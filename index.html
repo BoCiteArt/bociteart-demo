@@ -53,4 +53,606 @@
     .ticker .row{
       position:absolute; inset:0;
       display:flex;
-      align-
+      align-items:center;
+      padding:0 14px;
+      gap:12px;
+      overflow:hidden;
+    }
+    .marquee{
+      display:flex;
+      gap:38px;
+      white-space:nowrap;
+      animation: marquee 12s linear infinite;
+      will-change: transform;
+    }
+    .marquee .item{
+      display:flex;
+      flex-direction:column;
+      min-width:360px;
+    }
+    .ticker .title{
+      color:#fff;
+      font-weight:800;
+      font-size:14px;
+    }
+    .ticker .sub{
+      color:rgba(255,255,255,.92);
+      font-weight:700;
+      font-size:12px;
+      margin-top:2px;
+    }
+    .ticker .rule{
+      margin-left:auto;
+      color:rgba(255,255,255,.92);
+      font-size:11px;
+      font-weight:700;
+      flex:0 0 auto;
+    }
+    @keyframes marquee{
+      0%{ transform:translateX(0); }
+      100%{ transform:translateX(-50%); }
+    }
+
+    /* --- Grid tiles --- */
+    .gridWrap{
+      position:relative;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .tile{
+      position:relative;
+      width:100%;
+      aspect-ratio:1 / 1; /* tuiles carrées */
+      border-radius:22px;
+      overflow:hidden;
+      background:var(--beige);
+      cursor:pointer;
+    }
+    .tile img{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+    }
+    .tile .overlay{
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.55));
+    }
+    .tile .content{
+      position:absolute; inset:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      padding:12px;
+      color:#fff;
+    }
+    .tile .h{
+      font-weight:900;
+      font-size:18px;
+      line-height:1.15;
+    }
+    .tile .p{
+      margin-top:8px;
+      font-weight:700;
+      font-size:12px;
+      color:rgba(255,255,255,.92);
+    }
+    .tile.logoOnly .overlay{ display:none; }
+    .tile.logoOnly .content{ display:none; }
+
+    /* --- Emergency buttons (long press) --- */
+    .emgSlot{
+      position:absolute;
+      left:50%;
+      transform:translate(-50%,-50%);
+      padding:6px;
+      border-radius:999px;
+      background:var(--bg);
+    }
+    .emgTop{ top:33.333%; }
+    .emgBottom{ top:66.666%; }
+
+    .lpBtn{
+      position:relative;
+      width:90px; height:90px;
+      border:none;
+      background:transparent;
+      padding:0;
+      touch-action:none;
+      cursor:pointer;
+    }
+    .lpRing{
+      position:absolute; inset:0;
+    }
+    .lpCore{
+      position:absolute;
+      left:50%; top:50%;
+      transform:translate(-50%,-50%);
+      width:74px; height:74px;
+      border-radius:999px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:900;
+      box-shadow:0 10px 20px rgba(0,0,0,.18);
+      user-select:none;
+    }
+    .lpSmall{ width:64px; height:64px; }
+    .lpCore .icon{
+      width:16px; height:16px;
+      margin-bottom:2px;
+      opacity:.95;
+    }
+    .lpCore .lbl{
+      font-size:18px;
+      line-height:1;
+    }
+    .lpCore .lblSmall{
+      font-size:12px;
+      line-height:1.05;
+    }
+
+    /* --- DAE button --- */
+    .dae{
+      width:100%;
+      border-radius:20px;
+      background:#f7efe3; /* beige clair */
+      border:3px solid var(--red); /* contour rouge comme 112 */
+      padding:14px 14px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:900;
+      font-size:16px;
+      cursor:pointer;
+    }
+    .heart{
+      width:64px;
+      height:64px;
+      flex:0 0 auto;
+    }
+
+    /* --- Footer icons --- */
+    .footer{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      padding-bottom:6px;
+    }
+    .iconBtn{
+      width:44px; height:44px;
+      border-radius:999px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      box-shadow:0 4px 10px rgba(0,0,0,.08);
+    }
+
+    /* --- Modal --- */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      z-index:50;
+    }
+    .modal.open{ display:block; }
+    .backdrop{
+      position:absolute; inset:0;
+      background:rgba(0,0,0,.40);
+    }
+    .sheet{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:min(420px, calc(100% - 18px));
+      background:var(--bg);
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:0 14px 40px rgba(0,0,0,.22);
+    }
+    .sheet .head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 14px;
+      font-weight:900;
+      border-bottom:1px solid rgba(0,0,0,.10);
+    }
+    .sheet .body{
+      padding:14px;
+      font-size:14px;
+      color:var(--text);
+    }
+    .xbtn{
+      border:none;
+      background:#fff;
+      width:36px; height:36px;
+      border-radius:12px;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 4px 10px rgba(0,0,0,.08);
+    }
+    .muted{ color:var(--muted); font-size:12px; font-weight:700; }
+
+    /* Choice modal */
+    .choiceGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .choiceBtn{
+      border:2px solid rgba(0,0,0,.10);
+      background:var(--beige);
+      border-radius:14px;
+      padding:12px;
+      font-weight:900;
+      cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- Ticker -->
+    <div class="ticker" id="ticker">
+      <img id="tickerImg" alt="" />
+      <div class="overlay"></div>
+      <div class="row">
+        <div class="marquee" id="marquee">
+          <div class="item">
+            <div class="title" id="tickerTitleA"></div>
+            <div class="sub" id="tickerSubA"></div>
+          </div>
+          <div class="item">
+            <div class="title" id="tickerTitleB"></div>
+            <div class="sub" id="tickerSubB"></div>
+          </div>
+        </div>
+        <div class="rule">10/jour • règle 16h</div>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="gridWrap">
+      <div class="grid">
+        <div class="tile" data-open="oeuvres">
+          <img alt="" src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=1200&q=60"/>
+          <div class="overlay"></div>
+          <div class="content">
+            <div class="h">Visitez les œuvres d’artistes</div>
+            <div class="p">Carte • guidage • audio</div>
+          </div>
+        </div>
+
+        <div class="tile" data-open="ecole">
+          <img alt="" src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=60"/>
+          <div class="overlay"></div>
+          <div class="content">
+            <div class="h">École</div>
+            <div class="p">Mot du jour</div>
+          </div>
+        </div>
+
+        <div class="tile" data-open="sport">
+          <img alt="" src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=60"/>
+          <div class="overlay"></div>
+          <div class="content">
+            <div class="h">Sport</div>
+            <div class="p">Infos • parcs • loisirs</div>
+          </div>
+        </div>
+
+        <div class="tile" data-open="mairie">
+          <img alt="" src="https://images.unsplash.com/photo-1505843513577-22bb7d21e455?auto=format&fit=crop&w=1200&q=60"/>
+          <div class="overlay"></div>
+          <div class="content">
+            <div class="h">Mairie</div>
+            <div class="p">Infos • agenda</div>
+          </div>
+        </div>
+
+        <div class="tile logoOnly" id="adminTile">
+          <img alt="" src="https://bociteart.com/logo-bociteart.png"/>
+        </div>
+
+        <div class="tile" data-open="commerces">
+          <img alt="" src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=900&q=60"/>
+          <div class="overlay"></div>
+          <div class="content">
+            <div class="h">Commerces</div>
+            <div class="p">Bons plans</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 112 -->
+      <div class="emgSlot emgTop">
+        <button class="lpBtn" id="btn112" aria-label="112">
+          <svg class="lpRing" width="90" height="90" viewBox="0 0 90 90">
+            <circle cx="45" cy="45" r="35" fill="none" stroke="rgba(165,30,34,.25)" stroke-width="5"></circle>
+            <circle id="ring112" cx="45" cy="45" r="35" fill="none" stroke="rgba(165,30,34,1)"
+                    stroke-width="5" stroke-linecap="round"
+                    stroke-dasharray="219.911" stroke-dashoffset="219.911"
+                    transform="rotate(-90 45 45)"></circle>
+          </svg>
+          <div class="lpCore" style="background:var(--red);">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.86.3 1.7.54 2.5a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.58-1.11a2 2 0 0 1 2.11-.45c.8.24 1.64.42 2.5.54A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            <div class="lbl">112</div>
+          </div>
+        </button>
+      </div>
+
+      <!-- 3919 / 119 -->
+      <div class="emgSlot emgBottom">
+        <button class="lpBtn" id="btnSos" aria-label="3919/119" style="width:80px;height:80px;">
+          <svg class="lpRing" width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,.25)" stroke-width="5"></circle>
+            <circle id="ringSos" cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,1)"
+                    stroke-width="5" stroke-linecap="round"
+                    stroke-dasharray="188.496" stroke-dashoffset="188.496"
+                    transform="rotate(-90 40 40)"></circle>
+          </svg>
+          <div class="lpCore lpSmall" id="sosCore" style="background:var(--redSoft);">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.86.3 1.7.54 2.5a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.58-1.11a2 2 0 0 1 2.11-.45c.8.24 1.64.42 2.5.54A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            <div class="lblSmall" id="sosLabel">3919/119</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- DAE -->
+    <div class="dae" id="daeBtn">
+      <svg class="heart" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.6">
+        <path d="M20.8 4.6c-1.7-1.7-4.5-1.7-6.2 0L12 7.2 9.4 4.6c-1.7-1.7-4.5-1.7-6.2 0-1.7 1.7-1.7 4.5 0 6.2L12 19.6l8.8-8.8c1.7-1.7 1.7-4.5 0-6.2z"/>
+        <path d="M13 8h-2v4H7v2h4v4h2v-4h4v-2h-4z" stroke="var(--red)"/>
+      </svg>
+      <div>Trouver un défibrillateur autour de moi</div>
+    </div>
+
+    <!-- Footer (on garde seulement les icônes) -->
+    <div class="footer">
+      <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true">
+          <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.27 2.3-2.6 4.73-2.6 5.06 0 6 3.33 6 7.67V24h-5v-7.6c0-1.81-.03-4.13-2.52-4.13-2.53 0-2.92 1.97-2.92 4v7.73h-5V8z"/>
+        </svg>
+      </a>
+      <a class="iconBtn" href="https://instagram.com/bociteart" target="_blank" rel="noreferrer" aria-label="Instagram">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#C13584" aria-hidden="true">
+          <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3.2A4.8 4.8 0 1 0 16.8 12 4.81 4.81 0 0 0 12 7.2zm0 7.8A3 3 0 1 1 15 12a3 3 0 0 1-3 3zm4.9-8.9a1.1 1.1 0 1 1-1.1-1.1 1.1 1.1 0 0 1 1.1 1.1z"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="backdrop" id="modalClose"></div>
+    <div class="sheet">
+      <div class="head">
+        <div id="modalTitle">Titre</div>
+        <button class="xbtn" id="xBtn" aria-label="Fermer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Choice 3919 / 119 -->
+  <div class="modal" id="choice">
+    <div class="backdrop" id="choiceClose"></div>
+    <div class="sheet">
+      <div class="head">
+        <div>Choisir le numéro</div>
+        <button class="xbtn" id="choiceX" aria-label="Fermer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="body">
+        <div style="font-weight:800">Appuyez une fois pour choisir, puis revenez au bouton et faites un appui long pour appeler.</div>
+        <div class="choiceGrid">
+          <button class="choiceBtn" data-pick="3919">3919</button>
+          <button class="choiceBtn" data-pick="119">119</button>
+        </div>
+        <div class="muted" style="margin-top:10px">3919 : violences femmes • 119 : enfance en danger</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Ticker rotation ---
+    const tickerItems = [
+      {
+        title: "Annonce partenaire (démo)",
+        subtitle: "Exemple : -15% à partir de 30 bocitecoins",
+        img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60",
+      },
+      {
+        title: "Mairie (démo) : dernières places ce soir",
+        subtitle: "Tarifs étudiants / citoyens (après 16h)",
+        img: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60",
+      },
+    ];
+    let tickerIdx = 0;
+
+    function setTicker(i){
+      const it = tickerItems[i];
+      document.getElementById("tickerImg").src = it.img;
+      document.getElementById("tickerTitleA").textContent = it.title;
+      document.getElementById("tickerSubA").textContent = it.subtitle || "";
+      document.getElementById("tickerTitleB").textContent = it.title;
+      document.getElementById("tickerSubB").textContent = it.subtitle || "";
+    }
+    setTicker(0);
+    setInterval(()=>{ tickerIdx = (tickerIdx+1) % tickerItems.length; setTicker(tickerIdx); }, 10000);
+
+    // --- Modal system ---
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+    const closeModal = () => modal.classList.remove("open");
+    document.getElementById("modalClose").onclick = closeModal;
+    document.getElementById("xBtn").onclick = closeModal;
+
+    function openModal(title, html){
+      modalTitle.textContent = title;
+      modalBody.innerHTML = html;
+      modal.classList.add("open");
+    }
+
+    document.querySelectorAll("[data-open]").forEach(el=>{
+      el.addEventListener("click", ()=>{
+        const key = el.getAttribute("data-open");
+        if(key==="oeuvres"){
+          openModal("Œuvres", `
+            <div style="font-weight:900;margin-bottom:8px;">Démo : carte + QR/BLE + audio</div>
+            <div>Dans l’app finale : parcours réel, guidage simple, lecture audio “voix féminine douce”.</div>
+          `);
+        }
+        if(key==="ecole"){
+          openModal("École", `
+            <div style="font-weight:900;margin-bottom:8px;">Mot du jour</div>
+            <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
+              « Je suis ravi aujourd’hui. » — Alan, 11 ans
+            </div>
+            <div class="muted" style="margin-top:10px;">
+              (Démo) Lecture audio et édition prof peuvent être ajoutées ensuite.
+            </div>
+          `);
+        }
+        if(key==="sport"){
+          openModal("Sport", `
+            <div style="font-weight:900;margin-bottom:8px;">Sous-onglet Parcs (démo)</div>
+            <div>Carte plein écran prévue : parcs, bois, parcours, salles.</div>
+          `);
+        }
+        if(key==="mairie"){
+          openModal("Mairie", `
+            <div style="font-weight:900;margin-bottom:8px;">Infos mairie + agenda (démo)</div>
+            <div>Ajout : annonces, alertes, évènements, règle 16h.</div>
+          `);
+        }
+        if(key==="commerces"){
+          openModal("Commerces", `
+            <div style="font-weight:900;margin-bottom:8px;">Commerces (démo)</div>
+            <div>Bons plans + attribution de points + pubs (selon règles).</div>
+          `);
+        }
+      });
+    });
+
+    // Admin tile (démo)
+    document.getElementById("adminTile").addEventListener("click", ()=>{
+      openModal("Accès Admin (Démo)", `
+        <div style="font-weight:900;margin-bottom:8px;">Accès caché</div>
+        <div>Dans la vraie appli : code + 2FA + journal des actions.</div>
+      `);
+    });
+
+    // DAE screen
+    document.getElementById("daeBtn").addEventListener("click", ()=>{
+      openModal("Défibrillateur (DAE)", `
+        <div style="font-weight:900;margin-bottom:8px;">Carte plein écran</div>
+        <div>Orientation, rayon 1–3 km, hôpital/pharmacie/DAE.</div>
+      `);
+    });
+
+    // --- Long press logic ---
+    function makeLongPress(btn, ringEl, ms, onTrigger){
+      let raf=null, start=null, holding=false;
+      const r = ringEl.getAttribute("r") ? parseFloat(ringEl.getAttribute("r")) : 35;
+      const circ = 2 * Math.PI * r;
+      ringEl.style.strokeDasharray = String(circ);
+      ringEl.style.strokeDashoffset = String(circ);
+
+      const stop = ()=>{
+        holding=false; start=null;
+        ringEl.style.strokeDashoffset = String(circ);
+        if(raf) cancelAnimationFrame(raf);
+        raf=null;
+      };
+
+      const tick = (ts)=>{
+        if(!holding) return;
+        if(start===null) start=ts;
+        const p = Math.min(1, (ts-start)/ms);
+        ringEl.style.strokeDashoffset = String(circ * (1-p));
+        if(p>=1){
+          stop();
+          onTrigger();
+          return;
+        }
+        raf = requestAnimationFrame(tick);
+      };
+
+      btn.addEventListener("pointerdown", (e)=>{
+        e.preventDefault();
+        if(holding) return;
+        holding=true;
+        raf = requestAnimationFrame(tick);
+      });
+      ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
+        btn.addEventListener(ev, stop);
+      });
+      btn.addEventListener("contextmenu", (e)=> e.preventDefault());
+    }
+
+    // 112
+    makeLongPress(
+      document.getElementById("btn112"),
+      document.getElementById("ring112"),
+      1800,
+      ()=> alert("Démo : appel 112 (appui long validé).")
+    );
+
+    // 3919 / 119 choice + long press
+    let sosNumber = null;
+    const choice = document.getElementById("choice");
+    const closeChoice = ()=> choice.classList.remove("open");
+    document.getElementById("choiceClose").onclick = closeChoice;
+    document.getElementById("choiceX").onclick = closeChoice;
+
+    document.querySelectorAll(".choiceBtn").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        sosNumber = b.getAttribute("data-pick");
+        document.getElementById("sosLabel").textContent = sosNumber;
+        closeChoice();
+      });
+    });
+
+    makeLongPress(
+      document.getElementById("btnSos"),
+      document.getElementById("ringSos"),
+      2000,
+      ()=>{
+        if(!sosNumber){
+          choice.classList.add("open");
+          return;
+        }
+        alert("Démo : appel " + sosNumber + " (appui long validé).");
+      }
+    );
+  </script>
+</body>
+</html>
+
