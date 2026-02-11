@@ -11,13 +11,16 @@
       --surface:#ffffff;
       --beige:#efe4d3;
       --green:#2f5d46;
+
+      /* ROUGE 112 */
       --red:#a51e22;
       --redSoft:#7f1a1d;
+
       --text:#1f1f1f;
       --muted:#6e6a63;
       --link:#1d4ed8;
 
-      /* hauteur visible mobile (sera mise à jour en JS) */
+      /* hauteur visible mobile */
       --vh: 1vh;
     }
 
@@ -36,9 +39,7 @@
       overscroll-behavior: none;
     }
 
-    /* Conteneur principal :
-       - min-height basée sur la vraie hauteur visible (Chrome Android)
-       - + fallback 100vh / 100dvh */
+    /* Conteneur principal : hauteur visible (Chrome Android) */
     .page{
       min-height: calc(var(--vh) * 100);
       min-height: 100vh;
@@ -119,18 +120,18 @@
     }
 
     /* --- Grid tiles --- */
-    .gridWrap{
-      position:relative;
-    }
+    .gridWrap{ position:relative; }
     .grid{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:12px;
     }
+
+    /* PAR DÉFAUT : carré */
     .tile{
       position:relative;
       width:100%;
-      aspect-ratio:1 / 1; /* tuiles carrées */
+      aspect-ratio:1 / 1;
       border-radius:22px;
       overflow:hidden;
       background:var(--beige);
@@ -190,9 +191,7 @@
       touch-action:none;
       cursor:pointer;
     }
-    .lpRing{
-      position:absolute; inset:0;
-    }
+    .lpRing{ position:absolute; inset:0; }
     .lpCore{
       position:absolute;
       left:50%; top:50%;
@@ -214,21 +213,15 @@
       margin-bottom:2px;
       opacity:.95;
     }
-    .lpCore .lbl{
-      font-size:18px;
-      line-height:1;
-    }
-    .lpCore .lblSmall{
-      font-size:12px;
-      line-height:1.05;
-    }
+    .lpCore .lbl{ font-size:18px; line-height:1; }
+    .lpCore .lblSmall{ font-size:12px; line-height:1.05; }
 
     /* --- DAE button --- */
     .dae{
       width:100%;
       border-radius:20px;
-      background:#f7efe3; /* beige clair */
-      border:3px solid var(--red); /* contour rouge comme 112 */
+      background:#f7efe3;
+      border:3px solid var(--red);       /* rouge 112 */
       padding:14px 14px;
       display:flex;
       align-items:center;
@@ -368,6 +361,49 @@
       cursor:pointer;
     }
     .tab.active{ background:var(--beige); }
+
+    /* =========================================================
+       ✅ OPTIMISATION ANDROID : on réduit la HAUTEUR globale
+       - tuiles un peu moins hautes
+       - ticker un peu moins haut
+       - bouton DAE plus bas + coeur -1/3
+       - marges/gaps légèrement réduits
+       ========================================================= */
+    @media (max-height: 780px){
+      .wrap{ padding:10px; gap:10px; }
+      .ticker{ height:138px; }
+
+      /* tuiles moins hautes (≈ -10%) */
+      .tile{ aspect-ratio: 1 / 0.90; }
+
+      .grid{ gap:10px; }
+
+      .tile .h{ font-size:16px; }
+      .tile .p{ margin-top:6px; }
+
+      /* DAE plus petit + coeur -1/3 */
+      .dae{
+        padding:10px 12px;
+        font-size:14px;
+        border-radius:18px;
+        border-color: var(--red); /* rouge 112 */
+      }
+      .heart{
+        width:44px;
+        height:44px;
+      }
+
+      .footerRow{ padding-bottom:8px; }
+      .iconBtn{ width:40px; height:40px; }
+      .legalBtn{ padding:9px 10px; font-size:12px; }
+    }
+
+    /* encore plus compact si écran très petit */
+    @media (max-height: 700px){
+      .ticker{ height:128px; }
+      .tile{ aspect-ratio: 1 / 0.86; } /* encore un peu moins haut */
+      .wrap{ gap:9px; }
+    }
 
   </style>
 </head>
@@ -806,3 +842,4 @@
   </script>
 </body>
 </html>
+
