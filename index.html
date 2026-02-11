@@ -14,6 +14,7 @@
       --redSoft:#7f1a1d;
       --text:#1f1f1f;
       --muted:#6e6a63;
+      --link:#1d4ed8;
     }
 
     *{ box-sizing:border-box; }
@@ -218,12 +219,24 @@
       flex:0 0 auto;
     }
 
-    /* --- Footer icons --- */
-    .footer{
+    /* --- Footer complet --- */
+    .footerRow{
       display:flex;
-      justify-content:flex-end;
+      align-items:center;
+      justify-content:space-between;
       gap:10px;
       padding-bottom:6px;
+    }
+    .siteLink{
+      font-size:14px;
+      font-weight:800;
+      color:var(--link);
+      text-decoration:none;
+    }
+    .footerRight{
+      display:flex;
+      align-items:center;
+      gap:10px;
     }
     .iconBtn{
       width:44px; height:44px;
@@ -234,6 +247,21 @@
       justify-content:center;
       text-decoration:none;
       box-shadow:0 4px 10px rgba(0,0,0,.08);
+    }
+    .legalBtn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--beige);
+      color:var(--green);
+      font-weight:900;
+      padding:10px 12px;
+      border-radius:14px;
+      border:2px solid rgba(0,0,0,.08);
+      cursor:pointer;
+      white-space:nowrap;
+      font-size:13px;
+      box-shadow:0 4px 10px rgba(0,0,0,.06);
     }
 
     /* --- Modal --- */
@@ -298,6 +326,24 @@
       font-weight:900;
       cursor:pointer;
     }
+
+    /* Legal tabs */
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .tab{
+      border:2px solid rgba(0,0,0,.10);
+      background:#fff;
+      border-radius:12px;
+      padding:8px 10px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .tab.active{ background:var(--beige); }
+
   </style>
 </head>
 
@@ -424,29 +470,36 @@
       <div>Trouver un défibrillateur autour de moi</div>
     </div>
 
-    <!-- Footer (on garde seulement les icônes) -->
-    <div class="footer">
-      <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noreferrer" aria-label="LinkedIn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true">
-          <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.27 2.3-2.6 4.73-2.6 5.06 0 6 3.33 6 7.67V24h-5v-7.6c0-1.81-.03-4.13-2.52-4.13-2.53 0-2.92 1.97-2.92 4v7.73h-5V8z"/>
-        </svg>
-      </a>
-      <a class="iconBtn" href="https://instagram.com/bociteart" target="_blank" rel="noreferrer" aria-label="Instagram">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="#C13584" aria-hidden="true">
-          <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3.2A4.8 4.8 0 1 0 16.8 12 4.81 4.81 0 0 0 12 7.2zm0 7.8A3 3 0 1 1 15 12a3 3 0 0 1-3 3zm4.9-8.9a1.1 1.1 0 1 1-1.1-1.1 1.1 1.1 0 0 1 1.1 1.1z"/>
-        </svg>
-      </a>
+    <!-- Footer complet -->
+    <div class="footerRow">
+      <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noreferrer">www.bociteart.com</a>
+
+      <div class="footerRight">
+        <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true">
+            <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.27 2.3-2.6 4.73-2.6 5.06 0 6 3.33 6 7.67V24h-5v-7.6c0-1.81-.03-4.13-2.52-4.13-2.53 0-2.92 1.97-2.92 4v7.73h-5V8z"/>
+          </svg>
+        </a>
+
+        <a class="iconBtn" href="https://instagram.com/bociteart" target="_blank" rel="noreferrer" aria-label="Instagram">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#C13584" aria-hidden="true">
+            <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3.2A4.8 4.8 0 1 0 16.8 12 4.81 4.81 0 0 0 12 7.2zm0 7.8A3 3 0 1 1 15 12a3 3 0 0 1-3 3zm4.9-8.9a1.1 1.1 0 1 1-1.1-1.1 1.1 1.1 0 0 1 1.1 1.1z"/>
+          </svg>
+        </a>
+
+        <button class="legalBtn" id="openLegal" type="button">RGPD • CGU • CGV</button>
+      </div>
     </div>
 
   </div>
 
-  <!-- Modal -->
+  <!-- Modal (écrans) -->
   <div class="modal" id="modal">
     <div class="backdrop" id="modalClose"></div>
     <div class="sheet">
       <div class="head">
         <div id="modalTitle">Titre</div>
-        <button class="xbtn" id="xBtn" aria-label="Fermer">
+        <button class="xbtn" id="xBtn" aria-label="Fermer" type="button">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2">
             <path d="M18 6L6 18M6 6l12 12"/>
           </svg>
@@ -456,13 +509,50 @@
     </div>
   </div>
 
+  <!-- Legal modal -->
+  <div class="modal" id="legal">
+    <div class="backdrop" id="legalClose"></div>
+    <div class="sheet">
+      <div class="head">
+        <div>Documents & mentions légales</div>
+        <button class="xbtn" id="legalX" aria-label="Fermer" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="body">
+        <div class="tabs">
+          <button class="tab active" data-tab="rgpd" type="button">RGPD</button>
+          <button class="tab" data-tab="cgu" type="button">CGU</button>
+          <button class="tab" data-tab="cgv" type="button">CGV</button>
+        </div>
+
+        <div id="p-rgpd">
+          <div style="font-weight:900;">Politique de protection des données (RGPD)</div>
+          <div style="margin-top:8px;">Acceptation explicite (case + bouton), horodatage, version enregistrée.</div>
+        </div>
+
+        <div id="p-cgu" style="display:none;">
+          <div style="font-weight:900;">Conditions Générales d’Utilisation (CGU)</div>
+          <div style="margin-top:8px;">Règles d’usage, responsabilité, droit applicable, bocitecoins = points (pas une monnaie).</div>
+        </div>
+
+        <div id="p-cgv" style="display:none;">
+          <div style="font-weight:900;">Conditions Générales de Vente (CGV)</div>
+          <div style="margin-top:8px;">Options payantes, paiement, résiliation, rétractation si applicable.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Choice 3919 / 119 -->
   <div class="modal" id="choice">
     <div class="backdrop" id="choiceClose"></div>
     <div class="sheet">
       <div class="head">
         <div>Choisir le numéro</div>
-        <button class="xbtn" id="choiceX" aria-label="Fermer">
+        <button class="xbtn" id="choiceX" aria-label="Fermer" type="button">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2">
             <path d="M18 6L6 18M6 6l12 12"/>
           </svg>
@@ -471,8 +561,8 @@
       <div class="body">
         <div style="font-weight:800">Appuyez une fois pour choisir, puis revenez au bouton et faites un appui long pour appeler.</div>
         <div class="choiceGrid">
-          <button class="choiceBtn" data-pick="3919">3919</button>
-          <button class="choiceBtn" data-pick="119">119</button>
+          <button class="choiceBtn" data-pick="3919" type="button">3919</button>
+          <button class="choiceBtn" data-pick="119" type="button">119</button>
         </div>
         <div class="muted" style="margin-top:10px">3919 : violences femmes • 119 : enfance en danger</div>
       </div>
@@ -577,6 +667,31 @@
       `);
     });
 
+    // --- Legal modal open/close + tabs ---
+    const legal = document.getElementById("legal");
+    const openLegalBtn = document.getElementById("openLegal");
+    const closeLegalBtn = document.getElementById("legalClose");
+    const closeLegalX = document.getElementById("legalX");
+
+    const openLegal = () => legal.classList.add("open");
+    const closeLegal = () => legal.classList.remove("open");
+
+    openLegalBtn.onclick = openLegal;
+    closeLegalBtn.onclick = closeLegal;
+    closeLegalX.onclick = closeLegal;
+
+    document.querySelectorAll("#legal .tab").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("#legal .tab").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const k = btn.getAttribute("data-tab");
+        document.getElementById("p-rgpd").style.display = (k==="rgpd") ? "block" : "none";
+        document.getElementById("p-cgu").style.display  = (k==="cgu")  ? "block" : "none";
+        document.getElementById("p-cgv").style.display  = (k==="cgv")  ? "block" : "none";
+      });
+    });
+
     // --- Long press logic ---
     function makeLongPress(btn, ringEl, ms, onTrigger){
       let raf=null, start=null, holding=false;
@@ -655,4 +770,3 @@
   </script>
 </body>
 </html>
-
