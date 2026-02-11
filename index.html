@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- IMPORTANT: viewport + stabilité mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Bo’CitéArt – Démo</title>
   <style>
     :root{
@@ -15,17 +16,40 @@
       --text:#1f1f1f;
       --muted:#6e6a63;
       --link:#1d4ed8;
+
+      /* hauteur visible mobile (sera mise à jour en JS) */
+      --vh: 1vh;
     }
 
     *{ box-sizing:border-box; }
-    body{
+    html, body{
+      height:100%;
       margin:0;
+      padding:0;
+    }
+    body{
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:var(--bg);
       color:var(--text);
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      overscroll-behavior: none;
+    }
+
+    /* Conteneur principal :
+       - min-height basée sur la vraie hauteur visible (Chrome Android)
+       - + fallback 100vh / 100dvh */
+    .page{
+      min-height: calc(var(--vh) * 100);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
     }
 
     .wrap{
+      width:100%;
       max-width:420px;
       margin:0 auto;
       padding:12px;
@@ -225,7 +249,8 @@
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      padding-bottom:6px;
+      padding-bottom:10px;
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
     }
     .siteLink{
       font-size:14px;
@@ -348,149 +373,151 @@
 </head>
 
 <body>
-  <div class="wrap">
+  <div class="page">
+    <div class="wrap">
 
-    <!-- Ticker -->
-    <div class="ticker" id="ticker">
-      <img id="tickerImg" alt="" />
-      <div class="overlay"></div>
-      <div class="row">
-        <div class="marquee" id="marquee">
-          <div class="item">
-            <div class="title" id="tickerTitleA"></div>
-            <div class="sub" id="tickerSubA"></div>
+      <!-- Ticker -->
+      <div class="ticker" id="ticker">
+        <img id="tickerImg" alt="" />
+        <div class="overlay"></div>
+        <div class="row">
+          <div class="marquee" id="marquee">
+            <div class="item">
+              <div class="title" id="tickerTitleA"></div>
+              <div class="sub" id="tickerSubA"></div>
+            </div>
+            <div class="item">
+              <div class="title" id="tickerTitleB"></div>
+              <div class="sub" id="tickerSubB"></div>
+            </div>
           </div>
-          <div class="item">
-            <div class="title" id="tickerTitleB"></div>
-            <div class="sub" id="tickerSubB"></div>
-          </div>
-        </div>
-        <div class="rule">10/jour • règle 16h</div>
-      </div>
-    </div>
-
-    <!-- Grid -->
-    <div class="gridWrap">
-      <div class="grid">
-        <div class="tile" data-open="oeuvres">
-          <img alt="" src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=1200&q=60"/>
-          <div class="overlay"></div>
-          <div class="content">
-            <div class="h">Visitez les œuvres d’artistes</div>
-            <div class="p">Carte • guidage • audio</div>
-          </div>
-        </div>
-
-        <div class="tile" data-open="ecole">
-          <img alt="" src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=60"/>
-          <div class="overlay"></div>
-          <div class="content">
-            <div class="h">École</div>
-            <div class="p">Mot du jour</div>
-          </div>
-        </div>
-
-        <div class="tile" data-open="sport">
-          <img alt="" src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=60"/>
-          <div class="overlay"></div>
-          <div class="content">
-            <div class="h">Sport</div>
-            <div class="p">Infos • parcs • loisirs</div>
-          </div>
-        </div>
-
-        <div class="tile" data-open="mairie">
-          <img alt="" src="https://images.unsplash.com/photo-1505843513577-22bb7d21e455?auto=format&fit=crop&w=1200&q=60"/>
-          <div class="overlay"></div>
-          <div class="content">
-            <div class="h">Mairie</div>
-            <div class="p">Infos • agenda</div>
-          </div>
-        </div>
-
-        <div class="tile logoOnly" id="adminTile">
-          <img alt="" src="https://bociteart.com/logo-bociteart.png"/>
-        </div>
-
-        <div class="tile" data-open="commerces">
-          <img alt="" src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=900&q=60"/>
-          <div class="overlay"></div>
-          <div class="content">
-            <div class="h">Commerces</div>
-            <div class="p">Bons plans</div>
-          </div>
+          <div class="rule">10/jour • règle 16h</div>
         </div>
       </div>
 
-      <!-- 112 -->
-      <div class="emgSlot emgTop">
-        <button class="lpBtn" id="btn112" aria-label="112">
-          <svg class="lpRing" width="90" height="90" viewBox="0 0 90 90">
-            <circle cx="45" cy="45" r="35" fill="none" stroke="rgba(165,30,34,.25)" stroke-width="5"></circle>
-            <circle id="ring112" cx="45" cy="45" r="35" fill="none" stroke="rgba(165,30,34,1)"
-                    stroke-width="5" stroke-linecap="round"
-                    stroke-dasharray="219.911" stroke-dashoffset="219.911"
-                    transform="rotate(-90 45 45)"></circle>
-          </svg>
-          <div class="lpCore" style="background:var(--red);">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.86.3 1.7.54 2.5a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.58-1.11a2 2 0 0 1 2.11-.45c.8.24 1.64.42 2.5.54A2 2 0 0 1 22 16.92z"/>
+      <!-- Grid -->
+      <div class="gridWrap">
+        <div class="grid">
+          <div class="tile" data-open="oeuvres">
+            <img alt="" src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=1200&q=60"/>
+            <div class="overlay"></div>
+            <div class="content">
+              <div class="h">Visitez les œuvres d’artistes</div>
+              <div class="p">Carte • guidage • audio</div>
+            </div>
+          </div>
+
+          <div class="tile" data-open="ecole">
+            <img alt="" src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=60"/>
+            <div class="overlay"></div>
+            <div class="content">
+              <div class="h">École</div>
+              <div class="p">Mot du jour</div>
+            </div>
+          </div>
+
+          <div class="tile" data-open="sport">
+            <img alt="" src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=60"/>
+            <div class="overlay"></div>
+            <div class="content">
+              <div class="h">Sport</div>
+              <div class="p">Infos • parcs • loisirs</div>
+            </div>
+          </div>
+
+          <div class="tile" data-open="mairie">
+            <img alt="" src="https://images.unsplash.com/photo-1505843513577-22bb7d21e455?auto=format&fit=crop&w=1200&q=60"/>
+            <div class="overlay"></div>
+            <div class="content">
+              <div class="h">Mairie</div>
+              <div class="p">Infos • agenda</div>
+            </div>
+          </div>
+
+          <div class="tile logoOnly" id="adminTile">
+            <img alt="" src="https://bociteart.com/logo-bociteart.png"/>
+          </div>
+
+          <div class="tile" data-open="commerces">
+            <img alt="" src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=900&q=60"/>
+            <div class="overlay"></div>
+            <div class="content">
+              <div class="h">Commerces</div>
+              <div class="p">Bons plans</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 112 -->
+        <div class="emgSlot emgTop">
+          <button class="lpBtn" id="btn112" aria-label="112">
+            <svg class="lpRing" width="90" height="90" viewBox="0 0 90 90">
+              <circle cx="45" cy="45" r="35" fill="none" stroke="rgba(165,30,34,.25)" stroke-width="5"></circle>
+              <circle id="ring112" cx="45" cy="45" r="35" fill="none" stroke="rgba(165,30,34,1)"
+                      stroke-width="5" stroke-linecap="round"
+                      stroke-dasharray="219.911" stroke-dashoffset="219.911"
+                      transform="rotate(-90 45 45)"></circle>
             </svg>
-            <div class="lbl">112</div>
-          </div>
-        </button>
-      </div>
+            <div class="lpCore" style="background:var(--red);">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.86.3 1.7.54 2.5a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.58-1.11a2 2 0 0 1 2.11-.45c.8.24 1.64.42 2.5.54A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <div class="lbl">112</div>
+            </div>
+          </button>
+        </div>
 
-      <!-- 3919 / 119 -->
-      <div class="emgSlot emgBottom">
-        <button class="lpBtn" id="btnSos" aria-label="3919/119" style="width:80px;height:80px;">
-          <svg class="lpRing" width="80" height="80" viewBox="0 0 80 80">
-            <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,.25)" stroke-width="5"></circle>
-            <circle id="ringSos" cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,1)"
-                    stroke-width="5" stroke-linecap="round"
-                    stroke-dasharray="188.496" stroke-dashoffset="188.496"
-                    transform="rotate(-90 40 40)"></circle>
-          </svg>
-          <div class="lpCore lpSmall" id="sosCore" style="background:var(--redSoft);">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.86.3 1.7.54 2.5a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.58-1.11a2 2 0 0 1 2.11-.45c.8.24 1.64.42 2.5.54A2 2 0 0 1 22 16.92z"/>
+        <!-- 3919 / 119 -->
+        <div class="emgSlot emgBottom">
+          <button class="lpBtn" id="btnSos" aria-label="3919/119" style="width:80px;height:80px;">
+            <svg class="lpRing" width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,.25)" stroke-width="5"></circle>
+              <circle id="ringSos" cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,1)"
+                      stroke-width="5" stroke-linecap="round"
+                      stroke-dasharray="188.496" stroke-dashoffset="188.496"
+                      transform="rotate(-90 40 40)"></circle>
             </svg>
-            <div class="lblSmall" id="sosLabel">3919/119</div>
-          </div>
-        </button>
+            <div class="lpCore lpSmall" id="sosCore" style="background:var(--redSoft);">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.86.3 1.7.54 2.5a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.58-1.11a2 2 0 0 1 2.11-.45c.8.24 1.64.42 2.5.54A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <div class="lblSmall" id="sosLabel">3919/119</div>
+            </div>
+          </button>
+        </div>
       </div>
-    </div>
 
-    <!-- DAE -->
-    <div class="dae" id="daeBtn">
-      <svg class="heart" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.6">
-        <path d="M20.8 4.6c-1.7-1.7-4.5-1.7-6.2 0L12 7.2 9.4 4.6c-1.7-1.7-4.5-1.7-6.2 0-1.7 1.7-1.7 4.5 0 6.2L12 19.6l8.8-8.8c1.7-1.7 1.7-4.5 0-6.2z"/>
-        <path d="M13 8h-2v4H7v2h4v4h2v-4h4v-2h-4z" stroke="var(--red)"/>
-      </svg>
-      <div>Trouver un défibrillateur autour de moi</div>
-    </div>
-
-    <!-- Footer complet -->
-    <div class="footerRow">
-      <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noreferrer">www.bociteart.com</a>
-
-      <div class="footerRight">
-        <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noreferrer" aria-label="LinkedIn">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true">
-            <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.27 2.3-2.6 4.73-2.6 5.06 0 6 3.33 6 7.67V24h-5v-7.6c0-1.81-.03-4.13-2.52-4.13-2.53 0-2.92 1.97-2.92 4v7.73h-5V8z"/>
-          </svg>
-        </a>
-
-        <a class="iconBtn" href="https://instagram.com/bociteart" target="_blank" rel="noreferrer" aria-label="Instagram">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="#C13584" aria-hidden="true">
-            <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3.2A4.8 4.8 0 1 0 16.8 12 4.81 4.81 0 0 0 12 7.2zm0 7.8A3 3 0 1 1 15 12a3 3 0 0 1-3 3zm4.9-8.9a1.1 1.1 0 1 1-1.1-1.1 1.1 1.1 0 0 1 1.1 1.1z"/>
-          </svg>
-        </a>
-
-        <button class="legalBtn" id="openLegal" type="button">RGPD • CGU • CGV</button>
+      <!-- DAE -->
+      <div class="dae" id="daeBtn">
+        <svg class="heart" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.6">
+          <path d="M20.8 4.6c-1.7-1.7-4.5-1.7-6.2 0L12 7.2 9.4 4.6c-1.7-1.7-4.5-1.7-6.2 0-1.7 1.7-1.7 4.5 0 6.2L12 19.6l8.8-8.8c1.7-1.7 1.7-4.5 0-6.2z"/>
+          <path d="M13 8h-2v4H7v2h4v4h2v-4h4v-2h-4z" stroke="var(--red)"/>
+        </svg>
+        <div>Trouver un défibrillateur autour de moi</div>
       </div>
-    </div>
 
+      <!-- Footer complet -->
+      <div class="footerRow">
+        <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noreferrer">www.bociteart.com</a>
+
+        <div class="footerRight">
+          <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true">
+              <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.27 2.3-2.6 4.73-2.6 5.06 0 6 3.33 6 7.67V24h-5v-7.6c0-1.81-.03-4.13-2.52-4.13-2.53 0-2.92 1.97-2.92 4v7.73h-5V8z"/>
+            </svg>
+          </a>
+
+          <a class="iconBtn" href="https://instagram.com/bociteart" target="_blank" rel="noreferrer" aria-label="Instagram">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#C13584" aria-hidden="true">
+              <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3.2A4.8 4.8 0 1 0 16.8 12 4.81 4.81 0 0 0 12 7.2zm0 7.8A3 3 0 1 1 15 12a3 3 0 0 1-3 3zm4.9-8.9a1.1 1.1 0 1 1-1.1-1.1 1.1 1.1 0 0 1 1.1 1.1z"/>
+            </svg>
+          </a>
+
+          <button class="legalBtn" id="openLegal" type="button">RGPD • CGU • CGV</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- Modal (écrans) -->
@@ -570,6 +597,15 @@
   </div>
 
   <script>
+    // --- Fix hauteur visible Android (barres Chrome) ---
+    function setVh(){
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    setVh();
+    window.addEventListener('resize', setVh);
+    window.addEventListener('orientationchange', setVh);
+
     // --- Ticker rotation ---
     const tickerItems = [
       {
