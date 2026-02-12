@@ -238,7 +238,6 @@
       width:64px;
       height:64px;
       flex:0 0 auto;
-
     }
 
     /* --- Footer complet --- */
@@ -369,47 +368,30 @@
 
     /* =========================================================
        ✅ OPTIMISATION ANDROID : on réduit la HAUTEUR globale
-       - tuiles un peu moins hautes
-       - ticker un peu moins haut
-       - bouton DAE plus bas + coeur -1/3
-       - marges/gaps légèrement réduits
        ========================================================= */
     @media (max-height: 780px){
       .wrap{ padding:10px; gap:10px; }
       .ticker{ height:138px; }
-
-      /* tuiles moins hautes (≈ -10%) */
       .tile{ aspect-ratio: 1 / 0.90; }
-
       .grid{ gap:10px; }
-
       .tile .h{ font-size:16px; }
       .tile .p{ margin-top:6px; }
-
-      /* DAE plus petit + coeur -1/3 */
       .dae{
         padding:10px 12px;
         font-size:14px;
         border-radius:18px;
-        border-color: var(--red); /* rouge 112 */
+        border-color: var(--red);
       }
-      .heart{
-        width:44px;
-        height:44px;
-      }
-
+      .heart{ width:44px; height:44px; }
       .footerRow{ padding-bottom:8px; }
       .iconBtn{ width:40px; height:40px; }
       .legalBtn{ padding:9px 10px; font-size:12px; }
     }
-
-    /* encore plus compact si écran très petit */
     @media (max-height: 700px){
       .ticker{ height:128px; }
-      .tile{ aspect-ratio: 1 / 0.80; } /* encore un peu moins haut */
+      .tile{ aspect-ratio: 1 / 0.80; }
       .wrap{ gap:9px; }
     }
-
   </style>
 </head>
 
@@ -651,12 +633,12 @@
     const tickerItems = [
       {
         title: "Annonce partenaire (démo)",
-        subtitle: "Exemple : -15% à partir de 30 bocitecoins",
+        subtitle: "Exemple : -15% à partir de 30 bocitecoins OR • plafond 10 pubs/jour",
         img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60",
       },
       {
-        title: "Mairie (démo) : dernières places ce soir",
-        subtitle: "Tarifs étudiants / citoyens (après 16h)",
+        title: "Mairie (démo) : informations & agenda",
+        subtitle: "Règle d’équité 16h • fenêtre 2 mois glissants",
         img: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60",
       },
     ];
@@ -687,42 +669,150 @@
       modal.classList.add("open");
     }
 
+    // --- Audio (démo) : voix enfant / voix féminine douce ---
+    function speak(text, mode){
+      if(!("speechSynthesis" in window)){
+        alert("Audio non supporté sur ce navigateur (démo).");
+        return;
+      }
+      window.speechSynthesis.cancel();
+
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "fr-FR";
+      u.rate = (mode==="female") ? 0.95 : 1.05;
+      u.pitch = (mode==="female") ? 1.0 : 1.35;
+
+      const voices = window.speechSynthesis.getVoices();
+      const fr = voices.filter(v => (v.lang||"").toLowerCase().startsWith("fr"));
+      if(fr.length) u.voice = fr[0];
+
+      window.speechSynthesis.speak(u);
+    }
+
     document.querySelectorAll("[data-open]").forEach(el=>{
       el.addEventListener("click", ()=>{
         const key = el.getAttribute("data-open");
+
         if(key==="oeuvres"){
           openModal("Œuvres", `
-            <div style="font-weight:900;margin-bottom:8px;">Démo : carte + QR/BLE + audio</div>
-            <div>Dans l’app finale : parcours réel, guidage simple, lecture audio “voix féminine douce”.</div>
+            <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (structure)</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Carte des fresques (quartiers)</li>
+              <li>Fiche œuvre : artiste • mécène • remerciements</li>
+              <li>Scan QR / BLE à proximité</li>
+              <li>Audio : voix féminine douce (lecture des contenus)</li>
+              <li>Mode visite : guidage simple</li>
+              <li>Récompense (officiel) : bocitecoins selon règle locale</li>
+            </ul>
+            <div class="muted" style="margin-top:10px;">
+              (Démo) On affiche la structure. Les vraies fiches seront remplies ensuite.
+            </div>
           `);
         }
+
         if(key==="ecole"){
           openModal("École", `
-            <div style="font-weight:900;margin-bottom:8px;">Mot du jour</div>
+            <div style="font-weight:900;margin-bottom:8px;">Mot du jour (structure)</div>
+
             <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
               « Je suis ravi aujourd’hui. » — Alan, 11 ans
             </div>
+
             <div class="muted" style="margin-top:10px;">
-              (Démo) Lecture audio et édition prof peuvent être ajoutées ensuite.
+              Le professeur choisit la voix. Si les parents refusent la voix de l’enfant, on utilise une voix féminine synthétique.
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+              <button class="choiceBtn" type="button" id="playChild">▶ Lire (voix enfant)</button>
+              <button class="choiceBtn" type="button" id="playFemale">▶ Lire (voix féminine douce)</button>
+            </div>
+
+            <div style="font-weight:900;margin-top:14px;">Sous-onglets (structure)</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Publication “mot du jour” (compte prof)</li>
+              <li>Choix voix : enfant / féminine douce (1 clic)</li>
+              <li>Archivage : historique des mots</li>
+              <li>Règles : pas de commentaires libres</li>
+              <li>RGPD : autorisations gérées par l’établissement</li>
+            </ul>
+          `);
+
+          // Hook boutons audio (démo)
+          setTimeout(()=>{
+            const text = "Je suis ravi aujourd’hui.";
+            const btnC = document.getElementById("playChild");
+            const btnF = document.getElementById("playFemale");
+            if(btnC) btnC.onclick = ()=> speak(text, "child");
+            if(btnF) btnF.onclick = ()=> speak(text, "female");
+          }, 0);
+        }
+
+        if(key==="sport"){
+          openModal("Sport", `
+            <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Rapport du week-end (résumé)</li>
+              <li>Missions citoyennes : propreté • rangement • fair-play</li>
+              <li>Preuve photo (non publique) — si activée</li>
+              <li>Bocitecoins BRONZE : échange uniquement mairie/collectivité</li>
+              <li>Pas de messagerie • pas de commentaires libres</li>
+            </ul>
+            <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Parcs • bois • parcours • salles</li>
+              <li>Carte plein écran + guidage</li>
+            </ul>
+          `);
+        }
+
+        if(key==="mairie"){
+          openModal("Mairie", `
+            <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Infos & alertes (travaux, circulation, annonces)</li>
+              <li>Agenda / calendrier vivant (visible, contenu selon activation)</li>
+              <li>Échanges bocitecoins ARGENT (école) et BRONZE (sport)</li>
+              <li>Cadeaux / surprises : validation & “brûlage” des échanges</li>
+              <li>Communications officielles & bilans (exports)</li>
+            </ul>
+            <div class="muted" style="margin-top:10px;">
+              (Officiel) accès mairie = compte référent + activation.
             </div>
           `);
         }
-        if(key==="sport"){
-          openModal("Sport", `
-            <div style="font-weight:900;margin-bottom:8px;">Sous-onglet Parcs (démo)</div>
-            <div>Carte plein écran prévue : parcs, bois, parcours, salles.</div>
-          `);
-        }
-        if(key==="mairie"){
-          openModal("Mairie", `
-            <div style="font-weight:900;margin-bottom:8px;">Infos mairie + agenda (démo)</div>
-            <div>Ajout : annonces, alertes, évènements, règle 16h.</div>
-          `);
-        }
+
         if(key==="commerces"){
           openModal("Commerces", `
-            <div style="font-weight:900;margin-bottom:8px;">Commerces (démo)</div>
-            <div>Bons plans + attribution de points + pubs (selon règles).</div>
+            <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
+
+            <div style="font-weight:900;margin-top:10px;">Bocitecoins OR</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Gain client : 1 bocitecoin OR par tranche de 10 € d’achat</li>
+              <li>Seuil minimum : 10 €</li>
+              <li>Chaque +10 € = +1 OR</li>
+            </ul>
+
+            <div style="font-weight:900;margin-top:12px;">Facturation Bo’CitéArt</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>0,09 € HT par tranche de 10 € (dès 10 €)</li>
+              <li>Facture mensuelle automatique (PDF)</li>
+              <li>Paiement par virement bancaire</li>
+              <li>RIB partenaire : masqué côté commerçant (visible admin)</li>
+              <li>En attente : SIRET/RIB selon création SAS / asso 1901</li>
+            </ul>
+
+            <div style="font-weight:900;margin-top:12px;">Publicités & visibilité</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Plafond : 10 publicités / jour</li>
+              <li>Règle d’équité “16h”</li>
+              <li>Prix : 50 € HT la pub • pack 5 = 200 € HT (validité 2 mois)</li>
+              <li>Même prix commerces / ville</li>
+              <li>Calendrier : 2 mois glissants (ouverture progressive)</li>
+            </ul>
+
+            <div class="muted" style="margin-top:10px;">
+              (Démo) On affiche la structure : les vrais écrans “portefeuille, factures, pubs” arrivent dans l’app officielle.
+            </div>
           `);
         }
       });
@@ -730,17 +820,32 @@
 
     // Admin tile (démo)
     document.getElementById("adminTile").addEventListener("click", ()=>{
-      openModal("Accès Admin (Démo)", `
-        <div style="font-weight:900;margin-bottom:8px;">Accès caché</div>
-        <div>Dans la vraie appli : code + 2FA + journal des actions.</div>
+      openModal("Accès Admin (structure)", `
+        <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
+          <li>Activation / blocage / désactivation à distance</li>
+          <li>Journal des actions (traçabilité probatoire)</li>
+          <li>Sécurité : 2FA (option) • alertes tentative accès • anti-fraude</li>
+          <li>Paramètres : règles bocitecoins • plafonds • pubs • documents</li>
+          <li>Facturation : génération PDF • statuts paiements • impayés</li>
+        </ul>
+        <div class="muted" style="margin-top:10px;">
+          (Démo) Écran vitrine : la mécanique complète sera dans l’app officielle.
+        </div>
       `);
     });
 
     // DAE screen
     document.getElementById("daeBtn").addEventListener("click", ()=>{
       openModal("Défibrillateur (DAE)", `
-        <div style="font-weight:900;margin-bottom:8px;">Carte plein écran</div>
-        <div>Orientation, rayon 1–3 km, hôpital/pharmacie/DAE.</div>
+        <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>Orientation + guidage</li>
+          <li>Rayon local : 1 à 3 km</li>
+          <li>DAE • pharmacie • hôpital</li>
+          <li>Géolocalisation optionnelle (RGPD)</li>
+        </ul>
       `);
     });
 
@@ -809,7 +914,7 @@
       btn.addEventListener("contextmenu", (e)=> e.preventDefault());
     }
 
-    // 112
+    // 112 (démo)
     makeLongPress(
       document.getElementById("btn112"),
       document.getElementById("ring112"),
@@ -847,4 +952,3 @@
   </script>
 </body>
 </html>
-
