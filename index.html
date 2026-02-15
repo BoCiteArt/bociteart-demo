@@ -670,6 +670,48 @@
       modal.classList.add("open");
     }
 
+    /* =========================================================
+       ✅ AJOUT UNIQUE DEMANDÉ : clic sur le TICKER ouvre une fenêtre
+       (ne touche à rien d’autre)
+       ========================================================= */
+    document.getElementById("ticker").addEventListener("click", ()=>{
+      openModal("Publicités & visibilité (Ticker)", `
+        <div style="font-weight:900;margin-bottom:8px;">Bandeau “Ticker” : annonces visibles par tous</div>
+
+        <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
+          <strong>10 annonces maximum par jour</strong> : rareté organisée pour créer de la valeur,
+          sans noyer l’application sous la publicité.
+        </div>
+
+        <div style="font-weight:900;margin-top:12px;">Règles clés</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li><strong>Plafond strict :</strong> 10/jour (impact immédiat)</li>
+          <li><strong>Règle d’équité 16h :</strong> accès équitable avant 16h • ouverture des places restantes après</li>
+          <li><strong>Même tarif</strong> : commerce, mairie, association</li>
+          <li><strong>Calendrier</strong> : réservation sur 2 mois glissants • dates grisées si complet</li>
+        </ul>
+
+        <div style="font-weight:900;margin-top:12px;">Pourquoi ça marche (pour convaincre vite)</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li><strong>Rareté = valeur perçue forte</strong></li>
+          <li>Tout le monde l’a “en poche” → <strong>visibilité locale directe</strong></li>
+          <li>Pas d’écrasement publicitaire → <strong>confiance</strong> et confort utilisateur</li>
+        </ul>
+
+        <div style="font-weight:900;margin-top:12px;">Exemples concrets</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li><strong>Mairie :</strong> “50 dernières places théâtre à 5 € – étudiants – 26/02/2026”</li>
+          <li><strong>Commerce :</strong> offre exceptionnelle limitée dans le temps</li>
+          <li><strong>Association :</strong> événement local prioritaire</li>
+        </ul>
+
+        <div class="muted" style="margin-top:10px;">
+          (Démo) Ici on montre le principe. Dans l’app officielle : réservation, validation, preuve de diffusion.
+        </div>
+      `);
+    });
+    /* ====== FIN AJOUT UNIQUE ====== */
+
     // --- Audio (démo) : voix enfant / voix féminine douce ---
     function speak(text, mode){
       if(!("speechSynthesis" in window)){
@@ -738,7 +780,6 @@
             </ul>
           `);
 
-          // Hook boutons audio (démo)
           setTimeout(()=>{
             const text = "Je suis ravi aujourd’hui.";
             const btnC = document.getElementById("playChild");
@@ -781,64 +822,55 @@
             </div>
           `);
         }
-        
+
         if(key==="commerces"){
-  openModal("Commerces", `
-    <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
+          openModal("Commerces", `
+            <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
 
-    <div style="font-weight:900;margin-top:10px;">Bocitecoins OR</div>
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Gain client : 1 bocitecoin OR par tranche de 10 € d’achat</li>
-      <li>Seuil minimum : 10 €</li>
-      <li>Chaque +10 € = +1 OR</li>
-    </ul>
+            <div style="font-weight:900;margin-top:10px;">Bocitecoins OR</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Gain client : 1 bocitecoin OR par tranche de 10 € d’achat</li>
+              <li>Seuil minimum : 10 €</li>
+              <li>Chaque +10 € = +1 OR</li>
+            </ul>
 
-    <div style="font-weight:900;margin-top:12px;">Facturation Bo’CitéArt</div>
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>0,09 € HT par tranche de 10 € (dès 10 €)</li>
-      <li>Facture mensuelle automatique (PDF)</li>
-      <li>Paiement par virement bancaire</li>
-      <li>RIB partenaire : masqué côté commerçant (visible admin)</li>
-      <li>En attente : SIRET/RIB selon création SAS / asso 1901</li>
-    </ul>
+            <div style="font-weight:900;margin-top:12px;">Facturation Bo’CitéArt</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>0,09 € HT par tranche de 10 € (dès 10 €)</li>
+              <li>Facture mensuelle automatique (PDF)</li>
+              <li>Paiement par virement bancaire</li>
+              <li>RIB partenaire : masqué côté commerçant (visible admin)</li>
+              <li>En attente : SIRET/RIB selon création SAS / asso 1901</li>
+            </ul>
 
-    <div style="font-weight:900;margin-top:12px;">Publicités & visibilité stratégique</div>
+            <div style="font-weight:900;margin-top:12px;">Publicités & visibilité stratégique</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Plafond strict : 10 publicités maximum par jour (rareté organisée)</li>
+              <li>Règle d’équité 16h : accès équitable avant 16h • ouverture élargie après</li>
+              <li>Même tarif pour tous : commerce, mairie, association</li>
+              <li>Prix : 50 € HT • Pack 5 = 200 € HT (validité 2 mois glissants)</li>
+              <li>Calendrier intelligent : réservation sur 2 mois • dates grisées si complet</li>
+            </ul>
 
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Plafond strict : 10 publicités maximum par jour (rareté organisée)</li>
-      <li>Règle d’équité 16h : accès équitable avant 16h • ouverture élargie après</li>
-      <li>Même tarif pour tous : commerce, mairie, association</li>
-      <li>Prix : 50 € HT • Pack 5 = 200 € HT (validité 2 mois glissants)</li>
-      <li>Calendrier intelligent : réservation sur 2 mois • dates grisées si complet</li>
-    </ul>
+            <div style="margin-top:12px;font-weight:900;">Pourquoi ce système est puissant ?</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Rareté = valeur perçue élevée</li>
+              <li>Tous les citoyens ont l’application en poche</li>
+              <li>Visibilité équitable, pas d’écrasement publicitaire</li>
+              <li>Incitation naturelle à réserver tôt</li>
+            </ul>
 
-    <div style="margin-top:12px;font-weight:900;">
-      Pourquoi ce système est puissant ?
-    </div>
-
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Rareté = valeur perçue élevée</li>
-      <li>Tous les citoyens ont l’application en poche</li>
-      <li>Visibilité équitable, pas d’écrasement publicitaire</li>
-      <li>Incitation naturelle à réserver tôt</li>
-    </ul>
-
-    <div style="margin-top:12px;font-weight:900;">
-      Exemples concrets :
-    </div>
-
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Mairie : 50 dernières places théâtre à 5 € – étudiants – 26/02/2026</li>
-      <li>Commerce : offre exceptionnelle limitée dans le temps</li>
-      <li>Association : événement local prioritaire</li>
-    </ul>
-  `);
-}
-
+            <div style="margin-top:12px;font-weight:900;">Exemples concrets :</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Mairie : 50 dernières places théâtre à 5 € – étudiants – 26/02/2026</li>
+              <li>Commerce : offre exceptionnelle limitée dans le temps</li>
+              <li>Association : événement local prioritaire</li>
+            </ul>
+          `);
+        }
       });
     });
 
-    // Admin tile (démo)
     document.getElementById("adminTile").addEventListener("click", ()=>{
       openModal("Accès Admin (structure)", `
         <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
@@ -856,7 +888,6 @@
       `);
     });
 
-    // DAE screen
     document.getElementById("daeBtn").addEventListener("click", ()=>{
       openModal("Défibrillateur (DAE)", `
         <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
@@ -934,7 +965,6 @@
       btn.addEventListener("contextmenu", (e)=> e.preventDefault());
     }
 
-    // 112 (démo)
     makeLongPress(
       document.getElementById("btn112"),
       document.getElementById("ring112"),
@@ -942,7 +972,6 @@
       ()=> alert("Démo : appel 112 (appui long validé).")
     );
 
-    // 3919 / 119 choice + long press
     let sosNumber = null;
     const choice = document.getElementById("choice");
     const closeChoice = ()=> choice.classList.remove("open");
@@ -972,3 +1001,4 @@
   </script>
 </body>
 </html>
+
