@@ -9,6 +9,7 @@
   <meta name="theme-color" content="#a51e22">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+
   <style>
     :root{
       --bg:#f1e6d6;
@@ -43,7 +44,6 @@
       overscroll-behavior: none;
     }
 
-    /* Conteneur principal : hauteur visible (Chrome Android) */
     .page{
       min-height: calc(var(--vh) * 100);
       min-height: 100vh;
@@ -132,7 +132,6 @@
       gap:12px;
     }
 
-    /* PAR DÉFAUT : carré */
     .tile{
       position:relative;
       width:100%;
@@ -226,7 +225,7 @@
       width:100%;
       border-radius:20px;
       background:#f7efe3;
-      border:3px solid var(--red);       /* rouge 112 */
+      border:3px solid var(--red);
       padding:14px 14px;
       display:flex;
       align-items:center;
@@ -322,6 +321,10 @@
       padding:14px;
       font-size:14px;
       color:var(--text);
+
+      /* IMPORTANT : long texte (RGPD/CGU/CGV) */
+      max-height: min(72vh, 520px);
+      overflow:auto;
     }
     .xbtn{
       border:none;
@@ -356,6 +359,12 @@
       gap:8px;
       flex-wrap:wrap;
       margin-bottom:12px;
+      position:sticky;
+      top:0;
+      background:var(--bg);
+      padding-top:2px;
+      padding-bottom:10px;
+      z-index:2;
     }
     .tab{
       border:2px solid rgba(0,0,0,.10);
@@ -366,6 +375,33 @@
       cursor:pointer;
     }
     .tab.active{ background:var(--beige); }
+
+    .doc h2{ margin:12px 0 6px; font-size:15px; }
+    .doc h3{ margin:10px 0 6px; font-size:14px; }
+    .doc p{ margin:6px 0; font-weight:700; }
+    .doc ul{ margin:6px 0 0 18px; font-weight:800; }
+    .doc .box{
+      border:2px solid rgba(0,0,0,.08);
+      background:#fff;
+      border-radius:14px;
+      padding:10px;
+      font-weight:800;
+      margin:10px 0;
+    }
+    .pillRow{
+      display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:#fff;
+      border:2px solid rgba(0,0,0,.08);
+      border-radius:999px;
+      padding:7px 10px;
+      font-weight:900;
+      font-size:12px;
+    }
 
     /* =========================================================
        ✅ OPTIMISATION ANDROID : on réduit la HAUTEUR globale
@@ -387,6 +423,7 @@
       .footerRow{ padding-bottom:8px; }
       .iconBtn{ width:40px; height:40px; }
       .legalBtn{ padding:9px 10px; font-size:12px; }
+      .sheet .body{ max-height:min(70vh, 460px); }
     }
     @media (max-height: 700px){
       .ticker{ height:128px; }
@@ -401,7 +438,7 @@
     <div class="wrap">
 
       <!-- Ticker -->
-      <div class="ticker" id="ticker">
+      <div class="ticker" id="ticker" aria-label="Publicités (toucher pour détails)">
         <img id="tickerImg" alt="" />
         <div class="overlay"></div>
         <div class="row">
@@ -579,20 +616,224 @@
           <button class="tab" data-tab="cgv" type="button">CGV</button>
         </div>
 
-        <div id="p-rgpd">
-          <div style="font-weight:900;">Politique de protection des données (RGPD)</div>
-          <div style="margin-top:8px;">Acceptation explicite (case + bouton), horodatage, version enregistrée.</div>
+        <!-- RGPD -->
+        <div id="p-rgpd" class="doc">
+          <div style="font-weight:900;font-size:15px;">📗 Politique de protection des données (RGPD) — Bo’CitéArt</div>
+          <div class="muted" style="margin-top:4px;">Dernière mise à jour : 09 février 2026</div>
+
+          <div class="box">
+            Objectif : expliquer clairement quelles données sont traitées, pourquoi, sur quelle base légale,
+            pendant combien de temps, et quels sont vos droits.
+          </div>
+
+          <h2>1. Responsable du traitement</h2>
+          <p>Bo’CitéArt agit via la SAS Bo’CitéArt et/ou l’association loi 1901 Bo’CitéArt selon la nature du service concerné.</p>
+
+          <h2>2. Données traitées (catégories)</h2>
+          <ul>
+            <li>Compte : nom/prénom (selon cas), email, rôle, identifiants techniques, statut.</li>
+            <li>Usage : historiques d’actions (attributions/retraits), soldes, preuves techniques anti-fraude.</li>
+            <li>Sécurité : journaux de connexion, événements de sécurité, traces d’administration.</li>
+            <li>Partenaires : informations professionnelles, facturation (PDF), statuts.</li>
+            <li>Géolocalisation (optionnelle) : uniquement si activée (carte/DAE/orientation).</li>
+            <li>École : mot du jour (texte) + audio si activé.</li>
+            <li>Sport : contenus référent + preuve photo non publique si activée.</li>
+          </ul>
+
+          <div class="box">
+            Précision : aucune reconnaissance biométrique n’est mise en œuvre. Aucun gabarit voix/biométrie n’est stocké.
+          </div>
+
+          <h2>3. Finalités</h2>
+          <ul>
+            <li>Fonctionnement des comptes et des rôles.</li>
+            <li>Gestion des bocitecoins (traces, anti-abus, preuve).</li>
+            <li>Gestion publicitaire (réservation/diffusion/preuve).</li>
+            <li>Gestion administrative et comptable (factures, paiements, impayés).</li>
+            <li>Sécurité (fraude, abus, traçabilité, supervision).</li>
+            <li>Obligations légales.</li>
+          </ul>
+
+          <h2>4. Bases légales</h2>
+          <ul>
+            <li>Exécution du contrat (CGU/CGV) selon les cas.</li>
+            <li>Intérêt légitime : sécurité, prévention des abus, preuve.</li>
+            <li>Obligation légale : comptabilité, conservation.</li>
+            <li>Consentement : géolocalisation et options nécessitant un choix.</li>
+          </ul>
+
+          <h2>5. Conservation</h2>
+          <ul>
+            <li>Logs sécurité : 6 à 12 mois maximum (sauf incident).</li>
+            <li>Transactions bocitecoins : durée nécessaire à la preuve + litiges.</li>
+            <li>Factures : 10 ans (ou durée légale applicable).</li>
+            <li>Photos sport (si activées) : 30 jours par défaut (sauf litige).</li>
+          </ul>
+
+          <h2>6. Urgences (112 / 3919 / 119)</h2>
+          <ul>
+            <li>Bo’CitéArt fournit un accès rapide : l’appel est réalisé via le téléphone de l’appareil.</li>
+            <li>Aucun enregistrement d’appel n’est réalisé par Bo’CitéArt.</li>
+          </ul>
+
+          <h2>7. Droits des personnes</h2>
+          <ul>
+            <li>Accès, rectification, opposition, limitation.</li>
+            <li>Effacement dans les limites légales.</li>
+            <li>Portabilité lorsque applicable.</li>
+            <li>Réclamation possible auprès de la CNIL.</li>
+          </ul>
+
+          <h2>8. Sécurité</h2>
+          <ul>
+            <li>Contrôle d’accès et séparation des rôles.</li>
+            <li>Journalisation des actions sensibles.</li>
+            <li>Désactivation à distance en cas d’incident.</li>
+            <li>Dispositifs anti-fraude.</li>
+          </ul>
+
+          <div class="muted" style="margin-top:10px;">
+            (Démo) Les contacts rgpd/support seront renseignés dans la version officielle (SIRET/siège/RIB).
+          </div>
         </div>
 
-        <div id="p-cgu" style="display:none;">
-          <div style="font-weight:900;">Conditions Générales d’Utilisation (CGU)</div>
-          <div style="margin-top:8px;">Règles d’usage, responsabilité, droit applicable, bocitecoins = points (pas une monnaie).</div>
+        <!-- CGU -->
+        <div id="p-cgu" class="doc" style="display:none;">
+          <div style="font-weight:900;font-size:15px;">📘 Conditions Générales d’Utilisation (CGU) — Bo’CitéArt</div>
+          <div class="muted" style="margin-top:4px;">Dernière mise à jour : 09 février 2026</div>
+
+          <div class="box">
+            Bo’CitéArt est un dispositif territorial, culturel et citoyen. Ce n’est ni un réseau social, ni un service bancaire,
+            ni une plateforme de paiement, ni un intermédiaire financier.
+          </div>
+
+          <h2>1. Accès et compte</h2>
+          <ul>
+            <li>Consultation libre des contenus publics.</li>
+            <li>Compte requis pour portefeuille bocitecoins, vote, accès référents et certaines actions.</li>
+            <li>L’utilisateur garantit l’exactitude des informations et l’absence d’usurpation.</li>
+          </ul>
+
+          <h2>2. Comptes référents (mairie / école / sport / commerçants)</h2>
+          <ul>
+            <li>Accès conditionné à convention/contrat + activation par code.</li>
+            <li>Chaque partenaire est responsable de ses contenus, autorisations et décisions.</li>
+            <li>Pas de messagerie privée inter-entités.</li>
+          </ul>
+
+          <h2>3. Règles de comportement</h2>
+          <ul>
+            <li>Interdiction : injures, diffamation, discrimination, harcèlement, incitation à la haine.</li>
+            <li>Interdiction : fraude, manipulation, accès non autorisé, atteinte aux droits d’auteur/droit à l’image.</li>
+            <li>Sanctions : avertissement, suspension, blocage immédiat en cas de gravité.</li>
+          </ul>
+
+          <h2>4. Fonction Urgences (112 / 3919 / 119)</h2>
+          <ul>
+            <li>Usage réservé aux situations réelles : ce n’est pas un jouet.</li>
+            <li>112 : déclenchement par appui long (anti-erreur).</li>
+            <li>3919 / 119 : accès discret (sécurité).</li>
+            <li>Bo’CitéArt ne se substitue pas aux services compétents.</li>
+          </ul>
+
+          <h2>5. bocitecoins : nature juridique</h2>
+          <ul>
+            <li>Outil de reconnaissance locale, assimilable à des points de fidélité.</li>
+            <li>Ne constitue pas une monnaie, un instrument de paiement, un titre financier, un crédit, ni un actif.</li>
+            <li>Non convertible en espèces.</li>
+          </ul>
+
+          <h2>6. Types de bocitecoins</h2>
+          <div class="pillRow">
+            <span class="pill">🟡 École : portefeuille “ARGENT” (dédié mairie)</span>
+            <span class="pill">🟢 Sport : portefeuille “BRONZE” (dédié mairie)</span>
+            <span class="pill">🟨 Commerces : portefeuille “OR” (chez partenaires)</span>
+          </div>
+          <ul>
+            <li>OR : attribués par commerçants partenaires, échangeables chez commerçants selon règles.</li>
+            <li>École : échange exclusivement via mairie/collectivité.</li>
+            <li>Sport : échange exclusivement via mairie/collectivité.</li>
+          </ul>
+
+          <h2>7. École – mot du jour et audio</h2>
+          <ul>
+            <li>Publication par enseignant.</li>
+            <li>Voix enfant possible si autorisation parentale gérée par l’établissement.</li>
+            <li>Alternative : voix synthétique féminine douce.</li>
+          </ul>
+
+          <h2>8. Sport – missions et preuves</h2>
+          <ul>
+            <li>Publications par référent habilité.</li>
+            <li>Preuve photo non publique possible si activée.</li>
+            <li>Pas de commentaires libres utilisateurs.</li>
+          </ul>
+
+          <h2>9. Responsabilité</h2>
+          <ul>
+            <li>Bo’CitéArt met en œuvre des moyens raisonnables, sans garantie de disponibilité permanente.</li>
+            <li>Offres/cadeaux/avantages partenaires relèvent de leur responsabilité.</li>
+          </ul>
+
+          <h2>10. Droit applicable</h2>
+          <p>Les présentes CGU sont régies par le droit français.</p>
         </div>
 
-        <div id="p-cgv" style="display:none;">
-          <div style="font-weight:900;">Conditions Générales de Vente (CGV)</div>
-          <div style="margin-top:8px;">Options payantes, paiement, résiliation, rétractation si applicable.</div>
+        <!-- CGV -->
+        <div id="p-cgv" class="doc" style="display:none;">
+          <div style="font-weight:900;font-size:15px;">📕 Conditions Générales de Vente (CGV) — Bo’CitéArt</div>
+          <div class="muted" style="margin-top:4px;">Dernière mise à jour : 09 février 2026</div>
+
+          <div class="box">
+            Les CGV s’appliquent aux partenaires professionnels/institutionnels (commerçants, collectivités, associations, établissements).
+            Les citoyens relèvent des CGU.
+          </div>
+
+          <h2>1. Champ d’application</h2>
+          <ul>
+            <li>Diffusion publicitaire / visibilité.</li>
+            <li>Coûts d’utilisation liés à l’attribution de bocitecoins OR (commerçants).</li>
+            <li>La structure émettrice (SAS/asso) est indiquée sur le devis/commande/facture.</li>
+          </ul>
+
+          <h2>2. Publicités</h2>
+          <ul>
+            <li>Publicité unitaire : 50 € HT</li>
+            <li>Pack 5 publicités : 200 € HT (validité 2 mois glissants)</li>
+            <li>Plafond : 10 publicités / jour</li>
+            <li>Règle d’équité “16h” : accès équitable avant 16h, ouverture élargie après.</li>
+          </ul>
+
+          <h2>3. Coût d’attribution bocitecoins OR</h2>
+          <ul>
+            <li>Déclenchement : à partir de 10 € d’achat minimum.</li>
+            <li>Tarif : 0,09 € HT par tranche de 10 € (chaque tranche +10€ = +0,09€).</li>
+            <li>Le client gagne : 1 bocitecoin OR par tranche de 10 €.</li>
+            <li>Contribution technique (maintenance, sécurité, traçabilité). Pas une commission CA, pas un service de paiement.</li>
+          </ul>
+
+          <h2>4. Échange des bocitecoins OR</h2>
+          <ul>
+            <li>Seuil minimum : 30 bocitecoins.</li>
+            <li>Barème : 30 → 10% ; 50 → 15% ; 100 → 20%.</li>
+            <li>Plafond alimentaire : 30% maximum du cadeau en alimentaire.</li>
+          </ul>
+
+          <h2>5. Paiement / suspension</h2>
+          <ul>
+            <li>Paiement exigible avant activation/diffusion (sauf modalités collectivités).</li>
+            <li>En cas de non-paiement, fraude ou usage non conforme : suspension/blocage possible.</li>
+          </ul>
+
+          <h2>6. Responsabilité</h2>
+          <ul>
+            <li>Le partenaire est seul responsable de ses contenus, offres et décisions.</li>
+          </ul>
+
+          <h2>7. Droit applicable</h2>
+          <p>Droit français.</p>
         </div>
+
       </div>
     </div>
   </div>
@@ -670,47 +911,39 @@
       modal.classList.add("open");
     }
 
-    /* =========================================================
-       ✅ AJOUT UNIQUE DEMANDÉ : clic sur le TICKER ouvre une fenêtre
-       (ne touche à rien d’autre)
-       ========================================================= */
+    // ✅ CLIC SUR LE TICKER = ouvre un descriptif clair pour élus / CCI / mairie
     document.getElementById("ticker").addEventListener("click", ()=>{
-      openModal("Publicités & visibilité (Ticker)", `
-        <div style="font-weight:900;margin-bottom:8px;">Bandeau “Ticker” : annonces visibles par tous</div>
+      openModal("Publicités & visibilité (ticker)", `
+        <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = l’espace rare de visibilité</div>
 
-        <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
-          <strong>10 annonces maximum par jour</strong> : rareté organisée pour créer de la valeur,
-          sans noyer l’application sous la publicité.
-        </div>
-
-        <div style="font-weight:900;margin-top:12px;">Règles clés</div>
         <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li><strong>Plafond strict :</strong> 10/jour (impact immédiat)</li>
-          <li><strong>Règle d’équité 16h :</strong> accès équitable avant 16h • ouverture des places restantes après</li>
-          <li><strong>Même tarif</strong> : commerce, mairie, association</li>
-          <li><strong>Calendrier</strong> : réservation sur 2 mois glissants • dates grisées si complet</li>
+          <li><strong>10 publicités maximum par jour</strong> : pas d’invasion, rareté organisée.</li>
+          <li><strong>Règle d’équité “16h”</strong> : avant 16h, accès partagé ; après 16h, ouverture des places restantes.</li>
+          <li><strong>Mêmes conditions</strong> : commerces, mairie, association (équité réelle).</li>
+          <li><strong>Calendrier</strong> : réservation sur 2 mois glissants, dates grisées si complet.</li>
+          <li><strong>Preuve & traçabilité</strong> : diffusion horodatée, logique probatoire (cadre CGV/RGPD).</li>
         </ul>
 
-        <div style="font-weight:900;margin-top:12px;">Pourquoi ça marche (pour convaincre vite)</div>
+        <div style="margin-top:12px;font-weight:900;">Pourquoi ça “fait tilt” ?</div>
         <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li><strong>Rareté = valeur perçue forte</strong></li>
-          <li>Tout le monde l’a “en poche” → <strong>visibilité locale directe</strong></li>
-          <li>Pas d’écrasement publicitaire → <strong>confiance</strong> et confort utilisateur</li>
+          <li>Rareté = valeur perçue forte (on réserve vite).</li>
+          <li>Tout le monde a l’application en poche.</li>
+          <li>Pas de jalousies : accès équitable + plafond.</li>
+          <li>Convient autant au commerce qu’au service public.</li>
         </ul>
 
-        <div style="font-weight:900;margin-top:12px;">Exemples concrets</div>
+        <div style="margin-top:12px;font-weight:900;">Exemples concrets</div>
         <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li><strong>Mairie :</strong> “50 dernières places théâtre à 5 € – étudiants – 26/02/2026”</li>
-          <li><strong>Commerce :</strong> offre exceptionnelle limitée dans le temps</li>
-          <li><strong>Association :</strong> événement local prioritaire</li>
+          <li><strong>Mairie</strong> : “50 dernières places théâtre à 5 € – étudiants – 26/02/2026”.</li>
+          <li><strong>Commerce</strong> : “offre flash 24h” limitée en quantité.</li>
+          <li><strong>Association</strong> : “événement local prioritaire” + rappel citoyen.</li>
         </ul>
 
         <div class="muted" style="margin-top:10px;">
-          (Démo) Ici on montre le principe. Dans l’app officielle : réservation, validation, preuve de diffusion.
+          (Démo) Ici on présente la mécanique. L’espace partenaire complet (factures / calendrier / réservations) est prévu dans l’app officielle.
         </div>
       `);
     });
-    /* ====== FIN AJOUT UNIQUE ====== */
 
     // --- Audio (démo) : voix enfant / voix féminine douce ---
     function speak(text, mode){
@@ -844,6 +1077,7 @@
             </ul>
 
             <div style="font-weight:900;margin-top:12px;">Publicités & visibilité stratégique</div>
+
             <ul style="margin:8px 0 0 18px;font-weight:800;">
               <li>Plafond strict : 10 publicités maximum par jour (rareté organisée)</li>
               <li>Règle d’équité 16h : accès équitable avant 16h • ouverture élargie après</li>
@@ -866,11 +1100,16 @@
               <li>Commerce : offre exceptionnelle limitée dans le temps</li>
               <li>Association : événement local prioritaire</li>
             </ul>
+
+            <div class="muted" style="margin-top:10px;">
+              (Démo) On montre le principe : la réservation et la facturation détaillées sont prévues côté partenaire dans l’app officielle.
+            </div>
           `);
         }
       });
     });
 
+    // Admin tile (démo)
     document.getElementById("adminTile").addEventListener("click", ()=>{
       openModal("Accès Admin (structure)", `
         <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
@@ -888,6 +1127,7 @@
       `);
     });
 
+    // DAE screen
     document.getElementById("daeBtn").addEventListener("click", ()=>{
       openModal("Défibrillateur (DAE)", `
         <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
@@ -965,13 +1205,74 @@
       btn.addEventListener("contextmenu", (e)=> e.preventDefault());
     }
 
+    // ✅ Sensibilisation urgences (1 seule fois, mémorisée)
+    function emergencyGate(kind, onOk){
+      const key = "bociteart_ack_" + kind;
+      if(localStorage.getItem(key) === "1"){
+        onOk();
+        return;
+      }
+
+      const title = (kind==="112") ? "Urgence 112 — usage responsable" : "Aide 3919 / 119 — usage responsable";
+      const body = (kind==="112") ? `
+        <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
+          <li>Les appels abusifs perturbent les secours et peuvent exposer à des suites.</li>
+          <li>Bo’CitéArt n’est pas un service de secours : il facilite l’accès au numéro.</li>
+          <li>Appui long = sécurité anti-erreur.</li>
+        </ul>
+        <div class="box" style="margin-top:10px;">
+          <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
+            <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
+            J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
+          </label>
+        </div>
+        <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
+      ` : `
+        <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li><strong>3919</strong> : violences faites aux femmes (écoute/orientation).</li>
+          <li><strong>119</strong> : enfance en danger.</li>
+          <li>Ne pas utiliser par provocation ou amusement : cela perturbe l’aide réelle.</li>
+          <li>Bo’CitéArt ne remplace pas les services compétents : il facilite l’accès.</li>
+        </ul>
+        <div class="box" style="margin-top:10px;">
+          <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
+            <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
+            J’ai compris : j’utiliserai ces numéros uniquement en cas de situation réelle.
+          </label>
+        </div>
+        <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>
+      `;
+
+      openModal(title, body);
+
+      setTimeout(()=>{
+        const box = document.getElementById("ackBox");
+        const btn = document.getElementById("ackBtn");
+        if(!btn) return;
+        btn.onclick = ()=>{
+          if(!box || !box.checked){
+            alert("Veuillez cocher la case pour confirmer que vous avez compris.");
+            return;
+          }
+          localStorage.setItem(key, "1");
+          closeModal();
+          onOk();
+        };
+      }, 0);
+    }
+
+    // 112 (démo)
     makeLongPress(
       document.getElementById("btn112"),
       document.getElementById("ring112"),
       1800,
-      ()=> alert("Démo : appel 112 (appui long validé).")
+      ()=> emergencyGate("112", ()=> alert("Démo : appel 112 (appui long validé)."))
     );
 
+    // 3919 / 119 choice + long press
     let sosNumber = null;
     const choice = document.getElementById("choice");
     const closeChoice = ()=> choice.classList.remove("open");
@@ -995,10 +1296,9 @@
           choice.classList.add("open");
           return;
         }
-        alert("Démo : appel " + sosNumber + " (appui long validé).");
+        emergencyGate("sos", ()=> alert("Démo : appel " + sosNumber + " (appui long validé)."));
       }
     );
   </script>
 </body>
 </html>
-
