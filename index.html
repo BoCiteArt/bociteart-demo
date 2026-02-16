@@ -638,12 +638,13 @@
           <h2>2. Données traitées (catégories) — minimisation</h2>
           <ul>
             <li>Compte : nom/prénom (selon cas), email, rôle, identifiants techniques, statut.</li>
-            <li>Usage : historiques d’actions (attributions/retraits), soldes, éléments techniques anti-fraude.</li>
+            <li>Usage : historiques d’actions (attributions/retraits), compteurs, éléments techniques anti-fraude.</li>
             <li>Sécurité : journaux de connexion, événements de sécurité, traces d’administration.</li>
             <li>Partenaires : informations professionnelles, facturation (PDF), statuts.</li>
             <li>Géolocalisation (optionnelle) : uniquement si activée (carte/DAE/orientation).</li>
             <li>École : mot du jour (texte) + audio si activé.</li>
             <li>Sport : contenus référent + preuve photo non publique si activée.</li>
+            <li>Abonnement (optionnel) : identifiants de transaction et statut d’abonnement (sans stockage des données de carte dans Bo’CitéArt, si paiement géré par une plateforme tierce).</li>
           </ul>
 
           <div class="box">
@@ -657,6 +658,7 @@
             <li>Gestion des bocitecoins (traces, anti-abus, preuve d’opérations).</li>
             <li>Gestion publicitaire (réservation/diffusion/horodatage) — le cas échéant.</li>
             <li>Gestion administrative et comptable (factures, paiements, impayés) — le cas échéant.</li>
+            <li>Gestion d’un abonnement optionnel (accès à des fonctionnalités numériques supplémentaires).</li>
             <li>Sécurité (fraude, abus, traçabilité, supervision).</li>
             <li>Obligations légales et défense des droits.</li>
           </ul>
@@ -674,6 +676,7 @@
             <li>Logs sécurité : 6 à 12 mois maximum (sauf incident, obligation légale ou litige).</li>
             <li>Transactions bocitecoins : durée proportionnée à la preuve + gestion des litiges, puis purge/anonymisation.</li>
             <li>Factures : 10 ans (ou durée légale applicable).</li>
+            <li>Données d’abonnement : durée de l’abonnement + délais légaux de conservation comptable/preuve.</li>
             <li>Photos sport (si activées) : durée courte par défaut (ex. 30 jours), accès strictement limité, suppression anticipée possible sauf litige.</li>
           </ul>
 
@@ -727,7 +730,7 @@
           <h2>1. Accès et compte</h2>
           <ul>
             <li>Consultation libre des contenus publics.</li>
-            <li>Compte requis pour portefeuille bocitecoins, vote, accès référents et certaines actions.</li>
+            <li>Compte requis pour compteur bocitecoins, vote, accès référents et certaines actions.</li>
             <li>L’utilisateur garantit l’exactitude des informations et l’absence d’usurpation.</li>
           </ul>
 
@@ -761,16 +764,20 @@
             <li>Les règles peuvent être adaptées (sécurité, équité, lutte anti-abus) selon le cadre contractuel applicable.</li>
           </ul>
 
-          <h2>6. Types de bocitecoins</h2>
+          <h2>6. Types de bocitecoins (codes couleur)</h2>
           <div class="pillRow">
-            <span class="pill">🟡 École : portefeuille “Jaune” (dédié mairie)</span>
-            <span class="pill">🟢 Sport : portefeuille “Vert” (dédié mairie)</span>
-            <span class="pill">🟨 Commerces : portefeuille “OR” (chez partenaires)</span>
+            <span class="pill">🟡 École : compteur “Jaune” (dédié mairie)</span>
+            <span class="pill">🟢 Sport : compteur “Vert” (dédié mairie)</span>
+            <span class="pill">🟨 Commerces : compteur “OR” (chez partenaires)</span>
+          </div>
+          <div class="box">
+            <strong>Clarification :</strong> “OR” désigne uniquement une <strong>couleur / repère visuel</strong> dans l’application.
+            Cela ne signifie pas “or” au sens métal précieux, ni une valeur intrinsèque.
           </div>
           <ul>
-            <li>OR : attribués par commerçants partenaires, échangeables chez commerçants selon règles.</li>
-            <li>École : échange exclusivement via mairie/collectivité.</li>
-            <li>Sport : échange exclusivement via mairie/collectivité.</li>
+            <li>bocitecoins couleur OR : attribués par commerçants partenaires, échangeables chez commerçants selon règles.</li>
+            <li>bocitecoins couleur Jaune : échange exclusivement via mairie/collectivité.</li>
+            <li>bocitecoins couleur Vert : échange exclusivement via mairie/collectivité.</li>
             <li>Aucun avantage n’est dû automatiquement : les offres/cadeaux relèvent des partenaires/collectivité.</li>
           </ul>
 
@@ -789,14 +796,29 @@
             <li>Pas de commentaires libres utilisateurs.</li>
           </ul>
 
-          <h2>9. Responsabilité</h2>
+          <h2>9. Abonnement optionnel (citoyens)</h2>
+          <div class="box">
+            Bo’CitéArt peut proposer un <strong>abonnement optionnel</strong> à <strong>2,99 €</strong> (prix indicatif en démo),
+            donnant accès à des <strong>fonctionnalités numériques supplémentaires</strong> (ex. options de confort, personnalisation, accès à des contenus/archives, outils pratiques).
+            <div class="muted" style="margin-top:8px;">
+              Cet abonnement ne constitue pas un service bancaire, ne donne aucun droit à une valeur monétaire et n’est pas une conversion de bocitecoins.
+              Les conditions définitives figurent dans les CGV applicables.
+            </div>
+          </div>
+          <ul>
+            <li>Abonnement facultatif : l’accès aux contenus publics reste possible sans abonnement.</li>
+            <li>Le paiement (si activé) peut être géré par une plateforme de paiement tierce ; Bo’CitéArt ne stocke pas les données de carte.</li>
+            <li>Résiliation : selon modalités décrites dans les CGV applicables.</li>
+          </ul>
+
+          <h2>10. Responsabilité</h2>
           <ul>
             <li>Bo’CitéArt met en œuvre des moyens raisonnables, sans garantie de disponibilité permanente ni d’absence d’erreurs.</li>
             <li>Les informations (DAE, lieux, horaires, contenus partenaires) peuvent dépendre de sources tierces : données indicatives, à vérifier.</li>
             <li>Offres/cadeaux/avantages partenaires relèvent de leur responsabilité.</li>
           </ul>
 
-          <h2>10. Droit applicable</h2>
+          <h2>11. Droit applicable</h2>
           <p>Les présentes CGU sont régies par le droit français.</p>
 
           <h2>Propriété intellectuelle</h2>
@@ -806,7 +828,7 @@
             Toute reproduction, extraction, imitation ou détournement est interdite sans autorisation écrite.
           </p>
 
-          <h2>11. Évolution des documents</h2>
+          <h2>12. Évolution des documents</h2>
           <p>
             Bo’CitéArt peut mettre à jour les présentes CGU pour des raisons légales, techniques, de sécurité ou de lutte anti-abus.
             La version en vigueur est celle affichée dans l’application.
@@ -819,8 +841,9 @@
           <div class="muted" style="margin-top:4px;">Dernière mise à jour : 16 février 2026</div>
 
           <div class="box">
-            Les CGV s’appliquent aux partenaires professionnels/institutionnels (commerçants, collectivités, associations, établissements).
-            Les citoyens relèvent des CGU.
+            Les CGV s’appliquent aux partenaires professionnels/institutionnels (commerçants, collectivités, associations, établissements)
+            et, le cas échéant, aux services numériques optionnels (abonnement) proposés aux citoyens.
+            Les citoyens relèvent des CGU pour l’usage général.
             <div class="muted" style="margin-top:8px;">
               <strong>Démo :</strong> les prix/packs/plafonds présentés ci-dessous sont des exemples de configuration et ne valent engagement contractuel qu’une fois formalisés par devis/commande/facture.
             </div>
@@ -829,11 +852,21 @@
           <h2>1. Champ d’application</h2>
           <ul>
             <li>Diffusion publicitaire / visibilité.</li>
-            <li>Coûts d’utilisation liés à l’attribution de bocitecoins OR (commerçants).</li>
+            <li>Coûts d’utilisation liés à l’attribution de bocitecoins couleur OR (commerçants).</li>
+            <li>Abonnement optionnel “services numériques” (citoyens) — si activé.</li>
             <li>La structure émettrice (SAS/asso) est indiquée sur le devis/commande/facture.</li>
           </ul>
 
-          <h2>2. Publicités</h2>
+          <h2>2. Abonnement optionnel (services numériques)</h2>
+          <ul>
+            <li>Prix indicatif (démo) : 2,99 €.</li>
+            <li>Objet : accès à des fonctionnalités numériques supplémentaires (confort, options, contenus/archives, outils pratiques) selon description dans l’offre.</li>
+            <li>Indépendance : l’abonnement n’est pas un service bancaire, n’est pas un moyen de paiement et n’implique aucune valeur monétaire attachée aux bocitecoins.</li>
+            <li>Durée / reconduction / résiliation : selon modalités indiquées lors de la souscription et dans les CGV applicables.</li>
+            <li>Paiement : peut être opéré par une plateforme de paiement tierce ; Bo’CitéArt ne stocke pas les données de carte.</li>
+          </ul>
+
+          <h2>3. Publicités</h2>
           <ul>
             <li>Publicité unitaire : 50 € HT</li>
             <li>Pack 5 publicités : 200 € HT (validité 2 mois glissants)</li>
@@ -842,39 +875,43 @@
             <li>Bo’CitéArt se réserve le droit de refuser/retirer une publicité non conforme (illégale, trompeuse, portant atteinte à un tiers, ou contraire au cadre citoyen).</li>
           </ul>
 
-          <h2>3. Coût d’attribution bocitecoins OR</h2>
+          <h2>4. Coût d’attribution bocitecoins couleur OR</h2>
+          <div class="box">
+            <strong>Clarification :</strong> “OR” désigne uniquement une <strong>couleur / repère visuel</strong> dans l’application.
+            Cela ne signifie pas “or” au sens métal précieux, ni une valeur intrinsèque.
+          </div>
           <ul>
             <li>Déclenchement : à partir de 10 € d’achat minimum.</li>
             <li>Tarif : 0,09 € HT par tranche de 10 € (chaque tranche +10€ = +0,09€).</li>
-            <li>Le client gagne : 1 bocitecoin OR par tranche de 10 €.</li>
+            <li>Le client gagne : 1 bocitecoin couleur OR par tranche de 10 €.</li>
             <li>Contribution technique (maintenance, sécurité, traçabilité). Pas une commission sur chiffre d’affaires, pas un service de paiement.</li>
           </ul>
 
-          <h2>4. Échange des bocitecoins OR</h2>
+          <h2>5. Échange des bocitecoins couleur OR</h2>
           <ul>
-            <li>Seuil minimum : 30 bocitecoins.</li>
+            <li>Seuil minimum : 30 bocitecoins couleur OR.</li>
             <li>Barème : 30 → 15% ; 50 → 20% ; 100 → 35%.</li>
             <li>Plafond alimentaire : 30% maximum du cadeau en "alimentaire & boisson inclus".</li>
             <li>Les avantages relèvent de la politique commerciale du partenaire : ils ne constituent pas un droit acquis, ni une valeur monétaire.</li>
           </ul>
 
-          <h2>5. Paiement / suspension</h2>
+          <h2>6. Paiement / suspension</h2>
           <ul>
             <li>Paiement exigible avant activation/diffusion (sauf modalités collectivités).</li>
             <li>En cas de non-paiement, fraude, contenu illicite ou usage non conforme : suspension/blocage possible.</li>
             <li>Les journaux techniques peuvent servir d’éléments de preuve (horodatages, événements de diffusion) dans la limite du droit applicable.</li>
           </ul>
 
-          <h2>6. Responsabilité</h2>
+          <h2>7. Responsabilité</h2>
           <ul>
             <li>Le partenaire est seul responsable de ses contenus, offres et décisions, ainsi que des autorisations nécessaires (images, marques, droit à l’image, droit d’auteur).</li>
             <li>Bo’CitéArt n’est pas responsable des pertes commerciales indirectes, ni des résultats attendus d’une publicité.</li>
           </ul>
 
-          <h2>7. Droit applicable</h2>
+          <h2>8. Droit applicable</h2>
           <p>Droit français.</p>
 
-          <h2>8. Clauses de sécurité contractuelle</h2>
+          <h2>9. Clauses de sécurité contractuelle</h2>
           <ul>
             <li>Nullité partielle : si une clause est invalide, les autres restent applicables.</li>
             <li>Force majeure : événements extérieurs imprévisibles pouvant suspendre le service.</li>
@@ -923,7 +960,7 @@
     const tickerItems = [
       {
         title: "Annonce partenaire (démo)",
-        subtitle: "Exemple : -15% à partir de 30 bocitecoins OR • plafond 10 pubs/jour • exemples non contractuels",
+        subtitle: "Exemple : -15% à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels",
         img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60",
       },
       {
@@ -1125,11 +1162,15 @@
               Les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.
             </div>
 
-            <div style="font-weight:900;margin-top:10px;">Bocitecoins OR</div>
+            <div style="font-weight:900;margin-top:10px;">Bocitecoins couleur OR</div>
+            <div class="box">
+              <strong>Clarification :</strong> “OR” désigne uniquement une <strong>couleur / repère visuel</strong> dans l’application.
+              Cela ne signifie pas “or” au sens métal précieux, ni une valeur intrinsèque.
+            </div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Gain client : 1 bocitecoin OR par tranche de 10 € d’achat</li>
+              <li>Gain client : 1 bocitecoin couleur OR par tranche de 10 € d’achat</li>
               <li>Seuil minimum : 10 €</li>
-              <li>Chaque +10 € = +1 OR</li>
+              <li>Chaque +10 € = +1 bocitecoin couleur OR</li>
             </ul>
 
             <div style="font-weight:900;margin-top:12px;">Facturation Bo’CitéArt</div>
@@ -1379,3 +1420,4 @@
   </script>
 </body>
 </html>
+
