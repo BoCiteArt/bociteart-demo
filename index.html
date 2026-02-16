@@ -639,12 +639,15 @@
           <ul>
             <li>Compte : nom/prénom (selon cas), email, rôle, identifiants techniques, statut.</li>
             <li>Usage : historiques d’actions (attributions/retraits), compteurs, éléments techniques anti-fraude.</li>
-            <li>Sécurité : journaux de connexion, événements de sécurité, traces d’administration.</li>
+            <li>Sécurité : journaux techniques de connexion, événements de sécurité, traces d’administration.</li>
             <li>Partenaires : informations professionnelles, facturation (PDF), statuts.</li>
-            <li>Géolocalisation (optionnelle) : uniquement si activée (carte/DAE/orientation).</li>
+            <li>Géolocalisation (optionnelle) : uniquement si activée (carte/DAE/orientation) et gérée par le système du téléphone.</li>
             <li>École : mot du jour (texte) + audio si activé.</li>
             <li>Sport : contenus référent + preuve photo non publique si activée.</li>
-            <li>Abonnement (optionnel) : identifiants de transaction et statut d’abonnement (sans stockage des données de carte dans Bo’CitéArt, si paiement géré par une plateforme tierce).</li>
+            <li>
+              Abonnement (optionnel) : statut d’abonnement, références de mandat SEPA/prélèvement, éléments de preuve comptable, et données techniques nécessaires au service.
+              <strong>Bo’CitéArt ne stocke pas</strong> les numéros de “contacts de confiance” ni les données de géolocalisation liées à la fonction “retrouver mon téléphone”, lorsqu’elles sont gérées localement par l’appareil et/ou par les services du fabricant (ex. coffre/compte Apple/Google).
+            </li>
           </ul>
 
           <div class="box">
@@ -658,7 +661,7 @@
             <li>Gestion des bocitecoins (traces, anti-abus, preuve d’opérations).</li>
             <li>Gestion publicitaire (réservation/diffusion/horodatage) — le cas échéant.</li>
             <li>Gestion administrative et comptable (factures, paiements, impayés) — le cas échéant.</li>
-            <li>Gestion d’un abonnement optionnel (accès à des fonctionnalités numériques supplémentaires).</li>
+            <li>Gestion d’un abonnement optionnel (accès à des fonctionnalités numériques supplémentaires, dont la continuité d’accès au compteur en cas de changement/perte d’appareil, selon l’offre).</li>
             <li>Sécurité (fraude, abus, traçabilité, supervision).</li>
             <li>Obligations légales et défense des droits.</li>
           </ul>
@@ -668,7 +671,7 @@
             <li>Exécution du contrat (CGU/CGV) selon les cas.</li>
             <li>Intérêt légitime : sécurité, prévention des abus, preuve et défense en justice.</li>
             <li>Obligation légale : comptabilité, conservation.</li>
-            <li>Consentement : géolocalisation et options nécessitant un choix.</li>
+            <li>Consentement : géolocalisation et options nécessitant un choix (au niveau du téléphone).</li>
           </ul>
 
           <h2>5. Conservation</h2>
@@ -703,10 +706,16 @@
             <li>Dispositifs anti-fraude.</li>
           </ul>
 
-          <h2>9. Contenus tiers / liens externes</h2>
+          <h2>9. Prestataires & hébergement</h2>
+          <ul>
+            <li>Le service peut être hébergé chez un prestataire tiers (ex. OVH), choisi pour ses capacités d’hébergement.</li>
+            <li>Bo’CitéArt reste responsable de ses obligations contractuelles, tout en étant susceptible de dépendre d’infrastructures tierces (réseau, hébergeur, systèmes mobiles).</li>
+          </ul>
+
+          <h2>10. Contenus tiers / liens externes</h2>
           <ul>
             <li>Cette démo peut afficher des contenus hébergés par des tiers (images, réseaux sociaux). Bo’CitéArt n’en garantit pas la disponibilité.</li>
-            <li>Les partenaires et référents restent responsables des contenus qu’ils publient et des autorisations nécessaires (droit à l’image, droit d’auteur, etc.).</li>
+            <li>Les partenaires et référents restent responsables des contenus qu’ils publient et des autorisations nécessaires (droit à l'image, droit d’auteur, etc.).</li>
           </ul>
 
           <div class="muted" style="margin-top:10px;">
@@ -796,19 +805,32 @@
             <li>Pas de commentaires libres utilisateurs.</li>
           </ul>
 
-          <h2>9. Abonnement optionnel (citoyens)</h2>
+          <h2>9. Abonnement optionnel (citoyens) — service numérique renforcé</h2>
           <div class="box">
-            Bo’CitéArt peut proposer un <strong>abonnement optionnel</strong> à <strong>2,99 €</strong> (prix indicatif en démo),
-            donnant accès à des <strong>fonctionnalités numériques supplémentaires</strong> (ex. options de confort, personnalisation, accès à des contenus/archives, outils pratiques).
-            <div class="muted" style="margin-top:8px;">
-              Cet abonnement ne constitue pas un service bancaire, ne donne aucun droit à une valeur monétaire et n’est pas une conversion de bocitecoins.
-              Les conditions définitives figurent dans les CGV applicables.
-            </div>
+            Bo’CitéArt peut proposer un <strong>abonnement optionnel</strong> à <strong>2,99 € / mois</strong> (TTC, prix indicatif en démo),
+            donnant accès à des <strong>fonctionnalités numériques supplémentaires</strong> conçues pour un usage plus protégé et plus confortable,
+            notamment pour <strong>enfants</strong>, <strong>personnes âgées</strong> ou <strong>personnes isolées</strong>.
           </div>
+
+          <h3>9.1 Avantages possibles (selon l’offre et compatibilité appareil)</h3>
           <ul>
-            <li>Abonnement facultatif : l’accès aux contenus publics reste possible sans abonnement.</li>
-            <li>Le paiement (si activé) peut être géré par une plateforme de paiement tierce ; Bo’CitéArt ne stocke pas les données de carte.</li>
-            <li>Résiliation : selon modalités décrites dans les CGV applicables.</li>
+            <li><strong>Continuité d’accès au compteur</strong> en cas de perte, vol, casse ou changement de téléphone (si la fonction est activée dans l’offre).</li>
+            <li><strong>Hébergement / sauvegarde technique</strong> du service auprès d’un prestataire tiers (ex. OVH), afin d’offrir des capacités serveur nécessaires au service.</li>
+            <li><strong>Alerte batterie faible</strong> : notifications/alertes locales lorsque la batterie atteint un seuil bas (ex. 5%), dans la limite des capacités du téléphone.</li>
+            <li><strong>Contacts de confiance</strong> (jusqu’à 2) paramétrables par l’utilisateur dans son interface, utile pour un enfant, un proche âgé ou une personne en difficulté, selon les capacités de l’appareil.</li>
+            <li><strong>Retrouver son téléphone</strong> : possibilité d’utiliser les fonctions de géolocalisation/sonnerie déjà prévues par le système du téléphone et/ou par les services du fabricant (Apple/Google), si l’utilisateur les active.</li>
+          </ul>
+
+          <div class="box">
+            <strong>Cadre strict :</strong> ce service constitue un outil technique complémentaire. Il ne constitue ni un dispositif de surveillance,
+            ni un système de sécurité, ni une garantie de protection des personnes. Il ne se substitue pas aux services d’urgence.
+          </div>
+
+          <h3>9.2 Données & responsabilité (abonnement)</h3>
+          <ul>
+            <li>Les “contacts de confiance” et fonctions “retrouver mon téléphone” peuvent être gérés <strong>sur l’appareil</strong> et/ou via les services du fabricant :
+              Bo’CitéArt n’a pas vocation à accéder au contenu de ces données lorsqu’elles sont gérées hors de son système.</li>
+            <li>Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> : pas de garantie d’absence d’incidents (réseau, téléphone, OS, hébergeur tiers, etc.).</li>
           </ul>
 
           <h2>10. Responsabilité</h2>
@@ -845,7 +867,7 @@
             et, le cas échéant, aux services numériques optionnels (abonnement) proposés aux citoyens.
             Les citoyens relèvent des CGU pour l’usage général.
             <div class="muted" style="margin-top:8px;">
-              <strong>Démo :</strong> les prix/packs/plafonds présentés ci-dessous sont des exemples de configuration et ne valent engagement contractuel qu’une fois formalisés par devis/commande/facture.
+              <strong>Démo :</strong> les prix/packs/plafonds présentés ci-dessous sont des exemples de configuration et ne valent engagement contractuel qu’une fois formalisés par devis/commande/facture (et/ou parcours de souscription).
             </div>
           </div>
 
@@ -859,11 +881,35 @@
 
           <h2>2. Abonnement optionnel (services numériques)</h2>
           <ul>
-            <li>Prix indicatif (démo) : 2,99 €.</li>
-            <li>Objet : accès à des fonctionnalités numériques supplémentaires (confort, options, contenus/archives, outils pratiques) selon description dans l’offre.</li>
+            <li>Prix indicatif (démo) : 2,99 € TTC / mois.</li>
+            <li>Objet : accès à des fonctionnalités numériques supplémentaires (ex. continuité d’accès au compteur en cas de changement/perte d’appareil, alertes locales, options de confort), selon description de l’offre au moment de la souscription.</li>
+            <li>Paiement : <strong>prélèvement SEPA</strong> (mandat SEPA conclu lors de la souscription, selon les modalités affichées).</li>
+            <li>Le tarif contribue notamment au financement d’un prestataire d’hébergement/maintenance (ex. OVH), des opérations techniques, et des mises à jour.</li>
             <li>Indépendance : l’abonnement n’est pas un service bancaire, n’est pas un moyen de paiement et n’implique aucune valeur monétaire attachée aux bocitecoins.</li>
-            <li>Durée / reconduction / résiliation : selon modalités indiquées lors de la souscription et dans les CGV applicables.</li>
-            <li>Paiement : peut être opéré par une plateforme de paiement tierce ; Bo’CitéArt ne stocke pas les données de carte.</li>
+          </ul>
+
+          <h3>2.1 Durée, reconduction, résiliation</h3>
+          <ul>
+            <li>Abonnement mensuel reconductible, sauf résiliation par l’utilisateur selon les modalités prévues dans l’interface.</li>
+            <li>Résiliation possible à tout moment ; les effets (fin de période) sont précisés lors de la souscription.</li>
+          </ul>
+
+          <h3>2.2 Impayés / suspension</h3>
+          <ul>
+            <li>En cas d’échec de prélèvement : notifications et tentatives de régularisation peuvent être effectuées.</li>
+            <li>À défaut de régularisation dans un délai raisonnable (ex. 7 jours calendaires) : suspension possible des fonctionnalités liées à l’abonnement, jusqu’à régularisation.</li>
+            <li>Bo’CitéArt ne garantit pas l’envoi de SMS de relance : selon la configuration, les relances peuvent être réalisées via notifications dans l’application et/ou email si applicable.</li>
+          </ul>
+
+          <h3>2.3 Modification du prix</h3>
+          <ul>
+            <li>Le tarif peut évoluer en cas d’évolution significative des coûts techniques/hébergement ou du périmètre du service.</li>
+            <li>Toute modification est notifiée au moins 30 jours avant son application et ouvre un droit de résiliation avant entrée en vigueur du nouveau tarif.</li>
+          </ul>
+
+          <h3>2.4 Droit de rétractation (consommateurs)</h3>
+          <ul>
+            <li>Lorsque applicable, l’utilisateur dispose d’un délai légal de rétractation. Si l’exécution du service numérique commence immédiatement à la demande expresse de l’utilisateur, celui-ci peut être amené à renoncer à son droit de rétractation selon les règles légales en vigueur.</li>
           </ul>
 
           <h2>3. Publicités</h2>
@@ -895,17 +941,19 @@
             <li>Les avantages relèvent de la politique commerciale du partenaire : ils ne constituent pas un droit acquis, ni une valeur monétaire.</li>
           </ul>
 
-          <h2>6. Paiement / suspension</h2>
+          <h2>6. Paiement / suspension (partenaires)</h2>
           <ul>
             <li>Paiement exigible avant activation/diffusion (sauf modalités collectivités).</li>
             <li>En cas de non-paiement, fraude, contenu illicite ou usage non conforme : suspension/blocage possible.</li>
+            <li>Affichage partiel de certaines informations sensibles (ex. éléments bancaires) possible à des fins de sécurité, sans empêcher l’exercice des droits et obligations légaux/contractuels.</li>
             <li>Les journaux techniques peuvent servir d’éléments de preuve (horodatages, événements de diffusion) dans la limite du droit applicable.</li>
           </ul>
 
           <h2>7. Responsabilité</h2>
           <ul>
             <li>Le partenaire est seul responsable de ses contenus, offres et décisions, ainsi que des autorisations nécessaires (images, marques, droit à l’image, droit d’auteur).</li>
-            <li>Bo’CitéArt n’est pas responsable des pertes commerciales indirectes, ni des résultats attendus d’une publicité.</li>
+            <li>Bo’CitéArt est tenu à une obligation de moyens pour le service numérique et n’est pas responsable des pertes commerciales indirectes, ni des résultats attendus d’une publicité.</li>
+            <li>La responsabilité de Bo’CitéArt, si engagée, est limitée aux dommages directs dans la mesure permise par la loi.</li>
           </ul>
 
           <h2>8. Droit applicable</h2>
@@ -1178,7 +1226,7 @@
               <li>0,09 € HT par tranche de 10 € (dès 10 €)</li>
               <li>Facture mensuelle automatique (PDF)</li>
               <li>Paiement par virement bancaire</li>
-              <li>RIB partenaire : masqué côté commerçant (visible admin)</li>
+              <li>RIB partenaire : masqué partiellement côté commerçant (visible admin) — objectif sécurité</li>
               <li>En attente : SIRET/RIB selon création SAS / asso 1901</li>
             </ul>
 
@@ -1420,4 +1468,3 @@
   </script>
 </body>
 </html>
-
