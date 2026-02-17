@@ -321,8 +321,6 @@
       padding:14px;
       font-size:14px;
       color:var(--text);
-
-      /* IMPORTANT : long texte (RGPD/CGU/CGV) */
       max-height: min(72vh, 520px);
       overflow:auto;
     }
@@ -641,6 +639,7 @@
           <ul>
             <li>École (démo) : mots du jour, paramètres de lecture et historique, stockés localement sur l’appareil via <strong>localStorage</strong> (aucune transmission par Bo’CitéArt dans cette démo).</li>
             <li>Urgences/DAE (démo) : aucun enregistrement d’appel ; la géolocalisation éventuelle relève du téléphone et du navigateur (permissions système).</li>
+            <li>Sport (démo) : aucune collecte de photo. L’écran décrit un cadre possible en version officielle.</li>
           </ul>
 
           <h3>2.2 Dans la version officielle (si activée)</h3>
@@ -650,6 +649,7 @@
             <li>Sécurité : journaux techniques de connexion/administration, alertes et événements de sécurité.</li>
             <li>Partenaires : informations professionnelles et documents de facturation si contractualisation.</li>
             <li>Géolocalisation : uniquement si l’utilisateur l’active sur son appareil pour des fonctions de carte/orientation (Bo’CitéArt n’accède pas à la géolocalisation du téléphone sans permission, et ne la détourne pas à d’autres fins).</li>
+            <li><strong>Preuves photo (sport)</strong> : uniquement si activées, <strong>non publiques</strong>, <strong>sans personnes</strong> (lieu/objet uniquement), accès restreint.</li>
             <li>Paiements : opérés par un <strong>prestataire de services de paiement (PSP)</strong>. Bo’CitéArt ne collecte ni ne stocke les données de carte.</li>
           </ul>
 
@@ -672,6 +672,7 @@
             <li>Gestion publicitaire (réservation/diffusion) — le cas échéant.</li>
             <li>Gestion administrative et comptable (statuts de paiement, facturation) — le cas échéant.</li>
             <li>Gestion d’un service numérique optionnel — le cas échéant.</li>
+            <li><strong>Sport :</strong> validation de conformité de missions civiques (<strong>preuves photo non publiques si activées</strong>).</li>
             <li>Sécurité (prévention des abus, supervision, continuité).</li>
             <li>Obligations légales et défense des droits.</li>
           </ul>
@@ -690,6 +691,7 @@
             <li>Opérations bocitecoins : durée proportionnée à la gestion et aux litiges, puis purge/anonymisation lorsque possible.</li>
             <li>Factures/écritures comptables : durée légale applicable.</li>
             <li>Données liées à un service optionnel : durée du service + délais légaux applicables.</li>
+            <li><strong>Preuves photo sport (si activées)</strong> : <strong>30 jours maximum</strong>, suppression automatique.</li>
           </ul>
 
           <h2>7. Urgences (112 / 3919 / 119) & DAE</h2>
@@ -757,7 +759,7 @@
           <h2>2. Comptes référents (mairie / école / sport / commerçants)</h2>
           <ul>
             <li>Accès conditionné à convention/contrat + activation (version officielle).</li>
-            <li>Chaque partenaire est responsable de ses contenus, autorisations et décisions (droit à l’image, droit d’auteur, exactitude, cadre légal).</li>
+            <li>Chaque partenaire est responsable de ses contenus, autorisations et décisions (droit à l'image, droit d'auteur, exactitude, cadre légal).</li>
             <li>Pas de messagerie privée inter-entités.</li>
           </ul>
 
@@ -795,12 +797,6 @@
             <strong>Clarification :</strong> “OR” désigne uniquement une <strong>couleur / repère visuel</strong> dans l’application.
             Cela ne signifie pas “or” au sens métal précieux, ni une valeur intrinsèque.
           </div>
-          <ul>
-            <li>bocitecoins couleur OR : attribués par commerçants partenaires, pouvant ouvrir droit à un avantage <strong>si</strong> le partenaire l’applique selon ses conditions.</li>
-            <li>bocitecoins couleur Jaune : échange exclusivement via mairie/collectivité. <strong>Les bocitecoins Jaune représentent l’engagement citoyen des élèves.</strong></li>
-            <li>bocitecoins couleur Vert : échange exclusivement via mairie/collectivité.</li>
-            <li>Les avantages, cadeaux ou surprises relèvent des partenaires/collectivité : ils sont encadrés par leurs conditions et leurs contraintes (stocks, sécurité, anti-abus).</li>
-          </ul>
 
           <h2>7. École – mot du jour et audio</h2>
           <ul>
@@ -808,10 +804,21 @@
             <li>Espaces séparés par classe : un enseignant ne publie que dans sa classe.</li>
             <li>Contenus non identifiants : pas de nom complet, pas d’adresse, pas d’élément permettant l’identification.</li>
             <li>Voix enfant : uniquement si l’établissement détient l’autorisation parentale (conservée par l’établissement) ; sinon voix synthétique.</li>
-            <li>L’établissement reste responsable des autorisations et du cadre applicable aux mineurs.</li>
+            <li><strong>Remplacement :</strong> en cas d’absence, la direction peut publier via un accès habilité limité à la classe.</li>
           </ul>
 
-          <h2>8. Rôle “Administration Mairie” et “Référent Commerce”</h2>
+          <h2>8. Sport — cadre de responsabilisation (sans surveillance)</h2>
+          <ul>
+            <li>Missions civiques : propreté, rangement, remise en place du matériel, fair-play.</li>
+            <li><strong>Preuves photo (optionnelles, non publiques)</strong> : finalité = documenter la conformité d’une mission (lieu/objet uniquement).</li>
+            <li><strong>Interdit</strong> : personnes, visages, élèves, signes distinctifs, documents, listes, noms sur casiers.</li>
+            <li>L’encadrant s’engage à ne transmettre aucune image contenant une personne ou un élément identifiant.</li>
+            <li>Tout contenu non conforme peut être supprimé, et le compte suspendu en cas de manquement.</li>
+            <li>Conservation (si activée) : <strong>30 jours maximum</strong>, suppression automatique.</li>
+            <li>Ces éléments servent à étayer une décision d’attribution : ils ne constituent pas une preuve officielle ni une sanction disciplinaire.</li>
+          </ul>
+
+          <h2>9. Rôle “Administration Mairie” et “Référent Commerce”</h2>
           <div class="box">
             <strong>Administration Mairie</strong> : accès dédié (infos/alertes/agenda, actions collectivité, échanges Jaune/Vert).
           </div>
@@ -828,14 +835,14 @@
             </div>
           </div>
 
-          <h2>9. Responsabilité</h2>
+          <h2>10. Responsabilité</h2>
           <ul>
             <li>Bo’CitéArt met en œuvre des moyens raisonnables, sans garantie de disponibilité permanente ni d’absence d’erreurs.</li>
             <li>Les informations (DAE, lieux, horaires, contenus partenaires) peuvent dépendre de sources tierces : données indicatives, à vérifier.</li>
             <li>Offres/cadeaux/avantages partenaires relèvent de leur responsabilité et de leurs conditions.</li>
           </ul>
 
-          <h2>10. Droit applicable</h2>
+          <h2>11. Droit applicable</h2>
           <p>Les présentes CGU sont régies par le droit français.</p>
 
           <h2>Propriété intellectuelle</h2>
@@ -845,7 +852,7 @@
             Toute reproduction, extraction, imitation ou détournement est interdite sans autorisation écrite.
           </p>
 
-          <h2>11. Évolution des documents</h2>
+          <h2>12. Évolution des documents</h2>
           <p>
             Bo’CitéArt peut mettre à jour les présentes CGU pour des raisons légales, techniques, de sécurité ou de lutte anti-abus.
             La version en vigueur est celle affichée dans l’application.
@@ -886,6 +893,7 @@
             <li>Objet : accès à des fonctionnalités numériques supplémentaires (options, confort, outils pratiques) selon description dans l’offre.</li>
             <li>Ce service n’est pas un service bancaire, n’est pas un moyen de paiement et n’implique aucune valeur monétaire attachée aux bocitecoins.</li>
             <li>Le prix peut évoluer selon les modalités du prestataire et les coûts de service ; le prix applicable est celui affiché au moment de la souscription.</li>
+            <li>En cas de non-paiement confirmé, fraude ou usage illicite : suspension du service possible dans le respect du contrat applicable.</li>
           </ul>
 
           <h2>4. Publicités</h2>
@@ -896,6 +904,7 @@
             <li>Règle d’équité “16h” : principe d’accès avant 16h, ouverture des places restantes après 16h, sous réserve de disponibilité.</li>
             <li><strong>Mairie :</strong> accès possible selon procédures administratives (devis/bon de commande), dans les mêmes limites de capacité.</li>
             <li>Bo’CitéArt peut refuser/retirer une publicité non conforme (illégale, trompeuse, portant atteinte à un tiers, ou contraire au cadre citoyen).</li>
+            <li>Aucune allégation de résultat garanti : la visibilité ne vaut pas promesse de retombées.</li>
           </ul>
 
           <h2>5. Coût d’attribution bocitecoins couleur OR — si activé contractuellement</h2>
@@ -979,6 +988,90 @@
     window.addEventListener('resize', setVh);
     window.addEventListener('orientationchange', setVh);
 
+    // =========================================================
+    // ✅ Calendrier scolaire (Zone B - Académie de Lille / HDF)
+    // =========================================================
+    // IMPORTANT : les dates doivent être mises à jour à partir de la publication officielle.
+    // Ici : structure prête à remplacer (démo).
+    const SCHOOL_ZONE_B_2025_2026 = {
+      vacations: [
+        { start: "2025-10-18", end: "2025-11-02" }, // Toussaint
+        { start: "2025-12-20", end: "2026-01-04" }, // Noël
+        { start: "2026-02-14", end: "2026-03-01" }, // Hiver (Zone B)
+        { start: "2026-04-11", end: "2026-04-26" }, // Printemps (Zone B)
+        { start: "2026-07-04", end: "2026-08-31" }  // Été
+      ],
+      holidays: [
+        "2025-11-01","2025-11-11","2025-12-25",
+        "2026-01-01","2026-04-06","2026-05-01","2026-05-08",
+        "2026-05-14","2026-05-25","2026-07-14"
+      ]
+    };
+
+    function isoDate(d){
+      const y=d.getFullYear();
+      const m=String(d.getMonth()+1).padStart(2,"0");
+      const da=String(d.getDate()).padStart(2,"0");
+      return `${y}-${m}-${da}`;
+    }
+    function isWithinRange(dayIso, r){
+      return dayIso >= r.start && dayIso <= r.end;
+    }
+    function isVacationDay(dayIso){
+      return SCHOOL_ZONE_B_2025_2026.vacations.some(r => isWithinRange(dayIso, r));
+    }
+    function isHoliday(dayIso){
+      return SCHOOL_ZONE_B_2025_2026.holidays.includes(dayIso);
+    }
+    function schoolDaysInMonth(now=new Date()){
+      const y=now.getFullYear();
+      const m=now.getMonth();
+      const first=new Date(y,m,1);
+      const last=new Date(y,m+1,0);
+
+      let count=0;
+      for(let d=new Date(first); d<=last; d.setDate(d.getDate()+1)){
+        const dow=d.getDay();
+        if(dow===0 || dow===6) continue;
+        const dayIso = isoDate(d);
+        if(isVacationDay(dayIso)) continue;
+        if(isHoliday(dayIso)) continue;
+        count++;
+      }
+      return count;
+    }
+    function monthSchoolDaysExpected(){
+      return schoolDaysInMonth(new Date());
+    }
+    function publishedOnSchoolDaysThisMonth(cls){
+      const now=new Date();
+      const y=now.getFullYear(), m=now.getMonth();
+      const set=new Set();
+
+      (cls.words||[]).forEach(w=>{
+        const d=new Date(w.t);
+        if(d.getFullYear()!==y || d.getMonth()!==m) return;
+        const dow=d.getDay();
+        if(dow===0 || dow===6) return;
+        const dayIso=isoDate(d);
+        if(isVacationDay(dayIso) || isHoliday(dayIso)) return;
+        set.add(dayIso);
+      });
+      return set.size;
+    }
+    function teacherAssiduityBonus(cls){
+      const expected = monthSchoolDaysExpected();
+      if(expected<=0) return 0;
+
+      const done = publishedOnSchoolDaysThisMonth(cls);
+      const ratio = done / expected;
+
+      if(ratio >= 0.999) return 50;
+      if(ratio >= (2/3)) return 30;
+      if(ratio >= (1/3)) return 15;
+      return 0;
+    }
+
     // --- Ticker rotation ---
     const tickerItems = [
       {
@@ -1019,7 +1112,7 @@
       modal.classList.add("open");
     }
 
-    // ✅ CLIC SUR LE TICKER = ouvre un descriptif clair pour élus / CCI / mairie
+    // ✅ CLIC SUR LE TICKER
     document.getElementById("ticker").addEventListener("click", ()=>{
       openModal("Publicités & visibilité (ticker)", `
         <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
@@ -1035,7 +1128,8 @@
           <li><strong>Règle d’équité “16h”</strong> : principe d’accès avant 16h, puis ouverture des places restantes après 16h (sous réserve de disponibilité/contraintes techniques).</li>
           <li><strong>Principe d’égalité de traitement</strong> : conditions identiques par catégorie (sous réserve de conformité et de disponibilité).</li>
           <li><strong>Calendrier</strong> : réservation sur 2 mois glissants, dates grisées si complet.</li>
-          <li><strong>Horodatage interne</strong> : enregistrement technique destiné à la gestion, la sécurité et la cohérence (sans présentation comme un service probatoire).</li>
+          <li><strong>Horodatage interne</strong> : enregistrement technique destiné à la gestion, la sécurité et la cohérence.</li>
+          <li>Aucune promesse de résultat : une visibilité ne vaut pas retombées garanties.</li>
         </ul>
 
         <div style="margin-top:12px;font-weight:900;">Exemples concrets (démo)</div>
@@ -1071,8 +1165,7 @@
       window.speechSynthesis.speak(u);
     }
 
-    // --- ÉCOLE : 5 classes (démo) + calcul auto Jaune (0/80/100/120) ---
-    // NOTE : démo locale via localStorage (aucune donnée envoyée).
+    // --- ÉCOLE : 5 classes (démo) + calcul auto Jaune + bonus assiduité classe ---
     const SCHOOL_KEY = "bociteart_school_demo_v1";
 
     function schoolLoad(){
@@ -1139,9 +1232,15 @@
     function openSchoolHome(){
       const data=schoolLoad();
       const mk=monthKey();
-      const cards = data.classes.map((cls, i)=>{
+      const expected = monthSchoolDaysExpected();
+
+      const cards = data.classes.map((cls)=>{
         const lvl=levelFor(cls);
         const n=monthCount(cls);
+
+        const done = publishedOnSchoolDaysThisMonth(cls);
+        const bonus = teacherAssiduityBonus(cls);
+
         return `
           <div class="box" style="margin:10px 0;">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">
@@ -1152,6 +1251,10 @@
               <div style="font-weight:900;">🟡 ${lvl.coins}</div>
             </div>
 
+            <div class="muted" style="margin-top:6px;">
+              Jours d’école (mois) : <strong>${expected}</strong> • publiés : <strong>${done}</strong> • bonus classe : <strong>🟡 ${bonus}</strong>
+            </div>
+
             <div class="muted" style="margin-top:8px;">
               Niveau : <strong>${esc(lvl.label)}</strong>
             </div>
@@ -1160,6 +1263,10 @@
               <button class="choiceBtn" type="button" data-school="listenChild" data-id="${cls.id}">▶ Voix enfant</button>
               <button class="choiceBtn" type="button" data-school="listenSynth" data-id="${cls.id}">▶ Voix synthétique</button>
               <button class="choiceBtn" type="button" data-school="teacher" data-id="${cls.id}">Espace Prof</button>
+            </div>
+
+            <div class="muted" style="margin-top:8px;">
+              Bonus assiduité = dotation collective liée à la régularité sur les <strong>jours d’école</strong> (hors vacances/fériés). Aucun avantage personnel.
             </div>
           </div>
         `;
@@ -1182,6 +1289,7 @@
             <li>Participation : 12+ mots → 80 bocitecoins Jaune</li>
             <li>Engagement : 20+ mots + régularité → 100 bocitecoins Jaune</li>
             <li>Excellence citoyenne : 28+ mots + régularité → 120 bocitecoins Jaune</li>
+            <li><strong>Bonus assiduité (classe)</strong> : selon ratio “jours publiés / jours d’école attendus” → +15 / +30 / +50</li>
           </ul>
           <div class="muted" style="margin-top:8px;">Aucun classement public : affichage du niveau et du total Jaune du mois par classe.</div>
         </div>
@@ -1231,6 +1339,10 @@
       const items=(cls.words||[]).filter(w=>inThisMonth(w.t)).slice().reverse().slice(0,10);
       const lvl=levelFor(cls);
 
+      const expected = monthSchoolDaysExpected();
+      const done = publishedOnSchoolDaysThisMonth(cls);
+      const bonus = teacherAssiduityBonus(cls);
+
       openModal("École — Espace Prof", `
         <div style="font-weight:900;margin-bottom:8px;">Espace Prof — ${esc(cls.name)}</div>
 
@@ -1239,10 +1351,16 @@
           <div class="muted" style="margin-top:8px;">
             Contenus non identifiants : pas de nom complet, pas d’adresse, pas d’élément permettant l’identification.
           </div>
+          <div class="muted" style="margin-top:8px;">
+            En cas d’absence, la direction peut publier via un accès habilité limité à la classe (version officielle).
+          </div>
         </div>
 
         <div class="box">
           Mois en cours : <strong>${monthCount(cls)}</strong> mot(s) • Niveau : <strong>${esc(lvl.label)}</strong> • 🟡 <strong>${lvl.coins}</strong>
+          <div class="muted" style="margin-top:6px;">
+            Jours d’école (mois) : <strong>${expected}</strong> • publiés : <strong>${done}</strong> • bonus classe : <strong>🟡 ${bonus}</strong>
+          </div>
         </div>
 
         <div style="font-weight:900;margin-top:10px;">Lecture “voix enfant” (info de fonctionnement)</div>
@@ -1299,6 +1417,7 @@
       },0);
     }
 
+    // --- Home tiles ---
     document.querySelectorAll("[data-open]").forEach(el=>{
       el.addEventListener("click", ()=>{
         const key = el.getAttribute("data-open");
@@ -1330,16 +1449,30 @@
         if(key==="sport"){
           openModal("Sport", `
             <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+
             <div class="box">
-              <strong>Important :</strong> si preuve photo activée : pas de visages de mineurs sans autorisations nécessaires. Accès restreint, durée courte, finalité = validation de mission.
+              <strong>Preuve photo (optionnelle, non publique) :</strong> finalité = documenter la conformité d’une mission civique (ex. vestiaire rangé, matériel remis en place).
+              <ul style="margin:8px 0 0 18px;font-weight:900;">
+                <li><strong>Interdit</strong> : personnes, visages, élèves, signes distinctifs, documents, listes, noms sur casiers.</li>
+                <li>Photo = lieu/objet uniquement (ex. zone rangée, matériel aligné).</li>
+                <li>Accès restreint (encadrant habilité + administration si besoin de contrôle).</li>
+                <li>Conservation : <strong>30 jours maximum</strong>, suppression automatique.</li>
+              </ul>
+              <div class="muted" style="margin-top:8px;">
+                La photo sert à documenter la conformité et à étayer une décision d’attribution. Elle ne constitue pas une preuve officielle ni une sanction disciplinaire.
+              </div>
+              <div class="muted" style="margin-top:8px;">
+                (Démo) Cette version ne collecte pas de photo : elle décrit un cadre possible en version officielle.
+              </div>
             </div>
+
             <ul style="margin:8px 0 0 18px;font-weight:800;">
               <li>Rapport du week-end (résumé)</li>
               <li>Missions citoyennes : propreté • rangement • fair-play</li>
-              <li>Preuve photo (non publique) — si activée</li>
               <li>Bocitecoins couleur Vert: échange uniquement mairie/collectivité</li>
               <li>Pas de messagerie • pas de commentaires libres</li>
             </ul>
+
             <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
               <li>Parcs • bois • parcours • salles</li>
@@ -1392,7 +1525,7 @@
             <div style="font-weight:900;margin-top:12px;">Paiements (structure)</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
               <li>Paiement via prestataire de services de paiement (PSP)</li>
-              <li>Le PSP gère la transaction et la facturation/justificatifs liés au paiement ; reversement à Bo’CitéArt selon contrat PSP</li>
+              <li>Le PSP gère la transaction et la facturation/justificatifs ; reversement à Bo’CitéArt selon contrat PSP</li>
               <li>Bo’CitéArt ne stocke pas les données de carte</li>
             </ul>
 
@@ -1402,6 +1535,7 @@
               <li>Règle d’équité 16h : principe d’accès avant 16h • ouverture élargie après (sous réserve de disponibilité)</li>
               <li>Prix (exemples) : 50 € HT • Pack 5 = 200 € HT (validité 2 mois glissants)</li>
               <li>Calendrier intelligent : réservation sur 2 mois • dates grisées si complet</li>
+              <li>Aucune promesse de résultat : visibilité ≠ retombées garanties</li>
             </ul>
 
             <div class="box" style="margin-top:12px;">
@@ -1608,7 +1742,8 @@
     document.getElementById("choiceClose").onclick = closeChoice;
     document.getElementById("choiceX").onclick = closeChoice;
 
-    document.querySelectorAll(".choiceBtn").forEach(b=>{
+    // ✅ Scope uniquement au modal de choix, pas à tous les boutons du site
+    document.querySelectorAll("#choice .choiceBtn").forEach(b=>{
       b.addEventListener("click", ()=>{
         const pick = b.getAttribute("data-pick");
         if(pick==="3919" || pick==="119"){
@@ -1634,4 +1769,3 @@
   </script>
 </body>
 </html>
-
