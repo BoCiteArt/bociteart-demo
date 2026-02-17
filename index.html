@@ -625,25 +625,32 @@
             Objectif : expliquer clairement quelles données sont traitées, pourquoi, sur quelle base légale,
             pendant combien de temps, et quels sont vos droits.
             <div class="muted" style="margin-top:8px;">
-              <strong>Démo :</strong> certains paramètres (contacts dédiés, identifiants, prestataires, durées exactes) seront précisés dans la version officielle.
+              <strong>Version de démonstration :</strong> cette page illustre le cadre. Les mentions légales et informations d’identification complètes seront affichées dans la version officielle lors de l’ouverture du service au public.
             </div>
           </div>
 
           <h2>1. Responsable du traitement</h2>
           <p>
-            Bo’CitéArt agit via la SAS Bo’CitéArt et/ou l’association loi 1901 Bo’CitéArt selon la nature du service concerné.
-            Les informations légales complètes et contacts dédiés seront communiqués dans la version officielle.
+            Le responsable du traitement et les contacts dédiés (adresse, email RGPD, DPO le cas échéant) sont indiqués dans la version officielle au moment de l’ouverture du service.
+            En attendant, cette démonstration ne permet pas de souscription ni de paiement, et n’exploite pas de base de données serveur.
           </p>
 
-          <h2>2. Données traitées (catégories) — minimisation</h2>
+          <h2>2. Données traitées — principe de minimisation</h2>
+
+          <h3>2.1 Dans cette démonstration (locale)</h3>
           <ul>
-            <li>Compte : email (selon cas), rôle, identifiants techniques, statut.</li>
-            <li>Usage : historiques d’actions (attributions/retraits), compteurs, éléments techniques anti-abus.</li>
-            <li>Sécurité : journaux de connexion, événements de sécurité, traces d’administration.</li>
-            <li>Partenaires : informations professionnelles et facturation (PDF) si contractualisation.</li>
-            <li>Géolocalisation (optionnelle) : uniquement si activée par l’utilisateur sur son téléphone (carte/DAE/orientation).</li>
-            <li>École : mot du jour (texte) + lecture audio (selon choix), par espace de classe.</li>
-            <li>Paiements : réalisés via un prestataire de services de paiement (PSP). Bo’CitéArt ne stocke pas les données de carte.</li>
+            <li>École (démo) : mots du jour, paramètres de lecture et historique, stockés localement sur l’appareil via <strong>localStorage</strong> (aucune transmission par Bo’CitéArt dans cette démo).</li>
+            <li>Urgences/DAE (démo) : aucun enregistrement d’appel ; la géolocalisation éventuelle relève du téléphone et du navigateur (permissions système).</li>
+          </ul>
+
+          <h3>2.2 Dans la version officielle (si activée)</h3>
+          <ul>
+            <li>Compte : identifiant de compte (ex. email selon choix), rôle, identifiants techniques, statut.</li>
+            <li>Usage : éléments nécessaires au fonctionnement des compteurs bocitecoins, à la prévention des abus et à la gestion des opérations (données strictement nécessaires).</li>
+            <li>Sécurité : journaux techniques de connexion/administration, alertes et événements de sécurité.</li>
+            <li>Partenaires : informations professionnelles et documents de facturation si contractualisation.</li>
+            <li>Géolocalisation : uniquement si l’utilisateur l’active sur son appareil pour des fonctions de carte/orientation (Bo’CitéArt n’accède pas à la géolocalisation du téléphone sans permission, et ne la détourne pas à d’autres fins).</li>
+            <li>Paiements : opérés par un <strong>prestataire de services de paiement (PSP)</strong>. Bo’CitéArt ne collecte ni ne stocke les données de carte.</li>
           </ul>
 
           <div class="box">
@@ -651,42 +658,62 @@
             Les contenus destinés aux mineurs doivent rester <strong>non identifiants</strong> (pas de nom complet, pas d’adresse, pas d’éléments permettant l’identification).
           </div>
 
-          <h2>3. Finalités</h2>
+          <h2>3. Paiements via PSP — données réellement reçues par Bo’CitéArt</h2>
           <ul>
-            <li>Fonctionnement des comptes et des rôles.</li>
-            <li>Gestion des bocitecoins (calcul, traçabilité interne, prévention des abus).</li>
-            <li>Gestion publicitaire (réservation/diffusion/horodatage interne) — le cas échéant.</li>
-            <li>Gestion administrative et comptable (factures, statuts de paiement) — le cas échéant.</li>
-            <li>Gestion d’un service numérique optionnel (abonnement) — le cas échéant.</li>
-            <li>Sécurité (fraude, abus, supervision).</li>
+            <li>Le PSP gère la transaction et la facturation/justificatifs liés au paiement selon son cadre.</li>
+            <li>Bo’CitéArt reçoit uniquement les informations nécessaires à la tenue comptable et au pilotage du service : <strong>référence de transaction</strong>, <strong>statut</strong> (payé/échoué/remboursé le cas échéant), <strong>date</strong>, <strong>montant</strong>, <strong>référence de compte</strong>.</li>
+            <li>Le PSP reverse à Bo’CitéArt les sommes dues selon le contrat PSP (déduction faite des frais du PSP). Bo’CitéArt émet les pièces nécessaires à sa comptabilité et à la traçabilité.</li>
+          </ul>
+
+          <h2>4. Finalités</h2>
+          <ul>
+            <li>Fonctionnement des comptes et des rôles (version officielle).</li>
+            <li>Gestion des bocitecoins (calcul, cohérence, prévention des abus).</li>
+            <li>Gestion publicitaire (réservation/diffusion) — le cas échéant.</li>
+            <li>Gestion administrative et comptable (statuts de paiement, facturation) — le cas échéant.</li>
+            <li>Gestion d’un service numérique optionnel — le cas échéant.</li>
+            <li>Sécurité (prévention des abus, supervision, continuité).</li>
             <li>Obligations légales et défense des droits.</li>
           </ul>
 
-          <h2>4. Bases légales</h2>
+          <h2>5. Bases légales</h2>
           <ul>
             <li>Exécution du contrat (CGU/CGV) selon les cas.</li>
             <li>Intérêt légitime : sécurité, prévention des abus, défense en justice.</li>
-            <li>Obligation légale : comptabilité, conservation.</li>
-            <li>Consentement : géolocalisation et options nécessitant un choix sur le téléphone.</li>
+            <li>Obligation légale : comptabilité et conservation.</li>
+            <li>Consentement : géolocalisation et options nécessitant une autorisation sur le téléphone.</li>
           </ul>
 
-          <h2>5. Conservation</h2>
+          <h2>6. Conservation</h2>
           <ul>
-            <li>Logs sécurité : durée proportionnée (ex. 6 à 12 mois), sauf incident, obligation légale ou litige.</li>
-            <li>Transactions bocitecoins : durée proportionnée à la gestion et aux litiges, puis purge/anonymisation.</li>
-            <li>Factures : 10 ans (ou durée légale applicable).</li>
-            <li>Données liées au service optionnel : durée du service + délais légaux applicables.</li>
+            <li>Logs sécurité : durée proportionnée et conforme au besoin de sécurité (sauf incident, obligation légale ou litige).</li>
+            <li>Opérations bocitecoins : durée proportionnée à la gestion et aux litiges, puis purge/anonymisation lorsque possible.</li>
+            <li>Factures/écritures comptables : durée légale applicable.</li>
+            <li>Données liées à un service optionnel : durée du service + délais légaux applicables.</li>
           </ul>
 
-          <h2>6. Urgences (112 / 3919 / 119) & DAE</h2>
+          <h2>7. Urgences (112 / 3919 / 119) & DAE</h2>
           <ul>
             <li>Bo’CitéArt fournit un accès rapide : l’appel est réalisé via le téléphone de l’appareil.</li>
-            <li>Aucun enregistrement d’appel n’est réalisé par Bo’CitéArt.</li>
+            <li>Aucun enregistrement d’appel n’est effectué par Bo’CitéArt.</li>
             <li><strong>Danger immédiat :</strong> appeler le 112. Le 3919 est un dispositif d’écoute/orientation (pas un service d’intervention immédiate).</li>
-            <li>Les informations DAE/lieux sont indicatives et peuvent dépendre de sources tierces.</li>
+            <li>Les informations DAE/lieux sont indicatives et peuvent dépendre de sources tierces ou du téléphone. Selon l’opérateur, la zone ou la configuration, l’accès peut échouer.</li>
           </ul>
 
-          <h2>7. Droits des personnes</h2>
+          <h2>8. Contenus tiers et liens externes</h2>
+          <ul>
+            <li>Cette démo charge des contenus depuis des services tiers (ex. images). Le simple affichage peut transmettre des données techniques (adresse IP, user-agent, date/heure) au fournisseur tiers.</li>
+            <li>Les liens vers des réseaux sociaux ouvrent des services tiers soumis à leurs propres politiques.</li>
+            <li>Bo’CitéArt n’est pas responsable des traitements réalisés par ces tiers.</li>
+          </ul>
+
+          <h2>9. Destinataires / accès</h2>
+          <ul>
+            <li>Accès interne strictement limité aux personnes habilitées (principe du moindre privilège).</li>
+            <li>Communication à des tiers uniquement sur base légale (obligation, décision, réquisition) ou dans le cadre contractuel nécessaire (PSP, hébergeur, maintenance).</li>
+          </ul>
+
+          <h2>10. Droits des personnes</h2>
           <ul>
             <li>Accès, rectification, opposition, limitation.</li>
             <li>Effacement dans les limites légales.</li>
@@ -694,22 +721,16 @@
             <li>Réclamation possible auprès de la CNIL.</li>
           </ul>
 
-          <h2>8. Sécurité</h2>
+          <h2>11. Sécurité</h2>
           <ul>
             <li>Contrôle d’accès et séparation des rôles.</li>
-            <li>Journalisation des actions sensibles (finalité sécurité / audit interne).</li>
+            <li>Journalisation des actions sensibles à des fins de sécurité et d’audit interne.</li>
             <li>Désactivation à distance en cas d’incident.</li>
             <li>Dispositifs anti-abus.</li>
           </ul>
 
-          <h2>9. Contenus tiers / liens externes</h2>
-          <ul>
-            <li>Cette démo peut afficher des contenus hébergés par des tiers (images, réseaux sociaux). Bo’CitéArt n’en garantit pas la disponibilité.</li>
-            <li>Les partenaires et référents restent responsables des contenus qu’ils publient et des autorisations nécessaires (droit à l'image, droit d’auteur, etc.).</li>
-          </ul>
-
           <div class="muted" style="margin-top:10px;">
-            (Démo) Les contacts RGPD/support seront renseignés dans la version officielle.
+            Les informations d’identification, l’hébergeur et les contacts RGPD seront affichés dans la version officielle lors de l’ouverture du service.
           </div>
         </div>
 
@@ -722,20 +743,20 @@
             Bo’CitéArt est un dispositif territorial, culturel et citoyen. Ce n’est ni un réseau social, ni un service bancaire,
             ni une plateforme de paiement, ni un intermédiaire financier.
             <div class="muted" style="margin-top:8px;">
-              <strong>Démo :</strong> les exemples et mécaniques sont présentés à titre illustratif.
+              <strong>Version de démonstration :</strong> aucune souscription ni paiement n’est possible depuis cette version. Les règles contractuelles opposables sont celles de la version officielle et, pour les partenaires, celles du devis/bon de commande/facture accepté(e) + CGV en vigueur.
             </div>
           </div>
 
           <h2>1. Accès et compte</h2>
           <ul>
             <li>Consultation libre des contenus publics.</li>
-            <li>Compte requis pour compteur bocitecoins, vote, accès référents et certaines actions.</li>
+            <li>Compte requis pour compteur bocitecoins et certaines actions (version officielle).</li>
             <li>L’utilisateur garantit l’exactitude des informations et l’absence d’usurpation.</li>
           </ul>
 
           <h2>2. Comptes référents (mairie / école / sport / commerçants)</h2>
           <ul>
-            <li>Accès conditionné à convention/contrat + activation par code.</li>
+            <li>Accès conditionné à convention/contrat + activation (version officielle).</li>
             <li>Chaque partenaire est responsable de ses contenus, autorisations et décisions (droit à l’image, droit d’auteur, exactitude, cadre légal).</li>
             <li>Pas de messagerie privée inter-entités.</li>
           </ul>
@@ -744,23 +765,24 @@
           <ul>
             <li>Interdiction : injures, diffamation, discrimination, harcèlement, incitation à la haine.</li>
             <li>Interdiction : fraude, manipulation, accès non autorisé, atteinte aux droits d’auteur/droit à l’image.</li>
-            <li>Sanctions : avertissement, suspension, blocage immédiat en cas de gravité ou de risque.</li>
+            <li>Sanctions : avertissement, suspension, blocage immédiat en cas de gravité, de risque ou d’abus.</li>
           </ul>
 
           <h2>4. Fonction Urgences (112 / 3919 / 119)</h2>
           <ul>
             <li>Usage réservé aux situations réelles : ce n’est ni un jouet, ni un jeu.</li>
-            <li>112 : danger immédiat / urgence. Déclenchement par appui long (anti-erreur).</li>
+            <li>112 : danger immédiat / urgence. Déclenchement par appui long (réduction des appels accidentels, sans garantie d’erreur zéro).</li>
             <li>3919 : écoute/orientation (pas une intervention immédiate). 119 : enfance en danger.</li>
             <li>Bo’CitéArt ne se substitue pas aux services compétents : il facilite l’accès au numéro via le téléphone.</li>
+            <li>L’utilisateur reste seul responsable de l’usage et des conséquences d’un usage abusif. Selon l’opérateur, la zone ou la configuration du téléphone, l’appel peut échouer.</li>
           </ul>
 
           <h2>5. bocitecoins : nature juridique</h2>
           <ul>
-            <li>Outil de reconnaissance locale, assimilable à des points d’avantages.</li>
+            <li>Outil de reconnaissance locale, assimilable à des points d’avantages dans un cadre citoyen.</li>
             <li>Ne constitue pas une monnaie, un instrument de paiement, un titre financier, un crédit, ni un actif.</li>
             <li>Non convertible en espèces, non remboursable, sans valeur faciale garantie.</li>
-            <li>Les règles peuvent être adaptées (sécurité, équité, lutte anti-abus) selon le cadre contractuel applicable.</li>
+            <li>Les règles peuvent évoluer pour raisons de sécurité, d’équité, de conformité ou de lutte anti-abus, dans le respect du cadre contractuel applicable.</li>
           </ul>
 
           <h2>6. Types de bocitecoins (codes couleur)</h2>
@@ -774,18 +796,19 @@
             Cela ne signifie pas “or” au sens métal précieux, ni une valeur intrinsèque.
           </div>
           <ul>
-            <li>bocitecoins couleur OR : attribués par commerçants partenaires, échangeables chez commerçants selon règles.</li>
+            <li>bocitecoins couleur OR : attribués par commerçants partenaires, pouvant ouvrir droit à un avantage <strong>si</strong> le partenaire l’applique selon ses conditions.</li>
             <li>bocitecoins couleur Jaune : échange exclusivement via mairie/collectivité. <strong>Les bocitecoins Jaune représentent l’engagement citoyen des élèves.</strong></li>
             <li>bocitecoins couleur Vert : échange exclusivement via mairie/collectivité.</li>
-            <li>Aucun avantage n’est dû automatiquement : les offres/cadeaux relèvent des partenaires/collectivité.</li>
+            <li>Les avantages, cadeaux ou surprises relèvent des partenaires/collectivité : ils sont encadrés par leurs conditions et leurs contraintes (stocks, sécurité, anti-abus).</li>
           </ul>
 
           <h2>7. École – mot du jour et audio</h2>
           <ul>
-            <li>Publication par enseignant habilité.</li>
+            <li>Publication par enseignant habilité (version officielle).</li>
             <li>Espaces séparés par classe : un enseignant ne publie que dans sa classe.</li>
-            <li>Les contenus doivent être non identifiants (pas de nom complet / adresse / éléments d’identification).</li>
-            <li>Voix enfant possible si autorisation parentale conservée par l’établissement ; sinon voix synthétique.</li>
+            <li>Contenus non identifiants : pas de nom complet, pas d’adresse, pas d’élément permettant l’identification.</li>
+            <li>Voix enfant : uniquement si l’établissement détient l’autorisation parentale (conservée par l’établissement) ; sinon voix synthétique.</li>
+            <li>L’établissement reste responsable des autorisations et du cadre applicable aux mineurs.</li>
           </ul>
 
           <h2>8. Rôle “Administration Mairie” et “Référent Commerce”</h2>
@@ -795,13 +818,13 @@
           <div class="box">
             <strong>Référent Commerce</strong> :
             <ul style="margin:8px 0 0 18px;font-weight:900;">
-              <li>valider des opérations</li>
+              <li>valider des opérations (conformité/anti-abus, selon le cadre défini)</li>
               <li>superviser les commerces partenaires</li>
-              <li>voir les statistiques globales (pas détaillées)</li>
+              <li>voir des statistiques <strong>globales et agrégées</strong> (pas détaillées)</li>
               <li>coordonner des campagnes</li>
             </ul>
             <div class="muted" style="margin-top:8px;">
-              ⚠️ chaque commerce garde son propre compte. Ce n’est pas un contrôle. C’est une supervision stratégique.
+              ⚠️ Chaque commerce garde son propre compte. Le rôle “Référent Commerce” n’implique pas d’accès aux détails internes d’un commerce (ex. données clients, moyens de paiement, informations sensibles) et s’exerce dans le cadre d’un mandat/contrat applicable.
             </div>
           </div>
 
@@ -809,7 +832,7 @@
           <ul>
             <li>Bo’CitéArt met en œuvre des moyens raisonnables, sans garantie de disponibilité permanente ni d’absence d’erreurs.</li>
             <li>Les informations (DAE, lieux, horaires, contenus partenaires) peuvent dépendre de sources tierces : données indicatives, à vérifier.</li>
-            <li>Offres/cadeaux/avantages partenaires relèvent de leur responsabilité.</li>
+            <li>Offres/cadeaux/avantages partenaires relèvent de leur responsabilité et de leurs conditions.</li>
           </ul>
 
           <h2>10. Droit applicable</h2>
@@ -839,29 +862,30 @@
             et, le cas échéant, à certains services numériques optionnels.
             Les citoyens relèvent des CGU pour l’usage général.
             <div class="muted" style="margin-top:8px;">
-              <strong>Démo :</strong> les prix/packs/plafonds présentés ci-dessous sont des exemples de configuration et ne valent engagement contractuel qu’une fois formalisés par devis/commande/facture.
+              <strong>Version de démonstration :</strong> aucun encaissement n’est réalisé depuis cette version. Les engagements commerciaux naissent d’un devis/bon de commande/facture accepté(e) et des CGV en vigueur à cette date.
             </div>
           </div>
 
           <h2>1. Champ d’application</h2>
           <ul>
             <li>Diffusion publicitaire / visibilité.</li>
-            <li>Coûts d’utilisation liés à l’attribution de bocitecoins couleur OR (commerçants).</li>
+            <li>Coûts d’utilisation liés à l’attribution de bocitecoins couleur OR (commerçants) — si activé contractuellement.</li>
             <li>Service numérique optionnel — le cas échéant.</li>
-            <li>La structure émettrice (SAS/asso) est indiquée sur le devis/commande/facture.</li>
+            <li>La structure émettrice et les modalités exactes figurent sur le devis/commande/facture.</li>
           </ul>
 
           <h2>2. Paiement via PSP</h2>
           <div class="box">
-            Les paiements sont opérés via un prestataire de services de paiement (PSP). Bo’CitéArt ne stocke pas les données de carte.
+            Les paiements sont opérés via un prestataire de services de paiement (PSP). Le PSP gère la transaction, la facturation/justificatifs liés au paiement et reverse à Bo’CitéArt les sommes dues selon le contrat PSP (déduction faite de ses frais).
+            Bo’CitéArt ne collecte ni ne stocke les données de carte.
           </div>
 
-          <h2>3. Service numérique optionnel (abonnement) — le cas échéant</h2>
+          <h2>3. Service numérique optionnel — le cas échéant</h2>
           <ul>
-            <li>Prix indicatif (démo) : 2,99 € (modalités finales précisées lors de la souscription).</li>
+            <li>Prix indicatif (exemple) : 2,99 € (modalités finales affichées avant souscription).</li>
             <li>Objet : accès à des fonctionnalités numériques supplémentaires (options, confort, outils pratiques) selon description dans l’offre.</li>
             <li>Ce service n’est pas un service bancaire, n’est pas un moyen de paiement et n’implique aucune valeur monétaire attachée aux bocitecoins.</li>
-            <li>Le prix peut évoluer selon les modalités du prestataire et les coûts de service (conditions affichées avant souscription).</li>
+            <li>Le prix peut évoluer selon les modalités du prestataire et les coûts de service ; le prix applicable est celui affiché au moment de la souscription.</li>
           </ul>
 
           <h2>4. Publicités</h2>
@@ -871,10 +895,10 @@
             <li>Plafond : 10 publicités / jour</li>
             <li>Règle d’équité “16h” : principe d’accès avant 16h, ouverture des places restantes après 16h, sous réserve de disponibilité.</li>
             <li><strong>Mairie :</strong> accès possible selon procédures administratives (devis/bon de commande), dans les mêmes limites de capacité.</li>
-            <li>Bo’CitéArt se réserve le droit de refuser/retirer une publicité non conforme (illégale, trompeuse, portant atteinte à un tiers, ou contraire au cadre citoyen).</li>
+            <li>Bo’CitéArt peut refuser/retirer une publicité non conforme (illégale, trompeuse, portant atteinte à un tiers, ou contraire au cadre citoyen).</li>
           </ul>
 
-          <h2>5. Coût d’attribution bocitecoins couleur OR</h2>
+          <h2>5. Coût d’attribution bocitecoins couleur OR — si activé contractuellement</h2>
           <div class="box">
             <strong>Clarification :</strong> “OR” désigne uniquement une <strong>couleur / repère visuel</strong> dans l’application.
             Cela ne signifie pas “or” au sens métal précieux, ni une valeur intrinsèque.
@@ -883,28 +907,28 @@
             <li>Déclenchement : à partir de 10 € d’achat minimum.</li>
             <li>Tarif : 0,09 € HT par tranche de 10 € (chaque tranche +10€ = +0,09€).</li>
             <li>Le client gagne : 1 bocitecoin couleur OR par tranche de 10 €.</li>
-            <li>Contribution technique (maintenance, sécurité, traçabilité interne). Pas une commission sur chiffre d’affaires, pas un service de paiement.</li>
+            <li>Contribution technique (maintenance, sécurité, cohérence, prévention des abus). Ce mécanisme n’est ni une commission sur chiffre d’affaires, ni un service de paiement.</li>
           </ul>
 
-          <h2>6. Échange des bocitecoins couleur OR</h2>
+          <h2>6. Avantages liés aux bocitecoins couleur OR</h2>
           <ul>
-            <li>Seuil minimum : 30 bocitecoins couleur OR.</li>
-            <li>Barème : 30 → 15% ; 50 → 20% ; 100 → 35%.</li>
+            <li>Seuil d’accès (exemple de campagne) : 30 bocitecoins couleur OR.</li>
+            <li>Paliers d’avantage (exemples indicatifs de campagne) : 30 → 15% ; 50 → 20% ; 100 → 35%.</li>
             <li>Plafond alimentaire : 30% maximum du cadeau en "alimentaire & boisson inclus".</li>
-            <li>Les avantages relèvent de la politique commerciale du partenaire : ils ne constituent pas un droit acquis, ni une valeur monétaire.</li>
+            <li>Les paliers et avantages sont appliqués par le partenaire selon ses conditions (stocks, sécurité, anti-abus) et ne constituent pas une valeur monétaire des bocitecoins.</li>
           </ul>
 
           <h2>7. Paiement / suspension</h2>
           <ul>
             <li>Paiement exigible selon devis/commande/facture.</li>
-            <li>En cas de non-paiement, fraude, contenu illicite ou usage non conforme : suspension/blocage possible.</li>
+            <li>En cas de non-paiement, fraude, contenu illicite ou usage non conforme : suspension/blocage possible dans le respect du contrat applicable.</li>
           </ul>
 
           <h2>8. Responsabilité</h2>
           <ul>
             <li>Le partenaire est seul responsable de ses contenus, offres et décisions, ainsi que des autorisations nécessaires (images, marques, droit à l’image, droit d’auteur).</li>
             <li>Bo’CitéArt n’est pas responsable des pertes commerciales indirectes, ni des résultats attendus d’une publicité.</li>
-            <li>Bo’CitéArt n’est pas responsable des indisponibilités liées au PSP ou à des tiers.</li>
+            <li>Bo’CitéArt n’est pas responsable des indisponibilités liées au PSP ou à des tiers (hébergeur, réseaux, services externes), sans préjudice des obligations légales applicables.</li>
           </ul>
 
           <h2>9. Droit applicable</h2>
@@ -959,7 +983,7 @@
     const tickerItems = [
       {
         title: "Annonce partenaire (démo)",
-        subtitle: "Exemple : -15% à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels",
+        subtitle: "Exemple : paliers indicatifs à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • illustration non contractuelle",
         img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60",
       },
       {
@@ -1001,7 +1025,8 @@
         <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
 
         <div class="box">
-          <strong>Important :</strong> principes présentés à titre illustratif. Les conditions définitives sont celles du devis/commande/facture et des CGV applicables.
+          <strong>Cadre :</strong> la présente démonstration illustre la mécanique. Les conditions opposables (prix, dates, contenus, capacité)
+          résultent du devis/bon de commande/facture accepté(e) et des CGV applicables en version officielle.
           Bo’CitéArt peut refuser/retirer un contenu non conforme (illégal, trompeur, ou portant atteinte à un tiers).
         </div>
 
@@ -1010,7 +1035,7 @@
           <li><strong>Règle d’équité “16h”</strong> : principe d’accès avant 16h, puis ouverture des places restantes après 16h (sous réserve de disponibilité/contraintes techniques).</li>
           <li><strong>Principe d’égalité de traitement</strong> : conditions identiques par catégorie (sous réserve de conformité et de disponibilité).</li>
           <li><strong>Calendrier</strong> : réservation sur 2 mois glissants, dates grisées si complet.</li>
-          <li><strong>Horodatage interne</strong> : traçabilité de commande/diffusion à des fins de gestion et de sécurité (sans promesse de preuve opposable).</li>
+          <li><strong>Horodatage interne</strong> : enregistrement technique destiné à la gestion, la sécurité et la cohérence (sans présentation comme un service probatoire).</li>
         </ul>
 
         <div style="margin-top:12px;font-weight:900;">Exemples concrets (démo)</div>
@@ -1349,7 +1374,7 @@
             <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
 
             <div class="box">
-              <strong>Important :</strong> les exemples de tarifs/packs sont indicatifs en démo. Les conditions définitives sont celles du contrat (devis/commande/facture + CGV).
+              <strong>Cadre :</strong> les exemples de tarifs/packs sont illustratifs. Les conditions opposables sont celles du contrat (devis/commande/facture accepté(e) + CGV).
               Les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.
             </div>
 
@@ -1367,24 +1392,24 @@
             <div style="font-weight:900;margin-top:12px;">Paiements (structure)</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
               <li>Paiement via prestataire de services de paiement (PSP)</li>
+              <li>Le PSP gère la transaction et la facturation/justificatifs liés au paiement ; reversement à Bo’CitéArt selon contrat PSP</li>
               <li>Bo’CitéArt ne stocke pas les données de carte</li>
-              <li>Factures/justificatifs : selon contrat</li>
             </ul>
 
             <div style="font-weight:900;margin-top:12px;">Publicités & visibilité stratégique</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
               <li>Plafond strict : 10 publicités maximum par jour (limitation)</li>
               <li>Règle d’équité 16h : principe d’accès avant 16h • ouverture élargie après (sous réserve de disponibilité)</li>
-              <li>Prix : 50 € HT • Pack 5 = 200 € HT (validité 2 mois glissants)</li>
+              <li>Prix (exemples) : 50 € HT • Pack 5 = 200 € HT (validité 2 mois glissants)</li>
               <li>Calendrier intelligent : réservation sur 2 mois • dates grisées si complet</li>
             </ul>
 
             <div class="box" style="margin-top:12px;">
               <strong>Référent Commerce (supervision stratégique)</strong>
               <ul style="margin:8px 0 0 18px;font-weight:900;">
-                <li>valider des opérations</li>
+                <li>valider des opérations (conformité/anti-abus)</li>
                 <li>superviser les commerces partenaires</li>
-                <li>voir des statistiques globales (pas détaillées)</li>
+                <li>voir des statistiques globales et agrégées (pas détaillées)</li>
                 <li>coordonner des campagnes</li>
               </ul>
               <div class="muted" style="margin-top:8px;">
@@ -1520,6 +1545,7 @@
           <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
           <li>Les appels abusifs perturbent les secours et peuvent exposer à des suites.</li>
           <li>Appui long = réduction des appels accidentels (sans garantie d’erreur zéro).</li>
+          <li>Selon l’opérateur, la zone ou la configuration du téléphone, l’appel peut échouer.</li>
         </ul>
         <div class="box" style="margin-top:10px;">
           <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
@@ -1538,6 +1564,7 @@
           <li><strong>119</strong> : enfance en danger.</li>
           <li><strong>Danger immédiat</strong> : appeler le 112.</li>
           <li>Ne pas utiliser par provocation : cela perturbe l’aide réelle.</li>
+          <li>Selon l’opérateur, la zone ou la configuration du téléphone, l’appel peut échouer.</li>
         </ul>
         <div class="box" style="margin-top:10px;">
           <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
@@ -1607,5 +1634,4 @@
   </script>
 </body>
 </html>
-
 
