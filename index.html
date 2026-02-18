@@ -2,15 +2,12 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <!-- IMPORTANT: viewport + stabilité mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Bo’CitéArt – Démo</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#a51e22">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 
-  <!-- ✅ Leaflet (carte DAE) -->
+  <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
   <style>
@@ -20,7 +17,6 @@
       --beige:#efe4d3;
       --green:#2f5d46;
 
-      /* ROUGE 112 */
       --red:#a51e22;
       --redSoft:#7f1a1d;
 
@@ -28,16 +24,11 @@
       --muted:#6e6a63;
       --link:#1d4ed8;
 
-      /* hauteur visible mobile */
       --vh: 1vh;
     }
 
     *{ box-sizing:border-box; }
-    html, body{
-      height:100%;
-      margin:0;
-      padding:0;
-    }
+    html, body{ height:100%; margin:0; padding:0; }
     body{
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:var(--bg);
@@ -66,7 +57,7 @@
       gap:12px;
     }
 
-    /* --- Ticker --- */
+    /* --- Home ticker --- */
     .ticker{
       position:relative;
       overflow:hidden;
@@ -75,21 +66,12 @@
       height:150px;
       cursor:pointer;
     }
-    .ticker img{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover;
-    }
-    .ticker .overlay{
-      position:absolute; inset:0;
-      background:linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.12));
-    }
+    .ticker img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .ticker .overlay{ position:absolute; inset:0; background:linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.12)); }
     .ticker .row{
       position:absolute; inset:0;
-      display:flex;
-      align-items:center;
-      padding:0 14px;
-      gap:12px;
+      display:flex; align-items:center;
+      padding:0 14px; gap:12px;
       overflow:hidden;
     }
     .marquee{
@@ -104,24 +86,9 @@
       flex-direction:column;
       min-width:360px;
     }
-    .ticker .title{
-      color:#fff;
-      font-weight:800;
-      font-size:14px;
-    }
-    .ticker .sub{
-      color:rgba(255,255,255,.92);
-      font-weight:700;
-      font-size:12px;
-      margin-top:2px;
-    }
-    .ticker .rule{
-      margin-left:auto;
-      color:rgba(255,255,255,.92);
-      font-size:11px;
-      font-weight:700;
-      flex:0 0 auto;
-    }
+    .ticker .title{ color:#fff; font-weight:800; font-size:14px; }
+    .ticker .sub{ color:rgba(255,255,255,.92); font-weight:700; font-size:12px; margin-top:2px; }
+    .ticker .rule{ margin-left:auto; color:rgba(255,255,255,.92); font-size:11px; font-weight:700; flex:0 0 auto; }
     @keyframes marquee{
       0%{ transform:translateX(0); }
       100%{ transform:translateX(-50%); }
@@ -134,7 +101,6 @@
       grid-template-columns:1fr 1fr;
       gap:12px;
     }
-
     .tile{
       position:relative;
       width:100%;
@@ -144,40 +110,22 @@
       background:var(--beige);
       cursor:pointer;
     }
-    .tile img{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover;
-    }
-    .tile .overlay{
-      position:absolute; inset:0;
-      background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.55));
-    }
+    .tile img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .tile .overlay{ position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.55)); }
     .tile .content{
       position:absolute; inset:0;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
+      display:flex; flex-direction:column;
+      justify-content:center; align-items:center;
       text-align:center;
       padding:12px;
       color:#fff;
     }
-    .tile .h{
-      font-weight:900;
-      font-size:18px;
-      line-height:1.15;
-    }
-    .tile .p{
-      margin-top:8px;
-      font-weight:700;
-      font-size:12px;
-      color:rgba(255,255,255,.92);
-    }
+    .tile .h{ font-weight:900; font-size:18px; line-height:1.15; }
+    .tile .p{ margin-top:8px; font-weight:700; font-size:12px; color:rgba(255,255,255,.92); }
     .tile.logoOnly .overlay{ display:none; }
     .tile.logoOnly .content{ display:none; }
 
-    /* --- Emergency buttons (long press) --- */
+    /* --- Emergency buttons --- */
     .emgSlot{
       position:absolute;
       left:50%;
@@ -192,8 +140,7 @@
     .lpBtn{
       position:relative;
       width:90px; height:90px;
-      border:none;
-      background:transparent;
+      border:none; background:transparent;
       padding:0;
       touch-action:none;
       cursor:pointer;
@@ -205,10 +152,8 @@
       transform:translate(-50%,-50%);
       width:74px; height:74px;
       border-radius:999px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
       color:#fff;
       font-weight:900;
       box-shadow:0 10px 20px rgba(0,0,0,.18);
@@ -216,17 +161,12 @@
       text-align:center;
     }
     .lpSmall{ width:64px; height:64px; }
-    .lpCore .icon{
-      width:16px; height:16px;
-      margin-bottom:2px;
-      opacity:.95;
-    }
+    .lpCore .icon{ width:16px; height:16px; margin-bottom:2px; opacity:.95; }
     .lpCore .lbl{ font-size:18px; line-height:1; }
     .lpCore .lblSmall{ font-size:12px; line-height:1.05; }
 
-    /* ✅ Sous-texte SOS encore plus petit */
     .sosSub{
-      font-size:7.5px; /* ✅ réduit */
+      font-size:7.5px;
       font-weight:900;
       line-height:1.0;
       margin-top:2px;
@@ -249,13 +189,9 @@
       font-size:16px;
       cursor:pointer;
     }
-    .heart{
-      width:64px;
-      height:64px;
-      flex:0 0 auto;
-    }
+    .heart{ width:64px; height:64px; flex:0 0 auto; }
 
-    /* --- Footer complet --- */
+    /* Footer */
     .footerRow{
       display:flex;
       align-items:center;
@@ -264,17 +200,8 @@
       padding-bottom:10px;
       padding-bottom: max(10px, env(safe-area-inset-bottom));
     }
-    .siteLink{
-      font-size:14px;
-      font-weight:800;
-      color:var(--link);
-      text-decoration:none;
-    }
-    .footerRight{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
+    .siteLink{ font-size:14px; font-weight:800; color:var(--link); text-decoration:none; }
+    .footerRight{ display:flex; align-items:center; gap:10px; }
     .iconBtn{
       width:44px; height:44px;
       border-radius:999px;
@@ -309,10 +236,7 @@
       z-index:50;
     }
     .modal.open{ display:block; }
-    .backdrop{
-      position:absolute; inset:0;
-      background:rgba(0,0,0,.40);
-    }
+    .backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.40); }
     .sheet{
       position:absolute;
       left:50%;
@@ -331,6 +255,7 @@
       padding:12px 14px;
       font-weight:900;
       border-bottom:1px solid rgba(0,0,0,.10);
+      background:var(--bg);
     }
     .sheet .body{
       padding:14px;
@@ -338,6 +263,7 @@
       color:var(--text);
       max-height: min(72vh, 520px);
       overflow:auto;
+      background:var(--bg);
     }
     .xbtn{
       border:none;
@@ -350,13 +276,22 @@
     }
     .muted{ color:var(--muted); font-size:12px; font-weight:700; }
 
-    /* Choice modal */
-    .choiceGrid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:10px;
+    /* ✅ FULLSCREEN SHEET (pour navigation DAE) */
+    .sheet.fullscreen{
+      left:0; top:0; transform:none;
+      width:100%;
+      height:100dvh;
+      border-radius:0;
     }
+    .sheet.fullscreen .body{
+      padding:0;
+      max-height:none;
+      height:calc(100dvh - 52px);
+      overflow:hidden;
+    }
+
+    /* Choice modal */
+    .choiceGrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
     .choiceBtn{
       border:2px solid rgba(0,0,0,.10);
       background:var(--beige);
@@ -368,15 +303,11 @@
 
     /* Legal tabs */
     .tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
+      display:flex; gap:8px; flex-wrap:wrap;
       margin-bottom:12px;
-      position:sticky;
-      top:0;
+      position:sticky; top:0;
       background:var(--bg);
-      padding-top:2px;
-      padding-bottom:10px;
+      padding-top:2px; padding-bottom:10px;
       z-index:2;
     }
     .tab{
@@ -388,7 +319,6 @@
       cursor:pointer;
     }
     .tab.active{ background:var(--beige); }
-
     .doc h2{ margin:12px 0 6px; font-size:15px; }
     .doc h3{ margin:10px 0 6px; font-size:14px; }
     .doc p{ margin:6px 0; font-weight:700; }
@@ -402,9 +332,7 @@
       margin:10px 0;
     }
 
-    /* =========================================================
-       ✅ OPTIMISATION ANDROID : on réduit la HAUTEUR globale
-       ========================================================= */
+    /* Mobile height optim */
     @media (max-height: 780px){
       .wrap{ padding:10px; gap:10px; }
       .ticker{ height:138px; }
@@ -412,18 +340,13 @@
       .grid{ gap:10px; }
       .tile .h{ font-size:16px; }
       .tile .p{ margin-top:6px; }
-      .dae{
-        padding:10px 12px;
-        font-size:14px;
-        border-radius:18px;
-        border-color: var(--red);
-      }
+      .dae{ padding:10px 12px; font-size:14px; border-radius:18px; border-color: var(--red); }
       .heart{ width:44px; height:44px; }
       .footerRow{ padding-bottom:8px; }
       .iconBtn{ width:40px; height:40px; }
       .legalBtn{ padding:9px 10px; font-size:12px; }
       .sheet .body{ max-height:min(70vh, 460px); }
-      .sosSub{ font-size:7px; } /* ✅ encore plus petit sur petits écrans */
+      .sosSub{ font-size:7px; }
     }
     @media (max-height: 700px){
       .ticker{ height:128px; }
@@ -432,20 +355,20 @@
     }
 
     /* =========================================================
-       ✅ SPORT (démo) : bandeau 1 cm + liste clubs + paiement
+       SPORT
        ========================================================= */
     .sportWrap{ display:flex; flex-direction:column; gap:12px; }
 
-    /* ✅ Bandeau sport collé en haut (sticky) */
+    /* ✅ Bandeau sport collé en haut de l'onglet sport principal */
     .sportTicker{
       height:40px;
       border-radius:14px;
       background:#fff;
       overflow:hidden;
       border:2px solid rgba(0,0,0,.12);
-      position:sticky;         /* ✅ sticky */
-      top:0;                   /* ✅ collé en haut */
-      z-index:5;               /* ✅ au-dessus du contenu */
+      position:sticky;
+      top:0;
+      z-index:5;
     }
     .sportTicker .stRow{
       position:absolute; inset:0;
@@ -462,15 +385,26 @@
       animation: sportMarq 14s linear infinite;
       will-change: transform;
     }
+
+    /* ✅ IMPORTANT: parent n’est plus en 900 => on voit la différence gras / normal */
     .sportMarquee .stItem{
       display:flex;
       align-items:center;
       gap:10px;
       min-width:360px;
       color:var(--text);
-      font-weight:900;
       font-size:12px;
+      font-weight:700;  /* normal */
     }
+    .stText{
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      max-width:320px;
+      font-weight:700; /* normal */
+    }
+    .stText.bold{ font-weight:1000; } /* gras */
+
     .stLogo{
       width:22px;height:22px;
       border-radius:6px;
@@ -481,13 +415,6 @@
       border:1px solid rgba(0,0,0,.08);
     }
     .stLogo img{ width:100%;height:100%; object-fit:cover; display:block; }
-    .stText{
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-      max-width:320px;
-    }
-    .stBold{ font-weight:1000; letter-spacing:.2px; } /* ✅ gras visible */
     .stHint{
       margin-left:auto;
       color:rgba(0,0,0,.65);
@@ -514,12 +441,7 @@
       font-weight:900;
       background:#fff;
     }
-    .clubList{
-      margin-top:10px;
-      display:grid;
-      grid-template-columns:1fr;
-      gap:8px;
-    }
+    .clubList{ margin-top:10px; display:grid; grid-template-columns:1fr; gap:8px; }
     .clubBtn{
       border:2px solid rgba(0,0,0,.10);
       background:var(--beige);
@@ -542,12 +464,8 @@
       border:2px solid rgba(0,0,0,.08);
       white-space:nowrap;
     }
-    .formGrid{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:10px;
-      margin-top:10px;
-    }
+
+    .formGrid{ display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px; }
     .inp{
       width:100%;
       padding:10px;
@@ -556,17 +474,8 @@
       font-weight:900;
       background:#fff;
     }
-    .row2{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-    .miniNote{
-      margin-top:8px;
-      font-size:12px;
-      font-weight:800;
-      color:rgba(0,0,0,.70);
-    }
+    .row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .miniNote{ margin-top:8px; font-size:12px; font-weight:800; color:rgba(0,0,0,.70); }
     .payBar{
       display:flex;
       flex-direction:column;
@@ -577,12 +486,7 @@
       border:2px solid rgba(0,0,0,.08);
       background:#fff;
     }
-    .payLine{
-      display:flex;
-      justify-content:space-between;
-      font-weight:900;
-      gap:12px;
-    }
+    .payLine{ display:flex; justify-content:space-between; font-weight:900; gap:12px; }
     .toggleRow{
       display:flex;
       align-items:center;
@@ -604,7 +508,7 @@
       font-weight:900;
     }
 
-    /* ✅ Vidéo responsive dans modale */
+    /* Vidéo */
     .videoBox{
       border:2px solid rgba(0,0,0,.08);
       background:#fff;
@@ -620,92 +524,129 @@
       overflow:hidden;
       background:#fff;
     }
-    /* ✅ Vidéo plus petite pour laisser place au reste */
-    .videoWrap.small{
-      padding-top:40%;
-    }
-    .videoWrap iframe{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      border:0;
-    }
+    .videoWrap.small{ padding-top:40%; }
+    .videoWrap iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 
-    /* ✅ Carte DAE */
-    .mapBox{
-      border:2px solid rgba(0,0,0,.08);
+    /* =========================================================
+       DAE NAV FULLSCREEN
+       ========================================================= */
+    .navWrap{
+      position:relative;
+      width:100%;
+      height:100%;
       background:#fff;
+    }
+    #navMap{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+    }
+    .navHud{
+      position:absolute;
+      left:10px;
+      right:10px;
+      top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      z-index:1000;
+      pointer-events:none; /* sauf boutons internes */
+    }
+    .navCard{
+      background:rgba(255,255,255,.92);
+      border:2px solid rgba(0,0,0,.10);
       border-radius:14px;
       padding:10px;
-      margin:10px 0;
+      box-shadow:0 10px 24px rgba(0,0,0,.14);
+      pointer-events:auto;
     }
-    .mapCanvas{
-      width:100%;
-      height:320px;
-      border-radius:12px;
-      overflow:hidden;
-      background:#fff;
-    }
-    .pillRow{
+    .navTopRow{
       display:flex;
-      gap:8px;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .navTitle{
+      font-weight:1000;
+      font-size:14px;
+      line-height:1.15;
+    }
+    .navSub{
+      margin-top:4px;
+      font-weight:900;
+      font-size:12px;
+      color:rgba(0,0,0,.70);
+    }
+    .navStats{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+      font-weight:1000;
+      font-size:12px;
+    }
+    .chip{
+      background:var(--beige);
+      border:2px solid rgba(0,0,0,.08);
+      border-radius:999px;
+      padding:6px 10px;
+      white-space:nowrap;
+    }
+
+    .arrowWrap{
+      position:absolute;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      z-index:1000;
+      pointer-events:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      flex-direction:column;
+    }
+    .arrowCircle{
+      width:88px;
+      height:88px;
+      border-radius:999px;
+      background:rgba(255,255,255,.92);
+      border:2px solid rgba(0,0,0,.10);
+      box-shadow:0 12px 28px rgba(0,0,0,.18);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .arrowSvg{
+      width:52px; height:52px;
+      transform:rotate(0deg);
+      transition:transform 120ms linear;
+    }
+    .arrowHint{
+      background:rgba(255,255,255,.92);
+      border:2px solid rgba(0,0,0,.10);
+      border-radius:999px;
+      padding:6px 10px;
+      font-weight:1000;
+      font-size:12px;
+      box-shadow:0 10px 24px rgba(0,0,0,.14);
+    }
+
+    .navBtns{
+      display:flex;
+      gap:10px;
       flex-wrap:wrap;
       margin-top:8px;
     }
-    .pill{
-      border:2px solid rgba(0,0,0,.10);
-      background:var(--beige);
-      border-radius:999px;
-      padding:8px 10px;
-      font-weight:1000;
-      cursor:pointer;
-      font-size:12px;
-    }
-    .pill.active{
-      background:#fff;
-    }
-    .daeList{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:8px;
-      margin-top:10px;
-    }
-    .daeItem{
-      border:2px solid rgba(0,0,0,.10);
-      background:var(--beige);
-      border-radius:14px;
-      padding:10px 12px;
-      font-weight:900;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-    .daeItem .top{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:flex-start;
-    }
-    .daeItem .dist{
-      font-weight:1000;
-      white-space:nowrap;
-    }
-    .daeActions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:4px;
-    }
-    .daeLinkBtn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      text-decoration:none;
+    .navBtn{
       border:2px solid rgba(0,0,0,.10);
       background:#fff;
       border-radius:12px;
       padding:8px 10px;
       font-weight:1000;
       font-size:12px;
+      cursor:pointer;
     }
   </style>
 </head>
@@ -741,7 +682,7 @@
             <div class="overlay"></div>
             <div class="content">
               <div class="h">Visitez les œuvres d’artistes</div>
-              <div class="p">Carte • guidage • audio</div>
+              <div class="p">Carte • guidage • audio, QRcode BLE, Remerciement mécène, mairie, bio artiste(s), histoires quartiers</div>
             </div>
           </div>
 
@@ -750,7 +691,7 @@
             <div class="overlay"></div>
             <div class="content">
               <div class="h">École</div>
-              <div class="p">Mot du jour</div>
+              <div class="p">les Mots du jour</div>
             </div>
           </div>
 
@@ -768,7 +709,7 @@
             <div class="overlay"></div>
             <div class="content">
               <div class="h">Mairie</div>
-              <div class="p">Infos • agenda</div>
+              <div class="p">Infos • agenda, service gratuit, urgence déviation, possiblité pub pour évènement(payante) </div>
             </div>
           </div>
 
@@ -781,7 +722,7 @@
             <div class="overlay"></div>
             <div class="content">
               <div class="h">Commerces</div>
-              <div class="p">Bons plans</div>
+              <div class="p">Bons plans, pub payante possible, participation aux clubs sports, participation aide Asso ciblée </div>
             </div>
           </div>
         </div>
@@ -836,23 +777,20 @@
         <div>Trouver un défibrillateur autour de moi</div>
       </div>
 
-      <!-- Footer complet -->
+      <!-- Footer -->
       <div class="footerRow">
         <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noreferrer">www.bociteart.com</a>
-
         <div class="footerRight">
           <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noreferrer" aria-label="LinkedIn">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true">
               <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.27 2.3-2.6 4.73-2.6 5.06 0 6 3.33 6 7.67V24h-5v-7.6c0-1.81-.03-4.13-2.52-4.13-2.53 0-2.92 1.97-2.92 4v7.73h-5V8z"/>
             </svg>
           </a>
-
           <a class="iconBtn" href="https://instagram.com/bociteart" target="_blank" rel="noreferrer" aria-label="Instagram">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="#C13584" aria-hidden="true">
               <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-2.24-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3.2A4.8 4.8 0 1 0 16.8 12 4.81 4.81 0 0 0 12 7.2zm0 7.8A3 3 0 1 1 15 12a3 3 0 0 1-3 3zm4.9-8.9a1.1 1.1 0 1 1-1.1-1.1 1.1 1.1 0 0 1 1.1 1.1z"/>
             </svg>
           </a>
-
           <button class="legalBtn" id="openLegal" type="button">RGPD • CGU • CGV</button>
         </div>
       </div>
@@ -860,10 +798,10 @@
     </div>
   </div>
 
-  <!-- Modal (écrans) -->
+  <!-- Modal (global) -->
   <div class="modal" id="modal">
     <div class="backdrop" id="modalClose"></div>
-    <div class="sheet">
+    <div class="sheet" id="sheet">
       <div class="head">
         <div id="modalTitle">Titre</div>
         <button class="xbtn" id="xBtn" aria-label="Fermer" type="button">
@@ -895,218 +833,31 @@
           <button class="tab" data-tab="cgv" type="button">CGV</button>
         </div>
 
-        <!-- RGPD -->
         <div id="p-rgpd" class="doc">
           <div style="font-weight:900;font-size:15px;">📗 Politique de protection des données (RGPD) — Bo’CitéArt</div>
-          <div class="muted" style="margin-top:4px;">Dernière mise à jour : 16 février 2026</div>
-
-          <div class="box">
-            Objectif : expliquer clairement quelles données sont traitées, pourquoi, sur quelle base légale,
-            pendant combien de temps, et quels sont vos droits.
-            <div class="muted" style="margin-top:8px;">
-              <strong>Version de démonstration :</strong> cette page illustre le cadre. Les mentions légales et informations d’identification complètes seront affichées dans la version officielle lors de l’ouverture du service au public.
-            </div>
+          <div class="muted" style="margin-top:4px;">Dernière mise à jour : 18 février 2026</div>
+          <div class="doc box">
+            Version de démonstration : illustration de cadre (pas de souscription ici).
           </div>
-
-          <h2>1. Responsable du traitement</h2>
-          <p>
-            Le responsable du traitement et les contacts dédiés (adresse, email RGPD, DPO le cas échéant) sont indiqués dans la version officielle au moment de l’ouverture du service.
-            En attendant, cette démonstration ne permet pas de souscription ni de paiement, et n’exploite pas de base de données serveur.
-          </p>
-
-          <h2>2. Données traitées — principe de minimisation</h2>
-
-          <h3>2.1 Dans cette démonstration (locale)</h3>
+          <h2>Urgences & DAE</h2>
           <ul>
-            <li>École (démo) : mots du jour, paramètres de lecture et historique, stockés localement sur l’appareil via <strong>localStorage</strong> (aucune transmission par Bo’CitéArt dans cette démo).</li>
-            <li>Urgences/DAE (démo) : aucun enregistrement d’appel ; la géolocalisation éventuelle relève du téléphone et du navigateur (permissions système).</li>
-            <li>Sport (démo) : fiches “commerce/club” saisies en démonstration stockées localement via <strong>localStorage</strong>.</li>
+            <li>112 danger immédiat.</li>
+            <li>3919 écoute/orientation.</li>
+            <li>119 enfance en danger.</li>
           </ul>
-
-          <h3>2.2 Dans la version officielle (si activée)</h3>
-          <ul>
-            <li>Compte : identifiant de compte (ex. email selon choix), rôle, identifiants techniques, statut.</li>
-            <li>Usage : éléments nécessaires au fonctionnement des journaux et mécanismes anti-abus.</li>
-            <li>Sécurité : journaux techniques de connexion/administration, alertes et événements de sécurité.</li>
-            <li>Partenaires : informations professionnelles strictement nécessaires à la contractualisation (ex. raison sociale, email pro, SIRET si requis).</li>
-            <li>Paiements : opérés par un <strong>prestataire de services de paiement (PSP)</strong>. Bo’CitéArt ne collecte ni ne stocke les données de carte.</li>
-          </ul>
-
-          <div class="box">
-            <strong>Sport — principe “paiement direct” :</strong> le commerçant règle via PSP.
-            Le PSP réalise le versement vers les bénéficiaires indiqués (club / association / Bo’CitéArt) selon la configuration.
-            Bo’CitéArt ne stocke pas les données bancaires de carte et ne “voit” que les informations nécessaires (référence, statut, montant).
-          </div>
-
-          <h2>3. Paiements via PSP — données réellement reçues par Bo’CitéArt</h2>
-          <ul>
-            <li>Le PSP gère la transaction et la facturation/justificatifs liés au paiement selon son cadre.</li>
-            <li>Bo’CitéArt reçoit uniquement les informations nécessaires : <strong>référence</strong>, <strong>statut</strong>, <strong>date</strong>, <strong>montant</strong>, <strong>référence de compte</strong>.</li>
-            <li>Bo’CitéArt n’exploite pas les données de paiement à d’autres fins.</li>
-          </ul>
-
-          <h2>4. Finalités</h2>
-          <ul>
-            <li>Fonctionnement des comptes et des rôles (version officielle).</li>
-            <li>Visibilité “Sport” : encarts et bandeau des soutiens.</li>
-            <li>Gestion administrative et comptable (statuts de paiement, pièces, traçabilité).</li>
-            <li>Sécurité (prévention des abus, supervision, continuité).</li>
-          </ul>
-
-          <h2>5. Bases légales</h2>
-          <ul>
-            <li>Exécution du contrat (CGU/CGV) selon les cas.</li>
-            <li>Intérêt légitime : sécurité, prévention des abus, défense en justice.</li>
-            <li>Obligation légale : comptabilité et conservation.</li>
-            <li>Consentement : options nécessitant une permission sur le téléphone (géolocalisation).</li>
-          </ul>
-
-          <h2>6. Conservation</h2>
-          <ul>
-            <li>Logs sécurité : durée proportionnée, purge/anonymisation si possible.</li>
-            <li>Traçabilité paiements : durée légale applicable (comptabilité).</li>
-          </ul>
-
-          <h2>7. Urgences (112 / 3919 / 119) & DAE</h2>
-          <ul>
-            <li>Bo’CitéArt fournit un accès rapide : l’appel est réalisé via le téléphone.</li>
-            <li>Aucun enregistrement d’appel n’est effectué par Bo’CitéArt.</li>
-            <li><strong>Danger immédiat :</strong> appeler le 112. Le 3919 est un dispositif d’écoute/orientation.</li>
-          </ul>
-
-          <h2>8. Contenus tiers et liens externes</h2>
-          <ul>
-            <li>Les liens ouvrent des services tiers soumis à leurs propres politiques.</li>
-            <li>Bo’CitéArt n’est pas responsable des traitements réalisés par ces tiers.</li>
-          </ul>
-
-          <h2>9. Droits des personnes</h2>
-          <ul>
-            <li>Accès, rectification, opposition, limitation.</li>
-            <li>Effacement dans les limites légales.</li>
-            <li>Réclamation possible auprès de la CNIL.</li>
-          </ul>
-
-          <h2>10. Sécurité</h2>
-          <ul>
-            <li>Contrôle d’accès et séparation des rôles.</li>
-            <li>Journalisation des actions sensibles à des fins d’audit interne.</li>
-            <li>Désactivation à distance en cas d’incident.</li>
-          </ul>
-
-          <div class="muted" style="margin-top:10px;">
-            Les informations d’identification, l’hébergeur et les contacts RGPD seront affichés dans la version officielle lors de l’ouverture du service.
-          </div>
         </div>
 
-        <!-- CGU -->
         <div id="p-cgu" class="doc" style="display:none;">
-          <div style="font-weight:900;font-size:15px;">📘 Conditions Générales d’Utilisation (CGU) — Bo’CitéArt</div>
-          <div class="muted" style="margin-top:4px;">Dernière mise à jour : 16 février 2026</div>
-
-          <div class="box">
-            Bo’CitéArt est un dispositif territorial, culturel et citoyen.
-            Ce n’est ni un réseau social, ni un service bancaire, ni une plateforme de paiement.
-          </div>
-
-          <h2>1. Accès et compte</h2>
-          <ul>
-            <li>Consultation libre des contenus publics.</li>
-            <li>Compte requis pour certaines actions (version officielle).</li>
-          </ul>
-
-          <h2>2. Règles de comportement</h2>
-          <ul>
-            <li>Interdiction : injures, diffamation, discrimination, harcèlement.</li>
-            <li>Interdiction : fraude, manipulation, atteinte aux droits.</li>
-            <li>Sanctions : suspension/blocage en cas d’abus.</li>
-          </ul>
-
-          <h2>3. Sport — principe “soutien visible”</h2>
-          <div class="box">
-            Le bandeau sport affiche des soutiens commerciaux associés à un club et à une cause associative.
-            <br><br>
-            <strong>Objectif :</strong> rendre visible le soutien et favoriser l’adoption de l’application par la vie locale.
-            <br><br>
-            Les contenus restent encadrés (pas de commentaires libres, pas de dérives).
-          </div>
-
-          <h2>4. Urgences (112 / 3919 / 119)</h2>
-          <ul>
-            <li>Usage réservé aux situations réelles.</li>
-            <li>112 : danger immédiat. 3919 : écoute/orientation. 119 : enfance en danger.</li>
-          </ul>
-
-          <h2>5. Responsabilité</h2>
-          <ul>
-            <li>Bo’CitéArt met en œuvre des moyens raisonnables sans garantie d’absence d’erreurs.</li>
-            <li>Informations indicatives selon sources tierces.</li>
-          </ul>
-
-          <h2>6. Propriété intellectuelle</h2>
-          <p>
-            Contenus, marque, logos, mécaniques et architecture sont protégés.
-            Toute reproduction/détournement est interdit sans autorisation écrite.
-          </p>
+          <div style="font-weight:900;font-size:15px;">📘 CGU — Bo’CitéArt</div>
+          <div class="muted" style="margin-top:4px;">Dernière mise à jour : 18 février 2026</div>
+          <div class="doc box">Cadre de bon usage.</div>
         </div>
 
-        <!-- CGV -->
         <div id="p-cgv" class="doc" style="display:none;">
-          <div style="font-weight:900;font-size:15px;">📕 Conditions Générales de Vente (CGV) — Bo’CitéArt</div>
-          <div class="muted" style="margin-top:4px;">Dernière mise à jour : 16 février 2026</div>
-
-          <div class="box">
-            Les CGV s’appliquent aux partenaires professionnels/institutionnels (commerçants, collectivités, associations).
-            Les citoyens relèvent des CGU pour l’usage général.
-          </div>
-
-          <h2>1. Paiement via PSP</h2>
-          <div class="box">
-            Les paiements sont opérés via un prestataire de services de paiement (PSP).
-            Le PSP gère la transaction et reverse les montants aux bénéficiaires selon la configuration (split).
-            Bo’CitéArt ne collecte ni ne stocke les données de carte.
-          </div>
-
-          <h2>2. Offre “Sport — soutien visible d’un club”</h2>
-          <div class="box">
-            <strong>Prix :</strong> 100 € HT (120 € TTC)
-            <br>
-            <strong>Option :</strong> mise en avant “gras” + 5 € HT (+ 6 € TTC)
-            <br><br>
-            <strong>Répartition (sur 100 € HT) :</strong>
-            <ul style="margin:8px 0 0 18px;font-weight:900;">
-              <li>60 € → club sélectionné</li>
-              <li>30 € → association (cause) sélectionnée</li>
-              <li>10 € → frais techniques Bo’CitéArt (maintenance / sécurité / diffusion / traçabilité)</li>
-            </ul>
-            <div class="muted" style="margin-top:8px;">
-              Les frais PSP sont prélevés par le PSP selon son barème contractuel.
-            </div>
-          </div>
-
-          <h2>3. Facturation / justificatifs “don”</h2>
-          <ul>
-            <li>La partie “don” destinée au club et à l’association est justifiée par les pièces émises par ces entités (sur demande du commerce).</li>
-            <li>Bo’CitéArt émet sa pièce relative aux frais techniques (10 € HT) selon le cadre applicable.</li>
-            <li>Le PSP fournit le justificatif de paiement (référence, date, montant, statut).</li>
-          </ul>
-
-          <h2>4. Contenus et conformité</h2>
-          <ul>
-            <li>Bo’CitéArt peut refuser/retirer un contenu illégal, trompeur, ou portant atteinte à un tiers.</li>
-            <li>Le partenaire est responsable de ses logos, marques et autorisations.</li>
-          </ul>
-
-          <h2>5. Responsabilité</h2>
-          <ul>
-            <li>Bo’CitéArt n’est pas responsable des indisponibilités liées au PSP ou à des tiers.</li>
-            <li>Bo’CitéArt ne garantit pas un résultat commercial (visibilité ≠ ventes garanties).</li>
-          </ul>
-
-          <h2>6. Droit applicable</h2>
-          <p>Droit français.</p>
+          <div style="font-weight:900;font-size:15px;">📕 CGV — Bo’CitéArt</div>
+          <div class="muted" style="margin-top:4px;">Dernière mise à jour : 18 février 2026</div>
+          <div class="doc box">Paiements via PSP.</div>
         </div>
-
       </div>
     </div>
   </div>
@@ -1124,7 +875,7 @@
         </button>
       </div>
       <div class="body">
-        <div style="font-weight:800">Appuyez une fois pour choisir, puis revenez au bouton et faites un appui long pour appeler.</div>
+        <div style="font-weight:800">Touchez pour choisir, puis appui long pour appeler.</div>
         <div class="choiceGrid">
           <button class="choiceBtn" data-pick="3919" type="button">3919</button>
           <button class="choiceBtn" data-pick="119" type="button">119</button>
@@ -1134,11 +885,10 @@
     </div>
   </div>
 
-  <!-- ✅ Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    // --- Fix hauteur visible Android (barres Chrome) ---
+    // --- Fix hauteur visible Android ---
     function setVh(){
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -1149,15 +899,28 @@
 
     // --- Modal system ---
     const modal = document.getElementById("modal");
+    const sheet = document.getElementById("sheet");
     const modalTitle = document.getElementById("modalTitle");
     const modalBody = document.getElementById("modalBody");
-    const closeModal = () => modal.classList.remove("open");
+
+    let onModalCloseHooks = [];
+
+    const closeModal = () => {
+      // hooks (ex: stop watchPosition)
+      try { onModalCloseHooks.forEach(fn=>{ try{ fn(); }catch(e){} }); } catch(e){}
+      onModalCloseHooks = [];
+
+      modal.classList.remove("open");
+      sheet.classList.remove("fullscreen");
+    };
+
     document.getElementById("modalClose").onclick = closeModal;
     document.getElementById("xBtn").onclick = closeModal;
 
-    function openModal(title, html){
+    function openModal(title, html, opts={}){
       modalTitle.textContent = title;
       modalBody.innerHTML = html;
+      if(opts.fullscreen) sheet.classList.add("fullscreen"); else sheet.classList.remove("fullscreen");
       modal.classList.add("open");
     }
 
@@ -1170,32 +933,16 @@
         .replaceAll("'","&#039;");
     }
 
-    // ✅ Pop-up explicatif “première fois” (112 / SOS / ticker)
-    function onceInfo(key, title, html){
-      const k = "bociteart_hint_" + key;
-      if(localStorage.getItem(k) === "1") return false;
-      localStorage.setItem(k, "1");
-      openModal(title, html);
-      return true;
-    }
-
-    // --- Ticker rotation (home) ---
+    // --- Ticker home ---
     const tickerItems = [
-      {
-        title: "Annonce partenaire (démo)",
-        subtitle: "Publicités limitées • règle 16h • cadre citoyen",
-        img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60",
-      },
-      {
-        title: "Mairie (démo) : informations & agenda",
-        subtitle: "Infos utiles • alertes • événements",
-        img: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60",
-      },
+      { title:"Annonce partenaire (démo)", subtitle:"Publicités limitées • règle 16h • cadre citoyen",
+        img:"https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60" },
+      { title:"Mairie (démo) : informations & agenda", subtitle:"Infos utiles • alertes • événements",
+        img:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60" }
     ];
-    let tickerIdx = 0;
-
+    let tickerIdx=0;
     function setTicker(i){
-      const it = tickerItems[i];
+      const it=tickerItems[i];
       document.getElementById("tickerImg").src = it.img;
       document.getElementById("tickerTitleA").textContent = it.title;
       document.getElementById("tickerSubA").textContent = it.subtitle || "";
@@ -1203,235 +950,19 @@
       document.getElementById("tickerSubB").textContent = it.subtitle || "";
     }
     setTicker(0);
-    setInterval(()=>{ tickerIdx = (tickerIdx+1) % tickerItems.length; setTicker(tickerIdx); }, 10000);
+    setInterval(()=>{ tickerIdx=(tickerIdx+1)%tickerItems.length; setTicker(tickerIdx); }, 10000);
 
     document.getElementById("ticker").addEventListener("click", ()=>{
       openModal("Bandeau du haut (home)", `
-        <div style="font-weight:900;margin-bottom:8px;">À quoi sert ce bandeau ?</div>
-        <div class="box">
-          Il affiche des informations utiles (mairie / événements) et des publicités partenaires
-          dans un cadre strict : <strong>limité</strong> (max/jour) et <strong>équitable</strong> (règle 16h).
+        <div style="font-weight:900;margin-bottom:8px;">Bandeau informatif / publicitaire (cadre)</div>
+        <div class="doc box">
+          Affichage limité (10pubs max/jour) + règle d’équité 16h.
         </div>
       `);
     });
 
-    // --- Audio (démo) ---
-    function speak(text, mode){
-      if(!("speechSynthesis" in window)){
-        alert("Audio non supporté sur ce navigateur (démo).");
-        return;
-      }
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = "fr-FR";
-      u.rate = (mode==="female") ? 0.95 : 1.05;
-      u.pitch = (mode==="female") ? 1.0 : 1.35;
-      const voices = window.speechSynthesis.getVoices();
-      const fr = voices.filter(v => (v.lang||"").toLowerCase().startsWith("fr"));
-      if(fr.length) u.voice = fr[0];
-      window.speechSynthesis.speak(u);
-    }
-
     // =========================================================
-    // ✅ ÉCOLE : inchangé (démo locale)
-    // =========================================================
-    const SCHOOL_KEY = "bociteart_school_demo_v1";
-    function schoolLoad(){
-      let data = null;
-      try{ data = JSON.parse(localStorage.getItem(SCHOOL_KEY) || "null"); }catch(e){ data=null; }
-      if(!data || !Array.isArray(data.classes)){
-        data = {
-          classes: [
-            { id:"c1", name:"Classe 1", words:[], consentChild:false, lastText:"Je suis ravi aujourd’hui." },
-            { id:"c2", name:"Classe 2", words:[], consentChild:false, lastText:"Je suis ravi aujourd’hui." },
-            { id:"c3", name:"Classe 3", words:[], consentChild:false, lastText:"Je suis ravi aujourd’hui." },
-            { id:"c4", name:"Classe 4", words:[], consentChild:false, lastText:"Je suis ravi aujourd’hui." },
-            { id:"c5", name:"Classe 5", words:[], consentChild:false, lastText:"Je suis ravi aujourd’hui." },
-          ]
-        };
-        localStorage.setItem(SCHOOL_KEY, JSON.stringify(data));
-      }
-      return data;
-    }
-    function schoolSave(data){ localStorage.setItem(SCHOOL_KEY, JSON.stringify(data)); }
-    function monthKey(d=new Date()){
-      const y=d.getFullYear();
-      const m=String(d.getMonth()+1).padStart(2,"0");
-      return `${y}-${m}`;
-    }
-    function inThisMonth(iso){
-      const d=new Date(iso);
-      const now=new Date();
-      return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
-    }
-    function monthCount(cls){ return (cls.words||[]).filter(w=>inThisMonth(w.t)).length; }
-    function weekCount(cls){
-      const set=new Set();
-      (cls.words||[]).filter(w=>inThisMonth(w.t)).forEach(w=>{
-        const d=new Date(w.t);
-        const onejan=new Date(d.getFullYear(),0,1);
-        const day=Math.floor((d-onejan)/86400000);
-        const week=Math.floor((day+onejan.getDay())/7)+1;
-        set.add(`${d.getFullYear()}-${week}`);
-      });
-      return set.size;
-    }
-    function levelFor(cls){
-      const n=monthCount(cls);
-      const w=weekCount(cls);
-      if(n>=28 && w>=3) return {label:"Excellence citoyenne", coins:120};
-      if(n>=20 && w>=2) return {label:"Engagement", coins:100};
-      if(n>=12) return {label:"Participation", coins:80};
-      return {label:"En cours", coins:0};
-    }
-
-    function openSchoolHome(){
-      const data=schoolLoad();
-      const mk=monthKey();
-      const cards = data.classes.map((cls)=>{
-        const lvl=levelFor(cls);
-        const n=monthCount(cls);
-        return `
-          <div class="box" style="margin:10px 0;">
-            <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">
-              <div style="font-weight:900;">
-                ${esc(cls.name)}
-                <div class="muted" style="margin-top:4px;">${n} mot(s) ce mois • lecture enfant : ${cls.consentChild ? "oui" : "non"}</div>
-              </div>
-              <div style="font-weight:900;">🟡 ${lvl.coins}</div>
-            </div>
-
-            <div class="muted" style="margin-top:8px;">
-              Niveau : <strong>${esc(lvl.label)}</strong>
-            </div>
-
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn" type="button" data-school="listenChild" data-id="${cls.id}">▶ Voix enfant</button>
-              <button class="choiceBtn" type="button" data-school="listenSynth" data-id="${cls.id}">▶ Voix synthétique</button>
-              <button class="choiceBtn" type="button" data-school="teacher" data-id="${cls.id}">Espace Prof</button>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      openModal("École", `
-        <div style="font-weight:900;margin-bottom:8px;">Mot du jour — classes séparées (structure)</div>
-
-        <div class="box">
-          <strong>Règle :</strong> chaque classe est indépendante. Un professeur ne publie que dans sa classe.
-          <div class="muted" style="margin-top:8px;">
-            La voix de l’enfant est utilisée uniquement si l’établissement détient l’autorisation parentale.
-            Sinon : voix synthétique.
-          </div>
-        </div>
-
-        <div class="box">
-          <strong>Calcul automatique (mois : ${mk})</strong>
-          <ul style="margin:8px 0 0 18px;font-weight:900;">
-            <li>Participation : 12+ mots → 80 bocitecoins Jaune</li>
-            <li>Engagement : 20+ mots + régularité → 100 bocitecoins Jaune</li>
-            <li>Excellence citoyenne : 28+ mots + régularité → 120 bocitecoins Jaune</li>
-          </ul>
-        </div>
-
-        ${cards}
-      `);
-
-      setTimeout(()=>{
-        modalBody.querySelectorAll("[data-school]").forEach(btn=>{
-          btn.addEventListener("click", ()=>{
-            const act=btn.getAttribute("data-school");
-            const id=btn.getAttribute("data-id");
-            const d=schoolLoad();
-            const cls=d.classes.find(x=>x.id===id);
-            if(!cls) return;
-
-            if(act==="listenChild"){
-              if(!cls.consentChild){
-                alert("Voix enfant non autorisée pour cette classe (démo).");
-                return;
-              }
-              speak(cls.lastText || "Mot du jour.", "child");
-              return;
-            }
-            if(act==="listenSynth"){
-              speak(cls.lastText || "Mot du jour.", "female");
-              return;
-            }
-            if(act==="teacher"){
-              openTeacher(id);
-              return;
-            }
-          });
-        });
-      },0);
-    }
-
-    function openTeacher(classId){
-      const data=schoolLoad();
-      const cls=data.classes.find(c=>c.id===classId);
-      if(!cls) return;
-
-      const items=(cls.words||[]).filter(w=>inThisMonth(w.t)).slice().reverse().slice(0,10);
-      const lvl=levelFor(cls);
-
-      openModal("École — Espace Prof", `
-        <div style="font-weight:900;margin-bottom:8px;">Espace Prof — ${esc(cls.name)}</div>
-
-        <div class="box">
-          Mois en cours : <strong>${monthCount(cls)}</strong> mot(s) • Niveau : <strong>${esc(lvl.label)}</strong> • 🟡 <strong>${lvl.coins}</strong>
-        </div>
-
-        <div style="font-weight:900;margin-top:10px;">Lecture “voix enfant”</div>
-        <div style="display:flex;gap:10px;margin-top:8px;">
-          <button class="choiceBtn" type="button" id="consentYes">Autoriser</button>
-          <button class="choiceBtn" type="button" id="consentNo">Refuser</button>
-        </div>
-        <div class="muted" style="margin-top:8px;">
-          L’établissement conserve l’autorisation parentale.
-        </div>
-
-        <div style="font-weight:900;margin-top:12px;">Publier un mot du jour</div>
-        <input id="wordInput" class="inp" maxlength="140" placeholder="Ex : Je suis ravi aujourd’hui.">
-        <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
-          <button class="choiceBtn" type="button" id="publishWord">Publier</button>
-          <button class="choiceBtn" type="button" id="backSchool">Retour</button>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <strong>Historique (10 derniers — mois en cours)</strong>
-          <ul style="margin:10px 0 0 18px;font-weight:900;">
-            ${items.length ? items.map(w=>{
-              const dt=new Date(w.t).toLocaleString("fr-FR");
-              return `<li>${dt} — ${esc(w.text)}</li>`;
-            }).join("") : "<li>Aucun mot ce mois-ci.</li>"}
-          </ul>
-          <div class="muted" style="margin-top:8px;">(Démo) Stockage local via localStorage.</div>
-        </div>
-      `);
-
-      setTimeout(()=>{
-        const d=schoolLoad();
-        const c=d.classes.find(x=>x.id===classId);
-        if(!c) return;
-
-        document.getElementById("consentYes").onclick=()=>{ c.consentChild=true; schoolSave(d); openTeacher(classId); };
-        document.getElementById("consentNo").onclick=()=>{ c.consentChild=false; schoolSave(d); openTeacher(classId); };
-        document.getElementById("publishWord").onclick=()=>{
-          const t=(document.getElementById("wordInput").value || "").trim();
-          if(t.length<2){ alert("Texte trop court."); return; }
-          c.lastText=t;
-          c.words=c.words||[];
-          c.words.push({ t:new Date().toISOString(), text:t });
-          schoolSave(d);
-          openTeacher(classId);
-        };
-        document.getElementById("backSchool").onclick=()=> openSchoolHome();
-      },0);
-    }
-
-    // =========================================================
-    // ✅ SPORT : modèle 100€ HT / 120€ TTC + option gras +5€ HT
+    // SPORT
     // =========================================================
     const SPORT_KEY = "bociteart_sport_demo_v1";
 
@@ -1441,27 +972,8 @@
       if(!data || !Array.isArray(data.sponsors)){
         data = {
           sponsors: [
-            // ✅ 2 pubs en défilement : 1 en gras / 1 normal (différence visible)
-            {
-              id:"ex1",
-              bizName:"OdeKoré (coiffeur)",
-              clubId: 12,
-              clubName:"Hockey Club",
-              cause:"Aide aux maladies orphelines",
-              bold:true,
-              logoDataUrl:"",
-              createdAt: new Date().toISOString()
-            },
-            {
-              id:"ex2",
-              bizName:"Anaïs Fleurs",
-              clubId: 31,
-              clubName:"Club de Natation",
-              cause:"Aide aux enfants hospitalisés",
-              bold:false,
-              logoDataUrl:"",
-              createdAt: new Date().toISOString()
-            }
+            { id:"ex1", bizName:"OdeKoré (coiffeur)", clubId:12, clubName:"Hockey Club", cause:"Aide aux maladies orphelines", bold:true,  logoDataUrl:"", createdAt:new Date().toISOString() },
+            { id:"ex2", bizName:"Anaïs Fleurs",        clubId:31, clubName:"Club de Natation", cause:"Aide aux enfants hospitalisés", bold:false, logoDataUrl:"", createdAt:new Date().toISOString() }
           ]
         };
         localStorage.setItem(SPORT_KEY, JSON.stringify(data));
@@ -1477,16 +989,11 @@
       for(let i=1;i<=200;i++){
         const sp = sports[(i-1)%sports.length];
         const q = quartiers[(i-1)%quartiers.length];
-        clubs.push({
-          id:i,
-          name:`${sp} – Club ${i}`,
-          city:"Wattignies",
-          tag:q
-        });
+        clubs.push({ id:i, name:`${sp} – Club ${i}`, city:"Wattignies", tag:q });
       }
       clubs[11].name = "Hockey Club";
       clubs[30].name = "Club de Natation";
-      clubs[4].name = "FC Wattignies";
+      clubs[4].name  = "FC Wattignies";
       clubs[25].name = "Wattignies Judo";
       clubs[60].name = "Basket Club Wattignies";
       return clubs;
@@ -1496,13 +1003,12 @@
     function renderSportTickerItems(){
       const data = sportLoad();
       const items = data.sponsors.slice().reverse();
-      const safe = items.length ? items : [];
-      const twice = safe.concat(safe);
-      const html = twice.map(sp=>{
+      const twice = items.concat(items);
+      return twice.map(sp=>{
         const logoHtml = sp.logoDataUrl
           ? `<img alt="" src="${sp.logoDataUrl}">`
           : `<span style="font-weight:1000;font-size:12px;">🏷️</span>`;
-        const boldCls = sp.bold ? "stBold" : "";
+        const boldCls = sp.bold ? "bold" : "";
         const txt = `${sp.bizName} soutient ${sp.clubName} • ${sp.cause} • Et vous ?`;
         return `
           <div class="stItem">
@@ -1511,18 +1017,16 @@
           </div>
         `;
       }).join("");
-      return html;
     }
 
     function openSportHome(){
-      const tickerHtml = renderSportTickerItems();
-
       openModal("Sport", `
         <div class="sportWrap">
-          <!-- ✅ Bandeau pub sport collé en haut -->
-          <div class="sportTicker" id="sportTicker" aria-label="Bandeau sport (toucher pour détails)">
+
+          <!-- ✅ UNIQUEMENT ICI : bandeau collé en haut de l'onglet sport principal -->
+          <div class="sportTicker" id="sportTicker" aria-label="Bandeau sport">
             <div class="stRow">
-              <div class="sportMarquee" id="sportMarquee">${tickerHtml}</div>
+              <div class="sportMarquee" id="sportMarquee">${renderSportTickerItems()}</div>
               <div class="stHint">Soutiens</div>
             </div>
           </div>
@@ -1530,39 +1034,21 @@
           <div class="sportPanel">
             <div style="font-weight:1000;font-size:15px;">Soutenir un club (paiement immédiat)</div>
             <div class="miniNote">
-              Le commerçant choisit un club, ajoute son identité (logo optionnel), puis paie.
-              Le paiement est géré par un PSP (split) : club + association + Bo’CitéArt (frais techniques).
+              Choisissez un club, saisissez le commerce, option “gras”, puis paiement (démo).
             </div>
 
-            <div class="box" style="margin-top:10px;">
-              <strong>Tarif :</strong> 120 € TTC (100 € HT)
-              <br>
-              <strong>Répartition HT :</strong> 60 € club • 30 € association • 10 € frais techniques
-              <div class="muted" style="margin-top:6px;">
-                Option “mise en avant en gras” : + 5 € HT (+ 6 € TTC)
-              </div>
+            <div class="doc box" style="margin-top:10px;">
+              <strong>Tarif :</strong> 120 € TTC (100 € HT) • 
             </div>
 
             <input class="sportSearch" id="clubSearch" placeholder="Rechercher un club… (ex : hockey, natation, club 12)">
-
             <div class="clubList" id="clubList"></div>
           </div>
 
           <div class="sportPanel">
             <div style="font-weight:1000;font-size:15px;">Rapport du week-end (démo)</div>
-            <div class="miniNote">
-              Ici on affichera : résultats, agenda, et une fiche “civisme & respect” (sans humilier, sans polémiques).
-            </div>
-            <div class="box">
-              <ul style="margin:8px 0 0 18px;font-weight:900;">
-                <li>✅ Propreté vestiaires</li>
-                <li>✅ Respect arbitre</li>
-                <li>✅ Fair-play</li>
-                <li>✅ Rangement matériel</li>
-              </ul>
-              <div class="muted" style="margin-top:8px;">
-                (Officiel) La saisie se fera via un référent club, avec mécanismes anti-pression (journal, contrôles, seuils).
-              </div>
+            <div class="doc box">
+              Ici : résultats, agenda, civisme (sans humiliations).
             </div>
           </div>
         </div>
@@ -1570,18 +1056,13 @@
 
       setTimeout(()=>{
         const st = document.getElementById("sportTicker");
-        if(st){
-          st.addEventListener("click", ()=>{
-            openModal("Bandeau Sport (collé en haut)", `
-              <div style="font-weight:900;margin-bottom:8px;">À quoi sert ce bandeau ?</div>
-              <div class="box">
-                Il montre en continu les commerces qui soutiennent un club <strong>et</strong> une cause.
-                <br><br>
-                Dans cette démo : <strong>1 texte en gras</strong> et <strong>1 normal</strong> pour montrer la différence.
-              </div>
-            `);
-          });
-        }
+        st.addEventListener("click", ()=>{
+          openModal("Bandeau Sport", `
+            <div class="doc box">
+              Défilement des soutiens : 1 pub <strong>gras</strong> et 1 pub <strong>normal</strong> (différence visible).
+            </div>
+          `);
+        });
 
         const list = document.getElementById("clubList");
         const search = document.getElementById("clubSearch");
@@ -1608,7 +1089,7 @@
               const id = parseInt(btn.getAttribute("data-club"),10);
               const club = CLUBS.find(x=>x.id===id);
               if(!club) return;
-              openSportSponsorForm(club);
+              openSportSponsorForm(club); // ✅ sans bandeau
             });
           });
         }
@@ -1627,21 +1108,13 @@
       });
     }
 
+    /* ✅ IMPORTANT : plus de bandeau sport ici */
     function openSportSponsorForm(club){
       openModal("Sport — Soutenir un club", `
         <div class="sportWrap">
-
-          <!-- ✅ Bandeau pub sport collé en haut (même sur le formulaire) -->
-          <div class="sportTicker" id="sportTicker2">
-            <div class="stRow">
-              <div class="sportMarquee">${renderSportTickerItems()}</div>
-              <div class="stHint">Soutiens</div>
-            </div>
-          </div>
-
           <div class="sportPanel">
             <div style="font-weight:1000;font-size:15px;">Club sélectionné</div>
-            <div class="box">
+            <div class="doc box">
               <div style="font-weight:1000;">${esc(club.name)} <span class="muted">(#${club.id})</span></div>
               <div class="muted" style="margin-top:6px;">Ville : ${esc(club.city)} • Quartier : ${esc(club.tag)}</div>
             </div>
@@ -1654,15 +1127,12 @@
                 <input class="inp" id="bizSiret" placeholder="SIRET (optionnel)" />
               </div>
 
-              <div class="box" style="margin:0;">
+              <div class="doc box" style="margin:0;">
                 <div style="font-weight:1000;margin-bottom:6px;">Logo (optionnel)</div>
                 <input class="inp" id="bizLogo" type="file" accept="image/*">
-                <div class="muted" style="margin-top:6px;">
-                  (Officiel) le logo est contrôlé (pas d’images illégales, pas d’usurpation, pas de contenu choquant).
-                </div>
               </div>
 
-              <div style="font-weight:1000;margin-top:2px;">Cause associative (exemples)</div>
+              <div style="font-weight:1000;margin-top:2px;">Cause associative</div>
               <select class="inp" id="cause">
                 <option>Aide aux maladies orphelines</option>
                 <option>Aide aux enfants hospitalisés</option>
@@ -1672,33 +1142,18 @@
 
               <div class="toggleRow">
                 <div>
-                  Option : texte en <strong>gras</strong> dans le bandeau (+ 5 € HT)
-                  <div class="muted" style="margin-top:4px;">Plus visible immédiatement.</div>
+                  Option : texte en <strong>gras</strong> dans le bandeau (+ 6 € TTC)
                 </div>
                 <input type="checkbox" id="boldOpt">
               </div>
 
               <div class="payBar">
                 <div class="payLine"><span>Prix</span><span id="priceTtc">120 € TTC</span></div>
-                <div class="payLine"><span>Base</span><span>100 € HT</span></div>
-                <div class="payLine"><span>TVA</span><span id="tvaLine">20 €</span></div>
-                <div class="muted">Le commerce récupère sa TVA selon son régime.</div>
-                <hr style="border:none;border-top:1px solid rgba(0,0,0,.08);margin:4px 0;">
-                <div class="payLine"><span>Club</span><span id="clubPart">60 € HT</span></div>
-                <div class="payLine"><span>Association</span><span id="assoPart">30 € HT</span></div>
-                <div class="payLine"><span>Frais techniques</span><span id="techPart">10 € HT</span></div>
                 <div class="muted">
-                  Paiement via PSP : le PSP gère la transaction et peut répartir automatiquement (split) vers les bénéficiaires.
-                </div>
               </div>
 
               <button class="choiceBtn" id="payBtn" type="button" style="width:100%;">Payer et activer le soutien</button>
               <button class="choiceBtn" id="backSport" type="button" style="width:100%;">Retour Sport</button>
-
-              <div class="miniNote">
-                <strong>Factures “don” :</strong> le commerce peut demander une pièce au club et à l’association.
-                Bo’CitéArt émet la pièce relative aux frais techniques (selon le cadre).
-              </div>
             </div>
           </div>
         </div>
@@ -1707,25 +1162,10 @@
       setTimeout(()=>{
         const boldOpt = document.getElementById("boldOpt");
         const priceTtc = document.getElementById("priceTtc");
-        const tvaLine = document.getElementById("tvaLine");
-        const clubPart = document.getElementById("clubPart");
-        const assoPart = document.getElementById("assoPart");
-        const techPart = document.getElementById("techPart");
 
         function recalc(){
           const bold = !!boldOpt.checked;
-          const baseHT = 100;
-          const optHT = bold ? 5 : 0;
-          const totalHT = baseHT + optHT;
-          const tva = Math.round(totalHT * 0.20 * 100)/100;
-          const totalTTC = Math.round((totalHT + tva)*100)/100;
-
-          priceTtc.textContent = `${totalTTC} € TTC`;
-          tvaLine.textContent = `${tva} €`;
-
-          clubPart.textContent = `60 € HT`;
-          assoPart.textContent = `30 € HT`;
-          techPart.textContent = `${10 + optHT} € HT`;
+          priceTtc.textContent = bold ? "126 € TTC" : "120 € TTC";
         }
         recalc();
         boldOpt.addEventListener("change", recalc);
@@ -1734,65 +1174,43 @@
 
         document.getElementById("payBtn").onclick = async ()=>{
           const bizName = (document.getElementById("bizName").value || "").trim();
-          if(bizName.length < 2){
-            alert("Veuillez saisir le nom du commerce.");
-            return;
-          }
-          const bizEmail = (document.getElementById("bizEmail").value || "").trim();
-          const bizSiret = (document.getElementById("bizSiret").value || "").trim();
+          if(bizName.length < 2){ alert("Veuillez saisir le nom du commerce."); return; }
+
           const cause = document.getElementById("cause").value;
           const bold = !!document.getElementById("boldOpt").checked;
 
           let logoDataUrl = "";
           const file = (document.getElementById("bizLogo").files || [])[0];
           if(file){
-            try{
-              logoDataUrl = await readFileAsDataURL(file);
-            }catch(e){
-              alert("Logo non chargé (démo). Vous pouvez continuer sans logo.");
-              logoDataUrl = "";
-            }
+            try{ logoDataUrl = await readFileAsDataURL(file); } catch(e){ logoDataUrl=""; }
           }
 
           const id = "sp_" + Math.random().toString(16).slice(2);
           const d = sportLoad();
           d.sponsors.push({
-            id,
-            bizName,
-            clubId: club.id,
-            clubName: club.name,
-            cause,
-            bold,
-            logoDataUrl,
-            meta:{ bizEmail, bizSiret },
-            createdAt: new Date().toISOString()
+            id, bizName, clubId:club.id, clubName:club.name,
+            cause, bold, logoDataUrl, createdAt:new Date().toISOString()
           });
           sportSave(d);
 
           openModal("Paiement validé (démo)", `
             <div class="successBox">
-              ✅ Soutien activé : <strong>${esc(bizName)}</strong>
-              <br>
-              Club : <strong>${esc(club.name)}</strong>
-              <br>
-              Cause : <strong>${esc(cause)}</strong>
-              <br>
-              Mise en avant : <strong>${bold ? "GRAS" : "standard"}</strong>
+              ✅ Soutien activé : <strong>${esc(bizName)}</strong><br>
+              Club : <strong>${esc(club.name)}</strong><br>
+              Mise en avant : <strong>${bold ? "GRAS" : "normal"}</strong>
             </div>
-
             <button class="choiceBtn" id="goSport" type="button" style="width:100%;margin-top:10px;">Retour à l’onglet Sport</button>
           `);
 
           setTimeout(()=>{
-            const btn = document.getElementById("goSport");
-            if(btn) btn.onclick = ()=> openSportHome();
+            document.getElementById("goSport").onclick = ()=> openSportHome();
           },0);
         };
       },0);
     }
 
     // =========================================================
-    // ✅ DAE : vidéo + carte réelle + recherche 1 à 3 km
+    // DAE : recherche + navigation plein écran + itinéraire (ligne) + fléchage
     // =========================================================
     const CROIX_ROUGE_DAE_YT = "3CAmp8yKYEg";
 
@@ -1807,13 +1225,30 @@
       return 2*R*Math.asin(Math.sqrt(a));
     }
 
+    function bearingDeg(lat1, lon1, lat2, lon2){
+      const toRad = (x)=> x * Math.PI / 180;
+      const toDeg = (x)=> x * 180 / Math.PI;
+      const φ1 = toRad(lat1), φ2 = toRad(lat2);
+      const Δλ = toRad(lon2 - lon1);
+      const y = Math.sin(Δλ) * Math.cos(φ2);
+      const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
+      let θ = toDeg(Math.atan2(y, x));
+      θ = (θ + 360) % 360;
+      return θ;
+    }
+
+    function formatDistMeters(m){
+      if(m < 1000) return `${Math.round(m)} m`;
+      return `${(m/1000).toFixed(2)} km`;
+    }
+
     function openDaeVideo(){
       const yt = `https://www.youtube-nocookie.com/embed/${CROIX_ROUGE_DAE_YT}?rel=0&modestbranding=1`;
       const ytOpen = `https://www.youtube.com/watch?v=${CROIX_ROUGE_DAE_YT}`;
       openModal("Défibrillateur (DAE) — mode d’emploi", `
         <div style="font-weight:900;margin-bottom:8px;">Comprendre vite (vidéo)</div>
-        <div class="box">
-          Un DAE peut sauver une vie. En cas de danger immédiat : appelez le <strong>112</strong>.
+        <div class="doc box">
+          En cas de danger immédiat : appelez le <strong>112</strong>.
         </div>
 
         <div class="videoBox">
@@ -1828,25 +1263,20 @@
 
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
             <a class="choiceBtn" href="${ytOpen}" target="_blank" rel="noreferrer"
-               style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
+              style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
               Ouvrir sur YouTube
             </a>
-            <button class="choiceBtn" id="openDaeMap" type="button">Carte & itinéraires DAE (1–3 km)</button>
+            <button class="choiceBtn" id="goNav" type="button">Carte plein écran + itinéraire (1–3 km)</button>
           </div>
 
           <div class="muted" style="margin-top:8px;">
-            Si la vidéo ne s’affiche pas (bloqueur), utilisez “Ouvrir sur YouTube”.
+            (Démo) Itinéraire via OSRM + DAE via OpenStreetMap.
           </div>
-        </div>
-
-        <div class="box">
-          <strong>Ensuite :</strong> ouvrir la carte pour trouver le DAE le plus proche (1 à 3 km).
         </div>
       `);
 
       setTimeout(()=>{
-        const btn = document.getElementById("openDaeMap");
-        if(btn) btn.onclick = ()=> openDaeMap(2); // par défaut 2 km
+        document.getElementById("goNav").onclick = ()=> startDaeNavigation(2);
       },0);
     }
 
@@ -1878,205 +1308,369 @@
             tags["addr:postcode"],
             tags["addr:city"]
           ].filter(Boolean).join(" ");
-          return {
-            id: e.id,
-            lat: e.lat,
-            lon: e.lon,
-            name,
-            addr,
-            tags
-          };
+          return { id:e.id, lat:e.lat, lon:e.lon, name, addr };
         });
     }
 
-    function openDaeMap(km){
-      const kmSafe = (km===1 || km===2 || km===3) ? km : 2;
+    // OSRM route (walking)
+    async function fetchRouteOSRM(fromLat, fromLon, toLat, toLon){
+      const url = `https://router.project-osrm.org/route/v1/foot/${fromLon},${fromLat};${toLon},${toLat}?overview=full&geometries=geojson&steps=true`;
+      const res = await fetch(url);
+      if(!res.ok) throw new Error("OSRM indisponible");
+      const data = await res.json();
+      if(!data.routes || !data.routes[0]) throw new Error("Route non trouvée");
+      const r = data.routes[0];
+      return {
+        distanceM: r.distance,
+        durationS: r.duration,
+        geometry: r.geometry, // geojson line
+        legs: r.legs || []
+      };
+    }
 
-      openModal("DAE — Carte & itinéraires", `
-        <div style="font-weight:1000;">Rechercher des DAE autour de moi</div>
-        <div class="miniNote">
-          Choisissez un rayon (1 à 3 km), autorisez la géolocalisation, puis sélectionnez un DAE pour obtenir l’itinéraire.
-        </div>
+    function fmtDuration(s){
+      const min = Math.round(s/60);
+      if(min < 60) return `${min} min`;
+      const h = Math.floor(min/60);
+      const m = min % 60;
+      return `${h}h${String(m).padStart(2,"0")}`;
+    }
 
-        <div class="box" style="margin-top:10px;">
-          <strong>Rayon :</strong>
-          <div class="pillRow">
-            <button class="pill ${kmSafe===1?"active":""}" data-km="1" type="button">1 km</button>
-            <button class="pill ${kmSafe===2?"active":""}" data-km="2" type="button">2 km</button>
-            <button class="pill ${kmSafe===3?"active":""}" data-km="3" type="button">3 km</button>
-          </div>
-          <div class="muted" style="margin-top:8px;">
-            Données issues d’OpenStreetMap (si un DAE n’est pas référencé, il peut ne pas apparaître).
-          </div>
-        </div>
+    // plein écran navigation
+    function startDaeNavigation(km){
+      const kmSafe = (km===1||km===2||km===3) ? km : 2;
 
-        <div class="mapBox">
-          <div id="daeStatus" class="muted">📍 En attente de géolocalisation…</div>
-          <div style="height:8px;"></div>
-          <div id="daeMap" class="mapCanvas"></div>
-        </div>
+      openModal("Navigation DAE (plein écran)", `
+        <div class="navWrap">
+          <div id="navMap"></div>
 
-        <div class="sportPanel" style="padding:12px;">
-          <div style="font-weight:1000;">DAE trouvés</div>
-          <div id="daeList" class="daeList">
-            <div class="muted">—</div>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="refreshDae" type="button">Rechercher</button>
-          <button class="choiceBtn" id="backToVideo" type="button">Retour vidéo</button>
-        </div>
-
-        <div class="box" style="margin-top:10px;">
-          <strong>En cas d’arrêt cardiaque :</strong> appelez le <strong>112</strong> immédiatement, commencez le massage, puis allez chercher le DAE.
-        </div>
-      `);
-
-      setTimeout(()=>{
-        let map = null;
-        let userMarker = null;
-        let daeLayer = null;
-        let lastPos = null;
-
-        const statusEl = document.getElementById("daeStatus");
-        const listEl = document.getElementById("daeList");
-
-        function setStatus(t){ if(statusEl) statusEl.textContent = t; }
-
-        function initMap(lat, lon){
-          if(map) return;
-          map = L.map("daeMap", { zoomControl:true }).setView([lat, lon], 14);
-          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap'
-          }).addTo(map);
-
-          userMarker = L.marker([lat, lon]).addTo(map).bindPopup("Vous êtes ici");
-          daeLayer = L.layerGroup().addTo(map);
-        }
-
-        function renderList(items, userLat, userLon){
-          if(!listEl) return;
-          if(!items.length){
-            listEl.innerHTML = `<div class="muted">Aucun DAE trouvé dans ce rayon.</div>`;
-            return;
-          }
-          listEl.innerHTML = items.map((d)=>{
-            const dist = haversineKm(userLat, userLon, d.lat, d.lon);
-            const distTxt = dist < 1 ? `${Math.round(dist*1000)} m` : `${dist.toFixed(2)} km`;
-            const dir = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLon}&destination=${d.lat},${d.lon}&travelmode=walking`;
-            const osm = `https://www.openstreetmap.org/?mlat=${d.lat}&mlon=${d.lon}#map=18/${d.lat}/${d.lon}`;
-            return `
-              <div class="daeItem">
-                <div class="top">
-                  <div>
-                    <div>${esc(d.name)}</div>
-                    <div class="muted" style="margin-top:2px;">${esc(d.addr || "Adresse non renseignée")}</div>
-                  </div>
-                  <div class="dist">${esc(distTxt)}</div>
+          <div class="navHud">
+            <div class="navCard">
+              <div class="navTopRow">
+                <div>
+                  <div class="navTitle" id="navTitle">Recherche du DAE le plus proche…</div>
+                  <div class="navSub" id="navSub">Rayon ${kmSafe} km • géolocalisation en cours</div>
                 </div>
-                <div class="daeActions">
-                  <a class="daeLinkBtn" href="${dir}" target="_blank" rel="noreferrer">Itinéraire</a>
-                  <a class="daeLinkBtn" href="${osm}" target="_blank" rel="noreferrer">Voir sur OSM</a>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <button class="navBtn" id="km1" type="button">1 km</button>
+                  <button class="navBtn" id="km2" type="button">2 km</button>
+                  <button class="navBtn" id="km3" type="button">3 km</button>
                 </div>
               </div>
-            `;
-          }).join("");
-        }
 
-        async function runSearch(){
-          const radiusMeters = kmSafe * 1000;
-          setStatus(`📍 Géolocalisation… (rayon ${kmSafe} km)`);
-          listEl.innerHTML = `<div class="muted">Recherche en cours…</div>`;
+              <div class="navStats" id="navStats">
+                <span class="chip">—</span>
+              </div>
 
-          if(!navigator.geolocation){
-            setStatus("Géolocalisation non supportée sur ce navigateur.");
-            listEl.innerHTML = `<div class="muted">Impossible d’afficher la carte sans localisation.</div>`;
+              <div class="navBtns">
+                <button class="navBtn" id="recenter" type="button">Recentrer</button>
+                <button class="navBtn" id="openGmaps" type="button">Ouvrir Google Maps</button>
+              </div>
+
+              <div class="muted" id="navWarn" style="margin-top:8px;">
+                Si la boussole ne bouge pas : certains téléphones demandent une autorisation capteurs.
+              </div>
+            </div>
+          </div>
+
+          <div class="arrowWrap">
+            <div class="arrowCircle">
+              <svg class="arrowSvg" id="arrowSvg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2 L19 12 L12 10 L5 12 Z"></path>
+                <path d="M12 10 L12 22"></path>
+              </svg>
+            </div>
+            <div class="arrowHint" id="arrowHint">Flèche = direction à suivre</div>
+          </div>
+        </div>
+      `, {fullscreen:true});
+
+      // highlight km
+      setTimeout(()=>{
+        const setActive = ()=>{
+          ["km1","km2","km3"].forEach(id=>{
+            const b=document.getElementById(id);
+            b.style.background="#fff";
+          });
+          document.getElementById("km"+kmSafe).style.background="var(--beige)";
+        };
+        setActive();
+
+        document.getElementById("km1").onclick=()=> startDaeNavigation(1);
+        document.getElementById("km2").onclick=()=> startDaeNavigation(2);
+        document.getElementById("km3").onclick=()=> startDaeNavigation(3);
+      },0);
+
+      let map=null, userMarker=null, daeMarker=null, routeLine=null;
+      let watchId=null;
+
+      let target=null; // {lat, lon, name, addr}
+      let lastRoute=null; // route data
+      let lastUser=null;  // {lat, lon, heading?}
+
+      // device orientation heading fallback
+      let deviceHeading=null;
+      function setupDeviceOrientation(){
+        const handler = (e)=>{
+          // iOS uses webkitCompassHeading sometimes
+          if(typeof e.webkitCompassHeading === "number"){
+            deviceHeading = e.webkitCompassHeading;
             return;
           }
+          if(typeof e.alpha === "number"){
+            // alpha: 0 = north (varies by device), take as approx
+            deviceHeading = (360 - e.alpha) % 360;
+          }
+        };
 
-          navigator.geolocation.getCurrentPosition(async (pos)=>{
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-            lastPos = {lat, lon};
+        // iOS permission (best effort)
+        try{
+          if(typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function"){
+            // only triggers on user gesture; we try on first recenter click
+            document.getElementById("recenter").addEventListener("click", async ()=>{
+              try{
+                const p = await DeviceOrientationEvent.requestPermission();
+                if(p === "granted"){
+                  window.addEventListener("deviceorientation", handler, true);
+                }
+              }catch(e){}
+            }, {once:true});
+          }else{
+            window.addEventListener("deviceorientation", handler, true);
+          }
+        }catch(e){}
+      }
 
-            initMap(lat, lon);
-            userMarker.setLatLng([lat, lon]);
-            map.setView([lat, lon], 14);
+      function initMap(lat, lon){
+        if(map) return;
+        map = L.map("navMap", { zoomControl:true }).setView([lat, lon], 16);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19, attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
 
-            try{
-              setStatus(`🔎 Recherche des DAE… (rayon ${kmSafe} km)`);
-              const daes = await fetchDaes(lat, lon, radiusMeters);
+        userMarker = L.marker([lat, lon]).addTo(map).bindPopup("Vous êtes ici");
+      }
 
-              const withDist = daes.map(d=>({
-                ...d,
-                distKm: haversineKm(lat, lon, d.lat, d.lon)
-              })).sort((a,b)=>a.distKm-b.distKm);
+      function updateHud(){
+        const titleEl = document.getElementById("navTitle");
+        const subEl = document.getElementById("navSub");
+        const statsEl = document.getElementById("navStats");
 
-              daeLayer.clearLayers();
-              withDist.forEach((d)=>{
-                const mk = L.marker([d.lat, d.lon]).addTo(daeLayer);
-                mk.bindPopup(`<strong>${esc(d.name)}</strong><br>${esc(d.addr||"")}`);
-              });
-
-              if(withDist.length){
-                const group = L.featureGroup([userMarker, daeLayer]);
-                try{ map.fitBounds(group.getBounds().pad(0.2)); }catch(e){}
-              }
-
-              setStatus(`✅ ${withDist.length} DAE trouvé(s) dans ${kmSafe} km`);
-              renderList(withDist, lat, lon);
-
-            }catch(e){
-              setStatus("❌ Impossible de récupérer la liste des DAE (service temporairement indisponible).");
-              listEl.innerHTML = `<div class="muted">Réessayez dans quelques secondes.</div>`;
-            }
-          }, (err)=>{
-            setStatus("❌ Géolocalisation refusée ou indisponible.");
-            listEl.innerHTML = `<div class="muted">Autorisez la localisation pour afficher la carte et les DAE proches.</div>`;
-          }, { enableHighAccuracy:true, timeout:12000, maximumAge:60000 });
+        if(!lastUser){
+          titleEl.textContent = "Géolocalisation…";
+          subEl.textContent = `Rayon ${kmSafe} km`;
+          statsEl.innerHTML = `<span class="chip">—</span>`;
+          return;
         }
 
-        // boutons rayon
-        modalBody.querySelectorAll("[data-km]").forEach(b=>{
-          b.addEventListener("click", ()=>{
-            const k = parseInt(b.getAttribute("data-km"),10);
-            openDaeMap(k);
-          });
-        });
+        if(!target){
+          titleEl.textContent = "Recherche du DAE le plus proche…";
+          subEl.textContent = `Rayon ${kmSafe} km • position OK`;
+          statsEl.innerHTML = `<span class="chip">—</span>`;
+          return;
+        }
 
-        document.getElementById("refreshDae").onclick = runSearch;
-        document.getElementById("backToVideo").onclick = openDaeVideo;
+        const distKm = haversineKm(lastUser.lat, lastUser.lon, target.lat, target.lon);
+        const distM = distKm * 1000;
 
-        // lance direct
-        runSearch();
+        titleEl.textContent = `DAE : ${target.name}`;
+        subEl.textContent = target.addr ? target.addr : "Adresse non renseignée";
 
-      }, 0);
+        const chips = [];
+        chips.push(`<span class="chip">Distance : ${formatDistMeters(distM)}</span>`);
+
+        if(lastRoute){
+          chips.push(`<span class="chip">Temps : ${fmtDuration(lastRoute.durationS)}</span>`);
+        }else{
+          chips.push(`<span class="chip">Calcul itinéraire…</span>`);
+        }
+
+        statsEl.innerHTML = chips.join("");
+      }
+
+      function rotateArrow(relativeDeg){
+        const arrow = document.getElementById("arrowSvg");
+        if(!arrow) return;
+        arrow.style.transform = `rotate(${relativeDeg}deg)`;
+      }
+
+      function updateArrow(){
+        if(!lastUser || !target) return;
+
+        const heading =
+          (typeof lastUser.heading === "number" && !Number.isNaN(lastUser.heading)) ? lastUser.heading :
+          (typeof deviceHeading === "number" && !Number.isNaN(deviceHeading)) ? deviceHeading :
+          null;
+
+        // point de visée: si route => point un peu plus loin sur la polyline
+        let aimLat = target.lat, aimLon = target.lon;
+
+        if(lastRoute && lastRoute.geometry && lastRoute.geometry.coordinates && lastRoute.geometry.coordinates.length > 8){
+          const coords = lastRoute.geometry.coordinates; // [lon,lat]
+          // trouver index le plus proche
+          let bestI=0, bestD=Infinity;
+          for(let i=0;i<coords.length;i+=3){
+            const lon=coords[i][0], lat=coords[i][1];
+            const d = haversineKm(lastUser.lat,lastUser.lon,lat,lon);
+            if(d < bestD){ bestD=d; bestI=i; }
+          }
+          const j = Math.min(coords.length-1, bestI + 8);
+          aimLon = coords[j][0];
+          aimLat = coords[j][1];
+        }
+
+        const b = bearingDeg(lastUser.lat, lastUser.lon, aimLat, aimLon);
+
+        // si heading inconnu => flèche pointe vers le Nord relatif (pas parfait)
+        const rel = (heading===null) ? b : ((b - heading + 360) % 360);
+        rotateArrow(rel);
+      }
+
+      let routeTimer = null;
+      async function computeRoute(){
+        if(!lastUser || !target) return;
+        // throttle: éviter spam OSRM
+        if(routeTimer) return;
+        routeTimer = setTimeout(()=>{ routeTimer=null; }, 1200);
+
+        try{
+          const r = await fetchRouteOSRM(lastUser.lat, lastUser.lon, target.lat, target.lon);
+          lastRoute = r;
+
+          // draw line
+          if(routeLine){ routeLine.remove(); routeLine=null; }
+          const latlngs = r.geometry.coordinates.map(c=>[c[1], c[0]]);
+          routeLine = L.polyline(latlngs, { weight:6, opacity:0.85 }).addTo(map);
+
+          // fit bounds (mais pas trop agressif)
+          const b = routeLine.getBounds();
+          try{ map.fitBounds(b.pad(0.25), { animate:true }); }catch(e){}
+
+          updateHud();
+          updateArrow();
+        }catch(e){
+          lastRoute = null;
+          updateHud();
+        }
+      }
+
+      async function pickNearestDAE(radiusKm){
+        if(!lastUser) return null;
+        const radiusM = radiusKm * 1000;
+        const daes = await fetchDaes(lastUser.lat, lastUser.lon, radiusM);
+        if(!daes.length) return null;
+        const sorted = daes.map(d=>({
+          ...d,
+          distKm: haversineKm(lastUser.lat,lastUser.lon,d.lat,d.lon)
+        })).sort((a,b)=>a.distKm-b.distKm);
+        return sorted[0];
+      }
+
+      function updateMarkers(){
+        if(!map || !lastUser) return;
+        userMarker.setLatLng([lastUser.lat, lastUser.lon]);
+
+        if(target){
+          if(!daeMarker){
+            daeMarker = L.marker([target.lat, target.lon]).addTo(map).bindPopup("DAE");
+          }else{
+            daeMarker.setLatLng([target.lat, target.lon]);
+          }
+        }
+      }
+
+      function recenter(){
+        if(!map || !lastUser) return;
+        map.setView([lastUser.lat, lastUser.lon], 17, { animate:true });
+      }
+
+      // Hook stop on close
+      onModalCloseHooks.push(()=>{
+        if(watchId!==null){
+          try{ navigator.geolocation.clearWatch(watchId); }catch(e){}
+        }
+        try{
+          window.removeEventListener("deviceorientation", ()=>{}, true);
+        }catch(e){}
+      });
+
+      setupDeviceOrientation();
+
+      setTimeout(()=>{
+        document.getElementById("recenter").onclick = recenter;
+
+        document.getElementById("openGmaps").onclick = ()=>{
+          if(!lastUser || !target) return;
+          const u = `https://www.google.com/maps/dir/?api=1&origin=${lastUser.lat},${lastUser.lon}&destination=${target.lat},${target.lon}&travelmode=walking`;
+          window.open(u, "_blank");
+        };
+      },0);
+
+      // Start watchPosition
+      if(!navigator.geolocation){
+        openModal("Erreur", `<div class="doc box">Géolocalisation non supportée sur ce navigateur.</div>`);
+        return;
+      }
+
+      watchId = navigator.geolocation.watchPosition(async (pos)=>{
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const heading = pos.coords.heading; // may be null
+        lastUser = { lat, lon, heading: (typeof heading==="number" ? heading : null) };
+
+        initMap(lat, lon);
+        updateMarkers();
+        updateHud();
+        updateArrow();
+
+        // si pas de cible -> choisir le plus proche
+        if(!target){
+          try{
+            const nearest = await pickNearestDAE(kmSafe);
+            if(!nearest){
+              document.getElementById("navTitle").textContent = "Aucun DAE trouvé dans ce rayon";
+              document.getElementById("navSub").textContent = "Essayez 3 km ou vérifiez la base OSM.";
+              return;
+            }
+            target = nearest;
+
+            // marker + route
+            updateMarkers();
+            // zoom
+            try{ map.setView([lat, lon], 16); }catch(e){}
+            await computeRoute();
+          }catch(e){
+            document.getElementById("navTitle").textContent = "Service DAE indisponible";
+            document.getElementById("navSub").textContent = "Réessayez dans quelques secondes.";
+          }
+        }else{
+          // recalcul itinéraire à intervalles / déplacement
+          await computeRoute();
+        }
+
+      }, (err)=>{
+        openModal("Géolocalisation refusée", `
+          <div class="doc box">
+            Autorisez la localisation pour afficher la carte plein écran + fléchage + itinéraire.
+          </div>
+        `);
+      }, { enableHighAccuracy:true, timeout:12000, maximumAge:5000 });
     }
 
     document.getElementById("daeBtn").addEventListener("click", openDaeVideo);
 
     // =========================================================
-    // ✅ Légal : open/close + tabs
+    // Légal
     // =========================================================
     const legal = document.getElementById("legal");
-    const openLegalBtn = document.getElementById("openLegal");
-    const closeLegalBtn = document.getElementById("legalClose");
-    const closeLegalX = document.getElementById("legalX");
-
-    const openLegal = () => legal.classList.add("open");
-    const closeLegal = () => legal.classList.remove("open");
-
-    openLegalBtn.onclick = openLegal;
-    closeLegalBtn.onclick = closeLegal;
-    closeLegalX.onclick = closeLegal;
+    document.getElementById("openLegal").onclick = ()=> legal.classList.add("open");
+    document.getElementById("legalClose").onclick = ()=> legal.classList.remove("open");
+    document.getElementById("legalX").onclick = ()=> legal.classList.remove("open");
 
     document.querySelectorAll("#legal .tab").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         document.querySelectorAll("#legal .tab").forEach(b=>b.classList.remove("active"));
         btn.classList.add("active");
-
         const k = btn.getAttribute("data-tab");
         document.getElementById("p-rgpd").style.display = (k==="rgpd") ? "block" : "none";
         document.getElementById("p-cgu").style.display  = (k==="cgu")  ? "block" : "none";
@@ -2085,69 +1679,37 @@
     });
 
     // =========================================================
-    // ✅ ÉCRANS TILES
+    // Tiles
     // =========================================================
     document.querySelectorAll("[data-open]").forEach(el=>{
       el.addEventListener("click", ()=>{
         const key = el.getAttribute("data-open");
-
+        if(key==="sport"){ openSportHome(); return; }
         if(key==="oeuvres"){
-          openModal("Œuvres", `
-            <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (structure)</div>
-            <div class="box">Carte, guidage, audio, fiche œuvre.</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Carte des fresques</li>
-              <li>Fiche : artiste • mécène • remerciements</li>
-              <li>Scan QR / BLE</li>
-              <li>Audio : voix féminine douce</li>
-            </ul>
-          `);
+          openModal("Œuvres", `<div class="doc box">Structure : carte / fiche œuvre / scan / audio</div>`);
+          return;
         }
-
-        if(key==="ecole"){ openSchoolHome(); }
-        if(key==="sport"){ openSportHome(); }
-
+        if(key==="ecole"){
+          openModal("École", `<div class="doc box">Structure : mot du jour + voix</div>`);
+          return;
+        }
         if(key==="mairie"){
-          openModal("Mairie", `
-            <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
-            <div class="box">Infos utiles et alertes accessibles côté citoyen.</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Infos & alertes</li>
-              <li>Agenda / calendrier vivant</li>
-              <li>Échanges (selon activation)</li>
-            </ul>
-          `);
+          openModal("Mairie", `<div class="doc box">Structure : infos / alertes / agenda</div>`);
+          return;
         }
-
         if(key==="commerces"){
-          openModal("Commerces", `
-            <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
-            <div class="box">Bons plans + publicité limitée (max/jour) dans un cadre équitable.</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Publicité : slots limités</li>
-              <li>Règle d’équité “16h”</li>
-              <li>Paiements via PSP (pas de données de carte stockées)</li>
-            </ul>
-          `);
+          openModal("Commerces", `<div class="doc box">Structure : bons plans + cadre publicité</div>`);
+          return;
         }
       });
     });
 
     document.getElementById("adminTile").addEventListener("click", ()=>{
-      openModal("Accès Admin (structure)", `
-        <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
-        <div class="box">Rôles, blocages, journalisation, alertes, sécurité.</div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Gestion des rôles</li>
-          <li>Activation / blocage / désactivation</li>
-          <li>Journal des actions</li>
-          <li>2FA (option) • alertes tentatives</li>
-        </ul>
-      `);
+      openModal("Accès Admin (structure)", `<div class="doc box">Rôles • blocage • journal • sécurité</div>`);
     });
 
     // =========================================================
-    // ✅ Long press logic
+    // Long press logic (urgence)
     // =========================================================
     function makeLongPress(btn, ringEl, ms, onTrigger){
       let raf=null, start=null, holding=false;
@@ -2182,93 +1744,13 @@
         holding=true;
         raf = requestAnimationFrame(tick);
       });
-      ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
-        btn.addEventListener(ev, stop);
-      });
+      ["pointerup","pointerleave","pointercancel"].forEach(ev=> btn.addEventListener(ev, stop));
       btn.addEventListener("contextmenu", (e)=> e.preventDefault());
     }
 
-    // ✅ Sensibilisation urgences (1 seule fois, mémorisée)
-    function emergencyGate(kind, onOk){
-      const key = "bociteart_ack_" + kind;
-      if(localStorage.getItem(key) === "1"){
-        onOk();
-        return;
-      }
-
-      const title = (kind==="112") ? "Urgence 112 — usage responsable" : "Aide 3919 / 119 — usage responsable";
-      const body = (kind==="112") ? `
-        <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
-        <div class="box">
-          <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé par votre téléphone.
-        </div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Utiliser le 112 uniquement en cas de danger réel.</li>
-          <li>Appui long = réduction des appels accidentels.</li>
-        </ul>
-        <div class="box" style="margin-top:10px;">
-          <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
-            <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-            J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
-          </label>
-        </div>
-        <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
-      ` : `
-        <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li><strong>3919</strong> : écoute/orientation (violences, mise à l’abri, orientation)</li>
-          <li><strong>119</strong> : enfance en danger</li>
-          <li><strong>Danger immédiat</strong> : 112</li>
-        </ul>
-        <div class="box" style="margin-top:10px;">
-          <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
-            <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-            J’ai compris : j’utiliserai ces numéros uniquement en cas de situation réelle.
-          </label>
-        </div>
-        <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>
-      `;
-
-      openModal(title, body);
-
-      setTimeout(()=>{
-        const box = document.getElementById("ackBox");
-        const btn = document.getElementById("ackBtn");
-        if(!btn) return;
-        btn.onclick = ()=>{
-          if(!box || !box.checked){
-            alert("Veuillez cocher la case pour confirmer que vous avez compris.");
-            return;
-          }
-          localStorage.setItem(key, "1");
-          closeModal();
-          onOk();
-        };
-      }, 0);
-    }
-
-    // ✅ “fiche” au simple clic sur 112 / SOS (première fois)
     const btn112 = document.getElementById("btn112");
-    btn112.addEventListener("click", ()=>{
-      onceInfo("112tap", "112 — comment ça marche ?", `
-        <div style="font-weight:900;margin-bottom:8px;">Ce bouton sert à appeler le 112 (urgence)</div>
-        <div class="box">
-          Pour éviter les appels accidentels, l’appel se fait par <strong>appui long</strong>.
-          <br><br>
-          En cas d’urgence réelle : restez appuyé jusqu’au cercle complet.
-        </div>
-        <div class="muted">Un simple tap n’appelle jamais.</div>
-      `);
-    });
+    makeLongPress(btn112, document.getElementById("ring112"), 1800, ()=> alert("Démo : appel 112"));
 
-    makeLongPress(
-      btn112,
-      document.getElementById("ring112"),
-      1800,
-      ()=> emergencyGate("112", ()=> alert("Démo : appel 112 (appui long validé)."))
-    );
-
-    // 3919 / 119 choice + long press
     let sosNumber = null;
     const choice = document.getElementById("choice");
     const closeChoice = ()=> choice.classList.remove("open");
@@ -2287,30 +1769,10 @@
     });
 
     const btnSos = document.getElementById("btnSos");
-    btnSos.addEventListener("click", ()=>{
-      onceInfo("sostap", "3919 / 119 — comment ça marche ?", `
-        <div style="font-weight:900;margin-bottom:8px;">Aide femmes & enfants — comment ça marche ?</div>
-        <div class="box">
-          1) Touchez une fois : choisissez <strong>3919</strong> ou <strong>119</strong>
-          <br>
-          2) Puis faites un <strong>appui long</strong> pour appeler.
-        </div>
-        <div class="muted">Danger immédiat : 112.</div>
-      `);
+    makeLongPress(btnSos, document.getElementById("ringSos"), 2000, ()=>{
+      if(!sosNumber){ choice.classList.add("open"); return; }
+      alert("Démo : appel " + sosNumber);
     });
-
-    makeLongPress(
-      btnSos,
-      document.getElementById("ringSos"),
-      2000,
-      ()=>{
-        if(!sosNumber){
-          choice.classList.add("open");
-          return;
-        }
-        emergencyGate("sos", ()=> alert("Démo : appel " + sosNumber + " (appui long validé)."));
-      }
-    );
   </script>
 </body>
 </html>
