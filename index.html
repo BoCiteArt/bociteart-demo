@@ -1,8 +1,7 @@
-ok maintenant tu peux refaire tous le code complet en prenant compte de cela pour le dae parce que tu l'a cassé ou tu en à oublier des blocs sur le parcours total  donc refait le code complet voici le code complet à modifier <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <!-- IMPORTANT: viewport + stabilité mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Bo’CitéArt – Démo</title>
   <link rel="manifest" href="manifest.json">
@@ -17,7 +16,6 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       --beige:#efe4d3;
       --green:#2f5d46;
 
-      /* ROUGE 112 */
       --red:#a51e22;
       --redSoft:#7f1a1d;
 
@@ -25,16 +23,11 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       --muted:#6e6a63;
       --link:#1d4ed8;
 
-      /* hauteur visible mobile */
       --vh: 1vh;
     }
 
     *{ box-sizing:border-box; }
-    html, body{
-      height:100%;
-      margin:0;
-      padding:0;
-    }
+    html, body{ height:100%; margin:0; padding:0; }
     body{
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:var(--bg);
@@ -63,7 +56,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       gap:12px;
     }
 
-    /* --- Ticker --- */
+    /* --- Ticker HOME (haut) --- */
     .ticker{
       position:relative;
       overflow:hidden;
@@ -71,6 +64,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       background:var(--beige);
       height:150px;
       cursor:pointer;
+      border:2px solid rgba(0,0,0,.06);
     }
     .ticker img{
       position:absolute; inset:0;
@@ -124,6 +118,74 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       100%{ transform:translateX(-50%); }
     }
 
+    /* =========================================================
+       ✅ NOUVEAU : BANDEAU SPORT SUR LA PAGE D’ACCUEIL (HOME)
+       - visible immédiatement, sans entrer dans un sous-onglet
+       - fond clair (pas noir)
+       - texte normal vs gras (option payante)
+       - texte complet (pas de …)
+       ========================================================= */
+    .sportHomeTicker{
+      height:44px;                /* env. 1 cm */
+      border-radius:16px;
+      background:#fff;            /* ✅ clair */
+      border:2px solid rgba(0,0,0,.10);
+      overflow:hidden;
+      position:relative;
+      cursor:pointer;
+    }
+    .sportHomeTicker .stRow{
+      position:absolute; inset:0;
+      display:flex;
+      align-items:center;
+      padding:0 10px;
+      gap:10px;
+      overflow:hidden;
+      background:linear-gradient(90deg, rgba(241,230,214,.85), rgba(255,255,255,.95));
+    }
+    .sportHomeMarquee{
+      display:flex;
+      gap:30px;
+      white-space:nowrap;
+      animation: sportMarq 16s linear infinite;
+      will-change: transform;
+    }
+    .sportHomeMarquee .stItem{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:420px;
+      color:#111;
+      font-weight:900;
+      font-size:12px;
+    }
+    .stLogo{
+      width:24px;height:24px;
+      border-radius:7px;
+      background:rgba(0,0,0,.06);
+      display:flex;align-items:center;justify-content:center;
+      overflow:hidden;
+      flex:0 0 auto;
+      border:1px solid rgba(0,0,0,.06);
+    }
+    .stLogo img{ width:100%;height:100%; object-fit:cover; display:block; }
+    .stText{
+      white-space:nowrap; /* ✅ texte complet, pas d’ellipsis */
+    }
+    .stBold{ font-weight:1000; letter-spacing:.2px; }
+    .stHint{
+      margin-left:auto;
+      color:rgba(0,0,0,.70);
+      font-weight:1000;
+      font-size:11px;
+      flex:0 0 auto;
+      padding-left:10px;
+    }
+    @keyframes sportMarq{
+      0%{ transform:translateX(0); }
+      100%{ transform:translateX(-50%); }
+    }
+
     /* --- Grid tiles --- */
     .gridWrap{ position:relative; }
     .grid{
@@ -131,7 +193,6 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       grid-template-columns:1fr 1fr;
       gap:12px;
     }
-
     .tile{
       position:relative;
       width:100%;
@@ -210,6 +271,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       font-weight:900;
       box-shadow:0 10px 20px rgba(0,0,0,.18);
       user-select:none;
+      text-align:center;
     }
     .lpSmall{ width:64px; height:64px; }
     .lpCore .icon{
@@ -218,7 +280,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       opacity:.95;
     }
     .lpCore .lbl{ font-size:18px; line-height:1; }
-    .lpCore .lblSmall{ font-size:12px; line-height:1.05; }
+    .lpCore .lblSmall{ font-size:11px; line-height:1.05; }
 
     /* --- DAE button --- */
     .dae{
@@ -234,11 +296,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       font-size:16px;
       cursor:pointer;
     }
-    .heart{
-      width:64px;
-      height:64px;
-      flex:0 0 auto;
-    }
+    .heart{ width:64px; height:64px; flex:0 0 auto; }
 
     /* --- Footer complet --- */
     .footerRow{
@@ -287,21 +345,12 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
     }
 
     /* --- Modal --- */
-    .modal{
-      position:fixed;
-      inset:0;
-      display:none;
-      z-index:50;
-    }
+    .modal{ position:fixed; inset:0; display:none; z-index:50; }
     .modal.open{ display:block; }
-    .backdrop{
-      position:absolute; inset:0;
-      background:rgba(0,0,0,.40);
-    }
+    .backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.40); }
     .sheet{
       position:absolute;
-      left:50%;
-      top:50%;
+      left:50%; top:50%;
       transform:translate(-50%,-50%);
       width:min(420px, calc(100% - 18px));
       background:var(--bg);
@@ -321,8 +370,6 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       padding:14px;
       font-size:14px;
       color:var(--text);
-
-      /* IMPORTANT : long texte (RGPD/CGU/CGV) */
       max-height: min(72vh, 520px);
       overflow:auto;
     }
@@ -338,12 +385,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
     .muted{ color:var(--muted); font-size:12px; font-weight:700; }
 
     /* Choice modal */
-    .choiceGrid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:10px;
-    }
+    .choiceGrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
     .choiceBtn{
       border:2px solid rgba(0,0,0,.10);
       background:var(--beige);
@@ -388,115 +430,16 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       font-weight:800;
       margin:10px 0;
     }
-    .pillRow{
-      display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;
-    }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      background:#fff;
-      border:2px solid rgba(0,0,0,.08);
-      border-radius:999px;
-      padding:7px 10px;
-      font-weight:900;
-      font-size:12px;
-    }
 
     /* =========================================================
-       ✅ OPTIMISATION ANDROID : on réduit la HAUTEUR globale
-       ========================================================= */
-    @media (max-height: 780px){
-      .wrap{ padding:10px; gap:10px; }
-      .ticker{ height:138px; }
-      .tile{ aspect-ratio: 1 / 0.90; }
-      .grid{ gap:10px; }
-      .tile .h{ font-size:16px; }
-      .tile .p{ margin-top:6px; }
-      .dae{
-        padding:10px 12px;
-        font-size:14px;
-        border-radius:18px;
-        border-color: var(--red);
-      }
-      .heart{ width:44px; height:44px; }
-      .footerRow{ padding-bottom:8px; }
-      .iconBtn{ width:40px; height:40px; }
-      .legalBtn{ padding:9px 10px; font-size:12px; }
-      .sheet .body{ max-height:min(70vh, 460px); }
-    }
-    @media (max-height: 700px){
-      .ticker{ height:128px; }
-      .tile{ aspect-ratio: 1 / 0.80; }
-      .wrap{ gap:9px; }
-    }
-
-    /* =========================================================
-       ✅ SPORT (démo) : bandeau 1 cm + liste clubs + paiement
+       ✅ SPORT (démo) : panneaux + paiement + fiche commerce
        ========================================================= */
     .sportWrap{ display:flex; flex-direction:column; gap:12px; }
-    .sportTicker{
-      height:40px; /* ~1 cm */
-      border-radius:14px;
-      background:#111;
-      overflow:hidden;
-      border:2px solid rgba(0,0,0,.12);
-      position:relative;
-    }
-    .sportTicker .stRow{
-      position:absolute; inset:0;
-      display:flex;
-      align-items:center;
-      padding:0 10px;
-      gap:10px;
-      overflow:hidden;
-    }
-    .sportMarquee{
-      display:flex;
-      gap:28px;
-      white-space:nowrap;
-      animation: sportMarq 14s linear infinite;
-      will-change: transform;
-    }
-    .sportMarquee .stItem{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:360px;
-      color:#fff;
-      font-weight:900;
-      font-size:12px;
-    }
-    .stLogo{
-      width:22px;height:22px;
-      border-radius:6px;
-      background:rgba(255,255,255,.14);
-      display:flex;align-items:center;justify-content:center;
-      overflow:hidden;
-      flex:0 0 auto;
-    }
-    .stLogo img{ width:100%;height:100%; object-fit:cover; display:block; }
-    .stText{
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-      max-width:320px;
-    }
-    .stBold{ font-weight:1000; letter-spacing:.2px; }
-    .stHint{ margin-left:auto; color:rgba(255,255,255,.85); font-weight:900; font-size:11px; flex:0 0 auto; }
-    @keyframes sportMarq{
-      0%{ transform:translateX(0); }
-      100%{ transform:translateX(-50%); }
-    }
-
     .sportPanel{
       border:2px solid rgba(0,0,0,.08);
       background:#fff;
       border-radius:16px;
       padding:12px;
-    }
-    .sportTopRow{
-      display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;
     }
     .sportSearch{
       width:100%;
@@ -505,6 +448,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       border:2px solid rgba(0,0,0,.10);
       font-weight:900;
       background:#fff;
+      margin-top:10px;
     }
     .clubList{
       margin-top:10px;
@@ -534,12 +478,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       border:2px solid rgba(0,0,0,.08);
       white-space:nowrap;
     }
-    .formGrid{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:10px;
-      margin-top:10px;
-    }
+    .formGrid{ display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px; }
     .inp{
       width:100%;
       padding:10px;
@@ -548,11 +487,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       font-weight:900;
       background:#fff;
     }
-    .row2{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
+    .row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .miniNote{
       margin-top:8px;
       font-size:12px;
@@ -569,12 +504,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       border:2px solid rgba(0,0,0,.08);
       background:#fff;
     }
-    .payLine{
-      display:flex;
-      justify-content:space-between;
-      font-weight:900;
-      gap:12px;
-    }
+    .payLine{ display:flex; justify-content:space-between; font-weight:900; gap:12px; }
     .toggleRow{
       display:flex;
       align-items:center;
@@ -595,6 +525,28 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       padding:10px;
       font-weight:900;
     }
+
+    /* Responsive (Android) */
+    @media (max-height: 780px){
+      .wrap{ padding:10px; gap:10px; }
+      .ticker{ height:138px; }
+      .tile{ aspect-ratio: 1 / 0.90; }
+      .grid{ gap:10px; }
+      .tile .h{ font-size:16px; }
+      .tile .p{ margin-top:6px; }
+      .dae{ padding:10px 12px; font-size:14px; border-radius:18px; }
+      .heart{ width:44px; height:44px; }
+      .footerRow{ padding-bottom:8px; }
+      .iconBtn{ width:40px; height:40px; }
+      .legalBtn{ padding:9px 10px; font-size:12px; }
+      .sheet .body{ max-height:min(70vh, 460px); }
+      .sportHomeTicker{ height:42px; }
+    }
+    @media (max-height: 700px){
+      .ticker{ height:128px; }
+      .tile{ aspect-ratio: 1 / 0.80; }
+      .wrap{ gap:9px; }
+    }
   </style>
 </head>
 
@@ -602,7 +554,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
   <div class="page">
     <div class="wrap">
 
-      <!-- Ticker -->
+      <!-- Ticker HOME (haut) -->
       <div class="ticker" id="ticker" aria-label="Publicités (toucher pour détails)">
         <img id="tickerImg" alt="" />
         <div class="overlay"></div>
@@ -618,6 +570,14 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
             </div>
           </div>
           <div class="rule">10/jour • règle 16h</div>
+        </div>
+      </div>
+
+      <!-- ✅ NOUVEAU : bandeau sport sur HOME -->
+      <div class="sportHomeTicker" id="sportHomeTicker" aria-label="Bandeau Sport (visible dès l’accueil)">
+        <div class="stRow">
+          <div class="sportHomeMarquee" id="sportHomeMarquee"></div>
+          <div class="stHint">Sport • Soutiens</div>
         </div>
       </div>
 
@@ -695,7 +655,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
 
         <!-- 3919 / 119 -->
         <div class="emgSlot emgBottom">
-          <button class="lpBtn" id="btnSos" aria-label="3919/119" style="width:80px;height:80px;">
+          <button class="lpBtn" id="btnSos" aria-label="Aide femmes / enfants (3919 / 119)" style="width:80px;height:80px;">
             <svg class="lpRing" width="80" height="80" viewBox="0 0 80 80">
               <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,.25)" stroke-width="5"></circle>
               <circle id="ringSos" cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,1)"
@@ -707,7 +667,8 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.86.3 1.7.54 2.5a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.58-1.11a2 2 0 0 1 2.11-.45c.8.24 1.64.42 2.5.54A2 2 0 0 1 22 16.92z"/>
               </svg>
-              <div class="lblSmall" id="sosLabel">3919/119</div>
+              <div class="lblSmall" id="sosLabel">Aide femmes / enfants</div>
+              <div class="lblSmall" id="sosLabel2" style="opacity:.95;">(3919 / 119)</div>
             </div>
           </button>
         </div>
@@ -719,7 +680,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
           <path d="M20.8 4.6c-1.7-1.7-4.5-1.7-6.2 0L12 7.2 9.4 4.6c-1.7-1.7-4.5-1.7-6.2 0-1.7 1.7-1.7 4.5 0 6.2L12 19.6l8.8-8.8c1.7-1.7 1.7-4.5 0-6.2z"/>
           <path d="M13 8h-2v4H7v2h4v4h2v-4h4v-2h-4z" stroke="var(--red)"/>
         </svg>
-        <div>Trouver un défibrillateur autour de moi</div>
+        <div>Trouver un défibrillateur (DAE) autour de moi</div>
       </div>
 
       <!-- Footer complet -->
@@ -834,7 +795,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
           <h2>4. Finalités</h2>
           <ul>
             <li>Fonctionnement des comptes et des rôles (version officielle).</li>
-            <li>Visibilité “Sport” : encarts et bandeau des soutiens.</li>
+            <li>Visibilité “Sport” : bandeau des soutiens (home + onglet sport).</li>
             <li>Gestion administrative et comptable (statuts de paiement, pièces, traçabilité).</li>
             <li>Sécurité (prévention des abus, supervision, continuité).</li>
           </ul>
@@ -857,7 +818,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
           <ul>
             <li>Bo’CitéArt fournit un accès rapide : l’appel est réalisé via le téléphone.</li>
             <li>Aucun enregistrement d’appel n’est effectué par Bo’CitéArt.</li>
-            <li><strong>Danger immédiat :</strong> appeler le 112. Le 3919 est un dispositif d’écoute/orientation.</li>
+            <li><strong>Danger immédiat :</strong> appeler le 112. Le 3919 est un dispositif d’écoute/orientation. Le 119 concerne l’enfance en danger.</li>
           </ul>
 
           <h2>8. Contenus tiers et liens externes</h2>
@@ -912,7 +873,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
           <div class="box">
             Le bandeau sport affiche des soutiens commerciaux associés à un club et à une cause associative.
             <br><br>
-            <strong>Objectif :</strong> rendre visible le soutien et favoriser l’adoption de l’application par la vie locale.
+            <strong>Objectif :</strong> rendre visible le geste et favoriser l’adoption de l’application par la vie locale.
             <br><br>
             Les contenus restent encadrés (pas de commentaires libres, pas de dérives).
           </div>
@@ -920,7 +881,8 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
           <h2>4. Urgences (112 / 3919 / 119)</h2>
           <ul>
             <li>Usage réservé aux situations réelles.</li>
-            <li>112 : danger immédiat. 3919 : écoute/orientation. 119 : enfance en danger.</li>
+            <li>112 : plateforme d’urgence qui vous écoute et transfère au bon service (15/17/18 selon le besoin).</li>
+            <li>3919 : écoute/orientation • 119 : enfance en danger.</li>
           </ul>
 
           <h2>5. Responsabilité</h2>
@@ -957,7 +919,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
           <div class="box">
             <strong>Prix :</strong> 100 € HT (120 € TTC)
             <br>
-            <strong>Option :</strong> mise en avant “gras” + 5 € HT (+ 6 € TTC)
+            <strong>Option :</strong> mise en avant <strong>en gras</strong> + 5 € HT (+ 6 € TTC)
             <br><br>
             <strong>Répartition (sur 100 € HT) :</strong>
             <ul style="margin:8px 0 0 18px;font-weight:900;">
@@ -1010,12 +972,17 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
         </button>
       </div>
       <div class="body">
-        <div style="font-weight:800">Appuyez une fois pour choisir, puis revenez au bouton et faites un appui long pour appeler.</div>
-        <div class="choiceGrid">
-          <button class="choiceBtn" data-pick="3919" type="button">3919</button>
-          <button class="choiceBtn" data-pick="119" type="button">119</button>
+        <div style="font-weight:900">Aide d’urgence : femmes / enfants</div>
+        <div class="muted" style="margin-top:6px;">
+          Touchez une fois pour choisir, puis revenez au bouton et faites un appui long pour appeler.
         </div>
-        <div class="muted" style="margin-top:10px">3919 : écoute/orientation • 119 : enfance en danger • danger immédiat : 112</div>
+        <div class="choiceGrid">
+          <button class="choiceBtn" data-pick="3919" type="button">3919 — Aide aux femmes (écoute / orientation)</button>
+          <button class="choiceBtn" data-pick="119" type="button">119 — Enfance en danger (urgence enfant)</button>
+        </div>
+        <div class="muted" style="margin-top:10px">
+          Danger immédiat : 112 (plateforme d’urgence qui transfère vers 15/17/18 selon le besoin).
+        </div>
       </div>
     </div>
   </div>
@@ -1053,7 +1020,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
         .replaceAll("'","&#039;");
     }
 
-    // ✅ Pop-up explicatif “première fois” (112 / SOS / DAE / ticker)
+    // ✅ Pop-up explicatif “première fois”
     function onceInfo(key, title, html){
       const k = "bociteart_hint_" + key;
       if(localStorage.getItem(k) === "1") return false;
@@ -1088,16 +1055,12 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
     setTicker(0);
     setInterval(()=>{ tickerIdx = (tickerIdx+1) % tickerItems.length; setTicker(tickerIdx); }, 10000);
 
-    // ✅ CLIC SUR LE TICKER = ouvre un descriptif clair
     document.getElementById("ticker").addEventListener("click", ()=>{
       openModal("Bandeau du haut (home)", `
         <div style="font-weight:900;margin-bottom:8px;">À quoi sert ce bandeau ?</div>
-        <div class="box">
+        <div class="doc box">
           Il affiche des informations utiles (mairie / événements) et des publicités partenaires
           dans un cadre strict : <strong>limité</strong> (max/jour) et <strong>équitable</strong> (règle 16h).
-        </div>
-        <div class="box">
-          <strong>Astuce :</strong> touchez les bandeaux dans chaque onglet : ils ouvrent toujours une fiche explicative.
         </div>
       `);
     });
@@ -1120,10 +1083,418 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
     }
 
     // =========================================================
-    // ✅ ÉCOLE : inchangé (démo locale)
+    // ✅ SPORT : stockage + bandeau home + fiches
+    // =========================================================
+    const SPORT_KEY = "bociteart_sport_demo_v1";
+
+    function sportLoad(){
+      let data=null;
+      try{ data = JSON.parse(localStorage.getItem(SPORT_KEY) || "null"); }catch(e){ data=null; }
+      if(!data || !Array.isArray(data.sponsors)){
+        data = {
+          sponsors: [
+            {
+              id:"ex1",
+              bizName:"OdeKoré (coiffeur)",
+              clubId: 12,
+              clubName:"Hockey Club",
+              cause:"Association : maladies orphelines",
+              bold:false,
+              logoDataUrl:"",
+              createdAt: new Date().toISOString()
+            },
+            {
+              id:"ex2",
+              bizName:"Anaïs Fleurs",
+              clubId: 31,
+              clubName:"Club de Natation",
+              cause:"Association : enfants hospitalisés",
+              bold:true,
+              logoDataUrl:"",
+              createdAt: new Date().toISOString()
+            }
+          ]
+        };
+        localStorage.setItem(SPORT_KEY, JSON.stringify(data));
+      }
+      return data;
+    }
+    function sportSave(data){ localStorage.setItem(SPORT_KEY, JSON.stringify(data)); }
+
+    function makeClubs(){
+      const sports = ["Football","Basket","Handball","Natation","Judo","Tennis","Hockey","Athlétisme","Rugby","Badminton","Gym","Volley"];
+      const quartiers = ["Centre","Nord","Sud","Est","Ouest","Bois","Parc","Moulin","Fleurs","Stade"];
+      const clubs = [];
+      for(let i=1;i<=200;i++){
+        const sp = sports[(i-1)%sports.length];
+        const q = quartiers[(i-1)%quartiers.length];
+        clubs.push({ id:i, name:`${sp} – Club ${i}`, city:"Wattignies", tag:q });
+      }
+      clubs[11].name = "Hockey Club";
+      clubs[30].name = "Club de Natation";
+      clubs[4].name = "FC Wattignies";
+      clubs[25].name = "Wattignies Judo";
+      clubs[60].name = "Basket Club Wattignies";
+      return clubs;
+    }
+    const CLUBS = makeClubs();
+
+    // ✅ Texte COMPLET : commerce + club + association/cause (pas de …)
+    function sponsorLine(sp){
+      const asso = sp.cause || "Association : (à définir)";
+      return `${sp.bizName} soutient ${sp.clubName} • ${asso}`;
+    }
+
+    function renderSportTickerHTML(){
+      const data = sportLoad();
+      const items = data.sponsors.slice().reverse();
+      if(!items.length){
+        return `
+          <div class="stItem">
+            <div class="stLogo"><span style="font-weight:1000;font-size:12px;">🏷️</span></div>
+            <div class="stText">Sport : aucun soutien enregistré (démo).</div>
+          </div>
+        `;
+      }
+      const twice = items.concat(items); // boucle -50%
+      return twice.map(sp=>{
+        const logoHtml = sp.logoDataUrl
+          ? `<img alt="" src="${sp.logoDataUrl}">`
+          : `<span style="font-weight:1000;font-size:12px;">🏷️</span>`;
+        const boldCls = sp.bold ? "stBold" : "";
+        return `
+          <div class="stItem">
+            <div class="stLogo">${logoHtml}</div>
+            <div class="stText ${boldCls}">${esc(sponsorLine(sp))}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // ✅ HOME : actualise le bandeau sport
+    function refreshSportHomeTicker(){
+      const el = document.getElementById("sportHomeMarquee");
+      if(!el) return;
+      el.innerHTML = renderSportTickerHTML();
+    }
+    refreshSportHomeTicker();
+
+    // ✅ Clic sur bandeau sport HOME : explication + accès direct Sport
+    document.getElementById("sportHomeTicker").addEventListener("click", ()=>{
+      openModal("Bandeau Sport (sur l’accueil)", `
+        <div style="font-weight:900;margin-bottom:8px;">Visible dès l’ouverture : pourquoi ?</div>
+        <div class="doc box">
+          Pour que l’utilité saute aux yeux : <strong>un commerce</strong> + <strong>un club</strong> + <strong>une association</strong>.
+          Le geste est clair, public, et propre.
+        </div>
+        <div class="doc box">
+          <strong>Option :</strong> texte en <strong>gras</strong> (plus visible) = <strong>+ 5 € HT</strong> (soit <strong>+ 6 € TTC</strong>).
+        </div>
+        <button class="choiceBtn" id="goSportFromHome" type="button" style="width:100%;">Ouvrir l’onglet Sport</button>
+      `);
+      setTimeout(()=>{
+        const b=document.getElementById("goSportFromHome");
+        if(b) b.onclick = ()=> openSportHome();
+      },0);
+    });
+
+    function openSportHome(){
+      refreshSportHomeTicker(); // au cas où
+      openModal("Sport", `
+        <div class="sportWrap">
+          <div class="sportPanel">
+            <div style="font-weight:1000;font-size:15px;">Soutien visible (commerce → club + association)</div>
+            <div class="miniNote">
+              Le bandeau est visible sur l’accueil (home) et ici, pour que l’impact soit immédiat.
+            </div>
+
+            <div class="doc box" style="margin-top:10px;">
+              <strong>Tarif :</strong> 120 € TTC (100 € HT)<br>
+              <strong>Option gras :</strong> + 5 € HT (+ 6 € TTC)<br><br>
+              <strong>Répartition HT :</strong> 60 € club • 30 € association • 10 € frais techniques
+            </div>
+
+            <input class="sportSearch" id="clubSearch" placeholder="Rechercher un club… (ex : hockey, natation, club 12)">
+            <div class="clubList" id="clubList"></div>
+          </div>
+
+          <div class="sportPanel">
+            <div style="font-weight:1000;font-size:15px;">Rapport du week-end (démo)</div>
+            <div class="miniNote">
+              Ici on affichera : résultats, agenda, et une fiche “civisme & respect” (sans polémiques).
+            </div>
+            <div class="doc box">
+              <ul style="margin:8px 0 0 18px;font-weight:900;">
+                <li>✅ Propreté vestiaires</li>
+                <li>✅ Respect arbitre</li>
+                <li>✅ Fair-play</li>
+                <li>✅ Rangement matériel</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `);
+
+      setTimeout(()=>{
+        const list = document.getElementById("clubList");
+        const search = document.getElementById("clubSearch");
+
+        function renderClubs(filter=""){
+          const f = (filter||"").trim().toLowerCase();
+          const shown = CLUBS.filter(c=>{
+            if(!f) return true;
+            return (c.name.toLowerCase().includes(f) || String(c.id).includes(f) || c.tag.toLowerCase().includes(f));
+          }).slice(0, 30);
+
+          list.innerHTML = shown.map(c=>`
+            <button class="clubBtn" type="button" data-club="${c.id}">
+              <div style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;">
+                <div>${esc(c.name)}</div>
+                <div class="clubMeta">${esc(c.city)} • #${c.id}</div>
+              </div>
+              <span class="tag">${esc(c.tag)}</span>
+            </button>
+          `).join("");
+
+          list.querySelectorAll("[data-club]").forEach(btn=>{
+            btn.addEventListener("click", ()=>{
+              const id = parseInt(btn.getAttribute("data-club"),10);
+              const club = CLUBS.find(x=>x.id===id);
+              if(!club) return;
+              openSportSponsorForm(club);
+            });
+          });
+        }
+
+        renderClubs("");
+        search.addEventListener("input", ()=> renderClubs(search.value));
+      },0);
+    }
+
+    function readFileAsDataURL(file){
+      return new Promise((resolve,reject)=>{
+        const r = new FileReader();
+        r.onload = ()=> resolve(String(r.result||""));
+        r.onerror = ()=> reject(new Error("Erreur lecture fichier"));
+        r.readAsDataURL(file);
+      });
+    }
+
+    // ✅ mini “modèle” reçu fiscal (démo) téléchargeable
+    function downloadReceiptTemplate(){
+      const text =
+`MODELE (DEMO) — Reçu fiscal / Attestation de don
+Association : ________________________
+SIREN/SIRET : ________________________
+Adresse : ____________________________
+Donateur (commerce) : ________________
+Montant du don : _____________________
+Date : _______________________________
+Objet : Soutien citoyen (Bo’CitéArt — Sport)
+
+NB : Ceci est un modèle DEMO. En réel, l'association émet son document officiel selon son cadre.`;
+      const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "modele-recu-fiscal-demo.txt";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=> URL.revokeObjectURL(url), 1000);
+    }
+
+    function openSportSponsorForm(club){
+      openModal("Sport — Soutenir un club", `
+        <div class="sportWrap">
+
+          <div class="sportPanel">
+            <div style="font-weight:1000;font-size:15px;">Club sélectionné</div>
+            <div class="doc box">
+              <div style="font-weight:1000;">${esc(club.name)} <span class="muted">(#${club.id})</span></div>
+              <div class="muted" style="margin-top:6px;">Ville : ${esc(club.city)} • Quartier : ${esc(club.tag)}</div>
+            </div>
+
+            <div style="font-weight:1000;margin-top:10px;">Fiche commerce (facturation)</div>
+            <div class="miniNote">
+              Dans la version officielle, ces coordonnées servent à la facturation et aux justificatifs.
+            </div>
+
+            <div class="formGrid">
+              <input class="inp" id="bizName" placeholder="Nom du commerce (obligatoire)" />
+              <div class="row2">
+                <input class="inp" id="bizContact" placeholder="Nom du contact (optionnel)" />
+                <input class="inp" id="bizPhone" placeholder="Téléphone (optionnel)" />
+              </div>
+              <div class="row2">
+                <input class="inp" id="bizEmail" placeholder="Email pro (optionnel)" />
+                <input class="inp" id="bizSiret" placeholder="SIRET (optionnel)" />
+              </div>
+              <input class="inp" id="bizAddr" placeholder="Adresse (optionnel)" />
+              <div class="row2">
+                <input class="inp" id="bizZip" placeholder="Code postal (optionnel)" />
+                <input class="inp" id="bizCity" placeholder="Ville (optionnel)" />
+              </div>
+
+              <div class="doc box" style="margin:0;">
+                <div style="font-weight:1000;margin-bottom:6px;">Logo (optionnel) — emplacement prévu</div>
+                <input class="inp" id="bizLogo" type="file" accept="image/*">
+                <div class="muted" style="margin-top:6px;">
+                  (Officiel) logo contrôlé : pas d’usurpation, pas de contenu choquant.
+                </div>
+              </div>
+
+              <div style="font-weight:1000;margin-top:2px;">Association soutenue (cause)</div>
+              <select class="inp" id="cause">
+                <option>Association : maladies orphelines</option>
+                <option>Association : enfants hospitalisés</option>
+                <option>Association : personnes âgées isolées</option>
+                <option>Association : handicap</option>
+              </select>
+
+              <div class="toggleRow">
+                <div>
+                  Option : texte en <strong>gras</strong> dans le bandeau (+ 5 € HT)
+                  <div class="muted" style="margin-top:4px;">Plus visible immédiatement.</div>
+                </div>
+                <input type="checkbox" id="boldOpt">
+              </div>
+
+              <div class="toggleRow" style="background:#fff;">
+                <div>
+                  Je souhaite que l’association émette un <strong>reçu / attestation</strong> (défiscalisation)
+                  <div class="muted" style="margin-top:4px;">En démo : modèle téléchargeable.</div>
+                </div>
+                <input type="checkbox" id="wantReceipt">
+              </div>
+
+              <div class="payBar">
+                <div class="payLine"><span>Prix TTC</span><span id="priceTtc">120 € TTC</span></div>
+                <div class="payLine"><span>Détail</span><span id="detailLine">100 € HT + 20 € TVA</span></div>
+                <div class="muted">Option gras : + 5 € HT (+ 6 € TTC) → visibilité (diffusion).</div>
+                <hr style="border:none;border-top:1px solid rgba(0,0,0,.08);margin:4px 0;">
+                <div class="payLine"><span>Club</span><span id="clubPart">60 € HT</span></div>
+                <div class="payLine"><span>Association</span><span id="assoPart">30 € HT</span></div>
+                <div class="payLine"><span>Frais techniques</span><span id="techPart">10 € HT</span></div>
+                <div class="muted">
+                  En version officielle : paiement via PSP (split possible). Bo’CitéArt ne stocke pas les cartes.
+                </div>
+              </div>
+
+              <button class="choiceBtn" id="dlReceipt" type="button" style="width:100%;">Télécharger modèle reçu fiscal (démo)</button>
+              <button class="choiceBtn" id="payBtn" type="button" style="width:100%;">Payer et activer le soutien</button>
+              <button class="choiceBtn" id="backSport" type="button" style="width:100%;">Retour Sport</button>
+            </div>
+          </div>
+        </div>
+      `);
+
+      setTimeout(()=>{
+        const boldOpt = document.getElementById("boldOpt");
+        const priceTtc = document.getElementById("priceTtc");
+        const detailLine = document.getElementById("detailLine");
+        const clubPart = document.getElementById("clubPart");
+        const assoPart = document.getElementById("assoPart");
+        const techPart = document.getElementById("techPart");
+
+        function recalc(){
+          const bold = !!boldOpt.checked;
+          const baseHT = 100;
+          const optHT = bold ? 5 : 0;
+          const totalHT = baseHT + optHT;
+          const tva = Math.round(totalHT * 0.20 * 100)/100;
+          const totalTTC = Math.round((totalHT + tva)*100)/100;
+
+          priceTtc.textContent = `${totalTTC} € TTC`;
+          detailLine.textContent = `${totalHT} € HT + ${tva} € TVA`;
+
+          clubPart.textContent = `60 € HT`;
+          assoPart.textContent = `30 € HT`;
+          techPart.textContent = `${10 + optHT} € HT`;
+        }
+        recalc();
+        boldOpt.addEventListener("change", recalc);
+
+        document.getElementById("dlReceipt").onclick = downloadReceiptTemplate;
+        document.getElementById("backSport").onclick = ()=> openSportHome();
+
+        document.getElementById("payBtn").onclick = async ()=>{
+          const bizName = (document.getElementById("bizName").value || "").trim();
+          if(bizName.length < 2){
+            alert("Veuillez saisir le nom du commerce.");
+            return;
+          }
+
+          const meta = {
+            bizContact:(document.getElementById("bizContact").value||"").trim(),
+            bizPhone:(document.getElementById("bizPhone").value||"").trim(),
+            bizEmail:(document.getElementById("bizEmail").value||"").trim(),
+            bizSiret:(document.getElementById("bizSiret").value||"").trim(),
+            bizAddr:(document.getElementById("bizAddr").value||"").trim(),
+            bizZip:(document.getElementById("bizZip").value||"").trim(),
+            bizCity:(document.getElementById("bizCity").value||"").trim(),
+            wantReceipt: !!document.getElementById("wantReceipt").checked
+          };
+
+          const cause = document.getElementById("cause").value;
+          const bold = !!document.getElementById("boldOpt").checked;
+
+          let logoDataUrl = "";
+          const file = (document.getElementById("bizLogo").files || [])[0];
+          if(file){
+            try{ logoDataUrl = await readFileAsDataURL(file); }
+            catch(e){ alert("Logo non chargé (démo). Vous pouvez continuer sans logo."); logoDataUrl=""; }
+          }
+
+          // (Démo) paiement simulé + inscription sponsor
+          const id = "sp_" + Math.random().toString(16).slice(2);
+          const d = sportLoad();
+          d.sponsors.push({
+            id,
+            bizName,
+            clubId: club.id,
+            clubName: club.name,
+            cause,
+            bold,
+            logoDataUrl,
+            meta,
+            createdAt: new Date().toISOString()
+          });
+          sportSave(d);
+
+          refreshSportHomeTicker(); // ✅ visible immédiatement sur HOME
+
+          openModal("Paiement validé (démo)", `
+            <div class="successBox">
+              ✅ Soutien activé
+              <div style="margin-top:8px;"><strong>Commerce :</strong> ${esc(bizName)}</div>
+              <div><strong>Club :</strong> ${esc(club.name)}</div>
+              <div><strong>Association :</strong> ${esc(cause)}</div>
+              <div><strong>Affichage :</strong> ${bold ? "<span style='font-weight:1000;'>GRAS</span> (+5€ HT)" : "standard"}</div>
+            </div>
+
+            <div class="doc box">
+              Vous voyez maintenant le bandeau sport sur <strong>la page d’accueil</strong> : c’est immédiat pour un élu / la CCI.
+            </div>
+
+            <button class="choiceBtn" id="goHome" type="button" style="width:100%;">Retour à l’accueil</button>
+            <button class="choiceBtn" id="goSport" type="button" style="width:100%;">Retour à l’onglet Sport</button>
+          `);
+
+          setTimeout(()=>{
+            const b1=document.getElementById("goHome");
+            const b2=document.getElementById("goSport");
+            if(b1) b1.onclick = ()=> closeModal();
+            if(b2) b2.onclick = ()=> openSportHome();
+          },0);
+        };
+      },0);
+    }
+
+    // =========================================================
+    // ✅ ÉCOLE (inchangé – démo locale)
     // =========================================================
     const SCHOOL_KEY = "bociteart_school_demo_v1";
-
     function schoolLoad(){
       let data = null;
       try{ data = JSON.parse(localStorage.getItem(SCHOOL_KEY) || "null"); }catch(e){ data=null; }
@@ -1180,7 +1551,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
         const lvl=levelFor(cls);
         const n=monthCount(cls);
         return `
-          <div class="box" style="margin:10px 0;">
+          <div class="doc box" style="margin:10px 0;">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">
               <div style="font-weight:900;">
                 ${esc(cls.name)}
@@ -1188,11 +1559,9 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
               </div>
               <div style="font-weight:900;">🟡 ${lvl.coins}</div>
             </div>
-
             <div class="muted" style="margin-top:8px;">
               Niveau : <strong>${esc(lvl.label)}</strong>
             </div>
-
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
               <button class="choiceBtn" type="button" data-school="listenChild" data-id="${cls.id}">▶ Voix enfant</button>
               <button class="choiceBtn" type="button" data-school="listenSynth" data-id="${cls.id}">▶ Voix synthétique</button>
@@ -1205,7 +1574,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       openModal("École", `
         <div style="font-weight:900;margin-bottom:8px;">Mot du jour — classes séparées (structure)</div>
 
-        <div class="box">
+        <div class="doc box">
           <strong>Règle :</strong> chaque classe est indépendante. Un professeur ne publie que dans sa classe.
           <div class="muted" style="margin-top:8px;">
             La voix de l’enfant est utilisée uniquement si l’établissement détient l’autorisation parentale.
@@ -1213,7 +1582,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
           </div>
         </div>
 
-        <div class="box">
+        <div class="doc box">
           <strong>Calcul automatique (mois : ${mk})</strong>
           <ul style="margin:8px 0 0 18px;font-weight:900;">
             <li>Participation : 12+ mots → 80 bocitecoins Jaune</li>
@@ -1235,10 +1604,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
             if(!cls) return;
 
             if(act==="listenChild"){
-              if(!cls.consentChild){
-                alert("Voix enfant non autorisée pour cette classe (démo).");
-                return;
-              }
+              if(!cls.consentChild){ alert("Voix enfant non autorisée pour cette classe (démo)."); return; }
               speak(cls.lastText || "Mot du jour.", "child");
               return;
             }
@@ -1266,7 +1632,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       openModal("École — Espace Prof", `
         <div style="font-weight:900;margin-bottom:8px;">Espace Prof — ${esc(cls.name)}</div>
 
-        <div class="box">
+        <div class="doc box">
           Mois en cours : <strong>${monthCount(cls)}</strong> mot(s) • Niveau : <strong>${esc(lvl.label)}</strong> • 🟡 <strong>${lvl.coins}</strong>
         </div>
 
@@ -1286,7 +1652,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
           <button class="choiceBtn" type="button" id="backSchool">Retour</button>
         </div>
 
-        <div class="box" style="margin-top:12px;">
+        <div class="doc box" style="margin-top:12px;">
           <strong>Historique (10 derniers — mois en cours)</strong>
           <ul style="margin:10px 0 0 18px;font-weight:900;">
             ${items.length ? items.map(w=>{
@@ -1319,416 +1685,6 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
     }
 
     // =========================================================
-    // ✅ SPORT : modèle 100€ HT / 120€ TTC + option gras +5€ HT
-    // =========================================================
-    const SPORT_KEY = "bociteart_sport_demo_v1";
-
-    function sportLoad(){
-      let data=null;
-      try{ data = JSON.parse(localStorage.getItem(SPORT_KEY) || "null"); }catch(e){ data=null; }
-      if(!data || !Array.isArray(data.sponsors)){
-        data = {
-          sponsors: [
-            // exemples “wouah” dès le départ
-            {
-              id:"ex1",
-              bizName:"OdeKoré (coiffeur)",
-              clubId: 12,
-              clubName:"Hockey Club",
-              cause:"Aide aux maladies orphelines",
-              bold:false,
-              logoDataUrl:"",
-              createdAt: new Date().toISOString()
-            },
-            {
-              id:"ex2",
-              bizName:"Anaïs Fleurs",
-              clubId: 31,
-              clubName:"Club de Natation",
-              cause:"Aide aux enfants hospitalisés",
-              bold:true,
-              logoDataUrl:"",
-              createdAt: new Date().toISOString()
-            }
-          ]
-        };
-        localStorage.setItem(SPORT_KEY, JSON.stringify(data));
-      }
-      return data;
-    }
-    function sportSave(data){ localStorage.setItem(SPORT_KEY, JSON.stringify(data)); }
-
-    function makeClubs(){
-      const sports = ["Football","Basket","Handball","Natation","Judo","Tennis","Hockey","Athlétisme","Rugby","Badminton","Gym","Volley"];
-      const quartiers = ["Centre","Nord","Sud","Est","Ouest","Bois","Parc","Moulin","Fleurs","Stade"];
-      const clubs = [];
-      for(let i=1;i<=200;i++){
-        const sp = sports[(i-1)%sports.length];
-        const q = quartiers[(i-1)%quartiers.length];
-        clubs.push({
-          id:i,
-          name:`${sp} – Club ${i}`,
-          city:"Wattignies",
-          tag:q
-        });
-      }
-      // quelques noms plus “réels”
-      clubs[11].name = "Hockey Club";
-      clubs[30].name = "Club de Natation";
-      clubs[4].name = "FC Wattignies";
-      clubs[25].name = "Wattignies Judo";
-      clubs[60].name = "Basket Club Wattignies";
-      return clubs;
-    }
-    const CLUBS = makeClubs();
-
-    function renderSportTickerItems(){
-      const data = sportLoad();
-      const items = data.sponsors.slice().reverse(); // récent d’abord
-      const safe = items.length ? items : [];
-      const twice = safe.concat(safe); // pour boucle -50%
-      const html = twice.map(sp=>{
-        const logoHtml = sp.logoDataUrl
-          ? `<img alt="" src="${sp.logoDataUrl}">`
-          : `<span style="font-weight:1000;font-size:12px;">🏷️</span>`;
-        const boldCls = sp.bold ? "stBold" : "";
-        const txt = `${sp.bizName} soutient ${sp.clubName} • ${sp.cause} • Et vous ?`;
-        return `
-          <div class="stItem">
-            <div class="stLogo">${logoHtml}</div>
-            <div class="stText ${boldCls}">${esc(txt)}</div>
-          </div>
-        `;
-      }).join("");
-      return html;
-    }
-
-    function openSportHome(){
-      const data = sportLoad();
-      const tickerHtml = renderSportTickerItems();
-
-      openModal("Sport", `
-        <div class="sportWrap">
-          <div class="sportTicker" id="sportTicker" aria-label="Bandeau sport (toucher pour détails)">
-            <div class="stRow">
-              <div class="sportMarquee" id="sportMarquee">${tickerHtml}</div>
-              <div class="stHint">Soutiens</div>
-            </div>
-          </div>
-
-          <div class="sportPanel">
-            <div style="font-weight:1000;font-size:15px;">Soutenir un club (paiement immédiat)</div>
-            <div class="miniNote">
-              Le commerçant choisit un club, ajoute son identité (logo optionnel), puis paie.
-              Le paiement est géré par un PSP (split) : club + association + Bo’CitéArt (frais techniques).
-            </div>
-
-            <div class="box" style="margin-top:10px;">
-              <strong>Tarif :</strong> 120 € TTC (100 € HT)
-              <br>
-              <strong>Répartition HT :</strong> 60 € club • 30 € association • 10 € frais techniques
-              <div class="muted" style="margin-top:6px;">
-                Option “mise en avant en gras” : + 5 € HT (+ 6 € TTC)
-              </div>
-            </div>
-
-            <input class="sportSearch" id="clubSearch" placeholder="Rechercher un club… (ex : hockey, natation, club 12)">
-
-            <div class="clubList" id="clubList"></div>
-          </div>
-
-          <div class="sportPanel">
-            <div style="font-weight:1000;font-size:15px;">Rapport du week-end (démo)</div>
-            <div class="miniNote">
-              Ici on affichera : résultats, agenda, et une fiche “civisme & respect” (sans humilier, sans polémiques).
-            </div>
-            <div class="box">
-              <ul style="margin:8px 0 0 18px;font-weight:900;">
-                <li>✅ Propreté vestiaires</li>
-                <li>✅ Respect arbitre</li>
-                <li>✅ Fair-play</li>
-                <li>✅ Rangement matériel</li>
-              </ul>
-              <div class="muted" style="margin-top:8px;">
-                (Officiel) La saisie se fera via un référent club, avec mécanismes anti-pression (journal, contrôles, seuils).
-              </div>
-            </div>
-          </div>
-        </div>
-      `);
-
-      // interactions
-      setTimeout(()=>{
-        // bandeau sport = fiche explicative
-        const st = document.getElementById("sportTicker");
-        if(st){
-          st.addEventListener("click", ()=>{
-            openModal("Bandeau Sport (1 cm)", `
-              <div style="font-weight:900;margin-bottom:8px;">À quoi sert ce bandeau ?</div>
-              <div class="box">
-                Il montre en continu les commerces qui soutiennent un club <strong>et</strong> une cause.
-                C’est un levier de visibilité “propre” : simple, lisible, utile.
-              </div>
-              <div class="box">
-                <strong>Concret :</strong> “OdeKoré soutient Hockey Club • maladies orphelines • Et vous ?”
-                <br><br>
-                Pour apparaître : le commerce choisit un club et paie (PSP).
-              </div>
-              <div class="muted">
-                (Démo) Les logos sont optionnels. En version officielle : contrôle de conformité + anti-abus.
-              </div>
-            `);
-          });
-        }
-
-        // list clubs
-        const list = document.getElementById("clubList");
-        const search = document.getElementById("clubSearch");
-
-        function renderClubs(filter=""){
-          const f = (filter||"").trim().toLowerCase();
-          const shown = CLUBS.filter(c=>{
-            if(!f) return true;
-            return (c.name.toLowerCase().includes(f) || String(c.id).includes(f) || c.tag.toLowerCase().includes(f));
-          }).slice(0, 30);
-
-          list.innerHTML = shown.map(c=>`
-            <button class="clubBtn" type="button" data-club="${c.id}">
-              <div style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;">
-                <div>${esc(c.name)}</div>
-                <div class="clubMeta">${esc(c.city)} • #${c.id}</div>
-              </div>
-              <span class="tag">${esc(c.tag)}</span>
-            </button>
-          `).join("");
-
-          list.querySelectorAll("[data-club]").forEach(btn=>{
-            btn.addEventListener("click", ()=>{
-              const id = parseInt(btn.getAttribute("data-club"),10);
-              const club = CLUBS.find(x=>x.id===id);
-              if(!club) return;
-              openSportSponsorForm(club);
-            });
-          });
-        }
-
-        renderClubs("");
-        search.addEventListener("input", ()=> renderClubs(search.value));
-      },0);
-    }
-
-    function readFileAsDataURL(file){
-      return new Promise((resolve,reject)=>{
-        const r = new FileReader();
-        r.onload = ()=> resolve(String(r.result||""));
-        r.onerror = ()=> reject(new Error("Erreur lecture fichier"));
-        r.readAsDataURL(file);
-      });
-    }
-
-    function openSportSponsorForm(club){
-      openModal("Sport — Soutenir un club", `
-        <div class="sportWrap">
-
-          <div class="sportTicker" id="sportTicker2">
-            <div class="stRow">
-              <div class="sportMarquee">${renderSportTickerItems()}</div>
-              <div class="stHint">Soutiens</div>
-            </div>
-          </div>
-
-          <div class="sportPanel">
-            <div style="font-weight:1000;font-size:15px;">Club sélectionné</div>
-            <div class="box">
-              <div style="font-weight:1000;">${esc(club.name)} <span class="muted">(#${club.id})</span></div>
-              <div class="muted" style="margin-top:6px;">Ville : ${esc(club.city)} • Quartier : ${esc(club.tag)}</div>
-            </div>
-
-            <div style="font-weight:1000;margin-top:10px;">Identité du commerce</div>
-            <div class="formGrid">
-              <input class="inp" id="bizName" placeholder="Nom du commerce (ex : OdeKoré)" />
-              <div class="row2">
-                <input class="inp" id="bizEmail" placeholder="Email pro (optionnel)" />
-                <input class="inp" id="bizSiret" placeholder="SIRET (optionnel)" />
-              </div>
-
-              <div class="box" style="margin:0;">
-                <div style="font-weight:1000;margin-bottom:6px;">Logo (optionnel)</div>
-                <input class="inp" id="bizLogo" type="file" accept="image/*">
-                <div class="muted" style="margin-top:6px;">
-                  (Officiel) le logo est contrôlé (pas d’images illégales, pas d’usurpation, pas de contenu choquant).
-                </div>
-              </div>
-
-              <div style="font-weight:1000;margin-top:2px;">Cause associative (exemples)</div>
-              <select class="inp" id="cause">
-                <option>Aide aux maladies orphelines</option>
-                <option>Aide aux enfants hospitalisés</option>
-                <option>Aide aux personnes âgées isolées</option>
-                <option>Aide au handicap</option>
-              </select>
-
-              <div class="toggleRow">
-                <div>
-                  Option : texte en <strong>gras</strong> dans le bandeau (+ 5 € HT)
-                  <div class="muted" style="margin-top:4px;">Plus visible immédiatement.</div>
-                </div>
-                <input type="checkbox" id="boldOpt">
-              </div>
-
-              <div class="payBar">
-                <div class="payLine"><span>Prix</span><span id="priceTtc">120 € TTC</span></div>
-                <div class="payLine"><span>Base</span><span>100 € HT</span></div>
-                <div class="payLine"><span>TVA</span><span id="tvaLine">20 €</span></div>
-                <div class="muted">Le commerce récupère sa TVA selon son régime.</div>
-                <hr style="border:none;border-top:1px solid rgba(0,0,0,.08);margin:4px 0;">
-                <div class="payLine"><span>Club</span><span id="clubPart">60 € HT</span></div>
-                <div class="payLine"><span>Association</span><span id="assoPart">30 € HT</span></div>
-                <div class="payLine"><span>Frais techniques</span><span id="techPart">10 € HT</span></div>
-                <div class="muted">
-                  Paiement via PSP : le PSP gère la transaction et peut répartir automatiquement (split) vers les bénéficiaires.
-                </div>
-              </div>
-
-              <button class="choiceBtn" id="payBtn" type="button" style="width:100%;">Payer et activer le soutien</button>
-              <button class="choiceBtn" id="backSport" type="button" style="width:100%;">Retour Sport</button>
-
-              <div class="miniNote">
-                <strong>Factures “don” :</strong> le commerce peut demander une pièce au club et à l’association.
-                Bo’CitéArt émet la pièce relative aux frais techniques (selon le cadre).
-              </div>
-
-              <div class="box">
-                <strong>Onboarding PSP (vrai modèle)</strong> :
-                <ul style="margin:8px 0 0 18px;font-weight:900;">
-                  <li>Le PSP peut fournir une page sécurisée pour créer/valider les comptes bénéficiaires (club / association / Bo’CitéArt).</li>
-                  <li>Le commerce ne saisit pas les IBAN dans Bo’CitéArt : c’est le PSP qui gère.</li>
-                  <li>Bo’CitéArt conserve seulement les identifiants PSP (références), pas les données sensibles.</li>
-                </ul>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      `);
-
-      setTimeout(()=>{
-        // bandeau sport = fiche explicative
-        const st = document.getElementById("sportTicker2");
-        if(st){
-          st.addEventListener("click", ()=>{
-            openModal("Bandeau Sport", `
-              <div style="font-weight:900;margin-bottom:8px;">Vous voyez ?</div>
-              <div class="box">
-                C’est exactement ce que verra un citoyen en ouvrant l’onglet Sport.
-                <br><br>
-                Le commerce comprend immédiatement l’intérêt : <strong>être cité</strong>, en continu, proprement.
-              </div>
-            `);
-          });
-        }
-
-        const boldOpt = document.getElementById("boldOpt");
-        const priceTtc = document.getElementById("priceTtc");
-        const tvaLine = document.getElementById("tvaLine");
-        const clubPart = document.getElementById("clubPart");
-        const assoPart = document.getElementById("assoPart");
-        const techPart = document.getElementById("techPart");
-
-        function recalc(){
-          const bold = !!boldOpt.checked;
-          // base = 100€ HT => 120€ TTC
-          // option gras = 5€ HT => 6€ TTC (TVA 20%)
-          const baseHT = 100;
-          const optHT = bold ? 5 : 0;
-          const totalHT = baseHT + optHT;
-          const tva = Math.round(totalHT * 0.20 * 100)/100;
-          const totalTTC = Math.round((totalHT + tva)*100)/100;
-
-          priceTtc.textContent = `${totalTTC} € TTC`;
-          tvaLine.textContent = `${tva} €`;
-
-          // répartition: base 60/30/10, option gras -> tout en “tech” (logique : c'est de la diffusion/visibilité)
-          clubPart.textContent = `60 € HT`;
-          assoPart.textContent = `30 € HT`;
-          techPart.textContent = `${10 + optHT} € HT`;
-        }
-        recalc();
-        boldOpt.addEventListener("change", recalc);
-
-        document.getElementById("backSport").onclick = ()=> openSportHome();
-
-        document.getElementById("payBtn").onclick = async ()=>{
-          const bizName = (document.getElementById("bizName").value || "").trim();
-          if(bizName.length < 2){
-            alert("Veuillez saisir le nom du commerce.");
-            return;
-          }
-          const bizEmail = (document.getElementById("bizEmail").value || "").trim();
-          const bizSiret = (document.getElementById("bizSiret").value || "").trim();
-          const cause = document.getElementById("cause").value;
-          const bold = !!document.getElementById("boldOpt").checked;
-
-          // logo (optionnel)
-          let logoDataUrl = "";
-          const file = (document.getElementById("bizLogo").files || [])[0];
-          if(file){
-            try{
-              logoDataUrl = await readFileAsDataURL(file);
-            }catch(e){
-              alert("Logo non chargé (démo). Vous pouvez continuer sans logo.");
-              logoDataUrl = "";
-            }
-          }
-
-          // (Démo) paiement simulé
-          const id = "sp_" + Math.random().toString(16).slice(2);
-          const d = sportLoad();
-          d.sponsors.push({
-            id,
-            bizName,
-            clubId: club.id,
-            clubName: club.name,
-            cause,
-            bold,
-            logoDataUrl,
-            meta:{ bizEmail, bizSiret },
-            createdAt: new Date().toISOString()
-          });
-          sportSave(d);
-
-          openModal("Paiement validé (démo)", `
-            <div class="successBox">
-              ✅ Soutien activé : <strong>${esc(bizName)}</strong>
-              <br>
-              Club : <strong>${esc(club.name)}</strong>
-              <br>
-              Cause : <strong>${esc(cause)}</strong>
-              <br>
-              Mise en avant : <strong>${bold ? "GRAS" : "standard"}</strong>
-            </div>
-
-            <div class="box">
-              <strong>Ce qui se passe en version officielle :</strong>
-              <ul style="margin:8px 0 0 18px;font-weight:900;">
-                <li>Le commerce paie via PSP (carte/virement selon options).</li>
-                <li>Le PSP répartit : club / association / Bo’CitéArt (frais techniques).</li>
-                <li>Le PSP donne le justificatif paiement + références.</li>
-              </ul>
-            </div>
-
-            <button class="choiceBtn" id="goSport" type="button" style="width:100%;">Retour à l’onglet Sport</button>
-          `);
-
-          setTimeout(()=>{
-            const btn = document.getElementById("goSport");
-            if(btn) btn.onclick = ()=> openSportHome();
-          },0);
-        };
-      },0);
-    }
-
-    // =========================================================
     // ✅ ÉCRANS TILES
     // =========================================================
     document.querySelectorAll("[data-open]").forEach(el=>{
@@ -1738,9 +1694,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
         if(key==="oeuvres"){
           openModal("Œuvres", `
             <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (structure)</div>
-            <div class="box">
-              Carte, guidage, audio, fiche œuvre.
-            </div>
+            <div class="doc box">Carte, guidage, audio, fiche œuvre.</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
               <li>Carte des fresques</li>
               <li>Fiche : artiste • mécène • remerciements</li>
@@ -1750,20 +1704,13 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
           `);
         }
 
-        if(key==="ecole"){
-          openSchoolHome();
-        }
-
-        if(key==="sport"){
-          openSportHome();
-        }
+        if(key==="ecole"){ openSchoolHome(); }
+        if(key==="sport"){ openSportHome(); }
 
         if(key==="mairie"){
           openModal("Mairie", `
             <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
-            <div class="box">
-              Infos utiles et alertes accessibles côté citoyen.
-            </div>
+            <div class="doc box">Infos utiles et alertes accessibles côté citoyen.</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
               <li>Infos & alertes</li>
               <li>Agenda / calendrier vivant</li>
@@ -1775,7 +1722,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
         if(key==="commerces"){
           openModal("Commerces", `
             <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
-            <div class="box">
+            <div class="doc box">
               Bons plans + publicité limitée (max/jour) dans un cadre équitable.
             </div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
@@ -1792,7 +1739,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
     document.getElementById("adminTile").addEventListener("click", ()=>{
       openModal("Accès Admin (structure)", `
         <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
-        <div class="box">
+        <div class="doc box">
           Rôles, blocages, journalisation, alertes, sécurité.
         </div>
         <ul style="margin:8px 0 0 18px;font-weight:800;">
@@ -1805,32 +1752,65 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
     });
 
     // =========================================================
-    // ✅ DAE : “fiche” dès le premier clic + ensuite ouverture normale
+    // ✅ DAE : fiche + vidéo Croix-Rouge (cliquable) + “carte” (structure)
+    // Vidéo (démo) : https://www.youtube.com/watch?v=02K0aGyzTHk :contentReference[oaicite:0]{index=0}
     // =========================================================
+    const CR_VIDEO_ID = "02K0aGyzTHk";
+
     document.getElementById("daeBtn").addEventListener("click", ()=>{
-      const shown = onceInfo("dae", "DAE — à quoi sert ce bouton ?", `
-        <div style="font-weight:900;margin-bottom:8px;">Ce bouton ouvre la carte des défibrillateurs</div>
-        <div class="box">
-          Vous allez être guidé vers un DAE autour de vous (si la géolocalisation est autorisée).
+      const shown = onceInfo("dae", "Défibrillateur (DAE) — à quoi ça sert ?", `
+        <div style="font-weight:900;margin-bottom:8px;">Ce bouton sert à trouver un défibrillateur</div>
+        <div class="doc box">
+          Un <strong>DAE</strong> (défibrillateur) peut sauver une vie en cas d’arrêt cardiaque.
           <br><br>
-          En cas d’urgence, appelez le <strong>112</strong>.
+          <strong>Urgence :</strong> appelez le <strong>112</strong> (plateforme qui vous écoute et transfère au bon service : 15/17/18).
         </div>
-        <div class="muted">Touchez à nouveau le bouton DAE pour ouvrir la fiche “carte” (démo).</div>
+
+        <div class="doc box">
+          <strong>Vidéo (Croix-Rouge) :</strong> comprendre tout de suite, en 1 minute.
+          <div style="margin-top:10px;">
+            <a class="siteLink" target="_blank" rel="noreferrer"
+              href="https://www.youtube.com/watch?v=${CR_VIDEO_ID}">
+              ▶ Ouvrir la vidéo “utiliser un défibrillateur”
+            </a>
+          </div>
+        </div>
+
+        <div class="muted">Touchez encore le bouton DAE pour ouvrir la fiche “carte + vidéo” (démo).</div>
       `);
       if(shown) return;
 
-      openModal("Défibrillateur (DAE)", `
-        <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
-        <div class="box">
-          Indication indicative selon sources et téléphone.
-          En cas d’urgence : 112.
+      openModal("Défibrillateur (DAE) — Carte + vidéo", `
+        <div style="font-weight:900;margin-bottom:8px;">Comprendre et agir vite</div>
+
+        <div class="doc box">
+          <strong>1)</strong> Appeler <strong>112</strong> (ils transfèrent au service adapté) • <strong>2)</strong> Massage cardiaque • <strong>3)</strong> DAE dès que possible.
         </div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Orientation + guidage</li>
-          <li>Rayon local</li>
-          <li>DAE • pharmacie • hôpital</li>
-          <li>Géolocalisation optionnelle</li>
-        </ul>
+
+        <div class="doc box" style="padding:0; overflow:hidden;">
+          <iframe
+            width="100%" height="210"
+            src="https://www.youtube-nocookie.com/embed/${CR_VIDEO_ID}"
+            title="Croix-Rouge — utilisation d’un défibrillateur"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="doc box">
+          <strong>Carte (structure) :</strong> guidage vers les DAE autour de vous (si géolocalisation autorisée).
+          <ul style="margin:8px 0 0 18px;font-weight:900;">
+            <li>Orientation + guidage</li>
+            <li>Rayon local</li>
+            <li>DAE • pharmacie • hôpital</li>
+          </ul>
+        </div>
+
+        <a class="siteLink" target="_blank" rel="noreferrer"
+          href="https://www.youtube.com/watch?v=${CR_VIDEO_ID}">
+          ▶ Ouvrir la vidéo sur YouTube
+        </a>
       `);
     });
 
@@ -1862,7 +1842,7 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
     });
 
     // =========================================================
-    // ✅ Long press logic (inchangé) + ajout “fiche” au simple tap
+    // ✅ Long press logic
     // =========================================================
     function makeLongPress(btn, ringEl, ms, onTrigger){
       let raf=null, start=null, holding=false;
@@ -1903,39 +1883,36 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       btn.addEventListener("contextmenu", (e)=> e.preventDefault());
     }
 
-    // ✅ Sensibilisation urgences (1 seule fois, mémorisée)
+    // ✅ Sensibilisation urgences
     function emergencyGate(kind, onOk){
       const key = "bociteart_ack_" + kind;
-      if(localStorage.getItem(key) === "1"){
-        onOk();
-        return;
-      }
+      if(localStorage.getItem(key) === "1"){ onOk(); return; }
 
-      const title = (kind==="112") ? "Urgence 112 — usage responsable" : "Aide 3919 / 119 — usage responsable";
+      const title = (kind==="112") ? "112 — appel d’urgence (usage responsable)" : "Aide femmes / enfants — usage responsable";
       const body = (kind==="112") ? `
-        <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
-        <div class="box">
-          <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé par votre téléphone.
+        <div style="font-weight:900;margin-bottom:8px;">112 = plateforme d’urgence qui vous écoute</div>
+        <div class="doc box">
+          Le 112 <strong>vous écoute</strong> et <strong>transmet</strong> au bon service selon le besoin :
+          <strong>15</strong> (médical), <strong>17</strong> (police), <strong>18</strong> (pompiers).
         </div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Utiliser le 112 uniquement en cas de danger réel.</li>
-          <li>Appui long = réduction des appels accidentels.</li>
-        </ul>
-        <div class="box" style="margin-top:10px;">
+        <div class="doc box">
+          Pour éviter les appels accidentels, l’appel se fait par <strong>appui long</strong>.
+        </div>
+        <div class="doc box" style="margin-top:10px;">
           <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
             <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-            J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
+            J’ai compris : je n’utiliserai ce bouton qu’en cas de danger réel.
           </label>
         </div>
-        <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
+        <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers l’appel 112</button>
       ` : `
-        <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li><strong>3919</strong> : écoute/orientation</li>
-          <li><strong>119</strong> : enfance en danger</li>
-          <li><strong>Danger immédiat</strong> : 112</li>
-        </ul>
-        <div class="box" style="margin-top:10px;">
+        <div style="font-weight:900;margin-bottom:8px;">Aide d’urgence : femmes / enfants</div>
+        <div class="doc box">
+          <strong>3919</strong> : aide aux femmes (écoute / orientation)<br>
+          <strong>119</strong> : enfance en danger (urgence enfant)<br>
+          <strong>Danger immédiat</strong> : 112
+        </div>
+        <div class="doc box" style="margin-top:10px;">
           <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
             <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
             J’ai compris : j’utiliserai ces numéros uniquement en cas de situation réelle.
@@ -1962,22 +1939,20 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
       }, 0);
     }
 
-    // ✅ “fiche” au simple clic sur 112 / SOS (première fois)
+    // ✅ Simple tap 112 = explication
     const btn112 = document.getElementById("btn112");
     btn112.addEventListener("click", ()=>{
-      // clic = fiche, pas appel
-      onceInfo("112tap", "112 — comment ça marche ?", `
-        <div style="font-weight:900;margin-bottom:8px;">Ce bouton sert à appeler le 112 (urgence)</div>
-        <div class="box">
-          Pour éviter les appels accidentels, l’appel se fait par <strong>appui long</strong>.
+      onceInfo("112tap", "112 — à quoi sert ce bouton ?", `
+        <div style="font-weight:900;margin-bottom:8px;">112 = plateforme d’urgence</div>
+        <div class="doc box">
+          On vous écoute et on transfère au bon service (15 / 17 / 18) selon le besoin.
           <br><br>
-          En cas d’urgence réelle : restez appuyé jusqu’au cercle complet.
+          Pour éviter les appels accidentels : <strong>appui long</strong> obligatoire.
         </div>
         <div class="muted">Un simple tap n’appelle jamais.</div>
       `);
     });
 
-    // 112 (démo long press)
     makeLongPress(
       btn112,
       document.getElementById("ring112"),
@@ -1997,7 +1972,8 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
         const pick = b.getAttribute("data-pick");
         if(pick==="3919" || pick==="119"){
           sosNumber = pick;
-          document.getElementById("sosLabel").textContent = sosNumber;
+          document.getElementById("sosLabel").textContent = "Aide femmes / enfants";
+          document.getElementById("sosLabel2").textContent = "(" + sosNumber + ")";
           closeChoice();
         }
       });
@@ -2005,11 +1981,14 @@ ok maintenant tu peux refaire tous le code complet en prenant compte de cela pou
 
     const btnSos = document.getElementById("btnSos");
     btnSos.addEventListener("click", ()=>{
-      onceInfo("sostap", "3919 / 119 — comment ça marche ?", `
-        <div style="font-weight:900;margin-bottom:8px;">Ce bouton aide à appeler 3919 ou 119</div>
-        <div class="box">
-          1) Touchez une fois : choisissez <strong>3919</strong> ou <strong>119</strong>
-          <br>
+      onceInfo("sostap", "Aide femmes / enfants — comment ça marche ?", `
+        <div style="font-weight:900;margin-bottom:8px;">Ce bouton sert à appeler rapidement</div>
+        <div class="doc box">
+          <strong>3919</strong> : aide aux femmes (écoute / orientation)<br>
+          <strong>119</strong> : enfance en danger (urgence enfant)
+        </div>
+        <div class="doc box">
+          1) Touchez une fois : choisissez <strong>3919</strong> ou <strong>119</strong><br>
           2) Puis faites un <strong>appui long</strong> pour appeler.
         </div>
         <div class="muted">Danger immédiat : 112.</div>
