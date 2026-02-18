@@ -81,11 +81,7 @@
       animation: marquee 12s linear infinite;
       will-change: transform;
     }
-    .marquee .item{
-      display:flex;
-      flex-direction:column;
-      min-width:360px;
-    }
+    .marquee .item{ display:flex; flex-direction:column; min-width:360px; }
     .ticker .title{ color:#fff; font-weight:800; font-size:14px; }
     .ticker .sub{ color:rgba(255,255,255,.92); font-weight:700; font-size:12px; margin-top:2px; }
     .ticker .rule{ margin-left:auto; color:rgba(255,255,255,.92); font-size:11px; font-weight:700; flex:0 0 auto; }
@@ -164,9 +160,8 @@
     .lpCore .icon{ width:16px; height:16px; margin-bottom:2px; opacity:.95; }
     .lpCore .lbl{ font-size:18px; line-height:1; }
     .lpCore .lblSmall{ font-size:12px; line-height:1.05; }
-
     .sosSub{
-      font-size:7.5px;
+      font-size:7.2px;
       font-weight:900;
       line-height:1.0;
       margin-top:2px;
@@ -276,7 +271,7 @@
     }
     .muted{ color:var(--muted); font-size:12px; font-weight:700; }
 
-    /* ✅ FULLSCREEN SHEET (pour navigation DAE) */
+    /* ✅ FULLSCREEN SHEET (navigation DAE) */
     .sheet.fullscreen{
       left:0; top:0; transform:none;
       width:100%;
@@ -290,8 +285,7 @@
       overflow:hidden;
     }
 
-    /* Choice modal */
-    .choiceGrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+    /* Buttons in content */
     .choiceBtn{
       border:2px solid rgba(0,0,0,.10);
       background:var(--beige);
@@ -301,34 +295,17 @@
       cursor:pointer;
     }
 
-    /* Legal tabs */
-    .tabs{
-      display:flex; gap:8px; flex-wrap:wrap;
-      margin-bottom:12px;
-      position:sticky; top:0;
-      background:var(--bg);
-      padding-top:2px; padding-bottom:10px;
-      z-index:2;
-    }
-    .tab{
-      border:2px solid rgba(0,0,0,.10);
-      background:#fff;
-      border-radius:12px;
-      padding:8px 10px;
-      font-weight:900;
-      cursor:pointer;
-    }
-    .tab.active{ background:var(--beige); }
+    /* Docs look */
     .doc h2{ margin:12px 0 6px; font-size:15px; }
     .doc h3{ margin:10px 0 6px; font-size:14px; }
-    .doc p{ margin:6px 0; font-weight:700; }
-    .doc ul{ margin:6px 0 0 18px; font-weight:800; }
+    .doc p{ margin:6px 0; font-weight:800; }
+    .doc ul{ margin:6px 0 0 18px; font-weight:900; }
     .doc .box{
       border:2px solid rgba(0,0,0,.08);
       background:#fff;
       border-radius:14px;
       padding:10px;
-      font-weight:800;
+      font-weight:900;
       margin:10px 0;
     }
 
@@ -340,37 +317,28 @@
       .grid{ gap:10px; }
       .tile .h{ font-size:16px; }
       .tile .p{ margin-top:6px; }
-      .dae{ padding:10px 12px; font-size:14px; border-radius:18px; border-color: var(--red); }
+      .dae{ padding:10px 12px; font-size:14px; border-radius:18px; }
       .heart{ width:44px; height:44px; }
       .footerRow{ padding-bottom:8px; }
       .iconBtn{ width:40px; height:40px; }
       .legalBtn{ padding:9px 10px; font-size:12px; }
       .sheet .body{ max-height:min(70vh, 460px); }
-      .sosSub{ font-size:7px; }
-    }
-    @media (max-height: 700px){
-      .ticker{ height:128px; }
-      .tile{ aspect-ratio: 1 / 0.80; }
-      .wrap{ gap:9px; }
+      .sosSub{ font-size:6.9px; }
     }
 
     /* =========================================================
-       SPORT
+       SPORT - bandeau (SUR HOME, AVANT DAE)
        ========================================================= */
-    .sportWrap{ display:flex; flex-direction:column; gap:12px; }
-
-    /* ✅ Bandeau sport collé en haut de l'onglet sport principal */
-    .sportTicker{
+    .sportTickerHome{
       height:40px;
       border-radius:14px;
       background:#fff;
       overflow:hidden;
       border:2px solid rgba(0,0,0,.12);
-      position:sticky;
-      top:0;
-      z-index:5;
+      position:relative;
+      cursor:pointer;
     }
-    .sportTicker .stRow{
+    .sportTickerHome .stRow{
       position:absolute; inset:0;
       display:flex;
       align-items:center;
@@ -385,8 +353,6 @@
       animation: sportMarq 14s linear infinite;
       will-change: transform;
     }
-
-    /* ✅ IMPORTANT: parent n’est plus en 900 => on voit la différence gras / normal */
     .sportMarquee .stItem{
       display:flex;
       align-items:center;
@@ -394,7 +360,7 @@
       min-width:360px;
       color:var(--text);
       font-size:12px;
-      font-weight:700;  /* normal */
+      font-weight:700; /* normal */
     }
     .stText{
       overflow:hidden;
@@ -404,7 +370,6 @@
       font-weight:700; /* normal */
     }
     .stText.bold{ font-weight:1000; } /* gras */
-
     .stLogo{
       width:22px;height:22px;
       border-radius:6px;
@@ -427,6 +392,10 @@
       100%{ transform:translateX(-50%); }
     }
 
+    /* =========================================================
+       SPORT (onglet) - inchangé dans le fond, juste sans bandeau
+       ========================================================= */
+    .sportWrap{ display:flex; flex-direction:column; gap:12px; }
     .sportPanel{
       border:2px solid rgba(0,0,0,.08);
       background:#fff;
@@ -464,7 +433,6 @@
       border:2px solid rgba(0,0,0,.08);
       white-space:nowrap;
     }
-
     .formGrid{ display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px; }
     .inp{
       width:100%;
@@ -475,7 +443,7 @@
       background:#fff;
     }
     .row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .miniNote{ margin-top:8px; font-size:12px; font-weight:800; color:rgba(0,0,0,.70); }
+    .miniNote{ margin-top:8px; font-size:12px; font-weight:900; color:rgba(0,0,0,.70); }
     .payBar{
       display:flex;
       flex-direction:column;
@@ -536,12 +504,7 @@
       height:100%;
       background:#fff;
     }
-    #navMap{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-    }
+    #navMap{ position:absolute; inset:0; width:100%; height:100%; }
     .navHud{
       position:absolute;
       left:10px;
@@ -551,7 +514,7 @@
       flex-direction:column;
       gap:8px;
       z-index:1000;
-      pointer-events:none; /* sauf boutons internes */
+      pointer-events:none;
     }
     .navCard{
       background:rgba(255,255,255,.92);
@@ -567,17 +530,8 @@
       justify-content:space-between;
       gap:10px;
     }
-    .navTitle{
-      font-weight:1000;
-      font-size:14px;
-      line-height:1.15;
-    }
-    .navSub{
-      margin-top:4px;
-      font-weight:900;
-      font-size:12px;
-      color:rgba(0,0,0,.70);
-    }
+    .navTitle{ font-weight:1000; font-size:14px; line-height:1.15; }
+    .navSub{ margin-top:4px; font-weight:900; font-size:12px; color:rgba(0,0,0,.70); }
     .navStats{
       display:flex;
       gap:10px;
@@ -593,7 +547,6 @@
       padding:6px 10px;
       white-space:nowrap;
     }
-
     .arrowWrap{
       position:absolute;
       left:50%;
@@ -632,7 +585,6 @@
       font-size:12px;
       box-shadow:0 10px 24px rgba(0,0,0,.14);
     }
-
     .navBtns{
       display:flex;
       gap:10px;
@@ -655,7 +607,7 @@
   <div class="page">
     <div class="wrap">
 
-      <!-- Ticker -->
+      <!-- Ticker home -->
       <div class="ticker" id="ticker" aria-label="Publicités (toucher pour détails)">
         <img id="tickerImg" alt="" />
         <div class="overlay"></div>
@@ -682,7 +634,7 @@
             <div class="overlay"></div>
             <div class="content">
               <div class="h">Visitez les œuvres d’artistes</div>
-              <div class="p">Carte • guidage • audio,</div>
+              <div class="p">Carte • guidage • audio</div>
             </div>
           </div>
 
@@ -691,7 +643,7 @@
             <div class="overlay"></div>
             <div class="content">
               <div class="h">École</div>
-              <div class="p">Mots du jour</div>
+              <div class="p">Mot du jour • voix</div>
             </div>
           </div>
 
@@ -709,7 +661,7 @@
             <div class="overlay"></div>
             <div class="content">
               <div class="h">Mairie</div>
-              <div class="p">Infos • agenda, </div>
+              <div class="p">Infos • agenda • alertes</div>
             </div>
           </div>
 
@@ -722,7 +674,7 @@
             <div class="overlay"></div>
             <div class="content">
               <div class="h">Commerces</div>
-              <div class="p">Bons plans, pub </div>
+              <div class="p">Offres • WattCoins • pubs limitées</div>
             </div>
           </div>
         </div>
@@ -765,6 +717,14 @@
               <div class="sosSub">Aide femmes &amp; enfants</div>
             </div>
           </button>
+        </div>
+      </div>
+
+      <!-- ✅ BANDEAU SPORT SUR HOME (en bas, juste AVANT DAE) -->
+      <div class="sportTickerHome" id="sportHomeTicker" aria-label="Bandeau Sport (défilement)">
+        <div class="stRow">
+          <div class="sportMarquee" id="sportHomeMarquee"></div>
+          <div class="stHint">Sport</div>
         </div>
       </div>
 
@@ -814,7 +774,7 @@
     </div>
   </div>
 
-  <!-- Legal modal -->
+  <!-- Legal modal (on garde, mais l’élu n’a pas besoin d’y aller pour comprendre l’app) -->
   <div class="modal" id="legal">
     <div class="backdrop" id="legalClose"></div>
     <div class="sheet">
@@ -827,36 +787,30 @@
         </button>
       </div>
       <div class="body">
-        <div class="tabs">
-          <button class="tab active" data-tab="rgpd" type="button">RGPD</button>
-          <button class="tab" data-tab="cgu" type="button">CGU</button>
-          <button class="tab" data-tab="cgv" type="button">CGV</button>
-        </div>
-
-        <div id="p-rgpd" class="doc">
-          <div style="font-weight:900;font-size:15px;">📗 Politique de protection des données (RGPD) — Bo’CitéArt</div>
-          <div class="muted" style="margin-top:4px;">Dernière mise à jour : 18 février 2026</div>
-          <div class="doc box">
-            Version de démonstration : illustration de cadre (pas de souscription ici).
+        <div class="doc">
+          <div class="box">
+            Ici : RGPD / CGU / CGV complètes (cadre juridique).<br>
+            <span class="muted">Mais la démonstration montre déjà l’application “en entier” sans obligation de lecture juridique.</span>
           </div>
-          <h2>Urgences & DAE</h2>
+
+          <h2>RGPD (résumé)</h2>
           <ul>
-            <li>112 danger immédiat.</li>
-            <li>3919 écoute/orientation.</li>
-            <li>119 enfance en danger.</li>
+            <li>Minimisation des données.</li>
+            <li>Journalisation sécurité.</li>
+            <li>Paiements via PSP : pas de carte stockée.</li>
           </ul>
-        </div>
 
-        <div id="p-cgu" class="doc" style="display:none;">
-          <div style="font-weight:900;font-size:15px;">📘 CGU — Bo’CitéArt</div>
-          <div class="muted" style="margin-top:4px;">Dernière mise à jour : 18 février 2026</div>
-          <div class="doc box">Cadre de bon usage.</div>
-        </div>
+          <h2>CGU (résumé)</h2>
+          <ul>
+            <li>Règles de comportement (anti-abus).</li>
+            <li>Blocage/désactivation en cas de dérives.</li>
+          </ul>
 
-        <div id="p-cgv" class="doc" style="display:none;">
-          <div style="font-weight:900;font-size:15px;">📕 CGV — Bo’CitéArt</div>
-          <div class="muted" style="margin-top:4px;">Dernière mise à jour : 18 février 2026</div>
-          <div class="doc box">Paiements via PSP.</div>
+          <h2>CGV (résumé)</h2>
+          <ul>
+            <li>Cadre partenaires pro (commerces/collectivités).</li>
+            <li>Offres et tarification.</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -875,12 +829,19 @@
         </button>
       </div>
       <div class="body">
-        <div style="font-weight:800">Touchez pour choisir, puis appui long pour appeler.</div>
-        <div class="choiceGrid">
-          <button class="choiceBtn" data-pick="3919" type="button">3919</button>
-          <button class="choiceBtn" data-pick="119" type="button">119</button>
+        <div class="doc">
+          <div class="box">
+            1) Choisir <strong>3919</strong> ou <strong>119</strong><br>
+            2) Revenir au bouton et faire un <strong>appui long</strong> pour appeler.
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <button class="choiceBtn" data-pick="3919" type="button">3919</button>
+            <button class="choiceBtn" data-pick="119" type="button">119</button>
+          </div>
+          <div class="muted" style="margin-top:10px;">
+            3919 : écoute/orientation • 119 : enfance en danger • danger immédiat : 112
+          </div>
         </div>
-        <div class="muted" style="margin-top:10px">3919 : écoute/orientation • 119 : enfance en danger • danger immédiat : 112</div>
       </div>
     </div>
   </div>
@@ -906,10 +867,8 @@
     let onModalCloseHooks = [];
 
     const closeModal = () => {
-      // hooks (ex: stop watchPosition)
       try { onModalCloseHooks.forEach(fn=>{ try{ fn(); }catch(e){} }); } catch(e){}
       onModalCloseHooks = [];
-
       modal.classList.remove("open");
       sheet.classList.remove("fullscreen");
     };
@@ -954,9 +913,15 @@
 
     document.getElementById("ticker").addEventListener("click", ()=>{
       openModal("Bandeau du haut (home)", `
-        <div style="font-weight:900;margin-bottom:8px;">Bandeau informatif / publicitaire (cadre)</div>
-        <div class="doc box">
-          Affichage limité (10pubs max/jour) + règle d’équité 16h.
+        <div class="doc">
+          <div class="box">
+            <strong>Ce bandeau sert à :</strong><br>
+            • afficher des infos mairie (alertes / agenda / messages)<br>
+            • afficher des publicités partenaires dans un cadre strict
+          </div>
+          <div class="box">
+            <strong>Cadre :</strong> publicité limitée (ex : max/jour) + rotation équitable (“règle 16h”).
+          </div>
         </div>
       `);
     });
@@ -1019,26 +984,49 @@
       }).join("");
     }
 
+    // ✅ Bandeau sport sur HOME
+    function refreshSportHomeTicker(){
+      const el = document.getElementById("sportHomeMarquee");
+      if(el) el.innerHTML = renderSportTickerItems();
+    }
+    refreshSportHomeTicker();
+
+    document.getElementById("sportHomeTicker").addEventListener("click", ()=>{
+      openModal("Sport — Soutiens visibles (cadre)", `
+        <div class="doc">
+          <div class="box">
+            <strong>Bandeau sport (sur l’accueil) :</strong><br>
+            • montre en continu les commerces qui soutiennent un club + une cause<br>
+            • une pub peut être en <strong>gras</strong> (option) et une autre en <strong>normal</strong> (standard)
+          </div>
+          <div class="box">
+            Cliquez ensuite sur l’onglet <strong>Sport</strong> pour voir : liste des clubs, paiement, et rapport civique du week-end.
+          </div>
+          <button class="choiceBtn" id="goSportFromBanner" type="button" style="width:100%;margin-top:10px;">Ouvrir l’onglet Sport</button>
+        </div>
+      `);
+      setTimeout(()=>{
+        const b = document.getElementById("goSportFromBanner");
+        if(b) b.onclick = ()=> openSportHome();
+      },0);
+    });
+
+    // ✅ Onglet sport (on ne “casse” rien) : juste SANS bandeau
     function openSportHome(){
       openModal("Sport", `
         <div class="sportWrap">
 
-          <!-- ✅ UNIQUEMENT ICI : bandeau collé en haut de l'onglet sport principal -->
-          <div class="sportTicker" id="sportTicker" aria-label="Bandeau sport">
-            <div class="stRow">
-              <div class="sportMarquee" id="sportMarquee">${renderSportTickerItems()}</div>
-              <div class="stHint">Soutiens</div>
-            </div>
-          </div>
-
           <div class="sportPanel">
             <div style="font-weight:1000;font-size:15px;">Soutenir un club (paiement immédiat)</div>
             <div class="miniNote">
-              Choisissez un club, saisissez le commerce, option “gras”, puis paiement (démo).
+              Le commerçant choisit un club, ajoute son identité (logo optionnel), puis paie.
+              Le paiement est géré par un PSP (split) : club + association + Bo’CitéArt (frais techniques).
             </div>
 
             <div class="doc box" style="margin-top:10px;">
-              <strong>Tarif :</strong> 120 € TTC (100 € HT) • Option écriture en gras:+ 6 € TTC (+5€HT)
+              <strong>Tarif :</strong> 120 € TTC (100 € HT)<br>
+              <strong>Répartition HT :</strong> 60 € club • 30 € association • 10 € frais techniques<br>
+              <span class="muted">Option “mise en avant en gras” : + 5 € HT (+ 6 € TTC)</span>
             </div>
 
             <input class="sportSearch" id="clubSearch" placeholder="Rechercher un club… (ex : hockey, natation, club 12)">
@@ -1047,23 +1035,26 @@
 
           <div class="sportPanel">
             <div style="font-weight:1000;font-size:15px;">Rapport du week-end (démo)</div>
+            <div class="miniNote">
+              Ici on affichera : résultats, agenda, et une fiche “civisme & respect” (sans humilier, sans polémiques).
+            </div>
             <div class="doc box">
-              Ici : résultats, agenda, civisme (sans humiliations).
+              <ul style="margin:8px 0 0 18px;font-weight:900;">
+                <li>✅ Propreté vestiaires</li>
+                <li>✅ Respect arbitre</li>
+                <li>✅ Fair-play</li>
+                <li>✅ Rangement matériel</li>
+              </ul>
+              <div class="muted" style="margin-top:8px;">
+                (Officiel) Saisie par un référent club + mécanismes anti-pression (journal, contrôles, seuils).
+              </div>
             </div>
           </div>
+
         </div>
       `);
 
       setTimeout(()=>{
-        const st = document.getElementById("sportTicker");
-        st.addEventListener("click", ()=>{
-          openModal("Bandeau Sport", `
-            <div class="doc box">
-              Défilement des soutiens : 1 pub <strong>gras</strong> et 1 pub <strong>normal</strong> (différence visible).
-            </div>
-          `);
-        });
-
         const list = document.getElementById("clubList");
         const search = document.getElementById("clubSearch");
 
@@ -1089,7 +1080,7 @@
               const id = parseInt(btn.getAttribute("data-club"),10);
               const club = CLUBS.find(x=>x.id===id);
               if(!club) return;
-              openSportSponsorForm(club); // ✅ sans bandeau
+              openSportSponsorForm(club);
             });
           });
         }
@@ -1108,7 +1099,6 @@
       });
     }
 
-    /* ✅ IMPORTANT : plus de bandeau sport ici */
     function openSportSponsorForm(club){
       openModal("Sport — Soutenir un club", `
         <div class="sportWrap">
@@ -1130,6 +1120,9 @@
               <div class="doc box" style="margin:0;">
                 <div style="font-weight:1000;margin-bottom:6px;">Logo (optionnel)</div>
                 <input class="inp" id="bizLogo" type="file" accept="image/*">
+                <div class="muted" style="margin-top:6px;">
+                  (Officiel) le logo est contrôlé (pas d’images illégales, pas d’usurpation, pas de contenu choquant).
+                </div>
               </div>
 
               <div style="font-weight:1000;margin-top:2px;">Cause associative</div>
@@ -1142,18 +1135,32 @@
 
               <div class="toggleRow">
                 <div>
-                  Option : texte en <strong>gras</strong> dans le bandeau (+ 6 € TTC)
+                  Option : texte en <strong>gras</strong> dans le bandeau (+ 5 € HT)
+                  <div class="muted" style="margin-top:4px;">Plus visible immédiatement.</div>
                 </div>
                 <input type="checkbox" id="boldOpt">
               </div>
 
               <div class="payBar">
                 <div class="payLine"><span>Prix</span><span id="priceTtc">120 € TTC</span></div>
-                <div class="muted">Option écriture en gras: +6 € TTC<div>
+                <div class="payLine"><span>Base</span><span>100 € HT</span></div>
+                <div class="payLine"><span>TVA</span><span id="tvaLine">20 €</span></div>
+                <div class="muted">Le commerce récupère sa TVA selon son régime.</div>
+                <hr style="border:none;border-top:1px solid rgba(0,0,0,.08);margin:4px 0;">
+                <div class="payLine"><span>Club</span><span id="clubPart">60 € HT</span></div>
+                <div class="payLine"><span>Association</span><span id="assoPart">30 € HT</span></div>
+                <div class="payLine"><span>Frais techniques</span><span id="techPart">10 € HT</span></div>
+                <div class="muted">
+                  Paiement via PSP : split automatique vers les bénéficiaires (club / association / Bo’CitéArt).
+                </div>
               </div>
 
               <button class="choiceBtn" id="payBtn" type="button" style="width:100%;">Payer et activer le soutien</button>
               <button class="choiceBtn" id="backSport" type="button" style="width:100%;">Retour Sport</button>
+
+              <div class="miniNote">
+                <strong>Justificatifs :</strong> pièces possibles côté club/association + pièce Bo’CitéArt (frais techniques).
+              </div>
             </div>
           </div>
         </div>
@@ -1162,10 +1169,24 @@
       setTimeout(()=>{
         const boldOpt = document.getElementById("boldOpt");
         const priceTtc = document.getElementById("priceTtc");
+        const tvaLine = document.getElementById("tvaLine");
+        const clubPart = document.getElementById("clubPart");
+        const assoPart = document.getElementById("assoPart");
+        const techPart = document.getElementById("techPart");
 
         function recalc(){
           const bold = !!boldOpt.checked;
-          priceTtc.textContent = bold ? "126 € TTC" : "120 € TTC";
+          const baseHT = 100;
+          const optHT = bold ? 5 : 0;
+          const totalHT = baseHT + optHT;
+          const tva = Math.round(totalHT * 0.20 * 100)/100;
+          const totalTTC = Math.round((totalHT + tva)*100)/100;
+
+          priceTtc.textContent = `${totalTTC} € TTC`;
+          tvaLine.textContent = `${tva} €`;
+          clubPart.textContent = `60 € HT`;
+          assoPart.textContent = `30 € HT`;
+          techPart.textContent = `${10 + optHT} € HT`;
         }
         recalc();
         boldOpt.addEventListener("change", recalc);
@@ -1176,41 +1197,50 @@
           const bizName = (document.getElementById("bizName").value || "").trim();
           if(bizName.length < 2){ alert("Veuillez saisir le nom du commerce."); return; }
 
+          const bizEmail = (document.getElementById("bizEmail").value || "").trim();
+          const bizSiret = (document.getElementById("bizSiret").value || "").trim();
           const cause = document.getElementById("cause").value;
           const bold = !!document.getElementById("boldOpt").checked;
 
           let logoDataUrl = "";
           const file = (document.getElementById("bizLogo").files || [])[0];
           if(file){
-            try{ logoDataUrl = await readFileAsDataURL(file); } catch(e){ logoDataUrl=""; }
+            try{ logoDataUrl = await readFileAsDataURL(file); }catch(e){ logoDataUrl=""; }
           }
 
           const id = "sp_" + Math.random().toString(16).slice(2);
           const d = sportLoad();
           d.sponsors.push({
             id, bizName, clubId:club.id, clubName:club.name,
-            cause, bold, logoDataUrl, createdAt:new Date().toISOString()
+            cause, bold, logoDataUrl,
+            meta:{ bizEmail, bizSiret },
+            createdAt:new Date().toISOString()
           });
           sportSave(d);
+
+          // ✅ met à jour le bandeau sport sur HOME
+          refreshSportHomeTicker();
 
           openModal("Paiement validé (démo)", `
             <div class="successBox">
               ✅ Soutien activé : <strong>${esc(bizName)}</strong><br>
               Club : <strong>${esc(club.name)}</strong><br>
-              Mise en avant : <strong>${bold ? "GRAS" : "normal"}</strong>
+              Cause : <strong>${esc(cause)}</strong><br>
+              Mise en avant : <strong>${bold ? "GRAS" : "standard"}</strong>
             </div>
             <button class="choiceBtn" id="goSport" type="button" style="width:100%;margin-top:10px;">Retour à l’onglet Sport</button>
           `);
 
           setTimeout(()=>{
-            document.getElementById("goSport").onclick = ()=> openSportHome();
+            const btn = document.getElementById("goSport");
+            if(btn) btn.onclick = ()=> openSportHome();
           },0);
         };
       },0);
     }
 
     // =========================================================
-    // DAE : recherche + navigation plein écran + itinéraire (ligne) + fléchage
+    // DAE : vidéo + explications complètes + navigation plein écran
     // =========================================================
     const CROIX_ROUGE_DAE_YT = "3CAmp8yKYEg";
 
@@ -1245,38 +1275,59 @@
     function openDaeVideo(){
       const yt = `https://www.youtube-nocookie.com/embed/${CROIX_ROUGE_DAE_YT}?rel=0&modestbranding=1`;
       const ytOpen = `https://www.youtube.com/watch?v=${CROIX_ROUGE_DAE_YT}`;
-      openModal("Défibrillateur (DAE) — mode d’emploi", `
-        <div style="font-weight:900;margin-bottom:8px;">Comprendre vite (vidéo)</div>
-        <div class="doc box">
-          En cas de danger immédiat : appelez le <strong>112</strong>.
-        </div>
 
-        <div class="videoBox">
-          <div class="videoWrap small">
-            <iframe
-              src="${yt}"
-              title="Vidéo - comment utiliser un DAE"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen>
-            </iframe>
+      openModal("Défibrillateur (DAE) — secours", `
+        <div class="doc">
+          <div class="box">
+            <strong>Objectif :</strong> que n’importe qui comprenne quoi faire immédiatement,
+            avant même de chercher le DAE.
           </div>
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <a class="choiceBtn" href="${ytOpen}" target="_blank" rel="noreferrer"
-              style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
-              Ouvrir sur YouTube
-            </a>
-            <button class="choiceBtn" id="goNav" type="button">Carte plein écran + itinéraire (1–3 km)</button>
+          <div class="box">
+            <strong>En urgence :</strong> appelez le <strong>112</strong> (danger immédiat).<br>
+            Bo’CitéArt sert de <strong>raccourci</strong> et de <strong>guidage</strong>.
           </div>
 
-          <div class="muted" style="margin-top:8px;">
-            (Démo) Itinéraire via OSRM + DAE via OpenStreetMap.
+          <div class="videoBox">
+            <div style="font-weight:900;margin-bottom:8px;">Vidéo rapide (mode d’emploi)</div>
+            <div class="videoWrap small">
+              <iframe
+                src="${yt}"
+                title="Vidéo - comment utiliser un DAE"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+              </iframe>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <a class="choiceBtn" href="${ytOpen}" target="_blank" rel="noreferrer"
+                 style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
+                Ouvrir sur YouTube
+              </a>
+              <button class="choiceBtn" id="goNav" type="button">Carte plein écran + itinéraire (1–3 km)</button>
+            </div>
+
+            <div class="muted" style="margin-top:8px;">
+              Si la vidéo ne s’affiche pas (bloqueur), utilisez “Ouvrir sur YouTube”.
+            </div>
+          </div>
+
+          <div class="box">
+            <strong>Ce que la carte fera (version officielle) :</strong>
+            <ul style="margin:8px 0 0 18px;font-weight:900;">
+              <li>Géolocalisation (si autorisée)</li>
+              <li>Recherche du DAE le plus proche</li>
+              <li>Traçage itinéraire (ligne) + guidage</li>
+              <li>Flèche directionnelle (orientation)</li>
+              <li>Rayon paramétrable (1 à 3 km)</li>
+            </ul>
           </div>
         </div>
       `);
 
       setTimeout(()=>{
-        document.getElementById("goNav").onclick = ()=> startDaeNavigation(2);
+        const b = document.getElementById("goNav");
+        if(b) b.onclick = ()=> startDaeNavigation(2);
       },0);
     }
 
@@ -1312,7 +1363,6 @@
         });
     }
 
-    // OSRM route (walking)
     async function fetchRouteOSRM(fromLat, fromLon, toLat, toLon){
       const url = `https://router.project-osrm.org/route/v1/foot/${fromLon},${fromLat};${toLon},${toLat}?overview=full&geometries=geojson&steps=true`;
       const res = await fetch(url);
@@ -1323,7 +1373,7 @@
       return {
         distanceM: r.distance,
         durationS: r.duration,
-        geometry: r.geometry, // geojson line
+        geometry: r.geometry,
         legs: r.legs || []
       };
     }
@@ -1336,7 +1386,6 @@
       return `${h}h${String(m).padStart(2,"0")}`;
     }
 
-    // plein écran navigation
     function startDaeNavigation(km){
       const kmSafe = (km===1||km===2||km===3) ? km : 2;
 
@@ -1368,7 +1417,7 @@
               </div>
 
               <div class="muted" id="navWarn" style="margin-top:8px;">
-                Si la boussole ne bouge pas : certains téléphones demandent une autorisation capteurs.
+                Si la flèche ne bouge pas : certains téléphones demandent une autorisation capteurs.
               </div>
             </div>
           </div>
@@ -1385,7 +1434,6 @@
         </div>
       `, {fullscreen:true});
 
-      // highlight km
       setTimeout(()=>{
         const setActive = ()=>{
           ["km1","km2","km3"].forEach(id=>{
@@ -1404,29 +1452,24 @@
       let map=null, userMarker=null, daeMarker=null, routeLine=null;
       let watchId=null;
 
-      let target=null; // {lat, lon, name, addr}
-      let lastRoute=null; // route data
-      let lastUser=null;  // {lat, lon, heading?}
+      let target=null;
+      let lastRoute=null;
+      let lastUser=null;
 
-      // device orientation heading fallback
       let deviceHeading=null;
       function setupDeviceOrientation(){
         const handler = (e)=>{
-          // iOS uses webkitCompassHeading sometimes
           if(typeof e.webkitCompassHeading === "number"){
             deviceHeading = e.webkitCompassHeading;
             return;
           }
           if(typeof e.alpha === "number"){
-            // alpha: 0 = north (varies by device), take as approx
             deviceHeading = (360 - e.alpha) % 360;
           }
         };
 
-        // iOS permission (best effort)
         try{
           if(typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function"){
-            // only triggers on user gesture; we try on first recenter click
             document.getElementById("recenter").addEventListener("click", async ()=>{
               try{
                 const p = await DeviceOrientationEvent.requestPermission();
@@ -1502,12 +1545,10 @@
           (typeof deviceHeading === "number" && !Number.isNaN(deviceHeading)) ? deviceHeading :
           null;
 
-        // point de visée: si route => point un peu plus loin sur la polyline
         let aimLat = target.lat, aimLon = target.lon;
 
         if(lastRoute && lastRoute.geometry && lastRoute.geometry.coordinates && lastRoute.geometry.coordinates.length > 8){
-          const coords = lastRoute.geometry.coordinates; // [lon,lat]
-          // trouver index le plus proche
+          const coords = lastRoute.geometry.coordinates;
           let bestI=0, bestD=Infinity;
           for(let i=0;i<coords.length;i+=3){
             const lon=coords[i][0], lat=coords[i][1];
@@ -1520,8 +1561,6 @@
         }
 
         const b = bearingDeg(lastUser.lat, lastUser.lon, aimLat, aimLon);
-
-        // si heading inconnu => flèche pointe vers le Nord relatif (pas parfait)
         const rel = (heading===null) ? b : ((b - heading + 360) % 360);
         rotateArrow(rel);
       }
@@ -1529,7 +1568,6 @@
       let routeTimer = null;
       async function computeRoute(){
         if(!lastUser || !target) return;
-        // throttle: éviter spam OSRM
         if(routeTimer) return;
         routeTimer = setTimeout(()=>{ routeTimer=null; }, 1200);
 
@@ -1537,14 +1575,11 @@
           const r = await fetchRouteOSRM(lastUser.lat, lastUser.lon, target.lat, target.lon);
           lastRoute = r;
 
-          // draw line
           if(routeLine){ routeLine.remove(); routeLine=null; }
           const latlngs = r.geometry.coordinates.map(c=>[c[1], c[0]]);
           routeLine = L.polyline(latlngs, { weight:6, opacity:0.85 }).addTo(map);
 
-          // fit bounds (mais pas trop agressif)
-          const b = routeLine.getBounds();
-          try{ map.fitBounds(b.pad(0.25), { animate:true }); }catch(e){}
+          try{ map.fitBounds(routeLine.getBounds().pad(0.25), { animate:true }); }catch(e){}
 
           updateHud();
           updateArrow();
@@ -1584,21 +1619,16 @@
         map.setView([lastUser.lat, lastUser.lon], 17, { animate:true });
       }
 
-      // Hook stop on close
       onModalCloseHooks.push(()=>{
         if(watchId!==null){
           try{ navigator.geolocation.clearWatch(watchId); }catch(e){}
         }
-        try{
-          window.removeEventListener("deviceorientation", ()=>{}, true);
-        }catch(e){}
       });
 
       setupDeviceOrientation();
 
       setTimeout(()=>{
         document.getElementById("recenter").onclick = recenter;
-
         document.getElementById("openGmaps").onclick = ()=>{
           if(!lastUser || !target) return;
           const u = `https://www.google.com/maps/dir/?api=1&origin=${lastUser.lat},${lastUser.lon}&destination=${target.lat},${target.lon}&travelmode=walking`;
@@ -1606,7 +1636,6 @@
         };
       },0);
 
-      // Start watchPosition
       if(!navigator.geolocation){
         openModal("Erreur", `<div class="doc box">Géolocalisation non supportée sur ce navigateur.</div>`);
         return;
@@ -1615,7 +1644,7 @@
       watchId = navigator.geolocation.watchPosition(async (pos)=>{
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
-        const heading = pos.coords.heading; // may be null
+        const heading = pos.coords.heading;
         lastUser = { lat, lon, heading: (typeof heading==="number" ? heading : null) };
 
         initMap(lat, lon);
@@ -1623,7 +1652,6 @@
         updateHud();
         updateArrow();
 
-        // si pas de cible -> choisir le plus proche
         if(!target){
           try{
             const nearest = await pickNearestDAE(kmSafe);
@@ -1633,10 +1661,7 @@
               return;
             }
             target = nearest;
-
-            // marker + route
             updateMarkers();
-            // zoom
             try{ map.setView([lat, lon], 16); }catch(e){}
             await computeRoute();
           }catch(e){
@@ -1644,7 +1669,6 @@
             document.getElementById("navSub").textContent = "Réessayez dans quelques secondes.";
           }
         }else{
-          // recalcul itinéraire à intervalles / déplacement
           await computeRoute();
         }
 
@@ -1667,49 +1691,152 @@
     document.getElementById("legalClose").onclick = ()=> legal.classList.remove("open");
     document.getElementById("legalX").onclick = ()=> legal.classList.remove("open");
 
-    document.querySelectorAll("#legal .tab").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        document.querySelectorAll("#legal .tab").forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-        const k = btn.getAttribute("data-tab");
-        document.getElementById("p-rgpd").style.display = (k==="rgpd") ? "block" : "none";
-        document.getElementById("p-cgu").style.display  = (k==="cgu")  ? "block" : "none";
-        document.getElementById("p-cgv").style.display  = (k==="cgv")  ? "block" : "none";
-      });
-    });
-
     // =========================================================
-    // Tiles
+    // Écrans TILES : ✅ détails complets (élu / CCI)
     // =========================================================
     document.querySelectorAll("[data-open]").forEach(el=>{
       el.addEventListener("click", ()=>{
         const key = el.getAttribute("data-open");
-        if(key==="sport"){ openSportHome(); return; }
+
         if(key==="oeuvres"){
-          openModal("Œuvres", `<div class="doc box">Structure : carte / fiche œuvre / scan / audio</div>`);
+          openModal("Œuvres & fresques — (version complète)", `
+            <div class="doc">
+              <div class="box">
+                <strong>But :</strong> valoriser la ville (parcours artistique) + rendre l’art “vivant” et accessible.
+              </div>
+
+              <h2>Ce que l’onglet contiendra</h2>
+              <ul>
+                <li>Carte interactive des fresques (géolocalisation)</li>
+                <li>Fiche œuvre : artiste • mécène • remerciements</li>
+                <li>Audio : lecture (voix féminine douce)</li>
+                <li>Scan QR / BLE : déblocage WattCoins</li>
+                <li>Guidage piéton (itinéraire)</li>
+              </ul>
+
+              <div class="box">
+                <strong>Impact :</strong> tourisme local, visibilité des mécènes, parcours famille, accès simple.
+              </div>
+            </div>
+          `);
           return;
         }
+
         if(key==="ecole"){
-          openModal("École", `<div class="doc box">Structure : mot du jour + voix</div>`);
+          openModal("École — (version complète)", `
+            <div class="doc">
+              <div class="box">
+                <strong>But :</strong> faire vivre l’application par la jeunesse + créer un rituel citoyen.
+              </div>
+
+              <h2>Fonctions</h2>
+              <ul>
+                <li>Mot du jour (par classe)</li>
+                <li>Lecture audio (voix enfant si autorisation / sinon voix synthétique)</li>
+                <li>Historique mensuel + progression</li>
+                <li>WattCoins “école” (spécifiques, échangeables uniquement mairie)</li>
+                <li>Accès prof sécurisé (publication / gestion)</li>
+              </ul>
+
+              <div class="box">
+                <strong>Cadre :</strong> pas de réseau social libre • pas de commentaires ouverts • protection enfant.
+              </div>
+            </div>
+          `);
           return;
         }
+
+        if(key==="sport"){
+          openSportHome();
+          return;
+        }
+
         if(key==="mairie"){
-          openModal("Mairie", `<div class="doc box">Structure : infos / alertes / agenda</div>`);
+          openModal("Mairie — infos & vie locale (version complète)", `
+            <div class="doc">
+              <div class="box">
+                <strong>But :</strong> donner une utilité quotidienne à l’app : infos mairie + calendrier vivant.
+              </div>
+
+              <h2>Contenus visibles par tous</h2>
+              <ul>
+                <li>Infos travaux / alertes / déviations</li>
+                <li>Agenda / événements (calendrier vivant)</li>
+                <li>Messages officiels (simples, courts, utiles)</li>
+              </ul>
+
+              <h2>Fonctions encadrées</h2>
+              <ul>
+                <li>Publication mairie (droits limités)</li>
+                <li>Validation admin principal sur ce qui dépasse “infos”</li>
+                <li>Traçabilité des modifications</li>
+              </ul>
+
+              <div class="box">
+                <strong>Objectif :</strong> adoption de l’app par l’utilité, pas seulement par “le projet”.
+              </div>
+            </div>
+          `);
           return;
         }
+
         if(key==="commerces"){
-          openModal("Commerces", `<div class="doc box">Structure : bons plans + cadre publicité</div>`);
+          openModal("Commerces — bons plans & WattCoins (version complète)", `
+            <div class="doc">
+              <div class="box">
+                <strong>But :</strong> carte de fidélité collective + dynamisation commerce local.
+              </div>
+
+              <h2>Fonctions</h2>
+              <ul>
+                <li>Offres / bons plans (cadre anti-surcharge)</li>
+                <li>Attribution WattCoins selon seuil (ex : 50€)</li>
+                <li>Échanges contre cadeaux (règles claires)</li>
+                <li>Publicités limitées (max/jour) et équité (règle 16h)</li>
+                <li>Journal discret côté admin en cas de litige</li>
+              </ul>
+
+              <div class="box">
+                <strong>Confiance :</strong> pas de classement entre commerçants • pas de stats humiliantes.
+              </div>
+            </div>
+          `);
           return;
         }
       });
     });
 
     document.getElementById("adminTile").addEventListener("click", ()=>{
-      openModal("Accès Admin (structure)", `<div class="doc box">Rôles • blocage • journal • sécurité</div>`);
+      openModal("Administration — (version complète)", `
+        <div class="doc">
+          <div class="box">
+            <strong>But :</strong> une application “pro” : sécurité, contrôle, évolutivité, traçabilité.
+          </div>
+
+          <h2>Gestion</h2>
+          <ul>
+            <li>Rôles : admin principal / mairie / commerçants / enseignants…</li>
+            <li>Activation / blocage / désactivation à distance</li>
+            <li>2FA optionnel</li>
+            <li>Alertes (tentatives d’accès, erreurs répétées)</li>
+          </ul>
+
+          <h2>Traçabilité</h2>
+          <ul>
+            <li>Journal des actions sensibles (inviolable / audit)</li>
+            <li>Historique des corrections / litiges (export mensuel)</li>
+            <li>Protection des paramètres critiques (double validation possible)</li>
+          </ul>
+
+          <div class="box">
+            <strong>Cadre :</strong> RGPD/CGU/CGV intégrées + séparation des responsabilités.
+          </div>
+        </div>
+      `);
     });
 
     // =========================================================
-    // Long press logic (urgence)
+    // Urgences : long press
     // =========================================================
     function makeLongPress(btn, ringEl, ms, onTrigger){
       let raf=null, start=null, holding=false;
@@ -1773,6 +1900,11 @@
       if(!sosNumber){ choice.classList.add("open"); return; }
       alert("Démo : appel " + sosNumber);
     });
+
+    // =========================================================
+    // Init sport home marquee
+    // =========================================================
+    refreshSportHomeTicker();
   </script>
 </body>
 </html>
