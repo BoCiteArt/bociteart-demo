@@ -518,6 +518,74 @@
       .tile{ aspect-ratio: 1 / 0.80; }
       .wrap{ gap:9px; }
     }
+
+    /* =========================================================
+       ✅ AJOUT SOUS LES TUILES : "DERNIERS ÉCHANGES" (sans toucher le reste)
+       ========================================================= */
+    .updates{
+      border:2px solid rgba(0,0,0,.08);
+      background:#fff;
+      border-radius:18px;
+      padding:12px;
+      box-shadow:0 6px 14px rgba(0,0,0,.06);
+    }
+    .updatesTitle{
+      font-weight:900;
+      font-size:15px;
+      margin-bottom:6px;
+    }
+    .updatesSub{
+      color:var(--muted);
+      font-weight:800;
+      font-size:12px;
+      margin-bottom:10px;
+    }
+    .updatesGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .uCard{
+      background:var(--bg);
+      border:2px solid rgba(0,0,0,.08);
+      border-radius:14px;
+      padding:10px;
+    }
+    .uCard .h{
+      font-weight:900;
+      font-size:13px;
+      margin-bottom:6px;
+    }
+    .uCard .txt{
+      font-weight:800;
+      font-size:12px;
+      color:var(--text);
+      line-height:1.25;
+    }
+    .uActions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .uMiniBtn{
+      border:2px solid rgba(0,0,0,.10);
+      background:var(--beige);
+      border-radius:12px;
+      padding:8px 10px;
+      font-weight:900;
+      cursor:pointer;
+      font-size:12px;
+    }
+    .uLine{
+      margin-top:10px;
+      border:2px solid rgba(0,0,0,.08);
+      background:var(--beige);
+      border-radius:14px;
+      padding:10px;
+      font-weight:800;
+      font-size:12px;
+    }
   </style>
 </head>
 
@@ -633,6 +701,36 @@
               <div class="lblSmall" id="sosLabel">3919/119</div>
             </div>
           </button>
+        </div>
+      </div>
+
+      <!-- ✅ AJOUT SOUS LES TUILES : Derniers échanges (sans toucher aux onglets) -->
+      <div class="updates" id="updates">
+        <div class="updatesTitle">Derniers échanges (aperçu immédiat)</div>
+        <div class="updatesSub">But : élus/CCI voient tout de suite ce que l’appli contient, sans tout ouvrir.</div>
+
+        <div class="updatesGrid">
+          <div class="uCard">
+            <div class="h">🏫 École — mot du jour</div>
+            <div class="txt">« Je suis ravi aujourd’hui. » — Exemple (démo)</div>
+            <div class="uActions">
+              <button class="uMiniBtn" type="button" id="openEcoleFromUpdates">Voir l’onglet</button>
+              <button class="uMiniBtn" type="button" id="readEcoleFromUpdates">Lire audio</button>
+            </div>
+          </div>
+
+          <div class="uCard">
+            <div class="h">🏟️ Sport — week-end</div>
+            <div class="txt">Rapport du week-end (démo) : missions citoyennes • fair-play • propreté.</div>
+            <div class="uActions">
+              <button class="uMiniBtn" type="button" id="openSportFromUpdates">Voir l’onglet</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="uLine">
+          ❤️ DAE : carte + itinéraire (1 à 3 km) + vidéo (dans l’onglet DAE).
+          <button class="uMiniBtn" type="button" id="openDaeFromUpdates" style="margin-left:8px;">Ouvrir DAE</button>
         </div>
       </div>
 
@@ -1124,8 +1222,14 @@
 
     function buildCalendarHTML(){
       const first = new Date(calYear, calMonth, 1);
-      const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+      const last = new Date(calYear, calMonth+1, 0);
+      const startDow = (first.getDay() + 6) % 7; // 0=Mon
+      const daysInMonth = last.getDate();
 
+      const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+      const bookings = loadBookings();
+
+      const labels = ["L","M","M","J","V","S","D"];
       let html = `
         <div class="calWrap">
           <div class="calTop">
@@ -1142,7 +1246,7 @@
           </div>
 
           <div class="calGrid" style="margin-top:10px;">
-            ${["L","M","M","J","V","S","D"].map(x=>`<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
+            ${labels.map(x=>`<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
           </div>
 
           <div class="calGrid" id="calDays"></div>
@@ -1175,6 +1279,7 @@
       const startDow = (first.getDay() + 6) % 7;
       const daysInMonth = last.getDate();
 
+      // leading blanks
       let cells = [];
       for(let i=0;i<startDow;i++){
         cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
@@ -1195,6 +1300,7 @@
 
       daysEl.innerHTML = cells.join("");
 
+      // navigation
       document.getElementById("calPrev").onclick = ()=>{
         calMonth--;
         if(calMonth<0){ calMonth=11; calYear--; }
@@ -1206,8 +1312,12 @@
         renderCalendarInto(containerId);
       };
 
-      document.getElementById("calRecap").onclick = ()=> openRecapModal(calYear, calMonth);
+      // recap
+      document.getElementById("calRecap").onclick = ()=>{
+        openRecapModal(calYear, calMonth);
+      };
 
+      // reset demo
       document.getElementById("calReset").onclick = ()=>{
         if(confirm("Réinitialiser les réservations (démo) ?")){
           localStorage.removeItem(PUB_STORE_KEY);
@@ -1215,6 +1325,7 @@
         }
       };
 
+      // click day
       document.querySelectorAll(".calDay[data-day]").forEach(el=>{
         el.addEventListener("click", ()=>{
           const d = parseInt(el.getAttribute("data-day"),10);
@@ -1304,6 +1415,7 @@
       const monthObj = b[keyYM] || {};
       const days = Object.keys(monthObj).sort();
 
+      // CSV
       let csv = "date;profil;horodatage_iso;horodatage_fr;note\n";
       days.forEach(d=>{
         (monthObj[d]||[]).forEach(it=>{
@@ -1364,7 +1476,7 @@ ${days.length ? days.map(d=>{
       },0);
     }
 
-    // ✅ CLIC SUR LE TICKER
+    // ✅ CLIC SUR LE TICKER = ouvre un descriptif clair pour élus / CCI / mairie
     document.getElementById("ticker").addEventListener("click", ()=>{
       openModal("Publicités & visibilité (ticker)", `
         <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
@@ -1416,48 +1528,29 @@ ${days.length ? days.map(d=>{
       el.addEventListener("click", ()=>{
         const key = el.getAttribute("data-open");
 
-        // ✅ OEUVRES : enrichi (élu/CCI) sans changer ta logique
         if(key==="oeuvres"){
           openModal("Œuvres", `
-            <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (version “élu/CCI”)</div>
-
+            <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (structure)</div>
             <div class="box">
-              <strong>But immédiat :</strong> rendre la ville visitable et attractive via un parcours artistique connecté,
-              avec retombées locales (commerce, mécénat, image, tourisme de proximité).
+              <strong>Cadre :</strong> contenus illustratifs en démo. Les informations (lieux, orientation) dépendent du téléphone et des sources disponibles.
             </div>
-
-            <div style="font-weight:900;margin-top:10px;">Ce que l’élu voit tout de suite dans l’app</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Carte des fresques par quartiers</li>
-              <li>Guidage simple (piéton) vers une œuvre</li>
-              <li>Fiche œuvre : artiste • mécène • remerciements • récit</li>
-              <li>Audio : lecture (voix féminine douce)</li>
-              <li>QR / BLE à proximité : expérience “déblocage”</li>
-              <li>Valorisation : mairie + partenaires + écoles (co-acteurs)</li>
+              <li>Carte des fresques (quartiers)</li>
+              <li>Fiche œuvre : artiste • mécène • remerciements</li>
+              <li>Scan QR / BLE à proximité</li>
+              <li>Audio : voix féminine douce (lecture des contenus)</li>
+              <li>Mode visite : guidage simple</li>
+              <li>Reconnaissance : bocitecoins selon règles locales</li>
             </ul>
-
-            <div style="font-weight:900;margin-top:12px;">Pilotage (structure)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Contenus modifiables par l’administration (ajout/retrait/édition)</li>
-              <li>Activation par “saisons” (onglets progressifs)</li>
-              <li>Cadre anti-abus (pas de commentaires libres, pas de dérives)</li>
-            </ul>
-
             <div class="muted" style="margin-top:10px;">
               (Démo) Structure présentée à titre de démonstration.
             </div>
           `);
         }
 
-        // ✅ ECOLE : enrichi (élu/CCI) sans toucher à ta lecture audio
         if(key==="ecole"){
           openModal("École", `
-            <div style="font-weight:900;margin-bottom:8px;">École & jeunesse (version “élu/CCI”)</div>
-
-            <div class="box">
-              <strong>But :</strong> donner de la vie quotidienne à l’application via un rituel simple.
-              Les enfants deviennent le moteur d’adoption (parents, familles, habitants).
-            </div>
+            <div style="font-weight:900;margin-bottom:8px;">Mot du jour (structure)</div>
 
             <div class="box">
               <strong>Cadre école :</strong> l’établissement gère et conserve les autorisations nécessaires (document de rentrée).
@@ -1481,16 +1574,9 @@ ${days.length ? days.map(d=>{
             <ul style="margin:8px 0 0 18px;font-weight:800;">
               <li>Publication “mot du jour” (compte prof)</li>
               <li>Choix voix : enfant / synthétique (selon autorisations)</li>
-              <li>Archivage : historique des mots (preuve de continuité)</li>
+              <li>Archivage : historique des mots</li>
               <li>Règles : pas de commentaires libres</li>
               <li>Bocitecoins couleur Jaune : collectivité</li>
-            </ul>
-
-            <div style="font-weight:900;margin-top:12px;">Intérêt institutionnel</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Projet éducatif et citoyen : valorisant, non polémique</li>
-              <li>Outil simple à présenter aux directions d’établissement</li>
-              <li>Cadre clair : responsabilités, autorisations, et sécurité</li>
             </ul>
           `);
 
@@ -1503,7 +1589,6 @@ ${days.length ? days.map(d=>{
           }, 0);
         }
 
-        // ❗ SPORT : inchangé (tu as demandé ne pas toucher)
         if(key==="sport"){
           openModal("Sport", `
             <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
@@ -1525,47 +1610,28 @@ ${days.length ? days.map(d=>{
           `);
         }
 
-        // ✅ MAIRIE : enrichi (élu/CCI)
         if(key==="mairie"){
           openModal("Mairie", `
-            <div style="font-weight:900;margin-bottom:8px;">Mairie (version “élu/CCI”)</div>
-
+            <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
             <div class="box">
               <strong>Accès citoyen gratuit :</strong> messages d’intérêt général (sécurité, route, météo exceptionnelle) peuvent être diffusés sans condition d’abonnement.
-              L’app devient utile “tous les jours”, pas seulement lors d’un événement.
             </div>
-
-            <div style="font-weight:900;margin-top:10px;">Ce qui est visible immédiatement</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
               <li>Infos & alertes (travaux, circulation, annonces)</li>
               <li>Agenda / calendrier vivant (visible, contenu selon activation)</li>
-              <li>Rubriques claires : “ce week-end”, “infos pratiques”, “messages officiels”</li>
-            </ul>
-
-            <div style="font-weight:900;margin-top:12px;">Fonctions de pilotage (structure)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Compte référent mairie (droits limités)</li>
-              <li>Traçabilité des publications (anti-incident)</li>
-              <li>Échanges bocitecoins Jaune (école) et Vert (sport) via règles collectivité</li>
+              <li>Échanges bocitecoins Jaune (école) et Vert (sport)</li>
               <li>Cadeaux / surprises : validation et gestion interne</li>
               <li>Réservation publicité (si activée) via bon de commande / devis signé</li>
             </ul>
-
             <div class="muted" style="margin-top:10px;">
               (Officiel) accès mairie = compte référent + activation.
             </div>
           `);
         }
 
-        // ✅ COMMERCES : enrichi (élu/CCI)
         if(key==="commerces"){
           openModal("Commerces", `
-            <div style="font-weight:900;margin-bottom:8px;">Commerces (version “élu/CCI”)</div>
-
-            <div class="box">
-              <strong>But :</strong> dynamiser les achats locaux via un mécanisme simple (points/avantages),
-              sans “classement” ni pression entre commerçants.
-            </div>
+            <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
 
             <div class="box">
               <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.
@@ -1580,7 +1646,6 @@ ${days.length ? days.map(d=>{
               <li>Attribution : 1 bocitecoin couleur OR par tranche de 10 € d’achat</li>
               <li>Seuil minimum : 10 €</li>
               <li>Chaque +10 € = +1 bocitecoin couleur OR</li>
-              <li>Règle simple en caisse : pas d’attribution si le seuil n’est pas atteint</li>
             </ul>
 
             <div style="font-weight:900;margin-top:12px;">Facturation Bo’CitéArt</div>
@@ -1598,56 +1663,33 @@ ${days.length ? days.map(d=>{
               <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
               <li>Prix : 50 € HT • Pack 5 = 200 € HT (validité 2 mois glissants)</li>
             </ul>
-
-            <div style="font-weight:900;margin-top:12px;">Sécurité & équité</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Pas de classement public entre commerçants</li>
-              <li>Suivi complet réservé à l’administration (en cas de litige)</li>
-              <li>Cadre anti-abus : suspension possible si usage non conforme</li>
-            </ul>
           `);
         }
       });
     });
 
-    // ✅ Admin tile : enrichi (élu/CCI)
+    // Admin tile (démo)
     document.getElementById("adminTile").addEventListener("click", ()=>{
       openModal("Accès Admin (structure)", `
-        <div style="font-weight:900;margin-bottom:8px;">Administration (version “élu/CCI”)</div>
-
+        <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
         <div class="box">
           <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
           Les éléments affichés sont une vitrine de structure (démo).
         </div>
-
-        <div style="font-weight:900;margin-top:10px;">Gouvernance & rôles</div>
         <ul style="margin:8px 0 0 18px;font-weight:800;">
           <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
           <li>Activation / blocage / désactivation</li>
           <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
-        </ul>
-
-        <div style="font-weight:900;margin-top:12px;">Traçabilité & conformité</div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Journalisation des actions sensibles (structure)</li>
           <li>Facturation : génération PDF • statuts paiements</li>
-          <li>Support : gestion des incidents et litiges (structure)</li>
-          <li>Cadre RGPD / CGU / CGV intégré</li>
+          <li>Abonnement (citoyens) : suivi des statuts (actif/inactif) et cohérence de facturation</li>
         </ul>
-
-        <div style="font-weight:900;margin-top:12px;">Abonnement optionnel (citoyens)</div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Suivi des statuts (actif/inactif) et cohérence de facturation</li>
-          <li>Services numériques supplémentaires (structure)</li>
-        </ul>
-
         <div class="muted" style="margin-top:10px;">
           (Démo) Les obligations légales et mentions complètes seront affichées dans la version officielle.
         </div>
       `);
     });
 
-    // DAE screen (inchangé)
+    // ✅ DAE screen : AJOUT vidéo + ligne itinéraire (sans retirer tes explications)
     document.getElementById("daeBtn").addEventListener("click", ()=>{
       openModal("Défibrillateur (DAE)", `
         <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
@@ -1656,12 +1698,43 @@ ${days.length ? days.map(d=>{
           Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
         </div>
         <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
           <li>Orientation + guidage</li>
           <li>Rayon local : 1 à 3 km</li>
           <li>DAE • pharmacie • hôpital</li>
           <li>Géolocalisation optionnelle (activation utilisateur)</li>
         </ul>
+
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
+          <video controls playsinline style="width:100%;border-radius:14px;background:#000;">
+            <!-- Remplace "dae-video.mp4" par ton fichier vidéo -->
+            <source src="dae-video.mp4" type="video/mp4">
+            Votre navigateur ne supporte pas la vidéo.
+          </video>
+          <div class="muted" style="margin-top:8px;">
+            (Démo) Vidéo d’explication / gestes essentiels.
+          </div>
+        </div>
+
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
+          <div class="muted">
+            Ici, la version officielle affichera la carte + fléchage + une ligne d’itinéraire vers le DAE le plus proche.
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
+            <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
+          </div>
+        </div>
       `);
+
+      setTimeout(()=>{
+        const loc = document.getElementById("daeLocate");
+        const rte = document.getElementById("daeRoute");
+        if(loc) loc.onclick = ()=> alert("Démo : demande de localisation (GPS).");
+        if(rte) rte.onclick = ()=> alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
+      },0);
     });
 
     // --- Legal modal open/close + tabs ---
@@ -1829,6 +1902,22 @@ ${days.length ? days.map(d=>{
         emergencyGate("sos", ()=> alert("Démo : appel " + sosNumber + " (appui long validé)."));
       }
     );
+
+    // ✅ AJOUT : boutons du bloc "Derniers échanges" (sans toucher au reste)
+    function clickTile(key){
+      const t = document.querySelector(`.tile[data-open="${key}"]`);
+      if(t) t.click();
+    }
+
+    const btnEcole = document.getElementById("openEcoleFromUpdates");
+    const btnSport = document.getElementById("openSportFromUpdates");
+    const btnDae = document.getElementById("openDaeFromUpdates");
+    const btnRead = document.getElementById("readEcoleFromUpdates");
+
+    if(btnEcole) btnEcole.onclick = ()=> clickTile("ecole");
+    if(btnSport) btnSport.onclick = ()=> clickTile("sport");
+    if(btnDae) btnDae.onclick = ()=> document.getElementById("daeBtn").click();
+    if(btnRead) btnRead.onclick = ()=> speak("Je suis ravi aujourd’hui.", "child");
   </script>
 </body>
 </html>
