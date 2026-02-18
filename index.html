@@ -10,6 +10,9 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 
+  <!-- ✅ Leaflet (carte DAE) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
   <style>
     :root{
       --bg:#f1e6d6;
@@ -221,14 +224,14 @@
     .lpCore .lbl{ font-size:18px; line-height:1; }
     .lpCore .lblSmall{ font-size:12px; line-height:1.05; }
 
-    /* ✅ Sous-texte SOS plus petit (sans toucher aux numéros) */
+    /* ✅ Sous-texte SOS encore plus petit */
     .sosSub{
-      font-size:9px;
+      font-size:7.5px; /* ✅ réduit */
       font-weight:900;
-      line-height:1.05;
+      line-height:1.0;
       margin-top:2px;
       opacity:.95;
-      max-width:58px;
+      max-width:60px;
       white-space:normal;
     }
 
@@ -420,7 +423,7 @@
       .iconBtn{ width:40px; height:40px; }
       .legalBtn{ padding:9px 10px; font-size:12px; }
       .sheet .body{ max-height:min(70vh, 460px); }
-      .sosSub{ font-size:8.5px; }
+      .sosSub{ font-size:7px; } /* ✅ encore plus petit sur petits écrans */
     }
     @media (max-height: 700px){
       .ticker{ height:128px; }
@@ -433,14 +436,16 @@
        ========================================================= */
     .sportWrap{ display:flex; flex-direction:column; gap:12px; }
 
-    /* ✅ Fond clair (plus noir) */
+    /* ✅ Bandeau sport collé en haut (sticky) */
     .sportTicker{
       height:40px;
       border-radius:14px;
       background:#fff;
       overflow:hidden;
       border:2px solid rgba(0,0,0,.12);
-      position:relative;
+      position:sticky;         /* ✅ sticky */
+      top:0;                   /* ✅ collé en haut */
+      z-index:5;               /* ✅ au-dessus du contenu */
     }
     .sportTicker .stRow{
       position:absolute; inset:0;
@@ -482,7 +487,7 @@
       white-space:nowrap;
       max-width:320px;
     }
-    .stBold{ font-weight:1000; letter-spacing:.2px; }
+    .stBold{ font-weight:1000; letter-spacing:.2px; } /* ✅ gras visible */
     .stHint{
       margin-left:auto;
       color:rgba(0,0,0,.65);
@@ -613,12 +618,94 @@
       padding-top:56.25%;
       border-radius:12px;
       overflow:hidden;
-      background:#fff; /* ✅ changé (était #000) */
+      background:#fff;
+    }
+    /* ✅ Vidéo plus petite pour laisser place au reste */
+    .videoWrap.small{
+      padding-top:40%;
     }
     .videoWrap iframe{
       position:absolute; inset:0;
       width:100%; height:100%;
       border:0;
+    }
+
+    /* ✅ Carte DAE */
+    .mapBox{
+      border:2px solid rgba(0,0,0,.08);
+      background:#fff;
+      border-radius:14px;
+      padding:10px;
+      margin:10px 0;
+    }
+    .mapCanvas{
+      width:100%;
+      height:320px;
+      border-radius:12px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .pillRow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .pill{
+      border:2px solid rgba(0,0,0,.10);
+      background:var(--beige);
+      border-radius:999px;
+      padding:8px 10px;
+      font-weight:1000;
+      cursor:pointer;
+      font-size:12px;
+    }
+    .pill.active{
+      background:#fff;
+    }
+    .daeList{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:8px;
+      margin-top:10px;
+    }
+    .daeItem{
+      border:2px solid rgba(0,0,0,.10);
+      background:var(--beige);
+      border-radius:14px;
+      padding:10px 12px;
+      font-weight:900;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .daeItem .top{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .daeItem .dist{
+      font-weight:1000;
+      white-space:nowrap;
+    }
+    .daeActions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:4px;
+    }
+    .daeLinkBtn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      border:2px solid rgba(0,0,0,.10);
+      background:#fff;
+      border-radius:12px;
+      padding:8px 10px;
+      font-weight:1000;
+      font-size:12px;
     }
   </style>
 </head>
@@ -733,7 +820,6 @@
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.86.3 1.7.54 2.5a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.58-1.11a2 2 0 0 1 2.11-.45c.8.24 1.64.42 2.5.54A2 2 0 0 1 22 16.92z"/>
               </svg>
 
-              <!-- ✅ On garde 3919/119 identique, on ajoute juste un sous-texte plus petit -->
               <div class="lblSmall" id="sosLabel">3919/119</div>
               <div class="sosSub">Aide femmes &amp; enfants</div>
             </div>
@@ -1048,6 +1134,9 @@
     </div>
   </div>
 
+  <!-- ✅ Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <script>
     // --- Fix hauteur visible Android (barres Chrome) ---
     function setVh(){
@@ -1352,7 +1441,7 @@
       if(!data || !Array.isArray(data.sponsors)){
         data = {
           sponsors: [
-            // ✅ demandé : OdeKoré en gras / Anaïs Fleurs en normal
+            // ✅ 2 pubs en défilement : 1 en gras / 1 normal (différence visible)
             {
               id:"ex1",
               bizName:"OdeKoré (coiffeur)",
@@ -1430,6 +1519,7 @@
 
       openModal("Sport", `
         <div class="sportWrap">
+          <!-- ✅ Bandeau pub sport collé en haut -->
           <div class="sportTicker" id="sportTicker" aria-label="Bandeau sport (toucher pour détails)">
             <div class="stRow">
               <div class="sportMarquee" id="sportMarquee">${tickerHtml}</div>
@@ -1482,11 +1572,12 @@
         const st = document.getElementById("sportTicker");
         if(st){
           st.addEventListener("click", ()=>{
-            openModal("Bandeau Sport (1 cm)", `
+            openModal("Bandeau Sport (collé en haut)", `
               <div style="font-weight:900;margin-bottom:8px;">À quoi sert ce bandeau ?</div>
               <div class="box">
                 Il montre en continu les commerces qui soutiennent un club <strong>et</strong> une cause.
-                C’est une vitrine simple, lisible, et utile.
+                <br><br>
+                Dans cette démo : <strong>1 texte en gras</strong> et <strong>1 normal</strong> pour montrer la différence.
               </div>
             `);
           });
@@ -1540,6 +1631,7 @@
       openModal("Sport — Soutenir un club", `
         <div class="sportWrap">
 
+          <!-- ✅ Bandeau pub sport collé en haut (même sur le formulaire) -->
           <div class="sportTicker" id="sportTicker2">
             <div class="stRow">
               <div class="sportMarquee">${renderSportTickerItems()}</div>
@@ -1700,6 +1792,299 @@
     }
 
     // =========================================================
+    // ✅ DAE : vidéo + carte réelle + recherche 1 à 3 km
+    // =========================================================
+    const CROIX_ROUGE_DAE_YT = "3CAmp8yKYEg";
+
+    function haversineKm(lat1, lon1, lat2, lon2){
+      const R = 6371;
+      const toRad = (x)=> x * Math.PI / 180;
+      const dLat = toRad(lat2-lat1);
+      const dLon = toRad(lon2-lon1);
+      const a =
+        Math.sin(dLat/2)**2 +
+        Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+      return 2*R*Math.asin(Math.sqrt(a));
+    }
+
+    function openDaeVideo(){
+      const yt = `https://www.youtube-nocookie.com/embed/${CROIX_ROUGE_DAE_YT}?rel=0&modestbranding=1`;
+      const ytOpen = `https://www.youtube.com/watch?v=${CROIX_ROUGE_DAE_YT}`;
+      openModal("Défibrillateur (DAE) — mode d’emploi", `
+        <div style="font-weight:900;margin-bottom:8px;">Comprendre vite (vidéo)</div>
+        <div class="box">
+          Un DAE peut sauver une vie. En cas de danger immédiat : appelez le <strong>112</strong>.
+        </div>
+
+        <div class="videoBox">
+          <div class="videoWrap small">
+            <iframe
+              src="${yt}"
+              title="Vidéo - comment utiliser un DAE"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <a class="choiceBtn" href="${ytOpen}" target="_blank" rel="noreferrer"
+               style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
+              Ouvrir sur YouTube
+            </a>
+            <button class="choiceBtn" id="openDaeMap" type="button">Carte & itinéraires DAE (1–3 km)</button>
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            Si la vidéo ne s’affiche pas (bloqueur), utilisez “Ouvrir sur YouTube”.
+          </div>
+        </div>
+
+        <div class="box">
+          <strong>Ensuite :</strong> ouvrir la carte pour trouver le DAE le plus proche (1 à 3 km).
+        </div>
+      `);
+
+      setTimeout(()=>{
+        const btn = document.getElementById("openDaeMap");
+        if(btn) btn.onclick = ()=> openDaeMap(2); // par défaut 2 km
+      },0);
+    }
+
+    async function fetchDaes(lat, lon, radiusMeters){
+      const q = `
+        [out:json][timeout:25];
+        (
+          node(around:${Math.round(radiusMeters)},${lat},${lon})["amenity"="defibrillator"];
+        );
+        out body;
+      `;
+      const url = "https://overpass-api.de/api/interpreter";
+      const res = await fetch(url, {
+        method:"POST",
+        headers: { "Content-Type":"text/plain;charset=UTF-8" },
+        body: q
+      });
+      if(!res.ok) throw new Error("Overpass indisponible");
+      const data = await res.json();
+      const els = Array.isArray(data.elements) ? data.elements : [];
+      return els
+        .filter(e => typeof e.lat==="number" && typeof e.lon==="number")
+        .map(e=>{
+          const tags = e.tags || {};
+          const name = tags.name || "DAE (défibrillateur)";
+          const addr = [
+            tags["addr:housenumber"],
+            tags["addr:street"],
+            tags["addr:postcode"],
+            tags["addr:city"]
+          ].filter(Boolean).join(" ");
+          return {
+            id: e.id,
+            lat: e.lat,
+            lon: e.lon,
+            name,
+            addr,
+            tags
+          };
+        });
+    }
+
+    function openDaeMap(km){
+      const kmSafe = (km===1 || km===2 || km===3) ? km : 2;
+
+      openModal("DAE — Carte & itinéraires", `
+        <div style="font-weight:1000;">Rechercher des DAE autour de moi</div>
+        <div class="miniNote">
+          Choisissez un rayon (1 à 3 km), autorisez la géolocalisation, puis sélectionnez un DAE pour obtenir l’itinéraire.
+        </div>
+
+        <div class="box" style="margin-top:10px;">
+          <strong>Rayon :</strong>
+          <div class="pillRow">
+            <button class="pill ${kmSafe===1?"active":""}" data-km="1" type="button">1 km</button>
+            <button class="pill ${kmSafe===2?"active":""}" data-km="2" type="button">2 km</button>
+            <button class="pill ${kmSafe===3?"active":""}" data-km="3" type="button">3 km</button>
+          </div>
+          <div class="muted" style="margin-top:8px;">
+            Données issues d’OpenStreetMap (si un DAE n’est pas référencé, il peut ne pas apparaître).
+          </div>
+        </div>
+
+        <div class="mapBox">
+          <div id="daeStatus" class="muted">📍 En attente de géolocalisation…</div>
+          <div style="height:8px;"></div>
+          <div id="daeMap" class="mapCanvas"></div>
+        </div>
+
+        <div class="sportPanel" style="padding:12px;">
+          <div style="font-weight:1000;">DAE trouvés</div>
+          <div id="daeList" class="daeList">
+            <div class="muted">—</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <button class="choiceBtn" id="refreshDae" type="button">Rechercher</button>
+          <button class="choiceBtn" id="backToVideo" type="button">Retour vidéo</button>
+        </div>
+
+        <div class="box" style="margin-top:10px;">
+          <strong>En cas d’arrêt cardiaque :</strong> appelez le <strong>112</strong> immédiatement, commencez le massage, puis allez chercher le DAE.
+        </div>
+      `);
+
+      setTimeout(()=>{
+        let map = null;
+        let userMarker = null;
+        let daeLayer = null;
+        let lastPos = null;
+
+        const statusEl = document.getElementById("daeStatus");
+        const listEl = document.getElementById("daeList");
+
+        function setStatus(t){ if(statusEl) statusEl.textContent = t; }
+
+        function initMap(lat, lon){
+          if(map) return;
+          map = L.map("daeMap", { zoomControl:true }).setView([lat, lon], 14);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+          }).addTo(map);
+
+          userMarker = L.marker([lat, lon]).addTo(map).bindPopup("Vous êtes ici");
+          daeLayer = L.layerGroup().addTo(map);
+        }
+
+        function renderList(items, userLat, userLon){
+          if(!listEl) return;
+          if(!items.length){
+            listEl.innerHTML = `<div class="muted">Aucun DAE trouvé dans ce rayon.</div>`;
+            return;
+          }
+          listEl.innerHTML = items.map((d)=>{
+            const dist = haversineKm(userLat, userLon, d.lat, d.lon);
+            const distTxt = dist < 1 ? `${Math.round(dist*1000)} m` : `${dist.toFixed(2)} km`;
+            const dir = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLon}&destination=${d.lat},${d.lon}&travelmode=walking`;
+            const osm = `https://www.openstreetmap.org/?mlat=${d.lat}&mlon=${d.lon}#map=18/${d.lat}/${d.lon}`;
+            return `
+              <div class="daeItem">
+                <div class="top">
+                  <div>
+                    <div>${esc(d.name)}</div>
+                    <div class="muted" style="margin-top:2px;">${esc(d.addr || "Adresse non renseignée")}</div>
+                  </div>
+                  <div class="dist">${esc(distTxt)}</div>
+                </div>
+                <div class="daeActions">
+                  <a class="daeLinkBtn" href="${dir}" target="_blank" rel="noreferrer">Itinéraire</a>
+                  <a class="daeLinkBtn" href="${osm}" target="_blank" rel="noreferrer">Voir sur OSM</a>
+                </div>
+              </div>
+            `;
+          }).join("");
+        }
+
+        async function runSearch(){
+          const radiusMeters = kmSafe * 1000;
+          setStatus(`📍 Géolocalisation… (rayon ${kmSafe} km)`);
+          listEl.innerHTML = `<div class="muted">Recherche en cours…</div>`;
+
+          if(!navigator.geolocation){
+            setStatus("Géolocalisation non supportée sur ce navigateur.");
+            listEl.innerHTML = `<div class="muted">Impossible d’afficher la carte sans localisation.</div>`;
+            return;
+          }
+
+          navigator.geolocation.getCurrentPosition(async (pos)=>{
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            lastPos = {lat, lon};
+
+            initMap(lat, lon);
+            userMarker.setLatLng([lat, lon]);
+            map.setView([lat, lon], 14);
+
+            try{
+              setStatus(`🔎 Recherche des DAE… (rayon ${kmSafe} km)`);
+              const daes = await fetchDaes(lat, lon, radiusMeters);
+
+              const withDist = daes.map(d=>({
+                ...d,
+                distKm: haversineKm(lat, lon, d.lat, d.lon)
+              })).sort((a,b)=>a.distKm-b.distKm);
+
+              daeLayer.clearLayers();
+              withDist.forEach((d)=>{
+                const mk = L.marker([d.lat, d.lon]).addTo(daeLayer);
+                mk.bindPopup(`<strong>${esc(d.name)}</strong><br>${esc(d.addr||"")}`);
+              });
+
+              if(withDist.length){
+                const group = L.featureGroup([userMarker, daeLayer]);
+                try{ map.fitBounds(group.getBounds().pad(0.2)); }catch(e){}
+              }
+
+              setStatus(`✅ ${withDist.length} DAE trouvé(s) dans ${kmSafe} km`);
+              renderList(withDist, lat, lon);
+
+            }catch(e){
+              setStatus("❌ Impossible de récupérer la liste des DAE (service temporairement indisponible).");
+              listEl.innerHTML = `<div class="muted">Réessayez dans quelques secondes.</div>`;
+            }
+          }, (err)=>{
+            setStatus("❌ Géolocalisation refusée ou indisponible.");
+            listEl.innerHTML = `<div class="muted">Autorisez la localisation pour afficher la carte et les DAE proches.</div>`;
+          }, { enableHighAccuracy:true, timeout:12000, maximumAge:60000 });
+        }
+
+        // boutons rayon
+        modalBody.querySelectorAll("[data-km]").forEach(b=>{
+          b.addEventListener("click", ()=>{
+            const k = parseInt(b.getAttribute("data-km"),10);
+            openDaeMap(k);
+          });
+        });
+
+        document.getElementById("refreshDae").onclick = runSearch;
+        document.getElementById("backToVideo").onclick = openDaeVideo;
+
+        // lance direct
+        runSearch();
+
+      }, 0);
+    }
+
+    document.getElementById("daeBtn").addEventListener("click", openDaeVideo);
+
+    // =========================================================
+    // ✅ Légal : open/close + tabs
+    // =========================================================
+    const legal = document.getElementById("legal");
+    const openLegalBtn = document.getElementById("openLegal");
+    const closeLegalBtn = document.getElementById("legalClose");
+    const closeLegalX = document.getElementById("legalX");
+
+    const openLegal = () => legal.classList.add("open");
+    const closeLegal = () => legal.classList.remove("open");
+
+    openLegalBtn.onclick = openLegal;
+    closeLegalBtn.onclick = closeLegal;
+    closeLegalX.onclick = closeLegal;
+
+    document.querySelectorAll("#legal .tab").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("#legal .tab").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const k = btn.getAttribute("data-tab");
+        document.getElementById("p-rgpd").style.display = (k==="rgpd") ? "block" : "none";
+        document.getElementById("p-cgu").style.display  = (k==="cgu")  ? "block" : "none";
+        document.getElementById("p-cgv").style.display  = (k==="cgv")  ? "block" : "none";
+      });
+    });
+
+    // =========================================================
     // ✅ ÉCRANS TILES
     // =========================================================
     document.querySelectorAll("[data-open]").forEach(el=>{
@@ -1759,98 +2144,6 @@
           <li>2FA (option) • alertes tentatives</li>
         </ul>
       `);
-    });
-
-    // =========================================================
-    // ✅ DAE : vidéo Croix-Rouge directement (cliquable)
-    // =========================================================
-    // ⚠️ Remplace cet ID si tu veux une autre vidéo
-    const CROIX_ROUGE_DAE_YT = "3CAmp8yKYEg"; // ✅ changé (était OlcTPhsQLtQ)
-
-    function openDaeVideo(){
-      const yt = `https://www.youtube-nocookie.com/embed/${CROIX_ROUGE_DAE_YT}?rel=0&modestbranding=1`;
-      const ytOpen = `https://www.youtube.com/watch?v=${CROIX_ROUGE_DAE_YT}`;
-      openModal("Défibrillateur (DAE) — mode d’emploi", `
-        <div style="font-weight:900;margin-bottom:8px;">Comprendre en 60 secondes (vidéo)</div>
-        <div class="box">
-          Un DAE peut sauver une vie. En cas de danger immédiat : appelez le <strong>112</strong>.
-        </div>
-
-        <div class="videoBox">
-          <div class="videoWrap">
-            <iframe
-              src="${yt}"
-              title="Vidéo - comment utiliser un DAE (Croix-Rouge)"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen>
-            </iframe>
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <a class="choiceBtn" href="${ytOpen}" target="_blank" rel="noreferrer" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
-              Ouvrir sur YouTube
-            </a>
-            <button class="choiceBtn" id="openDaeMap" type="button">Ouvrir la carte des DAE (démo)</button>
-          </div>
-          <div class="muted" style="margin-top:8px;">
-            Si la vidéo ne s’affiche pas (bloqueur), utilisez “Ouvrir sur YouTube”.
-          </div>
-        </div>
-
-        <div class="box">
-          <strong>But :</strong> que quelqu’un comprenne immédiatement quoi faire, avant de chercher le DAE.
-        </div>
-      `);
-
-      setTimeout(()=>{
-        const btn = document.getElementById("openDaeMap");
-        if(btn){
-          btn.onclick = ()=>{
-            openModal("DAE — Carte autour de moi (structure)", `
-              <div style="font-weight:900;margin-bottom:8px;">Trouver un défibrillateur proche</div>
-              <div class="box">
-                Cette page affichera une carte + guidage (si géolocalisation autorisée).
-                <br><br>
-                En cas d’urgence : appelez le <strong>112</strong>.
-              </div>
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Orientation + guidage</li>
-                <li>Rayon local</li>
-                <li>DAE • pharmacie • hôpital</li>
-                <li>Géolocalisation optionnelle</li>
-              </ul>
-            `);
-          };
-        }
-      },0);
-    }
-
-    document.getElementById("daeBtn").addEventListener("click", openDaeVideo);
-
-    // =========================================================
-    // ✅ Légal : open/close + tabs
-    // =========================================================
-    const legal = document.getElementById("legal");
-    const openLegalBtn = document.getElementById("openLegal");
-    const closeLegalBtn = document.getElementById("legalClose");
-    const closeLegalX = document.getElementById("legalX");
-
-    const openLegal = () => legal.classList.add("open");
-    const closeLegal = () => legal.classList.remove("open");
-
-    openLegalBtn.onclick = openLegal;
-    closeLegalBtn.onclick = closeLegal;
-    closeLegalX.onclick = closeLegal;
-
-    document.querySelectorAll("#legal .tab").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        document.querySelectorAll("#legal .tab").forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-
-        const k = btn.getAttribute("data-tab");
-        document.getElementById("p-rgpd").style.display = (k==="rgpd") ? "block" : "none";
-        document.getElementById("p-cgu").style.display  = (k==="cgu")  ? "block" : "none";
-        document.getElementById("p-cgv").style.display  = (k==="cgv")  ? "block" : "none";
-      });
     });
 
     // =========================================================
