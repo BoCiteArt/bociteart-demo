@@ -586,6 +586,35 @@
       font-weight:800;
       font-size:12px;
     }
+
+    /* =========================================================
+       ✅ AJOUT : BANDE SPORT PUB 1CM (juste au-dessus du DAE)
+       (sans toucher au reste)
+       ========================================================= */
+    .sportMiniBand{
+      height:38px;               /* ≈ 1 cm mobile */
+      background:#ffffff;
+      border:2px solid rgba(0,0,0,.08);
+      border-radius:14px;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      position:relative;
+    }
+    .sportMiniTrack{
+      display:flex;
+      gap:40px;
+      white-space:nowrap;
+      font-weight:900;
+      font-size:12px;
+      padding-left:14px;
+      animation:sportMiniScroll 18s linear infinite;
+      will-change: transform;
+    }
+    @keyframes sportMiniScroll{
+      0%{ transform:translateX(0); }
+      100%{ transform:translateX(-50%); }
+    }
   </style>
 </head>
 
@@ -705,29 +734,30 @@
       </div>
 
       <!-- ✅ AJOUT SOUS LES TUILES : Derniers échanges (sans toucher aux onglets) -->
-<div class="updates">
-  <div class="updatesTitle">Derniers échanges</div>
-  <div class="updatesSub">Démo – accès rapide</div>
+      <div class="updates">
+        <div class="updatesTitle">Derniers échanges</div>
+        <div class="updatesSub">Démo – accès rapide</div>
 
-  <div class="updatesGrid">
-    <div class="uCard">
-      <div class="h">🏟️ Sport — week-end</div>
-      <div class="txt">Rapport du week-end (démo) : missions citoyennes • fair-play • propreté.</div>
-      <div class="uActions">
-        <button class="uMiniBtn" type="button" id="openSportFromUpdates">Voir l’onglet</button>
-      </div>
-    </div>
+        <div class="updatesGrid">
+          <div class="uCard">
+            <div class="h">🏟️ Sport — week-end</div>
+            <div class="txt">Rapport du week-end (démo) : missions citoyennes • fair-play • propreté.</div>
+            <div class="uActions">
+              <button class="uMiniBtn" type="button" id="openSportFromUpdates">Voir l’onglet</button>
+            </div>
+          </div>
 
-    <div class="uCard">
-      <div class="h">🏫 École — mot du jour</div>
-      <div class="txt">Lecture (démo) : “Je suis ravi aujourd’hui.”</div>
-      <div class="uActions">
-        <button class="uMiniBtn" type="button" id="openEcoleFromUpdates">Voir l’onglet</button>
-        <button class="uMiniBtn" type="button" id="readEcoleFromUpdates">▶ Lire</button>
-      </div>
-    </div>
-  </div>
+          <div class="uCard">
+            <div class="h">🏫 École — mot du jour</div>
+            <div class="txt">Lecture (démo) : “Je suis ravi aujourd’hui.”</div>
+            <div class="uActions">
+              <button class="uMiniBtn" type="button" id="openEcoleFromUpdates">Voir l’onglet</button>
+              <button class="uMiniBtn" type="button" id="readEcoleFromUpdates">▶ Lire</button>
+            </div>
+          </div>
         </div>
+      </div>
+
       <!-- ✅ BANDEAU SPORT (défilant) : soutien commerçants → clubs + associations -->
       <div class="sportPub" id="sportPub" aria-label="Bandeau Sport — soutiens commerçants">
         <div class="sportPubHead">
@@ -776,6 +806,28 @@
 
         <div class="assoActions">
           <button class="assoBtn" type="button" id="openAssoFiche">Voir la fiche élus / CCI</button>
+        </div>
+      </div>
+
+      <div class="sportTape" aria-label="Bandeau sport et associations">
+        <div class="sportTapeViewport">
+          <div class="sportTapeTrack" id="sportTapeTrack"></div>
+        </div>
+      </div>
+
+      <!-- ✅ AJOUT : BANDE SPORT PUB 1CM (juste au-dessus du DAE) -->
+      <div class="sportMiniBand" aria-label="Bandeau sport pub (1 cm)">
+        <div class="sportMiniTrack" id="sportMiniTrack">
+          <div>🏟️ Boulangerie Croquet soutient Club + Les Papillons (Nord)</div>
+          <div>🏟️ Pharmacie Richardson soutient Club + ATC Nord</div>
+          <div>🏟️ Anaïs Fleurs soutient Club + Étoile Filante</div>
+          <div>🏟️ Garage Planque soutient Club + Les Clés du Cœur</div>
+
+          <!-- duplication pour boucle fluide -->
+          <div>🏟️ Boulangerie Croquet soutient Club + Les Papillons (Nord)</div>
+          <div>🏟️ Pharmacie Richardson soutient Club + ATC Nord</div>
+          <div>🏟️ Anaïs Fleurs soutient Club + Étoile Filante</div>
+          <div>🏟️ Garage Planque soutient Club + Les Clés du Cœur</div>
         </div>
       </div>
 
