@@ -2,9 +2,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <!-- IMPORTANT: viewport + stabilité mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Bo’CitéArt – Démo</title>
+
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#a51e22">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -25,16 +25,11 @@
       --muted:#6e6a63;
       --link:#1d4ed8;
 
-      /* hauteur visible mobile */
       --vh: 1vh;
     }
 
     *{ box-sizing:border-box; }
-    html, body{
-      height:100%;
-      margin:0;
-      padding:0;
-    }
+    html, body{ height:100%; margin:0; padding:0; }
     body{
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:var(--bg);
@@ -63,7 +58,7 @@
       gap:12px;
     }
 
-    /* --- Ticker --- */
+    /* --- Ticker top --- */
     .ticker{
       position:relative;
       overflow:hidden;
@@ -72,21 +67,12 @@
       height:150px;
       cursor:pointer;
     }
-    .ticker img{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover;
-    }
-    .ticker .overlay{
-      position:absolute; inset:0;
-      background:linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.12));
-    }
+    .ticker img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .ticker .overlay{ position:absolute; inset:0; background:linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.12)); }
     .ticker .row{
       position:absolute; inset:0;
-      display:flex;
-      align-items:center;
-      padding:0 14px;
-      gap:12px;
+      display:flex; align-items:center;
+      padding:0 14px; gap:12px;
       overflow:hidden;
     }
     .marquee{
@@ -101,17 +87,8 @@
       flex-direction:column;
       min-width:360px;
     }
-    .ticker .title{
-      color:#fff;
-      font-weight:800;
-      font-size:14px;
-    }
-    .ticker .sub{
-      color:rgba(255,255,255,.92);
-      font-weight:700;
-      font-size:12px;
-      margin-top:2px;
-    }
+    .ticker .title{ color:#fff; font-weight:800; font-size:14px; }
+    .ticker .sub{ color:rgba(255,255,255,.92); font-weight:700; font-size:12px; margin-top:2px; }
     .ticker .rule{
       margin-left:auto;
       color:rgba(255,255,255,.92);
@@ -131,7 +108,6 @@
       grid-template-columns:1fr 1fr;
       gap:12px;
     }
-
     .tile{
       position:relative;
       width:100%;
@@ -141,15 +117,8 @@
       background:var(--beige);
       cursor:pointer;
     }
-    .tile img{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover;
-    }
-    .tile .overlay{
-      position:absolute; inset:0;
-      background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.55));
-    }
+    .tile img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .tile .overlay{ position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.55)); }
     .tile .content{
       position:absolute; inset:0;
       display:flex;
@@ -160,17 +129,8 @@
       padding:12px;
       color:#fff;
     }
-    .tile .h{
-      font-weight:900;
-      font-size:18px;
-      line-height:1.15;
-    }
-    .tile .p{
-      margin-top:8px;
-      font-weight:700;
-      font-size:12px;
-      color:rgba(255,255,255,.92);
-    }
+    .tile .h{ font-weight:900; font-size:18px; line-height:1.15; }
+    .tile .p{ margin-top:8px; font-weight:700; font-size:12px; color:rgba(255,255,255,.92); }
     .tile.logoOnly .overlay{ display:none; }
     .tile.logoOnly .content{ display:none; }
 
@@ -212,13 +172,35 @@
       user-select:none;
     }
     .lpSmall{ width:64px; height:64px; }
-    .lpCore .icon{
-      width:16px; height:16px;
-      margin-bottom:2px;
-      opacity:.95;
-    }
+    .lpCore .icon{ width:16px; height:16px; margin-bottom:2px; opacity:.95; }
     .lpCore .lbl{ font-size:18px; line-height:1; }
     .lpCore .lblSmall{ font-size:12px; line-height:1.05; }
+
+    /* --- Mini bandeau sport (1 cm) juste au-dessus du DAE --- */
+    .sportMiniBand{
+      height:38px;               /* ≈ 1 cm mobile */
+      background:#ffffff;
+      border:2px solid rgba(0,0,0,.08);
+      border-radius:14px;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      position:relative;
+    }
+    .sportMiniTrack{
+      display:flex;
+      gap:40px;
+      white-space:nowrap;
+      font-weight:900;
+      font-size:12px;
+      padding-left:14px;
+      animation:sportMiniScroll 18s linear infinite;
+      will-change: transform;
+    }
+    @keyframes sportMiniScroll{
+      0%{ transform:translateX(0); }
+      100%{ transform:translateX(-50%); }
+    }
 
     /* --- DAE button --- */
     .dae{
@@ -234,13 +216,9 @@
       font-size:16px;
       cursor:pointer;
     }
-    .heart{
-      width:64px;
-      height:64px;
-      flex:0 0 auto;
-    }
+    .heart{ width:64px; height:64px; flex:0 0 auto; }
 
-    /* --- Footer complet --- */
+    /* --- Footer --- */
     .footerRow{
       display:flex;
       align-items:center;
@@ -255,11 +233,7 @@
       color:var(--link);
       text-decoration:none;
     }
-    .footerRight{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
+    .footerRight{ display:flex; align-items:center; gap:10px; }
     .iconBtn{
       width:44px; height:44px;
       border-radius:999px;
@@ -287,17 +261,9 @@
     }
 
     /* --- Modal --- */
-    .modal{
-      position:fixed;
-      inset:0;
-      display:none;
-      z-index:50;
-    }
+    .modal{ position:fixed; inset:0; display:none; z-index:50; }
     .modal.open{ display:block; }
-    .backdrop{
-      position:absolute; inset:0;
-      background:rgba(0,0,0,.40);
-    }
+    .backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.40); }
     .sheet{
       position:absolute;
       left:50%;
@@ -321,8 +287,6 @@
       padding:14px;
       font-size:14px;
       color:var(--text);
-
-      /* IMPORTANT : long texte (RGPD/CGU/CGV) */
       max-height: min(72vh, 520px);
       overflow:auto;
     }
@@ -337,13 +301,7 @@
     }
     .muted{ color:var(--muted); font-size:12px; font-weight:700; }
 
-    /* Choice modal */
-    .choiceGrid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:10px;
-    }
+    .choiceGrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
     .choiceBtn{
       border:2px solid rgba(0,0,0,.10);
       background:var(--beige);
@@ -388,9 +346,7 @@
       font-weight:800;
       margin:10px 0;
     }
-    .pillRow{
-      display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;
-    }
+    .pillRow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
     .pill{
       display:inline-flex;
       align-items:center;
@@ -419,9 +375,7 @@
       margin-bottom:8px;
       font-weight:900;
     }
-    .calTop .mini{
-      display:flex; gap:8px; align-items:center;
-    }
+    .calTop .mini{ display:flex; gap:8px; align-items:center; }
     .calBtn{
       border:2px solid rgba(0,0,0,.10);
       background:var(--beige);
@@ -431,12 +385,7 @@
       cursor:pointer;
       white-space:nowrap;
     }
-    .calGrid{
-      display:grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap:6px;
-      margin-top:8px;
-    }
+    .calGrid{ display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; margin-top:8px; }
     .calDay{
       border:2px solid rgba(0,0,0,.08);
       background:var(--bg);
@@ -448,25 +397,10 @@
       flex-direction:column;
       justify-content:space-between;
     }
-    .calDay.disabled{
-      opacity:.45;
-      cursor:not-allowed;
-    }
-    .calDay.full{
-      background:#e7e0d5;
-      cursor:not-allowed;
-    }
-    .calDay .d{
-      font-weight:900;
-      font-size:12px;
-      line-height:1;
-    }
-    .calDay .s{
-      font-weight:900;
-      font-size:11px;
-      color:var(--muted);
-      margin-top:6px;
-    }
+    .calDay.disabled{ opacity:.45; cursor:not-allowed; }
+    .calDay.full{ background:#e7e0d5; cursor:not-allowed; }
+    .calDay .d{ font-weight:900; font-size:12px; line-height:1; }
+    .calDay .s{ font-weight:900; font-size:11px; color:var(--muted); margin-top:6px; }
     .calLegend{
       display:flex;
       gap:8px;
@@ -484,16 +418,9 @@
       border-radius:999px;
       padding:6px 10px;
     }
-    .dot{
-      width:10px; height:10px;
-      border-radius:999px;
-      background:#111;
-      display:inline-block;
-    }
+    .dot{ width:10px; height:10px; border-radius:999px; background:#111; display:inline-block; }
 
-    /* =========================================================
-       ✅ OPTIMISATION ANDROID : on réduit la HAUTEUR globale
-       ========================================================= */
+    /* Android height squeeze */
     @media (max-height: 780px){
       .wrap{ padding:10px; gap:10px; }
       .ticker{ height:138px; }
@@ -505,115 +432,20 @@
         padding:10px 12px;
         font-size:14px;
         border-radius:18px;
-        border-color: var(--red);
       }
       .heart{ width:44px; height:44px; }
       .footerRow{ padding-bottom:8px; }
       .iconBtn{ width:40px; height:40px; }
       .legalBtn{ padding:9px 10px; font-size:12px; }
       .sheet .body{ max-height:min(70vh, 460px); }
+      .sportMiniBand{ height:34px; }
     }
     @media (max-height: 700px){
       .ticker{ height:128px; }
       .tile{ aspect-ratio: 1 / 0.80; }
       .wrap{ gap:9px; }
-    }
-
-    /* =========================================================
-       ✅ AJOUT SOUS LES TUILES : "DERNIERS ÉCHANGES" (sans toucher le reste)
-       ========================================================= */
-    .updates{
-      border:2px solid rgba(0,0,0,.08);
-      background:#fff;
-      border-radius:18px;
-      padding:12px;
-      box-shadow:0 6px 14px rgba(0,0,0,.06);
-    }
-    .updatesTitle{
-      font-weight:900;
-      font-size:15px;
-      margin-bottom:6px;
-    }
-    .updatesSub{
-      color:var(--muted);
-      font-weight:800;
-      font-size:12px;
-      margin-bottom:10px;
-    }
-    .updatesGrid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-    .uCard{
-      background:var(--bg);
-      border:2px solid rgba(0,0,0,.08);
-      border-radius:14px;
-      padding:10px;
-    }
-    .uCard .h{
-      font-weight:900;
-      font-size:13px;
-      margin-bottom:6px;
-    }
-    .uCard .txt{
-      font-weight:800;
-      font-size:12px;
-      color:var(--text);
-      line-height:1.25;
-    }
-    .uActions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-    .uMiniBtn{
-      border:2px solid rgba(0,0,0,.10);
-      background:var(--beige);
-      border-radius:12px;
-      padding:8px 10px;
-      font-weight:900;
-      cursor:pointer;
-      font-size:12px;
-    }
-    .uLine{
-      margin-top:10px;
-      border:2px solid rgba(0,0,0,.08);
-      background:var(--beige);
-      border-radius:14px;
-      padding:10px;
-      font-weight:800;
-      font-size:12px;
-    }
-
-    /* =========================================================
-       ✅ AJOUT : BANDE SPORT PUB 1CM (juste au-dessus du DAE)
-       (sans toucher au reste)
-       ========================================================= */
-    .sportMiniBand{
-      height:38px;               /* ≈ 1 cm mobile */
-      background:#ffffff;
-      border:2px solid rgba(0,0,0,.08);
-      border-radius:14px;
-      overflow:hidden;
-      display:flex;
-      align-items:center;
-      position:relative;
-    }
-    .sportMiniTrack{
-      display:flex;
-      gap:40px;
-      white-space:nowrap;
-      font-weight:900;
-      font-size:12px;
-      padding-left:14px;
-      animation:sportMiniScroll 18s linear infinite;
-      will-change: transform;
-    }
-    @keyframes sportMiniScroll{
-      0%{ transform:translateX(0); }
-      100%{ transform:translateX(-50%); }
+      .sportMiniBand{ height:32px; }
+      .sportMiniTrack{ font-size:11px; }
     }
   </style>
 </head>
@@ -667,7 +499,7 @@
             <div class="overlay"></div>
             <div class="content">
               <div class="h">Sport</div>
-              <div class="p">Infos • parcs • loisirs</div>
+              <div class="p">Rapport • soutien • fiche</div>
             </div>
           </div>
 
@@ -733,102 +565,9 @@
         </div>
       </div>
 
-      <!-- ✅ AJOUT SOUS LES TUILES : Derniers échanges (sans toucher aux onglets) -->
-      <div class="updates">
-        <div class="updatesTitle">Derniers échanges</div>
-        <div class="updatesSub">Démo – accès rapide</div>
-
-        <div class="updatesGrid">
-          <div class="uCard">
-            <div class="h">🏟️ Sport — week-end</div>
-            <div class="txt">Rapport du week-end (démo) : missions citoyennes • fair-play • propreté.</div>
-            <div class="uActions">
-              <button class="uMiniBtn" type="button" id="openSportFromUpdates">Voir l’onglet</button>
-            </div>
-          </div>
-
-          <div class="uCard">
-            <div class="h">🏫 École — mot du jour</div>
-            <div class="txt">Lecture (démo) : “Je suis ravi aujourd’hui.”</div>
-            <div class="uActions">
-              <button class="uMiniBtn" type="button" id="openEcoleFromUpdates">Voir l’onglet</button>
-              <button class="uMiniBtn" type="button" id="readEcoleFromUpdates">▶ Lire</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ✅ BANDEAU SPORT (défilant) : soutien commerçants → clubs + associations -->
-      <div class="sportPub" id="sportPub" aria-label="Bandeau Sport — soutiens commerçants">
-        <div class="sportPubHead">
-          <div class="sportPubTitle">🏟️ Sport — soutiens commerçants (démo)</div>
-          <button class="sportPubBtn" type="button" id="openSportPubFiche">Voir la fiche</button>
-        </div>
-
-        <div class="sportPubMarquee" id="sportPubMarquee">
-          <div class="sportPubTrack" id="sportPubTrack">
-            <div class="sportPubItem">
-              <div class="logo" id="spLogoA">LOGO</div>
-              <div class="txt">
-                <div class="l1" id="spLineA1"></div>
-                <div class="l2" id="spLineA2"></div>
-              </div>
-            </div>
-
-            <div class="sportPubItem">
-              <div class="logo" id="spLogoB">LOGO</div>
-              <div class="txt">
-                <div class="l1" id="spLineB1"></div>
-                <div class="l2" id="spLineB2"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sportPubFoot">
-          Visibilité équitable • plafond quotidien • (démo) logos déposés dans la version officielle
-        </div>
-      </div>
-
-      <!-- ✅ ASSOS RETENUES (visibles) -->
-      <div class="assoBox">
-        <div class="assoTitle">🤝 Associations retenues (démo)</div>
-        <div class="assoSub">
-          Choix Bo’CitéArt : aider des structures très utiles avec peu de moyens.
-        </div>
-
-        <ul class="assoList">
-          <li><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</li>
-          <li><strong>Étoile Filante</strong> — enfants atteints de maladies rares</li>
-          <li><strong>Les Papillons</strong> — antenne Nord</li>
-          <li><strong>ATC Nord</strong> — traumatisés crâniens</li>
-        </ul>
-
-        <div class="assoActions">
-          <button class="assoBtn" type="button" id="openAssoFiche">Voir la fiche élus / CCI</button>
-        </div>
-      </div>
-
-      <div class="sportTape" aria-label="Bandeau sport et associations">
-        <div class="sportTapeViewport">
-          <div class="sportTapeTrack" id="sportTapeTrack"></div>
-        </div>
-      </div>
-
-      <!-- ✅ AJOUT : BANDE SPORT PUB 1CM (juste au-dessus du DAE) -->
-      <div class="sportMiniBand" aria-label="Bandeau sport pub (1 cm)">
-        <div class="sportMiniTrack" id="sportMiniTrack">
-          <div>🏟️ Boulangerie Croquet soutient Club + Les Papillons (Nord)</div>
-          <div>🏟️ Pharmacie Richardson soutient Club + ATC Nord</div>
-          <div>🏟️ Anaïs Fleurs soutient Club + Étoile Filante</div>
-          <div>🏟️ Garage Planque soutient Club + Les Clés du Cœur</div>
-
-          <!-- duplication pour boucle fluide -->
-          <div>🏟️ Boulangerie Croquet soutient Club + Les Papillons (Nord)</div>
-          <div>🏟️ Pharmacie Richardson soutient Club + ATC Nord</div>
-          <div>🏟️ Anaïs Fleurs soutient Club + Étoile Filante</div>
-          <div>🏟️ Garage Planque soutient Club + Les Clés du Cœur</div>
-        </div>
+      <!-- ✅ Bandeau 1 cm : Commerçant + Club + Association (défilement) -->
+      <div class="sportMiniBand" aria-label="Bandeau soutien sport + association (1 cm)">
+        <div class="sportMiniTrack" id="sportMiniTrack"></div>
       </div>
 
       <!-- DAE -->
@@ -840,7 +579,7 @@
         <div>Trouver un défibrillateur autour de moi</div>
       </div>
 
-      <!-- Footer complet -->
+      <!-- Footer -->
       <div class="footerRow">
         <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noreferrer">www.bociteart.com</a>
 
@@ -920,28 +659,23 @@
           <h2>2. Principes : minimisation et séparation</h2>
           <div class="box">
             Bo’CitéArt limite les données au strict nécessaire. Certaines fonctions relèvent uniquement du téléphone (système d’exploitation) ou d’un prestataire tiers :
-            <strong>Bo’CitéArt n’accède pas aux données internes du téléphone (ex. fonctions “retrouver mon appareil”, listes de contacts, géolocalisation native, etc.)</strong>.
+            <strong>Bo’CitéArt n’accède pas aux données internes du téléphone</strong>.
           </div>
 
           <h2>3. Données traitées (catégories)</h2>
           <ul>
-            <li><strong>Compte</strong> : identifiants de compte (email), rôle (citoyen/partenaire/référent), statut (actif/suspendu), identifiants techniques.</li>
-            <li><strong>Usage</strong> : compteurs d’attribution/consommation de bocitecoins (couleurs OR/Jaune/Vert), événements techniques nécessaires à la cohérence du service.</li>
-            <li><strong>Sécurité</strong> : journaux techniques de connexion, événements d’administration, mesures anti-abus (dans la limite du nécessaire).</li>
-            <li><strong>Partenaires</strong> : informations professionnelles nécessaires au contrat, à la facturation et à la relation commerciale.</li>
-            <li><strong>Facturation / paiements partenaires</strong> : références facture, périodes, montants, statut de paiement. Le RIB peut être affiché partiellement sur l’interface mobile pour réduire les risques en cas de perte/vol du téléphone, sans empêcher l’accès aux informations complètes sur les documents comptables.</li>
-            <li><strong>Géolocalisation</strong> : uniquement si l’utilisateur active une fonction de carte/orientation. La localisation provient du téléphone ; Bo’CitéArt ne traite pas une “géolocalisation permanente” par défaut.</li>
-            <li><strong>École</strong> : texte du mot du jour. Audio : soit voix synthétique, soit voix d’enfant <strong>si et seulement si</strong> l’établissement a recueilli et conservé les autorisations nécessaires.</li>
-            <li><strong>Abonnement optionnel</strong> : statut d’abonnement (actif/inactif), identifiants de transaction, historique de facturation. <strong>Bo’CitéArt ne stocke pas les données bancaires sensibles</strong> ; les modalités techniques et bancaires sont opérées par les circuits SEPA et/ou un prestataire.</li>
+            <li><strong>Compte</strong> : identifiants de compte (email), rôle, statut, identifiants techniques.</li>
+            <li><strong>Usage</strong> : compteurs de bocitecoins, événements nécessaires à la cohérence du service.</li>
+            <li><strong>Sécurité</strong> : journaux techniques de connexion, événements d’administration, mesures anti-abus.</li>
+            <li><strong>Partenaires</strong> : données pro nécessaires au contrat, facturation, relation commerciale.</li>
+            <li><strong>Facturation</strong> : références facture, périodes, montants, statut.</li>
+            <li><strong>Géolocalisation</strong> : uniquement si l’utilisateur active une fonction de carte/orientation.</li>
           </ul>
 
           <h2>4. Finalités</h2>
           <ul>
             <li>Fonctionnement des comptes, des rôles et des contenus.</li>
-            <li>Gestion des compteurs bocitecoins (cohérence du service, anti-abus, suivi d’opérations).</li>
-            <li>Services d’information d’intérêt général (ex. alertes sécurité/route/météo exceptionnelle) : accès gratuit citoyen.</li>
-            <li>Gestion partenaires : publicité (si activée), réservations, facturation, paiements, support.</li>
-            <li>Gestion de l’abonnement optionnel (accès à des fonctions numériques supplémentaires).</li>
+            <li>Gestion des compteurs bocitecoins (cohérence, anti-abus).</li>
             <li>Sécurité et conformité.</li>
             <li>Obligations légales et défense des droits.</li>
           </ul>
@@ -949,43 +683,24 @@
           <h2>5. Bases légales</h2>
           <ul>
             <li>Exécution du contrat (CGU/CGV) selon le service.</li>
-            <li>Intérêt légitime : sécurité, prévention des abus, continuité et intégrité du service.</li>
+            <li>Intérêt légitime : sécurité, prévention des abus.</li>
             <li>Obligation légale : comptabilité, conservation des pièces.</li>
             <li>Consentement : géolocalisation et options nécessitant une activation.</li>
           </ul>
 
-          <h2>6. Conservation</h2>
-          <ul>
-            <li>Journaux techniques : durée proportionnée (ex. 6 à 12 mois), prolongation possible en cas d’incident/litige/obligation légale.</li>
-            <li>Données de facturation : selon les durées légales applicables.</li>
-            <li>Données d’abonnement : durée de l’abonnement + délais légaux de preuve/comptabilité.</li>
-            <li>Contenus école/sport : durée définie par le service ; suppression anticipée possible sauf contrainte légale/litige.</li>
-          </ul>
-
-          <h2>7. Urgences (112 / 3919 / 119)</h2>
+          <h2>6. Urgences (112 / 3919 / 119)</h2>
           <ul>
             <li>Bo’CitéArt fournit un accès rapide : l’appel est passé via le téléphone.</li>
             <li>Aucun enregistrement d’appel par Bo’CitéArt.</li>
             <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
           </ul>
 
-          <h2>8. Droits des personnes</h2>
+          <h2>7. Droits</h2>
           <ul>
             <li>Accès, rectification, opposition, limitation.</li>
             <li>Effacement dans les limites légales.</li>
-            <li>Portabilité lorsque applicable.</li>
             <li>Réclamation possible auprès de la CNIL.</li>
           </ul>
-
-          <h2>9. Sous-traitants / hébergement</h2>
-          <ul>
-            <li>Hébergement et services techniques peuvent être assurés par un prestataire tiers (ex. OVH ou équivalent selon configuration).</li>
-            <li>Bo’CitéArt ne garantit pas le fonctionnement des réseaux (opérateur, Internet), ni celui des services tiers, et met en œuvre des mesures raisonnables de sécurité adaptées.</li>
-          </ul>
-
-          <div class="muted" style="margin-top:10px;">
-            (Démo) Les contacts rgpd/support seront renseignés dans la version officielle (SIRET/siège).
-          </div>
         </div>
 
         <!-- CGU -->
@@ -994,118 +709,26 @@
           <div class="muted" style="margin-top:4px;">Dernière mise à jour : 16 février 2026</div>
 
           <div class="box">
-            Bo’CitéArt est un dispositif territorial, culturel et citoyen.
-            Ce n’est ni un réseau social, ni un service bancaire, ni une plateforme de paiement, ni un intermédiaire financier.
-            <div class="muted" style="margin-top:8px;">
-              Certaines fonctions relèvent du téléphone (système) ou de prestataires tiers. Bo’CitéArt ne garantit pas la disponibilité continue ni l’absence d’incident.
-            </div>
+            Bo’CitéArt est un dispositif territorial, culturel et citoyen. Ce n’est ni un réseau social, ni un service bancaire.
           </div>
 
-          <h2>1. Accès et compte</h2>
+          <h2>1. Accès</h2>
           <ul>
-            <li>Consultation libre des contenus publics.</li>
-            <li>Compte requis pour accéder aux fonctionnalités nécessitant une identification (ex. compteurs bocitecoins, votes, accès référents).</li>
-            <li>L’utilisateur s’interdit toute usurpation et garantit l’exactitude des informations fournies.</li>
+            <li>Contenus publics : accès libre.</li>
+            <li>Fonctions “actives” : compte requis.</li>
           </ul>
 
-          <h2>2. Accès d’intérêt général</h2>
-          <div class="box">
-            Les informations à utilité publique (ex. alertes sécurité/route, conditions météorologiques exceptionnelles, messages de nécessité primaire) peuvent être accessibles gratuitement aux citoyens, sans condition d’abonnement.
-          </div>
-
-          <h2>3. Comptes référents (mairie / école / sport / commerçants)</h2>
-          <ul>
-            <li>Accès conditionné à un cadre d’activation (code, habilitation) et, le cas échéant, à un contrat/convention.</li>
-            <li>Chaque partenaire est responsable de ses contenus, autorisations et informations publiées (droit à l’image, droit d’auteur, exactitude, cadre légal).</li>
-            <li>Pas de messagerie privée inter-entités.</li>
-          </ul>
-
-          <h2>4. Règles de comportement</h2>
-          <ul>
-            <li>Interdictions : injures, menaces, diffamation, discrimination, harcèlement, incitation à la haine, contenus illicites.</li>
-            <li>Interdictions : fraude, manipulation, accès non autorisé, atteinte aux droits d’auteur/droit à l’image.</li>
-            <li>Sanctions : suspension, limitation, blocage en cas de gravité, risque ou non-conformité.</li>
-          </ul>
-
-          <h2>5. Urgences (112 / 3919 / 119)</h2>
+          <h2>2. Urgences</h2>
           <ul>
             <li>Usage réservé aux situations réelles.</li>
-            <li>112 : danger immédiat/urgence. 3919 : écoute/orientation. 119 : enfance en danger.</li>
-            <li>Bo’CitéArt ne fournit pas d’intervention : l’appel est passé via le téléphone.</li>
-            <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
+            <li>Danger immédiat : appeler le 112.</li>
           </ul>
 
-          <h2>6. bocitecoins : nature et limites</h2>
+          <h2>3. bocitecoins</h2>
           <ul>
-            <li>Outil de reconnaissance locale, assimilable à des points / avantages.</li>
-            <li>Ne constitue pas une monnaie, un instrument de paiement, un actif, un crédit, un titre financier, ni une créance.</li>
-            <li>Non convertible en espèces, non remboursable, sans valeur faciale garantie.</li>
-            <li>Aucun droit automatique à un avantage : les offres/cadeaux relèvent des partenaires/collectivité selon leurs règles.</li>
+            <li>Outil de reconnaissance locale (points/avantages).</li>
+            <li>Non convertible en espèces, non remboursable.</li>
           </ul>
-
-          <h2>7. Types de bocitecoins (codes couleur)</h2>
-          <div class="pillRow">
-            <span class="pill">🟡 École : compteur “Jaune” (collectivité)</span>
-            <span class="pill">🟢 Sport : compteur “Vert” (collectivité)</span>
-            <span class="pill">🟨 Commerces : compteur “OR” (partenaires)</span>
-          </div>
-          <div class="box">
-            <strong>Clarification :</strong> “OR” désigne uniquement une <strong>couleur / repère visuel</strong> dans l’application.
-            Cela ne signifie pas un métal précieux ni une valeur intrinsèque.
-          </div>
-
-          <h2>8. École – mot du jour et audio</h2>
-          <ul>
-            <li>Publication par enseignant habilité.</li>
-            <li>Le contenu doit rester non identifiant (pas de nom complet, pas d’adresse, pas de données permettant l’identification).</li>
-            <li>Audio : voix synthétique, ou voix d’enfant si l’établissement a recueilli et conservé les autorisations nécessaires (document interne de rentrée).</li>
-            <li>Bo’CitéArt peut retirer/suspendre un contenu en cas de doute sur la conformité.</li>
-          </ul>
-
-          <h2>9. Sport – missions et preuves (si activées)</h2>
-          <ul>
-            <li>Publications par référent habilité.</li>
-            <li>Le cas échéant, éléments de validation non publics, accès restreint, finalité limitée à la validation de mission.</li>
-          </ul>
-
-          <h2>10. Abonnement optionnel (citoyens) — services numériques</h2>
-          <div class="box">
-            Bo’CitéArt peut proposer un abonnement optionnel à <strong>2,99 € TTC / mois</strong> (prix affiché pouvant évoluer selon les modalités du prestataire du service),
-            permettant d’activer des <strong>services numériques supplémentaires</strong>, notamment une fonctionnalité de sauvegarde/restauration du compteur bocitecoins en cas de perte/vol/changement de téléphone,
-            et des options de confort/alerte.
-            <div class="muted" style="margin-top:8px;">
-              L’abonnement n’est pas un service bancaire, ne crée aucune valeur monétaire, et n’est pas une conversion de bocitecoins.
-              Les résultats dépendent du téléphone, des réseaux et de prestataires tiers. Bo’CitéArt ne garantit pas une récupération dans tous les cas.
-            </div>
-          </div>
-          <ul>
-            <li>Abonnement facultatif : l’accès aux contenus publics reste possible sans abonnement.</li>
-            <li>Le paiement est opéré par prélèvement SEPA (et/ou circuits associés) selon les modalités affichées lors de la souscription.</li>
-            <li>En cas de résiliation, le service optionnel est désactivé à la date d’effet.</li>
-          </ul>
-
-          <h2>11. Responsabilité</h2>
-          <ul>
-            <li>Bo’CitéArt met en œuvre des moyens raisonnables, sans garantie de disponibilité permanente.</li>
-            <li>Les informations (DAE, lieux, horaires, contenus partenaires) peuvent dépendre de sources tierces : données indicatives à vérifier.</li>
-            <li>Offres/cadeaux/avantages partenaires relèvent de leur responsabilité.</li>
-          </ul>
-
-          <h2>12. Droit applicable</h2>
-          <p>Les présentes CGU sont régies par le droit français.</p>
-
-          <h2>Propriété intellectuelle</h2>
-          <p>
-            L’ensemble des contenus, marques, logos, structures techniques, mécaniques de fonctionnement et architecture
-            sont protégés par le droit d’auteur et/ou dépôts INPI/EUIPO.
-            Toute reproduction, extraction, imitation ou détournement est interdite sans autorisation écrite.
-          </p>
-
-          <h2>13. Évolution des documents</h2>
-          <p>
-            Bo’CitéArt peut mettre à jour les présentes CGU pour des raisons légales, techniques, de sécurité ou de lutte anti-abus.
-            La version en vigueur est celle affichée dans l’application.
-          </p>
         </div>
 
         <!-- CGV -->
@@ -1115,94 +738,21 @@
 
           <div class="box">
             Les CGV s’appliquent aux partenaires (commerçants, collectivités, associations, établissements) et, le cas échéant,
-            à l’abonnement optionnel “services numériques” des citoyens.
-            Les citoyens relèvent des CGU pour l’usage général.
-            <div class="muted" style="margin-top:8px;">
-              Les conditions définitives sont celles du devis/commande/facture/bon de commande (et documents contractuels associés).
-            </div>
+            à certaines options payantes.
           </div>
 
-          <h2>1. Champ d’application</h2>
+          <h2>Publicités (démo calendrier)</h2>
           <ul>
-            <li>Diffusion publicitaire / visibilité (si activée).</li>
-            <li>Coûts d’utilisation liés à l’attribution de bocitecoins couleur OR (commerçants).</li>
-            <li>Abonnement optionnel “services numériques” (citoyens), si proposé.</li>
-            <li>La structure émettrice (SAS/association selon service) est indiquée sur le devis/commande/facture.</li>
+            <li>Plafond : 10 publicités / jour.</li>
+            <li>Règle 16h : ouverture des places restantes après 16h (si disponibilité).</li>
           </ul>
 
-          <h2>2. Abonnement optionnel (services numériques) — citoyens</h2>
+          <h2>Responsabilité</h2>
           <ul>
-            <li>Prix : <strong>2,99 € TTC / mois</strong> (prix affiché pouvant évoluer selon les modalités du prestataire du service ; l’évolution est affichée avant application selon les règles applicables).</li>
-            <li>Objet : activation de services numériques supplémentaires (ex. sauvegarde/restauration du compteur bocitecoins, options d’alerte) selon description de l’offre.</li>
-            <li>Paiement : <strong>prélèvement SEPA</strong> (mandat et modalités affichés lors de la souscription). Bo’CitéArt ne stocke pas de données bancaires sensibles.</li>
-            <li>Rappels impayés : notifications applicatives et/ou email ; SMS uniquement si l’utilisateur a expressément choisi ce canal et si la donnée est disponible via le dispositif de paiement, sans obligation de conservation par Bo’CitéArt.</li>
-            <li>Défaut de paiement : après <strong>7 jours</strong> de relances, le service optionnel peut être suspendu, puis la souscription clôturée. <strong>Pas de remboursement</strong> des périodes engagées.</li>
-            <li>Résiliation : selon le mécanisme affiché au moment de la souscription (effet à la fin de période en cours ou selon règle affichée). Après résiliation/suspension, la fonctionnalité de sauvegarde optionnelle n’est plus active.</li>
-            <li>Limites : dépend du téléphone, des réseaux et du prestataire tiers ; aucune garantie de récupération dans tous les cas (téléphone éteint/cassé, réseau indisponible, service tiers indisponible, fraude, etc.).</li>
-          </ul>
-
-          <h2>3. Publicités — partenaires / collectivités / associations</h2>
-          <ul>
-            <li>Publicité unitaire : 50 € HT</li>
-            <li>Pack 5 publicités : 200 € HT (validité 2 mois glissants)</li>
-            <li>Plafond : 10 publicités / jour</li>
-            <li>Règle d’accès “16h” : principe d’accès avant 16h, puis ouverture des places restantes après 16h (sous réserve de disponibilité et contraintes techniques/sécurité).</li>
-            <li>Collectivités : possibilité de réservation via <strong>bon de commande / devis signé</strong> selon leurs procédures internes.</li>
-            <li>Bo’CitéArt peut refuser/retirer une publicité non conforme (illégale, trompeuse, portant atteinte à un tiers, ou contraire au cadre citoyen).</li>
-            <li>Aucune garantie d’audience, de clic, de résultat commercial.</li>
-          </ul>
-
-          <h2>4. Coût d’attribution bocitecoins couleur OR (commerçants)</h2>
-          <div class="box">
-            <strong>Clarification :</strong> “OR” désigne uniquement une <strong>couleur / repère visuel</strong> dans l’application.
-            Cela ne signifie pas un métal précieux ni une valeur intrinsèque.
-          </div>
-          <ul>
-            <li>Déclenchement : à partir de 10 € d’achat minimum.</li>
-            <li>Tarif : 0,09 € HT par tranche de 10 €.</li>
-            <li>Attribution côté client : 1 bocitecoin couleur OR par tranche de 10 €.</li>
-            <li>Contribution technique (maintenance, sécurité, fonctionnement). Pas une commission sur chiffre d’affaires, pas un service de paiement.</li>
-          </ul>
-
-          <h2>5. Utilisation des bocitecoins couleur OR</h2>
-          <ul>
-            <li>Seuil minimum : 30 bocitecoins couleur OR.</li>
-            <li>Barème indicatif : 30 → 15% ; 50 → 20% ; 100 → 35% (selon règles partenaires en vigueur).</li>
-            <li>Plafond alimentaire : 30% maximum du cadeau en "alimentaire & boisson inclus" (si applicable).</li>
-            <li>Les avantages relèvent de la politique du partenaire : aucun droit acquis, aucune valeur monétaire due.</li>
-          </ul>
-
-          <h2>6. Paiement / suspension — partenaires</h2>
-          <ul>
-            <li>Paiement exigible selon les modalités du contrat (avant activation/diffusion si applicable, sauf modalités collectivités).</li>
-            <li>En cas de non-paiement, fraude, contenu illicite ou usage non conforme : suspension/blocage possible.</li>
-            <li>Facturation : documents comptables (PDF, périodes, montants, références) constituent la base de contrôle. Le masquage partiel d’un RIB sur l’interface mobile vise uniquement la sécurité en cas de perte/vol du téléphone.</li>
-          </ul>
-
-          <h2>7. Traçabilité de commande — publicité (fonctionnelle)</h2>
-          <div class="box">
-            Pour l’organisation interne du service, chaque réservation publicitaire peut être associée à un horodatage et à un récapitulatif mensuel consultable.
-            Cette traçabilité vise la gestion et la justification interne en cas de réclamation, sans constituer une garantie d’absence d’incident technique.
-          </div>
-
-          <h2>8. Responsabilité</h2>
-          <ul>
-            <li>Le partenaire est seul responsable de ses contenus, offres et autorisations nécessaires (images, marques, droits).</li>
-            <li>Bo’CitéArt n’est pas responsable des pertes commerciales indirectes ni des résultats attendus d’une publicité.</li>
-            <li>Bo’CitéArt n’est pas responsable des défaillances réseaux, appareils, ou prestataires tiers (hébergeur, opérateur, etc.).</li>
-          </ul>
-
-          <h2>9. Droit applicable</h2>
-          <p>Droit français.</p>
-
-          <h2>10. Clauses générales</h2>
-          <ul>
-            <li>Nullité partielle : l’invalidité d’une clause n’affecte pas les autres.</li>
-            <li>Force majeure : événements extérieurs imprévisibles pouvant suspendre le service.</li>
-            <li>Évolution : les conditions peuvent évoluer pour raisons légales, techniques, sécurité ou anti-abus (selon contrat applicable).</li>
+            <li>Le partenaire est responsable de ses contenus/offres/droits.</li>
+            <li>Aucune garantie d’audience ou de résultat commercial.</li>
           </ul>
         </div>
-
       </div>
     </div>
   </div>
@@ -1240,32 +790,6 @@
     window.addEventListener('resize', setVh);
     window.addEventListener('orientationchange', setVh);
 
-    // --- Ticker rotation ---
-    const tickerItems = [
-      {
-        title: "Annonce partenaire (démo)",
-        subtitle: "Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels",
-        img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60",
-      },
-      {
-        title: "Mairie (démo) : informations & agenda",
-        subtitle: "Accès gratuit citoyen pour alertes d’intérêt général • règle d’accès 16h (pub) • sous réserve de disponibilité",
-        img: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60",
-      },
-    ];
-    let tickerIdx = 0;
-
-    function setTicker(i){
-      const it = tickerItems[i];
-      document.getElementById("tickerImg").src = it.img;
-      document.getElementById("tickerTitleA").textContent = it.title;
-      document.getElementById("tickerSubA").textContent = it.subtitle || "";
-      document.getElementById("tickerTitleB").textContent = it.title;
-      document.getElementById("tickerSubB").textContent = it.subtitle || "";
-    }
-    setTicker(0);
-    setInterval(()=>{ tickerIdx = (tickerIdx+1) % tickerItems.length; setTicker(tickerIdx); }, 10000);
-
     // --- Modal system ---
     const modal = document.getElementById("modal");
     const modalTitle = document.getElementById("modalTitle");
@@ -1280,328 +804,7 @@
       modal.classList.add("open");
     }
 
-    // ==== Calendrier pubs (démo) ====
-    const PUB_MAX_PER_DAY = 10;
-    const PUB_STORE_KEY = "bociteart_pubBookings_v1"; // { "YYYY-MM": { "YYYY-MM-DD":[{...},...] } }
-    let calYear = new Date().getFullYear();
-    let calMonth = new Date().getMonth(); // 0-11
-
-    function pad2(n){ return String(n).padStart(2,"0"); }
-    function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
-    function ym(y,m){ return `${y}-${pad2(m+1)}`; }
-
-    function loadBookings(){
-      try{
-        const raw = localStorage.getItem(PUB_STORE_KEY);
-        return raw ? JSON.parse(raw) : {};
-      }catch(e){ return {}; }
-    }
-    function saveBookings(obj){
-      localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj));
-    }
-    function getDayBookings(obj, y, m, d){
-      const keyYM = ym(y,m);
-      const keyYMD = ymd(y,m,d);
-      return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : [];
-    }
-    function setDayBookings(obj, y, m, d, list){
-      const keyYM = ym(y,m);
-      const keyYMD = ymd(y,m,d);
-      if(!obj[keyYM]) obj[keyYM] = {};
-      obj[keyYM][keyYMD] = list;
-    }
-    function daySlotsUsed(obj, y, m, d){
-      return getDayBookings(obj,y,m,d).length;
-    }
-    function isFull(obj,y,m,d){
-      return daySlotsUsed(obj,y,m,d) >= PUB_MAX_PER_DAY;
-    }
-
-    function buildCalendarHTML(){
-      const first = new Date(calYear, calMonth, 1);
-      const last = new Date(calYear, calMonth+1, 0);
-      const startDow = (first.getDay() + 6) % 7; // 0=Mon
-      const daysInMonth = last.getDate();
-
-      const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
-      const bookings = loadBookings();
-
-      const labels = ["L","M","M","J","V","S","D"];
-      let html = `
-        <div class="calWrap">
-          <div class="calTop">
-            <div style="font-weight:900;">Calendrier (démo) — ${monthName}</div>
-            <div class="mini">
-              <button class="calBtn" id="calPrev" type="button">◀</button>
-              <button class="calBtn" id="calNext" type="button">▶</button>
-            </div>
-          </div>
-
-          <div class="muted">
-            Règle : <strong>${PUB_MAX_PER_DAY} réservations maximum / jour</strong>. Une journée complète devient grisée et non sélectionnable.
-            Chaque réservation enregistre un <strong>horodatage</strong>. Un <strong>récap mensuel</strong> est disponible.
-          </div>
-
-          <div class="calGrid" style="margin-top:10px;">
-            ${labels.map(x=>`<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
-          </div>
-
-          <div class="calGrid" id="calDays"></div>
-
-          <div class="calLegend">
-            <span class="tag"><span class="dot" style="background:#111;"></span> Jour disponible</span>
-            <span class="tag"><span class="dot" style="background:#999;"></span> Jour complet (grisé)</span>
-          </div>
-
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
-            <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
-          </div>
-        </div>
-      `;
-      return html;
-    }
-
-    function renderCalendarInto(containerId){
-      const box = document.getElementById(containerId);
-      if(!box) return;
-
-      box.innerHTML = buildCalendarHTML();
-
-      const daysEl = document.getElementById("calDays");
-      const bookings = loadBookings();
-
-      const first = new Date(calYear, calMonth, 1);
-      const last = new Date(calYear, calMonth+1, 0);
-      const startDow = (first.getDay() + 6) % 7;
-      const daysInMonth = last.getDate();
-
-      // leading blanks
-      let cells = [];
-      for(let i=0;i<startDow;i++){
-        cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
-      }
-
-      for(let d=1; d<=daysInMonth; d++){
-        const used = daySlotsUsed(bookings, calYear, calMonth, d);
-        const full = used >= PUB_MAX_PER_DAY;
-        const cls = full ? "calDay full" : "calDay";
-        const tip = full ? "Jour complet" : "Réserver";
-        cells.push(`
-          <div class="${cls}" data-day="${d}" role="button" aria-label="${tip}">
-            <div class="d">${d}</div>
-            <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
-          </div>
-        `);
-      }
-
-      daysEl.innerHTML = cells.join("");
-
-      // navigation
-      document.getElementById("calPrev").onclick = ()=>{
-        calMonth--;
-        if(calMonth<0){ calMonth=11; calYear--; }
-        renderCalendarInto(containerId);
-      };
-      document.getElementById("calNext").onclick = ()=>{
-        calMonth++;
-        if(calMonth>11){ calMonth=0; calYear++; }
-        renderCalendarInto(containerId);
-      };
-
-      // recap
-      document.getElementById("calRecap").onclick = ()=>{
-        openRecapModal(calYear, calMonth);
-      };
-
-      // reset demo
-      document.getElementById("calReset").onclick = ()=>{
-        if(confirm("Réinitialiser les réservations (démo) ?")){
-          localStorage.removeItem(PUB_STORE_KEY);
-          renderCalendarInto(containerId);
-        }
-      };
-
-      // click day
-      document.querySelectorAll(".calDay[data-day]").forEach(el=>{
-        el.addEventListener("click", ()=>{
-          const d = parseInt(el.getAttribute("data-day"),10);
-          const bookings2 = loadBookings();
-          if(isFull(bookings2, calYear, calMonth, d)) return;
-
-          const key = ymd(calYear, calMonth, d);
-          const used = daySlotsUsed(bookings2, calYear, calMonth, d);
-
-          openModal("Réserver une publicité (démo)", `
-            <div class="box">
-              <div style="font-weight:900;">Date : ${key}</div>
-              <div class="muted" style="margin-top:6px;">
-                Il reste <strong>${PUB_MAX_PER_DAY - used}</strong> place(s) disponible(s).
-                Chaque réservation enregistre un horodatage.
-              </div>
-            </div>
-
-            <div style="font-weight:900;margin-top:10px;">Choisir un profil (démo)</div>
-            <div class="choiceGrid">
-              <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
-              <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
-              <button class="choiceBtn" id="bkAsso" type="button">Association</button>
-              <button class="choiceBtn" id="bkEcole" type="button">École</button>
-            </div>
-
-            <div class="box" style="margin-top:12px;">
-              <strong>Collectivité :</strong> réservation possible via bon de commande / devis signé selon procédure interne.
-              <div class="muted" style="margin-top:6px;">
-                (Démo) La validation finale et la facturation relèvent du contrat applicable.
-              </div>
-            </div>
-
-            <div class="muted" style="margin-top:10px;">
-              Une fois la 10e place prise, la journée devient grisée et non ouvrable.
-            </div>
-          `);
-
-          setTimeout(()=>{
-            const doBook = (who)=>{
-              const now = new Date();
-              const stampISO = now.toISOString();
-              const stampFR = now.toLocaleString("fr-FR");
-
-              const b = loadBookings();
-              const list = getDayBookings(b, calYear, calMonth, d);
-
-              if(list.length >= PUB_MAX_PER_DAY){
-                alert("Jour complet.");
-                closeModal();
-                renderCalendarInto(containerId);
-                return;
-              }
-
-              list.push({
-                date: key,
-                who,
-                ts_iso: stampISO,
-                ts_fr: stampFR,
-                note: "Réservation (démo)"
-              });
-              setDayBookings(b, calYear, calMonth, d, list);
-              saveBookings(b);
-
-              closeModal();
-              renderCalendarInto(containerId);
-
-              alert(`Réservation enregistrée (démo)\n${key}\n${who}\nHorodatage : ${stampFR}`);
-            };
-
-            const c = document.getElementById("bkCommerce");
-            const m = document.getElementById("bkMairie");
-            const a = document.getElementById("bkAsso");
-            const e2 = document.getElementById("bkEcole");
-            if(c) c.onclick = ()=> doBook("Commerce");
-            if(m) m.onclick = ()=> doBook("Mairie");
-            if(a) a.onclick = ()=> doBook("Association");
-            if(e2) e2.onclick = ()=> doBook("École");
-          },0);
-        });
-      });
-    }
-
-    function openRecapModal(y, m){
-      const b = loadBookings();
-      const keyYM = ym(y,m);
-      const monthObj = b[keyYM] || {};
-      const days = Object.keys(monthObj).sort();
-
-      // CSV
-      let csv = "date;profil;horodatage_iso;horodatage_fr;note\n";
-      days.forEach(d=>{
-        (monthObj[d]||[]).forEach(it=>{
-          csv += `${it.date};${it.who};${it.ts_iso};${it.ts_fr};${(it.note||"")}\n`;
-        });
-      });
-
-      const total = days.reduce((acc, d)=> acc + (monthObj[d]||[]).length, 0);
-
-      openModal("Récap mensuel (démo) — publicités", `
-        <div class="box">
-          <div style="font-weight:900;">Mois : ${keyYM}</div>
-          <div class="muted" style="margin-top:6px;">Total réservations : <strong>${total}</strong></div>
-          <div class="muted" style="margin-top:6px;">
-            Ce récap sert à répondre à une réclamation et à vérifier les journées complètes, sans promettre une absence d’incident technique.
-          </div>
-        </div>
-
-        <div style="font-weight:900;margin-top:10px;">Détails</div>
-        <div class="box" style="white-space:pre-wrap; font-weight:800;">
-${days.length ? days.map(d=>{
-  const list = monthObj[d]||[];
-  const head = `• ${d} — ${list.length}/${PUB_MAX_PER_DAY}`;
-  const lines = list.map((it,idx)=>`  - ${idx+1}) ${it.who} — ${it.ts_fr}`).join("\n");
-  return head + "\n" + lines;
-}).join("\n\n") : "Aucune réservation enregistrée (démo)."}
-        </div>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
-          <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
-        </div>
-
-        <div class="muted" style="margin-top:10px;">
-          (Démo) À terme, ce récap peut être exporté (PDF/CSV) selon le cadre contractuel et les obligations applicables.
-        </div>
-      `);
-
-      setTimeout(()=>{
-        const btnCsv = document.getElementById("copyCsv");
-        const btnJson = document.getElementById("copyJson");
-        if(btnCsv) btnCsv.onclick = async ()=>{
-          try{
-            await navigator.clipboard.writeText(csv);
-            alert("CSV copié.");
-          }catch(e){
-            alert("Copie impossible sur ce navigateur.");
-          }
-        };
-        if(btnJson) btnJson.onclick = async ()=>{
-          try{
-            await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2));
-            alert("JSON copié.");
-          }catch(e){
-            alert("Copie impossible sur ce navigateur.");
-          }
-        };
-      },0);
-    }
-
-    // ✅ CLIC SUR LE TICKER = ouvre un descriptif clair pour élus / CCI / mairie
-    document.getElementById("ticker").addEventListener("click", ()=>{
-      openModal("Publicités & visibilité (ticker)", `
-        <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
-
-        <div class="box">
-          <strong>Cadre :</strong> réservation plafonnée, gestion par calendrier, possibilité de récap mensuel et horodatage des réservations.
-          Les conditions contractuelles applicables sont celles du devis/commande/facture et des CGV.
-        </div>
-
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li><strong>${PUB_MAX_PER_DAY} publicités maximum par jour</strong> : limitation stricte.</li>
-          <li><strong>Règle d’accès “16h”</strong> : principe d’accès avant 16h, ouverture des places restantes après 16h (sous réserve de disponibilité/contraintes techniques).</li>
-          <li><strong>Collectivités</strong> : réservation possible via bon de commande / devis signé.</li>
-          <li><strong>Journée complète</strong> : la date devient grisée et non sélectionnable.</li>
-          <li><strong>Récap mensuel</strong> : consultation/export (démo) pour répondre à une réclamation.</li>
-        </ul>
-
-        <div id="calHost"></div>
-
-        <div class="muted" style="margin-top:10px;">
-          (Démo) Ici on montre la mécanique. Les validations et la facturation relèvent du cadre contractuel.
-        </div>
-      `);
-
-      setTimeout(()=> renderCalendarInto("calHost"), 0);
-    });
-
-    // --- Audio (démo) : voix enfant / voix féminine douce ---
+    // --- Audio (démo) ---
     function speak(text, mode){
       if(!("speechSynthesis" in window)){
         alert("Audio non supporté sur ce navigateur (démo).");
@@ -1621,6 +824,152 @@ ${days.length ? days.map(d=>{
       window.speechSynthesis.speak(u);
     }
 
+    // =========================================
+    // 1) BANDEAU 1 cm : soutiens Sport + Asso
+    // =========================================
+    // -> Format EXACT demandé :
+    //    "NOM COMMERÇANT soutient NOM CLUB + NOM ASSO"
+    // -> Tu modifies cette liste quand tu veux.
+    const sportSoutiens = [
+      { commerce:"Boulangerie Croquet", club:"Club (ex.)", asso:"Les Papillons" },
+      { commerce:"Pharmacie Richardson", club:"Club (ex.)", asso:"ATC Nord" },
+      { commerce:"Anaïs Fleurs", club:"Club (ex.)", asso:"Étoile Filante" },
+      { commerce:"Garage Planque", club:"Club (ex.)", asso:"Les Clés du Cœur" },
+    ];
+
+    function renderSportMiniBand(){
+      const track = document.getElementById("sportMiniTrack");
+      if(!track) return;
+
+      // On double la liste pour une boucle fluide
+      const items = sportSoutiens.concat(sportSoutiens).map(x =>
+        `<div>🏟️ ${escapeHtml(x.commerce)} soutient ${escapeHtml(x.club)} + ${escapeHtml(x.asso)}</div>`
+      );
+      track.innerHTML = items.join("");
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    renderSportMiniBand();
+
+    // =========================================
+    // 2) Ticker rotation (haut)
+    // =========================================
+    const tickerItems = [
+      {
+        title: "Annonce partenaire (démo)",
+        subtitle: "Exemple : visibilité + cadre citoyen • plafond 10 pubs/jour • règle 16h",
+        img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60",
+      },
+      {
+        title: "Mairie (démo) : informations & agenda",
+        subtitle: "Accès gratuit citoyen pour messages d’intérêt général (selon activation officielle)",
+        img: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60",
+      },
+    ];
+    let tickerIdx = 0;
+
+    function setTicker(i){
+      const it = tickerItems[i];
+      document.getElementById("tickerImg").src = it.img;
+      document.getElementById("tickerTitleA").textContent = it.title;
+      document.getElementById("tickerSubA").textContent = it.subtitle || "";
+      document.getElementById("tickerTitleB").textContent = it.title;
+      document.getElementById("tickerSubB").textContent = it.subtitle || "";
+    }
+    setTicker(0);
+    setInterval(()=>{ tickerIdx = (tickerIdx+1) % tickerItems.length; setTicker(tickerIdx); }, 10000);
+
+    // =========================================
+    // 3) “Fichier” dans l’onglet SPORT
+    // =========================================
+    function openSportFiche(){
+      openModal("📄 Fichier — Fiche élus / CCI / commerçants (Sport + Associations)", `
+        <div class="box">
+          <div style="font-weight:900;">Objet</div>
+          <div class="muted" style="margin-top:6px;">
+            Donner une raison claire aux clubs sportifs d’aller vers les commerçants, et une raison claire aux commerçants d’aider,
+            avec visibilité locale + impact social, sans afficher les détails sensibles au public.
+          </div>
+        </div>
+
+        <div class="box">
+          <div style="font-weight:900;">Principe Bo’CitéArt</div>
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Un commerçant soutient <strong>un club sportif</strong> + <strong>une association défavorisée</strong>.</li>
+            <li>Le nom du commerçant apparaît dans le <strong>bandeau défilant (1 cm)</strong> : “Commerce soutient Club + Association”.</li>
+            <li>Le club est encouragé à orienter ses licenciés/familles vers les commerces soutiens (logique locale, positive, non agressive).</li>
+            <li>Les détails de facturation et de répartition restent <strong>discrets</strong> (pas visibles publiquement).</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <div style="font-weight:900;">Montant et répartition (exemple)</div>
+          <div style="font-weight:800;margin-top:6px;">
+            Exemple de soutien : <strong>100 € HT</strong> / période (ex. trimestriel) répartis comme suit :
+          </div>
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li><strong>50 € HT</strong> pour le <strong>club sportif</strong></li>
+            <li><strong>40 € HT</strong> pour l’<strong>association</strong></li>
+            <li><strong>10 € HT</strong> pour les <strong>frais techniques</strong> (maintenance / gestion / intégration affichage)</li>
+          </ul>
+          <div class="muted" style="margin-top:8px;">
+            Si TVA à 20% : 100 € HT = <strong>120 € TTC</strong>. (Taux TVA à adapter si besoin.)
+          </div>
+        </div>
+
+        <div class="box">
+          <div style="font-weight:900;">Chaîne de facturation (discrète)</div>
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Le commerçant verse la somme au <strong>PSP</strong> (prestataire de paiement).</li>
+            <li>Le commerçant reçoit sa <strong>facture commerçant</strong> (selon configuration du PSP/contrat).</li>
+            <li>L’association fournit un <strong>reçu / attestation de don</strong> au commerçant (défiscalisation si éligible, selon règles en vigueur).</li>
+            <li>Bo’CitéArt émet une <strong>facture</strong> correspondant aux <strong>frais techniques</strong> (ex. 10 € HT).</li>
+          </ul>
+          <div class="muted" style="margin-top:8px;">
+            Nota : la structure exacte (qui facture quoi, et comment le PSP répartit) est à fixer contractuellement. Ici c’est une maquette de logique.
+          </div>
+        </div>
+
+        <div class="box">
+          <div style="font-weight:900;">Associations retenues (uniquement celles-ci)</div>
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</li>
+            <li><strong>Étoile Filante</strong> — enfants atteints de maladies rares</li>
+            <li><strong>Les Papillons</strong> — antenne Nord</li>
+            <li><strong>ATC Nord</strong> — traumatisés crâniens</li>
+          </ul>
+          <div class="muted" style="margin-top:8px;">
+            Bo’CitéArt affiche publiquement le nom des associations choisies (référence unique) pour éviter la dispersion et garantir la cohérence.
+          </div>
+        </div>
+
+        <div class="box">
+          <div style="font-weight:900;">Ce que voit le commerçant (simple)</div>
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Son nom dans le bandeau 1 cm.</li>
+            <li>Le nom du club qu’il soutient.</li>
+            <li>Le nom de l’association qu’il aide.</li>
+            <li>Un lien “fiche” (ce document) pour comprendre le cadre, sans jargon.</li>
+          </ul>
+        </div>
+
+        <div class="muted" style="margin-top:10px;">
+          (Démo) Cette fiche est volontairement claire et présentable pour : élu, CCI, commerçant, président de club.
+        </div>
+      `);
+    }
+
+    // =========================================
+    // 4) Pages (onglets) via tuiles
+    // =========================================
     document.querySelectorAll("[data-open]").forEach(el=>{
       el.addEventListener("click", ()=>{
         const key = el.getAttribute("data-open");
@@ -1637,11 +986,7 @@ ${days.length ? days.map(d=>{
               <li>Scan QR / BLE à proximité</li>
               <li>Audio : voix féminine douce (lecture des contenus)</li>
               <li>Mode visite : guidage simple</li>
-              <li>Reconnaissance : bocitecoins selon règles locales</li>
             </ul>
-            <div class="muted" style="margin-top:10px;">
-              (Démo) Structure présentée à titre de démonstration.
-            </div>
           `);
         }
 
@@ -1649,17 +994,8 @@ ${days.length ? days.map(d=>{
           openModal("École", `
             <div style="font-weight:900;margin-bottom:8px;">Mot du jour (structure)</div>
 
-            <div class="box">
-              <strong>Cadre école :</strong> l’établissement gère et conserve les autorisations nécessaires (document de rentrée).
-              Contenus non identifiants. En cas de désaccord parental, la voix synthétique est utilisée.
-            </div>
-
             <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
               « Je suis ravi aujourd’hui. » — Exemple (démo)
-            </div>
-
-            <div class="muted" style="margin-top:10px;">
-              Le professeur choisit la voix selon le cadre de l’établissement.
             </div>
 
             <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
@@ -1670,10 +1006,9 @@ ${days.length ? days.map(d=>{
             <div style="font-weight:900;margin-top:14px;">Sous-onglets (structure)</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
               <li>Publication “mot du jour” (compte prof)</li>
-              <li>Choix voix : enfant / synthétique (selon autorisations)</li>
+              <li>Choix voix : enfant / synthétique</li>
               <li>Archivage : historique des mots</li>
               <li>Règles : pas de commentaires libres</li>
-              <li>Bocitecoins couleur Jaune : collectivité</li>
             </ul>
           `);
 
@@ -1688,98 +1023,72 @@ ${days.length ? days.map(d=>{
 
         if(key==="sport"){
           openModal("Sport", `
-            <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+            <div style="font-weight:900;margin-bottom:8px;">Sport (structure)</div>
+
             <div class="box">
-              <strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.
+              <strong>But :</strong> faire vivre l’onglet Sport (rapports, civisme, fair-play) et déclencher un soutien commerçants → clubs + associations.
             </div>
+
+            <div style="font-weight:900;margin-top:10px;">📄 Fichier cliquable</div>
+            <div class="box">
+              <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;">
+                <div style="font-weight:900;">Fiche élus / CCI / commerçants</div>
+                <button class="choiceBtn" id="openSportFicheBtn" type="button" style="padding:10px 12px;">Ouvrir</button>
+              </div>
+              <div class="muted" style="margin-top:8px;">
+                Contenu : modèle de soutien (commerce → club + association), visibilité dans le bandeau 1 cm, montants, répartition, discrétion.
+              </div>
+            </div>
+
+            <div style="font-weight:900;margin-top:10px;">Rapport du week-end (démo)</div>
+            <div class="box">
+              Missions citoyennes • propreté • rangement • fair-play. (Démo)
+              <div class="muted" style="margin-top:6px;">
+                Dans la version officielle : formulaire simple + validation référent (si activée).
+              </div>
+            </div>
+
+            <div style="font-weight:900;margin-top:10px;">Ce que voit le public</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Rapport du week-end (résumé)</li>
-              <li>Missions citoyennes : propreté • rangement • fair-play</li>
-              <li>Validation (optionnelle) — non publique</li>
-              <li>Bocitecoins couleur Vert : collectivité</li>
-              <li>Pas de messagerie • pas de commentaires libres</li>
+              <li>Le bandeau 1 cm (en page d’accueil) : “Commerce soutient Club + Association”.</li>
+              <li>Pas de détails de factures / montants affichés publiquement.</li>
+              <li>La fiche “élus/CCI” est consultable depuis cet onglet, pas sur l’accueil.</li>
             </ul>
-            <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Parcs • bois • parcours • salles</li>
-              <li>Carte plein écran + guidage</li>
-            </ul>
-            <div style="font-weight:900;margin-top:16px;">
-Nombre de clubs partenaires
-</div>
-
-<div class="box">
-Actuellement : 12 clubs engagés (démo)
-<br><br>
-Chaque club peut proposer :
-• Rapport du week-end  
-• Actions citoyennes  
-• Partenariats commerçants  
-• Soutien associatif  
-</div>
-
-<div class="box">
-Publicité sport :
-Les commerçants peuvent soutenir un club + une association.
-Leur visibilité apparaît dans le bandeau défilant principal.
-Plafond limité pour garantir l’équité.
-</div>
-
           `);
+
+          setTimeout(()=>{
+            const b = document.getElementById("openSportFicheBtn");
+            if(b) b.onclick = openSportFiche;
+          },0);
         }
 
         if(key==="mairie"){
           openModal("Mairie", `
             <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
             <div class="box">
-              <strong>Accès citoyen gratuit :</strong> messages d’intérêt général (sécurité, route, météo exceptionnelle) peuvent être diffusés sans condition d’abonnement.
+              <strong>Accès citoyen gratuit :</strong> messages d’intérêt général (sécurité, route, météo exceptionnelle) peuvent être diffusés sans condition d’abonnement, selon activation officielle.
             </div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Infos & alertes (travaux, circulation, annonces)</li>
-              <li>Agenda / calendrier vivant (visible, contenu selon activation)</li>
-              <li>Échanges bocitecoins Jaune (école) et Vert (sport)</li>
-              <li>Cadeaux / surprises : validation et gestion interne</li>
-              <li>Réservation publicité (si activée) via bon de commande / devis signé</li>
+              <li>Infos & alertes</li>
+              <li>Agenda (si activé)</li>
+              <li>Actions citoyennes (si activées)</li>
             </ul>
-            <div class="muted" style="margin-top:10px;">
-              (Officiel) accès mairie = compte référent + activation.
-            </div>
           `);
         }
 
         if(key==="commerces"){
           openModal("Commerces", `
             <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
-
             <div class="box">
-              <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.
-              Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
-            </div>
-
-            <div style="font-weight:900;margin-top:10px;">Bocitecoins couleur OR</div>
-            <div class="box">
-              <strong>Clarification :</strong> “OR” = couleur / repère visuel dans l’application, sans valeur intrinsèque.
+              Bons plans, visibilité, et logique locale.
+              <div class="muted" style="margin-top:6px;">
+                (Démo) Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
+              </div>
             </div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Attribution : 1 bocitecoin couleur OR par tranche de 10 € d’achat</li>
-              <li>Seuil minimum : 10 €</li>
-              <li>Chaque +10 € = +1 bocitecoin couleur OR</li>
-            </ul>
-
-            <div style="font-weight:900;margin-top:12px;">Facturation Bo’CitéArt</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>0,09 € HT par tranche de 10 € (dès 10 €)</li>
-              <li>Facture mensuelle (PDF)</li>
-              <li>Paiement selon modalités contractuelles</li>
-              <li>Masquage partiel du RIB sur interface mobile : mesure de sécurité en cas de perte/vol</li>
-            </ul>
-
-            <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Plafond strict : ${PUB_MAX_PER_DAY} maximum / jour</li>
-              <li>Journée complète : grisée et non sélectionnable</li>
-              <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
-              <li>Prix : 50 € HT • Pack 5 = 200 € HT (validité 2 mois glissants)</li>
+              <li>Offres partenaires</li>
+              <li>Cadre de visibilité (si activé)</li>
+              <li>Respect du cadre citoyen</li>
             </ul>
           `);
         }
@@ -1791,23 +1100,18 @@ Plafond limité pour garantir l’équité.
       openModal("Accès Admin (structure)", `
         <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
         <div class="box">
-          <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
-          Les éléments affichés sont une vitrine de structure (démo).
+          Accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
         </div>
         <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
-          <li>Activation / blocage / désactivation</li>
-          <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
-          <li>Facturation : génération PDF • statuts paiements</li>
-          <li>Abonnement (citoyens) : suivi des statuts (actif/inactif) et cohérence de facturation</li>
+          <li>Gestion des rôles</li>
+          <li>Activation / blocage</li>
+          <li>Paramètres</li>
+          <li>Facturation (selon modèle retenu)</li>
         </ul>
-        <div class="muted" style="margin-top:10px;">
-          (Démo) Les obligations légales et mentions complètes seront affichées dans la version officielle.
-        </div>
       `);
     });
 
-    // ✅ DAE screen : AJOUT vidéo + ligne itinéraire (sans retirer tes explications)
+    // DAE screen
     document.getElementById("daeBtn").addEventListener("click", ()=>{
       openModal("Défibrillateur (DAE)", `
         <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
@@ -1819,26 +1123,22 @@ Plafond limité pour garantir l’équité.
           <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
           <li>Orientation + guidage</li>
           <li>Rayon local : 1 à 3 km</li>
-          <li>DAE • pharmacie • hôpital</li>
-          <li>Géolocalisation optionnelle (activation utilisateur)</li>
         </ul>
 
         <div class="box" style="margin-top:12px;">
           <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
-         <div style="border-radius:14px; overflow:hidden; background:#000;">
-  <iframe
-    width="100%"
-    height="220"
-    src="https://www.youtube.com/embed/3CAmp8yKYEg"
-    title="Utilisation DAE - Croix Rouge"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen>
-  </iframe>
-</div>
-          <div class="muted" style="margin-top:8px;">
-            (Démo) Vidéo d’explication / gestes essentiels.
+          <div style="border-radius:14px; overflow:hidden; background:#000;">
+            <iframe
+              width="100%"
+              height="220"
+              src="https://www.youtube.com/embed/3CAmp8yKYEg"
+              title="Utilisation DAE - Croix Rouge"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
           </div>
+          <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
         </div>
 
         <div class="box" style="margin-top:12px;">
@@ -1926,7 +1226,7 @@ Plafond limité pour garantir l’équité.
       btn.addEventListener("contextmenu", (e)=> e.preventDefault());
     }
 
-    // ✅ Sensibilisation urgences (1 seule fois, mémorisée)
+    // Sensibilisation urgences (1 seule fois, mémorisée)
     function emergencyGate(kind, onOk){
       const key = "bociteart_ack_" + kind;
       if(localStorage.getItem(key) === "1"){
@@ -1942,9 +1242,8 @@ Plafond limité pour garantir l’équité.
           Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
         </div>
         <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
+          <li>Utiliser le 112 uniquement en cas de danger réel.</li>
           <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
-          <li>Appui long = réduction des appels accidentels (sans garantie d’erreur zéro).</li>
         </ul>
         <div class="box" style="margin-top:10px;">
           <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
@@ -1960,7 +1259,7 @@ Plafond limité pour garantir l’équité.
           Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
         </div>
         <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li><strong>3919</strong> : écoute/orientation (pas une intervention immédiate).</li>
+          <li><strong>3919</strong> : écoute/orientation.</li>
           <li><strong>119</strong> : enfance en danger.</li>
           <li><strong>Danger immédiat</strong> : appeler le 112.</li>
         </ul>
@@ -2027,21 +1326,182 @@ Plafond limité pour garantir l’équité.
       }
     );
 
-    // ✅ AJOUT : boutons du bloc "Derniers échanges" (sans toucher au reste)
-    function clickTile(key){
-      const t = document.querySelector(`.tile[data-open="${key}"]`);
-      if(t) t.click();
+    // Ticker click -> info + calendrier pub (démo)
+    // (On garde la mécanique calendrier si tu en as besoin ; sinon tu peux supprimer cette partie.)
+    const PUB_MAX_PER_DAY = 10;
+    const PUB_STORE_KEY = "bociteart_pubBookings_v1";
+    let calYear = new Date().getFullYear();
+    let calMonth = new Date().getMonth();
+
+    function pad2(n){ return String(n).padStart(2,"0"); }
+    function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
+    function ym(y,m){ return `${y}-${pad2(m+1)}`; }
+
+    function loadBookings(){ try{ const raw = localStorage.getItem(PUB_STORE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
+    function saveBookings(obj){ localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj)); }
+    function getDayBookings(obj, y, m, d){
+      const keyYM = ym(y,m);
+      const keyYMD = ymd(y,m,d);
+      return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : [];
+    }
+    function setDayBookings(obj, y, m, d, list){
+      const keyYM = ym(y,m);
+      const keyYMD = ymd(y,m,d);
+      if(!obj[keyYM]) obj[keyYM] = {};
+      obj[keyYM][keyYMD] = list;
+    }
+    function daySlotsUsed(obj, y, m, d){ return getDayBookings(obj,y,m,d).length; }
+    function isFull(obj,y,m,d){ return daySlotsUsed(obj,y,m,d) >= PUB_MAX_PER_DAY; }
+
+    function buildCalendarHTML(){
+      const first = new Date(calYear, calMonth, 1);
+      const last = new Date(calYear, calMonth+1, 0);
+      const startDow = (first.getDay() + 6) % 7; // 0=Mon
+      const daysInMonth = last.getDate();
+      const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+
+      let html = `
+        <div class="calWrap">
+          <div class="calTop">
+            <div style="font-weight:900;">Calendrier (démo) — ${monthName}</div>
+            <div class="mini">
+              <button class="calBtn" id="calPrev" type="button">◀</button>
+              <button class="calBtn" id="calNext" type="button">▶</button>
+            </div>
+          </div>
+
+          <div class="muted">
+            Règle : <strong>${PUB_MAX_PER_DAY} réservations maximum / jour</strong>. Une journée complète devient grisée et non sélectionnable.
+          </div>
+
+          <div class="calGrid" style="margin-top:10px;">
+            ${["L","M","M","J","V","S","D"].map(x=>`<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
+          </div>
+
+          <div class="calGrid" id="calDays"></div>
+
+          <div class="calLegend">
+            <span class="tag"><span class="dot" style="background:#111;"></span> Jour disponible</span>
+            <span class="tag"><span class="dot" style="background:#999;"></span> Jour complet</span>
+          </div>
+        </div>
+      `;
+      return html;
     }
 
-    const btnEcole = document.getElementById("openEcoleFromUpdates");
-    const btnSport = document.getElementById("openSportFromUpdates");
-    const btnDae = document.getElementById("openDaeFromUpdates");
-    const btnRead = document.getElementById("readEcoleFromUpdates");
+    function renderCalendarInto(containerId){
+      const box = document.getElementById(containerId);
+      if(!box) return;
 
-    if(btnEcole) btnEcole.onclick = ()=> clickTile("ecole");
-    if(btnSport) btnSport.onclick = ()=> clickTile("sport");
-    if(btnDae) btnDae.onclick = ()=> document.getElementById("daeBtn").click();
-    if(btnRead) btnRead.onclick = ()=> speak("Je suis ravi aujourd’hui.", "child");
+      box.innerHTML = buildCalendarHTML();
+
+      const daysEl = document.getElementById("calDays");
+      const bookings = loadBookings();
+
+      const first = new Date(calYear, calMonth, 1);
+      const last = new Date(calYear, calMonth+1, 0);
+      const startDow = (first.getDay() + 6) % 7;
+      const daysInMonth = last.getDate();
+
+      let cells = [];
+      for(let i=0;i<startDow;i++){
+        cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
+      }
+
+      for(let d=1; d<=daysInMonth; d++){
+        const used = daySlotsUsed(bookings, calYear, calMonth, d);
+        const full = used >= PUB_MAX_PER_DAY;
+        const cls = full ? "calDay full" : "calDay";
+        cells.push(`
+          <div class="${cls}" data-day="${d}" role="button" aria-label="${full ? "Jour complet" : "Réserver"}">
+            <div class="d">${d}</div>
+            <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
+          </div>
+        `);
+      }
+
+      daysEl.innerHTML = cells.join("");
+
+      document.getElementById("calPrev").onclick = ()=>{
+        calMonth--;
+        if(calMonth<0){ calMonth=11; calYear--; }
+        renderCalendarInto(containerId);
+      };
+      document.getElementById("calNext").onclick = ()=>{
+        calMonth++;
+        if(calMonth>11){ calMonth=0; calYear++; }
+        renderCalendarInto(containerId);
+      };
+
+      document.querySelectorAll(".calDay[data-day]").forEach(el=>{
+        el.addEventListener("click", ()=>{
+          const d = parseInt(el.getAttribute("data-day"),10);
+          const b = loadBookings();
+          if(isFull(b, calYear, calMonth, d)) return;
+
+          const key = ymd(calYear, calMonth, d);
+          const used = daySlotsUsed(b, calYear, calMonth, d);
+
+          openModal("Réserver une publicité (démo)", `
+            <div class="box">
+              <div style="font-weight:900;">Date : ${key}</div>
+              <div class="muted" style="margin-top:6px;">
+                Il reste <strong>${PUB_MAX_PER_DAY - used}</strong> place(s) disponible(s).
+              </div>
+            </div>
+
+            <div style="font-weight:900;margin-top:10px;">Choisir un profil (démo)</div>
+            <div class="choiceGrid">
+              <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
+              <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
+              <button class="choiceBtn" id="bkAsso" type="button">Association</button>
+              <button class="choiceBtn" id="bkEcole" type="button">École</button>
+            </div>
+          `);
+
+          setTimeout(()=>{
+            const doBook = (who)=>{
+              const now = new Date();
+              const stampFR = now.toLocaleString("fr-FR");
+              const bb = loadBookings();
+              const list = getDayBookings(bb, calYear, calMonth, d);
+              if(list.length >= PUB_MAX_PER_DAY){
+                alert("Jour complet.");
+                closeModal();
+                renderCalendarInto(containerId);
+                return;
+              }
+              list.push({ date:key, who, ts_fr: stampFR });
+              setDayBookings(bb, calYear, calMonth, d, list);
+              saveBookings(bb);
+              closeModal();
+              renderCalendarInto(containerId);
+              alert(`Réservation enregistrée (démo)\n${key}\n${who}\nHorodatage : ${stampFR}`);
+            };
+
+            const c = document.getElementById("bkCommerce");
+            const m = document.getElementById("bkMairie");
+            const a = document.getElementById("bkAsso");
+            const e2 = document.getElementById("bkEcole");
+            if(c) c.onclick = ()=> doBook("Commerce");
+            if(m) m.onclick = ()=> doBook("Mairie");
+            if(a) a.onclick = ()=> doBook("Association");
+            if(e2) e2.onclick = ()=> doBook("École");
+          },0);
+        });
+      });
+    }
+
+    document.getElementById("ticker").addEventListener("click", ()=>{
+      openModal("Publicités & visibilité (ticker)", `
+        <div style="font-weight:900;margin-bottom:8px;">Espace de visibilité (démo)</div>
+        <div class="box">
+          Plafond quotidien, calendrier, et gestion simple.
+        </div>
+        <div id="calHost"></div>
+      `);
+      setTimeout(()=> renderCalendarInto("calHost"), 0);
+    });
   </script>
 </body>
 </html>
