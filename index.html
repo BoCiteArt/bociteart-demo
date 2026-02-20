@@ -237,7 +237,7 @@
       gap:48px;
       white-space:nowrap;
       padding-left:14px;
-      animation: sportTape 28s linear infinite; /* ✅ plus lent */
+      animation: sportTape 20s linear infinite; /* ✅ plus lent */
       will-change: transform;
       font-size:12px;
       color:var(--text);
@@ -263,7 +263,7 @@
       background:#f7efe3;
       border:3px solid var(--red);
       padding:10px 12px;          /* ✅ réduit */
-      min-height:95px;            /* ✅ ~ 2,5 cm */
+      min-height:93px;            /* ✅ ~ 2,5 cm */
       display:flex;
       align-items:center;
       gap:12px;
@@ -1367,12 +1367,12 @@ ${days.length ? days.map(d=>{
     }
 
     // Démo : 4 messages, dont 2 en gras (comme demandé)
-    const tapeAds = [
-      { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-      { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • (démo) url possible", bold:false },
-      { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • Offre spéciale (démo)", bold:true },
-      { txt:"🚗 Garage Planque soutient Club + Les Papillons • visibilité locale", bold:false },
-    ];
+   const tapeAds = [
+  { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com" },
+  { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com" },
+  { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com" },
+  { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com" },
+];
 
     function renderTape(){
       const track = document.getElementById("sportTapeTrack");
