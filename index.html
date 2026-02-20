@@ -542,7 +542,7 @@
     }
 
     /* =========================================================
-       ✅ "DERNIERS ÉCHANGES" (inchangé)
+       ✅ "DERNIERS ÉCHANGES" (styles conservés même si bloc retiré)
        ========================================================= */
     .updates{
       border:2px solid rgba(0,0,0,.08);
@@ -721,35 +721,6 @@
         </div>
       </div>
 
-      <!-- Derniers échanges -->
-      <div class="updates">
-        <div class="updatesTitle">Derniers échanges</div>
-        <div class="updatesSub">Démo – accès rapide</div>
-
-        <div class="updatesGrid">
-          <div class="uCard">
-            <div class="h">🏟️ Sport — week-end</div>
-            <div class="txt">Rapport du week-end (démo) : missions citoyennes • fair-play • propreté.</div>
-            <div class="uActions">
-              <button class="uMiniBtn" type="button" id="openSportFromUpdates">Voir l’onglet</button>
-            </div>
-          </div>
-
-          <div class="uCard">
-            <div class="h">🏫 École — mot du jour</div>
-            <div class="txt">Lecture (démo) : “Je suis ravi aujourd’hui.”</div>
-            <div class="uActions">
-              <button class="uMiniBtn" type="button" id="openEcoleFromUpdates">Voir l’onglet</button>
-              <button class="uMiniBtn" type="button" id="readEcoleFromUpdates">▶ Lire</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="uLine">
-          Démo : contenus visibles par tous • accès référents selon activation (mairie/école/clubs).
-        </div>
-      </div>
-
       <!-- ✅ Bandeau 1 cm : juste au-dessus du DAE -->
       <div class="sportTape" aria-label="Bandeau sport — soutiens commerçants">
         <div class="sportTapeViewport">
@@ -827,29 +798,27 @@
 
         <!-- RGPD -->
         <div id="p-rgpd" class="doc">
+          <!-- ... CONTENU INCHANGÉ ... -->
+          <!-- Je laisse ton texte complet tel quel -->
           <div style="font-weight:900;font-size:15px;">📗 Politique de protection des données (RGPD) — Bo’CitéArt</div>
           <div class="muted" style="margin-top:4px;">Dernière mise à jour : 16 février 2026</div>
-
           <div class="box">
             Objectif : expliquer quelles données sont traitées, pourquoi, sur quelle base, combien de temps, et quels sont vos droits.
             <div class="muted" style="margin-top:8px;">
               <strong>Démo :</strong> les identifiants légaux complets (SIRET/siège/contacts dédiés) seront affichés dans la version officielle.
             </div>
           </div>
-
           <h2>1. Responsable du traitement</h2>
           <p>
             Bo’CitéArt (structure désignée au contrat : SAS et/ou association selon le service) est responsable des traitements nécessaires au fonctionnement de l’application.
             Les mentions légales complètes et le contact dédié seront affichés dans la version officielle.
           </p>
-
           <h2>2. Principes : minimisation et séparation</h2>
           <div class="box">
             Bo’CitéArt limite les données au strict nécessaire.
             Certaines fonctions (paiement, émission de justificatifs) peuvent relever d’un <strong>prestataire tiers</strong> (ex. PSP) :
             <strong>Bo’CitéArt ne stocke pas les données bancaires sensibles</strong> et n’accède pas aux identifiants internes des moyens de paiement.
           </div>
-
           <h2>3. Données traitées (catégories)</h2>
           <ul>
             <li><strong>Compte</strong> : identifiants de compte (email), rôle, statut (actif/suspendu), identifiants techniques.</li>
@@ -861,7 +830,6 @@
             <li><strong>Géolocalisation</strong> : uniquement si l’utilisateur active une fonction de carte/orientation.</li>
             <li><strong>École</strong> : texte du mot du jour. Audio : voix synthétique, ou voix d’enfant si l’établissement a recueilli les autorisations nécessaires.</li>
           </ul>
-
           <h2>4. Finalités</h2>
           <ul>
             <li>Fonctionnement des comptes, des rôles et des contenus.</li>
@@ -870,7 +838,6 @@
             <li>Sécurité et conformité (prévention des abus).</li>
             <li>Obligations légales et défense des droits.</li>
           </ul>
-
           <h2>5. Bases légales</h2>
           <ul>
             <li>Exécution du contrat (CGU/CGV) selon le service.</li>
@@ -878,13 +845,11 @@
             <li>Obligation légale : conservation de certaines pièces.</li>
             <li>Consentement : géolocalisation et options nécessitant une activation.</li>
           </ul>
-
           <h2>6. Paiement / PSP (clarification)</h2>
           <div class="box">
             Les flux de paiement et certaines pièces justificatives peuvent être opérés par un prestataire tiers (PSP), selon le contrat.
             Bo’CitéArt n’est pas un établissement bancaire, ne fournit pas de service de paiement au sens réglementaire, et ne conserve pas les données bancaires sensibles.
           </div>
-
           <h2>7. Droits des personnes</h2>
           <ul>
             <li>Accès, rectification, opposition, limitation.</li>
@@ -892,7 +857,6 @@
             <li>Portabilité lorsque applicable.</li>
             <li>Réclamation possible auprès de la CNIL.</li>
           </ul>
-
           <div class="muted" style="margin-top:10px;">
             (Démo) Les contacts rgpd/support seront renseignés dans la version officielle (SIRET/siège).
           </div>
@@ -900,9 +864,9 @@
 
         <!-- CGU -->
         <div id="p-cgu" class="doc" style="display:none;">
+          <!-- ... CONTENU INCHANGÉ ... -->
           <div style="font-weight:900;font-size:15px;">📘 Conditions Générales d’Utilisation (CGU) — Bo’CitéArt</div>
           <div class="muted" style="margin-top:4px;">Dernière mise à jour : 16 février 2026</div>
-
           <div class="box">
             Bo’CitéArt est un dispositif territorial, culturel et citoyen.
             Ce n’est ni un réseau social, ni un service bancaire, ni une plateforme de paiement.
@@ -910,14 +874,12 @@
               Certaines fonctions relèvent du téléphone ou de prestataires tiers. Bo’CitéArt ne garantit pas la disponibilité continue ni l’absence d’incident.
             </div>
           </div>
-
           <h2>1. Accès et compte</h2>
           <ul>
             <li>Consultation libre des contenus publics.</li>
             <li>Compte requis pour certaines fonctions (compteurs, votes, accès référents).</li>
             <li>Interdiction d’usurpation et obligation d’informations exactes.</li>
           </ul>
-
           <h2>2. Bandeaux de visibilité (dont bandeau 1 cm)</h2>
           <ul>
             <li>Le texte affiché est fourni par le partenaire sous sa responsabilité.</li>
@@ -925,62 +887,54 @@
             <li>Bo’CitéArt peut refuser/retirer un affichage non conforme, sans indemnité, pour sécurité/juridique/cadre citoyen.</li>
             <li>L’option d’écriture en gras est une option d’affichage (sans garantie de performance commerciale).</li>
           </ul>
-
           <h2>3. Règles de comportement</h2>
           <ul>
             <li>Interdictions : injures, menaces, diffamation, discrimination, harcèlement.</li>
             <li>Interdictions : fraude, manipulation, accès non autorisé.</li>
             <li>Sanctions : suspension, limitation, blocage en cas de gravité/risque/non-conformité.</li>
           </ul>
-
           <h2>4. Urgences (112 / 3919 / 119)</h2>
           <ul>
             <li>Usage réservé aux situations réelles.</li>
             <li>Bo’CitéArt est un raccourci : l’appel est passé via le téléphone.</li>
             <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
           </ul>
-
           <h2>5. Responsabilité (limites)</h2>
           <ul>
             <li>Bo’CitéArt met en œuvre des moyens raisonnables, sans garantie de disponibilité permanente.</li>
             <li>Liens externes/URL : Bo’CitéArt n’est pas responsable des contenus ou indisponibilités des sites tiers.</li>
             <li>Affichages publicitaires et textes partenaires : responsabilité du partenaire émetteur.</li>
           </ul>
-
           <h2>6. Droit applicable</h2>
           <p>Les présentes CGU sont régies par le droit français.</p>
         </div>
 
         <!-- CGV -->
         <div id="p-cgv" class="doc" style="display:none;">
+          <!-- ... CONTENU INCHANGÉ ... -->
           <div style="font-weight:900;font-size:15px;">📕 Conditions Générales de Vente (CGV) — Bo’CitéArt</div>
           <div class="muted" style="margin-top:4px;">Dernière mise à jour : 16 février 2026</div>
-
           <div class="box">
             Les CGV s’appliquent aux partenaires (commerçants, collectivités, associations, établissements) et, le cas échéant,
             à des options d’affichage/visibilité. Les conditions définitives sont celles du devis/commande/facture/contrat applicable.
           </div>
-
           <h2>1. Bandeaux de visibilité (ex : ticker / bandeau 1 cm)</h2>
           <ul>
             <li>Plafonds, règles de diffusion, priorités et contraintes techniques sont définis par l’offre.</li>
             <li>Aucune garantie de clics, ventes, audience ou résultat.</li>
             <li>Bo’CitéArt peut refuser/retirer une diffusion non conforme (illégale, trompeuse, atteinte à un tiers, cadre citoyen).</li>
           </ul>
-
           <h2>2. Option “Texte en gras” (bandeau 1 cm)</h2>
           <div class="box">
             Option d’affichage : <strong>+4 € TTC</strong> (tarif indicatif, confirmé par devis/contrat).
             L’option est purement visuelle et ne constitue pas une promesse de performance commerciale.
           </div>
-
           <h2>3. URL / site web dans la publicité</h2>
           <ul>
             <li>Le partenaire peut fournir une URL à afficher.</li>
             <li>Le partenaire garantit détenir les droits et la conformité du site (contenu, mentions, RGPD, etc.).</li>
             <li>Bo’CitéArt peut refuser une URL manifestement risquée (phishing, illégal, contenu sensible, etc.).</li>
           </ul>
-
           <h2>4. Soutien “Club + Association” : structure et documents (PSP / justificatifs)</h2>
           <div class="box">
             <ul style="margin:8px 0 0 18px;font-weight:800;">
@@ -991,14 +945,12 @@
               <li>Bo’CitéArt n’effectue pas de conseil fiscal. La déductibilité dépend de la situation du donateur et du cadre légal applicable.</li>
             </ul>
           </div>
-
           <h2>5. Responsabilités</h2>
           <ul>
             <li>Le partenaire est responsable de ses contenus, images, marques, URLs, et autorisations nécessaires.</li>
             <li>Bo’CitéArt n’est pas responsable des pertes commerciales indirectes ni des résultats attendus.</li>
             <li>Bo’CitéArt n’est pas responsable des défaillances réseaux, appareils, ou prestataires tiers (hébergeur, PSP, opérateurs).</li>
           </ul>
-
           <h2>6. Droit applicable</h2>
           <p>Droit français.</p>
         </div>
@@ -1954,17 +1906,8 @@ ${days.length ? days.map(d=>{
       }
     );
 
-    // ✅ boutons "Derniers échanges"
-    function clickTile(key){
-      const t = document.querySelector(`.tile[data-open="${key}"]`);
-      if(t) t.click();
-    }
-    const btnEcole = document.getElementById("openEcoleFromUpdates");
-    const btnSport = document.getElementById("openSportFromUpdates");
-    const btnRead = document.getElementById("readEcoleFromUpdates");
-    if(btnEcole) btnEcole.onclick = ()=> clickTile("ecole");
-    if(btnSport) btnSport.onclick = ()=> clickTile("sport");
-    if(btnRead) btnRead.onclick = ()=> speak("Je suis ravi aujourd’hui.", "child");
+    // ✅ IMPORTANT : suppression du bloc "Derniers échanges"
+    // => donc on retire aussi le code qui cherchait ces boutons.
   </script>
 </body>
 </html>
