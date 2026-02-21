@@ -1,7 +1,28 @@
 <!DOCTYPE html>
-<html lang="fr">
 <head>
   <meta charset="UTF-8" />
+
+  <!-- Sécurité ajoutée -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(self)">
+  <meta http-equiv="Content-Security-Policy"
+ content="
+default-src 'self';
+base-uri 'self';
+object-src 'none';
+frame-ancestors 'self';
+form-action 'self';
+upgrade-insecure-requests;
+
+img-src 'self' https: data:;
+script-src 'self' 'unsafe-inline';
+style-src 'self' 'unsafe-inline';
+font-src 'self' https: data:;
+connect-src 'self' https:;
+frame-src https://www.youtube.com;
+">
+  
   <!-- IMPORTANT: viewport + stabilité mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Bo’CitéArt – Démo</title>
@@ -1152,6 +1173,28 @@
     setVh();
     window.addEventListener('resize', setVh);
     window.addEventListener('orientationchange', setVh);
+    // ===========================
+// MODE APP : DEMO / LIVE
+// ===========================
+const APP_MODE = "DEMO"; // <-- Jour J : remplacer par "LIVE"
+
+function callPhone(number){
+  const n = String(number || "").trim();
+
+  // sécurité : n'accepte que chiffres (anti injection)
+  if(!/^\d{2,4}$/.test(n)){
+    console.warn("Numéro invalide:", n);
+    return;
+  }
+
+  if(APP_MODE === "DEMO"){
+    alert("Démo : appel " + n + " (appui long validé).");
+    return;
+  }
+
+  // LIVE (Jour J)
+  window.location.href = "tel:" + n;
+}
 
     // --- Ticker rotation ---
     const tickerItems = [
@@ -1194,24 +1237,49 @@
     }
 
     // --- Audio (démo) : voix enfant / voix féminine douce ---
-    function speak(text, mode){
-      if(!("speechSynthesis" in window)){
-        alert("Audio non supporté sur ce navigateur (démo).");
-        return;
-      }
-      window.speechSynthesis.cancel();
+    let cachedVoices = [];
 
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = "fr-FR";
-      u.rate = (mode==="female") ? 0.95 : 1.05;
-      u.pitch = (mode==="female") ? 1.0 : 1.35;
-
-      const voices = window.speechSynthesis.getVoices();
-      const fr = voices.filter(v => (v.lang||"").toLowerCase().startsWith("fr"));
-      if(fr.length) u.voice = fr[0];
-
-      window.speechSynthesis.speak(u);
+function loadVoices(){
+  return new Promise(resolve=>{
+    let voices = speechSynthesis.getVoices();
+    if(voices.length){
+      cachedVoices = voices;
+      resolve();
+    } else {
+      speechSynthesis.onvoiceschanged = ()=>{
+        cachedVoices = speechSynthesis.getVoices();
+        resolve();
+      };
     }
+  });
+}
+
+async function speak(text, mode="female"){
+  if(!("speechSynthesis" in window)) return;
+
+  await loadVoices();
+  speechSynthesis.cancel();
+
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "fr-FR";
+  u.rate = 0.95;
+  u.pitch = 1.05;
+
+  const frVoices = cachedVoices.filter(v =>
+    v.lang && v.lang.toLowerCase().startsWith("fr")
+  );
+
+  if(frVoices.length){
+    u.voice = frVoices[0];
+  }
+
+  if(mode === "child"){
+    u.pitch = 1.35;
+    u.rate = 1.05;
+  }
+
+  speechSynthesis.speak(u);
+}
 
     // === Calendrier pubs (démo) (inchangé) ===
     const PUB_MAX_PER_DAY = 10;
@@ -1229,27 +1297,44 @@
         return raw ? JSON.parse(raw) : {};
       }catch(e){ return {}; }
     }
-    function saveBookings(obj){
-      localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj));
-    }
-    function getDayBookings(obj, y, m, d){
-      const keyYM = ym(y,m);
-      const keyYMD = ymd(y,m,d);
-      return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : [];
-    }
-    function setDayBookings(obj, y, m, d, list){
-      const keyYM = ym(y,m);
-      const keyYMD = ymd(y,m,d);
-      if(!obj[keyYM]) obj[keyYM] = {};
-      obj[keyYM][keyYMD] = list;
-    }
-    function daySlotsUsed(obj, y, m, d){
-      return getDayBookings(obj,y,m,d).length;
-    }
-    function isFull(obj,y,m,d){
-      return daySlotsUsed(obj,y,m,d) >= PUB_MAX_PER_DAY;
-    }
+ function loadBookings(){
+  try{
+    const raw = localStorage.getItem(PUB_STORE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){
+    console.warn("Lecture localStorage impossible.");
+    return {};
+  }
+}
+    
+function saveBookings(obj){
+  try{
+    localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj));
+  }catch(e){
+    console.warn("Stockage local indisponible.");
+  }
+}
 
+function getDayBookings(obj, y, m, d){
+  const keyYM = ym(y,m);
+  const keyYMD = ymd(y,m,d);
+  return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : [];
+}
+
+function setDayBookings(obj, y, m, d, list){
+  const keyYM = ym(y,m);
+  const keyYMD = ymd(y,m,d);
+  if(!obj[keyYM]) obj[keyYM] = {};
+  obj[keyYM][keyYMD] = list;
+}
+
+function daySlotsUsed(obj, y, m, d){
+  return getDayBookings(obj, y, m, d).length;
+}
+
+function isFull(obj, y, m, d){
+  return daySlotsUsed(obj, y, m, d) >= PUB_MAX_PER_DAY;
+}
     function buildCalendarHTML(){
       const first = new Date(calYear, calMonth, 1);
       const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
@@ -1765,15 +1850,15 @@ ${days.length ? days.map(d=>{
         <div class="box" style="margin-top:12px;">
           <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
           <div style="border-radius:14px; overflow:hidden; background:#000;">
-            <iframe
-              width="100%"
-              height="220"
-              src="https://www.youtube.com/embed/3CAmp8yKYEg"
-              title="Utilisation DAE - Croix Rouge"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen>
-            </iframe>
+       <iframe
+  width="100%"
+  height="220"
+  src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
+  title="Utilisation DAE"
+  loading="lazy"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen>
+</iframe>
           </div>
           <div class="muted" style="margin-top:8px;">
             (Démo) Vidéo d’explication / gestes essentiels.
@@ -1877,11 +1962,48 @@ ${days.length ? days.map(d=>{
         const inUrl   = document.getElementById("spUrl");
         const cbBold  = document.getElementById("spBold");
 
-        const makeLine = ()=>{
-          const name = (inName && inName.value.trim()) ? inName.value.trim() : "Commerce (démo)";
-          const url  = (inUrl && inUrl.value.trim()) ? inUrl.value.trim() : "";
-          const base = `${name} soutient Club + Association`;
-          return url ? `${base} • ${url}` : base;
+       const makeLine = ()=>{
+  const name = (inName && inName.value.trim()) ? inName.value.trim() : "Commerce (démo)";
+
+  // URL brute
+  let url = (inUrl && inUrl.value.trim()) ? inUrl.value.trim() : "";
+  const base = `${name} soutient Club + Association`;
+
+  // Nettoyage simple
+  url = url.replace(/\s+/g, ""); // enlève espaces
+  if(!url) return base;
+
+  // Autoriser "www." en auto-fix -> https://
+  if(url.startsWith("www.")){
+    url = "https://" + url;
+  }
+
+  // Refuser http://
+  if(url.startsWith("http://")){
+    alert("URL invalide : utiliser https:// (pas http://).");
+    return base;
+  }
+
+  // Refuser tout sauf https://
+  if(!url.startsWith("https://")){
+    alert("URL invalide : utiliser https://");
+    return base;
+  }
+
+  // Bloquer caractères dangereux / injections (simple)
+  // (on autorise lettres, chiffres et caractères URL classiques)
+  if(!/^[a-zA-Z0-9-._~:/?#\[\]@!$&'()*+,;=%]+$/.test(url)){
+    alert("URL invalide : caractères non autorisés.");
+    return base;
+  }
+
+  // Limite de longueur (lisibilité bandeau)
+  if(url.length > 80){
+    alert("URL trop longue (max 80 caractères).");
+    return base;
+  }
+
+  return `${base} • ${url}`;
         };
 
         if(btnPrev) btnPrev.onclick = ()=>{
@@ -1927,45 +2049,60 @@ ${days.length ? days.map(d=>{
     });
 
     // --- Long press logic ---
-    function makeLongPress(btn, ringEl, ms, onTrigger){
-      let raf=null, start=null, holding=false;
-      const r = ringEl.getAttribute("r") ? parseFloat(ringEl.getAttribute("r")) : 35;
-      const circ = 2 * Math.PI * r;
-      ringEl.style.strokeDasharray = String(circ);
-      ringEl.style.strokeDashoffset = String(circ);
+   function makeLongPress(btn, ringEl, ms, onTrigger){
+  if(!btn || !ringEl) return;
 
-      const stop = ()=>{
-        holding=false; start=null;
-        ringEl.style.strokeDashoffset = String(circ);
-        if(raf) cancelAnimationFrame(raf);
-        raf=null;
-      };
+  let raf = null, start = null, holding = false;
+  let fired = false; // ✅ anti double déclenchement
 
-      const tick = (ts)=>{
-        if(!holding) return;
-        if(start===null) start=ts;
-        const p = Math.min(1, (ts-start)/ms);
-        ringEl.style.strokeDashoffset = String(circ * (1-p));
-        if(p>=1){
-          stop();
-          onTrigger();
-          return;
-        }
-        raf = requestAnimationFrame(tick);
-      };
+  const rAttr = ringEl.getAttribute("r");
+  const r = rAttr ? parseFloat(rAttr) : 35;
+  const circ = 2 * Math.PI * r;
 
-      btn.addEventListener("pointerdown", (e)=>{
-        e.preventDefault();
-        if(holding) return;
-        holding=true;
-        raf = requestAnimationFrame(tick);
-      });
-      ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
-        btn.addEventListener(ev, stop);
-      });
-      btn.addEventListener("contextmenu", (e)=> e.preventDefault());
+  ringEl.style.strokeDasharray = String(circ);
+  ringEl.style.strokeDashoffset = String(circ);
+
+  const stop = ()=>{
+    holding = false;
+    start = null;
+    fired = false; // ✅ reset verrou
+    ringEl.style.strokeDashoffset = String(circ);
+    if(raf) cancelAnimationFrame(raf);
+    raf = null;
+  };
+
+  const tick = (ts)=>{
+    if(!holding) return;
+    if(start === null) start = ts;
+
+    const p = Math.min(1, (ts - start) / ms);
+    ringEl.style.strokeDashoffset = String(circ * (1 - p));
+
+    if(p >= 1){
+      if(fired) return;     // ✅ bloque si déjà déclenché
+      fired = true;
+      stop();
+      onTrigger();
+      return;
     }
+    raf = requestAnimationFrame(tick);
+  };
 
+  btn.addEventListener("pointerdown", (e)=>{
+    e.preventDefault();
+    if(holding) return;
+    holding = true;
+    fired = false; // ✅ verrou prêt pour un nouveau hold
+    raf = requestAnimationFrame(tick);
+  });
+
+  ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
+    btn.addEventListener(ev, stop);
+  });
+
+  btn.addEventListener("contextmenu", (e)=> e.preventDefault());
+}
+    
     // ✅ Sensibilisation urgences (1 seule fois, mémorisée)
     function emergencyGate(kind, onOk){
       const key = "bociteart_ack_" + kind;
@@ -2031,14 +2168,13 @@ ${days.length ? days.map(d=>{
       }, 0);
     }
 
-    // 112 (démo)
-    makeLongPress(
-      document.getElementById("btn112"),
-      document.getElementById("ring112"),
-      1800,
-      ()=> emergencyGate("112", ()=> alert("Démo : appel 112 (appui long validé)."))
-    );
-
+   // 112
+makeLongPress(
+  document.getElementById("btn112"),
+  document.getElementById("ring112"),
+  1800,
+  () => emergencyGate("112", () => callPhone("112"))
+);
     // 3919 / 119 choice + long press
     let sosNumber = null;
     const choice = document.getElementById("choice");
@@ -2054,18 +2190,18 @@ ${days.length ? days.map(d=>{
       });
     });
 
-    makeLongPress(
-      document.getElementById("btnSos"),
-      document.getElementById("ringSos"),
-      2000,
-      ()=>{
-        if(!sosNumber){
-          choice.classList.add("open");
-          return;
-        }
-        emergencyGate("sos", ()=> alert("Démo : appel " + sosNumber + " (appui long validé)."));
-      }
-    );
+       makeLongPress(
+  document.getElementById("btnSos"),
+  document.getElementById("ringSos"),
+  2000,
+  ()=>{
+    if(!sosNumber){
+      choice.classList.add("open");
+      return;
+    }
+    emergencyGate("sos", ()=> callPhone(sosNumber));
+  }
+);
 
     // ✅ IMPORTANT : suppression du bloc "Derniers échanges"
     // => donc on retire aussi le code qui cherchait ces boutons.
