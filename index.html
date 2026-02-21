@@ -2102,13 +2102,58 @@ ${days.length ? days.map(d=>{
 
   btn.addEventListener("contextmenu", (e)=> e.preventDefault());
 }
-    
+    // ===========================
+// ACK storage durci
+// ===========================
+const ACK_PREFIX = "bociteart_ack_v2_";
+const ACK_SALT = "BoCiteArt|ack|v2";
+
+function fnv1a(str){
+  let h = 0x811c9dc5;
+  for(let i=0;i<str.length;i++){
+    h ^= str.charCodeAt(i);
+    h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
+  }
+  return ("00000000" + h.toString(16)).slice(-8);
+}
+
+function ackSign(kind, ts){
+  return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
+}
+
+function ackGet(kind){
+  const key = ACK_PREFIX + kind;
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return false;
+
+    const parts = raw.split("|");
+    if(parts.length !== 3) return false;
+
+    const ok = parts[0] === "1";
+    const ts = parseInt(parts[1], 10);
+    const sig = parts[2];
+
+    if(!ok || !Number.isFinite(ts)) return false;
+
+    return sig === ackSign(kind, ts);
+  }catch(e){
+    return false;
+  }
+ } 
+function ackSet(kind){
+  const key = ACK_PREFIX + kind;
+  try{
+    const ts = Date.now();
+    const sig = ackSign(kind, ts);
+    localStorage.setItem(key, `1|${ts}|${sig}`);
+  }catch(e){}
+}
     // ✅ Sensibilisation urgences (1 seule fois, mémorisée)
     function emergencyGate(kind, onOk){
-      const key = "bociteart_ack_" + kind;
-      if(localStorage.getItem(key) === "1"){
-        onOk();
-        return;
+     if(ackGet(kind)){
+  onOk();
+  return;
       }
 
       const title = (kind==="112") ? "Urgence 112 — usage responsable" : "Aide 3919 / 119 — usage responsable";
@@ -2161,7 +2206,7 @@ ${days.length ? days.map(d=>{
             alert("Veuillez cocher la case pour confirmer que vous avez compris.");
             return;
           }
-          localStorage.setItem(key, "1");
+          ackSet(kind);
           closeModal();
           onOk();
         };
