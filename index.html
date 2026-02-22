@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="fr">
 <head>
   <meta charset="UTF-8" />
 
@@ -65,6 +66,9 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       overscroll-behavior: none;
     }
 
+    /* ✅ petite modif sûre : verrou scroll quand modal ouverte */
+    body.modalOpen{ overflow:hidden; }
+
     .page{
       min-height: calc(var(--vh) * 100);
       min-height: 100vh;
@@ -90,7 +94,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       overflow:hidden;
       border-radius:18px;
       background:var(--beige);
-      height:130px; /* (tu m’avais demandé -1cm plus tôt ; je n’y touche pas ici) */
+      height:130px;
       cursor:pointer;
     }
     .ticker img{
@@ -251,7 +255,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   font-weight:700 !important;
 }
     
-/* --- 112 : réduire UNIQUEMENT le mot URGENCE + icône --- */
+/* --- ✅ 112 : réduire UNIQUEMENT le mot URGENCE + icône --- */
 #btn112 .lblSmallTop{
   font-size:7px !important;
   line-height:1 !important;
@@ -276,7 +280,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 }
 
 #btnSos #sosLabel{
-  font-size:7px !important;   /* <-- ici tu agrandis */
+  font-size:7px !important;
   line-height:1 !important;
   font-weight:900 !important;
 }
@@ -295,12 +299,12 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
  .sportTapeViewport{ width:100%; overflow:hidden; }
 
 .sportTapeTrack{
-  display:inline-flex;          /* ✅ important : largeur “au contenu” */
-  width:max-content;            /* ✅ important : évite le blocage/reset visible */
+  display:inline-flex;
+  width:max-content;
   gap:48px;
   white-space:nowrap;
   padding-left:14px;
-  animation: sportTape 80s linear infinite; /* (ou 8s / 10s si tu veux un peu plus lent) */
+  animation: sportTape 80s linear infinite;
   will-change: transform;
 }
 
@@ -326,8 +330,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       border-radius:20px;
       background:#f7efe3;
       border:3px solid var(--red);
-      padding:10px 12px;          /* ✅ réduit */
-      min-height:93px;            /* ✅ ~ 2,5 cm */
+      padding:10px 12px;
+      min-height:93px;
       display:flex;
       align-items:center;
       gap:12px;
@@ -336,8 +340,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       cursor:pointer;
     }
     .heart{
-      width:52px;                 /* ✅ réduit */
-      height:52px;                /* ✅ réduit */
+      width:52px;
+      height:52px;
       flex:0 0 auto;
     }
 
@@ -804,18 +808,21 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
       <!-- Footer -->
       <div class="footerRow">
-        <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noreferrer">www.bociteart.com</a>
+        <!-- ✅ petit fix : noopener -->
+        <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noopener noreferrer">www.bociteart.com</a>
 
         <div class="footerRight">
-          <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+          <!-- ✅ petit fix : noopener -->
+          <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true">
               <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.27 2.3-2.6 4.73-2.6 5.06 0 6 3.33 6 7.67V24h-5v-7.6c0-1.81-.03-4.13-2.52-4.13-2.53 0-2.92 1.97-2.92 4v7.73h-5V8z"/>
             </svg>
           </a>
 
-          <a class="iconBtn" href="https://instagram.com/bociteart" target="_blank" rel="noreferrer" aria-label="Instagram">
+          <!-- ✅ petit fix : noopener -->
+          <a class="iconBtn" href="https://instagram.com/bociteart" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="#C13584" aria-hidden="true">
-              <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3.2A4.8 4.8 0 1 0 16.8 12 4.81 4.81 0 0 0 12 7.2zm0 7.8A3 3 0 1 1 15 12a3 3 0 0 1-3 3zm4.9-8.9a1.1 1.1 0 1 1-1.1-1.1 1.1 1.1 0 0 1 1.1 1.1z"/>
+              <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3.2A4.8 4.8 0 1 0 16.8 12 4.81 4.81 0 0 0 12 7.2zm0 7.8A3 3 0 1 1 15 12a3 3 0 0 1-3 3zm4.9-8.9a1.1 1.1 0 1 1-1.1-1.1 a1.1 1.1 0 0 1 1.1 1.1z"/>
             </svg>
           </a>
 
@@ -842,7 +849,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     </div>
   </div>
 
-   <!-- Legal modal -->
+  <!-- Legal modal -->
   <div class="modal" id="legal">
     <div class="backdrop" id="legalClose"></div>
     <div class="sheet">
@@ -864,6 +871,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
         <!-- RGPD -->
         <div id="p-rgpd" class="doc">
+          <!-- (TON TEXTE IDENTIQUE) -->
           <div style="font-weight:900;font-size:15px;">📗 Politique de protection des données (RGPD) — Bo’CitéArt</div>
           <div class="muted" style="margin-top:4px;">
             Version pré-structuration — entités juridiques en cours de constitution
@@ -974,166 +982,142 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
         <!-- CGU -->
         <div id="p-cgu" class="doc" style="display:none;">
+          <!-- (TON TEXTE IDENTIQUE) -->
           <div style="font-weight:900;font-size:15px;">📘 Conditions Générales d’Utilisation — Bo’CitéArt</div>
-
           <div class="box">
             Bo’CitéArt est un projet territorial en cours de déploiement.
             L’application ne constitue ni un service d’urgence, ni un réseau social ouvert, ni un établissement bancaire.
           </div>
-
           <h2>0. Statut de la version “démo” / pré-structuration</h2>
           <div class="box">
             La présente version peut être une démonstration fonctionnelle. Aucune relation contractuelle ferme ne peut naître
             avant l’immatriculation officielle des entités juridiques (SAS et/ou association) et la signature d’un contrat applicable
             (devis/commande/CGV, le cas échéant).
           </div>
-
           <h2>1. Accès</h2>
           <ul>
             <li>Contenus publics consultables librement</li>
             <li>Fonctions avancées réservées aux profils habilités (admin, mairie, école, commerçant, etc.)</li>
           </ul>
-
           <h2>2. Règles de conduite</h2>
           <ul>
             <li>Interdiction de contenu illégal, injurieux, diffamatoire, discriminatoire</li>
             <li>Interdiction de publier des données personnelles sans droit (surtout mineurs)</li>
             <li>Interdiction de tentative de fraude, contournement, perturbation</li>
           </ul>
-
           <h2>3. Modération / retrait</h2>
           <div class="box">
             Bo’CitéArt peut retirer un contenu, limiter une fonctionnalité, ou suspendre un accès en cas de non-conformité,
             d’abus, ou de risque juridique/sécuritaire, sans obligation de maintien en ligne.
           </div>
-
           <h2>4. Bocitecoins / WattCoins</h2>
           <div class="box">
             Les unités internes (bocitecoins / WattCoins) sont des unités promotionnelles.
             Elles n’ont aucune valeur monétaire, ne sont pas convertibles en euros, non remboursables.
           </div>
-
           <h2>5. Publicité (si activée)</h2>
           <ul>
             <li>Le partenaire est responsable de son contenu et de ses droits (marque, image, texte)</li>
             <li>Bo’CitéArt peut refuser/retirer une publicité en cas de non-conformité ou risque</li>
             <li>Aucune promesse de résultat commercial</li>
           </ul>
-
           <h2>6. Urgences</h2>
           <div class="box">
             Les boutons 112 / 3919 / 119 sont des raccourcis téléphoniques.
             Bo’CitéArt ne fournit pas les secours et ne garantit pas la connexion réseau.
             En cas d’urgence, appeler immédiatement les secours sans attendre.
           </div>
-
           <h2>7. Informations et données “indicatives”</h2>
           <div class="box">
             Certaines informations peuvent provenir de sources externes ou du téléphone (ex. carte, itinéraires, points d’intérêt, DAE).
             Elles sont fournies à titre indicatif et peuvent comporter des inexactitudes, retards ou indisponibilités.
             Bo’CitéArt ne garantit pas l’exactitude parfaite de ces informations.
           </div>
-
           <h2>8. Disponibilité / limites</h2>
           <div class="box">
             L’application est fournie “en l’état” (démo / pré-déploiement).
             Bo’CitéArt ne garantit pas l’absence d’erreurs, ni une disponibilité continue.
           </div>
-
           <h2>9. Responsabilité</h2>
           <ul>
             <li>Bo’CitéArt n’est pas responsable d’un mauvais usage de l’application</li>
             <li>Bo’CitéArt n’est pas responsable des contenus fournis par des tiers au-delà de sa modération</li>
             <li>Les dommages indirects (perte commerciale, etc.) sont exclus dans la limite légale</li>
           </ul>
-
           <h2>10. Force majeure</h2>
           <div class="box">
             Bo’CitéArt ne pourra être tenu responsable en cas de force majeure ou d’événement extérieur rendant le service indisponible
             ou altéré (panne réseau, incident hébergeur, cyberattaque, coupure électrique, décision administrative, etc.).
           </div>
-
           <h2>11. Propriété intellectuelle</h2>
           <div class="box">
             L’ensemble des éléments de Bo’CitéArt (concept, structure, textes, contenus, visuels, charte, design, marque et signes distinctifs)
             est protégé. Toute reproduction, extraction, réutilisation ou détournement sans autorisation est interdit, sauf droits légaux applicables.
           </div>
-
           <h2>12. Modification des conditions</h2>
           <div class="box">
             Bo’CitéArt peut modifier les présentes conditions pour tenir compte des évolutions du service, des exigences légales ou de sécurité.
             La version applicable est celle publiée dans l’application au moment de l’utilisation.
           </div>
-
           <h2>13. Droit applicable</h2>
           <p>Droit français.</p>
         </div>
 
         <!-- CGV -->
         <div id="p-cgv" class="doc" style="display:none;">
+          <!-- (TON TEXTE IDENTIQUE) -->
           <div style="font-weight:900;font-size:15px;">📕 Conditions Générales de Vente — Bo’CitéArt</div>
-
           <div class="box">
             Les présentes CGV s’appliqueront à compter de l’immatriculation de la SAS Bo’CitéArt.
             Aucune prestation commerciale n’est contractualisée tant que la structure n’est pas officiellement constituée
             et qu’un document contractuel (devis/commande/facture) n’est pas accepté.
           </div>
-
           <h2>1. Objet</h2>
           <p>
             Les CGV encadrent les prestations commerciales (visibilité partenaire, options d’affichage, services associés)
             proposées en version officielle selon devis/commande/facture.
           </p>
-
           <h2>2. Commande</h2>
           <ul>
             <li>La commande sera formalisée (devis signé, bon de commande, ou équivalent)</li>
             <li>La diffusion peut dépendre d’une validation (conformité, cohérence éditoriale, droits, sécurité)</li>
           </ul>
-
           <h2>3. Prix / Paiement</h2>
           <div class="box">
             Les prix, durées, options, et modalités de paiement sont précisés dans le devis/commande.
             Les règles fiscales (TVA) dépendent du cadre applicable au moment de l’immatriculation.
           </div>
-
           <h2>4. Obligations du client (partenaire)</h2>
           <ul>
             <li>Garantir la légalité du contenu fourni</li>
             <li>Garantir les droits sur marque, logo, image et textes</li>
             <li>Ne pas fournir de contenu trompeur, interdit ou contraire à la loi</li>
           </ul>
-
           <h2>5. Retrait / refus</h2>
           <p>
             Bo’CitéArt peut refuser, suspendre ou retirer une diffusion en cas de non-conformité, de risque juridique/sécuritaire,
             ou d’atteinte à l’image du projet, selon le contrat applicable.
           </p>
-
           <h2>6. Responsabilité</h2>
           <p>
             Bo’CitéArt n’assure aucune promesse de performance commerciale.
             La responsabilité est limitée dans la mesure permise par la loi et selon le contrat applicable.
           </p>
-
           <h2>7. Propriété intellectuelle</h2>
           <div class="box">
             Les éléments, signes distinctifs et supports liés à Bo’CitéArt (dont la structure et le concept de présentation) sont protégés.
             Le client n’acquiert aucun droit de propriété sur Bo’CitéArt au-delà des droits d’usage expressément prévus au contrat.
           </div>
-
           <h2>8. Force majeure</h2>
           <div class="box">
             Bo’CitéArt ne pourra être tenu responsable en cas de force majeure ou d’événement extérieur (panne réseau, incident hébergeur,
             cyberattaque, coupure électrique, décision administrative, etc.) affectant l’exécution des prestations.
           </div>
-
           <h2>9. Modification des CGV</h2>
           <div class="box">
             Bo’CitéArt peut faire évoluer les présentes CGV. Les CGV applicables sont celles acceptées au moment de la commande
             (devis/bon/commande/facture).
           </div>
-
           <h2>10. Droit applicable</h2>
           <p>Droit français.</p>
         </div>
@@ -1142,7 +1126,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     </div><!-- /.sheet -->
   </div><!-- /#legal -->
 
-  <!-- Choice 3919 / 119 (MODAL INDÉPENDANT : ne doit pas être dans #legal) -->
+  <!-- Choice 3919 / 119 -->
   <div class="modal" id="choice">
     <div class="backdrop" id="choiceClose"></div>
     <div class="sheet">
@@ -1164,6 +1148,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       </div>
     </div>
   </div>
+
   <script>
     // --- Fix hauteur visible Android (barres Chrome) ---
     function setVh(){
@@ -1173,28 +1158,46 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     setVh();
     window.addEventListener('resize', setVh);
     window.addEventListener('orientationchange', setVh);
+
+    // ✅ petites variables globales sûres pour focus (ne casse rien)
+    let __lastFocus = null;
+
+    // ✅ helpers : lock scroll quand modal ouverte
+    function lockScroll(on){
+      document.body.classList.toggle("modalOpen", !!on);
+    }
+
+    // ✅ clavier + accessibilité sans changer le HTML :
+    // - ticker + tiles deviennent "cliquables clavier" (Enter / Espace)
+    function makeKeyboardClickable(el, onActivate){
+      if(!el) return;
+      el.setAttribute("tabindex","0");
+      el.setAttribute("role","button");
+      el.addEventListener("keydown", (e)=>{
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          onActivate();
+        }
+      });
+    }
+
     // ===========================
-// MODE APP : DEMO / LIVE
-// ===========================
-const APP_MODE = "DEMO"; // <-- Jour J : remplacer par "LIVE"
+    // MODE APP : DEMO / LIVE
+    // ===========================
+    const APP_MODE = "DEMO"; // <-- Jour J : remplacer par "LIVE"
 
-function callPhone(number){
-  const n = String(number || "").trim();
-
-  // sécurité : n'accepte que chiffres (anti injection)
-  if(!/^\d{2,4}$/.test(n)){
-    console.warn("Numéro invalide:", n);
-    return;
-  }
-
-  if(APP_MODE === "DEMO"){
-    alert("Démo : appel " + n + " (appui long validé).");
-    return;
-  }
-
-  // LIVE (Jour J)
-  window.location.href = "tel:" + n;
-}
+    function callPhone(number){
+      const n = String(number || "").trim();
+      if(!/^\d{2,4}$/.test(n)){
+        console.warn("Numéro invalide:", n);
+        return;
+      }
+      if(APP_MODE === "DEMO"){
+        alert("Démo : appel " + n + " (appui long validé).");
+        return;
+      }
+      window.location.href = "tel:" + n;
+    }
 
     // --- Ticker rotation ---
     const tickerItems = [
@@ -1226,60 +1229,93 @@ function callPhone(number){
     const modal = document.getElementById("modal");
     const modalTitle = document.getElementById("modalTitle");
     const modalBody = document.getElementById("modalBody");
-    const closeModal = () => modal.classList.remove("open");
+
+    const closeModal = () => {
+      modal.classList.remove("open");
+      lockScroll(false);
+      if(__lastFocus && typeof __lastFocus.focus === "function") __lastFocus.focus();
+      __lastFocus = null;
+    };
+
     document.getElementById("modalClose").onclick = closeModal;
     document.getElementById("xBtn").onclick = closeModal;
 
     function openModal(title, html){
+      __lastFocus = document.activeElement;
       modalTitle.textContent = title;
       modalBody.innerHTML = html;
       modal.classList.add("open");
+      lockScroll(true);
+      // focus close btn (petit plus UX)
+      setTimeout(()=>{ document.getElementById("xBtn")?.focus?.(); },0);
     }
+
+    // ✅ ESC ferme les modales (sans toucher le reste)
+    document.addEventListener("keydown", (e)=>{
+      if(e.key !== "Escape") return;
+
+      const legal = document.getElementById("legal");
+      const choice = document.getElementById("choice");
+
+      if(choice && choice.classList.contains("open")){
+        choice.classList.remove("open");
+        lockScroll(false);
+        return;
+      }
+      if(legal && legal.classList.contains("open")){
+        legal.classList.remove("open");
+        lockScroll(false);
+        return;
+      }
+      if(modal && modal.classList.contains("open")){
+        closeModal();
+      }
+    });
 
     // --- Audio (démo) : voix enfant / voix féminine douce ---
     let cachedVoices = [];
 
-function loadVoices(){
-  return new Promise(resolve=>{
-    let voices = speechSynthesis.getVoices();
-    if(voices.length){
-      cachedVoices = voices;
-      resolve();
-    } else {
-      speechSynthesis.onvoiceschanged = ()=>{
-        cachedVoices = speechSynthesis.getVoices();
-        resolve();
-      };
+    function loadVoices(){
+      return new Promise(resolve=>{
+        let voices = speechSynthesis.getVoices();
+        if(voices.length){
+          cachedVoices = voices;
+          resolve();
+        } else {
+          speechSynthesis.onvoiceschanged = ()=>{
+            cachedVoices = speechSynthesis.getVoices();
+            resolve();
+          };
+        }
+      });
     }
-  });
-}
 
-async function speak(text, mode="female"){
-  if(!("speechSynthesis" in window)) return;
+    async function speak(text, mode="female"){
+      if(!("speechSynthesis" in window)) return;
 
-  await loadVoices();
-  speechSynthesis.cancel();
+      await loadVoices();
+      speechSynthesis.cancel();
 
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "fr-FR";
-  u.rate = 0.95;
-  u.pitch = 1.05;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "fr-FR";
+      u.rate = 0.95;
+      u.pitch = 1.05;
 
-  const frVoices = cachedVoices.filter(v =>
-    v.lang && v.lang.toLowerCase().startsWith("fr")
-  );
+      const frVoices = cachedVoices.filter(v =>
+        v.lang && v.lang.toLowerCase().startsWith("fr")
+      );
 
-  if(frVoices.length){
-    u.voice = frVoices[0];
-  }
+      if(frVoices.length){
+        u.voice = frVoices[0];
+      }
 
-  if(mode === "child"){
-    u.pitch = 1.35;
-    u.rate = 1.05;
-  }
+      if(mode === "child"){
+        u.pitch = 1.35;
+        u.rate = 1.05;
+      }
 
-  speechSynthesis.speak(u);
-}
+      speechSynthesis.speak(u);
+    }
 
     // === Calendrier pubs (démo) (inchangé) ===
     const PUB_MAX_PER_DAY = 10;
@@ -1291,44 +1327,45 @@ async function speak(text, mode="female"){
     function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
     function ym(y,m){ return `${y}-${pad2(m+1)}`; }
 
- function loadBookings(){
-  try{
-    const raw = localStorage.getItem(PUB_STORE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  }catch(e){
-    console.warn("Lecture localStorage impossible.");
-    return {};
-  }
-}
-    
-function saveBookings(obj){
-  try{
-    localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj));
-  }catch(e){
-    console.warn("Stockage local indisponible.");
-  }
-}
+    function loadBookings(){
+      try{
+        const raw = localStorage.getItem(PUB_STORE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      }catch(e){
+        console.warn("Lecture localStorage impossible.");
+        return {};
+      }
+    }
 
-function getDayBookings(obj, y, m, d){
-  const keyYM = ym(y,m);
-  const keyYMD = ymd(y,m,d);
-  return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : [];
-}
+    function saveBookings(obj){
+      try{
+        localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj));
+      }catch(e){
+        console.warn("Stockage local indisponible.");
+      }
+    }
 
-function setDayBookings(obj, y, m, d, list){
-  const keyYM = ym(y,m);
-  const keyYMD = ymd(y,m,d);
-  if(!obj[keyYM]) obj[keyYM] = {};
-  obj[keyYM][keyYMD] = list;
-}
+    function getDayBookings(obj, y, m, d){
+      const keyYM = ym(y,m);
+      const keyYMD = ymd(y,m,d);
+      return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : [];
+    }
 
-function daySlotsUsed(obj, y, m, d){
-  return getDayBookings(obj, y, m, d).length;
-}
+    function setDayBookings(obj, y, m, d, list){
+      const keyYM = ym(y,m);
+      const keyYMD = ymd(y,m,d);
+      if(!obj[keyYM]) obj[keyYM] = {};
+      obj[keyYM][keyYMD] = list;
+    }
 
-function isFull(obj, y, m, d){
-  return daySlotsUsed(obj, y, m, d) >= PUB_MAX_PER_DAY;
-}
+    function daySlotsUsed(obj, y, m, d){
+      return getDayBookings(obj, y, m, d).length;
+    }
+
+    function isFull(obj, y, m, d){
+      return daySlotsUsed(obj, y, m, d) >= PUB_MAX_PER_DAY;
+    }
+
     function buildCalendarHTML(){
       const first = new Date(calYear, calMonth, 1);
       const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
@@ -1567,7 +1604,7 @@ ${days.length ? days.map(d=>{
     }
 
     // ✅ CLIC SUR LE TICKER = ouvre un descriptif + calendrier (inchangé)
-    document.getElementById("ticker").addEventListener("click", ()=>{
+    function openTicker(){
       openModal("Publicités & visibilité (ticker)", `
         <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
 
@@ -1592,7 +1629,9 @@ ${days.length ? days.map(d=>{
       `);
 
       setTimeout(()=> renderCalendarInto("calHost"), 0);
-    });
+    }
+
+    document.getElementById("ticker").addEventListener("click", openTicker);
 
     // ===========================
     // ✅ Bandeau 1 cm : pubs + gras
@@ -1606,22 +1645,18 @@ ${days.length ? days.map(d=>{
         .replaceAll("'","&#039;");
     }
 
-    // Démo : 4 messages, dont 2 en gras (comme demandé)
-   const tapeAds = [
-  { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-  { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
-  { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
-  { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false },
-];
+    const tapeAds = [
+      { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
+      { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
+      { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
+      { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false },
+    ];
 
     function renderTape(){
       const track = document.getElementById("sportTapeTrack");
       if(!track) return;
-
-      // on duplique pour animation continue
       const doubled = tapeAds.concat(tapeAds);
-
-      track.innerHTML = doubled.map((a, i)=>{
+      track.innerHTML = doubled.map((a)=>{
         const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
         return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
       }).join("");
@@ -1629,7 +1664,7 @@ ${days.length ? days.map(d=>{
     renderTape();
 
     // ===========================
-    // Ouverture des tuiles (détails remis)
+    // Ouverture des tuiles (ton code inchangé)
     // ===========================
     document.querySelectorAll("[data-open]").forEach(el=>{
       el.addEventListener("click", ()=>{
@@ -1825,7 +1860,7 @@ ${days.length ? days.map(d=>{
       `);
     });
 
-    // ✅ DAE screen (inchangé, hors taille carte)
+    // ✅ DAE screen (inchangé)
     document.getElementById("daeBtn").addEventListener("click", ()=>{
       openModal("Défibrillateur (DAE)", `
         <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
@@ -1880,7 +1915,7 @@ ${days.length ? days.map(d=>{
     });
 
     // ===========================
-    // ✅ Fiche SPORT (avec URL + option gras)
+    // ✅ Fiche SPORT (inchangé)
     // ===========================
     function openSportFiche(){
       openModal("📄 Fiche — élus / CCI / commerçants (Sport + Associations)", `
@@ -1956,48 +1991,32 @@ ${days.length ? days.map(d=>{
         const inUrl   = document.getElementById("spUrl");
         const cbBold  = document.getElementById("spBold");
 
-       const makeLine = ()=>{
-  const name = (inName && inName.value.trim()) ? inName.value.trim() : "Commerce (démo)";
-
-  // URL brute
-  let url = (inUrl && inUrl.value.trim()) ? inUrl.value.trim() : "";
-  const base = `${name} soutient Club + Association`;
-
-  // Nettoyage simple
-  url = url.replace(/\s+/g, ""); // enlève espaces
-  if(!url) return base;
-
-  // Autoriser "www." en auto-fix -> https://
-  if(url.startsWith("www.")){
-    url = "https://" + url;
-  }
-
-  // Refuser http://
-  if(url.startsWith("http://")){
-    alert("URL invalide : utiliser https:// (pas http://).");
-    return base;
-  }
-
-  // Refuser tout sauf https://
-  if(!url.startsWith("https://")){
-    alert("URL invalide : utiliser https://");
-    return base;
-  }
-
-  // Bloquer caractères dangereux / injections (simple)
-  // (on autorise lettres, chiffres et caractères URL classiques)
-  if(!/^[a-zA-Z0-9-._~:/?#\[\]@!$&'()*+,;=%]+$/.test(url)){
-    alert("URL invalide : caractères non autorisés.");
-    return base;
-  }
-
-  // Limite de longueur (lisibilité bandeau)
-  if(url.length > 80){
-    alert("URL trop longue (max 80 caractères).");
-    return base;
-  }
-
-  return `${base} • ${url}`;
+        const makeLine = ()=>{
+          const name = (inName && inName.value.trim()) ? inName.value.trim() : "Commerce (démo)";
+          let url = (inUrl && inUrl.value.trim()) ? inUrl.value.trim() : "";
+          const base = `${name} soutient Club + Association`;
+          url = url.replace(/\s+/g, "");
+          if(!url) return base;
+          if(url.startsWith("www.")){
+            url = "https://" + url;
+          }
+          if(url.startsWith("http://")){
+            alert("URL invalide : utiliser https:// (pas http://).");
+            return base;
+          }
+          if(!url.startsWith("https://")){
+            alert("URL invalide : utiliser https://");
+            return base;
+          }
+          if(!/^[a-zA-Z0-9-._~:/?#\[\]@!$&'()*+,;=%]+$/.test(url)){
+            alert("URL invalide : caractères non autorisés.");
+            return base;
+          }
+          if(url.length > 80){
+            alert("URL trop longue (max 80 caractères).");
+            return base;
+          }
+          return `${base} • ${url}`;
         };
 
         if(btnPrev) btnPrev.onclick = ()=>{
@@ -2008,8 +2027,6 @@ ${days.length ? days.map(d=>{
         if(btnAdd) btnAdd.onclick = ()=>{
           const line = makeLine();
           const bold = !!(cbBold && cbBold.checked);
-
-          // on ajoute une pub dans le bandeau (démo locale)
           tapeAds.push({ txt: line, bold });
           renderTape();
           alert("Ajouté au bandeau (démo).");
@@ -2017,137 +2034,135 @@ ${days.length ? days.map(d=>{
       },0);
     }
 
-// --- Legal modal open/close + tabs ---
-const legal = document.getElementById("legal");
-const openLegalBtn = document.getElementById("openLegal");
-const closeLegalBtn = document.getElementById("legalClose");
-const closeLegalX = document.getElementById("legalX");
+    // --- Legal modal open/close + tabs ---
+    const legal = document.getElementById("legal");
+    const openLegalBtn = document.getElementById("openLegal");
+    const closeLegalBtn = document.getElementById("legalClose");
+    const closeLegalX = document.getElementById("legalX");
 
-const openLegal = () => { if(legal) legal.classList.add("open"); };
-const closeLegal = () => { if(legal) legal.classList.remove("open"); };
+    const openLegal = () => { if(legal) { __lastFocus = document.activeElement; legal.classList.add("open"); lockScroll(true);} };
+    const closeLegal = () => { if(legal) { legal.classList.remove("open"); lockScroll(false); if(__lastFocus?.focus) __lastFocus.focus(); __lastFocus=null; } };
 
-if(openLegalBtn) openLegalBtn.onclick = openLegal;
-if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
-if(closeLegalX) closeLegalX.onclick = closeLegal;
+    if(openLegalBtn) openLegalBtn.onclick = openLegal;
+    if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
+    if(closeLegalX) closeLegalX.onclick = closeLegal;
 
-document.querySelectorAll("#legal .tab").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    document.querySelectorAll("#legal .tab").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
+    document.querySelectorAll("#legal .tab").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("#legal .tab").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
 
-    const k = btn.getAttribute("data-tab");
-    document.getElementById("p-rgpd").style.display = (k==="rgpd") ? "block" : "none";
-    document.getElementById("p-cgu").style.display  = (k==="cgu")  ? "block" : "none";
-    document.getElementById("p-cgv").style.display  = (k==="cgv")  ? "block" : "none";
-  });
-});
- 
+        const k = btn.getAttribute("data-tab");
+        document.getElementById("p-rgpd").style.display = (k==="rgpd") ? "block" : "none";
+        document.getElementById("p-cgu").style.display  = (k==="cgu")  ? "block" : "none";
+        document.getElementById("p-cgv").style.display  = (k==="cgv")  ? "block" : "none";
+      });
+    });
+
     // ===========================
-// ACK storage durci
-// ===========================
-const ACK_PREFIX = "bociteart_ack_v2_";
-const ACK_SALT = "BoCiteArt|ack|v2";
+    // ACK storage durci (inchangé)
+    // ===========================
+    const ACK_PREFIX = "bociteart_ack_v2_";
+    const ACK_SALT = "BoCiteArt|ack|v2";
 
-function fnv1a(str){
-  let h = 0x811c9dc5;
-  for(let i=0;i<str.length;i++){
-    h ^= str.charCodeAt(i);
-    h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
-  }
-  return ("00000000" + h.toString(16)).slice(-8);
-}
-
-function ackSign(kind, ts){
-  return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
-}
-
-function ackGet(kind){
-  const key = ACK_PREFIX + kind;
-  try{
-    const raw = localStorage.getItem(key);
-    if(!raw) return false;
-
-    const parts = raw.split("|");
-    if(parts.length !== 3) return false;
-
-    const ok = parts[0] === "1";
-    const ts = parseInt(parts[1], 10);
-    const sig = parts[2];
-
-    if(!ok || !Number.isFinite(ts)) return false;
-
-    return sig === ackSign(kind, ts);
-  }catch(e){
-    return false;
-  }
-} 
-function ackSet(kind){
-  const key = ACK_PREFIX + kind;
-  try{
-    const ts = Date.now();
-    const sig = ackSign(kind, ts);
-    localStorage.setItem(key, `1|${ts}|${sig}`);
-  }catch(e){}
-}
-    // --- Long press logic ---
-   function makeLongPress(btn, ringEl, ms, onTrigger){
-  if(!btn || !ringEl) return;
-
-  let raf = null, start = null, holding = false;
-  let fired = false; // ✅ anti double déclenchement
-
-  const rAttr = ringEl.getAttribute("r");
-  const r = rAttr ? parseFloat(rAttr) : 35;
-  const circ = 2 * Math.PI * r;
-
-  ringEl.style.strokeDasharray = String(circ);
-  ringEl.style.strokeDashoffset = String(circ);
-
-  const stop = ()=>{
-    holding = false;
-    start = null;
-    fired = false; // ✅ reset verrou
-    ringEl.style.strokeDashoffset = String(circ);
-    if(raf) cancelAnimationFrame(raf);
-    raf = null;
-  };
-
-  const tick = (ts)=>{
-    if(!holding) return;
-    if(start === null) start = ts;
-
-    const p = Math.min(1, (ts - start) / ms);
-    ringEl.style.strokeDashoffset = String(circ * (1 - p));
-
-    if(p >= 1){
-      if(fired) return;     // ✅ bloque si déjà déclenché
-      fired = true;
-      stop();
-      onTrigger();
-      return;
+    function fnv1a(str){
+      let h = 0x811c9dc5;
+      for(let i=0;i<str.length;i++){
+        h ^= str.charCodeAt(i);
+        h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
+      }
+      return ("00000000" + h.toString(16)).slice(-8);
     }
-    raf = requestAnimationFrame(tick);
-  };
 
-  btn.addEventListener("pointerdown", (e)=>{
-    e.preventDefault();
-    if(holding) return;
-    holding = true;
-    fired = false; // ✅ verrou prêt pour un nouveau hold
-    raf = requestAnimationFrame(tick);
-  });
+    function ackSign(kind, ts){
+      return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
+    }
 
-  ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
-    btn.addEventListener(ev, stop);
-  });
+    function ackGet(kind){
+      const key = ACK_PREFIX + kind;
+      try{
+        const raw = localStorage.getItem(key);
+        if(!raw) return false;
+        const parts = raw.split("|");
+        if(parts.length !== 3) return false;
+        const ok = parts[0] === "1";
+        const ts = parseInt(parts[1], 10);
+        const sig = parts[2];
+        if(!ok || !Number.isFinite(ts)) return false;
+        return sig === ackSign(kind, ts);
+      }catch(e){
+        return false;
+      }
+    }
+    function ackSet(kind){
+      const key = ACK_PREFIX + kind;
+      try{
+        const ts = Date.now();
+        const sig = ackSign(kind, ts);
+        localStorage.setItem(key, `1|${ts}|${sig}`);
+      }catch(e){}
+    }
 
-  btn.addEventListener("contextmenu", (e)=> e.preventDefault());
-}
-    // ✅ Sensibilisation urgences (1 seule fois, mémorisée)
+    // --- Long press logic ---
+    function makeLongPress(btn, ringEl, ms, onTrigger){
+      if(!btn || !ringEl) return;
+
+      let raf = null, start = null, holding = false;
+      let fired = false;
+
+      const rAttr = ringEl.getAttribute("r");
+      const r = rAttr ? parseFloat(rAttr) : 35;
+      const circ = 2 * Math.PI * r;
+
+      ringEl.style.strokeDasharray = String(circ);
+      ringEl.style.strokeDashoffset = String(circ);
+
+      const stop = ()=>{
+        holding = false;
+        start = null;
+        fired = false;
+        ringEl.style.strokeDashoffset = String(circ);
+        if(raf) cancelAnimationFrame(raf);
+        raf = null;
+      };
+
+      const tick = (ts)=>{
+        if(!holding) return;
+        if(start === null) start = ts;
+
+        const p = Math.min(1, (ts - start) / ms);
+        ringEl.style.strokeDashoffset = String(circ * (1 - p));
+
+        if(p >= 1){
+          if(fired) return;
+          fired = true;
+          stop();
+          onTrigger();
+          return;
+        }
+        raf = requestAnimationFrame(tick);
+      };
+
+      btn.addEventListener("pointerdown", (e)=>{
+        e.preventDefault();
+        if(holding) return;
+        holding = true;
+        fired = false;
+        raf = requestAnimationFrame(tick);
+      });
+
+      ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
+        btn.addEventListener(ev, stop);
+      });
+
+      btn.addEventListener("contextmenu", (e)=> e.preventDefault());
+    }
+
+    // ✅ Sensibilisation urgences (inchangé)
     function emergencyGate(kind, onOk){
-     if(ackGet(kind)){
-  onOk();
-  return;
+      if(ackGet(kind)){
+        onOk();
+        return;
       }
 
       const title = (kind==="112") ? "Urgence 112 — usage responsable" : "Aide 3919 / 119 — usage responsable";
@@ -2207,17 +2222,19 @@ function ackSet(kind){
       }, 0);
     }
 
-   // 112
-makeLongPress(
-  document.getElementById("btn112"),
-  document.getElementById("ring112"),
-  1800,
-  () => emergencyGate("112", () => callPhone("112"))
-);
+    // 112
+    makeLongPress(
+      document.getElementById("btn112"),
+      document.getElementById("ring112"),
+      1800,
+      () => emergencyGate("112", () => callPhone("112"))
+    );
+
     // 3919 / 119 choice + long press
     let sosNumber = null;
     const choice = document.getElementById("choice");
-    const closeChoice = ()=> choice.classList.remove("open");
+    const closeChoice = ()=> { choice.classList.remove("open"); lockScroll(false); if(__lastFocus?.focus) __lastFocus.focus(); __lastFocus=null; };
+
     document.getElementById("choiceClose").onclick = closeChoice;
     document.getElementById("choiceX").onclick = closeChoice;
 
@@ -2229,21 +2246,35 @@ makeLongPress(
       });
     });
 
-       makeLongPress(
-  document.getElementById("btnSos"),
-  document.getElementById("ringSos"),
-  2000,
-  ()=>{
-    if(!sosNumber){
-      choice.classList.add("open");
-      return;
-    }
-    emergencyGate(sosNumber, ()=> callPhone(sosNumber));
-  }
-);
+    makeLongPress(
+      document.getElementById("btnSos"),
+      document.getElementById("ringSos"),
+      2000,
+      ()=>{
+        if(!sosNumber){
+          __lastFocus = document.activeElement;
+          choice.classList.add("open");
+          lockScroll(true);
+          return;
+        }
+        emergencyGate(sosNumber, ()=> callPhone(sosNumber));
+      }
+    );
 
     // ✅ IMPORTANT : suppression du bloc "Derniers échanges"
     // => donc on retire aussi le code qui cherchait ces boutons.
+
+    // ======================================================
+    // ✅ AJOUTS "NICKEL" SANS TOUCHER LA STRUCTURE :
+    // - clavier ticker + tiles + admin
+    // ======================================================
+    makeKeyboardClickable(document.getElementById("ticker"), openTicker);
+
+    document.querySelectorAll(".tile[data-open]").forEach(el=>{
+      makeKeyboardClickable(el, ()=> el.click());
+    });
+    makeKeyboardClickable(document.getElementById("adminTile"), ()=> document.getElementById("adminTile").click());
+
   </script>
 </body>
 </html>
