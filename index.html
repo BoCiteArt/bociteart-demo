@@ -2017,31 +2017,78 @@ ${days.length ? days.map(d=>{
       },0);
     }
 
-    // --- Legal modal open/close + tabs ---
-    const legal = document.getElementById("legal");
-    const openLegalBtn = document.getElementById("openLegal");
-    const closeLegalBtn = document.getElementById("legalClose");
-    const closeLegalX = document.getElementById("legalX");
+// --- Legal modal open/close + tabs ---
+const legal = document.getElementById("legal");
+const openLegalBtn = document.getElementById("openLegal");
+const closeLegalBtn = document.getElementById("legalClose");
+const closeLegalX = document.getElementById("legalX");
 
-    const openLegal = () => legal.classList.add("open");
-    const closeLegal = () => legal.classList.remove("open");
+const openLegal = () => legal.classList.add("open");
+const closeLegal = () => legal.classList.remove("open");
 
-    openLegalBtn.onclick = openLegal;
-    closeLegalBtn.onclick = closeLegal;
-    closeLegalX.onclick = closeLegal;
+if(openLegalBtn) openLegalBtn.onclick = openLegal;
+if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
+if(closeLegalX) closeLegalX.onclick = closeLegal;
 
-    document.querySelectorAll("#legal .tab").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        document.querySelectorAll("#legal .tab").forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
+document.querySelectorAll("#legal .tab").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll("#legal .tab").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
 
-        const k = btn.getAttribute("data-tab");
-        document.getElementById("p-rgpd").style.display = (k==="rgpd") ? "block" : "none";
-        document.getElementById("p-cgu").style.display  = (k==="cgu")  ? "block" : "none";
-        document.getElementById("p-cgv").style.display  = (k==="cgv")  ? "block" : "none";
-      });
-    });
+    const k = btn.getAttribute("data-tab");
+    document.getElementById("p-rgpd").style.display = (k==="rgpd") ? "block" : "none";
+    document.getElementById("p-cgu").style.display  = (k==="cgu")  ? "block" : "none";
+    document.getElementById("p-cgv").style.display  = (k==="cgv")  ? "block" : "none";
+  });
+});
+ 
+    // ===========================
+// ACK storage durci
+// ===========================
+const ACK_PREFIX = "bociteart_ack_v2_";
+const ACK_SALT = "BoCiteArt|ack|v2";
 
+function fnv1a(str){
+  let h = 0x811c9dc5;
+  for(let i=0;i<str.length;i++){
+    h ^= str.charCodeAt(i);
+    h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
+  }
+  return ("00000000" + h.toString(16)).slice(-8);
+}
+
+function ackSign(kind, ts){
+  return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
+}
+
+function ackGet(kind){
+  const key = ACK_PREFIX + kind;
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return false;
+
+    const parts = raw.split("|");
+    if(parts.length !== 3) return false;
+
+    const ok = parts[0] === "1";
+    const ts = parseInt(parts[1], 10);
+    const sig = parts[2];
+
+    if(!ok || !Number.isFinite(ts)) return false;
+
+    return sig === ackSign(kind, ts);
+  }catch(e){
+    return false;
+  }
+} 
+function ackSet(kind){
+  const key = ACK_PREFIX + kind;
+  try{
+    const ts = Date.now();
+    const sig = ackSign(kind, ts);
+    localStorage.setItem(key, `1|${ts}|${sig}`);
+  }catch(e){}
+}
     // --- Long press logic ---
    function makeLongPress(btn, ringEl, ms, onTrigger){
   if(!btn || !ringEl) return;
@@ -2095,53 +2142,6 @@ ${days.length ? days.map(d=>{
   });
 
   btn.addEventListener("contextmenu", (e)=> e.preventDefault());
-}
-    // ===========================
-// ACK storage durci
-// ===========================
-const ACK_PREFIX = "bociteart_ack_v2_";
-const ACK_SALT = "BoCiteArt|ack|v2";
-
-function fnv1a(str){
-  let h = 0x811c9dc5;
-  for(let i=0;i<str.length;i++){
-    h ^= str.charCodeAt(i);
-    h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
-  }
-  return ("00000000" + h.toString(16)).slice(-8);
-}
-
-function ackSign(kind, ts){
-  return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
-}
-
-function ackGet(kind){
-  const key = ACK_PREFIX + kind;
-  try{
-    const raw = localStorage.getItem(key);
-    if(!raw) return false;
-
-    const parts = raw.split("|");
-    if(parts.length !== 3) return false;
-
-    const ok = parts[0] === "1";
-    const ts = parseInt(parts[1], 10);
-    const sig = parts[2];
-
-    if(!ok || !Number.isFinite(ts)) return false;
-
-    return sig === ackSign(kind, ts);
-  }catch(e){
-    return false;
-  }
- } 
-function ackSet(kind){
-  const key = ACK_PREFIX + kind;
-  try{
-    const ts = Date.now();
-    const sig = ackSign(kind, ts);
-    localStorage.setItem(key, `1|${ts}|${sig}`);
-  }catch(e){}
 }
     // ✅ Sensibilisation urgences (1 seule fois, mémorisée)
     function emergencyGate(kind, onOk){
