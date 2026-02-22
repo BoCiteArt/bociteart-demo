@@ -20,7 +20,7 @@ script-src 'self' 'unsafe-inline';
 style-src 'self' 'unsafe-inline';
 font-src 'self' https: data:;
 connect-src 'self' https:;
-frame-src https://www.youtube.com;
+frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 ">
   
   <!-- IMPORTANT: viewport + stabilité mobile -->
@@ -2023,8 +2023,8 @@ const openLegalBtn = document.getElementById("openLegal");
 const closeLegalBtn = document.getElementById("legalClose");
 const closeLegalX = document.getElementById("legalX");
 
-const openLegal = () => legal.classList.add("open");
-const closeLegal = () => legal.classList.remove("open");
+const openLegal = () => { if(legal) legal.classList.add("open"); };
+const closeLegal = () => { if(legal) legal.classList.remove("open"); };
 
 if(openLegalBtn) openLegalBtn.onclick = openLegal;
 if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
@@ -2238,7 +2238,7 @@ makeLongPress(
       choice.classList.add("open");
       return;
     }
-    emergencyGate("sos", ()=> callPhone(sosNumber));
+    emergencyGate(sosNumber, ()=> callPhone(sosNumber));
   }
 );
 
