@@ -1291,12 +1291,6 @@ async function speak(text, mode="female"){
     function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
     function ym(y,m){ return `${y}-${pad2(m+1)}`; }
 
-    function loadBookings(){
-      try{
-        const raw = localStorage.getItem(PUB_STORE_KEY);
-        return raw ? JSON.parse(raw) : {};
-      }catch(e){ return {}; }
-    }
  function loadBookings(){
   try{
     const raw = localStorage.getItem(PUB_STORE_KEY);
