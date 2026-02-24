@@ -354,6 +354,24 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       padding-bottom:10px;
       padding-bottom: max(10px, env(safe-area-inset-bottom));
     }
+    /* ✅ Footer toujours sur 1 ligne (Compte + RGPD) */
+.footerRight{
+  display:flex;
+  gap:10px;
+  flex-wrap: nowrap;     /* interdit retour ligne */
+  align-items:center;
+  min-width:0;
+}
+
+.footerRight .legalBtn{
+  flex:1;                /* partage 50% / 50% */
+  min-width:0;
+  padding:9px 8px;
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
     .siteLink{
       font-size:14px;
       font-weight:800;
@@ -826,7 +844,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             </svg>
           </a>
 
-          <button class="legalBtn" id="openSecure" type="button">Compte sécurisé</button>
+          <button class="legalBtn" id="openSecure" type="button">Compte + assistance</button>
           <button class="legalBtn" id="openLegal" type="button">RGPD • CGU • CGV</button>
         </div>
       </div>
@@ -905,6 +923,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             <li><strong>Fonctions</strong> : paramètres, préférences, contenus publiés par profils habilités</li>
             <li><strong>Publicité</strong> : texte fourni par le partenaire, réservations (horodatage)</li>
             <li><strong>Démo</strong> : données locales de démonstration (localStorage)</li>
+            <li><strong>Transactions / facturation (LIVE)</strong> : montants agrégés, identifiants de facturation, journaux de paiement via PSP (Bo’CitéArt ne stocke pas les données bancaires)</li>
           </ul>
 
           <h2>3. Données sensibles</h2>
@@ -960,6 +979,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             <li>Accès interne : administrateur habilité</li>
             <li>Profils habilités : mairie/école/commerçants selon leurs droits</li>
             <li>Sous-traitants techniques : uniquement si nécessaires (hébergement, analytics, etc.) — précisés en version officielle</li>
+            <li>Prestataire de paiement (PSP) : exécute les reversements et fournit une traçabilité (sous-traitant) — détails précisés en version officielle</li>
           </ul>
 
           <h2>10. Sécurité</h2>
@@ -1062,6 +1082,11 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             L’application est fournie “en l’état” (démo / pré-déploiement).
             Bo’CitéArt ne garantit pas l’absence d’erreurs, ni une disponibilité continue.
           </div>
+          <h2>7 ter. Suivi indicatif (commerçants)</h2>
+<div class="box">
+  Certaines vues de suivi (ex. estimation mensuelle) sont fournies à titre <strong>indicatif</strong> et ne constituent pas un document comptable,
+  fiscal ou opposable. Les montants contractuels et facturés sont ceux issus du PSP et/ou de la facture mensuelle.
+</div>
           <h2>9. Responsabilité</h2>
           <ul>
             <li>Bo’CitéArt n’est pas responsable d’un mauvais usage de l’application</li>
@@ -1120,6 +1145,15 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             Les prix, durées, options, et modalités de paiement sont précisés dans le devis/commande.
             Les règles fiscales (TVA) dépendent du cadre applicable au moment de l’immatriculation.
           </div>
+          <h2>3 bis. Frais de fonctionnement — commerçants</h2>
+<div class="box">
+  En version LIVE, un frais peut être appliqué : <strong>0,09 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés
+  (modalités exactes, périmètre, HT/TTC, et règles de calcul définis au devis/commande).
+  Le reversement peut être automatisé via <strong>PSP</strong> (prestataire de paiement) avec traçabilité et <strong>facture mensuelle</strong>.
+</div>
+<div class="box">
+  Les vues “suivi” affichées dans l’application sont <strong>indicatives</strong> ; la valeur contractuelle est celle des documents de facturation et journaux PSP.
+</div>
           <h2>4. Obligations du client (partenaire)</h2>
           <ul>
             <li>Garantir la légalité du contenu fourni</li>
@@ -1434,7 +1468,84 @@ if(openSecureBtn){
         console.warn("Stockage local indisponible.");
       }
     }
+// ===========================
+// ✅ Suivi frais commerçants (démo) — indicatif
+// ===========================
+const FEE_STORE_KEY = "bociteart_fee_demo_v1";
 
+function feeYM(d=new Date()){
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  return `${y}-${m}`;
+}
+
+function feeLoad(){
+  try{
+    const raw = localStorage.getItem(FEE_STORE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){ return {}; }
+}
+function feeSave(obj){
+  try{ localStorage.setItem(FEE_STORE_KEY, JSON.stringify(obj)); }catch(e){}
+}
+
+function calcFeeFromSales(eur){
+  const v = Number(eur || 0);
+  if(!Number.isFinite(v) || v <= 0) return 0;
+  const tranches = Math.floor(v / 10); // par tranche de 10€
+  return tranches * 0.09;              // 0,09€ par tranche
+}
+
+function fmtEUR(x){
+  const n = Number(x || 0);
+  return n.toLocaleString("fr-FR", { minimumFractionDigits:2, maximumFractionDigits:2 }) + " €";
+}
+
+// branche les boutons du modal commerces (à appeler après openModal)
+function initFeeUiInModal(){
+  const input = document.getElementById("feeInputSales");
+  const outSales = document.getElementById("feeSalesOut");
+  const outFee = document.getElementById("feeOut");
+  const btnAdd = document.getElementById("feeAddBtn");
+  const btnReset = document.getElementById("feeResetBtn");
+
+  if(!input || !outSales || !outFee || !btnAdd || !btnReset) return;
+
+  const ym = feeYM();
+  const db = feeLoad();
+  const cur = db[ym] || { sales: 0 };
+
+  outSales.textContent = fmtEUR(cur.sales || 0);
+  outFee.textContent = fmtEUR(calcFeeFromSales(cur.sales || 0));
+  input.value = (cur.sales || 0);
+
+  btnAdd.onclick = ()=>{
+    const v = Number(input.value || 0);
+    if(!Number.isFinite(v) || v < 0){
+      alert("Montant invalide.");
+      return;
+    }
+    const db2 = feeLoad();
+    db2[ym] = { sales: v, ts_fr: new Date().toLocaleString("fr-FR") };
+    feeSave(db2);
+
+    outSales.textContent = fmtEUR(v);
+    outFee.textContent = fmtEUR(calcFeeFromSales(v));
+    alert("Suivi mis à jour (démo).");
+  };
+
+  btnReset.onclick = ()=>{
+    if(confirm("Réinitialiser le suivi du mois (démo) sur ce téléphone ?")){
+      const db2 = feeLoad();
+      delete db2[ym];
+      feeSave(db2);
+      input.value = "";
+      outSales.textContent = fmtEUR(0);
+      outFee.textContent = fmtEUR(0);
+      alert("Réinitialisé (démo).");
+    }
+  };
+}
     function getDayBookings(obj, y, m, d){
       const keyYM = ym(y,m);
       const keyYMD = ymd(y,m,d);
@@ -1937,6 +2048,8 @@ ${days.length ? days.map(d=>{
     const btnF = document.getElementById("playFemale");
     if(btnC) btnC.onclick = ()=> speak(text, "child");
     if(btnF) btnF.onclick = ()=> speak(text, "female");
+    if(window.__bociteart_school_init_done) return;
+window.__bociteart_school_init_done = true;
 
     // ====== ÉCOLES / CLASSES (démo) ======
     // ✅ garde anti-doublon si on rouvre le modal plusieurs fois
@@ -2175,37 +2288,75 @@ ${days.length ? days.map(d=>{
           `);
         }
 
-        if(key==="commerces"){
-          openModal("Commerces", `
-            <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
+      if(key==="commerces"){
+  openModal("Commerces", `
+    <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
 
-            <div class="box">
-              <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.
-              Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
-            </div>
+    <div class="box">
+      <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.
+      Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
+    </div>
 
-            <div style="font-weight:900;margin-top:10px;">Bocitecoins couleur OR</div>
-            <div class="box">
-              <strong>Clarification :</strong> “OR” = couleur / repère visuel dans l’application, sans valeur intrinsèque.
-            </div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Attribution : 1 bocitecoin couleur OR par tranche de 10 € d’achat</li>
-              <li>Seuil minimum : 10 €</li>
-              <li>Chaque +10 € = +1 bocitecoin couleur OR</li>
-            </ul>
+    <div style="font-weight:900;margin-top:10px;">Bocitecoins couleur OR</div>
+    <div class="box">
+      <strong>Clarification :</strong> “OR” = couleur / repère visuel dans l’application, sans valeur intrinsèque.
+    </div>
 
-            <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Plafond strict : ${PUB_MAX_PER_DAY} maximum / jour</li>
-              <li>Journée complète : grisée et non sélectionnable</li>
-              <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
-              <li>Option : texte en gras (+4€ TTC) possible sur certains emplacements (selon offre)</li>
-              <li>Possibilité d’URL (affichage) selon conformité</li>
-            </ul>
-          `);
-        }
-      });
-    });
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Attribution : 1 bocitecoin couleur OR par tranche de 10 € d’achat</li>
+      <li>Seuil minimum : 10 €</li>
+      <li>Chaque +10 € = +1 bocitecoin couleur OR</li>
+    </ul>
+
+    <div style="font-weight:900;margin-top:12px;">Frais Bo’CitéArt (structure)</div>
+    <div class="box">
+      <strong>Règle :</strong> <strong>0,09 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés (traçabilité).
+      <div class="muted" style="margin-top:8px;">
+        Reversement automatique via PSP (ou solution équivalente),
+        avec journalisation et facture mensuelle récapitulative (selon contrat).
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Vue “suivi” ci-dessous : indicative, non comptable, non exploitable juridiquement.
+      </div>
+
+    <div style="font-weight:900;margin-top:12px;">Suivi mensuel (démo — indicatif)</div>
+    <div class="box">
+      <div class="muted">Saisis un montant d’achats du mois (ex : total caisse) pour voir l’estimation.</div>
+
+      <div style="margin-top:10px;font-weight:900;">Montant achats (mois en cours)</div>
+      <input class="miniField" id="feeInputSales" type="number" min="0" step="0.01" placeholder="Ex : 1250.00" />
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="feeAddBtn" type="button">➕ Ajouter / mettre à jour</button>
+        <button class="choiceBtn" id="feeResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+      </div>
+
+      <div class="box" style="margin-top:12px;background:var(--bg);">
+        <div style="font-weight:900;">Résumé (mois en cours)</div>
+        <div class="muted" style="margin-top:6px;">
+          Achats saisis : <strong id="feeSalesOut">0,00 €</strong><br>
+          Frais estimés Bo’CitéArt : <strong id="feeOut">0,00 €</strong><br>
+          Règle : 0,09 € / tranche de 10 € (arrondi par tranches)
+        </div>
+      </div>
+
+      <div class="muted" style="margin-top:10px;">
+        (Démo) Données stockées localement sur ce téléphone.
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Plafond strict : ${PUB_MAX_PER_DAY} maximum / jour</li>
+      <li>Journée complète : grisée et non sélectionnable</li>
+      <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
+      <li>Option : texte en gras (+4€ TTC)</li>
+      <li>Possibilité d’URL selon conformité</li>
+    </ul>
+  `);
+
+  setTimeout(()=>{ initFeeUiInModal(); },0);
+}
 
     // Admin tile (démo)
     document.getElementById("adminTile").addEventListener("click", ()=>{
