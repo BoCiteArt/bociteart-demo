@@ -826,6 +826,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             </svg>
           </a>
 
+          <button class="legalBtn" id="openSecure" type="button">Compte sécurisé</button>
           <button class="legalBtn" id="openLegal" type="button">RGPD • CGU • CGV</button>
         </div>
       </div>
@@ -974,6 +975,18 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             <li>Droit d’opposition et limitation</li>
             <li>Droit de réclamation auprès de la CNIL</li>
           </ul>
+          <div class="box" style="margin-top:10px;">
+  <div style="font-weight:900;">Option “Compte sécurisé” (si activée)</div>
+  <div class="muted" style="margin-top:6px;">
+    Cette option peut impliquer un traitement par un <strong>prestataire serveur tiers</strong> (sous-traitant),
+    uniquement pour fournir les fonctions : récupération de compte, assistance, alertes, et, si autorisée,
+    géolocalisation ponctuelle et SMS vers 2 numéros de confiance.
+    Les autorisations sensibles (ex. localisation) sont demandées via le téléphone et restent refusables.
+  </div>
+  <div class="muted" style="margin-top:6px;">
+    Bo’CitéArt n’est tenu qu’à une <strong>obligation de moyens</strong> concernant ces fonctions.
+  </div>
+</div>
 
           <div class="box">
             Bo’CitéArt s’engage à ne vendre aucune donnée et à respecter strictement le RGPD.
@@ -1010,9 +1023,9 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             Bo’CitéArt peut retirer un contenu, limiter une fonctionnalité, ou suspendre un accès en cas de non-conformité,
             d’abus, ou de risque juridique/sécuritaire, sans obligation de maintien en ligne.
           </div>
-          <h2>4. Bocitecoins / WattCoins</h2>
+          <h2>4. Bocitecoins </h2>
           <div class="box">
-            Les unités internes (bocitecoins / WattCoins) sont des unités promotionnelles.
+            Les unités internes bocitecoins sont des unités promotionnelles.
             Elles n’ont aucune valeur monétaire, ne sont pas convertibles en euros, non remboursables.
           </div>
           <h2>5. Publicité (si activée)</h2>
@@ -1033,6 +1046,17 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             Elles sont fournies à titre indicatif et peuvent comporter des inexactitudes, retards ou indisponibilités.
             Bo’CitéArt ne garantit pas l’exactitude parfaite de ces informations.
           </div>
+          <h2>7 bis. Option “Compte sécurisé” (si activée)</h2>
+<div class="box">
+  L’option “Compte sécurisé + assistance téléphone” est un service <strong>facultatif</strong> (abonnement).
+  Sans abonnement, l’utilisateur accepte le risque : perte/vol/changement de téléphone pouvant entraîner une perte d’accès.
+  Avec abonnement, certaines fonctions (sauvegarde/récupération, assistance, alertes, SMS à 2 contacts de confiance,
+  géolocalisation ponctuelle si autorisée) peuvent être proposées.
+  <br><br>
+  Ces fonctions peuvent être opérées par un <strong>prestataire serveur tiers</strong> (selon version LIVE).
+  Bo’CitéArt est tenu à une <strong>obligation de moyens</strong>, sans garantie de résultat, et sous réserve de compatibilité
+  du téléphone, du réseau et des autorisations accordées.
+</div>
           <h2>8. Disponibilité / limites</h2>
           <div class="box">
             L’application est fournie “en l’état” (démo / pré-déploiement).
@@ -1077,6 +1101,15 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             Les CGV encadrent les prestations commerciales (visibilité partenaire, options d’affichage, services associés)
             proposées en version officielle selon devis/commande/facture.
           </p>
+         <h2>1 bis. Abonnement “Compte sécurisé + assistance téléphone”</h2>
+<div class="box">
+  Un abonnement optionnel peut être proposé au tarif indicatif de <strong>2,99 € / mois</strong> (conditions exactes précisées au devis/commande).
+  Il vise notamment à faciliter l’accompagnement par les proches (famille, aidants) en cas d’oubli, désorientation,
+  difficulté temporaire ou situation de fragilité.
+  <br><br>
+  Le service est fourni sous <strong>obligation de moyens</strong> et peut dépendre d’un prestataire tiers (selon version LIVE),
+  de la compatibilité du téléphone, du réseau, et des autorisations accordées par l’utilisateur.
+</div> 
           <h2>2. Commande</h2>
           <ul>
             <li>La commande sera formalisée (devis signé, bon de commande, ou équivalent)</li>
@@ -1249,6 +1282,63 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       // focus close btn (petit plus UX)
       setTimeout(()=>{ document.getElementById("xBtn")?.focus?.(); },0);
     }
+    
+    // ===========================
+// ✅ Compte sécurisé (abonnement) — écran info (démo)
+// ===========================
+const openSecureBtn = document.getElementById("openSecure");
+
+if(openSecureBtn){
+  openSecureBtn.addEventListener("click", ()=>{
+    openModal("Compte sécurisé + assistance téléphone", `
+      <div class="box">
+        <div style="font-weight:900;">Abonnement optionnel : <strong>2,99 € / mois</strong></div>
+        <div class="muted" style="margin-top:6px;">
+          Objectif : aider la récupération de compte et faciliter l’accompagnement par les proches (famille, aidants,
+          parents, grands-parents, enfants…), notamment en cas d’oubli, de désorientation, de difficulté temporaire
+          ou de situation de fragilité.
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;">Sans abonnement</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>L’utilisateur accepte le risque : <strong>perte/vol/changement de téléphone</strong> = perte d’accès possible.</li>
+          <li>(Démo) Les données peuvent être uniquement locales (sur le téléphone).</li>
+        </ul>
+      </div>
+
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;">Avec abonnement</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li><strong>Sauvegarde</strong> & récupération du compte (selon configuration).</li>
+          <li><strong>Assistance</strong> : aide à la récupération / réactivation.</li>
+          <li><strong>Alertes</strong> : bip batterie faible (si supporté), sonnerie/vibration à distance (si possible).</li>
+          <li><strong>Géolocalisation ponctuelle</strong> uniquement si autorisée par l’utilisateur.</li>
+          <li><strong>SMS aux 2 numéros de confiance</strong> (si activés par l’utilisateur).</li>
+        </ul>
+
+        <div class="muted" style="margin-top:8px;">
+          Ces fonctions sont opérées par un <strong>prestataire serveur tiers</strong> (selon version LIVE).
+          Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> (pas d’obligation de résultat).
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;">Important</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>Service <strong>optionnel</strong>, activable/désactivable.</li>
+          <li>Les autorisations sensibles (ex. localisation) restent <strong>contrôlées par le téléphone</strong>.</li>
+          <li>En cas d’urgence : utiliser <strong>112</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="muted" style="margin-top:10px;">
+        (Démo) Ici on présente l’offre. En LIVE : activation, contrat, consentements et conditions applicables.
+      </div>
+    `);
+  });
+}
 
     // ✅ ESC ferme les modales (sans toucher le reste)
     document.addEventListener("keydown", (e)=>{
