@@ -1739,7 +1739,156 @@ ${days.length ? days.map(d=>{
             if(btnF) btnF.onclick = ()=> speak(text, "female");
           }, 0);
         }
+          
+<div style="font-weight:900;margin-bottom:8px;">Mot du jour (structure)</div>
 
+<div class="box">
+  <strong>Cadre école :</strong> l’établissement gère et conserve les autorisations nécessaires (document de rentrée).
+  Contenus non identifiants. En cas de désaccord parental, la voix synthétique est utilisée.
+</div>
+
+<div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
+  « Je suis ravi aujourd’hui. » — Exemple (démo)
+</div>
+
+<div class="muted" style="margin-top:10px;">
+  Le professeur choisit la voix selon le cadre de l’établissement.
+</div>
+
+<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+  <button class="choiceBtn" type="button" id="playChild">▶ Lire (voix enfant — démo)</button>
+  <button class="choiceBtn" type="button" id="playFemale">▶ Lire (voix synthétique)</button>
+</div>
+
+<!-- ✅ Gestion École -->
+<div style="font-weight:900;margin-top:14px;">Gestion École (démo)</div>
+<div class="box">
+  <strong>Règles :</strong> 1 mot du jour maximum par jour. Une fois validé, c’est gelé jusqu’au lendemain.
+  <div class="muted" style="margin-top:8px;">
+    Accès réservé (version LIVE) : Directeur / Professeur uniquement.
+  </div>
+  <div class="muted" style="margin-top:8px;">
+    Contrôles : interdit d’enregistrer/afficher des injures, propagande, incitation, menaces, ou contenu non scolaire.
+    En version LIVE : retrait immédiat + gel possible + traçabilité.
+  </div>
+</div>
+
+<!-- ✅ Choix école / classe (modifiable facilement via une liste JS) -->
+<div style="font-weight:900;margin-top:10px;">Classe (démo)</div>
+<div class="box">
+  <div class="muted">Choisir l’école / la classe CM2 concernée (liste modifiable selon la ville).</div>
+  <select class="miniField" id="schoolClassSelect" aria-label="Choisir la classe"></select>
+</div>
+
+<div style="font-weight:900;margin-top:10px;">Saisie (démo)</div>
+<input class="miniField" id="schoolWordInput" placeholder="Saisir le mot du jour (sans nom d’enfant, sans injure)" />
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+  <button class="choiceBtn" id="schoolSaveBtn" type="button">✅ Valider aujourd’hui</button>
+  <button class="choiceBtn" id="schoolResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+</div>
+
+<!-- ✅ Quotas -->
+<div class="box" style="margin-top:12px;">
+  <div style="font-weight:900;">Quotas (école)</div>
+  <ul style="margin:8px 0 0 18px;font-weight:800;">
+    <li>15 mots = 50 bocitecoins</li>
+    <li>18 mots = 80 bocitecoins</li>
+    <li>22 mots = 100 bocitecoins</li>
+  </ul>
+  <div class="muted" style="margin-top:8px;">
+    Valeur de référence : <strong>1 bocitecoin = 1 €</strong> (outil de valorisation interne).
+  </div>
+</div>
+
+<!-- ✅ Solidarité : choix associations + don total/partiel -->
+<div style="font-weight:900;margin-top:14px;">Partage solidaire (structure)</div>
+<div class="box">
+  <div style="font-weight:900;">Principe</div>
+  <div class="muted" style="margin-top:6px;">
+    Les bocitecoins “École” sont échangeables à la mairie en articles scolaires,
+    ou peuvent être partagés (sur décision école/mairie) avec 1 ou plusieurs associations.
+    <br><br>
+    La mairie s’engage, selon ses capacités, à convertir l’équivalent en matériel/don et à diffuser à la classe
+    le message de remerciement transmis par l’association via la mairie.
+  </div>
+</div>
+
+<div class="box" style="margin-top:12px;">
+  <div style="font-weight:900;">Choisir le mode de partage</div>
+  <label class="miniCheck" style="margin-top:10px;">
+    <input type="radio" name="donMode" value="none" checked>
+    <div>Pas de partage solidaire (tout pour matériel scolaire)</div>
+  </label>
+  <label class="miniCheck">
+    <input type="radio" name="donMode" value="full">
+    <div>Don total (100% des bocitecoins concernés)</div>
+  </label>
+  <label class="miniCheck">
+    <input type="radio" name="donMode" value="partial">
+    <div>Don partiel (répartition en %)</div>
+  </label>
+</div>
+
+<div class="box" style="margin-top:12px;">
+  <div style="font-weight:900;">Associations (sélection + répartition)</div>
+  <div class="muted" style="margin-top:6px;">
+    En “don total” : tu coches 1 à 4 associations (partage égal).
+    <br>
+    En “don partiel” : tu coches + tu fixes les pourcentages (total = 100%).
+  </div>
+
+  <div style="margin-top:10px;">
+    <label class="miniCheck">
+      <input type="checkbox" class="assoPick" data-asso="Les Clés du Cœur">
+      <div><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</div>
+    </label>
+
+    <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+      <div class="muted" style="min-width:78px;">% :</div>
+      <input class="miniField assoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+    </div>
+
+    <label class="miniCheck">
+      <input type="checkbox" class="assoPick" data-asso="Étoile Filante">
+      <div><strong>Étoile Filante</strong> — enfants atteints de maladies rares</div>
+    </label>
+
+    <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+      <div class="muted" style="min-width:78px;">% :</div>
+      <input class="miniField assoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+    </div>
+
+    <label class="miniCheck">
+      <input type="checkbox" class="assoPick" data-asso="Les Papillons (antenne Nord)">
+      <div><strong>Les Papillons</strong> — antenne Nord</div>
+    </label>
+
+    <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+      <div class="muted" style="min-width:78px;">% :</div>
+      <input class="miniField assoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+    </div>
+
+    <label class="miniCheck">
+      <input type="checkbox" class="assoPick" data-asso="ATC Nord">
+      <div><strong>ATC Nord</strong> — traumatisés crâniens</div>
+    </label>
+
+    <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+      <div class="muted" style="min-width:78px;">% :</div>
+      <input class="miniField assoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <button class="choiceBtn" id="schoolAssoPreview" type="button">👁️ Aperçu partage</button>
+    <button class="choiceBtn" id="schoolAssoSave" type="button">💾 Enregistrer (démo)</button>
+  </div>
+
+  <div class="muted" style="margin-top:10px;">
+    (Démo) Enregistrement local sur ce téléphone. En LIVE : validation par compte école + transmission au compte mairie.
+  </div>
+</div>
         if(key==="sport"){
           openModal("Sport", `
             <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
