@@ -1309,7 +1309,10 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       modal.classList.add("open");
       lockScroll(true);
       // focus close btn (petit plus UX)
-      setTimeout(()=>{ document.getElementById("xBtn")?.focus?.(); },0);
+      setTimeout(()=>{
+  const xb = document.getElementById("xBtn");
+  if(xb && xb.focus) xb.focus();
+},0);
     }
     
     // ===========================
@@ -2351,7 +2354,10 @@ window.__bociteart_school_init_done = true;
     </ul>
   `);
 
-  setTimeout(()=>{ initFeeUiInModal(); },0);
+  setTimeout(()=>{
+  const xb = document.getElementById("xBtn");
+  if(xb && xb.focus) xb.focus();
+},0);
 }
 
     // Admin tile (démo)
