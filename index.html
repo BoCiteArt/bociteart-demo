@@ -2564,16 +2564,25 @@ window.__bociteart_school_init_done = true;
     if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
     if(closeLegalX) closeLegalX.onclick = closeLegal;
 
-    document.querySelectorAll("#legal .tab").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        document.querySelectorAll("#legal .tab").forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
+    /* Onglets RGPD/CGU/CGV : texte plus petit, 2 lignes possibles */
+#legal .tab{
+  font-size:11px;
+  line-height:1.05;
+  white-space:normal;
+  text-align:center;
+}
 
-        const k = btn.getAttribute("data-tab");
-        document.getElementById("p-rgpd").style.display = (k==="rgpd") ? "block" : "none";
-        document.getElementById("p-cgu").style.display  = (k==="cgu")  ? "block" : "none";
-        document.getElementById("p-cgv").style.display  = (k==="cgv")  ? "block" : "none";
-      });
+/* Bouton footer RGPD • CGU • CGV : plus petit, 2 lignes max sans changer la taille */
+#openLegal{
+  font-size:11px;
+  line-height:1.05;
+  white-space:normal;
+
+  display:-webkit-inline-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
     });
 
     // ===========================
