@@ -683,6 +683,25 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       transform:scale(1.15);
       margin-top:2px;
     }
+    /* Onglets RGPD/CGU/CGV : texte plus petit, 2 lignes possibles */
+#legal .tab{
+  font-size:11px;
+  line-height:1.05;
+  white-space:normal;
+  text-align:center;
+}
+
+/* Bouton footer RGPD • CGU • CGV : plus petit, 2 lignes max */
+#openLegal{
+  font-size:11px;
+  line-height:1.05;
+  white-space:normal;
+
+  display:-webkit-inline-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
   </style>
 </head>
 
@@ -1311,6 +1330,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       lockScroll(true);
       // focus close btn (petit plus UX)
       setTimeout(()=>{
+        initFeeUiInModal();
   const xb = document.getElementById("xBtn");
   if(xb && xb.focus) xb.focus();
 },0);
@@ -2355,11 +2375,11 @@ window.__bociteart_school_init_done = true;
     </ul>
   `);
 
-  setTimeout(()=>{
+ setTimeout(()=>{
+  initFeeUiInModal();
   const xb = document.getElementById("xBtn");
   if(xb && xb.focus) xb.focus();
 },0);
-}
 
     // Admin tile (démo)
     document.getElementById("adminTile").addEventListener("click", ()=>{
