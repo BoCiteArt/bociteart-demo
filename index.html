@@ -701,6 +701,42 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   -webkit-box-orient:vertical;
   -webkit-line-clamp:2;
   overflow:hidden;
+}<script>
+/* ... tout ton code existant ... */
+
+/* ✅ ONGLET RGPD / CGU / CGV : activation */
+(function initLegalTabs(){
+  const legal = document.getElementById("legal");
+  if(!legal) return;
+
+  const tabs = legal.querySelectorAll(".tab");
+  const panels = {
+    rgpd: document.getElementById("p-rgpd"),
+    cgu:  document.getElementById("p-cgu"),
+    cgv:  document.getElementById("p-cgv"),
+  };
+
+  function showTab(name){
+    // active bouton
+    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+    // affiche bon panneau
+    Object.keys(panels).forEach(k=>{
+      if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
+    });
+  }
+
+  tabs.forEach(t=>{
+    t.addEventListener("click", ()=>{
+      showTab(t.dataset.tab);
+    });
+  });
+
+  // par défaut
+  showTab("rgpd");
+})();
+</script>
+  #openLegal{
+  text-align:center;
 }
   </style>
 </head>
