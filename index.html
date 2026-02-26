@@ -2441,13 +2441,6 @@ ${days.length ? days.map(d=>{
 
     alert("Validé (démo) : " + cls + "\n« " + w + " »");
   };
-document.querySelectorAll("[data-open]").forEach(el=>{
-  el.addEventListener("click", ()=>{
-    const key = el.getAttribute("data-open");
-    if(window.__bociteartOpenByKey){
-      window.__bociteartOpenByKey(key);
-    }
-});
   // ======================================================
   // ✅ SPORT / MAIRIE / COMMERCES — ouverture modales (inchangé sur textes)
   // ======================================================
