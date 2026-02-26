@@ -197,7 +197,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       color:rgba(255,255,255,.92);
     }
     .tile.logoOnly .overlay{ display:none; }
-    .tile.logoOnly .content{ display:none; }
 
     /* --- Emergency buttons (long press) --- */
 .emgSlot{
@@ -620,7 +619,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       .wrap{ gap:12px; }
       .sportTape{ height:32px; }
     }
-
     /* =========================================================
        ✅ "DERNIERS ÉCHANGES" (styles conservés même si bloc retiré)
        ========================================================= */
@@ -661,7 +659,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       font-weight:800;
       font-size:12px;
     }
-
     /* petits champs formulaire (fiche sport) */
     .miniField{
       width:100%;
@@ -3819,8 +3816,7 @@ window.__bociteart_school_init_done = true;
     };
 
   }, 0);
-}
-          
+}   
         if(key==="sport"){
           openModal("Sport", `
             <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
@@ -4168,11 +4164,7 @@ window.__bociteart_school_init_done = true;
     if(openLegalBtn) openLegalBtn.onclick = openLegal;
     if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
     if(closeLegalX) closeLegalX.onclick = closeLegal;
-
-    /* Onglets RGPD/CGU/CGV : texte plus petit, 2 lignes possibles */
-/* Onglets RGPD/CGU/CGV : texte plus petit, 2 lignes possibles */
-
-
+        
     // ===========================
     // ACK storage durci (inchangé)
     // ===========================
@@ -4358,7 +4350,6 @@ window.__bociteart_school_init_done = true;
         document.getElementById("sosLabel").textContent = sosNumber;
         closeChoice();
       });
-    });
 
     makeLongPress(
       document.getElementById("btnSos"),
@@ -4390,36 +4381,6 @@ window.__bociteart_school_init_done = true;
     makeKeyboardClickable(document.getElementById("adminTile"), ()=> document.getElementById("adminTile").click());
 // ===========================
 // ✅ ONGLET RGPD / CGU / CGV : activation
-// ===========================
-(function initLegalTabs(){
-  const legal = document.getElementById("legal");
-  if(!legal) return;
-
-  const tabs = legal.querySelectorAll(".tab");
-  if(!tabs || !tabs.length) return;
-
-  const panels = {
-    rgpd: document.getElementById("p-rgpd"),
-    cgu:  document.getElementById("p-cgu"),
-    cgv:  document.getElementById("p-cgv"),
-  };
-
-  function showTab(name){
-    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
-    Object.keys(panels).forEach(k=>{
-      if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
-    });
-  }
-
-  tabs.forEach(t=>{
-    t.addEventListener("click", ()=> showTab(t.dataset.tab));
-  });
-
-  showTab("rgpd");
-})();
-  </script>
-    <script>
-// ✅ ONGLET RGPD / CGU / CGV : activation
 (function initLegalTabs(){
   const legal = document.getElementById("legal");
   if(!legal) return;
@@ -4447,93 +4408,7 @@ window.__bociteart_school_init_done = true;
   showTab("rgpd");
 })();
 </script>
-<script>
-// ✅ ONGLET RGPD / CGU / CGV : activation
-(function initLegalTabs(){
-  const legal = document.getElementById("legal");
-  if(!legal) return;
-
-  const tabs = legal.querySelectorAll(".tab");
-  if(!tabs || !tabs.length) return;
-
-  const panels = {
-    rgpd: document.getElementById("p-rgpd"),
-    cgu:  document.getElementById("p-cgu"),
-    cgv:  document.getElementById("p-cgv"),
-  };
-
-  function showTab(name){
-    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
-    Object.keys(panels).forEach(k=>{
-      if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
-    });
-  }
-
-  tabs.forEach(t=>{
-    t.addEventListener("click", ()=> showTab(t.dataset.tab));
-  });
-
-  showTab("rgpd");
-})();
-</script>
-<script>
-// ✅ ONGLET RGPD / CGU / CGV : activation
-(function initLegalTabs(){
-  const legal = document.getElementById("legal");
-  if(!legal) return;
-
-  const tabs = legal.querySelectorAll(".tab");
-  if(!tabs || !tabs.length) return;
-
-  const panels = {
-    rgpd: document.getElementById("p-rgpd"),
-    cgu:  document.getElementById("p-cgu"),
-    cgv:  document.getElementById("p-cgv"),
-  };
-
-  function showTab(name){
-    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
-    Object.keys(panels).forEach(k=>{
-      if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
-    });
-  }
-
-  tabs.forEach(t=>{
-    t.addEventListener("click", ()=> showTab(t.dataset.tab));
-  });
-
-  showTab("rgpd");
-})();
-</script>
-<script>
-// ✅ ONGLET RGPD / CGU / CGV : activation
-(function initLegalTabs(){
-  const legal = document.getElementById("legal");
-  if(!legal) return;
-
-  const tabs = legal.querySelectorAll(".tab");
-  if(!tabs || !tabs.length) return;
-
-  const panels = {
-    rgpd: document.getElementById("p-rgpd"),
-    cgu:  document.getElementById("p-cgu"),
-    cgv:  document.getElementById("p-cgv"),
-  };
-
-  function showTab(name){
-    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
-    Object.keys(panels).forEach(k=>{
-      if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
-    });
-  }
-
-  tabs.forEach(t=>{
-    t.addEventListener("click", ()=> showTab(t.dataset.tab));
-  });
-
-  showTab("rgpd");
-})();
-</script>
+<sript>
       
 </body>
 </html>
