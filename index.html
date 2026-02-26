@@ -698,7 +698,20 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       font-size:11px;
       line-height:1.05;
       white-space:normal;
-      text-align:center;
+      text-align:center;/* ============================= */
+/* RGPD / CGU / CGV alignement  */
+/* ============================= */
+#legal .tabs{
+  display:flex;
+  flex-direction:column;   /* les met l’un sous l’autre */
+  align-items:center;      /* centre horizontalement */
+  gap:8px;
+}
+
+#legal .tab{
+  width:100%;
+  text-align:center;
+}
     }
   </style>
 </head>
@@ -1343,9 +1356,17 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       },0);
     }
 
-    // ===========================
-    // ✅ Compte sécurisé (abonnement) — écran info (démo)
-    // ===========================
+   /* ============================= */
+/* Tuile Sécurité & Assistance  */
+/* ============================= */
+
+.tile[data-open="admin"] .label,
+.tile.secure .label{
+  font-size:11px;          /* plus petit */
+  line-height:1.1;
+  text-align:center;
+  white-space:normal;      /* autorise retour ligne */
+} 
     const openSecureBtn = document.getElementById("openSecure");
 
     if(openSecureBtn){
