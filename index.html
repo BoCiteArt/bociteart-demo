@@ -689,8 +689,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   line-height:1.05;
   white-space:normal;
   text-align:center;
-}
-
+}  
+    
 /* Bouton footer RGPD • CGU • CGV : plus petit, 2 lignes max */
 #openLegal{
   font-size:11px;
@@ -702,7 +702,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   -webkit-line-clamp:2;
   overflow:hidden;
 }<script>
-/* ... tout ton code existant ... */
+  
 
 /* ✅ ONGLET RGPD / CGU / CGV : activation */
 (function initLegalTabs(){
@@ -740,7 +740,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 }
   </style>
 </head>
-
 <body>
   <div class="page">
     <div class="wrap">
@@ -1714,7 +1713,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       font-weight:900;
       cursor:pointer;
     }
-
     /* Legal tabs */
     .tabs{
       display:flex;
@@ -1764,7 +1762,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       font-weight:900;
       font-size:12px;
     }
-
     /* ==== Mini calendrier pub (démo) ==== */
     .calWrap{
       border:2px solid rgba(0,0,0,.08);
@@ -1919,75 +1916,27 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       outline:none;
     }
     .miniCheck{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      font-weight:900;
-      margin-top:10px;
-    }
-    .miniCheck input{
-      transform:scale(1.15);
-      margin-top:2px;
-    }
-    /* Onglets RGPD/CGU/CGV : texte plus petit, 2 lignes possibles */
+  white-space:normal;
+  text-align:center;
+}
+    
+/* Onglets RGPD/CGU/CGV : texte plus petit, 2 lignes possibles */
 #legal .tab{
   font-size:11px;
   line-height:1.05;
   white-space:normal;
   text-align:center;
 }
-
-/* Bouton footer RGPD • CGU • CGV : plus petit, 2 lignes max */
 #openLegal{
   font-size:11px;
   line-height:1.05;
   white-space:normal;
-
   display:-webkit-inline-box;
   -webkit-box-orient:vertical;
   -webkit-line-clamp:2;
   overflow:hidden;
-}<script>
-/* ... tout ton code existant ... */
-
-/* ✅ ONGLET RGPD / CGU / CGV : activation */
-(function initLegalTabs(){
-  const legal = document.getElementById("legal");
-  if(!legal) return;
-
-  const tabs = legal.querySelectorAll(".tab");
-  const panels = {
-    rgpd: document.getElementById("p-rgpd"),
-    cgu:  document.getElementById("p-cgu"),
-    cgv:  document.getElementById("p-cgv"),
-  };
-
-  function showTab(name){
-    // active bouton
-    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
-    // affiche bon panneau
-    Object.keys(panels).forEach(k=>{
-      if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
-    });
-  }
-
-  tabs.forEach(t=>{
-    t.addEventListener("click", ()=>{
-      showTab(t.dataset.tab);
-    });
-  });
-
-  // par défaut
-  showTab("rgpd");
-})();
-</script>
-  #openLegal{
   text-align:center;
 }
-  </style>
-</head>
-
-<body>
   <div class="page">
     <div class="wrap">
 
@@ -3875,7 +3824,6 @@ window.__bociteart_school_init_done = true;
     if(closeLegalX) closeLegalX.onclick = closeLegal;
 
     /* Onglets RGPD/CGU/CGV : texte plus petit, 2 lignes possibles */
-/* Onglets RGPD/CGU/CGV : texte plus petit, 2 lignes possibles */
 
 
     // ===========================
@@ -5672,7 +5620,35 @@ window.__bociteart_school_init_done = true;
       makeKeyboardClickable(el, ()=> el.click());
     });
     makeKeyboardClickable(document.getElementById("adminTile"), ()=> document.getElementById("adminTile").click());
+// ===========================
+// ✅ ONGLET RGPD / CGU / CGV : activation
+// ===========================
+(function initLegalTabs(){
+  const legal = document.getElementById("legal");
+  if(!legal) return;
 
+  const tabs = legal.querySelectorAll(".tab");
+  if(!tabs || !tabs.length) return;
+
+  const panels = {
+    rgpd: document.getElementById("p-rgpd"),
+    cgu:  document.getElementById("p-cgu"),
+    cgv:  document.getElementById("p-cgv"),
+  };
+
+  function showTab(name){
+    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+    Object.keys(panels).forEach(k=>{
+      if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
+    });
+  }
+
+  tabs.forEach(t=>{
+    t.addEventListener("click", ()=> showTab(t.dataset.tab));
+  });
+
+  showTab("rgpd");
+})();
   </script>
 </body>
 </html>
