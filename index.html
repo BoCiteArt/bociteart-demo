@@ -2492,6 +2492,14 @@ ${days.length ? days.map(d=>{
               <br>• Soutien associatif
             </div>
           `);
+      document.querySelectorAll('[data-open]').forEach(function(el){
+  el.addEventListener('click', function(){
+    var key = el.getAttribute('data-open');
+    if(window.__bociteartOpenByKey){
+      window.__bociteartOpenByKey(key);
+    }
+  });
+});
 
       setTimeout(()=>{
         const b = $("openSportFicheBtn");
