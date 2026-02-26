@@ -2433,25 +2433,17 @@ ${days.length ? days.map(d=>{
 
     alert("Validé (démo) : " + cls + "\n« " + w + " »");
   };
-// ======================================================
-// ✅ LIAISON TUILES → __bociteartOpenByKey (FIX)
-// ======================================================
-
 document.querySelectorAll("[data-open]").forEach(el=>{
   el.addEventListener("click", ()=>{
     const key = el.getAttribute("data-open");
-
-    if(typeof window.__bociteartOpenByKey === "function"){
+    if(window.__bociteartOpenByKey){
       window.__bociteartOpenByKey(key);
     }
   });
-
+});
   // ======================================================
   // ✅ SPORT / MAIRIE / COMMERCES — ouverture modales (inchangé sur textes)
   // ======================================================
-  // ⚠️ Ce bloc suppose que "key" est fourni par ton routeur/clic tiles.
-  // Mets ces if dans TA fonction existante qui reçoit `key`.
-  // Ici, on expose une fonction utilitaire propre, sans casser le reste.
   window.__bociteartOpenByKey = function(key){
     if(!isFn(window.openModal)) return;
 
