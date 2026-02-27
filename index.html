@@ -716,26 +716,27 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 /* ============================= */
 /* RGPD / CGU / CGV alignement  */
 /* ============================= */
-
+/* ✅ RGPD / CGU / CGV : centrage propre, 1 colonne */
 #legal .tabs{
   display:flex;
   flex-direction:column;
-  align-items:stretch;      /* prend toute la largeur */
-  justify-content:center;
+  align-items:stretch;   /* chaque bouton prend toute la largeur */
   gap:6px;
   width:100%;
-  padding:0;
-  margin:0;
 }
 
 #legal .tab{
-  display:block;            /* ⚠️ pas "bloc" */
+  display:flex;                 /* centre le texte parfaitement */
+  align-items:center;
+  justify-content:center;
   width:100%;
+  box-sizing:border-box;
   text-align:center;
-  margin:0 auto;
-  padding:8px 10px;         /* ajuste si besoin */
+  padding:8px 10px;
+
   font-size:11px;
-  line-height:1.05;
+  line-height:1.1;
+  white-space:nowrap;           /* RGPD/CGU/CGV = 1 ligne */
 }
   </style>
 </head>
