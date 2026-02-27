@@ -682,61 +682,43 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       transform:scale(1.15);
       margin-top:2px;
     }
-   /* Bouton footer RGPD • CGU • CGV : plus petit, 2 lignes max */
-#openLegal{
+/* =========================
+   ✅ FOOTER : 2 boutons bas
+   ========================= */
+.legalBtn{
   font-size:11px;
   line-height:1.05;
-  padding:9px 8px;
-  text-align:center; 
-  white-space:normal;
-  display:-webkit-inline-box;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:2;
-  overflow:hidden;
-}
-  /* Boutons footer bas : 2 lignes max + centrage */
-.footerBtns button{
-  font-size:11px;
-  line-height:1.05;
-  padding:9px 8px;
-  text-align:center;
-  white-space:normal;
-  display:-webkit-inline-box;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:2;
-  overflow:hidden;
-}
-/* Onglets RGPD/CGU/CGV : texte plus petit, 2 lignes possibles */
-#legal .tab{
-  font-size:11px;
-  line-height:1.05;
-  white-space:normal;
-  text-align:center;
-}
-/* ============================= */
-/* RGPD / CGU / CGV alignement  */
-/* ============================= */
-/* ✅ RGPD / CGU / CGV : centrage propre, 1 colonne */
-#legal .tabs{
-  display:flex;
-  flex-direction:column;
-  align-items:stretch;   /* chaque bouton prend toute la largeur */
-  gap:6px;
-  width:100%;
-}
+  padding:7px 8px;
 
-#legal .tab{
-  display:flex;                 /* centre le texte parfaitement */
+  display:flex;
   align-items:center;
   justify-content:center;
-  width:100%;
-  box-sizing:border-box;
+
   text-align:center;
+  white-space:normal;
+  height:42px;        /* même hauteur => centrage net */
+  overflow:hidden;
+  box-sizing:border-box;
+}
+    /* =========================
+   ✅ MODALE LEGAL : onglets
+   ========================= */
+#legal .tabs{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+}
+
+#legal .tab{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  min-width:70px;
   padding:8px 10px;
 
-  font-size:11px;
-  line-height:1.1;
-  white-space:nowrap;           /* RGPD/CGU/CGV = 1 ligne */
+  text-align:center;
+  white-space:nowrap;
 }
   </style>
 </head>
@@ -894,7 +876,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             </svg>
           </a>
 
-          <button class="legalBtn" id="openSecure" type="button">Compte + assistance</button>
+          <button class="legalBtn" id="openSecure" type="button">Compte / aide</button>
           <button class="legalBtn" id="openLegal" type="button">RGPD • CGU • CGV</button>
         </div>
       </div>
