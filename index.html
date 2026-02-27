@@ -3097,17 +3097,8 @@ document.querySelectorAll("[data-open]").forEach(el=>{
       t.addEventListener("click", ()=> showTab(t.dataset.tab));
     });
 
-    showTab("rgpd");
-  })();
-
+    showTab("rgpd"),
 })(); // fin initBoCiteArtClean
-</script>
-    makeKeyboardClickable(document.getElementById("ticker"), openTicker);
-
-    document.querySelectorAll(".tile[data-open]").forEach(el=>{
-      makeKeyboardClickable(el, ()=> el.click());
-    });
-    makeKeyboardClickable(document.getElementById("adminTile"), ()=> document.getElementById("adminTile").click());
   </script>
 </body>
 </html>
