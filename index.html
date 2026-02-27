@@ -2089,9 +2089,6 @@ document.querySelectorAll("[data-open]").forEach(el=>{
         </div>
       `);
 
-      // (ton setTimeout école reste inchangé ici)
-      return;
-    }
           setTimeout(()=>{
             // Voix (tes IDs existants)
             const text = "Je suis ravi aujourd’hui.";
@@ -2105,7 +2102,10 @@ document.querySelectorAll("[data-open]").forEach(el=>{
 
             // ====== ÉCOLES / CLASSES (démo) ======
             // ✅ garde anti-doublon si on rouvre le modal plusieurs fois
+             }; 0);
 
+            return;
+             }
             const SCHOOL_CLASSES = [
               "École X — CM2 A",
               "École X — CM2 B",
