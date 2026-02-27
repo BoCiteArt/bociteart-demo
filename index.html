@@ -685,18 +685,20 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 /* =========================
    ✅ FOOTER : 2 boutons bas
    ========================= */
+/* ✅ FOOTER : 2 boutons bas (2 lignes, centré, petit) */
 .legalBtn{
-  font-size:11px;
+  font-size:10px;
   line-height:1.05;
-  padding:7px 8px;
+  padding:6px 6px;
+  height:42px;
 
   display:flex;
   align-items:center;
   justify-content:center;
 
   text-align:center;
-  white-space:normal;
-  height:42px;        /* même hauteur => centrage net */
+  white-space:normal;     /* autorise le retour à la ligne */
+  word-break:break-word;  /* coupe si besoin */
   overflow:hidden;
   box-sizing:border-box;
 }
@@ -876,8 +878,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             </svg>
           </a>
 
-          <button class="legalBtn" id="openSecure" type="button">Compte / aide</button>
-          <button class="legalBtn" id="openLegal" type="button">RGPD • CGU • CGV</button>
+          <button class="legalBtn" id="openSecure" type="button">Compte<br>+ aide</button>
+<button class="legalBtn" id="openLegal" type="button">RGPD • CGU<br>• CGV</button>
         </div>
       </div>
 
