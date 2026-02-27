@@ -2271,17 +2271,6 @@ document.querySelectorAll("[data-open]").forEach(el=>{
       });
     });
 
-    // ======================================================
-    // ✅ AJOUTS "NICKEL" SANS TOUCHER LA STRUCTURE :
-    // - clavier ticker + tiles + admin
-    // =====================================================
-/* =========================================================
-   Bo'CitéArt — nettoyage / consolidation (sans toucher aux textes)
-   - Corrige accolades manquantes / setTimeout orphelin
-   - Supprime doublons d’init (ex: makeLongPress placé hors forEach)
-   - Ajoute gardes anti-null pour éviter crash si un élément manque
-   ========================================================= */
-
 (function initBoCiteArtClean(){
   "use strict";
 
