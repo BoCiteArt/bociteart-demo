@@ -702,6 +702,18 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   overflow:hidden;
   box-sizing:border-box;
 }
+  /* ✅ Bouton RGPD en 3 lignes verticales */
+.legalStack{
+  flex-direction:column;
+  gap:1px;
+}
+
+.legalStack span{
+  display:block;
+  font-size:9px;      /* plus petit */
+  line-height:1.05;
+  text-align:center;
+}  
     /* =========================
    ✅ MODALE LEGAL : onglets
    ========================= */
@@ -879,7 +891,11 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
           </a>
 
           <button class="legalBtn" id="openSecure" type="button">Compte<br>+ aide</button>
-<button class="legalBtn" id="openLegal" type="button">RGPD • CGU<br>• CGV</button>
+<button class="legalBtn legalStack" id="openLegal" type="button">
+  <span>RGPD</span>
+  <span>CGU</span>
+  <span>CGV</span>
+</button>
         </div>
       </div>
 
