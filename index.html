@@ -3049,13 +3049,6 @@ document.querySelectorAll("[data-open]").forEach(el=>{
     }
   );
 
-  // ✅ IMPORTANT : suppression du bloc "Derniers échanges"
-  // => donc on retire aussi le code qui cherchait ces boutons.
-
-  // ======================================================
-  // ✅ AJOUTS "NICKEL" SANS TOUCHER LA STRUCTURE :
-  // - clavier ticker + tiles + admin
-  // ======================================================
   if(isFn(window.makeKeyboardClickable)){
     window.makeKeyboardClickable($("ticker"), window.openTicker);
 
@@ -3065,10 +3058,7 @@ document.querySelectorAll("[data-open]").forEach(el=>{
 
     if(adminTile) window.makeKeyboardClickable(adminTile, ()=> adminTile.click());
   }
-
-  // ===========================
-  // ✅ ONGLET RGPD / CGU / CGV : activation
-  // ===========================
+  
   (function initLegalTabs(){
     const legal = $("legal");
     if(!legal) return;
