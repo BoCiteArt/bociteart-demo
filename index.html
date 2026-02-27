@@ -705,14 +705,14 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 /* ============================= */
 #legal .tabs{
   display:flex;
-  flex-direction:column;   /* les met l’un sous l’autre */
+  flex-direction:column;
   align-items:center;
-  justify-content:center; /* centre horizontalement */
+  justify-content:center;
   gap:6px;
 }
 
 #legal .tab{
-  display:bloc;
+  display:block;
   width:100%;
   text-align:center;
   margin:0 auto;
@@ -3097,7 +3097,7 @@ document.querySelectorAll("[data-open]").forEach(el=>{
       t.addEventListener("click", ()=> showTab(t.dataset.tab));
     });
 
-    showTab("rgpd"),
+    showTab("rgpd");
 })(); // fin initBoCiteArtClean
   </script>
 </body>
