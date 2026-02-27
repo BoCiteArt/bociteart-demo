@@ -2257,8 +2257,8 @@ document.querySelectorAll("[data-open]").forEach(el=>{
               if(/[<>]/.test(w)){ alert("Texte invalide."); return; }
 
               const db = schoolLoad();
-              b.lastWord = {
-                class: cls,d
+              db.lastWord = {
+                class: cls,
                 text: w,
                 ts_fr: new Date().toLocaleString("fr-FR"),
                 note: "Mot du jour (démo, stockage local)"
@@ -3079,6 +3079,8 @@ document.querySelectorAll("[data-open]").forEach(el=>{
     });
 
     showTab("rgpd");
+  })();
+  
 })(); // fin initBoCiteArtClean
   </script>
 </body>
