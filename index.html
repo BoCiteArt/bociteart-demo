@@ -1195,14 +1195,32 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             Les prix, durées, options, et modalités de paiement sont précisés dans le devis/commande.
             Les règles fiscales (TVA) dépendent du cadre applicable au moment de l’immatriculation.
           </div>
-          <h2>3 bis. Frais de fonctionnement — commerçants</h2>
-          <div class="box">
-            En version LIVE, un frais peut être appliqué : <strong>0,09 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés
-            (modalités exactes, périmètre, HT/TTC, et règles de calcul définis au devis/commande).
-            Le reversement peut être automatisé via <strong>PSP</strong> (prestataire de paiement) avec traçabilité et <strong>facture mensuelle</strong>.
-          </div>
-          <div class="box">
-            Les vues “suivi” affichées dans l’application sont <strong>indicatives</strong> ; la valeur contractuelle est celle des documents de facturation et journaux PSP.
+          <h2>3 bis. Abonnement & frais de fonctionnement — commerçants</h2>
+
+<div class="box">
+  <div style="font-weight:900;">Abonnement mensuel</div>
+  <div style="margin-top:6px;">
+    En version LIVE, l’accès “Compte Commerçant” est facturé <strong>26,90 € HT / mois</strong>,
+    selon devis/commande/facture et durée d’engagement précisés au contrat.
+  </div>
+</div>
+
+<div class="box">
+  <div style="font-weight:900;">Frais par utilisation (tranches)</div>
+  <div style="margin-top:6px;">
+    En version LIVE, un frais est appliqué : <strong>0,18 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés
+    (modalités exactes, périmètre, HT/TTC, règles d’arrondi et cas particuliers définis au contrat).
+  </div>
+  <div class="muted" style="margin-top:8px;">
+    Le paiement et la traçabilité sont opérés via <strong>PSP</strong> (prestataire de paiement).
+    Bo’CitéArt ne stocke pas les données bancaires.
+    Une facture mensuelle récapitulative peut être émise selon le cadre contractuel.
+  </div>
+</div>
+
+<div class="box">
+  Les vues “suivi” affichées dans l’application sont <strong>indicatives</strong> ; la valeur contractuelle est celle des documents de facturation
+  et journaux PSP.
           </div>
           <h2>4. Obligations du client (partenaire)</h2>
           <ul>
@@ -1553,7 +1571,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       const v = Number(eur || 0);
       if(!Number.isFinite(v) || v <= 0) return 0;
       const tranches = Math.floor(v / 10); // par tranche de 10€
-      return tranches * 0.09;              // 0,09€ par tranche
+      return tranches * 0.18;              // 0,18€ par tranche
     }
 
     function fmtEUR(x){
@@ -2589,7 +2607,7 @@ document.querySelectorAll("[data-open]").forEach(el=>{
         <div class="muted" style="margin-top:6px;">
           Achats saisis : <strong id="feeSalesOut">0,00 €</strong><br>
           Frais estimés Bo’CitéArt : <strong id="feeOut">0,00 €</strong><br>
-          Règle : 0,09 € / tranche de 10 € (arrondi par tranches)
+          Règle : 0,18 € / tranche de 10 € (arrondi par tranches)
         </div>
       </div>
 
