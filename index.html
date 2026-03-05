@@ -1989,6 +1989,27 @@ ${days.length ? days.map(d=>{
     // ===========================
     // ✅ Bandeau 1 cm : pubs + gras
     // ===========================
+// ===========================
+// ✅ Bandeau 1 cm : pubs + gras
+// ===========================
+
+// ✅ Sécurité : évite injection HTML + bug si texte contient < >
+function escapeHtml(s){
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+window.tapeAds = [
+  { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
+  { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
+  { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
+  { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false },
+];
+
 function renderTape(){
   const track = document.getElementById("sportTapeTrack");
   if(!track) return;
@@ -2002,28 +2023,10 @@ function renderTape(){
     return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
   }).join("");
 }
-    const tapeAds = [
-      { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-      { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
-      { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
-      { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false },
-    ];window.tapeAds = tapeAds;
 
- function renderTape(){
-  const track = document.getElementById("sportTapeTrack");
-  if(!track) return;
-
-  if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
-
-  const doubled = window.tapeAds.concat(window.tapeAds);
-
-  if(!track) return;
-
-  track.innerHTML = doubled.map((a)=>{
-    const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
-    return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
-  }).join("");
-}
+// ✅ lancement au chargement
+renderTape();
+window.renderTape = renderTape;
 
 // ===========================
 // Ouverture des tuiles (FIX sport/mairie/commerces)
