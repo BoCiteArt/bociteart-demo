@@ -685,7 +685,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 /* =========================
    ✅ FOOTER : 2 boutons bas
    ========================= */
-/* ✅ FOOTER : 2 boutons bas (2 lignes, centré, petit) */
 .legalBtn{
   font-size:10px;
   line-height:1.05;
@@ -2208,9 +2207,6 @@ document.querySelectorAll("[data-open]").forEach(el=>{
             if(btnC) btnC.onclick = ()=> speak(text, "child");
             if(btnF) btnF.onclick = ()=> speak(text, "female");
 
-            if(window.__bociteart_school_init_done) return;
-            window.__bociteart_school_init_done = true;
-
             // ====== ÉCOLES / CLASSES (démo) ======
             // ✅ garde anti-doublon si on rouvre le modal plusieurs fois
             
@@ -2391,167 +2387,12 @@ document.querySelectorAll("[data-open]").forEach(el=>{
   const $ = (id) => document.getElementById(id);
   const on = (el, evt, fn, opts) => { if(el) el.addEventListener(evt, fn, opts); };
   const isFn = (f) => typeof f === "function";
-
   // ======================================================
-  // ✅ ÉCOLE — stockage local (inchangé sur les textes)
+  // ✅ ÉCOLE
   // ======================================================
-  const SCHOOL_STORE_KEY = "bociteart_school_v1";
+  // L’écran École est déjà géré dans le openModal("École", ...) (avec son setTimeout).
+  // On ne duplique pas ici : évite les handlers en double et garantit un comportement stable en LIVE.
 
-  function schoolLoad(){
-    try{
-      const raw = localStorage.getItem(SCHOOL_STORE_KEY);
-      return raw ? JSON.parse(raw) : {};
-    }catch(e){ return {}; }
-  }
-  function schoolSave(obj){
-    try{ localStorage.setItem(SCHOOL_STORE_KEY, JSON.stringify(obj)); }catch(e){}
-  }
-
-  function fillSchoolSelect(){
-    const sel = $("schoolClassSelect");
-    if(!sel) return;
-    if(!Array.isArray(window.SCHOOL_CLASSES)) return;
-    sel.innerHTML = window.SCHOOL_CLASSES.map((x,i)=> `<option value="${i}">${x}</option>`).join("");
-  }
-
-  function getDonMode(){
-    const r = document.querySelector('input[name="donMode"]:checked');
-    return r ? r.value : "none";
-  }
-
-  function getAssoSelection(){
-    return Array.from(document.querySelectorAll(".assoPick"))
-      .filter(cb=> cb.checked)
-      .map(cb=> cb.getAttribute("data-asso"));
-  }
-
-  function getAssoPctMap(){
-    const map = {};
-    Array.from(document.querySelectorAll(".assoPct")).forEach(inp=>{
-      const a = inp.getAttribute("data-asso");
-      const v = parseInt(inp.value || "0", 10);
-      map[a] = Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 0;
-    });
-    return map;
-  }
-
-  function normalizeForFull(picks){
-    if(!picks.length) return { ok:false, msg:"Choisis au moins 1 association." };
-    const pct = Math.floor(100 / picks.length);
-    const rem = 100 - (pct * picks.length);
-    const out = {};
-    picks.forEach((a,idx)=> out[a] = pct + (idx===0 ? rem : 0));
-    return { ok:true, pctMap: out };
-  }
-
-  function validatePartial(picks, pctMap){
-    if(!picks.length) return { ok:false, msg:"Choisis au moins 1 association." };
-    let sum = 0;
-    picks.forEach(a=> sum += (pctMap[a] || 0));
-    if(sum !== 100) return { ok:false, msg:`En don partiel, le total doit faire 100%. (Actuel : ${sum}%)` };
-    return { ok:true };
-  }
-
-  // Init école (sans setTimeout orphelin)
-  fillSchoolSelect();
-
-  const btnPrev2     = $("schoolAssoPreview");
-  const btnSave2     = $("schoolAssoSave");
-  const btnReset2    = $("schoolResetBtn");
-  const btnWordSave2 = $("schoolSaveBtn");
-
-  if(btnPrev2) btnPrev2.onclick = ()=>{
-    const mode = getDonMode();
-    const picks = getAssoSelection();
-    const pctMap = getAssoPctMap();
-
-    if(mode === "none"){
-      alert("Aperçu : Pas de partage solidaire (tout pour matériel scolaire).");
-      return;
-    }
-    if(mode === "full"){
-      const norm = normalizeForFull(picks);
-      if(!norm.ok){ alert(norm.msg); return; }
-      const lines = Object.entries(norm.pctMap).map(([a,p])=> `- ${a} : ${p}%`).join("\n");
-      alert("Aperçu (don total, partage égal)\n" + lines);
-      return;
-    }
-    const v = validatePartial(picks, pctMap);
-    if(!v.ok){ alert(v.msg); return; }
-    const lines = picks.map(a=> `- ${a} : ${pctMap[a] || 0}%`).join("\n");
-    alert("Aperçu (don partiel)\n" + lines);
-  };
-
-  if(btnSave2) btnSave2.onclick = ()=>{
-    const mode = getDonMode();
-    const picks = getAssoSelection();
-    const pctMap = getAssoPctMap();
-
-    const sel = $("schoolClassSelect");
-    const idx = sel ? parseInt(sel.value,10) : 0;
-    const cls = (Array.isArray(window.SCHOOL_CLASSES) && window.SCHOOL_CLASSES[idx])
-      ? window.SCHOOL_CLASSES[idx]
-      : (Array.isArray(window.SCHOOL_CLASSES) ? window.SCHOOL_CLASSES[0] : "");
-
-    let finalMap = {};
-
-    if(mode === "none"){
-      finalMap = {};
-    }else if(mode === "full"){
-      const norm = normalizeForFull(picks);
-      if(!norm.ok){ alert(norm.msg); return; }
-      finalMap = norm.pctMap;
-    }else{
-      const v = validatePartial(picks, pctMap);
-      if(!v.ok){ alert(v.msg); return; }
-      picks.forEach(a=> finalMap[a] = pctMap[a] || 0);
-    }
-
-    const db = schoolLoad();
-    db.lastSolidarity = {
-      class: cls,
-      mode,
-      map: finalMap,
-      ts_fr: new Date().toLocaleString("fr-FR"),
-      note: "Décision de partage (démo, stockage local)"
-    };
-    schoolSave(db);
-
-    alert("Enregistré (démo) pour : " + cls);
-  };
-
-  if(btnReset2) btnReset2.onclick = ()=>{
-    if(confirm("Réinitialiser les données École (démo) sur ce téléphone ?")){
-      localStorage.removeItem(SCHOOL_STORE_KEY);
-      alert("Réinitialisé (démo).");
-    }
-  };
-
-  if(btnWordSave2) btnWordSave2.onclick = ()=>{
-    const input = $("schoolWordInput");
-    const sel = $("schoolClassSelect");
-    const idx = sel ? parseInt(sel.value,10) : 0;
-    const cls = (Array.isArray(window.SCHOOL_CLASSES) && window.SCHOOL_CLASSES[idx])
-      ? window.SCHOOL_CLASSES[idx]
-      : (Array.isArray(window.SCHOOL_CLASSES) ? window.SCHOOL_CLASSES[0] : "");
-    const w = input ? (input.value || "").trim() : "";
-
-    if(!w){ alert("Saisis le mot du jour."); return; }
-
-    // filtre simple démo
-    if(/[<>]/.test(w)){ alert("Texte invalide."); return; }
-
-    const db = schoolLoad();
-    db.lastWord = {
-      class: cls,
-      text: w,
-      ts_fr: new Date().toLocaleString("fr-FR"),
-      note: "Mot du jour (démo, stockage local)"
-    };
-    schoolSave(db);
-
-    alert("Validé (démo) : " + cls + "\n« " + w + " »");
-  };
   // ======================================================
   // ✅ SPORT / MAIRIE / COMMERCES — ouverture modales (inchangé sur textes)
   // ======================================================
