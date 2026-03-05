@@ -1441,13 +1441,16 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     const modalTitle = document.getElementById("modalTitle");
     const modalBody = document.getElementById("modalBody");
 
-    const closeModal = () => {
-      window.closeModal = closeModal;
-      modal.classList.remove("open");
-      lockScroll(false);
-      if(__lastFocus && typeof __lastFocus.focus === "function") __lastFocus.focus();
-      __lastFocus = null;
-    };
+   const closeModal = () => {
+  modal.classList.remove("open");
+  lockScroll(false);
+  if(window.__lastFocus && typeof window.__lastFocus.focus === "function"){
+      window.__lastFocus.focus();
+  }
+  window.__lastFocus = null;
+};
+
+window.closeModal = closeModal;
 
     document.getElementById("modalClose").onclick = closeModal;
     document.getElementById("xBtn").onclick = closeModal;
@@ -1986,14 +1989,19 @@ ${days.length ? days.map(d=>{
     // ===========================
     // ✅ Bandeau 1 cm : pubs + gras
     // ===========================
-    function escapeHtml(s){
-      return String(s)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
+ function renderTape(){
+  const track = document.getElementById("sportTapeTrack");
+  if(!track) return;
+
+  // ✅ garde béton : évite crash si tapeAds est undefined / null / pas un tableau
+  if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
+
+  const doubled = window.tapeAds.concat(window.tapeAds);
+  track.innerHTML = doubled.map((a)=>{
+    const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
+    return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
+  }).join("");
+}
 
     const tapeAds = [
       { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
@@ -2002,17 +2010,21 @@ ${days.length ? days.map(d=>{
       { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false },
     ];window.tapeAds = tapeAds;
 
-    function renderTape(){
-      const track = document.getElementById("sportTapeTrack");
-      if(!track) return;
-      const doubled = window.tapeAds.concat(window.tapeAds);
-      track.innerHTML = doubled.map((a)=>{
-        const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
-        return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
-      }).join("");
-    }
-    try { renderTape(); }
-    catch(e){ console.warn("renderTape failed:", e); }
+ function renderTape(){
+  const track = document.getElementById("sportTapeTrack");
+  if(!track) return;
+
+  if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
+
+  const doubled = window.tapeAds.concat(window.tapeAds);
+
+  if(!track) return;
+
+  track.innerHTML = doubled.map((a)=>{
+    const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
+    return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
+  }).join("");
+}
 
 // ===========================
 // Ouverture des tuiles (FIX sport/mairie/commerces)
@@ -2277,10 +2289,20 @@ document.querySelectorAll("[data-open]").forEach(el=>{
 
             fillSchoolSelect();
 
-            const btnPrev2 = document.getElementById("schoolAssoPreview");
-            const btnSave2 = document.getElementById("schoolAssoSave");
-            const btnReset2 = document.getElementById("schoolResetBtn");
-            const btnWordSave2 = document.getElementById("schoolSaveBtn");
+const btnPrev2 = document.getElementById("schoolAssoPreview");
+const btnSave2 = document.getElementById("schoolAssoSave");
+const btnReset2 = document.getElementById("schoolResetBtn");
+const btnWordSave2 = document.getElementById("schoolSaveBtn");
+
+// ✅ nettoyage (anti effet bizarre si navigateur garde un état)
+if(btnPrev2)     btnPrev2.onclick = null;
+if(btnSave2)     btnSave2.onclick = null;
+if(btnReset2)    btnReset2.onclick = null;
+if(btnWordSave2) btnWordSave2.onclick = null;
+
+if(btnPrev2) btnPrev2.onclick = ()=>{
+  ...
+};
 
             if(btnPrev2) btnPrev2.onclick = ()=>{
               const mode = getDonMode();
