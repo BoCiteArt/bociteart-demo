@@ -1372,7 +1372,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     window.addEventListener('orientationchange', setVh);
 
     // ✅ petites variables globales sûres pour focus (ne casse rien)
-    let __lastFocus = null;
+    window.__lastFocus = null;
 
     // ✅ helpers : lock scroll quand modal ouverte
     function lockScroll(on){
@@ -1442,6 +1442,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     const modalBody = document.getElementById("modalBody");
 
     const closeModal = () => {
+      window.closeModal = closeModal;
       modal.classList.remove("open");
       lockScroll(false);
       if(__lastFocus && typeof __lastFocus.focus === "function") __lastFocus.focus();
@@ -1999,12 +2000,12 @@ ${days.length ? days.map(d=>{
       { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
       { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
       { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false },
-    ];
+    ];window.tapeAds = tapeAds;
 
     function renderTape(){
       const track = document.getElementById("sportTapeTrack");
       if(!track) return;
-      const doubled = tapeAds.concat(tapeAds);
+      const doubled = window.tapeAds.concat(window.tapeAds);
       track.innerHTML = doubled.map((a)=>{
         const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
         return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
