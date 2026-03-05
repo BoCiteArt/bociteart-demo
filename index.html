@@ -972,7 +972,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             <li><strong>Sécurité</strong> : journaux techniques (logs), horodatages, tentatives d’accès</li>
             <li><strong>Fonctions</strong> : paramètres, préférences, contenus publiés par profils habilités</li>
             <li><strong>Publicité</strong> : texte fourni par le partenaire, réservations (horodatage)</li>
-            <li><strong>Démo</strong> : données locales de démonstration (localStorage)</li>
+            <li><strong>Démo</strong> : données locales de démonstration (localStorage), conservées uniquement sur l’appareil de l’utilisateur et supprimables via les paramètres du navigateur.</li>
             <li><strong>Transactions / facturation (LIVE)</strong> : montants agrégés, identifiants de facturation, journaux de paiement via PSP (Bo’CitéArt ne stocke pas les données bancaires)</li>
           </ul>
 
@@ -2540,7 +2540,10 @@ document.querySelectorAll("[data-open]").forEach(el=>{
   // ✅ SPORT / MAIRIE / COMMERCES — ouverture modales (inchangé sur textes)
   // ======================================================
   window.__bociteartOpenByKey = function(key){
-    if(!isFn(window.openModal)) return;
+
+  key = String(key || "").trim();
+
+  if(!isFn(window.openModal)) return;
 
     if(key==="sport"){
       openModal("Sport", `
