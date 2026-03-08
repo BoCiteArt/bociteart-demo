@@ -2519,7 +2519,51 @@ document.querySelectorAll("[data-open]").forEach(el=>{
             </div>
           `);
     }
+   // ===========================
+// MAIRIE — message bandeau (DEMO)
+// ===========================
 
+const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
+
+function mairieLoad(){
+  try{
+    const raw = localStorage.getItem(MAIRIE_STORE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){ return {}; }
+}
+
+function mairieSave(obj){
+  try{
+    localStorage.setItem(MAIRIE_STORE_KEY, JSON.stringify(obj));
+  }catch(e){}
+}
+
+function renderMairieTicker(){
+
+  const track = document.getElementById("mairieTickerTrack");
+  if(!track) return;
+
+  const db = mairieLoad();
+
+  if(!db.message){
+    track.innerHTML = "<span>Aucune information mairie</span>";
+    return;
+  }
+
+  const doubled = [db.message, db.message];
+
+  track.innerHTML = doubled.map(m=>{
+    return `<span>${m}</span>`;
+  }).join("");
+}
+
+// lancement au chargement
+renderMairieTicker();
+
+    // ===========================
+// COMMERCES
+// ===========================
+    
     if(key==="commerces"){
       openModal("Commerces", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
