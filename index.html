@@ -2104,6 +2104,49 @@ function renderTape(){
 renderTape();
 window.renderTape = renderTape;
 
+   // ===========================
+// MAIRIE — message bandeau (DEMO)
+// ===========================
+const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
+
+function mairieLoad(){
+  try{
+    const raw = localStorage.getItem(MAIRIE_STORE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){
+    return {};
+  }
+}
+
+function mairieSave(obj){
+  try{
+    localStorage.setItem(MAIRIE_STORE_KEY, JSON.stringify(obj));
+  }catch(e){}
+}
+
+function renderMairieTicker(){
+  const track = document.getElementById("mairieTickerTrack");
+  if(!track) return;
+
+  const db = mairieLoad();
+
+  // message par défaut démo si rien n’a encore été saisi
+  const msg = (db.message && String(db.message).trim())
+    ? String(db.message).trim()
+    : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+
+  const doubled = [msg, msg];
+
+  track.innerHTML = doubled.map(m=>{
+    return `<span>${escapeHtml(m)}</span>`;
+  }).join("");
+}
+
+// lancement au chargement
+renderMairieTicker();
+window.renderMairieTicker = renderMairieTicker;
+window.mairieLoad = mairieLoad;
+window.mairieSave = mairieSave; 
 // ===========================
 // Ouverture des tuiles (FIX sport/mairie/commerces)
 // ===========================
@@ -2460,12 +2503,14 @@ if(btnReset2) btnReset2.onclick = ()=>{
   schoolSave(db);
 
   alert("Validé (démo) : " + cls + "\n« " + w + " »");
-}; 
-        /* Les autres cases (sport/mairie/commerces + le reste du JS) arrivent dans ta 2e partie,
-           donc je m’arrête ici proprement sans casser les accolades. */
+};
+            
 (function initBoCiteArtClean(){
   "use strict";
-
+ }; 0);
+    return;
+  }
+});  
   // ---------------------------
   // Helpers safe
   // ---------------------------
@@ -2643,50 +2688,6 @@ if(btnReset2) btnReset2.onclick = ()=>{
     }
   },0);
 }
-// ===========================
-// MAIRIE — message bandeau (DEMO)
-// ===========================
-const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
-
-function mairieLoad(){
-  try{
-    const raw = localStorage.getItem(MAIRIE_STORE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  }catch(e){
-    return {};
-  }
-}
-
-function mairieSave(obj){
-  try{
-    localStorage.setItem(MAIRIE_STORE_KEY, JSON.stringify(obj));
-  }catch(e){}
-}
-
-function renderMairieTicker(){
-  const track = document.getElementById("mairieTickerTrack");
-  if(!track) return;
-
-  const db = mairieLoad();
-
-  // message par défaut démo si rien n’a encore été saisi
-  const msg = (db.message && String(db.message).trim())
-    ? String(db.message).trim()
-    : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-
-  const doubled = [msg, msg];
-
-  track.innerHTML = doubled.map(m=>{
-    return `<span>${escapeHtml(m)}</span>`;
-  }).join("");
-}
-
-// lancement au chargement
-renderMairieTicker();
-window.renderMairieTicker = renderMairieTicker;
-window.mairieLoad = mairieLoad;
-window.mairieSave = mairieSave;
-
     // ===========================
 // COMMERCES
 // ===========================
