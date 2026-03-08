@@ -344,21 +344,26 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 /* =========================
    ✅ Mini bandeau sur tuile mairie
    ========================= */
+
+/* =========================
+   ✅ Mini bandeau sur tuile mairie
+   ========================= */
 #mairieTile{
   position:relative;
   overflow:hidden;
 }
 
+/* petit quart de rond en bas à gauche, discret */
 #mairieTile::after{
   content:"";
   position:absolute;
-  width:78px;
-  height:78px;
-  left:-20px;
-  bottom:-20px;
+  width:44px;
+  height:44px;
+  left:-10px;
+  bottom:-10px;
   border-radius:50%;
   background:var(--bg);
-  z-index:3;
+  z-index:4;
   pointer-events:none;
 }
 
@@ -368,11 +373,11 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   right:0;
   bottom:0;
   height:18px;
-  background:rgba(165,30,34,.92);
+  background:rgba(165,30,34,.95);
   overflow:hidden;
   display:flex;
   align-items:center;
-  z-index:2;
+  z-index:3;
 }
 
 .mairieTickerTrack{
