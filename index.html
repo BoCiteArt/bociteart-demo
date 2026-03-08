@@ -148,7 +148,9 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       0%{ transform:translateX(0); }
       100%{ transform:translateX(-50%); }
     }
- .tileBadge{
+
+    /* --- Grid tiles --- */
+     .tileBadge{
   position:absolute;
   top:10px;
   right:10px;
@@ -167,15 +169,12 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   50%{ transform:scale(1.18); opacity:.75; }
   100%{ transform:scale(1); opacity:1; }
 }
-
-    /* --- Grid tiles --- */
     .gridWrap{ position:relative; }
     .grid{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:12px;
     }
-
     .tile{
       position:relative;
       width:100%;
