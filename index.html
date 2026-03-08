@@ -2435,8 +2435,7 @@ if(btnReset2) btnReset2.onclick = ()=>{
     alert("Réinitialisé (démo).");
   }
 };
-
-if(btnWordSave2) btnWordSave2.onclick = ()=>{
+           if(btnWordSave2) btnWordSave2.onclick = ()=>{
   const input = document.getElementById("schoolWordInput");
   const sel = document.getElementById("schoolClassSelect");
   const idx = sel ? parseInt(sel.value,10) : 0;
@@ -2445,7 +2444,10 @@ if(btnWordSave2) btnWordSave2.onclick = ()=>{
 
   if(!w){ alert("Saisis le mot du jour."); return; }
 
-  if(/[<>]/.test(w)){ alert("Texte invalide."); return; }
+  if(/[<>]/.test(w)){ 
+    alert("Texte invalide."); 
+    return; 
+  }
 
   const db = schoolLoad();
   db.lastWord = {
@@ -2454,38 +2456,11 @@ if(btnWordSave2) btnWordSave2.onclick = ()=>{
     ts_fr: new Date().toLocaleString("fr-FR"),
     note: "Mot du jour (démo, stockage local)"
   };
+
   schoolSave(db);
 
   alert("Validé (démo) : " + cls + "\n« " + w + " »");
-};
-
-            if(btnWordSave2) btnWordSave2.onclick = ()=>{
-              const input = document.getElementById("schoolWordInput");
-              const sel = document.getElementById("schoolClassSelect");
-              const idx = sel ? parseInt(sel.value,10) : 0;
-              const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-              const w = input ? (input.value || "").trim() : "";
-
-              if(!w){ alert("Saisis le mot du jour."); return; }
-
-              // filtre simple démo
-              if(/[<>]/.test(w)){ alert("Texte invalide."); return; }
-
-              const db = schoolLoad();
-              db.lastWord = {
-                class: cls,
-                text: w,
-                ts_fr: new Date().toLocaleString("fr-FR"),
-                note: "Mot du jour (démo, stockage local)"
-              };
-              schoolSave(db);
-
-              alert("Validé (démo) : " + cls + "\n« " + w + " »");
-            };
-
-          }, 0);
-        }
-    
+}; 
         /* Les autres cases (sport/mairie/commerces + le reste du JS) arrivent dans ta 2e partie,
            donc je m’arrête ici proprement sans casser les accolades. */
       });
