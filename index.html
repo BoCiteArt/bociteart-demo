@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+0,0,.10);<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
@@ -344,26 +344,28 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 /* =========================
    ✅ Mini bandeau sur tuile mairie
    ========================= */
-
-/* =========================
-   ✅ Mini bandeau sur tuile mairie
-   ========================= */
 #mairieTile{
   position:relative;
   overflow:hidden;
 }
 
 /* petit quart de rond en bas à gauche, discret */
+#mairieTile{
+  position:relative;
+  overflow:hidden;
+}
+
+/* vrai quart de rond centré sur le bouton 3919/119 */
 #mairieTile::after{
   content:"";
   position:absolute;
-  width:44px;
-  height:44px;
-  left:-10px;
-  bottom:-10px;
+  width:72px;
+  height:72px;
+  left:-36px;
+  bottom:-36px;
   border-radius:50%;
   background:var(--bg);
-  z-index:4;
+  z-index:2;
   pointer-events:none;
 }
 
@@ -377,7 +379,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   overflow:hidden;
   display:flex;
   align-items:center;
-  z-index:3;
+  z-index:5;
 }
 
 .mairieTickerTrack{
@@ -509,7 +511,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       justify-content:space-between;
       padding:12px 14px;
       font-weight:900;
-      border-bottom:1px solid rgba(0,0,0,.10);
+      border-bottom:1px solid rgba(0,
     }
     .sheet .body{
       padding:14px;
