@@ -357,6 +357,11 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 }
 
 /* vrai quart de rond centré sur le bouton 3919/119 */
+#mairieTile{
+  position:relative;
+  overflow:hidden;
+}
+
 #mairieTile::after{
   content:"";
   position:absolute;
@@ -402,7 +407,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   0%{ transform:translateX(0); }
   100%{ transform:translateX(-100%); }
 }
-
     /* --- DAE button --- */
     .dae{
       width:100%;
