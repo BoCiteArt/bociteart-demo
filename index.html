@@ -148,6 +148,25 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       0%{ transform:translateX(0); }
       100%{ transform:translateX(-50%); }
     }
+ .tileBadge{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:14px;
+  height:14px;
+  border-radius:999px;
+  background:#d61f26;
+  border:2px solid #fff;
+  box-shadow:0 0 0 2px rgba(0,0,0,.08);
+  z-index:3;
+  animation: badgePulse 1.2s infinite;
+}
+
+@keyframes badgePulse{
+  0%{ transform:scale(1); opacity:1; }
+  50%{ transform:scale(1.18); opacity:.75; }
+  100%{ transform:scale(1); opacity:1; }
+}
 
     /* --- Grid tiles --- */
     .gridWrap{ position:relative; }
@@ -806,14 +825,15 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             </div>
           </div>
 
-          <div class="tile" data-open="ecole">
-            <img alt="" src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=60"/>
-            <div class="overlay"></div>
-            <div class="content">
-              <div class="h">École</div>
-              <div class="p">Mot du jour</div>
-            </div>
-          </div>
+<div class="tile" data-open="ecole">
+  <img alt="" src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=60"/>
+  <div class="overlay"></div>
+  <div class="tileBadge" aria-hidden="true"></div>
+  <div class="content">
+    <div class="h">École</div>
+    <div class="p">Mot du jour</div>
+  </div>
+</div>
 
           <div class="tile" data-open="sport">
             <img alt="" src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=60"/>
@@ -825,8 +845,10 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
           </div>
 
           <div class="tile" data-open="mairie">
+ <div class="tile" data-open="mairie" id="mairieTile">
   <img alt="" src="https://images.unsplash.com/photo-1505843513577-22bb7d21e455?auto=format&fit=crop&w=1200&q=60"/>
   <div class="overlay"></div>
+
   <div class="content">
     <div class="h">Mairie</div>
     <div class="p">Infos • agenda</div>
