@@ -322,6 +322,41 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       0%{ transform:translateX(0); }
       100%{ transform:translateX(-50%);}
     }
+    /* =========================
+   ✅ Mini bandeau sur tuile mairie
+   ========================= */
+.mairieTicker{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:18px;
+  background:rgba(165,30,34,.92);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  z-index:2;
+}
+
+.mairieTickerTrack{
+  display:inline-flex;
+  align-items:center;
+  white-space:nowrap;
+  padding-left:100%;
+  animation: mairieTickerMove 12s linear infinite;
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+}
+
+.mairieTickerTrack span{
+  padding-right:40px;
+}
+
+@keyframes mairieTickerMove{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(-100%); }
+}
 
     /* --- DAE button --- */
     .dae{
