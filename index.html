@@ -342,21 +342,10 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       100%{ transform:translateX(-50%);}
     }
   
-/* =========================
-   ✅ Mini bandeau sur tuile mairie
-   ========================= */
-#mairieTile{
-  position:relative;
-  overflow:hidden;
-}
-
-/* petit quart de rond en bas à gauche, discret */
-#mairieTile{
-  position:relative;
-  overflow:hidden;
-}
-
 /* vrai quart de rond centré sur le bouton 3919/119 */
+/* =========================
+   Mini bandeau sur tuile mairie
+   ========================= */
 #mairieTile{
   position:relative;
   overflow:hidden;
@@ -2550,35 +2539,122 @@ const btnWordSave2 = document.getElementById("schoolSaveBtn");
       },0);
     }
 
-    if(key==="mairie"){
-      openModal("Mairie", `
-            <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
-            <div class="box">
-              <strong>Accès citoyen gratuit :</strong> messages d’intérêt général (sécurité, route, météo exceptionnelle) peuvent être diffusés sans condition d’abonnement.
-            </div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Infos & alertes (travaux, circulation, annonces)</li>
-              <li>Agenda / calendrier vivant (visible, contenu selon activation)</li>
-              <li>Échanges bocitecoins Jaune (école) et Vert (sport)</li>
-              <li>Cadeaux / surprises : validation et gestion interne</li>
-              <li>Réservation publicité (si activée) via bon de commande / devis signé</li>
-            </ul>
-            <div class="muted" style="margin-top:10px;">
-              (Officiel) accès mairie = compte référent + activation.
-            </div>
-          `);
+   if(key==="mairie"){
+  const db = mairieLoad();
+  const urgence = db.urgence || "";
+  const info = db.info || "";
+  const pub = db.pub || "";
+  const bandeau = db.message || "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+
+  openModal("Mairie", `
+    <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
+
+    <div class="box">
+      <strong>Accès citoyen gratuit :</strong> messages d’intérêt général, travaux, circulation, sécurité, alertes, agenda.
+    </div>
+
+    <div class="box">
+      <div style="font-weight:900;">Message actuellement diffusé sur la tuile mairie</div>
+      <div class="muted" style="margin-top:6px;">Ce texte alimente le petit bandeau rouge défilant visible directement sur la tuile.</div>
+      <div style="margin-top:8px;background:var(--bg);padding:10px;border-radius:12px;font-weight:800;">
+        ${escapeHtml(bandeau)}
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Urgence / alerte</div>
+    <textarea class="miniField" id="mairieUrgenceInput" rows="3" placeholder="Ex : Rue Émile Zola fermée du 3 au 8 avril">${escapeHtml(urgence)}</textarea>
+
+    <div style="font-weight:900;margin-top:12px;">Information mairie</div>
+    <textarea class="miniField" id="mairieInfoInput" rows="4" placeholder="Ex : réunion publique, collecte, agenda">${escapeHtml(info)}</textarea>
+
+    <div style="font-weight:900;margin-top:12px;">Publicité / annonce mairie</div>
+    <textarea class="miniField" id="mairiePubInput" rows="3" placeholder="Ex : Forum des associations samedi 14h-18h">${escapeHtml(pub)}</textarea>
+
+    <div style="font-weight:900;margin-top:12px;">Texte du bandeau défilant sur la tuile mairie</div>
+    <textarea class="miniField" id="mairieBandInput" rows="3" placeholder="Texte affiché directement sur la tuile mairie">${escapeHtml(bandeau)}</textarea>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+      <button class="choiceBtn" id="mairiePreviewBtn" type="button">👁️ Aperçu bandeau</button>
+      <button class="choiceBtn" id="mairieSaveBtn" type="button">💾 Enregistrer</button>
+      <button class="choiceBtn" id="mairieResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser</button>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Fonctions prévues</div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Infos & alertes</li>
+        <li>Agenda / calendrier vivant</li>
+        <li>Travaux / circulation / sécurité</li>
+        <li>Annonces publiques visibles rapidement</li>
+        <li>Bandeau défilant sur la tuile mairie</li>
+      </ul>
+    </div>
+
+    <div class="muted" style="margin-top:10px;">
+      (Démo) Enregistrement local sur ce téléphone. En LIVE : compte mairie / référent + droits d’accès.
+    </div>
+  `);
+
+  setTimeout(()=>{
+    const urgenceInput = document.getElementById("mairieUrgenceInput");
+    const infoInput = document.getElementById("mairieInfoInput");
+    const pubInput = document.getElementById("mairiePubInput");
+    const bandInput = document.getElementById("mairieBandInput");
+
+    const btnPreview = document.getElementById("mairiePreviewBtn");
+    const btnSave = document.getElementById("mairieSaveBtn");
+    const btnReset = document.getElementById("mairieResetBtn");
+
+    if(btnPreview){
+      btnPreview.onclick = ()=>{
+        const txt = bandInput ? bandInput.value.trim() : "";
+        alert(txt || "Aucun texte saisi pour le bandeau.");
+      };
     }
-   // ===========================
+
+    if(btnSave){
+      btnSave.onclick = ()=>{
+        const nextDb = {
+          urgence: urgenceInput ? urgenceInput.value.trim() : "",
+          info: infoInput ? infoInput.value.trim() : "",
+          pub: pubInput ? pubInput.value.trim() : "",
+          message: bandInput ? bandInput.value.trim() : ""
+        };
+
+        mairieSave(nextDb);
+        renderMairieTicker();
+        alert("Mairie enregistrée (démo).");
+      };
+    }
+
+    if(btnReset){
+      btnReset.onclick = ()=>{
+        if(confirm("Réinitialiser les données mairie (démo) sur ce téléphone ?")){
+          localStorage.removeItem(MAIRIE_STORE_KEY);
+          renderMairieTicker();
+          closeModal();
+          setTimeout(()=>{
+            if(typeof window.__bociteartOpenByKey === "function"){
+              window.__bociteartOpenByKey("mairie");
+            }
+          }, 50);
+        }
+      };
+    }
+  },0);
+}
+// ===========================
 // MAIRIE — message bandeau (DEMO)
 // ===========================
-
 const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
 
 function mairieLoad(){
   try{
     const raw = localStorage.getItem(MAIRIE_STORE_KEY);
     return raw ? JSON.parse(raw) : {};
-  }catch(e){ return {}; }
+  }catch(e){
+    return {};
+  }
 }
 
 function mairieSave(obj){
@@ -2588,26 +2664,28 @@ function mairieSave(obj){
 }
 
 function renderMairieTicker(){
-
   const track = document.getElementById("mairieTickerTrack");
   if(!track) return;
 
   const db = mairieLoad();
 
-  if(!db.message){
-    track.innerHTML = "<span>Aucune information mairie</span>";
-    return;
-  }
+  // message par défaut démo si rien n’a encore été saisi
+  const msg = (db.message && String(db.message).trim())
+    ? String(db.message).trim()
+    : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
 
-  const doubled = [db.message, db.message];
+  const doubled = [msg, msg];
 
   track.innerHTML = doubled.map(m=>{
-    return `<span>${m}</span>`;
+    return `<span>${escapeHtml(m)}</span>`;
   }).join("");
 }
 
 // lancement au chargement
 renderMairieTicker();
+window.renderMairieTicker = renderMairieTicker;
+window.mairieLoad = mairieLoad;
+window.mairieSave = mairieSave;
 
     // ===========================
 // COMMERCES
