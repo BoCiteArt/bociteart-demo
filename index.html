@@ -340,10 +340,29 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       0%{ transform:translateX(0); }
       100%{ transform:translateX(-50%);}
     }
-    /* =========================
+  
+/* =========================
    ✅ Mini bandeau sur tuile mairie
    ========================= */
-.mairieTicker{
+#mairieTile{
+  position:relative;
+  overflow:hidden;
+}
+
+#mairieTile::after{
+  content:"";
+  position:absolute;
+  width:78px;
+  height:78px;
+  left:-20px;
+  bottom:-20px;
+  border-radius:50%;
+  background:var(--bg);
+  z-index:3;
+  pointer-events:none;
+}
+
+.mairieTickerWrap{
   position:absolute;
   left:0;
   right:0;
@@ -843,8 +862,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             </div>
           </div>
 
-          <div class="tile" data-open="mairie">
- <div class="tile" data-open="mairie" id="mairieTile">
+       <div class="tile" data-open="mairie" id="mairieTile">
   <img alt="" src="https://images.unsplash.com/photo-1505843513577-22bb7d21e455?auto=format&fit=crop&w=1200&q=60"/>
   <div class="overlay"></div>
 
@@ -853,10 +871,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     <div class="p">Infos • agenda</div>
   </div>
 
-  <div class="mairieTicker">
-    <div class="mairieTickerTrack" id="mairieTickerTrack">
-      <span>🚧 Travaux rue Émile Zola du 3 au 8 avril</span>
-    </div>
+  <div class="mairieTickerWrap" aria-hidden="true">
+    <div class="mairieTickerTrack" id="mairieTickerTrack"></div>
   </div>
 </div>
 
