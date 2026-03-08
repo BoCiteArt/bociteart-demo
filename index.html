@@ -2371,65 +2371,93 @@ const btnSave2 = document.getElementById("schoolAssoSave");
 const btnReset2 = document.getElementById("schoolResetBtn");
 const btnWordSave2 = document.getElementById("schoolSaveBtn");
 
-              if(mode === "none"){
-                alert("Aperçu : Pas de partage solidaire (tout pour matériel scolaire).");
-                return;
-              }
-              if(mode === "full"){
-                const norm = normalizeForFull(picks);
-                if(!norm.ok){ alert(norm.msg); return; }
-                const lines = Object.entries(norm.pctMap).map(([a,p])=> `- ${a} : ${p}%`).join("\n");
-                alert("Aperçu (don total, partage égal)\n" + lines);
-                return;
-              }
-              const v = validatePartial(picks, pctMap);
-              if(!v.ok){ alert(v.msg); return; }
-              const lines = picks.map(a=> `- ${a} : ${pctMap[a] || 0}%`).join("\n");
-              alert("Aperçu (don partiel)\n" + lines);
-            };
+if(btnPrev2) btnPrev2.onclick = ()=>{
+  const mode = getDonMode();
+  const picks = getAssoSelection();
+  const pctMap = getAssoPctMap();
 
-            if(btnSave2) btnSave2.onclick = ()=>{
-              const mode = getDonMode();
-              const picks = getAssoSelection();
-              const pctMap = getAssoPctMap();
+  if(mode === "none"){
+    alert("Aperçu : Pas de partage solidaire (tout pour matériel scolaire).");
+    return;
+  }
+  if(mode === "full"){
+    const norm = normalizeForFull(picks);
+    if(!norm.ok){ alert(norm.msg); return; }
+    const lines = Object.entries(norm.pctMap).map(([a,p])=> `- ${a} : ${p}%`).join("\n");
+    alert("Aperçu (don total, partage égal)\n" + lines);
+    return;
+  }
+  const v = validatePartial(picks, pctMap);
+  if(!v.ok){ alert(v.msg); return; }
+  const lines = picks.map(a=> `- ${a} : ${pctMap[a] || 0}%`).join("\n");
+  alert("Aperçu (don partiel)\n" + lines);
+};
 
-              const sel = document.getElementById("schoolClassSelect");
-              const idx = sel ? parseInt(sel.value,10) : 0;
-              const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+if(btnSave2) btnSave2.onclick = ()=>{
+  const mode = getDonMode();
+  const picks = getAssoSelection();
+  const pctMap = getAssoPctMap();
 
-              let finalMap = {};
+  const sel = document.getElementById("schoolClassSelect");
+  const idx = sel ? parseInt(sel.value,10) : 0;
+  const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
 
-              if(mode === "none"){
-                finalMap = {};
-              }else if(mode === "full"){
-                const norm = normalizeForFull(picks);
-                if(!norm.ok){ alert(norm.msg); return; }
-                finalMap = norm.pctMap;
-              }else{
-                const v = validatePartial(picks, pctMap);
-                if(!v.ok){ alert(v.msg); return; }
-                picks.forEach(a=> finalMap[a] = pctMap[a] || 0);
-              }
+  let finalMap = {};
 
-              const db = schoolLoad();
-              db.lastSolidarity = {
-                class: cls,
-                mode,
-                map: finalMap,
-                ts_fr: new Date().toLocaleString("fr-FR"),
-                note: "Décision de partage (démo, stockage local)"
-              };
-              schoolSave(db);
+  if(mode === "none"){
+    finalMap = {};
+  }else if(mode === "full"){
+    const norm = normalizeForFull(picks);
+    if(!norm.ok){ alert(norm.msg); return; }
+    finalMap = norm.pctMap;
+  }else{
+    const v = validatePartial(picks, pctMap);
+    if(!v.ok){ alert(v.msg); return; }
+    picks.forEach(a=> finalMap[a] = pctMap[a] || 0);
+  }
 
-              alert("Enregistré (démo) pour : " + cls);
-            };
+  const db = schoolLoad();
+  db.lastSolidarity = {
+    class: cls,
+    mode,
+    map: finalMap,
+    ts_fr: new Date().toLocaleString("fr-FR"),
+    note: "Décision de partage (démo, stockage local)"
+  };
+  schoolSave(db);
 
-            if(btnReset2) btnReset2.onclick = ()=>{
-              if(confirm("Réinitialiser les données École (démo) sur ce téléphone ?")){
-                localStorage.removeItem(SCHOOL_STORE_KEY);
-                alert("Réinitialisé (démo).");
-              }
-            };
+  alert("Enregistré (démo) pour : " + cls);
+};
+
+if(btnReset2) btnReset2.onclick = ()=>{
+  if(confirm("Réinitialiser les données École (démo) sur ce téléphone ?")){
+    localStorage.removeItem(SCHOOL_STORE_KEY);
+    alert("Réinitialisé (démo).");
+  }
+};
+
+if(btnWordSave2) btnWordSave2.onclick = ()=>{
+  const input = document.getElementById("schoolWordInput");
+  const sel = document.getElementById("schoolClassSelect");
+  const idx = sel ? parseInt(sel.value,10) : 0;
+  const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+  const w = input ? (input.value || "").trim() : "";
+
+  if(!w){ alert("Saisis le mot du jour."); return; }
+
+  if(/[<>]/.test(w)){ alert("Texte invalide."); return; }
+
+  const db = schoolLoad();
+  db.lastWord = {
+    class: cls,
+    text: w,
+    ts_fr: new Date().toLocaleString("fr-FR"),
+    note: "Mot du jour (démo, stockage local)"
+  };
+  schoolSave(db);
+
+  alert("Validé (démo) : " + cls + "\n« " + w + " »");
+};
 
             if(btnWordSave2) btnWordSave2.onclick = ()=>{
               const input = document.getElementById("schoolWordInput");
