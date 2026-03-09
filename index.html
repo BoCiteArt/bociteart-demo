@@ -1702,7 +1702,22 @@ window.closeModal = closeModal;
     // ✅ Suivi frais commerçants (démo) — indicatif
     // ===========================
     const FEE_STORE_KEY = "bociteart_fee_demo_v1";
+const CITIZEN_WALLET_KEY = "bociteart_citizen_wallet_v1";
 
+function loadCitizenWallet(){
+  try{
+    const raw = localStorage.getItem(CITIZEN_WALLET_KEY);
+    return raw ? JSON.parse(raw) : { or: 37 };
+  }catch(e){
+    return { or: 37 };
+  }
+}
+
+function saveCitizenWallet(obj){
+  try{
+    localStorage.setItem(CITIZEN_WALLET_KEY, JSON.stringify(obj));
+  }catch(e){}
+}
     function feeYM(d=new Date()){
       const y = d.getFullYear();
       const m = String(d.getMonth()+1).padStart(2,"0");
