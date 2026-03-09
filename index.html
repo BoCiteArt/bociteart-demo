@@ -388,95 +388,176 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     #legal .tabs{ display:flex; justify-content:center; gap:8px; }
     #legal .tab{ display:flex; align-items:center; justify-content:center; min-width:70px; padding:8px 10px; text-align:center; white-space:nowrap; }
 
-    /* Wallets / bocitecoins */
-    .coinShowcase{ display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-    .coinFace{
-      position:relative;
-      width:96px;
-      height:96px;
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      box-shadow: inset 0 2px 8px rgba(255,255,255,.45), inset 0 -5px 10px rgba(0,0,0,.18), 0 6px 14px rgba(0,0,0,.14);
-    }
-    .coinFace::before{
-      content:"";
-      position:absolute;
-      inset:8px;
-      border-radius:50%;
-      border:2px dashed rgba(255,245,190,.95);
-    }
-    .coinFace::after{
-      content:"✦ ✦ ✦ ✦ ✦ ✦";
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:flex-start;
-      justify-content:center;
-      padding-top:8px;
-      font-size:10px;
-      letter-spacing:2px;
-      opacity:.95;
-    }
-    .coinGold{ background:radial-gradient(circle at 30% 30%, #fff6bf 0%, #f7d96b 22%, #d9a514 58%, #b78105 78%, #8f6500 100%); border:4px solid #c69209; }
-    .coinGold::after{ color:#fff7c7; }
-    .coinGold::before{ border-color:rgba(255,245,190,.95); }
-    .coinYellow{ background:radial-gradient(circle at 30% 30%, #fffbd1 0%, #ffe97e 24%, #f4cf1d 60%, #d0aa08 82%, #a68000 100%); border:4px solid #d0aa08; }
-    .coinYellow::after{ color:#fffbe3; }
-    .coinYellow::before{ border-color:rgba(255,248,210,.96); }
-    .coinGreen{ background:radial-gradient(circle at 30% 30%, #dff7ea 0%, #8fd3ae 24%, #2f5d46 60%, #224736 82%, #183227 100%); border:4px solid #2f5d46; }
-    .coinGreen::after{ color:#e8fff3; }
-    .coinGreen::before{ border-color:rgba(226,255,241,.95); }
+   /* Wallets / bocitecoins */
+.coinShowcase{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
 
-    .coinInner{
-      position:relative;
-      width:66px;
-      height:66px;
-      border-radius:50%;
-      border:2px solid rgba(255,248,210,.9);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      font-weight:900;
-      z-index:1;
-      background:rgba(255,255,255,.12);
-      padding:4px;
-    }
-    .coinInner .n{ font-size:22px; line-height:1; }
-    .coinInner .t{ font-size:8px; line-height:1.05; margin-top:4px; }
-    .coinInnerGold{ color:#6b4b00; }
-    .coinInnerYellow{ color:#765d00; }
-    .coinInnerGreen{ color:#f1fff8; }
+.coinFace{
+  position:relative;
+  width:96px;
+  height:96px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  box-shadow:
+    inset 0 2px 8px rgba(255,255,255,.45),
+    inset 0 -5px 10px rgba(0,0,0,.18),
+    0 6px 14px rgba(0,0,0,.14);
+}
 
-    .coinStack{ position:relative; width:84px; height:64px; flex:0 0 auto; }
-    .stackCoin{
-      position:absolute;
-      width:44px;
-      height:44px;
-      border-radius:50%;
-      box-shadow:0 4px 10px rgba(0,0,0,.16);
-    }
-    .stackGold{ background:radial-gradient(circle at 30% 30%, #fff6bf 0%, #f7d96b 22%, #d9a514 58%, #b78105 78%, #8f6500 100%); border:3px solid #c69209; }
-    .stackYellow{ background:radial-gradient(circle at 30% 30%, #fffbd1 0%, #ffe97e 24%, #f4cf1d 60%, #d0aa08 82%, #a68000 100%); border:3px solid #d0aa08; }
-    .stackGreen{ background:radial-gradient(circle at 30% 30%, #dff7ea 0%, #8fd3ae 24%, #2f5d46 60%, #224736 82%, #183227 100%); border:3px solid #2f5d46; }
-    .stack1{ left:0; bottom:0; }
-    .stack2{ left:18px; bottom:8px; }
-    .stack3{ left:36px; bottom:16px; }
+.coinFace::before{
+  content:"";
+  position:absolute;
+  inset:8px;
+  border-radius:50%;
+  border:2px solid rgba(255,248,210,.92);
+}
 
-    .walletBox{ flex:1; min-width:190px; border:2px solid rgba(0,0,0,.08); background:#fff; border-radius:16px; padding:12px; }
-    .walletTitle{ font-weight:900; font-size:14px; margin-bottom:6px; }
-    .walletValue{ font-weight:900; font-size:24px; line-height:1; }
-    .walletGold{ color:#9a7000; }
-    .walletYellow{ color:#b18900; }
-    .walletGreen{ color:#2f5d46; }
-    .walletSub{ margin-top:6px; font-weight:800; font-size:12px; color:var(--muted); }
-    .walletActions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-    .walletMini{ border:2px solid rgba(0,0,0,.10); background:var(--beige); border-radius:12px; padding:8px 10px; font-weight:900; cursor:pointer; font-size:12px; }
+.coinGold{
+  background:
+    radial-gradient(circle at 30% 30%, #fff8cc 0%, #f6de74 22%, #d6a20f 56%, #b27c00 78%, #8b5f00 100%);
+  border:4px solid #c89400;
+}
+.coinYellow{
+  background:
+    radial-gradient(circle at 30% 30%, #fffcd8 0%, #fff08a 24%, #e4c81c 58%, #b79b00 80%, #8f7800 100%);
+  border:4px solid #ccb300;
+}
+.coinGreen{
+  background:
+    radial-gradient(circle at 30% 30%, #def7e8 0%, #88d2a8 24%, #2f5d46 58%, #234635 80%, #183227 100%);
+  border:4px solid #2f5d46;
+}
 
+.coinStars{
+  position:absolute;
+  left:50%;
+  width:100%;
+  text-align:center;
+  font-size:9px;
+  letter-spacing:1.3px;
+  font-weight:900;
+  z-index:1;
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+
+.coinStars.top{ top:8px; }
+.coinStars.bottom{ bottom:8px; }
+
+.coinStarsGold{ color:#fff7c8; }
+.coinStarsYellow{ color:#fffbe2; }
+.coinStarsGreen{ color:#e9fff3; }
+
+.coinInner{
+  position:relative;
+  width:66px;
+  height:66px;
+  border-radius:50%;
+  border:2px solid rgba(255,248,210,.9);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-weight:900;
+  z-index:2;
+  background:rgba(255,255,255,.12);
+  padding:4px;
+  box-shadow:inset 0 1px 4px rgba(255,255,255,.25);
+}
+.coinInner .n{ font-size:22px; line-height:1; }
+.coinInner .t{ font-size:8px; line-height:1.05; margin-top:4px; }
+
+.coinInnerGold{ color:#6b4b00; }
+.coinInnerYellow{ color:#765d00; }
+.coinInnerGreen{ color:#f1fff8; }
+
+.coinStack{
+  position:relative;
+  width:84px;
+  height:64px;
+  flex:0 0 auto;
+}
+
+.stackCoin{
+  position:absolute;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  box-shadow:
+    inset 0 1px 4px rgba(255,255,255,.20),
+    0 4px 10px rgba(0,0,0,.16);
+}
+.stackGold{
+  background:
+    radial-gradient(circle at 30% 30%, #fff8cc 0%, #f6de74 22%, #d6a20f 56%, #b27c00 78%, #8b5f00 100%);
+  border:3px solid #c89400;
+}
+.stackYellow{
+  background:
+    radial-gradient(circle at 30% 30%, #fffcd8 0%, #fff08a 24%, #e4c81c 58%, #b79b00 80%, #8f7800 100%);
+  border:3px solid #ccb300;
+}
+.stackGreen{
+  background:
+    radial-gradient(circle at 30% 30%, #def7e8 0%, #88d2a8 24%, #2f5d46 58%, #234635 80%, #183227 100%);
+  border:3px solid #2f5d46;
+}
+.stack1{ left:0; bottom:0; }
+.stack2{ left:18px; bottom:8px; }
+.stack3{ left:36px; bottom:16px; }
+
+.walletBox{
+  flex:1;
+  min-width:190px;
+  border:2px solid rgba(0,0,0,.08);
+  background:#fff;
+  border-radius:16px;
+  padding:12px;
+}
+.walletTitle{
+  font-weight:900;
+  font-size:14px;
+  margin-bottom:6px;
+}
+.walletValue{
+  font-weight:900;
+  font-size:24px;
+  line-height:1;
+}
+.walletGold{ color:#9a7000; }
+.walletYellow{ color:#b18900; }
+.walletGreen{ color:#2f5d46; }
+
+.walletSub{
+  margin-top:6px;
+  font-weight:800;
+  font-size:12px;
+  color:var(--muted);
+}
+.walletActions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.walletMini{
+  border:2px solid rgba(0,0,0,.10);
+  background:var(--beige);
+  border-radius:12px;
+  padding:8px 10px;
+  font-weight:900;
+  cursor:pointer;
+  font-size:12px;
+}
     @media (max-height: 780px){
       .wrap{ padding:10px; gap:10px; }
       .ticker{ height:120px; }
@@ -1678,228 +1759,401 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
           },0);
           return;
         }
+        
+if(key==="mairie"){
+  openModal("Mairie", `
+    <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
 
-        if(key==="mairie"){
-          openModal("Mairie", `
-            <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
-            <div class="box">
-              <strong>Cadre :</strong> informations d’intérêt général, agenda, alertes et messages officiels.
-            </div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Infos mairie</li>
-              <li>Agenda</li>
-              <li>Alertes circulation</li>
-              <li>Messages officiels</li>
-            </ul>
+    <div class="box">
+      <strong>Cadre :</strong> la mairie peut diffuser des messages d’intérêt général gratuits, et des messages promotionnels payants au même tarif que les commerçants pour garantir l’équité.
+    </div>
 
-            <div class="box" style="margin-top:12px;">
-              <div style="font-weight:900;">Message bandeau mairie (démo)</div>
-              <div class="muted" style="margin-top:6px;">
-                Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.
-              </div>
+    <div style="font-weight:900;margin-top:10px;">Messages gratuits d’intérêt général</div>
+    <div class="box">
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Urgence, tempête, vigilance météo</li>
+        <li>Rue barrée / déviation</li>
+        <li>Risque de gel / température dangereuse</li>
+        <li>Information de sécurité publique</li>
+      </ul>
+      <div class="muted" style="margin-top:8px;">
+        Ces messages restent gratuits pour la mairie.
+      </div>
+    </div>
 
-              <div style="margin-top:10px;font-weight:900;">Message</div>
-              <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
+    <div style="font-weight:900;margin-top:10px;">Messages payants mairie</div>
+    <div class="box">
+      <div class="muted">
+        Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.
+      </div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>1 publicité : 50 €</li>
+        <li>5 publicités : 200 €</li>
+      </ul>
+      <div class="muted" style="margin-top:8px;">
+        Même prix que les commerçants pour éviter la jalousie et montrer l’exemple.
+      </div>
+    </div>
 
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="mairieMsgSave" type="button">💾 Enregistrer</button>
-                <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">🧹 Réinitialiser</button>
-              </div>
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Message bandeau mairie (démo)</div>
+      <div class="muted" style="margin-top:6px;">
+        Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.
+      </div>
 
-              <div class="muted" style="margin-top:10px;">
-                (Démo) Enregistrement local sur ce téléphone.
-              </div>
-            </div>
-          `);
+      <div style="margin-top:10px;font-weight:900;">Message</div>
+      <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
 
-          setTimeout(()=>{
-            const input = document.getElementById("mairieMsgInput");
-            const saveBtn = document.getElementById("mairieMsgSave");
-            const resetBtn = document.getElementById("mairieMsgReset");
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="mairieMsgSave" type="button">💾 Enregistrer</button>
+        <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">🧹 Réinitialiser</button>
+      </div>
 
-            const db = mairieLoad();
-            if(input){
-              input.value = (db.message && String(db.message).trim())
-                ? String(db.message).trim()
-                : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-            }
+      <div class="muted" style="margin-top:10px;">
+        (Démo) Enregistrement local sur ce téléphone.
+      </div>
+    </div>
 
-            if(saveBtn) saveBtn.onclick = ()=>{
-              const msg = input ? String(input.value || "").trim() : "";
-              if(!msg){
-                alert("Saisis un message mairie.");
-                return;
-              }
-              const next = mairieLoad();
-              next.message = msg;
-              next.ts_fr = new Date().toLocaleString("fr-FR");
-              mairieSave(next);
-              renderMairieTicker();
-              alert("Message mairie enregistré (démo).");
-            };
+    <div style="font-weight:900;margin-top:14px;">Échange école → mairie (scan / brûlage)</div>
+    <div class="box">
+      <div class="muted">
+        La mairie peut scanner les bocitecoins école au moment de l’échange et les brûler automatiquement.
+        Le compteur école revient alors à zéro après remise du cadeau ou de la surprise.
+      </div>
 
-            if(resetBtn) resetBtn.onclick = ()=>{
-              if(confirm("Réinitialiser le message mairie (démo) sur ce téléphone ?")){
-                mairieSave({});
-                renderMairieTicker();
-                if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-                alert("Message mairie réinitialisé (démo).");
-              }
-            };
-          },0);
-          return;
-        }
+      <div style="margin-top:10px;font-weight:900;">Wallet école détecté</div>
+      <div class="box" style="background:var(--bg);">
+        Solde école actuel : <strong id="mairieSchoolWalletBalance">0</strong> bocitecoin(s) JAUNES
+      </div>
 
-        if(key==="commerces"){
-          openModal("Commerces", `
-            <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
+      <div style="margin-top:10px;font-weight:900;">Type de surprise choisie par la mairie</div>
+      <select class="miniField" id="mairieSchoolGiftType">
+        <option value="materiel-scolaire">Matériel scolaire</option>
+        <option value="extra-scolaire">Surprise extra-scolaire</option>
+      </select>
 
-            <div class="box">
-              <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.
-              Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
-            </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="mairieSchoolScanBtn" type="button">Scanner wallet école</button>
+        <button class="choiceBtn" id="mairieSchoolBurnBtn" type="button">Brûler les bocitecoins école</button>
+      </div>
 
-            <div class="coinShowcase">
-              <div class="coinFace coinFace--gold" aria-hidden="true">
-                <div class="coinStars coinStars--gold top">✦ ✦ ✦ ✦ ✦ ✦</div>
-                <div class="coinInner coinInner--gold">
-                  <div class="n">1</div>
-                  <div class="t">BoCitecoin</div>
-                </div>
-                <div class="coinStars coinStars--gold bottom">✦ ✦ ✦ ✦ ✦ ✦</div>
-              </div>
+      <div class="muted" style="margin-top:10px;">
+        Si l’école a décidé auparavant de donner tout ou partie de ses bocitecoins à une association depuis son onglet,
+        la mairie respecte cette décision lors de l’échange.
+      </div>
+    </div>
+  `);
 
-              <div class="coinStack" aria-hidden="true">
-                <div class="stackCoin stack1 stackCoin--gold"></div>
-                <div class="stackCoin stack2 stackCoin--gold"></div>
-                <div class="stackCoin stack3 stackCoin--gold"></div>
-              </div>
+  setTimeout(()=>{
+    const input = document.getElementById("mairieMsgInput");
+    const saveBtn = document.getElementById("mairieMsgSave");
+    const resetBtn = document.getElementById("mairieMsgReset");
 
-              <div class="walletBox">
-                <div class="walletTitle">Wallet client — BoCitecoins OR</div>
-                <div class="walletValue walletValue--gold" id="citizenCoinBalance">37</div>
-                <div class="walletSub">
-                  BoCitecoins disponibles pour échange ou utilisation selon les règles locales.
-                </div>
-              </div>
-            </div>
+    const db = mairieLoad();
+    if(input){
+      input.value = (db.message && String(db.message).trim())
+        ? String(db.message).trim()
+        : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+    }
 
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn" id="walletClientPlus10" type="button">+10</button>
-              <button class="choiceBtn" id="walletClientPlus50" type="button">+50</button>
-              <button class="choiceBtn" id="walletClientMinus10" type="button">-10</button>
-              <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser</button>
-            </div>
+    if(saveBtn) saveBtn.onclick = ()=>{
+      const msg = input ? String(input.value || "").trim() : "";
+      if(!msg){
+        alert("Saisis un message mairie.");
+        return;
+      }
+      const next = mairieLoad();
+      next.message = msg;
+      next.ts_fr = new Date().toLocaleString("fr-FR");
+      mairieSave(next);
+      renderMairieTicker();
+      alert("Message mairie enregistré (démo).");
+    };
 
-            <div style="font-weight:900;margin-top:12px;">Bocitecoins couleur OR</div>
-            <div class="box">
-              <strong>Clarification :</strong> “OR” = couleur / repère visuel dans l’application, sans valeur intrinsèque.
-              <div class="muted" style="margin-top:8px;">
-                Le solde visible du citoyen sert à motiver l’échange, le retour en commerce, et la consultation du compte.
-              </div>
-            </div>
+    if(resetBtn) resetBtn.onclick = ()=>{
+      if(confirm("Réinitialiser le message mairie (démo) sur ce téléphone ?")){
+        mairieSave({});
+        renderMairieTicker();
+        if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+        alert("Message mairie réinitialisé (démo).");
+      }
+    };
 
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Attribution : 1 bocitecoin couleur OR par tranche de 10 € d’achat</li>
-              <li>Seuil minimum : 10 €</li>
-              <li>Chaque +10 € = +1 bocitecoin couleur OR</li>
-            </ul>
+    const schoolLoad = (typeof loadSchoolWallet === "function")
+      ? loadSchoolWallet
+      : function(){
+          try{
+            const raw = localStorage.getItem("bociteart_school_wallet_v1");
+            return raw ? JSON.parse(raw) : { jaune: 0 };
+          }catch(e){
+            return { jaune: 0 };
+          }
+        };
 
-            <div style="font-weight:900;margin-top:12px;">Frais Bo’CitéArt (structure)</div>
-            <div class="box">
-              <strong>Règle :</strong> <strong>0,18 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés (traçabilité).
-              <div class="muted" style="margin-top:8px;">
-                Reversement automatique via PSP (ou solution équivalente),
-                avec journalisation et facture mensuelle récapitulative (selon contrat).
-              </div>
-              <div class="muted" style="margin-top:8px;">
-                Vue “suivi” ci-dessous : indicative, non comptable, non exploitable juridiquement.
-              </div>
-            </div>
+    const schoolSave = (typeof saveSchoolWallet === "function")
+      ? saveSchoolWallet
+      : function(obj){
+          try{
+            localStorage.setItem("bociteart_school_wallet_v1", JSON.stringify(obj));
+          }catch(e){}
+        };
 
-            <div style="font-weight:900;margin-top:12px;">Suivi mensuel (démo — indicatif)</div>
-            <div class="box"> 
-              <div class="muted">Saisis un montant d’achats du mois (ex : total caisse) pour voir l’estimation.</div>
+    const schoolBal = document.getElementById("mairieSchoolWalletBalance");
+    const schoolScanBtn = document.getElementById("mairieSchoolScanBtn");
+    const schoolBurnBtn = document.getElementById("mairieSchoolBurnBtn");
 
-              <div style="margin-top:10px;font-weight:900;">Montant achats (mois en cours)</div>
-              <input class="miniField" id="feeInputSales" type="number" min="0" step="0.01" placeholder="Ex : 1250.00" />
+    const refreshSchool = ()=>{
+      const w = schoolLoad();
+      if(schoolBal) schoolBal.textContent = Number(w.jaune || 0);
+    };
 
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="feeAddBtn" type="button">➕ Ajouter / mettre à jour</button>
-                <button class="choiceBtn" id="feeResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
-              </div>
+    refreshSchool();
 
-              <div class="box" style="margin-top:12px;background:var(--bg);">
-                <div style="font-weight:900;">Résumé (mois en cours)</div>
-                <div class="muted" style="margin-top:6px;">
-                  Achats saisis : <strong id="feeSalesOut">0,00 €</strong><br>
-                  Frais estimés Bo’CitéArt : <strong id="feeOut">0,00 €</strong><br>
-                  Règle : 0,18 € / tranche de 10 € (arrondi par tranches)
-                </div>
-              </div>
+    if(schoolScanBtn) schoolScanBtn.onclick = ()=>{
+      refreshSchool();
+      alert("Scan du wallet école simulé (démo).");
+    };
 
-              <div class="muted" style="margin-top:10px;">
-                (Démo) Données stockées localement sur ce téléphone.
-              </div>
-            </div>
+    if(schoolBurnBtn) schoolBurnBtn.onclick = ()=>{
+      const w = schoolLoad();
+      const total = Number(w.jaune || 0);
+      if(total <= 0){
+        alert("Aucun bocitecoin école à brûler.");
+        return;
+      }
+      if(confirm("Brûler les bocitecoins école et remettre le compteur à zéro ?")){
+        w.jaune = 0;
+        schoolSave(w);
+        refreshSchool();
+        alert("Bocitecoins école brûlés, compteur remis à zéro (démo).");
+      }
+    };
+  },0);
+  return;
+}
+       if(key==="commerces"){
+  openModal("Commerces", `
+    <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
 
-            <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
-              <li>Journée complète : grisée et non sélectionnable</li>
-              <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
-              <li>Option : texte en gras (+4€ TTC)</li>
-              <li>Possibilité d’URL selon conformité</li>
-            </ul>
-          `);
+    <div class="box">
+      <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.
+      Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
+    </div>
 
-          setTimeout(()=>{
-            if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
+    <div class="coinShowcase">
+      <div class="coinFace coinFace--gold" aria-hidden="true">
+        <div class="coinStars coinStars--gold top">✦ ✦ ✦ ✦ ✦ ✦</div>
+        <div class="coinInner coinInner--gold">
+          <div class="n">1</div>
+          <div class="t">BoCitecoin</div>
+        </div>
+        <div class="coinStars coinStars--gold bottom">✦ ✦ ✦ ✦ ✦ ✦</div>
+      </div>
 
-            const refresh = ()=>{
-              const wallet = loadCitizenWallet();
-              const bal = document.getElementById("citizenCoinBalance");
-              if(bal) bal.textContent = Number(wallet.or || 0);
-            };
+      <div class="coinStack" aria-hidden="true">
+        <div class="stackCoin stack1 stackCoin--gold"></div>
+        <div class="stackCoin stack2 stackCoin--gold"></div>
+        <div class="stackCoin stack3 stackCoin--gold"></div>
+      </div>
 
-            refresh();
+      <div class="walletBox">
+        <div class="walletTitle">Wallet client — BoCitecoins OR</div>
+        <div class="walletValue walletValue--gold" id="citizenCoinBalance">37</div>
+        <div class="walletSub">
+          BoCitecoins disponibles pour échange chez le commerçant selon les règles locales.
+        </div>
+      </div>
+    </div>
 
-            const p10 = document.getElementById("walletClientPlus10");
-            const p50 = document.getElementById("walletClientPlus50");
-            const m10 = document.getElementById("walletClientMinus10");
-            const rst = document.getElementById("walletClientReset");
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn" id="walletClientPlus10" type="button">+10</button>
+      <button class="choiceBtn" id="walletClientPlus50" type="button">+50</button>
+      <button class="choiceBtn" id="walletClientMinus10" type="button">-10</button>
+      <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser</button>
+    </div>
 
-            if(p10) p10.onclick = ()=>{
-              const w = loadCitizenWallet();
-              w.or = Number(w.or || 0) + 10;
-              saveCitizenWallet(w);
-              refresh();
-            };
-            if(p50) p50.onclick = ()=>{
-              const w = loadCitizenWallet();
-              w.or = Number(w.or || 0) + 50;
-              saveCitizenWallet(w);
-              refresh();
-            };
-            if(m10) m10.onclick = ()=>{
-              const w = loadCitizenWallet();
-              w.or = Math.max(0, Number(w.or || 0) - 10);
-              saveCitizenWallet(w);
-              refresh();
-            };
-            if(rst) rst.onclick = ()=>{
-              if(confirm("Réinitialiser le wallet Client (démo) sur ce téléphone ?")){
-                saveCitizenWallet({ or: 0 });
-                refresh();
-              }
-            };
+    <div style="font-weight:900;margin-top:14px;">Versement commerçant → client (démo)</div>
+    <div class="box">
+      <div class="muted">
+        Le commerçant saisit le montant d’achat, l’application calcule automatiquement le nombre de bocitecoins à verser,
+        puis le commerçant scanne le client pour créditer son wallet.
+      </div>
 
-            const xb = $("xBtn");
-            if(xb && xb.focus) xb.focus();
-          },0);
-          return;
-        }
-      };
+      <div style="margin-top:10px;font-weight:900;">Montant d’achat</div>
+      <input class="miniField" id="shopPurchaseAmount" type="number" min="0" step="0.01" placeholder="Ex : 47.00" />
+
+      <div style="margin-top:10px;font-weight:900;">Bocitecoins calculés</div>
+      <div class="box" style="background:var(--bg);">
+        <strong id="shopCoinsCalc">0</strong> bocitecoin(s) OR à verser
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="shopCalcBtn" type="button">Calculer</button>
+        <button class="choiceBtn" id="shopScanClientBtn" type="button">Scanner le client</button>
+        <button class="choiceBtn" id="shopCreditClientBtn" type="button">Créditer le wallet client</button>
+      </div>
+
+      <div class="muted" style="margin-top:10px;">
+        Règle actuelle : 1 bocitecoin OR par tranche complète de 10 € d’achat.
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Bocitecoins couleur OR</div>
+    <div class="box">
+      <strong>Clarification :</strong> “OR” = couleur / repère visuel dans l’application, sans valeur intrinsèque.
+      <div class="muted" style="margin-top:8px;">
+        Le solde visible du citoyen sert à motiver l’échange, le retour en commerce, et la consultation du compte.
+      </div>
+    </div>
+
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Attribution : 1 bocitecoin couleur OR par tranche de 10 € d’achat</li>
+      <li>Seuil minimum : 10 €</li>
+      <li>Chaque +10 € = +1 bocitecoin couleur OR</li>
+    </ul>
+
+    <div style="font-weight:900;margin-top:12px;">Frais Bo’CitéArt (structure)</div>
+    <div class="box">
+      <strong>Règle :</strong> <strong>0,18 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés (traçabilité).
+      <div class="muted" style="margin-top:8px;">
+        Reversement automatique via PSP (ou solution équivalente),
+        avec journalisation et facture mensuelle récapitulative (selon contrat).
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Vue “suivi” ci-dessous : indicative, non comptable, non exploitable juridiquement.
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Suivi mensuel (démo — indicatif)</div>
+    <div class="box"> 
+      <div class="muted">Saisis un montant d’achats du mois (ex : total caisse) pour voir l’estimation.</div>
+
+      <div style="margin-top:10px;font-weight:900;">Montant achats (mois en cours)</div>
+      <input class="miniField" id="feeInputSales" type="number" min="0" step="0.01" placeholder="Ex : 1250.00" />
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="feeAddBtn" type="button">➕ Ajouter / mettre à jour</button>
+        <button class="choiceBtn" id="feeResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+      </div>
+
+      <div class="box" style="margin-top:12px;background:var(--bg);">
+        <div style="font-weight:900;">Résumé (mois en cours)</div>
+        <div class="muted" style="margin-top:6px;">
+          Achats saisis : <strong id="feeSalesOut">0,00 €</strong><br>
+          Frais estimés Bo’CitéArt : <strong id="feeOut">0,00 €</strong><br>
+          Règle : 0,18 € / tranche de 10 € (arrondi par tranches)
+        </div>
+      </div>
+
+      <div class="muted" style="margin-top:10px;">
+        (Démo) Données stockées localement sur ce téléphone.
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
+      <li>Journée complète : grisée et non sélectionnable</li>
+      <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
+      <li>Option : texte en gras (+4€ TTC)</li>
+      <li>Possibilité d’URL selon conformité</li>
+    </ul>
+  `);
+
+  setTimeout(()=>{
+    if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
+
+    const refresh = ()=>{
+      const wallet = loadCitizenWallet();
+      const bal = document.getElementById("citizenCoinBalance");
+      if(bal) bal.textContent = Number(wallet.or || 0);
+    };
+
+    refresh();
+
+    const p10 = document.getElementById("walletClientPlus10");
+    const p50 = document.getElementById("walletClientPlus50");
+    const m10 = document.getElementById("walletClientMinus10");
+    const rst = document.getElementById("walletClientReset");
+
+    if(p10) p10.onclick = ()=>{
+      const w = loadCitizenWallet();
+      w.or = Number(w.or || 0) + 10;
+      saveCitizenWallet(w);
+      refresh();
+    };
+    if(p50) p50.onclick = ()=>{
+      const w = loadCitizenWallet();
+      w.or = Number(w.or || 0) + 50;
+      saveCitizenWallet(w);
+      refresh();
+    };
+    if(m10) m10.onclick = ()=>{
+      const w = loadCitizenWallet();
+      w.or = Math.max(0, Number(w.or || 0) - 10);
+      saveCitizenWallet(w);
+      refresh();
+    };
+    if(rst) rst.onclick = ()=>{
+      if(confirm("Réinitialiser le wallet Client (démo) sur ce téléphone ?")){
+        saveCitizenWallet({ or: 0 });
+        refresh();
+      }
+    };
+
+    const amountInput = document.getElementById("shopPurchaseAmount");
+    const calcOut = document.getElementById("shopCoinsCalc");
+    const calcBtn = document.getElementById("shopCalcBtn");
+    const scanBtn = document.getElementById("shopScanClientBtn");
+    const creditBtn = document.getElementById("shopCreditClientBtn");
+
+    let lastCalculatedCoins = 0;
+    let lastClientScanned = false;
+
+    const computeCoins = ()=>{
+      const amount = Number(amountInput ? amountInput.value : 0);
+      if(!Number.isFinite(amount) || amount < 0){
+        lastCalculatedCoins = 0;
+      } else {
+        lastCalculatedCoins = Math.floor(amount / 10);
+      }
+      if(calcOut) calcOut.textContent = String(lastCalculatedCoins);
+    };
+
+    if(calcBtn) calcBtn.onclick = ()=>{
+      computeCoins();
+      alert("Calcul effectué (démo).");
+    };
+
+    if(scanBtn) scanBtn.onclick = ()=>{
+      computeCoins();
+      lastClientScanned = true;
+      alert("Scan client simulé (démo).");
+    };
+
+    if(creditBtn) creditBtn.onclick = ()=>{
+      computeCoins();
+      if(!lastClientScanned){
+        alert("Scanne d’abord le client.");
+        return;
+      }
+      if(lastCalculatedCoins <= 0){
+        alert("Aucun bocitecoin à verser pour ce montant.");
+        return;
+      }
+      const w = loadCitizenWallet();
+      w.or = Number(w.or || 0) + lastCalculatedCoins;
+      saveCitizenWallet(w);
+      refresh();
+      lastClientScanned = false;
+      alert(lastCalculatedCoins + " bocitecoin(s) OR versé(s) au client (démo).");
+    };
+
+    const xb = $("xBtn");
+    if(xb && xb.focus) xb.focus();
+  },0);
+  return;
+}
 
       // ======================================================
       // ✅ Admin tile (démo)
