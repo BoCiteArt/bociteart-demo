@@ -1056,9 +1056,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       setTicker(0);
       setInterval(()=>{ tickerIdx = (tickerIdx+1) % tickerItems.length; setTicker(tickerIdx); }, 10000);
 
-      const modal = document.getElementById("modal");
-      const modalTitle = document.getElementById("modalTitle");
-      const modalBody = document.getElementById("modalBody");
       const closeModal = () => {
         modal.classList.remove("open");
         lockScroll(false);
