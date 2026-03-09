@@ -2588,113 +2588,136 @@ document.querySelectorAll("[data-open]").forEach(el=>{
       },0);
     }
 
-   if(key==="mairie"){
-  const db = mairieLoad();
-  const urgence = db.urgence || "";
-  const info = db.info || "";
-  const pub = db.pub || "";
-  const bandeau = db.message || "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-
-  openModal("Mairie", `
-    <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
-
-    <div class="box">
-      <strong>Accès citoyen gratuit :</strong> messages d’intérêt général, travaux, circulation, sécurité, alertes, agenda.
-    </div>
-
-    <div class="box">
-      <div style="font-weight:900;">Message actuellement diffusé sur la tuile mairie</div>
-      <div class="muted" style="margin-top:6px;">Ce texte alimente le petit bandeau rouge défilant visible directement sur la tuile.</div>
-      <div style="margin-top:8px;background:var(--bg);padding:10px;border-radius:12px;font-weight:800;">
-        ${escapeHtml(bandeau)}
-      </div>
-    </div>
-
-    <div style="font-weight:900;margin-top:12px;">Urgence / alerte</div>
-    <textarea class="miniField" id="mairieUrgenceInput" rows="3" placeholder="Ex : Rue Émile Zola fermée du 3 au 8 avril">${escapeHtml(urgence)}</textarea>
-
-    <div style="font-weight:900;margin-top:12px;">Information mairie</div>
-    <textarea class="miniField" id="mairieInfoInput" rows="4" placeholder="Ex : réunion publique, collecte, agenda">${escapeHtml(info)}</textarea>
-
-    <div style="font-weight:900;margin-top:12px;">Publicité / annonce mairie</div>
-    <textarea class="miniField" id="mairiePubInput" rows="3" placeholder="Ex : Forum des associations samedi 14h-18h">${escapeHtml(pub)}</textarea>
-
-    <div style="font-weight:900;margin-top:12px;">Texte du bandeau défilant sur la tuile mairie</div>
-    <textarea class="miniField" id="mairieBandInput" rows="3" placeholder="Texte affiché directement sur la tuile mairie">${escapeHtml(bandeau)}</textarea>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-      <button class="choiceBtn" id="mairiePreviewBtn" type="button">👁️ Aperçu bandeau</button>
-      <button class="choiceBtn" id="mairieSaveBtn" type="button">💾 Enregistrer</button>
-      <button class="choiceBtn" id="mairieResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser</button>
-    </div>
-
-       <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;">Fonctions prévues</div>
-      <ul style="margin:8px 0 0 18px;font-weight:800;">
-        <li>Infos & alertes d’urgence : gratuit</li>
-        <li>Travaux / circulation / sécurité : gratuit</li>
-        <li>Agenda / calendrier vivant : selon publication</li>
-        <li>Annonces publiques visibles rapidement : payant</li>
-        <li>Tarif annonce mairie / institution : 50 € la publicité</li>
-        <li>Pack 5 publicités : 200 €</li>
-        <li>Bandeau défilant sur la tuile mairie</li>
-      </ul>
-    </div>
-
-    <div class="muted" style="margin-top:10px;">
-      (Démo) Enregistrement local sur ce téléphone. En LIVE : compte mairie / référent + droits d’accès.
-    </div>
-  `);
-
-  setTimeout(()=>{
-    const urgenceInput = document.getElementById("mairieUrgenceInput");
-    const infoInput = document.getElementById("mairieInfoInput");
-    const pubInput = document.getElementById("mairiePubInput");
-    const bandInput = document.getElementById("mairieBandInput");
-
-    const btnPreview = document.getElementById("mairiePreviewBtn");
-    const btnSave = document.getElementById("mairieSaveBtn");
-    const btnReset = document.getElementById("mairieResetBtn");
-
-    if(btnPreview){
-      btnPreview.onclick = ()=>{
-        const txt = bandInput ? bandInput.value.trim() : "";
-        alert(txt || "Aucun texte saisi pour le bandeau.");
-      };
-    }
-
-    if(btnSave){
-      btnSave.onclick = ()=>{
-        const nextDb = {
-          urgence: urgenceInput ? urgenceInput.value.trim() : "",
-          info: infoInput ? infoInput.value.trim() : "",
-          pub: pubInput ? pubInput.value.trim() : "",
-          message: bandInput ? bandInput.value.trim() : ""
-        };
-
-        mairieSave(nextDb);
-        renderMairieTicker();
-        alert("Mairie enregistrée (démo).");
-      };
-    }
-
-    if(btnReset){
-      btnReset.onclick = ()=>{
-        if(confirm("Réinitialiser les données mairie (démo) sur ce téléphone ?")){
-          localStorage.removeItem(MAIRIE_STORE_KEY);
-          renderMairieTicker();
-          closeModal();
-          setTimeout(()=>{
-            if(typeof window.__bociteartOpenByKey === "function"){
-              window.__bociteartOpenByKey("mairie");
-            }
-          }, 50);
-        }
-      };
-    }
-  },0);
+   /* =========================
+   BoCitecoin OR + solde citoyen
+   ========================= */
+.coinShowcase{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  margin-top:12px;
+  flex-wrap:wrap;
 }
-    // ===========================
+
+.coinFace{
+  position:relative;
+  width:96px;
+  height:96px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 30%, #fff6bf 0%, #f7d96b 22%, #d9a514 58%, #b78105 78%, #8f6500 100%);
+  border:4px solid #c69209;
+  box-shadow:
+    inset 0 2px 8px rgba(255,255,255,.45),
+    inset 0 -5px 10px rgba(0,0,0,.18),
+    0 6px 14px rgba(0,0,0,.14);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.coinFace::before{
+  content:"";
+  position:absolute;
+  inset:8px;
+  border-radius:50%;
+  border:2px dashed rgba(255,245,190,.95);
+}
+
+.coinFace::after{
+  content:"✦ ✦ ✦ ✦ ✦ ✦";
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding-top:8px;
+  font-size:10px;
+  color:#fff7c7;
+  letter-spacing:2px;
+  opacity:.9;
+}
+
+.coinInner{
+  position:relative;
+  width:66px;
+  height:66px;
+  border-radius:50%;
+  border:2px solid rgba(255,248,210,.9);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#6b4b00;
+  font-weight:900;
+  z-index:1;
+  background:rgba(255,255,255,.12);
+}
+
+.coinInner .n{
+  font-size:24px;
+  line-height:1;
+}
+
+.coinInner .t{
+  font-size:8px;
+  line-height:1.05;
+  margin-top:4px;
+}
+
+.coinStack{
+  position:relative;
+  width:80px;
+  height:62px;
+  flex:0 0 auto;
+}
+
+.stackCoin{
+  position:absolute;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 30%, #fff6bf 0%, #f7d96b 22%, #d9a514 58%, #b78105 78%, #8f6500 100%);
+  border:3px solid #c69209;
+  box-shadow:0 4px 10px rgba(0,0,0,.16);
+}
+
+.stack1{ left:0; bottom:0; }
+.stack2{ left:18px; bottom:8px; }
+.stack3{ left:36px; bottom:16px; }
+
+.walletBox{
+  flex:1;
+  min-width:190px;
+  border:2px solid rgba(0,0,0,.08);
+  background:#fff;
+  border-radius:16px;
+  padding:12px;
+}
+
+.walletTitle{
+  font-weight:900;
+  font-size:14px;
+  margin-bottom:6px;
+}
+
+.walletValue{
+  font-weight:900;
+  font-size:24px;
+  color:#9a7000;
+  line-height:1;
+}
+
+.walletSub{
+  margin-top:6px;
+  font-weight:800;
+  font-size:12px;
+  color:var(--muted);
+}
+   // ===========================
 // COMMERCES
 // ===========================
     
@@ -2707,9 +2730,35 @@ document.querySelectorAll("[data-open]").forEach(el=>{
       Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
     </div>
 
-    <div style="font-weight:900;margin-top:10px;">Bocitecoins couleur OR</div>
+    <div class="coinShowcase">
+      <div class="coinFace" aria-hidden="true">
+        <div class="coinInner">
+          <div class="n">1</div>
+          <div class="t">BoCitecoin</div>
+        </div>
+      </div>
+
+      <div class="coinStack" aria-hidden="true">
+        <div class="stackCoin stack1"></div>
+        <div class="stackCoin stack2"></div>
+        <div class="stackCoin stack3"></div>
+      </div>
+
+      <div class="walletBox">
+        <div class="walletTitle">Solde citoyen BoCitecoins OR</div>
+        <div class="walletValue" id="citizenCoinBalance">37</div>
+        <div class="walletSub">
+          BoCitecoins disponibles pour échange ou utilisation selon les règles locales.
+        </div>
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Bocitecoins couleur OR</div>
     <div class="box">
       <strong>Clarification :</strong> “OR” = couleur / repère visuel dans l’application, sans valeur intrinsèque.
+      <div class="muted" style="margin-top:8px;">
+        Le solde visible du citoyen sert à motiver l’échange, le retour en commerce, et la consultation du compte.
+      </div>
     </div>
 
     <ul style="margin:8px 0 0 18px;font-weight:800;">
@@ -2729,6 +2778,7 @@ document.querySelectorAll("[data-open]").forEach(el=>{
         Vue “suivi” ci-dessous : indicative, non comptable, non exploitable juridiquement.
       </div>
     </div>
+
     <div style="font-weight:900;margin-top:12px;">Suivi mensuel (démo — indicatif)</div>
     <div class="box"> 
       <div class="muted">Saisis un montant d’achats du mois (ex : total caisse) pour voir l’estimation.</div>
@@ -2767,6 +2817,13 @@ document.querySelectorAll("[data-open]").forEach(el=>{
 
       setTimeout(()=>{
         if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
+
+        const wallet = loadCitizenWallet();
+        const bal = document.getElementById("citizenCoinBalance");
+        if(bal){
+          bal.textContent = Number(wallet.or || 0);
+        }
+
         const xb = $("xBtn");
         if(xb && xb.focus) xb.focus();
       },0);
