@@ -436,26 +436,67 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   border:4px solid #2f5d46;
 }
 
-.coinStars{
+.coinStarsRing{
   position:absolute;
-  left:50%;
-  width:100%;
-  text-align:center;
-  font-size:9px;
-  letter-spacing:1.3px;
-  font-weight:900;
-  z-index:1;
-  transform:translateX(-50%);
+  inset:10px;
+  border-radius:50%;
   pointer-events:none;
+  z-index:1;
 }
 
-.coinStars.top{ top:8px; }
-.coinStars.bottom{ bottom:8px; }
+.coinStarsRing span{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:12px;
+  height:12px;
+  margin-left:-6px;
+  margin-top:-6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  line-height:1;
+  font-weight:900;
+  transform-origin:0 0;
+}
 
-.coinStarsGold{ color:#fff7c8; }
-.coinStarsYellow{ color:#fffbe2; }
-.coinStarsGreen{ color:#e9fff3; }
+.coinStarsGold span{ color:#fff7c8; }
+.coinStarsYellow span{ color:#fffbe2; }
+.coinStarsGreen span{ color:#e9fff3; }
 
+.coinStarsRing span:nth-child(1){ transform:rotate(0deg) translateY(-34px) rotate(0deg); }
+.coinStarsRing span:nth-child(2){ transform:rotate(30deg) translateY(-34px) rotate(-30deg); }
+.coinStarsRing span:nth-child(3){ transform:rotate(60deg) translateY(-34px) rotate(-60deg); }
+.coinStarsRing span:nth-child(4){ transform:rotate(90deg) translateY(-34px) rotate(-90deg); }
+.coinStarsRing span:nth-child(5){ transform:rotate(120deg) translateY(-34px) rotate(-120deg); }
+.coinStarsRing span:nth-child(6){ transform:rotate(150deg) translateY(-34px) rotate(-150deg); }
+.coinStarsRing span:nth-child(7){ transform:rotate(180deg) translateY(-34px) rotate(-180deg); }
+.coinStarsRing span:nth-child(8){ transform:rotate(210deg) translateY(-34px) rotate(-210deg); }
+.coinStarsRing span:nth-child(9){ transform:rotate(240deg) translateY(-34px) rotate(-240deg); }
+.coinStarsRing span:nth-child(10){ transform:rotate(270deg) translateY(-34px) rotate(-270deg); }
+.coinStarsRing span:nth-child(11){ transform:rotate(300deg) translateY(-34px) rotate(-300deg); }
+.coinStarsRing span:nth-child(12){ transform:rotate(330deg) translateY(-34px) rotate(-330deg); }
+
+.stackCoin::before{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border-radius:50%;
+  border:1.5px solid rgba(255,248,210,.78);
+}
+
+.stackCoin::after{
+  content:"✦";
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  font-size:9px;
+  font-weight:900;
+  color:rgba(255,248,210,.92);
+  text-shadow:0 0 4px rgba(255,255,255,.25);
+}
 .coinInner{
   position:relative;
   width:66px;
@@ -1465,14 +1506,19 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
               </div>
 
           <div class="coinShowcase">
-  <div class="coinFace coinYellow" aria-hidden="true">
-    <div class="coinStars coinStarsYellow top">✦ ✦ ✦ ✦ ✦ ✦</div>
-    <div class="coinInner coinInnerYellow">
-      <div class="n">1</div>
-      <div class="t">BoCitecoin</div>
-    </div>
-    <div class="coinStars coinStarsYellow bottom">✦ ✦ ✦ ✦ ✦ ✦</div>
+ <div class="coinFace coinYellow" aria-hidden="true">
+  <div class="coinStars coinStarsYellow top">✦ ✦ ✦ ✦ ✦ ✦</div>
+  <div class="coinInner coinInnerYellow">
+    <div class="n">1</div>
+    <div class="t">BoCitecoin</div>
   </div>
+  <div class="coinStars coinStarsYellow bottom">✦ ✦ ✦ ✦ ✦ ✦</div>
+</div> 
+  <div class="coinInner coinInnerYellow">
+    <div class="n">1</div>
+    <div class="t">BoCitecoin</div>
+  </div>
+</div>
 
   <div class="coinStack" aria-hidden="true">
     <div class="stackCoin stackYellow stack1"></div>
@@ -1677,12 +1723,17 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
 
     <div class="coinShowcase">
-      <div class="coinFace coinGreen" aria-hidden="true">
-        <div class="coinStars coinStarsGreen top">✦ ✦ ✦ ✦ ✦ ✦</div>
-        <div class="coinInner coinInnerGreen">
-          <div class="n">1</div>
-          <div class="t">BoCitecoin</div>
-        </div>
+     <div class="coinFace coinGreen" aria-hidden="true">
+  <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
+    <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
+    <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
+    <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
+  </div>
+  <div class="coinInner coinInnerGreen">
+    <div class="n">1</div>
+    <div class="t">BoCitecoin</div>
+  </div>
+</div>
         <div class="coinStars coinStarsGreen bottom">✦ ✦ ✦ ✦ ✦ ✦</div>
       </div>
       <div class="coinStack" aria-hidden="true">
@@ -1953,11 +2004,16 @@ if(key==="mairie"){
 
     <div class="coinShowcase">
       <div class="coinFace coinGold" aria-hidden="true">
-        <div class="coinStars coinStarsGold top">✦ ✦ ✦ ✦ ✦ ✦</div>
-        <div class="coinInner coinInnerGold">
-          <div class="n">1</div>
-          <div class="t">BoCitecoin</div>
-        </div>
+  <div class="coinStarsRing coinStarsGold" aria-hidden="true">
+    <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
+    <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
+    <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
+  </div>
+  <div class="coinInner coinInnerGold">
+    <div class="n">1</div>
+    <div class="t">BoCitecoin</div>
+  </div>
+</div>
         <div class="coinStars coinStarsGold bottom">✦ ✦ ✦ ✦ ✦ ✦</div>
       </div>
 
