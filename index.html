@@ -2,12 +2,31 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+
+  <!-- Sécurité ajoutée -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="geolocation=(self)">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' https: data:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com;">
+  <meta http-equiv="Content-Security-Policy"
+ content="
+default-src 'self';
+base-uri 'self';
+object-src 'none';
+frame-ancestors 'self';
+form-action 'self';
+upgrade-insecure-requests;
+
+img-src 'self' https: data:;
+script-src 'self' 'unsafe-inline';
+style-src 'self' 'unsafe-inline';
+font-src 'self' https: data:;
+connect-src 'self' https:;
+frame-src https://www.youtube.com https://www.youtube-nocookie.com;
+">
+
+  <!-- IMPORTANT: viewport + stabilité mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <title>Bo’CitéArt – Démo corrigée</title>
+  <title>Bo’CitéArt – Démo</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#a51e22">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -24,25 +43,25 @@
       --text:#1f1f1f;
       --muted:#6e6a63;
       --link:#1d4ed8;
-      --vh:1vh;
+      --vh: 1vh;
     }
 
     *{ box-sizing:border-box; }
-    html,body{ height:100%; margin:0; padding:0; }
+    html, body{ height:100%; margin:0; padding:0; }
     body{
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:var(--bg);
       color:var(--text);
-      -webkit-text-size-adjust:100%;
-      text-size-adjust:100%;
-      overscroll-behavior:none;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      overscroll-behavior: none;
     }
     body.modalOpen{ overflow:hidden; }
 
     .page{
-      min-height:calc(var(--vh) * 100);
-      min-height:100vh;
-      min-height:100dvh;
+      min-height: calc(var(--vh) * 100);
+      min-height: 100vh;
+      min-height: 100dvh;
       display:flex;
       justify-content:center;
       align-items:flex-start;
@@ -80,8 +99,8 @@
       display:flex;
       gap:38px;
       white-space:nowrap;
-      animation:marquee 20s linear infinite;
-      will-change:transform;
+      animation: marquee 20s linear infinite;
+      will-change: transform;
     }
     .marquee .item{ display:flex; flex-direction:column; min-width:360px; }
     .ticker .title{ color:#fff; font-weight:800; font-size:14px; }
@@ -100,7 +119,7 @@
       border:2px solid #fff;
       box-shadow:0 0 0 2px rgba(0,0,0,.08);
       z-index:3;
-      animation:badgePulse 1.2s infinite;
+      animation: badgePulse 1.2s infinite;
     }
     @keyframes badgePulse{ 0%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.18); opacity:.75; } 100%{ transform:scale(1); opacity:1; } }
     .gridWrap{ position:relative; }
@@ -185,8 +204,8 @@
       gap:48px;
       white-space:nowrap;
       padding-left:14px;
-      animation:sportTape 80s linear infinite;
-      will-change:transform;
+      animation: sportTape 80s linear infinite;
+      will-change: transform;
     }
     .sportTapeItem{ display:flex; align-items:center; gap:8px; font-weight:400 !important; }
     .sportTapeItem.bold{ font-weight:900 !important; }
@@ -222,7 +241,7 @@
       align-items:center;
       white-space:nowrap;
       padding-left:100%;
-      animation:mairieTickerMove 24s linear infinite;
+      animation: mairieTickerMove 24s linear infinite;
       color:#fff;
       font-size:10px;
       font-weight:900;
@@ -252,9 +271,9 @@
       justify-content:space-between;
       gap:10px;
       padding-bottom:10px;
-      padding-bottom:max(10px, env(safe-area-inset-bottom));
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
     }
-    .footerRight{ display:flex; gap:10px; flex-wrap:nowrap; align-items:center; min-width:0; }
+    .footerRight{ display:flex; gap:10px; flex-wrap: nowrap; align-items:center; min-width:0; }
     .footerRight .legalBtn{ flex:1; min-width:0; padding:9px 8px; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .siteLink{ font-size:14px; font-weight:800; color:var(--link); text-decoration:none; }
     .iconBtn{
@@ -309,7 +328,7 @@
       padding:14px;
       font-size:14px;
       color:var(--text);
-      max-height:min(72vh, 520px);
+      max-height: min(72vh, 520px);
       overflow:auto;
     }
     .xbtn{
@@ -328,17 +347,48 @@
     .tab{ border:2px solid rgba(0,0,0,.10); background:#fff; border-radius:12px; padding:8px 10px; font-weight:900; cursor:pointer; }
     .tab.active{ background:var(--beige); }
     .doc h2{ margin:12px 0 6px; font-size:15px; }
+    .doc h3{ margin:10px 0 6px; font-size:14px; }
     .doc p{ margin:6px 0; font-weight:700; }
     .doc ul{ margin:6px 0 0 18px; font-weight:800; }
-    .doc .box, .box{ border:2px solid rgba(0,0,0,.08); background:#fff; border-radius:14px; padding:10px; font-weight:800; margin:10px 0; }
+    .doc .box{ border:2px solid rgba(0,0,0,.08); background:#fff; border-radius:14px; padding:10px; font-weight:800; margin:10px 0; }
+    .pillRow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .pill{ display:inline-flex; align-items:center; gap:6px; background:#fff; border:2px solid rgba(0,0,0,.08); border-radius:999px; padding:7px 10px; font-weight:900; font-size:12px; }
+
+    .calWrap{ border:2px solid rgba(0,0,0,.08); background:#fff; border-radius:14px; padding:10px; margin:10px 0; }
+    .calTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; font-weight:900; }
+    .calTop .mini{ display:flex; gap:8px; align-items:center; }
+    .calBtn{ border:2px solid rgba(0,0,0,.10); background:var(--beige); border-radius:12px; padding:8px 10px; font-weight:900; cursor:pointer; white-space:nowrap; }
+    .calGrid{ display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; margin-top:8px; }
+    .calDay{ border:2px solid rgba(0,0,0,.08); background:var(--bg); border-radius:12px; padding:6px 6px; cursor:pointer; min-height:44px; display:flex; flex-direction:column; justify-content:space-between; }
+    .calDay.disabled{ opacity:.45; cursor:not-allowed; }
+    .calDay.full{ background:#e7e0d5; cursor:not-allowed; }
+    .calDay .d{ font-weight:900; font-size:12px; line-height:1; }
+    .calDay .s{ font-weight:900; font-size:11px; color:var(--muted); margin-top:6px; }
+    .calLegend{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; font-weight:900; font-size:12px; }
+    .tag{ display:inline-flex; align-items:center; gap:6px; border:2px solid rgba(0,0,0,.08); background:#fff; border-radius:999px; padding:6px 10px; }
+    .dot{ width:10px; height:10px; border-radius:999px; background:#111; display:inline-block; }
+
+    .updates{ border:2px solid rgba(0,0,0,.08); background:#fff; border-radius:18px; padding:12px; box-shadow:0 6px 14px rgba(0,0,0,.06); }
+    .updatesTitle{ font-weight:900; font-size:15px; margin-bottom:6px; }
+    .updatesSub{ color:var(--muted); font-weight:800; font-size:12px; margin-bottom:10px; }
+    .updatesGrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .uCard{ background:var(--bg); border:2px solid rgba(0,0,0,.08); border-radius:14px; padding:10px; }
+    .uCard .h{ font-weight:900; font-size:13px; margin-bottom:6px; }
+    .uCard .txt{ font-weight:800; font-size:12px; color:var(--text); line-height:1.25; }
+    .uActions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .uMiniBtn{ border:2px solid rgba(0,0,0,.10); background:var(--beige); border-radius:12px; padding:8px 10px; font-weight:900; cursor:pointer; font-size:12px; }
+    .uLine{ margin-top:10px; border:2px solid rgba(0,0,0,.08); background:var(--beige); border-radius:14px; padding:10px; font-weight:800; font-size:12px; }
     .miniField{ width:100%; border:2px solid rgba(0,0,0,.10); border-radius:12px; padding:10px 10px; font-weight:800; background:#fff; outline:none; }
     .miniCheck{ display:flex; gap:10px; align-items:flex-start; font-weight:900; margin-top:10px; }
     .miniCheck input{ transform:scale(1.15); margin-top:2px; }
+
+    .legalBtn{ font-size:10px; line-height:1.05; padding:6px 6px; height:42px; display:flex; align-items:center; justify-content:center; text-align:center; white-space:normal; word-break:break-word; overflow:hidden; box-sizing:border-box; }
     .legalStack{ flex-direction:column; gap:1px; }
     .legalStack span{ display:block; font-size:9px; line-height:1.05; text-align:center; }
     #legal .tabs{ display:flex; justify-content:center; gap:8px; }
     #legal .tab{ display:flex; align-items:center; justify-content:center; min-width:70px; padding:8px 10px; text-align:center; white-space:nowrap; }
 
+    /* Wallets / bocitecoins */
     .coinShowcase{
       display:flex;
       gap:12px;
@@ -355,8 +405,10 @@
       align-items:center;
       justify-content:center;
       overflow:hidden;
-      box-shadow:inset 0 2px 8px rgba(255,255,255,.45), inset 0 -5px 10px rgba(0,0,0,.18), 0 6px 14px rgba(0,0,0,.14);
-      flex:0 0 auto;
+      box-shadow:
+        inset 0 2px 8px rgba(255,255,255,.45),
+        inset 0 -5px 10px rgba(0,0,0,.18),
+        0 6px 14px rgba(0,0,0,.14);
     }
     .coinFace::before{
       content:"";
@@ -364,7 +416,6 @@
       inset:8px;
       border-radius:50%;
       border:2px solid rgba(255,248,210,.92);
-      z-index:2;
     }
     .coinGold{
       background:radial-gradient(circle at 30% 30%, #fff8cc 0%, #f6de74 22%, #d6a20f 56%, #b27c00 78%, #8b5f00 100%);
@@ -385,25 +436,52 @@
       pointer-events:none;
       z-index:1;
     }
-    .coinStarsRing span{
+    .coinStarsRing::before{
+      content:"✦";
       position:absolute;
       left:50%;
       top:50%;
-      width:10px;
-      height:10px;
-      margin-left:-5px;
-      margin-top:-5px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:8px;
-      font-weight:900;
+      margin-left:-4px;
+      margin-top:-4px;
+      font-size:9px;
       line-height:1;
-      transform-origin:0 0;
+      font-weight:900;
+      text-shadow:
+        0 -34px 0 currentColor,
+        17px -29px 0 currentColor,
+        29px -17px 0 currentColor,
+        34px 0 0 currentColor,
+        29px 17px 0 currentColor,
+        17px 29px 0 currentColor,
+        0 34px 0 currentColor,
+        -17px 29px 0 currentColor,
+        -29px 17px 0 currentColor,
+        -34px 0 0 currentColor,
+        -29px -17px 0 currentColor,
+        -17px -29px 0 currentColor;
     }
-    .coinStarsGold span{ color:#fff7c8; }
-    .coinStarsYellow span{ color:#fffbe2; }
-    .coinStarsGreen span{ color:#e9fff3; }
+    .coinStarsGold::before{ color:#fff7c8; }
+    .coinStarsYellow::before{ color:#fffbe2; }
+    .coinStarsGreen::before{ color:#e9fff3; }
+
+    .stackCoin::before{
+      content:"";
+      position:absolute;
+      inset:5px;
+      border-radius:50%;
+      border:1.5px solid rgba(255,248,210,.78);
+    }
+    .stackCoin::after{
+      content:"✦";
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      font-size:9px;
+      font-weight:900;
+      color:rgba(255,248,210,.92);
+      text-shadow:0 0 4px rgba(255,255,255,.25);
+    }
     .coinInner{
       position:relative;
       width:66px;
@@ -416,54 +494,46 @@
       justify-content:center;
       text-align:center;
       font-weight:900;
-      z-index:3;
+      z-index:2;
       background:rgba(255,255,255,.12);
       padding:4px;
       box-shadow:inset 0 1px 4px rgba(255,255,255,.25);
     }
     .coinInner .n{ font-size:22px; line-height:1; }
     .coinInner .t{ font-size:8px; line-height:1.05; margin-top:4px; }
+
     .coinInnerGold{ color:#6b4b00; }
     .coinInnerYellow{ color:#765d00; }
     .coinInnerGreen{ color:#f1fff8; }
 
     .coinStack{
       position:relative;
-      width:88px;
+      width:84px;
       height:64px;
       flex:0 0 auto;
     }
+
     .stackCoin{
       position:absolute;
       width:44px;
       height:44px;
       border-radius:50%;
-      box-shadow:inset 0 1px 4px rgba(255,255,255,.20), 0 4px 10px rgba(0,0,0,.16);
-      overflow:hidden;
+      box-shadow:
+        inset 0 1px 4px rgba(255,255,255,.20),
+        0 4px 10px rgba(0,0,0,.16);
     }
-    .stackCoin::before{
-      content:"";
-      position:absolute;
-      inset:5px;
-      border-radius:50%;
-      border:1.5px solid rgba(255,248,210,.78);
-      z-index:1;
+    .stackGold{
+      background:radial-gradient(circle at 30% 30%, #fff8cc 0%, #f6de74 22%, #d6a20f 56%, #b27c00 78%, #8b5f00 100%);
+      border:3px solid #c89400;
     }
-    .stackCoin::after{
-      content:"✦";
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform:translate(-50%,-50%);
-      font-size:9px;
-      font-weight:900;
-      color:rgba(255,248,210,.92);
-      text-shadow:0 0 4px rgba(255,255,255,.25);
-      z-index:2;
+    .stackYellow{
+      background:radial-gradient(circle at 30% 30%, #fffcd8 0%, #fff08a 24%, #e4c81c 58%, #b79b00 80%, #8f7800 100%);
+      border:3px solid #ccb300;
     }
-    .stackGold{ background:radial-gradient(circle at 30% 30%, #fff8cc 0%, #f6de74 22%, #d6a20f 56%, #b27c00 78%, #8b5f00 100%); border:3px solid #c89400; }
-    .stackYellow{ background:radial-gradient(circle at 30% 30%, #fffcd8 0%, #fff08a 24%, #e4c81c 58%, #b79b00 80%, #8f7800 100%); border:3px solid #ccb300; }
-    .stackGreen{ background:radial-gradient(circle at 30% 30%, #def7e8 0%, #88d2a8 24%, #2f5d46 58%, #234635 80%, #183227 100%); border:3px solid #2f5d46; }
+    .stackGreen{
+      background:radial-gradient(circle at 30% 30%, #def7e8 0%, #88d2a8 24%, #2f5d46 58%, #234635 80%, #183227 100%);
+      border:3px solid #2f5d46;
+    }
     .stack1{ left:0; bottom:0; }
     .stack2{ left:18px; bottom:8px; }
     .stack3{ left:36px; bottom:16px; }
@@ -476,31 +546,67 @@
       border-radius:16px;
       padding:12px;
     }
-    .walletTitle{ font-weight:900; font-size:14px; margin-bottom:6px; }
-    .walletValue{ font-weight:900; font-size:24px; line-height:1; }
+    .walletTitle{
+      font-weight:900;
+      font-size:14px;
+      margin-bottom:6px;
+    }
+    .walletValue{
+      font-weight:900;
+      font-size:24px;
+      line-height:1;
+    }
     .walletGold{ color:#9a7000; }
     .walletYellow{ color:#b18900; }
     .walletGreen{ color:#2f5d46; }
-    .walletSub{ margin-top:6px; font-weight:800; font-size:12px; color:var(--muted); }
-    .walletActions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-    .walletMini{ border:2px solid rgba(0,0,0,.10); background:var(--beige); border-radius:12px; padding:8px 10px; font-weight:900; cursor:pointer; font-size:12px; }
 
-    @media (max-height:780px){
+    .walletSub{
+      margin-top:6px;
+      font-weight:800;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .walletActions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .walletMini{
+      border:2px solid rgba(0,0,0,.10);
+      background:var(--beige);
+      border-radius:12px;
+      padding:8px 10px;
+      font-weight:900;
+      cursor:pointer;
+      font-size:12px;
+    }
+
+    @media (max-height: 780px){
       .wrap{ padding:10px; gap:10px; }
       .ticker{ height:120px; }
+      .tile{ aspect-ratio: 1 / 0.70; }
       .grid{ gap:10px; }
       .tile .h{ font-size:16px; }
       .tile .p{ margin-top:6px; }
-      .dae{ padding:8px 10px; font-size:14px; border-radius:18px; min-height:86px; }
+      .dae{ padding:8px 10px; font-size:14px; border-radius:18px; border-color: var(--red); min-height:86px; }
       .heart{ width:44px; height:44px; }
       .footerRow{ padding-bottom:8px; }
       .iconBtn{ width:40px; height:40px; }
+      .legalBtn{ padding:9px 10px; font-size:12px; }
       .sheet .body{ max-height:min(70vh, 460px); }
       .sportTape{ height:34px; }
       .sportTapeTrack{ font-size:11px; }
     }
+    @media (max-height: 700px){
+      .ticker{ height:112px; }
+      .tile{ aspect-ratio: 1 / 0.70; }
+      .wrap{ gap:12px; }
+      .sportTape{ height:32px; }
+    }
   </style>
 </head>
+
 <body>
   <div class="page">
     <div class="wrap">
@@ -582,11 +688,16 @@
           <button class="lpBtn" id="btn112" aria-label="112">
             <svg class="lpRing" width="90" height="90" viewBox="0 0 90 90">
               <circle cx="45" cy="45" r="35" fill="none" stroke="rgba(165,30,34,.25)" stroke-width="5"></circle>
-              <circle id="ring112" cx="45" cy="45" r="35" fill="none" stroke="rgba(165,30,34,1)" stroke-width="5" stroke-linecap="round" stroke-dasharray="219.911" stroke-dashoffset="219.911" transform="rotate(-90 45 45)"></circle>
+              <circle id="ring112" cx="45" cy="45" r="35" fill="none" stroke="rgba(165,30,34,1)"
+                      stroke-width="5" stroke-linecap="round"
+                      stroke-dasharray="219.911" stroke-dashoffset="219.911"
+                      transform="rotate(-90 45 45)"></circle>
             </svg>
             <div class="lpCore" style="background:var(--red);">
               <div class="lblSmallTop">URGENCE</div>
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.72c.12.9.34 1.78.65 2.62a2 2 0 0 1-.45 2.11L8.1 9.91a16 16 0 0 0 6 6l1.46-1.2a2 2 0 0 1 2.11-.45c.84.31 1.72.53 2.62.65A2 2 0 0 1 22 16.92z"/></svg>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.72c.12.9.34 1.78.65 2.62a2 2 0 0 1-.45 2.11L8.1 9.91a16 16 0 0 0 6 6l1.46-1.2a2 2 0 0 1 2.11-.45c.84.31 1.72.53 2.62.65A2 2 0 0 1 22 16.92z"/>
+              </svg>
               <div class="lbl">112</div>
             </div>
           </button>
@@ -596,11 +707,16 @@
           <button class="lpBtn" id="btnSos" aria-label="3919/119" style="width:80px;height:80px;">
             <svg class="lpRing" width="80" height="80" viewBox="0 0 80 80">
               <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,.25)" stroke-width="5"></circle>
-              <circle id="ringSos" cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,1)" stroke-width="5" stroke-linecap="round" stroke-dasharray="188.496" stroke-dashoffset="188.496" transform="rotate(-90 40 40)"></circle>
+              <circle id="ringSos" cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,1)"
+                      stroke-width="5" stroke-linecap="round"
+                      stroke-dasharray="188.496" stroke-dashoffset="188.496"
+                      transform="rotate(-90 40 40)"></circle>
             </svg>
             <div class="lpCore lpSmall" id="sosCore" style="background:var(--redSoft); display:flex; flex-direction:column; align-items:center; justify-content:center;">
               <div class="lblTop">Urgence femmes<br>enfants</div>
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.72c.12.9.34 1.78.65 2.62a2 2 0 0 1-.45 2.11L8.1 9.91a16 16 0 0 0 6 6l1.46-1.2a2 2 0 0 1 2.11-.45c.84.31 1.72.53 2.62.65A2 2 0 0 1 22 16.92z"/></svg>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.72c.12.9.34 1.78.65 2.62a2 2 0 0 1-.45 2.11L8.1 9.91a16 16 0 0 0 6 6l1.46-1.2a2 2 0 0 1 2.11-.45c.84.31 1.72.53 2.62.65A2 2 0 0 1 22 16.92z"/>
+              </svg>
               <div class="lblSmall" id="sosLabel">3919 / 119</div>
             </div>
           </button>
@@ -608,7 +724,9 @@
       </div>
 
       <div class="sportTape" aria-label="Bandeau sport — soutiens commerçants">
-        <div class="sportTapeViewport"><div class="sportTapeTrack" id="sportTapeTrack"></div></div>
+        <div class="sportTapeViewport">
+          <div class="sportTapeTrack" id="sportTapeTrack"></div>
+        </div>
       </div>
 
       <div class="dae" id="daeBtn">
@@ -622,8 +740,12 @@
       <div class="footerRow">
         <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noopener noreferrer">www.bociteart.com</a>
         <div class="footerRight">
-          <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in</a>
-          <a class="iconBtn" href="https://instagram.com/bociteart" target="_blank" rel="noopener noreferrer" aria-label="Instagram">ig</a>
+          <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.27 2.3-2.6 4.73-2.6 5.06 0 6 3.33 6 7.67V24h-5v-7.6c0-1.81-.03-4.13-2.52-4.13-2.53 0-2.92 1.97-2.92 4v7.73h-5V8z"/></svg>
+          </a>
+          <a class="iconBtn" href="https://instagram.com/bociteart" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#C13584" aria-hidden="true"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3.2A4.8 4.8 0 1 0 16.8 12 4.81 4.81 0 0 0 12 7.2zm0 7.8A3 3 0 1 1 15 12a3 3 0 0 1-3 3zm4.9-8.9a1.1 1.1 0 1 1-1.1-1.1 a1.1 1.1 0 0 1 1.1 1.1z"/></svg>
+          </a>
           <button class="legalBtn" id="openSecure" type="button">Compte<br>+ aide</button>
           <button class="legalBtn legalStack" id="openLegal" type="button"><span>RGPD</span><span>CGU</span><span>CGV</span></button>
         </div>
@@ -636,7 +758,9 @@
     <div class="sheet">
       <div class="head">
         <div id="modalTitle">Titre</div>
-        <button class="xbtn" id="xBtn" aria-label="Fermer" type="button">✕</button>
+        <button class="xbtn" id="xBtn" aria-label="Fermer" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
       </div>
       <div class="body" id="modalBody"></div>
     </div>
@@ -647,7 +771,9 @@
     <div class="sheet">
       <div class="head">
         <div>Documents & mentions légales</div>
-        <button class="xbtn" id="legalX" aria-label="Fermer" type="button">✕</button>
+        <button class="xbtn" id="legalX" aria-label="Fermer" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
       </div>
       <div class="body">
         <div class="tabs">
@@ -655,9 +781,22 @@
           <button class="tab" data-tab="cgu" type="button">CGU</button>
           <button class="tab" data-tab="cgv" type="button">CGV</button>
         </div>
-        <div id="p-rgpd" class="doc"><div class="box">Version démo — texte raccourci ici. Réintègre ton texte légal complet si tu veux.</div></div>
-        <div id="p-cgu" class="doc" style="display:none;"><div class="box">Version démo — texte raccourci ici.</div></div>
-        <div id="p-cgv" class="doc" style="display:none;"><div class="box">Version démo — texte raccourci ici.</div></div>
+
+        <div id="p-rgpd" class="doc">
+          <div style="font-weight:900;font-size:15px;">📗 Politique de protection des données (RGPD) — Bo’CitéArt</div>
+          <div class="muted" style="margin-top:4px;">Version pré-structuration — entités juridiques en cours de constitution</div>
+          <div class="box">Bo’CitéArt est un projet territorial en cours de structuration juridique. La SAS commerciale et l’association loi 1901 à but non lucratif seront immatriculées avant toute exploitation contractuelle. Les mentions complètes (SIRET, siège, représentant légal, contact RGPD) seront publiées à cette étape.</div>
+        </div>
+
+        <div id="p-cgu" class="doc" style="display:none;">
+          <div style="font-weight:900;font-size:15px;">📘 Conditions Générales d’Utilisation — Bo’CitéArt</div>
+          <div class="box">Bo’CitéArt est un projet territorial en cours de déploiement.</div>
+        </div>
+
+        <div id="p-cgv" class="doc" style="display:none;">
+          <div style="font-weight:900;font-size:15px;">📄 Conditions Générales de Vente — Bo’CitéArt</div>
+          <div class="box">Les présentes Conditions Générales de Vente (CGV) encadrent les relations commerciales entre Bo’CitéArt et les partenaires professionnels.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -667,7 +806,9 @@
     <div class="sheet">
       <div class="head">
         <div>Choisir le numéro</div>
-        <button class="xbtn" id="choiceX" aria-label="Fermer" type="button">✕</button>
+        <button class="xbtn" id="choiceX" aria-label="Fermer" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
       </div>
       <div class="body">
         <div style="font-weight:800">Appuyez une fois pour choisir, puis revenez au bouton et faites un appui long pour appeler.</div>
@@ -682,9 +823,7 @@
 
   <script>
     (function initBoCiteArtClean(){
-      function $(id){ return document.getElementById(id); }
-      function on(el, evt, fn){ if(el) el.addEventListener(evt, fn); }
-      function isFn(f){ return typeof f === 'function'; }
+      console.log("✅ JS démarré");
 
       function setVh(){
         const vh = window.innerHeight * 0.01;
@@ -695,43 +834,16 @@
       window.addEventListener('orientationchange', setVh);
 
       window.__lastFocus = null;
-      function lockScroll(onState){ document.body.classList.toggle('modalOpen', !!onState); }
+
+      function lockScroll(on){ document.body.classList.toggle("modalOpen", !!on); }
       window.lockScroll = lockScroll;
-
-      const modal = $('modal');
-      const modalTitle = $('modalTitle');
-      const modalBody = $('modalBody');
-
-      function closeModal(){
-        modal.classList.remove('open');
-        lockScroll(false);
-        if(window.__lastFocus && typeof window.__lastFocus.focus === 'function') window.__lastFocus.focus();
-        window.__lastFocus = null;
-      }
-      function openModal(title, html){
-        window.__lastFocus = document.activeElement;
-        modalTitle.textContent = title;
-        modalBody.innerHTML = html;
-        modal.classList.add('open');
-        lockScroll(true);
-        setTimeout(()=>{
-          initFeeUiInModal();
-          hydrateCoinStars();
-          const xb = $('xBtn');
-          if(xb && xb.focus) xb.focus();
-        },0);
-      }
-      window.openModal = openModal;
-      window.closeModal = closeModal;
-      on($('modalClose'),'click',closeModal);
-      on($('xBtn'),'click',closeModal);
 
       function makeKeyboardClickable(el, onActivate){
         if(!el) return;
-        el.setAttribute('tabindex','0');
-        el.setAttribute('role','button');
-        el.addEventListener('keydown', (e)=>{
-          if(e.key === 'Enter' || e.key === ' '){
+        el.setAttribute("tabindex","0");
+        el.setAttribute("role","button");
+        el.addEventListener("keydown", (e)=>{
+          if(e.key === "Enter" || e.key === " "){
             e.preventDefault();
             onActivate();
           }
@@ -739,41 +851,93 @@
       }
       window.makeKeyboardClickable = makeKeyboardClickable;
 
-      const APP_MODE = 'DEMO';
+      const APP_MODE = "DEMO";
       function callPhone(number){
-        const n = String(number || '').trim();
+        const n = String(number || "").trim();
         if(!/^\d{2,4}$/.test(n)) return;
-        if(APP_MODE === 'DEMO'){
-          alert('Démo : appel ' + n + ' (appui long validé).');
+        if(APP_MODE === "DEMO"){
+          alert("Démo : appel " + n + " (appui long validé).");
           return;
         }
-        window.location.href = 'tel:' + n;
+        window.location.href = "tel:" + n;
       }
       window.callPhone = callPhone;
 
       const tickerItems = [
         {
-          title:'Annonce partenaire (démo)',
-          subtitle:'Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels',
-          img:'https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60'
+          title: "Annonce partenaire (démo)",
+          subtitle: "Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels",
+          img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60",
         },
         {
-          title:'Mairie (démo) : informations & agenda',
-          subtitle:'Accès gratuit citoyen pour alertes d’intérêt général • règle d’accès 16h (pub) • sous réserve de disponibilité',
-          img:'https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60'
-        }
+          title: "Mairie (démo) : informations & agenda",
+          subtitle: "Accès gratuit citoyen pour alertes d’intérêt général • règle d’accès 16h (pub) • sous réserve de disponibilité",
+          img: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60",
+        },
       ];
       let tickerIdx = 0;
       function setTicker(i){
         const it = tickerItems[i];
-        $('tickerImg').src = it.img;
-        $('tickerTitleA').textContent = it.title;
-        $('tickerSubA').textContent = it.subtitle || '';
-        $('tickerTitleB').textContent = it.title;
-        $('tickerSubB').textContent = it.subtitle || '';
+        document.getElementById("tickerImg").src = it.img;
+        document.getElementById("tickerTitleA").textContent = it.title;
+        document.getElementById("tickerSubA").textContent = it.subtitle || "";
+        document.getElementById("tickerTitleB").textContent = it.title;
+        document.getElementById("tickerSubB").textContent = it.subtitle || "";
       }
       setTicker(0);
-      setInterval(()=>{ tickerIdx = (tickerIdx+1) % tickerItems.length; setTicker(tickerIdx); }, 10000);
+      setInterval(()=>{
+        tickerIdx = (tickerIdx+1) % tickerItems.length;
+        setTicker(tickerIdx);
+      }, 10000);
+
+      const modal = document.getElementById("modal");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalBody = document.getElementById("modalBody");
+
+      const closeModal = () => {
+        modal.classList.remove("open");
+        lockScroll(false);
+        if(window.__lastFocus && typeof window.__lastFocus.focus === "function") window.__lastFocus.focus();
+        window.__lastFocus = null;
+      };
+      window.closeModal = closeModal;
+      document.getElementById("modalClose").onclick = closeModal;
+      document.getElementById("xBtn").onclick = closeModal;
+
+      function openModal(title, html){
+        window.__lastFocus = document.activeElement;
+        modalTitle.textContent = title;
+        modalBody.innerHTML = html;
+        modal.classList.add("open");
+        lockScroll(true);
+        setTimeout(()=>{
+          initFeeUiInModal();
+          const xb = document.getElementById("xBtn");
+          if(xb && xb.focus) xb.focus();
+        },0);
+      }
+      window.openModal = openModal;
+
+      const openSecureBtn = document.getElementById("openSecure");
+      if(openSecureBtn){
+        openSecureBtn.addEventListener("click", ()=>{
+          openModal("Compte sécurisé + assistance téléphone", `
+            <div class="box">
+              <div style="font-weight:900;">Abonnement optionnel : <strong>2,99 € / mois</strong></div>
+              <div class="muted" style="margin-top:6px;">Objectif : aider la récupération de compte et faciliter l’accompagnement par les proches.</div>
+            </div>
+          `);
+        });
+      }
+
+      document.addEventListener("keydown", (e)=>{
+        if(e.key !== "Escape") return;
+        const legal = document.getElementById("legal");
+        const choice = document.getElementById("choice");
+        if(choice && choice.classList.contains("open")){ choice.classList.remove("open"); lockScroll(false); return; }
+        if(legal && legal.classList.contains("open")){ legal.classList.remove("open"); lockScroll(false); return; }
+        if(modal && modal.classList.contains("open")) closeModal();
+      });
 
       let cachedVoices = [];
       function loadVoices(){
@@ -785,28 +949,31 @@
           }
         });
       }
-      async function speak(text, mode='female'){
-        if(!('speechSynthesis' in window)) return;
+
+      async function speak(text, mode="female"){
+        if(!("speechSynthesis" in window)) return;
         await loadVoices();
         speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'fr-FR';
+        u.lang = "fr-FR";
         u.rate = 0.95;
         u.pitch = 1.05;
-        const frVoices = cachedVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith('fr'));
+        const frVoices = cachedVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith("fr"));
         if(frVoices.length) u.voice = frVoices[0];
-        if(mode === 'child'){ u.pitch = 1.35; u.rate = 1.05; }
+        if(mode === "child"){ u.pitch = 1.35; u.rate = 1.05; }
         speechSynthesis.speak(u);
       }
 
       const PUB_MAX_PER_DAY = 10;
       window.PUB_MAX_PER_DAY = PUB_MAX_PER_DAY;
-      const PUB_STORE_KEY = 'bociteart_pubBookings_v1';
+      const PUB_STORE_KEY = "bociteart_pubBookings_v1";
       let calYear = new Date().getFullYear();
       let calMonth = new Date().getMonth();
-      function pad2(n){ return String(n).padStart(2,'0'); }
+
+      function pad2(n){ return String(n).padStart(2,"0"); }
       function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
       function ym(y,m){ return `${y}-${pad2(m+1)}`; }
+
       function loadBookings(){ try{ const raw = localStorage.getItem(PUB_STORE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
       function saveBookings(obj){ try{ localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj)); }catch(e){} }
       function getDayBookings(obj, y, m, d){ const keyYM = ym(y,m); const keyYMD = ymd(y,m,d); return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : []; }
@@ -814,18 +981,18 @@
       function daySlotsUsed(obj, y, m, d){ return getDayBookings(obj, y, m, d).length; }
       function isFull(obj, y, m, d){ return daySlotsUsed(obj, y, m, d) >= PUB_MAX_PER_DAY; }
 
-      const FEE_STORE_KEY = 'bociteart_fee_demo_v1';
-      const CITIZEN_WALLET_KEY = 'bociteart_citizen_wallet_v1';
-      const SCHOOL_WALLET_KEY = 'bociteart_school_wallet_v1';
-      const SPORT_WALLET_KEY = 'bociteart_sport_wallet_v1';
-      const SCHOOL_DATA_KEY = 'bociteart_school_v1';
+      const FEE_STORE_KEY = "bociteart_fee_demo_v1";
+      const CITIZEN_WALLET_KEY = "bociteart_citizen_wallet_v1";
+      const SCHOOL_WALLET_KEY = "bociteart_school_wallet_v1";
+      const SPORT_WALLET_KEY = "bociteart_sport_wallet_v1";
 
-      function loadCitizenWallet(){ try{ const raw = localStorage.getItem(CITIZEN_WALLET_KEY); return raw ? JSON.parse(raw) : { or:37 }; }catch(e){ return { or:37 }; } }
+      function loadCitizenWallet(){ try{ const raw = localStorage.getItem(CITIZEN_WALLET_KEY); return raw ? JSON.parse(raw) : { or: 37 }; }catch(e){ return { or: 37 }; } }
       function saveCitizenWallet(obj){ try{ localStorage.setItem(CITIZEN_WALLET_KEY, JSON.stringify(obj)); }catch(e){} }
-      function loadSchoolWallet(){ try{ const raw = localStorage.getItem(SCHOOL_WALLET_KEY); return raw ? JSON.parse(raw) : { jaune:0 }; }catch(e){ return { jaune:0 }; } }
+      function loadSchoolWallet(){ try{ const raw = localStorage.getItem(SCHOOL_WALLET_KEY); return raw ? JSON.parse(raw) : { jaune: 0 }; }catch(e){ return { jaune: 0 }; } }
       function saveSchoolWallet(obj){ try{ localStorage.setItem(SCHOOL_WALLET_KEY, JSON.stringify(obj)); }catch(e){} }
-      function loadSportWallet(){ try{ const raw = localStorage.getItem(SPORT_WALLET_KEY); return raw ? JSON.parse(raw) : { vert:0 }; }catch(e){ return { vert:0 }; } }
+      function loadSportWallet(){ try{ const raw = localStorage.getItem(SPORT_WALLET_KEY); return raw ? JSON.parse(raw) : { vert: 0 }; }catch(e){ return { vert: 0 }; } }
       function saveSportWallet(obj){ try{ localStorage.setItem(SPORT_WALLET_KEY, JSON.stringify(obj)); }catch(e){} }
+
       function walletAdd(key, field, delta){
         let data = key === CITIZEN_WALLET_KEY ? loadCitizenWallet() : key === SCHOOL_WALLET_KEY ? loadSchoolWallet() : loadSportWallet();
         data[field] = Math.max(0, Number(data[field] || 0) + Number(delta || 0));
@@ -835,752 +1002,143 @@
         return data[field];
       }
 
-      function feeYM(d=new Date()){ const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); return `${y}-${m}`; }
+      function feeYM(d=new Date()){ const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,"0"); return `${y}-${m}`; }
       function feeLoad(){ try{ const raw = localStorage.getItem(FEE_STORE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
       function feeSave(obj){ try{ localStorage.setItem(FEE_STORE_KEY, JSON.stringify(obj)); }catch(e){} }
-      function calcFeeFromSales(eur){ const v = Number(eur || 0); if(!Number.isFinite(v) || v <= 0) return 0; return Math.floor(v / 10) * 0.18; }
-      function fmtEUR(x){ const n = Number(x || 0); return n.toLocaleString('fr-FR', { minimumFractionDigits:2, maximumFractionDigits:2 }) + ' €'; }
+      function calcFeeFromSales(eur){ const v = Number(eur || 0); if(!Number.isFinite(v) || v <= 0) return 0; const tranches = Math.floor(v / 10); return tranches * 0.18; }
+      function fmtEUR(x){ const n = Number(x || 0); return n.toLocaleString("fr-FR", { minimumFractionDigits:2, maximumFractionDigits:2 }) + " €"; }
+
       function initFeeUiInModal(){
-        const input = $('feeInputSales');
-        const outSales = $('feeSalesOut');
-        const outFee = $('feeOut');
-        const btnAdd = $('feeAddBtn');
-        const btnReset = $('feeResetBtn');
+        const input = document.getElementById("feeInputSales");
+        const outSales = document.getElementById("feeSalesOut");
+        const outFee = document.getElementById("feeOut");
+        const btnAdd = document.getElementById("feeAddBtn");
+        const btnReset = document.getElementById("feeResetBtn");
+        const resetClient = document.getElementById("walletClientReset");
+        const outClient = document.getElementById("citizenCoinBalance");
+
+        if(outClient){ outClient.textContent = Number(loadCitizenWallet().or || 0); }
+        if(resetClient) resetClient.onclick = ()=>{ saveCitizenWallet({ or: 0 }); if(outClient) outClient.textContent = 0; };
+
         if(!input || !outSales || !outFee || !btnAdd || !btnReset) return;
-        const currentYm = feeYM();
+
+        const ym = feeYM();
         const db = feeLoad();
-        const cur = db[currentYm] || { sales:0 };
+        const cur = db[ym] || { sales: 0 };
         outSales.textContent = fmtEUR(cur.sales || 0);
         outFee.textContent = fmtEUR(calcFeeFromSales(cur.sales || 0));
-        input.value = cur.sales || 0;
+        input.value = (cur.sales || 0);
+
         btnAdd.onclick = ()=>{
           const v = Number(input.value || 0);
-          if(!Number.isFinite(v) || v < 0){ alert('Montant invalide.'); return; }
+          if(!Number.isFinite(v) || v < 0){ alert("Montant invalide."); return; }
           const db2 = feeLoad();
-          db2[currentYm] = { sales:v, ts_fr:new Date().toLocaleString('fr-FR') };
+          db2[ym] = { sales: v, ts_fr: new Date().toLocaleString("fr-FR") };
           feeSave(db2);
           outSales.textContent = fmtEUR(v);
           outFee.textContent = fmtEUR(calcFeeFromSales(v));
-          alert('Suivi mis à jour (démo).');
+          alert("Suivi mis à jour (démo).");
         };
+
         btnReset.onclick = ()=>{
-          if(confirm('Réinitialiser le suivi du mois (démo) sur ce téléphone ?')){
+          if(confirm("Réinitialiser le suivi du mois (démo) sur ce téléphone ?")){
             const db2 = feeLoad();
-            delete db2[currentYm];
+            delete db2[ym];
             feeSave(db2);
-            input.value = '';
+            input.value = "";
             outSales.textContent = fmtEUR(0);
             outFee.textContent = fmtEUR(0);
-            alert('Réinitialisé (démo).');
+            alert("Réinitialisé (démo).");
           }
         };
       }
-      window.initFeeUiInModal = initFeeUiInModal;
 
       function buildCalendarHTML(){
         const first = new Date(calYear, calMonth, 1);
-        const monthName = first.toLocaleDateString('fr-FR', { month:'long', year:'numeric' });
-        const labels = ['L','M','M','J','V','S','D'];
+        const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+        const labels = ["L","M","M","J","V","S","D"];
         return `
           <div class="calWrap">
             <div class="calTop">
               <div style="font-weight:900;">Calendrier (démo) — ${monthName}</div>
               <div class="mini">
-                <button class="choiceBtn" id="calPrev" type="button">◀</button>
-                <button class="choiceBtn" id="calNext" type="button">▶</button>
+                <button class="calBtn" id="calPrev" type="button">◀</button>
+                <button class="calBtn" id="calNext" type="button">▶</button>
               </div>
             </div>
-            <div class="muted">Règle : <strong>${PUB_MAX_PER_DAY} réservations maximum / jour</strong>.</div>
-            <div class="calGrid" style="margin-top:10px;">${labels.map(x=>`<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join('')}</div>
+            <div class="muted">Règle : <strong>${PUB_MAX_PER_DAY} réservations maximum / jour</strong>. Une journée complète devient grisée et non sélectionnable.</div>
+            <div class="calGrid" style="margin-top:10px;">${labels.map(x=>`<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}</div>
             <div class="calGrid" id="calDays"></div>
+            <div class="calLegend">
+              <span class="tag"><span class="dot" style="background:#111;"></span> Jour disponible</span>
+              <span class="tag"><span class="dot" style="background:#999;"></span> Jour complet (grisé)</span>
+            </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
               <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
               <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
             </div>
-          </div>`;
+          </div>
+        `;
       }
+
       function renderCalendarInto(containerId){
-        const box = $(containerId); if(!box) return;
+        const box = document.getElementById(containerId);
+        if(!box) return;
         box.innerHTML = buildCalendarHTML();
-        const daysEl = $('calDays');
-        const bookings = loadBookings();
-        const first = new Date(calYear, calMonth, 1);
-        const last = new Date(calYear, calMonth+1, 0);
-        const startDow = (first.getDay() + 6) % 7;
-        const daysInMonth = last.getDate();
-        let cells = [];
-        for(let i=0;i<startDow;i++) cells.push('<div class="calDay disabled" aria-hidden="true"></div>');
-        for(let d=1; d<=daysInMonth; d++){
-          const used = daySlotsUsed(bookings, calYear, calMonth, d);
-          const full = used >= PUB_MAX_PER_DAY;
-          const cls = full ? 'calDay full' : 'calDay';
-          cells.push(`<div class="${cls}" data-day="${d}" role="button"><div class="d">${d}</div><div class="s">${used}/${PUB_MAX_PER_DAY}</div></div>`);
-        }
-        daysEl.innerHTML = cells.join('');
-        on($('calPrev'),'click',()=>{ calMonth--; if(calMonth<0){ calMonth=11; calYear--; } renderCalendarInto(containerId); });
-        on($('calNext'),'click',()=>{ calMonth++; if(calMonth>11){ calMonth=0; calYear++; } renderCalendarInto(containerId); });
-        on($('calRecap'),'click',()=> openRecapModal(calYear, calMonth));
-        on($('calReset'),'click',()=>{ if(confirm('Réinitialiser les réservations (démo) ?')){ localStorage.removeItem(PUB_STORE_KEY); renderCalendarInto(containerId); } });
-        document.querySelectorAll('.calDay[data-day]').forEach(el=>{
-          el.addEventListener('click', ()=>{
-            const d = parseInt(el.getAttribute('data-day'),10);
-            const bookings2 = loadBookings();
-            if(isFull(bookings2, calYear, calMonth, d)) return;
-            const key = ymd(calYear, calMonth, d);
-            const used = daySlotsUsed(bookings2, calYear, calMonth, d);
-            openModal('Réserver une publicité (démo)', `
-              <div class="box">
-                <div style="font-weight:900;">Date : ${key}</div>
-                <div class="muted" style="margin-top:6px;">Il reste <strong>${PUB_MAX_PER_DAY - used}</strong> place(s) disponible(s).</div>
-              </div>
-              <div class="choiceGrid">
-                <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
-                <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
-                <button class="choiceBtn" id="bkAsso" type="button">Association</button>
-                <button class="choiceBtn" id="bkEcole" type="button">École</button>
-              </div>`);
-            setTimeout(()=>{
-              const doBook = (who)=>{
-                const now = new Date();
-                const stampISO = now.toISOString();
-                const stampFR = now.toLocaleString('fr-FR');
-                const b = loadBookings();
-                const list = getDayBookings(b, calYear, calMonth, d);
-                if(list.length >= PUB_MAX_PER_DAY){ alert('Jour complet.'); closeModal(); renderCalendarInto(containerId); return; }
-                list.push({ date:key, who, ts_iso:stampISO, ts_fr:stampFR, note:'Réservation (démo)' });
-                setDayBookings(b, calYear, calMonth, d, list);
-                saveBookings(b);
-                closeModal();
-                renderCalendarInto(containerId);
-                alert(`Réservation enregistrée (démo)\n${key}\n${who}\nHorodatage : ${stampFR}`);
-              };
-              on($('bkCommerce'),'click',()=> doBook('Commerce'));
-              on($('bkMairie'),'click',()=> doBook('Mairie'));
-              on($('bkAsso'),'click',()=> doBook('Association'));
-              on($('bkEcole'),'click',()=> doBook('École'));
-            },0);
-          });
-        });
       }
-      function openRecapModal(y,m){
+
+      function openRecapModal(y, m){
         const b = loadBookings();
         const keyYM = ym(y,m);
         const monthObj = b[keyYM] || {};
-        const days = Object.keys(monthObj).sort();
-        let csv = 'date;profil;horodatage_iso;horodatage_fr;note\n';
-        days.forEach(d=>{ (monthObj[d]||[]).forEach(it=>{ csv += `${it.date};${it.who};${it.ts_iso};${it.ts_fr};${(it.note||'')}\n`; }); });
-        const total = days.reduce((acc, d)=> acc + (monthObj[d]||[]).length, 0);
-        openModal('Récap mensuel (démo) — publicités', `
+        let csv = "date;profil;horodatage_iso;horodatage_fr;note\n";
+        Object.keys(monthObj).sort().forEach(d=>{
+          (monthObj[d]||[]).forEach(it=>{
+            csv += `${it.date};${it.who};${it.ts_iso};${it.ts_fr};${(it.note||"")}\n`;
+          });
+        });
+
+        openModal("Récap mensuel (démo) — publicités", `
           <div class="box">
             <div style="font-weight:900;">Mois : ${keyYM}</div>
-            <div class="muted" style="margin-top:6px;">Total réservations : <strong>${total}</strong></div>
           </div>
-          <div class="box" style="white-space:pre-wrap; font-weight:800;">${days.length ? days.map(d=>{ const list = monthObj[d]||[]; const head = `• ${d} — ${list.length}/${PUB_MAX_PER_DAY}`; const lines = list.map((it,idx)=>`  - ${idx+1}) ${it.who} — ${it.ts_fr}`).join('\n'); return head + '\n' + lines; }).join('\n\n') : 'Aucune réservation enregistrée (démo).'}</div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
             <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
             <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
-          </div>`);
+          </div>
+        `);
+
         setTimeout(()=>{
-          on($('copyCsv'),'click', async ()=>{ try{ await navigator.clipboard.writeText(csv); alert('CSV copié.'); } catch(e){ alert('Copie impossible sur ce navigateur.'); } });
-          on($('copyJson'),'click', async ()=>{ try{ await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2)); alert('JSON copié.'); } catch(e){ alert('Copie impossible sur ce navigateur.'); } });
+          const btnCsv = document.getElementById("copyCsv");
+          const btnJson = document.getElementById("copyJson");
+          if(btnCsv) btnCsv.onclick = async ()=>{ try{ await navigator.clipboard.writeText(csv); alert("CSV copié."); } catch(e){ alert("Copie impossible sur ce navigateur."); } };
+          if(btnJson) btnJson.onclick = async ()=>{ try{ await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2)); alert("JSON copié."); } catch(e){ alert("Copie impossible sur ce navigateur."); } };
         },0);
       }
+
       function openTicker(){
-        openModal('Publicités & visibilité (ticker)', `
+        openModal("Publicités & visibilité (ticker)", `
           <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
-          <div class="box"><strong>${PUB_MAX_PER_DAY} publicités maximum par jour</strong></div>
-          <div id="calHost"></div>`);
-        setTimeout(()=> renderCalendarInto('calHost'), 0);
+          <div class="box"><strong>Cadre :</strong> réservation plafonnée, gestion par calendrier, possibilité de récap mensuel et horodatage des réservations.</div>
+          <div id="calHost"></div>
+        `);
+        setTimeout(()=> renderCalendarInto("calHost"), 0);
       }
       window.openTicker = openTicker;
-      on($('ticker'),'click', openTicker);
+      document.getElementById("ticker").addEventListener("click", openTicker);
 
       function escapeHtml(s){
         return String(s)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/\"/g, '&quot;')
-          .replace(/'/g, '&#039;');
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
       }
 
       window.tapeAds = [
-        { txt:'🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com', bold:true },
-        { txt:'💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com', bold:false },
-        { txt:'🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com', bold:true },
-        { txt:'🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com', bold:false }
+        { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
+        { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
+        { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
+        { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false },
       ];
-      function renderTape(){
-        const track = $('sportTapeTrack');
-        if(!track) return;
-        const doubled = window.tapeAds.concat(window.tapeAds);
-        track.innerHTML = doubled.map(a=>`<div class="${a.bold ? 'sportTapeItem bold' : 'sportTapeItem'}">${escapeHtml(a.txt)}</div>`).join('');
-      }
-      window.renderTape = renderTape;
-      renderTape();
-
-      const MAIRIE_STORE_KEY = 'bociteart_mairie_msg';
-      function mairieLoad(){ try{ const raw = localStorage.getItem(MAIRIE_STORE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
-      function mairieSave(obj){ try{ localStorage.setItem(MAIRIE_STORE_KEY, JSON.stringify(obj)); }catch(e){} }
-      function renderMairieTicker(){
-        const track = $('mairieTickerTrack');
-        if(!track) return;
-        const db = mairieLoad();
-        const msg = (db.message && String(db.message).trim()) ? String(db.message).trim() : 'Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet';
-        track.innerHTML = `<span>${escapeHtml(msg)}</span><span>${escapeHtml(msg)}</span>`;
-      }
-      window.mairieLoad = mairieLoad;
-      window.mairieSave = mairieSave;
-      window.renderMairieTicker = renderMairieTicker;
-      renderMairieTicker();
-
-      function schoolProgressReward(dayCount){
-        if(dayCount === 15) return 36;
-        if(dayCount === 18) return 29;
-        if(dayCount === 22) return 19;
-        return 0;
-      }
-      function schoolLoad(){ try{ const raw = localStorage.getItem(SCHOOL_DATA_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
-      function schoolSave(obj){ try{ localStorage.setItem(SCHOOL_DATA_KEY, JSON.stringify(obj)); }catch(e){} }
-      function refreshSchoolWallet(){ const out = $('schoolCoinBalance'); if(out) out.textContent = Number(loadSchoolWallet().jaune || 0); }
-      function resetSchoolCycle(){
-        saveSchoolWallet({ jaune:0 });
-        const db = schoolLoad();
-        db.progress = { daysValidated:0 };
-        schoolSave(db);
-      }
-
-      function coinHtml(color, walletTitle, walletId, walletClass, walletSub, actionsHtml=''){
-        const colorClass = color === 'yellow' ? 'coinYellow' : color === 'green' ? 'coinGreen' : 'coinGold';
-        const starClass = color === 'yellow' ? 'coinStarsYellow' : color === 'green' ? 'coinStarsGreen' : 'coinStarsGold';
-        const innerClass = color === 'yellow' ? 'coinInnerYellow' : color === 'green' ? 'coinInnerGreen' : 'coinInnerGold';
-        const stackClass = color === 'yellow' ? 'stackYellow' : color === 'green' ? 'stackGreen' : 'stackGold';
-        const walletColor = color === 'yellow' ? 'walletYellow' : color === 'green' ? 'walletGreen' : 'walletGold';
-        return `
-          <div class="coinShowcase">
-            <div class="coinFace ${colorClass}" aria-hidden="true">
-              <div class="coinStarsRing ${starClass}" aria-hidden="true"></div>
-              <div class="coinInner ${innerClass}">
-                <div class="n">1</div>
-                <div class="t">BoCitecoin</div>
-              </div>
-            </div>
-            <div class="coinStack" aria-hidden="true">
-              <div class="stackCoin ${stackClass} stack1"></div>
-              <div class="stackCoin ${stackClass} stack2"></div>
-              <div class="stackCoin ${stackClass} stack3"></div>
-            </div>
-            <div class="walletBox">
-              <div class="walletTitle">${walletTitle}</div>
-              <div class="walletValue ${walletColor}" id="${walletId}">0</div>
-              <div class="walletSub">${walletSub}</div>
-              ${actionsHtml ? `<div class="walletActions">${actionsHtml}</div>` : ''}
-            </div>
-          </div>`;
-      }
-
-      function hydrateCoinStars(root=document){
-        root.querySelectorAll('.coinStarsRing').forEach(ring=>{
-          if(ring.dataset.hydrated === '1') return;
-          ring.dataset.hydrated = '1';
-          let html = '';
-          const total = 12;
-          const radius = 34;
-          for(let i=0;i<total;i++){
-            const deg = (360 / total) * i;
-            const rad = (deg - 90) * Math.PI / 180;
-            const x = Math.cos(rad) * radius;
-            const y = Math.sin(rad) * radius;
-            html += `<span style="transform:translate(${x}px, ${y}px)">✦</span>`;
-          }
-          ring.innerHTML = html;
-        });
-      }
-      hydrateCoinStars(document);
-
-      document.querySelectorAll('[data-open]').forEach(el=>{
-        el.addEventListener('click', ()=>{
-          const key = el.getAttribute('data-open');
-          if(key === 'sport' || key === 'mairie' || key === 'commerces'){
-            if(typeof window.__bociteartOpenByKey === 'function') window.__bociteartOpenByKey(key);
-            return;
-          }
-          if(key === 'oeuvres'){
-            openModal('Œuvres', `
-              <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (structure)</div>
-              <div class="box"><strong>Cadre :</strong> contenus illustratifs en démo.</div>
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Carte des fresques</li>
-                <li>Fiche œuvre : artiste • mécène • remerciements</li>
-                <li>Scan QR / BLE à proximité</li>
-              </ul>`);
-            return;
-          }
-          if(key === 'ecole'){
-            openModal('École', `
-              <div style="font-weight:900;margin-bottom:8px;">Mot du jour (structure)</div>
-              <div class="box"><strong>Cadre école :</strong> contenus non identifiants. En cas de désaccord parental, la voix synthétique est utilisée.</div>
-              <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">« Je suis ravi aujourd’hui. » — Exemple (démo)</div>
-              <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-                <button class="choiceBtn" type="button" id="playChild">▶ Lire (voix enfant — démo)</button>
-                <button class="choiceBtn" type="button" id="playFemale">▶ Lire (voix synthétique)</button>
-              </div>
-              ${coinHtml(
-                'yellow',
-                'Wallet École — BoCitecoins JAUNE',
-                'schoolCoinBalance',
-                'walletYellow',
-                'BoCitecoins gagnés par la classe, à échanger plus tard en mairie contre une surprise ou du matériel scolaire selon les règles locales.',
-                '<button class="walletMini" id="walletSchoolMinus" type="button">−1</button><button class="walletMini" id="walletSchoolReset" type="button">Réinitialiser</button>'
-              )}
-              <div style="font-weight:900;margin-top:14px;">Gestion École (démo)</div>
-              <div class="box"><strong>Règles :</strong> 1 mot du jour maximum par jour. Une fois validé, c’est gelé jusqu’au lendemain.</div>
-              <div class="box">
-                <div class="muted">Choisir l’école / la classe CM2 concernée.</div>
-                <select class="miniField" id="schoolClassSelect" aria-label="Choisir la classe"></select>
-              </div>
-              <div style="font-weight:900;margin-top:10px;">Saisie (démo)</div>
-              <input class="miniField" id="schoolWordInput" placeholder="Saisir le mot du jour (sans nom d’enfant, sans injure)" />
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="schoolSaveBtn" type="button">✅ Valider aujourd’hui</button>
-                <button class="choiceBtn" id="schoolResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
-              </div>
-              <div class="box" style="margin-top:12px;">
-                <div style="font-weight:900;">Quotas (école)</div>
-                <ul style="margin:8px 0 0 18px;font-weight:800;">
-                  <li>Chaque validation de jour ajoute 1 bocitecoin</li>
-                  <li>15e jour validé : total = 50 bocitecoins</li>
-                  <li>18e jour validé : total = 80 bocitecoins</li>
-                  <li>22e jour validé : total = 100 bocitecoins</li>
-                </ul>
-              </div>
-              <div class="box" style="margin-top:12px;">
-                <div style="font-weight:900;">Choisir le mode de partage</div>
-                <label class="miniCheck" style="margin-top:10px;"><input type="radio" name="donMode" value="none" checked><div>Pas de partage solidaire</div></label>
-                <label class="miniCheck"><input type="radio" name="donMode" value="full"><div>Don total</div></label>
-                <label class="miniCheck"><input type="radio" name="donMode" value="partial"><div>Don partiel</div></label>
-              </div>
-              <div class="box" style="margin-top:12px;">
-                <div style="font-weight:900;">Associations (sélection + répartition)</div>
-                <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="Les Clés du Cœur"><div><strong>Les Clés du Cœur</strong></div></label>
-                <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
-                <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="Étoile Filante"><div><strong>Étoile Filante</strong></div></label>
-                <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
-                <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="Les Papillons (antenne Nord)"><div><strong>Les Papillons</strong></div></label>
-                <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
-                <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="ATC Nord"><div><strong>ATC Nord</strong></div></label>
-                <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
-                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                  <button class="choiceBtn" id="schoolAssoPreview" type="button">👁️ Aperçu partage</button>
-                  <button class="choiceBtn" id="schoolAssoSave" type="button">💾 Enregistrer (démo)</button>
-                </div>
-              </div>`);
-
-            setTimeout(()=>{
-              const text = 'Je suis ravi aujourd’hui.';
-              on($('playChild'),'click',()=> speak(text, 'child'));
-              on($('playFemale'),'click',()=> speak(text, 'female'));
-              const SCHOOL_CLASSES = ['École X — CM2 A','École X — CM2 B','École Y — CM2 A','École Y — CM2 B','École Z — CM2'];
-              const sel = $('schoolClassSelect');
-              if(sel) sel.innerHTML = SCHOOL_CLASSES.map((x,i)=> `<option value="${i}">${x}</option>`).join('');
-              refreshSchoolWallet();
-              on($('walletSchoolMinus'),'click',()=>{ const v = walletAdd(SCHOOL_WALLET_KEY, 'jaune', -1); const out = $('schoolCoinBalance'); if(out) out.textContent = v; });
-              on($('walletSchoolReset'),'click',()=>{ resetSchoolCycle(); refreshSchoolWallet(); alert('Cycle école remis à zéro (démo).'); });
-
-              function getDonMode(){ const r = document.querySelector('input[name="donMode"]:checked'); return r ? r.value : 'none'; }
-              function getAssoSelection(){ return Array.from(document.querySelectorAll('.assoPick')).filter(cb=> cb.checked).map(cb=> cb.getAttribute('data-asso')); }
-              function getAssoPctMap(){ const map = {}; Array.from(document.querySelectorAll('.assoPct')).forEach(inp=>{ const a = inp.getAttribute('data-asso'); const v = parseInt(inp.value || '0', 10); map[a] = Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 0; }); return map; }
-              function normalizeForFull(picks){ if(!picks.length) return { ok:false, msg:'Choisis au moins 1 association.' }; const pct = Math.floor(100 / picks.length); const rem = 100 - (pct * picks.length); const out = {}; picks.forEach((a,idx)=> out[a] = pct + (idx===0 ? rem : 0)); return { ok:true, pctMap:out }; }
-              function validatePartial(picks, pctMap){ if(!picks.length) return { ok:false, msg:'Choisis au moins 1 association.' }; let sum = 0; picks.forEach(a=> sum += (pctMap[a] || 0)); if(sum !== 100) return { ok:false, msg:`En don partiel, le total doit faire 100%. (Actuel : ${sum}%)` }; return { ok:true }; }
-              on($('schoolAssoPreview'),'click', ()=>{
-                const mode = getDonMode();
-                const picks = getAssoSelection();
-                const pctMap = getAssoPctMap();
-                if(mode === 'none'){ alert('Aperçu : Pas de partage solidaire.'); return; }
-                if(mode === 'full'){
-                  const norm = normalizeForFull(picks);
-                  if(!norm.ok){ alert(norm.msg); return; }
-                  const lines = Object.entries(norm.pctMap).map(([a,p])=> `- ${a} : ${p}%`).join('\n');
-                  alert('Aperçu (don total, partage égal)\n' + lines);
-                  return;
-                }
-                const v = validatePartial(picks, pctMap);
-                if(!v.ok){ alert(v.msg); return; }
-                alert('Aperçu (don partiel)\n' + picks.map(a=> `- ${a} : ${pctMap[a] || 0}%`).join('\n'));
-              });
-              on($('schoolAssoSave'),'click', ()=>{
-                const mode = getDonMode();
-                const picks = getAssoSelection();
-                const pctMap = getAssoPctMap();
-                const idx = sel ? parseInt(sel.value,10) : 0;
-                const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-                let finalMap = {};
-                if(mode === 'none') finalMap = {};
-                else if(mode === 'full'){
-                  const norm = normalizeForFull(picks);
-                  if(!norm.ok){ alert(norm.msg); return; }
-                  finalMap = norm.pctMap;
-                }else{
-                  const v = validatePartial(picks, pctMap);
-                  if(!v.ok){ alert(v.msg); return; }
-                  picks.forEach(a=> finalMap[a] = pctMap[a] || 0);
-                }
-                const db = schoolLoad();
-                db.lastSolidarity = { class:cls, mode, map:finalMap, ts_fr:new Date().toLocaleString('fr-FR') };
-                schoolSave(db);
-                alert('Enregistré (démo) pour : ' + cls);
-              });
-              on($('schoolResetBtn'),'click', ()=>{
-                if(confirm('Réinitialiser les données École (démo) sur ce téléphone ?')){
-                  localStorage.removeItem(SCHOOL_DATA_KEY);
-                  resetSchoolCycle();
-                  refreshSchoolWallet();
-                  alert('Réinitialisé (démo).');
-                }
-              });
-              on($('schoolSaveBtn'),'click', ()=>{
-                const idx = sel ? parseInt(sel.value,10) : 0;
-                const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-                const input = $('schoolWordInput');
-                const w = input ? String(input.value || '').trim() : '';
-                if(!w){ alert('Saisis le mot du jour.'); return; }
-                if(/[<>]/.test(w)){ alert('Texte invalide.'); return; }
-                const db = schoolLoad();
-                if(!db.progress) db.progress = { daysValidated:0 };
-                db.lastWord = { class:cls, text:w, ts_fr:new Date().toLocaleString('fr-FR'), note:'Mot du jour (démo, stockage local)' };
-                db.progress.daysValidated = Number(db.progress.daysValidated || 0) + 1;
-                const dayCount = db.progress.daysValidated;
-                schoolSave(db);
-                let gainedToday = 1;
-                const bonus = schoolProgressReward(dayCount);
-                if(bonus > 0) gainedToday += bonus;
-                walletAdd(SCHOOL_WALLET_KEY, 'jaune', gainedToday);
-                refreshSchoolWallet();
-                alert('Validé (démo) : ' + cls + '\n« ' + w + ' »\nJour validé n° ' + dayCount + '\n+' + gainedToday + ' bocitecoin(s) JAUNE');
-              });
-            },0);
-            return;
-          }
-        });
-      });
-
-      window.__bociteartOpenByKey = function(key){
-        key = String(key || '').trim();
-        if(!isFn(window.openModal)) return;
-
-        if(key === 'sport'){
-          openModal('Sport', `
-            <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
-            <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation non publics.</div>
-            ${coinHtml(
-              'green',
-              'Wallet Sport — BoCitecoins VERT',
-              'sportCoinBalance',
-              'walletGreen',
-              'BoCitecoins gagnés par les actions sportives/citoyennes, échangeables plus tard chez un commerçant partenaire selon les règles locales.',
-              '<button class="walletMini" id="walletSportPlus10" type="button">+10</button><button class="walletMini" id="walletSportPlus25" type="button">+25</button><button class="walletMini" id="walletSportMinus" type="button">−1</button><button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>'
-            )}
-            <div class="box">
-              <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
-              <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel et la visibilité bandeau.</div>
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;"><button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button></div>
-            </div>`);
-          setTimeout(()=>{
-            on($('openSportFicheBtn'),'click', openSportFiche);
-            const refresh = ()=>{ const out = $('sportCoinBalance'); if(out) out.textContent = Number(loadSportWallet().vert || 0); };
-            refresh();
-            on($('walletSportPlus10'),'click', ()=>{ const w = loadSportWallet(); w.vert = Number(w.vert || 0) + 10; saveSportWallet(w); refresh(); });
-            on($('walletSportPlus25'),'click', ()=>{ const w = loadSportWallet(); w.vert = Number(w.vert || 0) + 25; saveSportWallet(w); refresh(); });
-            on($('walletSportMinus'),'click', ()=>{ const w = loadSportWallet(); w.vert = Math.max(0, Number(w.vert || 0) - 1); saveSportWallet(w); refresh(); });
-            on($('walletSportReset'),'click', ()=>{ if(confirm('Réinitialiser le wallet Sport (démo) sur ce téléphone ?')){ saveSportWallet({ vert:0 }); refresh(); } });
-          },0);
-          return;
-        }
-
-        if(key === 'mairie'){
-          openModal('Mairie', `
-            <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
-            <div class="box"><strong>Cadre :</strong> la mairie peut diffuser des messages d’intérêt général gratuits, et des messages promotionnels payants au même tarif que les commerçants.</div>
-            <div class="box">
-              <div style="font-weight:900;">Message bandeau mairie (démo)</div>
-              <div class="muted" style="margin-top:6px;">Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.</div>
-              <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="mairieMsgSave" type="button">💾 Enregistrer</button>
-                <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">🧹 Réinitialiser</button>
-              </div>
-            </div>
-            <div class="box">
-              <div style="font-weight:900;">Échange école → mairie (scan / brûlage)</div>
-              <div class="muted">La mairie peut scanner les bocitecoins école puis les brûler automatiquement.</div>
-              <div class="box" style="background:var(--bg);">Solde école actuel : <strong id="mairieSchoolWalletBalance">0</strong> bocitecoin(s) JAUNES</div>
-              <select class="miniField" id="mairieSchoolGiftType"><option value="materiel-scolaire">Matériel scolaire</option><option value="extra-scolaire">Surprise extra-scolaire</option></select>
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="mairieSchoolScanBtn" type="button">Scanner wallet école</button>
-                <button class="choiceBtn" id="mairieSchoolBurnBtn" type="button">Brûler les bocitecoins école</button>
-              </div>
-            </div>`);
-          setTimeout(()=>{
-            const input = $('mairieMsgInput');
-            const db = mairieLoad();
-            if(input){ input.value = (db.message && String(db.message).trim()) ? String(db.message).trim() : 'Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet'; }
-            on($('mairieMsgSave'),'click', ()=>{
-              const msg = input ? String(input.value || '').trim() : '';
-              if(!msg){ alert('Saisis un message mairie.'); return; }
-              const next = mairieLoad();
-              next.message = msg;
-              next.ts_fr = new Date().toLocaleString('fr-FR');
-              mairieSave(next);
-              renderMairieTicker();
-              alert('Message mairie enregistré (démo).');
-            });
-            on($('mairieMsgReset'),'click', ()=>{
-              if(confirm('Réinitialiser le message mairie (démo) sur ce téléphone ?')){
-                mairieSave({});
-                renderMairieTicker();
-                if(input) input.value = 'Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet';
-                alert('Message mairie réinitialisé (démo).');
-              }
-            });
-            const refreshSchool = ()=>{ const w = loadSchoolWallet(); const bal = $('mairieSchoolWalletBalance'); if(bal) bal.textContent = Number(w.jaune || 0); };
-            refreshSchool();
-            on($('mairieSchoolScanBtn'),'click', ()=>{ refreshSchool(); alert('Scan du wallet école simulé (démo).'); });
-            on($('mairieSchoolBurnBtn'),'click', ()=>{
-              const w = loadSchoolWallet();
-              const total = Number(w.jaune || 0);
-              if(total <= 0){ alert('Aucun bocitecoin école à brûler.'); return; }
-              if(confirm('Brûler les bocitecoins école et remettre le compteur à zéro ?')){
-                resetSchoolCycle();
-                refreshSchool();
-                alert('Bocitecoins école brûlés, compteur et cycle remis à zéro (démo).');
-              }
-            });
-          },0);
-          return;
-        }
-
-        if(key === 'commerces'){
-          openModal('Commerces', `
-            <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
-            <div class="box"><strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.</div>
-            ${coinHtml(
-              'gold',
-              'Wallet client — BoCitecoins OR',
-              'citizenCoinBalance',
-              'walletGold',
-              'BoCitecoins disponibles pour échange chez le commerçant selon les règles locales.'
-            )}
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn" id="walletClientPlus10" type="button">+10</button>
-              <button class="choiceBtn" id="walletClientPlus50" type="button">+50</button>
-              <button class="choiceBtn" id="walletClientMinus10" type="button">-10</button>
-              <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser</button>
-            </div>
-            <div class="box">
-              <div class="muted">Le commerçant saisit le montant d’achat, l’application calcule automatiquement le nombre de bocitecoins à verser.</div>
-              <div style="margin-top:10px;font-weight:900;">Montant d’achat</div>
-              <input class="miniField" id="shopPurchaseAmount" type="number" min="0" step="0.01" placeholder="Ex : 47.00" />
-              <div class="box" style="background:var(--bg);"><strong id="shopCoinsCalc">0</strong> bocitecoin(s) OR à verser</div>
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="shopCalcBtn" type="button">Calculer</button>
-                <button class="choiceBtn" id="shopScanClientBtn" type="button">Scanner le client</button>
-                <button class="choiceBtn" id="shopCreditClientBtn" type="button">Créditer le wallet client</button>
-              </div>
-              <div class="muted" style="margin-top:10px;">Règle actuelle : 1 bocitecoin OR par tranche complète de 10 € d’achat.</div>
-            </div>
-            <div class="box">
-              <strong>Règle :</strong> <strong>0,18 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés.
-            </div>
-            <div class="box">
-              <div class="muted">Saisis un montant d’achats du mois pour voir l’estimation.</div>
-              <input class="miniField" id="feeInputSales" type="number" min="0" step="0.01" placeholder="Ex : 1250.00" />
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="feeAddBtn" type="button">➕ Ajouter / mettre à jour</button>
-                <button class="choiceBtn" id="feeResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
-              </div>
-              <div class="box" style="margin-top:12px;background:var(--bg);">
-                <div style="font-weight:900;">Résumé (mois en cours)</div>
-                <div class="muted" style="margin-top:6px;">Achats saisis : <strong id="feeSalesOut">0,00 €</strong><br>Frais estimés Bo’CitéArt : <strong id="feeOut">0,00 €</strong></div>
-              </div>
-            </div>`);
-          setTimeout(()=>{
-            initFeeUiInModal();
-            const refresh = ()=>{ const wallet = loadCitizenWallet(); const bal = $('citizenCoinBalance'); if(bal) bal.textContent = Number(wallet.or || 0); };
-            refresh();
-            on($('walletClientPlus10'),'click', ()=>{ const w = loadCitizenWallet(); w.or = Number(w.or || 0) + 10; saveCitizenWallet(w); refresh(); });
-            on($('walletClientPlus50'),'click', ()=>{ const w = loadCitizenWallet(); w.or = Number(w.or || 0) + 50; saveCitizenWallet(w); refresh(); });
-            on($('walletClientMinus10'),'click', ()=>{ const w = loadCitizenWallet(); w.or = Math.max(0, Number(w.or || 0) - 10); saveCitizenWallet(w); refresh(); });
-            on($('walletClientReset'),'click', ()=>{ if(confirm('Réinitialiser le wallet Client (démo) sur ce téléphone ?')){ saveCitizenWallet({ or:0 }); refresh(); } });
-            const amountInput = $('shopPurchaseAmount');
-            const calcOut = $('shopCoinsCalc');
-            let lastCalculatedCoins = 0;
-            let lastClientScanned = false;
-            function computeCoins(){
-              const amount = Number(amountInput ? amountInput.value : 0);
-              lastCalculatedCoins = (!Number.isFinite(amount) || amount < 0) ? 0 : Math.floor(amount / 10);
-              if(calcOut) calcOut.textContent = String(lastCalculatedCoins);
-            }
-            on($('shopCalcBtn'),'click', ()=>{ computeCoins(); alert('Calcul effectué (démo).'); });
-            on($('shopScanClientBtn'),'click', ()=>{ computeCoins(); lastClientScanned = true; alert('Scan client simulé (démo).'); });
-            on($('shopCreditClientBtn'),'click', ()=>{
-              computeCoins();
-              if(!lastClientScanned){ alert('Scanne d’abord le client.'); return; }
-              if(lastCalculatedCoins <= 0){ alert('Aucun bocitecoin à verser pour ce montant.'); return; }
-              const w = loadCitizenWallet();
-              w.or = Number(w.or || 0) + lastCalculatedCoins;
-              saveCitizenWallet(w);
-              refresh();
-              lastClientScanned = false;
-              alert(lastCalculatedCoins + ' bocitecoin(s) OR versé(s) au client (démo).');
-            });
-          },0);
-          return;
-        }
-      };
-
-      const adminTile = $('adminTile');
-      on(adminTile, 'click', ()=>{
-        openModal('Accès Admin (structure)', `
-          <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
-          <div class="box"><strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.</div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
-            <li>Activation / blocage / désactivation</li>
-            <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
-          </ul>`);
-      });
-
-      const daeBtn = $('daeBtn');
-      on(daeBtn, 'click', ()=>{
-        openModal('Défibrillateur (DAE)', `
-          <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
-          <div class="box"><strong>Important :</strong> indication indicative dépendant des sources et du téléphone. En cas d’urgence, appeler le 112.</div>
-          <div class="box"><div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div><div class="muted">Ici, la version officielle affichera la carte + fléchage.</div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;"><button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button><button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button></div></div>`);
-        setTimeout(()=>{
-          on($('daeLocate'),'click', ()=> alert('Démo : demande de localisation (GPS).'));
-          on($('daeRoute'),'click', ()=> alert('Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.'));
-        },0);
-      });
-
-      function openSportFiche(){
-        openModal('📄 Fiche — élus / CCI / commerçants (Sport + Associations)', `
-          <div class="box"><div style="font-weight:900;">Objectif</div><div class="muted" style="margin-top:6px;">Déclencher un soutien simple : un commerçant soutient un club + une association, avec visibilité locale via le bandeau 1 cm.</div></div>
-          <div class="box"><div style="font-weight:900;">Préparer votre ligne (démo)</div><input class="miniField" id="spName" placeholder="Ex. Boulangerie Croquet" /><input class="miniField" id="spUrl" placeholder="https://..." style="margin-top:10px;" /><div class="miniCheck"><input id="spBold" type="checkbox" /><div>Option <strong>texte en gras</strong> (+4€ TTC).</div></div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;"><button class="choiceBtn" id="spPreview" type="button">👁️ Aperçu</button><button class="choiceBtn" id="spAddToTape" type="button">➕ Ajouter au bandeau (démo)</button></div></div>`);
-        setTimeout(()=>{
-          const inName = $('spName');
-          const inUrl = $('spUrl');
-          const cbBold = $('spBold');
-          const makeLine = ()=>{
-            const name = (inName && inName.value.trim()) ? inName.value.trim() : 'Commerce (démo)';
-            let url = (inUrl && inUrl.value.trim()) ? inUrl.value.trim() : '';
-            const base = `${name} soutient Club + Association`;
-            url = url.replace(/\s+/g, '');
-            if(!url) return base;
-            if(url.startsWith('www.')) url = 'https://' + url;
-            if(url.startsWith('http://')){ alert('URL invalide : utiliser https:// (pas http://).'); return base; }
-            if(!url.startsWith('https://')){ alert('URL invalide : utiliser https://'); return base; }
-            return `${base} • ${url}`;
-          };
-          on($('spPreview'),'click', ()=>{ const line = makeLine(); alert('Aperçu :\n' + line + (cbBold && cbBold.checked ? '\n(affichage gras)' : '\n(affichage normal)')); });
-          on($('spAddToTape'),'click', ()=>{
-            const line = makeLine();
-            const bold = !!(cbBold && cbBold.checked);
-            if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
-            window.tapeAds.push({ txt:line, bold });
-            renderTape();
-            alert('Ajouté au bandeau (démo).');
-          });
-        },0);
-      }
-
-      const legal = $('legal');
-      function openLegal(){ window.__lastFocus = document.activeElement; legal.classList.add('open'); lockScroll(true); }
-      function closeLegal(){ legal.classList.remove('open'); lockScroll(false); if(window.__lastFocus?.focus) window.__lastFocus.focus(); window.__lastFocus = null; }
-      on($('openLegal'),'click', openLegal);
-      on($('legalClose'),'click', closeLegal);
-      on($('legalX'),'click', closeLegal);
-      on($('openSecure'),'click', ()=> openModal('Compte sécurisé + assistance téléphone', '<div class="box"><strong>Abonnement optionnel :</strong> 2,99 € / mois.</div>'));
-
-      const ACK_PREFIX = 'bociteart_ack_v2_';
-      const ACK_SALT = 'BoCiteArt|ack|v2';
-      function fnv1a(str){ let h = 0x811c9dc5; for(let i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0; } return ('00000000' + h.toString(16)).slice(-8); }
-      function ackSign(kind, ts){ return fnv1a(`${ACK_SALT}|${kind}|${ts}`); }
-      function ackGet(kind){ const key = ACK_PREFIX + kind; try{ const raw = localStorage.getItem(key); if(!raw) return false; const parts = raw.split('|'); if(parts.length !== 3) return false; return parts[2] === ackSign(kind, parseInt(parts[1],10)); }catch(e){ return false; } }
-      function ackSet(kind){ const key = ACK_PREFIX + kind; try{ const ts = Date.now(); localStorage.setItem(key, `1|${ts}|${ackSign(kind, ts)}`); }catch(e){} }
-
-      function makeLongPress(btn, ringEl, ms, onTrigger){
-        if(!btn || !ringEl) return;
-        let raf = null, start = null, holding = false, fired = false;
-        const r = parseFloat(ringEl.getAttribute('r') || '35');
-        const circ = 2 * Math.PI * r;
-        ringEl.style.strokeDasharray = String(circ);
-        ringEl.style.strokeDashoffset = String(circ);
-        const stop = ()=>{ holding = false; start = null; fired = false; ringEl.style.strokeDashoffset = String(circ); if(raf) cancelAnimationFrame(raf); raf = null; };
-        const tick = (ts)=>{
-          if(!holding) return;
-          if(start === null) start = ts;
-          const p = Math.min(1, (ts - start) / ms);
-          ringEl.style.strokeDashoffset = String(circ * (1 - p));
-          if(p >= 1){ if(fired) return; fired = true; stop(); onTrigger(); return; }
-          raf = requestAnimationFrame(tick);
-        };
-        btn.addEventListener('pointerdown', (e)=>{ e.preventDefault(); if(holding) return; holding = true; fired = false; raf = requestAnimationFrame(tick); });
-        ['pointerup','pointerleave','pointercancel'].forEach(ev=> btn.addEventListener(ev, stop));
-        btn.addEventListener('contextmenu', (e)=> e.preventDefault());
-      }
-
-      function emergencyGate(kind, onOk){
-        if(ackGet(kind)){ onOk(); return; }
-        const body = kind === '112'
-          ? `<div class="box"><strong>112 :</strong> utiliser uniquement en cas d’urgence réelle.</div><label class="miniCheck"><input id="ackBox" type="checkbox"><div>J’ai compris.</div></label><button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>`
-          : `<div class="box"><strong>3919 / 119 :</strong> numéros sérieux à utiliser uniquement si nécessaire.</div><label class="miniCheck"><input id="ackBox" type="checkbox"><div>J’ai compris.</div></label><button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>`;
-        openModal(kind === '112' ? 'Urgence 112 — usage responsable' : 'Aide 3919 / 119 — usage responsable', body);
-        setTimeout(()=>{
-          on($('ackBtn'),'click', ()=>{
-            const box = $('ackBox');
-            if(!box || !box.checked){ alert('Veuillez cocher la case pour confirmer que vous avez compris.'); return; }
-            ackSet(kind);
-            closeModal();
-            onOk();
-          });
-        },0);
-      }
-
-      makeLongPress($('btn112'), $('ring112'), 1800, ()=> emergencyGate('112', ()=> callPhone('112')));
-      let sosNumber = null;
-      const choice = $('choice');
-      function closeChoice(){ choice.classList.remove('open'); lockScroll(false); if(window.__lastFocus?.focus) window.__lastFocus.focus(); window.__lastFocus = null; }
-      on($('choiceClose'),'click', closeChoice);
-      on($('choiceX'),'click', closeChoice);
-      document.querySelectorAll('#choice .choiceBtn[data-pick]').forEach(b=>{
-        b.addEventListener('click', ()=>{ sosNumber = b.getAttribute('data-pick'); const lab = $('sosLabel'); if(lab) lab.textContent = sosNumber; closeChoice(); });
-      });
-      makeLongPress($('btnSos'), $('ringSos'), 2000, ()=>{
-        if(!sosNumber){ window.__lastFocus = document.activeElement; choice.classList.add('open'); lockScroll(true); return; }
-        emergencyGate(sosNumber, ()=> callPhone(sosNumber));
-      });
-
-      document.addEventListener('keydown', (e)=>{
-        if(e.key !== 'Escape') return;
-        if(choice && choice.classList.contains('open')){ closeChoice(); return; }
-        if(legal && legal.classList.contains('open')){ closeLegal(); return; }
-        if(modal && modal.classList.contains('open')) closeModal();
-      });
-
-      if(isFn(window.makeKeyboardClickable)){
-        makeKeyboardClickable($('ticker'), openTicker);
-        document.querySelectorAll('.tile[data-open]').forEach(el=> makeKeyboardClickable(el, ()=> el.click()));
-        if(adminTile) makeKeyboardClickable(adminTile, ()=> adminTile.click());
-      }
-
-      (function initLegalTabs(){
-        const tabs = legal.querySelectorAll('.tab');
-        const panels = { rgpd:$('p-rgpd'), cgu:$('p-cgu'), cgv:$('p-cgv') };
-        function showTab(name){ tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name)); Object.keys(panels).forEach(k=>{ if(panels[k]) panels[k].style.display = (k === name) ? 'block' : 'none'; }); }
-        tabs.forEach(t=> t.addEventListener('click', ()=> showTab(t.dataset.tab)));
-        showTab('rgpd');
-      })();
-    })();
-  </script>
-</body>
-</html>
