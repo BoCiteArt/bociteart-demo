@@ -1946,7 +1946,7 @@ if(key==="mairie"){
   },0);
   return;
 }
-       if(key==="commerces"){
+ if(key==="commerces"){
   openModal("Commerces", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
 
@@ -1956,24 +1956,24 @@ if(key==="mairie"){
     </div>
 
     <div class="coinShowcase">
-      <div class="coinFace coinFace--gold" aria-hidden="true">
-        <div class="coinStars coinStars--gold top">✦ ✦ ✦ ✦ ✦ ✦</div>
-        <div class="coinInner coinInner--gold">
+      <div class="coinFace coinGold" aria-hidden="true">
+        <div class="coinStars coinStarsGold top">✦ ✦ ✦ ✦ ✦ ✦</div>
+        <div class="coinInner coinInnerGold">
           <div class="n">1</div>
           <div class="t">BoCitecoin</div>
         </div>
-        <div class="coinStars coinStars--gold bottom">✦ ✦ ✦ ✦ ✦ ✦</div>
+        <div class="coinStars coinStarsGold bottom">✦ ✦ ✦ ✦ ✦ ✦</div>
       </div>
 
       <div class="coinStack" aria-hidden="true">
-        <div class="stackCoin stack1 stackCoin--gold"></div>
-        <div class="stackCoin stack2 stackCoin--gold"></div>
-        <div class="stackCoin stack3 stackCoin--gold"></div>
+        <div class="stackCoin stack1 stackGold"></div>
+        <div class="stackCoin stack2 stackGold"></div>
+        <div class="stackCoin stack3 stackGold"></div>
       </div>
 
       <div class="walletBox">
         <div class="walletTitle">Wallet client — BoCitecoins OR</div>
-        <div class="walletValue walletValue--gold" id="citizenCoinBalance">37</div>
+        <div class="walletValue walletGold" id="citizenCoinBalance">37</div>
         <div class="walletSub">
           BoCitecoins disponibles pour échange chez le commerçant selon les règles locales.
         </div>
@@ -2097,18 +2097,21 @@ if(key==="mairie"){
       saveCitizenWallet(w);
       refresh();
     };
+
     if(p50) p50.onclick = ()=>{
       const w = loadCitizenWallet();
       w.or = Number(w.or || 0) + 50;
       saveCitizenWallet(w);
       refresh();
     };
+
     if(m10) m10.onclick = ()=>{
       const w = loadCitizenWallet();
       w.or = Math.max(0, Number(w.or || 0) - 10);
       saveCitizenWallet(w);
       refresh();
     };
+
     if(rst) rst.onclick = ()=>{
       if(confirm("Réinitialiser le wallet Client (démo) sur ce téléphone ?")){
         saveCitizenWallet({ or: 0 });
