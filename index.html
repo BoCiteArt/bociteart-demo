@@ -1055,6 +1055,9 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       }
       setTicker(0);
       setInterval(()=>{ tickerIdx = (tickerIdx+1) % tickerItems.length; setTicker(tickerIdx); }, 10000);
+            const modal = document.getElementById("modal");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalBody = document.getElementById("modalBody");
 
       const closeModal = () => {
         modal.classList.remove("open");
@@ -1196,14 +1199,10 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
         const outFee = document.getElementById("feeOut");
         const btnAdd = document.getElementById("feeAddBtn");
         const btnReset = document.getElementById("feeResetBtn");
-        const plusClient = document.getElementById("walletClientPlus");
-        const minusClient = document.getElementById("walletClientMinus");
-        const resetClient = document.getElementById("walletClientReset");
+                const resetClient = document.getElementById("walletClientReset");
         const outClient = document.getElementById("citizenCoinBalance");
 
         if(outClient){ outClient.textContent = Number(loadCitizenWallet().or || 0); }
-        if(plusClient) plusClient.onclick = ()=>{ const v = walletAdd(CITIZEN_WALLET_KEY, "or", 1); if(outClient) outClient.textContent = v; };
-        if(minusClient) minusClient.onclick = ()=>{ const v = walletAdd(CITIZEN_WALLET_KEY, "or", -1); if(outClient) outClient.textContent = v; };
         if(resetClient) resetClient.onclick = ()=>{ saveCitizenWallet({ or: 0 }); if(outClient) outClient.textContent = 0; };
 
         if(!input || !outSales || !outFee || !btnAdd || !btnReset) return;
@@ -2071,7 +2070,7 @@ if(key==="mairie"){
       <li>Possibilité d’URL selon conformité</li>
     </ul>
   `);
-
+ };
   setTimeout(()=>{
     if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
 
