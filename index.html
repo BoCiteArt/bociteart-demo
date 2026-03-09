@@ -1676,93 +1676,104 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
         if(!isFn(window.openModal)) return;
 
         if(key==="sport"){
-          openModal("Sport", `
-            <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
-            <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
+  openModal("Sport", `
+    <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+    <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
 
-            <div class="coinShowcase">
-              <div class="coinFace coinGreen" aria-hidden="true">
-                <div class="coinInner coinInnerGreen">
-                  <div class="n">1</div>
-                  <div class="t">BoCitecoin</div>
-                </div>
-              </div>
-              <div class="coinStack" aria-hidden="true">
-                <div class="stackCoin stackGreen stack1"></div>
-                <div class="stackCoin stackGreen stack2"></div>
-                <div class="stackCoin stackGreen stack3"></div>
-              </div>
-              <div class="walletBox">
-                <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
-                <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
-                <div class="walletSub">BoCitecoins gagnés par les actions sportives/citoyennes, échangeables plus tard chez un commerçant partenaire selon les règles locales.</div>
-                <div class="walletActions">
-                  <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-                  <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
-                  <button class="walletMini" id="walletSportMinus" type="button">−1</button>
-                  <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
-                </div>
-              </div>
-            </div>
+    <div class="coinShowcase">
+      <div class="coinFace coinGreen" aria-hidden="true">
+        <div class="coinStars coinStarsGreen top">✦ ✦ ✦ ✦ ✦ ✦</div>
+        <div class="coinInner coinInnerGreen">
+          <div class="n">1</div>
+          <div class="t">BoCitecoin</div>
+        </div>
+        <div class="coinStars coinStarsGreen bottom">✦ ✦ ✦ ✦ ✦ ✦</div>
+      </div>
+      <div class="coinStack" aria-hidden="true">
+        <div class="stackCoin stackGreen stack1"></div>
+        <div class="stackCoin stackGreen stack2"></div>
+        <div class="stackCoin stackGreen stack3"></div>
+      </div>
+      <div class="walletBox">
+        <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
+        <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
+        <div class="walletSub">BoCitecoins gagnés par les actions sportives/citoyennes, échangeables plus tard chez un commerçant partenaire selon les règles locales.</div>
+        <div class="walletActions">
+          <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
+          <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
+          <button class="walletMini" id="walletSportMinus" type="button">−1</button>
+          <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
+        </div>
+      </div>
+    </div>
 
-            <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
-            <div class="box">
-              <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
-              <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm), et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras. Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.</div>
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;"><button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button></div>
-            </div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Rapport du week-end (résumé)</li>
-              <li>Missions citoyennes : propreté • rangement • fair-play</li>
-              <li>Validation (optionnelle) — non publique</li>
-              <li>Bocitecoins couleur Vert : collectivité</li>
-              <li>Pas de messagerie • pas de commentaires libres</li>
-            </ul>
-            <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Parcs • bois • parcours • salles</li>
-              <li>Carte plein écran + guidage</li>
-            </ul>
-            <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
-            <div class="box">Actuellement : 12 clubs engagés (démo)<br><br>Chaque club peut proposer :<br>• Rapport du week-end<br>• Actions citoyennes<br>• Partenariats commerçants<br>• Soutien associatif</div>
-          `);
-          setTimeout(()=>{
-            const b = $("openSportFicheBtn");
-            if(b) b.onclick = openSportFiche;
-            const refresh = ()=>{ const out = document.getElementById("sportCoinBalance"); if(out) out.textContent = Number(loadSportWallet().vert || 0); };
-            refresh();
-            const p10 = document.getElementById("walletSportPlus10");
-                        const p50 = document.getElementById("walletSportPlus50");
-            const m10 = document.getElementById("walletSportMinus10");
-            const rst = document.getElementById("walletSportReset");
+    <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
+    <div class="box">
+      <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
+      <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm), et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras. Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;"><button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button></div>
+    </div>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Rapport du week-end (résumé)</li>
+      <li>Missions citoyennes : propreté • rangement • fair-play</li>
+      <li>Validation (optionnelle) — non publique</li>
+      <li>Bocitecoins couleur Vert : collectivité</li>
+      <li>Pas de messagerie • pas de commentaires libres</li>
+    </ul>
+    <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Parcs • bois • parcours • salles</li>
+      <li>Carte plein écran + guidage</li>
+    </ul>
+    <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
+    <div class="box">Actuellement : 12 clubs engagés (démo)<br><br>Chaque club peut proposer :<br>• Rapport du week-end<br>• Actions citoyennes<br>• Partenariats commerçants<br>• Soutien associatif</div>
+  `);
 
-            if(p10) p10.onclick = ()=>{
-              const w = loadSportWallet();
-              w.vert = Number(w.vert || 0) + 10;
-              saveSportWallet(w);
-              refresh();
-            };
-            if(p50) p50.onclick = ()=>{
-              const w = loadSportWallet();
-              w.vert = Number(w.vert || 0) + 50;
-              saveSportWallet(w);
-              refresh();
-            };
-            if(m10) m10.onclick = ()=>{
-              const w = loadSportWallet();
-              w.vert = Math.max(0, Number(w.vert || 0) - 10);
-              saveSportWallet(w);
-              refresh();
-            };
-            if(rst) rst.onclick = ()=>{
-              if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
-                saveSportWallet({ vert: 0 });
-                refresh();
-              }
-            };
-          },0);
-          return;
-        }
+  setTimeout(()=>{
+    const b = $("openSportFicheBtn");
+    if(b) b.onclick = openSportFiche;
+
+    const refresh = ()=>{
+      const out = document.getElementById("sportCoinBalance");
+      if(out) out.textContent = Number(loadSportWallet().vert || 0);
+    };
+    refresh();
+
+    const p10 = document.getElementById("walletSportPlus10");
+    const p25 = document.getElementById("walletSportPlus25");
+    const m1 = document.getElementById("walletSportMinus");
+    const rst = document.getElementById("walletSportReset");
+
+    if(p10) p10.onclick = ()=>{
+      const w = loadSportWallet();
+      w.vert = Number(w.vert || 0) + 10;
+      saveSportWallet(w);
+      refresh();
+    };
+
+    if(p25) p25.onclick = ()=>{
+      const w = loadSportWallet();
+      w.vert = Number(w.vert || 0) + 25;
+      saveSportWallet(w);
+      refresh();
+    };
+
+    if(m1) m1.onclick = ()=>{
+      const w = loadSportWallet();
+      w.vert = Math.max(0, Number(w.vert || 0) - 1);
+      saveSportWallet(w);
+      refresh();
+    };
+
+    if(rst) rst.onclick = ()=>{
+      if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
+        saveSportWallet({ vert: 0 });
+        refresh();
+      }
+    };
+  },0);
+  return;
+} 
         
 if(key==="mairie"){
   openModal("Mairie", `
