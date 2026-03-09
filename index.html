@@ -438,45 +438,40 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
 .coinStarsRing{
   position:absolute;
-  inset:10px;
+  inset:0;
   border-radius:50%;
   pointer-events:none;
   z-index:1;
 }
 
-.coinStarsRing span{
+.coinStarsRing::before{
+  content:"✦";
   position:absolute;
   left:50%;
   top:50%;
-  width:12px;
-  height:12px;
-  margin-left:-6px;
-  margin-top:-6px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  margin-left:-4px;
+  margin-top:-4px;
   font-size:9px;
   line-height:1;
   font-weight:900;
-  transform-origin:0 0;
+  text-shadow:
+    0 -34px 0 currentColor,
+    17px -29px 0 currentColor,
+    29px -17px 0 currentColor,
+    34px 0 0 currentColor,
+    29px 17px 0 currentColor,
+    17px 29px 0 currentColor,
+    0 34px 0 currentColor,
+    -17px 29px 0 currentColor,
+    -29px 17px 0 currentColor,
+    -34px 0 0 currentColor,
+    -29px -17px 0 currentColor,
+    -17px -29px 0 currentColor;
 }
 
-.coinStarsGold span{ color:#fff7c8; }
-.coinStarsYellow span{ color:#fffbe2; }
-.coinStarsGreen span{ color:#e9fff3; }
-
-.coinStarsRing span:nth-child(1){ transform:rotate(0deg) translateY(-34px) rotate(0deg); }
-.coinStarsRing span:nth-child(2){ transform:rotate(30deg) translateY(-34px) rotate(-30deg); }
-.coinStarsRing span:nth-child(3){ transform:rotate(60deg) translateY(-34px) rotate(-60deg); }
-.coinStarsRing span:nth-child(4){ transform:rotate(90deg) translateY(-34px) rotate(-90deg); }
-.coinStarsRing span:nth-child(5){ transform:rotate(120deg) translateY(-34px) rotate(-120deg); }
-.coinStarsRing span:nth-child(6){ transform:rotate(150deg) translateY(-34px) rotate(-150deg); }
-.coinStarsRing span:nth-child(7){ transform:rotate(180deg) translateY(-34px) rotate(-180deg); }
-.coinStarsRing span:nth-child(8){ transform:rotate(210deg) translateY(-34px) rotate(-210deg); }
-.coinStarsRing span:nth-child(9){ transform:rotate(240deg) translateY(-34px) rotate(-240deg); }
-.coinStarsRing span:nth-child(10){ transform:rotate(270deg) translateY(-34px) rotate(-270deg); }
-.coinStarsRing span:nth-child(11){ transform:rotate(300deg) translateY(-34px) rotate(-300deg); }
-.coinStarsRing span:nth-child(12){ transform:rotate(330deg) translateY(-34px) rotate(-330deg); }
+.coinStarsGold::before{ color:#fff7c8; }
+.coinStarsYellow::before{ color:#fffbe2; }
+.coinStarsGreen::before{ color:#e9fff3; }
 
 .stackCoin::before{
   content:"";
@@ -1506,19 +1501,14 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
               </div>
 
           <div class="coinShowcase">
- <div class="coinFace coinYellow" aria-hidden="true">
-  <div class="coinStars coinStarsYellow top">✦ ✦ ✦ ✦ ✦ ✦</div>
-  <div class="coinInner coinInnerYellow">
-    <div class="n">1</div>
-    <div class="t">BoCitecoin</div>
+<div class="coinShowcase">
+  <div class="coinFace coinYellow" aria-hidden="true">
+    <div class="coinStarsRing coinStarsYellow" aria-hidden="true"></div>
+    <div class="coinInner coinInnerYellow">
+      <div class="n">1</div>
+      <div class="t">BoCitecoin</div>
+    </div>
   </div>
-  <div class="coinStars coinStarsYellow bottom">✦ ✦ ✦ ✦ ✦ ✦</div>
-</div> 
-  <div class="coinInner coinInnerYellow">
-    <div class="n">1</div>
-    <div class="t">BoCitecoin</div>
-  </div>
-</div>
 
   <div class="coinStack" aria-hidden="true">
     <div class="stackCoin stackYellow stack1"></div>
@@ -1723,12 +1713,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
 
     <div class="coinShowcase">
-     <div class="coinFace coinGreen" aria-hidden="true">
-  <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
-    <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
-    <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
-    <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
-  </div>
+  <div class="coinStarsRing coinStarsGreen" aria-hidden="true"></div>
   <div class="coinInner coinInnerGreen">
     <div class="n">1</div>
     <div class="t">BoCitecoin</div>
@@ -2003,12 +1988,7 @@ if(key==="mairie"){
     </div>
 
     <div class="coinShowcase">
-      <div class="coinFace coinGold" aria-hidden="true">
-  <div class="coinStarsRing coinStarsGold" aria-hidden="true">
-    <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
-    <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
-    <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
-  </div>
+  <div class="coinStarsRing coinStarsGold" aria-hidden="true"></div>
   <div class="coinInner coinInnerGold">
     <div class="n">1</div>
     <div class="t">BoCitecoin</div>
