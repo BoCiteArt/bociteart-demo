@@ -419,6 +419,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   border-radius:50%;
   border:2px solid rgba(140,95,0,.55);
   pointer-events:none;
+  z-index:0;
 }
 
 .coinGold{
@@ -454,36 +455,36 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   top:50%;
   width:0;
   height:0;
-  font-size:8px;
+  font-size:9px;
   line-height:1;
   font-weight:900;
   transform:translate(-50%,-50%);
   text-shadow:
-    0 -31px 0 currentColor,
-    10px -29px 0 currentColor,
-    19px -25px 0 currentColor,
-    26px -18px 0 currentColor,
-    30px -9px 0 currentColor,
-    31px 0 0 currentColor,
-    30px 9px 0 currentColor,
-    26px 18px 0 currentColor,
-    19px 25px 0 currentColor,
-    10px 29px 0 currentColor,
-    0 31px 0 currentColor,
-    -10px 29px 0 currentColor,
-    -19px 25px 0 currentColor,
-    -26px 18px 0 currentColor,
-    -30px 9px 0 currentColor,
-    -31px 0 0 currentColor,
-    -30px -9px 0 currentColor,
-    -26px -18px 0 currentColor,
-    -19px -25px 0 currentColor,
-    -10px -29px 0 currentColor;
+    0 -34px 0 currentColor,
+    11px -32px 0 currentColor,
+    21px -27px 0 currentColor,
+    29px -20px 0 currentColor,
+    33px -10px 0 currentColor,
+    34px 0 0 currentColor,
+    33px 10px 0 currentColor,
+    29px 20px 0 currentColor,
+    21px 27px 0 currentColor,
+    11px 32px 0 currentColor,
+    0 34px 0 currentColor,
+    -11px 32px 0 currentColor,
+    -21px 27px 0 currentColor,
+    -29px 20px 0 currentColor,
+    -33px 10px 0 currentColor,
+    -34px 0 0 currentColor,
+    -33px -10px 0 currentColor,
+    -29px -20px 0 currentColor,
+    -21px -27px 0 currentColor,
+    -11px -32px 0 currentColor;
 }
 
-.coinStarsGold::before{ color:#8f6500; }
-.coinStarsYellow::before{ color:#8a7600; }
-.coinStarsGreen::before{ color:#d9f7e6; }
+.coinStarsGold::before{ color:#9b6a00; }
+.coinStarsYellow::before{ color:#967d00; }
+.coinStarsGreen::before{ color:#ecfff3; }
 
 .stackCoin::before{
   content:"";
@@ -2346,9 +2347,9 @@ function loadVoices(){
     <div class="box">
       <div style="font-weight:900;">🎁 Échanges possibles chez les partenaires Bo’CitéArt</div>
       <ul style="margin:8px 0 0 18px;font-weight:800;">
-        <li><strong>30 bocitecoins</strong> : avantage partenaire jusqu’à <strong>15 %</strong></li>
-        <li><strong>50 bocitecoins</strong> : avantage renforcé jusqu’à <strong>25 %</strong></li>
-        <li><strong>100 bocitecoins</strong> : avantage premium jusqu’à <strong>40 %</strong></li>
+      <li><strong>30 bocitecoins</strong> : avantage partenaire <span style="white-space:nowrap;"><strong>jusqu’à 15 %</strong></span></li>
+<li><strong>50 bocitecoins</strong> : avantage renforcé <span style="white-space:nowrap;"><strong>jusqu’à 25 %</strong></span></li>
+<li><strong>100 bocitecoins</strong> : avantage premium <span style="white-space:nowrap;"><strong>jusqu’à 40 %</strong></span></li>
       </ul>
       <div class="muted" style="margin-top:8px;">
         Les avantages sont proposés librement par les commerçants partenaires.
