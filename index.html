@@ -2865,39 +2865,39 @@ if(key==="commerces"){
       saveCitizenMeta(meta);
     }
 
-    function redeemCoins(required){
-      const wallet = loadCitizenWallet();
-      const meta = ensureCitizenMeta();
-      const now = Date.now();
-      const coins = Number(wallet.or || 0);
-      const daysLeft = daysBetween(now, meta.expireTs);
-      const loweredThresholdAllowed = daysLeft <= 30;
-      const minimumAllowed = loweredThresholdAllowed ? 20 : 30;
+  function redeemCoins(required){
+  const wallet = loadCitizenWallet();
+  const meta = ensureCitizenMeta();
+  const now = Date.now();
+  const coins = Number(wallet.or || 0);
+  const daysLeft = daysBetween(now, meta.expireTs);
+  const loweredThresholdAllowed = daysLeft <= 30;
+  const minimumAllowed = loweredThresholdAllowed ? 20 : 30;
 
-      if(required < minimumAllowed){
-        alert(\`Échange impossible sous \${minimumAllowed} bocitecoins dans la période actuelle.\`);
-        return;
-      }
+  if(required < minimumAllowed){
+    alert(`Échange impossible sous ${minimumAllowed} bocitecoins dans la période actuelle.`);
+    return;
+  }
 
-      if(coins < required){
-        alert(\`Solde insuffisant. Il faut \${required} bocitecoins.\`);
-        return;
-      }
+  if(coins < required){
+    alert(`Solde insuffisant. Il faut ${required} bocitecoins.`);
+    return;
+  }
 
-      if(confirm(\`Confirmer l’échange de \${required} bocitecoins ?\`)){
-        wallet.or = Math.max(0, coins - required);
-        saveCitizenWallet(wallet);
-        registerTx({
-          type: "redeem",
-          amount: required,
-          previous: coins,
-          resulting: wallet.or,
-          ts: Date.now()
-        });
-        refreshWalletUi();
-        alert(\`Échange validé (démo) : \${required} bocitecoins utilisés.\`);
-      }
-    }
+  if(confirm(`Confirmer l’échange de ${required} bocitecoins ?`)){
+    wallet.or = Math.max(0, coins - required);
+    saveCitizenWallet(wallet);
+    registerTx({
+      type: "redeem",
+      amount: required,
+      previous: coins,
+      resulting: wallet.or,
+      ts: Date.now()
+    });
+    refreshWalletUi();
+    alert(`Échange validé (démo) : ${required} bocitecoins utilisés.`);
+  }
+}
 
     refreshWalletUi();
 
