@@ -443,8 +443,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 .coinStarsRing{
   position:absolute;
   inset:0;
-  width:100%;
-  height:100%;
+  border-radius:50%;
   pointer-events:none;
   z-index:1;
 }
@@ -457,9 +456,100 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   display:block;
 }
 
-.coinStarsGold .starRingStroke{ stroke:#9b6a00; fill:none; }
-.coinStarsYellow .starRingStroke{ stroke:#967d00; fill:none; }
-.coinStarsGreen .starRingStroke{ stroke:#ecfff3; fill:none; }
+.starRingStroke{
+  fill:none;
+  vector-effect:non-scaling-stroke;
+}
+
+.coinStarsGold .starRingStroke{ stroke:#9b6a00; }
+.coinStarsYellow .starRingStroke{ stroke:#967d00; }
+.coinStarsGreen .starRingStroke{ stroke:#ecfff3; }
+
+.coinInner{
+  position:relative;
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-weight:900;
+  z-index:2;
+  padding:4px;
+  box-shadow:
+    inset 0 2px 5px rgba(255,255,255,.14),
+    inset 0 -3px 7px rgba(0,0,0,.16);
+}
+
+.coinInner::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:2px solid currentColor;
+  opacity:.35;
+  pointer-events:none;
+}
+
+.coinInner .n{
+  font-size:24px;
+  line-height:1;
+  position:relative;
+  z-index:1;
+}
+
+.coinInner .t{
+  font-size:8px;
+  line-height:1.05;
+  margin-top:4px;
+  position:relative;
+  z-index:1;
+  letter-spacing:.2px;
+}
+
+.coinInnerGold{
+  color:#7a5600;
+  background:radial-gradient(circle at 35% 30%, rgba(255,231,140,.92) 0%, rgba(222,177,38,.96) 58%, rgba(169,120,0,.98) 100%);
+  text-shadow:
+    0 1px 0 rgba(255,245,190,.65),
+    0 -1px 0 rgba(110,70,0,.25);
+}
+
+.coinInnerYellow{
+  color:#766100;
+  background:radial-gradient(circle at 35% 30%, rgba(255,240,162,.94) 0%, rgba(218,191,35,.97) 58%, rgba(160,136,0,.99) 100%);
+  text-shadow:
+    0 1px 0 rgba(255,250,204,.65),
+    0 -1px 0 rgba(100,90,0,.22);
+}
+
+.coinInnerGreen{
+  color:#eefcf4;
+  background:radial-gradient(circle at 35% 30%, rgba(119,190,149,.95) 0%, rgba(56,110,82,.98) 60%, rgba(30,63,47,.99) 100%);
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.18),
+    0 -1px 0 rgba(0,0,0,.18);
+}
+
+.coinStack{
+  position:relative;
+  width:84px;
+  height:64px;
+  flex:0 0 auto;
+}
+
+.stackCoin{
+  position:absolute;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  box-shadow:
+    inset 0 1px 5px rgba(255,255,255,.18),
+    inset 0 -3px 6px rgba(0,0,0,.14),
+    0 4px 10px rgba(0,0,0,.16);
+}
 
 .stackCoin::before{
   content:"";
@@ -467,7 +557,51 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   inset:5px;
   border-radius:50%;
   border:1.5px solid rgba(120,85,0,.42);
+  pointer-events:none;
+  z-index:0;
 }
+
+.stackGold{
+  background:
+    radial-gradient(circle at 32% 28%, #fff3a8 0%, #f4d44d 18%, #d9aa14 48%, #b98400 72%, #8d6200 100%);
+  border:3px solid #b67d00;
+}
+
+.stackYellow{
+  background:
+    radial-gradient(circle at 32% 28%, #fff7b6 0%, #f2df58 18%, #d4bb18 48%, #ab9300 72%, #7f6d00 100%);
+  border:3px solid #b89d00;
+}
+
+.stackGreen{
+  background:
+    radial-gradient(circle at 32% 28%, #dff7ea 0%, #91d9b1 20%, #3f7e5f 48%, #2e5f47 72%, #1f4332 100%);
+  border:3px solid #2f5d46;
+}
+
+.stackCoinStars{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:1;
+}
+
+.stackCoinStars svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.stackStarRingStroke{
+  fill:none;
+  vector-effect:non-scaling-stroke;
+}
+
+.stackGold .stackStarRingStroke{ stroke:#9b6a00; }
+.stackYellow .stackStarRingStroke{ stroke:#967d00; }
+.stackGreen .stackStarRingStroke{ stroke:#ecfff3; }
 
 .stackCoinLabel{
   position:absolute;
@@ -482,44 +616,22 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 }
 
 .stackCoinLabel .n{
-  font-size:11px;
+  font-size:10px;
   line-height:1;
   font-weight:900;
   margin-bottom:1px;
 }
 
 .stackCoinLabel .t{
-  font-size:3.8px;
+  font-size:3.4px;
   line-height:1;
   font-weight:900;
-  letter-spacing:.1px;
+  letter-spacing:0;
 }
 
 .stackGold .stackCoinLabel{ color:#7a5600; }
 .stackYellow .stackCoinLabel{ color:#766100; }
 .stackGreen .stackCoinLabel{ color:#eefcf4; }
-
-.stackCoinStars{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-  z-index:1;
-}
-
-.stackCoinStars svg{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  display:block;
-}
-
-.stackGold .stackStarRingStroke{ stroke:#9b6a00; fill:none; }
-.stackYellow .stackStarRingStroke{ stroke:#967d00; fill:none; }
-.stackGreen .stackStarRingStroke{ stroke:#ecfff3; fill:none; }
-}
 
 .stack1{ left:0; bottom:0; }
 .stack2{ left:18px; bottom:8px; }
@@ -2219,20 +2331,93 @@ function loadVoices(){
       Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
     </div>
 
-    <div class="coinShowcase">
-      <div class="coinFace coinGold" aria-hidden="true">
-        <div class="coinStarsRing coinStarsGold" aria-hidden="true"></div>
-        <div class="coinInner coinInnerGold">
-          <div class="n">1</div>
-          <div class="t">BoCitecoin</div>
-        </div>
-      </div>
+  <div class="coinShowcase">
+  <div class="coinFace coinGold" aria-hidden="true">
+    <div class="coinStarsRing coinStarsGold">
+      <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <circle
+          cx="50"
+          cy="50"
+          r="31.5"
+          stroke-width="2.2"
+          stroke-dasharray="0.2 5.9"
+          stroke-linecap="round"
+          class="starRingStroke"></circle>
+      </svg>
+    </div>
+    <div class="coinInner coinInnerGold">
+      <div class="n">1</div>
+      <div class="t">BoCitecoin</div>
+    </div>
+  </div>
 
-      <div class="coinStack" aria-hidden="true">
-        <div class="stackCoin stackGold stack1"></div>
-        <div class="stackCoin stackGold stack2"></div>
-        <div class="stackCoin stackGold stack3"></div>
+  <div class="coinStack" aria-hidden="true">
+    <div class="stackCoin stackGold stack1">
+      <div class="stackCoinStars">
+        <svg viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+          <circle
+            cx="22"
+            cy="22"
+            r="13"
+            stroke-width="1.5"
+            stroke-dasharray="0.2 3.1"
+            stroke-linecap="round"
+            class="stackStarRingStroke"></circle>
+        </svg>
       </div>
+      <div class="stackCoinLabel">
+        <div class="n">1</div>
+        <div class="t">BoCitecoin</div>
+      </div>
+    </div>
+
+    <div class="stackCoin stackGold stack2">
+      <div class="stackCoinStars">
+        <svg viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+          <circle
+            cx="22"
+            cy="22"
+            r="13"
+            stroke-width="1.5"
+            stroke-dasharray="0.2 3.1"
+            stroke-linecap="round"
+            class="stackStarRingStroke"></circle>
+        </svg>
+      </div>
+      <div class="stackCoinLabel">
+        <div class="n">1</div>
+        <div class="t">BoCitecoin</div>
+      </div>
+    </div>
+
+    <div class="stackCoin stackGold stack3">
+      <div class="stackCoinStars">
+        <svg viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+          <circle
+            cx="22"
+            cy="22"
+            r="13"
+            stroke-width="1.5"
+            stroke-dasharray="0.2 3.1"
+            stroke-linecap="round"
+            class="stackStarRingStroke"></circle>
+        </svg>
+      </div>
+      <div class="stackCoinLabel">
+        <div class="n">1</div>
+        <div class="t">BoCitecoin</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="walletBox">
+    <div class="walletTitle">Wallet client — BoCitecoins OR</div>
+    <div class="walletValue walletGold" id="citizenCoinBalance">37</div>
+    <div class="walletSub">
+      BoCitecoins disponibles pour échange chez les commerçants partenaires Bo’CitéArt selon les règles locales.
+    </div>
+  </div>
+</div>
 
       <div class="walletBox">
         <div class="walletTitle">Wallet client — BoCitecoins OR</div>
