@@ -1716,15 +1716,35 @@ function loadVoices(){
                 <button class="choiceBtn" type="button" id="playChild">▶ Lire (voix enfant — démo)</button>
                 <button class="choiceBtn" type="button" id="playFemale">▶ Lire (voix synthétique)</button>
               </div>
+              
+             <div class="coinShowcase">
+  <div class="coinFace coinYellow" aria-hidden="true">
+    <div class="coinStarsRing coinStarsYellow" aria-hidden="true"></div>
+    <div class="coinInner coinInnerYellow">
+      <div class="n">1</div>
+      <div class="t">BoCitecoin</div>
+    </div>
+  </div>
 
-              <div class="coinShowcase">
-                <div class="coinFace coinYellow" aria-hidden="true">
-                  <div class="coinStarsRing coinStarsYellow" aria-hidden="true"></div>
-                  <div class="coinInner coinInnerYellow">
-                    <div class="n">1</div>
-                    <div class="t">BoCitecoin</div>
-                  </div>
-                </div>
+  <div class="coinStack" aria-hidden="true">
+    <div class="stackCoin stackYellow stack1"></div>
+    <div class="stackCoin stackYellow stack2"></div>
+    <div class="stackCoin stackYellow stack3"></div>
+  </div>
+
+  <div class="walletBox">
+    <div class="walletTitle">Wallet École — BoCitecoins JAUNE</div>
+    <div class="walletValue walletYellow" id="schoolCoinBalance">0</div>
+    <div class="walletSub">
+      BoCitecoins gagnés par la classe, échangeables en mairie selon les règles locales,
+      ou cumulables pour un projet / une aide de classe selon le choix retenu.
+    </div>
+    <div class="walletActions">
+      <button class="walletMini" id="walletSchoolInfo" type="button">Voir le cycle</button>
+      <button class="walletMini" id="walletSchoolReset" type="button">Réinitialiser</button>
+    </div>
+  </div>
+</div>
 
                 <div class="coinStack" aria-hidden="true">
 
@@ -1784,17 +1804,23 @@ function loadVoices(){
               </div>
 
               <div class="box" style="margin-top:12px;">
-                <div style="font-weight:900;">Quotas (école)</div>
-                <ul style="margin:8px 0 0 18px;font-weight:800;">
-                  <li>15 mots validés = bonus 50 bocitecoins</li>
-                  <li>18 mots validés = bonus 80 bocitecoins</li>
-                  <li>22 mots validés = bonus 100 bocitecoins</li>
-                </ul>
-                <div class="muted" style="margin-top:8px;">
-                  En plus de ces bonus, <strong>chaque validation quotidienne ajoute automatiquement 1 bocitecoin</strong>.
-                </div>
-                <div class="muted" style="margin-top:8px;">Valeur d’usage : <strong>1 bocitecoin = 1 point</strong> (unité interne de valorisation, non monétaire, non convertible en euros). Toute conversion éventuelle en matériel relève de la décision de la mairie, selon ses capacités, sans obligation.</div>
-              </div>
+              <div class="box" style="margin-top:12px;">
+  <div style="font-weight:900;">Cycle de progression (école)</div>
+  <ul style="margin:8px 0 0 18px;font-weight:800;">
+    <li>Du 1er au 14e mot validé : <strong>+1 bocitecoin</strong> par jour</li>
+    <li>Au 15e mot validé : le compteur passe directement à <strong>50 bocitecoins</strong></li>
+    <li>Au 16e et 17e mot : <strong>+1</strong> par jour</li>
+    <li>Au 18e mot validé : le compteur passe directement à <strong>80 bocitecoins</strong></li>
+    <li>Du 19e au 21e mot : <strong>+1</strong> par jour</li>
+    <li>Au 22e mot validé : le compteur passe directement à <strong>100 bocitecoins</strong></li>
+  </ul>
+  <div class="muted" style="margin-top:8px;">
+    L’objectif est pédagogique : encourager l’écoute, la régularité, le vocabulaire, le respect et la participation en classe.
+  </div>
+  <div class="muted" style="margin-top:8px;">
+    La mairie peut ensuite soit brûler le compteur lors d’un échange, soit laisser la classe cumuler plusieurs périodes pour un projet plus important.
+  </div>
+</div> 
 
               <div style="font-weight:900;margin-top:14px;">Partage solidaire (structure)</div>
               <div class="box">
@@ -1883,11 +1909,11 @@ function loadVoices(){
                 if(sum !== 100) return { ok:false, msg:`En don partiel, le total doit faire 100%. (Actuel : ${sum}%)` };
                 return { ok:true };
               }
-
-              function refreshSchoolWallet(){
-                const out = document.getElementById("schoolCoinBalance");
-                if(out) out.textContent = Number(loadSchoolWallet().jaune || 0);
-              }
+              
+             function refreshSchoolWallet(){
+  const out = document.getElementById("schoolCoinBalance");
+  if(out) out.textContent = Number(loadSchoolWallet().jaune || 0);
+}
 
               function getTodayKey(){
                 return new Date().toISOString().slice(0,10);
@@ -1905,26 +1931,35 @@ function loadVoices(){
                 return db.progress[cls];
               }
 
-              function schoolMilestoneBonus(totalValidatedDays){
-                if(totalValidatedDays === 15) return 50;
-                if(totalValidatedDays === 18) return 80;
-                if(totalValidatedDays === 22) return 100;
-                return 0;
-              }
+            function schoolTargetValue(totalValidatedDays){
+  if(totalValidatedDays === 15) return 50;
+  if(totalValidatedDays === 18) return 80;
+  if(totalValidatedDays === 22) return 100;
+  return null;
+}
 
               fillSchoolSelect();
               refreshSchoolWallet();
+const schoolInfoBtn = document.getElementById("walletSchoolInfo");
+if(schoolInfoBtn) schoolInfoBtn.onclick = ()=>{
+  const db = schoolLoad();
+  const sel = document.getElementById("schoolClassSelect");
+  const idx = sel ? parseInt(sel.value,10) : 0;
+  const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+  const prog = getSchoolProgress(db, cls);
 
-              const schoolMinus = document.getElementById("walletSchoolMinus");
-              const schoolResetWallet = document.getElementById("walletSchoolReset");
-
-              if(schoolMinus) schoolMinus.onclick = ()=>{
-                const v = walletAdd(SCHOOL_WALLET_KEY, "jaune", -1);
-                const out = document.getElementById("schoolCoinBalance");
-                if(out) out.textContent = v;
-              };
-
+  alert(
+    "Classe : " + cls +
+    "\nMots validés dans le cycle : " + Number(prog.totalValidatedDays || 0) +
+    "\nCompteur actuel : " + Number(loadSchoolWallet().jaune || 0) + " bocitecoins" +
+    "\n\nPaliers :" +
+    "\n- 15e mot => 50" +
+    "\n- 18e mot => 80" +
+    "\n- 22e mot => 100"
+  );
+};
               if(schoolResetWallet) schoolResetWallet.onclick = ()=>{
+                if(confirm("Réinitialiser le compteur école et le cycle de progression (démo) ?")){
                 saveSchoolWallet({ jaune: 0 });
                 const db = schoolLoad();
                 if(db.progress) db.progress = {};
@@ -2001,61 +2036,67 @@ function loadVoices(){
                 }
               };
 
-              if(btnWordSave2) btnWordSave2.onclick = ()=>{
-                const input = document.getElementById("schoolWordInput");
-                const sel = document.getElementById("schoolClassSelect");
-                const idx = sel ? parseInt(sel.value,10) : 0;
-                const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-                const w = input ? (input.value || "").trim() : "";
-                const today = getTodayKey();
+if(btnWordSave2) btnWordSave2.onclick = ()=>{
+  const input = document.getElementById("schoolWordInput");
+  const sel = document.getElementById("schoolClassSelect");
+  const idx = sel ? parseInt(sel.value,10) : 0;
+  const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+  const w = input ? (input.value || "").trim() : "";
+  const today = getTodayKey();
 
-                if(!w){
-                  alert("Saisis le mot du jour.");
-                  return;
-                }
-                if(/[<>]/.test(w)){
-                  alert("Texte invalide.");
-                  return;
-                }
+  if(!w){
+    alert("Saisis le mot du jour.");
+    return;
+  }
+  if(/[<>]/.test(w)){
+    alert("Texte invalide.");
+    return;
+  }
 
-                const db = schoolLoad();
-                const prog = getSchoolProgress(db, cls);
+  const db = schoolLoad();
+  const prog = getSchoolProgress(db, cls);
 
-                if(prog.lastValidationDay === today){
-                  alert("Le mot du jour a déjà été validé aujourd’hui pour cette classe.");
-                  return;
-                }
+  if(prog.lastValidationDay === today){
+    alert("Le mot du jour a déjà été validé aujourd’hui pour cette classe.");
+    return;
+  }
 
-                db.lastWord = {
-                  class: cls,
-                  text: w,
-                  ts_fr: new Date().toLocaleString("fr-FR"),
-                  note: "Mot du jour (démo, stockage local)"
-                };
+  db.lastWord = {
+    class: cls,
+    text: w,
+    ts_fr: new Date().toLocaleString("fr-FR"),
+    note: "Mot du jour (démo, stockage local)"
+  };
 
-                prog.totalValidatedDays = Number(prog.totalValidatedDays || 0) + 1;
-                prog.lastValidationDay = today;
+  prog.totalValidatedDays = Number(prog.totalValidatedDays || 0) + 1;
+  prog.lastValidationDay = today;
 
-                let added = 0;
-                added += 1; // 1 jeton par validation quotidienne
+  const currentWallet = loadSchoolWallet();
+  let currentValue = Number(currentWallet.jaune || 0);
+  const target = schoolTargetValue(prog.totalValidatedDays);
 
-                const bonus = schoolMilestoneBonus(prog.totalValidatedDays);
-                if(bonus > 0 && !prog.awardedMilestones[String(prog.totalValidatedDays)]){
-                  prog.awardedMilestones[String(prog.totalValidatedDays)] = true;
-                  added += bonus;
-                }
+  if(target !== null){
+    currentValue = target;
+  } else {
+    currentValue += 1;
+  }
 
-                schoolSave(db);
-                walletAdd(SCHOOL_WALLET_KEY, "jaune", added);
-                refreshSchoolWallet();
+  saveSchoolWallet({ jaune: currentValue });
+  schoolSave(db);
+  refreshSchoolWallet();
 
-                alert(
-                  "Validé (démo) : " + cls +
-                  "\n« " + w + " »" +
-                  `\nJour validé n°${prog.totalValidatedDays}` +
-                  `\n+${added} bocitecoins JAUNE`
-                );
-              };
+  let message = 
+    "Validé (démo) : " + cls +
+    "\n« " + w + " »" +
+    "\nJour validé n°" + prog.totalValidatedDays +
+    "\nCompteur actuel : " + currentValue + " bocitecoins JAUNE";
+
+  if(target !== null){
+    message += "\nPalier atteint : compteur porté à " + target + " bocitecoins.";
+  }
+
+  alert(message);
+};
             }, 0);
             return;
           }
