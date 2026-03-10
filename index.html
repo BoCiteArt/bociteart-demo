@@ -1290,20 +1290,25 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       }
       window.openModal = openModal;
 
-     const openSecureBtn = document.getElementById("openSecure");
+    const openSecureBtn = document.getElementById("openSecure");
 if(openSecureBtn){
   openSecureBtn.addEventListener("click", ()=>{
     openModal("Compte sécurisé + assistance téléphone", `
       <div class="box">
         <div style="font-weight:900;">Abonnement optionnel : <strong>2,99 € / mois</strong></div>
-        <div class="muted" style="margin-top:6px;">Objectif : aider la récupération de compte et faciliter l’accompagnement par les proches (famille, aidants, parents, grands-parents, enfants…), notamment en cas d’oubli, de désorientation, de difficulté temporaire ou de situation de fragilité.</div>
+        <div class="muted" style="margin-top:6px;">
+          Objectif : aider la récupération de compte et faciliter l’accompagnement par les proches
+          (famille, aidants, parents, grands-parents, enfants…), notamment en cas d’oubli,
+          de désorientation, de difficulté temporaire ou de situation de fragilité.
+        </div>
       </div>
 
       <div class="box" style="margin-top:12px;">
         <div style="font-weight:900;">Sans abonnement</div>
         <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>L’utilisateur accepte le risque : <strong>perte/vol/changement de téléphone</strong> = perte d’accès possible.</li>
+          <li>L’utilisateur accepte le risque : <strong>perte / vol / changement de téléphone</strong> = perte d’accès possible.</li>
           <li>(Démo) Les données peuvent être uniquement locales (sur le téléphone).</li>
+          <li>Pas de récupération assistée, pas d’accompagnement renforcé, pas de relais d’alerte.</li>
         </ul>
       </div>
 
@@ -1312,47 +1317,72 @@ if(openSecureBtn){
         <ul style="margin:8px 0 0 18px;font-weight:800;">
           <li><strong>Sauvegarde</strong> & récupération du compte (selon configuration).</li>
           <li><strong>Assistance</strong> : aide à la récupération / réactivation.</li>
-          <li><strong>Alertes</strong> : bip batterie faible (si supporté), sonnerie/vibration à distance (si possible).</li>
+          <li><strong>Alerte batterie faible accompagnée</strong> : possibilité d’enregistrer <strong>2 numéros de confiance</strong> dans le forfait.</li>
+          <li><strong>Déclenchement visé</strong> : si le téléphone de la personne suivie descend à <strong>5 % de batterie</strong> (si le support technique le permet).</li>
+          <li><strong>1er relais</strong> : une alerte / un SMS est envoyé au <strong>1er numéro</strong> enregistré pour l’informer que le téléphone de la personne suivie est presque déchargé.</li>
+          <li><strong>But</strong> : permettre à ce proche d’appeler la personne concernée pour lui rappeler de <strong>rebrancher son téléphone</strong>.</li>
+          <li><strong>2e relais de sécurité</strong> : si le 1er proche n’agit pas ou ne répond pas dans un délai prévu de <strong>15 minutes</strong> (selon paramétrage et possibilités techniques), une alerte / un SMS peut être envoyé au <strong>2e numéro</strong> enregistré.</li>
+          <li><strong>Chaîne de vigilance</strong> : le 2e proche peut alors prendre le relais et prévenir à son tour la personne concernée.</li>
           <li><strong>Géolocalisation ponctuelle</strong> uniquement si autorisée par l’utilisateur.</li>
-          <li><strong>SMS aux 2 numéros de confiance</strong> (si activés par l’utilisateur).</li>
+          <li><strong>SMS aux 2 numéros de confiance</strong> uniquement si activés et configurés par l’utilisateur / le titulaire du forfait.</li>
+          <li><strong>Sonnerie / vibration à distance</strong> : seulement si cette fonction est techniquement possible sur l’appareil et la version utilisée.</li>
         </ul>
-        <div class="muted" style="margin-top:8px;">Ces fonctions sont opérées par un <strong>prestataire serveur tiers</strong> (selon version LIVE). Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> (pas d’obligation de résultat).</div>
+        <div class="muted" style="margin-top:8px;">
+          Ces fonctions sont opérées par un <strong>prestataire serveur tiers</strong> (selon version LIVE).
+          Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> et non de résultat :
+          cela signifie que la remontée d’alerte dépend notamment du téléphone, du niveau d’autorisation,
+          du réseau, du système d’exploitation, du prestataire SMS, et de la configuration active du compte.
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;">Cas d’usage visé</div>
+        <div class="muted" style="margin-top:6px;">
+          Exemple : une personne ayant souscrit l’option peut renseigner le numéro d’un proche âgé,
+          isolé ou ayant quelques troubles de mémoire. Si le téléphone de cette personne approche
+          de la panne batterie, le système tente d’alerter le proche principal, puis un proche secondaire
+          si nécessaire, afin d’éviter que la personne ne reste sans téléphone joignable.
+        </div>
       </div>
 
       <div class="box" style="margin-top:12px;">
         <div style="font-weight:900;">Important</div>
         <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Service <strong>optionnel</strong>, activable/désactivable.</li>
+          <li>Service <strong>optionnel</strong>, activable / désactivable.</li>
           <li>Les autorisations sensibles (ex. localisation) restent <strong>contrôlées par le téléphone</strong>.</li>
+          <li>Le fonctionnement dépend des <strong>autorisations accordées</strong>, du <strong>réseau</strong>, de la <strong>batterie</strong> restante, et de la <strong>compatibilité technique</strong>.</li>
+          <li>Cette option est une <strong>aide d’accompagnement</strong>, pas une garantie absolue de surveillance continue.</li>
           <li>En cas d’urgence : utiliser <strong>112</strong>.</li>
         </ul>
       </div>
 
-      <div class="muted" style="margin-top:10px;">(Démo) Ici on présente l’offre. En LIVE : activation, contrat, consentements et conditions applicables.</div>
+      <div class="muted" style="margin-top:10px;">
+        (Démo) Ici on présente l’offre. En LIVE : activation, contrat, consentements,
+        choix des numéros de confiance, délais, conditions applicables et paramétrage détaillé.
+      </div>
     `);
   });
-} 
+}
 
-      document.addEventListener("keydown", (e)=>{
-        if(e.key !== "Escape") return;
-        const legal = document.getElementById("legal");
-        const choice = document.getElementById("choice");
-        if(choice && choice.classList.contains("open")){ choice.classList.remove("open"); lockScroll(false); return; }
-        if(legal && legal.classList.contains("open")){ legal.classList.remove("open"); lockScroll(false); return; }
-        if(modal && modal.classList.contains("open")) closeModal();
-      });
+document.addEventListener("keydown", (e)=>{
+  if(e.key !== "Escape") return;
+  const legal = document.getElementById("legal");
+  const choice = document.getElementById("choice");
+  if(choice && choice.classList.contains("open")){ choice.classList.remove("open"); lockScroll(false); return; }
+  if(legal && legal.classList.contains("open")){ legal.classList.remove("open"); lockScroll(false); return; }
+  if(modal && modal.classList.contains("open")) closeModal();
+});
 
-      let cachedVoices = [];
-      function loadVoices(){
-        return new Promise(resolve=>{
-          let voices = speechSynthesis.getVoices();
-          if(voices.length){ cachedVoices = voices; resolve(); }
-          else {
-            speechSynthesis.onvoiceschanged = ()=>{ cachedVoices = speechSynthesis.getVoices(); resolve(); };
-          }
-        });
-      }
-
+let cachedVoices = [];
+function loadVoices(){
+  return new Promise(resolve=>{
+    let voices = speechSynthesis.getVoices();
+    if(voices.length){ cachedVoices = voices; resolve(); }
+    else {
+      speechSynthesis.onvoiceschanged = ()=>{ cachedVoices = speechSynthesis.getVoices(); resolve(); };
+    }
+  });
+}
       async function speak(text, mode="female"){
         if(!("speechSynthesis" in window)) return;
         await loadVoices();
