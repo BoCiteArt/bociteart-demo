@@ -2134,280 +2134,336 @@ if(key==="ecole"){
   }, 0);
   return;
 }
-        if(key==="sport"){
-          openModal("Sport", `
-            <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
-            <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
+if(key==="sport"){
+  openModal("Sport", `
+    <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+    <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
 
-            <div class="coinShowcase">
-              <div class="coinFace coinGreen" aria-hidden="true">
-                <div class="coinStarsRing coinStarsGreen" aria-hidden="true"></div>
-                <div class="coinInner coinInnerGreen">
-                  <div class="n">1</div>
-                  <div class="t">BoCitecoin</div>
-                </div>
-              </div>
+    <div class="coinShowcase">
+      <div class="coinFace coinGreen" aria-hidden="true">
+        <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
+          <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+            <circle
+              cx="50"
+              cy="50"
+              r="30.5"
+              stroke-width="4.8"
+              stroke-dasharray="0.01 5.33"
+              class="starRingStroke">
+            </circle>
+          </svg>
+        </div>
 
-              <div class="coinStack" aria-hidden="true">
-                <div class="stackCoin stackGreen stack1"></div>
-                <div class="stackCoin stackGreen stack2"></div>
-                <div class="stackCoin stackGreen stack3"></div>
-              </div>
+        <div class="coinInner coinInnerGreen">
+          <div class="n">1</div>
+          <div class="t">BoCitecoin</div>
+        </div>
+      </div>
 
-              <div class="walletBox">
-                <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
-                <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
-                <div class="walletSub">BoCitecoins gagnés par les actions sportives/citoyennes, échangeables plus tard chez un commerçant partenaire selon les règles locales.</div>
-                <div class="walletActions">
-                  <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-                  <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
-                  <button class="walletMini" id="walletSportMinus" type="button">−1</button>
-                  <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
-                </div>
-              </div>
-            </div>
+      <div class="coinStack" aria-hidden="true">
+        <div class="stackCoin stackGreen stack1">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle
+                cx="22"
+                cy="22"
+                r="11.4"
+                stroke-width="2.2"
+                stroke-dasharray="0.01 2.05"
+                class="stackStarRingStroke">
+              </circle>
+            </svg>
+          </div>
+        </div>
 
-            <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
-            <div class="box">
-              <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
-              <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm), et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras. Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.</div>
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;"><button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button></div>
-            </div>
+        <div class="stackCoin stackGreen stack2">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle
+                cx="22"
+                cy="22"
+                r="11.4"
+                stroke-width="2.2"
+                stroke-dasharray="0.01 2.05"
+                class="stackStarRingStroke">
+              </circle>
+            </svg>
+          </div>
+        </div>
 
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Rapport du week-end (résumé)</li>
-              <li>Missions citoyennes : propreté • rangement • fair-play</li>
-              <li>Validation (optionnelle) — non publique</li>
-              <li>Bocitecoins couleur Vert : collectivité</li>
-              <li>Pas de messagerie • pas de commentaires libres</li>
-            </ul>
+        <div class="stackCoin stackGreen stack3">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle
+                cx="22"
+                cy="22"
+                r="11.4"
+                stroke-width="2.2"
+                stroke-dasharray="0.01 2.05"
+                class="stackStarRingStroke">
+              </circle>
+            </svg>
+          </div>
+        </div>
+      </div>
 
-            <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Parcs • bois • parcours • salles</li>
-              <li>Carte plein écran + guidage</li>
-            </ul>
+      <div class="walletBox">
+        <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
+        <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
+        <div class="walletSub">BoCitecoins gagnés par les actions sportives/citoyennes, échangeables plus tard chez un commerçant partenaire selon les règles locales.</div>
+        <div class="walletActions">
+          <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
+          <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
+          <button class="walletMini" id="walletSportMinus" type="button">−1</button>
+          <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
+        </div>
+      </div>
+    </div>
 
-            <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
-            <div class="box">Actuellement : 12 clubs engagés (démo)<br><br>Chaque club peut proposer :<br>• Rapport du week-end<br>• Actions citoyennes<br>• Partenariats commerçants<br>• Soutien associatif</div>
-          `);
+    <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
+    <div class="box">
+      <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
+      <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm), et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras. Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
+      </div>
+    </div>
 
-          setTimeout(()=>{
-            const b = $("openSportFicheBtn");
-            if(b) b.onclick = openSportFiche;
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Rapport du week-end (résumé)</li>
+      <li>Missions citoyennes : propreté • rangement • fair-play</li>
+      <li>Validation (optionnelle) — non publique</li>
+      <li>Bocitecoins couleur Vert : collectivité</li>
+      <li>Pas de messagerie • pas de commentaires libres</li>
+    </ul>
 
-            const refresh = ()=>{
-              const out = document.getElementById("sportCoinBalance");
-              if(out) out.textContent = Number(loadSportWallet().vert || 0);
-            };
-            refresh();
+    <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Parcs • bois • parcours • salles</li>
+      <li>Carte plein écran + guidage</li>
+    </ul>
 
-            const p10 = document.getElementById("walletSportPlus10");
-            const p25 = document.getElementById("walletSportPlus25");
-            const m1 = document.getElementById("walletSportMinus");
-            const rst = document.getElementById("walletSportReset");
+    <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
+    <div class="box">Actuellement : 12 clubs engagés (démo)<br><br>Chaque club peut proposer :<br>• Rapport du week-end<br>• Actions citoyennes<br>• Partenariats commerçants<br>• Soutien associatif</div>
+  `);
 
-            if(p10) p10.onclick = ()=>{
-              const w = loadSportWallet();
-              w.vert = Number(w.vert || 0) + 10;
-              saveSportWallet(w);
-              refresh();
-            };
+  setTimeout(()=>{
+    const b = $("openSportFicheBtn");
+    if(b) b.onclick = openSportFiche;
 
-            if(p25) p25.onclick = ()=>{
-              const w = loadSportWallet();
-              w.vert = Number(w.vert || 0) + 25;
-              saveSportWallet(w);
-              refresh();
-            };
+    const refresh = ()=>{
+      const out = document.getElementById("sportCoinBalance");
+      if(out) out.textContent = Number(loadSportWallet().vert || 0);
+    };
+    refresh();
 
-            if(m1) m1.onclick = ()=>{
-              const w = loadSportWallet();
-              w.vert = Math.max(0, Number(w.vert || 0) - 1);
-              saveSportWallet(w);
-              refresh();
-            };
+    const p10 = document.getElementById("walletSportPlus10");
+    const p25 = document.getElementById("walletSportPlus25");
+    const m1 = document.getElementById("walletSportMinus");
+    const rst = document.getElementById("walletSportReset");
 
-            if(rst) rst.onclick = ()=>{
-              if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
-                saveSportWallet({ vert: 0 });
-                refresh();
-              }
-            }; },0);
-          return;
-        }
+    if(p10) p10.onclick = ()=>{
+      const w = loadSportWallet();
+      w.vert = Number(w.vert || 0) + 10;
+      saveSportWallet(w);
+      refresh();
+    };
 
-        if(key==="mairie"){
-          openModal("Mairie", `
-            <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
+    if(p25) p25.onclick = ()=>{
+      const w = loadSportWallet();
+      w.vert = Number(w.vert || 0) + 25;
+      saveSportWallet(w);
+      refresh();
+    };
 
-            <div class="box">
-              <strong>Cadre :</strong> la mairie peut diffuser des messages d’intérêt général gratuits, et des messages promotionnels payants au même tarif que les commerçants pour garantir l’équité.
-            </div>
+    if(m1) m1.onclick = ()=>{
+      const w = loadSportWallet();
+      w.vert = Math.max(0, Number(w.vert || 0) - 1);
+      saveSportWallet(w);
+      refresh();
+    };
 
-            <div style="font-weight:900;margin-top:10px;">Messages gratuits d’intérêt général</div>
-            <div class="box">
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Urgence, tempête, vigilance météo</li>
-                <li>Rue barrée / déviation</li>
-                <li>Risque de gel / température dangereuse</li>
-                <li>Information de sécurité publique</li>
-              </ul>
-              <div class="muted" style="margin-top:8px;">Ces messages restent gratuits pour la mairie.</div>
-            </div>
+    if(rst) rst.onclick = ()=>{
+      if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
+        saveSportWallet({ vert: 0 });
+        refresh();
+      }
+    };
+  },0);
+  return;
+}
 
-            <div style="font-weight:900;margin-top:10px;">Messages payants mairie</div>
-            <div class="box">
-              <div class="muted">Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.</div>
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>1 publicité : 50 €</li>
-                <li>5 publicités : 200 €</li>
-              </ul>
-              <div class="muted" style="margin-top:8px;">Même prix que les commerçants pour éviter la jalousie et montrer l’exemple.</div>
-            </div>
+if(key==="mairie"){
+  openModal("Mairie", `
+    <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
 
-            <div class="box" style="margin-top:12px;">
-              <div style="font-weight:900;">Message bandeau mairie (démo)</div>
-              <div class="muted" style="margin-top:6px;">Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.</div>
+    <div class="box">
+      <strong>Cadre :</strong> la mairie peut diffuser des messages d’intérêt général gratuits, et des messages promotionnels payants au même tarif que les commerçants pour garantir l’équité.
+    </div>
 
-              <div style="margin-top:10px;font-weight:900;">Message</div>
-              <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
+    <div style="font-weight:900;margin-top:10px;">Messages gratuits d’intérêt général</div>
+    <div class="box">
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Urgence, tempête, vigilance météo</li>
+        <li>Rue barrée / déviation</li>
+        <li>Risque de gel / température dangereuse</li>
+        <li>Information de sécurité publique</li>
+      </ul>
+      <div class="muted" style="margin-top:8px;">Ces messages restent gratuits pour la mairie.</div>
+    </div>
 
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="mairieMsgSave" type="button">💾 Enregistrer</button>
-                <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">🧹 Réinitialiser</button>
-              </div>
+    <div style="font-weight:900;margin-top:10px;">Messages payants mairie</div>
+    <div class="box">
+      <div class="muted">Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.</div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>1 publicité : 50 €</li>
+        <li>5 publicités : 200 €</li>
+      </ul>
+      <div class="muted" style="margin-top:8px;">Même prix que les commerçants pour éviter la jalousie et montrer l’exemple.</div>
+    </div>
 
-              <div class="muted" style="margin-top:10px;">(Démo) Enregistrement local sur ce téléphone.</div>
-            </div>
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Message bandeau mairie (démo)</div>
+      <div class="muted" style="margin-top:6px;">Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.</div>
 
-            <div style="font-weight:900;margin-top:14px;">Échange école → mairie (scan / brûlage)</div>
-            <div class="box">
-              <div class="muted">
-                La mairie peut scanner les bocitecoins école au moment de l’échange et les brûler automatiquement.
-                Le compteur école revient alors à zéro après remise du cadeau ou de la surprise.
-              </div>
+      <div style="margin-top:10px;font-weight:900;">Message</div>
+      <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
 
-              <div style="margin-top:10px;font-weight:900;">Wallet école détecté</div>
-              <div class="box" style="background:var(--bg);">
-                Solde école actuel : <strong id="mairieSchoolWalletBalance">0</strong> bocitecoin(s) JAUNES
-              </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="mairieMsgSave" type="button">💾 Enregistrer</button>
+        <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">🧹 Réinitialiser</button>
+      </div>
 
-              <div style="margin-top:10px;font-weight:900;">Type de surprise choisie par la mairie</div>
-              <select class="miniField" id="mairieSchoolGiftType">
-                <option value="materiel-scolaire">Matériel scolaire</option>
-                <option value="extra-scolaire">Surprise extra-scolaire</option>
-              </select>
+      <div class="muted" style="margin-top:10px;">(Démo) Enregistrement local sur ce téléphone.</div>
+    </div>
 
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="mairieSchoolScanBtn" type="button">Scanner wallet école</button>
-                <button class="choiceBtn" id="mairieSchoolBurnBtn" type="button">Brûler les bocitecoins école</button>
-              </div>
+    <div style="font-weight:900;margin-top:14px;">Échange école → mairie (scan / brûlage)</div>
+    <div class="box">
+      <div class="muted">
+        La mairie peut scanner les bocitecoins école au moment de l’échange et les brûler automatiquement.
+        Le compteur école revient alors à zéro après remise du cadeau ou de la surprise.
+      </div>
 
-              <div class="muted" style="margin-top:10px;">
-                Si l’école a décidé auparavant de donner tout ou partie de ses bocitecoins à une association depuis son onglet,
-                la mairie respecte cette décision lors de l’échange.
-              </div>
-            </div>
-          `);
+      <div style="margin-top:10px;font-weight:900;">Wallet école détecté</div>
+      <div class="box" style="background:var(--bg);">
+        Solde école actuel : <strong id="mairieSchoolWalletBalance">0</strong> bocitecoin(s) JAUNES
+      </div>
 
-          setTimeout(()=>{
-            const input = document.getElementById("mairieMsgInput");
-            const saveBtn = document.getElementById("mairieMsgSave");
-            const resetBtn = document.getElementById("mairieMsgReset");
+      <div style="margin-top:10px;font-weight:900;">Type de surprise choisie par la mairie</div>
+      <select class="miniField" id="mairieSchoolGiftType">
+        <option value="materiel-scolaire">Matériel scolaire</option>
+        <option value="extra-scolaire">Surprise extra-scolaire</option>
+      </select>
 
-            const db = mairieLoad();
-            if(input){
-              input.value = (db.message && String(db.message).trim())
-                ? String(db.message).trim()
-                : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-            }
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="mairieSchoolScanBtn" type="button">Scanner wallet école</button>
+        <button class="choiceBtn" id="mairieSchoolBurnBtn" type="button">Brûler les bocitecoins école</button>
+      </div>
 
-            if(saveBtn) saveBtn.onclick = ()=>{
-              const msg = input ? String(input.value || "").trim() : "";
-              if(!msg){
-                alert("Saisis un message mairie.");
-                return;
-              }
-              const next = mairieLoad();
-              next.message = msg;
-              next.ts_fr = new Date().toLocaleString("fr-FR");
-              mairieSave(next);
-              renderMairieTicker();
-              alert("Message mairie enregistré (démo).");
-            };
+      <div class="muted" style="margin-top:10px;">
+        Si l’école a décidé auparavant de donner tout ou partie de ses bocitecoins à une association depuis son onglet,
+        la mairie respecte cette décision lors de l’échange.
+      </div>
+    </div>
+  `);
 
-            if(resetBtn) resetBtn.onclick = ()=>{
-              if(confirm("Réinitialiser le message mairie (démo) sur ce téléphone ?")){
-                mairieSave({});
-                renderMairieTicker();
-                if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-                alert("Message mairie réinitialisé (démo).");
-              }
-            };
+  setTimeout(()=>{
+    const input = document.getElementById("mairieMsgInput");
+    const saveBtn = document.getElementById("mairieMsgSave");
+    const resetBtn = document.getElementById("mairieMsgReset");
 
-            const schoolLoadM = (typeof loadSchoolWallet === "function")
-              ? loadSchoolWallet
-              : function(){
-                  try{
-                    const raw = localStorage.getItem("bociteart_school_wallet_v1");
-                    return raw ? JSON.parse(raw) : { jaune: 0 };
-                  }catch(e){
-                    return { jaune: 0 };
-                  }
-                };
+    const db = mairieLoad();
+    if(input){
+      input.value = (db.message && String(db.message).trim())
+        ? String(db.message).trim()
+        : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+    }
 
-            const schoolSaveM = (typeof saveSchoolWallet === "function")
-              ? saveSchoolWallet
-              : function(obj){
-                  try{
-                    localStorage.setItem("bociteart_school_wallet_v1", JSON.stringify(obj));
-                  }catch(e){}
-                };
+    if(saveBtn) saveBtn.onclick = ()=>{
+      const msg = input ? String(input.value || "").trim() : "";
+      if(!msg){
+        alert("Saisis un message mairie.");
+        return;
+      }
+      const next = mairieLoad();
+      next.message = msg;
+      next.ts_fr = new Date().toLocaleString("fr-FR");
+      mairieSave(next);
+      renderMairieTicker();
+      alert("Message mairie enregistré (démo).");
+    };
 
-            const schoolBal = document.getElementById("mairieSchoolWalletBalance");
-            const schoolScanBtn = document.getElementById("mairieSchoolScanBtn");
-            const schoolBurnBtn = document.getElementById("mairieSchoolBurnBtn");
+    if(resetBtn) resetBtn.onclick = ()=>{
+      if(confirm("Réinitialiser le message mairie (démo) sur ce téléphone ?")){
+        mairieSave({});
+        renderMairieTicker();
+        if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+        alert("Message mairie réinitialisé (démo).");
+      }
+    };
 
-            const refreshSchool = ()=>{
-              const w = schoolLoadM();
-              if(schoolBal) schoolBal.textContent = Number(w.jaune || 0);
-            };
+    const schoolLoadM = (typeof loadSchoolWallet === "function")
+      ? loadSchoolWallet
+      : function(){
+          try{
+            const raw = localStorage.getItem("bociteart_school_wallet_v1");
+            return raw ? JSON.parse(raw) : { jaune: 0 };
+          }catch(e){
+            return { jaune: 0 };
+          }
+        };
 
-            refreshSchool();
+    const schoolSaveM = (typeof saveSchoolWallet === "function")
+      ? saveSchoolWallet
+      : function(obj){
+          try{
+            localStorage.setItem("bociteart_school_wallet_v1", JSON.stringify(obj));
+          }catch(e){}
+        };
 
-            if(schoolScanBtn) schoolScanBtn.onclick = ()=>{
-              refreshSchool();
-              alert("Scan du wallet école simulé (démo).");
-            };
+    const schoolBal = document.getElementById("mairieSchoolWalletBalance");
+    const schoolScanBtn = document.getElementById("mairieSchoolScanBtn");
+    const schoolBurnBtn = document.getElementById("mairieSchoolBurnBtn");
 
-            if(schoolBurnBtn) schoolBurnBtn.onclick = ()=>{
-              const w = schoolLoadM();
-              const total = Number(w.jaune || 0);
-              if(total <= 0){
-                alert("Aucun bocitecoin école à brûler.");
-                return;
-              }
-              if(confirm("Brûler les bocitecoins école et remettre le compteur à zéro ?")){
-                w.jaune = 0;
-                schoolSaveM(w);
+    const refreshSchool = ()=>{
+      const w = schoolLoadM();
+      if(schoolBal) schoolBal.textContent = Number(w.jaune || 0);
+    };
 
-                try{
-                  const raw = localStorage.getItem("bociteart_school_v1");
-                  const dbSchool = raw ? JSON.parse(raw) : {};
-                  if(dbSchool.progress) dbSchool.progress = {};
-                  localStorage.setItem("bociteart_school_v1", JSON.stringify(dbSchool));
-                }catch(e){}
+    refreshSchool();
 
-                refreshSchool();
-                alert("Bocitecoins école brûlés, compteur remis à zéro (démo).");
-              }
-            };
-          },0);
-          return;
-        }
+    if(schoolScanBtn) schoolScanBtn.onclick = ()=>{
+      refreshSchool();
+      alert("Scan du wallet école simulé (démo).");
+    };
 
-       if(key==="commerces"){
+    if(schoolBurnBtn) schoolBurnBtn.onclick = ()=>{
+      const w = schoolLoadM();
+      const total = Number(w.jaune || 0);
+      if(total <= 0){
+        alert("Aucun bocitecoin école à brûler.");
+        return;
+      }
+      if(confirm("Brûler les bocitecoins école et remettre le compteur à zéro ?")){
+        w.jaune = 0;
+        schoolSaveM(w);
+
+        try{
+          const raw = localStorage.getItem("bociteart_school_v1");
+          const dbSchool = raw ? JSON.parse(raw) : {};
+          if(dbSchool.progress) dbSchool.progress = {};
+          localStorage.setItem("bociteart_school_v1", JSON.stringify(dbSchool));
+        }catch(e){}
+
+        refreshSchool();
+        alert("Bocitecoins école brûlés, compteur remis à zéro (démo).");
+      }
+    };
+  },0);
+  return;
+}
+
+if(key==="commerces"){
   openModal("Commerces", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
 
@@ -2416,99 +2472,99 @@ if(key==="ecole"){
       Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
     </div>
 
-  <div class="coinShowcase">
-  <div class="coinFace coinGold" aria-hidden="true">
-    <div class="coinStarsRing coinStarsGold" aria-hidden="true">
-      <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-        <circle
-          cx="50"
-          cy="50"
-          r="30.5"
-          stroke-width="4.8"
-          stroke-dasharray="0.01 5.33"
-          class="starRingStroke">
-        </circle>
-      </svg>
-    </div>
+    <div class="coinShowcase">
+      <div class="coinFace coinGold" aria-hidden="true">
+        <div class="coinStarsRing coinStarsGold" aria-hidden="true">
+          <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+            <circle
+              cx="50"
+              cy="50"
+              r="30.5"
+              stroke-width="4.8"
+              stroke-dasharray="0.01 5.33"
+              class="starRingStroke">
+            </circle>
+          </svg>
+        </div>
 
-    <div class="coinInner coinInnerGold">
-      <div class="n">1</div>
-      <div class="t">BoCitecoin</div>
-    </div>
-  </div>
+        <div class="coinInner coinInnerGold">
+          <div class="n">1</div>
+          <div class="t">BoCitecoin</div>
+        </div>
+      </div>
 
-  <div class="coinStack" aria-hidden="true">
-    <div class="stackCoin stackGold stack1">
-      <div class="stackCoinStars" aria-hidden="true">
-        <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-          <circle
-            cx="22"
-            cy="22"
-            r="11.4"
-            stroke-width="2.2"
-            stroke-dasharray="0.01 2.05"
-            class="stackStarRingStroke">
-          </circle>
-        </svg>
+      <div class="coinStack" aria-hidden="true">
+        <div class="stackCoin stackGold stack1">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle
+                cx="22"
+                cy="22"
+                r="11.4"
+                stroke-width="2.2"
+                stroke-dasharray="0.01 2.05"
+                class="stackStarRingStroke">
+              </circle>
+            </svg>
+          </div>
+        </div>
+
+        <div class="stackCoin stackGold stack2">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle
+                cx="22"
+                cy="22"
+                r="11.4"
+                stroke-width="2.2"
+                stroke-dasharray="0.01 2.05"
+                class="stackStarRingStroke">
+              </circle>
+            </svg>
+          </div>
+        </div>
+
+        <div class="stackCoin stackGold stack3">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle
+                cx="22"
+                cy="22"
+                r="11.4"
+                stroke-width="2.2"
+                stroke-dasharray="0.01 2.05"
+                class="stackStarRingStroke">
+              </circle>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="walletBox">
+        <div class="walletTitle">Wallet client — BoCitecoins OR</div>
+        <div class="walletValue walletGold" id="citizenCoinBalance">37</div>
+        <div class="walletSub">
+          BoCitecoins disponibles pour échange chez les commerçants partenaires Bo’CitéArt selon les règles locales.
+        </div>
+
+        <div style="margin-top:12px;font-weight:900;">Progression vers le prochain palier</div>
+        <div style="margin-top:8px;background:#efe4d3;border-radius:999px;overflow:hidden;height:14px;border:2px solid rgba(0,0,0,.08);">
+          <div id="walletProgressBar" style="height:100%;width:0%;border-radius:999px;transition:width .25s ease, background .25s ease;background:linear-gradient(90deg,#e4c81c 0%, #88b84b 55%, #2f8f46 100%);"></div>
+        </div>
+
+        <div id="walletProgressText" class="walletSub" style="margin-top:8px;">Chargement...</div>
+        <div id="walletMotivation" class="walletSub" style="margin-top:6px;color:#2f5d46;font-weight:900;">&nbsp;</div>
+        <div id="walletExpiryInfo" class="walletSub" style="margin-top:6px;">&nbsp;</div>
       </div>
     </div>
-
-    <div class="stackCoin stackGold stack2">
-      <div class="stackCoinStars" aria-hidden="true">
-        <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-          <circle
-            cx="22"
-            cy="22"
-            r="11.4"
-            stroke-width="2.2"
-            stroke-dasharray="0.01 2.05"
-            class="stackStarRingStroke">
-          </circle>
-        </svg>
-      </div>
-    </div>
-
-    <div class="stackCoin stackGold stack3">
-      <div class="stackCoinStars" aria-hidden="true">
-        <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-          <circle
-            cx="22"
-            cy="22"
-            r="11.4"
-            stroke-width="2.2"
-            stroke-dasharray="0.01 2.05"
-            class="stackStarRingStroke">
-          </circle>
-        </svg>
-      </div>
-    </div>
-  </div>
-
-  <div class="walletBox">
-    <div class="walletTitle">Wallet client — BoCitecoins OR</div>
-    <div class="walletValue walletGold" id="citizenCoinBalance">37</div>
-    <div class="walletSub">
-      BoCitecoins disponibles pour échange chez les commerçants partenaires Bo’CitéArt selon les règles locales.
-    </div>
-
-    <div style="margin-top:12px;font-weight:900;">Progression vers le prochain palier</div>
-    <div style="margin-top:8px;background:#efe4d3;border-radius:999px;overflow:hidden;height:14px;border:2px solid rgba(0,0,0,.08);">
-      <div id="walletProgressBar" style="height:100%;width:0%;border-radius:999px;transition:width .25s ease, background .25s ease;background:linear-gradient(90deg,#e4c81c 0%, #88b84b 55%, #2f8f46 100%);"></div>
-    </div>
-
-    <div id="walletProgressText" class="walletSub" style="margin-top:8px;">Chargement...</div>
-    <div id="walletMotivation" class="walletSub" style="margin-top:6px;color:#2f5d46;font-weight:900;">&nbsp;</div>
-    <div id="walletExpiryInfo" class="walletSub" style="margin-top:6px;">&nbsp;</div>
-  </div>
-</div>
 
     <div style="font-weight:900;margin-top:14px;">Paliers d’échange</div>
     <div class="box">
       <div style="font-weight:900;">🎁 Échanges possibles chez les partenaires Bo’CitéArt</div>
       <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li><strong>30 bocitecoins</strong> : avantage partenaire <span style="white-space:nowrap;"><strong>jusqu’à 15 %</strong></span></li>
-<li><strong>50 bocitecoins</strong> : avantage renforcé <span style="white-space:nowrap;"><strong>jusqu’à 25 %</strong></span></li>
-<li><strong>100 bocitecoins</strong> : avantage premium <span style="white-space:nowrap;"><strong>jusqu’à 40 %</strong></span></li>
+        <li><strong>30 bocitecoins</strong> : avantage partenaire <span style="white-space:nowrap;"><strong>jusqu’à 15 %</strong></span></li>
+        <li><strong>50 bocitecoins</strong> : avantage renforcé <span style="white-space:nowrap;"><strong>jusqu’à 25 %</strong></span></li>
+        <li><strong>100 bocitecoins</strong> : avantage premium <span style="white-space:nowrap;"><strong>jusqu’à 40 %</strong></span></li>
       </ul>
       <div class="muted" style="margin-top:8px;">
         Les avantages sont proposés librement par les commerçants partenaires.
@@ -2738,53 +2794,53 @@ if(key==="ecole"){
       }
     }
 
-function refreshWalletUi(){
-  checkAnniversaryRule();
+    function refreshWalletUi(){
+      checkAnniversaryRule();
 
-  const wallet = loadCitizenWallet();
-  const meta = ensureCitizenMeta();
-  const coins = Number(wallet.or || 0);
+      const wallet = loadCitizenWallet();
+      const meta = ensureCitizenMeta();
+      const coins = Number(wallet.or || 0);
 
-  const bal = document.getElementById("citizenCoinBalance");
-  const progressBar = document.getElementById("walletProgressBar");
-  const progressText = document.getElementById("walletProgressText");
-  const motivation = document.getElementById("walletMotivation");
-  const expiry = document.getElementById("walletExpiryInfo");
+      const bal = document.getElementById("citizenCoinBalance");
+      const progressBar = document.getElementById("walletProgressBar");
+      const progressText = document.getElementById("walletProgressText");
+      const motivation = document.getElementById("walletMotivation");
+      const expiry = document.getElementById("walletExpiryInfo");
 
-  if(bal) bal.textContent = coins;
+      if(bal) bal.textContent = coins;
 
-  const next = getNextTarget(coins);
-  const percent = getProgressPercent(coins);
+      const next = getNextTarget(coins);
+      const percent = getProgressPercent(coins);
 
-  if(progressBar){
-    progressBar.style.width = percent + "%";
-    progressBar.style.background = `linear-gradient(90deg, #e4c81c 0%, #9fca45 ${Math.max(35, percent)}%, #2f8f46 100%)`;
-  }
+      if(progressBar){
+        progressBar.style.width = percent + "%";
+        progressBar.style.background = `linear-gradient(90deg, #e4c81c 0%, #9fca45 ${Math.max(35, percent)}%, #2f8f46 100%)`;
+      }
 
-  if(progressText){
-    if(coins >= 100){
-      progressText.textContent = `Palier actuel : 100 bocitecoins • Avantage estimé : ${getTargetLabel(100)}`;
-    }else{
-      progressText.textContent = `Solde actuel : ${coins} bocitecoins • Prochain palier : ${next} • Avantage estimé : ${getTargetLabel(next)}`;
+      if(progressText){
+        if(coins >= 100){
+          progressText.textContent = `Palier actuel : 100 bocitecoins • Avantage estimé : ${getTargetLabel(100)}`;
+        }else{
+          progressText.textContent = `Solde actuel : ${coins} bocitecoins • Prochain palier : ${next} • Avantage estimé : ${getTargetLabel(next)}`;
+        }
+        progressText.style.whiteSpace = "normal";
+        progressText.style.wordBreak = "keep-all";
+      }
+
+      if(motivation){
+        motivation.textContent = getMotivationText(coins);
+      }
+
+      if(expiry){
+        const now = Date.now();
+        const daysLeft = daysBetween(now, meta.expireTs);
+        if(daysLeft <= 30){
+          expiry.textContent = `Attention : il vous reste ${daysLeft} jour(s) avant la date anniversaire. Échange possible dès 20 bocitecoins sur cette période.`;
+        }else{
+          expiry.textContent = `Date anniversaire du compte : dans ${daysLeft} jour(s).`;
+        }
+      }
     }
-    progressText.style.whiteSpace = "normal";
-    progressText.style.wordBreak = "keep-all";
-  }
-
-  if(motivation){
-    motivation.textContent = getMotivationText(coins);
-  }
-
-  if(expiry){
-    const now = Date.now();
-    const daysLeft = daysBetween(now, meta.expireTs);
-    if(daysLeft <= 30){
-      expiry.textContent = `Attention : il vous reste ${daysLeft} jour(s) avant la date anniversaire. Échange possible dès 20 bocitecoins sur cette période.`;
-    }else{
-      expiry.textContent = `Date anniversaire du compte : dans ${daysLeft} jour(s).`;
-    }
-  }
-}
 
     function setFirstEarnDateIfNeeded(coinsAdded){
       if(coinsAdded <= 0) return;
@@ -2814,16 +2870,16 @@ function refreshWalletUi(){
       const minimumAllowed = loweredThresholdAllowed ? 20 : 30;
 
       if(required < minimumAllowed){
-        alert(`Échange impossible sous ${minimumAllowed} bocitecoins dans la période actuelle.`);
+        alert(\`Échange impossible sous \${minimumAllowed} bocitecoins dans la période actuelle.\`);
         return;
       }
 
       if(coins < required){
-        alert(`Solde insuffisant. Il faut ${required} bocitecoins.`);
+        alert(\`Solde insuffisant. Il faut \${required} bocitecoins.\`);
         return;
       }
 
-      if(confirm(`Confirmer l’échange de ${required} bocitecoins ?`)){
+      if(confirm(\`Confirmer l’échange de \${required} bocitecoins ?\`)){
         wallet.or = Math.max(0, coins - required);
         saveCitizenWallet(wallet);
         registerTx({
@@ -2834,7 +2890,7 @@ function refreshWalletUi(){
           ts: Date.now()
         });
         refreshWalletUi();
-        alert(`Échange validé (démo) : ${required} bocitecoins utilisés.`);
+        alert(\`Échange validé (démo) : \${required} bocitecoins utilisés.\`);
       }
     }
 
@@ -2960,7 +3016,6 @@ function refreshWalletUi(){
   },0);
   return;
 }
-  };
       // ======================================================
       // ✅ Admin tile (démo)
       // ======================================================
