@@ -766,7 +766,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     </div>
   </div>
 
-  <div class="modal" id="legal">
+   <div class="modal" id="legal">
     <div class="backdrop" id="legalClose"></div>
     <div class="sheet">
       <div class="head">
@@ -800,6 +800,378 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       </div>
     </div>
   </div>
+
+  <div class="modal" id="legal">
+  <div class="backdrop" id="legalClose"></div>
+  <div class="sheet">
+    <div class="head">
+      <div>Documents & mentions légales</div>
+      <button class="xbtn" id="legalX" aria-label="Fermer" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="body">
+      <div class="tabs">
+        <button class="tab active" data-tab="rgpd" type="button">RGPD</button>
+        <button class="tab" data-tab="cgu" type="button">CGU</button>
+        <button class="tab" data-tab="cgv" type="button">CGV</button>
+      </div>
+
+      <div id="p-rgpd" class="doc">
+        <div style="font-weight:900;font-size:15px;">📗 Politique de protection des données (RGPD) — Bo’CitéArt</div>
+        <div class="muted" style="margin-top:4px;">Version pré-structuration — entités juridiques en cours de constitution</div>
+        <div class="box">Bo’CitéArt est un projet territorial en cours de structuration juridique. La SAS commerciale et l’association loi 1901 à but non lucratif seront immatriculées avant toute exploitation contractuelle. Les mentions complètes (SIRET, siège, représentant légal, contact RGPD) seront publiées à cette étape.</div>
+
+        <h2>1. Responsable du traitement</h2>
+        <p>
+          Responsable provisoire : <strong>Bo’CitéArt — structure en cours de constitution</strong><br>
+          Représentant du projet : [Nom du porteur du projet]<br>
+          Contact RGPD : <a href="mailto:contact@bociteart.com">contact@bociteart.com</a><br>
+          Adresse : [à compléter]
+        </p>
+
+        <div class="box">
+          À terme :<br>
+          • La SAS assurera les prestations commerciales/techniques.<br>
+          • L’Association loi 1901 (but non lucratif) portera les actions citoyennes, culturelles et éducatives.
+        </div>
+
+        <h2>2. Données collectées (selon activation des fonctions)</h2>
+        <ul>
+          <li><strong>Compte</strong> : email, rôle (admin, mairie, commerçant, école, etc.).</li>
+          <li><strong>Sécurité</strong> : journaux techniques (logs), horodatages, tentatives d’accès.</li>
+          <li><strong>Fonctions</strong> : paramètres, préférences, contenus publiés par profils habilités.</li>
+          <li><strong>Publicité</strong> : texte fourni par le partenaire, réservations (horodatage).</li>
+          <li><strong>Démo</strong> : données locales de démonstration (localStorage), conservées uniquement sur l’appareil de l’utilisateur et supprimables via les paramètres du navigateur.</li>
+          <li><strong>Transactions / facturation (LIVE)</strong> : montants agrégés, identifiants de facturation, journaux de paiement via PSP (Bo’CitéArt ne stocke pas les données bancaires).</li>
+        </ul>
+
+        <h2>3. Données sensibles / contenus interdits</h2>
+        <div class="box">
+          Bo’CitéArt n’a pas vocation à collecter des données sensibles (santé, opinions, etc.).
+          Les zones de publication sont réservées aux profils habilités, et peuvent intégrer des contrôles de conformité.<br><br>
+          Tout contenu illicite, haineux, diffamatoire, discriminatoire, politique partisan, ou comportant des données personnelles non autorisées
+          (notamment concernant des mineurs), peut être <strong>retiré immédiatement</strong>, avec suspension d’accès et conservation d’éléments techniques
+          nécessaires à la gestion de l’incident et/ou à la coopération avec les autorités si requis.
+        </div>
+
+        <h2>4. Mineurs / École — cadre renforcé</h2>
+        <div class="box">Bo’CitéArt ne collecte aucune donnée personnelle directement auprès des enfants. Aucun compte élève autonome n’est créé.</div>
+        <ul>
+          <li>Publication par référent habilité (professeur/direction).</li>
+          <li>Interdiction de publier un nom d’enfant ou élément identifiant.</li>
+          <li>Voix d’enfant : uniquement si autorisations parentales gérées et conservées par l’établissement.</li>
+          <li>Retrait possible sur simple demande d’un responsable légal.</li>
+        </ul>
+
+        <h2>5. Base légale</h2>
+        <ul>
+          <li><strong>Exécution du service</strong> : fournir les fonctionnalités (accès, affichage, contenus).</li>
+          <li><strong>Intérêt légitime</strong> : sécurité, prévention fraude/abus, traçabilité minimale.</li>
+          <li><strong>Obligations légales</strong> : conformité, litiges, comptabilité/facturation (version officielle).</li>
+          <li><strong>Consentement</strong> : uniquement si une fonctionnalité le nécessite (ex. géolocalisation).</li>
+        </ul>
+
+        <h2>6. Finalités</h2>
+        <ul>
+          <li>Fonctionnement de l’application (contenus, accès, affichage).</li>
+          <li>Sécurisation des accès et prévention des abus.</li>
+          <li>Gestion de visibilité partenaire et réservations (si activées).</li>
+          <li>Animation citoyenne/territoriale (selon activation).</li>
+        </ul>
+
+        <h2>7. Géolocalisation (optionnelle)</h2>
+        <div class="box">
+          Si activée, la géolocalisation est demandée par votre téléphone et peut être refusée.
+          Elle sert uniquement à afficher des points d’intérêt (ex. DAE, parcours).
+          La démo ne garantit pas l’exactitude des données disponibles.
+        </div>
+
+        <h2>8. Durées de conservation</h2>
+        <ul>
+          <li><strong>Démo</strong> : données locales conservées sur le téléphone jusqu’à suppression du navigateur / réinitialisation.</li>
+          <li><strong>Logs sécurité</strong> : durée limitée, proportionnée, ajustée en version officielle.</li>
+          <li><strong>Facturation/contrats</strong> : selon obligations légales (version officielle).</li>
+        </ul>
+
+        <h2>9. Destinataires</h2>
+        <ul>
+          <li>Accès interne : administrateur habilité.</li>
+          <li>Profils habilités : mairie/école/commerçants selon leurs droits.</li>
+          <li>Sous-traitants techniques : uniquement si nécessaires (hébergement, analytics, etc.) — précisés en version officielle.</li>
+          <li>Prestataire de paiement (PSP) : exécute les reversements et fournit une traçabilité (sous-traitant) — détails précisés en version officielle.</li>
+        </ul>
+
+        <h2>10. Sécurité</h2>
+        <div class="box">
+          Mesures prévues selon version : contrôle d’accès par rôles, traçabilité, journalisation,
+          protections contre l’abus, et sécurisation des accès administrateurs.
+          Aucune solution ne peut garantir le risque zéro.
+        </div>
+
+        <h2>11. Vos droits</h2>
+        <ul>
+          <li>Droit d’accès, rectification, effacement.</li>
+          <li>Droit d’opposition et limitation.</li>
+          <li>Droit de réclamation auprès de la CNIL.</li>
+        </ul>
+
+        <div class="box" style="margin-top:10px;">
+          <div style="font-weight:900;">Option “Compte sécurisé” (si activée)</div>
+          <div class="muted" style="margin-top:6px;">
+            Cette option peut impliquer un traitement par un <strong>prestataire serveur tiers</strong> (sous-traitant),
+            uniquement pour fournir les fonctions : récupération de compte, assistance, alertes, et, si autorisée,
+            géolocalisation ponctuelle et SMS vers 2 numéros de confiance.
+            Les autorisations sensibles (ex. localisation) sont demandées via le téléphone et restent refusables.
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> concernant ces fonctions.
+          </div>
+        </div>
+
+        <div class="box">Bo’CitéArt s’engage à ne vendre aucune donnée et à respecter strictement le RGPD.</div>
+      </div>
+
+      <div id="p-cgu" class="doc" style="display:none;">
+        <div style="font-weight:900;font-size:15px;">📘 Conditions Générales d’Utilisation — Bo’CitéArt</div>
+        <div class="box">
+          Bo’CitéArt est un projet territorial en cours de déploiement.
+          L’application ne constitue ni un service d’urgence, ni un réseau social ouvert, ni un établissement bancaire,
+          ni un établissement de paiement, ni un service financier réglementé.<br><br>
+          Les <strong>BoCiteCoins</strong> sont des unités promotionnelles internes (non monétaires)
+          et ne sont pas des crypto-actifs, ni des titres, ni une monnaie locale au sens financier.
+        </div>
+
+        <h2>0. Statut de la version “démo” / pré-structuration</h2>
+        <div class="box">
+          La présente version peut être une démonstration fonctionnelle.
+          Aucune relation contractuelle ferme ne peut naître avant l’immatriculation officielle des entités juridiques
+          (SAS et/ou association) et la signature d’un contrat applicable (devis/commande/CGV, le cas échéant).
+        </div>
+
+        <h2>1. Accès — rôles, mandats et responsabilités</h2>
+        <ul>
+          <li><strong>Accès citoyen</strong> : consultation libre des contenus publiés (œuvres, école, sport, mairie, offres).</li>
+          <li><strong>Accès de publication</strong> : réservé aux profils habilités (admin, mairie, école, sport, commerçants).</li>
+          <li><strong>Chaque tuile de publication</strong> est protégée (mot de passe fort / contrôle d’accès / éventuellement 2FA selon rôle).</li>
+          <li><strong>Minimum 2 référents par tuile</strong> (ex. Mairie : 1 responsable + 1 référent). Le responsable peut modifier le 2e référent.</li>
+          <li><strong>Signature électronique obligatoire</strong> des documents applicables (CGU/CGV/mandat/conditions spécifiques) avant activation LIVE.</li>
+          <li>En cas d’incident, blocage, ou perte d’accès : <strong>Bo’CitéArt peut réinitialiser l’accès</strong> selon procédure de vérification.</li>
+        </ul>
+
+        <h2>2. Règles de conduite — tolérance zéro</h2>
+        <ul>
+          <li>Interdiction de contenu illégal, injurieux, diffamatoire, discriminatoire, haineux, violent, harcelant.</li>
+          <li>Interdiction de contenu politique partisan, propagande, incitation, menaces.</li>
+          <li>Interdiction de publier des données personnelles (noms, coordonnées, infos identifiantes), en particulier concernant des mineurs.</li>
+          <li>Interdiction de publier des images compromettantes, nudité, contenus sexuels, ou tout contenu inapproprié (détection/filtrage possibles selon version).</li>
+          <li>Interdiction de tentative de fraude, contournement, perturbation, extraction, ou “crack” du système.</li>
+        </ul>
+
+        <h2>3. Modération / retrait</h2>
+        <div class="box">
+          Bo’CitéArt peut retirer un contenu, limiter une fonctionnalité, ou suspendre un accès
+          en cas de non-conformité, d’abus, ou de risque juridique/sécuritaire, sans obligation de maintien en ligne.
+        </div>
+
+        <h2>4. BoCiteCoins</h2>
+        <div class="box">
+          Les <strong>BoCiteCoins</strong> sont des unités promotionnelles internes.
+          Elles n’ont <strong>aucune valeur monétaire</strong>, ne constituent pas une monnaie,
+          ne sont pas convertibles en euros, non remboursables,
+          et ne peuvent pas être revendues ou transférées hors des règles prévues par l’application.
+        </div>
+
+        <h2>5. Péremption des BoCiteCoins (règle de gestion)</h2>
+        <div class="box">
+          Durée : <strong>1 an</strong> à partir de l’obtention du premier point (déclencheur).
+          Un <strong>rappel 1 mois avant</strong> peut être affiché.<br><br>
+          Dernier mois :
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Seuil minimal d’échange : <strong>20 points</strong> minimum.</li>
+            <li>À échéance : le solde redémarre à <strong>12 points</strong>.</li>
+            <li>Le reste est <strong>brûlé automatiquement</strong>.</li>
+            <li>La date repart dès qu’un nouveau point est obtenu au-delà de 12.</li>
+          </ul>
+          Ces règles sont paramétrables par Bo’CitéArt et/ou la collectivité selon le cadre contractuel applicable.
+        </div>
+
+        <h2>6. Publicité (si activée)</h2>
+        <ul>
+          <li>Le partenaire est responsable de son contenu et de ses droits (marque, image, texte).</li>
+          <li>Bo’CitéArt peut refuser/retirer une publicité en cas de non-conformité ou risque.</li>
+          <li>Aucune promesse de résultat commercial.</li>
+        </ul>
+
+        <h2>7. Urgences</h2>
+        <div class="box">
+          Les boutons 112 / 3919 / 119 sont des raccourcis téléphoniques.
+          Bo’CitéArt ne fournit pas les secours et ne garantit pas la connexion réseau.
+          En cas d’urgence, appeler immédiatement les secours sans attendre.
+        </div>
+
+        <h2>8. Informations et données “indicatives”</h2>
+        <div class="box">
+          Certaines informations peuvent provenir de sources externes ou du téléphone
+          (ex. carte, itinéraires, points d’intérêt, DAE).
+          Elles sont fournies à titre indicatif et peuvent comporter des inexactitudes, retards ou indisponibilités.
+          Bo’CitéArt ne garantit pas l’exactitude parfaite de ces informations.
+        </div>
+
+        <h2>9. Sécurisation des comptes (2FA / double référent) — si activée</h2>
+        <div class="box">
+          Selon le rôle (mairie, école, sport, commerce), Bo’CitéArt peut activer des mesures renforcées :
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li><strong>2FA</strong> (double authentification) possible.</li>
+            <li><strong>Double référent</strong> : deux personnes distinctes peuvent être habilitées sur une même tuile (ex. maire + référent), afin d’assurer la continuité en cas d’absence.</li>
+            <li>Procédure de récupération : vérifications renforcées avant réactivation.</li>
+          </ul>
+          Ces mesures relèvent d’une <strong>obligation de moyens</strong> et peuvent dépendre du téléphone,
+          du réseau, et du prestataire technique selon la version LIVE.
+        </div>
+
+        <h2>10. Disponibilité / limites</h2>
+        <div class="box">
+          L’application est fournie “en l’état” (démo / pré-déploiement).
+          Bo’CitéArt ne garantit pas l’absence d’erreurs, ni une disponibilité continue.
+        </div>
+
+        <h2>11. Suivi indicatif (commerçants)</h2>
+        <div class="box">
+          Certaines vues de suivi (ex. estimation mensuelle) sont fournies à titre <strong>indicatif</strong>
+          et ne constituent pas un document comptable, fiscal ou opposable.
+          Les montants contractuels et facturés sont ceux issus du PSP et/ou de la facture mensuelle.
+        </div>
+
+        <h2>12. Responsabilité</h2>
+        <ul>
+          <li>Bo’CitéArt n’est pas responsable d’un mauvais usage de l’application.</li>
+          <li>Bo’CitéArt n’est pas responsable des contenus fournis par des tiers au-delà de sa modération.</li>
+          <li>Les dommages indirects (perte commerciale, etc.) sont exclus dans la limite légale.</li>
+        </ul>
+
+        <h2>13. Force majeure</h2>
+        <div class="box">
+          Bo’CitéArt ne pourra être tenu responsable en cas de force majeure ou d’événement extérieur rendant le service indisponible ou altéré
+          (panne réseau, incident hébergeur, cyberattaque, coupure électrique, décision administrative, etc.).
+        </div>
+
+        <h2>14. Propriété intellectuelle</h2>
+        <div class="box">
+          L’ensemble des éléments de Bo’CitéArt (concept, structure, textes, contenus, visuels, charte, design, marque et signes distinctifs)
+          est protégé. Toute reproduction, extraction, réutilisation ou détournement sans autorisation est interdit,
+          sauf droits légaux applicables.
+        </div>
+
+        <h2>15. Modification des conditions</h2>
+        <div class="box">
+          Bo’CitéArt peut modifier les présentes conditions pour tenir compte des évolutions du service,
+          des exigences légales ou de sécurité. La version applicable est celle publiée dans l’application au moment de l’utilisation.
+        </div>
+
+        <h2>16. Droit applicable</h2>
+        <p>Droit français.</p>
+      </div>
+
+      <div id="p-cgv" class="doc" style="display:none;">
+        <div style="font-weight:900;font-size:15px;">📄 Conditions Générales de Vente — Bo’CitéArt</div>
+        <div class="box">
+          Les présentes Conditions Générales de Vente (CGV) encadrent les relations commerciales entre Bo’CitéArt
+          et les partenaires professionnels (commerçants, collectivités, structures sportives, institutions)
+          utilisant les services proposés par la plateforme.
+        </div>
+
+        <h2>1. Statut du service</h2>
+        <div class="box">
+          Bo’CitéArt est une plateforme territoriale destinée à favoriser la dynamique locale entre citoyens,
+          commerces, institutions et acteurs associatifs.<br><br>
+          Les BoCiteCoins sont des <strong>unités promotionnelles internes</strong>.
+          Ils ne constituent pas une monnaie, un actif financier, un moyen de paiement ni un crypto-actif.
+        </div>
+
+        <h2>2. Accès au service</h2>
+        <ul>
+          <li>L’accès professionnel nécessite la validation des CGU, CGV et documents contractuels applicables.</li>
+          <li>Chaque structure dispose d’un accès sécurisé (identifiant + mot de passe).</li>
+          <li>Un minimum de deux référents peut être désigné pour garantir la continuité de gestion.</li>
+          <li>Bo’CitéArt peut suspendre un accès en cas d’abus, fraude ou non-respect des règles.</li>
+        </ul>
+
+        <h2>3. Abonnement commerçant</h2>
+        <div class="box">L’accès aux fonctionnalités commerciales de la plateforme est proposé sous forme d’abonnement.</div>
+        <ul>
+          <li><strong>Abonnement :</strong> 26,90 € HT par mois</li>
+          <li><strong>Engagement :</strong> 12 mois minimum</li>
+          <li><strong>Renouvellement :</strong> tacite sauf résiliation selon les conditions contractuelles</li>
+        </ul>
+
+        <h2>4. Frais de fonctionnement</h2>
+        <div class="box">
+          Bo’CitéArt applique un frais de fonctionnement lié à l’utilisation du système de traçabilité des transactions promotionnelles.
+        </div>
+        <ul>
+          <li><strong>0,18 € HT</strong> par tranche de <strong>10 € d’achats enregistrés</strong></li>
+          <li>La traçabilité peut être assurée via un prestataire de paiement (PSP).</li>
+          <li>Une facture récapitulative mensuelle peut être émise.</li>
+        </ul>
+
+        <h2>5. BoCiteCoins</h2>
+        <div class="box">Les BoCiteCoins sont attribués dans le cadre d’actions promotionnelles locales.<br><br>Ils sont :</div>
+        <ul>
+          <li>non convertibles en euros</li>
+          <li>non remboursables</li>
+          <li>non transférables hors du système</li>
+          <li>strictement liés à l’usage de la plateforme</li>
+        </ul>
+
+        <h2>6. Publicité</h2>
+        <div class="box">La plateforme peut proposer des espaces de visibilité promotionnelle selon les conditions définies dans l’application.</div>
+        <ul>
+          <li>nombre de publications limité par jour</li>
+          <li>réservation via calendrier intégré</li>
+          <li>contenu soumis à validation</li>
+          <li>Bo’CitéArt peut refuser toute publication non conforme</li>
+        </ul>
+
+        <h2>7. Paiement</h2>
+        <ul>
+          <li>Le paiement peut être réalisé via un prestataire de paiement sécurisé (PSP).</li>
+          <li>Les données bancaires ne sont pas stockées par Bo’CitéArt.</li>
+          <li>Les factures sont émises conformément aux obligations comptables applicables.</li>
+        </ul>
+
+        <h2>8. Suspension / résiliation</h2>
+        <ul>
+          <li>En cas de non-paiement, l’accès peut être suspendu.</li>
+          <li>En cas de fraude ou détournement, le compte peut être désactivé.</li>
+          <li>Bo’CitéArt peut suspendre temporairement un service pour maintenance ou sécurité.</li>
+        </ul>
+
+        <h2>9. Responsabilité</h2>
+        <ul>
+          <li>Bo’CitéArt fournit une plateforme technique et ne garantit pas un résultat commercial.</li>
+          <li>Bo’CitéArt n’est pas responsable des contenus publiés par les partenaires.</li>
+          <li>La responsabilité est limitée aux obligations légales applicables.</li>
+        </ul>
+
+        <h2>10. Force majeure</h2>
+        <div class="box">
+          Bo’CitéArt ne pourra être tenu responsable en cas d’événement extérieur empêchant le fonctionnement normal du service :
+          panne réseau, incident technique, cyberattaque, catastrophe naturelle ou décision administrative.
+        </div>
+
+        <h2>11. Modification des conditions</h2>
+        <div class="box">
+          Bo’CitéArt peut faire évoluer les présentes conditions afin de tenir compte des évolutions techniques,
+          juridiques ou réglementaires.
+        </div>
+
+        <h2>12. Droit applicable</h2>
+        <p>Les présentes conditions sont soumises au droit français.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
   <div class="modal" id="choice">
     <div class="backdrop" id="choiceClose"></div>
@@ -918,17 +1290,48 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       }
       window.openModal = openModal;
 
-      const openSecureBtn = document.getElementById("openSecure");
-      if(openSecureBtn){
-        openSecureBtn.addEventListener("click", ()=>{
-          openModal("Compte sécurisé + assistance téléphone", `
-            <div class="box">
-              <div style="font-weight:900;">Abonnement optionnel : <strong>2,99 € / mois</strong></div>
-              <div class="muted" style="margin-top:6px;">Objectif : aider la récupération de compte et faciliter l’accompagnement par les proches.</div>
-            </div>
-          `);
-        });
-      }
+     const openSecureBtn = document.getElementById("openSecure");
+if(openSecureBtn){
+  openSecureBtn.addEventListener("click", ()=>{
+    openModal("Compte sécurisé + assistance téléphone", `
+      <div class="box">
+        <div style="font-weight:900;">Abonnement optionnel : <strong>2,99 € / mois</strong></div>
+        <div class="muted" style="margin-top:6px;">Objectif : aider la récupération de compte et faciliter l’accompagnement par les proches (famille, aidants, parents, grands-parents, enfants…), notamment en cas d’oubli, de désorientation, de difficulté temporaire ou de situation de fragilité.</div>
+      </div>
+
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;">Sans abonnement</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>L’utilisateur accepte le risque : <strong>perte/vol/changement de téléphone</strong> = perte d’accès possible.</li>
+          <li>(Démo) Les données peuvent être uniquement locales (sur le téléphone).</li>
+        </ul>
+      </div>
+
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;">Avec abonnement</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li><strong>Sauvegarde</strong> & récupération du compte (selon configuration).</li>
+          <li><strong>Assistance</strong> : aide à la récupération / réactivation.</li>
+          <li><strong>Alertes</strong> : bip batterie faible (si supporté), sonnerie/vibration à distance (si possible).</li>
+          <li><strong>Géolocalisation ponctuelle</strong> uniquement si autorisée par l’utilisateur.</li>
+          <li><strong>SMS aux 2 numéros de confiance</strong> (si activés par l’utilisateur).</li>
+        </ul>
+        <div class="muted" style="margin-top:8px;">Ces fonctions sont opérées par un <strong>prestataire serveur tiers</strong> (selon version LIVE). Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> (pas d’obligation de résultat).</div>
+      </div>
+
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;">Important</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>Service <strong>optionnel</strong>, activable/désactivable.</li>
+          <li>Les autorisations sensibles (ex. localisation) restent <strong>contrôlées par le téléphone</strong>.</li>
+          <li>En cas d’urgence : utiliser <strong>112</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="muted" style="margin-top:10px;">(Démo) Ici on présente l’offre. En LIVE : activation, contrat, consentements et conditions applicables.</div>
+    `);
+  });
+} 
 
       document.addEventListener("keydown", (e)=>{
         if(e.key !== "Escape") return;
