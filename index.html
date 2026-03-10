@@ -388,7 +388,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     #legal .tabs{ display:flex; justify-content:center; gap:8px; }
     #legal .tab{ display:flex; align-items:center; justify-content:center; min-width:70px; padding:8px 10px; text-align:center; white-space:nowrap; }
 
- /* Wallets / bocitecoins */
+/* Wallets / bocitecoins */
 .coinShowcase{
   display:flex;
   gap:12px;
@@ -415,7 +415,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 .coinFace::before{
   content:"";
   position:absolute;
-  inset:6px;
+  inset:7px;
   border-radius:50%;
   border:2px solid rgba(140,95,0,.55);
   pointer-events:none;
@@ -455,58 +455,36 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   top:50%;
   width:0;
   height:0;
-  font-size:9px;
+  font-size:6px;
   line-height:1;
   font-weight:900;
   transform:translate(-50%,-50%);
   text-shadow:
-    0 -34px 0 currentColor,
-    11px -32px 0 currentColor,
-    21px -27px 0 currentColor,
-    29px -20px 0 currentColor,
-    33px -10px 0 currentColor,
-    34px 0 0 currentColor,
-    33px 10px 0 currentColor,
-    29px 20px 0 currentColor,
-    21px 27px 0 currentColor,
-    11px 32px 0 currentColor,
-    0 34px 0 currentColor,
-    -11px 32px 0 currentColor,
-    -21px 27px 0 currentColor,
-    -29px 20px 0 currentColor,
-    -33px 10px 0 currentColor,
-    -34px 0 0 currentColor,
-    -33px -10px 0 currentColor,
-    -29px -20px 0 currentColor,
-    -21px -27px 0 currentColor,
-    -11px -32px 0 currentColor;
+    0 -30px 0 currentColor,
+    9px -29px 0 currentColor,
+    17px -25px 0 currentColor,
+    24px -19px 0 currentColor,
+    29px -10px 0 currentColor,
+    30px 0 0 currentColor,
+    29px 10px 0 currentColor,
+    24px 19px 0 currentColor,
+    17px 25px 0 currentColor,
+    9px 29px 0 currentColor,
+    0 30px 0 currentColor,
+    -9px 29px 0 currentColor,
+    -17px 25px 0 currentColor,
+    -24px 19px 0 currentColor,
+    -29px 10px 0 currentColor,
+    -30px 0 0 currentColor,
+    -29px -10px 0 currentColor,
+    -24px -19px 0 currentColor,
+    -17px -25px 0 currentColor,
+    -9px -29px 0 currentColor;
 }
 
 .coinStarsGold::before{ color:#9b6a00; }
 .coinStarsYellow::before{ color:#967d00; }
 .coinStarsGreen::before{ color:#ecfff3; }
-
-.stackCoin::before{
-  content:"";
-  position:absolute;
-  inset:4px;
-  border-radius:50%;
-  border:1.5px solid rgba(120,85,0,.42);
-}
-
-.stackCoin::after{
-  content:"✦";
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  font-size:8px;
-  font-weight:900;
-}
-
-.stackGold::after{ color:#8f6500; }
-.stackYellow::after{ color:#8a7600; }
-.stackGreen::after{ color:#d9f7e6; }
 
 .coinInner{
   position:relative;
@@ -594,6 +572,48 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     0 4px 10px rgba(0,0,0,.16);
 }
 
+.stackCoin::before{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border-radius:50%;
+  border:1.5px solid rgba(120,85,0,.42);
+}
+
+.stackCoin::after{
+  content:"✦";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:0;
+  height:0;
+  transform:translate(-50%,-50%);
+  font-size:4px;
+  line-height:1;
+  font-weight:900;
+  text-shadow:
+    0 -13px 0 currentColor,
+    4px -12px 0 currentColor,
+    8px -10px 0 currentColor,
+    11px -7px 0 currentColor,
+    13px -3px 0 currentColor,
+    13px 0 0 currentColor,
+    13px 3px 0 currentColor,
+    11px 7px 0 currentColor,
+    8px 10px 0 currentColor,
+    4px 12px 0 currentColor,
+    0 13px 0 currentColor,
+    -4px 12px 0 currentColor,
+    -8px 10px 0 currentColor,
+    -11px 7px 0 currentColor,
+    -13px 3px 0 currentColor,
+    -13px 0 0 currentColor,
+    -13px -3px 0 currentColor,
+    -11px -7px 0 currentColor,
+    -8px -10px 0 currentColor,
+    -4px -12px 0 currentColor;
+}
+
 .stackGold{
   background:
     radial-gradient(circle at 32% 28%, #fff3a8 0%, #f4d44d 18%, #d9aa14 48%, #b98400 72%, #8d6200 100%);
@@ -611,6 +631,10 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     radial-gradient(circle at 32% 28%, #dff7ea 0%, #91d9b1 20%, #3f7e5f 48%, #2e5f47 72%, #1f4332 100%);
   border:3px solid #2f5d46;
 }
+
+.stackGold::after{ color:#9b6a00; }
+.stackYellow::after{ color:#967d00; }
+.stackGreen::after{ color:#ecfff3; }
 
 .stack1{ left:0; bottom:0; }
 .stack2{ left:18px; bottom:8px; }
