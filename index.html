@@ -1690,8 +1690,8 @@ function loadVoices(){
             if(typeof window.__bociteartOpenByKey === "function"){
               window.__bociteartOpenByKey(key);
               return;
-            }
-          }
+             });
+          });
 
           if(key==="oeuvres"){
             openModal("Œuvres", `
@@ -3026,7 +3026,7 @@ if(key==="commerces"){
       // ======================================================
       // ✅ Admin tile (démo)
       // ======================================================
-      const adminTile = ("adminTile");
+      const adminTile = $("adminTile");
       on(adminTile, "click", ()=>{
         if(!isFn(window.openModal)) return;
         openModal("Accès Admin (structure)", `
