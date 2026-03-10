@@ -443,134 +443,23 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 .coinStarsRing{
   position:absolute;
   inset:0;
-  border-radius:50%;
+  width:100%;
+  height:100%;
   pointer-events:none;
   z-index:1;
 }
 
-.coinStarsRing::before{
-  content:"✦";
-  position:absolute;
-  left:50%;
-  top:50%;
-  width:0;
-  height:0;
-  font-size:6px;
-  line-height:1;
-  font-weight:900;
-  transform:translate(-50%,-50%);
-  text-shadow:
-    0 -30px 0 currentColor,
-    9px -29px 0 currentColor,
-    17px -25px 0 currentColor,
-    24px -19px 0 currentColor,
-    29px -10px 0 currentColor,
-    30px 0 0 currentColor,
-    29px 10px 0 currentColor,
-    24px 19px 0 currentColor,
-    17px 25px 0 currentColor,
-    9px 29px 0 currentColor,
-    0 30px 0 currentColor,
-    -9px 29px 0 currentColor,
-    -17px 25px 0 currentColor,
-    -24px 19px 0 currentColor,
-    -29px 10px 0 currentColor,
-    -30px 0 0 currentColor,
-    -29px -10px 0 currentColor,
-    -24px -19px 0 currentColor,
-    -17px -25px 0 currentColor,
-    -9px -29px 0 currentColor;
-}
-
-.coinStarsGold::before{ color:#9b6a00; }
-.coinStarsYellow::before{ color:#967d00; }
-.coinStarsGreen::before{ color:#ecfff3; }
-
-.coinInner{
-  position:relative;
-  width:64px;
-  height:64px;
-  border-radius:50%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  font-weight:900;
-  z-index:2;
-  padding:4px;
-  box-shadow:
-    inset 0 2px 5px rgba(255,255,255,.14),
-    inset 0 -3px 7px rgba(0,0,0,.16);
-}
-
-.coinInner::before{
-  content:"";
+.coinStarsRing svg{
   position:absolute;
   inset:0;
-  border-radius:50%;
-  border:2px solid currentColor;
-  opacity:.35;
-  pointer-events:none;
+  width:100%;
+  height:100%;
+  display:block;
 }
 
-.coinInner .n{
-  font-size:24px;
-  line-height:1;
-  position:relative;
-  z-index:1;
-}
-
-.coinInner .t{
-  font-size:8px;
-  line-height:1.05;
-  margin-top:4px;
-  position:relative;
-  z-index:1;
-  letter-spacing:.2px;
-}
-
-.coinInnerGold{
-  color:#7a5600;
-  background:radial-gradient(circle at 35% 30%, rgba(255,231,140,.92) 0%, rgba(222,177,38,.96) 58%, rgba(169,120,0,.98) 100%);
-  text-shadow:
-    0 1px 0 rgba(255,245,190,.65),
-    0 -1px 0 rgba(110,70,0,.25);
-}
-
-.coinInnerYellow{
-  color:#766100;
-  background:radial-gradient(circle at 35% 30%, rgba(255,240,162,.94) 0%, rgba(218,191,35,.97) 58%, rgba(160,136,0,.99) 100%);
-  text-shadow:
-    0 1px 0 rgba(255,250,204,.65),
-    0 -1px 0 rgba(100,90,0,.22);
-}
-
-.coinInnerGreen{
-  color:#eefcf4;
-  background:radial-gradient(circle at 35% 30%, rgba(119,190,149,.95) 0%, rgba(56,110,82,.98) 60%, rgba(30,63,47,.99) 100%);
-  text-shadow:
-    0 1px 0 rgba(255,255,255,.18),
-    0 -1px 0 rgba(0,0,0,.18);
-}
-
-.coinStack{
-  position:relative;
-  width:84px;
-  height:64px;
-  flex:0 0 auto;
-}
-
-.stackCoin{
-  position:absolute;
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  box-shadow:
-    inset 0 1px 5px rgba(255,255,255,.18),
-    inset 0 -3px 6px rgba(0,0,0,.14),
-    0 4px 10px rgba(0,0,0,.16);
-}
+.coinStarsGold .starRingStroke{ stroke:#9b6a00; fill:none; }
+.coinStarsYellow .starRingStroke{ stroke:#967d00; fill:none; }
+.coinStarsGreen .starRingStroke{ stroke:#ecfff3; fill:none; }
 
 .stackCoin::before{
   content:"";
@@ -580,61 +469,57 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   border:1.5px solid rgba(120,85,0,.42);
 }
 
-.stackCoin::after{
-  content:"✦";
+.stackCoinLabel{
   position:absolute;
-  left:50%;
-  top:50%;
-  width:0;
-  height:0;
-  transform:translate(-50%,-50%);
-  font-size:4px;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  z-index:2;
+  pointer-events:none;
+}
+
+.stackCoinLabel .n{
+  font-size:11px;
   line-height:1;
   font-weight:900;
-  text-shadow:
-    0 -13px 0 currentColor,
-    4px -12px 0 currentColor,
-    8px -10px 0 currentColor,
-    11px -7px 0 currentColor,
-    13px -3px 0 currentColor,
-    13px 0 0 currentColor,
-    13px 3px 0 currentColor,
-    11px 7px 0 currentColor,
-    8px 10px 0 currentColor,
-    4px 12px 0 currentColor,
-    0 13px 0 currentColor,
-    -4px 12px 0 currentColor,
-    -8px 10px 0 currentColor,
-    -11px 7px 0 currentColor,
-    -13px 3px 0 currentColor,
-    -13px 0 0 currentColor,
-    -13px -3px 0 currentColor,
-    -11px -7px 0 currentColor,
-    -8px -10px 0 currentColor,
-    -4px -12px 0 currentColor;
+  margin-bottom:1px;
 }
 
-.stackGold{
-  background:
-    radial-gradient(circle at 32% 28%, #fff3a8 0%, #f4d44d 18%, #d9aa14 48%, #b98400 72%, #8d6200 100%);
-  border:3px solid #b67d00;
+.stackCoinLabel .t{
+  font-size:3.8px;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:.1px;
 }
 
-.stackYellow{
-  background:
-    radial-gradient(circle at 32% 28%, #fff7b6 0%, #f2df58 18%, #d4bb18 48%, #ab9300 72%, #7f6d00 100%);
-  border:3px solid #b89d00;
+.stackGold .stackCoinLabel{ color:#7a5600; }
+.stackYellow .stackCoinLabel{ color:#766100; }
+.stackGreen .stackCoinLabel{ color:#eefcf4; }
+
+.stackCoinStars{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:1;
 }
 
-.stackGreen{
-  background:
-    radial-gradient(circle at 32% 28%, #dff7ea 0%, #91d9b1 20%, #3f7e5f 48%, #2e5f47 72%, #1f4332 100%);
-  border:3px solid #2f5d46;
+.stackCoinStars svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
 }
 
-.stackGold::after{ color:#9b6a00; }
-.stackYellow::after{ color:#967d00; }
-.stackGreen::after{ color:#ecfff3; }
+.stackGold .stackStarRingStroke{ stroke:#9b6a00; fill:none; }
+.stackYellow .stackStarRingStroke{ stroke:#967d00; fill:none; }
+.stackGreen .stackStarRingStroke{ stroke:#ecfff3; fill:none; }
+}
 
 .stack1{ left:0; bottom:0; }
 .stack2{ left:18px; bottom:8px; }
