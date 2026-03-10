@@ -388,225 +388,299 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     #legal .tabs{ display:flex; justify-content:center; gap:8px; }
     #legal .tab{ display:flex; align-items:center; justify-content:center; min-width:70px; padding:8px 10px; text-align:center; white-space:nowrap; }
 
-    /* Wallets / bocitecoins */
-    .coinShowcase{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      margin-top:12px;
-      flex-wrap:wrap;
-    }
-    .coinFace{
-      position:relative;
-      width:96px;
-      height:96px;
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      box-shadow:
-        inset 0 2px 8px rgba(255,255,255,.45),
-        inset 0 -5px 10px rgba(0,0,0,.18),
-        0 6px 14px rgba(0,0,0,.14);
-    }
-    .coinFace::before{
-      content:"";
-      position:absolute;
-      inset:8px;
-      border-radius:50%;
-      border:2px solid rgba(255,248,210,.92);
-    }
-    .coinGold{
-      background:radial-gradient(circle at 30% 30%, #fff8cc 0%, #f6de74 22%, #d6a20f 56%, #b27c00 78%, #8b5f00 100%);
-      border:4px solid #c89400;
-    }
-    .coinYellow{
-      background:radial-gradient(circle at 30% 30%, #fffcd8 0%, #fff08a 24%, #e4c81c 58%, #b79b00 80%, #8f7800 100%);
-      border:4px solid #ccb300;
-    }
-    .coinGreen{
-      background:radial-gradient(circle at 30% 30%, #def7e8 0%, #88d2a8 24%, #2f5d46 58%, #234635 80%, #183227 100%);
-      border:4px solid #2f5d46;
-    }
-    .coinStarsRing{
-      position:absolute;
-      inset:0;
-      border-radius:50%;
-      pointer-events:none;
-      z-index:1;
-    }
-    .coinStarsRing::before{
-      content:"✦";
-      position:absolute;
-      left:50%;
-      top:50%;
-      margin-left:-4px;
-      margin-top:-4px;
-      font-size:9px;
-      line-height:1;
-      font-weight:900;
-      text-shadow:
-        0 -34px 0 currentColor,
-        17px -29px 0 currentColor,
-        29px -17px 0 currentColor,
-        34px 0 0 currentColor,
-        29px 17px 0 currentColor,
-        17px 29px 0 currentColor,
-        0 34px 0 currentColor,
-        -17px 29px 0 currentColor,
-        -29px 17px 0 currentColor,
-        -34px 0 0 currentColor,
-        -29px -17px 0 currentColor,
-        -17px -29px 0 currentColor;
-    }
-    .coinStarsGold::before{ color:#fff7c8; }
-    .coinStarsYellow::before{ color:#fffbe2; }
-    .coinStarsGreen::before{ color:#e9fff3; }
+ /* Wallets / bocitecoins */
+.coinShowcase{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
 
-    .stackCoin::before{
-      content:"";
-      position:absolute;
-      inset:5px;
-      border-radius:50%;
-      border:1.5px solid rgba(255,248,210,.78);
-    }
-    .stackCoin::after{
-      content:"✦";
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform:translate(-50%,-50%);
-      font-size:9px;
-      font-weight:900;
-      color:rgba(255,248,210,.92);
-      text-shadow:0 0 4px rgba(255,255,255,.25);
-    }
-    .coinInner{
-      position:relative;
-      width:66px;
-      height:66px;
-      border-radius:50%;
-      border:2px solid rgba(255,248,210,.9);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      font-weight:900;
-      z-index:2;
-      background:rgba(255,255,255,.12);
-      padding:4px;
-      box-shadow:inset 0 1px 4px rgba(255,255,255,.25);
-    }
-    .coinInner .n{ font-size:22px; line-height:1; }
-    .coinInner .t{ font-size:8px; line-height:1.05; margin-top:4px; }
+.coinFace{
+  position:relative;
+  width:96px;
+  height:96px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  box-shadow:
+    inset 0 3px 10px rgba(255,255,255,.30),
+    inset 0 -7px 14px rgba(0,0,0,.22),
+    0 6px 14px rgba(0,0,0,.14);
+}
 
-    .coinInnerGold{ color:#6b4b00; }
-    .coinInnerYellow{ color:#765d00; }
-    .coinInnerGreen{ color:#f1fff8; }
+.coinFace::before{
+  content:"";
+  position:absolute;
+  inset:6px;
+  border-radius:50%;
+  border:2px solid rgba(140,95,0,.55);
+  pointer-events:none;
+}
 
-    .coinStack{
-      position:relative;
-      width:84px;
-      height:64px;
-      flex:0 0 auto;
-    }
+.coinGold{
+  background:
+    radial-gradient(circle at 32% 28%, #fff3a8 0%, #f4d44d 18%, #d9aa14 48%, #b98400 72%, #8d6200 100%);
+  border:4px solid #b67d00;
+}
 
-    .stackCoin{
-      position:absolute;
-      width:44px;
-      height:44px;
-      border-radius:50%;
-      box-shadow:
-        inset 0 1px 4px rgba(255,255,255,.20),
-        0 4px 10px rgba(0,0,0,.16);
-    }
-    .stackGold{
-      background:radial-gradient(circle at 30% 30%, #fff8cc 0%, #f6de74 22%, #d6a20f 56%, #b27c00 78%, #8b5f00 100%);
-      border:3px solid #c89400;
-    }
-    .stackYellow{
-      background:radial-gradient(circle at 30% 30%, #fffcd8 0%, #fff08a 24%, #e4c81c 58%, #b79b00 80%, #8f7800 100%);
-      border:3px solid #ccb300;
-    }
-    .stackGreen{
-      background:radial-gradient(circle at 30% 30%, #def7e8 0%, #88d2a8 24%, #2f5d46 58%, #234635 80%, #183227 100%);
-      border:3px solid #2f5d46;
-    }
-    .stack1{ left:0; bottom:0; }
-    .stack2{ left:18px; bottom:8px; }
-    .stack3{ left:36px; bottom:16px; }
+.coinYellow{
+  background:
+    radial-gradient(circle at 32% 28%, #fff7b6 0%, #f2df58 18%, #d4bb18 48%, #ab9300 72%, #7f6d00 100%);
+  border:4px solid #b89d00;
+}
 
-    .walletBox{
-      flex:1;
-      min-width:190px;
-      border:2px solid rgba(0,0,0,.08);
-      background:#fff;
-      border-radius:16px;
-      padding:12px;
-    }
-    .walletTitle{
-      font-weight:900;
-      font-size:14px;
-      margin-bottom:6px;
-    }
-    .walletValue{
-      font-weight:900;
-      font-size:24px;
-      line-height:1;
-    }
-    .walletGold{ color:#9a7000; }
-    .walletYellow{ color:#b18900; }
-    .walletGreen{ color:#2f5d46; }
+.coinGreen{
+  background:
+    radial-gradient(circle at 32% 28%, #dff7ea 0%, #91d9b1 20%, #3f7e5f 48%, #2e5f47 72%, #1f4332 100%);
+  border:4px solid #2f5d46;
+}
 
-    .walletSub{
-      margin-top:6px;
-      font-weight:800;
-      font-size:12px;
-      color:var(--muted);
-    }
-    .walletActions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-    .walletMini{
-      border:2px solid rgba(0,0,0,.10);
-      background:var(--beige);
-      border-radius:12px;
-      padding:8px 10px;
-      font-weight:900;
-      cursor:pointer;
-      font-size:12px;
-    }
+.coinStarsRing{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:1;
+}
 
-    @media (max-height: 780px){
-      .wrap{ padding:10px; gap:10px; }
-      .ticker{ height:120px; }
-      .tile{ aspect-ratio: 1 / 0.70; }
-      .grid{ gap:10px; }
-      .tile .h{ font-size:16px; }
-      .tile .p{ margin-top:6px; }
-      .dae{ padding:8px 10px; font-size:14px; border-radius:18px; border-color: var(--red); min-height:86px; }
-      .heart{ width:44px; height:44px; }
-      .footerRow{ padding-bottom:8px; }
-      .iconBtn{ width:40px; height:40px; }
-      .legalBtn{ padding:9px 10px; font-size:12px; }
-      .sheet .body{ max-height:min(70vh, 460px); }
-      .sportTape{ height:34px; }
-      .sportTapeTrack{ font-size:11px; }
-    }
-    @media (max-height: 700px){
-      .ticker{ height:112px; }
-      .tile{ aspect-ratio: 1 / 0.70; }
-      .wrap{ gap:12px; }
-      .sportTape{ height:32px; }
-    }
-  </style>
-</head>
+.coinStarsRing::before{
+  content:"✦";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:0;
+  height:0;
+  font-size:8px;
+  line-height:1;
+  font-weight:900;
+  transform:translate(-50%,-50%);
+  text-shadow:
+    0 -28px 0 currentColor,
+    14px -24px 0 currentColor,
+    24px -14px 0 currentColor,
+    28px 0 0 currentColor,
+    24px 14px 0 currentColor,
+    14px 24px 0 currentColor,
+    0 28px 0 currentColor,
+    -14px 24px 0 currentColor,
+    -24px 14px 0 currentColor,
+    -28px 0 0 currentColor,
+    -24px -14px 0 currentColor,
+    -14px -24px 0 currentColor;
+}
 
+.coinStarsGold::before{ color:#8f6500; }
+.coinStarsYellow::before{ color:#8a7600; }
+.coinStarsGreen::before{ color:#d9f7e6; }
+
+.stackCoin::before{
+  content:"";
+  position:absolute;
+  inset:4px;
+  border-radius:50%;
+  border:1.5px solid rgba(120,85,0,.42);
+}
+
+.stackCoin::after{
+  content:"✦";
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  font-size:8px;
+  font-weight:900;
+}
+
+.stackGold::after{ color:#8f6500; }
+.stackYellow::after{ color:#8a7600; }
+.stackGreen::after{ color:#d9f7e6; }
+
+.coinInner{
+  position:relative;
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-weight:900;
+  z-index:2;
+  padding:4px;
+  box-shadow:
+    inset 0 2px 5px rgba(255,255,255,.14),
+    inset 0 -3px 7px rgba(0,0,0,.16);
+}
+
+.coinInner::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:2px solid currentColor;
+  opacity:.35;
+  pointer-events:none;
+}
+
+.coinInner .n{
+  font-size:24px;
+  line-height:1;
+  position:relative;
+  z-index:1;
+}
+
+.coinInner .t{
+  font-size:8px;
+  line-height:1.05;
+  margin-top:4px;
+  position:relative;
+  z-index:1;
+  letter-spacing:.2px;
+}
+
+.coinInnerGold{
+  color:#7a5600;
+  background:radial-gradient(circle at 35% 30%, rgba(255,231,140,.92) 0%, rgba(222,177,38,.96) 58%, rgba(169,120,0,.98) 100%);
+  text-shadow:
+    0 1px 0 rgba(255,245,190,.65),
+    0 -1px 0 rgba(110,70,0,.25);
+}
+
+.coinInnerYellow{
+  color:#766100;
+  background:radial-gradient(circle at 35% 30%, rgba(255,240,162,.94) 0%, rgba(218,191,35,.97) 58%, rgba(160,136,0,.99) 100%);
+  text-shadow:
+    0 1px 0 rgba(255,250,204,.65),
+    0 -1px 0 rgba(100,90,0,.22);
+}
+
+.coinInnerGreen{
+  color:#eefcf4;
+  background:radial-gradient(circle at 35% 30%, rgba(119,190,149,.95) 0%, rgba(56,110,82,.98) 60%, rgba(30,63,47,.99) 100%);
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.18),
+    0 -1px 0 rgba(0,0,0,.18);
+}
+
+.coinStack{
+  position:relative;
+  width:84px;
+  height:64px;
+  flex:0 0 auto;
+}
+
+.stackCoin{
+  position:absolute;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  box-shadow:
+    inset 0 1px 5px rgba(255,255,255,.18),
+    inset 0 -3px 6px rgba(0,0,0,.14),
+    0 4px 10px rgba(0,0,0,.16);
+}
+
+.stackGold{
+  background:
+    radial-gradient(circle at 32% 28%, #fff3a8 0%, #f4d44d 18%, #d9aa14 48%, #b98400 72%, #8d6200 100%);
+  border:3px solid #b67d00;
+}
+
+.stackYellow{
+  background:
+    radial-gradient(circle at 32% 28%, #fff7b6 0%, #f2df58 18%, #d4bb18 48%, #ab9300 72%, #7f6d00 100%);
+  border:3px solid #b89d00;
+}
+
+.stackGreen{
+  background:
+    radial-gradient(circle at 32% 28%, #dff7ea 0%, #91d9b1 20%, #3f7e5f 48%, #2e5f47 72%, #1f4332 100%);
+  border:3px solid #2f5d46;
+}
+
+.stack1{ left:0; bottom:0; }
+.stack2{ left:18px; bottom:8px; }
+.stack3{ left:36px; bottom:16px; }
+
+.walletBox{
+  flex:1;
+  min-width:190px;
+  border:2px solid rgba(0,0,0,.08);
+  background:#fff;
+  border-radius:16px;
+  padding:12px;
+}
+
+.walletTitle{
+  font-weight:900;
+  font-size:14px;
+  margin-bottom:6px;
+}
+
+.walletValue{
+  font-weight:900;
+  font-size:24px;
+  line-height:1;
+}
+
+.walletGold{ color:#9a7000; }
+.walletYellow{ color:#b18900; }
+.walletGreen{ color:#2f5d46; }
+
+.walletSub{
+  margin-top:6px;
+  font-weight:800;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.walletActions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+.walletMini{
+  border:2px solid rgba(0,0,0,.10);
+  background:var(--beige);
+  border-radius:12px;
+  padding:8px 10px;
+  font-weight:900;
+  cursor:pointer;
+  font-size:12px;
+}
+
+@media (max-height: 780px){
+  .wrap{ padding:10px; gap:10px; }
+  .ticker{ height:120px; }
+  .tile{ aspect-ratio: 1 / 0.70; }
+  .grid{ gap:10px; }
+  .tile .h{ font-size:16px; }
+  .tile .p{ margin-top:6px; }
+  .dae{ padding:8px 10px; font-size:14px; border-radius:18px; border-color: var(--red); min-height:86px; }
+  .heart{ width:44px; height:44px; }
+  .footerRow{ padding-bottom:8px; }
+  .iconBtn{ width:40px; height:40px; }
+  .legalBtn{ padding:9px 10px; font-size:12px; }
+  .sheet .body{ max-height:min(70vh, 460px); }
+  .sportTape{ height:34px; }
+  .sportTapeTrack{ font-size:11px; }
+}
+
+@media (max-height: 700px){
+  .ticker{ height:112px; }
+  .tile{ aspect-ratio: 1 / 0.70; }
+  .wrap{ gap:12px; }
+  .sportTape{ height:32px; }
+}
+  </style> 
+</head>  
 <body>
   <div class="page">
     <div class="wrap">
