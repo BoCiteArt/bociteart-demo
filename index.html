@@ -1269,6 +1269,10 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     (function initBoCiteArtClean(){
       console.log("✅ JS démarré");
 
+            const $ = (id) => document.getElementById(id);
+      const on = (el, evt, fn) => { if (el) el.addEventListener(evt, fn); };
+      const isFn = (v) => typeof v === "function";
+
       function setVh(){
         const vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -1679,13 +1683,15 @@ function loadVoices(){
       window.mairieLoad = mairieLoad;
       window.mairieSave = mairieSave;
 
-      document.querySelectorAll("[data-open]").forEach(el=>{
+ document.querySelectorAll("[data-open]").forEach(el=>{
         el.addEventListener("click", ()=>{
           const key = el.getAttribute("data-open");
 
           if(key==="sport" || key==="mairie" || key==="commerces"){
-            if(typeof window.__bociteartOpenByKey === "function") window.__bociteartOpenByKey(key);
-            return;
+            if(typeof window.__bociteartOpenByKey === "function"){
+              window.__bociteartOpenByKey(key);
+              return;
+            }
           }
 
           if(key==="oeuvres"){
@@ -3020,7 +3026,7 @@ if(key==="commerces"){
       // ======================================================
       // ✅ Admin tile (démo)
       // ======================================================
-      const adminTile = $("adminTile");
+      const adminTile = ("adminTile");
       on(adminTile, "click", ()=>{
         if(!isFn(window.openModal)) return;
         openModal("Accès Admin (structure)", `
