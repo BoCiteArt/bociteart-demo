@@ -459,18 +459,26 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   font-weight:900;
   transform:translate(-50%,-50%);
   text-shadow:
-    0 -28px 0 currentColor,
-    14px -24px 0 currentColor,
-    24px -14px 0 currentColor,
-    28px 0 0 currentColor,
-    24px 14px 0 currentColor,
-    14px 24px 0 currentColor,
-    0 28px 0 currentColor,
-    -14px 24px 0 currentColor,
-    -24px 14px 0 currentColor,
-    -28px 0 0 currentColor,
-    -24px -14px 0 currentColor,
-    -14px -24px 0 currentColor;
+    0 -31px 0 currentColor,
+    10px -29px 0 currentColor,
+    19px -25px 0 currentColor,
+    26px -18px 0 currentColor,
+    30px -9px 0 currentColor,
+    31px 0 0 currentColor,
+    30px 9px 0 currentColor,
+    26px 18px 0 currentColor,
+    19px 25px 0 currentColor,
+    10px 29px 0 currentColor,
+    0 31px 0 currentColor,
+    -10px 29px 0 currentColor,
+    -19px 25px 0 currentColor,
+    -26px 18px 0 currentColor,
+    -30px 9px 0 currentColor,
+    -31px 0 0 currentColor,
+    -30px -9px 0 currentColor,
+    -26px -18px 0 currentColor,
+    -19px -25px 0 currentColor,
+    -10px -29px 0 currentColor;
 }
 
 .coinStarsGold::before{ color:#8f6500; }
@@ -2570,51 +2578,53 @@ function loadVoices(){
       }
     }
 
-    function refreshWalletUi(){
-      checkAnniversaryRule();
+function refreshWalletUi(){
+  checkAnniversaryRule();
 
-      const wallet = loadCitizenWallet();
-      const meta = ensureCitizenMeta();
-      const coins = Number(wallet.or || 0);
+  const wallet = loadCitizenWallet();
+  const meta = ensureCitizenMeta();
+  const coins = Number(wallet.or || 0);
 
-      const bal = document.getElementById("citizenCoinBalance");
-      const progressBar = document.getElementById("walletProgressBar");
-      const progressText = document.getElementById("walletProgressText");
-      const motivation = document.getElementById("walletMotivation");
-      const expiry = document.getElementById("walletExpiryInfo");
+  const bal = document.getElementById("citizenCoinBalance");
+  const progressBar = document.getElementById("walletProgressBar");
+  const progressText = document.getElementById("walletProgressText");
+  const motivation = document.getElementById("walletMotivation");
+  const expiry = document.getElementById("walletExpiryInfo");
 
-      if(bal) bal.textContent = coins;
+  if(bal) bal.textContent = coins;
 
-      const next = getNextTarget(coins);
-      const percent = getProgressPercent(coins);
+  const next = getNextTarget(coins);
+  const percent = getProgressPercent(coins);
 
-      if(progressBar){
-        progressBar.style.width = percent + "%";
-        progressBar.style.background = `linear-gradient(90deg, #e4c81c 0%, #9fca45 ${Math.max(35, percent)}%, #2f8f46 100%)`;
-      }
+  if(progressBar){
+    progressBar.style.width = percent + "%";
+    progressBar.style.background = `linear-gradient(90deg, #e4c81c 0%, #9fca45 ${Math.max(35, percent)}%, #2f8f46 100%)`;
+  }
 
-      if(progressText){
-        if(coins >= 100){
-          progressText.textContent = `Palier actuel : 100 bocitecoins • Avantage estimé : ${getTargetLabel(100)}`;
-        }else{
-          progressText.textContent = `Solde actuel : ${coins} bocitecoins • Prochain palier : ${next} • Avantage estimé : ${getTargetLabel(next)}`;
-        }
-      }
-
-      if(motivation){
-        motivation.textContent = getMotivationText(coins);
-      }
-
-      if(expiry){
-        const now = Date.now();
-        const daysLeft = daysBetween(now, meta.expireTs);
-        if(daysLeft <= 30){
-          expiry.textContent = `Attention : il vous reste ${daysLeft} jour(s) avant la date anniversaire. Échange possible dès 20 bocitecoins sur cette période.`;
-        }else{
-          expiry.textContent = `Date anniversaire du compte : dans ${daysLeft} jour(s).`;
-        }
-      }
+  if(progressText){
+    if(coins >= 100){
+      progressText.textContent = `Palier actuel : 100 bocitecoins • Avantage estimé : ${getTargetLabel(100)}`;
+    }else{
+      progressText.textContent = `Solde actuel : ${coins} bocitecoins • Prochain palier : ${next} • Avantage estimé : ${getTargetLabel(next)}`;
     }
+    progressText.style.whiteSpace = "normal";
+    progressText.style.wordBreak = "keep-all";
+  }
+
+  if(motivation){
+    motivation.textContent = getMotivationText(coins);
+  }
+
+  if(expiry){
+    const now = Date.now();
+    const daysLeft = daysBetween(now, meta.expireTs);
+    if(daysLeft <= 30){
+      expiry.textContent = `Attention : il vous reste ${daysLeft} jour(s) avant la date anniversaire. Échange possible dès 20 bocitecoins sur cette période.`;
+    }else{
+      expiry.textContent = `Date anniversaire du compte : dans ${daysLeft} jour(s).`;
+    }
+  }
+}
 
     function setFirstEarnDateIfNeeded(coinsAdded){
       if(coinsAdded <= 0) return;
