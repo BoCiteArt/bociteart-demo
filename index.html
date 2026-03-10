@@ -391,7 +391,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 /* Wallets / bocitecoins */
 .coinShowcase{
   display:flex;
-  gap:12px;
+  gap:14px;
   align-items:center;
   margin-top:12px;
   flex-wrap:wrap;
@@ -406,39 +406,41 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   align-items:center;
   justify-content:center;
   overflow:hidden;
+  border:3px solid rgba(255,255,255,.30);
+  outline:2px solid rgba(0,0,0,.16);
   box-shadow:
-    inset 0 3px 10px rgba(255,255,255,.22),
-    inset 0 -7px 14px rgba(0,0,0,.20),
-    0 6px 14px rgba(0,0,0,.14);
+    inset 0 1px 3px rgba(255,255,255,.22),
+    inset 0 -2px 4px rgba(0,0,0,.16),
+    0 2px 5px rgba(0,0,0,.10);
 }
 
 .coinFace::before{
   content:"";
   position:absolute;
-  inset:10px;
+  inset:7px;
   border-radius:50%;
-  border:2px solid rgba(140,95,0,.50);
   pointer-events:none;
   z-index:0;
 }
 
 .coinGold{
   background:
-    radial-gradient(circle at 32% 28%, #fff3a8 0%, #f4d44d 18%, #d9aa14 48%, #b98400 72%, #8d6200 100%);
-  border:4px solid #b67d00;
+    radial-gradient(circle at 32% 28%, #fff4b8 0%, #f0d24f 20%, #d6ab18 52%, #b88400 74%, #8c6200 100%);
 }
 
 .coinYellow{
   background:
-    radial-gradient(circle at 32% 28%, #fff7b6 0%, #f2df58 18%, #d4bb18 48%, #ab9300 72%, #7f6d00 100%);
-  border:4px solid #b89d00;
+    radial-gradient(circle at 32% 28%, #fff7c8 0%, #f1de64 20%, #d6bc1f 52%, #ad9500 74%, #806d00 100%);
 }
 
 .coinGreen{
   background:
-    radial-gradient(circle at 32% 28%, #dff7ea 0%, #91d9b1 20%, #3f7e5f 48%, #2e5f47 72%, #1f4332 100%);
-  border:4px solid #2f5d46;
+    radial-gradient(circle at 32% 28%, #e6f9ee 0%, #9adab8 20%, #4d8d6b 52%, #2f674c 74%, #1f4634 100%);
 }
+
+.coinGold::before{ border:2px solid rgba(122,86,0,.45); }
+.coinYellow::before{ border:2px solid rgba(118,97,0,.42); }
+.coinGreen::before{ border:2px solid rgba(236,255,243,.28); }
 
 .coinStarsRing{
   position:absolute;
@@ -467,12 +469,12 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
 .coinStar{
   transform-box: fill-box;
-  transform-origin: center;
+  transform-origin:center;
 }
 
-.coinStarsGold .coinStar{ fill:#8a6200; }
-.coinStarsYellow .coinStar{ fill:#8a7400; }
-.coinStarsGreen .coinStar{ fill:#f4fff8; }
+.coinStarsGold .coinStar{ fill:#8d6500; }
+.coinStarsYellow .coinStar{ fill:#8a7300; }
+.coinStarsGreen .coinStar{ fill:#f2fff7; }
 
 .coinInner{
   position:relative;
@@ -488,8 +490,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   z-index:2;
   padding:4px;
   box-shadow:
-    inset 0 2px 5px rgba(255,255,255,.12),
-    inset 0 -3px 7px rgba(0,0,0,.14);
+    inset 0 1px 3px rgba(255,255,255,.12),
+    inset 0 -2px 4px rgba(0,0,0,.12);
 }
 
 .coinInner::before{
@@ -498,7 +500,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   inset:0;
   border-radius:50%;
   border:2px solid currentColor;
-  opacity:.30;
+  opacity:.28;
   pointer-events:none;
 }
 
@@ -515,79 +517,79 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   margin-top:4px;
   position:relative;
   z-index:1;
-  letter-spacing:.2px;
+  letter-spacing:.15px;
 }
 
 .coinInnerGold{
   color:#7a5600;
-  background:radial-gradient(circle at 35% 30%, rgba(255,231,140,1) 0%, rgba(222,177,38,1) 58%, rgba(169,120,0,1) 100%);
+  background:radial-gradient(circle at 35% 30%, #ffe79a 0%, #dfb32d 58%, #a97800 100%);
   text-shadow:
-    0 1px 0 rgba(255,245,190,.55),
-    0 -1px 0 rgba(110,70,0,.20);
+    0 1px 0 rgba(255,245,190,.45),
+    0 -1px 0 rgba(110,70,0,.14);
 }
 
 .coinInnerYellow{
   color:#766100;
-  background:radial-gradient(circle at 35% 30%, rgba(255,240,162,1) 0%, rgba(218,191,35,1) 58%, rgba(160,136,0,1) 100%);
+  background:radial-gradient(circle at 35% 30%, #fff1aa 0%, #dbc233 58%, #a08800 100%);
   text-shadow:
-    0 1px 0 rgba(255,250,204,.55),
-    0 -1px 0 rgba(100,90,0,.18);
+    0 1px 0 rgba(255,250,204,.45),
+    0 -1px 0 rgba(100,90,0,.12);
 }
 
 .coinInnerGreen{
   color:#eefcf4;
-  background:radial-gradient(circle at 35% 30%, rgba(119,190,149,1) 0%, rgba(56,110,82,1) 60%, rgba(30,63,47,1) 100%);
+  background:radial-gradient(circle at 35% 30%, #8fd0ab 0%, #4d8b69 58%, #244d39 100%);
   text-shadow:
-    0 1px 0 rgba(255,255,255,.14),
-    0 -1px 0 rgba(0,0,0,.16);
+    0 1px 0 rgba(255,255,255,.12),
+    0 -1px 0 rgba(0,0,0,.14);
 }
 
 .coinStack{
   position:relative;
-  width:84px;
-  height:64px;
+  width:92px;
+  height:68px;
   flex:0 0 auto;
 }
 
 .stackCoin{
   position:absolute;
-  width:44px;
-  height:44px;
+  width:46px;
+  height:46px;
   border-radius:50%;
   overflow:hidden;
+  border:2px solid rgba(255,255,255,.24);
+  outline:1px solid rgba(0,0,0,.14);
   box-shadow:
-    inset 0 1px 5px rgba(255,255,255,.14),
-    inset 0 -3px 6px rgba(0,0,0,.12),
-    0 4px 10px rgba(0,0,0,.16);
+    inset 0 1px 3px rgba(255,255,255,.14),
+    inset 0 -2px 4px rgba(0,0,0,.12),
+    0 3px 7px rgba(0,0,0,.12);
 }
 
 .stackCoin::before{
   content:"";
   position:absolute;
-  inset:6px;
+  inset:5px;
   border-radius:50%;
-  border:1.4px solid rgba(120,85,0,.38);
   pointer-events:none;
   z-index:0;
 }
 
 .stackGold{
   background:
-    radial-gradient(circle at 32% 28%, #fff3a8 0%, #f4d44d 18%, #d9aa14 48%, #b98400 72%, #8d6200 100%);
-  border:3px solid #b67d00;
+    radial-gradient(circle at 32% 28%, #fff4b8 0%, #f0d24f 20%, #d6ab18 52%, #b88400 74%, #8c6200 100%);
 }
-
 .stackYellow{
   background:
-    radial-gradient(circle at 32% 28%, #fff7b6 0%, #f2df58 18%, #d4bb18 48%, #ab9300 72%, #7f6d00 100%);
-  border:3px solid #b89d00;
+    radial-gradient(circle at 32% 28%, #fff7c8 0%, #f1de64 20%, #d6bc1f 52%, #ad9500 74%, #806d00 100%);
 }
-
 .stackGreen{
   background:
-    radial-gradient(circle at 32% 28%, #dff7ea 0%, #91d9b1 20%, #3f7e5f 48%, #2e5f47 72%, #1f4332 100%);
-  border:3px solid #2f5d46;
+    radial-gradient(circle at 32% 28%, #e6f9ee 0%, #9adab8 20%, #4d8d6b 52%, #2f674c 74%, #1f4634 100%);
 }
+
+.stackGold::before{ border:1px solid rgba(122,86,0,.40); }
+.stackYellow::before{ border:1px solid rgba(118,97,0,.38); }
+.stackGreen::before{ border:1px solid rgba(236,255,243,.26); }
 
 .stackCoinStars{
   position:absolute;
@@ -606,7 +608,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
 .stackStarRingStroke{
   fill:none;
-  opacity:.16;
+  opacity:.15;
 }
 
 .stackGold .stackStarRingStroke{ stroke:#7a5600; }
@@ -615,12 +617,12 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
 .stackStar{
   transform-box: fill-box;
-  transform-origin: center;
+  transform-origin:center;
 }
 
-.stackGold .stackStar{ fill:#8a6200; }
-.stackYellow .stackStar{ fill:#8a7400; }
-.stackGreen .stackStar{ fill:#f4fff8; }
+.stackGold .stackStar{ fill:#8d6500; }
+.stackYellow .stackStar{ fill:#8a7300; }
+.stackGreen .stackStar{ fill:#f2fff7; }
 
 .stackCoinLabel{
   position:absolute;
@@ -633,8 +635,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   z-index:2;
   pointer-events:none;
   text-shadow:
-    0 1px 0 rgba(255,255,255,.22),
-    0 -1px 0 rgba(0,0,0,.14);
+    0 1px 0 rgba(255,255,255,.18),
+    0 -1px 0 rgba(0,0,0,.12);
 }
 
 .stackCoinLabel .n{
@@ -648,7 +650,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   font-size:3.8px;
   line-height:1;
   font-weight:900;
-  letter-spacing:.1px;
+  letter-spacing:.08px;
 }
 
 .stackGold .stackCoinLabel{ color:#7a5600; }
@@ -656,8 +658,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 .stackGreen .stackCoinLabel{ color:#eefcf4; }
 
 .stack1{ left:0; bottom:0; z-index:1; }
-.stack2{ left:18px; bottom:8px; z-index:2; }
-.stack3{ left:36px; bottom:16px; z-index:3; }
+.stack2{ left:18px; bottom:7px; z-index:2; }
+.stack3{ left:36px; bottom:14px; z-index:3; }
 
 .walletBox{
   flex:1;
@@ -706,7 +708,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   font-weight:900;
   cursor:pointer;
   font-size:12px;
-}
 }
 @media (max-height: 780px){
   .wrap{ padding:10px; gap:10px; }
