@@ -391,7 +391,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 /* Wallets / bocitecoins */
 .coinShowcase{
   display:flex;
-  gap:14px;
+  gap:12px;
   align-items:center;
   margin-top:12px;
   flex-wrap:wrap;
@@ -406,48 +406,60 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   align-items:center;
   justify-content:center;
   overflow:hidden;
-  border:3px solid rgba(255,255,255,.30);
-  outline:2px solid rgba(0,0,0,.16);
+  isolation:isolate;
   box-shadow:
-    inset 0 1px 3px rgba(255,255,255,.22),
-    inset 0 -2px 4px rgba(0,0,0,.16),
-    0 2px 5px rgba(0,0,0,.10);
+    inset 0 2px 4px rgba(255,255,255,.22),
+    inset 0 -4px 8px rgba(0,0,0,.12),
+    0 5px 10px rgba(0,0,0,.14);
 }
 
 .coinFace::before{
   content:"";
   position:absolute;
-  inset:7px;
+  inset:0;
   border-radius:50%;
-  pointer-events:none;
   z-index:0;
 }
 
-.coinGold{
+.coinFace::after{
+  content:"";
+  position:absolute;
+  inset:2px;
+  border-radius:50%;
+  z-index:1;
+  pointer-events:none;
   background:
-    radial-gradient(circle at 32% 28%, #fff4b8 0%, #f0d24f 20%, #d6ab18 52%, #b88400 74%, #8c6200 100%);
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(255,255,255,.22) 0deg 3deg,
+      rgba(0,0,0,.10) 3deg 6deg
+    );
+  -webkit-mask: radial-gradient(circle, transparent 0 39px, #000 40px 46px, transparent 47px);
+  mask: radial-gradient(circle, transparent 0 39px, #000 40px 46px, transparent 47px);
+  opacity:.9;
 }
 
-.coinYellow{
+.coinGold::before{
   background:
-    radial-gradient(circle at 32% 28%, #fff7c8 0%, #f1de64 20%, #d6bc1f 52%, #ad9500 74%, #806d00 100%);
+    radial-gradient(circle at 35% 30%, #fff7ba 0%, #f7de63 22%, #d5ab18 52%, #b38200 74%, #8f6600 100%);
 }
 
-.coinGreen{
+.coinYellow::before{
   background:
-    radial-gradient(circle at 32% 28%, #e6f9ee 0%, #9adab8 20%, #4d8d6b 52%, #2f674c 74%, #1f4634 100%);
+    radial-gradient(circle at 35% 30%, #fff9c9 0%, #f4e36b 22%, #d2bc1b 52%, #a89000 74%, #7e6c00 100%);
 }
 
-.coinGold::before{ border:2px solid rgba(122,86,0,.45); }
-.coinYellow::before{ border:2px solid rgba(118,97,0,.42); }
-.coinGreen::before{ border:2px solid rgba(236,255,243,.28); }
+.coinGreen::before{
+  background:
+    radial-gradient(circle at 35% 30%, #dff8e8 0%, #98ddb8 22%, #4f8e6c 52%, #2f644b 74%, #214735 100%);
+}
 
 .coinStarsRing{
   position:absolute;
   inset:0;
   border-radius:50%;
   pointer-events:none;
-  z-index:1;
+  z-index:2;
 }
 
 .coinStarsRing svg{
@@ -460,26 +472,26 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
 .starRingStroke{
   fill:none;
-  opacity:.18;
+  opacity:.22;
 }
 
 .coinStarsGold .starRingStroke{ stroke:#7a5600; }
 .coinStarsYellow .starRingStroke{ stroke:#766100; }
-.coinStarsGreen .starRingStroke{ stroke:#ecfff3; }
+.coinStarsGreen .starRingStroke{ stroke:#eefcf4; }
 
 .coinStar{
   transform-box: fill-box;
   transform-origin:center;
 }
 
-.coinStarsGold .coinStar{ fill:#8d6500; }
-.coinStarsYellow .coinStar{ fill:#8a7300; }
-.coinStarsGreen .coinStar{ fill:#f2fff7; }
+.coinStarsGold .coinStar{ fill:#8a6200; }
+.coinStarsYellow .coinStar{ fill:#8a7400; }
+.coinStarsGreen .coinStar{ fill:#f5fff8; }
 
 .coinInner{
   position:relative;
-  width:64px;
-  height:64px;
+  width:62px;
+  height:62px;
   border-radius:50%;
   display:flex;
   flex-direction:column;
@@ -487,17 +499,17 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   justify-content:center;
   text-align:center;
   font-weight:900;
-  z-index:2;
+  z-index:3;
   padding:4px;
   box-shadow:
     inset 0 1px 3px rgba(255,255,255,.12),
-    inset 0 -2px 4px rgba(0,0,0,.12);
+    inset 0 -2px 4px rgba(0,0,0,.10);
 }
 
 .coinInner::before{
   content:"";
   position:absolute;
-  inset:0;
+  inset:-7px;
   border-radius:50%;
   border:2px solid currentColor;
   opacity:.28;
@@ -522,23 +534,23 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
 .coinInnerGold{
   color:#7a5600;
-  background:radial-gradient(circle at 35% 30%, #ffe79a 0%, #dfb32d 58%, #a97800 100%);
+  background:radial-gradient(circle at 35% 30%, #ffe990 0%, #deb126 58%, #a97800 100%);
   text-shadow:
     0 1px 0 rgba(255,245,190,.45),
-    0 -1px 0 rgba(110,70,0,.14);
+    0 -1px 0 rgba(110,70,0,.15);
 }
 
 .coinInnerYellow{
   color:#766100;
-  background:radial-gradient(circle at 35% 30%, #fff1aa 0%, #dbc233 58%, #a08800 100%);
+  background:radial-gradient(circle at 35% 30%, #fff0a2 0%, #d8bf23 58%, #a08800 100%);
   text-shadow:
     0 1px 0 rgba(255,250,204,.45),
-    0 -1px 0 rgba(100,90,0,.12);
+    0 -1px 0 rgba(100,90,0,.14);
 }
 
 .coinInnerGreen{
   color:#eefcf4;
-  background:radial-gradient(circle at 35% 30%, #8fd0ab 0%, #4d8b69 58%, #244d39 100%);
+  background:radial-gradient(circle at 35% 30%, #92d5ae 0%, #4d8d6a 58%, #2a5a43 100%);
   text-shadow:
     0 1px 0 rgba(255,255,255,.12),
     0 -1px 0 rgba(0,0,0,.14);
@@ -547,55 +559,69 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 .coinStack{
   position:relative;
   width:92px;
-  height:68px;
+  height:64px;
   flex:0 0 auto;
 }
 
 .stackCoin{
   position:absolute;
-  width:46px;
-  height:46px;
+  width:44px;
+  height:44px;
   border-radius:50%;
   overflow:hidden;
-  border:2px solid rgba(255,255,255,.24);
-  outline:1px solid rgba(0,0,0,.14);
+  isolation:isolate;
   box-shadow:
     inset 0 1px 3px rgba(255,255,255,.14),
-    inset 0 -2px 4px rgba(0,0,0,.12),
-    0 3px 7px rgba(0,0,0,.12);
+    inset 0 -2px 4px rgba(0,0,0,.10),
+    0 4px 8px rgba(0,0,0,.16);
 }
 
 .stackCoin::before{
   content:"";
   position:absolute;
-  inset:5px;
+  inset:0;
   border-radius:50%;
-  pointer-events:none;
   z-index:0;
 }
 
-.stackGold{
+.stackCoin::after{
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:50%;
+  z-index:1;
+  pointer-events:none;
   background:
-    radial-gradient(circle at 32% 28%, #fff4b8 0%, #f0d24f 20%, #d6ab18 52%, #b88400 74%, #8c6200 100%);
-}
-.stackYellow{
-  background:
-    radial-gradient(circle at 32% 28%, #fff7c8 0%, #f1de64 20%, #d6bc1f 52%, #ad9500 74%, #806d00 100%);
-}
-.stackGreen{
-  background:
-    radial-gradient(circle at 32% 28%, #e6f9ee 0%, #9adab8 20%, #4d8d6b 52%, #2f674c 74%, #1f4634 100%);
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(255,255,255,.22) 0deg 4deg,
+      rgba(0,0,0,.10) 4deg 8deg
+    );
+  -webkit-mask: radial-gradient(circle, transparent 0 17px, #000 18px 21px, transparent 22px);
+  mask: radial-gradient(circle, transparent 0 17px, #000 18px 21px, transparent 22px);
+  opacity:.9;
 }
 
-.stackGold::before{ border:1px solid rgba(122,86,0,.40); }
-.stackYellow::before{ border:1px solid rgba(118,97,0,.38); }
-.stackGreen::before{ border:1px solid rgba(236,255,243,.26); }
+.stackGold::before{
+  background:
+    radial-gradient(circle at 35% 30%, #fff7ba 0%, #f7de63 22%, #d5ab18 52%, #b38200 74%, #8f6600 100%);
+}
+
+.stackYellow::before{
+  background:
+    radial-gradient(circle at 35% 30%, #fff9c9 0%, #f4e36b 22%, #d2bc1b 52%, #a89000 74%, #7e6c00 100%);
+}
+
+.stackGreen::before{
+  background:
+    radial-gradient(circle at 35% 30%, #dff8e8 0%, #98ddb8 22%, #4f8e6c 52%, #2f644b 74%, #214735 100%);
+}
 
 .stackCoinStars{
   position:absolute;
   inset:0;
   pointer-events:none;
-  z-index:1;
+  z-index:2;
 }
 
 .stackCoinStars svg{
@@ -608,7 +634,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
 .stackStarRingStroke{
   fill:none;
-  opacity:.15;
+  opacity:.20;
 }
 
 .stackGold .stackStarRingStroke{ stroke:#7a5600; }
@@ -620,9 +646,9 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   transform-origin:center;
 }
 
-.stackGold .stackStar{ fill:#8d6500; }
-.stackYellow .stackStar{ fill:#8a7300; }
-.stackGreen .stackStar{ fill:#f2fff7; }
+.stackGold .stackStar{ fill:#8a6200; }
+.stackYellow .stackStar{ fill:#8a7400; }
+.stackGreen .stackStar{ fill:#f5fff8; }
 
 .stackCoinLabel{
   position:absolute;
@@ -632,7 +658,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   align-items:center;
   justify-content:center;
   text-align:center;
-  z-index:2;
+  z-index:3;
   pointer-events:none;
   text-shadow:
     0 1px 0 rgba(255,255,255,.18),
@@ -650,7 +676,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   font-size:3.8px;
   line-height:1;
   font-weight:900;
-  letter-spacing:.08px;
+  letter-spacing:.1px;
 }
 
 .stackGold .stackCoinLabel{ color:#7a5600; }
@@ -658,8 +684,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 .stackGreen .stackCoinLabel{ color:#eefcf4; }
 
 .stack1{ left:0; bottom:0; z-index:1; }
-.stack2{ left:18px; bottom:7px; z-index:2; }
-.stack3{ left:36px; bottom:14px; z-index:3; }
+.stack2{ left:18px; bottom:6px; z-index:2; }
+.stack3{ left:36px; bottom:12px; z-index:3; }
 
 .walletBox{
   flex:1;
