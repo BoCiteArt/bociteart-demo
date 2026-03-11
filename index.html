@@ -2075,7 +2075,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             return;
           }; 
           
-        if(key==="sport"){
+if(key==="sport"){
   openModal("Sport", `
     <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure démo)</div>
 
@@ -2253,6 +2253,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   setTimeout(()=>{
     const SPORT_SUPPORT_KEY = "bociteart_sport_support_v1";
     const SPORT_DEMO_MONTH_KEY = "bociteart_sport_month_demo_v1";
+    const SPORT_DEFAULT_CENTER = { lat: 50.5864, lon: 3.0431, label: "Wattignies (centre démo)" };
 
     let sportMap = null;
     let sportUserMarker = null;
@@ -2260,6 +2261,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     let sportPoiLayer = null;
     let sportCurrentPosition = null;
     let sportCurrentRadiusKm = 2;
+    let sportCurrentFilter = "all";
 
     function getCurrentYear(){
       return new Date().getFullYear();
@@ -2531,10 +2533,16 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       return normalizeOverpassElements(data.elements || []);
     }
 
-    function buildSimpleSuggestions(pois, userLat, userLon){
-      const preferredTypes = ["park", "forest", "playground", "sport"];
-      return pois
-        .filter(p=> preferredTypes.includes(p.type))
+    function filterPois(pois, filterName){
+      if(filterName === "all") return pois;
+      if(filterName === "family") return pois.filter(p => p.type === "playground" || p.type === "park");
+      if(filterName === "run") return pois.filter(p => p.type === "sport" || p.type === "park" || p.type === "cycle");
+      if(filterName === "nature") return pois.filter(p => p.type === "forest" || p.type === "park");
+      return pois;
+    }
+
+    function buildSimpleSuggestions(pois, userLat, userLon, filterName){
+      const filtered = filterPois(pois, filterName)
         .map((p)=>{
           const d = distanceMeters(userLat, userLon, p.lat, p.lon);
           return {
@@ -2543,11 +2551,33 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             dir: getCardinalDirection(userLat, userLon, p.lat, p.lon)
           };
         })
-        .sort((a,b)=> a.distance - b.distance)
-        .slice(0, 3);
+        .sort((a,b)=> a.distance - b.distance);
+
+      return filtered.slice(0, 3);
     }
 
-    function renderSuggestions(suggestions){
+    function getSuggestionSubtitle(type, filterName){
+      if(filterName === "family"){
+        if(type === "playground") return "balade famille / jeunes enfants";
+        if(type === "park") return "balade poussette / promenade";
+      }
+      if(filterName === "run"){
+        if(type === "sport") return "course rapide / activité";
+        if(type === "park" || type === "cycle") return "marche rapide / footing";
+      }
+      if(filterName === "nature"){
+        if(type === "forest") return "nature / calme";
+        if(type === "park") return "détente / verdure";
+      }
+
+      if(type === "playground") return "aire enfants";
+      if(type === "sport") return "activité sportive";
+      if(type === "forest") return "nature / calme";
+      if(type === "park") return "promenade";
+      return "repère local";
+    }
+
+    function renderSuggestions(suggestions, filterName){
       const box = document.getElementById("sportMapSuggestions");
       if(!box) return;
 
@@ -2560,7 +2590,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
         return `
           <div class="box" style="margin-top:8px;">
             <strong>${poiEmoji(s.type)} ${s.name}</strong><br>
-            ${formatDistance(s.distance)} — ${s.dir}
+            ${formatDistance(s.distance)} — ${s.dir}<br>
+            <span class="muted">${getSuggestionSubtitle(s.type, filterName)}</span>
           </div>
         `;
       }).join("");
@@ -2580,7 +2611,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       }).addTo(sportMap);
     }
 
-    function drawUserMarker(lat, lon){
+    function drawUserMarker(lat, lon, labelText){
       if(!sportMap) return;
 
       if(sportUserMarker){
@@ -2588,7 +2619,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       }
 
       sportUserMarker = L.marker([lat, lon]).addTo(sportMap);
-      sportUserMarker.bindPopup("Vous êtes ici");
+      sportUserMarker.bindPopup(labelText || "Vous êtes ici");
     }
 
     function clearPoiLayer(){
@@ -2612,13 +2643,14 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       });
     }
 
-    async function loadNearbyLayer(radiusKm){
+    async function loadNearbyLayer(radiusKm, filterName = sportCurrentFilter){
       if(!sportCurrentPosition || !sportMap) return;
 
-      const { lat, lon } = sportCurrentPosition;
+      const { lat, lon, label } = sportCurrentPosition;
       sportCurrentRadiusKm = radiusKm;
+      sportCurrentFilter = filterName;
 
-      drawUserMarker(lat, lon);
+      drawUserMarker(lat, lon, label || "Vous êtes ici");
       drawUserCircle(lat, lon, radiusKm);
 
       const status = document.getElementById("sportMapStatus");
@@ -2626,15 +2658,21 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
       try{
         const pois = await fetchNearbyPois(lat, lon, radiusKm);
-        renderPoisOnMap(pois, lat, lon);
+        const filteredPois = filterPois(pois, filterName);
 
-        const suggestions = buildSimpleSuggestions(pois, lat, lon);
-        renderSuggestions(suggestions);
+        renderPoisOnMap(filteredPois, lat, lon);
+
+        const suggestions = buildSimpleSuggestions(pois, lat, lon, filterName);
+        renderSuggestions(suggestions, filterName);
 
         if(status){
-          status.textContent = pois.length
-            ? pois.length + " repère(s) chargé(s) autour de vous."
-            : "Aucun repère chargé pour le moment.";
+          const prefix = label === SPORT_DEFAULT_CENTER.label
+            ? "GPS indisponible. Affichage autour de Wattignies. "
+            : "";
+
+          status.textContent = filteredPois.length
+            ? prefix + filteredPois.length + " repère(s) chargé(s) autour de vous."
+            : prefix + "Aucun repère chargé pour le moment.";
         }
       }catch(err){
         if(status) status.textContent = "Impossible de charger les lieux proches pour le moment.";
@@ -2647,7 +2685,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       const mapEl = document.getElementById("sportRealMap");
       if(!mapEl) return null;
 
-      sportMap = L.map("sportRealMap", { zoomControl: true }).setView([50.58, 3.04], 14);
+      sportMap = L.map("sportRealMap", { zoomControl: true }).setView([SPORT_DEFAULT_CENTER.lat, SPORT_DEFAULT_CENTER.lon], 14);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
@@ -2660,12 +2698,25 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       return sportMap;
     }
 
-    function locateUserAndLoad(radiusKm){
+    function useFallbackLocation(radiusKm, filterName = "all"){
+      sportCurrentPosition = {
+        lat: SPORT_DEFAULT_CENTER.lat,
+        lon: SPORT_DEFAULT_CENTER.lon,
+        label: SPORT_DEFAULT_CENTER.label
+      };
+
+      ensureSportMap();
+      sportMap.setView([SPORT_DEFAULT_CENTER.lat, SPORT_DEFAULT_CENTER.lon], 14);
+      loadNearbyLayer(radiusKm, filterName);
+    }
+
+    function locateUserAndLoad(radiusKm, filterName = "all"){
       const status = document.getElementById("sportMapStatus");
       if(status) status.textContent = "Recherche de votre position...";
 
       if(!navigator.geolocation){
-        if(status) status.textContent = "La géolocalisation n’est pas disponible sur cet appareil.";
+        if(status) status.textContent = "GPS indisponible. Affichage des lieux autour de Wattignies.";
+        useFallbackLocation(radiusKm, filterName);
         return;
       }
 
@@ -2673,14 +2724,15 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
         (pos)=>{
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
-          sportCurrentPosition = { lat, lon };
+          sportCurrentPosition = { lat, lon, label: "Vous êtes ici" };
 
           ensureSportMap();
           sportMap.setView([lat, lon], 15);
-          loadNearbyLayer(radiusKm);
+          loadNearbyLayer(radiusKm, filterName);
         },
         ()=>{
-          if(status) status.textContent = "Position non trouvée. Activez le GPS ou autorisez la localisation.";
+          if(status) status.textContent = "Position non trouvée. Affichage des lieux autour de Wattignies.";
+          useFallbackLocation(radiusKm, filterName);
         },
         {
           enableHighAccuracy: true,
@@ -2688,6 +2740,17 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
           maximumAge: 30000
         }
       );
+    }
+
+    function applySportPreset(filterName){
+      sportCurrentFilter = filterName;
+
+      if(!sportCurrentPosition){
+        locateUserAndLoad(sportCurrentRadiusKm, filterName);
+        return;
+      }
+
+      loadNearbyLayer(sportCurrentRadiusKm, filterName);
     }
 
     function openSportRealMap(){
@@ -2703,8 +2766,14 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             <button class="choiceBtn" id="sportMapMoveNowBtn" type="button">➡ Je veux bouger maintenant</button>
           </div>
 
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+            <button class="choiceBtn" id="sportPresetFamilyBtn" type="button">👨‍👩‍👧 Balade famille</button>
+            <button class="choiceBtn" id="sportPresetRunBtn" type="button">🏃 Course rapide</button>
+            <button class="choiceBtn" id="sportPresetNatureBtn" type="button">🌿 Nature / calme</button>
+          </div>
+
           <div class="muted" id="sportMapStatus" style="margin-top:10px;">
-            Appuyez sur “Me localiser” pour ouvrir la vraie carte autour de vous.
+            Appuyez sur “Me localiser” pour ouvrir la vraie carte autour de vous. Si le GPS ne répond pas, l’application affichera automatiquement Wattignies.
           </div>
         </div>
 
@@ -2726,18 +2795,27 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
         const radius2Btn = document.getElementById("sportRadius2Btn");
         const radius3Btn = document.getElementById("sportRadius3Btn");
         const moveNowBtn = document.getElementById("sportMapMoveNowBtn");
+        const familyBtn = document.getElementById("sportPresetFamilyBtn");
+        const runBtn = document.getElementById("sportPresetRunBtn");
+        const natureBtn = document.getElementById("sportPresetNatureBtn");
 
-        if(locateBtn) locateBtn.onclick = ()=> locateUserAndLoad(sportCurrentRadiusKm);
-        if(radius1Btn) radius1Btn.onclick = ()=> sportCurrentPosition ? loadNearbyLayer(1) : locateUserAndLoad(1);
-        if(radius2Btn) radius2Btn.onclick = ()=> sportCurrentPosition ? loadNearbyLayer(2) : locateUserAndLoad(2);
-        if(radius3Btn) radius3Btn.onclick = ()=> sportCurrentPosition ? loadNearbyLayer(3) : locateUserAndLoad(3);
+        if(locateBtn) locateBtn.onclick = ()=> locateUserAndLoad(sportCurrentRadiusKm, sportCurrentFilter);
+        if(radius1Btn) radius1Btn.onclick = ()=> sportCurrentPosition ? loadNearbyLayer(1, sportCurrentFilter) : locateUserAndLoad(1, sportCurrentFilter);
+        if(radius2Btn) radius2Btn.onclick = ()=> sportCurrentPosition ? loadNearbyLayer(2, sportCurrentFilter) : locateUserAndLoad(2, sportCurrentFilter);
+        if(radius3Btn) radius3Btn.onclick = ()=> sportCurrentPosition ? loadNearbyLayer(3, sportCurrentFilter) : locateUserAndLoad(3, sportCurrentFilter);
+
         if(moveNowBtn) moveNowBtn.onclick = ()=>{
+          sportCurrentFilter = "all";
           if(!sportCurrentPosition){
-            locateUserAndLoad(sportCurrentRadiusKm);
+            locateUserAndLoad(sportCurrentRadiusKm, "all");
             return;
           }
-          loadNearbyLayer(sportCurrentRadiusKm);
+          loadNearbyLayer(sportCurrentRadiusKm, "all");
         };
+
+        if(familyBtn) familyBtn.onclick = ()=> applySportPreset("family");
+        if(runBtn) runBtn.onclick = ()=> applySportPreset("run");
+        if(natureBtn) natureBtn.onclick = ()=> applySportPreset("nature");
 
         setTimeout(()=>{
           if(sportMap) sportMap.invalidateSize();
@@ -2746,9 +2824,10 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     }
 
     function handleSportMoveNow(){
+      sportCurrentFilter = "all";
       openSportRealMap();
       setTimeout(()=>{
-        locateUserAndLoad(2);
+        locateUserAndLoad(2, "all");
       }, 250);
     }
 
@@ -2876,7 +2955,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   },0);
 
   return;
-} 
+}
           
 if(key==="mairie"){
   openModal("Mairie", `
@@ -3242,9 +3321,49 @@ if(key==="commerces"){
     </ul>
 
     <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Validation publicité / paiement (démo)</div>
+
+      <div class="muted" style="margin-top:6px;">
+        En version officielle, la publicité ne pourra être diffusée sur la ligne d’affichage qu’après confirmation du paiement via PSP.
+      </div>
+
+      <div class="muted" style="margin-top:8px;">
+        L’option <strong>texte en gras (+4 € TTC)</strong> ne sera activée que si elle a été cochée et effectivement réglée.
+      </div>
+
+      <div style="margin-top:10px;font-weight:900;">État de la publicité</div>
+      <select class="miniField" id="shopAdPaymentStatus">
+        <option value="draft">Brouillon</option>
+        <option value="pending">En attente de paiement</option>
+        <option value="paid">Payée</option>
+        <option value="published">Publiée</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">Option gras</div>
+
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+        <input type="checkbox" id="shopAdBoldRequested">
+        <span>Demander l’affichage en gras (+4 € TTC)</span>
+      </label>
+
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+        <input type="checkbox" id="shopAdBoldPaid">
+        <span>Option gras payée</span>
+      </label>
+
+      <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="choiceBtn" id="shopAdCheckBtn" type="button">Vérifier la publication</button>
+      </div>
+
+      <div class="muted" id="shopAdResult" style="margin-top:10px;">
+        Statut de diffusion non vérifié.
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;">🔐 Sécurité prévue en version officielle</div>
       <div class="muted" style="margin-top:6px;">
-        En démonstration, certaines opérations sont simulées localement. En ouverture publique, les droits seront séparés par profil : citoyen, commerçant, référent sportif et administration. Les attributions, consommations, corrections et journaux seront contrôlés côté serveur sécurisé.
+        En démonstration, certaines opérations sont simulées localement. En ouverture publique, les droits seront séparés par profil : citoyen, commerçant, référent sportif et administration. Les attributions, consommations, corrections, publicités et journaux seront contrôlés côté serveur sécurisé.
       </div>
     </div>
   `);
@@ -3354,14 +3473,14 @@ if(key==="commerces"){
 
       if(progressBar){
         progressBar.style.width = percent + "%";
-        progressBar.style.background = \`linear-gradient(90deg, #e4c81c 0%, #9fca45 \${Math.max(35, percent)}%, #2f8f46 100%)\`;
+        progressBar.style.background = `linear-gradient(90deg, #e4c81c 0%, #9fca45 ${Math.max(35, percent)}%, #2f8f46 100%)`;
       }
 
       if(progressText){
         if(coins >= 100){
-          progressText.textContent = \`Palier actuel : 100 bocitecoins • Avantage estimé : \${getTargetLabel(100)}\`;
+          progressText.textContent = `Palier actuel : 100 bocitecoins • Avantage estimé : ${getTargetLabel(100)}`;
         }else{
-          progressText.textContent = \`Solde actuel : \${coins} bocitecoins • Prochain palier : \${next} • Avantage estimé : \${getTargetLabel(next)}\`;
+          progressText.textContent = `Solde actuel : ${coins} bocitecoins • Prochain palier : ${next} • Avantage estimé : ${getTargetLabel(next)}`;
         }
         progressText.style.whiteSpace = "normal";
         progressText.style.wordBreak = "keep-all";
@@ -3376,9 +3495,9 @@ if(key==="commerces"){
         const daysLeft = daysBetween(now, meta.expireTs);
 
         if(daysLeft <= 30){
-          expiry.textContent = \`Attention : il vous reste \${daysLeft} jour(s) avant la date anniversaire. Échange possible dès 20 bocitecoins sur cette période.\`;
+          expiry.textContent = `Attention : il vous reste ${daysLeft} jour(s) avant la date anniversaire. Échange possible dès 20 bocitecoins sur cette période.`;
         }else{
-          expiry.textContent = \`Date anniversaire du compte : dans \${daysLeft} jour(s).\`;
+          expiry.textContent = `Date anniversaire du compte : dans ${daysLeft} jour(s).`;
         }
       }
     }
@@ -3413,21 +3532,21 @@ if(key==="commerces"){
       const minimumAllowed = loweredThresholdAllowed ? 20 : 30;
 
       if(required < minimumAllowed){
-        alert(\`Échange impossible sous \${minimumAllowed} bocitecoins dans la période actuelle.\`);
+        alert(`Échange impossible sous ${minimumAllowed} bocitecoins dans la période actuelle.`);
         return;
       }
 
       if(coins < required){
-        alert(\`Solde insuffisant. Il faut \${required} bocitecoins.\`);
+        alert(`Solde insuffisant. Il faut ${required} bocitecoins.`);
         return;
       }
 
-      if(confirm(\`Confirmer l’échange de \${required} bocitecoins ?\`)){
+      if(confirm(`Confirmer l’échange de ${required} bocitecoins ?`)){
         wallet.or = Math.max(0, coins - required);
         saveCitizenWallet(wallet);
         registerTx({ type: "redeem", amount: required, previous: coins, resulting: wallet.or, ts: Date.now() });
         refreshWalletUi();
-        alert(\`Échange validé (démo) : \${required} bocitecoins utilisés.\`);
+        alert(`Échange validé (démo) : ${required} bocitecoins utilisés.`);
       }
     }
 
@@ -3547,6 +3666,44 @@ if(key==="commerces"){
 
       refreshWalletUi();
       alert("Dernière attribution annulée (démo). Tu peux ressaisir le bon montant.");
+    };
+
+    const adStatus = document.getElementById("shopAdPaymentStatus");
+    const adBoldRequested = document.getElementById("shopAdBoldRequested");
+    const adBoldPaid = document.getElementById("shopAdBoldPaid");
+    const adCheckBtn = document.getElementById("shopAdCheckBtn");
+    const adResult = document.getElementById("shopAdResult");
+
+    if(adCheckBtn) adCheckBtn.onclick = ()=>{
+      const paymentStatus = adStatus ? adStatus.value : "draft";
+      const boldRequested = !!(adBoldRequested && adBoldRequested.checked);
+      const boldPaid = !!(adBoldPaid && adBoldPaid.checked);
+
+      const canPublish = paymentStatus === "paid" || paymentStatus === "published";
+      const useBold = boldRequested && boldPaid;
+
+      if(!adResult) return;
+
+      if(!canPublish){
+        adResult.innerHTML =
+          "<strong>Publication bloquée :</strong> la publicité ne peut pas apparaître tant que le paiement n’est pas validé.";
+        return;
+      }
+
+      if(boldRequested && !boldPaid){
+        adResult.innerHTML =
+          "<strong>Publicité autorisée :</strong> diffusion possible, mais le texte restera en style normal car l’option gras n’a pas été réglée.";
+        return;
+      }
+
+      if(useBold){
+        adResult.innerHTML =
+          "<strong>Publicité autorisée :</strong> diffusion possible avec affichage en gras.";
+        return;
+      }
+
+      adResult.innerHTML =
+        "<strong>Publicité autorisée :</strong> diffusion possible en style normal.";
     };
 
     const xb = $("xBtn");
