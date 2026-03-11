@@ -2065,12 +2065,12 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             return;
           }; 
           
-           if(key==="sport"){
+        if(key==="sport"){
   openModal("Sport", `
-    <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+    <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure démo)</div>
 
     <div class="box">
-      <strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint.
+      <strong>Cadre :</strong> publications par référent habilité. Éléments de validation non publics. Démonstration fonctionnelle destinée à présenter l’usage futur de l’onglet sport.
     </div>
 
     <div class="box" style="margin-top:12px;">
@@ -2078,8 +2078,10 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       <div class="muted" style="margin-top:6px;">
         1 clic maximum par appareil et par année civile. Le compteur annuel mesure l’adhésion de l’année. Le cumul global conserve toute l’historique.
       </div>
+
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center;">
         <button class="choiceBtn" id="sportSupportBtn" type="button">❤️ Je soutiens</button>
+
         <div class="box" style="margin:0;background:var(--bg);">
           <strong>Soutiens année :</strong> <span id="sportSupportYearModal">0</span><br>
           <strong>Cumul global :</strong> <span id="sportSupportTotalModal">0</span>
@@ -2094,29 +2096,38 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
           <div class="t">BoCitecoin</div>
         </div>
       </div>
+
       <div class="walletBox">
         <div class="walletTitle">
           Wallet Sport — BoCitecoins VERT
         </div>
+
         <div class="walletValue walletGreen" id="sportCoinBalance">
           0
         </div>
+
         <div class="walletSub">
           BoCitecoins gagnés par les actions sportives / citoyennes, échangeables chez un commerçant partenaire.
         </div>
+
         <div class="walletActions">
-          <button class="walletMini" id="walletSportPlus1" type="button">+1 jour validé</button>
-          <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-          <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
-          <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
+          <button class="walletMini" id="sportMissionDoneBtn" type="button">✅ Mission faite : +1</button>
+          <button class="walletMini" id="walletSportPlus10" type="button">+10 démo</button>
+          <button class="walletMini" id="walletSportPlus25" type="button">+25 démo</button>
+          <button class="walletMini" id="walletSportReset" type="button">Réinitialiser démo</button>
+        </div>
+
+        <div class="muted" style="margin-top:8px;">
+          <strong>Fonctionnement visé :</strong> en version officielle, le référent ne pourra valider que <strong>+1 par mission</strong>, avec un <strong>maximum automatique de 10 BoCitecoins par mois</strong>. Les boutons marqués <strong>démo</strong> servent uniquement à la présentation.
         </div>
       </div>
     </div>
 
     <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;">🌳 Explorer autour de moi</div>
+
       <div class="muted" style="margin-top:6px;">
-        Une fenêtre plein écran peut s’ouvrir pour afficher les lieux de sport et de loisirs proches de l’utilisateur.
+        Carte locale plein écran avec parcs, bois, jeux, parcours et repères proches.
       </div>
 
       <div style="margin-top:10px;">
@@ -2140,38 +2151,13 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       </div>
 
       <div style="margin-top:10px;">
-        <strong>Repères visuels sur la carte :</strong><br>
-        Des icônes simples permettent de mieux se repérer rapidement dans le quartier ou dans les zones de promenade.
-      </div>
-
-      <div style="margin-top:10px;">
         <strong>Orientation :</strong><br>
-        Chaque lieu affiché peut montrer :
-        <br>- une flèche directionnelle
-        <br>- la distance
-        <br>- l’orientation (Nord / Sud / Est / Ouest)
-      </div>
-
-      <div style="margin-top:10px;">
-        <strong>Exemple :</strong><br>
-        ➜ Parc municipal - 720 m - Direction Nord-Est
-      </div>
-
-      <div style="margin-top:10px;">
-        <strong>Cercle de proximité :</strong><br>
-        La carte peut afficher un cercle autour de l’utilisateur pour visualiser rapidement tous les lieux disponibles dans un rayon de 1 à 3 km.
-      </div>
-
-      <div style="margin-top:10px;">
-        <strong>Parcours conseillés près de moi :</strong><br>
-        - marche tranquille<br>
-        - parcours running<br>
-        - balade famille / poussette / jeunes enfants
+        flèche directionnelle • distance • direction (Nord / Sud / Est / Ouest)
       </div>
 
       <div style="margin-top:10px;">
         <strong>Utilité :</strong><br>
-        Aider les sportifs, familles, seniors ou personnes seules à trouver rapidement où aller près de chez eux, avec un guidage plus clair et plus sûr.
+        Aider les sportifs, familles, seniors ou personnes seules à trouver rapidement où aller près de chez eux.
       </div>
 
       <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
@@ -2201,7 +2187,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     <ul style="margin:10px 0 0 18px;font-weight:800;">
       <li>Rapport du week-end</li>
       <li>Gestes citoyens validés par le référent</li>
-      <li>1 bocitecoin maximum par jour de présence d’équipe</li>
+      <li>Attribution symbolique plafonnée : 10 BoCitecoins VERT maximum par mois</li>
       <li>Bocitecoins VERT : sport / collectivité</li>
       <li>Pas de messagerie</li>
     </ul>
@@ -2212,45 +2198,107 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
     <div class="box">
       <div class="muted">
-        Le commerçant scanne le téléphone du référent sportif, prépare l’échange puis les bocitecoins VERT sont brûlés.
+        Le commerçant scanne le téléphone du référent pour préparer l’échange. En version officielle, le brûlage des BoCitecoins VERT se fera depuis l’interface commerçant sécurisée, avec décrémentation automatique du solde du référent.
       </div>
+
       <div class="muted" style="margin-top:8px;">
         Répartition type de la contribution commerçant : <strong>35 € club</strong> • <strong>14 € recherche / solidarité</strong> • <strong>1 € Bo’CitéArt</strong>
       </div>
 
       <div style="margin-top:10px;font-weight:900;">
-        Cause soutenue
+        Association / cause soutenue
       </div>
+
       <select class="miniField" id="sportAssoSelect">
-        <option value="Les Clés du Cœur">Les Clés du Cœur</option>
-        <option value="Étoile Filante">Étoile Filante</option>
-        <option value="Les Papillons">Les Papillons</option>
-        <option value="ATC Nord">ATC Nord</option>
+        <option value="Les Clés du Cœur">Les Clés du Cœur — aide aux familles en difficulté et soutien aux personnes isolées</option>
+        <option value="Étoile Filante">Étoile Filante — soutien aux enfants malades et accompagnement des familles</option>
+        <option value="Les Papillons">Les Papillons — protection de l’enfance, écoute et accompagnement des jeunes victimes</option>
+        <option value="ATC Nord">ATC Nord — aide aux accidentés de la vie, traumatisés crâniens et personnes en rééducation</option>
       </select>
 
       <div style="margin-top:10px;font-weight:900;">
         Valeur estimée de l’échange
       </div>
+
       <input class="miniField" id="sportGiftValue" type="number" min="0" step="0.01" placeholder="50">
 
       <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
         <button class="choiceBtn" id="sportCalcBtn" type="button">Calculer</button>
         <button class="choiceBtn" id="sportScanRefBtn" type="button">Scanner</button>
-        <button class="choiceBtn" id="sportValidateBtn" type="button">Valider</button>
-        <button class="choiceBtn" id="sportBurnBtn" type="button">Brûler</button>
       </div>
 
       <div class="muted" style="margin-top:10px;">
-        Le commerçant bénéficie de visibilité dans l’application, d’une image solidaire locale et d’une valorisation possible dans la communication annuelle.
+        Démonstration actuelle : le scan est simulé pour illustrer le futur parcours commerçant. En exploitation officielle, chaque opération sera contrôlée par profil et sécurisée côté serveur.
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">🔐 Sécurité prévue en version officielle</div>
+      <div class="muted" style="margin-top:6px;">
+        En démonstration, certains raccourcis restent visibles pour montrer le fonctionnement. En ouverture publique, les droits seront séparés : citoyen, référent, commerçant, administration. Les plafonds, scans, consommations et soldes seront contrôlés par serveur sécurisé.
       </div>
     </div>
   `);
 
   setTimeout(()=>{
     const SPORT_SUPPORT_KEY = "bociteart_sport_support_v1";
+    const SPORT_DEMO_MONTH_KEY = "bociteart_sport_month_demo_v1";
+
+    let sportMap = null;
+    let sportUserMarker = null;
+    let sportUserCircle = null;
+    let sportPoiLayer = null;
+    let sportCurrentPosition = null;
+    let sportCurrentRadiusKm = 2;
 
     function getCurrentYear(){
       return new Date().getFullYear();
+    }
+
+    function getCurrentMonthKey(){
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      return y + "-" + m;
+    }
+
+    function loadSportMonthDemo(){
+      try{
+        const raw = localStorage.getItem(SPORT_DEMO_MONTH_KEY);
+        if(raw) return JSON.parse(raw);
+      }catch(e){}
+      return { month: getCurrentMonthKey(), count: 0 };
+    }
+
+    function saveSportMonthDemo(obj){
+      try{ localStorage.setItem(SPORT_DEMO_MONTH_KEY, JSON.stringify(obj)); }catch(e){}
+    }
+
+    function getSportDemoMonthCount(){
+      const db = loadSportMonthDemo();
+      const month = getCurrentMonthKey();
+      if(db.month !== month){
+        const resetObj = { month, count: 0 };
+        saveSportMonthDemo(resetObj);
+        return 0;
+      }
+      return Number(db.count || 0);
+    }
+
+    function incrementSportDemoMonthCount(){
+      const month = getCurrentMonthKey();
+      const db = loadSportMonthDemo();
+      if(db.month !== month){
+        db.month = month;
+        db.count = 0;
+      }
+      db.count = Number(db.count || 0) + 1;
+      saveSportMonthDemo(db);
+      return db.count;
+    }
+
+    function resetSportDemoMonthCount(){
+      saveSportMonthDemo({ month: getCurrentMonthKey(), count: 0 });
     }
 
     function loadSportSupport(){
@@ -2298,81 +2346,404 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       saveSportSupport(db);
       refreshSportSupportUi();
 
-      const heart = document.getElementById("sportHeart");
-      if(heart){
-        heart.style.transform = "scale(1.28)";
-        setTimeout(()=>{ heart.style.transform = ""; }, 220);
-      }
-
       alert("Merci. Votre soutien annuel au sport local est enregistré.");
     }
 
-    function openSportExploreMap(){
+    function loadSportWalletSafe(){
+      if(typeof loadSportWallet === "function") return loadSportWallet();
+      try{
+        const raw = localStorage.getItem("bociteart_sport_wallet_v1");
+        return raw ? JSON.parse(raw) : { vert: 0 };
+      }catch(e){
+        return { vert: 0 };
+      }
+    }
+
+    function saveSportWalletSafe(w){
+      if(typeof saveSportWallet === "function"){
+        saveSportWallet(w);
+        return;
+      }
+      try{
+        localStorage.setItem("bociteart_sport_wallet_v1", JSON.stringify(w));
+      }catch(e){}
+    }
+
+    function refreshSportWalletUi(){
+      const w = loadSportWalletSafe();
+      const v = Number(w.vert || 0);
+      const el = document.getElementById("sportCoinBalance");
+      if(el) el.textContent = v;
+    }
+
+    function distanceMeters(lat1, lon1, lat2, lon2){
+      const R = 6371000;
+      const toRad = (d)=> d * Math.PI / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a =
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    function formatDistance(m){
+      if(m < 1000) return Math.round(m) + " m";
+      return (m / 1000).toFixed(1).replace(".", ",") + " km";
+    }
+
+    function getCardinalDirection(fromLat, fromLon, toLat, toLon){
+      const y = Math.sin((toLon - fromLon) * Math.PI / 180) * Math.cos(toLat * Math.PI / 180);
+      const x =
+        Math.cos(fromLat * Math.PI / 180) * Math.sin(toLat * Math.PI / 180) -
+        Math.sin(fromLat * Math.PI / 180) * Math.cos(toLat * Math.PI / 180) *
+        Math.cos((toLon - fromLon) * Math.PI / 180);
+
+      let brng = Math.atan2(y, x) * 180 / Math.PI;
+      brng = (brng + 360) % 360;
+
+      const dirs = ["Nord", "Nord-Est", "Est", "Sud-Est", "Sud", "Sud-Ouest", "Ouest", "Nord-Ouest"];
+      return dirs[Math.round(brng / 45) % 8];
+    }
+
+    function poiEmoji(type){
+      if(type === "park") return "🌳";
+      if(type === "forest") return "🌲";
+      if(type === "playground") return "🛝";
+      if(type === "sport") return "🏟";
+      if(type === "school") return "🏫";
+      if(type === "townhall") return "🏛";
+      if(type === "bus") return "🚌";
+      if(type === "parking") return "🅿";
+      if(type === "cycle") return "🚴";
+      return "📍";
+    }
+
+    function guessPoiType(tags){
+      if(tags.leisure === "park" || tags.boundary === "national_park") return "park";
+      if(tags.landuse === "forest" || tags.natural === "wood") return "forest";
+      if(tags.leisure === "playground") return "playground";
+      if(tags.leisure === "sports_centre" || tags.leisure === "pitch" || tags.leisure === "track" || tags.sport) return "sport";
+      if(tags.amenity === "school") return "school";
+      if(tags.amenity === "townhall") return "townhall";
+      if(tags.highway === "bus_stop") return "bus";
+      if(tags.amenity === "parking" || tags.parking) return "parking";
+      if(tags.highway === "cycleway") return "cycle";
+      return "other";
+    }
+
+    function normalizeOverpassElements(elements){
+      return elements
+        .map((el)=>{
+          let lat = null;
+          let lon = null;
+
+          if(typeof el.lat === "number" && typeof el.lon === "number"){
+            lat = el.lat;
+            lon = el.lon;
+          }else if(el.center && typeof el.center.lat === "number" && typeof el.center.lon === "number"){
+            lat = el.center.lat;
+            lon = el.center.lon;
+          }
+
+          if(lat === null || lon === null) return null;
+
+          const tags = el.tags || {};
+          const type = guessPoiType(tags);
+          const name =
+            tags.name ||
+            tags.official_name ||
+            tags.short_name ||
+            (
+              type === "park" ? "Parc" :
+              type === "forest" ? "Bois / espace nature" :
+              type === "playground" ? "Aire de jeux" :
+              type === "sport" ? "Équipement sportif" :
+              type === "school" ? "École" :
+              type === "townhall" ? "Mairie" :
+              type === "bus" ? "Arrêt de bus" :
+              type === "parking" ? "Parking" :
+              type === "cycle" ? "Piste cyclable" :
+              "Repère"
+            );
+
+          return { lat, lon, tags, type, name };
+        })
+        .filter(Boolean);
+    }
+
+    async function fetchNearbyPois(lat, lon, radiusKm){
+      const radiusM = Math.round(radiusKm * 1000);
+
+      const query = `
+        [out:json][timeout:20];
+        (
+          node(around:${radiusM},${lat},${lon})[leisure=park];
+          way(around:${radiusM},${lat},${lon})[leisure=park];
+          relation(around:${radiusM},${lat},${lon})[leisure=park];
+
+          node(around:${radiusM},${lat},${lon})[natural=wood];
+          way(around:${radiusM},${lat},${lon})[natural=wood];
+          relation(around:${radiusM},${lat},${lon})[natural=wood];
+
+          node(around:${radiusM},${lat},${lon})[landuse=forest];
+          way(around:${radiusM},${lat},${lon})[landuse=forest];
+          relation(around:${radiusM},${lat},${lon})[landuse=forest];
+
+          node(around:${radiusM},${lat},${lon})[leisure=playground];
+          way(around:${radiusM},${lat},${lon})[leisure=playground];
+
+          node(around:${radiusM},${lat},${lon})[leisure=sports_centre];
+          way(around:${radiusM},${lat},${lon})[leisure=sports_centre];
+          node(around:${radiusM},${lat},${lon})[leisure=pitch];
+          way(around:${radiusM},${lat},${lon})[leisure=pitch];
+          node(around:${radiusM},${lat},${lon})[leisure=track];
+          way(around:${radiusM},${lat},${lon})[leisure=track];
+
+          node(around:${radiusM},${lat},${lon})[amenity=school];
+          way(around:${radiusM},${lat},${lon})[amenity=school];
+
+          node(around:${radiusM},${lat},${lon})[amenity=townhall];
+          way(around:${radiusM},${lat},${lon})[amenity=townhall];
+
+          node(around:${radiusM},${lat},${lon})[highway=bus_stop];
+          node(around:${radiusM},${lat},${lon})[amenity=parking];
+        );
+        out center tags;
+      `;
+
+      const url = "https://overpass-api.de/api/interpreter?data=" + encodeURIComponent(query);
+      const res = await fetch(url, { method: "GET" });
+      if(!res.ok) throw new Error("Impossible de charger la carte locale.");
+      const data = await res.json();
+      return normalizeOverpassElements(data.elements || []);
+    }
+
+    function buildSimpleSuggestions(pois, userLat, userLon){
+      const preferredTypes = ["park", "forest", "playground", "sport"];
+      return pois
+        .filter(p=> preferredTypes.includes(p.type))
+        .map((p)=>{
+          const d = distanceMeters(userLat, userLon, p.lat, p.lon);
+          return {
+            ...p,
+            distance: d,
+            dir: getCardinalDirection(userLat, userLon, p.lat, p.lon)
+          };
+        })
+        .sort((a,b)=> a.distance - b.distance)
+        .slice(0, 3);
+    }
+
+    function renderSuggestions(suggestions){
+      const box = document.getElementById("sportMapSuggestions");
+      if(!box) return;
+
+      if(!suggestions.length){
+        box.innerHTML = `<div class="muted">Aucun lieu proche trouvé pour le moment.</div>`;
+        return;
+      }
+
+      box.innerHTML = suggestions.map((s)=>{
+        return `
+          <div class="box" style="margin-top:8px;">
+            <strong>${poiEmoji(s.type)} ${s.name}</strong><br>
+            ${formatDistance(s.distance)} — ${s.dir}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function drawUserCircle(lat, lon, radiusKm){
+      if(!sportMap) return;
+
+      if(sportUserCircle){
+        sportMap.removeLayer(sportUserCircle);
+      }
+
+      sportUserCircle = L.circle([lat, lon], {
+        radius: radiusKm * 1000,
+        weight: 1,
+        fillOpacity: 0.08
+      }).addTo(sportMap);
+    }
+
+    function drawUserMarker(lat, lon){
+      if(!sportMap) return;
+
+      if(sportUserMarker){
+        sportMap.removeLayer(sportUserMarker);
+      }
+
+      sportUserMarker = L.marker([lat, lon]).addTo(sportMap);
+      sportUserMarker.bindPopup("Vous êtes ici");
+    }
+
+    function clearPoiLayer(){
+      if(sportPoiLayer && sportMap){
+        sportMap.removeLayer(sportPoiLayer);
+      }
+      sportPoiLayer = L.layerGroup().addTo(sportMap);
+    }
+
+    function renderPoisOnMap(pois, userLat, userLon){
+      clearPoiLayer();
+
+      pois.forEach((p)=>{
+        const d = distanceMeters(userLat, userLon, p.lat, p.lon);
+        const dir = getCardinalDirection(userLat, userLon, p.lat, p.lon);
+        const popupHtml = `
+          <div style="font-weight:800;">${poiEmoji(p.type)} ${p.name}</div>
+          <div style="margin-top:6px;">${formatDistance(d)} — ${dir}</div>
+        `;
+        L.marker([p.lat, p.lon]).addTo(sportPoiLayer).bindPopup(popupHtml);
+      });
+    }
+
+    async function loadNearbyLayer(radiusKm){
+      if(!sportCurrentPosition || !sportMap) return;
+
+      const { lat, lon } = sportCurrentPosition;
+      sportCurrentRadiusKm = radiusKm;
+
+      drawUserMarker(lat, lon);
+      drawUserCircle(lat, lon, radiusKm);
+
+      const status = document.getElementById("sportMapStatus");
+      if(status) status.textContent = "Chargement des lieux proches...";
+
+      try{
+        const pois = await fetchNearbyPois(lat, lon, radiusKm);
+        renderPoisOnMap(pois, lat, lon);
+
+        const suggestions = buildSimpleSuggestions(pois, lat, lon);
+        renderSuggestions(suggestions);
+
+        if(status){
+          status.textContent = pois.length
+            ? pois.length + " repère(s) chargé(s) autour de vous."
+            : "Aucun repère chargé pour le moment.";
+        }
+      }catch(err){
+        if(status) status.textContent = "Impossible de charger les lieux proches pour le moment.";
+      }
+    }
+
+    function ensureSportMap(){
+      if(sportMap) return sportMap;
+
+      const mapEl = document.getElementById("sportRealMap");
+      if(!mapEl) return null;
+
+      sportMap = L.map("sportRealMap", { zoomControl: true }).setView([50.58, 3.04], 14);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap contributors"
+      }).addTo(sportMap);
+
+      sportPoiLayer = L.layerGroup().addTo(sportMap);
+
+      setTimeout(()=> sportMap.invalidateSize(), 250);
+      return sportMap;
+    }
+
+    function locateUserAndLoad(radiusKm){
+      const status = document.getElementById("sportMapStatus");
+      if(status) status.textContent = "Recherche de votre position...";
+
+      if(!navigator.geolocation){
+        if(status) status.textContent = "La géolocalisation n’est pas disponible sur cet appareil.";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos)=>{
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          sportCurrentPosition = { lat, lon };
+
+          ensureSportMap();
+          sportMap.setView([lat, lon], 15);
+          loadNearbyLayer(radiusKm);
+        },
+        ()=>{
+          if(status) status.textContent = "Position non trouvée. Activez le GPS ou autorisez la localisation.";
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 12000,
+          maximumAge: 30000
+        }
+      );
+    }
+
+    function openSportRealMap(){
       openModal("Explorer autour de moi", `
         <div style="font-weight:900;margin-bottom:8px;">🌳 Explorer autour de moi</div>
 
         <div class="box">
-          <strong>Affichage plein écran :</strong><br>
-          Carte locale des espaces proches utiles pour marcher, courir ou sortir avec enfants.
-        </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="choiceBtn" id="sportLocateBtn" type="button">📍 Me localiser</button>
+            <button class="choiceBtn" id="sportRadius1Btn" type="button">1 km</button>
+            <button class="choiceBtn" id="sportRadius2Btn" type="button">2 km</button>
+            <button class="choiceBtn" id="sportRadius3Btn" type="button">3 km</button>
+            <button class="choiceBtn" id="sportMapMoveNowBtn" type="button">➡ Je veux bouger maintenant</button>
+          </div>
 
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;">Rayon visible</div>
-          <div class="muted" style="margin-top:6px;">
-            1 km • 2 km • 3 km autour de l’utilisateur
+          <div class="muted" id="sportMapStatus" style="margin-top:10px;">
+            Appuyez sur “Me localiser” pour ouvrir la vraie carte autour de vous.
           </div>
         </div>
 
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;">Repères visuels</div>
-          <div class="muted" style="margin-top:6px;">
-            🌳 Parcs • 🌲 Bois • 🛝 Aires de jeux • 🚴 Pistes cyclables • 🅿 Parkings • 🚌 Arrêts de bus • 🏟 Équipements sportifs • 🏫 Écoles • 🏛 Mairie
-          </div>
-        </div>
+        <div id="sportRealMap" style="height:48vh;min-height:320px;border-radius:14px;overflow:hidden;margin-top:12px;"></div>
 
         <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;">Orientation</div>
-          <div class="muted" style="margin-top:6px;">
-            Chaque lieu peut afficher une flèche, une distance et une direction : Nord, Sud, Est ou Ouest.
-          </div>
-          <div style="margin-top:8px;">
-            ➜ Parc municipal — 720 m — Nord-Est<br>
-            ➜ Aire de jeux familiale — 950 m — Est<br>
-            ➜ Parcours running — 1,4 km — Nord
-          </div>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;">Parcours conseillés</div>
-          <div class="muted" style="margin-top:6px;">
-            Marche tranquille • Running • Balade famille / poussette / jeunes enfants
-          </div>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;">Démo actuelle</div>
-          <div class="muted" style="margin-top:6px;">
-            Cette ouverture montre la structure de la future carte plein écran. La connexion GPS/carte pourra ensuite être branchée sur vos données réelles.
+          <div style="font-weight:900;">3 idées proches</div>
+          <div id="sportMapSuggestions" style="margin-top:8px;">
+            <div class="muted">Les suggestions s’afficheront ici après localisation.</div>
           </div>
         </div>
       `);
+
+      setTimeout(()=>{
+        ensureSportMap();
+
+        const locateBtn = document.getElementById("sportLocateBtn");
+        const radius1Btn = document.getElementById("sportRadius1Btn");
+        const radius2Btn = document.getElementById("sportRadius2Btn");
+        const radius3Btn = document.getElementById("sportRadius3Btn");
+        const moveNowBtn = document.getElementById("sportMapMoveNowBtn");
+
+        if(locateBtn) locateBtn.onclick = ()=> locateUserAndLoad(sportCurrentRadiusKm);
+        if(radius1Btn) radius1Btn.onclick = ()=> sportCurrentPosition ? loadNearbyLayer(1) : locateUserAndLoad(1);
+        if(radius2Btn) radius2Btn.onclick = ()=> sportCurrentPosition ? loadNearbyLayer(2) : locateUserAndLoad(2);
+        if(radius3Btn) radius3Btn.onclick = ()=> sportCurrentPosition ? loadNearbyLayer(3) : locateUserAndLoad(3);
+        if(moveNowBtn) moveNowBtn.onclick = ()=>{
+          if(!sportCurrentPosition){
+            locateUserAndLoad(sportCurrentRadiusKm);
+            return;
+          }
+          loadNearbyLayer(sportCurrentRadiusKm);
+        };
+
+        setTimeout(()=>{
+          if(sportMap) sportMap.invalidateSize();
+        }, 300);
+      }, 0);
     }
 
     function handleSportMoveNow(){
-      const suggestions = [
-        "➜ Parc municipal — 720 m — Nord-Est — marche tranquille",
-        "➜ Aire de jeux familiale — 950 m — Est — balade poussette / enfants",
-        "➜ Parcours running — 1,4 km — Nord — footing / marche rapide"
-      ];
-
-      alert(
-        "Je veux bouger maintenant (démo)\n\n" +
-        "3 endroits proches proposés :\n\n" +
-        suggestions.join("\n")
-      );
+      openSportRealMap();
+      setTimeout(()=>{
+        locateUserAndLoad(2);
+      }, 250);
     }
 
     refreshSportSupportUi();
+    refreshSportWalletUi();
 
     const tileSupportBtn = document.getElementById("sportSupportBadge");
     const modalSupportBtn = document.getElementById("sportSupportBtn");
@@ -2389,65 +2760,70 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     if(modalSupportBtn) modalSupportBtn.onclick = handleSportSupportClick;
 
     const ficheBtn = document.getElementById("openSportFicheBtn");
-    if(ficheBtn) ficheBtn.onclick = openSportFiche;
+    if(ficheBtn && typeof openSportFiche === "function") ficheBtn.onclick = openSportFiche;
 
     const exploreBtn = document.getElementById("sportExploreBtn");
-    if(exploreBtn) exploreBtn.onclick = openSportExploreMap;
+    if(exploreBtn) exploreBtn.onclick = openSportRealMap;
 
     const moveNowBtn = document.getElementById("sportMoveNowBtn");
     if(moveNowBtn) moveNowBtn.onclick = handleSportMoveNow;
 
-    const refresh = ()=>{
-      const w = loadSportWallet();
-      const v = Number(w.vert || 0);
-      const el = document.getElementById("sportCoinBalance");
-      if(el) el.textContent = v;
-    };
-
-    refresh();
-
-    const plus1 = document.getElementById("walletSportPlus1");
+    const missionDoneBtn = document.getElementById("sportMissionDoneBtn");
     const plus10 = document.getElementById("walletSportPlus10");
     const plus25 = document.getElementById("walletSportPlus25");
     const reset = document.getElementById("walletSportReset");
 
-    if(plus1) plus1.onclick = ()=>{
-      const w = loadSportWallet();
+    if(missionDoneBtn) missionDoneBtn.onclick = ()=>{
+      const currentMonthCount = getSportDemoMonthCount();
+
+      if(currentMonthCount >= 10){
+        alert("Maximum démo atteint : 10 BoCitecoins VERT pour ce mois.");
+        return;
+      }
+
+      const w = loadSportWalletSafe();
       w.vert = Number(w.vert || 0) + 1;
-      saveSportWallet(w);
-      refresh();
+      saveSportWalletSafe(w);
+      incrementSportDemoMonthCount();
+      refreshSportWalletUi();
+
+      const afterCount = getSportDemoMonthCount();
+
+      alert(
+        "Mission validée : +1 BoCitecoin VERT ajouté.\n\n" +
+        "Compteur mensuel démo : " + afterCount + " / 10"
+      );
     };
 
     if(plus10) plus10.onclick = ()=>{
-      const w = loadSportWallet();
+      const w = loadSportWalletSafe();
       w.vert = Number(w.vert || 0) + 10;
-      saveSportWallet(w);
-      refresh();
+      saveSportWalletSafe(w);
+      refreshSportWalletUi();
+      alert("Ajout démo : +10 BoCitecoins VERT.");
     };
 
     if(plus25) plus25.onclick = ()=>{
-      const w = loadSportWallet();
+      const w = loadSportWalletSafe();
       w.vert = Number(w.vert || 0) + 25;
-      saveSportWallet(w);
-      refresh();
+      saveSportWalletSafe(w);
+      refreshSportWalletUi();
+      alert("Ajout démo : +25 BoCitecoins VERT.");
     };
 
     if(reset) reset.onclick = ()=>{
-      if(confirm("Réinitialiser le wallet sport ?")){
-        saveSportWallet({ vert: 0 });
-        refresh();
+      if(confirm("Réinitialiser le wallet sport en mode démo ?")){
+        saveSportWalletSafe({ vert: 0 });
+        resetSportDemoMonthCount();
+        refreshSportWalletUi();
+        alert("Wallet sport démo réinitialisé.");
       }
     };
 
     const giftInput = document.getElementById("sportGiftValue");
     const calcBtn = document.getElementById("sportCalcBtn");
     const scanBtn = document.getElementById("sportScanRefBtn");
-    const validBtn = document.getElementById("sportValidateBtn");
-    const burnBtn = document.getElementById("sportBurnBtn");
     const assoSelect = document.getElementById("sportAssoSelect");
-
-    let sportRefScanned = false;
-    let sportExchangeValidated = false;
 
     if(calcBtn) calcBtn.onclick = ()=>{
       const total = Number(giftInput ? giftInput.value : 0);
@@ -2459,10 +2835,12 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       const clubPart = 35;
       const solidarityPart = 14;
       const bociteartPart = 1;
+      const assoName = assoSelect ? assoSelect.options[assoSelect.selectedIndex].text : "";
 
       alert(
         "Calcul effectué (démo)." +
         "\nMontant saisi : " + total.toFixed(2) + " €" +
+        "\nAssociation : " + assoName +
         "\nRépartition cible :" +
         "\n- Club : " + clubPart.toFixed(2) + " €" +
         "\n- Recherche / solidarité : " + solidarityPart.toFixed(2) + " €" +
@@ -2471,75 +2849,25 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     };
 
     if(scanBtn) scanBtn.onclick = ()=>{
-      const w = loadSportWallet();
-      const coins = Number(w.vert || 0);
-      if(coins <= 0){
-        alert("Aucun bocitecoin VERT à échanger.");
-        return;
-      }
-      sportRefScanned = true;
-      alert("Scan du référent sportif simulé (démo).");
-    };
-
-    if(validBtn) validBtn.onclick = ()=>{
-      const w = loadSportWallet();
-      const coins = Number(w.vert || 0);
-      const total = Number(giftInput ? giftInput.value : 0);
-      const assoName = assoSelect ? assoSelect.value : "";
-
-      if(!sportRefScanned){
-        alert("Scanne d’abord le référent sportif.");
-        return;
-      }
-      if(coins <= 0){
-        alert("Aucun bocitecoin VERT à échanger.");
-        return;
-      }
-      if(!Number.isFinite(total) || total <= 0){
-        alert("Saisis une valeur d’échange valide.");
-        return;
-      }
-      if(!assoName){
-        alert("Choisis une cause soutenue.");
-        return;
-      }
-
-      sportExchangeValidated = true;
-      alert("Échange validé (démo).");
-    };
-
-    if(burnBtn) burnBtn.onclick = ()=>{
-      const w = loadSportWallet();
+      const w = loadSportWalletSafe();
       const coins = Number(w.vert || 0);
 
-      if(!sportRefScanned){
-        alert("Scanne d’abord le référent sportif.");
-        return;
-      }
-      if(!sportExchangeValidated){
-        alert("Valide d’abord l’échange.");
-        return;
-      }
       if(coins <= 0){
-        alert("Aucun bocitecoin VERT à brûler.");
+        alert("Aucun BoCitecoin VERT à présenter au commerçant.");
         return;
       }
 
-      if(confirm("Brûler les bocitecoins VERT et remettre le compteur sport à zéro ?")){
-        w.vert = 0;
-        saveSportWallet(w);
-        sportRefScanned = false;
-        sportExchangeValidated = false;
-        if(giftInput) giftInput.value = "";
-        refresh();
-        alert("Bocitecoins VERT brûlés, compteur remis à zéro.");
-      }
+      alert(
+        "Scan du référent sportif simulé (démo).\n\n" +
+        "Solde présenté : " + coins + " BoCitecoins VERT.\n\n" +
+        "En version officielle, le commerçant pourra choisir de consommer tout ou partie du solde depuis son propre onglet sécurisé."
+      );
     };
   },0);
 
   return;
-}
-
+} 
+          
 if(key==="mairie"){
   openModal("Mairie", `
     <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
