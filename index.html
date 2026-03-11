@@ -406,13 +406,14 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   align-items:center;
   justify-content:center;
   overflow:hidden;
+  flex:0 0 108px;
   box-shadow:
     0 10px 18px rgba(0,0,0,.18),
-    inset 0 2px 2px rgba(255,255,255,.20),
-    inset 0 -6px 10px rgba(0,0,0,.18);
+    inset 0 2px 2px rgba(255,255,255,.18),
+    inset 0 -6px 10px rgba(0,0,0,.16);
 }
 
-/* on enlève les faux cercles qui donnaient l’effet bouton */
+/* on supprime les faux cercles parasites */
 .coinFace::before,
 .coinFace::after{
   display:none;
@@ -437,39 +438,37 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   border:3px solid #224c39;
 }
 
-/* Anneau étoiles */
+/* Anneau d’étoiles */
 .coinStarsRing{
   position:absolute;
   inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
   pointer-events:none;
   z-index:2;
-  transform:translateY(8px);
 }
 
-/* fin anneau léger */
 .coinStarsRing::before{
   content:"";
   position:absolute;
-  width:80px;
-  height:80px;
+  left:50%;
+  top:50%;
+  width:76px;
+  height:76px;
   border-radius:50%;
-  border:1.5px solid rgba(255,255,255,.18);
+  border:1.5px solid rgba(255,255,255,.20);
+  transform:translate(-50%,-50%) translateY(8px);
 }
 
-/* on remet bien les étoiles */
 .coinStarsRing::after{
-  content:"★";
+  content:"";
   position:absolute;
   left:50%;
   top:50%;
-  transform:translate(-50%,-50%);
-  color:#f7f2d6;
-  font-size:9px;
-  line-height:1;
-  text-shadow:
+  width:6px;
+  height:6px;
+  background:#f7f2d6;
+  clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  transform:translate(-50%,-50%) translateY(8px);
+  box-shadow:
     0 -38px 0 #f7f2d6,
     19px -33px 0 #f7f2d6,
     33px -19px 0 #f7f2d6,
@@ -483,7 +482,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     -33px -19px 0 #f7f2d6,
     -19px -33px 0 #f7f2d6;
 }
-
+    
 /* Centre pièce */
 .coinInner{
   position:relative;
@@ -550,11 +549,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   text-shadow:0 1px 0 rgba(0,0,0,.20);
 }
 
-/* Suppression petites pièces */
-.coinStack{
-  display:none !important;
-}
-
+/* Suppression anciennes petites pièces */
+.coinStack,
 .stackCoin,
 .stackCoinStars,
 .stackCoinLabel,
