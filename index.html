@@ -3313,30 +3313,59 @@ if(key==="commerces"){
     <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
 
     <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
-      <li>Journée complète : grisée et non sélectionnable</li>
-      <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
-      <li>Option : texte en gras (+4€ TTC)</li>
-      <li>Possibilité d’URL selon conformité</li>
+      <li>Ligne 1 cm : diffusion conditionnée au paiement validé</li>
+      <li>Ligne 3 cm : réservation calendrier, paiement obligatoire avant diffusion</li>
+      <li>Tarif standard : <strong>50 €</strong> pour <strong>1 publicité</strong></li>
+      <li>Pack spécial : <strong>200 €</strong> pour <strong>5 publicités achetées en une fois</strong></li>
+      <li>Option : texte en gras <strong>+4 € TTC</strong></li>
+      <li>Les publicités impayées ou hors délai sont bloquées</li>
     </ul>
 
     <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;">Validation publicité / paiement (démo)</div>
 
       <div class="muted" style="margin-top:6px;">
-        En version officielle, la publicité ne pourra être diffusée sur la ligne d’affichage qu’après confirmation du paiement via PSP.
+        En version officielle, la publicité ne pourra être diffusée ni sur la ligne de 1 cm, ni sur la ligne de 3 cm, sans validation du paiement ou du dossier de facturation.
       </div>
 
-      <div class="muted" style="margin-top:8px;">
-        L’option <strong>texte en gras (+4 € TTC)</strong> ne sera activée que si elle a été cochée et effectivement réglée.
-      </div>
+      <div style="margin-top:10px;font-weight:900;">Type d’annonceur</div>
+      <select class="miniField" id="shopAdAdvertiserType">
+        <option value="merchant">Commerçant</option>
+        <option value="city">Mairie / collectivité</option>
+      </select>
 
-      <div style="margin-top:10px;font-weight:900;">État de la publicité</div>
+      <div style="margin-top:10px;font-weight:900;">Format de publicité</div>
+      <select class="miniField" id="shopAdFormat">
+        <option value="banner_1cm">Ligne 1 cm</option>
+        <option value="banner_3cm">Ligne 3 cm</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">Mode de règlement</div>
+      <select class="miniField" id="shopAdPaymentMode">
+        <option value="psp">PSP / carte bancaire</option>
+        <option value="invoice">Devis / facture / virement (RIB)</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">Type d’achat</div>
+      <select class="miniField" id="shopAdPackType">
+        <option value="single">1 publicité</option>
+        <option value="pack5">Pack 5 publicités</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">Nombre de publicités</div>
+      <input class="miniField" id="shopAdQty" type="number" min="1" step="1" value="1" placeholder="1">
+
+      <div style="margin-top:10px;font-weight:900;">Jours depuis émission / facture</div>
+      <input class="miniField" id="shopAdInvoiceDays" type="number" min="0" step="1" value="0" placeholder="0">
+
+      <div style="margin-top:10px;font-weight:900;">État du dossier</div>
       <select class="miniField" id="shopAdPaymentStatus">
         <option value="draft">Brouillon</option>
         <option value="pending">En attente de paiement</option>
         <option value="paid">Payée</option>
         <option value="published">Publiée</option>
+        <option value="overdue">En retard</option>
+        <option value="blocked">Bloquée</option>
       </select>
 
       <div style="margin-top:10px;font-weight:900;">Option gras</div>
@@ -3351,7 +3380,15 @@ if(key==="commerces"){
         <span>Option gras payée</span>
       </label>
 
+      <div class="box" style="margin-top:12px;background:var(--bg);">
+        <div style="font-weight:900;">Montant calculé</div>
+        <div class="muted" id="shopAdPriceOut" style="margin-top:6px;">
+          Calcul non lancé.
+        </div>
+      </div>
+
       <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="choiceBtn" id="shopAdPriceBtn" type="button">Calculer le montant</button>
         <button class="choiceBtn" id="shopAdCheckBtn" type="button">Vérifier la publication</button>
       </div>
 
@@ -3363,7 +3400,7 @@ if(key==="commerces"){
     <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;">🔐 Sécurité prévue en version officielle</div>
       <div class="muted" style="margin-top:6px;">
-        En démonstration, certaines opérations sont simulées localement. En ouverture publique, les droits seront séparés par profil : citoyen, commerçant, référent sportif et administration. Les attributions, consommations, corrections, publicités et journaux seront contrôlés côté serveur sécurisé.
+        En démonstration, certaines opérations sont simulées localement. En ouverture publique, les droits seront séparés par profil : citoyen, commerçant, référent sportif et administration. Les attributions, consommations, corrections, publicités, calendriers et journaux seront contrôlés côté serveur sécurisé.
       </div>
     </div>
   `);
@@ -3550,6 +3587,34 @@ if(key==="commerces"){
       }
     }
 
+    function computeAdPrice(format, packType, qty, boldRequested){
+      const safeQty = Math.max(1, Number(qty || 1));
+
+      let basePrice = 0;
+
+      if(packType === "pack5"){
+        basePrice = 200;
+      }else{
+        basePrice = safeQty * 50;
+      }
+
+      const boldPrice = boldRequested ? 4 : 0;
+      const total = basePrice + boldPrice;
+
+      return { basePrice, boldPrice, total, qty: safeQty, format, packType };
+    }
+
+    function canPublishAd(ad){
+      if(ad.advertiserType === "city"){
+        if(ad.paymentMode === "invoice" && ad.invoiceDays > 30 && ad.paymentStatus !== "paid" && ad.paymentStatus !== "published"){
+          return false;
+        }
+        return ad.paymentStatus === "paid" || ad.paymentStatus === "published";
+      }
+
+      return ad.paymentStatus === "paid" || ad.paymentStatus === "published";
+    }
+
     refreshWalletUi();
 
     const rst = document.getElementById("walletClientReset");
@@ -3668,42 +3733,97 @@ if(key==="commerces"){
       alert("Dernière attribution annulée (démo). Tu peux ressaisir le bon montant.");
     };
 
+    const adAdvertiserType = document.getElementById("shopAdAdvertiserType");
+    const adFormat = document.getElementById("shopAdFormat");
+    const adPaymentMode = document.getElementById("shopAdPaymentMode");
+    const adPackType = document.getElementById("shopAdPackType");
+    const adQty = document.getElementById("shopAdQty");
+    const adInvoiceDays = document.getElementById("shopAdInvoiceDays");
     const adStatus = document.getElementById("shopAdPaymentStatus");
     const adBoldRequested = document.getElementById("shopAdBoldRequested");
     const adBoldPaid = document.getElementById("shopAdBoldPaid");
+    const adPriceBtn = document.getElementById("shopAdPriceBtn");
     const adCheckBtn = document.getElementById("shopAdCheckBtn");
+    const adPriceOut = document.getElementById("shopAdPriceOut");
     const adResult = document.getElementById("shopAdResult");
 
+    if(adPriceBtn) adPriceBtn.onclick = ()=>{
+      const info = computeAdPrice(
+        adFormat ? adFormat.value : "banner_1cm",
+        adPackType ? adPackType.value : "single",
+        adQty ? adQty.value : 1,
+        !!(adBoldRequested && adBoldRequested.checked)
+      );
+
+      if(adPriceOut){
+        const formatLabel = info.format === "banner_1cm" ? "Ligne 1 cm" : "Ligne 3 cm";
+        const packLabel = info.packType === "pack5" ? "Pack 5 publicités" : "Achat unitaire";
+        adPriceOut.innerHTML =
+          "Format : <strong>" + formatLabel + "</strong><br>" +
+          "Type : <strong>" + packLabel + "</strong><br>" +
+          "Quantité : <strong>" + info.qty + "</strong><br>" +
+          "Base : <strong>" + info.basePrice.toFixed(2) + " €</strong><br>" +
+          "Option gras : <strong>" + info.boldPrice.toFixed(2) + " €</strong><br>" +
+          "Total estimé : <strong>" + info.total.toFixed(2) + " €</strong>";
+      }
+    };
+
     if(adCheckBtn) adCheckBtn.onclick = ()=>{
+      const advertiserType = adAdvertiserType ? adAdvertiserType.value : "merchant";
+      const format = adFormat ? adFormat.value : "banner_1cm";
+      const paymentMode = adPaymentMode ? adPaymentMode.value : "psp";
+      const packType = adPackType ? adPackType.value : "single";
+      const qty = adQty ? Number(adQty.value || 1) : 1;
+      const invoiceDays = adInvoiceDays ? Number(adInvoiceDays.value || 0) : 0;
       const paymentStatus = adStatus ? adStatus.value : "draft";
       const boldRequested = !!(adBoldRequested && adBoldRequested.checked);
       const boldPaid = !!(adBoldPaid && adBoldPaid.checked);
 
-      const canPublish = paymentStatus === "paid" || paymentStatus === "published";
+      const ad = {
+        advertiserType,
+        format,
+        paymentMode,
+        packType,
+        qty,
+        invoiceDays,
+        paymentStatus,
+        isBoldRequested: boldRequested,
+        isBoldPaid: boldPaid
+      };
+
+      const canPublish = canPublishAd(ad);
       const useBold = boldRequested && boldPaid;
+      const isOverdueInvoice = advertiserType === "city" && paymentMode === "invoice" && invoiceDays > 30 && paymentStatus !== "paid" && paymentStatus !== "published";
+      const formatLabel = format === "banner_1cm" ? "ligne 1 cm" : "ligne 3 cm";
 
       if(!adResult) return;
 
+      if(isOverdueInvoice){
+        adResult.innerHTML =
+          "<strong>Publicité bloquée :</strong> facture mairie dépassant 30 jours. Diffusion interrompue et nouvelle publicité impossible tant que la précédente n’est pas régularisée.";
+        return;
+      }
+
       if(!canPublish){
         adResult.innerHTML =
-          "<strong>Publication bloquée :</strong> la publicité ne peut pas apparaître tant que le paiement n’est pas validé.";
+          "<strong>Publication bloquée :</strong> la publicité " + formatLabel + " ne peut pas apparaître tant que le paiement ou la validation du dossier n’est pas effectif.";
         return;
       }
 
       if(boldRequested && !boldPaid){
         adResult.innerHTML =
-          "<strong>Publicité autorisée :</strong> diffusion possible, mais le texte restera en style normal car l’option gras n’a pas été réglée.";
+          "<strong>Publicité autorisée :</strong> diffusion possible sur " + formatLabel + ", mais le texte restera en style normal car l’option gras n’a pas été réglée.";
         return;
       }
 
       if(useBold){
         adResult.innerHTML =
-          "<strong>Publicité autorisée :</strong> diffusion possible avec affichage en gras.";
+          "<strong>Publicité autorisée :</strong> diffusion possible sur " + formatLabel + " avec affichage en gras.";
         return;
       }
 
       adResult.innerHTML =
-        "<strong>Publicité autorisée :</strong> diffusion possible en style normal.";
+        "<strong>Publicité autorisée :</strong> diffusion possible sur " + formatLabel + " en style normal.";
     };
 
     const xb = $("xBtn");
