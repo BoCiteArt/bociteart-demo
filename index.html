@@ -2002,7 +2002,7 @@ if(key==="ecole"){
   return;
 }
         
-         if(key==="sport"){
+        if(key==="sport"){
   openModal("Sport", `
     <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
 
@@ -2011,7 +2011,23 @@ if(key==="ecole"){
       Éléments de validation (si activés) non publics, accès restreint.
     </div>
 
-    <!-- WALLET SPORT -->
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">❤️ Soutien citoyen au sport local</div>
+      <div class="muted" style="margin-top:6px;">
+        1 clic maximum par appareil et par année civile.
+        Le compteur annuel mesure l’adhésion de l’année.
+        Le cumul global conserve toute l’historique.
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center;">
+        <button class="choiceBtn" id="sportSupportBtn" type="button">❤️ Je soutiens</button>
+        <div class="box" style="margin:0;background:var(--bg);">
+          <strong>Soutiens année :</strong> <span id="sportSupportYearModal">0</span><br>
+          <strong>Cumul global :</strong> <span id="sportSupportTotalModal">0</span>
+        </div>
+      </div>
+    </div>
+
     <div class="coinShowcase">
 
       <div class="coinFace coinGreen" aria-hidden="true">
@@ -2036,28 +2052,27 @@ if(key==="ecole"){
         </div>
 
         <div class="walletActions">
+          <button class="walletMini" id="walletSportPlus1" type="button">+1 jour validé</button>
           <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
           <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
-          <button class="walletMini" id="walletSportMinus" type="button">-1</button>
           <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
         </div>
       </div>
 
     </div>
 
-    <!-- FICHE -->
     <div style="font-weight:900;margin-top:14px;">
       📄 Fichier (à ouvrir)
     </div>
 
     <div class="box">
       <div style="font-weight:900;">
-        Fiche élus / CCI / commerçants — soutien Club + Association
+        Fiche élus / CCI / commerçants — soutien Club + Recherche / solidarité
       </div>
 
       <div class="muted" style="margin-top:6px;">
-        Cette fiche explique la logique de soutien trimestriel,
-        la visibilité commerçante et les partenariats club + association.
+        Cette fiche explique la logique de soutien mensuel,
+        la visibilité commerçante et le partage club + recherche / solidarité.
       </div>
 
       <div style="margin-top:10px;">
@@ -2067,16 +2082,14 @@ if(key==="ecole"){
       </div>
     </div>
 
-    <!-- LISTE -->
     <ul style="margin:10px 0 0 18px;font-weight:800;">
       <li>Rapport du week-end</li>
-      <li>Actions citoyennes</li>
-      <li>Validation optionnelle</li>
-      <li>Bocitecoins VERT : collectivité</li>
+      <li>Gestes citoyens validés par le référent</li>
+      <li>1 bocitecoin maximum par jour de présence d’équipe</li>
+      <li>Bocitecoins VERT : sport / collectivité</li>
       <li>Pas de messagerie</li>
     </ul>
 
-    <!-- ECHANGE -->
     <div style="font-weight:900;margin-top:16px;">
       Échange commerçant ↔ référent sportif
     </div>
@@ -2088,8 +2101,13 @@ if(key==="ecole"){
         prépare l’échange puis les bocitecoins VERT sont brûlés.
       </div>
 
+      <div class="muted" style="margin-top:8px;">
+        Répartition type de la contribution commerçant :
+        <strong>35 € club</strong> • <strong>14 € recherche / solidarité</strong> • <strong>1 € Bo’CitéArt</strong>
+      </div>
+
       <div style="margin-top:10px;font-weight:900;">
-        Association choisie
+        Cause soutenue
       </div>
 
       <select class="miniField" id="sportAssoSelect">
@@ -2103,7 +2121,7 @@ if(key==="ecole"){
         Valeur estimée de l’échange
       </div>
 
-      <input class="miniField" id="sportGiftValue" type="number" min="0" step="0.01" placeholder="100">
+      <input class="miniField" id="sportGiftValue" type="number" min="0" step="0.01" placeholder="50">
 
       <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
         <button class="choiceBtn" id="sportCalcBtn" type="button">Calculer</button>
@@ -2112,10 +2130,98 @@ if(key==="ecole"){
         <button class="choiceBtn" id="sportBurnBtn" type="button">Brûler</button>
       </div>
 
+      <div class="muted" style="margin-top:10px;">
+        Le commerçant bénéficie de visibilité dans l’application,
+        d’une image solidaire locale et d’une valorisation possible dans la communication annuelle.
+      </div>
+
     </div>
   `);
 
   setTimeout(()=>{
+
+    const SPORT_SUPPORT_KEY = "bociteart_sport_support_v1";
+
+    function getCurrentYear(){
+      return new Date().getFullYear();
+    }
+
+    function loadSportSupport(){
+      try{
+        const raw = localStorage.getItem(SPORT_SUPPORT_KEY);
+        if(raw) return JSON.parse(raw);
+      }catch(e){}
+      return {
+        total: 0,
+        byYear: {},
+        lastClickYear: null
+      };
+    }
+
+    function saveSportSupport(obj){
+      try{
+        localStorage.setItem(SPORT_SUPPORT_KEY, JSON.stringify(obj));
+      }catch(e){}
+    }
+
+    function refreshSportSupportUi(){
+      const db = loadSportSupport();
+      const y = getCurrentYear();
+      const yearCount = Number((db.byYear && db.byYear[y]) || 0);
+      const totalCount = Number(db.total || 0);
+
+      const tileYear = document.getElementById("sportSupportYearCount");
+      const tileTotal = document.getElementById("sportSupportTotalCount");
+      const modalYear = document.getElementById("sportSupportYearModal");
+      const modalTotal = document.getElementById("sportSupportTotalModal");
+
+      if(tileYear) tileYear.textContent = yearCount;
+      if(tileTotal) tileTotal.textContent = totalCount;
+      if(modalYear) modalYear.textContent = yearCount;
+      if(modalTotal) modalTotal.textContent = totalCount;
+    }
+
+    function handleSportSupportClick(){
+      const db = loadSportSupport();
+      const y = getCurrentYear();
+
+      if(Number(db.lastClickYear) === y){
+        alert("Votre soutien pour cette année est déjà enregistré. Merci.");
+        return;
+      }
+
+      if(!db.byYear) db.byYear = {};
+      db.byYear[y] = Number(db.byYear[y] || 0) + 1;
+      db.total = Number(db.total || 0) + 1;
+      db.lastClickYear = y;
+
+      saveSportSupport(db);
+      refreshSportSupportUi();
+
+      const heart = document.getElementById("sportHeart");
+      if(heart){
+        heart.style.transform = "scale(1.28)";
+        setTimeout(()=>{ heart.style.transform = ""; }, 220);
+      }
+
+      alert("Merci. Votre soutien annuel au sport local est enregistré.");
+    }
+
+    refreshSportSupportUi();
+
+    const tileSupportBtn = document.getElementById("sportSupportBadge");
+    const modalSupportBtn = document.getElementById("sportSupportBtn");
+
+    if(tileSupportBtn && !tileSupportBtn.dataset.bound){
+      tileSupportBtn.dataset.bound = "1";
+      tileSupportBtn.onclick = (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        handleSportSupportClick();
+      };
+    }
+
+    if(modalSupportBtn) modalSupportBtn.onclick = handleSportSupportClick;
 
     const ficheBtn = document.getElementById("openSportFicheBtn");
     if(ficheBtn) ficheBtn.onclick = openSportFiche;
@@ -2129,10 +2235,17 @@ if(key==="ecole"){
 
     refresh();
 
+    const plus1  = document.getElementById("walletSportPlus1");
     const plus10 = document.getElementById("walletSportPlus10");
     const plus25 = document.getElementById("walletSportPlus25");
-    const minus1 = document.getElementById("walletSportMinus");
     const reset  = document.getElementById("walletSportReset");
+
+    if(plus1) plus1.onclick = ()=>{
+      const w = loadSportWallet();
+      w.vert = Number(w.vert || 0) + 1;
+      saveSportWallet(w);
+      refresh();
+    };
 
     if(plus10) plus10.onclick = ()=>{
       const w = loadSportWallet();
@@ -2144,13 +2257,6 @@ if(key==="ecole"){
     if(plus25) plus25.onclick = ()=>{
       const w = loadSportWallet();
       w.vert = Number(w.vert || 0) + 25;
-      saveSportWallet(w);
-      refresh();
-    };
-
-    if(minus1) minus1.onclick = ()=>{
-      const w = loadSportWallet();
-      w.vert = Math.max(0, Number(w.vert || 0) - 1);
       saveSportWallet(w);
       refresh();
     };
@@ -2178,7 +2284,19 @@ if(key==="ecole"){
         alert("Saisis une valeur d’échange valide.");
         return;
       }
-      alert("Calcul effectué (démo).");
+
+      const clubPart = 35;
+      const solidarityPart = 14;
+      const bociteartPart = 1;
+
+      alert(
+        "Calcul effectué (démo)." +
+        "\\nMontant saisi : " + total.toFixed(2) + " €" +
+        "\\nRépartition cible :" +
+        "\\n- Club : " + clubPart.toFixed(2) + " €" +
+        "\\n- Recherche / solidarité : " + solidarityPart.toFixed(2) + " €" +
+        "\\n- Bo'CitéArt : " + bociteartPart.toFixed(2) + " €"
+      );
     };
 
     if(scanBtn) scanBtn.onclick = ()=>{
@@ -2214,7 +2332,7 @@ if(key==="ecole"){
       }
 
       if(!assoName){
-        alert("Choisis une association.");
+        alert("Choisis une cause soutenue.");
         return;
       }
 
@@ -2255,7 +2373,7 @@ if(key==="ecole"){
   },0);
 
   return;
-} 
+}
 
 if(key==="mairie"){
   openModal("Mairie", `
