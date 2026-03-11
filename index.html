@@ -3023,10 +3023,12 @@ if(key==="mairie"){
 
 if(key==="commerces"){
   openModal("Commerces", `
-    <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
+    <div style="font-weight:900;margin-bottom:8px;">Commerces (structure démo)</div>
+
     <div class="box">
-      <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros. Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
+      <strong>Cadre :</strong> les BoCitecoins ne sont ni une monnaie, ni un moyen de paiement, ni une conversion en euros. Les conditions commerciales applicables restent celles du contrat, du devis, de la commande, de la facture et des CGV du partenaire.
     </div>
+
     <div class="coinShowcase">
       <div class="coinFace coinGold" aria-hidden="true">
         <div class="coinInner coinInnerGold">
@@ -3034,118 +3036,177 @@ if(key==="commerces"){
           <div class="t">BoCitecoin</div>
         </div>
       </div>
+
       <div class="walletBox">
         <div class="walletTitle">Wallet client — BoCitecoins OR</div>
-        <div class="walletValue walletGold" id="citizenCoinBalance">37</div>
+
+        <div class="walletValue walletGold" id="citizenCoinBalance">
+          37
+        </div>
+
         <div class="walletSub">
           BoCitecoins disponibles pour échange chez les commerçants partenaires Bo’CitéArt selon les règles locales.
         </div>
+
         <div style="margin-top:12px;font-weight:900;">Progression vers le prochain palier</div>
+
         <div style="margin-top:8px;background:#efe4d3;border-radius:999px;overflow:hidden;height:14px;border:2px solid rgba(0,0,0,.08);">
           <div id="walletProgressBar" style="height:100%;width:0%;border-radius:999px;transition:width .25s ease, background .25s ease;background:linear-gradient(90deg,#e4c81c 0%, #88b84b 55%, #2f8f46 100%);"></div>
         </div>
+
         <div id="walletProgressText" class="walletSub" style="margin-top:8px;">Chargement...</div>
         <div id="walletMotivation" class="walletSub" style="margin-top:6px;color:#2f5d46;font-weight:900;">&nbsp;</div>
         <div id="walletExpiryInfo" class="walletSub" style="margin-top:6px;">&nbsp;</div>
       </div>
     </div>
+
     <div style="font-weight:900;margin-top:14px;">Paliers d’échange</div>
+
     <div class="box">
       <div style="font-weight:900;">🎁 Échanges possibles chez les partenaires Bo’CitéArt</div>
+
       <ul style="margin:8px 0 0 18px;font-weight:800;">
         <li><strong>30 bocitecoins</strong> : avantage partenaire <span style="white-space:nowrap;"><strong>jusqu’à 15 %</strong></span></li>
         <li><strong>50 bocitecoins</strong> : avantage renforcé <span style="white-space:nowrap;"><strong>jusqu’à 25 %</strong></span></li>
         <li><strong>100 bocitecoins</strong> : avantage premium <span style="white-space:nowrap;"><strong>jusqu’à 40 %</strong></span></li>
       </ul>
+
       <div class="muted" style="margin-top:8px;">
-        Les avantages sont proposés librement par les commerçants partenaires. Les pourcentages indiqués correspondent à des niveaux indicatifs permettant de structurer les échanges Bo’CitéArt.
+        Les avantages sont proposés librement par les commerçants partenaires. Les pourcentages indiqués correspondent à des niveaux indicatifs servant à structurer les échanges Bo’CitéArt.
       </div>
+
       <div class="muted" style="margin-top:8px;">
         Les offres comprenant de la nourriture ou des boissons ne peuvent représenter plus de 30 % de la valeur totale de l’avantage.
       </div>
     </div>
+
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
       <button class="choiceBtn" id="walletClientRedeem30" type="button">Échanger 30</button>
       <button class="choiceBtn" id="walletClientRedeem50" type="button">Échanger 50</button>
       <button class="choiceBtn" id="walletClientRedeem100" type="button">Échanger 100</button>
       <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser (démo)</button>
     </div>
+
     <div style="font-weight:900;margin-top:14px;">Attribution commerçant → client (démo)</div>
+
     <div class="box">
       <div class="muted">
         Le client règle son achat directement au commerçant par le moyen de paiement accepté par ce dernier (espèces, carte bancaire, chèque ou autre). Bo’CitéArt n’intervient pas dans ce paiement.
       </div>
+
       <div class="muted" style="margin-top:8px;">
-        Une fois l’achat encaissé, le commerçant saisit simplement le montant, l’application calcule automatiquement les bocitecoins, puis le commerçant scanne le client pour créditer son wallet.
+        Une fois l’achat encaissé, le commerçant saisit simplement le montant, l’application calcule automatiquement les BoCitecoins OR, puis le commerçant scanne le client pour créditer son wallet.
       </div>
+
       <div style="margin-top:10px;font-weight:900;">Montant d’achat</div>
       <input class="miniField" id="shopPurchaseAmount" type="number" min="0" step="0.01" placeholder="Ex : 47.00" />
-      <div style="margin-top:10px;font-weight:900;">Bocitecoins calculés</div>
+
+      <div style="margin-top:10px;font-weight:900;">BoCitecoins calculés</div>
       <div class="box" style="background:var(--bg);">
         <strong id="shopCoinsCalc">0</strong> bocitecoin(s) OR à verser
       </div>
+
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="shopCalcBtn" type="button">Calculer</button>
         <button class="choiceBtn" id="shopScanClientBtn" type="button">Scanner le client</button>
         <button class="choiceBtn" id="shopCreditClientBtn" type="button">Valider l’envoi</button>
         <button class="choiceBtn" id="shopUndoBtn" type="button" style="background:#fff;">Correction 60 s</button>
       </div>
+
       <div class="muted" style="margin-top:10px;">
-        Règle actuelle : 1 bocitecoin OR par tranche complète de 10 € d’achat.
+        Règle actuelle : 1 BoCitecoin OR par tranche complète de 10 € d’achat.
       </div>
+
       <div class="muted" style="margin-top:6px;">
         En cas d’erreur de saisie, le commerçant dispose d’une fenêtre de correction de 60 secondes après validation.
       </div>
+
       <div class="muted" style="margin-top:6px;">
         Si une anomalie persiste après ce délai, une demande de régularisation peut être transmise à l’administrateur Bo’CitéArt, qui intervient après vérification dans un délai raisonnable.
       </div>
     </div>
-    <div style="font-weight:900;margin-top:12px;">Bocitecoins couleur OR</div>
+
+    <div style="font-weight:900;margin-top:14px;">Compatibilité sport (prévue et déjà cadrée)</div>
+
+    <div class="box">
+      <div class="muted">
+        En version officielle, cet onglet commerçant comportera aussi un parcours séparé pour le <strong>référent sportif</strong>.
+      </div>
+
+      <div class="muted" style="margin-top:8px;">
+        Le commerçant pourra alors :
+        <br>- scanner un référent sportif
+        <br>- lire son solde réel de <strong>BoCitecoins VERT</strong>
+        <br>- consommer tout ou partie du solde
+        <br>- laisser le reste disponible si le référent ne souhaite pas tout utiliser
+      </div>
+
+      <div class="muted" style="margin-top:8px;">
+        Le wallet <strong>OR</strong> du client et le wallet <strong>VERT</strong> du sport restent donc séparés. Cette séparation évite les erreurs et garantit une architecture propre pour l’ouverture réelle.
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">BoCitecoins couleur OR</div>
+
     <div class="box">
       <strong>Clarification :</strong> “OR” = couleur / repère visuel dans l’application, sans valeur intrinsèque.
+
       <div class="muted" style="margin-top:8px;">
         Le solde visible du citoyen sert à motiver l’échange, le retour en commerce, et la consultation du compte.
       </div>
     </div>
+
     <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Attribution : 1 bocitecoin couleur OR par tranche de 10 € d’achat</li>
+      <li>Attribution : 1 BoCitecoin couleur OR par tranche de 10 € d’achat</li>
       <li>Seuil minimum : 10 €</li>
-      <li>Chaque tranche complète de 10 € = +1 bocitecoin OR</li>
-      <li>Échange standard à partir de 30 bocitecoins</li>
-      <li>Échanges renforcés possibles à 50 et 100 bocitecoins</li>
+      <li>Chaque tranche complète de 10 € = +1 BoCitecoin OR</li>
+      <li>Échange standard à partir de 30 BoCitecoins</li>
+      <li>Échanges renforcés possibles à 50 et 100 BoCitecoins</li>
     </ul>
+
     <div style="font-weight:900;margin-top:12px;">Règle anniversaire du compte</div>
+
     <div class="box">
       <ul style="margin:8px 0 0 18px;font-weight:800;">
-        <li>Validité standard : <strong>1 an</strong> à compter du premier bocitecoin obtenu</li>
-        <li>À <strong>30 jours</strong> de la date anniversaire : échange autorisé dès <strong>20 bocitecoins</strong></li>
+        <li>Validité standard : <strong>1 an</strong> à compter du premier BoCitecoin obtenu</li>
+        <li>À <strong>30 jours</strong> de la date anniversaire : échange autorisé dès <strong>20 BoCitecoins</strong></li>
         <li>Un message d’alerte informe le client avant échéance</li>
-        <li>Si aucun échange n’est réalisé avant l’échéance : le compte repart à <strong>12 bocitecoins</strong></li>
+        <li>Si aucun échange n’est réalisé avant l’échéance : le compte repart à <strong>12 BoCitecoins</strong></li>
         <li>Le reste du solde est brûlé automatiquement à la date anniversaire</li>
       </ul>
     </div>
+
     <div style="font-weight:900;margin-top:12px;">Frais Bo’CitéArt (structure)</div>
+
     <div class="box">
       <strong>Règle :</strong> <strong>0,18 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés (traçabilité).
+
       <div class="muted" style="margin-top:8px;">
         Reversement automatique via PSP (ou solution équivalente), avec journalisation et facture mensuelle récapitulative.
       </div>
+
       <div class="muted" style="margin-top:8px;">
         Le client paie son achat directement au commerçant. Le PSP intervient uniquement sur les écritures Bo’CitéArt, la traçabilité, les prélèvements et les factures partenaires.
       </div>
+
       <div class="muted" style="margin-top:8px;">
         Vue “suivi” ci-dessous : indicative, non comptable, non exploitable juridiquement.
       </div>
     </div>
+
     <div style="font-weight:900;margin-top:12px;">Suivi mensuel (démo — indicatif)</div>
+
     <div class="box">
       <div class="muted">Saisis un montant d’achats du mois (ex : total caisse) pour voir l’estimation.</div>
+
       <div style="margin-top:10px;font-weight:900;">Montant achats (mois en cours)</div>
       <input class="miniField" id="feeInputSales" type="number" min="0" step="0.01" placeholder="Ex : 1250.00" />
+
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="feeAddBtn" type="button">➕ Ajouter / mettre à jour</button>
         <button class="choiceBtn" id="feeResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
       </div>
+
       <div class="box" style="margin-top:12px;background:var(--bg);">
         <div style="font-weight:900;">Résumé (mois en cours)</div>
         <div class="muted" style="margin-top:6px;">
@@ -3154,11 +3215,14 @@ if(key==="commerces"){
           Règle : 0,18 € / tranche de 10 € (arrondi par tranches)
         </div>
       </div>
+
       <div class="muted" style="margin-top:10px;">
         (Démo) Données stockées localement sur ce téléphone.
       </div>
     </div>
+
     <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
+
     <ul style="margin:8px 0 0 18px;font-weight:800;">
       <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
       <li>Journée complète : grisée et non sélectionnable</li>
@@ -3166,6 +3230,13 @@ if(key==="commerces"){
       <li>Option : texte en gras (+4€ TTC)</li>
       <li>Possibilité d’URL selon conformité</li>
     </ul>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">🔐 Sécurité prévue en version officielle</div>
+      <div class="muted" style="margin-top:6px;">
+        En démonstration, certaines opérations sont simulées localement. En ouverture publique, les droits seront séparés par profil : citoyen, commerçant, référent sportif et administration. Les attributions, consommations, corrections et journaux seront contrôlés côté serveur sécurisé.
+      </div>
+    </div>
   `);
 
   setTimeout(()=>{
@@ -3226,6 +3297,7 @@ if(key==="commerces"){
     function getMotivationText(coins){
       const next = getNextTarget(coins);
       const diff = next - coins;
+
       if(coins >= 100) return "Palier premium atteint. Vous pouvez profiter du niveau d’avantage maximum.";
       if(diff === 4) return "Plus que 4 bocitecoins pour échanger. Votre belle surprise vous attend.";
       if(diff === 3) return "Plus que 3 bocitecoins. Encore un petit effort.";
@@ -3240,6 +3312,7 @@ if(key==="commerces"){
       const wallet = loadCitizenWallet();
       const meta = ensureCitizenMeta();
       const now = Date.now();
+
       if(meta.expireTs && now >= meta.expireTs){
         const current = Number(wallet.or || 0);
         wallet.or = 12;
@@ -3271,14 +3344,14 @@ if(key==="commerces"){
 
       if(progressBar){
         progressBar.style.width = percent + "%";
-        progressBar.style.background = `linear-gradient(90deg, #e4c81c 0%, #9fca45 ${Math.max(35, percent)}%, #2f8f46 100%)`;
+        progressBar.style.background = \`linear-gradient(90deg, #e4c81c 0%, #9fca45 \${Math.max(35, percent)}%, #2f8f46 100%)\`;
       }
 
       if(progressText){
         if(coins >= 100){
-          progressText.textContent = `Palier actuel : 100 bocitecoins • Avantage estimé : ${getTargetLabel(100)}`;
+          progressText.textContent = \`Palier actuel : 100 bocitecoins • Avantage estimé : \${getTargetLabel(100)}\`;
         }else{
-          progressText.textContent = `Solde actuel : ${coins} bocitecoins • Prochain palier : ${next} • Avantage estimé : ${getTargetLabel(next)}`;
+          progressText.textContent = \`Solde actuel : \${coins} bocitecoins • Prochain palier : \${next} • Avantage estimé : \${getTargetLabel(next)}\`;
         }
         progressText.style.whiteSpace = "normal";
         progressText.style.wordBreak = "keep-all";
@@ -3291,18 +3364,21 @@ if(key==="commerces"){
       if(expiry){
         const now = Date.now();
         const daysLeft = daysBetween(now, meta.expireTs);
+
         if(daysLeft <= 30){
-          expiry.textContent = `Attention : il vous reste ${daysLeft} jour(s) avant la date anniversaire. Échange possible dès 20 bocitecoins sur cette période.`;
+          expiry.textContent = \`Attention : il vous reste \${daysLeft} jour(s) avant la date anniversaire. Échange possible dès 20 bocitecoins sur cette période.\`;
         }else{
-          expiry.textContent = `Date anniversaire du compte : dans ${daysLeft} jour(s).`;
+          expiry.textContent = \`Date anniversaire du compte : dans \${daysLeft} jour(s).\`;
         }
       }
     }
 
     function setFirstEarnDateIfNeeded(coinsAdded){
       if(coinsAdded <= 0) return;
+
       const wallet = loadCitizenWallet();
       const meta = loadCitizenMeta();
+
       if(!meta.firstEarnTs || Number(wallet.or || 0) <= 0){
         const now = Date.now();
         meta.firstEarnTs = now;
@@ -3327,21 +3403,21 @@ if(key==="commerces"){
       const minimumAllowed = loweredThresholdAllowed ? 20 : 30;
 
       if(required < minimumAllowed){
-        alert(`Échange impossible sous ${minimumAllowed} bocitecoins dans la période actuelle.`);
+        alert(\`Échange impossible sous \${minimumAllowed} bocitecoins dans la période actuelle.\`);
         return;
       }
 
       if(coins < required){
-        alert(`Solde insuffisant. Il faut ${required} bocitecoins.`);
+        alert(\`Solde insuffisant. Il faut \${required} bocitecoins.\`);
         return;
       }
 
-      if(confirm(`Confirmer l’échange de ${required} bocitecoins ?`)){
+      if(confirm(\`Confirmer l’échange de \${required} bocitecoins ?\`)){
         wallet.or = Math.max(0, coins - required);
         saveCitizenWallet(wallet);
         registerTx({ type: "redeem", amount: required, previous: coins, resulting: wallet.or, ts: Date.now() });
         refreshWalletUi();
-        alert(`Échange validé (démo) : ${required} bocitecoins utilisés.`);
+        alert(\`Échange validé (démo) : \${required} bocitecoins utilisés.\`);
       }
     }
 
@@ -3357,7 +3433,7 @@ if(key==="commerces"){
     if(r100) r100.onclick = ()=> redeemCoins(100);
 
     if(rst) rst.onclick = ()=>{
-      if(confirm("Réinitialiser le wallet Client (démo) sur ce téléphone ?")){
+      if(confirm("Réinitialiser le wallet client (démo) sur ce téléphone ?")){
         saveCitizenWallet({ or: 0 });
         const now = Date.now();
         saveCitizenMeta({ firstEarnTs: now, expireTs: now + (365 * 24 * 60 * 60 * 1000), lastTx: null });
@@ -3378,11 +3454,13 @@ if(key==="commerces"){
 
     const computeCoins = ()=>{
       const amount = Number(amountInput ? amountInput.value : 0);
+
       if(!Number.isFinite(amount) || amount < 0){
         lastCalculatedCoins = 0;
-      } else {
+      }else{
         lastCalculatedCoins = Math.floor(amount / 10);
       }
+
       if(calcOut) calcOut.textContent = String(lastCalculatedCoins);
     };
 
@@ -3399,10 +3477,12 @@ if(key==="commerces"){
 
     if(creditBtn) creditBtn.onclick = ()=>{
       computeCoins();
+
       if(!lastClientScanned){
         alert("Scanne d’abord le client.");
         return;
       }
+
       if(lastCalculatedCoins <= 0){
         alert("Aucun bocitecoin à verser pour ce montant.");
         return;
@@ -3426,16 +3506,19 @@ if(key==="commerces"){
       undoDeadlineTs = Date.now() + 60000;
       lastClientScanned = false;
       refreshWalletUi();
+
       alert(lastCalculatedCoins + " bocitecoin(s) OR versé(s) au client (démo). Correction possible pendant 60 secondes.");
     };
 
     if(undoBtn) undoBtn.onclick = ()=>{
       const meta = loadCitizenMeta();
       const tx = meta.lastTx;
+
       if(!tx || tx.type !== "credit"){
         alert("Aucune opération crédit récente à corriger.");
         return;
       }
+
       if(Date.now() > undoDeadlineTs){
         alert("Délai de correction dépassé.");
         return;
@@ -3444,12 +3527,14 @@ if(key==="commerces"){
       const w = loadCitizenWallet();
       w.or = Math.max(0, Number(tx.previous || 0));
       saveCitizenWallet(w);
+
       registerTx({
         type: "undo_credit",
         previous: Number(tx.resulting || 0),
         resulting: Number(tx.previous || 0),
         ts: Date.now()
       });
+
       refreshWalletUi();
       alert("Dernière attribution annulée (démo). Tu peux ressaisir le bon montant.");
     };
