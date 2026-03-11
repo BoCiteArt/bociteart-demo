@@ -2065,12 +2065,14 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             return;
           }; 
           
-             if(key==="sport"){
+           if(key==="sport"){
   openModal("Sport", `
     <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+
     <div class="box">
       <strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint.
     </div>
+
     <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;">❤️ Soutien citoyen au sport local</div>
       <div class="muted" style="margin-top:6px;">
@@ -2084,6 +2086,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
         </div>
       </div>
     </div>
+
     <div class="coinShowcase">
       <div class="coinFace coinGreen" aria-hidden="true">
         <div class="coinInner coinInnerGreen">
@@ -2109,9 +2112,78 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
         </div>
       </div>
     </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">🌳 Explorer autour de moi</div>
+      <div class="muted" style="margin-top:6px;">
+        Une fenêtre plein écran peut s’ouvrir pour afficher les lieux de sport et de loisirs proches de l’utilisateur.
+      </div>
+
+      <div style="margin-top:10px;">
+        <strong>Rayon de recherche :</strong><br>
+        - 1 km<br>
+        - 2 km<br>
+        - 3 km
+      </div>
+
+      <div style="margin-top:10px;">
+        <strong>Lieux affichés :</strong><br>
+        - parcs et espaces verts<br>
+        - entrées de bois ou chemins nature<br>
+        - aires de jeux enfants<br>
+        - pistes cyclables<br>
+        - parkings publics<br>
+        - arrêts de bus<br>
+        - terrains ou équipements sportifs<br>
+        - écoles<br>
+        - mairie
+      </div>
+
+      <div style="margin-top:10px;">
+        <strong>Repères visuels sur la carte :</strong><br>
+        Des icônes simples permettent de mieux se repérer rapidement dans le quartier ou dans les zones de promenade.
+      </div>
+
+      <div style="margin-top:10px;">
+        <strong>Orientation :</strong><br>
+        Chaque lieu affiché peut montrer :
+        <br>- une flèche directionnelle
+        <br>- la distance
+        <br>- l’orientation (Nord / Sud / Est / Ouest)
+      </div>
+
+      <div style="margin-top:10px;">
+        <strong>Exemple :</strong><br>
+        ➜ Parc municipal - 720 m - Direction Nord-Est
+      </div>
+
+      <div style="margin-top:10px;">
+        <strong>Cercle de proximité :</strong><br>
+        La carte peut afficher un cercle autour de l’utilisateur pour visualiser rapidement tous les lieux disponibles dans un rayon de 1 à 3 km.
+      </div>
+
+      <div style="margin-top:10px;">
+        <strong>Parcours conseillés près de moi :</strong><br>
+        - marche tranquille<br>
+        - parcours running<br>
+        - balade famille / poussette / jeunes enfants
+      </div>
+
+      <div style="margin-top:10px;">
+        <strong>Utilité :</strong><br>
+        Aider les sportifs, familles, seniors ou personnes seules à trouver rapidement où aller près de chez eux, avec un guidage plus clair et plus sûr.
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="choiceBtn" id="sportExploreBtn" type="button">🌳 Explorer autour de moi</button>
+        <button class="choiceBtn" id="sportMoveNowBtn" type="button">➡ Je veux bouger maintenant</button>
+      </div>
+    </div>
+
     <div style="font-weight:900;margin-top:14px;">
       📄 Fichier (à ouvrir)
     </div>
+
     <div class="box">
       <div style="font-weight:900;">
         Fiche élus / CCI / commerçants — soutien Club + Recherche / solidarité
@@ -2125,6 +2197,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
         </button>
       </div>
     </div>
+
     <ul style="margin:10px 0 0 18px;font-weight:800;">
       <li>Rapport du week-end</li>
       <li>Gestes citoyens validés par le référent</li>
@@ -2132,9 +2205,11 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       <li>Bocitecoins VERT : sport / collectivité</li>
       <li>Pas de messagerie</li>
     </ul>
+
     <div style="font-weight:900;margin-top:16px;">
       Échange commerçant ↔ référent sportif
     </div>
+
     <div class="box">
       <div class="muted">
         Le commerçant scanne le téléphone du référent sportif, prépare l’échange puis les bocitecoins VERT sont brûlés.
@@ -2142,6 +2217,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       <div class="muted" style="margin-top:8px;">
         Répartition type de la contribution commerçant : <strong>35 € club</strong> • <strong>14 € recherche / solidarité</strong> • <strong>1 € Bo’CitéArt</strong>
       </div>
+
       <div style="margin-top:10px;font-weight:900;">
         Cause soutenue
       </div>
@@ -2151,16 +2227,19 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
         <option value="Les Papillons">Les Papillons</option>
         <option value="ATC Nord">ATC Nord</option>
       </select>
+
       <div style="margin-top:10px;font-weight:900;">
         Valeur estimée de l’échange
       </div>
       <input class="miniField" id="sportGiftValue" type="number" min="0" step="0.01" placeholder="50">
+
       <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
         <button class="choiceBtn" id="sportCalcBtn" type="button">Calculer</button>
         <button class="choiceBtn" id="sportScanRefBtn" type="button">Scanner</button>
         <button class="choiceBtn" id="sportValidateBtn" type="button">Valider</button>
         <button class="choiceBtn" id="sportBurnBtn" type="button">Brûler</button>
       </div>
+
       <div class="muted" style="margin-top:10px;">
         Le commerçant bénéficie de visibilité dans l’application, d’une image solidaire locale et d’une valorisation possible dans la communication annuelle.
       </div>
@@ -2228,6 +2307,71 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       alert("Merci. Votre soutien annuel au sport local est enregistré.");
     }
 
+    function openSportExploreMap(){
+      openModal("Explorer autour de moi", `
+        <div style="font-weight:900;margin-bottom:8px;">🌳 Explorer autour de moi</div>
+
+        <div class="box">
+          <strong>Affichage plein écran :</strong><br>
+          Carte locale des espaces proches utiles pour marcher, courir ou sortir avec enfants.
+        </div>
+
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;">Rayon visible</div>
+          <div class="muted" style="margin-top:6px;">
+            1 km • 2 km • 3 km autour de l’utilisateur
+          </div>
+        </div>
+
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;">Repères visuels</div>
+          <div class="muted" style="margin-top:6px;">
+            🌳 Parcs • 🌲 Bois • 🛝 Aires de jeux • 🚴 Pistes cyclables • 🅿 Parkings • 🚌 Arrêts de bus • 🏟 Équipements sportifs • 🏫 Écoles • 🏛 Mairie
+          </div>
+        </div>
+
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;">Orientation</div>
+          <div class="muted" style="margin-top:6px;">
+            Chaque lieu peut afficher une flèche, une distance et une direction : Nord, Sud, Est ou Ouest.
+          </div>
+          <div style="margin-top:8px;">
+            ➜ Parc municipal — 720 m — Nord-Est<br>
+            ➜ Aire de jeux familiale — 950 m — Est<br>
+            ➜ Parcours running — 1,4 km — Nord
+          </div>
+        </div>
+
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;">Parcours conseillés</div>
+          <div class="muted" style="margin-top:6px;">
+            Marche tranquille • Running • Balade famille / poussette / jeunes enfants
+          </div>
+        </div>
+
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;">Démo actuelle</div>
+          <div class="muted" style="margin-top:6px;">
+            Cette ouverture montre la structure de la future carte plein écran. La connexion GPS/carte pourra ensuite être branchée sur vos données réelles.
+          </div>
+        </div>
+      `);
+    }
+
+    function handleSportMoveNow(){
+      const suggestions = [
+        "➜ Parc municipal — 720 m — Nord-Est — marche tranquille",
+        "➜ Aire de jeux familiale — 950 m — Est — balade poussette / enfants",
+        "➜ Parcours running — 1,4 km — Nord — footing / marche rapide"
+      ];
+
+      alert(
+        "Je veux bouger maintenant (démo)\n\n" +
+        "3 endroits proches proposés :\n\n" +
+        suggestions.join("\n")
+      );
+    }
+
     refreshSportSupportUi();
 
     const tileSupportBtn = document.getElementById("sportSupportBadge");
@@ -2246,6 +2390,12 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
     const ficheBtn = document.getElementById("openSportFicheBtn");
     if(ficheBtn) ficheBtn.onclick = openSportFiche;
+
+    const exploreBtn = document.getElementById("sportExploreBtn");
+    if(exploreBtn) exploreBtn.onclick = openSportExploreMap;
+
+    const moveNowBtn = document.getElementById("sportMoveNowBtn");
+    if(moveNowBtn) moveNowBtn.onclick = handleSportMoveNow;
 
     const refresh = ()=>{
       const w = loadSportWallet();
