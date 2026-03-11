@@ -610,6 +610,58 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   cursor:pointer;
   font-size:12px;
 }
+   
+    .sportSupportBadge{
+  position:absolute;
+  top:10px;
+  right:10px;
+  z-index:6;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  border:none;
+  border-radius:999px;
+  padding:6px 10px;
+  background:rgba(255,255,255,.95);
+  box-shadow:0 4px 10px rgba(0,0,0,.14);
+  cursor:pointer;
+}
+
+.sportHeart{
+  font-size:16px;
+  line-height:1;
+  display:inline-block;
+  animation:sportHeartBeat 1.35s infinite;
+  transform-origin:center;
+}
+
+@keyframes sportHeartBeat{
+  0%{ transform:scale(1); }
+  18%{ transform:scale(1.12); }
+  36%{ transform:scale(1); }
+  54%{ transform:scale(1.16); }
+  72%{ transform:scale(1); }
+  100%{ transform:scale(1); }
+}
+
+.sportSupportCounts{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  line-height:1;
+}
+
+.sportSupportYear{
+  font-size:12px;
+  font-weight:900;
+  color:#a51e22;
+}
+
+.sportSupportTotal{
+  font-size:10px;
+  font-weight:900;
+  color:#2f5d46;
+} 
     
 @media (max-height: 780px){
   .wrap{ padding:10px; gap:10px; }
