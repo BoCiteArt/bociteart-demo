@@ -394,13 +394,15 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   gap:12px;
   align-items:center;
   margin-top:12px;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
 }
 
 .coinFace{
   position:relative;
   width:108px;
   height:108px;
+  min-width:108px;
+  max-width:108px;
   flex:0 0 108px;
   border-radius:50%;
   display:flex;
@@ -410,13 +412,12 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   box-shadow:0 10px 18px rgba(0,0,0,.16);
 }
 
-/* on supprime complètement les anciens faux cercles */
 .coinFace::before,
 .coinFace::after{
   display:none !important;
+  content:none !important;
 }
 
-/* Couleurs extérieures */
 .coinGold{
   background:#cda51d;
   border:3px solid #8e6a00;
@@ -432,7 +433,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   border:3px solid #224c39;
 }
 
-/* on neutralise complètement l'ancien système d'étoiles */
 .coinStarsRing,
 .coinStar,
 .coinStarsRing::before,
@@ -441,7 +441,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   content:none !important;
 }
 
-/* Centre pièce */
 .coinInner{
   position:relative;
   width:66px;
@@ -483,7 +482,6 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   letter-spacing:.15px;
 }
 
-/* Couleurs centre : pièce plate */
 .coinInnerGold{
   color:#fffdf6;
   background:#cda51d;
@@ -1961,29 +1959,29 @@ if(key==="sport"){
     <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
     <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
 
-    <div class="coinShowcase">
-      <div class="coinFace coinGreen" aria-hidden="true">
-<div class="coinFace coinGreen" aria-hidden="true">
-  <div class="coinInner coinInnerGreen">
-    <div class="n">1</div>
-    <div class="t">BoCitecoin</div>
+  <div class="coinShowcase">
+  <div class="coinFace coinGreen" aria-hidden="true">
+    <div class="coinInner coinInnerGreen">
+      <div class="n">1</div>
+      <div class="t">BoCitecoin</div>
+    </div>
+  </div>
+
+  <div class="walletBox">
+    <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
+    <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
+    <div class="walletSub">
+      BoCitecoins gagnés par les actions sportives/citoyennes, échangeables chez un commerçant partenaire
+      selon les règles locales et le partage solidaire prévu.
+    </div>
+    <div class="walletActions">
+      <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
+      <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
+      <button class="walletMini" id="walletSportMinus" type="button">−1</button>
+      <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
+    </div>
   </div>
 </div>
-      <div class="walletBox">
-        <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
-        <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
-        <div class="walletSub">
-          BoCitecoins gagnés par les actions sportives/citoyennes, échangeables chez un commerçant partenaire
-          selon les règles locales et le partage solidaire prévu.
-        </div>
-        <div class="walletActions">
-          <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-          <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
-          <button class="walletMini" id="walletSportMinus" type="button">−1</button>
-          <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
-        </div>
-      </div>
-    </div>
 
     <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
     <div class="box">
