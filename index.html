@@ -412,24 +412,10 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     inset 0 -6px 10px rgba(0,0,0,.18);
 }
 
-.coinFace::before{
-  content:"";
-  position:absolute;
-  inset:4px;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.20);
-  pointer-events:none;
-  z-index:1;
-}
-
+/* on enlève les faux cercles qui donnaient l’effet bouton */
+.coinFace::before,
 .coinFace::after{
-  content:"";
-  position:absolute;
-  inset:10px;
-  border-radius:50%;
-  border:2px solid rgba(255,255,255,.16);
-  pointer-events:none;
-  z-index:1;
+  display:none;
 }
 
 /* Couleurs extérieures */
@@ -451,7 +437,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   border:3px solid #224c39;
 }
 
-/* Anneau étoiles centré et légèrement remonté */
+/* Anneau étoiles */
 .coinStarsRing{
   position:absolute;
   inset:0;
@@ -462,6 +448,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   z-index:2;
 }
 
+/* fin anneau léger */
 .coinStarsRing::before{
   content:"";
   position:absolute;
@@ -472,33 +459,30 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   transform:translateY(-2px);
 }
 
+/* on remet bien les étoiles */
 .coinStarsRing::after{
   content:"✦";
   position:absolute;
-  width:80px;
-  height:80px;
   left:50%;
   top:50%;
   transform:translate(-50%,-50%) translateY(-2px);
-  transform-origin:center center;
-  color:#eef7f2;
-  font-size:15px;
+  color:#f8f4e8;
+  font-size:10px;
   line-height:1;
-  text-shadow:0 1px 1px rgba(255,255,255,.10);
-  border-radius:50%;
+  text-shadow:0 1px 1px rgba(0,0,0,.12);
   box-shadow:
-    0 -40px 0 0 #eef7f2,
-    20px -34.6px 0 0 #eef7f2,
-    34.6px -20px 0 0 #eef7f2,
-    40px 0 0 0 #eef7f2,
-    34.6px 20px 0 0 #eef7f2,
-    20px 34.6px 0 0 #eef7f2,
-    0 40px 0 0 #eef7f2,
-    -20px 34.6px 0 0 #eef7f2,
-    -34.6px 20px 0 0 #eef7f2,
-    -40px 0 0 0 #eef7f2,
-    -34.6px -20px 0 0 #eef7f2,
-    -20px -34.6px 0 0 #eef7f2;
+    0 -40px 0 0 #f8f4e8,
+    20px -34.6px 0 0 #f8f4e8,
+    34.6px -20px 0 0 #f8f4e8,
+    40px 0 0 0 #f8f4e8,
+    34.6px 20px 0 0 #f8f4e8,
+    20px 34.6px 0 0 #f8f4e8,
+    0 40px 0 0 #f8f4e8,
+    -20px 34.6px 0 0 #f8f4e8,
+    -34.6px 20px 0 0 #f8f4e8,
+    -40px 0 0 0 #f8f4e8,
+    -34.6px -20px 0 0 #f8f4e8,
+    -20px -34.6px 0 0 #f8f4e8;
 }
 
 /* Centre pièce */
@@ -630,6 +614,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   cursor:pointer;
   font-size:12px;
 }
+    
 @media (max-height: 780px){
   .wrap{ padding:10px; gap:10px; }
   .ticker{ height:120px; }
