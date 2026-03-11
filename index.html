@@ -454,46 +454,26 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 /* étoiles directement sur la surface de la pièce */
 .coinStar{
   position:absolute;
-  font-size:10px;
+  font-size:11px;
   line-height:1;
-  transform:translate(-50%,-50%);
+ color:size:#f8f2d8;
   text-shadow:0 1px 1px rgba(0,0,0,.18);
 }
-
-/* haut = étoiles foncées */
-.coinStar.s1,
-.coinStar.s2,
-.coinStar.s3,
-.coinStar.s4,
-.coinStar.s5,
-.coinStar.s6{
-  color:#111111;
+    
+/* 12 étoiles réparties sur le rond */
+.coinStar.s1  { top:10px; left:50%; transform:translateX(-50%); }
+.coinStar.s2  { top:14px; left:64%; transform:translateX(-50%); }
+.coinStar.s3  { top:24px; left:76%; transform:translateX(-50%); }
+.coinStar.s4  { top:39px; left:84px; transform:translateX(-50%); }
+.coinStar.s5  { top:57px; left:87px; transform:translateX(-50%); }
+.coinStar.s6  { top:75px; left:82px; transform:translateX(-50%); }
+.coinStar.s7  { top:86px; left:50%; transform:translateX(-50%); }
+.coinStar.s8  { top:75px; left:26px; transform:translateX(-50%); }
+.coinStar.s9  { top:57px; left:21px; transform:translateX(-50%); }
+.coinStar.s10 { top:39px; left:24px; transform:translateX(-50%); }
+.coinStar.s11 { top:24px; left:32%; transform:translateX(-50%); }
+.coinStar.s12 { top:14px; left:40%; transform:translateX(-50%); }
 }
-
-/* bas = étoiles claires */
-.coinStar.s7,
-.coinStar.s8,
-.coinStar.s9,
-.coinStar.s10,
-.coinStar.s11,
-.coinStar.s12{
-  color:#f8f2d8;
-}
-
-/* Répartition sur toute la surface extérieure, sans entrer dans le cercle central */
-.coinStar.s1  { left:18px; top:18px; }
-.coinStar.s2  { left:38px; top:14px; }
-.coinStar.s3  { left:54px; top:14px; }
-.coinStar.s4  { left:70px; top:14px; }
-.coinStar.s5  { left:86px; top:18px; }
-.coinStar.s6  { left:92px; top:32px; }
-
-.coinStar.s7  { left:91px; top:55px; }
-.coinStar.s8  { left:86px; top:74px; }
-.coinStar.s9  { left:74px; top:88px; }
-.coinStar.s10 { left:54px; top:93px; }
-.coinStar.s11 { left:32px; top:88px; }
-.coinStar.s12 { left:18px; top:74px; }
 
 /* Centre pièce */
 .coinInner{
