@@ -407,10 +407,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   align-items:center;
   justify-content:center;
   overflow:hidden;
-  box-shadow:
-    0 12px 20px rgba(0,0,0,.20),
-    inset 0 2px 3px rgba(255,255,255,.22),
-    inset 0 -7px 12px rgba(0,0,0,.22);
+  box-shadow:0 10px 18px rgba(0,0,0,.16);
 }
 
 /* on supprime complètement les anciens faux cercles */
@@ -421,58 +418,27 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
 /* Couleurs extérieures */
 .coinGold{
-  background:
-    radial-gradient(circle at 32% 28%, #fff7c8 0%, #f0da68 20%, #cda51d 50%, #a77f08 74%, #7d5d00 100%);
+  background:#cda51d;
   border:3px solid #8e6a00;
 }
 
 .coinYellow{
-  background:
-    radial-gradient(circle at 32% 28%, #fff8ca 0%, #f4e16f 20%, #d9bf2c 50%, #b28f10 74%, #866d06 100%);
+  background:#d9bf2c;
   border:3px solid #967900;
 }
 
 .coinGreen{
-  background:
-    radial-gradient(circle at 32% 28%, #d8f6e6 0%, #8dcda8 18%, #4f8f6a 48%, #2f5d46 74%, #1e4030 100%);
+  background:#4f8f6a;
   border:3px solid #224c39;
 }
 
-/* zone des étoiles : plus de cercle */
-.coinStarsRing{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  z-index:2;
-}
-
+/* on neutralise complètement l'ancien système d'étoiles */
+.coinStarsRing,
+.coinStar,
 .coinStarsRing::before,
 .coinStarsRing::after{
   display:none !important;
-}
-
-/* étoiles directement sur la surface de la pièce */
-.coinStar{
-  position:absolute;
-  font-size:11px;
-  line-height:1;
- color:size:#f8f2d8;
-  text-shadow:0 1px 1px rgba(0,0,0,.18);
-}
-    
-/* 12 étoiles réparties sur le rond */
-.coinStar.s1  { top:10px; left:50%; transform:translateX(-50%); }
-.coinStar.s2  { top:14px; left:64%; transform:translateX(-50%); }
-.coinStar.s3  { top:24px; left:76%; transform:translateX(-50%); }
-.coinStar.s4  { top:39px; left:84px; transform:translateX(-50%); }
-.coinStar.s5  { top:57px; left:87px; transform:translateX(-50%); }
-.coinStar.s6  { top:75px; left:82px; transform:translateX(-50%); }
-.coinStar.s7  { top:86px; left:50%; transform:translateX(-50%); }
-.coinStar.s8  { top:75px; left:26px; transform:translateX(-50%); }
-.coinStar.s9  { top:57px; left:21px; transform:translateX(-50%); }
-.coinStar.s10 { top:39px; left:24px; transform:translateX(-50%); }
-.coinStar.s11 { top:24px; left:32%; transform:translateX(-50%); }
-.coinStar.s12 { top:14px; left:40%; transform:translateX(-50%); }
+  content:none !important;
 }
 
 /* Centre pièce */
@@ -489,9 +455,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   font-weight:900;
   z-index:3;
   padding:4px;
-  box-shadow:
-    inset 0 2px 3px rgba(255,255,255,.18),
-    inset 0 -4px 7px rgba(0,0,0,.16);
+  box-shadow:none;
 }
 
 .coinInner::before{
@@ -499,7 +463,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   position:absolute;
   inset:0;
   border-radius:50%;
-  border:2px solid rgba(255,255,255,.22);
+  border:2px solid rgba(210,210,210,.95);
   pointer-events:none;
 }
 
@@ -519,26 +483,23 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   letter-spacing:.15px;
 }
 
-/* Couleurs centre */
+/* Couleurs centre : pièce plate */
 .coinInnerGold{
   color:#fffdf6;
-  background:
-    radial-gradient(circle at 35% 30%, #f8eca9 0%, #d8b83d 56%, #9f7807 100%);
-  text-shadow:0 1px 0 rgba(0,0,0,.18);
+  background:#cda51d;
+  text-shadow:none;
 }
 
 .coinInnerYellow{
   color:#fffdf6;
-  background:
-    radial-gradient(circle at 35% 30%, #f7ec9c 0%, #d8ba32 56%, #9d8200 100%);
-  text-shadow:0 1px 0 rgba(0,0,0,.18);
+  background:#d9bf2c;
+  text-shadow:none;
 }
 
 .coinInnerGreen{
   color:#ffffff;
-  background:
-    radial-gradient(circle at 35% 30%, #a7dbbb 0%, #5f9c77 58%, #2b523d 100%);
-  text-shadow:0 1px 0 rgba(0,0,0,.20);
+  background:#4f8f6a;
+  text-shadow:none;
 }
 
 /* Suppression anciennes petites pièces */
@@ -2002,27 +1963,12 @@ if(key==="sport"){
 
     <div class="coinShowcase">
       <div class="coinFace coinGreen" aria-hidden="true">
-        <div class="coinStarsRing">
-          <span class="coinStar s1">★</span>
-          <span class="coinStar s2">★</span>
-          <span class="coinStar s3">★</span>
-          <span class="coinStar s4">★</span>
-          <span class="coinStar s5">★</span>
-          <span class="coinStar s6">★</span>
-          <span class="coinStar s7">★</span>
-          <span class="coinStar s8">★</span>
-          <span class="coinStar s9">★</span>
-          <span class="coinStar s10">★</span>
-          <span class="coinStar s11">★</span>
-          <span class="coinStar s12">★</span>
-        </div>
-
-        <div class="coinInner coinInnerGreen">
-          <div class="n">1</div>
-          <div class="t">BoCitecoin</div>
-        </div>
-      </div>
-
+<div class="coinFace coinGreen" aria-hidden="true">
+  <div class="coinInner coinInnerGreen">
+    <div class="n">1</div>
+    <div class="t">BoCitecoin</div>
+  </div>
+</div>
       <div class="walletBox">
         <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
         <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
