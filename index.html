@@ -432,6 +432,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   z-index:1;
 }
 
+/* Couleurs extérieures */
 .coinGold{
   background:
     radial-gradient(circle at 32% 28%, #fff7c8 0%, #f0da68 20%, #cda51d 50%, #a77f08 74%, #7d5d00 100%);
@@ -450,33 +451,57 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   border:3px solid #224c39;
 }
 
+/* Anneau étoiles centré et légèrement remonté */
 .coinStarsRing{
   position:absolute;
   inset:0;
-  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   pointer-events:none;
   z-index:2;
 }
 
-.coinStarsRing svg{
+.coinStarsRing::before{
+  content:"";
   position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  display:block;
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.18);
+  transform:translateY(-2px);
 }
 
-.starRingStroke{
-  fill:none;
-  stroke:rgba(255,255,255,.22);
-  stroke-width:1.5;
+.coinStarsRing::after{
+  content:"✦";
+  position:absolute;
+  width:80px;
+  height:80px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%) translateY(-2px);
+  transform-origin:center center;
+  color:#eef7f2;
+  font-size:15px;
+  line-height:1;
+  text-shadow:0 1px 1px rgba(255,255,255,.10);
+  border-radius:50%;
+  box-shadow:
+    0 -40px 0 0 #eef7f2,
+    20px -34.6px 0 0 #eef7f2,
+    34.6px -20px 0 0 #eef7f2,
+    40px 0 0 0 #eef7f2,
+    34.6px 20px 0 0 #eef7f2,
+    20px 34.6px 0 0 #eef7f2,
+    0 40px 0 0 #eef7f2,
+    -20px 34.6px 0 0 #eef7f2,
+    -34.6px 20px 0 0 #eef7f2,
+    -40px 0 0 0 #eef7f2,
+    -34.6px -20px 0 0 #eef7f2,
+    -20px -34.6px 0 0 #eef7f2;
 }
 
-.coinStar{
-  fill:#e9f3ee;
-  opacity:.96;
-}
-
+/* Centre pièce */
 .coinInner{
   position:relative;
   width:66px;
@@ -520,26 +545,31 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   letter-spacing:.15px;
 }
 
+/* Couleurs centre */
 .coinInnerGold{
   color:#fffdf6;
-  background:radial-gradient(circle at 35% 30%, #f6e79c 0%, #d4b235 56%, #9f7807 100%);
+  background:
+    radial-gradient(circle at 35% 30%, #f6e79c 0%, #d4b235 56%, #9f7807 100%);
   text-shadow:0 1px 0 rgba(0,0,0,.18);
 }
 
 .coinInnerYellow{
   color:#fffdf6;
-  background:radial-gradient(circle at 35% 30%, #f7ec9c 0%, #d8ba32 56%, #9d8200 100%);
+  background:
+    radial-gradient(circle at 35% 30%, #f7ec9c 0%, #d8ba32 56%, #9d8200 100%);
   text-shadow:0 1px 0 rgba(0,0,0,.18);
 }
 
 .coinInnerGreen{
   color:#ffffff;
-  background:radial-gradient(circle at 35% 30%, #9fd7b4 0%, #4e8865 58%, #244735 100%);
+  background:
+    radial-gradient(circle at 35% 30%, #9fd7b4 0%, #4e8865 58%, #244735 100%);
   text-shadow:0 1px 0 rgba(0,0,0,.20);
 }
 
+/* Suppression petites pièces */
 .coinStack{
-  display:none;
+  display:none !important;
 }
 
 .stackCoin,
@@ -551,6 +581,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   display:none !important;
 }
 
+/* Wallet */
 .walletBox{
   flex:1;
   min-width:190px;
@@ -1642,20 +1673,10 @@ if(key==="ecole"){
       <button class="choiceBtn" type="button" id="playFemale">▶ Lire (voix synthétique)</button>
     </div>
 
- <div class="coinShowcase">
+    <div class="coinShowcase">
       <div class="coinFace coinYellow" aria-hidden="true">
-        <div class="coinStarsRing coinStarsYellow" aria-hidden="true">
-          <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-            <circle
-              cx="50"
-              cy="50"
-              r="30.5"
-              stroke-width="4.8"
-              stroke-dasharray="0.01 5.33"
-              class="starRingStroke">
-            </circle>
-          </svg>
-        </div>
+
+        <div class="coinStarsRing"></div>
 
         <div class="coinInner coinInnerYellow">
           <div class="n">1</div>
@@ -1663,53 +1684,20 @@ if(key==="ecole"){
         </div>
       </div>
 
-      <div class="coinStack" aria-hidden="true">
-        <div class="stackCoin stackYellow stack1">
-          <div class="stackCoinStars" aria-hidden="true">
-            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-              <circle
-                cx="22"
-                cy="22"
-                r="11.4"
-                stroke-width="2.2"
-                stroke-dasharray="0.01 2.05"
-                class="stackStarRingStroke">
-              </circle>
-            </svg>
-          </div>
+      <div class="walletBox">
+        <div class="walletTitle">Wallet École — BoCitecoins JAUNE</div>
+        <div class="walletValue walletYellow" id="schoolCoinBalance">0</div>
+        <div class="walletSub">
+          Bocitecoins gagnés par la classe, échangeables en mairie selon les règles locales,
+          ou cumulables pour un projet / une aide de classe selon le choix retenu.
         </div>
-
-        <div class="stackCoin stackYellow stack2">
-          <div class="stackCoinStars" aria-hidden="true">
-            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-              <circle
-                cx="22"
-                cy="22"
-                r="11.4"
-                stroke-width="2.2"
-                stroke-dasharray="0.01 2.05"
-                class="stackStarRingStroke">
-              </circle>
-            </svg>
-          </div>
-        </div>
-
-        <div class="stackCoin stackYellow stack3">
-          <div class="stackCoinStars" aria-hidden="true">
-            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-              <circle
-                cx="22"
-                cy="22"
-                r="11.4"
-                stroke-width="2.2"
-                stroke-dasharray="0.01 2.05"
-                class="stackStarRingStroke">
-              </circle>
-            </svg>
-          </div>
+        <div class="walletActions">
+          <button class="walletMini" id="walletSchoolInfo" type="button">Voir le cycle</button>
+          <button class="walletMini" id="walletSchoolReset" type="button">Réinitialiser</button>
         </div>
       </div>
-
+    </div>
+  `);
       <div class="walletBox">
         <div class="walletTitle">Wallet École — BoCitecoins JAUNE</div>
         <div class="walletValue walletYellow" id="schoolCoinBalance">0</div>
@@ -2054,28 +2042,22 @@ if(key==="sport"){
     <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
     <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
 
- <div class="coinShowcase">
-  <div class="coinFace coinGreen" aria-hidden="true">
-    <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
-      <svg viewBox="0 0 108 108" focusable="false" aria-hidden="true">
-        <circle cx="54" cy="54" r="37.5" class="starRingStroke"></circle>
+<div class="coinShowcase">
 
-        <g class="coinStar" transform="translate(54 54)">
-          <polygon points="0,-41 1.4,-37.2 5.4,-37.2 2.2,-34.8 3.4,-31 0,-33.4 -3.4,-31 -2.2,-34.8 -5.4,-37.2 -1.4,-37.2"></polygon>
-          <polygon points="20.5,-35.5 21.9,-31.7 25.9,-31.7 22.7,-29.3 23.9,-25.5 20.5,-27.9 17.1,-25.5 18.3,-29.3 15.1,-31.7 19.1,-31.7"></polygon>
-          <polygon points="35.5,-20.5 36.9,-16.7 40.9,-16.7 37.7,-14.3 38.9,-10.5 35.5,-12.9 32.1,-10.5 33.3,-14.3 30.1,-16.7 34.1,-16.7"></polygon>
-          <polygon points="41,0 42.4,3.8 46.4,3.8 43.2,6.2 44.4,10 41,7.6 37.6,10 38.8,6.2 35.6,3.8 39.6,3.8"></polygon>
-          <polygon points="35.5,20.5 36.9,24.3 40.9,24.3 37.7,26.7 38.9,30.5 35.5,28.1 32.1,30.5 33.3,26.7 30.1,24.3 34.1,24.3"></polygon>
-          <polygon points="20.5,35.5 21.9,39.3 25.9,39.3 22.7,41.7 23.9,45.5 20.5,43.1 17.1,45.5 18.3,41.7 15.1,39.3 19.1,39.3"></polygon>
-          <polygon points="0,41 1.4,44.8 5.4,44.8 2.2,47.2 3.4,51 0,48.6 -3.4,51 -2.2,47.2 -5.4,44.8 -1.4,44.8"></polygon>
-          <polygon points="-20.5,35.5 -19.1,39.3 -15.1,39.3 -18.3,41.7 -17.1,45.5 -20.5,43.1 -23.9,45.5 -22.7,41.7 -25.9,39.3 -21.9,39.3"></polygon>
-          <polygon points="-35.5,20.5 -34.1,24.3 -30.1,24.3 -33.3,26.7 -32.1,30.5 -35.5,28.1 -38.9,30.5 -37.7,26.7 -40.9,24.3 -36.9,24.3"></polygon>
-          <polygon points="-41,0 -39.6,3.8 -35.6,3.8 -38.8,6.2 -37.6,10 -41,7.6 -44.4,10 -43.2,6.2 -46.4,3.8 -42.4,3.8"></polygon>
-          <polygon points="-35.5,-20.5 -34.1,-16.7 -30.1,-16.7 -33.3,-14.3 -32.1,-10.5 -35.5,-12.9 -38.9,-10.5 -37.7,-14.3 -40.9,-16.7 -36.9,-16.7"></polygon>
-          <polygon points="-20.5,-35.5 -19.1,-31.7 -15.1,-31.7 -18.3,-29.3 -17.1,-25.5 -20.5,-27.9 -23.9,-25.5 -22.7,-29.3 -25.9,-31.7 -21.9,-31.7"></polygon>
-        </g>
-      </svg>
+  <div class="coinFace coinGreen" aria-hidden="true">
+
+    <!-- Anneau d’étoiles généré par le CSS -->
+    <div class="coinStarsRing"></div>
+
+    <!-- Centre de la pièce -->
+    <div class="coinInner coinInnerGreen">
+      <div class="n">1</div>
+      <div class="t">BoCitecoin</div>
     </div>
+
+  </div>
+
+</div>
 
     <div class="coinInner coinInnerGreen">
       <div class="n">1</div>
@@ -2374,18 +2356,8 @@ if(key==="commerces"){
 
     <div class="coinShowcase">
       <div class="coinFace coinGold" aria-hidden="true">
-        <div class="coinStarsRing coinStarsGold" aria-hidden="true">
-          <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-            <circle
-              cx="50"
-              cy="50"
-              r="30.5"
-              stroke-width="4.8"
-              stroke-dasharray="0.01 5.33"
-              class="starRingStroke">
-            </circle>
-          </svg>
-        </div>
+
+        <div class="coinStarsRing"></div>
 
         <div class="coinInner coinInnerGold">
           <div class="n">1</div>
@@ -2393,52 +2365,482 @@ if(key==="commerces"){
         </div>
       </div>
 
-      <div class="coinStack" aria-hidden="true">
-        <div class="stackCoin stackGold stack1">
-          <div class="stackCoinStars" aria-hidden="true">
-            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-              <circle
-                cx="22"
-                cy="22"
-                r="11.4"
-                stroke-width="2.2"
-                stroke-dasharray="0.01 2.05"
-                class="stackStarRingStroke">
-              </circle>
-            </svg>
-          </div>
+      <div class="walletBox">
+        <div class="walletTitle">Wallet client — BoCitecoins OR</div>
+        <div class="walletValue walletGold" id="citizenCoinBalance">37</div>
+        <div class="walletSub">
+          BoCitecoins disponibles pour échange chez les commerçants partenaires Bo’CitéArt selon les règles locales.
         </div>
 
-        <div class="stackCoin stackGold stack2">
-          <div class="stackCoinStars" aria-hidden="true">
-            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-              <circle
-                cx="22"
-                cy="22"
-                r="11.4"
-                stroke-width="2.2"
-                stroke-dasharray="0.01 2.05"
-                class="stackStarRingStroke">
-              </circle>
-            </svg>
-          </div>
+        <div style="margin-top:12px;font-weight:900;">Progression vers le prochain palier</div>
+        <div style="margin-top:8px;background:#efe4d3;border-radius:999px;overflow:hidden;height:14px;border:2px solid rgba(0,0,0,.08);">
+          <div id="walletProgressBar" style="height:100%;width:0%;border-radius:999px;transition:width .25s ease, background .25s ease;background:linear-gradient(90deg,#e4c81c 0%, #88b84b 55%, #2f8f46 100%);"></div>
         </div>
 
-        <div class="stackCoin stackGold stack3">
-          <div class="stackCoinStars" aria-hidden="true">
-            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-              <circle
-                cx="22"
-                cy="22"
-                r="11.4"
-                stroke-width="2.2"
-                stroke-dasharray="0.01 2.05"
-                class="stackStarRingStroke">
-              </circle>
-            </svg>
-          </div>
+        <div id="walletProgressText" class="walletSub" style="margin-top:8px;">Chargement...</div>
+        <div id="walletMotivation" class="walletSub" style="margin-top:6px;color:#2f5d46;font-weight:900;">&nbsp;</div>
+        <div id="walletExpiryInfo" class="walletSub" style="margin-top:6px;">&nbsp;</div>
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:14px;">Paliers d’échange</div>
+    <div class="box">
+      <div style="font-weight:900;">🎁 Échanges possibles chez les partenaires Bo’CitéArt</div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li><strong>30 bocitecoins</strong> : avantage partenaire <span style="white-space:nowrap;"><strong>jusqu’à 15 %</strong></span></li>
+        <li><strong>50 bocitecoins</strong> : avantage renforcé <span style="white-space:nowrap;"><strong>jusqu’à 25 %</strong></span></li>
+        <li><strong>100 bocitecoins</strong> : avantage premium <span style="white-space:nowrap;"><strong>jusqu’à 40 %</strong></span></li>
+      </ul>
+      <div class="muted" style="margin-top:8px;">
+        Les avantages sont proposés librement par les commerçants partenaires.
+        Les pourcentages indiqués correspondent à des niveaux indicatifs permettant de structurer les échanges Bo’CitéArt.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Les offres comprenant de la nourriture ou des boissons ne peuvent représenter plus de 30 % de la valeur totale de l’avantage.
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn" id="walletClientRedeem30" type="button">Échanger 30</button>
+      <button class="choiceBtn" id="walletClientRedeem50" type="button">Échanger 50</button>
+      <button class="choiceBtn" id="walletClientRedeem100" type="button">Échanger 100</button>
+      <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser (démo)</button>
+    </div>
+
+    <div style="font-weight:900;margin-top:14px;">Attribution commerçant → client (démo)</div>
+    <div class="box">
+      <div class="muted">
+        Le client règle son achat directement au commerçant par le moyen de paiement accepté par ce dernier
+        (espèces, carte bancaire, chèque ou autre). Bo’CitéArt n’intervient pas dans ce paiement.
+      </div>
+
+      <div class="muted" style="margin-top:8px;">
+        Une fois l’achat encaissé, le commerçant saisit simplement le montant, l’application calcule automatiquement
+        les bocitecoins, puis le commerçant scanne le client pour créditer son wallet.
+      </div>
+
+      <div style="margin-top:10px;font-weight:900;">Montant d’achat</div>
+      <input class="miniField" id="shopPurchaseAmount" type="number" min="0" step="0.01" placeholder="Ex : 47.00" />
+
+      <div style="margin-top:10px;font-weight:900;">Bocitecoins calculés</div>
+      <div class="box" style="background:var(--bg);">
+        <strong id="shopCoinsCalc">0</strong> bocitecoin(s) OR à verser
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="shopCalcBtn" type="button">Calculer</button>
+        <button class="choiceBtn" id="shopScanClientBtn" type="button">Scanner le client</button>
+        <button class="choiceBtn" id="shopCreditClientBtn" type="button">Valider l’envoi</button>
+        <button class="choiceBtn" id="shopUndoBtn" type="button" style="background:#fff;">Correction 60 s</button>
+      </div>
+
+      <div class="muted" style="margin-top:10px;">
+        Règle actuelle : 1 bocitecoin OR par tranche complète de 10 € d’achat.
+      </div>
+      <div class="muted" style="margin-top:6px;">
+        En cas d’erreur de saisie, le commerçant dispose d’une fenêtre de correction de 60 secondes après validation.
+      </div>
+      <div class="muted" style="margin-top:6px;">
+        Si une anomalie persiste après ce délai, une demande de régularisation peut être transmise à l’administrateur Bo’CitéArt,
+        qui intervient après vérification dans un délai raisonnable.
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Bocitecoins couleur OR</div>
+    <div class="box">
+      <strong>Clarification :</strong> “OR” = couleur / repère visuel dans l’application, sans valeur intrinsèque.
+      <div class="muted" style="margin-top:8px;">
+        Le solde visible du citoyen sert à motiver l’échange, le retour en commerce, et la consultation du compte.
+      </div>
+    </div>
+
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Attribution : 1 bocitecoin couleur OR par tranche de 10 € d’achat</li>
+      <li>Seuil minimum : 10 €</li>
+      <li>Chaque tranche complète de 10 € = +1 bocitecoin OR</li>
+      <li>Échange standard à partir de 30 bocitecoins</li>
+      <li>Échanges renforcés possibles à 50 et 100 bocitecoins</li>
+    </ul>
+
+    <div style="font-weight:900;margin-top:12px;">Règle anniversaire du compte</div>
+    <div class="box">
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Validité standard : <strong>1 an</strong> à compter du premier bocitecoin obtenu</li>
+        <li>À <strong>30 jours</strong> de la date anniversaire : échange autorisé dès <strong>20 bocitecoins</strong></li>
+        <li>Un message d’alerte informe le client avant échéance</li>
+        <li>Si aucun échange n’est réalisé avant l’échéance : le compte repart à <strong>12 bocitecoins</strong></li>
+        <li>Le reste du solde est brûlé automatiquement à la date anniversaire</li>
+      </ul>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Frais Bo’CitéArt (structure)</div>
+    <div class="box">
+      <strong>Règle :</strong> <strong>0,18 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés (traçabilité).
+      <div class="muted" style="margin-top:8px;">
+        Reversement automatique via PSP (ou solution équivalente), avec journalisation et facture mensuelle récapitulative.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Le client paie son achat directement au commerçant. Le PSP intervient uniquement sur les écritures Bo’CitéArt,
+        la traçabilité, les prélèvements et les factures partenaires.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Vue “suivi” ci-dessous : indicative, non comptable, non exploitable juridiquement.
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Suivi mensuel (démo — indicatif)</div>
+    <div class="box">
+      <div class="muted">Saisis un montant d’achats du mois (ex : total caisse) pour voir l’estimation.</div>
+
+      <div style="margin-top:10px;font-weight:900;">Montant achats (mois en cours)</div>
+      <input class="miniField" id="feeInputSales" type="number" min="0" step="0.01" placeholder="Ex : 1250.00" />
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="feeAddBtn" type="button">➕ Ajouter / mettre à jour</button>
+        <button class="choiceBtn" id="feeResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+      </div>
+
+      <div class="box" style="margin-top:12px;background:var(--bg);">
+        <div style="font-weight:900;">Résumé (mois en cours)</div>
+        <div class="muted" style="margin-top:6px;">
+          Achats saisis : <strong id="feeSalesOut">0,00 €</strong><br>
+          Frais estimés Bo’CitéArt : <strong id="feeOut">0,00 €</strong><br>
+          Règle : 0,18 € / tranche de 10 € (arrondi par tranches)
         </div>
       </div>
+
+      <div class="muted" style="margin-top:10px;">
+        (Démo) Données stockées localement sur ce téléphone.
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
+      <li>Journée complète : grisée et non sélectionnable</li>
+      <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
+      <li>Option : texte en gras (+4€ TTC)</li>
+      <li>Possibilité d’URL selon conformité</li>
+    </ul>
+    `);
+
+  setTimeout(()=>{
+    if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
+
+    const CITIZEN_META_KEY = "bociteart_citizen_wallet_meta_v1";
+
+    function loadCitizenMeta(){
+      try{
+        const raw = localStorage.getItem(CITIZEN_META_KEY);
+        if(raw) return JSON.parse(raw);
+      }catch(e){}
+      const now = Date.now();
+      const oneYear = 365 * 24 * 60 * 60 * 1000;
+      return {
+        firstEarnTs: now,
+        expireTs: now + oneYear,
+        lastTx: null
+      };
+    }
+
+    function saveCitizenMeta(obj){
+      try{ localStorage.setItem(CITIZEN_META_KEY, JSON.stringify(obj)); }catch(e){}
+    }
+
+    function ensureCitizenMeta(){
+      const wallet = loadCitizenWallet();
+      const meta = loadCitizenMeta();
+      if(Number(wallet.or || 0) > 0 && !meta.firstEarnTs){
+        const now = Date.now();
+        meta.firstEarnTs = now;
+        meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+      }
+      saveCitizenMeta(meta);
+      return meta;
+    }
+
+    function daysBetween(now, ts){
+      return Math.ceil((ts - now) / (24 * 60 * 60 * 1000));
+    }
+
+    function getNextTarget(coins){
+      if(coins < 30) return 30;
+      if(coins < 50) return 50;
+      if(coins < 100) return 100;
+      return 100;
+    }
+
+    function getTargetLabel(target){
+      if(target === 30) return "jusqu’à 15 %";
+      if(target === 50) return "jusqu’à 25 %";
+      return "jusqu’à 40 %";
+    }
+
+    function getProgressPercent(coins){
+      if(coins < 30) return Math.max(0, Math.min(100, (coins / 30) * 100));
+      if(coins < 50) return Math.max(0, Math.min(100, ((coins - 30) / 20) * 100));
+      if(coins < 100) return Math.max(0, Math.min(100, ((coins - 50) / 50) * 100));
+      return 100;
+    }
+
+    function getMotivationText(coins){
+      const next = getNextTarget(coins);
+      const diff = next - coins;
+
+      if(coins >= 100) return "Palier premium atteint. Vous pouvez profiter du niveau d’avantage maximum.";
+      if(diff === 4) return "Plus que 4 bocitecoins pour échanger. Votre belle surprise vous attend.";
+      if(diff === 3) return "Plus que 3 bocitecoins. Encore un petit effort.";
+      if(diff === 2) return "Plus que 2 bocitecoins. Vous y êtes presque.";
+      if(diff === 1) return "Plus que 1 bocitecoin. Le prochain achat peut déclencher votre avantage.";
+      if(coins < 30) return "Cumulez vos bocitecoins pour atteindre le premier échange.";
+      if(coins < 50) return "Conservez vos bocitecoins pour viser un avantage encore plus fort.";
+      return "Continuez à cumuler pour atteindre le niveau premium.";
+    }
+
+    function checkAnniversaryRule(){
+      const wallet = loadCitizenWallet();
+      const meta = ensureCitizenMeta();
+      const now = Date.now();
+
+      if(meta.expireTs && now >= meta.expireTs){
+        const current = Number(wallet.or || 0);
+        wallet.or = 12;
+        saveCitizenWallet(wallet);
+
+        meta.firstEarnTs = now;
+        meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+        meta.lastTx = {
+          type: "anniversary_reset",
+          previous: current,
+          resulting: 12,
+          ts: now
+        };
+        saveCitizenMeta(meta);
+      }
+    }
+
+    function refreshWalletUi(){
+      checkAnniversaryRule();
+
+      const wallet = loadCitizenWallet();
+      const meta = ensureCitizenMeta();
+      const coins = Number(wallet.or || 0);
+
+      const bal = document.getElementById("citizenCoinBalance");
+      const progressBar = document.getElementById("walletProgressBar");
+      const progressText = document.getElementById("walletProgressText");
+      const motivation = document.getElementById("walletMotivation");
+      const expiry = document.getElementById("walletExpiryInfo");
+
+      if(bal) bal.textContent = coins;
+
+      const next = getNextTarget(coins);
+      const percent = getProgressPercent(coins);
+
+      if(progressBar){
+        progressBar.style.width = percent + "%";
+        progressBar.style.background = `linear-gradient(90deg, #e4c81c 0%, #9fca45 ${Math.max(35, percent)}%, #2f8f46 100%)`;
+      }
+
+      if(progressText){
+        if(coins >= 100){
+          progressText.textContent = `Palier actuel : 100 bocitecoins • Avantage estimé : ${getTargetLabel(100)}`;
+        }else{
+          progressText.textContent = `Solde actuel : ${coins} bocitecoins • Prochain palier : ${next} • Avantage estimé : ${getTargetLabel(next)}`;
+        }
+        progressText.style.whiteSpace = "normal";
+        progressText.style.wordBreak = "keep-all";
+      }
+
+      if(motivation){
+        motivation.textContent = getMotivationText(coins);
+      }
+
+      if(expiry){
+        const now = Date.now();
+        const daysLeft = daysBetween(now, meta.expireTs);
+        if(daysLeft <= 30){
+          expiry.textContent = `Attention : il vous reste ${daysLeft} jour(s) avant la date anniversaire. Échange possible dès 20 bocitecoins sur cette période.`;
+        }else{
+          expiry.textContent = `Date anniversaire du compte : dans ${daysLeft} jour(s).`;
+        }
+      }
+    }
+
+    function setFirstEarnDateIfNeeded(coinsAdded){
+      if(coinsAdded <= 0) return;
+      const wallet = loadCitizenWallet();
+      const meta = loadCitizenMeta();
+      if(!meta.firstEarnTs || Number(wallet.or || 0) <= 0){
+        const now = Date.now();
+        meta.firstEarnTs = now;
+        meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+        saveCitizenMeta(meta);
+      }
+    }
+
+    function registerTx(tx){
+      const meta = loadCitizenMeta();
+      meta.lastTx = tx;
+      saveCitizenMeta(meta);
+    }
+
+  function redeemCoins(required){
+  const wallet = loadCitizenWallet();
+  const meta = ensureCitizenMeta();
+  const now = Date.now();
+  const coins = Number(wallet.or || 0);
+  const daysLeft = daysBetween(now, meta.expireTs);
+  const loweredThresholdAllowed = daysLeft <= 30;
+  const minimumAllowed = loweredThresholdAllowed ? 20 : 30;
+
+  if(required < minimumAllowed){
+    alert(`Échange impossible sous ${minimumAllowed} bocitecoins dans la période actuelle.`);
+    return;
+  }
+
+  if(coins < required){
+    alert(`Solde insuffisant. Il faut ${required} bocitecoins.`);
+    return;
+  }
+
+  if(confirm(`Confirmer l’échange de ${required} bocitecoins ?`)){
+    wallet.or = Math.max(0, coins - required);
+    saveCitizenWallet(wallet);
+    registerTx({
+      type: "redeem",
+      amount: required,
+      previous: coins,
+      resulting: wallet.or,
+      ts: Date.now()
+    });
+    refreshWalletUi();
+    alert(`Échange validé (démo) : ${required} bocitecoins utilisés.`);
+  }
+}
+
+    refreshWalletUi();
+
+    const rst = document.getElementById("walletClientReset");
+    const r30 = document.getElementById("walletClientRedeem30");
+    const r50 = document.getElementById("walletClientRedeem50");
+    const r100 = document.getElementById("walletClientRedeem100");
+
+    if(r30) r30.onclick = ()=> redeemCoins(30);
+    if(r50) r50.onclick = ()=> redeemCoins(50);
+    if(r100) r100.onclick = ()=> redeemCoins(100);
+
+    if(rst) rst.onclick = ()=>{
+      if(confirm("Réinitialiser le wallet Client (démo) sur ce téléphone ?")){
+        saveCitizenWallet({ or: 0 });
+        const now = Date.now();
+        saveCitizenMeta({
+          firstEarnTs: now,
+          expireTs: now + (365 * 24 * 60 * 60 * 1000),
+          lastTx: null
+        });
+        refreshWalletUi();
+      }
+    };
+
+    const amountInput = document.getElementById("shopPurchaseAmount");
+    const calcOut = document.getElementById("shopCoinsCalc");
+    const calcBtn = document.getElementById("shopCalcBtn");
+    const scanBtn = document.getElementById("shopScanClientBtn");
+    const creditBtn = document.getElementById("shopCreditClientBtn");
+    const undoBtn = document.getElementById("shopUndoBtn");
+
+    let lastCalculatedCoins = 0;
+    let lastClientScanned = false;
+    let undoDeadlineTs = 0;
+
+    const computeCoins = ()=>{
+      const amount = Number(amountInput ? amountInput.value : 0);
+      if(!Number.isFinite(amount) || amount < 0){
+        lastCalculatedCoins = 0;
+      } else {
+        lastCalculatedCoins = Math.floor(amount / 10);
+      }
+      if(calcOut) calcOut.textContent = String(lastCalculatedCoins);
+    };
+
+    if(calcBtn) calcBtn.onclick = ()=>{
+      computeCoins();
+      alert("Calcul effectué (démo).");
+    };
+
+    if(scanBtn) scanBtn.onclick = ()=>{
+      computeCoins();
+      lastClientScanned = true;
+      alert("Scan client simulé (démo).");
+    };
+
+    if(creditBtn) creditBtn.onclick = ()=>{
+      computeCoins();
+      if(!lastClientScanned){
+        alert("Scanne d’abord le client.");
+        return;
+      }
+      if(lastCalculatedCoins <= 0){
+        alert("Aucun bocitecoin à verser pour ce montant.");
+        return;
+      }
+
+      const w = loadCitizenWallet();
+      const before = Number(w.or || 0);
+      w.or = before + lastCalculatedCoins;
+      saveCitizenWallet(w);
+      setFirstEarnDateIfNeeded(lastCalculatedCoins);
+
+      registerTx({
+        type: "credit",
+        amount: lastCalculatedCoins,
+        previous: before,
+        resulting: w.or,
+        purchaseAmount: Number(amountInput ? amountInput.value : 0),
+        ts: Date.now()
+      });
+
+      undoDeadlineTs = Date.now() + 60000;
+      lastClientScanned = false;
+      refreshWalletUi();
+      alert(lastCalculatedCoins + " bocitecoin(s) OR versé(s) au client (démo). Correction possible pendant 60 secondes.");
+    };
+
+    if(undoBtn) undoBtn.onclick = ()=>{
+      const meta = loadCitizenMeta();
+      const tx = meta.lastTx;
+
+      if(!tx || tx.type !== "credit"){
+        alert("Aucune opération crédit récente à corriger.");
+        return;
+      }
+
+      if(Date.now() > undoDeadlineTs){
+        alert("Délai de correction dépassé.");
+        return;
+      }
+
+      const w = loadCitizenWallet();
+      w.or = Math.max(0, Number(tx.previous || 0));
+      saveCitizenWallet(w);
+
+      registerTx({
+        type: "undo_credit",
+        previous: Number(tx.resulting || 0),
+        resulting: Number(tx.previous || 0),
+        ts: Date.now()
+      });
+
+      refreshWalletUi();
+      alert("Dernière attribution annulée (démo). Tu peux ressaisir le bon montant.");
+    };
+
+    const xb = $("xBtn");
+    if(xb && xb.focus) xb.focus();
+  },0);
+  return;
+}
 
       <div class="walletBox">
         <div class="walletTitle">Wallet client — BoCitecoins OR</div>
