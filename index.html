@@ -1954,304 +1954,170 @@ if(key==="ecole"){
   return;
 }
           
-if(key==="sport"){
+          if(key==="sport"){
   openModal("Sport", `
     <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
-    <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
 
-  <div class="coinShowcase">
-  <div class="coinFace coinGreen" aria-hidden="true">
-    <div class="coinInner coinInnerGreen">
-      <div class="n">1</div>
-      <div class="t">BoCitecoin</div>
-    </div>
-  </div>
-
-  <div class="walletBox">
-    <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
-    <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
-    <div class="walletSub">
-      BoCitecoins gagnés par les actions sportives/citoyennes, échangeables chez un commerçant partenaire
-      selon les règles locales et le partage solidaire prévu.
-    </div>
-    <div class="walletActions">
-      <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-      <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
-      <button class="walletMini" id="walletSportMinus" type="button">−1</button>
-      <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
-    </div>
-  </div>
-</div>
-
-    <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
     <div class="box">
-      <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
+      <strong>Cadre :</strong> publications par référent habilité.
+      Éléments de validation (si activés) non publics, accès restreint.
+    </div>
+
+    <!-- WALLET SPORT -->
+    <div class="coinShowcase">
+
+      <div class="coinFace coinGreen">
+        <div class="coinInner coinInnerGreen">
+          <div class="n">1</div>
+          <div class="t">BoCitecoin</div>
+        </div>
+      </div>
+
+      <div class="walletBox">
+
+        <div class="walletTitle">
+          Wallet Sport — BoCitecoins VERT
+        </div>
+
+        <div class="walletValue walletGreen" id="sportCoinBalance">
+          0
+        </div>
+
+        <div class="walletSub">
+          BoCitecoins gagnés par les actions sportives / citoyennes,
+          échangeables chez un commerçant partenaire.
+        </div>
+
+        <div class="walletActions">
+          <button class="walletMini" id="walletSportPlus10">+10</button>
+          <button class="walletMini" id="walletSportPlus25">+25</button>
+          <button class="walletMini" id="walletSportMinus">-1</button>
+          <button class="walletMini" id="walletSportReset">Réinitialiser</button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- FICHE -->
+    <div style="font-weight:900;margin-top:14px;">
+      📄 Fichier (à ouvrir)
+    </div>
+
+    <div class="box">
+      <div style="font-weight:900;">
+        Fiche élus / CCI / commerçants — soutien Club + Association
+      </div>
+
       <div class="muted" style="margin-top:6px;">
-        Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm),
-        et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras.
-        Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.
+        Cette fiche explique la logique de soutien trimestriel,
+        la visibilité commerçante et les partenariats club + association.
       </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
+
+      <div style="margin-top:10px;">
+        <button class="choiceBtn" id="openSportFicheBtn">
+          Ouvrir la fiche
+        </button>
       </div>
     </div>
 
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Rapport du week-end (résumé)</li>
-      <li>Missions citoyennes : propreté • rangement • fair-play</li>
-      <li>Validation (optionnelle) — non publique</li>
-      <li>Bocitecoins couleur Vert : collectivité</li>
-      <li>Pas de messagerie • pas de commentaires libres</li>
+    <!-- LISTE -->
+    <ul style="margin:10px 0 0 18px;font-weight:800;">
+      <li>Rapport du week-end</li>
+      <li>Actions citoyennes</li>
+      <li>Validation optionnelle</li>
+      <li>Bocitecoins VERT : collectivité</li>
+      <li>Pas de messagerie</li>
     </ul>
 
-    <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Parcs • bois • parcours • salles</li>
-      <li>Carte plein écran + guidage</li>
-    </ul>
-
-    <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
-    <div class="box">
-      Actuellement : 12 clubs engagés (démo)<br><br>
-      Chaque club peut proposer :<br>
-      • Rapport du week-end<br>
-      • Actions citoyennes<br>
-      • Partenariats commerçants<br>
-      • Soutien associatif
+    <!-- ECHANGE -->
+    <div style="font-weight:900;margin-top:16px;">
+      Échange commerçant ↔ référent sportif
     </div>
 
-    <div style="font-weight:900;margin-top:16px;">Échange commerçant ↔ référent sportif (démo)</div>
     <div class="box">
+
       <div class="muted">
-        Même principe que pour les commerçants : le commerçant scanne le portable du référent sportif,
-        prépare l’échange, remet la surprise ou le cadeau, puis les bocitecoins VERT sont brûlés
-        et le compteur repart à zéro.
+        Le commerçant scanne le téléphone du référent sportif,
+        prépare l’échange puis les bocitecoins VERT sont brûlés.
       </div>
 
-      <div class="muted" style="margin-top:8px;">
-        Répartition de l’échange :
-        <strong>minimum 30 %</strong> pour l’association choisie,
-        <strong>maximum 20 %</strong> en nourritures / boissons,
-        et <strong>50 %</strong> pour matériel sportif ou autre utile pour le sport.
+      <div style="margin-top:10px;font-weight:900;">
+        Association choisie
       </div>
 
-      <div style="margin-top:10px;font-weight:900;">Association choisie</div>
       <select class="miniField" id="sportAssoSelect">
-        <option value="Les Clés du Cœur">Les Clés du Cœur</option>
-        <option value="Étoile Filante">Étoile Filante</option>
-        <option value="Les Papillons (antenne Nord)">Les Papillons (antenne Nord)</option>
-        <option value="ATC Nord">ATC Nord</option>
+        <option>Les Clés du Cœur</option>
+        <option>Étoile Filante</option>
+        <option>Les Papillons</option>
+        <option>ATC Nord</option>
       </select>
 
-      <div style="margin-top:10px;font-weight:900;">Valeur totale estimée de l’échange (démo)</div>
-      <input class="miniField" id="sportGiftValue" type="number" min="0" step="0.01" placeholder="Ex : 100.00" />
-
-      <div style="margin-top:10px;font-weight:900;">Répartition automatique</div>
-      <div class="box" style="background:var(--bg);">
-        <div><strong>Association (30 % mini)</strong> : <span id="sportAssoOut">0,00 €</span></div>
-        <div style="margin-top:6px;"><strong>Nourritures / boissons (20 % max)</strong> : <span id="sportFoodOut">0,00 €</span></div>
-        <div style="margin-top:6px;"><strong>Matériel sportif / utile au sport (50 %)</strong> : <span id="sportEquipOut">0,00 €</span></div>
+      <div style="margin-top:10px;font-weight:900;">
+        Valeur estimée de l’échange
       </div>
 
-      <div style="margin-top:10px;font-weight:900;">Wallet sport détecté</div>
-      <div class="box" style="background:var(--bg);">
-        Solde sport actuel : <strong id="sportExchangeBalance">0</strong> bocitecoin(s) VERT
+      <input class="miniField" id="sportGiftValue" type="number" placeholder="100">
+
+      <div style="margin-top:10px;">
+        <button class="choiceBtn" id="sportCalcBtn">Calculer</button>
+        <button class="choiceBtn" id="sportScanRefBtn">Scanner</button>
+        <button class="choiceBtn" id="sportValidateBtn">Valider</button>
+        <button class="choiceBtn" id="sportBurnBtn">Brûler</button>
       </div>
 
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="sportCalcBtn" type="button">Calculer</button>
-        <button class="choiceBtn" id="sportScanRefBtn" type="button">Scanner le référent sportif</button>
-        <button class="choiceBtn" id="sportValidateBtn" type="button">Valider l’échange</button>
-        <button class="choiceBtn" id="sportBurnBtn" type="button" style="background:#fff;">Brûler et remettre à zéro</button>
-      </div>
-
-      <div class="muted" style="margin-top:10px;">
-        En démo, l’échange est simulé localement sur ce téléphone.
-        En LIVE : traçabilité, journalisation, historique, et validation selon les droits attribués.
-      </div>
     </div>
   `);
 
   setTimeout(()=>{
-    const b = $("openSportFicheBtn");
-    if(b) b.onclick = openSportFiche;
 
     const refresh = ()=>{
-      const out1 = document.getElementById("sportCoinBalance");
-      const out2 = document.getElementById("sportExchangeBalance");
-      const value = Number(loadSportWallet().vert || 0);
-      if(out1) out1.textContent = value;
-      if(out2) out2.textContent = value;
+      const w = loadSportWallet();
+      const v = Number(w.vert || 0);
+      const el = document.getElementById("sportCoinBalance");
+      if(el) el.textContent = v;
     };
+
     refresh();
 
-    const p10 = document.getElementById("walletSportPlus10");
-    const p25 = document.getElementById("walletSportPlus25");
-    const m1 = document.getElementById("walletSportMinus");
-    const rst = document.getElementById("walletSportReset");
+    const plus10 = document.getElementById("walletSportPlus10");
+    const plus25 = document.getElementById("walletSportPlus25");
+    const minus1 = document.getElementById("walletSportMinus");
+    const reset  = document.getElementById("walletSportReset");
 
-    if(p10) p10.onclick = ()=>{
+    if(plus10) plus10.onclick = ()=>{
       const w = loadSportWallet();
-      w.vert = Number(w.vert || 0) + 10;
+      w.vert = Number(w.vert||0) + 10;
       saveSportWallet(w);
       refresh();
     };
 
-    if(p25) p25.onclick = ()=>{
+    if(plus25) plus25.onclick = ()=>{
       const w = loadSportWallet();
-      w.vert = Number(w.vert || 0) + 25;
+      w.vert = Number(w.vert||0) + 25;
       saveSportWallet(w);
       refresh();
     };
 
-    if(m1) m1.onclick = ()=>{
+    if(minus1) minus1.onclick = ()=>{
       const w = loadSportWallet();
-      w.vert = Math.max(0, Number(w.vert || 0) - 1);
+      w.vert = Math.max(0, Number(w.vert||0)-1);
       saveSportWallet(w);
       refresh();
     };
 
-    if(rst) rst.onclick = ()=>{
-      if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
-        saveSportWallet({ vert: 0 });
+    if(reset) reset.onclick = ()=>{
+      if(confirm("Réinitialiser le wallet sport ?")){
+        saveSportWallet({vert:0});
         refresh();
       }
     };
 
-    const giftInput = document.getElementById("sportGiftValue");
-    const assoOut = document.getElementById("sportAssoOut");
-    const foodOut = document.getElementById("sportFoodOut");
-    const equipOut = document.getElementById("sportEquipOut");
-    const calcBtn = document.getElementById("sportCalcBtn");
-    const scanBtn = document.getElementById("sportScanRefBtn");
-    const validBtn = document.getElementById("sportValidateBtn");
-    const burnBtn = document.getElementById("sportBurnBtn");
-    const assoSelect = document.getElementById("sportAssoSelect");
-
-    let sportRefScanned = false;
-    let sportExchangeValidated = false;
-
-    const fmtSportEUR = (x)=>{
-      const n = Number(x || 0);
-      return n.toLocaleString("fr-FR", { minimumFractionDigits:2, maximumFractionDigits:2 }) + " €";
-    };
-
-    const computeSportSplit = ()=>{
-      const total = Number(giftInput ? giftInput.value : 0);
-
-      if(!Number.isFinite(total) || total <= 0){
-        if(assoOut) assoOut.textContent = "0,00 €";
-        if(foodOut) foodOut.textContent = "0,00 €";
-        if(equipOut) equipOut.textContent = "0,00 €";
-        return { total:0, asso:0, food:0, equip:0 };
-      }
-
-      const asso = total * 0.30;
-      const food = total * 0.20;
-      const equip = total * 0.50;
-
-      if(assoOut) assoOut.textContent = fmtSportEUR(asso);
-      if(foodOut) foodOut.textContent = fmtSportEUR(food);
-      if(equipOut) equipOut.textContent = fmtSportEUR(equip);
-
-      return { total, asso, food, equip };
-    };
-
-    if(calcBtn) calcBtn.onclick = ()=>{
-      const parts = computeSportSplit();
-      if(parts.total <= 0){
-        alert("Saisis une valeur d’échange valide.");
-        return;
-      }
-      alert("Répartition calculée (démo).");
-    };
-
-    if(scanBtn) scanBtn.onclick = ()=>{
-      const w = loadSportWallet();
-      const coins = Number(w.vert || 0);
-      if(coins <= 0){
-        alert("Aucun bocitecoin VERT à échanger.");
-        return;
-      }
-      sportRefScanned = true;
-      refresh();
-      alert("Scan du référent sportif simulé (démo).");
-    };
-
-    if(validBtn) validBtn.onclick = ()=>{
-      const w = loadSportWallet();
-      const coins = Number(w.vert || 0);
-      const parts = computeSportSplit();
-      const assoName = assoSelect ? assoSelect.value : "";
-
-      if(!sportRefScanned){
-        alert("Scanne d’abord le référent sportif.");
-        return;
-      }
-
-      if(coins <= 0){
-        alert("Aucun bocitecoin VERT à échanger.");
-        return;
-      }
-
-      if(parts.total <= 0){
-        alert("Saisis une valeur totale d’échange valide.");
-        return;
-      }
-
-      if(!assoName){
-        alert("Choisis une association.");
-        return;
-      }
-
-      sportExchangeValidated = true;
-
-      alert(
-        "Échange validé (démo)." +
-        "\\nAssociation : " + assoName +
-        "\\nPart association : " + fmtSportEUR(parts.asso) +
-        "\\nPart nourritures / boissons : " + fmtSportEUR(parts.food) +
-        "\\nPart matériel sportif / utile au sport : " + fmtSportEUR(parts.equip) +
-        "\\n\\nTu peux maintenant brûler les bocitecoins VERT et remettre le compteur à zéro."
-      );
-    };
-
-    if(burnBtn) burnBtn.onclick = ()=>{
-      const w = loadSportWallet();
-      const coins = Number(w.vert || 0);
-
-      if(!sportRefScanned){
-        alert("Scanne d’abord le référent sportif.");
-        return;
-      }
-
-      if(!sportExchangeValidated){
-        alert("Valide d’abord l’échange.");
-        return;
-      }
-
-      if(coins <= 0){
-        alert("Aucun bocitecoin VERT à brûler.");
-        return;
-      }
-
-      if(confirm("Brûler les bocitecoins VERT et remettre le compteur sport à zéro ?")){
-        w.vert = 0;
-        saveSportWallet(w);
-        sportRefScanned = false;
-        sportExchangeValidated = false;
-        if(giftInput) giftInput.value = "";
-        if(assoOut) assoOut.textContent = "0,00 €";
-        if(foodOut) foodOut.textContent = "0,00 €";
-        if(equipOut) equipOut.textContent = "0,00 €";
-        refresh();
-        alert("Échange terminé (démo) : bocitecoins VERT brûlés, compteur remis à zéro.");
-      }
-    };
   },0);
+
   return;
 }
-          
+
 if(key==="mairie"){
   openModal("Mairie", `
     <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
