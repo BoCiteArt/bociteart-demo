@@ -1991,8 +1991,8 @@ if(key==="ecole"){
   }, 0);
   return;
 }
-          
-          if(key==="sport"){
+        
+         if(key==="sport"){
   openModal("Sport", `
     <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
 
@@ -2004,16 +2004,14 @@ if(key==="ecole"){
     <!-- WALLET SPORT -->
     <div class="coinShowcase">
 
-      <div class="coinFace coinGreen">
-       <div class="coinFace coinGreen" aria-hidden="true">
-  <div class="coinInner coinInnerGreen">
-    <div class="n">1</div>
-    <div class="t">BoCitecoin</div>
-  </div>
-</div>
+      <div class="coinFace coinGreen" aria-hidden="true">
+        <div class="coinInner coinInnerGreen">
+          <div class="n">1</div>
+          <div class="t">BoCitecoin</div>
+        </div>
+      </div>
 
       <div class="walletBox">
-
         <div class="walletTitle">
           Wallet Sport — BoCitecoins VERT
         </div>
@@ -2028,12 +2026,11 @@ if(key==="ecole"){
         </div>
 
         <div class="walletActions">
-          <button class="walletMini" id="walletSportPlus10">+10</button>
-          <button class="walletMini" id="walletSportPlus25">+25</button>
-          <button class="walletMini" id="walletSportMinus">-1</button>
-          <button class="walletMini" id="walletSportReset">Réinitialiser</button>
+          <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
+          <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
+          <button class="walletMini" id="walletSportMinus" type="button">-1</button>
+          <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
         </div>
-
       </div>
 
     </div>
@@ -2054,7 +2051,7 @@ if(key==="ecole"){
       </div>
 
       <div style="margin-top:10px;">
-        <button class="choiceBtn" id="openSportFicheBtn">
+        <button class="choiceBtn" id="openSportFicheBtn" type="button">
           Ouvrir la fiche
         </button>
       </div>
@@ -2086,29 +2083,32 @@ if(key==="ecole"){
       </div>
 
       <select class="miniField" id="sportAssoSelect">
-        <option>Les Clés du Cœur</option>
-        <option>Étoile Filante</option>
-        <option>Les Papillons</option>
-        <option>ATC Nord</option>
+        <option value="Les Clés du Cœur">Les Clés du Cœur</option>
+        <option value="Étoile Filante">Étoile Filante</option>
+        <option value="Les Papillons">Les Papillons</option>
+        <option value="ATC Nord">ATC Nord</option>
       </select>
 
       <div style="margin-top:10px;font-weight:900;">
         Valeur estimée de l’échange
       </div>
 
-      <input class="miniField" id="sportGiftValue" type="number" placeholder="100">
+      <input class="miniField" id="sportGiftValue" type="number" min="0" step="0.01" placeholder="100">
 
-      <div style="margin-top:10px;">
-        <button class="choiceBtn" id="sportCalcBtn">Calculer</button>
-        <button class="choiceBtn" id="sportScanRefBtn">Scanner</button>
-        <button class="choiceBtn" id="sportValidateBtn">Valider</button>
-        <button class="choiceBtn" id="sportBurnBtn">Brûler</button>
+      <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="choiceBtn" id="sportCalcBtn" type="button">Calculer</button>
+        <button class="choiceBtn" id="sportScanRefBtn" type="button">Scanner</button>
+        <button class="choiceBtn" id="sportValidateBtn" type="button">Valider</button>
+        <button class="choiceBtn" id="sportBurnBtn" type="button">Brûler</button>
       </div>
 
     </div>
   `);
 
   setTimeout(()=>{
+
+    const ficheBtn = document.getElementById("openSportFicheBtn");
+    if(ficheBtn) ficheBtn.onclick = openSportFiche;
 
     const refresh = ()=>{
       const w = loadSportWallet();
@@ -2126,36 +2126,126 @@ if(key==="ecole"){
 
     if(plus10) plus10.onclick = ()=>{
       const w = loadSportWallet();
-      w.vert = Number(w.vert||0) + 10;
+      w.vert = Number(w.vert || 0) + 10;
       saveSportWallet(w);
       refresh();
     };
 
     if(plus25) plus25.onclick = ()=>{
       const w = loadSportWallet();
-      w.vert = Number(w.vert||0) + 25;
+      w.vert = Number(w.vert || 0) + 25;
       saveSportWallet(w);
       refresh();
     };
 
     if(minus1) minus1.onclick = ()=>{
       const w = loadSportWallet();
-      w.vert = Math.max(0, Number(w.vert||0)-1);
+      w.vert = Math.max(0, Number(w.vert || 0) - 1);
       saveSportWallet(w);
       refresh();
     };
 
     if(reset) reset.onclick = ()=>{
       if(confirm("Réinitialiser le wallet sport ?")){
-        saveSportWallet({vert:0});
+        saveSportWallet({ vert: 0 });
         refresh();
+      }
+    };
+
+    const giftInput = document.getElementById("sportGiftValue");
+    const calcBtn = document.getElementById("sportCalcBtn");
+    const scanBtn = document.getElementById("sportScanRefBtn");
+    const validBtn = document.getElementById("sportValidateBtn");
+    const burnBtn = document.getElementById("sportBurnBtn");
+    const assoSelect = document.getElementById("sportAssoSelect");
+
+    let sportRefScanned = false;
+    let sportExchangeValidated = false;
+
+    if(calcBtn) calcBtn.onclick = ()=>{
+      const total = Number(giftInput ? giftInput.value : 0);
+      if(!Number.isFinite(total) || total <= 0){
+        alert("Saisis une valeur d’échange valide.");
+        return;
+      }
+      alert("Calcul effectué (démo).");
+    };
+
+    if(scanBtn) scanBtn.onclick = ()=>{
+      const w = loadSportWallet();
+      const coins = Number(w.vert || 0);
+      if(coins <= 0){
+        alert("Aucun bocitecoin VERT à échanger.");
+        return;
+      }
+      sportRefScanned = true;
+      alert("Scan du référent sportif simulé (démo).");
+    };
+
+    if(validBtn) validBtn.onclick = ()=>{
+      const w = loadSportWallet();
+      const coins = Number(w.vert || 0);
+      const total = Number(giftInput ? giftInput.value : 0);
+      const assoName = assoSelect ? assoSelect.value : "";
+
+      if(!sportRefScanned){
+        alert("Scanne d’abord le référent sportif.");
+        return;
+      }
+
+      if(coins <= 0){
+        alert("Aucun bocitecoin VERT à échanger.");
+        return;
+      }
+
+      if(!Number.isFinite(total) || total <= 0){
+        alert("Saisis une valeur d’échange valide.");
+        return;
+      }
+
+      if(!assoName){
+        alert("Choisis une association.");
+        return;
+      }
+
+      sportExchangeValidated = true;
+      alert("Échange validé (démo).");
+    };
+
+    if(burnBtn) burnBtn.onclick = ()=>{
+      const w = loadSportWallet();
+      const coins = Number(w.vert || 0);
+
+      if(!sportRefScanned){
+        alert("Scanne d’abord le référent sportif.");
+        return;
+      }
+
+      if(!sportExchangeValidated){
+        alert("Valide d’abord l’échange.");
+        return;
+      }
+
+      if(coins <= 0){
+        alert("Aucun bocitecoin VERT à brûler.");
+        return;
+      }
+
+      if(confirm("Brûler les bocitecoins VERT et remettre le compteur sport à zéro ?")){
+        w.vert = 0;
+        saveSportWallet(w);
+        sportRefScanned = false;
+        sportExchangeValidated = false;
+        if(giftInput) giftInput.value = "";
+        refresh();
+        alert("Bocitecoins VERT brûlés, compteur remis à zéro.");
       }
     };
 
   },0);
 
   return;
-}
+} 
 
 if(key==="mairie"){
   openModal("Mairie", `
