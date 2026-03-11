@@ -401,23 +401,22 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   position:relative;
   width:108px;
   height:108px;
+  flex:0 0 108px;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
   overflow:hidden;
-  flex:0 0 108px;
   box-shadow:
-  0 12px 20px rgba(0,0,0,.20),
-  inset 0 2px 3px rgba(255,255,255,.25),
-  inset 0 -6px 12px rgba(0,0,0,.22),
-  inset 0 0 0 2px rgba(255,255,255,.08);
+    0 12px 20px rgba(0,0,0,.20),
+    inset 0 2px 3px rgba(255,255,255,.22),
+    inset 0 -7px 12px rgba(0,0,0,.22);
 }
 
-/* on supprime les faux cercles parasites */
+/* on supprime les anciens faux cercles */
 .coinFace::before,
 .coinFace::after{
-  display:none;
+  display:none !important;
 }
 
 /* Couleurs extérieures */
@@ -435,7 +434,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
 .coinGreen{
   background:
-    radial-gradient(circle at 32% 28%, #dff8ea 0%, #8fd0a9 18%, #4f8f6a 48%, #2f5d46 74%, #1e4030 100%);
+    radial-gradient(circle at 32% 28%, #d8f6e6 0%, #8dcda8 18%, #4f8f6a 48%, #2f5d46 74%, #1e4030 100%);
   border:3px solid #224c39;
 }
 
@@ -447,6 +446,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   z-index:2;
 }
 
+/* cercle fin autour des étoiles */
 .coinStarsRing::before{
   content:"";
   position:absolute;
@@ -455,35 +455,37 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   width:76px;
   height:76px;
   border-radius:50%;
-  border:1.5px solid rgba(255,255,255,.20);
-  transform:translate(-50%,-50%) translateY(12px);
+  border:1.5px solid rgba(255,255,255,.18);
+  transform:translate(-50%,-50%) translateY(6px);
 }
 
+/* étoiles */
 .coinStarsRing::after{
-  content:"";
+  content:"✦";
   position:absolute;
   left:50%;
   top:50%;
-  width:5px;
-  height:5px;
-  background:#f7f2d6;
-  clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  transform:translate(-50%,-50%) translateY(12px);
-  box-shadow:
-    0 -38px 0 #f7f2d6,
-    19px -33px 0 #f7f2d6,
-    33px -19px 0 #f7f2d6,
-    38px 0 0 #f7f2d6,
-    33px 19px 0 #f7f2d6,
-    19px 33px 0 #f7f2d6,
-    0 38px 0 #f7f2d6,
-    -19px 33px 0 #f7f2d6,
-    -33px 19px 0 #f7f2d6,
-    -38px 0 0 #f7f2d6,
-    -33px -19px 0 #f7f2d6,
-    -19px -33px 0 #f7f2d6;
+  transform:translate(-50%,-50%) translateY(6px);
+  width:0;
+  height:0;
+  color:#f8f2d8;
+  font-size:10px;
+  line-height:1;
+  text-shadow:
+    0 -38px 0 #f8f2d8,
+    19px -33px 0 #f8f2d8,
+    33px -19px 0 #f8f2d8,
+    38px 0 0 #f8f2d8,
+    33px 19px 0 #f8f2d8,
+    19px 33px 0 #f8f2d8,
+    0 38px 0 #f8f2d8,
+    -19px 33px 0 #f8f2d8,
+    -33px 19px 0 #f8f2d8,
+    -38px 0 0 #f8f2d8,
+    -33px -19px 0 #f8f2d8,
+    -19px -33px 0 #f8f2d8;
 }
-    
+
 /* Centre pièce */
 .coinInner{
   position:relative;
@@ -499,8 +501,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   z-index:3;
   padding:4px;
   box-shadow:
-    inset 0 2px 3px rgba(255,255,255,.16),
-    inset 0 -4px 6px rgba(0,0,0,.14);
+    inset 0 2px 3px rgba(255,255,255,.18),
+    inset 0 -4px 7px rgba(0,0,0,.16);
 }
 
 .coinInner::before{
@@ -508,7 +510,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   position:absolute;
   inset:0;
   border-radius:50%;
-  border:2px solid rgba(255,255,255,.24);
+  border:2px solid rgba(255,255,255,.22);
   pointer-events:none;
 }
 
@@ -532,7 +534,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 .coinInnerGold{
   color:#fffdf6;
   background:
-    radial-gradient(circle at 35% 30%, #f6e79c 0%, #d4b235 56%, #9f7807 100%);
+    radial-gradient(circle at 35% 30%, #f8eca9 0%, #d8b83d 56%, #9f7807 100%);
   text-shadow:0 1px 0 rgba(0,0,0,.18);
 }
 
@@ -546,7 +548,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 .coinInnerGreen{
   color:#ffffff;
   background:
-    radial-gradient(circle at 35% 30%, #9fd7b4 0%, #4e8865 58%, #244735 100%);
+    radial-gradient(circle at 35% 30%, #a7dbbb 0%, #5f9c77 58%, #2b523d 100%);
   text-shadow:0 1px 0 rgba(0,0,0,.20);
 }
 
