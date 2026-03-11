@@ -406,11 +406,9 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   align-items:center;
   justify-content:center;
   overflow:hidden;
-  isolation:isolate;
   box-shadow:
-    inset 0 2px 4px rgba(255,255,255,.22),
-    inset 0 -4px 8px rgba(0,0,0,.12),
-    0 5px 10px rgba(0,0,0,.14);
+    0 6px 14px rgba(0,0,0,.14),
+    inset 0 1px 0 rgba(255,255,255,.22);
 }
 
 .coinFace::before{
@@ -418,40 +416,26 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   position:absolute;
   inset:0;
   border-radius:50%;
+  pointer-events:none;
   z-index:0;
 }
 
-.coinFace::after{
-  content:"";
-  position:absolute;
-  inset:2px;
-  border-radius:50%;
-  z-index:1;
-  pointer-events:none;
+.coinGold{
   background:
-    repeating-conic-gradient(
-      from 0deg,
-      rgba(255,255,255,.22) 0deg 3deg,
-      rgba(0,0,0,.10) 3deg 6deg
-    );
-  -webkit-mask: radial-gradient(circle, transparent 0 39px, #000 40px 46px, transparent 47px);
-  mask: radial-gradient(circle, transparent 0 39px, #000 40px 46px, transparent 47px);
-  opacity:.9;
+    radial-gradient(circle at 35% 32%, #fff4b8 0%, #efd55a 24%, #d4b225 52%, #b88f0f 74%, #977106 100%);
+  border:3px solid #a67a00;
 }
 
-.coinGold::before{
+.coinYellow{
   background:
-    radial-gradient(circle at 35% 30%, #fff7ba 0%, #f7de63 22%, #d5ab18 52%, #b38200 74%, #8f6600 100%);
+    radial-gradient(circle at 35% 32%, #fff7bf 0%, #f0df67 24%, #d6bf2d 52%, #b39b12 74%, #8b7808 100%);
+  border:3px solid #a38a00;
 }
 
-.coinYellow::before{
+.coinGreen{
   background:
-    radial-gradient(circle at 35% 30%, #fff9c9 0%, #f4e36b 22%, #d2bc1b 52%, #a89000 74%, #7e6c00 100%);
-}
-
-.coinGreen::before{
-  background:
-    radial-gradient(circle at 35% 30%, #dff8e8 0%, #98ddb8 22%, #4f8e6c 52%, #2f644b 74%, #214735 100%);
+    radial-gradient(circle at 35% 32%, #d9f6e5 0%, #98d8b0 24%, #5fa27a 52%, #3e7358 74%, #2a5842 100%);
+  border:3px solid #2f5d46;
 }
 
 .coinStarsRing{
@@ -459,7 +443,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   inset:0;
   border-radius:50%;
   pointer-events:none;
-  z-index:2;
+  z-index:1;
 }
 
 .coinStarsRing svg{
@@ -472,21 +456,18 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
 .starRingStroke{
   fill:none;
-  opacity:.22;
+  stroke-width:1.4;
+  opacity:.42;
 }
 
-.coinStarsGold .starRingStroke{ stroke:#7a5600; }
-.coinStarsYellow .starRingStroke{ stroke:#766100; }
-.coinStarsGreen .starRingStroke{ stroke:#eefcf4; }
+.coinStarsGold .starRingStroke{ stroke:#d7dce0; }
+.coinStarsYellow .starRingStroke{ stroke:#d7dce0; }
+.coinStarsGreen .starRingStroke{ stroke:#d7dce0; }
 
 .coinStar{
-  transform-box: fill-box;
-  transform-origin:center;
+  fill:#e3e7ea;
+  opacity:.98;
 }
-
-.coinStarsGold .coinStar{ fill:#8a6200; }
-.coinStarsYellow .coinStar{ fill:#8a7400; }
-.coinStarsGreen .coinStar{ fill:#f5fff8; }
 
 .coinInner{
   position:relative;
@@ -499,20 +480,19 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   justify-content:center;
   text-align:center;
   font-weight:900;
-  z-index:3;
+  z-index:2;
   padding:4px;
   box-shadow:
-    inset 0 1px 3px rgba(255,255,255,.12),
+    inset 0 1px 2px rgba(255,255,255,.14),
     inset 0 -2px 4px rgba(0,0,0,.10);
 }
 
 .coinInner::before{
   content:"";
   position:absolute;
-  inset:-7px;
+  inset:0;
   border-radius:50%;
-  border:2px solid currentColor;
-  opacity:.28;
+  border:2px solid rgba(214,220,224,.72);
   pointer-events:none;
 }
 
@@ -529,36 +509,30 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   margin-top:4px;
   position:relative;
   z-index:1;
-  letter-spacing:.15px;
+  letter-spacing:.2px;
 }
 
 .coinInnerGold{
-  color:#7a5600;
-  background:radial-gradient(circle at 35% 30%, #ffe990 0%, #deb126 58%, #a97800 100%);
-  text-shadow:
-    0 1px 0 rgba(255,245,190,.45),
-    0 -1px 0 rgba(110,70,0,.15);
+  color:#fffdf6;
+  background:radial-gradient(circle at 35% 32%, #f8eb9d 0%, #d8b63a 56%, #b1840c 100%);
+  text-shadow:0 1px 0 rgba(0,0,0,.14);
 }
 
 .coinInnerYellow{
-  color:#766100;
-  background:radial-gradient(circle at 35% 30%, #fff0a2 0%, #d8bf23 58%, #a08800 100%);
-  text-shadow:
-    0 1px 0 rgba(255,250,204,.45),
-    0 -1px 0 rgba(100,90,0,.14);
+  color:#fffdf6;
+  background:radial-gradient(circle at 35% 32%, #f6ec9f 0%, #dabc35 56%, #ab9300 100%);
+  text-shadow:0 1px 0 rgba(0,0,0,.14);
 }
 
 .coinInnerGreen{
-  color:#eefcf4;
-  background:radial-gradient(circle at 35% 30%, #92d5ae 0%, #4d8d6a 58%, #2a5a43 100%);
-  text-shadow:
-    0 1px 0 rgba(255,255,255,.12),
-    0 -1px 0 rgba(0,0,0,.14);
+  color:#fff;
+  background:radial-gradient(circle at 35% 32%, #9fdab6 0%, #5c9c75 56%, #36644d 100%);
+  text-shadow:0 1px 0 rgba(0,0,0,.14);
 }
 
 .coinStack{
   position:relative;
-  width:92px;
+  width:84px;
   height:64px;
   flex:0 0 auto;
 }
@@ -569,70 +543,43 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   height:44px;
   border-radius:50%;
   overflow:hidden;
-  isolation:isolate;
   box-shadow:
-    inset 0 1px 3px rgba(255,255,255,.14),
-    inset 0 -2px 4px rgba(0,0,0,.10),
-    0 4px 8px rgba(0,0,0,.16);
+    0 4px 10px rgba(0,0,0,.16),
+    inset 0 1px 0 rgba(255,255,255,.18);
 }
 
-.coinFace::before{
+.stackCoin::before{
   content:"";
   position:absolute;
-  inset:4px;
+  inset:0;
   border-radius:50%;
   pointer-events:none;
   z-index:0;
-  background:
-    repeating-conic-gradient(
-      from 0deg,
-      rgba(214,220,224,.95) 0deg 1.6deg,
-      rgba(126,138,146,.30) 1.6deg 4deg
-    );
-  -webkit-mask:
-    radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 7px));
-  mask:
-    radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 7px));
 }
 
-.stackCoin::after{
-  content:"";
-  position:absolute;
-  inset:1px;
-  border-radius:50%;
-  z-index:1;
-  pointer-events:none;
+.stackGold{
   background:
-    repeating-conic-gradient(
-      from 0deg,
-      rgba(255,255,255,.22) 0deg 4deg,
-      rgba(0,0,0,.10) 4deg 8deg
-    );
-  -webkit-mask: radial-gradient(circle, transparent 0 17px, #000 18px 21px, transparent 22px);
-  mask: radial-gradient(circle, transparent 0 17px, #000 18px 21px, transparent 22px);
-  opacity:.9;
+    radial-gradient(circle at 35% 32%, #fff4b8 0%, #efd55a 24%, #d4b225 52%, #b88f0f 74%, #977106 100%);
+  border:2px solid #a67a00;
 }
 
-.stackGold::before{
+.stackYellow{
   background:
-    radial-gradient(circle at 35% 30%, #fff7ba 0%, #f7de63 22%, #d5ab18 52%, #b38200 74%, #8f6600 100%);
+    radial-gradient(circle at 35% 32%, #fff7bf 0%, #f0df67 24%, #d6bf2d 52%, #b39b12 74%, #8b7808 100%);
+  border:2px solid #a38a00;
 }
 
-.stackYellow::before{
+.stackGreen{
   background:
-    radial-gradient(circle at 35% 30%, #fff9c9 0%, #f4e36b 22%, #d2bc1b 52%, #a89000 74%, #7e6c00 100%);
-}
-
-.stackGreen::before{
-  background:
-    radial-gradient(circle at 35% 30%, #dff8e8 0%, #98ddb8 22%, #4f8e6c 52%, #2f644b 74%, #214735 100%);
+    radial-gradient(circle at 35% 32%, #d9f6e5 0%, #98d8b0 24%, #5fa27a 52%, #3e7358 74%, #2a5842 100%);
+  border:2px solid #2f5d46;
 }
 
 .stackCoinStars{
   position:absolute;
   inset:0;
   pointer-events:none;
-  z-index:2;
+  z-index:1;
 }
 
 .stackCoinStars svg{
@@ -645,21 +592,15 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 
 .stackStarRingStroke{
   fill:none;
-  opacity:.20;
+  stroke:#d7dce0;
+  stroke-width:1;
+  opacity:.42;
 }
-
-.stackGold .stackStarRingStroke{ stroke:#7a5600; }
-.stackYellow .stackStarRingStroke{ stroke:#766100; }
-.stackGreen .stackStarRingStroke{ stroke:#eefcf4; }
 
 .stackStar{
-  transform-box: fill-box;
-  transform-origin:center;
+  fill:#e3e7ea;
+  opacity:.98;
 }
-
-.stackGold .stackStar{ fill:#8a6200; }
-.stackYellow .stackStar{ fill:#8a7400; }
-.stackGreen .stackStar{ fill:#f5fff8; }
 
 .stackCoinLabel{
   position:absolute;
@@ -669,11 +610,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   align-items:center;
   justify-content:center;
   text-align:center;
-  z-index:3;
+  z-index:2;
   pointer-events:none;
-  text-shadow:
-    0 1px 0 rgba(255,255,255,.18),
-    0 -1px 0 rgba(0,0,0,.12);
 }
 
 .stackCoinLabel .n{
@@ -681,6 +619,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   line-height:1;
   font-weight:900;
   margin-bottom:1px;
+  color:#fff;
+  text-shadow:0 1px 0 rgba(0,0,0,.14);
 }
 
 .stackCoinLabel .t{
@@ -688,15 +628,13 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   line-height:1;
   font-weight:900;
   letter-spacing:.1px;
+  color:#fff;
+  text-shadow:0 1px 0 rgba(0,0,0,.14);
 }
 
-.stackGold .stackCoinLabel{ color:#7a5600; }
-.stackYellow .stackCoinLabel{ color:#766100; }
-.stackGreen .stackCoinLabel{ color:#eefcf4; }
-
 .stack1{ left:0; bottom:0; z-index:1; }
-.stack2{ left:18px; bottom:6px; z-index:2; }
-.stack3{ left:36px; bottom:12px; z-index:3; }
+.stack2{ left:18px; bottom:8px; z-index:2; }
+.stack3{ left:36px; bottom:16px; z-index:3; }
 
 .walletBox{
   flex:1;
@@ -2205,20 +2143,20 @@ if(key==="sport"){
   <div class="coinFace coinGreen" aria-hidden="true">
     <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
       <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-        <g fill="#d9dde1" opacity="0.96">
-          <polygon points="50,12 51.2,15.3 54.7,15.3 51.9,17.4 53,20.6 50,18.6 47,20.6 48.1,17.4 45.3,15.3 48.8,15.3"></polygon>
-          <polygon points="68,16.8 69.2,20.1 72.7,20.1 69.9,22.2 71,25.4 68,23.4 65,25.4 66.1,22.2 63.3,20.1 66.8,20.1"></polygon>
-          <polygon points="81.2,30 82.4,33.3 85.9,33.3 83.1,35.4 84.2,38.6 81.2,36.6 78.2,38.6 79.3,35.4 76.5,33.3 80,33.3"></polygon>
-          <polygon points="86,50 87.2,53.3 90.7,53.3 87.9,55.4 89,58.6 86,56.6 83,58.6 84.1,55.4 81.3,53.3 84.8,53.3"></polygon>
-          <polygon points="81.2,70 82.4,73.3 85.9,73.3 83.1,75.4 84.2,78.6 81.2,76.6 78.2,78.6 79.3,75.4 76.5,73.3 80,73.3"></polygon>
-          <polygon points="68,83.2 69.2,86.5 72.7,86.5 69.9,88.6 71,91.8 68,89.8 65,91.8 66.1,88.6 63.3,86.5 66.8,86.5"></polygon>
-          <polygon points="50,88 51.2,91.3 54.7,91.3 51.9,93.4 53,96.6 50,94.6 47,96.6 48.1,93.4 45.3,91.3 48.8,91.3"></polygon>
-          <polygon points="32,83.2 33.2,86.5 36.7,86.5 33.9,88.6 35,91.8 32,89.8 29,91.8 30.1,88.6 27.3,86.5 30.8,86.5"></polygon>
-          <polygon points="18.8,70 20,73.3 23.5,73.3 20.7,75.4 21.8,78.6 18.8,76.6 15.8,78.6 16.9,75.4 14.1,73.3 17.6,73.3"></polygon>
-          <polygon points="14,50 15.2,53.3 18.7,53.3 15.9,55.4 17,58.6 14,56.6 11,58.6 12.1,55.4 9.3,53.3 12.8,53.3"></polygon>
-          <polygon points="18.8,30 20,33.3 23.5,33.3 20.7,35.4 21.8,38.6 18.8,36.6 15.8,38.6 16.9,35.4 14.1,33.3 17.6,33.3"></polygon>
-          <polygon points="32,16.8 33.2,20.1 36.7,20.1 33.9,22.2 35,25.4 32,23.4 29,25.4 30.1,22.2 27.3,20.1 30.8,20.1"></polygon>
-        </g>
+        <circle cx="50" cy="50" r="36" class="starRingStroke"></circle>
+
+        <polygon class="coinStar" points="50,12 51.2,15.3 54.7,15.3 51.9,17.4 53,20.6 50,18.6 47,20.6 48.1,17.4 45.3,15.3 48.8,15.3"></polygon>
+        <polygon class="coinStar" points="68,16.8 69.2,20.1 72.7,20.1 69.9,22.2 71,25.4 68,23.4 65,25.4 66.1,22.2 63.3,20.1 66.8,20.1"></polygon>
+        <polygon class="coinStar" points="81.2,30 82.4,33.3 85.9,33.3 83.1,35.4 84.2,38.6 81.2,36.6 78.2,38.6 79.3,35.4 76.5,33.3 80,33.3"></polygon>
+        <polygon class="coinStar" points="86,50 87.2,53.3 90.7,53.3 87.9,55.4 89,58.6 86,56.6 83,58.6 84.1,55.4 81.3,53.3 84.8,53.3"></polygon>
+        <polygon class="coinStar" points="81.2,70 82.4,73.3 85.9,73.3 83.1,75.4 84.2,78.6 81.2,76.6 78.2,78.6 79.3,75.4 76.5,73.3 80,73.3"></polygon>
+        <polygon class="coinStar" points="68,83.2 69.2,86.5 72.7,86.5 69.9,88.6 71,91.8 68,89.8 65,91.8 66.1,88.6 63.3,86.5 66.8,86.5"></polygon>
+        <polygon class="coinStar" points="50,88 51.2,91.3 54.7,91.3 51.9,93.4 53,96.6 50,94.6 47,96.6 48.1,93.4 45.3,91.3 48.8,91.3"></polygon>
+        <polygon class="coinStar" points="32,83.2 33.2,86.5 36.7,86.5 33.9,88.6 35,91.8 32,89.8 29,91.8 30.1,88.6 27.3,86.5 30.8,86.5"></polygon>
+        <polygon class="coinStar" points="18.8,70 20,73.3 23.5,73.3 20.7,75.4 21.8,78.6 18.8,76.6 15.8,78.6 16.9,75.4 14.1,73.3 17.6,73.3"></polygon>
+        <polygon class="coinStar" points="14,50 15.2,53.3 18.7,53.3 15.9,55.4 17,58.6 14,56.6 11,58.6 12.1,55.4 9.3,53.3 12.8,53.3"></polygon>
+        <polygon class="coinStar" points="18.8,30 20,33.3 23.5,33.3 20.7,35.4 21.8,38.6 18.8,36.6 15.8,38.6 16.9,35.4 14.1,33.3 17.6,33.3"></polygon>
+        <polygon class="coinStar" points="32,16.8 33.2,20.1 36.7,20.1 33.9,22.2 35,25.4 32,23.4 29,25.4 30.1,22.2 27.3,20.1 30.8,20.1"></polygon>
       </svg>
     </div>
 
@@ -2232,20 +2170,20 @@ if(key==="sport"){
     <div class="stackCoin stackGreen stack1">
       <div class="stackCoinStars" aria-hidden="true">
         <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-          <g fill="#d9dde1" opacity="0.96">
-            <polygon points="22,5.5 22.7,7.4 24.8,7.4 23.1,8.7 23.8,10.6 22,9.4 20.2,10.6 20.9,8.7 19.2,7.4 21.3,7.4"></polygon>
-            <polygon points="29.2,7.4 29.9,9.3 32,9.3 30.3,10.6 31,12.5 29.2,11.3 27.4,12.5 28.1,10.6 26.4,9.3 28.5,9.3"></polygon>
-            <polygon points="34.5,12.7 35.2,14.6 37.3,14.6 35.6,15.9 36.3,17.8 34.5,16.6 32.7,17.8 33.4,15.9 31.7,14.6 33.8,14.6"></polygon>
-            <polygon points="36.5,22 37.2,23.9 39.3,23.9 37.6,25.2 38.3,27.1 36.5,25.9 34.7,27.1 35.4,25.2 33.7,23.9 35.8,23.9"></polygon>
-            <polygon points="34.5,31.3 35.2,33.2 37.3,33.2 35.6,34.5 36.3,36.4 34.5,35.2 32.7,36.4 33.4,34.5 31.7,33.2 33.8,33.2"></polygon>
-            <polygon points="29.2,36.6 29.9,38.5 32,38.5 30.3,39.8 31,41.7 29.2,40.5 27.4,41.7 28.1,39.8 26.4,38.5 28.5,38.5"></polygon>
-            <polygon points="22,38.5 22.7,40.4 24.8,40.4 23.1,41.7 23.8,43.6 22,42.4 20.2,43.6 20.9,41.7 19.2,40.4 21.3,40.4"></polygon>
-            <polygon points="14.8,36.6 15.5,38.5 17.6,38.5 15.9,39.8 16.6,41.7 14.8,40.5 13,41.7 13.7,39.8 12,38.5 14.1,38.5"></polygon>
-            <polygon points="9.5,31.3 10.2,33.2 12.3,33.2 10.6,34.5 11.3,36.4 9.5,35.2 7.7,36.4 8.4,34.5 6.7,33.2 8.8,33.2"></polygon>
-            <polygon points="7.5,22 8.2,23.9 10.3,23.9 8.6,25.2 9.3,27.1 7.5,25.9 5.7,27.1 6.4,25.2 4.7,23.9 6.8,23.9"></polygon>
-            <polygon points="9.5,12.7 10.2,14.6 12.3,14.6 10.6,15.9 11.3,17.8 9.5,16.6 7.7,17.8 8.4,15.9 6.7,14.6 8.8,14.6"></polygon>
-            <polygon points="14.8,7.4 15.5,9.3 17.6,9.3 15.9,10.6 16.6,12.5 14.8,11.3 13,12.5 13.7,10.6 12,9.3 14.1,9.3"></polygon>
-          </g>
+          <circle cx="22" cy="22" r="16" class="stackStarRingStroke"></circle>
+
+          <polygon class="stackStar" points="22,5 22.7,6.9 24.8,6.9 23.1,8.2 23.8,10.1 22,8.9 20.2,10.1 20.9,8.2 19.2,6.9 21.3,6.9"></polygon>
+          <polygon class="stackStar" points="30,7.1 30.7,9 32.8,9 31.1,10.3 31.8,12.2 30,11 28.2,12.2 28.9,10.3 27.2,9 29.3,9"></polygon>
+          <polygon class="stackStar" points="35.9,13 36.6,14.9 38.7,14.9 37,16.2 37.7,18.1 35.9,16.9 34.1,18.1 34.8,16.2 33.1,14.9 35.2,14.9"></polygon>
+          <polygon class="stackStar" points="38,22 38.7,23.9 40.8,23.9 39.1,25.2 39.8,27.1 38,25.9 36.2,27.1 36.9,25.2 35.2,23.9 37.3,23.9"></polygon>
+          <polygon class="stackStar" points="35.9,31 36.6,32.9 38.7,32.9 37,34.2 37.7,36.1 35.9,34.9 34.1,36.1 34.8,34.2 33.1,32.9 35.2,32.9"></polygon>
+          <polygon class="stackStar" points="30,36.9 30.7,38.8 32.8,38.8 31.1,40.1 31.8,42 30,40.8 28.2,42 28.9,40.1 27.2,38.8 29.3,38.8"></polygon>
+          <polygon class="stackStar" points="22,39 22.7,40.9 24.8,40.9 23.1,42.2 23.8,44.1 22,42.9 20.2,44.1 20.9,42.2 19.2,40.9 21.3,40.9"></polygon>
+          <polygon class="stackStar" points="14,36.9 14.7,38.8 16.8,38.8 15.1,40.1 15.8,42 14,40.8 12.2,42 12.9,40.1 11.2,38.8 13.3,38.8"></polygon>
+          <polygon class="stackStar" points="8.1,31 8.8,32.9 10.9,32.9 9.2,34.2 9.9,36.1 8.1,34.9 6.3,36.1 7,34.2 5.3,32.9 7.4,32.9"></polygon>
+          <polygon class="stackStar" points="6,22 6.7,23.9 8.8,23.9 7.1,25.2 7.8,27.1 6,25.9 4.2,27.1 4.9,25.2 3.2,23.9 5.3,23.9"></polygon>
+          <polygon class="stackStar" points="8.1,13 8.8,14.9 10.9,14.9 9.2,16.2 9.9,18.1 8.1,16.9 6.3,18.1 7,16.2 5.3,14.9 7.4,14.9"></polygon>
+          <polygon class="stackStar" points="14,7.1 14.7,9 16.8,9 15.1,10.3 15.8,12.2 14,11 12.2,12.2 12.9,10.3 11.2,9 13.3,9"></polygon>
         </svg>
       </div>
       <div class="stackCoinLabel" aria-hidden="true">
@@ -2257,20 +2195,20 @@ if(key==="sport"){
     <div class="stackCoin stackGreen stack2">
       <div class="stackCoinStars" aria-hidden="true">
         <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-          <g fill="#d9dde1" opacity="0.96">
-            <polygon points="22,5.5 22.7,7.4 24.8,7.4 23.1,8.7 23.8,10.6 22,9.4 20.2,10.6 20.9,8.7 19.2,7.4 21.3,7.4"></polygon>
-            <polygon points="29.2,7.4 29.9,9.3 32,9.3 30.3,10.6 31,12.5 29.2,11.3 27.4,12.5 28.1,10.6 26.4,9.3 28.5,9.3"></polygon>
-            <polygon points="34.5,12.7 35.2,14.6 37.3,14.6 35.6,15.9 36.3,17.8 34.5,16.6 32.7,17.8 33.4,15.9 31.7,14.6 33.8,14.6"></polygon>
-            <polygon points="36.5,22 37.2,23.9 39.3,23.9 37.6,25.2 38.3,27.1 36.5,25.9 34.7,27.1 35.4,25.2 33.7,23.9 35.8,23.9"></polygon>
-            <polygon points="34.5,31.3 35.2,33.2 37.3,33.2 35.6,34.5 36.3,36.4 34.5,35.2 32.7,36.4 33.4,34.5 31.7,33.2 33.8,33.2"></polygon>
-            <polygon points="29.2,36.6 29.9,38.5 32,38.5 30.3,39.8 31,41.7 29.2,40.5 27.4,41.7 28.1,39.8 26.4,38.5 28.5,38.5"></polygon>
-            <polygon points="22,38.5 22.7,40.4 24.8,40.4 23.1,41.7 23.8,43.6 22,42.4 20.2,43.6 20.9,41.7 19.2,40.4 21.3,40.4"></polygon>
-            <polygon points="14.8,36.6 15.5,38.5 17.6,38.5 15.9,39.8 16.6,41.7 14.8,40.5 13,41.7 13.7,39.8 12,38.5 14.1,38.5"></polygon>
-            <polygon points="9.5,31.3 10.2,33.2 12.3,33.2 10.6,34.5 11.3,36.4 9.5,35.2 7.7,36.4 8.4,34.5 6.7,33.2 8.8,33.2"></polygon>
-            <polygon points="7.5,22 8.2,23.9 10.3,23.9 8.6,25.2 9.3,27.1 7.5,25.9 5.7,27.1 6.4,25.2 4.7,23.9 6.8,23.9"></polygon>
-            <polygon points="9.5,12.7 10.2,14.6 12.3,14.6 10.6,15.9 11.3,17.8 9.5,16.6 7.7,17.8 8.4,15.9 6.7,14.6 8.8,14.6"></polygon>
-            <polygon points="14.8,7.4 15.5,9.3 17.6,9.3 15.9,10.6 16.6,12.5 14.8,11.3 13,12.5 13.7,10.6 12,9.3 14.1,9.3"></polygon>
-          </g>
+          <circle cx="22" cy="22" r="16" class="stackStarRingStroke"></circle>
+
+          <polygon class="stackStar" points="22,5 22.7,6.9 24.8,6.9 23.1,8.2 23.8,10.1 22,8.9 20.2,10.1 20.9,8.2 19.2,6.9 21.3,6.9"></polygon>
+          <polygon class="stackStar" points="30,7.1 30.7,9 32.8,9 31.1,10.3 31.8,12.2 30,11 28.2,12.2 28.9,10.3 27.2,9 29.3,9"></polygon>
+          <polygon class="stackStar" points="35.9,13 36.6,14.9 38.7,14.9 37,16.2 37.7,18.1 35.9,16.9 34.1,18.1 34.8,16.2 33.1,14.9 35.2,14.9"></polygon>
+          <polygon class="stackStar" points="38,22 38.7,23.9 40.8,23.9 39.1,25.2 39.8,27.1 38,25.9 36.2,27.1 36.9,25.2 35.2,23.9 37.3,23.9"></polygon>
+          <polygon class="stackStar" points="35.9,31 36.6,32.9 38.7,32.9 37,34.2 37.7,36.1 35.9,34.9 34.1,36.1 34.8,34.2 33.1,32.9 35.2,32.9"></polygon>
+          <polygon class="stackStar" points="30,36.9 30.7,38.8 32.8,38.8 31.1,40.1 31.8,42 30,40.8 28.2,42 28.9,40.1 27.2,38.8 29.3,38.8"></polygon>
+          <polygon class="stackStar" points="22,39 22.7,40.9 24.8,40.9 23.1,42.2 23.8,44.1 22,42.9 20.2,44.1 20.9,42.2 19.2,40.9 21.3,40.9"></polygon>
+          <polygon class="stackStar" points="14,36.9 14.7,38.8 16.8,38.8 15.1,40.1 15.8,42 14,40.8 12.2,42 12.9,40.1 11.2,38.8 13.3,38.8"></polygon>
+          <polygon class="stackStar" points="8.1,31 8.8,32.9 10.9,32.9 9.2,34.2 9.9,36.1 8.1,34.9 6.3,36.1 7,34.2 5.3,32.9 7.4,32.9"></polygon>
+          <polygon class="stackStar" points="6,22 6.7,23.9 8.8,23.9 7.1,25.2 7.8,27.1 6,25.9 4.2,27.1 4.9,25.2 3.2,23.9 5.3,23.9"></polygon>
+          <polygon class="stackStar" points="8.1,13 8.8,14.9 10.9,14.9 9.2,16.2 9.9,18.1 8.1,16.9 6.3,18.1 7,16.2 5.3,14.9 7.4,14.9"></polygon>
+          <polygon class="stackStar" points="14,7.1 14.7,9 16.8,9 15.1,10.3 15.8,12.2 14,11 12.2,12.2 12.9,10.3 11.2,9 13.3,9"></polygon>
         </svg>
       </div>
       <div class="stackCoinLabel" aria-hidden="true">
@@ -2282,20 +2220,20 @@ if(key==="sport"){
     <div class="stackCoin stackGreen stack3">
       <div class="stackCoinStars" aria-hidden="true">
         <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-          <g fill="#d9dde1" opacity="0.96">
-            <polygon points="22,5.5 22.7,7.4 24.8,7.4 23.1,8.7 23.8,10.6 22,9.4 20.2,10.6 20.9,8.7 19.2,7.4 21.3,7.4"></polygon>
-            <polygon points="29.2,7.4 29.9,9.3 32,9.3 30.3,10.6 31,12.5 29.2,11.3 27.4,12.5 28.1,10.6 26.4,9.3 28.5,9.3"></polygon>
-            <polygon points="34.5,12.7 35.2,14.6 37.3,14.6 35.6,15.9 36.3,17.8 34.5,16.6 32.7,17.8 33.4,15.9 31.7,14.6 33.8,14.6"></polygon>
-            <polygon points="36.5,22 37.2,23.9 39.3,23.9 37.6,25.2 38.3,27.1 36.5,25.9 34.7,27.1 35.4,25.2 33.7,23.9 35.8,23.9"></polygon>
-            <polygon points="34.5,31.3 35.2,33.2 37.3,33.2 35.6,34.5 36.3,36.4 34.5,35.2 32.7,36.4 33.4,34.5 31.7,33.2 33.8,33.2"></polygon>
-            <polygon points="29.2,36.6 29.9,38.5 32,38.5 30.3,39.8 31,41.7 29.2,40.5 27.4,41.7 28.1,39.8 26.4,38.5 28.5,38.5"></polygon>
-            <polygon points="22,38.5 22.7,40.4 24.8,40.4 23.1,41.7 23.8,43.6 22,42.4 20.2,43.6 20.9,41.7 19.2,40.4 21.3,40.4"></polygon>
-            <polygon points="14.8,36.6 15.5,38.5 17.6,38.5 15.9,39.8 16.6,41.7 14.8,40.5 13,41.7 13.7,39.8 12,38.5 14.1,38.5"></polygon>
-            <polygon points="9.5,31.3 10.2,33.2 12.3,33.2 10.6,34.5 11.3,36.4 9.5,35.2 7.7,36.4 8.4,34.5 6.7,33.2 8.8,33.2"></polygon>
-            <polygon points="7.5,22 8.2,23.9 10.3,23.9 8.6,25.2 9.3,27.1 7.5,25.9 5.7,27.1 6.4,25.2 4.7,23.9 6.8,23.9"></polygon>
-            <polygon points="9.5,12.7 10.2,14.6 12.3,14.6 10.6,15.9 11.3,17.8 9.5,16.6 7.7,17.8 8.4,15.9 6.7,14.6 8.8,14.6"></polygon>
-            <polygon points="14.8,7.4 15.5,9.3 17.6,9.3 15.9,10.6 16.6,12.5 14.8,11.3 13,12.5 13.7,10.6 12,9.3 14.1,9.3"></polygon>
-          </g>
+          <circle cx="22" cy="22" r="16" class="stackStarRingStroke"></circle>
+
+          <polygon class="stackStar" points="22,5 22.7,6.9 24.8,6.9 23.1,8.2 23.8,10.1 22,8.9 20.2,10.1 20.9,8.2 19.2,6.9 21.3,6.9"></polygon>
+          <polygon class="stackStar" points="30,7.1 30.7,9 32.8,9 31.1,10.3 31.8,12.2 30,11 28.2,12.2 28.9,10.3 27.2,9 29.3,9"></polygon>
+          <polygon class="stackStar" points="35.9,13 36.6,14.9 38.7,14.9 37,16.2 37.7,18.1 35.9,16.9 34.1,18.1 34.8,16.2 33.1,14.9 35.2,14.9"></polygon>
+          <polygon class="stackStar" points="38,22 38.7,23.9 40.8,23.9 39.1,25.2 39.8,27.1 38,25.9 36.2,27.1 36.9,25.2 35.2,23.9 37.3,23.9"></polygon>
+          <polygon class="stackStar" points="35.9,31 36.6,32.9 38.7,32.9 37,34.2 37.7,36.1 35.9,34.9 34.1,36.1 34.8,34.2 33.1,32.9 35.2,32.9"></polygon>
+          <polygon class="stackStar" points="30,36.9 30.7,38.8 32.8,38.8 31.1,40.1 31.8,42 30,40.8 28.2,42 28.9,40.1 27.2,38.8 29.3,38.8"></polygon>
+          <polygon class="stackStar" points="22,39 22.7,40.9 24.8,40.9 23.1,42.2 23.8,44.1 22,42.9 20.2,44.1 20.9,42.2 19.2,40.9 21.3,40.9"></polygon>
+          <polygon class="stackStar" points="14,36.9 14.7,38.8 16.8,38.8 15.1,40.1 15.8,42 14,40.8 12.2,42 12.9,40.1 11.2,38.8 13.3,38.8"></polygon>
+          <polygon class="stackStar" points="8.1,31 8.8,32.9 10.9,32.9 9.2,34.2 9.9,36.1 8.1,34.9 6.3,36.1 7,34.2 5.3,32.9 7.4,32.9"></polygon>
+          <polygon class="stackStar" points="6,22 6.7,23.9 8.8,23.9 7.1,25.2 7.8,27.1 6,25.9 4.2,27.1 4.9,25.2 3.2,23.9 5.3,23.9"></polygon>
+          <polygon class="stackStar" points="8.1,13 8.8,14.9 10.9,14.9 9.2,16.2 9.9,18.1 8.1,16.9 6.3,18.1 7,16.2 5.3,14.9 7.4,14.9"></polygon>
+          <polygon class="stackStar" points="14,7.1 14.7,9 16.8,9 15.1,10.3 15.8,12.2 14,11 12.2,12.2 12.9,10.3 11.2,9 13.3,9"></polygon>
         </svg>
       </div>
       <div class="stackCoinLabel" aria-hidden="true">
