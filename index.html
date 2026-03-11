@@ -413,7 +413,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     inset 0 -7px 12px rgba(0,0,0,.22);
 }
 
-/* on supprime les anciens faux cercles */
+/* on supprime complètement les anciens faux cercles */
 .coinFace::before,
 .coinFace::after{
   display:none !important;
@@ -438,7 +438,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   border:3px solid #224c39;
 }
 
-/* Anneau d’étoiles */
+/* zone des étoiles : plus de cercle */
 .coinStarsRing{
   position:absolute;
   inset:0;
@@ -446,45 +446,54 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   z-index:2;
 }
 
-/* cercle fin autour des étoiles */
-.coinStarsRing::before{
-  content:"";
-  position:absolute;
-  left:50%;
-  top:50%;
-  width:76px;
-  height:76px;
-  border-radius:50%;
-  border:1.5px solid rgba(255,255,255,.18);
-  transform:translate(-50%,-50%) translateY(6px);
+.coinStarsRing::before,
+.coinStarsRing::after{
+  display:none !important;
 }
 
-/* étoiles */
-.coinStarsRing::after{
-  content:"✦";
+/* étoiles directement sur la surface de la pièce */
+.coinStar{
   position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%) translateY(6px);
-  width:0;
-  height:0;
-  color:#f8f2d8;
   font-size:10px;
   line-height:1;
-  text-shadow:
-    0 -38px 0 #f8f2d8,
-    19px -33px 0 #f8f2d8,
-    33px -19px 0 #f8f2d8,
-    38px 0 0 #f8f2d8,
-    33px 19px 0 #f8f2d8,
-    19px 33px 0 #f8f2d8,
-    0 38px 0 #f8f2d8,
-    -19px 33px 0 #f8f2d8,
-    -33px 19px 0 #f8f2d8,
-    -38px 0 0 #f8f2d8,
-    -33px -19px 0 #f8f2d8,
-    -19px -33px 0 #f8f2d8;
+  transform:translate(-50%,-50%);
+  text-shadow:0 1px 1px rgba(0,0,0,.18);
 }
+
+/* haut = étoiles foncées */
+.coinStar.s1,
+.coinStar.s2,
+.coinStar.s3,
+.coinStar.s4,
+.coinStar.s5,
+.coinStar.s6{
+  color:#111111;
+}
+
+/* bas = étoiles claires */
+.coinStar.s7,
+.coinStar.s8,
+.coinStar.s9,
+.coinStar.s10,
+.coinStar.s11,
+.coinStar.s12{
+  color:#f8f2d8;
+}
+
+/* Répartition sur toute la surface extérieure, sans entrer dans le cercle central */
+.coinStar.s1  { left:18px; top:18px; }
+.coinStar.s2  { left:38px; top:14px; }
+.coinStar.s3  { left:54px; top:14px; }
+.coinStar.s4  { left:70px; top:14px; }
+.coinStar.s5  { left:86px; top:18px; }
+.coinStar.s6  { left:92px; top:32px; }
+
+.coinStar.s7  { left:91px; top:55px; }
+.coinStar.s8  { left:86px; top:74px; }
+.coinStar.s9  { left:74px; top:88px; }
+.coinStar.s10 { left:54px; top:93px; }
+.coinStar.s11 { left:32px; top:88px; }
+.coinStar.s12 { left:18px; top:74px; }
 
 /* Centre pièce */
 .coinInner{
@@ -551,7 +560,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     radial-gradient(circle at 35% 30%, #a7dbbb 0%, #5f9c77 58%, #2b523d 100%);
   text-shadow:0 1px 0 rgba(0,0,0,.20);
 }
-    
+
 /* Suppression anciennes petites pièces */
 .coinStack,
 .stackCoin,
