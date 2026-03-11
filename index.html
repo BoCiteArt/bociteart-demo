@@ -1825,7 +1825,7 @@ if(key==="ecole"){
       if(!picks.length) return { ok:false, msg:"Choisis au moins 1 association." };
       let sum = 0;
       picks.forEach(a=> sum += (pctMap[a] || 0));
-      if(sum !== 100) return { ok:false, msg:\`En don partiel, le total doit faire 100%. (Actuel : \${sum}%)\` };
+      if(sum !== 100) return { ok:false, msg:`En don partiel, le total doit faire 100%. (Actuel : ${sum}%)` };
       return { ok:true };
     }
 
@@ -1906,14 +1906,14 @@ if(key==="ecole"){
       if(mode === "full"){
         const norm = normalizeForFull(picks);
         if(!norm.ok){ alert(norm.msg); return; }
-        const lines = Object.entries(norm.pctMap).map(([a,p])=> \`- \${a} : \${p}%\`).join("\\n");
+        const lines = Object.entries(norm.pctMap).map(([a,p])=> `- ${a} : ${p}%`).join("\n");
         alert("Aperçu (don total, partage égal)\\n" + lines);
         return;
       }
 
       const v = validatePartial(picks, pctMap);
       if(!v.ok){ alert(v.msg); return; }
-      const lines = picks.map(a=> \`- \${a} : \${pctMap[a] || 0}%\`).join("\\n");
+      const lines = picks.map(a=> `- ${a} : ${pctMap[a] || 0}%`).join("\n");
       alert("Aperçu (don partiel)\\n" + lines);
     };
 
@@ -2022,7 +2022,7 @@ if(key==="ecole"){
   }, 0);
   return;
 }
-
+          
 if(key==="sport"){
   openModal("Sport", `
     <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
