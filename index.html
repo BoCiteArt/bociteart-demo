@@ -409,99 +409,60 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   align-items:center;
   justify-content:center;
   overflow:hidden;
-  box-shadow:0 10px 18px rgba(0,0,0,.16);
+  box-shadow:
+    0 12px 22px rgba(0,0,0,.18),
+    inset 0 2px 2px rgba(255,255,255,.18),
+    inset 0 -8px 12px rgba(0,0,0,.18);
 }
 
 .coinFace::before,
 .coinFace::after{
-  display:none !important;
-  content:none !important;
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
 }
 
+/* reflets + anneaux externes */
+.coinFace::before{
+  inset:7px;
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,.32) 0%, rgba(255,255,255,.12) 18%, rgba(255,255,255,0) 36%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 62%);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.14),
+    inset 0 0 0 10px rgba(255,255,255,.04);
+  z-index:1;
+}
+
+.coinFace::after{
+  inset:14px;
+  border:2px solid rgba(255,255,255,.16);
+  z-index:1;
+}
+
+/* couleurs de base */
 .coinGold{
-  background:#cda51d;
+  background:
+    radial-gradient(circle at 30% 24%, #fff6be 0%, #f3dc6a 22%, #cda51d 56%, #9d7707 100%);
   border:3px solid #8e6a00;
 }
 
 .coinYellow{
-  background:#d9bf2c;
+  background:
+    radial-gradient(circle at 30% 24%, #fff7c8 0%, #f2e06e 22%, #d7b82c 56%, #9a7b00 100%);
   border:3px solid #967900;
 }
 
 .coinGreen{
-  background:#4f8f6a;
+  background:
+    radial-gradient(circle at 30% 24%, #b8ebca 0%, #77bf96 22%, #4f8f6a 58%, #2a523d 100%);
   border:3px solid #224c39;
 }
 
+/* on neutralise totalement l'ancien système d'étoiles */
 .coinStarsRing,
 .coinStar,
-.coinStarsRing::before,
-.coinStarsRing::after{
-  display:none !important;
-  content:none !important;
-}
-
-.coinInner{
-  position:relative;
-  width:66px;
-  height:66px;
-  border-radius:50%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  font-weight:900;
-  z-index:3;
-  padding:4px;
-  box-shadow:none;
-}
-
-.coinInner::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:50%;
-  border:2px solid rgba(210,210,210,.95);
-  pointer-events:none;
-}
-
-.coinInner .n{
-  font-size:28px;
-  line-height:1;
-  position:relative;
-  z-index:1;
-}
-
-.coinInner .t{
-  font-size:8px;
-  line-height:1.05;
-  margin-top:4px;
-  position:relative;
-  z-index:1;
-  letter-spacing:.15px;
-}
-
-.coinInnerGold{
-  color:#fffdf6;
-  background:#cda51d;
-  text-shadow:none;
-}
-
-.coinInnerYellow{
-  color:#fffdf6;
-  background:#d9bf2c;
-  text-shadow:none;
-}
-
-.coinInnerGreen{
-  color:#ffffff;
-  background:#4f8f6a;
-  text-shadow:none;
-}
-
-/* Suppression anciennes petites pièces */
-.coinStack,
 .stackCoin,
 .stackCoinStars,
 .stackCoinLabel,
@@ -509,6 +470,85 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 .stack2,
 .stack3{
   display:none !important;
+}
+
+/* coeur de pièce */
+.coinInner{
+  position:relative;
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  z-index:3;
+  padding:4px;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.18),
+    inset 0 -6px 8px rgba(0,0,0,.14);
+}
+
+.coinInner::before{
+  content:"";
+  position:absolute;
+  inset:-8px;
+  border-radius:50%;
+  border:3px solid rgba(230,230,230,.92);
+  pointer-events:none;
+}
+
+.coinInner::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.14),
+    inset 0 10px 12px rgba(255,255,255,.08);
+  pointer-events:none;
+}
+
+.coinInner .n{
+  font-size:28px;
+  line-height:1;
+  font-weight:900;
+  position:relative;
+  z-index:2;
+}
+
+.coinInner .t{
+  font-size:8px;
+  line-height:1.05;
+  margin-top:4px;
+  letter-spacing:.1px;
+  font-weight:800;
+  position:relative;
+  z-index:2;
+  white-space:nowrap;
+}
+
+/* teintes internes */
+.coinInnerGold{
+  background:
+    radial-gradient(circle at 32% 26%, #f9ebb0 0%, #dfc14d 48%, #ab8109 100%);
+  color:#fffdf6;
+  text-shadow:0 1px 0 rgba(0,0,0,.16);
+}
+
+.coinInnerYellow{
+  background:
+    radial-gradient(circle at 32% 26%, #faefae 0%, #e2c848 48%, #aa8905 100%);
+  color:#fffdf6;
+  text-shadow:0 1px 0 rgba(0,0,0,.16);
+}
+
+.coinInnerGreen{
+  background:
+    radial-gradient(circle at 32% 26%, #b6e3c6 0%, #6aa884 48%, #315b43 100%);
+  color:#ffffff;
+  text-shadow:0 1px 0 rgba(0,0,0,.18);
 }
 
 /* Wallet */
@@ -1605,14 +1645,12 @@ if(key==="ecole"){
     </div>
 
     <div class="coinShowcase">
-      <div class="coinFace coinYellow" aria-hidden="true">
-        <div class="coinStarsRing"></div>
-
-        <div class="coinInner coinInnerYellow">
-          <div class="n">1</div>
-          <div class="t">BoCitecoin</div>
-        </div>
-      </div>
+     <div class="coinFace coinYellow" aria-hidden="true">
+  <div class="coinInner coinInnerYellow">
+    <div class="n">1</div>
+    <div class="t">BoCitecoin</div>
+  </div>
+</div>
 
       <div class="walletBox">
         <div class="walletTitle">Wallet École — BoCitecoins JAUNE</div>
@@ -1967,11 +2005,12 @@ if(key==="ecole"){
     <div class="coinShowcase">
 
       <div class="coinFace coinGreen">
-        <div class="coinInner coinInnerGreen">
-          <div class="n">1</div>
-          <div class="t">BoCitecoin</div>
-        </div>
-      </div>
+       <div class="coinFace coinGreen" aria-hidden="true">
+  <div class="coinInner coinInnerGreen">
+    <div class="n">1</div>
+    <div class="t">BoCitecoin</div>
+  </div>
+</div>
 
       <div class="walletBox">
 
@@ -2298,15 +2337,12 @@ if(key==="commerces"){
     </div>
 
     <div class="coinShowcase">
-      <div class="coinFace coinGold" aria-hidden="true">
-
-        <div class="coinStarsRing"></div>
-
-        <div class="coinInner coinInnerGold">
-          <div class="n">1</div>
-          <div class="t">BoCitecoin</div>
-        </div>
-      </div>
+     <div class="coinFace coinGold" aria-hidden="true">
+  <div class="coinInner coinInnerGold">
+    <div class="n">1</div>
+    <div class="t">BoCitecoin</div>
+  </div>
+</div>
 
       <div class="walletBox">
         <div class="walletTitle">Wallet client — BoCitecoins OR</div>
