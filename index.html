@@ -446,6 +446,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   justify-content:center;
   pointer-events:none;
   z-index:2;
+  transform:translateY(8px);
 }
 
 /* fin anneau léger */
@@ -456,9 +457,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   height:80px;
   border-radius:50%;
   border:1.5px solid rgba(255,255,255,.18);
-  transform:translateY(16px);
 }
-
 
 /* on remet bien les étoiles */
 .coinStarsRing::after{
@@ -466,7 +465,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   position:absolute;
   left:50%;
   top:50%;
-  transform:translate(-50%,-50%) translateY(6px);
+  transform:translate(-50%,-50%);
   color:#f7f2d6;
   font-size:9px;
   line-height:1;
