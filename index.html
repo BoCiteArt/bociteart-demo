@@ -388,306 +388,306 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     #legal .tabs{ display:flex; justify-content:center; gap:8px; }
     #legal .tab{ display:flex; align-items:center; justify-content:center; min-width:70px; padding:8px 10px; text-align:center; white-space:nowrap; }
 
-/* Wallets / bocitecoins */
-.coinShowcase{
-  display:flex;
-  gap:12px;
-  align-items:center;
-  margin-top:12px;
-  flex-wrap:nowrap;
-}
+    /* Wallets / bocitecoins */
+    .coinShowcase{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-top:12px;
+      flex-wrap:nowrap;
+    }
 
-.coinFace{
-  position:relative;
-  width:108px;
-  height:108px;
-  min-width:108px;
-  max-width:108px;
-  flex:0 0 108px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  box-shadow:
-    0 12px 22px rgba(0,0,0,.18),
-    inset 0 2px 2px rgba(255,255,255,.18),
-    inset 0 -8px 12px rgba(0,0,0,.18);
-}
+    .coinFace{
+      position:relative;
+      width:108px;
+      height:108px;
+      min-width:108px;
+      max-width:108px;
+      flex:0 0 108px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      box-shadow:
+        0 12px 22px rgba(0,0,0,.18),
+        inset 0 2px 2px rgba(255,255,255,.18),
+        inset 0 -8px 12px rgba(0,0,0,.18);
+    }
 
-.coinFace::before,
-.coinFace::after{
-  content:"";
-  position:absolute;
-  border-radius:50%;
-  pointer-events:none;
-}
+    .coinFace::before,
+    .coinFace::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      pointer-events:none;
+    }
 
-/* reflets + anneaux externes */
-.coinFace::before{
-  inset:7px;
-  background:
-    radial-gradient(circle at 30% 24%, rgba(255,255,255,.32) 0%, rgba(255,255,255,.12) 18%, rgba(255,255,255,0) 36%),
-    radial-gradient(circle at 50% 50%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 62%);
-  box-shadow:
-    inset 0 0 0 2px rgba(255,255,255,.14),
-    inset 0 0 0 10px rgba(255,255,255,.04);
-  z-index:1;
-}
+    /* reflets + anneaux externes */
+    .coinFace::before{
+      inset:7px;
+      background:
+        radial-gradient(circle at 30% 24%, rgba(255,255,255,.32) 0%, rgba(255,255,255,.12) 18%, rgba(255,255,255,0) 36%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 62%);
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,.14),
+        inset 0 0 0 10px rgba(255,255,255,.04);
+      z-index:1;
+    }
 
-.coinFace::after{
-  inset:14px;
-  border:2px solid rgba(255,255,255,.16);
-  z-index:1;
-}
+    .coinFace::after{
+      inset:14px;
+      border:2px solid rgba(255,255,255,.16);
+      z-index:1;
+    }
 
-/* couleurs de base */
-.coinGold{
-  background:
-    radial-gradient(circle at 30% 24%, #fff6be 0%, #f3dc6a 22%, #cda51d 56%, #9d7707 100%);
-  border:3px solid #8e6a00;
-}
+    /* couleurs de base */
+    .coinGold{
+      background:
+        radial-gradient(circle at 30% 24%, #fff6be 0%, #f3dc6a 22%, #cda51d 56%, #9d7707 100%);
+      border:3px solid #8e6a00;
+    }
 
-.coinYellow{
-  background:
-    radial-gradient(circle at 30% 24%, #fff7c8 0%, #f2e06e 22%, #d7b82c 56%, #9a7b00 100%);
-  border:3px solid #967900;
-}
+    .coinYellow{
+      background:
+        radial-gradient(circle at 30% 24%, #fff7c8 0%, #f2e06e 22%, #d7b82c 56%, #9a7b00 100%);
+      border:3px solid #967900;
+    }
 
-.coinGreen{
-  background:
-    radial-gradient(circle at 30% 24%, #b8ebca 0%, #77bf96 22%, #4f8f6a 58%, #2a523d 100%);
-  border:3px solid #224c39;
-}
+    .coinGreen{
+      background:
+        radial-gradient(circle at 30% 24%, #b8ebca 0%, #77bf96 22%, #4f8f6a 58%, #2a523d 100%);
+      border:3px solid #224c39;
+    }
 
-/* on neutralise totalement l'ancien système d'étoiles */
-.coinStarsRing,
-.coinStar,
-.stackCoin,
-.stackCoinStars,
-.stackCoinLabel,
-.stack1,
-.stack2,
-.stack3{
-  display:none !important;
-}
+    /* on neutralise totalement l'ancien système d'étoiles */
+    .coinStarsRing,
+    .coinStar,
+    .stackCoin,
+    .stackCoinStars,
+    .stackCoinLabel,
+    .stack1,
+    .stack2,
+    .stack3{
+      display:none !important;
+    }
 
-/* coeur de pièce */
-.coinInner{
-  position:relative;
-  width:64px;
-  height:64px;
-  border-radius:50%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  z-index:3;
-  padding:4px;
-  box-shadow:
-    inset 0 2px 4px rgba(255,255,255,.18),
-    inset 0 -6px 8px rgba(0,0,0,.14);
-}
+    /* coeur de pièce */
+    .coinInner{
+      position:relative;
+      width:64px;
+      height:64px;
+      border-radius:50%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      z-index:3;
+      padding:4px;
+      box-shadow:
+        inset 0 2px 4px rgba(255,255,255,.18),
+        inset 0 -6px 8px rgba(0,0,0,.14);
+    }
 
-.coinInner::before{
-  content:"";
-  position:absolute;
-  inset:-8px;
-  border-radius:50%;
-  border:3px solid rgba(230,230,230,.92);
-  pointer-events:none;
-}
+    .coinInner::before{
+      content:"";
+      position:absolute;
+      inset:-8px;
+      border-radius:50%;
+      border:3px solid rgba(230,230,230,.92);
+      pointer-events:none;
+    }
 
-.coinInner::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:50%;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.14),
-    inset 0 10px 12px rgba(255,255,255,.08);
-  pointer-events:none;
-}
+    .coinInner::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.14),
+        inset 0 10px 12px rgba(255,255,255,.08);
+      pointer-events:none;
+    }
 
-.coinInner .n{
-  font-size:28px;
-  line-height:1;
-  font-weight:900;
-  position:relative;
-  z-index:2;
-}
+    .coinInner .n{
+      font-size:28px;
+      line-height:1;
+      font-weight:900;
+      position:relative;
+      z-index:2;
+    }
 
-.coinInner .t{
-  font-size:8px;
-  line-height:1.05;
-  margin-top:4px;
-  letter-spacing:.1px;
-  font-weight:800;
-  position:relative;
-  z-index:2;
-  white-space:nowrap;
-}
+    .coinInner .t{
+      font-size:8px;
+      line-height:1.05;
+      margin-top:4px;
+      letter-spacing:.1px;
+      font-weight:800;
+      position:relative;
+      z-index:2;
+      white-space:nowrap;
+    }
 
-/* teintes internes */
-.coinInnerGold{
-  background:
-    radial-gradient(circle at 32% 26%, #fff3b0 0%, #e2bf4a 45%, #a67900 100%);
-  color:#5b3a00;
-  text-shadow:
-    0 1px 0 rgba(255,255,255,.25),
-    0 2px 2px rgba(0,0,0,.25);
-} 
-  .coinInnerGold::before{
-  content:"";
-  position:absolute;
-  inset:-8px;
-  border-radius:50%;
-  border:3px solid #7a4e00;
-  pointer-events:none;
-}
+    /* teintes internes */
+    .coinInnerGold{
+      background:
+        radial-gradient(circle at 32% 26%, #fff3b0 0%, #e2bf4a 45%, #a67900 100%);
+      color:#5b3a00;
+      text-shadow:
+        0 1px 0 rgba(255,255,255,.25),
+        0 2px 2px rgba(0,0,0,.25);
+    }
+    .coinInnerGold::before{
+      content:"";
+      position:absolute;
+      inset:-8px;
+      border-radius:50%;
+      border:3px solid #7a4e00;
+      pointer-events:none;
+    }
 
-.coinInnerYellow{
-  background:
-    radial-gradient(circle at 32% 26%, #faefae 0%, #e2c848 48%, #aa8905 100%);
-  color:#fffdf6;
-  text-shadow:0 1px 0 rgba(0,0,0,.16);
-}
+    .coinInnerYellow{
+      background:
+        radial-gradient(circle at 32% 26%, #faefae 0%, #e2c848 48%, #aa8905 100%);
+      color:#fffdf6;
+      text-shadow:0 1px 0 rgba(0,0,0,.16);
+    }
 
-.coinInnerGreen{
-  background:
-    radial-gradient(circle at 32% 26%, #b6e3c6 0%, #6aa884 48%, #315b43 100%);
-  color:#ffffff;
-  text-shadow:0 1px 0 rgba(0,0,0,.18);
-}
+    .coinInnerGreen{
+      background:
+        radial-gradient(circle at 32% 26%, #b6e3c6 0%, #6aa884 48%, #315b43 100%);
+      color:#ffffff;
+      text-shadow:0 1px 0 rgba(0,0,0,.18);
+    }
 
-/* Wallet */
-.walletBox{
-  flex:1;
-  min-width:190px;
-  border:2px solid rgba(0,0,0,.08);
-  background:#fff;
-  border-radius:16px;
-  padding:12px;
-}
+    /* Wallet */
+    .walletBox{
+      flex:1;
+      min-width:190px;
+      border:2px solid rgba(0,0,0,.08);
+      background:#fff;
+      border-radius:16px;
+      padding:12px;
+    }
 
-.walletTitle{
-  font-weight:900;
-  font-size:14px;
-  margin-bottom:6px;
-}
+    .walletTitle{
+      font-weight:900;
+      font-size:14px;
+      margin-bottom:6px;
+    }
 
-.walletValue{
-  font-weight:900;
-  font-size:24px;
-  line-height:1;
-}
+    .walletValue{
+      font-weight:900;
+      font-size:24px;
+      line-height:1;
+    }
 
-.walletGold{ color:#9a7000; }
-.walletYellow{ color:#b18900; }
-.walletGreen{ color:#2f5d46; }
+    .walletGold{ color:#9a7000; }
+    .walletYellow{ color:#b18900; }
+    .walletGreen{ color:#2f5d46; }
 
-.walletSub{
-  margin-top:6px;
-  font-weight:800;
-  font-size:12px;
-  color:var(--muted);
-}
+    .walletSub{
+      margin-top:6px;
+      font-weight:800;
+      font-size:12px;
+      color:var(--muted);
+    }
 
-.walletActions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:10px;
-}
+    .walletActions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
 
-.walletMini{
-  border:2px solid rgba(0,0,0,.10);
-  background:var(--beige);
-  border-radius:12px;
-  padding:8px 10px;
-  font-weight:900;
-  cursor:pointer;
-  font-size:12px;
-}
-   
+    .walletMini{
+      border:2px solid rgba(0,0,0,.10);
+      background:var(--beige);
+      border-radius:12px;
+      padding:8px 10px;
+      font-weight:900;
+      cursor:pointer;
+      font-size:12px;
+    }
+
     .sportSupportBadge{
-  position:absolute;
-  top:10px;
-  right:10px;
-  z-index:6;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  border:none;
-  border-radius:999px;
-  padding:6px 10px;
-  background:rgba(255,255,255,.95);
-  box-shadow:0 4px 10px rgba(0,0,0,.14);
-  cursor:pointer;
-}
+      position:absolute;
+      top:10px;
+      right:10px;
+      z-index:6;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      border:none;
+      border-radius:999px;
+      padding:6px 10px;
+      background:rgba(255,255,255,.95);
+      box-shadow:0 4px 10px rgba(0,0,0,.14);
+      cursor:pointer;
+    }
 
-.sportHeart{
-  font-size:16px;
-  line-height:1;
-  display:inline-block;
-  animation:sportHeartBeat 1.35s infinite;
-  transform-origin:center;
-}
+    .sportHeart{
+      font-size:16px;
+      line-height:1;
+      display:inline-block;
+      animation:sportHeartBeat 1.35s infinite;
+      transform-origin:center;
+    }
 
-@keyframes sportHeartBeat{
-  0%{ transform:scale(1); }
-  18%{ transform:scale(1.12); }
-  36%{ transform:scale(1); }
-  54%{ transform:scale(1.16); }
-  72%{ transform:scale(1); }
-  100%{ transform:scale(1); }
-}
+    @keyframes sportHeartBeat{
+      0%{ transform:scale(1); }
+      18%{ transform:scale(1.12); }
+      36%{ transform:scale(1); }
+      54%{ transform:scale(1.16); }
+      72%{ transform:scale(1); }
+      100%{ transform:scale(1); }
+    }
 
-.sportSupportCounts{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  line-height:1;
-}
+    .sportSupportCounts{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      line-height:1;
+    }
 
-.sportSupportYear{
-  font-size:12px;
-  font-weight:900;
-  color:#a51e22;
-}
+    .sportSupportYear{
+      font-size:12px;
+      font-weight:900;
+      color:#a51e22;
+    }
 
-.sportSupportTotal{
-  font-size:10px;
-  font-weight:900;
-  color:#2f5d46;
-} 
-    
-@media (max-height: 780px){
-  .wrap{ padding:10px; gap:10px; }
-  .ticker{ height:120px; }
-  .tile{ aspect-ratio: 1 / 0.70; }
-  .grid{ gap:10px; }
-  .tile .h{ font-size:16px; }
-  .tile .p{ margin-top:6px; }
-  .dae{ padding:8px 10px; font-size:14px; border-radius:18px; border-color: var(--red); min-height:86px; }
-  .heart{ width:44px; height:44px; }
-  .footerRow{ padding-bottom:8px; }
-  .iconBtn{ width:40px; height:40px; }
-  .legalBtn{ padding:9px 10px; font-size:12px; }
-  .sheet .body{ max-height:min(70vh, 460px); }
-  .sportTape{ height:34px; }
-  .sportTapeTrack{ font-size:11px; }
-}
+    .sportSupportTotal{
+      font-size:10px;
+      font-weight:900;
+      color:#2f5d46;
+    }
 
-@media (max-height: 700px){
-  .ticker{ height:112px; }
-  .tile{ aspect-ratio: 1 / 0.70; }
-  .wrap{ gap:12px; }
-  .sportTape{ height:32px; }
-}
-  </style> 
-</head>  
+    @media (max-height: 780px){
+      .wrap{ padding:10px; gap:10px; }
+      .ticker{ height:120px; }
+      .tile{ aspect-ratio: 1 / 0.70; }
+      .grid{ gap:10px; }
+      .tile .h{ font-size:16px; }
+      .tile .p{ margin-top:6px; }
+      .dae{ padding:8px 10px; font-size:14px; border-radius:18px; border-color: var(--red); min-height:86px; }
+      .heart{ width:44px; height:44px; }
+      .footerRow{ padding-bottom:8px; }
+      .iconBtn{ width:40px; height:40px; }
+      .legalBtn{ padding:9px 10px; font-size:12px; }
+      .sheet .body{ max-height:min(70vh, 460px); }
+      .sportTape{ height:34px; }
+      .sportTapeTrack{ font-size:11px; }
+    }
+
+    @media (max-height: 700px){
+      .ticker{ height:112px; }
+      .tile{ aspect-ratio: 1 / 0.70; }
+      .wrap{ gap:12px; }
+      .sportTape{ height:32px; }
+    }
+  </style>
+</head>
 <body>
   <div class="page">
     <div class="wrap">
@@ -730,24 +730,23 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
             </div>
           </div>
 
-          <div class="tile" data-open="sport">
-<div class="tile" data-open="sport" id="sportTile">
-  <img alt="" src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=60"/>
-  <div class="overlay"></div>
+          <div class="tile" data-open="sport" id="sportTile">
+            <img alt="" src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=60"/>
+            <div class="overlay"></div>
 
-  <button class="sportSupportBadge" id="sportSupportBadge" type="button" aria-label="Soutenir le sport local">
-    <span class="sportHeart" id="sportHeart">❤️</span>
-    <span class="sportSupportCounts">
-      <span class="sportSupportYear" id="sportSupportYearCount">0</span>
-      <span class="sportSupportTotal" id="sportSupportTotalCount">0</span>
-    </span>
-  </button>
+            <button class="sportSupportBadge" id="sportSupportBadge" type="button" aria-label="Soutenir le sport local">
+              <span class="sportHeart" id="sportHeart">❤️</span>
+              <span class="sportSupportCounts">
+                <span class="sportSupportYear" id="sportSupportYearCount">0</span>
+                <span class="sportSupportTotal" id="sportSupportTotalCount">0</span>
+              </span>
+            </button>
 
-  <div class="content">
-    <div class="h">Sport</div>
-    <div class="p">Infos • parcs • loisirs</div>
-  </div>
-</div>
+            <div class="content">
+              <div class="h">Sport</div>
+              <div class="p">Infos • parcs • loisirs</div>
+            </div>
+          </div>
 
           <div class="tile" data-open="mairie" id="mairieTile">
             <img alt="" src="https://images.unsplash.com/photo-1505843513577-22bb7d21e455?auto=format&fit=crop&w=1200&q=60"/>
@@ -858,376 +857,376 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   </div>
 
   <div class="modal" id="legal">
-  <div class="backdrop" id="legalClose"></div>
-  <div class="sheet">
-    <div class="head">
-      <div>Documents & mentions légales</div>
-      <button class="xbtn" id="legalX" aria-label="Fermer" type="button">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <div class="body">
-      <div class="tabs">
-        <button class="tab active" data-tab="rgpd" type="button">RGPD</button>
-        <button class="tab" data-tab="cgu" type="button">CGU</button>
-        <button class="tab" data-tab="cgv" type="button">CGV</button>
+    <div class="backdrop" id="legalClose"></div>
+    <div class="sheet">
+      <div class="head">
+        <div>Documents & mentions légales</div>
+        <button class="xbtn" id="legalX" aria-label="Fermer" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
       </div>
-
-      <div id="p-rgpd" class="doc">
-        <div style="font-weight:900;font-size:15px;">📗 Politique de protection des données (RGPD) — Bo’CitéArt</div>
-        <div class="muted" style="margin-top:4px;">Version pré-structuration — entités juridiques en cours de constitution</div>
-        <div class="box">Bo’CitéArt est un projet territorial en cours de structuration juridique. La SAS commerciale et l’association loi 1901 à but non lucratif seront immatriculées avant toute exploitation contractuelle. Les mentions complètes (SIRET, siège, représentant légal, contact RGPD) seront publiées à cette étape.</div>
-
-        <h2>1. Responsable du traitement</h2>
-        <p>
-          Responsable provisoire : <strong>Bo’CitéArt — structure en cours de constitution</strong><br>
-          Représentant du projet : [Nom du porteur du projet]<br>
-          Contact RGPD : <a href="mailto:contact@bociteart.com">contact@bociteart.com</a><br>
-          Adresse : [à compléter]
-        </p>
-
-        <div class="box">
-          À terme :<br>
-          • La SAS assurera les prestations commerciales/techniques.<br>
-          • L’Association loi 1901 (but non lucratif) portera les actions citoyennes, culturelles et éducatives.
+      <div class="body">
+        <div class="tabs">
+          <button class="tab active" data-tab="rgpd" type="button">RGPD</button>
+          <button class="tab" data-tab="cgu" type="button">CGU</button>
+          <button class="tab" data-tab="cgv" type="button">CGV</button>
         </div>
 
-        <h2>2. Données collectées (selon activation des fonctions)</h2>
-        <ul>
-          <li><strong>Compte</strong> : email, rôle (admin, mairie, commerçant, école, etc.).</li>
-          <li><strong>Sécurité</strong> : journaux techniques (logs), horodatages, tentatives d’accès.</li>
-          <li><strong>Fonctions</strong> : paramètres, préférences, contenus publiés par profils habilités.</li>
-          <li><strong>Publicité</strong> : texte fourni par le partenaire, réservations (horodatage).</li>
-          <li><strong>Démo</strong> : données locales de démonstration (localStorage), conservées uniquement sur l’appareil de l’utilisateur et supprimables via les paramètres du navigateur.</li>
-          <li><strong>Transactions / facturation (LIVE)</strong> : montants agrégés, identifiants de facturation, journaux de paiement via PSP (Bo’CitéArt ne stocke pas les données bancaires).</li>
-        </ul>
+        <div id="p-rgpd" class="doc">
+          <div style="font-weight:900;font-size:15px;">📗 Politique de protection des données (RGPD) — Bo’CitéArt</div>
+          <div class="muted" style="margin-top:4px;">Version pré-structuration — entités juridiques en cours de constitution</div>
+          <div class="box">Bo’CitéArt est un projet territorial en cours de structuration juridique. La SAS commerciale et l’association loi 1901 à but non lucratif seront immatriculées avant toute exploitation contractuelle. Les mentions complètes (SIRET, siège, représentant légal, contact RGPD) seront publiées à cette étape.</div>
 
-        <h2>3. Données sensibles / contenus interdits</h2>
-        <div class="box">
-          Bo’CitéArt n’a pas vocation à collecter des données sensibles (santé, opinions, etc.).
-          Les zones de publication sont réservées aux profils habilités, et peuvent intégrer des contrôles de conformité.<br><br>
-          Tout contenu illicite, haineux, diffamatoire, discriminatoire, politique partisan, ou comportant des données personnelles non autorisées
-          (notamment concernant des mineurs), peut être <strong>retiré immédiatement</strong>, avec suspension d’accès et conservation d’éléments techniques
-          nécessaires à la gestion de l’incident et/ou à la coopération avec les autorités si requis.
-        </div>
+          <h2>1. Responsable du traitement</h2>
+          <p>
+            Responsable provisoire : <strong>Bo’CitéArt — structure en cours de constitution</strong><br>
+            Représentant du projet : [Nom du porteur du projet]<br>
+            Contact RGPD : <a href="mailto:contact@bociteart.com">contact@bociteart.com</a><br>
+            Adresse : [à compléter]
+          </p>
 
-        <h2>4. Mineurs / École — cadre renforcé</h2>
-        <div class="box">Bo’CitéArt ne collecte aucune donnée personnelle directement auprès des enfants. Aucun compte élève autonome n’est créé.</div>
-        <ul>
-          <li>Publication par référent habilité (professeur/direction).</li>
-          <li>Interdiction de publier un nom d’enfant ou élément identifiant.</li>
-          <li>Voix d’enfant : uniquement si autorisations parentales gérées et conservées par l’établissement.</li>
-          <li>Retrait possible sur simple demande d’un responsable légal.</li>
-        </ul>
-
-        <h2>5. Base légale</h2>
-        <ul>
-          <li><strong>Exécution du service</strong> : fournir les fonctionnalités (accès, affichage, contenus).</li>
-          <li><strong>Intérêt légitime</strong> : sécurité, prévention fraude/abus, traçabilité minimale.</li>
-          <li><strong>Obligations légales</strong> : conformité, litiges, comptabilité/facturation (version officielle).</li>
-          <li><strong>Consentement</strong> : uniquement si une fonctionnalité le nécessite (ex. géolocalisation).</li>
-        </ul>
-
-        <h2>6. Finalités</h2>
-        <ul>
-          <li>Fonctionnement de l’application (contenus, accès, affichage).</li>
-          <li>Sécurisation des accès et prévention des abus.</li>
-          <li>Gestion de visibilité partenaire et réservations (si activées).</li>
-          <li>Animation citoyenne/territoriale (selon activation).</li>
-        </ul>
-
-        <h2>7. Géolocalisation (optionnelle)</h2>
-        <div class="box">
-          Si activée, la géolocalisation est demandée par votre téléphone et peut être refusée.
-          Elle sert uniquement à afficher des points d’intérêt (ex. DAE, parcours).
-          La démo ne garantit pas l’exactitude des données disponibles.
-        </div>
-
-        <h2>8. Durées de conservation</h2>
-        <ul>
-          <li><strong>Démo</strong> : données locales conservées sur le téléphone jusqu’à suppression du navigateur / réinitialisation.</li>
-          <li><strong>Logs sécurité</strong> : durée limitée, proportionnée, ajustée en version officielle.</li>
-          <li><strong>Facturation/contrats</strong> : selon obligations légales (version officielle).</li>
-        </ul>
-
-        <h2>9. Destinataires</h2>
-        <ul>
-          <li>Accès interne : administrateur habilité.</li>
-          <li>Profils habilités : mairie/école/commerçants selon leurs droits.</li>
-          <li>Sous-traitants techniques : uniquement si nécessaires (hébergement, analytics, etc.) — précisés en version officielle.</li>
-          <li>Prestataire de paiement (PSP) : exécute les reversements et fournit une traçabilité (sous-traitant) — détails précisés en version officielle.</li>
-        </ul>
-
-        <h2>10. Sécurité</h2>
-        <div class="box">
-          Mesures prévues selon version : contrôle d’accès par rôles, traçabilité, journalisation,
-          protections contre l’abus, et sécurisation des accès administrateurs.
-          Aucune solution ne peut garantir le risque zéro.
-        </div>
-
-        <h2>11. Vos droits</h2>
-        <ul>
-          <li>Droit d’accès, rectification, effacement.</li>
-          <li>Droit d’opposition et limitation.</li>
-          <li>Droit de réclamation auprès de la CNIL.</li>
-        </ul>
-
-        <div class="box" style="margin-top:10px;">
-          <div style="font-weight:900;">Option “Compte sécurisé” (si activée)</div>
-          <div class="muted" style="margin-top:6px;">
-            Cette option peut impliquer un traitement par un <strong>prestataire serveur tiers</strong> (sous-traitant),
-            uniquement pour fournir les fonctions : récupération de compte, assistance, alertes, et, si autorisée,
-            géolocalisation ponctuelle et SMS vers 2 numéros de confiance.
-            Les autorisations sensibles (ex. localisation) sont demandées via le téléphone et restent refusables.
+          <div class="box">
+            À terme :<br>
+            • La SAS assurera les prestations commerciales/techniques.<br>
+            • L’Association loi 1901 (but non lucratif) portera les actions citoyennes, culturelles et éducatives.
           </div>
-          <div class="muted" style="margin-top:6px;">
-            Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> concernant ces fonctions.
+
+          <h2>2. Données collectées (selon activation des fonctions)</h2>
+          <ul>
+            <li><strong>Compte</strong> : email, rôle (admin, mairie, commerçant, école, etc.).</li>
+            <li><strong>Sécurité</strong> : journaux techniques (logs), horodatages, tentatives d’accès.</li>
+            <li><strong>Fonctions</strong> : paramètres, préférences, contenus publiés par profils habilités.</li>
+            <li><strong>Publicité</strong> : texte fourni par le partenaire, réservations (horodatage).</li>
+            <li><strong>Démo</strong> : données locales de démonstration (localStorage), conservées uniquement sur l’appareil de l’utilisateur et supprimables via les paramètres du navigateur.</li>
+            <li><strong>Transactions / facturation (LIVE)</strong> : montants agrégés, identifiants de facturation, journaux de paiement via PSP (Bo’CitéArt ne stocke pas les données bancaires).</li>
+          </ul>
+
+          <h2>3. Données sensibles / contenus interdits</h2>
+          <div class="box">
+            Bo’CitéArt n’a pas vocation à collecter des données sensibles (santé, opinions, etc.).
+            Les zones de publication sont réservées aux profils habilités, et peuvent intégrer des contrôles de conformité.<br><br>
+            Tout contenu illicite, haineux, diffamatoire, discriminatoire, politique partisan, ou comportant des données personnelles non autorisées
+            (notamment concernant des mineurs), peut être <strong>retiré immédiatement</strong>, avec suspension d’accès et conservation d’éléments techniques
+            nécessaires à la gestion de l’incident et/ou à la coopération avec les autorités si requis.
           </div>
-        </div>
 
-        <div class="box">Bo’CitéArt s’engage à ne vendre aucune donnée et à respecter strictement le RGPD.</div>
-      </div>
-
-      <div id="p-cgu" class="doc" style="display:none;">
-        <div style="font-weight:900;font-size:15px;">📘 Conditions Générales d’Utilisation — Bo’CitéArt</div>
-        <div class="box">
-          Bo’CitéArt est un projet territorial en cours de déploiement.
-          L’application ne constitue ni un service d’urgence, ni un réseau social ouvert, ni un établissement bancaire,
-          ni un établissement de paiement, ni un service financier réglementé.<br><br>
-          Les <strong>BoCiteCoins</strong> sont des unités promotionnelles internes (non monétaires)
-          et ne sont pas des crypto-actifs, ni des titres, ni une monnaie locale au sens financier.
-        </div>
-
-        <h2>0. Statut de la version “démo” / pré-structuration</h2>
-        <div class="box">
-          La présente version peut être une démonstration fonctionnelle.
-          Aucune relation contractuelle ferme ne peut naître avant l’immatriculation officielle des entités juridiques
-          (SAS et/ou association) et la signature d’un contrat applicable (devis/commande/CGV, le cas échéant).
-        </div>
-
-        <h2>1. Accès — rôles, mandats et responsabilités</h2>
-        <ul>
-          <li><strong>Accès citoyen</strong> : consultation libre des contenus publiés (œuvres, école, sport, mairie, offres).</li>
-          <li><strong>Accès de publication</strong> : réservé aux profils habilités (admin, mairie, école, sport, commerçants).</li>
-          <li><strong>Chaque tuile de publication</strong> est protégée (mot de passe fort / contrôle d’accès / éventuellement 2FA selon rôle).</li>
-          <li><strong>Minimum 2 référents par tuile</strong> (ex. Mairie : 1 responsable + 1 référent). Le responsable peut modifier le 2e référent.</li>
-          <li><strong>Signature électronique obligatoire</strong> des documents applicables (CGU/CGV/mandat/conditions spécifiques) avant activation LIVE.</li>
-          <li>En cas d’incident, blocage, ou perte d’accès : <strong>Bo’CitéArt peut réinitialiser l’accès</strong> selon procédure de vérification.</li>
-        </ul>
-
-        <h2>2. Règles de conduite — tolérance zéro</h2>
-        <ul>
-          <li>Interdiction de contenu illégal, injurieux, diffamatoire, discriminatoire, haineux, violent, harcelant.</li>
-          <li>Interdiction de contenu politique partisan, propagande, incitation, menaces.</li>
-          <li>Interdiction de publier des données personnelles (noms, coordonnées, infos identifiantes), en particulier concernant des mineurs.</li>
-          <li>Interdiction de publier des images compromettantes, nudité, contenus sexuels, ou tout contenu inapproprié (détection/filtrage possibles selon version).</li>
-          <li>Interdiction de tentative de fraude, contournement, perturbation, extraction, ou “crack” du système.</li>
-        </ul>
-
-        <h2>3. Modération / retrait</h2>
-        <div class="box">
-          Bo’CitéArt peut retirer un contenu, limiter une fonctionnalité, ou suspendre un accès
-          en cas de non-conformité, d’abus, ou de risque juridique/sécuritaire, sans obligation de maintien en ligne.
-        </div>
-
-        <h2>4. BoCiteCoins</h2>
-        <div class="box">
-          Les <strong>BoCiteCoins</strong> sont des unités promotionnelles internes.
-          Elles n’ont <strong>aucune valeur monétaire</strong>, ne constituent pas une monnaie,
-          ne sont pas convertibles en euros, non remboursables,
-          et ne peuvent pas être revendues ou transférées hors des règles prévues par l’application.
-        </div>
-
-        <h2>5. Péremption des BoCiteCoins (règle de gestion)</h2>
-        <div class="box">
-          Durée : <strong>1 an</strong> à partir de l’obtention du premier point (déclencheur).
-          Un <strong>rappel 1 mois avant</strong> peut être affiché.<br><br>
-          Dernier mois :
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>Seuil minimal d’échange : <strong>20 points</strong> minimum.</li>
-            <li>À échéance : le solde redémarre à <strong>12 points</strong>.</li>
-            <li>Le reste est <strong>brûlé automatiquement</strong>.</li>
-            <li>La date repart dès qu’un nouveau point est obtenu au-delà de 12.</li>
+          <h2>4. Mineurs / École — cadre renforcé</h2>
+          <div class="box">Bo’CitéArt ne collecte aucune donnée personnelle directement auprès des enfants. Aucun compte élève autonome n’est créé.</div>
+          <ul>
+            <li>Publication par référent habilité (professeur/direction).</li>
+            <li>Interdiction de publier un nom d’enfant ou élément identifiant.</li>
+            <li>Voix d’enfant : uniquement si autorisations parentales gérées et conservées par l’établissement.</li>
+            <li>Retrait possible sur simple demande d’un responsable légal.</li>
           </ul>
-          Ces règles sont paramétrables par Bo’CitéArt et/ou la collectivité selon le cadre contractuel applicable.
-        </div>
 
-        <h2>6. Publicité (si activée)</h2>
-        <ul>
-          <li>Le partenaire est responsable de son contenu et de ses droits (marque, image, texte).</li>
-          <li>Bo’CitéArt peut refuser/retirer une publicité en cas de non-conformité ou risque.</li>
-          <li>Aucune promesse de résultat commercial.</li>
-        </ul>
-
-        <h2>7. Urgences</h2>
-        <div class="box">
-          Les boutons 112 / 3919 / 119 sont des raccourcis téléphoniques.
-          Bo’CitéArt ne fournit pas les secours et ne garantit pas la connexion réseau.
-          En cas d’urgence, appeler immédiatement les secours sans attendre.
-        </div>
-
-        <h2>8. Informations et données “indicatives”</h2>
-        <div class="box">
-          Certaines informations peuvent provenir de sources externes ou du téléphone
-          (ex. carte, itinéraires, points d’intérêt, DAE).
-          Elles sont fournies à titre indicatif et peuvent comporter des inexactitudes, retards ou indisponibilités.
-          Bo’CitéArt ne garantit pas l’exactitude parfaite de ces informations.
-        </div>
-
-        <h2>9. Sécurisation des comptes (2FA / double référent) — si activée</h2>
-        <div class="box">
-          Selon le rôle (mairie, école, sport, commerce), Bo’CitéArt peut activer des mesures renforcées :
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li><strong>2FA</strong> (double authentification) possible.</li>
-            <li><strong>Double référent</strong> : deux personnes distinctes peuvent être habilitées sur une même tuile (ex. maire + référent), afin d’assurer la continuité en cas d’absence.</li>
-            <li>Procédure de récupération : vérifications renforcées avant réactivation.</li>
+          <h2>5. Base légale</h2>
+          <ul>
+            <li><strong>Exécution du service</strong> : fournir les fonctionnalités (accès, affichage, contenus).</li>
+            <li><strong>Intérêt légitime</strong> : sécurité, prévention fraude/abus, traçabilité minimale.</li>
+            <li><strong>Obligations légales</strong> : conformité, litiges, comptabilité/facturation (version officielle).</li>
+            <li><strong>Consentement</strong> : uniquement si une fonctionnalité le nécessite (ex. géolocalisation).</li>
           </ul>
-          Ces mesures relèvent d’une <strong>obligation de moyens</strong> et peuvent dépendre du téléphone,
-          du réseau, et du prestataire technique selon la version LIVE.
+
+          <h2>6. Finalités</h2>
+          <ul>
+            <li>Fonctionnement de l’application (contenus, accès, affichage).</li>
+            <li>Sécurisation des accès et prévention des abus.</li>
+            <li>Gestion de visibilité partenaire et réservations (si activées).</li>
+            <li>Animation citoyenne/territoriale (selon activation).</li>
+          </ul>
+
+          <h2>7. Géolocalisation (optionnelle)</h2>
+          <div class="box">
+            Si activée, la géolocalisation est demandée par votre téléphone et peut être refusée.
+            Elle sert uniquement à afficher des points d’intérêt (ex. DAE, parcours).
+            La démo ne garantit pas l’exactitude des données disponibles.
+          </div>
+
+          <h2>8. Durées de conservation</h2>
+          <ul>
+            <li><strong>Démo</strong> : données locales conservées sur le téléphone jusqu’à suppression du navigateur / réinitialisation.</li>
+            <li><strong>Logs sécurité</strong> : durée limitée, proportionnée, ajustée en version officielle.</li>
+            <li><strong>Facturation/contrats</strong> : selon obligations légales (version officielle).</li>
+          </ul>
+
+          <h2>9. Destinataires</h2>
+          <ul>
+            <li>Accès interne : administrateur habilité.</li>
+            <li>Profils habilités : mairie/école/commerçants selon leurs droits.</li>
+            <li>Sous-traitants techniques : uniquement si nécessaires (hébergement, analytics, etc.) — précisés en version officielle.</li>
+            <li>Prestataire de paiement (PSP) : exécute les reversements et fournit une traçabilité (sous-traitant) — détails précisés en version officielle.</li>
+          </ul>
+
+          <h2>10. Sécurité</h2>
+          <div class="box">
+            Mesures prévues selon version : contrôle d’accès par rôles, traçabilité, journalisation,
+            protections contre l’abus, et sécurisation des accès administrateurs.
+            Aucune solution ne peut garantir le risque zéro.
+          </div>
+
+          <h2>11. Vos droits</h2>
+          <ul>
+            <li>Droit d’accès, rectification, effacement.</li>
+            <li>Droit d’opposition et limitation.</li>
+            <li>Droit de réclamation auprès de la CNIL.</li>
+          </ul>
+
+          <div class="box" style="margin-top:10px;">
+            <div style="font-weight:900;">Option “Compte sécurisé” (si activée)</div>
+            <div class="muted" style="margin-top:6px;">
+              Cette option peut impliquer un traitement par un <strong>prestataire serveur tiers</strong> (sous-traitant),
+              uniquement pour fournir les fonctions : récupération de compte, assistance, alertes, et, si autorisée,
+              géolocalisation ponctuelle et SMS vers 2 numéros de confiance.
+              Les autorisations sensibles (ex. localisation) sont demandées via le téléphone et restent refusables.
+            </div>
+            <div class="muted" style="margin-top:6px;">
+              Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> concernant ces fonctions.
+            </div>
+          </div>
+
+          <div class="box">Bo’CitéArt s’engage à ne vendre aucune donnée et à respecter strictement le RGPD.</div>
         </div>
 
-        <h2>10. Disponibilité / limites</h2>
-        <div class="box">
-          L’application est fournie “en l’état” (démo / pré-déploiement).
-          Bo’CitéArt ne garantit pas l’absence d’erreurs, ni une disponibilité continue.
+        <div id="p-cgu" class="doc" style="display:none;">
+          <div style="font-weight:900;font-size:15px;">📘 Conditions Générales d’Utilisation — Bo’CitéArt</div>
+          <div class="box">
+            Bo’CitéArt est un projet territorial en cours de déploiement.
+            L’application ne constitue ni un service d’urgence, ni un réseau social ouvert, ni un établissement bancaire,
+            ni un établissement de paiement, ni un service financier réglementé.<br><br>
+            Les <strong>BoCiteCoins</strong> sont des unités promotionnelles internes (non monétaires)
+            et ne sont pas des crypto-actifs, ni des titres, ni une monnaie locale au sens financier.
+          </div>
+
+          <h2>0. Statut de la version “démo” / pré-structuration</h2>
+          <div class="box">
+            La présente version peut être une démonstration fonctionnelle.
+            Aucune relation contractuelle ferme ne peut naître avant l’immatriculation officielle des entités juridiques
+            (SAS et/ou association) et la signature d’un contrat applicable (devis/commande/CGV, le cas échéant).
+          </div>
+
+          <h2>1. Accès — rôles, mandats et responsabilités</h2>
+          <ul>
+            <li><strong>Accès citoyen</strong> : consultation libre des contenus publiés (œuvres, école, sport, mairie, offres).</li>
+            <li><strong>Accès de publication</strong> : réservé aux profils habilités (admin, mairie, école, sport, commerçants).</li>
+            <li><strong>Chaque tuile de publication</strong> est protégée (mot de passe fort / contrôle d’accès / éventuellement 2FA selon rôle).</li>
+            <li><strong>Minimum 2 référents par tuile</strong> (ex. Mairie : 1 responsable + 1 référent). Le responsable peut modifier le 2e référent.</li>
+            <li><strong>Signature électronique obligatoire</strong> des documents applicables (CGU/CGV/mandat/conditions spécifiques) avant activation LIVE.</li>
+            <li>En cas d’incident, blocage, ou perte d’accès : <strong>Bo’CitéArt peut réinitialiser l’accès</strong> selon procédure de vérification.</li>
+          </ul>
+
+          <h2>2. Règles de conduite — tolérance zéro</h2>
+          <ul>
+            <li>Interdiction de contenu illégal, injurieux, diffamatoire, discriminatoire, haineux, violent, harcelant.</li>
+            <li>Interdiction de contenu politique partisan, propagande, incitation, menaces.</li>
+            <li>Interdiction de publier des données personnelles (noms, coordonnées, infos identifiantes), en particulier concernant des mineurs.</li>
+            <li>Interdiction de publier des images compromettantes, nudité, contenus sexuels, ou tout contenu inapproprié (détection/filtrage possibles selon version).</li>
+            <li>Interdiction de tentative de fraude, contournement, perturbation, extraction, ou “crack” du système.</li>
+          </ul>
+
+          <h2>3. Modération / retrait</h2>
+          <div class="box">
+            Bo’CitéArt peut retirer un contenu, limiter une fonctionnalité, ou suspendre un accès
+            en cas de non-conformité, d’abus, ou de risque juridique/sécuritaire, sans obligation de maintien en ligne.
+          </div>
+
+          <h2>4. BoCiteCoins</h2>
+          <div class="box">
+            Les <strong>BoCiteCoins</strong> sont des unités promotionnelles internes.
+            Elles n’ont <strong>aucune valeur monétaire</strong>, ne constituent pas une monnaie,
+            ne sont pas convertibles en euros, non remboursables,
+            et ne peuvent pas être revendues ou transférées hors des règles prévues par l’application.
+          </div>
+
+          <h2>5. Péremption des BoCiteCoins (règle de gestion)</h2>
+          <div class="box">
+            Durée : <strong>1 an</strong> à partir de l’obtention du premier point (déclencheur).
+            Un <strong>rappel 1 mois avant</strong> peut être affiché.<br><br>
+            Dernier mois :
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Seuil minimal d’échange : <strong>20 points</strong> minimum.</li>
+              <li>À échéance : le solde redémarre à <strong>12 points</strong>.</li>
+              <li>Le reste est <strong>brûlé automatiquement</strong>.</li>
+              <li>La date repart dès qu’un nouveau point est obtenu au-delà de 12.</li>
+            </ul>
+            Ces règles sont paramétrables par Bo’CitéArt et/ou la collectivité selon le cadre contractuel applicable.
+          </div>
+
+          <h2>6. Publicité (si activée)</h2>
+          <ul>
+            <li>Le partenaire est responsable de son contenu et de ses droits (marque, image, texte).</li>
+            <li>Bo’CitéArt peut refuser/retirer une publicité en cas de non-conformité ou risque.</li>
+            <li>Aucune promesse de résultat commercial.</li>
+          </ul>
+
+          <h2>7. Urgences</h2>
+          <div class="box">
+            Les boutons 112 / 3919 / 119 sont des raccourcis téléphoniques.
+            Bo’CitéArt ne fournit pas les secours et ne garantit pas la connexion réseau.
+            En cas d’urgence, appeler immédiatement les secours sans attendre.
+          </div>
+
+          <h2>8. Informations et données “indicatives”</h2>
+          <div class="box">
+            Certaines informations peuvent provenir de sources externes ou du téléphone
+            (ex. carte, itinéraires, points d’intérêt, DAE).
+            Elles sont fournies à titre indicatif et peuvent comporter des inexactitudes, retards ou indisponibilités.
+            Bo’CitéArt ne garantit pas l’exactitude parfaite de ces informations.
+          </div>
+
+          <h2>9. Sécurisation des comptes (2FA / double référent) — si activée</h2>
+          <div class="box">
+            Selon le rôle (mairie, école, sport, commerce), Bo’CitéArt peut activer des mesures renforcées :
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li><strong>2FA</strong> (double authentification) possible.</li>
+              <li><strong>Double référent</strong> : deux personnes distinctes peuvent être habilitées sur une même tuile (ex. maire + référent), afin d’assurer la continuité en cas d’absence.</li>
+              <li>Procédure de récupération : vérifications renforcées avant réactivation.</li>
+            </ul>
+            Ces mesures relèvent d’une <strong>obligation de moyens</strong> et peuvent dépendre du téléphone,
+            du réseau, et du prestataire technique selon la version LIVE.
+          </div>
+
+          <h2>10. Disponibilité / limites</h2>
+          <div class="box">
+            L’application est fournie “en l’état” (démo / pré-déploiement).
+            Bo’CitéArt ne garantit pas l’absence d’erreurs, ni une disponibilité continue.
+          </div>
+
+          <h2>11. Suivi indicatif (commerçants)</h2>
+          <div class="box">
+            Certaines vues de suivi (ex. estimation mensuelle) sont fournies à titre <strong>indicatif</strong>
+            et ne constituent pas un document comptable, fiscal ou opposable.
+            Les montants contractuels et facturés sont ceux issus du PSP et/ou de la facture mensuelle.
+          </div>
+
+          <h2>12. Responsabilité</h2>
+          <ul>
+            <li>Bo’CitéArt n’est pas responsable d’un mauvais usage de l’application.</li>
+            <li>Bo’CitéArt n’est pas responsable des contenus fournis par des tiers au-delà de sa modération.</li>
+            <li>Les dommages indirects (perte commerciale, etc.) sont exclus dans la limite légale.</li>
+          </ul>
+
+          <h2>13. Force majeure</h2>
+          <div class="box">
+            Bo’CitéArt ne pourra être tenu responsable en cas de force majeure ou d’événement extérieur rendant le service indisponible ou altéré
+            (panne réseau, incident hébergeur, cyberattaque, coupure électrique, décision administrative, etc.).
+          </div>
+
+          <h2>14. Propriété intellectuelle</h2>
+          <div class="box">
+            L’ensemble des éléments de Bo’CitéArt (concept, structure, textes, contenus, visuels, charte, design, marque et signes distinctifs)
+            est protégé. Toute reproduction, extraction, réutilisation ou détournement sans autorisation est interdit,
+            sauf droits légaux applicables.
+          </div>
+
+          <h2>15. Modification des conditions</h2>
+          <div class="box">
+            Bo’CitéArt peut modifier les présentes conditions pour tenir compte des évolutions du service,
+            des exigences légales ou de sécurité. La version applicable est celle publiée dans l’application au moment de l’utilisation.
+          </div>
+
+          <h2>16. Droit applicable</h2>
+          <p>Droit français.</p>
         </div>
 
-        <h2>11. Suivi indicatif (commerçants)</h2>
-        <div class="box">
-          Certaines vues de suivi (ex. estimation mensuelle) sont fournies à titre <strong>indicatif</strong>
-          et ne constituent pas un document comptable, fiscal ou opposable.
-          Les montants contractuels et facturés sont ceux issus du PSP et/ou de la facture mensuelle.
+        <div id="p-cgv" class="doc" style="display:none;">
+          <div style="font-weight:900;font-size:15px;">📄 Conditions Générales de Vente — Bo’CitéArt</div>
+          <div class="box">
+            Les présentes Conditions Générales de Vente (CGV) encadrent les relations commerciales entre Bo’CitéArt
+            et les partenaires professionnels (commerçants, collectivités, structures sportives, institutions)
+            utilisant les services proposés par la plateforme.
+          </div>
+
+          <h2>1. Statut du service</h2>
+          <div class="box">
+            Bo’CitéArt est une plateforme territoriale destinée à favoriser la dynamique locale entre citoyens,
+            commerces, institutions et acteurs associatifs.<br><br>
+            Les BoCiteCoins sont des <strong>unités promotionnelles internes</strong>.
+            Ils ne constituent pas une monnaie, un actif financier, un moyen de paiement ni un crypto-actif.
+          </div>
+
+          <h2>2. Accès au service</h2>
+          <ul>
+            <li>L’accès professionnel nécessite la validation des CGU, CGV et documents contractuels applicables.</li>
+            <li>Chaque structure dispose d’un accès sécurisé (identifiant + mot de passe).</li>
+            <li>Un minimum de deux référents peut être désigné pour garantir la continuité de gestion.</li>
+            <li>Bo’CitéArt peut suspendre un accès en cas d’abus, fraude ou non-respect des règles.</li>
+          </ul>
+
+          <h2>3. Abonnement commerçant</h2>
+          <div class="box">L’accès aux fonctionnalités commerciales de la plateforme est proposé sous forme d’abonnement.</div>
+          <ul>
+            <li><strong>Abonnement :</strong> 26,90 € HT par mois</li>
+            <li><strong>Engagement :</strong> 12 mois minimum</li>
+            <li><strong>Renouvellement :</strong> tacite sauf résiliation selon les conditions contractuelles</li>
+          </ul>
+
+          <h2>4. Frais de fonctionnement</h2>
+          <div class="box">
+            Bo’CitéArt applique un frais de fonctionnement lié à l’utilisation du système de traçabilité des transactions promotionnelles.
+          </div>
+          <ul>
+            <li><strong>0,18 € HT</strong> par tranche de <strong>10 € d’achats enregistrés</strong></li>
+            <li>La traçabilité peut être assurée via un prestataire de paiement (PSP).</li>
+            <li>Une facture récapitulative mensuelle peut être émise.</li>
+          </ul>
+
+          <h2>5. BoCiteCoins</h2>
+          <div class="box">Les BoCiteCoins sont attribués dans le cadre d’actions promotionnelles locales.<br><br>Ils sont :</div>
+          <ul>
+            <li>non convertibles en euros</li>
+            <li>non remboursables</li>
+            <li>non transférables hors du système</li>
+            <li>strictement liés à l’usage de la plateforme</li>
+          </ul>
+
+          <h2>6. Publicité</h2>
+          <div class="box">La plateforme peut proposer des espaces de visibilité promotionnelle selon les conditions définies dans l’application.</div>
+          <ul>
+            <li>nombre de publications limité par jour</li>
+            <li>réservation via calendrier intégré</li>
+            <li>contenu soumis à validation</li>
+            <li>Bo’CitéArt peut refuser toute publication non conforme</li>
+          </ul>
+
+          <h2>7. Paiement</h2>
+          <ul>
+            <li>Le paiement peut être réalisé via un prestataire de paiement sécurisé (PSP).</li>
+            <li>Les données bancaires ne sont pas stockées par Bo’CitéArt.</li>
+            <li>Les factures sont émises conformément aux obligations comptables applicables.</li>
+          </ul>
+
+          <h2>8. Suspension / résiliation</h2>
+          <ul>
+            <li>En cas de non-paiement, l’accès peut être suspendu.</li>
+            <li>En cas de fraude ou détournement, le compte peut être désactivé.</li>
+            <li>Bo’CitéArt peut suspendre temporairement un service pour maintenance ou sécurité.</li>
+          </ul>
+
+          <h2>9. Responsabilité</h2>
+          <ul>
+            <li>Bo’CitéArt fournit une plateforme technique et ne garantit pas un résultat commercial.</li>
+            <li>Bo’CitéArt n’est pas responsable des contenus publiés par les partenaires.</li>
+            <li>La responsabilité est limitée aux obligations légales applicables.</li>
+          </ul>
+
+          <h2>10. Force majeure</h2>
+          <div class="box">
+            Bo’CitéArt ne pourra être tenu responsable en cas d’événement extérieur empêchant le fonctionnement normal du service :
+            panne réseau, incident technique, cyberattaque, catastrophe naturelle ou décision administrative.
+          </div>
+
+          <h2>11. Modification des conditions</h2>
+          <div class="box">
+            Bo’CitéArt peut faire évoluer les présentes conditions afin de tenir compte des évolutions techniques,
+            juridiques ou réglementaires.
+          </div>
+
+          <h2>12. Droit applicable</h2>
+          <p>Les présentes conditions sont soumises au droit français.</p>
         </div>
-
-        <h2>12. Responsabilité</h2>
-        <ul>
-          <li>Bo’CitéArt n’est pas responsable d’un mauvais usage de l’application.</li>
-          <li>Bo’CitéArt n’est pas responsable des contenus fournis par des tiers au-delà de sa modération.</li>
-          <li>Les dommages indirects (perte commerciale, etc.) sont exclus dans la limite légale.</li>
-        </ul>
-
-        <h2>13. Force majeure</h2>
-        <div class="box">
-          Bo’CitéArt ne pourra être tenu responsable en cas de force majeure ou d’événement extérieur rendant le service indisponible ou altéré
-          (panne réseau, incident hébergeur, cyberattaque, coupure électrique, décision administrative, etc.).
-        </div>
-
-        <h2>14. Propriété intellectuelle</h2>
-        <div class="box">
-          L’ensemble des éléments de Bo’CitéArt (concept, structure, textes, contenus, visuels, charte, design, marque et signes distinctifs)
-          est protégé. Toute reproduction, extraction, réutilisation ou détournement sans autorisation est interdit,
-          sauf droits légaux applicables.
-        </div>
-
-        <h2>15. Modification des conditions</h2>
-        <div class="box">
-          Bo’CitéArt peut modifier les présentes conditions pour tenir compte des évolutions du service,
-          des exigences légales ou de sécurité. La version applicable est celle publiée dans l’application au moment de l’utilisation.
-        </div>
-
-        <h2>16. Droit applicable</h2>
-        <p>Droit français.</p>
-      </div>
-
-      <div id="p-cgv" class="doc" style="display:none;">
-        <div style="font-weight:900;font-size:15px;">📄 Conditions Générales de Vente — Bo’CitéArt</div>
-        <div class="box">
-          Les présentes Conditions Générales de Vente (CGV) encadrent les relations commerciales entre Bo’CitéArt
-          et les partenaires professionnels (commerçants, collectivités, structures sportives, institutions)
-          utilisant les services proposés par la plateforme.
-        </div>
-
-        <h2>1. Statut du service</h2>
-        <div class="box">
-          Bo’CitéArt est une plateforme territoriale destinée à favoriser la dynamique locale entre citoyens,
-          commerces, institutions et acteurs associatifs.<br><br>
-          Les BoCiteCoins sont des <strong>unités promotionnelles internes</strong>.
-          Ils ne constituent pas une monnaie, un actif financier, un moyen de paiement ni un crypto-actif.
-        </div>
-
-        <h2>2. Accès au service</h2>
-        <ul>
-          <li>L’accès professionnel nécessite la validation des CGU, CGV et documents contractuels applicables.</li>
-          <li>Chaque structure dispose d’un accès sécurisé (identifiant + mot de passe).</li>
-          <li>Un minimum de deux référents peut être désigné pour garantir la continuité de gestion.</li>
-          <li>Bo’CitéArt peut suspendre un accès en cas d’abus, fraude ou non-respect des règles.</li>
-        </ul>
-
-        <h2>3. Abonnement commerçant</h2>
-        <div class="box">L’accès aux fonctionnalités commerciales de la plateforme est proposé sous forme d’abonnement.</div>
-        <ul>
-          <li><strong>Abonnement :</strong> 26,90 € HT par mois</li>
-          <li><strong>Engagement :</strong> 12 mois minimum</li>
-          <li><strong>Renouvellement :</strong> tacite sauf résiliation selon les conditions contractuelles</li>
-        </ul>
-
-        <h2>4. Frais de fonctionnement</h2>
-        <div class="box">
-          Bo’CitéArt applique un frais de fonctionnement lié à l’utilisation du système de traçabilité des transactions promotionnelles.
-        </div>
-        <ul>
-          <li><strong>0,18 € HT</strong> par tranche de <strong>10 € d’achats enregistrés</strong></li>
-          <li>La traçabilité peut être assurée via un prestataire de paiement (PSP).</li>
-          <li>Une facture récapitulative mensuelle peut être émise.</li>
-        </ul>
-
-        <h2>5. BoCiteCoins</h2>
-        <div class="box">Les BoCiteCoins sont attribués dans le cadre d’actions promotionnelles locales.<br><br>Ils sont :</div>
-        <ul>
-          <li>non convertibles en euros</li>
-          <li>non remboursables</li>
-          <li>non transférables hors du système</li>
-          <li>strictement liés à l’usage de la plateforme</li>
-        </ul>
-
-        <h2>6. Publicité</h2>
-        <div class="box">La plateforme peut proposer des espaces de visibilité promotionnelle selon les conditions définies dans l’application.</div>
-        <ul>
-          <li>nombre de publications limité par jour</li>
-          <li>réservation via calendrier intégré</li>
-          <li>contenu soumis à validation</li>
-          <li>Bo’CitéArt peut refuser toute publication non conforme</li>
-        </ul>
-
-        <h2>7. Paiement</h2>
-        <ul>
-          <li>Le paiement peut être réalisé via un prestataire de paiement sécurisé (PSP).</li>
-          <li>Les données bancaires ne sont pas stockées par Bo’CitéArt.</li>
-          <li>Les factures sont émises conformément aux obligations comptables applicables.</li>
-        </ul>
-
-        <h2>8. Suspension / résiliation</h2>
-        <ul>
-          <li>En cas de non-paiement, l’accès peut être suspendu.</li>
-          <li>En cas de fraude ou détournement, le compte peut être désactivé.</li>
-          <li>Bo’CitéArt peut suspendre temporairement un service pour maintenance ou sécurité.</li>
-        </ul>
-
-        <h2>9. Responsabilité</h2>
-        <ul>
-          <li>Bo’CitéArt fournit une plateforme technique et ne garantit pas un résultat commercial.</li>
-          <li>Bo’CitéArt n’est pas responsable des contenus publiés par les partenaires.</li>
-          <li>La responsabilité est limitée aux obligations légales applicables.</li>
-        </ul>
-
-        <h2>10. Force majeure</h2>
-        <div class="box">
-          Bo’CitéArt ne pourra être tenu responsable en cas d’événement extérieur empêchant le fonctionnement normal du service :
-          panne réseau, incident technique, cyberattaque, catastrophe naturelle ou décision administrative.
-        </div>
-
-        <h2>11. Modification des conditions</h2>
-        <div class="box">
-          Bo’CitéArt peut faire évoluer les présentes conditions afin de tenir compte des évolutions techniques,
-          juridiques ou réglementaires.
-        </div>
-
-        <h2>12. Droit applicable</h2>
-        <p>Les présentes conditions sont soumises au droit français.</p>
       </div>
     </div>
   </div>
-</div>
 
   <div class="modal" id="choice">
     <div class="backdrop" id="choiceClose"></div>
@@ -1349,99 +1348,100 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       }
       window.openModal = openModal;
 
-    const openSecureBtn = document.getElementById("openSecure");
-if(openSecureBtn){
-  openSecureBtn.addEventListener("click", ()=>{
-    openModal("Compte sécurisé + assistance téléphone", `
-      <div class="box">
-        <div style="font-weight:900;">Abonnement optionnel : <strong>2,99 € / mois</strong></div>
-        <div class="muted" style="margin-top:6px;">
-          Objectif : aider la récupération de compte et faciliter l’accompagnement par les proches
-          (famille, aidants, parents, grands-parents, enfants…), notamment en cas d’oubli,
-          de désorientation, de difficulté temporaire ou de situation de fragilité.
-        </div>
-      </div>
+      const openSecureBtn = document.getElementById("openSecure");
+      if(openSecureBtn){
+        openSecureBtn.addEventListener("click", ()=>{
+          openModal("Compte sécurisé + assistance téléphone", `
+            <div class="box">
+              <div style="font-weight:900;">Abonnement optionnel : <strong>2,99 € / mois</strong></div>
+              <div class="muted" style="margin-top:6px;">
+                Objectif : aider la récupération de compte et faciliter l’accompagnement par les proches
+                (famille, aidants, parents, grands-parents, enfants…), notamment en cas d’oubli,
+                de désorientation, de difficulté temporaire ou de situation de fragilité.
+              </div>
+            </div>
 
-      <div class="box" style="margin-top:12px;">
-        <div style="font-weight:900;">Sans abonnement</div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>L’utilisateur accepte le risque : <strong>perte / vol / changement de téléphone</strong> = perte d’accès possible.</li>
-          <li>(Démo) Les données peuvent être uniquement locales (sur le téléphone).</li>
-          <li>Pas de récupération assistée, pas d’accompagnement renforcé, pas de relais d’alerte.</li>
-        </ul>
-      </div>
+            <div class="box" style="margin-top:12px;">
+              <div style="font-weight:900;">Sans abonnement</div>
+              <ul style="margin:8px 0 0 18px;font-weight:800;">
+                <li>L’utilisateur accepte le risque : <strong>perte / vol / changement de téléphone</strong> = perte d’accès possible.</li>
+                <li>(Démo) Les données peuvent être uniquement locales (sur le téléphone).</li>
+                <li>Pas de récupération assistée, pas d’accompagnement renforcé, pas de relais d’alerte.</li>
+              </ul>
+            </div>
 
-      <div class="box" style="margin-top:12px;">
-        <div style="font-weight:900;">Avec abonnement</div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li><strong>Sauvegarde</strong> & récupération du compte (selon configuration).</li>
-          <li><strong>Assistance</strong> : aide à la récupération / réactivation.</li>
-          <li><strong>Alerte batterie faible accompagnée</strong> : possibilité d’enregistrer <strong>2 numéros de confiance</strong> dans le forfait.</li>
-          <li><strong>Déclenchement visé</strong> : si le téléphone de la personne suivie descend à <strong>5 % de batterie</strong> (si le support technique le permet).</li>
-          <li><strong>1er relais</strong> : une alerte / un SMS est envoyé au <strong>1er numéro</strong> enregistré pour l’informer que le téléphone de la personne suivie est presque déchargé.</li>
-          <li><strong>But</strong> : permettre à ce proche d’appeler la personne concernée pour lui rappeler de <strong>rebrancher son téléphone</strong>.</li>
-          <li><strong>2e relais de sécurité</strong> : si le 1er proche n’agit pas ou ne répond pas dans un délai prévu de <strong>15 minutes</strong> (selon paramétrage et possibilités techniques), une alerte / un SMS peut être envoyé au <strong>2e numéro</strong> enregistré.</li>
-          <li><strong>Chaîne de vigilance</strong> : le 2e proche peut alors prendre le relais et prévenir à son tour la personne concernée.</li>
-          <li><strong>Géolocalisation ponctuelle</strong> uniquement si autorisée par l’utilisateur.</li>
-          <li><strong>SMS aux 2 numéros de confiance</strong> uniquement si activés et configurés par l’utilisateur / le titulaire du forfait.</li>
-          <li><strong>Sonnerie / vibration à distance</strong> : seulement si cette fonction est techniquement possible sur l’appareil et la version utilisée.</li>
-        </ul>
-        <div class="muted" style="margin-top:8px;">
-          Ces fonctions sont opérées par un <strong>prestataire serveur tiers</strong> (selon version LIVE).
-          Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> et non de résultat :
-          cela signifie que la remontée d’alerte dépend notamment du téléphone, du niveau d’autorisation,
-          du réseau, du système d’exploitation, du prestataire SMS, et de la configuration active du compte.
-        </div>
-      </div>
+            <div class="box" style="margin-top:12px;">
+              <div style="font-weight:900;">Avec abonnement</div>
+              <ul style="margin:8px 0 0 18px;font-weight:800;">
+                <li><strong>Sauvegarde</strong> & récupération du compte (selon configuration).</li>
+                <li><strong>Assistance</strong> : aide à la récupération / réactivation.</li>
+                <li><strong>Alerte batterie faible accompagnée</strong> : possibilité d’enregistrer <strong>2 numéros de confiance</strong> dans le forfait.</li>
+                <li><strong>Déclenchement visé</strong> : si le téléphone de la personne suivie descend à <strong>5 % de batterie</strong> (si le support technique le permet).</li>
+                <li><strong>1er relais</strong> : une alerte / un SMS est envoyé au <strong>1er numéro</strong> enregistré pour l’informer que le téléphone de la personne suivie est presque déchargé.</li>
+                <li><strong>But</strong> : permettre à ce proche d’appeler la personne concernée pour lui rappeler de <strong>rebrancher son téléphone</strong>.</li>
+                <li><strong>2e relais de sécurité</strong> : si le 1er proche n’agit pas ou ne répond pas dans un délai prévu de <strong>15 minutes</strong> (selon paramétrage et possibilités techniques), une alerte / un SMS peut être envoyé au <strong>2e numéro</strong> enregistré.</li>
+                <li><strong>Chaîne de vigilance</strong> : le 2e proche peut alors prendre le relais et prévenir à son tour la personne concernée.</li>
+                <li><strong>Géolocalisation ponctuelle</strong> uniquement si autorisée par l’utilisateur.</li>
+                <li><strong>SMS aux 2 numéros de confiance</strong> uniquement si activés et configurés par l’utilisateur / le titulaire du forfait.</li>
+                <li><strong>Sonnerie / vibration à distance</strong> : seulement si cette fonction est techniquement possible sur l’appareil et la version utilisée.</li>
+              </ul>
+              <div class="muted" style="margin-top:8px;">
+                Ces fonctions sont opérées par un <strong>prestataire serveur tiers</strong> (selon version LIVE).
+                Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> et non de résultat :
+                cela signifie que la remontée d’alerte dépend notamment du téléphone, du niveau d’autorisation,
+                du réseau, du système d’exploitation, du prestataire SMS, et de la configuration active du compte.
+              </div>
+            </div>
 
-      <div class="box" style="margin-top:12px;">
-        <div style="font-weight:900;">Cas d’usage visé</div>
-        <div class="muted" style="margin-top:6px;">
-          Exemple : une personne ayant souscrit l’option peut renseigner le numéro d’un proche âgé,
-          isolé ou ayant quelques troubles de mémoire. Si le téléphone de cette personne approche
-          de la panne batterie, le système tente d’alerter le proche principal, puis un proche secondaire
-          si nécessaire, afin d’éviter que la personne ne reste sans téléphone joignable.
-        </div>
-      </div>
+            <div class="box" style="margin-top:12px;">
+              <div style="font-weight:900;">Cas d’usage visé</div>
+              <div class="muted" style="margin-top:6px;">
+                Exemple : une personne ayant souscrit l’option peut renseigner le numéro d’un proche âgé,
+                isolé ou ayant quelques troubles de mémoire. Si le téléphone de cette personne approche
+                de la panne batterie, le système tente d’alerter le proche principal, puis un proche secondaire
+                si nécessaire, afin d’éviter que la personne ne reste sans téléphone joignable.
+              </div>
+            </div>
 
-      <div class="box" style="margin-top:12px;">
-        <div style="font-weight:900;">Important</div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Service <strong>optionnel</strong>, activable / désactivable.</li>
-          <li>Les autorisations sensibles (ex. localisation) restent <strong>contrôlées par le téléphone</strong>.</li>
-          <li>Le fonctionnement dépend des <strong>autorisations accordées</strong>, du <strong>réseau</strong>, de la <strong>batterie</strong> restante, et de la <strong>compatibilité technique</strong>.</li>
-          <li>Cette option est une <strong>aide d’accompagnement</strong>, pas une garantie absolue de surveillance continue.</li>
-          <li>En cas d’urgence : utiliser <strong>112</strong>.</li>
-        </ul>
-      </div>
+            <div class="box" style="margin-top:12px;">
+              <div style="font-weight:900;">Important</div>
+              <ul style="margin:8px 0 0 18px;font-weight:800;">
+                <li>Service <strong>optionnel</strong>, activable / désactivable.</li>
+                <li>Les autorisations sensibles (ex. localisation) restent <strong>contrôlées par le téléphone</strong>.</li>
+                <li>Le fonctionnement dépend des <strong>autorisations accordées</strong>, du <strong>réseau</strong>, de la <strong>batterie</strong> restante, et de la <strong>compatibilité technique</strong>.</li>
+                <li>Cette option est une <strong>aide d’accompagnement</strong>, pas une garantie absolue de surveillance continue.</li>
+                <li>En cas d’urgence : utiliser <strong>112</strong>.</li>
+              </ul>
+            </div>
 
-      <div class="muted" style="margin-top:10px;">
-        (Démo) Ici on présente l’offre. En LIVE : activation, contrat, consentements,
-        choix des numéros de confiance, délais, conditions applicables et paramétrage détaillé.
-      </div>
-      `);
-  });
-}
+            <div class="muted" style="margin-top:10px;">
+              (Démo) Ici on présente l’offre. En LIVE : activation, contrat, consentements,
+              choix des numéros de confiance, délais, conditions applicables et paramétrage détaillé.
+            </div>
+          `);
+        });
+      }
 
-document.addEventListener("keydown", (e)=>{
-  if(e.key !== "Escape") return;
-  const legal = document.getElementById("legal");
-  const choice = document.getElementById("choice");
-  if(choice && choice.classList.contains("open")){ choice.classList.remove("open"); lockScroll(false); return; }
-  if(legal && legal.classList.contains("open")){ legal.classList.remove("open"); lockScroll(false); return; }
-  if(modal && modal.classList.contains("open")) closeModal();
-});
+      document.addEventListener("keydown", (e)=>{
+        if(e.key !== "Escape") return;
+        const legal = document.getElementById("legal");
+        const choice = document.getElementById("choice");
+        if(choice && choice.classList.contains("open")){ choice.classList.remove("open"); lockScroll(false); return; }
+        if(legal && legal.classList.contains("open")){ legal.classList.remove("open"); lockScroll(false); return; }
+        if(modal && modal.classList.contains("open")) closeModal();
+      });
 
-let cachedVoices = [];
-function loadVoices(){
-  return new Promise(resolve=>{
-    let voices = speechSynthesis.getVoices();
-    if(voices.length){ cachedVoices = voices; resolve(); }
-    else {
-      speechSynthesis.onvoiceschanged = ()=>{ cachedVoices = speechSynthesis.getVoices(); resolve(); };
-    }
-  });
-}
+      let cachedVoices = [];
+      function loadVoices(){
+        return new Promise(resolve=>{
+          let voices = speechSynthesis.getVoices();
+          if(voices.length){ cachedVoices = voices; resolve(); }
+          else {
+            speechSynthesis.onvoiceschanged = ()=>{ cachedVoices = speechSynthesis.getVoices(); resolve(); };
+          }
+        });
+      }
+
       async function speak(text, mode="female"){
         if(!("speechSynthesis" in window)) return;
         await loadVoices();
@@ -1544,6 +1544,7 @@ function loadVoices(){
           }
         };
       }
+      window.initFeeUiInModal = initFeeUiInModal;
 
       function buildCalendarHTML(){
         const first = new Date(calYear, calMonth, 1);
@@ -1666,7 +1667,7 @@ function loadVoices(){
       window.mairieLoad = mairieLoad;
       window.mairieSave = mairieSave;
 
- document.querySelectorAll("[data-open]").forEach(el=>{
+      document.querySelectorAll("[data-open]").forEach(el=>{
         el.addEventListener("click", ()=>{
           const key = el.getAttribute("data-open");
 
@@ -1674,8 +1675,8 @@ function loadVoices(){
             if(typeof window.__bociteartOpenByKey === "function"){
               window.__bociteartOpenByKey(key);
               return;
-             }
-           }
+            }
+          }
 
           if(key==="oeuvres"){
             openModal("Œuvres", `
@@ -1694,393 +1695,387 @@ function loadVoices(){
             return;
           }
 
-if(key==="ecole"){
-  openModal("École", `
-    <div style="font-weight:900;margin-bottom:8px;">Mot du jour (structure)</div>
+          if(key==="ecole"){
+            openModal("École", `
+              <div style="font-weight:900;margin-bottom:8px;">Mot du jour (structure)</div>
 
-    <div class="box">
-      <strong>Cadre école :</strong> l’établissement gère et conserve les autorisations nécessaires (document de rentrée).
-      Contenus non identifiants. En cas de désaccord parental, la voix synthétique est utilisée.
-    </div>
+              <div class="box">
+                <strong>Cadre école :</strong> l’établissement gère et conserve les autorisations nécessaires (document de rentrée).
+                Contenus non identifiants. En cas de désaccord parental, la voix synthétique est utilisée.
+              </div>
 
-    <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
-      « Je suis ravi aujourd’hui. » — Exemple (démo)
-    </div>
+              <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
+                « Je suis ravi aujourd’hui. » — Exemple (démo)
+              </div>
 
-    <div class="muted" style="margin-top:10px;">
-      Le professeur choisit la voix selon le cadre de l’établissement.
-    </div>
+              <div class="muted" style="margin-top:10px;">
+                Le professeur choisit la voix selon le cadre de l’établissement.
+              </div>
 
-    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-      <button class="choiceBtn" type="button" id="playChild">▶ Lire (voix enfant — démo)</button>
-      <button class="choiceBtn" type="button" id="playFemale">▶ Lire (voix synthétique)</button>
-    </div>
+              <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+                <button class="choiceBtn" type="button" id="playChild">▶ Lire (voix enfant — démo)</button>
+                <button class="choiceBtn" type="button" id="playFemale">▶ Lire (voix synthétique)</button>
+              </div>
 
-    <div class="coinShowcase">
-     <div class="coinFace coinYellow" aria-hidden="true">
-  <div class="coinInner coinInnerYellow">
-    <div class="n">1</div>
-    <div class="t">BoCitecoin</div>
-  </div>
-</div>
+              <div class="coinShowcase">
+                <div class="coinFace coinYellow" aria-hidden="true">
+                  <div class="coinInner coinInnerYellow">
+                    <div class="n">1</div>
+                    <div class="t">BoCitecoin</div>
+                  </div>
+                </div>
 
-      <div class="walletBox">
-        <div class="walletTitle">Wallet École — BoCitecoins JAUNE</div>
-        <div class="walletValue walletYellow" id="schoolCoinBalance">0</div>
-        <div class="walletSub">
-          Bocitecoins gagnés par la classe, échangeables en mairie selon les règles locales,
-          ou cumulables pour un projet / une aide de classe selon le choix retenu.
-        </div>
-        <div class="walletActions">
-          <button class="walletMini" id="walletSchoolInfo" type="button">Voir le cycle</button>
-          <button class="walletMini" id="walletSchoolReset" type="button">Réinitialiser</button>
-        </div>
-      </div>
-    </div>
+                <div class="walletBox">
+                  <div class="walletTitle">Wallet École — BoCitecoins JAUNE</div>
+                  <div class="walletValue walletYellow" id="schoolCoinBalance">0</div>
+                  <div class="walletSub">
+                    Bocitecoins gagnés par la classe, échangeables en mairie selon les règles locales,
+                    ou cumulables pour un projet / une aide de classe selon le choix retenu.
+                  </div>
+                  <div class="walletActions">
+                    <button class="walletMini" id="walletSchoolInfo" type="button">Voir le cycle</button>
+                    <button class="walletMini" id="walletSchoolReset" type="button">Réinitialiser</button>
+                  </div>
+                </div>
+              </div>
 
-    <div style="font-weight:900;margin-top:14px;">Gestion École (démo)</div>
-    <div class="box">
-      <strong>Règles :</strong> 1 mot du jour maximum par jour. Une fois validé, c’est gelé jusqu’au lendemain.
-      <div class="muted" style="margin-top:8px;">Accès réservé (version LIVE) : Directeur / Professeur uniquement.</div>
-      <div class="muted" style="margin-top:8px;">Contrôles : interdit d’enregistrer/afficher des injures, propagande, incitation, menaces, ou contenu non scolaire. En version LIVE : retrait immédiat + gel possible + traçabilité.</div>
-    </div>
+              <div style="font-weight:900;margin-top:14px;">Gestion École (démo)</div>
+              <div class="box">
+                <strong>Règles :</strong> 1 mot du jour maximum par jour. Une fois validé, c’est gelé jusqu’au lendemain.
+                <div class="muted" style="margin-top:8px;">Accès réservé (version LIVE) : Directeur / Professeur uniquement.</div>
+                <div class="muted" style="margin-top:8px;">Contrôles : interdit d’enregistrer/afficher des injures, propagande, incitation, menaces, ou contenu non scolaire. En version LIVE : retrait immédiat + gel possible + traçabilité.</div>
+              </div>
 
-    <div style="font-weight:900;margin-top:10px;">Classe (démo)</div>
-    <div class="box">
-      <div class="muted">Choisir l’école / la classe CM2 concernée (liste modifiable selon la ville).</div>
-      <select class="miniField" id="schoolClassSelect" aria-label="Choisir la classe"></select>
-    </div>
+              <div style="font-weight:900;margin-top:10px;">Classe (démo)</div>
+              <div class="box">
+                <div class="muted">Choisir l’école / la classe CM2 concernée (liste modifiable selon la ville).</div>
+                <select class="miniField" id="schoolClassSelect" aria-label="Choisir la classe"></select>
+              </div>
 
-    <div style="font-weight:900;margin-top:10px;">Saisie (démo)</div>
-    <input class="miniField" id="schoolWordInput" placeholder="Saisir le mot du jour (sans nom d’enfant, sans injure)" />
+              <div style="font-weight:900;margin-top:10px;">Saisie (démo)</div>
+              <input class="miniField" id="schoolWordInput" placeholder="Saisir le mot du jour (sans nom d’enfant, sans injure)" />
 
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-      <button class="choiceBtn" id="schoolSaveBtn" type="button">✅ Valider aujourd’hui</button>
-      <button class="choiceBtn" id="schoolResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
-    </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                <button class="choiceBtn" id="schoolSaveBtn" type="button">✅ Valider aujourd’hui</button>
+                <button class="choiceBtn" id="schoolResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+              </div>
 
-    <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;">Cycle de progression (école)</div>
-      <ul style="margin:8px 0 0 18px;font-weight:800;">
-        <li>Du 1er au 14e mot validé : <strong>+1 bocitecoin</strong> par jour</li>
-        <li>Au 15e mot validé : le compteur passe directement à <strong>50 bocitecoins</strong></li>
-        <li>Au 16e et 17e mot : <strong>+1</strong> par jour</li>
-        <li>Au 18e mot validé : le compteur passe directement à <strong>80 bocitecoins</strong></li>
-        <li>Du 19e au 21e mot : <strong>+1</strong> par jour</li>
-        <li>Au 22e mot validé : le compteur passe directement à <strong>100 bocitecoins</strong></li>
-      </ul>
-      <div class="muted" style="margin-top:8px;">
-        L’objectif est pédagogique : encourager l’écoute, la régularité, le vocabulaire, le respect et la participation en classe.
-      </div>
-      <div class="muted" style="margin-top:8px;">
-        La mairie peut ensuite soit brûler le compteur lors d’un échange, soit laisser la classe cumuler plusieurs périodes pour un projet plus important.
-      </div>
-    </div>
+              <div class="box" style="margin-top:12px;">
+                <div style="font-weight:900;">Cycle de progression (école)</div>
+                <ul style="margin:8px 0 0 18px;font-weight:800;">
+                  <li>Du 1er au 14e mot validé : <strong>+1 bocitecoin</strong> par jour</li>
+                  <li>Au 15e mot validé : le compteur passe directement à <strong>50 bocitecoins</strong></li>
+                  <li>Au 16e et 17e mot : <strong>+1</strong> par jour</li>
+                  <li>Au 18e mot validé : le compteur passe directement à <strong>80 bocitecoins</strong></li>
+                  <li>Du 19e au 21e mot : <strong>+1</strong> par jour</li>
+                  <li>Au 22e mot validé : le compteur passe directement à <strong>100 bocitecoins</strong></li>
+                </ul>
+                <div class="muted" style="margin-top:8px;">
+                  L’objectif est pédagogique : encourager l’écoute, la régularité, le vocabulaire, le respect et la participation en classe.
+                </div>
+                <div class="muted" style="margin-top:8px;">
+                  La mairie peut ensuite soit brûler le compteur lors d’un échange, soit laisser la classe cumuler plusieurs périodes pour un projet plus important.
+                </div>
+              </div>
 
-    <div style="font-weight:900;margin-top:14px;">Partage solidaire (structure)</div>
-    <div class="box">
-      <div style="font-weight:900;">Principe</div>
-      <div class="muted" style="margin-top:6px;">
-        Les bocitecoins “École” sont échangeables à la mairie en articles scolaires, ou peuvent être partagés
-        (sur décision école/mairie) avec 1 ou plusieurs associations.<br><br>
-        La mairie s’engage, selon ses capacités, à convertir l’équivalent en matériel/don et à diffuser à la classe
-        le message de remerciement transmis par l’association via la mairie.
-      </div>
-    </div>
+              <div style="font-weight:900;margin-top:14px;">Partage solidaire (structure)</div>
+              <div class="box">
+                <div style="font-weight:900;">Principe</div>
+                <div class="muted" style="margin-top:6px;">
+                  Les bocitecoins “École” sont échangeables à la mairie en articles scolaires, ou peuvent être partagés
+                  (sur décision école/mairie) avec 1 ou plusieurs associations.<br><br>
+                  La mairie s’engage, selon ses capacités, à convertir l’équivalent en matériel/don et à diffuser à la classe
+                  le message de remerciement transmis par l’association via la mairie.
+                </div>
+              </div>
 
-    <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;">Choisir le mode de partage</div>
-      <label class="miniCheck" style="margin-top:10px;"><input type="radio" name="donMode" value="none" checked><div>Pas de partage solidaire (tout pour matériel scolaire)</div></label>
-      <label class="miniCheck"><input type="radio" name="donMode" value="full"><div>Don total (100% des bocitecoins concernés)</div></label>
-      <label class="miniCheck"><input type="radio" name="donMode" value="partial"><div>Don partiel (répartition en %)</div></label>
-    </div>
+              <div class="box" style="margin-top:12px;">
+                <div style="font-weight:900;">Choisir le mode de partage</div>
+                <label class="miniCheck" style="margin-top:10px;"><input type="radio" name="donMode" value="none" checked><div>Pas de partage solidaire (tout pour matériel scolaire)</div></label>
+                <label class="miniCheck"><input type="radio" name="donMode" value="full"><div>Don total (100% des bocitecoins concernés)</div></label>
+                <label class="miniCheck"><input type="radio" name="donMode" value="partial"><div>Don partiel (répartition en %)</div></label>
+              </div>
 
-    <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;">Associations (sélection + répartition)</div>
-      <div class="muted" style="margin-top:6px;">En “don total” : tu coches 1 à 4 associations (partage égal).<br>En “don partiel” : tu coches + tu fixes les pourcentages (total = 100%).</div>
+              <div class="box" style="margin-top:12px;">
+                <div style="font-weight:900;">Associations (sélection + répartition)</div>
+                <div class="muted" style="margin-top:6px;">En “don total” : tu coches 1 à 4 associations (partage égal).<br>En “don partiel” : tu coches + tu fixes les pourcentages (total = 100%).</div>
 
-      <div style="margin-top:10px;">
-        <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="Les Clés du Cœur"><div><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</div></label>
-        <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
+                <div style="margin-top:10px;">
+                  <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="Les Clés du Cœur"><div><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</div></label>
+                  <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
 
-        <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="Étoile Filante"><div><strong>Étoile Filante</strong> — enfants atteints de maladies rares</div></label>
-        <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
+                  <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="Étoile Filante"><div><strong>Étoile Filante</strong> — enfants atteints de maladies rares</div></label>
+                  <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
 
-        <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="Les Papillons (antenne Nord)"><div><strong>Les Papillons</strong> — antenne Nord</div></label>
-        <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
+                  <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="Les Papillons (antenne Nord)"><div><strong>Les Papillons</strong> — antenne Nord</div></label>
+                  <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
 
-        <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="ATC Nord"><div><strong>ATC Nord</strong> — traumatisés crâniens</div></label>
-        <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
-      </div>
+                  <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="ATC Nord"><div><strong>ATC Nord</strong> — traumatisés crâniens</div></label>
+                  <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
+                </div>
 
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="schoolAssoPreview" type="button">👁️ Aperçu partage</button>
-        <button class="choiceBtn" id="schoolAssoSave" type="button">💾 Enregistrer (démo)</button>
-      </div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                  <button class="choiceBtn" id="schoolAssoPreview" type="button">👁️ Aperçu partage</button>
+                  <button class="choiceBtn" id="schoolAssoSave" type="button">💾 Enregistrer (démo)</button>
+                </div>
 
-      <div class="muted" style="margin-top:10px;">(Démo) Enregistrement local sur ce téléphone. En LIVE : validation par compte école + transmission au compte mairie.</div>
-    </div>
-  `);
+                <div class="muted" style="margin-top:10px;">(Démo) Enregistrement local sur ce téléphone. En LIVE : validation par compte école + transmission au compte mairie.</div>
+              </div>
+            `);
 
-  setTimeout(()=>{
-    const text = "Je suis ravi aujourd’hui.";
-    const btnC = document.getElementById("playChild");
-    const btnF = document.getElementById("playFemale");
-    if(btnC) btnC.onclick = ()=> speak(text, "child");
-    if(btnF) btnF.onclick = ()=> speak(text, "female");
+            setTimeout(()=>{
+              const text = "Je suis ravi aujourd’hui.";
+              const btnC = document.getElementById("playChild");
+              const btnF = document.getElementById("playFemale");
+              if(btnC) btnC.onclick = ()=> speak(text, "child");
+              if(btnF) btnF.onclick = ()=> speak(text, "female");
 
-    const SCHOOL_CLASSES = ["École X — CM2 A","École X — CM2 B","École Y — CM2 A","École Y — CM2 B","École Z — CM2"];
-    const SCHOOL_STORE_KEY = "bociteart_school_v1";
+              const SCHOOL_CLASSES = ["École X — CM2 A","École X — CM2 B","École Y — CM2 A","École Y — CM2 B","École Z — CM2"];
+              const SCHOOL_STORE_KEY = "bociteart_school_v1";
 
-    function schoolLoad(){ try{ const raw = localStorage.getItem(SCHOOL_STORE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
-    function schoolSave(obj){ try{ localStorage.setItem(SCHOOL_STORE_KEY, JSON.stringify(obj)); }catch(e){} }
+              function schoolLoad(){ try{ const raw = localStorage.getItem(SCHOOL_STORE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
+              function schoolSave(obj){ try{ localStorage.setItem(SCHOOL_STORE_KEY, JSON.stringify(obj)); }catch(e){} }
 
-    function fillSchoolSelect(){
-      const sel = document.getElementById("schoolClassSelect");
-      if(!sel) return;
-      sel.innerHTML = SCHOOL_CLASSES.map((x,i)=> `<option value="${i}">${x}</option>`).join("");
-    }
+              function fillSchoolSelect(){
+                const sel = document.getElementById("schoolClassSelect");
+                if(!sel) return;
+                sel.innerHTML = SCHOOL_CLASSES.map((x,i)=> `<option value="${i}">${x}</option>`).join("");
+              }
 
-    function getDonMode(){ const r = document.querySelector('input[name="donMode"]:checked'); return r ? r.value : "none"; }
-    function getAssoSelection(){ return Array.from(document.querySelectorAll(".assoPick")).filter(cb=> cb.checked).map(cb=> cb.getAttribute("data-asso")); }
-    function getAssoPctMap(){
-      const map = {};
-      Array.from(document.querySelectorAll(".assoPct")).forEach(inp=>{
-        const a = inp.getAttribute("data-asso");
-        const v = parseInt(inp.value || "0", 10);
-        map[a] = Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 0;
-      });
-      return map;
-    }
+              function getDonMode(){ const r = document.querySelector('input[name="donMode"]:checked'); return r ? r.value : "none"; }
+              function getAssoSelection(){ return Array.from(document.querySelectorAll(".assoPick")).filter(cb=> cb.checked).map(cb=> cb.getAttribute("data-asso")); }
+              function getAssoPctMap(){
+                const map = {};
+                Array.from(document.querySelectorAll(".assoPct")).forEach(inp=>{
+                  const a = inp.getAttribute("data-asso");
+                  const v = parseInt(inp.value || "0", 10);
+                  map[a] = Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 0;
+                });
+                return map;
+              }
 
-    function normalizeForFull(picks){
-      if(!picks.length) return { ok:false, msg:"Choisis au moins 1 association." };
-      const pct = Math.floor(100 / picks.length);
-      const rem = 100 - (pct * picks.length);
-      const out = {};
-      picks.forEach((a,idx)=> out[a] = pct + (idx===0 ? rem : 0));
-      return { ok:true, pctMap: out };
-    }
+              function normalizeForFull(picks){
+                if(!picks.length) return { ok:false, msg:"Choisis au moins 1 association." };
+                const pct = Math.floor(100 / picks.length);
+                const rem = 100 - (pct * picks.length);
+                const out = {};
+                picks.forEach((a,idx)=> out[a] = pct + (idx===0 ? rem : 0));
+                return { ok:true, pctMap: out };
+              }
 
-    function validatePartial(picks, pctMap){
-      if(!picks.length) return { ok:false, msg:"Choisis au moins 1 association." };
-      let sum = 0;
-      picks.forEach(a=> sum += (pctMap[a] || 0));
-      if(sum !== 100) return { ok:false, msg:`En don partiel, le total doit faire 100%. (Actuel : ${sum}%)` };
-      return { ok:true };
-    }
+              function validatePartial(picks, pctMap){
+                if(!picks.length) return { ok:false, msg:"Choisis au moins 1 association." };
+                let sum = 0;
+                picks.forEach(a=> sum += (pctMap[a] || 0));
+                if(sum !== 100) return { ok:false, msg:`En don partiel, le total doit faire 100%. (Actuel : ${sum}%)` };
+                return { ok:true };
+              }
 
-    function refreshSchoolWallet(){
-      const out = document.getElementById("schoolCoinBalance");
-      if(out) out.textContent = Number(loadSchoolWallet().jaune || 0);
-    }
+              function refreshSchoolWallet(){
+                const out = document.getElementById("schoolCoinBalance");
+                if(out) out.textContent = Number(loadSchoolWallet().jaune || 0);
+              }
 
-    function getTodayKey(){
-      return new Date().toISOString().slice(0,10);
-    }
+              function getTodayKey(){
+                return new Date().toISOString().slice(0,10);
+              }
 
-    function getSchoolProgress(db, cls){
-      if(!db.progress) db.progress = {};
-      if(!db.progress[cls]){
-        db.progress[cls] = {
-          totalValidatedDays: 0,
-          lastValidationDay: ""
-        };
-      }
-      return db.progress[cls];
-    }
+              function getSchoolProgress(db, cls){
+                if(!db.progress) db.progress = {};
+                if(!db.progress[cls]){
+                  db.progress[cls] = {
+                    totalValidatedDays: 0,
+                    lastValidationDay: ""
+                  };
+                }
+                return db.progress[cls];
+              }
 
-    function schoolTargetValue(totalValidatedDays){
-      if(totalValidatedDays === 15) return 50;
-      if(totalValidatedDays === 18) return 80;
-      if(totalValidatedDays === 22) return 100;
-      return null;
-    }
+              function schoolTargetValue(totalValidatedDays){
+                if(totalValidatedDays === 15) return 50;
+                if(totalValidatedDays === 18) return 80;
+                if(totalValidatedDays === 22) return 100;
+                return null;
+              }
 
-    fillSchoolSelect();
-    refreshSchoolWallet();
+              fillSchoolSelect();
+              refreshSchoolWallet();
 
-    const schoolInfoBtn = document.getElementById("walletSchoolInfo");
-    const schoolResetWallet = document.getElementById("walletSchoolReset");
-    const btnPrev2 = document.getElementById("schoolAssoPreview");
-    const btnSave2 = document.getElementById("schoolAssoSave");
-    const btnReset2 = document.getElementById("schoolResetBtn");
-    const btnWordSave2 = document.getElementById("schoolSaveBtn");
+              const schoolInfoBtn = document.getElementById("walletSchoolInfo");
+              const schoolResetWallet = document.getElementById("walletSchoolReset");
+              const btnPrev2 = document.getElementById("schoolAssoPreview");
+              const btnSave2 = document.getElementById("schoolAssoSave");
+              const btnReset2 = document.getElementById("schoolResetBtn");
+              const btnWordSave2 = document.getElementById("schoolSaveBtn");
 
-    if(schoolInfoBtn) schoolInfoBtn.onclick = ()=>{
-      const db = schoolLoad();
-      const sel = document.getElementById("schoolClassSelect");
-      const idx = sel ? parseInt(sel.value,10) : 0;
-      const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-      const prog = getSchoolProgress(db, cls);
+              if(schoolInfoBtn) schoolInfoBtn.onclick = ()=>{
+                const db = schoolLoad();
+                const sel = document.getElementById("schoolClassSelect");
+                const idx = sel ? parseInt(sel.value,10) : 0;
+                const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+                const prog = getSchoolProgress(db, cls);
 
-      alert(
-        "Classe : " + cls +
-        "\\nMots validés dans le cycle : " + Number(prog.totalValidatedDays || 0) +
-        "\\nCompteur actuel : " + Number(loadSchoolWallet().jaune || 0) + " bocitecoins" +
-        "\\n\\nPaliers :" +
-        "\\n- 15e mot => 50" +
-        "\\n- 18e mot => 80" +
-        "\\n- 22e mot => 100"
-      );
-    };
+                alert(
+                  "Classe : " + cls +
+                  "\nMots validés dans le cycle : " + Number(prog.totalValidatedDays || 0) +
+                  "\nCompteur actuel : " + Number(loadSchoolWallet().jaune || 0) + " bocitecoins" +
+                  "\n\nPaliers :" +
+                  "\n- 15e mot => 50" +
+                  "\n- 18e mot => 80" +
+                  "\n- 22e mot => 100"
+                );
+              };
 
-    if(schoolResetWallet) schoolResetWallet.onclick = ()=>{
-      if(confirm("Réinitialiser le compteur école et le cycle de progression (démo) ?")){
-        saveSchoolWallet({ jaune: 0 });
-        const db = schoolLoad();
-        if(db.progress) db.progress = {};
-        schoolSave(db);
-        refreshSchoolWallet();
-      }
-    };
+              if(schoolResetWallet) schoolResetWallet.onclick = ()=>{
+                if(confirm("Réinitialiser le compteur école et le cycle de progression (démo) ?")){
+                  saveSchoolWallet({ jaune: 0 });
+                  const db = schoolLoad();
+                  if(db.progress) db.progress = {};
+                  schoolSave(db);
+                  refreshSchoolWallet();
+                }
+              };
 
-    if(btnPrev2) btnPrev2.onclick = ()=>{
-      const mode = getDonMode();
-      const picks = getAssoSelection();
-      const pctMap = getAssoPctMap();
+              if(btnPrev2) btnPrev2.onclick = ()=>{
+                const mode = getDonMode();
+                const picks = getAssoSelection();
+                const pctMap = getAssoPctMap();
 
-      if(mode === "none"){
-        alert("Aperçu : Pas de partage solidaire (tout pour matériel scolaire).");
-        return;
-      }
-      if(mode === "full"){
-        const norm = normalizeForFull(picks);
-        if(!norm.ok){ alert(norm.msg); return; }
-        const lines = Object.entries(norm.pctMap).map(([a,p])=> `- ${a} : ${p}%`).join("\n");
-        alert("Aperçu (don total, partage égal)\\n" + lines);
-        return;
-      }
+                if(mode === "none"){
+                  alert("Aperçu : Pas de partage solidaire (tout pour matériel scolaire).");
+                  return;
+                }
+                if(mode === "full"){
+                  const norm = normalizeForFull(picks);
+                  if(!norm.ok){ alert(norm.msg); return; }
+                  const lines = Object.entries(norm.pctMap).map(([a,p])=> `- ${a} : ${p}%`).join("\n");
+                  alert("Aperçu (don total, partage égal)\n" + lines);
+                  return;
+                }
 
-      const v = validatePartial(picks, pctMap);
-      if(!v.ok){ alert(v.msg); return; }
-      const lines = picks.map(a=> `- ${a} : ${pctMap[a] || 0}%`).join("\n");
-      alert("Aperçu (don partiel)\\n" + lines);
-    };
+                const v = validatePartial(picks, pctMap);
+                if(!v.ok){ alert(v.msg); return; }
+                const lines = picks.map(a=> `- ${a} : ${pctMap[a] || 0}%`).join("\n");
+                alert("Aperçu (don partiel)\n" + lines);
+              };
 
-    if(btnSave2) btnSave2.onclick = ()=>{
-      const mode = getDonMode();
-      const picks = getAssoSelection();
-      const pctMap = getAssoPctMap();
-      const sel = document.getElementById("schoolClassSelect");
-      const idx = sel ? parseInt(sel.value,10) : 0;
-      const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-      let finalMap = {};
+              if(btnSave2) btnSave2.onclick = ()=>{
+                const mode = getDonMode();
+                const picks = getAssoSelection();
+                const pctMap = getAssoPctMap();
+                const sel = document.getElementById("schoolClassSelect");
+                const idx = sel ? parseInt(sel.value,10) : 0;
+                const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+                let finalMap = {};
 
-      if(mode === "none") finalMap = {};
-      else if(mode === "full"){
-        const norm = normalizeForFull(picks);
-        if(!norm.ok){ alert(norm.msg); return; }
-        finalMap = norm.pctMap;
-      }else{
-        const v = validatePartial(picks, pctMap);
-        if(!v.ok){ alert(v.msg); return; }
-        picks.forEach(a=> finalMap[a] = pctMap[a] || 0);
-      }
+                if(mode === "none") finalMap = {};
+                else if(mode === "full"){
+                  const norm = normalizeForFull(picks);
+                  if(!norm.ok){ alert(norm.msg); return; }
+                  finalMap = norm.pctMap;
+                }else{
+                  const v = validatePartial(picks, pctMap);
+                  if(!v.ok){ alert(v.msg); return; }
+                  picks.forEach(a=> finalMap[a] = pctMap[a] || 0);
+                }
 
-      const db = schoolLoad();
-      db.lastSolidarity = {
-        class: cls,
-        mode,
-        map: finalMap,
-        ts_fr: new Date().toLocaleString("fr-FR"),
-        note: "Décision de partage (démo, stockage local)"
-      };
-      schoolSave(db);
-      alert("Enregistré (démo) pour : " + cls);
-    };
+                const db = schoolLoad();
+                db.lastSolidarity = {
+                  class: cls,
+                  mode,
+                  map: finalMap,
+                  ts_fr: new Date().toLocaleString("fr-FR"),
+                  note: "Décision de partage (démo, stockage local)"
+                };
+                schoolSave(db);
+                alert("Enregistré (démo) pour : " + cls);
+              };
 
-    if(btnReset2) btnReset2.onclick = ()=>{
-      if(confirm("Réinitialiser les données École (démo) sur ce téléphone ?")){
-        localStorage.removeItem(SCHOOL_STORE_KEY);
-        saveSchoolWallet({ jaune: 0 });
-        refreshSchoolWallet();
-        alert("Réinitialisé (démo).");
-      }
-    };
+              if(btnReset2) btnReset2.onclick = ()=>{
+                if(confirm("Réinitialiser les données École (démo) sur ce téléphone ?")){
+                  localStorage.removeItem(SCHOOL_STORE_KEY);
+                  saveSchoolWallet({ jaune: 0 });
+                  refreshSchoolWallet();
+                  alert("Réinitialisé (démo).");
+                }
+              };
 
-    if(btnWordSave2) btnWordSave2.onclick = ()=>{
-      const input = document.getElementById("schoolWordInput");
-      const sel = document.getElementById("schoolClassSelect");
-      const idx = sel ? parseInt(sel.value,10) : 0;
-      const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-      const w = input ? (input.value || "").trim() : "";
-      const today = getTodayKey();
+              if(btnWordSave2) btnWordSave2.onclick = ()=>{
+                const input = document.getElementById("schoolWordInput");
+                const sel = document.getElementById("schoolClassSelect");
+                const idx = sel ? parseInt(sel.value,10) : 0;
+                const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+                const w = input ? (input.value || "").trim() : "";
+                const today = getTodayKey();
 
-      if(!w){
-        alert("Saisis le mot du jour.");
-        return;
-      }
-      if(/[<>]/.test(w)){
-        alert("Texte invalide.");
-        return;
-      }
+                if(!w){
+                  alert("Saisis le mot du jour.");
+                  return;
+                }
+                if(/[<>]/.test(w)){
+                  alert("Texte invalide.");
+                  return;
+                }
 
-      const db = schoolLoad();
-      const prog = getSchoolProgress(db, cls);
+                const db = schoolLoad();
+                const prog = getSchoolProgress(db, cls);
 
-      if(prog.lastValidationDay === today){
-        alert("Le mot du jour a déjà été validé aujourd’hui pour cette classe.");
-        return;
-      }
+                if(prog.lastValidationDay === today){
+                  alert("Le mot du jour a déjà été validé aujourd’hui pour cette classe.");
+                  return;
+                }
 
-      db.lastWord = {
-        class: cls,
-        text: w,
-        ts_fr: new Date().toLocaleString("fr-FR"),
-        note: "Mot du jour (démo, stockage local)"
-      };
+                db.lastWord = {
+                  class: cls,
+                  text: w,
+                  ts_fr: new Date().toLocaleString("fr-FR"),
+                  note: "Mot du jour (démo, stockage local)"
+                };
 
-      prog.totalValidatedDays = Number(prog.totalValidatedDays || 0) + 1;
-      prog.lastValidationDay = today;
+                prog.totalValidatedDays = Number(prog.totalValidatedDays || 0) + 1;
+                prog.lastValidationDay = today;
 
-      const currentWallet = loadSchoolWallet();
-      let currentValue = Number(currentWallet.jaune || 0);
-      const target = schoolTargetValue(prog.totalValidatedDays);
+                const currentWallet = loadSchoolWallet();
+                let currentValue = Number(currentWallet.jaune || 0);
+                const target = schoolTargetValue(prog.totalValidatedDays);
 
-      if(target !== null){
-        currentValue = target;
-      } else {
-        currentValue += 1;
-      }
+                if(target !== null){
+                  currentValue = target;
+                } else {
+                  currentValue += 1;
+                }
 
-      saveSchoolWallet({ jaune: currentValue });
-      schoolSave(db);
-      refreshSchoolWallet();
+                saveSchoolWallet({ jaune: currentValue });
+                schoolSave(db);
+                refreshSchoolWallet();
 
-      let message =
-        "Validé (démo) : " + cls +
-        "\\n« " + w + " »" +
-        "\\nJour validé n°" + prog.totalValidatedDays +
-        "\\nCompteur actuel : " + currentValue + " bocitecoins JAUNE";
+                let message =
+                  "Validé (démo) : " + cls +
+                  "\n« " + w + " »" +
+                  "\nJour validé n°" + prog.totalValidatedDays +
+                  "\nCompteur actuel : " + currentValue + " bocitecoins JAUNE";
 
-      if(target !== null){
-        message += "\\nPalier atteint : compteur porté à " + target + " bocitecoins.";
-      }
+                if(target !== null){
+                  message += "\nPalier atteint : compteur porté à " + target + " bocitecoins.";
+                }
 
-      alert(message);
-    };
-  }, 0);
-  return;
-}
-        
-        if(key==="sport"){
+                alert(message);
+              };
+            }, 0);
+            return;
+          }; 
+          
+             if(key==="sport"){
   openModal("Sport", `
     <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
-
     <div class="box">
-      <strong>Cadre :</strong> publications par référent habilité.
-      Éléments de validation (si activés) non publics, accès restreint.
+      <strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint.
     </div>
-
     <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;">❤️ Soutien citoyen au sport local</div>
       <div class="muted" style="margin-top:6px;">
-        1 clic maximum par appareil et par année civile.
-        Le compteur annuel mesure l’adhésion de l’année.
-        Le cumul global conserve toute l’historique.
+        1 clic maximum par appareil et par année civile. Le compteur annuel mesure l’adhésion de l’année. Le cumul global conserve toute l’historique.
       </div>
-
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center;">
         <button class="choiceBtn" id="sportSupportBtn" type="button">❤️ Je soutiens</button>
         <div class="box" style="margin:0;background:var(--bg);">
@@ -2089,30 +2084,23 @@ if(key==="ecole"){
         </div>
       </div>
     </div>
-
     <div class="coinShowcase">
-
       <div class="coinFace coinGreen" aria-hidden="true">
         <div class="coinInner coinInnerGreen">
           <div class="n">1</div>
           <div class="t">BoCitecoin</div>
         </div>
       </div>
-
       <div class="walletBox">
         <div class="walletTitle">
           Wallet Sport — BoCitecoins VERT
         </div>
-
         <div class="walletValue walletGreen" id="sportCoinBalance">
           0
         </div>
-
         <div class="walletSub">
-          BoCitecoins gagnés par les actions sportives / citoyennes,
-          échangeables chez un commerçant partenaire.
+          BoCitecoins gagnés par les actions sportives / citoyennes, échangeables chez un commerçant partenaire.
         </div>
-
         <div class="walletActions">
           <button class="walletMini" id="walletSportPlus1" type="button">+1 jour validé</button>
           <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
@@ -2120,30 +2108,23 @@ if(key==="ecole"){
           <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
         </div>
       </div>
-
     </div>
-
     <div style="font-weight:900;margin-top:14px;">
       📄 Fichier (à ouvrir)
     </div>
-
     <div class="box">
       <div style="font-weight:900;">
         Fiche élus / CCI / commerçants — soutien Club + Recherche / solidarité
       </div>
-
       <div class="muted" style="margin-top:6px;">
-        Cette fiche explique la logique de soutien mensuel,
-        la visibilité commerçante et le partage club + recherche / solidarité.
+        Cette fiche explique la logique de soutien mensuel, la visibilité commerçante et le partage club + recherche / solidarité.
       </div>
-
       <div style="margin-top:10px;">
         <button class="choiceBtn" id="openSportFicheBtn" type="button">
           Ouvrir la fiche
         </button>
       </div>
     </div>
-
     <ul style="margin:10px 0 0 18px;font-weight:800;">
       <li>Rapport du week-end</li>
       <li>Gestes citoyens validés par le référent</li>
@@ -2151,57 +2132,42 @@ if(key==="ecole"){
       <li>Bocitecoins VERT : sport / collectivité</li>
       <li>Pas de messagerie</li>
     </ul>
-
     <div style="font-weight:900;margin-top:16px;">
       Échange commerçant ↔ référent sportif
     </div>
-
     <div class="box">
-
       <div class="muted">
-        Le commerçant scanne le téléphone du référent sportif,
-        prépare l’échange puis les bocitecoins VERT sont brûlés.
+        Le commerçant scanne le téléphone du référent sportif, prépare l’échange puis les bocitecoins VERT sont brûlés.
       </div>
-
       <div class="muted" style="margin-top:8px;">
-        Répartition type de la contribution commerçant :
-        <strong>35 € club</strong> • <strong>14 € recherche / solidarité</strong> • <strong>1 € Bo’CitéArt</strong>
+        Répartition type de la contribution commerçant : <strong>35 € club</strong> • <strong>14 € recherche / solidarité</strong> • <strong>1 € Bo’CitéArt</strong>
       </div>
-
       <div style="margin-top:10px;font-weight:900;">
         Cause soutenue
       </div>
-
       <select class="miniField" id="sportAssoSelect">
         <option value="Les Clés du Cœur">Les Clés du Cœur</option>
         <option value="Étoile Filante">Étoile Filante</option>
         <option value="Les Papillons">Les Papillons</option>
         <option value="ATC Nord">ATC Nord</option>
       </select>
-
       <div style="margin-top:10px;font-weight:900;">
         Valeur estimée de l’échange
       </div>
-
       <input class="miniField" id="sportGiftValue" type="number" min="0" step="0.01" placeholder="50">
-
       <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
         <button class="choiceBtn" id="sportCalcBtn" type="button">Calculer</button>
         <button class="choiceBtn" id="sportScanRefBtn" type="button">Scanner</button>
         <button class="choiceBtn" id="sportValidateBtn" type="button">Valider</button>
         <button class="choiceBtn" id="sportBurnBtn" type="button">Brûler</button>
       </div>
-
       <div class="muted" style="margin-top:10px;">
-        Le commerçant bénéficie de visibilité dans l’application,
-        d’une image solidaire locale et d’une valorisation possible dans la communication annuelle.
+        Le commerçant bénéficie de visibilité dans l’application, d’une image solidaire locale et d’une valorisation possible dans la communication annuelle.
       </div>
-
     </div>
   `);
 
   setTimeout(()=>{
-
     const SPORT_SUPPORT_KEY = "bociteart_sport_support_v1";
 
     function getCurrentYear(){
@@ -2213,17 +2179,11 @@ if(key==="ecole"){
         const raw = localStorage.getItem(SPORT_SUPPORT_KEY);
         if(raw) return JSON.parse(raw);
       }catch(e){}
-      return {
-        total: 0,
-        byYear: {},
-        lastClickYear: null
-      };
+      return { total: 0, byYear: {}, lastClickYear: null };
     }
 
     function saveSportSupport(obj){
-      try{
-        localStorage.setItem(SPORT_SUPPORT_KEY, JSON.stringify(obj));
-      }catch(e){}
+      try{ localStorage.setItem(SPORT_SUPPORT_KEY, JSON.stringify(obj)); }catch(e){}
     }
 
     function refreshSportSupportUi(){
@@ -2256,7 +2216,6 @@ if(key==="ecole"){
       db.byYear[y] = Number(db.byYear[y] || 0) + 1;
       db.total = Number(db.total || 0) + 1;
       db.lastClickYear = y;
-
       saveSportSupport(db);
       refreshSportSupportUi();
 
@@ -2297,10 +2256,10 @@ if(key==="ecole"){
 
     refresh();
 
-    const plus1  = document.getElementById("walletSportPlus1");
+    const plus1 = document.getElementById("walletSportPlus1");
     const plus10 = document.getElementById("walletSportPlus10");
     const plus25 = document.getElementById("walletSportPlus25");
-    const reset  = document.getElementById("walletSportReset");
+    const reset = document.getElementById("walletSportReset");
 
     if(plus1) plus1.onclick = ()=>{
       const w = loadSportWallet();
@@ -2353,11 +2312,11 @@ if(key==="ecole"){
 
       alert(
         "Calcul effectué (démo)." +
-        "\\nMontant saisi : " + total.toFixed(2) + " €" +
-        "\\nRépartition cible :" +
-        "\\n- Club : " + clubPart.toFixed(2) + " €" +
-        "\\n- Recherche / solidarité : " + solidarityPart.toFixed(2) + " €" +
-        "\\n- Bo'CitéArt : " + bociteartPart.toFixed(2) + " €"
+        "\nMontant saisi : " + total.toFixed(2) + " €" +
+        "\nRépartition cible :" +
+        "\n- Club : " + clubPart.toFixed(2) + " €" +
+        "\n- Recherche / solidarité : " + solidarityPart.toFixed(2) + " €" +
+        "\n- Bo'CitéArt : " + bociteartPart.toFixed(2) + " €"
       );
     };
 
@@ -2382,17 +2341,14 @@ if(key==="ecole"){
         alert("Scanne d’abord le référent sportif.");
         return;
       }
-
       if(coins <= 0){
         alert("Aucun bocitecoin VERT à échanger.");
         return;
       }
-
       if(!Number.isFinite(total) || total <= 0){
         alert("Saisis une valeur d’échange valide.");
         return;
       }
-
       if(!assoName){
         alert("Choisis une cause soutenue.");
         return;
@@ -2410,12 +2366,10 @@ if(key==="ecole"){
         alert("Scanne d’abord le référent sportif.");
         return;
       }
-
       if(!sportExchangeValidated){
         alert("Valide d’abord l’échange.");
         return;
       }
-
       if(coins <= 0){
         alert("Aucun bocitecoin VERT à brûler.");
         return;
@@ -2431,7 +2385,6 @@ if(key==="ecole"){
         alert("Bocitecoins VERT brûlés, compteur remis à zéro.");
       }
     };
-
   },0);
 
   return;
@@ -2440,11 +2393,9 @@ if(key==="ecole"){
 if(key==="mairie"){
   openModal("Mairie", `
     <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
-
     <div class="box">
       <strong>Cadre :</strong> la mairie peut diffuser des messages d’intérêt général gratuits, et des messages promotionnels payants au même tarif que les commerçants pour garantir l’équité.
     </div>
-
     <div style="font-weight:900;margin-top:10px;">Messages gratuits d’intérêt général</div>
     <div class="box">
       <ul style="margin:8px 0 0 18px;font-weight:800;">
@@ -2455,7 +2406,6 @@ if(key==="mairie"){
       </ul>
       <div class="muted" style="margin-top:8px;">Ces messages restent gratuits pour la mairie.</div>
     </div>
-
     <div style="font-weight:900;margin-top:10px;">Messages payants mairie</div>
     <div class="box">
       <div class="muted">Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.</div>
@@ -2465,48 +2415,37 @@ if(key==="mairie"){
       </ul>
       <div class="muted" style="margin-top:8px;">Même prix que les commerçants pour éviter la jalousie et montrer l’exemple.</div>
     </div>
-
     <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;">Message bandeau mairie (démo)</div>
       <div class="muted" style="margin-top:6px;">Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.</div>
-
       <div style="margin-top:10px;font-weight:900;">Message</div>
       <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
-
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="mairieMsgSave" type="button">💾 Enregistrer</button>
         <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">🧹 Réinitialiser</button>
       </div>
-
       <div class="muted" style="margin-top:10px;">(Démo) Enregistrement local sur ce téléphone.</div>
     </div>
-
     <div style="font-weight:900;margin-top:14px;">Échange école → mairie (scan / brûlage)</div>
     <div class="box">
       <div class="muted">
-        La mairie peut scanner les bocitecoins école au moment de l’échange et les brûler automatiquement.
-        Le compteur école revient alors à zéro après remise du cadeau ou de la surprise.
+        La mairie peut scanner les bocitecoins école au moment de l’échange et les brûler automatiquement. Le compteur école revient alors à zéro après remise du cadeau ou de la surprise.
       </div>
-
       <div style="margin-top:10px;font-weight:900;">Wallet école détecté</div>
       <div class="box" style="background:var(--bg);">
         Solde école actuel : <strong id="mairieSchoolWalletBalance">0</strong> bocitecoin(s) JAUNES
       </div>
-
       <div style="margin-top:10px;font-weight:900;">Type de surprise choisie par la mairie</div>
       <select class="miniField" id="mairieSchoolGiftType">
         <option value="materiel-scolaire">Matériel scolaire</option>
         <option value="extra-scolaire">Surprise extra-scolaire</option>
       </select>
-
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="mairieSchoolScanBtn" type="button">Scanner wallet école</button>
         <button class="choiceBtn" id="mairieSchoolBurnBtn" type="button">Brûler les bocitecoins école</button>
       </div>
-
       <div class="muted" style="margin-top:10px;">
-        Si l’école a décidé auparavant de donner tout ou partie de ses bocitecoins à une association depuis son onglet,
-        la mairie respecte cette décision lors de l’échange.
+        Si l’école a décidé auparavant de donner tout ou partie de ses bocitecoins à une association depuis son onglet, la mairie respecte cette décision lors de l’échange.
       </div>
     </div>
   `);
@@ -2515,8 +2454,8 @@ if(key==="mairie"){
     const input = document.getElementById("mairieMsgInput");
     const saveBtn = document.getElementById("mairieMsgSave");
     const resetBtn = document.getElementById("mairieMsgReset");
-
     const db = mairieLoad();
+
     if(input){
       input.value = (db.message && String(db.message).trim())
         ? String(db.message).trim()
@@ -2560,9 +2499,7 @@ if(key==="mairie"){
     const schoolSaveM = (typeof saveSchoolWallet === "function")
       ? saveSchoolWallet
       : function(obj){
-          try{
-            localStorage.setItem("bociteart_school_wallet_v1", JSON.stringify(obj));
-          }catch(e){}
+          try{ localStorage.setItem("bociteart_school_wallet_v1", JSON.stringify(obj)); }catch(e){}
         };
 
     const schoolBal = document.getElementById("mairieSchoolWalletBalance");
@@ -2591,57 +2528,49 @@ if(key==="mairie"){
       if(confirm("Brûler les bocitecoins école et remettre le compteur à zéro ?")){
         w.jaune = 0;
         schoolSaveM(w);
-
         try{
           const raw = localStorage.getItem("bociteart_school_v1");
           const dbSchool = raw ? JSON.parse(raw) : {};
           if(dbSchool.progress) dbSchool.progress = {};
           localStorage.setItem("bociteart_school_v1", JSON.stringify(dbSchool));
         }catch(e){}
-
         refreshSchool();
         alert("Bocitecoins école brûlés, compteur remis à zéro (démo).");
       }
     };
   },0);
+
   return;
 }
 
 if(key==="commerces"){
   openModal("Commerces", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
-
     <div class="box">
-      <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.
-      Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
+      <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros. Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
     </div>
-
     <div class="coinShowcase">
-     <div class="coinFace coinGold" aria-hidden="true">
-  <div class="coinInner coinInnerGold">
-    <div class="n">1</div>
-    <div class="t">BoCitecoin</div>
-  </div>
-</div>
-
+      <div class="coinFace coinGold" aria-hidden="true">
+        <div class="coinInner coinInnerGold">
+          <div class="n">1</div>
+          <div class="t">BoCitecoin</div>
+        </div>
+      </div>
       <div class="walletBox">
         <div class="walletTitle">Wallet client — BoCitecoins OR</div>
         <div class="walletValue walletGold" id="citizenCoinBalance">37</div>
         <div class="walletSub">
           BoCitecoins disponibles pour échange chez les commerçants partenaires Bo’CitéArt selon les règles locales.
         </div>
-
         <div style="margin-top:12px;font-weight:900;">Progression vers le prochain palier</div>
         <div style="margin-top:8px;background:#efe4d3;border-radius:999px;overflow:hidden;height:14px;border:2px solid rgba(0,0,0,.08);">
           <div id="walletProgressBar" style="height:100%;width:0%;border-radius:999px;transition:width .25s ease, background .25s ease;background:linear-gradient(90deg,#e4c81c 0%, #88b84b 55%, #2f8f46 100%);"></div>
         </div>
-
         <div id="walletProgressText" class="walletSub" style="margin-top:8px;">Chargement...</div>
         <div id="walletMotivation" class="walletSub" style="margin-top:6px;color:#2f5d46;font-weight:900;">&nbsp;</div>
         <div id="walletExpiryInfo" class="walletSub" style="margin-top:6px;">&nbsp;</div>
       </div>
     </div>
-
     <div style="font-weight:900;margin-top:14px;">Paliers d’échange</div>
     <div class="box">
       <div style="font-weight:900;">🎁 Échanges possibles chez les partenaires Bo’CitéArt</div>
@@ -2651,48 +2580,38 @@ if(key==="commerces"){
         <li><strong>100 bocitecoins</strong> : avantage premium <span style="white-space:nowrap;"><strong>jusqu’à 40 %</strong></span></li>
       </ul>
       <div class="muted" style="margin-top:8px;">
-        Les avantages sont proposés librement par les commerçants partenaires.
-        Les pourcentages indiqués correspondent à des niveaux indicatifs permettant de structurer les échanges Bo’CitéArt.
+        Les avantages sont proposés librement par les commerçants partenaires. Les pourcentages indiqués correspondent à des niveaux indicatifs permettant de structurer les échanges Bo’CitéArt.
       </div>
       <div class="muted" style="margin-top:8px;">
         Les offres comprenant de la nourriture ou des boissons ne peuvent représenter plus de 30 % de la valeur totale de l’avantage.
       </div>
     </div>
-
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
       <button class="choiceBtn" id="walletClientRedeem30" type="button">Échanger 30</button>
       <button class="choiceBtn" id="walletClientRedeem50" type="button">Échanger 50</button>
       <button class="choiceBtn" id="walletClientRedeem100" type="button">Échanger 100</button>
       <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser (démo)</button>
     </div>
-
     <div style="font-weight:900;margin-top:14px;">Attribution commerçant → client (démo)</div>
     <div class="box">
       <div class="muted">
-        Le client règle son achat directement au commerçant par le moyen de paiement accepté par ce dernier
-        (espèces, carte bancaire, chèque ou autre). Bo’CitéArt n’intervient pas dans ce paiement.
+        Le client règle son achat directement au commerçant par le moyen de paiement accepté par ce dernier (espèces, carte bancaire, chèque ou autre). Bo’CitéArt n’intervient pas dans ce paiement.
       </div>
-
       <div class="muted" style="margin-top:8px;">
-        Une fois l’achat encaissé, le commerçant saisit simplement le montant, l’application calcule automatiquement
-        les bocitecoins, puis le commerçant scanne le client pour créditer son wallet.
+        Une fois l’achat encaissé, le commerçant saisit simplement le montant, l’application calcule automatiquement les bocitecoins, puis le commerçant scanne le client pour créditer son wallet.
       </div>
-
       <div style="margin-top:10px;font-weight:900;">Montant d’achat</div>
       <input class="miniField" id="shopPurchaseAmount" type="number" min="0" step="0.01" placeholder="Ex : 47.00" />
-
       <div style="margin-top:10px;font-weight:900;">Bocitecoins calculés</div>
       <div class="box" style="background:var(--bg);">
         <strong id="shopCoinsCalc">0</strong> bocitecoin(s) OR à verser
       </div>
-
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="shopCalcBtn" type="button">Calculer</button>
         <button class="choiceBtn" id="shopScanClientBtn" type="button">Scanner le client</button>
         <button class="choiceBtn" id="shopCreditClientBtn" type="button">Valider l’envoi</button>
         <button class="choiceBtn" id="shopUndoBtn" type="button" style="background:#fff;">Correction 60 s</button>
       </div>
-
       <div class="muted" style="margin-top:10px;">
         Règle actuelle : 1 bocitecoin OR par tranche complète de 10 € d’achat.
       </div>
@@ -2700,11 +2619,9 @@ if(key==="commerces"){
         En cas d’erreur de saisie, le commerçant dispose d’une fenêtre de correction de 60 secondes après validation.
       </div>
       <div class="muted" style="margin-top:6px;">
-        Si une anomalie persiste après ce délai, une demande de régularisation peut être transmise à l’administrateur Bo’CitéArt,
-        qui intervient après vérification dans un délai raisonnable.
+        Si une anomalie persiste après ce délai, une demande de régularisation peut être transmise à l’administrateur Bo’CitéArt, qui intervient après vérification dans un délai raisonnable.
       </div>
     </div>
-
     <div style="font-weight:900;margin-top:12px;">Bocitecoins couleur OR</div>
     <div class="box">
       <strong>Clarification :</strong> “OR” = couleur / repère visuel dans l’application, sans valeur intrinsèque.
@@ -2712,7 +2629,6 @@ if(key==="commerces"){
         Le solde visible du citoyen sert à motiver l’échange, le retour en commerce, et la consultation du compte.
       </div>
     </div>
-
     <ul style="margin:8px 0 0 18px;font-weight:800;">
       <li>Attribution : 1 bocitecoin couleur OR par tranche de 10 € d’achat</li>
       <li>Seuil minimum : 10 €</li>
@@ -2720,7 +2636,6 @@ if(key==="commerces"){
       <li>Échange standard à partir de 30 bocitecoins</li>
       <li>Échanges renforcés possibles à 50 et 100 bocitecoins</li>
     </ul>
-
     <div style="font-weight:900;margin-top:12px;">Règle anniversaire du compte</div>
     <div class="box">
       <ul style="margin:8px 0 0 18px;font-weight:800;">
@@ -2731,7 +2646,6 @@ if(key==="commerces"){
         <li>Le reste du solde est brûlé automatiquement à la date anniversaire</li>
       </ul>
     </div>
-
     <div style="font-weight:900;margin-top:12px;">Frais Bo’CitéArt (structure)</div>
     <div class="box">
       <strong>Règle :</strong> <strong>0,18 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés (traçabilité).
@@ -2739,26 +2653,21 @@ if(key==="commerces"){
         Reversement automatique via PSP (ou solution équivalente), avec journalisation et facture mensuelle récapitulative.
       </div>
       <div class="muted" style="margin-top:8px;">
-        Le client paie son achat directement au commerçant. Le PSP intervient uniquement sur les écritures Bo’CitéArt,
-        la traçabilité, les prélèvements et les factures partenaires.
+        Le client paie son achat directement au commerçant. Le PSP intervient uniquement sur les écritures Bo’CitéArt, la traçabilité, les prélèvements et les factures partenaires.
       </div>
       <div class="muted" style="margin-top:8px;">
         Vue “suivi” ci-dessous : indicative, non comptable, non exploitable juridiquement.
       </div>
     </div>
-
     <div style="font-weight:900;margin-top:12px;">Suivi mensuel (démo — indicatif)</div>
     <div class="box">
       <div class="muted">Saisis un montant d’achats du mois (ex : total caisse) pour voir l’estimation.</div>
-
       <div style="margin-top:10px;font-weight:900;">Montant achats (mois en cours)</div>
       <input class="miniField" id="feeInputSales" type="number" min="0" step="0.01" placeholder="Ex : 1250.00" />
-
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="feeAddBtn" type="button">➕ Ajouter / mettre à jour</button>
         <button class="choiceBtn" id="feeResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
       </div>
-
       <div class="box" style="margin-top:12px;background:var(--bg);">
         <div style="font-weight:900;">Résumé (mois en cours)</div>
         <div class="muted" style="margin-top:6px;">
@@ -2767,12 +2676,10 @@ if(key==="commerces"){
           Règle : 0,18 € / tranche de 10 € (arrondi par tranches)
         </div>
       </div>
-
       <div class="muted" style="margin-top:10px;">
         (Démo) Données stockées localement sur ce téléphone.
       </div>
     </div>
-
     <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
     <ul style="margin:8px 0 0 18px;font-weight:800;">
       <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
@@ -2781,7 +2688,7 @@ if(key==="commerces"){
       <li>Option : texte en gras (+4€ TTC)</li>
       <li>Possibilité d’URL selon conformité</li>
     </ul>
-    `);
+  `);
 
   setTimeout(()=>{
     if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
@@ -2795,11 +2702,7 @@ if(key==="commerces"){
       }catch(e){}
       const now = Date.now();
       const oneYear = 365 * 24 * 60 * 60 * 1000;
-      return {
-        firstEarnTs: now,
-        expireTs: now + oneYear,
-        lastTx: null
-      };
+      return { firstEarnTs: now, expireTs: now + oneYear, lastTx: null };
     }
 
     function saveCitizenMeta(obj){
@@ -2845,7 +2748,6 @@ if(key==="commerces"){
     function getMotivationText(coins){
       const next = getNextTarget(coins);
       const diff = next - coins;
-
       if(coins >= 100) return "Palier premium atteint. Vous pouvez profiter du niveau d’avantage maximum.";
       if(diff === 4) return "Plus que 4 bocitecoins pour échanger. Votre belle surprise vous attend.";
       if(diff === 3) return "Plus que 3 bocitecoins. Encore un petit effort.";
@@ -2860,20 +2762,13 @@ if(key==="commerces"){
       const wallet = loadCitizenWallet();
       const meta = ensureCitizenMeta();
       const now = Date.now();
-
       if(meta.expireTs && now >= meta.expireTs){
         const current = Number(wallet.or || 0);
         wallet.or = 12;
         saveCitizenWallet(wallet);
-
         meta.firstEarnTs = now;
         meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
-        meta.lastTx = {
-          type: "anniversary_reset",
-          previous: current,
-          resulting: 12,
-          ts: now
-        };
+        meta.lastTx = { type: "anniversary_reset", previous: current, resulting: 12, ts: now };
         saveCitizenMeta(meta);
       }
     }
@@ -2966,13 +2861,7 @@ if(key==="commerces"){
       if(confirm(`Confirmer l’échange de ${required} bocitecoins ?`)){
         wallet.or = Math.max(0, coins - required);
         saveCitizenWallet(wallet);
-        registerTx({
-          type: "redeem",
-          amount: required,
-          previous: coins,
-          resulting: wallet.or,
-          ts: Date.now()
-        });
+        registerTx({ type: "redeem", amount: required, previous: coins, resulting: wallet.or, ts: Date.now() });
         refreshWalletUi();
         alert(`Échange validé (démo) : ${required} bocitecoins utilisés.`);
       }
@@ -2993,11 +2882,7 @@ if(key==="commerces"){
       if(confirm("Réinitialiser le wallet Client (démo) sur ce téléphone ?")){
         saveCitizenWallet({ or: 0 });
         const now = Date.now();
-        saveCitizenMeta({
-          firstEarnTs: now,
-          expireTs: now + (365 * 24 * 60 * 60 * 1000),
-          lastTx: null
-        });
+        saveCitizenMeta({ firstEarnTs: now, expireTs: now + (365 * 24 * 60 * 60 * 1000), lastTx: null });
         refreshWalletUi();
       }
     };
@@ -3069,12 +2954,10 @@ if(key==="commerces"){
     if(undoBtn) undoBtn.onclick = ()=>{
       const meta = loadCitizenMeta();
       const tx = meta.lastTx;
-
       if(!tx || tx.type !== "credit"){
         alert("Aucune opération crédit récente à corriger.");
         return;
       }
-
       if(Date.now() > undoDeadlineTs){
         alert("Délai de correction dépassé.");
         return;
@@ -3083,27 +2966,26 @@ if(key==="commerces"){
       const w = loadCitizenWallet();
       w.or = Math.max(0, Number(tx.previous || 0));
       saveCitizenWallet(w);
-
       registerTx({
         type: "undo_credit",
         previous: Number(tx.resulting || 0),
         resulting: Number(tx.previous || 0),
         ts: Date.now()
       });
-
       refreshWalletUi();
       alert("Dernière attribution annulée (démo). Tu peux ressaisir le bon montant.");
     };
 
     const xb = $("xBtn");
     if(xb && xb.focus) xb.focus();
-    },0);
+  },0);
+
   return;
 }
         });
       });
 
-// ===============================================
+      // ===============================================
       // ✅ Admin tile (démo)
       // ======================================================
       const adminTile = $("adminTile");
@@ -3112,8 +2994,7 @@ if(key==="commerces"){
         openModal("Accès Admin (structure)", `
           <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
           <div class="box">
-            <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
-            Les éléments affichés sont une vitrine de structure (démo).
+            <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité. Les éléments affichés sont une vitrine de structure (démo).
           </div>
           <ul style="margin:8px 0 0 18px;font-weight:800;">
             <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
@@ -3133,8 +3014,7 @@ if(key==="commerces"){
         openModal("Défibrillateur (DAE)", `
           <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
           <div class="box">
-            <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
-            Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
+            <strong>Important :</strong> indication indicative dépendant des sources et du téléphone. Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
           </div>
           <ul style="margin:8px 0 0 18px;font-weight:800;">
             <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
@@ -3143,23 +3023,13 @@ if(key==="commerces"){
             <li>DAE • pharmacie • hôpital</li>
             <li>Géolocalisation optionnelle (activation utilisateur)</li>
           </ul>
-
           <div class="box" style="margin-top:12px;">
             <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
             <div style="border-radius:14px; overflow:hidden; background:#000;">
-              <iframe
-                width="100%"
-                height="220"
-                src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
-                title="Utilisation DAE"
-                loading="lazy"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen>
-              </iframe>
+              <iframe width="100%" height="220" src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1" title="Utilisation DAE" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
             <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
           </div>
-
           <div class="box" style="margin-top:12px;">
             <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
             <div class="muted">
@@ -3193,7 +3063,6 @@ if(key==="commerces"){
               Déclencher un soutien simple : un commerçant soutient un club + une association, avec visibilité locale via le bandeau 1 cm.
             </div>
           </div>
-
           <div class="box">
             <div style="font-weight:900;">Principe</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
@@ -3203,13 +3072,11 @@ if(key==="commerces"){
               <li>Les modalités PSP / pièces / fiscalité sont décrites dans les CGV/contrats (discrétion + conformité).</li>
             </ul>
           </div>
-
           <div class="box">
             <div style="font-weight:900;">Montant (exemple)</div>
             <div style="font-weight:800;margin-top:6px;">Exemple : <strong>100 € HT</strong> par période (ex. trimestriel).</div>
             <div class="muted" style="margin-top:8px;">(Démo) La répartition exacte est contractualisée. La TVA dépend du cadre applicable.</div>
           </div>
-
           <div class="box">
             <div style="font-weight:900;">Associations retenues (uniquement celles-ci)</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
@@ -3219,29 +3086,23 @@ if(key==="commerces"){
               <li><strong>ATC Nord</strong> — traumatisés crâniens</li>
             </ul>
           </div>
-
           <div class="box">
             <div style="font-weight:900;">Préparer votre ligne (démo)</div>
             <div class="muted" style="margin-top:6px;">Le commerçant peut choisir l’affichage en gras (+4€ TTC) et indiquer une URL.</div>
-
             <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
             <input class="miniField" id="spName" placeholder="Ex. Boulangerie Croquet" />
-
             <div style="margin-top:10px;font-weight:900;">URL (optionnelle)</div>
             <input class="miniField" id="spUrl" placeholder="https://..." />
-
             <div class="miniCheck">
               <input id="spBold" type="checkbox" />
               <div>
                 Option <strong>texte en gras</strong> (+4€ TTC) — pour une meilleure lisibilité (sans promesse de résultats).
               </div>
             </div>
-
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
               <button class="choiceBtn" id="spPreview" type="button">👁️ Aperçu</button>
               <button class="choiceBtn" id="spAddToTape" type="button">➕ Ajouter au bandeau (démo)</button>
             </div>
-
             <div class="muted" style="margin-top:10px;">
               (Démo) Ici, l’ajout est local (sur ce téléphone). La version officielle gèrera validation/contrat/contrôle.
             </div>
@@ -3250,10 +3111,10 @@ if(key==="commerces"){
 
         setTimeout(()=>{
           const btnPrev = $("spPreview");
-          const btnAdd  = $("spAddToTape");
-          const inName  = $("spName");
-          const inUrl   = $("spUrl");
-          const cbBold  = $("spBold");
+          const btnAdd = $("spAddToTape");
+          const inName = $("spName");
+          const inUrl = $("spUrl");
+          const cbBold = $("spBold");
 
           const makeLine = ()=>{
             const name = (inName && inName.value.trim()) ? inName.value.trim() : "Commerce (démo)";
@@ -3303,9 +3164,9 @@ if(key==="commerces"){
       // --- Legal modal open/close + tabs ---
       // ======================================================
       const legal = $("legal");
-      const openLegalBtn  = $("openLegal");
+      const openLegalBtn = $("openLegal");
       const closeLegalBtn = $("legalClose");
-      const closeLegalX   = $("legalX");
+      const closeLegalX = $("legalX");
 
       if(typeof window.__lastFocus === "undefined") window.__lastFocus = null;
 
@@ -3324,9 +3185,9 @@ if(key==="commerces"){
         window.__lastFocus = null;
       };
 
-      if(openLegalBtn)  openLegalBtn.onclick  = openLegal;
+      if(openLegalBtn) openLegalBtn.onclick = openLegal;
       if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
-      if(closeLegalX)   closeLegalX.onclick   = closeLegal;
+      if(closeLegalX) closeLegalX.onclick = closeLegal;
 
       // ===========================
       // ACK storage durci
@@ -3375,10 +3236,8 @@ if(key==="commerces"){
 
       function makeLongPress(btn, ringEl, ms, onTrigger){
         if(!btn || !ringEl) return;
-
         let raf = null, start = null, holding = false;
         let fired = false;
-
         const rAttr = ringEl.getAttribute("r");
         const r = rAttr ? parseFloat(rAttr) : 35;
         const circ = 2 * Math.PI * r;
@@ -3398,10 +3257,8 @@ if(key==="commerces"){
         const tick = (ts)=>{
           if(!holding) return;
           if(start === null) start = ts;
-
           const p = Math.min(1, (ts - start) / ms);
           ringEl.style.strokeDashoffset = String(circ * (1 - p));
-
           if(p >= 1){
             if(fired) return;
             fired = true;
@@ -3437,8 +3294,7 @@ if(key==="commerces"){
         const body = (kind==="112") ? `
           <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
           <div class="box">
-            <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
-            Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
+            <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone. Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
           </div>
           <ul style="margin:8px 0 0 18px;font-weight:800;">
             <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
@@ -3455,8 +3311,7 @@ if(key==="commerces"){
         ` : `
           <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
           <div class="box">
-            <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
-            Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
+            <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone. Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
           </div>
           <ul style="margin:8px 0 0 18px;font-weight:800;">
             <li><strong>3919</strong> : écoute/orientation (pas une intervention immédiate).</li>
@@ -3538,25 +3393,22 @@ if(key==="commerces"){
 
       if(isFn(window.makeKeyboardClickable)){
         window.makeKeyboardClickable($("ticker"), window.openTicker);
-
         document.querySelectorAll(".tile[data-open]").forEach(el=>{
           window.makeKeyboardClickable(el, ()=> el.click());
         });
-
         if(adminTile) window.makeKeyboardClickable(adminTile, ()=> adminTile.click());
       }
 
       (function initLegalTabs(){
         const legal = $("legal");
         if(!legal) return;
-
         const tabs = legal.querySelectorAll(".tab");
         if(!tabs || !tabs.length) return;
 
         const panels = {
           rgpd: $("p-rgpd"),
-          cgu:  $("p-cgu"),
-          cgv:  $("p-cgv"),
+          cgu: $("p-cgu"),
+          cgv: $("p-cgv"),
         };
 
         function showTab(name){
@@ -3574,39 +3426,34 @@ if(key==="commerces"){
       })();
 
       (function initSportSupportTile(){
-  const SPORT_SUPPORT_KEY = "bociteart_sport_support_v1";
+        const SPORT_SUPPORT_KEY = "bociteart_sport_support_v1";
 
-  function getCurrentYear(){
-    return new Date().getFullYear();
-  }
+        function getCurrentYear(){
+          return new Date().getFullYear();
+        }
 
-  function loadSportSupport(){
-    try{
-      const raw = localStorage.getItem(SPORT_SUPPORT_KEY);
-      if(raw) return JSON.parse(raw);
-    }catch(e){}
-    return {
-      total: 0,
-      byYear: {},
-      lastClickYear: null
-    };
-  }
+        function loadSportSupport(){
+          try{
+            const raw = localStorage.getItem(SPORT_SUPPORT_KEY);
+            if(raw) return JSON.parse(raw);
+          }catch(e){}
+          return { total: 0, byYear: {}, lastClickYear: null };
+        }
 
-  function refreshSportSupportTileUi(){
-    const db = loadSportSupport();
-    const y = getCurrentYear();
-    const yearCount = Number((db.byYear && db.byYear[y]) || 0);
-    const totalCount = Number(db.total || 0);
+        function refreshSportSupportTileUi(){
+          const db = loadSportSupport();
+          const y = getCurrentYear();
+          const yearCount = Number((db.byYear && db.byYear[y]) || 0);
+          const totalCount = Number(db.total || 0);
+          const tileYear = document.getElementById("sportSupportYearCount");
+          const tileTotal = document.getElementById("sportSupportTotalCount");
+          if(tileYear) tileYear.textContent = yearCount;
+          if(tileTotal) tileTotal.textContent = totalCount;
+        }
 
-    const tileYear = document.getElementById("sportSupportYearCount");
-    const tileTotal = document.getElementById("sportSupportTotalCount");
+        refreshSportSupportTileUi();
+      })();
 
-    if(tileYear) tileYear.textContent = yearCount;
-    if(tileTotal) tileTotal.textContent = totalCount;
-  }
-
-  refreshSportSupportTileUi();
-      
     })(); // fin initBoCiteArtClean
   </script>
 </body>
