@@ -1466,198 +1466,644 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
         speechSynthesis.speak(u);
       }
 
-      const PUB_MAX_PER_DAY = 10;
-      window.PUB_MAX_PER_DAY = PUB_MAX_PER_DAY;
-      const PUB_STORE_KEY = "bociteart_pubBookings_v1";
-      let calYear = new Date().getFullYear();
-      let calMonth = new Date().getMonth();
+const PUB_MAX_PER_DAY = 10;
+window.PUB_MAX_PER_DAY = PUB_MAX_PER_DAY;
 
-      function pad2(n){ return String(n).padStart(2,"0"); }
-      function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
-      function ym(y,m){ return `${y}-${pad2(m+1)}`; }
+const PUB_STORE_KEY = "bociteart_pubBookings_v2";
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
 
-      function loadBookings(){ try{ const raw = localStorage.getItem(PUB_STORE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
-      function saveBookings(obj){ try{ localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj)); }catch(e){} }
-      function getDayBookings(obj, y, m, d){ const keyYM = ym(y,m); const keyYMD = ymd(y,m,d); return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : []; }
-      function setDayBookings(obj, y, m, d, list){ const keyYM = ym(y,m); const keyYMD = ymd(y,m,d); if(!obj[keyYM]) obj[keyYM] = {}; obj[keyYM][keyYMD] = list; }
-      function daySlotsUsed(obj, y, m, d){ return getDayBookings(obj, y, m, d).length; }
-      function isFull(obj, y, m, d){ return daySlotsUsed(obj, y, m, d) >= PUB_MAX_PER_DAY; }
+function pad2(n){ return String(n).padStart(2,"0"); }
+function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
+function ym(y,m){ return `${y}-${pad2(m+1)}`; }
 
-      const FEE_STORE_KEY = "bociteart_fee_demo_v1";
-      const CITIZEN_WALLET_KEY = "bociteart_citizen_wallet_v1";
-      const SCHOOL_WALLET_KEY = "bociteart_school_wallet_v1";
-      const SPORT_WALLET_KEY = "bociteart_sport_wallet_v1";
+function loadBookings(){
+  try{
+    const raw = localStorage.getItem(PUB_STORE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){
+    return {};
+  }
+}
+function saveBookings(obj){
+  try{ localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj)); }catch(e){}
+}
+function getDayBookings(obj, y, m, d){
+  const keyYM = ym(y,m);
+  const keyYMD = ymd(y,m,d);
+  return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : [];
+}
+function setDayBookings(obj, y, m, d, list){
+  const keyYM = ym(y,m);
+  const keyYMD = ymd(y,m,d);
+  if(!obj[keyYM]) obj[keyYM] = {};
+  obj[keyYM][keyYMD] = list;
+}
+function daySlotsUsed(obj, y, m, d){
+  return getDayBookings(obj, y, m, d).length;
+}
+function isFull(obj, y, m, d){
+  return daySlotsUsed(obj, y, m, d) >= PUB_MAX_PER_DAY;
+}
 
-      function loadCitizenWallet(){ try{ const raw = localStorage.getItem(CITIZEN_WALLET_KEY); return raw ? JSON.parse(raw) : { or: 37 }; }catch(e){ return { or: 37 }; } }
-      function saveCitizenWallet(obj){ try{ localStorage.setItem(CITIZEN_WALLET_KEY, JSON.stringify(obj)); }catch(e){} }
-      function loadSchoolWallet(){ try{ const raw = localStorage.getItem(SCHOOL_WALLET_KEY); return raw ? JSON.parse(raw) : { jaune: 0 }; }catch(e){ return { jaune: 0 }; } }
-      function saveSchoolWallet(obj){ try{ localStorage.setItem(SCHOOL_WALLET_KEY, JSON.stringify(obj)); }catch(e){} }
-      function loadSportWallet(){ try{ const raw = localStorage.getItem(SPORT_WALLET_KEY); return raw ? JSON.parse(raw) : { vert: 0 }; }catch(e){ return { vert: 0 }; } }
-      function saveSportWallet(obj){ try{ localStorage.setItem(SPORT_WALLET_KEY, JSON.stringify(obj)); }catch(e){} }
+function isBefore16h(){
+  return new Date().getHours() < 16;
+}
 
-      function walletAdd(key, field, delta){
-        let data = key === CITIZEN_WALLET_KEY ? loadCitizenWallet() : key === SCHOOL_WALLET_KEY ? loadSchoolWallet() : loadSportWallet();
-        data[field] = Math.max(0, Number(data[field] || 0) + Number(delta || 0));
-        if(key === CITIZEN_WALLET_KEY) saveCitizenWallet(data);
-        if(key === SCHOOL_WALLET_KEY) saveSchoolWallet(data);
-        if(key === SPORT_WALLET_KEY) saveSportWallet(data);
-        return data[field];
+function normalizeBooking(raw){
+  return {
+    id: raw.id || ("pub_" + Date.now() + "_" + Math.random().toString(36).slice(2,7)),
+    date: raw.date || "",
+    advertiserType: raw.advertiserType || "merchant", // merchant | city
+    advertiserName: raw.advertiserName || "Annonceur",
+    who: raw.who || raw.advertiserName || "Annonceur",
+    format: raw.format || "banner_3cm",               // banner_1cm | banner_3cm
+    paymentMode: raw.paymentMode || "psp",            // psp | invoice
+    paymentStatus: raw.paymentStatus || "draft",      // draft | pending | paid | published | overdue | blocked
+    invoiceDays: Number(raw.invoiceDays || 0),
+    packType: raw.packType || "single",               // single | pack5
+    qty: Math.max(1, Number(raw.qty || 1)),
+    unitPriceHt: Number(raw.unitPriceHt || 50),
+    basePriceHt: Number(raw.basePriceHt || 50),
+    boldRequested: !!raw.boldRequested,
+    boldPaid: !!raw.boldPaid,
+    boldPriceTtc: Number(raw.boldPriceTtc || 0),
+    txt: raw.txt || "",
+    note: raw.note || "",
+    ts_iso: raw.ts_iso || new Date().toISOString(),
+    ts_fr: raw.ts_fr || new Date().toLocaleString("fr-FR")
+  };
+}
+
+function computeAdPrice(format, packType, qty, boldRequested){
+  const safeQty = Math.max(1, Number(qty || 1));
+  let basePriceHt = 0;
+
+  if(packType === "pack5"){
+    basePriceHt = 200;
+  }else{
+    basePriceHt = safeQty * 50;
+  }
+
+  const boldPriceTtc = boldRequested ? 4 : 0;
+  const totalShown = basePriceHt + boldPriceTtc;
+
+  return {
+    format,
+    packType,
+    qty: safeQty,
+    basePriceHt,
+    boldPriceTtc,
+    totalShown
+  };
+}
+
+function bookingBlocksNewReservation(b){
+  if(b.advertiserType !== "city") return false;
+  if(b.paymentMode !== "invoice") return false;
+  if(b.invoiceDays <= 30) return false;
+  return b.paymentStatus !== "paid" && b.paymentStatus !== "published";
+}
+
+function canPublishBooking(b){
+  const bk = normalizeBooking(b);
+
+  if(bookingBlocksNewReservation(bk)) return false;
+  return bk.paymentStatus === "paid" || bk.paymentStatus === "published";
+}
+
+function bookingUseBold(b){
+  const bk = normalizeBooking(b);
+  return bk.boldRequested && bk.boldPaid;
+}
+
+function findBlockingUnpaidForAdvertiser(advertiserName, advertiserType){
+  const db = loadBookings();
+  const months = Object.keys(db || {});
+  for(const monthKey of months){
+    const monthObj = db[monthKey] || {};
+    const days = Object.keys(monthObj || {});
+    for(const dayKey of days){
+      const arr = monthObj[dayKey] || [];
+      for(const raw of arr){
+        const b = normalizeBooking(raw);
+        if(
+          b.advertiserName === advertiserName &&
+          b.advertiserType === advertiserType &&
+          bookingBlocksNewReservation(b)
+        ){
+          return b;
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function countBookingsByAdvertiser(list, advertiserName){
+  return (list || []).filter(it => normalizeBooking(it).advertiserName === advertiserName).length;
+}
+
+function canReserveOnDay(list, advertiserName){
+  const existingCount = countBookingsByAdvertiser(list, advertiserName);
+
+  if(isBefore16h()){
+    return existingCount < 1;
+  }
+
+  return list.length < PUB_MAX_PER_DAY;
+}
+
+function addBooking(y, m, d, booking){
+  const db = loadBookings();
+  const dayList = getDayBookings(db, y, m, d).map(normalizeBooking);
+  const bk = normalizeBooking(booking);
+
+  if(dayList.length >= PUB_MAX_PER_DAY){
+    return { ok:false, message:"Journée complète : 10 publicités déjà réservées." };
+  }
+
+  const blocking = findBlockingUnpaidForAdvertiser(bk.advertiserName, bk.advertiserType);
+  if(blocking){
+    return {
+      ok:false,
+      message:"Réservation bloquée : une publicité précédente de cet annonceur est impayée au-delà du délai autorisé."
+    };
+  }
+
+  if(!canReserveOnDay(dayList, bk.advertiserName)){
+    return {
+      ok:false,
+      message:"Avant 16h : 1 seule publicité par commerçant et par jour. Après 16h, réservation supplémentaire possible s’il reste des places."
+    };
+  }
+
+  dayList.push(bk);
+  setDayBookings(db, y, m, d, dayList);
+  saveBookings(db);
+
+  return { ok:true, booking:bk };
+}
+
+function resetAllBookings(){
+  try{ localStorage.removeItem(PUB_STORE_KEY); }catch(e){}
+}
+
+const FEE_STORE_KEY = "bociteart_fee_demo_v1";
+const CITIZEN_WALLET_KEY = "bociteart_citizen_wallet_v1";
+const SCHOOL_WALLET_KEY = "bociteart_school_wallet_v1";
+const SPORT_WALLET_KEY = "bociteart_sport_wallet_v1";
+
+function loadCitizenWallet(){ try{ const raw = localStorage.getItem(CITIZEN_WALLET_KEY); return raw ? JSON.parse(raw) : { or: 37 }; }catch(e){ return { or: 37 }; } }
+function saveCitizenWallet(obj){ try{ localStorage.setItem(CITIZEN_WALLET_KEY, JSON.stringify(obj)); }catch(e){} }
+function loadSchoolWallet(){ try{ const raw = localStorage.getItem(SCHOOL_WALLET_KEY); return raw ? JSON.parse(raw) : { jaune: 0 }; }catch(e){ return { jaune: 0 }; } }
+function saveSchoolWallet(obj){ try{ localStorage.setItem(SCHOOL_WALLET_KEY, JSON.stringify(obj)); }catch(e){} }
+function loadSportWallet(){ try{ const raw = localStorage.getItem(SPORT_WALLET_KEY); return raw ? JSON.parse(raw) : { vert: 0 }; }catch(e){ return { vert: 0 }; } }
+function saveSportWallet(obj){ try{ localStorage.setItem(SPORT_WALLET_KEY, JSON.stringify(obj)); }catch(e){} }
+
+function walletAdd(key, field, delta){
+  let data = key === CITIZEN_WALLET_KEY ? loadCitizenWallet() : key === SCHOOL_WALLET_KEY ? loadSchoolWallet() : loadSportWallet();
+  data[field] = Math.max(0, Number(data[field] || 0) + Number(delta || 0));
+  if(key === CITIZEN_WALLET_KEY) saveCitizenWallet(data);
+  if(key === SCHOOL_WALLET_KEY) saveSchoolWallet(data);
+  if(key === SPORT_WALLET_KEY) saveSportWallet(data);
+  return data[field];
+}
+
+function feeYM(d=new Date()){ const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,"0"); return `${y}-${m}`; }
+function feeLoad(){ try{ const raw = localStorage.getItem(FEE_STORE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
+function feeSave(obj){ try{ localStorage.setItem(FEE_STORE_KEY, JSON.stringify(obj)); }catch(e){} }
+function calcFeeFromSales(eur){ const v = Number(eur || 0); if(!Number.isFinite(v) || v <= 0) return 0; const tranches = Math.floor(v / 10); return tranches * 0.18; }
+function fmtEUR(x){ const n = Number(x || 0); return n.toLocaleString("fr-FR", { minimumFractionDigits:2, maximumFractionDigits:2 }) + " €"; }
+
+function initFeeUiInModal(){
+  const input = document.getElementById("feeInputSales");
+  const outSales = document.getElementById("feeSalesOut");
+  const outFee = document.getElementById("feeOut");
+  const btnAdd = document.getElementById("feeAddBtn");
+  const btnReset = document.getElementById("feeResetBtn");
+  const resetClient = document.getElementById("walletClientReset");
+  const outClient = document.getElementById("citizenCoinBalance");
+
+  if(outClient){ outClient.textContent = Number(loadCitizenWallet().or || 0); }
+  if(resetClient) resetClient.onclick = ()=>{ saveCitizenWallet({ or: 0 }); if(outClient) outClient.textContent = 0; };
+
+  if(!input || !outSales || !outFee || !btnAdd || !btnReset) return;
+
+  const ymKey = feeYM();
+  const db = feeLoad();
+  const cur = db[ymKey] || { sales: 0 };
+  outSales.textContent = fmtEUR(cur.sales || 0);
+  outFee.textContent = fmtEUR(calcFeeFromSales(cur.sales || 0));
+  input.value = (cur.sales || 0);
+
+  btnAdd.onclick = ()=>{
+    const v = Number(input.value || 0);
+    if(!Number.isFinite(v) || v < 0){ alert("Montant invalide."); return; }
+    const db2 = feeLoad();
+    db2[ymKey] = { sales: v, ts_fr: new Date().toLocaleString("fr-FR") };
+    feeSave(db2);
+    outSales.textContent = fmtEUR(v);
+    outFee.textContent = fmtEUR(calcFeeFromSales(v));
+    alert("Suivi mis à jour (démo).");
+  };
+
+  btnReset.onclick = ()=>{
+    if(confirm("Réinitialiser le suivi du mois (démo) sur ce téléphone ?")){
+      const db2 = feeLoad();
+      delete db2[ymKey];
+      feeSave(db2);
+      input.value = "";
+      outSales.textContent = fmtEUR(0);
+      outFee.textContent = fmtEUR(0);
+      alert("Réinitialisé (démo).");
+    }
+  };
+}
+window.initFeeUiInModal = initFeeUiInModal;
+
+function buildCalendarHTML(){
+  const first = new Date(calYear, calMonth, 1);
+  const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+  const labels = ["L","M","M","J","V","S","D"];
+
+  return `
+    <div class="calWrap">
+      <div class="calTop">
+        <div style="font-weight:900;">Calendrier publicités (démo) — ${monthName}</div>
+        <div class="mini">
+          <button class="calBtn" id="calPrev" type="button">◀</button>
+          <button class="calBtn" id="calNext" type="button">▶</button>
+        </div>
+      </div>
+
+      <div class="muted">
+        Règles :
+        <br><strong>10 publicités maximum par jour</strong>
+        <br>Avant <strong>16h</strong> : <strong>1 publicité maximum par commerçant et par jour</strong>
+        <br>Après <strong>16h</strong> : si des places restent libres, un commerçant ayant déjà réservé peut reprendre un slot
+        <br>Sans paiement validé : <strong>pas de diffusion</strong>
+      </div>
+
+      <div class="calGrid" style="margin-top:10px;">
+        ${labels.map(x=>`<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
+      </div>
+
+      <div class="calGrid" id="calDays"></div>
+
+      <div class="calLegend">
+        <span class="tag"><span class="dot" style="background:#111;"></span> Jour disponible</span>
+        <span class="tag"><span class="dot" style="background:#999;"></span> Jour complet (grisé)</span>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
+        <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+      </div>
+    </div>
+  `;
+}
+
+function buildDayCellsHTML(y, m){
+  const first = new Date(y, m, 1);
+  const last = new Date(y, m + 1, 0);
+  const totalDays = last.getDate();
+  const startOffset = (first.getDay() + 6) % 7; // lundi = 0
+  const db = loadBookings();
+  let html = "";
+
+  for(let i = 0; i < startOffset; i++){
+    html += `<div></div>`;
+  }
+
+  for(let d = 1; d <= totalDays; d++){
+    const used = daySlotsUsed(db, y, m, d);
+    const full = used >= PUB_MAX_PER_DAY;
+    const cls = full ? "calDay isDisabled" : "calDay";
+    html += `
+      <button class="${cls}" type="button" data-cal-day="${d}">
+        <div style="font-weight:900;">${d}</div>
+        <div class="muted" style="font-size:11px;margin-top:4px;">${used}/${PUB_MAX_PER_DAY}</div>
+      </button>
+    `;
+  }
+
+  return html;
+}
+
+function openBookingModalForDay(y, m, d){
+  const dateStr = ymd(y,m,d);
+  openModal("Réserver une publicité (démo)", `
+    <div class="box">
+      <div style="font-weight:900;">Date : ${dateStr}</div>
+      <div class="muted" style="margin-top:6px;">
+        Avant 16h : 1 seule publicité par commerçant et par jour. Après 16h : réservation supplémentaire possible si la journée n’est pas complète.
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Type d’annonceur</div>
+      <select class="miniField" id="pubBookAdvertiserType">
+        <option value="merchant">Commerçant</option>
+        <option value="city">Mairie / collectivité</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">Nom de l’annonceur</div>
+      <input class="miniField" id="pubBookAdvertiserName" placeholder="Ex : Boulangerie Croquet">
+
+      <div style="margin-top:10px;font-weight:900;">Format</div>
+      <select class="miniField" id="pubBookFormat">
+        <option value="banner_3cm">Ligne 3 cm</option>
+        <option value="banner_1cm">Ligne 1 cm</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">Mode de règlement</div>
+      <select class="miniField" id="pubBookPaymentMode">
+        <option value="psp">PSP / carte bancaire</option>
+        <option value="invoice">Devis / facture / virement</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">État du paiement</div>
+      <select class="miniField" id="pubBookPaymentStatus">
+        <option value="pending">En attente</option>
+        <option value="paid">Payée</option>
+        <option value="published">Publiée</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">Jours depuis facture</div>
+      <input class="miniField" id="pubBookInvoiceDays" type="number" min="0" step="1" value="0">
+
+      <div style="margin-top:10px;font-weight:900;">Type d’achat</div>
+      <select class="miniField" id="pubBookPackType">
+        <option value="single">1 publicité</option>
+        <option value="pack5">Pack 5 publicités</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">Texte bandeau 1 cm (si utilisé)</div>
+      <input class="miniField" id="pubBookText" placeholder="Ex : Offre spéciale aujourd’hui">
+
+      <label style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+        <input type="checkbox" id="pubBookBoldRequested">
+        <span>Demander le gras (+4 € TTC)</span>
+      </label>
+
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+        <input type="checkbox" id="pubBookBoldPaid">
+        <span>Gras payé</span>
+      </label>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button class="choiceBtn" id="pubBookSaveBtn" type="button">💾 Réserver</button>
+      </div>
+    </div>
+  `);
+
+  setTimeout(()=>{
+    const saveBtn = document.getElementById("pubBookSaveBtn");
+    const advertiserType = document.getElementById("pubBookAdvertiserType");
+    const advertiserName = document.getElementById("pubBookAdvertiserName");
+    const format = document.getElementById("pubBookFormat");
+    const paymentMode = document.getElementById("pubBookPaymentMode");
+    const paymentStatus = document.getElementById("pubBookPaymentStatus");
+    const invoiceDays = document.getElementById("pubBookInvoiceDays");
+    const packType = document.getElementById("pubBookPackType");
+    const text = document.getElementById("pubBookText");
+    const boldRequested = document.getElementById("pubBookBoldRequested");
+    const boldPaid = document.getElementById("pubBookBoldPaid");
+
+    if(saveBtn) saveBtn.onclick = ()=>{
+      const advName = advertiserName ? String(advertiserName.value || "").trim() : "";
+      if(!advName){
+        alert("Saisis le nom de l’annonceur.");
+        return;
       }
 
-      function feeYM(d=new Date()){ const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,"0"); return `${y}-${m}`; }
-      function feeLoad(){ try{ const raw = localStorage.getItem(FEE_STORE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
-      function feeSave(obj){ try{ localStorage.setItem(FEE_STORE_KEY, JSON.stringify(obj)); }catch(e){} }
-      function calcFeeFromSales(eur){ const v = Number(eur || 0); if(!Number.isFinite(v) || v <= 0) return 0; const tranches = Math.floor(v / 10); return tranches * 0.18; }
-      function fmtEUR(x){ const n = Number(x || 0); return n.toLocaleString("fr-FR", { minimumFractionDigits:2, maximumFractionDigits:2 }) + " €"; }
+      const pricing = computeAdPrice(
+        format ? format.value : "banner_3cm",
+        packType ? packType.value : "single",
+        1,
+        !!(boldRequested && boldRequested.checked)
+      );
 
-      function initFeeUiInModal(){
-        const input = document.getElementById("feeInputSales");
-        const outSales = document.getElementById("feeSalesOut");
-        const outFee = document.getElementById("feeOut");
-        const btnAdd = document.getElementById("feeAddBtn");
-        const btnReset = document.getElementById("feeResetBtn");
-        const resetClient = document.getElementById("walletClientReset");
-        const outClient = document.getElementById("citizenCoinBalance");
+      const result = addBooking(y, m, d, {
+        date: dateStr,
+        advertiserType: advertiserType ? advertiserType.value : "merchant",
+        advertiserName: advName,
+        who: advName,
+        format: format ? format.value : "banner_3cm",
+        paymentMode: paymentMode ? paymentMode.value : "psp",
+        paymentStatus: paymentStatus ? paymentStatus.value : "pending",
+        invoiceDays: invoiceDays ? Number(invoiceDays.value || 0) : 0,
+        packType: packType ? packType.value : "single",
+        qty: 1,
+        unitPriceHt: 50,
+        basePriceHt: pricing.basePriceHt,
+        boldRequested: !!(boldRequested && boldRequested.checked),
+        boldPaid: !!(boldPaid && boldPaid.checked),
+        boldPriceTtc: pricing.boldPriceTtc,
+        txt: text ? String(text.value || "").trim() : "",
+        note: "Réservation calendrier démo"
+      });
 
-        if(outClient){ outClient.textContent = Number(loadCitizenWallet().or || 0); }
-        if(resetClient) resetClient.onclick = ()=>{ saveCitizenWallet({ or: 0 }); if(outClient) outClient.textContent = 0; };
-
-        if(!input || !outSales || !outFee || !btnAdd || !btnReset) return;
-
-        const ym = feeYM();
-        const db = feeLoad();
-        const cur = db[ym] || { sales: 0 };
-        outSales.textContent = fmtEUR(cur.sales || 0);
-        outFee.textContent = fmtEUR(calcFeeFromSales(cur.sales || 0));
-        input.value = (cur.sales || 0);
-
-        btnAdd.onclick = ()=>{
-          const v = Number(input.value || 0);
-          if(!Number.isFinite(v) || v < 0){ alert("Montant invalide."); return; }
-          const db2 = feeLoad();
-          db2[ym] = { sales: v, ts_fr: new Date().toLocaleString("fr-FR") };
-          feeSave(db2);
-          outSales.textContent = fmtEUR(v);
-          outFee.textContent = fmtEUR(calcFeeFromSales(v));
-          alert("Suivi mis à jour (démo).");
-        };
-
-        btnReset.onclick = ()=>{
-          if(confirm("Réinitialiser le suivi du mois (démo) sur ce téléphone ?")){
-            const db2 = feeLoad();
-            delete db2[ym];
-            feeSave(db2);
-            input.value = "";
-            outSales.textContent = fmtEUR(0);
-            outFee.textContent = fmtEUR(0);
-            alert("Réinitialisé (démo).");
-          }
-        };
-      }
-      window.initFeeUiInModal = initFeeUiInModal;
-
-      function buildCalendarHTML(){
-        const first = new Date(calYear, calMonth, 1);
-        const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
-        const labels = ["L","M","M","J","V","S","D"];
-        return `
-          <div class="calWrap">
-            <div class="calTop">
-              <div style="font-weight:900;">Calendrier (démo) — ${monthName}</div>
-              <div class="mini">
-                <button class="calBtn" id="calPrev" type="button">◀</button>
-                <button class="calBtn" id="calNext" type="button">▶</button>
-              </div>
-            </div>
-            <div class="muted">Règle : <strong>${PUB_MAX_PER_DAY} réservations maximum / jour</strong>. Une journée complète devient grisée et non sélectionnable.</div>
-            <div class="calGrid" style="margin-top:10px;">${labels.map(x=>`<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}</div>
-            <div class="calGrid" id="calDays"></div>
-            <div class="calLegend">
-              <span class="tag"><span class="dot" style="background:#111;"></span> Jour disponible</span>
-              <span class="tag"><span class="dot" style="background:#999;"></span> Jour complet (grisé)</span>
-            </div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
-              <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
-            </div>
-          </div>
-        `;
+      if(!result.ok){
+        alert(result.message || "Réservation refusée.");
+        return;
       }
 
-      function renderCalendarInto(containerId){
-        const box = document.getElementById(containerId);
-        if(!box) return;
-        box.innerHTML = buildCalendarHTML();
-      }
-
-      function openRecapModal(y, m){
-        const b = loadBookings();
-        const keyYM = ym(y,m);
-        const monthObj = b[keyYM] || {};
-        let csv = "date;profil;horodatage_iso;horodatage_fr;note\n";
-        Object.keys(monthObj).sort().forEach(d=>{
-          (monthObj[d]||[]).forEach(it=>{
-            csv += `${it.date};${it.who};${it.ts_iso};${it.ts_fr};${(it.note||"")}\n`;
-          });
-        });
-
-        openModal("Récap mensuel (démo) — publicités", `
-          <div class="box">
-            <div style="font-weight:900;">Mois : ${keyYM}</div>
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
-            <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
-          </div>
-        `);
-
-        setTimeout(()=>{
-          const btnCsv = document.getElementById("copyCsv");
-          const btnJson = document.getElementById("copyJson");
-          if(btnCsv) btnCsv.onclick = async ()=>{ try{ await navigator.clipboard.writeText(csv); alert("CSV copié."); } catch(e){ alert("Copie impossible sur ce navigateur."); } };
-          if(btnJson) btnJson.onclick = async ()=>{ try{ await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2)); alert("JSON copié."); } catch(e){ alert("Copie impossible sur ce navigateur."); } };
-        },0);
-      }
-
-      function openTicker(){
-        openModal("Publicités & visibilité (ticker)", `
-          <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
-          <div class="box"><strong>Cadre :</strong> réservation plafonnée, gestion par calendrier, possibilité de récap mensuel et horodatage des réservations.</div>
-          <div id="calHost"></div>
-        `);
-        setTimeout(()=> renderCalendarInto("calHost"), 0);
-      }
-      window.openTicker = openTicker;
-      document.getElementById("ticker").addEventListener("click", openTicker);
-
-      function escapeHtml(s){
-        return String(s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      }
-
-      window.tapeAds = [
-        { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-        { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
-        { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
-        { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false },
-      ];
-
-      function renderTape(){
-        const track = document.getElementById("sportTapeTrack");
-        if(!track) return;
-        if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
-        const doubled = window.tapeAds.concat(window.tapeAds);
-        track.innerHTML = doubled.map((a)=>{
-          const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
-          return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
-        }).join("");
-      }
-      window.renderTape = renderTape;
       renderTape();
+      openTicker();
+      alert("Réservation enregistrée (démo).");
+    };
+  },0);
+}
+
+function renderCalendarInto(containerId){
+  const box = document.getElementById(containerId);
+  if(!box) return;
+
+  box.innerHTML = buildCalendarHTML();
+
+  const calDays = document.getElementById("calDays");
+  if(calDays){
+    calDays.innerHTML = buildDayCellsHTML(calYear, calMonth);
+  }
+
+  const prevBtn = document.getElementById("calPrev");
+  const nextBtn = document.getElementById("calNext");
+  const recapBtn = document.getElementById("calRecap");
+  const resetBtn = document.getElementById("calReset");
+
+  if(prevBtn) prevBtn.onclick = ()=>{
+    calMonth -= 1;
+    if(calMonth < 0){
+      calMonth = 11;
+      calYear -= 1;
+    }
+    renderCalendarInto(containerId);
+  };
+
+  if(nextBtn) nextBtn.onclick = ()=>{
+    calMonth += 1;
+    if(calMonth > 11){
+      calMonth = 0;
+      calYear += 1;
+    }
+    renderCalendarInto(containerId);
+  };
+
+  if(recapBtn) recapBtn.onclick = ()=> openRecapModal(calYear, calMonth);
+
+  if(resetBtn) resetBtn.onclick = ()=>{
+    if(confirm("Réinitialiser toutes les réservations publicitaires (démo) sur ce téléphone ?")){
+      resetAllBookings();
+      renderTape();
+      renderCalendarInto(containerId);
+      alert("Réservations pub réinitialisées (démo).");
+    }
+  };
+
+  box.querySelectorAll("[data-cal-day]").forEach(btn=>{
+    btn.onclick = ()=>{
+      const d = Number(btn.getAttribute("data-cal-day"));
+      const db = loadBookings();
+      if(isFull(db, calYear, calMonth, d)){
+        alert("Journée complète : 10 publicités déjà réservées.");
+        return;
+      }
+      openBookingModalForDay(calYear, calMonth, d);
+    };
+  });
+}
+
+function openRecapModal(y, m){
+  const b = loadBookings();
+  const keyYM = ym(y,m);
+  const monthObj = b[keyYM] || {};
+  let csv = "date;annonceur;type;format;statut_paiement;mode_paiement;jours_facture;gras_demande;gras_paye;texte;horodatage_fr\n";
+
+  Object.keys(monthObj).sort().forEach(d=>{
+    (monthObj[d] || []).forEach(raw=>{
+      const it = normalizeBooking(raw);
+      csv += [
+        it.date,
+        it.advertiserName,
+        it.advertiserType,
+        it.format,
+        it.paymentStatus,
+        it.paymentMode,
+        it.invoiceDays,
+        it.boldRequested ? "oui" : "non",
+        it.boldPaid ? "oui" : "non",
+        (it.txt || "").replace(/;/g, ","),
+        it.ts_fr
+      ].join(";") + "\n";
+    });
+  });
+
+  openModal("Récap mensuel (démo) — publicités", `
+    <div class="box">
+      <div style="font-weight:900;">Mois : ${keyYM}</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
+      <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
+    </div>
+  `);
+
+  setTimeout(()=>{
+    const btnCsv = document.getElementById("copyCsv");
+    const btnJson = document.getElementById("copyJson");
+    if(btnCsv) btnCsv.onclick = async ()=>{
+      try{
+        await navigator.clipboard.writeText(csv);
+        alert("CSV copié.");
+      }catch(e){
+        alert("Copie impossible sur ce navigateur.");
+      }
+    };
+    if(btnJson) btnJson.onclick = async ()=>{
+      try{
+        await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2));
+        alert("JSON copié.");
+      }catch(e){
+        alert("Copie impossible sur ce navigateur.");
+      }
+    };
+  },0);
+}
+
+function openTicker(){
+  openModal("Publicités & visibilité (ticker)", `
+    <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
+    <div class="box">
+      <strong>Cadre :</strong> réservation plafonnée, gestion par calendrier, paiement requis avant diffusion, filtre commerçant / mairie, rareté à 10 publicités par jour.
+    </div>
+    <div id="calHost"></div>
+  `);
+  setTimeout(()=> renderCalendarInto("calHost"), 0);
+}
+window.openTicker = openTicker;
+
+const tickerEl = document.getElementById("ticker");
+if(tickerEl){
+  tickerEl.addEventListener("click", openTicker);
+}
+
+function escapeHtml(s){
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+window.tapeAdsFallback = [
+  { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
+  { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
+  { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
+  { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false },
+];
+
+function getEligibleTapeAdsForToday(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth();
+  const d = now.getDate();
+  const db = loadBookings();
+  const list = getDayBookings(db, y, m, d).map(normalizeBooking);
+
+  return list
+    .filter(b => b.format === "banner_1cm")
+    .filter(b => canPublishBooking(b))
+    .map(b => ({
+      txt: b.txt && String(b.txt).trim()
+        ? b.txt
+        : `${b.advertiserName} • publicité validée`,
+      bold: bookingUseBold(b),
+      advertiserType: b.advertiserType
+    }));
+}
+
+function renderTape(){
+  const track = document.getElementById("sportTapeTrack");
+  if(!track) return;
+
+  let ads = getEligibleTapeAdsForToday();
+
+  if(!ads.length){
+    ads = Array.isArray(window.tapeAdsFallback) ? window.tapeAdsFallback.slice() : [];
+  }
+
+  const doubled = ads.concat(ads);
+
+  track.innerHTML = doubled.map((a)=>{
+    const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
+    return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
+  }).join("");
+}
+window.renderTape = renderTape;
+renderTape();
 
       const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
       function mairieLoad(){ try{ const raw = localStorage.getItem(MAIRIE_STORE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
@@ -4012,26 +4458,28 @@ if(key==="mairie"){
     const adPriceOut = document.getElementById("shopAdPriceOut");
     const adResult = document.getElementById("shopAdResult");
 
-    if(adPriceBtn) adPriceBtn.onclick = ()=>{
-      const info = computeAdPrice(
-        adFormat ? adFormat.value : "banner_1cm",
-        adPackType ? adPackType.value : "single",
-        adQty ? adQty.value : 1,
-        !!(adBoldRequested && adBoldRequested.checked)
-      );
+   if(adPriceBtn) adPriceBtn.onclick = ()=>{
+  const info = computeAdPrice(
+    adFormat ? adFormat.value : "banner_1cm",
+    adPackType ? adPackType.value : "single",
+    adQty ? adQty.value : 1,
+    !!(adBoldRequested && adBoldRequested.checked)
+  );
 
-      if(adPriceOut){
-        const formatLabel = info.format === "banner_1cm" ? "Ligne 1 cm" : "Ligne 3 cm";
-        const packLabel = info.packType === "pack5" ? "Pack 5 publicités" : "Achat unitaire";
-        adPriceOut.innerHTML =
-          "Format : <strong>" + formatLabel + "</strong><br>" +
-          "Type : <strong>" + packLabel + "</strong><br>" +
-          "Quantité : <strong>" + info.qty + "</strong><br>" +
-          "Base : <strong>" + info.basePrice.toFixed(2) + " €</strong><br>" +
-          "Option gras : <strong>" + info.boldPrice.toFixed(2) + " €</strong><br>" +
-          "Total estimé : <strong>" + info.total.toFixed(2) + " €</strong>";
-      }
-    };
+  if(adPriceOut){
+    const formatLabel = info.format === "banner_1cm" ? "Ligne 1 cm" : "Ligne 3 cm";
+    const packLabel = info.packType === "pack5" ? "Pack 5 publicités" : "Achat unitaire";
+
+    adPriceOut.innerHTML =
+      "Format : <strong>" + formatLabel + "</strong><br>" +
+      "Type : <strong>" + packLabel + "</strong><br>" +
+      "Quantité : <strong>" + info.qty + "</strong><br>" +
+      "Base HT : <strong>" + info.basePrice.toFixed(2) + " €</strong><br>" +
+      "Option gras TTC : <strong>" + info.boldPrice.toFixed(2) + " €</strong><br>" +
+      "Total affiché : <strong>" + info.total.toFixed(2) + " €</strong><br>" +
+      "<span class=\"muted\">Rappel : les publicités sont en HT, l’option gras est un supplément TTC.</span>";
+  }
+};
 
     if(adCheckBtn) adCheckBtn.onclick = ()=>{
       const advertiserType = adAdvertiserType ? adAdvertiserType.value : "merchant";
