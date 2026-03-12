@@ -2994,10 +2994,12 @@ function registerSportBurn(){
           
 if(key==="mairie"){
   openModal("Mairie", `
-    <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
+    <div style="font-weight:900;margin-bottom:8px;">Mairie (structure démo)</div>
+
     <div class="box">
       <strong>Cadre :</strong> la mairie peut diffuser des messages d’intérêt général gratuits, et des messages promotionnels payants au même tarif que les commerçants pour garantir l’équité.
     </div>
+
     <div style="font-weight:900;margin-top:10px;">Messages gratuits d’intérêt général</div>
     <div class="box">
       <ul style="margin:8px 0 0 18px;font-weight:800;">
@@ -3006,46 +3008,147 @@ if(key==="mairie"){
         <li>Risque de gel / température dangereuse</li>
         <li>Information de sécurité publique</li>
       </ul>
-      <div class="muted" style="margin-top:8px;">Ces messages restent gratuits pour la mairie.</div>
+      <div class="muted" style="margin-top:8px;">
+        Ces messages restent gratuits pour la mairie.
+      </div>
     </div>
+
     <div style="font-weight:900;margin-top:10px;">Messages payants mairie</div>
     <div class="box">
-      <div class="muted">Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.</div>
+      <div class="muted">
+        Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.
+      </div>
+
       <ul style="margin:8px 0 0 18px;font-weight:800;">
-        <li>1 publicité : 50 €</li>
-        <li>5 publicités : 200 €</li>
+        <li>1 publicité : <strong>50 € HT</strong></li>
+        <li>5 publicités achetées en une fois : <strong>200 € HT</strong></li>
+        <li>Option texte en gras : <strong>+4 € TTC</strong></li>
       </ul>
-      <div class="muted" style="margin-top:8px;">Même prix que les commerçants pour éviter la jalousie et montrer l’exemple.</div>
+
+      <div class="muted" style="margin-top:8px;">
+        Même prix que les commerçants pour éviter la jalousie et montrer l’exemple.
+      </div>
+
+      <div class="muted" style="margin-top:8px;">
+        Paiement possible via <strong>PSP</strong> si la mairie l’accepte, ou via <strong>devis / facture / virement</strong>.
+      </div>
     </div>
+
     <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;">Message bandeau mairie (démo)</div>
-      <div class="muted" style="margin-top:6px;">Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.</div>
+      <div style="font-weight:900;">Message bandeau mairie gratuit (démo)</div>
+      <div class="muted" style="margin-top:6px;">
+        Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie pour les informations d’intérêt général.
+      </div>
+
       <div style="margin-top:10px;font-weight:900;">Message</div>
       <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
+
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="mairieMsgSave" type="button">💾 Enregistrer</button>
         <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">🧹 Réinitialiser</button>
       </div>
-      <div class="muted" style="margin-top:10px;">(Démo) Enregistrement local sur ce téléphone.</div>
+
+      <div class="muted" style="margin-top:10px;">
+        (Démo) Enregistrement local sur ce téléphone.
+      </div>
     </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Publicité mairie payante (démo)</div>
+
+      <div class="muted" style="margin-top:6px;">
+        Cette partie prépare la logique des publicités mairie payantes pour la ligne 1 cm ou la ligne 3 cm.
+      </div>
+
+      <div style="margin-top:10px;font-weight:900;">Format</div>
+      <select class="miniField" id="mairieAdFormat">
+        <option value="banner_1cm">Ligne 1 cm</option>
+        <option value="banner_3cm">Ligne 3 cm</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">Mode de règlement</div>
+      <select class="miniField" id="mairieAdPaymentMode">
+        <option value="invoice">Devis / facture / virement (RIB)</option>
+        <option value="psp">PSP / carte bancaire</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">Type d’achat</div>
+      <select class="miniField" id="mairieAdPackType">
+        <option value="single">1 publicité</option>
+        <option value="pack5">5 publicités achetées en une fois</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">Nombre de publicités</div>
+      <input class="miniField" id="mairieAdQty" type="number" min="1" step="1" value="1" placeholder="1">
+
+      <div style="margin-top:10px;font-weight:900;">Jours depuis émission / facture</div>
+      <input class="miniField" id="mairieAdInvoiceDays" type="number" min="0" step="1" value="0" placeholder="0">
+
+      <div style="margin-top:10px;font-weight:900;">État du dossier</div>
+      <select class="miniField" id="mairieAdPaymentStatus">
+        <option value="draft">Brouillon</option>
+        <option value="pending">En attente de paiement</option>
+        <option value="paid">Payée</option>
+        <option value="published">Publiée</option>
+        <option value="overdue">En retard</option>
+        <option value="blocked">Bloquée</option>
+      </select>
+
+      <div style="margin-top:10px;font-weight:900;">Option gras</div>
+
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+        <input type="checkbox" id="mairieAdBoldRequested">
+        <span>Demander l’affichage en gras (+4 € TTC)</span>
+      </label>
+
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+        <input type="checkbox" id="mairieAdBoldPaid">
+        <span>Option gras payée</span>
+      </label>
+
+      <div class="box" style="margin-top:12px;background:var(--bg);">
+        <div style="font-weight:900;">Montant calculé</div>
+        <div class="muted" id="mairieAdPriceOut" style="margin-top:6px;">
+          Calcul non lancé.
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="mairieAdPriceBtn" type="button">Calculer le montant</button>
+        <button class="choiceBtn" id="mairieAdCheckBtn" type="button">Vérifier la diffusion</button>
+      </div>
+
+      <div class="muted" id="mairieAdResult" style="margin-top:10px;">
+        Statut de diffusion non vérifié.
+      </div>
+
+      <div class="muted" style="margin-top:10px;">
+        En version officielle, si une facture mairie dépasse <strong>30 jours</strong> sans règlement, la publicité en cours est bloquée et aucune nouvelle publicité ne peut être activée tant que la précédente n’est pas régularisée.
+      </div>
+    </div>
+
     <div style="font-weight:900;margin-top:14px;">Échange école → mairie (scan / brûlage)</div>
     <div class="box">
       <div class="muted">
         La mairie peut scanner les bocitecoins école au moment de l’échange et les brûler automatiquement. Le compteur école revient alors à zéro après remise du cadeau ou de la surprise.
       </div>
+
       <div style="margin-top:10px;font-weight:900;">Wallet école détecté</div>
       <div class="box" style="background:var(--bg);">
         Solde école actuel : <strong id="mairieSchoolWalletBalance">0</strong> bocitecoin(s) JAUNES
       </div>
+
       <div style="margin-top:10px;font-weight:900;">Type de surprise choisie par la mairie</div>
       <select class="miniField" id="mairieSchoolGiftType">
         <option value="materiel-scolaire">Matériel scolaire</option>
         <option value="extra-scolaire">Surprise extra-scolaire</option>
       </select>
+
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="mairieSchoolScanBtn" type="button">Scanner wallet école</button>
         <button class="choiceBtn" id="mairieSchoolBurnBtn" type="button">Brûler les bocitecoins école</button>
       </div>
+
       <div class="muted" style="margin-top:10px;">
         Si l’école a décidé auparavant de donner tout ou partie de ses bocitecoins à une association depuis son onglet, la mairie respecte cette décision lors de l’échange.
       </div>
@@ -3053,6 +3156,34 @@ if(key==="mairie"){
   `);
 
   setTimeout(()=>{
+    function computeMairieAdPrice(format, packType, qty, boldRequested){
+      const safeQty = Math.max(1, Number(qty || 1));
+      let basePrice = 0;
+
+      if(packType === "pack5"){
+        basePrice = 200;
+      }else{
+        basePrice = safeQty * 50;
+      }
+
+      const boldPrice = boldRequested ? 4 : 0;
+      const total = basePrice + boldPrice;
+
+      return { basePrice, boldPrice, total, qty: safeQty, format, packType };
+    }
+
+    function canPublishMairieAd(ad){
+      const isOverdueInvoice =
+        ad.paymentMode === "invoice" &&
+        ad.invoiceDays > 30 &&
+        ad.paymentStatus !== "paid" &&
+        ad.paymentStatus !== "published";
+
+      if(isOverdueInvoice) return false;
+
+      return ad.paymentStatus === "paid" || ad.paymentStatus === "published";
+    }
+
     const input = document.getElementById("mairieMsgInput");
     const saveBtn = document.getElementById("mairieMsgSave");
     const resetBtn = document.getElementById("mairieMsgReset");
@@ -3085,6 +3216,101 @@ if(key==="mairie"){
         if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
         alert("Message mairie réinitialisé (démo).");
       }
+    };
+
+    const mairieAdFormat = document.getElementById("mairieAdFormat");
+    const mairieAdPaymentMode = document.getElementById("mairieAdPaymentMode");
+    const mairieAdPackType = document.getElementById("mairieAdPackType");
+    const mairieAdQty = document.getElementById("mairieAdQty");
+    const mairieAdInvoiceDays = document.getElementById("mairieAdInvoiceDays");
+    const mairieAdPaymentStatus = document.getElementById("mairieAdPaymentStatus");
+    const mairieAdBoldRequested = document.getElementById("mairieAdBoldRequested");
+    const mairieAdBoldPaid = document.getElementById("mairieAdBoldPaid");
+    const mairieAdPriceBtn = document.getElementById("mairieAdPriceBtn");
+    const mairieAdCheckBtn = document.getElementById("mairieAdCheckBtn");
+    const mairieAdPriceOut = document.getElementById("mairieAdPriceOut");
+    const mairieAdResult = document.getElementById("mairieAdResult");
+
+    if(mairieAdPriceBtn) mairieAdPriceBtn.onclick = ()=>{
+      const info = computeMairieAdPrice(
+        mairieAdFormat ? mairieAdFormat.value : "banner_1cm",
+        mairieAdPackType ? mairieAdPackType.value : "single",
+        mairieAdQty ? mairieAdQty.value : 1,
+        !!(mairieAdBoldRequested && mairieAdBoldRequested.checked)
+      );
+
+      if(mairieAdPriceOut){
+        const formatLabel = info.format === "banner_1cm" ? "Ligne 1 cm" : "Ligne 3 cm";
+        const packLabel = info.packType === "pack5" ? "Pack 5 publicités" : "Achat unitaire";
+
+        mairieAdPriceOut.innerHTML =
+          "Format : <strong>" + formatLabel + "</strong><br>" +
+          "Type : <strong>" + packLabel + "</strong><br>" +
+          "Quantité : <strong>" + info.qty + "</strong><br>" +
+          "Base HT : <strong>" + info.basePrice.toFixed(2) + " €</strong><br>" +
+          "Option gras TTC : <strong>" + info.boldPrice.toFixed(2) + " €</strong><br>" +
+          "Total estimé : <strong>" + info.total.toFixed(2) + " €</strong>";
+      }
+    };
+
+    if(mairieAdCheckBtn) mairieAdCheckBtn.onclick = ()=>{
+      const format = mairieAdFormat ? mairieAdFormat.value : "banner_1cm";
+      const paymentMode = mairieAdPaymentMode ? mairieAdPaymentMode.value : "invoice";
+      const packType = mairieAdPackType ? mairieAdPackType.value : "single";
+      const qty = mairieAdQty ? Number(mairieAdQty.value || 1) : 1;
+      const invoiceDays = mairieAdInvoiceDays ? Number(mairieAdInvoiceDays.value || 0) : 0;
+      const paymentStatus = mairieAdPaymentStatus ? mairieAdPaymentStatus.value : "draft";
+      const boldRequested = !!(mairieAdBoldRequested && mairieAdBoldRequested.checked);
+      const boldPaid = !!(mairieAdBoldPaid && mairieAdBoldPaid.checked);
+
+      const ad = {
+        format,
+        paymentMode,
+        packType,
+        qty,
+        invoiceDays,
+        paymentStatus,
+        isBoldRequested: boldRequested,
+        isBoldPaid: boldPaid
+      };
+
+      const canPublish = canPublishMairieAd(ad);
+      const useBold = boldRequested && boldPaid;
+      const isOverdueInvoice =
+        paymentMode === "invoice" &&
+        invoiceDays > 30 &&
+        paymentStatus !== "paid" &&
+        paymentStatus !== "published";
+      const formatLabel = format === "banner_1cm" ? "ligne 1 cm" : "ligne 3 cm";
+
+      if(!mairieAdResult) return;
+
+      if(isOverdueInvoice){
+        mairieAdResult.innerHTML =
+          "<strong>Publicité bloquée :</strong> facture mairie dépassant 30 jours. Diffusion interrompue et nouvelle publicité impossible tant que la précédente n’est pas régularisée.";
+        return;
+      }
+
+      if(!canPublish){
+        mairieAdResult.innerHTML =
+          "<strong>Publication bloquée :</strong> la publicité mairie sur " + formatLabel + " ne peut pas apparaître tant que le paiement ou la validation du dossier n’est pas effectif.";
+        return;
+      }
+
+      if(boldRequested && !boldPaid){
+        mairieAdResult.innerHTML =
+          "<strong>Publicité autorisée :</strong> diffusion possible sur " + formatLabel + ", mais le texte restera en style normal car l’option gras n’a pas été réglée.";
+        return;
+      }
+
+      if(useBold){
+        mairieAdResult.innerHTML =
+          "<strong>Publicité autorisée :</strong> diffusion possible sur " + formatLabel + " avec affichage en gras.";
+        return;
+      }
+
+      mairieAdResult.innerHTML =
+        "<strong>Publicité autorisée :</strong> diffusion possible sur " + formatLabel + " en style normal.";
     };
 
     const schoolLoadM = (typeof loadSchoolWallet === "function")
@@ -3123,19 +3349,23 @@ if(key==="mairie"){
     if(schoolBurnBtn) schoolBurnBtn.onclick = ()=>{
       const w = schoolLoadM();
       const total = Number(w.jaune || 0);
+
       if(total <= 0){
         alert("Aucun bocitecoin école à brûler.");
         return;
       }
+
       if(confirm("Brûler les bocitecoins école et remettre le compteur à zéro ?")){
         w.jaune = 0;
         schoolSaveM(w);
+
         try{
           const raw = localStorage.getItem("bociteart_school_v1");
           const dbSchool = raw ? JSON.parse(raw) : {};
           if(dbSchool.progress) dbSchool.progress = {};
           localStorage.setItem("bociteart_school_v1", JSON.stringify(dbSchool));
         }catch(e){}
+
         refreshSchool();
         alert("Bocitecoins école brûlés, compteur remis à zéro (démo).");
       }
@@ -3143,9 +3373,9 @@ if(key==="mairie"){
   },0);
 
   return;
-}
-
-if(key==="commerces"){
+} 
+          
+ if(key==="commerces"){
   openModal("Commerces", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces (structure démo)</div>
 
