@@ -2253,6 +2253,7 @@ if(key==="sport"){
   setTimeout(()=>{
     const SPORT_SUPPORT_KEY = "bociteart_sport_support_v1";
     const SPORT_DEMO_MONTH_KEY = "bociteart_sport_month_demo_v1";
+    const SPORT_BURN_META_KEY = "bociteart_sport_burn_meta_v1";
     const SPORT_DEFAULT_CENTER = { lat: 50.5864, lon: 3.0431, label: "Wattignies (centre démo)" };
 
     let sportMap = null;
@@ -2312,7 +2313,41 @@ if(key==="sport"){
     function resetSportDemoMonthCount(){
       saveSportMonthDemo({ month: getCurrentMonthKey(), count: 0 });
     }
+    
+    /* ===== Gestion brûlage mensuel sport ===== */
+    
+      function loadSportBurnMeta(){
+  try{
+    const raw = localStorage.getItem(SPORT_BURN_META_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return { lastBurnMonth: null, lastBurnTs: null };
+}
 
+function saveSportBurnMeta(obj){
+  try{ localStorage.setItem(SPORT_BURN_META_KEY, JSON.stringify(obj)); }catch(e){}
+}
+
+function getCurrentMonthKeyForBurn(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  return y + "-" + m;
+}
+
+function canBurnSportNow(){
+  const meta = loadSportBurnMeta();
+  const currentMonth = getCurrentMonthKeyForBurn();
+  return meta.lastBurnMonth !== currentMonth;
+}
+
+function registerSportBurn(){
+  const now = new Date();
+  saveSportBurnMeta({
+    lastBurnMonth: getCurrentMonthKeyForBurn(),
+    lastBurnTs: now.toISOString()
+  });
+}
     function loadSportSupport(){
       try{
         const raw = localStorage.getItem(SPORT_SUPPORT_KEY);
