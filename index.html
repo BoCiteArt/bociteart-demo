@@ -657,7 +657,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     .sportSupportBadge{
       position:absolute;
       top:10px;
-      right:10px;
+      right:20px;
       z-index:6;
       display:flex;
       align-items:center;
@@ -3170,16 +3170,37 @@ function registerSportBurn(){
       }).addTo(sportMap);
     }
 
-    function drawUserMarker(lat, lon, labelText){
-      if(!sportMap) return;
+   function drawUserMarker(lat, lon){
+  if(!sportMap) return;
 
-      if(sportUserMarker){
-        sportMap.removeLayer(sportUserMarker);
-      }
+  if(sportUserMarker){
+    sportMap.removeLayer(sportUserMarker);
+  }
 
-      sportUserMarker = L.marker([lat, lon]).addTo(sportMap);
-      sportUserMarker.bindPopup(labelText || "Vous êtes ici");
-    }
+  const userIcon = L.divIcon({
+    className: "sport-user-marker",
+    html: `
+      <div style="
+        width:20px;
+        height:20px;
+        border-radius:50%;
+        background:#1d4ed8;
+        border:3px solid #ffffff;
+        box-shadow:0 0 0 3px rgba(29,78,216,.20);
+      "></div>
+    `,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
+  });
+
+const icon = L.divIcon({
+  className: "sport-poi-icon",
+  html: `<div style="font-size:18px;">${poiEmoji(p.type)}</div>`,
+  iconSize: [20,20],
+  iconAnchor: [10,10]
+});
+
+L.marker([p.lat, p.lon], { icon }).addTo(sportPoiLayer)
 
     function clearPoiLayer(){
       if(sportPoiLayer && sportMap){
@@ -3189,18 +3210,39 @@ function registerSportBurn(){
     }
 
     function renderPoisOnMap(pois, userLat, userLon){
-      clearPoiLayer();
+  clearPoiLayer();
 
-      pois.forEach((p)=>{
-        const d = distanceMeters(userLat, userLon, p.lat, p.lon);
-        const dir = getCardinalDirection(userLat, userLon, p.lat, p.lon);
-        const popupHtml = `
-          <div style="font-weight:800;">${poiEmoji(p.type)} ${p.name}</div>
-          <div style="margin-top:6px;">${formatDistance(d)} — ${dir}</div>
-        `;
-        L.marker([p.lat, p.lon]).addTo(sportPoiLayer).bindPopup(popupHtml);
-      });
-    }
+  pois.forEach((p)=>{
+    const d = distanceMeters(userLat, userLon, p.lat, p.lon);
+    const dir = getCardinalDirection(userLat, userLon, p.lat, p.lon);
+
+    const popupHtml = `
+      <div style="font-weight:800;">${poiEmoji(p.type)} ${p.name}</div>
+      <div style="margin-top:6px;">${formatDistance(d)} — ${dir}</div>
+    `;
+
+    const color =
+      p.type === "park" ? "#2f8f46" :
+      p.type === "forest" ? "#3f7d32" :
+      p.type === "playground" ? "#d97706" :
+      p.type === "sport" ? "#b91c1c" :
+      p.type === "school" ? "#7c3aed" :
+      p.type === "townhall" ? "#374151" :
+      p.type === "bus" ? "#2563eb" :
+      p.type === "parking" ? "#6b7280" :
+      "#0f766e";
+
+    L.circleMarker([p.lat, p.lon], {
+      radius: 6,
+      color: "#ffffff",
+      weight: 2,
+      fillColor: color,
+      fillOpacity: 0.95
+    })
+    .addTo(sportPoiLayer)
+    .bindPopup(popupHtml);
+  });
+}
 
     async function loadNearbyLayer(radiusKm, filterName = sportCurrentFilter){
       if(!sportCurrentPosition || !sportMap) return;
