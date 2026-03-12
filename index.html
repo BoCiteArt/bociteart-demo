@@ -78,14 +78,15 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     }
 
     .wrap{
-      width:100%;
-      max-width:420px;
-      margin:0 auto;
-      padding:10px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
+  width:100%;
+  max-width:420px;
+  margin:0 auto;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-height:100dvh;
+}
 
     .ticker{
       position:relative;
@@ -197,28 +198,51 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     #btnSos .icon{ width:12px !important; height:12px !important; margin:2px 0 !important; }
     #btnSos #sosLabel{ font-size:7px !important; line-height:1 !important; font-weight:900 !important; }
 
-    .sportTape{
-      height:38px;
-      background:#fff;
-      border-radius:14px;
-      border:2px solid rgba(0,0,0,.08);
-      overflow:hidden;
-      display:flex;
-      align-items:center;
-      padding:0;
-    }
-    .sportTapeViewport{ width:100%; overflow:hidden; }
-    .sportTapeTrack{
-      display:inline-flex;
-      width:max-content;
-      gap:48px;
-      white-space:nowrap;
-      padding-left:14px;
-      animation: sportTape 80s linear infinite;
-      will-change: transform;
-    }
-    .sportTapeItem{ display:flex; align-items:center; gap:8px; font-weight:400 !important; }
-    .sportTapeItem.bold{ font-weight:900 !important; }
+ .sportTape{
+  height:32px;
+  background:#fff;
+  border-radius:14px;
+  border:2px solid rgba(0,0,0,.08);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  padding:0;
+  margin-top:2px;
+}
+
+.sportTapeViewport{
+  width:100%;
+  height:32px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+}
+
+.sportTapeTrack{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  gap:48px;
+  white-space:nowrap;
+  padding-left:14px;
+  min-height:32px;
+  max-height:32px;
+  animation: sportTape 80s linear infinite;
+  will-change: transform;
+}
+
+.sportTapeItem{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  height:32px;
+  line-height:32px;
+  font-size:14px;
+  font-weight:400 !important;
+}
+
+.sportTapeItem.bold{ font-weight:900 !important; }
+    .sportTapeItem{ display:flex; align-items:center; gap:8px; font-weight:400 !important; 
     @keyframes sportTape{ 0%{ transform:translateX(0); } 100%{ transform:translateX(-50%);} }
 
     #mairieTile{ position:relative; overflow:hidden; }
@@ -275,14 +299,15 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     }
     .heart{ width:52px; height:52px; flex:0 0 auto; }
 
-    .footerRow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding-bottom:10px;
-      padding-bottom: max(10px, env(safe-area-inset-bottom));
-    }
+   .footerRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding-bottom:10px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  margin-top:auto;
+  }
     .footerRight{ display:flex; gap:10px; flex-wrap: nowrap; align-items:center; min-width:0; }
     .footerRight .legalBtn{ flex:1; min-width:0; padding:9px 8px; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .siteLink{ font-size:14px; font-weight:800; color:var(--link); text-decoration:none; }
@@ -696,6 +721,30 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       .wrap{ gap:12px; }
       .sportTape{ height:32px; }
     }
+                   
+   .largeAdsZone{
+  margin-top:8px;
+  height:56px;
+  min-height:56px;
+  max-height:56px;
+  padding:6px 10px;
+  background:#f3f3f3;
+  border:2px solid #a51e22;
+  border-radius:14px;
+  font-weight:900;
+  font-size:15px;
+  text-align:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+
+.largeAdsZone > div{
+  width:100%;
+  line-height:1.15;
+}
   </style>
 </head>
 <body>
@@ -823,41 +872,48 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
         </div>
       </div>
 
-    <div class="sportTape" aria-label="Bandeau sport — soutiens commerçants">
+<div class="sportTape" aria-label="Bandeau sport — soutiens commerçants">
   <div class="sportTapeViewport">
     <div class="sportTapeTrack" id="sportTapeTrack"></div>
   </div>
 </div>
 
-<div id="largeAdsZone" style="
-  margin-top:8px;
-  padding:8px 12px;
-  background:#fff;
-  border:2px solid #a51e22;
-  border-radius:10px;
-  font-weight:900;
-  font-size:16px;
-  text-align:center;
-  min-height:70px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-sizing:border-box;
-">
+<div id="largeAdsZone" class="largeAdsZone">
   Espace publicité locale
 </div>
 
 <div class="dae" id="daeBtn">
+  <svg class="heart" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.6">
+    <path d="M20.8 4.6c-1.7-1.7-4.5-1.7-6.2 0L12 7.2 9.4 4.6c-1.7-1.7-4.5-1.7-6.2 0-1.7 1.7-1.7 4.5 0 6.2L12 19.6l8.8-8.8c1.7-1.7 1.7-4.5 0-6.2z"/>
+    <path d="M13 8h-2v4H7v2h4v4h2v-4h4v-2h-4z" stroke="var(--red)"/>
+  </svg>
+  <div>Trouver un défibrillateur autour de moi</div>
+</div>
 
-      <div class="dae" id="daeBtn">
-        <svg class="heart" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.6">
-          <path d="M20.8 4.6c-1.7-1.7-4.5-1.7-6.2 0L12 7.2 9.4 4.6c-1.7-1.7-4.5-1.7-6.2 0-1.7 1.7-1.7 4.5 0 6.2L12 19.6l8.8-8.8c1.7-1.7 1.7-4.5 0-6.2z"/>
-          <path d="M13 8h-2v4H7v2h4v4h2v-4h4v-2h-4z" stroke="var(--red)"/>
-        </svg>
-        <div>Trouver un défibrillateur autour de moi</div>
-      </div>
+<div class="footerRow">
+  <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noopener noreferrer">www.bociteart.com</a>
 
-      <div class="footerRow">
+  <div class="footerRight">
+    <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true">
+        <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.27 2.3-2.6 4.73-2.6 5.06 0 6 3.33 6 7.67V24h-5v-7.6c0-1.81-.03-4.13-2.52-4.13-2.53 0-2.92 1.97-2.92 4v7.73h-5V8z"/>
+      </svg>
+    </a>
+
+    <a class="iconBtn" href="https://instagram.com/bociteart" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#C13584" aria-hidden="true">
+        <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3.2A4.8 4.8 0 1 0 16.8 12 4.81 4.81 0 0 0 12 7.2zm0 7.8A3 3 0 1 1 15 12a3 3 0 0 1-3 3zm4.9-8.9a1.1 1.1 0 1 1-1.1-1.1a1.1 1.1 0 0 1 1.1 1.1z"/>
+      </svg>
+    </a>
+
+    <button class="legalBtn" id="openSecure" type="button">Compte<br>+ aide</button>
+    <button class="legalBtn legalStack" id="openLegal" type="button">
+      <span>RGPD</span>
+      <span>CGU</span>
+      <span>CGV</span>
+    </button>
+  </div>
+</div>
         <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noopener noreferrer">www.bociteart.com</a>
         <div class="footerRight">
           <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
