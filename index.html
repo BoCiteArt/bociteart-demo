@@ -2124,6 +2124,48 @@ function renderTape(){
 }
 window.renderTape = renderTape;
 renderTape();
+      
+      function getEligibleLargeAdsForToday(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth();
+  const d = now.getDate();
+
+  const db = loadBookings();
+  const list = getDayBookings(db, y, m, d).map(normalizeBooking);
+
+  return list
+    .filter(b => b.format === "banner_3cm")
+    .filter(b => canPublishBooking(b));
+}
+
+function renderLargeAds(){
+  const zone = document.getElementById("largeAdsZone");
+  if(!zone) return;
+
+  const ads = getEligibleLargeAdsForToday();
+
+  if(!ads.length){
+    zone.innerHTML = "Espace publicité locale";
+    return;
+  }
+
+  const ad = ads[Math.floor(Math.random() * ads.length)];
+
+  zone.innerHTML = `
+    <div style="width:100%">
+      <div style="font-size:18px;font-weight:900;">
+        ${escapeHtml(ad.advertiserName)}
+      </div>
+      <div style="margin-top:4px;font-weight:600;">
+        ${escapeHtml(ad.txt || "Offre spéciale aujourd’hui")}
+      </div>
+    </div>
+  `;
+}
+
+window.renderLargeAds = renderLargeAds;
+renderLargeAds();
 
       const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
       function mairieLoad(){ try{ const raw = localStorage.getItem(MAIRIE_STORE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
