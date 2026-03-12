@@ -2958,6 +2958,21 @@ function registerSportBurn(){
         Math.sin(dLon/2) * Math.sin(dLon/2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       return R * c;
+      function getPoiDistanceLimitByZoom(zoom){
+  if(zoom >= 17) return 3000;
+  if(zoom >= 16) return 2000;
+  if(zoom >= 15) return 1200;
+  if(zoom >= 14) return 700;
+  return 0;
+}
+
+function getMaxPoiCountByZoom(zoom){
+  if(zoom >= 17) return 120;
+  if(zoom >= 16) return 80;
+  if(zoom >= 15) return 40;
+  if(zoom >= 14) return 20;
+  return 0;
+}
     }
 
     function formatDistance(m){
@@ -3209,38 +3224,45 @@ L.marker([p.lat, p.lon], { icon }).addTo(sportPoiLayer)
       sportPoiLayer = L.layerGroup().addTo(sportMap);
     }
 
-    function renderPoisOnMap(pois, userLat, userLon){
+function renderPoisOnMap(pois, userLat, userLon){
   clearPoiLayer();
 
-  pois.forEach((p)=>{
-    const d = distanceMeters(userLat, userLon, p.lat, p.lon);
-    const dir = getCardinalDirection(userLat, userLon, p.lat, p.lon);
+  if(!sportMap) return;
 
+  const zoom = sportMap.getZoom();
+  const maxDistance = getPoiDistanceLimitByZoom(zoom);
+  const maxCount = getMaxPoiCountByZoom(zoom);
+
+  if(maxDistance <= 0 || maxCount <= 0){
+    return;
+  }
+
+  const visiblePois = pois
+    .map((p)=>{
+      const d = distanceMeters(userLat, userLon, p.lat, p.lon);
+      const dir = getCardinalDirection(userLat, userLon, p.lat, p.lon);
+      return { ...p, distance: d, dir };
+    })
+    .filter((p)=> p.distance <= maxDistance)
+    .sort((a,b)=> a.distance - b.distance)
+    .slice(0, maxCount);
+
+  visiblePois.forEach((p)=>{
     const popupHtml = `
       <div style="font-weight:800;">${poiEmoji(p.type)} ${p.name}</div>
-      <div style="margin-top:6px;">${formatDistance(d)} — ${dir}</div>
+      <div style="margin-top:6px;">${formatDistance(p.distance)} — ${p.dir}</div>
     `;
 
-    const color =
-      p.type === "park" ? "#2f8f46" :
-      p.type === "forest" ? "#3f7d32" :
-      p.type === "playground" ? "#d97706" :
-      p.type === "sport" ? "#b91c1c" :
-      p.type === "school" ? "#7c3aed" :
-      p.type === "townhall" ? "#374151" :
-      p.type === "bus" ? "#2563eb" :
-      p.type === "parking" ? "#6b7280" :
-      "#0f766e";
+    const icon = L.divIcon({
+      className: "sport-poi-icon",
+      html: `<div style="font-size:18px;line-height:1;">${poiEmoji(p.type)}</div>`,
+      iconSize: [20, 20],
+      iconAnchor: [10, 10]
+    });
 
-    L.circleMarker([p.lat, p.lon], {
-      radius: 6,
-      color: "#ffffff",
-      weight: 2,
-      fillColor: color,
-      fillOpacity: 0.95
-    })
-    .addTo(sportPoiLayer)
-    .bindPopup(popupHtml);
+    L.marker([p.lat, p.lon], { icon })
+      .addTo(sportPoiLayer)
+      .bindPopup(popupHtml);
   });
 }
 
@@ -3286,7 +3308,10 @@ L.marker([p.lat, p.lon], { icon }).addTo(sportPoiLayer)
       const mapEl = document.getElementById("sportRealMap");
       if(!mapEl) return null;
 
-      sportMap = L.map("sportRealMap", { zoomControl: true }).setView([SPORT_DEFAULT_CENTER.lat, SPORT_DEFAULT_CENTER.lon], 14);
+      sportMap = L.map("sportRealMap", {
+  zoomControl: true,
+  preferCanvas: true
+}).setView([50.58, 3.04], 14);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
@@ -3294,6 +3319,15 @@ L.marker([p.lat, p.lon], { icon }).addTo(sportPoiLayer)
       }).addTo(sportMap);
 
       sportPoiLayer = L.layerGroup().addTo(sportMap);
+      sportMap.on("zoomend", ()=>{
+  if(!sportCurrentPosition) return;
+  loadNearbyLayer(sportCurrentRadiusKm);
+});
+
+sportMap.on("moveend", ()=>{
+  if(!sportCurrentPosition) return;
+  loadNearbyLayer(sportCurrentRadiusKm);
+});
 
       setTimeout(()=> sportMap.invalidateSize(), 250);
       return sportMap;
