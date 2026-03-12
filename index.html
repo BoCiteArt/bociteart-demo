@@ -65,6 +65,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
       overscroll-behavior: none;
+     overflow-x:hidden; 
     }
     body.modalOpen{ overflow:hidden; }
 
@@ -77,7 +78,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       align-items:flex-start;
     }
 
-    .wrap{
+   .wrap{
   width:100%;
   max-width:420px;
   margin:0 auto;
@@ -86,6 +87,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   flex-direction:column;
   gap:10px;
   min-height:100dvh;
+  min-height:100svh;
 }
 
     .ticker{
@@ -198,7 +200,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     #btnSos .icon{ width:12px !important; height:12px !important; margin:2px 0 !important; }
     #btnSos #sosLabel{ font-size:7px !important; line-height:1 !important; font-weight:900 !important; }
 
- .sportTape{
+.sportTape{
   height:32px;
   background:#fff;
   border-radius:14px;
@@ -241,10 +243,14 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   font-weight:400 !important;
 }
 
-.sportTapeItem.bold{ font-weight:900 !important; }
-    .sportTapeItem{ display:flex; align-items:center; gap:8px; font-weight:400 !important; 
-    @keyframes sportTape{ 0%{ transform:translateX(0); } 100%{ transform:translateX(-50%);} }
+.sportTapeItem.bold{
+  font-weight:900 !important;
+}
 
+@keyframes sportTape{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(-50%); }
+}
     #mairieTile{ position:relative; overflow:hidden; }
     #mairieTile::after{
       content:"";
@@ -283,7 +289,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     .mairieTickerTrack span{ padding-right:40px; }
     @keyframes mairieTickerMove{ 0%{ transform:translateX(0); } 100%{ transform:translateX(-100%); } }
 
-    .dae{
+ .dae{
   width:100%;
   border-radius:20px;
   background:#f7efe3;
@@ -297,10 +303,10 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   font-size:16px;
   cursor:pointer;
   box-sizing:border-box;
-    }
+}
     .heart{ width:52px; height:52px; flex:0 0 auto; }
 
-   .footerRow{
+  .footerRow{
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -308,7 +314,8 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   padding-bottom:10px;
   padding-bottom: max(10px, env(safe-area-inset-bottom));
   margin-top:auto;
-  }
+  flex-wrap:nowrap;
+}
     .footerRight{ display:flex; gap:10px; flex-wrap: nowrap; align-items:center; min-width:0; }
     .footerRight .legalBtn{ flex:1; min-width:0; padding:9px 8px; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .siteLink{ font-size:14px; font-weight:800; color:var(--link); text-decoration:none; }
@@ -723,7 +730,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
       .sportTape{ height:32px; }
     }
                    
-   .largeAdsZone{
+  .largeAdsZone{
   margin-top:8px;
   height:56px;
   min-height:56px;
@@ -746,6 +753,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
   width:100%;
   line-height:1.15;
 }
+                   
   </style>
 </head>
 <body>
@@ -892,29 +900,7 @@ frame-src https://www.youtube.com https://www.youtube-nocookie.com;
 </div>
 
 <div class="footerRow">
-  <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noopener noreferrer">www.bociteart.com</a>
 
-  <div class="footerRight">
-    <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true">
-        <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.27 2.3-2.6 4.73-2.6 5.06 0 6 3.33 6 7.67V24h-5v-7.6c0-1.81-.03-4.13-2.52-4.13-2.53 0-2.92 1.97-2.92 4v7.73h-5V8z"/>
-      </svg>
-    </a>
-
-    <a class="iconBtn" href="https://instagram.com/bociteart" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="#C13584" aria-hidden="true">
-        <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3.2A4.8 4.8 0 1 0 16.8 12 4.81 4.81 0 0 0 12 7.2zm0 7.8A3 3 0 1 1 15 12a3 3 0 0 1-3 3zm4.9-8.9a1.1 1.1 0 1 1-1.1-1.1a1.1 1.1 0 0 1 1.1 1.1z"/>
-      </svg>
-    </a>
-
-    <button class="legalBtn" id="openSecure" type="button">Compte<br>+ aide</button>
-    <button class="legalBtn legalStack" id="openLegal" type="button">
-      <span>RGPD</span>
-      <span>CGU</span>
-      <span>CGV</span>
-    </button>
-  </div>
-</div>
         <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noopener noreferrer">www.bociteart.com</a>
         <div class="footerRight">
           <a class="iconBtn" href="https://linkedin.com/in/jean-michel-brulé-33a303209" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
