@@ -1,35 +1,35 @@
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
 
-  <!-- Base -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Bo’CitéArt – Démo</title>
-
-  <!-- Sécurité démo : à migrer en headers HTTP en réel -->
+  <!-- Démo : ces protections devront être passées en en-têtes HTTP en production -->
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
   <meta http-equiv="Content-Security-Policy"
-        content="
-default-src 'self';
-base-uri 'self';
-object-src 'none';
-form-action 'self';
-img-src 'self' https: data:;
-script-src 'self' 'unsafe-inline' https://unpkg.com;
-style-src 'self' 'unsafe-inline' https://unpkg.com;
-font-src 'self' https: data:;
-connect-src 'self' https:;
-frame-src https://www.youtube.com https://www.youtube-nocookie.com;
-upgrade-insecure-requests;
-">
+    content="
+      default-src 'self';
+      base-uri 'self';
+      object-src 'none';
+      form-action 'self';
+      upgrade-insecure-requests;
+      img-src 'self' https: data:;
+      script-src 'self' 'unsafe-inline' https://unpkg.com;
+      style-src 'self' 'unsafe-inline' https://unpkg.com;
+      font-src 'self' https: data:;
+      connect-src 'self' https:;
+      frame-src https://www.youtube.com https://www.youtube-nocookie.com;
+    ">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Bo’CitéArt – Démo</title>
 
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#a51e22">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 
-  <!-- Leaflet (démo) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Leaflet (démo). En réel : auto-héberger -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
@@ -43,13 +43,14 @@ upgrade-insecure-requests;
       --text:#1f1f1f;
       --muted:#6e6a63;
       --link:#1d4ed8;
-      --vh: 1vh;
+      --vh:1vh;
     }
 
     *{ box-sizing:border-box; }
-    html,body{ height:100%; margin:0; padding:0; }
+    html, body{ height:100%; margin:0; padding:0; }
+
     body{
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:var(--bg);
       color:var(--text);
       -webkit-text-size-adjust:100%;
@@ -57,6 +58,7 @@ upgrade-insecure-requests;
       overscroll-behavior:none;
       overflow-x:hidden;
     }
+
     body.modalOpen{ overflow:hidden; }
 
     .page{
@@ -87,7 +89,11 @@ upgrade-insecure-requests;
       background:var(--beige);
       height:130px;
       cursor:pointer;
+      border:none;
+      padding:0;
+      appearance:none;
     }
+
     .ticker img{
       position:absolute;
       inset:0;
@@ -95,11 +101,13 @@ upgrade-insecure-requests;
       height:100%;
       object-fit:cover;
     }
+
     .ticker .overlay{
       position:absolute;
       inset:0;
       background:linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.12));
     }
+
     .ticker .row{
       position:absolute;
       inset:0;
@@ -109,6 +117,7 @@ upgrade-insecure-requests;
       gap:12px;
       overflow:hidden;
     }
+
     .marquee{
       display:flex;
       gap:38px;
@@ -116,13 +125,26 @@ upgrade-insecure-requests;
       animation:marquee 20s linear infinite;
       will-change:transform;
     }
+
     .marquee .item{
       display:flex;
       flex-direction:column;
       min-width:360px;
     }
-    .ticker .title{ color:#fff; font-weight:800; font-size:14px; }
-    .ticker .sub{ color:rgba(255,255,255,.92); font-weight:700; font-size:12px; margin-top:2px; }
+
+    .ticker .title{
+      color:#fff;
+      font-weight:800;
+      font-size:14px;
+    }
+
+    .ticker .sub{
+      color:rgba(255,255,255,.92);
+      font-weight:700;
+      font-size:12px;
+      margin-top:2px;
+    }
+
     .ticker .rule{
       margin-left:auto;
       color:rgba(255,255,255,.92);
@@ -130,6 +152,7 @@ upgrade-insecure-requests;
       font-weight:700;
       flex:0 0 auto;
     }
+
     @keyframes marquee{
       0%{ transform:translateX(0); }
       100%{ transform:translateX(-50%); }
@@ -148,6 +171,7 @@ upgrade-insecure-requests;
       z-index:3;
       animation:badgePulse 1.2s infinite;
     }
+
     @keyframes badgePulse{
       0%{ transform:scale(1); opacity:1; }
       50%{ transform:scale(1.18); opacity:.75; }
@@ -155,6 +179,7 @@ upgrade-insecure-requests;
     }
 
     .gridWrap{ position:relative; }
+
     .grid{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -171,9 +196,11 @@ upgrade-insecure-requests;
       cursor:pointer;
       border:none;
       padding:0;
-      display:block;
       text-align:left;
+      appearance:none;
+      display:block;
     }
+
     .tile img{
       position:absolute;
       inset:0;
@@ -181,11 +208,13 @@ upgrade-insecure-requests;
       height:100%;
       object-fit:cover;
     }
+
     .tile .overlay{
       position:absolute;
       inset:0;
       background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.55));
     }
+
     .tile .content{
       position:absolute;
       inset:0;
@@ -197,8 +226,20 @@ upgrade-insecure-requests;
       padding:12px;
       color:#fff;
     }
-    .tile .h{ font-weight:900; font-size:18px; line-height:1.15; }
-    .tile .p{ margin-top:8px; font-weight:700; font-size:12px; color:rgba(255,255,255,.92); }
+
+    .tile .h{
+      font-weight:900;
+      font-size:18px;
+      line-height:1.15;
+    }
+
+    .tile .p{
+      margin-top:8px;
+      font-weight:700;
+      font-size:12px;
+      color:rgba(255,255,255,.92);
+    }
+
     .tile.logoOnly .overlay{ display:none; }
 
     .emgSlot{
@@ -210,6 +251,7 @@ upgrade-insecure-requests;
       background:var(--bg);
       z-index:20;
     }
+
     .emgTop{ top:33.333%; }
     .emgBottom{ top:66.666%; }
 
@@ -223,7 +265,9 @@ upgrade-insecure-requests;
       touch-action:none;
       cursor:pointer;
     }
+
     .lpRing{ position:absolute; inset:0; }
+
     .lpCore{
       position:absolute;
       left:50%;
@@ -241,16 +285,59 @@ upgrade-insecure-requests;
       box-shadow:0 10px 20px rgba(0,0,0,.18);
       user-select:none;
     }
-    .lpSmall{ width:68px; height:68px; }
-    .lpCore .icon{ width:16px; height:16px; margin-bottom:2px; opacity:.95; }
-    .lpCore .lbl{ font-size:12px !important; line-height:1; font-weight:700 !important; }
-    .lpCore .lblSmall{ font-size:8px !important; line-height:1; font-weight:700 !important; }
 
-    #btn112 .lblSmallTop{ font-size:7px !important; line-height:1 !important; }
-    #btn112 .icon{ width:14px !important; height:14px !important; margin-bottom:1px !important; }
-    #btnSos .lblTop{ font-size:7px !important; line-height:1.05 !important; font-weight:800 !important; }
-    #btnSos .icon{ width:12px !important; height:12px !important; margin:2px 0 !important; }
-    #btnSos #sosLabel{ font-size:7px !important; line-height:1 !important; font-weight:900 !important; }
+    .lpSmall{
+      width:68px;
+      height:68px;
+    }
+
+    .lpCore .icon{
+      width:16px;
+      height:16px;
+      margin-bottom:2px;
+      opacity:.95;
+    }
+
+    .lpCore .lbl{
+      font-size:12px !important;
+      line-height:1;
+      font-weight:700 !important;
+    }
+
+    .lpCore .lblSmall{
+      font-size:8px !important;
+      line-height:1;
+      font-weight:700 !important;
+    }
+
+    #btn112 .lblSmallTop{
+      font-size:7px !important;
+      line-height:1 !important;
+    }
+
+    #btn112 .icon{
+      width:14px !important;
+      height:14px !important;
+      margin-bottom:1px !important;
+    }
+
+    #btnSos .lblTop{
+      font-size:7px !important;
+      line-height:1.05 !important;
+      font-weight:800 !important;
+    }
+
+    #btnSos .icon{
+      width:12px !important;
+      height:12px !important;
+      margin:2px 0 !important;
+    }
+
+    #btnSos #sosLabel{
+      font-size:7px !important;
+      line-height:1 !important;
+      font-weight:900 !important;
+    }
 
     .sportTape{
       height:32px;
@@ -263,6 +350,7 @@ upgrade-insecure-requests;
       padding:0;
       margin-top:2px;
     }
+
     .sportTapeViewport{
       width:100%;
       height:32px;
@@ -270,6 +358,7 @@ upgrade-insecure-requests;
       display:flex;
       align-items:center;
     }
+
     .sportTapeTrack{
       display:inline-flex;
       align-items:center;
@@ -282,6 +371,7 @@ upgrade-insecure-requests;
       animation:sportTape 80s linear infinite;
       will-change:transform;
     }
+
     .sportTapeItem{
       display:flex;
       align-items:center;
@@ -291,13 +381,19 @@ upgrade-insecure-requests;
       font-size:14px;
       font-weight:400 !important;
     }
+
     .sportTapeItem.bold{ font-weight:900 !important; }
+
     @keyframes sportTape{
       0%{ transform:translateX(0); }
       100%{ transform:translateX(-50%); }
     }
 
-    #mairieTile{ position:relative; overflow:hidden; }
+    #mairieTile{
+      position:relative;
+      overflow:hidden;
+    }
+
     #mairieTile::after{
       content:"";
       position:absolute;
@@ -323,6 +419,7 @@ upgrade-insecure-requests;
       align-items:center;
       z-index:5;
     }
+
     .mairieTickerTrack{
       display:inline-flex;
       align-items:center;
@@ -333,7 +430,9 @@ upgrade-insecure-requests;
       font-size:10px;
       font-weight:900;
     }
+
     .mairieTickerTrack span{ padding-right:40px; }
+
     @keyframes mairieTickerMove{
       0%{ transform:translateX(0); }
       100%{ transform:translateX(-100%); }
@@ -353,8 +452,14 @@ upgrade-insecure-requests;
       font-size:16px;
       cursor:pointer;
       box-sizing:border-box;
+      appearance:none;
     }
-    .heart{ width:52px; height:52px; flex:0 0 auto; }
+
+    .heart{
+      width:52px;
+      height:52px;
+      flex:0 0 auto;
+    }
 
     .footerRow{
       display:flex;
@@ -366,6 +471,7 @@ upgrade-insecure-requests;
       flex-wrap:nowrap;
       min-width:0;
     }
+
     .footerRight{
       display:flex;
       gap:10px;
@@ -373,6 +479,7 @@ upgrade-insecure-requests;
       align-items:center;
       min-width:0;
     }
+
     .footerRight .legalBtn{
       flex:1;
       min-width:0;
@@ -416,6 +523,7 @@ upgrade-insecure-requests;
       white-space:nowrap;
       font-size:13px;
       box-shadow:0 4px 10px rgba(0,0,0,.06);
+      appearance:none;
     }
 
     .modal{
@@ -424,6 +532,7 @@ upgrade-insecure-requests;
       display:none;
       z-index:50;
     }
+
     .modal.open{ display:block; }
 
     .backdrop{
@@ -475,7 +584,11 @@ upgrade-insecure-requests;
       box-shadow:0 4px 10px rgba(0,0,0,.08);
     }
 
-    .muted{ color:var(--muted); font-size:12px; font-weight:700; }
+    .muted{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
 
     .choiceGrid{
       display:grid;
@@ -491,7 +604,7 @@ upgrade-insecure-requests;
       padding:12px;
       font-weight:900;
       cursor:pointer;
-      font:inherit;
+      appearance:none;
     }
 
     .tabs{
@@ -514,14 +627,16 @@ upgrade-insecure-requests;
       padding:8px 10px;
       font-weight:900;
       cursor:pointer;
-      font:inherit;
+      appearance:none;
     }
+
     .tab.active{ background:var(--beige); }
 
     .doc h2{ margin:12px 0 6px; font-size:15px; }
     .doc h3{ margin:10px 0 6px; font-size:14px; }
     .doc p{ margin:6px 0; font-weight:700; }
     .doc ul{ margin:6px 0 0 18px; font-weight:800; }
+
     .doc .box{
       border:2px solid rgba(0,0,0,.08);
       background:#fff;
@@ -531,6 +646,25 @@ upgrade-insecure-requests;
       margin:10px 0;
     }
 
+    .pillRow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:#fff;
+      border:2px solid rgba(0,0,0,.08);
+      border-radius:999px;
+      padding:7px 10px;
+      font-weight:900;
+      font-size:12px;
+    }
+
     .calWrap{
       border:2px solid rgba(0,0,0,.08);
       background:#fff;
@@ -538,6 +672,7 @@ upgrade-insecure-requests;
       padding:10px;
       margin:10px 0;
     }
+
     .calTop{
       display:flex;
       align-items:center;
@@ -546,11 +681,13 @@ upgrade-insecure-requests;
       margin-bottom:8px;
       font-weight:900;
     }
+
     .calTop .mini{
       display:flex;
       gap:8px;
       align-items:center;
     }
+
     .calBtn{
       border:2px solid rgba(0,0,0,.10);
       background:var(--beige);
@@ -559,33 +696,77 @@ upgrade-insecure-requests;
       font-weight:900;
       cursor:pointer;
       white-space:nowrap;
-      font:inherit;
+      appearance:none;
     }
+
     .calGrid{
       display:grid;
       grid-template-columns:repeat(7, 1fr);
       gap:6px;
       margin-top:8px;
     }
+
     .calDay{
       border:2px solid rgba(0,0,0,.08);
       background:var(--bg);
       border-radius:12px;
-      padding:6px;
+      padding:6px 6px;
       cursor:pointer;
       min-height:44px;
       display:flex;
       flex-direction:column;
       justify-content:space-between;
-      font:inherit;
+      appearance:none;
     }
+
     .calDay.disabled{
       opacity:.45;
       cursor:not-allowed;
     }
+
     .calDay.full{
       background:#e7e0d5;
       cursor:not-allowed;
+    }
+
+    .calDay .d{
+      font-weight:900;
+      font-size:12px;
+      line-height:1;
+    }
+
+    .calDay .s{
+      font-weight:900;
+      font-size:11px;
+      color:var(--muted);
+      margin-top:6px;
+    }
+
+    .calLegend{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+      font-weight:900;
+      font-size:12px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      border:2px solid rgba(0,0,0,.08);
+      background:#fff;
+      border-radius:999px;
+      padding:6px 10px;
+    }
+
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background:#111;
+      display:inline-block;
     }
 
     .updates{
@@ -596,13 +777,71 @@ upgrade-insecure-requests;
       box-shadow:0 6px 14px rgba(0,0,0,.06);
     }
 
-    .box{
+    .updatesTitle{
+      font-weight:900;
+      font-size:15px;
+      margin-bottom:6px;
+    }
+
+    .updatesSub{
+      color:var(--muted);
+      font-weight:800;
+      font-size:12px;
+      margin-bottom:10px;
+    }
+
+    .updatesGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .uCard{
+      background:var(--bg);
       border:2px solid rgba(0,0,0,.08);
-      background:#fff;
+      border-radius:14px;
+      padding:10px;
+    }
+
+    .uCard .h{
+      font-weight:900;
+      font-size:13px;
+      margin-bottom:6px;
+    }
+
+    .uCard .txt{
+      font-weight:800;
+      font-size:12px;
+      color:var(--text);
+      line-height:1.25;
+    }
+
+    .uActions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .uMiniBtn{
+      border:2px solid rgba(0,0,0,.10);
+      background:var(--beige);
+      border-radius:12px;
+      padding:8px 10px;
+      font-weight:900;
+      cursor:pointer;
+      font-size:12px;
+      appearance:none;
+    }
+
+    .uLine{
+      margin-top:10px;
+      border:2px solid rgba(0,0,0,.08);
+      background:var(--beige);
       border-radius:14px;
       padding:10px;
       font-weight:800;
-      margin:10px 0;
+      font-size:12px;
     }
 
     .miniField{
@@ -613,7 +852,6 @@ upgrade-insecure-requests;
       font-weight:800;
       background:#fff;
       outline:none;
-      font:inherit;
     }
 
     .miniCheck{
@@ -623,6 +861,7 @@ upgrade-insecure-requests;
       font-weight:900;
       margin-top:10px;
     }
+
     .miniCheck input{
       transform:scale(1.15);
       margin-top:2px;
@@ -642,10 +881,12 @@ upgrade-insecure-requests;
       overflow:hidden;
       box-sizing:border-box;
     }
+
     .legalStack{
       flex-direction:column;
       gap:1px;
     }
+
     .legalStack span{
       display:block;
       font-size:9px;
@@ -658,6 +899,7 @@ upgrade-insecure-requests;
       justify-content:center;
       gap:8px;
     }
+
     #legal .tab{
       display:flex;
       align-items:center;
@@ -681,6 +923,7 @@ upgrade-insecure-requests;
       width:108px;
       height:108px;
       min-width:108px;
+      max-width:108px;
       flex:0 0 108px;
       border-radius:50%;
       display:flex;
@@ -692,6 +935,7 @@ upgrade-insecure-requests;
         inset 0 2px 2px rgba(255,255,255,.18),
         inset 0 -8px 12px rgba(0,0,0,.18);
     }
+
     .coinFace::before,
     .coinFace::after{
       content:"";
@@ -699,6 +943,7 @@ upgrade-insecure-requests;
       border-radius:50%;
       pointer-events:none;
     }
+
     .coinFace::before{
       inset:7px;
       background:
@@ -709,6 +954,7 @@ upgrade-insecure-requests;
         inset 0 0 0 10px rgba(255,255,255,.04);
       z-index:1;
     }
+
     .coinFace::after{
       inset:14px;
       border:2px solid rgba(255,255,255,.16);
@@ -719,10 +965,12 @@ upgrade-insecure-requests;
       background:radial-gradient(circle at 30% 24%, #fff6be 0%, #f3dc6a 22%, #cda51d 56%, #9d7707 100%);
       border:3px solid #8e6a00;
     }
+
     .coinYellow{
       background:radial-gradient(circle at 30% 24%, #fff7c8 0%, #f2e06e 22%, #d7b82c 56%, #9a7b00 100%);
       border:3px solid #967900;
     }
+
     .coinGreen{
       background:radial-gradient(circle at 30% 24%, #b8ebca 0%, #77bf96 22%, #4f8f6a 58%, #2a523d 100%);
       border:3px solid #224c39;
@@ -755,6 +1003,7 @@ upgrade-insecure-requests;
         inset 0 2px 4px rgba(255,255,255,.18),
         inset 0 -6px 8px rgba(0,0,0,.14);
     }
+
     .coinInner::before{
       content:"";
       position:absolute;
@@ -763,6 +1012,7 @@ upgrade-insecure-requests;
       border:3px solid rgba(230,230,230,.92);
       pointer-events:none;
     }
+
     .coinInner::after{
       content:"";
       position:absolute;
@@ -773,6 +1023,7 @@ upgrade-insecure-requests;
         inset 0 10px 12px rgba(255,255,255,.08);
       pointer-events:none;
     }
+
     .coinInner .n{
       font-size:28px;
       line-height:1;
@@ -780,6 +1031,7 @@ upgrade-insecure-requests;
       position:relative;
       z-index:2;
     }
+
     .coinInner .t{
       font-size:8px;
       line-height:1.05;
@@ -796,6 +1048,7 @@ upgrade-insecure-requests;
       color:#5b3a00;
       text-shadow:0 1px 0 rgba(255,255,255,.25), 0 2px 2px rgba(0,0,0,.25);
     }
+
     .coinInnerGold::before{
       content:"";
       position:absolute;
@@ -804,14 +1057,16 @@ upgrade-insecure-requests;
       border:3px solid #7a4e00;
       pointer-events:none;
     }
+
     .coinInnerYellow{
       background:radial-gradient(circle at 32% 26%, #faefae 0%, #e2c848 48%, #aa8905 100%);
       color:#fffdf6;
       text-shadow:0 1px 0 rgba(0,0,0,.16);
     }
+
     .coinInnerGreen{
       background:radial-gradient(circle at 32% 26%, #b6e3c6 0%, #6aa884 48%, #315b43 100%);
-      color:#fff;
+      color:#ffffff;
       text-shadow:0 1px 0 rgba(0,0,0,.18);
     }
 
@@ -823,16 +1078,19 @@ upgrade-insecure-requests;
       border-radius:16px;
       padding:12px;
     }
+
     .walletTitle{
       font-weight:900;
       font-size:14px;
       margin-bottom:6px;
     }
+
     .walletValue{
       font-weight:900;
       font-size:24px;
       line-height:1;
     }
+
     .walletGold{ color:#9a7000; }
     .walletYellow{ color:#b18900; }
     .walletGreen{ color:#2f5d46; }
@@ -859,7 +1117,7 @@ upgrade-insecure-requests;
       font-weight:900;
       cursor:pointer;
       font-size:12px;
-      font:inherit;
+      appearance:none;
     }
 
     .sportSupportBadge{
@@ -876,7 +1134,9 @@ upgrade-insecure-requests;
       background:rgba(255,255,255,.95);
       box-shadow:0 4px 10px rgba(0,0,0,.14);
       cursor:pointer;
+      appearance:none;
     }
+
     .sportHeart{
       font-size:16px;
       line-height:1;
@@ -884,6 +1144,7 @@ upgrade-insecure-requests;
       animation:sportHeartBeat 1.35s infinite;
       transform-origin:center;
     }
+
     @keyframes sportHeartBeat{
       0%{ transform:scale(1); }
       18%{ transform:scale(1.12); }
@@ -892,17 +1153,20 @@ upgrade-insecure-requests;
       72%{ transform:scale(1); }
       100%{ transform:scale(1); }
     }
+
     .sportSupportCounts{
       display:flex;
       flex-direction:column;
       align-items:flex-start;
       line-height:1;
     }
+
     .sportSupportYear{
       font-size:12px;
       font-weight:900;
       color:#a51e22;
     }
+
     .sportSupportTotal{
       font-size:10px;
       font-weight:900;
@@ -916,7 +1180,15 @@ upgrade-insecure-requests;
       .grid{ gap:10px; }
       .tile .h{ font-size:16px; }
       .tile .p{ margin-top:6px; }
-      .dae{ padding:8px 10px; font-size:14px; border-radius:18px; min-height:86px; }
+
+      .dae{
+        padding:8px 10px;
+        font-size:14px;
+        border-radius:18px;
+        border-color:var(--red);
+        min-height:86px;
+      }
+
       .heart{ width:44px; height:44px; }
       .footerRow{ padding-bottom:8px; }
       .iconBtn{ width:40px; height:40px; }
@@ -958,6 +1230,7 @@ upgrade-insecure-requests;
 
       <div class="gridWrap">
         <div class="grid">
+
           <button class="tile" data-open="oeuvres" type="button">
             <img alt="" src="oeuvres.jpg"/>
             <div class="overlay"></div>
@@ -977,12 +1250,15 @@ upgrade-insecure-requests;
             </div>
           </button>
 
-          <button class="tile" data-open="sport" id="sportTile" type="button">
+          <!-- IMPORTANT :
+               La tuile SPORT n'est PAS un bouton pour éviter le bug HTML
+               dû au bouton imbriqué (sportSupportBadge) -->
+          <div class="tile" data-open="sport" id="sportTile" role="button" tabindex="0" aria-label="Sport">
             <img alt="" src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=60"/>
             <div class="overlay"></div>
 
             <button class="sportSupportBadge" id="sportSupportBadge" type="button" aria-label="Soutenir le sport local">
-              <span class="sportHeart">❤️</span>
+              <span class="sportHeart" id="sportHeart">❤️</span>
               <span class="sportSupportCounts">
                 <span class="sportSupportYear" id="sportSupportYearCount">0</span>
                 <span class="sportSupportTotal" id="sportSupportTotalCount">0</span>
@@ -993,7 +1269,7 @@ upgrade-insecure-requests;
               <div class="h">Sport</div>
               <div class="p">Infos • parcs • loisirs</div>
             </div>
-          </button>
+          </div>
 
           <button class="tile" data-open="mairie" id="mairieTile" type="button">
             <img alt="" src="https://images.unsplash.com/photo-1505843513577-22bb7d21e455?auto=format&fit=crop&w=1200&q=60"/>
@@ -1007,7 +1283,7 @@ upgrade-insecure-requests;
             </div>
           </button>
 
-          <button class="tile logoOnly" id="adminTile" type="button">
+          <button class="tile logoOnly" id="adminTile" type="button" aria-label="Administration">
             <img alt="" src="https://bociteart.com/logo-bociteart.png"/>
           </button>
 
@@ -1019,6 +1295,7 @@ upgrade-insecure-requests;
               <div class="p">Bons plans</div>
             </div>
           </button>
+
         </div>
 
         <div class="emgSlot emgTop">
@@ -1041,7 +1318,7 @@ upgrade-insecure-requests;
         </div>
 
         <div class="emgSlot emgBottom">
-          <button class="lpBtn" id="btnSos" aria-label="3919/119" type="button" style="width:80px;height:80px;">
+          <button class="lpBtn" id="btnSos" aria-label="3919/119" style="width:80px;height:80px;" type="button">
             <svg class="lpRing" width="80" height="80" viewBox="0 0 80 80">
               <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,.25)" stroke-width="5"></circle>
               <circle id="ringSos" cx="40" cy="40" r="30" fill="none" stroke="rgba(127,26,29,1)"
@@ -1049,7 +1326,7 @@ upgrade-insecure-requests;
                       stroke-dasharray="188.496" stroke-dashoffset="188.496"
                       transform="rotate(-90 40 40)"></circle>
             </svg>
-            <div class="lpCore lpSmall" id="sosCore" style="background:var(--redSoft);">
+            <div class="lpCore lpSmall" id="sosCore" style="background:var(--redSoft); display:flex; flex-direction:column; align-items:center; justify-content:center;">
               <div class="lblTop">Urgence femmes<br>enfants</div>
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.72c.12.9.34 1.78.65 2.62a2 2 0 0 1-.45 2.11L8.1 9.91a16 16 0 0 0 6 6l1.46-1.2a2 2 0 0 1 2.11-.45c.84.31 1.72.53 2.62.65A2 2 0 0 1 22 16.92z"/>
@@ -1090,7 +1367,9 @@ upgrade-insecure-requests;
             </svg>
           </a>
 
-          <button class="legalBtn" id="openSecure" type="button">Compte<br>+ aide</button>
+          <button class="legalBtn" id="openSecure" type="button">
+            Compte<br>+ aide
+          </button>
 
           <button class="legalBtn legalStack" id="openLegal" type="button">
             <span>RGPD</span>
@@ -1099,11 +1378,10 @@ upgrade-insecure-requests;
           </button>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- MODAL GÉNÉRIQUE -->
+  <!-- MODALE PRINCIPALE -->
   <div class="modal" id="modal" aria-hidden="true">
     <div class="backdrop" id="modalClose"></div>
     <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -1119,18 +1397,19 @@ upgrade-insecure-requests;
     </div>
   </div>
 
-  <!-- LEGAL -->
+  <!-- MODALE LÉGALE -->
   <div class="modal" id="legal" aria-hidden="true">
     <div class="backdrop" id="legalClose"></div>
-    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="legalTitle">
+    <div class="sheet" role="dialog" aria-modal="true">
       <div class="head">
-        <div id="legalTitle">Documents & mentions légales</div>
+        <div>Documents & mentions légales</div>
         <button class="xbtn" id="legalX" aria-label="Fermer" type="button">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2">
             <path d="M18 6L6 18M6 6l12 12"/>
           </svg>
         </button>
       </div>
+
       <div class="body">
         <div class="tabs">
           <button class="tab active" data-tab="rgpd" type="button">RGPD</button>
@@ -1138,14 +1417,10 @@ upgrade-insecure-requests;
           <button class="tab" data-tab="cgv" type="button">CGV</button>
         </div>
 
-        <!-- RGPD -->
         <div id="p-rgpd" class="doc">
           <div style="font-weight:900;font-size:15px;">📗 Politique de protection des données (RGPD) — Bo’CitéArt</div>
           <div class="muted" style="margin-top:4px;">Version pré-structuration — entités juridiques en cours de constitution</div>
-
-          <div class="box">
-            Bo’CitéArt est un projet territorial en cours de structuration juridique. La SAS commerciale et l’association loi 1901 à but non lucratif seront immatriculées avant toute exploitation contractuelle. Les mentions complètes (SIRET, siège, représentant légal, contact RGPD) seront publiées à cette étape.
-          </div>
+          <div class="box">Bo’CitéArt est un projet territorial en cours de structuration juridique. La SAS commerciale et l’association loi 1901 à but non lucratif seront immatriculées avant toute exploitation contractuelle. Les mentions complètes (SIRET, siège, représentant légal, contact RGPD) seront publiées à cette étape.</div>
 
           <h2>1. Responsable du traitement</h2>
           <p>
@@ -1173,8 +1448,11 @@ upgrade-insecure-requests;
 
           <h2>3. Données sensibles / contenus interdits</h2>
           <div class="box">
-            Bo’CitéArt n’a pas vocation à collecter des données sensibles (santé, opinions, etc.). Les zones de publication sont réservées aux profils habilités et peuvent intégrer des contrôles de conformité.<br><br>
-            Tout contenu illicite, haineux, diffamatoire, discriminatoire, politique partisan, ou comportant des données personnelles non autorisées (notamment concernant des mineurs), peut être <strong>retiré immédiatement</strong>, avec suspension d’accès et conservation d’éléments techniques nécessaires à la gestion de l’incident et/ou à la coopération avec les autorités si requis.
+            Bo’CitéArt n’a pas vocation à collecter des données sensibles (santé, opinions, etc.).
+            Les zones de publication sont réservées aux profils habilités, et peuvent intégrer des contrôles de conformité.<br><br>
+            Tout contenu illicite, haineux, diffamatoire, discriminatoire, politique partisan, ou comportant des données personnelles non autorisées
+            (notamment concernant des mineurs), peut être <strong>retiré immédiatement</strong>, avec suspension d’accès et conservation d’éléments techniques
+            nécessaires à la gestion de l’incident et/ou à la coopération avec les autorités si requis.
           </div>
 
           <h2>4. Mineurs / École — cadre renforcé</h2>
@@ -1204,7 +1482,9 @@ upgrade-insecure-requests;
 
           <h2>7. Géolocalisation (optionnelle)</h2>
           <div class="box">
-            Si activée, la géolocalisation est demandée par votre téléphone et peut être refusée. Elle sert uniquement à afficher des points d’intérêt (ex. DAE, parcours). La démo ne garantit pas l’exactitude des données disponibles.
+            Si activée, la géolocalisation est demandée par votre téléphone et peut être refusée.
+            Elle sert uniquement à afficher des points d’intérêt (ex. DAE, parcours).
+            La démo ne garantit pas l’exactitude des données disponibles.
           </div>
 
           <h2>8. Durées de conservation</h2>
@@ -1224,7 +1504,9 @@ upgrade-insecure-requests;
 
           <h2>10. Sécurité</h2>
           <div class="box">
-            Mesures prévues selon version : contrôle d’accès par rôles, traçabilité, journalisation, protections contre l’abus, et sécurisation des accès administrateurs. Aucune solution ne peut garantir le risque zéro.
+            Mesures prévues selon version : contrôle d’accès par rôles, traçabilité, journalisation,
+            protections contre l’abus, et sécurisation des accès administrateurs.
+            Aucune solution ne peut garantir le risque zéro.
           </div>
 
           <h2>11. Vos droits</h2>
@@ -1237,7 +1519,10 @@ upgrade-insecure-requests;
           <div class="box" style="margin-top:10px;">
             <div style="font-weight:900;">Option “Compte sécurisé” (si activée)</div>
             <div class="muted" style="margin-top:6px;">
-              Cette option peut impliquer un traitement par un <strong>prestataire serveur tiers</strong> (sous-traitant), uniquement pour fournir les fonctions : récupération de compte, assistance, alertes, et, si autorisée, géolocalisation ponctuelle et SMS vers 2 numéros de confiance. Les autorisations sensibles (ex. localisation) sont demandées via le téléphone et restent refusables.
+              Cette option peut impliquer un traitement par un <strong>prestataire serveur tiers</strong> (sous-traitant),
+              uniquement pour fournir les fonctions : récupération de compte, assistance, alertes, et, si autorisée,
+              géolocalisation ponctuelle et SMS vers 2 numéros de confiance.
+              Les autorisations sensibles (ex. localisation) sont demandées via le téléphone et restent refusables.
             </div>
             <div class="muted" style="margin-top:6px;">
               Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> concernant ces fonctions.
@@ -1247,18 +1532,21 @@ upgrade-insecure-requests;
           <div class="box">Bo’CitéArt s’engage à ne vendre aucune donnée et à respecter strictement le RGPD.</div>
         </div>
 
-        <!-- CGU -->
         <div id="p-cgu" class="doc" style="display:none;">
           <div style="font-weight:900;font-size:15px;">📘 Conditions Générales d’Utilisation — Bo’CitéArt</div>
-
           <div class="box">
-            Bo’CitéArt est un projet territorial en cours de déploiement. L’application ne constitue ni un service d’urgence, ni un réseau social ouvert, ni un établissement bancaire, ni un établissement de paiement, ni un service financier réglementé.<br><br>
-            Les <strong>BoCiteCoins</strong> sont des unités promotionnelles internes (non monétaires) et ne sont pas des crypto-actifs, ni des titres, ni une monnaie locale au sens financier.
+            Bo’CitéArt est un projet territorial en cours de déploiement.
+            L’application ne constitue ni un service d’urgence, ni un réseau social ouvert, ni un établissement bancaire,
+            ni un établissement de paiement, ni un service financier réglementé.<br><br>
+            Les <strong>BoCiteCoins</strong> sont des unités promotionnelles internes (non monétaires)
+            et ne sont pas des crypto-actifs, ni des titres, ni une monnaie locale au sens financier.
           </div>
 
           <h2>0. Statut de la version “démo” / pré-structuration</h2>
           <div class="box">
-            La présente version peut être une démonstration fonctionnelle. Aucune relation contractuelle ferme ne peut naître avant l’immatriculation officielle des entités juridiques (SAS et/ou association) et la signature d’un contrat applicable (devis/commande/CGV, le cas échéant).
+            La présente version peut être une démonstration fonctionnelle.
+            Aucune relation contractuelle ferme ne peut naître avant l’immatriculation officielle des entités juridiques
+            (SAS et/ou association) et la signature d’un contrat applicable (devis/commande/CGV, le cas échéant).
           </div>
 
           <h2>1. Accès — rôles, mandats et responsabilités</h2>
@@ -1282,17 +1570,22 @@ upgrade-insecure-requests;
 
           <h2>3. Modération / retrait</h2>
           <div class="box">
-            Bo’CitéArt peut retirer un contenu, limiter une fonctionnalité, ou suspendre un accès en cas de non-conformité, d’abus, ou de risque juridique/sécuritaire, sans obligation de maintien en ligne.
+            Bo’CitéArt peut retirer un contenu, limiter une fonctionnalité, ou suspendre un accès
+            en cas de non-conformité, d’abus, ou de risque juridique/sécuritaire, sans obligation de maintien en ligne.
           </div>
 
           <h2>4. BoCiteCoins</h2>
           <div class="box">
-            Les <strong>BoCiteCoins</strong> sont des unités promotionnelles internes. Elles n’ont <strong>aucune valeur monétaire</strong>, ne constituent pas une monnaie, ne sont pas convertibles en euros, non remboursables, et ne peuvent pas être revendues ou transférées hors des règles prévues par l’application.
+            Les <strong>BoCiteCoins</strong> sont des unités promotionnelles internes.
+            Elles n’ont <strong>aucune valeur monétaire</strong>, ne constituent pas une monnaie,
+            ne sont pas convertibles en euros, non remboursables,
+            et ne peuvent pas être revendues ou transférées hors des règles prévues par l’application.
           </div>
 
           <h2>5. Péremption des BoCiteCoins (règle de gestion)</h2>
           <div class="box">
-            Durée : <strong>1 an</strong> à partir de l’obtention du premier point (déclencheur). Un <strong>rappel 1 mois avant</strong> peut être affiché.<br><br>
+            Durée : <strong>1 an</strong> à partir de l’obtention du premier point (déclencheur).
+            Un <strong>rappel 1 mois avant</strong> peut être affiché.<br><br>
             Dernier mois :
             <ul style="margin:8px 0 0 18px;font-weight:800;">
               <li>Seuil minimal d’échange : <strong>20 points</strong> minimum.</li>
@@ -1312,12 +1605,17 @@ upgrade-insecure-requests;
 
           <h2>7. Urgences</h2>
           <div class="box">
-            Les boutons 112 / 3919 / 119 sont des raccourcis téléphoniques. Bo’CitéArt ne fournit pas les secours et ne garantit pas la connexion réseau. En cas d’urgence, appeler immédiatement les secours sans attendre.
+            Les boutons 112 / 3919 / 119 sont des raccourcis téléphoniques.
+            Bo’CitéArt ne fournit pas les secours et ne garantit pas la connexion réseau.
+            En cas d’urgence, appeler immédiatement les secours sans attendre.
           </div>
 
           <h2>8. Informations et données “indicatives”</h2>
           <div class="box">
-            Certaines informations peuvent provenir de sources externes ou du téléphone (ex. carte, itinéraires, points d’intérêt, DAE). Elles sont fournies à titre indicatif et peuvent comporter des inexactitudes, retards ou indisponibilités. Bo’CitéArt ne garantit pas l’exactitude parfaite de ces informations.
+            Certaines informations peuvent provenir de sources externes ou du téléphone
+            (ex. carte, itinéraires, points d’intérêt, DAE).
+            Elles sont fournies à titre indicatif et peuvent comporter des inexactitudes, retards ou indisponibilités.
+            Bo’CitéArt ne garantit pas l’exactitude parfaite de ces informations.
           </div>
 
           <h2>9. Sécurisation des comptes (2FA / double référent) — si activée</h2>
@@ -1328,17 +1626,21 @@ upgrade-insecure-requests;
               <li><strong>Double référent</strong> : deux personnes distinctes peuvent être habilitées sur une même tuile (ex. maire + référent), afin d’assurer la continuité en cas d’absence.</li>
               <li>Procédure de récupération : vérifications renforcées avant réactivation.</li>
             </ul>
-            Ces mesures relèvent d’une <strong>obligation de moyens</strong> et peuvent dépendre du téléphone, du réseau, et du prestataire technique selon la version LIVE.
+            Ces mesures relèvent d’une <strong>obligation de moyens</strong> et peuvent dépendre du téléphone,
+            du réseau, et du prestataire technique selon la version LIVE.
           </div>
 
           <h2>10. Disponibilité / limites</h2>
           <div class="box">
-            L’application est fournie “en l’état” (démo / pré-déploiement). Bo’CitéArt ne garantit pas l’absence d’erreurs, ni une disponibilité continue.
+            L’application est fournie “en l’état” (démo / pré-déploiement).
+            Bo’CitéArt ne garantit pas l’absence d’erreurs, ni une disponibilité continue.
           </div>
 
           <h2>11. Suivi indicatif (commerçants)</h2>
           <div class="box">
-            Certaines vues de suivi (ex. estimation mensuelle) sont fournies à titre <strong>indicatif</strong> et ne constituent pas un document comptable, fiscal ou opposable. Les montants contractuels et facturés sont ceux issus du PSP et/ou de la facture mensuelle.
+            Certaines vues de suivi (ex. estimation mensuelle) sont fournies à titre <strong>indicatif</strong>
+            et ne constituent pas un document comptable, fiscal ou opposable.
+            Les montants contractuels et facturés sont ceux issus du PSP et/ou de la facture mensuelle.
           </div>
 
           <h2>12. Responsabilité</h2>
@@ -1350,35 +1652,41 @@ upgrade-insecure-requests;
 
           <h2>13. Force majeure</h2>
           <div class="box">
-            Bo’CitéArt ne pourra être tenu responsable en cas de force majeure ou d’événement extérieur rendant le service indisponible ou altéré (panne réseau, incident hébergeur, cyberattaque, coupure électrique, décision administrative, etc.).
+            Bo’CitéArt ne pourra être tenu responsable en cas de force majeure ou d’événement extérieur rendant le service indisponible ou altéré
+            (panne réseau, incident hébergeur, cyberattaque, coupure électrique, décision administrative, etc.).
           </div>
 
           <h2>14. Propriété intellectuelle</h2>
           <div class="box">
-            L’ensemble des éléments de Bo’CitéArt (concept, structure, textes, contenus, visuels, charte, design, marque et signes distinctifs) est protégé. Toute reproduction, extraction, réutilisation ou détournement sans autorisation est interdit, sauf droits légaux applicables.
+            L’ensemble des éléments de Bo’CitéArt (concept, structure, textes, contenus, visuels, charte, design, marque et signes distinctifs)
+            est protégé. Toute reproduction, extraction, réutilisation ou détournement sans autorisation est interdit,
+            sauf droits légaux applicables.
           </div>
 
           <h2>15. Modification des conditions</h2>
           <div class="box">
-            Bo’CitéArt peut modifier les présentes conditions pour tenir compte des évolutions du service, des exigences légales ou de sécurité. La version applicable est celle publiée dans l’application au moment de l’utilisation.
+            Bo’CitéArt peut modifier les présentes conditions pour tenir compte des évolutions du service,
+            des exigences légales ou de sécurité. La version applicable est celle publiée dans l’application au moment de l’utilisation.
           </div>
 
           <h2>16. Droit applicable</h2>
           <p>Droit français.</p>
         </div>
 
-        <!-- CGV -->
         <div id="p-cgv" class="doc" style="display:none;">
           <div style="font-weight:900;font-size:15px;">📄 Conditions Générales de Vente — Bo’CitéArt</div>
-
           <div class="box">
-            Les présentes Conditions Générales de Vente (CGV) encadrent les relations commerciales entre Bo’CitéArt et les partenaires professionnels (commerçants, collectivités, structures sportives, institutions) utilisant les services proposés par la plateforme.
+            Les présentes Conditions Générales de Vente (CGV) encadrent les relations commerciales entre Bo’CitéArt
+            et les partenaires professionnels (commerçants, collectivités, structures sportives, institutions)
+            utilisant les services proposés par la plateforme.
           </div>
 
           <h2>1. Statut du service</h2>
           <div class="box">
-            Bo’CitéArt est une plateforme territoriale destinée à favoriser la dynamique locale entre citoyens, commerces, institutions et acteurs associatifs.<br><br>
-            Les BoCiteCoins sont des <strong>unités promotionnelles internes</strong>. Ils ne constituent pas une monnaie, un actif financier, un moyen de paiement ni un crypto-actif.
+            Bo’CitéArt est une plateforme territoriale destinée à favoriser la dynamique locale entre citoyens,
+            commerces, institutions et acteurs associatifs.<br><br>
+            Les BoCiteCoins sont des <strong>unités promotionnelles internes</strong>.
+            Ils ne constituent pas une monnaie, un actif financier, un moyen de paiement ni un crypto-actif.
           </div>
 
           <h2>2. Accès au service</h2>
@@ -1448,12 +1756,14 @@ upgrade-insecure-requests;
 
           <h2>10. Force majeure</h2>
           <div class="box">
-            Bo’CitéArt ne pourra être tenu responsable en cas d’événement extérieur empêchant le fonctionnement normal du service : panne réseau, incident technique, cyberattaque, catastrophe naturelle ou décision administrative.
+            Bo’CitéArt ne pourra être tenu responsable en cas d’événement extérieur empêchant le fonctionnement normal du service :
+            panne réseau, incident technique, cyberattaque, catastrophe naturelle ou décision administrative.
           </div>
 
           <h2>11. Modification des conditions</h2>
           <div class="box">
-            Bo’CitéArt peut faire évoluer les présentes conditions afin de tenir compte des évolutions techniques, juridiques ou réglementaires.
+            Bo’CitéArt peut faire évoluer les présentes conditions afin de tenir compte des évolutions techniques,
+            juridiques ou réglementaires.
           </div>
 
           <h2>12. Droit applicable</h2>
@@ -1463,12 +1773,12 @@ upgrade-insecure-requests;
     </div>
   </div>
 
-  <!-- CHOIX 3919/119 -->
+  <!-- MODALE CHOIX SOS -->
   <div class="modal" id="choice" aria-hidden="true">
     <div class="backdrop" id="choiceClose"></div>
-    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="choiceTitle">
+    <div class="sheet" role="dialog" aria-modal="true">
       <div class="head">
-        <div id="choiceTitle">Choisir le numéro</div>
+        <div>Choisir le numéro</div>
         <button class="xbtn" id="choiceX" aria-label="Fermer" type="button">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2">
             <path d="M18 6L6 18M6 6l12 12"/>
@@ -1487,322 +1797,244 @@ upgrade-insecure-requests;
   </div>
 
   <script>
-  (function initBoCiteArtClean(){
-    "use strict";
+    (function initBoCiteArtClean(){
+      "use strict";
 
-    // =========================================================
-    // CONFIG
-    // =========================================================
-    const CONFIG = {
-      mode: "demo", // "demo" | "live"
-      pubMaxPerDay: 10,
-      oneYearMs: 365 * 24 * 60 * 60 * 1000
-    };
-
-    // =========================================================
-    // HELPERS
-    // =========================================================
-    const $ = (id) => document.getElementById(id);
-    const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
-    const isFn = (v) => typeof v === "function";
-
-    function setVh(){
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-    }
-    setVh();
-    window.addEventListener("resize", setVh);
-    window.addEventListener("orientationchange", setVh);
-
-    function lockScroll(enabled){
-      document.body.classList.toggle("modalOpen", !!enabled);
-    }
-
-    function escapeHtml(str){
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    function safeUrl(url){
-      try{
-        const u = new URL(url);
-        return u.protocol === "https:" ? u.toString() : "";
-      }catch(e){
-        return "";
-      }
-    }
-
-    function readStorage(key, fallback){
-      try{
-        const raw = localStorage.getItem(key);
-        if(!raw) return fallback;
-        const parsed = JSON.parse(raw);
-        return parsed ?? fallback;
-      }catch(e){
-        return fallback;
-      }
-    }
-
-    function writeStorage(key, value){
-      try{
-        localStorage.setItem(key, JSON.stringify(value));
-      }catch(e){}
-    }
-
-    function removeStorage(key){
-      try{
-        localStorage.removeItem(key);
-      }catch(e){}
-    }
-
-    function fmtEUR(n){
-      return Number(n || 0).toLocaleString("fr-FR", {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }) + " €";
-    }
-
-    function pad2(n){
-      return String(n).padStart(2, "0");
-    }
-
-    function ymd(y,m,d){
-      return `${y}-${pad2(m + 1)}-${pad2(d)}`;
-    }
-
-    function ym(y,m){
-      return `${y}-${pad2(m + 1)}`;
-    }
-
-    function nowTs(){
-      return Date.now();
-    }
-
-    function toast(msg){
-      alert(msg);
-    }
-
-    // =========================================================
-    // MODALS
-    // =========================================================
-    window.__lastFocus = null;
-
-    const modal = $("modal");
-    const modalBody = $("modalBody");
-    const modalTitle = $("modalTitle");
-
-    function openModal(title, html){
-      window.__lastFocus = document.activeElement;
-      modalTitle.textContent = title;
-      modalBody.innerHTML = html;
-      modal.classList.add("open");
-      modal.setAttribute("aria-hidden", "false");
-      lockScroll(true);
-
-      setTimeout(() => {
-        initFeeUiInModal();
-        const xb = $("xBtn");
-        if(xb && xb.focus) xb.focus();
-      }, 0);
-    }
-
-    function closeModal(){
-      modal.classList.remove("open");
-      modal.setAttribute("aria-hidden", "true");
-      lockScroll(false);
-      if(window.__lastFocus && window.__lastFocus.focus){
-        window.__lastFocus.focus();
-      }
-      window.__lastFocus = null;
-    }
-
-    on($("modalClose"), "click", closeModal);
-    on($("xBtn"), "click", closeModal);
-
-    // =========================================================
-    // LEGAL TABS
-    // =========================================================
-    const legal = $("legal");
-
-    function openLegal(){
-      window.__lastFocus = document.activeElement;
-      legal.classList.add("open");
-      legal.setAttribute("aria-hidden", "false");
-      lockScroll(true);
-    }
-
-    function closeLegal(){
-      legal.classList.remove("open");
-      legal.setAttribute("aria-hidden", "true");
-      lockScroll(false);
-      if(window.__lastFocus && window.__lastFocus.focus){
-        window.__lastFocus.focus();
-      }
-      window.__lastFocus = null;
-    }
-
-    on($("openLegal"), "click", openLegal);
-    on($("legalClose"), "click", closeLegal);
-    on($("legalX"), "click", closeLegal);
-
-    (function initLegalTabs(){
-      const tabs = legal.querySelectorAll(".tab");
-      const panels = {
-        rgpd: $("p-rgpd"),
-        cgu: $("p-cgu"),
-        cgv: $("p-cgv")
+      const CONFIG = {
+        mode: "demo",
+        pubMaxPerDay: 10
       };
 
-      function showTab(name){
-        tabs.forEach(tab => tab.classList.toggle("active", tab.dataset.tab === name));
-        Object.keys(panels).forEach(key => {
-          if(panels[key]) panels[key].style.display = key === name ? "block" : "none";
-        });
+      const $ = (id) => document.getElementById(id);
+      const isFn = (v) => typeof v === "function";
+      const oneYearMs = 365 * 24 * 60 * 60 * 1000;
+
+      function setVh(){
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--vh", `${vh}px`);
       }
 
-      tabs.forEach(tab => {
-        tab.addEventListener("click", () => showTab(tab.dataset.tab));
+      setVh();
+      window.addEventListener("resize", setVh);
+      window.addEventListener("orientationchange", setVh);
+
+      function escapeHtml(value){
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function readStorage(key, fallback){
+        try{
+          const raw = localStorage.getItem(key);
+          if(!raw) return fallback;
+          const parsed = JSON.parse(raw);
+          return parsed ?? fallback;
+        }catch(e){
+          return fallback;
+        }
+      }
+
+      function writeStorage(key, value){
+        try{
+          localStorage.setItem(key, JSON.stringify(value));
+        }catch(e){}
+      }
+
+      function removeStorage(key){
+        try{
+          localStorage.removeItem(key);
+        }catch(e){}
+      }
+
+      function lockScroll(locked){
+        document.body.classList.toggle("modalOpen", !!locked);
+      }
+
+      let lastFocusEl = null;
+
+      function openGenericModal(modalEl){
+        if(!modalEl) return;
+        lastFocusEl = document.activeElement;
+        modalEl.classList.add("open");
+        modalEl.setAttribute("aria-hidden", "false");
+        lockScroll(true);
+      }
+
+      function closeGenericModal(modalEl){
+        if(!modalEl) return;
+        modalEl.classList.remove("open");
+        modalEl.setAttribute("aria-hidden", "true");
+        lockScroll(false);
+        if(lastFocusEl && isFn(lastFocusEl.focus)) lastFocusEl.focus();
+        lastFocusEl = null;
+      }
+
+      const modal = $("modal");
+      const modalTitle = $("modalTitle");
+      const modalBody = $("modalBody");
+
+      function closeModal(){
+        closeGenericModal(modal);
+      }
+
+      function openModal(title, html){
+        modalTitle.textContent = title;
+        modalBody.innerHTML = html;
+        openGenericModal(modal);
+        setTimeout(() => {
+          const xb = $("xBtn");
+          if(xb && isFn(xb.focus)) xb.focus();
+          initFeeUiInModal();
+        }, 0);
+      }
+
+      $("modalClose")?.addEventListener("click", closeModal);
+      $("xBtn")?.addEventListener("click", closeModal);
+
+      document.addEventListener("keydown", (e)=>{
+        if(e.key !== "Escape") return;
+        if($("choice")?.classList.contains("open")) return closeGenericModal($("choice"));
+        if($("legal")?.classList.contains("open")) return closeGenericModal($("legal"));
+        if(modal?.classList.contains("open")) closeModal();
       });
 
-      showTab("rgpd");
-    })();
-
-    // =========================================================
-    // ESCAPE KEY
-    // =========================================================
-    document.addEventListener("keydown", (e) => {
-      if(e.key !== "Escape") return;
-
-      const choice = $("choice");
-      if(choice.classList.contains("open")){
-        closeChoice();
-        return;
+      function toast(msg){
+        alert(msg);
       }
-      if(legal.classList.contains("open")){
-        closeLegal();
-        return;
-      }
-      if(modal.classList.contains("open")){
-        closeModal();
-      }
-    });
 
-    // =========================================================
-    // VOICES
-    // =========================================================
-    let cachedVoices = [];
+      function callPhone(number){
+        const n = String(number || "").trim();
+        if(!/^\d{2,4}$/.test(n)) return;
+        if(CONFIG.mode === "demo"){
+          toast("Démo : appel " + n + " (appui long validé).");
+          return;
+        }
+        window.location.href = "tel:" + n;
+      }
 
-    function loadVoices(){
-      return new Promise((resolve) => {
-        const voices = speechSynthesis.getVoices();
-        if(voices.length){
-          cachedVoices = voices;
-          resolve();
+      const tickerItems = [
+        {
+          title: "Annonce partenaire (démo)",
+          subtitle: "Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels",
+          img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+        },
+        {
+          title: "Mairie (démo) : informations & agenda",
+          subtitle: "Accès gratuit citoyen pour alertes d’intérêt général • règle d’accès 16h (pub) • sous réserve de disponibilité",
+          img: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
+        }
+      ];
+
+      let tickerIdx = 0;
+
+      function setTicker(i){
+        const it = tickerItems[i];
+        $("tickerImg").src = it.img;
+        $("tickerTitleA").textContent = it.title;
+        $("tickerSubA").textContent = it.subtitle || "";
+        $("tickerTitleB").textContent = it.title;
+        $("tickerSubB").textContent = it.subtitle || "";
+      }
+
+      setTicker(0);
+
+      setInterval(() => {
+        tickerIdx = (tickerIdx + 1) % tickerItems.length;
+        setTicker(tickerIdx);
+      }, 10000);
+
+      const LEGAL_MODAL = $("legal");
+      $("openLegal")?.addEventListener("click", ()=> openGenericModal(LEGAL_MODAL));
+      $("legalClose")?.addEventListener("click", ()=> closeGenericModal(LEGAL_MODAL));
+      $("legalX")?.addEventListener("click", ()=> closeGenericModal(LEGAL_MODAL));
+
+      (function initLegalTabs(){
+        const tabs = LEGAL_MODAL?.querySelectorAll(".tab") || [];
+        const panels = {
+          rgpd: $("p-rgpd"),
+          cgu: $("p-cgu"),
+          cgv: $("p-cgv")
+        };
+
+        function showTab(name){
+          tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+          Object.keys(panels).forEach(key => {
+            if(panels[key]) panels[key].style.display = key === name ? "block" : "none";
+          });
+        }
+
+        tabs.forEach(t => t.addEventListener("click", ()=> showTab(t.dataset.tab)));
+        showTab("rgpd");
+      })();
+
+      const CHOICE_MODAL = $("choice");
+      let sosNumber = null;
+
+      function closeChoice(){
+        closeGenericModal(CHOICE_MODAL);
+      }
+
+      $("choiceClose")?.addEventListener("click", closeChoice);
+      $("choiceX")?.addEventListener("click", closeChoice);
+
+      document.querySelectorAll("#choice .choiceBtn[data-pick]").forEach(btn => {
+        btn.addEventListener("click", ()=>{
+          sosNumber = btn.getAttribute("data-pick");
+          $("sosLabel").textContent = sosNumber;
+          closeChoice();
+        });
+      });
+
+      const ACK_PREFIX = "bociteart_ack_v2_";
+      const ACK_SALT = "BoCiteArt|ack|v2";
+
+      function fnv1a(str){
+        let h = 0x811c9dc5;
+        for(let i = 0; i < str.length; i++){
+          h ^= str.charCodeAt(i);
+          h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
+        }
+        return ("00000000" + h.toString(16)).slice(-8);
+      }
+
+      function ackSign(kind, ts){
+        return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
+      }
+
+      function ackGet(kind){
+        try{
+          const raw = localStorage.getItem(ACK_PREFIX + kind);
+          if(!raw) return false;
+          const parts = raw.split("|");
+          if(parts.length !== 3) return false;
+          const ok = parts[0] === "1";
+          const ts = parseInt(parts[1], 10);
+          const sig = parts[2];
+          return ok && Number.isFinite(ts) && sig === ackSign(kind, ts);
+        }catch(e){
+          return false;
+        }
+      }
+
+      function ackSet(kind){
+        const ts = Date.now();
+        localStorage.setItem(ACK_PREFIX + kind, `1|${ts}|${ackSign(kind, ts)}`);
+      }
+
+      function emergencyGate(kind, onOk){
+        if(ackGet(kind)){
+          onOk();
           return;
         }
 
-        const handler = () => {
-          cachedVoices = speechSynthesis.getVoices();
-          resolve();
-        };
+        const is112 = kind === "112";
+        const title = is112 ? "Urgence 112 — usage responsable" : "Aide 3919 / 119 — usage responsable";
 
-        speechSynthesis.addEventListener("voiceschanged", handler, { once:true });
-      });
-    }
-
-    async function speak(text, mode = "female"){
-      if(!("speechSynthesis" in window)) return;
-      await loadVoices();
-      speechSynthesis.cancel();
-
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = "fr-FR";
-      u.rate = 0.95;
-      u.pitch = 1.05;
-
-      const frVoices = cachedVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith("fr"));
-      if(frVoices.length) u.voice = frVoices[0];
-
-      if(mode === "child"){
-        u.pitch = 1.35;
-        u.rate = 1.05;
-      }
-
-      speechSynthesis.speak(u);
-    }
-
-    // =========================================================
-    // PHONE
-    // =========================================================
-    function callPhone(number){
-      const n = String(number || "").trim();
-      if(!/^\d{2,4}$/.test(n)) return;
-
-      if(CONFIG.mode === "demo"){
-        toast("Démo : appel " + n + " (appui long validé).");
-        return;
-      }
-
-      window.location.href = "tel:" + n;
-    }
-
-    // =========================================================
-    // ACK
-    // =========================================================
-    const ACK_PREFIX = "bociteart_ack_v2_";
-    const ACK_SALT = "BoCiteArt|ack|v2";
-
-    function fnv1a(str){
-      let h = 0x811c9dc5;
-      for(let i = 0; i < str.length; i++){
-        h ^= str.charCodeAt(i);
-        h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
-      }
-      return ("00000000" + h.toString(16)).slice(-8);
-    }
-
-    function ackSign(kind, ts){
-      return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
-    }
-
-    function ackGet(kind){
-      const key = ACK_PREFIX + kind;
-      try{
-        const raw = localStorage.getItem(key);
-        if(!raw) return false;
-        const parts = raw.split("|");
-        if(parts.length !== 3) return false;
-        const ok = parts[0] === "1";
-        const ts = parseInt(parts[1], 10);
-        const sig = parts[2];
-        if(!ok || !Number.isFinite(ts)) return false;
-        return sig === ackSign(kind, ts);
-      }catch(e){
-        return false;
-      }
-    }
-
-    function ackSet(kind){
-      const ts = nowTs();
-      localStorage.setItem(ACK_PREFIX + kind, `1|${ts}|${ackSign(kind, ts)}`);
-    }
-
-    function emergencyGate(kind, onOk){
-      if(ackGet(kind)){
-        onOk();
-        return;
-      }
-
-      const title = kind === "112"
-        ? "Urgence 112 — usage responsable"
-        : "Aide 3919 / 119 — usage responsable";
-
-      const body = kind === "112"
-        ? `
+        const body = is112 ? `
           <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
           <div class="box">
             <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone. Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
@@ -1819,8 +2051,7 @@ upgrade-insecure-requests;
             </label>
           </div>
           <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
-        `
-        : `
+        ` : `
           <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
           <div class="box">
             <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone. Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
@@ -1839,1704 +2070,1014 @@ upgrade-insecure-requests;
           <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>
         `;
 
-      openModal(title, body);
+        openModal(title, body);
 
-      setTimeout(() => {
-        const ackBox = $("ackBox");
-        const ackBtn = $("ackBtn");
-        if(!ackBtn) return;
+        setTimeout(()=>{
+          $("ackBtn")?.addEventListener("click", ()=>{
+            if(!$("ackBox")?.checked){
+              return toast("Veuillez cocher la case pour confirmer que vous avez compris.");
+            }
+            ackSet(kind);
+            closeModal();
+            onOk();
+          });
+        }, 0);
+      }
 
-        ackBtn.onclick = () => {
-          if(!ackBox || !ackBox.checked){
-            toast("Veuillez cocher la case pour confirmer que vous avez compris.");
+      function makeLongPress(btn, ringEl, ms, onTrigger){
+        if(!btn || !ringEl) return;
+
+        let raf = null;
+        let start = null;
+        let holding = false;
+        let fired = false;
+        const r = parseFloat(ringEl.getAttribute("r") || "35");
+        const circ = 2 * Math.PI * r;
+
+        ringEl.style.strokeDasharray = String(circ);
+        ringEl.style.strokeDashoffset = String(circ);
+
+        function stop(){
+          holding = false;
+          start = null;
+          fired = false;
+          ringEl.style.strokeDashoffset = String(circ);
+          if(raf) cancelAnimationFrame(raf);
+          raf = null;
+        }
+
+        function tick(ts){
+          if(!holding) return;
+          if(start === null) start = ts;
+          const p = Math.min(1, (ts - start) / ms);
+          ringEl.style.strokeDashoffset = String(circ * (1 - p));
+          if(p >= 1){
+            if(fired) return;
+            fired = true;
+            stop();
+            onTrigger();
             return;
           }
-          ackSet(kind);
-          closeModal();
-          onOk();
-        };
-      }, 0);
-    }
+          raf = requestAnimationFrame(tick);
+        }
 
-    function makeLongPress(btn, ringEl, ms, onTrigger){
-      if(!btn || !ringEl) return;
+        btn.addEventListener("pointerdown", (e)=>{
+          e.preventDefault();
+          if(holding) return;
+          holding = true;
+          fired = false;
+          raf = requestAnimationFrame(tick);
+        });
 
-      let raf = null;
-      let start = null;
-      let holding = false;
-      let fired = false;
+        ["pointerup","pointerleave","pointercancel"].forEach(ev => {
+          btn.addEventListener(ev, stop);
+        });
 
-      const r = parseFloat(ringEl.getAttribute("r") || "35");
-      const circ = 2 * Math.PI * r;
-
-      ringEl.style.strokeDasharray = String(circ);
-      ringEl.style.strokeDashoffset = String(circ);
-
-      function stop(){
-        holding = false;
-        start = null;
-        fired = false;
-        ringEl.style.strokeDashoffset = String(circ);
-        if(raf) cancelAnimationFrame(raf);
-        raf = null;
+        btn.addEventListener("contextmenu", (e)=> e.preventDefault());
       }
 
-      function tick(ts){
-        if(!holding) return;
-        if(start === null) start = ts;
+      makeLongPress($("btn112"), $("ring112"), 1800, ()=>{
+        emergencyGate("112", ()=> callPhone("112"));
+      });
 
-        const p = Math.min(1, (ts - start) / ms);
-        ringEl.style.strokeDashoffset = String(circ * (1 - p));
-
-        if(p >= 1){
-          if(fired) return;
-          fired = true;
-          stop();
-          onTrigger();
+      makeLongPress($("btnSos"), $("ringSos"), 2000, ()=>{
+        if(!sosNumber){
+          openGenericModal(CHOICE_MODAL);
           return;
         }
-
-        raf = requestAnimationFrame(tick);
-      }
-
-      btn.addEventListener("pointerdown", (e) => {
-        e.preventDefault();
-        if(holding) return;
-        holding = true;
-        fired = false;
-        raf = requestAnimationFrame(tick);
+        emergencyGate(sosNumber, ()=> callPhone(sosNumber));
       });
 
-      ["pointerup","pointerleave","pointercancel"].forEach(evt => {
-        btn.addEventListener(evt, stop);
-      });
-
-      btn.addEventListener("contextmenu", (e) => e.preventDefault());
-    }
-
-    // =========================================================
-    // CHOICE MODAL
-    // =========================================================
-    const choice = $("choice");
-    let sosNumber = null;
-
-    function openChoice(){
-      window.__lastFocus = document.activeElement;
-      choice.classList.add("open");
-      choice.setAttribute("aria-hidden", "false");
-      lockScroll(true);
-    }
-
-    function closeChoice(){
-      choice.classList.remove("open");
-      choice.setAttribute("aria-hidden", "true");
-      lockScroll(false);
-      if(window.__lastFocus && window.__lastFocus.focus){
-        window.__lastFocus.focus();
-      }
-      window.__lastFocus = null;
-    }
-
-    on($("choiceClose"), "click", closeChoice);
-    on($("choiceX"), "click", closeChoice);
-
-    document.querySelectorAll("#choice .choiceBtn[data-pick]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        sosNumber = btn.getAttribute("data-pick");
-        const lab = $("sosLabel");
-        if(lab) lab.textContent = sosNumber;
-        closeChoice();
-      });
-    });
-
-    makeLongPress($("btn112"), $("ring112"), 1800, () => {
-      emergencyGate("112", () => callPhone("112"));
-    });
-
-    makeLongPress($("btnSos"), $("ringSos"), 2000, () => {
-      if(!sosNumber){
-        openChoice();
-        return;
-      }
-      emergencyGate(sosNumber, () => callPhone(sosNumber));
-    });
-
-    // =========================================================
-    // TICKER
-    // =========================================================
-    const tickerItems = [
-      {
-        title: "Annonce partenaire (démo)",
-        subtitle: "Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels",
-        img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
-      },
-      {
-        title: "Mairie (démo) : informations & agenda",
-        subtitle: "Accès gratuit citoyen pour alertes d’intérêt général • règle d’accès 16h (pub) • sous réserve de disponibilité",
-        img: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
-      }
-    ];
-
-    let tickerIdx = 0;
-
-    function setTicker(i){
-      const it = tickerItems[i];
-      $("tickerImg").src = it.img;
-      $("tickerTitleA").textContent = it.title;
-      $("tickerSubA").textContent = it.subtitle || "";
-      $("tickerTitleB").textContent = it.title;
-      $("tickerSubB").textContent = it.subtitle || "";
-    }
-
-    setTicker(0);
-    setInterval(() => {
-      tickerIdx = (tickerIdx + 1) % tickerItems.length;
-      setTicker(tickerIdx);
-    }, 10000);
-
-    // =========================================================
-    // PUB / CALENDAR
-    // =========================================================
-    const PUB_STORE_KEY = "bociteart_pubBookings_v3";
-    let calYear = new Date().getFullYear();
-    let calMonth = new Date().getMonth();
-
-    function loadBookings(){
-      return readStorage(PUB_STORE_KEY, {});
-    }
-
-    function saveBookings(obj){
-      writeStorage(PUB_STORE_KEY, obj);
-    }
-
-    function getDayBookings(db, y, m, d){
-      const keyYM = ym(y, m);
-      const keyYMD = ymd(y, m, d);
-      return (db[keyYM] && db[keyYM][keyYMD]) ? db[keyYM][keyYMD] : [];
-    }
-
-    function setDayBookings(db, y, m, d, list){
-      const keyYM = ym(y, m);
-      const keyYMD = ymd(y, m, d);
-      if(!db[keyYM]) db[keyYM] = {};
-      db[keyYM][keyYMD] = list;
-    }
-
-    function isBefore16h(){
-      return new Date().getHours() < 16;
-    }
-
-    function normalizeBooking(raw){
-      return {
-        id: raw.id || ("pub_" + nowTs() + "_" + Math.random().toString(36).slice(2,7)),
-        date: raw.date || "",
-        advertiserType: raw.advertiserType || "merchant",
-        advertiserName: raw.advertiserName || "Annonceur",
-        who: raw.who || raw.advertiserName || "Annonceur",
-        format: raw.format || "banner_3cm",
-        paymentMode: raw.paymentMode || "psp",
-        paymentStatus: raw.paymentStatus || "draft",
-        invoiceDays: Number(raw.invoiceDays || 0),
-        packType: raw.packType || "single",
-        qty: Math.max(1, Number(raw.qty || 1)),
-        unitPriceHt: Number(raw.unitPriceHt || 50),
-        basePriceHt: Number(raw.basePriceHt || 50),
-        boldRequested: !!raw.boldRequested,
-        boldPaid: !!raw.boldPaid,
-        boldPriceTtc: Number(raw.boldPriceTtc || 0),
-        txt: raw.txt || "",
-        note: raw.note || "",
-        ts_iso: raw.ts_iso || new Date().toISOString(),
-        ts_fr: raw.ts_fr || new Date().toLocaleString("fr-FR")
-      };
-    }
-
-    function computeAdPrice(format, packType, qty, boldRequested){
-      const safeQty = Math.max(1, Number(qty || 1));
-      let basePriceHt = 0;
-
-      if(packType === "pack5"){
-        basePriceHt = 200;
-      }else{
-        basePriceHt = safeQty * 50;
-      }
-
-      const boldPriceTtc = boldRequested ? 4 : 0;
-      const totalShown = basePriceHt + boldPriceTtc;
-
-      return {
-        format,
-        packType,
-        qty: safeQty,
-        basePriceHt,
-        boldPriceTtc,
-        totalShown
-      };
-    }
-
-    function bookingBlocksNewReservation(b){
-      if(b.advertiserType !== "city") return false;
-      if(b.paymentMode !== "invoice") return false;
-      if(b.invoiceDays <= 30) return false;
-      return b.paymentStatus !== "paid" && b.paymentStatus !== "published";
-    }
-
-    function canPublishBooking(b){
-      const bk = normalizeBooking(b);
-      if(bookingBlocksNewReservation(bk)) return false;
-      return bk.paymentStatus === "paid" || bk.paymentStatus === "published";
-    }
-
-    function bookingUseBold(b){
-      const bk = normalizeBooking(b);
-      return bk.boldRequested && bk.boldPaid;
-    }
-
-    function countBookingsByAdvertiser(list, advertiserName){
-      return (list || []).filter(it => normalizeBooking(it).advertiserName === advertiserName).length;
-    }
-
-    function canReserveOnDay(list, advertiserName){
-      const existingCount = countBookingsByAdvertiser(list, advertiserName);
-      if(isBefore16h()) return existingCount < 1;
-      return list.length < CONFIG.pubMaxPerDay;
-    }
-
-    function findBlockingUnpaidForAdvertiser(advertiserName, advertiserType){
-      const db = loadBookings();
-      for(const monthKey of Object.keys(db || {})){
-        const monthObj = db[monthKey] || {};
-        for(const dayKey of Object.keys(monthObj || {})){
-          const arr = monthObj[dayKey] || [];
-          for(const raw of arr){
-            const b = normalizeBooking(raw);
-            if(
-              b.advertiserName === advertiserName &&
-              b.advertiserType === advertiserType &&
-              bookingBlocksNewReservation(b)
-            ){
-              return b;
-            }
-          }
-        }
-      }
-      return null;
-    }
-
-    function addBooking(y, m, d, booking){
-      const db = loadBookings();
-      const dayList = getDayBookings(db, y, m, d).map(normalizeBooking);
-      const bk = normalizeBooking(booking);
-
-      if(dayList.length >= CONFIG.pubMaxPerDay){
-        return { ok:false, message:"Journée complète : 10 publicités déjà réservées." };
-      }
-
-      const blocking = findBlockingUnpaidForAdvertiser(bk.advertiserName, bk.advertiserType);
-      if(blocking){
-        return {
-          ok:false,
-          message:"Réservation bloquée : une publicité précédente de cet annonceur est impayée au-delà du délai autorisé."
-        };
-      }
-
-      if(!canReserveOnDay(dayList, bk.advertiserName)){
-        return {
-          ok:false,
-          message:"Avant 16h : 1 seule publicité par commerçant et par jour. Après 16h, réservation supplémentaire possible s’il reste des places."
-        };
-      }
-
-      dayList.push(bk);
-      setDayBookings(db, y, m, d, dayList);
-      saveBookings(db);
-      return { ok:true, booking:bk };
-    }
-
-    function resetAllBookings(){
-      removeStorage(PUB_STORE_KEY);
-    }
-
-    function daySlotsUsed(obj, y, m, d){
-      return getDayBookings(obj, y, m, d).length;
-    }
-
-    function isFull(obj, y, m, d){
-      return daySlotsUsed(obj, y, m, d) >= CONFIG.pubMaxPerDay;
-    }
-
-    function buildCalendarHTML(){
-      const first = new Date(calYear, calMonth, 1);
-      const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
-      const labels = ["L","M","M","J","V","S","D"];
-
-      return `
-        <div class="calWrap">
-          <div class="calTop">
-            <div style="font-weight:900;">Calendrier publicités (démo) — ${escapeHtml(monthName)}</div>
-            <div class="mini">
-              <button class="calBtn" id="calPrev" type="button">◀</button>
-              <button class="calBtn" id="calNext" type="button">▶</button>
+      $("openSecure")?.addEventListener("click", ()=>{
+        openModal("Compte sécurisé + assistance téléphone", `
+          <div class="box">
+            <div style="font-weight:900;">Abonnement optionnel : <strong>2,99 € / mois</strong></div>
+            <div class="muted" style="margin-top:6px;">
+              Objectif : aider la récupération de compte et faciliter l’accompagnement par les proches
+              (famille, aidants, parents, grands-parents, enfants…), notamment en cas d’oubli,
+              de désorientation, de difficulté temporaire ou de situation de fragilité.
             </div>
           </div>
 
-          <div class="muted">
-            Règles :
-            <br><strong>10 publicités maximum par jour</strong>
-            <br>Avant <strong>16h</strong> : <strong>1 publicité maximum par commerçant et par jour</strong>
-            <br>Après <strong>16h</strong> : si des places restent libres, un commerçant ayant déjà réservé peut reprendre un slot
-            <br>Sans paiement validé : <strong>pas de diffusion</strong>
+          <div class="box" style="margin-top:12px;">
+            <div style="font-weight:900;">Sans abonnement</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>L’utilisateur accepte le risque : <strong>perte / vol / changement de téléphone</strong> = perte d’accès possible.</li>
+              <li>(Démo) Les données peuvent être uniquement locales (sur le téléphone).</li>
+              <li>Pas de récupération assistée, pas d’accompagnement renforcé, pas de relais d’alerte.</li>
+            </ul>
           </div>
 
-          <div class="calGrid" style="margin-top:10px;">
-            ${labels.map(x => `<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
+          <div class="box" style="margin-top:12px;">
+            <div style="font-weight:900;">Avec abonnement</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li><strong>Sauvegarde</strong> & récupération du compte (selon configuration).</li>
+              <li><strong>Assistance</strong> : aide à la récupération / réactivation.</li>
+              <li><strong>Alerte batterie faible accompagnée</strong> : possibilité d’enregistrer <strong>2 numéros de confiance</strong> dans le forfait.</li>
+              <li><strong>Déclenchement visé</strong> : si le téléphone de la personne suivie descend à <strong>5 % de batterie</strong> (si le support technique le permet).</li>
+              <li><strong>1er relais</strong> : une alerte / un SMS est envoyé au <strong>1er numéro</strong> enregistré pour l’informer que le téléphone de la personne suivie est presque déchargé.</li>
+              <li><strong>But</strong> : permettre à ce proche d’appeler la personne concernée pour lui rappeler de <strong>rebrancher son téléphone</strong>.</li>
+              <li><strong>2e relais de sécurité</strong> : si le 1er proche n’agit pas ou ne répond pas dans un délai prévu de <strong>15 minutes</strong> (selon paramétrage et possibilités techniques), une alerte / un SMS peut être envoyé au <strong>2e numéro</strong> enregistré.</li>
+              <li><strong>Chaîne de vigilance</strong> : le 2e proche peut alors prendre le relais et prévenir à son tour la personne concernée.</li>
+              <li><strong>Géolocalisation ponctuelle</strong> uniquement si autorisée par l’utilisateur.</li>
+              <li><strong>SMS aux 2 numéros de confiance</strong> uniquement si activés et configurés par l’utilisateur / le titulaire du forfait.</li>
+              <li><strong>Sonnerie / vibration à distance</strong> : seulement si cette fonction est techniquement possible sur l’appareil et la version utilisée.</li>
+            </ul>
+            <div class="muted" style="margin-top:8px;">
+              Ces fonctions sont opérées par un <strong>prestataire serveur tiers</strong> (selon version LIVE).
+              Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> et non de résultat :
+              cela signifie que la remontée d’alerte dépend notamment du téléphone, du niveau d’autorisation,
+              du réseau, du système d’exploitation, du prestataire SMS, et de la configuration active du compte.
+            </div>
           </div>
 
-          <div class="calGrid" id="calDays"></div>
-
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
-            <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+          <div class="box" style="margin-top:12px;">
+            <div style="font-weight:900;">Cas d’usage visé</div>
+            <div class="muted" style="margin-top:6px;">
+              Exemple : une personne ayant souscrit l’option peut renseigner le numéro d’un proche âgé,
+              isolé ou ayant quelques troubles de mémoire. Si le téléphone de cette personne approche
+              de la panne batterie, le système tente d’alerter le proche principal, puis un proche secondaire
+              si nécessaire, afin d’éviter que la personne ne reste sans téléphone joignable.
+            </div>
           </div>
-        </div>
-      `;
-    }
 
-    function buildDayCellsHTML(y, m){
-      const first = new Date(y, m, 1);
-      const last = new Date(y, m + 1, 0);
-      const totalDays = last.getDate();
-      const startOffset = (first.getDay() + 6) % 7;
-      const db = loadBookings();
-      let html = "";
+          <div class="box" style="margin-top:12px;">
+            <div style="font-weight:900;">Important</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Service <strong>optionnel</strong>, activable / désactivable.</li>
+              <li>Les autorisations sensibles (ex. localisation) restent <strong>contrôlées par le téléphone</strong>.</li>
+              <li>Le fonctionnement dépend des <strong>autorisations accordées</strong>, du <strong>réseau</strong>, de la <strong>batterie</strong> restante, et de la <strong>compatibilité technique</strong>.</li>
+              <li>Cette option est une <strong>aide d’accompagnement</strong>, pas une garantie absolue de surveillance continue.</li>
+              <li>En cas d’urgence : utiliser <strong>112</strong>.</li>
+            </ul>
+          </div>
 
-      for(let i = 0; i < startOffset; i++){
-        html += `<div></div>`;
+          <div class="muted" style="margin-top:10px;">
+            (Démo) Ici on présente l’offre. En LIVE : activation, contrat, consentements,
+            choix des numéros de confiance, délais, conditions applicables et paramétrage détaillé.
+          </div>
+        `);
+      });
+
+      const PUB_STORE_KEY = "bociteart_pubBookings_v2";
+      const FEE_STORE_KEY = "bociteart_fee_demo_v1";
+      const CITIZEN_WALLET_KEY = "bociteart_citizen_wallet_v1";
+      const SCHOOL_WALLET_KEY = "bociteart_school_wallet_v1";
+      const SPORT_WALLET_KEY = "bociteart_sport_wallet_v1";
+      const CITIZEN_META_KEY = "bociteart_citizen_wallet_meta_v1";
+      const SCHOOL_STORE_KEY = "bociteart_school_v1";
+      const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
+      const SPORT_SUPPORT_KEY = "bociteart_sport_support_v1";
+      const SPORT_DEMO_MONTH_KEY = "bociteart_sport_month_demo_v1";
+
+      function loadCitizenWallet(){ return readStorage(CITIZEN_WALLET_KEY, { or: 37 }); }
+      function saveCitizenWallet(v){ writeStorage(CITIZEN_WALLET_KEY, v); }
+
+      function loadSchoolWallet(){ return readStorage(SCHOOL_WALLET_KEY, { jaune: 0 }); }
+      function saveSchoolWallet(v){ writeStorage(SCHOOL_WALLET_KEY, v); }
+
+      function loadSportWallet(){ return readStorage(SPORT_WALLET_KEY, { vert: 0 }); }
+      function saveSportWallet(v){ writeStorage(SPORT_WALLET_KEY, v); }
+
+      function loadCitizenMeta(){
+        const def = { firstEarnTs: Date.now(), expireTs: Date.now() + oneYearMs, lastTx: null };
+        return readStorage(CITIZEN_META_KEY, def);
+      }
+      function saveCitizenMeta(v){ writeStorage(CITIZEN_META_KEY, v); }
+
+      function loadMairieMsg(){ return readStorage(MAIRIE_STORE_KEY, {}); }
+      function saveMairieMsg(v){ writeStorage(MAIRIE_STORE_KEY, v); }
+
+      function loadSchoolState(){ return readStorage(SCHOOL_STORE_KEY, {}); }
+      function saveSchoolState(v){ writeStorage(SCHOOL_STORE_KEY, v); }
+
+      function loadPubBookings(){ return readStorage(PUB_STORE_KEY, {}); }
+      function savePubBookings(v){ writeStorage(PUB_STORE_KEY, v); }
+
+      function loadFeeData(){ return readStorage(FEE_STORE_KEY, {}); }
+      function saveFeeData(v){ writeStorage(FEE_STORE_KEY, v); }
+
+      function loadSportSupport(){
+        return readStorage(SPORT_SUPPORT_KEY, { total: 0, byYear: {}, lastClickYear: null });
+      }
+      function saveSportSupport(v){ writeStorage(SPORT_SUPPORT_KEY, v); }
+
+      function loadSportMonthDemo(){
+        const now = new Date();
+        const month = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
+        return readStorage(SPORT_DEMO_MONTH_KEY, { month, count: 0 });
+      }
+      function saveSportMonthDemo(v){ writeStorage(SPORT_DEMO_MONTH_KEY, v); }
+
+      function fmtEUR(x){
+        return Number(x || 0).toLocaleString("fr-FR", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }) + " €";
       }
 
-      for(let d = 1; d <= totalDays; d++){
-        const used = daySlotsUsed(db, y, m, d);
-        const full = used >= CONFIG.pubMaxPerDay;
-        const cls = full ? "calDay disabled full" : "calDay";
-
-        html += `
-          <button class="${cls}" type="button" data-cal-day="${d}">
-            <div style="font-weight:900;">${d}</div>
-            <div class="muted" style="font-size:11px;margin-top:4px;">${used}/${CONFIG.pubMaxPerDay}</div>
-          </button>
-        `;
+      function feeYM(d = new Date()){
+        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
       }
 
-      return html;
-    }
-
-    function openRecapModal(y, m){
-      const db = loadBookings();
-      const keyYM = ym(y, m);
-      const monthObj = db[keyYM] || {};
-      let csv = "date;annonceur;type;format;statut_paiement;mode_paiement;jours_facture;gras_demande;gras_paye;texte;horodatage_fr\n";
-
-      Object.keys(monthObj).sort().forEach(dayKey => {
-        (monthObj[dayKey] || []).forEach(raw => {
-          const it = normalizeBooking(raw);
-          csv += [
-            it.date,
-            it.advertiserName,
-            it.advertiserType,
-            it.format,
-            it.paymentStatus,
-            it.paymentMode,
-            it.invoiceDays,
-            it.boldRequested ? "oui" : "non",
-            it.boldPaid ? "oui" : "non",
-            (it.txt || "").replace(/;/g, ","),
-            it.ts_fr
-          ].join(";") + "\n";
-        });
-      });
-
-      openModal("Récap mensuel (démo) — publicités", `
-        <div class="box">
-          <div style="font-weight:900;">Mois : ${escapeHtml(keyYM)}</div>
-        </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
-          <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
-        </div>
-      `);
-
-      setTimeout(() => {
-        on($("copyCsv"), "click", async () => {
-          try{
-            await navigator.clipboard.writeText(csv);
-            toast("CSV copié.");
-          }catch(e){
-            toast("Copie impossible sur ce navigateur.");
-          }
-        });
-
-        on($("copyJson"), "click", async () => {
-          try{
-            await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2));
-            toast("JSON copié.");
-          }catch(e){
-            toast("Copie impossible sur ce navigateur.");
-          }
-        });
-      }, 0);
-    }
-
-    function openBookingModalForDay(y, m, d){
-      const dateStr = ymd(y, m, d);
-
-      openModal("Réserver une publicité (démo)", `
-        <div class="box">
-          <div style="font-weight:900;">Date : ${escapeHtml(dateStr)}</div>
-          <div class="muted" style="margin-top:6px;">
-            Avant 16h : 1 seule publicité par commerçant et par jour. Après 16h : réservation supplémentaire possible si la journée n’est pas complète.
-          </div>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;">Type d’annonceur</div>
-          <select class="miniField" id="pubBookAdvertiserType">
-            <option value="merchant">Commerçant</option>
-            <option value="city">Mairie / collectivité</option>
-          </select>
-
-          <div style="margin-top:10px;font-weight:900;">Nom de l’annonceur</div>
-          <input class="miniField" id="pubBookAdvertiserName" placeholder="Ex : Boulangerie Croquet">
-
-          <div style="margin-top:10px;font-weight:900;">Format</div>
-          <select class="miniField" id="pubBookFormat">
-            <option value="banner_3cm">Ligne 3 cm</option>
-            <option value="banner_1cm">Ligne 1 cm</option>
-          </select>
-
-          <div style="margin-top:10px;font-weight:900;">Mode de règlement</div>
-          <select class="miniField" id="pubBookPaymentMode">
-            <option value="psp">PSP / carte bancaire</option>
-            <option value="invoice">Devis / facture / virement</option>
-          </select>
-
-          <div style="margin-top:10px;font-weight:900;">État du paiement</div>
-          <select class="miniField" id="pubBookPaymentStatus">
-            <option value="pending">En attente</option>
-            <option value="paid">Payée</option>
-            <option value="published">Publiée</option>
-          </select>
-
-          <div style="margin-top:10px;font-weight:900;">Jours depuis facture</div>
-          <input class="miniField" id="pubBookInvoiceDays" type="number" min="0" step="1" value="0">
-
-          <div style="margin-top:10px;font-weight:900;">Type d’achat</div>
-          <select class="miniField" id="pubBookPackType">
-            <option value="single">1 publicité</option>
-            <option value="pack5">Pack 5 publicités</option>
-          </select>
-
-          <div style="margin-top:10px;font-weight:900;">Texte bandeau 1 cm (si utilisé)</div>
-          <input class="miniField" id="pubBookText" placeholder="Ex : Offre spéciale aujourd’hui">
-
-          <label style="display:flex;align-items:center;gap:8px;margin-top:10px;">
-            <input type="checkbox" id="pubBookBoldRequested">
-            <span>Demander le gras (+4 € TTC)</span>
-          </label>
-
-          <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-            <input type="checkbox" id="pubBookBoldPaid">
-            <span>Gras payé</span>
-          </label>
-
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-            <button class="choiceBtn" id="pubBookSaveBtn" type="button">💾 Réserver</button>
-          </div>
-        </div>
-      `);
-
-      setTimeout(() => {
-        on($("pubBookSaveBtn"), "click", () => {
-          const advName = String($("pubBookAdvertiserName")?.value || "").trim();
-          if(!advName){
-            toast("Saisis le nom de l’annonceur.");
-            return;
-          }
-
-          const pricing = computeAdPrice(
-            $("pubBookFormat")?.value || "banner_3cm",
-            $("pubBookPackType")?.value || "single",
-            1,
-            !!$("pubBookBoldRequested")?.checked
-          );
-
-          const result = addBooking(y, m, d, {
-            date: dateStr,
-            advertiserType: $("pubBookAdvertiserType")?.value || "merchant",
-            advertiserName: advName,
-            who: advName,
-            format: $("pubBookFormat")?.value || "banner_3cm",
-            paymentMode: $("pubBookPaymentMode")?.value || "psp",
-            paymentStatus: $("pubBookPaymentStatus")?.value || "pending",
-            invoiceDays: Number($("pubBookInvoiceDays")?.value || 0),
-            packType: $("pubBookPackType")?.value || "single",
-            qty: 1,
-            unitPriceHt: 50,
-            basePriceHt: pricing.basePriceHt,
-            boldRequested: !!$("pubBookBoldRequested")?.checked,
-            boldPaid: !!$("pubBookBoldPaid")?.checked,
-            boldPriceTtc: pricing.boldPriceTtc,
-            txt: String($("pubBookText")?.value || "").trim(),
-            note: "Réservation calendrier démo"
-          });
-
-          if(!result.ok){
-            toast(result.message || "Réservation refusée.");
-            return;
-          }
-
-          renderTape();
-          renderLargeAds();
-          openTicker();
-          toast("Réservation enregistrée (démo).");
-        });
-      }, 0);
-    }
-
-    function renderCalendarInto(containerId){
-      const host = $(containerId);
-      if(!host) return;
-
-      host.innerHTML = buildCalendarHTML();
-      const calDays = $("calDays");
-      if(calDays) calDays.innerHTML = buildDayCellsHTML(calYear, calMonth);
-
-      on($("calPrev"), "click", () => {
-        calMonth--;
-        if(calMonth < 0){
-          calMonth = 11;
-          calYear--;
-        }
-        renderCalendarInto(containerId);
-      });
-
-      on($("calNext"), "click", () => {
-        calMonth++;
-        if(calMonth > 11){
-          calMonth = 0;
-          calYear++;
-        }
-        renderCalendarInto(containerId);
-      });
-
-      on($("calRecap"), "click", () => openRecapModal(calYear, calMonth));
-      on($("calReset"), "click", () => {
-        if(confirm("Réinitialiser toutes les réservations publicitaires (démo) sur ce téléphone ?")){
-          resetAllBookings();
-          renderTape();
-          renderLargeAds();
-          renderCalendarInto(containerId);
-          toast("Réservations pub réinitialisées (démo).");
-        }
-      });
-
-      host.querySelectorAll("[data-cal-day]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const d = Number(btn.getAttribute("data-cal-day"));
-          const db = loadBookings();
-          if(isFull(db, calYear, calMonth, d)){
-            toast("Journée complète : 10 publicités déjà réservées.");
-            return;
-          }
-          openBookingModalForDay(calYear, calMonth, d);
-        });
-      });
-    }
-
-    function openTicker(){
-      openModal("Publicités & visibilité (ticker)", `
-        <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
-        <div class="box">
-          <strong>Cadre :</strong> réservation plafonnée, gestion par calendrier, paiement requis avant diffusion, filtre commerçant / mairie, rareté à 10 publicités par jour.
-        </div>
-        <div id="calHost"></div>
-      `);
-
-      setTimeout(() => renderCalendarInto("calHost"), 0);
-    }
-
-    on($("ticker"), "click", openTicker);
-
-    // =========================================================
-    // TAPE ADS
-    // =========================================================
-    window.tapeAdsFallback = [
-      { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-      { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
-      { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
-      { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
-    ];
-
-    function getEligibleTapeAdsForToday(){
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = now.getMonth();
-      const d = now.getDate();
-      const db = loadBookings();
-      const list = getDayBookings(db, y, m, d).map(normalizeBooking);
-
-      return list
-        .filter(b => b.format === "banner_1cm")
-        .filter(canPublishBooking)
-        .map(b => ({
-          txt: b.txt && String(b.txt).trim() ? b.txt : `${b.advertiserName} • publicité validée`,
-          bold: bookingUseBold(b),
-          advertiserType: b.advertiserType
-        }));
-    }
-
-    function renderTape(){
-      const track = $("sportTapeTrack");
-      if(!track) return;
-
-      let ads = getEligibleTapeAdsForToday();
-      if(!ads.length) ads = Array.isArray(window.tapeAdsFallback) ? window.tapeAdsFallback.slice() : [];
-
-      const doubled = ads.concat(ads);
-      track.innerHTML = doubled.map((a) => {
-        const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
-        return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
-      }).join("");
-    }
-
-    function getEligibleLargeAdsForToday(){
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = now.getMonth();
-      const d = now.getDate();
-      const db = loadBookings();
-      const list = getDayBookings(db, y, m, d).map(normalizeBooking);
-
-      return list
-        .filter(b => b.format === "banner_3cm")
-        .filter(canPublishBooking);
-    }
-
-    function renderLargeAds(){
-      const zone = $("largeAdsZone");
-      if(!zone) return;
-
-      const ads = getEligibleLargeAdsForToday();
-      if(!ads.length){
-        zone.innerHTML = "Espace publicité locale";
-        return;
+      function calcFeeFromSales(eur){
+        const v = Number(eur || 0);
+        if(!Number.isFinite(v) || v <= 0) return 0;
+        return Math.floor(v / 10) * 0.18;
       }
 
-      const ad = ads[Math.floor(Math.random() * ads.length)];
-      zone.innerHTML = `
-        <div style="width:100%">
-          <div style="font-size:18px;font-weight:900;">
-            ${escapeHtml(ad.advertiserName)}
-          </div>
-          <div style="margin-top:4px;font-weight:600;">
-            ${escapeHtml(ad.txt || "Offre spéciale aujourd’hui")}
-          </div>
-        </div>
-      `;
-    }
+      function initFeeUiInModal(){
+        const input = $("feeInputSales");
+        const outSales = $("feeSalesOut");
+        const outFee = $("feeOut");
+        const btnAdd = $("feeAddBtn");
+        const btnReset = $("feeResetBtn");
 
-    renderTape();
+        if(!input || !outSales || !outFee || !btnAdd || !btnReset) return;
 
-    // =========================================================
-    // MAIRIE TICKER
-    // =========================================================
-    const MAIRIE_STORE_KEY = "bociteart_mairie_msg_v2";
+        const ym = feeYM();
+        const db = loadFeeData();
+        const current = db[ym] || { sales: 0 };
 
-    function mairieLoad(){
-      return readStorage(MAIRIE_STORE_KEY, {});
-    }
+        outSales.textContent = fmtEUR(current.sales || 0);
+        outFee.textContent = fmtEUR(calcFeeFromSales(current.sales || 0));
+        input.value = String(current.sales || 0);
 
-    function mairieSave(obj){
-      writeStorage(MAIRIE_STORE_KEY, obj);
-    }
-
-    function renderMairieTicker(){
-      const track = $("mairieTickerTrack");
-      if(!track) return;
-
-      const db = mairieLoad();
-      const msg = (db.message && String(db.message).trim())
-        ? String(db.message).trim()
-        : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-
-      track.innerHTML = `<span>${escapeHtml(msg)}</span><span>${escapeHtml(msg)}</span>`;
-    }
-
-    renderMairieTicker();
-
-    // =========================================================
-    // WALLET / STORAGE
-    // =========================================================
-    const FEE_STORE_KEY = "bociteart_fee_demo_v2";
-    const CITIZEN_WALLET_KEY = "bociteart_citizen_wallet_v2";
-    const SCHOOL_WALLET_KEY = "bociteart_school_wallet_v2";
-    const SPORT_WALLET_KEY = "bociteart_sport_wallet_v2";
-    const CITIZEN_META_KEY = "bociteart_citizen_wallet_meta_v2";
-
-    function loadCitizenWallet(){ return readStorage(CITIZEN_WALLET_KEY, { or:37 }); }
-    function saveCitizenWallet(v){ writeStorage(CITIZEN_WALLET_KEY, v); }
-
-    function loadSchoolWallet(){ return readStorage(SCHOOL_WALLET_KEY, { jaune:0 }); }
-    function saveSchoolWallet(v){ writeStorage(SCHOOL_WALLET_KEY, v); }
-
-    function loadSportWallet(){ return readStorage(SPORT_WALLET_KEY, { vert:0 }); }
-    function saveSportWallet(v){ writeStorage(SPORT_WALLET_KEY, v); }
-
-    function loadCitizenMeta(){
-      const fallback = { firstEarnTs: nowTs(), expireTs: nowTs() + CONFIG.oneYearMs, lastTx:null };
-      return readStorage(CITIZEN_META_KEY, fallback);
-    }
-
-    function saveCitizenMeta(v){
-      writeStorage(CITIZEN_META_KEY, v);
-    }
-
-    function ensureCitizenMeta(){
-      const wallet = loadCitizenWallet();
-      const meta = loadCitizenMeta();
-
-      if(Number(wallet.or || 0) > 0 && !meta.firstEarnTs){
-        const now = nowTs();
-        meta.firstEarnTs = now;
-        meta.expireTs = now + CONFIG.oneYearMs;
-      }
-
-      saveCitizenMeta(meta);
-      return meta;
-    }
-
-    function walletAdd(key, field, delta){
-      let data;
-      if(key === CITIZEN_WALLET_KEY) data = loadCitizenWallet();
-      else if(key === SCHOOL_WALLET_KEY) data = loadSchoolWallet();
-      else data = loadSportWallet();
-
-      data[field] = Math.max(0, Number(data[field] || 0) + Number(delta || 0));
-
-      if(key === CITIZEN_WALLET_KEY) saveCitizenWallet(data);
-      if(key === SCHOOL_WALLET_KEY) saveSchoolWallet(data);
-      if(key === SPORT_WALLET_KEY) saveSportWallet(data);
-
-      return data[field];
-    }
-
-    function feeYM(d = new Date()){
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, "0");
-      return `${y}-${m}`;
-    }
-
-    function feeLoad(){
-      return readStorage(FEE_STORE_KEY, {});
-    }
-
-    function feeSave(obj){
-      writeStorage(FEE_STORE_KEY, obj);
-    }
-
-    function calcFeeFromSales(eur){
-      const v = Number(eur || 0);
-      if(!Number.isFinite(v) || v <= 0) return 0;
-      const tranches = Math.floor(v / 10);
-      return tranches * 0.18;
-    }
-
-    function initFeeUiInModal(){
-      const input = $("feeInputSales");
-      const outSales = $("feeSalesOut");
-      const outFee = $("feeOut");
-      const btnAdd = $("feeAddBtn");
-      const btnReset = $("feeResetBtn");
-      const resetClient = $("walletClientReset");
-      const outClient = $("citizenCoinBalance");
-
-      if(outClient) outClient.textContent = Number(loadCitizenWallet().or || 0);
-
-      if(resetClient){
-        resetClient.onclick = () => {
-          saveCitizenWallet({ or:0 });
-          if(outClient) outClient.textContent = "0";
+        btnAdd.onclick = ()=>{
+          const v = Number(input.value || 0);
+          if(!Number.isFinite(v) || v < 0) return toast("Montant invalide.");
+          const next = loadFeeData();
+          next[ym] = { sales: v, ts_fr: new Date().toLocaleString("fr-FR") };
+          saveFeeData(next);
+          outSales.textContent = fmtEUR(v);
+          outFee.textContent = fmtEUR(calcFeeFromSales(v));
+          toast("Suivi mis à jour (démo).");
         };
-      }
 
-      if(!input || !outSales || !outFee || !btnAdd || !btnReset) return;
-
-      const ymKey = feeYM();
-      const db = feeLoad();
-      const cur = db[ymKey] || { sales:0 };
-
-      outSales.textContent = fmtEUR(cur.sales || 0);
-      outFee.textContent = fmtEUR(calcFeeFromSales(cur.sales || 0));
-      input.value = String(cur.sales || 0);
-
-      btnAdd.onclick = () => {
-        const v = Number(input.value || 0);
-        if(!Number.isFinite(v) || v < 0){
-          toast("Montant invalide.");
-          return;
-        }
-
-        const db2 = feeLoad();
-        db2[ymKey] = { sales:v, ts_fr:new Date().toLocaleString("fr-FR") };
-        feeSave(db2);
-        outSales.textContent = fmtEUR(v);
-        outFee.textContent = fmtEUR(calcFeeFromSales(v));
-        toast("Suivi mis à jour (démo).");
-      };
-
-      btnReset.onclick = () => {
-        if(confirm("Réinitialiser le suivi du mois (démo) sur ce téléphone ?")){
-          const db2 = feeLoad();
-          delete db2[ymKey];
-          feeSave(db2);
+        btnReset.onclick = ()=>{
+          if(!confirm("Réinitialiser le suivi du mois (démo) sur ce téléphone ?")) return;
+          const next = loadFeeData();
+          delete next[ym];
+          saveFeeData(next);
           input.value = "";
           outSales.textContent = fmtEUR(0);
           outFee.textContent = fmtEUR(0);
           toast("Réinitialisé (démo).");
+        };
+      }
+
+      function pad2(n){ return String(n).padStart(2, "0"); }
+      function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
+      function ym(y,m){ return `${y}-${pad2(m+1)}`; }
+
+      function getDayBookings(obj, y, m, d){
+        const monthKey = ym(y,m);
+        const dateKey = ymd(y,m,d);
+        return (obj[monthKey] && obj[monthKey][dateKey]) ? obj[monthKey][dateKey] : [];
+      }
+
+      function setDayBookings(obj, y, m, d, list){
+        const monthKey = ym(y,m);
+        const dateKey = ymd(y,m,d);
+        if(!obj[monthKey]) obj[monthKey] = {};
+        obj[monthKey][dateKey] = list;
+      }
+
+      function normalizeBooking(raw){
+        return {
+          id: raw.id || ("pub_" + Date.now() + "_" + Math.random().toString(36).slice(2,7)),
+          date: raw.date || "",
+          advertiserType: raw.advertiserType || "merchant",
+          advertiserName: raw.advertiserName || "Annonceur",
+          who: raw.who || raw.advertiserName || "Annonceur",
+          format: raw.format || "banner_3cm",
+          paymentMode: raw.paymentMode || "psp",
+          paymentStatus: raw.paymentStatus || "draft",
+          invoiceDays: Number(raw.invoiceDays || 0),
+          packType: raw.packType || "single",
+          qty: Math.max(1, Number(raw.qty || 1)),
+          unitPriceHt: Number(raw.unitPriceHt || 50),
+          basePriceHt: Number(raw.basePriceHt || 50),
+          boldRequested: !!raw.boldRequested,
+          boldPaid: !!raw.boldPaid,
+          boldPriceTtc: Number(raw.boldPriceTtc || 0),
+          txt: raw.txt || "",
+          note: raw.note || "",
+          ts_iso: raw.ts_iso || new Date().toISOString(),
+          ts_fr: raw.ts_fr || new Date().toLocaleString("fr-FR")
+        };
+      }
+
+      function computeAdPrice(format, packType, qty, boldRequested){
+        const safeQty = Math.max(1, Number(qty || 1));
+        let basePriceHt = 0;
+
+        if(packType === "pack5"){
+          basePriceHt = 200;
+        }else{
+          basePriceHt = safeQty * 50;
         }
-      };
-    }
 
-    // =========================================================
-    // OUVERTURE TUILES
-    // =========================================================
-    function openByKey(key){
-      if(key === "oeuvres"){
-        openModal("Œuvres", `
-          <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (structure)</div>
-          <div class="box"><strong>Cadre :</strong> contenus illustratifs en démo. Les informations (lieux, orientation) dépendent du téléphone et des sources disponibles.</div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>Carte des fresques (quartiers)</li>
-            <li>Fiche œuvre : artiste • mécène • remerciements</li>
-            <li>Scan QR / BLE à proximité</li>
-            <li>Audio : voix féminine douce (lecture des contenus)</li>
-            <li>Mode visite : guidage simple</li>
-            <li>Reconnaissance : bocitecoins selon règles locales</li>
-          </ul>
-          <div class="muted" style="margin-top:10px;">(Démo) Structure présentée à titre de démonstration.</div>
-        `);
-        return;
+        const boldPriceTtc = boldRequested ? 4 : 0;
+
+        return {
+          format,
+          packType,
+          qty: safeQty,
+          basePriceHt,
+          boldPriceTtc,
+          totalShown: basePriceHt + boldPriceTtc
+        };
       }
 
-      // La suite est dans la PARTIE 2
-      openByKeyPart2(key);
-    }
-
-    window.__bociteartOpenByKey = openByKey;
-
-    document.querySelectorAll("[data-open]").forEach(el => {
-      el.addEventListener("click", () => {
-        const key = el.getAttribute("data-open");
-        openByKey(key);
-      });
-    });
-
-    // =========================================================
-    // COMPTE + AIDE
-    // =========================================================
-    on($("openSecure"), "click", () => {
-      openModal("Compte sécurisé + assistance téléphone", `
-        <div class="box">
-          <div style="font-weight:900;">Abonnement optionnel : <strong>2,99 € / mois</strong></div>
-          <div class="muted" style="margin-top:6px;">
-            Objectif : aider la récupération de compte et faciliter l’accompagnement par les proches (famille, aidants, parents, grands-parents, enfants…), notamment en cas d’oubli, de désorientation, de difficulté temporaire ou de situation de fragilité.
-          </div>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;">Sans abonnement</div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>L’utilisateur accepte le risque : <strong>perte / vol / changement de téléphone</strong> = perte d’accès possible.</li>
-            <li>(Démo) Les données peuvent être uniquement locales (sur le téléphone).</li>
-            <li>Pas de récupération assistée, pas d’accompagnement renforcé, pas de relais d’alerte.</li>
-          </ul>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;">Avec abonnement</div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li><strong>Sauvegarde</strong> & récupération du compte (selon configuration).</li>
-            <li><strong>Assistance</strong> : aide à la récupération / réactivation.</li>
-            <li><strong>Alerte batterie faible accompagnée</strong> : possibilité d’enregistrer <strong>2 numéros de confiance</strong> dans le forfait.</li>
-            <li><strong>Déclenchement visé</strong> : si le téléphone de la personne suivie descend à <strong>5 % de batterie</strong> (si le support technique le permet).</li>
-            <li><strong>1er relais</strong> : une alerte / un SMS est envoyé au <strong>1er numéro</strong> enregistré pour l’informer que le téléphone de la personne suivie est presque déchargé.</li>
-            <li><strong>But</strong> : permettre à ce proche d’appeler la personne concernée pour lui rappeler de <strong>rebrancher son téléphone</strong>.</li>
-            <li><strong>2e relais de sécurité</strong> : si le 1er proche n’agit pas ou ne répond pas dans un délai prévu de <strong>15 minutes</strong> (selon paramétrage et possibilités techniques), une alerte / un SMS peut être envoyé au <strong>2e numéro</strong> enregistré.</li>
-            <li><strong>Chaîne de vigilance</strong> : le 2e proche peut alors prendre le relais et prévenir à son tour la personne concernée.</li>
-            <li><strong>Géolocalisation ponctuelle</strong> uniquement si autorisée par l’utilisateur.</li>
-            <li><strong>SMS aux 2 numéros de confiance</strong> uniquement si activés et configurés par l’utilisateur / le titulaire du forfait.</li>
-            <li><strong>Sonnerie / vibration à distance</strong> : seulement si cette fonction est techniquement possible sur l’appareil et la version utilisée.</li>
-          </ul>
-          <div class="muted" style="margin-top:8px;">
-            Ces fonctions sont opérées par un <strong>prestataire serveur tiers</strong> (selon version LIVE). Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> et non de résultat : cela signifie que la remontée d’alerte dépend notamment du téléphone, du niveau d’autorisation, du réseau, du système d’exploitation, du prestataire SMS, et de la configuration active du compte.
-          </div>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;">Cas d’usage visé</div>
-          <div class="muted" style="margin-top:6px;">
-            Exemple : une personne ayant souscrit l’option peut renseigner le numéro d’un proche âgé, isolé ou ayant quelques troubles de mémoire. Si le téléphone de cette personne approche de la panne batterie, le système tente d’alerter le proche principal, puis un proche secondaire si nécessaire, afin d’éviter que la personne ne reste sans téléphone joignable.
-          </div>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;">Important</div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>Service <strong>optionnel</strong>, activable / désactivable.</li>
-            <li>Les autorisations sensibles (ex. localisation) restent <strong>contrôlées par le téléphone</strong>.</li>
-            <li>Le fonctionnement dépend des <strong>autorisations accordées</strong>, du <strong>réseau</strong>, de la <strong>batterie</strong> restante, et de la <strong>compatibilité technique</strong>.</li>
-            <li>Cette option est une <strong>aide d’accompagnement</strong>, pas une garantie absolue de surveillance continue.</li>
-            <li>En cas d’urgence : utiliser <strong>112</strong>.</li>
-          </ul>
-        </div>
-
-        <div class="muted" style="margin-top:10px;">
-          (Démo) Ici on présente l’offre. En LIVE : activation, contrat, consentements, choix des numéros de confiance, délais, conditions applicables et paramétrage détaillé.
-        </div>
-      `);
-    });
-
-    // =========================================================
-    // ADMIN TILE
-    // =========================================================
-    on($("adminTile"), "click", () => {
-      openModal("Accès Admin (structure)", `
-        <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
-        <div class="box">
-          <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité. Les éléments affichés sont une vitrine de structure (démo).
-        </div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
-          <li>Activation / blocage / désactivation</li>
-          <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
-          <li>Suivi interne (litiges) : historique, traçabilité</li>
-        </ul>
-      `);
-    });
-
-    // =========================================================
-    // DAE
-    // =========================================================
-    on($("daeBtn"), "click", () => {
-      openModal("Défibrillateur (DAE)", `
-        <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
-        <div class="box">
-          <strong>Important :</strong> indication indicative dépendant des sources et du téléphone. Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
-        </div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
-          <li>Orientation + guidage</li>
-          <li>Rayon local : 1 à 3 km</li>
-          <li>DAE • pharmacie • hôpital</li>
-          <li>Géolocalisation optionnelle (activation utilisateur)</li>
-        </ul>
-
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
-          <div style="border-radius:14px;overflow:hidden;background:#000;">
-            <iframe width="100%" height="220"
-                    src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
-                    title="Utilisation DAE"
-                    loading="lazy"
-                    referrerpolicy="strict-origin-when-cross-origin"
-                    allowfullscreen></iframe>
-          </div>
-          <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
-          <div class="muted">
-            Ici, la version officielle affichera la carte + fléchage + une ligne d’itinéraire vers le DAE le plus proche.
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
-            <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
-          </div>
-        </div>
-      `);
-
-      setTimeout(() => {
-        on($("daeLocate"), "click", () => toast("Démo : demande de localisation (GPS)."));
-        on($("daeRoute"), "click", () => toast("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche."));
-      }, 0);
-    });
-
-    // =========================================================
-    // SUPPORT SPORT TILE
-    // =========================================================
-    const SPORT_SUPPORT_KEY = "bociteart_sport_support_v2";
-
-    function getCurrentYear(){
-      return new Date().getFullYear();
-    }
-
-    function loadSportSupport(){
-      return readStorage(SPORT_SUPPORT_KEY, { total:0, byYear:{}, lastClickYear:null });
-    }
-
-    function saveSportSupport(v){
-      writeStorage(SPORT_SUPPORT_KEY, v);
-    }
-
-    function refreshSportSupportUi(){
-      const db = loadSportSupport();
-      const y = getCurrentYear();
-      const yearCount = Number((db.byYear && db.byYear[y]) || 0);
-      const totalCount = Number(db.total || 0);
-
-      if($("sportSupportYearCount")) $("sportSupportYearCount").textContent = String(yearCount);
-      if($("sportSupportTotalCount")) $("sportSupportTotalCount").textContent = String(totalCount);
-      if($("sportSupportYearModal")) $("sportSupportYearModal").textContent = String(yearCount);
-      if($("sportSupportTotalModal")) $("sportSupportTotalModal").textContent = String(totalCount);
-    }
-
-    function handleSportSupportClick(){
-      const db = loadSportSupport();
-      const y = getCurrentYear();
-
-      if(Number(db.lastClickYear) === y){
-        toast("Votre soutien pour cette année est déjà enregistré. Merci.");
-        return;
+      function bookingBlocksNewReservation(b){
+        if(b.advertiserType !== "city") return false;
+        if(b.paymentMode !== "invoice") return false;
+        if(b.invoiceDays <= 30) return false;
+        return b.paymentStatus !== "paid" && b.paymentStatus !== "published";
       }
 
-      if(!db.byYear) db.byYear = {};
-      db.byYear[y] = Number(db.byYear[y] || 0) + 1;
-      db.total = Number(db.total || 0) + 1;
-      db.lastClickYear = y;
-
-      saveSportSupport(db);
-      refreshSportSupportUi();
-      toast("Merci. Votre soutien annuel au sport local est enregistré.");
-    }
-
-    refreshSportSupportUi();
-
-    on($("sportSupportBadge"), "click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      handleSportSupportClick();
-    });
-
-        // =========================================================
-    // ACCESSIBILITY
-    // =========================================================
-    if (isFn(window.makeKeyboardClickable)) {
-      const tickerNode = $("ticker");
-      if (tickerNode && isFn(window.openTicker)) {
-        window.makeKeyboardClickable(tickerNode, window.openTicker);
+      function canPublishBooking(b){
+        const bk = normalizeBooking(b);
+        if(bookingBlocksNewReservation(bk)) return false;
+        return bk.paymentStatus === "paid" || bk.paymentStatus === "published";
       }
 
-      document.querySelectorAll(".tile[data-open]").forEach((el) => {
-        window.makeKeyboardClickable(el, () => el.click());
-      });
-
-      const adminTileKb = $("adminTile");
-      if (adminTileKb) {
-        window.makeKeyboardClickable(adminTileKb, () => adminTileKb.click());
+      function bookingUseBold(b){
+        const bk = normalizeBooking(b);
+        return bk.boldRequested && bk.boldPaid;
       }
-    }
 
-    // =========================================================
-    // ADMIN TILE (démo)
-    // =========================================================
-    const adminTile = $("adminTile");
-    on(adminTile, "click", () => {
-      if (!isFn(window.openModal)) return;
+      function isBefore16h(){
+        return new Date().getHours() < 16;
+      }
 
-      openModal(
-        "Accès Admin (structure)",
-        `
-        <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
-        <div class="box">
-          <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
-          Les éléments affichés sont une vitrine de structure (démo).
-        </div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
-          <li>Activation / blocage / désactivation</li>
-          <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
-          <li>Suivi interne (litiges) : historique, traçabilité</li>
-        </ul>
-      `
-      );
-    });
+      function countBookingsByAdvertiser(list, advertiserName){
+        return list.filter(it => normalizeBooking(it).advertiserName === advertiserName).length;
+      }
 
-    // =========================================================
-    // DAE SCREEN
-    // =========================================================
-    const daeBtn = $("daeBtn");
-    on(daeBtn, "click", () => {
-      if (!isFn(window.openModal)) return;
+      function canReserveOnDay(list, advertiserName){
+        const existingCount = countBookingsByAdvertiser(list, advertiserName);
+        if(isBefore16h()) return existingCount < 1;
+        return list.length < CONFIG.pubMaxPerDay;
+      }
 
-      openModal(
-        "Défibrillateur (DAE)",
-        `
-        <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
-        <div class="box">
-          <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
-          Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
-        </div>
-
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
-          <li>Orientation + guidage</li>
-          <li>Rayon local : 1 à 3 km</li>
-          <li>DAE • pharmacie • hôpital</li>
-          <li>Géolocalisation optionnelle (activation utilisateur)</li>
-        </ul>
-
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
-          <div style="border-radius:14px; overflow:hidden; background:#000;">
-            <iframe
-              width="100%"
-              height="220"
-              src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
-              title="Utilisation DAE"
-              loading="lazy"
-              referrerpolicy="strict-origin-when-cross-origin"
-              allowfullscreen>
-            </iframe>
-          </div>
-          <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
-          <div class="muted">
-            Ici, la version officielle affichera la carte + fléchage + une ligne d’itinéraire vers le DAE le plus proche.
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
-            <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
-          </div>
-        </div>
-      `
-      );
-
-      setTimeout(() => {
-        const loc = $("daeLocate");
-        const rte = $("daeRoute");
-
-        if (loc) {
-          loc.onclick = () => {
-            if (!navigator.geolocation) {
-              alert("Géolocalisation non disponible sur cet appareil.");
-              return;
+      function findBlockingUnpaidForAdvertiser(advertiserName, advertiserType){
+        const db = loadPubBookings();
+        for(const monthKey of Object.keys(db)){
+          const monthObj = db[monthKey] || {};
+          for(const dayKey of Object.keys(monthObj)){
+            const arr = monthObj[dayKey] || [];
+            for(const raw of arr){
+              const b = normalizeBooking(raw);
+              if(
+                b.advertiserName === advertiserName &&
+                b.advertiserType === advertiserType &&
+                bookingBlocksNewReservation(b)
+              ){
+                return b;
+              }
             }
-            alert("Démo : demande de localisation (GPS).");
+          }
+        }
+        return null;
+      }
+
+      function addBooking(y, m, d, booking){
+        const db = loadPubBookings();
+        const dayList = getDayBookings(db, y, m, d).map(normalizeBooking);
+        const bk = normalizeBooking(booking);
+
+        if(dayList.length >= CONFIG.pubMaxPerDay){
+          return { ok:false, message:"Journée complète : 10 publicités déjà réservées." };
+        }
+
+        const blocking = findBlockingUnpaidForAdvertiser(bk.advertiserName, bk.advertiserType);
+        if(blocking){
+          return {
+            ok:false,
+            message:"Réservation bloquée : une publicité précédente de cet annonceur est impayée au-delà du délai autorisé."
           };
         }
 
-        if (rte) {
-          rte.onclick = () =>
-            alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
+        if(!canReserveOnDay(dayList, bk.advertiserName)){
+          return {
+            ok:false,
+            message:"Avant 16h : 1 seule publicité par commerçant et par jour. Après 16h, réservation supplémentaire possible s’il reste des places."
+          };
         }
-      }, 0);
-    });
 
-    // =========================================================
-    // SPORT FICHE
-    // =========================================================
-    function openSportFiche() {
-      if (!isFn(window.openModal)) return;
+        dayList.push(bk);
+        setDayBookings(db, y, m, d, dayList);
+        savePubBookings(db);
+        return { ok:true, booking:bk };
+      }
 
-      openModal(
-        "📄 Fiche — élus / CCI / commerçants (Sport + Associations)",
-        `
-        <div class="box">
-          <div style="font-weight:900;">Objectif</div>
-          <div class="muted" style="margin-top:6px;">
-            Déclencher un soutien simple : un commerçant soutient un club + une association,
-            avec visibilité locale via le bandeau 1 cm.
+      function resetAllBookings(){
+        removeStorage(PUB_STORE_KEY);
+      }
+
+      let calYear = new Date().getFullYear();
+      let calMonth = new Date().getMonth();
+
+      function daySlotsUsed(obj, y, m, d){
+        return getDayBookings(obj, y, m, d).length;
+      }
+
+      function isFull(obj, y, m, d){
+        return daySlotsUsed(obj, y, m, d) >= CONFIG.pubMaxPerDay;
+      }
+
+      function buildCalendarHTML(){
+        const first = new Date(calYear, calMonth, 1);
+        const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+        const labels = ["L","M","M","J","V","S","D"];
+
+        return `
+          <div class="calWrap">
+            <div class="calTop">
+              <div style="font-weight:900;">Calendrier publicités (démo) — ${monthName}</div>
+              <div class="mini">
+                <button class="calBtn" id="calPrev" type="button">◀</button>
+                <button class="calBtn" id="calNext" type="button">▶</button>
+              </div>
+            </div>
+
+            <div class="muted">
+              Règles :
+              <br><strong>10 publicités maximum par jour</strong>
+              <br>Avant <strong>16h</strong> : <strong>1 publicité maximum par commerçant et par jour</strong>
+              <br>Après <strong>16h</strong> : si des places restent libres, un commerçant ayant déjà réservé peut reprendre un slot
+              <br>Sans paiement validé : <strong>pas de diffusion</strong>
+            </div>
+
+            <div class="calGrid" style="margin-top:10px;">
+              ${labels.map(x=>`<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
+            </div>
+
+            <div class="calGrid" id="calDays"></div>
+
+            <div class="calLegend">
+              <span class="tag"><span class="dot" style="background:#111;"></span> Jour disponible</span>
+              <span class="tag"><span class="dot" style="background:#999;"></span> Jour complet (grisé)</span>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
+              <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+            </div>
           </div>
-        </div>
+        `;
+      }
 
-        <div class="box">
-          <div style="font-weight:900;">Principe</div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>Un commerçant soutient <strong>un club sportif</strong> + <strong>une association</strong>.</li>
-            <li>Sa ligne apparaît dans le bandeau : “Commerce soutient Club + Association”.</li>
-            <li>Le club valorise ses soutiens auprès de ses licenciés/familles (logique locale).</li>
-            <li>Les modalités PSP / pièces / fiscalité sont décrites dans les CGV/contrats (discrétion + conformité).</li>
-          </ul>
-        </div>
+      function buildDayCellsHTML(y, m){
+        const first = new Date(y, m, 1);
+        const last = new Date(y, m + 1, 0);
+        const totalDays = last.getDate();
+        const startOffset = (first.getDay() + 6) % 7;
+        const db = loadPubBookings();
 
-        <div class="box">
-          <div style="font-weight:900;">Montant (exemple)</div>
-          <div style="font-weight:800;margin-top:6px;">Exemple : <strong>100 € HT</strong> par période (ex. trimestriel).</div>
-          <div class="muted" style="margin-top:8px;">(Démo) La répartition exacte est contractualisée. La TVA dépend du cadre applicable.</div>
-        </div>
+        let html = "";
+        for(let i = 0; i < startOffset; i++) html += `<div></div>`;
 
-        <div class="box">
-          <div style="font-weight:900;">Associations retenues (uniquement celles-ci)</div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</li>
-            <li><strong>Étoile Filante</strong> — enfants atteints de maladies rares</li>
-            <li><strong>Les Papillons</strong> — antenne Nord</li>
-            <li><strong>ATC Nord</strong> — traumatisés crâniens</li>
-          </ul>
-        </div>
+        for(let d = 1; d <= totalDays; d++){
+          const used = daySlotsUsed(db, y, m, d);
+          const full = used >= CONFIG.pubMaxPerDay;
+          const cls = full ? "calDay disabled full" : "calDay";
+          html += `
+            <button class="${cls}" type="button" data-cal-day="${d}">
+              <div class="d">${d}</div>
+              <div class="s">${used}/${CONFIG.pubMaxPerDay}</div>
+            </button>
+          `;
+        }
 
-        <div class="box">
-          <div style="font-weight:900;">Préparer votre ligne (démo)</div>
-          <div class="muted" style="margin-top:6px;">Le commerçant peut choisir l’affichage en gras (+4€ TTC) et indiquer une URL.</div>
+        return html;
+      }
 
-          <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
-          <input class="miniField" id="spName" placeholder="Ex. Boulangerie Croquet" />
+      function openRecapModal(y, m){
+        const db = loadPubBookings();
+        const keyYM = ym(y,m);
+        const monthObj = db[keyYM] || {};
+        let csv = "date;annonceur;type;format;statut_paiement;mode_paiement;jours_facture;gras_demande;gras_paye;texte;horodatage_fr\\n";
 
-          <div style="margin-top:10px;font-weight:900;">URL (optionnelle)</div>
-          <input class="miniField" id="spUrl" placeholder="https://..." />
+        Object.keys(monthObj).sort().forEach(day => {
+          (monthObj[day] || []).forEach(raw => {
+            const it = normalizeBooking(raw);
+            csv += [
+              it.date,
+              it.advertiserName,
+              it.advertiserType,
+              it.format,
+              it.paymentStatus,
+              it.paymentMode,
+              it.invoiceDays,
+              it.boldRequested ? "oui" : "non",
+              it.boldPaid ? "oui" : "non",
+              (it.txt || "").replace(/;/g, ","),
+              it.ts_fr
+            ].join(";") + "\\n";
+          });
+        });
 
-          <div class="miniCheck">
-            <input id="spBold" type="checkbox" />
-            <div>
-              Option <strong>texte en gras</strong> (+4€ TTC) — pour une meilleure lisibilité
-              (sans promesse de résultats).
+        openModal("Récap mensuel (démo) — publicités", `
+          <div class="box">
+            <div style="font-weight:900;">Mois : ${keyYM}</div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
+            <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
+          </div>
+        `);
+
+        setTimeout(()=>{
+          $("copyCsv")?.addEventListener("click", async ()=>{
+            try{
+              await navigator.clipboard.writeText(csv);
+              toast("CSV copié.");
+            }catch(e){
+              toast("Copie impossible sur ce navigateur.");
+            }
+          });
+
+          $("copyJson")?.addEventListener("click", async ()=>{
+            try{
+              await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2));
+              toast("JSON copié.");
+            }catch(e){
+              toast("Copie impossible sur ce navigateur.");
+            }
+          });
+        }, 0);
+      }
+
+      function openBookingModalForDay(y, m, d){
+        const dateStr = ymd(y,m,d);
+
+        openModal("Réserver une publicité (démo)", `
+          <div class="box">
+            <div style="font-weight:900;">Date : ${dateStr}</div>
+            <div class="muted" style="margin-top:6px;">
+              Avant 16h : 1 seule publicité par commerçant et par jour. Après 16h : réservation supplémentaire possible si la journée n’est pas complète.
             </div>
           </div>
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-            <button class="choiceBtn" id="spPreview" type="button">👁️ Aperçu</button>
-            <button class="choiceBtn" id="spAddToTape" type="button">➕ Ajouter au bandeau (démo)</button>
+          <div class="box" style="margin-top:12px;">
+            <div style="font-weight:900;">Type d’annonceur</div>
+            <select class="miniField" id="pubBookAdvertiserType">
+              <option value="merchant">Commerçant</option>
+              <option value="city">Mairie / collectivité</option>
+            </select>
+
+            <div style="margin-top:10px;font-weight:900;">Nom de l’annonceur</div>
+            <input class="miniField" id="pubBookAdvertiserName" placeholder="Ex : Boulangerie Croquet">
+
+            <div style="margin-top:10px;font-weight:900;">Format</div>
+            <select class="miniField" id="pubBookFormat">
+              <option value="banner_3cm">Ligne 3 cm</option>
+              <option value="banner_1cm">Ligne 1 cm</option>
+            </select>
+
+            <div style="margin-top:10px;font-weight:900;">Mode de règlement</div>
+            <select class="miniField" id="pubBookPaymentMode">
+              <option value="psp">PSP / carte bancaire</option>
+              <option value="invoice">Devis / facture / virement</option>
+            </select>
+
+            <div style="margin-top:10px;font-weight:900;">État du paiement</div>
+            <select class="miniField" id="pubBookPaymentStatus">
+              <option value="pending">En attente</option>
+              <option value="paid">Payée</option>
+              <option value="published">Publiée</option>
+            </select>
+
+            <div style="margin-top:10px;font-weight:900;">Jours depuis facture</div>
+            <input class="miniField" id="pubBookInvoiceDays" type="number" min="0" step="1" value="0">
+
+            <div style="margin-top:10px;font-weight:900;">Type d’achat</div>
+            <select class="miniField" id="pubBookPackType">
+              <option value="single">1 publicité</option>
+              <option value="pack5">Pack 5 publicités</option>
+            </select>
+
+            <div style="margin-top:10px;font-weight:900;">Texte bandeau 1 cm (si utilisé)</div>
+            <input class="miniField" id="pubBookText" placeholder="Ex : Offre spéciale aujourd’hui">
+
+            <label style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+              <input type="checkbox" id="pubBookBoldRequested">
+              <span>Demander le gras (+4 € TTC)</span>
+            </label>
+
+            <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+              <input type="checkbox" id="pubBookBoldPaid">
+              <span>Gras payé</span>
+            </label>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+              <button class="choiceBtn" id="pubBookSaveBtn" type="button">💾 Réserver</button>
+            </div>
           </div>
+        `);
 
-          <div class="muted" style="margin-top:10px;">
-            (Démo) Ici, l’ajout est local (sur ce téléphone). La version officielle gèrera validation/contrat/contrôle.
-          </div>
-        </div>
-      `
-      );
+        setTimeout(()=>{
+          $("pubBookSaveBtn")?.addEventListener("click", ()=>{
+            const advertiserName = String($("pubBookAdvertiserName")?.value || "").trim();
+            if(!advertiserName) return toast("Saisis le nom de l’annonceur.");
 
-      setTimeout(() => {
-        const btnPrev = $("spPreview");
-        const btnAdd = $("spAddToTape");
-        const inName = $("spName");
-        const inUrl = $("spUrl");
-        const cbBold = $("spBold");
-
-        function validateHttpsUrl(raw) {
-          const cleaned = String(raw || "").trim().replace(/\s+/g, "");
-          if (!cleaned) return { ok: true, url: "" };
-
-          let candidate = cleaned;
-          if (candidate.startsWith("www.")) {
-            candidate = "https://" + candidate;
-          }
-
-          try {
-            const parsed = new URL(candidate);
-            if (parsed.protocol !== "https:") {
-              return { ok: false, msg: "URL invalide : utiliser https:// (pas http://)." };
-            }
-            if (candidate.length > 200) {
-              return { ok: false, msg: "URL trop longue." };
-            }
-            return { ok: true, url: parsed.toString() };
-          } catch (e) {
-            return { ok: false, msg: "URL invalide." };
-          }
-        }
-
-        function makeLine() {
-          const name = (inName && inName.value.trim()) ? inName.value.trim() : "Commerce (démo)";
-          const base = `${name} soutient Club + Association`;
-
-          const v = validateHttpsUrl(inUrl ? inUrl.value : "");
-          if (!v.ok) {
-            alert(v.msg);
-            return null;
-          }
-
-          return v.url ? `${base} • ${v.url}` : base;
-        }
-
-        if (btnPrev) {
-          btnPrev.onclick = () => {
-            const line = makeLine();
-            if (!line) return;
-            alert(
-              "Aperçu :\n" +
-                line +
-                ((cbBold && cbBold.checked) ? "\n(affichage gras)" : "\n(affichage normal)")
+            const pricing = computeAdPrice(
+              $("pubBookFormat")?.value || "banner_3cm",
+              $("pubBookPackType")?.value || "single",
+              1,
+              !!$("pubBookBoldRequested")?.checked
             );
-          };
-        }
 
-        if (btnAdd) {
-          btnAdd.onclick = () => {
-            const line = makeLine();
-            if (!line) return;
+            const result = addBooking(y, m, d, {
+              date: dateStr,
+              advertiserType: $("pubBookAdvertiserType")?.value || "merchant",
+              advertiserName,
+              who: advertiserName,
+              format: $("pubBookFormat")?.value || "banner_3cm",
+              paymentMode: $("pubBookPaymentMode")?.value || "psp",
+              paymentStatus: $("pubBookPaymentStatus")?.value || "pending",
+              invoiceDays: Number($("pubBookInvoiceDays")?.value || 0),
+              packType: $("pubBookPackType")?.value || "single",
+              qty: 1,
+              unitPriceHt: 50,
+              basePriceHt: pricing.basePriceHt,
+              boldRequested: !!$("pubBookBoldRequested")?.checked,
+              boldPaid: !!$("pubBookBoldPaid")?.checked,
+              boldPriceTtc: pricing.boldPriceTtc,
+              txt: String($("pubBookText")?.value || "").trim(),
+              note: "Réservation calendrier démo"
+            });
 
-            const bold = !!(cbBold && cbBold.checked);
+            if(!result.ok) return toast(result.message || "Réservation refusée.");
 
-            if (!Array.isArray(window.tapeAdsFallback)) {
-              window.tapeAdsFallback = [];
-            }
-
-            window.tapeAdsFallback.push({ txt: line, bold });
-
-            if (isFn(window.renderTape)) {
-              window.renderTape();
-            }
-
-            alert("Ajouté au bandeau (démo).");
-          };
-        }
-      }, 0);
-    }
-
-    // =========================================================
-    // LEGAL MODAL OPEN/CLOSE + TABS
-    // =========================================================
-    const legal = $("legal");
-    const openLegalBtn = $("openLegal");
-    const closeLegalBtn = $("legalClose");
-    const closeLegalX = $("legalX");
-
-    if (typeof window.__lastFocus === "undefined") {
-      window.__lastFocus = null;
-    }
-
-    const openLegal = () => {
-      if (!legal) return;
-      window.__lastFocus = document.activeElement;
-      legal.classList.add("open");
-      if (isFn(window.lockScroll)) window.lockScroll(true);
-    };
-
-    const closeLegal = () => {
-      if (!legal) return;
-      legal.classList.remove("open");
-      if (isFn(window.lockScroll)) window.lockScroll(false);
-      if (window.__lastFocus && typeof window.__lastFocus.focus === "function") {
-        window.__lastFocus.focus();
+            renderTape();
+            openTicker();
+            toast("Réservation enregistrée (démo).");
+          });
+        }, 0);
       }
-      window.__lastFocus = null;
-    };
 
-    if (openLegalBtn) openLegalBtn.onclick = openLegal;
-    if (closeLegalBtn) closeLegalBtn.onclick = closeLegal;
-    if (closeLegalX) closeLegalX.onclick = closeLegal;
+      function renderCalendarInto(containerId){
+        const box = $(containerId);
+        if(!box) return;
 
-    (function initLegalTabs() {
-      if (!legal) return;
+        box.innerHTML = buildCalendarHTML();
+        $("calDays").innerHTML = buildDayCellsHTML(calYear, calMonth);
 
-      const tabs = legal.querySelectorAll(".tab");
-      if (!tabs || !tabs.length) return;
-
-      const panels = {
-        rgpd: $("p-rgpd"),
-        cgu: $("p-cgu"),
-        cgv: $("p-cgv"),
-      };
-
-      function showTab(name) {
-        tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === name));
-        Object.keys(panels).forEach((k) => {
-          if (panels[k]) {
-            panels[k].style.display = k === name ? "block" : "none";
+        $("calPrev")?.addEventListener("click", ()=>{
+          calMonth -= 1;
+          if(calMonth < 0){
+            calMonth = 11;
+            calYear -= 1;
           }
+          renderCalendarInto(containerId);
+        });
+
+        $("calNext")?.addEventListener("click", ()=>{
+          calMonth += 1;
+          if(calMonth > 11){
+            calMonth = 0;
+            calYear += 1;
+          }
+          renderCalendarInto(containerId);
+        });
+
+        $("calRecap")?.addEventListener("click", ()=> openRecapModal(calYear, calMonth));
+
+        $("calReset")?.addEventListener("click", ()=>{
+          if(!confirm("Réinitialiser toutes les réservations publicitaires (démo) sur ce téléphone ?")) return;
+          resetAllBookings();
+          renderTape();
+          renderCalendarInto(containerId);
+          toast("Réservations pub réinitialisées (démo).");
+        });
+
+        box.querySelectorAll("[data-cal-day]").forEach(btn => {
+          btn.addEventListener("click", ()=>{
+            const d = Number(btn.getAttribute("data-cal-day"));
+            const db = loadPubBookings();
+            if(isFull(db, calYear, calMonth, d)){
+              return toast("Journée complète : 10 publicités déjà réservées.");
+            }
+            openBookingModalForDay(calYear, calMonth, d);
+          });
         });
       }
 
-      tabs.forEach((t) => {
-        t.addEventListener("click", () => showTab(t.dataset.tab));
-      });
-
-      showTab("rgpd");
-    })();
-
-    // =========================================================
-    // ACK STORAGE DURCI (démo locale)
-    // =========================================================
-    const ACK_PREFIX = "bociteart_ack_v2_";
-    const ACK_SALT = "BoCiteArt|ack|v2";
-
-    function fnv1a(str) {
-      let h = 0x811c9dc5;
-      for (let i = 0; i < str.length; i += 1) {
-        h ^= str.charCodeAt(i);
-        h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+      function openTicker(){
+        openModal("Publicités & visibilité (ticker)", `
+          <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
+          <div class="box">
+            <strong>Cadre :</strong> réservation plafonnée, gestion par calendrier, paiement requis avant diffusion, filtre commerçant / mairie, rareté à 10 publicités par jour.
+          </div>
+          <div id="calHost"></div>
+        `);
+        setTimeout(()=> renderCalendarInto("calHost"), 0);
       }
-      return ("00000000" + h.toString(16)).slice(-8);
-    }
 
-    function ackSign(kind, ts) {
-      return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
-    }
+      $("ticker")?.addEventListener("click", openTicker);
 
-    function ackGet(kind) {
-      const key = ACK_PREFIX + kind;
-      try {
-        const raw = localStorage.getItem(key);
-        if (!raw) return false;
-        const parts = raw.split("|");
-        if (parts.length !== 3) return false;
-        const ok = parts[0] === "1";
-        const ts = parseInt(parts[1], 10);
-        const sig = parts[2];
-        if (!ok || !Number.isFinite(ts)) return false;
-        return sig === ackSign(kind, ts);
-      } catch (e) {
-        return false;
+      function renderMairieTicker(){
+        const track = $("mairieTickerTrack");
+        if(!track) return;
+        const db = loadMairieMsg();
+        const msg = (db.message && String(db.message).trim())
+          ? String(db.message).trim()
+          : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+        track.innerHTML = `<span>${escapeHtml(msg)}</span><span>${escapeHtml(msg)}</span>`;
       }
-    }
 
-    function ackSet(kind) {
-      const key = ACK_PREFIX + kind;
-      try {
-        const ts = Date.now();
-        const sig = ackSign(kind, ts);
-        localStorage.setItem(key, `1|${ts}|${sig}`);
-      } catch (e) {}
-    }
+      renderMairieTicker();
 
-    // =========================================================
-    // LONG PRESS
-    // =========================================================
-    function makeLongPress(btn, ringEl, ms, onTrigger) {
-      if (!btn || !ringEl) return;
+      window.tapeAdsFallback = [
+        { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
+        { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
+        { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
+        { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
+      ];
+            window.tapeAdsDynamic = Array.isArray(readStorage("bociteart_tape_dynamic_v1", []))
+        ? readStorage("bociteart_tape_dynamic_v1", [])
+        : [];
 
-      let raf = null;
-      let start = null;
-      let holding = false;
-      let fired = false;
+      function saveDynamicTape(){
+        writeStorage(
+          "bociteart_tape_dynamic_v1",
+          Array.isArray(window.tapeAdsDynamic) ? window.tapeAdsDynamic : []
+        );
+      }
 
-      const rAttr = ringEl.getAttribute("r");
-      const r = rAttr ? parseFloat(rAttr) : 35;
-      const circ = 2 * Math.PI * r;
+      function getEligibleTapeAdsForToday(){
+        const now = new Date();
+        const db = loadPubBookings();
+        const list = getDayBookings(
+          db,
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        ).map(normalizeBooking);
 
-      ringEl.style.strokeDasharray = String(circ);
-      ringEl.style.strokeDashoffset = String(circ);
+        return list
+          .filter(b => b.format === "banner_1cm")
+          .filter(canPublishBooking)
+          .map(b => ({
+            txt: b.txt && String(b.txt).trim()
+              ? String(b.txt).trim()
+              : `${b.advertiserName} • publicité validée`,
+            bold: bookingUseBold(b)
+          }));
+      }
 
-      const stop = () => {
-        holding = false;
-        start = null;
-        fired = false;
-        ringEl.style.strokeDashoffset = String(circ);
-        if (raf) cancelAnimationFrame(raf);
-        raf = null;
-      };
+      function renderTape(){
+        const track = $("sportTapeTrack");
+        if(!track) return;
 
-      const tick = (ts) => {
-        if (!holding) return;
-        if (start === null) start = ts;
-        const p = Math.min(1, (ts - start) / ms);
-        ringEl.style.strokeDashoffset = String(circ * (1 - p));
+        let ads = getEligibleTapeAdsForToday();
 
-        if (p >= 1) {
-          if (fired) return;
-          fired = true;
-          stop();
-          onTrigger();
-          return;
+        if(!ads.length){
+          ads = [
+            ...(Array.isArray(window.tapeAdsDynamic) ? window.tapeAdsDynamic : []),
+            ...(Array.isArray(window.tapeAdsFallback) ? window.tapeAdsFallback : [])
+          ];
         }
 
-        raf = requestAnimationFrame(tick);
-      };
+        if(!ads.length){
+          ads = [{ txt:"Bo’CitéArt — bandeau démo", bold:false }];
+        }
 
-      btn.addEventListener("pointerdown", (e) => {
-        e.preventDefault();
-        if (holding) return;
-        holding = true;
-        fired = false;
-        raf = requestAnimationFrame(tick);
-      });
+        const doubled = ads.concat(ads);
 
-      ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => {
-        btn.addEventListener(ev, stop);
-      });
+        track.innerHTML = doubled.map(a => {
+          const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
+          return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
+        }).join("");
+      }
+      renderTape();
 
-      btn.addEventListener("contextmenu", (e) => e.preventDefault());
-    }
+      function openSportFiche(){
+        openModal("📄 Fiche — élus / CCI / commerçants (Sport + Associations)", `
+          <div class="box">
+            <div style="font-weight:900;">Objectif</div>
+            <div class="muted" style="margin-top:6px;">
+              Déclencher un soutien simple : un commerçant soutient un club + une association, avec visibilité locale via le bandeau 1 cm.
+            </div>
+          </div>
 
-    // =========================================================
-    // EMERGENCY GATE
-    // =========================================================
-    function emergencyGate(kind, onOk) {
-      if (ackGet(kind)) {
-        onOk();
-        return;
+          <div class="box">
+            <div style="font-weight:900;">Principe</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Un commerçant soutient <strong>un club sportif</strong> + <strong>une association</strong>.</li>
+              <li>Sa ligne apparaît dans le bandeau : “Commerce soutient Club + Association”.</li>
+              <li>Le club valorise ses soutiens auprès de ses licenciés/familles (logique locale).</li>
+              <li>Les modalités PSP / pièces / fiscalité sont décrites dans les CGV/contrats (discrétion + conformité).</li>
+            </ul>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Montant (exemple)</div>
+            <div style="font-weight:800;margin-top:6px;">Exemple : <strong>100 € HT</strong> par période (ex. trimestriel).</div>
+            <div class="muted" style="margin-top:8px;">(Démo) La répartition exacte est contractualisée. La TVA dépend du cadre applicable.</div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Associations retenues (uniquement celles-ci)</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</li>
+              <li><strong>Étoile Filante</strong> — enfants atteints de maladies rares</li>
+              <li><strong>Les Papillons</strong> — antenne Nord</li>
+              <li><strong>ATC Nord</strong> — traumatisés crâniens</li>
+            </ul>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Préparer votre ligne (démo)</div>
+            <div class="muted" style="margin-top:6px;">Le commerçant peut choisir l’affichage en gras (+4€ TTC) et indiquer une URL.</div>
+            <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
+            <input class="miniField" id="spName" placeholder="Ex. Boulangerie Croquet" />
+            <div style="margin-top:10px;font-weight:900;">URL (optionnelle)</div>
+            <input class="miniField" id="spUrl" placeholder="https://..." />
+            <div class="miniCheck">
+              <input id="spBold" type="checkbox" />
+              <div>Option <strong>texte en gras</strong> (+4€ TTC) — pour une meilleure lisibilité (sans promesse de résultats).</div>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+              <button class="choiceBtn" id="spPreview" type="button">👁️ Aperçu</button>
+              <button class="choiceBtn" id="spAddToTape" type="button">➕ Ajouter au bandeau (démo)</button>
+            </div>
+            <div class="muted" style="margin-top:10px;">
+              (Démo) Ici, l’ajout est local (sur ce téléphone). La version officielle gèrera validation/contrat/contrôle.
+            </div>
+          </div>
+        `);
+
+        setTimeout(()=>{
+          function buildLine(){
+            const nameRaw = String($("spName")?.value || "").trim();
+            const urlRaw = String($("spUrl")?.value || "").trim();
+            const name = nameRaw || "Commerce (démo)";
+            const base = `${name} soutient Club + Association`;
+
+            if(!urlRaw) return base;
+
+            let url = urlRaw;
+            if(url.startsWith("www.")) url = "https://" + url;
+
+            try{
+              const u = new URL(url);
+              if(u.protocol !== "https:"){
+                toast("URL invalide : utiliser https://");
+                return base;
+              }
+              url = u.toString();
+            }catch(e){
+              toast("URL invalide.");
+              return base;
+            }
+
+            return `${base} • ${url}`;
+          }
+
+          const previewBtn = $("spPreview");
+          const addBtn = $("spAddToTape");
+
+          if(previewBtn){
+            previewBtn.onclick = ()=>{
+              const line = buildLine();
+              toast(
+                "Aperçu :\n" +
+                line +
+                ($("spBold")?.checked ? "\n(affichage gras)" : "\n(affichage normal)")
+              );
+            };
+          }
+
+          if(addBtn){
+            addBtn.onclick = ()=>{
+              const line = buildLine();
+              if(!line || !String(line).trim()){
+                toast("Ligne invalide.");
+                return;
+              }
+
+              if(!Array.isArray(window.tapeAdsDynamic)){
+                window.tapeAdsDynamic = [];
+              }
+
+              window.tapeAdsDynamic.push({
+                txt: line,
+                bold: !!$("spBold")?.checked
+              });
+
+              saveDynamicTape();
+              renderTape();
+              toast("Ajouté au bandeau (démo).");
+            };
+          }
+        }, 0);
       }
 
-      const title =
-        kind === "112"
-          ? "Urgence 112 — usage responsable"
-          : "Aide 3919 / 119 — usage responsable";
+      const SCHOOL_CLASSES = ["École X — CM2 A","École X — CM2 B","École Y — CM2 A","École Y — CM2 B","École Z — CM2"];
 
-      const body =
-        kind === "112"
-          ? `
-            <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
-            <div class="box">
-              <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
-              Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
-            </div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
-              <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
-              <li>Appui long = réduction des appels accidentels (sans garantie d’erreur zéro).</li>
-            </ul>
-            <div class="box" style="margin-top:10px;">
-              <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
-                <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-                J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
-              </label>
-            </div>
-            <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
-          `
-          : `
-            <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
-            <div class="box">
-              <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
-              Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
-            </div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li><strong>3919</strong> : écoute/orientation (pas une intervention immédiate).</li>
-              <li><strong>119</strong> : enfance en danger.</li>
-              <li><strong>Danger immédiat</strong> : appeler le 112.</li>
-            </ul>
-            <div class="box" style="margin-top:10px;">
-              <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
-                <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-                J’ai compris : j’utiliserai ces numéros uniquement en cas de situation réelle.
-              </label>
-            </div>
-            <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>
-          `;
-
-      if (isFn(window.openModal)) {
-        window.openModal(title, body);
+      function getTodayKey(){
+        return new Date().toISOString().slice(0, 10);
       }
 
-      setTimeout(() => {
-        const box = $("ackBox");
-        const btn = $("ackBtn");
+      function getSchoolProgress(db, cls){
+        if(!db.progress) db.progress = {};
+        if(!db.progress[cls]){
+          db.progress[cls] = {
+            totalValidatedDays: 0,
+            lastValidationDay: ""
+          };
+        }
+        return db.progress[cls];
+      }
 
-        if (!btn) return;
+      function schoolTargetValue(totalValidatedDays){
+        if(totalValidatedDays === 15) return 50;
+        if(totalValidatedDays === 18) return 80;
+        if(totalValidatedDays === 22) return 100;
+        return null;
+      }
 
-        btn.onclick = () => {
-          if (!box || !box.checked) {
-            alert("Veuillez cocher la case pour confirmer que vous avez compris.");
+      async function loadVoices(){
+        return new Promise(resolve => {
+          if(!("speechSynthesis" in window)){
+            resolve([]);
             return;
           }
-          ackSet(kind);
-          if (isFn(window.closeModal)) window.closeModal();
-          onOk();
-        };
-      }, 0);
-    }
 
-    // =========================================================
-    // EMERGENCY BUTTONS
-    // =========================================================
-    makeLongPress(
-      $("btn112"),
-      $("ring112"),
-      1800,
-      () => emergencyGate("112", () => {
-        if (isFn(window.callPhone)) window.callPhone("112");
-      })
-    );
+          const voices = speechSynthesis.getVoices();
+          if(voices.length){
+            resolve(voices);
+            return;
+          }
 
-    let sosNumber = null;
-    const choice = $("choice");
+          const handler = ()=>{
+            speechSynthesis.removeEventListener("voiceschanged", handler);
+            resolve(speechSynthesis.getVoices());
+          };
 
-    const closeChoice = () => {
-      if (!choice) return;
-      choice.classList.remove("open");
-      if (isFn(window.lockScroll)) window.lockScroll(false);
-      if (window.__lastFocus && typeof window.__lastFocus.focus === "function") {
-        window.__lastFocus.focus();
-      }
-      window.__lastFocus = null;
-    };
-
-    on($("choiceClose"), "click", closeChoice);
-    on($("choiceX"), "click", closeChoice);
-
-    document.querySelectorAll("#choice .choiceBtn[data-pick]").forEach((b) => {
-      b.addEventListener("click", () => {
-        sosNumber = b.getAttribute("data-pick");
-        const lab = $("sosLabel");
-        if (lab) lab.textContent = sosNumber;
-        closeChoice();
-      });
-    });
-
-    makeLongPress(
-      $("btnSos"),
-      $("ringSos"),
-      2000,
-      () => {
-        if (!choice) return;
-
-        if (!sosNumber) {
-          window.__lastFocus = document.activeElement;
-          choice.classList.add("open");
-          if (isFn(window.lockScroll)) window.lockScroll(true);
-          return;
-        }
-
-        emergencyGate(sosNumber, () => {
-          if (isFn(window.callPhone)) window.callPhone(sosNumber);
+          speechSynthesis.addEventListener("voiceschanged", handler, { once:true });
         });
       }
-    );
 
-    // =========================================================
-    // SPORT SUPPORT TILE REFRESH
-    // =========================================================
-    (function initSportSupportTile() {
-      const SPORT_SUPPORT_KEY = "bociteart_sport_support_v1";
+      async function speak(text, mode = "female"){
+        if(!("speechSynthesis" in window)) return;
 
-      function getCurrentYear() {
+        const voices = await loadVoices();
+        speechSynthesis.cancel();
+
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "fr-FR";
+        u.rate = 0.95;
+        u.pitch = mode === "child" ? 1.35 : 1.05;
+
+        const frVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("fr"));
+        if(frVoice) u.voice = frVoice;
+
+        speechSynthesis.speak(u);
+      }
+
+      function getCurrentYear(){
         return new Date().getFullYear();
       }
 
-      function loadSportSupport() {
-        try {
-          const raw = localStorage.getItem(SPORT_SUPPORT_KEY);
-          if (raw) return JSON.parse(raw);
-        } catch (e) {}
-        return { total: 0, byYear: {}, lastClickYear: null };
-      }
-
-      function refreshSportSupportTileUi() {
+      function refreshSportSupportUi(){
         const db = loadSportSupport();
         const y = getCurrentYear();
         const yearCount = Number((db.byYear && db.byYear[y]) || 0);
         const totalCount = Number(db.total || 0);
 
-        const tileYear = document.getElementById("sportSupportYearCount");
-        const tileTotal = document.getElementById("sportSupportTotalCount");
-
-        if (tileYear) tileYear.textContent = yearCount;
-        if (tileTotal) tileTotal.textContent = totalCount;
+        if($("sportSupportYearCount")) $("sportSupportYearCount").textContent = yearCount;
+        if($("sportSupportTotalCount")) $("sportSupportTotalCount").textContent = totalCount;
+        if($("sportSupportYearModal")) $("sportSupportYearModal").textContent = yearCount;
+        if($("sportSupportTotalModal")) $("sportSupportTotalModal").textContent = totalCount;
       }
 
-      refreshSportSupportTileUi();
-    })();
+      function handleSportSupportClick(){
+        const db = loadSportSupport();
+        const y = getCurrentYear();
 
-    // =========================================================
-    // SAFETY FINAL CHECKS
-    // =========================================================
-    if (isFn(window.renderTape)) window.renderTape();
-    if (isFn(window.renderLargeAds)) window.renderLargeAds();
-    if (isFn(window.renderMairieTicker)) window.renderMairieTicker();
+        if(Number(db.lastClickYear) === y){
+          return toast("Votre soutien pour cette année est déjà enregistré. Merci.");
+        }
 
-  })(); // fin initBoCiteArtClean
-  </script>
-</body>
-</html>
+        if(!db.byYear) db.byYear = {};
+        db.byYear[y] = Number(db.byYear[y] || 0) + 1;
+        db.total = Number(db.total || 0) + 1;
+        db.lastClickYear = y;
+
+        saveSportSupport(db);
+        refreshSportSupportUi();
+        toast("Merci. Votre soutien annuel au sport local est enregistré.");
+      }
+
+      function refreshSportWalletUi(){
+        const w = loadSportWallet();
+        if($("sportCoinBalance")) $("sportCoinBalance").textContent = Number(w.vert || 0);
+      }
+
+      function getCurrentMonthKey(){
