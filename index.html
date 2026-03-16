@@ -2792,51 +2792,34 @@
 
       renderMairieTicker();
 
-      window.tapeAdsFallback = [
-        { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-        { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
-        { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
-        { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
+           window.tapeAdsFallback = [
+        { txt:'🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com', bold:true },
+        { txt:'💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com', bold:false },
+        { txt:'🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com', bold:true },
+        { txt:'🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com', bold:false }
       ];
-            window.tapeAdsDynamic = Array.isArray(readStorage("bociteart_tape_dynamic_v1", []))
-        ? readStorage("bociteart_tape_dynamic_v1", [])
-        : [];
+
+      window.tapeAdsDynamic = readStorage('bociteart_tape_dynamic_v1', []);
 
       function saveDynamicTape(){
-        writeStorage(
-          "bociteart_tape_dynamic_v1",
-          Array.isArray(window.tapeAdsDynamic) ? window.tapeAdsDynamic : []
-        );
-      }
-
-      function getEligibleTapeAdsForToday(){
-        const now = new Date();
-        const db = loadPubBookings();
-        const list = getDayBookings(
-          db,
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate()
-        ).map(normalizeBooking);
-
-        return list
-          .filter(b => b.format === "banner_1cm")
-          .filter(canPublishBooking)
-          .map(b => ({
-            txt: b.txt && String(b.txt).trim()
-              ? String(b.txt).trim()
-              : `${b.advertiserName} • publicité validée`,
-            bold: bookingUseBold(b)
-          }));
+        writeStorage('bociteart_tape_dynamic_v1', window.tapeAdsDynamic);
       }
 
       function renderTape(){
-        const track = $("sportTapeTrack");
+        const track = $('sportTapeTrack');
         if(!track) return;
 
-        let ads = getEligibleTapeAdsForToday();
+        let ads = [];
 
-        if(!ads.length){
+        if(typeof getEligibleTapeAdsForToday === 'function'){
+          try{
+            ads = getEligibleTapeAdsForToday();
+          }catch(e){
+            ads = [];
+          }
+        }
+
+        if(!Array.isArray(ads) || !ads.length){
           ads = [
             ...(Array.isArray(window.tapeAdsDynamic) ? window.tapeAdsDynamic : []),
             ...(Array.isArray(window.tapeAdsFallback) ? window.tapeAdsFallback : [])
@@ -2844,20 +2827,816 @@
         }
 
         if(!ads.length){
-          ads = [{ txt:"Bo’CitéArt — bandeau démo", bold:false }];
+          ads = [{ txt:'Bo’CitéArt — bandeau démo', bold:false }];
         }
 
         const doubled = ads.concat(ads);
 
-        track.innerHTML = doubled.map(a => {
-          const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
-          return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
-        }).join("");
+        track.innerHTML = doubled.map(a => `
+          <div class="${a.bold ? 'sportTapeItem bold' : 'sportTapeItem'}">${escapeHtml(a.txt)}</div>
+        `).join('');
       }
+
+      window.renderTape = renderTape;
       renderTape();
 
+      const MAIRIE_STORE_KEY = 'bociteart_mairie_msg';
+
+      function mairieLoad(){
+        try{
+          const raw = localStorage.getItem(MAIRIE_STORE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        }catch(e){
+          return {};
+        }
+      }
+
+      function mairieSave(obj){
+        try{
+          localStorage.setItem(MAIRIE_STORE_KEY, JSON.stringify(obj));
+        }catch(e){}
+      }
+
+      function renderMairieTicker(){
+        const track = $('mairieTickerTrack');
+        if(!track) return;
+
+        const db = mairieLoad();
+        const msg =
+          (db.message && String(db.message).trim())
+            ? String(db.message).trim()
+            : 'Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet';
+
+        track.innerHTML = `<span>${escapeHtml(msg)}</span><span>${escapeHtml(msg)}</span>`;
+      }
+
+      window.mairieLoad = mairieLoad;
+      window.mairieSave = mairieSave;
+      window.renderMairieTicker = renderMairieTicker;
+      renderMairieTicker();
+
+      const SCHOOL_DATA_KEY_SAFE =
+        (typeof SCHOOL_DATA_KEY !== 'undefined' && SCHOOL_DATA_KEY)
+          ? SCHOOL_DATA_KEY
+          : 'bociteart_school_v1';
+
+      function schoolProgressReward(dayCount){
+        if(dayCount === 15) return 36;
+        if(dayCount === 18) return 29;
+        if(dayCount === 22) return 19;
+        return 0;
+      }
+
+      function schoolLoad(){
+        try{
+          const raw = localStorage.getItem(SCHOOL_DATA_KEY_SAFE);
+          return raw ? JSON.parse(raw) : {};
+        }catch(e){
+          return {};
+        }
+      }
+
+      function schoolSave(obj){
+        try{
+          localStorage.setItem(SCHOOL_DATA_KEY_SAFE, JSON.stringify(obj));
+        }catch(e){}
+      }
+
+      function refreshSchoolWallet(){
+        const out = $('schoolCoinBalance');
+        if(!out) return;
+        const wallet = loadSchoolWallet();
+        out.textContent = Number(wallet.jaune || 0);
+      }
+
+      function resetSchoolCycle(){
+        saveSchoolWallet({ jaune:0 });
+        const db = schoolLoad();
+        db.progress = { daysValidated:0 };
+        schoolSave(db);
+      }
+
+      function coinHtml(color, walletTitle, walletId, walletClass, walletSub, actionsHtml=''){
+        const colorClass = color === 'yellow' ? 'coinYellow' : color === 'green' ? 'coinGreen' : 'coinGold';
+        const innerClass = color === 'yellow' ? 'coinInnerYellow' : color === 'green' ? 'coinInnerGreen' : 'coinInnerGold';
+        const walletColor = color === 'yellow' ? 'walletYellow' : color === 'green' ? 'walletGreen' : 'walletGold';
+
+        return `
+          <div class="coinShowcase">
+            <div class="coinFace ${colorClass}" aria-hidden="true">
+              <div class="coinInner ${innerClass}">
+                <div class="n">1</div>
+                <div class="t">BoCitecoin</div>
+              </div>
+            </div>
+
+            <div class="walletBox">
+              <div class="walletTitle">${walletTitle}</div>
+              <div class="walletValue ${walletColor}" id="${walletId}">0</div>
+              <div class="walletSub">${walletSub}</div>
+              ${actionsHtml ? `<div class="walletActions">${actionsHtml}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }
+
+      function hydrateCoinStars(root=document){
+        const rings = root.querySelectorAll('.coinStarsRing');
+        rings.forEach(ring=>{
+          if(ring.dataset.hydrated === '1') return;
+          ring.dataset.hydrated = '1';
+
+          let html = '';
+          const total = 12;
+          const radius = 34;
+
+          for(let i=0;i<total;i++){
+            const deg = (360 / total) * i;
+            const rad = (deg - 90) * Math.PI / 180;
+            const x = Math.cos(rad) * radius;
+            const y = Math.sin(rad) * radius;
+            html += `<span style="transform:translate(${x}px, ${y}px)">✦</span>`;
+          }
+
+          ring.innerHTML = html;
+        });
+      }
+
+      hydrateCoinStars(document);
+      document.querySelectorAll('[data-open]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+          const key = el.getAttribute('data-open');
+
+          if(key === 'sport' || key === 'mairie' || key === 'commerces'){
+            if(typeof window.__bociteartOpenByKey === 'function'){
+              window.__bociteartOpenByKey(key);
+            }
+            return;
+          }
+
+          if(key === 'oeuvres'){
+            openModal('Œuvres', `
+              <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (structure)</div>
+              <div class="box"><strong>Cadre :</strong> contenus illustratifs en démo.</div>
+              <ul style="margin:8px 0 0 18px;font-weight:800;">
+                <li>Carte des fresques</li>
+                <li>Fiche œuvre : artiste • mécène • remerciements</li>
+                <li>Scan QR / BLE à proximité</li>
+              </ul>
+            `);
+            return;
+          }
+
+          if(key === 'ecole'){
+            openModal('École', `
+              <div style="font-weight:900;margin-bottom:8px;">Mot du jour (structure)</div>
+
+              <div class="box">
+                <strong>Cadre école :</strong> contenus non identifiants. En cas de désaccord parental, la voix synthétique est utilisée.
+              </div>
+
+              <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
+                « Je suis ravi aujourd’hui. » — Exemple (démo)
+              </div>
+
+              <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+                <button class="choiceBtn" type="button" id="playChild">▶ Lire (voix enfant — démo)</button>
+                <button class="choiceBtn" type="button" id="playFemale">▶ Lire (voix synthétique)</button>
+              </div>
+
+              ${coinHtml(
+                'yellow',
+                'Wallet École — BoCitecoins JAUNE',
+                'schoolCoinBalance',
+                'walletYellow',
+                'BoCitecoins gagnés par la classe, à échanger plus tard en mairie contre une surprise ou du matériel scolaire selon les règles locales.',
+                '<button class="walletMini" id="walletSchoolMinus" type="button">−1</button><button class="walletMini" id="walletSchoolReset" type="button">Réinitialiser</button>'
+              )}
+
+              <div style="font-weight:900;margin-top:14px;">Gestion École (démo)</div>
+
+              <div class="box">
+                <strong>Règles :</strong> 1 mot du jour maximum par jour. Une fois validé, c’est gelé jusqu’au lendemain.
+              </div>
+
+              <div class="box">
+                <div class="muted">Choisir l’école / la classe CM2 concernée.</div>
+                <select class="miniField" id="schoolClassSelect" aria-label="Choisir la classe"></select>
+              </div>
+
+              <div style="font-weight:900;margin-top:10px;">Saisie (démo)</div>
+              <input class="miniField" id="schoolWordInput" placeholder="Saisir le mot du jour (sans nom d’enfant, sans injure)" />
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                <button class="choiceBtn" id="schoolSaveBtn" type="button">✅ Valider aujourd’hui</button>
+                <button class="choiceBtn" id="schoolResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+              </div>
+
+              <div class="box" style="margin-top:12px;">
+                <div style="font-weight:900;">Quotas (école)</div>
+                <ul style="margin:8px 0 0 18px;font-weight:800;">
+                  <li>Chaque validation de jour ajoute 1 bocitecoin</li>
+                  <li>15e jour validé : total = 50 bocitecoins</li>
+                  <li>18e jour validé : total = 80 bocitecoins</li>
+                  <li>22e jour validé : total = 100 bocitecoins</li>
+                </ul>
+              </div>
+
+              <div class="box" style="margin-top:12px;">
+                <div style="font-weight:900;">Choisir le mode de partage</div>
+                <label class="miniCheck" style="margin-top:10px;"><input type="radio" name="donMode" value="none" checked><div>Pas de partage solidaire</div></label>
+                <label class="miniCheck"><input type="radio" name="donMode" value="full"><div>Don total</div></label>
+                <label class="miniCheck"><input type="radio" name="donMode" value="partial"><div>Don partiel</div></label>
+              </div>
+
+              <div class="box" style="margin-top:12px;">
+                <div style="font-weight:900;">Associations (sélection + répartition)</div>
+
+                <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="Les Clés du Cœur"><div><strong>Les Clés du Cœur</strong></div></label>
+                <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
+
+                <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="Étoile Filante"><div><strong>Étoile Filante</strong></div></label>
+                <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
+
+                <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="Les Papillons (antenne Nord)"><div><strong>Les Papillons</strong></div></label>
+                <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
+
+                <label class="miniCheck"><input type="checkbox" class="assoPick" data-asso="ATC Nord"><div><strong>ATC Nord</strong></div></label>
+                <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;"><div class="muted" style="min-width:78px;">% :</div><input class="miniField assoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;"></div>
+
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                  <button class="choiceBtn" id="schoolAssoPreview" type="button">👁️ Aperçu partage</button>
+                  <button class="choiceBtn" id="schoolAssoSave" type="button">💾 Enregistrer (démo)</button>
+                </div>
+              </div>
+            `);
+
+            setTimeout(()=>{
+              const text = 'Je suis ravi aujourd’hui.';
+              on($('playChild'),'click',()=>speak(text,'child'));
+              on($('playFemale'),'click',()=>speak(text,'female'));
+
+              const SCHOOL_CLASSES = ['École X — CM2 A','École X — CM2 B','École Y — CM2 A','École Y — CM2 B','École Z — CM2'];
+              const sel = $('schoolClassSelect');
+
+              if(sel){
+                sel.innerHTML = SCHOOL_CLASSES.map((x,i)=>`<option value="${i}">${x}</option>`).join('');
+              }
+
+              refreshSchoolWallet();
+
+              on($('walletSchoolMinus'),'click',()=>{
+                const w = loadSchoolWallet();
+                w.jaune = Math.max(0, Number(w.jaune || 0) - 1);
+                saveSchoolWallet(w);
+                refreshSchoolWallet();
+              });
+
+              on($('walletSchoolReset'),'click',()=>{
+                resetSchoolCycle();
+                refreshSchoolWallet();
+                alert('Cycle école remis à zéro (démo).');
+              });
+
+              function getDonMode(){
+                const r = document.querySelector('input[name="donMode"]:checked');
+                return r ? r.value : 'none';
+              }
+
+              function getAssoSelection(){
+                return Array.from(document.querySelectorAll('.assoPick'))
+                  .filter(cb=>cb.checked)
+                  .map(cb=>cb.getAttribute('data-asso'));
+              }
+
+              function getAssoPctMap(){
+                const map = {};
+                Array.from(document.querySelectorAll('.assoPct')).forEach(inp=>{
+                  const a = inp.getAttribute('data-asso');
+                  const v = parseInt(inp.value || '0', 10);
+                  map[a] = Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 0;
+                });
+                return map;
+              }
+
+              function normalizeForFull(picks){
+                if(!picks.length) return { ok:false, msg:'Choisis au moins 1 association.' };
+                const pct = Math.floor(100 / picks.length);
+                const rem = 100 - (pct * picks.length);
+                const out = {};
+                picks.forEach((a,idx)=> out[a] = pct + (idx===0 ? rem : 0));
+                return { ok:true, pctMap:out };
+              }
+
+              function validatePartial(picks, pctMap){
+                if(!picks.length) return { ok:false, msg:'Choisis au moins 1 association.' };
+                let sum = 0;
+                picks.forEach(a=> sum += (pctMap[a] || 0));
+                if(sum !== 100) return { ok:false, msg:`En don partiel, le total doit faire 100%. (Actuel : ${sum}%)` };
+                return { ok:true };
+              }
+
+              on($('schoolAssoPreview'),'click',()=>{
+                const mode = getDonMode();
+                const picks = getAssoSelection();
+                const pctMap = getAssoPctMap();
+
+                if(mode === 'none'){
+                  alert('Aperçu : Pas de partage solidaire.');
+                  return;
+                }
+
+                if(mode === 'full'){
+                  const norm = normalizeForFull(picks);
+                  if(!norm.ok){ alert(norm.msg); return; }
+                  const lines = Object.entries(norm.pctMap).map(([a,p])=> `- ${a} : ${p}%`).join('\n');
+                  alert('Aperçu (don total, partage égal)\n' + lines);
+                  return;
+                }
+
+                const v = validatePartial(picks, pctMap);
+                if(!v.ok){ alert(v.msg); return; }
+
+                alert('Aperçu (don partiel)\n' + picks.map(a=> `- ${a} : ${pctMap[a] || 0}%`).join('\n'));
+              });
+
+              on($('schoolAssoSave'),'click',()=>{
+                const mode = getDonMode();
+                const picks = getAssoSelection();
+                const pctMap = getAssoPctMap();
+                const idx = sel ? parseInt(sel.value,10) : 0;
+                const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+
+                let finalMap = {};
+
+                if(mode === 'none'){
+                  finalMap = {};
+                }else if(mode === 'full'){
+                  const norm = normalizeForFull(picks);
+                  if(!norm.ok){ alert(norm.msg); return; }
+                  finalMap = norm.pctMap;
+                }else{
+                  const v = validatePartial(picks, pctMap);
+                  if(!v.ok){ alert(v.msg); return; }
+                  picks.forEach(a=> finalMap[a] = pctMap[a] || 0);
+                }
+
+                const db = schoolLoad();
+                db.lastSolidarity = {
+                  class:cls,
+                  mode,
+                  map:finalMap,
+                  ts_fr:new Date().toLocaleString('fr-FR')
+                };
+                schoolSave(db);
+
+                alert('Enregistré (démo) pour : ' + cls);
+              });
+
+              on($('schoolResetBtn'),'click',()=>{
+                if(confirm('Réinitialiser les données École (démo) sur ce téléphone ?')){
+                  localStorage.removeItem(SCHOOL_DATA_KEY_SAFE);
+                  resetSchoolCycle();
+                  refreshSchoolWallet();
+                  alert('Réinitialisé (démo).');
+                }
+              });
+
+              on($('schoolSaveBtn'),'click',()=>{
+                const idx = sel ? parseInt(sel.value,10) : 0;
+                const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+                const input = $('schoolWordInput');
+                const w = input ? String(input.value || '').trim() : '';
+
+                if(!w){
+                  alert('Saisis le mot du jour.');
+                  return;
+                }
+
+                if(/[<>]/.test(w)){
+                  alert('Texte invalide.');
+                  return;
+                }
+
+                const db = schoolLoad();
+                if(!db.progress) db.progress = { daysValidated:0 };
+
+                db.lastWord = {
+                  class:cls,
+                  text:w,
+                  ts_fr:new Date().toLocaleString('fr-FR'),
+                  note:'Mot du jour (démo, stockage local)'
+                };
+
+                db.progress.daysValidated = Number(db.progress.daysValidated || 0) + 1;
+                const dayCount = db.progress.daysValidated;
+                schoolSave(db);
+
+                let gainedToday = 1;
+                const bonus = schoolProgressReward(dayCount);
+                if(bonus > 0) gainedToday += bonus;
+
+                const wallet = loadSchoolWallet();
+                wallet.jaune = Number(wallet.jaune || 0) + gainedToday;
+                saveSchoolWallet(wallet);
+
+                refreshSchoolWallet();
+
+                alert(
+                  'Validé (démo) : ' + cls +
+                  '\n« ' + w + ' »' +
+                  '\nJour validé n° ' + dayCount +
+                  '\n+' + gainedToday + ' bocitecoin(s) JAUNE'
+                );
+              });
+            },0);
+
+            return;
+          }
+        });
+      });
+
+      window.__bociteartOpenByKey = function(key){
+        key = String(key || '').trim();
+        if(!isFn(window.openModal)) return;
+
+        if(key === 'sport'){
+          openModal('Sport', `
+            <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+
+            <div class="box">
+              <strong>Cadre :</strong> publications par référent habilité. Éléments de validation non publics.
+            </div>
+
+            ${coinHtml(
+              'green',
+              'Wallet Sport — BoCitecoins VERT',
+              'sportCoinBalance',
+              'walletGreen',
+              'BoCitecoins gagnés par les actions sportives/citoyennes, échangeables plus tard chez un commerçant partenaire selon les règles locales.',
+              '<button class="walletMini" id="walletSportPlus10" type="button">+10</button><button class="walletMini" id="walletSportPlus25" type="button">+25</button><button class="walletMini" id="walletSportMinus" type="button">−1</button><button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>'
+            )}
+
+            <div class="box">
+              <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
+              <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel et la visibilité bandeau.</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
+              </div>
+            </div>
+          `);
+
+          setTimeout(()=>{
+            on($('openSportFicheBtn'),'click',openSportFiche);
+
+            const refresh = ()=>{
+              const out = $('sportCoinBalance');
+              if(out) out.textContent = Number(loadSportWallet().vert || 0);
+            };
+
+            refresh();
+
+            on($('walletSportPlus10'),'click',()=>{
+              const w = loadSportWallet();
+              w.vert = Number(w.vert || 0) + 10;
+              saveSportWallet(w);
+              refresh();
+            });
+
+            on($('walletSportPlus25'),'click',()=>{
+              const w = loadSportWallet();
+              w.vert = Number(w.vert || 0) + 25;
+              saveSportWallet(w);
+              refresh();
+            });
+
+            on($('walletSportMinus'),'click',()=>{
+              const w = loadSportWallet();
+              w.vert = Math.max(0, Number(w.vert || 0) - 1);
+              saveSportWallet(w);
+              refresh();
+            });
+
+            on($('walletSportReset'),'click',()=>{
+              if(confirm('Réinitialiser le wallet Sport (démo) sur ce téléphone ?')){
+                saveSportWallet({ vert:0 });
+                refresh();
+              }
+            });
+          },0);
+
+          return;
+        }
+
+
+        if(key === 'mairie'){
+          openModal('Mairie', `
+            <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
+
+            <div class="box">
+              <strong>Cadre :</strong> la mairie peut diffuser des messages d’intérêt général gratuits, et des messages promotionnels payants au même tarif que les commerçants.
+            </div>
+
+            <div class="box">
+              <div style="font-weight:900;">Message bandeau mairie (démo)</div>
+              <div class="muted" style="margin-top:6px;">Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.</div>
+
+              <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                <button class="choiceBtn" id="mairieMsgSave" type="button">💾 Enregistrer</button>
+                <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">🧹 Réinitialiser</button>
+              </div>
+            </div>
+
+            <div class="box">
+              <div style="font-weight:900;">Échange école → mairie (scan / brûlage)</div>
+              <div class="muted">La mairie peut scanner les bocitecoins école puis les brûler automatiquement.</div>
+
+              <div class="box" style="background:var(--bg);">
+                Solde école actuel : <strong id="mairieSchoolWalletBalance">0</strong> bocitecoin(s) JAUNES
+              </div>
+
+              <select class="miniField" id="mairieSchoolGiftType">
+                <option value="materiel-scolaire">Matériel scolaire</option>
+                <option value="extra-scolaire">Surprise extra-scolaire</option>
+              </select>
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                <button class="choiceBtn" id="mairieSchoolScanBtn" type="button">Scanner wallet école</button>
+                <button class="choiceBtn" id="mairieSchoolBurnBtn" type="button">Brûler les bocitecoins école</button>
+              </div>
+            </div>
+          `);
+
+          setTimeout(()=>{
+            const input = $('mairieMsgInput');
+            const db = mairieLoad();
+
+            if(input){
+              input.value =
+                (db.message && String(db.message).trim())
+                  ? String(db.message).trim()
+                  : 'Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet';
+            }
+
+            on($('mairieMsgSave'),'click',()=>{
+              const msg = input ? String(input.value || '').trim() : '';
+
+              if(!msg){
+                alert('Saisis un message mairie.');
+                return;
+              }
+
+              const next = mairieLoad();
+              next.message = msg;
+              next.ts_fr = new Date().toLocaleString('fr-FR');
+              mairieSave(next);
+              renderMairieTicker();
+
+              alert('Message mairie enregistré (démo).');
+            });
+
+            on($('mairieMsgReset'),'click',()=>{
+              if(confirm('Réinitialiser le message mairie (démo) sur ce téléphone ?')){
+                mairieSave({});
+                renderMairieTicker();
+                if(input){
+                  input.value = 'Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet';
+                }
+                alert('Message mairie réinitialisé (démo).');
+              }
+            });
+
+            const refreshSchool = ()=>{
+              const w = loadSchoolWallet();
+              const bal = $('mairieSchoolWalletBalance');
+              if(bal) bal.textContent = Number(w.jaune || 0);
+            };
+
+            refreshSchool();
+
+            on($('mairieSchoolScanBtn'),'click',()=>{
+              refreshSchool();
+              alert('Scan du wallet école simulé (démo).');
+            });
+
+            on($('mairieSchoolBurnBtn'),'click',()=>{
+              const w = loadSchoolWallet();
+              const total = Number(w.jaune || 0);
+
+              if(total <= 0){
+                alert('Aucun bocitecoin école à brûler.');
+                return;
+              }
+
+              if(confirm('Brûler les bocitecoins école et remettre le compteur à zéro ?')){
+                resetSchoolCycle();
+                refreshSchool();
+                alert('Bocitecoins école brûlés, compteur et cycle remis à zéro (démo).');
+              }
+            });
+          },0);
+
+          return;
+        }
+
+        if(key === 'commerces'){
+          openModal('Commerces', `
+            <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
+
+            <div class="box">
+              <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.
+            </div>
+
+            ${coinHtml(
+              'gold',
+              'Wallet client — BoCitecoins OR',
+              'citizenCoinBalance',
+              'walletGold',
+              'BoCitecoins disponibles pour échange chez le commerçant selon les règles locales.'
+            )}
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="walletClientPlus10" type="button">+10</button>
+              <button class="choiceBtn" id="walletClientPlus50" type="button">+50</button>
+              <button class="choiceBtn" id="walletClientMinus10" type="button">-10</button>
+              <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser</button>
+            </div>
+
+            <div class="box">
+              <div class="muted">
+                Le commerçant saisit le montant d’achat, l’application calcule automatiquement le nombre de bocitecoins à verser.
+              </div>
+
+              <div style="margin-top:10px;font-weight:900;">Montant d’achat</div>
+              <input class="miniField" id="shopPurchaseAmount" type="number" min="0" step="0.01" placeholder="Ex : 47.00" />
+
+              <div class="box" style="background:var(--bg);">
+                <strong id="shopCoinsCalc">0</strong> bocitecoin(s) OR à verser
+              </div>
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                <button class="choiceBtn" id="shopCalcBtn" type="button">Calculer</button>
+                <button class="choiceBtn" id="shopScanClientBtn" type="button">Scanner le client</button>
+                <button class="choiceBtn" id="shopCreditClientBtn" type="button">Créditer le wallet client</button>
+              </div>
+
+              <div class="muted" style="margin-top:10px;">
+                Règle actuelle : 1 bocitecoin OR par tranche complète de 10 € d’achat.
+              </div>
+            </div>
+
+            <div class="box">
+              <strong>Règle :</strong> <strong>0,18 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés.
+            </div>
+
+            <div class="box">
+              <div class="muted">Saisis un montant d’achats du mois pour voir l’estimation.</div>
+              <input class="miniField" id="feeInputSales" type="number" min="0" step="0.01" placeholder="Ex : 1250.00" />
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                <button class="choiceBtn" id="feeAddBtn" type="button">➕ Ajouter / mettre à jour</button>
+                <button class="choiceBtn" id="feeResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+              </div>
+
+              <div class="box" style="margin-top:12px;background:var(--bg);">
+                <div style="font-weight:900;">Résumé (mois en cours)</div>
+                <div class="muted" style="margin-top:6px;">
+                  Achats saisis : <strong id="feeSalesOut">0,00 €</strong><br>
+                  Frais estimés Bo’CitéArt : <strong id="feeOut">0,00 €</strong>
+                </div>
+              </div>
+            </div>
+          `);
+
+          setTimeout(()=>{
+            initFeeUiInModal();
+
+            const refresh = ()=>{
+              const wallet = loadCitizenWallet();
+              const bal = $('citizenCoinBalance');
+              if(bal) bal.textContent = Number(wallet.or || 0);
+            };
+
+            refresh();
+
+            on($('walletClientPlus10'),'click',()=>{
+              const w = loadCitizenWallet();
+              w.or = Number(w.or || 0) + 10;
+              saveCitizenWallet(w);
+              refresh();
+            });
+
+            on($('walletClientPlus50'),'click',()=>{
+              const w = loadCitizenWallet();
+              w.or = Number(w.or || 0) + 50;
+              saveCitizenWallet(w);
+              refresh();
+            });
+
+            on($('walletClientMinus10'),'click',()=>{
+              const w = loadCitizenWallet();
+              w.or = Math.max(0, Number(w.or || 0) - 10);
+              saveCitizenWallet(w);
+              refresh();
+            });
+
+            on($('walletClientReset'),'click',()=>{
+              if(confirm('Réinitialiser le wallet Client (démo) sur ce téléphone ?')){
+                saveCitizenWallet({ or:0 });
+                refresh();
+              }
+            });
+
+            const amountInput = $('shopPurchaseAmount');
+            const calcOut = $('shopCoinsCalc');
+            let lastCalculatedCoins = 0;
+            let lastClientScanned = false;
+
+            function computeCoins(){
+              const amount = Number(amountInput ? amountInput.value : 0);
+              lastCalculatedCoins = (!Number.isFinite(amount) || amount < 0) ? 0 : Math.floor(amount / 10);
+              if(calcOut) calcOut.textContent = String(lastCalculatedCoins);
+            }
+
+            on($('shopCalcBtn'),'click',()=>{
+              computeCoins();
+              alert('Calcul effectué (démo).');
+            });
+
+            on($('shopScanClientBtn'),'click',()=>{
+              computeCoins();
+              lastClientScanned = true;
+              alert('Scan client simulé (démo).');
+            });
+
+            on($('shopCreditClientBtn'),'click',()=>{
+              computeCoins();
+
+              if(!lastClientScanned){
+                alert('Scanne d’abord le client.');
+                return;
+              }
+
+              if(lastCalculatedCoins <= 0){
+                alert('Aucun bocitecoin à verser pour ce montant.');
+                return;
+              }
+
+              const w = loadCitizenWallet();
+              w.or = Number(w.or || 0) + lastCalculatedCoins;
+              saveCitizenWallet(w);
+              refresh();
+              lastClientScanned = false;
+
+              alert(lastCalculatedCoins + ' bocitecoin(s) OR versé(s) au client (démo).');
+            });
+          },0);
+
+          return;
+        }
+      };
+
+
+      const adminTile = $('adminTile');
+      on(adminTile, 'click', ()=>{
+        openModal('Accès Admin (structure)', `
+          <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
+          <div class="box"><strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.</div>
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
+            <li>Activation / blocage / désactivation</li>
+            <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
+          </ul>
+        `);
+      });
+
+
+      const daeBtn = $('daeBtn');
+      on(daeBtn, 'click', ()=>{
+        openModal('Défibrillateur (DAE)', `
+          <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
+          <div class="box"><strong>Important :</strong> indication indicative dépendant des sources et du téléphone. En cas d’urgence, appeler le 112.</div>
+          <div class="box">
+            <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
+            <div class="muted">Ici, la version officielle affichera la carte + fléchage.</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
+              <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
+            </div>
+          </div>
+        `);
+
+        setTimeout(()=>{
+          on($('daeLocate'),'click',()=>alert('Démo : demande de localisation (GPS).'));
+          on($('daeRoute'),'click',()=>alert('Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.'));
+        },0);
+      });
+
+
       function openSportFiche(){
-        openModal("📄 Fiche — élus / CCI / commerçants (Sport + Associations)", `
+        openModal('📄 Fiche — élus / CCI / commerçants (Sport + Associations)', `
           <div class="box">
             <div style="font-weight:900;">Objectif</div>
             <div class="muted" style="margin-top:6px;">
@@ -2866,218 +3645,309 @@
           </div>
 
           <div class="box">
-            <div style="font-weight:900;">Principe</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Un commerçant soutient <strong>un club sportif</strong> + <strong>une association</strong>.</li>
-              <li>Sa ligne apparaît dans le bandeau : “Commerce soutient Club + Association”.</li>
-              <li>Le club valorise ses soutiens auprès de ses licenciés/familles (logique locale).</li>
-              <li>Les modalités PSP / pièces / fiscalité sont décrites dans les CGV/contrats (discrétion + conformité).</li>
-            </ul>
-          </div>
-
-          <div class="box">
-            <div style="font-weight:900;">Montant (exemple)</div>
-            <div style="font-weight:800;margin-top:6px;">Exemple : <strong>100 € HT</strong> par période (ex. trimestriel).</div>
-            <div class="muted" style="margin-top:8px;">(Démo) La répartition exacte est contractualisée. La TVA dépend du cadre applicable.</div>
-          </div>
-
-          <div class="box">
-            <div style="font-weight:900;">Associations retenues (uniquement celles-ci)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</li>
-              <li><strong>Étoile Filante</strong> — enfants atteints de maladies rares</li>
-              <li><strong>Les Papillons</strong> — antenne Nord</li>
-              <li><strong>ATC Nord</strong> — traumatisés crâniens</li>
-            </ul>
-          </div>
-
-          <div class="box">
             <div style="font-weight:900;">Préparer votre ligne (démo)</div>
-            <div class="muted" style="margin-top:6px;">Le commerçant peut choisir l’affichage en gras (+4€ TTC) et indiquer une URL.</div>
-            <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
             <input class="miniField" id="spName" placeholder="Ex. Boulangerie Croquet" />
-            <div style="margin-top:10px;font-weight:900;">URL (optionnelle)</div>
-            <input class="miniField" id="spUrl" placeholder="https://..." />
+            <input class="miniField" id="spUrl" placeholder="https://..." style="margin-top:10px;" />
             <div class="miniCheck">
               <input id="spBold" type="checkbox" />
-              <div>Option <strong>texte en gras</strong> (+4€ TTC) — pour une meilleure lisibilité (sans promesse de résultats).</div>
+              <div>Option <strong>texte en gras</strong> (+4€ TTC).</div>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
               <button class="choiceBtn" id="spPreview" type="button">👁️ Aperçu</button>
               <button class="choiceBtn" id="spAddToTape" type="button">➕ Ajouter au bandeau (démo)</button>
             </div>
-            <div class="muted" style="margin-top:10px;">
-              (Démo) Ici, l’ajout est local (sur ce téléphone). La version officielle gèrera validation/contrat/contrôle.
-            </div>
           </div>
         `);
 
         setTimeout(()=>{
-          function buildLine(){
-            const nameRaw = String($("spName")?.value || "").trim();
-            const urlRaw = String($("spUrl")?.value || "").trim();
-            const name = nameRaw || "Commerce (démo)";
+          const inName = $('spName');
+          const inUrl = $('spUrl');
+          const cbBold = $('spBold');
+
+          const makeLine = ()=>{
+            const name = (inName && inName.value.trim()) ? inName.value.trim() : 'Commerce (démo)';
+            let url = (inUrl && inUrl.value.trim()) ? inUrl.value.trim() : '';
             const base = `${name} soutient Club + Association`;
 
-            if(!urlRaw) return base;
+            url = url.replace(/\s+/g, '');
 
-            let url = urlRaw;
-            if(url.startsWith("www.")) url = "https://" + url;
+            if(!url) return base;
+            if(url.startsWith('www.')) url = 'https://' + url;
 
-            try{
-              const u = new URL(url);
-              if(u.protocol !== "https:"){
-                toast("URL invalide : utiliser https://");
-                return base;
-              }
-              url = u.toString();
-            }catch(e){
-              toast("URL invalide.");
+            if(url.startsWith('http://')){
+              alert('URL invalide : utiliser https:// (pas http://).');
+              return base;
+            }
+
+            if(!url.startsWith('https://')){
+              alert('URL invalide : utiliser https://');
               return base;
             }
 
             return `${base} • ${url}`;
-          }
-
-          const previewBtn = $("spPreview");
-          const addBtn = $("spAddToTape");
-
-          if(previewBtn){
-            previewBtn.onclick = ()=>{
-              const line = buildLine();
-              toast(
-                "Aperçu :\n" +
-                line +
-                ($("spBold")?.checked ? "\n(affichage gras)" : "\n(affichage normal)")
-              );
-            };
-          }
-
-          if(addBtn){
-            addBtn.onclick = ()=>{
-              const line = buildLine();
-              if(!line || !String(line).trim()){
-                toast("Ligne invalide.");
-                return;
-              }
-
-              if(!Array.isArray(window.tapeAdsDynamic)){
-                window.tapeAdsDynamic = [];
-              }
-
-              window.tapeAdsDynamic.push({
-                txt: line,
-                bold: !!$("spBold")?.checked
-              });
-
-              saveDynamicTape();
-              renderTape();
-              toast("Ajouté au bandeau (démo).");
-            };
-          }
-        }, 0);
-      }
-
-      const SCHOOL_CLASSES = ["École X — CM2 A","École X — CM2 B","École Y — CM2 A","École Y — CM2 B","École Z — CM2"];
-
-      function getTodayKey(){
-        return new Date().toISOString().slice(0, 10);
-      }
-
-      function getSchoolProgress(db, cls){
-        if(!db.progress) db.progress = {};
-        if(!db.progress[cls]){
-          db.progress[cls] = {
-            totalValidatedDays: 0,
-            lastValidationDay: ""
           };
+
+          on($('spPreview'),'click',()=>{
+            const line = makeLine();
+            alert('Aperçu :\n' + line + (cbBold && cbBold.checked ? '\n(affichage gras)' : '\n(affichage normal)'));
+          });
+
+          on($('spAddToTape'),'click',()=>{
+            const line = makeLine();
+            const bold = !!(cbBold && cbBold.checked);
+
+            if(!Array.isArray(window.tapeAdsDynamic)){
+              window.tapeAdsDynamic = [];
+            }
+
+            window.tapeAdsDynamic.push({ txt:line, bold });
+            saveDynamicTape();
+            renderTape();
+
+            alert('Ajouté au bandeau (démo).');
+          });
+        },0);
+      }
+
+      const legal = $('legal');
+
+      function openLegal(){
+        if(!legal) return;
+        window.__lastFocus = document.activeElement;
+        legal.classList.add('open');
+        lockScroll(true);
+      }
+
+      function closeLegal(){
+        if(!legal) return;
+        legal.classList.remove('open');
+        lockScroll(false);
+        if(window.__lastFocus?.focus) window.__lastFocus.focus();
+        window.__lastFocus = null;
+      }
+
+      on($('openLegal'),'click',openLegal);
+      on($('legalClose'),'click',closeLegal);
+      on($('legalX'),'click',closeLegal);
+
+      on($('openSecure'),'click',()=>{
+        openModal(
+          'Compte sécurisé + assistance téléphone',
+          '<div class="box"><strong>Abonnement optionnel :</strong> 2,99 € / mois.</div>'
+        );
+      });
+
+
+      const ACK_PREFIX = 'bociteart_ack_v2_';
+      const ACK_SALT = 'BoCiteArt|ack|v2';
+
+      function fnv1a(str){
+        let h = 0x811c9dc5;
+        for(let i=0;i<str.length;i++){
+          h ^= str.charCodeAt(i);
+          h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
         }
-        return db.progress[cls];
+        return ('00000000' + h.toString(16)).slice(-8);
       }
 
-      function schoolTargetValue(totalValidatedDays){
-        if(totalValidatedDays === 15) return 50;
-        if(totalValidatedDays === 18) return 80;
-        if(totalValidatedDays === 22) return 100;
-        return null;
+      function ackSign(kind, ts){
+        return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
       }
 
-      async function loadVoices(){
-        return new Promise(resolve => {
-          if(!("speechSynthesis" in window)){
-            resolve([]);
+      function ackGet(kind){
+        const key = ACK_PREFIX + kind;
+        try{
+          const raw = localStorage.getItem(key);
+          if(!raw) return false;
+          const parts = raw.split('|');
+          if(parts.length !== 3) return false;
+          const ok = parts[0] === '1';
+          const ts = parseInt(parts[1],10);
+          const sig = parts[2];
+          if(!ok || !Number.isFinite(ts)) return false;
+          return sig === ackSign(kind, ts);
+        }catch(e){
+          return false;
+        }
+      }
+
+      function ackSet(kind){
+        const key = ACK_PREFIX + kind;
+        try{
+          const ts = Date.now();
+          localStorage.setItem(key, `1|${ts}|${ackSign(kind, ts)}`);
+        }catch(e){}
+      }
+
+
+      function makeLongPress(btn, ringEl, ms, onTrigger){
+        if(!btn || !ringEl) return;
+
+        let raf = null;
+        let start = null;
+        let holding = false;
+        let fired = false;
+
+        const r = parseFloat(ringEl.getAttribute('r') || '35');
+        const circ = 2 * Math.PI * r;
+
+        ringEl.style.strokeDasharray = String(circ);
+        ringEl.style.strokeDashoffset = String(circ);
+
+        const stop = ()=>{
+          holding = false;
+          start = null;
+          fired = false;
+          ringEl.style.strokeDashoffset = String(circ);
+          if(raf) cancelAnimationFrame(raf);
+          raf = null;
+        };
+
+        const tick = (ts)=>{
+          if(!holding) return;
+          if(start === null) start = ts;
+
+          const p = Math.min(1, (ts - start) / ms);
+          ringEl.style.strokeDashoffset = String(circ * (1 - p));
+
+          if(p >= 1){
+            if(fired) return;
+            fired = true;
+            stop();
+            onTrigger();
             return;
           }
 
-          const voices = speechSynthesis.getVoices();
-          if(voices.length){
-            resolve(voices);
-            return;
-          }
+          raf = requestAnimationFrame(tick);
+        };
 
-          const handler = ()=>{
-            speechSynthesis.removeEventListener("voiceschanged", handler);
-            resolve(speechSynthesis.getVoices());
-          };
-
-          speechSynthesis.addEventListener("voiceschanged", handler, { once:true });
+        btn.addEventListener('pointerdown', (e)=>{
+          e.preventDefault();
+          if(holding) return;
+          holding = true;
+          fired = false;
+          raf = requestAnimationFrame(tick);
         });
+
+        ['pointerup','pointerleave','pointercancel'].forEach(ev=>btn.addEventListener(ev, stop));
+        btn.addEventListener('contextmenu', (e)=>e.preventDefault());
       }
 
-      async function speak(text, mode = "female"){
-        if(!("speechSynthesis" in window)) return;
 
-        const voices = await loadVoices();
-        speechSynthesis.cancel();
-
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = "fr-FR";
-        u.rate = 0.95;
-        u.pitch = mode === "child" ? 1.35 : 1.05;
-
-        const frVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("fr"));
-        if(frVoice) u.voice = frVoice;
-
-        speechSynthesis.speak(u);
-      }
-
-      function getCurrentYear(){
-        return new Date().getFullYear();
-      }
-
-      function refreshSportSupportUi(){
-        const db = loadSportSupport();
-        const y = getCurrentYear();
-        const yearCount = Number((db.byYear && db.byYear[y]) || 0);
-        const totalCount = Number(db.total || 0);
-
-        if($("sportSupportYearCount")) $("sportSupportYearCount").textContent = yearCount;
-        if($("sportSupportTotalCount")) $("sportSupportTotalCount").textContent = totalCount;
-        if($("sportSupportYearModal")) $("sportSupportYearModal").textContent = yearCount;
-        if($("sportSupportTotalModal")) $("sportSupportTotalModal").textContent = totalCount;
-      }
-
-      function handleSportSupportClick(){
-        const db = loadSportSupport();
-        const y = getCurrentYear();
-
-        if(Number(db.lastClickYear) === y){
-          return toast("Votre soutien pour cette année est déjà enregistré. Merci.");
+      function emergencyGate(kind, onOk){
+        if(ackGet(kind)){
+          onOk();
+          return;
         }
 
-        if(!db.byYear) db.byYear = {};
-        db.byYear[y] = Number(db.byYear[y] || 0) + 1;
-        db.total = Number(db.total || 0) + 1;
-        db.lastClickYear = y;
+        const body = kind === '112'
+          ? `<div class="box"><strong>112 :</strong> utiliser uniquement en cas d’urgence réelle.</div><label class="miniCheck"><input id="ackBox" type="checkbox"><div>J’ai compris.</div></label><button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>`
+          : `<div class="box"><strong>3919 / 119 :</strong> numéros sérieux à utiliser uniquement si nécessaire.</div><label class="miniCheck"><input id="ackBox" type="checkbox"><div>J’ai compris.</div></label><button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>`;
 
-        saveSportSupport(db);
-        refreshSportSupportUi();
-        toast("Merci. Votre soutien annuel au sport local est enregistré.");
+        openModal(
+          kind === '112' ? 'Urgence 112 — usage responsable' : 'Aide 3919 / 119 — usage responsable',
+          body
+        );
+
+        setTimeout(()=>{
+          on($('ackBtn'),'click',()=>{
+            const box = $('ackBox');
+            if(!box || !box.checked){
+              alert('Veuillez cocher la case pour confirmer que vous avez compris.');
+              return;
+            }
+            ackSet(kind);
+            closeModal();
+            onOk();
+          });
+        },0);
       }
 
-      function refreshSportWalletUi(){
-        const w = loadSportWallet();
-        if($("sportCoinBalance")) $("sportCoinBalance").textContent = Number(w.vert || 0);
+
+      makeLongPress($('btn112'), $('ring112'), 1800, ()=> emergencyGate('112', ()=> callPhone('112')));
+
+      let sosNumber = null;
+      const choice = $('choice');
+
+      function closeChoice(){
+        if(!choice) return;
+        choice.classList.remove('open');
+        lockScroll(false);
+        if(window.__lastFocus?.focus) window.__lastFocus.focus();
+        window.__lastFocus = null;
       }
 
-      function getCurrentMonthKey(){
+      on($('choiceClose'),'click',closeChoice);
+      on($('choiceX'),'click',closeChoice);
+
+      document.querySelectorAll('#choice .choiceBtn[data-pick]').forEach(b=>{
+        b.addEventListener('click', ()=>{
+          sosNumber = b.getAttribute('data-pick');
+          const lab = $('sosLabel');
+          if(lab) lab.textContent = sosNumber;
+          closeChoice();
+        });
+      });
+
+      makeLongPress($('btnSos'), $('ringSos'), 2000, ()=>{
+        if(!sosNumber){
+          window.__lastFocus = document.activeElement;
+          choice.classList.add('open');
+          lockScroll(true);
+          return;
+        }
+        emergencyGate(sosNumber, ()=> callPhone(sosNumber));
+      });
+
+
+      document.addEventListener('keydown', (e)=>{
+        if(e.key !== 'Escape') return;
+
+        if(choice && choice.classList.contains('open')){
+          closeChoice();
+          return;
+        }
+
+        if(legal && legal.classList.contains('open')){
+          closeLegal();
+          return;
+        }
+
+        if(modal && modal.classList.contains('open')){
+          closeModal();
+        }
+      });
+
+
+      if(isFn(window.makeKeyboardClickable)){
+        makeKeyboardClickable($('ticker'), openTicker);
+        document.querySelectorAll('.tile[data-open]').forEach(el=>{
+          makeKeyboardClickable(el, ()=> el.click());
+        });
+        if(adminTile){
+          makeKeyboardClickable(adminTile, ()=> adminTile.click());
+        }
+      }
+
+
+      (function initLegalTabs(){
+        if(!legal) return;
+
+        const tabs = legal.querySelectorAll('.tab');
+        const panels = { rgpd:$('p-rgpd'), cgu:$('p-cgu'), cgv:$('p-cgv') };
+
+        function showTab(name){
+          tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+          Object.keys(panels).forEach(k=>{
+            if(panels[k]) panels[k].style.display = (k === name) ? 'block' : 'none';
+          });
+        }
+
+        tabs.forEach(t=> t.addEventListener('click', ()=> showTab(t.dataset.tab)));
+        showTab('rgpd');
+      })();
+
+    })();
+  </script>
+</body>
+</html>
