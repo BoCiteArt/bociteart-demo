@@ -14,6 +14,105 @@
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 
   <style>
+    /* =========================
+   ANIMATION PIÈCE QUI TOURNE
+   ========================= */
+
+.coinFace,
+.stackCoin{
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* Rotation douce permanente */
+.coinFace.coinGreen{
+  animation: coinSpinGreen 6s linear infinite;
+}
+
+/* Petites pièces empilées : mouvement plus discret et décalé */
+.stackCoin.stackGreen.stack1{
+  animation: coinSpinMini 7s linear infinite;
+}
+.stackCoin.stackGreen.stack2{
+  animation: coinSpinMini 7.8s linear infinite;
+}
+.stackCoin.stackGreen.stack3{
+  animation: coinSpinMini 8.6s linear infinite;
+}
+
+/* Léger reflet mobile */
+.coinFace.coinGreen::after{
+  content:"";
+  position:absolute;
+  inset:-18%;
+  background: linear-gradient(
+    115deg,
+    rgba(255,255,255,0) 20%,
+    rgba(255,255,255,0.16) 45%,
+    rgba(255,255,255,0.42) 50%,
+    rgba(255,255,255,0.10) 55%,
+    rgba(255,255,255,0) 80%
+  );
+  transform: translateX(-120%) rotate(8deg);
+  animation: coinShine 3.8s ease-in-out infinite;
+  pointer-events:none;
+  z-index:3;
+}
+
+/* Pause légère au survol pour garder un rendu propre */
+.coinFace.coinGreen:hover,
+.stackCoin.stackGreen:hover{
+  animation-play-state: paused;
+}
+
+@keyframes coinSpinGreen{
+  0%{
+    transform: perspective(700px) rotateY(0deg);
+  }
+  25%{
+    transform: perspective(700px) rotateY(90deg);
+  }
+  50%{
+    transform: perspective(700px) rotateY(180deg);
+  }
+  75%{
+    transform: perspective(700px) rotateY(270deg);
+  }
+  100%{
+    transform: perspective(700px) rotateY(360deg);
+  }
+}
+
+@keyframes coinSpinMini{
+  0%{
+    transform: perspective(600px) rotateY(0deg);
+  }
+  50%{
+    transform: perspective(600px) rotateY(180deg);
+  }
+  100%{
+    transform: perspective(600px) rotateY(360deg);
+  }
+}
+
+@keyframes coinShine{
+  0%{
+    transform: translateX(-120%) rotate(8deg);
+    opacity:.0;
+  }
+  18%{
+    opacity:.75;
+  }
+  45%{
+    transform: translateX(120%) rotate(8deg);
+    opacity:.0;
+  }
+  100%{
+    transform: translateX(120%) rotate(8deg);
+    opacity:.0;
+  }
+}
     :root{
       --bg:#f1e6d6;
       --surface:#ffffff;
