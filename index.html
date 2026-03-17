@@ -765,11 +765,11 @@
   <!-- Compteur sport discret -->
   <div style="
     position:absolute;
-    top:2px;
+    top:1px;
     left:50%;
     transform:translateX(-50%);
     z-index:6;
-    width:80px;
+    width:76px;
     background:rgba(255,255,255,.90);
     border-radius:12px;
     padding:3px 5px 4px 5px;
@@ -789,7 +789,6 @@
       margin-bottom:2px;
     ">
       <span style="font-size:10px;">❤️</span>
-      <span>Sport</span>
     </div>
 
     <div style="display:flex;justify-content:space-between;gap:3px;">
@@ -2578,74 +2577,164 @@ function refreshSportTileCounters(){
          // ====== SPORT MODAL START ======
 if(key === "sport"){
   openModal("Sport", `
-    <div style="font-weight:900;margin-bottom:8px;">Sport & associations</div>
+    <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
 
-    <div class="walletBox">
-      <div class="walletTitle">Wallet Sport</div>
-      <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
+    <div class="box">
+      <strong>Cadre :</strong> publications par référent habilité.
+      Les éléments de validation (si activés) ne sont pas publics.
+      Accès restreint, finalité limitée.
+    </div>
 
-      <div style="margin-top:10px;">
-        <div>Continu : <strong id="sportContinuCounter">0</strong></div>
-        <div>Annuel : <strong id="sportAnnualCounter">0</strong></div>
+    <div class="coinShowcase">
+
+      <div class="coinFace coinGreen" aria-hidden="true">
+        <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
+          <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+            <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
+          </svg>
+        </div>
+
+        <div class="coinInner coinInnerGreen">
+          <div class="n">1</div>
+          <div class="t">BoCitecoin</div>
+        </div>
       </div>
 
-      <div class="walletActions">
-        <button id="walletSportPlus10">+10</button>
-        <button id="walletSportPlus25">+25</button>
-        <button id="walletSportMinus">-1</button>
-        <button id="walletSportReset">Reset</button>
-        <button id="walletSportAnnualReset">Reset annuel</button>
+      <div class="coinStack" aria-hidden="true">
+        <div class="stackCoin stackGreen stack1">
+          <div class="stackCoinStars">
+            <svg viewBox="0 0 44 44">
+              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <div class="stackCoin stackGreen stack2">
+          <div class="stackCoinStars">
+            <svg viewBox="0 0 44 44">
+              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <div class="stackCoin stackGreen stack3">
+          <div class="stackCoinStars">
+            <svg viewBox="0 0 44 44">
+              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05"></circle>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="walletBox">
+        <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
+
+        <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
+
+        <div class="walletSub">
+          BoCitecoins gagnés grâce aux actions sportives et citoyennes.
+          Ils valorisent l’implication locale et peuvent être utilisés plus tard
+          chez les commerçants partenaires selon les règles Bo’CitéArt.
+        </div>
+
+        <div style="margin-top:12px;font-weight:900;">Compteurs Sport</div>
+
+        <div class="box" style="margin-top:8px;background:var(--bg);">
+          <div style="display:flex;justify-content:space-between;">
+            <div>
+              <div class="muted">Compteur continu</div>
+              <div id="sportContinuCounter" style="font-weight:900;font-size:22px;color:var(--green);">0</div>
+            </div>
+
+            <div>
+              <div class="muted">Compteur annuel</div>
+              <div id="sportAnnualCounter" style="font-weight:900;font-size:22px;color:var(--red);">0</div>
+            </div>
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            Le compteur continu suit votre progression actuelle.
+            Le compteur annuel valorise l’engagement sur toute l’année.
+          </div>
+        </div>
+
+        <div class="walletActions">
+          <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
+          <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
+          <button class="walletMini" id="walletSportMinus" type="button">−1</button>
+          <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
+          <button class="walletMini" id="walletSportAnnualReset" type="button">Réinitialiser annuel</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Fonctionnement</div>
+
+    <div class="box">
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Les clubs publient un résumé du week-end</li>
+        <li>Les actions citoyennes sont valorisées</li>
+        <li>Le fair-play et l’engagement sont encouragés</li>
+        <li>Les validations peuvent être contrôlées (non visibles)</li>
+      </ul>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Exemples d’actions reconnues</div>
+
+    <div class="box">
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Ramassage de déchets après un match</li>
+        <li>Nettoyage des vestiaires</li>
+        <li>Comportement fair-play</li>
+        <li>Aide à l’organisation d’un événement</li>
+      </ul>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Cartes sport</div>
+
+    <div class="box">
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Parcs sportifs</li>
+        <li>Bois et parcours</li>
+        <li>Salles de sport</li>
+        <li>Carte plein écran avec guidage</li>
+      </ul>
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">Clubs partenaires</div>
+
+    <div class="box">
+      Actuellement : 12 clubs engagés (démo)<br><br>
+
+      Chaque club peut proposer :
+      <br>• Rapport du week-end
+      <br>• Actions citoyennes
+      <br>• Partenariats commerçants
+      <br>• Soutien associatif
+    </div>
+
+    <div style="font-weight:900;margin-top:12px;">📄 Fiche partenaires</div>
+
+    <div class="box">
+      <div style="font-weight:900;">
+        Fiche élus / CCI / commerçants — soutien Club + Association
+      </div>
+
+      <div class="muted" style="margin-top:6px;">
+        Cette fiche explique le fonctionnement du soutien :
+        un commerçant soutient un club et une association.
+        Sa visibilité apparaît dans le bandeau.
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button class="choiceBtn" id="openSportFicheBtn">Ouvrir la fiche</button>
       </div>
     </div>
   `);
 
   setTimeout(()=>{
-
-    function refresh(){
-      const w = loadSportWallet();
-      const a = loadSportAnnual();
-
-      document.getElementById("sportCoinBalance").textContent = w.vert || 0;
-      document.getElementById("sportContinuCounter").textContent = w.vert || 0;
-      document.getElementById("sportAnnualCounter").textContent = a.annual || 0;
-
-      refreshSportTileCounters();
-    }
-
-    function add(points){
-      const w = loadSportWallet();
-      const a = loadSportAnnual();
-
-      w.vert = (w.vert||0) + points;
-      a.annual += points;
-
-      saveSportWallet(w);
-      saveSportAnnual(a);
-      refresh();
-    }
-
-    refresh();
-
-    document.getElementById("walletSportPlus10").onclick = ()=> add(10);
-    document.getElementById("walletSportPlus25").onclick = ()=> add(25);
-
-    document.getElementById("walletSportMinus").onclick = ()=>{
-      const w = loadSportWallet();
-      w.vert = Math.max(0,(w.vert||0)-1);
-      saveSportWallet(w);
-      refresh();
-    };
-
-    document.getElementById("walletSportReset").onclick = ()=>{
-      saveSportWallet({vert:0});
-      refresh();
-    };
-
-    document.getElementById("walletSportAnnualReset").onclick = ()=>{
-      saveSportAnnual({year: currentSportYear(), annual:0});
-      refresh();
-    };
-
+    const btn = $("openSportFicheBtn");
+    if(btn) btn.onclick = openSportFiche;
   },0);
 
   return;
