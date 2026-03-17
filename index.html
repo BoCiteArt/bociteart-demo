@@ -3352,9 +3352,10 @@
             const xb = $("xBtn");
             if(xb && xb.focus) xb.focus();
           },0);
-          return;
+                   return;
         }
-      });
+      }); // fin du addEventListener("click", ...)
+    });   // fin du forEach sur [data-open]
 
       const adminTile = $("adminTile");
       on(adminTile, "click", ()=>{
