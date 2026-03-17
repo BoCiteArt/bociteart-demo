@@ -758,15 +758,46 @@
               <div class="p">Mot du jour</div>
             </div>
           </div>
+          <!-- ====== SPORT TILE START ====== -->
+<div class="tile" data-open="sport" id="sportTile">
+  <img alt="" src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=60"/>
+  <div class="overlay"></div>
 
-          <div class="tile" data-open="sport">
-            <img alt="" src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=60"/>
-            <div class="overlay"></div>
-            <div class="content">
-              <div class="h">Sport</div>
-              <div class="p">Infos • parcs • loisirs</div>
-            </div>
-          </div>
+  <!-- COMPTEUR AVEC COEUR -->
+  <div style="
+    position:absolute;
+    top:10px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:6;
+    width:150px;
+    background:rgba(255,255,255,.95);
+    border-radius:16px;
+    padding:6px;
+    text-align:center;
+    box-shadow:0 4px 10px rgba(0,0,0,.2);
+  ">
+    <div style="font-weight:900;font-size:12px;color:#2f8f46;">❤️ Sport</div>
+
+    <div style="display:flex;gap:6px;margin-top:4px;">
+      <div style="flex:1;background:#f3efe6;border-radius:10px;">
+        <div style="font-size:9px;font-weight:900;">Continu</div>
+        <div id="sportTileContinuCounter" style="font-weight:900;color:#2f8f46;">0</div>
+      </div>
+
+      <div style="flex:1;background:#f3efe6;border-radius:10px;">
+        <div style="font-size:9px;font-weight:900;">Annuel</div>
+        <div id="sportTileAnnualCounter" style="font-weight:900;color:#a51e22;">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content" style="padding-top:70px;">
+    <div class="h">Sport</div>
+    <div class="p">Infos • parcs • loisirs</div>
+  </div>
+</div>
+<!-- ====== SPORT TILE END ====== -->
 
           <div class="tile" data-open="mairie" id="mairieTile">
             <img alt="" src="https://images.unsplash.com/photo-1505843513577-22bb7d21e455?auto=format&fit=crop&w=1200&q=60"/>
