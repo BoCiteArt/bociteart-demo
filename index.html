@@ -1327,11 +1327,15 @@
       const modalTitle = $("modalTitle");
       const modalBody = $("modalBody");
 
-      function closeModal(){
-        if(!modal) return;
-        modal.classList.remove("open");
-        modal.setAttribute("aria-hidden", "true");
+       function closeModal(){
+        const modalEl = document.getElementById("modal");
+        if(!modalEl) return;
+
+        modalEl.classList.remove("open");
+        modalEl.setAttribute("aria-hidden", "true");
+        modalEl.style.display = "";
         lockScroll(false);
+
         if(window.__lastFocus && typeof window.__lastFocus.focus === "function"){
           window.__lastFocus.focus();
         }
@@ -1340,6 +1344,35 @@
       window.closeModal = closeModal;
 
       function openModal(title, html){
+        const modalEl = document.getElementById("modal");
+        const titleEl = document.getElementById("modalTitle");
+        const bodyEl = document.getElementById("modalBody");
+
+        if(!modalEl || !titleEl || !bodyEl) return;
+
+        window.__lastFocus = document.activeElement;
+
+        titleEl.textContent = title;
+        bodyEl.innerHTML = html;
+
+        lockScroll(true);
+
+        modalEl.setAttribute("aria-hidden", "false");
+        modalEl.classList.add("open");
+        modalEl.style.display = "block";
+
+        requestAnimationFrame(()=>{
+          modalEl.setAttribute("aria-hidden", "false");
+          modalEl.classList.add("open");
+          modalEl.style.display = "block";
+
+          if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
+
+          const xb = document.getElementById("xBtn");
+          if(xb && xb.focus) xb.focus();
+        });
+      }
+      window.openModal = openModal;
         window.__lastFocus = document.activeElement;
         modalTitle.textContent = title;
         modalBody.innerHTML = html;
@@ -1353,6 +1386,17 @@
         }, 0);
       }
       window.openModal = openModal;
+          window.__bociteartOpenByKey = function(key){
+        if(key === "sport"){
+          document.querySelector('[data-open="sport"]')?.click();
+        }else if(key === "ecole"){
+          document.querySelector('[data-open="ecole"]')?.click();
+        }else if(key === "mairie"){
+          document.querySelector('[data-open="mairie"]')?.click();
+        }else if(key === "commerces"){
+          document.querySelector('[data-open="commerces"]')?.click();
+        }
+      };
 
       on($("modalClose"), "click", closeModal);
       on($("xBtn"), "click", closeModal);
