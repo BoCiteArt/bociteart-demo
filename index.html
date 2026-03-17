@@ -1327,78 +1327,52 @@
       const modalTitle = $("modalTitle");
       const modalBody = $("modalBody");
 
-       function closeModal(){
-        const modalEl = document.getElementById("modal");
-        if(!modalEl) return;
+     function closeModal(){
+  const modalEl = document.getElementById("modal");
+  if(!modalEl) return;
 
-        modalEl.classList.remove("open");
-        modalEl.setAttribute("aria-hidden", "true");
-        modalEl.style.display = "";
-        lockScroll(false);
+  modalEl.classList.remove("open");
+  modalEl.setAttribute("aria-hidden", "true");
+  modalEl.style.display = "";
+  lockScroll(false);
 
-        if(window.__lastFocus && typeof window.__lastFocus.focus === "function"){
-          window.__lastFocus.focus();
-        }
-        window.__lastFocus = null;
-      }
-      window.closeModal = closeModal;
+  if(window.__lastFocus && typeof window.__lastFocus.focus === "function"){
+    window.__lastFocus.focus();
+  }
+  window.__lastFocus = null;
+}
+window.closeModal = closeModal;
 
-      function openModal(title, html){
-        const modalEl = document.getElementById("modal");
-        const titleEl = document.getElementById("modalTitle");
-        const bodyEl = document.getElementById("modalBody");
+function openModal(title, html){
+  const modalEl = document.getElementById("modal");
+  const titleEl = document.getElementById("modalTitle");
+  const bodyEl = document.getElementById("modalBody");
 
-        if(!modalEl || !titleEl || !bodyEl) return;
+  if(!modalEl || !titleEl || !bodyEl) return;
 
-        window.__lastFocus = document.activeElement;
+  window.__lastFocus = document.activeElement;
 
-        titleEl.textContent = title;
-        bodyEl.innerHTML = html;
+  titleEl.textContent = title;
+  bodyEl.innerHTML = html;
 
-        lockScroll(true);
+  lockScroll(true);
 
-        modalEl.setAttribute("aria-hidden", "false");
-        modalEl.classList.add("open");
-        modalEl.style.display = "block";
+  modalEl.setAttribute("aria-hidden", "false");
+  modalEl.classList.add("open");
+  modalEl.style.display = "block";
 
-        requestAnimationFrame(()=>{
-          modalEl.setAttribute("aria-hidden", "false");
-          modalEl.classList.add("open");
-          modalEl.style.display = "block";
+  requestAnimationFrame(()=>{
+    modalEl.setAttribute("aria-hidden", "false");
+    modalEl.classList.add("open");
+    modalEl.style.display = "block";
 
-          if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
+    if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
 
-          const xb = document.getElementById("xBtn");
-          if(xb && xb.focus) xb.focus();
-        });
-      }
-      window.openModal = openModal;
-        window.__lastFocus = document.activeElement;
-        modalTitle.textContent = title;
-        modalBody.innerHTML = html;
-        modal.classList.add("open");
-        modal.setAttribute("aria-hidden", "false");
-        lockScroll(true);
-        setTimeout(()=>{
-          if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
-          const xb = $("xBtn");
-          if(xb && xb.focus) xb.focus();
-        }, 0);
-      }
-      window.openModal = openModal;
-          window.__bociteartOpenByKey = function(key){
-        if(key === "sport"){
-          document.querySelector('[data-open="sport"]')?.click();
-        }else if(key === "ecole"){
-          document.querySelector('[data-open="ecole"]')?.click();
-        }else if(key === "mairie"){
-          document.querySelector('[data-open="mairie"]')?.click();
-        }else if(key === "commerces"){
-          document.querySelector('[data-open="commerces"]')?.click();
-        }
-      };
-
-      on($("modalClose"), "click", closeModal);
+    const xb = document.getElementById("xBtn");
+    if(xb && xb.focus) xb.focus();
+  });
+}
+window.openModal = openModal;
       on($("xBtn"), "click", closeModal);
 
       const openSecureBtn = $("openSecure");
@@ -1959,7 +1933,7 @@
           .replace(/'/g, "&#039;");
       }
 
-      window.tapeAds = [
+           window.tapeAds = [
         { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
         { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
         { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
@@ -2014,13 +1988,6 @@
       document.querySelectorAll("[data-open]").forEach((el)=>{
         el.addEventListener("click", ()=>{
           const key = el.getAttribute("data-open");
-
-          if(key === "sport" || key === "mairie" || key === "commerces"){
-            if(typeof window.__bociteartOpenByKey === "function"){
-              window.__bociteartOpenByKey(key);
-              return;
-            }
-          }
 
           if(key === "oeuvres"){
             openModal("Œuvres", `
@@ -2684,7 +2651,7 @@
             },0);
             return;
           }
-
+          
           if(key === "mairie" ){
           openModal("Mairie", `
             <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
