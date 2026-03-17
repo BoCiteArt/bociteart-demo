@@ -2496,9 +2496,57 @@
 
             return;
           }
-        if(key === "sport"){
+               
+          if(key === "sport"){
           openModal("Sport", `
             <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+
+            <div style="display:flex;justify-content:center;margin:6px 0 14px 0;">
+              <div style="
+                width:min(100%, 320px);
+                background:#fff;
+                border:2px solid rgba(0,0,0,.08);
+                border-radius:18px;
+                padding:12px;
+                box-shadow:0 4px 10px rgba(0,0,0,.06);
+                text-align:center;
+              ">
+                <div style="font-weight:900;font-size:14px;color:var(--green);margin-bottom:8px;">
+                  ❤️ Suivi Sport citoyen
+                </div>
+
+                <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+                  <div style="
+                    min-width:120px;
+                    background:var(--bg);
+                    border:2px solid rgba(0,0,0,.08);
+                    border-radius:14px;
+                    padding:10px;
+                  ">
+                    <div style="font-weight:900;font-size:12px;color:var(--muted);">Compteur continu</div>
+                    <div id="sportContinuCounter" style="font-weight:900;font-size:28px;color:var(--green);line-height:1.1;margin-top:4px;">0</div>
+                    <div style="font-weight:800;font-size:11px;color:var(--muted);margin-top:4px;">niveau actif</div>
+                  </div>
+
+                  <div style="
+                    min-width:120px;
+                    background:var(--bg);
+                    border:2px solid rgba(0,0,0,.08);
+                    border-radius:14px;
+                    padding:10px;
+                  ">
+                    <div style="font-weight:900;font-size:12px;color:var(--muted);">Compteur annuel</div>
+                    <div id="sportAnnualCounter" style="font-weight:900;font-size:28px;color:#a51e22;line-height:1.1;margin-top:4px;">0</div>
+                    <div style="font-weight:800;font-size:11px;color:var(--muted);margin-top:4px;">cumul année</div>
+                  </div>
+                </div>
+
+                <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:10px;">
+                  <button class="walletMini" id="sportAnnualResetBtn" type="button">Réinit. annuel</button>
+                </div>
+              </div>
+            </div>
+
             <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
 
             <div class="coinShowcase">
@@ -2508,6 +2556,7 @@
                     <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
                   </svg>
                 </div>
+
                 <div class="coinInner coinInnerGreen">
                   <div class="n">1</div>
                   <div class="t">BoCitecoin</div>
@@ -2522,6 +2571,7 @@
                     </svg>
                   </div>
                 </div>
+
                 <div class="stackCoin stackGreen stack2">
                   <div class="stackCoinStars" aria-hidden="true">
                     <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
@@ -2529,6 +2579,7 @@
                     </svg>
                   </div>
                 </div>
+
                 <div class="stackCoin stackGreen stack3">
                   <div class="stackCoinStars" aria-hidden="true">
                     <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
@@ -2589,32 +2640,83 @@
             const b = $("openSportFicheBtn");
             if(b) b.onclick = openSportFiche;
 
-            const refresh = ()=>{
+            const SPORT_ANNUAL_KEY = "bociteart_sport_annual_v1";
+
+            function currentYear(){
+              return new Date().getFullYear();
+            }
+
+            function loadSportAnnual(){
+              try{
+                const raw = localStorage.getItem(SPORT_ANNUAL_KEY);
+                const parsed = raw ? JSON.parse(raw) : null;
+                if(parsed && Number(parsed.year) === currentYear()){
+                  return {
+                    year: Number(parsed.year),
+                    annual: Number(parsed.annual || 0)
+                  };
+                }
+              }catch(e){}
+              return {
+                year: currentYear(),
+                annual: 0
+              };
+            }
+
+            function saveSportAnnual(obj){
+              try{
+                localStorage.setItem(SPORT_ANNUAL_KEY, JSON.stringify({
+                  year: Number(obj.year || currentYear()),
+                  annual: Number(obj.annual || 0)
+                }));
+              }catch(e){}
+            }
+
+            function refresh(){
               const out = $("sportCoinBalance");
-              if(out) out.textContent = Number(loadSportWallet().vert || 0);
-            };
+              const currentOut = $("sportContinuCounter");
+              const annualOut = $("sportAnnualCounter");
+
+              const currentWallet = loadSportWallet();
+              const annualData = loadSportAnnual();
+
+              const continu = Number(currentWallet.vert || 0);
+              const annual = Number(annualData.annual || 0);
+
+              if(out) out.textContent = continu;
+              if(currentOut) currentOut.textContent = continu;
+              if(annualOut) annualOut.textContent = annual;
+            }
+
+            function addSportPoints(points){
+              const w = loadSportWallet();
+              const annualData = loadSportAnnual();
+
+              w.vert = Number(w.vert || 0) + points;
+              annualData.annual = Number(annualData.annual || 0) + points;
+
+              saveSportWallet(w);
+              saveSportAnnual(annualData);
+              refresh();
+            }
+
             refresh();
 
             const p10 = $("walletSportPlus10");
             const p25 = $("walletSportPlus25");
             const m1 = $("walletSportMinus");
             const rst = $("walletSportReset");
+            const annualResetBtn = $("sportAnnualResetBtn");
 
             if(p10){
               p10.onclick = ()=>{
-                const w = loadSportWallet();
-                w.vert = Number(w.vert || 0) + 10;
-                saveSportWallet(w);
-                refresh();
+                addSportPoints(10);
               };
             }
 
             if(p25){
               p25.onclick = ()=>{
-                const w = loadSportWallet();
-                w.vert = Number(w.vert || 0) + 25;
-                saveSportWallet(w);
-                refresh();
+                addSportPoints(25);
               };
             }
 
@@ -2635,10 +2737,22 @@
                 }
               };
             }
+
+            if(annualResetBtn){
+              annualResetBtn.onclick = ()=>{
+                if(confirm("Réinitialiser le compteur annuel Sport (démo) sur ce téléphone ?")){
+                  saveSportAnnual({
+                    year: currentYear(),
+                    annual: 0
+                  });
+                  refresh();
+                }
+              };
+            }
           },0);
           return;
         }
-
+          
         if(key === "mairie"){
           openModal("Mairie", `
             <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
