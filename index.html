@@ -3863,3 +3863,1736 @@ if(key === "sport"){
   </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(self)">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' https: data:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com;">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Bo’CitéArt – Démo</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#a51e22">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+
+  <style>
+    :root{
+      --bg:#f1e6d6;
+      --surface:#ffffff;
+      --beige:#efe4d3;
+      --green:#2f5d46;
+      --greenSoft:#3f7e5f;
+      --red:#a51e22;
+      --redSoft:#7f1a1d;
+      --gold:#b67d00;
+      --goldDark:#8d6200;
+      --yellow:#b89d00;
+      --yellowDark:#7f6d00;
+      --text:#1f1f1f;
+      --muted:#6e6a63;
+      --link:#1d4ed8;
+      --vh:1vh;
+    }
+
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; margin:0; padding:0; }
+
+    body{
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      -webkit-text-size-adjust:100%;
+      text-size-adjust:100%;
+      overscroll-behavior:none;
+    }
+
+    body.modalOpen{ overflow:hidden; }
+
+    .page{
+      min-height:calc(var(--vh) * 100);
+      min-height:100vh;
+      min-height:100dvh;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:420px;
+      margin:0 auto;
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .ticker{
+      position:relative;
+      overflow:hidden;
+      border-radius:18px;
+      background:var(--beige);
+      height:130px;
+      cursor:pointer;
+    }
+
+    .ticker img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .ticker .overlay{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.12));
+    }
+
+    .ticker .row{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      padding:0 14px;
+      gap:12px;
+      overflow:hidden;
+    }
+
+    .marquee{
+      display:flex;
+      gap:38px;
+      white-space:nowrap;
+      animation:marquee 20s linear infinite;
+      will-change:transform;
+    }
+
+    .marquee .item{
+      display:flex;
+      flex-direction:column;
+      min-width:360px;
+    }
+
+    .ticker .title{
+      color:#fff;
+      font-weight:800;
+      font-size:14px;
+    }
+
+    .ticker .sub{
+      color:rgba(255,255,255,.92);
+      font-weight:700;
+      font-size:12px;
+      margin-top:2px;
+    }
+
+    .ticker .rule{
+      margin-left:auto;
+      color:rgba(255,255,255,.92);
+      font-size:11px;
+      font-weight:700;
+      flex:0 0 auto;
+    }
+
+    @keyframes marquee{
+      0%{ transform:translateX(0); }
+      100%{ transform:translateX(-50%); }
+    }
+
+    .tileBadge{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:14px;
+      height:14px;
+      border-radius:999px;
+      background:#1f8f4d;
+      border:2px solid #fff;
+      box-shadow:0 0 0 2px rgba(0,0,0,.08);
+      z-index:3;
+      animation:badgePulse 1.2s infinite;
+    }
+
+    @keyframes badgePulse{
+      0%{ transform:scale(1); opacity:1; }
+      50%{ transform:scale(1.18); opacity:.75; }
+      100%{ transform:scale(1); opacity:1; }
+    }
+
+    .gridWrap{ position:relative; }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .tile{
+      position:relative;
+      width:100%;
+      aspect-ratio:1 / 0.70;
+      border-radius:22px;
+      overflow:hidden;
+      background:var(--beige);
+      cursor:pointer;
+    }
+
+    .tile img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .tile .overlay{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.55));
+    }
+
+    .tile .content{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      padding:12px;
+      color:#fff;
+      z-index:2;
+    }
+
+    .tile .h{
+      font-weight:900;
+      font-size:18px;
+      line-height:1.15;
+      text-shadow:0 2px 6px rgba(0,0,0,.25);
+    }
+
+    .tile .p{
+      margin-top:8px;
+      font-weight:700;
+      font-size:12px;
+      color:rgba(255,255,255,.95);
+      text-shadow:0 2px 6px rgba(0,0,0,.25);
+    }
+
+    .tile.logoOnly .overlay{ display:none; }
+
+    .emgSlot{
+      position:absolute;
+      left:50%;
+      transform:translate(-50%,-50%);
+      padding:6px;
+      border-radius:999px;
+      background:var(--bg);
+      z-index:20;
+    }
+
+    .emgTop{ top:33.333%; }
+    .emgBottom{ top:66.666%; }
+
+    .lpBtn{
+      position:relative;
+      width:90px;
+      height:90px;
+      border:none;
+      background:transparent;
+      padding:0;
+      touch-action:none;
+      cursor:pointer;
+    }
+
+    .lpRing{ position:absolute; inset:0; }
+
+    .lpCore{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:74px;
+      height:74px;
+      border-radius:999px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:700;
+      box-shadow:0 10px 20px rgba(0,0,0,.18);
+      user-select:none;
+    }
+
+    .lpSmall{ width:68px; height:68px; }
+
+    .lpCore .icon{
+      width:16px;
+      height:16px;
+      margin-bottom:2px;
+      opacity:.95;
+    }
+
+    .lpCore .lbl{ font-size:12px !important; line-height:1; font-weight:700 !important; }
+    .lpCore .lblSmall{ font-size:8px !important; line-height:1; font-weight:700 !important; }
+    #btn112 .lblSmallTop{ font-size:7px !important; line-height:1 !important; }
+    #btn112 .icon{ width:14px !important; height:14px !important; margin-bottom:1px !important; }
+    #btnSos .lblTop{ font-size:7px !important; line-height:1.05 !important; font-weight:800 !important; }
+    #btnSos .icon{ width:12px !important; height:12px !important; margin:2px 0 !important; }
+    #btnSos #sosLabel{ font-size:7px !important; line-height:1 !important; font-weight:900 !important; }
+
+    .sportTileCounter{
+      position:absolute;
+      top:8px;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:3;
+      width:118px;
+      background:rgba(255,248,242,.95);
+      border:2px solid rgba(0,0,0,.10);
+      border-radius:16px;
+      padding:4px 8px 5px;
+      box-shadow:0 6px 14px rgba(0,0,0,.12);
+      backdrop-filter:blur(2px);
+    }
+
+    .sportTileCounterTop{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:5px;
+      font-weight:900;
+      font-size:10px;
+      line-height:1;
+      color:var(--green);
+      margin-bottom:3px;
+    }
+
+    .sportTileCounterTop .heartIcon{
+      font-size:13px;
+      line-height:1;
+      color:var(--red);
+      filter:drop-shadow(0 1px 1px rgba(0,0,0,.15));
+    }
+
+    .sportTileCounterGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      align-items:end;
+      text-align:center;
+    }
+
+    .sportTileCounterLabel{
+      font-size:10px;
+      font-weight:900;
+      color:#000;
+      line-height:1.05;
+    }
+
+    .sportTileCounterValue{
+      margin-top:2px;
+      font-size:13px;
+      font-weight:900;
+      line-height:1;
+    }
+
+    .sportTileCounterValue.continu{ color:var(--green); }
+    .sportTileCounterValue.annuel{ color:var(--red); }
+
+    .sportTape{
+      height:38px;
+      background:#fff;
+      border-radius:14px;
+      border:2px solid rgba(0,0,0,.08);
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      padding:0;
+    }
+
+    .sportTapeViewport{ width:100%; overflow:hidden; }
+
+    .sportTapeTrack{
+      display:inline-flex;
+      width:max-content;
+      gap:48px;
+      white-space:nowrap;
+      padding-left:14px;
+      animation:sportTape 80s linear infinite;
+      will-change:transform;
+    }
+
+    .sportTapeItem{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:400 !important;
+    }
+
+    .sportTapeItem.bold{ font-weight:900 !important; }
+
+    @keyframes sportTape{
+      0%{ transform:translateX(0); }
+      100%{ transform:translateX(-50%); }
+    }
+
+    #mairieTile{
+      position:relative;
+      overflow:hidden;
+    }
+
+    #mairieTile::after{
+      content:"";
+      position:absolute;
+      width:56px;
+      height:56px;
+      left:-28px;
+      bottom:-28px;
+      border-radius:50%;
+      background:var(--bg);
+      z-index:4;
+      pointer-events:none;
+    }
+
+    .mairieTickerWrap{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:18px;
+      background:rgba(165,30,34,.95);
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      z-index:5;
+    }
+
+    .mairieTickerTrack{
+      display:inline-flex;
+      align-items:center;
+      white-space:nowrap;
+      padding-left:100%;
+      animation:mairieTickerMove 24s linear infinite;
+      color:#fff;
+      font-size:10px;
+      font-weight:900;
+    }
+
+    .mairieTickerTrack span{ padding-right:40px; }
+
+    @keyframes mairieTickerMove{
+      0%{ transform:translateX(0); }
+      100%{ transform:translateX(-100%); }
+    }
+
+    .dae{
+      width:100%;
+      border-radius:20px;
+      background:#f7efe3;
+      border:3px solid var(--red);
+      padding:10px 12px;
+      min-height:93px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:900;
+      font-size:16px;
+      cursor:pointer;
+    }
+
+    .heart{ width:52px; height:52px; flex:0 0 auto; }
+
+    .footerRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding-bottom:10px;
+      padding-bottom:max(10px, env(safe-area-inset-bottom));
+    }
+
+    .footerRight{
+      display:flex;
+      gap:10px;
+      flex-wrap:nowrap;
+      align-items:center;
+      min-width:0;
+    }
+
+    .footerRight .legalBtn{
+      flex:1;
+      min-width:0;
+      padding:9px 8px;
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .siteLink{
+      font-size:14px;
+      font-weight:800;
+      color:var(--link);
+      text-decoration:none;
+    }
+
+    .iconBtn{
+      width:44px;
+      height:44px;
+      border-radius:999px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      box-shadow:0 4px 10px rgba(0,0,0,.08);
+    }
+
+    .legalBtn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--beige);
+      color:var(--green);
+      font-weight:900;
+      padding:10px 12px;
+      border-radius:14px;
+      border:2px solid rgba(0,0,0,.08);
+      cursor:pointer;
+      white-space:nowrap;
+      font-size:13px;
+      box-shadow:0 4px 10px rgba(0,0,0,.06);
+    }
+
+    .legalStack{ flex-direction:column; gap:1px; }
+
+    .legalStack span{
+      display:block;
+      font-size:9px;
+      line-height:1.05;
+      text-align:center;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      z-index:50;
+    }
+
+    .modal.open{ display:block; }
+
+    .backdrop{
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,.40);
+    }
+
+    .sheet{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:min(420px, calc(100% - 18px));
+      background:var(--bg);
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:0 14px 40px rgba(0,0,0,.22);
+    }
+
+    .sheet .head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 14px;
+      font-weight:900;
+      border-bottom:1px solid rgba(0,0,0,.10);
+    }
+
+    .sheet .body{
+      padding:14px;
+      font-size:14px;
+      color:var(--text);
+      max-height:min(72vh, 520px);
+      overflow:auto;
+    }
+
+    .xbtn{
+      border:none;
+      background:#fff;
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 4px 10px rgba(0,0,0,.08);
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .choiceGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .choiceBtn{
+      border:2px solid rgba(0,0,0,.10);
+      background:var(--beige);
+      border-radius:14px;
+      padding:12px;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+      position:sticky;
+      top:0;
+      background:var(--bg);
+      padding-top:2px;
+      padding-bottom:10px;
+      z-index:2;
+    }
+
+    .tab{
+      border:2px solid rgba(0,0,0,.10);
+      background:#fff;
+      border-radius:12px;
+      padding:8px 10px;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .tab.active{ background:var(--beige); }
+
+    .doc h2{ margin:12px 0 6px; font-size:15px; }
+    .doc h3{ margin:10px 0 6px; font-size:14px; }
+    .doc p{ margin:6px 0; font-weight:700; }
+    .doc ul{ margin:6px 0 0 18px; font-weight:800; }
+
+    .doc .box,
+    .box{
+      border:2px solid rgba(0,0,0,.08);
+      background:#fff;
+      border-radius:14px;
+      padding:10px;
+      font-weight:800;
+      margin:10px 0;
+    }
+
+    .miniField{
+      width:100%;
+      border:2px solid rgba(0,0,0,.10);
+      border-radius:12px;
+      padding:10px 10px;
+      font-weight:800;
+      background:#fff;
+      outline:none;
+    }
+
+    .miniCheck{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      font-weight:900;
+      margin-top:10px;
+    }
+
+    .miniCheck input{
+      transform:scale(1.15);
+      margin-top:2px;
+    }
+
+    .coinShowcase{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+
+    /* =========================
+       PIÈCES 3D COMMUNES
+       ========================= */
+
+    .coin3d{
+      position:relative;
+      width:110px;
+      height:110px;
+      perspective:900px;
+      flex:0 0 auto;
+      filter:drop-shadow(0 8px 14px rgba(0,0,0,.18));
+    }
+
+    .coin3dInner{
+      position:relative;
+      width:100%;
+      height:100%;
+      transform-style:preserve-3d;
+      animation:coinSpin3d 6s linear infinite;
+    }
+
+    .coin3d:hover .coin3dInner{ animation-play-state:paused; }
+
+    .coinFace3d{
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      backface-visibility:hidden;
+      overflow:hidden;
+      transform-style:preserve-3d;
+    }
+
+    .coinFront{ transform:translateZ(8px); }
+    .coinBack{ transform:rotateY(180deg) translateZ(8px); }
+
+    .coinEdge{
+      position:absolute;
+      top:50%;
+      left:50%;
+      width:16px;
+      height:100px;
+      transform:translate(-50%,-50%) rotateY(90deg);
+      border-radius:999px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.20) 0 3px,
+          rgba(0,0,0,.16) 3px 6px
+        );
+      box-shadow:
+        inset 0 0 6px rgba(255,255,255,.18),
+        inset 0 0 10px rgba(0,0,0,.22);
+    }
+
+    .coinCenter{
+      position:absolute;
+      inset:14px;
+      border-radius:50%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      z-index:2;
+      border:2px solid rgba(210,210,210,.70);
+      box-shadow:
+        inset 0 3px 8px rgba(255,255,255,.20),
+        inset 0 -6px 10px rgba(0,0,0,.18);
+    }
+
+    .coinCenter::before,
+    .coinCenter::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      inset:6px;
+      border:1.5px solid rgba(214,214,214,.58);
+      pointer-events:none;
+    }
+
+    .coinCenter::after{
+      inset:11px;
+      border-width:1px;
+      opacity:.75;
+    }
+
+    .coinCenter .n{
+      font-size:28px;
+      line-height:1;
+      font-weight:900;
+      color:#e3e3e3;
+      text-shadow:
+        0 1px 0 rgba(255,255,255,.18),
+        0 -1px 0 rgba(0,0,0,.20);
+      position:relative;
+      z-index:2;
+    }
+
+    .coinCenter .t{
+      margin-top:5px;
+      font-size:8px;
+      line-height:1.05;
+      font-weight:900;
+      letter-spacing:.2px;
+      color:#d5d5d5;
+      text-shadow:
+        0 1px 0 rgba(255,255,255,.12),
+        0 -1px 0 rgba(0,0,0,.18);
+      position:relative;
+      z-index:2;
+    }
+
+    .shine{
+      position:absolute;
+      inset:-22%;
+      background:linear-gradient(
+        115deg,
+        rgba(255,255,255,0) 22%,
+        rgba(255,255,255,.10) 40%,
+        rgba(255,255,255,.34) 50%,
+        rgba(255,255,255,.08) 60%,
+        rgba(255,255,255,0) 78%
+      );
+      transform:translateX(-125%) rotate(8deg);
+      animation:coinShineSweep 3.8s ease-in-out infinite;
+      z-index:3;
+      pointer-events:none;
+    }
+
+    .coin3d.gold .coinFront,
+    .coin3d.gold .coinBack{
+      background:
+        radial-gradient(circle at 30% 30%, #fff4b7 0%, #f0d355 18%, #d3a415 48%, #b47f00 70%, #855c00 100%);
+      border:4px solid #b67d00;
+      box-shadow:
+        inset 0 4px 10px rgba(255,255,255,.30),
+        inset 0 -8px 14px rgba(0,0,0,.26);
+    }
+
+    .coin3d.gold .coinEdge{
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          #f6dd72 0 3px,
+          #a97500 3px 6px
+        );
+    }
+
+    .coin3d.yellow .coinFront,
+    .coin3d.yellow .coinBack{
+      background:
+        radial-gradient(circle at 30% 30%, #fff7bf 0%, #f1df60 20%, #d4bb18 48%, #ad9600 72%, #7f6d00 100%);
+      border:4px solid #b89d00;
+      box-shadow:
+        inset 0 4px 10px rgba(255,255,255,.30),
+        inset 0 -8px 14px rgba(0,0,0,.26);
+    }
+
+    .coin3d.yellow .coinEdge{
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          #f6e57e 0 3px,
+          #9b8400 3px 6px
+        );
+    }
+
+    .coin3d.green .coinFront,
+    .coin3d.green .coinBack{
+      background:
+        radial-gradient(circle at 30% 30%, #a7efc8 0%, #57b57b 20%, #2f7b55 48%, #225940 72%, #183c2d 100%);
+      border:4px solid #2f5d46;
+      box-shadow:
+        inset 0 4px 10px rgba(255,255,255,.28),
+        inset 0 -8px 14px rgba(0,0,0,.28);
+    }
+
+    .coin3d.green .coinEdge{
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          #78c998 0 3px,
+          #2a5b42 3px 6px
+        );
+    }
+
+    .coinStack3d{
+      position:relative;
+      width:88px;
+      height:70px;
+      flex:0 0 auto;
+    }
+
+    .miniCoin3d{
+      position:absolute;
+      width:46px;
+      height:46px;
+      perspective:700px;
+      filter:drop-shadow(0 4px 8px rgba(0,0,0,.16));
+    }
+
+    .miniCoinInner{
+      position:relative;
+      width:100%;
+      height:100%;
+      transform-style:preserve-3d;
+      animation:miniCoinSpin 8s linear infinite;
+    }
+
+    .miniCoin3d:hover .miniCoinInner{ animation-play-state:paused; }
+
+    .miniCoin3d.i1{ left:0; bottom:0; z-index:1; }
+    .miniCoin3d.i2{ left:18px; bottom:10px; z-index:2; }
+    .miniCoin3d.i3{ left:36px; bottom:20px; z-index:3; }
+
+    .miniFace,
+    .miniBack{
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      backface-visibility:hidden;
+      overflow:hidden;
+    }
+
+    .miniFace{ transform:translateZ(5px); }
+    .miniBack{ transform:rotateY(180deg) translateZ(5px); }
+
+    .miniEdge{
+      position:absolute;
+      top:50%;
+      left:50%;
+      width:10px;
+      height:42px;
+      transform:translate(-50%,-50%) rotateY(90deg);
+      border-radius:999px;
+      box-shadow:
+        inset 0 0 4px rgba(255,255,255,.16),
+        inset 0 0 8px rgba(0,0,0,.22);
+    }
+
+    .miniLabel{
+      position:absolute;
+      inset:7px;
+      border-radius:50%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      border:1.6px solid rgba(214,214,214,.62);
+      box-shadow:
+        inset 0 2px 5px rgba(255,255,255,.18),
+        inset 0 -4px 7px rgba(0,0,0,.16);
+    }
+
+    .miniLabel::before{
+      content:"";
+      position:absolute;
+      inset:4px;
+      border-radius:50%;
+      border:1px solid rgba(214,214,214,.45);
+      pointer-events:none;
+    }
+
+    .miniLabel .n{
+      font-size:11px;
+      line-height:1;
+      font-weight:900;
+      color:#dddddd;
+      text-shadow:
+        0 1px 0 rgba(255,255,255,.14),
+        0 -1px 0 rgba(0,0,0,.20);
+    }
+
+    .miniLabel .t{
+      margin-top:2px;
+      font-size:4px;
+      line-height:1;
+      font-weight:900;
+      color:#d4d4d4;
+      letter-spacing:.1px;
+      text-shadow:
+        0 1px 0 rgba(255,255,255,.12),
+        0 -1px 0 rgba(0,0,0,.18);
+    }
+
+    .miniCoin3d.gold .miniFace,
+    .miniCoin3d.gold .miniBack{
+      background:
+        radial-gradient(circle at 30% 30%, #fff4b7 0%, #f0d355 18%, #d3a415 48%, #b47f00 70%, #855c00 100%);
+      border:3px solid #b67d00;
+    }
+
+    .miniCoin3d.gold .miniEdge{
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          #f6dd72 0 2px,
+          #a97500 2px 4px
+        );
+    }
+
+    .miniCoin3d.yellow .miniFace,
+    .miniCoin3d.yellow .miniBack{
+      background:
+        radial-gradient(circle at 30% 30%, #fff7bf 0%, #f1df60 20%, #d4bb18 48%, #ad9600 72%, #7f6d00 100%);
+      border:3px solid #b89d00;
+    }
+
+    .miniCoin3d.yellow .miniEdge{
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          #f6e57e 0 2px,
+          #9b8400 2px 4px
+        );
+    }
+
+    .miniCoin3d.green .miniFace,
+    .miniCoin3d.green .miniBack{
+      background:
+        radial-gradient(circle at 30% 30%, #a7efc8 0%, #57b57b 20%, #2f7b55 48%, #225940 72%, #183c2d 100%);
+      border:3px solid #2f5d46;
+    }
+
+    .miniCoin3d.green .miniEdge{
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          #78c998 0 2px,
+          #2a5b42 2px 4px
+        );
+    }
+
+    @keyframes coinSpin3d{
+      0%{ transform:rotateY(0deg); }
+      100%{ transform:rotateY(360deg); }
+    }
+
+    @keyframes miniCoinSpin{
+      0%{ transform:rotateY(0deg); }
+      100%{ transform:rotateY(360deg); }
+    }
+
+    @keyframes coinShineSweep{
+      0%{
+        transform:translateX(-125%) rotate(8deg);
+        opacity:0;
+      }
+      18%{ opacity:.72; }
+      46%{
+        transform:translateX(120%) rotate(8deg);
+        opacity:0;
+      }
+      100%{
+        transform:translateX(120%) rotate(8deg);
+        opacity:0;
+      }
+    }
+
+    .walletBox{
+      flex:1;
+      min-width:190px;
+      border:2px solid rgba(0,0,0,.08);
+      background:#fff;
+      border-radius:16px;
+      padding:12px;
+    }
+
+    .walletTitle{
+      font-weight:900;
+      font-size:14px;
+      margin-bottom:6px;
+    }
+
+    .walletValue{
+      font-weight:900;
+      font-size:24px;
+      line-height:1;
+    }
+
+    .walletGold{ color:#9a7000; }
+    .walletYellow{ color:#b18900; }
+    .walletGreen{ color:#2f5d46; }
+
+    .walletSub{
+      margin-top:6px;
+      font-weight:800;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .walletActions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .walletMini{
+      border:2px solid rgba(0,0,0,.10);
+      background:var(--beige);
+      border-radius:12px;
+      padding:8px 10px;
+      font-weight:900;
+      cursor:pointer;
+      font-size:12px;
+    }
+
+    @media (max-height:780px){
+      .wrap{ padding:10px; gap:10px; }
+      .ticker{ height:120px; }
+      .grid{ gap:10px; }
+      .tile .h{ font-size:16px; }
+      .tile .p{ margin-top:6px; }
+      .dae{ padding:8px 10px; font-size:14px; border-radius:18px; min-height:86px; }
+      .heart{ width:44px; height:44px; }
+      .footerRow{ padding-bottom:8px; }
+      .iconBtn{ width:40px; height:40px; }
+      .sheet .body{ max-height:min(70vh, 460px); }
+      .sportTape{ height:34px; }
+      .sportTapeTrack{ font-size:11px; }
+      .sportTileCounter{
+        width:108px;
+        top:6px;
+        padding:4px 7px 5px;
+      }
+      .sportTileCounterTop{ font-size:9px; }
+      .sportTileCounterValue{ font-size:12px; }
+      .coin3d{ width:98px; height:98px; }
+    }
+  </style>
+  <script>
+(function(){
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+
+  const SPORT_STORE_KEY = "bociteart_sport_counters_v1";
+
+  function loadSportCounters(){
+    try{
+      const raw = localStorage.getItem(SPORT_STORE_KEY);
+      if(!raw) return { continu: 0, annuel: 0 };
+      const data = JSON.parse(raw);
+      return {
+        continu: Number(data.continu || 0),
+        annuel: Number(data.annuel || 0)
+      };
+    }catch(e){
+      return { continu: 0, annuel: 0 };
+    }
+  }
+
+  function saveSportCounters(data){
+    try{
+      localStorage.setItem(SPORT_STORE_KEY, JSON.stringify({
+        continu: Number(data.continu || 0),
+        annuel: Number(data.annuel || 0)
+      }));
+    }catch(e){}
+  }
+
+  function refreshSportTileCounters(){
+    const data = loadSportCounters();
+    const c1 = $("tileSportContinu");
+    const c2 = $("tileSportAnnual");
+
+    if(c1) c1.textContent = data.continu;
+    if(c2) c2.textContent = data.annuel;
+  }
+
+  function openModal(title, html){
+    const modal = $("modal");
+    const modalTitle = $("modalTitle");
+    const modalBody = $("modalBody");
+
+    if(!modal || !modalTitle || !modalBody) return;
+
+    modalTitle.textContent = title;
+    modalBody.innerHTML = html;
+    modal.classList.add("open");
+    document.body.classList.add("modalOpen");
+  }
+
+  function closeModal(){
+    const modal = $("modal");
+    if(!modal) return;
+    modal.classList.remove("open");
+    document.body.classList.remove("modalOpen");
+  }
+
+  window.closeModal = closeModal;
+
+  function openLegal(type){
+    const docs = {
+      rgpd: `
+        <div class="doc">
+          <h2>RGPD</h2>
+          <div class="box">
+            Politique de démonstration Bo’CitéArt. Les traitements définitifs, responsables, bases légales,
+            durées de conservation, sécurité et sous-traitants seront précisés dans la version live.
+          </div>
+          <p>
+            Cette démo présente la structure générale de l’application et ses grands principes de fonctionnement.
+          </p>
+        </div>
+      `,
+      cgu: `
+        <div class="doc">
+          <h2>CGU</h2>
+          <div class="box">
+            Conditions d’utilisation de démonstration. Les BoCitecoins ne sont pas une monnaie
+            et ne constituent pas un moyen de paiement.
+          </div>
+          <p>
+            Les fonctions visibles ici relèvent d’une maquette démo préparatoire.
+          </p>
+        </div>
+      `,
+      cgv: `
+        <div class="doc">
+          <h2>CGV</h2>
+          <div class="box">
+            Conditions de vente de démonstration. Les modalités contractuelles définitives
+            seront intégrées à la version live.
+          </div>
+          <p>
+            Cette démo illustre les principes de structure, pas les écritures contractuelles finales.
+          </p>
+        </div>
+      `
+    };
+
+    openModal(
+      type.toUpperCase(),
+      docs[type] || `<div class="box">Document indisponible.</div>`
+    );
+  }
+
+  window.openLegal = openLegal;
+
+  function openDefib(){
+    openModal("Défibrillateur", `
+      <div style="font-weight:900;margin-bottom:8px;">Trouver un défibrillateur autour de moi</div>
+      <div class="box">
+        La version officielle affichera ici une carte, les points DAE proches,
+        le guidage et les informations utiles en cas d’urgence.
+      </div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Carte plein écran</li>
+        <li>Géolocalisation si autorisée</li>
+        <li>Parcours guidé</li>
+        <li>Rappel : en cas d’urgence, appeler le 112</li>
+      </ul>
+    `);
+  }
+
+  window.openDefib = openDefib;
+
+  function openSportFiche(){
+    openModal("Fiche Sport + Association", `
+      <div class="box">
+        <div style="font-weight:900;">Objectif</div>
+        <div class="muted" style="margin-top:6px;">
+          Permettre à un commerçant de soutenir un club et une association
+          avec une visibilité locale simple et lisible.
+        </div>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Principe</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>Un commerçant soutient un club + une association</li>
+          <li>La ligne peut apparaître dans le bandeau sport</li>
+          <li>La version live intégrera les validations et contrôles</li>
+        </ul>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Associations retenues</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>Les Clés du Cœur</li>
+          <li>Étoile Filante</li>
+          <li>Les Papillons</li>
+          <li>ATC Nord</li>
+        </ul>
+      </div>
+    `);
+  }
+
+  window.openSportFiche = openSportFiche;
+
+  function bindSportModal(){
+    const plus10 = $("walletSportPlus10");
+    const plus25 = $("walletSportPlus25");
+    const minus1 = $("walletSportMinus");
+    const reset = $("walletSportReset");
+    const resetAnnual = $("walletSportAnnualReset");
+    const ficheBtn = $("openSportFicheBtn");
+
+    function draw(){
+      const data = loadSportCounters();
+      const balance = $("sportCoinBalance");
+      const continu = $("sportContinuCounter");
+      const annuel = $("sportAnnualCounter");
+
+      if(balance) balance.textContent = data.continu;
+      if(continu) continu.textContent = data.continu;
+      if(annuel) annuel.textContent = data.annuel;
+
+      refreshSportTileCounters();
+    }
+
+    if(plus10){
+      plus10.onclick = () => {
+        const data = loadSportCounters();
+        data.continu += 10;
+        data.annuel += 10;
+        saveSportCounters(data);
+        draw();
+      };
+    }
+
+    if(plus25){
+      plus25.onclick = () => {
+        const data = loadSportCounters();
+        data.continu += 25;
+        data.annuel += 25;
+        saveSportCounters(data);
+        draw();
+      };
+    }
+
+    if(minus1){
+      minus1.onclick = () => {
+        const data = loadSportCounters();
+        data.continu = Math.max(0, data.continu - 1);
+        saveSportCounters(data);
+        draw();
+      };
+    }
+
+    if(reset){
+      reset.onclick = () => {
+        if(confirm("Réinitialiser le compteur continu Sport ?")){
+          const data = loadSportCounters();
+          data.continu = 0;
+          saveSportCounters(data);
+          draw();
+        }
+      };
+    }
+
+    if(resetAnnual){
+      resetAnnual.onclick = () => {
+        if(confirm("Réinitialiser le compteur annuel Sport ?")){
+          const data = loadSportCounters();
+          data.annuel = 0;
+          saveSportCounters(data);
+          draw();
+        }
+      };
+    }
+
+    if(ficheBtn){
+      ficheBtn.onclick = openSportFiche;
+    }
+
+    draw();
+  }
+
+  function handleTile(key){
+    if(key === "art"){
+      openModal("Visitez les œuvres d’artistes", `
+        <div style="font-weight:900;margin-bottom:8px;">Visitez les œuvres d’artistes</div>
+
+        <div class="box">
+          Parcours culturel connecté autour des fresques, œuvres et points d’intérêt artistiques.
+        </div>
+
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>Carte des œuvres</li>
+          <li>Guidage</li>
+          <li>Audio</li>
+          <li>Fiches artistes</li>
+          <li>Remerciements • mécènes • contexte</li>
+        </ul>
+      `);
+      return;
+    }
+
+    if(key === "ecole"){
+      openModal("École", `
+        <div style="font-weight:900;margin-bottom:8px;">École</div>
+
+        <div class="box">
+          <strong>Mot du jour :</strong> « Je suis ravi aujourd’hui. »
+        </div>
+
+        <div class="muted" style="margin-top:10px;">
+          La version officielle intégrera la gestion des classes, la validation quotidienne
+          et le suivi des BoCitecoins JAUNE.
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+          <button class="choiceBtn" id="playChild" type="button">▶ Lire (voix enfant)</button>
+          <button class="choiceBtn" id="playFemale" type="button">▶ Lire (voix synthétique)</button>
+        </div>
+
+        <div class="coinShowcase">
+          <div class="coinFace coinYellow" aria-hidden="true">
+            <div class="coinStarsRing coinStarsYellow" aria-hidden="true">
+              <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+                <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
+              </svg>
+            </div>
+            <div class="coinInner coinInnerYellow">
+              <div class="n">1</div>
+              <div class="t">BoCitecoin</div>
+            </div>
+          </div>
+
+          <div class="walletBox">
+            <div class="walletTitle">Wallet École — BoCitecoins JAUNE</div>
+            <div class="walletValue walletYellow">0</div>
+            <div class="walletSub">
+              Bocitecoins gagnés par la classe, échangeables en mairie selon les règles locales.
+            </div>
+          </div>
+        </div>
+      `);
+
+      setTimeout(()=>{
+        const child = $("playChild");
+        const female = $("playFemale");
+
+        if(child){
+          child.onclick = () => {
+            const u = new SpeechSynthesisUtterance("Je suis ravi aujourd’hui.");
+            u.lang = "fr-FR";
+            u.rate = 1.02;
+            u.pitch = 1.35;
+            speechSynthesis.cancel();
+            speechSynthesis.speak(u);
+          };
+        }
+
+        if(female){
+          female.onclick = () => {
+            const u = new SpeechSynthesisUtterance("Je suis ravi aujourd’hui.");
+            u.lang = "fr-FR";
+            u.rate = 0.96;
+            u.pitch = 1.04;
+            speechSynthesis.cancel();
+            speechSynthesis.speak(u);
+          };
+        }
+      }, 0);
+
+      return;
+    }
+
+    if(key === "sport"){
+      openModal("Sport", `
+        <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+
+        <div class="box">
+          <strong>Cadre :</strong> publications par référent habilité.
+          Les éléments de validation (si activés) ne sont pas publics.
+          Accès restreint, finalité limitée.
+        </div>
+
+        <div class="coinShowcase">
+
+          <div class="coin3d green" aria-hidden="true">
+            <div class="coin3dInner">
+              <div class="coinEdge"></div>
+
+              <div class="coinFace3d coinFront">
+                <div class="coinCenter">
+                  <div class="n">1</div>
+                  <div class="t">BoCitecoin</div>
+                </div>
+                <div class="shine"></div>
+              </div>
+
+              <div class="coinFace3d coinBack">
+                <div class="coinCenter">
+                  <div class="n">1</div>
+                  <div class="t">BoCitecoin</div>
+                </div>
+                <div class="shine"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="coinStack3d" aria-hidden="true">
+            <div class="miniCoin3d green i1">
+              <div class="miniCoinInner">
+                <div class="miniEdge"></div>
+                <div class="miniFace">
+                  <div class="miniLabel">
+                    <div class="n">1</div>
+                    <div class="t">BoCitecoin</div>
+                  </div>
+                </div>
+                <div class="miniBack">
+                  <div class="miniLabel">
+                    <div class="n">1</div>
+                    <div class="t">BoCitecoin</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="miniCoin3d green i2">
+              <div class="miniCoinInner">
+                <div class="miniEdge"></div>
+                <div class="miniFace">
+                  <div class="miniLabel">
+                    <div class="n">1</div>
+                    <div class="t">BoCitecoin</div>
+                  </div>
+                </div>
+                <div class="miniBack">
+                  <div class="miniLabel">
+                    <div class="n">1</div>
+                    <div class="t">BoCitecoin</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="miniCoin3d green i3">
+              <div class="miniCoinInner">
+                <div class="miniEdge"></div>
+                <div class="miniFace">
+                  <div class="miniLabel">
+                    <div class="n">1</div>
+                    <div class="t">BoCitecoin</div>
+                  </div>
+                </div>
+                <div class="miniBack">
+                  <div class="miniLabel">
+                    <div class="n">1</div>
+                    <div class="t">BoCitecoin</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="walletBox">
+            <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
+
+            <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
+
+            <div class="walletSub">
+              BoCitecoins gagnés grâce aux actions sportives et citoyennes.
+              Ils valorisent l’implication locale et peuvent être utilisés plus tard
+              chez les commerçants partenaires selon les règles Bo’CitéArt.
+            </div>
+
+            <div style="margin-top:12px;font-weight:900;">Compteurs Sport</div>
+
+            <div class="box" style="margin-top:8px;background:var(--bg);">
+              <div style="display:flex;justify-content:space-between;">
+                <div>
+                  <div class="muted">Compteur continu</div>
+                  <div id="sportContinuCounter" style="font-weight:900;font-size:22px;color:var(--green);">0</div>
+                </div>
+
+                <div>
+                  <div class="muted">Compteur annuel</div>
+                  <div id="sportAnnualCounter" style="font-weight:900;font-size:22px;color:var(--red);">0</div>
+                </div>
+              </div>
+
+              <div class="muted" style="margin-top:8px;">
+                Le compteur continu suit votre progression actuelle.
+                Le compteur annuel valorise l’engagement sur toute l’année.
+              </div>
+            </div>
+
+            <div class="walletActions">
+              <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
+              <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
+              <button class="walletMini" id="walletSportMinus" type="button">−1</button>
+              <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
+              <button class="walletMini" id="walletSportAnnualReset" type="button">Réinitialiser annuel</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-weight:900;margin-top:12px;">Fonctionnement</div>
+
+        <div class="box">
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Les clubs publient un résumé du week-end</li>
+            <li>Les actions citoyennes sont valorisées</li>
+            <li>Le fair-play et l’engagement sont encouragés</li>
+            <li>Les validations peuvent être contrôlées (non visibles)</li>
+          </ul>
+        </div>
+
+        <div style="font-weight:900;margin-top:12px;">Exemples d’actions reconnues</div>
+
+        <div class="box">
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Ramassage de déchets après un match</li>
+            <li>Nettoyage des vestiaires</li>
+            <li>Comportement fair-play</li>
+            <li>Aide à l’organisation d’un événement</li>
+          </ul>
+        </div>
+
+        <div style="font-weight:900;margin-top:12px;">Cartes sport</div>
+
+        <div class="box">
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Parcs sportifs</li>
+            <li>Bois et parcours</li>
+            <li>Salles de sport</li>
+            <li>Carte plein écran avec guidage</li>
+          </ul>
+        </div>
+
+        <div style="font-weight:900;margin-top:12px;">Clubs partenaires</div>
+
+        <div class="box">
+          Actuellement : 12 clubs engagés (démo)<br><br>
+          Chaque club peut proposer :
+          <br>• Rapport du week-end
+          <br>• Actions citoyennes
+          <br>• Partenariats commerçants
+          <br>• Soutien associatif
+        </div>
+
+        <div style="font-weight:900;margin-top:12px;">📄 Fiche partenaires</div>
+
+        <div class="box">
+          <div style="font-weight:900;">
+            Fiche élus / CCI / commerçants — soutien Club + Association
+          </div>
+
+          <div class="muted" style="margin-top:6px;">
+            Cette fiche explique le fonctionnement du soutien :
+            un commerçant soutient un club et une association.
+            Sa visibilité apparaît dans le bandeau.
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:10px;">
+            <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
+          </div>
+        </div>
+      `);
+
+      setTimeout(bindSportModal, 0);
+      return;
+    }
+
+    if(key === "mairie"){
+      openModal("Mairie", `
+        <div style="font-weight:900;margin-bottom:8px;">Mairie</div>
+
+        <div class="box">
+          La mairie peut diffuser des messages d’intérêt général gratuits,
+          ainsi que des informations utiles à la vie locale.
+        </div>
+
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>Urgences locales</li>
+          <li>Rue barrée / déviation</li>
+          <li>Agenda</li>
+          <li>Alertes et informations publiques</li>
+        </ul>
+      `);
+      return;
+    }
+
+    if(key === "commerces"){
+      openModal("Commerces", `
+        <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
+
+        <div class="box">
+          <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie,
+          ni un moyen de paiement, ni une conversion en euros.
+        </div>
+
+        <div class="coinShowcase">
+          <div class="coinFace coinGold" aria-hidden="true">
+            <div class="coinStarsRing coinStarsGold" aria-hidden="true">
+              <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+                <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
+              </svg>
+            </div>
+            <div class="coinInner coinInnerGold">
+              <div class="n">1</div>
+              <div class="t">BoCitecoin</div>
+            </div>
+          </div>
+
+          <div class="walletBox">
+            <div class="walletTitle">Wallet client — BoCitecoins OR</div>
+            <div class="walletValue walletGold">37</div>
+            <div class="walletSub">
+              BoCitecoins disponibles pour échange chez les commerçants partenaires Bo’CitéArt.
+            </div>
+          </div>
+        </div>
+
+        <div style="font-weight:900;margin-top:14px;">Paliers d’échange</div>
+        <div class="box">
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>30 bocitecoins : jusqu’à 15 %</li>
+            <li>50 bocitecoins : jusqu’à 25 %</li>
+            <li>100 bocitecoins : jusqu’à 40 %</li>
+          </ul>
+        </div>
+      `);
+      return;
+    }
+  }
+
+  window.handleTile = handleTile;
+
+  function setupEmergencyButtons(){
+    const btn112 = $("btn112");
+    const btnSos = $("btnSos");
+
+    if(btn112){
+      btn112.addEventListener("click", ()=>{
+        alert("Démo : appel 112");
+      });
+    }
+
+    if(btnSos){
+      btnSos.addEventListener("click", ()=>{
+        alert("Démo : appel 3919 / 119");
+      });
+    }
+  }
+
+  function startMarquees(){
+    const topTicker = $("topTicker");
+    if(topTicker){
+      topTicker.addEventListener("click", ()=>{
+        openModal("Bandeau Bo’CitéArt", `
+          <div class="box">
+            Bandeau de présentation générale, publicités, informations locales et mise en valeur du projet.
+          </div>
+        `);
+      });
+    }
+  }
+
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape"){
+      closeModal();
+    }
+  });
+
+  refreshSportTileCounters();
+  setupEmergencyButtons();
+  startMarquees();
+})();
+</script>
