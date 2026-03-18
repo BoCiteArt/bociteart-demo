@@ -714,9 +714,182 @@
       .sportTape{ height:34px; }
       .sportTapeTrack{ font-size:11px; }
     }
+    /* =========================
+   CARTE BIEN-ÊTRE PLEIN ÉCRAN
+   ========================= */
+.mapModal{
+  position:fixed;
+  inset:0;
+  z-index:120;
+  display:none;
+  background:var(--bg);
+}
+.mapModal.open{
+  display:block;
+}
+.mapTopBar{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px;
+  background:rgba(241,230,214,.96);
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid rgba(0,0,0,.08);
+}
+.mapTopTitle{
+  font-weight:900;
+  font-size:16px;
+}
+.mapTopSub{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:800;
+  margin-top:2px;
+}
+.mapTopActions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.mapBtn{
+  border:2px solid rgba(0,0,0,.10);
+  background:#fff;
+  border-radius:12px;
+  padding:10px 12px;
+  font-weight:900;
+  cursor:pointer;
+}
+.mapCanvas{
+  position:absolute;
+  inset:64px 0 0 0;
+}
+.mapLegend{
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:10px;
+  z-index:5;
+  background:rgba(255,255,255,.94);
+  border:2px solid rgba(0,0,0,.08);
+  border-radius:14px;
+  padding:10px;
+  box-shadow:0 8px 22px rgba(0,0,0,.12);
+}
+.mapLegendRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 14px;
+  align-items:center;
+}
+.mapLegendItem{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  font-weight:800;
+  color:var(--text);
+}
+.dot{
+  width:12px;
+  height:12px;
+  border-radius:999px;
+  background:#64748b;
+  border:2px solid rgba(255,255,255,.9);
+  box-shadow:0 0 0 1px rgba(0,0,0,.15);
+}
+.dot.green{ background:#2f855a; }
+.dot.blue{ background:#2563eb; }
+.dot.gray{ background:#6b7280; }
+.dot.brown{ background:#8b5e3c; }
+.dot.red{ background:#b91c1c; }
+.dot.orange{ background:#c77700; }
+
+.userArrowWrap{
+  width:28px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.userArrow{
+  width:0;
+  height:0;
+  border-left:8px solid transparent;
+  border-right:8px solid transparent;
+  border-bottom:16px solid #0f766e;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.28));
+  transform-origin:50% 70%;
+}
+.userPulse{
+  width:14px;
+  height:14px;
+  border-radius:999px;
+  background:#0f766e;
+  border:2px solid #fff;
+  box-shadow:0 0 0 6px rgba(15,118,110,.15);
+}
+
+.poiIcon{
+  width:18px;
+  height:18px;
+  border-radius:999px;
+  background:#6b7280;
+  border:2px solid #fff;
+  box-shadow:0 0 0 1px rgba(0,0,0,.18);
+}
+.poi-park{ background:#2f855a; }
+.poi-forest{ background:#276749; }
+.poi-walk{ background:#2563eb; }
+.poi-bike{ background:#1d4ed8; }
+.poi-bus{ background:#6b7280; }
+.poi-food{ background:#c77700; }
+.poi-restaurant{ background:#b91c1c; }
+
+.leaflet-popup-content{
+  font-weight:800;
+  font-size:13px;
+}
+.leaflet-control-attribution{
+  font-size:10px;
+}
   </style>
+  <link rel="stylesheet" href="leaflet/leaflet.css" />
 </head>
+  <script src="leaflet/leaflet.js"></script>
 <body>
+  <div class="mapModal" id="wellbeingMapModal" aria-hidden="true">
+  <div class="mapTopBar">
+    <div>
+      <div class="mapTopTitle">Carte bien-être & déplacements</div>
+      <div class="mapTopSub">Parcs, promenade, pistes cyclables, bus, restauration, points alimentaires — rayon 3 km</div>
+    </div>
+
+    <div class="mapTopActions">
+      <button class="mapBtn" id="wbLocateBtn" type="button">Me localiser</button>
+      <button class="mapBtn" id="wbCenterBtn" type="button">Recentrer</button>
+      <button class="mapBtn" id="wbCloseBtn" type="button">Fermer</button>
+    </div>
+  </div>
+
+  <div class="mapCanvas" id="wellbeingMap"></div>
+
+  <div class="mapLegend">
+    <div class="mapLegendRow">
+      <div class="mapLegendItem"><span class="dot green"></span> Parc / loisir</div>
+      <div class="mapLegendItem"><span class="dot gray"></span> Forêt / nature</div>
+      <div class="mapLegendItem"><span class="dot blue"></span> Marche / piste cyclable</div>
+      <div class="mapLegendItem"><span class="dot brown"></span> Alimentation</div>
+      <div class="mapLegendItem"><span class="dot red"></span> Restaurant</div>
+      <div class="mapLegendItem"><span class="dot orange"></span> Arrêt de bus</div>
+    </div>
+  </div>
+</div>
   <div class="page">
     <div class="wrap">
 
@@ -758,7 +931,250 @@
               <div class="p">Mot du jour</div>
             </div>
           </div>
+          
+      /* =========================
+         CARTE BIEN-ÊTRE
+         ========================= */
+      let wellbeingMap = null;
+      let wellbeingUserMarker = null;
+      let wellbeingAccuracyCircle = null;
+      let wellbeingWatchId = null;
+      let wellbeingHeading = 0;
+      let wellbeingCurrentLatLng = null;
+      let wellbeingPoiMarkers = [];
+      let wellbeingHasCenteredOnce = false;
 
+      const WELLBEING_RADIUS_METERS = 3000;
+
+      const WELLBEING_POINTS = [
+        { type:"park", name:"Parc de loisir", lat:50.5857, lng:3.0508, desc:"Espace détente et promenade" },
+        { type:"forest", name:"Bois / nature", lat:50.5798, lng:3.0422, desc:"Zone boisée et respiration" },
+        { type:"walk", name:"Parcours marche", lat:50.5829, lng:3.0581, desc:"Parcours de marche conseillé" },
+        { type:"bike", name:"Piste cyclable", lat:50.5882, lng:3.0607, desc:"Accès vélo / déplacement doux" },
+        { type:"bus", name:"Arrêt de bus", lat:50.5842, lng:3.0558, desc:"Arrêt de bus à proximité" },
+        { type:"restaurant", name:"Restaurant", lat:50.5861, lng:3.0477, desc:"Restauration à proximité" },
+        { type:"food", name:"Point alimentaire", lat:50.5830, lng:3.0528, desc:"Commerce alimentaire" }
+      ];
+
+      function wbIconClass(type){
+        if(type === "park") return "poiIcon poi-park";
+        if(type === "forest") return "poiIcon poi-forest";
+        if(type === "walk") return "poiIcon poi-walk";
+        if(type === "bike") return "poiIcon poi-bike";
+        if(type === "bus") return "poiIcon poi-bus";
+        if(type === "restaurant") return "poiIcon poi-restaurant";
+        if(type === "food") return "poiIcon poi-food";
+        return "poiIcon";
+      }
+
+      function createPoiIcon(type){
+        return L.divIcon({
+          className: "",
+          html: `<div class="${wbIconClass(type)}" aria-hidden="true"></div>`,
+          iconSize: [18,18],
+          iconAnchor: [9,9],
+          popupAnchor: [0,-8]
+        });
+      }
+
+      function createUserIcon(deg){
+        return L.divIcon({
+          className: "",
+          html: `
+            <div class="userArrowWrap" aria-hidden="true">
+              <div class="userArrow" style="transform:rotate(${deg}deg);"></div>
+            </div>
+          `,
+          iconSize: [28,28],
+          iconAnchor: [14,14]
+        });
+      }
+
+      function distanceMeters(lat1, lng1, lat2, lng2){
+        const R = 6371000;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a =
+          Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+          Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+      }
+
+      function clearWellbeingPois(){
+        wellbeingPoiMarkers.forEach(m => {
+          try{ wellbeingMap.removeLayer(m); }catch(e){}
+        });
+        wellbeingPoiMarkers = [];
+      }
+
+      function renderWellbeingPois(lat, lng){
+        if(!wellbeingMap) return;
+        clearWellbeingPois();
+
+        WELLBEING_POINTS.forEach((p)=>{
+          const dist = distanceMeters(lat, lng, p.lat, p.lng);
+          if(dist <= WELLBEING_RADIUS_METERS){
+            const marker = L.marker([p.lat, p.lng], { icon:createPoiIcon(p.type) });
+            marker.bindPopup(`
+              <div style="font-weight:900;">${escapeHtml(p.name)}</div>
+              <div style="margin-top:4px;">${escapeHtml(p.desc || "")}</div>
+              <div style="margin-top:6px;color:#6e6a63;font-size:12px;">À environ ${Math.round(dist)} m</div>
+            `);
+            marker.addTo(wellbeingMap);
+            wellbeingPoiMarkers.push(marker);
+          }
+        });
+      }
+
+      function updateUserHeading(deg){
+        wellbeingHeading = Number.isFinite(deg) ? deg : 0;
+        if(wellbeingUserMarker && wellbeingCurrentLatLng){
+          wellbeingUserMarker.setIcon(createUserIcon(wellbeingHeading));
+        }
+      }
+
+      function ensureWellbeingMap(){
+        if(wellbeingMap) return;
+
+        wellbeingMap = L.map("wellbeingMap", {
+          zoomControl: true,
+          attributionControl: true
+        }).setView([50.584, 3.05], 14);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: "&copy; OpenStreetMap"
+        }).addTo(wellbeingMap);
+
+        setTimeout(()=>{
+          wellbeingMap.invalidateSize();
+        }, 200);
+      }
+
+      function updateWellbeingPosition(lat, lng, accuracy){
+        wellbeingCurrentLatLng = [lat, lng];
+        ensureWellbeingMap();
+
+        if(!wellbeingUserMarker){
+          wellbeingUserMarker = L.marker([lat, lng], { icon:createUserIcon(wellbeingHeading) }).addTo(wellbeingMap);
+        }else{
+          wellbeingUserMarker.setLatLng([lat, lng]);
+          wellbeingUserMarker.setIcon(createUserIcon(wellbeingHeading));
+        }
+
+        if(!wellbeingAccuracyCircle){
+          wellbeingAccuracyCircle = L.circle([lat, lng], {
+            radius: Math.max(10, Number(accuracy || 20)),
+            color: "#0f766e",
+            weight: 1,
+            fillColor: "#0f766e",
+            fillOpacity: 0.08
+          }).addTo(wellbeingMap);
+        }else{
+          wellbeingAccuracyCircle.setLatLng([lat, lng]);
+          wellbeingAccuracyCircle.setRadius(Math.max(10, Number(accuracy || 20)));
+        }
+
+        renderWellbeingPois(lat, lng);
+
+        if(!wellbeingHasCenteredOnce){
+          wellbeingMap.setView([lat, lng], 15);
+          wellbeingHasCenteredOnce = true;
+        }
+      }
+
+      function startWellbeingTracking(){
+        if(!navigator.geolocation){
+          alert("La géolocalisation n’est pas disponible sur ce téléphone.");
+          return;
+        }
+
+        if(wellbeingWatchId !== null){
+          navigator.geolocation.clearWatch(wellbeingWatchId);
+          wellbeingWatchId = null;
+        }
+
+        wellbeingWatchId = navigator.geolocation.watchPosition(
+          (pos)=>{
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            const accuracy = pos.coords.accuracy || 20;
+            updateWellbeingPosition(lat, lng, accuracy);
+          },
+          ()=>{
+            alert("Impossible d’obtenir la position actuelle.");
+          },
+          {
+            enableHighAccuracy: true,
+            maximumAge: 3000,
+            timeout: 10000
+          }
+        );
+      }
+
+      function stopWellbeingTracking(){
+        if(wellbeingWatchId !== null && navigator.geolocation){
+          navigator.geolocation.clearWatch(wellbeingWatchId);
+          wellbeingWatchId = null;
+        }
+      }
+
+      function openWellbeingMap(){
+        const modal = $("wellbeingMapModal");
+        if(!modal) return;
+
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        lockScroll(true);
+
+        ensureWellbeingMap();
+        setTimeout(()=>{
+          if(wellbeingMap) wellbeingMap.invalidateSize();
+        }, 150);
+
+        wellbeingHasCenteredOnce = false;
+        startWellbeingTracking();
+      }
+
+      function closeWellbeingMap(){
+        const modal = $("wellbeingMapModal");
+        if(!modal) return;
+
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        lockScroll(false);
+        stopWellbeingTracking();
+      }
+
+      window.openWellbeingMap = openWellbeingMap;
+      window.closeWellbeingMap = closeWellbeingMap;
+
+      on($("wbCloseBtn"), "click", closeWellbeingMap);
+
+      on($("wbLocateBtn"), "click", ()=>{
+        wellbeingHasCenteredOnce = false;
+        startWellbeingTracking();
+      });
+
+      on($("wbCenterBtn"), "click", ()=>{
+        if(wellbeingMap && wellbeingCurrentLatLng){
+          wellbeingMap.setView(wellbeingCurrentLatLng, 15);
+        }
+      });
+
+      window.addEventListener("deviceorientationabsolute", (event)=>{
+        if(typeof event.alpha === "number"){
+          updateUserHeading(event.alpha);
+        }
+      }, true);
+
+      window.addEventListener("deviceorientation", (event)=>{
+        if(typeof event.alpha === "number"){
+          updateUserHeading(event.alpha);
+        }
+      }, true);
           <div class="tile" data-open="sport">
             <img alt="" src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=60"/>
             <div class="overlay"></div>
@@ -2545,212 +2961,227 @@ window.openModal = openModal;
 
             return;
           }
-                    if(key === "sport"){
-            openModal("Sport", `
-              <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+                  if(key === "sport"){
+  openModal("Sport", `
+    <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
 
-              <div class="box">
-                <strong>Cadre :</strong> publications par référent habilité.
-                Les éléments de validation (si activés) ne sont pas publics.
-                Accès restreint, finalité limitée.
-              </div>
+    <div class="box">
+      <strong>Cadre :</strong> publications par référent habilité.
+      Les éléments de validation (si activés) ne sont pas publics.
+      Accès restreint, finalité limitée.
+    </div>
 
-              <div class="coinShowcase">
-                <div class="coinFace coinGreen" aria-hidden="true">
-                  <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
-                    <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-                      <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
-                    </svg>
-                  </div>
-                  <div class="coinInner coinInnerGreen">
-                    <div class="n">1</div>
-                    <div class="t">BoCitecoin</div>
-                  </div>
-                </div>
+    <div class="coinShowcase">
+      <div class="coinFace coinGreen" aria-hidden="true">
+        <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
+          <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+            <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
+          </svg>
+        </div>
+        <div class="coinInner coinInnerGreen">
+          <div class="n">1</div>
+          <div class="t">BoCitecoin</div>
+        </div>
+      </div>
 
-                <div class="coinStack" aria-hidden="true">
-                  <div class="stackCoin stackGreen stack1">
-                    <div class="stackCoinStars" aria-hidden="true">
-                      <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                        <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="stackCoin stackGreen stack2">
-                    <div class="stackCoinStars" aria-hidden="true">
-                      <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                        <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="stackCoin stackGreen stack3">
-                    <div class="stackCoinStars" aria-hidden="true">
-                      <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                        <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
+      <div class="coinStack" aria-hidden="true">
+        <div class="stackCoin stackGreen stack1">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+            </svg>
+          </div>
+        </div>
+        <div class="stackCoin stackGreen stack2">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+            </svg>
+          </div>
+        </div>
+        <div class="stackCoin stackGreen stack3">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+            </svg>
+          </div>
+        </div>
+      </div>
 
-                <div class="walletBox">
-                  <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
-                  <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
+      <div class="walletBox">
+        <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
+        <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
 
-                  <div class="walletSub">
-                    BoCitecoins gagnés grâce aux actions sportives et citoyennes.
-                    Échange possible à partir de <strong>10 BoCitecoins VERT</strong>
-                    chez un commerçant partenaire selon les règles locales.
-                  </div>
+        <div class="walletSub">
+          BoCitecoins gagnés grâce aux actions sportives et citoyennes.
+          Échange possible à partir de <strong>10 BoCitecoins VERT</strong>
+          chez un commerçant partenaire selon les règles locales.
+        </div>
 
-                  <div class="box" style="margin-top:10px;background:var(--bg);">
-                    <div style="font-weight:900;">Règle d’échange Sport</div>
-                    <div class="muted" style="margin-top:6px;">
-                      À partir de <strong>10 BoCitecoins VERT</strong>, le sportif peut déclencher un échange.
-                      Le commerçant scanne, remet le cadeau ou l’avantage, puis les BoCitecoins utilisés sont brûlés automatiquement.
-                    </div>
-                  </div>
+        <div class="box" style="margin-top:10px;background:var(--bg);">
+          <div style="font-weight:900;">Règle d’échange Sport</div>
+          <div class="muted" style="margin-top:6px;">
+            À partir de <strong>10 BoCitecoins VERT</strong>, le sportif peut déclencher un échange.
+            Le commerçant scanne, remet le cadeau ou l’avantage, puis les BoCitecoins utilisés sont brûlés automatiquement.
+          </div>
+        </div>
 
-                  <div class="walletActions">
-                    <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-                    <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
-                    <button class="walletMini" id="walletSportScanRedeem10" type="button">Scanner + brûler 10</button>
-                    <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
-                  </div>
-                </div>
-              </div>
+        <div class="walletActions">
+          <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
+          <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
+          <button class="walletMini" id="walletSportScanRedeem10" type="button">Scanner + brûler 10</button>
+          <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
+        </div>
+      </div>
+    </div>
 
-              <div style="font-weight:900;margin-top:12px;">Fonctionnement</div>
-              <div class="box">
-                <ul style="margin:8px 0 0 18px;font-weight:800;">
-                  <li>Les clubs publient un résumé du week-end</li>
-                  <li>Les actions citoyennes sont valorisées</li>
-                  <li>Le fair-play et l’engagement sont encouragés</li>
-                  <li>Les validations peuvent être contrôlées (non visibles publiquement)</li>
-                </ul>
-              </div>
+    <div style="font-weight:900;margin-top:12px;">Fonctionnement</div>
+    <div class="box">
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Les clubs publient un résumé du week-end</li>
+        <li>Les actions citoyennes sont valorisées</li>
+        <li>Le fair-play et l’engagement sont encouragés</li>
+        <li>Les validations peuvent être contrôlées (non visibles publiquement)</li>
+      </ul>
+    </div>
 
-              <div style="font-weight:900;margin-top:12px;">Échange commerçant</div>
-              <div class="box">
-                <div style="font-weight:900;">Principe simple</div>
-                <div class="muted" style="margin-top:6px;">
-                  Le commerçant va vite : il scanne le sportif, vérifie que le seuil de 10 BoCitecoins VERT est atteint,
-                  remet le cadeau ou l’avantage prévu, puis les 10 BoCitecoins sont brûlés.
-                </div>
-              </div>
+    <div style="font-weight:900;margin-top:12px;">Échange commerçant</div>
+    <div class="box">
+      <div style="font-weight:900;">Principe simple</div>
+      <div class="muted" style="margin-top:6px;">
+        Le commerçant va vite : il scanne le sportif, vérifie que le seuil de 10 BoCitecoins VERT est atteint,
+        remet le cadeau ou l’avantage prévu, puis les 10 BoCitecoins sont brûlés.
+      </div>
+    </div>
 
-              <div style="font-weight:900;margin-top:12px;">Option solidaire</div>
-              <div class="box">
-                <div style="font-weight:900;">Exemple de répartition</div>
-                <ul style="margin:8px 0 0 18px;font-weight:800;">
-                  <li>Valeur globale : <strong>50 €</strong></li>
-                  <li>Part sportif / club : <strong>35 €</strong></li>
-                  <li>Part association retenue : <strong>12,50 €</strong></li>
-                  <li>Part Bo’CitéArt (PSP / maintenance) : <strong>2,50 €</strong></li>
-                </ul>
-                <div class="muted" style="margin-top:8px;">
-                  Cette répartition doit rester clairement encadrée par les CGU, CGV et documents contractuels applicables.
-                </div>
-              </div>
+    <div style="font-weight:900;margin-top:12px;">Option solidaire</div>
+    <div class="box">
+      <div style="font-weight:900;">Exemple de répartition</div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Valeur globale : <strong>50 €</strong></li>
+        <li>Part sportif / club : <strong>35 €</strong></li>
+        <li>Part association retenue : <strong>12,50 €</strong></li>
+        <li>Part Bo’CitéArt (PSP / maintenance) : <strong>2,50 €</strong></li>
+      </ul>
+      <div class="muted" style="margin-top:8px;">
+        Cette répartition doit rester clairement encadrée par les CGU, CGV et documents contractuels applicables.
+      </div>
+    </div>
 
-              <div style="font-weight:900;margin-top:12px;">Associations retenues</div>
-              <div class="box">
-                <ul style="margin:8px 0 0 18px;font-weight:800;">
-                  <li>Les Clés du Cœur</li>
-                  <li>Étoile Filante</li>
-                  <li>Les Papillons — antenne Nord</li>
-                  <li>ATC Nord</li>
-                </ul>
-              </div>
+    <div style="font-weight:900;margin-top:12px;">Associations retenues</div>
+    <div class="box">
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Les Clés du Cœur</li>
+        <li>Étoile Filante</li>
+        <li>Les Papillons — antenne Nord</li>
+        <li>ATC Nord</li>
+      </ul>
+    </div>
 
-              <div style="font-weight:900;margin-top:12px;">Cartes sport</div>
-              <div class="box">
-                <ul style="margin:8px 0 0 18px;font-weight:800;">
-                  <li>Parcs sportifs</li>
-                  <li>Bois et parcours</li>
-                  <li>Salles de sport</li>
-                  <li>Carte plein écran avec guidage</li>
-                </ul>
-              </div>
+    <div style="font-weight:900;margin-top:12px;">Cartes sport</div>
+    <div class="box">
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Parcs sportifs</li>
+        <li>Bois et parcours</li>
+        <li>Salles de sport</li>
+        <li>Carte plein écran avec guidage</li>
+      </ul>
+    </div>
 
-              <div style="font-weight:900;margin-top:12px;">📄 Fiche partenaires</div>
-              <div class="box">
-                <div style="font-weight:900;">
-                  Fiche élus / CCI / commerçants — soutien Club + Association
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  Cette fiche explique le fonctionnement du soutien :
-                  un commerçant soutient un club et une association.
-                  Sa visibilité apparaît dans le bandeau.
-                </div>
-                <div style="display:flex;gap:10px;margin-top:10px;">
-                  <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
-                </div>
-              </div>
-            `);
+    <div style="font-weight:900;margin-top:12px;">📄 Fiche partenaires</div>
+    <div class="box">
+      <div style="font-weight:900;">
+        Fiche élus / CCI / commerçants — soutien Club + Association
+      </div>
+      <div class="muted" style="margin-top:6px;">
+        Cette fiche explique le fonctionnement du soutien :
+        un commerçant soutient un club et une association.
+        Sa visibilité apparaît dans le bandeau.
+      </div>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
+      </div>
+    </div>
 
-            setTimeout(()=>{
-              const b = $("openSportFicheBtn");
-              if(b) b.onclick = openSportFiche;
+    <div style="font-weight:900;margin-top:12px;">Carte bien-être</div>
+    <div class="box">
+      <div class="muted">
+        Carte plein écran avec position actuelle, orientation et points utiles visibles progressivement
+        dans un rayon de 3 km.
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="openWellbeingMapBtn" type="button">Ouvrir la carte</button>
+      </div>
+    </div>
+  `);
 
-              const refresh = ()=>{
-                const out = $("sportCoinBalance");
-                if(out) out.textContent = Number(loadSportWallet().vert || 0);
-              };
-              refresh();
+  setTimeout(()=>{
+    const b = $("openSportFicheBtn");
+    if(b) b.onclick = openSportFiche;
 
-              const p10 = $("walletSportPlus10");
-              const p25 = $("walletSportPlus25");
-              const redeem10 = $("walletSportScanRedeem10");
-              const rst = $("walletSportReset");
+    const wb = $("openWellbeingMapBtn");
+    if(wb) wb.onclick = openWellbeingMap;
 
-              if(p10){
-                p10.onclick = ()=>{
-                  const w = loadSportWallet();
-                  w.vert = Number(w.vert || 0) + 10;
-                  saveSportWallet(w);
-                  refresh();
-                };
-              }
+    const refresh = ()=>{
+      const out = $("sportCoinBalance");
+      if(out) out.textContent = Number(loadSportWallet().vert || 0);
+    };
+    refresh();
 
-              if(p25){
-                p25.onclick = ()=>{
-                  const w = loadSportWallet();
-                  w.vert = Number(w.vert || 0) + 25;
-                  saveSportWallet(w);
-                  refresh();
-                };
-              }
+    const p10 = $("walletSportPlus10");
+    const p25 = $("walletSportPlus25");
+    const redeem10 = $("walletSportScanRedeem10");
+    const rst = $("walletSportReset");
 
-              if(redeem10){
-                redeem10.onclick = ()=>{
-                  const w = loadSportWallet();
-                  const current = Number(w.vert || 0);
+    if(p10){
+      p10.onclick = ()=>{
+        const w = loadSportWallet();
+        w.vert = Number(w.vert || 0) + 10;
+        saveSportWallet(w);
+        refresh();
+      };
+    }
 
-                  if(current < 10){
-                    alert("Échange impossible : il faut au moins 10 BoCitecoins VERT.");
-                    return;
-                  }
+    if(p25){
+      p25.onclick = ()=>{
+        const w = loadSportWallet();
+        w.vert = Number(w.vert || 0) + 25;
+        saveSportWallet(w);
+        refresh();
+      };
+    }
 
-                  if(confirm("Confirmer le scan commerçant et brûler 10 BoCitecoins VERT ?")){
-                    w.vert = Math.max(0, current - 10);
-                    saveSportWallet(w);
-                    refresh();
-                    alert("Échange Sport validé (démo) : 10 BoCitecoins VERT brûlés.");
-                  }
-                };
-              }
+    if(redeem10){
+      redeem10.onclick = ()=>{
+        const w = loadSportWallet();
+        const current = Number(w.vert || 0);
 
-              if(rst){
-                rst.onclick = ()=>{
-                  if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
-                    saveSportWallet({ vert:0 });
-                    refresh();
-                  }
-                };
-              }
-            },0);
-            return;
-          }
+        if(current < 10){
+          alert("Échange impossible : il faut au moins 10 BoCitecoins VERT.");
+          return;
+        }
+
+        if(confirm("Confirmer le scan commerçant et brûler 10 BoCitecoins VERT ?")){
+          w.vert = Math.max(0, current - 10);
+          saveSportWallet(w);
+          refresh();
+          alert("Échange Sport validé (démo) : 10 BoCitecoins VERT brûlés.");
+        }
+      };
+    }
+
+    if(rst){
+      rst.onclick = ()=>{
+        if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
+          saveSportWallet({ vert:0 });
+          refresh();
+        }
+      };
+    }
+  },0);
+
+  return;
+} 
           
           if(key === "mairie" ){
           openModal("Mairie", `
