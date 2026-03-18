@@ -700,6 +700,708 @@
       font-size:12px;
     }
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(self)">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' https: data:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com;">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Bo’CitéArt – Démo</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#a51e22">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+
+  <style>
+    :root{
+      --bg:#f1e6d6;
+      --surface:#ffffff;
+      --beige:#efe4d3;
+      --green:#2f5d46;
+      --red:#a51e22;
+      --redSoft:#7f1a1d;
+      --text:#1f1f1f;
+      --muted:#6e6a63;
+      --link:#1d4ed8;
+      --vh:1vh;
+    }
+
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; margin:0; padding:0; }
+
+    body{
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      -webkit-text-size-adjust:100%;
+      text-size-adjust:100%;
+      overscroll-behavior:none;
+    }
+
+    body.modalOpen{ overflow:hidden; }
+
+    .page{
+      min-height:calc(var(--vh) * 100);
+      min-height:100vh;
+      min-height:100dvh;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:420px;
+      margin:0 auto;
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .ticker{
+      position:relative;
+      overflow:hidden;
+      border-radius:18px;
+      background:var(--beige);
+      height:130px;
+      cursor:pointer;
+    }
+    .ticker img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    .ticker .overlay{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.12));
+    }
+    .ticker .row{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      padding:0 14px;
+      gap:12px;
+      overflow:hidden;
+    }
+    .marquee{
+      display:flex;
+      gap:38px;
+      white-space:nowrap;
+      animation:marquee 20s linear infinite;
+      will-change:transform;
+    }
+    .marquee .item{
+      display:flex;
+      flex-direction:column;
+      min-width:360px;
+    }
+    .ticker .title{ color:#fff; font-weight:800; font-size:14px; }
+    .ticker .sub{ color:rgba(255,255,255,.92); font-weight:700; font-size:12px; margin-top:2px; }
+    .ticker .rule{
+      margin-left:auto;
+      color:rgba(255,255,255,.92);
+      font-size:11px;
+      font-weight:700;
+      flex:0 0 auto;
+    }
+
+    @keyframes marquee{
+      0%{ transform:translateX(0); }
+      100%{ transform:translateX(-50%); }
+    }
+
+    .tileBadge{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:14px;
+      height:14px;
+      border-radius:999px;
+      background:#1f8f4d;
+      border:2px solid #fff;
+      box-shadow:0 0 0 2px rgba(0,0,0,.08);
+      z-index:3;
+      animation:badgePulse 1.2s infinite;
+    }
+
+    @keyframes badgePulse{
+      0%{ transform:scale(1); opacity:1; }
+      50%{ transform:scale(1.18); opacity:.75; }
+      100%{ transform:scale(1); opacity:1; }
+    }
+
+    .gridWrap{ position:relative; }
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .tile{
+      position:relative;
+      width:100%;
+      aspect-ratio:1 / 0.70;
+      border-radius:22px;
+      overflow:hidden;
+      background:var(--beige);
+      cursor:pointer;
+    }
+    .tile img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    .tile .overlay{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.55));
+    }
+    .tile .content{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      padding:12px;
+      color:#fff;
+    }
+    .tile .h{ font-weight:900; font-size:18px; line-height:1.15; }
+    .tile .p{ margin-top:8px; font-weight:700; font-size:12px; color:rgba(255,255,255,.92); }
+    .tile.logoOnly .overlay{ display:none; }
+
+    .emgSlot{
+      position:absolute;
+      left:50%;
+      transform:translate(-50%,-50%);
+      padding:6px;
+      border-radius:999px;
+      background:var(--bg);
+      z-index:20;
+    }
+    .emgTop{ top:33.333%; }
+    .emgBottom{ top:66.666%; }
+
+    .lpBtn{
+      position:relative;
+      width:90px;
+      height:90px;
+      border:none;
+      background:transparent;
+      padding:0;
+      touch-action:none;
+      cursor:pointer;
+    }
+    .lpRing{ position:absolute; inset:0; }
+    .lpCore{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:74px;
+      height:74px;
+      border-radius:999px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:700;
+      box-shadow:0 10px 20px rgba(0,0,0,.18);
+      user-select:none;
+    }
+    .lpSmall{ width:68px; height:68px; }
+    .lpCore .icon{ width:16px; height:16px; margin-bottom:2px; opacity:.95; }
+    .lpCore .lbl{ font-size:12px !important; line-height:1; font-weight:700 !important; }
+    .lpCore .lblSmall{ font-size:8px !important; line-height:1; font-weight:700 !important; }
+    #btn112 .lblSmallTop{ font-size:7px !important; line-height:1 !important; }
+    #btn112 .icon{ width:14px !important; height:14px !important; margin-bottom:1px !important; }
+    #btnSos .lblTop{ font-size:7px !important; line-height:1.05 !important; font-weight:800 !important; }
+    #btnSos .icon{ width:12px !important; height:12px !important; margin:2px 0 !important; }
+    #btnSos #sosLabel{ font-size:7px !important; line-height:1 !important; font-weight:900 !important; }
+
+    .sportTape{
+      height:38px;
+      background:#fff;
+      border-radius:14px;
+      border:2px solid rgba(0,0,0,.08);
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      padding:0;
+    }
+    .sportTapeViewport{ width:100%; overflow:hidden; }
+    .sportTapeTrack{
+      display:inline-flex;
+      width:max-content;
+      gap:48px;
+      white-space:nowrap;
+      padding-left:14px;
+      animation:sportTape 80s linear infinite;
+      will-change:transform;
+    }
+    .sportTapeItem{ display:flex; align-items:center; gap:8px; font-weight:400 !important; }
+    .sportTapeItem.bold{ font-weight:900 !important; }
+
+    @keyframes sportTape{
+      0%{ transform:translateX(0); }
+      100%{ transform:translateX(-50%); }
+    }
+
+    #mairieTile{ position:relative; overflow:hidden; }
+    #mairieTile::after{
+      content:"";
+      position:absolute;
+      width:56px;
+      height:56px;
+      left:-28px;
+      bottom:-28px;
+      border-radius:50%;
+      background:var(--bg);
+      z-index:4;
+      pointer-events:none;
+    }
+
+    .mairieTickerWrap{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:18px;
+      background:rgba(165,30,34,.95);
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      z-index:5;
+    }
+    .mairieTickerTrack{
+      display:inline-flex;
+      align-items:center;
+      white-space:nowrap;
+      padding-left:100%;
+      animation:mairieTickerMove 24s linear infinite;
+      color:#fff;
+      font-size:10px;
+      font-weight:900;
+    }
+    .mairieTickerTrack span{ padding-right:40px; }
+
+    @keyframes mairieTickerMove{
+      0%{ transform:translateX(0); }
+      100%{ transform:translateX(-100%); }
+    }
+
+    .dae{
+      width:100%;
+      border-radius:20px;
+      background:#f7efe3;
+      border:3px solid var(--red);
+      padding:10px 12px;
+      min-height:93px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:900;
+      font-size:16px;
+      cursor:pointer;
+    }
+    .heart{ width:52px; height:52px; flex:0 0 auto; }
+
+    .footerRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding-bottom:10px;
+      padding-bottom:max(10px, env(safe-area-inset-bottom));
+    }
+    .footerRight{
+      display:flex;
+      gap:10px;
+      flex-wrap:nowrap;
+      align-items:center;
+      min-width:0;
+    }
+    .footerRight .legalBtn{
+      flex:1;
+      min-width:0;
+      padding:9px 8px;
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .siteLink{
+      font-size:14px;
+      font-weight:800;
+      color:var(--link);
+      text-decoration:none;
+    }
+    .iconBtn{
+      width:44px;
+      height:44px;
+      border-radius:999px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      box-shadow:0 4px 10px rgba(0,0,0,.08);
+    }
+    .legalBtn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--beige);
+      color:var(--green);
+      font-weight:900;
+      padding:10px 12px;
+      border-radius:14px;
+      border:2px solid rgba(0,0,0,.08);
+      cursor:pointer;
+      white-space:nowrap;
+      font-size:13px;
+      box-shadow:0 4px 10px rgba(0,0,0,.06);
+    }
+    .legalStack{ flex-direction:column; gap:1px; }
+    .legalStack span{
+      display:block;
+      font-size:9px;
+      line-height:1.05;
+      text-align:center;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      z-index:50;
+    }
+    .modal.open{ display:block; }
+
+    .backdrop{
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,.40);
+    }
+
+    .sheet{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:min(420px, calc(100% - 18px));
+      background:var(--bg);
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:0 14px 40px rgba(0,0,0,.22);
+    }
+    .sheet .head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 14px;
+      font-weight:900;
+      border-bottom:1px solid rgba(0,0,0,.10);
+    }
+    .sheet .body{
+      padding:14px;
+      font-size:14px;
+      color:var(--text);
+      max-height:min(72vh, 520px);
+      overflow:auto;
+    }
+
+    .xbtn{
+      border:none;
+      background:#fff;
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 4px 10px rgba(0,0,0,.08);
+    }
+
+    .muted{ color:var(--muted); font-size:12px; font-weight:700; }
+    .choiceGrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+    .choiceBtn{
+      border:2px solid rgba(0,0,0,.10);
+      background:var(--beige);
+      border-radius:14px;
+      padding:12px;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+      position:sticky;
+      top:0;
+      background:var(--bg);
+      padding-top:2px;
+      padding-bottom:10px;
+      z-index:2;
+    }
+    .tab{
+      border:2px solid rgba(0,0,0,.10);
+      background:#fff;
+      border-radius:12px;
+      padding:8px 10px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .tab.active{ background:var(--beige); }
+
+    .doc h2{ margin:12px 0 6px; font-size:15px; }
+    .doc h3{ margin:10px 0 6px; font-size:14px; }
+    .doc p{ margin:6px 0; font-weight:700; }
+    .doc ul{ margin:6px 0 0 18px; font-weight:800; }
+    .doc .box,
+    .box{
+      border:2px solid rgba(0,0,0,.08);
+      background:#fff;
+      border-radius:14px;
+      padding:10px;
+      font-weight:800;
+      margin:10px 0;
+    }
+
+    .miniField{
+      width:100%;
+      border:2px solid rgba(0,0,0,.10);
+      border-radius:12px;
+      padding:10px 10px;
+      font-weight:800;
+      background:#fff;
+      outline:none;
+    }
+
+    .miniCheck{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      font-weight:900;
+      margin-top:10px;
+    }
+    .miniCheck input{
+      transform:scale(1.15);
+      margin-top:2px;
+    }
+
+    .coinShowcase{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+
+    .coinFace{
+      position:relative;
+      width:96px;
+      height:96px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      box-shadow:inset 0 3px 10px rgba(255,255,255,.22), inset 0 -7px 14px rgba(0,0,0,.20), 0 6px 14px rgba(0,0,0,.14);
+    }
+    .coinFace::before{
+      content:"";
+      position:absolute;
+      inset:10px;
+      border-radius:50%;
+      border:2px solid rgba(140,95,0,.50);
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .coinGold{
+      background:radial-gradient(circle at 32% 28%, #fff3a8 0%, #f4d44d 18%, #d9aa14 48%, #b98400 72%, #8d6200 100%);
+      border:4px solid #b67d00;
+    }
+    .coinYellow{
+      background:radial-gradient(circle at 32% 28%, #fff7b6 0%, #f2df58 18%, #d4bb18 48%, #ab9300 72%, #7f6d00 100%);
+      border:4px solid #b89d00;
+    }
+    .coinGreen{
+      background:radial-gradient(circle at 32% 28%, #dff7ea 0%, #91d9b1 20%, #3f7e5f 48%, #2e5f47 72%, #1f4332 100%);
+      border:4px solid #2f5d46;
+    }
+
+    .coinStarsRing{
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      pointer-events:none;
+      z-index:1;
+    }
+    .coinStarsRing svg{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      display:block;
+    }
+    .starRingStroke{
+      fill:none;
+      vector-effect:non-scaling-stroke;
+      stroke-linecap:round;
+    }
+    .coinStarsGold .starRingStroke{ stroke:#9b6a00; }
+    .coinStarsYellow .starRingStroke{ stroke:#967d00; }
+    .coinStarsGreen .starRingStroke{ stroke:#ecfff3; }
+
+    .coinInner{
+      position:relative;
+      width:64px;
+      height:64px;
+      border-radius:50%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      font-weight:900;
+      z-index:2;
+      padding:4px;
+      box-shadow:inset 0 2px 5px rgba(255,255,255,.12), inset 0 -3px 7px rgba(0,0,0,.14);
+    }
+    .coinInner::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      border:2px solid currentColor;
+      opacity:.30;
+      pointer-events:none;
+    }
+    .coinInner .n{ font-size:24px; line-height:1; position:relative; z-index:1; }
+    .coinInner .t{ font-size:8px; line-height:1.05; margin-top:4px; position:relative; z-index:1; letter-spacing:.2px; }
+
+    .coinInnerGold{
+      color:#7a5600;
+      background:radial-gradient(circle at 35% 30%, rgba(255,231,140,1) 0%, rgba(222,177,38,1) 58%, rgba(169,120,0,1) 100%);
+      text-shadow:0 1px 0 rgba(255,245,190,.55), 0 -1px 0 rgba(110,70,0,.20);
+    }
+    .coinInnerYellow{
+      color:#766100;
+      background:radial-gradient(circle at 35% 30%, rgba(255,240,162,1) 0%, rgba(218,191,35,1) 58%, rgba(160,136,0,1) 100%);
+      text-shadow:0 1px 0 rgba(255,250,204,.55), 0 -1px 0 rgba(100,90,0,.18);
+    }
+    .coinInnerGreen{
+      color:#eefcf4;
+      background:radial-gradient(circle at 35% 30%, rgba(119,190,149,1) 0%, rgba(56,110,82,1) 60%, rgba(30,63,47,1) 100%);
+      text-shadow:0 1px 0 rgba(255,255,255,.14), 0 -1px 0 rgba(0,0,0,.16);
+    }
+
+    .coinStack{
+      position:relative;
+      width:84px;
+      height:64px;
+      flex:0 0 auto;
+    }
+
+    .stackCoin{
+      position:absolute;
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      overflow:hidden;
+      box-shadow:inset 0 1px 5px rgba(255,255,255,.14), inset 0 -3px 6px rgba(0,0,0,.12), 0 4px 10px rgba(0,0,0,.16);
+    }
+    .stackCoin::before{
+      content:"";
+      position:absolute;
+      inset:6px;
+      border-radius:50%;
+      border:1.4px solid rgba(120,85,0,.38);
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .stackGold{
+      background:radial-gradient(circle at 32% 28%, #fff3a8 0%, #f4d44d 18%, #d9aa14 48%, #b98400 72%, #8d6200 100%);
+      border:3px solid #b67d00;
+    }
+    .stackYellow{
+      background:radial-gradient(circle at 32% 28%, #fff7b6 0%, #f2df58 18%, #d4bb18 48%, #ab9300 72%, #7f6d00 100%);
+      border:3px solid #b89d00;
+    }
+    .stackGreen{
+      background:radial-gradient(circle at 32% 28%, #dff7ea 0%, #91d9b1 20%, #3f7e5f 48%, #2e5f47 72%, #1f4332 100%);
+      border:3px solid #2f5d46;
+    }
+
+    .stackCoinStars{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:1;
+    }
+    .stackCoinStars svg{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      display:block;
+    }
+    .stackStarRingStroke{
+      fill:none;
+      vector-effect:non-scaling-stroke;
+      stroke-linecap:round;
+    }
+    .stackGold .stackStarRingStroke{ stroke:#9b6a00; }
+    .stackYellow .stackStarRingStroke{ stroke:#967d00; }
+    .stackGreen .stackStarRingStroke{ stroke:#ecfff3; }
+
+    .stack1{ left:0; bottom:0; z-index:1; }
+    .stack2{ left:18px; bottom:8px; z-index:2; }
+    .stack3{ left:36px; bottom:16px; z-index:3; }
+
+    .walletBox{
+      flex:1;
+      min-width:190px;
+      border:2px solid rgba(0,0,0,.08);
+      background:#fff;
+      border-radius:16px;
+      padding:12px;
+    }
+    .walletTitle{ font-weight:900; font-size:14px; margin-bottom:6px; }
+    .walletValue{ font-weight:900; font-size:24px; line-height:1; }
+    .walletGold{ color:#9a7000; }
+    .walletYellow{ color:#b18900; }
+    .walletGreen{ color:#2f5d46; }
+    .walletSub{ margin-top:6px; font-weight:800; font-size:12px; color:var(--muted); }
+    .walletActions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .walletMini{
+      border:2px solid rgba(0,0,0,.10);
+      background:var(--beige);
+      border-radius:12px;
+      padding:8px 10px;
+      font-weight:900;
+      cursor:pointer;
+      font-size:12px;
+    }
+
     @media (max-height:780px){
       .wrap{ padding:10px; gap:10px; }
       .ticker{ height:120px; }
@@ -753,6 +1455,633 @@ function renderWellbeingPois(lat, lng){
     }
   });
 }
+      <script src="leaflet/leaflet.js"></script>
+  <script>
+    (function initBoCiteArtClean(){
+      console.log("✅ JS démarré");
+
+      const $ = (id) => document.getElementById(id);
+      const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
+      const isFn = (v) => typeof v === "function";
+
+      function setVh(){
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--vh", `${vh}px`);
+      }
+      setVh();
+      window.addEventListener("resize", setVh);
+      window.addEventListener("orientationchange", setVh);
+
+      window.__lastFocus = null;
+
+      function lockScroll(state){
+        document.body.classList.toggle("modalOpen", !!state);
+      }
+      window.lockScroll = lockScroll;
+
+      function makeKeyboardClickable(el, onActivate){
+        if(!el) return;
+        el.setAttribute("tabindex","0");
+        el.setAttribute("role","button");
+        el.addEventListener("keydown", (e)=>{
+          if(e.key === "Enter" || e.key === " "){
+            e.preventDefault();
+            onActivate();
+          }
+        });
+      }
+      window.makeKeyboardClickable = makeKeyboardClickable;
+
+      const APP_MODE = "DEMO";
+
+      function callPhone(number){
+        const n = String(number || "").trim();
+        if(!/^\d{2,4}$/.test(n)) return;
+        if(APP_MODE === "DEMO"){
+          alert("Démo : appel " + n + " (appui long validé).");
+          return;
+        }
+        window.location.href = "tel:" + n;
+      }
+      window.callPhone = callPhone;
+
+      const tickerItems = [
+        {
+          title:"Annonce partenaire (démo)",
+          subtitle:"Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels",
+          img:"https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+        },
+        {
+          title:"Mairie (démo) : informations & agenda",
+          subtitle:"Accès gratuit citoyen pour alertes d’intérêt général • règle d’accès 16h (pub) • sous réserve de disponibilité",
+          img:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
+        }
+      ];
+
+      let tickerIdx = 0;
+
+      function setTicker(i){
+        const it = tickerItems[i];
+        $("tickerImg").src = it.img;
+        $("tickerTitleA").textContent = it.title;
+        $("tickerSubA").textContent = it.subtitle || "";
+        $("tickerTitleB").textContent = it.title;
+        $("tickerSubB").textContent = it.subtitle || "";
+      }
+      setTicker(0);
+      setInterval(()=>{
+        tickerIdx = (tickerIdx + 1) % tickerItems.length;
+        setTicker(tickerIdx);
+      }, 10000);
+
+      const modal = $("modal");
+      const modalTitle = $("modalTitle");
+      const modalBody = $("modalBody");
+
+     function closeModal(){
+  const modalEl = document.getElementById("modal");
+  if(!modalEl) return;
+
+  modalEl.classList.remove("open");
+  modalEl.setAttribute("aria-hidden", "true");
+  modalEl.style.display = "";
+  lockScroll(false);
+
+  if(window.__lastFocus && typeof window.__lastFocus.focus === "function"){
+    window.__lastFocus.focus();
+  }
+  window.__lastFocus = null;
+}
+window.closeModal = closeModal;
+
+function openModal(title, html){
+  const modalEl = document.getElementById("modal");
+  const titleEl = document.getElementById("modalTitle");
+  const bodyEl = document.getElementById("modalBody");
+
+  if(!modalEl || !titleEl || !bodyEl) return;
+
+  window.__lastFocus = document.activeElement;
+
+  titleEl.textContent = title;
+  bodyEl.innerHTML = html;
+
+  lockScroll(true);
+
+  modalEl.setAttribute("aria-hidden", "false");
+  modalEl.classList.add("open");
+  modalEl.style.display = "block";
+
+  requestAnimationFrame(()=>{
+    modalEl.setAttribute("aria-hidden", "false");
+    modalEl.classList.add("open");
+    modalEl.style.display = "block";
+
+    if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
+
+    const xb = document.getElementById("xBtn");
+    if(xb && xb.focus) xb.focus();
+  });
+}
+window.openModal = openModal;
+      on($("xBtn"), "click", closeModal);
+
+      const openSecureBtn = $("openSecure");
+      if(openSecureBtn){
+        openSecureBtn.addEventListener("click", ()=>{
+          openModal("Compte sécurisé + assistance téléphone", `
+            <div class="box">
+              <div style="font-weight:900;">Abonnement optionnel : <strong>2,99 € / mois</strong></div>
+              <div class="muted" style="margin-top:6px;">
+                Objectif : aider la récupération de compte et faciliter l’accompagnement par les proches
+                (famille, aidants, parents, grands-parents, enfants…), notamment en cas d’oubli,
+                de désorientation, de difficulté temporaire ou de situation de fragilité.
+              </div>
+            </div>
+
+            <div class="box" style="margin-top:12px;">
+              <div style="font-weight:900;">Sans abonnement</div>
+              <ul style="margin:8px 0 0 18px;font-weight:800;">
+                <li>L’utilisateur accepte le risque : <strong>perte / vol / changement de téléphone</strong> = perte d’accès possible.</li>
+                <li>(Démo) Les données peuvent être uniquement locales (sur le téléphone).</li>
+                <li>Pas de récupération assistée, pas d’accompagnement renforcé, pas de relais d’alerte.</li>
+              </ul>
+            </div>
+
+            <div class="box" style="margin-top:12px;">
+              <div style="font-weight:900;">Avec abonnement</div>
+              <ul style="margin:8px 0 0 18px;font-weight:800;">
+                <li><strong>Sauvegarde</strong> & récupération du compte (selon configuration).</li>
+                <li><strong>Assistance</strong> : aide à la récupération / réactivation.</li>
+                <li><strong>Alerte batterie faible accompagnée</strong> : possibilité d’enregistrer <strong>2 numéros de confiance</strong> dans le forfait.</li>
+                <li><strong>Déclenchement visé</strong> : si le téléphone de la personne suivie descend à <strong>5 % de batterie</strong> (si le support technique le permet).</li>
+                <li><strong>1er relais</strong> : une alerte / un SMS est envoyé au <strong>1er numéro</strong> enregistré pour l’informer que le téléphone de la personne suivie est presque déchargé.</li>
+                <li><strong>But</strong> : permettre à ce proche d’appeler la personne concernée pour lui rappeler de <strong>rebrancher son téléphone</strong>.</li>
+                <li><strong>2e relais de sécurité</strong> : si le 1er proche n’agit pas ou ne répond pas dans un délai prévu de <strong>15 minutes</strong> (selon paramétrage et possibilités techniques), une alerte / un SMS peut être envoyé au <strong>2e numéro</strong> enregistré.</li>
+                <li><strong>Chaîne de vigilance</strong> : le 2e proche peut alors prendre le relais et prévenir à son tour la personne concernée.</li>
+                <li><strong>Géolocalisation ponctuelle</strong> uniquement si autorisée par l’utilisateur.</li>
+                <li><strong>SMS aux 2 numéros de confiance</strong> uniquement si activés et configurés par l’utilisateur / le titulaire du forfait.</li>
+                <li><strong>Sonnerie / vibration à distance</strong> : seulement si cette fonction est techniquement possible sur l’appareil et la version utilisée.</li>
+              </ul>
+              <div class="muted" style="margin-top:8px;">
+                Ces fonctions sont opérées par un <strong>prestataire serveur tiers</strong> (selon version LIVE).
+                Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> et non de résultat : cela signifie
+                que la remontée d’alerte dépend notamment du téléphone, du niveau d’autorisation, du réseau,
+                du système d’exploitation, du prestataire SMS, et de la configuration active du compte.
+              </div>
+            </div>
+
+            <div class="box" style="margin-top:12px;">
+              <div style="font-weight:900;">Cas d’usage visé</div>
+              <div class="muted" style="margin-top:6px;">
+                Exemple : une personne ayant souscrit l’option peut renseigner le numéro d’un proche âgé,
+                isolé ou ayant quelques troubles de mémoire. Si le téléphone de cette personne approche de la panne batterie,
+                le système tente d’alerter le proche principal, puis un proche secondaire si nécessaire,
+                afin d’éviter que la personne ne reste sans téléphone joignable.
+              </div>
+            </div>
+
+            <div class="box" style="margin-top:12px;">
+              <div style="font-weight:900;">Important</div>
+              <ul style="margin:8px 0 0 18px;font-weight:800;">
+                <li>Service <strong>optionnel</strong>, activable / désactivable.</li>
+                <li>Les autorisations sensibles (ex. localisation) restent <strong>contrôlées par le téléphone</strong>.</li>
+                <li>Le fonctionnement dépend des <strong>autorisations accordées</strong>, du <strong>réseau</strong>, de la <strong>batterie</strong> restante, et de la <strong>compatibilité technique</strong>.</li>
+                <li>Cette option est une <strong>aide d’accompagnement</strong>, pas une garantie absolue de surveillance continue.</li>
+                <li>En cas d’urgence : utiliser <strong>112</strong>.</li>
+              </ul>
+            </div>
+
+            <div class="muted" style="margin-top:10px;">
+              (Démo) Ici on présente l’offre. En LIVE : activation, contrat, consentements,
+              choix des numéros de confiance, délais, conditions applicables et paramétrage détaillé.
+            </div>
+          `);
+        });
+      }
+
+      document.addEventListener("keydown", (e)=>{
+        if(e.key !== "Escape") return;
+        const legal = $("legal");
+        const choice = $("choice");
+        if(choice && choice.classList.contains("open")){
+          choice.classList.remove("open");
+          lockScroll(false);
+          return;
+        }
+        if(legal && legal.classList.contains("open")){
+          legal.classList.remove("open");
+          lockScroll(false);
+          return;
+        }
+        if(modal && modal.classList.contains("open")) closeModal();
+      });
+
+      let cachedVoices = [];
+
+      function loadVoices(){
+        return new Promise((resolve)=>{
+          let voices = speechSynthesis.getVoices();
+          if(voices.length){
+            cachedVoices = voices;
+            resolve();
+          }else{
+            speechSynthesis.onvoiceschanged = ()=>{
+              cachedVoices = speechSynthesis.getVoices();
+              resolve();
+            };
+          }
+        });
+      }
+
+      async function speak(text, mode="female"){
+        if(!("speechSynthesis" in window)) return;
+        await loadVoices();
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "fr-FR";
+        u.rate = 0.95;
+        u.pitch = 1.05;
+        const frVoices = cachedVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith("fr"));
+        if(frVoices.length) u.voice = frVoices[0];
+        if(mode === "child"){
+          u.pitch = 1.35;
+          u.rate = 1.05;
+        }
+        speechSynthesis.speak(u);
+      }
+
+      const PUB_MAX_PER_DAY = 10;
+      window.PUB_MAX_PER_DAY = PUB_MAX_PER_DAY;
+      const PUB_STORE_KEY = "bociteart_pubBookings_v1";
+
+      let calYear = new Date().getFullYear();
+      let calMonth = new Date().getMonth();
+
+      function pad2(n){ return String(n).padStart(2, "0"); }
+      function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
+      function ym(y,m){ return `${y}-${pad2(m+1)}`; }
+
+      function loadBookings(){
+        try{
+          const raw = localStorage.getItem(PUB_STORE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        }catch(e){
+          return {};
+        }
+      }
+
+      function saveBookings(obj){
+        try{
+          localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj));
+        }catch(e){}
+      }
+
+      function getDayBookings(obj, y, m, d){
+        const keyYM = ym(y,m);
+        const keyYMD = ymd(y,m,d);
+        return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : [];
+      }
+
+      function setDayBookings(obj, y, m, d, list){
+        const keyYM = ym(y,m);
+        const keyYMD = ymd(y,m,d);
+        if(!obj[keyYM]) obj[keyYM] = {};
+        obj[keyYM][keyYMD] = list;
+      }
+
+      function daySlotsUsed(obj, y, m, d){
+        return getDayBookings(obj, y, m, d).length;
+      }
+
+      function isFull(obj, y, m, d){
+        return daySlotsUsed(obj, y, m, d) >= PUB_MAX_PER_DAY;
+      }
+
+      const FEE_STORE_KEY = "bociteart_fee_demo_v1";
+      const CITIZEN_WALLET_KEY = "bociteart_citizen_wallet_v1";
+      const SCHOOL_WALLET_KEY = "bociteart_school_wallet_v1";
+      const SPORT_WALLET_KEY = "bociteart_sport_wallet_v1";
+
+      function loadCitizenWallet(){
+        try{
+          const raw = localStorage.getItem(CITIZEN_WALLET_KEY);
+          return raw ? JSON.parse(raw) : { or:37 };
+        }catch(e){
+          return { or:37 };
+        }
+      }
+
+      function saveCitizenWallet(obj){
+        try{ localStorage.setItem(CITIZEN_WALLET_KEY, JSON.stringify(obj)); }catch(e){}
+      }
+
+      function loadSchoolWallet(){
+        try{
+          const raw = localStorage.getItem(SCHOOL_WALLET_KEY);
+          return raw ? JSON.parse(raw) : { jaune:0 };
+        }catch(e){
+          return { jaune:0 };
+        }
+      }
+
+      function saveSchoolWallet(obj){
+        try{ localStorage.setItem(SCHOOL_WALLET_KEY, JSON.stringify(obj)); }catch(e){}
+      }
+
+      function loadSportWallet(){
+        try{
+          const raw = localStorage.getItem(SPORT_WALLET_KEY);
+          return raw ? JSON.parse(raw) : { vert:0 };
+        }catch(e){
+          return { vert:0 };
+        }
+      }
+
+      function saveSportWallet(obj){
+        try{ localStorage.setItem(SPORT_WALLET_KEY, JSON.stringify(obj)); }catch(e){}
+      }
+
+      function walletAdd(key, field, delta){
+        let data = key === CITIZEN_WALLET_KEY
+          ? loadCitizenWallet()
+          : key === SCHOOL_WALLET_KEY
+            ? loadSchoolWallet()
+            : loadSportWallet();
+
+        data[field] = Math.max(0, Number(data[field] || 0) + Number(delta || 0));
+
+        if(key === CITIZEN_WALLET_KEY) saveCitizenWallet(data);
+        if(key === SCHOOL_WALLET_KEY) saveSchoolWallet(data);
+        if(key === SPORT_WALLET_KEY) saveSportWallet(data);
+
+        return data[field];
+      }
+
+      function feeYM(d = new Date()){
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        return `${y}-${m}`;
+      }
+
+      function feeLoad(){
+        try{
+          const raw = localStorage.getItem(FEE_STORE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        }catch(e){
+          return {};
+        }
+      }
+
+      function feeSave(obj){
+        try{ localStorage.setItem(FEE_STORE_KEY, JSON.stringify(obj)); }catch(e){}
+      }
+
+      function calcFeeFromSales(eur){
+        const v = Number(eur || 0);
+        if(!Number.isFinite(v) || v <= 0) return 0;
+        const tranches = Math.floor(v / 10);
+        return tranches * 0.18;
+      }
+
+      function fmtEUR(x){
+        const n = Number(x || 0);
+        return n.toLocaleString("fr-FR", {
+          minimumFractionDigits:2,
+          maximumFractionDigits:2
+        }) + " €";
+      }
+
+      function initFeeUiInModal(){
+        const input = $("feeInputSales");
+        const outSales = $("feeSalesOut");
+        const outFee = $("feeOut");
+        const btnAdd = $("feeAddBtn");
+        const btnReset = $("feeResetBtn");
+        const resetClient = $("walletClientReset");
+        const outClient = $("citizenCoinBalance");
+
+        if(outClient){
+          outClient.textContent = Number(loadCitizenWallet().or || 0);
+        }
+
+        if(resetClient){
+          resetClient.onclick = ()=>{
+            saveCitizenWallet({ or:0 });
+            if(outClient) outClient.textContent = 0;
+          };
+        }
+
+        if(!input || !outSales || !outFee || !btnAdd || !btnReset) return;
+
+        const currentYm = feeYM();
+        const db = feeLoad();
+        const cur = db[currentYm] || { sales:0 };
+
+        outSales.textContent = fmtEUR(cur.sales || 0);
+        outFee.textContent = fmtEUR(calcFeeFromSales(cur.sales || 0));
+        input.value = cur.sales || 0;
+
+        btnAdd.onclick = ()=>{
+          const v = Number(input.value || 0);
+          if(!Number.isFinite(v) || v < 0){
+            alert("Montant invalide.");
+            return;
+          }
+          const db2 = feeLoad();
+          db2[currentYm] = { sales:v, ts_fr:new Date().toLocaleString("fr-FR") };
+          feeSave(db2);
+          outSales.textContent = fmtEUR(v);
+          outFee.textContent = fmtEUR(calcFeeFromSales(v));
+          alert("Suivi mis à jour (démo).");
+        };
+
+        btnReset.onclick = ()=>{
+          if(confirm("Réinitialiser le suivi du mois (démo) sur ce téléphone ?")){
+            const db2 = feeLoad();
+            delete db2[currentYm];
+            feeSave(db2);
+            input.value = "";
+            outSales.textContent = fmtEUR(0);
+            outFee.textContent = fmtEUR(0);
+            alert("Réinitialisé (démo).");
+          }
+        };
+      }
+      window.initFeeUiInModal = initFeeUiInModal;
+
+      function buildCalendarHTML(){
+        const first = new Date(calYear, calMonth, 1);
+        const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+        const labels = ["L","M","M","J","V","S","D"];
+
+        return `
+          <div class="calWrap">
+            <div class="calTop">
+              <div style="font-weight:900;">Calendrier (démo) — ${monthName}</div>
+              <div class="mini">
+                <button class="choiceBtn" id="calPrev" type="button">◀</button>
+                <button class="choiceBtn" id="calNext" type="button">▶</button>
+              </div>
+            </div>
+
+            <div class="muted">
+              Règle : <strong>${PUB_MAX_PER_DAY} réservations maximum / jour</strong>.
+              Une journée complète devient grisée et non sélectionnable.
+            </div>
+
+            <div class="calGrid" style="margin-top:10px;">
+              ${labels.map(x => `<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
+            </div>
+
+            <div class="calGrid" id="calDays"></div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
+              <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderCalendarInto(containerId){
+        const box = $(containerId);
+        if(!box) return;
+
+        box.innerHTML = buildCalendarHTML();
+
+        const daysEl = $("calDays");
+        const bookings = loadBookings();
+        const first = new Date(calYear, calMonth, 1);
+        const last = new Date(calYear, calMonth + 1, 0);
+        const startDow = (first.getDay() + 6) % 7;
+        const daysInMonth = last.getDate();
+
+        const cells = [];
+
+        for(let i=0; i<startDow; i++){
+          cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
+        }
+
+        for(let d=1; d<=daysInMonth; d++){
+          const used = daySlotsUsed(bookings, calYear, calMonth, d);
+          const full = used >= PUB_MAX_PER_DAY;
+          const cls = full ? "calDay full" : "calDay";
+          cells.push(`
+            <div class="${cls}" data-day="${d}" role="button">
+              <div class="d">${d}</div>
+              <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
+            </div>
+          `);
+        }
+
+        daysEl.innerHTML = cells.join("");
+
+        on($("calPrev"), "click", ()=>{
+          calMonth--;
+          if(calMonth < 0){
+            calMonth = 11;
+            calYear--;
+          }
+          renderCalendarInto(containerId);
+        });
+
+        on($("calNext"), "click", ()=>{
+          calMonth++;
+          if(calMonth > 11){
+            calMonth = 0;
+            calYear++;
+          }
+          renderCalendarInto(containerId);
+        });
+
+        on($("calRecap"), "click", ()=> openRecapModal(calYear, calMonth));
+
+        on($("calReset"), "click", ()=>{
+          if(confirm("Réinitialiser les réservations (démo) ?")){
+            localStorage.removeItem(PUB_STORE_KEY);
+            renderCalendarInto(containerId);
+          }
+        });
+
+        document.querySelectorAll(".calDay[data-day]").forEach((el)=>{
+          el.addEventListener("click", ()=>{
+            const d = parseInt(el.getAttribute("data-day"), 10);
+            const bookings2 = loadBookings();
+
+            if(isFull(bookings2, calYear, calMonth, d)) return;
+
+            const key = ymd(calYear, calMonth, d);
+            const used = daySlotsUsed(bookings2, calYear, calMonth, d);
+
+            openModal("Réserver une publicité (démo)", `
+              <div class="box">
+                <div style="font-weight:900;">Date : ${key}</div>
+                <div class="muted" style="margin-top:6px;">
+                  Il reste <strong>${PUB_MAX_PER_DAY - used}</strong> place(s) disponible(s).
+                </div>
+              </div>
+
+              <div class="choiceGrid">
+                <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
+                <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
+                <button class="choiceBtn" id="bkAsso" type="button">Association</button>
+                <button class="choiceBtn" id="bkEcole" type="button">École</button>
+              </div>
+            `);
+
+            setTimeout(()=>{
+              const doBook = (who)=>{
+                const now = new Date();
+                const stampISO = now.toISOString();
+                const stampFR = now.toLocaleString("fr-FR");
+                const b = loadBookings();
+                const list = getDayBookings(b, calYear, calMonth, d);
+
+                if(list.length >= PUB_MAX_PER_DAY){
+                  alert("Jour complet.");
+                  closeModal();
+                  renderCalendarInto(containerId);
+                  return;
+                }
+
+                list.push({
+                  date:key,
+                  who,
+                  ts_iso:stampISO,
+                  ts_fr:stampFR,
+                  note:"Réservation (démo)"
+                });
+
+                setDayBookings(b, calYear, calMonth, d, list);
+                saveBookings(b);
+                closeModal();
+                renderCalendarInto(containerId);
+                alert(`Réservation enregistrée (démo)\n${key}\n${who}\nHorodatage : ${stampFR}`);
+              };
+
+              on($("bkCommerce"), "click", ()=> doBook("Commerce"));
+              on($("bkMairie"), "click", ()=> doBook("Mairie"));
+              on($("bkAsso"), "click", ()=> doBook("Association"));
+              on($("bkEcole"), "click", ()=> doBook("École"));
+            }, 0);
+          });
+        });
+      }
+
+      function openRecapModal(y, m){
+        const b = loadBookings();
+        const keyYM = ym(y,m);
+        const monthObj = b[keyYM] || {};
+        let csv = "date;profil;horodatage_iso;horodatage_fr;note\n";
+
+        Object.keys(monthObj).sort().forEach((d)=>{
+          (monthObj[d] || []).forEach((it)=>{
+            csv += `${it.date};${it.who};${it.ts_iso};${it.ts_fr};${(it.note || "")}\n`;
+          });
+        });
+
+        openModal("Récap mensuel (démo) — publicités", `
       <script src="leaflet/leaflet.js"></script>
   <script>
     (function initBoCiteArtClean(){
