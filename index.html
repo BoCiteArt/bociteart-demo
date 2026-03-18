@@ -1006,6 +1006,13 @@
             </div>
           </div>
 
+          <div class="box">
+  Certaines fonctions activées peuvent générer une traçabilité minimale des opérations
+  (ex. scan, déclenchement d’un échange, horodatage, profil habilité, ventilation technique d’une opération),
+  uniquement pour assurer la sécurité, la vérification, le suivi technique, la prévention des abus,
+  et, le cas échéant, la justification contractuelle ou comptable des opérations concernées.
+</div>
+
           <div class="box">Bo’CitéArt s’engage à ne vendre aucune donnée et à respecter strictement le RGPD.</div>
         </div>
 
@@ -1021,6 +1028,19 @@
           <div class="box">
             La présente version peut être une démonstration fonctionnelle. Aucune relation contractuelle ferme ne peut naître avant l’immatriculation officielle des entités juridiques (SAS et/ou association) et la signature d’un contrat applicable (devis/commande/CGV, le cas échéant).
           </div>
+          <h2>BoCiteCoins Sport (règle spécifique)</h2>
+<div class="box">
+  Les <strong>BoCiteCoins VERTS</strong> liés au sport valorisent des actions sportives et citoyennes.
+  Ils ne constituent pas une monnaie, n’ont aucune valeur monétaire, et ne sont pas convertibles en euros.
+  <br><br>
+  Lorsque le seuil prévu est atteint, notamment <strong>10 BoCiteCoins VERTS</strong> selon la règle locale activée,
+  le commerçant partenaire peut scanner l’utilisateur, remettre l’avantage ou le cadeau prévu,
+  puis les BoCiteCoins utilisés sont <strong>brûlés</strong> automatiquement ou déduits du compteur.
+  <br><br>
+  Selon les dispositifs activés, une partie de l’opération peut aussi contribuer à un club sportif,
+  à une association partenaire retenue, ainsi qu’aux frais techniques et de maintenance de Bo’CitéArt,
+  dans les conditions définies par les documents contractuels applicables.
+</div>
 
           <h2>1. Accès — rôles, mandats et responsabilités</h2>
           <ul>
@@ -1134,6 +1154,23 @@
           <div class="box">
             Les présentes Conditions Générales de Vente (CGV) encadrent les relations commerciales entre Bo’CitéArt et les partenaires professionnels (commerçants, collectivités, structures sportives, institutions) utilisant les services proposés par la plateforme.
           </div>
+          <h2>Répartition spécifique – dispositif Sport / Club / Association</h2>
+<div class="box">
+  Lorsque le dispositif Sport est activé, certaines opérations peuvent donner lieu à une répartition prédéfinie
+  entre plusieurs bénéficiaires, selon les modalités contractuelles applicables.
+  <br><br>
+  Exemple indicatif de répartition :
+  <ul style="margin:8px 0 0 18px;font-weight:800;">
+    <li>Valeur globale de l’opération : <strong>50 €</strong></li>
+    <li>Part affectée au sportif / club : <strong>35 €</strong></li>
+    <li>Part affectée à l’association retenue : <strong>12,50 €</strong></li>
+    <li>Part affectée à Bo’CitéArt : <strong>2,50 €</strong> au titre des frais techniques, PSP et maintenance</li>
+  </ul>
+  <br>
+  Cette répartition ne constitue pas un mécanisme bancaire ou financier réglementé.
+  Elle relève exclusivement du cadre contractuel, promotionnel, technique et partenarial défini par Bo’CitéArt
+  avec les structures concernées.
+</div>
 
           <h2>1. Statut du service</h2>
           <div class="box">
@@ -2508,11 +2545,15 @@ window.openModal = openModal;
 
             return;
           }
-
-          if(key === "sport"){
+                    if(key === "sport"){
             openModal("Sport", `
               <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
-              <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
+
+              <div class="box">
+                <strong>Cadre :</strong> publications par référent habilité.
+                Les éléments de validation (si activés) ne sont pas publics.
+                Accès restreint, finalité limitée.
+              </div>
 
               <div class="coinShowcase">
                 <div class="coinFace coinGreen" aria-hidden="true">
@@ -2554,47 +2595,96 @@ window.openModal = openModal;
                 <div class="walletBox">
                   <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
                   <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
-                  <div class="walletSub">BoCitecoins gagnés par les actions sportives/citoyennes, échangeables plus tard chez un commerçant partenaire selon les règles locales.</div>
+
+                  <div class="walletSub">
+                    BoCitecoins gagnés grâce aux actions sportives et citoyennes.
+                    Échange possible à partir de <strong>10 BoCitecoins VERT</strong>
+                    chez un commerçant partenaire selon les règles locales.
+                  </div>
+
+                  <div class="box" style="margin-top:10px;background:var(--bg);">
+                    <div style="font-weight:900;">Règle d’échange Sport</div>
+                    <div class="muted" style="margin-top:6px;">
+                      À partir de <strong>10 BoCitecoins VERT</strong>, le sportif peut déclencher un échange.
+                      Le commerçant scanne, remet le cadeau ou l’avantage, puis les BoCitecoins utilisés sont brûlés automatiquement.
+                    </div>
+                  </div>
+
                   <div class="walletActions">
                     <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
                     <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
-                    <button class="walletMini" id="walletSportMinus" type="button">−1</button>
+                    <button class="walletMini" id="walletSportScanRedeem10" type="button">Scanner + brûler 10</button>
                     <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
                   </div>
                 </div>
               </div>
 
-              <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
+              <div style="font-weight:900;margin-top:12px;">Fonctionnement</div>
               <div class="box">
-                <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
-                <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm), et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras. Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.</div>
-                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                  <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
+                <ul style="margin:8px 0 0 18px;font-weight:800;">
+                  <li>Les clubs publient un résumé du week-end</li>
+                  <li>Les actions citoyennes sont valorisées</li>
+                  <li>Le fair-play et l’engagement sont encouragés</li>
+                  <li>Les validations peuvent être contrôlées (non visibles publiquement)</li>
+                </ul>
+              </div>
+
+              <div style="font-weight:900;margin-top:12px;">Échange commerçant</div>
+              <div class="box">
+                <div style="font-weight:900;">Principe simple</div>
+                <div class="muted" style="margin-top:6px;">
+                  Le commerçant va vite : il scanne le sportif, vérifie que le seuil de 10 BoCitecoins VERT est atteint,
+                  remet le cadeau ou l’avantage prévu, puis les 10 BoCitecoins sont brûlés.
                 </div>
               </div>
 
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Rapport du week-end (résumé)</li>
-                <li>Missions citoyennes : propreté • rangement • fair-play</li>
-                <li>Validation (optionnelle) — non publique</li>
-                <li>Bocitecoins couleur Vert : collectivité</li>
-                <li>Pas de messagerie • pas de commentaires libres</li>
-              </ul>
-
-              <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Parcs • bois • parcours • salles</li>
-                <li>Carte plein écran + guidage</li>
-              </ul>
-
-              <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
+              <div style="font-weight:900;margin-top:12px;">Option solidaire</div>
               <div class="box">
-                Actuellement : 12 clubs engagés (démo)<br><br>
-                Chaque club peut proposer :<br>
-                • Rapport du week-end<br>
-                • Actions citoyennes<br>
-                • Partenariats commerçants<br>
-                • Soutien associatif
+                <div style="font-weight:900;">Exemple de répartition</div>
+                <ul style="margin:8px 0 0 18px;font-weight:800;">
+                  <li>Valeur globale : <strong>50 €</strong></li>
+                  <li>Part sportif / club : <strong>35 €</strong></li>
+                  <li>Part association retenue : <strong>12,50 €</strong></li>
+                  <li>Part Bo’CitéArt (PSP / maintenance) : <strong>2,50 €</strong></li>
+                </ul>
+                <div class="muted" style="margin-top:8px;">
+                  Cette répartition doit rester clairement encadrée par les CGU, CGV et documents contractuels applicables.
+                </div>
+              </div>
+
+              <div style="font-weight:900;margin-top:12px;">Associations retenues</div>
+              <div class="box">
+                <ul style="margin:8px 0 0 18px;font-weight:800;">
+                  <li>Les Clés du Cœur</li>
+                  <li>Étoile Filante</li>
+                  <li>Les Papillons — antenne Nord</li>
+                  <li>ATC Nord</li>
+                </ul>
+              </div>
+
+              <div style="font-weight:900;margin-top:12px;">Cartes sport</div>
+              <div class="box">
+                <ul style="margin:8px 0 0 18px;font-weight:800;">
+                  <li>Parcs sportifs</li>
+                  <li>Bois et parcours</li>
+                  <li>Salles de sport</li>
+                  <li>Carte plein écran avec guidage</li>
+                </ul>
+              </div>
+
+              <div style="font-weight:900;margin-top:12px;">📄 Fiche partenaires</div>
+              <div class="box">
+                <div style="font-weight:900;">
+                  Fiche élus / CCI / commerçants — soutien Club + Association
+                </div>
+                <div class="muted" style="margin-top:6px;">
+                  Cette fiche explique le fonctionnement du soutien :
+                  un commerçant soutient un club et une association.
+                  Sa visibilité apparaît dans le bandeau.
+                </div>
+                <div style="display:flex;gap:10px;margin-top:10px;">
+                  <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
+                </div>
               </div>
             `);
 
@@ -2610,7 +2700,7 @@ window.openModal = openModal;
 
               const p10 = $("walletSportPlus10");
               const p25 = $("walletSportPlus25");
-              const m1 = $("walletSportMinus");
+              const redeem10 = $("walletSportScanRedeem10");
               const rst = $("walletSportReset");
 
               if(p10){
@@ -2631,12 +2721,22 @@ window.openModal = openModal;
                 };
               }
 
-              if(m1){
-                m1.onclick = ()=>{
+              if(redeem10){
+                redeem10.onclick = ()=>{
                   const w = loadSportWallet();
-                  w.vert = Math.max(0, Number(w.vert || 0) - 1);
-                  saveSportWallet(w);
-                  refresh();
+                  const current = Number(w.vert || 0);
+
+                  if(current < 10){
+                    alert("Échange impossible : il faut au moins 10 BoCitecoins VERT.");
+                    return;
+                  }
+
+                  if(confirm("Confirmer le scan commerçant et brûler 10 BoCitecoins VERT ?")){
+                    w.vert = Math.max(0, current - 10);
+                    saveSportWallet(w);
+                    refresh();
+                    alert("Échange Sport validé (démo) : 10 BoCitecoins VERT brûlés.");
+                  }
                 };
               }
 
