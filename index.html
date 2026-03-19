@@ -1289,10 +1289,11 @@
       const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
       const isFn = (v) => typeof v === "function";
 
-            let wellbeingMap = null;
-      let wellbeingUserMarker = null;
-      let wellbeingPoiMarkers = [];
-      let wellbeingWatchId = null;
+let wellbeingMap = null;
+let wellbeingUserMarker = null;
+let wellbeingPoiMarkers = [];
+let wellbeingWatchId = null;
+let currentHeading = 0;
 
       const WELLBEING_RADIUS_METERS = 3000;
       const WELLBEING_POINTS = [
@@ -1354,18 +1355,19 @@
       }
 
       function createUserIcon(deg){
-        if(!window.L) return null;
-        return L.divIcon({
-          className: "",
-          html: `
-            <div class="userArrowWrap" aria-hidden="true">
-              <div class="userArrow" style="transform:rotate(${deg}deg);"></div>
-            </div>
-          `,
-          iconSize: [28,28],
-          iconAnchor: [14,14]
-        });
-      }
+  if(!window.L) return null;
+
+  return L.divIcon({
+    className: "",
+    html: `
+      <div class="userArrowWrap" aria-hidden="true">
+        <div class="userArrow" style="transform:rotate(${deg}deg);"></div>
+      </div>
+    `,
+    iconSize: [28,28],
+    iconAnchor: [14,14]
+  });
+}
 
       function renderWellbeingPois(lat, lng){
         if(!wellbeingMap || !window.L) return;
@@ -1387,6 +1389,19 @@
         });
       }
 
+      let currentHeading = 0;
+
+function initCompass(){
+  if (typeof DeviceOrientationEvent !== "undefined"){
+
+    window.addEventListener("deviceorientation", (event)=>{
+      if(event.alpha !== null){
+        currentHeading = 360 - event.alpha;
+      }
+    });
+
+  }
+}
       function openWellbeingMap(){
         if(typeof window.openModal !== "function"){
           alert("Carte indisponible.");
