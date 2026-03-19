@@ -1387,8 +1387,6 @@
         });
       }
 
-      let currentHeading = 0;
-
 function initCompass(){
   if (typeof DeviceOrientationEvent !== "undefined"){
 
@@ -2168,81 +2166,240 @@ function initCompass(){
       window.openTicker = openTicker;
       on($("ticker"), "click", openTicker);
 
-      function escapeHtml(s){
-        let wellbeingMap = null;
-let wellbeingUserMarker = null;
-let wellbeingPoiMarkers = [];
-let wellbeingWatchId = null;
+function escapeHtml(s){
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
-const WELLBEING_RADIUS_METERS = 3000;
+function wbIconClass(type){
+  switch(String(type || "").toLowerCase()){
+    case "sport": return "wbPoi wbPoiSport";
+    case "walk": return "wbPoi wbPoiWalk";
+    case "gym": return "wbPoi wbPoiGym";
+    case "health": return "wbPoi wbPoiHealth";
+    default: return "wbPoi wbPoiDefault";
+  }
+}
 
-const WELLBEING_POINTS = [
-  { name:"Parc sportif", lat:50.586, lng:3.043 },
-  { name:"Bois promenade", lat:50.589, lng:3.038 },
-  { name:"Salle sport", lat:50.584, lng:3.049 }
-];
+function clearWellbeingPois(){
+  wellbeingPoiMarkers.forEach((m)=>{
+    try{
+      if(wellbeingMap) wellbeingMap.removeLayer(m);
+    }catch(e){}
+  });
+  wellbeingPoiMarkers = [];
+}
+
+function distanceMeters(lat1, lng1, lat2, lng2){
+  const toRad = (v) => v * Math.PI / 180;
+  const R = 6371000;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function createPoiIcon(type){
+  if(!window.L) return null;
+  return L.divIcon({
+    className: "",
+    html: `<div class="${wbIconClass(type)}" aria-hidden="true"></div>`,
+    iconSize: [18,18],
+    iconAnchor: [9,9],
+    popupAnchor: [0,-8]
+  });
+}
+
+function createUserIcon(deg){
+  if(!window.L) return null;
+  return L.divIcon({
+    className: "",
+    html: `
+      <div class="userArrowWrap" aria-hidden="true">
+        <div class="userArrow" style="transform:rotate(${deg}deg);"></div>
+      </div>
+    `,
+    iconSize: [28,28],
+    iconAnchor: [14,14]
+  });
+}
+
+function renderWellbeingPois(lat, lng){
+  if(!wellbeingMap || !window.L) return;
+  clearWellbeingPois();
+
+  WELLBEING_POINTS.forEach((p)=>{
+    const dist = distanceMeters(lat, lng, p.lat, p.lng);
+    if(dist <= WELLBEING_RADIUS_METERS){
+      const icon = createPoiIcon(p.type);
+      const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
+      marker.bindPopup(`
+        <div style="font-weight:900;">${escapeHtml(p.name)}</div>
+        <div style="margin-top:4px;">${escapeHtml(p.desc || "")}</div>
+        <div style="margin-top:6px;color:#6e6a63;font-size:12px;">À environ ${Math.round(dist)} m</div>
+      `);
+      marker.addTo(wellbeingMap);
+      wellbeingPoiMarkers.push(marker);
+    }
+  });
+}
+
+function initCompass(){
+  if(typeof DeviceOrientationEvent !== "undefined"){
+    window.addEventListener("deviceorientation", (event)=>{
+      if(event.alpha !== null){
+        currentHeading = 360 - event.alpha;
+      }
+    });
+  }
+}
 
 function openWellbeingMap(){
-  openModal("Carte bien-être", `
-    <div id="map" style="height:420px;border-radius:16px;"></div>
-    <div style="margin-top:10px;">
-      <button class="choiceBtn" id="locateBtn">📍 Me localiser</button>
+  initCompass();
+
+  if(typeof window.openModal !== "function"){
+    alert("Carte indisponible.");
+    return;
+  }
+
+  window.openModal("Carte bien-être", `
+    <div class="box">
+      <div class="muted">
+        Carte plein écran avec position actuelle, orientation et points utiles visibles dans un rayon de 3 km.
+      </div>
+    </div>
+
+    <div id="wellbeingMapHost" style="height:420px;border-radius:16px;overflow:hidden;background:#e9e9e9;"></div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+      <button class="choiceBtn" id="wbLocateBtn" type="button">📍 Me localiser</button>
+      <button class="choiceBtn" id="wbStopBtn" type="button" style="background:#fff;">⏹ Arrêter</button>
     </div>
   `);
 
   setTimeout(()=>{
+    const mapHost = document.getElementById("wellbeingMapHost");
+    const locateBtn = document.getElementById("wbLocateBtn");
+    const stopBtn = document.getElementById("wbStopBtn");
 
-    const map = L.map("map").setView([50.586, 3.043], 14);
+    if(!mapHost) return;
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom:19
-    }).addTo(map);
+    if(!window.L){
+      mapHost.innerHTML = `
+        <div style="padding:16px;font-weight:800;">
+          Leaflet n’est pas chargé.
+        </div>
+      `;
+      return;
+    }
 
-    document.getElementById("locateBtn").onclick = ()=>{
-      navigator.geolocation.getCurrentPosition((pos)=>{
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
+    try{
+      if(wellbeingMap){
+        try{ wellbeingMap.remove(); }catch(e){}
+        wellbeingMap = null;
+      }
 
-        L.marker([lat,lng]).addTo(map);
-        map.setView([lat,lng],15);
-      });
+      wellbeingMap = L.map(mapHost).setView([50.586, 3.043], 14);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap"
+      }).addTo(wellbeingMap);
+
+      setTimeout(()=>{
+        try{ wellbeingMap.invalidateSize(); }catch(e){}
+      }, 120);
+
+    }catch(e){
+      mapHost.innerHTML = `
+        <div style="padding:16px;font-weight:800;">
+          Erreur d’initialisation de la carte.
+        </div>
+      `;
+      return;
+    }
+
+    const startLocate = ()=>{
+      if(!navigator.geolocation){
+        alert("Géolocalisation indisponible sur cet appareil.");
+        return;
+      }
+
+      if(wellbeingWatchId !== null){
+        navigator.geolocation.clearWatch(wellbeingWatchId);
+        wellbeingWatchId = null;
+      }
+
+      wellbeingWatchId = navigator.geolocation.watchPosition(
+        (pos)=>{
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+
+          if(!wellbeingMap) return;
+
+          const icon = createUserIcon(currentHeading);
+
+          if(!wellbeingUserMarker){
+            wellbeingUserMarker = L.marker([lat, lng], icon ? { icon } : undefined).addTo(wellbeingMap);
+          }else{
+            wellbeingUserMarker.setLatLng([lat, lng]);
+            wellbeingUserMarker.setIcon(createUserIcon(currentHeading));
+          }
+
+          wellbeingMap.setView([lat, lng], 15);
+          renderWellbeingPois(lat, lng);
+        },
+        ()=>{
+          alert("Impossible d’obtenir la position.");
+        },
+        {
+          enableHighAccuracy:true,
+          maximumAge:10000,
+          timeout:10000
+        }
+      );
     };
 
-    WELLBEING_POINTS.forEach(p=>{
-      L.marker([p.lat,p.lng]).addTo(map)
-        .bindPopup(p.name);
-    });
+    const stopLocate = ()=>{
+      if(wellbeingWatchId !== null){
+        navigator.geolocation.clearWatch(wellbeingWatchId);
+        wellbeingWatchId = null;
+      }
+    };
 
-  }, 100);
+    if(locateBtn) locateBtn.onclick = startLocate;
+    if(stopBtn) stopBtn.onclick = stopLocate;
+  }, 0);
 }
-        return String(s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      }
 
-      window.tapeAds = [
-        { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-        { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
-        { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
-        { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
-      ];
+window.tapeAds = [
+  { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
+  { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
+  { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
+  { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
+];
 
-      function renderTape(){
-        const track = $("sportTapeTrack");
-        if(!track) return;
-        if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
+function renderTape(){
+  const track = $("sportTapeTrack");
+  if(!track) return;
+  if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
 
-        const doubled = window.tapeAds.concat(window.tapeAds);
-        track.innerHTML = doubled.map((a)=>{
-          const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
-          return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
-        }).join("");
-      }
-      window.renderTape = renderTape;
-      renderTape();
+  const doubled = window.tapeAds.concat(window.tapeAds);
+  track.innerHTML = doubled.map((a)=>{
+    const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
+    return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
+  }).join("");
+}
+window.renderTape = renderTape;
+renderTape();
 
       const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
 
