@@ -14,8 +14,6 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#a51e22">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-  
-  <!-- ✅ AJOUT PROPRE ICI -->
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
@@ -1269,38 +1267,38 @@
           </svg>
         </button>
       </div>
-      <div class="body">
-        <div style="font-weight:800">Appuyez une fois pour choisir, puis revenez au bouton et faites un appui long pour appeler.</div>
-        <div class="choiceGrid">
-          <button class="choiceBtn" data-pick="3919" type="button">3919</button>
-          <button class="choiceBtn" data-pick="119" type="button">119</button>
-        </div>
-        <div class="muted" style="margin-top:10px">3919 : écoute/orientation • 119 : enfance en danger • danger immédiat : 112</div>
-      </div>
-    </div>
+     <div class="body">
+  <div style="font-weight:800">Appuyez une fois pour choisir, puis revenez au bouton et faites un appui long pour appeler.</div>
+  <div class="choiceGrid">
+    <button class="choiceBtn" data-pick="3919" type="button">3919</button>
+    <button class="choiceBtn" data-pick="119" type="button">119</button>
   </div>
+  <div class="muted" style="margin-top:10px">3919 : écoute/orientation • 119 : enfance en danger • danger immédiat : 112</div>
+</div>
+</div>
+</div>
 
- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    (function initBoCiteArtClean(){
-      console.log("✅ JS démarré");
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function initBoCiteArtClean(){
+  console.log("✅ JS démarré");
 
-      const $ = (id) => document.getElementById(id);
-      const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
-      const isFn = (v) => typeof v === "function";
+  const $ = (id) => document.getElementById(id);
+  const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
+  const isFn = (v) => typeof v === "function";
 
-let wellbeingMap = null;
-let wellbeingUserMarker = null;
-let wellbeingPoiMarkers = [];
-let wellbeingWatchId = null;
-let currentHeading = 0;
+  let wellbeingMap = null;
+  let wellbeingUserMarker = null;
+  let wellbeingPoiMarkers = [];
+  let wellbeingWatchId = null;
+  let currentHeading = 0;
 
-      const WELLBEING_RADIUS_METERS = 3000;
-      const WELLBEING_POINTS = [
-        { name:"Parc sportif", desc:"Point sport (démo)", lat:50.586, lng:3.043, type:"sport" },
-        { name:"Bois et parcours", desc:"Point promenade (démo)", lat:50.589, lng:3.038, type:"walk" },
-        { name:"Salle de sport", desc:"Point salle (démo)", lat:50.584, lng:3.049, type:"gym" }
-      ];
+  const WELLBEING_RADIUS_METERS = 3000;
+  const WELLBEING_POINTS = [
+    { name:"Parc sportif", desc:"Point sport (démo)", lat:50.586, lng:3.043, type:"sport" },
+    { name:"Bois et parcours", desc:"Point promenade (démo)", lat:50.589, lng:3.038, type:"walk" },
+    { name:"Salle de sport", desc:"Point salle (démo)", lat:50.584, lng:3.049, type:"gym" }
+  ];
 
       function escapeHtml(s){
         return String(s)
