@@ -6,12 +6,18 @@
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="geolocation=(self)">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' https: data:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com;">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  
   <title>Bo’CitéArt – Démo</title>
+  
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#a51e22">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  
+  <!-- ✅ AJOUT PROPRE ICI -->
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+  <link rel="stylesheet" href="leaflet/leaflet.css" />
 
   <style>
     :root{
@@ -699,7 +705,7 @@
       cursor:pointer;
       font-size:12px;
     }
-
+    
     @media (max-height:780px){
       .wrap{ padding:10px; gap:10px; }
       .ticker{ height:120px; }
@@ -716,6 +722,7 @@
     }
   </style>
 </head>
+  
 <body>
   <div class="page">
     <div class="wrap">
@@ -1245,6 +1252,7 @@
     </div>
   </div>
 
+  <script src="leaflet/leaflet.js"></script>
   <script>
     (function initBoCiteArtClean(){
       console.log("✅ JS démarré");
@@ -1907,6 +1915,52 @@
       on($("ticker"), "click", openTicker);
 
       function escapeHtml(s){
+        let wellbeingMap = null;
+let wellbeingUserMarker = null;
+let wellbeingPoiMarkers = [];
+let wellbeingWatchId = null;
+
+const WELLBEING_RADIUS_METERS = 3000;
+
+const WELLBEING_POINTS = [
+  { name:"Parc sportif", lat:50.586, lng:3.043 },
+  { name:"Bois promenade", lat:50.589, lng:3.038 },
+  { name:"Salle sport", lat:50.584, lng:3.049 }
+];
+
+function openWellbeingMap(){
+  openModal("Carte bien-être", `
+    <div id="map" style="height:420px;border-radius:16px;"></div>
+    <div style="margin-top:10px;">
+      <button class="choiceBtn" id="locateBtn">📍 Me localiser</button>
+    </div>
+  `);
+
+  setTimeout(()=>{
+
+    const map = L.map("map").setView([50.586, 3.043], 14);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom:19
+    }).addTo(map);
+
+    document.getElementById("locateBtn").onclick = ()=>{
+      navigator.geolocation.getCurrentPosition((pos)=>{
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        L.marker([lat,lng]).addTo(map);
+        map.setView([lat,lng],15);
+      });
+    };
+
+    WELLBEING_POINTS.forEach(p=>{
+      L.marker([p.lat,p.lng]).addTo(map)
+        .bindPopup(p.name);
+    });
+
+  }, 100);
+}
         return String(s)
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
@@ -2571,10 +2625,20 @@
               </ul>
 
               <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Parcs • bois • parcours • salles</li>
-                <li>Carte plein écran + guidage</li>
-              </ul>
+<ul style="margin:8px 0 0 18px;font-weight:800;">
+  <li>Parcs • bois • parcours • salles</li>
+  <li>Carte plein écran + guidage</li>
+</ul>
+
+<div class="box" style="margin-top:10px;">
+  <div style="font-weight:900;">Carte bien-être</div>
+  <div class="muted" style="margin-top:6px;">
+    Ouvre la carte plein écran avec points utiles autour de vous.
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <button class="choiceBtn" id="openMap" type="button">Carte bien-être</button>
+  </div>
+</div>
 
               <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
               <div class="box">
@@ -2590,6 +2654,9 @@
             setTimeout(()=>{
               const b = $("openSportFicheBtn");
               if(b) b.onclick = openSportFiche;
+
+              const btnMap = $("openMap");
+if(btnMap) btnMap.onclick = openWellbeingMap;
 
               const refresh = ()=>{
                 const out = $("sportCoinBalance");
