@@ -3652,477 +3652,477 @@ function renderWellbeingPois(lat, lng){
                 };
               }
 
-              const xb = $("xBtn");
-              if(xb && xb.focus) xb.focus();
-            },0);
-            return;
-          }
-        });
-      });
+                  const xb = $("xBtn");
+      if(xb && xb.focus) xb.focus();
+    },0);
+    return;
+  }
+});
+});
 
-      const adminTile = $("adminTile");
-      on(adminTile, "click", ()=>{
-        if(!isFn(window.openModal)) return;
-        openModal("Accès Admin (structure)", `
-          <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
-          <div class="box">
-            <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
-            Les éléments affichés sont une vitrine de structure (démo).
-          </div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
-            <li>Activation / blocage / désactivation</li>
-            <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
-            <li>Suivi interne (litiges) : historique, traçabilité</li>
-          </ul>
-        `);
-      });
+const adminTile = $("adminTile");
+on(adminTile, "click", ()=>{
+  if(!isFn(window.openModal)) return;
+  openModal("Accès Admin (structure)", `
+    <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
+    <div class="box">
+      <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
+      Les éléments affichés sont une vitrine de structure (démo).
+    </div>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
+      <li>Activation / blocage / désactivation</li>
+      <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
+      <li>Suivi interne (litiges) : historique, traçabilité</li>
+    </ul>
+  `);
+});
 
-      const daeBtn = $("daeBtn");
-      on(daeBtn, "click", ()=>{
-        if(!isFn(window.openModal)) return;
-        openModal("Défibrillateur (DAE)", `
-          <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
-          <div class="box">
-            <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
-            Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
-          </div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
-            <li>Orientation + guidage</li>
-            <li>Rayon local : 1 à 3 km</li>
-            <li>DAE • pharmacie • hôpital</li>
-            <li>Géolocalisation optionnelle (activation utilisateur)</li>
-          </ul>
+const daeBtn = $("daeBtn");
+on(daeBtn, "click", ()=>{
+  if(!isFn(window.openModal)) return;
+  openModal("Défibrillateur (DAE)", `
+    <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
+    <div class="box">
+      <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
+      Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
+    </div>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
+      <li>Orientation + guidage</li>
+      <li>Rayon local : 1 à 3 km</li>
+      <li>DAE • pharmacie • hôpital</li>
+      <li>Géolocalisation optionnelle (activation utilisateur)</li>
+    </ul>
 
-          <div class="box" style="margin-top:12px;">
-            <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
-            <div style="border-radius:14px; overflow:hidden; background:#000;">
-              <iframe
-                width="100%"
-                height="220"
-                src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
-                title="Utilisation DAE"
-                loading="lazy"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen>
-              </iframe>
-            </div>
-            <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
-          </div>
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
+      <div style="border-radius:14px; overflow:hidden; background:#000;">
+        <iframe
+          width="100%"
+          height="220"
+          src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
+          title="Utilisation DAE"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
+    </div>
 
-          <div class="box" style="margin-top:12px;">
-            <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
-            <div class="muted">
-              Ici, la version officielle affichera la carte + fléchage + une ligne d’itinéraire vers le DAE le plus proche.
-            </div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
-              <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
-            </div>
-          </div>
-        `);
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
+      <div class="muted">
+        Ici, la version officielle affichera la carte + fléchage + une ligne d’itinéraire vers le DAE le plus proche.
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
+        <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
+      </div>
+    </div>
+  `);
 
-        setTimeout(()=>{
-          const loc = $("daeLocate");
-          const rte = $("daeRoute");
-          if(loc) loc.onclick = ()=> alert("Démo : demande de localisation (GPS).");
-          if(rte) rte.onclick = ()=> alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
-        },0);
-      });
+  setTimeout(()=>{
+    const loc = $("daeLocate");
+    const rte = $("daeRoute");
+    if(loc) loc.onclick = ()=> alert("Démo : demande de localisation (GPS).");
+    if(rte) rte.onclick = ()=> alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
+  },0);
+});
 
-      function openSportFiche(){
-        if(!isFn(window.openModal)) return;
+function openSportFiche(){
+  if(!isFn(window.openModal)) return;
 
-        openModal("📄 Fiche — élus / CCI / commerçants (Sport + Associations)", `
-          <div class="box">
-            <div style="font-weight:900;">Objectif</div>
-            <div class="muted" style="margin-top:6px;">
-              Déclencher un soutien simple : un commerçant soutient un club + une association, avec visibilité locale via le bandeau 1 cm.
-            </div>
-          </div>
+  openModal("📄 Fiche — élus / CCI / commerçants (Sport + Associations)", `
+    <div class="box">
+      <div style="font-weight:900;">Objectif</div>
+      <div class="muted" style="margin-top:6px;">
+        Déclencher un soutien simple : un commerçant soutient un club + une association, avec visibilité locale via le bandeau 1 cm.
+      </div>
+    </div>
 
-          <div class="box">
-            <div style="font-weight:900;">Principe</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Un commerçant soutient <strong>un club sportif</strong> + <strong>une association</strong>.</li>
-              <li>Sa ligne apparaît dans le bandeau : “Commerce soutient Club + Association”.</li>
-              <li>Le club valorise ses soutiens auprès de ses licenciés/familles (logique locale).</li>
-              <li>Les modalités PSP / pièces / fiscalité sont décrites dans les CGV/contrats (discrétion + conformité).</li>
-            </ul>
-          </div>
+    <div class="box">
+      <div style="font-weight:900;">Principe</div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Un commerçant soutient <strong>un club sportif</strong> + <strong>une association</strong>.</li>
+        <li>Sa ligne apparaît dans le bandeau : “Commerce soutient Club + Association”.</li>
+        <li>Le club valorise ses soutiens auprès de ses licenciés/familles (logique locale).</li>
+        <li>Les modalités PSP / pièces / fiscalité sont décrites dans les CGV/contrats (discrétion + conformité).</li>
+      </ul>
+    </div>
 
-          <div class="box">
-            <div style="font-weight:900;">Montant (exemple)</div>
-            <div style="font-weight:800;margin-top:6px;">Exemple : <strong>100 € HT</strong> par période (ex. trimestriel).</div>
-            <div class="muted" style="margin-top:8px;">(Démo) La répartition exacte est contractualisée. La TVA dépend du cadre applicable.</div>
-          </div>
+    <div class="box">
+      <div style="font-weight:900;">Montant (exemple)</div>
+      <div style="font-weight:800;margin-top:6px;">Exemple : <strong>100 € HT</strong> par période (ex. trimestriel).</div>
+      <div class="muted" style="margin-top:8px;">(Démo) La répartition exacte est contractualisée. La TVA dépend du cadre applicable.</div>
+    </div>
 
-          <div class="box">
-            <div style="font-weight:900;">Associations retenues (uniquement celles-ci)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</li>
-              <li><strong>Étoile Filante</strong> — enfants atteints de maladies rares</li>
-              <li><strong>Les Papillons</strong> — antenne Nord</li>
-              <li><strong>ATC Nord</strong> — traumatisés crâniens</li>
-            </ul>
-          </div>
+    <div class="box">
+      <div style="font-weight:900;">Associations retenues (uniquement celles-ci)</div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</li>
+        <li><strong>Étoile Filante</strong> — enfants atteints de maladies rares</li>
+        <li><strong>Les Papillons</strong> — antenne Nord</li>
+        <li><strong>ATC Nord</strong> — traumatisés crâniens</li>
+      </ul>
+    </div>
 
-          <div class="box">
-            <div style="font-weight:900;">Préparer votre ligne (démo)</div>
-            <div class="muted" style="margin-top:6px;">Le commerçant peut choisir l’affichage en gras (+4€ TTC) et indiquer une URL.</div>
+    <div class="box">
+      <div style="font-weight:900;">Préparer votre ligne (démo)</div>
+      <div class="muted" style="margin-top:6px;">Le commerçant peut choisir l’affichage en gras (+4€ TTC) et indiquer une URL.</div>
 
-            <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
-            <input class="miniField" id="spName" placeholder="Ex. Boulangerie Croquet" />
+      <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
+      <input class="miniField" id="spName" placeholder="Ex. Boulangerie Croquet" />
 
-            <div style="margin-top:10px;font-weight:900;">URL (optionnelle)</div>
-            <input class="miniField" id="spUrl" placeholder="https://..." />
+      <div style="margin-top:10px;font-weight:900;">URL (optionnelle)</div>
+      <input class="miniField" id="spUrl" placeholder="https://..." />
 
-            <div class="miniCheck">
-              <input id="spBold" type="checkbox" />
-              <div>
-                Option <strong>texte en gras</strong> (+4€ TTC) — pour une meilleure lisibilité (sans promesse de résultats).
-              </div>
-            </div>
+      <div class="miniCheck">
+        <input id="spBold" type="checkbox" />
+        <div>
+          Option <strong>texte en gras</strong> (+4€ TTC) — pour une meilleure lisibilité (sans promesse de résultats).
+        </div>
+      </div>
 
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-              <button class="choiceBtn" id="spPreview" type="button">👁️ Aperçu</button>
-              <button class="choiceBtn" id="spAddToTape" type="button">➕ Ajouter au bandeau (démo)</button>
-            </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button class="choiceBtn" id="spPreview" type="button">👁️ Aperçu</button>
+        <button class="choiceBtn" id="spAddToTape" type="button">➕ Ajouter au bandeau (démo)</button>
+      </div>
 
-            <div class="muted" style="margin-top:10px;">
-              (Démo) Ici, l’ajout est local (sur ce téléphone). La version officielle gèrera validation/contrat/contrôle.
-            </div>
-          </div>
-        `);
+      <div class="muted" style="margin-top:10px;">
+        (Démo) Ici, l’ajout est local (sur ce téléphone). La version officielle gèrera validation/contrat/contrôle.
+      </div>
+    </div>
+  `);
 
-        setTimeout(()=>{
-          const btnPrev = $("spPreview");
-          const btnAdd = $("spAddToTape");
-          const inName = $("spName");
-          const inUrl = $("spUrl");
-          const cbBold = $("spBold");
+  setTimeout(()=>{
+    const btnPrev = $("spPreview");
+    const btnAdd = $("spAddToTape");
+    const inName = $("spName");
+    const inUrl = $("spUrl");
+    const cbBold = $("spBold");
 
-          const makeLine = ()=>{
-            const name = (inName && inName.value.trim()) ? inName.value.trim() : "Commerce (démo)";
-            let url = (inUrl && inUrl.value.trim()) ? inUrl.value.trim() : "";
-            const base = `${name} soutient Club + Association`;
+    const makeLine = ()=>{
+      const name = (inName && inName.value.trim()) ? inName.value.trim() : "Commerce (démo)";
+      let url = (inUrl && inUrl.value.trim()) ? inUrl.value.trim() : "";
+      const base = `${name} soutient Club + Association`;
 
-            url = url.replace(/\s+/g, "");
-            if(!url) return base;
-            if(url.startsWith("www.")) url = "https://" + url;
+      url = url.replace(/\s+/g, "");
+      if(!url) return base;
+      if(url.startsWith("www.")) url = "https://" + url;
 
-            if(url.startsWith("http://")){
-              alert("URL invalide : utiliser https:// (pas http://).");
-              return base;
-            }
-            if(!url.startsWith("https://")){
-              alert("URL invalide : utiliser https://");
-              return base;
-            }
-            if(!/^[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+$/.test(url)){
-              alert("URL invalide : caractères non autorisés.");
-              return base;
-            }
-            if(url.length > 80){
-              alert("URL trop longue (max 80 caractères).");
-              return base;
-            }
-            return `${base} • ${url}`;
-          };
-
-          if(btnPrev){
-            btnPrev.onclick = ()=>{
-              const line = makeLine();
-              alert("Aperçu :\n" + line + (cbBold && cbBold.checked ? "\n(affichage gras)" : "\n(affichage normal)"));
-            };
-          }
-
-          if(btnAdd){
-            btnAdd.onclick = ()=>{
-              const line = makeLine();
-              const bold = !!(cbBold && cbBold.checked);
-              if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
-              window.tapeAds.push({ txt:line, bold });
-              if(isFn(window.renderTape)) window.renderTape();
-              alert("Ajouté au bandeau (démo).");
-            };
-          }
-        },0);
+      if(url.startsWith("http://")){
+        alert("URL invalide : utiliser https:// (pas http://).");
+        return base;
       }
+      if(!url.startsWith("https://")){
+        alert("URL invalide : utiliser https://");
+        return base;
+      }
+      if(!/^[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+$/.test(url)){
+        alert("URL invalide : caractères non autorisés.");
+        return base;
+      }
+      if(url.length > 80){
+        alert("URL trop longue (max 80 caractères).");
+        return base;
+      }
+      return `${base} • ${url}`;
+    };
 
-      const legal = $("legal");
-      const openLegalBtn = $("openLegal");
-      const closeLegalBtn = $("legalClose");
-      const closeLegalX = $("legalX");
-
-      if(typeof window.__lastFocus === "undefined") window.__lastFocus = null;
-
-      const openLegal = ()=>{
-        if(!legal) return;
-        window.__lastFocus = document.activeElement;
-        legal.classList.add("open");
-        if(isFn(window.lockScroll)) window.lockScroll(true);
+    if(btnPrev){
+      btnPrev.onclick = ()=>{
+        const line = makeLine();
+        alert("Aperçu :\n" + line + (cbBold && cbBold.checked ? "\n(affichage gras)" : "\n(affichage normal)"));
       };
+    }
 
-      const closeLegal = ()=>{
-        if(!legal) return;
-        legal.classList.remove("open");
-        if(isFn(window.lockScroll)) window.lockScroll(false);
-        if(window.__lastFocus?.focus) window.__lastFocus.focus();
-        window.__lastFocus = null;
+    if(btnAdd){
+      btnAdd.onclick = ()=>{
+        const line = makeLine();
+        const bold = !!(cbBold && cbBold.checked);
+        if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
+        window.tapeAds.push({ txt:line, bold });
+        if(isFn(window.renderTape)) window.renderTape();
+        alert("Ajouté au bandeau (démo).");
       };
+    }
+  },0);
+}
 
-      if(openLegalBtn) openLegalBtn.onclick = openLegal;
-      if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
-      if(closeLegalX) closeLegalX.onclick = closeLegal;
+const legal = $("legal");
+const openLegalBtn = $("openLegal");
+const closeLegalBtn = $("legalClose");
+const closeLegalX = $("legalX");
 
-      const ACK_PREFIX = "bociteart_ack_v2_";
-      const ACK_SALT = "BoCiteArt|ack|v2";
+if(typeof window.__lastFocus === "undefined") window.__lastFocus = null;
 
-      function fnv1a(str){
-        let h = 0x811c9dc5;
-        for(let i=0;i<str.length;i++){
-          h ^= str.charCodeAt(i);
-          h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
-        }
-        return ("00000000" + h.toString(16)).slice(-8);
+const openLegal = ()=>{
+  if(!legal) return;
+  window.__lastFocus = document.activeElement;
+  legal.classList.add("open");
+  if(isFn(window.lockScroll)) window.lockScroll(true);
+};
+
+const closeLegal = ()=>{
+  if(!legal) return;
+  legal.classList.remove("open");
+  if(isFn(window.lockScroll)) window.lockScroll(false);
+  if(window.__lastFocus?.focus) window.__lastFocus.focus();
+  window.__lastFocus = null;
+};
+
+if(openLegalBtn) openLegalBtn.onclick = openLegal;
+if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
+if(closeLegalX) closeLegalX.onclick = closeLegal;
+
+const ACK_PREFIX = "bociteart_ack_v2_";
+const ACK_SALT = "BoCiteArt|ack|v2";
+
+function fnv1a(str){
+  let h = 0x811c9dc5;
+  for(let i=0;i<str.length;i++){
+    h ^= str.charCodeAt(i);
+    h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
+  }
+  return ("00000000" + h.toString(16)).slice(-8);
+}
+
+function ackSign(kind, ts){
+  return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
+}
+
+function ackGet(kind){
+  const key = ACK_PREFIX + kind;
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return false;
+    const parts = raw.split("|");
+    if(parts.length !== 3) return false;
+    const ok = parts[0] === "1";
+    const ts = parseInt(parts[1], 10);
+    const sig = parts[2];
+    if(!ok || !Number.isFinite(ts)) return false;
+    return sig === ackSign(kind, ts);
+  }catch(e){
+    return false;
+  }
+}
+
+function ackSet(kind){
+  const key = ACK_PREFIX + kind;
+  try{
+    const ts = Date.now();
+    const sig = ackSign(kind, ts);
+    localStorage.setItem(key, `1|${ts}|${sig}`);
+  }catch(e){}
+}
+
+function makeLongPress(btn, ringEl, ms, onTrigger){
+  if(!btn || !ringEl) return;
+
+  let raf = null;
+  let start = null;
+  let holding = false;
+  let fired = false;
+
+  const rAttr = ringEl.getAttribute("r");
+  const r = rAttr ? parseFloat(rAttr) : 35;
+  const circ = 2 * Math.PI * r;
+
+  ringEl.style.strokeDasharray = String(circ);
+  ringEl.style.strokeDashoffset = String(circ);
+
+  const stop = ()=>{
+    holding = false;
+    start = null;
+    fired = false;
+    ringEl.style.strokeDashoffset = String(circ);
+    if(raf) cancelAnimationFrame(raf);
+    raf = null;
+  };
+
+  const tick = (ts)=>{
+    if(!holding) return;
+    if(start === null) start = ts;
+
+    const p = Math.min(1, (ts - start) / ms);
+    ringEl.style.strokeDashoffset = String(circ * (1 - p));
+
+    if(p >= 1){
+      if(fired) return;
+      fired = true;
+      stop();
+      onTrigger();
+      return;
+    }
+    raf = requestAnimationFrame(tick);
+  };
+
+  btn.addEventListener("pointerdown", (e)=>{
+    e.preventDefault();
+    if(holding) return;
+    holding = true;
+    fired = false;
+    raf = requestAnimationFrame(tick);
+  });
+
+  ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
+    btn.addEventListener(ev, stop);
+  });
+
+  btn.addEventListener("contextmenu", (e)=> e.preventDefault());
+}
+
+function emergencyGate(kind, onOk){
+  if(ackGet(kind)){
+    onOk();
+    return;
+  }
+
+  const title = (kind === "112") ? "Urgence 112 — usage responsable" : "Aide 3919 / 119 — usage responsable";
+
+  const body = (kind === "112") ? `
+    <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
+    <div class="box">
+      <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
+      Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
+    </div>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
+      <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
+      <li>Appui long = réduction des appels accidentels (sans garantie d’erreur zéro).</li>
+    </ul>
+    <div class="box" style="margin-top:10px;">
+      <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
+        <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
+        J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
+      </label>
+    </div>
+    <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
+  ` : `
+    <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
+    <div class="box">
+      <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
+      Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
+    </div>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li><strong>3919</strong> : écoute/orientation (pas une intervention immédiate).</li>
+      <li><strong>119</strong> : enfance en danger.</li>
+      <li><strong>Danger immédiat</strong> : appeler le 112.</li>
+    </ul>
+    <div class="box" style="margin-top:10px;">
+      <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
+        <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
+        J’ai compris : j’utiliserai ces numéros uniquement en cas de situation réelle.
+      </label>
+    </div>
+    <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>
+  `;
+
+  if(isFn(window.openModal)) window.openModal(title, body);
+
+  setTimeout(()=>{
+    const box = $("ackBox");
+    const btn = $("ackBtn");
+    if(!btn) return;
+    btn.onclick = ()=>{
+      if(!box || !box.checked){
+        alert("Veuillez cocher la case pour confirmer que vous avez compris.");
+        return;
       }
+      ackSet(kind);
+      if(isFn(window.closeModal)) window.closeModal();
+      onOk();
+    };
+  }, 0);
+}
 
-      function ackSign(kind, ts){
-        return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
-      }
+makeLongPress(
+  $("btn112"),
+  $("ring112"),
+  1800,
+  ()=> emergencyGate("112", ()=> { if(isFn(window.callPhone)) window.callPhone("112"); })
+);
 
-      function ackGet(kind){
-        const key = ACK_PREFIX + kind;
-        try{
-          const raw = localStorage.getItem(key);
-          if(!raw) return false;
-          const parts = raw.split("|");
-          if(parts.length !== 3) return false;
-          const ok = parts[0] === "1";
-          const ts = parseInt(parts[1], 10);
-          const sig = parts[2];
-          if(!ok || !Number.isFinite(ts)) return false;
-          return sig === ackSign(kind, ts);
-        }catch(e){
-          return false;
-        }
-      }
+let sosNumber = null;
+const choice = $("choice");
 
-      function ackSet(kind){
-        const key = ACK_PREFIX + kind;
-        try{
-          const ts = Date.now();
-          const sig = ackSign(kind, ts);
-          localStorage.setItem(key, `1|${ts}|${sig}`);
-        }catch(e){}
-      }
+const closeChoice = ()=>{
+  if(!choice) return;
+  choice.classList.remove("open");
+  if(isFn(window.lockScroll)) window.lockScroll(false);
+  if(window.__lastFocus?.focus) window.__lastFocus.focus();
+  window.__lastFocus = null;
+};
 
-      function makeLongPress(btn, ringEl, ms, onTrigger){
-        if(!btn || !ringEl) return;
+on($("choiceClose"), "click", closeChoice);
+on($("choiceX"), "click", closeChoice);
 
-        let raf = null;
-        let start = null;
-        let holding = false;
-        let fired = false;
+document.querySelectorAll("#choice .choiceBtn[data-pick]").forEach((b)=>{
+  b.addEventListener("click", ()=>{
+    sosNumber = b.getAttribute("data-pick");
+    const lab = $("sosLabel");
+    if(lab) lab.textContent = sosNumber;
+    closeChoice();
+  });
+});
 
-        const rAttr = ringEl.getAttribute("r");
-        const r = rAttr ? parseFloat(rAttr) : 35;
-        const circ = 2 * Math.PI * r;
+makeLongPress(
+  $("btnSos"),
+  $("ringSos"),
+  2000,
+  ()=>{
+    if(!choice) return;
+    if(!sosNumber){
+      window.__lastFocus = document.activeElement;
+      choice.classList.add("open");
+      if(isFn(window.lockScroll)) window.lockScroll(true);
+      return;
+    }
+    emergencyGate(sosNumber, ()=> { if(isFn(window.callPhone)) window.callPhone(sosNumber); });
+  }
+);
 
-        ringEl.style.strokeDasharray = String(circ);
-        ringEl.style.strokeDashoffset = String(circ);
+if(isFn(window.makeKeyboardClickable)){
+  window.makeKeyboardClickable($("ticker"), window.openTicker);
 
-        const stop = ()=>{
-          holding = false;
-          start = null;
-          fired = false;
-          ringEl.style.strokeDashoffset = String(circ);
-          if(raf) cancelAnimationFrame(raf);
-          raf = null;
-        };
+  document.querySelectorAll(".tile[data-open]").forEach((el)=>{
+    window.makeKeyboardClickable(el, ()=> el.click());
+  });
 
-        const tick = (ts)=>{
-          if(!holding) return;
-          if(start === null) start = ts;
+  if(adminTile) window.makeKeyboardClickable(adminTile, ()=> adminTile.click());
+}
 
-          const p = Math.min(1, (ts - start) / ms);
-          ringEl.style.strokeDashoffset = String(circ * (1 - p));
+(function initLegalTabs(){
+  const legal = $("legal");
+  if(!legal) return;
 
-          if(p >= 1){
-            if(fired) return;
-            fired = true;
-            stop();
-            onTrigger();
-            return;
-          }
-          raf = requestAnimationFrame(tick);
-        };
+  const tabs = legal.querySelectorAll(".tab");
+  if(!tabs || !tabs.length) return;
 
-        btn.addEventListener("pointerdown", (e)=>{
-          e.preventDefault();
-          if(holding) return;
-          holding = true;
-          fired = false;
-          raf = requestAnimationFrame(tick);
-        });
+  const panels = {
+    rgpd: $("p-rgpd"),
+    cgu: $("p-cgu"),
+    cgv: $("p-cgv")
+  };
 
-        ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
-          btn.addEventListener(ev, stop);
-        });
+  function showTab(name){
+    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+    Object.keys(panels).forEach((k)=>{
+      if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
+    });
+  }
 
-        btn.addEventListener("contextmenu", (e)=> e.preventDefault());
-      }
+  tabs.forEach((t)=>{
+    t.addEventListener("click", ()=> showTab(t.dataset.tab));
+  });
 
-      function emergencyGate(kind, onOk){
-        if(ackGet(kind)){
-          onOk();
-          return;
-        }
+  showTab("rgpd");
+})();
 
-        const title = (kind === "112") ? "Urgence 112 — usage responsable" : "Aide 3919 / 119 — usage responsable";
-
-        const body = (kind === "112") ? `
-          <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
-          <div class="box">
-            <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
-            Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
-          </div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
-            <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
-            <li>Appui long = réduction des appels accidentels (sans garantie d’erreur zéro).</li>
-          </ul>
-          <div class="box" style="margin-top:10px;">
-            <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
-              <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-              J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
-            </label>
-          </div>
-          <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
-        ` : `
-          <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
-          <div class="box">
-            <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
-            Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
-          </div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li><strong>3919</strong> : écoute/orientation (pas une intervention immédiate).</li>
-            <li><strong>119</strong> : enfance en danger.</li>
-            <li><strong>Danger immédiat</strong> : appeler le 112.</li>
-          </ul>
-          <div class="box" style="margin-top:10px;">
-            <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
-              <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-              J’ai compris : j’utiliserai ces numéros uniquement en cas de situation réelle.
-            </label>
-          </div>
-          <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>
-        `;
-
-        if(isFn(window.openModal)) window.openModal(title, body);
-
-        setTimeout(()=>{
-          const box = $("ackBox");
-          const btn = $("ackBtn");
-          if(!btn) return;
-          btn.onclick = ()=>{
-            if(!box || !box.checked){
-              alert("Veuillez cocher la case pour confirmer que vous avez compris.");
-              return;
-            }
-            ackSet(kind);
-            if(isFn(window.closeModal)) window.closeModal();
-            onOk();
-          };
-        }, 0);
-      }
-
-      makeLongPress(
-        $("btn112"),
-        $("ring112"),
-        1800,
-        ()=> emergencyGate("112", ()=> { if(isFn(window.callPhone)) window.callPhone("112"); })
-      );
-
-      let sosNumber = null;
-      const choice = $("choice");
-
-      const closeChoice = ()=>{
-        if(!choice) return;
-        choice.classList.remove("open");
-        if(isFn(window.lockScroll)) window.lockScroll(false);
-        if(window.__lastFocus?.focus) window.__lastFocus.focus();
-        window.__lastFocus = null;
-      };
-
-      on($("choiceClose"), "click", closeChoice);
-      on($("choiceX"), "click", closeChoice);
-
-      document.querySelectorAll("#choice .choiceBtn[data-pick]").forEach((b)=>{
-        b.addEventListener("click", ()=>{
-          sosNumber = b.getAttribute("data-pick");
-          const lab = $("sosLabel");
-          if(lab) lab.textContent = sosNumber;
-          closeChoice();
-        });
-      });
-
-      makeLongPress(
-        $("btnSos"),
-        $("ringSos"),
-        2000,
-        ()=>{
-          if(!choice) return;
-          if(!sosNumber){
-            window.__lastFocus = document.activeElement;
-            choice.classList.add("open");
-            if(isFn(window.lockScroll)) window.lockScroll(true);
-            return;
-          }
-          emergencyGate(sosNumber, ()=> { if(isFn(window.callPhone)) window.callPhone(sosNumber); });
-        }
-      );
-
-      if(isFn(window.makeKeyboardClickable)){
-        window.makeKeyboardClickable($("ticker"), window.openTicker);
-
-        document.querySelectorAll(".tile[data-open]").forEach((el)=>{
-          window.makeKeyboardClickable(el, ()=> el.click());
-        });
-
-        if(adminTile) window.makeKeyboardClickable(adminTile, ()=> adminTile.click());
-      }
-
-      (function initLegalTabs(){
-        const legal = $("legal");
-        if(!legal) return;
-
-        const tabs = legal.querySelectorAll(".tab");
-        if(!tabs || !tabs.length) return;
-
-        const panels = {
-          rgpd: $("p-rgpd"),
-          cgu: $("p-cgu"),
-          cgv: $("p-cgv")
-        };
-
-        function showTab(name){
-          tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
-          Object.keys(panels).forEach((k)=>{
-            if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
-          });
-        }
-
-        tabs.forEach((t)=>{
-          t.addEventListener("click", ()=> showTab(t.dataset.tab));
-        });
-
-        showTab("rgpd");
-      })();
-
-    })();
-  </script>
+})();
+</script>
 </body>
 </html>
