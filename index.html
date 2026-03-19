@@ -2333,6 +2333,10 @@ function openWellbeingMap(){
         return;
       }
 
+      if(typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function"){
+        DeviceOrientationEvent.requestPermission().catch(()=>{}).then(()=>{});
+      }
+
       if(wellbeingWatchId !== null){
         navigator.geolocation.clearWatch(wellbeingWatchId);
         wellbeingWatchId = null;
@@ -2362,16 +2366,30 @@ function openWellbeingMap(){
         },
         {
           enableHighAccuracy:true,
-          maximumAge:10000,
+          maximumAge:3000,
           timeout:10000
         }
       );
+
+      if(window.__wellbeingHeadingTimer){
+        clearInterval(window.__wellbeingHeadingTimer);
+      }
+
+      window.__wellbeingHeadingTimer = setInterval(()=>{
+        if(wellbeingUserMarker){
+          wellbeingUserMarker.setIcon(createUserIcon(currentHeading));
+        }
+      }, 700);
     };
 
     const stopLocate = ()=>{
       if(wellbeingWatchId !== null){
         navigator.geolocation.clearWatch(wellbeingWatchId);
         wellbeingWatchId = null;
+      }
+      if(window.__wellbeingHeadingTimer){
+        clearInterval(window.__wellbeingHeadingTimer);
+        window.__wellbeingHeadingTimer = null;
       }
     };
 
@@ -3008,13 +3026,30 @@ renderTape();
                 <div class="walletBox">
                   <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
                   <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
-                  <div class="walletSub">BoCitecoins gagnés par les actions sportives/citoyennes, échangeables plus tard chez un commerçant partenaire selon les règles locales.</div>
+                 <div class="walletSub">BoCitecoins gagnés par les actions sportives/citoyennes, échangeables uniquement par tranches de 10 chez un commerçant partenaire. L’échange bénéficie au club, jamais au référent. Maximum 30% en nourriture/boissons, le reste en matériel sportif.</div>
+                  <div class="box" style="margin-top:12px;">
+  <div style="font-weight:900;">Échange commerçant → club (démo)</div>
+  <div class="muted" style="margin-top:6px;">
+    Le commerçant scanne, valide l’échange, brûle les BoCitecoins utilisés, puis le compteur redescend selon la tranche échangée.
+    Le référent ne reçoit rien pour lui-même : l’avantage doit bénéficier au club.
+  </div>
+  <div class="muted" style="margin-top:6px;">
+    Échange autorisé uniquement par tranche de 10 BoCitecoins (10 ou 20). Pas plus.
+  </div>
+  <div class="muted" style="margin-top:6px;">
+    Composition de l’aide : maximum 30% nourriture/boissons incluses, le reste en matériel sportif.
+  </div>
+  <div class="muted" style="margin-top:6px;">
+    L’échange peut aussi servir de moment pour proposer au commerçant un soutien complémentaire au club, tout en aidant l’une des 4 associations retenues.
+  </div>
+</div>   
                   <div class="walletActions">
-                    <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-                    <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
-                    <button class="walletMini" id="walletSportMinus" type="button">−1</button>
-                    <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
-                  </div>
+  <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
+  <button class="walletMini" id="walletSportPlus20" type="button">+20</button>
+  <button class="walletMini" id="walletSportRedeem10" type="button">Échanger 10</button>
+  <button class="walletMini" id="walletSportRedeem20" type="button">Échanger 20</button>
+  <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
+</div>
                 </div>
               </div>
 
@@ -3063,30 +3098,76 @@ renderTape();
             `);
 
             setTimeout(()=>{
-              const b = $("openSportFicheBtn");
-              if(b) b.onclick = openSportFiche;
+        const p10 = $("walletSportPlus10");
+const p20 = $("walletSportPlus20");
+const r10 = $("walletSportRedeem10");
+const r20 = $("walletSportRedeem20");
+const rst = $("walletSportReset");
 
-              const btnMap = $("openMap");
-if(btnMap) btnMap.onclick = openWellbeingMap;
+if(p10){
+  p10.onclick = ()=>{
+    const w = loadSportWallet();
+    w.vert = Number(w.vert || 0) + 10;
+    saveSportWallet(w);
+    refresh();
+  };
+}
 
-              const refresh = ()=>{
-                const out = $("sportCoinBalance");
-                if(out) out.textContent = Number(loadSportWallet().vert || 0);
-              };
-              refresh();
+if(p20){
+  p20.onclick = ()=>{
+    const w = loadSportWallet();
+    w.vert = Number(w.vert || 0) + 20;
+    saveSportWallet(w);
+    refresh();
+  };
+}
 
-              const p10 = $("walletSportPlus10");
-              const p25 = $("walletSportPlus25");
-              const m1 = $("walletSportMinus");
-              const rst = $("walletSportReset");
+if(r10){
+  r10.onclick = ()=>{
+    const w = loadSportWallet();
+    const solde = Number(w.vert || 0);
 
-              if(p10){
-                p10.onclick = ()=>{
-                  const w = loadSportWallet();
-                  w.vert = Number(w.vert || 0) + 10;
-                  saveSportWallet(w);
-                  refresh();
-                };
+    if(solde < 10){
+      alert("Il faut au minimum 10 BoCitecoins pour cet échange.");
+      return;
+    }
+
+    if(confirm("Le commerçant scanne et valide l’échange de 10 BoCitecoins pour le club. Confirmer ?")){
+      w.vert = Math.max(0, solde - 10);
+      saveSportWallet(w);
+      refresh();
+      alert("Échange 10 validé (démo). Les BoCitecoins ont été brûlés pour cet échange club.");
+    }
+  };
+}
+
+if(r20){
+  r20.onclick = ()=>{
+    const w = loadSportWallet();
+    const solde = Number(w.vert || 0);
+
+    if(solde < 20){
+      alert("Il faut au minimum 20 BoCitecoins pour cet échange.");
+      return;
+    }
+
+    if(confirm("Le commerçant scanne et valide l’échange de 20 BoCitecoins pour le club. Confirmer ?")){
+      w.vert = Math.max(0, solde - 20);
+      saveSportWallet(w);
+      refresh();
+      alert("Échange 20 validé (démo). Les BoCitecoins ont été brûlés pour cet échange club.");
+    }
+  };
+}
+
+if(rst){
+  rst.onclick = ()=>{
+    if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
+      saveSportWallet({ vert:0 });
+      refresh();
+    }
+  };
+}
               }
 
               if(p25){
