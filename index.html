@@ -2180,6 +2180,27 @@ function initCompass(){
   }
 }
 
+function initCompass(){
+  if(window.__wellbeingCompassInit) return;
+  window.__wellbeingCompassInit = true;
+
+  window.addEventListener("deviceorientationabsolute", (event)=>{
+    if(event.alpha !== null && !isNaN(event.alpha)){
+      currentHeading = 360 - event.alpha;
+    }
+  }, true);
+
+  window.addEventListener("deviceorientation", (event)=>{
+    if(typeof event.webkitCompassHeading === "number"){
+      currentHeading = event.webkitCompassHeading;
+      return;
+    }
+    if(event.alpha !== null && !isNaN(event.alpha)){
+      currentHeading = 360 - event.alpha;
+    }
+  }, true);
+}
+
 function openWellbeingMap(){
   initCompass();
 
@@ -2224,6 +2245,13 @@ function openWellbeingMap(){
         try{ wellbeingMap.remove(); }catch(e){}
         wellbeingMap = null;
       }
+
+      if(wellbeingUserMarker){
+        try{ wellbeingUserMarker.remove(); }catch(e){}
+        wellbeingUserMarker = null;
+      }
+
+      clearWellbeingPois();
 
       wellbeingMap = L.map(mapHost).setView([50.586, 3.043], 14);
 
@@ -2297,7 +2325,7 @@ function openWellbeingMap(){
         if(wellbeingUserMarker){
           wellbeingUserMarker.setIcon(createUserIcon(currentHeading));
         }
-      }, 700);
+      }, 500);
     };
 
     const stopLocate = ()=>{
@@ -2305,6 +2333,7 @@ function openWellbeingMap(){
         navigator.geolocation.clearWatch(wellbeingWatchId);
         wellbeingWatchId = null;
       }
+
       if(window.__wellbeingHeadingTimer){
         clearInterval(window.__wellbeingHeadingTimer);
         window.__wellbeingHeadingTimer = null;
