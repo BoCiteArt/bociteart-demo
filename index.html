@@ -715,6 +715,11 @@
     .wbPoiGym{ background:#a51e22; }
     .wbPoiHealth{ background:#7f1a1d; }
     .wbPoiDefault{ background:#6e6a63; }
+    .wbPoiPark{ background:#4caf50; }
+    .wbPoiBike{ background:#00acc1; }
+    .wbPoiBus{ background:#ff9800; }
+    .wbPoiShop{ background:#8e24aa; }
+    .wbPoiFood{ background:#e53935; }
 
     .userArrowWrap{
       width:28px;
@@ -1320,10 +1325,25 @@ window.closeModal = closeModal;
 
   const WELLBEING_RADIUS_METERS = 3000;
   const WELLBEING_POINTS = [
-    { name:"Parc sportif", desc:"Point sport (démo)", lat:50.586, lng:3.043, type:"sport" },
-    { name:"Bois et parcours", desc:"Point promenade (démo)", lat:50.589, lng:3.038, type:"walk" },
-    { name:"Salle de sport", desc:"Point salle (démo)", lat:50.584, lng:3.049, type:"gym" }
-  ];
+  { name:"Parc sportif", desc:"Point sport (démo)", lat:50.586, lng:3.043, type:"sport" },
+  { name:"Bois et parcours", desc:"Point promenade (démo)", lat:50.589, lng:3.038, type:"walk" },
+  { name:"Salle de sport", desc:"Point salle (démo)", lat:50.584, lng:3.049, type:"gym" },
+
+  { name:"Parc urbain", desc:"Parc / détente", lat:50.587, lng:3.046, type:"park" },
+  { name:"Espace vert central", desc:"Square / promenade", lat:50.585, lng:3.040, type:"park" },
+
+  { name:"Piste cyclable nord", desc:"Accès piste cyclable", lat:50.592, lng:3.045, type:"bike" },
+  { name:"Piste cyclable centre", desc:"Voie vélo", lat:50.586, lng:3.050, type:"bike" },
+
+  { name:"Arrêt de bus Mairie", desc:"Transport en commun", lat:50.585, lng:3.047, type:"bus" },
+  { name:"Arrêt de bus Centre", desc:"Transport en commun", lat:50.588, lng:3.041, type:"bus" },
+
+  { name:"Supérette du centre", desc:"Commerce de proximité", lat:50.584, lng:3.044, type:"shop" },
+  { name:"Mini-market quartier nord", desc:"Courses rapides", lat:50.590, lng:3.042, type:"shop" },
+
+  { name:"Restaurant place centrale", desc:"Restauration", lat:50.586, lng:3.048, type:"food" },
+  { name:"Snack du quartier", desc:"Petite restauration", lat:50.583, lng:3.046, type:"food" }
+];
 
       function escapeHtml(s){
         return String(s)
@@ -1334,14 +1354,19 @@ window.closeModal = closeModal;
           .replace(/'/g, "&#039;");
       }
 
-      function wbIconClass(type){
-        switch(String(type || "").toLowerCase()){
-          case "sport": return "wbPoi wbPoiSport";
-          case "walk": return "wbPoi wbPoiWalk";
-          case "gym": return "wbPoi wbPoiGym";
-          case "health": return "wbPoi wbPoiHealth";
-          default: return "wbPoi wbPoiDefault";
-        }
+    function wbIconClass(type){
+  switch(String(type || "").toLowerCase()){
+    case "sport": return "wbPoi wbPoiSport";
+    case "walk": return "wbPoi wbPoiWalk";
+    case "gym": return "wbPoi wbPoiGym";
+    case "health": return "wbPoi wbPoiHealth";
+    case "park": return "wbPoi wbPoiPark";
+    case "bike": return "wbPoi wbPoiBike";
+    case "bus": return "wbPoi wbPoiBus";
+    case "shop": return "wbPoi wbPoiShop";
+    case "food": return "wbPoi wbPoiFood";
+    default: return "wbPoi wbPoiDefault";
+  } 
       }
 
       function clearWellbeingPois(){
