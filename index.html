@@ -1658,23 +1658,42 @@ window.closeModal = closeModal;
         return R * c;
       }
 
-     function createPoiIcon(type){
+    function createPoiIcon(type){
   if(!window.L) return null;
 
-  let iconChar = "•";
+  let iconHtml = "📍";
 
   switch(String(type || "").toLowerCase()){
-    case "sport": iconChar = "🏟"; break;
-    case "walk": iconChar = "🌿"; break;
-    case "gym": iconChar = "🏋"; break;
-    case "health": iconChar = "✚"; break;
-    case "park": iconChar = "🌳"; break;
-    case "bike": iconChar = "🚲"; break;
-    case "bus": iconChar = "🚌"; break;
-    case "shop": iconChar = "🛒"; break;
-    case "food": iconChar = "🍽"; break;
-    default: iconChar = "•";
-  }
+    case "sport":
+      iconHtml = "🏟";
+      break;
+    case "walk":
+      iconHtml = "🌿";
+      break;
+    case "gym":
+      iconHtml = "🏋";
+      break;
+    case "health":
+      iconHtml = "✚";
+      break;
+    case "park":
+      iconHtml = "🌳";
+      break;
+    case "bike":
+      iconHtml = "🚲";
+      break;
+    case "bus":
+      iconHtml = "🚌";
+      break;
+    case "shop":
+      iconHtml = "🛒";
+      break;
+    case "food":
+      iconHtml = "🍽";
+      break;
+    default:
+      iconHtml = "📍";
+  } 
 
   return L.divIcon({
     className: "",
@@ -1713,7 +1732,7 @@ window.closeModal = closeModal;
   });
 }
 
-     function renderWellbeingPois(lat, lng){
+   function renderWellbeingPois(lat, lng){
   if(!wellbeingMap || !window.L) return;
   clearWellbeingPois();
 
@@ -1739,14 +1758,6 @@ window.closeModal = closeModal;
     }
   });
 }
-
-function openWellbeingMap(){
-  initCompass();
-
-  if(typeof window.openModal !== "function"){
-    alert("Carte indisponible.");
-    return;
-  }
 
   window.openModal("Carte bien-être", `
     <div class="box">
@@ -2427,26 +2438,27 @@ function openTicker(){
     <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
 
     <div class="box">
-      <strong>Cadre :</strong> espace rare, visibilité locale limitée à <strong>10 publicités maximum par jour</strong>.
+      <strong>Cadre :</strong> espace rare, limité à <strong>10 publicités maximum par jour</strong>, afin de préserver la lisibilité et la valeur de diffusion.
     </div>
 
     <div class="box">
       <div style="font-weight:900;">Règle métier (démo)</div>
       <ul style="margin:8px 0 0 18px;font-weight:800;">
-        <li>Maximum : <strong>10 pubs par jour</strong></li>
-        <li>En principe : <strong>1 pub par commerçant et par jour</strong></li>
-        <li>À partir de <strong>16h00</strong>, si des places sont encore libres, un commerçant ayant déjà réservé peut reprendre une place disponible</li>
-        <li><strong>50 € HT</strong> la publicité unitaire</li>
-        <li><strong>Pack 5 pubs = 200 € HT</strong></li>
-        <li>Diffusion uniquement après validation du paiement</li>
-        <li>Facturation mensuelle centralisée via PSP</li>
+        <li><strong>10 publicités maximum par jour</strong></li>
+        <li><strong>1 publicité maximum par commerçant et par jour</strong></li>
+        <li>À partir de <strong>16h00</strong>, si toutes les places n’ont pas été prises, un commerçant ayant déjà réservé ce jour peut reprendre une place restée libre</li>
+        <li><strong>Tarif unitaire :</strong> 50 € HT par jour</li>
+        <li><strong>Pack 5 publicités :</strong> 200 € HT</li>
+        <li>La publicité n’est diffusée qu’après validation du paiement</li>
+        <li>Le paiement est traité par PSP avant diffusion</li>
+        <li>Le PSP assure ensuite la facturation mensuelle</li>
       </ul>
     </div>
 
     <div class="box">
       <div class="muted">
-        La réservation ci-dessous reste une démonstration locale. La version officielle ajoutera :
-        identité commerçant, contrôle 1 pub/jour, déblocage après 16h, validation paiement PSP et émission mensuelle.
+        La démo montre ici la logique de réservation. La version officielle ajoutera le contrôle automatique :
+        identité commerçant, limite 1 pub/jour, déblocage après 16h, paiement validé avant diffusion et suivi mensuel.
       </div>
     </div>
 
