@@ -1884,32 +1884,34 @@
     });
   }
 
-  function renderWellbeingPois(lat, lng){
-    if(!wellbeingMap || !window.L) return;
-    clearWellbeingPois();
+  function renderWellbeingPois(){
+  if(!wellbeingMap || !window.L) return;
 
-    WELLBEING_POINTS.forEach((p)=>{
-      const dist = distanceMeters(lat, lng, p.lat, p.lng);
+  clearWellbeingPois();
 
-      if(dist <= WELLBEING_RADIUS_METERS){
-        const icon = createPoiIcon(p.type);
-        const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
+  const bounds = wellbeingMap.getBounds();
 
-        marker.bindPopup(`
-          <div class="poiCard">
-            <img class="poiCardImg" src="${escapeHtml(p.img || "")}" alt="${escapeHtml(p.name || "")}">
-            <div class="poiCardTitle">${escapeHtml(p.name || "")}</div>
-            <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
-            <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
-            <div class="poiCardDist">À environ ${Math.round(dist)} m</div>
-          </div>
-        `);
+  WELLBEING_POINTS.forEach((p)=>{
+    const pointLatLng = L.latLng(p.lat, p.lng);
 
-        marker.addTo(wellbeingMap);
-        wellbeingPoiMarkers.push(marker);
-      }
-    });
-  }
+    if(bounds.pad(0.35).contains(pointLatLng)){
+      const icon = createPoiIcon(p.type);
+      const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
+
+      marker.bindPopup(`
+        <div class="poiCard">
+          <img class="poiCardImg" src="${escapeHtml(p.img || "")}" alt="${escapeHtml(p.name || "")}">
+          <div class="poiCardTitle">${escapeHtml(p.name || "")}</div>
+          <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
+          <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
+        </div>
+      `);
+
+      marker.addTo(wellbeingMap);
+      wellbeingPoiMarkers.push(marker);
+    }
+  });
+}
 
   function createUserIcon(deg){
     if(!window.L) return null;
@@ -1946,14 +1948,12 @@
       }
     }, true);
   }
-
-  function openWellbeingMap(){
-    initCompass();
-
-    if(typeof window.openModal !== "function"){
-      alert("Carte indisponible.");
-      return;
-    }
+        setTimeout(()=>{
+          try{
+            wellbeingMap.invalidateSize();
+            renderWellbeingPois();
+          }catch(e){}
+        }, 180);
 
     window.openModal("Carte bien-être", `
       <div class="box">
@@ -2005,11 +2005,14 @@
           maxZoom: 19,
           attribution: "&copy; OpenStreetMap"
         }).addTo(wellbeingMap);
+              wellbeingMap.on("moveend zoomend", ()=>{
+        renderWellbeingPois();
+      });
 
-        setTimeout(()=>{
+               setTimeout(()=>{
           try{
             wellbeingMap.invalidateSize();
-            renderWellbeingPois(50.586, 3.043);
+            renderWellbeingPois();
           }catch(e){}
         }, 180);
 
@@ -2057,7 +2060,7 @@
             }
 
             wellbeingMap.setView([lat, lng], 15);
-            renderWellbeingPois(lat, lng);
+            renderWellbeingPois();
           },
           ()=>{
             alert("Impossible d’obtenir la position.");
