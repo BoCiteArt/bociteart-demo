@@ -1398,120 +1398,149 @@ function initCompass(){
 
   }
 }
-      function openWellbeingMap(){
-        if(typeof window.openModal !== "function"){
-          alert("Carte indisponible.");
-          return;
-        }
+function openWellbeingMap(){
+  initCompass();
 
-        window.openModal("Carte bien-être", `
-          <div class="box">
-            <div class="muted">
-              Carte plein écran avec position actuelle et points utiles visibles dans un rayon de 3 km.
-            </div>
-          </div>
+  if(typeof window.openModal !== "function"){
+    alert("Carte indisponible.");
+    return;
+  }
 
-          <div id="wellbeingMapHost" style="height:420px;border-radius:16px;overflow:hidden;background:#e9e9e9;"></div>
+  window.openModal("Carte bien-être", `
+    <div class="box">
+      <div class="muted">
+        Carte plein écran avec position actuelle, orientation et points utiles visibles dans un rayon de 3 km.
+      </div>
+    </div>
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-            <button class="choiceBtn" id="wbLocateBtn" type="button">📍 Me localiser</button>
-            <button class="choiceBtn" id="wbStopBtn" type="button" style="background:#fff;">⏹ Arrêter</button>
-          </div>
-        `);
+    <div id="wellbeingMapHost" style="height:420px;border-radius:16px;overflow:hidden;background:#e9e9e9;"></div>
 
-        setTimeout(()=>{
-          const mapHost = document.getElementById("wellbeingMapHost");
-          const locateBtn = document.getElementById("wbLocateBtn");
-          const stopBtn = document.getElementById("wbStopBtn");
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+      <button class="choiceBtn" id="wbLocateBtn" type="button">📍 Me localiser</button>
+      <button class="choiceBtn" id="wbStopBtn" type="button" style="background:#fff;">⏹ Arrêter</button>
+    </div>
+  `);
 
-          if(!mapHost) return;
+  setTimeout(()=>{
+    const mapHost = document.getElementById("wellbeingMapHost");
+    const locateBtn = document.getElementById("wbLocateBtn");
+    const stopBtn = document.getElementById("wbStopBtn");
 
-          if(!window.L){
-            mapHost.innerHTML = `
-              <div style="padding:16px;font-weight:800;">
-                Leaflet n’est pas chargé.
-              </div>
-            `;
-            return;
-          }
+    if(!mapHost) return;
 
-          try{
-            if(wellbeingMap){
-              try{ wellbeingMap.remove(); }catch(e){}
-              wellbeingMap = null;
-            }
+    if(!window.L){
+      mapHost.innerHTML = `
+        <div style="padding:16px;font-weight:800;">
+          Leaflet n’est pas chargé.
+        </div>
+      `;
+      return;
+    }
 
-            wellbeingMap = L.map(mapHost).setView([50.586, 3.043], 14);
-
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-              maxZoom: 19,
-              attribution: "&copy; OpenStreetMap"
-            }).addTo(wellbeingMap);
-
-            setTimeout(()=>{
-              try{ wellbeingMap.invalidateSize(); }catch(e){}
-            }, 120);
-
-          }catch(e){
-            mapHost.innerHTML = `
-              <div style="padding:16px;font-weight:800;">
-                Erreur d’initialisation de la carte.
-              </div>
-            `;
-            return;
-          }
-
-          const startLocate = ()=>{
-            if(!navigator.geolocation){
-              alert("Géolocalisation indisponible sur cet appareil.");
-              return;
-            }
-
-            if(wellbeingWatchId !== null){
-              navigator.geolocation.clearWatch(wellbeingWatchId);
-              wellbeingWatchId = null;
-            }
-
-            wellbeingWatchId = navigator.geolocation.watchPosition(
-              (pos)=>{
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-
-                if(!wellbeingMap) return;
-
-                const icon = createUserIcon(0);
-
-                if(!wellbeingUserMarker){
-                  wellbeingUserMarker = L.marker([lat, lng], icon ? { icon } : undefined).addTo(wellbeingMap);
-                }else{
-                  wellbeingUserMarker.setLatLng([lat, lng]);
-                }
-
-                wellbeingMap.setView([lat, lng], 15);
-                renderWellbeingPois(lat, lng);
-              },
-              ()=>{
-                alert("Impossible d’obtenir la position.");
-              },
-              {
-                enableHighAccuracy:true,
-                maximumAge:10000,
-                timeout:10000
-              }
-            );
-          };
-
-          const stopLocate = ()=>{
-            if(wellbeingWatchId !== null){
-              navigator.geolocation.clearWatch(wellbeingWatchId);
-              wellbeingWatchId = null;
-            }
-          };
-
-          if(locateBtn) locateBtn.onclick = startLocate;
-          if(stopBtn) stopBtn.onclick = stopLocate;
-        }, 0);
+    try{
+      if(wellbeingMap){
+        try{ wellbeingMap.remove(); }catch(e){}
+        wellbeingMap = null;
       }
+
+      if(wellbeingUserMarker){
+        try{ wellbeingUserMarker.remove(); }catch(e){}
+        wellbeingUserMarker = null;
+      }
+
+      clearWellbeingPois();
+
+      wellbeingMap = L.map(mapHost).setView([50.586, 3.043], 14);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap"
+      }).addTo(wellbeingMap);
+
+      setTimeout(()=>{
+        try{ wellbeingMap.invalidateSize(); }catch(e){}
+      }, 120);
+
+    }catch(e){
+      mapHost.innerHTML = `
+        <div style="padding:16px;font-weight:800;">
+          Erreur d’initialisation de la carte.
+        </div>
+      `;
+      return;
+    }
+
+    const startLocate = ()=>{
+      if(!navigator.geolocation){
+        alert("Géolocalisation indisponible sur cet appareil.");
+        return;
+      }
+
+      if(typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function"){
+        DeviceOrientationEvent.requestPermission().catch(()=>{}).then(()=>{});
+      }
+
+      if(wellbeingWatchId !== null){
+        navigator.geolocation.clearWatch(wellbeingWatchId);
+        wellbeingWatchId = null;
+      }
+
+      wellbeingWatchId = navigator.geolocation.watchPosition(
+        (pos)=>{
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+
+          if(!wellbeingMap) return;
+
+          const icon = createUserIcon(currentHeading);
+
+          if(!wellbeingUserMarker){
+            wellbeingUserMarker = L.marker([lat, lng], icon ? { icon } : undefined).addTo(wellbeingMap);
+          }else{
+            wellbeingUserMarker.setLatLng([lat, lng]);
+            wellbeingUserMarker.setIcon(createUserIcon(currentHeading));
+          }
+
+          wellbeingMap.setView([lat, lng], 15);
+          renderWellbeingPois(lat, lng);
+        },
+        ()=>{
+          alert("Impossible d’obtenir la position.");
+        },
+        {
+          enableHighAccuracy:true,
+          maximumAge:3000,
+          timeout:10000
+        }
+      );
+
+      if(window.__wellbeingHeadingTimer){
+        clearInterval(window.__wellbeingHeadingTimer);
+      }
+
+      window.__wellbeingHeadingTimer = setInterval(()=>{
+        if(wellbeingUserMarker){
+          wellbeingUserMarker.setIcon(createUserIcon(currentHeading));
+        }
+      }, 500);
+    };
+
+    const stopLocate = ()=>{
+      if(wellbeingWatchId !== null){
+        navigator.geolocation.clearWatch(wellbeingWatchId);
+        wellbeingWatchId = null;
+      }
+
+      if(window.__wellbeingHeadingTimer){
+        clearInterval(window.__wellbeingHeadingTimer);
+        window.__wellbeingHeadingTimer = null;
+      }
+    };
+
+    if(locateBtn) locateBtn.onclick = startLocate;
+    if(stopBtn) stopBtn.onclick = stopLocate;
+  }, 0);
+}
       
       function setVh(){
         const vh = window.innerHeight * 0.01;
