@@ -1424,603 +1424,609 @@
   const $ = (id) => document.getElementById(id);
   const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
   const isFn = (v) => typeof v === "function";
+
   const tickerItems = [
-  {
-    title:"🥐 Boulangerie Croquet",
-    subtitle:"Offre spéciale partenaires • Démo",
-    img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=60"
-  },
-  {
-    title:"💊 Pharmacie Richardson",
-    subtitle:"Bien-être & santé • Démo",
-    img:"https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=1200&q=60"
-  },
-  {
-    title:"🌸 Anaïs Fleurs",
-    subtitle:"Bouquets & événements • Démo",
-    img:"https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=60"
-  }
-];
+    {
+      title:"🥐 Boulangerie Croquet",
+      subtitle:"Offre spéciale partenaires • Démo",
+      img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=60"
+    },
+    {
+      title:"💊 Pharmacie Richardson",
+      subtitle:"Bien-être & santé • Démo",
+      img:"https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=1200&q=60"
+    },
+    {
+      title:"🌸 Anaïs Fleurs",
+      subtitle:"Bouquets & événements • Démo",
+      img:"https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=60"
+    }
+  ];
 
-let tickerIdx = 0;
+  let tickerIdx = 0;
 
-function setTicker(i){
-  const it = tickerItems[i];
-  if($("tickerImg")) $("tickerImg").src = it.img;
-  if($("tickerTitleA")) $("tickerTitleA").textContent = it.title;
-  if($("tickerSubA")) $("tickerSubA").textContent = it.subtitle || "";
-  if($("tickerTitleB")) $("tickerTitleB").textContent = it.title;
-  if($("tickerSubB")) $("tickerSubB").textContent = it.subtitle || "";
-}
-
-setTicker(0);
-
-setInterval(()=>{
-  tickerIdx = (tickerIdx + 1) % tickerItems.length;
-  setTicker(tickerIdx);
-}, 4000);
-  
-function lockScroll(lock){
-  document.body.classList.toggle("modalOpen", !!lock);
-}
-
-const modal = $("modal");
-const modalTitle = $("modalTitle");
-const modalBody = $("modalBody");
-
-function closeModal(){
-  if(!modal) return;
-  modal.classList.remove("open");
-  modal.setAttribute("aria-hidden", "true");
-  lockScroll(false);
-}
-
-function openModal(title, html){
-  if(!modal || !modalTitle || !modalBody) return;
-  modalTitle.textContent = title;
-  modalBody.innerHTML = html;
-  modal.classList.add("open");
-  modal.setAttribute("aria-hidden", "false");
-  lockScroll(true);
-}
-
-window.openModal = openModal;
-window.closeModal = closeModal;
-
-on($("modalClose"), "click", closeModal);
-on($("xBtn"), "click", closeModal);
-
-document.addEventListener("keydown", (e)=>{
-  if(e.key === "Escape"){
-    closeModal();
-  }
-});
-
-let wellbeingMap = null;
-let wellbeingUserMarker = null;
-let wellbeingPoiMarkers = [];
-let wellbeingWatchId = null;
-let currentHeading = 0;
-
-const WELLBEING_RADIUS_METERS = 3000;
-const WELLBEING_POINTS = [
-  {
-    name:"Parc sportif",
-    desc:"Espace de sport et promenade.",
-    lat:50.586,
-    lng:3.043,
-    type:"sport",
-    address:"Secteur centre",
-    img:"https://images.unsplash.com/photo-1547347298-4074fc3086f0?auto=format&fit=crop&w=900&q=60"
-  },
-  {
-    name:"Bois et parcours",
-    desc:"Balade, marche et détente.",
-    lat:50.589,
-    lng:3.038,
-    type:"walk",
-    address:"Secteur nord-ouest",
-    img:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=60"
-  },
-  {
-    name:"Salle de sport",
-    desc:"Activités sportives en intérieur.",
-    lat:50.584,
-    lng:3.049,
-    type:"gym",
-    address:"Secteur est",
-    img:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=60"
-  },
-  {
-    name:"Parc urbain",
-    desc:"Parc de quartier pour détente.",
-    lat:50.587,
-    lng:3.046,
-    type:"park",
-    address:"Quartier central",
-    img:"https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=60"
-  },
-  {
-    name:"Espace vert central",
-    desc:"Square et promenade.",
-    lat:50.585,
-    lng:3.040,
-    type:"park",
-    address:"Centre-ville",
-    img:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=60"
-  },
-  {
-    name:"Piste cyclable nord",
-    desc:"Accès voie vélo.",
-    lat:50.592,
-    lng:3.045,
-    type:"bike",
-    address:"Secteur nord",
-    img:"https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=900&q=60"
-  },
-  {
-    name:"Piste cyclable centre",
-    desc:"Voie cyclable sécurisée.",
-    lat:50.586,
-    lng:3.050,
-    type:"bike",
-    address:"Centre-est",
-    img:"https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=900&q=60"
-  },
-  {
-    name:"Arrêt de bus Mairie",
-    desc:"Point d’arrêt transport en commun.",
-    lat:50.585,
-    lng:3.047,
-    type:"bus",
-    address:"Avenue principale",
-    img:"https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=900&q=60"
-  },
-  {
-    name:"Arrêt de bus Centre",
-    desc:"Accès bus secteur central.",
-    lat:50.588,
-    lng:3.041,
-    type:"bus",
-    address:"Centre-ville",
-    img:"https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?auto=format&fit=crop&w=900&q=60"
-  },
-  {
-    name:"Supérette du centre",
-    desc:"Commerce de proximité.",
-    lat:50.584,
-    lng:3.044,
-    type:"shop",
-    address:"Centre-ville",
-    img:"https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=60"
-  },
-  {
-    name:"Mini-market quartier nord",
-    desc:"Courses rapides et dépannage.",
-    lat:50.590,
-    lng:3.042,
-    type:"shop",
-    address:"Quartier nord",
-    img:"https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=900&q=60"
-  },
-  {
-    name:"Restaurant place centrale",
-    desc:"Restauration sur place.",
-    lat:50.586,
-    lng:3.048,
-    type:"food",
-    address:"Place centrale",
-    img:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=60"
-  },
-  {
-    name:"Snack du quartier",
-    desc:"Petite restauration rapide.",
-    lat:50.583,
-    lng:3.046,
-    type:"food",
-    address:"Secteur sud-centre",
-    img:"https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=60"
-  }
-];
-function escapeHtml(s){
-  return String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-function clearWellbeingPois(){
-  wellbeingPoiMarkers.forEach((m)=>{
-    try{
-      if(wellbeingMap) wellbeingMap.removeLayer(m);
-    }catch(e){}
-  });
-  wellbeingPoiMarkers = [];
-}
-
-function distanceMeters(lat1, lng1, lat2, lng2){
-  const toRad = (v) => v * Math.PI / 180;
-  const R = 6371000;
-  const dLat = toRad(lat2 - lat1);
-  const dLng = toRad(lng2 - lng1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-    Math.sin(dLng / 2) * Math.sin(dLng / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
-function createPoiIcon(type){
-  if(!window.L) return null;
-
-  let svg = `
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-      <circle cx="12" cy="12" r="5" fill="none" stroke="#333" stroke-width="1.8"/>
-    </svg>
-  `;
-
-  switch(String(type || "").toLowerCase()){
-    case "sport":
-    case "gym":
-      svg = `
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-          <path d="M3 10v4M6 8v8M18 8v8M21 10v4M6 12h12" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      `;
-      break;
-
-    case "walk":
-    case "park":
-      svg = `
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-          <path d="M12 20v-5M8 12c0-2.2 1.8-4 4-4s4 1.8 4 4c0 1.6-1 3.1-2.5 3.7H10.5C9 15.1 8 13.6 8 12Z" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      `;
-      break;
-
-    case "bike":
-      svg = `
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-          <circle cx="6" cy="17" r="3" fill="none" stroke="#1f1f1f" stroke-width="1.8"/>
-          <circle cx="18" cy="17" r="3" fill="none" stroke="#1f1f1f" stroke-width="1.8"/>
-          <path d="M9 17l3-7h3M10 10h4M12 17l-3-4M12 17l3-4" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      `;
-      break;
-
-    case "bus":
-      svg = `
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-          <rect x="5" y="6" width="14" height="10" rx="2" fill="none" stroke="#1f1f1f" stroke-width="1.8"/>
-          <path d="M8 16v2M16 16v2M7 10h10" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round"/>
-          <circle cx="8" cy="18" r="1" fill="#1f1f1f"/>
-          <circle cx="16" cy="18" r="1" fill="#1f1f1f"/>
-        </svg>
-      `;
-      break;
-
-    case "shop":
-      svg = `
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-          <path d="M7 8h13l-1.2 6.5a2 2 0 0 1-2 1.5H10a2 2 0 0 1-2-1.6L6.5 5H4" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="10" cy="19" r="1.2" fill="#1f1f1f"/>
-          <circle cx="17" cy="19" r="1.2" fill="#1f1f1f"/>
-        </svg>
-      `;
-      break;
-
-    case "food":
-      svg = `
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-          <path d="M7 4v7M5 4v4M9 4v4M7 11v9M15 4v9M15 13l3-2V4" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      `;
-      break;
-
-    case "health":
-      svg = `
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-          <path d="M12 5v14M5 12h14" fill="none" stroke="#1f1f1f" stroke-width="2.2" stroke-linecap="round"/>
-        </svg>
-      `;
-      break;
+  function setTicker(i){
+    const it = tickerItems[i];
+    if(!it) return;
+    if($("tickerImg")) $("tickerImg").src = it.img;
+    if($("tickerTitleA")) $("tickerTitleA").textContent = it.title;
+    if($("tickerSubA")) $("tickerSubA").textContent = it.subtitle || "";
+    if($("tickerTitleB")) $("tickerTitleB").textContent = it.title;
+    if($("tickerSubB")) $("tickerSubB").textContent = it.subtitle || "";
   }
 
-  return L.divIcon({
-    className: "",
-    html: `<div class="wbPoiIcon" aria-hidden="true">${svg}</div>`,
-    iconSize: [30,30],
-    iconAnchor: [15,15],
-    popupAnchor: [0,-14]
-  });
-}
+  setTicker(0);
 
-function renderWellbeingPois(lat, lng){
-  if(!wellbeingMap || !window.L) return;
-  clearWellbeingPois();
+  setInterval(()=>{
+    tickerIdx = (tickerIdx + 1) % tickerItems.length;
+    setTicker(tickerIdx);
+  }, 4000);
 
-  WELLBEING_POINTS.forEach((p)=>{
-    const dist = distanceMeters(lat, lng, p.lat, p.lng);
+  function lockScroll(lock){
+    document.body.classList.toggle("modalOpen", !!lock);
+  }
 
-    if(dist <= WELLBEING_RADIUS_METERS){
-      const icon = createPoiIcon(p.type);
-      const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
+  const modal = $("modal");
+  const modalTitle = $("modalTitle");
+  const modalBody = $("modalBody");
 
-      marker.bindPopup(`
-        <div class="poiCard">
-          <img class="poiCardImg" src="${escapeHtml(p.img || "")}" alt="${escapeHtml(p.name || "")}">
-          <div class="poiCardTitle">${escapeHtml(p.name || "")}</div>
-          <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
-          <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
-          <div class="poiCardDist">À environ ${Math.round(dist)} m</div>
-        </div>
-      `);
+  function closeModal(){
+    if(!modal) return;
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    lockScroll(false);
+  }
 
-      marker.addTo(wellbeingMap);
-      wellbeingPoiMarkers.push(marker);
+  function openModal(title, html){
+    if(!modal || !modalTitle || !modalBody) return;
+    modalTitle.textContent = title;
+    modalBody.innerHTML = html;
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    lockScroll(true);
+  }
+
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+
+  on($("modalClose"), "click", closeModal);
+  on($("xBtn"), "click", closeModal);
+
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape"){
+      closeModal();
     }
   });
-}
 
-function createUserIcon(deg){
-  if(!window.L) return null;
+  let wellbeingMap = null;
+  let wellbeingUserMarker = null;
+  let wellbeingPoiMarkers = [];
+  let wellbeingWatchId = null;
+  let currentHeading = 0;
 
-  return L.divIcon({
-    className: "",
-    html: `
-      <div class="userArrowWrap" aria-hidden="true">
-        <div class="userArrow" style="transform:rotate(${deg}deg);"></div>
-      </div>
-    `,
-    iconSize: [28,28],
-    iconAnchor: [14,14]
-  });
-}
+  const WELLBEING_RADIUS_METERS = 3000;
 
-function initCompass(){
-  if(window.__wellbeingCompassInit) return;
-  window.__wellbeingCompassInit = true;
-
-  window.addEventListener("deviceorientationabsolute", (event)=>{
-    if(event.alpha !== null && !isNaN(event.alpha)){
-      currentHeading = 360 - event.alpha;
+  const WELLBEING_POINTS = [
+    {
+      name:"Parc sportif",
+      desc:"Espace de sport et promenade.",
+      lat:50.586,
+      lng:3.043,
+      type:"sport",
+      address:"Secteur centre",
+      img:"https://images.unsplash.com/photo-1547347298-4074fc3086f0?auto=format&fit=crop&w=900&q=60"
+    },
+    {
+      name:"Bois et parcours",
+      desc:"Balade, marche et détente.",
+      lat:50.589,
+      lng:3.038,
+      type:"walk",
+      address:"Secteur nord-ouest",
+      img:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=60"
+    },
+    {
+      name:"Salle de sport",
+      desc:"Activités sportives en intérieur.",
+      lat:50.584,
+      lng:3.049,
+      type:"gym",
+      address:"Secteur est",
+      img:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=60"
+    },
+    {
+      name:"Parc urbain",
+      desc:"Parc de quartier pour détente.",
+      lat:50.587,
+      lng:3.046,
+      type:"park",
+      address:"Quartier central",
+      img:"https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=60"
+    },
+    {
+      name:"Espace vert central",
+      desc:"Square et promenade.",
+      lat:50.585,
+      lng:3.040,
+      type:"park",
+      address:"Centre-ville",
+      img:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=60"
+    },
+    {
+      name:"Piste cyclable nord",
+      desc:"Accès voie vélo.",
+      lat:50.592,
+      lng:3.045,
+      type:"bike",
+      address:"Secteur nord",
+      img:"https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=900&q=60"
+    },
+    {
+      name:"Piste cyclable centre",
+      desc:"Voie cyclable sécurisée.",
+      lat:50.586,
+      lng:3.050,
+      type:"bike",
+      address:"Centre-est",
+      img:"https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=900&q=60"
+    },
+    {
+      name:"Arrêt de bus Mairie",
+      desc:"Point d’arrêt transport en commun.",
+      lat:50.585,
+      lng:3.047,
+      type:"bus",
+      address:"Avenue principale",
+      img:"https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=900&q=60"
+    },
+    {
+      name:"Arrêt de bus Centre",
+      desc:"Accès bus secteur central.",
+      lat:50.588,
+      lng:3.041,
+      type:"bus",
+      address:"Centre-ville",
+      img:"https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?auto=format&fit=crop&w=900&q=60"
+    },
+    {
+      name:"Supérette du centre",
+      desc:"Commerce de proximité.",
+      lat:50.584,
+      lng:3.044,
+      type:"shop",
+      address:"Centre-ville",
+      img:"https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=60"
+    },
+    {
+      name:"Mini-market quartier nord",
+      desc:"Courses rapides et dépannage.",
+      lat:50.590,
+      lng:3.042,
+      type:"shop",
+      address:"Quartier nord",
+      img:"https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=900&q=60"
+    },
+    {
+      name:"Restaurant place centrale",
+      desc:"Restauration sur place.",
+      lat:50.586,
+      lng:3.048,
+      type:"food",
+      address:"Place centrale",
+      img:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=60"
+    },
+    {
+      name:"Snack du quartier",
+      desc:"Petite restauration rapide.",
+      lat:50.583,
+      lng:3.046,
+      type:"food",
+      address:"Secteur sud-centre",
+      img:"https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=60"
     }
-  }, true);
+  ];
 
-  window.addEventListener("deviceorientation", (event)=>{
-    if(typeof event.webkitCompassHeading === "number"){
-      currentHeading = event.webkitCompassHeading;
-      return;
-    }
-    if(event.alpha !== null && !isNaN(event.alpha)){
-      currentHeading = 360 - event.alpha;
-    }
-  }, true);
-}
-
-function openWellbeingMap(){
-  initCompass();
-
-  if(typeof window.openModal !== "function"){
-    alert("Carte indisponible.");
-    return;
+  function escapeHtml(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 
-  window.openModal("Carte bien-être", `
-    <div class="box">
-      <div class="muted">
-        Carte plein écran avec position actuelle, orientation et points utiles visibles dans un rayon de 3 km.
-      </div>
-    </div>
+  function clearWellbeingPois(){
+    wellbeingPoiMarkers.forEach((m)=>{
+      try{
+        if(wellbeingMap) wellbeingMap.removeLayer(m);
+      }catch(e){}
+    });
+    wellbeingPoiMarkers = [];
+  }
 
-    <div id="wellbeingMapHost" style="height:420px;border-radius:16px;overflow:hidden;background:#e9e9e9;"></div>
+  function distanceMeters(lat1, lng1, lat2, lng2){
+    const toRad = (v) => v * Math.PI / 180;
+    const R = 6371000;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
 
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-      <button class="choiceBtn" id="wbLocateBtn" type="button">📍 Me localiser</button>
-      <button class="choiceBtn" id="wbStopBtn" type="button" style="background:#fff;">⏹ Arrêter</button>
-    </div>
-  `);
+  function createPoiIcon(type){
+    if(!window.L) return null;
 
-  setTimeout(()=>{
-    const mapHost = document.getElementById("wellbeingMapHost");
-    const locateBtn = document.getElementById("wbLocateBtn");
-    const stopBtn = document.getElementById("wbStopBtn");
+    let svg = `
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <circle cx="12" cy="12" r="5" fill="none" stroke="#333" stroke-width="1.8"/>
+      </svg>
+    `;
 
-    if(!mapHost) return;
+    switch(String(type || "").toLowerCase()){
+      case "sport":
+      case "gym":
+        svg = `
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M3 10v4M6 8v8M18 8v8M21 10v4M6 12h12" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        `;
+        break;
 
-    if(!window.L){
-      mapHost.innerHTML = `
-        <div style="padding:16px;font-weight:800;">
-          Leaflet n’est pas chargé.
-        </div>
-      `;
-      return;
+      case "walk":
+      case "park":
+        svg = `
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M12 20v-5M8 12c0-2.2 1.8-4 4-4s4 1.8 4 4c0 1.6-1 3.1-2.5 3.7H10.5C9 15.1 8 13.6 8 12Z" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        `;
+        break;
+
+      case "bike":
+        svg = `
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <circle cx="6" cy="17" r="3" fill="none" stroke="#1f1f1f" stroke-width="1.8"/>
+            <circle cx="18" cy="17" r="3" fill="none" stroke="#1f1f1f" stroke-width="1.8"/>
+            <path d="M9 17l3-7h3M10 10h4M12 17l-3-4M12 17l3-4" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        `;
+        break;
+
+      case "bus":
+        svg = `
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <rect x="5" y="6" width="14" height="10" rx="2" fill="none" stroke="#1f1f1f" stroke-width="1.8"/>
+            <path d="M8 16v2M16 16v2M7 10h10" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="8" cy="18" r="1" fill="#1f1f1f"/>
+            <circle cx="16" cy="18" r="1" fill="#1f1f1f"/>
+          </svg>
+        `;
+        break;
+
+      case "shop":
+        svg = `
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M7 8h13l-1.2 6.5a2 2 0 0 1-2 1.5H10a2 2 0 0 1-2-1.6L6.5 5H4" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="10" cy="19" r="1.2" fill="#1f1f1f"/>
+            <circle cx="17" cy="19" r="1.2" fill="#1f1f1f"/>
+          </svg>
+        `;
+        break;
+
+      case "food":
+        svg = `
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M7 4v7M5 4v4M9 4v4M7 11v9M15 4v9M15 13l3-2V4" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        `;
+        break;
+
+      case "health":
+        svg = `
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" fill="none" stroke="#1f1f1f" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        `;
+        break;
     }
 
-    try{
-      if(wellbeingMap){
-        try{ wellbeingMap.remove(); }catch(e){}
-        wellbeingMap = null;
+    return L.divIcon({
+      className: "",
+      html: `<div class="wbPoiIcon" aria-hidden="true">${svg}</div>`,
+      iconSize: [30,30],
+      iconAnchor: [15,15],
+      popupAnchor: [0,-14]
+    });
+  }
+
+  function renderWellbeingPois(lat, lng){
+    if(!wellbeingMap || !window.L) return;
+    clearWellbeingPois();
+
+    WELLBEING_POINTS.forEach((p)=>{
+      const dist = distanceMeters(lat, lng, p.lat, p.lng);
+
+      if(dist <= WELLBEING_RADIUS_METERS){
+        const icon = createPoiIcon(p.type);
+        const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
+
+        marker.bindPopup(`
+          <div class="poiCard">
+            <img class="poiCardImg" src="${escapeHtml(p.img || "")}" alt="${escapeHtml(p.name || "")}">
+            <div class="poiCardTitle">${escapeHtml(p.name || "")}</div>
+            <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
+            <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
+            <div class="poiCardDist">À environ ${Math.round(dist)} m</div>
+          </div>
+        `);
+
+        marker.addTo(wellbeingMap);
+        wellbeingPoiMarkers.push(marker);
       }
+    });
+  }
 
-      if(wellbeingUserMarker){
-        try{ wellbeingUserMarker.remove(); }catch(e){}
-        wellbeingUserMarker = null;
-      }
+  function createUserIcon(deg){
+    if(!window.L) return null;
 
-      clearWellbeingPois();
-
-      wellbeingMap = L.map(mapHost).setView([50.586, 3.043], 14);
-
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: "&copy; OpenStreetMap"
-      }).addTo(wellbeingMap);
-
-      setTimeout(()=>{
-        try{ wellbeingMap.invalidateSize(); }catch(e){}
-      }, 120);
-
-    }catch(e){
-      mapHost.innerHTML = `
-        <div style="padding:16px;font-weight:800;">
-          Erreur d’initialisation de la carte.
+    return L.divIcon({
+      className: "",
+      html: `
+        <div class="userArrowWrap" aria-hidden="true">
+          <div class="userArrow" style="transform:rotate(${deg}deg);"></div>
         </div>
-      `;
+      `,
+      iconSize: [28,28],
+      iconAnchor: [14,14]
+    });
+  }
+
+  function initCompass(){
+    if(window.__wellbeingCompassInit) return;
+    window.__wellbeingCompassInit = true;
+
+    window.addEventListener("deviceorientationabsolute", (event)=>{
+      if(event.alpha !== null && !isNaN(event.alpha)){
+        currentHeading = 360 - event.alpha;
+      }
+    }, true);
+
+    window.addEventListener("deviceorientation", (event)=>{
+      if(typeof event.webkitCompassHeading === "number"){
+        currentHeading = event.webkitCompassHeading;
+        return;
+      }
+      if(event.alpha !== null && !isNaN(event.alpha)){
+        currentHeading = 360 - event.alpha;
+      }
+    }, true);
+  }
+
+  function openWellbeingMap(){
+    initCompass();
+
+    if(typeof window.openModal !== "function"){
+      alert("Carte indisponible.");
       return;
     }
 
-    const startLocate = ()=>{
-      if(!navigator.geolocation){
-        alert("Géolocalisation indisponible sur cet appareil.");
+    window.openModal("Carte bien-être", `
+      <div class="box">
+        <div class="muted">
+          Carte plein écran avec position actuelle, orientation et points utiles visibles dans un rayon de 3 km.
+        </div>
+      </div>
+
+      <div id="wellbeingMapHost" style="height:420px;border-radius:16px;overflow:hidden;background:#e9e9e9;"></div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button class="choiceBtn" id="wbLocateBtn" type="button">📍 Me localiser</button>
+        <button class="choiceBtn" id="wbStopBtn" type="button" style="background:#fff;">⏹ Arrêter</button>
+      </div>
+    `);
+
+    setTimeout(()=>{
+      const mapHost = document.getElementById("wellbeingMapHost");
+      const locateBtn = document.getElementById("wbLocateBtn");
+      const stopBtn = document.getElementById("wbStopBtn");
+
+      if(!mapHost) return;
+
+      if(!window.L){
+        mapHost.innerHTML = `
+          <div style="padding:16px;font-weight:800;">
+            Leaflet n’est pas chargé.
+          </div>
+        `;
         return;
       }
 
-      if(typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function"){
-        DeviceOrientationEvent.requestPermission().catch(()=>{}).then(()=>{});
+      try{
+        if(wellbeingMap){
+          try{ wellbeingMap.remove(); }catch(e){}
+          wellbeingMap = null;
+        }
+
+        if(wellbeingUserMarker){
+          try{ wellbeingUserMarker.remove(); }catch(e){}
+          wellbeingUserMarker = null;
+        }
+
+        clearWellbeingPois();
+
+        wellbeingMap = L.map(mapHost).setView([50.586, 3.043], 14);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: "&copy; OpenStreetMap"
+        }).addTo(wellbeingMap);
+
+        setTimeout(()=>{
+          try{ wellbeingMap.invalidateSize(); }catch(e){}
+        }, 120);
+
+      }catch(e){
+        mapHost.innerHTML = `
+          <div style="padding:16px;font-weight:800;">
+            Erreur d’initialisation de la carte.
+          </div>
+        `;
+        return;
       }
 
-      if(wellbeingWatchId !== null){
-        navigator.geolocation.clearWatch(wellbeingWatchId);
-        wellbeingWatchId = null;
-      }
+      const startLocate = ()=>{
+        if(!navigator.geolocation){
+          alert("Géolocalisation indisponible sur cet appareil.");
+          return;
+        }
 
-      wellbeingWatchId = navigator.geolocation.watchPosition(
-        (pos)=>{
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
+        if(typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function"){
+          DeviceOrientationEvent.requestPermission().catch(()=>{}).then(()=>{});
+        }
 
-          if(!wellbeingMap) return;
+        if(wellbeingWatchId !== null){
+          navigator.geolocation.clearWatch(wellbeingWatchId);
+          wellbeingWatchId = null;
+        }
 
-          const icon = createUserIcon(currentHeading);
+        wellbeingWatchId = navigator.geolocation.watchPosition(
+          (pos)=>{
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
 
-          if(!wellbeingUserMarker){
-            wellbeingUserMarker = L.marker([lat, lng], icon ? { icon } : undefined).addTo(wellbeingMap);
-          }else{
-            wellbeingUserMarker.setLatLng([lat, lng]);
+            if(!wellbeingMap) return;
+
+            const icon = createUserIcon(currentHeading);
+
+            if(!wellbeingUserMarker){
+              wellbeingUserMarker = L.marker([lat, lng], icon ? { icon } : undefined).addTo(wellbeingMap);
+            }else{
+              wellbeingUserMarker.setLatLng([lat, lng]);
+              wellbeingUserMarker.setIcon(createUserIcon(currentHeading));
+            }
+
+            wellbeingMap.setView([lat, lng], 15);
+            renderWellbeingPois(lat, lng);
+          },
+          ()=>{
+            alert("Impossible d’obtenir la position.");
+          },
+          {
+            enableHighAccuracy:true,
+            maximumAge:3000,
+            timeout:10000
+          }
+        );
+
+        if(window.__wellbeingHeadingTimer){
+          clearInterval(window.__wellbeingHeadingTimer);
+        }
+
+        window.__wellbeingHeadingTimer = setInterval(()=>{
+          if(wellbeingUserMarker){
             wellbeingUserMarker.setIcon(createUserIcon(currentHeading));
           }
+        }, 500);
+      };
 
-          wellbeingMap.setView([lat, lng], 15);
-          renderWellbeingPois(lat, lng);
-        },
-        ()=>{
-          alert("Impossible d’obtenir la position.");
-        },
-        {
-          enableHighAccuracy:true,
-          maximumAge:3000,
-          timeout:10000
+      const stopLocate = ()=>{
+        if(wellbeingWatchId !== null){
+          navigator.geolocation.clearWatch(wellbeingWatchId);
+          wellbeingWatchId = null;
         }
-      );
 
-      if(window.__wellbeingHeadingTimer){
-        clearInterval(window.__wellbeingHeadingTimer);
-      }
-
-      window.__wellbeingHeadingTimer = setInterval(()=>{
-        if(wellbeingUserMarker){
-          wellbeingUserMarker.setIcon(createUserIcon(currentHeading));
+        if(window.__wellbeingHeadingTimer){
+          clearInterval(window.__wellbeingHeadingTimer);
+          window.__wellbeingHeadingTimer = null;
         }
-      }, 500);
-    };
+      };
 
-    const stopLocate = ()=>{
-      if(wellbeingWatchId !== null){
-        navigator.geolocation.clearWatch(wellbeingWatchId);
-        wellbeingWatchId = null;
-      }
-
-      if(window.__wellbeingHeadingTimer){
-        clearInterval(window.__wellbeingHeadingTimer);
-        window.__wellbeingHeadingTimer = null;
-      }
-    };
-
-    if(locateBtn) locateBtn.onclick = startLocate;
-    if(stopBtn) stopBtn.onclick = stopLocate;
-  }, 0);
-}
-
-window.tapeAds = [
-  { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-  { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
-  { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
-  { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
-];
-
-function renderTape(){
-  const track = $("sportTapeTrack");
-  if(!track) return;
-  if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
-
-  const doubled = window.tapeAds.concat(window.tapeAds);
-  track.innerHTML = doubled.map((a)=>{
-    const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
-    return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
-  }).join("");
-}
-
-window.renderTape = renderTape;
-renderTape();
-
-const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
-
-function mairieLoad(){
-  try{
-    const raw = localStorage.getItem(MAIRIE_STORE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  }catch(e){
-    return {};
+      if(locateBtn) locateBtn.onclick = startLocate;
+      if(stopBtn) stopBtn.onclick = stopLocate;
+    }, 0);
   }
-}
 
-function mairieSave(obj){
-  try{ localStorage.setItem(MAIRIE_STORE_KEY, JSON.stringify(obj)); }catch(e){}
-}
+  window.tapeAds = [
+    { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
+    { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
+    { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
+    { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
+  ];
 
-function renderMairieTicker(){
-  const track = $("mairieTickerTrack");
-  if(!track) return;
-  const db = mairieLoad();
-  const msg = (db.message && String(db.message).trim())
-    ? String(db.message).trim()
-    : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+  function renderTape(){
+    const track = $("sportTapeTrack");
+    if(!track) return;
+    if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
 
-  track.innerHTML = [msg, msg].map(m => `<span>${escapeHtml(m)}</span>`).join("");
-}
+    const doubled = window.tapeAds.concat(window.tapeAds);
+    track.innerHTML = doubled.map((a)=>{
+      const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
+      return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
+    }).join("");
+  }
 
-renderMairieTicker();
-window.renderMairieTicker = renderMairieTicker;
-window.mairieLoad = mairieLoad;
-window.mairieSave = mairieSave;
-    document.querySelectorAll("[data-open]").forEach((el)=>{
-  el.addEventListener("click", ()=>{
-    const key = el.getAttribute("data-open");
+  window.renderTape = renderTape;
+  renderTape();
 
-    if(key === "oeuvres"){
-      openModal("Œuvres", `
-        <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (structure)</div>
-        <div class="box">
-          <strong>Cadre :</strong> contenus illustratifs en démo. Les informations
-          (lieux, orientation) dépendent du téléphone et des sources disponibles.
-        </div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Carte des fresques (quartiers)</li>
-          <li>Fiche œuvre : artiste • mécène • remerciements</li>
-          <li>Scan QR / BLE à proximité</li>
-          <li>Audio : voix féminine douce (lecture des contenus)</li>
-          <li>Mode visite : guidage simple</li>
-          <li>Reconnaissance : bocitecoins selon règles locales</li>
-        </ul>
-        <div class="muted" style="margin-top:10px;">(Démo) Structure présentée à titre de démonstration.</div>
-      `);
-      return;
+  const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
+
+  function mairieLoad(){
+    try{
+      const raw = localStorage.getItem(MAIRIE_STORE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){
+      return {};
     }
+  }
 
+  function mairieSave(obj){
+    try{ localStorage.setItem(MAIRIE_STORE_KEY, JSON.stringify(obj)); }catch(e){}
+  }
+
+  function renderMairieTicker(){
+    const track = $("mairieTickerTrack");
+    if(!track) return;
+    const db = mairieLoad();
+    const msg = (db.message && String(db.message).trim())
+      ? String(db.message).trim()
+      : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+
+    track.innerHTML = [msg, msg].map(m => `<span>${escapeHtml(m)}</span>`).join("");
+  }
+
+  renderMairieTicker();
+  window.renderMairieTicker = renderMairieTicker;
+  window.mairieLoad = mairieLoad;
+  window.mairieSave = mairieSave;
+
+  document.querySelectorAll("[data-open]").forEach((el)=>{
+    el.addEventListener("click", ()=>{
+      const key = el.getAttribute("data-open");
+
+      if(key === "oeuvres"){
+        openModal("Œuvres", `
+          <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (structure)</div>
+          <div class="box">
+            <strong>Cadre :</strong> contenus illustratifs en démo. Les informations
+            (lieux, orientation) dépendent du téléphone et des sources disponibles.
+          </div>
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Carte des fresques (quartiers)</li>
+            <li>Fiche œuvre : artiste • mécène • remerciements</li>
+            <li>Scan QR / BLE à proximité</li>
+            <li>Audio : voix féminine douce (lecture des contenus)</li>
+            <li>Mode visite : guidage simple</li>
+            <li>Reconnaissance : bocitecoins selon règles locales</li>
+          </ul>
+          <div class="muted" style="margin-top:10px;">(Démo) Structure présentée à titre de démonstration.</div>
+        `);
+        return;
+      }
+
+      if(key === "ecole"){
     if(key === "ecole"){
       openModal("École", `
         <div style="font-weight:900;margin-bottom:8px;">Mot du jour (structure)</div>
