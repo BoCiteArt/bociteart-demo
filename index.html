@@ -1435,7 +1435,7 @@
   const WELLBEING_CACHE_PREFIX = "bociteart_wb_cache_v2_";
   const POI_FALLBACK_IMG = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/640px-No_image_available.svg.png";
 
- let wellbeingMap = null;
+let wellbeingMap = null;
 let wellbeingUserMarker = null;
 let wellbeingPoiMarkers = [];
 let wellbeingWatchId = null;
@@ -1614,7 +1614,6 @@ function getFallbackPoiName(tags){
   if(tags.amenity === "pharmacy") return "Pharmacie";
   if(tags.amenity === "hospital") return "Hôpital";
   if(tags.amenity === "clinic") return "Clinique";
-  if(tags.amenity === "school") return "École";
   if(tags.highway === "bus_stop") return "Arrêt de bus";
   if(tags.shop) return "Commerce";
   if(tags.amenity === "restaurant") return "Restaurant";
@@ -1630,7 +1629,6 @@ function getPoiTypeFromTags(tags){
   if(tags.highway === "bus_stop") return "bus";
   if(tags.shop) return "shop";
   if(tags.amenity === "restaurant" || tags.amenity === "cafe" || tags.amenity === "fast_food") return "food";
-  if(tags.highway === "cycleway" || tags.cycleway) return "bike";
   return "default";
 }
 
@@ -1960,11 +1958,10 @@ function stopWellbeingLocate(){
 
 async function refreshNearbyPois(lat, lng, force){
   const now = Date.now();
-  const minDelay = 15000;
   const movedEnough = !wellbeingLastFetchCenter
     || distanceMeters(wellbeingLastFetchCenter.lat, wellbeingLastFetchCenter.lng, lat, lng) > 120;
 
-  if(!force && (now - wellbeingLastFetchTs < minDelay) && !movedEnough){
+  if(!force && (now - wellbeingLastFetchTs < WELLBEING_FETCH_MIN_INTERVAL_MS) && !movedEnough){
     return;
   }
 
@@ -1972,7 +1969,7 @@ async function refreshNearbyPois(lat, lng, force){
   wellbeingLastFetchCenter = { lat, lng };
 
   try{
-    const realPois = await fetchNearbyPois(lat, lng, 1800);
+    const realPois = await fetchNearbyPois(lat, lng, WELLBEING_FETCH_RADIUS);
     wellbeingPoints = realPois.length ? realPois : WELLBEING_FALLBACK_POINTS.slice();
     renderWellbeingPois();
 
@@ -2059,7 +2056,7 @@ function openWellbeingMap(){
 
       wellbeingMap = L.map(mapHost, {
         zoomControl: true
-      }).setView([50.586, 3.043], 14);
+      }).setView(WELLBEING_DEFAULT_CENTER, 14);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
