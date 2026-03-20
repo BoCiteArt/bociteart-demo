@@ -1636,15 +1636,7 @@
     if($("tickerSubB")) $("tickerSubB").textContent = it.subtitle || "";
   }
 
-  function openTicker(){
-    const it = tickerItems[tickerIdx] || tickerItems[0];
-    openModal("Publicité", `
-      <div class="box">
-        <div style="font-weight:900;">${escapeHtml(it.title || "")}</div>
-        <div class="muted" style="margin-top:6px;">${escapeHtml(it.subtitle || "")}</div>
-      </div>
-      <div class="box">Règle : 10/jour • règle 16h</div>
-    `);
+function openTicker(){
   }
   window.openTicker = openTicker;
 
