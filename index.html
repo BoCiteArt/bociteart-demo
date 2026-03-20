@@ -1428,402 +1428,24 @@
   const PUB_MAX_PER_DAY = 10;
   window.PUB_MAX_PER_DAY = PUB_MAX_PER_DAY;
 
-  function lockScroll(lock){
-    document.body.classList.toggle("modalOpen", !!lock);
-  }
-  window.lockScroll = lockScroll;
+  const WELLBEING_DEFAULT_CENTER = [50.586, 3.043];
+  const WELLBEING_FETCH_RADIUS = 1800;
+  const WELLBEING_FETCH_MIN_INTERVAL_MS = 15000;
+  const WELLBEING_CACHE_TTL_MS = 10 * 60 * 1000;
+  const WELLBEING_CACHE_PREFIX = "bociteart_wb_cache_v2_";
+  const POI_FALLBACK_IMG = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/640px-No_image_available.svg.png";
 
-  function escapeHtml(s){
-    return String(s == null ? "" : s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-  function callPhone(number){
-    if(!number) return;
-    window.location.href = "tel:" + String(number).replace(/[^\d+]/g, "");
-  }
-  window.callPhone = callPhone;
-
-  function makeKeyboardClickable(el, fn){
-    if(!el || !isFn(fn)) return;
-    if(!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
-    if(!el.hasAttribute("role")) el.setAttribute("role", "button");
-    el.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter" || e.key === " "){
-        e.preventDefault();
-        fn();
-      }
-    });
-  }
-  window.makeKeyboardClickable = makeKeyboardClickable;
-
-  function speak(text, mode){
-    if(!("speechSynthesis" in window)){
-      alert(text || "");
-      return;
-    }
-    try{ speechSynthesis.cancel(); }catch(e){}
-    const u = new SpeechSynthesisUtterance(text || "");
-    u.lang = "fr-FR";
-    u.rate = mode === "child" ? 1.05 : 0.96;
-    u.pitch = mode === "child" ? 1.3 : 1.0;
-    speechSynthesis.speak(u);
-  }
-  window.speak = speak;
-
-  function loadSchoolWallet(){
-    try{
-      const raw = localStorage.getItem("bociteart_school_wallet_v1");
-      return raw ? JSON.parse(raw) : { jaune:0 };
-    }catch(e){
-      return { jaune:0 };
-    }
-  }
-  function saveSchoolWallet(obj){
-    try{ localStorage.setItem("bociteart_school_wallet_v1", JSON.stringify(obj)); }catch(e){}
-  }
-  window.loadSchoolWallet = loadSchoolWallet;
-  window.saveSchoolWallet = saveSchoolWallet;
-
-  function loadSportWallet(){
-    try{
-      const raw = localStorage.getItem("bociteart_sport_wallet_v1");
-      return raw ? JSON.parse(raw) : { vert:0 };
-    }catch(e){
-      return { vert:0 };
-    }
-  }
-  function saveSportWallet(obj){
-    try{ localStorage.setItem("bociteart_sport_wallet_v1", JSON.stringify(obj)); }catch(e){}
-  }
-  window.loadSportWallet = loadSportWallet;
-  window.saveSportWallet = saveSportWallet;
-
-  function loadCitizenWallet(){
-    try{
-      const raw = localStorage.getItem("bociteart_citizen_wallet_v1");
-      return raw ? JSON.parse(raw) : { or:37 };
-    }catch(e){
-      return { or:37 };
-    }
-  }
-  function saveCitizenWallet(obj){
-    try{ localStorage.setItem("bociteart_citizen_wallet_v1", JSON.stringify(obj)); }catch(e){}
-  }
-  window.loadCitizenWallet = loadCitizenWallet;
-  window.saveCitizenWallet = saveCitizenWallet;
-
-  function initFeeUiInModal(){
-    const input = $("feeInputSales");
-    const outSales = $("feeSalesOut");
-    const outFee = $("feeOut");
-    const addBtn = $("feeAddBtn");
-    const resetBtn = $("feeResetBtn");
-    const KEY = "bociteart_fee_demo_v1";
-
-    function loadFee(){
-      try{
-        const raw = localStorage.getItem(KEY);
-        return raw ? JSON.parse(raw) : { sales:0 };
-      }catch(e){
-        return { sales:0 };
-      }
-    }
-
-    function saveFee(obj){
-      try{ localStorage.setItem(KEY, JSON.stringify(obj)); }catch(e){}
-    }
-
-    function fmt(n){
-      return Number(n || 0).toLocaleString("fr-FR", {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }) + " €";
-    }
-
-    function renderFee(){
-      const db = loadFee();
-      const sales = Number(db.sales || 0);
-      const fee = Math.floor(sales / 10) * 0.18;
-
-      if(input) input.value = sales ? String(sales) : "";
-      if(outSales) outSales.textContent = fmt(sales);
-      if(outFee) outFee.textContent = fmt(fee);
-    }
-
-    if(addBtn){
-      addBtn.onclick = ()=>{
-        const sales = Number(input ? input.value : 0);
-        saveFee({ sales: Number.isFinite(sales) && sales > 0 ? sales : 0 });
-        renderFee();
-      };
-    }
-
-    if(resetBtn){
-      resetBtn.onclick = ()=>{
-        saveFee({ sales:0 });
-        renderFee();
-      };
-    }
-
-    renderFee();
-  }
-  window.initFeeUiInModal = initFeeUiInModal;
-
-  const modal = $("modal");
-  const modalTitle = $("modalTitle");
-  const modalBody = $("modalBody");
-
-  function closeModal(){
-    if(!modal) return;
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
-    lockScroll(false);
-  }
-
-  function openModal(title, html){
-    if(!modal || !modalTitle || !modalBody) return;
-    modalTitle.textContent = title;
-    modalBody.innerHTML = html;
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
-    lockScroll(true);
-  }
-
-  window.openModal = openModal;
-  window.closeModal = closeModal;
-
-  on($("modalClose"), "click", closeModal);
-  on($("xBtn"), "click", closeModal);
-
-  document.addEventListener("keydown", (e)=>{
-    if(e.key === "Escape"){
-      closeModal();
-    }
-  });
-
-  const tickerItems = [
-    {
-      title:"🥐 Boulangerie Croquet",
-      subtitle:"Offre spéciale partenaires • Démo",
-      img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=60"
-    },
-    {
-      title:"💊 Pharmacie Richardson",
-      subtitle:"Bien-être & santé • Démo",
-      img:"https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=1200&q=60"
-    },
-    {
-      title:"🌸 Anaïs Fleurs",
-      subtitle:"Bouquets & événements • Démo",
-      img:"https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=60"
-    }
-  ];
-
-let tickerIdx = 0;
-
-function setTicker(i){
-  const it = tickerItems[i];
-  if(!it) return;
-  if($("tickerImg")) $("tickerImg").src = it.img;
-  if($("tickerTitleA")) $("tickerTitleA").textContent = it.title;
-  if($("tickerSubA")) $("tickerSubA").textContent = it.subtitle || "";
-  if($("tickerTitleB")) $("tickerTitleB").textContent = it.title;
-  if($("tickerSubB")) $("tickerSubB").textContent = it.subtitle || "";
-}
-
-function openTicker(){
-  const it = tickerItems[tickerIdx] || tickerItems[0];
-
-  openModal("Publicité", `
-    <div class="box">
-      <div style="font-weight:900;">${escapeHtml(it.title || "")}</div>
-      <div class="muted" style="margin-top:6px;">${escapeHtml(it.subtitle || "")}</div>
-    </div>
-
-    <div class="box">
-      <div style="font-weight:900;">Règle publicitaire</div>
-      <div class="muted" style="margin-top:6px;">
-        Maximum ${window.PUB_MAX_PER_DAY || 10} publicités par jour.
-      </div>
-      <div class="muted" style="margin-top:6px;">
-        Jusqu’à <strong>16h00</strong>, une publicité du jour peut encore être réservée si une place reste disponible.
-      </div>
-      <div class="muted" style="margin-top:6px;">
-        Après <strong>16h00</strong>, la réservation du jour est fermée. Il faut choisir un autre jour disponible.
-      </div>
-      <div class="muted" style="margin-top:6px;">
-        Une journée complète apparaît comme indisponible.
-      </div>
-    </div>
-
-    <div class="box">
-      <div style="font-weight:900;">Calendrier publicitaire (démo)</div>
-      <div class="muted" style="margin-top:6px;">
-        Sélection d’un jour de diffusion. Version démo locale.
-      </div>
-
-      <div class="calWrap">
-        <div class="calTop">
-          <div style="font-weight:900;">Mois en cours</div>
-          <div class="mini">
-            <button class="walletMini" type="button" id="pubTodayBtn">Aujourd’hui</button>
-            <button class="walletMini" type="button" id="pubResetBtn">Réinit.</button>
-          </div>
-        </div>
-
-        <div class="calGrid" id="pubCalGrid"></div>
-      </div>
-
-      <div class="muted" style="margin-top:10px;">
-        Avant 16h : jour possible si non complet. Après 16h : jour courant bloqué.
-      </div>
-    </div>
-  `);
-
-  setTimeout(()=>{
-    const grid = $("pubCalGrid");
-    const todayBtn = $("pubTodayBtn");
-    const resetBtn = $("pubResetBtn");
-    if(!grid) return;
-
-    const KEY = "bociteart_pub_calendar_v1";
-    const MAX = Number(window.PUB_MAX_PER_DAY || 10);
-
-    function loadDb(){
-      try{
-        const raw = localStorage.getItem(KEY);
-        return raw ? JSON.parse(raw) : {};
-      }catch(e){
-        return {};
-      }
-    }
-
-    function saveDb(db){
-      try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){}
-    }
-
-    function ymd(d){
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
-      return `${y}-${m}-${day}`;
-    }
-
-    function renderCal(){
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth();
-
-      const first = new Date(year, month, 1);
-      const last = new Date(year, month + 1, 0);
-      const firstDay = (first.getDay() + 6) % 7;
-      const totalDays = last.getDate();
-      const db = loadDb();
-
-      const cells = [];
-      const labels = ["L","M","M","J","V","S","D"];
-
-      labels.forEach((lab)=>{
-        cells.push(`<div class="calDay disabled"><div class="d">${lab}</div></div>`);
-      });
-
-      for(let i = 0; i < firstDay; i++){
-        cells.push(`<div class="calDay disabled"></div>`);
-      }
-
-      for(let day = 1; day <= totalDays; day++){
-        const d = new Date(year, month, day);
-        const key = ymd(d);
-        const count = Number((db[key] && db[key].count) || 0);
-
-        const isToday = key === ymd(now);
-        const after16 = now.getHours() >= 16;
-        const blockedToday = isToday && after16;
-        const full = count >= MAX || blockedToday;
-
-        cells.push(`
-          <button
-            class="calDay ${full ? "full" : ""}"
-            type="button"
-            data-date="${key}"
-            ${full ? "disabled" : ""}
-          >
-            <div class="d">${day}</div>
-            <div class="s">${count}/${MAX}</div>
-          </button>
-        `);
-      }
-
-      grid.innerHTML = cells.join("");
-
-      grid.querySelectorAll(".calDay[data-date]").forEach((btn)=>{
-        btn.onclick = ()=>{
-          const key = btn.getAttribute("data-date");
-          const db2 = loadDb();
-          if(!db2[key]) db2[key] = { count:0 };
-
-          if(Number(db2[key].count || 0) >= MAX){
-            alert("Journée complète.");
-            return;
-          }
-
-          db2[key].count = Number(db2[key].count || 0) + 1;
-          saveDb(db2);
-          renderCal();
-          alert("Réservation ajoutée en démo pour le " + key);
-        };
-      });
-    }
-
-    if(todayBtn){
-      todayBtn.onclick = ()=>{
-        alert("Rappel : le jour même est réservable seulement avant 16h s’il reste des places.");
-      };
-    }
-
-    if(resetBtn){
-      resetBtn.onclick = ()=>{
-        if(confirm("Réinitialiser le calendrier pub en démo ?")){
-          saveDb({});
-          renderCal();
-        }
-      };
-    }
-
-    renderCal();
-  }, 0);
-}
-
-window.openTicker = openTicker;
-
-setTicker(0);
-setInterval(()=>{
-  tickerIdx = (tickerIdx + 1) % tickerItems.length;
-  setTicker(tickerIdx);
-}, 4000);
-on($("ticker"), "click", openTicker);
-
-let wellbeingMap = null;
+ let wellbeingMap = null;
 let wellbeingUserMarker = null;
 let wellbeingPoiMarkers = [];
 let wellbeingWatchId = null;
 let currentHeading = 0;
+let wellbeingPoints = [];
+let wellbeingAbortController = null;
+let wellbeingLastFetchTs = 0;
+let wellbeingLastFetchCenter = null;
 
-function clearWellbeingPois(){
-  wellbeingPoiMarkers.forEach((marker)=>{
-    try{
-      if(wellbeingMap) wellbeingMap.removeLayer(marker);
-    }catch(e){}
-  });
-  wellbeingPoiMarkers = [];
-}
-
-const WELLBEING_POINTS = [
+const WELLBEING_FALLBACK_POINTS = [
   {
     name:"Parc sportif",
     desc:"Espace de sport et promenade.",
@@ -1943,6 +1565,196 @@ const WELLBEING_POINTS = [
   }
 ];
 
+const WELLBEING_TYPE_FALLBACK_IMG = {
+  sport:"https://images.unsplash.com/photo-1547347298-4074fc3086f0?auto=format&fit=crop&w=900&q=60",
+  gym:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=60",
+  walk:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=60",
+  park:"https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=60",
+  bike:"https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=900&q=60",
+  bus:"https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=900&q=60",
+  shop:"https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=60",
+  food:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=60",
+  health:"https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=900&q=60",
+  default:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=60"
+};
+
+function clearWellbeingPois(){
+  wellbeingPoiMarkers.forEach((marker)=>{
+    try{
+      if(wellbeingMap) wellbeingMap.removeLayer(marker);
+    }catch(e){}
+  });
+  wellbeingPoiMarkers = [];
+}
+
+function distanceMeters(lat1, lng1, lat2, lng2){
+  const R = 6371000;
+  const toRad = (n) => n * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c);
+}
+
+function formatDistance(m){
+  if(!Number.isFinite(m)) return "";
+  if(m < 1000) return `${m} m`;
+  return `${(m / 1000).toFixed(1).replace(".", ",")} km`;
+}
+
+function getFallbackPoiName(tags){
+  if(tags.leisure === "park") return "Parc";
+  if(tags.leisure === "pitch") return "Terrain de sport";
+  if(tags.leisure === "sports_centre") return "Centre sportif";
+  if(tags.leisure === "fitness_station") return "Station fitness";
+  if(tags.amenity === "pharmacy") return "Pharmacie";
+  if(tags.amenity === "hospital") return "Hôpital";
+  if(tags.amenity === "clinic") return "Clinique";
+  if(tags.amenity === "school") return "École";
+  if(tags.highway === "bus_stop") return "Arrêt de bus";
+  if(tags.shop) return "Commerce";
+  if(tags.amenity === "restaurant") return "Restaurant";
+  if(tags.amenity === "cafe") return "Café";
+  if(tags.amenity === "fast_food") return "Restauration rapide";
+  return "Point d’intérêt";
+}
+
+function getPoiTypeFromTags(tags){
+  if(tags.leisure === "park") return "park";
+  if(tags.leisure === "pitch" || tags.leisure === "sports_centre" || tags.leisure === "fitness_station" || tags.sport) return "sport";
+  if(tags.amenity === "pharmacy" || tags.amenity === "hospital" || tags.amenity === "clinic") return "health";
+  if(tags.highway === "bus_stop") return "bus";
+  if(tags.shop) return "shop";
+  if(tags.amenity === "restaurant" || tags.amenity === "cafe" || tags.amenity === "fast_food") return "food";
+  if(tags.highway === "cycleway" || tags.cycleway) return "bike";
+  return "default";
+}
+
+function getPoiDescFromTags(tags){
+  const items = [];
+
+  if(tags.sport) items.push(tags.sport);
+  if(tags.leisure === "park") items.push("parc");
+  if(tags.leisure === "pitch") items.push("terrain");
+  if(tags.leisure === "sports_centre") items.push("centre sportif");
+  if(tags.leisure === "fitness_station") items.push("fitness");
+  if(tags.amenity === "pharmacy") items.push("pharmacie");
+  if(tags.amenity === "hospital") items.push("hôpital");
+  if(tags.amenity === "clinic") items.push("clinique");
+  if(tags.amenity === "restaurant") items.push("restaurant");
+  if(tags.amenity === "cafe") items.push("café");
+  if(tags.amenity === "fast_food") items.push("restauration rapide");
+  if(tags.shop) items.push(tags.shop);
+
+  return items.length ? items.join(" • ") : "Lieu détecté autour de vous";
+}
+
+function getPoiAddress(tags){
+  return [
+    tags["addr:housenumber"],
+    tags["addr:street"],
+    tags["addr:postcode"],
+    tags["addr:city"]
+  ].filter(Boolean).join(" ");
+}
+
+function getPoiImage(tags, type){
+  const rawImage = String(tags.image || "").trim();
+  if(/^https:\/\/.+/i.test(rawImage)) return rawImage;
+
+  const commons = String(tags.wikimedia_commons || "").trim();
+  if(/^File:/i.test(commons)){
+    const fileName = commons.replace(/^File:/i, "").replace(/ /g, "_");
+    return "https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(fileName) + "?width=800";
+  }
+
+  return WELLBEING_TYPE_FALLBACK_IMG[type] || WELLBEING_TYPE_FALLBACK_IMG.default;
+}
+
+function normalizePoiElement(el){
+  const tags = el.tags || {};
+  const lat = Number(el.lat ?? (el.center && el.center.lat));
+  const lng = Number(el.lon ?? (el.center && el.center.lon));
+  if(!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+  const type = getPoiTypeFromTags(tags);
+
+  return {
+    osmType: el.type,
+    osmId: el.id,
+    name: tags.name || getFallbackPoiName(tags),
+    desc: getPoiDescFromTags(tags),
+    lat,
+    lng,
+    type,
+    address: getPoiAddress(tags),
+    img: getPoiImage(tags, type),
+    tags
+  };
+}
+
+async function fetchNearbyPois(lat, lng, radius){
+  const query = `
+[out:json][timeout:12];
+(
+  node(around:${radius},${lat},${lng})["leisure"~"park|pitch|sports_centre|fitness_station"];
+  way(around:${radius},${lat},${lng})["leisure"~"park|pitch|sports_centre|fitness_station"];
+  relation(around:${radius},${lat},${lng})["leisure"~"park|pitch|sports_centre|fitness_station"];
+
+  node(around:${radius},${lat},${lng})["amenity"~"pharmacy|hospital|clinic|restaurant|cafe|fast_food"];
+  way(around:${radius},${lat},${lng})["amenity"~"pharmacy|hospital|clinic|restaurant|cafe|fast_food"];
+  relation(around:${radius},${lat},${lng})["amenity"~"pharmacy|hospital|clinic|restaurant|cafe|fast_food"];
+
+  node(around:${radius},${lat},${lng})["shop"];
+  way(around:${radius},${lat},${lng})["shop"];
+
+  node(around:${radius},${lat},${lng})["highway"="bus_stop"];
+);
+out center tags;
+  `.trim();
+
+  if(wellbeingAbortController){
+    try{ wellbeingAbortController.abort(); }catch(e){}
+  }
+
+  wellbeingAbortController = new AbortController();
+  const timeoutId = setTimeout(()=>{
+    try{ wellbeingAbortController.abort(); }catch(e){}
+  }, 9000);
+
+  try{
+    const res = await fetch("https://overpass-api.de/api/interpreter", {
+      method:"POST",
+      headers:{ "Content-Type":"text/plain;charset=UTF-8" },
+      body:query,
+      signal: wellbeingAbortController.signal
+    });
+
+    if(!res.ok) throw new Error("Réponse Overpass invalide");
+
+    const json = await res.json();
+    const normalized = (json.elements || [])
+      .map(normalizePoiElement)
+      .filter(Boolean);
+
+    const seen = new Set();
+    const unique = normalized.filter((p)=>{
+      const key = `${p.name}|${p.lat.toFixed(5)}|${p.lng.toFixed(5)}|${p.type}`;
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    return unique;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 function createPoiIcon(type){
   if(!window.L) return null;
 
@@ -2027,27 +1839,70 @@ function renderWellbeingPois(){
 
   clearWellbeingPois();
 
-  const bounds = wellbeingMap.getBounds().pad(0.35);
+  const bounds = wellbeingMap.getBounds().pad(0.25);
+  const center = wellbeingUserMarker ? wellbeingUserMarker.getLatLng() : wellbeingMap.getCenter();
 
-  WELLBEING_POINTS.forEach((p)=>{
-    const pointLatLng = L.latLng(p.lat, p.lng);
-    if(!bounds.contains(pointLatLng)) return;
+  wellbeingPoints
+    .filter((p)=>{
+      const pointLatLng = L.latLng(p.lat, p.lng);
+      return bounds.contains(pointLatLng);
+    })
+    .sort((a, b)=>{
+      const da = distanceMeters(center.lat, center.lng, a.lat, a.lng);
+      const db = distanceMeters(center.lat, center.lng, b.lat, b.lng);
+      return da - db;
+    })
+    .forEach((p)=>{
+      const icon = createPoiIcon(p.type);
+      const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
 
-    const icon = createPoiIcon(p.type);
-    const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
+      const dist = center ? formatDistance(distanceMeters(center.lat, center.lng, p.lat, p.lng)) : "";
 
-    marker.bindPopup(`
-      <div class="poiCard">
-        <img class="poiCardImg" src="${escapeHtml(p.img || "")}" alt="${escapeHtml(p.name || "")}">
-        <div class="poiCardTitle">${escapeHtml(p.name || "")}</div>
-        <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
-        <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
-      </div>
-    `);
+      marker.bindPopup(`
+        <div class="poiCard">
+          <img class="poiCardImg" src="${escapeHtml(p.img || WELLBEING_TYPE_FALLBACK_IMG.default)}" alt="${escapeHtml(p.name || "")}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">
+          <div class="poiCardTitle">${escapeHtml(p.name || "")}</div>
+          <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
+          <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
+          <div class="poiCardDist">${escapeHtml(dist)}</div>
+        </div>
+      `);
 
-    marker.addTo(wellbeingMap);
-    wellbeingPoiMarkers.push(marker);
-  });
+      marker.addTo(wellbeingMap);
+      wellbeingPoiMarkers.push(marker);
+    });
+
+  const listHost = document.getElementById("wellbeingList");
+  if(listHost){
+    const list = wellbeingPoints
+      .slice()
+      .sort((a, b)=>{
+        const da = distanceMeters(center.lat, center.lng, a.lat, a.lng);
+        const db = distanceMeters(center.lat, center.lng, b.lat, b.lng);
+        return da - db;
+      })
+      .slice(0, 10);
+
+    listHost.innerHTML = list.length ? list.map((p, idx)=>{
+      const dist = formatDistance(distanceMeters(center.lat, center.lng, p.lat, p.lng));
+      return `
+        <button type="button" class="choiceBtn" data-poi-index="${idx}" style="width:100%;text-align:left;padding:10px;">
+          <div style="font-weight:900;">${escapeHtml(p.name || "")}</div>
+          <div class="muted" style="margin-top:4px;">${escapeHtml(p.address || p.desc || "")}</div>
+          <div class="muted" style="margin-top:4px;">${escapeHtml(dist)}</div>
+        </button>
+      `;
+    }).join("") : `<div class="muted">Aucun lieu détecté dans la zone affichée.</div>`;
+
+    listHost.querySelectorAll("[data-poi-index]").forEach((btn)=>{
+      btn.onclick = ()=>{
+        const idx = Number(btn.getAttribute("data-poi-index"));
+        const target = list[idx];
+        if(!target || !wellbeingMap) return;
+        wellbeingMap.setView([target.lat, target.lng], 17);
+      };
+    });
+  }
 }
 
 function createUserIcon(deg){
@@ -2087,7 +1942,7 @@ function initCompass(){
 }
 
 function stopWellbeingLocate(){
-  if(wellbeingWatchId !== null){
+  if(wellbeingWatchId !== null && navigator.geolocation){
     navigator.geolocation.clearWatch(wellbeingWatchId);
     wellbeingWatchId = null;
   }
@@ -2095,6 +1950,46 @@ function stopWellbeingLocate(){
   if(window.__wellbeingHeadingTimer){
     clearInterval(window.__wellbeingHeadingTimer);
     window.__wellbeingHeadingTimer = null;
+  }
+
+  if(wellbeingAbortController){
+    try{ wellbeingAbortController.abort(); }catch(e){}
+    wellbeingAbortController = null;
+  }
+}
+
+async function refreshNearbyPois(lat, lng, force){
+  const now = Date.now();
+  const minDelay = 15000;
+  const movedEnough = !wellbeingLastFetchCenter
+    || distanceMeters(wellbeingLastFetchCenter.lat, wellbeingLastFetchCenter.lng, lat, lng) > 120;
+
+  if(!force && (now - wellbeingLastFetchTs < minDelay) && !movedEnough){
+    return;
+  }
+
+  wellbeingLastFetchTs = now;
+  wellbeingLastFetchCenter = { lat, lng };
+
+  try{
+    const realPois = await fetchNearbyPois(lat, lng, 1800);
+    wellbeingPoints = realPois.length ? realPois : WELLBEING_FALLBACK_POINTS.slice();
+    renderWellbeingPois();
+
+    const status = document.getElementById("wellbeingStatus");
+    if(status){
+      status.textContent = realPois.length
+        ? `${realPois.length} lieu(x) détecté(s) autour de vous`
+        : "Aucune donnée réelle reçue : affichage des points de démonstration";
+    }
+  }catch(e){
+    wellbeingPoints = WELLBEING_FALLBACK_POINTS.slice();
+    renderWellbeingPois();
+
+    const status = document.getElementById("wellbeingStatus");
+    if(status){
+      status.textContent = "Connexion lente ou service indisponible : affichage des points de démonstration";
+    }
   }
 }
 
@@ -2111,20 +2006,29 @@ function openWellbeingMap(){
       <div class="muted">
         Carte plein écran avec position actuelle, orientation et points utiles visibles dans la zone affichée.
       </div>
+      <div class="muted" id="wellbeingStatus" style="margin-top:6px;">Chargement de la carte…</div>
     </div>
 
     <div id="wellbeingMapHost" style="height:420px;border-radius:16px;overflow:hidden;background:#e9e9e9;"></div>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
       <button class="choiceBtn" id="wbLocateBtn" type="button">📍 Me localiser</button>
+      <button class="choiceBtn" id="wbRefreshBtn" type="button">🔄 Rafraîchir</button>
       <button class="choiceBtn" id="wbStopBtn" type="button" style="background:#fff;">⏹ Arrêter</button>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Lieux détectés dans la zone</div>
+      <div id="wellbeingList" style="margin-top:10px;display:flex;flex-direction:column;gap:8px;"></div>
     </div>
   `);
 
   setTimeout(()=>{
     const mapHost = document.getElementById("wellbeingMapHost");
     const locateBtn = document.getElementById("wbLocateBtn");
+    const refreshBtn = document.getElementById("wbRefreshBtn");
     const stopBtn = document.getElementById("wbStopBtn");
+    const status = document.getElementById("wellbeingStatus");
 
     if(!mapHost) return;
 
@@ -2151,6 +2055,7 @@ function openWellbeingMap(){
       }
 
       clearWellbeingPois();
+      wellbeingPoints = WELLBEING_FALLBACK_POINTS.slice();
 
       wellbeingMap = L.map(mapHost, {
         zoomControl: true
@@ -2169,6 +2074,7 @@ function openWellbeingMap(){
         try{
           wellbeingMap.invalidateSize();
           renderWellbeingPois();
+          if(status) status.textContent = "Carte prête. Utilisez “Me localiser” pour afficher les lieux proches.";
         }catch(e){}
       }, 180);
 
@@ -2194,7 +2100,7 @@ function openWellbeingMap(){
       stopWellbeingLocate();
 
       wellbeingWatchId = navigator.geolocation.watchPosition(
-        (pos)=>{
+        async (pos)=>{
           const lat = pos.coords.latitude;
           const lng = pos.coords.longitude;
 
@@ -2214,9 +2120,17 @@ function openWellbeingMap(){
           }
 
           wellbeingMap.setView([lat, lng], 15);
-          renderWellbeingPois();
+
+          if(status){
+            status.textContent = "Position reçue. Recherche des lieux autour de vous…";
+          }
+
+          await refreshNearbyPois(lat, lng, false);
         },
         ()=>{
+          if(status){
+            status.textContent = "Impossible d’obtenir la position. Les points de démonstration restent affichés.";
+          }
           alert("Impossible d’obtenir la position.");
         },
         {
@@ -2233,19 +2147,39 @@ function openWellbeingMap(){
       }, 500);
     };
 
-    if(locateBtn) locateBtn.onclick = startLocate;
-    if(stopBtn) stopBtn.onclick = stopWellbeingLocate;
+    if(locateBtn){
+      locateBtn.onclick = startLocate;
+    }
+
+    if(refreshBtn){
+      refreshBtn.onclick = async ()=>{
+        if(wellbeingUserMarker){
+          const ll = wellbeingUserMarker.getLatLng();
+          if(status) status.textContent = "Rafraîchissement des lieux…";
+          await refreshNearbyPois(ll.lat, ll.lng, true);
+        }else{
+          startLocate();
+        }
+      };
+    }
+
+    if(stopBtn){
+      stopBtn.onclick = ()=>{
+        stopWellbeingLocate();
+        if(status) status.textContent = "Suivi arrêté.";
+      };
+    }
   }, 0);
 }
 
 window.openWellbeingMap = openWellbeingMap;
 
-window.tapeAds = [
-  { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-  { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
-  { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
-  { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
-];
+  window.tapeAds = [
+    { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
+    { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
+    { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
+    { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
+  ];
 
   function renderTape(){
     const track = $("sportTapeTrack");
@@ -2382,7 +2316,7 @@ window.tapeAds = [
           alert("URL invalide : utiliser https://");
           return base;
         }
-        if(!/^[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+$/.test(url)){
+        if(!/^[a-zA-Z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]+$/.test(url)){
           alert("URL invalide : caractères non autorisés.");
           return base;
         }
