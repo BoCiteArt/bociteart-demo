@@ -1654,7 +1654,7 @@
     setTicker(tickerIdx);
   }, 4000);
   on($("ticker"), "click", openTicker);
-}
+
   let wellbeingMap = null;
   let wellbeingUserMarker = null;
   let wellbeingPoiMarkers = [];
@@ -1885,33 +1885,33 @@
   }
 
   function renderWellbeingPois(){
-  if(!wellbeingMap || !window.L) return;
+    if(!wellbeingMap || !window.L) return;
 
-  clearWellbeingPois();
+    clearWellbeingPois();
 
-  const bounds = wellbeingMap.getBounds();
+    const bounds = wellbeingMap.getBounds();
 
-  WELLBEING_POINTS.forEach((p)=>{
-    const pointLatLng = L.latLng(p.lat, p.lng);
+    WELLBEING_POINTS.forEach((p)=>{
+      const pointLatLng = L.latLng(p.lat, p.lng);
 
-    if(bounds.pad(0.35).contains(pointLatLng)){
-      const icon = createPoiIcon(p.type);
-      const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
+      if(bounds.pad(0.35).contains(pointLatLng)){
+        const icon = createPoiIcon(p.type);
+        const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
 
-      marker.bindPopup(`
-        <div class="poiCard">
-          <img class="poiCardImg" src="${escapeHtml(p.img || "")}" alt="${escapeHtml(p.name || "")}">
-          <div class="poiCardTitle">${escapeHtml(p.name || "")}</div>
-          <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
-          <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
-        </div>
-      `);
+        marker.bindPopup(`
+          <div class="poiCard">
+            <img class="poiCardImg" src="${escapeHtml(p.img || "")}" alt="${escapeHtml(p.name || "")}">
+            <div class="poiCardTitle">${escapeHtml(p.name || "")}</div>
+            <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
+            <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
+          </div>
+        `);
 
-      marker.addTo(wellbeingMap);
-      wellbeingPoiMarkers.push(marker);
-    }
-  });
-}
+        marker.addTo(wellbeingMap);
+        wellbeingPoiMarkers.push(marker);
+      }
+    });
+  }
 
   function createUserIcon(deg){
     if(!window.L) return null;
@@ -1948,17 +1948,19 @@
       }
     }, true);
   }
-        setTimeout(()=>{
-          try{
-            wellbeingMap.invalidateSize();
-            renderWellbeingPois();
-          }catch(e){}
-        }, 180);
+
+  function openWellbeingMap(){
+    initCompass();
+
+    if(typeof window.openModal !== "function"){
+      alert("Carte indisponible.");
+      return;
+    }
 
     window.openModal("Carte bien-être", `
       <div class="box">
         <div class="muted">
-          Carte plein écran avec position actuelle, orientation et points utiles visibles dans un rayon de 3 km.
+          Carte plein écran avec position actuelle, orientation et points utiles visibles dans la zone affichée.
         </div>
       </div>
 
@@ -2005,11 +2007,12 @@
           maxZoom: 19,
           attribution: "&copy; OpenStreetMap"
         }).addTo(wellbeingMap);
-              wellbeingMap.on("moveend zoomend", ()=>{
-        renderWellbeingPois();
-      });
 
-               setTimeout(()=>{
+        wellbeingMap.on("moveend zoomend", ()=>{
+          renderWellbeingPois();
+        });
+
+        setTimeout(()=>{
           try{
             wellbeingMap.invalidateSize();
             renderWellbeingPois();
@@ -2041,22 +2044,23 @@
         }
 
         wellbeingWatchId = navigator.geolocation.watchPosition(
-                (pos)=>{
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
+          (pos)=>{
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
 
-          if(typeof pos.coords.heading === "number" && !isNaN(pos.coords.heading)){
-            currentHeading = pos.coords.heading;
-          }
+            if(typeof pos.coords.heading === "number" && !isNaN(pos.coords.heading)){
+              currentHeading = pos.coords.heading;
+            }
 
-          if(!wellbeingMap) return;
+            if(!wellbeingMap) return;
 
-          const icon = createUserIcon(currentHeading);
+            const icon = createUserIcon(currentHeading);
+
             if(!wellbeingUserMarker){
               wellbeingUserMarker = L.marker([lat, lng], icon ? { icon } : undefined).addTo(wellbeingMap);
             }else{
               wellbeingUserMarker.setLatLng([lat, lng]);
-              wellbeingUserMarker.setIcon(createUserIcon(currentHeading));
+              wellbeingUserMarker.setIcon(icon);
             }
 
             wellbeingMap.setView([lat, lng], 15);
@@ -2100,7 +2104,7 @@
     }, 0);
   }
 
-  window.tapeAds = [
+  window.openWellbeingMap = openWellbeingMap;
     { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
     { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
     { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
