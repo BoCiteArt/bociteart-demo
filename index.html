@@ -2018,71 +2018,71 @@ function openWellbeingMap(){
         });
       }
 
-      function openRecapModal(y, m){
-        const b = loadBookings();
-        const keyYM = ym(y,m);
-        const monthObj = b[keyYM] || {};
-        let csv = "date;profil;horodatage_iso;horodatage_fr;note\n";
+    function openRecapModal(y, m){
+  const b = loadBookings();
+  const keyYM = ym(y,m);
+  const monthObj = b[keyYM] || {};
+  let csv = "date;profil;horodatage_iso;horodatage_fr;note\n";
 
-        Object.keys(monthObj).sort().forEach((d)=>{
-          (monthObj[d] || []).forEach((it)=>{
-            csv += `${it.date};${it.who};${it.ts_iso};${it.ts_fr};${(it.note || "")}\n`;
-          });
-        });
+  Object.keys(monthObj).sort().forEach((d)=>{
+    (monthObj[d] || []).forEach((it)=>{
+      csv += `${it.date};${it.who};${it.ts_iso};${it.ts_fr};${(it.note || "")}\n`;
+    });
+  });
 
-        openModal("Récap mensuel (démo) — publicités", `
-          <div class="box">
-            <div style="font-weight:900;">Mois : ${keyYM}</div>
-          </div>
+  openModal("Récap mensuel (démo) — publicités", `
+    <div class="box">
+      <div style="font-weight:900;">Mois : ${keyYM}</div>
+    </div>
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
-            <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
-          </div>
-        `);
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
+      <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
+    </div>
+  `);
 
-        setTimeout(()=>{
-          const btnCsv = $("copyCsv");
-          const btnJson = $("copyJson");
+  setTimeout(()=>{
+    const btnCsv = $("copyCsv");
+    const btnJson = $("copyJson");
 
-          if(btnCsv){
-            btnCsv.onclick = async ()=>{
-              try{
-                await navigator.clipboard.writeText(csv);
-                alert("CSV copié.");
-              }catch(e){
-                alert("Copie impossible sur ce navigateur.");
-              }
-            };
-          }
+    if(btnCsv){
+      btnCsv.onclick = async ()=>{
+        try{
+          await navigator.clipboard.writeText(csv);
+          alert("CSV copié.");
+        }catch(e){
+          alert("Copie impossible sur ce navigateur.");
+        }
+      };
+    }
 
-          if(btnJson){
-            btnJson.onclick = async ()=>{
-              try{
-                await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2));
-                alert("JSON copié.");
-              }catch(e){
-                alert("Copie impossible sur ce navigateur.");
-              }
-            };
-          }
-        }, 0);
-      }
+    if(btnJson){
+      btnJson.onclick = async ()=>{
+        try{
+          await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2));
+          alert("JSON copié.");
+        }catch(e){
+          alert("Copie impossible sur ce navigateur.");
+        }
+      };
+    }
+  }, 0);
+}
 
-      function openTicker(){
-        openModal("Publicités & visibilité (ticker)", `
-          <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
-          <div class="box">
-            <strong>Cadre :</strong> réservation plafonnée, gestion par calendrier,
-            possibilité de récap mensuel et horodatage des réservations.
-          </div>
-          <div id="calHost"></div>
-        `);
+function openTicker(){
+  openModal("Publicités & visibilité (ticker)", `
+    <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
+    <div class="box">
+      <strong>Cadre :</strong> réservation plafonnée, gestion par calendrier,
+      possibilité de récap mensuel et horodatage des réservations.
+    </div>
+    <div id="calHost"></div>
+  `);
 
-        setTimeout(()=> renderCalendarInto("calHost"), 0);
-      }
-      window.openTicker = openTicker;
-      on($("ticker"), "click", openTicker);
+  setTimeout(()=> renderCalendarInto("calHost"), 0);
+}
+window.openTicker = openTicker;
+on($("ticker"), "click", openTicker);
 
 function escapeHtml(s){
   return String(s)
