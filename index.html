@@ -2171,16 +2171,6 @@ function renderWellbeingPois(lat, lng){
 }
 
 function initCompass(){
-  if(typeof DeviceOrientationEvent !== "undefined"){
-    window.addEventListener("deviceorientation", (event)=>{
-      if(event.alpha !== null){
-        currentHeading = 360 - event.alpha;
-      }
-    });
-  }
-}
-
-function initCompass(){
   if(window.__wellbeingCompassInit) return;
   window.__wellbeingCompassInit = true;
 
@@ -2366,37 +2356,36 @@ function renderTape(){
 window.renderTape = renderTape;
 renderTape();
 
-      const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
+const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
 
-      function mairieLoad(){
-        try{
-          const raw = localStorage.getItem(MAIRIE_STORE_KEY);
-          return raw ? JSON.parse(raw) : {};
-        }catch(e){
-          return {};
-        }
-      }
+function mairieLoad(){
+  try{
+    const raw = localStorage.getItem(MAIRIE_STORE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){
+    return {};
+  }
+}
 
-      function mairieSave(obj){
-        try{ localStorage.setItem(MAIRIE_STORE_KEY, JSON.stringify(obj)); }catch(e){}
-      }
+function mairieSave(obj){
+  try{ localStorage.setItem(MAIRIE_STORE_KEY, JSON.stringify(obj)); }catch(e){}
+}
 
-      function renderMairieTicker(){
-        const track = $("mairieTickerTrack");
-        if(!track) return;
-        const db = mairieLoad();
-        const msg = (db.message && String(db.message).trim())
-          ? String(db.message).trim()
-          : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+function renderMairieTicker(){
+  const track = $("mairieTickerTrack");
+  if(!track) return;
+  const db = mairieLoad();
+  const msg = (db.message && String(db.message).trim())
+    ? String(db.message).trim()
+    : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
 
-        track.innerHTML = [msg, msg].map(m => `<span>${escapeHtml(m)}</span>`).join("");
-      }
+  track.innerHTML = [msg, msg].map(m => `<span>${escapeHtml(m)}</span>`).join("");
+}
 
-      renderMairieTicker();
-      window.renderMairieTicker = renderMairieTicker;
-      window.mairieLoad = mairieLoad;
-      window.mairieSave = mairieSave;
-
+renderMairieTicker();
+window.renderMairieTicker = renderMairieTicker;
+window.mairieLoad = mairieLoad;
+window.mairieSave = mairieSave;
       document.querySelectorAll("[data-open]").forEach((el)=>{
         el.addEventListener("click", ()=>{
           const key = el.getAttribute("data-open");
