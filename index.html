@@ -1460,8 +1460,8 @@ setInterval(()=>{
   setTicker(tickerIdx);
 }, 4000);
   
-  function lockScroll(lock){
-  document.body.style.overflow = lock ? "hidden" : "";
+function lockScroll(lock){
+  document.body.classList.toggle("modalOpen", !!lock);
 }
 
 const modal = $("modal");
@@ -1470,30 +1470,41 @@ const modalBody = $("modalBody");
 
 function closeModal(){
   if(!modal) return;
-  modal.style.display = "none";
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
   lockScroll(false);
 }
 
 function openModal(title, html){
-  if(!modal) return;
+  if(!modal || !modalTitle || !modalBody) return;
   modalTitle.textContent = title;
   modalBody.innerHTML = html;
-  modal.style.display = "block";
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
   lockScroll(true);
 }
 
 window.openModal = openModal;
 window.closeModal = closeModal;
 
-  let wellbeingMap = null;
-  let wellbeingUserMarker = null;
-  let wellbeingPoiMarkers = [];
-  let wellbeingWatchId = null;
-  let currentHeading = 0;
+on($("modalClose"), "click", closeModal);
+on($("xBtn"), "click", closeModal);
 
-  const WELLBEING_RADIUS_METERS = 3000;
-  const WELLBEING_POINTS = [
-  {
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape"){
+    closeModal();
+  }
+});
+
+let wellbeingMap = null;
+let wellbeingUserMarker = null;
+let wellbeingPoiMarkers = [];
+let wellbeingWatchId = null;
+let currentHeading = 0;
+
+const WELLBEING_RADIUS_METERS = 3000;
+const WELLBEING_POINTS = [
+
     name:"Parc sportif",
     desc:"Espace de sport et promenade.",
     lat:50.586,
