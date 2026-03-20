@@ -1661,28 +1661,13 @@
   let wellbeingWatchId = null;
   let currentHeading = 0;
 
-  const WELLBEING_RADIUS_METERS = 3000;
-
   function clearWellbeingPois(){
-    wellbeingPoiMarkers.forEach((m)=>{
+    wellbeingPoiMarkers.forEach((marker)=>{
       try{
-        if(wellbeingMap) wellbeingMap.removeLayer(m);
+        if(wellbeingMap) wellbeingMap.removeLayer(marker);
       }catch(e){}
     });
     wellbeingPoiMarkers = [];
-  }
-
-  function distanceMeters(lat1, lng1, lat2, lng2){
-    const toRad = (v) => v * Math.PI / 180;
-    const R = 6371000;
-    const dLat = toRad(lat2 - lat1);
-    const dLng = toRad(lng2 - lng1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-      Math.sin(dLng / 2) * Math.sin(dLng / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
   }
 
   const WELLBEING_POINTS = [
@@ -1878,9 +1863,9 @@
     return L.divIcon({
       className: "",
       html: `<div class="wbPoiIcon" aria-hidden="true">${svg}</div>`,
-      iconSize: [30,30],
-      iconAnchor: [15,15],
-      popupAnchor: [0,-14]
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
+      popupAnchor: [0, -14]
     });
   }
 
@@ -1889,27 +1874,26 @@
 
     clearWellbeingPois();
 
-    const bounds = wellbeingMap.getBounds();
+    const bounds = wellbeingMap.getBounds().pad(0.35);
 
     WELLBEING_POINTS.forEach((p)=>{
       const pointLatLng = L.latLng(p.lat, p.lng);
+      if(!bounds.contains(pointLatLng)) return;
 
-      if(bounds.pad(0.35).contains(pointLatLng)){
-        const icon = createPoiIcon(p.type);
-        const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
+      const icon = createPoiIcon(p.type);
+      const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
 
-        marker.bindPopup(`
-          <div class="poiCard">
-            <img class="poiCardImg" src="${escapeHtml(p.img || "")}" alt="${escapeHtml(p.name || "")}">
-            <div class="poiCardTitle">${escapeHtml(p.name || "")}</div>
-            <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
-            <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
-          </div>
-        `);
+      marker.bindPopup(`
+        <div class="poiCard">
+          <img class="poiCardImg" src="${escapeHtml(p.img || "")}" alt="${escapeHtml(p.name || "")}">
+          <div class="poiCardTitle">${escapeHtml(p.name || "")}</div>
+          <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
+          <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
+        </div>
+      `);
 
-        marker.addTo(wellbeingMap);
-        wellbeingPoiMarkers.push(marker);
-      }
+      marker.addTo(wellbeingMap);
+      wellbeingPoiMarkers.push(marker);
     });
   }
 
@@ -1920,11 +1904,11 @@
       className: "",
       html: `
         <div class="userArrowWrap" aria-hidden="true">
-          <div class="userArrow" style="transform:rotate(${deg}deg);"></div>
+          <div class="userArrow" style="transform:rotate(${Number(deg || 0)}deg);"></div>
         </div>
       `,
-      iconSize: [28,28],
-      iconAnchor: [14,14]
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
     });
   }
 
@@ -1939,7 +1923,7 @@
     }, true);
 
     window.addEventListener("deviceorientation", (event)=>{
-      if(typeof event.webkitCompassHeading === "number"){
+      if(typeof event.webkitCompassHeading === "number" && !isNaN(event.webkitCompassHeading)){
         currentHeading = event.webkitCompassHeading;
         return;
       }
@@ -1947,6 +1931,18 @@
         currentHeading = 360 - event.alpha;
       }
     }, true);
+  }
+
+  function stopWellbeingLocate(){
+    if(wellbeingWatchId !== null){
+      navigator.geolocation.clearWatch(wellbeingWatchId);
+      wellbeingWatchId = null;
+    }
+
+    if(window.__wellbeingHeadingTimer){
+      clearInterval(window.__wellbeingHeadingTimer);
+      window.__wellbeingHeadingTimer = null;
+    }
   }
 
   function openWellbeingMap(){
@@ -1989,6 +1985,8 @@
       }
 
       try{
+        stopWellbeingLocate();
+
         if(wellbeingMap){
           try{ wellbeingMap.remove(); }catch(e){}
           wellbeingMap = null;
@@ -2001,7 +1999,9 @@
 
         clearWellbeingPois();
 
-        wellbeingMap = L.map(mapHost).setView([50.586, 3.043], 14);
+        wellbeingMap = L.map(mapHost, {
+          zoomControl: true
+        }).setView([50.586, 3.043], 14);
 
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           maxZoom: 19,
@@ -2035,13 +2035,10 @@
         }
 
         if(typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function"){
-          DeviceOrientationEvent.requestPermission().catch(()=>{}).then(()=>{});
+          DeviceOrientationEvent.requestPermission().catch(()=>{});
         }
 
-        if(wellbeingWatchId !== null){
-          navigator.geolocation.clearWatch(wellbeingWatchId);
-          wellbeingWatchId = null;
-        }
+        stopWellbeingLocate();
 
         wellbeingWatchId = navigator.geolocation.watchPosition(
           (pos)=>{
@@ -2070,15 +2067,11 @@
             alert("Impossible d’obtenir la position.");
           },
           {
-            enableHighAccuracy:true,
-            maximumAge:3000,
-            timeout:10000
+            enableHighAccuracy: true,
+            maximumAge: 3000,
+            timeout: 10000
           }
         );
-
-        if(window.__wellbeingHeadingTimer){
-          clearInterval(window.__wellbeingHeadingTimer);
-        }
 
         window.__wellbeingHeadingTimer = setInterval(()=>{
           if(wellbeingUserMarker){
@@ -2087,20 +2080,8 @@
         }, 500);
       };
 
-      const stopLocate = ()=>{
-        if(wellbeingWatchId !== null){
-          navigator.geolocation.clearWatch(wellbeingWatchId);
-          wellbeingWatchId = null;
-        }
-
-        if(window.__wellbeingHeadingTimer){
-          clearInterval(window.__wellbeingHeadingTimer);
-          window.__wellbeingHeadingTimer = null;
-        }
-      };
-
       if(locateBtn) locateBtn.onclick = startLocate;
-      if(stopBtn) stopBtn.onclick = stopLocate;
+      if(stopBtn) stopBtn.onclick = stopWellbeingLocate;
     }, 0);
   }
 
