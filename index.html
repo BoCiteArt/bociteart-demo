@@ -736,6 +736,139 @@
       border-bottom:16px solid #111;
       filter:drop-shadow(0 2px 3px rgba(0,0,0,.25));
     }
+    .calWrap{
+  margin-top:10px;
+}
+
+.calTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+
+.calTop .mini{
+  display:flex;
+  gap:8px;
+}
+
+.calGrid{
+  display:grid;
+  grid-template-columns:repeat(7, 1fr);
+  gap:8px;
+}
+
+.calDay{
+  min-height:64px;
+  border:2px solid rgba(0,0,0,.10);
+  background:#fff;
+  border-radius:14px;
+  padding:8px 6px;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-weight:900;
+}
+
+.calDay .d{
+  font-size:16px;
+  line-height:1;
+}
+
+.calDay .s{
+  margin-top:6px;
+  font-size:12px;
+  color:var(--muted);
+  font-weight:800;
+}
+
+.calDay.full{
+  background:#e7e7e7;
+  color:#8a8a8a;
+  cursor:not-allowed;
+  opacity:.9;
+}
+
+.calDay.disabled{
+  background:transparent;
+  border:none;
+  cursor:default;
+}
+
+.calDay:hover:not(.disabled):not(.full){
+  transform:translateY(-1px);
+}
+   .wbPoiIcon{
+  width:30px;
+  height:30px;
+  border-radius:999px;
+  background:#ffffff;
+  border:1.5px solid rgba(0,0,0,.18);
+  box-shadow:0 3px 10px rgba(0,0,0,.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.wbPoiIcon span{
+  font-size:15px;
+  line-height:1;
+}
+
+.wbUserDot{
+  width:18px;
+  height:18px;
+  border-radius:999px;
+  background:#2563eb;
+  border:3px solid #fff;
+  box-shadow:0 0 0 2px rgba(37,99,235,.22);
+}
+
+.poiCard{
+  min-width:220px;
+  max-width:260px;
+}
+
+.poiCardImg{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:12px;
+  display:block;
+  margin-bottom:8px;
+}
+
+.poiCardTitle{
+  font-weight:900;
+  font-size:15px;
+  line-height:1.2;
+}
+
+.poiCardMeta{
+  margin-top:4px;
+  color:#6e6a63;
+  font-size:12px;
+  font-weight:800;
+}
+
+.poiCardText{
+  margin-top:8px;
+  font-size:13px;
+  font-weight:700;
+  color:#1f1f1f;
+}
+
+.poiCardDist{
+  margin-top:8px;
+  font-size:12px;
+  color:#6e6a63;
+  font-weight:800;
+} 
     
     @media (max-height:780px){
       .wrap{ padding:10px; gap:10px; }
@@ -1360,24 +1493,123 @@ window.closeModal = closeModal;
 
   const WELLBEING_RADIUS_METERS = 3000;
   const WELLBEING_POINTS = [
-  { name:"Parc sportif", desc:"Point sport (démo)", lat:50.586, lng:3.043, type:"sport" },
-  { name:"Bois et parcours", desc:"Point promenade (démo)", lat:50.589, lng:3.038, type:"walk" },
-  { name:"Salle de sport", desc:"Point salle (démo)", lat:50.584, lng:3.049, type:"gym" },
-
-  { name:"Parc urbain", desc:"Parc / détente", lat:50.587, lng:3.046, type:"park" },
-  { name:"Espace vert central", desc:"Square / promenade", lat:50.585, lng:3.040, type:"park" },
-
-  { name:"Piste cyclable nord", desc:"Accès piste cyclable", lat:50.592, lng:3.045, type:"bike" },
-  { name:"Piste cyclable centre", desc:"Voie vélo", lat:50.586, lng:3.050, type:"bike" },
-
-  { name:"Arrêt de bus Mairie", desc:"Transport en commun", lat:50.585, lng:3.047, type:"bus" },
-  { name:"Arrêt de bus Centre", desc:"Transport en commun", lat:50.588, lng:3.041, type:"bus" },
-
-  { name:"Supérette du centre", desc:"Commerce de proximité", lat:50.584, lng:3.044, type:"shop" },
-  { name:"Mini-market quartier nord", desc:"Courses rapides", lat:50.590, lng:3.042, type:"shop" },
-
-  { name:"Restaurant place centrale", desc:"Restauration", lat:50.586, lng:3.048, type:"food" },
-  { name:"Snack du quartier", desc:"Petite restauration", lat:50.583, lng:3.046, type:"food" }
+  {
+    name:"Parc sportif",
+    desc:"Espace de sport et promenade.",
+    lat:50.586,
+    lng:3.043,
+    type:"sport",
+    address:"Secteur centre",
+    img:"https://images.unsplash.com/photo-1547347298-4074fc3086f0?auto=format&fit=crop&w=900&q=60"
+  },
+  {
+    name:"Bois et parcours",
+    desc:"Balade, marche et détente.",
+    lat:50.589,
+    lng:3.038,
+    type:"walk",
+    address:"Secteur nord-ouest",
+    img:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=60"
+  },
+  {
+    name:"Salle de sport",
+    desc:"Activités sportives en intérieur.",
+    lat:50.584,
+    lng:3.049,
+    type:"gym",
+    address:"Secteur est",
+    img:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=60"
+  },
+  {
+    name:"Parc urbain",
+    desc:"Parc de quartier pour détente.",
+    lat:50.587,
+    lng:3.046,
+    type:"park",
+    address:"Quartier central",
+    img:"https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=60"
+  },
+  {
+    name:"Espace vert central",
+    desc:"Square et promenade.",
+    lat:50.585,
+    lng:3.040,
+    type:"park",
+    address:"Centre-ville",
+    img:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=60"
+  },
+  {
+    name:"Piste cyclable nord",
+    desc:"Accès voie vélo.",
+    lat:50.592,
+    lng:3.045,
+    type:"bike",
+    address:"Secteur nord",
+    img:"https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=900&q=60"
+  },
+  {
+    name:"Piste cyclable centre",
+    desc:"Voie cyclable sécurisée.",
+    lat:50.586,
+    lng:3.050,
+    type:"bike",
+    address:"Centre-est",
+    img:"https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=900&q=60"
+  },
+  {
+    name:"Arrêt de bus Mairie",
+    desc:"Point d’arrêt transport en commun.",
+    lat:50.585,
+    lng:3.047,
+    type:"bus",
+    address:"Avenue principale",
+    img:"https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=900&q=60"
+  },
+  {
+    name:"Arrêt de bus Centre",
+    desc:"Accès bus secteur central.",
+    lat:50.588,
+    lng:3.041,
+    type:"bus",
+    address:"Centre-ville",
+    img:"https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?auto=format&fit=crop&w=900&q=60"
+  },
+  {
+    name:"Supérette du centre",
+    desc:"Commerce de proximité.",
+    lat:50.584,
+    lng:3.044,
+    type:"shop",
+    address:"Centre-ville",
+    img:"https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=60"
+  },
+  {
+    name:"Mini-market quartier nord",
+    desc:"Courses rapides et dépannage.",
+    lat:50.590,
+    lng:3.042,
+    type:"shop",
+    address:"Quartier nord",
+    img:"https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=900&q=60"
+  },
+  {
+    name:"Restaurant place centrale",
+    desc:"Restauration sur place.",
+    lat:50.586,
+    lng:3.048,
+    type:"food",
+    address:"Place centrale",
+    img:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=60"
+  },
+  {
+    name:"Snack du quartier",
+    desc:"Petite restauration rapide.",
+    lat:50.583,
+    lng:3.046,
+    type:"food",
+    address:"Secteur sud-centre",
+    img:"https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=60"
+  }
 ];
 
       function escapeHtml(s){
@@ -1426,51 +1658,87 @@ window.closeModal = closeModal;
         return R * c;
       }
 
-      function createPoiIcon(type){
-        if(!window.L) return null;
-        return L.divIcon({
-          className: "",
-          html: `<div class="${wbIconClass(type)}" aria-hidden="true"></div>`,
-          iconSize: [18,18],
-          iconAnchor: [9,9],
-          popupAnchor: [0,-8]
-        });
-      }
+     function createPoiIcon(type){
+  if(!window.L) return null;
 
-      function createUserIcon(deg){
+  let iconChar = "•";
+
+  switch(String(type || "").toLowerCase()){
+    case "sport": iconChar = "🏟"; break;
+    case "walk": iconChar = "🌿"; break;
+    case "gym": iconChar = "🏋"; break;
+    case "health": iconChar = "✚"; break;
+    case "park": iconChar = "🌳"; break;
+    case "bike": iconChar = "🚲"; break;
+    case "bus": iconChar = "🚌"; break;
+    case "shop": iconChar = "🛒"; break;
+    case "food": iconChar = "🍽"; break;
+    default: iconChar = "•";
+  }
+
+  return L.divIcon({
+    className: "",
+    html: `<div class="wbPoiIcon" aria-hidden="true"><span>${iconChar}</span></div>`,
+    iconSize: [30,30],
+    iconAnchor: [15,15],
+    popupAnchor: [0,-14]
+  });
+} 
+
+     function createUserIcon(deg){
   if(!window.L) return null;
 
   return L.divIcon({
     className: "",
     html: `
-      <div class="userArrowWrap" aria-hidden="true">
-        <div class="userArrow" style="transform:rotate(${deg}deg);"></div>
+      <div style="position:relative;width:34px;height:34px;display:flex;align-items:center;justify-content:center;">
+        <div class="wbUserDot"></div>
+        <div style="
+          position:absolute;
+          top:-2px;
+          left:50%;
+          transform:translateX(-50%) rotate(${deg}deg);
+          transform-origin:50% 18px;
+          width:0;
+          height:0;
+          border-left:8px solid transparent;
+          border-right:8px solid transparent;
+          border-bottom:18px solid #111;
+          filter:drop-shadow(0 2px 3px rgba(0,0,0,.25));
+        "></div>
       </div>
     `,
-    iconSize: [28,28],
-    iconAnchor: [14,14]
+    iconSize: [34,34],
+    iconAnchor: [17,17]
   });
 }
 
-      function renderWellbeingPois(lat, lng){
-        if(!wellbeingMap || !window.L) return;
-        clearWellbeingPois();
+     function renderWellbeingPois(lat, lng){
+  if(!wellbeingMap || !window.L) return;
+  clearWellbeingPois();
 
-        WELLBEING_POINTS.forEach((p)=>{
-          const dist = distanceMeters(lat, lng, p.lat, p.lng);
-          if(dist <= WELLBEING_RADIUS_METERS){
-            const icon = createPoiIcon(p.type);
-            const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
-            marker.bindPopup(`
-              <div style="font-weight:900;">${escapeHtml(p.name)}</div>
-              <div style="margin-top:4px;">${escapeHtml(p.desc || "")}</div>
-              <div style="margin-top:6px;color:#6e6a63;font-size:12px;">À environ ${Math.round(dist)} m</div>
-            `);
-            marker.addTo(wellbeingMap);
-            wellbeingPoiMarkers.push(marker);
-          }
-        });
-      }
+  WELLBEING_POINTS.forEach((p)=>{
+    const dist = distanceMeters(lat, lng, p.lat, p.lng);
+
+    if(dist <= WELLBEING_RADIUS_METERS){
+      const icon = createPoiIcon(p.type);
+      const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
+
+      marker.bindPopup(`
+        <div class="poiCard">
+          <img class="poiCardImg" src="${escapeHtml(p.img || "")}" alt="${escapeHtml(p.name)}">
+          <div class="poiCardTitle">${escapeHtml(p.name)}</div>
+          <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
+          <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
+          <div class="poiCardDist">À environ ${Math.round(dist)} m</div>
+        </div>
+      `);
+
+      marker.addTo(wellbeingMap);
+      wellbeingPoiMarkers.push(marker);
+    }
+  });
+}
 
 function openWellbeingMap(){
   initCompass();
@@ -2157,10 +2425,31 @@ function openWellbeingMap(){
 function openTicker(){
   openModal("Publicités & visibilité (ticker)", `
     <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
+
     <div class="box">
-      <strong>Cadre :</strong> réservation plafonnée, gestion par calendrier,
-      possibilité de récap mensuel et horodatage des réservations.
+      <strong>Cadre :</strong> espace rare, visibilité locale limitée à <strong>10 publicités maximum par jour</strong>.
     </div>
+
+    <div class="box">
+      <div style="font-weight:900;">Règle métier (démo)</div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Maximum : <strong>10 pubs par jour</strong></li>
+        <li>En principe : <strong>1 pub par commerçant et par jour</strong></li>
+        <li>À partir de <strong>16h00</strong>, si des places sont encore libres, un commerçant ayant déjà réservé peut reprendre une place disponible</li>
+        <li><strong>50 € HT</strong> la publicité unitaire</li>
+        <li><strong>Pack 5 pubs = 200 € HT</strong></li>
+        <li>Diffusion uniquement après validation du paiement</li>
+        <li>Facturation mensuelle centralisée via PSP</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <div class="muted">
+        La réservation ci-dessous reste une démonstration locale. La version officielle ajoutera :
+        identité commerçant, contrôle 1 pub/jour, déblocage après 16h, validation paiement PSP et émission mensuelle.
+      </div>
+    </div>
+
     <div id="calHost"></div>
   `);
 
