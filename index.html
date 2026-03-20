@@ -2479,16 +2479,6 @@ function escapeHtml(s){
     .replace(/'/g, "&#039;");
 }
 
-function wbIconClass(type){
-  switch(String(type || "").toLowerCase()){
-    case "sport": return "wbPoi wbPoiSport";
-    case "walk": return "wbPoi wbPoiWalk";
-    case "gym": return "wbPoi wbPoiGym";
-    case "health": return "wbPoi wbPoiHealth";
-    default: return "wbPoi wbPoiDefault";
-  }
-}
-
 function clearWellbeingPois(){
   wellbeingPoiMarkers.forEach((m)=>{
     try{
@@ -2513,15 +2503,130 @@ function distanceMeters(lat1, lng1, lat2, lng2){
 
 function createPoiIcon(type){
   if(!window.L) return null;
+
+  let svg = `
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <circle cx="12" cy="12" r="5" fill="none" stroke="#333" stroke-width="1.8"/>
+    </svg>
+  `;
+
+  switch(String(type || "").toLowerCase()){
+    case "sport":
+    case "gym":
+      svg = `
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M3 10v4M6 8v8M18 8v8M21 10v4M6 12h12" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
+      break;
+
+    case "walk":
+    case "park":
+      svg = `
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M12 20v-5M8 12c0-2.2 1.8-4 4-4s4 1.8 4 4c0 1.6-1 3.1-2.5 3.7H10.5C9 15.1 8 13.6 8 12Z" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
+      break;
+
+    case "bike":
+      svg = `
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <circle cx="6" cy="17" r="3" fill="none" stroke="#1f1f1f" stroke-width="1.8"/>
+          <circle cx="18" cy="17" r="3" fill="none" stroke="#1f1f1f" stroke-width="1.8"/>
+          <path d="M9 17l3-7h3M10 10h4M12 17l-3-4M12 17l3-4" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
+      break;
+
+    case "bus":
+      svg = `
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <rect x="5" y="6" width="14" height="10" rx="2" fill="none" stroke="#1f1f1f" stroke-width="1.8"/>
+          <path d="M8 16v2M16 16v2M7 10h10" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="8" cy="18" r="1" fill="#1f1f1f"/>
+          <circle cx="16" cy="18" r="1" fill="#1f1f1f"/>
+        </svg>
+      `;
+      break;
+
+    case "shop":
+      svg = `
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M7 8h13l-1.2 6.5a2 2 0 0 1-2 1.5H10a2 2 0 0 1-2-1.6L6.5 5H4" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="10" cy="19" r="1.2" fill="#1f1f1f"/>
+          <circle cx="17" cy="19" r="1.2" fill="#1f1f1f"/>
+        </svg>
+      `;
+      break;
+
+    case "food":
+      svg = `
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M7 4v7M5 4v4M9 4v4M7 11v9M15 4v9M15 13l3-2V4" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
+      break;
+
+    case "health":
+      svg = `
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" fill="none" stroke="#1f1f1f" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      `;
+      break;
+  }
+
   return L.divIcon({
     className: "",
-    html: `<div class="${wbIconClass(type)}" aria-hidden="true"></div>`,
-    iconSize: [18,18],
-    iconAnchor: [9,9],
-    popupAnchor: [0,-8]
+    html: `<div class="wbPoiIcon" aria-hidden="true">${svg}</div>`,
+    iconSize: [30,30],
+    iconAnchor: [15,15],
+    popupAnchor: [0,-14]
   });
 }
 
+function renderWellbeingPois(lat, lng){
+  if(!wellbeingMap || !window.L) return;
+  clearWellbeingPois();
+
+  WELLBEING_POINTS.forEach((p)=>{
+    const dist = distanceMeters(lat, lng, p.lat, p.lng);
+
+    if(dist <= WELLBEING_RADIUS_METERS){
+      const icon = createPoiIcon(p.type);
+      const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
+
+      marker.bindPopup(`
+        <div class="poiCard">
+          <img class="poiCardImg" src="${escapeHtml(p.img || "")}" alt="${escapeHtml(p.name)}">
+          <div class="poiCardTitle">${escapeHtml(p.name)}</div>
+          <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
+          <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
+          <div class="poiCardDist">À environ ${Math.round(dist)} m</div>
+        </div>
+      `);
+
+      marker.addTo(wellbeingMap);
+      wellbeingPoiMarkers.push(marker);
+    }
+  });
+}
+
+function createUserIcon(deg){
+  if(!window.L) return null;
+
+  return L.divIcon({
+    className: "",
+    html: `
+      <div class="userArrowWrap" aria-hidden="true">
+        <div class="userArrow" style="transform:rotate(${deg}deg);"></div>
+      </div>
+    `,
+    iconSize: [28,28],
+    iconAnchor: [14,14]
+  });
+}
 function createUserIcon(deg){
   if(!window.L) return null;
   return L.divIcon({
