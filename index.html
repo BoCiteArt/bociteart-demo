@@ -1425,46 +1425,154 @@
   const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
   const isFn = (v) => typeof v === "function";
 
-  const tickerItems = [
-    {
-      title:"🥐 Boulangerie Croquet",
-      subtitle:"Offre spéciale partenaires • Démo",
-      img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=60"
-    },
-    {
-      title:"💊 Pharmacie Richardson",
-      subtitle:"Bien-être & santé • Démo",
-      img:"https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=1200&q=60"
-    },
-    {
-      title:"🌸 Anaïs Fleurs",
-      subtitle:"Bouquets & événements • Démo",
-      img:"https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=60"
-    }
-  ];
-
-  let tickerIdx = 0;
-
-  function setTicker(i){
-    const it = tickerItems[i];
-    if(!it) return;
-    if($("tickerImg")) $("tickerImg").src = it.img;
-    if($("tickerTitleA")) $("tickerTitleA").textContent = it.title;
-    if($("tickerSubA")) $("tickerSubA").textContent = it.subtitle || "";
-    if($("tickerTitleB")) $("tickerTitleB").textContent = it.title;
-    if($("tickerSubB")) $("tickerSubB").textContent = it.subtitle || "";
-  }
-
-  setTicker(0);
-
-  setInterval(()=>{
-    tickerIdx = (tickerIdx + 1) % tickerItems.length;
-    setTicker(tickerIdx);
-  }, 4000);
+  const PUB_MAX_PER_DAY = 10;
+  window.PUB_MAX_PER_DAY = PUB_MAX_PER_DAY;
 
   function lockScroll(lock){
     document.body.classList.toggle("modalOpen", !!lock);
   }
+  window.lockScroll = lockScroll;
+
+  function escapeHtml(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function callPhone(number){
+    if(!number) return;
+    window.location.href = "tel:" + String(number).replace(/[^\d+]/g, "");
+  }
+  window.callPhone = callPhone;
+
+  function makeKeyboardClickable(el, fn){
+    if(!el || !isFn(fn)) return;
+    if(!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+    if(!el.hasAttribute("role")) el.setAttribute("role", "button");
+    el.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        fn();
+      }
+    });
+  }
+  window.makeKeyboardClickable = makeKeyboardClickable;
+
+  function speak(text, mode){
+    if(!("speechSynthesis" in window)){
+      alert(text || "");
+      return;
+    }
+    try{ speechSynthesis.cancel(); }catch(e){}
+    const u = new SpeechSynthesisUtterance(text || "");
+    u.lang = "fr-FR";
+    u.rate = mode === "child" ? 1.05 : 0.96;
+    u.pitch = mode === "child" ? 1.3 : 1.0;
+    speechSynthesis.speak(u);
+  }
+  window.speak = speak;
+
+  function loadSchoolWallet(){
+    try{
+      const raw = localStorage.getItem("bociteart_school_wallet_v1");
+      return raw ? JSON.parse(raw) : { jaune:0 };
+    }catch(e){
+      return { jaune:0 };
+    }
+  }
+  function saveSchoolWallet(obj){
+    try{ localStorage.setItem("bociteart_school_wallet_v1", JSON.stringify(obj)); }catch(e){}
+  }
+  window.loadSchoolWallet = loadSchoolWallet;
+  window.saveSchoolWallet = saveSchoolWallet;
+
+  function loadSportWallet(){
+    try{
+      const raw = localStorage.getItem("bociteart_sport_wallet_v1");
+      return raw ? JSON.parse(raw) : { vert:0 };
+    }catch(e){
+      return { vert:0 };
+    }
+  }
+  function saveSportWallet(obj){
+    try{ localStorage.setItem("bociteart_sport_wallet_v1", JSON.stringify(obj)); }catch(e){}
+  }
+  window.loadSportWallet = loadSportWallet;
+  window.saveSportWallet = saveSportWallet;
+
+  function loadCitizenWallet(){
+    try{
+      const raw = localStorage.getItem("bociteart_citizen_wallet_v1");
+      return raw ? JSON.parse(raw) : { or:37 };
+    }catch(e){
+      return { or:37 };
+    }
+  }
+  function saveCitizenWallet(obj){
+    try{ localStorage.setItem("bociteart_citizen_wallet_v1", JSON.stringify(obj)); }catch(e){}
+  }
+  window.loadCitizenWallet = loadCitizenWallet;
+  window.saveCitizenWallet = saveCitizenWallet;
+
+  function initFeeUiInModal(){
+    const input = $("feeInputSales");
+    const outSales = $("feeSalesOut");
+    const outFee = $("feeOut");
+    const addBtn = $("feeAddBtn");
+    const resetBtn = $("feeResetBtn");
+    const KEY = "bociteart_fee_demo_v1";
+
+    function loadFee(){
+      try{
+        const raw = localStorage.getItem(KEY);
+        return raw ? JSON.parse(raw) : { sales:0 };
+      }catch(e){
+        return { sales:0 };
+      }
+    }
+
+    function saveFee(obj){
+      try{ localStorage.setItem(KEY, JSON.stringify(obj)); }catch(e){}
+    }
+
+    function fmt(n){
+      return Number(n || 0).toLocaleString("fr-FR", {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }) + " €";
+    }
+
+    function renderFee(){
+      const db = loadFee();
+      const sales = Number(db.sales || 0);
+      const fee = Math.floor(sales / 10) * 0.18;
+
+      if(input) input.value = sales ? String(sales) : "";
+      if(outSales) outSales.textContent = fmt(sales);
+      if(outFee) outFee.textContent = fmt(fee);
+    }
+
+    if(addBtn){
+      addBtn.onclick = ()=>{
+        const sales = Number(input ? input.value : 0);
+        saveFee({ sales: Number.isFinite(sales) && sales > 0 ? sales : 0 });
+        renderFee();
+      };
+    }
+
+    if(resetBtn){
+      resetBtn.onclick = ()=>{
+        saveFee({ sales:0 });
+        renderFee();
+      };
+    }
+
+    renderFee();
+  }
+  window.initFeeUiInModal = initFeeUiInModal;
 
   const modal = $("modal");
   const modalTitle = $("modalTitle");
@@ -1497,6 +1605,55 @@
       closeModal();
     }
   });
+
+  const tickerItems = [
+    {
+      title:"🥐 Boulangerie Croquet",
+      subtitle:"Offre spéciale partenaires • Démo",
+      img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=60"
+    },
+    {
+      title:"💊 Pharmacie Richardson",
+      subtitle:"Bien-être & santé • Démo",
+      img:"https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=1200&q=60"
+    },
+    {
+      title:"🌸 Anaïs Fleurs",
+      subtitle:"Bouquets & événements • Démo",
+      img:"https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=60"
+    }
+  ];
+
+  let tickerIdx = 0;
+
+  function setTicker(i){
+    const it = tickerItems[i];
+    if(!it) return;
+    if($("tickerImg")) $("tickerImg").src = it.img;
+    if($("tickerTitleA")) $("tickerTitleA").textContent = it.title;
+    if($("tickerSubA")) $("tickerSubA").textContent = it.subtitle || "";
+    if($("tickerTitleB")) $("tickerTitleB").textContent = it.title;
+    if($("tickerSubB")) $("tickerSubB").textContent = it.subtitle || "";
+  }
+
+  function openTicker(){
+    const it = tickerItems[tickerIdx] || tickerItems[0];
+    openModal("Publicité", `
+      <div class="box">
+        <div style="font-weight:900;">${escapeHtml(it.title || "")}</div>
+        <div class="muted" style="margin-top:6px;">${escapeHtml(it.subtitle || "")}</div>
+      </div>
+      <div class="box">Règle : 10/jour • règle 16h</div>
+    `);
+  }
+  window.openTicker = openTicker;
+
+  setTicker(0);
+  setInterval(()=>{
+    tickerIdx = (tickerIdx + 1) % tickerItems.length;
+    setTicker(tickerIdx);
+  }, 4000);
+  on($("ticker"), "click", openTicker);
 
   let wellbeingMap = null;
   let wellbeingUserMarker = null;
@@ -1626,15 +1783,6 @@
     }
   ];
 
-  function escapeHtml(s){
-    return String(s == null ? "" : s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
   function clearWellbeingPois(){
     wellbeingPoiMarkers.forEach((m)=>{
       try{
@@ -1675,7 +1823,6 @@
           </svg>
         `;
         break;
-
       case "walk":
       case "park":
         svg = `
@@ -1684,7 +1831,6 @@
           </svg>
         `;
         break;
-
       case "bike":
         svg = `
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -1694,7 +1840,6 @@
           </svg>
         `;
         break;
-
       case "bus":
         svg = `
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -1705,7 +1850,6 @@
           </svg>
         `;
         break;
-
       case "shop":
         svg = `
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -1715,7 +1859,6 @@
           </svg>
         `;
         break;
-
       case "food":
         svg = `
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -1723,7 +1866,6 @@
           </svg>
         `;
         break;
-
       case "health":
         svg = `
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -1836,11 +1978,7 @@
       if(!mapHost) return;
 
       if(!window.L){
-        mapHost.innerHTML = `
-          <div style="padding:16px;font-weight:800;">
-            Leaflet n’est pas chargé.
-          </div>
-        `;
+        mapHost.innerHTML = `<div style="padding:16px;font-weight:800;">Leaflet n’est pas chargé.</div>`;
         return;
       }
 
@@ -1867,13 +2005,8 @@
         setTimeout(()=>{
           try{ wellbeingMap.invalidateSize(); }catch(e){}
         }, 120);
-
       }catch(e){
-        mapHost.innerHTML = `
-          <div style="padding:16px;font-weight:800;">
-            Erreur d’initialisation de la carte.
-          </div>
-        `;
+        mapHost.innerHTML = `<div style="padding:16px;font-weight:800;">Erreur d’initialisation de la carte.</div>`;
         return;
       }
 
@@ -2002,6 +2135,126 @@
   window.mairieLoad = mairieLoad;
   window.mairieSave = mairieSave;
 
+  function openSportFiche(){
+    if(!isFn(window.openModal)) return;
+
+    openModal("📄 Fiche — élus / CCI / commerçants (Sport + Associations)", `
+      <div class="box">
+        <div style="font-weight:900;">Objectif</div>
+        <div class="muted" style="margin-top:6px;">
+          Déclencher un soutien simple : un commerçant soutient un club + une association, avec visibilité locale via le bandeau 1 cm.
+        </div>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Principe</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>Un commerçant soutient <strong>un club sportif</strong> + <strong>une association</strong>.</li>
+          <li>Sa ligne apparaît dans le bandeau : “Commerce soutient Club + Association”.</li>
+          <li>Le club valorise ses soutiens auprès de ses licenciés/familles (logique locale).</li>
+          <li>Les modalités PSP / pièces / fiscalité sont décrites dans les CGV/contrats (discrétion + conformité).</li>
+        </ul>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Montant (exemple)</div>
+        <div style="font-weight:800;margin-top:6px;">Exemple : <strong>100 € HT</strong> par période (ex. trimestriel).</div>
+        <div class="muted" style="margin-top:8px;">(Démo) La répartition exacte est contractualisée. La TVA dépend du cadre applicable.</div>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Associations retenues (uniquement celles-ci)</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</li>
+          <li><strong>Étoile Filante</strong> — enfants atteints de maladies rares</li>
+          <li><strong>Les Papillons</strong> — antenne Nord</li>
+          <li><strong>ATC Nord</strong> — traumatisés crâniens</li>
+        </ul>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Préparer votre ligne (démo)</div>
+        <div class="muted" style="margin-top:6px;">Le commerçant peut choisir l’affichage en gras (+4€ TTC) et indiquer une URL.</div>
+
+        <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
+        <input class="miniField" id="spName" placeholder="Ex. Boulangerie Croquet" />
+
+        <div style="margin-top:10px;font-weight:900;">URL (optionnelle)</div>
+        <input class="miniField" id="spUrl" placeholder="https://..." />
+
+        <div class="miniCheck">
+          <input id="spBold" type="checkbox" />
+          <div>
+            Option <strong>texte en gras</strong> (+4€ TTC) — pour une meilleure lisibilité (sans promesse de résultats).
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+          <button class="choiceBtn" id="spPreview" type="button">👁️ Aperçu</button>
+          <button class="choiceBtn" id="spAddToTape" type="button">➕ Ajouter au bandeau (démo)</button>
+        </div>
+
+        <div class="muted" style="margin-top:10px;">
+          (Démo) Ici, l’ajout est local (sur ce téléphone). La version officielle gèrera validation/contrat/contrôle.
+        </div>
+      </div>
+    `);
+
+    setTimeout(()=>{
+      const btnPrev = $("spPreview");
+      const btnAdd = $("spAddToTape");
+      const inName = $("spName");
+      const inUrl = $("spUrl");
+      const cbBold = $("spBold");
+
+      const makeLine = ()=>{
+        const name = (inName && inName.value.trim()) ? inName.value.trim() : "Commerce (démo)";
+        let url = (inUrl && inUrl.value.trim()) ? inUrl.value.trim() : "";
+        const base = `${name} soutient Club + Association`;
+
+        url = url.replace(/\s+/g, "");
+        if(!url) return base;
+        if(url.startsWith("www.")) url = "https://" + url;
+
+        if(url.startsWith("http://")){
+          alert("URL invalide : utiliser https:// (pas http://).");
+          return base;
+        }
+        if(!url.startsWith("https://")){
+          alert("URL invalide : utiliser https://");
+          return base;
+        }
+        if(!/^[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+$/.test(url)){
+          alert("URL invalide : caractères non autorisés.");
+          return base;
+        }
+        if(url.length > 80){
+          alert("URL trop longue (max 80 caractères).");
+          return base;
+        }
+        return `${base} • ${url}`;
+      };
+
+      if(btnPrev){
+        btnPrev.onclick = ()=>{
+          const line = makeLine();
+          alert("Aperçu :\n" + line + (cbBold && cbBold.checked ? "\n(affichage gras)" : "\n(affichage normal)"));
+        };
+      }
+
+      if(btnAdd){
+        btnAdd.onclick = ()=>{
+          const line = makeLine();
+          const bold = !!(cbBold && cbBold.checked);
+          if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
+          window.tapeAds.push({ txt:line, bold });
+          if(isFn(window.renderTape)) window.renderTape();
+          alert("Ajouté au bandeau (démo).");
+        };
+      }
+    },0);
+  }
+
   document.querySelectorAll("[data-open]").forEach((el)=>{
     el.addEventListener("click", ()=>{
       const key = el.getAttribute("data-open");
@@ -2027,1497 +2280,1357 @@
       }
 
       if(key === "ecole"){
-    if(key === "ecole"){
-      openModal("École", `
-        <div style="font-weight:900;margin-bottom:8px;">Mot du jour (structure)</div>
+        openModal("École", `
+          <div style="font-weight:900;margin-bottom:8px;">Mot du jour (structure)</div>
 
-        <div class="box">
-          <strong>Cadre école :</strong> l’établissement gère et conserve les autorisations nécessaires
-          (document de rentrée). Contenus non identifiants. En cas de désaccord parental,
-          la voix synthétique est utilisée.
-        </div>
-
-        <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
-          « Je suis ravi aujourd’hui. » — Exemple (démo)
-        </div>
-
-        <div class="muted" style="margin-top:10px;">
-          Le professeur choisit la voix selon le cadre de l’établissement.
-        </div>
-
-        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-          <button class="choiceBtn" type="button" id="playChild">▶ Lire (voix enfant — démo)</button>
-          <button class="choiceBtn" type="button" id="playFemale">▶ Lire (voix synthétique)</button>
-        </div>
-
-        <div class="coinShowcase">
-          <div class="coinFace coinYellow" aria-hidden="true">
-            <div class="coinStarsRing coinStarsYellow" aria-hidden="true">
-              <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-                <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
-              </svg>
-            </div>
-            <div class="coinInner coinInnerYellow">
-              <div class="n">1</div>
-              <div class="t">BoCitecoin</div>
-            </div>
+          <div class="box">
+            <strong>Cadre école :</strong> l’établissement gère et conserve les autorisations nécessaires
+            (document de rentrée). Contenus non identifiants. En cas de désaccord parental,
+            la voix synthétique est utilisée.
           </div>
 
-          <div class="coinStack" aria-hidden="true">
-            <div class="stackCoin stackYellow stack1">
-              <div class="stackCoinStars" aria-hidden="true">
-                <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                  <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+          <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
+            « Je suis ravi aujourd’hui. » — Exemple (démo)
+          </div>
+
+          <div class="muted" style="margin-top:10px;">
+            Le professeur choisit la voix selon le cadre de l’établissement.
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+            <button class="choiceBtn" type="button" id="playChild">▶ Lire (voix enfant — démo)</button>
+            <button class="choiceBtn" type="button" id="playFemale">▶ Lire (voix synthétique)</button>
+          </div>
+
+          <div class="coinShowcase">
+            <div class="coinFace coinYellow" aria-hidden="true">
+              <div class="coinStarsRing coinStarsYellow" aria-hidden="true">
+                <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+                  <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
                 </svg>
               </div>
-            </div>
-
-            <div class="stackCoin stackYellow stack2">
-              <div class="stackCoinStars" aria-hidden="true">
-                <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                  <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                </svg>
+              <div class="coinInner coinInnerYellow">
+                <div class="n">1</div>
+                <div class="t">BoCitecoin</div>
               </div>
             </div>
 
-            <div class="stackCoin stackYellow stack3">
-              <div class="stackCoinStars" aria-hidden="true">
-                <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                  <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div class="walletBox">
-            <div class="walletTitle">Wallet École — BoCitecoins JAUNE</div>
-            <div class="walletValue walletYellow" id="schoolCoinBalance">0</div>
-            <div class="walletSub">
-              Bocitecoins gagnés par la classe, échangeables en mairie selon les règles locales,
-              ou cumulables pour un projet / une aide de classe selon le choix retenu.
-            </div>
-            <div class="walletActions">
-              <button class="walletMini" id="walletSchoolInfo" type="button">Voir le cycle</button>
-              <button class="walletMini" id="walletSchoolReset" type="button">Réinitialiser</button>
-            </div>
-          </div>
-        </div>
-      `);
-
-      setTimeout(()=>{
-        const text = "Je suis ravi aujourd’hui.";
-        const btnC = $("playChild");
-        const btnF = $("playFemale");
-        if(btnC) btnC.onclick = ()=> speak(text, "child");
-        if(btnF) btnF.onclick = ()=> speak(text, "female");
-
-        const out = $("schoolCoinBalance");
-        if(out) out.textContent = Number(loadSchoolWallet().jaune || 0);
-
-        const schoolResetWallet = $("walletSchoolReset");
-        if(schoolResetWallet){
-          schoolResetWallet.onclick = ()=>{
-            if(confirm("Réinitialiser le compteur école (démo) ?")){
-              saveSchoolWallet({ jaune:0 });
-              const out2 = $("schoolCoinBalance");
-              if(out2) out2.textContent = 0;
-            }
-          };
-        }
-
-        const schoolInfoBtn = $("walletSchoolInfo");
-        if(schoolInfoBtn){
-          schoolInfoBtn.onclick = ()=>{
-            alert("Cycle école (démo) :\n- 15e mot => 50\n- 18e mot => 80\n- 22e mot => 100");
-          };
-        }
-      }, 0);
-
-      return;
-    }
-
-    if(key === "sport"){
-      openModal("Sport", `
-        <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
-        <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
-
-        <div class="coinShowcase">
-          <div class="coinFace coinGreen" aria-hidden="true">
-            <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
-              <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-                <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
-              </svg>
-            </div>
-            <div class="coinInner coinInnerGreen">
-              <div class="n">1</div>
-              <div class="t">BoCitecoin</div>
-            </div>
-          </div>
-
-          <div class="coinStack" aria-hidden="true">
-            <div class="stackCoin stackGreen stack1">
-              <div class="stackCoinStars" aria-hidden="true">
-                <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                  <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                </svg>
-              </div>
-            </div>
-            <div class="stackCoin stackGreen stack2">
-              <div class="stackCoinStars" aria-hidden="true">
-                <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                  <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                </svg>
-              </div>
-            </div>
-            <div class="stackCoin stackGreen stack3">
-              <div class="stackCoinStars" aria-hidden="true">
-                <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                  <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div class="walletBox">
-            <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
-            <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
-            <div class="walletSub">BoCitecoins gagnés par les actions sportives/citoyennes, échangeables uniquement par tranches de 10 chez un commerçant partenaire. L’échange bénéficie au club, jamais au référent. Maximum 30% en nourriture/boissons, le reste en matériel sportif.</div>
-
-            <div class="box" style="margin-top:12px;">
-              <div style="font-weight:900;">Échange commerçant → club (démo)</div>
-              <div class="muted" style="margin-top:6px;">
-                Le commerçant scanne, valide l’échange, brûle les BoCitecoins utilisés, puis le compteur redescend selon la tranche échangée.
-                Le référent ne reçoit rien pour lui-même : l’avantage doit bénéficier au club.
-              </div>
-              <div class="muted" style="margin-top:6px;">
-                Échange autorisé uniquement par tranche de 10 BoCitecoins (10 ou 20). Pas plus.
-              </div>
-              <div class="muted" style="margin-top:6px;">
-                Composition de l’aide : maximum 30% nourriture/boissons incluses, le reste en matériel sportif.
-              </div>
-              <div class="muted" style="margin-top:6px;">
-                L’échange peut aussi servir de moment pour proposer au commerçant un soutien complémentaire au club, tout en aidant l’une des 4 associations retenues.
-              </div>
-            </div>
-
-            <div class="walletActions">
-              <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-              <button class="walletMini" id="walletSportPlus20" type="button">+20</button>
-              <button class="walletMini" id="walletSportRedeem10" type="button">Échanger 10</button>
-              <button class="walletMini" id="walletSportRedeem20" type="button">Échanger 20</button>
-              <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
-            </div>
-          </div>
-        </div>
-
-        <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
-        <div class="box">
-          <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
-          <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm), et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras. Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.</div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
-          </div>
-        </div>
-
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Rapport du week-end (résumé)</li>
-          <li>Missions citoyennes : propreté • rangement • fair-play</li>
-          <li>Validation (optionnelle) — non publique</li>
-          <li>Bocitecoins couleur Vert : collectivité</li>
-          <li>Pas de messagerie • pas de commentaires libres</li>
-        </ul>
-
-        <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Parcs • bois • parcours • salles</li>
-          <li>Carte plein écran + guidage</li>
-        </ul>
-
-        <div class="box" style="margin-top:10px;">
-          <div style="font-weight:900;">Carte bien-être</div>
-          <div class="muted" style="margin-top:6px;">
-            Ouvre la carte plein écran avec points utiles autour de vous.
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="openMap" type="button">Carte bien-être</button>
-          </div>
-        </div>
-
-        <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
-        <div class="box">
-          Actuellement : 12 clubs engagés (démo)<br><br>
-          Chaque club peut proposer :<br>
-          • Rapport du week-end<br>
-          • Actions citoyennes<br>
-          • Partenariats commerçants<br>
-          • Soutien associatif
-        </div>
-      `);
-
-      setTimeout(()=>{
-        const b = $("openSportFicheBtn");
-        const btnMap = $("openMap");
-        const p10 = $("walletSportPlus10");
-        const p20 = $("walletSportPlus20");
-        const r10 = $("walletSportRedeem10");
-        const r20 = $("walletSportRedeem20");
-        const rst = $("walletSportReset");
-
-        const refresh = ()=>{
-          const out = $("sportCoinBalance");
-          if(out) out.textContent = Number(loadSportWallet().vert || 0);
-        };
-
-        if(b) b.onclick = openSportFiche;
-        if(btnMap) btnMap.onclick = openWellbeingMap;
-
-        refresh();
-
-        if(p10){
-          p10.onclick = ()=>{
-            const w = loadSportWallet();
-            w.vert = Number(w.vert || 0) + 10;
-            saveSportWallet(w);
-            refresh();
-          };
-        }
-
-        if(p20){
-          p20.onclick = ()=>{
-            const w = loadSportWallet();
-            w.vert = Number(w.vert || 0) + 20;
-            saveSportWallet(w);
-            refresh();
-          };
-        }
-
-        if(r10){
-          r10.onclick = ()=>{
-            const w = loadSportWallet();
-            const solde = Number(w.vert || 0);
-            if(solde < 10){
-              alert("Il faut au minimum 10 BoCitecoins pour cet échange.");
-              return;
-            }
-            if(confirm("Le commerçant scanne et valide l’échange de 10 BoCitecoins pour le club. Confirmer ?")){
-              w.vert = Math.max(0, solde - 10);
-              saveSportWallet(w);
-              refresh();
-              alert("Échange 10 validé (démo). Les BoCitecoins ont été brûlés pour cet échange club.");
-            }
-          };
-        }
-
-        if(r20){
-          r20.onclick = ()=>{
-            const w = loadSportWallet();
-            const solde = Number(w.vert || 0);
-            if(solde < 20){
-              alert("Il faut au minimum 20 BoCitecoins pour cet échange.");
-              return;
-            }
-            if(confirm("Le commerçant scanne et valide l’échange de 20 BoCitecoins pour le club. Confirmer ?")){
-              w.vert = Math.max(0, solde - 20);
-              saveSportWallet(w);
-              refresh();
-              alert("Échange 20 validé (démo). Les BoCitecoins ont été brûlés pour cet échange club.");
-            }
-          };
-        }
-
-        if(rst){
-          rst.onclick = ()=>{
-            if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
-              saveSportWallet({ vert:0 });
-              refresh();
-            }
-          };
-        }
-      },0);
-      return;
-    }
-
-    if(key === "mairie" ){ 
-          openModal("Mairie", `
-            <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
-
-            <div class="box">
-              <strong>Cadre :</strong> la mairie peut diffuser des messages d’intérêt général gratuits, et des messages promotionnels payants au même tarif que les commerçants pour garantir l’équité.
-            </div>
-
-            <div style="font-weight:900;margin-top:10px;">Messages gratuits d’intérêt général</div>
-            <div class="box">
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Urgence, tempête, vigilance météo</li>
-                <li>Rue barrée / déviation</li>
-                <li>Risque de gel / température dangereuse</li>
-                <li>Information de sécurité publique</li>
-              </ul>
-              <div class="muted" style="margin-top:8px;">Ces messages restent gratuits pour la mairie.</div>
-            </div>
-
-            <div style="font-weight:900;margin-top:10px;">Messages payants mairie</div>
-            <div class="box">
-              <div class="muted">Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.</div>
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>1 publicité : 50 €</li>
-                <li>5 publicités : 200 €</li>
-              </ul>
-              <div class="muted" style="margin-top:8px;">Même prix que les commerçants pour éviter la jalousie et montrer l’exemple.</div>
-            </div>
-
-            <div class="box" style="margin-top:12px;">
-              <div style="font-weight:900;">Message bandeau mairie (démo)</div>
-              <div class="muted" style="margin-top:6px;">Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.</div>
-
-              <div style="margin-top:10px;font-weight:900;">Message</div>
-              <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
-
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="mairieMsgSave" type="button">💾 Enregistrer</button>
-                <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">🧹 Réinitialiser</button>
-              </div>
-
-              <div class="muted" style="margin-top:10px;">(Démo) Enregistrement local sur ce téléphone.</div>
-            </div>
-
-            <div style="font-weight:900;margin-top:14px;">Échange école → mairie (scan / brûlage)</div>
-            <div class="box">
-              <div class="muted">
-                La mairie peut scanner les bocitecoins école au moment de l’échange et les brûler automatiquement.
-                Le compteur école revient alors à zéro après remise du cadeau ou de la surprise.
-              </div>
-
-              <div style="margin-top:10px;font-weight:900;">Wallet école détecté</div>
-              <div class="box" style="background:var(--bg);">
-                Solde école actuel : <strong id="mairieSchoolWalletBalance">0</strong> bocitecoin(s) JAUNES
-              </div>
-
-              <div style="margin-top:10px;font-weight:900;">Type de surprise choisie par la mairie</div>
-              <select class="miniField" id="mairieSchoolGiftType">
-                <option value="materiel-scolaire">Matériel scolaire</option>
-                <option value="extra-scolaire">Surprise extra-scolaire</option>
-              </select>
-
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="mairieSchoolScanBtn" type="button">Scanner wallet école</button>
-                <button class="choiceBtn" id="mairieSchoolBurnBtn" type="button">Brûler les bocitecoins école</button>
-              </div>
-
-              <div class="muted" style="margin-top:10px;">
-                Si l’école a décidé auparavant de donner tout ou partie de ses bocitecoins à une association depuis son onglet,
-                la mairie respecte cette décision lors de l’échange.
-              </div>
-            </div>
-          `);
-
-          setTimeout(()=>{
-            const input = $("mairieMsgInput");
-            const saveBtn = $("mairieMsgSave");
-            const resetBtn = $("mairieMsgReset");
-
-            const db = mairieLoad();
-            if(input){
-              input.value = (db.message && String(db.message).trim())
-                ? String(db.message).trim()
-                : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-            }
-
-            if(saveBtn){
-              saveBtn.onclick = ()=>{
-                const msg = input ? String(input.value || "").trim() : "";
-                if(!msg){
-                  alert("Saisis un message mairie.");
-                  return;
-                }
-                const next = mairieLoad();
-                next.message = msg;
-                next.ts_fr = new Date().toLocaleString("fr-FR");
-                mairieSave(next);
-                renderMairieTicker();
-                alert("Message mairie enregistré (démo).");
-              };
-            }
-
-            if(resetBtn){
-              resetBtn.onclick = ()=>{
-                if(confirm("Réinitialiser le message mairie (démo) sur ce téléphone ?")){
-                  mairieSave({});
-                  renderMairieTicker();
-                  if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-                  alert("Message mairie réinitialisé (démo).");
-                }
-              };
-            }
-
-            const schoolLoadM = (typeof loadSchoolWallet === "function")
-              ? loadSchoolWallet
-              : function(){
-                  try{
-                    const raw = localStorage.getItem("bociteart_school_wallet_v1");
-                    return raw ? JSON.parse(raw) : { jaune:0 };
-                  }catch(e){
-                    return { jaune:0 };
-                  }
-                };
-
-            const schoolSaveM = (typeof saveSchoolWallet === "function")
-              ? saveSchoolWallet
-              : function(obj){
-                  try{
-                    localStorage.setItem("bociteart_school_wallet_v1", JSON.stringify(obj));
-                  }catch(e){}
-                };
-
-            const schoolBal = $("mairieSchoolWalletBalance");
-            const schoolScanBtn = $("mairieSchoolScanBtn");
-            const schoolBurnBtn = $("mairieSchoolBurnBtn");
-
-            const refreshSchool = ()=>{
-              const w = schoolLoadM();
-              if(schoolBal) schoolBal.textContent = Number(w.jaune || 0);
-            };
-
-            refreshSchool();
-
-            if(schoolScanBtn){
-              schoolScanBtn.onclick = ()=>{
-                refreshSchool();
-                alert("Scan du wallet école simulé (démo).");
-              };
-            }
-
-            if(schoolBurnBtn){
-              schoolBurnBtn.onclick = ()=>{
-                const w = schoolLoadM();
-                const total = Number(w.jaune || 0);
-                if(total <= 0){
-                  alert("Aucun bocitecoin école à brûler.");
-                  return;
-                }
-                if(confirm("Brûler les bocitecoins école et remettre le compteur à zéro ?")){
-                  w.jaune = 0;
-                  schoolSaveM(w);
-
-                  try{
-                    const raw = localStorage.getItem("bociteart_school_v1");
-                    const dbSchool = raw ? JSON.parse(raw) : {};
-                    if(dbSchool.progress) dbSchool.progress = {};
-                    localStorage.setItem("bociteart_school_v1", JSON.stringify(dbSchool));
-                  }catch(e){}
-
-                  refreshSchool();
-                  alert("Bocitecoins école brûlés, compteur remis à zéro (démo).");
-                }
-              };
-            }
-          },0);
-          return;
-        }
-
-        if(key === "commerces"){
-          openModal("Commerces", `
-            <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
-
-            <div class="box">
-              <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.
-              Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
-            </div>
-
-            <div class="coinShowcase">
-              <div class="coinFace coinGold" aria-hidden="true">
-                <div class="coinStarsRing coinStarsGold" aria-hidden="true">
-                  <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-                    <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
+            <div class="coinStack" aria-hidden="true">
+              <div class="stackCoin stackYellow stack1">
+                <div class="stackCoinStars" aria-hidden="true">
+                  <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+                    <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
                   </svg>
                 </div>
+              </div>
 
-                <div class="coinInner coinInnerGold">
-                  <div class="n">1</div>
-                  <div class="t">BoCitecoin</div>
+              <div class="stackCoin stackYellow stack2">
+                <div class="stackCoinStars" aria-hidden="true">
+                  <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+                    <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+                  </svg>
                 </div>
               </div>
 
-              <div class="coinStack" aria-hidden="true">
-                <div class="stackCoin stackGold stack1">
-                  <div class="stackCoinStars" aria-hidden="true">
-                    <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                      <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="stackCoin stackGold stack2">
-                  <div class="stackCoinStars" aria-hidden="true">
-                    <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                      <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="stackCoin stackGold stack3">
-                  <div class="stackCoinStars" aria-hidden="true">
-                    <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                      <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                    </svg>
-                  </div>
+              <div class="stackCoin stackYellow stack3">
+                <div class="stackCoinStars" aria-hidden="true">
+                  <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+                    <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+                  </svg>
                 </div>
               </div>
-
-              <div class="walletBox">
-                <div class="walletTitle">Wallet client — BoCitecoins OR</div>
-                <div class="walletValue walletGold" id="citizenCoinBalance">37</div>
-                <div class="walletSub">
-                  BoCitecoins disponibles pour échange chez les commerçants partenaires Bo’CitéArt selon les règles locales.
-                </div>
-
-                <div style="margin-top:12px;font-weight:900;">Progression vers le prochain palier</div>
-                <div style="margin-top:8px;background:#efe4d3;border-radius:999px;overflow:hidden;height:14px;border:2px solid rgba(0,0,0,.08);">
-                  <div id="walletProgressBar" style="height:100%;width:0%;border-radius:999px;transition:width .25s ease, background .25s ease;background:linear-gradient(90deg,#e4c81c 0%, #88b84b 55%, #2f8f46 100%);"></div>
-                </div>
-
-                <div id="walletProgressText" class="walletSub" style="margin-top:8px;">Chargement...</div>
-                <div id="walletMotivation" class="walletSub" style="margin-top:6px;color:#2f5d46;font-weight:900;">&nbsp;</div>
-                <div id="walletExpiryInfo" class="walletSub" style="margin-top:6px;">&nbsp;</div>
-              </div>
             </div>
 
-            <div style="font-weight:900;margin-top:14px;">Paliers d’échange</div>
-            <div class="box">
-              <div style="font-weight:900;">🎁 Échanges possibles chez les partenaires Bo’CitéArt</div>
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li><strong>30 bocitecoins</strong> : avantage partenaire <span style="white-space:nowrap;"><strong>jusqu’à 15 %</strong></span></li>
-                <li><strong>50 bocitecoins</strong> : avantage renforcé <span style="white-space:nowrap;"><strong>jusqu’à 25 %</strong></span></li>
-                <li><strong>100 bocitecoins</strong> : avantage premium <span style="white-space:nowrap;"><strong>jusqu’à 40 %</strong></span></li>
-              </ul>
-              <div class="muted" style="margin-top:8px;">
-                Les avantages sont proposés librement par les commerçants partenaires.
-                Les pourcentages indiqués correspondent à des niveaux indicatifs permettant de structurer les échanges Bo’CitéArt.
+            <div class="walletBox">
+              <div class="walletTitle">Wallet École — BoCitecoins JAUNE</div>
+              <div class="walletValue walletYellow" id="schoolCoinBalance">0</div>
+              <div class="walletSub">
+                Bocitecoins gagnés par la classe, échangeables en mairie selon les règles locales,
+                ou cumulables pour un projet / une aide de classe selon le choix retenu.
               </div>
-              <div class="muted" style="margin-top:8px;">
-                Les offres comprenant de la nourriture ou des boissons ne peuvent représenter plus de 30 % de la valeur totale de l’avantage.
+              <div class="walletActions">
+                <button class="walletMini" id="walletSchoolInfo" type="button">Voir le cycle</button>
+                <button class="walletMini" id="walletSchoolReset" type="button">Réinitialiser</button>
               </div>
-            </div>
-
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn" id="walletClientRedeem30" type="button">Échanger 30</button>
-              <button class="choiceBtn" id="walletClientRedeem50" type="button">Échanger 50</button>
-              <button class="choiceBtn" id="walletClientRedeem100" type="button">Échanger 100</button>
-              <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser (démo)</button>
-            </div>
-
-            <div style="font-weight:900;margin-top:14px;">Attribution commerçant → client (démo)</div>
-            <div class="box">
-              <div class="muted">
-                Le client règle son achat directement au commerçant par le moyen de paiement accepté par ce dernier
-                (espèces, carte bancaire, chèque ou autre). Bo’CitéArt n’intervient pas dans ce paiement.
-              </div>
-
-              <div class="muted" style="margin-top:8px;">
-                Une fois l’achat encaissé, le commerçant saisit simplement le montant, l’application calcule automatiquement
-                les bocitecoins, puis le commerçant scanne le client pour créditer son wallet.
-              </div>
-
-              <div style="margin-top:10px;font-weight:900;">Montant d’achat</div>
-              <input class="miniField" id="shopPurchaseAmount" type="number" min="0" step="0.01" placeholder="Ex : 47.00" />
-
-              <div style="margin-top:10px;font-weight:900;">Bocitecoins calculés</div>
-              <div class="box" style="background:var(--bg);">
-                <strong id="shopCoinsCalc">0</strong> bocitecoin(s) OR à verser
-              </div>
-
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="shopCalcBtn" type="button">Calculer</button>
-                <button class="choiceBtn" id="shopScanClientBtn" type="button">Scanner le client</button>
-                <button class="choiceBtn" id="shopCreditClientBtn" type="button">Valider l’envoi</button>
-                <button class="choiceBtn" id="shopUndoBtn" type="button" style="background:#fff;">Correction 60 s</button>
-              </div>
-
-              <div class="muted" style="margin-top:10px;">
-                Règle actuelle : 1 bocitecoin OR par tranche complète de 10 € d’achat.
-              </div>
-              <div class="muted" style="margin-top:6px;">
-                En cas d’erreur de saisie, le commerçant dispose d’une fenêtre de correction de 60 secondes après validation.
-              </div>
-              <div class="muted" style="margin-top:6px;">
-                Si une anomalie persiste après ce délai, une demande de régularisation peut être transmise à l’administrateur Bo’CitéArt,
-                qui intervient après vérification dans un délai raisonnable.
-              </div>
-            </div>
-
-            <div style="font-weight:900;margin-top:12px;">Bocitecoins couleur OR</div>
-            <div class="box">
-              <strong>Clarification :</strong> “OR” = couleur / repère visuel dans l’application, sans valeur intrinsèque.
-              <div class="muted" style="margin-top:8px;">
-                Le solde visible du citoyen sert à motiver l’échange, le retour en commerce, et la consultation du compte.
-              </div>
-            </div>
-
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Attribution : 1 bocitecoin couleur OR par tranche de 10 € d’achat</li>
-              <li>Seuil minimum : 10 €</li>
-              <li>Chaque tranche complète de 10 € = +1 bocitecoin OR</li>
-              <li>Échange standard à partir de 30 bocitecoins</li>
-              <li>Échanges renforcés possibles à 50 et 100 bocitecoins</li>
-            </ul>
-
-            <div style="font-weight:900;margin-top:12px;">Règle anniversaire du compte</div>
-            <div class="box">
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Validité standard : <strong>1 an</strong> à compter du premier bocitecoin obtenu</li>
-                <li>À <strong>30 jours</strong> de la date anniversaire : échange autorisé dès <strong>20 bocitecoins</strong></li>
-                <li>Un message d’alerte informe le client avant échéance</li>
-                <li>Si aucun échange n’est réalisé avant l’échéance : le compte repart à <strong>12 bocitecoins</strong></li>
-                <li>Le reste du solde est brûlé automatiquement à la date anniversaire</li>
-              </ul>
-            </div>
-
-            <div style="font-weight:900;margin-top:12px;">Frais Bo’CitéArt (structure)</div>
-            <div class="box">
-              <strong>Règle :</strong> <strong>0,18 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés (traçabilité).
-              <div class="muted" style="margin-top:8px;">
-                Reversement automatique via PSP (ou solution équivalente), avec journalisation et facture mensuelle récapitulative.
-              </div>
-              <div class="muted" style="margin-top:8px;">
-                Le client paie son achat directement au commerçant. Le PSP intervient uniquement sur les écritures Bo’CitéArt,
-                la traçabilité, les prélèvements et les factures partenaires.
-              </div>
-              <div class="muted" style="margin-top:8px;">
-                Vue “suivi” ci-dessous : indicative, non comptable, non exploitable juridiquement.
-              </div>
-            </div>
-
-            <div style="font-weight:900;margin-top:12px;">Suivi mensuel (démo — indicatif)</div>
-            <div class="box">
-              <div class="muted">Saisis un montant d’achats du mois (ex : total caisse) pour voir l’estimation.</div>
-
-              <div style="margin-top:10px;font-weight:900;">Montant achats (mois en cours)</div>
-              <input class="miniField" id="feeInputSales" type="number" min="0" step="0.01" placeholder="Ex : 1250.00" />
-
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="feeAddBtn" type="button">➕ Ajouter / mettre à jour</button>
-                <button class="choiceBtn" id="feeResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
-              </div>
-
-              <div class="box" style="margin-top:12px;background:var(--bg);">
-                <div style="font-weight:900;">Résumé (mois en cours)</div>
-                <div class="muted" style="margin-top:6px;">
-                  Achats saisis : <strong id="feeSalesOut">0,00 €</strong><br>
-                  Frais estimés Bo’CitéArt : <strong id="feeOut">0,00 €</strong><br>
-                  Règle : 0,18 € / tranche de 10 € (arrondi par tranches)
-                </div>
-              </div>
-
-              <div class="muted" style="margin-top:10px;">
-                (Démo) Données stockées localement sur ce téléphone.
-              </div>
-            </div>
-
-            <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
-              <li>Journée complète : grisée et non sélectionnable</li>
-              <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
-              <li>Option : texte en gras (+4€ TTC)</li>
-              <li>Possibilité d’URL selon conformité</li>
-            </ul>
-          `);
-
-          setTimeout(()=>{
-            if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
-
-            const CITIZEN_META_KEY = "bociteart_citizen_wallet_meta_v1";
-
-            function loadCitizenMeta(){
-              try{
-                const raw = localStorage.getItem(CITIZEN_META_KEY);
-                if(raw) return JSON.parse(raw);
-              }catch(e){}
-              const now = Date.now();
-              const oneYear = 365 * 24 * 60 * 60 * 1000;
-              return {
-                firstEarnTs: now,
-                expireTs: now + oneYear,
-                lastTx: null
-              };
-            }
-
-            function saveCitizenMeta(obj){
-              try{ localStorage.setItem(CITIZEN_META_KEY, JSON.stringify(obj)); }catch(e){}
-            }
-
-            function ensureCitizenMeta(){
-              const wallet = loadCitizenWallet();
-              const meta = loadCitizenMeta();
-              if(Number(wallet.or || 0) > 0 && !meta.firstEarnTs){
-                const now = Date.now();
-                meta.firstEarnTs = now;
-                meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
-              }
-              saveCitizenMeta(meta);
-              return meta;
-            }
-
-            function daysBetween(now, ts){
-              return Math.ceil((ts - now) / (24 * 60 * 60 * 1000));
-            }
-
-            function getNextTarget(coins){
-              if(coins < 30) return 30;
-              if(coins < 50) return 50;
-              if(coins < 100) return 100;
-              return 100;
-            }
-
-            function getTargetLabel(target){
-              if(target === 30) return "jusqu’à 15 %";
-              if(target === 50) return "jusqu’à 25 %";
-              return "jusqu’à 40 %";
-            }
-
-            function getProgressPercent(coins){
-              if(coins < 30) return Math.max(0, Math.min(100, (coins / 30) * 100));
-              if(coins < 50) return Math.max(0, Math.min(100, ((coins - 30) / 20) * 100));
-              if(coins < 100) return Math.max(0, Math.min(100, ((coins - 50) / 50) * 100));
-              return 100;
-            }
-
-            function getMotivationText(coins){
-              const next = getNextTarget(coins);
-              const diff = next - coins;
-
-              if(coins >= 100) return "Palier premium atteint. Vous pouvez profiter du niveau d’avantage maximum.";
-              if(diff === 4) return "Plus que 4 bocitecoins pour échanger. Votre belle surprise vous attend.";
-              if(diff === 3) return "Plus que 3 bocitecoins. Encore un petit effort.";
-              if(diff === 2) return "Plus que 2 bocitecoins. Vous y êtes presque.";
-              if(diff === 1) return "Plus que 1 bocitecoin. Le prochain achat peut déclencher votre avantage.";
-              if(coins < 30) return "Cumulez vos bocitecoins pour atteindre le premier échange.";
-              if(coins < 50) return "Conservez vos bocitecoins pour viser un avantage encore plus fort.";
-              return "Continuez à cumuler pour atteindre le niveau premium.";
-            }
-
-            function checkAnniversaryRule(){
-              const wallet = loadCitizenWallet();
-              const meta = ensureCitizenMeta();
-              const now = Date.now();
-
-              if(meta.expireTs && now >= meta.expireTs){
-                const current = Number(wallet.or || 0);
-                wallet.or = 12;
-                saveCitizenWallet(wallet);
-
-                meta.firstEarnTs = now;
-                meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
-                meta.lastTx = {
-                  type:"anniversary_reset",
-                  previous:current,
-                  resulting:12,
-                  ts:now
-                };
-                saveCitizenMeta(meta);
-              }
-            }
-
-            function refreshWalletUi(){
-              checkAnniversaryRule();
-
-              const wallet = loadCitizenWallet();
-              const meta = ensureCitizenMeta();
-              const coins = Number(wallet.or || 0);
-
-              const bal = $("citizenCoinBalance");
-              const progressBar = $("walletProgressBar");
-              const progressText = $("walletProgressText");
-              const motivation = $("walletMotivation");
-              const expiry = $("walletExpiryInfo");
-
-              if(bal) bal.textContent = coins;
-
-              const next = getNextTarget(coins);
-              const percent = getProgressPercent(coins);
-
-              if(progressBar){
-                progressBar.style.width = percent + "%";
-                progressBar.style.background = `linear-gradient(90deg, #e4c81c 0%, #9fca45 ${Math.max(35, percent)}%, #2f8f46 100%)`;
-              }
-
-              if(progressText){
-                if(coins >= 100){
-                  progressText.textContent = `Palier actuel : 100 bocitecoins • Avantage estimé : ${getTargetLabel(100)}`;
-                }else{
-                  progressText.textContent = `Solde actuel : ${coins} bocitecoins • Prochain palier : ${next} • Avantage estimé : ${getTargetLabel(next)}`;
-                }
-                progressText.style.whiteSpace = "normal";
-                progressText.style.wordBreak = "keep-all";
-              }
-
-              if(motivation){
-                motivation.textContent = getMotivationText(coins);
-              }
-
-              if(expiry){
-                const now = Date.now();
-                const daysLeft = daysBetween(now, meta.expireTs);
-                if(daysLeft <= 30){
-                  expiry.textContent = `Attention : il vous reste ${daysLeft} jour(s) avant la date anniversaire. Échange possible dès 20 bocitecoins sur cette période.`;
-                }else{
-                  expiry.textContent = `Date anniversaire du compte : dans ${daysLeft} jour(s).`;
-                }
-              }
-            }
-
-            function setFirstEarnDateIfNeeded(coinsAdded){
-              if(coinsAdded <= 0) return;
-              const wallet = loadCitizenWallet();
-              const meta = loadCitizenMeta();
-              if(!meta.firstEarnTs || Number(wallet.or || 0) <= 0){
-                const now = Date.now();
-                meta.firstEarnTs = now;
-                meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
-                saveCitizenMeta(meta);
-              }
-            }
-
-            function registerTx(tx){
-              const meta = loadCitizenMeta();
-              meta.lastTx = tx;
-              saveCitizenMeta(meta);
-            }
-
-            function redeemCoins(required){
-              const wallet = loadCitizenWallet();
-              const meta = ensureCitizenMeta();
-              const now = Date.now();
-              const coins = Number(wallet.or || 0);
-              const daysLeft = daysBetween(now, meta.expireTs);
-              const loweredThresholdAllowed = daysLeft <= 30;
-              const minimumAllowed = loweredThresholdAllowed ? 20 : 30;
-
-              if(required < minimumAllowed){
-                alert(`Échange impossible sous ${minimumAllowed} bocitecoins dans la période actuelle.`);
-                return;
-              }
-
-              if(coins < required){
-                alert(`Solde insuffisant. Il faut ${required} bocitecoins.`);
-                return;
-              }
-
-              if(confirm(`Confirmer l’échange de ${required} bocitecoins ?`)){
-                wallet.or = Math.max(0, coins - required);
-                saveCitizenWallet(wallet);
-                registerTx({
-                  type:"redeem",
-                  amount:required,
-                  previous:coins,
-                  resulting:wallet.or,
-                  ts:Date.now()
-                });
-                refreshWalletUi();
-                alert(`Échange validé (démo) : ${required} bocitecoins utilisés.`);
-              }
-            }
-
-            refreshWalletUi();
-
-            const rst = $("walletClientReset");
-            const r30 = $("walletClientRedeem30");
-            const r50 = $("walletClientRedeem50");
-            const r100 = $("walletClientRedeem100");
-
-            if(r30) r30.onclick = ()=> redeemCoins(30);
-            if(r50) r50.onclick = ()=> redeemCoins(50);
-            if(r100) r100.onclick = ()=> redeemCoins(100);
-
-            if(rst){
-              rst.onclick = ()=>{
-                if(confirm("Réinitialiser le wallet Client (démo) sur ce téléphone ?")){
-                  saveCitizenWallet({ or:0 });
-                  const now = Date.now();
-                  saveCitizenMeta({
-                    firstEarnTs: now,
-                    expireTs: now + (365 * 24 * 60 * 60 * 1000),
-                    lastTx: null
-                  });
-                  refreshWalletUi();
-                }
-              };
-            }
-
-            const amountInput = $("shopPurchaseAmount");
-            const calcOut = $("shopCoinsCalc");
-            const calcBtn = $("shopCalcBtn");
-            const scanBtn = $("shopScanClientBtn");
-            const creditBtn = $("shopCreditClientBtn");
-            const undoBtn = $("shopUndoBtn");
-
-            let lastCalculatedCoins = 0;
-            let lastClientScanned = false;
-            let undoDeadlineTs = 0;
-
-            const computeCoins = ()=>{
-              const amount = Number(amountInput ? amountInput.value : 0);
-              if(!Number.isFinite(amount) || amount < 0){
-                lastCalculatedCoins = 0;
-              }else{
-                lastCalculatedCoins = Math.floor(amount / 10);
-              }
-              if(calcOut) calcOut.textContent = String(lastCalculatedCoins);
-            };
-
-            if(calcBtn){
-              calcBtn.onclick = ()=>{
-                computeCoins();
-                alert("Calcul effectué (démo).");
-              };
-            }
-
-            if(scanBtn){
-              scanBtn.onclick = ()=>{
-                computeCoins();
-                lastClientScanned = true;
-                alert("Scan client simulé (démo).");
-              };
-            }
-
-            if(creditBtn){
-              creditBtn.onclick = ()=>{
-                computeCoins();
-
-                if(!lastClientScanned){
-                  alert("Scanne d’abord le client.");
-                  return;
-                }
-
-                if(lastCalculatedCoins <= 0){
-                  alert("Aucun bocitecoin à verser pour ce montant.");
-                  return;
-                }
-
-                const w = loadCitizenWallet();
-                const before = Number(w.or || 0);
-                w.or = before + lastCalculatedCoins;
-                saveCitizenWallet(w);
-                setFirstEarnDateIfNeeded(lastCalculatedCoins);
-
-                registerTx({
-                  type:"credit",
-                  amount:lastCalculatedCoins,
-                  previous:before,
-                  resulting:w.or,
-                  purchaseAmount:Number(amountInput ? amountInput.value : 0),
-                  ts:Date.now()
-                });
-
-                undoDeadlineTs = Date.now() + 60000;
-                lastClientScanned = false;
-                refreshWalletUi();
-                alert(lastCalculatedCoins + " bocitecoin(s) OR versé(s) au client (démo). Correction possible pendant 60 secondes.");
-              };
-            }
-
-            if(undoBtn){
-              undoBtn.onclick = ()=>{
-                const meta = loadCitizenMeta();
-                const tx = meta.lastTx;
-
-                if(!tx || tx.type !== "credit"){
-                  alert("Aucune opération crédit récente à corriger.");
-                  return;
-                }
-
-                if(Date.now() > undoDeadlineTs){
-                  alert("Délai de correction dépassé.");
-                  return;
-                }
-
-                const w = loadCitizenWallet();
-                w.or = Math.max(0, Number(tx.previous || 0));
-                saveCitizenWallet(w);
-
-                registerTx({
-                  type:"undo_credit",
-                  previous:Number(tx.resulting || 0),
-                  resulting:Number(tx.previous || 0),
-                  ts:Date.now()
-                });
-
-                refreshWalletUi();
-                alert("Dernière attribution annulée (démo). Tu peux ressaisir le bon montant.");
-              };
-            }
-
-            const xb = $("xBtn");
-            if(xb && xb.focus) xb.focus();
-          },0);
-          return;
-        }
-      });
-    });
-
-      const adminTile = $("adminTile");
-      on(adminTile, "click", ()=>{
-        if(!isFn(window.openModal)) return;
-        openModal("Accès Admin (structure)", `
-          <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
-          <div class="box">
-            <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
-            Les éléments affichés sont une vitrine de structure (démo).
-          </div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
-            <li>Activation / blocage / désactivation</li>
-            <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
-            <li>Suivi interne (litiges) : historique, traçabilité</li>
-          </ul>
-        `);
-      });
-
-      const daeBtn = $("daeBtn");
-      on(daeBtn, "click", ()=>{
-        if(!isFn(window.openModal)) return;
-        openModal("Défibrillateur (DAE)", `
-          <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
-          <div class="box">
-            <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
-            Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
-          </div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
-            <li>Orientation + guidage</li>
-            <li>Rayon local : 1 à 3 km</li>
-            <li>DAE • pharmacie • hôpital</li>
-            <li>Géolocalisation optionnelle (activation utilisateur)</li>
-          </ul>
-
-          <div class="box" style="margin-top:12px;">
-            <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
-            <div style="border-radius:14px; overflow:hidden; background:#000;">
-              <iframe
-                width="100%"
-                height="220"
-                src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
-                title="Utilisation DAE"
-                loading="lazy"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen>
-              </iframe>
-            </div>
-            <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
-          </div>
-
-          <div class="box" style="margin-top:12px;">
-            <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
-            <div class="muted">
-              Ici, la version officielle affichera la carte + fléchage + une ligne d’itinéraire vers le DAE le plus proche.
-            </div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
-              <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
             </div>
           </div>
         `);
 
         setTimeout(()=>{
-          const loc = $("daeLocate");
-          const rte = $("daeRoute");
-          if(loc) loc.onclick = ()=> alert("Démo : demande de localisation (GPS).");
-          if(rte) rte.onclick = ()=> alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
-        },0);
-      });
+          const text = "Je suis ravi aujourd’hui.";
+          const btnC = $("playChild");
+          const btnF = $("playFemale");
+          if(btnC) btnC.onclick = ()=> speak(text, "child");
+          if(btnF) btnF.onclick = ()=> speak(text, "female");
 
-      function openSportFiche(){
-        if(!isFn(window.openModal)) return;
+          const out = $("schoolCoinBalance");
+          if(out) out.textContent = Number(loadSchoolWallet().jaune || 0);
 
-        openModal("📄 Fiche — élus / CCI / commerçants (Sport + Associations)", `
-          <div class="box">
-            <div style="font-weight:900;">Objectif</div>
-            <div class="muted" style="margin-top:6px;">
-              Déclencher un soutien simple : un commerçant soutient un club + une association, avec visibilité locale via le bandeau 1 cm.
-            </div>
-          </div>
+          const schoolResetWallet = $("walletSchoolReset");
+          if(schoolResetWallet){
+            schoolResetWallet.onclick = ()=>{
+              if(confirm("Réinitialiser le compteur école (démo) ?")){
+                saveSchoolWallet({ jaune:0 });
+                const out2 = $("schoolCoinBalance");
+                if(out2) out2.textContent = 0;
+              }
+            };
+          }
 
-          <div class="box">
-            <div style="font-weight:900;">Principe</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Un commerçant soutient <strong>un club sportif</strong> + <strong>une association</strong>.</li>
-              <li>Sa ligne apparaît dans le bandeau : “Commerce soutient Club + Association”.</li>
-              <li>Le club valorise ses soutiens auprès de ses licenciés/familles (logique locale).</li>
-              <li>Les modalités PSP / pièces / fiscalité sont décrites dans les CGV/contrats (discrétion + conformité).</li>
-            </ul>
-          </div>
+          const schoolInfoBtn = $("walletSchoolInfo");
+          if(schoolInfoBtn){
+            schoolInfoBtn.onclick = ()=>{
+              alert("Cycle école (démo) :\n- 15e mot => 50\n- 18e mot => 80\n- 22e mot => 100");
+            };
+          }
+        }, 0);
 
-          <div class="box">
-            <div style="font-weight:900;">Montant (exemple)</div>
-            <div style="font-weight:800;margin-top:6px;">Exemple : <strong>100 € HT</strong> par période (ex. trimestriel).</div>
-            <div class="muted" style="margin-top:8px;">(Démo) La répartition exacte est contractualisée. La TVA dépend du cadre applicable.</div>
-          </div>
+        return;
+      }
 
-          <div class="box">
-            <div style="font-weight:900;">Associations retenues (uniquement celles-ci)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</li>
-              <li><strong>Étoile Filante</strong> — enfants atteints de maladies rares</li>
-              <li><strong>Les Papillons</strong> — antenne Nord</li>
-              <li><strong>ATC Nord</strong> — traumatisés crâniens</li>
-            </ul>
-          </div>
+      if(key === "sport"){
+        openModal("Sport", `
+          <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+          <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
 
-          <div class="box">
-            <div style="font-weight:900;">Préparer votre ligne (démo)</div>
-            <div class="muted" style="margin-top:6px;">Le commerçant peut choisir l’affichage en gras (+4€ TTC) et indiquer une URL.</div>
-
-            <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
-            <input class="miniField" id="spName" placeholder="Ex. Boulangerie Croquet" />
-
-            <div style="margin-top:10px;font-weight:900;">URL (optionnelle)</div>
-            <input class="miniField" id="spUrl" placeholder="https://..." />
-
-            <div class="miniCheck">
-              <input id="spBold" type="checkbox" />
-              <div>
-                Option <strong>texte en gras</strong> (+4€ TTC) — pour une meilleure lisibilité (sans promesse de résultats).
+          <div class="coinShowcase">
+            <div class="coinFace coinGreen" aria-hidden="true">
+              <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
+                <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+                  <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
+                </svg>
+              </div>
+              <div class="coinInner coinInnerGreen">
+                <div class="n">1</div>
+                <div class="t">BoCitecoin</div>
               </div>
             </div>
 
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-              <button class="choiceBtn" id="spPreview" type="button">👁️ Aperçu</button>
-              <button class="choiceBtn" id="spAddToTape" type="button">➕ Ajouter au bandeau (démo)</button>
+            <div class="coinStack" aria-hidden="true">
+              <div class="stackCoin stackGreen stack1">
+                <div class="stackCoinStars" aria-hidden="true">
+                  <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+                    <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+                  </svg>
+                </div>
+              </div>
+              <div class="stackCoin stackGreen stack2">
+                <div class="stackCoinStars" aria-hidden="true">
+                  <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+                    <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+                  </svg>
+                </div>
+              </div>
+              <div class="stackCoin stackGreen stack3">
+                <div class="stackCoinStars" aria-hidden="true">
+                  <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+                    <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="walletBox">
+              <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
+              <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
+              <div class="walletSub">BoCitecoins gagnés par les actions sportives/citoyennes, échangeables uniquement par tranches de 10 chez un commerçant partenaire. L’échange bénéficie au club, jamais au référent. Maximum 30% en nourriture/boissons, le reste en matériel sportif.</div>
+
+              <div class="box" style="margin-top:12px;">
+                <div style="font-weight:900;">Échange commerçant → club (démo)</div>
+                <div class="muted" style="margin-top:6px;">
+                  Le commerçant scanne, valide l’échange, brûle les BoCitecoins utilisés, puis le compteur redescend selon la tranche échangée.
+                  Le référent ne reçoit rien pour lui-même : l’avantage doit bénéficier au club.
+                </div>
+                <div class="muted" style="margin-top:6px;">
+                  Échange autorisé uniquement par tranche de 10 BoCitecoins (10 ou 20). Pas plus.
+                </div>
+                <div class="muted" style="margin-top:6px;">
+                  Composition de l’aide : maximum 30% nourriture/boissons incluses, le reste en matériel sportif.
+                </div>
+                <div class="muted" style="margin-top:6px;">
+                  L’échange peut aussi servir de moment pour proposer au commerçant un soutien complémentaire au club, tout en aidant l’une des 4 associations retenues.
+                </div>
+              </div>
+
+              <div class="walletActions">
+                <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
+                <button class="walletMini" id="walletSportPlus20" type="button">+20</button>
+                <button class="walletMini" id="walletSportRedeem10" type="button">Échanger 10</button>
+                <button class="walletMini" id="walletSportRedeem20" type="button">Échanger 20</button>
+                <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
+          <div class="box">
+            <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
+            <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm), et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras. Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
+            </div>
+          </div>
+
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Rapport du week-end (résumé)</li>
+            <li>Missions citoyennes : propreté • rangement • fair-play</li>
+            <li>Validation (optionnelle) — non publique</li>
+            <li>Bocitecoins couleur Vert : collectivité</li>
+            <li>Pas de messagerie • pas de commentaires libres</li>
+          </ul>
+
+          <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Parcs • bois • parcours • salles</li>
+            <li>Carte plein écran + guidage</li>
+          </ul>
+
+          <div class="box" style="margin-top:10px;">
+            <div style="font-weight:900;">Carte bien-être</div>
+            <div class="muted" style="margin-top:6px;">
+              Ouvre la carte plein écran avec points utiles autour de vous.
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="openMap" type="button">Carte bien-être</button>
+            </div>
+          </div>
+
+          <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
+          <div class="box">
+            Actuellement : 12 clubs engagés (démo)<br><br>
+            Chaque club peut proposer :<br>
+            • Rapport du week-end<br>
+            • Actions citoyennes<br>
+            • Partenariats commerçants<br>
+            • Soutien associatif
+          </div>
+        `);
+
+        setTimeout(()=>{
+          const b = $("openSportFicheBtn");
+          const btnMap = $("openMap");
+          const p10 = $("walletSportPlus10");
+          const p20 = $("walletSportPlus20");
+          const r10 = $("walletSportRedeem10");
+          const r20 = $("walletSportRedeem20");
+          const rst = $("walletSportReset");
+
+          const refresh = ()=>{
+            const out = $("sportCoinBalance");
+            if(out) out.textContent = Number(loadSportWallet().vert || 0);
+          };
+
+          if(b) b.onclick = openSportFiche;
+          if(btnMap) btnMap.onclick = openWellbeingMap;
+
+          refresh();
+
+          if(p10){
+            p10.onclick = ()=>{
+              const w = loadSportWallet();
+              w.vert = Number(w.vert || 0) + 10;
+              saveSportWallet(w);
+              refresh();
+            };
+          }
+
+          if(p20){
+            p20.onclick = ()=>{
+              const w = loadSportWallet();
+              w.vert = Number(w.vert || 0) + 20;
+              saveSportWallet(w);
+              refresh();
+            };
+          }
+
+          if(r10){
+            r10.onclick = ()=>{
+              const w = loadSportWallet();
+              const solde = Number(w.vert || 0);
+              if(solde < 10){
+                alert("Il faut au minimum 10 BoCitecoins pour cet échange.");
+                return;
+              }
+              if(confirm("Le commerçant scanne et valide l’échange de 10 BoCitecoins pour le club. Confirmer ?")){
+                w.vert = Math.max(0, solde - 10);
+                saveSportWallet(w);
+                refresh();
+                alert("Échange 10 validé (démo). Les BoCitecoins ont été brûlés pour cet échange club.");
+              }
+            };
+          }
+
+          if(r20){
+            r20.onclick = ()=>{
+              const w = loadSportWallet();
+              const solde = Number(w.vert || 0);
+              if(solde < 20){
+                alert("Il faut au minimum 20 BoCitecoins pour cet échange.");
+                return;
+              }
+              if(confirm("Le commerçant scanne et valide l’échange de 20 BoCitecoins pour le club. Confirmer ?")){
+                w.vert = Math.max(0, solde - 20);
+                saveSportWallet(w);
+                refresh();
+                alert("Échange 20 validé (démo). Les BoCitecoins ont été brûlés pour cet échange club.");
+              }
+            };
+          }
+
+          if(rst){
+            rst.onclick = ()=>{
+              if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
+                saveSportWallet({ vert:0 });
+                refresh();
+              }
+            };
+          }
+        },0);
+        return;
+      }
+
+      if(key === "mairie"){
+        openModal("Mairie", `
+          <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
+
+          <div class="box">
+            <strong>Cadre :</strong> la mairie peut diffuser des messages d’intérêt général gratuits, et des messages promotionnels payants au même tarif que les commerçants pour garantir l’équité.
+          </div>
+
+          <div style="font-weight:900;margin-top:10px;">Messages gratuits d’intérêt général</div>
+          <div class="box">
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Urgence, tempête, vigilance météo</li>
+              <li>Rue barrée / déviation</li>
+              <li>Risque de gel / température dangereuse</li>
+              <li>Information de sécurité publique</li>
+            </ul>
+            <div class="muted" style="margin-top:8px;">Ces messages restent gratuits pour la mairie.</div>
+          </div>
+
+          <div style="font-weight:900;margin-top:10px;">Messages payants mairie</div>
+          <div class="box">
+            <div class="muted">Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>1 publicité : 50 €</li>
+              <li>5 publicités : 200 €</li>
+            </ul>
+            <div class="muted" style="margin-top:8px;">Même prix que les commerçants pour éviter la jalousie et montrer l’exemple.</div>
+          </div>
+
+          <div class="box" style="margin-top:12px;">
+            <div style="font-weight:900;">Message bandeau mairie (démo)</div>
+            <div class="muted" style="margin-top:6px;">Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.</div>
+
+            <div style="margin-top:10px;font-weight:900;">Message</div>
+            <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="mairieMsgSave" type="button">💾 Enregistrer</button>
+              <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">🧹 Réinitialiser</button>
+            </div>
+
+            <div class="muted" style="margin-top:10px;">(Démo) Enregistrement local sur ce téléphone.</div>
+          </div>
+
+          <div style="font-weight:900;margin-top:14px;">Échange école → mairie (scan / brûlage)</div>
+          <div class="box">
+            <div class="muted">
+              La mairie peut scanner les bocitecoins école au moment de l’échange et les brûler automatiquement.
+              Le compteur école revient alors à zéro après remise du cadeau ou de la surprise.
+            </div>
+
+            <div style="margin-top:10px;font-weight:900;">Wallet école détecté</div>
+            <div class="box" style="background:var(--bg);">
+              Solde école actuel : <strong id="mairieSchoolWalletBalance">0</strong> bocitecoin(s) JAUNES
+            </div>
+
+            <div style="margin-top:10px;font-weight:900;">Type de surprise choisie par la mairie</div>
+            <select class="miniField" id="mairieSchoolGiftType">
+              <option value="materiel-scolaire">Matériel scolaire</option>
+              <option value="extra-scolaire">Surprise extra-scolaire</option>
+            </select>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="mairieSchoolScanBtn" type="button">Scanner wallet école</button>
+              <button class="choiceBtn" id="mairieSchoolBurnBtn" type="button">Brûler les bocitecoins école</button>
             </div>
 
             <div class="muted" style="margin-top:10px;">
-              (Démo) Ici, l’ajout est local (sur ce téléphone). La version officielle gèrera validation/contrat/contrôle.
+              Si l’école a décidé auparavant de donner tout ou partie de ses bocitecoins à une association depuis son onglet,
+              la mairie respecte cette décision lors de l’échange.
             </div>
           </div>
         `);
 
         setTimeout(()=>{
-          const btnPrev = $("spPreview");
-          const btnAdd = $("spAddToTape");
-          const inName = $("spName");
-          const inUrl = $("spUrl");
-          const cbBold = $("spBold");
+          const input = $("mairieMsgInput");
+          const saveBtn = $("mairieMsgSave");
+          const resetBtn = $("mairieMsgReset");
 
-          const makeLine = ()=>{
-            const name = (inName && inName.value.trim()) ? inName.value.trim() : "Commerce (démo)";
-            let url = (inUrl && inUrl.value.trim()) ? inUrl.value.trim() : "";
-            const base = `${name} soutient Club + Association`;
+          const db = mairieLoad();
+          if(input){
+            input.value = (db.message && String(db.message).trim())
+              ? String(db.message).trim()
+              : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+          }
 
-            url = url.replace(/\s+/g, "");
-            if(!url) return base;
-            if(url.startsWith("www.")) url = "https://" + url;
-
-            if(url.startsWith("http://")){
-              alert("URL invalide : utiliser https:// (pas http://).");
-              return base;
-            }
-            if(!url.startsWith("https://")){
-              alert("URL invalide : utiliser https://");
-              return base;
-            }
-            if(!/^[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+$/.test(url)){
-              alert("URL invalide : caractères non autorisés.");
-              return base;
-            }
-            if(url.length > 80){
-              alert("URL trop longue (max 80 caractères).");
-              return base;
-            }
-            return `${base} • ${url}`;
-          };
-
-          if(btnPrev){
-            btnPrev.onclick = ()=>{
-              const line = makeLine();
-              alert("Aperçu :\n" + line + (cbBold && cbBold.checked ? "\n(affichage gras)" : "\n(affichage normal)"));
+          if(saveBtn){
+            saveBtn.onclick = ()=>{
+              const msg = input ? String(input.value || "").trim() : "";
+              if(!msg){
+                alert("Saisis un message mairie.");
+                return;
+              }
+              const next = mairieLoad();
+              next.message = msg;
+              next.ts_fr = new Date().toLocaleString("fr-FR");
+              mairieSave(next);
+              renderMairieTicker();
+              alert("Message mairie enregistré (démo).");
             };
           }
 
-          if(btnAdd){
-            btnAdd.onclick = ()=>{
-              const line = makeLine();
-              const bold = !!(cbBold && cbBold.checked);
-              if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
-              window.tapeAds.push({ txt:line, bold });
-              if(isFn(window.renderTape)) window.renderTape();
-              alert("Ajouté au bandeau (démo).");
+          if(resetBtn){
+            resetBtn.onclick = ()=>{
+              if(confirm("Réinitialiser le message mairie (démo) sur ce téléphone ?")){
+                mairieSave({});
+                renderMairieTicker();
+                if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+                alert("Message mairie réinitialisé (démo).");
+              }
+            };
+          }
+
+          const schoolBal = $("mairieSchoolWalletBalance");
+          const schoolScanBtn = $("mairieSchoolScanBtn");
+          const schoolBurnBtn = $("mairieSchoolBurnBtn");
+
+          const refreshSchool = ()=>{
+            const w = loadSchoolWallet();
+            if(schoolBal) schoolBal.textContent = Number(w.jaune || 0);
+          };
+
+          refreshSchool();
+
+          if(schoolScanBtn){
+            schoolScanBtn.onclick = ()=>{
+              refreshSchool();
+              alert("Scan du wallet école simulé (démo).");
+            };
+          }
+
+          if(schoolBurnBtn){
+            schoolBurnBtn.onclick = ()=>{
+              const w = loadSchoolWallet();
+              const total = Number(w.jaune || 0);
+              if(total <= 0){
+                alert("Aucun bocitecoin école à brûler.");
+                return;
+              }
+              if(confirm("Brûler les bocitecoins école et remettre le compteur à zéro ?")){
+                w.jaune = 0;
+                saveSchoolWallet(w);
+
+                try{
+                  const raw = localStorage.getItem("bociteart_school_v1");
+                  const dbSchool = raw ? JSON.parse(raw) : {};
+                  if(dbSchool.progress) dbSchool.progress = {};
+                  localStorage.setItem("bociteart_school_v1", JSON.stringify(dbSchool));
+                }catch(e){}
+
+                refreshSchool();
+                alert("Bocitecoins école brûlés, compteur remis à zéro (démo).");
+              }
             };
           }
         },0);
+        return;
       }
 
-      const legal = $("legal");
-      const openLegalBtn = $("openLegal");
-      const closeLegalBtn = $("legalClose");
-      const closeLegalX = $("legalX");
+      if(key === "commerces"){
+        openModal("Commerces", `
+          <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
 
-      if(typeof window.__lastFocus === "undefined") window.__lastFocus = null;
-
-      const openLegal = ()=>{
-        if(!legal) return;
-        window.__lastFocus = document.activeElement;
-        legal.classList.add("open");
-        if(isFn(window.lockScroll)) window.lockScroll(true);
-      };
-
-      const closeLegal = ()=>{
-        if(!legal) return;
-        legal.classList.remove("open");
-        if(isFn(window.lockScroll)) window.lockScroll(false);
-        if(window.__lastFocus?.focus) window.__lastFocus.focus();
-        window.__lastFocus = null;
-      };
-
-      if(openLegalBtn) openLegalBtn.onclick = openLegal;
-      if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
-      if(closeLegalX) closeLegalX.onclick = closeLegal;
-
-      const ACK_PREFIX = "bociteart_ack_v2_";
-      const ACK_SALT = "BoCiteArt|ack|v2";
-
-      function fnv1a(str){
-        let h = 0x811c9dc5;
-        for(let i=0;i<str.length;i++){
-          h ^= str.charCodeAt(i);
-          h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
-        }
-        return ("00000000" + h.toString(16)).slice(-8);
-      }
-
-      function ackSign(kind, ts){
-        return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
-      }
-
-      function ackGet(kind){
-        const key = ACK_PREFIX + kind;
-        try{
-          const raw = localStorage.getItem(key);
-          if(!raw) return false;
-          const parts = raw.split("|");
-          if(parts.length !== 3) return false;
-          const ok = parts[0] === "1";
-          const ts = parseInt(parts[1], 10);
-          const sig = parts[2];
-          if(!ok || !Number.isFinite(ts)) return false;
-          return sig === ackSign(kind, ts);
-        }catch(e){
-          return false;
-        }
-      }
-
-      function ackSet(kind){
-        const key = ACK_PREFIX + kind;
-        try{
-          const ts = Date.now();
-          const sig = ackSign(kind, ts);
-          localStorage.setItem(key, `1|${ts}|${sig}`);
-        }catch(e){}
-      }
-
-      function makeLongPress(btn, ringEl, ms, onTrigger){
-        if(!btn || !ringEl) return;
-
-        let raf = null;
-        let start = null;
-        let holding = false;
-        let fired = false;
-
-        const rAttr = ringEl.getAttribute("r");
-        const r = rAttr ? parseFloat(rAttr) : 35;
-        const circ = 2 * Math.PI * r;
-
-        ringEl.style.strokeDasharray = String(circ);
-        ringEl.style.strokeDashoffset = String(circ);
-
-        const stop = ()=>{
-          holding = false;
-          start = null;
-          fired = false;
-          ringEl.style.strokeDashoffset = String(circ);
-          if(raf) cancelAnimationFrame(raf);
-          raf = null;
-        };
-
-        const tick = (ts)=>{
-          if(!holding) return;
-          if(start === null) start = ts;
-
-          const p = Math.min(1, (ts - start) / ms);
-          ringEl.style.strokeDashoffset = String(circ * (1 - p));
-
-          if(p >= 1){
-            if(fired) return;
-            fired = true;
-            stop();
-            onTrigger();
-            return;
-          }
-          raf = requestAnimationFrame(tick);
-        };
-
-        btn.addEventListener("pointerdown", (e)=>{
-          e.preventDefault();
-          if(holding) return;
-          holding = true;
-          fired = false;
-          raf = requestAnimationFrame(tick);
-        });
-
-        ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
-          btn.addEventListener(ev, stop);
-        });
-
-        btn.addEventListener("contextmenu", (e)=> e.preventDefault());
-      }
-
-      function emergencyGate(kind, onOk){
-        if(ackGet(kind)){
-          onOk();
-          return;
-        }
-
-        const title = (kind === "112") ? "Urgence 112 — usage responsable" : "Aide 3919 / 119 — usage responsable";
-
-        const body = (kind === "112") ? `
-          <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
           <div class="box">
-            <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
-            Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
+            <strong>Cadre :</strong> les bocitecoins ne sont pas une monnaie, ni un moyen de paiement, ni une conversion en euros.
+            Les conditions commerciales applicables sont celles du contrat (devis/commande/facture + CGV).
           </div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
-            <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
-            <li>Appui long = réduction des appels accidentels (sans garantie d’erreur zéro).</li>
-          </ul>
-          <div class="box" style="margin-top:10px;">
-            <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
-              <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-              J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
-            </label>
-          </div>
-          <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
-        ` : `
-          <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
-          <div class="box">
-            <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
-            Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
-          </div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li><strong>3919</strong> : écoute/orientation (pas une intervention immédiate).</li>
-            <li><strong>119</strong> : enfance en danger.</li>
-            <li><strong>Danger immédiat</strong> : appeler le 112.</li>
-          </ul>
-          <div class="box" style="margin-top:10px;">
-            <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
-              <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-              J’ai compris : j’utiliserai ces numéros uniquement en cas de situation réelle.
-            </label>
-          </div>
-          <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>
-        `;
 
-        if(isFn(window.openModal)) window.openModal(title, body);
+          <div class="coinShowcase">
+            <div class="coinFace coinGold" aria-hidden="true">
+              <div class="coinStarsRing coinStarsGold" aria-hidden="true">
+                <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+                  <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
+                </svg>
+              </div>
+
+              <div class="coinInner coinInnerGold">
+                <div class="n">1</div>
+                <div class="t">BoCitecoin</div>
+              </div>
+            </div>
+
+            <div class="coinStack" aria-hidden="true">
+              <div class="stackCoin stackGold stack1">
+                <div class="stackCoinStars" aria-hidden="true">
+                  <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+                    <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="stackCoin stackGold stack2">
+                <div class="stackCoinStars" aria-hidden="true">
+                  <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+                    <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="stackCoin stackGold stack3">
+                <div class="stackCoinStars" aria-hidden="true">
+                  <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+                    <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="walletBox">
+              <div class="walletTitle">Wallet client — BoCitecoins OR</div>
+              <div class="walletValue walletGold" id="citizenCoinBalance">37</div>
+              <div class="walletSub">
+                BoCitecoins disponibles pour échange chez les commerçants partenaires Bo’CitéArt selon les règles locales.
+              </div>
+
+              <div style="margin-top:12px;font-weight:900;">Progression vers le prochain palier</div>
+              <div style="margin-top:8px;background:#efe4d3;border-radius:999px;overflow:hidden;height:14px;border:2px solid rgba(0,0,0,.08);">
+                <div id="walletProgressBar" style="height:100%;width:0%;border-radius:999px;transition:width .25s ease, background .25s ease;background:linear-gradient(90deg,#e4c81c 0%, #88b84b 55%, #2f8f46 100%);"></div>
+              </div>
+
+              <div id="walletProgressText" class="walletSub" style="margin-top:8px;">Chargement...</div>
+              <div id="walletMotivation" class="walletSub" style="margin-top:6px;color:#2f5d46;font-weight:900;">&nbsp;</div>
+              <div id="walletExpiryInfo" class="walletSub" style="margin-top:6px;">&nbsp;</div>
+            </div>
+          </div>
+
+          <div style="font-weight:900;margin-top:14px;">Paliers d’échange</div>
+          <div class="box">
+            <div style="font-weight:900;">🎁 Échanges possibles chez les partenaires Bo’CitéArt</div>
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li><strong>30 bocitecoins</strong> : avantage partenaire <span style="white-space:nowrap;"><strong>jusqu’à 15 %</strong></span></li>
+              <li><strong>50 bocitecoins</strong> : avantage renforcé <span style="white-space:nowrap;"><strong>jusqu’à 25 %</strong></span></li>
+              <li><strong>100 bocitecoins</strong> : avantage premium <span style="white-space:nowrap;"><strong>jusqu’à 40 %</strong></span></li>
+            </ul>
+            <div class="muted" style="margin-top:8px;">
+              Les avantages sont proposés librement par les commerçants partenaires.
+              Les pourcentages indiqués correspondent à des niveaux indicatifs permettant de structurer les échanges Bo’CitéArt.
+            </div>
+            <div class="muted" style="margin-top:8px;">
+              Les offres comprenant de la nourriture ou des boissons ne peuvent représenter plus de 30 % de la valeur totale de l’avantage.
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <button class="choiceBtn" id="walletClientRedeem30" type="button">Échanger 30</button>
+            <button class="choiceBtn" id="walletClientRedeem50" type="button">Échanger 50</button>
+            <button class="choiceBtn" id="walletClientRedeem100" type="button">Échanger 100</button>
+            <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser (démo)</button>
+          </div>
+
+          <div style="font-weight:900;margin-top:14px;">Attribution commerçant → client (démo)</div>
+          <div class="box">
+            <div class="muted">
+              Le client règle son achat directement au commerçant par le moyen de paiement accepté par ce dernier
+              (espèces, carte bancaire, chèque ou autre). Bo’CitéArt n’intervient pas dans ce paiement.
+            </div>
+
+            <div class="muted" style="margin-top:8px;">
+              Une fois l’achat encaissé, le commerçant saisit simplement le montant, l’application calcule automatiquement
+              les bocitecoins, puis le commerçant scanne le client pour créditer son wallet.
+            </div>
+
+            <div style="margin-top:10px;font-weight:900;">Montant d’achat</div>
+            <input class="miniField" id="shopPurchaseAmount" type="number" min="0" step="0.01" placeholder="Ex : 47.00" />
+
+            <div style="margin-top:10px;font-weight:900;">Bocitecoins calculés</div>
+            <div class="box" style="background:var(--bg);">
+              <strong id="shopCoinsCalc">0</strong> bocitecoin(s) OR à verser
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="shopCalcBtn" type="button">Calculer</button>
+              <button class="choiceBtn" id="shopScanClientBtn" type="button">Scanner le client</button>
+              <button class="choiceBtn" id="shopCreditClientBtn" type="button">Valider l’envoi</button>
+              <button class="choiceBtn" id="shopUndoBtn" type="button" style="background:#fff;">Correction 60 s</button>
+            </div>
+
+            <div class="muted" style="margin-top:10px;">
+              Règle actuelle : 1 bocitecoin OR par tranche complète de 10 € d’achat.
+            </div>
+            <div class="muted" style="margin-top:6px;">
+              En cas d’erreur de saisie, le commerçant dispose d’une fenêtre de correction de 60 secondes après validation.
+            </div>
+            <div class="muted" style="margin-top:6px;">
+              Si une anomalie persiste après ce délai, une demande de régularisation peut être transmise à l’administrateur Bo’CitéArt,
+              qui intervient après vérification dans un délai raisonnable.
+            </div>
+          </div>
+
+          <div style="font-weight:900;margin-top:12px;">Bocitecoins couleur OR</div>
+          <div class="box">
+            <strong>Clarification :</strong> “OR” = couleur / repère visuel dans l’application, sans valeur intrinsèque.
+            <div class="muted" style="margin-top:8px;">
+              Le solde visible du citoyen sert à motiver l’échange, le retour en commerce, et la consultation du compte.
+            </div>
+          </div>
+
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Attribution : 1 bocitecoin couleur OR par tranche de 10 € d’achat</li>
+            <li>Seuil minimum : 10 €</li>
+            <li>Chaque tranche complète de 10 € = +1 bocitecoin OR</li>
+            <li>Échange standard à partir de 30 bocitecoins</li>
+            <li>Échanges renforcés possibles à 50 et 100 bocitecoins</li>
+          </ul>
+
+          <div style="font-weight:900;margin-top:12px;">Règle anniversaire du compte</div>
+          <div class="box">
+            <ul style="margin:8px 0 0 18px;font-weight:800;">
+              <li>Validité standard : <strong>1 an</strong> à compter du premier bocitecoin obtenu</li>
+              <li>À <strong>30 jours</strong> de la date anniversaire : échange autorisé dès <strong>20 bocitecoins</strong></li>
+              <li>Un message d’alerte informe le client avant échéance</li>
+              <li>Si aucun échange n’est réalisé avant l’échéance : le compte repart à <strong>12 bocitecoins</strong></li>
+              <li>Le reste du solde est brûlé automatiquement à la date anniversaire</li>
+            </ul>
+          </div>
+
+          <div style="font-weight:900;margin-top:12px;">Frais Bo’CitéArt (structure)</div>
+          <div class="box">
+            <strong>Règle :</strong> <strong>0,18 €</strong> par tranche de <strong>10 €</strong> d’achats enregistrés (traçabilité).
+            <div class="muted" style="margin-top:8px;">
+              Reversement automatique via PSP (ou solution équivalente), avec journalisation et facture mensuelle récapitulative.
+            </div>
+            <div class="muted" style="margin-top:8px;">
+              Le client paie son achat directement au commerçant. Le PSP intervient uniquement sur les écritures Bo’CitéArt,
+              la traçabilité, les prélèvements et les factures partenaires.
+            </div>
+            <div class="muted" style="margin-top:8px;">
+              Vue “suivi” ci-dessous : indicative, non comptable, non exploitable juridiquement.
+            </div>
+          </div>
+
+          <div style="font-weight:900;margin-top:12px;">Suivi mensuel (démo — indicatif)</div>
+          <div class="box">
+            <div class="muted">Saisis un montant d’achats du mois (ex : total caisse) pour voir l’estimation.</div>
+
+            <div style="margin-top:10px;font-weight:900;">Montant achats (mois en cours)</div>
+            <input class="miniField" id="feeInputSales" type="number" min="0" step="0.01" placeholder="Ex : 1250.00" />
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="feeAddBtn" type="button">➕ Ajouter / mettre à jour</button>
+              <button class="choiceBtn" id="feeResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+            </div>
+
+            <div class="box" style="margin-top:12px;background:var(--bg);">
+              <div style="font-weight:900;">Résumé (mois en cours)</div>
+              <div class="muted" style="margin-top:6px;">
+                Achats saisis : <strong id="feeSalesOut">0,00 €</strong><br>
+                Frais estimés Bo’CitéArt : <strong id="feeOut">0,00 €</strong><br>
+                Règle : 0,18 € / tranche de 10 € (arrondi par tranches)
+              </div>
+            </div>
+
+            <div class="muted" style="margin-top:10px;">
+              (Démo) Données stockées localement sur ce téléphone.
+            </div>
+          </div>
+
+          <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
+            <li>Journée complète : grisée et non sélectionnable</li>
+            <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
+            <li>Option : texte en gras (+4€ TTC)</li>
+            <li>Possibilité d’URL selon conformité</li>
+          </ul>
+        `);
 
         setTimeout(()=>{
-          const box = $("ackBox");
-          const btn = $("ackBtn");
-          if(!btn) return;
-          btn.onclick = ()=>{
-            if(!box || !box.checked){
-              alert("Veuillez cocher la case pour confirmer que vous avez compris.");
+          if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
+
+          const CITIZEN_META_KEY = "bociteart_citizen_wallet_meta_v1";
+
+          function loadCitizenMeta(){
+            try{
+              const raw = localStorage.getItem(CITIZEN_META_KEY);
+              if(raw) return JSON.parse(raw);
+            }catch(e){}
+            const now = Date.now();
+            const oneYear = 365 * 24 * 60 * 60 * 1000;
+            return {
+              firstEarnTs: now,
+              expireTs: now + oneYear,
+              lastTx: null
+            };
+          }
+
+          function saveCitizenMeta(obj){
+            try{ localStorage.setItem(CITIZEN_META_KEY, JSON.stringify(obj)); }catch(e){}
+          }
+
+          function ensureCitizenMeta(){
+            const wallet = loadCitizenWallet();
+            const meta = loadCitizenMeta();
+            if(Number(wallet.or || 0) > 0 && !meta.firstEarnTs){
+              const now = Date.now();
+              meta.firstEarnTs = now;
+              meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+            }
+            saveCitizenMeta(meta);
+            return meta;
+          }
+
+          function daysBetween(now, ts){
+            return Math.ceil((ts - now) / (24 * 60 * 60 * 1000));
+          }
+
+          function getNextTarget(coins){
+            if(coins < 30) return 30;
+            if(coins < 50) return 50;
+            if(coins < 100) return 100;
+            return 100;
+          }
+
+          function getTargetLabel(target){
+            if(target === 30) return "jusqu’à 15 %";
+            if(target === 50) return "jusqu’à 25 %";
+            return "jusqu’à 40 %";
+          }
+
+          function getProgressPercent(coins){
+            if(coins < 30) return Math.max(0, Math.min(100, (coins / 30) * 100));
+            if(coins < 50) return Math.max(0, Math.min(100, ((coins - 30) / 20) * 100));
+            if(coins < 100) return Math.max(0, Math.min(100, ((coins - 50) / 50) * 100));
+            return 100;
+          }
+
+          function getMotivationText(coins){
+            const next = getNextTarget(coins);
+            const diff = next - coins;
+
+            if(coins >= 100) return "Palier premium atteint. Vous pouvez profiter du niveau d’avantage maximum.";
+            if(diff === 4) return "Plus que 4 bocitecoins pour échanger. Votre belle surprise vous attend.";
+            if(diff === 3) return "Plus que 3 bocitecoins. Encore un petit effort.";
+            if(diff === 2) return "Plus que 2 bocitecoins. Vous y êtes presque.";
+            if(diff === 1) return "Plus que 1 bocitecoin. Le prochain achat peut déclencher votre avantage.";
+            if(coins < 30) return "Cumulez vos bocitecoins pour atteindre le premier échange.";
+            if(coins < 50) return "Conservez vos bocitecoins pour viser un avantage encore plus fort.";
+            return "Continuez à cumuler pour atteindre le niveau premium.";
+          }
+
+          function checkAnniversaryRule(){
+            const wallet = loadCitizenWallet();
+            const meta = ensureCitizenMeta();
+            const now = Date.now();
+
+            if(meta.expireTs && now >= meta.expireTs){
+              const current = Number(wallet.or || 0);
+              wallet.or = 12;
+              saveCitizenWallet(wallet);
+
+              meta.firstEarnTs = now;
+              meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+              meta.lastTx = {
+                type:"anniversary_reset",
+                previous:current,
+                resulting:12,
+                ts:now
+              };
+              saveCitizenMeta(meta);
+            }
+          }
+
+          function refreshWalletUi(){
+            checkAnniversaryRule();
+
+            const wallet = loadCitizenWallet();
+            const meta = ensureCitizenMeta();
+            const coins = Number(wallet.or || 0);
+
+            const bal = $("citizenCoinBalance");
+            const progressBar = $("walletProgressBar");
+            const progressText = $("walletProgressText");
+            const motivation = $("walletMotivation");
+            const expiry = $("walletExpiryInfo");
+
+            if(bal) bal.textContent = coins;
+
+            const next = getNextTarget(coins);
+            const percent = getProgressPercent(coins);
+
+            if(progressBar){
+              progressBar.style.width = percent + "%";
+              progressBar.style.background = `linear-gradient(90deg, #e4c81c 0%, #9fca45 ${Math.max(35, percent)}%, #2f8f46 100%)`;
+            }
+
+            if(progressText){
+              if(coins >= 100){
+                progressText.textContent = `Palier actuel : 100 bocitecoins • Avantage estimé : ${getTargetLabel(100)}`;
+              }else{
+                progressText.textContent = `Solde actuel : ${coins} bocitecoins • Prochain palier : ${next} • Avantage estimé : ${getTargetLabel(next)}`;
+              }
+              progressText.style.whiteSpace = "normal";
+              progressText.style.wordBreak = "keep-all";
+            }
+
+            if(motivation){
+              motivation.textContent = getMotivationText(coins);
+            }
+
+            if(expiry){
+              const now = Date.now();
+              const daysLeft = daysBetween(now, meta.expireTs);
+              if(daysLeft <= 30){
+                expiry.textContent = `Attention : il vous reste ${daysLeft} jour(s) avant la date anniversaire. Échange possible dès 20 bocitecoins sur cette période.`;
+              }else{
+                expiry.textContent = `Date anniversaire du compte : dans ${daysLeft} jour(s).`;
+              }
+            }
+          }
+
+          function setFirstEarnDateIfNeeded(coinsAdded){
+            if(coinsAdded <= 0) return;
+            const wallet = loadCitizenWallet();
+            const meta = loadCitizenMeta();
+            if(!meta.firstEarnTs || Number(wallet.or || 0) <= 0){
+              const now = Date.now();
+              meta.firstEarnTs = now;
+              meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+              saveCitizenMeta(meta);
+            }
+          }
+
+          function registerTx(tx){
+            const meta = loadCitizenMeta();
+            meta.lastTx = tx;
+            saveCitizenMeta(meta);
+          }
+
+          function redeemCoins(required){
+            const wallet = loadCitizenWallet();
+            const meta = ensureCitizenMeta();
+            const now = Date.now();
+            const coins = Number(wallet.or || 0);
+            const daysLeft = daysBetween(now, meta.expireTs);
+            const loweredThresholdAllowed = daysLeft <= 30;
+            const minimumAllowed = loweredThresholdAllowed ? 20 : 30;
+
+            if(required < minimumAllowed){
+              alert(`Échange impossible sous ${minimumAllowed} bocitecoins dans la période actuelle.`);
               return;
             }
-            ackSet(kind);
-            if(isFn(window.closeModal)) window.closeModal();
-            onOk();
-          };
-        }, 0);
-      }
 
-      makeLongPress(
-        $("btn112"),
-        $("ring112"),
-        1800,
-        ()=> emergencyGate("112", ()=> { if(isFn(window.callPhone)) window.callPhone("112"); })
-      );
+            if(coins < required){
+              alert(`Solde insuffisant. Il faut ${required} bocitecoins.`);
+              return;
+            }
 
-      let sosNumber = null;
-      const choice = $("choice");
-
-      const closeChoice = ()=>{
-        if(!choice) return;
-        choice.classList.remove("open");
-        if(isFn(window.lockScroll)) window.lockScroll(false);
-        if(window.__lastFocus?.focus) window.__lastFocus.focus();
-        window.__lastFocus = null;
-      };
-
-      on($("choiceClose"), "click", closeChoice);
-      on($("choiceX"), "click", closeChoice);
-
-      document.querySelectorAll("#choice .choiceBtn[data-pick]").forEach((b)=>{
-        b.addEventListener("click", ()=>{
-          sosNumber = b.getAttribute("data-pick");
-          const lab = $("sosLabel");
-          if(lab) lab.textContent = sosNumber;
-          closeChoice();
-        });
-      });
-
-      makeLongPress(
-        $("btnSos"),
-        $("ringSos"),
-        2000,
-        ()=>{
-          if(!choice) return;
-          if(!sosNumber){
-            window.__lastFocus = document.activeElement;
-            choice.classList.add("open");
-            if(isFn(window.lockScroll)) window.lockScroll(true);
-            return;
+            if(confirm(`Confirmer l’échange de ${required} bocitecoins ?`)){
+              wallet.or = Math.max(0, coins - required);
+              saveCitizenWallet(wallet);
+              registerTx({
+                type:"redeem",
+                amount:required,
+                previous:coins,
+                resulting:wallet.or,
+                ts:Date.now()
+              });
+              refreshWalletUi();
+              alert(`Échange validé (démo) : ${required} bocitecoins utilisés.`);
+            }
           }
-          emergencyGate(sosNumber, ()=> { if(isFn(window.callPhone)) window.callPhone(sosNumber); });
-        }
-      );
 
-      if(isFn(window.makeKeyboardClickable)){
-        window.makeKeyboardClickable($("ticker"), window.openTicker);
+          refreshWalletUi();
 
-        document.querySelectorAll(".tile[data-open]").forEach((el)=>{
-          window.makeKeyboardClickable(el, ()=> el.click());
-        });
+          const rst = $("walletClientReset");
+          const r30 = $("walletClientRedeem30");
+          const r50 = $("walletClientRedeem50");
+          const r100 = $("walletClientRedeem100");
 
-        if(adminTile) window.makeKeyboardClickable(adminTile, ()=> adminTile.click());
+          if(r30) r30.onclick = ()=> redeemCoins(30);
+          if(r50) r50.onclick = ()=> redeemCoins(50);
+          if(r100) r100.onclick = ()=> redeemCoins(100);
+
+          if(rst){
+            rst.onclick = ()=>{
+              if(confirm("Réinitialiser le wallet Client (démo) sur ce téléphone ?")){
+                saveCitizenWallet({ or:0 });
+                const now = Date.now();
+                saveCitizenMeta({
+                  firstEarnTs: now,
+                  expireTs: now + (365 * 24 * 60 * 60 * 1000),
+                  lastTx: null
+                });
+                refreshWalletUi();
+              }
+            };
+          }
+
+          const amountInput = $("shopPurchaseAmount");
+          const calcOut = $("shopCoinsCalc");
+          const calcBtn = $("shopCalcBtn");
+          const scanBtn = $("shopScanClientBtn");
+          const creditBtn = $("shopCreditClientBtn");
+          const undoBtn = $("shopUndoBtn");
+
+          let lastCalculatedCoins = 0;
+          let lastClientScanned = false;
+          let undoDeadlineTs = 0;
+
+          const computeCoins = ()=>{
+            const amount = Number(amountInput ? amountInput.value : 0);
+            if(!Number.isFinite(amount) || amount < 0){
+              lastCalculatedCoins = 0;
+            }else{
+              lastCalculatedCoins = Math.floor(amount / 10);
+            }
+            if(calcOut) calcOut.textContent = String(lastCalculatedCoins);
+          };
+
+          if(calcBtn){
+            calcBtn.onclick = ()=>{
+              computeCoins();
+              alert("Calcul effectué (démo).");
+            };
+          }
+
+          if(scanBtn){
+            scanBtn.onclick = ()=>{
+              computeCoins();
+              lastClientScanned = true;
+              alert("Scan client simulé (démo).");
+            };
+          }
+
+          if(creditBtn){
+            creditBtn.onclick = ()=>{
+              computeCoins();
+
+              if(!lastClientScanned){
+                alert("Scanne d’abord le client.");
+                return;
+              }
+
+              if(lastCalculatedCoins <= 0){
+                alert("Aucun bocitecoin à verser pour ce montant.");
+                return;
+              }
+
+              const w = loadCitizenWallet();
+              const before = Number(w.or || 0);
+              w.or = before + lastCalculatedCoins;
+              saveCitizenWallet(w);
+              setFirstEarnDateIfNeeded(lastCalculatedCoins);
+
+              registerTx({
+                type:"credit",
+                amount:lastCalculatedCoins,
+                previous:before,
+                resulting:w.or,
+                purchaseAmount:Number(amountInput ? amountInput.value : 0),
+                ts:Date.now()
+              });
+
+              undoDeadlineTs = Date.now() + 60000;
+              lastClientScanned = false;
+              refreshWalletUi();
+              alert(lastCalculatedCoins + " bocitecoin(s) OR versé(s) au client (démo). Correction possible pendant 60 secondes.");
+            };
+          }
+
+          if(undoBtn){
+            undoBtn.onclick = ()=>{
+              const meta = loadCitizenMeta();
+              const tx = meta.lastTx;
+
+              if(!tx || tx.type !== "credit"){
+                alert("Aucune opération crédit récente à corriger.");
+                return;
+              }
+
+              if(Date.now() > undoDeadlineTs){
+                alert("Délai de correction dépassé.");
+                return;
+              }
+
+              const w = loadCitizenWallet();
+              w.or = Math.max(0, Number(tx.previous || 0));
+              saveCitizenWallet(w);
+
+              registerTx({
+                type:"undo_credit",
+                previous:Number(tx.resulting || 0),
+                resulting:Number(tx.previous || 0),
+                ts:Date.now()
+              });
+
+              refreshWalletUi();
+              alert("Dernière attribution annulée (démo). Tu peux ressaisir le bon montant.");
+            };
+          }
+
+          const xb = $("xBtn");
+          if(xb && xb.focus) xb.focus();
+        },0);
+        return;
       }
+    });
+  });
 
-      (function initLegalTabs(){
-        const legal = $("legal");
-        if(!legal) return;
+  const adminTile = $("adminTile");
+  on(adminTile, "click", ()=>{
+    if(!isFn(window.openModal)) return;
+    openModal("Accès Admin (structure)", `
+      <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
+      <div class="box">
+        <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
+        Les éléments affichés sont une vitrine de structure (démo).
+      </div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
+        <li>Activation / blocage / désactivation</li>
+        <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
+        <li>Suivi interne (litiges) : historique, traçabilité</li>
+      </ul>
+    `);
+  });
 
-        const tabs = legal.querySelectorAll(".tab");
-        if(!tabs || !tabs.length) return;
+  const daeBtn = $("daeBtn");
+  on(daeBtn, "click", ()=>{
+    if(!isFn(window.openModal)) return;
+    openModal("Défibrillateur (DAE)", `
+      <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
+      <div class="box">
+        <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
+        Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
+      </div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
+        <li>Orientation + guidage</li>
+        <li>Rayon local : 1 à 3 km</li>
+        <li>DAE • pharmacie • hôpital</li>
+        <li>Géolocalisation optionnelle (activation utilisateur)</li>
+      </ul>
 
-        const panels = {
-          rgpd: $("p-rgpd"),
-          cgu: $("p-cgu"),
-          cgv: $("p-cgv")
-        };
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
+        <div style="border-radius:14px; overflow:hidden; background:#000;">
+          <iframe
+            width="100%"
+            height="220"
+            src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
+            title="Utilisation DAE"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
+      </div>
 
-        function showTab(name){
-          tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
-          Object.keys(panels).forEach((k)=>{
-            if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
-          });
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
+        <div class="muted">
+          Ici, la version officielle affichera la carte + fléchage + une ligne d’itinéraire vers le DAE le plus proche.
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
+          <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
+        </div>
+      </div>
+    `);
+
+    setTimeout(()=>{
+      const loc = $("daeLocate");
+      const rte = $("daeRoute");
+      if(loc) loc.onclick = ()=> alert("Démo : demande de localisation (GPS).");
+      if(rte) rte.onclick = ()=> alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
+    },0);
+  });
+
+  const legal = $("legal");
+  const openLegalBtn = $("openLegal");
+  const closeLegalBtn = $("legalClose");
+  const closeLegalX = $("legalX");
+
+  if(typeof window.__lastFocus === "undefined") window.__lastFocus = null;
+
+  const openLegal = ()=>{
+    if(!legal) return;
+    window.__lastFocus = document.activeElement;
+    legal.classList.add("open");
+    lockScroll(true);
+  };
+
+  const closeLegal = ()=>{
+    if(!legal) return;
+    legal.classList.remove("open");
+    lockScroll(false);
+    if(window.__lastFocus?.focus) window.__lastFocus.focus();
+    window.__lastFocus = null;
+  };
+
+  if(openLegalBtn) openLegalBtn.onclick = openLegal;
+  if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
+  if(closeLegalX) closeLegalX.onclick = closeLegal;
+
+  const ACK_PREFIX = "bociteart_ack_v2_";
+  const ACK_SALT = "BoCiteArt|ack|v2";
+
+  function fnv1a(str){
+    let h = 0x811c9dc5;
+    for(let i=0;i<str.length;i++){
+      h ^= str.charCodeAt(i);
+      h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
+    }
+    return ("00000000" + h.toString(16)).slice(-8);
+  }
+
+  function ackSign(kind, ts){
+    return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
+  }
+
+  function ackGet(kind){
+    const key = ACK_PREFIX + kind;
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) return false;
+      const parts = raw.split("|");
+      if(parts.length !== 3) return false;
+      const ok = parts[0] === "1";
+      const ts = parseInt(parts[1], 10);
+      const sig = parts[2];
+      if(!ok || !Number.isFinite(ts)) return false;
+      return sig === ackSign(kind, ts);
+    }catch(e){
+      return false;
+    }
+  }
+
+  function ackSet(kind){
+    const key = ACK_PREFIX + kind;
+    try{
+      const ts = Date.now();
+      const sig = ackSign(kind, ts);
+      localStorage.setItem(key, `1|${ts}|${sig}`);
+    }catch(e){}
+  }
+
+  function makeLongPress(btn, ringEl, ms, onTrigger){
+    if(!btn || !ringEl) return;
+
+    let raf = null;
+    let start = null;
+    let holding = false;
+    let fired = false;
+
+    const rAttr = ringEl.getAttribute("r");
+    const r = rAttr ? parseFloat(rAttr) : 35;
+    const circ = 2 * Math.PI * r;
+
+    ringEl.style.strokeDasharray = String(circ);
+    ringEl.style.strokeDashoffset = String(circ);
+
+    const stop = ()=>{
+      holding = false;
+      start = null;
+      fired = false;
+      ringEl.style.strokeDashoffset = String(circ);
+      if(raf) cancelAnimationFrame(raf);
+      raf = null;
+    };
+
+    const tick = (ts)=>{
+      if(!holding) return;
+      if(start === null) start = ts;
+
+      const p = Math.min(1, (ts - start) / ms);
+      ringEl.style.strokeDashoffset = String(circ * (1 - p));
+
+      if(p >= 1){
+        if(fired) return;
+        fired = true;
+        stop();
+        onTrigger();
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+
+    btn.addEventListener("pointerdown", (e)=>{
+      e.preventDefault();
+      if(holding) return;
+      holding = true;
+      fired = false;
+      raf = requestAnimationFrame(tick);
+    });
+
+    ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
+      btn.addEventListener(ev, stop);
+    });
+
+    btn.addEventListener("contextmenu", (e)=> e.preventDefault());
+  }
+
+  function emergencyGate(kind, onOk){
+    if(ackGet(kind)){
+      onOk();
+      return;
+    }
+
+    const title = (kind === "112") ? "Urgence 112 — usage responsable" : "Aide 3919 / 119 — usage responsable";
+
+    const body = (kind === "112") ? `
+      <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
+      <div class="box">
+        <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
+        Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
+      </div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
+        <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
+        <li>Appui long = réduction des appels accidentels (sans garantie d’erreur zéro).</li>
+      </ul>
+      <div class="box" style="margin-top:10px;">
+        <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
+          <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
+          J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
+        </label>
+      </div>
+      <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
+    ` : `
+      <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
+      <div class="box">
+        <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
+        Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
+      </div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li><strong>3919</strong> : écoute/orientation (pas une intervention immédiate).</li>
+        <li><strong>119</strong> : enfance en danger.</li>
+        <li><strong>Danger immédiat</strong> : appeler le 112.</li>
+      </ul>
+      <div class="box" style="margin-top:10px;">
+        <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
+          <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
+          J’ai compris : j’utiliserai ces numéros uniquement en cas de situation réelle.
+        </label>
+      </div>
+      <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>
+    `;
+
+    if(isFn(window.openModal)) window.openModal(title, body);
+
+    setTimeout(()=>{
+      const box = $("ackBox");
+      const btn = $("ackBtn");
+      if(!btn) return;
+      btn.onclick = ()=>{
+        if(!box || !box.checked){
+          alert("Veuillez cocher la case pour confirmer que vous avez compris.");
+          return;
         }
+        ackSet(kind);
+        if(isFn(window.closeModal)) window.closeModal();
+        onOk();
+      };
+    }, 0);
+  }
 
-        tabs.forEach((t)=>{
-          t.addEventListener("click", ()=> showTab(t.dataset.tab));
-        });
+  makeLongPress(
+    $("btn112"),
+    $("ring112"),
+    1800,
+    ()=> emergencyGate("112", ()=> { if(isFn(window.callPhone)) window.callPhone("112"); })
+  );
 
-        showTab("rgpd");
-      })();
+  let sosNumber = null;
+  const choice = $("choice");
 
-    })();
-  </script>
+  const closeChoice = ()=>{
+    if(!choice) return;
+    choice.classList.remove("open");
+    lockScroll(false);
+    if(window.__lastFocus?.focus) window.__lastFocus.focus();
+    window.__lastFocus = null;
+  };
+
+  on($("choiceClose"), "click", closeChoice);
+  on($("choiceX"), "click", closeChoice);
+
+  document.querySelectorAll("#choice .choiceBtn[data-pick]").forEach((b)=>{
+    b.addEventListener("click", ()=>{
+      sosNumber = b.getAttribute("data-pick");
+      const lab = $("sosLabel");
+      if(lab) lab.textContent = sosNumber;
+      closeChoice();
+    });
+  });
+
+  makeLongPress(
+    $("btnSos"),
+    $("ringSos"),
+    2000,
+    ()=>{
+      if(!choice) return;
+      if(!sosNumber){
+        window.__lastFocus = document.activeElement;
+        choice.classList.add("open");
+        lockScroll(true);
+        return;
+      }
+      emergencyGate(sosNumber, ()=> { if(isFn(window.callPhone)) window.callPhone(sosNumber); });
+    }
+  );
+
+  if(isFn(window.makeKeyboardClickable)){
+    window.makeKeyboardClickable($("ticker"), window.openTicker);
+
+    document.querySelectorAll(".tile[data-open]").forEach((el)=>{
+      window.makeKeyboardClickable(el, ()=> el.click());
+    });
+
+    if(adminTile) window.makeKeyboardClickable(adminTile, ()=> adminTile.click());
+  }
+
+  (function initLegalTabs(){
+    const legalEl = $("legal");
+    if(!legalEl) return;
+
+    const tabs = legalEl.querySelectorAll(".tab");
+    if(!tabs || !tabs.length) return;
+
+    const panels = {
+      rgpd: $("p-rgpd"),
+      cgu: $("p-cgu"),
+      cgv: $("p-cgv")
+    };
+
+    function showTab(name){
+      tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+      Object.keys(panels).forEach((k)=>{
+        if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
+      });
+    }
+
+    tabs.forEach((t)=>{
+      t.addEventListener("click", ()=> showTab(t.dataset.tab));
+    });
+
+    showTab("rgpd");
+  })();
+
+})();
+</script>
 </body>
 </html>
