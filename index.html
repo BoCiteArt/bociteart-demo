@@ -2980,225 +2980,212 @@ renderTape();
 
             return;
           }
+          
+if(key === "sport"){
+  openModal("Sport", `
+    <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+    <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
 
-          if(key === "sport"){
-            openModal("Sport", `
-              <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
-              <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
+    <div class="coinShowcase">
+      <div class="coinFace coinGreen" aria-hidden="true">
+        <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
+          <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+            <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
+          </svg>
+        </div>
+        <div class="coinInner coinInnerGreen">
+          <div class="n">1</div>
+          <div class="t">BoCitecoin</div>
+        </div>
+      </div>
 
-              <div class="coinShowcase">
-                <div class="coinFace coinGreen" aria-hidden="true">
-                  <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
-                    <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-                      <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
-                    </svg>
-                  </div>
-                  <div class="coinInner coinInnerGreen">
-                    <div class="n">1</div>
-                    <div class="t">BoCitecoin</div>
-                  </div>
-                </div>
+      <div class="coinStack" aria-hidden="true">
+        <div class="stackCoin stackGreen stack1">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+            </svg>
+          </div>
+        </div>
+        <div class="stackCoin stackGreen stack2">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+            </svg>
+          </div>
+        </div>
+        <div class="stackCoin stackGreen stack3">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+            </svg>
+          </div>
+        </div>
+      </div>
 
-                <div class="coinStack" aria-hidden="true">
-                  <div class="stackCoin stackGreen stack1">
-                    <div class="stackCoinStars" aria-hidden="true">
-                      <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                        <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="stackCoin stackGreen stack2">
-                    <div class="stackCoinStars" aria-hidden="true">
-                      <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                        <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="stackCoin stackGreen stack3">
-                    <div class="stackCoinStars" aria-hidden="true">
-                      <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                        <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
+      <div class="walletBox">
+        <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
+        <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
+        <div class="walletSub">BoCitecoins gagnés par les actions sportives/citoyennes, échangeables uniquement par tranches de 10 chez un commerçant partenaire. L’échange bénéficie au club, jamais au référent. Maximum 30% en nourriture/boissons, le reste en matériel sportif.</div>
 
-                <div class="walletBox">
-                  <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
-                  <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
-                 <div class="walletSub">BoCitecoins gagnés par les actions sportives/citoyennes, échangeables uniquement par tranches de 10 chez un commerçant partenaire. L’échange bénéficie au club, jamais au référent. Maximum 30% en nourriture/boissons, le reste en matériel sportif.</div>
-                  <div class="box" style="margin-top:12px;">
-  <div style="font-weight:900;">Échange commerçant → club (démo)</div>
-  <div class="muted" style="margin-top:6px;">
-    Le commerçant scanne, valide l’échange, brûle les BoCitecoins utilisés, puis le compteur redescend selon la tranche échangée.
-    Le référent ne reçoit rien pour lui-même : l’avantage doit bénéficier au club.
-  </div>
-  <div class="muted" style="margin-top:6px;">
-    Échange autorisé uniquement par tranche de 10 BoCitecoins (10 ou 20). Pas plus.
-  </div>
-  <div class="muted" style="margin-top:6px;">
-    Composition de l’aide : maximum 30% nourriture/boissons incluses, le reste en matériel sportif.
-  </div>
-  <div class="muted" style="margin-top:6px;">
-    L’échange peut aussi servir de moment pour proposer au commerçant un soutien complémentaire au club, tout en aidant l’une des 4 associations retenues.
-  </div>
-</div>   
-                  <div class="walletActions">
-  <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-  <button class="walletMini" id="walletSportPlus20" type="button">+20</button>
-  <button class="walletMini" id="walletSportRedeem10" type="button">Échanger 10</button>
-  <button class="walletMini" id="walletSportRedeem20" type="button">Échanger 20</button>
-  <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
-</div>
-                </div>
-              </div>
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;">Échange commerçant → club (démo)</div>
+          <div class="muted" style="margin-top:6px;">
+            Le commerçant scanne, valide l’échange, brûle les BoCitecoins utilisés, puis le compteur redescend selon la tranche échangée.
+            Le référent ne reçoit rien pour lui-même : l’avantage doit bénéficier au club.
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            Échange autorisé uniquement par tranche de 10 BoCitecoins (10 ou 20). Pas plus.
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            Composition de l’aide : maximum 30% nourriture/boissons incluses, le reste en matériel sportif.
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            L’échange peut aussi servir de moment pour proposer au commerçant un soutien complémentaire au club, tout en aidant l’une des 4 associations retenues.
+          </div>
+        </div>
 
-              <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
-              <div class="box">
-                <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
-                <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm), et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras. Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.</div>
-                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                  <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
-                </div>
-              </div>
+        <div class="walletActions">
+          <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
+          <button class="walletMini" id="walletSportPlus20" type="button">+20</button>
+          <button class="walletMini" id="walletSportRedeem10" type="button">Échanger 10</button>
+          <button class="walletMini" id="walletSportRedeem20" type="button">Échanger 20</button>
+          <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
+        </div>
+      </div>
+    </div>
 
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Rapport du week-end (résumé)</li>
-                <li>Missions citoyennes : propreté • rangement • fair-play</li>
-                <li>Validation (optionnelle) — non publique</li>
-                <li>Bocitecoins couleur Vert : collectivité</li>
-                <li>Pas de messagerie • pas de commentaires libres</li>
-              </ul>
+    <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
+    <div class="box">
+      <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
+      <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm), et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras. Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
+      </div>
+    </div>
 
-              <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
-<ul style="margin:8px 0 0 18px;font-weight:800;">
-  <li>Parcs • bois • parcours • salles</li>
-  <li>Carte plein écran + guidage</li>
-</ul>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Rapport du week-end (résumé)</li>
+      <li>Missions citoyennes : propreté • rangement • fair-play</li>
+      <li>Validation (optionnelle) — non publique</li>
+      <li>Bocitecoins couleur Vert : collectivité</li>
+      <li>Pas de messagerie • pas de commentaires libres</li>
+    </ul>
 
-<div class="box" style="margin-top:10px;">
-  <div style="font-weight:900;">Carte bien-être</div>
-  <div class="muted" style="margin-top:6px;">
-    Ouvre la carte plein écran avec points utiles autour de vous.
-  </div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-    <button class="choiceBtn" id="openMap" type="button">Carte bien-être</button>
-  </div>
-</div>
+    <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Parcs • bois • parcours • salles</li>
+      <li>Carte plein écran + guidage</li>
+    </ul>
 
-              <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
-              <div class="box">
-                Actuellement : 12 clubs engagés (démo)<br><br>
-                Chaque club peut proposer :<br>
-                • Rapport du week-end<br>
-                • Actions citoyennes<br>
-                • Partenariats commerçants<br>
-                • Soutien associatif
-              </div>
-            `);
+    <div class="box" style="margin-top:10px;">
+      <div style="font-weight:900;">Carte bien-être</div>
+      <div class="muted" style="margin-top:6px;">
+        Ouvre la carte plein écran avec points utiles autour de vous.
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="openMap" type="button">Carte bien-être</button>
+      </div>
+    </div>
 
-            setTimeout(()=>{
-        const p10 = $("walletSportPlus10");
-const p20 = $("walletSportPlus20");
-const r10 = $("walletSportRedeem10");
-const r20 = $("walletSportRedeem20");
-const rst = $("walletSportReset");
+    <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
+    <div class="box">
+      Actuellement : 12 clubs engagés (démo)<br><br>
+      Chaque club peut proposer :<br>
+      • Rapport du week-end<br>
+      • Actions citoyennes<br>
+      • Partenariats commerçants<br>
+      • Soutien associatif
+    </div>
+  `);
 
-if(p10){
-  p10.onclick = ()=>{
-    const w = loadSportWallet();
-    w.vert = Number(w.vert || 0) + 10;
-    saveSportWallet(w);
+  setTimeout(()=>{
+    const b = $("openSportFicheBtn");
+    const btnMap = $("openMap");
+
+    const p10 = $("walletSportPlus10");
+    const p20 = $("walletSportPlus20");
+    const r10 = $("walletSportRedeem10");
+    const r20 = $("walletSportRedeem20");
+    const rst = $("walletSportReset");
+
+    const refresh = ()=>{
+      const out = $("sportCoinBalance");
+      if(out) out.textContent = Number(loadSportWallet().vert || 0);
+    };
+
+    if(b) b.onclick = openSportFiche;
+    if(btnMap) btnMap.onclick = openWellbeingMap;
+
     refresh();
-  };
-}
 
-if(p20){
-  p20.onclick = ()=>{
-    const w = loadSportWallet();
-    w.vert = Number(w.vert || 0) + 20;
-    saveSportWallet(w);
-    refresh();
-  };
-}
-
-if(r10){
-  r10.onclick = ()=>{
-    const w = loadSportWallet();
-    const solde = Number(w.vert || 0);
-
-    if(solde < 10){
-      alert("Il faut au minimum 10 BoCitecoins pour cet échange.");
-      return;
+    if(p10){
+      p10.onclick = ()=>{
+        const w = loadSportWallet();
+        w.vert = Number(w.vert || 0) + 10;
+        saveSportWallet(w);
+        refresh();
+      };
     }
 
-    if(confirm("Le commerçant scanne et valide l’échange de 10 BoCitecoins pour le club. Confirmer ?")){
-      w.vert = Math.max(0, solde - 10);
-      saveSportWallet(w);
-      refresh();
-      alert("Échange 10 validé (démo). Les BoCitecoins ont été brûlés pour cet échange club.");
+    if(p20){
+      p20.onclick = ()=>{
+        const w = loadSportWallet();
+        w.vert = Number(w.vert || 0) + 20;
+        saveSportWallet(w);
+        refresh();
+      };
     }
-  };
+
+    if(r10){
+      r10.onclick = ()=>{
+        const w = loadSportWallet();
+        const solde = Number(w.vert || 0);
+
+        if(solde < 10){
+          alert("Il faut au minimum 10 BoCitecoins pour cet échange.");
+          return;
+        }
+
+        if(confirm("Le commerçant scanne et valide l’échange de 10 BoCitecoins pour le club. Confirmer ?")){
+          w.vert = Math.max(0, solde - 10);
+          saveSportWallet(w);
+          refresh();
+          alert("Échange 10 validé (démo). Les BoCitecoins ont été brûlés pour cet échange club.");
+        }
+      };
+    }
+
+    if(r20){
+      r20.onclick = ()=>{
+        const w = loadSportWallet();
+        const solde = Number(w.vert || 0);
+
+        if(solde < 20){
+          alert("Il faut au minimum 20 BoCitecoins pour cet échange.");
+          return;
+        }
+
+        if(confirm("Le commerçant scanne et valide l’échange de 20 BoCitecoins pour le club. Confirmer ?")){
+          w.vert = Math.max(0, solde - 20);
+          saveSportWallet(w);
+          refresh();
+          alert("Échange 20 validé (démo). Les BoCitecoins ont été brûlés pour cet échange club.");
+        }
+      };
+    }
+
+    if(rst){
+      rst.onclick = ()=>{
+        if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
+          saveSportWallet({ vert:0 });
+          refresh();
+        }
+      };
+    }
+  },0);
+  return;
 }
-
-if(r20){
-  r20.onclick = ()=>{
-    const w = loadSportWallet();
-    const solde = Number(w.vert || 0);
-
-    if(solde < 20){
-      alert("Il faut au minimum 20 BoCitecoins pour cet échange.");
-      return;
-    }
-
-    if(confirm("Le commerçant scanne et valide l’échange de 20 BoCitecoins pour le club. Confirmer ?")){
-      w.vert = Math.max(0, solde - 20);
-      saveSportWallet(w);
-      refresh();
-      alert("Échange 20 validé (démo). Les BoCitecoins ont été brûlés pour cet échange club.");
-    }
-  };
-}
-
-if(rst){
-  rst.onclick = ()=>{
-    if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
-      saveSportWallet({ vert:0 });
-      refresh();
-    }
-  };
-}
-              }
-
-              if(p25){
-                p25.onclick = ()=>{
-                  const w = loadSportWallet();
-                  w.vert = Number(w.vert || 0) + 25;
-                  saveSportWallet(w);
-                  refresh();
-                };
-              }
-
-              if(m1){
-                m1.onclick = ()=>{
-                  const w = loadSportWallet();
-                  w.vert = Math.max(0, Number(w.vert || 0) - 1);
-                  saveSportWallet(w);
-                  refresh();
-                };
-              }
-
-              if(rst){
-                rst.onclick = ()=>{
-                  if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
-                    saveSportWallet({ vert:0 });
-                    refresh();
-                  }
-                };
-              }
-            },0);
-            return;
-          }
 
           if(key === "mairie" ){
           openModal("Mairie", `
