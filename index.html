@@ -2038,14 +2038,17 @@
         }
 
         wellbeingWatchId = navigator.geolocation.watchPosition(
-          (pos)=>{
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
+                (pos)=>{
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
 
-            if(!wellbeingMap) return;
+          if(typeof pos.coords.heading === "number" && !isNaN(pos.coords.heading)){
+            currentHeading = pos.coords.heading;
+          }
 
-            const icon = createUserIcon(currentHeading);
+          if(!wellbeingMap) return;
 
+          const icon = createUserIcon(currentHeading);
             if(!wellbeingUserMarker){
               wellbeingUserMarker = L.marker([lat, lng], icon ? { icon } : undefined).addTo(wellbeingMap);
             }else{
@@ -3377,58 +3380,89 @@
   const closeLegalBtn = $("legalClose");
   const closeLegalX = $("legalX");
 
-  if(openSecureBtn){
-    openSecureBtn.onclick = ()=>{
-      openModal("Compte + aide", `
-        <div style="font-weight:900;margin-bottom:8px;">Compte + aide (structure)</div>
+if(openSecureBtn){
+  openSecureBtn.onclick = ()=>{
+    openModal("Compte + aide", `
+      <div style="font-weight:900;margin-bottom:8px;">Compte + aide (structure)</div>
 
-        <div class="box">
-          <strong>Cadre :</strong> cette zone regroupe l’aide utilisateur, la récupération de compte,
-          l’assistance et, selon la version activée, certaines fonctions de sécurité renforcée.
-        </div>
+      <div class="box">
+        <strong>Cadre :</strong> cette zone regroupe l’aide utilisateur, la récupération de compte,
+        l’assistance et, selon la version activée, certaines fonctions de sécurité renforcée.
+      </div>
 
-        <div class="box">
-          <div style="font-weight:900;">Aide utilisateur</div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>Comprendre les tuiles de l’application</li>
-            <li>Comprendre les bocitecoins et leurs usages</li>
-            <li>Retrouver les principales fonctions : mairie, école, sport, commerces</li>
-            <li>Être guidé en cas de difficulté d’accès</li>
-          </ul>
+      <div class="box">
+        <div style="font-weight:900;">Option Compte sécurisé (si activée)</div>
+        <div class="muted" style="margin-top:6px;">
+          Cette option peut impliquer un traitement par un <strong>prestataire serveur tiers</strong> (sous-traitant),
+          uniquement pour fournir les fonctions : récupération de compte, assistance, alertes, et, si autorisée,
+          géolocalisation ponctuelle et SMS vers <strong>2 numéros de confiance</strong>.
         </div>
+        <div class="muted" style="margin-top:6px;">
+          Les autorisations sensibles (ex. localisation) sont demandées via le téléphone et restent refusables.
+        </div>
+        <div class="muted" style="margin-top:6px;">
+          Bo’CitéArt est tenu à une <strong>obligation de moyens</strong> concernant ces fonctions.
+        </div>
+      </div>
 
-        <div class="box">
-          <div style="font-weight:900;">Compte sécurisé</div>
-          <div class="muted" style="margin-top:6px;">
-            Selon la version activée, cette zone peut proposer :
-          </div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>Récupération de compte</li>
-            <li>Assistance en cas de blocage</li>
-            <li>Alertes liées au compte</li>
-            <li>Vérifications complémentaires selon le rôle</li>
-          </ul>
+      <div class="box">
+        <div style="font-weight:900;">Abonnement indicatif</div>
+        <div class="muted" style="margin-top:6px;">
+          Option compte sécurisé : <strong>2,99 € / mois</strong> (structure de démonstration).
         </div>
+        <div class="muted" style="margin-top:6px;">
+          Cette option peut inclure, selon version activée :
+        </div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>récupération de compte</li>
+          <li>aide et assistance</li>
+          <li>alertes liées au compte</li>
+          <li>envoi vers 2 numéros de confiance</li>
+          <li>géolocalisation ponctuelle si autorisée</li>
+        </ul>
+      </div>
 
-        <div class="box">
-          <div style="font-weight:900;">Important</div>
-          <div class="muted" style="margin-top:6px;">
-            Les fonctions réellement disponibles dépendent de la version activée,
-            du téléphone, du réseau, et des autorisations accordées par l’utilisateur.
-          </div>
+      <div class="box">
+        <div style="font-weight:900;">2 numéros de confiance</div>
+        <div class="muted" style="margin-top:6px;">
+          L’utilisateur peut, selon la version activée, renseigner jusqu’à <strong>2 numéros de confiance</strong>
+          destinés à recevoir une alerte ou un SMS en cas de déclenchement autorisé.
         </div>
+        <div class="muted" style="margin-top:6px;">
+          Ces fonctions dépendent du téléphone, du réseau, des autorisations accordées,
+          et du prestataire technique retenu.
+        </div>
+      </div>
 
-        <div class="box">
-          <div style="font-weight:900;">Rappel</div>
-          <div class="muted" style="margin-top:6px;">
-            Bo’CitéArt reste une interface d’information et de services territoriaux.
-            Les appels d’urgence, la localisation, les alertes sensibles et les fonctions avancées
-            dépendent du téléphone et des services autorisés.
-          </div>
+      <div class="box">
+        <div style="font-weight:900;">Aide utilisateur</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>Comprendre les tuiles de l’application</li>
+          <li>Comprendre les bocitecoins et leurs usages</li>
+          <li>Retrouver les principales fonctions : mairie, école, sport, commerces</li>
+          <li>Être guidé en cas de difficulté d’accès</li>
+        </ul>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Important</div>
+        <div class="muted" style="margin-top:6px;">
+          Les fonctions réellement disponibles dépendent de la version activée,
+          du téléphone, du réseau, et des autorisations accordées par l’utilisateur.
         </div>
-      `);
-    };
-  }
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Rappel</div>
+        <div class="muted" style="margin-top:6px;">
+          Bo’CitéArt reste une interface d’information et de services territoriaux.
+          Les appels d’urgence, la localisation, les alertes sensibles et les fonctions avancées
+          dépendent du téléphone et des services autorisés.
+        </div>
+      </div>
+    `);
+  };
+}
 
   if(typeof window.__lastFocus === "undefined") window.__lastFocus = null;
 
