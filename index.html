@@ -1286,6 +1286,31 @@
   const $ = (id) => document.getElementById(id);
   const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
   const isFn = (v) => typeof v === "function";
+  
+  function lockScroll(lock){
+  document.body.style.overflow = lock ? "hidden" : "";
+}
+
+const modal = $("modal");
+const modalTitle = $("modalTitle");
+const modalBody = $("modalBody");
+
+function closeModal(){
+  if(!modal) return;
+  modal.style.display = "none";
+  lockScroll(false);
+}
+
+function openModal(title, html){
+  if(!modal) return;
+  modalTitle.textContent = title;
+  modalBody.innerHTML = html;
+  modal.style.display = "block";
+  lockScroll(true);
+}
+
+window.openModal = openModal;
+window.closeModal = closeModal;
 
   let wellbeingMap = null;
   let wellbeingUserMarker = null;
