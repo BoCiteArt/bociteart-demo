@@ -1223,8 +1223,8 @@
     Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : <strong>50 € HT pour 1 publicité</strong>, ou <strong>200 € HT pour un forfait de 5 publicités</strong>.<br><br>
 
     Le calendrier publicitaire fonctionne dans la limite de <strong>10 publicités maximum par jour</strong>.<br>
-    Avant <strong>16h</strong>, un même profil ne peut réserver qu’<strong>une seule publicité sur la journée concernée</strong>.<br>
-    À partir de <strong>16h</strong>, si les 10 publicités du jour ne sont pas toutes prises, les emplacements restants peuvent encore être réservés jusqu’à ce que la journée soit complète.<br><br>
+   Chaque entité (commerçant, association autorisée ou mairie) peut réserver une seule publicité par jour jusqu’à 16h00.<br>
+  À partir de 16h00, si toutes les places disponibles pour la journée ne sont pas encore réservées, des réservations supplémentaires peuvent être effectuées dans la limite des emplacements restants, jusqu’à atteindre le maximum journalier de 10 publicités.<br><br>
 
     Pour les commerçants et les associations, toute publicité non réglée ne peut pas être diffusée. En cas de paiement via PSP non régularisé à l’échéance contractuelle, la diffusion peut être suspendue et aucun nouvel emplacement publicitaire ne peut être activé tant que le paiement n’est pas effectivement reçu.<br><br>
 
@@ -1346,8 +1346,8 @@
     Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : <strong>50 € HT pour 1 publicité</strong>, ou <strong>200 € HT pour un forfait de 5 publicités</strong>.<br><br>
 
     Le calendrier publicitaire est limité à <strong>10 publicités maximum par jour</strong>.<br>
-    Avant <strong>16h</strong>, un même profil ne peut réserver qu’<strong>une seule publicité sur la journée concernée</strong>.<br>
-    À partir de <strong>16h</strong>, si les 10 publicités du jour ne sont pas toutes prises, les emplacements restants peuvent encore être réservés jusqu’à complète occupation de la journée.<br><br>
+    Chaque entité (commerçant, association autorisée ou mairie) peut réserver une seule publicité par jour jusqu’à 16h00.<br>
+   À partir de 16h00, si toutes les places disponibles pour la journée ne sont pas encore réservées, des réservations supplémentaires peuvent être effectuées dans la limite des emplacements restants, jusqu’à atteindre le maximum journalier de 10 publicités.<br><br>
 
     Toute réservation ne vaut pas, à elle seule, validation définitive de diffusion. La diffusion reste subordonnée au respect des conditions contractuelles, techniques et de paiement applicables.
   </div>
@@ -2589,279 +2589,331 @@ out center tags;
       }
       window.initFeeUiInModal = initFeeUiInModal;
 
-           function buildCalendarHTML(){
-        const first = new Date(calYear, calMonth, 1);
-        const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
-        const labels = ["L","M","M","J","V","S","D"];
+     function buildCalendarHTML(){
+  const first = new Date(calYear, calMonth, 1);
+  const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+  const labels = ["L","M","M","J","V","S","D"];
 
-        return `
-          <div class="calWrap">
-            <div class="calTop">
-              <div style="font-weight:900;">Calendrier (démo) — ${monthName}</div>
-              <div class="mini">
-                <button class="choiceBtn" id="calPrev" type="button">◀</button>
-                <button class="choiceBtn" id="calNext" type="button">▶</button>
-              </div>
-            </div>
+  return `
+    <div class="calWrap">
+      <div class="calTop">
+        <div style="font-weight:900;">Calendrier (démo) — ${monthName}</div>
+        <div class="mini">
+          <button class="choiceBtn" id="calPrev" type="button">◀</button>
+          <button class="choiceBtn" id="calNext" type="button">▶</button>
+        </div>
+      </div>
 
-            <div class="muted">
-              Règle : <strong>${PUB_MAX_PER_DAY} réservations maximum / jour</strong>.
-              Une journée complète devient grisée et non sélectionnable.
-            </div>
+      <div class="muted">
+        Règle : <strong>${PUB_MAX_PER_DAY} réservations maximum par jour</strong>.
+      </div>
+      <div class="muted" style="margin-top:6px;">
+        Jusqu’à 16h00, chaque entité (commerce, mairie ou association autorisée) peut réserver <strong>1 seule publicité par jour</strong>.
+      </div>
+      <div class="muted" style="margin-top:6px;">
+        À partir de 16h00, si les 10 publicités du jour ne sont pas toutes réservées, les places restantes peuvent être reprises par les mêmes entités jusqu’à épuisement complet des 10 emplacements.
+      </div>
+      <div class="muted" style="margin-top:6px;">
+        Une fois les 10 publicités du jour réservées, la journée est complète et les réservations basculent au jour suivant.
+      </div>
 
-            <div class="calGrid" style="margin-top:10px;">
-              ${labels.map(x => `<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
-            </div>
+      <div class="calGrid" style="margin-top:10px;">
+        ${labels.map(x => `<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
+      </div>
 
-            <div class="calGrid" id="calDays"></div>
+      <div class="calGrid" id="calDays"></div>
 
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
-              <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
-            </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
+        <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderCalendarInto(containerId){
+  const box = $(containerId);
+  if(!box) return;
+
+  box.innerHTML = buildCalendarHTML();
+
+  const daysEl = $("calDays");
+  const bookings = loadBookings();
+  const first = new Date(calYear, calMonth, 1);
+  const last = new Date(calYear, calMonth + 1, 0);
+  const startDow = (first.getDay() + 6) % 7;
+  const daysInMonth = last.getDate();
+
+  const cells = [];
+
+  for(let i=0; i<startDow; i++){
+    cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
+  }
+
+  for(let d=1; d<=daysInMonth; d++){
+    const used = daySlotsUsed(bookings, calYear, calMonth, d);
+    const full = used >= PUB_MAX_PER_DAY;
+    const cls = full ? "calDay full" : "calDay";
+
+    cells.push(`
+      <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
+        <div class="d">${d}</div>
+        <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
+      </div>
+    `);
+  }
+
+  daysEl.innerHTML = cells.join("");
+
+  on($("calPrev"), "click", ()=>{
+    calMonth--;
+    if(calMonth < 0){
+      calMonth = 11;
+      calYear--;
+    }
+    renderCalendarInto(containerId);
+  });
+
+  on($("calNext"), "click", ()=>{
+    calMonth++;
+    if(calMonth > 11){
+      calMonth = 0;
+      calYear++;
+    }
+    renderCalendarInto(containerId);
+  });
+
+  on($("calRecap"), "click", ()=> openRecapModal(calYear, calMonth));
+
+  on($("calReset"), "click", ()=>{
+    if(confirm("Réinitialiser les réservations (démo) ?")){
+      localStorage.removeItem(PUB_STORE_KEY);
+      renderCalendarInto(containerId);
+    }
+  });
+
+  document.querySelectorAll(".calDay[data-day]").forEach((el)=>{
+    el.addEventListener("click", ()=>{
+      const d = parseInt(el.getAttribute("data-day"), 10);
+      const bookings2 = loadBookings();
+
+      if(isFull(bookings2, calYear, calMonth, d)) return;
+
+      const key = ymd(calYear, calMonth, d);
+      const used = daySlotsUsed(bookings2, calYear, calMonth, d);
+
+      openModal("Réserver une publicité (démo)", `
+        <div class="box">
+          <div style="font-weight:900;">Date : ${key}</div>
+          <div class="muted" style="margin-top:6px;">
+            Il reste <strong>${PUB_MAX_PER_DAY - used}</strong> place(s) disponible(s).
           </div>
-        `;
-      }
+          <div class="muted" style="margin-top:6px;">
+            Jusqu’à 16h00 : chaque entité (commerce, mairie ou association autorisée) peut réserver 1 seule publicité sur la journée.
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            À partir de 16h00 : si les 10 publicités du jour ne sont pas toutes prises, les places restantes peuvent encore être réservées par les mêmes entités jusqu’à ce que la journée soit complète.
+          </div>
+          <div class="muted" style="margin-top:10px;">
+            Les publications publicitaires du bandeau supérieur sont accessibles aux commerçants, à la mairie et, le cas échéant, à certaines associations selon validation et conditions applicables.
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : 50 € HT pour 1 publicité, ou 200 € HT pour un forfait de 5 publicités.
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            Pour les commerçants et les associations, toute publicité non payée ne peut pas être diffusée. En cas de paiement via PSP non régularisé à échéance, la diffusion est bloquée jusqu’au paiement effectif.
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            Les associations sportives locales ont vocation à être prioritairement valorisées dans l’espace sport dédié de l’application.
+          </div>
+        </div>
 
-      function renderCalendarInto(containerId){
-        const box = $(containerId);
-        if(!box) return;
+        <div class="choiceGrid">
+          <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
+          <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
+          <button class="choiceBtn" id="bkAsso" type="button">Association</button>
+        </div>
+      `);
 
-        box.innerHTML = buildCalendarHTML();
+      setTimeout(()=>{
+        const doBook = (entityType)=>{
+          const now = new Date();
+          const stampISO = now.toISOString();
+          const stampFR = now.toLocaleString("fr-FR");
+          const b = loadBookings();
+          let list = getDayBookings(b, calYear, calMonth, d);
 
-        const daysEl = $("calDays");
-        const bookings = loadBookings();
-        const first = new Date(calYear, calMonth, 1);
-        const last = new Date(calYear, calMonth + 1, 0);
-        const startDow = (first.getDay() + 6) % 7;
-        const daysInMonth = last.getDate();
+          if(!Array.isArray(list)) list = [];
 
-        const cells = [];
-
-        for(let i=0; i<startDow; i++){
-          cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
-        }
-
-        for(let d=1; d<=daysInMonth; d++){
-          const used = daySlotsUsed(bookings, calYear, calMonth, d);
-          const full = used >= PUB_MAX_PER_DAY;
-          const cls = full ? "calDay full" : "calDay";
-
-          cells.push(`
-            <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
-              <div class="d">${d}</div>
-              <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
-            </div>
-          `);
-        }
-
-        daysEl.innerHTML = cells.join("");
-
-        on($("calPrev"), "click", ()=>{
-          calMonth--;
-          if(calMonth < 0){
-            calMonth = 11;
-            calYear--;
-          }
-          renderCalendarInto(containerId);
-        });
-
-        on($("calNext"), "click", ()=>{
-          calMonth++;
-          if(calMonth > 11){
-            calMonth = 0;
-            calYear++;
-          }
-          renderCalendarInto(containerId);
-        });
-
-        on($("calRecap"), "click", ()=> openRecapModal(calYear, calMonth));
-
-        on($("calReset"), "click", ()=>{
-          if(confirm("Réinitialiser les réservations (démo) ?")){
-            localStorage.removeItem(PUB_STORE_KEY);
+          if(list.length >= PUB_MAX_PER_DAY){
+            alert("Jour complet.");
+            closeModal();
             renderCalendarInto(containerId);
+            return;
           }
-        });
 
-        document.querySelectorAll(".calDay[data-day]").forEach((el)=>{
-          el.addEventListener("click", ()=>{
-            const d = parseInt(el.getAttribute("data-day"), 10);
-            const bookings2 = loadBookings();
+          const currentHour = now.getHours();
 
-            if(isFull(bookings2, calYear, calMonth, d)) return;
+          const entityLabel =
+            entityType === "Commerce"
+              ? "Nom du commerce"
+              : entityType === "Mairie"
+                ? "Nom de la mairie / service"
+                : "Nom de l’association";
 
-            const key = ymd(calYear, calMonth, d);
-            const used = daySlotsUsed(bookings2, calYear, calMonth, d);
+          const entityInput = prompt(`${entityLabel} (démo) :`);
+          if(!entityInput || !entityInput.trim()){
+            alert("Réservation annulée.");
+            return;
+          }
 
-            openModal("Réserver une publicité (démo)", `
-              <div class="box">
-                <div style="font-weight:900;">Date : ${key}</div>
-                <div class="muted" style="margin-top:6px;">
-                  Il reste <strong>${PUB_MAX_PER_DAY - used}</strong> place(s) disponible(s).
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  Avant 16h : un même profil ne peut réserver qu’une seule publicité sur la journée.
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  À partir de 16h : si les 10 publicités du jour ne sont pas toutes prises, les places restantes peuvent encore être réservées jusqu’à ce que la journée soit complète.
-                </div>
-                <div class="muted" style="margin-top:10px;">
-                  Les publications publicitaires du bandeau supérieur sont accessibles aux commerçants, à la mairie et, le cas échéant, à certaines associations selon validation et conditions applicables.
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : 50 € HT pour 1 publicité, ou 200 € HT pour un forfait de 5 publicités.
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  Pour les commerçants et les associations, toute publicité non payée ne peut pas être diffusée. En cas de paiement via PSP non régularisé à échéance, la diffusion est bloquée jusqu’au paiement effectif.
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  Les associations sportives locales ont vocation à être prioritairement valorisées dans l’espace sport dédié de l’application.
-                </div>
-              </div>
+          const entityName = entityInput.trim();
+          const normalizedEntityName = entityName.toLowerCase();
 
-              <div class="choiceGrid">
-                <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
-                <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
-                <button class="choiceBtn" id="bkAsso" type="button">Association</button>
-              </div>
-            `);
+          const alreadyBookedToday = list.some(item =>
+            String(item.entityType || item.who || "").trim().toLowerCase() === entityType.toLowerCase() &&
+            String(item.entityName || item.who || "").trim().toLowerCase() === normalizedEntityName
+          );
 
-            setTimeout(()=>{
-              const doBook = (who)=>{
-                const now = new Date();
-                const stampISO = now.toISOString();
-                const stampFR = now.toLocaleString("fr-FR");
-                const b = loadBookings();
-                let list = getDayBookings(b, calYear, calMonth, d);
+          if(currentHour < 16 && alreadyBookedToday){
+            alert("Avant 16h00, cette entité a déjà réservé sa publicité du jour.");
+            return;
+          }
 
-                if(!Array.isArray(list)) list = [];
-
-                if(list.length >= PUB_MAX_PER_DAY){
-                  alert("Jour complet.");
-                  closeModal();
-                  renderCalendarInto(containerId);
-                  return;
-                }
-
-                const currentHour = now.getHours();
-                const normalizedWho = String(who || "").trim().toLowerCase();
-
-                const alreadyBookedToday = list.some(item =>
-                  String(item.who || "").trim().toLowerCase() === normalizedWho
-                );
-
-                if(currentHour < 16 && alreadyBookedToday){
-                  alert("Avant 16h, un même profil ne peut réserver qu’une seule publicité sur la journée.");
-                  return;
-                }
-
-                list.push({
-                  date:key,
-                  who,
-                  ts_iso:stampISO,
-                  ts_fr:stampFR,
-                  note: currentHour < 16
-                    ? "Réservation avant 16h (1 seule par profil)"
-                    : "Réservation après 16h (places restantes autorisées)"
-                });
-
-                setDayBookings(b, calYear, calMonth, d, list);
-                saveBookings(b);
-                closeModal();
-                renderCalendarInto(containerId);
-
-                alert(`Réservation enregistrée (démo)\n${key}\n${who}\nHorodatage : ${stampFR}`);
-              };
-
-              on($("bkCommerce"), "click", ()=> doBook("Commerce"));
-              on($("bkMairie"), "click", ()=> doBook("Mairie"));
-              on($("bkAsso"), "click", ()=> doBook("Association"));
-            }, 0);
+          list.push({
+            date: key,
+            who: entityType,
+            entityType: entityType,
+            entityName: entityName,
+            ts_iso: stampISO,
+            ts_fr: stampFR,
+            note: currentHour < 16
+              ? "Réservation avant 16h00 (1 seule publicité par entité)"
+              : "Réservation après 16h00 (places restantes autorisées jusqu’au complet)"
           });
-        });
-      }
 
-      function openRecapModal(y, m){
-        const b = loadBookings();
-        const keyYM = ym(y,m);
-        const monthObj = b[keyYM] || {};
-        let csv = "date;profil;horodatage_iso;horodatage_fr;note\n";
+          setDayBookings(b, calYear, calMonth, d, list);
+          saveBookings(b);
+          closeModal();
+          renderCalendarInto(containerId);
 
-        Object.keys(monthObj).sort().forEach((d)=>{
-          (monthObj[d] || []).forEach((it)=>{
-            csv += `${it.date};${it.who};${it.ts_iso};${it.ts_fr};${(it.note || "")}\n`;
-          });
-        });
+          alert(
+            `Réservation enregistrée (démo)\n${key}\nType : ${entityType}\nEntité : ${entityName}\nHorodatage : ${stampFR}`
+          );
+        };
 
-        openModal("Récap mensuel (démo) — publicités", `
-          <div class="box">
-            <div style="font-weight:900;">Mois : ${keyYM}</div>
-          </div>
+        on($("bkCommerce"), "click", ()=> doBook("Commerce"));
+        on($("bkMairie"), "click", ()=> doBook("Mairie"));
+        on($("bkAsso"), "click", ()=> doBook("Association"));
+      }, 0);
+    });
+  });
+}
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
-            <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
-          </div>
-        `);
+function openRecapModal(y, m){
+  const b = loadBookings();
+  const keyYM = ym(y,m);
+  const monthObj = b[keyYM] || {};
 
-        setTimeout(()=>{
-          const btnCsv = $("copyCsv");
-          const btnJson = $("copyJson");
+  const cleanCsv = (value) => {
+    return String(value || "").replace(/;/g, ",").replace(/\n/g, " ").trim();
+  };
 
-          if(btnCsv){
-            btnCsv.onclick = async ()=>{
-              try{
-                await navigator.clipboard.writeText(csv);
-                alert("CSV copié.");
-              }catch(e){
-                alert("Copie impossible sur ce navigateur.");
-              }
-            };
-          }
+  let csv = "date;type_entite;entite;horodatage_iso;horodatage_fr;note\n";
 
-          if(btnJson){
-            btnJson.onclick = async ()=>{
-              try{
-                await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2));
-                alert("JSON copié.");
-              }catch(e){
-                alert("Copie impossible sur ce navigateur.");
-              }
-            };
-          }
-        }, 0);
-      }
-      function openTicker(){
-        openModal("Publicités & visibilité (ticker)", `
-          <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
+  Object.keys(monthObj).sort().forEach((d)=>{
+    (monthObj[d] || []).forEach((it)=>{
+      const entityType = cleanCsv(it.entityType || it.who || "");
+      const entityName = cleanCsv(it.entityName || it.who || "");
+      const tsIso = cleanCsv(it.ts_iso || "");
+      const tsFr = cleanCsv(it.ts_fr || "");
+      const note = cleanCsv(it.note || "");
 
-          <div class="box">
-            <strong>Cadre :</strong> réservation plafonnée, gestion par calendrier, possibilité de récap mensuel et horodatage des réservations.
-          </div>
+      csv += `${cleanCsv(it.date)};${entityType};${entityName};${tsIso};${tsFr};${note}\n`;
+    });
+  });
 
-          <div class="box">
-            <div class="muted">
-              Les publications publicitaires du bandeau supérieur sont accessibles aux commerçants, à la mairie et, le cas échéant, à certaines associations selon validation et conditions applicables.
-            </div>
-            <div class="muted" style="margin-top:8px;">
-              Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : 50 € HT pour 1 publicité, ou 200 € HT pour un forfait de 5 publicités.
-            </div>
-            <div class="muted" style="margin-top:8px;">
-              Pour les commerçants et les associations, l’absence de paiement bloque la diffusion de la publicité. En cas de paiement via PSP non régularisé à échéance, aucune nouvelle publicité ne peut être diffusée tant que la situation n’est pas régularisée.
-            </div>
-            <div class="muted" style="margin-top:8px;">
-              Les associations sportives locales ont vocation à être prioritairement valorisées dans l’espace sport dédié de l’application.
-            </div>
-          </div>
+  openModal("Récap mensuel (démo) — publicités", `
+    <div class="box">
+      <div style="font-weight:900;">Mois : ${keyYM}</div>
+      <div class="muted" style="margin-top:6px;">
+        Export du récap mensuel des réservations publicitaires.
+      </div>
+    </div>
 
-          <div id="calHost"></div>
-        `);
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
+      <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
+    </div>
+  `);
 
-        setTimeout(()=> renderCalendarInto("calHost"), 0);
-      }
-      window.openTicker = openTicker;
-      on($("ticker"), "click", openTicker);
+  setTimeout(()=>{
+    const btnCsv = $("copyCsv");
+    const btnJson = $("copyJson");
+
+    if(btnCsv){
+      btnCsv.onclick = async ()=>{
+        try{
+          await navigator.clipboard.writeText(csv);
+          alert("CSV copié.");
+        }catch(e){
+          alert("Copie impossible sur ce navigateur.");
+        }
+      };
+    }
+
+    if(btnJson){
+      btnJson.onclick = async ()=>{
+        try{
+          await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2));
+          alert("JSON copié.");
+        }catch(e){
+          alert("Copie impossible sur ce navigateur.");
+        }
+      };
+    }
+  }, 0);
+}
+
+function openTicker(){
+  openModal("Publicités & visibilité (ticker)", `
+    <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
+
+    <div class="box">
+      <strong>Cadre :</strong> réservation plafonnée, gestion par calendrier, possibilité de récap mensuel et horodatage des réservations.
+    </div>
+
+    <div class="box">
+      <div class="muted">
+        Les publications publicitaires du bandeau supérieur sont accessibles aux commerçants, à la mairie et, le cas échéant, à certaines associations selon validation et conditions applicables.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : 50 € HT pour 1 publicité, ou 200 € HT pour un forfait de 5 publicités.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Jusqu’à 16h00, chaque entité (commerce, mairie ou association autorisée) peut réserver 1 seule publicité pour la journée concernée.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        À partir de 16h00, si les 10 publicités du jour ne sont pas toutes réservées, les places restantes peuvent encore être réservées par les mêmes entités jusqu’à épuisement complet des 10 emplacements.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Une fois les 10 publicités du jour réservées, la journée est complète et aucune réservation supplémentaire ne peut être ajoutée sur cette date.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Pour les commerçants et les associations, l’absence de paiement bloque la diffusion de la publicité. En cas de paiement via PSP non régularisé à échéance, aucune nouvelle publicité ne peut être diffusée tant que la situation n’est pas régularisée.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Les associations sportives locales ont vocation à être prioritairement valorisées dans l’espace sport dédié de l’application.
+      </div>
+    </div>
+
+    <div id="calHost"></div>
+  `);
+
+  setTimeout(()=> renderCalendarInto("calHost"), 0);
+}
+window.openTicker = openTicker;
+on($("ticker"), "click", openTicker);
 
       function escapeHtml(s){
         return String(s)
@@ -3081,13 +3133,14 @@ out center tags;
               <div class="box">
                 <div style="font-weight:900;">Principe</div>
                 <div class="muted" style="margin-top:6px;">
-                  Les bocitecoins “École” sont échangeables à la mairie en articles scolaires, ou peuvent être partagés
-                  (sur décision école/mairie) avec 1 ou plusieurs associations.<br><br>
-                  La mairie s’engage, selon ses capacités, à convertir l’équivalent en matériel/don et à diffuser à la classe
-                  le message de remerciement transmis par l’association via la mairie.
-                </div>
-              </div>
-
+  Chaque entité (commerçant, association autorisée ou mairie) peut réserver une seule publicité par jour jusqu’à 16h00.
+</div>
+<div class="muted" style="margin-top:6px;">
+  À partir de 16h00, si toutes les places disponibles pour la journée ne sont pas encore réservées, des réservations supplémentaires sont possibles dans la limite des emplacements restants, jusqu’à atteindre les ${PUB_MAX_PER_DAY} publicités prévues pour la journée.
+</div>
+<div class="muted" style="margin-top:6px;">
+  Une fois le quota journalier atteint, la journée est complète et aucune réservation supplémentaire n’est possible.
+</div>
               <div class="box" style="margin-top:12px;">
                 <div style="font-weight:900;">Choisir le mode de partage</div>
                 <label class="miniCheck" style="margin-top:10px;">
@@ -3630,6 +3683,9 @@ out center tags;
               </ul>
               <div class="muted" style="margin-top:8px;">Ces messages restent gratuits pour la mairie.</div>
             </div>
+            <div class="muted" style="margin-top:8px;">
+  Chaque entité (commerçant, association autorisée ou mairie) peut réserver une seule publicité par jour jusqu’à 16h00. À partir de 16h00, si des emplacements restent disponibles, des réservations supplémentaires sont possibles jusqu’à atteindre le maximum journalier de ${PUB_MAX_PER_DAY} publicités.
+</div>
 
             <div style="font-weight:900;margin-top:10px;">Messages payants mairie</div>
             <div class="box">
