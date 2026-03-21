@@ -5,7 +5,7 @@
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="geolocation=(self)">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' https: data:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests; img-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; font-src 'self' https: data:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Bo’CitéArt – Démo</title>
   <link rel="manifest" href="manifest.json">
@@ -2623,17 +2623,31 @@ out center tags;
           cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
         }
 
-        for(let d=1; d<=daysInMonth; d++){
-          const used = daySlotsUsed(bookings, calYear, calMonth, d);
-          const full = used >= PUB_MAX_PER_DAY;
-          const cls = full ? "calDay full" : "calDay";
-          cells.push(`
-            <div class="${cls}" data-day="${d}" role="button">
-              <div class="d">${d}</div>
-              <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
-            </div>
-          `);
-        }
+        const now = new Date();
+const todayY = now.getFullYear();
+const todayM = now.getMonth();
+const todayD = now.getDate();
+const after16 = now.getHours() >= 16;
+
+for(let d=1; d<=daysInMonth; d++){
+  const used = daySlotsUsed(bookings, calYear, calMonth, d);
+
+  const isToday =
+    calYear === todayY &&
+    calMonth === todayM &&
+    d === todayD;
+
+  const blockedBy16h = isToday && after16;
+  const full = used >= PUB_MAX_PER_DAY || blockedBy16h;
+  const cls = full ? "calDay full" : "calDay";
+
+  cells.push(`
+    <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
+      <div class="d">${d}</div>
+      <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
+    </div>
+  `);
+}
 
         daysEl.innerHTML = cells.join("");
 
