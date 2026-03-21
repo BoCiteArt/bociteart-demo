@@ -2602,39 +2602,7 @@ out center tags;
           </div>
         `;
       }
-
-function renderCalendarInto(containerId){
-  const box = $(containerId);
-  if(!box) return;
-
-  box.innerHTML = buildCalendarHTML();
-
-  const daysEl = $("calDays");
-  const bookings = loadBookings();
-  const first = new Date(calYear, calMonth, 1);
-  const last = new Date(calYear, calMonth + 1, 0);
-  const startDow = (first.getDay() + 6) % 7;
-  const daysInMonth = last.getDate();
-
-  const cells = [];
-
-  for(let i = 0; i < startDow; i++){
-    cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
-  }
-
-  for(let d = 1; d <= daysInMonth; d++){
-    const used = daySlotsUsed(bookings, calYear, calMonth, d);
-    const full = used >= PUB_MAX_PER_DAY;
-    const cls = full ? "calDay full" : "calDay";
-
-    cells.push(`
-      <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
-        <div class="d">${d}</div>
-        <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
-      </div>
-    `);
-  }
-
+      
   daysEl.innerHTML = cells.join("");
 
   on($("calPrev"), "click", ()=>{
