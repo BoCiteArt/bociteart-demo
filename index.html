@@ -3594,18 +3594,19 @@ on($("ticker"), "click", openTicker);
                 </div>
 
                 <div class="walletBox">
-                  <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
-                  <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
-                  <div class="walletSub">BoCitecoins gagnés par les actions sportives/citoyennes, échangeables plus tard chez un commerçant partenaire selon les règles locales.</div>
-                  <div class="walletActions">
-                    <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-                    <button class="walletMini" id="walletSportPlus25" type="button">+25</button>
-                    <button class="walletMini" id="walletSportMinus" type="button">−1</button>
-                    <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
-                  </div>
-                </div>
-              </div>
-
+  <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
+  <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
+  <div class="walletSub">
+    Les BoCitecoins VERT sont gagnés par les actions sportives et citoyennes validées.
+    Ils servent uniquement à aider le club bénéficiaire, jamais une personne.
+  </div>
+  <div class="walletActions">
+    <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
+    <button class="walletMini" id="walletSportPlus20" type="button">+20</button>
+    <button class="walletMini" id="walletSportInfo" type="button">Règle d’échange</button>
+    <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
+  </div>
+</div>
               <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
               <div class="box">
                 <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
@@ -3615,13 +3616,26 @@ on($("ticker"), "click", openTicker);
                 </div>
               </div>
 
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Rapport du week-end (résumé)</li>
-                <li>Missions citoyennes : propreté • rangement • fair-play</li>
-                <li>Validation (optionnelle) — non publique</li>
-                <li>Bocitecoins couleur Vert : collectivité</li>
-                <li>Pas de messagerie • pas de commentaires libres</li>
-              </ul>
+         <div class="box" style="margin-top:12px;">
+  <div style="font-weight:900;">Règle Sport – BoCitecoins VERT</div>
+  <div class="muted" style="margin-top:8px;">
+    Les BoCitecoins VERT sont gagnés par les clubs ou groupes sportifs pour des actions sportives et citoyennes validées dans le cadre de Bo’CitéArt.
+    Ils servent uniquement à aider le club bénéficiaire, jamais une personne physique.
+  </div>
+
+  <ul style="margin:10px 0 0 18px;font-weight:800;">
+    <li>Échange autorisé uniquement par tranches de <strong>10</strong> ou <strong>20</strong> BoCitecoins VERT</li>
+    <li>L’avantage bénéficie au <strong>club</strong>, jamais au référent, éducateur ou particulier</li>
+    <li>Après validation, les coins utilisés sont <strong>brûlés</strong> du wallet sport</li>
+    <li>Maximum <strong>30 %</strong> de l’aide en nourriture ou boissons</li>
+    <li>Le reste doit profiter utilement au club : matériel, accessoires, soutien logistique ou besoin sportif</li>
+    <li>Aucune conversion en euros, aucun versement d’argent, aucun usage personnel</li>
+  </ul>
+
+  <div class="muted" style="margin-top:8px;">
+    Exemples : 7 = impossible • 10 = possible • 15 = impossible • 20 = possible.
+  </div>
+</div>
 
               <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
               <ul style="margin:8px 0 0 18px;font-weight:800;">
@@ -3662,11 +3676,51 @@ on($("ticker"), "click", openTicker);
               };
               refresh();
 
-              const p10 = $("walletSportPlus10");
-              const p25 = $("walletSportPlus25");
-              const m1 = $("walletSportMinus");
-              const rst = $("walletSportReset");
+             const p10 = $("walletSportPlus10");
+const p20 = $("walletSportPlus20");
+const infoBtn = $("walletSportInfo");
+const rst = $("walletSportReset");
 
+if(p10){
+  p10.onclick = ()=>{
+    const w = loadSportWallet();
+    w.vert = Number(w.vert || 0) + 10;
+    saveSportWallet(w);
+    refresh();
+  };
+}
+
+if(p20){
+  p20.onclick = ()=>{
+    const w = loadSportWallet();
+    w.vert = Number(w.vert || 0) + 20;
+    saveSportWallet(w);
+    refresh();
+  };
+}
+
+if(infoBtn){
+  infoBtn.onclick = ()=>{
+    alert(
+      "BoCitecoins VERT — règle d’échange\\n\\n" +
+      "- Gagnés par des actions sportives et citoyennes validées\\n" +
+      "- Réservés au club, jamais à une personne\\n" +
+      "- Échange uniquement par 10 ou 20\\n" +
+      "- Coins brûlés après usage\\n" +
+      "- Maximum 30 % en nourriture/boissons\\n" +
+      "- Le reste doit servir utilement au club"
+    );
+  };
+}
+
+if(rst){
+  rst.onclick = ()=>{
+    if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
+      saveSportWallet({ vert:0 });
+      refresh();
+    }
+  };
+}
               if(p10){
                 p10.onclick = ()=>{
                   const w = loadSportWallet();
