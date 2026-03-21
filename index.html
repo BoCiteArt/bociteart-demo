@@ -3593,7 +3593,7 @@ on($("ticker"), "click", openTicker);
                   </div>
                 </div>
 
-                <div class="walletBox">
+           <div class="walletBox">
   <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
   <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
   <div class="walletSub">
@@ -3607,16 +3607,17 @@ on($("ticker"), "click", openTicker);
     <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
   </div>
 </div>
-              <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
-              <div class="box">
-                <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
-                <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm), et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras. Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.</div>
-                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                  <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
-                </div>
-              </div>
 
-         <div class="box" style="margin-top:12px;">
+<div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
+<div class="box">
+  <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
+  <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm), et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras. Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
+  </div>
+</div>
+
+<div class="box" style="margin-top:12px;">
   <div style="font-weight:900;">Règle Sport – BoCitecoins VERT</div>
   <div class="muted" style="margin-top:8px;">
     Les BoCitecoins VERT sont gagnés par les clubs ou groupes sportifs pour des actions sportives et citoyennes validées dans le cadre de Bo’CitéArt.
@@ -3637,129 +3638,93 @@ on($("ticker"), "click", openTicker);
   </div>
 </div>
 
-              <div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Parcs • bois • parcours • salles</li>
-                <li>Carte plein écran + guidage</li>
-              </ul>
-              
-                            <div class="box" style="margin-top:10px;">
-                <div style="font-weight:900;">Carte bien-être</div>
-                <div class="muted" style="margin-top:6px;">
-                  Ouvre la carte plein écran avec points utiles autour de vous.
-                </div>
-                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                  <button class="choiceBtn" id="openMap" type="button">Carte bien-être</button>
-                </div>
-              </div>
+<div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
+<ul style="margin:8px 0 0 18px;font-weight:800;">
+  <li>Parcs • bois • parcours • salles</li>
+  <li>Carte plein écran + guidage</li>
+</ul>
 
-              <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
-              <div class="box">
-                Actuellement : 12 clubs engagés (démo)<br><br>
-                Chaque club peut proposer :<br>
-                • Rapport du week-end<br>
-                • Actions citoyennes<br>
-                • Partenariats commerçants<br>
-                • Soutien associatif
-              </div>
-            `);
+<div class="box" style="margin-top:10px;">
+  <div style="font-weight:900;">Carte bien-être</div>
+  <div class="muted" style="margin-top:6px;">
+    Ouvre la carte plein écran avec points utiles autour de vous.
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <button class="choiceBtn" id="openMap" type="button">Carte bien-être</button>
+  </div>
+</div>
 
-            setTimeout(()=>{
-              const b = $("openSportFicheBtn");
-              const btnMap = $("openMap");
-              if(b) b.onclick = openSportFiche;
-              if(btnMap) btnMap.onclick = openWellbeingMap;
+<div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
+<div class="box">
+  Actuellement : 12 clubs engagés (démo)<br><br>
+  Chaque club peut proposer :<br>
+  • Rapport du week-end<br>
+  • Actions citoyennes<br>
+  • Partenariats commerçants<br>
+  • Soutien associatif
+</div>
+`);
 
-              const refresh = ()=>{
-                const out = $("sportCoinBalance");
-                if(out) out.textContent = Number(loadSportWallet().vert || 0);
-              };
-              refresh();
+setTimeout(()=>{
+  const b = $("openSportFicheBtn");
+  const btnMap = $("openMap");
+  if(b) b.onclick = openSportFiche;
+  if(btnMap) btnMap.onclick = openWellbeingMap;
 
-             const p10 = $("walletSportPlus10");
-const p20 = $("walletSportPlus20");
-const infoBtn = $("walletSportInfo");
-const rst = $("walletSportReset");
-
-if(p10){
-  p10.onclick = ()=>{
-    const w = loadSportWallet();
-    w.vert = Number(w.vert || 0) + 10;
-    saveSportWallet(w);
-    refresh();
+  const refresh = ()=>{
+    const out = $("sportCoinBalance");
+    if(out) out.textContent = Number(loadSportWallet().vert || 0);
   };
-}
+  refresh();
 
-if(p20){
-  p20.onclick = ()=>{
-    const w = loadSportWallet();
-    w.vert = Number(w.vert || 0) + 20;
-    saveSportWallet(w);
-    refresh();
-  };
-}
+  const p10 = $("walletSportPlus10");
+  const p20 = $("walletSportPlus20");
+  const infoBtn = $("walletSportInfo");
+  const rst = $("walletSportReset");
 
-if(infoBtn){
-  infoBtn.onclick = ()=>{
-    alert(
-      "BoCitecoins VERT — règle d’échange\\n\\n" +
-      "- Gagnés par des actions sportives et citoyennes validées\\n" +
-      "- Réservés au club, jamais à une personne\\n" +
-      "- Échange uniquement par 10 ou 20\\n" +
-      "- Coins brûlés après usage\\n" +
-      "- Maximum 30 % en nourriture/boissons\\n" +
-      "- Le reste doit servir utilement au club"
-    );
-  };
-}
-
-if(rst){
-  rst.onclick = ()=>{
-    if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
-      saveSportWallet({ vert:0 });
+  if(p10){
+    p10.onclick = ()=>{
+      const w = loadSportWallet();
+      w.vert = Number(w.vert || 0) + 10;
+      saveSportWallet(w);
       refresh();
-    }
-  };
-}
-              if(p10){
-                p10.onclick = ()=>{
-                  const w = loadSportWallet();
-                  w.vert = Number(w.vert || 0) + 10;
-                  saveSportWallet(w);
-                  refresh();
-                };
-              }
+    };
+  }
 
-              if(p25){
-                p25.onclick = ()=>{
-                  const w = loadSportWallet();
-                  w.vert = Number(w.vert || 0) + 25;
-                  saveSportWallet(w);
-                  refresh();
-                };
-              }
+  if(p20){
+    p20.onclick = ()=>{
+      const w = loadSportWallet();
+      w.vert = Number(w.vert || 0) + 20;
+      saveSportWallet(w);
+      refresh();
+    };
+  }
 
-              if(m1){
-                m1.onclick = ()=>{
-                  const w = loadSportWallet();
-                  w.vert = Math.max(0, Number(w.vert || 0) - 1);
-                  saveSportWallet(w);
-                  refresh();
-                };
-              }
+  if(infoBtn){
+    infoBtn.onclick = ()=>{
+      alert(
+        "BoCitecoins VERT — règle d’échange\n\n" +
+        "- Gagnés par des actions sportives et citoyennes validées\n" +
+        "- Réservés au club, jamais à une personne\n" +
+        "- Échange uniquement par 10 ou 20\n" +
+        "- Coins brûlés après usage\n" +
+        "- Maximum 30 % en nourriture/boissons\n" +
+        "- Le reste doit servir utilement au club"
+      );
+    };
+  }
 
-              if(rst){
-                rst.onclick = ()=>{
-                  if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
-                    saveSportWallet({ vert:0 });
-                    refresh();
-                  }
-                };
-              }
-            },0);
-            return;
+  if(rst){
+    rst.onclick = ()=>{
+      if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
+        saveSportWallet({ vert:0 });
+        refresh();
+      }
+    };
+  }
+},0);
+return;
           }
-
           if(key === "mairie" ){
           openModal("Mairie", `
             <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
