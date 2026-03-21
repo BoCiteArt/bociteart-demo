@@ -2569,8 +2569,41 @@ out center tags;
       }
       window.initFeeUiInModal = initFeeUiInModal;
 
-      function buildCalendarHTML(){
-       function renderCalendarInto(containerId){
+           function buildCalendarHTML(){
+        const first = new Date(calYear, calMonth, 1);
+        const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+        const labels = ["L","M","M","J","V","S","D"];
+
+        return `
+          <div class="calWrap">
+            <div class="calTop">
+              <div style="font-weight:900;">Calendrier (démo) — ${monthName}</div>
+              <div class="mini">
+                <button class="choiceBtn" id="calPrev" type="button">◀</button>
+                <button class="choiceBtn" id="calNext" type="button">▶</button>
+              </div>
+            </div>
+
+            <div class="muted">
+              Règle : <strong>${PUB_MAX_PER_DAY} réservations maximum / jour</strong>.
+              Une journée complète devient grisée et non sélectionnable.
+            </div>
+
+            <div class="calGrid" style="margin-top:10px;">
+              ${labels.map(x => `<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
+            </div>
+
+            <div class="calGrid" id="calDays"></div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
+              <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderCalendarInto(containerId){
         const box = $(containerId);
         if(!box) return;
 
@@ -2779,7 +2812,6 @@ out center tags;
           }
         }, 0);
       }
-
       function openTicker(){
         openModal("Publicités & visibilité (ticker)", `
           <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
