@@ -1211,16 +1211,13 @@
             Ces règles sont paramétrables par Bo’CitéArt et/ou la collectivité selon le cadre contractuel applicable.
           </div>
 
-          <h2>6. Publicité (si activée)</h2>
-<ul>
-  <li>Le partenaire est responsable de son contenu et de ses droits (marque, image, texte).</li>
-  <li>Bo’CitéArt peut refuser ou retirer une publicité en cas de non-conformité, de risque juridique, technique ou d’image.</li>
-  <li>Le nombre de publicités est limité à <strong>10 par jour</strong>.</li>
-  <li>Avant <strong>16h00</strong>, un même commerçant ne peut réserver qu’<strong>une seule publicité</strong> pour le jour en cours.</li>
-  <li>À partir de <strong>16h00</strong>, si le quota quotidien n’est pas atteint, les places restantes peuvent encore être réservées jusqu’au complet, y compris par un commerçant ayant déjà réservé ce même jour.</li>
-  <li>Une journée devient indisponible uniquement lorsque les <strong>10 emplacements</strong> sont attribués.</li>
-  <li>Aucune promesse de résultat commercial.</li>
-</ul>
+<h2>6. Publicité (si activée)</h2>
+          <div class="box">
+  Les publications publicitaires du bandeau supérieur sont accessibles aux commerçants, à la mairie et, le cas échéant, à certaines associations selon validation et conditions applicables.<br><br>
+  Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : 50 € HT pour 1 publicité, ou 200 € HT pour un forfait de 5 publicités.<br><br>
+  Pour les commerçants et les associations, toute publicité non réglée ne peut pas être diffusée. En cas de paiement via PSP non régularisé à échéance, la diffusion peut être suspendue et aucun nouvel emplacement publicitaire ne peut être activé tant que le paiement n’est pas effectivement reçu.<br><br>
+  Les associations sportives locales ont vocation à être prioritairement valorisées dans l’espace sport dédié de l’application.
+</div>
 
           <h2>7. Urgences</h2>
           <div class="box">
@@ -1328,15 +1325,12 @@
           </ul>
 
          <h2>6. Publicité</h2>
-<div class="box">La plateforme peut proposer des espaces de visibilité promotionnelle selon les conditions définies dans l’application.</div>
-<ul>
-  <li>maximum <strong>10 publications par jour</strong></li>
-  <li>réservation via calendrier intégré</li>
-  <li>avant <strong>16h00</strong>, un même commerçant peut réserver <strong>1 publication maximum</strong> pour le jour en cours</li>
-  <li>à partir de <strong>16h00</strong>, si le quota quotidien n’est pas atteint, les emplacements restants peuvent encore être réservés jusqu’au complet, y compris par un commerçant ayant déjà réservé ce même jour</li>
-  <li>contenu soumis à validation</li>
-  <li>Bo’CitéArt peut refuser toute publication non conforme</li>
-</ul>
+<div class="box">
+  Les publications publicitaires du bandeau supérieur sont accessibles aux commerçants, à la mairie et, le cas échéant, à certaines associations selon validation et conditions applicables.<br><br>
+  Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : 50 € HT pour 1 publicité, ou 200 € HT pour un forfait de 5 publicités.<br><br>
+  Pour les commerçants et les associations, l’absence de paiement interdit la mise en ligne ou le maintien en diffusion de la publicité. En cas de règlement via PSP non honoré ou non régularisé à échéance, Bo’CitéArt peut bloquer immédiatement toute diffusion publicitaire jusqu’au paiement complet.<br><br>
+  Les associations sportives locales ont vocation à être prioritairement valorisées dans l’espace sport dédié de l’application.
+</div>
           <h2>7. Paiement</h2>
           <ul>
             <li>Le paiement peut être réalisé via un prestataire de paiement sécurisé (PSP).</li>
@@ -2680,28 +2674,38 @@ function renderCalendarInto(containerId){
       const key = ymd(calYear, calMonth, d);
       const used = daySlotsUsed(bookings2, calYear, calMonth, d);
 
-      openModal("Réserver une publicité (démo)", `
-        <div class="box">
-          <div style="font-weight:900;">Date : ${key}</div>
-          <div class="muted" style="margin-top:6px;">
-            Il reste <strong>${PUB_MAX_PER_DAY - used}</strong> place(s) disponible(s).
-          </div>
-          <div class="muted" style="margin-top:6px;">
-            Avant 16h : un même profil ne peut réserver qu’une seule publicité sur la journée.
-          </div>
-          <div class="muted" style="margin-top:6px;">
-            À partir de 16h : si les 10 publicités du jour ne sont pas toutes prises, les places restantes
-            peuvent encore être réservées jusqu’à ce que la journée soit complète.
-          </div>
-        </div>
+    openModal("Réserver une publicité (démo)", `
+  <div class="box">
+    <div style="font-weight:900;">Date : ${key}</div>
+    <div class="muted" style="margin-top:6px;">
+      Il reste <strong>${PUB_MAX_PER_DAY - used}</strong> place(s) disponible(s).
+    </div>
+    <div class="muted" style="margin-top:6px;">
+      Avant 16h : un même profil ne peut réserver qu’une seule publicité sur la journée.
+    </div>
+    <div class="muted" style="margin-top:6px;">
+      À partir de 16h : si les 10 publicités du jour ne sont pas toutes prises, les places restantes peuvent encore être réservées jusqu’à ce que la journée soit complète.
+    </div>
+    <div class="muted" style="margin-top:10px;">
+      Les publications publicitaires du bandeau supérieur sont accessibles aux commerçants, à la mairie et, le cas échéant, à certaines associations selon validation et conditions applicables.
+    </div>
+    <div class="muted" style="margin-top:6px;">
+      Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : 50 € HT pour 1 publicité, ou 200 € HT pour un forfait de 5 publicités.
+    </div>
+    <div class="muted" style="margin-top:6px;">
+      Pour les commerçants et les associations, toute publicité non payée ne peut pas être diffusée. En cas de paiement via PSP non régularisé à échéance, la diffusion est bloquée jusqu’au paiement effectif.
+    </div>
+    <div class="muted" style="margin-top:6px;">
+      Les associations sportives locales ont vocation à être prioritairement valorisées dans l’espace sport dédié de l’application.
+    </div>
+  </div>
 
-        <div class="choiceGrid">
-          <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
-          <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
-          <button class="choiceBtn" id="bkAsso" type="button">Association</button>
-          <button class="choiceBtn" id="bkEcole" type="button">École</button>
-        </div>
-      `);
+  <div class="choiceGrid">
+    <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
+    <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
+    <button class="choiceBtn" id="bkAsso" type="button">Association</button>
+  </div>
+`);
 
       setTimeout(()=>{
         const doBook = (who)=>{
@@ -2809,18 +2813,20 @@ function renderCalendarInto(containerId){
         }, 0);
       }
 
-      function openTicker(){
-        openModal("Publicités & visibilité (ticker)", `
-          <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
-          <div class="box">
-  <strong>Cadre :</strong> réservation plafonnée à 10 publicités par jour, gestion par calendrier,
-  horodatage des réservations et possibilité de récap mensuel.<br><br>
-  <strong>Règle :</strong> avant 16h, un commerçant peut réserver 1 publicité maximum pour le jour en cours.
-  À partir de 16h, si toutes les places du jour ne sont pas encore prises, les places restantes peuvent encore être réservées jusqu’au complet,
-  y compris par un commerçant ayant déjà réservé ce même jour.
-</div>
-          <div id="calHost"></div>
-        `);
+        <div class="box">
+      <div class="muted">
+        Les publications publicitaires du bandeau supérieur sont accessibles aux commerçants, à la mairie et, le cas échéant, à certaines associations selon validation et conditions applicables.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : 50 € HT pour 1 publicité, ou 200 € HT pour un forfait de 5 publicités.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Pour les commerçants et les associations, l’absence de paiement bloque la diffusion de la publicité. En cas de paiement via PSP non régularisé à échéance, aucune nouvelle publicité ne peut être diffusée tant que la situation n’est pas régularisée.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Les associations sportives locales ont vocation à être prioritairement valorisées dans l’espace sport dédié de l’application.
+      </div>
+    </div>
 
         setTimeout(()=> renderCalendarInto("calHost"), 0);
       }
