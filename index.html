@@ -12,6 +12,7 @@
   <meta name="theme-color" content="#a51e22">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
     :root{
@@ -700,6 +701,152 @@
       font-size:12px;
     }
 
+        .calWrap{
+      margin-top:10px;
+    }
+
+    .calTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+
+    .calTop .mini{
+      display:flex;
+      gap:8px;
+    }
+
+    .calGrid{
+      display:grid;
+      grid-template-columns:repeat(7, 1fr);
+      gap:8px;
+    }
+
+    .calDay{
+      min-height:64px;
+      border:2px solid rgba(0,0,0,.10);
+      background:#fff;
+      border-radius:14px;
+      padding:8px 6px;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      font-weight:900;
+    }
+
+    .calDay .d{
+      font-size:16px;
+      line-height:1;
+    }
+
+    .calDay .s{
+      margin-top:6px;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:800;
+    }
+
+    .calDay.full{
+      background:#e7e7e7;
+      color:#8a8a8a;
+      cursor:not-allowed;
+      opacity:.9;
+    }
+
+    .calDay.disabled{
+      background:transparent;
+      border:none;
+      cursor:default;
+    }
+
+    .calDay:hover:not(.disabled):not(.full){
+      transform:translateY(-1px);
+    }
+
+    .wbPoiIcon{
+      width:30px;
+      height:30px;
+      border-radius:999px;
+      background:#ffffff;
+      border:1.5px solid rgba(0,0,0,.18);
+      box-shadow:0 3px 10px rgba(0,0,0,.18);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .wbUserDot{
+      width:18px;
+      height:18px;
+      border-radius:999px;
+      background:#2563eb;
+      border:3px solid #fff;
+      box-shadow:0 0 0 2px rgba(37,99,235,.22);
+    }
+
+    .userArrowWrap{
+      width:28px;
+      height:28px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .userArrow{
+      width:0;
+      height:0;
+      border-left:8px solid transparent;
+      border-right:8px solid transparent;
+      border-bottom:16px solid #111;
+      filter:drop-shadow(0 2px 3px rgba(0,0,0,.25));
+    }
+
+    .poiCard{
+      min-width:220px;
+      max-width:260px;
+    }
+
+    .poiCardImg{
+      width:100%;
+      height:120px;
+      object-fit:cover;
+      border-radius:12px;
+      display:block;
+      margin-bottom:8px;
+    }
+
+    .poiCardTitle{
+      font-weight:900;
+      font-size:15px;
+      line-height:1.2;
+    }
+
+    .poiCardMeta{
+      margin-top:4px;
+      color:#6e6a63;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .poiCardText{
+      margin-top:8px;
+      font-size:13px;
+      font-weight:700;
+      color:#1f1f1f;
+    }
+
+    .poiCardDist{
+      margin-top:8px;
+      font-size:12px;
+      color:#6e6a63;
+      font-weight:800;
+    }
     @media (max-height:780px){
       .wrap{ padding:10px; gap:10px; }
       .ticker{ height:120px; }
@@ -1245,6 +1392,7 @@
     </div>
   </div>
 
+ <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     (function initBoCiteArtClean(){
       console.log("✅ JS démarré");
@@ -1485,6 +1633,747 @@
       const PUB_MAX_PER_DAY = 10;
       window.PUB_MAX_PER_DAY = PUB_MAX_PER_DAY;
       const PUB_STORE_KEY = "bociteart_pubBookings_v1";
+
+            const WELLBEING_DEFAULT_CENTER = [50.586, 3.043];
+      const WELLBEING_FETCH_RADIUS = 1800;
+      const WELLBEING_FETCH_MIN_INTERVAL_MS = 15000;
+      const POI_FALLBACK_IMG = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/640px-No_image_available.svg.png";
+
+      let wellbeingMap = null;
+      let wellbeingUserMarker = null;
+      let wellbeingPoiMarkers = [];
+      let wellbeingWatchId = null;
+      let currentHeading = 0;
+      let wellbeingPoints = [];
+      let wellbeingAbortController = null;
+      let wellbeingLastFetchTs = 0;
+      let wellbeingLastFetchCenter = null;
+
+      const WELLBEING_FALLBACK_POINTS = [
+        {
+          name:"Parc sportif",
+          desc:"Espace de sport et promenade.",
+          lat:50.586,
+          lng:3.043,
+          type:"sport",
+          address:"Secteur centre",
+          img:"https://images.unsplash.com/photo-1547347298-4074fc3086f0?auto=format&fit=crop&w=900&q=60"
+        },
+        {
+          name:"Bois et parcours",
+          desc:"Balade, marche et détente.",
+          lat:50.589,
+          lng:3.038,
+          type:"walk",
+          address:"Secteur nord-ouest",
+          img:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=60"
+        },
+        {
+          name:"Salle de sport",
+          desc:"Activités sportives en intérieur.",
+          lat:50.584,
+          lng:3.049,
+          type:"gym",
+          address:"Secteur est",
+          img:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=60"
+        },
+        {
+          name:"Parc urbain",
+          desc:"Parc de quartier pour détente.",
+          lat:50.587,
+          lng:3.046,
+          type:"park",
+          address:"Quartier central",
+          img:"https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=60"
+        },
+        {
+          name:"Espace vert central",
+          desc:"Square et promenade.",
+          lat:50.585,
+          lng:3.040,
+          type:"park",
+          address:"Centre-ville",
+          img:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=60"
+        },
+        {
+          name:"Piste cyclable nord",
+          desc:"Accès voie vélo.",
+          lat:50.592,
+          lng:3.045,
+          type:"bike",
+          address:"Secteur nord",
+          img:"https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=900&q=60"
+        },
+        {
+          name:"Piste cyclable centre",
+          desc:"Voie cyclable sécurisée.",
+          lat:50.586,
+          lng:3.050,
+          type:"bike",
+          address:"Centre-est",
+          img:"https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=900&q=60"
+        },
+        {
+          name:"Arrêt de bus Mairie",
+          desc:"Point d’arrêt transport en commun.",
+          lat:50.585,
+          lng:3.047,
+          type:"bus",
+          address:"Avenue principale",
+          img:"https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=900&q=60"
+        },
+        {
+          name:"Arrêt de bus Centre",
+          desc:"Accès bus secteur central.",
+          lat:50.588,
+          lng:3.041,
+          type:"bus",
+          address:"Centre-ville",
+          img:"https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?auto=format&fit=crop&w=900&q=60"
+        },
+        {
+          name:"Supérette du centre",
+          desc:"Commerce de proximité.",
+          lat:50.584,
+          lng:3.044,
+          type:"shop",
+          address:"Centre-ville",
+          img:"https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=60"
+        },
+        {
+          name:"Mini-market quartier nord",
+          desc:"Courses rapides et dépannage.",
+          lat:50.590,
+          lng:3.042,
+          type:"shop",
+          address:"Quartier nord",
+          img:"https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=900&q=60"
+        },
+        {
+          name:"Restaurant place centrale",
+          desc:"Restauration sur place.",
+          lat:50.586,
+          lng:3.048,
+          type:"food",
+          address:"Place centrale",
+          img:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=60"
+        },
+        {
+          name:"Snack du quartier",
+          desc:"Petite restauration rapide.",
+          lat:50.583,
+          lng:3.046,
+          type:"food",
+          address:"Secteur sud-centre",
+          img:"https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=60"
+        }
+      ];
+
+      const WELLBEING_TYPE_FALLBACK_IMG = {
+        sport:"https://images.unsplash.com/photo-1547347298-4074fc3086f0?auto=format&fit=crop&w=900&q=60",
+        gym:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=60",
+        walk:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=60",
+        park:"https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=60",
+        bike:"https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=900&q=60",
+        bus:"https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=900&q=60",
+        shop:"https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=60",
+        food:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=60",
+        health:"https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=900&q=60",
+        default:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=60"
+      };
+
+      function clearWellbeingPois(){
+        wellbeingPoiMarkers.forEach((marker)=>{
+          try{
+            if(wellbeingMap) wellbeingMap.removeLayer(marker);
+          }catch(e){}
+        });
+        wellbeingPoiMarkers = [];
+      }
+
+      function distanceMeters(lat1, lng1, lat2, lng2){
+        const R = 6371000;
+        const toRad = (n) => n * Math.PI / 180;
+        const dLat = toRad(lat2 - lat1);
+        const dLng = toRad(lng2 - lng1);
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+          Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return Math.round(R * c);
+      }
+
+      function formatDistance(m){
+        if(!Number.isFinite(m)) return "";
+        if(m < 1000) return `${m} m`;
+        return `${(m / 1000).toFixed(1).replace(".", ",")} km`;
+      }
+
+      function getFallbackPoiName(tags){
+        if(tags.leisure === "park") return "Parc";
+        if(tags.leisure === "pitch") return "Terrain de sport";
+        if(tags.leisure === "sports_centre") return "Centre sportif";
+        if(tags.leisure === "fitness_station") return "Station fitness";
+        if(tags.amenity === "pharmacy") return "Pharmacie";
+        if(tags.amenity === "hospital") return "Hôpital";
+        if(tags.amenity === "clinic") return "Clinique";
+        if(tags.highway === "bus_stop") return "Arrêt de bus";
+        if(tags.shop) return "Commerce";
+        if(tags.amenity === "restaurant") return "Restaurant";
+        if(tags.amenity === "cafe") return "Café";
+        if(tags.amenity === "fast_food") return "Restauration rapide";
+        return "Point d’intérêt";
+      }
+
+      function getPoiTypeFromTags(tags){
+        if(tags.leisure === "park") return "park";
+        if(tags.leisure === "pitch" || tags.leisure === "sports_centre" || tags.leisure === "fitness_station" || tags.sport) return "sport";
+        if(tags.amenity === "pharmacy" || tags.amenity === "hospital" || tags.amenity === "clinic") return "health";
+        if(tags.highway === "bus_stop") return "bus";
+        if(tags.shop) return "shop";
+        if(tags.amenity === "restaurant" || tags.amenity === "cafe" || tags.amenity === "fast_food") return "food";
+        return "default";
+      }
+
+      function getPoiDescFromTags(tags){
+        const items = [];
+
+        if(tags.sport) items.push(tags.sport);
+        if(tags.leisure === "park") items.push("parc");
+        if(tags.leisure === "pitch") items.push("terrain");
+        if(tags.leisure === "sports_centre") items.push("centre sportif");
+        if(tags.leisure === "fitness_station") items.push("fitness");
+        if(tags.amenity === "pharmacy") items.push("pharmacie");
+        if(tags.amenity === "hospital") items.push("hôpital");
+        if(tags.amenity === "clinic") items.push("clinique");
+        if(tags.amenity === "restaurant") items.push("restaurant");
+        if(tags.amenity === "cafe") items.push("café");
+        if(tags.amenity === "fast_food") items.push("restauration rapide");
+        if(tags.shop) items.push(tags.shop);
+
+        return items.length ? items.join(" • ") : "Lieu détecté autour de vous";
+      }
+
+      function getPoiAddress(tags){
+        return [
+          tags["addr:housenumber"],
+          tags["addr:street"],
+          tags["addr:postcode"],
+          tags["addr:city"]
+        ].filter(Boolean).join(" ");
+      }
+
+      function getPoiImage(tags, type){
+        const rawImage = String(tags.image || "").trim();
+        if(/^https:\/\/.+/i.test(rawImage)) return rawImage;
+
+        const commons = String(tags.wikimedia_commons || "").trim();
+        if(/^File:/i.test(commons)){
+          const fileName = commons.replace(/^File:/i, "").replace(/ /g, "_");
+          return "https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(fileName) + "?width=800";
+        }
+
+        return WELLBEING_TYPE_FALLBACK_IMG[type] || WELLBEING_TYPE_FALLBACK_IMG.default;
+      }
+
+      function normalizePoiElement(el){
+        const tags = el.tags || {};
+        const lat = Number(el.lat ?? (el.center && el.center.lat));
+        const lng = Number(el.lon ?? (el.center && el.center.lon));
+        if(!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+        const type = getPoiTypeFromTags(tags);
+
+        return {
+          osmType: el.type,
+          osmId: el.id,
+          name: tags.name || getFallbackPoiName(tags),
+          desc: getPoiDescFromTags(tags),
+          lat,
+          lng,
+          type,
+          address: getPoiAddress(tags),
+          img: getPoiImage(tags, type),
+          tags
+        };
+      }
+
+      async function fetchNearbyPois(lat, lng, radius){
+        const query = `
+[out:json][timeout:12];
+(
+  node(around:${radius},${lat},${lng})["leisure"~"park|pitch|sports_centre|fitness_station"];
+  way(around:${radius},${lat},${lng})["leisure"~"park|pitch|sports_centre|fitness_station"];
+  relation(around:${radius},${lat},${lng})["leisure"~"park|pitch|sports_centre|fitness_station"];
+
+  node(around:${radius},${lat},${lng})["amenity"~"pharmacy|hospital|clinic|restaurant|cafe|fast_food"];
+  way(around:${radius},${lat},${lng})["amenity"~"pharmacy|hospital|clinic|restaurant|cafe|fast_food"];
+  relation(around:${radius},${lat},${lng})["amenity"~"pharmacy|hospital|clinic|restaurant|cafe|fast_food"];
+
+  node(around:${radius},${lat},${lng})["shop"];
+  way(around:${radius},${lat},${lng})["shop"];
+
+  node(around:${radius},${lat},${lng})["highway"="bus_stop"];
+);
+out center tags;
+        `.trim();
+
+        if(wellbeingAbortController){
+          try{ wellbeingAbortController.abort(); }catch(e){}
+        }
+
+        wellbeingAbortController = new AbortController();
+        const timeoutId = setTimeout(()=>{
+          try{ wellbeingAbortController.abort(); }catch(e){}
+        }, 9000);
+
+        try{
+          const res = await fetch("https://overpass-api.de/api/interpreter", {
+            method:"POST",
+            headers:{ "Content-Type":"text/plain;charset=UTF-8" },
+            body:query,
+            signal: wellbeingAbortController.signal
+          });
+
+          if(!res.ok) throw new Error("Réponse Overpass invalide");
+
+          const json = await res.json();
+          const normalized = (json.elements || [])
+            .map(normalizePoiElement)
+            .filter(Boolean);
+
+          const seen = new Set();
+          const unique = normalized.filter((p)=>{
+            const key = `${p.name}|${p.lat.toFixed(5)}|${p.lng.toFixed(5)}|${p.type}`;
+            if(seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+
+          return unique;
+        } finally {
+          clearTimeout(timeoutId);
+        }
+      }
+
+      function createPoiIcon(type){
+        if(!window.L) return null;
+
+        let svg = `
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <circle cx="12" cy="12" r="5" fill="none" stroke="#333" stroke-width="1.8"/>
+          </svg>
+        `;
+
+        switch(String(type || "").toLowerCase()){
+          case "sport":
+          case "gym":
+            svg = `
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M3 10v4M6 8v8M18 8v8M21 10v4M6 12h12" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            `;
+            break;
+          case "walk":
+          case "park":
+            svg = `
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M12 20v-5M8 12c0-2.2 1.8-4 4-4s4 1.8 4 4c0 1.6-1 3.1-2.5 3.7H10.5C9 15.1 8 13.6 8 12Z" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            `;
+            break;
+          case "bike":
+            svg = `
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <circle cx="6" cy="17" r="3" fill="none" stroke="#1f1f1f" stroke-width="1.8"/>
+                <circle cx="18" cy="17" r="3" fill="none" stroke="#1f1f1f" stroke-width="1.8"/>
+                <path d="M9 17l3-7h3M10 10h4M12 17l-3-4M12 17l3-4" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            `;
+            break;
+          case "bus":
+            svg = `
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <rect x="5" y="6" width="14" height="10" rx="2" fill="none" stroke="#1f1f1f" stroke-width="1.8"/>
+                <path d="M8 16v2M16 16v2M7 10h10" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="8" cy="18" r="1" fill="#1f1f1f"/>
+                <circle cx="16" cy="18" r="1" fill="#1f1f1f"/>
+              </svg>
+            `;
+            break;
+          case "shop":
+            svg = `
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M7 8h13l-1.2 6.5a2 2 0 0 1-2 1.5H10a2 2 0 0 1-2-1.6L6.5 5H4" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="10" cy="19" r="1.2" fill="#1f1f1f"/>
+                <circle cx="17" cy="19" r="1.2" fill="#1f1f1f"/>
+              </svg>
+            `;
+            break;
+          case "food":
+            svg = `
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M7 4v7M5 4v4M9 4v4M7 11v9M15 4v9M15 13l3-2V4" fill="none" stroke="#1f1f1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            `;
+            break;
+          case "health":
+            svg = `
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" fill="none" stroke="#1f1f1f" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+            `;
+            break;
+        }
+
+        return L.divIcon({
+          className: "",
+          html: `<div class="wbPoiIcon" aria-hidden="true">${svg}</div>`,
+          iconSize: [30, 30],
+          iconAnchor: [15, 15],
+          popupAnchor: [0, -14]
+        });
+      }
+
+      function renderWellbeingPois(){
+        if(!wellbeingMap || !window.L) return;
+
+        clearWellbeingPois();
+
+        const bounds = wellbeingMap.getBounds().pad(0.25);
+        const center = wellbeingUserMarker ? wellbeingUserMarker.getLatLng() : wellbeingMap.getCenter();
+
+        wellbeingPoints
+          .filter((p)=>{
+            const pointLatLng = L.latLng(p.lat, p.lng);
+            return bounds.contains(pointLatLng);
+          })
+          .sort((a, b)=>{
+            const da = distanceMeters(center.lat, center.lng, a.lat, a.lng);
+            const db = distanceMeters(center.lat, center.lng, b.lat, b.lng);
+            return da - db;
+          })
+          .forEach((p)=>{
+            const icon = createPoiIcon(p.type);
+            const marker = L.marker([p.lat, p.lng], icon ? { icon } : undefined);
+
+            const dist = center ? formatDistance(distanceMeters(center.lat, center.lng, p.lat, p.lng)) : "";
+
+            marker.bindPopup(`
+              <div class="poiCard">
+                <img class="poiCardImg" src="${escapeHtml(p.img || WELLBEING_TYPE_FALLBACK_IMG.default)}" alt="${escapeHtml(p.name || "")}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">
+                <div class="poiCardTitle">${escapeHtml(p.name || "")}</div>
+                <div class="poiCardMeta">${escapeHtml(p.address || "")}</div>
+                <div class="poiCardText">${escapeHtml(p.desc || "")}</div>
+                <div class="poiCardDist">${escapeHtml(dist)}</div>
+              </div>
+            `);
+
+            marker.addTo(wellbeingMap);
+            wellbeingPoiMarkers.push(marker);
+          });
+
+        const listHost = document.getElementById("wellbeingList");
+        if(listHost){
+          const list = wellbeingPoints
+            .slice()
+            .sort((a, b)=>{
+              const da = distanceMeters(center.lat, center.lng, a.lat, a.lng);
+              const db = distanceMeters(center.lat, center.lng, b.lat, b.lng);
+              return da - db;
+            })
+            .slice(0, 10);
+
+          listHost.innerHTML = list.length ? list.map((p, idx)=>{
+            const dist = formatDistance(distanceMeters(center.lat, center.lng, p.lat, p.lng));
+            return `
+              <button type="button" class="choiceBtn" data-poi-index="${idx}" style="width:100%;text-align:left;padding:10px;">
+                <div style="font-weight:900;">${escapeHtml(p.name || "")}</div>
+                <div class="muted" style="margin-top:4px;">${escapeHtml(p.address || p.desc || "")}</div>
+                <div class="muted" style="margin-top:4px;">${escapeHtml(dist)}</div>
+              </button>
+            `;
+          }).join("") : `<div class="muted">Aucun lieu détecté dans la zone affichée.</div>`;
+
+          listHost.querySelectorAll("[data-poi-index]").forEach((btn)=>{
+            btn.onclick = ()=>{
+              const idx = Number(btn.getAttribute("data-poi-index"));
+              const target = list[idx];
+              if(!target || !wellbeingMap) return;
+              wellbeingMap.setView([target.lat, target.lng], 17);
+            };
+          });
+        }
+      }
+
+      function createUserIcon(deg){
+        if(!window.L) return null;
+
+        return L.divIcon({
+          className: "",
+          html: `
+            <div class="userArrowWrap" aria-hidden="true">
+              <div class="userArrow" style="transform:rotate(${Number(deg || 0)}deg);"></div>
+            </div>
+          `,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14]
+        });
+      }
+
+      function initCompass(){
+        if(window.__wellbeingCompassInit) return;
+        window.__wellbeingCompassInit = true;
+
+        window.addEventListener("deviceorientationabsolute", (event)=>{
+          if(event.alpha !== null && !isNaN(event.alpha)){
+            currentHeading = 360 - event.alpha;
+          }
+        }, true);
+
+        window.addEventListener("deviceorientation", (event)=>{
+          if(typeof event.webkitCompassHeading === "number" && !isNaN(event.webkitCompassHeading)){
+            currentHeading = event.webkitCompassHeading;
+            return;
+          }
+          if(event.alpha !== null && !isNaN(event.alpha)){
+            currentHeading = 360 - event.alpha;
+          }
+        }, true);
+      }
+
+      function stopWellbeingLocate(){
+        if(wellbeingWatchId !== null && navigator.geolocation){
+          navigator.geolocation.clearWatch(wellbeingWatchId);
+          wellbeingWatchId = null;
+        }
+
+        if(window.__wellbeingHeadingTimer){
+          clearInterval(window.__wellbeingHeadingTimer);
+          window.__wellbeingHeadingTimer = null;
+        }
+
+        if(wellbeingAbortController){
+          try{ wellbeingAbortController.abort(); }catch(e){}
+          wellbeingAbortController = null;
+        }
+      }
+
+      async function refreshNearbyPois(lat, lng, force){
+        const now = Date.now();
+        const movedEnough = !wellbeingLastFetchCenter
+          || distanceMeters(wellbeingLastFetchCenter.lat, wellbeingLastFetchCenter.lng, lat, lng) > 120;
+
+        if(!force && (now - wellbeingLastFetchTs < WELLBEING_FETCH_MIN_INTERVAL_MS) && !movedEnough){
+          return;
+        }
+
+        wellbeingLastFetchTs = now;
+        wellbeingLastFetchCenter = { lat, lng };
+
+        try{
+          const realPois = await fetchNearbyPois(lat, lng, WELLBEING_FETCH_RADIUS);
+          wellbeingPoints = realPois.length ? realPois : WELLBEING_FALLBACK_POINTS.slice();
+          renderWellbeingPois();
+
+          const status = document.getElementById("wellbeingStatus");
+          if(status){
+            status.textContent = realPois.length
+              ? `${realPois.length} lieu(x) détecté(s) autour de vous`
+              : "Aucune donnée réelle reçue : affichage des points de démonstration";
+          }
+        }catch(e){
+          wellbeingPoints = WELLBEING_FALLBACK_POINTS.slice();
+          renderWellbeingPois();
+
+          const status = document.getElementById("wellbeingStatus");
+          if(status){
+            status.textContent = "Connexion lente ou service indisponible : affichage des points de démonstration";
+          }
+        }
+      }
+
+      function openWellbeingMap(){
+        initCompass();
+
+        if(typeof window.openModal !== "function"){
+          alert("Carte indisponible.");
+          return;
+        }
+
+        window.openModal("Carte bien-être", `
+          <div class="box">
+            <div class="muted">
+              Carte plein écran avec position actuelle, orientation et points utiles visibles dans la zone affichée.
+            </div>
+            <div class="muted" id="wellbeingStatus" style="margin-top:6px;">Chargement de la carte…</div>
+          </div>
+
+          <div id="wellbeingMapHost" style="height:420px;border-radius:16px;overflow:hidden;background:#e9e9e9;"></div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+            <button class="choiceBtn" id="wbLocateBtn" type="button">📍 Me localiser</button>
+            <button class="choiceBtn" id="wbRefreshBtn" type="button">🔄 Rafraîchir</button>
+            <button class="choiceBtn" id="wbStopBtn" type="button" style="background:#fff;">⏹ Arrêter</button>
+          </div>
+
+          <div class="box" style="margin-top:12px;">
+            <div style="font-weight:900;">Lieux détectés dans la zone</div>
+            <div id="wellbeingList" style="margin-top:10px;display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+        `);
+
+        setTimeout(()=>{
+          const mapHost = document.getElementById("wellbeingMapHost");
+          const locateBtn = document.getElementById("wbLocateBtn");
+          const refreshBtn = document.getElementById("wbRefreshBtn");
+          const stopBtn = document.getElementById("wbStopBtn");
+          const status = document.getElementById("wellbeingStatus");
+
+          if(!mapHost) return;
+
+          if(!window.L){
+            mapHost.innerHTML = `
+              <div style="padding:16px;font-weight:800;">
+                Leaflet n’est pas chargé.
+              </div>
+            `;
+            return;
+          }
+
+          try{
+            stopWellbeingLocate();
+
+            if(wellbeingMap){
+              try{ wellbeingMap.remove(); }catch(e){}
+              wellbeingMap = null;
+            }
+
+            if(wellbeingUserMarker){
+              try{ wellbeingUserMarker.remove(); }catch(e){}
+              wellbeingUserMarker = null;
+            }
+
+            clearWellbeingPois();
+            wellbeingPoints = WELLBEING_FALLBACK_POINTS.slice();
+
+            wellbeingMap = L.map(mapHost, {
+              zoomControl: true
+            }).setView(WELLBEING_DEFAULT_CENTER, 14);
+
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              maxZoom: 19,
+              attribution: "&copy; OpenStreetMap"
+            }).addTo(wellbeingMap);
+
+            wellbeingMap.on("moveend zoomend", ()=>{
+              renderWellbeingPois();
+            });
+
+            setTimeout(()=>{
+              try{
+                wellbeingMap.invalidateSize();
+                renderWellbeingPois();
+                if(status) status.textContent = "Carte prête. Utilisez “Me localiser” pour afficher les lieux proches.";
+              }catch(e){}
+            }, 180);
+
+          }catch(e){
+            mapHost.innerHTML = `
+              <div style="padding:16px;font-weight:800;">
+                Erreur d’initialisation de la carte.
+              </div>
+            `;
+            return;
+          }
+
+          const startLocate = ()=>{
+            if(!navigator.geolocation){
+              alert("Géolocalisation indisponible sur cet appareil.");
+              return;
+            }
+
+            if(typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function"){
+              DeviceOrientationEvent.requestPermission().catch(()=>{});
+            }
+
+            stopWellbeingLocate();
+
+            wellbeingWatchId = navigator.geolocation.watchPosition(
+              async (pos)=>{
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+
+                if(typeof pos.coords.heading === "number" && !isNaN(pos.coords.heading)){
+                  currentHeading = pos.coords.heading;
+                }
+
+                if(!wellbeingMap) return;
+
+                const icon = createUserIcon(currentHeading);
+
+                if(!wellbeingUserMarker){
+                  wellbeingUserMarker = L.marker([lat, lng], icon ? { icon } : undefined).addTo(wellbeingMap);
+                }else{
+                  wellbeingUserMarker.setLatLng([lat, lng]);
+                  wellbeingUserMarker.setIcon(icon);
+                }
+
+                wellbeingMap.setView([lat, lng], 15);
+
+                if(status){
+                  status.textContent = "Position reçue. Recherche des lieux autour de vous…";
+                }
+
+                await refreshNearbyPois(lat, lng, false);
+              },
+              ()=>{
+                if(status){
+                  status.textContent = "Impossible d’obtenir la position. Les points de démonstration restent affichés.";
+                }
+                alert("Impossible d’obtenir la position.");
+              },
+              {
+                enableHighAccuracy: true,
+                maximumAge: 3000,
+                timeout: 10000
+              }
+            );
+
+            window.__wellbeingHeadingTimer = setInterval(()=>{
+              if(wellbeingUserMarker){
+                wellbeingUserMarker.setIcon(createUserIcon(currentHeading));
+              }
+            }, 500);
+          };
+
+          if(locateBtn){
+            locateBtn.onclick = startLocate;
+          }
+
+          if(refreshBtn){
+            refreshBtn.onclick = async ()=>{
+              if(wellbeingUserMarker){
+                const ll = wellbeingUserMarker.getLatLng();
+                if(status) status.textContent = "Rafraîchissement des lieux…";
+                await refreshNearbyPois(ll.lat, ll.lng, true);
+              }else{
+                startLocate();
+              }
+            };
+          }
+
+          if(stopBtn){
+            stopBtn.onclick = ()=>{
+              stopWellbeingLocate();
+              if(status) status.textContent = "Suivi arrêté.";
+            };
+          }
+        }, 0);
+      }
+
+      window.openWellbeingMap = openWellbeingMap;
 
       let calYear = new Date().getFullYear();
       let calMonth = new Date().getMonth();
@@ -2575,6 +3464,16 @@
                 <li>Parcs • bois • parcours • salles</li>
                 <li>Carte plein écran + guidage</li>
               </ul>
+              
+                            <div class="box" style="margin-top:10px;">
+                <div style="font-weight:900;">Carte bien-être</div>
+                <div class="muted" style="margin-top:6px;">
+                  Ouvre la carte plein écran avec points utiles autour de vous.
+                </div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                  <button class="choiceBtn" id="openMap" type="button">Carte bien-être</button>
+                </div>
+              </div>
 
               <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
               <div class="box">
@@ -2589,7 +3488,9 @@
 
             setTimeout(()=>{
               const b = $("openSportFicheBtn");
+              const btnMap = $("openMap");
               if(b) b.onclick = openSportFiche;
+              if(btnMap) btnMap.onclick = openWellbeingMap;
 
               const refresh = ()=>{
                 const out = $("sportCoinBalance");
