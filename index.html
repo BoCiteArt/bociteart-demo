@@ -1075,7 +1075,7 @@
             <li><strong>Compte</strong> : email, rôle (admin, mairie, commerçant, école, etc.).</li>
             <li><strong>Sécurité</strong> : journaux techniques (logs), horodatages, tentatives d’accès.</li>
             <li><strong>Fonctions</strong> : paramètres, préférences, contenus publiés par profils habilités.</li>
-            <li><strong>Publicité</strong> : texte fourni par le partenaire, réservations (horodatage).</li>
+            <li><strong>Publicité</strong> : texte fourni par le partenaire, date de réservation, horodatage, et données strictement nécessaires à la gestion des emplacements publicitaires.</li>
             <li><strong>Démo</strong> : données locales de démonstration (localStorage), conservées uniquement sur l’appareil de l’utilisateur et supprimables via les paramètres du navigateur.</li>
             <li><strong>Transactions / facturation (LIVE)</strong> : montants agrégés, identifiants de facturation, journaux de paiement via PSP (Bo’CitéArt ne stocke pas les données bancaires).</li>
           </ul>
@@ -1212,11 +1212,15 @@
           </div>
 
           <h2>6. Publicité (si activée)</h2>
-          <ul>
-            <li>Le partenaire est responsable de son contenu et de ses droits (marque, image, texte).</li>
-            <li>Bo’CitéArt peut refuser/retirer une publicité en cas de non-conformité ou risque.</li>
-            <li>Aucune promesse de résultat commercial.</li>
-          </ul>
+<ul>
+  <li>Le partenaire est responsable de son contenu et de ses droits (marque, image, texte).</li>
+  <li>Bo’CitéArt peut refuser ou retirer une publicité en cas de non-conformité, de risque juridique, technique ou d’image.</li>
+  <li>Le nombre de publicités est limité à <strong>10 par jour</strong>.</li>
+  <li>Avant <strong>16h00</strong>, un même commerçant ne peut réserver qu’<strong>une seule publicité</strong> pour le jour en cours.</li>
+  <li>À partir de <strong>16h00</strong>, si le quota quotidien n’est pas atteint, les places restantes peuvent encore être réservées jusqu’au complet, y compris par un commerçant ayant déjà réservé ce même jour.</li>
+  <li>Une journée devient indisponible uniquement lorsque les <strong>10 emplacements</strong> sont attribués.</li>
+  <li>Aucune promesse de résultat commercial.</li>
+</ul>
 
           <h2>7. Urgences</h2>
           <div class="box">
@@ -1323,15 +1327,16 @@
             <li>strictement liés à l’usage de la plateforme</li>
           </ul>
 
-          <h2>6. Publicité</h2>
-          <div class="box">La plateforme peut proposer des espaces de visibilité promotionnelle selon les conditions définies dans l’application.</div>
-          <ul>
-            <li>nombre de publications limité par jour</li>
-            <li>réservation via calendrier intégré</li>
-            <li>contenu soumis à validation</li>
-            <li>Bo’CitéArt peut refuser toute publication non conforme</li>
-          </ul>
-
+         <h2>6. Publicité</h2>
+<div class="box">La plateforme peut proposer des espaces de visibilité promotionnelle selon les conditions définies dans l’application.</div>
+<ul>
+  <li>maximum <strong>10 publications par jour</strong></li>
+  <li>réservation via calendrier intégré</li>
+  <li>avant <strong>16h00</strong>, un même commerçant peut réserver <strong>1 publication maximum</strong> pour le jour en cours</li>
+  <li>à partir de <strong>16h00</strong>, si le quota quotidien n’est pas atteint, les emplacements restants peuvent encore être réservés jusqu’au complet, y compris par un commerçant ayant déjà réservé ce même jour</li>
+  <li>contenu soumis à validation</li>
+  <li>Bo’CitéArt peut refuser toute publication non conforme</li>
+</ul>
           <h2>7. Paiement</h2>
           <ul>
             <li>Le paiement peut être réalisé via un prestataire de paiement sécurisé (PSP).</li>
@@ -2604,145 +2609,155 @@ out center tags;
         `;
       }
 
-      function renderCalendarInto(containerId){
-        const box = $(containerId);
-        if(!box) return;
+function renderCalendarInto(containerId){
+  const box = $(containerId);
+  if(!box) return;
 
-        box.innerHTML = buildCalendarHTML();
+  box.innerHTML = buildCalendarHTML();
 
-        const daysEl = $("calDays");
-        const bookings = loadBookings();
-        const first = new Date(calYear, calMonth, 1);
-        const last = new Date(calYear, calMonth + 1, 0);
-        const startDow = (first.getDay() + 6) % 7;
-        const daysInMonth = last.getDate();
+  const daysEl = $("calDays");
+  const bookings = loadBookings();
+  const first = new Date(calYear, calMonth, 1);
+  const last = new Date(calYear, calMonth + 1, 0);
+  const startDow = (first.getDay() + 6) % 7;
+  const daysInMonth = last.getDate();
 
-        const cells = [];
+  const cells = [];
 
-        for(let i=0; i<startDow; i++){
-          cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
-        }
+  for(let i = 0; i < startDow; i++){
+    cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
+  }
 
-        const now = new Date();
-const todayY = now.getFullYear();
-const todayM = now.getMonth();
-const todayD = now.getDate();
-const after16 = now.getHours() >= 16;
+  for(let d = 1; d <= daysInMonth; d++){
+    const used = daySlotsUsed(bookings, calYear, calMonth, d);
+    const full = used >= PUB_MAX_PER_DAY;
+    const cls = full ? "calDay full" : "calDay";
 
-for(let d=1; d<=daysInMonth; d++){
-  const used = daySlotsUsed(bookings, calYear, calMonth, d);
+    cells.push(`
+      <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
+        <div class="d">${d}</div>
+        <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
+      </div>
+    `);
+  }
 
-  const isToday =
-    calYear === todayY &&
-    calMonth === todayM &&
-    d === todayD;
+  daysEl.innerHTML = cells.join("");
 
-  const blockedBy16h = isToday && after16;
-  const full = used >= PUB_MAX_PER_DAY || blockedBy16h;
-  const cls = full ? "calDay full" : "calDay";
+  on($("calPrev"), "click", ()=>{
+    calMonth--;
+    if(calMonth < 0){
+      calMonth = 11;
+      calYear--;
+    }
+    renderCalendarInto(containerId);
+  });
 
-  cells.push(`
-    <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
-      <div class="d">${d}</div>
-      <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
-    </div>
-  `);
-}
+  on($("calNext"), "click", ()=>{
+    calMonth++;
+    if(calMonth > 11){
+      calMonth = 0;
+      calYear++;
+    }
+    renderCalendarInto(containerId);
+  });
 
-        daysEl.innerHTML = cells.join("");
+  on($("calRecap"), "click", ()=> openRecapModal(calYear, calMonth));
 
-        on($("calPrev"), "click", ()=>{
-          calMonth--;
-          if(calMonth < 0){
-            calMonth = 11;
-            calYear--;
-          }
-          renderCalendarInto(containerId);
-        });
+  on($("calReset"), "click", ()=>{
+    if(confirm("Réinitialiser les réservations (démo) ?")){
+      localStorage.removeItem(PUB_STORE_KEY);
+      renderCalendarInto(containerId);
+    }
+  });
 
-        on($("calNext"), "click", ()=>{
-          calMonth++;
-          if(calMonth > 11){
-            calMonth = 0;
-            calYear++;
-          }
-          renderCalendarInto(containerId);
-        });
+  document.querySelectorAll(".calDay[data-day]").forEach((el)=>{
+    el.addEventListener("click", ()=>{
+      const d = parseInt(el.getAttribute("data-day"), 10);
+      const bookings2 = loadBookings();
 
-        on($("calRecap"), "click", ()=> openRecapModal(calYear, calMonth));
+      if(isFull(bookings2, calYear, calMonth, d)) return;
 
-        on($("calReset"), "click", ()=>{
-          if(confirm("Réinitialiser les réservations (démo) ?")){
-            localStorage.removeItem(PUB_STORE_KEY);
+      const key = ymd(calYear, calMonth, d);
+      const used = daySlotsUsed(bookings2, calYear, calMonth, d);
+
+      openModal("Réserver une publicité (démo)", `
+        <div class="box">
+          <div style="font-weight:900;">Date : ${key}</div>
+          <div class="muted" style="margin-top:6px;">
+            Il reste <strong>${PUB_MAX_PER_DAY - used}</strong> place(s) disponible(s).
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            Avant 16h : un même profil ne peut réserver qu’une seule publicité sur la journée.
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            À partir de 16h : si les 10 publicités du jour ne sont pas toutes prises, les places restantes
+            peuvent encore être réservées jusqu’à ce que la journée soit complète.
+          </div>
+        </div>
+
+        <div class="choiceGrid">
+          <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
+          <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
+          <button class="choiceBtn" id="bkAsso" type="button">Association</button>
+          <button class="choiceBtn" id="bkEcole" type="button">École</button>
+        </div>
+      `);
+
+      setTimeout(()=>{
+        const doBook = (who)=>{
+          const now = new Date();
+          const stampISO = now.toISOString();
+          const stampFR = now.toLocaleString("fr-FR");
+          const b = loadBookings();
+          let list = getDayBookings(b, calYear, calMonth, d);
+
+          if(!Array.isArray(list)) list = [];
+
+          if(list.length >= PUB_MAX_PER_DAY){
+            alert("Jour complet.");
+            closeModal();
             renderCalendarInto(containerId);
+            return;
           }
-        });
 
-        document.querySelectorAll(".calDay[data-day]").forEach((el)=>{
-          el.addEventListener("click", ()=>{
-            const d = parseInt(el.getAttribute("data-day"), 10);
-            const bookings2 = loadBookings();
+          const currentHour = now.getHours();
+          const normalizedWho = String(who || "").trim().toLowerCase();
 
-            if(isFull(bookings2, calYear, calMonth, d)) return;
+          const alreadyBookedToday = list.some(item =>
+            String(item.who || "").trim().toLowerCase() === normalizedWho
+          );
 
-            const key = ymd(calYear, calMonth, d);
-            const used = daySlotsUsed(bookings2, calYear, calMonth, d);
+          if(currentHour < 16 && alreadyBookedToday){
+            alert("Avant 16h, un même profil ne peut réserver qu’une seule publicité sur la journée.");
+            return;
+          }
 
-            openModal("Réserver une publicité (démo)", `
-              <div class="box">
-                <div style="font-weight:900;">Date : ${key}</div>
-                <div class="muted" style="margin-top:6px;">
-                  Il reste <strong>${PUB_MAX_PER_DAY - used}</strong> place(s) disponible(s).
-                </div>
-              </div>
-
-              <div class="choiceGrid">
-                <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
-                <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
-                <button class="choiceBtn" id="bkAsso" type="button">Association</button>
-                <button class="choiceBtn" id="bkEcole" type="button">École</button>
-              </div>
-            `);
-
-            setTimeout(()=>{
-              const doBook = (who)=>{
-                const now = new Date();
-                const stampISO = now.toISOString();
-                const stampFR = now.toLocaleString("fr-FR");
-                const b = loadBookings();
-                const list = getDayBookings(b, calYear, calMonth, d);
-
-                if(list.length >= PUB_MAX_PER_DAY){
-                  alert("Jour complet.");
-                  closeModal();
-                  renderCalendarInto(containerId);
-                  return;
-                }
-
-                list.push({
-                  date:key,
-                  who,
-                  ts_iso:stampISO,
-                  ts_fr:stampFR,
-                  note:"Réservation (démo)"
-                });
-
-                setDayBookings(b, calYear, calMonth, d, list);
-                saveBookings(b);
-                closeModal();
-                renderCalendarInto(containerId);
-                alert(`Réservation enregistrée (démo)\n${key}\n${who}\nHorodatage : ${stampFR}`);
-              };
-
-              on($("bkCommerce"), "click", ()=> doBook("Commerce"));
-              on($("bkMairie"), "click", ()=> doBook("Mairie"));
-              on($("bkAsso"), "click", ()=> doBook("Association"));
-              on($("bkEcole"), "click", ()=> doBook("École"));
-            }, 0);
+          list.push({
+            date:key,
+            who,
+            ts_iso:stampISO,
+            ts_fr:stampFR,
+            note: currentHour < 16
+              ? "Réservation avant 16h (1 seule par profil)"
+              : "Réservation après 16h (places restantes autorisées)"
           });
-        });
-      }
 
+          setDayBookings(b, calYear, calMonth, d, list);
+          saveBookings(b);
+          closeModal();
+          renderCalendarInto(containerId);
+
+          alert(`Réservation enregistrée (démo)\n${key}\n${who}\nHorodatage : ${stampFR}`);
+        };
+
+        on($("bkCommerce"), "click", ()=> doBook("Commerce"));
+        on($("bkMairie"), "click", ()=> doBook("Mairie"));
+        on($("bkAsso"), "click", ()=> doBook("Association"));
+        on($("bkEcole"), "click", ()=> doBook("École"));
+      }, 0);
+    });
+  });
+}
       function openRecapModal(y, m){
         const b = loadBookings();
         const keyYM = ym(y,m);
@@ -2798,9 +2813,12 @@ for(let d=1; d<=daysInMonth; d++){
         openModal("Publicités & visibilité (ticker)", `
           <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
           <div class="box">
-            <strong>Cadre :</strong> réservation plafonnée, gestion par calendrier,
-            possibilité de récap mensuel et horodatage des réservations.
-          </div>
+  <strong>Cadre :</strong> réservation plafonnée à 10 publicités par jour, gestion par calendrier,
+  horodatage des réservations et possibilité de récap mensuel.<br><br>
+  <strong>Règle :</strong> avant 16h, un commerçant peut réserver 1 publicité maximum pour le jour en cours.
+  À partir de 16h, si toutes les places du jour ne sont pas encore prises, les places restantes peuvent encore être réservées jusqu’au complet,
+  y compris par un commerçant ayant déjà réservé ce même jour.
+</div>
           <div id="calHost"></div>
         `);
 
@@ -2896,7 +2914,9 @@ for(let d=1; d<=daysInMonth; d++){
                 <li>Mode visite : guidage simple</li>
                 <li>Reconnaissance : bocitecoins selon règles locales</li>
               </ul>
-              <div class="muted" style="margin-top:10px;">(Démo) Structure présentée à titre de démonstration.</div>
+              <div class="muted" style="margin-top:10px;">
+              Avant 16h : 1 réservation maximum par commerçant pour le jour même. Après 16h : les places restantes du jour restent ouvertes jusqu’au complet.
+             </div>
             `);
             return;
           }
