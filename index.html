@@ -1048,7 +1048,7 @@
           <button class="tab" data-tab="cgv" type="button">CGV</button>
         </div>
 
-        <div id="p-rgpd" class="doc">
+       <div id="p-rgpd" class="doc">
   <div style="font-weight:900;font-size:15px;">📗 Politique de protection des données (RGPD) — Bo’CitéArt</div>
   <div class="muted" style="margin-top:4px;">Version pré-structuration — entités juridiques en cours de constitution</div>
 
@@ -1075,7 +1075,8 @@
     <li><strong>Compte</strong> : email, rôle (admin, mairie, commerçant, école, association, etc.).</li>
     <li><strong>Sécurité</strong> : journaux techniques (logs), horodatages, tentatives d’accès, éléments nécessaires à la prévention des abus et à la traçabilité.</li>
     <li><strong>Fonctions</strong> : paramètres, préférences, contenus publiés par profils habilités.</li>
-    <li><strong>Publicité</strong> : texte fourni par le partenaire, date de réservation, horodatage, catégorie de profil, données strictement nécessaires à la gestion des emplacements publicitaires, au contrôle des disponibilités journalières, et au suivi de l’état de paiement associé.</li>
+    <li><strong>Publicité</strong> : texte fourni par le partenaire, date de réservation, horodatage, catégorie de profil, identité de l’entité réservante, données strictement nécessaires à la gestion des emplacements publicitaires, au contrôle des disponibilités journalières, au respect de la règle de réservation avant/après 16h, et au suivi de l’état de paiement associé.</li>
+    <li><strong>Sport / BoCitecoins VERT</strong> : données strictement nécessaires au suivi des attributions, validations, échanges, brûlage des unités promotionnelles, contrôle des usages réservés au club bénéficiaire, et prévention des usages personnels non autorisés.</li>
     <li><strong>Démo</strong> : données locales de démonstration (localStorage), conservées uniquement sur l’appareil de l’utilisateur et supprimables via les paramètres du navigateur.</li>
     <li><strong>Transactions / facturation (LIVE)</strong> : montants agrégés, identifiants de facturation, état de règlement, journaux de paiement via PSP (Bo’CitéArt ne stocke pas les données bancaires).</li>
   </ul>
@@ -1097,8 +1098,8 @@
 
   <h2>5. Base légale</h2>
   <ul>
-    <li><strong>Exécution du service</strong> : fournir les fonctionnalités (accès, affichage, contenus, réservations, gestion des emplacements publicitaires).</li>
-    <li><strong>Intérêt légitime</strong> : sécurité, prévention fraude/abus, traçabilité minimale, contrôle des disponibilités et du respect des règles de réservation.</li>
+    <li><strong>Exécution du service</strong> : fournir les fonctionnalités (accès, affichage, contenus, réservations, gestion des emplacements publicitaires, suivi des unités promotionnelles internes).</li>
+    <li><strong>Intérêt légitime</strong> : sécurité, prévention fraude/abus, traçabilité minimale, contrôle des disponibilités, contrôle du respect des règles de réservation, et prévention des détournements d’usage des BoCitecoins.</li>
     <li><strong>Obligations légales</strong> : conformité, litiges, comptabilité/facturation (version officielle).</li>
     <li><strong>Consentement</strong> : uniquement si une fonctionnalité le nécessite (ex. géolocalisation).</li>
   </ul>
@@ -1107,7 +1108,8 @@
   <ul>
     <li>Fonctionnement de l’application (contenus, accès, affichage).</li>
     <li>Sécurisation des accès et prévention des abus.</li>
-    <li>Gestion de visibilité partenaire, réservations publicitaires, disponibilité des emplacements, et suivi de l’état de diffusion selon les conditions applicables.</li>
+    <li>Gestion de visibilité partenaire, réservations publicitaires, disponibilité des emplacements, suivi de l’état de diffusion selon les conditions applicables, et contrôle du respect de la règle de réservation avant/après 16h.</li>
+    <li>Gestion et traçabilité des BoCitecoins VERT dans leur finalité de soutien au club bénéficiaire.</li>
     <li>Animation citoyenne/territoriale (selon activation).</li>
   </ul>
 
@@ -1121,6 +1123,7 @@
     <li><strong>Démo</strong> : données locales conservées sur le téléphone jusqu’à suppression du navigateur / réinitialisation.</li>
     <li><strong>Logs sécurité</strong> : durée limitée, proportionnée, ajustée en version officielle.</li>
     <li><strong>Réservations publicitaires / suivi de diffusion / état de paiement</strong> : conservation limitée à la durée nécessaire à la gestion contractuelle, à la traçabilité interne et aux obligations légales applicables.</li>
+    <li><strong>BoCitecoins VERT / échanges / brûlage</strong> : conservation limitée à la durée nécessaire à la gestion des attributions, à la justification des échanges, au contrôle interne et au traitement des éventuels litiges.</li>
     <li><strong>Facturation/contrats</strong> : selon obligations légales (version officielle).</li>
   </ul>
 
@@ -1134,7 +1137,7 @@
 
   <h2>10. Sécurité</h2>
   <div class="box">
-    Mesures prévues selon version : contrôle d’accès par rôles, traçabilité, journalisation, protections contre l’abus, et sécurisation des accès administrateurs. Aucune solution ne peut garantir le risque zéro.
+    Mesures prévues selon version : contrôle d’accès par rôles, traçabilité, journalisation, protections contre l’abus, contrôle de cohérence des réservations, et sécurisation des accès administrateurs. Aucune solution ne peut garantir le risque zéro.
   </div>
 
   <h2>11. Vos droits</h2>
@@ -1223,25 +1226,46 @@
     Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : <strong>50 € HT pour 1 publicité</strong>, ou <strong>200 € HT pour un forfait de 5 publicités</strong>.<br><br>
 
     Le calendrier publicitaire fonctionne dans la limite de <strong>10 publicités maximum par jour</strong>.<br>
-   Chaque entité (commerçant, association autorisée ou mairie) peut réserver une seule publicité par jour jusqu’à 16h00.<br>
-  À partir de 16h00, si toutes les places disponibles pour la journée ne sont pas encore réservées, des réservations supplémentaires peuvent être effectuées dans la limite des emplacements restants, jusqu’à atteindre le maximum journalier de 10 publicités.<br><br>
+    Jusqu’à <strong>16h00</strong>, <strong>chaque entité réservante</strong> ne peut réserver qu’<strong>une seule publicité par jour</strong>.<br>
+    Par entité réservante, il faut entendre la structure elle-même (commerce, mairie, association) et non le nombre de ses responsables, comptes, référents ou représentants.<br>
+    À partir de <strong>16h00</strong>, si les 10 emplacements du jour ne sont pas tous réservés, les places restantes peuvent encore être prises, y compris par une entité ayant déjà réservé le même jour, jusqu’à épuisement complet des <strong>10 publicités prévues pour la journée</strong>.<br>
+    Une fois les 10 emplacements journaliers atteints, la journée est complète, aucune réservation supplémentaire n’est possible sur cette date, et les réservations doivent alors porter sur un jour ultérieur disponible.<br><br>
 
     Pour les commerçants et les associations, toute publicité non réglée ne peut pas être diffusée. En cas de paiement via PSP non régularisé à l’échéance contractuelle, la diffusion peut être suspendue et aucun nouvel emplacement publicitaire ne peut être activé tant que le paiement n’est pas effectivement reçu.<br><br>
 
     Pour la mairie, les modalités applicables peuvent relever d’un devis, bon pour accord, mandat administratif ou tout autre support contractuel validé entre les parties. En l’absence de validation ou de régularisation selon le mode retenu, la diffusion peut être refusée ou suspendue.
   </div>
 
-  <h2>7. Urgences</h2>
+  <h2>7. Règle Sport – BoCitecoins VERT</h2>
+  <div class="box">
+    Les <strong>BoCitecoins VERT</strong> sont gagnés par les clubs ou groupes sportifs pour des actions sportives et citoyennes validées dans le cadre de Bo’CitéArt. Ils ne sont pas destinés à enrichir une personne physique et servent uniquement à aider le club bénéficiaire.<br><br>
+
+    Ils permettent au club d’obtenir, chez un commerçant partenaire Bo’CitéArt, un avantage utile au club, par exemple du matériel sportif, des accessoires, un soutien logistique, ou, dans une limite encadrée, une part accessoire de nourriture ou de boissons.<br><br>
+
+    L’échange bénéficie exclusivement au club. Il ne peut jamais profiter personnellement à un référent, un éducateur, un dirigeant, un parent, un joueur ou toute autre personne physique agissant pour elle-même.<br><br>
+
+    Les BoCitecoins VERT sont attribués pour des actions cohérentes avec l’esprit du projet, notamment action citoyenne, nettoyage, rangement, fair-play, implication reconnue du club, ou participation à une dynamique locale positive.<br><br>
+
+    Dans la version actuelle, l’échange ne peut être effectué que par tranches autorisées de <strong>10</strong> ou <strong>20 BoCitecoins VERT</strong>. Les échanges hors de ces tranches ne sont pas autorisés, sauf évolution ultérieure expressément décidée par Bo’CitéArt.<br><br>
+
+    Après validation de l’échange, les BoCitecoins VERT utilisés sont <strong>brûlés</strong>, c’est-à-dire retirés définitivement du wallet sport à hauteur du montant échangé.<br><br>
+
+    La valeur remise au club ne peut pas être composée principalement de nourriture ou de boissons. La part de nourriture ou boissons ne peut représenter au maximum que <strong>30 %</strong> de la valeur totale de l’aide ; le solde doit principalement correspondre à un besoin utile au club.<br><br>
+
+    Sont notamment interdits : l’échange au profit personnel d’un individu, la conversion en euros, la remise d’argent, l’échange hors tranches prévues, l’avantage sans rapport avec l’intérêt du club, l’abus sur la part nourriture/boissons, et toute validation fictive sans action réelle.
+  </div>
+
+  <h2>8. Urgences</h2>
   <div class="box">
     Les boutons 112 / 3919 / 119 sont des raccourcis téléphoniques. Bo’CitéArt ne fournit pas les secours et ne garantit pas la connexion réseau. En cas d’urgence, appeler immédiatement les secours sans attendre.
   </div>
 
-  <h2>8. Informations et données “indicatives”</h2>
+  <h2>9. Informations et données “indicatives”</h2>
   <div class="box">
     Certaines informations peuvent provenir de sources externes ou du téléphone (ex. carte, itinéraires, points d’intérêt, DAE). Elles sont fournies à titre indicatif et peuvent comporter des inexactitudes, retards ou indisponibilités. Bo’CitéArt ne garantit pas l’exactitude parfaite de ces informations.
   </div>
 
-  <h2>9. Sécurisation des comptes (2FA / double référent) — si activée</h2>
+  <h2>10. Sécurisation des comptes (2FA / double référent) — si activée</h2>
   <div class="box">
     Selon le rôle (mairie, école, sport, commerce, association), Bo’CitéArt peut activer des mesures renforcées :
     <ul style="margin:8px 0 0 18px;font-weight:800;">
@@ -1252,40 +1276,41 @@
     Ces mesures relèvent d’une <strong>obligation de moyens</strong> et peuvent dépendre du téléphone, du réseau, et du prestataire technique selon la version LIVE.
   </div>
 
-  <h2>10. Disponibilité / limites</h2>
+  <h2>11. Disponibilité / limites</h2>
   <div class="box">
     L’application est fournie “en l’état” (démo / pré-déploiement). Bo’CitéArt ne garantit pas l’absence d’erreurs, ni une disponibilité continue.
   </div>
 
-  <h2>11. Suivi indicatif (commerçants)</h2>
+  <h2>12. Suivi indicatif (commerçants)</h2>
   <div class="box">
     Certaines vues de suivi (ex. estimation mensuelle) sont fournies à titre <strong>indicatif</strong> et ne constituent pas un document comptable, fiscal ou opposable. Les montants contractuels et facturés sont ceux issus du PSP, du devis validé, de la facture mensuelle ou de tout support contractuel applicable.
   </div>
 
-  <h2>12. Responsabilité</h2>
+  <h2>13. Responsabilité</h2>
   <ul>
     <li>Bo’CitéArt n’est pas responsable d’un mauvais usage de l’application.</li>
     <li>Bo’CitéArt n’est pas responsable des contenus fournis par des tiers au-delà de sa modération.</li>
     <li>Bo’CitéArt n’est pas responsable d’une absence de diffusion due à un défaut de paiement, à un refus de validation, à une indisponibilité journalière du calendrier ou à une saturation des emplacements disponibles.</li>
+    <li>Bo’CitéArt n’est pas responsable d’un usage irrégulier des BoCitecoins VERT réalisé en méconnaissance des règles applicables par un club, un référent ou un partenaire.</li>
     <li>Les dommages indirects (perte commerciale, perte d’image, perte d’opportunité, etc.) sont exclus dans la limite légale.</li>
   </ul>
 
-  <h2>13. Force majeure</h2>
+  <h2>14. Force majeure</h2>
   <div class="box">
     Bo’CitéArt ne pourra être tenu responsable en cas de force majeure ou d’événement extérieur rendant le service indisponible ou altéré (panne réseau, incident hébergeur, cyberattaque, coupure électrique, décision administrative, etc.).
   </div>
 
-  <h2>14. Propriété intellectuelle</h2>
+  <h2>15. Propriété intellectuelle</h2>
   <div class="box">
     L’ensemble des éléments de Bo’CitéArt (concept, structure, textes, contenus, visuels, charte, design, marque et signes distinctifs) est protégé. Toute reproduction, extraction, réutilisation ou détournement sans autorisation est interdit, sauf droits légaux applicables.
   </div>
 
-  <h2>15. Modification des conditions</h2>
+  <h2>16. Modification des conditions</h2>
   <div class="box">
     Bo’CitéArt peut modifier les présentes conditions pour tenir compte des évolutions du service, des exigences légales ou de sécurité. La version applicable est celle publiée dans l’application au moment de l’utilisation.
   </div>
 
-  <h2>16. Droit applicable</h2>
+  <h2>17. Droit applicable</h2>
   <p>Droit français.</p>
 </div>
 
@@ -1346,8 +1371,10 @@
     Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : <strong>50 € HT pour 1 publicité</strong>, ou <strong>200 € HT pour un forfait de 5 publicités</strong>.<br><br>
 
     Le calendrier publicitaire est limité à <strong>10 publicités maximum par jour</strong>.<br>
-    Chaque entité (commerçant, association autorisée ou mairie) peut réserver une seule publicité par jour jusqu’à 16h00.<br>
-   À partir de 16h00, si toutes les places disponibles pour la journée ne sont pas encore réservées, des réservations supplémentaires peuvent être effectuées dans la limite des emplacements restants, jusqu’à atteindre le maximum journalier de 10 publicités.<br><br>
+    Jusqu’à <strong>16h00</strong>, <strong>chaque entité réservante</strong> ne peut réserver qu’<strong>une seule publicité par jour</strong>.<br>
+    Par entité réservante, il faut entendre la structure elle-même et non le nombre de ses responsables, comptes, référents ou représentants.<br>
+    À partir de <strong>16h00</strong>, si toutes les places disponibles pour la journée ne sont pas encore réservées, des réservations supplémentaires peuvent être effectuées dans la limite des emplacements restants, y compris par une entité ayant déjà réservé le même jour, jusqu’à atteindre le maximum journalier de <strong>10 publicités</strong>.<br>
+    Une fois le maximum journalier atteint, aucune nouvelle publicité ne peut être réservée sur la date concernée et toute réservation ultérieure doit porter sur un jour encore disponible.<br><br>
 
     Toute réservation ne vaut pas, à elle seule, validation définitive de diffusion. La diffusion reste subordonnée au respect des conditions contractuelles, techniques et de paiement applicables.
   </div>
@@ -1358,35 +1385,49 @@
     <li>Les données bancaires ne sont pas stockées par Bo’CitéArt.</li>
     <li>Les factures sont émises conformément aux obligations comptables applicables.</li>
     <li>Sauf conditions particulières convenues entre les parties, toute publicité doit être réglée avant diffusion.</li>
-    <li>Lorsqu’un délai de règlement est expressément accordé contractuellement (ex. PSP à 30 jours, facture à échéance, mandat administratif), le non-paiement à l’échéance autorise Bo’CitéArt à suspendre ou refuser toute diffusion publicitaire en cours ou à venir jusqu’à régularisation complète.</li>
+    <li>Lorsqu’un délai de règlement est expressément accordé contractuellement, le non-paiement à l’échéance autorise Bo’CitéArt à suspendre ou refuser toute diffusion publicitaire en cours ou à venir jusqu’à régularisation complète.</li>
   </ul>
 
-  <h2>8. Suspension / résiliation</h2>
+  <h2>8. BoCitecoins VERT – cadre d’échange sport</h2>
+  <div class="box">
+    Les <strong>BoCitecoins VERT</strong> sont des unités promotionnelles internes destinées exclusivement au soutien du club bénéficiaire dans le cadre d’actions sportives et citoyennes validées.<br><br>
+
+    Ils ne peuvent en aucun cas donner lieu à une remise d’argent, à une conversion en euros, à un remboursement, ni à un avantage personnel accordé à un référent, éducateur, dirigeant, parent, joueur ou tiers agissant pour lui-même.<br><br>
+
+    Dans la version actuelle, l’échange n’est autorisé que par tranches de <strong>10</strong> ou <strong>20 BoCitecoins VERT</strong>. Après validation, les unités utilisées sont <strong>brûlées</strong> et retirées du wallet sport à due concurrence.<br><br>
+
+    L’avantage remis doit bénéficier au club et correspondre principalement à un besoin utile au fonctionnement, à l’équipement ou au soutien logistique du club. La part de nourriture ou de boissons ne peut excéder <strong>30 %</strong> de la valeur totale de l’avantage accordé.<br><br>
+
+    Toute demande ou validation contraire à ces règles peut être refusée, suspendue ou annulée par Bo’CitéArt.
+  </div>
+
+  <h2>9. Suspension / résiliation</h2>
   <ul>
     <li>En cas de non-paiement, l’accès ou la diffusion peut être suspendu(e) sans indemnité.</li>
     <li>En cas de fraude, détournement, publication non conforme ou usage abusif, le compte peut être désactivé.</li>
     <li>Bo’CitéArt peut suspendre temporairement un service pour maintenance, sécurité ou impossibilité technique.</li>
   </ul>
 
-  <h2>9. Responsabilité</h2>
+  <h2>10. Responsabilité</h2>
   <ul>
     <li>Bo’CitéArt fournit une plateforme technique et ne garantit pas un résultat commercial, institutionnel ou publicitaire.</li>
     <li>Bo’CitéArt n’est pas responsable des contenus publiés par les partenaires.</li>
     <li>Bo’CitéArt n’est pas responsable d’une absence de diffusion liée à un défaut de paiement, à une échéance non respectée, à une saturation du calendrier, à une indisponibilité technique ou à un refus de validation motivé.</li>
+    <li>Bo’CitéArt n’est pas responsable d’un échange BoCitecoins VERT réalisé en dehors des règles applicables par un partenaire, un club ou un référent.</li>
     <li>La responsabilité de Bo’CitéArt est limitée aux obligations légales applicables et, en tout état de cause, au montant effectivement encaissé au titre de la prestation litigieuse, sauf disposition impérative contraire.</li>
   </ul>
 
-  <h2>10. Force majeure</h2>
+  <h2>11. Force majeure</h2>
   <div class="box">
     Bo’CitéArt ne pourra être tenu responsable en cas d’événement extérieur empêchant le fonctionnement normal du service : panne réseau, incident technique, cyberattaque, catastrophe naturelle ou décision administrative.
   </div>
 
-  <h2>11. Modification des conditions</h2>
+  <h2>12. Modification des conditions</h2>
   <div class="box">
     Bo’CitéArt peut faire évoluer les présentes conditions afin de tenir compte des évolutions techniques, juridiques ou réglementaires.
   </div>
 
-  <h2>12. Droit applicable</h2>
+  <h2>13. Droit applicable</h2>
   <p>Les présentes conditions sont soumises au droit français.</p>
 </div>
   <div class="modal" id="choice" aria-hidden="true">
