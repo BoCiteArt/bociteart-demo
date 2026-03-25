@@ -904,6 +904,125 @@
   <div class="page">
     <div class="wrap">
 
+      <!-- DEBUT FORMULAIRE INSCRIPTION -->
+<section style="max-width:700px;margin:40px auto;padding:20px;border:1px solid #ccc;border-radius:12px;background:#f9f9f9;">
+  <h2>Créer un compte</h2>
+
+  <label>Je suis :</label><br>
+  <select id="typeUser" onchange="toggleType()">
+    <option value="particulier">Particulier</option>
+    <option value="pro">Professionnel</option>
+  </select>
+
+  <br><br>
+
+  <label>Nom :</label><br>
+  <input type="text" id="nom"><br><br>
+
+  <label>Email :</label><br>
+  <input type="email" id="email"><br><br>
+
+  <label>Date de naissance :</label><br>
+  <input type="date" id="birthdate" onchange="checkAge()"><br><br>
+
+  <!-- MINEUR -->
+  <div id="mineurBlock" style="display:none;">
+    <h4>Responsable légal obligatoire</h4>
+
+    <label>Email parent :</label><br>
+    <input type="email" id="parentEmail"><br><br>
+
+    <label>Téléphone parent :</label><br>
+    <input type="tel" id="parentTel"><br><br>
+  </div>
+
+  <!-- PRO -->
+  <div id="proBlock" style="display:none;">
+    <h4>Informations professionnelles</h4>
+
+    <label>SIRET :</label><br>
+    <input type="text" id="siret"><br><br>
+
+    <label>RIB :</label><br>
+    <input type="text" id="rib"><br><br>
+  </div>
+
+  <button onclick="validerInscription()" style="padding:10px 20px;border-radius:8px;">
+    Créer mon compte
+  </button>
+</section>
+
+<script>
+function checkAge() {
+  const birth = new Date(document.getElementById("birthdate").value);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+
+  if (age < 18) {
+    document.getElementById("mineurBlock").style.display = "block";
+  } else {
+    document.getElementById("mineurBlock").style.display = "none";
+  }
+}
+
+function toggleType() {
+  const type = document.getElementById("typeUser").value;
+
+  if (type === "pro") {
+    document.getElementById("proBlock").style.display = "block";
+  } else {
+    document.getElementById("proBlock").style.display = "none";
+  }
+}
+
+function validerInscription() {
+  const nom = document.getElementById("nom").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const type = document.getElementById("typeUser").value;
+
+  if (!nom || !email) {
+    alert("Nom et email obligatoires");
+    return;
+  }
+
+  const birth = document.getElementById("birthdate").value;
+  let mineur = false;
+
+  if (birth) {
+    const age = new Date().getFullYear() - new Date(birth).getFullYear();
+    if (age < 18) mineur = true;
+  }
+
+  if (mineur) {
+    const pEmail = document.getElementById("parentEmail").value.trim();
+    const pTel = document.getElementById("parentTel").value.trim();
+
+    if (!pEmail || !pTel) {
+      alert("Mineur : infos parent obligatoires");
+      return;
+    }
+  }
+
+  if (type === "pro") {
+    const siret = document.getElementById("siret").value.trim();
+    const rib = document.getElementById("rib").value.trim();
+
+    if (!siret || siret.length < 10) {
+      alert("SIRET invalide");
+      return;
+    }
+
+    if (!rib || rib.length < 10) {
+      alert("RIB invalide");
+      return;
+    }
+  }
+
+  alert("Compte créé (démo propre) ✅");
+}
+</script>
+<!-- FIN FORMULAIRE INSCRIPTION -->
+
       <div class="ticker" id="ticker" aria-label="Publicités (toucher pour détails)">
         <img id="tickerImg" alt="" />
         <div class="overlay"></div>
