@@ -871,18 +871,30 @@
     <h2>Bienvenue sur Bo’CitéArt</h2>
 
     <p>
-      Avant d’accéder à l’application, vous devez lire et accepter :
-    </p>
+    <p>
+  Avant d’accéder à l’application, vous devez lire et accepter :
+</p>
 
-    <ul>
-      <li>la politique RGPD</li>
-      <li>les CGU</li>
-      <li>les CGV</li>
-    </ul>
+<div style="display:flex;flex-direction:column;gap:10px;margin:16px 0;">
+  <button type="button" onclick="ouvrirDoc('rgpd')" style="padding:10px;border-radius:8px;cursor:pointer;">
+    Lire la politique RGPD
+  </button>
+  <button type="button" onclick="ouvrirDoc('cgu')" style="padding:10px;border-radius:8px;cursor:pointer;">
+    Lire les CGU
+  </button>
+  <button type="button" onclick="ouvrirDoc('cgv')" style="padding:10px;border-radius:8px;cursor:pointer;">
+    Lire les CGV
+  </button>
+</div>
 
-    <label><input type="checkbox" id="check-rgpd"> J’accepte le RGPD</label><br><br>
-    <label><input type="checkbox" id="check-cgu"> J’accepte les CGU</label><br><br>
-    <label><input type="checkbox" id="check-cgv"> J’accepte les CGV</label><br><br>
+<p>
+  Si vous êtes mineur, vous confirmez utiliser l’application dans le cadre prévu par les présentes conditions.
+  Si nécessaire, les coordonnées d’un parent ou représentant légal pourront être demandées.
+</p>
+
+<label><input type="checkbox" id="check-rgpd"> J’ai lu et j’accepte le RGPD</label><br><br>
+<label><input type="checkbox" id="check-cgu"> J’ai lu et j’accepte les CGU</label><br><br>
+<label><input type="checkbox" id="check-cgv"> J’ai lu et j’accepte les CGV</label><br><br>
 
     <button id="btn-acces" disabled onclick="ouvrirAppli()">
       Accéder à l’application
@@ -4891,6 +4903,12 @@ return;
     if (c) c.addEventListener("change", verifierCases);
   });
 
+    window.ouvrirDoc = function (doc) {
+    document.getElementById("consentement").style.display = "none";
+    if (typeof showTab === "function") {
+      showTab(doc);
+    }
+  };
   window.ouvrirAppli = function () {
     document.getElementById("consentement").style.display = "none";
   };
