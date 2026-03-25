@@ -870,33 +870,30 @@
   <div style="max-width:700px;margin:30px auto;padding:20px;border:1px solid #ccc;border-radius:12px;background:#f9f9f9;">
     <h2>Bienvenue sur Bo’CitéArt</h2>
 
+    <p>Avant d’accéder à l’application, vous devez lire et accepter :</p>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0;">
+      <button type="button" id="btn-lire-rgpd" style="padding:10px;border-radius:8px;cursor:pointer;">
+        Lire la politique RGPD
+      </button>
+      <button type="button" id="btn-lire-cgu" style="padding:10px;border-radius:8px;cursor:pointer;">
+        Lire les CGU
+      </button>
+      <button type="button" id="btn-lire-cgv" style="padding:10px;border-radius:8px;cursor:pointer;">
+        Lire les CGV
+      </button>
+    </div>
+
     <p>
-    <p>
-  Avant d’accéder à l’application, vous devez lire et accepter :
-</p>
+      Si vous êtes mineur, vous confirmez utiliser l’application dans le cadre prévu par les présentes conditions.
+      Si nécessaire, les coordonnées d’un parent ou représentant légal pourront être demandées.
+    </p>
 
-<div style="display:flex;flex-direction:column;gap:10px;margin:16px 0;">
-  <button type="button" onclick="ouvrirDoc('rgpd')" style="padding:10px;border-radius:8px;cursor:pointer;">
-    Lire la politique RGPD
-  </button>
-  <button type="button" onclick="ouvrirDoc('cgu')" style="padding:10px;border-radius:8px;cursor:pointer;">
-    Lire les CGU
-  </button>
-  <button type="button" onclick="ouvrirDoc('cgv')" style="padding:10px;border-radius:8px;cursor:pointer;">
-    Lire les CGV
-  </button>
-</div>
+    <label><input type="checkbox" id="check-rgpd"> J’ai lu et j’accepte le RGPD</label><br><br>
+    <label><input type="checkbox" id="check-cgu"> J’ai lu et j’accepte les CGU</label><br><br>
+    <label><input type="checkbox" id="check-cgv"> J’ai lu et j’accepte les CGV</label><br><br>
 
-<p>
-  Si vous êtes mineur, vous confirmez utiliser l’application dans le cadre prévu par les présentes conditions.
-  Si nécessaire, les coordonnées d’un parent ou représentant légal pourront être demandées.
-</p>
-
-<label><input type="checkbox" id="check-rgpd"> J’ai lu et j’accepte le RGPD</label><br><br>
-<label><input type="checkbox" id="check-cgu"> J’ai lu et j’accepte les CGU</label><br><br>
-<label><input type="checkbox" id="check-cgv"> J’ai lu et j’accepte les CGV</label><br><br>
-
-    <button id="btn-acces" disabled onclick="ouvrirAppli()">
+    <button id="btn-acces" type="button" disabled style="padding:10px 18px;border-radius:8px;cursor:pointer;opacity:0.5;">
       Accéder à l’application
     </button>
   </div>
@@ -4888,35 +4885,75 @@ return;
     })();
     <script>
 document.addEventListener("DOMContentLoaded", function () {
-
+  const consentement = document.getElementById("consentement");
   const checkRgpd = document.getElementById("check-rgpd");
   const checkCgu = document.getElementById("check-cgu");
   const checkCgv = document.getElementById("check-cgv");
   const btnAcces = document.getElementById("btn-acces");
 
-  function verifier() {
-    if (!checkRgpd || !checkCgu || !checkCgv || !btnAcces) return;
+  const btnLireRgpd = document.getElementById("btn-lire-rgpd");
+  const btnLireCgu = document.getElementById("btn-lire-cgu");
+  const btnLireCgv = document.getElementById("btn-lire-cgv");
 
-    if (checkRgpd.checked && checkCgu.checked && checkCgv.checked) {
-      btnAcces.disabled = false;
-      btnAcces.style.opacity = "1";
-    } else {
-      btnAcces.disabled = true;
-      btnAcces.style.opacity = "0.5";
+  function majBouton() {
+    const ok =
+      checkRgpd && checkRgpd.checked &&
+      checkCgu && checkCgu.checked &&
+      checkCgv && checkCgv.checked;
+
+    if (btnAcces) {
+      btnAcces.disabled = !ok;
+      btnAcces.style.opacity = ok ? "1" : "0.5";
     }
   }
 
-  checkRgpd?.addEventListener("change", verifier);
-  checkCgu?.addEventListener("change", verifier);
-  checkCgv?.addEventListener("change", verifier);
+  function ouvrirEtAfficher(doc) {
+    if (typeof showTab === "function") {
+      if (doc === "rgpd") showTab("rgpd");
+      if (doc === "cgu") showTab("cgu");
+      if (doc === "cgv") showTab("cgv");
+    }
 
-  verifier();
+    if (consentement) {
+      consentement.style.display = "none";
+    }
 
-  btnAcces?.addEventListener("click", function () {
-    const bloc = document.getElementById("consentement");
-    if (bloc) bloc.style.display = "none";
-  });
+    setTimeout(function () {
+      alert("Le document demandé est maintenant affiché dans l’application. Après lecture, recharge la page pour revenir à l’écran d’acceptation, ou continue la démonstration.");
+    }, 150);
+  }
 
+  if (btnLireRgpd) {
+    btnLireRgpd.addEventListener("click", function () {
+      ouvrirEtAfficher("rgpd");
+    });
+  }
+
+  if (btnLireCgu) {
+    btnLireCgu.addEventListener("click", function () {
+      ouvrirEtAfficher("cgu");
+    });
+  }
+
+  if (btnLireCgv) {
+    btnLireCgv.addEventListener("click", function () {
+      ouvrirEtAfficher("cgv");
+    });
+  }
+
+  if (checkRgpd) checkRgpd.addEventListener("change", majBouton);
+  if (checkCgu) checkCgu.addEventListener("change", majBouton);
+  if (checkCgv) checkCgv.addEventListener("change", majBouton);
+
+  if (btnAcces) {
+    btnAcces.addEventListener("click", function () {
+      if (consentement) {
+        consentement.style.display = "none";
+      }
+    });
+  }
+
+  majBouton();
 });
 </script>    
 </body>
