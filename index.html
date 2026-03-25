@@ -4897,6 +4897,13 @@ return;
   const btnLireCgu = document.getElementById("btn-lire-cgu");
   const btnLireCgv = document.getElementById("btn-lire-cgv");
 
+  const openLegalBtn = document.getElementById("openLegal");
+  const closeLegalBtn = document.getElementById("legalClose");
+  const closeLegalX = document.getElementById("legalX");
+  const legal = document.getElementById("legal");
+
+  let retourConsentementApresLecture = false;
+
   function majBouton() {
     const ok =
       checkRgpd && checkRgpd.checked &&
@@ -4910,32 +4917,56 @@ return;
     }
   }
 
-  function ouvrirOnglet(tabName) {
-    const bouton = document.querySelector('.tab[data-tab="' + tabName + '"]');
-    if (bouton) {
-      bouton.click();
-    }
+  function ouvrirLecture(tabName) {
+    retourConsentementApresLecture = true;
+
     if (consentement) {
       consentement.style.display = "none";
+    }
+
+    if (openLegalBtn) {
+      openLegalBtn.click();
+    } else if (legal) {
+      legal.classList.add("open");
+    }
+
+    const tabBtn = document.querySelector('.tab[data-tab="' + tabName + '"]');
+    if (tabBtn) {
+      tabBtn.click();
+    }
+  }
+
+  function retourConsentement() {
+    if (retourConsentementApresLecture && consentement) {
+      consentement.style.display = "block";
+      retourConsentementApresLecture = false;
     }
   }
 
   if (btnLireRgpd) {
     btnLireRgpd.onclick = function () {
-      ouvrirOnglet("rgpd");
+      ouvrirLecture("rgpd");
     };
   }
 
   if (btnLireCgu) {
     btnLireCgu.onclick = function () {
-      ouvrirOnglet("cgu");
+      ouvrirLecture("cgu");
     };
   }
 
   if (btnLireCgv) {
     btnLireCgv.onclick = function () {
-      ouvrirOnglet("cgv");
+      ouvrirLecture("cgv");
     };
+  }
+
+  if (closeLegalBtn) {
+    closeLegalBtn.addEventListener("click", retourConsentement);
+  }
+
+  if (closeLegalX) {
+    closeLegalX.addEventListener("click", retourConsentement);
   }
 
   if (checkRgpd) {
