@@ -904,101 +904,120 @@
   <div class="page">
     <div class="wrap">
 
-      <!-- DEBUT FORMULAIRE INSCRIPTION -->
-<section style="max-width:700px;margin:40px auto;padding:20px;border:1px solid #ccc;border-radius:12px;background:#f9f9f9;">
-  <h2>Créer un compte</h2>
+<!-- DEBUT FORMULAIRE INSCRIPTION -->
+<div id="overlay-inscription" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.96);z-index:99990;display:none;overflow:auto;padding:20px;">
+  <div style="max-width:700px;margin:40px auto;padding:24px;border:1px solid #ccc;border-radius:18px;background:#f9f9f9;box-shadow:0 8px 30px rgba(0,0,0,0.08);">
+    <h2 style="margin-top:0;">Créer un compte</h2>
 
-  <label>Je suis :</label><br>
-  <select id="typeUser" onchange="toggleType()">
-    <option value="particulier">Particulier</option>
-    <option value="pro">Professionnel</option>
-  </select>
+    <label>Je suis :</label><br>
+    <select id="typeUser" onchange="toggleType()" style="margin-top:6px;padding:8px;width:100%;max-width:260px;">
+      <option value="particulier">Particulier</option>
+      <option value="pro">Professionnel</option>
+    </select>
 
-  <br><br>
+    <br><br>
 
-  <label>Nom :</label><br>
-  <input type="text" id="nom"><br><br>
+    <label>Nom :</label><br>
+    <input type="text" id="nom" style="margin-top:6px;padding:8px;width:100%;max-width:420px;"><br><br>
 
-  <label>Email :</label><br>
-  <input type="email" id="email"><br><br>
+    <label>Email :</label><br>
+    <input type="email" id="email" style="margin-top:6px;padding:8px;width:100%;max-width:420px;"><br><br>
 
-  <label>Date de naissance :</label><br>
-  <input type="date" id="birthdate" onchange="checkAge()"><br><br>
+    <label>Date de naissance :</label><br>
+    <input type="date" id="birthdate" onchange="checkAge()" style="margin-top:6px;padding:8px;width:100%;max-width:220px;"><br><br>
 
-  <!-- MINEUR -->
-  <div id="mineurBlock" style="display:none;">
-    <h4>Responsable légal obligatoire</h4>
+    <div id="mineurBlock" style="display:none;">
+      <h4>Responsable légal obligatoire</h4>
 
-    <label>Email parent :</label><br>
-    <input type="email" id="parentEmail"><br><br>
+      <label>Email parent :</label><br>
+      <input type="email" id="parentEmail" style="margin-top:6px;padding:8px;width:100%;max-width:420px;"><br><br>
 
-    <label>Téléphone parent :</label><br>
-    <input type="tel" id="parentTel"><br><br>
+      <label>Téléphone parent :</label><br>
+      <input type="tel" id="parentTel" style="margin-top:6px;padding:8px;width:100%;max-width:420px;"><br><br>
+    </div>
+
+    <div id="proBlock" style="display:none;">
+      <h4>Informations professionnelles</h4>
+
+      <label>SIRET :</label><br>
+      <input type="text" id="siret" style="margin-top:6px;padding:8px;width:100%;max-width:420px;"><br><br>
+
+      <label>RIB :</label><br>
+      <input type="text" id="rib" style="margin-top:6px;padding:8px;width:100%;max-width:420px;"><br><br>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;">
+      <button type="button" onclick="validerInscription()" style="padding:12px 20px;border-radius:10px;cursor:pointer;">
+        Créer mon compte
+      </button>
+
+      <button type="button" onclick="fermerInscription()" style="padding:12px 20px;border-radius:10px;cursor:pointer;">
+        Fermer
+      </button>
+    </div>
   </div>
-
-  <!-- PRO -->
-  <div id="proBlock" style="display:none;">
-    <h4>Informations professionnelles</h4>
-
-    <label>SIRET :</label><br>
-    <input type="text" id="siret"><br><br>
-
-    <label>RIB :</label><br>
-    <input type="text" id="rib"><br><br>
-  </div>
-
-  <button onclick="validerInscription()" style="padding:10px 20px;border-radius:8px;">
-    Créer mon compte
-  </button>
-</section>
+</div>
 
 <script>
+function ouvrirInscription() {
+  const bloc = document.getElementById("overlay-inscription");
+  if (bloc) bloc.style.display = "block";
+}
+
+function fermerInscription() {
+  const bloc = document.getElementById("overlay-inscription");
+  if (bloc) bloc.style.display = "none";
+}
+
 function checkAge() {
-  const birth = new Date(document.getElementById("birthdate").value);
+  const valeur = document.getElementById("birthdate").value;
+  const mineurBlock = document.getElementById("mineurBlock");
+  if (!valeur) {
+    mineurBlock.style.display = "none";
+    return;
+  }
+
+  const birth = new Date(valeur);
   const today = new Date();
   let age = today.getFullYear() - birth.getFullYear();
-
-  if (age < 18) {
-    document.getElementById("mineurBlock").style.display = "block";
-  } else {
-    document.getElementById("mineurBlock").style.display = "none";
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
   }
+
+  mineurBlock.style.display = age < 18 ? "block" : "none";
 }
 
 function toggleType() {
   const type = document.getElementById("typeUser").value;
-
-  if (type === "pro") {
-    document.getElementById("proBlock").style.display = "block";
-  } else {
-    document.getElementById("proBlock").style.display = "none";
-  }
+  const proBlock = document.getElementById("proBlock");
+  proBlock.style.display = type === "pro" ? "block" : "none";
 }
 
 function validerInscription() {
   const nom = document.getElementById("nom").value.trim();
   const email = document.getElementById("email").value.trim();
   const type = document.getElementById("typeUser").value;
+  const birthValue = document.getElementById("birthdate").value;
 
-  if (!nom || !email) {
-    alert("Nom et email obligatoires");
+  if (!nom || !email || !birthValue) {
+    alert("Veuillez remplir le nom, l’email et la date de naissance.");
     return;
   }
 
-  const birth = document.getElementById("birthdate").value;
-  let mineur = false;
-
-  if (birth) {
-    const age = new Date().getFullYear() - new Date(birth).getFullYear();
-    if (age < 18) mineur = true;
+  const birth = new Date(birthValue);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
   }
 
-  if (mineur) {
-    const pEmail = document.getElementById("parentEmail").value.trim();
-    const pTel = document.getElementById("parentTel").value.trim();
-
-    if (!pEmail || !pTel) {
-      alert("Mineur : infos parent obligatoires");
+  if (age < 18) {
+    const parentEmail = document.getElementById("parentEmail").value.trim();
+    const parentTel = document.getElementById("parentTel").value.trim();
+    if (!parentEmail || !parentTel) {
+      alert("Pour un mineur, email et téléphone du parent sont obligatoires.");
       return;
     }
   }
@@ -1006,19 +1025,18 @@ function validerInscription() {
   if (type === "pro") {
     const siret = document.getElementById("siret").value.trim();
     const rib = document.getElementById("rib").value.trim();
-
     if (!siret || siret.length < 10) {
-      alert("SIRET invalide");
+      alert("Veuillez renseigner un SIRET valide.");
       return;
     }
-
     if (!rib || rib.length < 10) {
-      alert("RIB invalide");
+      alert("Veuillez renseigner un RIB valide.");
       return;
     }
   }
 
-  alert("Compte créé (démo propre) ✅");
+  alert("Compte créé (démo) ✅");
+  fermerInscription();
 }
 </script>
 <!-- FIN FORMULAIRE INSCRIPTION -->
@@ -5039,9 +5057,12 @@ return;
   function ouvrirLecture(tabName) {
     retourConsentementApresLecture = true;
 
-    if (consentement) {
-      consentement.style.display = "none";
-    }
+   if (consentement) {
+  consentement.style.display = "none";
+}
+if (typeof ouvrirInscription === "function") {
+  ouvrirInscription();
+}
 
     if (openLegalBtn) {
       openLegalBtn.click();
