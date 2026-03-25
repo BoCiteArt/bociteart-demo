@@ -4885,8 +4885,8 @@ return;
     })();
   </script>
         
-   <script>
-document.addEventListener("DOMContentLoaded", function () {
+  <script>
+(function () {
   const consentement = document.getElementById("consentement");
   const checkRgpd = document.getElementById("check-rgpd");
   const checkCgu = document.getElementById("check-cgu");
@@ -4906,58 +4906,72 @@ document.addEventListener("DOMContentLoaded", function () {
     if (btnAcces) {
       btnAcces.disabled = !ok;
       btnAcces.style.opacity = ok ? "1" : "0.5";
+      btnAcces.style.cursor = ok ? "pointer" : "not-allowed";
     }
   }
 
-  function ouvrirEtAfficher(doc) {
-    if (typeof showTab === "function") {
-      if (doc === "rgpd") showTab("rgpd");
-      if (doc === "cgu") showTab("cgu");
-      if (doc === "cgv") showTab("cgv");
+  function ouvrirOnglet(tabName) {
+    const bouton = document.querySelector('.tab[data-tab="' + tabName + '"]');
+    if (bouton) {
+      bouton.click();
     }
-
     if (consentement) {
       consentement.style.display = "none";
     }
-
-    setTimeout(function () {
-      alert("Le document demandé est maintenant affiché dans l’application. Après lecture, recharge la page pour revenir à l’écran d’acceptation, ou continue la démonstration.");
-    }, 150);
   }
 
   if (btnLireRgpd) {
-    btnLireRgpd.addEventListener("click", function () {
-      ouvrirEtAfficher("rgpd");
-    });
+    btnLireRgpd.onclick = function () {
+      ouvrirOnglet("rgpd");
+    };
   }
 
   if (btnLireCgu) {
-    btnLireCgu.addEventListener("click", function () {
-      ouvrirEtAfficher("cgu");
-    });
+    btnLireCgu.onclick = function () {
+      ouvrirOnglet("cgu");
+    };
   }
 
   if (btnLireCgv) {
-    btnLireCgv.addEventListener("click", function () {
-      ouvrirEtAfficher("cgv");
-    });
+    btnLireCgv.onclick = function () {
+      ouvrirOnglet("cgv");
+    };
   }
 
-  if (checkRgpd) checkRgpd.addEventListener("change", majBouton);
-  if (checkCgu) checkCgu.addEventListener("change", majBouton);
-  if (checkCgv) checkCgv.addEventListener("change", majBouton);
+  if (checkRgpd) {
+    checkRgpd.onchange = majBouton;
+    checkRgpd.onclick = majBouton;
+  }
+
+  if (checkCgu) {
+    checkCgu.onchange = majBouton;
+    checkCgu.onclick = majBouton;
+  }
+
+  if (checkCgv) {
+    checkCgv.onchange = majBouton;
+    checkCgv.onclick = majBouton;
+  }
 
   if (btnAcces) {
-    btnAcces.addEventListener("click", function () {
-      if (consentement) {
-        consentement.style.display = "none";
+    btnAcces.onclick = function () {
+      if (
+        checkRgpd && checkRgpd.checked &&
+        checkCgu && checkCgu.checked &&
+        checkCgv && checkCgv.checked
+      ) {
+        if (consentement) {
+          consentement.style.display = "none";
+        }
+      } else {
+        alert("Vous devez cocher les 3 cases avant d’accéder à l’application.");
       }
-    });
+    };
   }
 
   majBouton();
-});
-</script>    
+})();
+</script>
 </body>
 </html>
 
