@@ -4910,6 +4910,83 @@ return;
 
     })();
   </script>
+   <!-- DEBUT FORMULAIRE INSCRIPTION -->
+<section style="max-width:700px;margin:40px auto;padding:20px;border:1px solid #ccc;border-radius:12px;background:#f9f9f9;">
+  <h2>Créer un compte</h2>
+
+  <label>Je suis :</label><br>
+  <select id="typeUser" onchange="toggleType()">
+    <option value="particulier">Particulier</option>
+    <option value="pro">Professionnel</option>
+  </select>
+
+  <br><br>
+
+  <label>Nom :</label><br>
+  <input type="text"><br><br>
+
+  <label>Email :</label><br>
+  <input type="email"><br><br>
+
+  <label>Date de naissance :</label><br>
+  <input type="date" id="birthdate" onchange="checkAge()"><br><br>
+
+  <!-- BLOC MINEUR -->
+  <div id="mineurBlock" style="display:none;">
+    <h4>Responsable légal (obligatoire pour les mineurs)</h4>
+
+    <label>Email du parent :</label><br>
+    <input type="email"><br><br>
+
+    <label>Téléphone du parent :</label><br>
+    <input type="tel"><br><br>
+  </div>
+
+  <!-- BLOC PRO -->
+  <div id="proBlock" style="display:none;">
+    <h4>Informations professionnelles</h4>
+
+    <label>SIRET :</label><br>
+    <input type="text"><br><br>
+
+    <label>KBIS (-3 mois) :</label><br>
+    <input type="file"><br><br>
+
+    <label>RIB :</label><br>
+    <input type="text"><br><br>
+  </div>
+
+  <button onclick="validerInscription()">Créer mon compte</button>
+</section>
+
+<script>
+function checkAge() {
+  const birthdate = new Date(document.getElementById("birthdate").value);
+  const today = new Date();
+  let age = today.getFullYear() - birthdate.getFullYear();
+
+  if (age < 18) {
+    document.getElementById("mineurBlock").style.display = "block";
+  } else {
+    document.getElementById("mineurBlock").style.display = "none";
+  }
+}
+
+function toggleType() {
+  const type = document.getElementById("typeUser").value;
+
+  if (type === "pro") {
+    document.getElementById("proBlock").style.display = "block";
+  } else {
+    document.getElementById("proBlock").style.display = "none";
+  }
+}
+
+function validerInscription() {
+  alert("Inscription enregistrée (version démo)");
+}
+</script>
+<!-- FIN FORMULAIRE INSCRIPTION -->     
 </body>
 </html>
 
