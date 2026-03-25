@@ -4868,7 +4868,7 @@ return;
           cgv: $("p-cgv")
         };
 
-        function showTab(name){
+       window.showTab = function(name){
           tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
           Object.keys(panels).forEach((k)=>{
             if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
