@@ -864,6 +864,34 @@
   </style>
 </head>
 <body>
+
+<!-- DEBUT ECRAN ACCES OBLIGATOIRE -->
+<div id="consentement" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;z-index:99999;padding:20px;overflow:auto;">
+  <div style="max-width:700px;margin:30px auto;padding:20px;border:1px solid #ccc;border-radius:12px;background:#f9f9f9;">
+    <h2>Bienvenue sur Bo’CitéArt</h2>
+
+    <p>
+      Avant d’accéder à l’application, vous devez lire et accepter :
+    </p>
+
+    <ul>
+      <li>la politique RGPD</li>
+      <li>les CGU</li>
+      <li>les CGV</li>
+    </ul>
+
+    <label><input type="checkbox" id="check-rgpd"> J’accepte le RGPD</label><br><br>
+    <label><input type="checkbox" id="check-cgu"> J’accepte les CGU</label><br><br>
+    <label><input type="checkbox" id="check-cgv"> J’accepte les CGV</label><br><br>
+
+    <button id="btn-acces" disabled onclick="ouvrirAppli()">
+      Accéder à l’application
+    </button>
+  </div>
+</div>
+<!-- FIN ECRAN ACCES OBLIGATOIRE -->
+
+<div class="page"> 
   <div class="page">
     <div class="wrap">
 
@@ -4846,7 +4874,28 @@ return;
       })();
 
     })();
-  </script>   
+    <script>
+(function () {
+  const checks = [
+    document.getElementById("check-rgpd"),
+    document.getElementById("check-cgu"),
+    document.getElementById("check-cgv")
+  ];
+  const btn = document.getElementById("btn-acces");
+
+  function verifierCases() {
+    btn.disabled = !checks.every(c => c && c.checked);
+  }
+
+  checks.forEach(c => {
+    if (c) c.addEventListener("change", verifierCases);
+  });
+
+  window.ouvrirAppli = function () {
+    document.getElementById("consentement").style.display = "none";
+  };
+})();
+</script>    
 </body>
 </html>
 
