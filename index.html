@@ -4188,31 +4188,23 @@ return;
               </div>
             </div>
 
-            <div style="font-weight:900;margin-top:12px;">Suivi mensuel (démo — indicatif)</div>
-            <div class="box">
-              <div class="muted">Saisis un montant d’achats du mois (ex : total caisse) pour voir l’estimation.</div>
+      <div style="font-weight:900;margin-top:12px;">Facturation Bo’CitéArt</div>
+<div class="box">
+  <div style="font-weight:900;">Ce que le commerçant doit comprendre</div>
 
-              <div style="margin-top:10px;font-weight:900;">Montant achats (mois en cours)</div>
-              <input class="miniField" id="feeInputSales" type="number" min="0" step="0.01" placeholder="Ex : 1250.00" />
+  <ul style="margin:8px 0 0 18px;font-weight:800;">
+    <li>Chaque tranche complète de <strong>10 € d’achat enregistré</strong> génère <strong>0,18 €</strong> dus à Bo’CitéArt.</li>
+    <li>Le commerçant n’a pas à refaire sa comptabilité dans l’application.</li>
+    <li>Son chiffre d’affaires réel, sa caisse et sa TVA restent gérés par ses propres outils.</li>
+    <li>Bo’CitéArt suit uniquement les opérations utiles à son propre calcul de facturation.</li>
+    <li>Une <strong>facture mensuelle officielle</strong> est ensuite transmise via le système prévu (PSP ou facturation associée).</li>
+  </ul>
 
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="feeAddBtn" type="button">➕ Ajouter / mettre à jour</button>
-                <button class="choiceBtn" id="feeResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
-              </div>
-
-              <div class="box" style="margin-top:12px;background:var(--bg);">
-                <div style="font-weight:900;">Résumé (mois en cours)</div>
-                <div class="muted" style="margin-top:6px;">
-                  Achats saisis : <strong id="feeSalesOut">0,00 €</strong><br>
-                  Frais estimés Bo’CitéArt : <strong id="feeOut">0,00 €</strong><br>
-                  Règle : 0,18 € / tranche de 10 € (arrondi par tranches)
-                </div>
-              </div>
-
-              <div class="muted" style="margin-top:10px;">
-                (Démo) Données stockées localement sur ce téléphone.
-              </div>
-            </div>
+  <div class="muted" style="margin-top:10px;">
+    L’affichage présent dans l’application a pour seul but d’expliquer le mécanisme Bo’CitéArt.  
+    La facture mensuelle officielle fait foi.
+  </div>
+</div>
 
             <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
             <ul style="margin:8px 0 0 18px;font-weight:800;">
