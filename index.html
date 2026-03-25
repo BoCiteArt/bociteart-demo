@@ -900,7 +900,6 @@
 </div>
 <!-- FIN ECRAN ACCES OBLIGATOIRE -->
 
-<div class="page"> 
   <div class="page">
     <div class="wrap">
 
@@ -5022,7 +5021,7 @@ return;
     })();
   </script>
         
-  <script>
+<script>
 (function () {
   const consentement = document.getElementById("consentement");
   const checkRgpd = document.getElementById("check-rgpd");
@@ -5057,12 +5056,9 @@ return;
   function ouvrirLecture(tabName) {
     retourConsentementApresLecture = true;
 
-   if (consentement) {
-  consentement.style.display = "none";
-}
-if (typeof ouvrirInscription === "function") {
-  ouvrirInscription();
-}
+    if (consentement) {
+      consentement.style.display = "none";
+    }
 
     if (openLegalBtn) {
       openLegalBtn.click();
@@ -5133,6 +5129,9 @@ if (typeof ouvrirInscription === "function") {
       ) {
         if (consentement) {
           consentement.style.display = "none";
+        }
+        if (typeof ouvrirInscription === "function") {
+          ouvrirInscription();
         }
       } else {
         alert("Vous devez cocher les 3 cases avant d’accéder à l’application.");
