@@ -4887,32 +4887,37 @@ return;
 
     })();
     <script>
-(function () {
-  const checks = [
-    document.getElementById("check-rgpd"),
-    document.getElementById("check-cgu"),
-    document.getElementById("check-cgv")
-  ];
-  const btn = document.getElementById("btn-acces");
+document.addEventListener("DOMContentLoaded", function () {
 
-  function verifierCases() {
-    btn.disabled = !checks.every(c => c && c.checked);
+  const checkRgpd = document.getElementById("check-rgpd");
+  const checkCgu = document.getElementById("check-cgu");
+  const checkCgv = document.getElementById("check-cgv");
+  const btnAcces = document.getElementById("btn-acces");
+
+  function verifier() {
+    if (!checkRgpd || !checkCgu || !checkCgv || !btnAcces) return;
+
+    if (checkRgpd.checked && checkCgu.checked && checkCgv.checked) {
+      btnAcces.disabled = false;
+      btnAcces.style.opacity = "1";
+    } else {
+      btnAcces.disabled = true;
+      btnAcces.style.opacity = "0.5";
+    }
   }
 
-  checks.forEach(c => {
-    if (c) c.addEventListener("change", verifierCases);
+  checkRgpd?.addEventListener("change", verifier);
+  checkCgu?.addEventListener("change", verifier);
+  checkCgv?.addEventListener("change", verifier);
+
+  verifier();
+
+  btnAcces?.addEventListener("click", function () {
+    const bloc = document.getElementById("consentement");
+    if (bloc) bloc.style.display = "none";
   });
 
-    window.ouvrirDoc = function (doc) {
-    document.getElementById("consentement").style.display = "none";
-    if (typeof showTab === "function") {
-      showTab(doc);
-    }
-  };
-  window.ouvrirAppli = function () {
-    document.getElementById("consentement").style.display = "none";
-  };
-})();
+});
 </script>    
 </body>
 </html>
