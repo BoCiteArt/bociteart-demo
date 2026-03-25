@@ -1034,6 +1034,7 @@ function validerInscription() {
     }
   }
 
+  initAccountDateIfNeeded();
   alert("Compte créé (démo) ✅");
   fermerInscription();
 }
@@ -4215,23 +4216,38 @@ return;
 
             const CITIZEN_META_KEY = "bociteart_citizen_wallet_meta_v1";
 
-            function loadCitizenMeta(){
-              try{
-                const raw = localStorage.getItem(CITIZEN_META_KEY);
-                if(raw) return JSON.parse(raw);
-              }catch(e){}
-              const now = Date.now();
-              const oneYear = 365 * 24 * 60 * 60 * 1000;
-              return {
-                firstEarnTs: now,
-                expireTs: now + oneYear,
-                lastTx: null
-              };
-            }
+         function loadCitizenMeta(){
+  try{
+    const raw = localStorage.getItem(CITIZEN_META_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      return {
+        firstEarnTs: parsed.firstEarnTs || null,
+        expireTs: parsed.expireTs || null,
+        lastTx: parsed.lastTx || null,
+        thirtyDayAlertShown: parsed.thirtyDayAlertShown || false
+      };
+    }
+  }catch(e){}
+  return {
+    firstEarnTs: null,
+    expireTs: null,
+    lastTx: null,
+    thirtyDayAlertShown: false
+  };
+}
 
-            function saveCitizenMeta(obj){
-              try{ localStorage.setItem(CITIZEN_META_KEY, JSON.stringify(obj)); }catch(e){}
-            }
+          function initAccountDateIfNeeded(){
+  const meta = loadCitizenMeta();
+
+  if(!meta.firstEarnTs){
+    const now = Date.now();
+    meta.firstEarnTs = now;
+    meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+    meta.thirtyDayAlertShown = false;
+    saveCitizenMeta(meta);
+  }
+}
 
             function ensureCitizenMeta(){
               const wallet = loadCitizenWallet();
@@ -4284,26 +4300,39 @@ return;
             }
 
             function checkAnniversaryRule(){
-              const wallet = loadCitizenWallet();
-              const meta = ensureCitizenMeta();
-              const now = Date.now();
+  const wallet = loadCitizenWallet();
+  const meta = loadCitizenMeta();
+  const now = Date.now();
 
-              if(meta.expireTs && now >= meta.expireTs){
-                const current = Number(wallet.or || 0);
-                wallet.or = 12;
-                saveCitizenWallet(wallet);
+  if(!meta.firstEarnTs || !meta.expireTs){
+    return;
+  }
 
-                meta.firstEarnTs = now;
-                meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
-                meta.lastTx = {
-                  type:"anniversary_reset",
-                  previous:current,
-                  resulting:12,
-                  ts:now
-                };
-                saveCitizenMeta(meta);
-              }
-            }
+  const daysLeft = Math.ceil((meta.expireTs - now) / (24 * 60 * 60 * 1000));
+
+  if(daysLeft <= 30 && daysLeft > 0 && !meta.thirtyDayAlertShown){
+    alert("Attention : vous arrivez à 30 jours de votre date anniversaire.\n\nVous pouvez désormais échanger dès 20 bocitecoins.\n\nAprès cette date, si vos bocitecoins ne sont pas utilisés, votre compte reviendra automatiquement à 12 bocitecoins. Le reste sera perdu.");
+    meta.thirtyDayAlertShown = true;
+    saveCitizenMeta(meta);
+  }
+
+  if(now >= meta.expireTs){
+    const current = Number(wallet.or || 0);
+    wallet.or = 12;
+    saveCitizenWallet(wallet);
+
+    meta.firstEarnTs = now;
+    meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+    meta.thirtyDayAlertShown = false;
+    meta.lastTx = {
+      type:"anniversary_reset",
+      previous:current,
+      resulting:12,
+      ts:now
+    };
+    saveCitizenMeta(meta);
+  }
+}
 
             function refreshWalletUi(){
               checkAnniversaryRule();
@@ -4343,15 +4372,15 @@ return;
               }
 
               if(expiry){
-                const now = Date.now();
-                const daysLeft = daysBetween(now, meta.expireTs);
-                if(daysLeft <= 30){
-                  expiry.textContent = `Attention : il vous reste ${daysLeft} jour(s) avant la date anniversaire. Échange possible dès 20 bocitecoins sur cette période.`;
-                }else{
-                  expiry.textContent = `Date anniversaire du compte : dans ${daysLeft} jour(s).`;
-                }
-              }
-            }
+  const now = Date.now();
+  const daysLeft = daysBetween(now, meta.expireTs);
+
+  if(daysLeft <= 30){
+    expiry.textContent = `Attention : vous arrivez à 30 jours de votre date anniversaire. Vous pouvez désormais échanger dès 20 bocitecoins. Après cette date, si vos bocitecoins ne sont pas utilisés, votre compte reviendra automatiquement à 12 bocitecoins. Le reste sera perdu.`;
+  }else{
+    expiry.textContent = `Date anniversaire du compte : dans ${daysLeft} jour(s).`;
+  }
+}
 
             function setFirstEarnDateIfNeeded(coinsAdded){
               if(coinsAdded <= 0) return;
