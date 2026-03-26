@@ -3792,226 +3792,280 @@ return;
     </div>
   `);
 
-  setTimeout(()=>{
-    const input = $("mairieMsgInput");
-    const saveBtn = $("mairieMsgSave");
-    const resetBtn = $("mairieMsgReset");
+     setTimeout(()=>{
+  const input = $("mairieMsgInput");
+  const saveBtn = $("mairieMsgSave");
+  const resetBtn = $("mairieMsgReset");
 
-    const db = mairieLoad();
-    if(input){
-      input.value = (db.message && String(db.message).trim())
-        ? String(db.message).trim()
-        : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-    }
+  const db = mairieLoad();
+  if(input){
+    input.value = (db.message && String(db.message).trim())
+      ? String(db.message).trim()
+      : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+  }
 
-    if(saveBtn){
-      saveBtn.onclick = ()=>{
-        const msg = input ? String(input.value || "").trim() : "";
-        if(!msg){
-          alert("Saisis un message mairie.");
-          return;
-        }
-        const next = mairieLoad();
-        next.message = msg;
-        next.ts_fr = new Date().toLocaleString("fr-FR");
-        mairieSave(next);
+  if(saveBtn){
+    saveBtn.onclick = ()=>{
+      const msg = input ? String(input.value || "").trim() : "";
+      if(!msg){
+        alert("Saisis un message mairie.");
+        return;
+      }
+      const next = mairieLoad();
+      next.message = msg;
+      next.ts_fr = new Date().toLocaleString("fr-FR");
+      mairieSave(next);
+      renderMairieTicker();
+      alert("Message mairie enregistré (démo).");
+    };
+  }
+
+  if(resetBtn){
+    resetBtn.onclick = ()=>{
+      if(confirm("Réinitialiser le message mairie (démo) sur ce téléphone ?")){
+        mairieSave({});
         renderMairieTicker();
-        alert("Message mairie enregistré (démo).");
-      };
-    }
-
-    if(resetBtn){
-      resetBtn.onclick = ()=>{
-        if(confirm("Réinitialiser le message mairie (démo) sur ce téléphone ?")){
-          mairieSave({});
-          renderMairieTicker();
-          if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-          alert("Message mairie réinitialisé (démo).");
-        }
-      };
-    }
-
-    const MAIRIE_SCHOOL_HISTORY_KEY = "bociteart_mairie_school_history_v1";
-    const SCHOOL_STORE_KEY = "bociteart_school_v1";
-
-    function mairieHistoryLoad(){
-      try{
-        const raw = localStorage.getItem(MAIRIE_SCHOOL_HISTORY_KEY);
-        return raw ? JSON.parse(raw) : [];
-      }catch(e){
-        return [];
+        if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+        alert("Message mairie réinitialisé (démo).");
       }
+    };
+  }
+
+  const MAIRIE_SCHOOL_HISTORY_KEY = "bociteart_mairie_school_history_v1";
+  const SCHOOL_STORE_KEY = "bociteart_school_v1";
+
+  function mairieHistoryLoad(){
+    try{
+      const raw = localStorage.getItem(MAIRIE_SCHOOL_HISTORY_KEY);
+      return raw ? JSON.parse(raw) : [];
+    }catch(e){
+      return [];
     }
+  }
 
-    function mairieHistorySave(arr){
-      try{ localStorage.setItem(MAIRIE_SCHOOL_HISTORY_KEY, JSON.stringify(arr)); }catch(e){}
+  function mairieHistorySave(arr){
+    try{ localStorage.setItem(MAIRIE_SCHOOL_HISTORY_KEY, JSON.stringify(arr)); }catch(e){}
+  }
+
+  function schoolLoadLocal(){
+    try{
+      const raw = localStorage.getItem(SCHOOL_STORE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){
+      return {};
     }
+  }
 
-    function schoolLoadLocal(){
-      try{
-        const raw = localStorage.getItem(SCHOOL_STORE_KEY);
-        return raw ? JSON.parse(raw) : {};
-      }catch(e){
-        return {};
-      }
-    }
+  function schoolSaveLocal(obj){
+    try{ localStorage.setItem(SCHOOL_STORE_KEY, JSON.stringify(obj)); }catch(e){}
+  }
 
-    function schoolSaveLocal(obj){
-      try{ localStorage.setItem(SCHOOL_STORE_KEY, JSON.stringify(obj)); }catch(e){}
-    }
-
-    const schoolLoadM = (typeof loadSchoolWallet === "function")
-      ? loadSchoolWallet
-      : function(){
-          try{
-            const raw = localStorage.getItem("bociteart_school_wallet_v1");
-            return raw ? JSON.parse(raw) : { jaune:0 };
-          }catch(e){
-            return { jaune:0 };
-          }
-        };
-
-    const schoolSaveM = (typeof saveSchoolWallet === "function")
-      ? saveSchoolWallet
-      : function(obj){
-          try{
-            localStorage.setItem("bociteart_school_wallet_v1", JSON.stringify(obj));
-          }catch(e){}
-        };
-
-    const scanInput = $("mairieScanInput");
-    const readBtn = $("mairieReadBtn");
-    const validateBtn = $("mairieValidateBtn");
-    const historyBtn = $("mairieHistoryBtn");
-    const historyResetBtn = $("mairieHistoryResetBtn");
-    const readOut = $("mairieReadOut");
-
-    let currentPayload = null;
-
-    function renderPayload(payload){
-      if(!readOut) return;
-      readOut.innerHTML = window.boScanEngine.formatSchoolPayload(payload);
-    }
-
-    if(readBtn){
-      readBtn.onclick = ()=>{
-        const raw = scanInput ? scanInput.value.trim() : "";
-        if(!raw){
-          alert("Aucune lecture disponible.");
-          return;
-        }
-
+  const schoolLoadM = (typeof loadSchoolWallet === "function")
+    ? loadSchoolWallet
+    : function(){
         try{
-          const parsed = window.boScanEngine.parse(raw);
-
-          if(!window.boScanEngine.isSupported(parsed) || parsed.type !== "school_wallet"){
-            alert("Code non reconnu pour l’échange école → mairie.");
-            return;
-          }
-
-          currentPayload = parsed;
-          renderPayload(parsed);
+          const raw = localStorage.getItem("bociteart_school_wallet_v1");
+          return raw ? JSON.parse(raw) : { jaune:0 };
         }catch(e){
-          alert("Lecture invalide.");
+          return { jaune:0 };
         }
       };
-    }
 
-    if(validateBtn){
-      validateBtn.onclick = ()=>{
-        if(!currentPayload){
-          alert("Lis d’abord un code classe.");
+  const schoolSaveM = (typeof saveSchoolWallet === "function")
+    ? saveSchoolWallet
+    : function(obj){
+        try{
+          localStorage.setItem("bociteart_school_wallet_v1", JSON.stringify(obj));
+        }catch(e){}
+      };
+
+  const scanInput = $("mairieScanInput");
+  const readBtn = $("mairieReadBtn");
+  const validateBtn = $("mairieValidateBtn");
+  const historyBtn = $("mairieHistoryBtn");
+  const historyResetBtn = $("mairieHistoryResetBtn");
+  const exportBtn = $("mairieExportBtn");
+  const readOut = $("mairieReadOut");
+
+  let currentPayload = null;
+
+  function renderPayload(payload){
+    if(!readOut) return;
+    readOut.innerHTML = window.boScanEngine.formatSchoolPayload(payload);
+  }
+
+  if(readBtn){
+    readBtn.onclick = ()=>{
+      const raw = scanInput ? scanInput.value.trim() : "";
+      if(!raw){
+        alert("Aucune lecture disponible.");
+        return;
+      }
+
+      try{
+        const parsed = window.boScanEngine.parse(raw);
+
+        if(!window.boScanEngine.isSupported(parsed) || parsed.type !== "school_wallet"){
+          alert("Code non reconnu pour l’échange école → mairie.");
           return;
         }
 
-        const schoolDb = schoolLoadLocal();
-        const className = currentPayload.class || "Classe inconnue";
+        currentPayload = parsed;
+        renderPayload(parsed);
+      }catch(e){
+        alert("Lecture invalide.");
+      }
+    };
+  }
 
-        const solidarity = schoolDb.lastSolidarity && schoolDb.lastSolidarity.class === className
-          ? schoolDb.lastSolidarity
-          : { mode:"none", map:{} };
+  if(validateBtn){
+    validateBtn.onclick = ()=>{
+      if(!currentPayload){
+        alert("Lis d’abord un code classe.");
+        return;
+      }
 
-        const history = mairieHistoryLoad();
-        history.push({
-          class: className,
-          amount: Number(currentPayload.wallet || 0),
-          solidarity: solidarity,
-          ts: Date.now(),
-          ts_fr: new Date().toLocaleString("fr-FR")
-        });
-        mairieHistorySave(history);
+      const schoolDb = schoolLoadLocal();
+      const className = currentPayload.class || "Classe inconnue";
 
-        schoolSaveM({ jaune:0 });
+      const solidarity = schoolDb.lastSolidarity && schoolDb.lastSolidarity.class === className
+        ? schoolDb.lastSolidarity
+        : { mode:"none", map:{} };
 
-        if(!schoolDb.progress) schoolDb.progress = {};
-        schoolDb.progress[className] = {
-          totalValidatedDays: 0,
-          lastValidationDay: ""
-        };
-        schoolSaveLocal(schoolDb);
+      const history = mairieHistoryLoad();
+      history.push({
+        class: className,
+        amount: Number(currentPayload.wallet || 0),
+        solidarity: solidarity,
+        ts: Date.now(),
+        ts_fr: new Date().toLocaleString("fr-FR")
+      });
+      mairieHistorySave(history);
 
-        alert(
-          "Échange mairie validé.\n\n" +
-          "Classe : " + className + "\n" +
-          "Montant vidé : " + Number(currentPayload.wallet || 0) + " bocitecoins JAUNE\n\n" +
-          "Le wallet école a été remis à zéro et le cycle de progression a été réinitialisé."
+      schoolSaveM({ jaune:0 });
+
+      if(!schoolDb.progress) schoolDb.progress = {};
+      schoolDb.progress[className] = {
+        totalValidatedDays: 0,
+        lastValidationDay: ""
+      };
+      schoolSaveLocal(schoolDb);
+
+      alert(
+        "Échange mairie validé.\n\n" +
+        "Classe : " + className + "\n" +
+        "Montant vidé : " + Number(currentPayload.wallet || 0) + " bocitecoins JAUNE\n\n" +
+        "Le wallet école a été remis à zéro et le cycle de progression a été réinitialisé."
+      );
+
+      currentPayload = null;
+      if(scanInput) scanInput.value = "";
+      if(readOut) readOut.textContent = "Aucun code lu pour le moment.";
+    };
+  }
+
+  if(historyBtn){
+    historyBtn.onclick = ()=>{
+      const history = mairieHistoryLoad();
+
+      if(!history.length){
+        alert("Aucun historique mairie école pour le moment.");
+        return;
+      }
+
+      const grouped = {};
+      history.forEach((x)=>{
+        if(!grouped[x.class]){
+          grouped[x.class] = {
+            total:0,
+            count:0,
+            last:x.ts_fr
+          };
+        }
+        grouped[x.class].total += Number(x.amount || 0);
+        grouped[x.class].count += 1;
+        grouped[x.class].last = x.ts_fr;
+      });
+
+      const lines = Object.keys(grouped).sort().map((cls)=>{
+        const g = grouped[cls];
+        return (
+          cls +
+          "\n- échanges : " + g.count +
+          "\n- total vidé : " + g.total + " bocitecoins" +
+          "\n- dernier échange : " + g.last
         );
+      }).join("\n\n");
 
-        currentPayload = null;
-        if(scanInput) scanInput.value = "";
-        if(readOut) readOut.textContent = "Aucun code lu pour le moment.";
-      };
-    }
+      alert("Historique mairie école :\n\n" + lines);
+    };
+  }
 
-    if(historyBtn){
-      historyBtn.onclick = ()=>{
-        const history = mairieHistoryLoad();
+  if(historyResetBtn){
+    historyResetBtn.onclick = ()=>{
+      if(confirm("Réinitialiser l’historique mairie école (démo) ?")){
+        mairieHistorySave([]);
+        alert("Historique mairie école réinitialisé.");
+      }
+    };
+  }
 
-        if(!history.length){
-          alert("Aucun historique mairie école pour le moment.");
-          return;
+  if(exportBtn){
+    exportBtn.onclick = ()=>{
+      const history = mairieHistoryLoad();
+
+      if(!history.length){
+        alert("Aucun historique à exporter.");
+        return;
+      }
+
+      const grouped = {};
+      history.forEach((x)=>{
+        if(!grouped[x.class]){
+          grouped[x.class] = {
+            total:0,
+            count:0,
+            last:x.ts_fr,
+            solidarity:[]
+          };
         }
+        grouped[x.class].total += Number(x.amount || 0);
+        grouped[x.class].count += 1;
+        grouped[x.class].last = x.ts_fr;
 
-        const grouped = {};
-        history.forEach((x)=>{
-          if(!grouped[x.class]){
-            grouped[x.class] = {
-              total:0,
-              count:0,
-              last:x.ts_fr
-            };
-          }
-          grouped[x.class].total += Number(x.amount || 0);
-          grouped[x.class].count += 1;
-          grouped[x.class].last = x.ts_fr;
-        });
-
-        const lines = Object.keys(grouped).sort().map((cls)=>{
-          const g = grouped[cls];
-          return (
-            cls +
-            "\n- échanges : " + g.count +
-            "\n- total vidé : " + g.total + " bocitecoins" +
-            "\n- dernier échange : " + g.last
+        if(x.solidarity && x.solidarity.mode && x.solidarity.mode !== "none"){
+          grouped[x.class].solidarity.push(
+            "mode=" + x.solidarity.mode + " " + JSON.stringify(x.solidarity.map || {})
           );
-        }).join("\n\n");
-
-        alert("Historique mairie école :\n\n" + lines);
-      };
-    }
-
-    if(historyResetBtn){
-      historyResetBtn.onclick = ()=>{
-        if(confirm("Réinitialiser l’historique mairie école (démo) ?")){
-          mairieHistorySave([]);
-          alert("Historique mairie école réinitialisé.");
         }
-      };
-    }
-  },0);
+      });
 
-  return;
-}
+      const lines = Object.keys(grouped).sort().map((cls)=>{
+        const g = grouped[cls];
+        return (
+          "Classe : " + cls + "\n" +
+          "Nombre d’échanges : " + g.count + "\n" +
+          "Total vidé : " + g.total + " bocitecoins JAUNE\n" +
+          "Dernier échange : " + g.last + "\n" +
+          "Partage solidaire : " + (g.solidarity.length ? g.solidarity.join(" | ") : "aucun")
+        );
+      }).join("\n\n--------------------\n\n");
+
+      const exportText =
+        "HISTORIQUE MAIRIE — ÉCOLES\n" +
+        "Export du " + new Date().toLocaleString("fr-FR") + "\n\n" +
+        lines;
+
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(exportText)
+          .then(()=> alert("Historique exporté et copié dans le presse-papiers."))
+          .catch(()=> alert(exportText));
+      }else{
+        alert(exportText);
+      }
+    };
+  }
+},0);
         if(key === "commerces"){
           openModal("Commerces", `
             <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
@@ -4101,6 +4155,7 @@ return;
               <button class="choiceBtn" id="walletClientRedeem50" type="button">Échanger 50</button>
               <button class="choiceBtn" id="walletClientRedeem100" type="button">Échanger 100</button>
               <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser (démo)</button>
+              <button class="choiceBtn" id="mairieExportBtn" type="button" style="background:#fff;">Exporter historique</button>
             </div>
 
             <div style="font-weight:900;margin-top:14px;">Attribution commerçant → client (démo)</div>
