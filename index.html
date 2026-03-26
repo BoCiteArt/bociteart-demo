@@ -3535,7 +3535,6 @@ on($("ticker"), "click", openTicker);
   }
 
 },0);
-
             return;
           }
 
@@ -3713,187 +3712,160 @@ setTimeout(()=>{
 },0);
 return;
           }
-          if(key === "mairie" ){
-          openModal("Mairie", `
-            <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
+        if(key === "mairie" ){
+  openModal("Mairie", `
+    <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
 
-            <div class="box">
-              <strong>Cadre :</strong> la mairie peut diffuser des messages d’intérêt général gratuits, et des messages promotionnels payants au même tarif que les commerçants pour garantir l’équité.
-            </div>
+    <div class="box">
+      <strong>Cadre :</strong> la mairie peut diffuser des messages d’intérêt général gratuits,
+      et des messages promotionnels payants au même tarif que les commerçants.
+    </div>
 
-            <div style="font-weight:900;margin-top:10px;">Messages gratuits d’intérêt général</div>
-            <div class="box">
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Urgence, tempête, vigilance météo</li>
-                <li>Rue barrée / déviation</li>
-                <li>Risque de gel / température dangereuse</li>
-                <li>Information de sécurité publique</li>
-              </ul>
-              <div class="muted" style="margin-top:8px;">Ces messages restent gratuits pour la mairie.</div>
-            </div>
-            <div class="muted" style="margin-top:8px;">
-  Chaque entité (commerçant, association autorisée ou mairie) peut réserver une seule publicité par jour jusqu’à 16h00. À partir de 16h00, si des emplacements restent disponibles, des réservations supplémentaires sont possibles jusqu’à atteindre le maximum journalier de ${PUB_MAX_PER_DAY} publicités.
-</div>
+    <div style="font-weight:900;margin-top:10px;">Message bandeau mairie</div>
+    <input class="miniField" id="mairieMsgInput" placeholder="Message mairie" />
 
-            <div style="font-weight:900;margin-top:10px;">Messages payants mairie</div>
-            <div class="box">
-              <div class="muted">Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.</div>
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>1 publicité : 50 €</li>
-                <li>5 publicités : 200 €</li>
-              </ul>
-              <div class="muted" style="margin-top:8px;">Même prix que les commerçants pour éviter la jalousie et montrer l’exemple.</div>
-            </div>
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      <button class="choiceBtn" id="mairieMsgSave">Enregistrer</button>
+      <button class="choiceBtn" id="mairieMsgReset" style="background:#fff;">Reset</button>
+    </div>
 
-            <div class="box" style="margin-top:12px;">
-              <div style="font-weight:900;">Message bandeau mairie (démo)</div>
-              <div class="muted" style="margin-top:6px;">Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.</div>
+    <div style="font-weight:900;margin-top:14px;">Échange école → mairie</div>
 
-              <div style="margin-top:10px;font-weight:900;">Message</div>
-              <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
+    <div class="box">
+      <textarea id="mairieScanInput" class="miniField" style="min-height:120px;" placeholder="Coller le code école"></textarea>
 
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="mairieMsgSave" type="button">💾 Enregistrer</button>
-                <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">🧹 Réinitialiser</button>
-              </div>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button class="choiceBtn" id="mairieReadBtn">Lire</button>
+        <button class="choiceBtn" id="mairieValidateBtn">Valider échange</button>
+        <button class="choiceBtn" id="mairieHistoryBtn" style="background:#fff;">Historique</button>
+      </div>
 
-              <div class="muted" style="margin-top:10px;">(Démo) Enregistrement local sur ce téléphone.</div>
-            </div>
+      <div id="mairieReadOut" class="muted" style="margin-top:10px;">
+        Aucun code chargé
+      </div>
+    </div>
+  `);
 
-            <div style="font-weight:900;margin-top:14px;">Échange école → mairie (scan / brûlage)</div>
-            <div class="box">
-              <div class="muted">
-                La mairie peut scanner les bocitecoins école au moment de l’échange et les brûler automatiquement.
-                Le compteur école revient alors à zéro après remise du cadeau ou de la surprise.
-              </div>
+  setTimeout(()=>{
 
-              <div style="margin-top:10px;font-weight:900;">Wallet école détecté</div>
-              <div class="box" style="background:var(--bg);">
-                Solde école actuel : <strong id="mairieSchoolWalletBalance">0</strong> bocitecoin(s) JAUNES
-              </div>
+    const HISTORY_KEY = "bociteart_mairie_history_v1";
+    const SCHOOL_KEY = "bociteart_school_v1";
 
-              <div style="margin-top:10px;font-weight:900;">Type de surprise choisie par la mairie</div>
-              <select class="miniField" id="mairieSchoolGiftType">
-                <option value="materiel-scolaire">Matériel scolaire</option>
-                <option value="extra-scolaire">Surprise extra-scolaire</option>
-              </select>
+    function historyLoad(){
+      try{
+        const raw = localStorage.getItem(HISTORY_KEY);
+        return raw ? JSON.parse(raw) : [];
+      }catch(e){ return []; }
+    }
 
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="mairieSchoolScanBtn" type="button">Scanner wallet école</button>
-                <button class="choiceBtn" id="mairieSchoolBurnBtn" type="button">Brûler les bocitecoins école</button>
-              </div>
+    function historySave(arr){
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(arr));
+    }
 
-              <div class="muted" style="margin-top:10px;">
-                Si l’école a décidé auparavant de donner tout ou partie de ses bocitecoins à une association depuis son onglet,
-                la mairie respecte cette décision lors de l’échange.
-              </div>
-            </div>
-          `);
+    function schoolLoad(){
+      try{
+        const raw = localStorage.getItem(SCHOOL_KEY);
+        return raw ? JSON.parse(raw) : {};
+      }catch(e){ return {}; }
+    }
 
-          setTimeout(()=>{
-            const input = $("mairieMsgInput");
-            const saveBtn = $("mairieMsgSave");
-            const resetBtn = $("mairieMsgReset");
+    function schoolSave(obj){
+      localStorage.setItem(SCHOOL_KEY, JSON.stringify(obj));
+    }
 
-            const db = mairieLoad();
-            if(input){
-              input.value = (db.message && String(db.message).trim())
-                ? String(db.message).trim()
-                : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-            }
+    const scanInput = $("mairieScanInput");
+    const readBtn = $("mairieReadBtn");
+    const validateBtn = $("mairieValidateBtn");
+    const historyBtn = $("mairieHistoryBtn");
+    const readOut = $("mairieReadOut");
 
-            if(saveBtn){
-              saveBtn.onclick = ()=>{
-                const msg = input ? String(input.value || "").trim() : "";
-                if(!msg){
-                  alert("Saisis un message mairie.");
-                  return;
-                }
-                const next = mairieLoad();
-                next.message = msg;
-                next.ts_fr = new Date().toLocaleString("fr-FR");
-                mairieSave(next);
-                renderMairieTicker();
-                alert("Message mairie enregistré (démo).");
-              };
-            }
+    let current = null;
 
-            if(resetBtn){
-              resetBtn.onclick = ()=>{
-                if(confirm("Réinitialiser le message mairie (démo) sur ce téléphone ?")){
-                  mairieSave({});
-                  renderMairieTicker();
-                  if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-                  alert("Message mairie réinitialisé (démo).");
-                }
-              };
-            }
+    // 👉 LECTURE CODE
+    if(readBtn){
+      readBtn.onclick = ()=>{
+        try{
+          const parsed = JSON.parse(scanInput.value);
 
-            const schoolLoadM = (typeof loadSchoolWallet === "function")
-              ? loadSchoolWallet
-              : function(){
-                  try{
-                    const raw = localStorage.getItem("bociteart_school_wallet_v1");
-                    return raw ? JSON.parse(raw) : { jaune:0 };
-                  }catch(e){
-                    return { jaune:0 };
-                  }
-                };
+          if(parsed.type !== "school_wallet"){
+            alert("Code invalide");
+            return;
+          }
 
-            const schoolSaveM = (typeof saveSchoolWallet === "function")
-              ? saveSchoolWallet
-              : function(obj){
-                  try{
-                    localStorage.setItem("bociteart_school_wallet_v1", JSON.stringify(obj));
-                  }catch(e){}
-                };
+          current = parsed;
 
-            const schoolBal = $("mairieSchoolWalletBalance");
-            const schoolScanBtn = $("mairieSchoolScanBtn");
-            const schoolBurnBtn = $("mairieSchoolBurnBtn");
+          readOut.innerHTML =
+            "<strong>Classe :</strong> " + parsed.class +
+            "<br><strong>Wallet :</strong> " + parsed.wallet +
+            "<br><strong>Date :</strong> " + new Date(parsed.ts).toLocaleString();
 
-            const refreshSchool = ()=>{
-              const w = schoolLoadM();
-              if(schoolBal) schoolBal.textContent = Number(w.jaune || 0);
-            };
+        }catch(e){
+          alert("Erreur lecture code");
+        }
+      };
+    }
 
-            refreshSchool();
-
-            if(schoolScanBtn){
-              schoolScanBtn.onclick = ()=>{
-                refreshSchool();
-                alert("Scan du wallet école simulé (démo).");
-              };
-            }
-
-            if(schoolBurnBtn){
-              schoolBurnBtn.onclick = ()=>{
-                const w = schoolLoadM();
-                const total = Number(w.jaune || 0);
-                if(total <= 0){
-                  alert("Aucun bocitecoin école à brûler.");
-                  return;
-                }
-                if(confirm("Brûler les bocitecoins école et remettre le compteur à zéro ?")){
-                  w.jaune = 0;
-                  schoolSaveM(w);
-
-                  try{
-                    const raw = localStorage.getItem("bociteart_school_v1");
-                    const dbSchool = raw ? JSON.parse(raw) : {};
-                    if(dbSchool.progress) dbSchool.progress = {};
-                    localStorage.setItem("bociteart_school_v1", JSON.stringify(dbSchool));
-                  }catch(e){}
-
-                  refreshSchool();
-                  alert("Bocitecoins école brûlés, compteur remis à zéro (démo).");
-                }
-              };
-            }
-          },0);
+    // 👉 VALIDATION
+    if(validateBtn){
+      validateBtn.onclick = ()=>{
+        if(!current){
+          alert("Lire un code avant");
           return;
         }
 
+        const schoolDb = schoolLoad();
+
+        // historique
+        const hist = historyLoad();
+        hist.push({
+          class: current.class,
+          amount: current.wallet,
+          ts: Date.now(),
+          ts_fr: new Date().toLocaleString("fr-FR")
+        });
+        historySave(hist);
+
+        // reset wallet école
+        saveSchoolWallet({ jaune:0 });
+
+        // reset progression
+        if(!schoolDb.progress) schoolDb.progress = {};
+        schoolDb.progress[current.class] = {
+          totalValidatedDays:0,
+          lastValidationDay:""
+        };
+        schoolSave(schoolDb);
+
+        alert("Échange validé — compteur remis à zéro");
+
+        current = null;
+        scanInput.value = "";
+        readOut.textContent = "Aucun code chargé";
+      };
+    }
+
+    // 👉 HISTORIQUE
+    if(historyBtn){
+      historyBtn.onclick = ()=>{
+        const hist = historyLoad();
+
+        if(!hist.length){
+          alert("Aucun historique");
+          return;
+        }
+
+        const txt = hist.map(x =>
+          x.ts_fr + " | " + x.class + " | " + x.amount + " coins"
+        ).join("\n\n");
+
+        alert(txt);
+      };
+    }
+
+  },0);
+
+  return;
+}
         if(key === "commerces"){
           openModal("Commerces", `
             <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
