@@ -3231,11 +3231,10 @@ on($("ticker"), "click", openTicker);
                     ou cumulables pour un projet / une aide de classe selon le choix retenu.
                   </div>
                   <div class="walletActions">
-                    <button class="walletMini" id="walletSchoolInfo" type="button">Voir le cycle</button>
-                    <button class="walletMini" id="walletSchoolReset" type="button">Réinitialiser</button>
-                  </div>
-                </div>
-              </div>
+  <button class="walletMini" id="walletSchoolInfo" type="button">Voir le cycle</button>
+  <button class="walletMini" id="walletSchoolReset" type="button">Réinitialiser</button>
+  <button class="walletMini" id="schoolShowQr" type="button">Code classe</button>
+</div>
 
               <div style="font-weight:900;margin-top:14px;">Gestion École (démo)</div>
               <div class="box">
@@ -3470,13 +3469,14 @@ on($("ticker"), "click", openTicker);
               fillSchoolSelect();
               refreshSchoolWallet();
 
-              const schoolInfoBtn = $("walletSchoolInfo");
-              const schoolResetWallet = $("walletSchoolReset");
-              const btnPrev2 = $("schoolAssoPreview");
-              const btnSave2 = $("schoolAssoSave");
-              const btnReset2 = $("schoolResetBtn");
-              const btnWordSave2 = $("schoolSaveBtn");
-
+                 const schoolInfoBtn = $("walletSchoolInfo");
+                 const schoolResetWallet = $("walletSchoolReset");
+                 const schoolShowQr = $("schoolShowQr");
+                 const btnPrev2 = $("schoolAssoPreview");
+                 const btnSave2 = $("schoolAssoSave");
+                 const btnReset2 = $("schoolResetBtn");
+                 const btnWordSave2 = $("schoolSaveBtn");
+              
               if(schoolInfoBtn){
                 schoolInfoBtn.onclick = ()=>{
                   const db = schoolLoad();
@@ -3484,8 +3484,30 @@ on($("ticker"), "click", openTicker);
                   const idx = sel ? parseInt(sel.value,10) : 0;
                   const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
                   const prog = getSchoolProgress(db, cls);
+                    );
+                  };
+                 } 
+                  if(schoolShowQr){
+  schoolShowQr.onclick = ()=>{
+    const sel = $("schoolClassSelect");
+    const idx = sel ? parseInt(sel.value,10) : 0;
+    const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+    const wallet = Number(loadSchoolWallet().jaune || 0);
 
-                  alert(
+    const payload = {
+      type: "school_wallet",
+      class: cls,
+      wallet: wallet,
+      ts: Date.now()
+    };
+
+    alert(
+      "Code classe à scanner par la mairie :\n\n" +
+      JSON.stringify(payload, null, 2)
+    );
+  };
+}
+                alert(
                     "Classe : " + cls +
                     "\nMots validés dans le cycle : " + Number(prog.totalValidatedDays || 0) +
                     "\nCompteur actuel : " + Number(loadSchoolWallet().jaune || 0) + " bocitecoins" +
