@@ -4252,11 +4252,7 @@ function initAccountDateIfNeeded(){
     const now = Date.now();
     meta.firstEarnTs = now;
 
-    // TEST : 10 jours
-    meta.expireTs = now + (29* 24 * 60 * 60 * 1000);
-
-    // VERSION NORMALE À REMETTRE ENSUITE :
-    // meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+    meta.expireTs = now + ( 365 * 24 * 60 * 60 * 1000);
 
     meta.thirtyDayAlertShown = false;
     meta.tenDayAlertShown = false;
@@ -4347,11 +4343,7 @@ function checkAnniversaryRule(){
 
     meta.firstEarnTs = now;
 
-    // TEST : 10 jours
-    meta.expireTs = now + (29 * 24 * 60 * 60 * 1000);
-
-    // VERSION NORMALE À REMETTRE ENSUITE :
-    // meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+    meta.expireTs = now + ( 365 * 24 * 60 * 60 * 1000);
 
     meta.thirtyDayAlertShown = false;
     meta.tenDayAlertShown = false;
@@ -4472,11 +4464,7 @@ if(rst){
       saveCitizenMeta({
   firstEarnTs: now,
 
-  // TEST : 10 jours
-  expireTs: now + (29 * 24 * 60 * 60 * 1000),
-
-  // VERSION NORMALE À REMETTRE ENSUITE :
-  // expireTs: now + (365 * 24 * 60 * 60 * 1000),
+  expireTs: now + (365 * 24 * 60 * 60 * 1000),
 
   lastTx: null,
   thirtyDayAlertShown: false,
