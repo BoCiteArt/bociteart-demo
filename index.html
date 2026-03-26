@@ -3544,180 +3544,235 @@ if(schoolShowQr){
             return;
           }
 
-          if(key === "sport"){
-            openModal("Sport", `
-              <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
-              <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
+        if(key === "sport"){
+  openModal("Sport", `
+    <div style="font-weight:900;margin-bottom:8px;">Sport (structure)</div>
 
-              <div class="coinShowcase">
-                <div class="coinFace coinGreen" aria-hidden="true">
-                  <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
-                    <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-                      <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
-                    </svg>
-                  </div>
-                  <div class="coinInner coinInnerGreen">
-                    <div class="n">1</div>
-                    <div class="t">BoCitecoin</div>
-                  </div>
-                </div>
+    <div class="box">
+      <strong>Cadre :</strong> le club accumule des bocitecoins VERTS via ses actions.
+      Ils sont utilisés uniquement pour les besoins du club.
+    </div>
 
-                <div class="coinStack" aria-hidden="true">
-                  <div class="stackCoin stackGreen stack1">
-                    <div class="stackCoinStars" aria-hidden="true">
-                      <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                        <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="stackCoin stackGreen stack2">
-                    <div class="stackCoinStars" aria-hidden="true">
-                      <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                        <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="stackCoin stackGreen stack3">
-                    <div class="stackCoinStars" aria-hidden="true">
-                      <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                        <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
+    <!-- WALLET SPORT -->
+    <div class="walletBox" style="margin-top:12px;">
+      <div class="walletTitle">Wallet Club — Bocitecoins VERT</div>
+      <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
+      <div class="walletSub">
+        Bocitecoins du club, utilisables en mairie ou chez un commerçant partenaire.
+      </div>
 
-           <div class="walletBox">
-  <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
-  <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
-  <div class="walletSub">
-    Les BoCitecoins VERT sont gagnés par les actions sportives et citoyennes validées.
-    Ils servent uniquement à aider le club bénéficiaire, jamais une personne.
-  </div>
-  <div class="walletActions">
-    <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-    <button class="walletMini" id="walletSportPlus20" type="button">+20</button>
-    <button class="walletMini" id="walletSportInfo" type="button">Règle d’échange</button>
-    <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
-  </div>
-</div>
+      <div class="walletActions">
+        <button class="walletMini" id="sportShowQr">Code club</button>
+        <button class="walletMini" id="sportReset">Réinitialiser (démo)</button>
+      </div>
+    </div>
 
-<div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
-<div class="box">
-  <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
-  <div class="muted" style="margin-top:6px;">Cette fiche explique la logique de soutien trimestriel, la visibilité (bandeau 1 cm), et permet au commerçant de préparer sa ligne (nom + club + association + URL) avec option gras. Les aspects PSP / pièces / fiscalité sont renvoyés aux CGV/contrats.</div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-    <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
-  </div>
-</div>
+    <!-- VALIDATION -->
+    <div style="font-weight:900;margin-top:14px;">Validation d’échange club</div>
+    <div class="box">
 
-<div class="box" style="margin-top:12px;">
-  <div style="font-weight:900;">Règle Sport – BoCitecoins VERT</div>
-  <div class="muted" style="margin-top:8px;">
-    Les BoCitecoins VERT sont gagnés par les clubs ou groupes sportifs pour des actions sportives et citoyennes validées dans le cadre de Bo’CitéArt.
-    Ils servent uniquement à aider le club bénéficiaire, jamais une personne physique.
-  </div>
+      <div class="muted">
+        Cet échange est réalisé au nom du club.<br>
+        Il est enregistré, daté et consultable par la mairie.<br>
+        👉 Il doit être utilisé uniquement dans l’intérêt du club.
+      </div>
 
-  <ul style="margin:10px 0 0 18px;font-weight:800;">
-    <li>Échange autorisé uniquement par tranches de <strong>10</strong> ou <strong>20</strong> BoCitecoins VERT</li>
-    <li>L’avantage bénéficie au <strong>club</strong>, jamais au référent, éducateur ou particulier</li>
-    <li>Après validation, les coins utilisés sont <strong>brûlés</strong> du wallet sport</li>
-    <li>Maximum <strong>30 %</strong> de l’aide en nourriture ou boissons</li>
-    <li>Le reste doit profiter utilement au club : matériel, accessoires, soutien logistique ou besoin sportif</li>
-    <li>Aucune conversion en euros, aucun versement d’argent, aucun usage personnel</li>
-  </ul>
+      <div class="muted" style="margin-top:8px;">
+        Les bocitecoins appartiennent au club.  
+        Ils ne peuvent en aucun cas être utilisés à titre personnel.
+      </div>
 
-  <div class="muted" style="margin-top:8px;">
-    Exemples : 7 = impossible • 10 = possible • 15 = impossible • 20 = possible.
-  </div>
-</div>
+      <div class="muted" style="margin-top:8px;">
+        Utilisation : au besoin du club,  
+        échangés en mairie ou auprès d’un magasin partenaire.
+      </div>
 
-<div style="font-weight:900;margin-top:14px;">Cartes (structure)</div>
-<ul style="margin:8px 0 0 18px;font-weight:800;">
-  <li>Parcs • bois • parcours • salles</li>
-  <li>Carte plein écran + guidage</li>
-</ul>
+      <div class="muted" style="margin-top:8px;">
+        Une part peut être utilisée pour nourriture ou boissons  
+        <strong>(maximum 30%)</strong>.  
+        Le reste doit être consacré au matériel ou aux besoins du club.
+      </div>
 
-<div class="box" style="margin-top:10px;">
-  <div style="font-weight:900;">Carte bien-être</div>
-  <div class="muted" style="margin-top:6px;">
-    Ouvre la carte plein écran avec points utiles autour de vous.
-  </div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-    <button class="choiceBtn" id="openMap" type="button">Carte bien-être</button>
-  </div>
-</div>
+      <div class="muted" style="margin-top:8px;">
+        Chaque échange est tracé. La mairie peut consulter l’historique.
+      </div>
 
-<div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
-<div class="box">
-  Actuellement : 12 clubs engagés (démo)<br><br>
-  Chaque club peut proposer :<br>
-  • Rapport du week-end<br>
-  • Actions citoyennes<br>
-  • Partenariats commerçants<br>
-  • Soutien associatif
-</div>
-`);
+      <div class="muted" style="margin-top:8px;">
+        Une très petite partie du dispositif permet simplement d’assurer son bon fonctionnement.
+      </div>
 
-setTimeout(()=>{
-  const b = $("openSportFicheBtn");
-  const btnMap = $("openMap");
-  if(b) b.onclick = openSportFiche;
-  if(btnMap) btnMap.onclick = openWellbeingMap;
+      <div style="margin-top:10px;">
+        <button class="choiceBtn" id="sportContinue">Continuer l’échange</button>
+      </div>
+    </div>
 
-  const refresh = ()=>{
-    const out = $("sportCoinBalance");
-    if(out) out.textContent = Number(loadSportWallet().vert || 0);
-  };
-  refresh();
+    <!-- SCAN / ÉCHANGE -->
+    <div style="font-weight:900;margin-top:14px;">Échange club → commerçant / mairie</div>
+    <div class="box">
 
-  const p10 = $("walletSportPlus10");
-  const p20 = $("walletSportPlus20");
-  const infoBtn = $("walletSportInfo");
-  const rst = $("walletSportReset");
+      <textarea id="sportScanInput" class="miniField" style="min-height:100px;" placeholder="Lecture du code club"></textarea>
 
-  if(p10){
-    p10.onclick = ()=>{
-      const w = loadSportWallet();
-      w.vert = Number(w.vert || 0) + 10;
-      saveSportWallet(w);
-      refresh();
-    };
-  }
+      <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+        <button class="choiceBtn" id="sportReadBtn">Lire</button>
+        <button class="choiceBtn" id="sportValidateBtn">Valider échange</button>
+        <button class="choiceBtn" id="sportHistoryBtn" style="background:#fff;">Historique</button>
+      </div>
 
-  if(p20){
-    p20.onclick = ()=>{
-      const w = loadSportWallet();
-      w.vert = Number(w.vert || 0) + 20;
-      saveSportWallet(w);
-      refresh();
-    };
-  }
+      <div class="box" style="margin-top:10px;background:var(--bg);">
+        <div id="sportReadOut">Aucun code lu</div>
+      </div>
 
-  if(infoBtn){
-    infoBtn.onclick = ()=>{
-      alert(
-        "BoCitecoins VERT — règle d’échange\n\n" +
-        "- Gagnés par des actions sportives et citoyennes validées\n" +
-        "- Réservés au club, jamais à une personne\n" +
-        "- Échange uniquement par 10 ou 20\n" +
-        "- Coins brûlés après usage\n" +
-        "- Maximum 30 % en nourriture/boissons\n" +
-        "- Le reste doit servir utilement au club"
-      );
-    };
-  }
+    </div>
+  `);
 
-  if(rst){
-    rst.onclick = ()=>{
-      if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
-        saveSportWallet({ vert:0 });
-        refresh();
-      }
-    };
-  }
-},0);
-return;
+  setTimeout(()=>{
+
+    const SPORT_KEY = "bociteart_sport_wallet_v1";
+    const SPORT_HISTORY_KEY = "bociteart_sport_history_v1";
+
+    function loadSport(){
+      try{
+        return JSON.parse(localStorage.getItem(SPORT_KEY)) || { vert:0 };
+      }catch(e){ return { vert:0 }; }
+    }
+
+    function saveSport(obj){
+      localStorage.setItem(SPORT_KEY, JSON.stringify(obj));
+    }
+
+    function loadHistory(){
+      try{
+        return JSON.parse(localStorage.getItem(SPORT_HISTORY_KEY)) || [];
+      }catch(e){ return []; }
+    }
+
+    function saveHistory(arr){
+      localStorage.setItem(SPORT_HISTORY_KEY, JSON.stringify(arr));
+    }
+
+    const balance = $("sportCoinBalance");
+    const showQr = $("sportShowQr");
+    const reset = $("sportReset");
+
+    const scanInput = $("sportScanInput");
+    const readBtn = $("sportReadBtn");
+    const validateBtn = $("sportValidateBtn");
+    const historyBtn = $("sportHistoryBtn");
+    const readOut = $("sportReadOut");
+
+    let currentPayload = null;
+
+    function refresh(){
+      const w = loadSport();
+      if(balance) balance.textContent = Number(w.vert || 0);
+    }
+
+    refresh();
+
+    // QR CLUB
+    if(showQr){
+      showQr.onclick = ()=>{
+        const w = loadSport();
+
+        const payload = {
+          type:"sport_wallet",
+          club:"Club X",
+          wallet:Number(w.vert || 0),
+          ts:Date.now()
+        };
+
+        alert("Code club :\n\n" + JSON.stringify(payload, null, 2));
+      };
+    }
+
+    // RESET
+    if(reset){
+      reset.onclick = ()=>{
+        if(confirm("Réinitialiser le wallet sport ?")){
+          saveSport({ vert:0 });
+          refresh();
+        }
+      };
+    }
+
+    // LECTURE
+    if(readBtn){
+      readBtn.onclick = ()=>{
+        try{
+          const parsed = JSON.parse(scanInput.value);
+
+          if(parsed.type !== "sport_wallet"){
+            alert("Code invalide.");
+            return;
           }
+
+          currentPayload = parsed;
+
+          readOut.innerHTML =
+            "Club : " + parsed.club +
+            "<br>Montant : " + parsed.wallet + " bocitecoins";
+
+        }catch(e){
+          alert("Lecture impossible.");
+        }
+      };
+    }
+
+    // VALIDATION
+    if(validateBtn){
+      validateBtn.onclick = ()=>{
+        if(!currentPayload){
+          alert("Lis d’abord un code.");
+          return;
+        }
+
+        const history = loadHistory();
+
+        history.push({
+          club: currentPayload.club,
+          amount: currentPayload.wallet,
+          ts: Date.now(),
+          ts_fr: new Date().toLocaleString("fr-FR")
+        });
+
+        saveHistory(history);
+
+        saveSport({ vert:0 });
+
+        alert("Échange validé pour le club.\nWallet remis à zéro.");
+
+        currentPayload = null;
+        scanInput.value = "";
+        readOut.textContent = "Aucun code lu";
+
+        refresh();
+      };
+    }
+
+    // HISTORIQUE
+    if(historyBtn){
+      historyBtn.onclick = ()=>{
+        const h = loadHistory();
+
+        if(!h.length){
+          alert("Aucun historique.");
+          return;
+        }
+
+        const txt = h.map(x =>
+          x.club + "\n" +
+          x.amount + " bocitecoins\n" +
+          x.ts_fr
+        ).join("\n\n");
+
+        alert(txt);
+      };
+    }
+
+  },0);
+
+  return;
+}
 
    if(key === "mairie"){
   openModal("Mairie", `
