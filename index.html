@@ -3364,322 +3364,177 @@ on($("ticker"), "click", openTicker);
               </div>
             `);
 
-            setTimeout(()=>{
-              const text = "Je suis ravi aujourd’hui.";
-              const btnC = $("playChild");
-              const btnF = $("playFemale");
-              if(btnC) btnC.onclick = ()=> speak(text, "child");
-              if(btnF) btnF.onclick = ()=> speak(text, "female");
+          setTimeout(()=>{
+  const text = "Je suis ravi aujourd’hui.";
+  const btnC = $("playChild");
+  const btnF = $("playFemale");
+  if(btnC) btnC.onclick = ()=> speak(text, "child");
+  if(btnF) btnF.onclick = ()=> speak(text, "female");
 
-              const SCHOOL_CLASSES = [
-                "École X — CM2 A",
-                "École X — CM2 B",
-                "École Y — CM2 A",
-                "École Y — CM2 B",
-                "École Z — CM2"
-              ];
-              const SCHOOL_STORE_KEY = "bociteart_school_v1";
+  const SCHOOL_CLASSES = [
+    "École X — CM2 A",
+    "École X — CM2 B",
+    "École Y — CM2 A",
+    "École Y — CM2 B",
+    "École Z — CM2"
+  ];
 
-              function schoolLoad(){
-                try{
-                  const raw = localStorage.getItem(SCHOOL_STORE_KEY);
-                  return raw ? JSON.parse(raw) : {};
-                }catch(e){
-                  return {};
-                }
-              }
+  const SCHOOL_STORE_KEY = "bociteart_school_v1";
 
-              function schoolSave(obj){
-                try{ localStorage.setItem(SCHOOL_STORE_KEY, JSON.stringify(obj)); }catch(e){}
-              }
+  function schoolLoad(){
+    try{
+      const raw = localStorage.getItem(SCHOOL_STORE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){
+      return {};
+    }
+  }
 
-              function fillSchoolSelect(){
-                const sel = $("schoolClassSelect");
-                if(!sel) return;
-                sel.innerHTML = SCHOOL_CLASSES.map((x,i)=> `<option value="${i}">${x}</option>`).join("");
-              }
+  function schoolSave(obj){
+    try{ localStorage.setItem(SCHOOL_STORE_KEY, JSON.stringify(obj)); }catch(e){}
+  }
 
-              function getDonMode(){
-                const r = document.querySelector('input[name="donMode"]:checked');
-                return r ? r.value : "none";
-              }
-
-              function getAssoSelection(){
-                return Array.from(document.querySelectorAll(".assoPick"))
-                  .filter(cb => cb.checked)
-                  .map(cb => cb.getAttribute("data-asso"));
-              }
-
-              function getAssoPctMap(){
-                const map = {};
-                Array.from(document.querySelectorAll(".assoPct")).forEach((inp)=>{
-                  const a = inp.getAttribute("data-asso");
-                  const v = parseInt(inp.value || "0", 10);
-                  map[a] = Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 0;
-                });
-                return map;
-              }
-
-              function normalizeForFull(picks){
-                if(!picks.length) return { ok:false, msg:"Choisis au moins 1 association." };
-                const pct = Math.floor(100 / picks.length);
-                const rem = 100 - (pct * picks.length);
-                const out = {};
-                picks.forEach((a,idx)=> out[a] = pct + (idx === 0 ? rem : 0));
-                return { ok:true, pctMap:out };
-              }
-
-              function validatePartial(picks, pctMap){
-                if(!picks.length) return { ok:false, msg:"Choisis au moins 1 association." };
-                let sum = 0;
-                picks.forEach(a => sum += (pctMap[a] || 0));
-                if(sum !== 100){
-                  return { ok:false, msg:`En don partiel, le total doit faire 100%. (Actuel : ${sum}%)` };
-                }
-                return { ok:true };
-              }
-
-              function refreshSchoolWallet(){
-                const out = $("schoolCoinBalance");
-                if(out) out.textContent = Number(loadSchoolWallet().jaune || 0);
-              }
-
-              function getTodayKey(){
-                return new Date().toISOString().slice(0,10);
-              }
-
-              function getSchoolProgress(db, cls){
-                if(!db.progress) db.progress = {};
-                if(!db.progress[cls]){
-                  db.progress[cls] = {
-                    totalValidatedDays:0,
-                    lastValidationDay:""
-                  };
-                }
-                return db.progress[cls];
-              }
-
-              function schoolTargetValue(totalValidatedDays){
-                if(totalValidatedDays === 15) return 50;
-                if(totalValidatedDays === 18) return 80;
-                if(totalValidatedDays === 22) return 100;
-                return null;
-              }
-
-              fillSchoolSelect();
-              refreshSchoolWallet();
-
-                 const schoolInfoBtn = $("walletSchoolInfo");
-                 const schoolResetWallet = $("walletSchoolReset");
-                 const schoolShowQr = $("schoolShowQr");
-                 const btnPrev2 = $("schoolAssoPreview");
-                 const btnSave2 = $("schoolAssoSave");
-                 const btnReset2 = $("schoolResetBtn");
-                 const btnWordSave2 = $("schoolSaveBtn");
-              
-              if(schoolInfoBtn){
-                schoolInfoBtn.onclick = ()=>{
-                  const db = schoolLoad();
-                  const sel = $("schoolClassSelect");
-                  const idx = sel ? parseInt(sel.value,10) : 0;
-                  const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-                  const prog = getSchoolProgress(db, cls);
-                    );
-                  };
-                 } 
-                  if(schoolShowQr){
-  schoolShowQr.onclick = ()=>{
+  function fillSchoolSelect(){
     const sel = $("schoolClassSelect");
-    const idx = sel ? parseInt(sel.value,10) : 0;
-    const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-    const wallet = Number(loadSchoolWallet().jaune || 0);
+    if(!sel) return;
+    sel.innerHTML = SCHOOL_CLASSES.map((x,i)=> `<option value="${i}">${x}</option>`).join("");
+  }
 
-    const payload = {
-      type: "school_wallet",
-      class: cls,
-      wallet: wallet,
-      ts: Date.now()
+  function refreshSchoolWallet(){
+    const out = $("schoolCoinBalance");
+    if(out) out.textContent = Number(loadSchoolWallet().jaune || 0);
+  }
+
+  function getTodayKey(){
+    return new Date().toISOString().slice(0,10);
+  }
+
+  function getSchoolProgress(db, cls){
+    if(!db.progress) db.progress = {};
+    if(!db.progress[cls]){
+      db.progress[cls] = {
+        totalValidatedDays:0,
+        lastValidationDay:""
+      };
+    }
+    return db.progress[cls];
+  }
+
+  function schoolTargetValue(totalValidatedDays){
+    if(totalValidatedDays === 15) return 50;
+    if(totalValidatedDays === 18) return 80;
+    if(totalValidatedDays === 22) return 100;
+    return null;
+  }
+
+  fillSchoolSelect();
+  refreshSchoolWallet();
+
+  const schoolInfoBtn = $("walletSchoolInfo");
+  const schoolResetWallet = $("walletSchoolReset");
+  const schoolShowQr = $("schoolShowQr");
+  const btnWordSave2 = $("schoolSaveBtn");
+
+  // 👉 INFO CLASSE
+  if(schoolInfoBtn){
+    schoolInfoBtn.onclick = ()=>{
+      const db = schoolLoad();
+      const sel = $("schoolClassSelect");
+      const idx = sel ? parseInt(sel.value,10) : 0;
+      const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+      const prog = getSchoolProgress(db, cls);
+
+      alert(
+        "Classe : " + cls +
+        "\nMots validés : " + Number(prog.totalValidatedDays || 0) +
+        "\nWallet : " + Number(loadSchoolWallet().jaune || 0) + " bocitecoins"
+      );
     };
+  }
 
-    alert(
-      "Code classe à scanner par la mairie :\n\n" +
-      JSON.stringify(payload, null, 2)
-    );
-  };
-}
-                alert(
-                    "Classe : " + cls +
-                    "\nMots validés dans le cycle : " + Number(prog.totalValidatedDays || 0) +
-                    "\nCompteur actuel : " + Number(loadSchoolWallet().jaune || 0) + " bocitecoins" +
-                    "\n\nPaliers :" +
-                    "\n- 15e mot => 50" +
-                    "\n- 18e mot => 80" +
-                    "\n- 22e mot => 100"
-                  );
-                };
-              }
+  // 👉 CODE CLASSE (SCAN MAIRIE)
+  if(schoolShowQr){
+    schoolShowQr.onclick = ()=>{
+      const sel = $("schoolClassSelect");
+      const idx = sel ? parseInt(sel.value,10) : 0;
+      const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+      const wallet = Number(loadSchoolWallet().jaune || 0);
 
-              if(schoolResetWallet){
-                schoolResetWallet.onclick = ()=>{
-                  if(confirm("Réinitialiser le compteur école et le cycle de progression (démo) ?")){
-                    saveSchoolWallet({ jaune:0 });
-                    const db = schoolLoad();
-                    if(db.progress) db.progress = {};
-                    schoolSave(db);
-                    refreshSchoolWallet();
-                  }
-                };
-              }
+      const payload = {
+        type: "school_wallet",
+        class: cls,
+        wallet: wallet,
+        ts: Date.now()
+      };
 
-              if(btnPrev2){
-                btnPrev2.onclick = ()=>{
-                  const mode = getDonMode();
-                  const picks = getAssoSelection();
-                  const pctMap = getAssoPctMap();
+      alert(
+        "Code classe à scanner par la mairie :\n\n" +
+        JSON.stringify(payload, null, 2)
+      );
+    };
+  }
 
-                  if(mode === "none"){
-                    alert("Aperçu : Pas de partage solidaire (tout pour matériel scolaire).");
-                    return;
-                  }
+  // 👉 RESET WALLET ÉCOLE
+  if(schoolResetWallet){
+    schoolResetWallet.onclick = ()=>{
+      if(confirm("Réinitialiser le compteur école ?")){
+        saveSchoolWallet({ jaune:0 });
+        const db = schoolLoad();
+        if(db.progress) db.progress = {};
+        schoolSave(db);
+        refreshSchoolWallet();
+      }
+    };
+  }
 
-                  if(mode === "full"){
-                    const norm = normalizeForFull(picks);
-                    if(!norm.ok){
-                      alert(norm.msg);
-                      return;
-                    }
-                    const lines = Object.entries(norm.pctMap).map(([a,p]) => `- ${a} : ${p}%`).join("\n");
-                    alert("Aperçu (don total, partage égal)\n" + lines);
-                    return;
-                  }
+  // 👉 VALIDATION MOT DU JOUR
+  if(btnWordSave2){
+    btnWordSave2.onclick = ()=>{
+      const input = $("schoolWordInput");
+      const sel = $("schoolClassSelect");
+      const idx = sel ? parseInt(sel.value,10) : 0;
+      const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+      const w = input ? (input.value || "").trim() : "";
+      const today = getTodayKey();
 
-                  const v = validatePartial(picks, pctMap);
-                  if(!v.ok){
-                    alert(v.msg);
-                    return;
-                  }
-                  const lines = picks.map(a => `- ${a} : ${pctMap[a] || 0}%`).join("\n");
-                  alert("Aperçu (don partiel)\n" + lines);
-                };
-              }
+      if(!w){
+        alert("Saisis le mot du jour.");
+        return;
+      }
 
-              if(btnSave2){
-                btnSave2.onclick = ()=>{
-                  const mode = getDonMode();
-                  const picks = getAssoSelection();
-                  const pctMap = getAssoPctMap();
-                  const sel = $("schoolClassSelect");
-                  const idx = sel ? parseInt(sel.value,10) : 0;
-                  const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+      const db = schoolLoad();
+      const prog = getSchoolProgress(db, cls);
 
-                  let finalMap = {};
+      if(prog.lastValidationDay === today){
+        alert("Déjà validé aujourd’hui.");
+        return;
+      }
 
-                  if(mode === "none"){
-                    finalMap = {};
-                  }else if(mode === "full"){
-                    const norm = normalizeForFull(picks);
-                    if(!norm.ok){
-                      alert(norm.msg);
-                      return;
-                    }
-                    finalMap = norm.pctMap;
-                  }else{
-                    const v = validatePartial(picks, pctMap);
-                    if(!v.ok){
-                      alert(v.msg);
-                      return;
-                    }
-                    picks.forEach(a => finalMap[a] = pctMap[a] || 0);
-                  }
+      prog.totalValidatedDays++;
+      prog.lastValidationDay = today;
 
-                  const db = schoolLoad();
-                  db.lastSolidarity = {
-                    class:cls,
-                    mode,
-                    map:finalMap,
-                    ts_fr:new Date().toLocaleString("fr-FR"),
-                    note:"Décision de partage (démo, stockage local)"
-                  };
-                  schoolSave(db);
-                  alert("Enregistré (démo) pour : " + cls);
-                };
-              }
+      let currentValue = Number(loadSchoolWallet().jaune || 0);
+      const target = schoolTargetValue(prog.totalValidatedDays);
 
-              if(btnReset2){
-                btnReset2.onclick = ()=>{
-                  if(confirm("Réinitialiser les données École (démo) sur ce téléphone ?")){
-                    localStorage.removeItem(SCHOOL_STORE_KEY);
-                    saveSchoolWallet({ jaune:0 });
-                    refreshSchoolWallet();
-                    alert("Réinitialisé (démo).");
-                  }
-                };
-              }
+      if(target !== null){
+        currentValue = target;
+      }else{
+        currentValue += 1;
+      }
 
-              if(btnWordSave2){
-                btnWordSave2.onclick = ()=>{
-                  const input = $("schoolWordInput");
-                  const sel = $("schoolClassSelect");
-                  const idx = sel ? parseInt(sel.value,10) : 0;
-                  const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-                  const w = input ? (input.value || "").trim() : "";
-                  const today = getTodayKey();
+      saveSchoolWallet({ jaune:currentValue });
+      schoolSave(db);
+      refreshSchoolWallet();
 
-                  if(!w){
-                    alert("Saisis le mot du jour.");
-                    return;
-                  }
-                  if(/[<>]/.test(w)){
-                    alert("Texte invalide.");
-                    return;
-                  }
+      alert(
+        "Validé : " + cls +
+        "\nJour n°" + prog.totalValidatedDays +
+        "\nTotal : " + currentValue + " bocitecoins"
+      );
+    };
+  }
 
-                  const db = schoolLoad();
-                  const prog = getSchoolProgress(db, cls);
-
-                  if(prog.lastValidationDay === today){
-                    alert("Le mot du jour a déjà été validé aujourd’hui pour cette classe.");
-                    return;
-                  }
-
-                  db.lastWord = {
-                    class:cls,
-                    text:w,
-                    ts_fr:new Date().toLocaleString("fr-FR"),
-                    note:"Mot du jour (démo, stockage local)"
-                  };
-
-                  prog.totalValidatedDays = Number(prog.totalValidatedDays || 0) + 1;
-                  prog.lastValidationDay = today;
-
-                  const currentWallet = loadSchoolWallet();
-                  let currentValue = Number(currentWallet.jaune || 0);
-                  const target = schoolTargetValue(prog.totalValidatedDays);
-
-                  if(target !== null){
-                    currentValue = target;
-                  }else{
-                    currentValue += 1;
-                  }
-
-                  saveSchoolWallet({ jaune:currentValue });
-                  schoolSave(db);
-                  refreshSchoolWallet();
-
-                  let message =
-                    "Validé (démo) : " + cls +
-                    "\n« " + w + " »" +
-                    "\nJour validé n°" + prog.totalValidatedDays +
-                    "\nCompteur actuel : " + currentValue + " bocitecoins JAUNE";
-
-                  if(target !== null){
-                    message += "\nPalier atteint : compteur porté à " + target + " bocitecoins.";
-                  }
-
-                  alert(message);
-                };
-              }
-            }, 0);
+},0);
 
             return;
           }
