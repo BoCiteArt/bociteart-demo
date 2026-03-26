@@ -4225,7 +4225,8 @@ function loadCitizenMeta(){
         firstEarnTs: parsed.firstEarnTs || null,
         expireTs: parsed.expireTs || null,
         lastTx: parsed.lastTx || null,
-        thirtyDayAlertShown: parsed.thirtyDayAlertShown || false
+        thirtyDayAlertShown: parsed.thirtyDayAlertShown || false,
+        tenDayAlertShown: parsed.tenDayAlertShown || false
       };
     }
   }catch(e){}
@@ -4233,7 +4234,8 @@ function loadCitizenMeta(){
     firstEarnTs: null,
     expireTs: null,
     lastTx: null,
-    thirtyDayAlertShown: false
+    thirtyDayAlertShown: false,
+    tenDayAlertShown: false
   };
 }
 
@@ -4249,8 +4251,15 @@ function initAccountDateIfNeeded(){
   if(!meta.firstEarnTs){
     const now = Date.now();
     meta.firstEarnTs = now;
-    meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+
+    // TEST : 10 jours
+    meta.expireTs = now + (10 * 24 * 60 * 60 * 1000);
+
+    // VERSION NORMALE À REMETTRE ENSUITE :
+    // meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+
     meta.thirtyDayAlertShown = false;
+    meta.tenDayAlertShown = false;
     saveCitizenMeta(meta);
   }
 }
@@ -4311,7 +4320,7 @@ function checkAnniversaryRule(){
 
   const daysLeft = Math.ceil((meta.expireTs - now) / (24 * 60 * 60 * 1000));
 
-  if(daysLeft <= 30 && daysLeft > 0 && !meta.thirtyDayAlertShown){
+  if(daysLeft <= 30 && daysLeft > 10 && !meta.thirtyDayAlertShown){
     alert(
       "Attention : vous arrivez à 30 jours de votre date anniversaire.\n\n" +
       "Vous pouvez désormais échanger dès 20 bocitecoins.\n\n" +
@@ -4321,14 +4330,31 @@ function checkAnniversaryRule(){
     saveCitizenMeta(meta);
   }
 
+  if(daysLeft <= 10 && daysLeft > 0 && !meta.tenDayAlertShown){
+    alert(
+      "Rappel important : il vous reste 10 jours avant votre date anniversaire.\n\n" +
+      "Profitez maintenant de votre possibilité d’échanger dès 20 bocitecoins.\n\n" +
+      "Après cette date, votre compte reviendra automatiquement à 12 bocitecoins et le reste sera perdu."
+    );
+    meta.tenDayAlertShown = true;
+    saveCitizenMeta(meta);
+  }
+
   if(now >= meta.expireTs){
     const current = Number(wallet.or || 0);
     wallet.or = 12;
     saveCitizenWallet(wallet);
 
     meta.firstEarnTs = now;
-    meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+
+    // TEST : 10 jours
+    meta.expireTs = now + (10 * 24 * 60 * 60 * 1000);
+
+    // VERSION NORMALE À REMETTRE ENSUITE :
+    // meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
+
     meta.thirtyDayAlertShown = false;
+    meta.tenDayAlertShown = false;
     meta.lastTx = {
       type:"anniversary_reset",
       previous:current,
@@ -4338,7 +4364,6 @@ function checkAnniversaryRule(){
     saveCitizenMeta(meta);
   }
 }
-
 function refreshWalletUi(){
   checkAnniversaryRule();
 
@@ -4445,11 +4470,18 @@ if(rst){
       saveCitizenWallet({ or:0 });
       const now = Date.now();
       saveCitizenMeta({
-        firstEarnTs: now,
-        expireTs: now + (365 * 24 * 60 * 60 * 1000),
-        lastTx: null,
-        thirtyDayAlertShown: false
-      });
+  firstEarnTs: now,
+
+  // TEST : 10 jours
+  expireTs: now + (10 * 24 * 60 * 60 * 1000),
+
+  // VERSION NORMALE À REMETTRE ENSUITE :
+  // expireTs: now + (365 * 24 * 60 * 60 * 1000),
+
+  lastTx: null,
+  thirtyDayAlertShown: false,
+  tenDayAlertShown: false
+});
       refreshWalletUi();
     }
   };
