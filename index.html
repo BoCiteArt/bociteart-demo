@@ -3793,7 +3793,7 @@ return;
     </div>
   `);
 
-    if(key === "mairie" ){
+   if(key === "mairie"){
   openModal("Mairie", `
     <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
 
@@ -4077,13 +4077,13 @@ return;
           const g = grouped[cls];
           return (
             cls +
-            "\\n- échanges : " + g.count +
-            "\\n- total vidé : " + g.total + " bocitecoins" +
-            "\\n- dernier échange : " + g.last
+            "\n- échanges : " + g.count +
+            "\n- total vidé : " + g.total + " bocitecoins" +
+            "\n- dernier échange : " + g.last
           );
-        }).join("\\n\\n");
+        }).join("\n\n");
 
-        alert("Historique mairie école :\\n\\n" + lines);
+        alert("Historique mairie école :\n\n" + lines);
       };
     }
 
@@ -4129,17 +4129,17 @@ return;
         const lines = Object.keys(grouped).sort().map((cls)=>{
           const g = grouped[cls];
           return (
-            "Classe : " + cls + "\\n" +
-            "Nombre d’échanges : " + g.count + "\\n" +
-            "Total vidé : " + g.total + " bocitecoins JAUNE\\n" +
-            "Dernier échange : " + g.last + "\\n" +
+            "Classe : " + cls + "\n" +
+            "Nombre d’échanges : " + g.count + "\n" +
+            "Total vidé : " + g.total + " bocitecoins JAUNE\n" +
+            "Dernier échange : " + g.last + "\n" +
             "Partage solidaire : " + (g.solidarity.length ? g.solidarity.join(" | ") : "aucun")
           );
-        }).join("\\n\\n--------------------\\n\\n");
+        }).join("\n\n--------------------\n\n");
 
         const exportText =
-          "HISTORIQUE MAIRIE — ÉCOLES\\n" +
-          "Export du " + new Date().toLocaleString("fr-FR") + "\\n\\n" +
+          "HISTORIQUE MAIRIE — ÉCOLES\n" +
+          "Export du " + new Date().toLocaleString("fr-FR") + "\n\n" +
           lines;
 
         if(navigator.clipboard && navigator.clipboard.writeText){
