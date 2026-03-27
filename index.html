@@ -4169,10 +4169,11 @@ out center tags;
             openModal("Mairie", `
               <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
 
-              <div class="box">
-                <strong>Cadre :</strong> la mairie peut diffuser des messages d’intérêt général gratuits,
-                et des messages promotionnels payants au même tarif que les commerçants.
-              </div>
+             <div class="box">
+  <strong>Cadre :</strong> la mairie dispose de deux espaces distincts :
+  le <strong>petit bandeau rouge défilant</strong> de la tuile Mairie, réservé aux messages d’intérêt général diffusés gratuitement,
+  et le <strong>grand bandeau du haut</strong>, utilisé pour les messages promotionnels payants au même tarif que les commerçants.
+</div>
 
               <div style="font-weight:900;margin-top:10px;">Messages gratuits d’intérêt général</div>
               <div class="box">
@@ -4182,8 +4183,10 @@ out center tags;
                   <li>Risque de gel / température dangereuse</li>
                   <li>Information de sécurité publique</li>
                 </ul>
-                <div class="muted" style="margin-top:8px;">Ces messages restent gratuits pour la mairie.</div>
-              </div>
+               <div class="muted" style="margin-top:8px;">
+  Ces messages restent gratuits pour la mairie lorsqu’ils relèvent de l’intérêt général
+  et sont diffusés dans le <strong>petit bandeau rouge défilant</strong> de la tuile Mairie.
+</div>
 
               <div class="muted" style="margin-top:8px;">
                 Chaque entité (commerçant, association autorisée ou mairie) peut réserver une seule publicité par jour jusqu’à 16h00.
@@ -4193,7 +4196,11 @@ out center tags;
 
               <div style="font-weight:900;margin-top:10px;">Messages payants mairie</div>
               <div class="box">
-                <div class="muted">Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.</div>
+              <div class="muted">
+  Ces messages non gratuits, de type promotionnel, commercial, événementiel ou de mise en avant,
+  sont prévus pour le <strong>grand bandeau du haut</strong>, c’est-à-dire l’espace publicitaire payant.
+  Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.
+</div>
                 <ul style="margin:8px 0 0 18px;font-weight:800;">
                   <li>1 publicité : 50 €</li>
                   <li>5 publicités : 200 €</li>
@@ -4203,7 +4210,11 @@ out center tags;
 
               <div class="box" style="margin-top:12px;">
                 <div style="font-weight:900;">Message bandeau mairie (démo)</div>
-                <div class="muted" style="margin-top:6px;">Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.</div>
+               <div class="muted" style="margin-top:6px;">
+  Ce message alimente le <strong>petit bandeau rouge défilant</strong> sur la tuile Mairie.
+  Cet emplacement est prévu pour les messages d’intérêt général diffusés gratuitement
+  (urgence, sécurité, déviation, météo, vigilance, information publique).
+</div>
 
                 <div style="margin-top:10px;font-weight:900;">Message</div>
                 <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
@@ -4244,6 +4255,35 @@ out center tags;
                   la mairie respecte cette décision lors de l’échange.
                 </div>
               </div>
+             <div style="font-weight:900;margin-top:14px;">Lecture sport → mairie (démo)</div>
+<div class="box">
+  <div class="muted">
+    La mairie peut également lire le code dynamique transmis par un club ou une structure sport.
+    Après validation, le wallet sport est remis à zéro et l’opération est enregistrée
+    dans un historique sport séparé de l’historique école pour une meilleure lisibilité interne.
+  </div>
+
+  <div style="margin-top:10px;font-weight:900;">Lecture / scan sport (démo)</div>
+  <textarea id="mairieSportScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan sport (démo)"></textarea>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <button class="choiceBtn" id="mairieSportReadBtn" type="button">Lire le scan sport</button>
+    <button class="choiceBtn" id="mairieSportValidateBtn" type="button">Valider échange sport</button>
+    <button class="choiceBtn" id="mairieSportHistoryBtn" type="button" style="background:#fff;">Voir historique sport</button>
+    <button class="choiceBtn" id="mairieSportHistoryResetBtn" type="button" style="background:#fff;">Réinitialiser historique sport</button>
+    <button class="choiceBtn" id="mairieSportExportBtn" type="button" style="background:#fff;">Exporter historique sport</button>
+  </div>
+
+  <div class="box" style="margin-top:12px;background:var(--bg);">
+    <div style="font-weight:900;">Lecture du code sport</div>
+    <div class="muted" id="mairieSportReadOut" style="margin-top:8px;">Aucun code sport lu pour le moment.</div>
+  </div>
+
+  <div class="muted" style="margin-top:10px;">
+    L’historique sport mairie est distinct de l’historique école mairie afin de garder une lecture interne claire,
+    séparée par origine d’échange.
+  </div>
+</div> 
             `);
 
             setTimeout(()=>{
@@ -4522,6 +4562,61 @@ out center tags;
                     alert(exportText);
                   }
                 };
+                              if(exportBtn){
+                exportBtn.onclick = ()=>{
+                  const history = mairieHistoryLoad();
+
+                  if(!history.length){
+                    alert("Aucun historique à exporter.");
+                    return;
+                  }
+
+                  const grouped = {};
+                  history.forEach((x)=>{
+                    if(!grouped[x.class]){
+                      grouped[x.class] = {
+                        total:0,
+                        count:0,
+                        last:x.ts_fr,
+                        solidarity:[]
+                      };
+                    }
+                    grouped[x.class].total += Number(x.amount || 0);
+                    grouped[x.class].count += 1;
+                    grouped[x.class].last = x.ts_fr;
+
+                    if(x.solidarity && x.solidarity.mode && x.solidarity.mode !== "none"){
+                      grouped[x.class].solidarity.push(
+                        "mode=" + x.solidarity.mode + " " + JSON.stringify(x.solidarity.map || {})
+                      );
+                    }
+                  });
+
+                  const lines = Object.keys(grouped).sort().map((cls)=>{
+                    const g = grouped[cls];
+                    return (
+                      "Classe : " + cls + "\n" +
+                      "Nombre d’échanges : " + g.count + "\n" +
+                      "Total vidé : " + g.total + " bocitecoins JAUNE\n" +
+                      "Dernier échange : " + g.last + "\n" +
+                      "Partage solidaire : " + (g.solidarity.length ? g.solidarity.join(" | ") : "aucun")
+                    );
+                  }).join("\n\n--------------------\n\n");
+
+                  const exportText =
+                    "HISTORIQUE MAIRIE — ÉCOLES\n" +
+                    "Export du " + new Date().toLocaleString("fr-FR") + "\n\n" +
+                    lines;
+
+                  if(navigator.clipboard && navigator.clipboard.writeText){
+                    navigator.clipboard.writeText(exportText)
+                      .then(()=> alert("Historique exporté et copié dans le presse-papiers."))
+                      .catch(()=> alert(exportText));
+                  }else{
+                    alert(exportText);
+                  }
+                };
+              }
               }
             },0);
 
