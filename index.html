@@ -5290,7 +5290,7 @@ out center tags;
             return;
           }
 
-          if(key === "commerces"){
+                  if(key === "commerces"){
             openModal("Commerces", `
               <div style="font-weight:900;margin-bottom:8px;">Commerces (structure)</div>
 
@@ -5379,7 +5379,7 @@ out center tags;
                 <button class="choiceBtn" id="walletClientRedeem50" type="button">Échanger 50</button>
                 <button class="choiceBtn" id="walletClientRedeem100" type="button">Échanger 100</button>
                 <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser (démo)</button>
-               <button class="choiceBtn" id="merchantHistoryExportBtn" type="button" style="background:#fff;">Exporter historique</button>
+                <button class="choiceBtn" id="merchantHistoryExportBtn" type="button" style="background:#fff;">Exporter historique</button>
               </div>
 
               <div style="font-weight:900;margin-top:14px;">Attribution commerçant → client (démo)</div>
@@ -5493,46 +5493,46 @@ out center tags;
                 </div>
               </div>
 
-<div style="font-weight:900;margin-top:12px;">Fiche commerçant / code à scanner</div>
-<div class="box">
-  <div class="muted">
-    Cette fiche est enregistrée côté commerçant et sert à générer automatiquement le code commerçant
-    que le sportif pourra scanner pour préremplir sa demande de soutien solidaire.
-  </div>
+              <div style="font-weight:900;margin-top:12px;">Fiche commerçant / code à scanner</div>
+              <div class="box">
+                <div class="muted">
+                  Cette fiche est enregistrée côté commerçant et sert à générer automatiquement le code commerçant
+                  que le sportif pourra scanner pour préremplir sa demande de soutien solidaire.
+                </div>
 
-  <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
-  <input class="miniField" id="merchantProfileName" placeholder="Nom du commerce">
+                <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
+                <input class="miniField" id="merchantProfileName" placeholder="Nom du commerce">
 
-  <div style="margin-top:10px;font-weight:900;">Adresse</div>
-  <input class="miniField" id="merchantProfileAddress" placeholder="Adresse">
+                <div style="margin-top:10px;font-weight:900;">Adresse</div>
+                <input class="miniField" id="merchantProfileAddress" placeholder="Adresse">
 
-  <div style="margin-top:10px;font-weight:900;">Téléphone</div>
-  <input class="miniField" id="merchantProfilePhone" placeholder="Téléphone">
+                <div style="margin-top:10px;font-weight:900;">Téléphone</div>
+                <input class="miniField" id="merchantProfilePhone" placeholder="Téléphone">
 
-  <div style="margin-top:10px;font-weight:900;">Email</div>
-  <input class="miniField" id="merchantProfileEmail" placeholder="Email">
+                <div style="margin-top:10px;font-weight:900;">Email</div>
+                <input class="miniField" id="merchantProfileEmail" placeholder="Email">
 
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-    <button class="choiceBtn" id="merchantProfileSaveBtn" type="button">💾 Enregistrer la fiche</button>
-    <button class="choiceBtn" id="merchantShowQrBtn" type="button">Afficher mon code commerçant</button>
-  </div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                  <button class="choiceBtn" id="merchantProfileSaveBtn" type="button">💾 Enregistrer la fiche</button>
+                  <button class="choiceBtn" id="merchantShowQrBtn" type="button">Afficher mon code commerçant</button>
+                </div>
 
-  <div class="box" style="margin-top:12px;background:var(--bg);">
-    <div style="font-weight:900;">Format du code commerçant</div>
-    <div class="muted" id="merchantQrPreview" style="margin-top:8px;">
-      Aucun code généré pour le moment.
-    </div>
-  </div>
-</div>
+                <div class="box" style="margin-top:12px;background:var(--bg);">
+                  <div style="font-weight:900;">Format du code commerçant</div>
+                  <div class="muted" id="merchantQrPreview" style="margin-top:8px;">
+                    Aucun code généré pour le moment.
+                  </div>
+                </div>
+              </div>
 
-<div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
-<ul style="margin:8px 0 0 18px;font-weight:800;">
-  <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
-  <li>Journée complète : grisée et non sélectionnable</li>
-  <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
-  <li>Option : texte en gras (+4€ TTC)</li>
-  <li>Possibilité d’URL selon conformité</li>
-</ul>
+              <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
+              <ul style="margin:8px 0 0 18px;font-weight:800;">
+                <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
+                <li>Journée complète : grisée et non sélectionnable</li>
+                <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
+                <li>Option : texte en gras (+4€ TTC)</li>
+                <li>Possibilité d’URL selon conformité</li>
+              </ul>
             `);
 
             setTimeout(()=>{
@@ -5575,9 +5575,7 @@ out center tags;
                 if(!meta.firstEarnTs){
                   const now = Date.now();
                   meta.firstEarnTs = now;
-
                   meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
-
                   meta.thirtyDayAlertShown = false;
                   meta.tenDayAlertShown = false;
                   saveCitizenMeta(meta);
@@ -5668,9 +5666,7 @@ out center tags;
                   saveCitizenWallet(wallet);
 
                   meta.firstEarnTs = now;
-
                   meta.expireTs = now + (365 * 24 * 60 * 60 * 1000);
-
                   meta.thirtyDayAlertShown = false;
                   meta.tenDayAlertShown = false;
                   meta.lastTx = {
@@ -5748,16 +5744,16 @@ out center tags;
                 const minimumAllowed = loweredThresholdAllowed ? 20 : 30;
 
                 if(required < minimumAllowed){
-                  alert(`Échange impossible sous ${minimumAllowed} bocitecoins dans la période actuelle.`);
+                  alert(\`Échange impossible sous \${minimumAllowed} bocitecoins dans la période actuelle.\`);
                   return;
                 }
 
                 if(coins < required){
-                  alert(`Solde insuffisant. Il faut ${required} bocitecoins.`);
+                  alert(\`Solde insuffisant. Il faut \${required} bocitecoins.\`);
                   return;
                 }
 
-                if(confirm(`Confirmer l’échange de ${required} bocitecoins ?`)){
+                if(confirm(\`Confirmer l’échange de \${required} bocitecoins ?\`)){
                   wallet.or = Math.max(0, coins - required);
                   saveCitizenWallet(wallet);
                   registerTx({
@@ -5768,7 +5764,7 @@ out center tags;
                     ts:Date.now()
                   });
                   refreshWalletUi();
-                  alert(`Échange validé (démo) : ${required} bocitecoins utilisés.`);
+                  alert(\`Échange validé (démo) : \${required} bocitecoins utilisés.\`);
                 }
               }
 
@@ -5903,7 +5899,7 @@ out center tags;
                 };
               }
 
-                            const MERCHANT_PROFILE_KEY = "bociteart_merchant_profile_v1";
+              const MERCHANT_PROFILE_KEY = "bociteart_merchant_profile_v1";
 
               function loadMerchantProfile(){
                 try{
@@ -6000,7 +5996,8 @@ out center tags;
                   alert("Code commerçant à scanner :\n\n" + JSON.stringify(payload, null, 2));
                 };
               }
-                         const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
+
+              const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
 
               if(merchantHistoryExportBtn){
                 merchantHistoryExportBtn.onclick = ()=>{
@@ -6014,9 +6011,7 @@ out center tags;
                     email:""
                   };
 
-                  if(typeof loadMerchantProfile === "function"){
-                    profile = loadMerchantProfile() || profile;
-                  }
+                  profile = loadMerchantProfile() || profile;
 
                   const exportObj = {
                     exported_at_fr: new Date().toLocaleString("fr-FR"),
@@ -6038,14 +6033,14 @@ out center tags;
                   }
                 };
               }
+
               const xb = $("xBtn");
               if(xb && xb.focus) xb.focus();
             },0);
+
             return;
           }
-        });
-      });
-
+          
       const adminTile = $("adminTile");
       on(adminTile, "click", ()=>{
         if(!isFn(window.openModal)) return;
