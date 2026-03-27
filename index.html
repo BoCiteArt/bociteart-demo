@@ -4680,15 +4680,15 @@ out center tags;
             window.openSportPanel();
             return;
       }
-          if(key === "mairie"){
+                   if(key === "mairie"){
             openModal("Mairie", `
               <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
 
-             <div class="box">
-  <strong>Cadre :</strong> la mairie dispose de deux espaces distincts :
-  le <strong>petit bandeau rouge défilant</strong> de la tuile Mairie, réservé aux messages d’intérêt général diffusés gratuitement,
-  et le <strong>grand bandeau du haut</strong>, utilisé pour les messages promotionnels payants au même tarif que les commerçants.
-</div>
+              <div class="box">
+                <strong>Cadre :</strong> la mairie dispose de deux espaces distincts :
+                le <strong>petit bandeau rouge défilant</strong> de la tuile Mairie, réservé aux messages d’intérêt général diffusés gratuitement,
+                et le <strong>grand bandeau du haut</strong>, utilisé pour les messages promotionnels payants au même tarif que les commerçants.
+              </div>
 
               <div style="font-weight:900;margin-top:10px;">Messages gratuits d’intérêt général</div>
               <div class="box">
@@ -4698,24 +4698,26 @@ out center tags;
                   <li>Risque de gel / température dangereuse</li>
                   <li>Information de sécurité publique</li>
                 </ul>
-               <div class="muted" style="margin-top:8px;">
-  Ces messages restent gratuits pour la mairie lorsqu’ils relèvent de l’intérêt général
-  et sont diffusés dans le <strong>petit bandeau rouge défilant</strong> de la tuile Mairie.
-</div>
 
-              <div class="muted" style="margin-top:8px;">
-                Chaque entité (commerçant, association autorisée ou mairie) peut réserver une seule publicité par jour jusqu’à 16h00.
-                À partir de 16h00, si des emplacements restent disponibles, des réservations supplémentaires sont possibles
-                jusqu’à atteindre le maximum journalier de ${PUB_MAX_PER_DAY} publicités.
+                <div class="muted" style="margin-top:8px;">
+                  Ces messages restent gratuits pour la mairie lorsqu’ils relèvent de l’intérêt général
+                  et sont diffusés dans le <strong>petit bandeau rouge défilant</strong> de la tuile Mairie.
+                </div>
+
+                <div class="muted" style="margin-top:8px;">
+                  Chaque entité (commerçant, association autorisée ou mairie) peut réserver une seule publicité par jour jusqu’à 16h00.
+                  À partir de 16h00, si des emplacements restent disponibles, des réservations supplémentaires sont possibles
+                  jusqu’à atteindre le maximum journalier de ${PUB_MAX_PER_DAY} publicités.
+                </div>
               </div>
 
               <div style="font-weight:900;margin-top:10px;">Messages payants mairie</div>
               <div class="box">
-              <div class="muted">
-  Ces messages non gratuits, de type promotionnel, commercial, événementiel ou de mise en avant,
-  sont prévus pour le <strong>grand bandeau du haut</strong>, c’est-à-dire l’espace publicitaire payant.
-  Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.
-</div>
+                <div class="muted">
+                  Ces messages non gratuits, de type promotionnel, commercial, événementiel ou de mise en avant,
+                  sont prévus pour le <strong>grand bandeau du haut</strong>, c’est-à-dire l’espace publicitaire payant.
+                  Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.
+                </div>
                 <ul style="margin:8px 0 0 18px;font-weight:800;">
                   <li>1 publicité : 50 €</li>
                   <li>5 publicités : 200 €</li>
@@ -4725,11 +4727,11 @@ out center tags;
 
               <div class="box" style="margin-top:12px;">
                 <div style="font-weight:900;">Message bandeau mairie (démo)</div>
-               <div class="muted" style="margin-top:6px;">
-  Ce message alimente le <strong>petit bandeau rouge défilant</strong> sur la tuile Mairie.
-  Cet emplacement est prévu pour les messages d’intérêt général diffusés gratuitement
-  (urgence, sécurité, déviation, météo, vigilance, information publique).
-</div>
+                <div class="muted" style="margin-top:6px;">
+                  Ce message alimente le <strong>petit bandeau rouge défilant</strong> sur la tuile Mairie.
+                  Cet emplacement est prévu pour les messages d’intérêt général diffusés gratuitement
+                  (urgence, sécurité, déviation, météo, vigilance, information publique).
+                </div>
 
                 <div style="margin-top:10px;font-weight:900;">Message</div>
                 <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
@@ -4757,7 +4759,7 @@ out center tags;
                   <button class="choiceBtn" id="mairieValidateBtn" type="button">Valider échange</button>
                   <button class="choiceBtn" id="mairieHistoryBtn" type="button" style="background:#fff;">Voir historique</button>
                   <button class="choiceBtn" id="mairieHistoryResetBtn" type="button" style="background:#fff;">Réinitialiser historique</button>
-                <button class="choiceBtn" id="merchantHistoryExportBtn" type="button" style="background:#fff;">Exporter historique</button>
+                  <button class="choiceBtn" id="mairieExportBtn" type="button" style="background:#fff;">Exporter historique</button>
                 </div>
 
                 <div class="box" style="margin-top:12px;background:var(--bg);">
@@ -4770,35 +4772,36 @@ out center tags;
                   la mairie respecte cette décision lors de l’échange.
                 </div>
               </div>
-             <div style="font-weight:900;margin-top:14px;">Lecture sport → mairie (démo)</div>
-<div class="box">
-  <div class="muted">
-    La mairie peut également lire le code dynamique transmis par un club ou une structure sport.
-    Après validation, le wallet sport est remis à zéro et l’opération est enregistrée
-    dans un historique sport séparé de l’historique école pour une meilleure lisibilité interne.
-  </div>
 
-  <div style="margin-top:10px;font-weight:900;">Lecture / scan sport (démo)</div>
-  <textarea id="mairieSportScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan sport (démo)"></textarea>
+              <div style="font-weight:900;margin-top:14px;">Lecture sport → mairie (démo)</div>
+              <div class="box">
+                <div class="muted">
+                  La mairie peut également lire le code dynamique transmis par un club ou une structure sport.
+                  Après validation, le wallet sport est remis à zéro et l’opération est enregistrée
+                  dans un historique sport séparé de l’historique école pour une meilleure lisibilité interne.
+                </div>
 
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-    <button class="choiceBtn" id="mairieSportReadBtn" type="button">Lire le scan sport</button>
-    <button class="choiceBtn" id="mairieSportValidateBtn" type="button">Valider échange sport</button>
-    <button class="choiceBtn" id="mairieSportHistoryBtn" type="button" style="background:#fff;">Voir historique sport</button>
-    <button class="choiceBtn" id="mairieSportHistoryResetBtn" type="button" style="background:#fff;">Réinitialiser historique sport</button>
-    <button class="choiceBtn" id="mairieSportExportBtn" type="button" style="background:#fff;">Exporter historique sport</button>
-  </div>
+                <div style="margin-top:10px;font-weight:900;">Lecture / scan sport (démo)</div>
+                <textarea id="mairieSportScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan sport (démo)"></textarea>
 
-  <div class="box" style="margin-top:12px;background:var(--bg);">
-    <div style="font-weight:900;">Lecture du code sport</div>
-    <div class="muted" id="mairieSportReadOut" style="margin-top:8px;">Aucun code sport lu pour le moment.</div>
-  </div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+                  <button class="choiceBtn" id="mairieSportReadBtn" type="button">Lire le scan sport</button>
+                  <button class="choiceBtn" id="mairieSportValidateBtn" type="button">Valider échange sport</button>
+                  <button class="choiceBtn" id="mairieSportHistoryBtn" type="button" style="background:#fff;">Voir historique sport</button>
+                  <button class="choiceBtn" id="mairieSportHistoryResetBtn" type="button" style="background:#fff;">Réinitialiser historique sport</button>
+                  <button class="choiceBtn" id="mairieSportExportBtn" type="button" style="background:#fff;">Exporter historique sport</button>
+                </div>
 
-  <div class="muted" style="margin-top:10px;">
-    L’historique sport mairie est distinct de l’historique école mairie afin de garder une lecture interne claire,
-    séparée par origine d’échange.
-  </div>
-</div> 
+                <div class="box" style="margin-top:12px;background:var(--bg);">
+                  <div style="font-weight:900;">Lecture du code sport</div>
+                  <div class="muted" id="mairieSportReadOut" style="margin-top:8px;">Aucun code sport lu pour le moment.</div>
+                </div>
+
+                <div class="muted" style="margin-top:10px;">
+                  L’historique sport mairie est distinct de l’historique école mairie afin de garder une lecture interne claire,
+                  séparée par origine d’échange.
+                </div>
+              </div>
             `);
 
             setTimeout(()=>{
@@ -4841,6 +4844,7 @@ out center tags;
               }
 
               const MAIRIE_SCHOOL_HISTORY_KEY = "bociteart_mairie_school_history_v1";
+              const MAIRIE_SPORT_HISTORY_KEY = "bociteart_mairie_sport_history_v1";
               const SCHOOL_STORE_KEY = "bociteart_school_v1";
 
               function mairieHistoryLoad(){
@@ -4855,6 +4859,21 @@ out center tags;
               function mairieHistorySave(arr){
                 try{
                   localStorage.setItem(MAIRIE_SCHOOL_HISTORY_KEY, JSON.stringify(arr));
+                }catch(e){}
+              }
+
+              function mairieSportHistoryLoad(){
+                try{
+                  const raw = localStorage.getItem(MAIRIE_SPORT_HISTORY_KEY);
+                  return raw ? JSON.parse(raw) : [];
+                }catch(e){
+                  return [];
+                }
+              }
+
+              function mairieSportHistorySave(arr){
+                try{
+                  localStorage.setItem(MAIRIE_SPORT_HISTORY_KEY, JSON.stringify(arr));
                 }catch(e){}
               }
 
@@ -4892,6 +4911,25 @@ out center tags;
                     }catch(e){}
                   };
 
+              const sportLoadM = (typeof loadSportWallet === "function")
+                ? loadSportWallet
+                : function(){
+                    try{
+                      const raw = localStorage.getItem("bociteart_sport_wallet_v1");
+                      return raw ? JSON.parse(raw) : { vert:0 };
+                    }catch(e){
+                      return { vert:0 };
+                    }
+                  };
+
+              const sportSaveM = (typeof saveSportWallet === "function")
+                ? saveSportWallet
+                : function(obj){
+                    try{
+                      localStorage.setItem("bociteart_sport_wallet_v1", JSON.stringify(obj));
+                    }catch(e){}
+                  };
+
               const scanInput = $("mairieScanInput");
               const readBtn = $("mairieReadBtn");
               const validateBtn = $("mairieValidateBtn");
@@ -4900,11 +4938,28 @@ out center tags;
               const exportBtn = $("mairieExportBtn");
               const readOut = $("mairieReadOut");
 
+              const sportScanInput = $("mairieSportScanInput");
+              const sportReadBtn = $("mairieSportReadBtn");
+              const sportValidateBtn = $("mairieSportValidateBtn");
+              const sportHistoryBtn = $("mairieSportHistoryBtn");
+              const sportHistoryResetBtn = $("mairieSportHistoryResetBtn");
+              const sportExportBtn = $("mairieSportExportBtn");
+              const sportReadOut = $("mairieSportReadOut");
+
               let currentPayload = null;
+              let currentSportPayload = null;
 
               function renderPayload(payload){
                 if(!readOut) return;
                 readOut.innerHTML = window.boScanEngine.formatSchoolPayload(payload);
+              }
+
+              function renderSportPayloadMairie(payload){
+                if(!sportReadOut) return;
+                sportReadOut.innerHTML =
+                  "<strong>Club :</strong> " + escapeHtml(payload.club || "Non renseigné") + "<br>" +
+                  "<strong>Montant :</strong> " + Number(payload.wallet || 0) + " bocitecoins VERT<br>" +
+                  "<strong>Date :</strong> " + new Date(payload.ts || Date.now()).toLocaleString("fr-FR");
               }
 
               if(readBtn){
@@ -5077,61 +5132,158 @@ out center tags;
                     alert(exportText);
                   }
                 };
-                              if(exportBtn){
-                exportBtn.onclick = ()=>{
-                  const history = mairieHistoryLoad();
+              }
+
+              if(sportReadBtn){
+                sportReadBtn.onclick = ()=>{
+                  const raw = sportScanInput ? sportScanInput.value.trim() : "";
+                  if(!raw){
+                    alert("Aucune lecture sport disponible.");
+                    return;
+                  }
+
+                  try{
+                    const parsed = JSON.parse(raw);
+
+                    if(parsed.type !== "sport_wallet"){
+                      alert("Code non reconnu pour l’échange sport → mairie.");
+                      return;
+                    }
+
+                    currentSportPayload = parsed;
+                    renderSportPayloadMairie(parsed);
+                  }catch(e){
+                    alert("Lecture sport invalide.");
+                  }
+                };
+              }
+
+              if(sportValidateBtn){
+                sportValidateBtn.onclick = ()=>{
+                  if(!currentSportPayload){
+                    alert("Lis d’abord un code sport.");
+                    return;
+                  }
+
+                  const history = mairieSportHistoryLoad();
+                  history.push({
+                    club: currentSportPayload.club || "Club partenaire (démo)",
+                    amount: Number(currentSportPayload.wallet || 0),
+                    beneficiary: currentSportPayload.beneficiary || "club_only",
+                    solidarity: currentSportPayload.solidarity || { mode:"none", map:{} },
+                    ts: Date.now(),
+                    ts_fr: new Date().toLocaleString("fr-FR"),
+                    note: "échange sport validé côté mairie"
+                  });
+                  mairieSportHistorySave(history);
+
+                  sportSaveM({ vert:0 });
+
+                  alert(
+                    "Échange sport mairie validé.\n\n" +
+                    "Club : " + (currentSportPayload.club || "Club partenaire (démo)") + "\n" +
+                    "Montant vidé : " + Number(currentSportPayload.wallet || 0) + " bocitecoins VERT\n\n" +
+                    "Le wallet sport a été remis à zéro."
+                  );
+
+                  currentSportPayload = null;
+                  if(sportScanInput) sportScanInput.value = "";
+                  if(sportReadOut) sportReadOut.textContent = "Aucun code sport lu pour le moment.";
+                };
+              }
+
+              if(sportHistoryBtn){
+                sportHistoryBtn.onclick = ()=>{
+                  const history = mairieSportHistoryLoad();
 
                   if(!history.length){
-                    alert("Aucun historique à exporter.");
+                    alert("Aucun historique mairie sport pour le moment.");
                     return;
                   }
 
                   const grouped = {};
                   history.forEach((x)=>{
-                    if(!grouped[x.class]){
-                      grouped[x.class] = {
+                    if(!grouped[x.club]){
+                      grouped[x.club] = {
                         total:0,
                         count:0,
-                        last:x.ts_fr,
-                        solidarity:[]
+                        last:x.ts_fr
                       };
                     }
-                    grouped[x.class].total += Number(x.amount || 0);
-                    grouped[x.class].count += 1;
-                    grouped[x.class].last = x.ts_fr;
-
-                    if(x.solidarity && x.solidarity.mode && x.solidarity.mode !== "none"){
-                      grouped[x.class].solidarity.push(
-                        "mode=" + x.solidarity.mode + " " + JSON.stringify(x.solidarity.map || {})
-                      );
-                    }
+                    grouped[x.club].total += Number(x.amount || 0);
+                    grouped[x.club].count += 1;
+                    grouped[x.club].last = x.ts_fr;
                   });
 
-                  const lines = Object.keys(grouped).sort().map((cls)=>{
-                    const g = grouped[cls];
+                  const lines = Object.keys(grouped).sort().map((club)=>{
+                    const g = grouped[club];
                     return (
-                      "Classe : " + cls + "\n" +
+                      club +
+                      "\n- échanges : " + g.count +
+                      "\n- total vidé : " + g.total + " bocitecoins VERT" +
+                      "\n- dernier échange : " + g.last
+                    );
+                  }).join("\n\n");
+
+                  alert("Historique mairie sport :\n\n" + lines);
+                };
+              }
+
+              if(sportHistoryResetBtn){
+                sportHistoryResetBtn.onclick = ()=>{
+                  if(confirm("Réinitialiser l’historique mairie sport (démo) ?")){
+                    mairieSportHistorySave([]);
+                    alert("Historique mairie sport réinitialisé.");
+                  }
+                };
+              }
+
+              if(sportExportBtn){
+                sportExportBtn.onclick = ()=>{
+                  const history = mairieSportHistoryLoad();
+
+                  if(!history.length){
+                    alert("Aucun historique sport à exporter.");
+                    return;
+                  }
+
+                  const grouped = {};
+                  history.forEach((x)=>{
+                    if(!grouped[x.club]){
+                      grouped[x.club] = {
+                        total:0,
+                        count:0,
+                        last:x.ts_fr
+                      };
+                    }
+                    grouped[x.club].total += Number(x.amount || 0);
+                    grouped[x.club].count += 1;
+                    grouped[x.club].last = x.ts_fr;
+                  });
+
+                  const lines = Object.keys(grouped).sort().map((club)=>{
+                    const g = grouped[club];
+                    return (
+                      "Club : " + club + "\n" +
                       "Nombre d’échanges : " + g.count + "\n" +
-                      "Total vidé : " + g.total + " bocitecoins JAUNE\n" +
-                      "Dernier échange : " + g.last + "\n" +
-                      "Partage solidaire : " + (g.solidarity.length ? g.solidarity.join(" | ") : "aucun")
+                      "Total vidé : " + g.total + " bocitecoins VERT\n" +
+                      "Dernier échange : " + g.last
                     );
                   }).join("\n\n--------------------\n\n");
 
                   const exportText =
-                    "HISTORIQUE MAIRIE — ÉCOLES\n" +
+                    "HISTORIQUE MAIRIE — SPORT\n" +
                     "Export du " + new Date().toLocaleString("fr-FR") + "\n\n" +
                     lines;
 
                   if(navigator.clipboard && navigator.clipboard.writeText){
                     navigator.clipboard.writeText(exportText)
-                      .then(()=> alert("Historique exporté et copié dans le presse-papiers."))
+                      .then(()=> alert("Historique sport exporté et copié dans le presse-papiers."))
                       .catch(()=> alert(exportText));
                   }else{
                     alert(exportText);
                   }
                 };
-              }
               }
             },0);
 
