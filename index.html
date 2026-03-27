@@ -3730,27 +3730,233 @@ out center tags;
                     </div>
                   </div>
 
-                  <div style="font-weight:900;margin-top:14px;">Échange club → mairie / magasin partenaire</div>
-                  <div class="box">
-                    <div class="muted">
-                      Le club présente son code. Après validation, le wallet sport est remis à zéro et l’opération est enregistrée dans l’historique.
-                    </div>
+            <div style="font-weight:900;margin-top:14px;">Validation d’échange club</div>
+<div class="box">
+  <div class="muted">
+    Cet échange est réalisé au nom du club.<br>
+    Il est enregistré, daté et consultable par la mairie.<br>
+    Il doit être utilisé uniquement dans l’intérêt du club.
+  </div>
 
-                    <div style="margin-top:10px;font-weight:900;">Lecture / scan club (démo)</div>
-                    <textarea id="sportScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan club (démo)"></textarea>
+  <div class="muted" style="margin-top:8px;">
+    Les bocitecoins appartiennent au club. Ils ne peuvent en aucun cas être utilisés à titre personnel.
+  </div>
 
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                      <button class="choiceBtn" id="sportReadBtn" type="button">Lire le scan</button>
-                      <button class="choiceBtn" id="sportValidateBtn" type="button">Valider échange</button>
-                      <button class="choiceBtn" id="sportHistoryBtn" type="button" style="background:#fff;">Voir historique</button>
-                      <button class="choiceBtn" id="sportExportBtn" type="button" style="background:#fff;">Exporter historique</button>
-                    </div>
+  <div class="muted" style="margin-top:8px;">
+    Utilisation : au besoin du club, échangés en mairie ou auprès d’un magasin partenaire.
+  </div>
 
-                    <div class="box" style="margin-top:12px;background:var(--bg);">
-                      <div style="font-weight:900;">Lecture du code</div>
-                      <div class="muted" id="sportReadOut" style="margin-top:8px;">Aucun code lu pour le moment.</div>
-                    </div>
-                  </div>
+  <div class="muted" style="margin-top:8px;">
+    Une part peut être utilisée pour nourriture ou boissons <strong>(maximum 30%)</strong>. Le reste doit être consacré au matériel ou aux besoins du club.
+  </div>
+
+  <div class="muted" style="margin-top:8px;">
+    Chaque échange est tracé. La mairie peut consulter l’historique.
+  </div>
+
+  <div class="muted" style="margin-top:8px;">
+    1 bocitecoin = 1 € en valeur d’échange pour le club. Les échanges standards sont de <strong>10</strong> ou <strong>20 bocitecoins</strong>.
+  </div>
+</div>
+
+<div style="font-weight:900;margin-top:14px;">Partage solidaire club / associations</div>
+<div class="box">
+  <div style="font-weight:900;">Principe</div>
+  <div class="muted" style="margin-top:6px;">
+    Le club peut garder 100 % de ses bocitecoins, partager une partie avec une ou plusieurs associations,
+    ou donner 100 % des bocitecoins concernés à une ou plusieurs associations.
+  </div>
+
+  <div class="muted" style="margin-top:8px;">
+    En cas d’échange via la mairie, le choix enregistré accompagne le scan du club afin que la mairie puisse traiter
+    la répartition choisie par le club sans ressaisie inutile.
+  </div>
+
+  <div class="box" style="margin-top:12px;">
+    <div style="font-weight:900;">Choisir le mode de partage</div>
+
+    <label class="miniCheck" style="margin-top:10px;">
+      <input type="radio" name="sportDonMode" value="none" checked>
+      <div>Pas de partage solidaire (100 % pour le club)</div>
+    </label>
+
+    <label class="miniCheck">
+      <input type="radio" name="sportDonMode" value="full">
+      <div>Don total (100 % des bocitecoins concernés)</div>
+    </label>
+
+    <label class="miniCheck">
+      <input type="radio" name="sportDonMode" value="partial">
+      <div>Don partiel (répartition en %)</div>
+    </label>
+  </div>
+
+  <div class="box" style="margin-top:12px;">
+    <div style="font-weight:900;">Associations (sélection + répartition)</div>
+    <div class="muted" style="margin-top:6px;">
+      En “don total” : tu coches 1 à 4 associations (partage égal).<br>
+      En “don partiel” : tu coches + tu fixes les pourcentages (total = 100%).
+    </div>
+
+    <div style="margin-top:10px;">
+      <label class="miniCheck">
+        <input type="checkbox" class="sportAssoPick" data-asso="Les Clés du Cœur">
+        <div><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques</div>
+      </label>
+      <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+        <div class="muted" style="min-width:78px;">% :</div>
+        <input class="miniField sportAssoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+      </div>
+
+      <label class="miniCheck">
+        <input type="checkbox" class="sportAssoPick" data-asso="Étoile Filante">
+        <div><strong>Étoile Filante</strong> — enfants atteints de maladies rares</div>
+      </label>
+      <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+        <div class="muted" style="min-width:78px;">% :</div>
+        <input class="miniField sportAssoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+      </div>
+
+      <label class="miniCheck">
+        <input type="checkbox" class="sportAssoPick" data-asso="Les Papillons (antenne Nord)">
+        <div><strong>Les Papillons</strong> — antenne Nord</div>
+      </label>
+      <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+        <div class="muted" style="min-width:78px;">% :</div>
+        <input class="miniField sportAssoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+      </div>
+
+      <label class="miniCheck">
+        <input type="checkbox" class="sportAssoPick" data-asso="ATC Nord">
+        <div><strong>ATC Nord</strong> — traumatisés crâniens</div>
+      </label>
+      <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+        <div class="muted" style="min-width:78px;">% :</div>
+        <input class="miniField sportAssoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn" id="sportAssoPreview" type="button">👁️ Aperçu partage</button>
+      <button class="choiceBtn" id="sportAssoSave" type="button">💾 Enregistrer (démo)</button>
+    </div>
+
+    <div class="muted" style="margin-top:10px;">
+      (Démo) Enregistrement local sur ce téléphone. En LIVE : le choix accompagne le scan du club pour traitement mairie.
+    </div>
+  </div>
+</div>
+
+<div style="font-weight:900;margin-top:14px;">Demande commerçant solidaire + pub défilante</div>
+<div class="box">
+  <div class="muted">
+    Le sportif scanne le commerçant. Sa fiche se préremplit automatiquement.
+    Le sportif choisit simplement l’association que le commerçant souhaite soutenir.
+    Le texte diffusé est standardisé : nom de l’entreprise + club soutenu + association soutenue.
+  </div>
+
+  <div class="muted" style="margin-top:8px;">
+    Tarif fixe : <strong>50 € HT / 60 € TTC</strong> — diffusion dans la petite bande défilante pendant <strong>7 jours consécutifs</strong>,
+    uniquement après paiement validé.
+  </div>
+
+  <div style="margin-top:10px;font-weight:900;">Scan commerçant (démo)</div>
+  <textarea id="sportMerchantScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan commerçant (démo)"></textarea>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <button class="choiceBtn" id="sportMerchantReadBtn" type="button">Lire le scan commerçant</button>
+  </div>
+
+  <div class="box" style="margin-top:12px;background:var(--bg);">
+    <div style="font-weight:900;">Fiche commerçant préremplie</div>
+
+    <div style="margin-top:10px;font-weight:900;">Enseigne</div>
+    <input class="miniField" id="sportMerchantName" placeholder="Nom du commerce">
+
+    <div style="margin-top:10px;font-weight:900;">Adresse</div>
+    <input class="miniField" id="sportMerchantAddress" placeholder="Adresse">
+
+    <div style="margin-top:10px;font-weight:900;">Téléphone</div>
+    <input class="miniField" id="sportMerchantPhone" placeholder="Téléphone">
+
+    <div style="margin-top:10px;font-weight:900;">Email</div>
+    <input class="miniField" id="sportMerchantEmail" placeholder="Email">
+  </div>
+
+  <div class="box" style="margin-top:12px;">
+    <div style="font-weight:900;">Association choisie par le commerçant</div>
+    <div class="muted" style="margin-top:6px;">
+      Le sportif clique simplement sur l’association retenue. Le texte défilant est généré automatiquement.
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn sportPubAssoBtn" data-asso="Les Clés du Cœur" type="button">Les Clés du Cœur</button>
+      <button class="choiceBtn sportPubAssoBtn" data-asso="Étoile Filante" type="button">Étoile Filante</button>
+      <button class="choiceBtn sportPubAssoBtn" data-asso="Les Papillons (antenne Nord)" type="button">Les Papillons</button>
+      <button class="choiceBtn sportPubAssoBtn" data-asso="ATC Nord" type="button">ATC Nord</button>
+    </div>
+
+    <div class="box" style="margin-top:12px;background:var(--bg);">
+      <div style="font-weight:900;">Texte bande défilante généré</div>
+      <div class="muted" id="sportPubPreview" style="margin-top:8px;">Aucune publicité générée pour le moment.</div>
+    </div>
+  </div>
+
+  <div class="box" style="margin-top:12px;">
+    <div style="font-weight:900;">Paiement + diffusion</div>
+    <div class="muted" style="margin-top:6px;">
+      Sans paiement validé, la publicité n’est pas diffusée.
+    </div>
+    <div class="muted" style="margin-top:6px;">
+      Une fois le paiement validé, la publicité est diffusée pendant 7 jours consécutifs puis disparaît automatiquement.
+    </div>
+    <div class="muted" style="margin-top:6px;">
+      Après paiement validé, les justificatifs / factures sont prévus pour : le commerçant, Bo’CitéArt, le club et l’association.
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn" id="sportPubPayBtn" type="button">Payer 60 € TTC</button>
+      <button class="choiceBtn" id="sportPubHistoryBtn" type="button" style="background:#fff;">Voir pubs actives</button>
+    </div>
+  </div>
+</div>
+
+<div style="font-weight:900;margin-top:14px;">Échange club → mairie / magasin partenaire</div>
+<div class="box">
+  <div class="muted">
+    Le club présente son code. Ce code peut être lu par la mairie ou par un commerçant partenaire selon le cas.
+    Après validation, les bocitecoins échangés sont brûlés et l’opération est enregistrée dans l’historique.
+  </div>
+
+  <div class="muted" style="margin-top:8px;">
+    Échanges autorisés : <strong>10</strong> ou <strong>20 bocitecoins</strong>.
+  </div>
+
+  <div class="muted" style="margin-top:8px;">
+    Chez le commerçant : jusqu’à <strong>30 % maximum</strong> de la valeur totale peut concerner nourriture / boissons.
+    Le reste doit profiter au club selon les règles admises.
+  </div>
+
+  <div class="muted" style="margin-top:8px;">
+    En mairie : le club peut orienter tout ou partie du montant vers du matériel ou vers une / des associations selon le choix enregistré.
+  </div>
+
+  <div style="margin-top:10px;font-weight:900;">Lecture / scan club (démo)</div>
+  <textarea id="sportScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan club (démo)"></textarea>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <button class="choiceBtn" id="sportReadBtn" type="button">Lire le scan</button>
+    <button class="choiceBtn" id="sportValidate10Btn" type="button">Valider échange 10</button>
+    <button class="choiceBtn" id="sportValidate20Btn" type="button">Valider échange 20</button>
+    <button class="choiceBtn" id="sportHistoryBtn" type="button" style="background:#fff;">Voir historique</button>
+    <button class="choiceBtn" id="sportExportBtn" type="button" style="background:#fff;">Exporter historique</button>
+  </div>
+
+  <div class="box" style="margin-top:12px;background:var(--bg);">
+    <div style="font-weight:900;">Lecture du code</div>
+    <div class="muted" id="sportReadOut" style="margin-top:8px;">Aucun code lu pour le moment.</div>
+  </div>
+</div>
 
                   <div style="font-weight:900;margin-top:14px;">Plan / parcours / repères utiles</div>
                   <div class="box">
