@@ -6238,18 +6238,23 @@ out center tags;
                   alert("Code commerçant à scanner :\n\n" + JSON.stringify(payload, null, 2));
                 };
               }
-                            const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
+                         const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
 
               if(merchantHistoryExportBtn){
                 merchantHistoryExportBtn.onclick = ()=>{
                   const wallet = loadCitizenWallet();
                   const meta = loadCitizenMeta();
-                  const profile = loadMerchantProfile ? loadMerchantProfile() : {
+
+                  let profile = {
                     shopName:"",
                     address:"",
                     phone:"",
                     email:""
                   };
+
+                  if(typeof loadMerchantProfile === "function"){
+                    profile = loadMerchantProfile() || profile;
+                  }
 
                   const exportObj = {
                     exported_at_fr: new Date().toLocaleString("fr-FR"),
