@@ -3545,6 +3545,10 @@ if(schoolShowQr){
           }
 
      if(key === "sport"){
+       window.openSportPanel = function(){
+  const sportTile = document.querySelector('.tile[data-open="sport"]');
+  if(sportTile) sportTile.click();
+};
   openModal("Sport", `
     <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
     <div class="box"><strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.</div>
@@ -3774,26 +3778,33 @@ if(schoolShowQr){
       try{ localStorage.setItem(SPORT_REPORT_KEY, JSON.stringify(obj)); }catch(e){}
     }
 
-    function containsForbiddenWords(text){
-      const banned = [
-        "con","connard","connasse","salope","pute","merde","encule","enculé",
-        "fdp","fils de pute","batard","bâtard","abruti","idiot","cretin","crétin",
-        "ta gueule","ferme ta gueule","nique","niquer","va te faire","ordure","invectives","gros-mots","racisme","malhonnête","injures","outrancier","politique",
-      ];
+function saveSportReport(obj){
+  try{
+    localStorage.setItem(SPORT_REPORT_KEY, JSON.stringify(obj));
+  }catch(e){}
+}
 
-      const normalized = String(text || "")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
+function containsForbiddenWords(text){
+  const banned = [
+    "con","connard","connasse","salope","pute","merde","encule","enculé",
+    "fdp","fils de pute","batard","bâtard","abruti","idiot","cretin","crétin",
+    "ta gueule","ferme ta gueule","nique","niquer","va te faire","ordure",
+    "pourri","pourriture","demeure","débile","debile","sale type","sale mec"
+  ];
 
-      return banned.some(word =>
-        normalized.includes(
-          word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-        )
-      );
-    }
+  const normalized = String(text || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return banned.some(word =>
+    normalized.includes(
+      word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    )
+  );
+}
 
     function containsSuspiciousPattern(text){
       const t = String(text || "");
@@ -3898,8 +3909,9 @@ if(schoolShowQr){
         }
 
         if(containsForbiddenWords(txt)){
-          alert("Le texte contient des mots interdits. Merci de reformuler dans un esprit sportif et respectueux.");
-          return;
+  alert("Le texte contient des mots interdits. Les injures, propos agressifs, diffamatoires, humiliants ou non sportifs sont interdits.");
+  return;
+    }
         }
 
         if(containsSuspiciousPattern(txt)){
@@ -5117,125 +5129,149 @@ if(xb && xb.focus) xb.focus();
         },0);
       });
 
-      function openSportFiche(){
-        if(!isFn(window.openModal)) return;
+     function openSportFiche(){
+  if(!isFn(window.openModal)) return;
 
-        openModal("📄 Fiche — élus / CCI / commerçants (Sport + Associations)", `
-          <div class="box">
-            <div style="font-weight:900;">Objectif</div>
-            <div class="muted" style="margin-top:6px;">
-              Déclencher un soutien simple : un commerçant soutient un club + une association, avec visibilité locale via le bandeau 1 cm.
-            </div>
-          </div>
+  openModal("📄 Fiche — élus / CCI / commerçants (Sport + Associations)", `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+      <button class="choiceBtn" id="sportBackBtn" type="button" style="background:#fff;">← Retour à l’onglet Sport</button>
+    </div>
 
-          <div class="box">
-            <div style="font-weight:900;">Principe</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li>Un commerçant soutient <strong>un club sportif</strong> + <strong>une association</strong>.</li>
-              <li>Sa ligne apparaît dans le bandeau : “Commerce soutient Club + Association”.</li>
-              <li>Le club valorise ses soutiens auprès de ses licenciés/familles (logique locale).</li>
-              <li>Les modalités PSP / pièces / fiscalité sont décrites dans les CGV/contrats (discrétion + conformité).</li>
-            </ul>
-          </div>
+    <div class="box">
+      <div style="font-weight:900;">Objectif</div>
+      <div class="muted" style="margin-top:6px;">
+        Déclencher un soutien simple : un commerçant soutient un club + une association, avec visibilité locale via le bandeau 1 cm.
+      </div>
+    </div>
 
-          <div class="box">
-            <div style="font-weight:900;">Montant (exemple)</div>
-            <div style="font-weight:800;margin-top:6px;">Exemple : <strong>100 € HT</strong> par période (ex. trimestriel).</div>
-            <div class="muted" style="margin-top:8px;">(Démo) La répartition exacte est contractualisée. La TVA dépend du cadre applicable.</div>
-          </div>
+    <div class="box">
+      <div style="font-weight:900;">Principe</div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Un commerçant soutient <strong>un club sportif</strong> + <strong>une association</strong>.</li>
+        <li>Sa ligne apparaît dans le bandeau : “Commerce soutient Club + Association”.</li>
+        <li>Le club valorise ses soutiens auprès de ses licenciés/familles (logique locale).</li>
+        <li>Les modalités PSP / pièces / fiscalité sont décrites dans les CGV/contrats (discrétion + conformité).</li>
+      </ul>
+    </div>
 
-          <div class="box">
-            <div style="font-weight:900;">Associations retenues (uniquement celles-ci)</div>
-            <ul style="margin:8px 0 0 18px;font-weight:800;">
-              <li><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</li>
-              <li><strong>Étoile Filante</strong> — enfants atteints de maladies rares</li>
-              <li><strong>Les Papillons</strong> — antenne Nord</li>
-              <li><strong>ATC Nord</strong> — traumatisés crâniens</li>
-            </ul>
-          </div>
+    <div class="box">
+      <div style="font-weight:900;">Montant (exemple)</div>
+      <div style="font-weight:800;margin-top:6px;">Exemple : <strong>100 € HT</strong> par période (ex. trimestriel).</div>
+      <div class="muted" style="margin-top:8px;">(Démo) La répartition exacte est contractualisée. La TVA dépend du cadre applicable.</div>
+    </div>
 
-          <div class="box">
-            <div style="font-weight:900;">Préparer votre ligne (démo)</div>
-            <div class="muted" style="margin-top:6px;">Le commerçant peut choisir l’affichage en gras (+4€ TTC) et indiquer une URL.</div>
+    <div class="box">
+      <div style="font-weight:900;">Associations retenues (uniquement celles-ci)</div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</li>
+        <li><strong>Étoile Filante</strong> — enfants atteints de maladies rares</li>
+        <li><strong>Les Papillons</strong> — antenne Nord</li>
+        <li><strong>ATC Nord</strong> — traumatisés crâniens</li>
+      </ul>
+    </div>
 
-            <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
-            <input class="miniField" id="spName" placeholder="Ex. Boulangerie Croquet" />
+    <div class="box">
+      <div style="font-weight:900;">Préparer votre ligne (démo)</div>
+      <div class="muted" style="margin-top:6px;">Le commerçant peut choisir l’affichage en gras (+4€ TTC) et indiquer une URL.</div>
 
-            <div style="margin-top:10px;font-weight:900;">URL (optionnelle)</div>
-            <input class="miniField" id="spUrl" placeholder="https://..." />
+      <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
+      <input class="miniField" id="spName" placeholder="Ex. Boulangerie Croquet" />
 
-            <div class="miniCheck">
-              <input id="spBold" type="checkbox" />
-              <div>
-                Option <strong>texte en gras</strong> (+4€ TTC) — pour une meilleure lisibilité (sans promesse de résultats).
-              </div>
-            </div>
+      <div style="margin-top:10px;font-weight:900;">URL (optionnelle)</div>
+      <input class="miniField" id="spUrl" placeholder="https://..." />
 
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-              <button class="choiceBtn" id="spPreview" type="button">👁️ Aperçu</button>
-              <button class="choiceBtn" id="spAddToTape" type="button">➕ Ajouter au bandeau (démo)</button>
-            </div>
+      <label class="miniCheck">
+        <input id="spBold" type="checkbox" />
+        <div>
+          Option <strong>texte en gras</strong> (+4€ TTC) — pour une meilleure lisibilité (sans promesse de résultats).
+        </div>
+      </label>
 
-            <div class="muted" style="margin-top:10px;">
-              (Démo) Ici, l’ajout est local (sur ce téléphone). La version officielle gèrera validation/contrat/contrôle.
-            </div>
-          </div>
-        `);
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button class="choiceBtn" id="spPreview" type="button">👁️ Aperçu</button>
+        <button class="choiceBtn" id="spAddToTape" type="button">➕ Ajouter au bandeau (démo)</button>
+      </div>
 
-        setTimeout(()=>{
-          const btnPrev = $("spPreview");
-          const btnAdd = $("spAddToTape");
-          const inName = $("spName");
-          const inUrl = $("spUrl");
-          const cbBold = $("spBold");
+      <div class="muted" style="margin-top:10px;">
+        (Démo) Ici, l’ajout est local (sur ce téléphone). La version officielle gèrera validation / contrat / contrôle.
+      </div>
+    </div>
+  `);
 
-          const makeLine = ()=>{
-            const name = (inName && inName.value.trim()) ? inName.value.trim() : "Commerce (démo)";
-            let url = (inUrl && inUrl.value.trim()) ? inUrl.value.trim() : "";
-            const base = `${name} soutient Club + Association`;
+  setTimeout(()=>{
+    const btnBack = $("sportBackBtn");
+    const btnPrev = $("spPreview");
+    const btnAdd = $("spAddToTape");
+    const inName = $("spName");
+    const inUrl = $("spUrl");
+    const cbBold = $("spBold");
 
-            url = url.replace(/\s+/g, "");
-            if(!url) return base;
-            if(url.startsWith("www.")) url = "https://" + url;
+    if(btnBack){
+      btnBack.onclick = ()=>{
+        if(isFn(window.openSportPanel)){
+          window.openSportPanel();
+        }else{
+          closeModal();
+        }
+      };
+    }
 
-            if(url.startsWith("http://")){
-              alert("URL invalide : utiliser https:// (pas http://).");
-              return base;
-            }
-            if(!url.startsWith("https://")){
-              alert("URL invalide : utiliser https://");
-              return base;
-            }
-            if(!/^[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+$/.test(url)){
-              alert("URL invalide : caractères non autorisés.");
-              return base;
-            }
-            if(url.length > 80){
-              alert("URL trop longue (max 80 caractères).");
-              return base;
-            }
-            return `${base} • ${url}`;
-          };
+    const makeLine = ()=>{
+      const name = (inName && inName.value.trim()) ? inName.value.trim() : "Commerce (démo)";
+      let url = (inUrl && inUrl.value.trim()) ? inUrl.value.trim() : "";
+      const base = `${name} soutient Club + Association`;
 
-          if(btnPrev){
-            btnPrev.onclick = ()=>{
-              const line = makeLine();
-              alert("Aperçu :\n" + line + (cbBold && cbBold.checked ? "\n(affichage gras)" : "\n(affichage normal)"));
-            };
-          }
+      url = url.replace(/\s+/g, "");
+      if(!url) return base;
 
-          if(btnAdd){
-            btnAdd.onclick = ()=>{
-              const line = makeLine();
-              const bold = !!(cbBold && cbBold.checked);
-              if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
-              window.tapeAds.push({ txt:line, bold });
-              if(isFn(window.renderTape)) window.renderTape();
-              alert("Ajouté au bandeau (démo).");
-            };
-          }
-        },0);
+      if(url.startsWith("www.")) url = "https://" + url;
+
+      if(url.startsWith("http://")){
+        alert("URL invalide : utiliser https:// (pas http://).");
+        return base;
       }
+
+      if(!url.startsWith("https://")){
+        alert("URL invalide : utiliser https://");
+        return base;
+      }
+
+      if(!/^[a-zA-Z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]+$/.test(url)){
+        alert("URL invalide : caractères non autorisés.");
+        return base;
+      }
+
+      if(url.length > 80){
+        alert("URL trop longue (max 80 caractères).");
+        return base;
+      }
+
+      return `${base} • ${url}`;
+    };
+
+    if(btnPrev){
+      btnPrev.onclick = ()=>{
+        const line = makeLine();
+        alert(
+          "Aperçu :\n" +
+          line +
+          (cbBold && cbBold.checked ? "\n(affichage gras)" : "\n(affichage normal)")
+        );
+      };
+    }
+
+    if(btnAdd){
+      btnAdd.onclick = ()=>{
+        const line = makeLine();
+        const bold = !!(cbBold && cbBold.checked);
+        if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
+        window.tapeAds.push({ txt:line, bold });
+        if(isFn(window.renderTape)) window.renderTape();
+        alert("Ajouté au bandeau (démo).");
+      };
+    }
+  },0);
+}
 
       const legal = $("legal");
       const openLegalBtn = $("openLegal");
