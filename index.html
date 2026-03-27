@@ -3999,8 +3999,707 @@ out center tags;
                 `);
 
                 setTimeout(()=>{
-                  const SPORT_HISTORY_KEY = "bociteart_sport_history_v1";
-                  const SPORT_REPORT_KEY = "bociteart_sport_report_v1";
+        const SPORT_HISTORY_KEY = "bociteart_sport_history_v1";
+        const SPORT_REPORT_KEY = "bociteart_sport_report_v1";
+        const SPORT_SOLIDARITY_KEY = "bociteart_sport_solidarity_v1";
+        const SPORT_PUBS_KEY = "bociteart_sport_pubs_v1";
+
+        const b = $("openSportFicheBtn");
+        const btnMap = $("openMap");
+        if(b) b.onclick = openSportFiche;
+        if(btnMap) btnMap.onclick = openWellbeingMap;
+
+        const refresh = ()=>{
+          const out = $("sportCoinBalance");
+          if(out) out.textContent = Number(loadSportWallet().vert || 0);
+        };
+        refresh();
+
+        function loadSportHistory(){
+          try{
+            const raw = localStorage.getItem(SPORT_HISTORY_KEY);
+            return raw ? JSON.parse(raw) : [];
+          }catch(e){
+            return [];
+          }
+        }
+
+        function saveSportHistory(arr){
+          try{
+            localStorage.setItem(SPORT_HISTORY_KEY, JSON.stringify(arr));
+          }catch(e){}
+        }
+
+        function loadSportReport(){
+          try{
+            const raw = localStorage.getItem(SPORT_REPORT_KEY);
+            return raw ? JSON.parse(raw) : null;
+          }catch(e){
+            return null;
+          }
+        }
+
+        function saveSportReport(obj){
+          try{
+            localStorage.setItem(SPORT_REPORT_KEY, JSON.stringify(obj));
+          }catch(e){}
+        }
+
+        function loadSportSolidarity(){
+          try{
+            const raw = localStorage.getItem(SPORT_SOLIDARITY_KEY);
+            return raw ? JSON.parse(raw) : { mode:"none", map:{} };
+          }catch(e){
+            return { mode:"none", map:{} };
+          }
+        }
+
+        function saveSportSolidarity(obj){
+          try{
+            localStorage.setItem(SPORT_SOLIDARITY_KEY, JSON.stringify(obj));
+          }catch(e){}
+        }
+
+        function loadSportPubs(){
+          try{
+            const raw = localStorage.getItem(SPORT_PUBS_KEY);
+            return raw ? JSON.parse(raw) : [];
+          }catch(e){
+            return [];
+          }
+        }
+
+        function saveSportPubs(arr){
+          try{
+            localStorage.setItem(SPORT_PUBS_KEY, JSON.stringify(arr));
+          }catch(e){}
+        }
+
+        function getActiveSportPubs(){
+          const now = Date.now();
+          return loadSportPubs().filter(x => x.paid === true && now >= x.startTs && now <= x.endTs);
+        }
+
+        function syncSportPubsToTape(){
+          const active = getActiveSportPubs();
+          const staticAds = [
+            { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
+            { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
+            { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
+            { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
+          ];
+
+          const dynamicAds = active.map(x => ({
+            txt: x.text,
+            bold: true
+          }));
+
+          window.tapeAds = dynamicAds.length ? dynamicAds.concat(staticAds) : staticAds.slice();
+
+          if(typeof renderTape === "function"){
+            renderTape();
+          }
+        }
+
+        syncSportPubsToTape();
+
+        function containsForbiddenWords(text){
+          const banned = [
+            "con","connard","connasse","salope","pute","merde","encule","enculé",
+            "fdp","fils de pute","batard","bâtard","abruti","idiot","cretin","crétin",
+            "ta gueule","ferme ta gueule","nique","niquer","va te faire","ordure",
+            "pourri","pourriture","demeure","débile","debile","sale type","sale mec"
+          ];
+
+          const normalized = String(text || "")
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+          return banned.some(word =>
+            normalized.includes(
+              word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+            )
+          );
+        }
+
+        function containsSuspiciousPattern(text){
+          const t = String(text || "");
+          if(/[<>]/.test(t)) return true;
+          if(/https?:\/\//i.test(t)) return true;
+          return false;
+        }
+
+        const p10 = $("walletSportPlus10");
+        const p20 = $("walletSportPlus20");
+        const infoBtn = $("walletSportInfo");
+        const sportShowQr = $("sportShowQr");
+        const rst = $("walletSportReset");
+
+        const sportWeekendReport = $("sportWeekendReport");
+        const sportWeekendSave = $("sportWeekendSave");
+        const sportWeekendRead = $("sportWeekendRead");
+        const sportWeekendReset = $("sportWeekendReset");
+
+        const sportScanInput = $("sportScanInput");
+        const sportReadBtn = $("sportReadBtn");
+        const sportValidate10Btn = $("sportValidate10Btn");
+        const sportValidate20Btn = $("sportValidate20Btn");
+        const sportHistoryBtn = $("sportHistoryBtn");
+        const sportExportBtn = $("sportExportBtn");
+        const sportReadOut = $("sportReadOut");
+
+        const sportAssoPreview = $("sportAssoPreview");
+        const sportAssoSave = $("sportAssoSave");
+
+        const sportMerchantScanInput = $("sportMerchantScanInput");
+        const sportMerchantReadBtn = $("sportMerchantReadBtn");
+        const sportMerchantName = $("sportMerchantName");
+        const sportMerchantAddress = $("sportMerchantAddress");
+        const sportMerchantPhone = $("sportMerchantPhone");
+        const sportMerchantEmail = $("sportMerchantEmail");
+        const sportPubPreview = $("sportPubPreview");
+        const sportPubPayBtn = $("sportPubPayBtn");
+        const sportPubHistoryBtn = $("sportPubHistoryBtn");
+
+        let currentPayload = null;
+        let currentMerchantPayload = null;
+        let currentSelectedPubAsso = null;
+
+        function getClubName(){
+          return "Club partenaire (démo)";
+        }
+
+        function buildSportSolidarityPayload(){
+          const modeEl = document.querySelector('input[name="sportDonMode"]:checked');
+          const mode = modeEl ? modeEl.value : "none";
+          const picks = Array.from(document.querySelectorAll(".sportAssoPick"));
+          const pcts = Array.from(document.querySelectorAll(".sportAssoPct"));
+
+          const selected = picks
+            .filter(x => x.checked)
+            .map(x => x.getAttribute("data-asso"));
+
+          const map = {};
+
+          if(mode === "none"){
+            return { mode:"none", map:{} };
+          }
+
+          if(mode === "full"){
+            if(!selected.length){
+              return { error:"Sélectionne au moins une association." };
+            }
+
+            const share = Math.floor(100 / selected.length);
+            let remaining = 100;
+
+            selected.forEach((name, idx)=>{
+              if(idx === selected.length - 1){
+                map[name] = remaining;
+              }else{
+                map[name] = share;
+                remaining -= share;
+              }
+            });
+
+            return { mode:"full", map };
+          }
+
+          if(mode === "partial"){
+            if(!selected.length){
+              return { error:"Sélectionne au moins une association." };
+            }
+
+            let total = 0;
+
+            pcts.forEach((input)=>{
+              const name = input.getAttribute("data-asso");
+              const linked = picks.find(x => x.getAttribute("data-asso") === name);
+              if(linked && linked.checked){
+                const v = Number(input.value || 0);
+                map[name] = v;
+                total += v;
+              }
+            });
+
+            if(total !== 100){
+              return { error:"En mode partiel, le total doit être égal à 100 %." };
+            }
+
+            return { mode:"partial", map };
+          }
+
+          return { mode:"none", map:{} };
+        }
+
+        if(sportAssoPreview){
+          sportAssoPreview.onclick = ()=>{
+            const payload = buildSportSolidarityPayload();
+            if(payload.error){
+              alert(payload.error);
+              return;
+            }
+            alert("Aperçu partage sport :\n\n" + JSON.stringify(payload, null, 2));
+          };
+        }
+
+        if(sportAssoSave){
+          sportAssoSave.onclick = ()=>{
+            const payload = buildSportSolidarityPayload();
+            if(payload.error){
+              alert(payload.error);
+              return;
+            }
+            saveSportSolidarity(payload);
+            alert("Choix de partage sport enregistré (démo).");
+          };
+        }
+
+        if(p10){
+          p10.onclick = ()=>{
+            const w = loadSportWallet();
+            w.vert = Number(w.vert || 0) + 10;
+            saveSportWallet(w);
+            refresh();
+          };
+        }
+
+        if(p20){
+          p20.onclick = ()=>{
+            const w = loadSportWallet();
+            w.vert = Number(w.vert || 0) + 20;
+            saveSportWallet(w);
+            refresh();
+          };
+        }
+
+        if(infoBtn){
+          infoBtn.onclick = ()=>{
+            alert(
+              "BoCitecoins VERT — règle d’échange\n\n" +
+              "- 1 bocitecoin = 1 € en valeur d’échange\n" +
+              "- Échanges autorisés : 10 ou 20\n" +
+              "- Réservés au club, jamais à une personne\n" +
+              "- Maximum 30 % en nourriture / boissons chez commerçant\n" +
+              "- Le reste doit servir utilement au club\n" +
+              "- Le club peut aussi orienter une part vers une association via la mairie"
+            );
+          };
+        }
+
+        if(sportShowQr){
+          sportShowQr.onclick = ()=>{
+            const w = loadSportWallet();
+            const solidarity = loadSportSolidarity();
+
+            const payload = {
+              type: "sport_wallet",
+              club: getClubName(),
+              wallet: Number(w.vert || 0),
+              beneficiary: "club_only",
+              solidarity: solidarity,
+              ts: Date.now()
+            };
+
+            alert("Code club à scanner :\n\n" + JSON.stringify(payload, null, 2));
+          };
+        }
+
+        if(rst){
+          rst.onclick = ()=>{
+            if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
+              saveSportWallet({ vert:0 });
+              refresh();
+            }
+          };
+        }
+
+        if(sportWeekendSave){
+          sportWeekendSave.onclick = ()=>{
+            const txt = sportWeekendReport ? String(sportWeekendReport.value || "").trim() : "";
+
+            if(!txt){
+              alert("Saisis un résultat ou un compte-rendu.");
+              return;
+            }
+
+            if(txt.length < 5){
+              alert("Texte trop court.");
+              return;
+            }
+
+            if(txt.length > 500){
+              alert("Texte trop long (maximum 500 caractères).");
+              return;
+            }
+
+            if(containsForbiddenWords(txt)){
+              alert("Le texte contient des mots interdits. Les injures, propos agressifs, diffamatoires, humiliants ou non sportifs sont interdits.");
+              return;
+            }
+
+            if(containsSuspiciousPattern(txt)){
+              alert("Le texte contient des éléments non autorisés.");
+              return;
+            }
+
+            saveSportReport({
+              text: txt,
+              ts: Date.now(),
+              ts_fr: new Date().toLocaleString("fr-FR")
+            });
+
+            alert("Résultat / compte-rendu enregistré.");
+          };
+        }
+
+        if(sportWeekendRead){
+          sportWeekendRead.onclick = ()=>{
+            const data = loadSportReport();
+            if(!data){
+              alert("Aucun résultat enregistré.");
+              return;
+            }
+
+            alert("Dernier résultat enregistré :\n\n" + data.text + "\n\nLe " + data.ts_fr);
+          };
+        }
+
+        if(sportWeekendReset){
+          sportWeekendReset.onclick = ()=>{
+            if(confirm("Réinitialiser le dernier résultat du week-end ?")){
+              localStorage.removeItem(SPORT_REPORT_KEY);
+              if(sportWeekendReport) sportWeekendReport.value = "";
+              alert("Résultat réinitialisé.");
+            }
+          };
+        }
+
+        function renderSportPayload(payload){
+          if(!sportReadOut) return;
+
+          const solidarity = payload.solidarity ? JSON.stringify(payload.solidarity) : "aucun";
+
+          sportReadOut.innerHTML =
+            "<strong>Club :</strong> " + escapeHtml(payload.club || "Non renseigné") + "<br>" +
+            "<strong>Montant :</strong> " + Number(payload.wallet || 0) + " bocitecoins VERT<br>" +
+            "<strong>Date :</strong> " + new Date(payload.ts || Date.now()).toLocaleString("fr-FR") + "<br>" +
+            "<strong>Partage :</strong> " + escapeHtml(solidarity);
+        }
+
+        if(sportReadBtn){
+          sportReadBtn.onclick = ()=>{
+            const raw = sportScanInput ? String(sportScanInput.value || "").trim() : "";
+
+            if(!raw){
+              alert("Aucune lecture disponible.");
+              return;
+            }
+
+            try{
+              const parsed = JSON.parse(raw);
+
+              if(parsed.type !== "sport_wallet"){
+                alert("Code non reconnu pour l’échange sport.");
+                return;
+              }
+
+              currentPayload = parsed;
+              renderSportPayload(parsed);
+            }catch(e){
+              alert("Lecture invalide.");
+            }
+          };
+        }
+
+        function validateSportExchange(amountToBurn){
+          if(!currentPayload){
+            alert("Lis d’abord un code club.");
+            return;
+          }
+
+          const walletAmount = Number(currentPayload.wallet || 0);
+
+          if(walletAmount < amountToBurn){
+            alert("Montant insuffisant dans le wallet du club.");
+            return;
+          }
+
+          const history = loadSportHistory();
+          history.push({
+            club: currentPayload.club || getClubName(),
+            amount: amountToBurn,
+            beneficiary: "club_only",
+            solidarity: currentPayload.solidarity || { mode:"none", map:{} },
+            ts: Date.now(),
+            ts_fr: new Date().toLocaleString("fr-FR"),
+            note: "échange validé via interface sport"
+          });
+          saveSportHistory(history);
+
+          const remaining = Math.max(0, walletAmount - amountToBurn);
+          saveSportWallet({ vert:remaining });
+          refresh();
+
+          alert(
+            "Échange validé pour le club.\n\n" +
+            "Montant brûlé : " + amountToBurn + " bocitecoins VERT.\n" +
+            "Reste wallet : " + remaining + " bocitecoins VERT."
+          );
+
+          currentPayload = null;
+          if(sportScanInput) sportScanInput.value = "";
+          if(sportReadOut) sportReadOut.textContent = "Aucun code lu pour le moment.";
+        }
+
+        if(sportValidate10Btn){
+          sportValidate10Btn.onclick = ()=> validateSportExchange(10);
+        }
+
+        if(sportValidate20Btn){
+          sportValidate20Btn.onclick = ()=> validateSportExchange(20);
+        }
+
+        if(sportHistoryBtn){
+          sportHistoryBtn.onclick = ()=>{
+            const history = loadSportHistory();
+
+            if(!history.length){
+              alert("Aucun historique sport pour le moment.");
+              return;
+            }
+
+            const grouped = {};
+            history.forEach((x)=>{
+              if(!grouped[x.club]){
+                grouped[x.club] = {
+                  total:0,
+                  count:0,
+                  last:x.ts_fr
+                };
+              }
+              grouped[x.club].total += Number(x.amount || 0);
+              grouped[x.club].count += 1;
+              grouped[x.club].last = x.ts_fr;
+            });
+
+            const lines = Object.keys(grouped).sort().map((club)=>{
+              const g = grouped[club];
+              return (
+                club +
+                "\n- échanges : " + g.count +
+                "\n- total vidé : " + g.total + " bocitecoins VERT" +
+                "\n- dernier échange : " + g.last
+              );
+            }).join("\n\n");
+
+            alert("Historique sport :\n\n" + lines);
+          };
+        }
+
+        if(sportExportBtn){
+          sportExportBtn.onclick = ()=>{
+            const history = loadSportHistory();
+
+            if(!history.length){
+              alert("Aucun historique à exporter.");
+              return;
+            }
+
+            const grouped = {};
+            history.forEach((x)=>{
+              if(!grouped[x.club]){
+                grouped[x.club] = {
+                  total:0,
+                  count:0,
+                  last:x.ts_fr
+                };
+              }
+              grouped[x.club].total += Number(x.amount || 0);
+              grouped[x.club].count += 1;
+              grouped[x.club].last = x.ts_fr;
+            });
+
+            const lines = Object.keys(grouped).sort().map((club)=>{
+              const g = grouped[club];
+              return (
+                "Club : " + club + "\n" +
+                "Nombre d’échanges : " + g.count + "\n" +
+                "Total vidé : " + g.total + " bocitecoins VERT\n" +
+                "Dernier échange : " + g.last
+              );
+            }).join("\n\n--------------------\n\n");
+
+            const exportText =
+              "HISTORIQUE SPORT — CLUBS\n" +
+              "Export du " + new Date().toLocaleString("fr-FR") + "\n\n" +
+              lines;
+
+            if(navigator.clipboard && navigator.clipboard.writeText){
+              navigator.clipboard.writeText(exportText)
+                .then(()=> alert("Historique exporté et copié dans le presse-papiers."))
+                .catch(()=> alert(exportText));
+            }else{
+              alert(exportText);
+            }
+          };
+        }
+
+        function renderMerchantPayload(payload){
+          if(sportMerchantName) sportMerchantName.value = payload.shopName || "";
+          if(sportMerchantAddress) sportMerchantAddress.value = payload.address || "";
+          if(sportMerchantPhone) sportMerchantPhone.value = payload.phone || "";
+          if(sportMerchantEmail) sportMerchantEmail.value = payload.email || "";
+        }
+
+        if(sportMerchantReadBtn){
+          sportMerchantReadBtn.onclick = ()=>{
+            const raw = sportMerchantScanInput ? String(sportMerchantScanInput.value || "").trim() : "";
+
+            if(!raw){
+              alert("Aucune lecture commerçant disponible.");
+              return;
+            }
+
+            try{
+              const parsed = JSON.parse(raw);
+
+              if(parsed.type !== "merchant_profile"){
+                alert("Code commerçant non reconnu.");
+                return;
+              }
+
+              currentMerchantPayload = parsed;
+              renderMerchantPayload(parsed);
+              alert("Fiche commerçant préremplie.");
+            }catch(e){
+              alert("Lecture commerçant invalide.");
+            }
+          };
+        }
+
+        function buildSportPubText(assoName){
+          const company = sportMerchantName ? String(sportMerchantName.value || "").trim() : "";
+          const address = sportMerchantAddress ? String(sportMerchantAddress.value || "").trim() : "";
+          const phone = sportMerchantPhone ? String(sportMerchantPhone.value || "").trim() : "";
+
+          if(!company) return "";
+
+          let txt = `${company} soutient ${getClubName()} + ${assoName}`;
+          if(phone) txt += ` • ${phone}`;
+          if(address) txt += ` • ${address}`;
+          return txt;
+        }
+
+        document.querySelectorAll(".sportPubAssoBtn").forEach((btn)=>{
+          btn.addEventListener("click", ()=>{
+            currentSelectedPubAsso = btn.getAttribute("data-asso");
+            const txt = buildSportPubText(currentSelectedPubAsso);
+            if(sportPubPreview){
+              sportPubPreview.textContent = txt || "Aucune publicité générée pour le moment.";
+            }
+          });
+        });
+
+        if(sportPubPayBtn){
+          sportPubPayBtn.onclick = ()=>{
+            const company = sportMerchantName ? String(sportMerchantName.value || "").trim() : "";
+            const email = sportMerchantEmail ? String(sportMerchantEmail.value || "").trim() : "";
+            const phone = sportMerchantPhone ? String(sportMerchantPhone.value || "").trim() : "";
+            const address = sportMerchantAddress ? String(sportMerchantAddress.value || "").trim() : "";
+
+            if(!company){
+              alert("Scanne d’abord le commerçant pour préremplir la fiche.");
+              return;
+            }
+
+            if(!currentSelectedPubAsso){
+              alert("Choisis l’association soutenue.");
+              return;
+            }
+
+            const pubText = buildSportPubText(currentSelectedPubAsso);
+            if(!pubText){
+              alert("Impossible de générer la publicité.");
+              return;
+            }
+
+            const paymentValidated = confirm(
+              "Simulation paiement PSP\n\n" +
+              "Montant : 60 € TTC\n" +
+              "Répartition prévue :\n" +
+              "- 35 € TTC club\n" +
+              "- 22 € TTC association\n" +
+              "- 3 € TTC Bo'CitéArt\n\n" +
+              "Confirmer le paiement ?"
+            );
+
+            if(!paymentValidated){
+              alert("Paiement requis pour activer la publicité.");
+              return;
+            }
+
+            const now = Date.now();
+            const endTs = now + (7 * 24 * 60 * 60 * 1000);
+
+            const pubs = loadSportPubs();
+            pubs.push({
+              type:"sport_support",
+              company,
+              club:getClubName(),
+              asso:currentSelectedPubAsso,
+              email,
+              phone,
+              address,
+              text:pubText,
+              paid:true,
+              startTs:now,
+              endTs:endTs,
+              amountTTC:60,
+              clubPartTTC:35,
+              assoPartTTC:22,
+              bociteartPartTTC:3,
+              ts_fr:new Date().toLocaleString("fr-FR")
+            });
+            saveSportPubs(pubs);
+
+            syncSportPubsToTape();
+
+            alert(
+              "Paiement validé (démo).\n\n" +
+              "La publicité est active pendant 7 jours.\n" +
+              "Les justificatifs / factures sont à prévoir pour :\n" +
+              "- le commerçant\n" +
+              "- le club\n" +
+              "- l’association\n" +
+              "- Bo'CitéArt"
+            );
+          };
+        }
+
+        if(sportPubHistoryBtn){
+          sportPubHistoryBtn.onclick = ()=>{
+            const active = getActiveSportPubs();
+
+            if(!active.length){
+              alert("Aucune publicité sport active pour le moment.");
+              return;
+            }
+
+            const lines = active.map((x)=>{
+              return (
+                x.text +
+                "\n- début : " + new Date(x.startTs).toLocaleString("fr-FR") +
+                "\n- fin : " + new Date(x.endTs).toLocaleString("fr-FR")
+              );
+            }).join("\n\n--------------------\n\n");
+
+            alert("Publicités sport actives :\n\n" + lines);
+          };
+        }
 
                   const b = $("openSportFicheBtn");
                   const btnMap = $("openMap");
@@ -4448,7 +5147,7 @@ out center tags;
                   <button class="choiceBtn" id="mairieValidateBtn" type="button">Valider échange</button>
                   <button class="choiceBtn" id="mairieHistoryBtn" type="button" style="background:#fff;">Voir historique</button>
                   <button class="choiceBtn" id="mairieHistoryResetBtn" type="button" style="background:#fff;">Réinitialiser historique</button>
-                  <button class="choiceBtn" id="mairieExportBtn" type="button" style="background:#fff;">Exporter historique</button>
+                <button class="choiceBtn" id="merchantHistoryExportBtn" type="button" style="background:#fff;">Exporter historique</button>
                 </div>
 
                 <div class="box" style="margin-top:12px;background:var(--bg);">
@@ -4918,7 +5617,7 @@ out center tags;
                 <button class="choiceBtn" id="walletClientRedeem50" type="button">Échanger 50</button>
                 <button class="choiceBtn" id="walletClientRedeem100" type="button">Échanger 100</button>
                 <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser (démo)</button>
-                <button class="choiceBtn" id="mairieExportBtn" type="button" style="background:#fff;">Exporter historique</button>
+               <button class="choiceBtn" id="merchantHistoryExportBtn" type="button" style="background:#fff;">Exporter historique</button>
               </div>
 
               <div style="font-weight:900;margin-top:14px;">Attribution commerçant → client (démo)</div>
@@ -5032,14 +5731,46 @@ out center tags;
                 </div>
               </div>
 
-              <div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
-                <li>Journée complète : grisée et non sélectionnable</li>
-                <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
-                <li>Option : texte en gras (+4€ TTC)</li>
-                <li>Possibilité d’URL selon conformité</li>
-              </ul>
+<div style="font-weight:900;margin-top:12px;">Fiche commerçant / code à scanner</div>
+<div class="box">
+  <div class="muted">
+    Cette fiche est enregistrée côté commerçant et sert à générer automatiquement le code commerçant
+    que le sportif pourra scanner pour préremplir sa demande de soutien solidaire.
+  </div>
+
+  <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
+  <input class="miniField" id="merchantProfileName" placeholder="Nom du commerce">
+
+  <div style="margin-top:10px;font-weight:900;">Adresse</div>
+  <input class="miniField" id="merchantProfileAddress" placeholder="Adresse">
+
+  <div style="margin-top:10px;font-weight:900;">Téléphone</div>
+  <input class="miniField" id="merchantProfilePhone" placeholder="Téléphone">
+
+  <div style="margin-top:10px;font-weight:900;">Email</div>
+  <input class="miniField" id="merchantProfileEmail" placeholder="Email">
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <button class="choiceBtn" id="merchantProfileSaveBtn" type="button">💾 Enregistrer la fiche</button>
+    <button class="choiceBtn" id="merchantShowQrBtn" type="button">Afficher mon code commerçant</button>
+  </div>
+
+  <div class="box" style="margin-top:12px;background:var(--bg);">
+    <div style="font-weight:900;">Format du code commerçant</div>
+    <div class="muted" id="merchantQrPreview" style="margin-top:8px;">
+      Aucun code généré pour le moment.
+    </div>
+  </div>
+</div>
+
+<div style="font-weight:900;margin-top:12px;">Publicités (si activées)</div>
+<ul style="margin:8px 0 0 18px;font-weight:800;">
+  <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
+  <li>Journée complète : grisée et non sélectionnable</li>
+  <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
+  <li>Option : texte en gras (+4€ TTC)</li>
+  <li>Possibilité d’URL selon conformité</li>
+</ul>
             `);
 
             setTimeout(()=>{
@@ -5410,6 +6141,103 @@ out center tags;
                 };
               }
 
+                            const MERCHANT_PROFILE_KEY = "bociteart_merchant_profile_v1";
+
+              function loadMerchantProfile(){
+                try{
+                  const raw = localStorage.getItem(MERCHANT_PROFILE_KEY);
+                  return raw ? JSON.parse(raw) : {
+                    shopName:"",
+                    address:"",
+                    phone:"",
+                    email:""
+                  };
+                }catch(e){
+                  return {
+                    shopName:"",
+                    address:"",
+                    phone:"",
+                    email:""
+                  };
+                }
+              }
+
+              function saveMerchantProfile(obj){
+                try{
+                  localStorage.setItem(MERCHANT_PROFILE_KEY, JSON.stringify(obj));
+                }catch(e){}
+              }
+
+              function buildMerchantProfilePayload(){
+                const p = loadMerchantProfile();
+                return {
+                  type: "merchant_profile",
+                  shopName: p.shopName || "",
+                  address: p.address || "",
+                  phone: p.phone || "",
+                  email: p.email || ""
+                };
+              }
+
+              const merchantProfileName = $("merchantProfileName");
+              const merchantProfileAddress = $("merchantProfileAddress");
+              const merchantProfilePhone = $("merchantProfilePhone");
+              const merchantProfileEmail = $("merchantProfileEmail");
+              const merchantProfileSaveBtn = $("merchantProfileSaveBtn");
+              const merchantShowQrBtn = $("merchantShowQrBtn");
+              const merchantQrPreview = $("merchantQrPreview");
+
+              const merchantProfile = loadMerchantProfile();
+
+              if(merchantProfileName) merchantProfileName.value = merchantProfile.shopName || "";
+              if(merchantProfileAddress) merchantProfileAddress.value = merchantProfile.address || "";
+              if(merchantProfilePhone) merchantProfilePhone.value = merchantProfile.phone || "";
+              if(merchantProfileEmail) merchantProfileEmail.value = merchantProfile.email || "";
+
+              function refreshMerchantQrPreview(){
+                if(!merchantQrPreview) return;
+                const payload = buildMerchantProfilePayload();
+                merchantQrPreview.textContent = JSON.stringify(payload, null, 2);
+              }
+
+              refreshMerchantQrPreview();
+
+              if(merchantProfileSaveBtn){
+                merchantProfileSaveBtn.onclick = ()=>{
+                  const profile = {
+                    shopName: merchantProfileName ? String(merchantProfileName.value || "").trim() : "",
+                    address: merchantProfileAddress ? String(merchantProfileAddress.value || "").trim() : "",
+                    phone: merchantProfilePhone ? String(merchantProfilePhone.value || "").trim() : "",
+                    email: merchantProfileEmail ? String(merchantProfileEmail.value || "").trim() : ""
+                  };
+
+                  if(!profile.shopName){
+                    alert("Renseigne au minimum le nom du commerce.");
+                    return;
+                  }
+
+                  saveMerchantProfile(profile);
+                  refreshMerchantQrPreview();
+                  alert("Fiche commerçant enregistrée.");
+                };
+              }
+
+              if(merchantShowQrBtn){
+                merchantShowQrBtn.onclick = ()=>{
+                  const payload = buildMerchantProfilePayload();
+
+                  if(!payload.shopName){
+                    alert("Enregistre d’abord la fiche commerçant.");
+                    return;
+                  }
+
+                  if(merchantQrPreview){
+                    merchantQrPreview.textContent = JSON.stringify(payload, null, 2);
+                  }
+
+                  alert("Code commerçant à scanner :\n\n" + JSON.stringify(payload, null, 2));
+                };
+              }
               const xb = $("xBtn");
               if(xb && xb.focus) xb.focus();
             },0);
