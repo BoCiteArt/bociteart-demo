@@ -4680,7 +4680,7 @@ out center tags;
             window.openSportPanel();
             return;
       }
-                   if(key === "mairie"){
+          if(key === "mairie"){
             openModal("Mairie", `
               <div style="font-weight:900;margin-bottom:8px;">Mairie (structure)</div>
 
@@ -4789,7 +4789,7 @@ out center tags;
                   <button class="choiceBtn" id="mairieSportValidateBtn" type="button">Valider échange sport</button>
                   <button class="choiceBtn" id="mairieSportHistoryBtn" type="button" style="background:#fff;">Voir historique sport</button>
                   <button class="choiceBtn" id="mairieSportHistoryResetBtn" type="button" style="background:#fff;">Réinitialiser historique sport</button>
-                  <button class="choiceBtn" id="mairieExportBtn" type="button" style="background:#fff;">Exporter historique</button>
+                  <button class="choiceBtn" id="mairieSportExportBtn" type="button" style="background:#fff;">Exporter historique sport</button>
                 </div>
 
                 <div class="box" style="margin-top:12px;background:var(--bg);">
@@ -4909,17 +4909,6 @@ out center tags;
                     try{
                       localStorage.setItem("bociteart_school_wallet_v1", JSON.stringify(obj));
                     }catch(e){}
-                  };
-
-              const sportLoadM = (typeof loadSportWallet === "function")
-                ? loadSportWallet
-                : function(){
-                    try{
-                      const raw = localStorage.getItem("bociteart_sport_wallet_v1");
-                      return raw ? JSON.parse(raw) : { vert:0 };
-                    }catch(e){
-                      return { vert:0 };
-                    }
                   };
 
               const sportSaveM = (typeof saveSportWallet === "function")
@@ -5286,6 +5275,9 @@ out center tags;
                 };
               }
             },0);
+
+            return;
+          }
 
                   if(key === "commerces"){
             openModal("Commerces", `
