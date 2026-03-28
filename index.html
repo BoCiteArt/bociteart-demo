@@ -3585,1100 +3585,1100 @@ out center tags;
 
             return;
           }
-                  if(key === "sport"){
-            window.openSportPanel = function(){
-              const openSport = ()=>{
-                openModal("Sport", `
-                  <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
-                  <div class="box">
-                    <strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.
-                  </div>
-
-                  <div class="coinShowcase">
-                    <div class="coinFace coinGreen" aria-hidden="true">
-                      <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
-                        <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-                          <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
-                        </svg>
-                      </div>
-                      <div class="coinInner coinInnerGreen">
-                        <div class="n">1</div>
-                        <div class="t">BoCitecoin</div>
-                      </div>
-                    </div>
-
-                    <div class="coinStack" aria-hidden="true">
-                      <div class="stackCoin stackGreen stack1">
-                        <div class="stackCoinStars" aria-hidden="true">
-                          <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                            <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="stackCoin stackGreen stack2">
-                        <div class="stackCoinStars" aria-hidden="true">
-                          <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                            <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="stackCoin stackGreen stack3">
-                        <div class="stackCoinStars" aria-hidden="true">
-                          <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                            <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="walletBox">
-                      <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
-                      <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
-                      <div class="walletSub">
-                        Les BoCitecoins VERT sont gagnés par les actions sportives et citoyennes validées.
-                        Ils servent uniquement à aider le club bénéficiaire, jamais une personne.
-                      </div>
-                      <div class="walletActions">
-                        <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-                        <button class="walletMini" id="walletSportPlus20" type="button">+20</button>
-                        <button class="walletMini" id="walletSportInfo" type="button">Règle d’échange</button>
-                        <button class="walletMini" id="sportShowQr" type="button">Code club</button>
-                        <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
-                  <div class="box">
-                    <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
-                    <div class="muted" style="margin-top:6px;">
-                      Cette fiche explique la logique de soutien trimestriel, la visibilité locale et la préparation de la ligne commerçant.
-                    </div>
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                      <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
-                    </div>
-                  </div>
-
-                  <div class="box" style="margin-top:12px;">
-                    <div style="font-weight:900;">Règle Sport – BoCitecoins VERT</div>
-                    <div class="muted" style="margin-top:8px;">
-                      Les BoCitecoins VERT sont gagnés par les clubs ou groupes sportifs pour des actions sportives et citoyennes validées dans le cadre de Bo’CitéArt.
-                      Ils servent uniquement à aider le club bénéficiaire, jamais une personne physique.
-                    </div>
-
-                    <ul style="margin:10px 0 0 18px;font-weight:800;">
-                      <li>Échange autorisé uniquement par tranches de <strong>10</strong> ou <strong>20</strong> BoCitecoins VERT</li>
-                      <li>L’avantage bénéficie au <strong>club</strong>, jamais au référent, éducateur ou particulier</li>
-                      <li>Après validation, les coins utilisés sont <strong>brûlés</strong> du wallet sport</li>
-                      <li>Maximum <strong>30 %</strong> de l’aide en nourriture ou boissons</li>
-                      <li>Le reste doit profiter utilement au club : matériel, accessoires, soutien logistique ou besoin sportif</li>
-                      <li>Aucune conversion en euros, aucun versement d’argent, aucun usage personnel</li>
-                    </ul>
-
-                    <div class="muted" style="margin-top:8px;">
-                      Exemples : 7 = impossible • 10 = possible • 15 = impossible • 20 = possible.
-                    </div>
-                  </div>
-
-                  <div style="font-weight:900;margin-top:14px;">Validation d’échange club</div>
-                  <div class="box">
-                    <div class="muted">
-                      Cet échange est réalisé au nom du club.<br>
-                      Il est enregistré, daté et consultable par la mairie.<br>
-                      Il doit être utilisé uniquement dans l’intérêt du club.
-                    </div>
-
-                    <div class="muted" style="margin-top:8px;">
-                      Les bocitecoins appartiennent au club. Ils ne peuvent en aucun cas être utilisés à titre personnel.
-                    </div>
-
-                    <div class="muted" style="margin-top:8px;">
-                      Utilisation : au besoin du club, échangés en mairie ou auprès d’un magasin partenaire.
-                    </div>
-
-                    <div class="muted" style="margin-top:8px;">
-                      Une part peut être utilisée pour nourriture ou boissons <strong>(maximum 30%)</strong>. Le reste doit être consacré au matériel ou aux besoins du club.
-                    </div>
-
-                    <div class="muted" style="margin-top:8px;">
-                      Chaque échange est tracé. La mairie peut consulter l’historique.
-                    </div>
-
-                    <div class="muted" style="margin-top:8px;">
-                      Une très petite partie du dispositif permet simplement d’assurer son bon fonctionnement.
-                    </div>
-
-                    <div class="muted" style="margin-top:8px;">
-                      1 bocitecoin = 1 € en valeur d’échange pour le club. Les échanges standards sont de <strong>10</strong> ou <strong>20 bocitecoins</strong>.
-                    </div>
-                  </div>
-
-                  <div style="font-weight:900;margin-top:14px;">Résultat / compte-rendu du week-end</div>
-                  <div class="box">
-                    <div class="muted">
-                      Le président ou le référent peut enregistrer un résultat, un résumé ou une information utile au club.
-                    </div>
-
-                    <div style="margin-top:10px;font-weight:900;">Texte</div>
-                    <textarea id="sportWeekendReport" class="miniField" style="min-height:120px;" placeholder="Ex : Victoire 3-1 à domicile, bon état d’esprit, fair-play exemplaire"></textarea>
-
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                      <button class="choiceBtn" id="sportWeekendSave" type="button">💾 Enregistrer</button>
-                      <button class="choiceBtn" id="sportWeekendRead" type="button" style="background:#fff;">Lire le dernier</button>
-                      <button class="choiceBtn" id="sportWeekendReset" type="button" style="background:#fff;">Réinitialiser</button>
-                    </div>
-
-                    <div class="muted" style="margin-top:10px;">
-                      Les injures, propos agressifs, diffamatoires, humiliants ou non sportifs sont interdits.
-                    </div>
-                  </div>
-
-                  <div style="font-weight:900;margin-top:14px;">Partage solidaire club / associations</div>
-                  <div class="box">
-                    <div style="font-weight:900;">Principe</div>
-                    <div class="muted" style="margin-top:6px;">
-                      Le club peut garder 100 % de ses bocitecoins, partager une partie avec une ou plusieurs associations,
-                      ou donner 100 % des bocitecoins concernés à une ou plusieurs associations.
-                    </div>
-
-                    <div class="muted" style="margin-top:8px;">
-                      En cas d’échange via la mairie, le choix enregistré accompagne le scan du club afin que la mairie puisse traiter
-                      la répartition choisie par le club sans ressaisie inutile.
-                    </div>
-
-                    <div class="box" style="margin-top:12px;">
-                      <div style="font-weight:900;">Choisir le mode de partage</div>
-
-                      <label class="miniCheck" style="margin-top:10px;">
-                        <input type="radio" name="sportDonMode" value="none" checked>
-                        <div>Pas de partage solidaire (100 % pour le club)</div>
-                      </label>
-
-                      <label class="miniCheck">
-                        <input type="radio" name="sportDonMode" value="full">
-                        <div>Don total (100 % des bocitecoins concernés)</div>
-                      </label>
-
-                      <label class="miniCheck">
-                        <input type="radio" name="sportDonMode" value="partial">
-                        <div>Don partiel (répartition en %)</div>
-                      </label>
-                    </div>
-
-                    <div class="box" style="margin-top:12px;">
-                      <div style="font-weight:900;">Associations (sélection + répartition)</div>
-                      <div class="muted" style="margin-top:6px;">
-                        En “don total” : tu coches 1 à 4 associations (partage égal).<br>
-                        En “don partiel” : tu coches + tu fixes les pourcentages (total = 100%).
-                      </div>
-
-                      <div style="margin-top:10px;">
-                        <label class="miniCheck">
-                          <input type="checkbox" class="sportAssoPick" data-asso="Les Clés du Cœur">
-                          <div><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques</div>
-                        </label>
-                        <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
-                          <div class="muted" style="min-width:78px;">% :</div>
-                          <input class="miniField sportAssoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
-                        </div>
-
-                        <label class="miniCheck">
-                          <input type="checkbox" class="sportAssoPick" data-asso="Étoile Filante">
-                          <div><strong>Étoile Filante</strong> — enfants atteints de maladies rares</div>
-                        </label>
-                        <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
-                          <div class="muted" style="min-width:78px;">% :</div>
-                          <input class="miniField sportAssoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
-                        </div>
-
-                        <label class="miniCheck">
-                          <input type="checkbox" class="sportAssoPick" data-asso="Les Papillons (antenne Nord)">
-                          <div><strong>Les Papillons</strong> — antenne Nord</div>
-                        </label>
-                        <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
-                          <div class="muted" style="min-width:78px;">% :</div>
-                          <input class="miniField sportAssoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
-                        </div>
-
-                        <label class="miniCheck">
-                          <input type="checkbox" class="sportAssoPick" data-asso="ATC Nord">
-                          <div><strong>ATC Nord</strong> — traumatisés crâniens</div>
-                        </label>
-                        <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
-                          <div class="muted" style="min-width:78px;">% :</div>
-                          <input class="miniField sportAssoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
-                        </div>
-                      </div>
-
-                      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                        <button class="choiceBtn" id="sportAssoPreview" type="button">👁️ Aperçu partage</button>
-                        <button class="choiceBtn" id="sportAssoSave" type="button">💾 Enregistrer (démo)</button>
-                      </div>
-
-                      <div class="muted" style="margin-top:10px;">
-                        (Démo) Enregistrement local sur ce téléphone. En LIVE : le choix accompagne le scan du club pour traitement mairie.
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style="font-weight:900;margin-top:14px;">Demande commerçant solidaire + pub défilante</div>
-                  <div class="box">
-                    <div class="muted">
-                      Le sportif scanne le commerçant. Sa fiche se préremplit automatiquement.
-                      Le sportif choisit simplement l’association que le commerçant souhaite soutenir.
-                      Le texte diffusé est standardisé : nom de l’entreprise + club soutenu + association soutenue.
-                    </div>
-
-                    <div class="muted" style="margin-top:8px;">
-                      Tarif fixe : <strong>50 € HT / 60 € TTC</strong> — diffusion dans la petite bande défilante pendant <strong>7 jours consécutifs</strong>,
-                      uniquement après paiement validé.
-                    </div>
-
-                    <div style="margin-top:10px;font-weight:900;">Scan commerçant (démo)</div>
-                    <textarea id="sportMerchantScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan commerçant (démo)"></textarea>
-
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                      <button class="choiceBtn" id="sportMerchantReadBtn" type="button">Lire le scan commerçant</button>
-                    </div>
-
-                    <div class="box" style="margin-top:12px;background:var(--bg);">
-                      <div style="font-weight:900;">Fiche commerçant préremplie</div>
-
-                      <div style="margin-top:10px;font-weight:900;">Enseigne</div>
-                      <input class="miniField" id="sportMerchantName" placeholder="Nom du commerce">
-
-                      <div style="margin-top:10px;font-weight:900;">Adresse</div>
-                      <input class="miniField" id="sportMerchantAddress" placeholder="Adresse">
-
-                      <div style="margin-top:10px;font-weight:900;">Téléphone</div>
-                      <input class="miniField" id="sportMerchantPhone" placeholder="Téléphone">
-
-                      <div style="margin-top:10px;font-weight:900;">Email</div>
-                      <input class="miniField" id="sportMerchantEmail" placeholder="Email">
-                    </div>
-
-                    <div class="box" style="margin-top:12px;">
-                      <div style="font-weight:900;">Association choisie par le commerçant</div>
-                      <div class="muted" style="margin-top:6px;">
-                        Le sportif clique simplement sur l’association retenue. Le texte défilant est généré automatiquement.
-                      </div>
-
-                      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                        <button class="choiceBtn sportPubAssoBtn" data-asso="Les Clés du Cœur" type="button">Les Clés du Cœur</button>
-                        <button class="choiceBtn sportPubAssoBtn" data-asso="Étoile Filante" type="button">Étoile Filante</button>
-                        <button class="choiceBtn sportPubAssoBtn" data-asso="Les Papillons (antenne Nord)" type="button">Les Papillons</button>
-                        <button class="choiceBtn sportPubAssoBtn" data-asso="ATC Nord" type="button">ATC Nord</button>
-                      </div>
-
-                      <div class="box" style="margin-top:12px;background:var(--bg);">
-                        <div style="font-weight:900;">Texte bande défilante généré</div>
-                        <div class="muted" id="sportPubPreview" style="margin-top:8px;">Aucune publicité générée pour le moment.</div>
-                      </div>
-                    </div>
-
-                    <div class="box" style="margin-top:12px;">
-                      <div style="font-weight:900;">Paiement + diffusion</div>
-                      <div class="muted" style="margin-top:6px;">
-                        Sans paiement validé, la publicité n’est pas diffusée.
-                      </div>
-                      <div class="muted" style="margin-top:6px;">
-                        Une fois le paiement validé, la publicité est diffusée pendant 7 jours consécutifs puis disparaît automatiquement.
-                      </div>
-                      <div class="muted" style="margin-top:6px;">
-                        Après paiement validé, les justificatifs / factures sont prévus pour : le commerçant, Bo’CitéArt, le club et l’association.
-                      </div>
-
-                      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                        <button class="choiceBtn" id="sportPubPayBtn" type="button">Payer 60 € TTC</button>
-                        <button class="choiceBtn" id="sportPubHistoryBtn" type="button" style="background:#fff;">Voir pubs actives</button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style="font-weight:900;margin-top:14px;">Échange club → mairie / magasin partenaire</div>
-                  <div class="box">
-                    <div class="muted">
-                      Le club présente son code. Ce code peut être lu par la mairie ou par un commerçant partenaire selon le cas.
-                      Après validation, les bocitecoins échangés sont brûlés et l’opération est enregistrée dans l’historique.
-                    </div>
-
-                    <div class="muted" style="margin-top:8px;">
-                      Échanges autorisés : <strong>10</strong> ou <strong>20 bocitecoins</strong>.
-                    </div>
-
-                    <div class="muted" style="margin-top:8px;">
-                      Chez le commerçant : jusqu’à <strong>30 % maximum</strong> de la valeur totale peut concerner nourriture / boissons.
-                      Le reste doit profiter au club selon les règles admises.
-                    </div>
-
-                    <div class="muted" style="margin-top:8px;">
-                      En mairie : le club peut orienter tout ou partie du montant vers du matériel ou vers une / des associations selon le choix enregistré.
-                    </div>
-
-                    <div style="margin-top:10px;font-weight:900;">Lecture / scan club (démo)</div>
-                    <textarea id="sportScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan club (démo)"></textarea>
-
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                      <button class="choiceBtn" id="sportReadBtn" type="button">Lire le scan</button>
-                      <button class="choiceBtn" id="sportValidate10Btn" type="button">Valider échange 10</button>
-                      <button class="choiceBtn" id="sportValidate20Btn" type="button">Valider échange 20</button>
-                      <button class="choiceBtn" id="sportHistoryBtn" type="button" style="background:#fff;">Voir historique</button>
-                      <button class="choiceBtn" id="sportExportBtn" type="button" style="background:#fff;">Exporter historique</button>
-                    </div>
-
-                    <div class="box" style="margin-top:12px;background:var(--bg);">
-                      <div style="font-weight:900;">Lecture du code</div>
-                      <div class="muted" id="sportReadOut" style="margin-top:8px;">Aucun code lu pour le moment.</div>
-                    </div>
-                  </div>
-
-                  <div style="font-weight:900;margin-top:14px;">Plan / parcours / repères utiles</div>
-                  <div class="box">
-                    <ul style="margin:8px 0 0 18px;font-weight:800;">
-                      <li>Parc sportif</li>
-                      <li>Bois et parcours</li>
-                      <li>Salle de sport</li>
-                      <li>Parc urbain</li>
-                      <li>Espace vert central</li>
-                      <li>Piste cyclable nord</li>
-                      <li>Piste cyclable centre</li>
-                      <li>Arrêt de bus Mairie</li>
-                      <li>Arrêt de bus Centre</li>
-                      <li>Supérette du centre</li>
-                      <li>Mini-market quartier nord</li>
-                      <li>Restaurant place centrale</li>
-                      <li>Snack du quartier</li>
-                    </ul>
-                  </div>
-
-                  <div class="box" style="margin-top:10px;">
-                    <div style="font-weight:900;">Carte bien-être</div>
-                    <div class="muted" style="margin-top:6px;">
-                      Ouvre la carte plein écran avec points utiles autour de vous.
-                    </div>
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                      <button class="choiceBtn" id="openMap" type="button">Carte bien-être</button>
-                    </div>
-                  </div>
-
-                  <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
-                  <div class="box">
-                    Actuellement : 12 clubs engagés (démo)<br><br>
-                    Chaque club peut proposer :<br>
-                    • Rapport du week-end<br>
-                    • Actions citoyennes<br>
-                    • Partenariats commerçants<br>
-                    • Soutien associatif
-                  </div>
-                `);
-
-                setTimeout(()=>{
-                  const SPORT_HISTORY_KEY = "bociteart_sport_history_v1";
-                  const SPORT_REPORT_KEY = "bociteart_sport_report_v1";
-                  const SPORT_SOLIDARITY_KEY = "bociteart_sport_solidarity_v1";
-                  const SPORT_PUBS_KEY = "bociteart_sport_pubs_v1";
-
-                  const b = $("openSportFicheBtn");
-                  const btnMap = $("openMap");
-                  if(b) b.onclick = openSportFiche;
-                  if(btnMap) btnMap.onclick = openWellbeingMap;
-
-                  const refresh = ()=>{
-                    const out = $("sportCoinBalance");
-                    if(out) out.textContent = Number(loadSportWallet().vert || 0);
-                  };
-                  refresh();
-
-                  function loadSportHistory(){
-                    try{
-                      const raw = localStorage.getItem(SPORT_HISTORY_KEY);
-                      return raw ? JSON.parse(raw) : [];
-                    }catch(e){
-                      return [];
-                    }
-                  }
-
-                  function saveSportHistory(arr){
-                    try{
-                      localStorage.setItem(SPORT_HISTORY_KEY, JSON.stringify(arr));
-                    }catch(e){}
-                  }
-
-                  function loadSportReport(){
-                    try{
-                      const raw = localStorage.getItem(SPORT_REPORT_KEY);
-                      return raw ? JSON.parse(raw) : null;
-                    }catch(e){
-                      return null;
-                    }
-                  }
-
-                  function saveSportReport(obj){
-                    try{
-                      localStorage.setItem(SPORT_REPORT_KEY, JSON.stringify(obj));
-                    }catch(e){}
-                  }
-
-                  function loadSportSolidarity(){
-                    try{
-                      const raw = localStorage.getItem(SPORT_SOLIDARITY_KEY);
-                      return raw ? JSON.parse(raw) : { mode:"none", map:{} };
-                    }catch(e){
-                      return { mode:"none", map:{} };
-                    }
-                  }
-
-                  function saveSportSolidarity(obj){
-                    try{
-                      localStorage.setItem(SPORT_SOLIDARITY_KEY, JSON.stringify(obj));
-                    }catch(e){}
-                  }
-
-                  function loadSportPubs(){
-                    try{
-                      const raw = localStorage.getItem(SPORT_PUBS_KEY);
-                      return raw ? JSON.parse(raw) : [];
-                    }catch(e){
-                      return [];
-                    }
-                  }
-
-                  function saveSportPubs(arr){
-                    try{
-                      localStorage.setItem(SPORT_PUBS_KEY, JSON.stringify(arr));
-                    }catch(e){}
-                  }
-
-                  function getActiveSportPubs(){
-                    const now = Date.now();
-                    return loadSportPubs().filter(x => x.paid === true && now >= x.startTs && now <= x.endTs);
-                  }
-
-                  function syncSportPubsToTape(){
-                    const active = getActiveSportPubs();
-                    const staticAds = [
-                      { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-                      { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
-                      { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
-                      { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
-                    ];
-
-                    const dynamicAds = active.map(x => ({
-                      txt: x.text,
-                      bold: true
-                    }));
-
-                    window.tapeAds = dynamicAds.length ? dynamicAds.concat(staticAds) : staticAds.slice();
-
-                    if(typeof renderTape === "function"){
-                      renderTape();
-                    }
-                  }
-
-                  syncSportPubsToTape();
-
-                  function containsForbiddenWords(text){
-                    const banned = [
-                      "con","connard","connasse","salope","pute","merde","encule","enculé",
-                      "fdp","fils de pute","batard","bâtard","abruti","idiot","cretin","crétin",
-                      "ta gueule","ferme ta gueule","nique","niquer","va te faire","ordure",
-                      "pourri","pourriture","demeure","débile","debile","sale type","sale mec"
-                    ];
-
-                    const normalized = String(text || "")
-                      .toLowerCase()
-                      .normalize("NFD")
-                      .replace(/[\u0300-\u036f]/g, "")
-                      .replace(/\s+/g, " ")
-                      .trim();
-
-                    return banned.some(word =>
-                      normalized.includes(
-                        word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-                      )
-                    );
-                  }
-
-                  function containsSuspiciousPattern(text){
-                    const t = String(text || "");
-                    if(/[<>]/.test(t)) return true;
-                    if(/https?:\/\//i.test(t)) return true;
-                    return false;
-                  }
-
-                  const p10 = $("walletSportPlus10");
-                  const p20 = $("walletSportPlus20");
-                  const infoBtn = $("walletSportInfo");
-                  const sportShowQr = $("sportShowQr");
-                  const rst = $("walletSportReset");
-
-                  const sportWeekendReport = $("sportWeekendReport");
-                  const sportWeekendSave = $("sportWeekendSave");
-                  const sportWeekendRead = $("sportWeekendRead");
-                  const sportWeekendReset = $("sportWeekendReset");
-
-                  const sportScanInput = $("sportScanInput");
-                  const sportReadBtn = $("sportReadBtn");
-                  const sportValidate10Btn = $("sportValidate10Btn");
-                  const sportValidate20Btn = $("sportValidate20Btn");
-                  const sportHistoryBtn = $("sportHistoryBtn");
-                  const sportExportBtn = $("sportExportBtn");
-                  const sportReadOut = $("sportReadOut");
-
-                  const sportAssoPreview = $("sportAssoPreview");
-                  const sportAssoSave = $("sportAssoSave");
-
-                  const sportMerchantScanInput = $("sportMerchantScanInput");
-                  const sportMerchantReadBtn = $("sportMerchantReadBtn");
-                  const sportMerchantName = $("sportMerchantName");
-                  const sportMerchantAddress = $("sportMerchantAddress");
-                  const sportMerchantPhone = $("sportMerchantPhone");
-                  const sportMerchantEmail = $("sportMerchantEmail");
-                  const sportPubPreview = $("sportPubPreview");
-                  const sportPubPayBtn = $("sportPubPayBtn");
-                  const sportPubHistoryBtn = $("sportPubHistoryBtn");
-
-                  let currentPayload = null;
-                  let currentMerchantPayload = null;
-                  let currentSelectedPubAsso = null;
-
-                  function getClubName(){
-                    return "Club partenaire (démo)";
-                  }
-
-                  function buildSportSolidarityPayload(){
-                    const modeEl = document.querySelector('input[name="sportDonMode"]:checked');
-                    const mode = modeEl ? modeEl.value : "none";
-                    const picks = Array.from(document.querySelectorAll(".sportAssoPick"));
-                    const pcts = Array.from(document.querySelectorAll(".sportAssoPct"));
-
-                    const selected = picks.filter(x => x.checked).map(x => x.getAttribute("data-asso"));
-                    const map = {};
-
-                    if(mode === "none"){
-                      return { mode:"none", map:{} };
-                    }
-
-                    if(mode === "full"){
-                      if(!selected.length){
-                        return { error:"Sélectionne au moins une association." };
-                      }
-
-                      const share = Math.floor(100 / selected.length);
-                      let remaining = 100;
-
-                      selected.forEach((name, idx)=>{
-                        if(idx === selected.length - 1){
-                          map[name] = remaining;
-                        }else{
-                          map[name] = share;
-                          remaining -= share;
-                        }
-                      });
-
-                      return { mode:"full", map };
-                    }
-
-                    if(mode === "partial"){
-                      if(!selected.length){
-                        return { error:"Sélectionne au moins une association." };
-                      }
-
-                      let total = 0;
-
-                      pcts.forEach((input)=>{
-                        const name = input.getAttribute("data-asso");
-                        const linked = picks.find(x => x.getAttribute("data-asso") === name);
-                        if(linked && linked.checked){
-                          const v = Number(input.value || 0);
-                          map[name] = v;
-                          total += v;
-                        }
-                      });
-
-                      if(total !== 100){
-                        return { error:"En mode partiel, le total doit être égal à 100 %." };
-                      }
-
-                      return { mode:"partial", map };
-                    }
-
-                    return { mode:"none", map:{} };
-                  }
-
-                  if(sportAssoPreview){
-                    sportAssoPreview.onclick = ()=>{
-                      const payload = buildSportSolidarityPayload();
-                      if(payload.error){
-                        alert(payload.error);
-                        return;
-                      }
-                      alert("Aperçu partage sport :\n\n" + JSON.stringify(payload, null, 2));
-                    };
-                  }
-
-                  if(sportAssoSave){
-                    sportAssoSave.onclick = ()=>{
-                      const payload = buildSportSolidarityPayload();
-                      if(payload.error){
-                        alert(payload.error);
-                        return;
-                      }
-                      saveSportSolidarity(payload);
-                      alert("Choix de partage sport enregistré (démo).");
-                    };
-                  }
-
-                  if(p10){
-                    p10.onclick = ()=>{
-                      const w = loadSportWallet();
-                      w.vert = Number(w.vert || 0) + 10;
-                      saveSportWallet(w);
-                      refresh();
-                    };
-                  }
-
-                  if(p20){
-                    p20.onclick = ()=>{
-                      const w = loadSportWallet();
-                      w.vert = Number(w.vert || 0) + 20;
-                      saveSportWallet(w);
-                      refresh();
-                    };
-                  }
-
-                  if(infoBtn){
-                    infoBtn.onclick = ()=>{
-                      alert(
-                        "BoCitecoins VERT — règle d’échange\n\n" +
-                        "- 1 bocitecoin = 1 € en valeur d’échange\n" +
-                        "- Échanges autorisés : 10 ou 20\n" +
-                        "- Réservés au club, jamais à une personne\n" +
-                        "- Maximum 30 % en nourriture / boissons chez commerçant\n" +
-                        "- Le reste doit servir utilement au club\n" +
-                        "- Le club peut aussi orienter une part vers une association via la mairie"
-                      );
-                    };
-                  }
-
-                  if(sportShowQr){
-                    sportShowQr.onclick = ()=>{
-                      const w = loadSportWallet();
-                      const solidarity = loadSportSolidarity();
-
-                      const payload = {
-                        type: "sport_wallet",
-                        club: getClubName(),
-                        wallet: Number(w.vert || 0),
-                        beneficiary: "club_only",
-                        solidarity: solidarity,
-                        ts: Date.now()
-                      };
-
-                      alert("Code club à scanner :\n\n" + JSON.stringify(payload, null, 2));
-                    };
-                  }
-
-                  if(rst){
-                    rst.onclick = ()=>{
-                      if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
-                        saveSportWallet({ vert:0 });
-                        refresh();
-                      }
-                    };
-                  }
-
-                  if(sportWeekendSave){
-                    sportWeekendSave.onclick = ()=>{
-                      const txt = sportWeekendReport ? String(sportWeekendReport.value || "").trim() : "";
-
-                      if(!txt){
-                        alert("Saisis un résultat ou un compte-rendu.");
-                        return;
-                      }
-
-                      if(txt.length < 5){
-                        alert("Texte trop court.");
-                        return;
-                      }
-
-                      if(txt.length > 500){
-                        alert("Texte trop long (maximum 500 caractères).");
-                        return;
-                      }
-
-                      if(containsForbiddenWords(txt)){
-                        alert("Le texte contient des mots interdits. Les injures, propos agressifs, diffamatoires, humiliants ou non sportifs sont interdits.");
-                        return;
-                      }
-
-                      if(containsSuspiciousPattern(txt)){
-                        alert("Le texte contient des éléments non autorisés.");
-                        return;
-                      }
-
-                      saveSportReport({
-                        text: txt,
-                        ts: Date.now(),
-                        ts_fr: new Date().toLocaleString("fr-FR")
-                      });
-
-                      alert("Résultat / compte-rendu enregistré.");
-                    };
-                  }
-
-                  if(sportWeekendRead){
-                    sportWeekendRead.onclick = ()=>{
-                      const data = loadSportReport();
-                      if(!data){
-                        alert("Aucun résultat enregistré.");
-                        return;
-                      }
-
-                      alert("Dernier résultat enregistré :\n\n" + data.text + "\n\nLe " + data.ts_fr);
-                    };
-                  }
-
-                  if(sportWeekendReset){
-                    sportWeekendReset.onclick = ()=>{
-                      if(confirm("Réinitialiser le dernier résultat du week-end ?")){
-                        localStorage.removeItem(SPORT_REPORT_KEY);
-                        if(sportWeekendReport) sportWeekendReport.value = "";
-                        alert("Résultat réinitialisé.");
-                      }
-                    };
-                  }
-
-                  function renderSportPayload(payload){
-                    if(!sportReadOut) return;
-
-                    const solidarity = payload.solidarity ? JSON.stringify(payload.solidarity) : "aucun";
-
-                    sportReadOut.innerHTML =
-                      "<strong>Club :</strong> " + escapeHtml(payload.club || "Non renseigné") + "<br>" +
-                      "<strong>Montant :</strong> " + Number(payload.wallet || 0) + " bocitecoins VERT<br>" +
-                      "<strong>Date :</strong> " + new Date(payload.ts || Date.now()).toLocaleString("fr-FR") + "<br>" +
-                      "<strong>Partage :</strong> " + escapeHtml(solidarity);
-                  }
-
-                  if(sportReadBtn){
-                    sportReadBtn.onclick = ()=>{
-                      const raw = sportScanInput ? String(sportScanInput.value || "").trim() : "";
-
-                      if(!raw){
-                        alert("Aucune lecture disponible.");
-                        return;
-                      }
-
-                      try{
-                        const parsed = JSON.parse(raw);
-
-                        if(parsed.type !== "sport_wallet"){
-                          alert("Code non reconnu pour l’échange sport.");
-                          return;
-                        }
-
-                        currentPayload = parsed;
-                        renderSportPayload(parsed);
-                      }catch(e){
-                        alert("Lecture invalide.");
-                      }
-                    };
-                  }
-
-                  function validateSportExchange(amountToBurn){
-                    if(!currentPayload){
-                      alert("Lis d’abord un code club.");
-                      return;
-                    }
-
-                    const walletAmount = Number(currentPayload.wallet || 0);
-
-                    if(walletAmount < amountToBurn){
-                      alert("Montant insuffisant dans le wallet du club.");
-                      return;
-                    }
-
-                    const history = loadSportHistory();
-                    history.push({
-                      club: currentPayload.club || getClubName(),
-                      amount: amountToBurn,
-                      beneficiary: "club_only",
-                      solidarity: currentPayload.solidarity || { mode:"none", map:{} },
-                      ts: Date.now(),
-                      ts_fr: new Date().toLocaleString("fr-FR"),
-                      note: "échange validé via interface sport"
-                    });
-                    saveSportHistory(history);
-
-                    const remaining = Math.max(0, walletAmount - amountToBurn);
-                    saveSportWallet({ vert:remaining });
-                    refresh();
-
-                    alert(
-                      "Échange validé pour le club.\n\n" +
-                      "Montant brûlé : " + amountToBurn + " bocitecoins VERT.\n" +
-                      "Reste wallet : " + remaining + " bocitecoins VERT."
-                    );
-
-                    currentPayload = null;
-                    if(sportScanInput) sportScanInput.value = "";
-                    if(sportReadOut) sportReadOut.textContent = "Aucun code lu pour le moment.";
-                  }
-
-                  if(sportValidate10Btn){
-                    sportValidate10Btn.onclick = ()=> validateSportExchange(10);
-                  }
-
-                  if(sportValidate20Btn){
-                    sportValidate20Btn.onclick = ()=> validateSportExchange(20);
-                  }
-
-                  if(sportHistoryBtn){
-                    sportHistoryBtn.onclick = ()=>{
-                      const history = loadSportHistory();
-
-                      if(!history.length){
-                        alert("Aucun historique sport pour le moment.");
-                        return;
-                      }
-
-                      const grouped = {};
-                      history.forEach((x)=>{
-                        if(!grouped[x.club]){
-                          grouped[x.club] = {
-                            total:0,
-                            count:0,
-                            last:x.ts_fr
-                          };
-                        }
-                        grouped[x.club].total += Number(x.amount || 0);
-                        grouped[x.club].count += 1;
-                        grouped[x.club].last = x.ts_fr;
-                      });
-
-                      const lines = Object.keys(grouped).sort().map((club)=>{
-                        const g = grouped[club];
-                        return (
-                          club +
-                          "\n- échanges : " + g.count +
-                          "\n- total vidé : " + g.total + " bocitecoins VERT" +
-                          "\n- dernier échange : " + g.last
-                        );
-                      }).join("\n\n");
-
-                      alert("Historique sport :\n\n" + lines);
-                    };
-                  }
-
-                  if(sportExportBtn){
-                    sportExportBtn.onclick = ()=>{
-                      const history = loadSportHistory();
-
-                      if(!history.length){
-                        alert("Aucun historique à exporter.");
-                        return;
-                      }
-
-                      const grouped = {};
-                      history.forEach((x)=>{
-                        if(!grouped[x.club]){
-                          grouped[x.club] = {
-                            total:0,
-                            count:0,
-                            last:x.ts_fr
-                          };
-                        }
-                        grouped[x.club].total += Number(x.amount || 0);
-                        grouped[x.club].count += 1;
-                        grouped[x.club].last = x.ts_fr;
-                      });
-
-                      const lines = Object.keys(grouped).sort().map((club)=>{
-                        const g = grouped[club];
-                        return (
-                          "Club : " + club + "\n" +
-                          "Nombre d’échanges : " + g.count + "\n" +
-                          "Total vidé : " + g.total + " bocitecoins VERT\n" +
-                          "Dernier échange : " + g.last
-                        );
-                      }).join("\n\n--------------------\n\n");
-
-                      const exportText =
-                        "HISTORIQUE SPORT — CLUBS\n" +
-                        "Export du " + new Date().toLocaleString("fr-FR") + "\n\n" +
-                        lines;
-
-                      if(navigator.clipboard && navigator.clipboard.writeText){
-                        navigator.clipboard.writeText(exportText)
-                          .then(()=> alert("Historique exporté et copié dans le presse-papiers."))
-                          .catch(()=> alert(exportText));
-                      }else{
-                        alert(exportText);
-                      }
-                    };
-                  }
-
-                  function renderMerchantPayload(payload){
-                    if(sportMerchantName) sportMerchantName.value = payload.shopName || "";
-                    if(sportMerchantAddress) sportMerchantAddress.value = payload.address || "";
-                    if(sportMerchantPhone) sportMerchantPhone.value = payload.phone || "";
-                    if(sportMerchantEmail) sportMerchantEmail.value = payload.email || "";
-                  }
-
-                  if(sportMerchantReadBtn){
-                    sportMerchantReadBtn.onclick = ()=>{
-                      const raw = sportMerchantScanInput ? String(sportMerchantScanInput.value || "").trim() : "";
-
-                      if(!raw){
-                        alert("Aucune lecture commerçant disponible.");
-                        return;
-                      }
-
-                      try{
-                        const parsed = JSON.parse(raw);
-
-                        if(parsed.type !== "merchant_profile"){
-                          alert("Code commerçant non reconnu.");
-                          return;
-                        }
-
-                        currentMerchantPayload = parsed;
-                        renderMerchantPayload(parsed);
-                        alert("Fiche commerçant préremplie.");
-                      }catch(e){
-                        alert("Lecture commerçant invalide.");
-                      }
-                    };
-                  }
-
-                  function buildSportPubText(assoName){
-                    const company = sportMerchantName ? String(sportMerchantName.value || "").trim() : "";
-                    const address = sportMerchantAddress ? String(sportMerchantAddress.value || "").trim() : "";
-                    const phone = sportMerchantPhone ? String(sportMerchantPhone.value || "").trim() : "";
-
-                    if(!company) return "";
-
-                    let txt = `${company} soutient ${getClubName()} + ${assoName}`;
-                    if(phone) txt += ` • ${phone}`;
-                    if(address) txt += ` • ${address}`;
-                    return txt;
-                  }
-
-                  document.querySelectorAll(".sportPubAssoBtn").forEach((btn)=>{
-                    btn.addEventListener("click", ()=>{
-                      currentSelectedPubAsso = btn.getAttribute("data-asso");
-                      const txt = buildSportPubText(currentSelectedPubAsso);
-                      if(sportPubPreview){
-                        sportPubPreview.textContent = txt || "Aucune publicité générée pour le moment.";
-                      }
-                    });
-                  });
-
-                  if(sportPubPayBtn){
-                    sportPubPayBtn.onclick = ()=>{
-                      const company = sportMerchantName ? String(sportMerchantName.value || "").trim() : "";
-                      const email = sportMerchantEmail ? String(sportMerchantEmail.value || "").trim() : "";
-                      const phone = sportMerchantPhone ? String(sportMerchantPhone.value || "").trim() : "";
-                      const address = sportMerchantAddress ? String(sportMerchantAddress.value || "").trim() : "";
-
-                      if(!company){
-                        alert("Scanne d’abord le commerçant pour préremplir la fiche.");
-                        return;
-                      }
-
-                      if(!currentSelectedPubAsso){
-                        alert("Choisis l’association soutenue.");
-                        return;
-                      }
-
-                      const pubText = buildSportPubText(currentSelectedPubAsso);
-                      if(!pubText){
-                        alert("Impossible de générer la publicité.");
-                        return;
-                      }
-
-                      const paymentValidated = confirm(
-                        "Simulation paiement PSP\n\n" +
-                        "Montant : 60 € TTC\n" +
-                        "Répartition prévue :\n" +
-                        "- 35 € TTC club\n" +
-                        "- 22 € TTC association\n" +
-                        "- 3 € TTC Bo'CitéArt\n\n" +
-                        "Confirmer le paiement ?"
-                      );
-
-                      if(!paymentValidated){
-                        alert("Paiement requis pour activer la publicité.");
-                        return;
-                      }
-
-                      const now = Date.now();
-                      const endTs = now + (7 * 24 * 60 * 60 * 1000);
-
-                      const pubs = loadSportPubs();
-                      pubs.push({
-                        type:"sport_support",
-                        company,
-                        club:getClubName(),
-                        asso:currentSelectedPubAsso,
-                        email,
-                        phone,
-                        address,
-                        text:pubText,
-                        paid:true,
-                        startTs:now,
-                        endTs:endTs,
-                        amountTTC:60,
-                        clubPartTTC:35,
-                        assoPartTTC:22,
-                        bociteartPartTTC:3,
-                        ts_fr:new Date().toLocaleString("fr-FR")
-                      });
-                      saveSportPubs(pubs);
-
-                      syncSportPubsToTape();
-
-                      alert(
-                        "Paiement validé (démo).\n\n" +
-                        "La publicité est active pendant 7 jours.\n" +
-                        "Les justificatifs / factures sont à prévoir pour :\n" +
-                        "- le commerçant\n" +
-                        "- le club\n" +
-                        "- l’association\n" +
-                        "- Bo'CitéArt"
-                      );
-                    };
-                  }
-
-                  if(sportPubHistoryBtn){
-                    sportPubHistoryBtn.onclick = ()=>{
-                      const active = getActiveSportPubs();
-
-                      if(!active.length){
-                        alert("Aucune publicité sport active pour le moment.");
-                        return;
-                      }
-
-                      const lines = active.map((x)=>{
-                        return (
-                          x.text +
-                          "\n- début : " + new Date(x.startTs).toLocaleString("fr-FR") +
-                          "\n- fin : " + new Date(x.endTs).toLocaleString("fr-FR")
-                        );
-                      }).join("\n\n--------------------\n\n");
-
-                      alert("Publicités sport actives :\n\n" + lines);
-                    };
-                  }
-                },0);
-              };
-
-              openSport();
+if(key === "sport"){
+  window.openSportPanel = function(){
+    const openSport = ()=>{
+      openModal("Sport", `
+        <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+        <div class="box">
+          <strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.
+        </div>
+
+        <div class="coinShowcase">
+          <div class="coinFace coinGreen" aria-hidden="true">
+            <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
+              <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+                <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
+              </svg>
+            </div>
+            <div class="coinInner coinInnerGreen">
+              <div class="n">1</div>
+              <div class="t">BoCitecoin</div>
+            </div>
+          </div>
+
+          <div class="coinStack" aria-hidden="true">
+            <div class="stackCoin stackGreen stack1">
+              <div class="stackCoinStars" aria-hidden="true">
+                <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+                  <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+                </svg>
+              </div>
+            </div>
+            <div class="stackCoin stackGreen stack2">
+              <div class="stackCoinStars" aria-hidden="true">
+                <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+                  <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+                </svg>
+              </div>
+            </div>
+            <div class="stackCoin stackGreen stack3">
+              <div class="stackCoinStars" aria-hidden="true">
+                <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+                  <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="walletBox">
+            <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
+            <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
+            <div class="walletSub">
+              Les BoCitecoins VERT sont gagnés par les actions sportives et citoyennes validées.
+              Ils servent uniquement à aider le club bénéficiaire, jamais une personne.
+            </div>
+            <div class="walletActions">
+              <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
+              <button class="walletMini" id="walletSportPlus20" type="button">+20</button>
+              <button class="walletMini" id="walletSportInfo" type="button">Règle d’échange</button>
+              <button class="walletMini" id="sportShowQr" type="button">Code club</button>
+              <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
+        <div class="box">
+          <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
+          <div class="muted" style="margin-top:6px;">
+            Cette fiche explique la logique de soutien trimestriel, la visibilité locale et la préparation de la ligne commerçant.
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
+          </div>
+        </div>
+
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;">Règle Sport – BoCitecoins VERT</div>
+          <div class="muted" style="margin-top:8px;">
+            Les BoCitecoins VERT sont gagnés par les clubs ou groupes sportifs pour des actions sportives et citoyennes validées dans le cadre de Bo’CitéArt.
+            Ils servent uniquement à aider le club bénéficiaire, jamais une personne physique.
+          </div>
+
+          <ul style="margin:10px 0 0 18px;font-weight:800;">
+            <li>Échange autorisé uniquement par tranches de <strong>10</strong> ou <strong>20</strong> BoCitecoins VERT</li>
+            <li>L’avantage bénéficie au <strong>club</strong>, jamais au référent, éducateur ou particulier</li>
+            <li>Après validation, les coins utilisés sont <strong>brûlés</strong> du wallet sport</li>
+            <li>Maximum <strong>30 %</strong> de l’aide en nourriture ou boissons</li>
+            <li>Le reste doit profiter utilement au club : matériel, accessoires, soutien logistique ou besoin sportif</li>
+            <li>Aucune conversion en euros, aucun versement d’argent, aucun usage personnel</li>
+          </ul>
+
+          <div class="muted" style="margin-top:8px;">
+            Exemples : 7 = impossible • 10 = possible • 15 = impossible • 20 = possible.
+          </div>
+        </div>
+
+        <div style="font-weight:900;margin-top:14px;">Validation d’échange club</div>
+        <div class="box">
+          <div class="muted">
+            Cet échange est réalisé au nom du club.<br>
+            Il est enregistré, daté et consultable par la mairie.<br>
+            Il doit être utilisé uniquement dans l’intérêt du club.
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            Les bocitecoins appartiennent au club. Ils ne peuvent en aucun cas être utilisés à titre personnel.
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            Utilisation : au besoin du club, échangés en mairie ou auprès d’un magasin partenaire.
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            Une part peut être utilisée pour nourriture ou boissons <strong>(maximum 30%)</strong>. Le reste doit être consacré au matériel ou aux besoins du club.
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            Chaque échange est tracé. La mairie peut consulter l’historique.
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            1 bocitecoin = 1 unité d’avantage interne Bo’CitéArt pour le club. Les échanges standards sont de <strong>10</strong> ou <strong>20 bocitecoins</strong>.
+          </div>
+        </div>
+
+        <div style="font-weight:900;margin-top:14px;">Résultat / compte-rendu du week-end</div>
+        <div class="box">
+          <div class="muted">
+            Le président ou le référent peut enregistrer un résultat, un résumé ou une information utile au club.
+          </div>
+
+          <div style="margin-top:10px;font-weight:900;">Texte</div>
+          <textarea id="sportWeekendReport" class="miniField" style="min-height:120px;" placeholder="Ex : Victoire 3-1 à domicile, bon état d’esprit, fair-play exemplaire"></textarea>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <button class="choiceBtn" id="sportWeekendSave" type="button">💾 Enregistrer</button>
+            <button class="choiceBtn" id="sportWeekendRead" type="button" style="background:#fff;">Lire le dernier</button>
+            <button class="choiceBtn" id="sportWeekendReset" type="button" style="background:#fff;">Réinitialiser</button>
+          </div>
+
+          <div class="muted" style="margin-top:10px;">
+            Les injures, propos agressifs, diffamatoires, humiliants ou non sportifs sont interdits.
+          </div>
+        </div>
+
+        <div style="font-weight:900;margin-top:14px;">Partage solidaire club / associations</div>
+        <div class="box">
+          <div style="font-weight:900;">Principe</div>
+          <div class="muted" style="margin-top:6px;">
+            Le club peut garder 100 % de ses bocitecoins, partager une partie avec une ou plusieurs associations,
+            ou donner 100 % des bocitecoins concernés à une ou plusieurs associations.
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            En cas d’échange via la mairie, le choix enregistré accompagne le scan du club afin que la mairie puisse traiter
+            la répartition choisie par le club sans ressaisie inutile.
+          </div>
+
+          <div class="box" style="margin-top:12px;">
+            <div style="font-weight:900;">Choisir le mode de partage</div>
+
+            <label class="miniCheck" style="margin-top:10px;">
+              <input type="radio" name="sportDonMode" value="none" checked>
+              <div>Pas de partage solidaire (100 % pour le club)</div>
+            </label>
+
+            <label class="miniCheck">
+              <input type="radio" name="sportDonMode" value="full">
+              <div>Don total (100 % des bocitecoins concernés)</div>
+            </label>
+
+            <label class="miniCheck">
+              <input type="radio" name="sportDonMode" value="partial">
+              <div>Don partiel (répartition en %)</div>
+            </label>
+          </div>
+
+          <div class="box" style="margin-top:12px;">
+            <div style="font-weight:900;">Associations (sélection + répartition)</div>
+            <div class="muted" style="margin-top:6px;">
+              En “don total” : tu coches 1 à 4 associations (partage égal).<br>
+              En “don partiel” : tu coches + tu fixes les pourcentages (total = 100%).
+            </div>
+
+            <div style="margin-top:10px;">
+              <label class="miniCheck">
+                <input type="checkbox" class="sportAssoPick" data-asso="Les Clés du Cœur">
+                <div><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques</div>
+              </label>
+              <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+                <div class="muted" style="min-width:78px;">% :</div>
+                <input class="miniField sportAssoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+              </div>
+
+              <label class="miniCheck">
+                <input type="checkbox" class="sportAssoPick" data-asso="Étoile Filante">
+                <div><strong>Étoile Filante</strong> — enfants atteints de maladies rares</div>
+              </label>
+              <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+                <div class="muted" style="min-width:78px;">% :</div>
+                <input class="miniField sportAssoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+              </div>
+
+              <label class="miniCheck">
+                <input type="checkbox" class="sportAssoPick" data-asso="Les Papillons (antenne Nord)">
+                <div><strong>Les Papillons</strong> — antenne Nord</div>
+              </label>
+              <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+                <div class="muted" style="min-width:78px;">% :</div>
+                <input class="miniField sportAssoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+              </div>
+
+              <label class="miniCheck">
+                <input type="checkbox" class="sportAssoPick" data-asso="ATC Nord">
+                <div><strong>ATC Nord</strong> — traumatisés crâniens</div>
+              </label>
+              <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+                <div class="muted" style="min-width:78px;">% :</div>
+                <input class="miniField sportAssoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="sportAssoPreview" type="button">👁️ Aperçu partage</button>
+              <button class="choiceBtn" id="sportAssoSave" type="button">💾 Enregistrer (démo)</button>
+            </div>
+
+            <div class="muted" style="margin-top:10px;">
+              (Démo) Enregistrement local sur ce téléphone. En LIVE : le choix accompagne le scan du club pour traitement mairie.
+            </div>
+          </div>
+        </div>
+
+        <div style="font-weight:900;margin-top:14px;">Demande commerçant solidaire + pub défilante</div>
+        <div class="box">
+          <div class="muted">
+            Le sportif scanne le commerçant. Sa fiche se préremplit automatiquement.
+            Le sportif choisit simplement l’association que le commerçant souhaite soutenir.
+            Le texte diffusé est standardisé : nom de l’entreprise + club soutenu + association soutenue.
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            Tarif fixe : <strong>50 € HT / 60 € TTC</strong> — diffusion dans la petite bande défilante pendant <strong>7 jours consécutifs</strong>,
+            uniquement après paiement validé.
+          </div>
+
+          <div style="margin-top:10px;font-weight:900;">Scan commerçant (démo)</div>
+          <textarea id="sportMerchantScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan commerçant (démo)"></textarea>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <button class="choiceBtn" id="sportMerchantReadBtn" type="button">Lire le scan commerçant</button>
+          </div>
+
+          <div class="box" style="margin-top:12px;background:var(--bg);">
+            <div style="font-weight:900;">Fiche commerçant préremplie</div>
+
+            <div style="margin-top:10px;font-weight:900;">Enseigne</div>
+            <input class="miniField" id="sportMerchantName" placeholder="Nom du commerce">
+
+            <div style="margin-top:10px;font-weight:900;">Adresse</div>
+            <input class="miniField" id="sportMerchantAddress" placeholder="Adresse">
+
+            <div style="margin-top:10px;font-weight:900;">Téléphone</div>
+            <input class="miniField" id="sportMerchantPhone" placeholder="Téléphone">
+
+            <div style="margin-top:10px;font-weight:900;">Email</div>
+            <input class="miniField" id="sportMerchantEmail" placeholder="Email">
+          </div>
+
+          <div class="box" style="margin-top:12px;">
+            <div style="font-weight:900;">Association choisie par le commerçant</div>
+            <div class="muted" style="margin-top:6px;">
+              Le sportif clique simplement sur l’association retenue. Le texte défilant est généré automatiquement.
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn sportPubAssoBtn" data-asso="Les Clés du Cœur" type="button">Les Clés du Cœur</button>
+              <button class="choiceBtn sportPubAssoBtn" data-asso="Étoile Filante" type="button">Étoile Filante</button>
+              <button class="choiceBtn sportPubAssoBtn" data-asso="Les Papillons (antenne Nord)" type="button">Les Papillons</button>
+              <button class="choiceBtn sportPubAssoBtn" data-asso="ATC Nord" type="button">ATC Nord</button>
+            </div>
+
+            <div class="box" style="margin-top:12px;background:var(--bg);">
+              <div style="font-weight:900;">Texte bande défilante généré</div>
+              <div class="muted" id="sportPubPreview" style="margin-top:8px;">Aucune publicité générée pour le moment.</div>
+            </div>
+          </div>
+
+          <div class="box" style="margin-top:12px;">
+            <div style="font-weight:900;">Paiement + diffusion</div>
+            <div class="muted" style="margin-top:6px;">
+              Sans paiement validé, la publicité n’est pas diffusée.
+            </div>
+            <div class="muted" style="margin-top:6px;">
+              Une fois le paiement validé, la publicité est diffusée pendant 7 jours consécutifs puis disparaît automatiquement.
+            </div>
+            <div class="muted" style="margin-top:6px;">
+              Après paiement validé, les justificatifs / factures sont prévus pour : le commerçant, Bo’CitéArt, le club et l’association.
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <button class="choiceBtn" id="sportPubPayBtn" type="button">Payer 60 € TTC</button>
+              <button class="choiceBtn" id="sportPubHistoryBtn" type="button" style="background:#fff;">Voir pubs actives</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-weight:900;margin-top:14px;">Échange club → mairie / magasin partenaire</div>
+        <div class="box">
+          <div class="muted">
+            Le club présente son code. Ce code peut être lu par la mairie ou par un commerçant partenaire selon le cas.
+            Après validation, les bocitecoins échangés sont brûlés et l’opération est enregistrée dans l’historique.
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            Échanges autorisés : <strong>10</strong> ou <strong>20 bocitecoins</strong>.
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            Chez le commerçant : jusqu’à <strong>30 % maximum</strong> de la valeur totale peut concerner nourriture / boissons.
+            Le reste doit profiter au club selon les règles admises.
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            En mairie : le club peut orienter tout ou partie du montant vers du matériel ou vers une / des associations selon le choix enregistré.
+          </div>
+
+          <div style="margin-top:10px;font-weight:900;">Lecture / scan club (démo)</div>
+          <textarea id="sportScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan club (démo)"></textarea>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <button class="choiceBtn" id="sportReadBtn" type="button">Lire le scan</button>
+            <button class="choiceBtn" id="sportValidate10Btn" type="button">Valider échange 10</button>
+            <button class="choiceBtn" id="sportValidate20Btn" type="button">Valider échange 20</button>
+            <button class="choiceBtn" id="sportHistoryBtn" type="button" style="background:#fff;">Voir historique</button>
+            <button class="choiceBtn" id="sportExportBtn" type="button" style="background:#fff;">Exporter historique</button>
+          </div>
+
+          <div class="box" style="margin-top:12px;background:var(--bg);">
+            <div style="font-weight:900;">Lecture du code</div>
+            <div class="muted" id="sportReadOut" style="margin-top:8px;">Aucun code lu pour le moment.</div>
+          </div>
+        </div>
+
+        <div style="font-weight:900;margin-top:14px;">Plan / parcours / repères utiles</div>
+        <div class="box">
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Parc sportif</li>
+            <li>Bois et parcours</li>
+            <li>Salle de sport</li>
+            <li>Parc urbain</li>
+            <li>Espace vert central</li>
+            <li>Piste cyclable nord</li>
+            <li>Piste cyclable centre</li>
+            <li>Arrêt de bus Mairie</li>
+            <li>Arrêt de bus Centre</li>
+            <li>Supérette du centre</li>
+            <li>Mini-market quartier nord</li>
+            <li>Restaurant place centrale</li>
+            <li>Snack du quartier</li>
+          </ul>
+        </div>
+
+        <div class="box" style="margin-top:10px;">
+          <div style="font-weight:900;">Carte bien-être</div>
+          <div class="muted" style="margin-top:6px;">
+            Ouvre la carte plein écran avec points utiles autour de vous.
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <button class="choiceBtn" id="openMap" type="button">Carte bien-être</button>
+          </div>
+        </div>
+
+        <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
+        <div class="box">
+          Actuellement : 12 clubs engagés (démo)<br><br>
+          Chaque club peut proposer :<br>
+          • Rapport du week-end<br>
+          • Actions citoyennes<br>
+          • Partenariats commerçants<br>
+          • Soutien associatif
+        </div>
+      `);
+
+      setTimeout(()=>{
+        const SPORT_HISTORY_KEY = "bociteart_sport_history_v1";
+        const SPORT_REPORT_KEY = "bociteart_sport_report_v1";
+        const SPORT_SOLIDARITY_KEY = "bociteart_sport_solidarity_v1";
+        const SPORT_PUBS_KEY = "bociteart_sport_pubs_v1";
+
+        const b = $("openSportFicheBtn");
+        const btnMap = $("openMap");
+        if(b) b.onclick = openSportFiche;
+        if(btnMap) btnMap.onclick = openWellbeingMap;
+
+        const refresh = ()=>{
+          const out = $("sportCoinBalance");
+          if(out) out.textContent = Number(loadSportWallet().vert || 0);
+        };
+        refresh();
+
+        function loadSportHistory(){
+          try{
+            const raw = localStorage.getItem(SPORT_HISTORY_KEY);
+            return raw ? JSON.parse(raw) : [];
+          }catch(e){
+            return [];
+          }
+        }
+
+        function saveSportHistory(arr){
+          try{
+            localStorage.setItem(SPORT_HISTORY_KEY, JSON.stringify(arr));
+          }catch(e){}
+        }
+
+        function loadSportReport(){
+          try{
+            const raw = localStorage.getItem(SPORT_REPORT_KEY);
+            return raw ? JSON.parse(raw) : null;
+          }catch(e){
+            return null;
+          }
+        }
+
+        function saveSportReport(obj){
+          try{
+            localStorage.setItem(SPORT_REPORT_KEY, JSON.stringify(obj));
+          }catch(e){}
+        }
+
+        function loadSportSolidarity(){
+          try{
+            const raw = localStorage.getItem(SPORT_SOLIDARITY_KEY);
+            return raw ? JSON.parse(raw) : { mode:"none", map:{} };
+          }catch(e){
+            return { mode:"none", map:{} };
+          }
+        }
+
+        function saveSportSolidarity(obj){
+          try{
+            localStorage.setItem(SPORT_SOLIDARITY_KEY, JSON.stringify(obj));
+          }catch(e){}
+        }
+
+        function loadSportPubs(){
+          try{
+            const raw = localStorage.getItem(SPORT_PUBS_KEY);
+            return raw ? JSON.parse(raw) : [];
+          }catch(e){
+            return [];
+          }
+        }
+
+        function saveSportPubs(arr){
+          try{
+            localStorage.setItem(SPORT_PUBS_KEY, JSON.stringify(arr));
+          }catch(e){}
+        }
+
+        function getActiveSportPubs(){
+          const now = Date.now();
+          return loadSportPubs().filter(x => x.paid === true && now >= x.startTs && now <= x.endTs);
+        }
+
+        function syncSportPubsToTape(){
+          const active = getActiveSportPubs();
+          const staticAds = [
+            { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
+            { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
+            { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
+            { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
+          ];
+
+          const dynamicAds = active.map(x => ({
+            txt: x.text,
+            bold: true
+          }));
+
+          window.tapeAds = dynamicAds.length ? dynamicAds.concat(staticAds) : staticAds.slice();
+
+          if(typeof renderTape === "function"){
+            renderTape();
+          }
+        }
+
+        syncSportPubsToTape();
+
+        function containsForbiddenWords(text){
+          const banned = [
+            "con","connard","connasse","salope","pute","merde","encule","enculé",
+            "fdp","fils de pute","batard","bâtard","abruti","idiot","cretin","crétin",
+            "ta gueule","ferme ta gueule","nique","niquer","va te faire","ordure",
+            "pourri","pourriture","demeure","débile","debile","sale type","sale mec"
+          ];
+
+          const normalized = String(text || "")
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+          return banned.some(word =>
+            normalized.includes(
+              word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+            )
+          );
+        }
+
+        function containsSuspiciousPattern(text){
+          const t = String(text || "");
+          if(/[<>]/.test(t)) return true;
+          if(/https?:\/\//i.test(t)) return true;
+          return false;
+        }
+
+        const p10 = $("walletSportPlus10");
+        const p20 = $("walletSportPlus20");
+        const infoBtn = $("walletSportInfo");
+        const sportShowQr = $("sportShowQr");
+        const rst = $("walletSportReset");
+
+        const sportWeekendReport = $("sportWeekendReport");
+        const sportWeekendSave = $("sportWeekendSave");
+        const sportWeekendRead = $("sportWeekendRead");
+        const sportWeekendReset = $("sportWeekendReset");
+
+        const sportScanInput = $("sportScanInput");
+        const sportReadBtn = $("sportReadBtn");
+        const sportValidate10Btn = $("sportValidate10Btn");
+        const sportValidate20Btn = $("sportValidate20Btn");
+        const sportHistoryBtn = $("sportHistoryBtn");
+        const sportExportBtn = $("sportExportBtn");
+        const sportReadOut = $("sportReadOut");
+
+        const sportAssoPreview = $("sportAssoPreview");
+        const sportAssoSave = $("sportAssoSave");
+
+        const sportMerchantScanInput = $("sportMerchantScanInput");
+        const sportMerchantReadBtn = $("sportMerchantReadBtn");
+        const sportMerchantName = $("sportMerchantName");
+        const sportMerchantAddress = $("sportMerchantAddress");
+        const sportMerchantPhone = $("sportMerchantPhone");
+        const sportMerchantEmail = $("sportMerchantEmail");
+        const sportPubPreview = $("sportPubPreview");
+        const sportPubPayBtn = $("sportPubPayBtn");
+        const sportPubHistoryBtn = $("sportPubHistoryBtn");
+
+        let currentPayload = null;
+        let currentMerchantPayload = null;
+        let currentSelectedPubAsso = null;
+
+        function getClubName(){
+          return "Club partenaire (démo)";
+        }
+
+        function buildSportSolidarityPayload(){
+          const modeEl = document.querySelector('input[name="sportDonMode"]:checked');
+          const mode = modeEl ? modeEl.value : "none";
+          const picks = Array.from(document.querySelectorAll(".sportAssoPick"));
+          const pcts = Array.from(document.querySelectorAll(".sportAssoPct"));
+
+          const selected = picks
+            .filter(x => x.checked)
+            .map(x => x.getAttribute("data-asso"));
+
+          const map = {};
+
+          if(mode === "none"){
+            return { mode:"none", map:{} };
+          }
+
+          if(mode === "full"){
+            if(!selected.length){
+              return { error:"Sélectionne au moins une association." };
+            }
+
+            const share = Math.floor(100 / selected.length);
+            let remaining = 100;
+
+            selected.forEach((name, idx)=>{
+              if(idx === selected.length - 1){
+                map[name] = remaining;
+              }else{
+                map[name] = share;
+                remaining -= share;
+              }
+            });
+
+            return { mode:"full", map };
+          }
+
+          if(mode === "partial"){
+            if(!selected.length){
+              return { error:"Sélectionne au moins une association." };
+            }
+
+            let total = 0;
+
+            pcts.forEach((input)=>{
+              const name = input.getAttribute("data-asso");
+              const linked = picks.find(x => x.getAttribute("data-asso") === name);
+              if(linked && linked.checked){
+                const v = Number(input.value || 0);
+                map[name] = v;
+                total += v;
+              }
+            });
+
+            if(total !== 100){
+              return { error:"En mode partiel, le total doit être égal à 100 %." };
+            }
+
+            return { mode:"partial", map };
+          }
+
+          return { mode:"none", map:{} };
+        }
+
+        if(sportAssoPreview){
+          sportAssoPreview.onclick = ()=>{
+            const payload = buildSportSolidarityPayload();
+            if(payload.error){
+              alert(payload.error);
+              return;
+            }
+            alert("Aperçu partage sport :\n\n" + JSON.stringify(payload, null, 2));
+          };
+        }
+
+        if(sportAssoSave){
+          sportAssoSave.onclick = ()=>{
+            const payload = buildSportSolidarityPayload();
+            if(payload.error){
+              alert(payload.error);
+              return;
+            }
+            saveSportSolidarity(payload);
+            alert("Choix de partage sport enregistré (démo).");
+          };
+        }
+
+        if(p10){
+          p10.onclick = ()=>{
+            const w = loadSportWallet();
+            w.vert = Number(w.vert || 0) + 10;
+            saveSportWallet(w);
+            refresh();
+          };
+        }
+
+        if(p20){
+          p20.onclick = ()=>{
+            const w = loadSportWallet();
+            w.vert = Number(w.vert || 0) + 20;
+            saveSportWallet(w);
+            refresh();
+          };
+        }
+
+        if(infoBtn){
+          infoBtn.onclick = ()=>{
+            alert(
+              "BoCitecoins VERT — règle d’échange\n\n" +
+              "- 1 bocitecoin = 1 unité d’avantage interne Bo’CitéArt pour le club\n" +
+              "- Échanges autorisés : 10 ou 20\n" +
+              "- Réservés au club, jamais à une personne\n" +
+              "- Maximum 30 % en nourriture / boissons chez commerçant\n" +
+              "- Le reste doit servir utilement au club\n" +
+              "- Le club peut aussi orienter une part vers une association via la mairie"
+            );
+          };
+        }
+
+        if(sportShowQr){
+          sportShowQr.onclick = ()=>{
+            const w = loadSportWallet();
+            const solidarity = loadSportSolidarity();
+
+            const payload = {
+              type: "sport_wallet",
+              club: getClubName(),
+              wallet: Number(w.vert || 0),
+              beneficiary: "club_only",
+              solidarity: solidarity,
+              ts: Date.now()
             };
 
-            window.openSportPanel();
+            alert("Code club à scanner :\n\n" + JSON.stringify(payload, null, 2));
+          };
+        }
+
+        if(rst){
+          rst.onclick = ()=>{
+            if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
+              saveSportWallet({ vert:0 });
+              refresh();
+            }
+          };
+        }
+
+        if(sportWeekendSave){
+          sportWeekendSave.onclick = ()=>{
+            const txt = sportWeekendReport ? String(sportWeekendReport.value || "").trim() : "";
+
+            if(!txt){
+              alert("Saisis un résultat ou un compte-rendu.");
+              return;
+            }
+
+            if(txt.length < 5){
+              alert("Texte trop court.");
+              return;
+            }
+
+            if(txt.length > 500){
+              alert("Texte trop long (maximum 500 caractères).");
+              return;
+            }
+
+            if(containsForbiddenWords(txt)){
+              alert("Le texte contient des mots interdits. Les injures, propos agressifs, diffamatoires, humiliants ou non sportifs sont interdits.");
+              return;
+            }
+
+            if(containsSuspiciousPattern(txt)){
+              alert("Le texte contient des éléments non autorisés.");
+              return;
+            }
+
+            saveSportReport({
+              text: txt,
+              ts: Date.now(),
+              ts_fr: new Date().toLocaleString("fr-FR")
+            });
+
+            alert("Résultat / compte-rendu enregistré.");
+          };
+        }
+
+        if(sportWeekendRead){
+          sportWeekendRead.onclick = ()=>{
+            const data = loadSportReport();
+            if(!data){
+              alert("Aucun résultat enregistré.");
+              return;
+            }
+
+            alert("Dernier résultat enregistré :\n\n" + data.text + "\n\nLe " + data.ts_fr);
+          };
+        }
+
+        if(sportWeekendReset){
+          sportWeekendReset.onclick = ()=>{
+            if(confirm("Réinitialiser le dernier résultat du week-end ?")){
+              localStorage.removeItem(SPORT_REPORT_KEY);
+              if(sportWeekendReport) sportWeekendReport.value = "";
+              alert("Résultat réinitialisé.");
+            }
+          };
+        }
+
+        function renderSportPayload(payload){
+          if(!sportReadOut) return;
+
+          const solidarity = payload.solidarity ? JSON.stringify(payload.solidarity) : "aucun";
+
+          sportReadOut.innerHTML =
+            "<strong>Club :</strong> " + escapeHtml(payload.club || "Non renseigné") + "<br>" +
+            "<strong>Montant :</strong> " + Number(payload.wallet || 0) + " bocitecoins VERT<br>" +
+            "<strong>Date :</strong> " + new Date(payload.ts || Date.now()).toLocaleString("fr-FR") + "<br>" +
+            "<strong>Partage :</strong> " + escapeHtml(solidarity);
+        }
+
+        if(sportReadBtn){
+          sportReadBtn.onclick = ()=>{
+            const raw = sportScanInput ? String(sportScanInput.value || "").trim() : "";
+
+            if(!raw){
+              alert("Aucune lecture disponible.");
+              return;
+            }
+
+            try{
+              const parsed = JSON.parse(raw);
+
+              if(parsed.type !== "sport_wallet"){
+                alert("Code non reconnu pour l’échange sport.");
+                return;
+              }
+
+              currentPayload = parsed;
+              renderSportPayload(parsed);
+            }catch(e){
+              alert("Lecture invalide.");
+            }
+          };
+        }
+
+        function validateSportExchange(amountToBurn){
+          if(!currentPayload){
+            alert("Lis d’abord un code club.");
             return;
+          }
+
+          const walletAmount = Number(currentPayload.wallet || 0);
+
+          if(walletAmount < amountToBurn){
+            alert("Montant insuffisant dans le wallet du club.");
+            return;
+          }
+
+          const history = loadSportHistory();
+          history.push({
+            club: currentPayload.club || getClubName(),
+            amount: amountToBurn,
+            beneficiary: "club_only",
+            solidarity: currentPayload.solidarity || { mode:"none", map:{} },
+            ts: Date.now(),
+            ts_fr: new Date().toLocaleString("fr-FR"),
+            note: "échange validé via interface sport"
+          });
+          saveSportHistory(history);
+
+          const remaining = Math.max(0, walletAmount - amountToBurn);
+          saveSportWallet({ vert:remaining });
+          refresh();
+
+          alert(
+            "Échange validé pour le club.\n\n" +
+            "Montant brûlé : " + amountToBurn + " bocitecoins VERT.\n" +
+            "Reste wallet : " + remaining + " bocitecoins VERT."
+          );
+
+          currentPayload = null;
+          if(sportScanInput) sportScanInput.value = "";
+          if(sportReadOut) sportReadOut.textContent = "Aucun code lu pour le moment.";
+        }
+
+        if(sportValidate10Btn){
+          sportValidate10Btn.onclick = ()=> validateSportExchange(10);
+        }
+
+        if(sportValidate20Btn){
+          sportValidate20Btn.onclick = ()=> validateSportExchange(20);
+        }
+
+        if(sportHistoryBtn){
+          sportHistoryBtn.onclick = ()=>{
+            const history = loadSportHistory();
+
+            if(!history.length){
+              alert("Aucun historique sport pour le moment.");
+              return;
+            }
+
+            const grouped = {};
+            history.forEach((x)=>{
+              if(!grouped[x.club]){
+                grouped[x.club] = {
+                  total:0,
+                  count:0,
+                  last:x.ts_fr
+                };
+              }
+              grouped[x.club].total += Number(x.amount || 0);
+              grouped[x.club].count += 1;
+              grouped[x.club].last = x.ts_fr;
+            });
+
+            const lines = Object.keys(grouped).sort().map((club)=>{
+              const g = grouped[club];
+              return (
+                club +
+                "\n- échanges : " + g.count +
+                "\n- total vidé : " + g.total + " bocitecoins VERT" +
+                "\n- dernier échange : " + g.last
+              );
+            }).join("\n\n");
+
+            alert("Historique sport :\n\n" + lines);
+          };
+        }
+
+        if(sportExportBtn){
+          sportExportBtn.onclick = ()=>{
+            const history = loadSportHistory();
+
+            if(!history.length){
+              alert("Aucun historique à exporter.");
+              return;
+            }
+
+            const grouped = {};
+            history.forEach((x)=>{
+              if(!grouped[x.club]){
+                grouped[x.club] = {
+                  total:0,
+                  count:0,
+                  last:x.ts_fr
+                };
+              }
+              grouped[x.club].total += Number(x.amount || 0);
+              grouped[x.club].count += 1;
+              grouped[x.club].last = x.ts_fr;
+            });
+
+            const lines = Object.keys(grouped).sort().map((club)=>{
+              const g = grouped[club];
+              return (
+                "Club : " + club + "\n" +
+                "Nombre d’échanges : " + g.count + "\n" +
+                "Total vidé : " + g.total + " bocitecoins VERT\n" +
+                "Dernier échange : " + g.last
+              );
+            }).join("\n\n--------------------\n\n");
+
+            const exportText =
+              "HISTORIQUE SPORT — CLUBS\n" +
+              "Export du " + new Date().toLocaleString("fr-FR") + "\n\n" +
+              lines;
+
+            if(navigator.clipboard && navigator.clipboard.writeText){
+              navigator.clipboard.writeText(exportText)
+                .then(()=> alert("Historique exporté et copié dans le presse-papiers."))
+                .catch(()=> alert(exportText));
+            }else{
+              alert(exportText);
+            }
+          };
+        }
+
+        function renderMerchantPayload(payload){
+          if(sportMerchantName) sportMerchantName.value = payload.shopName || "";
+          if(sportMerchantAddress) sportMerchantAddress.value = payload.address || "";
+          if(sportMerchantPhone) sportMerchantPhone.value = payload.phone || "";
+          if(sportMerchantEmail) sportMerchantEmail.value = payload.email || "";
+        }
+
+        if(sportMerchantReadBtn){
+          sportMerchantReadBtn.onclick = ()=>{
+            const raw = sportMerchantScanInput ? String(sportMerchantScanInput.value || "").trim() : "";
+
+            if(!raw){
+              alert("Aucune lecture commerçant disponible.");
+              return;
+            }
+
+            try{
+              const parsed = JSON.parse(raw);
+
+              if(parsed.type !== "merchant_profile"){
+                alert("Code commerçant non reconnu.");
+                return;
+              }
+
+              currentMerchantPayload = parsed;
+              renderMerchantPayload(parsed);
+              alert("Fiche commerçant préremplie.");
+            }catch(e){
+              alert("Lecture commerçant invalide.");
+            }
+          };
+        }
+
+        function buildSportPubText(assoName){
+          const company = sportMerchantName ? String(sportMerchantName.value || "").trim() : "";
+          const address = sportMerchantAddress ? String(sportMerchantAddress.value || "").trim() : "";
+          const phone = sportMerchantPhone ? String(sportMerchantPhone.value || "").trim() : "";
+
+          if(!company) return "";
+
+          let txt = `${company} soutient ${getClubName()} + ${assoName}`;
+          if(phone) txt += ` • ${phone}`;
+          if(address) txt += ` • ${address}`;
+          return txt;
+        }
+
+        document.querySelectorAll(".sportPubAssoBtn").forEach((btn)=>{
+          btn.addEventListener("click", ()=>{
+            currentSelectedPubAsso = btn.getAttribute("data-asso");
+            const txt = buildSportPubText(currentSelectedPubAsso);
+            if(sportPubPreview){
+              sportPubPreview.textContent = txt || "Aucune publicité générée pour le moment.";
+            }
+          });
+        });
+
+        if(sportPubPayBtn){
+          sportPubPayBtn.onclick = ()=>{
+            const company = sportMerchantName ? String(sportMerchantName.value || "").trim() : "";
+            const email = sportMerchantEmail ? String(sportMerchantEmail.value || "").trim() : "";
+            const phone = sportMerchantPhone ? String(sportMerchantPhone.value || "").trim() : "";
+            const address = sportMerchantAddress ? String(sportMerchantAddress.value || "").trim() : "";
+
+            if(!company){
+              alert("Scanne d’abord le commerçant pour préremplir la fiche.");
+              return;
+            }
+
+            if(!currentSelectedPubAsso){
+              alert("Choisis l’association soutenue.");
+              return;
+            }
+
+            const pubText = buildSportPubText(currentSelectedPubAsso);
+            if(!pubText){
+              alert("Impossible de générer la publicité.");
+              return;
+            }
+
+            const paymentValidated = confirm(
+              "Simulation paiement PSP\n\n" +
+              "Montant : 60 € TTC\n" +
+              "Répartition prévue :\n" +
+              "- 35 € TTC club\n" +
+              "- 22 € TTC association\n" +
+              "- 3 € TTC Bo'CitéArt\n\n" +
+              "Confirmer le paiement ?"
+            );
+
+            if(!paymentValidated){
+              alert("Paiement requis pour activer la publicité.");
+              return;
+            }
+
+            const now = Date.now();
+            const endTs = now + (7 * 24 * 60 * 60 * 1000);
+
+            const pubs = loadSportPubs();
+            pubs.push({
+              type:"sport_support",
+              company,
+              club:getClubName(),
+              asso:currentSelectedPubAsso,
+              email,
+              phone,
+              address,
+              text:pubText,
+              paid:true,
+              startTs:now,
+              endTs:endTs,
+              amountTTC:60,
+              clubPartTTC:35,
+              assoPartTTC:22,
+              bociteartPartTTC:3,
+              ts_fr:new Date().toLocaleString("fr-FR")
+            });
+            saveSportPubs(pubs);
+
+            syncSportPubsToTape();
+
+            alert(
+              "Paiement validé (démo).\n\n" +
+              "La publicité est active pendant 7 jours.\n" +
+              "Les justificatifs / factures sont à prévoir pour :\n" +
+              "- le commerçant\n" +
+              "- le club\n" +
+              "- l’association\n" +
+              "- Bo'CitéArt"
+            );
+          };
+        }
+
+        if(sportPubHistoryBtn){
+          sportPubHistoryBtn.onclick = ()=>{
+            const active = getActiveSportPubs();
+
+            if(!active.length){
+              alert("Aucune publicité sport active pour le moment.");
+              return;
+            }
+
+            const lines = active.map((x)=>{
+              return (
+                x.text +
+                "\n- début : " + new Date(x.startTs).toLocaleString("fr-FR") +
+                "\n- fin : " + new Date(x.endTs).toLocaleString("fr-FR")
+              );
+            }).join("\n\n--------------------\n\n");
+
+            alert("Publicités sport actives :\n\n" + lines);
+          };
+        }
+      },0);
+    };
+
+    openSport();
+  };
+
+  window.openSportPanel();
+  return;
+}
       }
           if(key === "mairie"){
             openModal("Mairie", `
