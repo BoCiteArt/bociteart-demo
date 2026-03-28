@@ -5744,16 +5744,16 @@ out center tags;
                 const minimumAllowed = loweredThresholdAllowed ? 20 : 30;
 
                 if(required < minimumAllowed){
-                  alert(\`Échange impossible sous \${minimumAllowed} bocitecoins dans la période actuelle.\`);
+               alert(\`Échange impossible sous \${minimumAllowed} bocitecoins dans la période actuelle.\`);
                   return;
                 }
 
                 if(coins < required){
-                  alert(\`Solde insuffisant. Il faut \${required} bocitecoins.\`);
+                 alert(`Solde insuffisant. Il faut ${required} bocitecoins.`);
                   return;
                 }
 
-                if(confirm(\`Confirmer l’échange de \${required} bocitecoins ?\`)){
+               if(confirm(`Confirmer l’échange de ${required} bocitecoins ?`)){
                   wallet.or = Math.max(0, coins - required);
                   saveCitizenWallet(wallet);
                   registerTx({
@@ -5764,7 +5764,7 @@ out center tags;
                     ts:Date.now()
                   });
                   refreshWalletUi();
-                  alert(\`Échange validé (démo) : \${required} bocitecoins utilisés.\`);
+               alert(`Échange validé (démo) : ${required} bocitecoins utilisés.`); 
                 }
               }
 
