@@ -6023,9 +6023,14 @@ if(key === "sport"){
   }
 
   const xb = $("xBtn");
-  if(xb && xb.focus) xb.focus();
-},0); 
-          
+   if(xb && xb.focus) xb.focus();
+},0);
+
+            return;
+          }
+        });
+      });
+
       const adminTile = $("adminTile");
       on(adminTile, "click", ()=>{
         if(!isFn(window.openModal)) return;
