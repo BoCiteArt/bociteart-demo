@@ -5621,7 +5621,7 @@ if(key === "sport"){
 
   return;
 }
-              if(key === "commerces"){
+if(key === "commerces"){
   openModal("Commerces", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces</div>
 
@@ -6122,9 +6122,9 @@ if(key === "sport"){
 
       if(progressText){
         if(coins >= 100){
-          progressText.textContent = `Palier actuel : 100 bocitecoins • Niveau : ${getTargetLabel(100)}`;
+          progressText.textContent = "Palier actuel : 100 bocitecoins • Niveau : " + getTargetLabel(100);
         }else{
-          progressText.textContent = `Solde actuel : ${coins} bocitecoins • Prochain palier : ${next} • Niveau : ${getTargetLabel(next)}`;
+          progressText.textContent = "Solde actuel : " + coins + " bocitecoins • Prochain palier : " + next + " • Niveau : " + getTargetLabel(next);
         }
         progressText.style.whiteSpace = "normal";
         progressText.style.wordBreak = "keep-all";
@@ -6141,7 +6141,7 @@ if(key === "sport"){
         if(daysLeft <= 30){
           expiry.textContent = "Attention : vous arrivez à 30 jours de votre date anniversaire. Vous pouvez désormais échanger dès 20 bocitecoins. Après cette date, si vos bocitecoins ne sont pas utilisés, votre compte reviendra automatiquement à 12 bocitecoins. Le reste sera perdu.";
         }else{
-          expiry.textContent = `Date anniversaire du compte : dans ${daysLeft} jour(s).`;
+          expiry.textContent = "Date anniversaire du compte : dans " + daysLeft + " jour(s).";
         }
       }
     }
@@ -6162,16 +6162,16 @@ if(key === "sport"){
       const minimumAllowed = loweredThresholdAllowed ? 20 : 30;
 
       if(required < minimumAllowed){
-        alert(\`Échange impossible sous \${minimumAllowed} bocitecoins dans la période actuelle.\`);
+        alert("Échange impossible sous " + minimumAllowed + " bocitecoins dans la période actuelle.");
         return;
       }
 
       if(coins < required){
-        alert(\`Solde insuffisant. Il faut \${required} bocitecoins.\`);
+        alert("Solde insuffisant. Il faut " + required + " bocitecoins.");
         return;
       }
 
-      if(confirm(\`Confirmer l’échange de \${required} bocitecoins ?\`)){
+      if(confirm("Confirmer l’échange de " + required + " bocitecoins ?")){
         wallet.or = Math.max(0, coins - required);
         saveCitizenWallet(wallet);
         registerTx({
@@ -6182,7 +6182,7 @@ if(key === "sport"){
           ts:Date.now()
         });
         refreshWalletUi();
-        alert(\`Échange validé (démo) : \${required} bocitecoins utilisés.\`);
+        alert("Échange validé (démo) : " + required + " bocitecoins utilisés.");
       }
     }
 
@@ -6193,9 +6193,9 @@ if(key === "sport"){
     const r50 = $("walletClientRedeem50");
     const r100 = $("walletClientRedeem100");
 
-    if(r30) r30.onclick = ()=> redeemCoins(30);
-    if(r50) r50.onclick = ()=> redeemCoins(50);
-    if(r100) r100.onclick = ()=> redeemCoins(100);
+    if(r30) r30.onclick = function(){ redeemCoins(30); };
+    if(r50) r50.onclick = function(){ redeemCoins(50); };
+    if(r100) r100.onclick = function(){ redeemCoins(100); };
 
     if(rst){
       rst.onclick = ()=>{
@@ -6457,7 +6457,7 @@ if(key === "sport"){
   },0);
 
   return;
-} 
+}
       const adminTile = $("adminTile");
       on(adminTile, "click", ()=>{
         if(!isFn(window.openModal)) return;
