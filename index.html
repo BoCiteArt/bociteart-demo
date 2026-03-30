@@ -1717,7 +1717,7 @@ function validerInscription() {
         modal.setAttribute("aria-hidden", "false");
         lockScroll(true);
         setTimeout(()=>{
-          if(isFn(window.initFeeUiInModal)) window.initFeeUiInModal();
+          if(typeof window.initFeeUiInModal === "function") window.initFeeUiInModal();
           const xb = $("xBtn");
           if(xb && xb.focus) xb.focus();
         }, 0);
