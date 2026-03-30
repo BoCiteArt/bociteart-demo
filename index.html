@@ -4698,21 +4698,21 @@ if(key === "sport"){
   window.openSportPanel();
   return;
 }
-         if(key === "mairie"){
+        if(key === "mairie"){
   openModal("Mairie", `
     <div style="font-weight:900;margin-bottom:8px;">Mairie</div>
 
     <div class="box">
-      <strong>Cadre :</strong> la mairie dispose de deux espaces distincts :
-      le <strong>petit bandeau rouge défilant</strong> de la tuile Mairie, réservé aux messages d’intérêt général diffusés gratuitement,
-      et le <strong>grand bandeau du haut</strong>, utilisé pour les messages promotionnels payants au même tarif que les commerçants.
+      <strong>Cadre :</strong> la mairie dispose d’un espace public d’information destiné aux habitants
+      et d’un espace interne réservé à la gestion opérationnelle.
+      Le <strong>petit bandeau rouge défilant</strong> de la tuile Mairie reste réservé aux messages d’intérêt général.
     </div>
 
     <div style="font-weight:900;margin-top:10px;">Informations visibles par les habitants</div>
     <div class="box">
       <div class="muted">
-        Cette partie est destinée aux habitants. Elle présente les messages utiles, les informations publiques
-        et le cadre général de l’action mairie dans Bo’CitéArt.
+        Cette partie est destinée aux habitants. Elle présente uniquement les messages utiles,
+        les informations publiques et le cadre général de l’action mairie dans Bo’CitéArt.
       </div>
 
       <div style="font-weight:900;margin-top:12px;">Messages gratuits d’intérêt général</div>
@@ -4728,26 +4728,8 @@ if(key === "sport"){
         et sont diffusés dans le <strong>petit bandeau rouge défilant</strong> de la tuile Mairie.
       </div>
 
-      <div style="font-weight:900;margin-top:14px;">Messages payants mairie</div>
-      <div class="muted" style="margin-top:6px;">
-        Ces messages non gratuits, de type promotionnel, commercial, événementiel ou de mise en avant,
-        sont prévus pour le <strong>grand bandeau du haut</strong>, c’est-à-dire l’espace publicitaire payant.
-        Exemple : “Il reste 42 places pour le spectacle de vendredi, salle X, tarif étudiant 5 € au lieu de 40 € sur justificatif”.
-      </div>
-
-      <ul style="margin:8px 0 0 18px;font-weight:800;">
-        <li>1 publicité : 50 €</li>
-        <li>5 publicités : 200 €</li>
-      </ul>
-
       <div class="muted" style="margin-top:8px;">
-        Même prix que les commerçants pour éviter la jalousie et montrer l’exemple.
-      </div>
-
-      <div class="muted" style="margin-top:8px;">
-        Chaque entité (commerçant, association autorisée ou mairie) peut réserver une seule publicité par jour jusqu’à 16h00.
-        À partir de 16h00, si des emplacements restent disponibles, des réservations supplémentaires sont possibles
-        jusqu’à atteindre le maximum journalier de ${PUB_MAX_PER_DAY} publicités.
+        La mairie informe, relaie et accompagne la vie locale dans un format simple, utile et lisible pour tous.
       </div>
     </div>
 
@@ -4755,7 +4737,7 @@ if(key === "sport"){
       <div style="font-weight:900;">Accès interne mairie</div>
       <div class="muted" style="margin-top:6px;">
         Cet espace regroupe la gestion interne : message bandeau, lecture des scans école et sport,
-        validation des échanges et historiques.
+        dispatch des échanges, validations, historiques et suivi des parrainages.
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="toggleMairieAdminBtn" type="button">Ouvrir l’espace interne mairie</button>
@@ -4776,59 +4758,121 @@ if(key === "sport"){
         <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="mairieMsgSave" type="button">💾 Enregistrer</button>
-          <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">🧹 Réinitialiser</button>
+          <button class="choiceBtn" id="mairieMsgSave" type="button">Enregistrer</button>
+          <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">Réinitialiser</button>
         </div>
 
         <div class="muted" style="margin-top:10px;">(Démo) Enregistrement local sur ce téléphone.</div>
       </div>
 
-      <div style="font-weight:900;margin-top:14px;color:#8a6d00;">Lecture école → mairie</div>
+      <div style="font-weight:900;margin-top:16px;color:#8a6d00;">Lecture école → mairie</div>
       <div class="box" style="border-left:6px solid #d4bb18;">
         <div class="muted">
-          La mairie lit le code dynamique transmis par l’école. Après validation, le wallet école est remis à zéro,
-          le cycle de progression de la classe est réinitialisé, et l’opération est enregistrée dans l’historique mairie.
+          La mairie lit le code dynamique transmis par l’école, visualise le montant,
+          prépare la destination de l’échange puis valide l’opération. Une fois validé,
+          le wallet école est remis à zéro et le cycle de progression de la classe est réinitialisé.
         </div>
 
         <div style="margin-top:10px;font-weight:900;">Lecture / scan classe</div>
         <textarea id="mairieScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan classe (démo)"></textarea>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="mairieReadBtn" type="button">Lire le scan</button>
+          <button class="choiceBtn" id="mairieReadBtn" type="button" style="background:#f2df58;">Lire le scan</button>
           <button class="choiceBtn" id="mairieValidateBtn" type="button" style="background:#f2df58;">Valider échange école</button>
-          <button class="choiceBtn" id="mairieHistoryBtn" type="button" style="background:#fff;">Voir historique</button>
-          <button class="choiceBtn" id="mairieHistoryResetBtn" type="button" style="background:#fff;">Réinitialiser historique</button>
-          <button class="choiceBtn" id="mairieExportBtn" type="button" style="background:#fff;">Exporter historique</button>
+          <button class="choiceBtn" id="mairieHistoryBtn" type="button" style="background:#f2df58;">Voir historique</button>
+          <button class="choiceBtn" id="mairieHistoryResetBtn" type="button" style="background:#f2df58;">Réinitialiser historique</button>
+          <button class="choiceBtn" id="mairieExportBtn" type="button" style="background:#f2df58;">Exporter historique</button>
         </div>
 
         <div class="box" style="margin-top:12px;background:var(--bg);">
-          <div style="font-weight:900;">Lecture du code</div>
+          <div style="font-weight:900;">Lecture du code école</div>
           <div class="muted" id="mairieReadOut" style="margin-top:8px;">Aucun code lu pour le moment.</div>
         </div>
 
-        <div class="muted" style="margin-top:10px;">
-          Si l’école a décidé auparavant de donner tout ou partie de ses bocitecoins à une association depuis son onglet,
-          la mairie respecte cette décision lors de l’échange.
+        <div class="box" style="margin-top:12px;background:#fffdf0;">
+          <div style="font-weight:900;">Destination de l’échange école</div>
+
+          <label class="miniCheck" style="margin-top:10px;">
+            <input type="radio" name="mairieSchoolDispatchMode" value="keep" checked>
+            <div>Tout garder pour la classe / projet école</div>
+          </label>
+
+          <label class="miniCheck">
+            <input type="radio" name="mairieSchoolDispatchMode" value="partial">
+            <div>Partager partiellement avec une ou plusieurs associations</div>
+          </label>
+
+          <label class="miniCheck">
+            <input type="radio" name="mairieSchoolDispatchMode" value="full">
+            <div>Donner totalement à une ou plusieurs associations</div>
+          </label>
+
+          <div style="margin-top:12px;font-weight:900;">Associations bénéficiaires</div>
+
+          <label class="miniCheck">
+            <input type="checkbox" class="mairieSchoolAssoPick" data-asso="Les Clés du Cœur">
+            <div>Les Clés du Cœur</div>
+          </label>
+          <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+            <div class="muted" style="min-width:78px;">% :</div>
+            <input class="miniField mairieSchoolAssoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+          </div>
+
+          <label class="miniCheck">
+            <input type="checkbox" class="mairieSchoolAssoPick" data-asso="Étoile Filante">
+            <div>Étoile Filante</div>
+          </label>
+          <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+            <div class="muted" style="min-width:78px;">% :</div>
+            <input class="miniField mairieSchoolAssoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+          </div>
+
+          <label class="miniCheck">
+            <input type="checkbox" class="mairieSchoolAssoPick" data-asso="Les Papillons (antenne Nord)">
+            <div>Les Papillons (antenne Nord)</div>
+          </label>
+          <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+            <div class="muted" style="min-width:78px;">% :</div>
+            <input class="miniField mairieSchoolAssoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+          </div>
+
+          <label class="miniCheck">
+            <input type="checkbox" class="mairieSchoolAssoPick" data-asso="ATC Nord">
+            <div>ATC Nord</div>
+          </label>
+          <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+            <div class="muted" style="min-width:78px;">% :</div>
+            <input class="miniField mairieSchoolAssoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <button class="choiceBtn" id="mairieSchoolPreviewBtn" type="button" style="background:#f2df58;">Aperçu échange école</button>
+          </div>
+
+          <div class="box" style="margin-top:12px;background:var(--bg);">
+            <div style="font-weight:900;">Aperçu de validation école</div>
+            <div class="muted" id="mairieSchoolPreviewOut" style="margin-top:8px;">Aucun aperçu pour le moment.</div>
+          </div>
         </div>
       </div>
 
-      <div style="font-weight:900;margin-top:14px;color:#2f5d46;">Lecture sport → mairie</div>
+      <div style="font-weight:900;margin-top:16px;color:#2f5d46;">Lecture sport → mairie</div>
       <div class="box" style="border-left:6px solid #2f5d46;">
         <div class="muted">
-          La mairie peut également lire le code dynamique transmis par un club ou une structure sport.
-          Après validation, le wallet sport est remis à zéro et l’opération est enregistrée
-          dans un historique sport séparé de l’historique école pour une meilleure lisibilité interne.
+          La mairie lit le code dynamique transmis par un club ou une structure sport,
+          visualise le montant, prépare la destination de l’échange puis valide l’opération.
+          Une fois validé, le wallet sport est remis à zéro.
         </div>
 
         <div style="margin-top:10px;font-weight:900;">Lecture / scan sport</div>
         <textarea id="mairieSportScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan sport (démo)"></textarea>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="mairieSportReadBtn" type="button">Lire le scan sport</button>
+          <button class="choiceBtn" id="mairieSportReadBtn" type="button" style="background:#91d9b1;">Lire le scan sport</button>
           <button class="choiceBtn" id="mairieSportValidateBtn" type="button" style="background:#91d9b1;">Valider échange sport</button>
-          <button class="choiceBtn" id="mairieSportHistoryBtn" type="button" style="background:#fff;">Voir historique sport</button>
-          <button class="choiceBtn" id="mairieSportHistoryResetBtn" type="button" style="background:#fff;">Réinitialiser historique sport</button>
-          <button class="choiceBtn" id="mairieSportExportBtn" type="button" style="background:#fff;">Exporter historique sport</button>
+          <button class="choiceBtn" id="mairieSportHistoryBtn" type="button" style="background:#91d9b1;">Voir historique sport</button>
+          <button class="choiceBtn" id="mairieSportHistoryResetBtn" type="button" style="background:#91d9b1;">Réinitialiser historique sport</button>
+          <button class="choiceBtn" id="mairieSportExportBtn" type="button" style="background:#91d9b1;">Exporter historique sport</button>
         </div>
 
         <div class="box" style="margin-top:12px;background:var(--bg);">
@@ -4836,9 +4880,92 @@ if(key === "sport"){
           <div class="muted" id="mairieSportReadOut" style="margin-top:8px;">Aucun code sport lu pour le moment.</div>
         </div>
 
+        <div class="box" style="margin-top:12px;background:#f2fff7;">
+          <div style="font-weight:900;">Destination de l’échange sport</div>
+
+          <label class="miniCheck" style="margin-top:10px;">
+            <input type="radio" name="mairieSportDispatchMode" value="keep" checked>
+            <div>Tout garder pour le club</div>
+          </label>
+
+          <label class="miniCheck">
+            <input type="radio" name="mairieSportDispatchMode" value="partial">
+            <div>Partager partiellement avec une ou plusieurs associations</div>
+          </label>
+
+          <label class="miniCheck">
+            <input type="radio" name="mairieSportDispatchMode" value="full">
+            <div>Donner totalement à une ou plusieurs associations</div>
+          </label>
+
+          <div style="margin-top:12px;font-weight:900;">Associations bénéficiaires</div>
+
+          <label class="miniCheck">
+            <input type="checkbox" class="mairieSportAssoPick" data-asso="Les Clés du Cœur">
+            <div>Les Clés du Cœur</div>
+          </label>
+          <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+            <div class="muted" style="min-width:78px;">% :</div>
+            <input class="miniField mairieSportAssoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+          </div>
+
+          <label class="miniCheck">
+            <input type="checkbox" class="mairieSportAssoPick" data-asso="Étoile Filante">
+            <div>Étoile Filante</div>
+          </label>
+          <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+            <div class="muted" style="min-width:78px;">% :</div>
+            <input class="miniField mairieSportAssoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+          </div>
+
+          <label class="miniCheck">
+            <input type="checkbox" class="mairieSportAssoPick" data-asso="Les Papillons (antenne Nord)">
+            <div>Les Papillons (antenne Nord)</div>
+          </label>
+          <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+            <div class="muted" style="min-width:78px;">% :</div>
+            <input class="miniField mairieSportAssoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+          </div>
+
+          <label class="miniCheck">
+            <input type="checkbox" class="mairieSportAssoPick" data-asso="ATC Nord">
+            <div>ATC Nord</div>
+          </label>
+          <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+            <div class="muted" style="min-width:78px;">% :</div>
+            <input class="miniField mairieSportAssoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <button class="choiceBtn" id="mairieSportPreviewBtn" type="button" style="background:#91d9b1;">Aperçu échange sport</button>
+          </div>
+
+          <div class="box" style="margin-top:12px;background:var(--bg);">
+            <div style="font-weight:900;">Aperçu de validation sport</div>
+            <div class="muted" id="mairieSportPreviewOut" style="margin-top:8px;">Aucun aperçu pour le moment.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-weight:900;margin-top:16px;">Parrainages (prévu / suivi)</div>
+      <div class="box">
+        <div class="muted">
+          Cette zone est prévue pour le suivi des parrainages validés par Bo’CitéArt :
+          commerce, club, maintien 30 jours, preuve de présence, abondement financé par la mairie,
+          historique de validation et justificatif.
+        </div>
+
+        <div style="margin-top:10px;font-weight:900;">Parrainage en attente / suivi</div>
+        <textarea id="mairieReferralInput" class="miniField" style="min-height:110px;" placeholder="Ex : Nom du parrain, type, date, contrôle 30 jours, commentaire (démo)"></textarea>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <button class="choiceBtn" id="mairieReferralSaveBtn" type="button">Enregistrer suivi parrainage</button>
+          <button class="choiceBtn" id="mairieReferralReadBtn" type="button" style="background:#fff;">Lire suivi</button>
+          <button class="choiceBtn" id="mairieReferralResetBtn" type="button" style="background:#fff;">Réinitialiser suivi</button>
+        </div>
+
         <div class="muted" style="margin-top:10px;">
-          L’historique sport mairie est distinct de l’historique école mairie afin de garder une lecture interne claire,
-          séparée par origine d’échange.
+          Zone prévue pour preuve mairie / Bo’CitéArt en cas de validation réelle.
         </div>
       </div>
 
@@ -4899,6 +5026,7 @@ if(key === "sport"){
 
     const MAIRIE_SCHOOL_HISTORY_KEY = "bociteart_mairie_school_history_v1";
     const MAIRIE_SPORT_HISTORY_KEY = "bociteart_mairie_sport_history_v1";
+    const MAIRIE_REFERRAL_KEY = "bociteart_mairie_referral_v1";
     const SCHOOL_STORE_KEY = "bociteart_school_v1";
 
     function mairieHistoryLoad(){
@@ -4928,6 +5056,21 @@ if(key === "sport"){
     function mairieSportHistorySave(arr){
       try{
         localStorage.setItem(MAIRIE_SPORT_HISTORY_KEY, JSON.stringify(arr));
+      }catch(e){}
+    }
+
+    function mairieReferralLoad(){
+      try{
+        const raw = localStorage.getItem(MAIRIE_REFERRAL_KEY);
+        return raw ? JSON.parse(raw) : null;
+      }catch(e){
+        return null;
+      }
+    }
+
+    function mairieReferralSave(obj){
+      try{
+        localStorage.setItem(MAIRIE_REFERRAL_KEY, JSON.stringify(obj));
       }catch(e){}
     }
 
@@ -4980,6 +5123,8 @@ if(key === "sport"){
     const historyResetBtn = $("mairieHistoryResetBtn");
     const exportBtn = $("mairieExportBtn");
     const readOut = $("mairieReadOut");
+    const mairieSchoolPreviewBtn = $("mairieSchoolPreviewBtn");
+    const mairieSchoolPreviewOut = $("mairieSchoolPreviewOut");
 
     const sportScanInput = $("mairieSportScanInput");
     const sportReadBtn = $("mairieSportReadBtn");
@@ -4988,6 +5133,13 @@ if(key === "sport"){
     const sportHistoryResetBtn = $("mairieSportHistoryResetBtn");
     const sportExportBtn = $("mairieSportExportBtn");
     const sportReadOut = $("mairieSportReadOut");
+    const mairieSportPreviewBtn = $("mairieSportPreviewBtn");
+    const mairieSportPreviewOut = $("mairieSportPreviewOut");
+
+    const mairieReferralInput = $("mairieReferralInput");
+    const mairieReferralSaveBtn = $("mairieReferralSaveBtn");
+    const mairieReferralReadBtn = $("mairieReferralReadBtn");
+    const mairieReferralResetBtn = $("mairieReferralResetBtn");
 
     let currentPayload = null;
     let currentSportPayload = null;
@@ -5003,6 +5155,148 @@ if(key === "sport"){
         "<strong>Club :</strong> " + escapeHtml(payload.club || "Non renseigné") + "<br>" +
         "<strong>Montant :</strong> " + Number(payload.wallet || 0) + " bocitecoins VERT<br>" +
         "<strong>Date :</strong> " + new Date(payload.ts || Date.now()).toLocaleString("fr-FR");
+    }
+
+    function buildSchoolDispatchPayload(){
+      const modeEl = document.querySelector('input[name="mairieSchoolDispatchMode"]:checked');
+      const mode = modeEl ? modeEl.value : "keep";
+      const picks = Array.from(document.querySelectorAll(".mairieSchoolAssoPick"));
+      const pcts = Array.from(document.querySelectorAll(".mairieSchoolAssoPct"));
+      const selected = picks.filter(x => x.checked).map(x => x.getAttribute("data-asso"));
+      const map = {};
+
+      if(mode === "keep"){
+        return { mode:"keep", map:{} };
+      }
+
+      if(!selected.length){
+        return { error:"Sélectionne au moins une association pour l’échange école." };
+      }
+
+      if(mode === "full"){
+        const share = Math.floor(100 / selected.length);
+        let remaining = 100;
+        selected.forEach((name, idx)=>{
+          if(idx === selected.length - 1){
+            map[name] = remaining;
+          }else{
+            map[name] = share;
+            remaining -= share;
+          }
+        });
+        return { mode:"full", map };
+      }
+
+      if(mode === "partial"){
+        let total = 0;
+        pcts.forEach((input)=>{
+          const name = input.getAttribute("data-asso");
+          const linked = picks.find(x => x.getAttribute("data-asso") === name);
+          if(linked && linked.checked){
+            const v = Number(input.value || 0);
+            map[name] = v;
+            total += v;
+          }
+        });
+        if(total !== 100){
+          return { error:"En mode partiel école, le total doit être égal à 100 %." };
+        }
+        return { mode:"partial", map };
+      }
+
+      return { mode:"keep", map:{} };
+    }
+
+    function buildSportDispatchPayload(){
+      const modeEl = document.querySelector('input[name="mairieSportDispatchMode"]:checked');
+      const mode = modeEl ? modeEl.value : "keep";
+      const picks = Array.from(document.querySelectorAll(".mairieSportAssoPick"));
+      const pcts = Array.from(document.querySelectorAll(".mairieSportAssoPct"));
+      const selected = picks.filter(x => x.checked).map(x => x.getAttribute("data-asso"));
+      const map = {};
+
+      if(mode === "keep"){
+        return { mode:"keep", map:{} };
+      }
+
+      if(!selected.length){
+        return { error:"Sélectionne au moins une association pour l’échange sport." };
+      }
+
+      if(mode === "full"){
+        const share = Math.floor(100 / selected.length);
+        let remaining = 100;
+        selected.forEach((name, idx)=>{
+          if(idx === selected.length - 1){
+            map[name] = remaining;
+          }else{
+            map[name] = share;
+            remaining -= share;
+          }
+        });
+        return { mode:"full", map };
+      }
+
+      if(mode === "partial"){
+        let total = 0;
+        pcts.forEach((input)=>{
+          const name = input.getAttribute("data-asso");
+          const linked = picks.find(x => x.getAttribute("data-asso") === name);
+          if(linked && linked.checked){
+            const v = Number(input.value || 0);
+            map[name] = v;
+            total += v;
+          }
+        });
+        if(total !== 100){
+          return { error:"En mode partiel sport, le total doit être égal à 100 %." };
+        }
+        return { mode:"partial", map };
+      }
+
+      return { mode:"keep", map:{} };
+    }
+
+    if(mairieSchoolPreviewBtn){
+      mairieSchoolPreviewBtn.onclick = ()=>{
+        if(!currentPayload){
+          alert("Lis d’abord un code école.");
+          return;
+        }
+        const payload = buildSchoolDispatchPayload();
+        if(payload.error){
+          alert(payload.error);
+          return;
+        }
+        if(mairieSchoolPreviewOut){
+          mairieSchoolPreviewOut.textContent =
+            "Classe : " + (currentPayload.class || "Classe inconnue") +
+            " | Montant : " + Number(currentPayload.wallet || 0) +
+            " bocitecoins JAUNE | Destination : " +
+            JSON.stringify(payload);
+        }
+      };
+    }
+
+    if(mairieSportPreviewBtn){
+      mairieSportPreviewBtn.onclick = ()=>{
+        if(!currentSportPayload){
+          alert("Lis d’abord un code sport.");
+          return;
+        }
+        const payload = buildSportDispatchPayload();
+        if(payload.error){
+          alert(payload.error);
+          return;
+        }
+        if(mairieSportPreviewOut){
+          mairieSportPreviewOut.textContent =
+            "Club : " + (currentSportPayload.club || "Club partenaire (démo)") +
+            " | Montant : " + Number(currentSportPayload.wallet || 0) +
+            " bocitecoins VERT | Destination : " +
+            JSON.stringify(payload);
+        }
+      };
     }
 
     if(readBtn){
@@ -5023,6 +5317,7 @@ if(key === "sport"){
 
           currentPayload = parsed;
           renderPayload(parsed);
+          if(mairieSchoolPreviewOut) mairieSchoolPreviewOut.textContent = "Code école lu. Prépare la destination de l’échange.";
         }catch(e){
           alert("Lecture invalide.");
         }
@@ -5036,20 +5331,23 @@ if(key === "sport"){
           return;
         }
 
+        const dispatch = buildSchoolDispatchPayload();
+        if(dispatch.error){
+          alert(dispatch.error);
+          return;
+        }
+
         const schoolDb = schoolLoadLocal();
         const className = currentPayload.class || "Classe inconnue";
-
-        const solidarity = schoolDb.lastSolidarity && schoolDb.lastSolidarity.class === className
-          ? schoolDb.lastSolidarity
-          : { mode:"none", map:{} };
 
         const history = mairieHistoryLoad();
         history.push({
           class: className,
           amount: Number(currentPayload.wallet || 0),
-          solidarity: solidarity,
+          dispatch: dispatch,
           ts: Date.now(),
-          ts_fr: new Date().toLocaleString("fr-FR")
+          ts_fr: new Date().toLocaleString("fr-FR"),
+          note:"échange école validé côté mairie"
         });
         mairieHistorySave(history);
 
@@ -5065,13 +5363,15 @@ if(key === "sport"){
         alert(
           "Échange mairie validé.\n\n" +
           "Classe : " + className + "\n" +
-          "Montant vidé : " + Number(currentPayload.wallet || 0) + " bocitecoins JAUNE\n\n" +
+          "Montant échangé : " + Number(currentPayload.wallet || 0) + " bocitecoins JAUNE\n" +
+          "Destination : " + JSON.stringify(dispatch) + "\n\n" +
           "Le wallet école a été remis à zéro et le cycle de progression a été réinitialisé."
         );
 
         currentPayload = null;
         if(scanInput) scanInput.value = "";
         if(readOut) readOut.textContent = "Aucun code lu pour le moment.";
+        if(mairieSchoolPreviewOut) mairieSchoolPreviewOut.textContent = "Aucun aperçu pour le moment.";
       };
     }
 
@@ -5084,29 +5384,15 @@ if(key === "sport"){
           return;
         }
 
-        const grouped = {};
-        history.forEach((x)=>{
-          if(!grouped[x.class]){
-            grouped[x.class] = {
-              total:0,
-              count:0,
-              last:x.ts_fr
-            };
-          }
-          grouped[x.class].total += Number(x.amount || 0);
-          grouped[x.class].count += 1;
-          grouped[x.class].last = x.ts_fr;
-        });
-
-        const lines = Object.keys(grouped).sort().map((cls)=>{
-          const g = grouped[cls];
+        const lines = history.map((x)=>{
           return (
-            cls +
-            "\n- échanges : " + g.count +
-            "\n- total vidé : " + g.total + " bocitecoins" +
-            "\n- dernier échange : " + g.last
+            "Classe : " + x.class +
+            "\n- montant : " + Number(x.amount || 0) + " bocitecoins JAUNE" +
+            "\n- date : " + x.ts_fr +
+            "\n- dispatch : " + JSON.stringify(x.dispatch || {}) +
+            "\n- note : " + (x.note || "")
           );
-        }).join("\n\n");
+        }).join("\n\n--------------------\n\n");
 
         alert("Historique mairie école :\n\n" + lines);
       };
@@ -5130,35 +5416,13 @@ if(key === "sport"){
           return;
         }
 
-        const grouped = {};
-        history.forEach((x)=>{
-          if(!grouped[x.class]){
-            grouped[x.class] = {
-              total:0,
-              count:0,
-              last:x.ts_fr,
-              solidarity:[]
-            };
-          }
-          grouped[x.class].total += Number(x.amount || 0);
-          grouped[x.class].count += 1;
-          grouped[x.class].last = x.ts_fr;
-
-          if(x.solidarity && x.solidarity.mode && x.solidarity.mode !== "none"){
-            grouped[x.class].solidarity.push(
-              "mode=" + x.solidarity.mode + " " + JSON.stringify(x.solidarity.map || {})
-            );
-          }
-        });
-
-        const lines = Object.keys(grouped).sort().map((cls)=>{
-          const g = grouped[cls];
+        const lines = history.map((x)=>{
           return (
-            "Classe : " + cls + "\n" +
-            "Nombre d’échanges : " + g.count + "\n" +
-            "Total vidé : " + g.total + " bocitecoins JAUNE\n" +
-            "Dernier échange : " + g.last + "\n" +
-            "Partage solidaire : " + (g.solidarity.length ? g.solidarity.join(" | ") : "aucun")
+            "Classe : " + x.class + "\n" +
+            "Montant échangé : " + Number(x.amount || 0) + " bocitecoins JAUNE\n" +
+            "Date : " + x.ts_fr + "\n" +
+            "Dispatch : " + JSON.stringify(x.dispatch || {}) + "\n" +
+            "Note : " + (x.note || "")
           );
         }).join("\n\n--------------------\n\n");
 
@@ -5195,6 +5459,7 @@ if(key === "sport"){
 
           currentSportPayload = parsed;
           renderSportPayloadMairie(parsed);
+          if(mairieSportPreviewOut) mairieSportPreviewOut.textContent = "Code sport lu. Prépare la destination de l’échange.";
         }catch(e){
           alert("Lecture sport invalide.");
         }
@@ -5208,12 +5473,18 @@ if(key === "sport"){
           return;
         }
 
+        const dispatch = buildSportDispatchPayload();
+        if(dispatch.error){
+          alert(dispatch.error);
+          return;
+        }
+
         const history = mairieSportHistoryLoad();
         history.push({
           club: currentSportPayload.club || "Club partenaire (démo)",
           amount: Number(currentSportPayload.wallet || 0),
           beneficiary: currentSportPayload.beneficiary || "club_only",
-          solidarity: currentSportPayload.solidarity || { mode:"none", map:{} },
+          dispatch: dispatch,
           ts: Date.now(),
           ts_fr: new Date().toLocaleString("fr-FR"),
           note: "échange sport validé côté mairie"
@@ -5225,13 +5496,15 @@ if(key === "sport"){
         alert(
           "Échange sport mairie validé.\n\n" +
           "Club : " + (currentSportPayload.club || "Club partenaire (démo)") + "\n" +
-          "Montant vidé : " + Number(currentSportPayload.wallet || 0) + " bocitecoins VERT\n\n" +
+          "Montant échangé : " + Number(currentSportPayload.wallet || 0) + " bocitecoins VERT\n" +
+          "Destination : " + JSON.stringify(dispatch) + "\n\n" +
           "Le wallet sport a été remis à zéro."
         );
 
         currentSportPayload = null;
         if(sportScanInput) sportScanInput.value = "";
         if(sportReadOut) sportReadOut.textContent = "Aucun code sport lu pour le moment.";
+        if(mairieSportPreviewOut) mairieSportPreviewOut.textContent = "Aucun aperçu pour le moment.";
       };
     }
 
@@ -5244,29 +5517,15 @@ if(key === "sport"){
           return;
         }
 
-        const grouped = {};
-        history.forEach((x)=>{
-          if(!grouped[x.club]){
-            grouped[x.club] = {
-              total:0,
-              count:0,
-              last:x.ts_fr
-            };
-          }
-          grouped[x.club].total += Number(x.amount || 0);
-          grouped[x.club].count += 1;
-          grouped[x.club].last = x.ts_fr;
-        });
-
-        const lines = Object.keys(grouped).sort().map((club)=>{
-          const g = grouped[club];
+        const lines = history.map((x)=>{
           return (
-            club +
-            "\n- échanges : " + g.count +
-            "\n- total vidé : " + g.total + " bocitecoins VERT" +
-            "\n- dernier échange : " + g.last
+            "Club : " + x.club +
+            "\n- montant : " + Number(x.amount || 0) + " bocitecoins VERT" +
+            "\n- date : " + x.ts_fr +
+            "\n- dispatch : " + JSON.stringify(x.dispatch || {}) +
+            "\n- note : " + (x.note || "")
           );
-        }).join("\n\n");
+        }).join("\n\n--------------------\n\n");
 
         alert("Historique mairie sport :\n\n" + lines);
       };
@@ -5290,27 +5549,13 @@ if(key === "sport"){
           return;
         }
 
-        const grouped = {};
-        history.forEach((x)=>{
-          if(!grouped[x.club]){
-            grouped[x.club] = {
-              total:0,
-              count:0,
-              last:x.ts_fr
-            };
-          }
-          grouped[x.club].total += Number(x.amount || 0);
-          grouped[x.club].count += 1;
-          grouped[x.club].last = x.ts_fr;
-        });
-
-        const lines = Object.keys(grouped).sort().map((club)=>{
-          const g = grouped[club];
+        const lines = history.map((x)=>{
           return (
-            "Club : " + club + "\n" +
-            "Nombre d’échanges : " + g.count + "\n" +
-            "Total vidé : " + g.total + " bocitecoins VERT\n" +
-            "Dernier échange : " + g.last
+            "Club : " + x.club + "\n" +
+            "Montant échangé : " + Number(x.amount || 0) + " bocitecoins VERT\n" +
+            "Date : " + x.ts_fr + "\n" +
+            "Dispatch : " + JSON.stringify(x.dispatch || {}) + "\n" +
+            "Note : " + (x.note || "")
           );
         }).join("\n\n--------------------\n\n");
 
@@ -5325,6 +5570,50 @@ if(key === "sport"){
             .catch(()=> alert(exportText));
         }else{
           alert(exportText);
+        }
+      };
+    }
+
+    if(mairieReferralInput){
+      const referralDb = mairieReferralLoad();
+      if(referralDb && referralDb.text){
+        mairieReferralInput.value = referralDb.text;
+      }
+    }
+
+    if(mairieReferralSaveBtn){
+      mairieReferralSaveBtn.onclick = ()=>{
+        const txt = mairieReferralInput ? String(mairieReferralInput.value || "").trim() : "";
+        if(!txt){
+          alert("Saisis un suivi de parrainage.");
+          return;
+        }
+        mairieReferralSave({
+          text: txt,
+          ts: Date.now(),
+          ts_fr: new Date().toLocaleString("fr-FR")
+        });
+        alert("Suivi de parrainage enregistré.");
+      };
+    }
+
+    if(mairieReferralReadBtn){
+      mairieReferralReadBtn.onclick = ()=>{
+        const data = mairieReferralLoad();
+        if(!data){
+          alert("Aucun suivi de parrainage enregistré.");
+          return;
+        }
+        alert("Dernier suivi de parrainage :\n\n" + data.text + "\n\nLe " + data.ts_fr);
+      };
+    }
+
+    if(mairieReferralResetBtn){
+      mairieReferralResetBtn.onclick = ()=>{
+        if(confirm("Réinitialiser le suivi de parrainage ?")){
+          localStorage.removeItem(MAIRIE_REFERRAL_KEY);
+          if(mairieReferralInput) mairieReferralInput.value = "";
+          alert("Suivi de parrainage réinitialisé.");
         }
       };
     }
