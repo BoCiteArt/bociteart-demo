@@ -3585,6 +3585,8 @@ out center tags;
 
             return;
           }
+window.__bociteartOpenByKey = function(key){
+
 if(key === "sport"){
   window.openSportPanel = function(){
     const openSport = ()=>{
@@ -6459,6 +6461,7 @@ if (key === "commerces") {
 
   return;
 }
+  };
       const adminTile = $("adminTile");
       on(adminTile, "click", ()=>{
         if(!isFn(window.openModal)) return;
