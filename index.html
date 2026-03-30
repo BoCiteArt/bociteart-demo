@@ -5926,7 +5926,7 @@ if (key === "commerces") {
         </div>
 
         <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
+          <li>Plafond strict : ` + window.PUB_MAX_PER_DAY + ` maximum / jour</li>
           <li>Journée complète : grisée et non sélectionnable</li>
           <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
           <li>Option : texte en gras (+4 € TTC)</li>
@@ -6118,7 +6118,7 @@ if (key === "commerces") {
 
       if(progressBar){
         progressBar.style.width = percent + "%";
-        progressBar.style.background = `linear-gradient(90deg, #e4c81c 0%, #9fca45 ${Math.max(35, percent)}%, #2f8f46 100%)`;
+        progressBar.style.background = "linear-gradient(90deg, #e4c81c 0%, #9fca45 " + Math.max(35, percent) + "%, #2f8f46 100%)";
       }
 
       if(progressText){
