@@ -3636,7 +3636,7 @@ if(key === "sport"){
             <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
             <div class="walletSub">
               Les BoCitecoins VERT sont gagnés par les actions sportives et citoyennes validées.
-              Ils servent uniquement à aider le club bénéficiaire, jamais une personne.
+              Ils servent uniquement à aider le club bénéficiaire, éventuellement une association de recherche, jamais une personne.
             </div>
             <div class="walletActions">
               <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
@@ -3648,11 +3648,15 @@ if(key === "sport"){
           </div>
         </div>
 
-        <div style="font-weight:900;margin-top:10px;">📄 Fichier (à ouvrir)</div>
+        <div style="font-weight:900;margin-top:10px;">Fiche élus / CCI / commerçants</div>
         <div class="box">
-          <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Association</div>
+          <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Asso + pub défilante 7 jours</div>
           <div class="muted" style="margin-top:6px;">
-            Cette fiche explique la logique de soutien trimestriel, la visibilité locale et la préparation de la ligne commerçant.
+            Cette fiche explique la logique et l’intérêt du soutien pour le club + asso + publicité défilante pendant 7 jours.
+          </div>
+          <div class="muted" style="margin-top:8px;">
+            Le commerçant améliore sa visibilité locale, montre concrètement son soutien à un club et à une association,
+            participe à la dynamique de la ville et peut renforcer son image dans le temps.
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
             <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
@@ -3663,21 +3667,25 @@ if(key === "sport"){
           <div style="font-weight:900;">Règle Sport – BoCitecoins VERT</div>
           <div class="muted" style="margin-top:8px;">
             Les BoCitecoins VERT sont gagnés par les clubs ou groupes sportifs pour des actions sportives et citoyennes validées dans le cadre de Bo’CitéArt.
-            Ils servent uniquement à aider le club bénéficiaire, jamais une personne physique.
+            Ils servent uniquement à aider le club bénéficiaire, éventuellement une association de recherche, jamais une personne physique.
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            Après le choix retenu et discuté avec l’équipe sportive, le référent se présente soit chez le commerçant, soit à la mairie pour échanger selon ce que le club souhaite :
+            garder pour le club, partager partiellement avec une ou plusieurs associations, ou donner totalement à une ou plusieurs associations.
           </div>
 
           <ul style="margin:10px 0 0 18px;font-weight:800;">
-            <li>Échange autorisé uniquement par tranches de <strong>10</strong> ou <strong>20</strong> BoCitecoins VERT</li>
             <li>L’avantage bénéficie au <strong>club</strong>, jamais au référent, éducateur ou particulier</li>
-            <li>Après validation, les coins utilisés sont <strong>brûlés</strong> du wallet sport</li>
-            <li>Maximum <strong>30 %</strong> de l’aide en nourriture ou boissons</li>
-            <li>Le reste doit profiter utilement au club : matériel, accessoires, soutien logistique ou besoin sportif</li>
+            <li>Le référent présente le code club à la mairie ou au commerçant partenaire</li>
+            <li>Les bocitecoins sont déduits au moment de l’échange</li>
+            <li>Le commerçant ou la mairie offre au club l’avantage correspondant</li>
+            <li>Chez le commerçant : matériel sportif uniquement, ou matériel + <strong>30 % maximum</strong> en nourriture et boissons incluses</li>
+            <li>1 bocitecoin = 1 unité d’avantage interne Bo’CitéArt pour le club</li>
+            <li>Échange autorisé uniquement par tranches de <strong>10</strong> : 10, 20, 30…</li>
+            <li>Exemples : 10 = possible • 12 = impossible • 16 = impossible • 20 = possible • 25 = impossible • 30 = possible</li>
             <li>Aucune conversion en euros, aucun versement d’argent, aucun usage personnel</li>
           </ul>
-
-          <div class="muted" style="margin-top:8px;">
-            Exemples : 7 = impossible • 10 = possible • 15 = impossible • 20 = possible.
-          </div>
         </div>
 
         <div style="font-weight:900;margin-top:14px;">Validation d’échange club</div>
@@ -3705,7 +3713,7 @@ if(key === "sport"){
           </div>
 
           <div class="muted" style="margin-top:8px;">
-            1 bocitecoin = 1 unité d’avantage interne Bo’CitéArt pour le club. Les échanges standards sont de <strong>10</strong> ou <strong>20 bocitecoins</strong>.
+            1 bocitecoin = 1 unité d’avantage interne Bo’CitéArt pour le club. Les échanges standards sont par tranches de <strong>10 bocitecoins</strong> avec un minimum de 10.
           </div>
         </div>
 
@@ -3817,12 +3825,17 @@ if(key === "sport"){
           </div>
         </div>
 
-        <div style="font-weight:900;margin-top:14px;">Demande commerçant solidaire + pub défilante</div>
+        <div style="font-weight:900;margin-top:14px;">PUB défilante Commerçant + Soutien Club + Asso</div>
         <div class="box">
           <div class="muted">
             Le sportif scanne le commerçant. Sa fiche se préremplit automatiquement.
-            Le sportif choisit simplement l’association que le commerçant souhaite soutenir.
-            Le texte diffusé est standardisé : nom de l’entreprise + club soutenu + association soutenue.
+            Le sportif choisit simplement, d’un clic, l’association que le commerçant souhaite soutenir.
+            Le nom du club est déjà repris automatiquement depuis le téléphone / scan du club.
+          </div>
+
+          <div class="muted" style="margin-top:8px;">
+            Le texte diffusé est standardisé : <strong>nom de l’entreprise + club soutenu + association soutenue</strong>,
+            avec téléphone ou adresse si renseignés.
           </div>
 
           <div class="muted" style="margin-top:8px;">
@@ -3881,7 +3894,13 @@ if(key === "sport"){
               Une fois le paiement validé, la publicité est diffusée pendant 7 jours consécutifs puis disparaît automatiquement.
             </div>
             <div class="muted" style="margin-top:6px;">
-              Après paiement validé, les justificatifs / factures sont prévus pour : le commerçant, Bo’CitéArt, le club et l’association.
+              Après validation du paiement, une traçabilité complète est prévue pour :
+              le commerçant, le club, l’association et Bo’CitéArt.
+            </div>
+            <div class="muted" style="margin-top:6px;">
+              En version officielle, le commerçant reçoit immédiatement sa facture par email via le PSP.
+              Le club, l’association et Bo’CitéArt reçoivent également leur traçabilité / justificatif correspondant.
+              En cas de besoin, un renvoi de facture doit rester possible.
             </div>
 
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
@@ -3895,11 +3914,11 @@ if(key === "sport"){
         <div class="box">
           <div class="muted">
             Le club présente son code. Ce code peut être lu par la mairie ou par un commerçant partenaire selon le cas.
-            Après validation, les bocitecoins échangés sont brûlés et l’opération est enregistrée dans l’historique.
+            Après validation, les bocitecoins échangés sont déduits et l’opération est enregistrée dans l’historique.
           </div>
 
           <div class="muted" style="margin-top:8px;">
-            Échanges autorisés : <strong>10</strong> ou <strong>20 bocitecoins</strong>.
+            Échanges autorisés : tranches de <strong>10 bocitecoins</strong> uniquement.
           </div>
 
           <div class="muted" style="margin-top:8px;">
@@ -4251,11 +4270,11 @@ if(key === "sport"){
             alert(
               "BoCitecoins VERT — règle d’échange\n\n" +
               "- 1 bocitecoin = 1 unité d’avantage interne Bo’CitéArt pour le club\n" +
-              "- Échanges autorisés : 10 ou 20\n" +
+              "- Échanges autorisés : par tranches de 10 (10, 20, 30...)\n" +
               "- Réservés au club, jamais à une personne\n" +
               "- Maximum 30 % en nourriture / boissons chez commerçant\n" +
               "- Le reste doit servir utilement au club\n" +
-              "- Le club peut aussi orienter une part vers une association via la mairie"
+              "- Le club peut garder, partager partiellement ou donner à une association via la mairie"
             );
           };
         }
@@ -4416,7 +4435,7 @@ if(key === "sport"){
 
           alert(
             "Échange validé pour le club.\n\n" +
-            "Montant brûlé : " + amountToBurn + " bocitecoins VERT.\n" +
+            "Montant déduit : " + amountToBurn + " bocitecoins VERT.\n" +
             "Reste wallet : " + remaining + " bocitecoins VERT."
           );
 
