@@ -5608,20 +5608,21 @@ if(key === "sport"){
       };
     }
 
-    if(mairieReferralResetBtn){
-      mairieReferralResetBtn.onclick = ()=>{
-        if(confirm("Réinitialiser le suivi de parrainage ?")){
+   if (mairieReferralResetBtn) {
+      mairieReferralResetBtn.onclick = () => {
+        if (confirm("Réinitialiser le suivi de parrainage ?")) {
           localStorage.removeItem(MAIRIE_REFERRAL_KEY);
-          if(mairieReferralInput) mairieReferralInput.value = "";
+          if (mairieReferralInput) mairieReferralInput.value = "";
           alert("Suivi de parrainage réinitialisé.");
         }
       };
     }
-  },0);
+  }, 0);
 
   return;
 }
-if(key === "commerces"){
+
+if (key === "commerces") {
   openModal("Commerces", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces</div>
 
