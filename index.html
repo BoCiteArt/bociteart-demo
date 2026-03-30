@@ -5928,7 +5928,7 @@ if (key === "commerces") {
         </div>
 
         <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Plafond strict : ` + window.PUB_MAX_PER_DAY + ` maximum / jour</li>
+          <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
           <li>Journée complète : grisée et non sélectionnable</li>
           <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
           <li>Option : texte en gras (+4 € TTC)</li>
@@ -6462,7 +6462,7 @@ if (key === "commerces") {
   return;
 }
   };
-      const adminTile = $("adminTile");
+      const adminTile = $("adminTile");          
       on(adminTile, "click", ()=>{
         if(!isFn(window.openModal)) return;
         openModal("Accès Admin (structure)", `
