@@ -3303,29 +3303,36 @@ if(key === "ecole"){
         </div>
       </div>
 
-      <div style="font-weight:900;margin-top:10px;">Configuration annuelle (démo)</div>
-      <div class="box">
-        <div style="margin-top:4px;font-weight:900;">Nom de l’école</div>
-        <input class="miniField" id="schoolConfigName" placeholder="Nom de l’école">
+<div style="font-weight:900;margin-top:10px;">Configuration annuelle (démo)</div>
+<div class="box">
+  <div style="margin-top:4px;font-weight:900;">Nom de l’école</div>
+  <input class="miniField" id="schoolConfigName" placeholder="Nom de l’école">
 
-        <div style="margin-top:10px;font-weight:900;">Ville</div>
-        <input class="miniField" id="schoolConfigCity" placeholder="Ville">
+  <div style="margin-top:10px;font-weight:900;">Ville</div>
+  <input class="miniField" id="schoolConfigCity" placeholder="Ville">
 
-        <div style="margin-top:10px;font-weight:900;">Code postal</div>
-        <input class="miniField" id="schoolConfigPostal" placeholder="Code postal">
+  <div style="margin-top:10px;font-weight:900;">Code postal</div>
+  <input class="miniField" id="schoolConfigPostal" placeholder="Code postal">
 
-        <div style="margin-top:10px;font-weight:900;">Zone scolaire</div>
-        <select class="miniField" id="schoolConfigZone">
-          <option value="A">Zone A</option>
-          <option value="B">Zone B</option>
-          <option value="C">Zone C</option>
-        </select>
+  <div style="margin-top:10px;font-weight:900;">Zone scolaire</div>
+  <select class="miniField" id="schoolConfigZone">
+    <option value="A">Zone A</option>
+    <option value="B">Zone B</option>
+    <option value="C">Zone C</option>
+  </select>
 
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="schoolConfigSaveBtn" type="button">Enregistrer la configuration</button>
-          <button class="choiceBtn" id="schoolConfigReadBtn" type="button" style="background:#fff;">Lire la configuration</button>
-        </div>
-      </div>
+  <div class="muted" id="schoolZoneHint" style="margin-top:8px;">
+    Cette zone prépare le calendrier scolaire de l’école pour la version LIVE.
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <button class="choiceBtn" id="schoolConfigSaveBtn" type="button">Enregistrer la configuration</button>
+    <button class="choiceBtn" id="schoolConfigReadBtn" type="button" style="background:#fff;">Lire la configuration</button>
+    <button class="choiceBtn" id="schoolConfigCalendarBtn" type="button" style="background:#fff;">Voir calendrier préparé</button>
+  </div>
+
+  <div class="muted" id="schoolCalendarPreview" style="margin-top:10px;"></div>
+</div>
 
       <div style="font-weight:900;margin-top:10px;">Classe (démo)</div>
       <div class="box">
@@ -3604,6 +3611,42 @@ if(key === "ecole"){
         localStorage.setItem(SCHOOL_CONFIG_KEY, JSON.stringify(obj));
       }catch(e){}
     }
+    const SCHOOL_CALENDAR_PREP = {
+  A: {
+    label: "Zone A",
+    note: "Calendrier scolaire préparé pour la version LIVE.",
+    periods: []
+  },
+  B: {
+    label: "Zone B",
+    note: "Calendrier scolaire préparé pour la version LIVE.",
+    periods: []
+  },
+  C: {
+    label: "Zone C",
+    note: "Calendrier scolaire préparé pour la version LIVE.",
+    periods: []
+  }
+};
+
+function getPreparedCalendarForZone(zone){
+  return SCHOOL_CALENDAR_PREP[zone] || null;
+}
+
+function refreshSchoolCalendarPreview(){
+  if(!schoolCalendarPreview) return;
+
+  const zone = schoolConfigZone ? String(schoolConfigZone.value || "A") : "A";
+  const prepared = getPreparedCalendarForZone(zone);
+
+  if(!prepared){
+    schoolCalendarPreview.textContent = "";
+    return;
+  }
+
+  schoolCalendarPreview.textContent =
+    prepared.label + " — " + prepared.note;
+}
 
     function getCurrentSchoolClass(){
       const sel = $("schoolClassSelect");
@@ -3831,18 +3874,29 @@ function refreshSchoolDayState(){
   };
 }
 
-    const schoolConfigName = $("schoolConfigName");
-    const schoolConfigCity = $("schoolConfigCity");
-    const schoolConfigPostal = $("schoolConfigPostal");
-    const schoolConfigZone = $("schoolConfigZone");
-    const schoolConfigSaveBtn = $("schoolConfigSaveBtn");
-    const schoolConfigReadBtn = $("schoolConfigReadBtn");
-
+  const schoolConfigName = $("schoolConfigName");
+  const schoolConfigCity = $("schoolConfigCity");
+  const schoolConfigPostal = $("schoolConfigPostal");
+  const schoolConfigZone = $("schoolConfigZone");
+  const schoolConfigSaveBtn = $("schoolConfigSaveBtn");
+  const schoolConfigReadBtn = $("schoolConfigReadBtn");
+  const schoolConfigCalendarBtn = $("schoolConfigCalendarBtn");
+  const schoolCalendarPreview = $("schoolCalendarPreview");
+  const schoolZoneHint = $("schoolZoneHint");
+    
     const schoolCfg = schoolConfigLoad();
-    if(schoolConfigName) schoolConfigName.value = schoolCfg.schoolName || "";
-    if(schoolConfigCity) schoolConfigCity.value = schoolCfg.city || "";
-    if(schoolConfigPostal) schoolConfigPostal.value = schoolCfg.postal || "";
-    if(schoolConfigZone) schoolConfigZone.value = schoolCfg.zone || "A";
+if(schoolConfigName) schoolConfigName.value = schoolCfg.schoolName || "";
+if(schoolConfigCity) schoolConfigCity.value = schoolCfg.city || "";
+if(schoolConfigPostal) schoolConfigPostal.value = schoolCfg.postal || "";
+if(schoolConfigZone) schoolConfigZone.value = schoolCfg.zone || "A";
+
+refreshSchoolCalendarPreview();
+
+if(schoolConfigZone){
+  schoolConfigZone.onchange = function(){
+    refreshSchoolCalendarPreview();
+  };
+}
 
     if(schoolConfigSaveBtn){
       schoolConfigSaveBtn.onclick = ()=>{
@@ -3873,6 +3927,24 @@ function refreshSchoolDayState(){
         );
       };
     }
+    if(schoolConfigCalendarBtn){
+  schoolConfigCalendarBtn.onclick = ()=>{
+    const zone = schoolConfigZone ? String(schoolConfigZone.value || "A") : "A";
+    const prepared = getPreparedCalendarForZone(zone);
+
+    if(!prepared){
+      alert("Aucun calendrier préparé pour cette zone.");
+      return;
+    }
+
+    alert(
+      "Calendrier préparé :\n\n" +
+      "Zone : " + prepared.label + "\n" +
+      "Statut : " + prepared.note + "\n\n" +
+      "Les périodes officielles seront branchées pour la version LIVE."
+    );
+  };
+}
 
    const schoolInfoBtn = $("walletSchoolInfo");
 const schoolResetWallet = $("walletSchoolReset");
