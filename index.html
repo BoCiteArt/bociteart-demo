@@ -1156,13 +1156,43 @@ function validerInscription() {
         </div>
       </div>
 
-      <div class="dae" id="daeBtn" role="button" tabindex="0" aria-label="Trouver un défibrillateur autour de moi">
-        <svg class="heart" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.6">
-          <path d="M20.8 4.6c-1.7-1.7-4.5-1.7-6.2 0L12 7.2 9.4 4.6c-1.7-1.7-4.5-1.7-6.2 0-1.7 1.7-1.7 4.5 0 6.2L12 19.6l8.8-8.8c1.7-1.7 1.7-4.5 0-6.2z"/>
-          <path d="M13 8h-2v4H7v2h4v4h2v-4h4v-2h-4z" stroke="var(--red)"/>
-        </svg>
-        <div>Trouver un défibrillateur autour de moi</div>
-      </div>
+     <div style="display:flex;gap:10px;align-items:stretch;">
+  <div class="dae" id="daeBtn" role="button" tabindex="0" aria-label="Trouver un défibrillateur autour de moi" style="flex:1;">
+    <svg class="heart" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.6">
+      <path d="M20.8 4.6c-1.7-1.7-4.5-1.7-6.2 0L12 7.2 9.4 4.6c-1.7-1.7-4.5-1.7-6.2 0-1.7 1.7-1.7 4.5 0 6.2L12 19.6l8.8-8.8c1.7-1.7 1.7-4.5 0-6.2z"/>
+      <path d="M13 8h-2v4H7v2h4v4h2v-4h4v-2h-4z" stroke="var(--red)"/>
+    </svg>
+    <div>Trouver un défibrillateur autour de moi</div>
+  </div>
+
+  <div
+    id="clockBtn"
+    role="button"
+    tabindex="0"
+    aria-label="Horloge, date, saint du jour et météo"
+    style="
+      width:72%;
+      min-width:150px;
+      border:2px solid var(--red);
+      border-radius:18px;
+      background:#fff;
+      padding:10px 12px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      cursor:pointer;
+      user-select:none;
+      box-sizing:border-box;
+    "
+  >
+    <div id="clockWeatherMini" style="font-size:12px;font-weight:800;color:#666;line-height:1.1;margin-bottom:3px;">Météo</div>
+    <div id="clockTimeMini" style="font-size:24px;font-weight:900;line-height:1;">00:00</div>
+    <div id="clockDateMini" style="font-size:12px;font-weight:800;line-height:1.2;margin-top:4px;">Date</div>
+    <div id="clockSaintMini" style="font-size:11px;color:#666;line-height:1.2;margin-top:4px;">Saint du jour</div>
+  </div>
+</div>
 
       <div class="footerRow">
         <a class="siteLink" href="https://www.bociteart.com" target="_blank" rel="noopener noreferrer">www.bociteart.com</a>
@@ -7182,59 +7212,195 @@ const adminTile = $("adminTile");
         `);
       });
 
-      const daeBtn = $("daeBtn");
-      on(daeBtn, "click", ()=>{
-        if(!isFn(window.openModal)) return;
-        openModal("Défibrillateur (DAE)", `
-          <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
-          <div class="box">
-            <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
-            Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
-          </div>
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
-            <li>Orientation + guidage</li>
-            <li>Rayon local : 1 à 3 km</li>
-            <li>DAE • pharmacie • hôpital</li>
-            <li>Géolocalisation optionnelle (activation utilisateur)</li>
-          </ul>
+     const daeBtn = $("daeBtn");
+const clockBtn = $("clockBtn");
 
-          <div class="box" style="margin-top:12px;">
-            <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
-            <div style="border-radius:14px; overflow:hidden; background:#000;">
-              <iframe
-                width="100%"
-                height="220"
-                src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
-                title="Utilisation DAE"
-                loading="lazy"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen>
-              </iframe>
-            </div>
-            <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
-          </div>
+function getClockWeatherDemo(){
+  const h = new Date().getHours();
+  if(h >= 6 && h < 12) return "Matin";
+  if(h >= 12 && h < 18) return "Jour";
+  if(h >= 18 && h < 22) return "Soir";
+  return "Nuit";
+}
 
-          <div class="box" style="margin-top:12px;">
-            <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
-            <div class="muted">
-              Ici, la version officielle affichera la carte + fléchage + une ligne d’itinéraire vers le DAE le plus proche.
-            </div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
-              <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
-            </div>
-          </div>
-        `);
+function getSaintOfDayDemo(d){
+  const map = {
+    "01-01":"Sainte Marie",
+    "01-02":"Saint Basile",
+    "01-03":"Sainte Geneviève",
+    "01-04":"Saint Odilon",
+    "01-05":"Saint Édouard",
+    "01-06":"Épiphanie",
+    "02-14":"Saint Valentin",
+    "03-19":"Saint Joseph",
+    "05-01":"Fête du Travail",
+    "06-24":"Saint Jean-Baptiste",
+    "07-14":"Fête nationale",
+    "08-15":"Assomption",
+    "11-01":"Toussaint",
+    "11-11":"Saint Martin",
+    "12-25":"Noël"
+  };
+  const key = String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  return map[key] || "Saint du jour";
+}
 
-        setTimeout(()=>{
-          const loc = $("daeLocate");
-          const rte = $("daeRoute");
-          if(loc) loc.onclick = ()=> alert("Démo : demande de localisation (GPS).");
-          if(rte) rte.onclick = ()=> alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
-        },0);
+function refreshMiniClock(){
+  const t = $("clockTimeMini");
+  const d = $("clockDateMini");
+  const s = $("clockSaintMini");
+  const w = $("clockWeatherMini");
+
+  const now = new Date();
+
+  if(t){
+    t.textContent = now.toLocaleTimeString("fr-FR", {
+      hour:"2-digit",
+      minute:"2-digit"
+    });
+  }
+
+  if(d){
+    d.textContent = now.toLocaleDateString("fr-FR", {
+      weekday:"short",
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric"
+    });
+  }
+
+  if(s){
+    s.textContent = getSaintOfDayDemo(now);
+  }
+
+  if(w){
+    w.textContent = getClockWeatherDemo(now);
+  }
+}
+
+refreshMiniClock();
+window.__bociteartClockMiniTimer = window.setInterval(refreshMiniClock, 1000);
+
+on(daeBtn, "click", ()=>{
+  if(!isFn(window.openModal)) return;
+  openModal("Défibrillateur (DAE)", `
+    <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
+    <div class="box">
+      <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
+      Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
+    </div>
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
+      <li>Orientation + guidage</li>
+      <li>Rayon local : 1 à 3 km</li>
+      <li>DAE • pharmacie • hôpital</li>
+      <li>Géolocalisation optionnelle (activation utilisateur)</li>
+    </ul>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;margin-bottom:8px;">Vidéo DAE (démo)</div>
+      <div style="border-radius:14px; overflow:hidden; background:#000;">
+        <iframe
+          width="100%"
+          height="220"
+          src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
+          title="Utilisation DAE"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;margin-bottom:8px;">Itinéraire (démo)</div>
+      <div class="muted">
+        Ici, la version officielle affichera la carte + fléchage + une ligne d’itinéraire vers le DAE le plus proche.
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="daeLocate" type="button">Me localiser</button>
+        <button class="choiceBtn" id="daeRoute" type="button">Itinéraire</button>
+      </div>
+    </div>
+  `);
+
+  setTimeout(()=>{
+    const loc = $("daeLocate");
+    const rte = $("daeRoute");
+    if(loc) loc.onclick = ()=> alert("Démo : demande de localisation (GPS).");
+    if(rte) rte.onclick = ()=> alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
+  },0);
+});
+
+on(clockBtn, "click", ()=>{
+  if(!isFn(window.openModal)) return;
+
+  openModal("Horloge - Date - Saint du jour", `
+    <div style="font-weight:900;margin-bottom:8px;">Horloge locale (structure)</div>
+
+    <div class="box" style="text-align:center;">
+      <div id="clockTimeLarge" style="font-size:42px;font-weight:900;line-height:1;">00:00:00</div>
+      <div id="clockDateLarge" style="margin-top:8px;font-size:16px;font-weight:800;">Date</div>
+      <div id="clockSaintLarge" style="margin-top:6px;font-size:14px;color:#666;">Saint du jour</div>
+      <div id="clockWeatherLarge" style="margin-top:6px;font-size:14px;color:#666;">Météo</div>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Calendrier et informations utiles</div>
+      <div class="muted" style="margin-top:8px;">
+        Cet espace est prévu pour afficher de façon sobre :
+        la météo plus détaillée, les fêtes, le calendrier et les vacances scolaires selon la zone.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Le changement d’heure, l’ajustement selon la localisation et le double horaire départ / destination
+        pourront être branchés dans la version complète.
+      </div>
+    </div>
+  `);
+
+  function refreshLargeClock(){
+    const now = new Date();
+
+    const t = $("clockTimeLarge");
+    const d = $("clockDateLarge");
+    const s = $("clockSaintLarge");
+    const w = $("clockWeatherLarge");
+
+    if(t){
+      t.textContent = now.toLocaleTimeString("fr-FR", {
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit"
       });
+    }
 
+    if(d){
+      d.textContent = now.toLocaleDateString("fr-FR", {
+        weekday:"long",
+        day:"2-digit",
+        month:"long",
+        year:"numeric"
+      });
+    }
+
+    if(s){
+      s.textContent = getSaintOfDayDemo(now);
+    }
+
+    if(w){
+      w.textContent = "État du temps : " + getClockWeatherDemo(now);
+    }
+  }
+
+  refreshLargeClock();
+
+  if(window.__bociteartClockLargeTimer){
+    clearInterval(window.__bociteartClockLargeTimer);
+  }
+
+  window.__bociteartClockLargeTimer = setInterval(refreshLargeClock, 1000);
+});
       const legal = $("legal");
       const openLegalBtn = $("openLegal");
       const closeLegalBtn = $("legalClose");
