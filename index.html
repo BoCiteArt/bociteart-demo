@@ -4014,15 +4014,28 @@ const schoolDayStatus = $("schoolDayStatus");
     }
 
     if(schoolResetWallet){
-      schoolResetWallet.onclick = ()=>{
-        if(confirm("Réinitialiser le compteur école ?")){
-          saveSchoolWallet({ jaune:0 });
-          const db = schoolLoad();
-          if(db.progress) db.progress = {};
-          schoolSave(db);
-          refreshSchoolWallet();
-        }
-      };
+  schoolResetWallet.onclick = ()=>{
+    if(confirm("Réinitialiser le compteur école ?")){
+      saveSchoolWallet({ jaune:0 });
+
+      const db = schoolLoad();
+
+      if(db.progress){
+        db.progress = {};
+      }
+
+      const cls = getCurrentSchoolClass();
+      const prog = getSchoolProgress(db, cls);
+      prog.lastValidationDay = "";
+
+      schoolSave(db);
+      refreshSchoolWallet();
+      refreshSchoolWordDisplay();
+      refreshSchoolDayState();
+
+      alert("Compteur école réinitialisé pour la démo. La classe peut être revalidée.");
+    }
+  };
     }
 
     if(schoolResetBtn){
