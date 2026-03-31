@@ -5410,7 +5410,7 @@ if(key === "sport"){
   window.openSportPanel();
   return;
 }
-        if(key === "mairie"){
+      if(key === "mairie"){
   openModal("Mairie", `
     <div style="font-weight:900;margin-bottom:8px;">Mairie</div>
 
@@ -5692,54 +5692,38 @@ if(key === "sport"){
     const toggleAdminBtn = $("toggleMairieAdminBtn");
     const mairieAdminPanel = $("mairieAdminPanel");
 
-    if(toggleAdminBtn && mairieAdminPanel){
-      toggleAdminBtn.onclick = ()=>{
-        const isHidden = mairieAdminPanel.style.display === "none" || mairieAdminPanel.style.display === "";
-        mairieAdminPanel.style.display = isHidden ? "block" : "none";
-        toggleAdminBtn.textContent = isHidden
-          ? "Fermer l’espace interne mairie"
-          : "Ouvrir l’espace interne mairie";
-      };
-    }
+    const scanInput = $("mairieScanInput");
+    const readBtn = $("mairieReadBtn");
+    const validateBtn = $("mairieValidateBtn");
+    const historyBtn = $("mairieHistoryBtn");
+    const historyResetBtn = $("mairieHistoryResetBtn");
+    const exportBtn = $("mairieExportBtn");
+    const readOut = $("mairieReadOut");
+    const mairieSchoolPreviewBtn = $("mairieSchoolPreviewBtn");
+    const mairieSchoolPreviewOut = $("mairieSchoolPreviewOut");
 
-    const db = mairieLoad();
-    if(input){
-      input.value = (db.message && String(db.message).trim())
-        ? String(db.message).trim()
-        : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-    }
+    const sportScanInput = $("mairieSportScanInput");
+    const sportReadBtn = $("mairieSportReadBtn");
+    const sportValidateBtn = $("mairieSportValidateBtn");
+    const sportHistoryBtn = $("mairieSportHistoryBtn");
+    const sportHistoryResetBtn = $("mairieSportHistoryResetBtn");
+    const sportExportBtn = $("mairieSportExportBtn");
+    const sportReadOut = $("mairieSportReadOut");
+    const mairieSportPreviewBtn = $("mairieSportPreviewBtn");
+    const mairieSportPreviewOut = $("mairieSportPreviewOut");
 
-    if(saveBtn){
-      saveBtn.onclick = ()=>{
-        const msg = input ? String(input.value || "").trim() : "";
-        if(!msg){
-          alert("Saisis un message mairie.");
-          return;
-        }
-        const next = mairieLoad();
-        next.message = msg;
-        next.ts_fr = new Date().toLocaleString("fr-FR");
-        mairieSave(next);
-        renderMairieTicker();
-        alert("Message mairie enregistré (démo).");
-      };
-    }
-
-    if(resetBtn){
-      resetBtn.onclick = ()=>{
-        if(confirm("Réinitialiser le message mairie (démo) sur ce téléphone ?")){
-          mairieSave({});
-          renderMairieTicker();
-          if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-          alert("Message mairie réinitialisé (démo).");
-        }
-      };
-    }
+    const mairieReferralInput = $("mairieReferralInput");
+    const mairieReferralSaveBtn = $("mairieReferralSaveBtn");
+    const mairieReferralReadBtn = $("mairieReferralReadBtn");
+    const mairieReferralResetBtn = $("mairieReferralResetBtn");
 
     const MAIRIE_SCHOOL_HISTORY_KEY = "bociteart_mairie_school_history_v1";
     const MAIRIE_SPORT_HISTORY_KEY = "bociteart_mairie_sport_history_v1";
     const MAIRIE_REFERRAL_KEY = "bociteart_mairie_referral_v1";
     const SCHOOL_STORE_KEY = "bociteart_school_v1";
+
+    let currentPayload = null;
+    let currentSportPayload = null;
 
     function mairieHistoryLoad(){
       try{
@@ -5801,17 +5785,6 @@ if(key === "sport"){
       }catch(e){}
     }
 
-    const schoolLoadM = (typeof loadSchoolWallet === "function")
-      ? loadSchoolWallet
-      : function(){
-          try{
-            const raw = localStorage.getItem("bociteart_school_wallet_v1");
-            return raw ? JSON.parse(raw) : { jaune:0 };
-          }catch(e){
-            return { jaune:0 };
-          }
-        };
-
     const schoolSaveM = (typeof saveSchoolWallet === "function")
       ? saveSchoolWallet
       : function(obj){
@@ -5827,34 +5800,6 @@ if(key === "sport"){
             localStorage.setItem("bociteart_sport_wallet_v1", JSON.stringify(obj));
           }catch(e){}
         };
-
-    const scanInput = $("mairieScanInput");
-    const readBtn = $("mairieReadBtn");
-    const validateBtn = $("mairieValidateBtn");
-    const historyBtn = $("mairieHistoryBtn");
-    const historyResetBtn = $("mairieHistoryResetBtn");
-    const exportBtn = $("mairieExportBtn");
-    const readOut = $("mairieReadOut");
-    const mairieSchoolPreviewBtn = $("mairieSchoolPreviewBtn");
-    const mairieSchoolPreviewOut = $("mairieSchoolPreviewOut");
-
-    const sportScanInput = $("mairieSportScanInput");
-    const sportReadBtn = $("mairieSportReadBtn");
-    const sportValidateBtn = $("mairieSportValidateBtn");
-    const sportHistoryBtn = $("mairieSportHistoryBtn");
-    const sportHistoryResetBtn = $("mairieSportHistoryResetBtn");
-    const sportExportBtn = $("mairieSportExportBtn");
-    const sportReadOut = $("mairieSportReadOut");
-    const mairieSportPreviewBtn = $("mairieSportPreviewBtn");
-    const mairieSportPreviewOut = $("mairieSportPreviewOut");
-
-    const mairieReferralInput = $("mairieReferralInput");
-    const mairieReferralSaveBtn = $("mairieReferralSaveBtn");
-    const mairieReferralReadBtn = $("mairieReferralReadBtn");
-    const mairieReferralResetBtn = $("mairieReferralResetBtn");
-
-    let currentPayload = null;
-    let currentSportPayload = null;
 
     function renderPayload(payload){
       if(!readOut) return;
@@ -5901,11 +5846,11 @@ if(key === "sport"){
 
       if(mode === "partial"){
         let total = 0;
-        pcts.forEach((input)=>{
-          const name = input.getAttribute("data-asso");
+        pcts.forEach((field)=>{
+          const name = field.getAttribute("data-asso");
           const linked = picks.find(x => x.getAttribute("data-asso") === name);
           if(linked && linked.checked){
-            const v = Number(input.value || 0);
+            const v = Number(field.value || 0);
             map[name] = v;
             total += v;
           }
@@ -5951,11 +5896,11 @@ if(key === "sport"){
 
       if(mode === "partial"){
         let total = 0;
-        pcts.forEach((input)=>{
-          const name = input.getAttribute("data-asso");
+        pcts.forEach((field)=>{
+          const name = field.getAttribute("data-asso");
           const linked = picks.find(x => x.getAttribute("data-asso") === name);
           if(linked && linked.checked){
-            const v = Number(input.value || 0);
+            const v = Number(field.value || 0);
             map[name] = v;
             total += v;
           }
@@ -5969,23 +5914,68 @@ if(key === "sport"){
       return { mode:"keep", map:{} };
     }
 
+    if(toggleAdminBtn && mairieAdminPanel){
+      toggleAdminBtn.onclick = ()=>{
+        const isHidden = mairieAdminPanel.style.display === "none" || mairieAdminPanel.style.display === "";
+        mairieAdminPanel.style.display = isHidden ? "block" : "none";
+        toggleAdminBtn.textContent = isHidden
+          ? "Fermer l’espace interne mairie"
+          : "Ouvrir l’espace interne mairie";
+      };
+    }
+
+    const db = mairieLoad();
+    if(input){
+      input.value = (db.message && String(db.message).trim())
+        ? String(db.message).trim()
+        : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+    }
+
+    if(saveBtn){
+      saveBtn.onclick = ()=>{
+        const msg = input ? String(input.value || "").trim() : "";
+        if(!msg){
+          alert("Saisis un message mairie.");
+          return;
+        }
+        const next = mairieLoad();
+        next.message = msg;
+        next.ts_fr = new Date().toLocaleString("fr-FR");
+        mairieSave(next);
+        renderMairieTicker();
+        alert("Message mairie enregistré (démo).");
+      };
+    }
+
+    if(resetBtn){
+      resetBtn.onclick = ()=>{
+        if(confirm("Réinitialiser le message mairie (démo) sur ce téléphone ?")){
+          mairieSave({});
+          renderMairieTicker();
+          if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+          alert("Message mairie réinitialisé (démo).");
+        }
+      };
+    }
+
     if(mairieSchoolPreviewBtn){
       mairieSchoolPreviewBtn.onclick = ()=>{
         if(!currentPayload){
           alert("Lis d’abord un code école.");
           return;
         }
+
         const payload = buildSchoolDispatchPayload();
         if(payload.error){
           alert(payload.error);
           return;
         }
+
         if(mairieSchoolPreviewOut){
           mairieSchoolPreviewOut.textContent =
             "Classe : " + (currentPayload.class || "Classe inconnue") +
             " | Montant : " + Number(currentPayload.wallet || 0) +
-            " bocitecoins JAUNE | Destination : " +
-            JSON.stringify(payload);
+            " bocitecoins JAUNE | Destination : " + JSON.stringify(payload);
         }
       };
     }
@@ -5996,17 +5986,18 @@ if(key === "sport"){
           alert("Lis d’abord un code sport.");
           return;
         }
+
         const payload = buildSportDispatchPayload();
         if(payload.error){
           alert(payload.error);
           return;
         }
+
         if(mairieSportPreviewOut){
           mairieSportPreviewOut.textContent =
             "Club : " + (currentSportPayload.club || "Club partenaire (démo)") +
             " | Montant : " + Number(currentSportPayload.wallet || 0) +
-            " bocitecoins VERT | Destination : " +
-            JSON.stringify(payload);
+            " bocitecoins VERT | Destination : " + JSON.stringify(payload);
         }
       };
     }
@@ -6320,16 +6311,16 @@ if(key === "sport"){
       };
     }
 
-   if (mairieReferralResetBtn) {
-      mairieReferralResetBtn.onclick = () => {
-        if (confirm("Réinitialiser le suivi de parrainage ?")) {
+    if(mairieReferralResetBtn){
+      mairieReferralResetBtn.onclick = ()=>{
+        if(confirm("Réinitialiser le suivi de parrainage ?")){
           localStorage.removeItem(MAIRIE_REFERRAL_KEY);
-          if (mairieReferralInput) mairieReferralInput.value = "";
+          if(mairieReferralInput) mairieReferralInput.value = "";
           alert("Suivi de parrainage réinitialisé.");
         }
       };
     }
-  }, 0);
+  },0);
 
   return;
 }
