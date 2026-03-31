@@ -3303,37 +3303,36 @@ if(key === "ecole"){
         </div>
       </div>
 
-<div style="font-weight:900;margin-top:10px;">Configuration annuelle (démo)</div>
-<div class="box">
-  <div style="margin-top:4px;font-weight:900;">Nom de l’école</div>
-  <input class="miniField" id="schoolConfigName" placeholder="Nom de l’école">
+      <div style="font-weight:900;margin-top:10px;">Configuration annuelle (démo)</div>
+      <div class="box">
+        <div style="margin-top:4px;font-weight:900;">Nom de l’école</div>
+        <input class="miniField" id="schoolConfigName" placeholder="Nom de l’école">
 
-  <div style="margin-top:10px;font-weight:900;">Ville</div>
-  <input class="miniField" id="schoolConfigCity" placeholder="Ville">
+        <div style="margin-top:10px;font-weight:900;">Ville</div>
+        <input class="miniField" id="schoolConfigCity" placeholder="Ville">
 
-  <div style="margin-top:10px;font-weight:900;">Code postal</div>
-  <input class="miniField" id="schoolConfigPostal" placeholder="Code postal">
+        <div style="margin-top:10px;font-weight:900;">Code postal</div>
+        <input class="miniField" id="schoolConfigPostal" placeholder="Code postal">
 
-  <div style="margin-top:10px;font-weight:900;">Zone scolaire</div>
-  <select class="miniField" id="schoolConfigZone">
-    <option value="A">Zone A</option>
-    <option value="B">Zone B</option>
-    <option value="C">Zone C</option>
-  </select>
+        <div style="margin-top:10px;font-weight:900;">Zone scolaire</div>
+        <select class="miniField" id="schoolConfigZone">
+          <option value="A">Zone A</option>
+          <option value="B">Zone B</option>
+          <option value="C">Zone C</option>
+        </select>
 
-  <div class="muted" id="schoolZoneHint" style="margin-top:8px;">
-    Cette zone prépare le calendrier scolaire de l’école pour la version LIVE.
-  </div>
+        <div class="muted" id="schoolZoneHint" style="margin-top:8px;">
+          Cette zone prépare le calendrier scolaire de l’école pour la version LIVE.
+        </div>
 
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-  <button class="choiceBtn" id="schoolReferralSaveBtn" type="button">Enregistrer parrainage</button>
-  <button class="choiceBtn" id="schoolReferralReadBtn" type="button" style="background:#fff;">Lire parrainage</button>
-  <button class="choiceBtn" id="schoolReferralResetBtn" type="button" style="background:#fff;">Réinitialiser parrainage</button>
-  <button class="choiceBtn" id="schoolHistoryReadBtn" type="button" style="background:#fff;">Lire historique école</button>
-</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <button class="choiceBtn" id="schoolConfigSaveBtn" type="button">Enregistrer la configuration</button>
+          <button class="choiceBtn" id="schoolConfigReadBtn" type="button" style="background:#fff;">Lire la configuration</button>
+          <button class="choiceBtn" id="schoolConfigCalendarBtn" type="button" style="background:#fff;">Voir calendrier préparé</button>
+        </div>
 
-  <div class="muted" id="schoolCalendarPreview" style="margin-top:10px;"></div>
-</div>
+        <div class="muted" id="schoolCalendarPreview" style="margin-top:10px;"></div>
+      </div>
 
       <div style="font-weight:900;margin-top:10px;">Classe (démo)</div>
       <div class="box">
@@ -3342,18 +3341,18 @@ if(key === "ecole"){
       </div>
 
       <div style="font-weight:900;margin-top:10px;">Saisie (démo)</div>
-<input class="miniField" id="schoolWordInput" placeholder="Saisir le mot du jour (sans nom d’enfant, sans injure)" />
+      <input class="miniField" id="schoolWordInput" placeholder="Saisir le mot du jour (sans nom d’enfant, sans injure)" />
 
-<div class="muted" id="schoolDraftHint" style="margin-top:8px;">
-  Écoute d’essai : vous pouvez écouter, modifier, puis valider officiellement si le texte vous convient.
-</div>
+      <div class="muted" id="schoolDraftHint" style="margin-top:8px;">
+        Écoute d’essai : vous pouvez écouter, modifier, puis valider officiellement si le texte vous convient.
+      </div>
 
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-  <button class="choiceBtn" id="schoolSaveBtn" type="button">Valider aujourd’hui</button>
-  <button class="choiceBtn" id="schoolResetBtn" type="button" style="background:#fff;">Réinitialiser (démo)</button>
-</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="schoolSaveBtn" type="button">Valider aujourd’hui</button>
+        <button class="choiceBtn" id="schoolResetBtn" type="button" style="background:#fff;">Réinitialiser (démo)</button>
+      </div>
 
-<div class="muted" id="schoolDayStatus" style="margin-top:10px;"></div>
+      <div class="muted" id="schoolDayStatus" style="margin-top:10px;"></div>
 
       <div class="box" style="margin-top:12px;">
         <div style="font-weight:900;">Cycle de progression (école)</div>
@@ -3502,6 +3501,7 @@ if(key === "ecole"){
           <button class="choiceBtn" id="schoolReferralSaveBtn" type="button">Enregistrer parrainage</button>
           <button class="choiceBtn" id="schoolReferralReadBtn" type="button" style="background:#fff;">Lire parrainage</button>
           <button class="choiceBtn" id="schoolReferralResetBtn" type="button" style="background:#fff;">Réinitialiser parrainage</button>
+          <button class="choiceBtn" id="schoolHistoryReadBtn" type="button" style="background:#fff;">Lire historique école</button>
         </div>
 
         <div class="muted" style="margin-top:10px;">
@@ -3516,16 +3516,6 @@ if(key === "ecole"){
     const toggleSchoolAdminBtn = $("toggleSchoolAdminBtn");
     const schoolAdminPanel = $("schoolAdminPanel");
 
-    if(toggleSchoolAdminBtn && schoolAdminPanel){
-      toggleSchoolAdminBtn.onclick = ()=>{
-        const isHidden = schoolAdminPanel.style.display === "none" || schoolAdminPanel.style.display === "";
-        schoolAdminPanel.style.display = isHidden ? "block" : "none";
-        toggleSchoolAdminBtn.textContent = isHidden
-          ? "Fermer l’espace interne école"
-          : "Ouvrir l’espace interne école";
-      };
-    }
-
     const SCHOOL_CLASSES = [
       "École X — CM2 A",
       "École X — CM2 B",
@@ -3538,6 +3528,38 @@ if(key === "ecole"){
     const SCHOOL_REFERRAL_KEY = "bociteart_school_referral_v1";
     const SCHOOL_REFERRAL_HISTORY_KEY = "bociteart_school_referral_history_v1";
     const SCHOOL_CONFIG_KEY = "bociteart_school_config_v1";
+    const SCHOOL_HISTORY_KEY = "bociteart_school_history_v1";
+
+    const schoolConfigName = $("schoolConfigName");
+    const schoolConfigCity = $("schoolConfigCity");
+    const schoolConfigPostal = $("schoolConfigPostal");
+    const schoolConfigZone = $("schoolConfigZone");
+    const schoolConfigSaveBtn = $("schoolConfigSaveBtn");
+    const schoolConfigReadBtn = $("schoolConfigReadBtn");
+    const schoolConfigCalendarBtn = $("schoolConfigCalendarBtn");
+    const schoolCalendarPreview = $("schoolCalendarPreview");
+
+    const schoolInfoBtn = $("walletSchoolInfo");
+    const schoolResetWallet = $("walletSchoolReset");
+    const schoolShowQr = $("schoolShowQr");
+    const btnWordSave2 = $("schoolSaveBtn");
+    const schoolResetBtn = $("schoolResetBtn");
+    const schoolAssoPreview = $("schoolAssoPreview");
+    const schoolAssoSave = $("schoolAssoSave");
+    const schoolWordInput = $("schoolWordInput");
+    const schoolDraftHint = $("schoolDraftHint");
+    const schoolDayStatus = $("schoolDayStatus");
+
+    const schoolReferralChild = $("schoolReferralChild");
+    const schoolReferralType = $("schoolReferralType");
+    const schoolReferralTarget = $("schoolReferralTarget");
+    const schoolReferralPhone = $("schoolReferralPhone");
+    const schoolReferralAdult = $("schoolReferralAdult");
+    const schoolReferralNote = $("schoolReferralNote");
+    const schoolReferralSaveBtn = $("schoolReferralSaveBtn");
+    const schoolReferralReadBtn = $("schoolReferralReadBtn");
+    const schoolReferralResetBtn = $("schoolReferralResetBtn");
+    const schoolHistoryReadBtn = $("schoolHistoryReadBtn");
 
     function schoolLoad(){
       try{
@@ -3553,28 +3575,27 @@ if(key === "ecole"){
         localStorage.setItem(SCHOOL_STORE_KEY, JSON.stringify(obj));
       }catch(e){}
     }
-    const SCHOOL_HISTORY_KEY = "bociteart_school_history_v1";
 
-function schoolHistoryLoad(){
-  try{
-    const raw = localStorage.getItem(SCHOOL_HISTORY_KEY);
-    return raw ? JSON.parse(raw) : [];
-  }catch(e){
-    return [];
-  }
-}
+    function schoolHistoryLoad(){
+      try{
+        const raw = localStorage.getItem(SCHOOL_HISTORY_KEY);
+        return raw ? JSON.parse(raw) : [];
+      }catch(e){
+        return [];
+      }
+    }
 
-function schoolHistorySave(arr){
-  try{
-    localStorage.setItem(SCHOOL_HISTORY_KEY, JSON.stringify(arr));
-  }catch(e){}
-}
+    function schoolHistorySave(arr){
+      try{
+        localStorage.setItem(SCHOOL_HISTORY_KEY, JSON.stringify(arr));
+      }catch(e){}
+    }
 
-function addSchoolHistory(entry){
-  const hist = schoolHistoryLoad();
-  hist.push(entry);
-  schoolHistorySave(hist);
-}
+    function addSchoolHistory(entry){
+      const hist = schoolHistoryLoad();
+      hist.push(entry);
+      schoolHistorySave(hist);
+    }
 
     function schoolReferralLoad(){
       try{
@@ -3634,42 +3655,42 @@ function addSchoolHistory(entry){
         localStorage.setItem(SCHOOL_CONFIG_KEY, JSON.stringify(obj));
       }catch(e){}
     }
+
     const SCHOOL_CALENDAR_PREP = {
-  A: {
-    label: "Zone A",
-    note: "Calendrier scolaire préparé pour la version LIVE.",
-    periods: []
-  },
-  B: {
-    label: "Zone B",
-    note: "Calendrier scolaire préparé pour la version LIVE.",
-    periods: []
-  },
-  C: {
-    label: "Zone C",
-    note: "Calendrier scolaire préparé pour la version LIVE.",
-    periods: []
-  }
-};
+      A: {
+        label: "Zone A",
+        note: "Calendrier scolaire préparé pour la version LIVE.",
+        periods: []
+      },
+      B: {
+        label: "Zone B",
+        note: "Calendrier scolaire préparé pour la version LIVE.",
+        periods: []
+      },
+      C: {
+        label: "Zone C",
+        note: "Calendrier scolaire préparé pour la version LIVE.",
+        periods: []
+      }
+    };
 
-function getPreparedCalendarForZone(zone){
-  return SCHOOL_CALENDAR_PREP[zone] || null;
-}
+    function getPreparedCalendarForZone(zone){
+      return SCHOOL_CALENDAR_PREP[zone] || null;
+    }
 
-function refreshSchoolCalendarPreview(){
-  if(!schoolCalendarPreview) return;
+    function refreshSchoolCalendarPreview(){
+      if(!schoolCalendarPreview) return;
 
-  const zone = schoolConfigZone ? String(schoolConfigZone.value || "A") : "A";
-  const prepared = getPreparedCalendarForZone(zone);
+      const zone = schoolConfigZone ? String(schoolConfigZone.value || "A") : "A";
+      const prepared = getPreparedCalendarForZone(zone);
 
-  if(!prepared){
-    schoolCalendarPreview.textContent = "";
-    return;
-  }
+      if(!prepared){
+        schoolCalendarPreview.textContent = "";
+        return;
+      }
 
-  schoolCalendarPreview.textContent =
-    prepared.label + " — " + prepared.note;
-}
+      schoolCalendarPreview.textContent = prepared.label + " — " + prepared.note;
+    }
 
     function getCurrentSchoolClass(){
       const sel = $("schoolClassSelect");
@@ -3749,25 +3770,6 @@ function refreshSchoolCalendarPreview(){
       window.speechSynthesis.speak(u);
     }
 
-    const btnC = $("playChild");
-    const btnF = $("playFemale");
-
-    if(btnC){
-      btnC.onclick = function(){
-        schoolSpeak("child");
-      };
-    }
-
-    if(btnF){
-      btnF.onclick = function(){
-        schoolSpeak("female");
-      };
-    }
-
-    if("speechSynthesis" in window){
-      window.speechSynthesis.getVoices();
-    }
-
     function fillSchoolSelect(){
       const sel = $("schoolClassSelect");
       if(!sel) return;
@@ -3800,35 +3802,37 @@ function refreshSchoolCalendarPreview(){
       if(totalValidatedDays === 22) return 100;
       return null;
     }
-function refreshSchoolDayState(){
-  const cls = getCurrentSchoolClass();
-  const db = schoolLoad();
-  const prog = getSchoolProgress(db, cls);
-  const today = getTodayKey();
-  const locked = prog.lastValidationDay === today;
 
-  if(schoolWordInput){
-    schoolWordInput.disabled = locked;
-  }
+    function refreshSchoolDayState(){
+      const cls = getCurrentSchoolClass();
+      const db = schoolLoad();
+      const prog = getSchoolProgress(db, cls);
+      const today = getTodayKey();
+      const locked = prog.lastValidationDay === today;
 
-  if(btnWordSave2){
-    btnWordSave2.disabled = locked;
-    btnWordSave2.style.opacity = locked ? "0.55" : "1";
-    btnWordSave2.style.cursor = locked ? "not-allowed" : "pointer";
-  }
+      if(schoolWordInput){
+        schoolWordInput.disabled = locked;
+      }
 
-  if(schoolDraftHint){
-    schoolDraftHint.textContent = locked
-      ? "Le message du jour a été validé. Il est figé pour aujourd’hui."
-      : "Écoute d’essai : vous pouvez écouter, modifier, puis valider officiellement si le texte vous convient.";
-  }
+      if(btnWordSave2){
+        btnWordSave2.disabled = locked;
+        btnWordSave2.style.opacity = locked ? "0.55" : "1";
+        btnWordSave2.style.cursor = locked ? "not-allowed" : "pointer";
+      }
 
-  if(schoolDayStatus){
-    schoolDayStatus.textContent = locked
-      ? "Message du jour validé. Vous pourrez publier un nouveau message demain."
-      : "Le message n’est pas encore validé aujourd’hui. Modifiez-le si besoin avant validation officielle.";
-  }
-}
+      if(schoolDraftHint){
+        schoolDraftHint.textContent = locked
+          ? "Le message du jour a été validé. Il est figé pour aujourd’hui."
+          : "Écoute d’essai : vous pouvez écouter, modifier, puis valider officiellement si le texte vous convient.";
+      }
+
+      if(schoolDayStatus){
+        schoolDayStatus.textContent = locked
+          ? "Message du jour validé. Vous pourrez publier un nouveau message demain."
+          : "Le message n’est pas encore validé aujourd’hui. Modifiez-le si besoin avant validation officielle.";
+      }
+    }
+
     function buildSchoolSolidarityPayload(){
       const modeEl = document.querySelector('input[name="donMode"]:checked');
       const mode = modeEl ? modeEl.value : "none";
@@ -3884,42 +3888,61 @@ function refreshSchoolDayState(){
       return { mode:"none", map:{} };
     }
 
+    if(toggleSchoolAdminBtn && schoolAdminPanel){
+      toggleSchoolAdminBtn.onclick = ()=>{
+        const isHidden = schoolAdminPanel.style.display === "none" || schoolAdminPanel.style.display === "";
+        schoolAdminPanel.style.display = isHidden ? "block" : "none";
+        toggleSchoolAdminBtn.textContent = isHidden
+          ? "Fermer l’espace interne école"
+          : "Ouvrir l’espace interne école";
+      };
+    }
+
+    const btnC = $("playChild");
+    const btnF = $("playFemale");
+
+    if(btnC){
+      btnC.onclick = function(){
+        schoolSpeak("child");
+      };
+    }
+
+    if(btnF){
+      btnF.onclick = function(){
+        schoolSpeak("female");
+      };
+    }
+
+    if("speechSynthesis" in window){
+      window.speechSynthesis.getVoices();
+    }
+
     fillSchoolSelect();
+
+    const schoolCfg = schoolConfigLoad();
+    if(schoolConfigName) schoolConfigName.value = schoolCfg.schoolName || "";
+    if(schoolConfigCity) schoolConfigCity.value = schoolCfg.city || "";
+    if(schoolConfigPostal) schoolConfigPostal.value = schoolCfg.postal || "";
+    if(schoolConfigZone) schoolConfigZone.value = schoolCfg.zone || "A";
+
     refreshSchoolWallet();
     refreshSchoolWordDisplay();
+    refreshSchoolCalendarPreview();
     refreshSchoolDayState();
 
     const schoolClassSelect = $("schoolClassSelect");
     if(schoolClassSelect){
-    schoolClassSelect.onchange = function(){
-    refreshSchoolWordDisplay();
-    refreshSchoolDayState();
-  };
-}
+      schoolClassSelect.onchange = function(){
+        refreshSchoolWordDisplay();
+        refreshSchoolDayState();
+      };
+    }
 
-  const schoolConfigName = $("schoolConfigName");
-  const schoolConfigCity = $("schoolConfigCity");
-  const schoolConfigPostal = $("schoolConfigPostal");
-  const schoolConfigZone = $("schoolConfigZone");
-  const schoolConfigSaveBtn = $("schoolConfigSaveBtn");
-  const schoolConfigReadBtn = $("schoolConfigReadBtn");
-  const schoolConfigCalendarBtn = $("schoolConfigCalendarBtn");
-  const schoolCalendarPreview = $("schoolCalendarPreview");
-  const schoolZoneHint = $("schoolZoneHint");
-    
-    const schoolCfg = schoolConfigLoad();
-if(schoolConfigName) schoolConfigName.value = schoolCfg.schoolName || "";
-if(schoolConfigCity) schoolConfigCity.value = schoolCfg.city || "";
-if(schoolConfigPostal) schoolConfigPostal.value = schoolCfg.postal || "";
-if(schoolConfigZone) schoolConfigZone.value = schoolCfg.zone || "A";
-
-refreshSchoolCalendarPreview();
-
-if(schoolConfigZone){
-  schoolConfigZone.onchange = function(){
-    refreshSchoolCalendarPreview();
-  };
-}
+    if(schoolConfigZone){
+      schoolConfigZone.onchange = function(){
+        refreshSchoolCalendarPreview();
+      };
+    }
 
     if(schoolConfigSaveBtn){
       schoolConfigSaveBtn.onclick = ()=>{
@@ -3933,6 +3956,7 @@ if(schoolConfigZone){
         };
 
         schoolConfigSave(data);
+        refreshSchoolCalendarPreview();
         alert("Configuration annuelle école enregistrée.");
       };
     }
@@ -3950,35 +3974,25 @@ if(schoolConfigZone){
         );
       };
     }
+
     if(schoolConfigCalendarBtn){
-  schoolConfigCalendarBtn.onclick = ()=>{
-    const zone = schoolConfigZone ? String(schoolConfigZone.value || "A") : "A";
-    const prepared = getPreparedCalendarForZone(zone);
+      schoolConfigCalendarBtn.onclick = ()=>{
+        const zone = schoolConfigZone ? String(schoolConfigZone.value || "A") : "A";
+        const prepared = getPreparedCalendarForZone(zone);
 
-    if(!prepared){
-      alert("Aucun calendrier préparé pour cette zone.");
-      return;
+        if(!prepared){
+          alert("Aucun calendrier préparé pour cette zone.");
+          return;
+        }
+
+        alert(
+          "Calendrier préparé :\n\n" +
+          "Zone : " + prepared.label + "\n" +
+          "Statut : " + prepared.note + "\n\n" +
+          "Les périodes officielles seront branchées pour la version LIVE."
+        );
+      };
     }
-
-    alert(
-      "Calendrier préparé :\n\n" +
-      "Zone : " + prepared.label + "\n" +
-      "Statut : " + prepared.note + "\n\n" +
-      "Les périodes officielles seront branchées pour la version LIVE."
-    );
-  };
-}
-
-   const schoolInfoBtn = $("walletSchoolInfo");
-const schoolResetWallet = $("walletSchoolReset");
-const schoolShowQr = $("schoolShowQr");
-const btnWordSave2 = $("schoolSaveBtn");
-const schoolResetBtn = $("schoolResetBtn");
-const schoolAssoPreview = $("schoolAssoPreview");
-const schoolAssoSave = $("schoolAssoSave");
-const schoolWordInput = $("schoolWordInput");
-const schoolDraftHint = $("schoolDraftHint");
-const schoolDayStatus = $("schoolDayStatus");
 
     if(schoolInfoBtn){
       schoolInfoBtn.onclick = ()=>{
@@ -4014,35 +4028,33 @@ const schoolDayStatus = $("schoolDayStatus");
     }
 
     if(schoolResetWallet){
-  schoolResetWallet.onclick = ()=>{
-    if(confirm("Réinitialiser le compteur école ?")){
-      saveSchoolWallet({ jaune:0 });
+      schoolResetWallet.onclick = ()=>{
+        if(confirm("Réinitialiser le compteur école ?")){
+          saveSchoolWallet({ jaune:0 });
 
-      const db = schoolLoad();
+          const db = schoolLoad();
+          if(db.progress){
+            db.progress = {};
+          }
 
-      if(db.progress){
-        db.progress = {};
-      }
+          const cls = getCurrentSchoolClass();
+          const prog = getSchoolProgress(db, cls);
+          prog.lastValidationDay = "";
 
-      const cls = getCurrentSchoolClass();
-      const prog = getSchoolProgress(db, cls);
-      prog.lastValidationDay = "";
+          schoolSave(db);
+          refreshSchoolWallet();
+          refreshSchoolWordDisplay();
+          refreshSchoolDayState();
 
-      schoolSave(db);
-      refreshSchoolWallet();
-      refreshSchoolWordDisplay();
-      refreshSchoolDayState();
-
-      alert("Compteur école réinitialisé pour la démo. La classe peut être revalidée.");
-    }
-  };
+          alert("Compteur école réinitialisé pour la démo. La classe peut être revalidée.");
+        }
+      };
     }
 
     if(schoolResetBtn){
       schoolResetBtn.onclick = ()=>{
         if(confirm("Réinitialiser le mot du jour (démo) ?")){
-          const input = $("schoolWordInput");
-          if(input) input.value = "";
+          if(schoolWordInput) schoolWordInput.value = "";
           refreshSchoolDayState();
           alert("Saisie réinitialisée.");
         }
@@ -4051,9 +4063,8 @@ const schoolDayStatus = $("schoolDayStatus");
 
     if(btnWordSave2){
       btnWordSave2.onclick = ()=>{
-        const input = $("schoolWordInput");
         const cls = getCurrentSchoolClass();
-        const w = input ? String(input.value || "").trim() : "";
+        const w = schoolWordInput ? String(schoolWordInput.value || "").trim() : "";
         const today = getTodayKey();
 
         if(!w){
@@ -4073,14 +4084,6 @@ const schoolDayStatus = $("schoolDayStatus");
         prog.lastValidationDay = today;
 
         setSavedWordForClass(cls, w);
-       addSchoolHistory({
-  type: "mot_du_jour",
-  class: cls,
-  text: w,
-  coins: 1,
-  date: new Date().toISOString(),
-  date_fr: new Date().toLocaleString("fr-FR")
-});
 
         let currentValue = Number(loadSchoolWallet().jaune || 0);
         const target = schoolTargetValue(prog.totalValidatedDays);
@@ -4093,6 +4096,16 @@ const schoolDayStatus = $("schoolDayStatus");
 
         saveSchoolWallet({ jaune:currentValue });
         schoolSave(db);
+
+        addSchoolHistory({
+          type: "mot_du_jour",
+          class: cls,
+          text: w,
+          coins: 1,
+          date: new Date().toISOString(),
+          date_fr: new Date().toLocaleString("fr-FR")
+        });
+
         refreshSchoolWallet();
         refreshSchoolWordDisplay();
         refreshSchoolDayState();
@@ -4126,7 +4139,6 @@ const schoolDayStatus = $("schoolDayStatus");
         }
 
         const cls = getCurrentSchoolClass();
-
         const db = schoolLoad();
         db.lastSolidarity = {
           class: cls,
@@ -4141,19 +4153,8 @@ const schoolDayStatus = $("schoolDayStatus");
       };
     }
 
-    const schoolReferralChild = $("schoolReferralChild");
-    const schoolReferralType = $("schoolReferralType");
-    const schoolReferralTarget = $("schoolReferralTarget");
-    const schoolReferralPhone = $("schoolReferralPhone");
-    const schoolReferralAdult = $("schoolReferralAdult");
-    const schoolReferralNote = $("schoolReferralNote");
-    const schoolReferralSaveBtn = $("schoolReferralSaveBtn");
-    const schoolReferralReadBtn = $("schoolReferralReadBtn");
-    const schoolReferralResetBtn = $("schoolReferralResetBtn");
-    const schoolHistoryReadBtn = $("schoolHistoryReadBtn"); 
     const referralDb = schoolReferralLoad();
     if(referralDb){
-     
       if(schoolReferralChild) schoolReferralChild.value = referralDb.child || "";
       if(schoolReferralType) schoolReferralType.value = referralDb.type || "commerce";
       if(schoolReferralTarget) schoolReferralTarget.value = referralDb.target || "";
@@ -4198,44 +4199,18 @@ const schoolDayStatus = $("schoolDayStatus");
           alert("Renseigne le nom de l’adulte référent.");
           return;
         }
-        
-        if(schoolHistoryReadBtn){
-        schoolHistoryReadBtn.onclick = ()=>{
-        const hist = schoolHistoryLoad();
 
-         if(!hist.length){
-         alert("Aucun historique enregistré.");
-         return;
-        }
-
-         let txt = "Historique école :\n\n";
-
-         hist.slice(-20).forEach(h=>{
-         txt += "[" + (h.date_fr || "") + "] ";
-
-         if(h.type === "mot_du_jour"){
-         txt += "Mot : " + h.text + " | +" + h.coins + " coin\n";
-       }
-
-         if(h.type === "parrainage"){
-         txt += "Parrainage : " + h.target + 
-               " | Enfant : " + (h.child || "non renseigné") + "\n";
-      }
-    });
-
-    alert(txt);
-  };
-}
         schoolReferralSave(data);
+
         addSchoolHistory({
-  type: "parrainage",
-  class: cls,
-  target: data.target,
-  child: data.child,
-  status: data.status,
-  date: data.ts,
-  date_fr: data.ts_fr
-});
+          type: "parrainage",
+          class: cls,
+          target: data.target,
+          child: data.child,
+          status: data.status,
+          date: data.ts,
+          date_fr: data.ts_fr
+        });
 
         const hist = schoolReferralHistoryLoad();
         hist.push(data);
@@ -4283,16 +4258,39 @@ const schoolDayStatus = $("schoolDayStatus");
       };
     }
 
+    if(schoolHistoryReadBtn){
+      schoolHistoryReadBtn.onclick = ()=>{
+        const hist = schoolHistoryLoad();
+
+        if(!hist.length){
+          alert("Aucun historique enregistré.");
+          return;
+        }
+
+        let txt = "Historique école :\n\n";
+
+        hist.slice(-20).forEach(h=>{
+          txt += "[" + (h.date_fr || "") + "] ";
+
+          if(h.type === "mot_du_jour"){
+            txt += "Mot : " + h.text + " | +" + h.coins + " coin\n";
+          }
+
+          if(h.type === "parrainage"){
+            txt += "Parrainage : " + h.target + " | Enfant : " + (h.child || "non renseigné") + "\n";
+          }
+        });
+
+        alert(txt);
+      };
+    }
+
     const xb = $("xBtn");
     if(xb && xb.focus) xb.focus();
   },0);
 
   return;
 }
-       });
-      });
-
-      window.__bociteartOpenByKey = function(key){
 
 if(key === "sport"){
   window.openSportPanel = function(){
