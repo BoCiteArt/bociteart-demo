@@ -3552,6 +3552,28 @@ if(key === "ecole"){
         localStorage.setItem(SCHOOL_STORE_KEY, JSON.stringify(obj));
       }catch(e){}
     }
+    const SCHOOL_HISTORY_KEY = "bociteart_school_history_v1";
+
+function schoolHistoryLoad(){
+  try{
+    const raw = localStorage.getItem(SCHOOL_HISTORY_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function schoolHistorySave(arr){
+  try{
+    localStorage.setItem(SCHOOL_HISTORY_KEY, JSON.stringify(arr));
+  }catch(e){}
+}
+
+function addSchoolHistory(entry){
+  const hist = schoolHistoryLoad();
+  hist.push(entry);
+  schoolHistorySave(hist);
+}
 
     function schoolReferralLoad(){
       try{
@@ -4037,6 +4059,14 @@ const schoolDayStatus = $("schoolDayStatus");
         prog.lastValidationDay = today;
 
         setSavedWordForClass(cls, w);
+       addSchoolHistory({
+  type: "mot_du_jour",
+  class: cls,
+  text: w,
+  coins: 1,
+  date: new Date().toISOString(),
+  date_fr: new Date().toLocaleString("fr-FR")
+});
 
         let currentValue = Number(loadSchoolWallet().jaune || 0);
         const target = schoolTargetValue(prog.totalValidatedDays);
@@ -4106,9 +4136,10 @@ const schoolDayStatus = $("schoolDayStatus");
     const schoolReferralSaveBtn = $("schoolReferralSaveBtn");
     const schoolReferralReadBtn = $("schoolReferralReadBtn");
     const schoolReferralResetBtn = $("schoolReferralResetBtn");
-
+    const schoolHistoryReadBtn = $("schoolHistoryReadBtn"); 
     const referralDb = schoolReferralLoad();
     if(referralDb){
+     
       if(schoolReferralChild) schoolReferralChild.value = referralDb.child || "";
       if(schoolReferralType) schoolReferralType.value = referralDb.type || "commerce";
       if(schoolReferralTarget) schoolReferralTarget.value = referralDb.target || "";
@@ -4153,8 +4184,44 @@ const schoolDayStatus = $("schoolDayStatus");
           alert("Renseigne le nom de l’adulte référent.");
           return;
         }
+        
+        if(schoolHistoryReadBtn){
+        schoolHistoryReadBtn.onclick = ()=>{
+        const hist = schoolHistoryLoad();
 
+         if(!hist.length){
+         alert("Aucun historique enregistré.");
+         return;
+        }
+
+         let txt = "Historique école :\n\n";
+
+         hist.slice(-20).forEach(h=>{
+         txt += "[" + (h.date_fr || "") + "] ";
+
+         if(h.type === "mot_du_jour"){
+         txt += "Mot : " + h.text + " | +" + h.coins + " coin\n";
+       }
+
+         if(h.type === "parrainage"){
+         txt += "Parrainage : " + h.target + 
+               " | Enfant : " + (h.child || "non renseigné") + "\n";
+      }
+    });
+
+    alert(txt);
+  };
+}
         schoolReferralSave(data);
+        addSchoolHistory({
+  type: "parrainage",
+  class: cls,
+  target: data.target,
+  child: data.child,
+  status: data.status,
+  date: data.ts,
+  date_fr: data.ts_fr
+});
 
         const hist = schoolReferralHistoryLoad();
         hist.push(data);
@@ -4355,10 +4422,11 @@ if(key === "sport"){
           <textarea id="sportWeekendReport" class="miniField" style="min-height:120px;" placeholder="Ex : Victoire 3-1 à domicile, bon état d’esprit, fair-play exemplaire"></textarea>
 
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="sportWeekendSave" type="button">💾 Enregistrer</button>
-            <button class="choiceBtn" id="sportWeekendRead" type="button" style="background:#fff;">Lire le dernier</button>
-            <button class="choiceBtn" id="sportWeekendReset" type="button" style="background:#fff;">Réinitialiser</button>
-          </div>
+         <button class="choiceBtn" id="schoolReferralSaveBtn" type="button">Enregistrer parrainage</button>
+         <button class="choiceBtn" id="schoolReferralReadBtn" type="button" style="background:#fff;">Lire parrainage</button>
+         <button class="choiceBtn" id="schoolReferralResetBtn" type="button" style="background:#fff;">Réinitialiser parrainage</button>
+         <button class="choiceBtn" id="schoolHistoryReadBtn" type="button" style="background:#fff;">Lire historique école</button>
+         </div>
 
           <div class="muted" style="margin-top:10px;">
             Les injures, propos agressifs, diffamatoires, humiliants ou non sportifs sont interdits.
