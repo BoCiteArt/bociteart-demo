@@ -3303,6 +3303,30 @@ if(key === "ecole"){
         </div>
       </div>
 
+      <div style="font-weight:900;margin-top:10px;">Configuration annuelle (démo)</div>
+      <div class="box">
+        <div style="margin-top:4px;font-weight:900;">Nom de l’école</div>
+        <input class="miniField" id="schoolConfigName" placeholder="Nom de l’école">
+
+        <div style="margin-top:10px;font-weight:900;">Ville</div>
+        <input class="miniField" id="schoolConfigCity" placeholder="Ville">
+
+        <div style="margin-top:10px;font-weight:900;">Code postal</div>
+        <input class="miniField" id="schoolConfigPostal" placeholder="Code postal">
+
+        <div style="margin-top:10px;font-weight:900;">Zone scolaire</div>
+        <select class="miniField" id="schoolConfigZone">
+          <option value="A">Zone A</option>
+          <option value="B">Zone B</option>
+          <option value="C">Zone C</option>
+        </select>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <button class="choiceBtn" id="schoolConfigSaveBtn" type="button">Enregistrer la configuration</button>
+          <button class="choiceBtn" id="schoolConfigReadBtn" type="button" style="background:#fff;">Lire la configuration</button>
+        </div>
+      </div>
+
       <div style="font-weight:900;margin-top:10px;">Classe (démo)</div>
       <div class="box">
         <div class="muted">Choisir l’école / la classe CM2 concernée (liste modifiable selon la ville).</div>
@@ -3439,6 +3463,9 @@ if(key === "ecole"){
           Le parrainage ne doit pas être réalisé seul par un enfant : validation adulte / parent / structure réelle requise.
         </div>
 
+        <div style="margin-top:10px;font-weight:900;">Nom de l’enfant à l’origine du parrainage</div>
+        <input class="miniField" id="schoolReferralChild" placeholder="Nom de l’enfant">
+
         <div style="margin-top:10px;font-weight:900;">Type de parrainage</div>
         <select class="miniField" id="schoolReferralType">
           <option value="commerce">Commerce</option>
@@ -3495,6 +3522,8 @@ if(key === "ecole"){
 
     const SCHOOL_STORE_KEY = "bociteart_school_v1";
     const SCHOOL_REFERRAL_KEY = "bociteart_school_referral_v1";
+    const SCHOOL_REFERRAL_HISTORY_KEY = "bociteart_school_referral_history_v1";
+    const SCHOOL_CONFIG_KEY = "bociteart_school_config_v1";
 
     function schoolLoad(){
       try{
@@ -3523,6 +3552,50 @@ if(key === "ecole"){
     function schoolReferralSave(obj){
       try{
         localStorage.setItem(SCHOOL_REFERRAL_KEY, JSON.stringify(obj));
+      }catch(e){}
+    }
+
+    function schoolReferralHistoryLoad(){
+      try{
+        const raw = localStorage.getItem(SCHOOL_REFERRAL_HISTORY_KEY);
+        return raw ? JSON.parse(raw) : [];
+      }catch(e){
+        return [];
+      }
+    }
+
+    function schoolReferralHistorySave(arr){
+      try{
+        localStorage.setItem(SCHOOL_REFERRAL_HISTORY_KEY, JSON.stringify(arr));
+      }catch(e){}
+    }
+
+    function schoolConfigLoad(){
+      try{
+        const raw = localStorage.getItem(SCHOOL_CONFIG_KEY);
+        return raw ? JSON.parse(raw) : {
+          schoolName:"",
+          city:"",
+          postal:"",
+          zone:"A",
+          updatedAt:"",
+          updatedTs:null
+        };
+      }catch(e){
+        return {
+          schoolName:"",
+          city:"",
+          postal:"",
+          zone:"A",
+          updatedAt:"",
+          updatedTs:null
+        };
+      }
+    }
+
+    function schoolConfigSave(obj){
+      try{
+        localStorage.setItem(SCHOOL_CONFIG_KEY, JSON.stringify(obj));
       }catch(e){}
     }
 
@@ -3572,13 +3645,14 @@ if(key === "ecole"){
     }
 
     function schoolSpeak(mode){
+      const input = $("schoolWordInput");
+      const draftText = input ? String(input.value || "").trim() : "";
       const cls = getCurrentSchoolClass();
       const saved = getSavedWordForClass(cls);
-      const input = $("schoolWordInput");
-      const inputText = input ? String(input.value || "").trim() : "";
+      const officialText = (saved && String(saved.text || "").trim()) ? String(saved.text || "").trim() : "";
       const sampleText = "Je suis ravi aujourd’hui.";
 
-      const txt = (saved && String(saved.text || "").trim()) || inputText || sampleText;
+      const txt = draftText || officialText || sampleText;
 
       if(!("speechSynthesis" in window)){
         alert("La lecture vocale n’est pas prise en charge sur cet appareil / navigateur.");
@@ -3721,6 +3795,49 @@ if(key === "ecole"){
       };
     }
 
+    const schoolConfigName = $("schoolConfigName");
+    const schoolConfigCity = $("schoolConfigCity");
+    const schoolConfigPostal = $("schoolConfigPostal");
+    const schoolConfigZone = $("schoolConfigZone");
+    const schoolConfigSaveBtn = $("schoolConfigSaveBtn");
+    const schoolConfigReadBtn = $("schoolConfigReadBtn");
+
+    const schoolCfg = schoolConfigLoad();
+    if(schoolConfigName) schoolConfigName.value = schoolCfg.schoolName || "";
+    if(schoolConfigCity) schoolConfigCity.value = schoolCfg.city || "";
+    if(schoolConfigPostal) schoolConfigPostal.value = schoolCfg.postal || "";
+    if(schoolConfigZone) schoolConfigZone.value = schoolCfg.zone || "A";
+
+    if(schoolConfigSaveBtn){
+      schoolConfigSaveBtn.onclick = ()=>{
+        const data = {
+          schoolName: schoolConfigName ? String(schoolConfigName.value || "").trim() : "",
+          city: schoolConfigCity ? String(schoolConfigCity.value || "").trim() : "",
+          postal: schoolConfigPostal ? String(schoolConfigPostal.value || "").trim() : "",
+          zone: schoolConfigZone ? String(schoolConfigZone.value || "A").trim() : "A",
+          updatedAt: new Date().toLocaleString("fr-FR"),
+          updatedTs: Date.now()
+        };
+
+        schoolConfigSave(data);
+        alert("Configuration annuelle école enregistrée.");
+      };
+    }
+
+    if(schoolConfigReadBtn){
+      schoolConfigReadBtn.onclick = ()=>{
+        const data = schoolConfigLoad();
+        alert(
+          "Configuration école :\n\n" +
+          "Nom : " + (data.schoolName || "") +
+          "\nVille : " + (data.city || "") +
+          "\nCode postal : " + (data.postal || "") +
+          "\nZone : " + (data.zone || "") +
+          "\nDernière mise à jour : " + (data.updatedAt || "")
+        );
+      };
+    }
+
     const schoolInfoBtn = $("walletSchoolInfo");
     const schoolResetWallet = $("walletSchoolReset");
     const schoolShowQr = $("schoolShowQr");
@@ -3778,19 +3895,8 @@ if(key === "ecole"){
       schoolResetBtn.onclick = ()=>{
         if(confirm("Réinitialiser le mot du jour (démo) ?")){
           const input = $("schoolWordInput");
-          const cls = getCurrentSchoolClass();
-
           if(input) input.value = "";
-
-          const db = schoolLoad();
-          const prog = getSchoolProgress(db, cls);
-          prog.lastValidationDay = "";
-          schoolSave(db);
-
-          clearSavedWordForClass(cls);
-          refreshSchoolWordDisplay();
-
-          alert("Mot du jour réinitialisé pour la démo. Tu peux en saisir un nouveau.");
+          alert("Saisie réinitialisée.");
         }
       };
     }
@@ -3878,6 +3984,7 @@ if(key === "ecole"){
       };
     }
 
+    const schoolReferralChild = $("schoolReferralChild");
     const schoolReferralType = $("schoolReferralType");
     const schoolReferralTarget = $("schoolReferralTarget");
     const schoolReferralPhone = $("schoolReferralPhone");
@@ -3889,6 +3996,7 @@ if(key === "ecole"){
 
     const referralDb = schoolReferralLoad();
     if(referralDb){
+      if(schoolReferralChild) schoolReferralChild.value = referralDb.child || "";
       if(schoolReferralType) schoolReferralType.value = referralDb.type || "commerce";
       if(schoolReferralTarget) schoolReferralTarget.value = referralDb.target || "";
       if(schoolReferralPhone) schoolReferralPhone.value = referralDb.phone || "";
@@ -3902,6 +4010,7 @@ if(key === "ecole"){
 
         const data = {
           class: cls,
+          child: schoolReferralChild ? String(schoolReferralChild.value || "").trim() : "",
           type: schoolReferralType ? String(schoolReferralType.value || "").trim() : "",
           target: schoolReferralTarget ? String(schoolReferralTarget.value || "").trim() : "",
           phone: schoolReferralPhone ? String(schoolReferralPhone.value || "").trim() : "",
@@ -3911,6 +4020,11 @@ if(key === "ecole"){
           ts: Date.now(),
           ts_fr: new Date().toLocaleString("fr-FR")
         };
+
+        if(!data.child){
+          alert("Renseigne le nom de l’enfant à l’origine du parrainage.");
+          return;
+        }
 
         if(!data.target){
           alert("Renseigne le nom de la structure parrainée.");
@@ -3928,6 +4042,11 @@ if(key === "ecole"){
         }
 
         schoolReferralSave(data);
+
+        const hist = schoolReferralHistoryLoad();
+        hist.push(data);
+        schoolReferralHistorySave(hist);
+
         alert("Parrainage école enregistré (démo). Contrôle Bo’CitéArt requis avant validation.");
       };
     }
@@ -3943,6 +4062,7 @@ if(key === "ecole"){
         alert(
           "Dernier parrainage école :\n\n" +
           "Classe : " + (data.class || "") +
+          "\nEnfant : " + (data.child || "") +
           "\nType : " + (data.type || "") +
           "\nStructure : " + (data.target || "") +
           "\nTéléphone : " + (data.phone || "") +
@@ -3958,6 +4078,7 @@ if(key === "ecole"){
       schoolReferralResetBtn.onclick = ()=>{
         if(confirm("Réinitialiser le parrainage école ?")){
           localStorage.removeItem(SCHOOL_REFERRAL_KEY);
+          if(schoolReferralChild) schoolReferralChild.value = "";
           if(schoolReferralTarget) schoolReferralTarget.value = "";
           if(schoolReferralPhone) schoolReferralPhone.value = "";
           if(schoolReferralAdult) schoolReferralAdult.value = "";
@@ -3973,7 +4094,7 @@ if(key === "ecole"){
   },0);
 
   return;
-} 
+}
        });
       });
 
