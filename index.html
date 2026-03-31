@@ -3203,388 +3203,671 @@ out center tags;
             return;
           }
 
-          if(key === "ecole"){
-            openModal("École", `
-              <div style="font-weight:900;margin-bottom:8px;">Mot du jour (structure)</div>
+if(key === "ecole"){
+  openModal("École", `
+    <div style="font-weight:900;margin-bottom:8px;">École</div>
 
-              <div class="box">
-                <strong>Cadre école :</strong> l’établissement gère et conserve les autorisations nécessaires
-                (document de rentrée). Contenus non identifiants. En cas de désaccord parental,
-                la voix synthétique est utilisée.
-              </div>
+    <div class="box">
+      <strong>Cadre école :</strong> l’établissement gère et conserve les autorisations nécessaires
+      (document de rentrée). Contenus non identifiants. En cas de désaccord parental,
+      la voix synthétique est utilisée.
+    </div>
 
-              <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
-                « Je suis ravi aujourd’hui. » — Exemple (démo)
-              </div>
+    <div style="background:var(--beige);padding:10px;border-radius:14px;font-weight:800;">
+      « Je suis ravi aujourd’hui. » — Exemple (démo)
+    </div>
 
-              <div class="muted" style="margin-top:10px;">
-                Le professeur choisit la voix selon le cadre de l’établissement.
-              </div>
+    <div class="muted" style="margin-top:10px;">
+      Le professeur choisit la voix selon le cadre de l’établissement.
+    </div>
 
-              <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-                <button class="choiceBtn" type="button" id="playChild">▶ Lire (voix enfant — démo)</button>
-                <button class="choiceBtn" type="button" id="playFemale">▶ Lire (voix synthétique)</button>
-              </div>
+    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+      <button class="choiceBtn" type="button" id="playChild">Lire (voix enfant — démo)</button>
+      <button class="choiceBtn" type="button" id="playFemale">Lire (voix synthétique)</button>
+    </div>
 
-              <div class="coinShowcase">
-                <div class="coinFace coinYellow" aria-hidden="true">
-                  <div class="coinStarsRing coinStarsYellow" aria-hidden="true">
-                    <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-                      <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
-                    </svg>
-                  </div>
-                  <div class="coinInner coinInnerYellow">
-                    <div class="n">1</div>
-                    <div class="t">BoCitecoin</div>
-                  </div>
-                </div>
+    <div class="coinShowcase">
+      <div class="coinFace coinYellow" aria-hidden="true">
+        <div class="coinStarsRing coinStarsYellow" aria-hidden="true">
+          <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+            <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
+          </svg>
+        </div>
+        <div class="coinInner coinInnerYellow">
+          <div class="n">1</div>
+          <div class="t">BoCitecoin</div>
+        </div>
+      </div>
 
-                <div class="coinStack" aria-hidden="true">
-                  <div class="stackCoin stackYellow stack1">
-                    <div class="stackCoinStars" aria-hidden="true">
-                      <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                        <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                      </svg>
-                    </div>
-                  </div>
+      <div class="coinStack" aria-hidden="true">
+        <div class="stackCoin stackYellow stack1">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+            </svg>
+          </div>
+        </div>
 
-                  <div class="stackCoin stackYellow stack2">
-                    <div class="stackCoinStars" aria-hidden="true">
-                      <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                        <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                      </svg>
-                    </div>
-                  </div>
+        <div class="stackCoin stackYellow stack2">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+            </svg>
+          </div>
+        </div>
 
-                  <div class="stackCoin stackYellow stack3">
-                    <div class="stackCoinStars" aria-hidden="true">
-                      <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                        <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
+        <div class="stackCoin stackYellow stack3">
+          <div class="stackCoinStars" aria-hidden="true">
+            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
+              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
+            </svg>
+          </div>
+        </div>
+      </div>
 
-                <div class="walletBox">
-                  <div class="walletTitle">Wallet École — BoCitecoins JAUNE</div>
-                  <div class="walletValue walletYellow" id="schoolCoinBalance">0</div>
-                  <div class="walletSub">
-                    Bocitecoins gagnés par la classe, échangeables en mairie selon les règles locales,
-                    ou cumulables pour un projet / une aide de classe selon le choix retenu.
-                  </div>
-                  <div class="walletActions">
-                    <button class="walletMini" id="walletSchoolInfo" type="button">Voir le cycle</button>
-                    <button class="walletMini" id="walletSchoolReset" type="button">Réinitialiser</button>
-                    <button class="walletMini" id="schoolShowQr" type="button">Code classe</button>
-                  </div>
-                </div>
-              </div>
+      <div class="walletBox">
+        <div class="walletTitle">Wallet École — BoCitecoins JAUNE</div>
+        <div class="walletValue walletYellow" id="schoolCoinBalance">0</div>
+        <div class="walletSub">
+          Bocitecoins gagnés par la classe, échangeables en mairie selon les règles locales,
+          ou cumulables pour un projet / une aide de classe selon le choix retenu.
+        </div>
+        <div class="walletActions">
+          <button class="walletMini" id="walletSchoolInfo" type="button">Voir le cycle</button>
+          <button class="walletMini" id="walletSchoolReset" type="button">Réinitialiser</button>
+          <button class="walletMini" id="schoolShowQr" type="button">Code classe</button>
+        </div>
+      </div>
+    </div>
 
-              <div style="font-weight:900;margin-top:14px;">Gestion École (démo)</div>
-              <div class="box">
-                <strong>Règles :</strong> 1 mot du jour maximum par jour. Une fois validé, c’est gelé jusqu’au lendemain.
-                <div class="muted" style="margin-top:8px;">Accès réservé (version LIVE) : Directeur / Professeur uniquement.</div>
-                <div class="muted" style="margin-top:8px;">
-                  Contrôles : interdit d’enregistrer/afficher des injures, propagande, incitation, menaces,
-                  ou contenu non scolaire. En version LIVE : retrait immédiat + gel possible + traçabilité.
-                </div>
-              </div>
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Accès interne école</div>
+      <div class="muted" style="margin-top:6px;">
+        Cet espace regroupe la gestion école : validation du mot du jour, progression,
+        solidarité, génération du code classe et suivi du parrainage.
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="toggleSchoolAdminBtn" type="button">Ouvrir l’espace interne école</button>
+      </div>
+    </div>
 
-              <div style="font-weight:900;margin-top:10px;">Classe (démo)</div>
-              <div class="box">
-                <div class="muted">Choisir l’école / la classe CM2 concernée (liste modifiable selon la ville).</div>
-                <select class="miniField" id="schoolClassSelect" aria-label="Choisir la classe"></select>
-              </div>
+    <div id="schoolAdminPanel" style="display:none;">
 
-              <div style="font-weight:900;margin-top:10px;">Saisie (démo)</div>
-              <input class="miniField" id="schoolWordInput" placeholder="Saisir le mot du jour (sans nom d’enfant, sans injure)" />
+      <div style="font-weight:900;margin-top:14px;">Gestion École (interne)</div>
+      <div class="box">
+        <strong>Règles :</strong> 1 mot du jour maximum par jour. Une fois validé, c’est gelé jusqu’au lendemain.
+        <div class="muted" style="margin-top:8px;">Accès réservé (version LIVE) : Directeur / Professeur uniquement.</div>
+        <div class="muted" style="margin-top:8px;">
+          Contrôles : interdit d’enregistrer/afficher des injures, propagande, incitation, menaces,
+          ou contenu non scolaire. En version LIVE : retrait immédiat + gel possible + traçabilité.
+        </div>
+      </div>
 
-              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                <button class="choiceBtn" id="schoolSaveBtn" type="button">✅ Valider aujourd’hui</button>
-                <button class="choiceBtn" id="schoolResetBtn" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
-              </div>
+      <div style="font-weight:900;margin-top:10px;">Classe (démo)</div>
+      <div class="box">
+        <div class="muted">Choisir l’école / la classe CM2 concernée (liste modifiable selon la ville).</div>
+        <select class="miniField" id="schoolClassSelect" aria-label="Choisir la classe"></select>
+      </div>
 
-              <div class="box" style="margin-top:12px;">
-                <div style="font-weight:900;">Cycle de progression (école)</div>
-                <ul style="margin:8px 0 0 18px;font-weight:800;">
-                  <li>Du 1er au 14e mot validé : <strong>+1 bocitecoin</strong> par jour</li>
-                  <li>Au 15e mot validé : le compteur passe directement à <strong>50 bocitecoins</strong></li>
-                  <li>Au 16e et 17e mot : <strong>+1</strong> par jour</li>
-                  <li>Au 18e mot validé : le compteur passe directement à <strong>80 bocitecoins</strong></li>
-                  <li>Du 19e au 21e mot : <strong>+1</strong> par jour</li>
-                  <li>Au 22e mot validé : le compteur passe directement à <strong>100 bocitecoins</strong></li>
-                </ul>
-                <div class="muted" style="margin-top:8px;">
-                  L’objectif est pédagogique : encourager l’écoute, la régularité, le vocabulaire,
-                  le respect et la participation en classe.
-                </div>
-                <div class="muted" style="margin-top:8px;">
-                  La mairie peut ensuite soit brûler le compteur lors d’un échange,
-                  soit laisser la classe cumuler plusieurs périodes pour un projet plus important.
-                </div>
-              </div>
+      <div style="font-weight:900;margin-top:10px;">Saisie (démo)</div>
+      <input class="miniField" id="schoolWordInput" placeholder="Saisir le mot du jour (sans nom d’enfant, sans injure)" />
 
-              <div style="font-weight:900;margin-top:14px;">Partage solidaire (structure)</div>
-              <div class="box">
-                <div style="font-weight:900;">Principe</div>
-                <div class="muted" style="margin-top:6px;">
-                  Les bocitecoins JAUNE gagnés par la classe peuvent être utilisés de trois façons, selon la décision retenue dans le cadre pédagogique :
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  1. <strong>La classe garde 100 %</strong> de ses bocitecoins pour un échange en mairie au bénéfice des enfants ou du matériel scolaire.
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  2. <strong>La classe partage une partie</strong> de ses bocitecoins avec une ou plusieurs associations de recherche ou de santé, selon une répartition choisie.
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  3. <strong>La classe donne 100 %</strong> des bocitecoins concernés aux associations sélectionnées.
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  La mairie tient compte du choix enregistré par la classe au moment de l’échange. Bo’CitéArt n’exécute pas la dépense réelle : il trace simplement la décision et l’opération.
-                </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="schoolSaveBtn" type="button">Valider aujourd’hui</button>
+        <button class="choiceBtn" id="schoolResetBtn" type="button" style="background:#fff;">Réinitialiser (démo)</button>
+      </div>
 
-                <div class="box" style="margin-top:12px;">
-                  <div style="font-weight:900;">Choisir le mode de partage</div>
-                  <label class="miniCheck" style="margin-top:10px;">
-                    <input type="radio" name="donMode" value="none" checked>
-                    <div>Pas de partage solidaire (tout pour matériel scolaire)</div>
-                  </label>
-                  <label class="miniCheck">
-                    <input type="radio" name="donMode" value="full">
-                    <div>Don total (100% des bocitecoins concernés)</div>
-                  </label>
-                  <label class="miniCheck">
-                    <input type="radio" name="donMode" value="partial">
-                    <div>Don partiel (répartition en %)</div>
-                  </label>
-                </div>
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;">Cycle de progression (école)</div>
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>Du 1er au 14e mot validé : <strong>+1 bocitecoin</strong> par jour</li>
+          <li>Au 15e mot validé : le compteur passe directement à <strong>50 bocitecoins</strong></li>
+          <li>Au 16e et 17e mot : <strong>+1</strong> par jour</li>
+          <li>Au 18e mot validé : le compteur passe directement à <strong>80 bocitecoins</strong></li>
+          <li>Du 19e au 21e mot : <strong>+1</strong> par jour</li>
+          <li>Au 22e mot validé : le compteur passe directement à <strong>100 bocitecoins</strong></li>
+        </ul>
+        <div class="muted" style="margin-top:8px;">
+          L’objectif est pédagogique : encourager l’écoute, la régularité, le vocabulaire,
+          le respect et la participation en classe.
+        </div>
+        <div class="muted" style="margin-top:8px;">
+          La mairie peut ensuite soit brûler le compteur lors d’un échange,
+          soit laisser la classe cumuler plusieurs périodes pour un projet plus important.
+        </div>
+      </div>
 
-                <div class="box" style="margin-top:12px;">
-                  <div style="font-weight:900;">Associations (sélection + répartition)</div>
-                  <div class="muted" style="margin-top:6px;">
-                    En “don total” : tu coches 1 à 4 associations (partage égal).<br>
-                    En “don partiel” : tu coches + tu fixes les pourcentages (total = 100%).
-                  </div>
+      <div style="font-weight:900;margin-top:14px;">Partage solidaire (interne)</div>
+      <div class="box">
+        <div style="font-weight:900;">Principe</div>
+        <div class="muted" style="margin-top:6px;">
+          Les bocitecoins JAUNE gagnés par la classe peuvent être utilisés de trois façons, selon la décision retenue dans le cadre pédagogique :
+        </div>
+        <div class="muted" style="margin-top:6px;">
+          1. <strong>La classe garde 100 %</strong> de ses bocitecoins pour un échange en mairie au bénéfice des enfants ou du matériel scolaire.
+        </div>
+        <div class="muted" style="margin-top:6px;">
+          2. <strong>La classe partage une partie</strong> de ses bocitecoins avec une ou plusieurs associations de recherche ou de santé, selon une répartition choisie.
+        </div>
+        <div class="muted" style="margin-top:6px;">
+          3. <strong>La classe donne 100 %</strong> des bocitecoins concernés aux associations sélectionnées.
+        </div>
+        <div class="muted" style="margin-top:6px;">
+          La mairie tient compte du choix enregistré par la classe au moment de l’échange. Bo’CitéArt n’exécute pas la dépense réelle : il trace simplement la décision et l’opération.
+        </div>
 
-                  <div style="margin-top:10px;">
-                    <label class="miniCheck">
-                      <input type="checkbox" class="assoPick" data-asso="Les Clés du Cœur">
-                      <div><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</div>
-                    </label>
-                    <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
-                      <div class="muted" style="min-width:78px;">% :</div>
-                      <input class="miniField assoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
-                    </div>
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;">Choisir le mode de partage</div>
+          <label class="miniCheck" style="margin-top:10px;">
+            <input type="radio" name="donMode" value="none" checked>
+            <div>Pas de partage solidaire (tout pour matériel scolaire)</div>
+          </label>
+          <label class="miniCheck">
+            <input type="radio" name="donMode" value="full">
+            <div>Don total (100% des bocitecoins concernés)</div>
+          </label>
+          <label class="miniCheck">
+            <input type="radio" name="donMode" value="partial">
+            <div>Don partiel (répartition en %)</div>
+          </label>
+        </div>
 
-                    <label class="miniCheck">
-                      <input type="checkbox" class="assoPick" data-asso="Étoile Filante">
-                      <div><strong>Étoile Filante</strong> — enfants atteints de maladies rares</div>
-                    </label>
-                    <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
-                      <div class="muted" style="min-width:78px;">% :</div>
-                      <input class="miniField assoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
-                    </div>
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;">Associations (sélection + répartition)</div>
+          <div class="muted" style="margin-top:6px;">
+            En “don total” : tu coches 1 à 4 associations (partage égal).<br>
+            En “don partiel” : tu coches + tu fixes les pourcentages (total = 100%).
+          </div>
 
-                    <label class="miniCheck">
-                      <input type="checkbox" class="assoPick" data-asso="Les Papillons (antenne Nord)">
-                      <div><strong>Les Papillons</strong> — antenne Nord</div>
-                    </label>
-                    <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
-                      <div class="muted" style="min-width:78px;">% :</div>
-                      <input class="miniField assoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
-                    </div>
+          <div style="margin-top:10px;">
+            <label class="miniCheck">
+              <input type="checkbox" class="assoPick" data-asso="Les Clés du Cœur">
+              <div><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques (Lille)</div>
+            </label>
+            <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+              <div class="muted" style="min-width:78px;">% :</div>
+              <input class="miniField assoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+            </div>
 
-                    <label class="miniCheck">
-                      <input type="checkbox" class="assoPick" data-asso="ATC Nord">
-                      <div><strong>ATC Nord</strong> — traumatisés crâniens</div>
-                    </label>
-                    <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
-                      <div class="muted" style="min-width:78px;">% :</div>
-                      <input class="miniField assoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
-                    </div>
-                  </div>
+            <label class="miniCheck">
+              <input type="checkbox" class="assoPick" data-asso="Étoile Filante">
+              <div><strong>Étoile Filante</strong> — enfants atteints de maladies rares</div>
+            </label>
+            <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+              <div class="muted" style="min-width:78px;">% :</div>
+              <input class="miniField assoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+            </div>
 
-                  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-                    <button class="choiceBtn" id="schoolAssoPreview" type="button">👁️ Aperçu partage</button>
-                    <button class="choiceBtn" id="schoolAssoSave" type="button">💾 Enregistrer (démo)</button>
-                  </div>
+            <label class="miniCheck">
+              <input type="checkbox" class="assoPick" data-asso="Les Papillons (antenne Nord)">
+              <div><strong>Les Papillons</strong> — antenne Nord</div>
+            </label>
+            <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+              <div class="muted" style="min-width:78px;">% :</div>
+              <input class="miniField assoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+            </div>
 
-                  <div class="muted" style="margin-top:10px;">
-                    (Démo) Enregistrement local sur ce téléphone. En LIVE : validation par compte école + transmission au compte mairie.
-                  </div>
-                </div>
-              </div>
-            `);
+            <label class="miniCheck">
+              <input type="checkbox" class="assoPick" data-asso="ATC Nord">
+              <div><strong>ATC Nord</strong> — traumatisés crâniens</div>
+            </label>
+            <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
+              <div class="muted" style="min-width:78px;">% :</div>
+              <input class="miniField assoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
+            </div>
+          </div>
 
-            setTimeout(()=>{
-              const text = "Je suis ravi aujourd’hui.";
-              const btnC = $("playChild");
-              const btnF = $("playFemale");
-              if(btnC) btnC.onclick = ()=> speak(text, "child");
-              if(btnF) btnF.onclick = ()=> speak(text, "female");
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <button class="choiceBtn" id="schoolAssoPreview" type="button">Aperçu partage</button>
+            <button class="choiceBtn" id="schoolAssoSave" type="button">Enregistrer (démo)</button>
+          </div>
 
-              const SCHOOL_CLASSES = [
-                "École X — CM2 A",
-                "École X — CM2 B",
-                "École Y — CM2 A",
-                "École Y — CM2 B",
-                "École Z — CM2"
-              ];
+          <div class="muted" style="margin-top:10px;">
+            (Démo) Enregistrement local sur ce téléphone. En LIVE : validation par compte école + transmission au compte mairie.
+          </div>
+        </div>
+      </div>
 
-              const SCHOOL_STORE_KEY = "bociteart_school_v1";
+      <div style="font-weight:900;margin-top:14px;">Parrainage école (interne)</div>
+      <div class="box">
+        <div class="muted">
+          La classe peut contribuer à faire entrer un <strong>club sportif</strong> ou un <strong>commerce</strong> dans Bo’CitéArt.
+          Après contrôle réel par Bo’CitéArt et maintien sur 30 jours, la mairie peut attribuer <strong>10 bocitecoins JAUNE</strong> à la classe.
+        </div>
 
-              function schoolLoad(){
-                try{
-                  const raw = localStorage.getItem(SCHOOL_STORE_KEY);
-                  return raw ? JSON.parse(raw) : {};
-                }catch(e){
-                  return {};
-                }
-              }
+        <div class="muted" style="margin-top:8px;">
+          Le parrainage ne doit pas être réalisé seul par un enfant : validation adulte / parent / structure réelle requise.
+        </div>
 
-              function schoolSave(obj){
-                try{ localStorage.setItem(SCHOOL_STORE_KEY, JSON.stringify(obj)); }catch(e){}
-              }
+        <div style="margin-top:10px;font-weight:900;">Type de parrainage</div>
+        <select class="miniField" id="schoolReferralType">
+          <option value="commerce">Commerce</option>
+          <option value="club">Club sportif</option>
+        </select>
 
-              function fillSchoolSelect(){
-                const sel = $("schoolClassSelect");
-                if(!sel) return;
-                sel.innerHTML = SCHOOL_CLASSES.map((x,i)=> `<option value="${i}">${x}</option>`).join("");
-              }
+        <div style="margin-top:10px;font-weight:900;">Nom de la structure parrainée</div>
+        <input class="miniField" id="schoolReferralTarget" placeholder="Nom du commerce ou du club">
 
-              function refreshSchoolWallet(){
-                const out = $("schoolCoinBalance");
-                if(out) out.textContent = Number(loadSchoolWallet().jaune || 0);
-              }
+        <div style="margin-top:10px;font-weight:900;">Téléphone adulte / structure</div>
+        <input class="miniField" id="schoolReferralPhone" placeholder="Téléphone de contrôle">
 
-              function getTodayKey(){
-                return new Date().toISOString().slice(0,10);
-              }
+        <div style="margin-top:10px;font-weight:900;">Nom du parent / adulte référent</div>
+        <input class="miniField" id="schoolReferralAdult" placeholder="Nom de l’adulte référent">
 
-              function getSchoolProgress(db, cls){
-                if(!db.progress) db.progress = {};
-                if(!db.progress[cls]){
-                  db.progress[cls] = {
-                    totalValidatedDays:0,
-                    lastValidationDay:""
-                  };
-                }
-                return db.progress[cls];
-              }
+        <div style="margin-top:10px;font-weight:900;">Commentaire / preuve</div>
+        <textarea id="schoolReferralNote" class="miniField" style="min-height:110px;" placeholder="Ex : prise de contact faite, accord de principe, date, élément de contrôle"></textarea>
 
-              function schoolTargetValue(totalValidatedDays){
-                if(totalValidatedDays === 15) return 50;
-                if(totalValidatedDays === 18) return 80;
-                if(totalValidatedDays === 22) return 100;
-                return null;
-              }
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <button class="choiceBtn" id="schoolReferralSaveBtn" type="button">Enregistrer parrainage</button>
+          <button class="choiceBtn" id="schoolReferralReadBtn" type="button" style="background:#fff;">Lire parrainage</button>
+          <button class="choiceBtn" id="schoolReferralResetBtn" type="button" style="background:#fff;">Réinitialiser parrainage</button>
+        </div>
 
-              fillSchoolSelect();
-              refreshSchoolWallet();
+        <div class="muted" style="margin-top:10px;">
+          Validation finale uniquement après contrôle Bo’CitéArt et maintien sur 30 jours.
+        </div>
+      </div>
 
-              const schoolInfoBtn = $("walletSchoolInfo");
-              const schoolResetWallet = $("walletSchoolReset");
-              const schoolShowQr = $("schoolShowQr");
-              const btnWordSave2 = $("schoolSaveBtn");
+    </div>
+  `);
 
-              if(schoolInfoBtn){
-                schoolInfoBtn.onclick = ()=>{
-                  const db = schoolLoad();
-                  const sel = $("schoolClassSelect");
-                  const idx = sel ? parseInt(sel.value,10) : 0;
-                  const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-                  const prog = getSchoolProgress(db, cls);
+  setTimeout(()=>{
+    const text = "Je suis ravi aujourd’hui.";
+    const btnC = $("playChild");
+    const btnF = $("playFemale");
+    if(btnC) btnC.onclick = ()=> speak(text, "child");
+    if(btnF) btnF.onclick = ()=> speak(text, "female");
 
-                  alert(
-                    "Classe : " + cls +
-                    "\nMots validés : " + Number(prog.totalValidatedDays || 0) +
-                    "\nWallet : " + Number(loadSchoolWallet().jaune || 0) + " bocitecoins"
-                  );
-                };
-              }
+    const toggleSchoolAdminBtn = $("toggleSchoolAdminBtn");
+    const schoolAdminPanel = $("schoolAdminPanel");
 
-              if(schoolShowQr){
-                schoolShowQr.onclick = ()=>{
-                  const sel = $("schoolClassSelect");
-                  const idx = sel ? parseInt(sel.value,10) : 0;
-                  const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-                  const wallet = Number(loadSchoolWallet().jaune || 0);
+    if(toggleSchoolAdminBtn && schoolAdminPanel){
+      toggleSchoolAdminBtn.onclick = ()=>{
+        const isHidden = schoolAdminPanel.style.display === "none" || schoolAdminPanel.style.display === "";
+        schoolAdminPanel.style.display = isHidden ? "block" : "none";
+        toggleSchoolAdminBtn.textContent = isHidden
+          ? "Fermer l’espace interne école"
+          : "Ouvrir l’espace interne école";
+      };
+    }
 
-                  const db = schoolLoad();
-                  const solidarity = db.lastSolidarity && db.lastSolidarity.class === cls
-                    ? db.lastSolidarity
-                    : { mode:"none", map:{} };
+    const SCHOOL_CLASSES = [
+      "École X — CM2 A",
+      "École X — CM2 B",
+      "École Y — CM2 A",
+      "École Y — CM2 B",
+      "École Z — CM2"
+    ];
 
-                  const payload = window.boScanEngine.buildSchoolWalletPayload(cls, wallet, solidarity);
+    const SCHOOL_STORE_KEY = "bociteart_school_v1";
+    const SCHOOL_REFERRAL_KEY = "bociteart_school_referral_v1";
 
-                  alert(
-                    "Code classe à scanner par la mairie :\n\n" +
-                    JSON.stringify(payload, null, 2)
-                  );
-                };
-              }
+    function schoolLoad(){
+      try{
+        const raw = localStorage.getItem(SCHOOL_STORE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      }catch(e){
+        return {};
+      }
+    }
 
-              if(schoolResetWallet){
-                schoolResetWallet.onclick = ()=>{
-                  if(confirm("Réinitialiser le compteur école ?")){
-                    saveSchoolWallet({ jaune:0 });
-                    const db = schoolLoad();
-                    if(db.progress) db.progress = {};
-                    schoolSave(db);
-                    refreshSchoolWallet();
-                  }
-                };
-              }
+    function schoolSave(obj){
+      try{
+        localStorage.setItem(SCHOOL_STORE_KEY, JSON.stringify(obj));
+      }catch(e){}
+    }
 
-              if(btnWordSave2){
-                btnWordSave2.onclick = ()=>{
-                  const input = $("schoolWordInput");
-                  const sel = $("schoolClassSelect");
-                  const idx = sel ? parseInt(sel.value,10) : 0;
-                  const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
-                  const w = input ? (input.value || "").trim() : "";
-                  const today = getTodayKey();
+    function schoolReferralLoad(){
+      try{
+        const raw = localStorage.getItem(SCHOOL_REFERRAL_KEY);
+        return raw ? JSON.parse(raw) : null;
+      }catch(e){
+        return null;
+      }
+    }
 
-                  if(!w){
-                    alert("Saisis le mot du jour.");
-                    return;
-                  }
+    function schoolReferralSave(obj){
+      try{
+        localStorage.setItem(SCHOOL_REFERRAL_KEY, JSON.stringify(obj));
+      }catch(e){}
+    }
 
-                  const db = schoolLoad();
-                  const prog = getSchoolProgress(db, cls);
+    function fillSchoolSelect(){
+      const sel = $("schoolClassSelect");
+      if(!sel) return;
+      sel.innerHTML = SCHOOL_CLASSES.map((x,i)=> '<option value="' + i + '">' + x + '</option>').join("");
+    }
 
-                  if(prog.lastValidationDay === today){
-                    alert("Déjà validé aujourd’hui.");
-                    return;
-                  }
+    function refreshSchoolWallet(){
+      const out = $("schoolCoinBalance");
+      if(out) out.textContent = Number(loadSchoolWallet().jaune || 0);
+    }
 
-                  prog.totalValidatedDays++;
-                  prog.lastValidationDay = today;
+    function getTodayKey(){
+      return new Date().toISOString().slice(0,10);
+    }
 
-                  let currentValue = Number(loadSchoolWallet().jaune || 0);
-                  const target = schoolTargetValue(prog.totalValidatedDays);
+    function getSchoolProgress(db, cls){
+      if(!db.progress) db.progress = {};
+      if(!db.progress[cls]){
+        db.progress[cls] = {
+          totalValidatedDays:0,
+          lastValidationDay:""
+        };
+      }
+      return db.progress[cls];
+    }
 
-                  if(target !== null){
-                    currentValue = target;
-                  }else{
-                    currentValue += 1;
-                  }
+    function schoolTargetValue(totalValidatedDays){
+      if(totalValidatedDays === 15) return 50;
+      if(totalValidatedDays === 18) return 80;
+      if(totalValidatedDays === 22) return 100;
+      return null;
+    }
 
-                  saveSchoolWallet({ jaune:currentValue });
-                  schoolSave(db);
-                  refreshSchoolWallet();
+    function buildSchoolSolidarityPayload(){
+      const modeEl = document.querySelector('input[name="donMode"]:checked');
+      const mode = modeEl ? modeEl.value : "none";
+      const picks = Array.from(document.querySelectorAll(".assoPick"));
+      const pcts = Array.from(document.querySelectorAll(".assoPct"));
+      const selected = picks.filter(x => x.checked).map(x => x.getAttribute("data-asso"));
+      const map = {};
 
-                  alert(
-                    "Validé : " + cls +
-                    "\nJour n°" + prog.totalValidatedDays +
-                    "\nTotal : " + currentValue + " bocitecoins"
-                  );
-                };
-              }
-            },0);
+      if(mode === "none"){
+        return { mode:"none", map:{} };
+      }
 
-            return;
+      if(!selected.length){
+        return { error:"Sélectionne au moins une association." };
+      }
+
+      if(mode === "full"){
+        const share = Math.floor(100 / selected.length);
+        let remaining = 100;
+
+        selected.forEach((name, idx)=>{
+          if(idx === selected.length - 1){
+            map[name] = remaining;
+          }else{
+            map[name] = share;
+            remaining -= share;
           }
+        });
+
+        return { mode:"full", map:map };
+      }
+
+      if(mode === "partial"){
+        let total = 0;
+
+        pcts.forEach((input)=>{
+          const name = input.getAttribute("data-asso");
+          const linked = picks.find(x => x.getAttribute("data-asso") === name);
+          if(linked && linked.checked){
+            const v = Number(input.value || 0);
+            map[name] = v;
+            total += v;
+          }
+        });
+
+        if(total !== 100){
+          return { error:"En mode partiel, le total doit être égal à 100 %." };
+        }
+
+        return { mode:"partial", map:map };
+      }
+
+      return { mode:"none", map:{} };
+    }
+
+    fillSchoolSelect();
+    refreshSchoolWallet();
+
+    const schoolInfoBtn = $("walletSchoolInfo");
+    const schoolResetWallet = $("walletSchoolReset");
+    const schoolShowQr = $("schoolShowQr");
+    const btnWordSave2 = $("schoolSaveBtn");
+    const schoolResetBtn = $("schoolResetBtn");
+    const schoolAssoPreview = $("schoolAssoPreview");
+    const schoolAssoSave = $("schoolAssoSave");
+
+    if(schoolInfoBtn){
+      schoolInfoBtn.onclick = ()=>{
+        const db = schoolLoad();
+        const sel = $("schoolClassSelect");
+        const idx = sel ? parseInt(sel.value,10) : 0;
+        const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+        const prog = getSchoolProgress(db, cls);
+
+        alert(
+          "Classe : " + cls +
+          "\nMots validés : " + Number(prog.totalValidatedDays || 0) +
+          "\nWallet : " + Number(loadSchoolWallet().jaune || 0) + " bocitecoins"
+        );
+      };
+    }
+
+    if(schoolShowQr){
+      schoolShowQr.onclick = ()=>{
+        const sel = $("schoolClassSelect");
+        const idx = sel ? parseInt(sel.value,10) : 0;
+        const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+        const wallet = Number(loadSchoolWallet().jaune || 0);
+
+        const db = schoolLoad();
+        const solidarity = db.lastSolidarity && db.lastSolidarity.class === cls
+          ? db.lastSolidarity
+          : { mode:"none", map:{} };
+
+        const payload = window.boScanEngine.buildSchoolWalletPayload(cls, wallet, solidarity);
+
+        alert(
+          "Code classe à scanner par la mairie :\n\n" +
+          JSON.stringify(payload, null, 2)
+        );
+      };
+    }
+
+    if(schoolResetWallet){
+      schoolResetWallet.onclick = ()=>{
+        if(confirm("Réinitialiser le compteur école ?")){
+          saveSchoolWallet({ jaune:0 });
+          const db = schoolLoad();
+          if(db.progress) db.progress = {};
+          schoolSave(db);
+          refreshSchoolWallet();
+        }
+      };
+    }
+
+    if(schoolResetBtn){
+      schoolResetBtn.onclick = ()=>{
+        if(confirm("Réinitialiser le mot du jour (démo) ?")){
+          const input = $("schoolWordInput");
+          if(input) input.value = "";
+          alert("Saisie réinitialisée.");
+        }
+      };
+    }
+
+    if(btnWordSave2){
+      btnWordSave2.onclick = ()=>{
+        const input = $("schoolWordInput");
+        const sel = $("schoolClassSelect");
+        const idx = sel ? parseInt(sel.value,10) : 0;
+        const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+        const w = input ? (input.value || "").trim() : "";
+        const today = getTodayKey();
+
+        if(!w){
+          alert("Saisis le mot du jour.");
+          return;
+        }
+
+        const db = schoolLoad();
+        const prog = getSchoolProgress(db, cls);
+
+        if(prog.lastValidationDay === today){
+          alert("Déjà validé aujourd’hui.");
+          return;
+        }
+
+        prog.totalValidatedDays++;
+        prog.lastValidationDay = today;
+
+        let currentValue = Number(loadSchoolWallet().jaune || 0);
+        const target = schoolTargetValue(prog.totalValidatedDays);
+
+        if(target !== null){
+          currentValue = target;
+        }else{
+          currentValue += 1;
+        }
+
+        saveSchoolWallet({ jaune:currentValue });
+        schoolSave(db);
+        refreshSchoolWallet();
+
+        alert(
+          "Validé : " + cls +
+          "\nJour n°" + prog.totalValidatedDays +
+          "\nTotal : " + currentValue + " bocitecoins"
+        );
+      };
+    }
+
+    if(schoolAssoPreview){
+      schoolAssoPreview.onclick = ()=>{
+        const payload = buildSchoolSolidarityPayload();
+        if(payload.error){
+          alert(payload.error);
+          return;
+        }
+        alert("Aperçu partage école :\n\n" + JSON.stringify(payload, null, 2));
+      };
+    }
+
+    if(schoolAssoSave){
+      schoolAssoSave.onclick = ()=>{
+        const payload = buildSchoolSolidarityPayload();
+        if(payload.error){
+          alert(payload.error);
+          return;
+        }
+
+        const sel = $("schoolClassSelect");
+        const idx = sel ? parseInt(sel.value,10) : 0;
+        const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+
+        const db = schoolLoad();
+        db.lastSolidarity = {
+          class: cls,
+          mode: payload.mode,
+          map: payload.map,
+          ts: Date.now(),
+          ts_fr: new Date().toLocaleString("fr-FR")
+        };
+        schoolSave(db);
+
+        alert("Choix de partage école enregistré (démo).");
+      };
+    }
+
+    const schoolReferralType = $("schoolReferralType");
+    const schoolReferralTarget = $("schoolReferralTarget");
+    const schoolReferralPhone = $("schoolReferralPhone");
+    const schoolReferralAdult = $("schoolReferralAdult");
+    const schoolReferralNote = $("schoolReferralNote");
+    const schoolReferralSaveBtn = $("schoolReferralSaveBtn");
+    const schoolReferralReadBtn = $("schoolReferralReadBtn");
+    const schoolReferralResetBtn = $("schoolReferralResetBtn");
+
+    const referralDb = schoolReferralLoad();
+    if(referralDb){
+      if(schoolReferralType) schoolReferralType.value = referralDb.type || "commerce";
+      if(schoolReferralTarget) schoolReferralTarget.value = referralDb.target || "";
+      if(schoolReferralPhone) schoolReferralPhone.value = referralDb.phone || "";
+      if(schoolReferralAdult) schoolReferralAdult.value = referralDb.adult || "";
+      if(schoolReferralNote) schoolReferralNote.value = referralDb.note || "";
+    }
+
+    if(schoolReferralSaveBtn){
+      schoolReferralSaveBtn.onclick = ()=>{
+        const sel = $("schoolClassSelect");
+        const idx = sel ? parseInt(sel.value,10) : 0;
+        const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
+
+        const data = {
+          class: cls,
+          type: schoolReferralType ? String(schoolReferralType.value || "").trim() : "",
+          target: schoolReferralTarget ? String(schoolReferralTarget.value || "").trim() : "",
+          phone: schoolReferralPhone ? String(schoolReferralPhone.value || "").trim() : "",
+          adult: schoolReferralAdult ? String(schoolReferralAdult.value || "").trim() : "",
+          note: schoolReferralNote ? String(schoolReferralNote.value || "").trim() : "",
+          status: "en_attente_controle",
+          ts: Date.now(),
+          ts_fr: new Date().toLocaleString("fr-FR")
+        };
+
+        if(!data.target){
+          alert("Renseigne le nom de la structure parrainée.");
+          return;
+        }
+
+        if(!data.phone){
+          alert("Renseigne le téléphone de contrôle.");
+          return;
+        }
+
+        if(!data.adult){
+          alert("Renseigne le nom de l’adulte référent.");
+          return;
+        }
+
+        schoolReferralSave(data);
+        alert("Parrainage école enregistré (démo). Contrôle Bo’CitéArt requis avant validation.");
+      };
+    }
+
+    if(schoolReferralReadBtn){
+      schoolReferralReadBtn.onclick = ()=>{
+        const data = schoolReferralLoad();
+        if(!data){
+          alert("Aucun parrainage école enregistré.");
+          return;
+        }
+
+        alert(
+          "Dernier parrainage école :\n\n" +
+          "Classe : " + (data.class || "") +
+          "\nType : " + (data.type || "") +
+          "\nStructure : " + (data.target || "") +
+          "\nTéléphone : " + (data.phone || "") +
+          "\nAdulte référent : " + (data.adult || "") +
+          "\nStatut : " + (data.status || "") +
+          "\nDate : " + (data.ts_fr || "") +
+          "\n\nNote : " + (data.note || "")
+        );
+      };
+    }
+
+    if(schoolReferralResetBtn){
+      schoolReferralResetBtn.onclick = ()=>{
+        if(confirm("Réinitialiser le parrainage école ?")){
+          localStorage.removeItem(SCHOOL_REFERRAL_KEY);
+          if(schoolReferralTarget) schoolReferralTarget.value = "";
+          if(schoolReferralPhone) schoolReferralPhone.value = "";
+          if(schoolReferralAdult) schoolReferralAdult.value = "";
+          if(schoolReferralNote) schoolReferralNote.value = "";
+          if(schoolReferralType) schoolReferralType.value = "commerce";
+          alert("Parrainage école réinitialisé.");
+        }
+      };
+    }
+  },0);
+
+  return;
+}
         });
       });
 
