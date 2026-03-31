@@ -3741,12 +3741,63 @@ if(key === "ecole"){
   `);
 
   setTimeout(()=>{
-    const text = "Je suis ravi aujourd’hui.";
-    const btnC = $("playChild");
-    const btnF = $("playFemale");
-    if(btnC) btnC.onclick = ()=> speak(text, "child");
-    if(btnF) btnF.onclick = ()=> speak(text, "female");
+   function schoolSpeak(mode){
+  const sel = $("schoolClassSelect");
+  const idx = sel ? parseInt(sel.value,10) : 0;
+  const cls = SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
 
+  const db = schoolLoad();
+  const savedWord = db.lastWord && db.lastWord.class === cls
+    ? String(db.lastWord.text || "").trim()
+    : "";
+
+  const input = $("schoolWordInput");
+  const inputText = input ? String(input.value || "").trim() : "";
+  const sampleText = "Je suis ravi aujourd’hui.";
+
+  const txt = savedWord || inputText || sampleText;
+
+  if(!("speechSynthesis" in window)){
+    alert("La lecture vocale n’est pas prise en charge sur cet appareil / navigateur.");
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const u = new SpeechSynthesisUtterance(txt);
+  u.lang = "fr-FR";
+  u.volume = 1;
+  u.pitch = mode === "child" ? 1.35 : 1.0;
+  u.rate = mode === "child" ? 1.02 : 0.96;
+
+  const voices = window.speechSynthesis.getVoices() || [];
+  let chosenVoice = voices.find(v => /fr/i.test(v.lang)) || null;
+
+  if(chosenVoice){
+    u.voice = chosenVoice;
+  }
+
+  window.speechSynthesis.speak(u);
+}
+
+const btnC = $("playChild");
+const btnF = $("playFemale");
+
+if(btnC){
+  btnC.onclick = function(){
+    schoolSpeak("child");
+  };
+}
+
+if(btnF){
+  btnF.onclick = function(){
+    schoolSpeak("female");
+  };
+}
+
+if("speechSynthesis" in window){
+  window.speechSynthesis.getVoices();
+}
     const toggleSchoolAdminBtn = $("toggleSchoolAdminBtn");
     const schoolAdminPanel = $("schoolAdminPanel");
 
