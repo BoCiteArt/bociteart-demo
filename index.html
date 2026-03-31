@@ -1157,7 +1157,7 @@ function validerInscription() {
       </div>
 
      <div style="display:flex;gap:10px;align-items:stretch;">
-  <div class="dae" id="daeBtn" role="button" tabindex="0" aria-label="Trouver un défibrillateur autour de moi" style="flex:1;">
+  <div class="dae" id="daeBtn" role="button" tabindex="0" aria-label="Trouver un défibrillateur autour de moi" style="flex:1;min-height:72px;padding:8px 10px;">
     <svg class="heart" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.6">
       <path d="M20.8 4.6c-1.7-1.7-4.5-1.7-6.2 0L12 7.2 9.4 4.6c-1.7-1.7-4.5-1.7-6.2 0-1.7 1.7-1.7 4.5 0 6.2L12 19.6l8.8-8.8c1.7-1.7 1.7-4.5 0-6.2z"/>
       <path d="M13 8h-2v4H7v2h4v4h2v-4h4v-2h-4z" stroke="var(--red)"/>
@@ -1165,33 +1165,32 @@ function validerInscription() {
     <div>Trouver un défibrillateur autour de moi</div>
   </div>
 
-  <div
-    id="clockBtn"
-    role="button"
-    tabindex="0"
-    aria-label="Horloge, date, saint du jour et météo"
-    style="
-      width:72%;
-      min-width:150px;
-      border:2px solid var(--red);
-      border-radius:18px;
-      background:#fff;
-      padding:10px 12px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      text-align:center;
-      cursor:pointer;
-      user-select:none;
-      box-sizing:border-box;
-    "
-  >
-    <div id="clockWeatherMini" style="font-size:12px;font-weight:800;color:#666;line-height:1.1;margin-bottom:3px;">Météo</div>
-    <div id="clockTimeMini" style="font-size:24px;font-weight:900;line-height:1;">00:00</div>
-    <div id="clockDateMini" style="font-size:12px;font-weight:800;line-height:1.2;margin-top:4px;">Date</div>
-    <div id="clockSaintMini" style="font-size:11px;color:#666;line-height:1.2;margin-top:4px;">Saint du jour</div>
-  </div>
+<div
+  id="clockBtn"
+  role="button"
+  tabindex="0"
+  aria-label="Horloge, date, saint du jour"
+  style="
+    width:62%;
+    min-width:130px;
+    border:2px solid var(--red);
+    border-radius:16px;
+    background:#fff;
+    padding:8px 10px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    cursor:pointer;
+    user-select:none;
+    box-sizing:border-box;
+    min-height:72px;
+  "
+>
+  <div id="clockTimeMini" style="font-size:22px;font-weight:900;line-height:1;">00:00</div>
+  <div id="clockDateMini" style="font-size:11px;font-weight:800;line-height:1.15;margin-top:4px;">Date</div>
+  <div id="clockSaintMini" style="font-size:10px;color:#666;line-height:1.1;margin-top:3px;">Saint du jour</div>
 </div>
 
       <div class="footerRow">
@@ -7211,7 +7210,7 @@ const adminTile = $("adminTile");
           </ul>
         `);
       });
- });
+
      const daeBtn = $("daeBtn");
 const clockBtn = $("clockBtn");
 
@@ -7697,7 +7696,6 @@ function refreshMiniClock(){
   const t = $("clockTimeMini");
   const d = $("clockDateMini");
   const s = $("clockSaintMini");
-  const w = $("clockWeatherMini");
 
   const now = new Date();
 
@@ -7719,10 +7717,6 @@ function refreshMiniClock(){
 
   if(s){
     s.textContent = getSaintOfDayDemo(now);
-  }
-
-  if(w){
-    w.textContent = getClockWeatherDemo(now);
   }
 }
 
