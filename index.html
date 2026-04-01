@@ -1156,14 +1156,13 @@ function validerInscription() {
         </div>
       </div>
 
-     <div style="display:flex;gap:10px;align-items:stretch;">
-  <div class="dae" id="daeBtn" role="button" tabindex="0" aria-label="Trouver un défibrillateur autour de moi" style="flex:1;min-height:72px;padding:8px 10px;">
-    <svg class="heart" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.6">
-      <path d="M20.8 4.6c-1.7-1.7-4.5-1.7-6.2 0L12 7.2 9.4 4.6c-1.7-1.7-4.5-1.7-6.2 0-1.7 1.7-1.7 4.5 0 6.2L12 19.6l8.8-8.8c1.7-1.7 1.7-4.5 0-6.2z"/>
-      <path d="M13 8h-2v4H7v2h4v4h2v-4h4v-2h-4z" stroke="var(--red)"/>
-    </svg>
-    <div>Trouver un défibrillateur autour de moi</div>
-  </div>
+    <div class="dae" id="daeBtn" role="button" tabindex="0" aria-label="Trouver un défibrillateur autour de moi" style="min-height:58px;padding:6px 8px;">
+  <svg class="heart" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.6">
+    <path d="M20.8 4.6c-1.7-1.7-4.5-1.7-6.2 0L12 7.2 9.4 4.6c-1.7-1.7-4.5-1.7-6.2 0-1.7 1.7-1.7 4.5 0 6.2L12 19.6l8.8-8.8c1.7-1.7 1.7-4.5 0-6.2z"/>
+    <path d="M13 8h-2v4H7v2h4v4h2v-4h4v-2h-4z" stroke="var(--red)"/>
+  </svg>
+  <div style="font-size:12px;line-height:1.1;">Trouver un défibrillateur autour de moi</div>
+</div>
 
 <div
   id="clockBtn"
@@ -1172,11 +1171,11 @@ function validerInscription() {
   aria-label="Horloge, date, saint du jour"
   style="
     width:62%;
-    min-width:130px;
+    min-width:128px;
     border:2px solid var(--red);
     border-radius:16px;
     background:#fff;
-    padding:8px 10px;
+    padding:6px 8px;
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -1185,12 +1184,12 @@ function validerInscription() {
     cursor:pointer;
     user-select:none;
     box-sizing:border-box;
-    min-height:72px;
+    min-height:58px;
   "
 >
-  <div id="clockTimeMini" style="font-size:22px;font-weight:900;line-height:1;">00:00</div>
-  <div id="clockDateMini" style="font-size:11px;font-weight:800;line-height:1.15;margin-top:4px;">Date</div>
-  <div id="clockSaintMini" style="font-size:10px;color:#666;line-height:1.1;margin-top:3px;">Saint du jour</div>
+  <div id="clockTimeMini" style="font-size:18px;font-weight:900;line-height:1;">00:00</div>
+  <div id="clockDateMini" style="font-size:10px;font-weight:800;line-height:1.1;margin-top:2px;">Date</div>
+  <div id="clockSaintMini" style="font-size:9px;color:#666;line-height:1.1;margin-top:2px;">Saint du jour</div>
 </div>
 
       <div class="footerRow">
@@ -7211,6 +7210,15 @@ const adminTile = $("adminTile");
         `);
       });
 
+     <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
+            <li>Activation / blocage / désactivation</li>
+            <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
+            <li>Suivi interne (litiges) : historique, traçabilité</li>
+          </ul>
+        `);
+      });
+
      const daeBtn = $("daeBtn");
 const clockBtn = $("clockBtn");
 
@@ -7915,6 +7923,404 @@ on(clockBtn, "click", ()=>{
   window.__bociteartClockLargeTimer = setInterval(refreshLargeClock, 1000);
 });
       const legal = $("legal");
+      const openLegalBtn = $("openLegal");
+      const closeLegalBtn = $("legalClose");
+      const closeLegalX = $("legalX");
+
+      if(typeof window.__lastFocus === "undefined") window.__lastFocus = null;
+
+      const openLegal = ()=>{
+        if(!legal) return;
+        window.__lastFocus = document.activeElement;
+        legal.classList.add("open");
+        if(isFn(window.lockScroll)) window.lockScroll(true);
+      };
+
+      const closeLegal = ()=>{
+        if(!legal) return;
+        legal.classList.remove("open");
+        if(isFn(window.lockScroll)) window.lockScroll(false);
+        if(window.__lastFocus?.focus) window.__lastFocus.focus();
+        window.__lastFocus = null;
+      };
+
+      if(openLegalBtn) openLegalBtn.onclick = openLegal;
+      if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
+      if(closeLegalX) closeLegalX.onclick = closeLegal;
+
+      const ACK_PREFIX = "bociteart_ack_v2_";
+      const ACK_SALT = "BoCiteArt|ack|v2";
+
+      function fnv1a(str){
+        let h = 0x811c9dc5;
+        for(let i=0;i<str.length;i++){
+          h ^= str.charCodeAt(i);
+          h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
+        }
+        return ("00000000" + h.toString(16)).slice(-8);
+      }
+
+      function ackSign(kind, ts){
+        return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
+      }
+
+      function ackGet(kind){
+        const key = ACK_PREFIX + kind;
+        try{
+          const raw = localStorage.getItem(key);
+          if(!raw) return false;
+          const parts = raw.split("|");
+          if(parts.length !== 3) return false;
+          const ok = parts[0] === "1";
+          const ts = parseInt(parts[1], 10);
+          const sig = parts[2];
+          if(!ok || !Number.isFinite(ts)) return false;
+          return sig === ackSign(kind, ts);
+        }catch(e){
+          return false;
+        }
+      }
+
+      function ackSet(kind){
+        const key = ACK_PREFIX + kind;
+        try{
+          const ts = Date.now();
+          const sig = ackSign(kind, ts);
+          localStorage.setItem(key, `1|${ts}|${sig}`);
+        }catch(e){}
+      }
+
+      function makeLongPress(btn, ringEl, ms, onTrigger){
+        if(!btn || !ringEl) return;
+
+        let raf = null;
+        let start = null;
+        let holding = false;
+        let fired = false;
+
+        const rAttr = ringEl.getAttribute("r");
+        const r = rAttr ? parseFloat(rAttr) : 35;
+        const circ = 2 * Math.PI * r;
+
+        ringEl.style.strokeDasharray = String(circ);
+        ringEl.style.strokeDashoffset = String(circ);
+
+        const stop = ()=>{
+          holding = false;
+          start = null;
+          fired = false;
+          ringEl.style.strokeDashoffset = String(circ);
+          if(raf) cancelAnimationFrame(raf);
+          raf = null;
+        };
+
+        const tick = (ts)=>{
+          if(!holding) return;
+          if(start === null) start = ts;
+
+          const p = Math.min(1, (ts - start) / ms);
+          ringEl.style.strokeDashoffset = String(circ * (1 - p));
+
+          if(p >= 1){
+            if(fired) return;
+            fired = true;
+            stop();
+            onTrigger();
+            return;
+          }
+          raf = requestAnimationFrame(tick);
+        };
+
+        btn.addEventListener("pointerdown", (e)=>{
+          e.preventDefault();
+          if(holding) return;
+          holding = true;
+          fired = false;
+          raf = requestAnimationFrame(tick);
+        });
+
+        ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
+          btn.addEventListener(ev, stop);
+        });
+
+        btn.addEventListener("contextmenu", (e)=> e.preventDefault());
+      }
+
+      function emergencyGate(kind, onOk){
+        if(ackGet(kind)){
+          onOk();
+          return;
+        }
+
+        const title = (kind === "112") ? "Urgence 112 — usage responsable" : "Aide 3919 / 119 — usage responsable";
+
+        const body = (kind === "112") ? `
+          <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
+          <div class="box">
+            <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
+            Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
+          </div>
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
+            <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
+            <li>Appui long = réduction des appels accidentels (sans garantie d’erreur zéro).</li>
+          </ul>
+          <div class="box" style="margin-top:10px;">
+            <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
+              <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
+              J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
+            </label>
+          </div>
+          <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
+        ` : `
+          <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
+          <div class="box">
+            <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
+            Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
+          </div>
+          <ul style="margin:8px 0 0 18px;font-weight:800;">
+            <li><strong>3919</strong> : écoute/orientation (pas une intervention immédiate).</li>
+            <li><strong>119</strong> : enfance en danger.</li>
+            <li><strong>Danger immédiat</strong> : appeler le 112.</li>
+          </ul>
+          <div class="box" style="margin-top:10px;">
+            <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
+              <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
+              J’ai compris : j’utiliserai ces numéros uniquement en cas de situation réelle.
+            </label>
+          </div>
+          <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>
+        `;
+
+        if(isFn(window.openModal)) window.openModal(title, body);
+
+        setTimeout(()=>{
+          const box = $("ackBox");
+          const btn = $("ackBtn");
+          if(!btn) return;
+          btn.onclick = ()=>{
+            if(!box || !box.checked){
+              alert("Veuillez cocher la case pour confirmer que vous avez compris.");
+              return;
+            }
+            ackSet(kind);
+            if(isFn(window.closeModal)) window.closeModal();
+            onOk();
+          };
+        }, 0);
+      }
+
+      makeLongPress(
+        $("btn112"),
+        $("ring112"),
+        1800,
+        ()=> emergencyGate("112", ()=> { if(isFn(window.callPhone)) window.callPhone("112"); })
+      );
+
+      let sosNumber = null;
+      const choice = $("choice");
+
+      const closeChoice = ()=>{
+        if(!choice) return;
+        choice.classList.remove("open");
+        if(isFn(window.lockScroll)) window.lockScroll(false);
+        if(window.__lastFocus?.focus) window.__lastFocus.focus();
+        window.__lastFocus = null;
+      };
+
+      on($("choiceClose"), "click", closeChoice);
+      on($("choiceX"), "click", closeChoice);
+
+      document.querySelectorAll("#choice .choiceBtn[data-pick]").forEach((b)=>{
+        b.addEventListener("click", ()=>{
+          sosNumber = b.getAttribute("data-pick");
+          const lab = $("sosLabel");
+          if(lab) lab.textContent = sosNumber;
+          closeChoice();
+        });
+      });
+
+      makeLongPress(
+        $("btnSos"),
+        $("ringSos"),
+        2000,
+        ()=>{
+          if(!choice) return;
+          if(!sosNumber){
+            window.__lastFocus = document.activeElement;
+            choice.classList.add("open");
+            if(isFn(window.lockScroll)) window.lockScroll(true);
+            return;
+          }
+          emergencyGate(sosNumber, ()=> { if(isFn(window.callPhone)) window.callPhone(sosNumber); });
+        }
+      );
+
+      if(isFn(window.makeKeyboardClickable)){
+        window.makeKeyboardClickable($("ticker"), window.openTicker);
+
+        document.querySelectorAll(".tile[data-open]").forEach((el)=>{
+          window.makeKeyboardClickable(el, ()=> el.click());
+        });
+
+        if(adminTile) window.makeKeyboardClickable(adminTile, ()=> adminTile.click());
+      }
+
+      (function initLegalTabs(){
+        const legal = $("legal");
+        if(!legal) return;
+
+        const tabs = legal.querySelectorAll(".tab");
+        if(!tabs || !tabs.length) return;
+
+        const panels = {
+          rgpd: $("p-rgpd"),
+          cgu: $("p-cgu"),
+          cgv: $("p-cgv")
+        };
+
+        window.showTab = function(name){
+          tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+          Object.keys(panels).forEach((k)=>{
+            if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
+          });
+        };
+
+        tabs.forEach((t)=>{
+          t.addEventListener("click", ()=> showTab(t.dataset.tab));
+        });
+
+        showTab("rgpd");
+      })();
+
+    })();
+  </script>
+
+<script>
+(function () {
+  const consentement = document.getElementById("consentement");
+  const checkRgpd = document.getElementById("check-rgpd");
+  const checkCgu = document.getElementById("check-cgu");
+  const checkCgv = document.getElementById("check-cgv");
+  const btnAcces = document.getElementById("btn-acces");
+
+  const btnLireRgpd = document.getElementById("btn-lire-rgpd");
+  const btnLireCgu = document.getElementById("btn-lire-cgu");
+  const btnLireCgv = document.getElementById("btn-lire-cgv");
+
+  const openLegalBtn = document.getElementById("openLegal");
+  const closeLegalBtn = document.getElementById("legalClose");
+  const closeLegalX = document.getElementById("legalX");
+  const legal = document.getElementById("legal");
+
+  let retourConsentementApresLecture = false;
+
+  function majBouton() {
+    const ok =
+      checkRgpd && checkRgpd.checked &&
+      checkCgu && checkCgu.checked &&
+      checkCgv && checkCgv.checked;
+
+    if (btnAcces) {
+      btnAcces.disabled = !ok;
+      btnAcces.style.opacity = ok ? "1" : "0.5";
+      btnAcces.style.cursor = ok ? "pointer" : "not-allowed";
+    }
+  }
+
+  function ouvrirLecture(tabName) {
+    retourConsentementApresLecture = true;
+
+    if (consentement) {
+      consentement.style.display = "none";
+    }
+
+    if (openLegalBtn) {
+      openLegalBtn.click();
+    } else if (legal) {
+      legal.classList.add("open");
+    }
+
+    const tabBtn = document.querySelector('.tab[data-tab="' + tabName + '"]');
+    if (tabBtn) {
+      tabBtn.click();
+    }
+  }
+
+  function retourConsentement() {
+    if (retourConsentementApresLecture && consentement) {
+      consentement.style.display = "block";
+      retourConsentementApresLecture = false;
+    }
+  }
+
+  if (btnLireRgpd) {
+    btnLireRgpd.onclick = function () {
+      ouvrirLecture("rgpd");
+    };
+  }
+
+  if (btnLireCgu) {
+    btnLireCgu.onclick = function () {
+      ouvrirLecture("cgu");
+    };
+  }
+
+  if (btnLireCgv) {
+    btnLireCgv.onclick = function () {
+      ouvrirLecture("cgv");
+    };
+  }
+
+  if (closeLegalBtn) {
+    closeLegalBtn.addEventListener("click", retourConsentement);
+  }
+
+  if (closeLegalX) {
+    closeLegalX.addEventListener("click", retourConsentement);
+  }
+
+  if (checkRgpd) {
+    checkRgpd.onchange = majBouton;
+    checkRgpd.onclick = majBouton;
+  }
+
+  if (checkCgu) {
+    checkCgu.onchange = majBouton;
+    checkCgu.onclick = majBouton;
+  }
+
+  if (checkCgv) {
+    checkCgv.onchange = majBouton;
+    checkCgv.onclick = majBouton;
+  }
+
+  if (btnAcces) {
+    btnAcces.onclick = function () {
+      if (
+        checkRgpd && checkRgpd.checked &&
+        checkCgu && checkCgu.checked &&
+        checkCgv && checkCgv.checked
+      ) {
+        if (consentement) {
+          consentement.style.display = "none";
+        }
+        if (typeof ouvrirInscription === "function") {
+          ouvrirInscription();
+        }
+      } else {
+        alert("Vous devez cocher les 3 cases avant d’accéder à l’application.");
+      }
+    };
+  }
+majBouton();
+})();
+</script>
+</body>
+</html>
+
+
+
       const openLegalBtn = $("openLegal");
       const closeLegalBtn = $("legalClose");
       const closeLegalX = $("legalX");
