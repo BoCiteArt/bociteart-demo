@@ -1268,14 +1268,14 @@ function validerInscription() {
 
   <h2>1. Responsable du traitement</h2>
   <p>
-    Responsable provisoire : <strong>Bo’CitéArt — structure en cours de constitution</strong><br>
+    Responsable provisoire : <strong>Bo’CitéArt — en cours de constitution</strong><br>
     Représentant du projet : [Nom du porteur du projet]<br>
     Contact RGPD : <a href="mailto:contact@bociteart.com">contact@bociteart.com</a><br>
     Adresse : [à compléter]
   </p>
 
   <div class="box">
-    À terme, les responsabilités exactes entre la structure commerciale et la structure associative seront précisées dans la version officielle des présentes mentions.
+    À terme, les responsabilités exactes entre la SAS commerciale et l'Association 1901 à but non lucrative, seront précisées dans la version officielle des présentes mentions.
   </div>
 
   <h2>2. Principe général</h2>
@@ -1287,7 +1287,7 @@ function validerInscription() {
   <ul>
     <li><strong>Compte particulier</strong> : nom ou pseudonyme, email, téléphone, date de naissance, rôle, paramètres du compte.</li>
     <li><strong>Compte mineur</strong> : données du compte utilisateur + email et téléphone du parent ou représentant légal lorsque requis.</li>
-    <li><strong>Compte professionnel</strong> : identité de la structure, nom du responsable, email, téléphone, adresse, SIRET, KBIS ou justificatifs équivalents, statut de validation du compte, RIB professionnel validé selon le processus prévu, historique de mise à jour du moyen de paiement.</li>
+    <li><strong>Compte professionnel</strong> : identité de la SAS Bo'CitéArt, nom du responsable, email, téléphone, adresse, SIRET, KBIS ou justificatifs équivalents, statut de validation du compte, RIB professionnel validé selon le processus prévu, historique de mise à jour du moyen de paiement.</li>
     <li><strong>Sécurité</strong> : journaux techniques, horodatages, tentatives d’accès, opérations sensibles, changements de RIB, validations, blocages, réactivations, éléments nécessaires à la prévention de la fraude, à la sécurité et à la traçabilité.</li>
     <li><strong>Publicité</strong> : entité réservante, contenu fourni, dates souhaitées, créneaux réservés, options choisies, état de validation, état de paiement, historique de modification.</li>
     <li><strong>BoCitéCoins</strong> : opérations d’attribution, d’échange, solde, historique, statut garanti / non garanti selon abonnement, règles de péremption et de redémarrage annuel.</li>
@@ -1347,7 +1347,7 @@ function validerInscription() {
   <h2>10. Destinataires</h2>
   <ul>
     <li>Administrateurs et personnes habilitées selon leurs droits.</li>
-    <li>Structures partenaires autorisées dans la limite de leurs missions et de leurs habilitations.</li>
+    <li>Les partenaires autorisées dans la limite de leurs missions et de leurs habilitations.</li>
     <li>Sous-traitants techniques strictement nécessaires (hébergement, prestataire de paiement, services d’envoi d’email/SMS, etc.).</li>
     <li>Autorités compétentes si la loi l’impose ou si une situation le justifie.</li>
   </ul>
@@ -1405,7 +1405,7 @@ function validerInscription() {
   <h2>4. Compte particulier / compte professionnel</h2>
   <ul>
     <li>Le compte particulier permet l’usage des fonctions ouvertes au grand public selon les règles applicables.</li>
-    <li>Le compte professionnel n’est actif qu’après contrôle des éléments demandés par Bo’CitéArt, notamment l’identité de la structure et les justificatifs professionnels requis.</li>
+    <li>Le compte professionnel n’est actif qu’après contrôle des éléments demandés par Bo’CitéArt, notamment l’identité de la SAS Bo'CitéArt et les justificatifs professionnels requis.</li>
     <li>Bo’CitéArt peut refuser, suspendre ou désactiver un compte en cas de doute sérieux, de justificatif manquant, de fraude, d’abus, de non-paiement ou d’informations inexactes.</li>
   </ul>
 
@@ -1476,7 +1476,7 @@ function validerInscription() {
 
   <h2>16. Propriété intellectuelle</h2>
   <div class="box">
-    L’ensemble des éléments Bo’CitéArt — concept, structure, charte, textes, visuels, marque, signes distinctifs, agencement, logique de service — est protégé. Toute reproduction, extraction, imitation, réutilisation ou détournement non autorisé est interdit.
+    L’ensemble des éléments Bo’CitéArt — concept, Architecture, charte, textes, visuels, marque, signes distinctifs, agencement, logique de service — est protégé. Toute reproduction, extraction, imitation, réutilisation ou détournement non autorisé est interdit.
   </div>
 
   <h2>17. Modification des conditions</h2>
@@ -3217,7 +3217,7 @@ out center tags;
 
         if(key === "oeuvres"){
   openModal("Œuvres", `
-    <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (structure)</div>
+    <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques </div>
     
     <div class="box">
       <strong>Cadre :</strong> contenus illustratifs en démo. Les informations
@@ -3506,7 +3506,7 @@ if(key === "ecole"){
         </div>
 
         <div class="muted" style="margin-top:8px;">
-          Le parrainage ne doit pas être réalisé seul par un enfant : validation adulte / parent / structure réelle requise.
+          Le parrainage ne doit pas être réalisé seul par un enfant : validation adulte / parent / réelle requise.
         </div>
 
         <div style="margin-top:10px;font-weight:900;">Nom de l’enfant à l’origine du parrainage</div>
@@ -3518,10 +3518,10 @@ if(key === "ecole"){
           <option value="club">Club sportif</option>
         </select>
 
-        <div style="margin-top:10px;font-weight:900;">Nom de la structure parrainée</div>
+        <div style="margin-top:10px;font-weight:900;">Nom du club sportif ou commerce parrainée</div>
         <input class="miniField" id="schoolReferralTarget" placeholder="Nom du commerce ou du club">
 
-        <div style="margin-top:10px;font-weight:900;">Téléphone adulte / structure</div>
+        <div style="margin-top:10px;font-weight:900;">Téléphone adulte / parent </div>
         <input class="miniField" id="schoolReferralPhone" placeholder="Téléphone de contrôle">
 
         <div style="margin-top:10px;font-weight:900;">Nom du parent / adulte référent</div>
@@ -4219,7 +4219,7 @@ if(key === "ecole"){
         }
 
         if(!data.target){
-          alert("Renseigne le nom de la structure parrainée.");
+          alert("Renseigne le nom du club sportif ou commerce parrainée.");
           return;
         }
 
@@ -4266,7 +4266,7 @@ if(key === "ecole"){
           "Classe : " + (data.class || "") +
           "\nEnfant : " + (data.child || "") +
           "\nType : " + (data.type || "") +
-          "\nStructure : " + (data.target || "") +
+          "\nCommmerce ou club Sportif : " + (data.target || "") +
           "\nTéléphone : " + (data.phone || "") +
           "\nAdulte référent : " + (data.adult || "") +
           "\nStatut : " + (data.status || "") +
@@ -5604,7 +5604,7 @@ if(key === "sport"){
       <div style="font-weight:900;margin-top:16px;color:#2f5d46;">Lecture sport → mairie</div>
       <div class="box" style="border-left:6px solid #2f5d46;">
         <div class="muted">
-          La mairie lit le code dynamique transmis par un club ou une structure sport,
+          La mairie lit le code dynamique transmis par un club sportif,
           visualise le montant, prépare la destination de l’échange puis valide l’opération.
           Une fois validé, le wallet sport est remis à zéro.
         </div>
@@ -6606,7 +6606,7 @@ if(key === "sport"){
         </div>
 
         <div class="muted" style="margin-top:10px;">
-          Les frais PSP, la maintenance, la structure et les mises à jour s’inscrivent dans la logique de service.
+          Les frais PSP, la maintenance, et les mises à jour s’inscrivent dans la logique de service.
         </div>
 
         <div class="muted" style="margin-top:10px;">
@@ -7200,11 +7200,10 @@ if(key === "sport"){
   const adminTile = $("adminTile");
   on(adminTile, "click", ()=>{
     if(!isFn(window.openModal)) return;
-    openModal("Accès Admin (structure)", `
-      <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
+    openModal("Accès Administrateur", `
+      <div style="font-weight:900;margin-bottom:8px;">Administration </div>
       <div class="box">
         <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
-        Les éléments affichés sont une vitrine de structure (démo).
       </div>
       <ul style="margin:8px 0 0 18px;font-weight:800;">
         <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
@@ -7242,7 +7241,7 @@ if(key === "sport"){
     }
 
     if(s){
-      s.textContent = getSaintOfDayDemo(now);
+      s.textContent = getSaintOfDay(now);
     }
   }
 
@@ -7256,9 +7255,8 @@ if(key === "sport"){
   // ===== DAE =====
   on(daeBtn, "click", ()=>{
     if(!isFn(window.openModal)) return;
-
     openModal("Défibrillateur (DAE)", `
-      <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
+      <div style="font-weight:900;margin-bottom:8px;">Carte des débrifillateurs </div>
 
       <div class="box">
         <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
@@ -7286,13 +7284,12 @@ if(key === "sport"){
             allowfullscreen>
           </iframe>
         </div>
-        <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
+        <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication des gestes essentiels.</div>
       </div>
 
       <div class="box" style="margin-top:12px;">
         <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
         <div class="muted">
-          Ici, la version officielle affichera la carte + fléchage + une ligne d’itinéraire vers le DAE le plus proche.
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
           <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
@@ -7320,10 +7317,10 @@ if(key === "sport"){
 
     const now = new Date();
 
-    openModal("Horloge - Date - Saint du jour", `
+    openModal("Calendrier & informations du jour", `
       <div class="box" style="text-align:center;">
         <div id="clockTimeLarge" style="font-size:42px;font-weight:900;line-height:1;">00:00:00</div>
-        <div id="clockDateLarge" style="margin-top:8px;font-size:16px;font-weight:800;">Date</div>
+        <div id="clockDateLarge" style="margin-top:8px;font-size:18px;font-weight:800;">Date</div>
         <div id="clockSaintLarge" style="margin-top:6px;font-size:14px;color:#666;">Saint du jour</div>
       </div>
 
@@ -7366,7 +7363,7 @@ if(key === "sport"){
       }
 
       if(s){
-        s.textContent = getSaintOfDayDemo(nowLive);
+        s.textContent = getSaintOfDay(nowLive);
       }
     }
 
@@ -7666,7 +7663,7 @@ if(key === "sport"){
 
   // ===== CALENDRIER + SAINT DU JOUR =====
 
-  function getSaintOfDayDemo(d){
+  function getSaintOfDay(d){
     const map = {
 
       // JANVIER
@@ -7825,7 +7822,7 @@ if(key === "sport"){
     return map[key] || "Saint du jour";
   }
 
-  function getFrenchHolidayLabelDemo(d){
+  function getFrenchHolidayLabel(d){
     const key = String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
     const map = {
       "01-01":"Jour de l'An",
@@ -7877,8 +7874,8 @@ if(key === "sport"){
         d.getMonth() === today.getMonth() &&
         d.getDate() === today.getDate();
 
-      const holiday = getFrenchHolidayLabelDemo(d);
-      const saint = getSaintOfDayDemo(d);
+      const holiday = getFrenchHolidayLabel(d);
+      const saint = getSaintOfDay(d);
 
       html += `
         <div style="
