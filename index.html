@@ -7206,6 +7206,126 @@ on(adminTile, "click", ()=>{
   `);
 });
 
+     const daeBtn = $("daeBtn");
+const clockBtn = $("clockBtn");
+
+// ===== MINI HORLOGE =====
+function refreshMiniClock(){
+  const t = $("clockTimeMini");
+  const d = $("clockDateMini");
+  const s = $("clockSaintMini");
+
+  const now = new Date();
+
+  if(t){
+    t.textContent = now.toLocaleTimeString("fr-FR", {
+      hour:"2-digit",
+      minute:"2-digit"
+    });
+  }
+
+  if(d){
+    d.textContent = now.toLocaleDateString("fr-FR", {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric"
+    });
+  }
+
+  if(s){
+    s.textContent = getSaintOfDayDemo(now);
+  }
+}
+
+refreshMiniClock();
+
+if(window.__bociteartClockMiniTimer){
+  clearInterval(window.__bociteartClockMiniTimer);
+}
+window.__bociteartClockMiniTimer = setInterval(refreshMiniClock, 30000);
+
+// ===== DAE =====
+on(daeBtn, "click", ()=>{
+  if(!isFn(window.openModal)) return;
+
+  openModal("Défibrillateur (DAE)", `
+    <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
+
+    <div class="box">
+      <strong>Important :</strong> indication indicative.
+      En cas d’urgence : appeler le 112.
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE</div>
+      <div style="border-radius:14px; overflow:hidden; background:#000;">
+        <iframe
+          width="100%"
+          height="220"
+          src="https://www.youtube.com/embed/3CAmp8yKYEg"
+          loading="lazy"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <button class="choiceBtn" id="daeLocate">📍 Me localiser</button>
+      <button class="choiceBtn" id="daeRoute">➡️ Itinéraire</button>
+    </div>
+  `);
+
+  setTimeout(()=>{
+    const loc = $("daeLocate");
+    const rte = $("daeRoute");
+    if(loc) loc.onclick = ()=> alert("Localisation (démo)");
+    if(rte) rte.onclick = ()=> alert("Itinéraire (démo)");
+  },0);
+});
+
+// ===== HORLOGE GRAND FORMAT =====
+on(clockBtn, "click", ()=>{
+  if(!isFn(window.openModal)) return;
+
+  const now = new Date();
+
+  openModal("Horloge", `
+    <div class="box" style="text-align:center;">
+      <div id="clockTimeLarge" style="font-size:36px;font-weight:900;">00:00:00</div>
+      <div id="clockDateLarge"></div>
+      <div id="clockSaintLarge"></div>
+    </div>
+  `);
+
+  function refreshLargeClock(){
+    const nowLive = new Date();
+
+    const t = $("clockTimeLarge");
+    const d = $("clockDateLarge");
+    const s = $("clockSaintLarge");
+
+    if(t){
+      t.textContent = nowLive.toLocaleTimeString("fr-FR");
+    }
+
+    if(d){
+      d.textContent = nowLive.toLocaleDateString("fr-FR");
+    }
+
+    if(s){
+      s.textContent = getSaintOfDayDemo(nowLive);
+    }
+  }
+
+  refreshLargeClock();
+
+  if(window.__bociteartClockLargeTimer){
+    clearInterval(window.__bociteartClockLargeTimer);
+  }
+
+  window.__bociteartClockLargeTimer = setInterval(refreshLargeClock, 1000);
+});
+      
 const legal = $("legal");
 const openLegalBtn = $("openLegal");
 const closeLegalBtn = $("legalClose");
@@ -7452,6 +7572,108 @@ if(isFn(window.makeKeyboardClickable)){
   if(adminTile) window.makeKeyboardClickable(adminTile, ()=> adminTile.click());
 }
 
+  // ===== CALENDRIER + SAINT DU JOUR =====
+
+function getSaintOfDayDemo(d){
+  const map = {
+    "01-01":"Sainte Marie","01-02":"Saint Basile","01-03":"Sainte Geneviève",
+    "01-04":"Saint Odilon","01-05":"Saint Édouard","01-06":"Épiphanie",
+    "01-07":"Saint Raymond","01-08":"Saint Lucien","01-09":"Sainte Alix",
+    "01-10":"Saint Guillaume","01-11":"Saint Paulin","01-12":"Sainte Tatiana",
+    "01-13":"Sainte Yvette","01-14":"Sainte Nina","01-15":"Saint Rémi",
+    "01-16":"Saint Marcel","01-17":"Sainte Roseline","01-18":"Sainte Prisca",
+    "01-19":"Saint Marius","01-20":"Saint Sébastien","01-21":"Sainte Agnès",
+    "01-22":"Saint Vincent","01-23":"Saint Barnard","01-24":"Saint François de Sales",
+    "01-25":"Conversion de Saint Paul","01-26":"Sainte Paule","01-27":"Sainte Angèle",
+    "01-28":"Saint Thomas d'Aquin","01-29":"Saint Gildas","01-30":"Sainte Martine",
+    "01-31":"Sainte Marcelle"
+    // (on peut compléter après, mais ça suffit pour tester sans bug)
+  };
+
+  const key = String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  return map[key] || "Saint du jour";
+}
+
+function getFrenchHolidayLabelDemo(d){
+  const key = String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  const map = {
+    "01-01":"Jour de l'An",
+    "05-01":"Fête du Travail",
+    "05-08":"Victoire 1945",
+    "07-14":"Fête nationale",
+    "08-15":"Assomption",
+    "11-01":"Toussaint",
+    "11-11":"Armistice 1918",
+    "12-25":"Noël"
+  };
+  return map[key] || "";
+}
+
+function getMonthLabelFr(year, month){
+  return new Date(year, month, 1).toLocaleDateString("fr-FR", {
+    month:"long",
+    year:"numeric"
+  });
+}
+
+function buildMonthlyCalendarHtml(year, month){
+  const today = new Date();
+  const first = new Date(year, month, 1);
+  const last = new Date(year, month + 1, 0);
+
+  let startDay = first.getDay();
+  if(startDay === 0) startDay = 7;
+
+  const daysInMonth = last.getDate();
+  const weekdays = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+
+  let html = `
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px;">
+      ${weekdays.map(x => `
+        <div style="text-align:center;font-size:11px;font-weight:900;color:#666;padding:4px 0;">${x}</div>
+      `).join("")}
+  `;
+
+  for(let i=1;i<startDay;i++){
+    html += `<div></div>`;
+  }
+
+  for(let day=1; day<=daysInMonth; day++){
+    const d = new Date(year, month, day);
+
+    const isToday =
+      d.getFullYear() === today.getFullYear() &&
+      d.getMonth() === today.getMonth() &&
+      d.getDate() === today.getDate();
+
+    const holiday = getFrenchHolidayLabelDemo(d);
+    const saint = getSaintOfDayDemo(d);
+
+    html += `
+      <div style="
+        min-height:72px;
+        border:1px solid rgba(0,0,0,.10);
+        border-radius:12px;
+        padding:6px;
+        background:${isToday ? "#ffe7e7" : "#fff"};
+      ">
+        <div style="
+          font-weight:900;
+          font-size:13px;
+          color:${isToday ? "#b30000" : "#111"};
+        ">${day}</div>
+
+        <div style="font-size:10px;color:#666;">
+          ${holiday ? `<div style="font-weight:900;color:#b30000;">${holiday}</div>` : ""}
+          <div>${saint}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  html += `</div>`;
+  return html;
+}    
 (function initLegalTabs(){
   const legal = $("legal");
   if(!legal) return;
