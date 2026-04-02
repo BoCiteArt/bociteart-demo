@@ -7221,9 +7221,6 @@ if(key === "sport"){
 }
 };
 
-<script>
-(function initBoCiteArtClean(){
-
   const adminTile = $("adminTile");
   on(adminTile, "click", ()=>{
     if(!isFn(window.openModal)) return;
@@ -7340,111 +7337,6 @@ if(key === "sport"){
         rte.onclick = ()=> alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
       }
     },0);
-  });
-
-  // ===== HORLOGE GRAND FORMAT =====
-  on(clockBtn, "click", ()=>{
-    if(!isFn(window.openModal)) return;
-
-    const now = new Date();
-    let currentYear = now.getFullYear();
-    let currentMonth = now.getMonth();
-
-    openModal("Horloge", `
-      <div class="box" style="text-align:center;">
-        <div id="clockTimeLarge" style="font-size:36px;font-weight:900;line-height:1;">00:00:00</div>
-        <div id="clockDateLarge" style="margin-top:8px;font-weight:800;"></div>
-        <div id="clockSaintLarge" style="margin-top:6px;color:#666;font-weight:800;"></div>
-      </div>
-
-      <div class="box" style="margin-top:12px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
-          <button class="choiceBtn" id="clockPrevMonth" type="button" style="background:#fff;">Mois précédent</button>
-          <div id="clockMonthTitle" style="font-weight:900;font-size:16px;text-transform:capitalize;">
-            ${getMonthLabelFr(currentYear, currentMonth)}
-          </div>
-          <button class="choiceBtn" id="clockNextMonth" type="button" style="background:#fff;">Mois suivant</button>
-        </div>
-
-        <div id="clockCalendarWrap"></div>
-      </div>
-    `);
-
-    function refreshLargeClock(){
-      const nowLive = new Date();
-
-      const t = $("clockTimeLarge");
-      const d = $("clockDateLarge");
-      const s = $("clockSaintLarge");
-
-      if(t){
-        t.textContent = nowLive.toLocaleTimeString("fr-FR", {
-          hour:"2-digit",
-          minute:"2-digit",
-          second:"2-digit"
-        });
-      }
-
-      if(d){
-        d.textContent = nowLive.toLocaleDateString("fr-FR", {
-          weekday:"long",
-          day:"2-digit",
-          month:"long",
-          year:"numeric"
-        });
-      }
-
-      if(s){
-        s.textContent = getSaintOfDayDemo(nowLive);
-      }
-    }
-
-    function renderCalendar(){
-      const title = $("clockMonthTitle");
-      const wrap = $("clockCalendarWrap");
-
-      if(title){
-        title.textContent = getMonthLabelFr(currentYear, currentMonth);
-      }
-
-      if(wrap){
-        wrap.innerHTML = buildMonthlyCalendarHtml(currentYear, currentMonth);
-      }
-    }
-
-    const prevBtn = $("clockPrevMonth");
-    const nextBtn = $("clockNextMonth");
-
-    if(prevBtn){
-      prevBtn.onclick = ()=>{
-        currentMonth--;
-        if(currentMonth < 0){
-          currentMonth = 11;
-          currentYear--;
-        }
-        renderCalendar();
-      };
-    }
-
-    if(nextBtn){
-      nextBtn.onclick = ()=>{
-        currentMonth++;
-        if(currentMonth > 11){
-          currentMonth = 0;
-          currentYear++;
-        }
-        renderCalendar();
-      };
-    }
-
-    refreshLargeClock();
-    renderCalendar();
-
-    if(window.__bociteartClockLargeTimer){
-      clearInterval(window.__bociteartClockLargeTimer);
-    }
-
-    window.__bociteartClockLargeTimer = setInterval(refreshLargeClock, 1000);
   });
 
   const legal = $("legal");
