@@ -7221,681 +7221,746 @@ if(key === "sport"){
 }
 };
 
-const adminTile = $("adminTile");
-on(adminTile, "click", ()=>{
-  if(!isFn(window.openModal)) return;
-  openModal("Accès Admin (structure)", `
-    <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
-    <div class="box">
-      <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
-      Les éléments affichés sont une vitrine de structure (démo).
-    </div>
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
-      <li>Activation / blocage / désactivation</li>
-      <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
-      <li>Suivi interne (litiges) : historique, traçabilité</li>
-    </ul>
-  `);
-});
+<script>
+(function initBoCiteArtClean(){
 
-     const clockBtn = $("clockBtn");
+  const adminTile = $("adminTile");
+  on(adminTile, "click", ()=>{
+    if(!isFn(window.openModal)) return;
+    openModal("Accès Admin (structure)", `
+      <div style="font-weight:900;margin-bottom:8px;">Administration (structure)</div>
+      <div class="box">
+        <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
+        Les éléments affichés sont une vitrine de structure (démo).
+      </div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
+        <li>Activation / blocage / désactivation</li>
+        <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
+        <li>Suivi interne (litiges) : historique, traçabilité</li>
+      </ul>
+    `);
+  });
 
-// ===== MINI HORLOGE =====
-function refreshMiniClock(){
-  const t = $("clockTimeMini");
-  const d = $("clockDateMini");
-  const s = $("clockSaintMini");
+  const daeBtn = $("daeBtn");
+  const clockBtn = $("clockBtn");
 
-  const now = new Date();
+  // ===== MINI HORLOGE =====
+  function refreshMiniClock(){
+    const t = $("clockTimeMini");
+    const d = $("clockDateMini");
+    const s = $("clockSaintMini");
 
-  if(t){
-    t.textContent = now.toLocaleTimeString("fr-FR", {
-      hour:"2-digit",
-      minute:"2-digit"
-    });
+    const now = new Date();
+
+    if(t){
+      t.textContent = now.toLocaleTimeString("fr-FR", {
+        hour:"2-digit",
+        minute:"2-digit"
+      });
+    }
+
+    if(d){
+      d.textContent = now.toLocaleDateString("fr-FR", {
+        day:"2-digit",
+        month:"2-digit",
+        year:"numeric"
+      });
+    }
+
+    if(s){
+      s.textContent = getSaintOfDayDemo(now);
+    }
   }
 
-  if(d){
-    d.textContent = now.toLocaleDateString("fr-FR", {
-      day:"2-digit",
-      month:"2-digit",
+  refreshMiniClock();
+
+  if(window.__bociteartClockMiniTimer){
+    clearInterval(window.__bociteartClockMiniTimer);
+  }
+  window.__bociteartClockMiniTimer = setInterval(refreshMiniClock, 30000);
+
+  // ===== DAE =====
+  on(daeBtn, "click", ()=>{
+    if(!isFn(window.openModal)) return;
+
+    openModal("Défibrillateur (DAE)", `
+      <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
+
+      <div class="box">
+        <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
+        Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
+      </div>
+
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
+        <li>Orientation + guidage</li>
+        <li>Rayon local : 1 à 3 km</li>
+        <li>DAE • pharmacie • hôpital</li>
+        <li>Géolocalisation optionnelle (activation utilisateur)</li>
+      </ul>
+
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
+        <div style="border-radius:14px; overflow:hidden; background:#000;">
+          <iframe
+            width="100%"
+            height="220"
+            src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
+            title="Utilisation DAE"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
+      </div>
+
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
+        <div class="muted">
+          Ici, la version officielle affichera la carte + fléchage + une ligne d’itinéraire vers le DAE le plus proche.
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
+          <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
+        </div>
+      </div>
+    `);
+
+    setTimeout(()=>{
+      const loc = $("daeLocate");
+      const rte = $("daeRoute");
+
+      if(loc){
+        loc.onclick = ()=> alert("Démo : demande de localisation (GPS).");
+      }
+
+      if(rte){
+        rte.onclick = ()=> alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
+      }
+    },0);
+  });
+
+  // ===== HORLOGE GRAND FORMAT =====
+  on(clockBtn, "click", ()=>{
+    if(!isFn(window.openModal)) return;
+
+    const now = new Date();
+    let currentYear = now.getFullYear();
+    let currentMonth = now.getMonth();
+
+    openModal("Horloge", `
+      <div class="box" style="text-align:center;">
+        <div id="clockTimeLarge" style="font-size:36px;font-weight:900;line-height:1;">00:00:00</div>
+        <div id="clockDateLarge" style="margin-top:8px;font-weight:800;"></div>
+        <div id="clockSaintLarge" style="margin-top:6px;color:#666;font-weight:800;"></div>
+      </div>
+
+      <div class="box" style="margin-top:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <button class="choiceBtn" id="clockPrevMonth" type="button" style="background:#fff;">Mois précédent</button>
+          <div id="clockMonthTitle" style="font-weight:900;font-size:16px;text-transform:capitalize;">
+            ${getMonthLabelFr(currentYear, currentMonth)}
+          </div>
+          <button class="choiceBtn" id="clockNextMonth" type="button" style="background:#fff;">Mois suivant</button>
+        </div>
+
+        <div id="clockCalendarWrap"></div>
+      </div>
+    `);
+
+    function refreshLargeClock(){
+      const nowLive = new Date();
+
+      const t = $("clockTimeLarge");
+      const d = $("clockDateLarge");
+      const s = $("clockSaintLarge");
+
+      if(t){
+        t.textContent = nowLive.toLocaleTimeString("fr-FR", {
+          hour:"2-digit",
+          minute:"2-digit",
+          second:"2-digit"
+        });
+      }
+
+      if(d){
+        d.textContent = nowLive.toLocaleDateString("fr-FR", {
+          weekday:"long",
+          day:"2-digit",
+          month:"long",
+          year:"numeric"
+        });
+      }
+
+      if(s){
+        s.textContent = getSaintOfDayDemo(nowLive);
+      }
+    }
+
+    function renderCalendar(){
+      const title = $("clockMonthTitle");
+      const wrap = $("clockCalendarWrap");
+
+      if(title){
+        title.textContent = getMonthLabelFr(currentYear, currentMonth);
+      }
+
+      if(wrap){
+        wrap.innerHTML = buildMonthlyCalendarHtml(currentYear, currentMonth);
+      }
+    }
+
+    const prevBtn = $("clockPrevMonth");
+    const nextBtn = $("clockNextMonth");
+
+    if(prevBtn){
+      prevBtn.onclick = ()=>{
+        currentMonth--;
+        if(currentMonth < 0){
+          currentMonth = 11;
+          currentYear--;
+        }
+        renderCalendar();
+      };
+    }
+
+    if(nextBtn){
+      nextBtn.onclick = ()=>{
+        currentMonth++;
+        if(currentMonth > 11){
+          currentMonth = 0;
+          currentYear++;
+        }
+        renderCalendar();
+      };
+    }
+
+    refreshLargeClock();
+    renderCalendar();
+
+    if(window.__bociteartClockLargeTimer){
+      clearInterval(window.__bociteartClockLargeTimer);
+    }
+
+    window.__bociteartClockLargeTimer = setInterval(refreshLargeClock, 1000);
+  });
+
+  const legal = $("legal");
+  const openLegalBtn = $("openLegal");
+  const closeLegalBtn = $("legalClose");
+  const closeLegalX = $("legalX");
+
+  if(typeof window.__lastFocus === "undefined") window.__lastFocus = null;
+
+  const openLegal = ()=>{
+    if(!legal) return;
+    window.__lastFocus = document.activeElement;
+    legal.classList.add("open");
+    if(isFn(window.lockScroll)) window.lockScroll(true);
+  };
+
+  const closeLegal = ()=>{
+    if(!legal) return;
+    legal.classList.remove("open");
+    if(isFn(window.lockScroll)) window.lockScroll(false);
+    if(window.__lastFocus?.focus) window.__lastFocus.focus();
+    window.__lastFocus = null;
+  };
+
+  if(openLegalBtn) openLegalBtn.onclick = openLegal;
+  if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
+  if(closeLegalX) closeLegalX.onclick = closeLegal;
+
+  const ACK_PREFIX = "bociteart_ack_v2_";
+  const ACK_SALT = "BoCiteArt|ack|v2";
+
+  function fnv1a(str){
+    let h = 0x811c9dc5;
+    for(let i=0;i<str.length;i++){
+      h ^= str.charCodeAt(i);
+      h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
+    }
+    return ("00000000" + h.toString(16)).slice(-8);
+  }
+
+  function ackSign(kind, ts){
+    return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
+  }
+
+  function ackGet(kind){
+    const key = ACK_PREFIX + kind;
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) return false;
+      const parts = raw.split("|");
+      if(parts.length !== 3) return false;
+      const ok = parts[0] === "1";
+      const ts = parseInt(parts[1], 10);
+      const sig = parts[2];
+      if(!ok || !Number.isFinite(ts)) return false;
+      return sig === ackSign(kind, ts);
+    }catch(e){
+      return false;
+    }
+  }
+
+  function ackSet(kind){
+    const key = ACK_PREFIX + kind;
+    try{
+      const ts = Date.now();
+      const sig = ackSign(kind, ts);
+      localStorage.setItem(key, `1|${ts}|${sig}`);
+    }catch(e){}
+  }
+
+  function makeLongPress(btn, ringEl, ms, onTrigger){
+    if(!btn || !ringEl) return;
+
+    let raf = null;
+    let start = null;
+    let holding = false;
+    let fired = false;
+
+    const rAttr = ringEl.getAttribute("r");
+    const r = rAttr ? parseFloat(rAttr) : 35;
+    const circ = 2 * Math.PI * r;
+
+    ringEl.style.strokeDasharray = String(circ);
+    ringEl.style.strokeDashoffset = String(circ);
+
+    const stop = ()=>{
+      holding = false;
+      start = null;
+      fired = false;
+      ringEl.style.strokeDashoffset = String(circ);
+      if(raf) cancelAnimationFrame(raf);
+      raf = null;
+    };
+
+    const tick = (ts)=>{
+      if(!holding) return;
+      if(start === null) start = ts;
+
+      const p = Math.min(1, (ts - start) / ms);
+      ringEl.style.strokeDashoffset = String(circ * (1 - p));
+
+      if(p >= 1){
+        if(fired) return;
+        fired = true;
+        stop();
+        onTrigger();
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+
+    btn.addEventListener("pointerdown", (e)=>{
+      e.preventDefault();
+      if(holding) return;
+      holding = true;
+      fired = false;
+      raf = requestAnimationFrame(tick);
+    });
+
+    ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
+      btn.addEventListener(ev, stop);
+    });
+
+    btn.addEventListener("contextmenu", (e)=> e.preventDefault());
+  }
+
+  function emergencyGate(kind, onOk){
+    if(ackGet(kind)){
+      onOk();
+      return;
+    }
+
+    const title = (kind === "112")
+      ? "Urgence 112 — usage responsable"
+      : "Aide 3919 / 119 — usage responsable";
+
+    const body = (kind === "112") ? `
+      <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
+      <div class="box">
+        <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
+        Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
+      </div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
+        <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
+        <li>Appui long = réduction des appels accidentels (sans garantie d’erreur zéro).</li>
+      </ul>
+      <div class="box" style="margin-top:10px;">
+        <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
+          <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
+          J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
+        </label>
+      </div>
+      <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
+    ` : `
+      <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
+      <div class="box">
+        <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
+        Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
+      </div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li><strong>3919</strong> : écoute/orientation (pas une intervention immédiate).</li>
+        <li><strong>119</strong> : enfance en danger.</li>
+        <li><strong>Danger immédiat</strong> : appeler le 112.</li>
+      </ul>
+      <div class="box" style="margin-top:10px;">
+        <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
+          <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
+          J’ai compris : j’utiliserai ces numéros uniquement en cas de situation réelle.
+        </label>
+      </div>
+      <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>
+    `;
+
+    if(isFn(window.openModal)) window.openModal(title, body);
+
+    setTimeout(()=>{
+      const box = $("ackBox");
+      const btn = $("ackBtn");
+      if(!btn) return;
+      btn.onclick = ()=>{
+        if(!box || !box.checked){
+          alert("Veuillez cocher la case pour confirmer que vous avez compris.");
+          return;
+        }
+        ackSet(kind);
+        if(isFn(window.closeModal)) window.closeModal();
+        onOk();
+      };
+    }, 0);
+  }
+
+  makeLongPress(
+    $("btn112"),
+    $("ring112"),
+    1800,
+    ()=> emergencyGate("112", ()=> { if(isFn(window.callPhone)) window.callPhone("112"); })
+  );
+
+  let sosNumber = null;
+  const choice = $("choice");
+
+  const closeChoice = ()=>{
+    if(!choice) return;
+    choice.classList.remove("open");
+    if(isFn(window.lockScroll)) window.lockScroll(false);
+    if(window.__lastFocus?.focus) window.__lastFocus.focus();
+    window.__lastFocus = null;
+  };
+
+  on($("choiceClose"), "click", closeChoice);
+  on($("choiceX"), "click", closeChoice);
+
+  document.querySelectorAll("#choice .choiceBtn[data-pick]").forEach((b)=>{
+    b.addEventListener("click", ()=>{
+      sosNumber = b.getAttribute("data-pick");
+      const lab = $("sosLabel");
+      if(lab) lab.textContent = sosNumber;
+      closeChoice();
+    });
+  });
+
+  makeLongPress(
+    $("btnSos"),
+    $("ringSos"),
+    2000,
+    ()=>{
+      if(!choice) return;
+      if(!sosNumber){
+        window.__lastFocus = document.activeElement;
+        choice.classList.add("open");
+        if(isFn(window.lockScroll)) window.lockScroll(true);
+        return;
+      }
+      emergencyGate(sosNumber, ()=> { if(isFn(window.callPhone)) window.callPhone(sosNumber); });
+    }
+  );
+
+  if(isFn(window.makeKeyboardClickable)){
+    window.makeKeyboardClickable($("ticker"), window.openTicker);
+
+    document.querySelectorAll(".tile[data-open]").forEach((el)=>{
+      window.makeKeyboardClickable(el, ()=> el.click());
+    });
+
+    if(adminTile) window.makeKeyboardClickable(adminTile, ()=> adminTile.click());
+  }
+
+  // ===== CALENDRIER + SAINT DU JOUR =====
+
+  function getSaintOfDayDemo(d){
+    const map = {
+
+      // JANVIER
+      "01-01":"Sainte Marie","01-02":"Saint Basile","01-03":"Sainte Geneviève",
+      "01-04":"Saint Odilon","01-05":"Saint Édouard","01-06":"Épiphanie",
+      "01-07":"Saint Raymond","01-08":"Saint Lucien","01-09":"Sainte Alix",
+      "01-10":"Saint Guillaume","01-11":"Saint Paulin","01-12":"Sainte Tatiana",
+      "01-13":"Sainte Yvette","01-14":"Sainte Nina","01-15":"Saint Rémi",
+      "01-16":"Saint Marcel","01-17":"Sainte Roseline","01-18":"Sainte Prisca",
+      "01-19":"Saint Marius","01-20":"Saint Sébastien","01-21":"Sainte Agnès",
+      "01-22":"Saint Vincent","01-23":"Saint Barnard","01-24":"Saint François de Sales",
+      "01-25":"Conversion de Saint Paul","01-26":"Sainte Paule","01-27":"Sainte Angèle",
+      "01-28":"Saint Thomas d'Aquin","01-29":"Saint Gildas","01-30":"Sainte Martine",
+      "01-31":"Sainte Marcelle",
+
+      // FÉVRIER
+      "02-01":"Sainte Ella","02-02":"Présentation du Seigneur","02-03":"Saint Blaise",
+      "02-04":"Sainte Véronique","02-05":"Sainte Agathe","02-06":"Saint Gaston",
+      "02-07":"Sainte Eugénie","02-08":"Sainte Jacqueline","02-09":"Sainte Apolline",
+      "02-10":"Saint Arnaud","02-11":"Notre-Dame de Lourdes","02-12":"Saint Félix",
+      "02-13":"Sainte Béatrice","02-14":"Saint Valentin","02-15":"Saint Claude",
+      "02-16":"Sainte Julienne","02-17":"Saint Alexis","02-18":"Sainte Bernadette",
+      "02-19":"Saint Gabin","02-20":"Sainte Aimée","02-21":"Saint Damien",
+      "02-22":"Saint Pierre Damien","02-23":"Saint Lazare","02-24":"Saint Modeste",
+      "02-25":"Saint Roméo","02-26":"Saint Nestor","02-27":"Sainte Honorine",
+      "02-28":"Saint Romain",
+
+      // MARS
+      "03-01":"Saint Aubin","03-02":"Saint Charles le Bon","03-03":"Saint Guénolé",
+      "03-04":"Saint Casimir","03-05":"Sainte Olive","03-06":"Sainte Colette",
+      "03-07":"Sainte Félicité","03-08":"Saint Jean de Dieu","03-09":"Sainte Françoise",
+      "03-10":"Saint Vivien","03-11":"Saint Rosine","03-12":"Sainte Justine",
+      "03-13":"Saint Rodrigue","03-14":"Sainte Mathilde","03-15":"Sainte Louise",
+      "03-16":"Sainte Bénédicte","03-17":"Saint Patrick","03-18":"Saint Cyrille",
+      "03-19":"Saint Joseph","03-20":"Saint Herbert","03-21":"Sainte Clémence",
+      "03-22":"Sainte Léa","03-23":"Saint Victorien","03-24":"Sainte Catherine de Suède",
+      "03-25":"Annonciation","03-26":"Sainte Larissa","03-27":"Saint Habib",
+      "03-28":"Saint Gontran","03-29":"Sainte Gladys","03-30":"Saint Amédée",
+      "03-31":"Saint Benjamin",
+
+      // AVRIL
+      "04-01":"Saint Hugues","04-02":"Sainte Sandrine","04-03":"Saint Richard",
+      "04-04":"Saint Isidore","04-05":"Sainte Irène","04-06":"Saint Marcellin",
+      "04-07":"Saint Jean-Baptiste de La Salle","04-08":"Sainte Julie","04-09":"Saint Gautier",
+      "04-10":"Saint Fulbert","04-11":"Saint Stanislas","04-12":"Saint Jules",
+      "04-13":"Sainte Ida","04-14":"Saint Maxime","04-15":"Saint Paterne",
+      "04-16":"Saint Benoît-Joseph","04-17":"Saint Anicet","04-18":"Saint Parfait",
+      "04-19":"Sainte Emma","04-20":"Sainte Odette","04-21":"Saint Anselme",
+      "04-22":"Saint Alexandre","04-23":"Saint Georges","04-24":"Saint Fidèle",
+      "04-25":"Saint Marc","04-26":"Sainte Alida","04-27":"Sainte Zita",
+      "04-28":"Sainte Valérie","04-29":"Sainte Catherine de Sienne","04-30":"Saint Robert",
+
+      // MAI
+      "05-01":"Fête du Travail","05-02":"Saint Boris","05-03":"Saint Philippe et Saint Jacques",
+      "05-04":"Saint Sylvain","05-05":"Sainte Judith","05-06":"Sainte Prudence",
+      "05-07":"Sainte Gisèle","05-08":"Victoire 1945","05-09":"Saint Pacôme",
+      "05-10":"Sainte Solange","05-11":"Sainte Estelle","05-12":"Saint Achille",
+      "05-13":"Sainte Rolande","05-14":"Saint Matthias","05-15":"Sainte Denise",
+      "05-16":"Saint Honoré","05-17":"Saint Pascal","05-18":"Saint Éric",
+      "05-19":"Saint Yves","05-20":"Saint Bernardin","05-21":"Saint Constantin",
+      "05-22":"Saint Émile","05-23":"Saint Didier","05-24":"Saint Donatien",
+      "05-25":"Sainte Sophie","05-26":"Saint Bérenger","05-27":"Saint Augustin de Cantorbéry",
+      "05-28":"Saint Germain","05-29":"Saint Aymard","05-30":"Saint Ferdinand",
+      "05-31":"Visitation",
+
+      // JUIN
+      "06-01":"Saint Justin","06-02":"Saint Blandine","06-03":"Saint Kévin",
+      "06-04":"Sainte Clotilde","06-05":"Saint Igor","06-06":"Saint Norbert",
+      "06-07":"Saint Gilbert","06-08":"Saint Médard","06-09":"Sainte Diane",
+      "06-10":"Saint Landry","06-11":"Saint Barnabé","06-12":"Saint Guy",
+      "06-13":"Saint Antoine de Padoue","06-14":"Saint Élisée","06-15":"Sainte Germaine",
+      "06-16":"Saint Jean-François Régis","06-17":"Saint Hervé","06-18":"Saint Léonce",
+      "06-19":"Saint Romuald","06-20":"Saint Silvère","06-21":"Saint Rodolphe",
+      "06-22":"Saint Alban","06-23":"Sainte Audrey","06-24":"Saint Jean-Baptiste",
+      "06-25":"Saint Prosper","06-26":"Saint Anthelme","06-27":"Saint Fernand",
+      "06-28":"Saint Irénée","06-29":"Saint Pierre et Saint Paul","06-30":"Saint Martial",
+
+      // JUILLET
+      "07-01":"Saint Thierry","07-02":"Saint Martinien","07-03":"Saint Thomas",
+      "07-04":"Saint Florent","07-05":"Saint Antoine-Marie","07-06":"Sainte Mariette",
+      "07-07":"Saint Raoul","07-08":"Saint Thibault","07-09":"Sainte Amandine",
+      "07-10":"Saint Ulrich","07-11":"Saint Benoît","07-12":"Saint Olivier",
+      "07-13":"Saint Henri","07-14":"Fête nationale","07-15":"Saint Donald",
+      "07-16":"Notre-Dame du Mont-Carmel","07-17":"Sainte Charlotte","07-18":"Saint Frédéric",
+      "07-19":"Saint Arsène","07-20":"Sainte Marina","07-21":"Saint Victor",
+      "07-22":"Sainte Marie-Madeleine","07-23":"Sainte Brigitte","07-24":"Sainte Christine",
+      "07-25":"Saint Jacques","07-26":"Sainte Anne","07-27":"Sainte Nathalie",
+      "07-28":"Saint Samson","07-29":"Sainte Marthe","07-30":"Sainte Juliette",
+      "07-31":"Saint Ignace de Loyola",
+
+      // AOÛT
+      "08-01":"Saint Alphonse","08-02":"Saint Julien Eymard","08-03":"Sainte Lydie",
+      "08-04":"Saint Jean-Marie Vianney","08-05":"Saint Abel","08-06":"Transfiguration",
+      "08-07":"Saint Gaétan","08-08":"Saint Dominique","08-09":"Sainte Amour",
+      "08-10":"Saint Laurent","08-11":"Sainte Claire","08-12":"Sainte Clarisse",
+      "08-13":"Saint Hippolyte","08-14":"Saint Evrard","08-15":"Assomption",
+      "08-16":"Saint Armel","08-17":"Sainte Hyacinthe","08-18":"Sainte Hélène",
+      "08-19":"Saint Jean Eudes","08-20":"Saint Bernard","08-21":"Saint Christophe",
+      "08-22":"Saint Fabrice","08-23":"Sainte Rose","08-24":"Saint Barthélemy",
+      "08-25":"Saint Louis","08-26":"Sainte Natacha","08-27":"Sainte Monique",
+      "08-28":"Saint Augustin","08-29":"Sainte Sabine","08-30":"Saint Fiacre",
+      "08-31":"Saint Aristide",
+
+      // SEPTEMBRE
+      "09-01":"Saint Gilles","09-02":"Sainte Ingrid","09-03":"Saint Grégoire",
+      "09-04":"Sainte Rosalie","09-05":"Sainte Raïssa","09-06":"Saint Bertrand",
+      "09-07":"Sainte Reine","09-08":"Nativité de Marie","09-09":"Saint Alain",
+      "09-10":"Sainte Inès","09-11":"Saint Adelphe","09-12":"Saint Apollinaire",
+      "09-13":"Saint Aimé","09-14":"La Croix glorieuse","09-15":"Notre-Dame des Douleurs",
+      "09-16":"Sainte Édith","09-17":"Saint Renaud","09-18":"Sainte Nadège",
+      "09-19":"Sainte Émilie","09-20":"Saint Davy","09-21":"Saint Matthieu",
+      "09-22":"Saint Maurice","09-23":"Saint Constant","09-24":"Sainte Thècle",
+      "09-25":"Saint Hermann","09-26":"Saint Côme et Damien","09-27":"Saint Vincent de Paul",
+      "09-28":"Saint Venceslas","09-29":"Saint Michel","09-30":"Saint Jérôme",
+
+      // OCTOBRE
+      "10-01":"Sainte Thérèse de l'Enfant-Jésus","10-02":"Saint Léger","10-03":"Saint Gérard",
+      "10-04":"Saint François d'Assise","10-05":"Sainte Fleur","10-06":"Saint Bruno",
+      "10-07":"Saint Serge","10-08":"Sainte Pélagie","10-09":"Saint Denis",
+      "10-10":"Saint Ghislain","10-11":"Saint Firmin","10-12":"Saint Wilfried",
+      "10-13":"Saint Géraud","10-14":"Saint Juste","10-15":"Sainte Thérèse d'Avila",
+      "10-16":"Sainte Edwige","10-17":"Saint Baudouin","10-18":"Saint Luc",
+      "10-19":"Saint René","10-20":"Sainte Adeline","10-21":"Sainte Céline",
+      "10-22":"Sainte Élodie","10-23":"Saint Jean de Capistran","10-24":"Saint Florentin",
+      "10-25":"Saint Crépin","10-26":"Saint Dimitri","10-27":"Sainte Émeline",
+      "10-28":"Saint Simon et Saint Jude","10-29":"Saint Narcisse","10-30":"Bienvenue",
+      "10-31":"Saint Quentin",
+
+      // NOVEMBRE
+      "11-01":"Toussaint","11-02":"Défunts","11-03":"Saint Hubert",
+      "11-04":"Saint Charles Borromée","11-05":"Sainte Sylvie","11-06":"Sainte Bertille",
+      "11-07":"Sainte Carine","11-08":"Saint Geoffroy","11-09":"Dédicace du Latran",
+      "11-10":"Saint Léon","11-11":"Saint Martin","11-12":"Saint Christian",
+      "11-13":"Saint Brice","11-14":"Saint Sidoine","11-15":"Saint Albert",
+      "11-16":"Sainte Marguerite","11-17":"Sainte Élisabeth","11-18":"Sainte Aude",
+      "11-19":"Saint Tanguy","11-20":"Saint Edmond","11-21":"Présentation de Marie",
+      "11-22":"Sainte Cécile","11-23":"Saint Clément","11-24":"Sainte Flora",
+      "11-25":"Sainte Catherine","11-26":"Sainte Delphine","11-27":"Saint Séverin",
+      "11-28":"Saint Jacques de la Marche","11-29":"Saint Saturnin","11-30":"Saint André",
+
+      // DÉCEMBRE
+      "12-01":"Sainte Florence","12-02":"Sainte Viviane","12-03":"Saint François Xavier",
+      "12-04":"Sainte Barbara","12-05":"Saint Gérald","12-06":"Saint Nicolas",
+      "12-07":"Saint Ambroise","12-08":"Immaculée Conception","12-09":"Sainte Léocadie",
+      "12-10":"Notre-Dame de Lorette","12-11":"Saint Daniel","12-12":"Sainte Jeanne-Françoise",
+      "12-13":"Sainte Lucie","12-14":"Saint Odile","12-15":"Sainte Ninon",
+      "12-16":"Sainte Alice","12-17":"Saint Gaël","12-18":"Saint Gatien",
+      "12-19":"Saint Urbain","12-20":"Saint Théophile","12-21":"Saint Pierre Canisius",
+      "12-22":"Sainte Françoise-Xavière","12-23":"Saint Armand","12-24":"Sainte Adèle",
+      "12-25":"Noël","12-26":"Saint Étienne","12-27":"Saint Jean",
+      "12-28":"Saints Innocents","12-29":"Saint David","12-30":"Saint Roger",
+      "12-31":"Saint Sylvestre"
+    };
+
+    const key = String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+    return map[key] || "Saint du jour";
+  }
+
+  function getFrenchHolidayLabelDemo(d){
+    const key = String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+    const map = {
+      "01-01":"Jour de l'An",
+      "05-01":"Fête du Travail",
+      "05-08":"Victoire 1945",
+      "07-14":"Fête nationale",
+      "08-15":"Assomption",
+      "11-01":"Toussaint",
+      "11-11":"Armistice 1918",
+      "12-25":"Noël"
+    };
+    return map[key] || "";
+  }
+
+  function getMonthLabelFr(year, month){
+    return new Date(year, month, 1).toLocaleDateString("fr-FR", {
+      month:"long",
       year:"numeric"
     });
   }
 
-  if(s){
-    s.textContent = getSaintOfDayDemo(now);
-  }
-}
-
-refreshMiniClock();
-
-if(window.__bociteartClockMiniTimer){
-  clearInterval(window.__bociteartClockMiniTimer);
-}
-window.__bociteartClockMiniTimer = setInterval(refreshMiniClock, 30000);
-
-// ===== DAE =====
-on(daeBtn, "click", ()=>{
-  if(!isFn(window.openModal)) return;
-
-  openModal("Défibrillateur (DAE)", `
-    <div style="font-weight:900;margin-bottom:8px;">Carte plein écran (structure)</div>
-
-    <div class="box">
-      <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
-      Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
-    </div>
-
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
-      <li>Orientation + guidage</li>
-      <li>Rayon local : 1 à 3 km</li>
-      <li>DAE • pharmacie • hôpital</li>
-      <li>Géolocalisation optionnelle (activation utilisateur)</li>
-    </ul>
-
-    <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
-      <div style="border-radius:14px; overflow:hidden; background:#000;">
-        <iframe
-          width="100%"
-          height="220"
-          src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
-          title="Utilisation DAE"
-          loading="lazy"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen>
-        </iframe>
-      </div>
-      <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication / gestes essentiels.</div>
-    </div>
-
-    <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
-      <div class="muted">
-        Ici, la version officielle affichera la carte + fléchage + une ligne d’itinéraire vers le DAE le plus proche.
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
-        <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
-      </div>
-    </div>
-  `);
-
-  setTimeout(()=>{
-    const loc = $("daeLocate");
-    const rte = $("daeRoute");
-    if(loc) loc.onclick = ()=> alert("Démo : demande de localisation (GPS).");
-    if(rte) rte.onclick = ()=> alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
-  },0);
-});
-      
-  setTimeout(()=>{
-    const loc = $("daeLocate");
-    const rte = $("daeRoute");
-    if(loc) loc.onclick = ()=> alert("Localisation (démo)");
-    if(rte) rte.onclick = ()=> alert("Itinéraire (démo)");
-  },0);
-});
-
-// ===== HORLOGE GRAND FORMAT =====
-on(clockBtn, "click", ()=>{
-  if(!isFn(window.openModal)) return;
-
-  const now = new Date();
-
-  openModal("Horloge", `
-    <div class="box" style="text-align:center;">
-      <div id="clockTimeLarge" style="font-size:36px;font-weight:900;">00:00:00</div>
-      <div id="clockDateLarge"></div>
-      <div id="clockSaintLarge"></div>
-    </div>
-  `);
-
-  function refreshLargeClock(){
-    const nowLive = new Date();
-
-    const t = $("clockTimeLarge");
-    const d = $("clockDateLarge");
-    const s = $("clockSaintLarge");
-
-    if(t){
-      t.textContent = nowLive.toLocaleTimeString("fr-FR");
-    }
-
-    if(d){
-      d.textContent = nowLive.toLocaleDateString("fr-FR");
-    }
-
-    if(s){
-      s.textContent = getSaintOfDayDemo(nowLive);
-    }
-  }
-
-  refreshLargeClock();
-
-  if(window.__bociteartClockLargeTimer){
-    clearInterval(window.__bociteartClockLargeTimer);
-  }
-
-  window.__bociteartClockLargeTimer = setInterval(refreshLargeClock, 1000);
-});
-      
-const legal = $("legal");
-const openLegalBtn = $("openLegal");
-const closeLegalBtn = $("legalClose");
-const closeLegalX = $("legalX");
-
-if(typeof window.__lastFocus === "undefined") window.__lastFocus = null;
-
-const openLegal = ()=>{
-  if(!legal) return;
-  window.__lastFocus = document.activeElement;
-  legal.classList.add("open");
-  if(isFn(window.lockScroll)) window.lockScroll(true);
-};
-
-const closeLegal = ()=>{
-  if(!legal) return;
-  legal.classList.remove("open");
-  if(isFn(window.lockScroll)) window.lockScroll(false);
-  if(window.__lastFocus?.focus) window.__lastFocus.focus();
-  window.__lastFocus = null;
-};
-
-if(openLegalBtn) openLegalBtn.onclick = openLegal;
-if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
-if(closeLegalX) closeLegalX.onclick = closeLegal;
-
-const ACK_PREFIX = "bociteart_ack_v2_";
-const ACK_SALT = "BoCiteArt|ack|v2";
-
-function fnv1a(str){
-  let h = 0x811c9dc5;
-  for(let i=0;i<str.length;i++){
-    h ^= str.charCodeAt(i);
-    h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
-  }
-  return ("00000000" + h.toString(16)).slice(-8);
-}
-
-function ackSign(kind, ts){
-  return fnv1a(`${ACK_SALT}|${kind}|${ts}`);
-}
-
-function ackGet(kind){
-  const key = ACK_PREFIX + kind;
-  try{
-    const raw = localStorage.getItem(key);
-    if(!raw) return false;
-    const parts = raw.split("|");
-    if(parts.length !== 3) return false;
-    const ok = parts[0] === "1";
-    const ts = parseInt(parts[1], 10);
-    const sig = parts[2];
-    if(!ok || !Number.isFinite(ts)) return false;
-    return sig === ackSign(kind, ts);
-  }catch(e){
-    return false;
-  }
-}
-
-function ackSet(kind){
-  const key = ACK_PREFIX + kind;
-  try{
-    const ts = Date.now();
-    const sig = ackSign(kind, ts);
-    localStorage.setItem(key, `1|${ts}|${sig}`);
-  }catch(e){}
-}
-
-function makeLongPress(btn, ringEl, ms, onTrigger){
-  if(!btn || !ringEl) return;
-
-  let raf = null;
-  let start = null;
-  let holding = false;
-  let fired = false;
-
-  const rAttr = ringEl.getAttribute("r");
-  const r = rAttr ? parseFloat(rAttr) : 35;
-  const circ = 2 * Math.PI * r;
-
-  ringEl.style.strokeDasharray = String(circ);
-  ringEl.style.strokeDashoffset = String(circ);
-
-  const stop = ()=>{
-    holding = false;
-    start = null;
-    fired = false;
-    ringEl.style.strokeDashoffset = String(circ);
-    if(raf) cancelAnimationFrame(raf);
-    raf = null;
-  };
-
-  const tick = (ts)=>{
-    if(!holding) return;
-    if(start === null) start = ts;
-
-    const p = Math.min(1, (ts - start) / ms);
-    ringEl.style.strokeDashoffset = String(circ * (1 - p));
-
-    if(p >= 1){
-      if(fired) return;
-      fired = true;
-      stop();
-      onTrigger();
-      return;
-    }
-    raf = requestAnimationFrame(tick);
-  };
-
-  btn.addEventListener("pointerdown", (e)=>{
-    e.preventDefault();
-    if(holding) return;
-    holding = true;
-    fired = false;
-    raf = requestAnimationFrame(tick);
-  });
-
-  ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
-    btn.addEventListener(ev, stop);
-  });
-
-  btn.addEventListener("contextmenu", (e)=> e.preventDefault());
-}
-
-function emergencyGate(kind, onOk){
-  if(ackGet(kind)){
-    onOk();
-    return;
-  }
-
-  const title = (kind === "112")
-    ? "Urgence 112 — usage responsable"
-    : "Aide 3919 / 119 — usage responsable";
-
-  const body = (kind === "112") ? `
-    <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
-    <div class="box">
-      <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
-      Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
-    </div>
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
-      <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
-      <li>Appui long = réduction des appels accidentels (sans garantie d’erreur zéro).</li>
-    </ul>
-    <div class="box" style="margin-top:10px;">
-      <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
-        <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-        J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
-      </label>
-    </div>
-    <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
-  ` : `
-    <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
-    <div class="box">
-      <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
-      Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
-    </div>
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li><strong>3919</strong> : écoute/orientation (pas une intervention immédiate).</li>
-      <li><strong>119</strong> : enfance en danger.</li>
-      <li><strong>Danger immédiat</strong> : appeler le 112.</li>
-    </ul>
-    <div class="box" style="margin-top:10px;">
-      <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
-        <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-        J’ai compris : j’utiliserai ces numéros uniquement en cas de situation réelle.
-      </label>
-    </div>
-    <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>
-  `;
-
-  if(isFn(window.openModal)) window.openModal(title, body);
-
-  setTimeout(()=>{
-    const box = $("ackBox");
-    const btn = $("ackBtn");
-    if(!btn) return;
-    btn.onclick = ()=>{
-      if(!box || !box.checked){
-        alert("Veuillez cocher la case pour confirmer que vous avez compris.");
-        return;
-      }
-      ackSet(kind);
-      if(isFn(window.closeModal)) window.closeModal();
-      onOk();
-    };
-  }, 0);
-}
-
-makeLongPress(
-  $("btn112"),
-  $("ring112"),
-  1800,
-  ()=> emergencyGate("112", ()=> { if(isFn(window.callPhone)) window.callPhone("112"); })
-);
-
-let sosNumber = null;
-const choice = $("choice");
-
-const closeChoice = ()=>{
-  if(!choice) return;
-  choice.classList.remove("open");
-  if(isFn(window.lockScroll)) window.lockScroll(false);
-  if(window.__lastFocus?.focus) window.__lastFocus.focus();
-  window.__lastFocus = null;
-};
-
-on($("choiceClose"), "click", closeChoice);
-on($("choiceX"), "click", closeChoice);
-
-document.querySelectorAll("#choice .choiceBtn[data-pick]").forEach((b)=>{
-  b.addEventListener("click", ()=>{
-    sosNumber = b.getAttribute("data-pick");
-    const lab = $("sosLabel");
-    if(lab) lab.textContent = sosNumber;
-    closeChoice();
-  });
-});
-
-makeLongPress(
-  $("btnSos"),
-  $("ringSos"),
-  2000,
-  ()=>{
-    if(!choice) return;
-    if(!sosNumber){
-      window.__lastFocus = document.activeElement;
-      choice.classList.add("open");
-      if(isFn(window.lockScroll)) window.lockScroll(true);
-      return;
-    }
-    emergencyGate(sosNumber, ()=> { if(isFn(window.callPhone)) window.callPhone(sosNumber); });
-  }
-);
-
-if(isFn(window.makeKeyboardClickable)){
-  window.makeKeyboardClickable($("ticker"), window.openTicker);
-
-  document.querySelectorAll(".tile[data-open]").forEach((el)=>{
-    window.makeKeyboardClickable(el, ()=> el.click());
-  });
-
-  if(adminTile) window.makeKeyboardClickable(adminTile, ()=> adminTile.click());
-}
-
-  // ===== CALENDRIER + SAINT DU JOUR =====
-
-function getSaintOfDayDemo(d){
-  const map = {
-
-    // JANVIER
-    "01-01":"Sainte Marie","01-02":"Saint Basile","01-03":"Sainte Geneviève",
-    "01-04":"Saint Odilon","01-05":"Saint Édouard","01-06":"Épiphanie",
-    "01-07":"Saint Raymond","01-08":"Saint Lucien","01-09":"Sainte Alix",
-    "01-10":"Saint Guillaume","01-11":"Saint Paulin","01-12":"Sainte Tatiana",
-    "01-13":"Sainte Yvette","01-14":"Sainte Nina","01-15":"Saint Rémi",
-    "01-16":"Saint Marcel","01-17":"Sainte Roseline","01-18":"Sainte Prisca",
-    "01-19":"Saint Marius","01-20":"Saint Sébastien","01-21":"Sainte Agnès",
-    "01-22":"Saint Vincent","01-23":"Saint Barnard","01-24":"Saint François de Sales",
-    "01-25":"Conversion de Saint Paul","01-26":"Sainte Paule","01-27":"Sainte Angèle",
-    "01-28":"Saint Thomas d'Aquin","01-29":"Saint Gildas","01-30":"Sainte Martine",
-    "01-31":"Sainte Marcelle",
-
-    // FÉVRIER
-    "02-01":"Sainte Ella","02-02":"Présentation du Seigneur","02-03":"Saint Blaise",
-    "02-04":"Sainte Véronique","02-05":"Sainte Agathe","02-06":"Saint Gaston",
-    "02-07":"Sainte Eugénie","02-08":"Sainte Jacqueline","02-09":"Sainte Apolline",
-    "02-10":"Saint Arnaud","02-11":"Notre-Dame de Lourdes","02-12":"Saint Félix",
-    "02-13":"Sainte Béatrice","02-14":"Saint Valentin","02-15":"Saint Claude",
-    "02-16":"Sainte Julienne","02-17":"Saint Alexis","02-18":"Sainte Bernadette",
-    "02-19":"Saint Gabin","02-20":"Sainte Aimée","02-21":"Saint Damien",
-    "02-22":"Saint Pierre Damien","02-23":"Saint Lazare","02-24":"Saint Modeste",
-    "02-25":"Saint Roméo","02-26":"Saint Nestor","02-27":"Sainte Honorine",
-    "02-28":"Saint Romain",
-
-    // MARS
-    "03-01":"Saint Aubin","03-02":"Saint Charles le Bon","03-03":"Saint Guénolé",
-    "03-04":"Saint Casimir","03-05":"Sainte Olive","03-06":"Sainte Colette",
-    "03-07":"Sainte Félicité","03-08":"Saint Jean de Dieu","03-09":"Sainte Françoise",
-    "03-10":"Saint Vivien","03-11":"Saint Rosine","03-12":"Sainte Justine",
-    "03-13":"Saint Rodrigue","03-14":"Sainte Mathilde","03-15":"Sainte Louise",
-    "03-16":"Sainte Bénédicte","03-17":"Saint Patrick","03-18":"Saint Cyrille",
-    "03-19":"Saint Joseph","03-20":"Saint Herbert","03-21":"Sainte Clémence",
-    "03-22":"Sainte Léa","03-23":"Saint Victorien","03-24":"Sainte Catherine de Suède",
-    "03-25":"Annonciation","03-26":"Sainte Larissa","03-27":"Saint Habib",
-    "03-28":"Saint Gontran","03-29":"Sainte Gladys","03-30":"Saint Amédée",
-    "03-31":"Saint Benjamin",
-
-    // AVRIL
-    "04-01":"Saint Hugues","04-02":"Sainte Sandrine","04-03":"Saint Richard",
-    "04-04":"Saint Isidore","04-05":"Sainte Irène","04-06":"Saint Marcellin",
-    "04-07":"Saint Jean-Baptiste de La Salle","04-08":"Sainte Julie","04-09":"Saint Gautier",
-    "04-10":"Saint Fulbert","04-11":"Saint Stanislas","04-12":"Saint Jules",
-    "04-13":"Sainte Ida","04-14":"Saint Maxime","04-15":"Saint Paterne",
-    "04-16":"Saint Benoît-Joseph","04-17":"Saint Anicet","04-18":"Saint Parfait",
-    "04-19":"Sainte Emma","04-20":"Sainte Odette","04-21":"Saint Anselme",
-    "04-22":"Saint Alexandre","04-23":"Saint Georges","04-24":"Saint Fidèle",
-    "04-25":"Saint Marc","04-26":"Sainte Alida","04-27":"Sainte Zita",
-    "04-28":"Sainte Valérie","04-29":"Sainte Catherine de Sienne","04-30":"Saint Robert",
-
-    // MAI
-    "05-01":"Fête du Travail","05-02":"Saint Boris","05-03":"Saint Philippe et Saint Jacques",
-    "05-04":"Saint Sylvain","05-05":"Sainte Judith","05-06":"Sainte Prudence",
-    "05-07":"Sainte Gisèle","05-08":"Victoire 1945","05-09":"Saint Pacôme",
-    "05-10":"Sainte Solange","05-11":"Sainte Estelle","05-12":"Saint Achille",
-    "05-13":"Sainte Rolande","05-14":"Saint Matthias","05-15":"Sainte Denise",
-    "05-16":"Saint Honoré","05-17":"Saint Pascal","05-18":"Saint Éric",
-    "05-19":"Saint Yves","05-20":"Saint Bernardin","05-21":"Saint Constantin",
-    "05-22":"Saint Émile","05-23":"Saint Didier","05-24":"Saint Donatien",
-    "05-25":"Sainte Sophie","05-26":"Saint Bérenger","05-27":"Saint Augustin de Cantorbéry",
-    "05-28":"Saint Germain","05-29":"Saint Aymard","05-30":"Saint Ferdinand",
-    "05-31":"Visitation",
-
-    // JUIN
-    "06-01":"Saint Justin","06-02":"Saint Blandine","06-03":"Saint Kévin",
-    "06-04":"Sainte Clotilde","06-05":"Saint Igor","06-06":"Saint Norbert",
-    "06-07":"Saint Gilbert","06-08":"Saint Médard","06-09":"Sainte Diane",
-    "06-10":"Saint Landry","06-11":"Saint Barnabé","06-12":"Saint Guy",
-    "06-13":"Saint Antoine de Padoue","06-14":"Saint Élisée","06-15":"Sainte Germaine",
-    "06-16":"Saint Jean-François Régis","06-17":"Saint Hervé","06-18":"Saint Léonce",
-    "06-19":"Saint Romuald","06-20":"Saint Silvère","06-21":"Saint Rodolphe",
-    "06-22":"Saint Alban","06-23":"Sainte Audrey","06-24":"Saint Jean-Baptiste",
-    "06-25":"Saint Prosper","06-26":"Saint Anthelme","06-27":"Saint Fernand",
-    "06-28":"Saint Irénée","06-29":"Saint Pierre et Saint Paul","06-30":"Saint Martial",
-
-    // JUILLET
-    "07-01":"Saint Thierry","07-02":"Saint Martinien","07-03":"Saint Thomas",
-    "07-04":"Saint Florent","07-05":"Saint Antoine-Marie","07-06":"Sainte Mariette",
-    "07-07":"Saint Raoul","07-08":"Saint Thibault","07-09":"Sainte Amandine",
-    "07-10":"Saint Ulrich","07-11":"Saint Benoît","07-12":"Saint Olivier",
-    "07-13":"Saint Henri","07-14":"Fête nationale","07-15":"Saint Donald",
-    "07-16":"Notre-Dame du Mont-Carmel","07-17":"Sainte Charlotte","07-18":"Saint Frédéric",
-    "07-19":"Saint Arsène","07-20":"Sainte Marina","07-21":"Saint Victor",
-    "07-22":"Sainte Marie-Madeleine","07-23":"Sainte Brigitte","07-24":"Sainte Christine",
-    "07-25":"Saint Jacques","07-26":"Sainte Anne","07-27":"Sainte Nathalie",
-    "07-28":"Saint Samson","07-29":"Sainte Marthe","07-30":"Sainte Juliette",
-    "07-31":"Saint Ignace de Loyola",
-
-    // AOÛT
-    "08-01":"Saint Alphonse","08-02":"Saint Julien Eymard","08-03":"Sainte Lydie",
-    "08-04":"Saint Jean-Marie Vianney","08-05":"Saint Abel","08-06":"Transfiguration",
-    "08-07":"Saint Gaétan","08-08":"Saint Dominique","08-09":"Sainte Amour",
-    "08-10":"Saint Laurent","08-11":"Sainte Claire","08-12":"Sainte Clarisse",
-    "08-13":"Saint Hippolyte","08-14":"Saint Evrard","08-15":"Assomption",
-    "08-16":"Saint Armel","08-17":"Sainte Hyacinthe","08-18":"Sainte Hélène",
-    "08-19":"Saint Jean Eudes","08-20":"Saint Bernard","08-21":"Saint Christophe",
-    "08-22":"Saint Fabrice","08-23":"Sainte Rose","08-24":"Saint Barthélemy",
-    "08-25":"Saint Louis","08-26":"Sainte Natacha","08-27":"Sainte Monique",
-    "08-28":"Saint Augustin","08-29":"Sainte Sabine","08-30":"Saint Fiacre",
-    "08-31":"Saint Aristide",
-
-    // SEPTEMBRE
-    "09-01":"Saint Gilles","09-02":"Sainte Ingrid","09-03":"Saint Grégoire",
-    "09-04":"Sainte Rosalie","09-05":"Sainte Raïssa","09-06":"Saint Bertrand",
-    "09-07":"Sainte Reine","09-08":"Nativité de Marie","09-09":"Saint Alain",
-    "09-10":"Sainte Inès","09-11":"Saint Adelphe","09-12":"Saint Apollinaire",
-    "09-13":"Saint Aimé","09-14":"La Croix glorieuse","09-15":"Notre-Dame des Douleurs",
-    "09-16":"Sainte Édith","09-17":"Saint Renaud","09-18":"Sainte Nadège",
-    "09-19":"Sainte Émilie","09-20":"Saint Davy","09-21":"Saint Matthieu",
-    "09-22":"Saint Maurice","09-23":"Saint Constant","09-24":"Sainte Thècle",
-    "09-25":"Saint Hermann","09-26":"Saint Côme et Damien","09-27":"Saint Vincent de Paul",
-    "09-28":"Saint Venceslas","09-29":"Saint Michel","09-30":"Saint Jérôme",
-
-    // OCTOBRE
-    "10-01":"Sainte Thérèse de l'Enfant-Jésus","10-02":"Saint Léger","10-03":"Saint Gérard",
-    "10-04":"Saint François d'Assise","10-05":"Sainte Fleur","10-06":"Saint Bruno",
-    "10-07":"Saint Serge","10-08":"Sainte Pélagie","10-09":"Saint Denis",
-    "10-10":"Saint Ghislain","10-11":"Saint Firmin","10-12":"Saint Wilfried",
-    "10-13":"Saint Géraud","10-14":"Saint Juste","10-15":"Sainte Thérèse d'Avila",
-    "10-16":"Sainte Edwige","10-17":"Saint Baudouin","10-18":"Saint Luc",
-    "10-19":"Saint René","10-20":"Sainte Adeline","10-21":"Sainte Céline",
-    "10-22":"Sainte Élodie","10-23":"Saint Jean de Capistran","10-24":"Saint Florentin",
-    "10-25":"Saint Crépin","10-26":"Saint Dimitri","10-27":"Sainte Émeline",
-    "10-28":"Saint Simon et Saint Jude","10-29":"Saint Narcisse","10-30":"Bienvenue",
-    "10-31":"Saint Quentin",
-
-    // NOVEMBRE
-    "11-01":"Toussaint","11-02":"Défunts","11-03":"Saint Hubert",
-    "11-04":"Saint Charles Borromée","11-05":"Sainte Sylvie","11-06":"Sainte Bertille",
-    "11-07":"Sainte Carine","11-08":"Saint Geoffroy","11-09":"Dédicace du Latran",
-    "11-10":"Saint Léon","11-11":"Saint Martin","11-12":"Saint Christian",
-    "11-13":"Saint Brice","11-14":"Saint Sidoine","11-15":"Saint Albert",
-    "11-16":"Sainte Marguerite","11-17":"Sainte Élisabeth","11-18":"Sainte Aude",
-    "11-19":"Saint Tanguy","11-20":"Saint Edmond","11-21":"Présentation de Marie",
-    "11-22":"Sainte Cécile","11-23":"Saint Clément","11-24":"Sainte Flora",
-    "11-25":"Sainte Catherine","11-26":"Sainte Delphine","11-27":"Saint Séverin",
-    "11-28":"Saint Jacques de la Marche","11-29":"Saint Saturnin","11-30":"Saint André",
-
-    // DÉCEMBRE
-    "12-01":"Sainte Florence","12-02":"Sainte Viviane","12-03":"Saint François Xavier",
-    "12-04":"Sainte Barbara","12-05":"Saint Gérald","12-06":"Saint Nicolas",
-    "12-07":"Saint Ambroise","12-08":"Immaculée Conception","12-09":"Sainte Léocadie",
-    "12-10":"Notre-Dame de Lorette","12-11":"Saint Daniel","12-12":"Sainte Jeanne-Françoise",
-    "12-13":"Sainte Lucie","12-14":"Saint Odile","12-15":"Sainte Ninon",
-    "12-16":"Sainte Alice","12-17":"Saint Gaël","12-18":"Saint Gatien",
-    "12-19":"Saint Urbain","12-20":"Saint Théophile","12-21":"Saint Pierre Canisius",
-    "12-22":"Sainte Françoise-Xavière","12-23":"Saint Armand","12-24":"Sainte Adèle",
-    "12-25":"Noël","12-26":"Saint Étienne","12-27":"Saint Jean",
-    "12-28":"Saints Innocents","12-29":"Saint David","12-30":"Saint Roger",
-    "12-31":"Saint Sylvestre"
-  };
-
-  const key = String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
-  return map[key] || "Saint du jour";
-}
-
-function getFrenchHolidayLabelDemo(d){
-  const key = String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
-  const map = {
-    "01-01":"Jour de l'An",
-    "05-01":"Fête du Travail",
-    "05-08":"Victoire 1945",
-    "07-14":"Fête nationale",
-    "08-15":"Assomption",
-    "11-01":"Toussaint",
-    "11-11":"Armistice 1918",
-    "12-25":"Noël"
-  };
-  return map[key] || "";
-}
-
-function getMonthLabelFr(year, month){
-  return new Date(year, month, 1).toLocaleDateString("fr-FR", {
-    month:"long",
-    year:"numeric"
-  });
-}
-
-function buildMonthlyCalendarHtml(year, month){
-  const today = new Date();
-  const first = new Date(year, month, 1);
-  const last = new Date(year, month + 1, 0);
-
-  let startDay = first.getDay();
-  if(startDay === 0) startDay = 7;
-
-  const daysInMonth = last.getDate();
-  const weekdays = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
-
-  let html = `
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px;">
-      ${weekdays.map(x => `
-        <div style="text-align:center;font-size:11px;font-weight:900;color:#666;padding:4px 0;">${x}</div>
-      `).join("")}
-  `;
-
-  for(let i=1;i<startDay;i++){
-    html += `<div></div>`;
-  }
-
-  for(let day=1; day<=daysInMonth; day++){
-    const d = new Date(year, month, day);
-
-    const isToday =
-      d.getFullYear() === today.getFullYear() &&
-      d.getMonth() === today.getMonth() &&
-      d.getDate() === today.getDate();
-
-    const holiday = getFrenchHolidayLabelDemo(d);
-    const saint = getSaintOfDayDemo(d);
-
-    html += `
-      <div style="
-        min-height:72px;
-        border:1px solid rgba(0,0,0,.10);
-        border-radius:12px;
-        padding:6px;
-        background:${isToday ? "#ffe7e7" : "#fff"};
-      ">
-        <div style="
-          font-weight:900;
-          font-size:13px;
-          color:${isToday ? "#b30000" : "#111"};
-        ">${day}</div>
-
-        <div style="font-size:10px;color:#666;">
-          ${holiday ? `<div style="font-weight:900;color:#b30000;">${holiday}</div>` : ""}
-          <div>${saint}</div>
-        </div>
-      </div>
+  function buildMonthlyCalendarHtml(year, month){
+    const today = new Date();
+    const first = new Date(year, month, 1);
+    const last = new Date(year, month + 1, 0);
+
+    let startDay = first.getDay();
+    if(startDay === 0) startDay = 7;
+
+    const daysInMonth = last.getDate();
+    const weekdays = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+
+    let html = `
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px;">
+        ${weekdays.map(x => `
+          <div style="text-align:center;font-size:11px;font-weight:900;color:#666;padding:4px 0;">${x}</div>
+        `).join("")}
     `;
+
+    for(let i=1;i<startDay;i++){
+      html += `<div></div>`;
+    }
+
+    for(let day=1; day<=daysInMonth; day++){
+      const d = new Date(year, month, day);
+
+      const isToday =
+        d.getFullYear() === today.getFullYear() &&
+        d.getMonth() === today.getMonth() &&
+        d.getDate() === today.getDate();
+
+      const holiday = getFrenchHolidayLabelDemo(d);
+      const saint = getSaintOfDayDemo(d);
+
+      html += `
+        <div style="
+          min-height:72px;
+          border:1px solid rgba(0,0,0,.10);
+          border-radius:12px;
+          padding:6px;
+          background:${isToday ? "#ffe7e7" : "#fff"};
+        ">
+          <div style="
+            font-weight:900;
+            font-size:13px;
+            color:${isToday ? "#b30000" : "#111"};
+          ">${day}</div>
+
+          <div style="font-size:10px;color:#666;">
+            ${holiday ? `<div style="font-weight:900;color:#b30000;">${holiday}</div>` : ""}
+            <div>${saint}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    html += `</div>`;
+    return html;
   }
 
-  html += `</div>`;
-  return html;
-}    
-(function initLegalTabs(){
-  const legal = $("legal");
-  if(!legal) return;
+  (function initLegalTabs(){
+    const legal = $("legal");
+    if(!legal) return;
 
-  const tabs = legal.querySelectorAll(".tab");
-  if(!tabs || !tabs.length) return;
+    const tabs = legal.querySelectorAll(".tab");
+    if(!tabs || !tabs.length) return;
 
-  const panels = {
-    rgpd: $("p-rgpd"),
-    cgu: $("p-cgu"),
-    cgv: $("p-cgv")
-  };
+    const panels = {
+      rgpd: $("p-rgpd"),
+      cgu: $("p-cgu"),
+      cgv: $("p-cgv")
+    };
 
-  window.showTab = function(name){
-    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
-    Object.keys(panels).forEach((k)=>{
-      if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
+    window.showTab = function(name){
+      tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+      Object.keys(panels).forEach((k)=>{
+        if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
+      });
+    };
+
+    tabs.forEach((t)=>{
+      t.addEventListener("click", ()=> showTab(t.dataset.tab));
     });
-  };
 
-  tabs.forEach((t)=>{
-    t.addEventListener("click", ()=> showTab(t.dataset.tab));
-  });
-
-  showTab("rgpd");
-})();
+    showTab("rgpd");
+  })();
 
 })();
 </script>
