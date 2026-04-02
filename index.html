@@ -3215,27 +3215,26 @@ out center tags;
             }
           }
 
-          if(key === "oeuvres"){
-            openModal("Œuvres", `
-              <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (structure)</div>
-              <div class="box">
-                <strong>Cadre :</strong> contenus illustratifs en démo. Les informations
-                (lieux, orientation) dépendent du téléphone et des sources disponibles.
-              </div>
-              <ul style="margin:8px 0 0 18px;font-weight:800;">
-                <li>Carte des fresques (quartiers)</li>
-                <li>Fiche œuvre : artiste • mécène • remerciements</li>
-                <li>Scan QR / BLE à proximité</li>
-                <li>Audio : voix féminine douce (lecture des contenus)</li>
-                <li>Mode visite : guidage simple</li>
-                <li>Reconnaissance : bocitecoins selon règles locales</li>
-              </ul>
-              <div class="muted" style="margin-top:10px;">
-              Avant 16h : 1 réservation maximum par commerçant pour le jour même. Après 16h : les places restantes du jour restent ouvertes jusqu’au complet.
-             </div>
-            `);
-            return;
-          }
+        if(key === "oeuvres"){
+  openModal("Œuvres", `
+    <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques (structure)</div>
+    
+    <div class="box">
+      <strong>Cadre :</strong> contenus illustratifs en démo. Les informations
+      (lieux, orientation) dépendent du téléphone et des sources disponibles.
+    </div>
+
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li>Carte des fresques (quartiers)</li>
+      <li>Fiche œuvre : artiste • mécène • remerciements</li>
+      <li>Scan QR / BLE à proximité</li>
+      <li>Audio : voix féminine douce (lecture des contenus)</li>
+      <li>Mode visite : guidage simple</li>
+      <li>Reconnaissance : bocitecoins selon règles locales</li>
+    </ul>
+  `);
+  return;
+}
 
 if(key === "ecole"){
   openModal("École", `
