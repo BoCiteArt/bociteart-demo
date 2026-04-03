@@ -7530,6 +7530,41 @@ function buildMonthlyCalendarHtml(year, month){
   return html;
 }
 
+// ===== MINI HORLOGE =====
+function refreshMiniClock(){
+  const t = $("clockTimeMini");
+  const d = $("clockDateMini");
+  const s = $("clockSaintMini");
+
+  const now = new Date();
+
+  if(t){
+    t.textContent = now.toLocaleTimeString("fr-FR", {
+      hour:"2-digit",
+      minute:"2-digit"
+    });
+  }
+
+  if(d){
+    d.textContent = now.toLocaleDateString("fr-FR", {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric"
+    });
+  }
+
+  if(s){
+    s.textContent = getSaintOfDay(now);
+  }
+}
+
+refreshMiniClock();
+
+if(window.__bociteartClockMiniTimer){
+  clearInterval(window.__bociteartClockMiniTimer);
+}
+window.__bociteartClockMiniTimer = setInterval(refreshMiniClock, 30000);
+
 async function fetchWeatherForCoords(lat, lon){
   const url =
     "https://api.open-meteo.com/v1/forecast"
@@ -7612,6 +7647,65 @@ async function refreshMiniWeather(){
 }
 
 refreshMiniWeather();
+
+// ===== DAE =====
+on(daeBtn, "click", ()=>{
+  if(!isFn(window.openModal)) return;
+
+  openModal("Défibrillateur (DAE)", `
+    <div style="font-weight:900;margin-bottom:8px;">Carte des défibrillateurs</div>
+
+    <div class="box">
+      <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
+      Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
+    </div>
+
+    <ul style="margin:8px 0 0 18px;font-weight:800;">
+      <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
+      <li>Orientation + guidage</li>
+      <li>Rayon local : 1 à 3 km</li>
+      <li>DAE • pharmacie • hôpital</li>
+      <li>Géolocalisation optionnelle (activation utilisateur)</li>
+    </ul>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
+      <div style="border-radius:14px; overflow:hidden; background:#000;">
+        <iframe
+          width="100%"
+          height="220"
+          src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
+          title="Utilisation DAE"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication des gestes essentiels.</div>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
+        <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
+      </div>
+    </div>
+  `);
+
+  setTimeout(()=>{
+    const loc = $("daeLocate");
+    const rte = $("daeRoute");
+
+    if(loc){
+      loc.onclick = ()=> alert("Démo : demande de localisation (GPS).");
+    }
+
+    if(rte){
+      rte.onclick = ()=> alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
+    }
+  },0);
+});
 
 // ===== HORLOGE + CALENDRIER + MÉTÉO =====
 on(clockBtn, "click", ()=>{
@@ -7864,6 +7958,30 @@ function ackSet(kind){
 }
 
 function makeLongPress(btn, ringEl, ms, onTrigger){
+  if(!btn || !ringEl) return;
+
+  let raf = null;
+  let start = null;
+  let holding = false;
+  let fired = false;
+
+  const rAttr = ringEl.getAttribute("r");
+  const r = rAttr ? parseFloat(rAttr) : 35;
+  const circ = 2 * Math.PI * r;
+
+  ringEl.style.strokeDasharray = String(circ);
+  ringEl.style.strokeDashoffset = String(circ);
+
+  const stop = ()=>{
+    holding = false;
+    start = null;
+    fired = false;
+    ringEl.style.strokeDashoffset = String(circ);
+    if(raf) cancelAnimationFrame(raf);
+    raf = null;
+  };
+
+  const tick = (ts)=>{
     if(!holding) return;
     if(start === null) start = ts;
 
@@ -7888,7 +8006,7 @@ function makeLongPress(btn, ringEl, ms, onTrigger){
     raf = requestAnimationFrame(tick);
   });
 
-  ["pointerup","pointerleave","pointercancel"].forEach(ev=>{
+  ["pointerup","pointerleave","pointercancel"].forEach((ev)=>{
     btn.addEventListener(ev, stop);
   });
 
@@ -7945,20 +8063,20 @@ function emergencyGate(kind, onOk){
 
   if(isFn(window.openModal)) window.openModal(title, body);
 
-setTimeout(()=>{
-  const box = $("ackBox");
-  const btn = $("ackBtn");
-  if(!btn) return;
-  btn.onclick = ()=>{
-    if(!box || !box.checked){
-      alert("Veuillez cocher la case pour confirmer que vous avez compris.");
-      return;
-    }
-    ackSet(kind);
-    if(isFn(window.closeModal)) window.closeModal();
-    onOk();
-  };
-}, 0);
+  setTimeout(()=>{
+    const box = $("ackBox");
+    const btn = $("ackBtn");
+    if(!btn) return;
+    btn.onclick = ()=>{
+      if(!box || !box.checked){
+        alert("Veuillez cocher la case pour confirmer que vous avez compris.");
+        return;
+      }
+      ackSet(kind);
+      if(isFn(window.closeModal)) window.closeModal();
+      onOk();
+    };
+  }, 0);
 }
 
 makeLongPress(
@@ -8049,144 +8167,14 @@ if(isFn(window.makeKeyboardClickable)){
   };
 
   tabs.forEach((t)=>{
-    t.addEventListener("click", ()=>{
-      window.showTab(t.dataset.tab);
-    });
+    t.addEventListener("click", ()=> window.showTab(t.dataset.tab));
   });
 
   window.showTab("rgpd");
 })();
-
-})();
-</script>
-
-<script>
+    <script>
 (function () {
-  const consentement = document.getElementById("consentement");
-  const checkRgpd = document.getElementById("check-rgpd");
-  const checkCgu = document.getElementById("check-cgu");
-  const checkCgv = document.getElementById("check-cgv");
-  const btnAcces = document.getElementById("btn-acces");
-
-  const btnLireRgpd = document.getElementById("btn-lire-rgpd");
-  const btnLireCgu = document.getElementById("btn-lire-cgu");
-  const btnLireCgv = document.getElementById("btn-lire-cgv");
-
-  const openLegalBtn = document.getElementById("openLegal");
-  const closeLegalBtn = document.getElementById("legalClose");
-  const closeLegalX = document.getElementById("legalX");
-  const legal = document.getElementById("legal");
-
-  let retourConsentementApresLecture = false;
-
-  function majBouton() {
-    const ok =
-      !!checkRgpd && checkRgpd.checked &&
-      !!checkCgu && checkCgu.checked &&
-      !!checkCgv && checkCgv.checked;
-
-    if (btnAcces) {
-      btnAcces.disabled = !ok;
-      btnAcces.style.opacity = ok ? "1" : "0.5";
-      btnAcces.style.cursor = ok ? "pointer" : "not-allowed";
-    }
-  }
-
-  function ouvrirLecture(tabName) {
-    retourConsentementApresLecture = true;
-
-    if (consentement) {
-      consentement.style.display = "none";
-    }
-
-    if (openLegalBtn) {
-      openLegalBtn.click();
-    } else if (legal) {
-      legal.classList.add("open");
-    }
-
-    if (typeof window.showTab === "function") {
-      window.showTab(tabName);
-    } else {
-      const tabBtn = document.querySelector('.tab[data-tab="' + tabName + '"]');
-      if (tabBtn) {
-        tabBtn.click();
-      }
-    }
-  }
-
-  function retourConsentement() {
-    if (retourConsentementApresLecture && consentement) {
-      consentement.style.display = "block";
-      retourConsentementApresLecture = false;
-    }
-  }
-
-  if (btnLireRgpd) {
-    btnLireRgpd.addEventListener("click", function () {
-      ouvrirLecture("rgpd");
-    });
-  }
-
-  if (btnLireCgu) {
-    btnLireCgu.addEventListener("click", function () {
-      ouvrirLecture("cgu");
-    });
-  }
-
-  if (btnLireCgv) {
-    btnLireCgv.addEventListener("click", function () {
-      ouvrirLecture("cgv");
-    });
-  }
-
-  if (closeLegalBtn) {
-    closeLegalBtn.addEventListener("click", retourConsentement);
-  }
-
-  if (closeLegalX) {
-    closeLegalX.addEventListener("click", retourConsentement);
-  }
-
-  if (checkRgpd) {
-    checkRgpd.addEventListener("change", majBouton);
-    checkRgpd.addEventListener("click", majBouton);
-  }
-
-  if (checkCgu) {
-    checkCgu.addEventListener("change", majBouton);
-    checkCgu.addEventListener("click", majBouton);
-  }
-
-  if (checkCgv) {
-    checkCgv.addEventListener("change", majBouton);
-    checkCgv.addEventListener("click", majBouton);
-  }
-
-  if (btnAcces) {
-    btnAcces.addEventListener("click", function () {
-      const ok =
-        !!checkRgpd && checkRgpd.checked &&
-        !!checkCgu && checkCgu.checked &&
-        !!checkCgv && checkCgv.checked;
-
-      if (ok) {
-        if (consentement) {
-          consentement.style.display = "none";
-        }
-
-        if (typeof ouvrirInscription === "function") {
-          ouvrirInscription();
-        } else {
-          alert("Fonction ouvrirInscription() introuvable.");
-        }
-      } else {
-        alert("Vous devez cocher les 3 cases avant d’accéder à l’application.");
-      }
-    });
-  }
-
-  majBouton();
+  ...
 })();
 </script>
 </body>
