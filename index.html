@@ -7945,20 +7945,20 @@ function emergencyGate(kind, onOk){
 
   if(isFn(window.openModal)) window.openModal(title, body);
 
-  setTimeout(()=>{
-    const box = $("ackBox");
-    const btn = $("ackBtn");
-    if(!btn) return;
-    btn.onclick = ()=>{
-      if(!box || !box.checked){
-        alert("Veuillez cocher la case pour confirmer que vous avez compris.");
-        return;
-      }
-      ackSet(kind);
-      if(isFn(window.closeModal)) window.closeModal();
-      onOk();
-    };
-  }, 0);
+setTimeout(()=>{
+  const box = $("ackBox");
+  const btn = $("ackBtn");
+  if(!btn) return;
+  btn.onclick = ()=>{
+    if(!box || !box.checked){
+      alert("Veuillez cocher la case pour confirmer que vous avez compris.");
+      return;
+    }
+    ackSet(kind);
+    if(isFn(window.closeModal)) window.closeModal();
+    onOk();
+  };
+}, 0);
 }
 
 makeLongPress(
@@ -8037,20 +8037,30 @@ if(isFn(window.makeKeyboardClickable)){
   };
 
   window.showTab = function(name){
-    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+    tabs.forEach((t)=>{
+      t.classList.toggle("active", t.dataset.tab === name);
+    });
+
     Object.keys(panels).forEach((k)=>{
-      if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
+      if(panels[k]){
+        panels[k].style.display = (k === name) ? "block" : "none";
+      }
     });
   };
 
   tabs.forEach((t)=>{
-    t.addEventListener("click", ()=> window.showTab(t.dataset.tab));
+    t.addEventListener("click", ()=>{
+      window.showTab(t.dataset.tab);
+    });
   });
 
   window.showTab("rgpd");
 })();
 
-  <script>
+})();
+</script>
+
+<script>
 (function () {
   const consentement = document.getElementById("consentement");
   const checkRgpd = document.getElementById("check-rgpd");
@@ -8071,9 +8081,9 @@ if(isFn(window.makeKeyboardClickable)){
 
   function majBouton() {
     const ok =
-      checkRgpd && checkRgpd.checked &&
-      checkCgu && checkCgu.checked &&
-      checkCgv && checkCgv.checked;
+      !!checkRgpd && checkRgpd.checked &&
+      !!checkCgu && checkCgu.checked &&
+      !!checkCgv && checkCgv.checked;
 
     if (btnAcces) {
       btnAcces.disabled = !ok;
@@ -8113,21 +8123,21 @@ if(isFn(window.makeKeyboardClickable)){
   }
 
   if (btnLireRgpd) {
-    btnLireRgpd.onclick = function () {
+    btnLireRgpd.addEventListener("click", function () {
       ouvrirLecture("rgpd");
-    };
+    });
   }
 
   if (btnLireCgu) {
-    btnLireCgu.onclick = function () {
+    btnLireCgu.addEventListener("click", function () {
       ouvrirLecture("cgu");
-    };
+    });
   }
 
   if (btnLireCgv) {
-    btnLireCgv.onclick = function () {
+    btnLireCgv.addEventListener("click", function () {
       ouvrirLecture("cgv");
-    };
+    });
   }
 
   if (closeLegalBtn) {
@@ -8154,16 +8164,17 @@ if(isFn(window.makeKeyboardClickable)){
   }
 
   if (btnAcces) {
-    btnAcces.onclick = function () {
+    btnAcces.addEventListener("click", function () {
       const ok =
-        checkRgpd && checkRgpd.checked &&
-        checkCgu && checkCgu.checked &&
-        checkCgv && checkCgv.checked;
+        !!checkRgpd && checkRgpd.checked &&
+        !!checkCgu && checkCgu.checked &&
+        !!checkCgv && checkCgv.checked;
 
       if (ok) {
         if (consentement) {
           consentement.style.display = "none";
         }
+
         if (typeof ouvrirInscription === "function") {
           ouvrirInscription();
         } else {
@@ -8172,7 +8183,7 @@ if(isFn(window.makeKeyboardClickable)){
       } else {
         alert("Vous devez cocher les 3 cases avant d’accéder à l’application.");
       }
-    };
+    });
   }
 
   majBouton();
