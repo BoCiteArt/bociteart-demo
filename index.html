@@ -8025,6 +8025,132 @@ if(isFn(window.makeKeyboardClickable)){
   window.showTab("rgpd");
 })();
 
+  <script>
+(function () {
+  const consentement = document.getElementById("consentement");
+  const checkRgpd = document.getElementById("check-rgpd");
+  const checkCgu = document.getElementById("check-cgu");
+  const checkCgv = document.getElementById("check-cgv");
+  const btnAcces = document.getElementById("btn-acces");
+
+  const btnLireRgpd = document.getElementById("btn-lire-rgpd");
+  const btnLireCgu = document.getElementById("btn-lire-cgu");
+  const btnLireCgv = document.getElementById("btn-lire-cgv");
+
+  const openLegalBtn = document.getElementById("openLegal");
+  const closeLegalBtn = document.getElementById("legalClose");
+  const closeLegalX = document.getElementById("legalX");
+  const legal = document.getElementById("legal");
+
+  let retourConsentementApresLecture = false;
+
+  function majBouton() {
+    const ok =
+      checkRgpd && checkRgpd.checked &&
+      checkCgu && checkCgu.checked &&
+      checkCgv && checkCgv.checked;
+
+    if (btnAcces) {
+      btnAcces.disabled = !ok;
+      btnAcces.style.opacity = ok ? "1" : "0.5";
+      btnAcces.style.cursor = ok ? "pointer" : "not-allowed";
+    }
+  }
+
+  function ouvrirLecture(tabName) {
+    retourConsentementApresLecture = true;
+
+    if (consentement) {
+      consentement.style.display = "none";
+    }
+
+    if (openLegalBtn) {
+      openLegalBtn.click();
+    } else if (legal) {
+      legal.classList.add("open");
+    }
+
+    if (typeof window.showTab === "function") {
+      window.showTab(tabName);
+    } else {
+      const tabBtn = document.querySelector('.tab[data-tab="' + tabName + '"]');
+      if (tabBtn) {
+        tabBtn.click();
+      }
+    }
+  }
+
+  function retourConsentement() {
+    if (retourConsentementApresLecture && consentement) {
+      consentement.style.display = "block";
+      retourConsentementApresLecture = false;
+    }
+  }
+
+  if (btnLireRgpd) {
+    btnLireRgpd.onclick = function () {
+      ouvrirLecture("rgpd");
+    };
+  }
+
+  if (btnLireCgu) {
+    btnLireCgu.onclick = function () {
+      ouvrirLecture("cgu");
+    };
+  }
+
+  if (btnLireCgv) {
+    btnLireCgv.onclick = function () {
+      ouvrirLecture("cgv");
+    };
+  }
+
+  if (closeLegalBtn) {
+    closeLegalBtn.addEventListener("click", retourConsentement);
+  }
+
+  if (closeLegalX) {
+    closeLegalX.addEventListener("click", retourConsentement);
+  }
+
+  if (checkRgpd) {
+    checkRgpd.addEventListener("change", majBouton);
+    checkRgpd.addEventListener("click", majBouton);
+  }
+
+  if (checkCgu) {
+    checkCgu.addEventListener("change", majBouton);
+    checkCgu.addEventListener("click", majBouton);
+  }
+
+  if (checkCgv) {
+    checkCgv.addEventListener("change", majBouton);
+    checkCgv.addEventListener("click", majBouton);
+  }
+
+  if (btnAcces) {
+    btnAcces.onclick = function () {
+      const ok =
+        checkRgpd && checkRgpd.checked &&
+        checkCgu && checkCgu.checked &&
+        checkCgv && checkCgv.checked;
+
+      if (ok) {
+        if (consentement) {
+          consentement.style.display = "none";
+        }
+        if (typeof ouvrirInscription === "function") {
+          ouvrirInscription();
+        } else {
+          alert("Fonction ouvrirInscription() introuvable.");
+        }
+      } else {
+        alert("Vous devez cocher les 3 cases avant d’accéder à l’application.");
+      }
+    };
+  }
+
+  majBouton();
 })();
 </script>
 </body>
