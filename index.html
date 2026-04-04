@@ -5037,15 +5037,28 @@ if(key === "ecole"){
       };
     }
 
-    if(schoolResetBtn){
-      schoolResetBtn.onclick = ()=>{
-        if(confirm("Réinitialiser le mot du jour (démo) ?")){
-          if(schoolWordInput) schoolWordInput.value = "";
-          refreshSchoolDayState();
-          alert("Saisie réinitialisée.");
-        }
-      };
+  if(schoolResetBtn){
+  schoolResetBtn.onclick = ()=>{
+    if(confirm("Réinitialiser le mot du jour (démo) ?")){
+      const cls = getCurrentSchoolClass();
+      const db = schoolLoad();
+
+      if(schoolWordInput) schoolWordInput.value = "";
+
+      clearSavedWordForClass(cls);
+
+      const prog = getSchoolProgress(db, cls);
+      prog.lastValidationDay = "";
+
+      schoolSave(db);
+
+      refreshSchoolWordDisplay();
+      refreshSchoolDayState();
+
+      alert("Saisie réinitialisée. Vous pouvez écrire une nouvelle phrase et la valider.");
     }
+  };
+}
 
     if(btnWordSave2){
       btnWordSave2.onclick = ()=>{
