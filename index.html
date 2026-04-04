@@ -8167,24 +8167,15 @@ if(isFn(window.makeKeyboardClickable)){
   };
 
   tabs.forEach((t)=>{
-    t.addEventListener("click", ()=> window.showTab(t.dataset.tab));
+    t.addEventListener("click", ()=>{
+      window.showTab(t.dataset.tab);
+    });
   });
 
-    window.showTab = function(name){
-      tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
-      Object.keys(panels).forEach((k)=>{
-        if(panels[k]) panels[k].style.display = (k === name) ? "block" : "none";
-      });
-    };
-
-    tabs.forEach((t)=>{
-      t.addEventListener("click", ()=> showTab(t.dataset.tab));
-    });µ
-
-       showTab("rgpd");
-  })();
-
-<script>
+  window.showTab("rgpd");
+})();
+</script>
+  <script>
 (function () {
   const consentement = document.getElementById("consentement");
   const checkRgpd = document.getElementById("check-rgpd");
@@ -8229,9 +8220,13 @@ if(isFn(window.makeKeyboardClickable)){
       legal.classList.add("open");
     }
 
-    const tabBtn = document.querySelector('.tab[data-tab="' + tabName + '"]');
-    if (tabBtn) {
-      tabBtn.click();
+    if (typeof window.showTab === "function") {
+      window.showTab(tabName);
+    } else {
+      const tabBtn = document.querySelector('.tab[data-tab="' + tabName + '"]');
+      if (tabBtn) {
+        tabBtn.click();
+      }
     }
   }
 
@@ -8269,39 +8264,44 @@ if(isFn(window.makeKeyboardClickable)){
   }
 
   if (checkRgpd) {
-    checkRgpd.onchange = majBouton;
-    checkRgpd.onclick = majBouton;
+    checkRgpd.addEventListener("change", majBouton);
+    checkRgpd.addEventListener("click", majBouton);
   }
 
   if (checkCgu) {
-    checkCgu.onchange = majBouton;
-    checkCgu.onclick = majBouton;
+    checkCgu.addEventListener("change", majBouton);
+    checkCgu.addEventListener("click", majBouton);
   }
 
   if (checkCgv) {
-    checkCgv.onchange = majBouton;
-    checkCgv.onclick = majBouton;
+    checkCgv.addEventListener("change", majBouton);
+    checkCgv.addEventListener("click", majBouton);
   }
 
   if (btnAcces) {
     btnAcces.onclick = function () {
-      if (
+      const ok =
         checkRgpd && checkRgpd.checked &&
         checkCgu && checkCgu.checked &&
-        checkCgv && checkCgv.checked
-      ) {
+        checkCgv && checkCgv.checked;
+
+      if (ok) {
         if (consentement) {
           consentement.style.display = "none";
         }
+
         if (typeof ouvrirInscription === "function") {
           ouvrirInscription();
+        } else {
+          alert("Fonction ouvrirInscription() introuvable.");
         }
       } else {
         alert("Vous devez cocher les 3 cases avant d’accéder à l’application.");
       }
     };
   }
-majBouton();
+
+  majBouton();
 })();
 </script>
 </body>
