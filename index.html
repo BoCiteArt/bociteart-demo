@@ -3215,11 +3215,13 @@ out center tags;
             }
           }
 
-          if(key === "oeuvres"){
+         if(key === "oeuvres"){
 
   const STORAGE_KEY = "boc_oeuvres_unlock_v2";
   const LAST_KEY = "boc_oeuvres_last_v2";
   const AUDIO_BASE = "audio/oeuvres/";
+  const LOCAL_OEUVRE_AUDIO_KEY = "boc_oeuvres_local_audio_v1";
+  const LOCAL_ADMIN_PASSWORD = "bociteart-demo";
 
   const oeuvres = [
     {
@@ -3506,6 +3508,161 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
     }
   }
 
+  let oeuvreMediaRecorder = null;
+  let oeuvreAudioChunks = [];
+
+  function loadLocalOeuvreAudioDb(){
+    try{
+      return JSON.parse(localStorage.getItem(LOCAL_OEUVRE_AUDIO_KEY) || "{}");
+    }catch(e){
+      return {};
+    }
+  }
+
+  function saveLocalOeuvreAudioDb(db){
+    try{
+      localStorage.setItem(LOCAL_OEUVRE_AUDIO_KEY, JSON.stringify(db));
+    }catch(e){}
+  }
+
+  function getLocalAudioForOeuvre(id){
+    const db = loadLocalOeuvreAudioDb();
+    return db[id] || null;
+  }
+
+  function saveLocalAudioForOeuvre(id, payload){
+    const db = loadLocalOeuvreAudioDb();
+    db[id] = payload;
+    saveLocalOeuvreAudioDb(db);
+  }
+
+  function deleteLocalAudioForOeuvre(id){
+    const db = loadLocalOeuvreAudioDb();
+    if(db[id]) delete db[id];
+    saveLocalOeuvreAudioDb(db);
+  }
+
+  function hasLocalAudioForOeuvre(id){
+    const rec = getLocalAudioForOeuvre(id);
+    return !!(rec && rec.audioData);
+  }
+
+  function playPreferredAudioForOeuvre(id, fallbackUrl){
+    const rec = getLocalAudioForOeuvre(id);
+
+    if(rec && rec.audioData){
+      try{
+        let a = document.getElementById("boc-pro-audio-player");
+        if(!a){
+          a = document.createElement("audio");
+          a.id = "boc-pro-audio-player";
+          a.style.display = "none";
+          document.body.appendChild(a);
+        }
+        a.pause();
+        a.src = rec.audioData;
+        a.currentTime = 0;
+        a.play().catch(function(){
+          alert("Audio local introuvable. Le texte reste disponible.");
+        });
+        return;
+      }catch(e){
+        alert("Impossible de lancer l’audio local. Le texte reste disponible.");
+        return;
+      }
+    }
+
+    playAudio(fallbackUrl);
+  }
+
+  async function startLocalOeuvreRecording(id){
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      alert("Micro non disponible sur cet appareil.");
+      return;
+    }
+
+    if(oeuvreMediaRecorder && oeuvreMediaRecorder.state === "recording"){
+      alert("Un enregistrement est déjà en cours.");
+      return;
+    }
+
+    try{
+      const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+      oeuvreAudioChunks = [];
+
+      let options = {};
+      if(window.MediaRecorder){
+        if(MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported("audio/webm")){
+          options.mimeType = "audio/webm";
+        }
+      }
+
+      oeuvreMediaRecorder = new MediaRecorder(stream, options);
+
+      oeuvreMediaRecorder.ondataavailable = function(ev){
+        if(ev.data && ev.data.size > 0){
+          oeuvreAudioChunks.push(ev.data);
+        }
+      };
+
+      oeuvreMediaRecorder.onstop = function(){
+        try{
+          const blob = new Blob(oeuvreAudioChunks, { type: oeuvreMediaRecorder.mimeType || "audio/webm" });
+          const reader = new FileReader();
+
+          reader.onloadend = function(){
+            saveLocalAudioForOeuvre(id, {
+              audioData: reader.result,
+              mimeType: blob.type || "audio/webm",
+              savedAt: Date.now(),
+              savedAtFr: new Date().toLocaleString("fr-FR")
+            });
+            alert("Voix enregistrée localement pour cette œuvre sur cet appareil.");
+          };
+
+          reader.readAsDataURL(blob);
+        }catch(e){
+          alert("Erreur pendant la sauvegarde de l’enregistrement.");
+        }
+
+        try{
+          stream.getTracks().forEach(t => t.stop());
+        }catch(e){}
+      };
+
+      oeuvreMediaRecorder.start();
+      alert("Enregistrement démarré. Appuie ensuite sur Stop.");
+    }catch(e){
+      alert("Autorisation micro refusée ou indisponible.");
+    }
+  }
+
+  function stopLocalOeuvreRecording(){
+    try{
+      if(oeuvreMediaRecorder && oeuvreMediaRecorder.state === "recording"){
+        oeuvreMediaRecorder.stop();
+      }else{
+        alert("Aucun enregistrement en cours.");
+      }
+    }catch(e){
+      alert("Impossible d’arrêter l’enregistrement.");
+    }
+  }
+
+  function playLocalRecordedOeuvre(id){
+    const rec = getLocalAudioForOeuvre(id);
+    if(!rec || !rec.audioData){
+      alert("Aucun enregistrement local pour cette œuvre.");
+      return;
+    }
+    playPreferredAudioForOeuvre(id, "");
+  }
+
+  function deleteLocalRecordedOeuvre(id){
+    deleteLocalAudioForOeuvre(id);
+    alert("Enregistrement local supprimé pour cette œuvre.");
+  }
+
   function renderLinks(liens){
     if(!liens || !liens.length) return "";
     return `
@@ -3561,9 +3718,9 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
       </div>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-        <button onclick="document.getElementById('boc-pro-audio-player') ? (document.getElementById('boc-pro-audio-player').pause(), document.getElementById('boc-pro-audio-player').src='${esc(o.audio)}', document.getElementById('boc-pro-audio-player').currentTime=0, document.getElementById('boc-pro-audio-player').play().catch(function(){alert('Audio pro introuvable. Vérifie le fichier MP3. Le texte reste disponible.');})) : (function(){var a=document.createElement('audio');a.id='boc-pro-audio-player';a.style.display='none';document.body.appendChild(a);a.src='${esc(o.audio)}';a.play().catch(function(){alert('Audio pro introuvable. Vérifie le fichier MP3. Le texte reste disponible.');});})();"
+        <button onclick="(${playPreferredAudioForOeuvre.toString()})('${o.id}','${esc(o.audio)}')"
           style="background:#1f6f5f;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
-          ▶ Lire la voix pro
+          ▶ Écouter
         </button>
 
         <button onclick="var a=document.getElementById('boc-pro-audio-player'); if(a){a.pause(); a.currentTime=0;}"
@@ -3587,6 +3744,35 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
       </div>
 
       ${renderLinks(o.liens)}
+
+      <div style="margin-top:12px;padding:10px;border-radius:10px;background:#f6f6f6;">
+        <strong>Accès Bo’CitéArt local (démo admin)</strong><br>
+        <div class="muted" style="margin-top:6px;">
+          Ces actions servent à enregistrer localement une voix sur cet appareil. La vraie protection admin et la 2FA seront branchées plus tard.
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+          <button onclick="var p=prompt('Mot de passe admin local'); if(p==='${LOCAL_ADMIN_PASSWORD}'){(${startLocalOeuvreRecording.toString()})('${o.id}')} else if(p!==null){alert('Mot de passe incorrect');}"
+            style="background:#b06b00;color:#fff;padding:8px 10px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
+            Enregistrer la voix
+          </button>
+
+          <button onclick="var p=prompt('Mot de passe admin local'); if(p==='${LOCAL_ADMIN_PASSWORD}'){(${stopLocalOeuvreRecording.toString()})()} else if(p!==null){alert('Mot de passe incorrect');}"
+            style="background:#fff;color:#222;padding:8px 10px;border-radius:10px;border:1px solid #ddd;font-weight:900;cursor:pointer;">
+            Stop enregistrement
+          </button>
+
+          <button onclick="var p=prompt('Mot de passe admin local'); if(p==='${LOCAL_ADMIN_PASSWORD}'){(${playLocalRecordedOeuvre.toString()})('${o.id}')} else if(p!==null){alert('Mot de passe incorrect');}"
+            style="background:#fff;color:#222;padding:8px 10px;border-radius:10px;border:1px solid #ddd;font-weight:900;cursor:pointer;">
+            Écouter voix locale
+          </button>
+
+          <button onclick="var p=prompt('Mot de passe admin local'); if(p==='${LOCAL_ADMIN_PASSWORD}'){(${deleteLocalRecordedOeuvre.toString()})('${o.id}')} else if(p!==null){alert('Mot de passe incorrect');}"
+            style="background:#fff;color:#222;padding:8px 10px;border-radius:10px;border:1px solid #ddd;font-weight:900;cursor:pointer;">
+            Supprimer voix locale
+          </button>
+        </div>
+      </div>
 
       <div style="margin-top:12px;">
         <button onclick="localStorage.getItem('${LAST_KEY}') ? null : null"
@@ -3770,7 +3956,6 @@ QR-BOCITEART-010`
   return;
 }
         
-
 if(key === "ecole"){
   openModal("École", `
     <div style="font-weight:900;margin-bottom:8px;">École</div>
