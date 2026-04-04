@@ -7246,7 +7246,7 @@ if(key === "sport"){
 }
 };
 
- const adminTile = $("adminTile");
+const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
   if(!isFn(window.openModal)) return;
   openModal("Accès Administrateur", `
@@ -8142,10 +8142,10 @@ if(isFn(window.makeKeyboardClickable)){
 }
 
 (function initLegalTabs(){
-  const legal = $("legal");
-  if(!legal) return;
+  const legalModal = $("legal");
+  if(!legalModal) return;
 
-  const tabs = legal.querySelectorAll(".tab");
+  const tabs = legalModal.querySelectorAll(".tab");
   if(!tabs || !tabs.length) return;
 
   const panels = {
@@ -8175,7 +8175,8 @@ if(isFn(window.makeKeyboardClickable)){
   window.showTab("rgpd");
 })();
 </script>
-  <script>
+
+<script>
 (function () {
   const consentement = document.getElementById("consentement");
   const checkRgpd = document.getElementById("check-rgpd");
@@ -8306,4 +8307,3 @@ if(isFn(window.makeKeyboardClickable)){
 </script>
 </body>
 </html>
-
