@@ -3786,12 +3786,33 @@ if(key === "ecole"){
     </div>
 
     <div class="muted" style="margin-top:10px;">
-      Le professeur choisit la voix selon le cadre de l’établissement.
+      Le professeur choisit la voix selon le cadre de l’établissement. Si une vraie voix d’élève est enregistrée avec accord, elle sera lue en priorité.
     </div>
 
     <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
       <button class="choiceBtn" type="button" id="playChild">Lire (voix enfant — démo)</button>
       <button class="choiceBtn" type="button" id="playFemale">Lire (voix synthétique)</button>
+    </div>
+
+    <div style="margin-top:10px;"></div>
+
+    <div style="font-weight:900;">Voix réelle de l’élève (si accord)</div>
+
+    <div class="box" style="margin-top:6px;">
+      <div class="muted">
+        Le professeur peut enregistrer la vraie voix de l’élève. Si elle existe, elle sera utilisée automatiquement.
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="schoolRecordVoiceBtn" type="button">Enregistrer</button>
+        <button class="choiceBtn" id="schoolStopRecordVoiceBtn" type="button" style="background:#fff;">Stop</button>
+        <button class="choiceBtn" id="schoolPlayRecordedVoiceBtn" type="button" style="background:#fff;">Écouter</button>
+        <button class="choiceBtn" id="schoolDeleteRecordedVoiceBtn" type="button" style="background:#fff;">Supprimer</button>
+      </div>
+
+      <div class="muted" id="schoolRecordedVoiceStatus" style="margin-top:8px;">
+        Aucun enregistrement vocal
+      </div>
     </div>
 
     <div class="coinShowcase">
@@ -4097,6 +4118,7 @@ if(key === "ecole"){
     const SCHOOL_REFERRAL_HISTORY_KEY = "bociteart_school_referral_history_v1";
     const SCHOOL_CONFIG_KEY = "bociteart_school_config_v1";
     const SCHOOL_HISTORY_KEY = "bociteart_school_history_v1";
+    const SCHOOL_VOICE_STORE_KEY = "bociteart_school_voice_v1";
 
     const schoolConfigName = $("schoolConfigName");
     const schoolConfigCity = $("schoolConfigCity");
@@ -4117,6 +4139,11 @@ if(key === "ecole"){
     const schoolWordInput = $("schoolWordInput");
     const schoolDraftHint = $("schoolDraftHint");
     const schoolDayStatus = $("schoolDayStatus");
+    const schoolRecordVoiceBtn = $("schoolRecordVoiceBtn");
+    const schoolStopRecordVoiceBtn = $("schoolStopRecordVoiceBtn");
+    const schoolPlayRecordedVoiceBtn = $("schoolPlayRecordedVoiceBtn");
+    const schoolDeleteRecordedVoiceBtn = $("schoolDeleteRecordedVoiceBtn");
+    const schoolRecordedVoiceStatus = $("schoolRecordedVoiceStatus");
 
     const schoolReferralChild = $("schoolReferralChild");
     const schoolReferralType = $("schoolReferralType");
@@ -4128,6 +4155,10 @@ if(key === "ecole"){
     const schoolReferralReadBtn = $("schoolReferralReadBtn");
     const schoolReferralResetBtn = $("schoolReferralResetBtn");
     const schoolHistoryReadBtn = $("schoolHistoryReadBtn");
+
+    let schoolMediaRecorder = null;
+    let schoolAudioChunks = [];
+    let schoolAudioPlayer = null;
 
     function schoolLoad(){
       try{
@@ -4266,6 +4297,156 @@ if(key === "ecole"){
       return SCHOOL_CLASSES[idx] || SCHOOL_CLASSES[0];
     }
 
+    function schoolVoiceLoadAll(){
+      try{
+        const raw = localStorage.getItem(SCHOOL_VOICE_STORE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      }catch(e){
+        return {};
+      }
+    }
+
+    function schoolVoiceSaveAll(obj){
+      try{
+        localStorage.setItem(SCHOOL_VOICE_STORE_KEY, JSON.stringify(obj));
+      }catch(e){}
+    }
+
+    function getRecordedVoiceForClass(cls){
+      const db = schoolVoiceLoadAll();
+      return db[cls] || null;
+    }
+
+    function saveRecordedVoiceForClass(cls, payload){
+      const db = schoolVoiceLoadAll();
+      db[cls] = payload;
+      schoolVoiceSaveAll(db);
+    }
+
+    function deleteRecordedVoiceForClass(cls){
+      const db = schoolVoiceLoadAll();
+      if(db[cls]) delete db[cls];
+      schoolVoiceSaveAll(db);
+    }
+
+    function refreshRecordedVoiceStatus(){
+      if(!schoolRecordedVoiceStatus) return;
+      const cls = getCurrentSchoolClass();
+      const rec = getRecordedVoiceForClass(cls);
+
+      if(rec && rec.audioData){
+        schoolRecordedVoiceStatus.textContent =
+          "Enregistrement vocal disponible pour " + cls +
+          (rec.savedAtFr ? " — enregistré le " + rec.savedAtFr : "");
+      }else{
+        schoolRecordedVoiceStatus.textContent =
+          "Aucun enregistrement vocal pour " + cls + ".";
+      }
+    }
+
+    function playRecordedVoiceForClass(cls){
+      const rec = getRecordedVoiceForClass(cls);
+      if(!rec || !rec.audioData){
+        return false;
+      }
+
+      try{
+        if(!schoolAudioPlayer){
+          schoolAudioPlayer = new Audio();
+        }
+        schoolAudioPlayer.pause();
+        schoolAudioPlayer.src = rec.audioData;
+        schoolAudioPlayer.currentTime = 0;
+        schoolAudioPlayer.play().catch(()=>{
+          alert("Impossible de lire l’enregistrement.");
+        });
+        return true;
+      }catch(e){
+        alert("Impossible de lire l’enregistrement.");
+        return false;
+      }
+    }
+
+    async function startSchoolVoiceRecording(){
+      const cls = getCurrentSchoolClass();
+
+      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+        alert("L’enregistrement micro n’est pas disponible sur cet appareil.");
+        return;
+      }
+
+      if(schoolMediaRecorder && schoolMediaRecorder.state === "recording"){
+        alert("Un enregistrement est déjà en cours.");
+        return;
+      }
+
+      try{
+        const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+        schoolAudioChunks = [];
+
+        let options = {};
+        if(window.MediaRecorder){
+          if(MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported("audio/webm")){
+            options.mimeType = "audio/webm";
+          }
+        }
+
+        schoolMediaRecorder = new MediaRecorder(stream, options);
+
+        schoolMediaRecorder.ondataavailable = function(ev){
+          if(ev.data && ev.data.size > 0){
+            schoolAudioChunks.push(ev.data);
+          }
+        };
+
+        schoolMediaRecorder.onstop = function(){
+          try{
+            const blob = new Blob(schoolAudioChunks, { type: schoolMediaRecorder.mimeType || "audio/webm" });
+            const reader = new FileReader();
+
+            reader.onloadend = function(){
+              saveRecordedVoiceForClass(cls, {
+                class: cls,
+                audioData: reader.result,
+                mimeType: blob.type || "audio/webm",
+                savedAt: Date.now(),
+                savedAtFr: new Date().toLocaleString("fr-FR")
+              });
+
+              refreshRecordedVoiceStatus();
+              alert("Voix de l’élève enregistrée pour " + cls + ".");
+            };
+
+            reader.readAsDataURL(blob);
+          }catch(e){
+            alert("Erreur pendant la sauvegarde de l’enregistrement.");
+          }
+
+          try{
+            stream.getTracks().forEach(t => t.stop());
+          }catch(e){}
+        };
+
+        schoolMediaRecorder.start();
+        refreshRecordedVoiceStatus();
+        alert("Enregistrement démarré pour " + cls + ". Appuie ensuite sur “Stop”.");
+      }catch(e){
+        alert("Autorisation micro refusée ou indisponible.");
+      }
+    }
+
+    function stopSchoolVoiceRecording(){
+      try{
+        if(schoolMediaRecorder && schoolMediaRecorder.state === "recording"){
+          schoolMediaRecorder.stop();
+        }else{
+          alert("Aucun enregistrement en cours.");
+        }
+      }catch(e){
+        alert("Impossible d’arrêter l’enregistrement.");
+      }
+    }
+
     function getSavedWordForClass(cls){
       const db = schoolLoad();
       if(!db.words) db.words = {};
@@ -4315,6 +4496,11 @@ if(key === "ecole"){
 
       const txt = draftText || officialText || sampleText;
 
+      if(mode === "child"){
+        const played = playRecordedVoiceForClass(cls);
+        if(played) return;
+      }
+
       if(!("speechSynthesis" in window)){
         alert("La lecture vocale n’est pas prise en charge sur cet appareil / navigateur.");
         return;
@@ -4322,14 +4508,26 @@ if(key === "ecole"){
 
       window.speechSynthesis.cancel();
 
-      const u = new SpeechSynthesisUtterance(txt);
+      const normalizedText = String(txt)
+        .replace(/\s+/g, " ")
+        .replace(/([,;:.!?])/g, "$1 ");
+
+      const u = new SpeechSynthesisUtterance(normalizedText);
       u.lang = "fr-FR";
       u.volume = 1;
-      u.pitch = mode === "child" ? 1.35 : 1.0;
-      u.rate = mode === "child" ? 1.02 : 0.96;
+      u.pitch = mode === "child" ? 1.15 : 1.0;
+      u.rate = mode === "child" ? 0.88 : 0.90;
 
       const voices = window.speechSynthesis.getVoices() || [];
-      let chosenVoice = voices.find(v => /fr/i.test(v.lang)) || null;
+      const frVoices = voices.filter(v =>
+        /fr/i.test(v.lang || "") || /french|fran/i.test(v.name || "")
+      );
+
+      let chosenVoice =
+        frVoices.find(v => /denise/i.test(v.name || "")) ||
+        frVoices.find(v => /hortense|amelie|marie|brigitte|audrey|claire|celine/i.test(v.name || "")) ||
+        frVoices[0] ||
+        null;
 
       if(chosenVoice){
         u.voice = chosenVoice;
@@ -4481,6 +4679,39 @@ if(key === "ecole"){
       };
     }
 
+    if(schoolRecordVoiceBtn){
+      schoolRecordVoiceBtn.onclick = function(){
+        startSchoolVoiceRecording();
+      };
+    }
+
+    if(schoolStopRecordVoiceBtn){
+      schoolStopRecordVoiceBtn.onclick = function(){
+        stopSchoolVoiceRecording();
+      };
+    }
+
+    if(schoolPlayRecordedVoiceBtn){
+      schoolPlayRecordedVoiceBtn.onclick = function(){
+        const cls = getCurrentSchoolClass();
+        const ok = playRecordedVoiceForClass(cls);
+        if(!ok){
+          alert("Aucun enregistrement disponible pour cette classe.");
+        }
+      };
+    }
+
+    if(schoolDeleteRecordedVoiceBtn){
+      schoolDeleteRecordedVoiceBtn.onclick = function(){
+        const cls = getCurrentSchoolClass();
+        if(confirm("Supprimer l’enregistrement vocal pour " + cls + " ?")){
+          deleteRecordedVoiceForClass(cls);
+          refreshRecordedVoiceStatus();
+          alert("Enregistrement supprimé.");
+        }
+      };
+    }
+
     if("speechSynthesis" in window){
       window.speechSynthesis.getVoices();
     }
@@ -4497,12 +4728,14 @@ if(key === "ecole"){
     refreshSchoolWordDisplay();
     refreshSchoolCalendarPreview();
     refreshSchoolDayState();
+    refreshRecordedVoiceStatus();
 
     const schoolClassSelect = $("schoolClassSelect");
     if(schoolClassSelect){
       schoolClassSelect.onchange = function(){
         refreshSchoolWordDisplay();
         refreshSchoolDayState();
+        refreshRecordedVoiceStatus();
       };
     }
 
@@ -4858,7 +5091,7 @@ if(key === "ecole"){
   },0);
 
   return;
-      }
+}
     });
   });
 
