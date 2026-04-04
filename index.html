@@ -3215,26 +3215,561 @@ out center tags;
             }
           }
 
-        if(key === "oeuvres"){
-  openModal("Œuvres", `
-    <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques </div>
-    
-    <div class="box">
-      <strong>Cadre :</strong> contenus illustratifs en démo. Les informations
-      (lieux, orientation) dépendent du téléphone et des sources disponibles.
-    </div>
+          if(key === "oeuvres"){
 
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Carte des fresques (quartiers)</li>
-      <li>Fiche œuvre : artiste • mécène • remerciements</li>
-      <li>Scan QR / BLE à proximité</li>
-      <li>Audio : voix féminine douce (lecture des contenus)</li>
-      <li>Mode visite : guidage simple</li>
-      <li>Reconnaissance : bocitecoins selon règles locales</li>
-    </ul>
-  `);
+  const STORAGE_KEY = "boc_oeuvres_unlock_v2";
+  const LAST_KEY = "boc_oeuvres_last_v2";
+  const AUDIO_BASE = "audio/oeuvres/";
+
+  const oeuvres = [
+    {
+      id: "1",
+      qr: "QR-BOCITEART-001",
+      titre: "Libre et Fleurie",
+      quartier: "L’Arbrisseau",
+      artiste: "Julot",
+      mecene: "Garage Planque Citroën",
+      open: true,
+      audio: AUDIO_BASE + "oeuvre-1.mp3",
+      liens: [
+        { label: "Découvrir l’artiste", url: "https://site-artiste-julot.com" },
+        { label: "Découvrir le mécène", url: "https://www.citroen.fr" },
+        { label: "Ville de Wattignies", url: "https://www.wattignies.fr" }
+      ],
+      texte: `Bienvenue devant Libre et Fleurie.
+
+Cette œuvre rend hommage à l’âme vivante du quartier de L’Arbrisseau. Ici, on ressent à la fois le passage, la rencontre et la simplicité des liens du quotidien. Les habitants y partagent une mémoire discrète mais forte, faite de voisinage, de gestes simples, d’échanges, de fidélité au lieu et de présence humaine.
+
+Le visage représenté évoque une figure paisible, ouverte, enracinée dans son environnement. Sa chevelure fleurie symbolise la respiration du quartier, sa capacité à garder de la douceur, même au milieu du mouvement de la ville.
+
+Réalisée par l’artiste Julot, cette fresque a été rendue possible grâce au soutien du Garage Planque Citroën. Merci aux partenaires, à la ville et à toutes les personnes qui participent à faire vivre Wattignies avec culture et humanité.
+
+Prenez le temps d’observer, d’écouter, et pourquoi pas de poursuivre votre parcours vers une autre œuvre de la ville.`
+    },
+    {
+      id: "2",
+      qr: "QR-BOCITEART-002",
+      titre: "Les Tisserands du Lien",
+      quartier: "Centre-Ville",
+      artiste: "Amandine Verlaine",
+      mecene: "Maison Delcroix",
+      open: true,
+      audio: AUDIO_BASE + "oeuvre-2.mp3",
+      liens: [
+        { label: "Découvrir l’artiste", url: "https://portfolio-amandine.com" },
+        { label: "Découvrir le mécène", url: "https://www.example.com/maison-delcroix" },
+        { label: "Ville de Wattignies", url: "https://www.wattignies.fr" }
+      ],
+      texte: `Bienvenue devant Les Tisserands du Lien.
+
+Cette fresque raconte une autre richesse de la ville : celle des liens quotidiens. Dans un centre-ville, beaucoup passent sans toujours se voir. Pourtant, derrière chaque vitrine, chaque façade et chaque trajet répété, il existe une vie locale précieuse faite d’habitudes, de salutations, d’attentions et d’échanges sincères.
+
+Le visage de cette œuvre ne représente pas une seule personne. Il représente toutes celles et ceux qui tissent la ville au fil des jours : habitants, commerçants, visiteurs, familles et passants.
+
+Réalisée par Amandine Verlaine avec le soutien de la Maison Delcroix, cette œuvre rappelle que la ville tient aussi grâce à ce qui ne se voit pas toujours : la confiance, la présence et le respect.
+
+Merci à celles et ceux qui contribuent à faire de Wattignies une ville à taille humaine, où l’art révèle ce qui relie.`
+    },
+    {
+      id: "3",
+      qr: "QR-BOCITEART-003",
+      titre: "Souffle des Jardins",
+      quartier: "Quartier des Fleurs",
+      artiste: "À découvrir",
+      mecene: "À découvrir",
+      open: false,
+      audio: AUDIO_BASE + "oeuvre-3.mp3",
+      liens: [],
+      texte: `Bienvenue devant Souffle des Jardins.
+
+Cette œuvre invite à ressentir le rythme du quartier, sa relation au végétal, aux saisons et aux respirations du quotidien. Ici, la nature n’est pas seulement un décor. Elle devient un langage, une présence, une manière d’habiter le lieu avec douceur et équilibre.
+
+Le visage représenté semble émerger d’un mouvement vivant, comme si le quartier lui-même prenait la parole à travers les fleurs, les lignes et la lumière.
+
+Cette fresque fait partie du parcours Bo’CitéArt, pensé pour révéler autrement les quartiers de la ville. Merci aux futurs partenaires, aux habitants et à toutes les personnes qui contribueront à faire vivre cette étape du parcours.
+
+Poursuivez votre visite pour découvrir d’autres œuvres et d’autres histoires de Wattignies.`
+    },
+    {
+      id: "4",
+      qr: "QR-BOCITEART-004",
+      titre: "Mémoire de Briques",
+      quartier: "Vieux Wattignies",
+      artiste: "À découvrir",
+      mecene: "À découvrir",
+      open: false,
+      audio: AUDIO_BASE + "oeuvre-4.mp3",
+      liens: [],
+      texte: `Bienvenue devant Mémoire de Briques.
+
+Cette œuvre prolonge l’histoire des lieux, des murs, des générations et des transformations discrètes du quartier. Elle invite à regarder autrement les traces du passé et la manière dont elles continuent à structurer le présent.
+
+Chaque quartier garde en lui une mémoire silencieuse. Ici, elle se lit dans les matières, dans les lignes, dans l’épaisseur du temps. La fresque donne une voix à ce patrimoine discret et rappelle qu’un territoire se construit aussi à partir de ce qu’il conserve.
+
+Merci aux habitants, aux soutiens et aux partenaires qui participent à la valorisation de cette mémoire locale.
+
+Prenez le temps d’observer les détails et de laisser le quartier vous parler.`
+    },
+    {
+      id: "5",
+      qr: "QR-BOCITEART-005",
+      titre: "Le Visage des Saisons",
+      quartier: "Jules Ferry",
+      artiste: "À découvrir",
+      mecene: "À découvrir",
+      open: false,
+      audio: AUDIO_BASE + "oeuvre-5.mp3",
+      liens: [],
+      texte: `Bienvenue devant Le Visage des Saisons.
+
+Cette œuvre parle du temps qui passe, de la jeunesse, de la transmission et de l’évolution. Elle prend tout son sens dans un quartier où l’éducation, la vie quotidienne et l’élan collectif se croisent.
+
+Le visage représenté semble traversé par plusieurs saisons à la fois. Il évoque la croissance, le mouvement, l’apprentissage et la capacité à se transformer sans perdre son identité.
+
+À travers cette fresque, Bo’CitéArt propose une lecture sensible du quartier : un lieu où l’on apprend, où l’on grandit, où l’on construit des repères.
+
+Merci à toutes les personnes qui accompagnent la jeunesse et participent à la vitalité de la ville.`
+    },
+    {
+      id: "6",
+      qr: "QR-BOCITEART-006",
+      titre: "Éclats de Voisins",
+      quartier: "Michelet",
+      artiste: "À découvrir",
+      mecene: "À découvrir",
+      open: false,
+      audio: AUDIO_BASE + "oeuvre-6.mp3",
+      liens: [],
+      texte: `Bienvenue devant Éclats de Voisins.
+
+Cette œuvre met à l’honneur les liens de proximité, les gestes simples, les attentions discrètes et tout ce qui donne de l’épaisseur à la vie locale. Ici, le quartier existe à travers les regards, les habitudes, les petits échanges et la présence humaine.
+
+La fresque a été pensée comme un portrait collectif du voisinage. Elle rappelle qu’un quartier n’est pas seulement un ensemble de rues ou de bâtiments, mais un tissu vivant fait de présences, de mémoire et de respect mutuel.
+
+Merci aux habitants, aux soutiens du projet et à toutes celles et ceux qui contribuent chaque jour à faire vivre cet esprit de proximité.
+
+Continuez votre parcours pour découvrir les autres visages de la ville.`
+    },
+    {
+      id: "7",
+      qr: "QR-BOCITEART-007",
+      titre: "La Nuit Respire Ici",
+      quartier: "Entrée de Ville",
+      artiste: "À découvrir",
+      mecene: "À découvrir",
+      open: false,
+      audio: AUDIO_BASE + "oeuvre-7.mp3",
+      liens: [],
+      texte: `Bienvenue devant La Nuit Respire Ici.
+
+Cette œuvre invite à découvrir un autre visage de la ville : plus apaisé, plus intérieur, plus contemplatif. Elle transforme le passage en expérience sensible et donne au parcours une tonalité presque méditative.
+
+À l’entrée de la ville, la fresque agit comme un seuil. Elle propose de ralentir, d’observer autrement, et de ressentir la présence du lieu au-delà de l’agitation du quotidien.
+
+Le visage représenté semble écouter le silence, accueillir la lumière et laisser respirer l’espace autour de lui.
+
+Merci aux partenaires, aux habitants et à toutes les personnes qui soutiennent cette manière sensible de révéler la ville par l’art.`
+    },
+    {
+      id: "8",
+      qr: "QR-BOCITEART-008",
+      titre: "Horizons Partagés",
+      quartier: "Zone Sud",
+      artiste: "À découvrir",
+      mecene: "À découvrir",
+      open: false,
+      audio: AUDIO_BASE + "oeuvre-8.mp3",
+      liens: [],
+      texte: `Bienvenue devant Horizons Partagés.
+
+Ici, l’œuvre fait dialoguer le présent et l’avenir. Elle parle de transformation, d’élan commun, de ville en mouvement et de projection collective. Le quartier devient le lieu d’un horizon partagé plutôt qu’un simple espace traversé.
+
+Le visage représenté semble tourné vers demain, sans oublier ce qui l’a construit. La fresque invite à penser la ville comme une aventure collective, faite de trajectoires différentes mais orientées vers une même ambition : mieux vivre ensemble.
+
+Merci à tous les partenaires, habitants et soutiens qui participent à cette dynamique de transformation positive.
+
+Poursuivez votre découverte pour explorer les autres étapes du parcours Bo’CitéArt.`
+    },
+    {
+      id: "9",
+      qr: "QR-BOCITEART-009",
+      titre: "Les Voix Silencieuses",
+      quartier: "Résidentiel Nord",
+      artiste: "À découvrir",
+      mecene: "À découvrir",
+      open: false,
+      audio: AUDIO_BASE + "oeuvre-9.mp3",
+      liens: [],
+      texte: `Bienvenue devant Les Voix Silencieuses.
+
+Cette œuvre rend visibles les présences discrètes, les mémoires tranquilles et les histoires de quartier qui existent sans bruit mais donnent une profondeur réelle à la ville. Elle nous rappelle que tout ce qui compte n’est pas toujours ce qui se voit le plus.
+
+À travers ce visage, la fresque donne une place à celles et ceux qui habitent les lieux avec simplicité, fidélité et retenue. Elle valorise une humanité calme, souvent invisible, mais essentielle.
+
+Merci aux habitants, aux soutiens du projet et à toutes les personnes qui font vivre le quartier dans la durée, souvent sans chercher à se mettre en avant.
+
+Prenez le temps d’écouter ce que le lieu raconte en silence.`
+    },
+    {
+      id: "10",
+      qr: "QR-BOCITEART-010",
+      titre: "Racines Urbaines",
+      quartier: "Quartier Ouest",
+      artiste: "À découvrir",
+      mecene: "À découvrir",
+      open: false,
+      audio: AUDIO_BASE + "oeuvre-10.mp3",
+      liens: [],
+      texte: `Bienvenue devant Racines Urbaines.
+
+Cette œuvre interroge l’équilibre entre les matières de la ville, la présence du vivant et l’identité du quartier. Elle relie le minéral, le végétal, l’humain et le temps long dans une même respiration visuelle.
+
+Le visage représenté semble enraciné dans l’espace urbain tout en restant ouvert à la nature et au mouvement. La fresque rappelle que la ville peut être à la fois construite, habitée, vivante et sensible.
+
+À travers cette œuvre, Bo’CitéArt propose une vision de la ville comme un lieu de liens, d’ancrage et d’évolution.
+
+Merci à toutes les personnes, partenaires et habitants qui rendent possible cette alliance entre art, territoire et mémoire locale.`
+    }
+  ];
+
+  function esc(s){
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function getUnlocked(){
+    try{
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    }catch(e){
+      return [];
+    }
+  }
+
+  function setUnlocked(arr){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    }catch(e){}
+  }
+
+  function isOpen(o){
+    if(o.open) return true;
+    return getUnlocked().includes(o.id);
+  }
+
+  function unlockByQr(qr){
+    const o = oeuvres.find(x => x.qr === qr);
+    if(!o) return null;
+
+    const unlocked = getUnlocked();
+    if(!unlocked.includes(o.id) && !o.open){
+      unlocked.push(o.id);
+      setUnlocked(unlocked);
+    }
+
+    try{
+      localStorage.setItem(LAST_KEY, o.id);
+    }catch(e){}
+
+    return o;
+  }
+
+  function stopAudio(){
+    try{
+      const a = document.getElementById("boc-pro-audio-player");
+      if(a){
+        a.pause();
+        a.currentTime = 0;
+      }
+    }catch(e){}
+  }
+
+  function playAudio(url){
+    try{
+      let a = document.getElementById("boc-pro-audio-player");
+      if(!a){
+        a = document.createElement("audio");
+        a.id = "boc-pro-audio-player";
+        a.style.display = "none";
+        document.body.appendChild(a);
+      }
+      a.pause();
+      a.src = url;
+      a.currentTime = 0;
+      a.play().catch(function(){
+        alert("Audio pro introuvable. Vérifie le fichier MP3. Le texte reste disponible.");
+      });
+    }catch(e){
+      alert("Impossible de lancer l’audio. Le texte reste disponible.");
+    }
+  }
+
+  function renderLinks(liens){
+    if(!liens || !liens.length) return "";
+    return `
+      <div style="margin-top:12px;">
+        <div style="font-weight:900;margin-bottom:6px;">Aller plus loin</div>
+        ${liens.map(function(l){
+          return `
+            <div style="margin:6px 0;">
+              <a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer"
+                 style="display:inline-block;padding:8px 10px;border-radius:10px;background:#eef6f4;color:#1f6f5f;font-weight:900;text-decoration:none;">
+                ${esc(l.label)}
+              </a>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  function openDetailById(id){
+    const o = oeuvres.find(x => x.id === id);
+    if(!o) return;
+
+    if(!isOpen(o)){
+      alert("Cette œuvre est verrouillée. Il faut scanner le QR code sur place.");
+      return;
+    }
+
+    try{
+      localStorage.setItem(LAST_KEY, o.id);
+    }catch(e){}
+
+    openModal(o.titre, `
+      <div class="box">
+        <strong>Explication pour les élus :</strong><br>
+        cette fiche montre ce qui se passe une fois l’œuvre déverrouillée par QR code :
+        le visiteur accède à une expérience complète mêlant audio professionnel,
+        texte lisible, histoire du quartier, mise en valeur de l’artiste, du mécène
+        et des partenaires liés à l’œuvre.
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Objectif :</strong><br>
+        transformer une fresque en parcours culturel vivant, faire circuler les habitants
+        et visiteurs dans la ville, relier les quartiers, créer du lien humain et donner
+        une profondeur nouvelle à l’œuvre par la voix, le texte et les prolongements externes.
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        Quartier : ${esc(o.quartier)}<br>
+        Artiste : ${esc(o.artiste || "à découvrir")}<br>
+        Mécène : ${esc(o.mecene || "à découvrir")}
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+        <button onclick="document.getElementById('boc-pro-audio-player') ? (document.getElementById('boc-pro-audio-player').pause(), document.getElementById('boc-pro-audio-player').src='${esc(o.audio)}', document.getElementById('boc-pro-audio-player').currentTime=0, document.getElementById('boc-pro-audio-player').play().catch(function(){alert('Audio pro introuvable. Vérifie le fichier MP3. Le texte reste disponible.');})) : (function(){var a=document.createElement('audio');a.id='boc-pro-audio-player';a.style.display='none';document.body.appendChild(a);a.src='${esc(o.audio)}';a.play().catch(function(){alert('Audio pro introuvable. Vérifie le fichier MP3. Le texte reste disponible.');});})();"
+          style="background:#1f6f5f;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
+          ▶ Lire la voix pro
+        </button>
+
+        <button onclick="var a=document.getElementById('boc-pro-audio-player'); if(a){a.pause(); a.currentTime=0;}"
+          style="background:#666;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
+          ■ Arrêter
+        </button>
+      </div>
+
+      <div class="box" style="margin-top:12px;">
+        <strong>Lecture texte :</strong><br>
+        <div style="white-space:pre-line;line-height:1.55;margin-top:8px;">
+          ${esc(o.texte)}
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:12px;">
+        <strong>Audio attendu :</strong><br>
+        fichier MP3 professionnel intégré dans l’application ou le site, prévu pour une
+        voix féminine douce, calme, fluide et premium. Le texte reste toujours disponible
+        si le son ne fonctionne pas.
+      </div>
+
+      ${renderLinks(o.liens)}
+
+      <div style="margin-top:12px;">
+        <button onclick="localStorage.getItem('${LAST_KEY}') ? null : null"
+          style="display:none;"></button>
+      </div>
+    `);
+  }
+
+  function promptQr(){
+    const code = prompt(
+`Entrer le QR code de démo.
+Exemples :
+QR-BOCITEART-003
+QR-BOCITEART-004
+QR-BOCITEART-005
+QR-BOCITEART-006
+QR-BOCITEART-007
+QR-BOCITEART-008
+QR-BOCITEART-009
+QR-BOCITEART-010`
+    );
+    if(!code) return;
+
+    const o = unlockByQr(code.trim());
+    if(!o){
+      alert("QR code non reconnu.");
+      return;
+    }
+
+    alert("Œuvre débloquée : " + o.titre);
+    openDetailById(o.id);
+  }
+
+  function reopenLast(){
+    try{
+      const id = localStorage.getItem(LAST_KEY);
+      if(!id){
+        alert("Aucune œuvre récemment ouverte.");
+        return;
+      }
+      openDetailById(id);
+    }catch(e){
+      alert("Aucune œuvre récemment ouverte.");
+    }
+  }
+
+  function resetDemo(){
+    const ok = confirm("Réinitialiser les œuvres déverrouillées ?");
+    if(!ok) return;
+
+    try{
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(LAST_KEY);
+    }catch(e){}
+
+    stopAudio();
+    openOverview();
+  }
+
+  function renderRow(o, index){
+    const open = isOpen(o);
+
+    return `
+      <div class="box" style="margin-top:8px;">
+        <strong>${index + 1}. ${esc(o.titre)}</strong><br>
+        Quartier : ${esc(o.quartier)}<br>
+        Statut : <span style="color:${open ? "#0a7a32" : "#b06b00"};font-weight:900;">
+          ${open ? "accessible" : "à débloquer sur place"}
+        </span><br>
+        ${open
+          ? "Contenu : histoire du quartier, présentation de l’artiste, mécène, remerciements, audio pro et texte, liens complémentaires."
+          : "Aperçu : œuvre visible dans le parcours, fiche complète verrouillée jusqu’au scan."}
+
+        <div style="margin-top:10px;">
+          <button onclick="${open ? `(${openDetailById.toString()})('${o.id}')` : `(${promptQr.toString()})()`}"
+            style="background:${open ? "#1f6f5f" : "#b06b00"};color:#fff;padding:8px 10px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
+            ${open ? "Ouvrir la fiche" : "Scanner / saisir le QR"}
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function openOverview(){
+    openModal("Œuvres", `
+      <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques</div>
+
+      <div class="box">
+        <strong>Concept :</strong> chaque œuvre visible dans l’application fait partie d’un
+        parcours culturel urbain. Le visiteur découvre les fresques quartier par quartier,
+        scanne un QR code à proximité de l’œuvre, puis débloque automatiquement sa fiche
+        complète avec lecture <strong>audio + texte</strong>.
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Fonctionnement du parcours :</strong><br>
+        1. Le visiteur voit un QR code près de l’œuvre avec un message incitatif.<br>
+        2. Il télécharge ou ouvre l’application Bo’CitéArt.<br>
+        3. Il scanne le QR code depuis l’appli.<br>
+        4. Le QR sert d’<strong>interrupteur de découverte</strong> : la fiche complète de l’œuvre
+        se déverrouille automatiquement.<br>
+        5. L’histoire du quartier se lance en <strong>voix féminine douce</strong> et reste
+        aussi lisible en texte en cas de problème de son ou de connexion.
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Expérience voulue :</strong> donner envie de visiter les autres quartiers,
+        créer un parcours de plaisir, de culture, d’art et de rencontres, inciter les
+        habitants et visiteurs à découvrir la ville autrement et à échanger avec les gens
+        du quartier autour des œuvres.
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Ce que verront les élus à l’ouverture de cet onglet :</strong><br>
+        un aperçu clair du fonctionnement du parcours, des œuvres déjà ouvertes dans la démo,
+        des œuvres encore verrouillées, du rôle du QR code, de la lecture audio professionnelle
+        prévue, de la lecture texte de secours, et de la valorisation de l’artiste, du mécène
+        et des partenaires.
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+        <button onclick="(${promptQr.toString()})()"
+          style="border:0;background:#b06b00;color:#fff;padding:10px 12px;border-radius:10px;font-weight:900;cursor:pointer;">
+          Scanner / saisir un QR
+        </button>
+
+        <button onclick="(${reopenLast.toString()})()"
+          style="border:0;background:#224e96;color:#fff;padding:10px 12px;border-radius:10px;font-weight:900;cursor:pointer;">
+          Rouvrir la dernière œuvre
+        </button>
+
+        <button onclick="(${resetDemo.toString()})()"
+          style="border:0;background:#666;color:#fff;padding:10px 12px;border-radius:10px;font-weight:900;cursor:pointer;">
+          Réinitialiser la démo
+        </button>
+      </div>
+
+      <div style="font-weight:900;margin:14px 0 8px 0;">Fonctions prévues dans l’onglet</div>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Carte des fresques par quartiers</li>
+        <li>10 œuvres affichées dans le parcours</li>
+        <li>2 œuvres exemples déjà ouvertes dans la démo</li>
+        <li>8 œuvres visibles mais verrouillées jusqu’au scan sur place</li>
+        <li>Fiche œuvre : artiste • mécène • remerciements • histoire du quartier</li>
+        <li>Déverrouillage par scan QR / BLE à proximité</li>
+        <li>Lecture audio par voix féminine douce, calme et fluide</li>
+        <li>Lecture texte impérative en parallèle pour accessibilité et secours</li>
+        <li>Mode visite guidée simple</li>
+        <li>Reconnaissance : bocitecoins selon règles locales</li>
+        <li>Liens externes pour aller plus loin : artiste, mécène, ville, partenaires</li>
+      </ul>
+
+      <div style="font-weight:900;margin:14px 0 8px 0;">Parcours des 10 œuvres</div>
+
+      ${oeuvres.map(function(o, i){ return renderRow(o, i); }).join("")}
+
+      <div class="box" style="margin-top:12px;">
+        <strong>Contenu complet d’une fiche œuvre déverrouillée :</strong><br>
+        • titre de l’œuvre<br>
+        • quartier concerné<br>
+        • histoire du quartier<br>
+        • présentation de l’artiste<br>
+        • présentation du mécène<br>
+        • remerciements<br>
+        • lecture audio par vraie voix premium intégrée en MP3<br>
+        • lecture texte obligatoire en parallèle<br>
+        • liens “aller plus loin” pour visiter le site de l’artiste, du mécène, de la ville
+        ou d’autres partenaires utiles
+      </div>
+
+      <div class="box" style="margin-top:12px;">
+        <strong>Valeur ajoutée :</strong> l’application ne montre pas seulement une œuvre,
+        elle crée un lien concret entre art, quartier, habitants, mécènes, ville et mémoire locale.
+        Chaque fiche peut aussi orienter l’utilisateur vers des ressources extérieures pour approfondir
+        sa découverte et valoriser fortement les partenaires impliqués.
+      </div>
+    `);
+  }
+
+  openOverview();
   return;
 }
+        
 
 if(key === "ecole"){
   openModal("École", `
