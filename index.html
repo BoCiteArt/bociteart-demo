@@ -8371,82 +8371,30 @@ function getSchoolHolidayForDate(d){
   const ranges = getSchoolHolidayRanges(d.getFullYear()).concat(getSchoolHolidayRanges(d.getFullYear() - 1));
   return ranges.find(r => d >= r.start && d <= r.end) || null;
 }
-
-function buildMonthlyCalendarHtml(year, month){
-  const today = new Date();
-  const first = new Date(year, month, 1);
-  const last = new Date(year, month + 1, 0);
-
-  let startDay = first.getDay();
-  if(startDay === 0) startDay = 7;
-
-  const daysInMonth = last.getDate();
-  const weekdays = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
-
-  let html = `
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px;">
-      ${weekdays.map(x => `
-        <div style="text-align:center;font-size:11px;font-weight:900;color:#666;padding:4px 0;">${x}</div>
-      `).join("")}
-  `;
-
-  for(let i=1;i<startDay;i++){
-    html += `<div></div>`;
-  }
-
-  for(let day=1; day<=daysInMonth; day++){
-    const d = new Date(year, month, day);
-    const isToday =
-      d.getFullYear() === today.getFullYear() &&
-      d.getMonth() === today.getMonth() &&
-      d.getDate() === today.getDate();
-
-    const holiday = getFrenchHolidayLabel(d);
-    const saint = getSaintOfDay(d);
-    const schoolHoliday = getSchoolHolidayForDate(d);
-
-    let bg = "#fff";
-    let border = "1px solid rgba(0,0,0,.10)";
-
-    if(schoolHoliday){
-      bg = "#fff4cc";
-      border = "2px solid #d4aa00";
-    }
-
-    if(isToday){
-      bg = "#ffe7e7";
-      border = "2px solid #b30000";
-    }
-
-    html += `
-      <div style="
-        min-height:86px;
-        border:${border};
-        border-radius:12px;
-        padding:6px;
-        background:${bg};
-        box-sizing:border-box;
-      ">
-        <div style="
-          font-weight:900;
-          font-size:13px;
-          color:${isToday ? "#b30000" : "#111"};
-          margin-bottom:4px;
-        ">${day}</div>
-
-        <div style="font-size:10px;line-height:1.15;color:#666;">
-          ${holiday ? `<div style="font-weight:900;color:#b30000;">${holiday}</div>` : ""}
-          <div>${saint}</div>
-          ${schoolHoliday ? `<div style="margin-top:4px;font-weight:900;color:#9a6b00;">${schoolHoliday.label}</div>` : ""}
-        </div>
-      </div>
-    `;
-  }
-
-  html += `</div>`;
-  return html;
+function getZoneAccentFromHolidayLabel(label){
+  const txt = String(label || "").toUpperCase();
+  if(txt.includes("ZONE A")) return "#2b6cff";   // bleu
+  if(txt.includes("ZONE B")) return "#2f8f46";   // vert
+  if(txt.includes("ZONE C")) return "#7a4fd6";   // violet
+  return "#c89b00";
 }
 
+function shortSchoolHolidayLabel(label){
+  const txt = String(label || "");
+  if(txt.includes("Vacances d'hiver Zone A")) return "Hiver • A";
+  if(txt.includes("Vacances d'hiver Zone B")) return "Hiver • B";
+  if(txt.includes("Vacances d'hiver Zone C")) return "Hiver • C";
+
+  if(txt.includes("Vacances de printemps Zone A")) return "Printemps • A";
+  if(txt.includes("Vacances de printemps Zone B")) return "Printemps • B";
+  if(txt.includes("Vacances de printemps Zone C")) return "Printemps • C";
+
+  if(txt.includes("Vacances de Toussaint")) return "Toussaint";
+  if(txt.includes("Vacances de Noël")) return "Noël";
+  if(txt.includes("Grandes vacances")) return "Été";
+
+  return txt;
+}
 // ===== MINI HORLOGE =====
 function refreshMiniClock(){
   const t = $("clockTimeMini");
