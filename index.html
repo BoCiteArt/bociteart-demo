@@ -8353,15 +8353,15 @@ function getMonthLabelFr(year, month){
 
 function getSchoolHolidayRanges(year){
   return [
-    { start: new Date(year, 1, 8), end: new Date(year, 1, 24), label:"Vacances d'hiver Zone A" },
-    { start: new Date(year, 1, 15), end: new Date(year, 2, 3), label:"Vacances d'hiver Zone B" },
+    { start: new Date(year, 1, 8),  end: new Date(year, 1, 24), label:"Vacances d'hiver Zone A" },
+    { start: new Date(year, 1, 15), end: new Date(year, 2, 3),  label:"Vacances d'hiver Zone B" },
     { start: new Date(year, 1, 22), end: new Date(year, 2, 10), label:"Vacances d'hiver Zone C" },
 
-    { start: new Date(year, 3, 5), end: new Date(year, 3, 21), label:"Vacances de printemps Zone B" },
+    { start: new Date(year, 3, 5),  end: new Date(year, 3, 21), label:"Vacances de printemps Zone B" },
     { start: new Date(year, 3, 12), end: new Date(year, 3, 28), label:"Vacances de printemps Zone A" },
-    { start: new Date(year, 3, 19), end: new Date(year, 4, 5), label:"Vacances de printemps Zone C" },
+    { start: new Date(year, 3, 19), end: new Date(year, 4, 5),  label:"Vacances de printemps Zone C" },
 
-    { start: new Date(year, 6, 5), end: new Date(year, 7, 31), label:"Grandes vacances" },
+    { start: new Date(year, 6, 5),  end: new Date(year, 7, 31), label:"Grandes vacances" },
     { start: new Date(year, 9, 18), end: new Date(year, 10, 3), label:"Vacances de Toussaint" },
     { start: new Date(year, 11, 20), end: new Date(year + 1, 0, 5), label:"Vacances de Noël" }
   ];
@@ -8371,16 +8371,18 @@ function getSchoolHolidayForDate(d){
   const ranges = getSchoolHolidayRanges(d.getFullYear()).concat(getSchoolHolidayRanges(d.getFullYear() - 1));
   return ranges.find(r => d >= r.start && d <= r.end) || null;
 }
+
 function getZoneAccentFromHolidayLabel(label){
   const txt = String(label || "").toUpperCase();
-  if(txt.includes("ZONE A")) return "#2b6cff";   // bleu
-  if(txt.includes("ZONE B")) return "#2f8f46";   // vert
-  if(txt.includes("ZONE C")) return "#7a4fd6";   // violet
+  if(txt.includes("ZONE A")) return "#2b6cff";
+  if(txt.includes("ZONE B")) return "#2f8f46";
+  if(txt.includes("ZONE C")) return "#7a4fd6";
   return "#c89b00";
 }
 
 function shortSchoolHolidayLabel(label){
   const txt = String(label || "");
+
   if(txt.includes("Vacances d'hiver Zone A")) return "Hiver • A";
   if(txt.includes("Vacances d'hiver Zone B")) return "Hiver • B";
   if(txt.includes("Vacances d'hiver Zone C")) return "Hiver • C";
@@ -8395,6 +8397,132 @@ function shortSchoolHolidayLabel(label){
 
   return txt;
 }
+
+function buildMonthlyCalendarHtml(year, month){
+  const today = new Date();
+  const first = new Date(year, month, 1);
+  const last = new Date(year, month + 1, 0);
+
+  let startDay = first.getDay();
+  if(startDay === 0) startDay = 7;
+
+  const daysInMonth = last.getDate();
+  const weekdays = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+
+  let html = `
+    <div style="width:100%;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:10px;">
+        ${weekdays.map(x => `
+          <div style="
+            text-align:center;
+            font-size:10px;
+            font-weight:900;
+            color:#666;
+            padding:4px 0;
+            min-width:0;
+          ">${x}</div>
+        `).join("")}
+  `;
+
+  for(let i=1;i<startDay;i++){
+    html += `<div></div>`;
+  }
+
+  for(let day=1; day<=daysInMonth; day++){
+    const d = new Date(year, month, day);
+
+    const isToday =
+      d.getFullYear() === today.getFullYear() &&
+      d.getMonth() === today.getMonth() &&
+      d.getDate() === today.getDate();
+
+    const holiday = getFrenchHolidayLabel(d);
+    const saint = getSaintOfDay(d);
+    const schoolHoliday = getSchoolHolidayForDate(d);
+
+    let bg = "#fff";
+    let border = "1px solid rgba(0,0,0,.10)";
+    let leftBorder = "0";
+    let holidayHtml = "";
+    let schoolHtml = "";
+
+    if(schoolHoliday){
+      leftBorder = "5px solid " + getZoneAccentFromHolidayLabel(schoolHoliday.label);
+      schoolHtml = `
+        <div style="
+          margin-top:4px;
+          font-weight:900;
+          font-size:9px;
+          line-height:1.1;
+          color:${getZoneAccentFromHolidayLabel(schoolHoliday.label)};
+          word-break:break-word;
+          overflow-wrap:anywhere;
+        ">${shortSchoolHolidayLabel(schoolHoliday.label)}</div>
+      `;
+    }
+
+    if(holiday){
+      holidayHtml = `
+        <div style="
+          margin-top:3px;
+          font-size:9px;
+          line-height:1.1;
+          font-weight:900;
+          color:#b30000;
+          word-break:break-word;
+          overflow-wrap:anywhere;
+        ">${holiday}</div>
+      `;
+    }
+
+    if(isToday){
+      bg = "#fff3f3";
+      border = "2px solid #b30000";
+    }
+
+    html += `
+      <div style="
+        min-height:76px;
+        border:${border};
+        border-left:${leftBorder};
+        border-radius:12px;
+        padding:5px;
+        background:${bg};
+        box-sizing:border-box;
+        min-width:0;
+        overflow:hidden;
+      ">
+        <div style="
+          font-weight:900;
+          font-size:11px;
+          color:${isToday ? "#b30000" : "#111"};
+          margin-bottom:3px;
+          line-height:1;
+        ">${day}</div>
+
+        <div style="
+          font-size:8.8px;
+          line-height:1.12;
+          color:#666;
+          word-break:break-word;
+          overflow-wrap:anywhere;
+        ">
+          ${holidayHtml}
+          <div style="font-weight:800;">${saint}</div>
+          ${schoolHtml}
+        </div>
+      </div>
+    `;
+  }
+
+  html += `
+      </div>
+    </div>
+  `;
+
+  return html;
+}
+
 // ===== MINI HORLOGE =====
 function refreshMiniClock(){
   const t = $("clockTimeMini");
@@ -8589,21 +8717,21 @@ on(clockBtn, "click", ()=>{
 
     <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;margin-bottom:8px;">Évolution météo sur plusieurs heures</div>
-      <div id="clockWeatherHours" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;"></div>
+      <div id="clockWeatherHours" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;"></div>
     </div>
 
     <div class="box" style="margin-top:12px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
-        <button class="choiceBtn" id="clockPrevMonth" type="button" style="background:#fff;">Mois précédent</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+        <button class="choiceBtn" id="clockPrevMonth" type="button" style="background:#fff;padding:10px 12px;">← Préc.</button>
         <div id="clockMonthTitle" style="font-weight:900;font-size:16px;text-transform:capitalize;">${getMonthLabelFr(now.getFullYear(), now.getMonth())}</div>
-        <button class="choiceBtn" id="clockNextMonth" type="button" style="background:#fff;">Mois suivant</button>
+        <button class="choiceBtn" id="clockNextMonth" type="button" style="background:#fff;padding:10px 12px;">Suiv. →</button>
       </div>
 
       <div style="margin-top:8px;font-size:12px;font-weight:800;color:#9a6b00;">
-        Les vacances scolaires sont surlignées en jaune.
+        Zones scolaires : A bleu • B vert • C violet
       </div>
 
-      <div id="clockCalendarWrap"></div>
+      <div id="clockCalendarWrap" style="margin-top:8px;width:100%;overflow:hidden;"></div>
     </div>
   `);
 
@@ -8696,10 +8824,10 @@ on(clockBtn, "click", ()=>{
           for(let i = startIdx; i < Math.min(startIdx + 8, times.length); i++){
             const hh = String(times[i]).split("T")[1] || "";
             cards.push(`
-              <div style="border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:8px;text-align:center;background:#fff;">
+              <div style="border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:8px;text-align:center;background:#fff;min-width:0;">
                 <div style="font-weight:900;font-size:12px;">${hh.slice(0,5)}</div>
                 <div style="margin-top:6px;font-size:15px;font-weight:900;">${Number.isFinite(temps[i]) ? Math.round(temps[i]) + "°" : "--"}</div>
-                <div style="margin-top:4px;font-size:10px;color:#666;">${weatherCodeToLabel(Number(codes[i] || 0))}</div>
+                <div style="margin-top:4px;font-size:10px;color:#666;word-break:break-word;overflow-wrap:anywhere;">${weatherCodeToLabel(Number(codes[i] || 0))}</div>
               </div>
             `);
           }
@@ -9040,7 +9168,7 @@ if(isFn(window.makeKeyboardClickable)){
   window.showTab("rgpd");
 })();
 
-})();    
+})();
 </script>
 
 <script>
