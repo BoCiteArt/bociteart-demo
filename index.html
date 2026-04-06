@@ -6409,7 +6409,7 @@ if(key === "sport"){
   window.openSportPanel();
   return;
 }
-      if(key === "mairie"){
+    if(key === "mairie"){
   openModal("Mairie", `
     <div style="font-weight:900;margin-bottom:8px;">Mairie</div>
 
@@ -6426,12 +6426,81 @@ if(key === "sport"){
         les informations publiques et le cadre général de l’action mairie dans Bo’CitéArt.
       </div>
 
-      <div style="font-weight:900;margin-top:12px;">Messages gratuits d’intérêt général</div>
+      <div style="font-weight:900;margin-top:12px;">Lecture gratuite des services mairie</div>
+      <div class="muted" style="margin-top:8px;">
+        Tous les services d’information mairie affichés dans cette partie sont consultables gratuitement.
+        La lecture des horaires, coordonnées, démarches utiles et informations pratiques ne donne lieu à aucun coût.
+      </div>
+
+      <div class="muted" style="margin-top:8px;">
+        Seules les <strong>publicités</strong> prévues dans l’application relèvent d’un cadre distinct.
+        Les informations de service public, elles, restent dans un usage de lecture simple, utile et gratuit.
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Services mairie — exemples d’informations utiles</div>
+
+      <div style="margin-top:10px;font-weight:900;">Accueil mairie</div>
+      <div class="muted" style="margin-top:6px;">
+        Téléphone : 03 20 00 00 00<br>
+        Horaires : lundi au vendredi de 8h30 à 12h00 et de 13h30 à 17h30<br>
+        Samedi : 9h00 à 12h00 selon permanence
+      </div>
+
+      <div style="margin-top:12px;font-weight:900;">État civil</div>
+      <div class="muted" style="margin-top:6px;">
+        Actes de naissance, mariage, décès, livret de famille, attestations, copies et démarches d’état civil.<br>
+        Accueil sur rendez-vous ou aux horaires d’ouverture du service.
+      </div>
+
+      <div style="margin-top:12px;font-weight:900;">Carte d’identité / passeport</div>
+      <div class="muted" style="margin-top:6px;">
+        Dépôt des dossiers uniquement sur rendez-vous.<br>
+        Pré-demande possible en ligne avant passage au guichet.<br>
+        Retrait des titres sur présentation du justificatif remis lors du dépôt.
+      </div>
+
+      <div style="margin-top:12px;font-weight:900;">CCAS</div>
+      <div class="muted" style="margin-top:6px;">
+        Téléphone : 03 20 00 00 01<br>
+        Aide sociale, accompagnement des personnes âgées, soutien aux familles, orientation administrative,
+        dossiers d’urgence sociale, accompagnement local.
+      </div>
+
+      <div style="margin-top:12px;font-weight:900;">Urbanisme</div>
+      <div class="muted" style="margin-top:6px;">
+        Déclarations préalables, permis, demandes liées aux travaux, renseignements sur le règlement local,
+        informations sur les dépôts et délais d’instruction.
+      </div>
+
+      <div style="margin-top:12px;font-weight:900;">Affaires scolaires / périscolaire</div>
+      <div class="muted" style="margin-top:6px;">
+        Inscriptions, restauration scolaire, garderie, informations familles, calendrier utile,
+        accompagnement administratif lié à la vie scolaire.
+      </div>
+
+      <div style="margin-top:12px;font-weight:900;">Police municipale / tranquillité publique</div>
+      <div class="muted" style="margin-top:6px;">
+        Téléphone : 03 20 00 00 02<br>
+        Signalements, sécurité locale, prévention, tranquillité publique, informations pratiques de proximité.
+      </div>
+
+      <div class="muted" style="margin-top:10px;">
+        Ces données sont présentées ici à titre de démonstration. En version LIVE, elles seront remplacées
+        par les coordonnées, horaires et procédures réellement validés par la mairie.
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Messages gratuits d’intérêt général</div>
       <ul style="margin:8px 0 0 18px;font-weight:800;">
         <li>Urgence, tempête, vigilance météo</li>
         <li>Rue barrée / déviation</li>
         <li>Risque de gel / température dangereuse</li>
         <li>Information de sécurité publique</li>
+        <li>Horaires exceptionnels d’un service mairie</li>
+        <li>Fermeture temporaire d’un accueil ou d’un guichet</li>
       </ul>
 
       <div class="muted" style="margin-top:8px;">
