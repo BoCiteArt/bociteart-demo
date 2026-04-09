@@ -1,4 +1,3 @@
-<!-- PARTIE 1 / 2 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,8 +9,15 @@ body{font-family:Arial;margin:0;background:#f5f5f5}
 header{background:#111;color:#fff;padding:10px;text-align:center}
 .tab{display:none;padding:15px}
 .tab.active{display:block}
-.choiceBtn{padding:10px 15px;border-radius:8px;border:1px solid #ccc;cursor:pointer}
-textarea,input{width:100%;padding:8px;margin-top:5px}
+.choiceBtn{padding:10px 15px;border-radius:8px;border:1px solid #ccc;cursor:pointer;background:#fff}
+textarea,input{width:100%;padding:8px;margin-top:5px;box-sizing:border-box}
+.box{
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:10px;
+  padding:12px;
+  margin-top:12px;
+}
 </style>
 </head>
 <body>
@@ -22,6 +28,7 @@ textarea,input{width:100%;padding:8px;margin-top:5px}
 <!-- NAVIGATION -->
 <div style="display:flex;gap:10px;padding:10px;flex-wrap:wrap;">
 <button onclick="openTab('home')">Accueil</button>
+<button onclick="openTab('mairie')">Mairie</button>
 <button onclick="openTab('sport')">Sport</button>
 <button onclick="openTab('ecole')">École</button>
 <button onclick="openTab('commerce')">Commerçants</button>
@@ -31,6 +38,37 @@ textarea,input{width:100%;padding:8px;margin-top:5px}
 <div id="home" class="tab active">
 <h3>Bienvenue</h3>
 <p>Application Bo'CitéArt - Démo sécurisée</p>
+</div>
+
+<!-- MAIRIE -->
+<div id="mairie" class="tab">
+<h3>Mairie</h3>
+
+<div class="box">
+<strong>Cadre :</strong> la mairie dispose d’un espace public d’information destiné aux habitants.
+</div>
+
+<div class="box">
+<div style="font-weight:900;">Ville de Wattignies — accès citoyen utile</div>
+
+<div style="margin-top:8px;">
+Cet accès permet aux habitants de retrouver rapidement les informations et services utiles liés à la ville,
+dans un format simple, direct et lisible.
+</div>
+
+<div style="margin-top:8px;">
+L’objectif est de remplacer une lecture trop statique des services par un point d’entrée plus vivant,
+plus pratique et plus clair pour les citoyens.
+</div>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+<button class="choiceBtn" id="openWattigniesCityBtn" type="button">Ouvrir Ville de Wattignies</button>
+</div>
+
+<div style="margin-top:10px;">
+En version démo, ce bouton ouvre directement la page utile liée à la ville.
+</div>
+</div>
 </div>
 
 <!-- SPORT -->
@@ -61,121 +99,152 @@ textarea,input{width:100%;padding:8px;margin-top:5px}
 <div id="commerce" class="tab">
 <h3>Paiement publicité</h3>
 <p>Simulation sécurisée (pré-PSP)</p>
-<button id="payBtn">Payer 50€</button>
+<button id="payBtn" class="choiceBtn">Payer 50€</button>
 <p id="paymentStatus"></p>
 </div>
 
 <script>
 // NAVIGATION
 function openTab(id){
-document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  const target=document.getElementById(id);
+  if(target) target.classList.add('active');
 }
 
 // STORAGE SECURISE (simulation backend)
 function secureSave(key,data){
-const payload={
-value:data,
-time:Date.now()
-};
-localStorage.setItem(key,JSON.stringify(payload));
+  const payload={
+    value:data,
+    time:Date.now()
+  };
+  localStorage.setItem(key,JSON.stringify(payload));
 }
 
 function secureRead(key){
-const raw=localStorage.getItem(key);
-if(!raw) return null;
-try{
-return JSON.parse(raw).value;
-}catch{return null}
+  const raw=localStorage.getItem(key);
+  if(!raw) return null;
+  try{
+    return JSON.parse(raw).value;
+  }catch(e){
+    return null;
+  }
+}
+
+// MAIRIE
+const openWattigniesCityBtn=document.getElementById('openWattigniesCityBtn');
+if(openWattigniesCityBtn){
+  openWattigniesCityBtn.onclick=()=>{
+    window.open('https://www.wattignies.fr','_blank','noopener,noreferrer');
+  };
 }
 
 // SPORT
-sportWeekendSave.onclick=()=>{
-secureSave('sportWeekend',sportWeekendText.value);
-alert('Enregistré');
-};
+const sportWeekendSave=document.getElementById('sportWeekendSave');
+const sportWeekendRead=document.getElementById('sportWeekendRead');
+const sportWeekendReset=document.getElementById('sportWeekendReset');
+const sportWeekendText=document.getElementById('sportWeekendText');
 
-sportWeekendRead.onclick=()=>{
-const v=secureRead('sportWeekend');
-sportWeekendText.value=v||'';
-};
+if(sportWeekendSave){
+  sportWeekendSave.onclick=()=>{
+    secureSave('sportWeekend',sportWeekendText.value);
+    alert('Enregistré');
+  };
+}
 
-sportWeekendReset.onclick=()=>{
-localStorage.removeItem('sportWeekend');
-sportWeekendText.value='';
-};
+if(sportWeekendRead){
+  sportWeekendRead.onclick=()=>{
+    const v=secureRead('sportWeekend');
+    sportWeekendText.value=v||'';
+  };
+}
+
+if(sportWeekendReset){
+  sportWeekendReset.onclick=()=>{
+    localStorage.removeItem('sportWeekend');
+    sportWeekendText.value='';
+  };
+}
 
 // ECOLE
-schoolSave.onclick=()=>{
-secureSave('schoolWord',schoolWord.value);
-alert('Enregistré');
-};
+const schoolSave=document.getElementById('schoolSave');
+const schoolRead=document.getElementById('schoolRead');
+const schoolReset=document.getElementById('schoolReset');
+const schoolWord=document.getElementById('schoolWord');
 
-schoolRead.onclick=()=>{
-const v=secureRead('schoolWord');
-schoolWord.value=v||'';
-};
+if(schoolSave){
+  schoolSave.onclick=()=>{
+    secureSave('schoolWord',schoolWord.value);
+    alert('Enregistré');
+  };
+}
 
-schoolReset.onclick=()=>{
-localStorage.removeItem('schoolWord');
-schoolWord.value='';
-};
+if(schoolRead){
+  schoolRead.onclick=()=>{
+    const v=secureRead('schoolWord');
+    schoolWord.value=v||'';
+  };
+}
+
+if(schoolReset){
+  schoolReset.onclick=()=>{
+    localStorage.removeItem('schoolWord');
+    schoolWord.value='';
+  };
+}
 
 // PAIEMENT (pré-PSP prêt)
-payBtn.onclick=async()=>{
-paymentStatus.innerText='Connexion paiement...';
+const payBtn=document.getElementById('payBtn');
+const paymentStatus=document.getElementById('paymentStatus');
 
-// SIMULATION API (remplacera Stripe / PSP)
-await new Promise(r=>setTimeout(r,1000));
+if(payBtn){
+  payBtn.onclick=async()=>{
+    paymentStatus.innerText='Connexion paiement...';
 
-const paymentResult={status:'success',id:'demo_tx_123'};
+    // SIMULATION API (remplacera Stripe / PSP)
+    await new Promise(r=>setTimeout(r,1000));
 
-if(paymentResult.status==='success'){
-secureSave('payment',{paid:true,id:paymentResult.id});
-paymentStatus.innerText='Paiement validé ✔';
-}else{
-paymentStatus.innerText='Erreur paiement';
+    const paymentResult={status:'success',id:'demo_tx_123'};
+
+    if(paymentResult.status==='success'){
+      secureSave('payment',{paid:true,id:paymentResult.id});
+      paymentStatus.innerText='Paiement validé ✔';
+    }else{
+      paymentStatus.innerText='Erreur paiement';
+    }
+  };
 }
-};
 </script>
 
-<!-- FIN PARTIE 1 -->
-
-
-<!-- PARTIE 2 / 2 -->
 <script>
 // PROTECTION SUPPLEMENTAIRE (pré-live)
 (function(){
-let attempts=0;
-window.addEventListener('error',()=>{
-attempts++;
-if(attempts>5){
-alert('Erreur détectée - sécurité activée');
-}
-});
+  let attempts=0;
+  window.addEventListener('error',()=>{
+    attempts++;
+    if(attempts>5){
+      alert('Erreur détectée - sécurité activée');
+    }
+  });
 })();
 
 // VERIFICATION ETAT PAIEMENT (future PSP)
 function isPaid(){
-const p=secureRead('payment');
-return p && p.paid===true;
+  const p=secureRead('payment');
+  return p && p.paid===true;
 }
 
 // EXEMPLE UTILISATION
 setInterval(()=>{
-if(isPaid()){
-paymentStatus.style.color='green';
-}
+  if(isPaid() && paymentStatus){
+    paymentStatus.style.color='green';
+  }
 },2000);
 
 // PREPARATION WEBHOOK (placeholder)
 async function verifyPaymentServer(txId){
-// ici appel backend futur
-return true;
+  // ici appel backend futur
+  return true;
 }
-
-// HARDENING BASIQUE
-Object.freeze(window);
 </script>
 
 </body>
