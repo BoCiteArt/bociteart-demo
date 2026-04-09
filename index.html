@@ -3215,7 +3215,7 @@ out center tags;
             }
           }
 
-         if(key === "oeuvres"){
+        if(key === "oeuvres"){
 
   const STORAGE_KEY = "boc_oeuvres_unlock_v2";
   const LAST_KEY = "boc_oeuvres_last_v2";
@@ -3480,32 +3480,55 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
 
   function stopAudio(){
     try{
-      const a = document.getElementById("boc-pro-audio-player");
-      if(a){
-        a.pause();
-        a.currentTime = 0;
+      if("speechSynthesis" in window){
+        window.speechSynthesis.cancel();
       }
     }catch(e){}
   }
 
-  function playAudio(url){
+  function speakTextPremium(text){
     try{
-      let a = document.getElementById("boc-pro-audio-player");
-      if(!a){
-        a = document.createElement("audio");
-        a.id = "boc-pro-audio-player";
-        a.style.display = "none";
-        document.body.appendChild(a);
+      if(!("speechSynthesis" in window)){
+        alert("Synthèse vocale non supportée sur cet appareil.");
+        return;
       }
-      a.pause();
-      a.src = url;
-      a.currentTime = 0;
-      a.play().catch(function(){
-        alert("Audio pro introuvable. Vérifie le fichier MP3. Le texte reste disponible.");
-      });
+
+      window.speechSynthesis.cancel();
+
+      const utter = new SpeechSynthesisUtterance(String(text || ""));
+      utter.rate = 0.95;
+      utter.pitch = 1.05;
+      utter.volume = 1;
+      utter.lang = "fr-FR";
+
+      const voices = window.speechSynthesis.getVoices() || [];
+
+      const preferred =
+        voices.find(v => String(v.name || "").toLowerCase().includes("denise")) ||
+        voices.find(v => String(v.name || "").toLowerCase().includes("mercedes")) ||
+        voices.find(v => String(v.name || "").toLowerCase().includes("audrey")) ||
+        voices.find(v => String(v.name || "").toLowerCase().includes("amélie")) ||
+        voices.find(v => String(v.name || "").toLowerCase().includes("amelie")) ||
+        voices.find(v => String(v.name || "").toLowerCase().includes("google français")) ||
+        voices.find(v => String(v.lang || "").toLowerCase() === "fr-fr") ||
+        voices.find(v => String(v.lang || "").toLowerCase().startsWith("fr"));
+
+      if(preferred){
+        utter.voice = preferred;
+      }
+
+      window.speechSynthesis.speak(utter);
     }catch(e){
-      alert("Impossible de lancer l’audio. Le texte reste disponible.");
+      alert("Erreur de lecture vocale.");
     }
+  }
+
+  function stopSpeech(){
+    try{
+      if("speechSynthesis" in window){
+        window.speechSynthesis.cancel();
+      }
+    }catch(e){}
   }
 
   let oeuvreMediaRecorder = null;
@@ -3545,34 +3568,6 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
   function hasLocalAudioForOeuvre(id){
     const rec = getLocalAudioForOeuvre(id);
     return !!(rec && rec.audioData);
-  }
-
-  function playPreferredAudioForOeuvre(id, fallbackUrl){
-    const rec = getLocalAudioForOeuvre(id);
-
-    if(rec && rec.audioData){
-      try{
-        let a = document.getElementById("boc-pro-audio-player");
-        if(!a){
-          a = document.createElement("audio");
-          a.id = "boc-pro-audio-player";
-          a.style.display = "none";
-          document.body.appendChild(a);
-        }
-        a.pause();
-        a.src = rec.audioData;
-        a.currentTime = 0;
-        a.play().catch(function(){
-          alert("Audio local introuvable. Le texte reste disponible.");
-        });
-        return;
-      }catch(e){
-        alert("Impossible de lancer l’audio local. Le texte reste disponible.");
-        return;
-      }
-    }
-
-    playAudio(fallbackUrl);
   }
 
   async function startLocalOeuvreRecording(id){
@@ -3655,7 +3650,24 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
       alert("Aucun enregistrement local pour cette œuvre.");
       return;
     }
-    playPreferredAudioForOeuvre(id, "");
+
+    try{
+      let a = document.getElementById("boc-pro-audio-player");
+      if(!a){
+        a = document.createElement("audio");
+        a.id = "boc-pro-audio-player";
+        a.style.display = "none";
+        document.body.appendChild(a);
+      }
+      a.pause();
+      a.src = rec.audioData;
+      a.currentTime = 0;
+      a.play().catch(function(){
+        alert("Audio local introuvable. Le texte reste disponible.");
+      });
+    }catch(e){
+      alert("Impossible de lancer l’audio local. Le texte reste disponible.");
+    }
   }
 
   function deleteLocalRecordedOeuvre(id){
@@ -3682,204 +3694,181 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
     `;
   }
 
- function openDetailById(id){
-  const o = oeuvres.find(x => x.id === id);
-  if(!o) return;
+  function openDetailById(id){
+    const o = oeuvres.find(x => x.id === id);
+    if(!o) return;
 
-  if(!isOpen(o)){
-    alert("Cette œuvre est verrouillée. Il faut scanner le QR code sur place.");
-    return;
-  }
+    if(!isOpen(o)){
+      alert("Cette œuvre est verrouillée. Il faut scanner le QR code sur place.");
+      return;
+    }
 
-  try{
-    localStorage.setItem(LAST_KEY, o.id);
-  }catch(e){}
+    try{
+      localStorage.setItem(LAST_KEY, o.id);
+    }catch(e){}
 
-  const playBtnId = "oeuvrePlayBtn_" + o.id;
-  const stopBtnId = "oeuvreStopBtn_" + o.id;
-  const recBtnId = "oeuvreRecBtn_" + o.id;
-  const recStopBtnId = "oeuvreRecStopBtn_" + o.id;
-  const localPlayBtnId = "oeuvreLocalPlayBtn_" + o.id;
-  const localDeleteBtnId = "oeuvreLocalDeleteBtn_" + o.id;
-  const audioStatusId = "oeuvreAudioStatus_" + o.id;
+    const recBtnId = "oeuvreRecBtn_" + o.id;
+    const recStopBtnId = "oeuvreRecStopBtn_" + o.id;
+    const localPlayBtnId = "oeuvreLocalPlayBtn_" + o.id;
+    const localDeleteBtnId = "oeuvreLocalDeleteBtn_" + o.id;
+    const audioStatusId = "oeuvreAudioStatus_" + o.id;
 
-  const hasLocalAudio = hasLocalAudioForOeuvre(o.id);
+    const hasLocalAudio = hasLocalAudioForOeuvre(o.id);
 
-  openModal(o.titre, `
-    <div class="box">
-      <strong>Explication pour les élus :</strong><br>
-      cette fiche montre ce qui se passe une fois l’œuvre déverrouillée par QR code :
-      le visiteur accède à une expérience complète mêlant audio professionnel,
-      texte lisible, histoire du quartier, mise en valeur de l’artiste, du mécène
-      et des partenaires liés à l’œuvre.
-    </div>
-
-    <div class="box" style="margin-top:10px;">
-      <strong>Objectif :</strong><br>
-      transformer une fresque en parcours culturel vivant, faire circuler les habitants
-      et visiteurs dans la ville, relier les quartiers, créer du lien humain et donner
-      une profondeur nouvelle à l’œuvre par la voix, le texte et les prolongements externes.
-    </div>
-
-    <div class="box" style="margin-top:10px;">
-      Quartier : ${esc(o.quartier)}<br>
-      Artiste : ${esc(o.artiste || "à découvrir")}<br>
-      Mécène : ${esc(o.mecene || "à découvrir")}
-    </div>
-
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-      <button id="${playBtnId}" type="button"
-        style="background:#1f6f5f;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
-        ▶ Écouter
-      </button>
-
-      <button id="${stopBtnId}" type="button"
-        style="background:#666;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
-        ■ Arrêter
-      </button>
-    </div>
-
-    <div id="${audioStatusId}" class="muted" style="margin-top:8px;">
-      ${
-        hasLocalAudio
-          ? "Une voix locale est enregistrée sur cet appareil pour cette œuvre."
-          : "À ce stade, si aucun MP3 pro n’est encore intégré, le bouton Écouter peut ne rien lancer. C’est normal en démo tant que l’audio live n’est pas branché."
-      }
-    </div>
-
-    <div class="box" style="margin-top:12px;">
-      <strong>Lecture texte :</strong><br>
-      <div style="white-space:pre-line;line-height:1.55;margin-top:8px;">
-        ${esc(o.texte)}
+    openModal(o.titre, `
+      <div class="box">
+        <strong>Explication pour les élus :</strong><br>
+        cette fiche montre ce qui se passe une fois l’œuvre déverrouillée par QR code :
+        le visiteur accède à une expérience complète mêlant audio professionnel,
+        texte lisible, histoire du quartier, mise en valeur de l’artiste, du mécène
+        et des partenaires liés à l’œuvre.
       </div>
-    </div>
 
-    <div class="box" style="margin-top:12px;">
-      <strong>Audio attendu :</strong><br>
-      fichier MP3 professionnel intégré dans l’application ou le site, prévu pour une
-      voix féminine douce, calme, fluide et premium. Le texte reste toujours disponible
-      si le son ne fonctionne pas.
-    </div>
+      <div class="box" style="margin-top:10px;">
+        <strong>Objectif :</strong><br>
+        transformer une fresque en parcours culturel vivant, faire circuler les habitants
+        et visiteurs dans la ville, relier les quartiers, créer du lien humain et donner
+        une profondeur nouvelle à l’œuvre par la voix, le texte et les prolongements externes.
+      </div>
 
-    ${renderLinks(o.liens)}
-
-    <div style="margin-top:12px;padding:10px;border-radius:10px;background:#f6f6f6;">
-      <strong>Accès Bo’CitéArt local (démo admin)</strong><br>
-      <div class="muted" style="margin-top:6px;">
-        Ces actions servent à enregistrer localement une voix sur cet appareil. La vraie protection admin et la 2FA seront branchées plus tard.
+      <div class="box" style="margin-top:10px;">
+        Quartier : ${esc(o.quartier)}<br>
+        Artiste : ${esc(o.artiste || "à découvrir")}<br>
+        Mécène : ${esc(o.mecene || "à découvrir")}
       </div>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-        <button id="${recBtnId}" type="button"
-          style="background:#b06b00;color:#fff;padding:8px 10px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
-          Enregistrer la voix
+        <button onclick="speakTextPremium(${JSON.stringify(o.texte)})"
+          style="background:#1f6f5f;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
+          ▶ Écouter
         </button>
 
-        <button id="${recStopBtnId}" type="button"
-          style="background:#fff;color:#222;padding:8px 10px;border-radius:10px;border:1px solid #ddd;font-weight:900;cursor:pointer;">
-          Stop enregistrement
-        </button>
-
-        <button id="${localPlayBtnId}" type="button"
-          style="background:#fff;color:#222;padding:8px 10px;border-radius:10px;border:1px solid #ddd;font-weight:900;cursor:pointer;">
-          Écouter voix locale
-        </button>
-
-        <button id="${localDeleteBtnId}" type="button"
-          style="background:#fff;color:#222;padding:8px 10px;border-radius:10px;border:1px solid #ddd;font-weight:900;cursor:pointer;">
-          Supprimer voix locale
+        <button onclick="stopSpeech()"
+          style="background:#666;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
+          ■ Arrêter
         </button>
       </div>
-    </div>
-  `);
 
-  setTimeout(()=>{
-    const playBtn = document.getElementById(playBtnId);
-    const stopBtn = document.getElementById(stopBtnId);
-    const recBtn = document.getElementById(recBtnId);
-    const recStopBtn = document.getElementById(recStopBtnId);
-    const localPlayBtn = document.getElementById(localPlayBtnId);
-    const localDeleteBtn = document.getElementById(localDeleteBtnId);
-    const audioStatus = document.getElementById(audioStatusId);
+      <div id="${audioStatusId}" class="muted" style="margin-top:8px;">
+        ${
+          hasLocalAudio
+            ? "Une voix locale est enregistrée sur cet appareil pour cette œuvre."
+            : "Lecture directe par voix synthétique française de l’appareil. Le texte reste disponible en permanence."
+        }
+      </div>
 
-    if(playBtn){
-      playBtn.onclick = function(){
-        playPreferredAudioForOeuvre(o.id, o.audio);
+      <div class="box" style="margin-top:12px;">
+        <strong>Lecture texte :</strong><br>
+        <div style="white-space:pre-line;line-height:1.55;margin-top:8px;">
+          ${esc(o.texte)}
+        </div>
+      </div>
 
-        if(audioStatus){
-          if(hasLocalAudioForOeuvre(o.id)){
-            audioStatus.textContent = "Lecture de la voix locale enregistrée sur cet appareil.";
-          }else{
-            audioStatus.textContent = "Tentative de lecture du MP3 professionnel. S’il n’est pas encore intégré, seul le texte est disponible à ce stade.";
+      <div class="box" style="margin-top:12px;">
+        <strong>Audio attendu :</strong><br>
+        lecture directe par voix synthétique française de qualité disponible sur l’appareil
+        (type Denise, Mercedes ou équivalent). Le texte reste toujours disponible
+        si le son ne fonctionne pas.
+      </div>
+
+      ${renderLinks(o.liens)}
+
+      <div style="margin-top:12px;padding:10px;border-radius:10px;background:#f6f6f6;">
+        <strong>Accès Bo’CitéArt local (démo admin)</strong><br>
+        <div class="muted" style="margin-top:6px;">
+          Ces actions servent à enregistrer localement une voix sur cet appareil. La vraie protection admin et la 2FA seront branchées plus tard.
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+          <button id="${recBtnId}" type="button"
+            style="background:#b06b00;color:#fff;padding:8px 10px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
+            Enregistrer la voix
+          </button>
+
+          <button id="${recStopBtnId}" type="button"
+            style="background:#fff;color:#222;padding:8px 10px;border-radius:10px;border:1px solid #ddd;font-weight:900;cursor:pointer;">
+            Stop enregistrement
+          </button>
+
+          <button id="${localPlayBtnId}" type="button"
+            style="background:#fff;color:#222;padding:8px 10px;border-radius:10px;border:1px solid #ddd;font-weight:900;cursor:pointer;">
+            Écouter voix locale
+          </button>
+
+          <button id="${localDeleteBtnId}" type="button"
+            style="background:#fff;color:#222;padding:8px 10px;border-radius:10px;border:1px solid #ddd;font-weight:900;cursor:pointer;">
+            Supprimer voix locale
+          </button>
+        </div>
+      </div>
+    `);
+
+    setTimeout(()=>{
+      speakTextPremium(o.texte);
+    }, 400);
+
+    setTimeout(()=>{
+      const recBtn = document.getElementById(recBtnId);
+      const recStopBtn = document.getElementById(recStopBtnId);
+      const localPlayBtn = document.getElementById(localPlayBtnId);
+      const localDeleteBtn = document.getElementById(localDeleteBtnId);
+      const audioStatus = document.getElementById(audioStatusId);
+
+      if(recBtn){
+        recBtn.onclick = function(){
+          const p = prompt("Mot de passe admin local");
+          if(p === null) return;
+          if(p !== LOCAL_ADMIN_PASSWORD){
+            alert("Mot de passe incorrect");
+            return;
           }
-        }
-      };
-    }
+          startLocalOeuvreRecording(o.id);
+        };
+      }
 
-    if(stopBtn){
-      stopBtn.onclick = function(){
-        stopAudio();
-        if(audioStatus){
-          audioStatus.textContent = "Lecture arrêtée.";
-        }
-      };
-    }
+      if(recStopBtn){
+        recStopBtn.onclick = function(){
+          const p = prompt("Mot de passe admin local");
+          if(p === null) return;
+          if(p !== LOCAL_ADMIN_PASSWORD){
+            alert("Mot de passe incorrect");
+            return;
+          }
+          stopLocalOeuvreRecording();
+        };
+      }
 
-    if(recBtn){
-      recBtn.onclick = function(){
-        const p = prompt("Mot de passe admin local");
-        if(p === null) return;
-        if(p !== LOCAL_ADMIN_PASSWORD){
-          alert("Mot de passe incorrect");
-          return;
-        }
-        startLocalOeuvreRecording(o.id);
-      };
-    }
+      if(localPlayBtn){
+        localPlayBtn.onclick = function(){
+          const p = prompt("Mot de passe admin local");
+          if(p === null) return;
+          if(p !== LOCAL_ADMIN_PASSWORD){
+            alert("Mot de passe incorrect");
+            return;
+          }
+          playLocalRecordedOeuvre(o.id);
+          if(audioStatus){
+            audioStatus.textContent = "Lecture de l’enregistrement local.";
+          }
+        };
+      }
 
-    if(recStopBtn){
-      recStopBtn.onclick = function(){
-        const p = prompt("Mot de passe admin local");
-        if(p === null) return;
-        if(p !== LOCAL_ADMIN_PASSWORD){
-          alert("Mot de passe incorrect");
-          return;
-        }
-        stopLocalOeuvreRecording();
-      };
-    }
-
-    if(localPlayBtn){
-      localPlayBtn.onclick = function(){
-        const p = prompt("Mot de passe admin local");
-        if(p === null) return;
-        if(p !== LOCAL_ADMIN_PASSWORD){
-          alert("Mot de passe incorrect");
-          return;
-        }
-        playLocalRecordedOeuvre(o.id);
-        if(audioStatus){
-          audioStatus.textContent = "Lecture de l’enregistrement local.";
-        }
-      };
-    }
-
-    if(localDeleteBtn){
-      localDeleteBtn.onclick = function(){
-        const p = prompt("Mot de passe admin local");
-        if(p === null) return;
-        if(p !== LOCAL_ADMIN_PASSWORD){
-          alert("Mot de passe incorrect");
-          return;
-        }
-        deleteLocalRecordedOeuvre(o.id);
-        if(audioStatus){
-          audioStatus.textContent = "Enregistrement local supprimé pour cette œuvre.";
-        }
-      };
-    }
-  }, 0);
-}
+      if(localDeleteBtn){
+        localDeleteBtn.onclick = function(){
+          const p = prompt("Mot de passe admin local");
+          if(p === null) return;
+          if(p !== LOCAL_ADMIN_PASSWORD){
+            alert("Mot de passe incorrect");
+            return;
+          }
+          deleteLocalRecordedOeuvre(o.id);
+          if(audioStatus){
+            audioStatus.textContent = "Enregistrement local supprimé pour cette œuvre.";
+          }
+        };
+      }
+    }, 0);
+  }
 
   function promptQr(){
     const code = prompt(
@@ -3934,6 +3923,7 @@ QR-BOCITEART-010`
 
   function renderRow(o, index){
     const open = isOpen(o);
+    const btnId = "oeuvreRowBtn_" + o.id;
 
     return `
       <div class="box" style="margin-top:8px;">
@@ -3947,7 +3937,11 @@ QR-BOCITEART-010`
           : "Aperçu : œuvre visible dans le parcours, fiche complète verrouillée jusqu’au scan."}
 
         <div style="margin-top:10px;">
-          <button onclick="${open ? `(${openDetailById.toString()})('${o.id}')` : `(${promptQr.toString()})()`}"
+          <button
+            id="${btnId}"
+            type="button"
+            data-oeuvre-id="${esc(o.id)}"
+            data-open="${open ? "1" : "0"}"
             style="background:${open ? "#1f6f5f" : "#b06b00"};color:#fff;padding:8px 10px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
             ${open ? "Ouvrir la fiche" : "Scanner / saisir le QR"}
           </button>
@@ -3994,17 +3988,20 @@ QR-BOCITEART-010`
       </div>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-        <button onclick="(${promptQr.toString()})()"
+        <button id="oeuvreScanBtn"
+          type="button"
           style="border:0;background:#b06b00;color:#fff;padding:10px 12px;border-radius:10px;font-weight:900;cursor:pointer;">
           Scanner / saisir un QR
         </button>
 
-        <button onclick="(${reopenLast.toString()})()"
+        <button id="oeuvreReopenBtn"
+          type="button"
           style="border:0;background:#224e96;color:#fff;padding:10px 12px;border-radius:10px;font-weight:900;cursor:pointer;">
           Rouvrir la dernière œuvre
         </button>
 
-        <button onclick="(${resetDemo.toString()})()"
+        <button id="oeuvreResetBtn"
+          type="button"
           style="border:0;background:#666;color:#fff;padding:10px 12px;border-radius:10px;font-weight:900;cursor:pointer;">
           Réinitialiser la démo
         </button>
@@ -4050,6 +4047,43 @@ QR-BOCITEART-010`
         sa découverte et valoriser fortement les partenaires impliqués.
       </div>
     `);
+
+    setTimeout(()=>{
+      const scanBtn = document.getElementById("oeuvreScanBtn");
+      const reopenBtn = document.getElementById("oeuvreReopenBtn");
+      const resetBtn = document.getElementById("oeuvreResetBtn");
+
+      if(scanBtn){
+        scanBtn.onclick = function(){
+          promptQr();
+        };
+      }
+
+      if(reopenBtn){
+        reopenBtn.onclick = function(){
+          reopenLast();
+        };
+      }
+
+      if(resetBtn){
+        resetBtn.onclick = function(){
+          resetDemo();
+        };
+      }
+
+      oeuvres.forEach(function(o){
+        const btn = document.getElementById("oeuvreRowBtn_" + o.id);
+        if(!btn) return;
+
+        btn.onclick = function(){
+          if(isOpen(o)){
+            openDetailById(o.id);
+          }else{
+            promptQr();
+          }
+        };
+      });
+    }, 0);
   }
 
   openOverview();
