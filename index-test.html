@@ -1,0 +1,182 @@
+<!-- PARTIE 1 / 2 -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bo'CitéArt</title>
+<style>
+body{font-family:Arial;margin:0;background:#f5f5f5}
+header{background:#111;color:#fff;padding:10px;text-align:center}
+.tab{display:none;padding:15px}
+.tab.active{display:block}
+.choiceBtn{padding:10px 15px;border-radius:8px;border:1px solid #ccc;cursor:pointer}
+textarea,input{width:100%;padding:8px;margin-top:5px}
+</style>
+</head>
+<body>
+<header>
+<h2>Bo'CitéArt</h2>
+</header>
+
+<!-- NAVIGATION -->
+<div style="display:flex;gap:10px;padding:10px;flex-wrap:wrap;">
+<button onclick="openTab('home')">Accueil</button>
+<button onclick="openTab('sport')">Sport</button>
+<button onclick="openTab('ecole')">École</button>
+<button onclick="openTab('commerce')">Commerçants</button>
+</div>
+
+<!-- ACCUEIL -->
+<div id="home" class="tab active">
+<h3>Bienvenue</h3>
+<p>Application Bo'CitéArt - Démo sécurisée</p>
+</div>
+
+<!-- SPORT -->
+<div id="sport" class="tab">
+<h3>Résultat du week-end</h3>
+<textarea id="sportWeekendText" placeholder="Résultat du week-end"></textarea>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+<button class="choiceBtn" id="sportWeekendSave">💾 Enregistrer</button>
+<button class="choiceBtn" id="sportWeekendRead">Lire</button>
+<button class="choiceBtn" id="sportWeekendReset">Réinitialiser</button>
+</div>
+</div>
+
+<!-- ECOLE -->
+<div id="ecole" class="tab">
+<h3>Mot du jour</h3>
+<input id="schoolWord" placeholder="Mot du jour">
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+<button class="choiceBtn" id="schoolSave">💾 Enregistrer</button>
+<button class="choiceBtn" id="schoolRead">Lire</button>
+<button class="choiceBtn" id="schoolReset">Réinitialiser</button>
+</div>
+</div>
+
+<!-- COMMERCE -->
+<div id="commerce" class="tab">
+<h3>Paiement publicité</h3>
+<p>Simulation sécurisée (pré-PSP)</p>
+<button id="payBtn">Payer 50€</button>
+<p id="paymentStatus"></p>
+</div>
+
+<script>
+// NAVIGATION
+function openTab(id){
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+// STORAGE SECURISE (simulation backend)
+function secureSave(key,data){
+const payload={
+value:data,
+time:Date.now()
+};
+localStorage.setItem(key,JSON.stringify(payload));
+}
+
+function secureRead(key){
+const raw=localStorage.getItem(key);
+if(!raw) return null;
+try{
+return JSON.parse(raw).value;
+}catch{return null}
+}
+
+// SPORT
+sportWeekendSave.onclick=()=>{
+secureSave('sportWeekend',sportWeekendText.value);
+alert('Enregistré');
+};
+
+sportWeekendRead.onclick=()=>{
+const v=secureRead('sportWeekend');
+sportWeekendText.value=v||'';
+};
+
+sportWeekendReset.onclick=()=>{
+localStorage.removeItem('sportWeekend');
+sportWeekendText.value='';
+};
+
+// ECOLE
+schoolSave.onclick=()=>{
+secureSave('schoolWord',schoolWord.value);
+alert('Enregistré');
+};
+
+schoolRead.onclick=()=>{
+const v=secureRead('schoolWord');
+schoolWord.value=v||'';
+};
+
+schoolReset.onclick=()=>{
+localStorage.removeItem('schoolWord');
+schoolWord.value='';
+};
+
+// PAIEMENT (pré-PSP prêt)
+payBtn.onclick=async()=>{
+paymentStatus.innerText='Connexion paiement...';
+
+// SIMULATION API (remplacera Stripe / PSP)
+await new Promise(r=>setTimeout(r,1000));
+
+const paymentResult={status:'success',id:'demo_tx_123'};
+
+if(paymentResult.status==='success'){
+secureSave('payment',{paid:true,id:paymentResult.id});
+paymentStatus.innerText='Paiement validé ✔';
+}else{
+paymentStatus.innerText='Erreur paiement';
+}
+};
+</script>
+
+<!-- FIN PARTIE 1 -->
+
+
+<!-- PARTIE 2 / 2 -->
+<script>
+// PROTECTION SUPPLEMENTAIRE (pré-live)
+(function(){
+let attempts=0;
+window.addEventListener('error',()=>{
+attempts++;
+if(attempts>5){
+alert('Erreur détectée - sécurité activée');
+}
+});
+})();
+
+// VERIFICATION ETAT PAIEMENT (future PSP)
+function isPaid(){
+const p=secureRead('payment');
+return p && p.paid===true;
+}
+
+// EXEMPLE UTILISATION
+setInterval(()=>{
+if(isPaid()){
+paymentStatus.style.color='green';
+}
+},2000);
+
+// PREPARATION WEBHOOK (placeholder)
+async function verifyPaymentServer(txId){
+// ici appel backend futur
+return true;
+}
+
+// HARDENING BASIQUE
+Object.freeze(window);
+</script>
+
+</body>
+</html>
