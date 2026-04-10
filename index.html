@@ -6544,6 +6544,218 @@ if(key === "sport"){
   return;
 }
 if(key === "mairie"){
+  const CITY_SERVICES_DATA = [
+    {
+      title: "Accueil mairie",
+      items: [
+        "Téléphone : 03 20 00 00 00",
+        "Horaires : lundi au vendredi de 8h30 à 12h00 et de 13h30 à 17h30",
+        "Samedi : 9h00 à 12h00 selon permanence"
+      ]
+    },
+    {
+      title: "État civil",
+      items: [
+        "Actes de naissance, mariage, décès, livret de famille",
+        "Attestations, copies et démarches d’état civil",
+        "Accueil sur rendez-vous ou aux horaires d’ouverture"
+      ]
+    },
+    {
+      title: "Carte d’identité / passeport",
+      items: [
+        "Dépôt des dossiers sur rendez-vous",
+        "Pré-demande possible en ligne avant passage au guichet",
+        "Retrait des titres sur présentation du justificatif"
+      ]
+    },
+    {
+      title: "CCAS",
+      items: [
+        "Téléphone : 03 20 00 00 01",
+        "Aide sociale, accompagnement des personnes âgées",
+        "Soutien aux familles, orientation administrative"
+      ]
+    },
+    {
+      title: "Urbanisme",
+      items: [
+        "Déclarations préalables, permis, demandes liées aux travaux",
+        "Renseignements sur le règlement local",
+        "Informations sur les dépôts et délais d’instruction"
+      ]
+    },
+    {
+      title: "Affaires scolaires / périscolaire",
+      items: [
+        "Inscriptions",
+        "Restauration scolaire",
+        "Garderie",
+        "Informations familles et calendrier utile"
+      ]
+    },
+    {
+      title: "Police municipale / tranquillité publique",
+      items: [
+        "Téléphone : 03 20 00 00 02",
+        "Signalements",
+        "Sécurité locale",
+        "Prévention et informations pratiques de proximité"
+      ]
+    },
+
+    // Références issues de la capture “Ville de Wattignies”
+    {
+      title: "Actualités de Wattignies",
+      items: [
+        "Suivi des actualités locales",
+        "Consultation des archives d’actualités",
+        "Repères utiles sur la vie locale"
+      ]
+    },
+    {
+      title: "Vidéos de Wattignies",
+      items: [
+        "Espace vidéo local",
+        "Découverte visuelle de la ville",
+        "Contenus de présentation et de vie locale"
+      ]
+    },
+    {
+      title: "Prix et disponibilité des carburants",
+      items: [
+        "Repère pratique pour les habitants",
+        "Consultation rapide des stations et disponibilités"
+      ]
+    },
+    {
+      title: "Produits locaux",
+      items: [
+        "Mise en avant des produits et ressources locales",
+        "Découverte de l’offre de proximité"
+      ]
+    },
+    {
+      title: "Services professionnels",
+      items: [
+        "Annuaire de services et professionnels présents sur la ville",
+        "Repères utiles pour les habitants et usagers"
+      ]
+    },
+    {
+      title: "Administrations et établissements scolaires",
+      items: [
+        "Repères administratifs",
+        "Établissements scolaires",
+        "Informations pratiques de proximité"
+      ]
+    },
+    {
+      title: "Dernières offres d’emploi",
+      items: [
+        "Accès à des offres d’emploi autour de Wattignies",
+        "Repérage rapide d’opportunités locales"
+      ]
+    },
+    {
+      title: "Communication numérique / ressources web locales",
+      items: [
+        "Présence web locale",
+        "Ressources numériques de territoire",
+        "Informations utiles accessibles en ligne"
+      ]
+    }
+  ];
+
+  // ICI tu pourras ajouter / retirer librement des professionnels de santé
+  const HEALTH_DIRECTORY_DATA = {
+    medecins: [
+      { nom:"Dr à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
+    ],
+    specialistes: [
+      { nom:"Spécialiste à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
+    ],
+    kines: [
+      { nom:"Kiné à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
+    ],
+    infirmieres: [
+      { nom:"Cabinet infirmier à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
+    ],
+    pharmacies: [
+      { nom:"Pharmacie Richardson", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
+    ]
+  };
+
+  function renderCityServicesHtml(){
+    return `
+      <div style="font-weight:900;margin-bottom:8px;">Services mairie / ville de Wattignies</div>
+
+      <div class="box">
+        <div class="muted">
+          Cet espace rassemble les services mairie utiles et des repères pratiques inspirés
+          des ressources visibles autour de Wattignies, afin d’offrir aux citoyens un panel
+          de choix plus large dans un seul onglet lisible.
+        </div>
+      </div>
+
+      ${CITY_SERVICES_DATA.map(section => `
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;">${escapeHtml(section.title)}</div>
+          <div class="muted" style="margin-top:8px;">
+            ${section.items.map(line => "• " + escapeHtml(line)).join("<br>")}
+          </div>
+        </div>
+      `).join("")}
+
+      <div class="muted" style="margin-top:10px;">
+        (Démo) Tu peux enrichir, corriger ou alléger librement cette liste sans toucher à la structure générale.
+      </div>
+    `;
+  }
+
+  function renderHealthBlock(title, list){
+    return `
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;">${escapeHtml(title)}</div>
+        <div class="muted" style="margin-top:8px;">
+          ${
+            list.length
+              ? list.map(item => `
+                  • <strong>${escapeHtml(item.nom || "")}</strong><br>
+                  ${escapeHtml(item.adresse || "")}<br>
+                  ${escapeHtml(item.telephone || "")}
+                `).join("<br><br>")
+              : "Aucune entrée pour le moment."
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  function renderHealthDirectoryHtml(){
+    return `
+      <div style="font-weight:900;margin-bottom:8px;">Santé — médecins • spécialistes • kinés • infirmières • pharmacies</div>
+
+      <div class="box">
+        <div class="muted">
+          Cet annuaire santé est volontairement séparé du service mairie principal pour être
+          repéré immédiatement par le citoyen. Tu peux modifier librement cette liste
+          quand un professionnel arrive, part, change d’adresse ou cesse son activité.
+        </div>
+      </div>
+
+      ${renderHealthBlock("Médecins généralistes", HEALTH_DIRECTORY_DATA.medecins)}
+      ${renderHealthBlock("Spécialistes", HEALTH_DIRECTORY_DATA.specialistes)}
+      ${renderHealthBlock("Kinésithérapeutes", HEALTH_DIRECTORY_DATA.kines)}
+      ${renderHealthBlock("Infirmières / infirmiers", HEALTH_DIRECTORY_DATA.infirmieres)}
+      ${renderHealthBlock("Pharmacies", HEALTH_DIRECTORY_DATA.pharmacies)}
+
+      <div class="muted" style="margin-top:10px;">
+        (Démo) Chaque ligne peut être changée très facilement directement dans la liste HEALTH_DIRECTORY_DATA.
+      </div>
+    `;
+  }
+
   openModal("Mairie", `
     <div style="font-weight:900;margin-bottom:8px;">Mairie</div>
 
@@ -6561,13 +6773,13 @@ if(key === "mairie"){
         </button>
 
         <button class="choiceBtn" id="openHealthServicesBtn" type="button" style="background:#f2fff7;">
-          🩺 Médecins • spécialistes • infirmières • pharmacies
+          🩺 Médecins • spécialistes • kinés • infirmières • pharmacies
         </button>
       </div>
 
       <div class="muted" style="margin-top:10px;">
-        Le premier bouton ouvre les services mairie et informations utiles de la ville.
-        Le second ouvre l’annuaire santé local, clairement séparé pour être repéré immédiatement.
+        Le premier bouton ouvre les services mairie et les ressources utiles de la ville.
+        Le second ouvre l’annuaire santé local, séparé pour être repéré immédiatement.
       </div>
     </div>
 
@@ -6821,7 +7033,6 @@ if(key === "mairie"){
           Zone prévue pour preuve mairie / Bo’CitéArt en cas de validation réelle.
         </div>
       </div>
-
     </div>
   `);
 
@@ -7131,80 +7342,122 @@ if(key === "mairie"){
             </div>
           </div>
 
+          <div class="box">
+            <div style="font-weight:900;">Actualités de Wattignies</div>
+            <div class="muted" style="margin-top:6px;">
+              Suivi des actualités locales, archives et repères utiles.
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Vidéos de Wattignies</div>
+            <div class="muted" style="margin-top:6px;">
+              Espace vidéo local et découverte visuelle de la ville.
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Prix et disponibilité des carburants</div>
+            <div class="muted" style="margin-top:6px;">
+              Repère pratique pour les habitants.
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Produits locaux</div>
+            <div class="muted" style="margin-top:6px;">
+              Mise en avant des produits et ressources locales.
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Services professionnels</div>
+            <div class="muted" style="margin-top:6px;">
+              Annuaire et repères utiles des services professionnels présents sur la ville.
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Administrations et établissements scolaires</div>
+            <div class="muted" style="margin-top:6px;">
+              Repères administratifs et scolaires autour de Wattignies.
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Dernières offres d’emploi</div>
+            <div class="muted" style="margin-top:6px;">
+              Accès à des offres d’emploi locales et informations utiles.
+            </div>
+          </div>
+
           <div class="muted" style="margin-top:10px;">
-            (Démo) Cette vue remplace la grosse liste directement affichée dans l’onglet mairie
-            et la rend accessible via un bouton clair pour le citoyen.
+            (Démo) Tu peux enrichir librement cette partie avec d’autres rubriques ville utiles.
           </div>
         `);
       };
     }
 
-   if(openHealthServicesBtn){
-  openHealthServicesBtn.onclick = ()=>{
-    openModal("Santé — médecins • spécialistes • infirmières • pharmacies", `
-      <div style="font-weight:900;margin-bottom:8px;">Annuaire santé local</div>
+    if(openHealthServicesBtn){
+      openHealthServicesBtn.onclick = ()=>{
+        openModal("Santé — médecins • spécialistes • kinés • infirmières • pharmacies", `
+          <div style="font-weight:900;margin-bottom:8px;">Annuaire santé local</div>
 
-      <div class="box">
-        <div style="font-weight:900;">Médecins généralistes</div>
-        <div class="muted" style="margin-top:6px;">
-          • Dr Hadiza Hima-Bentein — 5 rue du Seigneur de Lannoy — 59139 Wattignies<br>
-          • Dr Françoise Cuvillier — 5 Clos Saint Lambert, rue de l’Yser — 59139 Wattignies<br>
-          • Dr Cindy Benbouhout-El Messaoudi — rue Clemenceau — 59139 Wattignies
-        </div>
-      </div>
+          <div class="box">
+            <div style="font-weight:900;">Médecins généralistes</div>
+            <div class="muted" style="margin-top:6px;">
+              • À compléter librement<br>
+              • À compléter librement<br>
+              • À compléter librement
+            </div>
+          </div>
 
-      <div class="box">
-        <div style="font-weight:900;">Spécialistes / centres spécialisés</div>
-        <div class="muted" style="margin-top:6px;">
-          • Dr Thomas Caudrelier — angiologie / médecin vasculaire — 117 rue du Général de Gaulle — 59139 Wattignies<br>
-          • Centre de Santé CREPS Hauts de France — centre de santé / médecine du sport — 11 rue de l’Yser — 59139 Wattignies
-        </div>
-      </div>
+          <div class="box">
+            <div style="font-weight:900;">Spécialistes</div>
+            <div class="muted" style="margin-top:6px;">
+              • À compléter librement<br>
+              • À compléter librement
+            </div>
+          </div>
 
-      <div class="box">
-        <div style="font-weight:900;">Kinésithérapeutes</div>
-        <div class="muted" style="margin-top:6px;">
-          • Corinne Rucquois — 100 rue du Général de Gaulle — 59139 Wattignies<br>
-          • Camille Delmotte — 7 rue de l’Yser — 59139 Wattignies<br>
-          • Martin Barrillon — 212 bis rue Clemenceau — 59139 Wattignies
-        </div>
-      </div>
+          <div class="box">
+            <div style="font-weight:900;">Kinésithérapeutes</div>
+            <div class="muted" style="margin-top:6px;">
+              • À compléter librement<br>
+              • À compléter librement
+            </div>
+          </div>
 
-      <div class="box">
-        <div style="font-weight:900;">Infirmières / infirmiers</div>
-        <div class="muted" style="margin-top:6px;">
-          • Cabinet infirmier Alexandre Houart et Céline Kammer — 222 bis rue Clemenceau — 59139 Wattignies — 07 67 71 65 87<br>
-          • Fatima Uguen — 222 bis rue Clemenceau — 59139 Wattignies<br>
-          • Neil Rodriguez — 23 rue Jean-François Desrousseaux — 59139 Wattignies<br>
-          • Dafri Oudha — 22 rue Hocedez — 59139 Wattignies<br>
-          • Cabinet infirmier de madame Jouret, monsieur Sabia et madame Urbain — 18 allée André Messager — 59139 Wattignies
-        </div>
-      </div>
+          <div class="box">
+            <div style="font-weight:900;">Infirmières / infirmiers</div>
+            <div class="muted" style="margin-top:6px;">
+              • À compléter librement<br>
+              • À compléter librement
+            </div>
+          </div>
 
-      <div class="box">
-        <div style="font-weight:900;">Pharmacies</div>
-        <div class="muted" style="margin-top:6px;">
-          • Pharmacie Richardson — 56 rue Clemenceau — 59139 Wattignies — 03 20 96 28 27<br>
-          • Pharmacie 104 — 104 rue du Général de Gaulle — 59139 Wattignies<br>
-          • Pharmacie de l’Arbrisseau — centre commercial Cora / rue Clemenceau — 59139 Wattignies<br>
-          • Pharmacie Carrefour Wattignies — rue Clemenceau — 59139 Wattignies
-        </div>
-      </div>
+          <div class="box">
+            <div style="font-weight:900;">Pharmacies</div>
+            <div class="muted" style="margin-top:6px;">
+              • Pharmacie Richardson — adresse — téléphone<br>
+              • À compléter librement
+            </div>
+          </div>
 
-      <div class="box">
-        <div style="font-weight:900;">Important</div>
-        <div class="muted" style="margin-top:6px;">
-          Cette partie est volontairement séparée du service mairie principal,
-          pour que le citoyen comprenne immédiatement qu’il entre dans un espace santé local.
-        </div>
-      </div>
+          <div class="box">
+            <div style="font-weight:900;">Important</div>
+            <div class="muted" style="margin-top:6px;">
+              Cet annuaire santé est séparé du service mairie principal pour que
+              le citoyen comprenne immédiatement qu’il entre dans un espace santé local.
+            </div>
+          </div>
 
-      <div class="muted" style="margin-top:10px;">
-        (Démo) Vérifier les coordonnées et disponibilités avant publication officielle.
-      </div>
-    `);
-  };
-}
+          <div class="muted" style="margin-top:10px;">
+            (Démo) Tu peux ajouter, retirer ou corriger librement les professionnels ici.
+          </div>
+        `);
+      };
+    }
 
     const db = mairieLoad();
     if(input){
@@ -7246,13 +7499,11 @@ if(key === "mairie"){
           alert("Lis d’abord un code école.");
           return;
         }
-
         const payload = buildSchoolDispatchPayload();
         if(payload.error){
           alert(payload.error);
           return;
         }
-
         if(mairieSchoolPreviewOut){
           mairieSchoolPreviewOut.textContent =
             "Classe : " + (currentPayload.class || "Classe inconnue") +
@@ -7268,13 +7519,11 @@ if(key === "mairie"){
           alert("Lis d’abord un code sport.");
           return;
         }
-
         const payload = buildSportDispatchPayload();
         if(payload.error){
           alert(payload.error);
           return;
         }
-
         if(mairieSportPreviewOut){
           mairieSportPreviewOut.textContent =
             "Club : " + (currentSportPayload.club || "Club partenaire (démo)") +
@@ -7291,15 +7540,12 @@ if(key === "mairie"){
           alert("Aucune lecture disponible.");
           return;
         }
-
         try{
           const parsed = window.boScanEngine.parse(raw);
-
           if(!window.boScanEngine.isSupported(parsed) || parsed.type !== "school_wallet"){
             alert("Code non reconnu pour l’échange école → mairie.");
             return;
           }
-
           currentPayload = parsed;
           renderPayload(parsed);
           if(mairieSchoolPreviewOut) mairieSchoolPreviewOut.textContent = "Code école lu. Prépare la destination de l’échange.";
@@ -7315,7 +7561,6 @@ if(key === "mairie"){
           alert("Lis d’abord un code classe.");
           return;
         }
-
         const dispatch = buildSchoolDispatchPayload();
         if(dispatch.error){
           alert(dispatch.error);
@@ -7363,7 +7608,6 @@ if(key === "mairie"){
     if(historyBtn){
       historyBtn.onclick = ()=>{
         const history = mairieHistoryLoad();
-
         if(!history.length){
           alert("Aucun historique mairie école pour le moment.");
           return;
@@ -7395,7 +7639,6 @@ if(key === "mairie"){
     if(exportBtn){
       exportBtn.onclick = ()=>{
         const history = mairieHistoryLoad();
-
         if(!history.length){
           alert("Aucun historique à exporter.");
           return;
@@ -7436,7 +7679,6 @@ if(key === "mairie"){
 
         try{
           const parsed = JSON.parse(raw);
-
           if(parsed.type !== "sport_wallet"){
             alert("Code non reconnu pour l’échange sport → mairie.");
             return;
@@ -7496,7 +7738,6 @@ if(key === "mairie"){
     if(sportHistoryBtn){
       sportHistoryBtn.onclick = ()=>{
         const history = mairieSportHistoryLoad();
-
         if(!history.length){
           alert("Aucun historique mairie sport pour le moment.");
           return;
@@ -7528,7 +7769,6 @@ if(key === "mairie"){
     if(sportExportBtn){
       sportExportBtn.onclick = ()=>{
         const history = mairieSportHistoryLoad();
-
         if(!history.length){
           alert("Aucun historique sport à exporter.");
           return;
