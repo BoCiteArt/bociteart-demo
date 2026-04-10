@@ -6543,86 +6543,31 @@ if(key === "sport"){
   window.openSportPanel();
   return;
 }
-    if(key === "mairie"){
+if(key === "mairie"){
   openModal("Mairie", `
     <div style="font-weight:900;margin-bottom:8px;">Mairie</div>
 
-    <div class="box">
-      <strong>Cadre :</strong> la mairie dispose d’un espace public d’information destiné aux habitants
-      et d’un espace interne réservé à la gestion opérationnelle.
-      Le <strong>petit bandeau rouge défilant</strong> de la tuile Mairie reste réservé aux messages d’intérêt général.
-    </div>
+    <div style="font-weight:900;margin-top:10px;">Accès habitants — services utiles</div>
 
-    <div style="font-weight:900;margin-top:10px;">Informations visibles par les habitants</div>
     <div class="box">
       <div class="muted">
-        Cette partie est destinée aux habitants. Elle présente uniquement les messages utiles,
-        les informations publiques et le cadre général de l’action mairie dans Bo’CitéArt.
+        Cette partie est destinée aux habitants. Elle permet d’ouvrir directement des espaces utiles,
+        lisibles et pratiques, sans surcharger l’onglet principal mairie.
       </div>
 
-      <div style="font-weight:900;margin-top:12px;">Lecture gratuite des services mairie</div>
-      <div class="muted" style="margin-top:8px;">
-        Tous les services d’information mairie affichés dans cette partie sont consultables gratuitement.
-        La lecture des horaires, coordonnées, démarches utiles et informations pratiques ne donne lieu à aucun coût.
-      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button class="choiceBtn" id="openMairieServicesBtn" type="button" style="background:#fff4f4;">
+          🏛️ Services mairie / ville
+        </button>
 
-      <div class="muted" style="margin-top:8px;">
-        Seules les <strong>publicités</strong> prévues dans l’application relèvent d’un cadre distinct.
-        Les informations de service public, elles, restent dans un usage de lecture simple, utile et gratuit.
-      </div>
-    </div>
-
-    <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;">Services mairie — exemples d’informations utiles</div>
-
-      <div style="margin-top:10px;font-weight:900;">Accueil mairie</div>
-      <div class="muted" style="margin-top:6px;">
-        Téléphone : 03 20 00 00 00<br>
-        Horaires : lundi au vendredi de 8h30 à 12h00 et de 13h30 à 17h30<br>
-        Samedi : 9h00 à 12h00 selon permanence
-      </div>
-
-      <div style="margin-top:12px;font-weight:900;">État civil</div>
-      <div class="muted" style="margin-top:6px;">
-        Actes de naissance, mariage, décès, livret de famille, attestations, copies et démarches d’état civil.<br>
-        Accueil sur rendez-vous ou aux horaires d’ouverture du service.
-      </div>
-
-      <div style="margin-top:12px;font-weight:900;">Carte d’identité / passeport</div>
-      <div class="muted" style="margin-top:6px;">
-        Dépôt des dossiers uniquement sur rendez-vous.<br>
-        Pré-demande possible en ligne avant passage au guichet.<br>
-        Retrait des titres sur présentation du justificatif remis lors du dépôt.
-      </div>
-
-      <div style="margin-top:12px;font-weight:900;">CCAS</div>
-      <div class="muted" style="margin-top:6px;">
-        Téléphone : 03 20 00 00 01<br>
-        Aide sociale, accompagnement des personnes âgées, soutien aux familles, orientation administrative,
-        dossiers d’urgence sociale, accompagnement local.
-      </div>
-
-      <div style="margin-top:12px;font-weight:900;">Urbanisme</div>
-      <div class="muted" style="margin-top:6px;">
-        Déclarations préalables, permis, demandes liées aux travaux, renseignements sur le règlement local,
-        informations sur les dépôts et délais d’instruction.
-      </div>
-
-      <div style="margin-top:12px;font-weight:900;">Affaires scolaires / périscolaire</div>
-      <div class="muted" style="margin-top:6px;">
-        Inscriptions, restauration scolaire, garderie, informations familles, calendrier utile,
-        accompagnement administratif lié à la vie scolaire.
-      </div>
-
-      <div style="margin-top:12px;font-weight:900;">Police municipale / tranquillité publique</div>
-      <div class="muted" style="margin-top:6px;">
-        Téléphone : 03 20 00 00 02<br>
-        Signalements, sécurité locale, prévention, tranquillité publique, informations pratiques de proximité.
+        <button class="choiceBtn" id="openHealthServicesBtn" type="button" style="background:#f2fff7;">
+          🩺 Médecins • spécialistes • infirmières • pharmacies
+        </button>
       </div>
 
       <div class="muted" style="margin-top:10px;">
-        Ces données sont présentées ici à titre de démonstration. En version LIVE, elles seront remplacées
-        par les coordonnées, horaires et procédures réellement validés par la mairie.
+        Le premier bouton ouvre les services mairie et informations utiles de la ville.
+        Le second ouvre l’annuaire santé local, clairement séparé pour être repéré immédiatement.
       </div>
     </div>
 
@@ -6633,17 +6578,11 @@ if(key === "sport"){
         <li>Rue barrée / déviation</li>
         <li>Risque de gel / température dangereuse</li>
         <li>Information de sécurité publique</li>
-        <li>Horaires exceptionnels d’un service mairie</li>
-        <li>Fermeture temporaire d’un accueil ou d’un guichet</li>
       </ul>
 
       <div class="muted" style="margin-top:8px;">
         Ces messages restent gratuits pour la mairie lorsqu’ils relèvent de l’intérêt général
         et sont diffusés dans le <strong>petit bandeau rouge défilant</strong> de la tuile Mairie.
-      </div>
-
-      <div class="muted" style="margin-top:8px;">
-        La mairie informe, relaie et accompagne la vie locale dans un format simple, utile et lisible pour tous.
       </div>
     </div>
 
@@ -6893,6 +6832,8 @@ if(key === "sport"){
 
     const toggleAdminBtn = $("toggleMairieAdminBtn");
     const mairieAdminPanel = $("mairieAdminPanel");
+    const openMairieServicesBtn = $("openMairieServicesBtn");
+    const openHealthServicesBtn = $("openHealthServicesBtn");
 
     const scanInput = $("mairieScanInput");
     const readBtn = $("mairieReadBtn");
@@ -7125,6 +7066,145 @@ if(key === "sport"){
           : "Ouvrir l’espace interne mairie";
       };
     }
+
+    if(openMairieServicesBtn){
+      openMairieServicesBtn.onclick = ()=>{
+        openModal("Services mairie / ville", `
+          <div style="font-weight:900;margin-bottom:8px;">Services mairie / ville de Wattignies</div>
+
+          <div class="box">
+            <div style="font-weight:900;">Accueil mairie</div>
+            <div class="muted" style="margin-top:6px;">
+              Téléphone : 03 20 00 00 00<br>
+              Horaires : lundi au vendredi de 8h30 à 12h00 et de 13h30 à 17h30<br>
+              Samedi : 9h00 à 12h00 selon permanence
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">État civil</div>
+            <div class="muted" style="margin-top:6px;">
+              Actes de naissance, mariage, décès, livret de famille,
+              attestations, copies et démarches d’état civil.
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Carte d’identité / passeport</div>
+            <div class="muted" style="margin-top:6px;">
+              Dépôt des dossiers sur rendez-vous, pré-demande possible en ligne,
+              retrait des titres sur présentation du justificatif.
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">CCAS</div>
+            <div class="muted" style="margin-top:6px;">
+              Téléphone : 03 20 00 00 01<br>
+              Aide sociale, accompagnement des personnes âgées,
+              soutien aux familles, orientation administrative.
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Urbanisme</div>
+            <div class="muted" style="margin-top:6px;">
+              Déclarations préalables, permis, demandes liées aux travaux,
+              renseignements sur le règlement local et délais d’instruction.
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Affaires scolaires / périscolaire</div>
+            <div class="muted" style="margin-top:6px;">
+              Inscriptions, restauration scolaire, garderie,
+              informations familles et calendrier utile.
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">Police municipale / tranquillité publique</div>
+            <div class="muted" style="margin-top:6px;">
+              Téléphone : 03 20 00 00 02<br>
+              Signalements, sécurité locale, prévention
+              et informations pratiques de proximité.
+            </div>
+          </div>
+
+          <div class="muted" style="margin-top:10px;">
+            (Démo) Cette vue remplace la grosse liste directement affichée dans l’onglet mairie
+            et la rend accessible via un bouton clair pour le citoyen.
+          </div>
+        `);
+      };
+    }
+
+   if(openHealthServicesBtn){
+  openHealthServicesBtn.onclick = ()=>{
+    openModal("Santé — médecins • spécialistes • infirmières • pharmacies", `
+      <div style="font-weight:900;margin-bottom:8px;">Annuaire santé local</div>
+
+      <div class="box">
+        <div style="font-weight:900;">Médecins généralistes</div>
+        <div class="muted" style="margin-top:6px;">
+          • Dr Hadiza Hima-Bentein — 5 rue du Seigneur de Lannoy — 59139 Wattignies<br>
+          • Dr Françoise Cuvillier — 5 Clos Saint Lambert, rue de l’Yser — 59139 Wattignies<br>
+          • Dr Cindy Benbouhout-El Messaoudi — rue Clemenceau — 59139 Wattignies
+        </div>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Spécialistes / centres spécialisés</div>
+        <div class="muted" style="margin-top:6px;">
+          • Dr Thomas Caudrelier — angiologie / médecin vasculaire — 117 rue du Général de Gaulle — 59139 Wattignies<br>
+          • Centre de Santé CREPS Hauts de France — centre de santé / médecine du sport — 11 rue de l’Yser — 59139 Wattignies
+        </div>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Kinésithérapeutes</div>
+        <div class="muted" style="margin-top:6px;">
+          • Corinne Rucquois — 100 rue du Général de Gaulle — 59139 Wattignies<br>
+          • Camille Delmotte — 7 rue de l’Yser — 59139 Wattignies<br>
+          • Martin Barrillon — 212 bis rue Clemenceau — 59139 Wattignies
+        </div>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Infirmières / infirmiers</div>
+        <div class="muted" style="margin-top:6px;">
+          • Cabinet infirmier Alexandre Houart et Céline Kammer — 222 bis rue Clemenceau — 59139 Wattignies — 07 67 71 65 87<br>
+          • Fatima Uguen — 222 bis rue Clemenceau — 59139 Wattignies<br>
+          • Neil Rodriguez — 23 rue Jean-François Desrousseaux — 59139 Wattignies<br>
+          • Dafri Oudha — 22 rue Hocedez — 59139 Wattignies<br>
+          • Cabinet infirmier de madame Jouret, monsieur Sabia et madame Urbain — 18 allée André Messager — 59139 Wattignies
+        </div>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Pharmacies</div>
+        <div class="muted" style="margin-top:6px;">
+          • Pharmacie Richardson — 56 rue Clemenceau — 59139 Wattignies — 03 20 96 28 27<br>
+          • Pharmacie 104 — 104 rue du Général de Gaulle — 59139 Wattignies<br>
+          • Pharmacie de l’Arbrisseau — centre commercial Cora / rue Clemenceau — 59139 Wattignies<br>
+          • Pharmacie Carrefour Wattignies — rue Clemenceau — 59139 Wattignies
+        </div>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Important</div>
+        <div class="muted" style="margin-top:6px;">
+          Cette partie est volontairement séparée du service mairie principal,
+          pour que le citoyen comprenne immédiatement qu’il entre dans un espace santé local.
+        </div>
+      </div>
+
+      <div class="muted" style="margin-top:10px;">
+        (Démo) Vérifier les coordonnées et disponibilités avant publication officielle.
+      </div>
+    `);
+  };
+}
 
     const db = mairieLoad();
     if(input){
