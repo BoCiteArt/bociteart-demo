@@ -9272,9 +9272,14 @@ on(clockBtn, "click", ()=>{
       <div id="clockTimeLarge" style="font-size:42px;font-weight:900;line-height:1;">00:00:00</div>
       <div id="clockDateLarge" style="margin-top:8px;font-size:18px;font-weight:800;">Date</div>
       <div id="clockSaintLarge" style="margin-top:6px;font-size:14px;color:#444;">Saint du jour</div>
-      <div id="clockLocationLarge" style="margin-top:6px;font-size:13px;color:#444;font-weight:800;">Localisation en cours…</div>
-      <div id="clockWeatherNow" style="margin-top:10px;font-size:14px;font-weight:900;">Météo en cours de chargement…</div>
+      <div id="clockLocationLarge" style="margin-top:6px;font-size:13px;color:#444;font-weight:800;">Position non demandée</div>
+      <div id="clockWeatherNow" style="margin-top:10px;font-size:14px;font-weight:900;">Appuyez sur “Activer ma position météo”.</div>
       <div id="clockWeatherSource" style="margin-top:4px;font-size:11px;color:#555;">Source météo : Open-Meteo</div>
+
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
+        <button class="choiceBtn" id="clockAskLocationBtn" type="button">📍 Activer ma position météo</button>
+        <button class="choiceBtn" id="clockRetryLocationBtn" type="button" style="background:#fff;">↻ Refaire la localisation</button>
+      </div>
     </div>
 
     <div class="box" style="margin-top:12px;">
@@ -9299,6 +9304,55 @@ on(clockBtn, "click", ()=>{
 
   let currentYear = now.getFullYear();
   let currentMonth = now.getMonth();
+
+  async function fetchWeatherForCoordsLive(lat, lon){
+    const url =
+      "https://api.open-meteo.com/v1/forecast"
+      + "?latitude=" + encodeURIComponent(lat)
+      + "&longitude=" + encodeURIComponent(lon)
+      + "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m"
+      + "&hourly=temperature_2m,weather_code,precipitation_probability"
+      + "&forecast_days=2"
+      + "&timezone=auto";
+
+    const res = await fetch(url, { cache:"no-store" });
+    if(!res.ok) throw new Error("Météo indisponible");
+    return await res.json();
+  }
+
+  async function reverseGeocodeCity(lat, lon){
+    try{
+      const url =
+        "https://nominatim.openstreetmap.org/reverse?format=jsonv2"
+        + "&lat=" + encodeURIComponent(lat)
+        + "&lon=" + encodeURIComponent(lon)
+        + "&zoom=16"
+        + "&addressdetails=1";
+
+      const res = await fetch(url, {
+        headers: {
+          "Accept": "application/json"
+        },
+        cache: "no-store"
+      });
+
+      if(!res.ok) throw new Error("Reverse geocode indisponible");
+
+      const data = await res.json();
+      const a = data.address || {};
+
+      return (
+        a.city ||
+        a.town ||
+        a.village ||
+        a.municipality ||
+        a.county ||
+        "Position détectée"
+      );
+    }catch(e){
+      return "Position détectée";
+    }
+  }
 
   function refreshLargeClock(){
     const nowLive = new Date();
@@ -9342,17 +9396,21 @@ on(clockBtn, "click", ()=>{
     }
   }
 
-  async function renderWeather(){
+  async function renderWeatherFromPosition(forceFresh){
     const hero = $("clockWeatherHero");
     const nowBox = $("clockWeatherNow");
     const hoursBox = $("clockWeatherHours");
     const locationBox = $("clockLocationLarge");
 
     if(!navigator.geolocation){
-      if(nowBox) nowBox.textContent = "Géolocalisation non disponible";
+      if(nowBox) nowBox.textContent = "Géolocalisation non disponible sur cet appareil.";
       if(locationBox) locationBox.textContent = "Lieu indisponible";
       return;
     }
+
+    if(nowBox) nowBox.textContent = "Recherche de la position…";
+    if(locationBox) locationBox.textContent = "Localisation en cours…";
+    if(hoursBox) hoursBox.innerHTML = `<div class="muted">Chargement de la météo locale…</div>`;
 
     navigator.geolocation.getCurrentPosition(async (pos)=>{
       try{
@@ -9360,11 +9418,12 @@ on(clockBtn, "click", ()=>{
         const lon = pos.coords.longitude;
 
         const city = await reverseGeocodeCity(lat, lon);
+
         if(locationBox){
-          locationBox.textContent = "📍 " + city;
+          locationBox.textContent = "📍 " + city + " • " + lat.toFixed(5) + ", " + lon.toFixed(5);
         }
 
-        const data = await fetchWeatherForCoords(lat, lon);
+        const data = await fetchWeatherForCoordsLive(lat, lon);
         const current = data.current || {};
         const hourly = data.hourly || {};
         const times = hourly.time || [];
@@ -9389,7 +9448,7 @@ on(clockBtn, "click", ()=>{
 
         if(hoursBox){
           let startIdx = 0;
-          const currentTime = (current.time || "");
+          const currentTime = String(current.time || "");
           const found = times.indexOf(currentTime);
           if(found >= 0) startIdx = found;
 
@@ -9409,23 +9468,57 @@ on(clockBtn, "click", ()=>{
           hoursBox.innerHTML = cards.join("");
         }
       }catch(e){
-        if(nowBox) nowBox.textContent = "Météo indisponible pour le moment";
+        if(nowBox) nowBox.textContent = "Météo indisponible pour le moment.";
         if(locationBox) locationBox.textContent = "Lieu indisponible";
         if(hoursBox) hoursBox.innerHTML = `<div class="muted">Impossible de charger l’évolution météo.</div>`;
       }
-    }, ()=>{
-      if(nowBox) nowBox.textContent = "Autorisation de position refusée";
-      if(locationBox) locationBox.textContent = "Localisation refusée";
-      if(hoursBox) hoursBox.innerHTML = `<div class="muted">La météo locale nécessite la position.</div>`;
+    }, async (err)=>{
+      const nowBox = $("clockWeatherNow");
+      const hoursBox = $("clockWeatherHours");
+      const locationBox = $("clockLocationLarge");
+
+      let permissionState = null;
+
+      try{
+        if(navigator.permissions && navigator.permissions.query){
+          const p = await navigator.permissions.query({ name:"geolocation" });
+          permissionState = p.state;
+        }
+      }catch(e){}
+
+      if(err && err.code === 1){
+        if(permissionState === "granted"){
+          if(nowBox) nowBox.textContent = "Le navigateur indique un refus temporaire. Appuyez sur “Refaire la localisation”.";
+          if(locationBox) locationBox.textContent = "Autorisation accordée mais position non renvoyée";
+        }else{
+          if(nowBox) nowBox.textContent = "Autorisation de position refusée.";
+          if(locationBox) locationBox.textContent = "Localisation refusée";
+        }
+      }else if(err && err.code === 2){
+        if(nowBox) nowBox.textContent = "Position indisponible pour le moment.";
+        if(locationBox) locationBox.textContent = "Signal GPS indisponible";
+      }else if(err && err.code === 3){
+        if(nowBox) nowBox.textContent = "Temps de recherche dépassé.";
+        if(locationBox) locationBox.textContent = "Recherche trop longue";
+      }else{
+        if(nowBox) nowBox.textContent = "Impossible d’obtenir la position.";
+        if(locationBox) locationBox.textContent = "Localisation indisponible";
+      }
+
+      if(hoursBox){
+        hoursBox.innerHTML = `<div class="muted">La météo locale nécessite une position valide.</div>`;
+      }
     }, {
-      enableHighAccuracy:true,
-      timeout:7000,
-      maximumAge:300000
+      enableHighAccuracy: true,
+      timeout: forceFresh ? 15000 : 10000,
+      maximumAge: forceFresh ? 0 : 300000
     });
   }
 
   const prevBtn = $("clockPrevMonth");
   const nextBtn = $("clockNextMonth");
+  const askBtn = $("clockAskLocationBtn");
+  const retryBtn = $("clockRetryLocationBtn");
 
   if(prevBtn){
     prevBtn.onclick = ()=>{
@@ -9449,9 +9542,38 @@ on(clockBtn, "click", ()=>{
     };
   }
 
+  if(askBtn){
+    askBtn.onclick = ()=>{
+      renderWeatherFromPosition(false);
+    };
+  }
+
+  if(retryBtn){
+    retryBtn.onclick = ()=>{
+      renderWeatherFromPosition(true);
+    };
+  }
+
   refreshLargeClock();
   renderCalendar();
-  renderWeather();
+
+  if(window.isSecureContext && navigator.geolocation){
+    renderWeatherFromPosition(false);
+  }else{
+    const nowBox = $("clockWeatherNow");
+    const locationBox = $("clockLocationLarge");
+    const hoursBox = $("clockWeatherHours");
+
+    if(nowBox){
+      nowBox.textContent = "La météo locale nécessite un site sécurisé HTTPS.";
+    }
+    if(locationBox){
+      locationBox.textContent = "HTTPS requis pour la géolocalisation";
+    }
+    if(hoursBox){
+      hoursBox.innerHTML = `<div class="muted">Passez le site en HTTPS pour activer la météo locale.</div>`;
+    }
+  }
 
   if(window.__bociteartClockLargeTimer){
     clearInterval(window.__bociteartClockLargeTimer);
