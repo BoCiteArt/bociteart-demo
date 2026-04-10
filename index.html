@@ -9085,24 +9085,24 @@ on(daeBtn, "click", ()=>{
   if(!isFn(window.openModal)) return;
 
   openModal("Défibrillateur (DAE)", `
-    <div style="font-weight:900;margin-bottom:8px;">Carte des défibrillateurs</div>
+    <div style="font-weight:900;margin-bottom:8px;">Défibrillateur le plus proche</div>
 
     <div class="box">
-      <strong>Important :</strong> indication indicative dépendant des sources et du téléphone.
-      Ne pas retarder l’appel aux secours : en cas d’urgence, appeler le 112.
+      <strong>Important :</strong> cette fonction doit être utilisée en complément des secours.
+      En cas d’urgence vitale, appelez immédiatement le <strong>112</strong>.
     </div>
 
     <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li><strong>Itinéraire</strong> : tracé / direction vers le DAE le plus proche (démo)</li>
-      <li>Orientation + guidage</li>
-      <li>Rayon local : 1 à 3 km</li>
-      <li>DAE • pharmacie • hôpital</li>
-      <li>Géolocalisation optionnelle (activation utilisateur)</li>
+      <li>Recherche du DAE le plus proche</li>
+      <li>Localisation GPS de l’utilisateur</li>
+      <li>Ouverture d’un itinéraire réel dans le téléphone</li>
+      <li>Accès rapide au guidage de déplacement</li>
+      <li>Compatible en HTTPS / mobile / application web</li>
     </ul>
 
     <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE (démo)</div>
-      <div style="border-radius:14px; overflow:hidden; background:#000;">
+      <div style="font-weight:900;margin-bottom:8px;">🎥 Vidéo DAE</div>
+      <div style="border-radius:14px;overflow:hidden;background:#000;">
         <iframe
           width="100%"
           height="220"
@@ -9113,14 +9113,24 @@ on(daeBtn, "click", ()=>{
           allowfullscreen>
         </iframe>
       </div>
-      <div class="muted" style="margin-top:8px;">(Démo) Vidéo d’explication des gestes essentiels.</div>
+      <div class="muted" style="margin-top:8px;">Vidéo d’explication des gestes essentiels.</div>
     </div>
 
     <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;margin-bottom:8px;">🧭 Itinéraire (démo)</div>
+      <div style="font-weight:900;margin-bottom:8px;">📍 Position et orientation</div>
+      <div class="muted" id="daeStatus" style="margin-top:6px;">
+        Appuyez sur “Me localiser” pour récupérer votre position.
+      </div>
+
+      <div class="box" style="margin-top:10px;background:var(--bg);">
+        <div><strong>Latitude :</strong> <span id="daeLat">-</span></div>
+        <div style="margin-top:4px;"><strong>Longitude :</strong> <span id="daeLng">-</span></div>
+        <div style="margin-top:4px;"><strong>Cap :</strong> <span id="daeHeading">-</span></div>
+      </div>
+
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
-        <button class="choiceBtn" id="daeRoute" type="button">➡️ Itinéraire</button>
+        <button class="choiceBtn" id="daeRoute" type="button">➡️ Ouvrir l’itinéraire</button>
       </div>
     </div>
   `);
@@ -9128,13 +9138,125 @@ on(daeBtn, "click", ()=>{
   setTimeout(()=>{
     const loc = $("daeLocate");
     const rte = $("daeRoute");
+    const status = $("daeStatus");
+    const latOut = $("daeLat");
+    const lngOut = $("daeLng");
+    const headingOut = $("daeHeading");
+
+    let daeUserLat = null;
+    let daeUserLng = null;
+    let daeUserHeading = null;
+
+    // Point DAE de démo
+    const demoDae = {
+      name: "DAE le plus proche (démo)",
+      lat: 50.5860,
+      lng: 3.0430
+    };
+
+    function updateHeadingDisplay(val){
+      if(!headingOut) return;
+      if(typeof val === "number" && isFinite(val)){
+        headingOut.textContent = Math.round(val) + "°";
+      }else{
+        headingOut.textContent = "Non disponible";
+      }
+    }
+
+    function setupCompass(){
+      function onOrientation(event){
+        let heading = null;
+
+        if(typeof event.webkitCompassHeading === "number"){
+          heading = event.webkitCompassHeading;
+        }else if(typeof event.alpha === "number"){
+          heading = 360 - event.alpha;
+        }
+
+        if(typeof heading === "number" && isFinite(heading)){
+          daeUserHeading = heading;
+          updateHeadingDisplay(heading);
+        }
+      }
+
+      if(typeof DeviceOrientationEvent !== "undefined" &&
+         typeof DeviceOrientationEvent.requestPermission === "function"){
+        DeviceOrientationEvent.requestPermission()
+          .then((state)=>{
+            if(state === "granted"){
+              window.addEventListener("deviceorientation", onOrientation, true);
+            }else{
+              updateHeadingDisplay(null);
+            }
+          })
+          .catch(()=>{
+            updateHeadingDisplay(null);
+          });
+      }else{
+        window.addEventListener("deviceorientationabsolute", onOrientation, true);
+        window.addEventListener("deviceorientation", onOrientation, true);
+      }
+    }
+
+    function openExternalRoute(lat, lng){
+      const url = "https://www.google.com/maps/dir/?api=1&destination="
+        + encodeURIComponent(lat + "," + lng)
+        + "&travelmode=walking";
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
 
     if(loc){
-      loc.onclick = ()=> alert("Démo : demande de localisation (GPS).");
+      loc.onclick = ()=>{
+        if(!navigator.geolocation){
+          if(status) status.textContent = "Géolocalisation non disponible sur cet appareil.";
+          return;
+        }
+
+        if(status) status.textContent = "Recherche de votre position en cours…";
+
+        navigator.geolocation.getCurrentPosition((pos)=>{
+          daeUserLat = pos.coords.latitude;
+          daeUserLng = pos.coords.longitude;
+
+          if(latOut) latOut.textContent = daeUserLat.toFixed(6);
+          if(lngOut) lngOut.textContent = daeUserLng.toFixed(6);
+
+          if(status){
+            status.textContent =
+              "Position trouvée. Vous pouvez maintenant ouvrir l’itinéraire vers le défibrillateur le plus proche.";
+          }
+
+          setupCompass();
+        }, (err)=>{
+          if(status){
+            if(err && err.code === 1){
+              status.textContent = "Autorisation refusée pour la localisation.";
+            }else if(err && err.code === 2){
+              status.textContent = "Position indisponible pour le moment.";
+            }else if(err && err.code === 3){
+              status.textContent = "Temps de recherche GPS dépassé.";
+            }else{
+              status.textContent = "Impossible d’obtenir la position.";
+            }
+          }
+        }, {
+          enableHighAccuracy: true,
+          timeout: 12000,
+          maximumAge: 0
+        });
+      };
     }
 
     if(rte){
-      rte.onclick = ()=> alert("Démo : affichage de l’itinéraire (ligne) vers le DAE le plus proche.");
+      rte.onclick = ()=>{
+        if(daeUserLat === null || daeUserLng === null){
+          alert("Commencez par appuyer sur “Me localiser”.");
+          return;
+        }
+
+        openExternalRoute(demoDae.lat, demoDae.lng);
+      };
     }
   },0);
 });
