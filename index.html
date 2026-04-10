@@ -8847,13 +8847,43 @@ async function fetchWeatherForCoords(lat, lon){
     + "?latitude=" + encodeURIComponent(lat)
     + "&longitude=" + encodeURIComponent(lon)
     + "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m"
-    + "&hourly=temperature_2m,weather_code"
+    + "&hourly=temperature_2m,weather_code,precipitation_probability"
     + "&forecast_days=2"
     + "&timezone=auto";
 
   const res = await fetch(url);
   if(!res.ok) throw new Error("Météo indisponible");
   return await res.json();
+}
+
+async function reverseGeocodeCity(lat, lon){
+  try{
+    const url =
+      "https://nominatim.openstreetmap.org/reverse?format=jsonv2"
+      + "&lat=" + encodeURIComponent(lat)
+      + "&lon=" + encodeURIComponent(lon);
+
+    const res = await fetch(url, {
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    if(!res.ok) throw new Error("Géocodage indisponible");
+    const data = await res.json();
+    const addr = data.address || {};
+
+    return (
+      addr.city ||
+      addr.town ||
+      addr.village ||
+      addr.municipality ||
+      addr.county ||
+      "Position détectée"
+    );
+  }catch(e){
+    return "Position détectée";
+  }
 }
 
 function weatherCodeToLabel(code){
@@ -8994,12 +9024,13 @@ on(clockBtn, "click", ()=>{
       <div id="clockTimeLarge" style="font-size:42px;font-weight:900;line-height:1;">00:00:00</div>
       <div id="clockDateLarge" style="margin-top:8px;font-size:18px;font-weight:800;">Date</div>
       <div id="clockSaintLarge" style="margin-top:6px;font-size:14px;color:#444;">Saint du jour</div>
+      <div id="clockLocationLarge" style="margin-top:6px;font-size:13px;color:#444;font-weight:800;">Localisation en cours…</div>
       <div id="clockWeatherNow" style="margin-top:10px;font-size:14px;font-weight:900;">Météo en cours de chargement…</div>
       <div id="clockWeatherSource" style="margin-top:4px;font-size:11px;color:#555;">Source météo : Open-Meteo</div>
     </div>
 
     <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;margin-bottom:8px;">Évolution météo sur plusieurs heures</div>
+      <div style="font-weight:900;margin-bottom:8px;">Évolution météo sur 24 heures</div>
       <div id="clockWeatherHours" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;"></div>
     </div>
 
@@ -9067,20 +9098,31 @@ on(clockBtn, "click", ()=>{
     const hero = $("clockWeatherHero");
     const nowBox = $("clockWeatherNow");
     const hoursBox = $("clockWeatherHours");
+    const locationBox = $("clockLocationLarge");
 
     if(!navigator.geolocation){
       if(nowBox) nowBox.textContent = "Géolocalisation non disponible";
+      if(locationBox) locationBox.textContent = "Lieu indisponible";
       return;
     }
 
     navigator.geolocation.getCurrentPosition(async (pos)=>{
       try{
-        const data = await fetchWeatherForCoords(pos.coords.latitude, pos.coords.longitude);
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        const city = await reverseGeocodeCity(lat, lon);
+        if(locationBox){
+          locationBox.textContent = "📍 " + city;
+        }
+
+        const data = await fetchWeatherForCoords(lat, lon);
         const current = data.current || {};
         const hourly = data.hourly || {};
         const times = hourly.time || [];
         const temps = hourly.temperature_2m || [];
         const codes = hourly.weather_code || [];
+        const rain = hourly.precipitation_probability || [];
 
         if(hero){
           hero.style.background = weatherCodeToBg(Number(current.weather_code || 0));
@@ -9104,13 +9146,15 @@ on(clockBtn, "click", ()=>{
           if(found >= 0) startIdx = found;
 
           const cards = [];
-          for(let i = startIdx; i < Math.min(startIdx + 8, times.length); i++){
+          for(let i = startIdx; i < Math.min(startIdx + 24, times.length); i++){
             const hh = String(times[i]).split("T")[1] || "";
+
             cards.push(`
               <div style="border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:8px;text-align:center;background:#fff;min-width:0;">
                 <div style="font-weight:900;font-size:12px;">${hh.slice(0,5)}</div>
                 <div style="margin-top:6px;font-size:15px;font-weight:900;">${Number.isFinite(temps[i]) ? Math.round(temps[i]) + "°" : "--"}</div>
                 <div style="margin-top:4px;font-size:10px;color:#666;word-break:break-word;overflow-wrap:anywhere;">${weatherCodeToLabel(Number(codes[i] || 0))}</div>
+                <div style="margin-top:4px;font-size:10px;color:#1d4ed8;font-weight:900;">${Number.isFinite(rain[i]) ? rain[i] + "% pluie" : "--"}</div>
               </div>
             `);
           }
@@ -9118,10 +9162,12 @@ on(clockBtn, "click", ()=>{
         }
       }catch(e){
         if(nowBox) nowBox.textContent = "Météo indisponible pour le moment";
+        if(locationBox) locationBox.textContent = "Lieu indisponible";
         if(hoursBox) hoursBox.innerHTML = `<div class="muted">Impossible de charger l’évolution météo.</div>`;
       }
     }, ()=>{
       if(nowBox) nowBox.textContent = "Autorisation de position refusée";
+      if(locationBox) locationBox.textContent = "Localisation refusée";
       if(hoursBox) hoursBox.innerHTML = `<div class="muted">La météo locale nécessite la position.</div>`;
     }, {
       enableHighAccuracy:true,
