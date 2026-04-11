@@ -1,0 +1,67 @@
+const FEE_STORE_KEY = "bociteart_fee_demo_v1";
+const CITIZEN_WALLET_KEY = "bociteart_citizen_wallet_v1";
+const SCHOOL_WALLET_KEY = "bociteart_school_wallet_v1";
+const SPORT_WALLET_KEY = "bociteart_sport_wallet_v1";
+
+function loadCitizenWallet(){
+  try{
+    const raw = localStorage.getItem(CITIZEN_WALLET_KEY);
+    return raw ? JSON.parse(raw) : { or:37 };
+  }catch(e){
+    return { or:37 };
+  }
+}
+
+function saveCitizenWallet(obj){
+  try{ localStorage.setItem(CITIZEN_WALLET_KEY, JSON.stringify(obj)); }catch(e){}
+}
+
+function loadSchoolWallet(){
+  try{
+    const raw = localStorage.getItem(SCHOOL_WALLET_KEY);
+    return raw ? JSON.parse(raw) : { jaune:0 };
+  }catch(e){
+    return { jaune:0 };
+  }
+}
+
+function saveSchoolWallet(obj){
+  try{ localStorage.setItem(SCHOOL_WALLET_KEY, JSON.stringify(obj)); }catch(e){}
+}
+
+function loadSportWallet(){
+  try{
+    const raw = localStorage.getItem(SPORT_WALLET_KEY);
+    return raw ? JSON.parse(raw) : { vert:0 };
+  }catch(e){
+    return { vert:0 };
+  }
+}
+
+function saveSportWallet(obj){
+  try{ localStorage.setItem(SPORT_WALLET_KEY, JSON.stringify(obj)); }catch(e){}
+}
+
+function walletAdd(key, field, delta){
+  let data = key === CITIZEN_WALLET_KEY
+    ? loadCitizenWallet()
+    : key === SCHOOL_WALLET_KEY
+      ? loadSchoolWallet()
+      : loadSportWallet();
+
+  data[field] = Math.max(0, Number(data[field] || 0) + Number(delta || 0));
+
+  if(key === CITIZEN_WALLET_KEY) saveCitizenWallet(data);
+  if(key === SCHOOL_WALLET_KEY) saveSchoolWallet(data);
+  if(key === SPORT_WALLET_KEY) saveSportWallet(data);
+
+  return data[field];
+}
+
+window.loadCitizenWallet = loadCitizenWallet;
+window.saveCitizenWallet = saveCitizenWallet;
+window.loadSchoolWallet = loadSchoolWallet;
+window.saveSchoolWallet = saveSchoolWallet;
+window.loadSportWallet = loadSportWallet;
+window.saveSportWallet = saveSportWallet;
+window.walletAdd = walletAdd;
