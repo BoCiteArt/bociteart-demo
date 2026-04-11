@@ -1579,7 +1579,11 @@ function validerInscription() {
       const $ = (id) => document.getElementById(id);
       const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
       const isFn = (v) => typeof v === "function";
-
+      
+      window.$ = $;
+      window.on = on;
+      window.isFn = isFn;
+     
       function setVh(){
         const vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -2700,6 +2704,14 @@ out center tags;
 
         return data[field];
       }
+
+      window.loadCitizenWallet = loadCitizenWallet;
+      window.saveCitizenWallet = saveCitizenWallet;
+      window.loadSchoolWallet = loadSchoolWallet;
+      window.saveSchoolWallet = saveSchoolWallet;
+      window.loadSportWallet = loadSportWallet;
+      window.saveSportWallet = saveSportWallet;
+      window.walletAdd = walletAdd;
 
       function feeYM(d = new Date()){
         const y = d.getFullYear();
@@ -5538,11 +5550,10 @@ if(key === "sport"){
           <textarea id="sportWeekendReport" class="miniField" style="min-height:120px;" placeholder="Ex : Victoire 3-1 à domicile, bon état d’esprit, fair-play exemplaire"></textarea>
 
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-         <button class="choiceBtn" id="schoolReferralSaveBtn" type="button">Enregistrer parrainage</button>
-         <button class="choiceBtn" id="schoolReferralReadBtn" type="button" style="background:#fff;">Lire parrainage</button>
-         <button class="choiceBtn" id="schoolReferralResetBtn" type="button" style="background:#fff;">Réinitialiser parrainage</button>
-         <button class="choiceBtn" id="schoolHistoryReadBtn" type="button" style="background:#fff;">Lire historique école</button>
-         </div>
+            <button class="choiceBtn" id="sportWeekendSave" type="button">Enregistrer le résultat</button>
+            <button class="choiceBtn" id="sportWeekendRead" type="button" style="background:#fff;">Lire le résultat</button>
+            <button class="choiceBtn" id="sportWeekendReset" type="button" style="background:#fff;">Réinitialiser le résultat</button>
+          </div>
 
           <div class="muted" style="margin-top:10px;">
             Les injures, propos agressifs, diffamatoires, humiliants ou non sportifs sont interdits.
@@ -5897,10 +5908,21 @@ if(key === "sport"){
 
           window.tapeAds = dynamicAds.length ? dynamicAds.concat(staticAds) : staticAds.slice();
 
-          if(typeof renderTape === "function"){
-            renderTape();
+          if(typeof window.renderTape === "function"){
+            window.renderTape();
           }
         }
+
+        window.loadSportHistory = loadSportHistory;
+        window.saveSportHistory = saveSportHistory;
+        window.loadSportReport = loadSportReport;
+        window.saveSportReport = saveSportReport;
+        window.loadSportSolidarity = loadSportSolidarity;
+        window.saveSportSolidarity = saveSportSolidarity;
+        window.loadSportPubs = loadSportPubs;
+        window.saveSportPubs = saveSportPubs;
+        window.getActiveSportPubs = getActiveSportPubs;
+        window.syncSportPubsToTape = syncSportPubsToTape;
 
         syncSportPubsToTape();
 
