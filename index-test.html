@@ -1,251 +1,67 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bo'CitéArt</title>
-<style>
-body{font-family:Arial;margin:0;background:#f5f5f5}
-header{background:#111;color:#fff;padding:10px;text-align:center}
-.tab{display:none;padding:15px}
-.tab.active{display:block}
-.choiceBtn{padding:10px 15px;border-radius:8px;border:1px solid #ccc;cursor:pointer;background:#fff}
-textarea,input{width:100%;padding:8px;margin-top:5px;box-sizing:border-box}
-.box{
-  background:#fff;
-  border:1px solid #ddd;
-  border-radius:10px;
-  padding:12px;
-  margin-top:12px;
-}
-</style>
-</head>
-<body>
-<header>
-<h2>Bo'CitéArt</h2>
-</header>
+const FEE_STORE_KEY = "bociteart_fee_demo_v1";
+const CITIZEN_WALLET_KEY = "bociteart_citizen_wallet_v1";
+const SCHOOL_WALLET_KEY = "bociteart_school_wallet_v1";
+const SPORT_WALLET_KEY = "bociteart_sport_wallet_v1";
 
-<!-- NAVIGATION -->
-<div style="display:flex;gap:10px;padding:10px;flex-wrap:wrap;">
-<button onclick="openTab('home')">Accueil</button>
-<button onclick="openTab('mairie')">Mairie</button>
-<button onclick="openTab('sport')">Sport</button>
-<button onclick="openTab('ecole')">École</button>
-<button onclick="openTab('commerce')">Commerçants</button>
-</div>
-
-<!-- ACCUEIL -->
-<div id="home" class="tab active">
-<h3>Bienvenue</h3>
-<p>Application Bo'CitéArt - Démo sécurisée</p>
-</div>
-
-<!-- MAIRIE -->
-<div id="mairie" class="tab">
-<h3>Mairie</h3>
-
-<div class="box">
-<strong>Cadre :</strong> la mairie dispose d’un espace public d’information destiné aux habitants.
-</div>
-
-<div class="box">
-<div style="font-weight:900;">Ville de Wattignies — accès citoyen utile</div>
-
-<div style="margin-top:8px;">
-Cet accès permet aux habitants de retrouver rapidement les informations et services utiles liés à la ville,
-dans un format simple, direct et lisible.
-</div>
-
-<div style="margin-top:8px;">
-L’objectif est de remplacer une lecture trop statique des services par un point d’entrée plus vivant,
-plus pratique et plus clair pour les citoyens.
-</div>
-
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-<button class="choiceBtn" id="openWattigniesCityBtn" type="button">Ouvrir Ville de Wattignies</button>
-</div>
-
-<div style="margin-top:10px;">
-En version démo, ce bouton ouvre directement la page utile liée à la ville.
-</div>
-</div>
-</div>
-
-<!-- SPORT -->
-<div id="sport" class="tab">
-<h3>Résultat du week-end</h3>
-<textarea id="sportWeekendText" placeholder="Résultat du week-end"></textarea>
-
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-<button class="choiceBtn" id="sportWeekendSave">💾 Enregistrer</button>
-<button class="choiceBtn" id="sportWeekendRead">Lire</button>
-<button class="choiceBtn" id="sportWeekendReset">Réinitialiser</button>
-</div>
-</div>
-
-<!-- ECOLE -->
-<div id="ecole" class="tab">
-<h3>Mot du jour</h3>
-<input id="schoolWord" placeholder="Mot du jour">
-
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-<button class="choiceBtn" id="schoolSave">💾 Enregistrer</button>
-<button class="choiceBtn" id="schoolRead">Lire</button>
-<button class="choiceBtn" id="schoolReset">Réinitialiser</button>
-</div>
-</div>
-
-<!-- COMMERCE -->
-<div id="commerce" class="tab">
-<h3>Paiement publicité</h3>
-<p>Simulation sécurisée (pré-PSP)</p>
-<button id="payBtn" class="choiceBtn">Payer 50€</button>
-<p id="paymentStatus"></p>
-</div>
-
-<script>
-// NAVIGATION
-function openTab(id){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  const target=document.getElementById(id);
-  if(target) target.classList.add('active');
-}
-
-// STORAGE SECURISE (simulation backend)
-function secureSave(key,data){
-  const payload={
-    value:data,
-    time:Date.now()
-  };
-  localStorage.setItem(key,JSON.stringify(payload));
-}
-
-function secureRead(key){
-  const raw=localStorage.getItem(key);
-  if(!raw) return null;
+function loadCitizenWallet(){
   try{
-    return JSON.parse(raw).value;
+    const raw = localStorage.getItem(CITIZEN_WALLET_KEY);
+    return raw ? JSON.parse(raw) : { or:37 };
   }catch(e){
-    return null;
+    return { or:37 };
   }
 }
 
-// MAIRIE
-const openWattigniesCityBtn=document.getElementById('openWattigniesCityBtn');
-if(openWattigniesCityBtn){
-  openWattigniesCityBtn.onclick=()=>{
-    window.open('https://www.wattignies.fr','_blank','noopener,noreferrer');
-  };
+function saveCitizenWallet(obj){
+  try{ localStorage.setItem(CITIZEN_WALLET_KEY, JSON.stringify(obj)); }catch(e){}
 }
 
-// SPORT
-const sportWeekendSave=document.getElementById('sportWeekendSave');
-const sportWeekendRead=document.getElementById('sportWeekendRead');
-const sportWeekendReset=document.getElementById('sportWeekendReset');
-const sportWeekendText=document.getElementById('sportWeekendText');
-
-if(sportWeekendSave){
-  sportWeekendSave.onclick=()=>{
-    secureSave('sportWeekend',sportWeekendText.value);
-    alert('Enregistré');
-  };
-}
-
-if(sportWeekendRead){
-  sportWeekendRead.onclick=()=>{
-    const v=secureRead('sportWeekend');
-    sportWeekendText.value=v||'';
-  };
-}
-
-if(sportWeekendReset){
-  sportWeekendReset.onclick=()=>{
-    localStorage.removeItem('sportWeekend');
-    sportWeekendText.value='';
-  };
-}
-
-// ECOLE
-const schoolSave=document.getElementById('schoolSave');
-const schoolRead=document.getElementById('schoolRead');
-const schoolReset=document.getElementById('schoolReset');
-const schoolWord=document.getElementById('schoolWord');
-
-if(schoolSave){
-  schoolSave.onclick=()=>{
-    secureSave('schoolWord',schoolWord.value);
-    alert('Enregistré');
-  };
-}
-
-if(schoolRead){
-  schoolRead.onclick=()=>{
-    const v=secureRead('schoolWord');
-    schoolWord.value=v||'';
-  };
-}
-
-if(schoolReset){
-  schoolReset.onclick=()=>{
-    localStorage.removeItem('schoolWord');
-    schoolWord.value='';
-  };
-}
-
-// PAIEMENT (pré-PSP prêt)
-const payBtn=document.getElementById('payBtn');
-const paymentStatus=document.getElementById('paymentStatus');
-
-if(payBtn){
-  payBtn.onclick=async()=>{
-    paymentStatus.innerText='Connexion paiement...';
-
-    // SIMULATION API (remplacera Stripe / PSP)
-    await new Promise(r=>setTimeout(r,1000));
-
-    const paymentResult={status:'success',id:'demo_tx_123'};
-
-    if(paymentResult.status==='success'){
-      secureSave('payment',{paid:true,id:paymentResult.id});
-      paymentStatus.innerText='Paiement validé ✔';
-    }else{
-      paymentStatus.innerText='Erreur paiement';
-    }
-  };
-}
-</script>
-
-<script>
-// PROTECTION SUPPLEMENTAIRE (pré-live)
-(function(){
-  let attempts=0;
-  window.addEventListener('error',()=>{
-    attempts++;
-    if(attempts>5){
-      alert('Erreur détectée - sécurité activée');
-    }
-  });
-})();
-
-// VERIFICATION ETAT PAIEMENT (future PSP)
-function isPaid(){
-  const p=secureRead('payment');
-  return p && p.paid===true;
-}
-
-// EXEMPLE UTILISATION
-setInterval(()=>{
-  if(isPaid() && paymentStatus){
-    paymentStatus.style.color='green';
+function loadSchoolWallet(){
+  try{
+    const raw = localStorage.getItem(SCHOOL_WALLET_KEY);
+    return raw ? JSON.parse(raw) : { jaune:0 };
+  }catch(e){
+    return { jaune:0 };
   }
-},2000);
-
-// PREPARATION WEBHOOK (placeholder)
-async function verifyPaymentServer(txId){
-  // ici appel backend futur
-  return true;
 }
-</script>
 
-</body>
-</html>
+function saveSchoolWallet(obj){
+  try{ localStorage.setItem(SCHOOL_WALLET_KEY, JSON.stringify(obj)); }catch(e){}
+}
+
+function loadSportWallet(){
+  try{
+    const raw = localStorage.getItem(SPORT_WALLET_KEY);
+    return raw ? JSON.parse(raw) : { vert:0 };
+  }catch(e){
+    return { vert:0 };
+  }
+}
+
+function saveSportWallet(obj){
+  try{ localStorage.setItem(SPORT_WALLET_KEY, JSON.stringify(obj)); }catch(e){}
+}
+
+function walletAdd(key, field, delta){
+  let data = key === CITIZEN_WALLET_KEY
+    ? loadCitizenWallet()
+    : key === SCHOOL_WALLET_KEY
+      ? loadSchoolWallet()
+      : loadSportWallet();
+
+  data[field] = Math.max(0, Number(data[field] || 0) + Number(delta || 0));
+
+  if(key === CITIZEN_WALLET_KEY) saveCitizenWallet(data);
+  if(key === SCHOOL_WALLET_KEY) saveSchoolWallet(data);
+  if(key === SPORT_WALLET_KEY) saveSportWallet(data);
+
+  return data[field];
+}
+
+window.loadCitizenWallet = loadCitizenWallet;
+window.saveCitizenWallet = saveCitizenWallet;
+window.loadSchoolWallet = loadSchoolWallet;
+window.saveSchoolWallet = saveSchoolWallet;
+window.loadSportWallet = loadSportWallet;
+window.saveSportWallet = saveSportWallet;
+window.walletAdd = walletAdd;
