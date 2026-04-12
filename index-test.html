@@ -232,6 +232,95 @@ function secureRead(key){
   }catch{
     return null;
   }
+  function escapeHtml(s){
+  return String(s || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+const DEFAULT_TICKER_ITEMS = [
+  {
+    title:"Annonce partenaire (démo)",
+    subtitle:"Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels",
+    img:"https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+  },
+  {
+    title:"Mairie (démo) : informations & agenda",
+    subtitle:"Accès gratuit citoyen pour alertes d’intérêt général • règle d’accès 16h (pub) • sous réserve de disponibilité",
+    img:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
+  }
+];
+
+window.tickerItems = window.tickerItems || JSON.parse(JSON.stringify(DEFAULT_TICKER_ITEMS));
+
+function ensureTickerUi(){
+  if(document.getElementById("topTicker")) return;
+
+  const header = document.querySelector("header");
+  if(!header) return;
+
+  const wrap = document.createElement("div");
+  wrap.id = "topTicker";
+  wrap.style.marginTop = "10px";
+  wrap.style.background = "#fff";
+  wrap.style.color = "#111";
+  wrap.style.borderRadius = "10px";
+  wrap.style.padding = "10px";
+  wrap.style.textAlign = "left";
+
+  wrap.innerHTML = `
+    <div id="tickerTitleA" style="font-weight:900;">-</div>
+    <div id="tickerSubA" style="font-size:13px;margin-top:4px;">-</div>
+  `;
+
+  header.appendChild(wrap);
+}
+
+function setTicker(i){
+  ensureTickerUi();
+  const it = window.tickerItems[i];
+  const titleA = document.getElementById("tickerTitleA");
+  const subA = document.getElementById("tickerSubA");
+
+  if(titleA) titleA.textContent = it.title || "";
+  if(subA) subA.textContent = it.subtitle || "";
+}
+
+let tickerIdx = 0;
+setTicker(0);
+
+setInterval(()=>{
+  if(!window.tickerItems || !window.tickerItems.length) return;
+  tickerIdx = (tickerIdx + 1) % window.tickerItems.length;
+  setTicker(tickerIdx);
+}, 10000);
+
+function syncMairiePaidAdToTicker(){
+  const ads = secureRead("bociteart_mairie_paid_ads_v1") || [];
+  const paid = ads.filter(x => x.paymentStatus === "paid");
+
+  if(!paid.length){
+    window.tickerItems = JSON.parse(JSON.stringify(DEFAULT_TICKER_ITEMS));
+    setTicker(tickerIdx % window.tickerItems.length);
+    return;
+  }
+
+  paid.sort((a,b)=> Number(b.ts || 0) - Number(a.ts || 0));
+  const last = paid[0];
+
+  window.tickerItems = JSON.parse(JSON.stringify(DEFAULT_TICKER_ITEMS));
+  window.tickerItems[1] = {
+    title: last.title || "Mairie (démo)",
+    subtitle: last.text || "",
+    img:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
+  };
+
+  tickerIdx = 1;
+  setTicker(1);
+}
 }
 
 function escapeHtml(s){
@@ -601,6 +690,7 @@ mairiePubResetBtn.onclick = ()=>{
   mairiePubPack.value = "1";
   mairiePubPaymentStatus.value = "draft";
   refreshMairiePubPreview();
+  syncMairiePaidAdToTicker();
 };
 
 mairieReferralSaveBtn.onclick = ()=>{
