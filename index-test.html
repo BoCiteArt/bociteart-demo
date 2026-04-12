@@ -627,36 +627,40 @@ mairiePubTransmitBtn.onclick = ()=>{
   }
 
   const ads = loadMairiePaidAds();
-  const unpaid = ads.filter(x => x.paymentStatus !== "paid");
+const olderUnpaid = ads.filter(x =>
+  x.paymentStatus !== "paid" &&
+  String(x.date || "") < dateVal
+);
 
-  if(unpaid.length && paymentStatusVal !== "paid"){
-    alert("Une ancienne publicité mairie n’est pas encore réglée. La suivante reste bloquée jusqu’au paiement.");
-    return;
-  }
+if(olderUnpaid.length){
+  alert("Une ancienne publicité mairie n’est pas encore réglée. Régularise d’abord la plus ancienne avant d’activer la suivante.");
+  return;
+}
 
-  const pubObj = {
-    type:"mairie_paid_pub",
-    date:dateVal,
-    title:titleVal,
-    text:textVal,
-    pack:packVal,
-    amountHT: packVal === "5" ? 200 : 50,
-    paymentStatus:paymentStatusVal,
-    transmitted: paymentStatusVal === "paid",
-    ts:Date.now(),
-    ts_fr:new Date().toLocaleString("fr-FR")
-  };
+const pubObj = {
+  type:"mairie_paid_pub",
+  date:dateVal,
+  title:titleVal,
+  text:textVal,
+  pack:packVal,
+  amountHT: packVal === "5" ? 200 : 50,
+  paymentStatus:paymentStatusVal,
+  transmitted: paymentStatusVal === "paid",
+  ts:Date.now(),
+  ts_fr:new Date().toLocaleString("fr-FR")
+};
 
-  ads.push(pubObj);
-  saveMairiePaidAds(ads);
+ads.push(pubObj);
+saveMairiePaidAds(ads);
 
-  if(paymentStatusVal === "paid"){
-    alert("Publicité mairie transmise et activée dans le grand bandeau du haut (démo).");
-  }else if(paymentStatusVal === "quote_validated"){
-    alert("Devis validé. La publicité mairie reste en attente de paiement avant diffusion.");
-  }else{
-    alert("Brouillon enregistré. La publicité mairie n’est pas encore diffusée.");
-  }
+if(paymentStatusVal === "paid"){
+  syncMairiePaidAdToTicker();
+  alert("Publicité mairie transmise et activée dans le grand bandeau du haut (démo).");
+}else if(paymentStatusVal === "quote_validated"){
+  alert("Devis validé. La publicité mairie reste en attente de paiement avant diffusion.");
+}else{
+  alert("Brouillon enregistré. La publicité mairie n’est pas encore diffusée.");
+}
 };
 
 mairiePubReadHistoryBtn.onclick = ()=>{
