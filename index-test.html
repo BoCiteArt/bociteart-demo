@@ -229,10 +229,12 @@ function secureRead(key){
   if(!raw) return null;
   try{
     return JSON.parse(raw).value;
-  }catch{
+  }catch(e){
     return null;
   }
-  function escapeHtml(s){
+}
+
+function escapeHtml(s){
   return String(s || "")
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
@@ -241,6 +243,7 @@ function secureRead(key){
     .replace(/'/g,"&#039;");
 }
 
+// ===== TICKER HAUT =====
 const DEFAULT_TICKER_ITEMS = [
   {
     title:"Annonce partenaire (démo)",
@@ -288,6 +291,7 @@ function setTicker(i){
   if(titleA) titleA.textContent = it.title || "";
   if(subA) subA.textContent = it.subtitle || "";
 }
+window.setTicker = setTicker;
 
 let tickerIdx = 0;
 setTicker(0);
@@ -320,16 +324,6 @@ function syncMairiePaidAdToTicker(){
 
   tickerIdx = 1;
   setTicker(1);
-}
-}
-
-function escapeHtml(s){
-  return String(s || "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
 }
 
 // SPORT
@@ -573,6 +567,7 @@ mairiePubDate.addEventListener("input", refreshMairiePubPreview);
 mairiePubPack.addEventListener("change", refreshMairiePubPreview);
 mairiePubPaymentStatus.addEventListener("change", refreshMairiePubPreview);
 refreshMairiePubPreview();
+syncMairiePaidAdToTicker();
 
 mairiePubSaveBtn.onclick = ()=>{
   const dateVal = String(mairiePubDate.value || "").trim();
@@ -627,40 +622,41 @@ mairiePubTransmitBtn.onclick = ()=>{
   }
 
   const ads = loadMairiePaidAds();
-const olderUnpaid = ads.filter(x =>
-  x.paymentStatus !== "paid" &&
-  String(x.date || "") < dateVal
-);
 
-if(olderUnpaid.length){
-  alert("Une ancienne publicité mairie n’est pas encore réglée. Régularise d’abord la plus ancienne avant d’activer la suivante.");
-  return;
-}
+  const olderUnpaid = ads.filter(x =>
+    x.paymentStatus !== "paid" &&
+    String(x.date || "") < dateVal
+  );
 
-const pubObj = {
-  type:"mairie_paid_pub",
-  date:dateVal,
-  title:titleVal,
-  text:textVal,
-  pack:packVal,
-  amountHT: packVal === "5" ? 200 : 50,
-  paymentStatus:paymentStatusVal,
-  transmitted: paymentStatusVal === "paid",
-  ts:Date.now(),
-  ts_fr:new Date().toLocaleString("fr-FR")
-};
+  if(olderUnpaid.length){
+    alert("Une ancienne publicité mairie n’est pas encore réglée. Régularise d’abord la plus ancienne avant d’activer la suivante.");
+    return;
+  }
 
-ads.push(pubObj);
-saveMairiePaidAds(ads);
+  const pubObj = {
+    type:"mairie_paid_pub",
+    date:dateVal,
+    title:titleVal,
+    text:textVal,
+    pack:packVal,
+    amountHT: packVal === "5" ? 200 : 50,
+    paymentStatus:paymentStatusVal,
+    transmitted: paymentStatusVal === "paid",
+    ts:Date.now(),
+    ts_fr:new Date().toLocaleString("fr-FR")
+  };
 
-if(paymentStatusVal === "paid"){
-  syncMairiePaidAdToTicker();
-  alert("Publicité mairie transmise et activée dans le grand bandeau du haut (démo).");
-}else if(paymentStatusVal === "quote_validated"){
-  alert("Devis validé. La publicité mairie reste en attente de paiement avant diffusion.");
-}else{
-  alert("Brouillon enregistré. La publicité mairie n’est pas encore diffusée.");
-}
+  ads.push(pubObj);
+  saveMairiePaidAds(ads);
+
+  if(paymentStatusVal === "paid"){
+    syncMairiePaidAdToTicker();
+    alert("Publicité mairie transmise et activée dans le grand bandeau du haut (démo).");
+  }else if(paymentStatusVal === "quote_validated"){
+    alert("Devis validé. La publicité mairie reste en attente de paiement avant diffusion.");
+  }else{
+    alert("Brouillon enregistré. La publicité mairie n’est pas encore diffusée.");
+  }
 };
 
 mairiePubReadHistoryBtn.onclick = ()=>{
@@ -694,7 +690,6 @@ mairiePubResetBtn.onclick = ()=>{
   mairiePubPack.value = "1";
   mairiePubPaymentStatus.value = "draft";
   refreshMairiePubPreview();
-  syncMairiePaidAdToTicker();
 };
 
 mairieReferralSaveBtn.onclick = ()=>{
@@ -748,7 +743,7 @@ function isPaid(){
 
 // EXEMPLE UTILISATION
 setInterval(()=>{
-  if(isPaid()){
+  if(isPaid() && typeof paymentStatus !== "undefined" && paymentStatus){
     paymentStatus.style.color = 'green';
   }
 },2000);
