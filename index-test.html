@@ -172,7 +172,7 @@ textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-bo
     </select>
 
     <div class="muted" style="margin-top:8px;">
-      Tant qu’une ancienne publicité mairie est en attente de paiement, la nouvelle transmission est bloquée.
+      Tant qu’une ancienne publicité mairie transmise est en attente de paiement, la nouvelle transmission est bloquée.
     </div>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
@@ -304,7 +304,7 @@ setInterval(()=>{
 
 function syncMairiePaidAdToTicker(){
   const ads = secureRead("bociteart_mairie_paid_ads_v1") || [];
-  const paid = ads.filter(x => x.paymentStatus === "paid");
+  const paid = ads.filter(x => x.paymentStatus === "paid" && x.transmitted === true);
 
   if(!paid.length){
     window.tickerItems = JSON.parse(JSON.stringify(DEFAULT_TICKER_ITEMS));
@@ -476,6 +476,7 @@ function renderHealthDirectoryText(){
 const MAIRIE_MESSAGE_KEY = "mairieMessage";
 const MAIRIE_REFERRAL_KEY = "bociteart_mairie_referral_v1";
 const MAIRIE_PAID_ADS_KEY = "bociteart_mairie_paid_ads_v1";
+const MAIRIE_PAID_AD_DRAFT_KEY = "bociteart_mairie_paid_ad_draft_v1";
 
 function mairieReferralLoad(){
   return secureRead(MAIRIE_REFERRAL_KEY);
@@ -491,6 +492,18 @@ function loadMairiePaidAds(){
 
 function saveMairiePaidAds(arr){
   secureSave(MAIRIE_PAID_ADS_KEY,arr);
+}
+
+function loadMairiePaidAdDraft(){
+  return secureRead(MAIRIE_PAID_AD_DRAFT_KEY) || null;
+}
+
+function saveMairiePaidAdDraft(obj){
+  secureSave(MAIRIE_PAID_AD_DRAFT_KEY,obj);
+}
+
+function clearMairiePaidAdDraft(){
+  localStorage.removeItem(MAIRIE_PAID_AD_DRAFT_KEY);
 }
 
 function buildMairiePubText(title, text){
@@ -566,6 +579,19 @@ mairiePubText.addEventListener("input", refreshMairiePubPreview);
 mairiePubDate.addEventListener("input", refreshMairiePubPreview);
 mairiePubPack.addEventListener("change", refreshMairiePubPreview);
 mairiePubPaymentStatus.addEventListener("change", refreshMairiePubPreview);
+
+// recharge le brouillon si présent
+(function restoreMairieDraft(){
+  const draft = loadMairiePaidAdDraft();
+  if(!draft) return;
+
+  mairiePubDate.value = draft.date || "";
+  mairiePubTitle.value = draft.title || "";
+  mairiePubText.value = draft.text || "";
+  mairiePubPack.value = draft.pack || "1";
+  mairiePubPaymentStatus.value = draft.paymentStatus || "draft";
+})();
+
 refreshMairiePubPreview();
 syncMairiePaidAdToTicker();
 
@@ -586,22 +612,20 @@ mairiePubSaveBtn.onclick = ()=>{
     return;
   }
 
-  const ads = loadMairiePaidAds();
-  ads.push({
-    type:"mairie_paid_pub",
+  saveMairiePaidAdDraft({
+    type:"mairie_paid_pub_draft",
     date:dateVal,
     title:titleVal,
     text:textVal,
     pack:packVal,
     amountHT: packVal === "5" ? 200 : 50,
     paymentStatus:paymentStatusVal,
-    transmitted:false,
     ts:Date.now(),
     ts_fr:new Date().toLocaleString("fr-FR")
   });
-  saveMairiePaidAds(ads);
+
   refreshMairiePubPreview();
-  alert("Publicité mairie enregistrée.");
+  alert("Brouillon mairie enregistré.");
 };
 
 mairiePubTransmitBtn.onclick = ()=>{
@@ -624,12 +648,13 @@ mairiePubTransmitBtn.onclick = ()=>{
   const ads = loadMairiePaidAds();
 
   const olderUnpaid = ads.filter(x =>
+    x.transmitted === true &&
     x.paymentStatus !== "paid" &&
     String(x.date || "") < dateVal
   );
 
   if(olderUnpaid.length){
-    alert("Une ancienne publicité mairie n’est pas encore réglée. Régularise d’abord la plus ancienne avant d’activer la suivante.");
+    alert("Une ancienne publicité mairie transmise n’est pas encore réglée. Régularise d’abord la plus ancienne avant d’activer la suivante.");
     return;
   }
 
@@ -641,13 +666,14 @@ mairiePubTransmitBtn.onclick = ()=>{
     pack:packVal,
     amountHT: packVal === "5" ? 200 : 50,
     paymentStatus:paymentStatusVal,
-    transmitted: paymentStatusVal === "paid",
+    transmitted:true,
     ts:Date.now(),
     ts_fr:new Date().toLocaleString("fr-FR")
   };
 
   ads.push(pubObj);
   saveMairiePaidAds(ads);
+  clearMairiePaidAdDraft();
 
   if(paymentStatusVal === "paid"){
     syncMairiePaidAdToTicker();
@@ -655,7 +681,7 @@ mairiePubTransmitBtn.onclick = ()=>{
   }else if(paymentStatusVal === "quote_validated"){
     alert("Devis validé. La publicité mairie reste en attente de paiement avant diffusion.");
   }else{
-    alert("Brouillon enregistré. La publicité mairie n’est pas encore diffusée.");
+    alert("Brouillon transmis. La publicité mairie n’est pas encore diffusée.");
   }
 };
 
@@ -689,6 +715,7 @@ mairiePubResetBtn.onclick = ()=>{
   mairiePubText.value = "";
   mairiePubPack.value = "1";
   mairiePubPaymentStatus.value = "draft";
+  clearMairiePaidAdDraft();
   refreshMairiePubPreview();
 };
 
