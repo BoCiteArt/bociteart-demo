@@ -637,20 +637,6 @@ mairiePubTransmitBtn.onclick = ()=>{
 
   const ads = loadMairiePaidAds();
 
-  const olderUnpaid = ads.filter(x =>
-    x.type === "mairie_paid_pub" &&
-    x.transmitted === true &&
-    x.paymentStatus !== "paid" &&
-    typeof x.date === "string" &&
-    x.date.length >= 10 &&
-    x.date < dateVal
-  );
-
-  if(olderUnpaid.length){
-    alert("Une ancienne publicité mairie transmise n’est pas encore réglée. Régularise d’abord la plus ancienne avant d’activer la suivante.");
-    return;
-  }
-
   const pubObj = {
     type:"mairie_paid_pub",
     date:dateVal,
@@ -677,7 +663,7 @@ mairiePubTransmitBtn.onclick = ()=>{
     alert("Brouillon transmis. La publicité mairie n’est pas encore diffusée.");
   }
 };
-
+  
 mairiePubReadHistoryBtn.onclick = ()=>{
   const ads = loadMairiePaidAds().filter(x => x.type === "mairie_paid_pub");
   if(!ads.length){
