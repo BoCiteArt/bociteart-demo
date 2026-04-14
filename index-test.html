@@ -21,7 +21,6 @@ textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-bo
 <h2>Bo'CitéArt</h2>
 </header>
 
-<!-- NAVIGATION -->
 <div style="display:flex;gap:10px;padding:10px;flex-wrap:wrap;">
 <button onclick="openTab('home')">Accueil</button>
 <button onclick="openTab('sport')">Sport</button>
@@ -30,17 +29,14 @@ textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-bo
 <button onclick="openTab('mairie')">Mairie</button>
 </div>
 
-<!-- ACCUEIL -->
 <div id="home" class="tab active">
 <h3>Bienvenue</h3>
 <p>Application Bo'CitéArt - Démo sécurisée</p>
 </div>
 
-<!-- SPORT -->
 <div id="sport" class="tab">
 <h3>Résultat du week-end</h3>
 <textarea id="sportWeekendText" placeholder="Résultat du week-end"></textarea>
-
 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
 <button class="choiceBtn" id="sportWeekendSave">💾 Enregistrer</button>
 <button class="choiceBtn" id="sportWeekendRead">Lire</button>
@@ -48,11 +44,9 @@ textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-bo
 </div>
 </div>
 
-<!-- ECOLE -->
 <div id="ecole" class="tab">
 <h3>Mot du jour</h3>
 <input id="schoolWord" placeholder="Mot du jour">
-
 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
 <button class="choiceBtn" id="schoolSave">💾 Enregistrer</button>
 <button class="choiceBtn" id="schoolRead">Lire</button>
@@ -60,7 +54,6 @@ textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-bo
 </div>
 </div>
 
-<!-- COMMERCE -->
 <div id="commerce" class="tab">
 <h3>Paiement publicité</h3>
 <p>Simulation sécurisée (pré-PSP)</p>
@@ -68,7 +61,6 @@ textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-bo
 <p id="paymentStatus"></p>
 </div>
 
-<!-- MAIRIE -->
 <div id="mairie" class="tab">
   <h3>Mairie</h3>
 
@@ -138,7 +130,7 @@ textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-bo
       <li>Pack 5 publicités = 200 € HT</li>
       <li>Avant 16h00 : 1 seule publicité mairie par journée réservée</li>
       <li>Après 16h00 : la mairie peut reprendre d’autres emplacements restants tant que les 10 du jour ne sont pas remplis</li>
-      <li>Si une ancienne publicité mairie n’est pas réglée, la suivante est bloquée jusqu’au paiement</li>
+      <li>Si une ancienne publicité mairie transmise n’est pas réglée, la suivante est bloquée jusqu’au paiement</li>
     </ul>
 
     <div class="muted" style="margin-top:8px;">
@@ -180,6 +172,7 @@ textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-bo
       <button class="choiceBtn" id="mairiePubTransmitBtn" type="button">Transmettre / activer si payé</button>
       <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button">Lire historique pubs mairie</button>
       <button class="choiceBtn" id="mairiePubResetBtn" type="button">Réinitialiser le formulaire</button>
+      <button class="choiceBtn" id="mairiePubHardResetBtn" type="button" style="background:#fff3f3;">Vider pubs mairie (démo)</button>
     </div>
 
     <div class="box" style="background:#f9f9f9;">
@@ -209,13 +202,11 @@ textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-bo
 </div>
 
 <script>
-// NAVIGATION
 function openTab(id){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// STORAGE SECURISE (simulation backend)
 function secureSave(key,data){
   const payload = {
     value:data,
@@ -243,7 +234,6 @@ function escapeHtml(s){
     .replace(/'/g,"&#039;");
 }
 
-// ===== TICKER HAUT =====
 const DEFAULT_TICKER_ITEMS = [
   {
     title:"Annonce partenaire (démo)",
@@ -261,7 +251,6 @@ window.tickerItems = window.tickerItems || JSON.parse(JSON.stringify(DEFAULT_TIC
 
 function ensureTickerUi(){
   if(document.getElementById("topTicker")) return;
-
   const header = document.querySelector("header");
   if(!header) return;
 
@@ -273,12 +262,10 @@ function ensureTickerUi(){
   wrap.style.borderRadius = "10px";
   wrap.style.padding = "10px";
   wrap.style.textAlign = "left";
-
   wrap.innerHTML = `
     <div id="tickerTitleA" style="font-weight:900;">-</div>
     <div id="tickerSubA" style="font-size:13px;margin-top:4px;">-</div>
   `;
-
   header.appendChild(wrap);
 }
 
@@ -287,7 +274,6 @@ function setTicker(i){
   const it = window.tickerItems[i];
   const titleA = document.getElementById("tickerTitleA");
   const subA = document.getElementById("tickerSubA");
-
   if(titleA) titleA.textContent = it.title || "";
   if(subA) subA.textContent = it.subtitle || "";
 }
@@ -304,7 +290,14 @@ setInterval(()=>{
 
 function syncMairiePaidAdToTicker(){
   const ads = secureRead("bociteart_mairie_paid_ads_v1") || [];
-  const paid = ads.filter(x => x.paymentStatus === "paid" && x.transmitted === true);
+  const paid = ads.filter(x =>
+    x &&
+    x.type === "mairie_paid_pub" &&
+    x.paymentStatus === "paid" &&
+    x.transmitted === true &&
+    x.title !== undefined &&
+    x.text !== undefined
+  );
 
   if(!paid.length){
     window.tickerItems = JSON.parse(JSON.stringify(DEFAULT_TICKER_ITEMS));
@@ -326,7 +319,6 @@ function syncMairiePaidAdToTicker(){
   setTicker(1);
 }
 
-// SPORT
 sportWeekendSave.onclick = ()=>{
   secureSave('sportWeekend',sportWeekendText.value);
   alert('Enregistré');
@@ -342,7 +334,6 @@ sportWeekendReset.onclick = ()=>{
   sportWeekendText.value = '';
 };
 
-// ECOLE
 schoolSave.onclick = ()=>{
   secureSave('schoolWord',schoolWord.value);
   alert('Enregistré');
@@ -358,12 +349,9 @@ schoolReset.onclick = ()=>{
   schoolWord.value = '';
 };
 
-// COMMERCE
 payBtn.onclick = async()=>{
   paymentStatus.innerText = 'Connexion paiement...';
-
   await new Promise(r=>setTimeout(r,1000));
-
   const paymentResult = {status:'success',id:'demo_tx_123'};
 
   if(paymentResult.status === 'success'){
@@ -374,7 +362,6 @@ payBtn.onclick = async()=>{
   }
 };
 
-// MAIRIE
 const CITY_SERVICES_DATA = [
   {
     title: "Accueil mairie",
@@ -487,7 +474,8 @@ function mairieReferralSave(obj){
 }
 
 function loadMairiePaidAds(){
-  return secureRead(MAIRIE_PAID_ADS_KEY) || [];
+  const data = secureRead(MAIRIE_PAID_ADS_KEY) || [];
+  return Array.isArray(data) ? data.filter(x => x && typeof x === "object") : [];
 }
 
 function saveMairiePaidAds(arr){
@@ -580,7 +568,6 @@ mairiePubDate.addEventListener("input", refreshMairiePubPreview);
 mairiePubPack.addEventListener("change", refreshMairiePubPreview);
 mairiePubPaymentStatus.addEventListener("change", refreshMairiePubPreview);
 
-// recharge le brouillon si présent
 (function restoreMairieDraft(){
   const draft = loadMairiePaidAdDraft();
   if(!draft) return;
@@ -648,9 +635,12 @@ mairiePubTransmitBtn.onclick = ()=>{
   const ads = loadMairiePaidAds();
 
   const olderUnpaid = ads.filter(x =>
+    x.type === "mairie_paid_pub" &&
     x.transmitted === true &&
     x.paymentStatus !== "paid" &&
-    String(x.date || "") < dateVal
+    typeof x.date === "string" &&
+    x.date.length >= 10 &&
+    x.date < dateVal
   );
 
   if(olderUnpaid.length){
@@ -686,7 +676,7 @@ mairiePubTransmitBtn.onclick = ()=>{
 };
 
 mairiePubReadHistoryBtn.onclick = ()=>{
-  const ads = loadMairiePaidAds();
+  const ads = loadMairiePaidAds().filter(x => x.type === "mairie_paid_pub");
   if(!ads.length){
     alert("Aucune publicité mairie enregistrée pour le moment.");
     return;
@@ -717,6 +707,21 @@ mairiePubResetBtn.onclick = ()=>{
   mairiePubPaymentStatus.value = "draft";
   clearMairiePaidAdDraft();
   refreshMairiePubPreview();
+};
+
+mairiePubHardResetBtn.onclick = ()=>{
+  if(confirm("Supprimer toutes les pubs mairie enregistrées et le brouillon local sur cet appareil ?")){
+    localStorage.removeItem(MAIRIE_PAID_ADS_KEY);
+    localStorage.removeItem(MAIRIE_PAID_AD_DRAFT_KEY);
+    mairiePubDate.value = "";
+    mairiePubTitle.value = "";
+    mairiePubText.value = "";
+    mairiePubPack.value = "1";
+    mairiePubPaymentStatus.value = "draft";
+    refreshMairiePubPreview();
+    syncMairiePaidAdToTicker();
+    alert("Historique pubs mairie vidé (démo).");
+  }
 };
 
 mairieReferralSaveBtn.onclick = ()=>{
@@ -751,7 +756,6 @@ mairieReferralResetBtn.onclick = ()=>{
 </script>
 
 <script>
-// PROTECTION SUPPLEMENTAIRE (pré-live)
 (function(){
   let attempts = 0;
   window.addEventListener('error',()=>{
@@ -762,26 +766,20 @@ mairieReferralResetBtn.onclick = ()=>{
   });
 })();
 
-// VERIFICATION ETAT PAIEMENT (future PSP)
 function isPaid(){
   const p = secureRead('payment');
   return p && p.paid === true;
 }
 
-// EXEMPLE UTILISATION
 setInterval(()=>{
   if(isPaid() && typeof paymentStatus !== "undefined" && paymentStatus){
     paymentStatus.style.color = 'green';
   }
 },2000);
 
-// PREPARATION WEBHOOK (placeholder)
 async function verifyPaymentServer(txId){
   return true;
 }
-
-// HARDENING BASIQUE
-Object.freeze(window);
 </script>
 
 </body>
