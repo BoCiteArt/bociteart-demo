@@ -464,6 +464,9 @@ const MAIRIE_MESSAGE_KEY = "mairieMessage";
 const MAIRIE_REFERRAL_KEY = "bociteart_mairie_referral_v1";
 const MAIRIE_PAID_ADS_KEY = "bociteart_mairie_paid_ads_v1";
 const MAIRIE_PAID_AD_DRAFT_KEY = "bociteart_mairie_paid_ad_draft_v1";
+  // DÉMO : remise à zéro automatique des pubs mairie au chargement
+localStorage.removeItem(MAIRIE_PAID_ADS_KEY);
+localStorage.removeItem(MAIRIE_PAID_AD_DRAFT_KEY);
 
 function mairieReferralLoad(){
   return secureRead(MAIRIE_REFERRAL_KEY);
