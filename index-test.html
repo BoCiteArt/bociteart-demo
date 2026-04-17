@@ -599,10 +599,16 @@ if(key === "mairie"){
     const mairiePubResetBtn = $("mairiePubResetBtn");
     const mairiePubPreview = $("mairiePubPreview");
 
-    const MAIRIE_SCHOOL_HISTORY_KEY = "bociteart_mairie_school_history_v1";
-    const MAIRIE_SPORT_HISTORY_KEY = "bociteart_mairie_sport_history_v1";
-    const MAIRIE_REFERRAL_KEY = "bociteart_mairie_referral_v1";
-    const SCHOOL_STORE_KEY = "bociteart_school_v1";
+   const MAIRIE_SCHOOL_HISTORY_KEY = "bociteart_mairie_school_history_v1";
+const MAIRIE_SPORT_HISTORY_KEY = "bociteart_mairie_sport_history_v1";
+const MAIRIE_REFERRAL_KEY = "bociteart_mairie_referral_v1";
+const SCHOOL_STORE_KEY = "bociteart_school_v1";
+
+// remise à zéro forcée pour test démo
+try{
+  localStorage.removeItem("bociteart_mairie_paid_ads_v1");
+  localStorage.removeItem("bociteart_mairie_paid_ad_draft_v1");
+}catch(e){}
 
     let currentPayload = null;
     let currentSportPayload = null;
@@ -903,32 +909,37 @@ if(key === "mairie"){
 
     refreshMairiePubPreview();
 
-    if(mairiePubTransmitBtn){
-      mairiePubTransmitBtn.onclick = ()=>{
-        const dateVal = mairiePubDate ? String(mairiePubDate.value || "").trim() : "";
-        const titleVal = mairiePubTitle ? String(mairiePubTitle.value || "").trim() : "";
-        const textVal = mairiePubText ? String(mairiePubText.value || "").trim() : "";
-        const paymentStatusVal = mairiePubPaymentStatus ? String(mairiePubPaymentStatus.value || "draft") : "draft";
+ if(mairiePubTransmitBtn){
+  mairiePubTransmitBtn.onclick = ()=>{
+    const dateVal = mairiePubDate ? String(mairiePubDate.value || "").trim() : "";
+    const titleVal = mairiePubTitle ? String(mairiePubTitle.value || "").trim() : "";
+    const textVal = mairiePubText ? String(mairiePubText.value || "").trim() : "";
+    const paymentStatusVal = mairiePubPaymentStatus ? String(mairiePubPaymentStatus.value || "draft") : "draft";
 
-        if(!dateVal){
-          alert("Renseigne la date réservée.");
-          return;
-        }
+    try{
+      localStorage.removeItem("bociteart_mairie_paid_ads_v1");
+      localStorage.removeItem("bociteart_mairie_paid_ad_draft_v1");
+    }catch(e){}
 
-        if(!titleVal && !textVal){
-          alert("Renseigne au moins un titre ou un texte de publicité.");
-          return;
-        }
-
-        if(paymentStatusVal !== "paid"){
-          alert("La publicité mairie n’est pas activée car le statut n’est pas sur payé / validé.");
-          return;
-        }
-
-        syncMairiePaidAdToTicker();
-        alert("Publicité mairie activée dans le grand bandeau du haut (démo).");
-      };
+    if(!dateVal){
+      alert("Renseigne la date réservée.");
+      return;
     }
+
+    if(!titleVal && !textVal){
+      alert("Renseigne au moins un titre ou un texte de publicité.");
+      return;
+    }
+
+    if(paymentStatusVal !== "paid"){
+      alert("La publicité mairie n’est pas activée car le statut n’est pas sur payé / validé.");
+      return;
+    }
+
+    syncMairiePaidAdToTicker();
+    alert("Publicité mairie activée dans le grand bandeau du haut (démo).");
+  };
+}
 
     if(mairiePubResetBtn){
       mairiePubResetBtn.onclick = ()=>{
@@ -942,10 +953,14 @@ if(key === "mairie"){
     }
 
     if(mairiePubReadHistoryBtn){
-      mairiePubReadHistoryBtn.onclick = ()=>{
-        alert("Historique pubs mairie désactivé pour ce test.");
-      };
-    }
+  mairiePubReadHistoryBtn.onclick = ()=>{
+    try{
+      localStorage.removeItem("bociteart_mairie_paid_ads_v1");
+      localStorage.removeItem("bociteart_mairie_paid_ad_draft_v1");
+    }catch(e){}
+    alert("Historique pubs mairie supprimé pour ce test.");
+  };
+}
 
     const db = mairieLoad();
     if(input){
