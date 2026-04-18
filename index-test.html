@@ -5,43 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bo'CitéArt</title>
 <style>
-body{font-family:Arial,sans-serif;margin:0;background:#f5f5f5;color:#111}
+body{font-family:Arial,sans-serif;margin:0;background:#f5f5f5}
 header{background:#111;color:#fff;padding:10px;text-align:center}
 .tab{display:none;padding:15px}
 .tab.active{display:block}
-.choiceBtn, button{
-  padding:10px 15px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  cursor:pointer;
-  background:#fff;
-}
-textarea,input,select{
-  width:100%;
-  padding:8px;
-  margin-top:5px;
-  box-sizing:border-box;
-  border:1px solid #ccc;
-  border-radius:8px;
-}
-.box{
-  background:#fff;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #ddd;
-  margin-top:10px;
-}
+.choiceBtn, button{padding:10px 15px;border-radius:8px;border:1px solid #ccc;cursor:pointer;background:#fff}
+textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-box;border:1px solid #ccc;border-radius:8px}
+.box{background:#fff;padding:12px;border-radius:10px;border:1px solid #ddd;margin-top:10px}
 .muted{color:#555}
-.miniCheck{display:flex;gap:8px;align-items:flex-start;margin-top:8px}
-.miniField{width:100%}
-#topTicker{
-  margin-top:10px;
-  background:#fff;
-  color:#111;
-  border-radius:10px;
-  padding:10px;
-  text-align:left;
-}
+#topTicker{margin-top:10px;background:#fff;color:#111;border-radius:10px;padding:10px;text-align:left}
 </style>
 </head>
 <body>
@@ -153,30 +125,19 @@ textarea,input,select{
   <div class="box">
     <div style="font-weight:900;">Publicité mairie payante — grand bandeau du haut</div>
     <div class="muted" style="margin-top:6px;">
-      La mairie utilise le même grand bandeau du haut que les commerçants,
-      avec les mêmes règles pour éviter les passe-droits, jalousies et montrer l’exemple.
+      Cette version test a été refaite à zéro : aucun historique, aucun blocage ancien, aucune reprise d’anciennes pubs.
     </div>
 
     <ul style="margin:8px 0 0 18px;font-weight:800;">
       <li>1 publicité = 50 € HT</li>
       <li>Pack 5 publicités = 200 € HT</li>
-      <li>Avant 16h00 : 1 seule publicité mairie par journée réservée</li>
-      <li>Après 16h00 : la mairie peut reprendre d’autres emplacements restants tant que les 10 du jour ne sont pas remplis</li>
-      <li>Si une publicité plus ancienne n’est pas régularisée, la suivante est bloquée</li>
+      <li>Version test : activation directe dans le bandeau si statut = payé / validé</li>
+      <li>Version test : aucun historique ne bloque</li>
     </ul>
-
-    <div class="muted" style="margin-top:8px;">
-      Parcours démo : préparation, enregistrement, activation si payé, historique lisible.
-    </div>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-      <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button" style="background:#fff;">Lire historique pubs mairie</button>
-      <button class="choiceBtn" id="mairiePubClearHistoryBtn" type="button" style="background:#fff3f3;">Vider historique pubs mairie</button>
-    </div>
   </div>
 
   <div class="box">
-    <div style="font-weight:900;">Rédaction / transmission de la publicité mairie</div>
+    <div style="font-weight:900;">Nouvelle pub mairie (test propre)</div>
 
     <div style="margin-top:10px;font-weight:900;">Date réservée</div>
     <input id="mairiePubDate" placeholder="AAAA-MM-JJ">
@@ -201,12 +162,12 @@ textarea,input,select{
     </select>
 
     <div class="muted" style="margin-top:8px;">
-      Seule une publicité au statut <strong>paid</strong> peut être activée dans le bandeau.
+      Dans cette version test, seule la valeur du statut compte pour afficher ou non la pub.
     </div>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-      <button class="choiceBtn" id="mairiePubSaveBtn" type="button">Enregistrer brouillon</button>
-      <button class="choiceBtn" id="mairiePubTransmitBtn" type="button">Activer la publicité si payé</button>
+      <button class="choiceBtn" id="mairiePubApplyBtn" type="button">Afficher dans le bandeau haut</button>
+      <button class="choiceBtn" id="mairiePubClearBtn" type="button" style="background:#fff3f3;">Supprimer la pub du bandeau</button>
       <button class="choiceBtn" id="mairiePubResetBtn" type="button">Réinitialiser le formulaire</button>
     </div>
 
@@ -261,13 +222,11 @@ function secureRead(key){
 const DEFAULT_TICKER_ITEMS = [
   {
     title:"Annonce partenaire (démo)",
-    subtitle:"Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels",
-    img:"https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+    subtitle:"Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels"
   },
   {
     title:"Mairie (démo) : informations & agenda",
-    subtitle:"Accès gratuit citoyen pour alertes d’intérêt général • règle d’accès 16h (pub) • sous réserve de disponibilité",
-    img:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
+    subtitle:"Accès gratuit citoyen pour alertes d’intérêt général • règle d’accès 16h (pub) • sous réserve de disponibilité"
   }
 ];
 
@@ -426,10 +385,8 @@ function renderHealthDirectoryText(){
   return blocks.join("\n");
 }
 
-const MAIRIE_MESSAGE_KEY = "mairieMessage_v3";
-const MAIRIE_REFERRAL_KEY = "bociteart_mairie_referral_v3";
-const MAIRIE_PUB_HISTORY_KEY = "bociteart_mairie_pub_history_v3";
-const MAIRIE_PUB_DRAFT_KEY = "bociteart_mairie_pub_draft_v3";
+const MAIRIE_MESSAGE_KEY = "mairie_message_clean_v1";
+const MAIRIE_REFERRAL_KEY = "mairie_referral_clean_v1";
 
 function mairieReferralLoad(){
   return secureRead(MAIRIE_REFERRAL_KEY);
@@ -437,27 +394,6 @@ function mairieReferralLoad(){
 
 function mairieReferralSave(obj){
   secureSave(MAIRIE_REFERRAL_KEY,obj);
-}
-
-function loadMairiePubHistory(){
-  const arr = secureRead(MAIRIE_PUB_HISTORY_KEY) || [];
-  return Array.isArray(arr) ? arr : [];
-}
-
-function saveMairiePubHistory(arr){
-  secureSave(MAIRIE_PUB_HISTORY_KEY, arr);
-}
-
-function loadMairiePubDraft(){
-  return secureRead(MAIRIE_PUB_DRAFT_KEY) || null;
-}
-
-function saveMairiePubDraft(obj){
-  secureSave(MAIRIE_PUB_DRAFT_KEY, obj);
-}
-
-function clearMairiePubDraft(){
-  localStorage.removeItem(MAIRIE_PUB_DRAFT_KEY);
 }
 
 function buildMairiePubText(title, text){
@@ -492,44 +428,17 @@ function refreshMairiePubPreview(){
 function applyMairiePubToTicker(titleVal, textVal){
   window.tickerItems[1] = {
     title: String(titleVal || "").trim() || "Mairie (démo)",
-    subtitle: String(textVal || "").trim(),
-    img:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
+    subtitle: String(textVal || "").trim()
   };
   tickerIdx = 1;
   setTicker(1);
 }
 
-function getBlockingOlderMairiePub(newDate){
-  const history = loadMairiePubHistory();
-  const blocking = history
-    .filter(x => x && x.date && x.date < newDate)
-    .filter(x => x.status === "draft" || x.status === "quote_validated")
-    .sort((a,b)=> String(a.date).localeCompare(String(b.date)));
-
-  return blocking.length ? blocking[0] : null;
+function clearMairiePubFromTicker(){
+  window.tickerItems[1] = JSON.parse(JSON.stringify(DEFAULT_TICKER_ITEMS[1]));
+  tickerIdx = 1;
+  setTicker(1);
 }
-
-(function restoreMairiePubDraft(){
-  const draft = loadMairiePubDraft();
-  if(!draft) return;
-
-  mairiePubDate.value = draft.date || "";
-  mairiePubTitle.value = draft.title || "";
-  mairiePubText.value = draft.text || "";
-  mairiePubPack.value = draft.pack || "1";
-  mairiePubPaymentStatus.value = draft.status || "draft";
-})();
-
-(function restoreMairieMessage(){
-  const data = secureRead(MAIRIE_MESSAGE_KEY);
-  if(data && data.message){
-    mairieMsgInput.value = data.message;
-  }else{
-    mairieMsgInput.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-  }
-})();
-
-refreshMairiePubPreview();
 
 openMairieServicesBtn.onclick = ()=>{
   alert(renderCityServicesText());
@@ -573,11 +482,12 @@ mairiePubDate.addEventListener("input", refreshMairiePubPreview);
 mairiePubPack.addEventListener("change", refreshMairiePubPreview);
 mairiePubPaymentStatus.addEventListener("change", refreshMairiePubPreview);
 
-mairiePubSaveBtn.onclick = ()=>{
+refreshMairiePubPreview();
+
+mairiePubApplyBtn.onclick = ()=>{
   const dateVal = String(mairiePubDate.value || "").trim();
   const titleVal = String(mairiePubTitle.value || "").trim();
   const textVal = String(mairiePubText.value || "").trim();
-  const packVal = String(mairiePubPack.value || "1");
   const paymentStatusVal = String(mairiePubPaymentStatus.value || "draft");
 
   if(!dateVal){
@@ -589,72 +499,19 @@ mairiePubSaveBtn.onclick = ()=>{
     alert("Renseigne au moins un titre ou un texte de publicité.");
     return;
   }
-
-  saveMairiePubDraft({
-    date: dateVal,
-    title: titleVal,
-    text: textVal,
-    pack: packVal,
-    status: paymentStatusVal
-  });
-
-  refreshMairiePubPreview();
-  alert("Brouillon mairie enregistré.");
-};
-
-mairiePubTransmitBtn.onclick = ()=>{
-  const dateVal = String(mairiePubDate.value || "").trim();
-  const titleVal = String(mairiePubTitle.value || "").trim();
-  const textVal = String(mairiePubText.value || "").trim();
-  const packVal = String(mairiePubPack.value || "1");
-  const paymentStatusVal = String(mairiePubPaymentStatus.value || "draft");
-
-  if(!dateVal){
-    alert("Renseigne la date réservée.");
-    return;
-  }
-
-  if(!titleVal && !textVal){
-    alert("Renseigne au moins un titre ou un texte de publicité.");
-    return;
-  }
-
-  const blockingOlder = getBlockingOlderMairiePub(dateVal);
-  if(blockingOlder){
-    alert(
-      "Une publicité plus ancienne n’est pas encore régularisée.\n\n" +
-      "Date : " + blockingOlder.date + "\n" +
-      "Titre : " + (blockingOlder.title || "Sans titre") + "\n" +
-      "Statut : " + blockingOlder.status
-    );
-    return;
-  }
-
-  const history = loadMairiePubHistory();
-
-  const record = {
-    id: Date.now(),
-    date: dateVal,
-    title: titleVal,
-    text: textVal,
-    pack: packVal,
-    amountHT: packVal === "5" ? 200 : 50,
-    status: paymentStatusVal,
-    transmitted: paymentStatusVal === "paid",
-    ts_fr: new Date().toLocaleString("fr-FR")
-  };
-
-  history.push(record);
-  saveMairiePubHistory(history);
-  clearMairiePubDraft();
 
   if(paymentStatusVal !== "paid"){
-    alert("Publicité enregistrée, mais non activée car le statut n’est pas payé / validé.");
+    alert("La publicité n’est pas affichée car le statut n’est pas sur payé / validé.");
     return;
   }
 
   applyMairiePubToTicker(titleVal, textVal);
-  alert("Publicité mairie activée dans le grand bandeau du haut.");
+  alert("Publicité mairie affichée dans le bandeau du haut.");
+};
+
+mairiePubClearBtn.onclick = ()=>{
+  clearMairiePubFromTicker();
+  alert("Publicité mairie retirée du bandeau du haut.");
 };
 
 mairiePubResetBtn.onclick = ()=>{
@@ -663,44 +520,7 @@ mairiePubResetBtn.onclick = ()=>{
   mairiePubText.value = "";
   mairiePubPack.value = "1";
   mairiePubPaymentStatus.value = "draft";
-  clearMairiePubDraft();
   refreshMairiePubPreview();
-};
-
-mairiePubReadHistoryBtn.onclick = ()=>{
-  const history = loadMairiePubHistory();
-
-  if(!history.length){
-    alert("Aucune publicité mairie enregistrée.");
-    return;
-  }
-
-  const txt = history
-    .slice()
-    .sort((a,b)=> String(a.date).localeCompare(String(b.date)))
-    .map((x, idx)=>{
-      return (
-        "#" + (idx + 1) +
-        "\nDate : " + (x.date || "") +
-        "\nTitre : " + (x.title || "") +
-        "\nTexte : " + (x.text || "") +
-        "\nFormule : " + (x.pack === "5" ? "Pack 5 publicités" : "1 publicité") +
-        "\nMontant HT : " + Number(x.amountHT || 0) + " €" +
-        "\nStatut : " + (x.status || "") +
-        "\nActivée : " + (x.transmitted ? "oui" : "non") +
-        "\nEnregistré le : " + (x.ts_fr || "")
-      );
-    }).join("\n\n--------------------\n\n");
-
-  alert("Historique pubs mairie :\n\n" + txt);
-};
-
-mairiePubClearHistoryBtn.onclick = ()=>{
-  if(confirm("Supprimer complètement l’historique pub mairie et le brouillon local ?")){
-    localStorage.removeItem(MAIRIE_PUB_HISTORY_KEY);
-    localStorage.removeItem(MAIRIE_PUB_DRAFT_KEY);
-    alert("Historique pub mairie vidé.");
-  }
 };
 
 mairieReferralSaveBtn.onclick = ()=>{
