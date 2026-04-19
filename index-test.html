@@ -9,7 +9,7 @@ body{font-family:Arial,sans-serif;margin:0;background:#f5f5f5}
 header{background:#111;color:#fff;padding:10px;text-align:center}
 .tab{display:none;padding:15px}
 .tab.active{display:block}
-.choiceBtn, button{padding:10px 15px;border-radius:8px;border:1px solid #ccc;cursor:pointer;background:#fff}
+.choiceBtn,button{padding:10px 15px;border-radius:8px;border:1px solid #ccc;cursor:pointer;background:#fff}
 textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-box;border:1px solid #ccc;border-radius:8px}
 .box{background:#fff;padding:12px;border-radius:10px;border:1px solid #ddd;margin-top:10px}
 .muted{color:#555}
@@ -125,19 +125,19 @@ textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-bo
   <div class="box">
     <div style="font-weight:900;">Publicité mairie payante — grand bandeau du haut</div>
     <div class="muted" style="margin-top:6px;">
-      Cette version test a été refaite à zéro : aucun historique, aucun blocage ancien, aucune reprise d’anciennes pubs.
+      Version test propre : aucune ancienne publicité n’est relue, aucun historique n’est utilisé, aucun blocage n’est appliqué.
     </div>
 
     <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>1 publicité = 50 € HT</li>
-      <li>Pack 5 publicités = 200 € HT</li>
-      <li>Version test : activation directe dans le bandeau si statut = payé / validé</li>
-      <li>Version test : aucun historique ne bloque</li>
+      <li>1 publicité = <strong>50 € HT</strong></li>
+      <li>Pack 5 publicités = <strong>200 € HT</strong></li>
+      <li>Affichage direct dans le bandeau haut si le statut est sur payé / validé</li>
+      <li>Aucun historique utilisé dans cette version test</li>
     </ul>
   </div>
 
   <div class="box">
-    <div style="font-weight:900;">Nouvelle pub mairie (test propre)</div>
+    <div style="font-weight:900;">Nouvelle publicité mairie</div>
 
     <div style="margin-top:10px;font-weight:900;">Date réservée</div>
     <input id="mairiePubDate" placeholder="AAAA-MM-JJ">
@@ -162,13 +162,13 @@ textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-bo
     </select>
 
     <div class="muted" style="margin-top:8px;">
-      Dans cette version test, seule la valeur du statut compte pour afficher ou non la pub.
+      Dans cette version test, seule une publicité au statut <strong>paid</strong> s’affiche dans le bandeau.
     </div>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
       <button class="choiceBtn" id="mairiePubApplyBtn" type="button">Afficher dans le bandeau haut</button>
-      <button class="choiceBtn" id="mairiePubClearBtn" type="button" style="background:#fff3f3;">Supprimer la pub du bandeau</button>
-      <button class="choiceBtn" id="mairiePubResetBtn" type="button">Réinitialiser le formulaire</button>
+      <button class="choiceBtn" id="mairiePubClearBtn" type="button" style="background:#fff3f3;">Retirer du bandeau haut</button>
+      <button class="choiceBtn" id="mairiePubResetBtn" type="button" style="background:#fff;">Réinitialiser le formulaire</button>
     </div>
 
     <div class="box" style="background:#f9f9f9;">
