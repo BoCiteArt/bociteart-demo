@@ -13,12 +13,8 @@ header{background:#111;color:#fff;padding:10px;text-align:center}
 textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-box;border:1px solid #ccc;border-radius:8px}
 .box{background:#fff;padding:12px;border-radius:10px;border:1px solid #ddd;margin-top:10px}
 .muted{color:#555}
-.small{font-size:12px;color:#666}
-.ok{color:#166534;font-weight:700}
-.warn{color:#92400e;font-weight:700}
-.bad{color:#991b1b;font-weight:700}
 #topTicker{margin-top:10px;background:#fff;color:#111;border-radius:10px;padding:10px;text-align:left}
-pre{white-space:pre-wrap;word-break:break-word}
+.small{font-size:12px}
 </style>
 </head>
 <body>
@@ -80,46 +76,16 @@ pre{white-space:pre-wrap;word-break:break-word}
     </div>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-      <button class="choiceBtn" id="openMairieServicesBtn" type="button" style="background:#fff4f4;">
-        🏛️ Services mairie / ville
-      </button>
-
-      <button class="choiceBtn" id="openHealthServicesBtn" type="button" style="background:#f2fff7;">
-        🩺 Médecins • spécialistes • kinés • infirmières • pharmacies
-      </button>
-    </div>
-
-    <div class="muted" style="margin-top:10px;">
-      Le premier bouton ouvre les services mairie et les ressources utiles de la ville.
-      Le second ouvre l’annuaire santé local, séparé pour être repéré immédiatement.
+      <button class="choiceBtn" id="openMairieServicesBtn" type="button" style="background:#fff4f4;">🏛️ Services mairie / ville</button>
+      <button class="choiceBtn" id="openHealthServicesBtn" type="button" style="background:#f2fff7;">🩺 Médecins • spécialistes • kinés • infirmières • pharmacies</button>
     </div>
   </div>
 
   <div class="box">
-    <div style="font-weight:900;">Messages gratuits d’intérêt général</div>
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Urgence, tempête, vigilance météo</li>
-      <li>Rue barrée / déviation</li>
-      <li>Risque de gel / température dangereuse</li>
-      <li>Information de sécurité publique</li>
-    </ul>
-
-    <div class="muted" style="margin-top:8px;">
-      Ces messages restent gratuits pour la mairie lorsqu’ils relèvent de l’intérêt général
-      et sont diffusés dans le petit bandeau rouge défilant de la tuile Mairie.
-    </div>
-  </div>
-
-  <div class="box">
-    <div style="font-weight:900;">Message bandeau mairie (interne)</div>
-    <div class="muted" style="margin-top:6px;">
-      Cet emplacement est prévu pour les messages d’intérêt général diffusés gratuitement
-      (urgence, sécurité, déviation, météo, vigilance, information publique).
-    </div>
-
+    <div style="font-weight:900;">Message bandeau mairie</div>
+    <div class="muted" style="margin-top:6px;">Messages d’intérêt général : urgence, sécurité, déviation, météo, vigilance.</div>
     <div style="margin-top:10px;font-weight:900;">Message</div>
     <input id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet">
-
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
       <button class="choiceBtn" id="mairieMsgSave" type="button">Enregistrer</button>
       <button class="choiceBtn" id="mairieMsgRead" type="button">Lire</button>
@@ -130,26 +96,26 @@ pre{white-space:pre-wrap;word-break:break-word}
   <div class="box">
     <div style="font-weight:900;">Publicité mairie payante — grand bandeau du haut</div>
     <div class="muted" style="margin-top:6px;">
-      Circuit mairie : brouillon → devis signé validé → facture émise avec échéance à 30 jours → paiement justifié → activation / consommation des crédits.
+      Circuit démo : brouillon → devis validé → paiement régularisé → activation.
     </div>
-
     <ul style="margin:8px 0 0 18px;font-weight:800;">
       <li>1 publicité = <strong>50 € HT</strong></li>
       <li>Pack 5 publicités = <strong>200 € HT</strong></li>
-      <li>Le devis signé ouvre le droit prévu dans la commande</li>
-      <li>Au-delà de 30 jours sans paiement réel justifié, le système bloque les nouvelles activations</li>
-      <li>Si un pack 5 est validé, les 5 diffusions peuvent être consommées sans blocage tant que la commande n’est pas échue impayée</li>
+      <li>Une publicité plus ancienne non payée bloque la suivante</li>
+      <li>Le bouton <strong>Libérer blocage démo</strong> sert uniquement à la démonstration</li>
     </ul>
 
-    <div class="small" style="margin-top:8px;">
-      Démo locale : envoi mail / facture / preuve bancaire simulés dans l’historique.
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button">Lire historique pubs mairie</button>
+      <button class="choiceBtn" id="mairiePubClearHistoryBtn" type="button" style="background:#fff3f3;">Vider historique pubs mairie</button>
+      <button class="choiceBtn" id="mairiePubDemoUnlockBtn" type="button" style="background:#fff7d6;">Libérer blocage démo</button>
     </div>
   </div>
 
-  <div class="box">
-    <div style="font-weight:900;">Créer une commande publicité mairie</div>
+  <div class="box" style="margin-top:12px;">
+    <div style="font-weight:900;">Nouvelle publicité mairie</div>
 
-    <div style="margin-top:10px;font-weight:900;">Date de la publicité</div>
+    <div style="margin-top:10px;font-weight:900;">Date réservée</div>
     <input id="mairiePubDate" placeholder="AAAA-MM-JJ">
 
     <div style="margin-top:10px;font-weight:900;">Titre publicité</div>
@@ -164,16 +130,21 @@ pre{white-space:pre-wrap;word-break:break-word}
       <option value="5">Pack 5 publicités — 200 € HT</option>
     </select>
 
-    <div style="margin-top:10px;font-weight:900;">Référence devis signé</div>
-    <input id="mairieQuoteRef" placeholder="Ex : DEV-MAIRIE-2026-001 signé">
+    <div style="margin-top:10px;font-weight:900;">Statut initial</div>
+    <select id="mairiePubPaymentStatus">
+      <option value="draft">Brouillon</option>
+      <option value="quote_validated">Devis validé</option>
+      <option value="paid">Payé / validé</option>
+    </select>
 
-    <div style="margin-top:10px;font-weight:900;">Email destinataire devis / facture</div>
-    <input id="mairieBillingEmail" placeholder="Ex : compta@mairie-demo.fr">
+    <div class="muted" style="margin-top:8px;">
+      Cette partie sert à préparer la pub. Le devis et la régularisation se pilotent aussi via les boutons ci-dessous.
+    </div>
 
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-      <button class="choiceBtn" id="mairiePubSaveDraftBtn" type="button">Enregistrer brouillon</button>
-      <button class="choiceBtn" id="mairiePubValidateQuoteBtn" type="button">Valider devis signé</button>
-      <button class="choiceBtn" id="mairiePubResetBtn" type="button" style="background:#fff;">Réinitialiser le formulaire</button>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn" id="mairiePubSaveBtn" type="button">Enregistrer</button>
+      <button class="choiceBtn" id="mairiePubActivateBtn" type="button">Activer si payé</button>
+      <button class="choiceBtn" id="mairiePubResetBtn" type="button">Réinitialiser le formulaire</button>
     </div>
 
     <div class="box" style="margin-top:12px;background:#f9f9f9;">
@@ -182,623 +153,34 @@ pre{white-space:pre-wrap;word-break:break-word}
     </div>
   </div>
 
-  <div class="box">
-    <div style="font-weight:900;">Justifier le paiement reçu</div>
+  <div class="box" style="margin-top:12px;">
+    <div style="font-weight:900;">Gestion d’une publicité existante</div>
 
-    <div style="margin-top:10px;font-weight:900;">Commande à régulariser</div>
-    <select id="mairiePaymentSelect">
-      <option value="">Choisir une commande</option>
+    <div style="margin-top:10px;font-weight:900;">Sélectionner une publicité</div>
+    <select id="mairiePubManageSelect">
+      <option value="">Choisir une publicité</option>
     </select>
 
-    <div style="margin-top:10px;font-weight:900;">Preuve de paiement / référence bancaire</div>
-    <input id="mairiePaymentProof" placeholder="Ex : VIR BO'CITÉART 2026-04-19 / relevé validé">
-
-    <div class="small" style="margin-top:8px;">
-      Dans la version finale, cette étape devra être déclenchée automatiquement après confirmation réelle du compte Bo’CitéArt.
+    <div class="muted small" style="margin-top:8px;">
+      Cette zone sert à justifier et faire évoluer l’état d’une pub déjà enregistrée.
     </div>
 
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-      <button class="choiceBtn" id="mairieRefreshPaymentsBtn" type="button">Actualiser la liste</button>
-      <button class="choiceBtn" id="mairieMarkPaidBtn" type="button">Justifier paiement reçu</button>
-    </div>
-  </div>
-
-  <div class="box">
-    <div style="font-weight:900;">Activer une publicité dans le bandeau haut</div>
-
-    <div style="margin-top:10px;font-weight:900;">Commande active à utiliser</div>
-    <select id="mairieActivationSelect">
-      <option value="">Choisir une commande active</option>
-    </select>
-
-    <div class="small" style="margin-top:8px;">
-      Une commande active est soit :
-      <br>• devis signé validé et encore dans le délai de 30 jours
-      <br>• ou paiement effectivement justifié
-    </div>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-      <button class="choiceBtn" id="mairieRefreshActivationBtn" type="button">Actualiser les commandes actives</button>
-      <button class="choiceBtn" id="mairieActivatePubBtn" type="button">Activer dans le bandeau si autorisé</button>
-      <button class="choiceBtn" id="mairieClearTickerBtn" type="button" style="background:#fff3f3;">Retirer du bandeau haut</button>
-    </div>
-  </div>
-
-  <div class="box">
-    <div style="font-weight:900;">Historique et suivi</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-      <button class="choiceBtn" id="mairieReadHistoryBtn" type="button">Lire historique</button>
-      <button class="choiceBtn" id="mairieClearHistoryBtn" type="button" style="background:#fff3f3;">Vider historique</button>
+      <button class="choiceBtn" id="mairiePubRefreshManageBtn" type="button">Actualiser la liste</button>
+      <button class="choiceBtn" id="mairiePubValidateQuoteBtn" type="button">Devis validé</button>
+      <button class="choiceBtn" id="mairiePubRegularizeBtn" type="button">Paiement régularisé</button>
     </div>
-    <div class="small" style="margin-top:8px;">
-      L’historique contient : brouillon, devis validé, facture émise, échéance, paiement justifié, crédits restants, activations.
+
+    <div class="box" style="margin-top:12px;background:#f9f9f9;">
+      <div style="font-weight:900;">Informations de gestion</div>
+      <div class="muted" id="mairiePubManageInfo" style="margin-top:8px;">Aucune publicité sélectionnée.</div>
     </div>
   </div>
 
   <div class="box">
     <div style="font-weight:900;">Parrainages (prévu / suivi)</div>
-
     <div class="muted" style="margin-top:8px;">
-      Cette zone est prévue pour le suivi des parrainages validés par Bo’CitéArt :
-      commerce, club, maintien 30 jours, preuve de présence, abondement financé par la mairie,
-      historique de validation et justificatif.
+      Cette zone est prévue pour le suivi des parrainages validés par Bo’CitéArt.
     </div>
-
     <div style="margin-top:10px;font-weight:900;">Parrainage en attente / suivi</div>
-    <textarea id="mairieReferralInput" style="min-height:110px;" placeholder="Ex : Nom du parrain, type, date, contrôle 30 jours, commentaire (démo)"></textarea>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-      <button class="choiceBtn" id="mairieReferralSaveBtn" type="button">Enregistrer suivi parrainage</button>
-      <button class="choiceBtn" id="mairieReferralReadBtn" type="button">Lire suivi</button>
-      <button class="choiceBtn" id="mairieReferralResetBtn" type="button">Réinitialiser suivi</button>
-    </div>
-  </div>
-</div>
-
-<script>
-function openTab(id){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  const target = document.getElementById(id);
-  if(target) target.classList.add('active');
-}
-
-function secureSave(key,data){
-  const payload = { value:data, time:Date.now() };
-  localStorage.setItem(key,JSON.stringify(payload));
-}
-
-function secureRead(key){
-  const raw = localStorage.getItem(key);
-  if(!raw) return null;
-  try{
-    return JSON.parse(raw).value;
-  }catch(e){
-    return null;
-  }
-}
-
-function toISODate(d){
-  const dt = new Date(d);
-  const y = dt.getFullYear();
-  const m = String(dt.getMonth()+1).padStart(2,"0");
-  const day = String(dt.getDate()).padStart(2,"0");
-  return y + "-" + m + "-" + day;
-}
-
-function addDays(dateString, days){
-  const d = new Date(dateString + "T12:00:00");
-  d.setDate(d.getDate() + days);
-  return toISODate(d);
-}
-
-function todayISO(){
-  return toISODate(new Date());
-}
-
-const DEFAULT_TICKER_ITEMS = [
-  {
-    title:"Annonce partenaire (démo)",
-    subtitle:"Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels"
-  },
-  {
-    title:"Mairie (démo) : informations & agenda",
-    subtitle:"Accès gratuit citoyen pour alertes d’intérêt général • règle d’accès 16h (pub) • sous réserve de disponibilité"
-  }
-];
-
-window.tickerItems = JSON.parse(JSON.stringify(DEFAULT_TICKER_ITEMS));
-
-function setTicker(i){
-  const it = window.tickerItems[i];
-  const titleA = document.getElementById("tickerTitleA");
-  const subA = document.getElementById("tickerSubA");
-  if(titleA) titleA.textContent = it.title || "";
-  if(subA) subA.textContent = it.subtitle || "";
-}
-window.setTicker = setTicker;
-
-let tickerIdx = 0;
-setTicker(0);
-
-setInterval(()=>{
-  if(!window.tickerItems || !window.tickerItems.length) return;
-  tickerIdx = (tickerIdx + 1) % window.tickerItems.length;
-  setTicker(tickerIdx);
-},10000);
-
-// SPORT
-sportWeekendSave.onclick = ()=>{
-  secureSave('sportWeekend',sportWeekendText.value);
-  alert('Enregistré');
-};
-
-sportWeekendRead.onclick = ()=>{
-  const v = secureRead('sportWeekend');
-  sportWeekendText.value = v || '';
-};
-
-sportWeekendReset.onclick = ()=>{
-  localStorage.removeItem('sportWeekend');
-  sportWeekendText.value = '';
-};
-
-// ECOLE
-schoolSave.onclick = ()=>{
-  secureSave('schoolWord',schoolWord.value);
-  alert('Enregistré');
-};
-
-schoolRead.onclick = ()=>{
-  const v = secureRead('schoolWord');
-  schoolWord.value = v || '';
-};
-
-schoolReset.onclick = ()=>{
-  localStorage.removeItem('schoolWord');
-  schoolWord.value = '';
-};
-
-// COMMERCE
-payBtn.onclick = async()=>{
-  paymentStatus.innerText = 'Connexion paiement...';
-  await new Promise(r=>setTimeout(r,1000));
-  const paymentResult = {status:'success',id:'demo_tx_123'};
-  if(paymentResult.status === 'success'){
-    secureSave('payment',{paid:true,id:paymentResult.id});
-    paymentStatus.innerText = 'Paiement validé ✔';
-    paymentStatus.style.color = 'green';
-  }else{
-    paymentStatus.innerText = 'Erreur paiement';
-  }
-};
-
-// MAIRIE
-const CITY_SERVICES_DATA = [
-  {
-    title: "Accueil mairie",
-    items: [
-      "Téléphone : 03 20 00 00 00",
-      "Horaires : lundi au vendredi de 8h30 à 12h00 et de 13h30 à 17h30",
-      "Samedi : 9h00 à 12h00 selon permanence"
-    ]
-  },
-  {
-    title: "État civil",
-    items: [
-      "Actes de naissance, mariage, décès, livret de famille",
-      "Attestations, copies et démarches d’état civil",
-      "Accueil sur rendez-vous ou aux horaires d’ouverture"
-    ]
-  },
-  {
-    title: "Carte d’identité / passeport",
-    items: [
-      "Dépôt des dossiers sur rendez-vous",
-      "Pré-demande possible en ligne avant passage au guichet",
-      "Retrait des titres sur présentation du justificatif"
-    ]
-  },
-  {
-    title: "CCAS",
-    items: [
-      "Téléphone : 03 20 00 00 01",
-      "Aide sociale, accompagnement des personnes âgées",
-      "Soutien aux familles, orientation administrative"
-    ]
-  },
-  {
-    title: "Urbanisme",
-    items: [
-      "Déclarations préalables, permis, demandes liées aux travaux",
-      "Renseignements sur le règlement local",
-      "Informations sur les dépôts et délais d’instruction"
-    ]
-  }
-];
-
-const HEALTH_DIRECTORY_DATA = {
-  medecins: [
-    { nom:"Dr à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-  ],
-  specialistes: [
-    { nom:"Spécialiste à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-  ],
-  kines: [
-    { nom:"Kiné à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-  ],
-  infirmieres: [
-    { nom:"Cabinet infirmier à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-  ],
-  pharmacies: [
-    { nom:"Pharmacie Richardson", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-  ]
-};
-
-function renderCityServicesText(){
-  return CITY_SERVICES_DATA.map(section=>{
-    return section.title + "\n- " + section.items.join("\n- ");
-  }).join("\n\n");
-}
-
-function renderHealthDirectoryText(){
-  const blocks = [];
-
-  blocks.push("Médecins généralistes");
-  HEALTH_DIRECTORY_DATA.medecins.forEach(x=> blocks.push("- " + x.nom + " | " + x.adresse + " | " + x.telephone));
-
-  blocks.push("\nSpécialistes");
-  HEALTH_DIRECTORY_DATA.specialistes.forEach(x=> blocks.push("- " + x.nom + " | " + x.adresse + " | " + x.telephone));
-
-  blocks.push("\nKinésithérapeutes");
-  HEALTH_DIRECTORY_DATA.kines.forEach(x=> blocks.push("- " + x.nom + " | " + x.adresse + " | " + x.telephone));
-
-  blocks.push("\nInfirmières / infirmiers");
-  HEALTH_DIRECTORY_DATA.infirmieres.forEach(x=> blocks.push("- " + x.nom + " | " + x.adresse + " | " + x.telephone));
-
-  blocks.push("\nPharmacies");
-  HEALTH_DIRECTORY_DATA.pharmacies.forEach(x=> blocks.push("- " + x.nom + " | " + x.adresse + " | " + x.telephone));
-
-  return blocks.join("\n");
-}
-
-const MAIRIE_MESSAGE_KEY = "mairie_message_clean_v2";
-const MAIRIE_REFERRAL_KEY = "mairie_referral_clean_v2";
-const MAIRIE_PUB_STORE_KEY = "bociteart_mairie_pub_store_v5";
-
-function mairieReferralLoad(){
-  return secureRead(MAIRIE_REFERRAL_KEY);
-}
-
-function mairieReferralSave(obj){
-  secureSave(MAIRIE_REFERRAL_KEY,obj);
-}
-
-function loadMairiePubStore(){
-  try{
-    const raw = localStorage.getItem(MAIRIE_PUB_STORE_KEY);
-    const data = raw ? JSON.parse(raw) : { orders: [] };
-    if(!data || !Array.isArray(data.orders)) return { orders: [] };
-    return data;
-  }catch(e){
-    return { orders: [] };
-  }
-}
-
-function saveMairiePubStore(store){
-  try{
-    localStorage.setItem(MAIRIE_PUB_STORE_KEY, JSON.stringify(store));
-  }catch(e){}
-}
-
-function buildMairiePubText(title, text){
-  const a = String(title || "").trim();
-  const b = String(text || "").trim();
-  if(!a && !b) return "";
-  if(a && b) return a + " • " + b;
-  return a || b;
-}
-
-function getPackSize(packVal){
-  return String(packVal || "1") === "5" ? 5 : 1;
-}
-
-function getAmountHT(packVal){
-  return String(packVal || "1") === "5" ? 200 : 50;
-}
-
-function isOrderPastDue(order){
-  if(!order || !order.dueDate) return false;
-  if(order.paymentStatus === "paid") return false;
-  return String(order.dueDate) < todayISO();
-}
-
-function isOrderUsable(order){
-  if(!order) return false;
-  if(order.creditsRemaining <= 0) return false;
-  if(order.quoteStatus !== "quote_validated") return false;
-  if(order.paymentStatus === "paid") return true;
-  return !isOrderPastDue(order);
-}
-
-function getBlockingOlderOrder(targetDate){
-  const store = loadMairiePubStore();
-  const older = store.orders
-    .filter(o => o && String(o.date || "") < String(targetDate || ""))
-    .filter(o => o.quoteStatus === "quote_validated")
-    .filter(o => o.paymentStatus !== "paid")
-    .filter(o => isOrderPastDue(o))
-    .sort((a,b)=> String(a.date || "").localeCompare(String(b.date || "")));
-  return older.length ? older[0] : null;
-}
-
-function refreshMairiePubPreview(){
-  const dateVal = String(mairiePubDate.value || "").trim();
-  const titleVal = String(mairiePubTitle.value || "").trim();
-  const textVal = String(mairiePubText.value || "").trim();
-  const packVal = String(mairiePubPack.value || "1");
-  const quoteRefVal = String(mairieQuoteRef.value || "").trim();
-  const emailVal = String(mairieBillingEmail.value || "").trim();
-
-  const txt = buildMairiePubText(titleVal, textVal);
-
-  if(!txt){
-    mairiePubPreview.textContent = "Aucune publicité mairie préparée pour le moment.";
-    return;
-  }
-
-  mairiePubPreview.textContent =
-    "Date : " + (dateVal || "non renseignée") +
-    " | Formule : " + (packVal === "5" ? "Pack 5 publicités" : "1 publicité") +
-    " | Montant : " + getAmountHT(packVal) + " € HT" +
-    " | Devis signé : " + (quoteRefVal || "non renseigné") +
-    " | Email : " + (emailVal || "non renseigné") +
-    " | Texte : " + txt;
-}
-
-function renderPaymentSelect(){
-  const store = loadMairiePubStore();
-  const list = store.orders
-    .filter(o => o && o.quoteStatus === "quote_validated" && o.paymentStatus !== "paid")
-    .sort((a,b)=> String(a.date || "").localeCompare(String(b.date || "")));
-
-  mairiePaymentSelect.innerHTML = '<option value="">Choisir une commande</option>';
-
-  list.forEach(o=>{
-    const opt = document.createElement("option");
-    opt.value = String(o.id);
-    const overdueText = isOrderPastDue(o) ? " | ÉCHUE" : "";
-    opt.textContent =
-      (o.date || "") +
-      " — " + (o.title || "sans titre") +
-      " — " + o.creditsRemaining + "/" + o.creditsTotal + " pub(s) restante(s)" +
-      " — échéance " + (o.dueDate || "") +
-      overdueText;
-    mairiePaymentSelect.appendChild(opt);
-  });
-}
-
-function renderActivationSelect(){
-  const store = loadMairiePubStore();
-  const list = store.orders
-    .filter(o => isOrderUsable(o))
-    .sort((a,b)=> String(a.date || "").localeCompare(String(b.date || "")));
-
-  mairieActivationSelect.innerHTML = '<option value="">Choisir une commande active</option>';
-
-  list.forEach(o=>{
-    const opt = document.createElement("option");
-    opt.value = String(o.id);
-    const payText = o.paymentStatus === "paid" ? "payée" : "devis validé / délai ouvert";
-    opt.textContent =
-      (o.date || "") +
-      " — " + (o.title || "sans titre") +
-      " — " + o.creditsRemaining + "/" + o.creditsTotal + " restante(s)" +
-      " — " + payText;
-    mairieActivationSelect.appendChild(opt);
-  });
-}
-
-function applyMairiePubToTicker(titleVal, textVal){
-  const safeTitle = String(titleVal || "").trim() || "Mairie (démo)";
-  const safeText = String(textVal || "").trim();
-
-  if(!window.tickerItems[1]){
-    window.tickerItems[1] = { title:safeTitle, subtitle:safeText };
-  }else{
-    window.tickerItems[1].title = safeTitle;
-    window.tickerItems[1].subtitle = safeText;
-  }
-
-  tickerIdx = 1;
-  setTicker(1);
-}
-
-function clearMairieTicker(){
-  window.tickerItems[1] = JSON.parse(JSON.stringify(DEFAULT_TICKER_ITEMS[1]));
-  tickerIdx = 1;
-  setTicker(1);
-}
-
-openMairieServicesBtn.onclick = ()=>{
-  alert(renderCityServicesText());
-};
-
-openHealthServicesBtn.onclick = ()=>{
-  alert(renderHealthDirectoryText());
-};
-
-mairieMsgSave.onclick = ()=>{
-  const msg = String(mairieMsgInput.value || "").trim();
-  if(!msg){
-    alert("Saisis un message mairie.");
-    return;
-  }
-  secureSave(MAIRIE_MESSAGE_KEY,{
-    message:msg,
-    ts_fr:new Date().toLocaleString("fr-FR")
-  });
-  alert("Message mairie enregistré.");
-};
-
-mairieMsgRead.onclick = ()=>{
-  const data = secureRead(MAIRIE_MESSAGE_KEY);
-  if(!data){
-    alert("Aucun message mairie enregistré.");
-    return;
-  }
-  mairieMsgInput.value = data.message || "";
-};
-
-mairieMsgReset.onclick = ()=>{
-  localStorage.removeItem(MAIRIE_MESSAGE_KEY);
-  mairieMsgInput.value = "";
-  alert("Message mairie réinitialisé.");
-};
-
-mairiePubTitle.addEventListener("input", refreshMairiePubPreview);
-mairiePubText.addEventListener("input", refreshMairiePubPreview);
-mairiePubDate.addEventListener("input", refreshMairiePubPreview);
-mairiePubPack.addEventListener("change", refreshMairiePubPreview);
-mairieQuoteRef.addEventListener("input", refreshMairiePubPreview);
-mairieBillingEmail.addEventListener("input", refreshMairiePubPreview);
-
-refreshMairiePubPreview();
-renderPaymentSelect();
-renderActivationSelect();
-
-mairiePubSaveDraftBtn.onclick = ()=>{
-  const dateVal = String(mairiePubDate.value || "").trim();
-  const titleVal = String(mairiePubTitle.value || "").trim();
-  const textVal = String(mairiePubText.value || "").trim();
-  const packVal = String(mairiePubPack.value || "1");
-  const quoteRefVal = String(mairieQuoteRef.value || "").trim();
-  const emailVal = String(mairieBillingEmail.value || "").trim();
-
-  if(!dateVal){
-    alert("Renseigne la date de la publicité.");
-    return;
-  }
-
-  if(!titleVal && !textVal){
-    alert("Renseigne au moins un titre ou un texte.");
-    return;
-  }
-
-  const store = loadMairiePubStore();
-  store.orders.push({
-    id: Date.now(),
-    date: dateVal,
-    title: titleVal,
-    text: textVal,
-    pack: packVal,
-    creditsTotal: getPackSize(packVal),
-    creditsUsed: 0,
-    creditsRemaining: getPackSize(packVal),
-    amountHT: getAmountHT(packVal),
-    quoteRef: quoteRefVal,
-    billingEmail: emailVal,
-    quoteStatus: "draft",
-    paymentStatus: "unpaid",
-    invoiceIssued: false,
-    dueDate: "",
-    paymentProof: "",
-    transmittedCount: 0,
-    lastActivationAt: "",
-    createdAt: new Date().toLocaleString("fr-FR"),
-    mailLog: ["Brouillon enregistré localement (" + new Date().toLocaleString("fr-FR") + ")"]
-  });
-
-  saveMairiePubStore(store);
-  renderPaymentSelect();
-  renderActivationSelect();
-  alert("Brouillon mairie enregistré.");
-};
-
-mairiePubValidateQuoteBtn.onclick = ()=>{
-  const dateVal = String(mairiePubDate.value || "").trim();
-  const titleVal = String(mairiePubTitle.value || "").trim();
-  const textVal = String(mairiePubText.value || "").trim();
-  const packVal = String(mairiePubPack.value || "1");
-  const quoteRefVal = String(mairieQuoteRef.value || "").trim();
-  const emailVal = String(mairieBillingEmail.value || "").trim();
-
-  if(!dateVal){
-    alert("Renseigne la date de la publicité.");
-    return;
-  }
-
-  if(!titleVal && !textVal){
-    alert("Renseigne au moins un titre ou un texte.");
-    return;
-  }
-
-  if(!quoteRefVal){
-    alert("Renseigne la référence du devis signé.");
-    return;
-  }
-
-  if(!emailVal){
-    alert("Renseigne l’email destinataire devis / facture.");
-    return;
-  }
-
-  const store = loadMairiePubStore();
-  const due = addDays(todayISO(), 30);
-
-  store.orders.push({
-    id: Date.now(),
-    date: dateVal,
-    title: titleVal,
-    text: textVal,
-    pack: packVal,
-    creditsTotal: getPackSize(packVal),
-    creditsUsed: 0,
-    creditsRemaining: getPackSize(packVal),
-    amountHT: getAmountHT(packVal),
-    quoteRef: quoteRefVal,
-    billingEmail: emailVal,
-    quoteStatus: "quote_validated",
-    paymentStatus: "unpaid",
-    invoiceIssued: true,
-    dueDate: due,
-    paymentProof: "",
-    transmittedCount: 0,
-    lastActivationAt: "",
-    createdAt: new Date().toLocaleString("fr-FR"),
-    mailLog: [
-      "Devis signé validé (" + new Date().toLocaleString("fr-FR") + ")",
-      "Envoi devis/facture simulé à " + emailVal,
-      "Facture émise avec échéance au " + due
-    ]
-  });
-
-  saveMairiePubStore(store);
-  renderPaymentSelect();
-  renderActivationSelect();
-
-  alert(
-    "Devis signé validé.\n\n" +
-    "Facture simulée envoyée à : " + emailVal + "\n" +
-    "Échéance de paiement : " + due + "\n" +
-    "Droit ouvert : " + getPackSize(packVal) + " publicité(s)."
-  );
-};
-
-mairieRefreshPaymentsBtn.onclick = ()=>{
-  renderPaymentSelect();
-  alert("Liste des commandes à régulariser actualisée.");
-};
-
-mairieMarkPaidBtn.onclick = ()=>{
-  const selectedId = String(mairiePaymentSelect.value || "").trim();
-  const proofVal = String(mairiePaymentProof.value || "").trim();
-
-  if(!selectedId){
-    alert("Sélectionne d’abord une commande.");
-    return;
-  }
-
-  if(!proofVal){
-    alert("Renseigne une preuve de paiement / référence bancaire.");
-    return;
- 
+    <textarea id="mairieReferralInput" style="min-height:110px;" placeholder="Ex : Nom du par
