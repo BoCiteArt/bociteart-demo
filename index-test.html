@@ -9,11 +9,38 @@ body{font-family:Arial,sans-serif;margin:0;background:#f5f5f5}
 header{background:#111;color:#fff;padding:10px;text-align:center}
 .tab{display:none;padding:15px}
 .tab.active{display:block}
-.choiceBtn,button{padding:10px 15px;border-radius:8px;border:1px solid #ccc;cursor:pointer;background:#fff}
-textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-box;border:1px solid #ccc;border-radius:8px}
-.box{background:#fff;padding:12px;border-radius:10px;border:1px solid #ddd;margin-top:10px}
+.choiceBtn,button{
+  padding:10px 15px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  cursor:pointer;
+  background:#fff;
+  font-weight:700;
+}
+textarea,input,select{
+  width:100%;
+  padding:8px;
+  margin-top:5px;
+  box-sizing:border-box;
+  border:1px solid #ccc;
+  border-radius:8px;
+}
+.box{
+  background:#fff;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  margin-top:10px;
+}
 .muted{color:#555}
-#topTicker{margin-top:10px;background:#fff;color:#111;border-radius:10px;padding:10px;text-align:left}
+#topTicker{
+  margin-top:10px;
+  background:#fff;
+  color:#111;
+  border-radius:10px;
+  padding:10px;
+  text-align:left;
+}
 </style>
 </head>
 <body>
@@ -125,18 +152,18 @@ textarea,input,select{width:100%;padding:8px;margin-top:5px;box-sizing:border-bo
   <div class="box">
     <div style="font-weight:900;">Publicité mairie payante — grand bandeau du haut</div>
     <div class="muted" style="margin-top:6px;">
-      Circuit mairie : enregistrement, devis validé, régularisation paiement, activation, blocage si une ancienne pub n’est pas payée.
+      Circuit mairie : création, devis validé, régularisation, activation et blocage automatique si une publicité plus ancienne n’est pas payée.
     </div>
 
     <ul style="margin:8px 0 0 18px;font-weight:800;">
       <li>1 publicité = <strong>50 € HT</strong></li>
       <li>Pack 5 publicités = <strong>200 € HT</strong></li>
-      <li>La mairie peut régulariser après validation comptable</li>
-      <li>Une pub plus ancienne non payée bloque l’activation suivante</li>
-      <li>Mode démo : bouton spécial pour vider et débloquer totalement</li>
+      <li>Le paiement peut être régularisé plus tard</li>
+      <li>Une publicité plus ancienne non payée bloque l’activation de la suivante</li>
+      <li>Mode démo : bouton spécial pour débloquer immédiatement</li>
     </ul>
 
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
       <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button">Lire historique pubs mairie</button>
       <button class="choiceBtn" id="mairiePubClearHistoryBtn" type="button" style="background:#fff3f3;">Vider historique pubs mairie</button>
       <button class="choiceBtn" id="mairieForceClearBtn" type="button" style="background:#ffe5e5;">⚠️ Mode démo : débloquer / vider l’historique</button>
@@ -392,7 +419,7 @@ function renderHealthDirectoryText(){
 
 const MAIRIE_MESSAGE_KEY = "mairie_message_clean_v1";
 const MAIRIE_REFERRAL_KEY = "mairie_referral_clean_v1";
-const MAIRIE_PUB_STORE_KEY = "bociteart_mairie_pub_store_v5";
+const MAIRIE_PUB_STORE_KEY = "bociteart_mairie_pub_store_v6";
 
 function mairieReferralLoad(){
   return secureRead(MAIRIE_REFERRAL_KEY);
