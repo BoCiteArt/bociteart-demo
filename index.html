@@ -6826,18 +6826,19 @@ if(key === "mairie"){
         <ul style="margin:8px 0 0 18px;font-weight:800;">
           <li>1 publicité = <strong>50 € HT</strong></li>
           <li>Pack 5 publicités = <strong>200 € HT</strong></li>
-          <li>Avant 16h00 : 1 seule publicité mairie par journée réservée</li>
-          <li>Après 16h00 : la mairie peut reprendre d’autres emplacements restants tant que les 10 du jour ne sont pas remplis</li>
-          <li>Si une ancienne publicité mairie n’est pas réglée, la suivante est bloquée jusqu’au paiement</li>
+          <li>Un devis validé ouvre le droit d’utiliser la publicité</li>
+          <li>Un pack 5 autorise 5 diffusions</li>
+          <li>Mode démo : bouton de vidage total pour éviter tout blocage pendant la présentation</li>
         </ul>
 
         <div class="muted" style="margin-top:8px;">
-          Le parcours reste le même : réservation via calendrier, devis / validation, puis activation après paiement.
+          Dans cette version de démonstration, on repart sur un module propre, séparé de l’ancien historique bloquant.
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
           <button class="choiceBtn" id="mairieOpenTickerCalendarBtn" type="button">Ouvrir le calendrier du bandeau haut</button>
           <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button" style="background:#fff;">Lire historique pubs mairie</button>
+          <button class="choiceBtn" id="mairiePubForceClearBtn" type="button" style="background:#fff3f3;">⚠️ Mode démo : vider l’historique pubs</button>
         </div>
       </div>
 
@@ -6863,22 +6864,28 @@ if(key === "mairie"){
         <select class="miniField" id="mairiePubPaymentStatus">
           <option value="draft">Brouillon</option>
           <option value="quote_validated">Devis validé</option>
-          <option value="paid">Payé / validé</option>
+          <option value="paid">Payé / régularisé</option>
         </select>
 
         <div class="muted" style="margin-top:8px;">
-          Tant qu’une ancienne publicité mairie est en attente de paiement, la nouvelle transmission est bloquée.
+          Étapes simples : préparer → valider le devis → marquer payé si besoin → activer dans le bandeau.
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="mairiePubSaveBtn" type="button">Enregistrer la publicité</button>
-          <button class="choiceBtn" id="mairiePubTransmitBtn" type="button">Transmettre / activer si payé</button>
+          <button class="choiceBtn" id="mairiePubValidateQuoteBtn" type="button">Valider le devis</button>
+          <button class="choiceBtn" id="mairiePubMarkPaidBtn" type="button">Marquer comme payé / régularisé</button>
+          <button class="choiceBtn" id="mairiePubTransmitBtn" type="button">Activer dans le bandeau</button>
           <button class="choiceBtn" id="mairiePubResetBtn" type="button" style="background:#fff;">Réinitialiser le formulaire</button>
         </div>
 
         <div class="box" style="margin-top:12px;background:var(--bg);">
           <div style="font-weight:900;">Aperçu publicité mairie</div>
           <div class="muted" id="mairiePubPreview" style="margin-top:8px;">Aucune publicité mairie préparée pour le moment.</div>
+        </div>
+
+        <div class="box" style="margin-top:12px;background:#fffdf0;">
+          <div style="font-weight:900;">État du dossier pub mairie</div>
+          <div class="muted" id="mairiePubStatusOut" style="margin-top:8px;">Aucun devis mairie validé pour le moment.</div>
         </div>
       </div>
 
@@ -7125,20 +7132,24 @@ if(key === "mairie"){
 
     const mairieOpenTickerCalendarBtn = $("mairieOpenTickerCalendarBtn");
     const mairiePubReadHistoryBtn = $("mairiePubReadHistoryBtn");
+    const mairiePubForceClearBtn = $("mairiePubForceClearBtn");
     const mairiePubDate = $("mairiePubDate");
     const mairiePubTitle = $("mairiePubTitle");
     const mairiePubText = $("mairiePubText");
     const mairiePubPack = $("mairiePubPack");
     const mairiePubPaymentStatus = $("mairiePubPaymentStatus");
-    const mairiePubSaveBtn = $("mairiePubSaveBtn");
+    const mairiePubValidateQuoteBtn = $("mairiePubValidateQuoteBtn");
+    const mairiePubMarkPaidBtn = $("mairiePubMarkPaidBtn");
     const mairiePubTransmitBtn = $("mairiePubTransmitBtn");
     const mairiePubResetBtn = $("mairiePubResetBtn");
     const mairiePubPreview = $("mairiePubPreview");
+    const mairiePubStatusOut = $("mairiePubStatusOut");
 
     const MAIRIE_SCHOOL_HISTORY_KEY = "bociteart_mairie_school_history_v1";
     const MAIRIE_SPORT_HISTORY_KEY = "bociteart_mairie_sport_history_v1";
     const MAIRIE_REFERRAL_KEY = "bociteart_mairie_referral_v1";
-    const MAIRIE_PAID_ADS_KEY = "bociteart_mairie_paid_ads_v1";
+    const MAIRIE_AD_ORDERS_KEY = "bociteart_mairie_ad_orders_v2";
+    const MAIRIE_AD_ACTIVE_KEY = "bociteart_mairie_ad_active_v2";
     const SCHOOL_STORE_KEY = "bociteart_school_v1";
 
     let currentPayload = null;
@@ -7189,23 +7200,45 @@ if(key === "mairie"){
       }catch(e){}
     }
 
-    function loadMairiePaidAds(){
+    function loadMairieAdOrders(){
       try{
-        const raw = localStorage.getItem(MAIRIE_PAID_ADS_KEY);
+        const raw = localStorage.getItem(MAIRIE_AD_ORDERS_KEY);
         return raw ? JSON.parse(raw) : [];
       }catch(e){
         return [];
       }
     }
 
-    function saveMairiePaidAds(arr){
+    function saveMairieAdOrders(arr){
       try{
-        localStorage.setItem(MAIRIE_PAID_ADS_KEY, JSON.stringify(arr));
+        localStorage.setItem(MAIRIE_AD_ORDERS_KEY, JSON.stringify(arr));
       }catch(e){}
     }
 
-    function getUnpaidMairieAds(){
-      return loadMairiePaidAds().filter(x => x.paymentStatus !== "paid");
+    function loadMairieActiveAd(){
+      try{
+        const raw = localStorage.getItem(MAIRIE_AD_ACTIVE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      }catch(e){
+        return null;
+      }
+    }
+
+    function saveMairieActiveAd(obj){
+      try{
+        localStorage.setItem(MAIRIE_AD_ACTIVE_KEY, JSON.stringify(obj));
+      }catch(e){}
+    }
+
+    function clearMairieAdDemoData(){
+      try{
+        localStorage.removeItem(MAIRIE_AD_ORDERS_KEY);
+        localStorage.removeItem(MAIRIE_AD_ACTIVE_KEY);
+      }catch(e){}
+    }
+
+    function getPackSlots(packVal){
+      return String(packVal || "1") === "5" ? 5 : 1;
     }
 
     function buildMairiePubText(title, text){
@@ -7241,20 +7274,36 @@ if(key === "mairie"){
         " | Texte : " + txt;
     }
 
+    function refreshMairiePubStatus(){
+      if(!mairiePubStatusOut) return;
+
+      const orders = loadMairieAdOrders();
+      if(!orders.length){
+        mairiePubStatusOut.textContent = "Aucun devis mairie validé pour le moment.";
+        return;
+      }
+
+      const last = orders.slice().sort((a,b)=> Number(b.ts || 0) - Number(a.ts || 0))[0];
+      mairiePubStatusOut.textContent =
+        "Dernier dossier : " +
+        (last.title || "Sans titre") +
+        " | Statut : " + (last.status || "draft") +
+        " | Diffusions utilisées : " + Number(last.usedSlots || 0) + "/" + Number(last.totalSlots || 1) +
+        " | Échéance théorique : " + (last.dueDate || "non calculée");
+    }
+
     function syncMairiePaidAdToTicker(){
       if(typeof window.tickerItems === "undefined" || !Array.isArray(window.tickerItems)) return;
 
-      const ads = loadMairiePaidAds();
-      const paid = ads.filter(x => x.paymentStatus === "paid");
-      if(!paid.length) return;
-
-      paid.sort((a,b)=> Number(b.ts || 0) - Number(a.ts || 0));
-      const last = paid[0];
+      const active = loadMairieActiveAd();
+      if(!active){
+        return;
+      }
 
       if(window.tickerItems[1]){
         window.tickerItems[1] = {
-          title: last.title || "Mairie (démo)",
-          subtitle: last.text || "",
+          title: active.title || "Mairie (démo)",
+          subtitle: active.text || "",
           img:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
         };
         if(typeof window.setTicker === "function"){
@@ -7272,6 +7321,52 @@ if(key === "mairie"){
           if(subB) subB.textContent = window.tickerItems[1].subtitle || "";
         }
       }
+    }
+
+    function computeDueDatePlus30Days(ts){
+      try{
+        const d = new Date(Number(ts || Date.now()));
+        d.setDate(d.getDate() + 30);
+        return d.toLocaleDateString("fr-FR");
+      }catch(e){
+        return "";
+      }
+    }
+
+    function buildAdPayloadFromForm(){
+      const dateVal = mairiePubDate ? String(mairiePubDate.value || "").trim() : "";
+      const titleVal = mairiePubTitle ? String(mairiePubTitle.value || "").trim() : "";
+      const textVal = mairiePubText ? String(mairiePubText.value || "").trim() : "";
+      const packVal = mairiePubPack ? String(mairiePubPack.value || "1") : "1";
+      const paymentStatusVal = mairiePubPaymentStatus ? String(mairiePubPaymentStatus.value || "draft") : "draft";
+
+      if(!dateVal){
+        return { error:"Renseigne la date réservée." };
+      }
+
+      if(!titleVal && !textVal){
+        return { error:"Renseigne au moins un titre ou un texte de publicité." };
+      }
+
+      return {
+        date: dateVal,
+        title: titleVal,
+        text: textVal,
+        pack: packVal,
+        amountHT: packVal === "5" ? 200 : 50,
+        totalSlots: getPackSlots(packVal),
+        paymentStatus: paymentStatusVal
+      };
+    }
+
+    function findMatchingOrder(payload){
+      const orders = loadMairieAdOrders().slice().sort((a,b)=> Number(b.ts || 0) - Number(a.ts || 0));
+      return orders.find(x =>
+        String(x.date || "") === String(payload.date || "") &&
+        String(x.title || "") === String(payload.title || "") &&
+        String(x.text || "") === String(payload.text || "") &&
+        String(x.pack || "") === String(payload.pack || "")
+      ) || null;
     }
 
     function schoolLoadLocal(){
@@ -7455,104 +7550,134 @@ if(key === "mairie"){
     if(mairiePubDate) mairiePubDate.addEventListener("input", refreshMairiePubPreview);
     if(mairiePubPack) mairiePubPack.addEventListener("change", refreshMairiePubPreview);
     if(mairiePubPaymentStatus) mairiePubPaymentStatus.addEventListener("change", refreshMairiePubPreview);
+
     refreshMairiePubPreview();
+    refreshMairiePubStatus();
     syncMairiePaidAdToTicker();
 
-    if(mairiePubSaveBtn){
-      mairiePubSaveBtn.onclick = ()=>{
-        const dateVal = mairiePubDate ? String(mairiePubDate.value || "").trim() : "";
-        const titleVal = mairiePubTitle ? String(mairiePubTitle.value || "").trim() : "";
-        const textVal = mairiePubText ? String(mairiePubText.value || "").trim() : "";
-        const packVal = mairiePubPack ? String(mairiePubPack.value || "1") : "1";
-        const paymentStatusVal = mairiePubPaymentStatus ? String(mairiePubPaymentStatus.value || "draft") : "draft";
-
-        if(!dateVal){
-          alert("Renseigne la date réservée.");
+    if(mairiePubValidateQuoteBtn){
+      mairiePubValidateQuoteBtn.onclick = ()=>{
+        const payload = buildAdPayloadFromForm();
+        if(payload.error){
+          alert(payload.error);
           return;
         }
 
-        if(!titleVal && !textVal){
-          alert("Renseigne au moins un titre ou un texte de publicité.");
-          return;
-        }
-
-        const ads = loadMairiePaidAds();
-        ads.push({
-          type:"mairie_paid_pub",
-          date:dateVal,
-          title:titleVal,
-          text:textVal,
-          pack:packVal,
-          amountHT: packVal === "5" ? 200 : 50,
-          paymentStatus:paymentStatusVal,
-          transmitted:false,
-          ts:Date.now(),
-          ts_fr:new Date().toLocaleString("fr-FR")
+        const orders = loadMairieAdOrders();
+        orders.push({
+          type:"mairie_ad_order_v2",
+          date: payload.date,
+          title: payload.title,
+          text: payload.text,
+          pack: payload.pack,
+          amountHT: payload.amountHT,
+          totalSlots: payload.totalSlots,
+          usedSlots: 0,
+          status: "quote_validated",
+          dueDate: computeDueDatePlus30Days(Date.now()),
+          ts: Date.now(),
+          ts_fr: new Date().toLocaleString("fr-FR")
         });
-        saveMairiePaidAds(ads);
+        saveMairieAdOrders(orders);
+
+        if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "quote_validated";
         refreshMairiePubPreview();
-        alert("Publicité mairie enregistrée.");
+        refreshMairiePubStatus();
+        alert("Devis mairie validé. Le dossier pub est ouvert.");
+      };
+    }
+
+    if(mairiePubMarkPaidBtn){
+      mairiePubMarkPaidBtn.onclick = ()=>{
+        const payload = buildAdPayloadFromForm();
+        if(payload.error){
+          alert(payload.error);
+          return;
+        }
+
+        const orders = loadMairieAdOrders();
+        const idx = orders.findIndex(x =>
+          String(x.date || "") === String(payload.date || "") &&
+          String(x.title || "") === String(payload.title || "") &&
+          String(x.text || "") === String(payload.text || "") &&
+          String(x.pack || "") === String(payload.pack || "")
+        );
+
+        if(idx >= 0){
+          orders[idx].status = "paid";
+          orders[idx].paid_ts = Date.now();
+          orders[idx].paid_ts_fr = new Date().toLocaleString("fr-FR");
+          saveMairieAdOrders(orders);
+        }else{
+          orders.push({
+            type:"mairie_ad_order_v2",
+            date: payload.date,
+            title: payload.title,
+            text: payload.text,
+            pack: payload.pack,
+            amountHT: payload.amountHT,
+            totalSlots: payload.totalSlots,
+            usedSlots: 0,
+            status: "paid",
+            dueDate: computeDueDatePlus30Days(Date.now()),
+            ts: Date.now(),
+            ts_fr: new Date().toLocaleString("fr-FR"),
+            paid_ts: Date.now(),
+            paid_ts_fr: new Date().toLocaleString("fr-FR")
+          });
+          saveMairieAdOrders(orders);
+        }
+
+        if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "paid";
+        refreshMairiePubPreview();
+        refreshMairiePubStatus();
+        alert("Dossier mairie marqué comme payé / régularisé.");
       };
     }
 
     if(mairiePubTransmitBtn){
       mairiePubTransmitBtn.onclick = ()=>{
-        const dateVal = mairiePubDate ? String(mairiePubDate.value || "").trim() : "";
-        const titleVal = mairiePubTitle ? String(mairiePubTitle.value || "").trim() : "";
-        const textVal = mairiePubText ? String(mairiePubText.value || "").trim() : "";
-        const packVal = mairiePubPack ? String(mairiePubPack.value || "1") : "1";
-        const paymentStatusVal = mairiePubPaymentStatus ? String(mairiePubPaymentStatus.value || "draft") : "draft";
-
-        if(!dateVal){
-          alert("Renseigne la date réservée.");
+        const payload = buildAdPayloadFromForm();
+        if(payload.error){
+          alert(payload.error);
           return;
         }
 
-        if(!titleVal && !textVal){
-          alert("Renseigne au moins un titre ou un texte de publicité.");
+        const orders = loadMairieAdOrders();
+        const idx = orders.findIndex(x =>
+          String(x.date || "") === String(payload.date || "") &&
+          String(x.title || "") === String(payload.title || "") &&
+          String(x.text || "") === String(payload.text || "") &&
+          String(x.pack || "") === String(payload.pack || "") &&
+          (x.status === "quote_validated" || x.status === "paid") &&
+          Number(x.usedSlots || 0) < Number(x.totalSlots || 1)
+        );
+
+        if(idx < 0){
+          alert("Valide d’abord le devis mairie, ou utilise le bouton mode démo pour repartir à zéro.");
           return;
         }
 
-        const ads = loadMairiePaidAds();
-        const unpaid = ads.filter(x => x.paymentStatus !== "paid");
+        orders[idx].usedSlots = Number(orders[idx].usedSlots || 0) + 1;
+        orders[idx].last_activation_ts = Date.now();
+        orders[idx].last_activation_ts_fr = new Date().toLocaleString("fr-FR");
+        saveMairieAdOrders(orders);
 
-        if(unpaid.length && paymentStatusVal !== "paid"){
-          alert("Une ancienne publicité mairie n’est pas encore réglée. La suivante reste bloquée jusqu’au paiement.");
-          return;
-        }
+        saveMairieActiveAd({
+          title: payload.title || "Mairie (démo)",
+          text: payload.text || "",
+          date: payload.date,
+          ts: Date.now()
+        });
 
-        if(unpaid.length && paymentStatusVal === "paid"){
-          const allStillUnpaid = unpaid.some(x => x.paymentStatus !== "paid");
-          if(allStillUnpaid){
-            alert("Une ancienne publicité mairie non réglée bloque encore la transmission. Régularise d’abord l’ancienne publicité.");
-            return;
-          }
-        }
+        syncMairiePaidAdToTicker();
+        refreshMairiePubStatus();
 
-        const pubObj = {
-          type:"mairie_paid_pub",
-          date:dateVal,
-          title:titleVal,
-          text:textVal,
-          pack:packVal,
-          amountHT: packVal === "5" ? 200 : 50,
-          paymentStatus:paymentStatusVal,
-          transmitted: paymentStatusVal === "paid",
-          ts:Date.now(),
-          ts_fr:new Date().toLocaleString("fr-FR")
-        };
-
-        ads.push(pubObj);
-        saveMairiePaidAds(ads);
-
-        if(paymentStatusVal === "paid"){
-          syncMairiePaidAdToTicker();
-          alert("Publicité mairie transmise et activée dans le grand bandeau du haut (démo).");
-        }else if(paymentStatusVal === "quote_validated"){
-          alert("Devis validé. La publicité mairie reste en attente de paiement avant diffusion.");
-        }else{
-          alert("Brouillon enregistré. La publicité mairie n’est pas encore diffusée.");
-        }
+        alert(
+          "Publicité mairie activée dans le grand bandeau du haut.\n\n" +
+          "Diffusions utilisées : " + Number(orders[idx].usedSlots || 0) +
+          " / " + Number(orders[idx].totalSlots || 1)
+        );
       };
     }
 
@@ -7569,13 +7694,13 @@ if(key === "mairie"){
 
     if(mairiePubReadHistoryBtn){
       mairiePubReadHistoryBtn.onclick = ()=>{
-        const ads = loadMairiePaidAds();
-        if(!ads.length){
-          alert("Aucune publicité mairie enregistrée pour le moment.");
+        const orders = loadMairieAdOrders();
+        if(!orders.length){
+          alert("Aucun historique pubs mairie pour le moment.");
           return;
         }
 
-        const txt = ads.map((x, idx)=>{
+        const txt = orders.map((x, idx)=>{
           return (
             "#" + (idx + 1) +
             "\nDate : " + (x.date || "") +
@@ -7583,13 +7708,31 @@ if(key === "mairie"){
             "\nTexte : " + (x.text || "") +
             "\nFormule : " + (x.pack === "5" ? "Pack 5 publicités" : "1 publicité") +
             "\nMontant HT : " + Number(x.amountHT || 0) + " €" +
-            "\nStatut : " + (x.paymentStatus || "") +
-            "\nTransmission : " + (x.transmitted ? "oui" : "non") +
-            "\nEnregistré le : " + (x.ts_fr || "")
+            "\nStatut : " + (x.status || "") +
+            "\nUtilisations : " + Number(x.usedSlots || 0) + "/" + Number(x.totalSlots || 1) +
+            "\nÉchéance théorique : " + (x.dueDate || "") +
+            "\nCréé le : " + (x.ts_fr || "") +
+            (x.paid_ts_fr ? "\nPayé le : " + x.paid_ts_fr : "")
           );
         }).join("\n\n--------------------\n\n");
 
         alert("Historique pubs mairie :\n\n" + txt);
+      };
+    }
+
+    if(mairiePubForceClearBtn){
+      mairiePubForceClearBtn.onclick = ()=>{
+        if(confirm("Mode démo : vider tout l’historique pubs mairie et débloquer entièrement ce module ?")){
+          clearMairieAdDemoData();
+          if(mairiePubDate) mairiePubDate.value = "";
+          if(mairiePubTitle) mairiePubTitle.value = "";
+          if(mairiePubText) mairiePubText.value = "";
+          if(mairiePubPack) mairiePubPack.value = "1";
+          if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "draft";
+          refreshMairiePubPreview();
+          refreshMairiePubStatus();
+          alert("Historique pubs mairie vidé pour la démonstration.");
+        }
       };
     }
 
