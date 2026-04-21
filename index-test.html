@@ -330,7 +330,8 @@ schoolReset.onclick = ()=>{
 };
 
   // MAIRIE
- if(key === "mairie"){
+
+if(key === "mairie"){
   const CITY_SERVICES_DATA = [
     {
       title: "Accueil mairie",
@@ -624,16 +625,17 @@ schoolReset.onclick = ()=>{
         <ul style="margin:8px 0 0 18px;font-weight:800;">
           <li>1 publicité = <strong>50 € HT</strong></li>
           <li>Pack 5 publicités = <strong>200 € HT</strong></li>
-          <li>Flux simple : date → brouillon → devis → payé → diffusion</li>
+          <li>Flux simple : calendrier → brouillon → devis validé → payé → diffusion</li>
           <li>Mode démo : vidage complet de l’historique possible</li>
+          <li>Jour même autorisé avant 16h00</li>
         </ul>
 
         <div class="muted" style="margin-top:8px;">
-          Une publicité peut être activée le jour même si elle est validée avant 16h00. Après 16h00, l’activation pour le jour même est bloquée.
+          Le calendrier doit seulement remplir la date du formulaire. Il ne doit plus te sortir de l’onglet mairie.
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="mairieOpenTickerCalendarBtn" type="button">Ouvrir le calendrier du bandeau haut</button>
+          <button class="choiceBtn" id="mairieOpenTickerCalendarBtn" type="button">Choisir la date dans le calendrier</button>
           <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button" style="background:#fff;">Lire historique pubs mairie</button>
           <button class="choiceBtn" id="mairiePubForceClearBtn" type="button" style="background:#fff3f3;">⚠️ Mode démo : vider l’historique pubs</button>
         </div>
@@ -645,11 +647,15 @@ schoolReset.onclick = ()=>{
         <div style="margin-top:10px;font-weight:900;">Date réservée</div>
         <input class="miniField" id="mairiePubDate" placeholder="AAAA-MM-JJ">
 
+        <div class="muted" style="margin-top:6px;">
+          La date choisie dans le calendrier doit apparaître ici automatiquement.
+        </div>
+
         <div style="margin-top:10px;font-weight:900;">Titre publicité</div>
         <input class="miniField" id="mairiePubTitle" placeholder="Ex : Concert ce soir">
 
         <div style="margin-top:10px;font-weight:900;">Texte publicité</div>
-        <textarea id="mairiePubText" class="miniField" style="min-height:110px;" placeholder="Ex : Il reste 52 places à 2 € au lieu de 40 € pour les étudiants sur présentation de leur carte."></textarea>
+        <textarea id="mairiePubText" class="miniField" style="min-height:110px;" placeholder="Ex : Il reste 10 places pour ce soir 21h00."></textarea>
 
         <div style="margin-top:10px;font-weight:900;">Formule</div>
         <select class="miniField" id="mairiePubPack">
@@ -657,7 +663,7 @@ schoolReset.onclick = ()=>{
           <option value="5">Pack 5 publicités — 200 € HT</option>
         </select>
 
-        <div style="margin-top:10px;font-weight:900;">Statut devis / paiement</div>
+        <div style="margin-top:10px;font-weight:900;">Statut dossier</div>
         <select class="miniField" id="mairiePubPaymentStatus">
           <option value="draft">Brouillon</option>
           <option value="quote_validated">Devis validé</option>
@@ -665,14 +671,14 @@ schoolReset.onclick = ()=>{
         </select>
 
         <div class="muted" style="margin-top:8px;">
-          Parcours : brouillon → devis validé → payé / régularisé → activation dans le bandeau.
+          Étapes : 1) brouillon 2) devis validé 3) payé / régularisé 4) activation dans le bandeau.
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
           <button class="choiceBtn" id="mairiePubSaveBtn" type="button">Enregistrer le brouillon</button>
           <button class="choiceBtn" id="mairiePubValidateQuoteBtn" type="button">Valider le devis</button>
           <button class="choiceBtn" id="mairiePubMarkPaidBtn" type="button">Marquer payé / régularisé</button>
-          <button class="choiceBtn" id="mairiePubTransmitBtn" type="button">Activer dans le bandeau</button>
+          <button class="choiceBtn" id="mairiePubTransmitBtn" type="button">Diffuser dans le grand bandeau</button>
           <button class="choiceBtn" id="mairiePubResetBtn" type="button" style="background:#fff;">Réinitialiser le formulaire</button>
         </div>
 
@@ -947,8 +953,8 @@ schoolReset.onclick = ()=>{
     const MAIRIE_SCHOOL_HISTORY_KEY = "bociteart_mairie_school_history_v1";
     const MAIRIE_SPORT_HISTORY_KEY = "bociteart_mairie_sport_history_v1";
     const MAIRIE_REFERRAL_KEY = "bociteart_mairie_referral_v1";
-    const MAIRIE_AD_ORDERS_KEY = "bociteart_mairie_ad_orders_v4";
-    const MAIRIE_AD_ACTIVE_KEY = "bociteart_mairie_ad_active_v4";
+    const MAIRIE_AD_ORDERS_KEY = "bociteart_mairie_ad_orders_v5";
+    const MAIRIE_ACTIVE_AD_KEY = "bociteart_mairie_ad_active_v5";
     const MAIRIE_SELECTED_DATE_KEY = "bociteart_mairie_selected_date_v1";
     const SCHOOL_STORE_KEY = "bociteart_school_v1";
 
@@ -1017,14 +1023,14 @@ schoolReset.onclick = ()=>{
 
     function saveMairieActiveAd(obj){
       try{
-        localStorage.setItem(MAIRIE_AD_ACTIVE_KEY, JSON.stringify(obj));
+        localStorage.setItem(MAIRIE_ACTIVE_AD_KEY, JSON.stringify(obj));
       }catch(e){}
     }
 
-    function clearMairiePubDemoData(){
+    function clearMairieAdDemoData(){
       try{
         localStorage.removeItem(MAIRIE_AD_ORDERS_KEY);
-        localStorage.removeItem(MAIRIE_AD_ACTIVE_KEY);
+        localStorage.removeItem(MAIRIE_ACTIVE_AD_KEY);
       }catch(e){}
     }
 
@@ -1044,6 +1050,14 @@ schoolReset.onclick = ()=>{
       return String(packVal || "1") === "5" ? 200 : 50;
     }
 
+    function buildMairiePubText(title, text){
+      const a = String(title || "").trim();
+      const b = String(text || "").trim();
+      if(!a && !b) return "";
+      if(a && b) return a + " • " + b;
+      return a || b;
+    }
+
     function computeDueDatePlus30Days(ts){
       try{
         const d = new Date(Number(ts || Date.now()));
@@ -1052,14 +1066,6 @@ schoolReset.onclick = ()=>{
       }catch(e){
         return "";
       }
-    }
-
-    function buildMairiePubText(title, text){
-      const a = String(title || "").trim();
-      const b = String(text || "").trim();
-      if(!a && !b) return "";
-      if(a && b) return a + " • " + b;
-      return a || b;
     }
 
     function refreshMairiePubPreview(){
@@ -1076,14 +1082,14 @@ schoolReset.onclick = ()=>{
       }
 
       const packVal = mairiePubPack ? String(mairiePubPack.value || "1") : "1";
-      const price = getPackAmount(packVal) + " € HT";
-      const payStatus = mairiePubPaymentStatus ? String(mairiePubPaymentStatus.value || "draft") : "draft";
       const dateVal = mairiePubDate ? String(mairiePubDate.value || "").trim() : "";
+      const price = getPackAmount(packVal);
+      const payStatus = mairiePubPaymentStatus ? String(mairiePubPaymentStatus.value || "draft") : "draft";
 
       mairiePubPreview.textContent =
         "Date : " + (dateVal || "non renseignée") +
         " | Formule : " + (packVal === "5" ? "Pack 5 publicités" : "1 publicité") +
-        " | Tarif : " + price +
+        " | Tarif : " + price + " € HT" +
         " | Statut : " + payStatus +
         " | Texte : " + txt;
     }
@@ -1104,6 +1110,39 @@ schoolReset.onclick = ()=>{
         " | Statut : " + (last.status || "draft") +
         " | Diffusions utilisées : " + Number(last.usedSlots || 0) + "/" + Number(last.totalSlots || 1) +
         " | Échéance théorique : " + (last.dueDate || "non calculée");
+    }
+
+    function buildAdPayloadFromForm(){
+      const dateVal = mairiePubDate ? String(mairiePubDate.value || "").trim() : "";
+      const titleVal = mairiePubTitle ? String(mairiePubTitle.value || "").trim() : "";
+      const textVal = mairiePubText ? String(mairiePubText.value || "").trim() : "";
+      const packVal = mairiePubPack ? String(mairiePubPack.value || "1") : "1";
+      const paymentStatusVal = mairiePubPaymentStatus ? String(mairiePubPaymentStatus.value || "draft") : "draft";
+
+      if(!dateVal){
+        return { error:"Renseigne la date réservée." };
+      }
+
+      if(!titleVal && !textVal){
+        return { error:"Renseigne au moins un titre ou un texte de publicité." };
+      }
+
+      return {
+        date: dateVal,
+        title: titleVal,
+        text: textVal,
+        pack: packVal,
+        amountHT: getPackAmount(packVal),
+        totalSlots: getPackSlots(packVal),
+        paymentStatus: paymentStatusVal
+      };
+    }
+
+    function restoreCalendarDateIntoForm(){
+      const selectedDate = loadSelectedMairieDate();
+      if(selectedDate && mairiePubDate){
+        mairiePubDate.value = selectedDate;
+      }
     }
 
     function forceDisplayMairieAdInMainTicker(titleVal, textVal){
@@ -1136,74 +1175,19 @@ schoolReset.onclick = ()=>{
         }catch(e){}
       }
 
+      const imgEl = $("tickerImg");
       const titleA = $("tickerTitleA");
       const titleB = $("tickerTitleB");
       const subA = $("tickerSubA");
       const subB = $("tickerSubB");
-      const imgEl = $("tickerImg");
 
+      if(imgEl) imgEl.src = imgUrl;
       if(titleA) titleA.textContent = safeTitle;
       if(titleB) titleB.textContent = safeTitle;
       if(subA) subA.textContent = safeText;
       if(subB) subB.textContent = safeText;
-      if(imgEl) imgEl.src = imgUrl;
 
       return true;
-    }
-
-    function buildAdPayloadFromForm(){
-      const dateVal = mairiePubDate ? String(mairiePubDate.value || "").trim() : "";
-      const titleVal = mairiePubTitle ? String(mairiePubTitle.value || "").trim() : "";
-      const textVal = mairiePubText ? String(mairiePubText.value || "").trim() : "";
-      const packVal = mairiePubPack ? String(mairiePubPack.value || "1") : "1";
-      const paymentStatusVal = mairiePubPaymentStatus ? String(mairiePubPaymentStatus.value || "draft") : "draft";
-
-      if(!dateVal){
-        return { error:"Renseigne la date réservée." };
-      }
-
-      if(!titleVal && !textVal){
-        return { error:"Renseigne au moins un titre ou un texte de publicité." };
-      }
-
-      return {
-        date: dateVal,
-        title: titleVal,
-        text: textVal,
-        pack: packVal,
-        amountHT: getPackAmount(packVal),
-        totalSlots: getPackSlots(packVal),
-        paymentStatus: paymentStatusVal
-      };
-    }
-
-    function restoreSelectedDateIntoMairieForm(){
-      if(!mairiePubDate) return;
-      const selectedDate = loadSelectedMairieDate();
-      if(selectedDate){
-        mairiePubDate.value = selectedDate;
-      }
-    }
-
-    function watchCalendarSelectedDateForMairie(){
-      let tries = 0;
-      const maxTries = 40;
-
-      const timer = setInterval(()=>{
-        tries += 1;
-        const selectedDate = loadSelectedMairieDate();
-
-        if(selectedDate && mairiePubDate){
-          mairiePubDate.value = selectedDate;
-          refreshMairiePubPreview();
-          clearInterval(timer);
-          return;
-        }
-
-        if(tries >= maxTries){
-          clearInterval(timer);
-        }
-      }, 500);
     }
 
     function schoolLoadLocal(){
@@ -1258,13 +1242,8 @@ schoolReset.onclick = ()=>{
       const selected = picks.filter(x => x.checked).map(x => x.getAttribute("data-asso"));
       const map = {};
 
-      if(mode === "keep"){
-        return { mode:"keep", map:{} };
-      }
-
-      if(!selected.length){
-        return { error:"Sélectionne au moins une association pour l’échange école." };
-      }
+      if(mode === "keep") return { mode:"keep", map:{} };
+      if(!selected.length) return { error:"Sélectionne au moins une association pour l’échange école." };
 
       if(mode === "full"){
         const share = Math.floor(100 / selected.length);
@@ -1291,9 +1270,7 @@ schoolReset.onclick = ()=>{
             total += v;
           }
         });
-        if(total !== 100){
-          return { error:"En mode partiel école, le total doit être égal à 100 %." };
-        }
+        if(total !== 100) return { error:"En mode partiel école, le total doit être égal à 100 %." };
         return { mode:"partial", map };
       }
 
@@ -1308,13 +1285,8 @@ schoolReset.onclick = ()=>{
       const selected = picks.filter(x => x.checked).map(x => x.getAttribute("data-asso"));
       const map = {};
 
-      if(mode === "keep"){
-        return { mode:"keep", map:{} };
-      }
-
-      if(!selected.length){
-        return { error:"Sélectionne au moins une association pour l’échange sport." };
-      }
+      if(mode === "keep") return { mode:"keep", map:{} };
+      if(!selected.length) return { error:"Sélectionne au moins une association pour l’échange sport." };
 
       if(mode === "full"){
         const share = Math.floor(100 / selected.length);
@@ -1341,9 +1313,7 @@ schoolReset.onclick = ()=>{
             total += v;
           }
         });
-        if(total !== 100){
-          return { error:"En mode partiel sport, le total doit être égal à 100 %." };
-        }
+        if(total !== 100) return { error:"En mode partiel sport, le total doit être égal à 100 %." };
         return { mode:"partial", map };
       }
 
@@ -1374,21 +1344,30 @@ schoolReset.onclick = ()=>{
 
     if(mairieOpenTickerCalendarBtn){
       mairieOpenTickerCalendarBtn.onclick = ()=>{
-        watchCalendarSelectedDateForMairie();
-
-        if(typeof window.openTicker === "function"){
-          try{
+        try{
+          if(typeof window.openTicker === "function"){
             window.openTicker("mairie");
-          }catch(e){
-            try{
-              window.openTicker();
-            }catch(err){
-              alert("Calendrier du bandeau indisponible.");
-            }
+          }else{
+            alert("Calendrier du bandeau indisponible.");
           }
-        }else{
+        }catch(e){
           alert("Calendrier du bandeau indisponible.");
         }
+
+        setTimeout(()=>{
+          restoreCalendarDateIntoForm();
+          refreshMairiePubPreview();
+        }, 300);
+
+        setTimeout(()=>{
+          restoreCalendarDateIntoForm();
+          refreshMairiePubPreview();
+        }, 1200);
+
+        setTimeout(()=>{
+          restoreCalendarDateIntoForm();
+          refreshMairiePubPreview();
+        }, 2500);
       };
     }
 
@@ -1398,7 +1377,7 @@ schoolReset.onclick = ()=>{
     if(mairiePubPack) mairiePubPack.addEventListener("change", refreshMairiePubPreview);
     if(mairiePubPaymentStatus) mairiePubPaymentStatus.addEventListener("change", refreshMairiePubPreview);
 
-    restoreSelectedDateIntoMairieForm();
+    restoreCalendarDateIntoForm();
     refreshMairiePubPreview();
     refreshMairiePubStatus();
 
@@ -1412,7 +1391,7 @@ schoolReset.onclick = ()=>{
 
         if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "draft";
         refreshMairiePubPreview();
-        alert("Brouillon mairie prêt.");
+        alert("Brouillon mairie enregistré.");
       };
     }
 
@@ -1426,7 +1405,7 @@ schoolReset.onclick = ()=>{
 
         const orders = loadMairieAdOrders();
         orders.push({
-          type:"mairie_ad_order_v4",
+          type:"mairie_ad_order_v5",
           date: payload.date,
           title: payload.title,
           text: payload.text,
@@ -1468,10 +1447,9 @@ schoolReset.onclick = ()=>{
           orders[idx].status = "paid";
           orders[idx].paid_ts = Date.now();
           orders[idx].paid_ts_fr = new Date().toLocaleString("fr-FR");
-          saveMairieAdOrders(orders);
         }else{
           orders.push({
-            type:"mairie_ad_order_v4",
+            type:"mairie_ad_order_v5",
             date: payload.date,
             title: payload.title,
             text: payload.text,
@@ -1486,8 +1464,9 @@ schoolReset.onclick = ()=>{
             paid_ts: Date.now(),
             paid_ts_fr: new Date().toLocaleString("fr-FR")
           });
-          saveMairieAdOrders(orders);
         }
+
+        saveMairieAdOrders(orders);
 
         if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "paid";
         refreshMairiePubPreview();
@@ -1510,7 +1489,6 @@ schoolReset.onclick = ()=>{
         const dd = String(now.getDate()).padStart(2, "0");
         const todayStr = `${yyyy}-${mm}-${dd}`;
         const currentHour = now.getHours();
-
         const selectedDate = String(payload.date || "").trim();
 
         if(selectedDate < todayStr){
@@ -1519,7 +1497,7 @@ schoolReset.onclick = ()=>{
         }
 
         if(selectedDate === todayStr && currentHour >= 16){
-          alert("Après 16h00, cette publicité ne peut plus être activée pour aujourd’hui.");
+          alert("Après 16h00, cette publicité ne peut plus être diffusée pour aujourd’hui.");
           return;
         }
 
@@ -1554,12 +1532,8 @@ schoolReset.onclick = ()=>{
         refreshMairiePubStatus();
 
         if(ok){
-          const whenText = selectedDate === todayStr
-            ? "pour aujourd’hui"
-            : "pour la date réservée";
-
           alert(
-            "Publicité mairie diffusée dans le grand bandeau " + whenText + ".\n\n" +
+            "Publicité mairie diffusée dans le grand bandeau.\n\n" +
             "Diffusions utilisées : " + Number(orders[idx].usedSlots || 0) +
             " / " + Number(orders[idx].totalSlots || 1)
           );
@@ -1611,7 +1585,7 @@ schoolReset.onclick = ()=>{
     if(mairiePubForceClearBtn){
       mairiePubForceClearBtn.onclick = ()=>{
         if(confirm("Mode démo : vider complètement l’historique pubs mairie ?")){
-          clearMairiePubDemoData();
+          clearMairieAdDemoData();
           if(mairiePubDate) mairiePubDate.value = loadSelectedMairieDate() || "";
           if(mairiePubTitle) mairiePubTitle.value = "";
           if(mairiePubText) mairiePubText.value = "";
@@ -2010,8 +1984,8 @@ schoolReset.onclick = ()=>{
   },0);
 
   return;
-} 
-
+}
+  
 // COMMERCE
 payBtn.onclick = async()=>{
   paymentStatus.innerText = 'Connexion paiement...';
