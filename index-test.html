@@ -332,7 +332,7 @@ schoolReset.onclick = ()=>{
   // MAIRIE
 
 
-  if(key === "mairie"){
+if(key === "mairie"){
   const CITY_SERVICES_DATA = [
     {
       title: "Accueil mairie",
@@ -626,40 +626,43 @@ schoolReset.onclick = ()=>{
         <ul style="margin:8px 0 0 18px;font-weight:800;">
           <li>1 publicité = <strong>50 € HT</strong></li>
           <li>Pack 5 publicités = <strong>200 € HT</strong></li>
-          <li>Avant 16h00 : 1 seule réservation mairie par jour</li>
-          <li>Après 16h00 : la mairie peut reprendre les places restantes jusqu’à 10 si elles ne sont pas prises</li>
-          <li>Le calendrier ci-dessous est partagé avec commerces / associations / mairie</li>
+          <li>Avant 16h00 : 1 seule réservation par entité et par jour</li>
+          <li>Après 16h00 : une même entité peut reprendre les places restantes jusqu’au plafond de 10 pubs / jour</li>
+          <li>Un devis validé ouvre le droit d’utiliser la publicité</li>
+          <li>Une facture échue non réglée bloque toute nouvelle diffusion</li>
           <li>Mode démo : bouton de vidage total pour éviter tout blocage pendant la présentation</li>
         </ul>
 
         <div class="muted" style="margin-top:8px;">
-          Ici, la date se réserve directement dans la mairie, sans sortir de l’onglet.
+          Ici, le calendrier est intégré dans la mairie : tu choisis la date et tu restes dans le même onglet pour rédiger puis diffuser.
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <button class="choiceBtn" id="mairieToggleCalendarBtn" type="button">Choisir une date de diffusion</button>
           <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button" style="background:#fff;">Lire historique pubs mairie</button>
           <button class="choiceBtn" id="mairiePubForceClearBtn" type="button" style="background:#fff3f3;">⚠️ Mode démo : vider l’historique pubs</button>
         </div>
 
-        <div class="box" style="margin-top:12px;background:var(--bg);">
-          <div style="font-weight:900;">Calendrier partagé des réservations publicitaires</div>
-          <div class="muted" style="margin-top:6px;">
-            Clique une date disponible pour la réserver au nom de la mairie. La date remplira automatiquement le formulaire plus bas, sans te faire sortir de l’onglet.
-          </div>
+        <div id="mairieCalendarBox" style="display:none;margin-top:12px;"></div>
 
-          <div id="mairieInlineCalendar" style="margin-top:12px;"></div>
+        <div class="box" id="mairieReservationInfoBox" style="display:none;margin-top:12px;background:#fffdf0;">
+          <div style="font-weight:900;">Réservation mairie</div>
+          <div class="muted" id="mairieReservationInfo" style="margin-top:8px;">Aucune date réservée.</div>
+        </div>
 
-          <div class="muted" id="mairieInlineCalendarInfo" style="margin-top:10px;">
-            Aucune date mairie réservée pour le moment.
+        <div class="box" id="mairieInvoiceBlockBox" style="display:none;margin-top:12px;background:#fff3f3;border-color:#d88;">
+          <div style="font-weight:900;color:#a51e22;">Blocage facture</div>
+          <div class="muted" id="mairieInvoiceBlockMsg" style="margin-top:8px;color:#a51e22;">
+            Veuillez d’abord régler votre facture précédente avant toute nouvelle diffusion.
           </div>
         </div>
       </div>
 
-      <div class="box" style="margin-top:12px;">
+      <div class="box" id="mairiePubFormBox" style="margin-top:12px;">
         <div style="font-weight:900;">Rédaction / transmission de la publicité mairie</div>
 
         <div style="margin-top:10px;font-weight:900;">Date réservée</div>
-        <input class="miniField" id="mairiePubDate" placeholder="AAAA-MM-JJ">
+        <input class="miniField" id="mairiePubDate" placeholder="AAAA-MM-JJ" readonly>
 
         <div style="margin-top:10px;font-weight:900;">Titre publicité</div>
         <input class="miniField" id="mairiePubTitle" placeholder="Ex : Concert ce soir">
@@ -681,7 +684,7 @@ schoolReset.onclick = ()=>{
         </select>
 
         <div class="muted" style="margin-top:8px;">
-          Étapes simples : préparer → valider le devis → marquer payé si besoin → activer dans le bandeau.
+          Étapes simples : réserver la date → préparer le texte → valider le devis → marquer payé si besoin → activer dans le bandeau.
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
@@ -943,8 +946,12 @@ schoolReset.onclick = ()=>{
     const mairieReferralReadBtn = $("mairieReferralReadBtn");
     const mairieReferralResetBtn = $("mairieReferralResetBtn");
 
-    const mairieInlineCalendar = $("mairieInlineCalendar");
-    const mairieInlineCalendarInfo = $("mairieInlineCalendarInfo");
+    const mairieToggleCalendarBtn = $("mairieToggleCalendarBtn");
+    const mairieCalendarBox = $("mairieCalendarBox");
+    const mairieReservationInfoBox = $("mairieReservationInfoBox");
+    const mairieReservationInfo = $("mairieReservationInfo");
+    const mairieInvoiceBlockBox = $("mairieInvoiceBlockBox");
+    const mairieInvoiceBlockMsg = $("mairieInvoiceBlockMsg");
 
     const mairiePubReadHistoryBtn = $("mairiePubReadHistoryBtn");
     const mairiePubForceClearBtn = $("mairiePubForceClearBtn");
@@ -959,19 +966,19 @@ schoolReset.onclick = ()=>{
     const mairiePubResetBtn = $("mairiePubResetBtn");
     const mairiePubPreview = $("mairiePubPreview");
     const mairiePubStatusOut = $("mairiePubStatusOut");
+    const mairiePubFormBox = $("mairiePubFormBox");
 
     const MAIRIE_SCHOOL_HISTORY_KEY = "bociteart_mairie_school_history_v1";
     const MAIRIE_SPORT_HISTORY_KEY = "bociteart_mairie_sport_history_v1";
     const MAIRIE_REFERRAL_KEY = "bociteart_mairie_referral_v1";
-    const MAIRIE_AD_ORDERS_KEY = "bociteart_mairie_ad_orders_v2";
-    const MAIRIE_AD_ACTIVE_KEY = "bociteart_mairie_ad_active_v2";
+    const MAIRIE_AD_ORDERS_KEY = "bociteart_mairie_ad_orders_v3";
+    const MAIRIE_AD_ACTIVE_KEY = "bociteart_mairie_ad_active_v3";
     const SCHOOL_STORE_KEY = "bociteart_school_v1";
 
     let currentPayload = null;
     let currentSportPayload = null;
-
-    let mairieCalYear = new Date().getFullYear();
-    let mairieCalMonth = new Date().getMonth();
+    let mairieCalYear = calYear;
+    let mairieCalMonth = calMonth;
 
     function mairieHistoryLoad(){
       try{
@@ -1067,6 +1074,144 @@ schoolReset.onclick = ()=>{
       return a || b;
     }
 
+    function computeDueDatePlus30Days(ts){
+      try{
+        const d = new Date(Number(ts || Date.now()));
+        d.setDate(d.getDate() + 30);
+        return d.toLocaleDateString("fr-FR");
+      }catch(e){
+        return "";
+      }
+    }
+
+    function formatYmdLocal(dateObj){
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const d = String(dateObj.getDate()).padStart(2, "0");
+      return y + "-" + m + "-" + d;
+    }
+
+    function parseYmdToDate(str){
+      const s = String(str || "").trim();
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
+      const parts = s.split("-");
+      return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]), 12, 0, 0, 0);
+    }
+
+    function isSameOrBeforeToday(ymdValue){
+      const d = parseYmdToDate(ymdValue);
+      if(!d) return false;
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      d.setHours(0,0,0,0);
+      return d.getTime() <= today.getTime();
+    }
+
+    function hasMairieReservationForDate(dateStr){
+      const bookings = loadBookings();
+      const parts = String(dateStr || "").split("-");
+      if(parts.length !== 3) return false;
+      const y = Number(parts[0]);
+      const mIndex = Number(parts[1]) - 1;
+      const d = Number(parts[2]);
+      const list = getDayBookings(bookings, y, mIndex, d) || [];
+      return list.some(item =>
+        String(item.entityType || item.who || "").trim().toLowerCase() === "mairie"
+      );
+    }
+
+    function findExpiredUnpaidInvoice(){
+      const orders = loadMairieAdOrders();
+      const now = Date.now();
+
+      return orders
+        .slice()
+        .sort((a,b)=> Number(b.ts || 0) - Number(a.ts || 0))
+        .find(x => {
+          if(String(x.status || "") === "paid") return false;
+          if(!x.dueDateIso && !x.dueDateTs) return false;
+
+          let dueTs = Number(x.dueDateTs || 0);
+          if(!dueTs && x.dueDateIso){
+            const parsed = parseYmdToDate(x.dueDateIso);
+            dueTs = parsed ? parsed.getTime() : 0;
+          }
+          return dueTs > 0 && now > dueTs;
+        }) || null;
+    }
+
+    function refreshInvoiceBlock(){
+      if(!mairieInvoiceBlockBox || !mairieInvoiceBlockMsg) return;
+
+      const blocked = findExpiredUnpaidInvoice();
+      if(!blocked){
+        mairieInvoiceBlockBox.style.display = "none";
+        return;
+      }
+
+      mairieInvoiceBlockBox.style.display = "block";
+      mairieInvoiceBlockMsg.textContent =
+        "Veuillez d’abord régler votre facture précédente avant toute nouvelle diffusion. " +
+        "Dossier concerné : " + (blocked.title || "Sans titre") +
+        " • échéance : " + (blocked.dueDate || blocked.dueDateIso || "non renseignée") +
+        " • statut : " + (blocked.status || "non réglé");
+    }
+
+    function canProceedForNewReservation(){
+      const blocked = findExpiredUnpaidInvoice();
+      if(blocked){
+        refreshInvoiceBlock();
+        alert(
+          "Blocage : une facture mairie précédente n’est pas réglée.\n\n" +
+          "Titre : " + (blocked.title || "Sans titre") +
+          "\nÉchéance : " + (blocked.dueDate || blocked.dueDateIso || "non renseignée") +
+          "\nStatut : " + (blocked.status || "non réglé") +
+          "\n\nVeuillez d’abord régulariser ce dossier."
+        );
+        return false;
+      }
+      return true;
+    }
+
+    function canProceedForActivation(payload){
+      const blocked = findExpiredUnpaidInvoice();
+      if(blocked){
+        const sameOrderIsBlocked =
+          String(blocked.date || "") === String(payload.date || "") &&
+          String(blocked.title || "") === String(payload.title || "") &&
+          String(blocked.text || "") === String(payload.text || "") &&
+          String(blocked.pack || "") === String(payload.pack || "");
+
+        if(!sameOrderIsBlocked){
+          refreshInvoiceBlock();
+          alert(
+            "Activation bloquée : une facture mairie précédente est échue et non réglée.\n\n" +
+            "Veuillez d’abord régulariser ce dossier."
+          );
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function refreshMairieReservationInfo(){
+      if(!mairieReservationInfoBox || !mairieReservationInfo || !mairiePubDate) return;
+
+      const dateVal = String(mairiePubDate.value || "").trim();
+      if(!dateVal){
+        mairieReservationInfoBox.style.display = "none";
+        return;
+      }
+
+      const whenText = isSameOrBeforeToday(dateVal)
+        ? "Diffusion possible pour aujourd’hui si les règles de quota sont respectées."
+        : "Date réservée pour une diffusion future.";
+
+      mairieReservationInfoBox.style.display = "block";
+      mairieReservationInfo.textContent =
+        "Date réservée pour la mairie : " + dateVal + " • " + whenText;
+    }
+
     function refreshMairiePubPreview(){
       if(!mairiePubPreview) return;
 
@@ -1108,33 +1253,19 @@ schoolReset.onclick = ()=>{
         (last.title || "Sans titre") +
         " | Statut : " + (last.status || "draft") +
         " | Diffusions utilisées : " + Number(last.usedSlots || 0) + "/" + Number(last.totalSlots || 1) +
-        " | Échéance théorique : " + (last.dueDate || "non calculée");
+        " | Échéance théorique : " + (last.dueDate || last.dueDateIso || "non calculée");
     }
 
-    function syncMairiePaidAdToTicker(){
-      const active = loadMairieActiveAd();
-      if(!active) return;
-
-      if(typeof tickerItems !== "undefined" && Array.isArray(tickerItems) && tickerItems[1]){
-        tickerItems[1] = {
-          title: active.title || "Mairie (démo)",
-          subtitle: active.text || "",
-          img:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
-        };
-
-        if(typeof setTicker === "function"){
-          try{
-            setTicker(1);
-            return;
-          }catch(e){}
-        }
-      }
-
+    function applyMairieAdToTickerDom(active){
       const imgEl = $("tickerImg");
       const titleA = $("tickerTitleA");
       const titleB = $("tickerTitleB");
       const subA = $("tickerSubA");
       const subB = $("tickerSubB");
+
+      if(!active){
+        return;
+      }
 
       if(imgEl) imgEl.src = "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60";
       if(titleA) titleA.textContent = active.title || "Mairie (démo)";
@@ -1143,14 +1274,32 @@ schoolReset.onclick = ()=>{
       if(subB) subB.textContent = active.text || "";
     }
 
-    function computeDueDatePlus30Days(ts){
-      try{
-        const d = new Date(Number(ts || Date.now()));
-        d.setDate(d.getDate() + 30);
-        return d.toLocaleDateString("fr-FR");
-      }catch(e){
-        return "";
+    function startMairieTickerOverrideLoop(){
+      if(window.__mairieTickerForceInterval){
+        clearInterval(window.__mairieTickerForceInterval);
+        window.__mairieTickerForceInterval = null;
       }
+
+      const active = loadMairieActiveAd();
+      if(!active) return;
+
+      applyMairieAdToTickerDom(active);
+
+      window.__mairieTickerForceInterval = setInterval(()=>{
+        const cur = loadMairieActiveAd();
+        if(!cur){
+          clearInterval(window.__mairieTickerForceInterval);
+          window.__mairieTickerForceInterval = null;
+          return;
+        }
+        applyMairieAdToTickerDom(cur);
+      }, 1200);
+    }
+
+    function syncMairiePaidAdToTicker(){
+      const active = loadMairieActiveAd();
+      if(!active) return;
+      startMairieTickerOverrideLoop();
     }
 
     function buildAdPayloadFromForm(){
@@ -1161,7 +1310,11 @@ schoolReset.onclick = ()=>{
       const paymentStatusVal = mairiePubPaymentStatus ? String(mairiePubPaymentStatus.value || "draft") : "draft";
 
       if(!dateVal){
-        return { error:"Renseigne la date réservée." };
+        return { error:"Choisis d’abord une date dans le calendrier mairie." };
+      }
+
+      if(!hasMairieReservationForDate(dateVal)){
+        return { error:"La date n’est pas réservée au nom de la mairie. Reprends d’abord une date dans le calendrier intégré." };
       }
 
       if(!titleVal && !textVal){
@@ -1323,39 +1476,39 @@ schoolReset.onclick = ()=>{
       return { mode:"keep", map:{} };
     }
 
-    function renderMairieInlineCalendar(){
-      if(!mairieInlineCalendar) return;
+    function renderInlineMairieCalendar(){
+      if(!mairieCalendarBox) return;
 
-      const bookings = loadBookings();
       const first = new Date(mairieCalYear, mairieCalMonth, 1);
       const last = new Date(mairieCalYear, mairieCalMonth + 1, 0);
+      const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+      const labels = ["L","M","M","J","V","S","D"];
+      const bookings = loadBookings();
       const startDow = (first.getDay() + 6) % 7;
       const daysInMonth = last.getDate();
-      const labels = ["L","M","M","J","V","S","D"];
-      const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
 
-      const cells = [];
+      let cells = "";
 
       for(let i=0; i<startDow; i++){
-        cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
+        cells += `<div class="calDay disabled" aria-hidden="true"></div>`;
       }
 
       for(let d=1; d<=daysInMonth; d++){
         const used = daySlotsUsed(bookings, mairieCalYear, mairieCalMonth, d);
         const full = used >= PUB_MAX_PER_DAY;
         const cls = full ? "calDay full" : "calDay";
-        cells.push(`
+        cells += `
           <div class="${cls}" ${full ? "" : `data-mairie-day="${d}" role="button"`}>
             <div class="d">${d}</div>
             <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
           </div>
-        `);
+        `;
       }
 
-      mairieInlineCalendar.innerHTML = `
-        <div class="calWrap">
+      mairieCalendarBox.innerHTML = `
+        <div class="box" style="margin-top:0;">
           <div class="calTop">
-            <div style="font-weight:900;text-transform:capitalize;">${monthName}</div>
+            <div style="font-weight:900;">Calendrier mairie — ${monthName}</div>
             <div class="mini">
               <button class="choiceBtn" id="mairieCalPrevBtn" type="button">◀</button>
               <button class="choiceBtn" id="mairieCalNextBtn" type="button">▶</button>
@@ -1363,16 +1516,18 @@ schoolReset.onclick = ()=>{
           </div>
 
           <div class="muted">
-            10 pubs max / jour partagées entre tous. Avant 16h00 : 1 seule réservation mairie par jour. Après 16h00 : reprise possible des places restantes jusqu’au complet.
+            Même règle que le grand bandeau commun : 10 pubs maximum par jour.
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            Avant 16h00, la mairie ne peut prendre qu’une seule réservation sur la journée.
+            Après 16h00, si toutes les pubs du jour ne sont pas prises, la mairie peut reprendre les places restantes.
           </div>
 
           <div class="calGrid" style="margin-top:10px;">
             ${labels.map(x => `<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
           </div>
 
-          <div class="calGrid" style="margin-top:8px;">
-            ${cells.join("")}
-          </div>
+          <div class="calGrid" id="mairieCalDays">${cells}</div>
         </div>
       `;
 
@@ -1386,7 +1541,7 @@ schoolReset.onclick = ()=>{
             mairieCalMonth = 11;
             mairieCalYear--;
           }
-          renderMairieInlineCalendar();
+          renderInlineMairieCalendar();
         };
       }
 
@@ -1397,67 +1552,69 @@ schoolReset.onclick = ()=>{
             mairieCalMonth = 0;
             mairieCalYear++;
           }
-          renderMairieInlineCalendar();
+          renderInlineMairieCalendar();
         };
       }
 
-      document.querySelectorAll("[data-mairie-day]").forEach((el)=>{
+      mairieCalendarBox.querySelectorAll("[data-mairie-day]").forEach((el)=>{
         el.onclick = ()=>{
+          if(!canProceedForNewReservation()) return;
+
           const d = parseInt(el.getAttribute("data-mairie-day"), 10);
-          reserveMairieDate(mairieCalYear, mairieCalMonth, d);
+          const bookingsLocal = loadBookings();
+          const keyDate = ymd(mairieCalYear, mairieCalMonth, d);
+          let list = getDayBookings(bookingsLocal, mairieCalYear, mairieCalMonth, d);
+
+          if(!Array.isArray(list)) list = [];
+
+          if(list.length >= PUB_MAX_PER_DAY){
+            alert("Jour complet.");
+            renderInlineMairieCalendar();
+            return;
+          }
+
+          const now = new Date();
+          const currentHour = now.getHours();
+          const alreadyBookedToday = list.some(item =>
+            String(item.entityType || item.who || "").trim().toLowerCase() === "mairie"
+          );
+
+          if(currentHour < 16 && alreadyBookedToday){
+            alert("Avant 16h00, la mairie a déjà réservé sa publicité du jour sur cette date.");
+            return;
+          }
+
+          list.push({
+            date: keyDate,
+            who: "Mairie",
+            entityType: "Mairie",
+            entityName: "Mairie",
+            ts_iso: now.toISOString(),
+            ts_fr: now.toLocaleString("fr-FR"),
+            note: currentHour < 16
+              ? "Réservation mairie avant 16h00 (1 seule publicité par entité)"
+              : "Réservation mairie après 16h00 (places restantes autorisées jusqu’au complet)"
+          });
+
+          setDayBookings(bookingsLocal, mairieCalYear, mairieCalMonth, d, list);
+          saveBookings(bookingsLocal);
+
+          if(mairiePubDate) mairiePubDate.value = keyDate;
+          refreshMairieReservationInfo();
+          refreshMairiePubPreview();
+
+          if(mairieCalendarBox) mairieCalendarBox.style.display = "none";
+          if(mairieToggleCalendarBtn) mairieToggleCalendarBtn.textContent = "Modifier la date de diffusion";
+
+          setTimeout(()=>{
+            if(mairiePubFormBox && typeof mairiePubFormBox.scrollIntoView === "function"){
+              mairiePubFormBox.scrollIntoView({ behavior:"smooth", block:"start" });
+            }
+          }, 50);
+
+          alert("Date réservée pour la mairie : " + keyDate + ". Tu restes dans l’onglet mairie pour rédiger et activer ta pub.");
         };
       });
-    }
-
-    function reserveMairieDate(y, m, d){
-      const keyDate = ymd(y, m, d);
-      const bookings = loadBookings();
-      let list = getDayBookings(bookings, y, m, d);
-      if(!Array.isArray(list)) list = [];
-
-      if(list.length >= PUB_MAX_PER_DAY){
-        alert("Cette journée est complète.");
-        renderMairieInlineCalendar();
-        return;
-      }
-
-      const now = new Date();
-      const currentHour = now.getHours();
-
-      const alreadyBookedBefore16 = list.some(item =>
-        String(item.entityType || item.who || "").trim().toLowerCase() === "mairie" &&
-        String(item.entityName || item.who || "").trim().toLowerCase() === "mairie"
-      );
-
-      if(currentHour < 16 && alreadyBookedBefore16){
-        alert("Avant 16h00, la mairie a déjà réservé sa publicité pour cette date.");
-        return;
-      }
-
-      list.push({
-        date: keyDate,
-        who: "Mairie",
-        entityType: "Mairie",
-        entityName: "Mairie",
-        ts_iso: now.toISOString(),
-        ts_fr: now.toLocaleString("fr-FR"),
-        note: currentHour < 16
-          ? "Réservation mairie avant 16h00"
-          : "Réservation mairie après 16h00 sur place restante"
-      });
-
-      setDayBookings(bookings, y, m, d, list);
-      saveBookings(bookings);
-
-      if(mairiePubDate) mairiePubDate.value = keyDate;
-      refreshMairiePubPreview();
-      renderMairieInlineCalendar();
-
-      if(mairieInlineCalendarInfo){
-        mairieInlineCalendarInfo.textContent =
-          "Date mairie réservée : " + keyDate +
-          " • Réservation prise en compte sans quitter l’onglet.";
-      }
     }
 
     if(toggleAdminBtn && mairieAdminPanel){
@@ -1467,6 +1624,11 @@ schoolReset.onclick = ()=>{
         toggleAdminBtn.textContent = isHidden
           ? "Fermer l’espace interne mairie"
           : "Ouvrir l’espace interne mairie";
+
+        if(isHidden){
+          refreshInvoiceBlock();
+          refreshMairieReservationInfo();
+        }
       };
     }
 
@@ -1482,6 +1644,19 @@ schoolReset.onclick = ()=>{
       };
     }
 
+    if(mairieToggleCalendarBtn && mairieCalendarBox){
+      mairieToggleCalendarBtn.onclick = ()=>{
+        const willShow = mairieCalendarBox.style.display === "none" || mairieCalendarBox.style.display === "";
+        mairieCalendarBox.style.display = willShow ? "block" : "none";
+        mairieToggleCalendarBtn.textContent = willShow
+          ? "Refermer le calendrier"
+          : (mairiePubDate && mairiePubDate.value ? "Modifier la date de diffusion" : "Choisir une date de diffusion");
+        if(willShow){
+          renderInlineMairieCalendar();
+        }
+      };
+    }
+
     if(mairiePubTitle) mairiePubTitle.addEventListener("input", refreshMairiePubPreview);
     if(mairiePubText) mairiePubText.addEventListener("input", refreshMairiePubPreview);
     if(mairiePubDate) mairiePubDate.addEventListener("input", refreshMairiePubPreview);
@@ -1490,8 +1665,9 @@ schoolReset.onclick = ()=>{
 
     refreshMairiePubPreview();
     refreshMairiePubStatus();
+    refreshMairieReservationInfo();
+    refreshInvoiceBlock();
     syncMairiePaidAdToTicker();
-    renderMairieInlineCalendar();
 
     if(mairiePubValidateQuoteBtn){
       mairiePubValidateQuoteBtn.onclick = ()=>{
@@ -1501,9 +1677,11 @@ schoolReset.onclick = ()=>{
           return;
         }
 
+        if(!canProceedForNewReservation()) return;
+
         const orders = loadMairieAdOrders();
         orders.push({
-          type:"mairie_ad_order_v2",
+          type:"mairie_ad_order_v3",
           date: payload.date,
           title: payload.title,
           text: payload.text,
@@ -1513,6 +1691,13 @@ schoolReset.onclick = ()=>{
           usedSlots: 0,
           status: "quote_validated",
           dueDate: computeDueDatePlus30Days(Date.now()),
+          dueDateIso: computeDueDatePlus30Days(Date.now()).split("/").reverse().join("-"),
+          dueDateTs: (function(){
+            const tmp = new Date();
+            tmp.setDate(tmp.getDate() + 30);
+            tmp.setHours(23,59,59,999);
+            return tmp.getTime();
+          })(),
           ts: Date.now(),
           ts_fr: new Date().toLocaleString("fr-FR")
         });
@@ -1521,6 +1706,7 @@ schoolReset.onclick = ()=>{
         if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "quote_validated";
         refreshMairiePubPreview();
         refreshMairiePubStatus();
+        refreshInvoiceBlock();
         alert("Devis mairie validé. Le dossier pub est ouvert.");
       };
     }
@@ -1548,7 +1734,7 @@ schoolReset.onclick = ()=>{
           saveMairieAdOrders(orders);
         }else{
           orders.push({
-            type:"mairie_ad_order_v2",
+            type:"mairie_ad_order_v3",
             date: payload.date,
             title: payload.title,
             text: payload.text,
@@ -1558,6 +1744,13 @@ schoolReset.onclick = ()=>{
             usedSlots: 0,
             status: "paid",
             dueDate: computeDueDatePlus30Days(Date.now()),
+            dueDateIso: computeDueDatePlus30Days(Date.now()).split("/").reverse().join("-"),
+            dueDateTs: (function(){
+              const tmp = new Date();
+              tmp.setDate(tmp.getDate() + 30);
+              tmp.setHours(23,59,59,999);
+              return tmp.getTime();
+            })(),
             ts: Date.now(),
             ts_fr: new Date().toLocaleString("fr-FR"),
             paid_ts: Date.now(),
@@ -1569,6 +1762,7 @@ schoolReset.onclick = ()=>{
         if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "paid";
         refreshMairiePubPreview();
         refreshMairiePubStatus();
+        refreshInvoiceBlock();
         alert("Dossier mairie marqué comme payé / régularisé.");
       };
     }
@@ -1581,6 +1775,8 @@ schoolReset.onclick = ()=>{
           return;
         }
 
+        if(!canProceedForActivation(payload)) return;
+
         const orders = loadMairieAdOrders();
         const idx = orders.findIndex(x =>
           String(x.date || "") === String(payload.date || "") &&
@@ -1592,11 +1788,12 @@ schoolReset.onclick = ()=>{
         );
 
         if(idx < 0){
-          alert("Valide d’abord le devis mairie, ou utilise le bouton mode démo pour repartir à zéro.");
+          alert("Valide d’abord le devis mairie, puis marque-le payé / régularisé si besoin, avant activation.");
           return;
         }
 
         orders[idx].usedSlots = Number(orders[idx].usedSlots || 0) + 1;
+        orders[idx].status = String(orders[idx].status || "") === "paid" ? "paid" : "quote_validated";
         orders[idx].last_activation_ts = Date.now();
         orders[idx].last_activation_ts_fr = new Date().toLocaleString("fr-FR");
         saveMairieAdOrders(orders);
@@ -1610,6 +1807,7 @@ schoolReset.onclick = ()=>{
 
         syncMairiePaidAdToTicker();
         refreshMairiePubStatus();
+        refreshInvoiceBlock();
 
         alert(
           "Publicité mairie activée dans le grand bandeau du haut.\n\n" +
@@ -1627,6 +1825,10 @@ schoolReset.onclick = ()=>{
         if(mairiePubPack) mairiePubPack.value = "1";
         if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "draft";
         refreshMairiePubPreview();
+        refreshMairieReservationInfo();
+        if(mairieToggleCalendarBtn){
+          mairieToggleCalendarBtn.textContent = "Choisir une date de diffusion";
+        }
       };
     }
 
@@ -1648,7 +1850,7 @@ schoolReset.onclick = ()=>{
             "\nMontant HT : " + Number(x.amountHT || 0) + " €" +
             "\nStatut : " + (x.status || "") +
             "\nUtilisations : " + Number(x.usedSlots || 0) + "/" + Number(x.totalSlots || 1) +
-            "\nÉchéance théorique : " + (x.dueDate || "") +
+            "\nÉchéance théorique : " + (x.dueDate || x.dueDateIso || "") +
             "\nCréé le : " + (x.ts_fr || "") +
             (x.paid_ts_fr ? "\nPayé le : " + x.paid_ts_fr : "")
           );
@@ -1669,7 +1871,14 @@ schoolReset.onclick = ()=>{
           if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "draft";
           refreshMairiePubPreview();
           refreshMairiePubStatus();
-          renderMairieInlineCalendar();
+          refreshMairieReservationInfo();
+          refreshInvoiceBlock();
+
+          if(window.__mairieTickerForceInterval){
+            clearInterval(window.__mairieTickerForceInterval);
+            window.__mairieTickerForceInterval = null;
+          }
+
           alert("Historique pubs mairie vidé pour la démonstration.");
         }
       };
