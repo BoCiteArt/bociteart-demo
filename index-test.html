@@ -31,25 +31,20 @@ textarea,input{width:100%;margin-top:5px;padding:8px;border-radius:8px;border:1p
 
 <div class="box">
 
-<h3>Mairie / Association (réservation pub)</h3>
+<h3>Mairie / Association — réservation pub</h3>
 
-<!-- CALENDRIER -->
-<b>Calendrier (max 10 pubs / jour)</b>
+<b>Calendrier — max 10 pubs / jour</b>
 <div id="calendar" class="calGrid"></div>
 
-<!-- DATE -->
 <b>Date sélectionnée</b>
 <input id="dateInput" readonly>
 
-<!-- TITRE -->
 <b>Titre</b>
 <input id="titleInput">
 
-<!-- TEXTE -->
 <b>Texte</b>
 <textarea id="textInput"></textarea>
 
-<!-- ACTIONS -->
 <div style="margin-top:10px;">
 <button onclick="saveAd()">Valider le devis</button>
 <button onclick="payAd()">Marquer payé</button>
@@ -57,7 +52,6 @@ textarea,input{width:100%;margin-top:5px;padding:8px;border-radius:8px;border:1p
 <button onclick="resetAll()">Reset</button>
 </div>
 
-<!-- APERÇU -->
 <div class="box">
 <b>Aperçu</b>
 <div id="preview">Aucune pub</div>
@@ -66,11 +60,9 @@ textarea,input{width:100%;margin-top:5px;padding:8px;border-radius:8px;border:1p
 </div>
 
 <script>
-
-// ==================== CONFIG ====================
 const MAX_PER_DAY = 10;
+let currentAd = null;
 
-// ==================== STORAGE ====================
 function loadBookings(){
   return JSON.parse(localStorage.getItem("bookings") || "{}");
 }
@@ -79,28 +71,28 @@ function saveBookings(b){
   localStorage.setItem("bookings", JSON.stringify(b));
 }
 
-// ==================== CALENDRIER ====================
 function buildCalendar(){
-  let html="";
+  let html = "";
   const bookings = loadBookings();
 
-  for(let d=1; d<=31; d++){
-    let date = `2026-04-${String(d).padStart(2,"0")}`;
-    let count = bookings[date] ? bookings[date].length : 0;
+  for(let d = 1; d <= 31; d++){
+    const date = `2026-04-${String(d).padStart(2,"0")}`;
+    const count = bookings[date] ? bookings[date].length : 0;
+    const cls = count >= MAX_PER_DAY ? "calDay full" : "calDay";
 
-    let cls = count>=MAX_PER_DAY ? "calDay full" : "calDay";
-
-    html += `<div class="${cls}" onclick="selectDate('${date}')">
-              ${d}<br>${count}/${MAX_PER_DAY}
-            </div>`;
+    html += `
+      <div class="${cls}" onclick="selectDate('${date}')">
+        ${d}<br>${count}/${MAX_PER_DAY}
+      </div>
+    `;
   }
 
   document.getElementById("calendar").innerHTML = html;
 }
 
 function selectDate(date){
-  let bookings = loadBookings();
-  let list = bookings[date] || [];
+  const bookings = loadBookings();
+  const list = bookings[date] || [];
 
   if(list.length >= MAX_PER_DAY){
     alert("Jour complet");
@@ -108,18 +100,13 @@ function selectDate(date){
   }
 
   document.getElementById("dateInput").value = date;
-
-  // NE SORT PAS DE L'ONGLET
   document.getElementById("titleInput").focus();
 }
 
-// ==================== PUB ====================
-let currentAd = null;
-
 function saveAd(){
-  let date = dateInput.value;
-  let title = titleInput.value;
-  let text = textInput.value;
+  const date = document.getElementById("dateInput").value;
+  const title = document.getElementById("titleInput").value.trim();
+  const text = document.getElementById("textInput").value.trim();
 
   if(!date){
     alert("Choisir une date");
@@ -132,33 +119,32 @@ function saveAd(){
   }
 
   currentAd = {
-    date,
-    title,
-    text,
-    paid:false
+    date: date,
+    title: title,
+    text: text,
+    paid: false
   };
 
-  preview.innerText = "Devis validé ✔";
+  document.getElementById("preview").innerText = "Devis validé ✔";
 }
 
 function payAd(){
   if(!currentAd){
-    alert("Valider le devis");
+    alert("Valider le devis d’abord");
     return;
   }
 
   currentAd.paid = true;
-  preview.innerText = "Payé ✔";
+  document.getElementById("preview").innerText = "Payé ✔";
 }
 
 function activateAd(){
-
   if(!currentAd || !currentAd.paid){
     alert("Paiement requis");
     return;
   }
 
-  let bookings = loadBookings();
+  const bookings = loadBookings();
 
   if(!bookings[currentAd.date]){
     bookings[currentAd.date] = [];
@@ -182,57 +168,31 @@ function activateAd(){
 
   localStorage.setItem("activePub", JSON.stringify(currentAd));
 
-  preview.innerText = "Diffusé dans le bandeau ✔";
+  document.getElementById("preview").innerText = "Diffusé dans le bandeau ✔";
 
   buildCalendar();
 
   alert("Publicité activée dans le grand bandeau.");
 }
 
-  let bookings = loadBookings();
-
-  if(!bookings[currentAd.date]){
-    bookings[currentAd.date] = [];
-  }
-
-  bookings[currentAd.date].push({
-    title: currentAd.title,
-    text: currentAd.text
-  });
-
-  saveBookings(bookings);
-
-  // AFFICHAGE BANDEAU
-  document.getElementById("tickerTitle").innerText = currentAd.title;
-  document.getElementById("tickerText").innerText = currentAd.text;
-
-  localStorage.setItem("activePub", JSON.stringify(currentAd));
-
-  preview.innerText = "Diffusé ✔";
-
-  buildCalendar();
-}
-
-// ==================== RESTORE ====================
 function restore(){
-  let pub = JSON.parse(localStorage.getItem("activePub") || "null");
+  const raw = localStorage.getItem("activePub");
+  if(!raw) return;
 
-  if(pub){
-    tickerTitle.innerText = pub.title;
-    tickerText.innerText = pub.text;
-  }
+  try{
+    const pub = JSON.parse(raw);
+    document.getElementById("tickerTitle").innerText = pub.title || "Annonce partenaire";
+    document.getElementById("tickerText").innerText = pub.text || "Aucune pub active";
+  }catch(e){}
 }
 
-// ==================== RESET ====================
 function resetAll(){
   localStorage.clear();
   location.reload();
 }
 
-// ==================== INIT ====================
 buildCalendar();
 restore();
-
 </script>
 
 </body>
