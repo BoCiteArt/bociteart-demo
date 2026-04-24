@@ -2081,22 +2081,7 @@ if(key === "mairie"){
 
   return;
 }
-
-}
-  window.__reopenMairieAfterCalendar = function(reservation){
-    openMairieModal({
-      reservedDate: reservation && reservation.reservedDate ? reservation.reservedDate : "",
-      entityType: reservation && reservation.entityType ? reservation.entityType : "Mairie",
-      entityName: reservation && reservation.entityName ? reservation.entityName : "",
-      title: "",
-      text: ""
-    });
-  };
-
-  openMairieModal();
-  return;
-}
-  
+ 
 // COMMERCE
 payBtn.onclick = async()=>{
   paymentStatus.innerText = 'Connexion paiement...';
