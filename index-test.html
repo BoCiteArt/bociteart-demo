@@ -175,9 +175,38 @@ preview.innerText="Payé ✔";
 }
 
 function activateAd(){
-if(!currentAd.paid){
-alert("Paiement requis");
-return;
+  if(!currentAd || !currentAd.paid){
+    alert("Paiement requis");
+    return;
+  }
+
+  const titre = currentAd.title || "Annonce mairie";
+  const texte = currentAd.text || "";
+
+  const t1 = document.getElementById("tickerTitleA");
+  const s1 = document.getElementById("tickerSubA");
+
+  const t2 = document.getElementById("tickerTitle");
+  const s2 = document.getElementById("tickerText");
+
+  if(t1) t1.innerText = titre;
+  if(s1) s1.innerText = texte;
+
+  if(t2) t2.innerText = titre;
+  if(s2) s2.innerText = texte;
+
+  localStorage.setItem("bociteart_active_pub", JSON.stringify({
+    title: titre,
+    text: texte,
+    date: currentAd.date || "",
+    ts: Date.now()
+  }));
+
+  if(typeof preview !== "undefined" && preview){
+    preview.innerText = "Diffusé ✔";
+  }
+
+  alert("Publicité activée dans le grand bandeau.");
 }
 
 ads.push({
@@ -215,7 +244,26 @@ function startTicker(){
 
   },3000);
 } 
+(function(){
+  try{
+    const raw = localStorage.getItem("bociteart_active_pub");
+    if(!raw) return;
 
+    const pub = JSON.parse(raw);
+
+    const t1 = document.getElementById("tickerTitleA");
+    const s1 = document.getElementById("tickerSubA");
+
+    const t2 = document.getElementById("tickerTitle");
+    const s2 = document.getElementById("tickerText");
+
+    if(t1) t1.innerText = pub.title || "";
+    if(s1) s1.innerText = pub.text || "";
+
+    if(t2) t2.innerText = pub.title || "";
+    if(s2) s2.innerText = pub.text || "";
+  }catch(e){}
+})();
 </script>
 
 </body>
