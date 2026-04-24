@@ -164,6 +164,37 @@ function activateAd(){
     bookings[currentAd.date] = [];
   }
 
+  if(bookings[currentAd.date].length >= MAX_PER_DAY){
+    alert("Jour complet");
+    return;
+  }
+
+  bookings[currentAd.date].push({
+    title: currentAd.title,
+    text: currentAd.text,
+    ts: Date.now()
+  });
+
+  saveBookings(bookings);
+
+  document.getElementById("tickerTitle").innerText = currentAd.title;
+  document.getElementById("tickerText").innerText = currentAd.text;
+
+  localStorage.setItem("activePub", JSON.stringify(currentAd));
+
+  preview.innerText = "Diffusé dans le bandeau ✔";
+
+  buildCalendar();
+
+  alert("Publicité activée dans le grand bandeau.");
+}
+
+  let bookings = loadBookings();
+
+  if(!bookings[currentAd.date]){
+    bookings[currentAd.date] = [];
+  }
+
   bookings[currentAd.date].push({
     title: currentAd.title,
     text: currentAd.text
