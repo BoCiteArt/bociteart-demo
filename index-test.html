@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bo'CitéArt - Test pub</title>
+<title>Bo'CitéArt - TEST PROPRE</title>
 
 <style>
 body{font-family:Arial;margin:0;background:#f5f5f5}
@@ -11,80 +11,123 @@ header{background:#111;color:#fff;padding:10px;text-align:center}
 button{padding:10px;border-radius:8px;border:1px solid #ccc;background:#fff;font-weight:bold;cursor:pointer}
 textarea,input{width:100%;margin-top:5px;padding:8px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}
 .box{background:#fff;padding:10px;border-radius:10px;margin:10px;border:1px solid #ddd}
-#topTicker{background:#fff;color:#111;padding:10px;border-radius:10px;margin-top:10px;text-align:left}
+#topTicker{background:#fff;color:#111;padding:10px;border-radius:10px;margin-top:10px}
 .calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
 .calDay{padding:8px;background:#eee;text-align:center;border-radius:6px;cursor:pointer}
-.calDay:hover{background:#ddd}
+.calDay.full{background:#ffb3b3}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h2>Bo'CitéArt</h2>
-  <div id="topTicker">
-    <div id="tickerTitle" style="font-weight:900;">Annonce partenaire</div>
-    <div id="tickerText">Aucune pub active</div>
-  </div>
+<h2>Bo'CitéArt</h2>
+
+<div id="topTicker">
+<div id="tickerTitle" style="font-weight:900;">Annonce partenaire</div>
+<div id="tickerText">Aucune pub active</div>
+</div>
 </header>
 
 <div class="box">
-  <h3>Mairie</h3>
 
-  <b>Calendrier réservation</b>
-  <div id="calendar" class="calGrid"></div>
+<h3>Mairie / Association (réservation pub)</h3>
 
-  <b>Date sélectionnée</b>
-  <input id="dateInput" readonly>
+<!-- CALENDRIER -->
+<b>Calendrier (max 10 pubs / jour)</b>
+<div id="calendar" class="calGrid"></div>
 
-  <b>Titre</b>
-  <input id="titleInput" placeholder="Ex : Grand cirque ce soir">
+<!-- DATE -->
+<b>Date sélectionnée</b>
+<input id="dateInput" readonly>
 
-  <b>Texte</b>
-  <textarea id="textInput" placeholder="Ex : 25 places à 5 € au lieu de 10 €"></textarea>
+<!-- TITRE -->
+<b>Titre</b>
+<input id="titleInput">
 
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-    <button onclick="saveAd()">Valider le devis</button>
-    <button onclick="payAd()">Marquer payé</button>
-    <button onclick="activateAd()">Activer dans le bandeau</button>
-    <button onclick="resetAll()">Réinitialiser</button>
-  </div>
+<!-- TEXTE -->
+<b>Texte</b>
+<textarea id="textInput"></textarea>
 
-  <div class="box">
-    <b>Aperçu</b>
-    <div id="preview">Aucune publicité préparée.</div>
-  </div>
+<!-- ACTIONS -->
+<div style="margin-top:10px;">
+<button onclick="saveAd()">Valider le devis</button>
+<button onclick="payAd()">Marquer payé</button>
+<button onclick="activateAd()">Activer</button>
+<button onclick="resetAll()">Reset</button>
+</div>
+
+<!-- APERÇU -->
+<div class="box">
+<b>Aperçu</b>
+<div id="preview">Aucune pub</div>
+</div>
+
 </div>
 
 <script>
-let currentAd = null;
 
+// ==================== CONFIG ====================
+const MAX_PER_DAY = 10;
+
+// ==================== STORAGE ====================
+function loadBookings(){
+  return JSON.parse(localStorage.getItem("bookings") || "{}");
+}
+
+function saveBookings(b){
+  localStorage.setItem("bookings", JSON.stringify(b));
+}
+
+// ==================== CALENDRIER ====================
 function buildCalendar(){
-  let html = "";
-  for(let d = 1; d <= 31; d++){
-    html += `<div class="calDay" onclick="selectDate(${d})">${d}</div>`;
+  let html="";
+  const bookings = loadBookings();
+
+  for(let d=1; d<=31; d++){
+    let date = `2026-04-${String(d).padStart(2,"0")}`;
+    let count = bookings[date] ? bookings[date].length : 0;
+
+    let cls = count>=MAX_PER_DAY ? "calDay full" : "calDay";
+
+    html += `<div class="${cls}" onclick="selectDate('${date}')">
+              ${d}<br>${count}/${MAX_PER_DAY}
+            </div>`;
   }
+
   document.getElementById("calendar").innerHTML = html;
 }
 
-function selectDate(d){
-  const date = `2026-04-${String(d).padStart(2,"0")}`;
+function selectDate(date){
+  let bookings = loadBookings();
+  let list = bookings[date] || [];
+
+  if(list.length >= MAX_PER_DAY){
+    alert("Jour complet");
+    return;
+  }
+
   document.getElementById("dateInput").value = date;
+
+  // NE SORT PAS DE L'ONGLET
   document.getElementById("titleInput").focus();
 }
 
+// ==================== PUB ====================
+let currentAd = null;
+
 function saveAd(){
-  const date = document.getElementById("dateInput").value.trim();
-  const title = document.getElementById("titleInput").value.trim();
-  const text = document.getElementById("textInput").value.trim();
+  let date = dateInput.value;
+  let title = titleInput.value;
+  let text = textInput.value;
 
   if(!date){
-    alert("Choisis d’abord une date.");
+    alert("Choisir une date");
     return;
   }
 
   if(!title || !text){
-    alert("Renseigne le titre et le texte.");
+    alert("Remplir titre + texte");
     return;
   }
 
@@ -95,68 +138,70 @@ function saveAd(){
     paid:false
   };
 
-  document.getElementById("preview").innerText =
-    "Devis validé : " + title + " • " + text;
+  preview.innerText = "Devis validé ✔";
 }
 
 function payAd(){
   if(!currentAd){
-    alert("Valide d’abord le devis.");
+    alert("Valider le devis");
     return;
   }
 
   currentAd.paid = true;
-  document.getElementById("preview").innerText =
-    "Payé ✔ : " + currentAd.title + " • " + currentAd.text;
+  preview.innerText = "Payé ✔";
 }
 
 function activateAd(){
-  if(!currentAd){
-    alert("Valide d’abord le devis.");
+
+  if(!currentAd || !currentAd.paid){
+    alert("Paiement requis");
     return;
   }
 
-  if(!currentAd.paid){
-    alert("Marque d’abord la publicité comme payée.");
-    return;
+  let bookings = loadBookings();
+
+  if(!bookings[currentAd.date]){
+    bookings[currentAd.date] = [];
   }
 
+  bookings[currentAd.date].push({
+    title: currentAd.title,
+    text: currentAd.text
+  });
+
+  saveBookings(bookings);
+
+  // AFFICHAGE BANDEAU
   document.getElementById("tickerTitle").innerText = currentAd.title;
   document.getElementById("tickerText").innerText = currentAd.text;
 
-  localStorage.setItem("bociteart_active_pub", JSON.stringify(currentAd));
+  localStorage.setItem("activePub", JSON.stringify(currentAd));
 
-  document.getElementById("preview").innerText = "Diffusé ✔ dans le grand bandeau.";
+  preview.innerText = "Diffusé ✔";
+
+  buildCalendar();
 }
 
-function restoreActiveAd(){
-  try{
-    const raw = localStorage.getItem("bociteart_active_pub");
-    if(!raw) return;
+// ==================== RESTORE ====================
+function restore(){
+  let pub = JSON.parse(localStorage.getItem("activePub") || "null");
 
-    const pub = JSON.parse(raw);
-
-    if(pub && pub.title && pub.text){
-      document.getElementById("tickerTitle").innerText = pub.title;
-      document.getElementById("tickerText").innerText = pub.text;
-    }
-  }catch(e){}
+  if(pub){
+    tickerTitle.innerText = pub.title;
+    tickerText.innerText = pub.text;
+  }
 }
 
+// ==================== RESET ====================
 function resetAll(){
-  localStorage.removeItem("bociteart_active_pub");
-  currentAd = null;
-
-  document.getElementById("dateInput").value = "";
-  document.getElementById("titleInput").value = "";
-  document.getElementById("textInput").value = "";
-  document.getElementById("tickerTitle").innerText = "Annonce partenaire";
-  document.getElementById("tickerText").innerText = "Aucune pub active";
-  document.getElementById("preview").innerText = "Aucune publicité préparée.";
+  localStorage.clear();
+  location.reload();
 }
 
+// ==================== INIT ====================
 buildCalendar();
-restoreActiveAd();
+restore();
+
 </script>
 
 </body>
