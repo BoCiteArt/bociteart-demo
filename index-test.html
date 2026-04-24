@@ -4,807 +4,179 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bo'CitéArt</title>
+
 <style>
-body{font-family:Arial,sans-serif;margin:0;background:#f5f5f5}
+body{font-family:Arial;margin:0;background:#f5f5f5}
 header{background:#111;color:#fff;padding:10px;text-align:center}
 .tab{display:none;padding:15px}
 .tab.active{display:block}
-.choiceBtn,button{
-  padding:10px 15px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  cursor:pointer;
-  background:#fff;
-  font-weight:700;
+
+button{
+padding:10px;
+border-radius:8px;
+border:1px solid #ccc;
+background:#fff;
+font-weight:bold;
+cursor:pointer;
 }
-textarea,input,select{
-  width:100%;
-  padding:8px;
-  margin-top:5px;
-  box-sizing:border-box;
-  border:1px solid #ccc;
-  border-radius:8px;
+
+textarea,input{
+width:100%;
+margin-top:5px;
+padding:8px;
+border-radius:8px;
+border:1px solid #ccc;
 }
+
 .box{
-  background:#fff;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #ddd;
-  margin-top:10px;
+background:#fff;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
+border:1px solid #ddd;
 }
-.muted{color:#555}
+
 #topTicker{
-  margin-top:10px;
-  background:#fff;
-  color:#111;
-  border-radius:10px;
-  padding:10px;
-  text-align:left;
+background:#fff;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
 }
+
 .calGrid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:6px;
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:5px;
 }
+
 .calDay{
-  min-height:54px;
-  border:1px solid #ddd;
-  background:#fff;
-  border-radius:10px;
-  padding:6px;
-  cursor:pointer;
-  text-align:center;
-  font-weight:900;
+padding:8px;
+background:#eee;
+text-align:center;
+border-radius:6px;
+cursor:pointer;
 }
-.calDay.full{
-  background:#ddd;
-  color:#777;
-  cursor:not-allowed;
-}
-.calDay.disabled{
-  background:transparent;
-  border:none;
-  cursor:default;
-}
+
+.calDay.full{background:#ffb3b3}
 </style>
 </head>
+
 <body>
 
 <header>
-  <h2>Bo'CitéArt</h2>
-  <div id="topTicker">
-    <div id="tickerTitleA" style="font-weight:900;">Annonce partenaire (démo)</div>
-    <div id="tickerSubA" style="font-size:13px;margin-top:4px;">Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels</div>
-  </div>
+<h2>Bo'CitéArt</h2>
+
+<div id="topTicker">
+<div id="tickerTitle">Annonce partenaire</div>
+<div id="tickerText">Aucune pub active</div>
+</div>
 </header>
 
-<div style="display:flex;gap:10px;padding:10px;flex-wrap:wrap;">
-  <button onclick="openTab('home')">Accueil</button>
-  <button onclick="openTab('sport')">Sport</button>
-  <button onclick="openTab('ecole')">École</button>
-  <button onclick="openTab('commerce')">Commerçants</button>
-  <button onclick="openTab('mairie')">Mairie</button>
+<div style="padding:10px;">
+<button onclick="openTab('mairie')">Mairie</button>
 </div>
 
-<div id="home" class="tab active">
-  <h3>Bienvenue</h3>
-  <p>Application Bo'CitéArt - Démo sécurisée</p>
+<div id="mairie" class="tab active">
+
+<h3>Mairie</h3>
+
+<div class="box">
+<b>Calendrier réservation</b>
+
+<div id="calendar"></div>
+
 </div>
 
-<div id="sport" class="tab">
-  <h3>Résultat du week-end</h3>
-  <textarea id="sportWeekendText" placeholder="Résultat du week-end"></textarea>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-    <button class="choiceBtn" id="sportWeekendSave">💾 Enregistrer</button>
-    <button class="choiceBtn" id="sportWeekendRead">Lire</button>
-    <button class="choiceBtn" id="sportWeekendReset">Réinitialiser</button>
-  </div>
+<div class="box">
+<b>Date sélectionnée</b>
+<input id="dateInput" readonly>
 </div>
 
-<div id="ecole" class="tab">
-  <h3>Mot du jour</h3>
-  <input id="schoolWord" placeholder="Mot du jour">
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-    <button class="choiceBtn" id="schoolSave">💾 Enregistrer</button>
-    <button class="choiceBtn" id="schoolRead">Lire</button>
-    <button class="choiceBtn" id="schoolReset">Réinitialiser</button>
-  </div>
+<div class="box">
+<b>Titre</b>
+<input id="titleInput">
 </div>
 
-<div id="commerce" class="tab">
-  <h3>Paiement publicité</h3>
-  <p>Simulation sécurisée pré-PSP</p>
-  <button id="payBtn">Payer 50€</button>
-  <p id="paymentStatus"></p>
+<div class="box">
+<b>Texte</b>
+<textarea id="textInput"></textarea>
 </div>
 
-<div id="mairie" class="tab">
-  <h3>Mairie</h3>
+<div style="margin-top:10px;">
+<button onclick="saveAd()">Valider le devis</button>
+<button onclick="payAd()">Marquer payé</button>
+<button onclick="activateAd()">Activer</button>
+</div>
 
-  <div class="box">
-    <div class="muted">
-      Cette partie est destinée aux habitants. Elle permet d’ouvrir directement des espaces utiles,
-      lisibles et pratiques, sans surcharger l’onglet principal mairie.
-    </div>
+<div class="box">
+<b>Aperçu</b>
+<div id="preview"></div>
+</div>
 
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-      <button class="choiceBtn" id="openMairieServicesBtn" type="button" style="background:#fff4f4;">
-        🏛️ Services mairie / ville
-      </button>
-
-      <button class="choiceBtn" id="openHealthServicesBtn" type="button" style="background:#f2fff7;">
-        🩺 Médecins • spécialistes • kinés • infirmières • pharmacies
-      </button>
-    </div>
-  </div>
-
-  <div class="box">
-    <div style="font-weight:900;">Messages gratuits d’intérêt général</div>
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Urgence, tempête, vigilance météo</li>
-      <li>Rue barrée / déviation</li>
-      <li>Risque de gel / température dangereuse</li>
-      <li>Information de sécurité publique</li>
-    </ul>
-  </div>
-
-  <div class="box">
-    <div style="font-weight:900;">Message bandeau mairie interne</div>
-    <input id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet">
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-      <button class="choiceBtn" id="mairieMsgSave" type="button">Enregistrer</button>
-      <button class="choiceBtn" id="mairieMsgRead" type="button">Lire</button>
-      <button class="choiceBtn" id="mairieMsgReset" type="button">Réinitialiser</button>
-    </div>
-  </div>
-
-  <div class="box">
-    <div style="font-weight:900;">Publicité mairie payante — grand bandeau du haut</div>
-    <div class="muted" style="margin-top:6px;">
-      La mairie utilise le même calendrier que les commerçants : 10 pubs maximum par jour.
-      Avant 16h : une seule pub par entité. Après 16h : l’entité peut reprendre les places restantes jusqu’au complet.
-    </div>
-
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>1 publicité = <strong>50 € HT</strong></li>
-      <li>Pack 5 publicités = <strong>200 € HT</strong></li>
-      <li>Une publicité ancienne non payée au-delà de 30 jours bloque l’activation suivante</li>
-      <li>Mode démo : bouton spécial pour vider l’historique</li>
-    </ul>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-      <button class="choiceBtn" id="mairieOpenCalendarBtn" type="button">Choisir une date</button>
-      <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button">Lire historique pubs mairie</button>
-      <button class="choiceBtn" id="mairiePubClearHistoryBtn" type="button" style="background:#fff3f3;">Vider historique pubs mairie</button>
-    </div>
-
-    <div id="mairieCalendarBox" class="box" style="display:none;background:#fafafa;"></div>
-  </div>
-
-  <div class="box">
-    <div style="font-weight:900;">Nouvelle publicité mairie</div>
-
-    <div style="margin-top:10px;font-weight:900;">Date réservée</div>
-    <input id="mairiePubDate" placeholder="AAAA-MM-JJ">
-
-    <div style="margin-top:10px;font-weight:900;">Titre publicité</div>
-    <input id="mairiePubTitle" placeholder="Ex : Concert ce soir">
-
-    <div style="margin-top:10px;font-weight:900;">Texte publicité</div>
-    <textarea id="mairiePubText" style="min-height:110px;" placeholder="Ex : Il reste 52 places à 2 € au lieu de 40 € pour les étudiants sur présentation de leur carte."></textarea>
-
-    <div style="margin-top:10px;font-weight:900;">Formule</div>
-    <select id="mairiePubPack">
-      <option value="1">1 publicité — 50 € HT</option>
-      <option value="5">Pack 5 publicités — 200 € HT</option>
-    </select>
-
-    <div style="margin-top:10px;font-weight:900;">Statut devis / paiement</div>
-    <select id="mairiePubPaymentStatus">
-      <option value="draft">Brouillon</option>
-      <option value="quote_validated">Devis validé</option>
-      <option value="paid">Payé / validé</option>
-    </select>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-      <button class="choiceBtn" id="mairiePubValidateQuoteBtn" type="button">Valider le devis</button>
-      <button class="choiceBtn" id="mairiePubMarkPaidBtn" type="button">Marquer payé</button>
-      <button class="choiceBtn" id="mairiePubActivateBtn" type="button">Activer dans le bandeau</button>
-      <button class="choiceBtn" id="mairiePubResetBtn" type="button">Réinitialiser le formulaire</button>
-    </div>
-
-    <div class="box" style="background:#f9f9f9;">
-      <div style="font-weight:900;">Aperçu publicité mairie</div>
-      <div class="muted" id="mairiePubPreview" style="margin-top:8px;">Aucune publicité mairie préparée pour le moment.</div>
-    </div>
-
-    <div class="box" style="background:#fffdf0;">
-      <div style="font-weight:900;">État du dossier</div>
-      <div class="muted" id="mairiePubStatusOut" style="margin-top:8px;">Aucun dossier pub mairie.</div>
-    </div>
-  </div>
-
-  <div class="box">
-    <div style="font-weight:900;">Régularisation d’une publicité mairie</div>
-
-    <select id="mairiePubRegularizeSelect">
-      <option value="">Choisir une publicité à régulariser</option>
-    </select>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-      <button class="choiceBtn" id="mairiePubRefreshRegularizeBtn" type="button">Actualiser la liste</button>
-      <button class="choiceBtn" id="mairiePubRegularizeBtn" type="button">Régulariser le paiement</button>
-    </div>
-  </div>
-
-  <div class="box">
-    <div style="font-weight:900;">Parrainages prévu / suivi</div>
-
-    <textarea id="mairieReferralInput" style="min-height:110px;" placeholder="Ex : Nom du parrain, type, date, contrôle 30 jours, commentaire démo"></textarea>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-      <button class="choiceBtn" id="mairieReferralSaveBtn" type="button">Enregistrer suivi parrainage</button>
-      <button class="choiceBtn" id="mairieReferralReadBtn" type="button">Lire suivi</button>
-      <button class="choiceBtn" id="mairieReferralResetBtn" type="button">Réinitialiser suivi</button>
-    </div>
-  </div>
 </div>
 
 <script>
-function $(id){ return document.getElementById(id); }
 
 function openTab(id){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  const target = $(id);
-  if(target) target.classList.add('active');
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.getElementById(id).classList.add('active');
 }
 
-function secureSave(key,data){
-  localStorage.setItem(key,JSON.stringify({value:data,time:Date.now()}));
+// CALENDRIER SIMPLE
+function buildCalendar(){
+let html="";
+let today=new Date();
+
+for(let d=1;d<=31;d++){
+html+=`<div class="calDay" onclick="selectDate(${d})">${d}</div>`;
 }
 
-function secureRead(key){
-  const raw = localStorage.getItem(key);
-  if(!raw) return null;
-  try{return JSON.parse(raw).value;}catch(e){return null;}
+document.getElementById("calendar").innerHTML=html;
 }
 
-function escapeHtml(s){
-  return String(s || "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;");
+function selectDate(d){
+let date=`2026-04-${String(d).padStart(2,'0')}`;
+document.getElementById("dateInput").value=date;
 }
 
-const PUB_MAX_PER_DAY = 10;
-const PUB_STORE_KEY = "bociteart_pubBookings_v1";
-const MAIRIE_AD_ORDERS_KEY = "bociteart_mairie_ad_orders_v2";
-const MAIRIE_AD_ACTIVE_KEY = "bociteart_mairie_ad_active_v2";
-const MAIRIE_MSG_KEY = "bociteart_mairie_msg";
-const MAIRIE_REFERRAL_KEY = "bociteart_mairie_referral_v1";
+// PUB
+let currentAd={};
 
-window.tickerItems = [
-  {
-    title:"Annonce partenaire (démo)",
-    subtitle:"Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels"
-  },
-  {
-    title:"Mairie (démo)",
-    subtitle:"Aucune publicité mairie active"
-  }
-];
+function saveAd(){
+currentAd={
+date:dateInput.value,
+title:titleInput.value,
+text:textInput.value,
+paid:false
+};
 
-function setTicker(i){
-  const it = window.tickerItems[i] || window.tickerItems[0];
-  if($("tickerTitleA")) $("tickerTitleA").textContent = it.title || "";
-  if($("tickerSubA")) $("tickerSubA").textContent = it.subtitle || "";
+preview.innerText="Devis validé : "+currentAd.title;
 }
 
-let tickerIdx = 0;
-setTicker(0);
-
-setInterval(()=>{
-  tickerIdx = (tickerIdx + 1) % window.tickerItems.length;
-  setTicker(tickerIdx);
-},10000);
-
-function applyAdToTicker(ad){
-  const item = {
-    title: ad.title || "Mairie",
-    subtitle: ad.text || ""
-  };
-  window.tickerItems[0] = item;
-  window.tickerItems[1] = item;
-  setTicker(0);
+function payAd(){
+if(!currentAd.title){
+alert("Valide d'abord le devis");
+return;
+}
+currentAd.paid=true;
+preview.innerText="Payé ✔";
 }
 
-function syncActiveAd(){
-  const raw = localStorage.getItem(MAIRIE_AD_ACTIVE_KEY);
-  if(!raw) return;
-  try{ applyAdToTicker(JSON.parse(raw)); }catch(e){}
+function activateAd(){
+if(!currentAd.paid){
+alert("Paiement requis");
+return;
 }
 
-function pad2(n){ return String(n).padStart(2,"0"); }
-function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
-function ym(y,m){ return `${y}-${pad2(m+1)}`; }
+tickerTitle.innerText=currentAd.title;
+tickerText.innerText=currentAd.text;
 
-function loadBookings(){
-  try{return JSON.parse(localStorage.getItem(PUB_STORE_KEY) || "{}");}
-  catch(e){return {};}
+preview.innerText="Diffusé ✔";
 }
 
-function saveBookings(obj){
-  localStorage.setItem(PUB_STORE_KEY,JSON.stringify(obj));
-}
+// INIT
+buildCalendar();
 
-function getDayBookings(obj,y,m,d){
-  const keyYM = ym(y,m);
-  const keyYMD = ymd(y,m,d);
-  return obj[keyYM] && obj[keyYM][keyYMD] ? obj[keyYM][keyYMD] : [];
-}
-
-function setDayBookings(obj,y,m,d,list){
-  const keyYM = ym(y,m);
-  const keyYMD = ymd(y,m,d);
-  if(!obj[keyYM]) obj[keyYM] = {};
-  obj[keyYM][keyYMD] = list;
-}
-
-function loadOrders(){
-  try{return JSON.parse(localStorage.getItem(MAIRIE_AD_ORDERS_KEY) || "[]");}
-  catch(e){return [];}
-}
-
-function saveOrders(arr){
-  localStorage.setItem(MAIRIE_AD_ORDERS_KEY,JSON.stringify(arr));
-}
-
-function computeDueDate(ts){
-  const d = new Date(ts);
-  d.setDate(d.getDate()+30);
-  return d.toLocaleDateString("fr-FR");
-}
-
-function hasBlockingUnpaidOrder(){
-  const now = Date.now();
-  const orders = loadOrders();
-  return orders.some(o=>{
-    if(o.status === "paid") return false;
-    if(!o.ts) return false;
-    return now - Number(o.ts) > 30*24*60*60*1000;
-  });
-}
-
-function getFormPayload(){
-  const date = $("mairiePubDate").value.trim();
-  const title = $("mairiePubTitle").value.trim();
-  const text = $("mairiePubText").value.trim();
-  const pack = $("mairiePubPack").value;
-  const status = $("mairiePubPaymentStatus").value;
-
-  if(!date) return {error:"Choisis d’abord une date."};
-  if(!title && !text) return {error:"Renseigne un titre ou un texte."};
-
-  return {
-    date,title,text,pack,status,
-    amountHT: pack === "5" ? 200 : 50,
-    totalSlots: pack === "5" ? 5 : 1
-  };
-}
-
-function refreshPreview(){
-  const p = getFormPayload();
-  if(p.error){
-    $("mairiePubPreview").textContent = "Aucune publicité mairie préparée pour le moment.";
-    return;
-  }
-  $("mairiePubPreview").textContent =
-    "Date : " + p.date +
-    " | Formule : " + (p.pack === "5" ? "Pack 5 publicités" : "1 publicité") +
-    " | Statut : " + p.status +
-    " | Texte : " + ((p.title ? p.title + " • " : "") + p.text);
-}
-
-function refreshStatus(){
-  const orders = loadOrders();
-  if(!orders.length){
-    $("mairiePubStatusOut").textContent = "Aucun dossier pub mairie.";
-    return;
-  }
-  const last = orders[orders.length-1];
-  $("mairiePubStatusOut").textContent =
-    "Dernier dossier : " + (last.title || "Sans titre") +
-    " | Statut : " + last.status +
-    " | Utilisations : " + (last.usedSlots || 0) + "/" + (last.totalSlots || 1) +
-    " | Échéance : " + (last.dueDate || "");
-}
-
-function refreshRegularizeList(){
-  const select = $("mairiePubRegularizeSelect");
-  select.innerHTML = '<option value="">Choisir une publicité à régulariser</option>';
-
-  loadOrders().forEach((o,i)=>{
-    if(o.status !== "paid"){
-      const opt = document.createElement("option");
-      opt.value = i;
-      opt.textContent = `${o.date} — ${o.title || "Sans titre"} — ${o.status}`;
-      select.appendChild(opt);
-    }
-  });
-}
-
-let calYear = new Date().getFullYear();
-let calMonth = new Date().getMonth();
-
-function renderCalendar(){
-  const box = $("mairieCalendarBox");
-  const bookings = loadBookings();
-  const first = new Date(calYear,calMonth,1);
-  const last = new Date(calYear,calMonth+1,0);
-  const startDow = (first.getDay()+6)%7;
-
-  let html = `
-    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;">
-      <button id="calPrev">◀</button>
-      <strong>${first.toLocaleDateString("fr-FR",{month:"long",year:"numeric"})}</strong>
-      <button id="calNext">▶</button>
-      <button id="calClose">Fermer</button>
-    </div>
-    <div class="muted" style="margin-top:10px;">
-      Avant 16h : 1 seule réservation par entité. Après 16h : les places restantes sont ouvertes jusqu’à 10.
-    </div>
-    <div class="calGrid" style="margin-top:10px;">
-      ${["L","M","M","J","V","S","D"].map(x=>`<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
-  `;
-
-  for(let i=0;i<startDow;i++) html += `<div class="calDay disabled"></div>`;
-
-  for(let d=1;d<=last.getDate();d++){
-    const used = getDayBookings(bookings,calYear,calMonth,d).length;
-    const full = used >= PUB_MAX_PER_DAY;
-    html += `
-      <div class="calDay ${full ? "full" : ""}" ${full ? "" : `data-day="${d}"`}>
-        <div>${d}</div>
-        <div class="muted">${used}/${PUB_MAX_PER_DAY}</div>
-      </div>
-    `;
-  }
-
-  html += `</div>`;
-  box.innerHTML = html;
-  box.style.display = "block";
-
-  $("calPrev").onclick = ()=>{
-    calMonth--;
-    if(calMonth<0){calMonth=11;calYear--;}
-    renderCalendar();
-  };
-
-  $("calNext").onclick = ()=>{
-    calMonth++;
-    if(calMonth>11){calMonth=0;calYear++;}
-    renderCalendar();
-  };
-
-  $("calClose").onclick = ()=>{
-    box.style.display = "none";
-  };
-
-  box.querySelectorAll("[data-day]").forEach(el=>{
-    el.onclick = ()=>{
-      const d = parseInt(el.dataset.day,10);
-      const date = ymd(calYear,calMonth,d);
-      const bookings = loadBookings();
-      let list = getDayBookings(bookings,calYear,calMonth,d);
-      const hour = new Date().getHours();
-
-      if(list.length >= PUB_MAX_PER_DAY){
-        alert("Jour complet.");
-        return;
-      }
-
-      const already = list.some(x =>
-        String(x.entityType || "").toLowerCase() === "mairie" &&
-        String(x.entityName || "").toLowerCase() === "wattignies"
-      );
-
-      if(hour < 16 && already){
-        alert("Avant 16h00, la mairie a déjà réservé une publicité sur cette journée.");
-        return;
-      }
-
-      list.push({
-        date,
-        entityType:"Mairie",
-        entityName:"Wattignies",
-        ts:Date.now(),
-        ts_fr:new Date().toLocaleString("fr-FR"),
-        note: hour < 16 ? "Avant 16h" : "Après 16h — places restantes"
-      });
-
-      setDayBookings(bookings,calYear,calMonth,d,list);
-      saveBookings(bookings);
-
-      $("mairiePubDate").value = date;
-      refreshPreview();
-
-      box.style.display = "none";
-      $("mairiePubTitle").focus();
-
-      alert("Date réservée : " + date);
-    };
-  });
-}
-
-/* SPORT */
-$("sportWeekendSave").onclick = ()=>{
-  secureSave("sportWeekend",$("sportWeekendText").value);
-  alert("Enregistré");
-};
-$("sportWeekendRead").onclick = ()=>{
-  $("sportWeekendText").value = secureRead("sportWeekend") || "";
-};
-$("sportWeekendReset").onclick = ()=>{
-  localStorage.removeItem("sportWeekend");
-  $("sportWeekendText").value = "";
-};
-
-/* ECOLE */
-$("schoolSave").onclick = ()=>{
-  secureSave("schoolWord",$("schoolWord").value);
-  alert("Enregistré");
-};
-$("schoolRead").onclick = ()=>{
-  $("schoolWord").value = secureRead("schoolWord") || "";
-};
-$("schoolReset").onclick = ()=>{
-  localStorage.removeItem("schoolWord");
-  $("schoolWord").value = "";
-};
-
-/* COMMERCE */
-$("payBtn").onclick = async()=>{
-  $("paymentStatus").innerText = "Connexion paiement...";
-  await new Promise(r=>setTimeout(r,700));
-  secureSave("payment",{paid:true,id:"demo_tx_123"});
-  $("paymentStatus").innerText = "Paiement validé ✔";
-  $("paymentStatus").style.color = "green";
-};
-
-/* MAIRIE SERVICES */
-$("openMairieServicesBtn").onclick = ()=>{
-  window.open("https://www.wattignies.fr","_blank","noopener,noreferrer");
-};
-
-$("openHealthServicesBtn").onclick = ()=>{
-  alert(
-    "Annuaire santé démo :\n\n" +
-    "Médecins : à compléter\n" +
-    "Spécialistes : à compléter\n" +
-    "Kinés : à compléter\n" +
-    "Infirmières : à compléter\n" +
-    "Pharmacies : Pharmacie Richardson"
-  );
-};
-
-/* MESSAGE MAIRIE */
-$("mairieMsgSave").onclick = ()=>{
-  const msg = $("mairieMsgInput").value.trim();
-  if(!msg){alert("Saisis un message mairie.");return;}
-  localStorage.setItem(MAIRIE_MSG_KEY,JSON.stringify({message:msg,ts_fr:new Date().toLocaleString("fr-FR")}));
-  alert("Message mairie enregistré.");
-};
-
-$("mairieMsgRead").onclick = ()=>{
-  const raw = localStorage.getItem(MAIRIE_MSG_KEY);
-  if(!raw){alert("Aucun message enregistré.");return;}
-  const data = JSON.parse(raw);
-  $("mairieMsgInput").value = data.message || "";
-};
-
-$("mairieMsgReset").onclick = ()=>{
-  localStorage.removeItem(MAIRIE_MSG_KEY);
-  $("mairieMsgInput").value = "";
-  alert("Message mairie réinitialisé.");
-};
-
-/* PUB MAIRIE */
-$("mairieOpenCalendarBtn").onclick = renderCalendar;
-
-["mairiePubDate","mairiePubTitle","mairiePubText","mairiePubPack","mairiePubPaymentStatus"].forEach(id=>{
-  $(id).addEventListener("input",refreshPreview);
-  $(id).addEventListener("change",refreshPreview);
-});
-
-$("mairiePubValidateQuoteBtn").onclick = ()=>{
-  const p = getFormPayload();
-  if(p.error){alert(p.error);return;}
-
-  const orders = loadOrders();
-  orders.push({
-    ...p,
-    status:"quote_validated",
-    usedSlots:0,
-    ts:Date.now(),
-    ts_fr:new Date().toLocaleString("fr-FR"),
-    dueDate:computeDueDate(Date.now())
-  });
-
-  saveOrders(orders);
-  $("mairiePubPaymentStatus").value = "quote_validated";
-  refreshPreview();
-  refreshStatus();
-  refreshRegularizeList();
-  alert("Devis mairie validé.");
-};
-
-$("mairiePubMarkPaidBtn").onclick = ()=>{
-  const p = getFormPayload();
-  if(p.error){alert(p.error);return;}
-
-  const orders = loadOrders();
-  let order = orders.find(o =>
-    o.date === p.date &&
-    o.title === p.title &&
-    o.text === p.text &&
-    o.pack === p.pack
-  );
-
-  if(order){
-    order.status = "paid";
-    order.paid_ts = Date.now();
-    order.paid_ts_fr = new Date().toLocaleString("fr-FR");
-  }else{
-    orders.push({
-      ...p,
-      status:"paid",
-      usedSlots:0,
-      ts:Date.now(),
-      ts_fr:new Date().toLocaleString("fr-FR"),
-      paid_ts:Date.now(),
-      paid_ts_fr:new Date().toLocaleString("fr-FR"),
-      dueDate:computeDueDate(Date.now())
-    });
-  }
-
-  saveOrders(orders);
-  $("mairiePubPaymentStatus").value = "paid";
-  refreshPreview();
-  refreshStatus();
-  refreshRegularizeList();
-  alert("Dossier marqué payé.");
-};
-
-$("mairiePubActivateBtn").onclick = ()=>{
-  const p = getFormPayload();
-  if(p.error){alert(p.error);return;}
-
-  if(hasBlockingUnpaidOrder()){
-    alert("Activation bloquée : une publicité mairie ancienne de plus de 30 jours n’est pas payée.");
-    return;
-  }
-
-  const orders = loadOrders();
-  const order = orders.find(o =>
-    o.date === p.date &&
-    o.title === p.title &&
-    o.text === p.text &&
-    o.pack === p.pack &&
-    (o.status === "quote_validated" || o.status === "paid") &&
-    Number(o.usedSlots || 0) < Number(o.totalSlots || 1)
-  );
-
-  if(!order){
-    alert("Valide d’abord le devis ou marque le dossier payé.");
-    return;
-  }
-
-  order.usedSlots = Number(order.usedSlots || 0) + 1;
-  order.last_activation_ts = Date.now();
-  order.last_activation_ts_fr = new Date().toLocaleString("fr-FR");
-  saveOrders(orders);
-
-  const active = {
-    title:p.title || "Mairie",
-    text:p.text || "",
-    date:p.date,
-    ts:Date.now()
-  };
-
-  localStorage.setItem(MAIRIE_AD_ACTIVE_KEY,JSON.stringify(active));
-  applyAdToTicker(active);
-  refreshStatus();
-
-  alert("Publicité mairie activée dans le grand bandeau.");
-};
-
-$("mairiePubResetBtn").onclick = ()=>{
-  $("mairiePubDate").value = "";
-  $("mairiePubTitle").value = "";
-  $("mairiePubText").value = "";
-  $("mairiePubPack").value = "1";
-  $("mairiePubPaymentStatus").value = "draft";
-  refreshPreview();
-};
-
-$("mairiePubReadHistoryBtn").onclick = ()=>{
-  const orders = loadOrders();
-  if(!orders.length){alert("Aucun historique pubs mairie.");return;}
-
-  const txt = orders.map((o,i)=>
-    "#" + (i+1) +
-    "\nDate : " + o.date +
-    "\nTitre : " + o.title +
-    "\nTexte : " + o.text +
-    "\nFormule : " + (o.pack === "5" ? "Pack 5" : "1 pub") +
-    "\nMontant HT : " + o.amountHT + " €" +
-    "\nStatut : " + o.status +
-    "\nUtilisations : " + (o.usedSlots || 0) + "/" + (o.totalSlots || 1) +
-    "\nÉchéance : " + o.dueDate +
-    "\nCréé le : " + o.ts_fr
-  ).join("\n\n--------------------\n\n");
-
-  alert("Historique pubs mairie :\n\n" + txt);
-};
-
-$("mairiePubClearHistoryBtn").onclick = ()=>{
-  if(confirm("Vider tout l’historique pubs mairie ?")){
-    localStorage.removeItem(MAIRIE_AD_ORDERS_KEY);
-    localStorage.removeItem(MAIRIE_AD_ACTIVE_KEY);
-    refreshStatus();
-    refreshRegularizeList();
-    alert("Historique vidé.");
-  }
-};
-
-$("mairiePubRefreshRegularizeBtn").onclick = refreshRegularizeList;
-
-$("mairiePubRegularizeBtn").onclick = ()=>{
-  const idx = $("mairiePubRegularizeSelect").value;
-  if(idx === ""){alert("Choisis une publicité.");return;}
-
-  const orders = loadOrders();
-  if(!orders[idx]){alert("Publicité introuvable.");return;}
-
-  orders[idx].status = "paid";
-  orders[idx].paid_ts = Date.now();
-  orders[idx].paid_ts_fr = new Date().toLocaleString("fr-FR");
-
-  saveOrders(orders);
-  refreshStatus();
-  refreshRegularizeList();
-
-  alert("Paiement régularisé.");
-};
-
-/* PARRAINAGE */
-$("mairieReferralSaveBtn").onclick = ()=>{
-  const txt = $("mairieReferralInput").value.trim();
-  if(!txt){alert("Saisis un suivi de parrainage.");return;}
-  localStorage.setItem(MAIRIE_REFERRAL_KEY,JSON.stringify({text:txt,ts_fr:new Date().toLocaleString("fr-FR")}));
-  alert("Suivi parrainage enregistré.");
-};
-
-$("mairieReferralReadBtn").onclick = ()=>{
-  const raw = localStorage.getItem(MAIRIE_REFERRAL_KEY);
-  if(!raw){alert("Aucun suivi enregistré.");return;}
-  const data = JSON.parse(raw);
-  $("mairieReferralInput").value = data.text || "";
-  alert("Dernier suivi chargé.");
-};
-
-$("mairieReferralResetBtn").onclick = ()=>{
-  localStorage.removeItem(MAIRIE_REFERRAL_KEY);
-  $("mairieReferralInput").value = "";
-  alert("Suivi réinitialisé.");
-};
-
-refreshPreview();
-refreshStatus();
-refreshRegularizeList();
-syncActiveAd();
 </script>
 
 </body>
