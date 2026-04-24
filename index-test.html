@@ -180,6 +180,19 @@ alert("Paiement requis");
 return;
 }
 
+ads.push({
+title: currentAd.title,
+text: currentAd.text
+});
+
+document.getElementById("tickerTitle").innerText = currentAd.title;
+document.getElementById("tickerText").innerText = currentAd.text;
+
+startTicker();
+
+preview.innerText="Diffusé ✔";
+}
+
 tickerTitle.innerText=currentAd.title;
 tickerText.innerText=currentAd.text;
 
@@ -188,6 +201,20 @@ preview.innerText="Diffusé ✔";
 
 // INIT
 buildCalendar();
+ let ads = [];
+let currentIndex = 0;
+
+function startTicker(){
+  if(!ads.length) return;
+
+  setInterval(()=>{
+    currentIndex = (currentIndex + 1) % ads.length;
+
+    document.getElementById("tickerTitle").innerText = ads[currentIndex].title;
+    document.getElementById("tickerText").innerText = ads[currentIndex].text;
+
+  },3000);
+} 
 
 </script>
 
