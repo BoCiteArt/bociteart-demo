@@ -3,15 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bo'CitéArt - TEST PROPRE</title>
+<title>Bo'CitéArt - Test bandeau modifiable</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#f5f5f5}
-header{background:#111;color:#fff;padding:10px;text-align:center}
-button{padding:10px;border-radius:8px;border:1px solid #ccc;background:#fff;font-weight:bold;cursor:pointer}
-textarea,input{width:100%;margin-top:5px;padding:8px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}
-.box{background:#fff;padding:10px;border-radius:10px;margin:10px;border:1px solid #ddd}
-#topTicker{background:#fff;color:#111;padding:10px;border-radius:10px;margin-top:10px}
+body{font-family:Arial,sans-serif;margin:0;background:#f5f5f5}
+header{background:#111;color:#fff;padding:12px;text-align:center}
+button{padding:10px 14px;border-radius:8px;border:1px solid #ccc;background:#fff;font-weight:bold;cursor:pointer}
+textarea,input{width:100%;margin-top:6px;padding:9px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}
+.box{background:#fff;padding:12px;border-radius:10px;margin:12px;border:1px solid #ddd}
+.muted{color:#555}
+#topTicker{background:#fff;color:#111;padding:12px;border-radius:12px;margin-top:10px;overflow:hidden}
+#tickerTitleA{font-weight:900;font-size:18px}
+#tickerSubA{font-size:14px;margin-top:5px}
 .calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
 .calDay{padding:8px;background:#eee;text-align:center;border-radius:6px;cursor:pointer}
 .calDay.full{background:#ffb3b3}
@@ -21,54 +24,142 @@ textarea,input{width:100%;margin-top:5px;padding:8px;border-radius:8px;border:1p
 <body>
 
 <header>
-<h2>Bo'CitéArt</h2>
+  <h2>Bo'CitéArt</h2>
 
-<div id="topTicker">
-<div id="tickerTitle" style="font-weight:900;">Annonce partenaire</div>
-<div id="tickerText">Aucune pub active</div>
-</div>
+  <div id="topTicker">
+    <div id="tickerTitleA">Annonce partenaire</div>
+    <div id="tickerSubA">Votre publicité peut apparaître ici.</div>
+  </div>
 </header>
 
 <div class="box">
+  <h3>Mairie / Association — réservation pub</h3>
 
-<h3>Mairie / Association — réservation pub</h3>
+  <b>Calendrier — max 10 pubs / jour</b>
+  <div id="calendar" class="calGrid"></div>
 
-<b>Calendrier — max 10 pubs / jour</b>
-<div id="calendar" class="calGrid"></div>
+  <b>Date sélectionnée</b>
+  <input id="dateInput" readonly>
 
-<b>Date sélectionnée</b>
-<input id="dateInput" readonly>
+  <b>Titre publicité</b>
+  <input id="titleInput" placeholder="Ex : Grand concert ce soir">
 
-<b>Titre</b>
-<input id="titleInput">
+  <b>Texte publicité</b>
+  <textarea id="textInput" placeholder="Ex : Il reste 25 places à tarif réduit."></textarea>
 
-<b>Texte</b>
-<textarea id="textInput"></textarea>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <button onclick="saveAd()">Valider le devis</button>
+    <button onclick="payAd()">Marquer payé</button>
+    <button onclick="activateAd()">Activer dans le grand bandeau</button>
+    <button onclick="resetAll()">Reset</button>
+  </div>
 
-<div style="margin-top:10px;">
-<button onclick="saveAd()">Valider le devis</button>
-<button onclick="payAd()">Marquer payé</button>
-<button onclick="activateAd()">Activer</button>
-<button onclick="resetAll()">Reset</button>
+  <div class="box">
+    <b>Aperçu</b>
+    <div id="preview" class="muted">Aucune pub</div>
+  </div>
 </div>
 
 <div class="box">
-<b>Aperçu</b>
-<div id="preview">Aucune pub</div>
-</div>
+  <h3>Modifier les phrases exemples du grand bandeau</h3>
 
+  <b>Titre</b>
+  <input id="tickerEditTitle" placeholder="Titre du bandeau">
+
+  <b>Phrase</b>
+  <textarea id="tickerEditSubtitle" placeholder="Phrase du bandeau"></textarea>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <button id="tickerSavePartnerBtn" type="button">Enregistrer phrase partenaire</button>
+    <button id="tickerSaveMairieBtn" type="button">Enregistrer phrase mairie / association</button>
+    <button id="tickerResetTextsBtn" type="button">Réinitialiser phrases</button>
+  </div>
 </div>
 
 <script>
 const MAX_PER_DAY = 10;
+const BOOKINGS_KEY = "bociteart_bookings_v1";
+const ACTIVE_PUB_KEY = "bociteart_active_pub_v1";
+const TICKER_TEXTS_KEY = "bociteart_ticker_texts_v1";
+
 let currentAd = null;
+let tickerIndex = 0;
+let tickerTimer = null;
+
+const DEFAULT_TICKER_ITEMS = [
+  {
+    title:"Annonce partenaire",
+    subtitle:"Votre publicité peut apparaître ici."
+  },
+  {
+    title:"Mairie / Association",
+    subtitle:"Information locale, événement, alerte ou annonce validée."
+  }
+];
 
 function loadBookings(){
-  return JSON.parse(localStorage.getItem("bookings") || "{}");
+  try{
+    return JSON.parse(localStorage.getItem(BOOKINGS_KEY) || "{}");
+  }catch(e){
+    return {};
+  }
 }
 
-function saveBookings(b){
-  localStorage.setItem("bookings", JSON.stringify(b));
+function saveBookings(data){
+  localStorage.setItem(BOOKINGS_KEY, JSON.stringify(data));
+}
+
+function loadTickerTexts(){
+  try{
+    const raw = localStorage.getItem(TICKER_TEXTS_KEY);
+    return raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(DEFAULT_TICKER_ITEMS));
+  }catch(e){
+    return JSON.parse(JSON.stringify(DEFAULT_TICKER_ITEMS));
+  }
+}
+
+function saveTickerTexts(items){
+  localStorage.setItem(TICKER_TEXTS_KEY, JSON.stringify(items));
+}
+
+window.tickerItems = loadTickerTexts();
+
+function setTicker(index){
+  if(!Array.isArray(window.tickerItems) || !window.tickerItems.length){
+    window.tickerItems = loadTickerTexts();
+  }
+
+  const item = window.tickerItems[index] || window.tickerItems[0];
+
+  document.getElementById("tickerTitleA").innerText = item.title || "";
+  document.getElementById("tickerSubA").innerText = item.subtitle || "";
+}
+
+function startTicker(){
+  if(tickerTimer) clearInterval(tickerTimer);
+
+  setTicker(tickerIndex);
+
+  tickerTimer = setInterval(()=>{
+    if(!Array.isArray(window.tickerItems) || !window.tickerItems.length) return;
+    tickerIndex = (tickerIndex + 1) % window.tickerItems.length;
+    setTicker(tickerIndex);
+  }, 4000);
+}
+
+function updateTickerText(index, title, subtitle){
+  if(!Array.isArray(window.tickerItems)){
+    window.tickerItems = loadTickerTexts();
+  }
+
+  window.tickerItems[index] = {
+    title: String(title || "").trim(),
+    subtitle: String(subtitle || "").trim()
+  };
+
+  saveTickerTexts(window.tickerItems);
+  tickerIndex = index;
+  setTicker(index);
 }
 
 function buildCalendar(){
@@ -119,10 +210,10 @@ function saveAd(){
   }
 
   currentAd = {
-    date: date,
-    title: title,
-    text: text,
-    paid: false
+    date,
+    title,
+    text,
+    paid:false
   };
 
   document.getElementById("preview").innerText = "Devis validé ✔";
@@ -135,7 +226,7 @@ function payAd(){
   }
 
   currentAd.paid = true;
-  document.getElementById("preview").innerText = "Payé ✔";
+  document.getElementById("preview").innerText = "Payé / régularisé ✔";
 }
 
 function activateAd(){
@@ -163,36 +254,66 @@ function activateAd(){
 
   saveBookings(bookings);
 
-  document.getElementById("tickerTitle").innerText = currentAd.title;
-  document.getElementById("tickerText").innerText = currentAd.text;
+  localStorage.setItem(ACTIVE_PUB_KEY, JSON.stringify(currentAd));
 
-  localStorage.setItem("activePub", JSON.stringify(currentAd));
+  updateTickerText(0, currentAd.title, currentAd.text);
 
-  document.getElementById("preview").innerText = "Diffusé dans le bandeau ✔";
+  document.getElementById("preview").innerText = "Diffusé dans le grand bandeau ✔";
 
   buildCalendar();
 
   alert("Publicité activée dans le grand bandeau.");
 }
 
-function restore(){
-  const raw = localStorage.getItem("activePub");
-  if(!raw) return;
-
+function restoreActivePub(){
   try{
+    const raw = localStorage.getItem(ACTIVE_PUB_KEY);
+    if(!raw) return;
+
     const pub = JSON.parse(raw);
-    document.getElementById("tickerTitle").innerText = pub.title || "Annonce partenaire";
-    document.getElementById("tickerText").innerText = pub.text || "Aucune pub active";
+
+    if(pub && pub.title){
+      updateTickerText(0, pub.title, pub.text || "");
+    }
   }catch(e){}
 }
 
 function resetAll(){
-  localStorage.clear();
+  localStorage.removeItem(BOOKINGS_KEY);
+  localStorage.removeItem(ACTIVE_PUB_KEY);
+  localStorage.removeItem(TICKER_TEXTS_KEY);
   location.reload();
 }
 
+document.getElementById("tickerSavePartnerBtn").onclick = ()=>{
+  updateTickerText(
+    0,
+    document.getElementById("tickerEditTitle").value,
+    document.getElementById("tickerEditSubtitle").value
+  );
+  alert("Phrase partenaire enregistrée.");
+};
+
+document.getElementById("tickerSaveMairieBtn").onclick = ()=>{
+  updateTickerText(
+    1,
+    document.getElementById("tickerEditTitle").value,
+    document.getElementById("tickerEditSubtitle").value
+  );
+  alert("Phrase mairie / association enregistrée.");
+};
+
+document.getElementById("tickerResetTextsBtn").onclick = ()=>{
+  localStorage.removeItem(TICKER_TEXTS_KEY);
+  window.tickerItems = JSON.parse(JSON.stringify(DEFAULT_TICKER_ITEMS));
+  tickerIndex = 0;
+  setTicker(0);
+  alert("Phrases réinitialisées.");
+};
+
 buildCalendar();
-restore();
+restoreActivePub();
+startTicker();
 </script>
 
 </body>
