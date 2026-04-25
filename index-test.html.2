@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Bo’CitéArt - Test Bandeau</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; }
-  header { background:#111; color:#fff; padding:15px; text-align:center; }
-  #topTicker { background:#fff; color:#111; padding:15px; margin:10px; border-radius:12px; border:1px solid #ddd; }
-  #tickerTitleA { font-weight:900; font-size:18px; }
-  #tickerSubA { font-size:14px; margin-top:5px; }
-  .box { background:#fff; margin:12px; padding:15px; border-radius:10px; border:1px solid #ddd; }
-  button { padding:12px 16px; margin:5px; border-radius:8px; border:1px solid #ccc; background:#fff; font-weight:bold; cursor:pointer; }
-  input, textarea { width:100%; padding:10px; margin:8px 0; border-radius:8px; border:1px solid #ccc; box-sizing:border-box; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bo’CitéArt – Démo</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; }
+    header { background:#111; color:#fff; padding:15px; text-align:center; }
+    #topTicker { 
+      background:#fff; color:#111; padding:15px; margin:10px; border-radius:12px; 
+      border:1px solid #ddd; min-height:80px;
+    }
+    #tickerTitleA { font-weight:900; font-size:18px; }
+    #tickerSubA { font-size:14px; margin-top:5px; }
+    .box { background:#fff; margin:12px; padding:15px; border-radius:10px; border:1px solid #ddd; }
+    input, textarea { width:100%; padding:10px; margin:8px 0; border-radius:8px; border:1px solid #ccc; box-sizing:border-box; }
+    button { padding:12px; margin:5px; border-radius:8px; background:#a51e22; color:white; border:none; font-weight:bold; cursor:pointer; }
+  </style>
 </head>
 <body>
 
 <header>
-  <h2>Bo'CitéArt - Test Bandeau</h2>
+  <h2>Bo'CitéArt</h2>
   <div id="topTicker">
     <div id="tickerTitleA">Annonce partenaire</div>
     <div id="tickerSubA">Aucune publicité active</div>
@@ -26,63 +29,63 @@
 </header>
 
 <div class="box">
-  <h3>Publicité Mairie (Test simple)</h3>
-
-  <b>Date réservée</b>
-  <input id="mairiePubDate" value="2026-04-25" readonly>
-
+  <h3>Mairie - Écriture directe dans le bandeau</h3>
+  
   <b>Titre publicité</b>
-  <input id="mairiePubTitle" placeholder="Ex : Concert ce soir" value="Concert ce soir à 21h">
+  <input id="mairiePubTitle" placeholder="Ex : Concert ce soir" value="Mairie de Wattignies">
 
-  <b>Texte publicité</b>
-  <textarea id="mairiePubText" placeholder="Texte de la pub">Il reste 12 places à 5 € - Venez nombreux !</textarea>
+  <b>Texte publicité (ce que tu écris ici s’affiche immédiatement)</b>
+  <textarea id="mairiePubText" rows="4" placeholder="Tape ton texte ici...">Il reste 12 places pour le concert ce soir à 21h - tarif réduit 5€</textarea>
 
-  <button id="activateBtn" style="background:#a51e22;color:white;width:100%;padding:15px;font-size:16px;">
-    ACTIVER DANS LE GRAND BANDEAU
-  </button>
-
-  <div class="box" style="margin-top:15px;">
-    <b>Aperçu</b>
-    <div id="preview" style="color:#555;margin-top:8px;">Clique sur le bouton ci-dessus</div>
-  </div>
+  <button id="resetBtn">Réinitialiser tout (démo)</button>
 </div>
 
 <script>
-  // Mise à jour du bandeau
-  function activatePub() {
+  // Mise à jour EN DIRECT du grand bandeau dès que tu tapes
+  function updateLiveTicker() {
     const title = document.getElementById("mairiePubTitle").value.trim() || "Mairie";
-    const text  = document.getElementById("mairiePubText").value.trim() || "Information importante";
+    const text  = document.getElementById("mairiePubText").value.trim() || "Aucune publicité active";
 
-    const finalTitle = "Mairie — " + title;
-    const finalText  = text;
+    document.getElementById("tickerTitleA").textContent = "Mairie — " + title;
+    document.getElementById("tickerSubA").textContent = text;
 
-    // Mise à jour directe du bandeau
-    document.getElementById("tickerTitleA").textContent = finalTitle;
-    document.getElementById("tickerSubA").textContent = finalText;
-
-    // Aperçu
-    document.getElementById("preview").innerHTML = 
-      `<strong>${finalTitle}</strong><br>${finalText}`;
-
-    alert("✅ Publicité activée dans le grand bandeau !");
+    // Sauvegarde pour que ça reste après rechargement
+    localStorage.setItem("liveMairiePub", JSON.stringify({title: title, text: text}));
   }
-
-  // Brancher le bouton
-  document.getElementById("activateBtn").addEventListener("click", activatePub);
 
   // Restauration au chargement
-  function restorePub() {
-    const saved = localStorage.getItem("lastMairiePub");
-    if (saved) {
-      try {
+  function restoreLivePub() {
+    try {
+      const saved = localStorage.getItem("liveMairiePub");
+      if (saved) {
         const pub = JSON.parse(saved);
-        document.getElementById("tickerTitleA").textContent = pub.title;
-        document.getElementById("tickerSubA").textContent = pub.text;
-      } catch(e) {}
-    }
+        document.getElementById("tickerTitleA").textContent = "Mairie — " + (pub.title || "Mairie");
+        document.getElementById("tickerSubA").textContent = pub.text || "";
+      }
+    } catch(e) {}
   }
 
-  restorePub();
+  // Initialisation
+  restoreLivePub();
+
+  // Mise à jour en temps réel quand tu tapes
+  const titleInput = document.getElementById("mairiePubTitle");
+  const textInput  = document.getElementById("mairiePubText");
+
+  if (titleInput) titleInput.addEventListener("input", updateLiveTicker);
+  if (textInput)  textInput.addEventListener("input", updateLiveTicker);
+
+  // Bouton reset
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if (confirm("Réinitialiser le bandeau ?")) {
+      localStorage.removeItem("liveMairiePub");
+      document.getElementById("mairiePubTitle").value = "Mairie de Wattignies";
+      document.getElementById("mairiePubText").value = "";
+      updateLiveTicker();
+    }
+  });
+
+  console.log("✅ Mode écriture directe activé - tape dans le textarea pour voir le bandeau se mettre à jour");
 </script>
 
 </body>
