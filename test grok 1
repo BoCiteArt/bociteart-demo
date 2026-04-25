@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Bo’CitéArt - Test Bandeau Simple</title>
+<title>Bo’CitéArt - Diffusion Simple Mairie</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; }
@@ -29,36 +29,38 @@
 </header>
 
 <div class="box">
-  <h3>Pub Mairie - Version propre</h3>
+  <h3>Diffusion Pub Mairie - Simple</h3>
 
-  <b>Date</b>
+  <b>Date (optionnelle)</b>
   <input id="dateInput" type="date" value="2026-04-25">
 
-  <b>Titre de la pub</b>
+  <b>Titre de la publicité</b>
   <input id="titleInput" value="Mairie - Grand événement">
 
-  <b>Texte de la pub</b>
-  <textarea id="textInput" rows="4">Grand concert de cirque ce soir à 21h - il reste 52 places - faire vite !</textarea>
+  <b>Texte de la publicité</b>
+  <textarea id="textInput" rows="5">Grand concert de cirque ce soir à 21h - il reste 52 places - faire vite !</textarea>
 
-  <button id="applyBtn">APPLIQUER DANS LE GRAND BANDEAU</button>
+  <button id="diffuseBtn">VALIDER ET DIFFUSER DANS LE GRAND BANDEAU</button>
 </div>
 
 <script>
-  function applyToBandeau() {
-    const date  = document.getElementById("dateInput").value;
+  function diffuserPub() {
+    const date  = document.getElementById("dateInput").value || "";
     const title = document.getElementById("titleInput").value.trim() || "Mairie";
     const text  = document.getElementById("textInput").value.trim() || "Information importante";
 
-    const finalTitle = "Mairie — " + title;
+    const finalTitle = date ? `Mairie (${date}) — ${title}` : `Mairie — ${title}`;
     const finalText  = text;
 
+    // Mise à jour du bandeau
     document.getElementById("tickerTitleA").textContent = finalTitle;
     document.getElementById("tickerSubA").textContent   = finalText;
 
-    alert("✅ Publicité appliquée dans le grand bandeau !");
+    alert("✅ Publicité diffusée dans le grand bandeau !");
   }
 
-  document.getElementById("applyBtn").addEventListener("click", applyToBandeau);
+  // Brancher le bouton
+  document.getElementById("diffuseBtn").addEventListener("click", diffuserPub);
 </script>
 
 </body>
