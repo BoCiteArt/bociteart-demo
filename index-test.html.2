@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bo’CitéArt – Démo</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; }
-    header { background:#111; color:#fff; padding:15px; text-align:center; }
-    #topTicker { 
-      background:#fff; color:#111; padding:15px; margin:10px; border-radius:12px; 
-      border:1px solid #ddd; min-height:80px;
-    }
-    #tickerTitleA { font-weight:900; font-size:18px; }
-    #tickerSubA { font-size:14px; margin-top:5px; }
-    .box { background:#fff; margin:12px; padding:15px; border-radius:10px; border:1px solid #ddd; }
-    input, textarea { width:100%; padding:10px; margin:8px 0; border-radius:8px; border:1px solid #ccc; box-sizing:border-box; }
-    button { padding:12px; margin:5px; border-radius:8px; background:#a51e22; color:white; border:none; font-weight:bold; cursor:pointer; }
-  </style>
+<meta charset="UTF-8">
+<title>Bo’CitéArt - Test Bandeau Direct</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; }
+  header { background:#111; color:#fff; padding:20px; text-align:center; }
+  #topTicker { 
+    background:#fff; color:#111; padding:20px; margin:15px; border-radius:12px; 
+    border:2px solid #ddd; min-height:100px; font-size:16px;
+  }
+  #tickerTitleA { font-weight:900; font-size:19px; margin-bottom:6px; }
+  #tickerSubA { font-size:15px; line-height:1.4; }
+  .box { background:#fff; margin:15px; padding:20px; border-radius:12px; border:1px solid #ddd; }
+  textarea, input { width:100%; padding:12px; margin:10px 0; border:1px solid #ccc; border-radius:8px; box-sizing:border-box; font-size:16px; }
+  button { padding:15px; margin:10px 0; width:100%; background:#a51e22; color:white; border:none; border-radius:8px; font-size:17px; font-weight:bold; cursor:pointer; }
+</style>
 </head>
 <body>
 
@@ -29,63 +29,72 @@
 </header>
 
 <div class="box">
-  <h3>Mairie - Écriture directe dans le bandeau</h3>
-  
-  <b>Titre publicité</b>
-  <input id="mairiePubTitle" placeholder="Ex : Concert ce soir" value="Mairie de Wattignies">
+  <h3>Test Direct Mairie → Grand Bandeau</h3>
+  <p>Écris ci-dessous → le texte doit apparaître immédiatement en haut</p>
 
-  <b>Texte publicité (ce que tu écris ici s’affiche immédiatement)</b>
-  <textarea id="mairiePubText" rows="4" placeholder="Tape ton texte ici...">Il reste 12 places pour le concert ce soir à 21h - tarif réduit 5€</textarea>
+  <b>Titre</b>
+  <input id="titleInput" value="Mairie de Wattignies" placeholder="Titre de la pub">
 
-  <button id="resetBtn">Réinitialiser tout (démo)</button>
+  <b>Texte de la publicité</b>
+  <textarea id="textInput" rows="5" placeholder="Tape ton texte ici...">Concert ce soir à 21h - il reste 12 places à 5€ - faire vite !</textarea>
+
+  <button id="forceBtn">FORCER LA MISE À JOUR DU BANDEAU</button>
+  <button id="resetBtn" style="background:#666;">Réinitialiser</button>
 </div>
 
 <script>
-  // Mise à jour EN DIRECT du grand bandeau dès que tu tapes
-  function updateLiveTicker() {
-    const title = document.getElementById("mairiePubTitle").value.trim() || "Mairie";
-    const text  = document.getElementById("mairiePubText").value.trim() || "Aucune publicité active";
+  const titleEl = document.getElementById("titleInput");
+  const textEl  = document.getElementById("textInput");
+  const forceBtn = document.getElementById("forceBtn");
+  const resetBtn = document.getElementById("resetBtn");
+
+  function updateBandeau() {
+    const title = titleEl.value.trim() || "Mairie";
+    const text  = textEl.value.trim()  || "Aucune publicité active";
 
     document.getElementById("tickerTitleA").textContent = "Mairie — " + title;
-    document.getElementById("tickerSubA").textContent = text;
+    document.getElementById("tickerSubA").textContent   = text;
 
-    // Sauvegarde pour que ça reste après rechargement
-    localStorage.setItem("liveMairiePub", JSON.stringify({title: title, text: text}));
+    // Sauvegarde
+    localStorage.setItem("directMairiePub", JSON.stringify({title: title, text: text}));
   }
 
+  // Mise à jour en direct quand on tape
+  titleEl.addEventListener("input", updateBandeau);
+  textEl.addEventListener("input", updateBandeau);
+
+  // Bouton force
+  forceBtn.addEventListener("click", () => {
+    updateBandeau();
+    alert("✅ Mise à jour forcée du grand bandeau");
+  });
+
+  // Bouton reset
+  resetBtn.addEventListener("click", () => {
+    if (confirm("Réinitialiser le bandeau ?")) {
+      localStorage.removeItem("directMairiePub");
+      titleEl.value = "Mairie de Wattignies";
+      textEl.value = "";
+      updateBandeau();
+    }
+  });
+
   // Restauration au chargement
-  function restoreLivePub() {
+  function restore() {
     try {
-      const saved = localStorage.getItem("liveMairiePub");
+      const saved = localStorage.getItem("directMairiePub");
       if (saved) {
-        const pub = JSON.parse(saved);
-        document.getElementById("tickerTitleA").textContent = "Mairie — " + (pub.title || "Mairie");
-        document.getElementById("tickerSubA").textContent = pub.text || "";
+        const data = JSON.parse(saved);
+        document.getElementById("tickerTitleA").textContent = "Mairie — " + (data.title || "Mairie");
+        document.getElementById("tickerSubA").textContent = data.text || "";
       }
     } catch(e) {}
   }
 
-  // Initialisation
-  restoreLivePub();
+  restore();
+  updateBandeau(); // affichage initial
 
-  // Mise à jour en temps réel quand tu tapes
-  const titleInput = document.getElementById("mairiePubTitle");
-  const textInput  = document.getElementById("mairiePubText");
-
-  if (titleInput) titleInput.addEventListener("input", updateLiveTicker);
-  if (textInput)  textInput.addEventListener("input", updateLiveTicker);
-
-  // Bouton reset
-  document.getElementById("resetBtn").addEventListener("click", () => {
-    if (confirm("Réinitialiser le bandeau ?")) {
-      localStorage.removeItem("liveMairiePub");
-      document.getElementById("mairiePubTitle").value = "Mairie de Wattignies";
-      document.getElementById("mairiePubText").value = "";
-      updateLiveTicker();
-    }
-  });
-
-  console.log("✅ Mode écriture directe activé - tape dans le textarea pour voir le bandeau se mettre à jour");
+  console.log("Mode écriture directe activé - tape dans le textarea");
 </script>
 
 </body>
