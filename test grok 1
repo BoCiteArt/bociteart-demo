@@ -1,25 +1,27 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Test Bandeau Direct</title>
+<title>Bo’CitéArt - Test Bandeau Simple</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; }
   header { background:#111; color:#fff; padding:20px; text-align:center; }
-  #topTicker { background:#fff; color:#111; padding:20px; margin:15px; border-radius:12px; border:2px solid #ddd; min-height:110px; }
+  #topTicker { 
+    background:#fff; color:#111; padding:20px; margin:15px; border-radius:12px; 
+    border:2px solid #ddd; min-height:110px; 
+  }
   #tickerTitleA { font-weight:900; font-size:19px; }
   #tickerSubA { font-size:15px; margin-top:6px; line-height:1.4; }
   .box { background:#fff; margin:15px; padding:20px; border-radius:12px; border:1px solid #ddd; }
-  textarea { width:100%; padding:15px; border:2px solid #a51e22; border-radius:10px; font-size:16px; min-height:140px; }
-  button { padding:15px; width:100%; margin:10px 0; background:#a51e22; color:white; border:none; border-radius:10px; font-size:17px; font-weight:bold; }
+  input, textarea { width:100%; padding:12px; margin:8px 0; border:1px solid #ccc; border-radius:8px; box-sizing:border-box; font-size:16px; }
+  button { padding:15px; width:100%; margin:10px 0; background:#a51e22; color:white; border:none; border-radius:10px; font-size:17px; font-weight:bold; cursor:pointer; }
 </style>
 </head>
 <body>
 
 <header>
-  <h2>Bo'CitéArt - Test Direct</h2>
+  <h2>Bo'CitéArt</h2>
   <div id="topTicker">
     <div id="tickerTitleA">Annonce partenaire</div>
     <div id="tickerSubA">Aucune publicité active</div>
@@ -27,39 +29,36 @@
 </header>
 
 <div class="box">
-  <h3>Écris ici → le texte apparaît en haut</h3>
-  
-  <b>Titre</b>
-  <input id="titleInput" value="Mairie" style="width:100%; padding:12px; margin-bottom:10px;">
+  <h3>Pub Mairie - Version propre</h3>
 
-  <b>Texte publicité</b>
-  <textarea id="textInput" placeholder="Tape ton texte ici...">Grand concert de cirque ce soir à 21h - il reste 52 places - faire vite !</textarea>
+  <b>Date</b>
+  <input id="dateInput" type="date" value="2026-04-25">
 
-  <button onclick="resetAll()">Réinitialiser</button>
+  <b>Titre de la pub</b>
+  <input id="titleInput" value="Mairie - Grand événement">
+
+  <b>Texte de la pub</b>
+  <textarea id="textInput" rows="4">Grand concert de cirque ce soir à 21h - il reste 52 places - faire vite !</textarea>
+
+  <button id="applyBtn">APPLIQUER DANS LE GRAND BANDEAU</button>
 </div>
 
 <script>
-  function updateBandeau() {
+  function applyToBandeau() {
+    const date  = document.getElementById("dateInput").value;
     const title = document.getElementById("titleInput").value.trim() || "Mairie";
-    const text  = document.getElementById("textInput").value.trim() || "";
+    const text  = document.getElementById("textInput").value.trim() || "Information importante";
 
-    document.getElementById("tickerTitleA").textContent = "Mairie — " + title;
-    document.getElementById("tickerSubA").textContent = text;
+    const finalTitle = "Mairie — " + title;
+    const finalText  = text;
+
+    document.getElementById("tickerTitleA").textContent = finalTitle;
+    document.getElementById("tickerSubA").textContent   = finalText;
+
+    alert("✅ Publicité appliquée dans le grand bandeau !");
   }
 
-  document.getElementById("titleInput").addEventListener("input", updateBandeau);
-  document.getElementById("textInput").addEventListener("input", updateBandeau);
-
-  function resetAll() {
-    if (confirm("Réinitialiser ?")) {
-      document.getElementById("titleInput").value = "Mairie";
-      document.getElementById("textInput").value = "";
-      updateBandeau();
-    }
-  }
-
-  // Initialisation
-  updateBandeau();
+  document.getElementById("applyBtn").addEventListener("click", applyToBandeau);
 </script>
 
 </body>
