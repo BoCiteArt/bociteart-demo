@@ -2,20 +2,20 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Bo’CitéArt - Diffusion Simple Mairie</title>
+<title>Bo’CitéArt - Bandeau Direct</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; }
   header { background:#111; color:#fff; padding:20px; text-align:center; }
   #topTicker { 
-    background:#fff; color:#111; padding:20px; margin:15px; border-radius:12px; 
-    border:2px solid #ddd; min-height:110px; 
+    background:#fff; color:#111; padding:25px; margin:15px; border-radius:12px; 
+    border:2px solid #ddd; min-height:120px; 
   }
-  #tickerTitleA { font-weight:900; font-size:19px; }
-  #tickerSubA { font-size:15px; margin-top:6px; line-height:1.4; }
+  #tickerTitleA { font-weight:900; font-size:20px; }
+  #tickerSubA { font-size:16px; margin-top:8px; line-height:1.4; }
   .box { background:#fff; margin:15px; padding:20px; border-radius:12px; border:1px solid #ddd; }
-  input, textarea { width:100%; padding:12px; margin:8px 0; border:1px solid #ccc; border-radius:8px; box-sizing:border-box; font-size:16px; }
-  button { padding:15px; width:100%; margin:10px 0; background:#a51e22; color:white; border:none; border-radius:10px; font-size:17px; font-weight:bold; cursor:pointer; }
+  input, textarea { width:100%; padding:12px; margin:8px 0; border:1px solid #ccc; border-radius:8px; box-sizing:border-box; }
+  button { padding:16px; width:100%; background:#a51e22; color:white; border:none; border-radius:10px; font-size:17px; font-weight:bold; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -29,38 +29,29 @@
 </header>
 
 <div class="box">
-  <h3>Diffusion Pub Mairie - Simple</h3>
+  <h3>Pub Mairie - Diffusion directe</h3>
 
-  <b>Date (optionnelle)</b>
-  <input id="dateInput" type="date" value="2026-04-25">
+  <b>Titre</b>
+  <input id="titleInput" value="Mairie">
 
-  <b>Titre de la publicité</b>
-  <input id="titleInput" value="Mairie - Grand événement">
+  <b>Texte de la pub</b>
+  <textarea id="textInput" rows="5">Grand concert ce soir à 21h - il reste 52 places - faire vite !</textarea>
 
-  <b>Texte de la publicité</b>
-  <textarea id="textInput" rows="5">Grand concert de cirque ce soir à 21h - il reste 52 places - faire vite !</textarea>
-
-  <button id="diffuseBtn">VALIDER ET DIFFUSER DANS LE GRAND BANDEAU</button>
+  <button id="applyBtn">VALIDER ET DIFFUSER DANS LE GRAND BANDEAU</button>
 </div>
 
 <script>
-  function diffuserPub() {
-    const date  = document.getElementById("dateInput").value || "";
+  function diffuserMaintenant() {
     const title = document.getElementById("titleInput").value.trim() || "Mairie";
-    const text  = document.getElementById("textInput").value.trim() || "Information importante";
+    const text  = document.getElementById("textInput").value.trim() || "";
 
-    const finalTitle = date ? `Mairie (${date}) — ${title}` : `Mairie — ${title}`;
-    const finalText  = text;
+    document.getElementById("tickerTitleA").textContent = "Mairie — " + title;
+    document.getElementById("tickerSubA").textContent = text;
 
-    // Mise à jour du bandeau
-    document.getElementById("tickerTitleA").textContent = finalTitle;
-    document.getElementById("tickerSubA").textContent   = finalText;
-
-    alert("✅ Publicité diffusée dans le grand bandeau !");
+    alert("✅ Pub diffusée dans le grand bandeau !");
   }
 
-  // Brancher le bouton
-  document.getElementById("diffuseBtn").addEventListener("click", diffuserPub);
+  document.getElementById("applyBtn").addEventListener("click", diffuserMaintenant);
 </script>
 
 </body>
