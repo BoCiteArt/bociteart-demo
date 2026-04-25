@@ -1,15 +1,260 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>TEST SIMPLE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bo'CitéArt - Test grand bandeau</title>
+
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#f5f5f5}
+header{background:#111;color:#fff;padding:12px;text-align:center}
+.box{background:#fff;margin:12px;padding:12px;border-radius:10px;border:1px solid #ddd}
+button{padding:10px 14px;border-radius:8px;border:1px solid #ccc;background:#fff;font-weight:bold;cursor:pointer}
+input,textarea{width:100%;padding:8px;margin-top:6px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}
+.muted{color:#555}
+#topTicker{background:#fff;color:#111;padding:12px;border-radius:12px;margin-top:10px}
+#tickerTitleA{font-weight:900;font-size:18px}
+#tickerSubA{font-size:14px;margin-top:5px}
+.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
+.calDay{padding:8px;background:#eee;text-align:center;border-radius:6px;cursor:pointer}
+.calDay.full{background:#ffb3b3}
+
+/* Tabs */
+.tabs {display:flex;gap:5px;margin-bottom:15px;border-bottom:1px solid #ddd;padding-bottom:8px}
+.tab-btn {padding:10px 20px;border-radius:8px 8px 0 0;border:1px solid #ccc;background:#fff;font-weight:bold;cursor:pointer}
+.tab-btn.active {background:#111;color:#fff;border-bottom:2px solid #111}
+</style>
 </head>
 
-<body style="font-family:Arial">
+<body>
 
-<h1>TEST OK</h1>
+<header>
+  <h2>Bo'CitéArt</h2>
+  <div id="topTicker">
+    <div id="tickerTitleA">Annonce partenaire</div>
+    <div id="tickerSubA">Aucune publicité active</div>
+  </div>
+</header>
 
-<button onclick="alert('ça marche')">Clique</button>
+<div class="box">
+  <h3>Calendrier réservation</h3>
+  <div class="muted">Maximum 10 publicités par jour (tous types confondus).</div>
+  <div id="calendar" class="calGrid"></div>
+</div>
+
+<div class="box">
+  <h3>Gestion des publicités</h3>
+
+  <!-- Onglets -->
+  <div class="tabs">
+    <button id="tab-mairie"     class="tab-btn active" onclick="switchTab('mairie')">Mairie</button>
+    <button id="tab-commerce"   class="tab-btn" onclick="switchTab('commerce')">Commerce</button>
+    <button id="tab-independant"class="tab-btn" onclick="switchTab('independant')">Indépendant</button>
+  </div>
+
+  <div id="pubForm">
+    <b id="formTypeLabel">Publicité Mairie</b>
+
+    <b>Date réservée</b>
+    <input id="pubDate" readonly>
+
+    <b id="titleLabel">Titre publicité</b>
+    <input id="pubTitle" placeholder="Ex : Concert ce soir">
+
+    <b id="textLabel">Texte publicité</b>
+    <textarea id="pubText" placeholder="Ex : Il reste 25 places à tarif réduit."></textarea>
+
+    <b>Statut paiement</b>
+    <label style="display:block;margin:10px 0;font-weight:normal">
+      <input type="checkbox" id="pubPaid"> Payé
+    </label>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+      <button id="pubDirectActivateBtn" type="button">
+        Valider et afficher dans le grand bandeau
+      </button>
+      <button id="pubResetBtn" type="button">Réinitialiser tout</button>
+    </div>
+
+    <div class="box">
+      <b>Aperçu</b>
+      <div id="pubPreview" class="muted">Aucune publicité préparée.</div>
+    </div>
+
+    <div class="box">
+      <b>État</b>
+      <div id="pubStatusOut" class="muted">Aucune publicité active.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const MAX_PER_DAY = 10;
+const BOOKINGS_KEY = "bociteart_pub_bookings_v1";
+const ACTIVE_PUB_KEY = "bociteart_grand_ticker_active_pub_v1";
+
+let currentType = "mairie"; // onglet actif
+
+// Configuration par type
+const typeConfig = {
+  mairie:     { name: "Mairie",     source: "mairie",     graceDays: 30 },
+  commerce:   { name: "Commerce",   source: "commerce",   graceDays: 0 },
+  independant:{ name: "Indépendant",source: "independant",graceDays: 0 }
+};
+
+window.tickerItems = [{ title:"Annonce partenaire", subtitle:"Aucune publicité active" }];
+
+function loadBookings(){
+  try{ return JSON.parse(localStorage.getItem(BOOKINGS_KEY) || "{}"); }
+  catch(e){ return {}; }
+}
+
+function saveBookings(data){
+  localStorage.setItem(BOOKINGS_KEY, JSON.stringify(data));
+}
+
+function buildCalendar(){
+  const bookings = loadBookings();
+  let html = "";
+
+  for(let d = 1; d <= 31; d++){
+    const date = `2026-04-${String(d).padStart(2,"0")}`;
+    const count = bookings[date] ? bookings[date].length : 0;
+    const full = count >= MAX_PER_DAY;
+    const cls = full ? "calDay full" : "calDay";
+
+    html += `<div class="${cls}" onclick="selectDate('${date}')">${d}<br>${count}/${MAX_PER_DAY}</div>`;
+  }
+
+  document.getElementById("calendar").innerHTML = html;
+}
+
+function selectDate(date){
+  // Remplit la date dans le formulaire de l'onglet actif
+  document.getElementById("pubDate").value = date;
+  document.getElementById("pubStatusOut").innerText = `Date réservée : ${date} (${typeConfig[currentType].name})`;
+  // On reste sur l'onglet déjà actif (comme tu l'as demandé)
+}
+
+function switchTab(type){
+  currentType = type;
+
+  // Mise en évidence de l'onglet
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(`tab-${type}`).classList.add('active');
+
+  // Mise à jour des labels
+  const cfg = typeConfig[type];
+  document.getElementById("formTypeLabel").textContent = `Publicité ${cfg.name}`;
+}
+
+function forcePubIntoGrandTicker(){
+  const cfg = typeConfig[currentType];
+  const date  = document.getElementById("pubDate").value.trim();
+  const title = document.getElementById("pubTitle").value.trim();
+  const text  = document.getElementById("pubText").value.trim();
+  const paid  = document.getElementById("pubPaid").checked;
+
+  if(!date){ alert("Choisis d’abord une date dans le calendrier."); return; }
+  if(!title){ alert("Renseigne le titre de la publicité."); return; }
+  if(!text){ alert("Renseigne le texte de la publicité."); return; }
+
+  const bookings = loadBookings();
+  if(!bookings[date]) bookings[date] = [];
+
+  if(bookings[date].length >= MAX_PER_DAY){
+    alert("Jour complet (10 pubs maximum).");
+    return;
+  }
+
+  const bookingEntry = {
+    source: cfg.source,
+    title: title,
+    text: text,
+    ts: Date.now(),
+    ts_fr: new Date().toLocaleString("fr-FR"),
+    paid: paid,
+    paidTs: paid ? Date.now() : null
+  };
+
+  bookings[date].push(bookingEntry);
+  saveBookings(bookings);
+
+  // === VÉRIFICATION PAIEMENT ===
+  let canDisplay = paid;
+
+  if (!paid) {
+    const daysSince = Math.floor((Date.now() - bookingEntry.ts) / 86400000);
+    if (cfg.graceDays > 0 && daysSince <= cfg.graceDays) {
+      canDisplay = true; // Mairie = 30 jours de délai
+    }
+  }
+
+  if (!canDisplay) {
+    const msg = cfg.graceDays > 0 
+      ? "Délai de 30 jours dépassé pour la Mairie. Paiement obligatoire." 
+      : "Paiement obligatoire pour afficher cette publicité.";
+    alert(msg);
+    buildCalendar();
+    return;
+  }
+
+  // === AFFICHAGE DANS LE GRAND BANDEAU ===
+  const finalTitle = `${cfg.name} — ${title}`;
+  const finalText  = text;
+
+  document.getElementById("tickerTitleA").textContent = finalTitle;
+  document.getElementById("tickerSubA").textContent = finalText;
+
+  window.tickerItems[0] = { title: finalTitle, subtitle: finalText };
+
+  localStorage.setItem(ACTIVE_PUB_KEY, JSON.stringify({
+    source: cfg.source,
+    date: date,
+    title: finalTitle,
+    subtitle: finalText,
+    ts: Date.now(),
+    ts_fr: new Date().toLocaleString("fr-FR"),
+    paid: paid
+  }));
+
+  document.getElementById("pubPreview").textContent = `Date : ${date} | ${finalTitle} • ${finalText}`;
+  document.getElementById("pubStatusOut").textContent = `Publicité ${cfg.name} affichée dans le grand bandeau.`;
+
+  buildCalendar();
+  alert(`✅ Publicité ${cfg.name} affichée dans le grand bandeau !`);
+}
+
+function restoreGrandTickerActivePub(){
+  try{
+    const raw = localStorage.getItem(ACTIVE_PUB_KEY);
+    if(!raw) return;
+    const pub = JSON.parse(raw);
+
+    document.getElementById("tickerTitleA").textContent = pub.title || "Annonce partenaire";
+    document.getElementById("tickerSubA").textContent = pub.subtitle || "Aucune publicité active";
+
+    window.tickerItems[0] = { title: pub.title || "", subtitle: pub.subtitle || "" };
+  }catch(e){}
+}
+
+function resetDemo(){
+  if(confirm("Réinitialiser toutes les réservations et la pub active ?")){
+    localStorage.removeItem(BOOKINGS_KEY);
+    localStorage.removeItem(ACTIVE_PUB_KEY);
+    location.reload();
+  }
+}
+
+// === INITIALISATION ===
+document.getElementById("pubDirectActivateBtn").onclick = forcePubIntoGrandTicker;
+document.getElementById("pubResetBtn").onclick = resetDemo;
+
+buildCalendar();
+restoreGrandTickerActivePub();
+switchTab('mairie'); // on commence sur Mairie
+</script>
 
 </body>
 </html>
