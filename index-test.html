@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bo'CitéArt - Mairie vers grand bandeau</title>
+<title>Bo'CitéArt - Test grand bandeau</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#f5f5f5}
+body{font-family:Arial,sans-serif;margin:0;background:#f5f5f5}
 header{background:#111;color:#fff;padding:12px;text-align:center}
 .box{background:#fff;margin:12px;padding:12px;border-radius:10px;border:1px solid #ddd}
-button{padding:10px;border-radius:8px;border:1px solid #ccc;background:#fff;font-weight:bold;cursor:pointer}
-input,textarea,select{width:100%;padding:8px;margin-top:6px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}
+button{padding:10px 14px;border-radius:8px;border:1px solid #ccc;background:#fff;font-weight:bold;cursor:pointer}
+input,textarea{width:100%;padding:8px;margin-top:6px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}
 .muted{color:#555}
 #topTicker{background:#fff;color:#111;padding:12px;border-radius:12px;margin-top:10px}
-#tickerTitleA,#tickerTitleB,#tickerTitle{font-weight:900;font-size:18px}
-#tickerSubA,#tickerSubB,#tickerText{font-size:14px;margin-top:5px}
+#tickerTitleA{font-weight:900;font-size:18px}
+#tickerSubA{font-size:14px;margin-top:5px}
 .calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
 .calDay{padding:8px;background:#eee;text-align:center;border-radius:6px;cursor:pointer}
 .calDay.full{background:#ffb3b3}
@@ -29,34 +29,19 @@ input,textarea,select{width:100%;padding:8px;margin-top:6px;border-radius:8px;bo
   <div id="topTicker">
     <div id="tickerTitleA">Annonce partenaire</div>
     <div id="tickerSubA">Aucune publicité active</div>
-
-    <div id="tickerTitleB" style="display:none;">Annonce partenaire</div>
-    <div id="tickerSubB" style="display:none;">Aucune publicité active</div>
-
-    <div id="tickerTitle" style="display:none;">Annonce partenaire</div>
-    <div id="tickerText" style="display:none;">Aucune publicité active</div>
   </div>
 </header>
 
 <div class="box">
-  <h3>Onglet Mairie — publicité grand bandeau</h3>
-
-  <div class="muted">
-    Ici, la mairie réserve une date, écrit sa publicité, valide le devis,
-    simule le paiement, puis active directement la publicité dans le grand bandeau.
-  </div>
-</div>
-
-<div class="box">
   <h3>Calendrier réservation</h3>
   <div class="muted">
-    Maximum 10 publicités par jour. Après activation, le compteur du jour augmente.
+    Maximum 10 publicités par jour.
   </div>
   <div id="calendar" class="calGrid"></div>
 </div>
 
 <div class="box">
-  <h3>Fiche publicité mairie</h3>
+  <h3>Publicité mairie</h3>
 
   <b>Date réservée</b>
   <input id="mairiePubDate" readonly>
@@ -65,20 +50,21 @@ input,textarea,select{width:100%;padding:8px;margin-top:6px;border-radius:8px;bo
   <input id="mairiePubTitle" placeholder="Ex : Concert ce soir">
 
   <b>Texte publicité</b>
-  <textarea id="mairiePubText" placeholder="Ex : Il reste des places à tarif réduit."></textarea>
-
-  <b>Statut</b>
-  <select id="mairiePubPaymentStatus">
-    <option value="draft">Brouillon</option>
-    <option value="quote_validated">Devis validé</option>
-    <option value="paid">Payé / régularisé</option>
-  </select>
+  <textarea id="mairiePubText" placeholder="Ex : Il reste 25 places à tarif réduit."></textarea>
 
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-    <button id="mairiePubValidateQuoteBtn">Valider le devis</button>
-    <button id="mairiePubMarkPaidBtn">Marquer payé / régularisé</button>
-    <button id="mairiePubTransmitBtn">Activer dans le bandeau</button>
-    <button id="resetBtn">Reset démo</button>
+    <button id="mairiePubDirectActivateBtn" type="button">
+      Valider et afficher dans le grand bandeau
+    </button>
+
+    <button id="mairiePubResetBtn" type="button">
+      Réinitialiser
+    </button>
+  </div>
+
+  <div class="box">
+    <b>Aperçu</b>
+    <div id="mairiePubPreview" class="muted">Aucune publicité mairie préparée.</div>
   </div>
 
   <div class="box">
@@ -89,12 +75,8 @@ input,textarea,select{width:100%;padding:8px;margin-top:6px;border-radius:8px;bo
 
 <script>
 const MAX_PER_DAY = 10;
-
-const BOOKINGS_KEY = "bociteart_mairie_bookings_v1";
-const MAIRIE_DRAFT_KEY = "bociteart_mairie_draft_pub_v1";
-const MAIRIE_ACTIVE_KEY = "bociteart_mairie_active_pub_v1";
-
-let currentMairiePub = null;
+const BOOKINGS_KEY = "bociteart_pub_bookings_v1";
+const ACTIVE_PUB_KEY = "bociteart_grand_ticker_active_pub_v1";
 
 window.tickerItems = [
   {
@@ -119,7 +101,7 @@ function buildCalendar(){
   const bookings = loadBookings();
   let html = "";
 
-  for(let d=1; d<=31; d++){
+  for(let d = 1; d <= 31; d++){
     const date = `2026-04-${String(d).padStart(2,"0")}`;
     const count = bookings[date] ? bookings[date].length : 0;
     const full = count >= MAX_PER_DAY;
@@ -149,230 +131,106 @@ function selectDate(date){
   document.getElementById("mairiePubStatusOut").innerText = "Date réservée : " + date;
 }
 
-function getMairieFormData(){
-  return {
-    type:"mairie_pub",
-    entityType:"Mairie",
-    entityName:"Mairie de Wattignies",
-    date:document.getElementById("mairiePubDate").value.trim(),
-    title:document.getElementById("mairiePubTitle").value.trim(),
-    text:document.getElementById("mairiePubText").value.trim(),
-    status:document.getElementById("mairiePubPaymentStatus").value,
-    ts:Date.now(),
-    ts_fr:new Date().toLocaleString("fr-FR")
-  };
-}
+function forceMairiePubIntoGrandTicker(){
+  const date = document.getElementById("mairiePubDate").value.trim();
+  const title = document.getElementById("mairiePubTitle").value.trim();
+  const text = document.getElementById("mairiePubText").value.trim();
 
-function validateForm(pub){
-  if(!pub.date){
-    alert("Choisis une date dans le calendrier.");
-    return false;
+  if(!date){
+    alert("Choisis d’abord une date.");
+    return;
   }
 
-  if(!pub.title){
+  if(!title){
     alert("Renseigne le titre de la publicité.");
-    return false;
+    return;
   }
 
-  if(!pub.text){
+  if(!text){
     alert("Renseigne le texte de la publicité.");
-    return false;
-  }
-
-  return true;
-}
-
-function forceGrandBandeau(pub){
-  const title = "Mairie — " + pub.title;
-  const text = pub.text + " • " + pub.entityName;
-
-  const idsTitle = ["tickerTitleA","tickerTitleB","tickerTitle"];
-  const idsText = ["tickerSubA","tickerSubB","tickerText"];
-
-  idsTitle.forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.textContent = title;
-  });
-
-  idsText.forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.textContent = text;
-  });
-
-  window.tickerItems = [
-    {
-      title:title,
-      subtitle:text
-    }
-  ];
-
-  if(typeof window.setTicker === "function"){
-    try{
-      window.setTicker(0);
-    }catch(e){}
-  }
-
-  localStorage.setItem(MAIRIE_ACTIVE_KEY, JSON.stringify({
-    title:title,
-    subtitle:text,
-    original:pub,
-    active:true,
-    activatedAt:Date.now(),
-    activatedAtFr:new Date().toLocaleString("fr-FR")
-  }));
-}
-
-function validateQuote(){
-  const pub = getMairieFormData();
-
-  if(!validateForm(pub)) return;
-
-  pub.status = "quote_validated";
-  currentMairiePub = pub;
-
-  document.getElementById("mairiePubPaymentStatus").value = "quote_validated";
-  localStorage.setItem(MAIRIE_DRAFT_KEY, JSON.stringify(pub));
-
-  document.getElementById("mairiePubStatusOut").innerText =
-    "Devis validé pour : " + pub.title;
-}
-
-function markPaid(){
-  let pub = currentMairiePub;
-
-  if(!pub){
-    try{
-      pub = JSON.parse(localStorage.getItem(MAIRIE_DRAFT_KEY) || "null");
-    }catch(e){
-      pub = null;
-    }
-  }
-
-  if(!pub){
-    alert("Valide d’abord le devis.");
-    return;
-  }
-
-  pub.status = "paid";
-  pub.paid = true;
-  pub.paidAt = Date.now();
-  pub.paidAtFr = new Date().toLocaleString("fr-FR");
-
-  currentMairiePub = pub;
-
-  document.getElementById("mairiePubPaymentStatus").value = "paid";
-  localStorage.setItem(MAIRIE_DRAFT_KEY, JSON.stringify(pub));
-
-  document.getElementById("mairiePubStatusOut").innerText =
-    "Paiement simulé / régularisé validé.";
-}
-
-function activateInBandeau(){
-  let pub = currentMairiePub;
-
-  if(!pub){
-    try{
-      pub = JSON.parse(localStorage.getItem(MAIRIE_DRAFT_KEY) || "null");
-    }catch(e){
-      pub = null;
-    }
-  }
-
-  if(!pub){
-    alert("Aucune publicité à activer. Valide d’abord le devis.");
-    return;
-  }
-
-  const latestForm = getMairieFormData();
-
-  pub.date = latestForm.date || pub.date;
-  pub.title = latestForm.title || pub.title;
-  pub.text = latestForm.text || pub.text;
-
-  if(!validateForm(pub)) return;
-
-  if(pub.status !== "paid" && pub.paid !== true){
-    alert("Il faut d’abord marquer la publicité comme payée / régularisée.");
     return;
   }
 
   const bookings = loadBookings();
 
-  if(!bookings[pub.date]){
-    bookings[pub.date] = [];
+  if(!bookings[date]){
+    bookings[date] = [];
   }
 
-  if(bookings[pub.date].length >= MAX_PER_DAY){
+  if(bookings[date].length >= MAX_PER_DAY){
     alert("Jour complet.");
     return;
   }
 
-  bookings[pub.date].push({
-    entityType:"Mairie",
-    entityName:"Mairie de Wattignies",
-    title:pub.title,
-    text:pub.text,
+  bookings[date].push({
+    source:"mairie",
+    title:title,
+    text:text,
     ts:Date.now(),
     ts_fr:new Date().toLocaleString("fr-FR")
   });
 
   saveBookings(bookings);
 
-  forceGrandBandeau(pub);
+  const finalTitle = "Mairie — " + title;
+  const finalText = text;
 
-  document.getElementById("mairiePubStatusOut").innerText =
-    "Publicité activée dans le grand bandeau ✔";
+  document.getElementById("tickerTitleA").textContent = finalTitle;
+  document.getElementById("tickerSubA").textContent = finalText;
+
+  window.tickerItems[0] = {
+    title:finalTitle,
+    subtitle:finalText
+  };
+
+  localStorage.setItem(ACTIVE_PUB_KEY, JSON.stringify({
+    source:"mairie",
+    date:date,
+    title:finalTitle,
+    subtitle:finalText,
+    ts:Date.now(),
+    ts_fr:new Date().toLocaleString("fr-FR")
+  }));
+
+  document.getElementById("mairiePubPreview").textContent =
+    "Date : " + date + " | " + finalTitle + " • " + finalText;
+
+  document.getElementById("mairiePubStatusOut").textContent =
+    "Publicité mairie affichée dans le grand bandeau.";
 
   buildCalendar();
 
-  alert("Publicité mairie activée dans le grand bandeau.");
+  alert("Publicité mairie affichée dans le grand bandeau.");
 }
 
-function restoreActivePub(){
+function restoreGrandTickerActivePub(){
   try{
-    const raw = localStorage.getItem(MAIRIE_ACTIVE_KEY);
+    const raw = localStorage.getItem(ACTIVE_PUB_KEY);
     if(!raw) return;
 
-    const active = JSON.parse(raw);
+    const pub = JSON.parse(raw);
 
-    if(active && active.active){
-      const idsTitle = ["tickerTitleA","tickerTitleB","tickerTitle"];
-      const idsText = ["tickerSubA","tickerSubB","tickerText"];
+    document.getElementById("tickerTitleA").textContent = pub.title || "Annonce partenaire";
+    document.getElementById("tickerSubA").textContent = pub.subtitle || "Aucune publicité active";
 
-      idsTitle.forEach(id=>{
-        const el = document.getElementById(id);
-        if(el) el.textContent = active.title || "";
-      });
-
-      idsText.forEach(id=>{
-        const el = document.getElementById(id);
-        if(el) el.textContent = active.subtitle || "";
-      });
-
-      window.tickerItems = [
-        {
-          title:active.title,
-          subtitle:active.subtitle
-        }
-      ];
-    }
+    window.tickerItems[0] = {
+      title:pub.title || "",
+      subtitle:pub.subtitle || ""
+    };
   }catch(e){}
 }
 
 function resetDemo(){
   localStorage.removeItem(BOOKINGS_KEY);
-  localStorage.removeItem(MAIRIE_DRAFT_KEY);
-  localStorage.removeItem(MAIRIE_ACTIVE_KEY);
+  localStorage.removeItem(ACTIVE_PUB_KEY);
   location.reload();
 }
 
-document.getElementById("mairiePubValidateQuoteBtn").onclick = validateQuote;
-document.getElementById("mairiePubMarkPaidBtn").onclick = markPaid;
-document.getElementById("mairiePubTransmitBtn").onclick = activateInBandeau;
-document.getElementById("resetBtn").onclick = resetDemo;
+document.getElementById("mairiePubDirectActivateBtn").onclick = forceMairiePubIntoGrandTicker;
+document.getElementById("mairiePubResetBtn").onclick = resetDemo;
 
 buildCalendar();
-restoreActivePub();
+restoreGrandTickerActivePub();
 </script>
 
 </body>
