@@ -1,1 +1,59 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Bo’CitéArt - Mairie → Bandeau</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; }
+  header { background:#111; color:#fff; padding:20px; text-align:center; }
+  #topTicker { 
+    background:#fff; color:#111; padding:25px; margin:15px; border-radius:12px; 
+    border:2px solid #a51e22; min-height:130px; 
+  }
+  #tickerTitleA { font-weight:900; font-size:20px; }
+  #tickerSubA { font-size:16px; margin-top:8px; line-height:1.4; }
+  .box { background:#fff; margin:15px; padding:20px; border-radius:12px; border:1px solid #ddd; }
+  input, textarea { width:100%; padding:12px; margin:8px 0; border:1px solid #ccc; border-radius:8px; box-sizing:border-box; font-size:16px; }
+  button { padding:15px; width:100%; background:#a51e22; color:white; border:none; border-radius:10px; font-size:17px; font-weight:bold; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<header>
+  <h2>Bo'CitéArt</h2>
+  <div id="topTicker">
+    <div id="tickerTitleA">Annonce partenaire</div>
+    <div id="tickerSubA">Aucune publicité active</div>
+  </div>
+</header>
+
+<div class="box">
+  <h3>Mairie - Diffusion dans le grand bandeau</h3>
+
+  <b>Titre de la publicité</b>
+  <input id="mairieTitle" value="Mairie de Wattignies">
+
+  <b>Texte de la publicité</b>
+  <textarea id="mairieText" rows="5">Grand concert ce soir à 21h - il reste 52 places - faire vite !</textarea>
+
+  <button id="diffuseBtn">VALIDER ET DIFFUSER DANS LE GRAND BANDEAU</button>
+</div>
+
+<script>
+  function diffuserPub() {
+    const title = document.getElementById("mairieTitle").value.trim() || "Mairie";
+    const text  = document.getElementById("mairieText").value.trim() || "Information importante";
+
+    document.getElementById("tickerTitleA").textContent = "Mairie — " + title;
+    document.getElementById("tickerSubA").textContent = text;
+
+    alert("✅ Publicité diffusée avec succès dans le grand bandeau !");
+  }
+
+  document.getElementById("diffuseBtn").addEventListener("click", diffuserPub);
+</script>
+
+</body>
+</html>
