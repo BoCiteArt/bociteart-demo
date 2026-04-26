@@ -226,11 +226,21 @@ function resetDemo(){
   location.reload();
 }
 
-document.getElementById("mairiePubDirectActivateBtn").onclick = forceMairiePubIntoGrandTicker;
+document.getElementById("mairiePubDirectActivateBtn").onclick = diffuserPubMairieSimple;
 document.getElementById("mairiePubResetBtn").onclick = resetDemo;
 
 buildCalendar();
 restoreGrandTickerActivePub();
+ // === FONCTION SIMPLE POUR DIFFUSER DEPUIS MAIRIE ===
+function diffuserPubMairieSimple() {
+  const title = document.getElementById("mairiePubTitle") ? document.getElementById("mairiePubTitle").value.trim() : "Mairie";
+  const text  = document.getElementById("mairiePubText")  ? document.getElementById("mairiePubText").value.trim()  : "Information importante";
+
+  document.getElementById("tickerTitleA").textContent = "Mairie — " + title;
+  document.getElementById("tickerSubA").textContent = text;
+
+  alert("✅ Publicité Mairie diffusée dans le grand bandeau !");
+} 
 </script>
 
 </body>
