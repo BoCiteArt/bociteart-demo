@@ -2,58 +2,41 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Bo’CitéArt - Bandeau Direct</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Bandeau Ultra Minimal</title>
 <style>
-  body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; }
-  header { background:#111; color:#fff; padding:20px; text-align:center; }
-  #topTicker { 
-    background:#fff; color:#111; padding:25px; margin:20px; border-radius:12px; 
-    border:3px solid #a51e22; min-height:130px; 
+  body { font-family: Arial; margin:0; padding:20px; background:#f0f0f0; }
+  #bandeau { 
+    background: white; 
+    border: 3px solid red; 
+    padding: 30px; 
+    margin: 20px 0; 
+    font-size: 20px; 
+    text-align: center;
   }
-  #tickerTitleA { font-weight:900; font-size:21px; }
-  #tickerSubA { font-size:16px; margin-top:8px; line-height:1.4; }
-  .box { background:#fff; margin:20px; padding:20px; border-radius:12px; border:1px solid #ddd; }
-  textarea { width:100%; padding:15px; border:2px solid #a51e22; border-radius:10px; font-size:16px; min-height:140px; }
-  button { padding:18px; width:100%; background:#a51e22; color:white; border:none; border-radius:10px; font-size:18px; font-weight:bold; cursor:pointer; }
+  textarea { width: 100%; height: 120px; padding: 10px; font-size: 16px; }
+  button { padding: 15px; font-size: 18px; background: #a51e22; color: white; border: none; width: 100%; margin-top: 10px; }
 </style>
 </head>
 <body>
 
-<header>
-  <h2>Bo'CitéArt - Bandeau Direct</h2>
-</header>
+<h2>Test Ultra Simple - Grand Bandeau</h2>
 
-<div id="topTicker">
-  <div id="tickerTitleA">Annonce partenaire</div>
-  <div id="tickerSubA">Aucune publicité active</div>
+<div id="bandeau">
+  <strong id="titre">Annonce partenaire</strong><br>
+  <span id="texte">Aucune publicité active</span>
 </div>
 
-<div class="box">
-  <h3>Écris ici → le bandeau en haut change immédiatement</h3>
-  
-  <b>Titre</b>
-  <input id="titleInput" value="Mairie" style="width:100%; padding:12px; margin-bottom:10px;">
-
-  <b>Texte à afficher dans le grand bandeau</b>
-  <textarea id="textInput" rows="5">Test : ma publicité s'affiche enfin dans le grand bandeau en haut !</textarea>
-
-  <button id="applyBtn">METTRE À JOUR LE GRAND BANDEAU</button>
+<div>
+  <textarea id="inputTexte" placeholder="Écris ici ton texte...">Test : ma pub doit apparaître en haut</textarea>
+  <button onclick="mettreAJour()">METTRE À JOUR LE BANDEAU EN HAUT</button>
 </div>
 
 <script>
-  function updateBandeau() {
-    const title = document.getElementById("titleInput").value.trim() || "Mairie";
-    const text  = document.getElementById("textInput").value.trim() || "Aucune publicité active";
-
-    document.getElementById("tickerTitleA").textContent = "Mairie — " + title;
-    document.getElementById("tickerSubA").textContent = text;
+  function mettreAJour() {
+    const texte = document.getElementById("inputTexte").value;
+    document.getElementById("texte").textContent = texte;
+    alert("Le bandeau a été mis à jour !");
   }
-
-  document.getElementById("applyBtn").addEventListener("click", updateBandeau);
-
-  // Mise à jour en direct quand on tape
-  document.getElementById("textInput").addEventListener("input", updateBandeau);
 </script>
 
 </body>
