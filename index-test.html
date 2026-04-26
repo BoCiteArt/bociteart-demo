@@ -131,79 +131,7 @@ function selectDate(date){
   document.getElementById("mairiePubStatusOut").innerText = "Date réservée : " + date;
 }
 
-function forceMairiePubIntoGrandTicker(){
-  const date = document.getElementById("mairiePubDate").value.trim();
-  const title = document.getElementById("mairiePubTitle").value.trim();
-  const text = document.getElementById("mairiePubText").value.trim();
-
-  if(!date){
-    alert("Choisis d’abord une date.");
-    return;
-  }
-
-  if(!title){
-    alert("Renseigne le titre de la publicité.");
-    return;
-  }
-
-  if(!text){
-    alert("Renseigne le texte de la publicité.");
-    return;
-  }
-
-  const bookings = loadBookings();
-
-  if(!bookings[date]){
-    bookings[date] = [];
-  }
-
-  if(bookings[date].length >= MAX_PER_DAY){
-    alert("Jour complet.");
-    return;
-  }
-
-  bookings[date].push({
-    source:"mairie",
-    title:title,
-    text:text,
-    ts:Date.now(),
-    ts_fr:new Date().toLocaleString("fr-FR")
-  });
-
-  saveBookings(bookings);
-
-  const finalTitle = "Mairie — " + title;
-  const finalText = text;
-
-  document.getElementById("tickerTitleA").textContent = finalTitle;
-  document.getElementById("tickerSubA").textContent = finalText;
-
-  window.tickerItems[0] = {
-    title:finalTitle,
-    subtitle:finalText
-  };
-
-  localStorage.setItem(ACTIVE_PUB_KEY, JSON.stringify({
-    source:"mairie",
-    date:date,
-    title:finalTitle,
-    subtitle:finalText,
-    ts:Date.now(),
-    ts_fr:new Date().toLocaleString("fr-FR")
-  }));
-
-  document.getElementById("mairiePubPreview").textContent =
-    "Date : " + date + " | " + finalTitle + " • " + finalText;
-
-  document.getElementById("mairiePubStatusOut").textContent =
-    "Publicité mairie affichée dans le grand bandeau.";
-
-  buildCalendar();
-
-  alert("Publicité mairie affichée dans le grand bandeau.");
-}
-
-// === FONCTION SIMPLE QUI MARCHE ===
+// === FONCTION QUI MARCHE ===
 function diffuserPubMairieSimple() {
   const title = document.getElementById("mairiePubTitle").value.trim() || "Mairie";
   const text  = document.getElementById("mairiePubText").value.trim() || "Information importante";
@@ -232,6 +160,23 @@ function resetDemo(){
   localStorage.removeItem(BOOKINGS_KEY);
   localStorage.removeItem(ACTIVE_PUB_KEY);
   location.reload();
+}
+
+function restoreGrandTickerActivePub(){
+  try{
+    const raw = localStorage.getItem(ACTIVE_PUB_KEY);
+    if(!raw) return;
+
+    const pub = JSON.parse(raw);
+
+    document.getElementById("tickerTitleA").textContent = pub.title || "Annonce partenaire";
+    document.getElementById("tickerSubA").textContent = pub.subtitle || "Aucune publicité active";
+
+    window.tickerItems[0] = {
+      title:pub.title || "",
+      subtitle:pub.subtitle || ""
+    };
+  }catch(e){}
 }
 
 // === BRANCHEMENT DES BOUTONS ===
