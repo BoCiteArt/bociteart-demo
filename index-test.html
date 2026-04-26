@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bo'CitéArt - Test grand bandeau</title>
+<title>Bo'CitéArt</title>
 
 <style>
 body{font-family:Arial,sans-serif;margin:0;background:#f5f5f5}
@@ -25,7 +25,6 @@ input,textarea{width:100%;padding:8px;margin-top:6px;border-radius:8px;border:1p
 
 <header>
   <h2>Bo'CitéArt</h2>
-
   <div id="topTicker">
     <div id="tickerTitleA">Annonce partenaire</div>
     <div id="tickerSubA">Aucune publicité active</div>
@@ -53,7 +52,7 @@ input,textarea{width:100%;padding:8px;margin-top:6px;border-radius:8px;border:1p
   <textarea id="mairiePubText" placeholder="Ex : Il reste 25 places à tarif réduit."></textarea>
 
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-    <button id="mairiePubDirectActivateBtn" type="button">
+    <button id="mairiePubDirectActivateBtn" type="button" style="background:#a51e22;color:white;">
       Valider et afficher dans le grand bandeau
     </button>
 
@@ -74,149 +73,22 @@ input,textarea{width:100%;padding:8px;margin-top:6px;border-radius:8px;border:1p
 </div>
 
 <script>
-const MAX_PER_DAY = 10;
-const BOOKINGS_KEY = "bociteart_pub_bookings_v1";
-const ACTIVE_PUB_KEY = "bociteart_grand_ticker_active_pub_v1";
-
-window.tickerItems = [
-  {
-    title:"Annonce partenaire",
-    subtitle:"Aucune publicité active"
-  }
-];
-
-function loadBookings(){
-  try{
-    return JSON.parse(localStorage.getItem(BOOKINGS_KEY) || "{}");
-  }catch(e){
-    return {};
-  }
-}
-
-function saveBookings(data){
-  localStorage.setItem(BOOKINGS_KEY, JSON.stringify(data));
-}
-
-function buildCalendar(){
-  const bookings = loadBookings();
-  let html = "";
-
-  for(let d = 1; d <= 31; d++){
-    const date = `2026-04-${String(d).padStart(2,"0")}`;
-    const count = bookings[date] ? bookings[date].length : 0;
-    const full = count >= MAX_PER_DAY;
-    const cls = full ? "calDay full" : "calDay";
-
-    html += `
-      <div class="${cls}" onclick="selectDate('${date}')">
-        ${d}<br>${count}/${MAX_PER_DAY}
-      </div>
-    `;
-  }
-
-  document.getElementById("calendar").innerHTML = html;
-}
-
-function selectDate(date){
-  const bookings = loadBookings();
-  const list = bookings[date] || [];
-
-  if(list.length >= MAX_PER_DAY){
-    alert("Jour complet.");
-    return;
-  }
-
-  document.getElementById("mairiePubDate").value = date;
-  document.getElementById("mairiePubTitle").focus();
-  document.getElementById("mairiePubStatusOut").innerText = "Date réservée : " + date;
-}
-
-// === FONCTION PRINCIPALE AVEC DÉBOGAGE ===
 function diffuserPubMairieSimple() {
-  console.log("=== Bouton 'Activer dans le bandeau' cliqué ===");
-
-  const titleInput = document.getElementById("mairiePubTitle");
-  const textInput = document.getElementById("mairiePubText");
-
-  const title = titleInput ? titleInput.value.trim() || "Mairie" : "Mairie";
-  const text  = textInput ? textInput.value.trim() || "Information importante" : "Information importante";
-
-  console.log("Titre récupéré :", title);
-  console.log("Texte récupéré :", text);
+  const title = document.getElementById("mairiePubTitle").value.trim() || "Mairie";
+  const text = document.getElementById("mairiePubText").value.trim() || "Information importante";
 
   const finalTitle = "Mairie — " + title;
 
-  // Mise à jour du bandeau
-  const titleEl = document.getElementById("tickerTitleA");
-  const subEl = document.getElementById("tickerSubA");
+  document.getElementById("tickerTitleA").textContent = finalTitle;
+  document.getElementById("tickerSubA").textContent = text;
 
-  if (titleEl) {
-    titleEl.textContent = finalTitle;
-    console.log("tickerTitleA mis à jour avec :", finalTitle);
-  } else {
-    console.log("ERREUR : tickerTitleA non trouvé !");
-  }
-
-  if (subEl) {
-    subEl.textContent = text;
-    console.log("tickerSubA mis à jour avec :", text);
-  } else {
-    console.log("ERREUR : tickerSubA non trouvé !");
-  }
-
-  // Sauvegarde
-  window.tickerItems[0] = { title: finalTitle, subtitle: text };
-  localStorage.setItem(ACTIVE_PUB_KEY, JSON.stringify({
-    source:"mairie",
-    title:finalTitle,
-    subtitle:text,
-    ts:Date.now()
-  }));
-
-  document.getElementById("mairiePubPreview").textContent = finalTitle + " • " + text;
-  document.getElementById("mairiePubStatusOut").textContent = "Publicité diffusée dans le grand bandeau.";
-
-  alert("✅ Publicité Mairie diffusée dans le grand bandeau !\n\nVérifie le bandeau en haut.");
+  alert("✅ Publicité diffusée dans le grand bandeau !");
 }
 
-function resetDemo(){
-  localStorage.removeItem(BOOKINGS_KEY);
-  localStorage.removeItem(ACTIVE_PUB_KEY);
-  location.reload();
-}
+// Brancher le bouton
+document.getElementById("mairiePubDirectActivateBtn").onclick = diffuserPubMairieSimple;
 
-function restoreGrandTickerActivePub(){
-  try{
-    const raw = localStorage.getItem(ACTIVE_PUB_KEY);
-    if(!raw) return;
-
-    const pub = JSON.parse(raw);
-
-    document.getElementById("tickerTitleA").textContent = pub.title || "Annonce partenaire";
-    document.getElementById("tickerSubA").textContent = pub.subtitle || "Aucune publicité active";
-
-    window.tickerItems[0] = {
-      title:pub.title || "",
-      subtitle:pub.subtitle || ""
-    };
-  }catch(e){}
-}
-
-// === BRANCHEMENT DES BOUTONS ===
-const activateBtn = document.getElementById("mairiePubDirectActivateBtn");
-if (activateBtn) {
-  activateBtn.onclick = diffuserPubMairieSimple;
-  console.log("Bouton 'mairiePubDirectActivateBtn' branché sur la fonction simple");
-} else {
-  console.log("ERREUR : Bouton mairiePubDirectActivateBtn non trouvé !");
-}
-
-document.getElementById("mairiePubResetBtn").onclick = resetDemo;
-
-buildCalendar();
-restoreGrandTickerActivePub();
-
-console.log("Script chargé - prêt à tester");
+console.log("Bouton 'Valider et afficher' branché sur la fonction simple");
 </script>
 
 </body>
