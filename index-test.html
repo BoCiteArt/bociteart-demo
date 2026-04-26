@@ -203,21 +203,29 @@ function forceMairiePubIntoGrandTicker(){
   alert("Publicité mairie affichée dans le grand bandeau.");
 }
 
-function restoreGrandTickerActivePub(){
-  try{
-    const raw = localStorage.getItem(ACTIVE_PUB_KEY);
-    if(!raw) return;
+// === FONCTION SIMPLE QUI MARCHE ===
+function diffuserPubMairieSimple() {
+  const title = document.getElementById("mairiePubTitle").value.trim() || "Mairie";
+  const text  = document.getElementById("mairiePubText").value.trim() || "Information importante";
 
-    const pub = JSON.parse(raw);
+  const finalTitle = "Mairie — " + title;
 
-    document.getElementById("tickerTitleA").textContent = pub.title || "Annonce partenaire";
-    document.getElementById("tickerSubA").textContent = pub.subtitle || "Aucune publicité active";
+  document.getElementById("tickerTitleA").textContent = finalTitle;
+  document.getElementById("tickerSubA").textContent = text;
 
-    window.tickerItems[0] = {
-      title:pub.title || "",
-      subtitle:pub.subtitle || ""
-    };
-  }catch(e){}
+  window.tickerItems[0] = { title: finalTitle, subtitle: text };
+
+  localStorage.setItem(ACTIVE_PUB_KEY, JSON.stringify({
+    source:"mairie",
+    title:finalTitle,
+    subtitle:text,
+    ts:Date.now()
+  }));
+
+  document.getElementById("mairiePubPreview").textContent = finalTitle + " • " + text;
+  document.getElementById("mairiePubStatusOut").textContent = "Publicité diffusée dans le grand bandeau.";
+
+  alert("✅ Publicité Mairie diffusée dans le grand bandeau !");
 }
 
 function resetDemo(){
@@ -226,21 +234,12 @@ function resetDemo(){
   location.reload();
 }
 
+// === BRANCHEMENT DES BOUTONS ===
 document.getElementById("mairiePubDirectActivateBtn").onclick = diffuserPubMairieSimple;
 document.getElementById("mairiePubResetBtn").onclick = resetDemo;
 
 buildCalendar();
 restoreGrandTickerActivePub();
- // === FONCTION SIMPLE POUR DIFFUSER DEPUIS MAIRIE ===
-function diffuserPubMairieSimple() {
-  const title = document.getElementById("mairiePubTitle") ? document.getElementById("mairiePubTitle").value.trim() : "Mairie";
-  const text  = document.getElementById("mairiePubText")  ? document.getElementById("mairiePubText").value.trim()  : "Information importante";
-
-  document.getElementById("tickerTitleA").textContent = "Mairie — " + title;
-  document.getElementById("tickerSubA").textContent = text;
-
-  alert("✅ Publicité Mairie diffusée dans le grand bandeau !");
-} 
 </script>
 
 </body>
