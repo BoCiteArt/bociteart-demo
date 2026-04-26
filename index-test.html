@@ -131,16 +131,38 @@ function selectDate(date){
   document.getElementById("mairiePubStatusOut").innerText = "Date réservée : " + date;
 }
 
-// === FONCTION QUI MARCHE VRAIMENT ===
+// === FONCTION PRINCIPALE AVEC DÉBOGAGE ===
 function diffuserPubMairieSimple() {
-  const title = document.getElementById("mairiePubTitle").value.trim() || "Mairie";
-  const text  = document.getElementById("mairiePubText").value.trim() || "Information importante";
+  console.log("=== Bouton 'Activer dans le bandeau' cliqué ===");
+
+  const titleInput = document.getElementById("mairiePubTitle");
+  const textInput = document.getElementById("mairiePubText");
+
+  const title = titleInput ? titleInput.value.trim() || "Mairie" : "Mairie";
+  const text  = textInput ? textInput.value.trim() || "Information importante" : "Information importante";
+
+  console.log("Titre récupéré :", title);
+  console.log("Texte récupéré :", text);
 
   const finalTitle = "Mairie — " + title;
 
   // Mise à jour du bandeau
-  document.getElementById("tickerTitleA").textContent = finalTitle;
-  document.getElementById("tickerSubA").textContent = text;
+  const titleEl = document.getElementById("tickerTitleA");
+  const subEl = document.getElementById("tickerSubA");
+
+  if (titleEl) {
+    titleEl.textContent = finalTitle;
+    console.log("tickerTitleA mis à jour avec :", finalTitle);
+  } else {
+    console.log("ERREUR : tickerTitleA non trouvé !");
+  }
+
+  if (subEl) {
+    subEl.textContent = text;
+    console.log("tickerSubA mis à jour avec :", text);
+  } else {
+    console.log("ERREUR : tickerSubA non trouvé !");
+  }
 
   // Sauvegarde
   window.tickerItems[0] = { title: finalTitle, subtitle: text };
@@ -151,11 +173,10 @@ function diffuserPubMairieSimple() {
     ts:Date.now()
   }));
 
-  // Mise à jour de l'aperçu et état
   document.getElementById("mairiePubPreview").textContent = finalTitle + " • " + text;
   document.getElementById("mairiePubStatusOut").textContent = "Publicité diffusée dans le grand bandeau.";
 
-  alert("✅ Publicité Mairie diffusée dans le grand bandeau !");
+  alert("✅ Publicité Mairie diffusée dans le grand bandeau !\n\nVérifie le bandeau en haut.");
 }
 
 function resetDemo(){
@@ -182,16 +203,20 @@ function restoreGrandTickerActivePub(){
 }
 
 // === BRANCHEMENT DES BOUTONS ===
-document.getElementById("mairiePubDirectActivateBtn").onclick = diffuserPubMairieSimple;
-
-// On branche aussi "Valider le devis" au cas où
-const validerDevisBtn = document.getElementById("validerDevisBtn") || document.querySelector("button:contains('Valider le devis')");
-if (validerDevisBtn) validerDevisBtn.onclick = diffuserPubMairieSimple;
+const activateBtn = document.getElementById("mairiePubDirectActivateBtn");
+if (activateBtn) {
+  activateBtn.onclick = diffuserPubMairieSimple;
+  console.log("Bouton 'mairiePubDirectActivateBtn' branché sur la fonction simple");
+} else {
+  console.log("ERREUR : Bouton mairiePubDirectActivateBtn non trouvé !");
+}
 
 document.getElementById("mairiePubResetBtn").onclick = resetDemo;
 
 buildCalendar();
 restoreGrandTickerActivePub();
+
+console.log("Script chargé - prêt à tester");
 </script>
 
 </body>
