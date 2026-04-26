@@ -2,15 +2,16 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Test Grand Bandeau Direct</title>
+<title>Bo’CitéArt - Bandeau Direct</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; }
+  header { background:#111; color:#fff; padding:20px; text-align:center; }
   #topTicker { 
     background:#fff; color:#111; padding:25px; margin:20px; border-radius:12px; 
-    border:3px solid #a51e22; min-height:130px; font-size:18px;
+    border:3px solid #a51e22; min-height:130px; 
   }
-  #tickerTitleA { font-weight:900; font-size:22px; }
+  #tickerTitleA { font-weight:900; font-size:21px; }
   #tickerSubA { font-size:16px; margin-top:8px; line-height:1.4; }
   .box { background:#fff; margin:20px; padding:20px; border-radius:12px; border:1px solid #ddd; }
   textarea { width:100%; padding:15px; border:2px solid #a51e22; border-radius:10px; font-size:16px; min-height:140px; }
@@ -19,7 +20,9 @@
 </head>
 <body>
 
-<header><h2>Test Grand Bandeau</h2></header>
+<header>
+  <h2>Bo'CitéArt - Bandeau Direct</h2>
+</header>
 
 <div id="topTicker">
   <div id="tickerTitleA">Annonce partenaire</div>
@@ -27,20 +30,30 @@
 </div>
 
 <div class="box">
-  <h3>Écris ici → le bandeau en haut doit changer</h3>
+  <h3>Écris ici → le bandeau en haut change immédiatement</h3>
   
-  <b>Texte à afficher dans le grand bandeau</b>
-  <textarea id="textInput" rows="5">Test : ma pub s'affiche enfin dans le grand bandeau !</textarea>
+  <b>Titre</b>
+  <input id="titleInput" value="Mairie" style="width:100%; padding:12px; margin-bottom:10px;">
 
-  <button id="applyBtn">CHANGER LE GRAND BANDEAU MAINTENANT</button>
+  <b>Texte à afficher dans le grand bandeau</b>
+  <textarea id="textInput" rows="5">Test : ma publicité s'affiche enfin dans le grand bandeau en haut !</textarea>
+
+  <button id="applyBtn">METTRE À JOUR LE GRAND BANDEAU</button>
 </div>
 
 <script>
-  document.getElementById("applyBtn").addEventListener("click", () => {
-    const text = document.getElementById("textInput").value.trim();
-    document.getElementById("tickerSubA").textContent = text || "Aucune publicité active";
-    alert("Le grand bandeau a été modifié !");
-  });
+  function updateBandeau() {
+    const title = document.getElementById("titleInput").value.trim() || "Mairie";
+    const text  = document.getElementById("textInput").value.trim() || "Aucune publicité active";
+
+    document.getElementById("tickerTitleA").textContent = "Mairie — " + title;
+    document.getElementById("tickerSubA").textContent = text;
+  }
+
+  document.getElementById("applyBtn").addEventListener("click", updateBandeau);
+
+  // Mise à jour en direct quand on tape
+  document.getElementById("textInput").addEventListener("input", updateBandeau);
 </script>
 
 </body>
