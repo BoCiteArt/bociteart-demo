@@ -131,18 +131,19 @@ function selectDate(date){
   document.getElementById("mairiePubStatusOut").innerText = "Date réservée : " + date;
 }
 
-// === FONCTION QUI MARCHE ===
+// === FONCTION QUI MARCHE VRAIMENT ===
 function diffuserPubMairieSimple() {
   const title = document.getElementById("mairiePubTitle").value.trim() || "Mairie";
   const text  = document.getElementById("mairiePubText").value.trim() || "Information importante";
 
   const finalTitle = "Mairie — " + title;
 
+  // Mise à jour du bandeau
   document.getElementById("tickerTitleA").textContent = finalTitle;
   document.getElementById("tickerSubA").textContent = text;
 
+  // Sauvegarde
   window.tickerItems[0] = { title: finalTitle, subtitle: text };
-
   localStorage.setItem(ACTIVE_PUB_KEY, JSON.stringify({
     source:"mairie",
     title:finalTitle,
@@ -150,6 +151,7 @@ function diffuserPubMairieSimple() {
     ts:Date.now()
   }));
 
+  // Mise à jour de l'aperçu et état
   document.getElementById("mairiePubPreview").textContent = finalTitle + " • " + text;
   document.getElementById("mairiePubStatusOut").textContent = "Publicité diffusée dans le grand bandeau.";
 
@@ -181,6 +183,11 @@ function restoreGrandTickerActivePub(){
 
 // === BRANCHEMENT DES BOUTONS ===
 document.getElementById("mairiePubDirectActivateBtn").onclick = diffuserPubMairieSimple;
+
+// On branche aussi "Valider le devis" au cas où
+const validerDevisBtn = document.getElementById("validerDevisBtn") || document.querySelector("button:contains('Valider le devis')");
+if (validerDevisBtn) validerDevisBtn.onclick = diffuserPubMairieSimple;
+
 document.getElementById("mairiePubResetBtn").onclick = resetDemo;
 
 buildCalendar();
