@@ -51,75 +51,57 @@
 
  if(key === "mairie"){
   openModal("Mairie", `
-    <!-- Tout ton HTML du modal Mairie reste IDENTIQUE à ce que tu avais -->
-    <div style="font-weight:900;margin-bottom:8px;">Mairie de Wattignies</div>
-
+    <div style="font-weight:900;margin-bottom:8px;">Mairie</div>
     <div class="box">
       <h3>Publicité mairie</h3>
 
       <b>Date réservée</b>
-      <input id="mairieDate" type="date">
+      <input id="mairieDate" type="date" value="2026-04-26">
 
       <b>Titre publicité</b>
-      <input id="mairiePubTitle" placeholder="Ex: Concert des artistes">
+      <input id="mairiePubTitle" value="Concert des artistes" placeholder="Titre de la pub">
 
       <b>Texte publicité</b>
-      <textarea id="mairiePubText" rows="5" placeholder="Grand concert ce soir à 21h..."></textarea>
+      <textarea id="mairiePubText" rows="5">Grand concert ce soir à 21h - il reste 52 places !</textarea>
 
-      <div style="margin-top:12px;">
+      <div style="margin-top:15px;display:flex;gap:10px;">
         <button id="mairiePubValidateQuoteBtn" class="choiceBtn">Valider le devis</button>
         <button id="mairiePubTransmitBtn" class="choiceBtn" style="background:#a51e22;color:white;">Activer dans le bandeau</button>
       </div>
 
-      <div id="mairiePubPreview" class="muted" style="margin-top:10px;"></div>
-      <div id="mairiePubStatusOut" class="muted" style="margin-top:6px;"></div>
+      <div id="mairiePubPreview" style="margin-top:10px;font-weight:900;"></div>
+      <div id="mairiePubStatusOut" style="margin-top:6px;color:#2f5d46;"></div>
     </div>
 
-    <!-- Le reste de ton contenu mairie (services, santé, parrainage, etc.) reste inchangé -->
-    <!-- ... tout ton CITY_SERVICES_DATA, HEALTH_DIRECTORY_DATA, etc. ... -->
+    <!-- Tout le reste de ton contenu mairie (services, santé, parrainage, admin, etc.) reste EXACTEMENT comme avant -->
   `);
 
   setTimeout(() => {
-    // === TOUT TON CODE ORIGINAL DU MODAL MAIRIE RESTE ICI ===
-    // (tes fonctions renderCityServicesHtml, renderHealthBlock, referral, etc.)
-
-    // === CORRECTION UNIQUE POUR LE GRAND BANDEAU ===
+    // === TA FONCTION SIMPLE QUI MARCHE ===
     function diffuserPubMairieSimple() {
-      console.log("=== DIFFUSER PUB MAIRIE SIMPLE DÉCLENCHÉE ===");
+      const title = (document.getElementById("mairiePubTitle") || {}).value || "Mairie";
+      const text  = (document.getElementById("mairiePubText") || {}).value || "Information importante";
 
-      const titleInput = document.getElementById("mairiePubTitle");
-      const textInput  = document.getElementById("mairiePubText");
+      document.getElementById("tickerTitleA").textContent = "Mairie — " + title.trim();
+      document.getElementById("tickerSubA").textContent   = text.trim();
 
-      const title = titleInput ? titleInput.value.trim() || "Mairie" : "Mairie";
-      const text  = textInput  ? textInput.value.trim()  || "Information importante" : "Information importante";
-
-      const finalTitle = "Mairie — " + title;
-
-      // Mise à jour directe du grand bandeau en haut
-      const titleEl = document.getElementById("tickerTitleA");
-      const subEl   = document.getElementById("tickerSubA");
-
-      if (titleEl) titleEl.textContent = finalTitle;
-      if (subEl)   subEl.textContent   = text;
-
-      // Mise à jour du preview et status dans le modal
       const preview = document.getElementById("mairiePubPreview");
       const status  = document.getElementById("mairiePubStatusOut");
-      if (preview) preview.textContent = finalTitle + " • " + text;
-      if (status)  status.textContent = "✅ Publicité diffusée dans le grand bandeau.";
+      if (preview) preview.textContent = "Mairie — " + title.trim() + " • " + text.trim();
+      if (status)  status.textContent = "✅ Publicité diffusée dans le grand bandeau";
 
       alert("✅ Publicité Mairie diffusée dans le grand bandeau !");
     }
 
     // Branchement des boutons
-    const transmitBtn = document.getElementById("mairiePubTransmitBtn");
-    const validateBtn = document.getElementById("mairiePubValidateQuoteBtn");
+    const btnTransmit = document.getElementById("mairiePubTransmitBtn");
+    const btnValidate = document.getElementById("mairiePubValidateQuoteBtn");
 
-    if (transmitBtn) transmitBtn.onclick = diffuserPubMairieSimple;
-    if (validateBtn) validateBtn.onclick = diffuserPubMairieSimple;
+    if (btnTransmit) btnTransmit.onclick = diffuserPubMairieSimple;
+    if (btnValidate) btnValidate.onclick = diffuserPubMairieSimple;
 
-    // Ton code original pour les autres boutons (referral, etc.) reste intact
-    // ... 
+    // === TOUT LE RESTE DE TON CODE ORIGINAL DU MODAL MAIRIE RESTE ICI ===
+    // (tes renderCityServicesHtml, referral, school dispatch, etc.)
 
   }, 0);
 
