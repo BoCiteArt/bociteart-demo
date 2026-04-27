@@ -147,6 +147,92 @@
   }
 
   console.log("Correction grand bandeau appliquée - prêt à tester");
+  <script>
+// === CORRECTION AGRESSIVE POUR LE GRAND BANDEAU ===
+// Cette version cherche TOUS les boutons possibles et les force à marcher
+
+function diffuserPubMairieSimple() {
+    console.log("=== DIFFUSER PUB MAIRIE SIMPLE DÉCLENCHÉE ===");
+
+    const titleInput = document.getElementById("mairiePubTitle");
+    const textInput  = document.getElementById("mairiePubText");
+
+    const title = titleInput ? titleInput.value.trim() || "Mairie de Wattignies" : "Mairie";
+    const text  = textInput  ? textInput.value.trim()  || "Information importante" : "Texte de la publicité";
+
+    console.log("Titre :", title);
+    console.log("Texte :", text);
+
+    const finalTitle = "Mairie — " + title;
+
+    // Mise à jour directe du grand bandeau
+    const titleEl = document.getElementById("tickerTitleA");
+    const subEl   = document.getElementById("tickerSubA");
+
+    if (titleEl) {
+        titleEl.textContent = finalTitle;
+        console.log("tickerTitleA mis à jour");
+    } else {
+        console.log("ERREUR : tickerTitleA non trouvé");
+    }
+
+    if (subEl) {
+        subEl.textContent = text;
+        console.log("tickerSubA mis à jour");
+    } else {
+        console.log("ERREUR : tickerSubA non trouvé");
+    }
+
+    // Mise à jour aperçu + statut
+    const preview = document.getElementById("mairiePubPreview");
+    const status  = document.getElementById("mairiePubStatusOut");
+
+    if (preview) preview.textContent = finalTitle + " • " + text;
+    if (status)  status.textContent = "✅ Publicité diffusée dans le grand bandeau.";
+
+    alert("✅ Publicité Mairie diffusée dans le grand bandeau !\n\nTitre : " + finalTitle + "\nTexte : " + text);
+}
+
+// === RECHERCHE ET BRANCHEMENT DE TOUS LES BOUTONS POSSIBLES ===
+setTimeout(() => {
+    console.log("Recherche des boutons 'Activer dans le bandeau'...");
+
+    // Cherche par ID exact
+    const btnsById = [
+        document.getElementById("mairiePubDirectActivateBtn"),
+        document.getElementById("mairiePubTransmitBtn"),
+        document.getElementById("mairiePubValidateQuoteBtn")
+    ];
+
+    // Cherche par texte dans le bouton
+    const allButtons = document.querySelectorAll("button");
+    allButtons.forEach(btn => {
+        const text = (btn.textContent || "").toLowerCase();
+        if (text.includes("activer dans le bandeau") || 
+            text.includes("valider et afficher") || 
+            text.includes("valider le devis")) {
+            
+            console.log("Bouton trouvé par texte :", btn.textContent);
+            btn.onclick = diffuserPubMairieSimple;
+            btn.style.background = "#a51e22";   // rouge pour voir qu'il est branché
+            btn.style.color = "white";
+        }
+    });
+
+    // Branchement des boutons trouvés par ID
+    btnsById.forEach((btn, index) => {
+        if (btn) {
+            console.log("Bouton par ID trouvé (index " + index + ")");
+            btn.onclick = diffuserPubMairieSimple;
+            btn.style.background = "#a51e22";
+            btn.style.color = "white";
+        }
+    });
+
+    console.log("Tous les boutons 'Activer' ont été rebranchés avec la fonction simple.");
+}, 800);   // on attend un peu que le modal soit chargé
+
+</script>
 </script>
 
 </body>
