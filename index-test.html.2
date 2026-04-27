@@ -714,6 +714,46 @@ if(isFn(window.makeKeyboardClickable)){ /* ton code original */ }
 
   majBouton();
 })();
+// === SOLUTION ULTIME POUR FORCER LE BANDEAU (à coller à la fin) ===
+function forcerMiseAJourBandeau() {
+  console.clear(); // pour voir clairement les logs
+  console.log("=== FORÇAGE TOTAL DU BANDEAU ===");
+
+  const titleInput = document.getElementById("mairiePubTitle");
+  const textInput  = document.getElementById("mairiePubText");
+
+  if (!titleInput || !textInput) {
+    alert("ERREUR : Ouvre d'abord l'onglet Mairie et remplis les champs.");
+    return;
+  }
+
+  const title = titleInput.value.trim() || "Mairie Test";
+  const text  = textInput.value.trim() || "Texte de test - ça doit apparaître en haut";
+
+  // Force sur les éléments du bandeau
+  let titleEl = document.getElementById("tickerTitleA");
+  let subEl   = document.getElementById("tickerSubA");
+
+  if (titleEl) titleEl.textContent = "MAIRIE — " + title;
+  if (subEl)   subEl.textContent   = text;
+
+  // Force aussi sur window.tickerItems si ça existe
+  if (window.tickerItems && window.tickerItems[0]) {
+    window.tickerItems[0].title = "MAIRIE — " + title;
+    window.tickerItems[0].subtitle = text;
+  }
+
+  alert("✅ FORÇAGE TERMINÉ\n\nVérifie le bandeau en haut de l'écran maintenant.\n\nSi rien ne change, dis-moi exactement ce que tu vois.");
+}
+
+// Bouton de test permanent (apparaîtra en bas à droite)
+const testForceBtn = document.createElement("button");
+testForceBtn.innerHTML = "🔴 TEST FORCÉ BANDEAU";
+testForceBtn.style.cssText = "position:fixed;bottom:30px;right:30px;background:#a51e22;color:white;padding:18px 25px;border:none;border-radius:12px;font-size:16px;font-weight:bold;z-index:99999;box-shadow:0 4px 15px rgba(0,0,0,0.3);";
+testForceBtn.onclick = forcerMiseAJourBandeau;
+document.body.appendChild(testForceBtn);
+
+console.log("Bouton de test forcé ajouté en bas à droite de l'écran.");
 </script>
 </body>
 </html>
