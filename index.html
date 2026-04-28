@@ -8337,35 +8337,6 @@ if(key === "mairie"){
           <strong id="shopCoinsCalc">0</strong> bocitecoin(s) OR à verser
         </div>
 
-<div class="box" style="margin-top:12px;">
-  <div style="font-weight:900;">Réserver une publicité commerce — grand bandeau du haut</div>
-
-  <div class="muted" style="margin-top:6px;">
-    Le commerçant prépare sa publicité, paie immédiatement, puis la publicité peut être activée dans le grand bandeau supérieur.
-  </div>
-
-  <div style="margin-top:10px;font-weight:900;">Date souhaitée</div>
-  <input class="miniField" id="merchantPubDate" placeholder="AAAA-MM-JJ">
-
-  <div style="margin-top:10px;font-weight:900;">Titre publicité</div>
-  <input class="miniField" id="merchantPubTitle" placeholder="Ex : Offre spéciale du week-end">
-
-  <div style="margin-top:10px;font-weight:900;">Texte publicité</div>
-  <textarea id="merchantPubText" class="miniField" style="min-height:100px;" placeholder="Ex : 20 % de remise sur présentation de l’application Bo’CitéArt."></textarea>
-
-  <div class="box" style="margin-top:12px;background:var(--bg);">
-    <div style="font-weight:900;">Aperçu publicité commerce</div>
-    <div class="muted" id="merchantPubPreview" style="margin-top:8px;">
-      Aucune publicité commerce préparée.
-    </div>
-  </div>
-
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-    <button class="choiceBtn" id="merchantPubPayBtn" type="button">Payer et activer — 60 € TTC</button>
-    <button class="choiceBtn" id="merchantPubHistoryBtn" type="button" style="background:#fff;">Voir pubs commerce</button>
-    <button class="choiceBtn" id="merchantPubResetBtn" type="button" style="background:#fff;">Réinitialiser</button>
-  </div>
-</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
           <button class="choiceBtn" id="shopCalcBtn" type="button">Calculer</button>
           <button class="choiceBtn" id="shopScanClientBtn" type="button">Scanner le client</button>
@@ -8382,6 +8353,37 @@ if(key === "mairie"){
         <div class="muted" style="margin-top:6px;">
           Si une anomalie persiste après ce délai, une demande de régularisation peut être transmise à l’administrateur Bo’CitéArt,
           qui intervient après vérification dans un délai raisonnable.
+        </div>
+      </div>
+
+      <div style="font-weight:900;margin-top:12px;">Réserver une publicité commerce</div>
+      <div class="box">
+        <div style="font-weight:900;">Grand bandeau du haut</div>
+
+        <div class="muted" style="margin-top:6px;">
+          Le commerçant prépare sa publicité, paie immédiatement, puis la publicité peut être activée dans le grand bandeau supérieur.
+        </div>
+
+        <div style="margin-top:10px;font-weight:900;">Date souhaitée</div>
+        <input class="miniField" id="merchantPubDate" placeholder="AAAA-MM-JJ">
+
+        <div style="margin-top:10px;font-weight:900;">Titre publicité</div>
+        <input class="miniField" id="merchantPubTitle" placeholder="Ex : Offre spéciale du week-end">
+
+        <div style="margin-top:10px;font-weight:900;">Texte publicité</div>
+        <textarea id="merchantPubText" class="miniField" style="min-height:100px;" placeholder="Ex : 20 % de remise sur présentation de l’application Bo’CitéArt."></textarea>
+
+        <div class="box" style="margin-top:12px;background:var(--bg);">
+          <div style="font-weight:900;">Aperçu publicité commerce</div>
+          <div class="muted" id="merchantPubPreview" style="margin-top:8px;">
+            Aucune publicité commerce préparée.
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <button class="choiceBtn" id="merchantPubPayBtn" type="button">Payer et activer — 60 € TTC</button>
+          <button class="choiceBtn" id="merchantPubHistoryBtn" type="button" style="background:#fff;">Voir pubs commerce</button>
+          <button class="choiceBtn" id="merchantPubResetBtn" type="button" style="background:#fff;">Réinitialiser</button>
         </div>
       </div>
 
