@@ -49,61 +49,368 @@
   // === TOUT TON CODE ORIGINAL JUSQU'ICI EST CONSERVÉ TEL QUEL ===
   // (les fonctions openModal, renderTape, openTicker, etc.)
 
- if(key === "mairie"){
-  openModal("Mairie", `
-    <div style="font-weight:900;margin-bottom:8px;">Mairie</div>
-    <div class="box">
-      <h3>Publicité mairie</h3>
+if(key === "mairie"){
 
-      <b>Date réservée</b>
-      <input id="mairieDate" type="date" value="2026-04-26">
+  const MAIRIE_MSG_KEY = "bociteart_mairie_msg";
+  const MAIRIE_PUB_KEY = "bociteart_mairie_pub_direct_v1";
+  const MAIRIE_BOOKINGS_KEY = "bociteart_mairie_pub_bookings_v1";
+  const PUB_LIMIT = 10;
 
-      <b>Titre publicité</b>
-      <input id="mairiePubTitle" value="Concert des artistes" placeholder="Titre de la pub">
+  function safeTxt(v){
+    return String(v || "")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;");
+  }
 
-      <b>Texte publicité</b>
-      <textarea id="mairiePubText" rows="5">Grand concert ce soir à 21h - il reste 52 places !</textarea>
+  function loadMairieBookings(){
+    try{
+      return JSON.parse(localStorage.getItem(MAIRIE_BOOKINGS_KEY) || "{}");
+    }catch(e){
+      return {};
+    }
+  }
 
-      <div style="margin-top:15px;display:flex;gap:10px;">
-        <button id="mairiePubValidateQuoteBtn" class="choiceBtn">Valider le devis</button>
-        <button id="mairiePubTransmitBtn" class="choiceBtn" style="background:#a51e22;color:white;">Activer dans le bandeau</button>
-      </div>
+  function saveMairieBookings(obj){
+    try{
+      localStorage.setItem(MAIRIE_BOOKINGS_KEY, JSON.stringify(obj));
+    }catch(e){}
+  }
 
-      <div id="mairiePubPreview" style="margin-top:10px;font-weight:900;"></div>
-      <div id="mairiePubStatusOut" style="margin-top:6px;color:#2f5d46;"></div>
-    </div>
+  function forceGrandBandeauMairie(pub){
+    const finalTitle = "Mairie — " + pub.title;
+    const finalText = pub.text;
 
-    <!-- Tout le reste de ton contenu mairie (services, santé, parrainage, admin, etc.) reste EXACTEMENT comme avant -->
-  `);
+    ["tickerTitleA","tickerTitleB","tickerTitle"].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.textContent = finalTitle;
+    });
 
-  setTimeout(() => {
-    // === TA FONCTION SIMPLE QUI MARCHE ===
-    function diffuserPubMairieSimple() {
-      const title = (document.getElementById("mairiePubTitle") || {}).value || "Mairie";
-      const text  = (document.getElementById("mairiePubText") || {}).value || "Information importante";
+    ["tickerSubA","tickerSubB","tickerText"].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.textContent = finalText;
+    });
 
-      document.getElementById("tickerTitleA").textContent = "Mairie — " + title.trim();
-      document.getElementById("tickerSubA").textContent   = text.trim();
-
-      const preview = document.getElementById("mairiePubPreview");
-      const status  = document.getElementById("mairiePubStatusOut");
-      if (preview) preview.textContent = "Mairie — " + title.trim() + " • " + text.trim();
-      if (status)  status.textContent = "✅ Publicité diffusée dans le grand bandeau";
-
-      alert("✅ Publicité Mairie diffusée dans le grand bandeau !");
+    if(!Array.isArray(window.tickerItems)){
+      window.tickerItems = [];
     }
 
-    // Branchement des boutons
-    const btnTransmit = document.getElementById("mairiePubTransmitBtn");
-    const btnValidate = document.getElementById("mairiePubValidateQuoteBtn");
+    window.tickerItems[0] = {
+      title: finalTitle,
+      subtitle: finalText,
+      img: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
+    };
 
-    if (btnTransmit) btnTransmit.onclick = diffuserPubMairieSimple;
-    if (btnValidate) btnValidate.onclick = diffuserPubMairieSimple;
+    if(typeof window.setTicker === "function"){
+      try{ window.setTicker(0); }catch(e){}
+    }
 
-    // === TOUT LE RESTE DE TON CODE ORIGINAL DU MODAL MAIRIE RESTE ICI ===
-    // (tes renderCityServicesHtml, referral, school dispatch, etc.)
+    try{
+      localStorage.setItem(MAIRIE_PUB_KEY, JSON.stringify({
+        source:"mairie",
+        date:pub.date,
+        title:finalTitle,
+        subtitle:finalText,
+        ts:Date.now(),
+        ts_fr:new Date().toLocaleString("fr-FR")
+      }));
+    }catch(e){}
+  }
 
-  }, 0);
+  function restoreGrandBandeauMairie(){
+    try{
+      const raw = localStorage.getItem(MAIRIE_PUB_KEY);
+      if(!raw) return;
+
+      const pub = JSON.parse(raw);
+
+      ["tickerTitleA","tickerTitleB","tickerTitle"].forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.textContent = pub.title || "";
+      });
+
+      ["tickerSubA","tickerSubB","tickerText"].forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.textContent = pub.subtitle || "";
+      });
+
+      if(!Array.isArray(window.tickerItems)){
+        window.tickerItems = [];
+      }
+
+      window.tickerItems[0] = {
+        title: pub.title || "",
+        subtitle: pub.subtitle || ""
+      };
+
+      if(typeof window.setTicker === "function"){
+        try{ window.setTicker(0); }catch(e){}
+      }
+    }catch(e){}
+  }
+
+  function buildMairieMiniCalendar(){
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const days = new Date(year, month + 1, 0).getDate();
+    const bookings = loadMairieBookings();
+
+    let html = `
+      <div class="box" style="margin-top:12px;">
+        <div style="font-weight:900;">Calendrier publicité mairie</div>
+        <div class="muted" style="margin-top:6px;">
+          Maximum ${PUB_LIMIT} publicités par jour. Sélectionne une date, puis remplis le texte.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px;">
+    `;
+
+    for(let d=1; d<=days; d++){
+      const date = year + "-" + String(month + 1).padStart(2,"0") + "-" + String(d).padStart(2,"0");
+      const count = bookings[date] ? bookings[date].length : 0;
+      const full = count >= PUB_LIMIT;
+
+      html += `
+        <button
+          type="button"
+          class="mairieDateBtn"
+          data-date="${date}"
+          ${full ? "disabled" : ""}
+          style="
+            padding:8px 4px;
+            border-radius:10px;
+            border:1px solid #ddd;
+            background:${full ? "#ffd0d0" : "#fff"};
+            font-weight:900;
+            cursor:${full ? "not-allowed" : "pointer"};
+          ">
+          ${d}<br><span style="font-size:11px;">${count}/${PUB_LIMIT}</span>
+        </button>
+      `;
+    }
+
+    html += `
+        </div>
+      </div>
+    `;
+
+    return html;
+  }
+
+  openModal("Mairie", `
+    <div style="font-weight:900;margin-bottom:8px;">Mairie</div>
+
+    <div class="box">
+      <div style="font-weight:900;">Messages gratuits d’intérêt général</div>
+      <div class="muted" style="margin-top:6px;">
+        Urgence, tempête, vigilance météo, rue barrée, déviation, information publique.
+      </div>
+
+      <div style="margin-top:10px;font-weight:900;">Message bandeau mairie</div>
+      <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue fermée — déviation">
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="mairieMsgSave" type="button">Enregistrer message mairie</button>
+        <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">Réinitialiser</button>
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Publicité mairie — grand bandeau du haut</div>
+      <div class="muted" style="margin-top:6px;">
+        Version simplifiée : une fois la date, le titre et le texte remplis, un seul bouton envoie directement la publicité dans le grand bandeau.
+      </div>
+    </div>
+
+    ${buildMairieMiniCalendar()}
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Rédaction de la publicité mairie</div>
+
+      <div style="margin-top:10px;font-weight:900;">Date réservée</div>
+      <input class="miniField" id="mairiePubDate" readonly placeholder="Choisir une date dans le calendrier">
+
+      <div style="margin-top:10px;font-weight:900;">Titre publicité</div>
+      <input class="miniField" id="mairiePubTitle" placeholder="Ex : Concert ce soir">
+
+      <div style="margin-top:10px;font-weight:900;">Texte publicité</div>
+      <textarea id="mairiePubText" class="miniField" style="min-height:110px;" placeholder="Ex : Il reste 25 places à tarif réduit."></textarea>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button class="choiceBtn" id="mairiePubDirectActivateBtn" type="button">
+          Valider et afficher dans le grand bandeau
+        </button>
+
+        <button class="choiceBtn" id="mairiePubResetBtn" type="button" style="background:#fff;">
+          Réinitialiser le formulaire
+        </button>
+      </div>
+
+      <div class="box" style="margin-top:12px;background:#f7efe3;">
+        <div style="font-weight:900;">Aperçu publicité mairie</div>
+        <div class="muted" id="mairiePubPreview" style="margin-top:8px;">
+          Aucune publicité mairie préparée pour le moment.
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:12px;background:#fffdf0;">
+        <div style="font-weight:900;">État</div>
+        <div class="muted" id="mairiePubStatusOut" style="margin-top:8px;">
+          En attente.
+        </div>
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Services utiles</div>
+      <div class="muted" style="margin-top:6px;">
+        Cette zone reste disponible pour les contenus mairie, santé, services, écoles, sport et parrainages.
+        Elle n’interfère plus avec l’activation du grand bandeau.
+      </div>
+    </div>
+  `);
+
+  setTimeout(()=>{
+    const mairieMsgInput = $("mairieMsgInput");
+    const mairieMsgSave = $("mairieMsgSave");
+    const mairieMsgReset = $("mairieMsgReset");
+
+    const mairiePubDate = $("mairiePubDate");
+    const mairiePubTitle = $("mairiePubTitle");
+    const mairiePubText = $("mairiePubText");
+    const mairiePubDirectActivateBtn = $("mairiePubDirectActivateBtn");
+    const mairiePubResetBtn = $("mairiePubResetBtn");
+    const mairiePubPreview = $("mairiePubPreview");
+    const mairiePubStatusOut = $("mairiePubStatusOut");
+
+    restoreGrandBandeauMairie();
+
+    try{
+      const savedMsg = JSON.parse(localStorage.getItem(MAIRIE_MSG_KEY) || "{}");
+      if(mairieMsgInput){
+        mairieMsgInput.value = savedMsg.message || "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+      }
+    }catch(e){}
+
+    document.querySelectorAll(".mairieDateBtn").forEach(btn=>{
+      btn.onclick = ()=>{
+        const date = btn.getAttribute("data-date");
+        if(mairiePubDate) mairiePubDate.value = date;
+        if(mairiePubStatusOut) mairiePubStatusOut.textContent = "Date sélectionnée : " + date;
+        if(mairiePubTitle && mairiePubTitle.focus) mairiePubTitle.focus();
+      };
+    });
+
+    if(mairieMsgSave){
+      mairieMsgSave.onclick = ()=>{
+        const msg = mairieMsgInput ? String(mairieMsgInput.value || "").trim() : "";
+        if(!msg){
+          alert("Saisis un message mairie.");
+          return;
+        }
+
+        localStorage.setItem(MAIRIE_MSG_KEY, JSON.stringify({
+          message:msg,
+          ts_fr:new Date().toLocaleString("fr-FR")
+        }));
+
+        if(typeof renderMairieTicker === "function"){
+          try{ renderMairieTicker(); }catch(e){}
+        }
+
+        alert("Message mairie enregistré.");
+      };
+    }
+
+    if(mairieMsgReset){
+      mairieMsgReset.onclick = ()=>{
+        localStorage.removeItem(MAIRIE_MSG_KEY);
+        if(mairieMsgInput){
+          mairieMsgInput.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
+        }
+        if(typeof renderMairieTicker === "function"){
+          try{ renderMairieTicker(); }catch(e){}
+        }
+        alert("Message mairie réinitialisé.");
+      };
+    }
+
+    if(mairiePubDirectActivateBtn){
+      mairiePubDirectActivateBtn.onclick = ()=>{
+        const date = mairiePubDate ? String(mairiePubDate.value || "").trim() : "";
+        const title = mairiePubTitle ? String(mairiePubTitle.value || "").trim() : "";
+        const text = mairiePubText ? String(mairiePubText.value || "").trim() : "";
+
+        if(!date){
+          alert("Choisis une date dans le calendrier.");
+          return;
+        }
+
+        if(!title){
+          alert("Renseigne le titre de la publicité.");
+          return;
+        }
+
+        if(!text){
+          alert("Renseigne le texte de la publicité.");
+          return;
+        }
+
+        const bookings = loadMairieBookings();
+
+        if(!bookings[date]){
+          bookings[date] = [];
+        }
+
+        if(bookings[date].length >= PUB_LIMIT){
+          alert("Cette journée est complète.");
+          return;
+        }
+
+        bookings[date].push({
+          source:"mairie",
+          title:title,
+          text:text,
+          ts:Date.now(),
+          ts_fr:new Date().toLocaleString("fr-FR")
+        });
+
+        saveMairieBookings(bookings);
+
+        forceGrandBandeauMairie({
+          date:date,
+          title:title,
+          text:text
+        });
+
+        if(mairiePubPreview){
+          mairiePubPreview.textContent =
+            "Date : " + date + " | Mairie — " + title + " • " + text;
+        }
+
+        if(mairiePubStatusOut){
+          mairiePubStatusOut.textContent =
+            "Publicité mairie affichée dans le grand bandeau.";
+        }
+
+        alert("Publicité mairie affichée dans le grand bandeau.");
+      };
+    }
+
+    if(mairiePubResetBtn){
+      mairiePubResetBtn.onclick = ()=>{
+        if(mairiePubDate) mairiePubDate.value = "";
+        if(mairiePubTitle) mairiePubTitle.value = "";
+        if(mairiePubText) mairiePubText.value = "";
+        if(mairiePubPreview) mairiePubPreview.textContent = "Aucune publicité mairie préparée pour le moment.";
+        if(mairiePubStatusOut) mairiePubStatusOut.textContent = "Formulaire réinitialisé.";
+      };
+    }
+
+    const xb = $("xBtn");
+    if(xb && xb.focus) xb.focus();
+  },0);
 
   return;
 }
