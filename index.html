@@ -1669,7 +1669,7 @@ function validerInscription() {
       }
       window.openSportFiche = openSportFiche;
 
-      const tickerItems = [
+       window.tickerItems = [
         {
           title:"Annonce partenaire (démo)",
           subtitle:"Exemple : avantage à partir de 30 bocitecoins couleur OR • plafond 10 pubs/jour • exemples non contractuels",
@@ -1684,17 +1684,23 @@ function validerInscription() {
 
       let tickerIdx = 0;
 
-      function setTicker(i){
-        const it = tickerItems[i];
-        $("tickerImg").src = it.img;
-        $("tickerTitleA").textContent = it.title;
-        $("tickerSubA").textContent = it.subtitle || "";
-        $("tickerTitleB").textContent = it.title;
-        $("tickerSubB").textContent = it.subtitle || "";
-      }
-      setTicker(0);
+ function setTicker(i){
+  const it = tickerItems[i];
+  $("tickerImg").src = it.img;
+  $("tickerTitleA").textContent = it.title;
+  $("tickerSubA").textContent = it.subtitle || "";
+  $("tickerTitleB").textContent = it.title;
+  $("tickerSubB").textContent = it.subtitle || "";
+}
+
+window.tickerItems = tickerItems;
+window.setTicker = setTicker;
+
+setTicker(0);
+
       setInterval(()=>{
-        tickerIdx = (tickerIdx + 1) % tickerItems.length;
+        if(!Array.isArray(window.tickerItems) || !window.tickerItems.length) return;
+        tickerIdx = (tickerIdx + 1) % window.tickerItems.length;
         setTicker(tickerIdx);
       }, 10000);
 
@@ -3413,12 +3419,13 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
     }
   ];
 
-  function esc(s){
+    function esc(s){
     return String(s || "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 
   function getUnlocked(){
@@ -3509,6 +3516,8 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
       }
     }catch(e){}
   }
+  window.speakTextPremium = speakTextPremium;
+  window.stopSpeech = stopSpeech;  
 
   let oeuvreMediaRecorder = null;
   let oeuvreAudioChunks = [];
@@ -6828,17 +6837,17 @@ if(key === "mairie"){
           <li>Pack 5 publicités = <strong>200 € HT</strong></li>
           <li>Un devis validé ouvre le droit d’utiliser la publicité</li>
           <li>Un pack 5 autorise 5 diffusions</li>
-          <li>Mode démo : bouton de vidage total pour éviter tout blocage pendant la présentation</li>
+        <li>Bouton de remise à zéro réservé aux tests avant mise en production</li>
         </ul>
 
         <div class="muted" style="margin-top:8px;">
-          Dans cette version de démonstration, on repart sur un module propre, séparé de l’ancien historique bloquant.
+        Ce module repart sur une base propre, séparée de l’ancien historique bloquant. 
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
           <button class="choiceBtn" id="mairieOpenTickerCalendarBtn" type="button">Ouvrir le calendrier du bandeau haut</button>
           <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button" style="background:#fff;">Lire historique pubs mairie</button>
-          <button class="choiceBtn" id="mairiePubForceClearBtn" type="button" style="background:#fff3f3;">⚠️ Mode démo : vider l’historique pubs</button>
+          <button class="choiceBtn" id="mairiePubForceClearBtn" type="button" style="background:#fff3f3;">⚠️ Tests : vider l’historique pubs</button>
         </div>
       </div>
 
@@ -7654,7 +7663,7 @@ if(key === "mairie"){
         );
 
         if(idx < 0){
-          alert("Valide d’abord le devis mairie, ou utilise le bouton mode démo pour repartir à zéro.");
+          alert("Valide d’abord le devis mairie, ou utilise le bouton de remise à zéro réservé aux tests.");
           return;
         }
 
@@ -7722,7 +7731,7 @@ if(key === "mairie"){
 
     if(mairiePubForceClearBtn){
       mairiePubForceClearBtn.onclick = ()=>{
-        if(confirm("Mode démo : vider tout l’historique pubs mairie et débloquer entièrement ce module ?")){
+        if(confirm("Tests : vider tout l’historique pubs mairie et débloquer entièrement ce module ?")){
           clearMairieAdDemoData();
           if(mairiePubDate) mairiePubDate.value = "";
           if(mairiePubTitle) mairiePubTitle.value = "";
@@ -7731,7 +7740,7 @@ if(key === "mairie"){
           if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "draft";
           refreshMairiePubPreview();
           refreshMairiePubStatus();
-          alert("Historique pubs mairie vidé pour la démonstration.");
+          alert("Historique pubs mairie vidé pour les tests.");
         }
       };
     }
