@@ -3099,45 +3099,124 @@ out center tags;
         }, 0);
       }
 
-      function openTicker(){
-        openModal("Publicités & visibilité (ticker)", `
-          <div style="font-weight:900;margin-bottom:8px;">Le bandeau du haut = espace de visibilité (démo)</div>
+ function openTicker(){
+  openModal("Publicités & visibilité", `
+    <div style="font-weight:900;margin-bottom:8px;">Grand bandeau publicitaire — espace commun</div>
 
-          <div class="box">
-            <strong>Cadre :</strong> réservation plafonnée, gestion par calendrier, possibilité de récap mensuel et horodatage des réservations.
-          </div>
+    <div class="box">
+      <strong>Cadre commun :</strong> ce calendrier centralise les réservations de publicité du grand bandeau supérieur.
+      Il est commun aux <strong>commerçants</strong>, à la <strong>mairie</strong> et aux <strong>associations autorisées</strong>.
+    </div>
 
-          <div class="box">
-            <div class="muted">
-              Les publications publicitaires du bandeau supérieur sont accessibles aux commerçants, à la mairie et, le cas échéant, à certaines associations selon validation et conditions applicables.
-            </div>
-            <div class="muted" style="margin-top:8px;">
-              Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : 50 € HT pour 1 publicité, ou 200 € HT pour un forfait de 5 publicités.
-            </div>
-            <div class="muted" style="margin-top:8px;">
-              Jusqu’à 16h00, chaque entité (commerce, mairie ou association autorisée) peut réserver 1 seule publicité pour la journée concernée.
-            </div>
-            <div class="muted" style="margin-top:8px;">
-              À partir de 16h00, si les 10 publicités du jour ne sont pas toutes réservées, les places restantes peuvent encore être réservées par les mêmes entités jusqu’à épuisement complet des 10 emplacements.
-            </div>
-            <div class="muted" style="margin-top:8px;">
-              Une fois les 10 publicités du jour réservées, la journée est complète et aucune réservation supplémentaire ne peut être ajoutée sur cette date.
-            </div>
-            <div class="muted" style="margin-top:8px;">
-              Pour les commerçants et les associations, l’absence de paiement bloque la diffusion de la publicité. En cas de paiement via PSP non régularisé à échéance, aucune nouvelle publicité ne peut être diffusée tant que la situation n’est pas régularisée.
-            </div>
-            <div class="muted" style="margin-top:8px;">
-              Les associations sportives locales ont vocation à être prioritairement valorisées dans l’espace sport dédié de l’application.
-            </div>
-          </div>
+    <div class="box">
+      <div class="muted">
+        Maximum : <strong>${PUB_MAX_PER_DAY} publicités par jour</strong>.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Avant 16h00 : une même entité ne peut réserver qu’une seule publicité sur la journée concernée.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Après 16h00 : s’il reste des places, les entités peuvent reprendre des emplacements jusqu’au maximum de ${PUB_MAX_PER_DAY}.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Tarif : <strong>50 € HT</strong> pour 1 publicité, ou <strong>200 € HT</strong> pour un forfait de 5 publicités.
+      </div>
+    </div>
 
-          <div id="calHost"></div>
-        `);
+    <div class="box">
+      <div style="font-weight:900;">Accès réservé</div>
+      <div class="muted" style="margin-top:6px;">
+        Cet espace n’est pas destiné aux simples visiteurs. Il sert uniquement aux comptes autorisés :
+        mairie, commerces et associations validées.
+      </div>
 
-        setTimeout(()=> renderCalendarInto("calHost"), 0);
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="tickerAccessCommerce" type="button">Commerce</button>
+        <button class="choiceBtn" id="tickerAccessMairie" type="button">Mairie</button>
+        <button class="choiceBtn" id="tickerAccessAsso" type="button">Association</button>
+      </div>
+
+      <div class="muted" id="tickerAccessStatus" style="margin-top:10px;">
+        Choisissez un profil autorisé pour ouvrir le calendrier commun.
+      </div>
+    </div>
+
+    <div id="tickerEntityInfo" class="box" style="display:none;margin-top:12px;background:var(--bg);"></div>
+
+    <div id="calHost" style="display:none;"></div>
+  `);
+
+  setTimeout(()=>{
+    const accessCommerce = $("tickerAccessCommerce");
+    const accessMairie = $("tickerAccessMairie");
+    const accessAsso = $("tickerAccessAsso");
+    const status = $("tickerAccessStatus");
+    const entityInfo = $("tickerEntityInfo");
+    const calHost = $("calHost");
+
+    function unlockTickerCalendar(profile){
+      let label = "";
+      let description = "";
+
+      if(profile === "commerce"){
+        label = "Commerce";
+        description = "Espace commerce : réservation avec paiement immédiat, visibilité locale, suivi des publicités achetées.";
       }
-      window.openTicker = openTicker;
-      on($("ticker"), "click", openTicker);
+
+      if(profile === "mairie"){
+        label = "Mairie";
+        description = "Espace mairie : réservation dans le même calendrier commun, sans passe-droit, avec suivi des diffusions.";
+      }
+
+      if(profile === "asso"){
+        label = "Association";
+        description = "Espace association autorisée : réservation possible après validation, avec paiement immédiat et visibilité encadrée.";
+      }
+
+      if(status){
+        status.textContent = "Accès ouvert : " + label + ". Le calendrier commun est maintenant disponible.";
+      }
+
+      if(entityInfo){
+        entityInfo.style.display = "block";
+        entityInfo.innerHTML = `
+          <div style="font-weight:900;">Profil sélectionné : ${escapeHtml(label)}</div>
+          <div class="muted" style="margin-top:8px;">${escapeHtml(description)}</div>
+          <div class="muted" style="margin-top:8px;">
+            Les réservations enregistrées ici alimentent le même compteur journalier :
+            impossible de dépasser ${PUB_MAX_PER_DAY} publicités sur une même date.
+          </div>
+        `;
+      }
+
+      if(calHost){
+        calHost.style.display = "block";
+      }
+
+      renderCalendarInto("calHost");
+    }
+
+    if(accessCommerce){
+      accessCommerce.onclick = ()=>{
+        unlockTickerCalendar("commerce");
+      };
+    }
+
+    if(accessMairie){
+      accessMairie.onclick = ()=>{
+        unlockTickerCalendar("mairie");
+      };
+    }
+
+    if(accessAsso){
+      accessAsso.onclick = ()=>{
+        unlockTickerCalendar("asso");
+      };
+    }
+  }, 0);
+}
+window.openTicker = openTicker;
+on($("ticker"), "click", openTicker);
 
       window.tapeAds = [
         { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
