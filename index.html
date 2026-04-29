@@ -7625,15 +7625,15 @@ if(key === "mairie"){
       };
     }
 
-    if(mairieOpenTickerCalendarBtn){
-      mairieOpenTickerCalendarBtn.onclick = ()=>{
-        if(typeof window.openTicker === "function"){
-          window.openTicker();
-        }else{
-          alert("Calendrier du bandeau indisponible.");
-        }
-      };
+ if(mairieOpenTickerCalendarBtn){
+  mairieOpenTickerCalendarBtn.onclick = ()=>{
+    if(typeof window.openTicker === "function"){
+      window.openTicker();
+    }else{
+      alert("Espace publicitaire commun indisponible.");
     }
+  };
+}
 
     if(mairiePubTitle) mairiePubTitle.addEventListener("input", refreshMairiePubPreview);
     if(mairiePubText) mairiePubText.addEventListener("input", refreshMairiePubPreview);
@@ -8298,12 +8298,15 @@ if(key === "mairie"){
       </div>
     </div>
 
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-      <button class="choiceBtn" id="walletClientRedeem30" type="button">Échanger 30</button>
-      <button class="choiceBtn" id="walletClientRedeem50" type="button">Échanger 50</button>
-      <button class="choiceBtn" id="walletClientRedeem100" type="button">Échanger 100</button>
-      <button class="choiceBtn" id="walletClientReset" type="button" style="background:#fff;">Réinitialiser (démo)</button>
-    </div>
+   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+  <button class="choiceBtn" id="mairieOpenTickerCalendarBtn" type="button">
+    Réserver une publicité dans le bandeau commun
+  </button>
+
+  <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button" style="background:#fff;">
+    Lire historique pubs mairie
+  </button>
+</div>
 
     <div style="font-weight:900;margin-top:12px;">Bocitecoins couleur OR</div>
     <div class="box">
