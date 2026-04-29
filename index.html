@@ -2813,226 +2813,246 @@ out center tags;
       }
       window.initFeeUiInModal = initFeeUiInModal;
 
-      function buildCalendarHTML(){
-        const first = new Date(calYear, calMonth, 1);
-        const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
-        const labels = ["L","M","M","J","V","S","D"];
+    function buildCalendarHTML(){
+  const first = new Date(calYear, calMonth, 1);
+  const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+  const labels = ["L","M","M","J","V","S","D"];
 
-        return `
-          <div class="calWrap">
-            <div class="calTop">
-              <div style="font-weight:900;">Calendrier (démo) — ${monthName}</div>
-              <div class="mini">
-                <button class="choiceBtn" id="calPrev" type="button">◀</button>
-                <button class="choiceBtn" id="calNext" type="button">▶</button>
-              </div>
-            </div>
+  return `
+    <div class="calWrap">
+      <div class="calTop">
+        <div style="font-weight:900;">Calendrier commun des publicités — ${monthName}</div>
+        <div class="mini">
+          <button class="choiceBtn" id="calPrev" type="button">◀</button>
+          <button class="choiceBtn" id="calNext" type="button">▶</button>
+        </div>
+      </div>
 
-            <div class="muted">
-              Règle : <strong>${PUB_MAX_PER_DAY} réservations maximum par jour</strong>.
-            </div>
-            <div class="muted" style="margin-top:6px;">
-              Jusqu’à 16h00, chaque entité (commerce, mairie ou association autorisée) peut réserver <strong>1 seule publicité par jour</strong>.
-            </div>
-            <div class="muted" style="margin-top:6px;">
-              À partir de 16h00, si les 10 publicités du jour ne sont pas toutes réservées, les places restantes peuvent être reprises par les mêmes entités jusqu’à épuisement complet des 10 emplacements.
-            </div>
-            <div class="muted" style="margin-top:6px;">
-              Une fois les 10 publicités du jour réservées, la journée est complète et les réservations basculent au jour suivant.
-            </div>
+      <div class="box">
+        <strong>Accès réservé :</strong> commerce, mairie ou association autorisée.
+        <div class="muted" style="margin-top:6px;">
+          Le calendrier est commun : chaque réservation prise ici compte dans le total du jour, quel que soit le profil.
+        </div>
+      </div>
 
-            <div class="calGrid" style="margin-top:10px;">
-              ${labels.map(x => `<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
-            </div>
+      <div class="muted">
+        Règle : <strong>${PUB_MAX_PER_DAY} publicités maximum par jour</strong>.
+      </div>
+      <div class="muted" style="margin-top:6px;">
+        Avant 16h00 : 1 seule publicité par entité et par jour.
+      </div>
+      <div class="muted" style="margin-top:6px;">
+        Après 16h00 : les places restantes peuvent être reprises par les mêmes entités jusqu’au plafond de 10.
+      </div>
 
-            <div class="calGrid" id="calDays"></div>
+      <div class="calGrid" style="margin-top:10px;">
+        ${labels.map(x => `<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
+      </div>
 
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
-              <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser (démo)</button>
-            </div>
+      <div class="calGrid" id="calDays"></div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
+        <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser test</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderCalendarInto(containerId){
+  const box = $(containerId);
+  if(!box) return;
+
+  box.innerHTML = buildCalendarHTML();
+
+  const daysEl = $("calDays");
+  const bookings = loadBookings();
+  const first = new Date(calYear, calMonth, 1);
+  const last = new Date(calYear, calMonth + 1, 0);
+  const startDow = (first.getDay() + 6) % 7;
+  const daysInMonth = last.getDate();
+
+  const cells = [];
+
+  for(let i=0; i<startDow; i++){
+    cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
+  }
+
+  for(let d=1; d<=daysInMonth; d++){
+    const used = daySlotsUsed(bookings, calYear, calMonth, d);
+    const full = used >= PUB_MAX_PER_DAY;
+    const cls = full ? "calDay full" : "calDay";
+    const remaining = Math.max(0, PUB_MAX_PER_DAY - used);
+
+    cells.push(`
+      <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
+        <div class="d">${d}</div>
+        <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
+        <div class="s" style="font-size:10px;">${full ? "Complet" : remaining + " dispo"}</div>
+      </div>
+    `);
+  }
+
+  daysEl.innerHTML = cells.join("");
+
+  on($("calPrev"), "click", ()=>{
+    calMonth--;
+    if(calMonth < 0){
+      calMonth = 11;
+      calYear--;
+    }
+    renderCalendarInto(containerId);
+  });
+
+  on($("calNext"), "click", ()=>{
+    calMonth++;
+    if(calMonth > 11){
+      calMonth = 0;
+      calYear++;
+    }
+    renderCalendarInto(containerId);
+  });
+
+  on($("calRecap"), "click", ()=> openRecapModal(calYear, calMonth));
+
+  on($("calReset"), "click", ()=>{
+    if(confirm("Réinitialiser toutes les réservations publicitaires de test ?")){
+      localStorage.removeItem(PUB_STORE_KEY);
+      renderCalendarInto(containerId);
+    }
+  });
+
+  document.querySelectorAll(".calDay[data-day]").forEach((el)=>{
+    el.addEventListener("click", ()=>{
+      const d = parseInt(el.getAttribute("data-day"), 10);
+      const bookings2 = loadBookings();
+
+      if(isFull(bookings2, calYear, calMonth, d)){
+        alert("Cette journée est complète. Choisis une autre date.");
+        return;
+      }
+
+      const key = ymd(calYear, calMonth, d);
+      const used = daySlotsUsed(bookings2, calYear, calMonth, d);
+      const remaining = PUB_MAX_PER_DAY - used;
+
+      openModal("Réserver une publicité", `
+        <div class="box">
+          <div style="font-weight:900;">Date : ${key}</div>
+          <div class="muted" style="margin-top:6px;">
+            Déjà réservé : <strong>${used}/${PUB_MAX_PER_DAY}</strong><br>
+            Places restantes : <strong>${remaining}</strong>
           </div>
-        `;
-      }
+          <div class="muted" style="margin-top:8px;">
+            Tarif : 50 € HT pour 1 publicité, ou 200 € HT pour 5 publicités.
+          </div>
+          <div class="muted" style="margin-top:8px;">
+            Paiement immédiat pour commerce et association. Pour la mairie, la mise en production devra bloquer automatiquement si non régularisé à 30 jours.
+          </div>
+        </div>
 
-      function renderCalendarInto(containerId){
-        const box = $(containerId);
-        if(!box) return;
+        <div class="choiceGrid">
+          <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
+          <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
+          <button class="choiceBtn" id="bkAsso" type="button">Association</button>
+        </div>
+      `);
 
-        box.innerHTML = buildCalendarHTML();
+      setTimeout(()=>{
+        const doBook = (entityType)=>{
+          const now = new Date();
+          const currentHour = now.getHours();
+          const stampISO = now.toISOString();
+          const stampFR = now.toLocaleString("fr-FR");
 
-        const daysEl = $("calDays");
-        const bookings = loadBookings();
-        const first = new Date(calYear, calMonth, 1);
-        const last = new Date(calYear, calMonth + 1, 0);
-        const startDow = (first.getDay() + 6) % 7;
-        const daysInMonth = last.getDate();
+          const b = loadBookings();
+          let list = getDayBookings(b, calYear, calMonth, d);
+          if(!Array.isArray(list)) list = [];
 
-        const cells = [];
-
-        for(let i=0; i<startDow; i++){
-          cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
-        }
-
-        for(let d=1; d<=daysInMonth; d++){
-          const used = daySlotsUsed(bookings, calYear, calMonth, d);
-          const full = used >= PUB_MAX_PER_DAY;
-          const cls = full ? "calDay full" : "calDay";
-
-          cells.push(`
-            <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
-              <div class="d">${d}</div>
-              <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
-            </div>
-          `);
-        }
-
-        daysEl.innerHTML = cells.join("");
-
-        on($("calPrev"), "click", ()=>{
-          calMonth--;
-          if(calMonth < 0){
-            calMonth = 11;
-            calYear--;
-          }
-          renderCalendarInto(containerId);
-        });
-
-        on($("calNext"), "click", ()=>{
-          calMonth++;
-          if(calMonth > 11){
-            calMonth = 0;
-            calYear++;
-          }
-          renderCalendarInto(containerId);
-        });
-
-        on($("calRecap"), "click", ()=> openRecapModal(calYear, calMonth));
-
-        on($("calReset"), "click", ()=>{
-          if(confirm("Réinitialiser les réservations (démo) ?")){
-            localStorage.removeItem(PUB_STORE_KEY);
+          if(list.length >= PUB_MAX_PER_DAY){
+            alert("Jour complet.");
+            closeModal();
             renderCalendarInto(containerId);
+            return;
           }
-        });
 
-        document.querySelectorAll(".calDay[data-day]").forEach((el)=>{
-          el.addEventListener("click", ()=>{
-            const d = parseInt(el.getAttribute("data-day"), 10);
-            const bookings2 = loadBookings();
+          const entityLabel =
+            entityType === "Commerce"
+              ? "Nom du commerce"
+              : entityType === "Mairie"
+                ? "Nom de la mairie / service"
+                : "Nom de l’association";
 
-            if(isFull(bookings2, calYear, calMonth, d)) return;
+          const entityInput = prompt(entityLabel + " :");
+          if(!entityInput || !entityInput.trim()){
+            alert("Réservation annulée.");
+            return;
+          }
 
-            const key = ymd(calYear, calMonth, d);
-            const used = daySlotsUsed(bookings2, calYear, calMonth, d);
+          const entityName = entityInput.trim();
+          const normalizedEntityName = entityName.toLowerCase();
 
-            openModal("Réserver une publicité (démo)", `
-              <div class="box">
-                <div style="font-weight:900;">Date : ${key}</div>
-                <div class="muted" style="margin-top:6px;">
-                  Il reste <strong>${PUB_MAX_PER_DAY - used}</strong> place(s) disponible(s).
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  Jusqu’à 16h00 : chaque entité (commerce, mairie ou association autorisée) peut réserver 1 seule publicité sur la journée concernée.
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  À partir de 16h00 : si les 10 publicités du jour ne sont pas toutes prises, les places restantes peuvent encore être réservées par les mêmes entités jusqu’à ce que la journée soit complète.
-                </div>
-                <div class="muted" style="margin-top:10px;">
-                  Les publications publicitaires du bandeau supérieur sont accessibles aux commerçants, à la mairie et, le cas échéant, à certaines associations selon validation et conditions applicables.
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  Le tarif applicable est identique pour les commerçants, la mairie et les associations autorisées : 50 € HT pour 1 publicité, ou 200 € HT pour un forfait de 5 publicités.
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  Pour les commerçants et les associations, toute publicité non payée ne peut pas être diffusée. En cas de paiement via PSP non régularisé à échéance, la diffusion est bloquée jusqu’au paiement effectif.
-                </div>
-                <div class="muted" style="margin-top:6px;">
-                  Les associations sportives locales ont vocation à être prioritairement valorisées dans l’espace sport dédié de l’application.
-                </div>
-              </div>
+          const alreadyBookedToday = list.some(item =>
+            String(item.entityType || item.who || "").trim().toLowerCase() === entityType.toLowerCase() &&
+            String(item.entityName || item.who || "").trim().toLowerCase() === normalizedEntityName
+          );
 
-              <div class="choiceGrid">
-                <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
-                <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
-                <button class="choiceBtn" id="bkAsso" type="button">Association</button>
-              </div>
-            `);
+          if(currentHour < 16 && alreadyBookedToday){
+            alert("Avant 16h00, cette entité a déjà réservé une publicité ce jour-là.");
+            return;
+          }
 
-            setTimeout(()=>{
-              const doBook = (entityType)=>{
-                const now = new Date();
-                const stampISO = now.toISOString();
-                const stampFR = now.toLocaleString("fr-FR");
-                const b = loadBookings();
-                let list = getDayBookings(b, calYear, calMonth, d);
+          const title = prompt("Titre de la publicité :");
+          if(!title || !title.trim()){
+            alert("Réservation annulée : titre obligatoire.");
+            return;
+          }
 
-                if(!Array.isArray(list)) list = [];
+          const text = prompt("Texte court de la publicité :");
+          if(!text || !text.trim()){
+            alert("Réservation annulée : texte obligatoire.");
+            return;
+          }
 
-                if(list.length >= PUB_MAX_PER_DAY){
-                  alert("Jour complet.");
-                  closeModal();
-                  renderCalendarInto(containerId);
-                  return;
-                }
-
-                const currentHour = now.getHours();
-
-                const entityLabel =
-                  entityType === "Commerce"
-                    ? "Nom du commerce"
-                    : entityType === "Mairie"
-                      ? "Nom de la mairie / service"
-                      : "Nom de l’association";
-
-                const entityInput = prompt(`${entityLabel} (démo) :`);
-                if(!entityInput || !entityInput.trim()){
-                  alert("Réservation annulée.");
-                  return;
-                }
-
-                const entityName = entityInput.trim();
-                const normalizedEntityName = entityName.toLowerCase();
-
-                const alreadyBookedToday = list.some(item =>
-                  String(item.entityType || item.who || "").trim().toLowerCase() === entityType.toLowerCase() &&
-                  String(item.entityName || item.who || "").trim().toLowerCase() === normalizedEntityName
-                );
-
-                if(currentHour < 16 && alreadyBookedToday){
-                  alert("Avant 16h00, cette entité a déjà réservé sa publicité du jour.");
-                  return;
-                }
-
-                list.push({
-                  date: key,
-                  who: entityType,
-                  entityType: entityType,
-                  entityName: entityName,
-                  ts_iso: stampISO,
-                  ts_fr: stampFR,
-                  note: currentHour < 16
-                    ? "Réservation avant 16h00 (1 seule publicité par entité)"
-                    : "Réservation après 16h00 (places restantes autorisées jusqu’au complet)"
-                });
-
-                setDayBookings(b, calYear, calMonth, d, list);
-                saveBookings(b);
-                closeModal();
-                renderCalendarInto(containerId);
-
-                alert(
-                  `Réservation enregistrée (démo)\n${key}\nType : ${entityType}\nEntité : ${entityName}\nHorodatage : ${stampFR}`
-                );
-              };
-
-              on($("bkCommerce"), "click", ()=> doBook("Commerce"));
-              on($("bkMairie"), "click", ()=> doBook("Mairie"));
-              on($("bkAsso"), "click", ()=> doBook("Association"));
-            }, 0);
+          list.push({
+            date: key,
+            who: entityType,
+            entityType: entityType,
+            entityName: entityName,
+            title: title.trim(),
+            text: text.trim(),
+            status: entityType === "Mairie" ? "quote_validated" : "paid",
+            paymentMode: entityType === "Mairie" ? "mairie_regularisation_30j" : "immediate",
+            due_ts: entityType === "Mairie" ? Date.now() + (30 * 24 * 60 * 60 * 1000) : null,
+            ts_iso: stampISO,
+            ts_fr: stampFR,
+            note: currentHour < 16
+              ? "Réservation avant 16h00"
+              : "Réservation après 16h00"
           });
-        });
-      }
+
+          setDayBookings(b, calYear, calMonth, d, list);
+          saveBookings(b);
+
+          closeModal();
+          renderCalendarInto(containerId);
+
+          alert(
+            "Réservation enregistrée.\n\n" +
+            "Date : " + key + "\n" +
+            "Type : " + entityType + "\n" +
+            "Entité : " + entityName + "\n" +
+            "Compteur jour : " + list.length + "/" + PUB_MAX_PER_DAY
+          );
+        };
+
+        on($("bkCommerce"), "click", ()=> doBook("Commerce"));
+        on($("bkMairie"), "click", ()=> doBook("Mairie"));
+        on($("bkAsso"), "click", ()=> doBook("Association"));
+      }, 0);
+    });
+  });
+}
 
       function openRecapModal(y, m){
         const b = loadBookings();
