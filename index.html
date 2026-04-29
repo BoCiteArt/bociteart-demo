@@ -3054,71 +3054,124 @@ function renderCalendarInto(containerId){
   });
 }
 
-      function openRecapModal(y, m){
-        const b = loadBookings();
-        const keyYM = ym(y,m);
-        const monthObj = b[keyYM] || {};
+function openRecapModal(y, m){
+  const b = loadBookings();
+  const keyYM = ym(y,m);
+  const monthObj = b[keyYM] || {};
 
-        const cleanCsv = (value) => {
-          return String(value || "").replace(/;/g, ",").replace(/\n/g, " ").trim();
-        };
+  const cleanCsv = (value) => {
+    return String(value || "").replace(/;/g, ",").replace(/\n/g, " ").trim();
+  };
 
-        let csv = "date;type_entite;entite;horodatage_iso;horodatage_fr;note\n";
+  const allRows = [];
 
-        Object.keys(monthObj).sort().forEach((d)=>{
-          (monthObj[d] || []).forEach((it)=>{
-            const entityType = cleanCsv(it.entityType || it.who || "");
-            const entityName = cleanCsv(it.entityName || it.who || "");
-            const tsIso = cleanCsv(it.ts_iso || "");
-            const tsFr = cleanCsv(it.ts_fr || "");
-            const note = cleanCsv(it.note || "");
+  Object.keys(monthObj).sort().forEach((d)=>{
+    (monthObj[d] || []).forEach((it)=>{
+      allRows.push({
+        date: it.date || d,
+        entityType: it.entityType || it.who || "",
+        entityName: it.entityName || it.who || "",
+        title: it.title || "",
+        text: it.text || "",
+        paymentStatus: it.paymentStatus || "",
+        amountHT: it.amountHT || "",
+        pack: it.pack || "",
+        ts_iso: it.ts_iso || "",
+        ts_fr: it.ts_fr || "",
+        note: it.note || ""
+      });
+    });
+  });
 
-            csv += `${cleanCsv(it.date)};${entityType};${entityName};${tsIso};${tsFr};${note}\n`;
-          });
-        });
+  const grouped = {};
+  allRows.forEach((r)=>{
+    const key = (r.entityType || "Autre") + " — " + (r.entityName || "Non renseigné");
+    if(!grouped[key]){
+      grouped[key] = {
+        count:0,
+        amountHT:0
+      };
+    }
+    grouped[key].count += 1;
+    grouped[key].amountHT += Number(r.amountHT || 0);
+  });
 
-        openModal("Récap mensuel (démo) — publicités", `
-          <div class="box">
-            <div style="font-weight:900;">Mois : ${keyYM}</div>
+  let csv = "date;type_entite;entite;titre;texte;statut_paiement;montant_ht;formule;horodatage_iso;horodatage_fr;note\n";
+
+  allRows.forEach((r)=>{
+    csv +=
+      `${cleanCsv(r.date)};` +
+      `${cleanCsv(r.entityType)};` +
+      `${cleanCsv(r.entityName)};` +
+      `${cleanCsv(r.title)};` +
+      `${cleanCsv(r.text)};` +
+      `${cleanCsv(r.paymentStatus)};` +
+      `${cleanCsv(r.amountHT)};` +
+      `${cleanCsv(r.pack)};` +
+      `${cleanCsv(r.ts_iso)};` +
+      `${cleanCsv(r.ts_fr)};` +
+      `${cleanCsv(r.note)}\n`;
+  });
+
+  const recapHtml = Object.keys(grouped).length
+    ? Object.keys(grouped).sort().map((name)=>{
+        const g = grouped[name];
+        return `
+          <div class="box" style="margin-top:8px;">
+            <div style="font-weight:900;">${escapeHtml(name)}</div>
             <div class="muted" style="margin-top:6px;">
-              Export du récap mensuel des réservations publicitaires.
+              Nombre de publicité(s) réservée(s) : <strong>${g.count}</strong><br>
+              Montant HT indicatif : <strong>${g.amountHT} €</strong>
             </div>
           </div>
+        `;
+      }).join("")
+    : `<div class="muted">Aucune réservation publicitaire sur ce mois.</div>`;
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
-            <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
-          </div>
-        `);
+  openModal("Récap mensuel — publicités", `
+    <div class="box">
+      <div style="font-weight:900;">Mois : ${keyYM}</div>
+      <div class="muted" style="margin-top:6px;">
+        Récapitulatif commun du grand bandeau publicitaire : mairie, commerces et associations.
+      </div>
+    </div>
 
-        setTimeout(()=>{
-          const btnCsv = $("copyCsv");
-          const btnJson = $("copyJson");
+    <div style="font-weight:900;margin-top:12px;">Résumé par entité</div>
+    ${recapHtml}
 
-          if(btnCsv){
-            btnCsv.onclick = async ()=>{
-              try{
-                await navigator.clipboard.writeText(csv);
-                alert("CSV copié.");
-              }catch(e){
-                alert("Copie impossible sur ce navigateur.");
-              }
-            };
-          }
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
+      <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
+    </div>
+  `);
 
-          if(btnJson){
-            btnJson.onclick = async ()=>{
-              try{
-                await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2));
-                alert("JSON copié.");
-              }catch(e){
-                alert("Copie impossible sur ce navigateur.");
-              }
-            };
-          }
-        }, 0);
-      }
+  setTimeout(()=>{
+    const btnCsv = $("copyCsv");
+    const btnJson = $("copyJson");
 
+    if(btnCsv){
+      btnCsv.onclick = async ()=>{
+        try{
+          await navigator.clipboard.writeText(csv);
+          alert("CSV copié.");
+        }catch(e){
+          alert(csv);
+        }
+      };
+    }
+
+    if(btnJson){
+      btnJson.onclick = async ()=>{
+        try{
+          await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2));
+          alert("JSON copié.");
+        }catch(e){
+          alert(JSON.stringify(monthObj, null, 2));
+        }
+      };
+    }
+  }, 0);
+}
  function openTicker(){
   openModal("Publicités & visibilité", `
     <div style="font-weight:900;margin-bottom:8px;">Grand bandeau publicitaire — espace commun</div>
