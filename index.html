@@ -3063,19 +3063,14 @@ function openRecapModal(y, m){
     return String(value || "").replace(/;/g, ",").replace(/\n/g, " ").trim();
   };
 
-  const allRows = [];
+  const rows = [];
 
   Object.keys(monthObj).sort().forEach((d)=>{
     (monthObj[d] || []).forEach((it)=>{
-      allRows.push({
+      rows.push({
         date: it.date || d,
         entityType: it.entityType || it.who || "",
         entityName: it.entityName || it.who || "",
-        title: it.title || "",
-        text: it.text || "",
-        paymentStatus: it.paymentStatus || "",
-        amountHT: it.amountHT || "",
-        pack: it.pack || "",
         ts_iso: it.ts_iso || "",
         ts_fr: it.ts_fr || "",
         note: it.note || ""
@@ -3083,71 +3078,63 @@ function openRecapModal(y, m){
     });
   });
 
-  const grouped = {};
-  allRows.forEach((r)=>{
-    const key = (r.entityType || "Autre") + " — " + (r.entityName || "Non renseigné");
-    if(!grouped[key]){
-      grouped[key] = {
+  const byEntity = {};
+  rows.forEach((r)=>{
+    const key = (r.entityType || "Type inconnu") + " — " + (r.entityName || "Entité inconnue");
+    if(!byEntity[key]){
+      byEntity[key] = {
         count:0,
-        amountHT:0
+        type:r.entityType,
+        name:r.entityName
       };
     }
-    grouped[key].count += 1;
-    grouped[key].amountHT += Number(r.amountHT || 0);
+    byEntity[key].count++;
   });
 
-  let csv = "date;type_entite;entite;titre;texte;statut_paiement;montant_ht;formule;horodatage_iso;horodatage_fr;note\n";
-
-  allRows.forEach((r)=>{
-    csv +=
-      `${cleanCsv(r.date)};` +
-      `${cleanCsv(r.entityType)};` +
-      `${cleanCsv(r.entityName)};` +
-      `${cleanCsv(r.title)};` +
-      `${cleanCsv(r.text)};` +
-      `${cleanCsv(r.paymentStatus)};` +
-      `${cleanCsv(r.amountHT)};` +
-      `${cleanCsv(r.pack)};` +
-      `${cleanCsv(r.ts_iso)};` +
-      `${cleanCsv(r.ts_fr)};` +
-      `${cleanCsv(r.note)}\n`;
+  let csv = "date;type_entite;entite;horodatage_iso;horodatage_fr;note\n";
+  rows.forEach((r)=>{
+    csv += `${cleanCsv(r.date)};${cleanCsv(r.entityType)};${cleanCsv(r.entityName)};${cleanCsv(r.ts_iso)};${cleanCsv(r.ts_fr)};${cleanCsv(r.note)}\n`;
   });
 
-  const recapHtml = Object.keys(grouped).length
-    ? Object.keys(grouped).sort().map((name)=>{
-        const g = grouped[name];
+  const total = rows.length;
+
+  const detailHtml = Object.keys(byEntity).length
+    ? Object.keys(byEntity).sort().map((key)=>{
+        const e = byEntity[key];
         return `
-          <div class="box" style="margin-top:8px;">
-            <div style="font-weight:900;">${escapeHtml(name)}</div>
-            <div class="muted" style="margin-top:6px;">
-              Nombre de publicité(s) réservée(s) : <strong>${g.count}</strong><br>
-              Montant HT indicatif : <strong>${g.amountHT} €</strong>
-            </div>
+          <div class="box" style="margin-top:8px;background:var(--bg);">
+            <strong>${escapeHtml(e.type || "Type inconnu")}</strong><br>
+            ${escapeHtml(e.name || "Entité inconnue")}<br>
+            <span class="muted">${e.count} publicité(s) réservée(s) ce mois-ci</span>
           </div>
         `;
       }).join("")
-    : `<div class="muted">Aucune réservation publicitaire sur ce mois.</div>`;
+    : `<div class="muted">Aucune réservation sur ce mois.</div>`;
 
   openModal("Récap mensuel — publicités", `
     <div class="box">
       <div style="font-weight:900;">Mois : ${keyYM}</div>
       <div class="muted" style="margin-top:6px;">
-        Récapitulatif commun du grand bandeau publicitaire : mairie, commerces et associations.
+        Total réservé ce mois-ci : <strong>${total}</strong> publicité(s).
       </div>
     </div>
 
-    <div style="font-weight:900;margin-top:12px;">Résumé par entité</div>
-    ${recapHtml}
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Détail par mairie / commerce / association</div>
+      ${detailHtml}
+    </div>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
       <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
       <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
+      <button class="choiceBtn" id="copySummary" type="button">📊 Copier résumé</button>
     </div>
   `);
 
   setTimeout(()=>{
     const btnCsv = $("copyCsv");
     const btnJson = $("copyJson");
+    const btnSummary = $("copySummary");
 
     if(btnCsv){
       btnCsv.onclick = async ()=>{
@@ -3167,6 +3154,25 @@ function openRecapModal(y, m){
           alert("JSON copié.");
         }catch(e){
           alert(JSON.stringify(monthObj, null, 2));
+        }
+      };
+    }
+
+    if(btnSummary){
+      btnSummary.onclick = async ()=>{
+        const summary =
+          "RÉCAP PUBLICITÉS — " + keyYM + "\n\n" +
+          "Total : " + total + " publicité(s)\n\n" +
+          Object.keys(byEntity).sort().map((key)=>{
+            const e = byEntity[key];
+            return "- " + (e.type || "Type inconnu") + " / " + (e.name || "Entité inconnue") + " : " + e.count + " pub(s)";
+          }).join("\n");
+
+        try{
+          await navigator.clipboard.writeText(summary);
+          alert("Résumé copié.");
+        }catch(e){
+          alert(summary);
         }
       };
     }
