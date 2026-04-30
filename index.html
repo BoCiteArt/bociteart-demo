@@ -8688,180 +8688,180 @@ if(mairiePubTransmitBtn){
       };
     }
 
-    const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
+     const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
     const MERCHANT_ADS_KEY = "bociteart_merchant_ads_v1";
 
-const merchantPubDate = $("merchantPubDate");
-const merchantPubTitle = $("merchantPubTitle");
-const merchantPubText = $("merchantPubText");
-const merchantPubPreview = $("merchantPubPreview");
-const merchantPubPayBtn = $("merchantPubPayBtn");
-const merchantPubHistoryBtn = $("merchantPubHistoryBtn");
-const merchantPubResetBtn = $("merchantPubResetBtn");
+    const merchantPubDate = $("merchantPubDate");
+    const merchantPubTitle = $("merchantPubTitle");
+    const merchantPubText = $("merchantPubText");
+    const merchantPubPreview = $("merchantPubPreview");
+    const merchantPubPayBtn = $("merchantPubPayBtn");
+    const merchantPubHistoryBtn = $("merchantPubHistoryBtn");
+    const merchantPubResetBtn = $("merchantPubResetBtn");
 
-function loadMerchantAds(){
-  try{
-    const raw = localStorage.getItem(MERCHANT_ADS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  }catch(e){
-    return [];
-  }
-}
-
-function saveMerchantAds(arr){
-  try{
-    localStorage.setItem(MERCHANT_ADS_KEY, JSON.stringify(arr));
-  }catch(e){}
-}
-
-function buildMerchantPubText(){
-  const title = merchantPubTitle ? String(merchantPubTitle.value || "").trim() : "";
-  const text = merchantPubText ? String(merchantPubText.value || "").trim() : "";
-
-  if(title && text) return title + " • " + text;
-  return title || text || "";
-}
-
-function refreshMerchantPubPreview(){
-  if(!merchantPubPreview) return;
-
-  const date = merchantPubDate ? String(merchantPubDate.value || "").trim() : "";
-  const txt = buildMerchantPubText();
-
-  if(!txt){
-    merchantPubPreview.textContent = "Aucune publicité commerce préparée.";
-    return;
-  }
-
-  merchantPubPreview.textContent =
-    "Date : " + (date || "non renseignée") +
-    " | Tarif : 60 € TTC" +
-    " | Texte : " + txt;
-}
-
-function syncMerchantAdToTicker(ad){
-  if(!ad) return;
-
-  const img = "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60";
-
-  if(Array.isArray(window.tickerItems)){
-    window.tickerItems[0] = {
-      title: ad.title || "Annonce commerce",
-      subtitle: ad.text || "",
-      img: img
-    };
-  }
-
-  if(typeof window.setTicker === "function"){
-    try{
-      window.setTicker(0);
-    }catch(e){}
-  }else{
-    const imgEl = $("tickerImg");
-    const titleA = $("tickerTitleA");
-    const titleB = $("tickerTitleB");
-    const subA = $("tickerSubA");
-    const subB = $("tickerSubB");
-
-    if(imgEl) imgEl.src = img;
-    if(titleA) titleA.textContent = ad.title || "Annonce commerce";
-    if(titleB) titleB.textContent = ad.title || "Annonce commerce";
-    if(subA) subA.textContent = ad.text || "";
-    if(subB) subB.textContent = ad.text || "";
-  }
-}
-
-if(merchantPubTitle) merchantPubTitle.addEventListener("input", refreshMerchantPubPreview);
-if(merchantPubText) merchantPubText.addEventListener("input", refreshMerchantPubPreview);
-if(merchantPubDate) merchantPubDate.addEventListener("input", refreshMerchantPubPreview);
-
-refreshMerchantPubPreview();
-
-if(merchantPubPayBtn){
-  merchantPubPayBtn.onclick = ()=>{
-    const date = merchantPubDate ? String(merchantPubDate.value || "").trim() : "";
-    const title = merchantPubTitle ? String(merchantPubTitle.value || "").trim() : "";
-    const text = merchantPubText ? String(merchantPubText.value || "").trim() : "";
-    const fullText = buildMerchantPubText();
-
-    if(!date){
-      alert("Renseigne la date souhaitée.");
-      return;
+    function loadMerchantAds(){
+      try{
+        const raw = localStorage.getItem(MERCHANT_ADS_KEY);
+        return raw ? JSON.parse(raw) : [];
+      }catch(e){
+        return [];
+      }
     }
 
-    if(!fullText){
-      alert("Renseigne au moins un titre ou un texte de publicité.");
-      return;
+    function saveMerchantAds(arr){
+      try{
+        localStorage.setItem(MERCHANT_ADS_KEY, JSON.stringify(arr));
+      }catch(e){}
     }
 
-    const ok = confirm(
-      "Paiement publicité commerce\n\n" +
-      "Montant : 60 € TTC\n\n" +
-      "Confirmer le paiement et activer la publicité dans le grand bandeau ?"
-    );
+    function buildMerchantPubText(){
+      const title = merchantPubTitle ? String(merchantPubTitle.value || "").trim() : "";
+      const text = merchantPubText ? String(merchantPubText.value || "").trim() : "";
 
-    if(!ok){
-      alert("Paiement annulé. La publicité n’est pas activée.");
-      return;
+      if(title && text) return title + " - " + text;
+      return title || text || "";
     }
 
-    const ad = {
-      type: "merchant_grand_ticker_ad",
-      date: date,
-      title: title || "Annonce commerce",
-      text: text,
-      fullText: fullText,
-      amountTTC: 60,
-      paid: true,
-      active: true,
-      ts: Date.now(),
-      ts_fr: new Date().toLocaleString("fr-FR")
-    };
+    function refreshMerchantPubPreview(){
+      if(!merchantPubPreview) return;
 
-    const ads = loadMerchantAds();
-    ads.push(ad);
-    saveMerchantAds(ads);
+      const date = merchantPubDate ? String(merchantPubDate.value || "").trim() : "";
+      const txt = buildMerchantPubText();
 
-    syncMerchantAdToTicker(ad);
+      if(!txt){
+        merchantPubPreview.textContent = "Aucune publicité commerce préparée.";
+        return;
+      }
 
-    alert("Paiement validé. Publicité commerce activée dans le grand bandeau.");
-  };
-}
-
-if(merchantPubHistoryBtn){
-  merchantPubHistoryBtn.onclick = ()=>{
-    const ads = loadMerchantAds();
-
-    if(!ads.length){
-      alert("Aucune publicité commerce enregistrée.");
-      return;
+      merchantPubPreview.textContent =
+        "Date : " + (date || "non renseignée") +
+        " | Tarif : 60 € TTC" +
+        " | Texte : " + txt;
     }
 
-    const txt = ads.map((x, i)=>{
-      return (
-        "#" + (i + 1) +
-        "\nDate : " + (x.date || "") +
-        "\nTitre : " + (x.title || "") +
-        "\nTexte : " + (x.text || "") +
-        "\nMontant TTC : " + Number(x.amountTTC || 0) + " €" +
-        "\nPayée : " + (x.paid ? "oui" : "non") +
-        "\nActive : " + (x.active ? "oui" : "non") +
-        "\nCréée le : " + (x.ts_fr || "")
-      );
-    }).join("\n\n--------------------\n\n");
+    function syncMerchantAdToTicker(ad){
+      if(!ad) return;
 
-    alert("Publicités commerce :\n\n" + txt);
-  };
-}
+      const img = "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60";
 
-if(merchantPubResetBtn){
-  merchantPubResetBtn.onclick = ()=>{
-    if(merchantPubDate) merchantPubDate.value = "";
-    if(merchantPubTitle) merchantPubTitle.value = "";
-    if(merchantPubText) merchantPubText.value = "";
+      if(Array.isArray(window.tickerItems)){
+        window.tickerItems[0] = {
+          title: ad.title || "Annonce commerce",
+          subtitle: ad.text || "",
+          img: img
+        };
+      }
+
+      if(typeof window.setTicker === "function"){
+        try{
+          window.setTicker(0);
+        }catch(e){}
+      }else{
+        const imgEl = $("tickerImg");
+        const titleA = $("tickerTitleA");
+        const titleB = $("tickerTitleB");
+        const subA = $("tickerSubA");
+        const subB = $("tickerSubB");
+
+        if(imgEl) imgEl.src = img;
+        if(titleA) titleA.textContent = ad.title || "Annonce commerce";
+        if(titleB) titleB.textContent = ad.title || "Annonce commerce";
+        if(subA) subA.textContent = ad.text || "";
+        if(subB) subB.textContent = ad.text || "";
+      }
+    }
+
+    if(merchantPubTitle) merchantPubTitle.addEventListener("input", refreshMerchantPubPreview);
+    if(merchantPubText) merchantPubText.addEventListener("input", refreshMerchantPubPreview);
+    if(merchantPubDate) merchantPubDate.addEventListener("input", refreshMerchantPubPreview);
+
     refreshMerchantPubPreview();
-  };
-}
+
+    if(merchantPubPayBtn){
+      merchantPubPayBtn.onclick = ()=>{
+        const date = merchantPubDate ? String(merchantPubDate.value || "").trim() : "";
+        const title = merchantPubTitle ? String(merchantPubTitle.value || "").trim() : "";
+        const text = merchantPubText ? String(merchantPubText.value || "").trim() : "";
+        const fullText = buildMerchantPubText();
+
+        if(!date){
+          alert("Renseigne la date souhaitée.");
+          return;
+        }
+
+        if(!fullText){
+          alert("Renseigne au moins un titre ou un texte de publicité.");
+          return;
+        }
+
+        const ok = confirm(
+          "Paiement publicité commerce\n\n" +
+          "Montant : 60 € TTC\n\n" +
+          "Confirmer le paiement et activer la publicité dans le grand bandeau ?"
+        );
+
+        if(!ok){
+          alert("Paiement annulé. La publicité n'est pas activée.");
+          return;
+        }
+
+        const ad = {
+          type: "merchant_grand_ticker_ad",
+          date: date,
+          title: title || "Annonce commerce",
+          text: text,
+          fullText: fullText,
+          amountTTC: 60,
+          paid: true,
+          active: true,
+          ts: Date.now(),
+          ts_fr: new Date().toLocaleString("fr-FR")
+        };
+
+        const ads = loadMerchantAds();
+        ads.push(ad);
+        saveMerchantAds(ads);
+
+        syncMerchantAdToTicker(ad);
+
+        alert("Paiement validé. Publicité commerce activée dans le grand bandeau.");
+      };
+    }
+
+    if(merchantPubHistoryBtn){
+      merchantPubHistoryBtn.onclick = ()=>{
+        const ads = loadMerchantAds();
+
+        if(!ads.length){
+          alert("Aucune publicité commerce enregistrée.");
+          return;
+        }
+
+        const txt = ads.map((x, i)=>{
+          return (
+            "#" + (i + 1) +
+            "\nDate : " + (x.date || "") +
+            "\nTitre : " + (x.title || "") +
+            "\nTexte : " + (x.text || "") +
+            "\nMontant TTC : " + Number(x.amountTTC || 0) + " €" +
+            "\nPayée : " + (x.paid ? "oui" : "non") +
+            "\nActive : " + (x.active ? "oui" : "non") +
+            "\nCréée le : " + (x.ts_fr || "")
+          );
+        }).join("\n\n--------------------\n\n");
+
+        alert("Publicités commerce :\n\n" + txt);
+      };
+    }
+
+    if(merchantPubResetBtn){
+      merchantPubResetBtn.onclick = ()=>{
+        if(merchantPubDate) merchantPubDate.value = "";
+        if(merchantPubTitle) merchantPubTitle.value = "";
+        if(merchantPubText) merchantPubText.value = "";
+        refreshMerchantPubPreview();
+      };
+    }
 
     if(merchantHistoryExportBtn){
       merchantHistoryExportBtn.onclick = ()=>{
@@ -8885,7 +8885,7 @@ if(merchantPubResetBtn){
         };
 
         const exportText =
-          "HISTORIQUE COMMERCE — EXPORT DÉMO\n\n" +
+          "HISTORIQUE COMMERCE - EXPORT DEMO\n\n" +
           JSON.stringify(exportObj, null, 2);
 
         if(navigator.clipboard && navigator.clipboard.writeText){
@@ -8905,8 +8905,6 @@ if(merchantPubResetBtn){
   return;
 }
 };
- } 
-
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
   if(!isFn(window.openModal)) return;
