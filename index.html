@@ -2967,34 +2967,34 @@ function renderCalendarInto(containerId){
 
   const cells = [];
 
-  for(let i=0; i<startDow; i++){
+  for(let i = 0; i < startDow; i++){
     cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
   }
 
-for(let d=1; d<=daysInMonth; d++){
-  const used = daySlotsUsed(bookings, calYear, calMonth, d);
-  const full = used >= PUB_MAX_PER_DAY;
-  const cls = full ? "calDay full" : "calDay";
-  const remaining = Math.max(0, PUB_MAX_PER_DAY - used);
-  const alertState = getDayPaymentAlert(bookings, calYear, calMonth, d);
+  for(let d = 1; d <= daysInMonth; d++){
+    const used = daySlotsUsed(bookings, calYear, calMonth, d);
+    const full = used >= PUB_MAX_PER_DAY;
+    const cls = full ? "calDay full" : "calDay";
+    const remaining = Math.max(0, PUB_MAX_PER_DAY - used);
+    const alertState = getDayPaymentAlert(bookings, calYear, calMonth, d);
 
-  let alertHtml = "";
-  if(alertState === "warning"){
-    alertHtml = `<div class="s" style="font-size:15px;color:#b06b00;">⚠️</div>`;
-  }
-  if(alertState === "blocked"){
-    alertHtml = `<div class="s" style="font-size:15px;color:#a51e22;">⛔</div>`;
-  }
+    let alertHtml = "";
+    if(alertState === "warning"){
+      alertHtml = `<div class="s" style="font-size:15px;color:#b06b00;">⚠️</div>`;
+    }
+    if(alertState === "blocked"){
+      alertHtml = `<div class="s" style="font-size:15px;color:#a51e22;">⛔</div>`;
+    }
 
-  cells.push(`
-    <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
-      <div class="d">${d}</div>
-      <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
-      <div class="s" style="font-size:10px;">${full ? "Complet" : remaining + " dispo"}</div>
-      ${alertHtml}
-    </div>
-  `);
-}
+    cells.push(`
+      <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
+        <div class="d">${d}</div>
+        <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
+        <div class="s" style="font-size:10px;">${full ? "Complet" : remaining + " dispo"}</div>
+        ${alertHtml}
+      </div>
+    `);
+  }
 
   daysEl.innerHTML = cells.join("");
 
@@ -3016,7 +3016,9 @@ for(let d=1; d<=daysInMonth; d++){
     renderCalendarInto(containerId);
   });
 
-  on($("calRecap"), "click", ()=> openRecapModal(calYear, calMonth));
+  on($("calRecap"), "click", ()=>{
+    openRecapModal(calYear, calMonth);
+  });
 
   on($("calReset"), "click", ()=>{
     if(confirm("Réinitialiser toutes les réservations publicitaires de test ?")){
@@ -3050,7 +3052,7 @@ for(let d=1; d<=daysInMonth; d++){
             Tarif : 50 € HT pour 1 publicité, ou 200 € HT pour 5 publicités.
           </div>
           <div class="muted" style="margin-top:8px;">
-            Paiement immédiat pour commerce et association. Pour la mairie, la mise en production devra bloquer automatiquement si non régularisé à 30 jours.
+            Paiement immédiat pour commerce et association. Pour la mairie, une régularisation sous 30 jours est prévue.
           </div>
         </div>
 
@@ -3079,36 +3081,35 @@ for(let d=1; d<=daysInMonth; d++){
             return;
           }
 
-          // 🔴 Vérification blocage mairie si impayé > 30 jours
-if(entityType === "Mairie"){
-  const allBookings = loadBookings();
-  const nowTs = Date.now();
-  let blocked = false;
+          if(entityType === "Mairie"){
+            const allBookings = loadBookings();
+            const nowTs = Date.now();
+            let blocked = false;
 
-  Object.keys(allBookings).forEach(monthKey=>{
-    Object.keys(allBookings[monthKey]).forEach(dayKey=>{
-      (allBookings[monthKey][dayKey] || []).forEach(item=>{
-        if(
-          item.entityType === "Mairie" &&
-          item.paymentMode === "mairie_regularisation_30j" &&
-          item.due_ts &&
-          nowTs > item.due_ts &&
-          item.status !== "paid"
-        ){
-          blocked = true;
-        }
-      });
-    });
-  });
+            Object.keys(allBookings).forEach(monthKey=>{
+              Object.keys(allBookings[monthKey] || {}).forEach(dayKey=>{
+                (allBookings[monthKey][dayKey] || []).forEach(item=>{
+                  if(
+                    item.entityType === "Mairie" &&
+                    item.paymentMode === "mairie_regularisation_30j" &&
+                    item.due_ts &&
+                    nowTs > item.due_ts &&
+                    item.status !== "paid"
+                  ){
+                    blocked = true;
+                  }
+                });
+              });
+            });
 
-  if(blocked){
-    alert(
-      "Blocage automatique : une ou plusieurs publicités mairie ne sont pas régularisées après 30 jours.\n\n" +
-      "Impossible de réserver une nouvelle publicité tant que la situation n’est pas réglée."
-    );
-    return;
-  }
-}
+            if(blocked){
+              alert(
+                "Blocage automatique : une ou plusieurs publicités mairie ne sont pas régularisées après 30 jours.\n\n" +
+                "Impossible de réserver une nouvelle publicité tant que la situation n’est pas réglée."
+              );
+              return;
+            }
+          }
 
           const entityLabel =
             entityType === "Commerce"
@@ -3190,10 +3191,10 @@ if(entityType === "Mairie"){
 
 function openRecapModal(y, m){
   const b = loadBookings();
-  const keyYM = ym(y,m);
+  const keyYM = ym(y, m);
   const monthObj = b[keyYM] || {};
 
-  const cleanCsv = (value) => {
+  const cleanCsv = (value)=>{
     return String(value || "").replace(/;/g, ",").replace(/\n/g, " ").trim();
   };
 
@@ -3207,34 +3208,37 @@ function openRecapModal(y, m){
         entityName: it.entityName || it.who || "",
         ts_iso: it.ts_iso || "",
         ts_fr: it.ts_fr || "",
-        note: it.note || ""
+        note: it.note || "",
+        status: it.status || "",
+        paymentMode: it.paymentMode || "",
+        due_ts: it.due_ts || null
       });
     });
   });
 
   const byEntity = {};
   rows.forEach((r)=>{
-    const key = (r.entityType || "Type inconnu") + " — " + (r.entityName || "Entité inconnue");
-    if(!byEntity[key]){
-      byEntity[key] = {
-        count:0,
-        type:r.entityType,
-        name:r.entityName
+    const groupKey = (r.entityType || "Type inconnu") + " — " + (r.entityName || "Entité inconnue");
+    if(!byEntity[groupKey]){
+      byEntity[groupKey] = {
+        count: 0,
+        type: r.entityType,
+        name: r.entityName
       };
     }
-    byEntity[key].count++;
+    byEntity[groupKey].count++;
   });
 
-  let csv = "date;type_entite;entite;horodatage_iso;horodatage_fr;note\n";
+  let csv = "date;type_entite;entite;horodatage_iso;horodatage_fr;statut;paiement;note\n";
   rows.forEach((r)=>{
-    csv += `${cleanCsv(r.date)};${cleanCsv(r.entityType)};${cleanCsv(r.entityName)};${cleanCsv(r.ts_iso)};${cleanCsv(r.ts_fr)};${cleanCsv(r.note)}\n`;
+    csv += `${cleanCsv(r.date)};${cleanCsv(r.entityType)};${cleanCsv(r.entityName)};${cleanCsv(r.ts_iso)};${cleanCsv(r.ts_fr)};${cleanCsv(r.status)};${cleanCsv(r.paymentMode)};${cleanCsv(r.note)}\n`;
   });
 
   const total = rows.length;
 
   const detailHtml = Object.keys(byEntity).length
-    ? Object.keys(byEntity).sort().map((key)=>{
-        const e = byEntity[key];
+    ? Object.keys(byEntity).sort().map((groupKey)=>{
+        const e = byEntity[groupKey];
         return `
           <div class="box" style="margin-top:8px;background:var(--bg);">
             <strong>${escapeHtml(e.type || "Type inconnu")}</strong><br>
@@ -3297,8 +3301,8 @@ function openRecapModal(y, m){
         const summary =
           "RÉCAP PUBLICITÉS — " + keyYM + "\n\n" +
           "Total : " + total + " publicité(s)\n\n" +
-          Object.keys(byEntity).sort().map((key)=>{
-            const e = byEntity[key];
+          Object.keys(byEntity).sort().map((groupKey)=>{
+            const e = byEntity[groupKey];
             return "- " + (e.type || "Type inconnu") + " / " + (e.name || "Entité inconnue") + " : " + e.count + " pub(s)";
           }).join("\n");
 
@@ -3312,9 +3316,19 @@ function openRecapModal(y, m){
     }
   }, 0);
 }
- function openTicker(){
+
+function openTicker(){
+  const warningMsg = checkMairiePaymentWarnings ? checkMairiePaymentWarnings() : null;
+
   openModal("Publicités & visibilité", `
     <div style="font-weight:900;margin-bottom:8px;">Grand bandeau publicitaire — espace commun</div>
+
+    ${warningMsg ? `
+      <div class="box" style="border-left:6px solid #b06b00;background:#fff8e8;">
+        <strong>Rappel mairie :</strong><br>
+        <div class="muted" style="white-space:pre-line;margin-top:6px;">${escapeHtml(warningMsg)}</div>
+      </div>
+    ` : ""}
 
     <div class="box">
       <strong>Cadre commun :</strong> ce calendrier centralise les réservations de publicité du grand bandeau supérieur.
@@ -3355,7 +3369,6 @@ function openRecapModal(y, m){
     </div>
 
     <div id="tickerEntityInfo" class="box" style="display:none;margin-top:12px;background:var(--bg);"></div>
-
     <div id="calHost" style="display:none;"></div>
   `);
 
@@ -3428,6 +3441,7 @@ function openRecapModal(y, m){
     }
   }, 0);
 }
+
 window.openTicker = openTicker;
 on($("ticker"), "click", openTicker);
 
