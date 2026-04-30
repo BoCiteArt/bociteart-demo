@@ -6985,78 +6985,33 @@ if(key === "mairie"){
         <div class="muted" style="margin-top:10px;">(Démo) Enregistrement local sur ce téléphone.</div>
       </div>
 
-      <div style="font-weight:900;margin-top:16px;">Publicité mairie payante — grand bandeau du haut</div>
-      <div class="box">
-        <div class="muted">
-          La mairie utilise le <strong>même grand bandeau du haut</strong> que les commerçants,
-          avec les <strong>mêmes règles</strong> pour éviter les passe-droits, jalousies et montrer l’exemple.
-        </div>
+      <div style="font-weight:900;margin-top:16px;">Publicité mairie — grand bandeau du haut</div>
+<div class="box">
+  <div class="muted">
+    La mairie utilise le calendrier commun du grand bandeau, avec les mêmes règles que les commerces et associations.
+  </div>
 
-        <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>1 publicité = <strong>50 € HT</strong></li>
-          <li>Pack 5 publicités = <strong>200 € HT</strong></li>
-          <li>Un devis validé ouvre le droit d’utiliser la publicité</li>
-          <li>Un pack 5 autorise 5 diffusions</li>
-        <li>Bouton de remise à zéro réservé aux tests avant mise en production</li>
-        </ul>
+  <ul style="margin:8px 0 0 18px;font-weight:800;">
+    <li>10 publicités maximum par jour au total</li>
+    <li>Avant 16h00 : 1 réservation maximum par entité</li>
+    <li>Après 16h00 : les places restantes peuvent être reprises jusqu’au complet</li>
+    <li>Réservation, paiement et historique sont centralisés dans le grand bandeau publicitaire</li>
+  </ul>
 
-        <div class="muted" style="margin-top:8px;">
-        Ce module repart sur une base propre, séparée de l’ancien historique bloquant. 
-        </div>
+  <div class="muted" style="margin-top:8px;">
+    Pour éviter les doublons, la réservation ne se fait plus dans l’onglet mairie.
+    Elle se fait uniquement via le calendrier commun du grand rectangle publicitaire.
+  </div>
 
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="mairieOpenTickerCalendarBtn" type="button">Ouvrir le calendrier du bandeau haut</button>
-          <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button" style="background:#fff;">Lire historique pubs mairie</button>
-          <button class="choiceBtn" id="mairiePubForceClearBtn" type="button" style="background:#fff3f3;">⚠️ Tests : vider l’historique pubs</button>
-        </div>
-      </div>
-
-      <div class="box" style="margin-top:12px;">
-        <div style="font-weight:900;">Rédaction / transmission de la publicité mairie</div>
-
-        <div style="margin-top:10px;font-weight:900;">Date réservée</div>
-        <input class="miniField" id="mairiePubDate" placeholder="AAAA-MM-JJ">
-
-        <div style="margin-top:10px;font-weight:900;">Titre publicité</div>
-        <input class="miniField" id="mairiePubTitle" placeholder="Ex : Concert ce soir">
-
-        <div style="margin-top:10px;font-weight:900;">Texte publicité</div>
-        <textarea id="mairiePubText" class="miniField" style="min-height:110px;" placeholder="Ex : Il reste 52 places à 2 € au lieu de 40 € pour les étudiants sur présentation de leur carte."></textarea>
-
-        <div style="margin-top:10px;font-weight:900;">Formule</div>
-        <select class="miniField" id="mairiePubPack">
-          <option value="1">1 publicité — 50 € HT</option>
-          <option value="5">Pack 5 publicités — 200 € HT</option>
-        </select>
-
-        <div style="margin-top:10px;font-weight:900;">Statut devis / paiement</div>
-        <select class="miniField" id="mairiePubPaymentStatus">
-          <option value="draft">Brouillon</option>
-          <option value="quote_validated">Devis validé</option>
-          <option value="paid">Payé / régularisé</option>
-        </select>
-
-        <div class="muted" style="margin-top:8px;">
-          Étapes simples : préparer → valider le devis → marquer payé si besoin → activer dans le bandeau.
-        </div>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="mairiePubValidateQuoteBtn" type="button">Valider le devis</button>
-          <button class="choiceBtn" id="mairiePubMarkPaidBtn" type="button">Marquer comme payé / régularisé</button>
-          <button class="choiceBtn" id="mairiePubTransmitBtn" type="button">Activer dans le bandeau</button>
-          <button class="choiceBtn" id="mairiePubResetBtn" type="button" style="background:#fff;">Réinitialiser le formulaire</button>
-        </div>
-
-        <div class="box" style="margin-top:12px;background:var(--bg);">
-          <div style="font-weight:900;">Aperçu publicité mairie</div>
-          <div class="muted" id="mairiePubPreview" style="margin-top:8px;">Aucune publicité mairie préparée pour le moment.</div>
-        </div>
-
-        <div class="box" style="margin-top:12px;background:#fffdf0;">
-          <div style="font-weight:900;">État du dossier pub mairie</div>
-          <div class="muted" id="mairiePubStatusOut" style="margin-top:8px;">Aucun devis mairie validé pour le moment.</div>
-        </div>
-      </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <button class="choiceBtn" id="mairieOpenTickerCalendarBtn" type="button">
+      Ouvrir le calendrier commun des publicités
+    </button>
+    <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button" style="background:#fff;">
+      Lire historique pubs mairie
+    </button>
+  </div>
+</div>
 
       <div style="font-weight:900;margin-top:16px;color:#8a6d00;">Lecture école → mairie</div>
       <div class="box" style="border-left:6px solid #d4bb18;">
