@@ -7669,15 +7669,18 @@ if(key === "mairie"){
   };
 }
 
-    if(mairiePubTitle) mairiePubTitle.addEventListener("input", refreshMairiePubPreview);
-    if(mairiePubText) mairiePubText.addEventListener("input", refreshMairiePubPreview);
-    if(mairiePubDate) mairiePubDate.addEventListener("input", refreshMairiePubPreview);
-    if(mairiePubPack) mairiePubPack.addEventListener("change", refreshMairiePubPreview);
-    if(mairiePubPaymentStatus) mairiePubPaymentStatus.addEventListener("change", refreshMairiePubPreview);
-
-    refreshMairiePubPreview();
     refreshMairiePubStatus();
     syncMairiePaidAdToTicker();
+
+    if(mairieOpenTickerCalendarBtn){
+      mairieOpenTickerCalendarBtn.onclick = ()=>{
+        if(typeof window.openTicker === "function"){
+          window.openTicker();
+        }else{
+          alert("Calendrier publicitaire indisponible.");
+        }
+      };
+    }
 
     if(mairiePubValidateQuoteBtn){
       mairiePubValidateQuoteBtn.onclick = ()=>{
