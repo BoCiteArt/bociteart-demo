@@ -2968,7 +2968,7 @@ function renderCalendarInto(containerId){
   const cells = [];
 
   for(let i = 0; i < startDow; i++){
-    cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
+    cells.push('<div class="calDay disabled" aria-hidden="true"></div>');
   }
 
   for(let d = 1; d <= daysInMonth; d++){
@@ -2980,22 +2980,22 @@ function renderCalendarInto(containerId){
 
     let alertHtml = "";
     if(alertState === "warning"){
-      alertHtml = `<div class="s" style="font-size:15px;color:#b06b00;">⚠️</div>`;
+      alertHtml = '<div class="s" style="font-size:15px;color:#b06b00;">⚠️</div>';
     }
     if(alertState === "blocked"){
-      alertHtml = `<div class="s" style="font-size:15px;color:#a51e22;">⛔</div>`;
+      alertHtml = '<div class="s" style="font-size:15px;color:#a51e22;">⛔</div>';
     }
 
- const dayAttr = full ? "" : 'data-day="' + d + '" role="button"';
+    const attrs = full ? "" : 'data-day="' + d + '" role="button"';
 
-cells.push(`
-  <div class="${cls}" ${dayAttr}>
-    <div class="d">${d}</div>
-    <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
-    <div class="s" style="font-size:10px;">${full ? "Complet" : remaining + " dispo"}</div>
-    ${alertHtml}
-  </div>
-`);
+    cells.push(
+      '<div class="' + cls + '" ' + attrs + '>' +
+        '<div class="d">' + d + '</div>' +
+        '<div class="s">' + used + '/' + PUB_MAX_PER_DAY + '</div>' +
+        '<div class="s" style="font-size:10px;">' + (full ? "Complet" : remaining + " dispo") + '</div>' +
+        alertHtml +
+      '</div>'
+    );
   }
 
   daysEl.innerHTML = cells.join("");
@@ -3018,9 +3018,7 @@ cells.push(`
     renderCalendarInto(containerId);
   });
 
-  on($("calRecap"), "click", ()=>{
-    openRecapModal(calYear, calMonth);
-  });
+  on($("calRecap"), "click", ()=> openRecapModal(calYear, calMonth));
 
   on($("calReset"), "click", ()=>{
     if(confirm("Réinitialiser toutes les réservations publicitaires de test ?")){
@@ -3054,7 +3052,7 @@ cells.push(`
             Tarif : 50 € HT pour 1 publicité, ou 200 € HT pour 5 publicités.
           </div>
           <div class="muted" style="margin-top:8px;">
-            Paiement immédiat pour commerce et association. Pour la mairie, une régularisation sous 30 jours est prévue.
+            Paiement immédiat pour commerce et association. Pour la mairie, blocage automatique si non régularisé à 30 jours.
           </div>
         </div>
 
@@ -3089,7 +3087,7 @@ cells.push(`
             let blocked = false;
 
             Object.keys(allBookings).forEach(monthKey=>{
-              Object.keys(allBookings[monthKey] || {}).forEach(dayKey=>{
+              Object.keys(allBookings[monthKey]).forEach(dayKey=>{
                 (allBookings[monthKey][dayKey] || []).forEach(item=>{
                   if(
                     item.entityType === "Mairie" &&
@@ -3163,9 +3161,7 @@ cells.push(`
             due_ts: entityType === "Mairie" ? Date.now() + (30 * 24 * 60 * 60 * 1000) : null,
             ts_iso: stampISO,
             ts_fr: stampFR,
-            note: currentHour < 16
-              ? "Réservation avant 16h00"
-              : "Réservation après 16h00"
+            note: currentHour < 16 ? "Réservation avant 16h00" : "Réservation après 16h00"
           });
 
           setDayBookings(b, calYear, calMonth, d, list);
