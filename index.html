@@ -2617,10 +2617,11 @@ out center tags;
       function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
       function ym(y,m){ return `${y}-${pad2(m+1)}`; }
 
-  function loadBookings(){
+ function loadBookings(){
   try{
     const raw = localStorage.getItem(PUB_STORE_KEY);
-    return raw ? JSON.parse(raw) : {};
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === "object" ? parsed : {};
   }catch(e){
     return {};
   }
@@ -2628,8 +2629,35 @@ out center tags;
 
 function saveBookings(obj){
   try{
-    localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj));
+    localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj || {}));
   }catch(e){}
+}
+
+function getDayBookings(obj, y, m, d){
+  const keyYM = ym(y,m);
+  const keyYMD = ymd(y,m,d);
+
+  if(!obj || typeof obj !== "object") return [];
+  if(!obj[keyYM] || typeof obj[keyYM] !== "object") return [];
+
+  const list = obj[keyYM][keyYMD];
+  return Array.isArray(list) ? list : [];
+}
+
+function setDayBookings(obj, y, m, d, list){
+  const keyYM = ym(y,m);
+  const keyYMD = ymd(y,m,d);
+
+  if(!obj[keyYM]) obj[keyYM] = {};
+  obj[keyYM][keyYMD] = Array.isArray(list) ? list : [];
+}
+
+function daySlotsUsed(obj, y, m, d){
+  return getDayBookings(obj, y, m, d).length;
+}
+
+function isFull(obj, y, m, d){
+  return daySlotsUsed(obj, y, m, d) >= PUB_MAX_PER_DAY;
 }
 
 function checkMairiePaymentWarnings(){
@@ -2638,15 +2666,21 @@ function checkMairiePaymentWarnings(){
   let warningMsg = null;
 
   Object.keys(bookings).forEach(monthKey=>{
-    Object.keys(bookings[monthKey]).forEach(dayKey=>{
-      (bookings[monthKey][dayKey] || []).forEach(item=>{
+    const monthObj = bookings[monthKey];
+    if(!monthObj || typeof monthObj !== "object") return;
+
+    Object.keys(monthObj).forEach(dayKey=>{
+      const dayList = Array.isArray(monthObj[dayKey]) ? monthObj[dayKey] : [];
+
+      dayList.forEach(item=>{
         if(
+          item &&
           item.entityType === "Mairie" &&
           item.paymentMode === "mairie_regularisation_30j" &&
           item.due_ts &&
           item.status !== "paid"
         ){
-          const diffDays = Math.floor((item.due_ts - now) / (1000*60*60*24));
+          const diffDays = Math.floor((Number(item.due_ts) - now) / (1000*60*60*24));
 
           if(diffDays <= 8 && diffDays >= 0){
             warningMsg =
@@ -2670,12 +2704,13 @@ function getDayPaymentAlert(bookings, y, m, d){
 
   list.forEach(item=>{
     if(
+      item &&
       item.entityType === "Mairie" &&
       item.paymentMode === "mairie_regularisation_30j" &&
       item.due_ts &&
       item.status !== "paid"
     ){
-      const diffDays = Math.floor((item.due_ts - now) / (1000*60*60*24));
+      const diffDays = Math.floor((Number(item.due_ts) - now) / (1000*60*60*24));
 
       if(diffDays < 0){
         hasBlocked = true;
