@@ -2976,6 +2976,37 @@ function renderCalendarInto(containerId){
             return;
           }
 
+          // 🔴 Vérification blocage mairie si impayé > 30 jours
+if(entityType === "Mairie"){
+  const allBookings = loadBookings();
+  const nowTs = Date.now();
+  let blocked = false;
+
+  Object.keys(allBookings).forEach(monthKey=>{
+    Object.keys(allBookings[monthKey]).forEach(dayKey=>{
+      (allBookings[monthKey][dayKey] || []).forEach(item=>{
+        if(
+          item.entityType === "Mairie" &&
+          item.paymentMode === "mairie_regularisation_30j" &&
+          item.due_ts &&
+          nowTs > item.due_ts &&
+          item.status !== "paid"
+        ){
+          blocked = true;
+        }
+      });
+    });
+  });
+
+  if(blocked){
+    alert(
+      "Blocage automatique : une ou plusieurs publicités mairie ne sont pas régularisées après 30 jours.\n\n" +
+      "Impossible de réserver une nouvelle publicité tant que la situation n’est pas réglée."
+    );
+    return;
+  }
+}
+
           const entityLabel =
             entityType === "Commerce"
               ? "Nom du commerce"
@@ -7682,573 +7713,31 @@ if(key === "mairie"){
       };
     }
 
-    if(mairiePubValidateQuoteBtn){
-      mairiePubValidateQuoteBtn.onclick = ()=>{
-        const payload = buildAdPayloadFromForm();
-        if(payload.error){
-          alert(payload.error);
-          return;
-        }
+   if(mairiePubValidateQuoteBtn){
+  mairiePubValidateQuoteBtn.onclick = ()=>{
+    alert(
+      "La réservation des publicités se fait désormais uniquement via le calendrier commun du bandeau.\n\n" +
+      "Clique sur : 'Ouvrir le calendrier commun des publicités'."
+    );
+  };
+}
 
-        const orders = loadMairieAdOrders();
-        orders.push({
-          type:"mairie_ad_order_v2",
-          date: payload.date,
-          title: payload.title,
-          text: payload.text,
-          pack: payload.pack,
-          amountHT: payload.amountHT,
-          totalSlots: payload.totalSlots,
-          usedSlots: 0,
-          status: "quote_validated",
-          dueDate: computeDueDatePlus30Days(Date.now()),
-          ts: Date.now(),
-          ts_fr: new Date().toLocaleString("fr-FR")
-        });
-        saveMairieAdOrders(orders);
+if(mairiePubMarkPaidBtn){
+  mairiePubMarkPaidBtn.onclick = ()=>{
+    alert(
+      "Le suivi paiement est désormais centralisé dans le calendrier commun.\n\n" +
+      "Chaque réservation y est enregistrée avec son statut."
+    );
+  };
+}
 
-        if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "quote_validated";
-        refreshMairiePubPreview();
-        refreshMairiePubStatus();
-        alert("Devis mairie validé. Le dossier pub est ouvert.");
-      };
-    }
-
-    if(mairiePubMarkPaidBtn){
-      mairiePubMarkPaidBtn.onclick = ()=>{
-        const payload = buildAdPayloadFromForm();
-        if(payload.error){
-          alert(payload.error);
-          return;
-        }
-
-        const orders = loadMairieAdOrders();
-        const idx = orders.findIndex(x =>
-          String(x.date || "") === String(payload.date || "") &&
-          String(x.title || "") === String(payload.title || "") &&
-          String(x.text || "") === String(payload.text || "") &&
-          String(x.pack || "") === String(payload.pack || "")
-        );
-
-        if(idx >= 0){
-          orders[idx].status = "paid";
-          orders[idx].paid_ts = Date.now();
-          orders[idx].paid_ts_fr = new Date().toLocaleString("fr-FR");
-          saveMairieAdOrders(orders);
-        }else{
-          orders.push({
-            type:"mairie_ad_order_v2",
-            date: payload.date,
-            title: payload.title,
-            text: payload.text,
-            pack: payload.pack,
-            amountHT: payload.amountHT,
-            totalSlots: payload.totalSlots,
-            usedSlots: 0,
-            status: "paid",
-            dueDate: computeDueDatePlus30Days(Date.now()),
-            ts: Date.now(),
-            ts_fr: new Date().toLocaleString("fr-FR"),
-            paid_ts: Date.now(),
-            paid_ts_fr: new Date().toLocaleString("fr-FR")
-          });
-          saveMairieAdOrders(orders);
-        }
-
-        if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "paid";
-        refreshMairiePubPreview();
-        refreshMairiePubStatus();
-        alert("Dossier mairie marqué comme payé / régularisé.");
-      };
-    }
-
-    if(mairiePubTransmitBtn){
-      mairiePubTransmitBtn.onclick = ()=>{
-        const payload = buildAdPayloadFromForm();
-        if(payload.error){
-          alert(payload.error);
-          return;
-        }
-
-        const orders = loadMairieAdOrders();
-        const idx = orders.findIndex(x =>
-          String(x.date || "") === String(payload.date || "") &&
-          String(x.title || "") === String(payload.title || "") &&
-          String(x.text || "") === String(payload.text || "") &&
-          String(x.pack || "") === String(payload.pack || "") &&
-          (x.status === "quote_validated" || x.status === "paid") &&
-          Number(x.usedSlots || 0) < Number(x.totalSlots || 1)
-        );
-
-        if(idx < 0){
-          alert("Valide d’abord le devis mairie, ou utilise le bouton de remise à zéro réservé aux tests.");
-          return;
-        }
-
-        orders[idx].usedSlots = Number(orders[idx].usedSlots || 0) + 1;
-        orders[idx].last_activation_ts = Date.now();
-        orders[idx].last_activation_ts_fr = new Date().toLocaleString("fr-FR");
-        saveMairieAdOrders(orders);
-
-        saveMairieActiveAd({
-          title: payload.title || "Mairie (démo)",
-          text: payload.text || "",
-          date: payload.date,
-          ts: Date.now()
-        });
-
-        syncMairiePaidAdToTicker();
-        refreshMairiePubStatus();
-
-        alert(
-          "Publicité mairie activée dans le grand bandeau du haut.\n\n" +
-          "Diffusions utilisées : " + Number(orders[idx].usedSlots || 0) +
-          " / " + Number(orders[idx].totalSlots || 1)
-        );
-      };
-    }
-
-    if(mairiePubResetBtn){
-      mairiePubResetBtn.onclick = ()=>{
-        if(mairiePubDate) mairiePubDate.value = "";
-        if(mairiePubTitle) mairiePubTitle.value = "";
-        if(mairiePubText) mairiePubText.value = "";
-        if(mairiePubPack) mairiePubPack.value = "1";
-        if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "draft";
-        refreshMairiePubPreview();
-      };
-    }
-
-    if(mairiePubReadHistoryBtn){
-      mairiePubReadHistoryBtn.onclick = ()=>{
-        const orders = loadMairieAdOrders();
-        if(!orders.length){
-          alert("Aucun historique pubs mairie pour le moment.");
-          return;
-        }
-
-        const txt = orders.map((x, idx)=>{
-          return (
-            "#" + (idx + 1) +
-            "\nDate : " + (x.date || "") +
-            "\nTitre : " + (x.title || "") +
-            "\nTexte : " + (x.text || "") +
-            "\nFormule : " + (x.pack === "5" ? "Pack 5 publicités" : "1 publicité") +
-            "\nMontant HT : " + Number(x.amountHT || 0) + " €" +
-            "\nStatut : " + (x.status || "") +
-            "\nUtilisations : " + Number(x.usedSlots || 0) + "/" + Number(x.totalSlots || 1) +
-            "\nÉchéance théorique : " + (x.dueDate || "") +
-            "\nCréé le : " + (x.ts_fr || "") +
-            (x.paid_ts_fr ? "\nPayé le : " + x.paid_ts_fr : "")
-          );
-        }).join("\n\n--------------------\n\n");
-
-        alert("Historique pubs mairie :\n\n" + txt);
-      };
-    }
-
-    if(mairiePubForceClearBtn){
-      mairiePubForceClearBtn.onclick = ()=>{
-        if(confirm("Tests : vider tout l’historique pubs mairie et débloquer entièrement ce module ?")){
-          clearMairieAdDemoData();
-          if(mairiePubDate) mairiePubDate.value = "";
-          if(mairiePubTitle) mairiePubTitle.value = "";
-          if(mairiePubText) mairiePubText.value = "";
-          if(mairiePubPack) mairiePubPack.value = "1";
-          if(mairiePubPaymentStatus) mairiePubPaymentStatus.value = "draft";
-          refreshMairiePubPreview();
-          refreshMairiePubStatus();
-          alert("Historique pubs mairie vidé pour les tests.");
-        }
-      };
-    }
-
-    const db = mairieLoad();
-    if(input){
-      input.value = (db.message && String(db.message).trim())
-        ? String(db.message).trim()
-        : "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-    }
-
-    if(saveBtn){
-      saveBtn.onclick = ()=>{
-        const msg = input ? String(input.value || "").trim() : "";
-        if(!msg){
-          alert("Saisis un message mairie.");
-          return;
-        }
-        const next = mairieLoad();
-        next.message = msg;
-        next.ts_fr = new Date().toLocaleString("fr-FR");
-        mairieSave(next);
-        renderMairieTicker();
-        alert("Message mairie enregistré (démo).");
-      };
-    }
-
-    if(resetBtn){
-      resetBtn.onclick = ()=>{
-        if(confirm("Réinitialiser le message mairie (démo) sur ce téléphone ?")){
-          mairieSave({});
-          renderMairieTicker();
-          if(input) input.value = "Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet";
-          alert("Message mairie réinitialisé (démo).");
-        }
-      };
-    }
-
-    if(mairieSchoolPreviewBtn){
-      mairieSchoolPreviewBtn.onclick = ()=>{
-        if(!currentPayload){
-          alert("Lis d’abord un code école.");
-          return;
-        }
-        const payload = buildSchoolDispatchPayload();
-        if(payload.error){
-          alert(payload.error);
-          return;
-        }
-        if(mairieSchoolPreviewOut){
-          mairieSchoolPreviewOut.textContent =
-            "Classe : " + (currentPayload.class || "Classe inconnue") +
-            " | Montant : " + Number(currentPayload.wallet || 0) +
-            " bocitecoins JAUNE | Destination : " + JSON.stringify(payload);
-        }
-      };
-    }
-
-    if(mairieSportPreviewBtn){
-      mairieSportPreviewBtn.onclick = ()=>{
-        if(!currentSportPayload){
-          alert("Lis d’abord un code sport.");
-          return;
-        }
-        const payload = buildSportDispatchPayload();
-        if(payload.error){
-          alert(payload.error);
-          return;
-        }
-        if(mairieSportPreviewOut){
-          mairieSportPreviewOut.textContent =
-            "Club : " + (currentSportPayload.club || "Club partenaire (démo)") +
-            " | Montant : " + Number(currentSportPayload.wallet || 0) +
-            " bocitecoins VERT | Destination : " + JSON.stringify(payload);
-        }
-      };
-    }
-
-    if(readBtn){
-      readBtn.onclick = ()=>{
-        const raw = scanInput ? scanInput.value.trim() : "";
-        if(!raw){
-          alert("Aucune lecture disponible.");
-          return;
-        }
-        try{
-          const parsed = window.boScanEngine.parse(raw);
-          if(!window.boScanEngine.isSupported(parsed) || parsed.type !== "school_wallet"){
-            alert("Code non reconnu pour l’échange école → mairie.");
-            return;
-          }
-          currentPayload = parsed;
-          renderPayload(parsed);
-          if(mairieSchoolPreviewOut) mairieSchoolPreviewOut.textContent = "Code école lu. Prépare la destination de l’échange.";
-        }catch(e){
-          alert("Lecture invalide.");
-        }
-      };
-    }
-
-    if(validateBtn){
-      validateBtn.onclick = ()=>{
-        if(!currentPayload){
-          alert("Lis d’abord un code classe.");
-          return;
-        }
-        const dispatch = buildSchoolDispatchPayload();
-        if(dispatch.error){
-          alert(dispatch.error);
-          return;
-        }
-
-        const schoolDb = schoolLoadLocal();
-        const className = currentPayload.class || "Classe inconnue";
-
-        const history = mairieHistoryLoad();
-        history.push({
-          class: className,
-          amount: Number(currentPayload.wallet || 0),
-          dispatch: dispatch,
-          ts: Date.now(),
-          ts_fr: new Date().toLocaleString("fr-FR"),
-          note:"échange école validé côté mairie"
-        });
-        mairieHistorySave(history);
-
-        schoolSaveM({ jaune:0 });
-
-        if(!schoolDb.progress) schoolDb.progress = {};
-        schoolDb.progress[className] = {
-          totalValidatedDays: 0,
-          lastValidationDay: ""
-        };
-        schoolSaveLocal(schoolDb);
-
-        alert(
-          "Échange mairie validé.\n\n" +
-          "Classe : " + className + "\n" +
-          "Montant échangé : " + Number(currentPayload.wallet || 0) + " bocitecoins JAUNE\n" +
-          "Destination : " + JSON.stringify(dispatch) + "\n\n" +
-          "Le wallet école a été remis à zéro et le cycle de progression a été réinitialisé."
-        );
-
-        currentPayload = null;
-        if(scanInput) scanInput.value = "";
-        if(readOut) readOut.textContent = "Aucun code lu pour le moment.";
-        if(mairieSchoolPreviewOut) mairieSchoolPreviewOut.textContent = "Aucun aperçu pour le moment.";
-      };
-    }
-
-    if(historyBtn){
-      historyBtn.onclick = ()=>{
-        const history = mairieHistoryLoad();
-        if(!history.length){
-          alert("Aucun historique mairie école pour le moment.");
-          return;
-        }
-
-        const lines = history.map((x)=>{
-          return (
-            "Classe : " + x.class +
-            "\n- montant : " + Number(x.amount || 0) + " bocitecoins JAUNE" +
-            "\n- date : " + x.ts_fr +
-            "\n- dispatch : " + JSON.stringify(x.dispatch || {}) +
-            "\n- note : " + (x.note || "")
-          );
-        }).join("\n\n--------------------\n\n");
-
-        alert("Historique mairie école :\n\n" + lines);
-      };
-    }
-
-    if(historyResetBtn){
-      historyResetBtn.onclick = ()=>{
-        if(confirm("Réinitialiser l’historique mairie école (démo) ?")){
-          mairieHistorySave([]);
-          alert("Historique mairie école réinitialisé.");
-        }
-      };
-    }
-
-    if(exportBtn){
-      exportBtn.onclick = ()=>{
-        const history = mairieHistoryLoad();
-        if(!history.length){
-          alert("Aucun historique à exporter.");
-          return;
-        }
-
-        const lines = history.map((x)=>{
-          return (
-            "Classe : " + x.class + "\n" +
-            "Montant échangé : " + Number(x.amount || 0) + " bocitecoins JAUNE\n" +
-            "Date : " + x.ts_fr + "\n" +
-            "Dispatch : " + JSON.stringify(x.dispatch || {}) + "\n" +
-            "Note : " + (x.note || "")
-          );
-        }).join("\n\n--------------------\n\n");
-
-        const exportText =
-          "HISTORIQUE MAIRIE — ÉCOLES\n" +
-          "Export du " + new Date().toLocaleString("fr-FR") + "\n\n" +
-          lines;
-
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(exportText)
-            .then(()=> alert("Historique exporté et copié dans le presse-papiers."))
-            .catch(()=> alert(exportText));
-        }else{
-          alert(exportText);
-        }
-      };
-    }
-
-    if(sportReadBtn){
-      sportReadBtn.onclick = ()=>{
-        const raw = sportScanInput ? sportScanInput.value.trim() : "";
-        if(!raw){
-          alert("Aucune lecture sport disponible.");
-          return;
-        }
-
-        try{
-          const parsed = JSON.parse(raw);
-          if(parsed.type !== "sport_wallet"){
-            alert("Code non reconnu pour l’échange sport → mairie.");
-            return;
-          }
-
-          currentSportPayload = parsed;
-          renderSportPayloadMairie(parsed);
-          if(mairieSportPreviewOut) mairieSportPreviewOut.textContent = "Code sport lu. Prépare la destination de l’échange.";
-        }catch(e){
-          alert("Lecture sport invalide.");
-        }
-      };
-    }
-
-    if(sportValidateBtn){
-      sportValidateBtn.onclick = ()=>{
-        if(!currentSportPayload){
-          alert("Lis d’abord un code sport.");
-          return;
-        }
-
-        const dispatch = buildSportDispatchPayload();
-        if(dispatch.error){
-          alert(dispatch.error);
-          return;
-        }
-
-        const history = mairieSportHistoryLoad();
-        history.push({
-          club: currentSportPayload.club || "Club partenaire (démo)",
-          amount: Number(currentSportPayload.wallet || 0),
-          beneficiary: currentSportPayload.beneficiary || "club_only",
-          dispatch: dispatch,
-          ts: Date.now(),
-          ts_fr: new Date().toLocaleString("fr-FR"),
-          note: "échange sport validé côté mairie"
-        });
-        mairieSportHistorySave(history);
-
-        sportSaveM({ vert:0 });
-
-        alert(
-          "Échange sport mairie validé.\n\n" +
-          "Club : " + (currentSportPayload.club || "Club partenaire (démo)") + "\n" +
-          "Montant échangé : " + Number(currentSportPayload.wallet || 0) + " bocitecoins VERT\n" +
-          "Destination : " + JSON.stringify(dispatch) + "\n\n" +
-          "Le wallet sport a été remis à zéro."
-        );
-
-        currentSportPayload = null;
-        if(sportScanInput) sportScanInput.value = "";
-        if(sportReadOut) sportReadOut.textContent = "Aucun code sport lu pour le moment.";
-        if(mairieSportPreviewOut) mairieSportPreviewOut.textContent = "Aucun aperçu pour le moment.";
-      };
-    }
-
-    if(sportHistoryBtn){
-      sportHistoryBtn.onclick = ()=>{
-        const history = mairieSportHistoryLoad();
-        if(!history.length){
-          alert("Aucun historique mairie sport pour le moment.");
-          return;
-        }
-
-        const lines = history.map((x)=>{
-          return (
-            "Club : " + x.club +
-            "\n- montant : " + Number(x.amount || 0) + " bocitecoins VERT" +
-            "\n- date : " + x.ts_fr +
-            "\n- dispatch : " + JSON.stringify(x.dispatch || {}) +
-            "\n- note : " + (x.note || "")
-          );
-        }).join("\n\n--------------------\n\n");
-
-        alert("Historique mairie sport :\n\n" + lines);
-      };
-    }
-
-    if(sportHistoryResetBtn){
-      sportHistoryResetBtn.onclick = ()=>{
-        if(confirm("Réinitialiser l’historique mairie sport (démo) ?")){
-          mairieSportHistorySave([]);
-          alert("Historique mairie sport réinitialisé.");
-        }
-      };
-    }
-
-    if(sportExportBtn){
-      sportExportBtn.onclick = ()=>{
-        const history = mairieSportHistoryLoad();
-        if(!history.length){
-          alert("Aucun historique sport à exporter.");
-          return;
-        }
-
-        const lines = history.map((x)=>{
-          return (
-            "Club : " + x.club + "\n" +
-            "Montant échangé : " + Number(x.amount || 0) + " bocitecoins VERT\n" +
-            "Date : " + x.ts_fr + "\n" +
-            "Dispatch : " + JSON.stringify(x.dispatch || {}) + "\n" +
-            "Note : " + (x.note || "")
-          );
-        }).join("\n\n--------------------\n\n");
-
-        const exportText =
-          "HISTORIQUE MAIRIE — SPORT\n" +
-          "Export du " + new Date().toLocaleString("fr-FR") + "\n\n" +
-          lines;
-
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(exportText)
-            .then(()=> alert("Historique sport exporté et copié dans le presse-papiers."))
-            .catch(()=> alert(exportText));
-        }else{
-          alert(exportText);
-        }
-      };
-    }
-
-    if(mairieReferralInput){
-      const referralDb = mairieReferralLoad();
-      if(referralDb && referralDb.text){
-        mairieReferralInput.value = referralDb.text;
-      }
-    }
-
-    if(mairieReferralSaveBtn){
-      mairieReferralSaveBtn.onclick = ()=>{
-        const txt = mairieReferralInput ? String(mairieReferralInput.value || "").trim() : "";
-        if(!txt){
-          alert("Saisis un suivi de parrainage.");
-          return;
-        }
-        mairieReferralSave({
-          text: txt,
-          ts: Date.now(),
-          ts_fr: new Date().toLocaleString("fr-FR")
-        });
-        alert("Suivi de parrainage enregistré.");
-      };
-    }
-
-    if(mairieReferralReadBtn){
-      mairieReferralReadBtn.onclick = ()=>{
-        const data = mairieReferralLoad();
-        if(!data){
-          alert("Aucun suivi de parrainage enregistré.");
-          return;
-        }
-        alert("Dernier suivi de parrainage :\n\n" + data.text + "\n\nLe " + data.ts_fr);
-      };
-    }
-
-    if(mairieReferralResetBtn){
-      mairieReferralResetBtn.onclick = ()=>{
-        if(confirm("Réinitialiser le suivi de parrainage ?")){
-          localStorage.removeItem(MAIRIE_REFERRAL_KEY);
-          if(mairieReferralInput) mairieReferralInput.value = "";
-          alert("Suivi de parrainage réinitialisé.");
-        }
-      };
-    }
-  },0);
-
-  return;
+if(mairiePubTransmitBtn){
+  mairiePubTransmitBtn.onclick = ()=>{
+    alert(
+      "L’activation des publicités se fait automatiquement via le système centralisé.\n\n" +
+      "Passe par le calendrier commun pour réserver et diffuser."
+    );
+  };
 }
            
   if(key === "commerces") {
