@@ -2617,41 +2617,99 @@ out center tags;
       function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
       function ym(y,m){ return `${y}-${pad2(m+1)}`; }
 
-      function loadBookings(){
-        try{
-          const raw = localStorage.getItem(PUB_STORE_KEY);
-          return raw ? JSON.parse(raw) : {};
-        }catch(e){
-          return {};
+  function loadBookings(){
+  try{
+    const raw = localStorage.getItem(PUB_STORE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){
+    return {};
+  }
+}
+
+function saveBookings(obj){
+  try{
+    localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj));
+  }catch(e){}
+}
+
+function checkMairiePaymentWarnings(){
+  const bookings = loadBookings();
+  const now = Date.now();
+  let warningMsg = null;
+
+  Object.keys(bookings).forEach(monthKey=>{
+    Object.keys(bookings[monthKey]).forEach(dayKey=>{
+      (bookings[monthKey][dayKey] || []).forEach(item=>{
+        if(
+          item.entityType === "Mairie" &&
+          item.paymentMode === "mairie_regularisation_30j" &&
+          item.due_ts &&
+          item.status !== "paid"
+        ){
+          const diffDays = Math.floor((item.due_ts - now) / (1000*60*60*24));
+
+          if(diffDays <= 8 && diffDays >= 0){
+            warningMsg =
+              "Information importante : une publicité mairie arrive bientôt à échéance.\n" +
+              "Merci de vérifier que la régularisation soit bien effectuée afin d’éviter toute interruption de l’accès publicitaire.\n\n" +
+              "Délai restant : " + diffDays + " jour(s).";
+          }
         }
-      }
+      });
+    });
+  });
 
-      function saveBookings(obj){
-        try{
-          localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj));
-        }catch(e){}
-      }
+  return warningMsg;
+}
 
-      function getDayBookings(obj, y, m, d){
-        const keyYM = ym(y,m);
-        const keyYMD = ymd(y,m,d);
-        return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : [];
-      }
+function getDayPaymentAlert(bookings, y, m, d){
+  const list = getDayBookings(bookings, y, m, d);
+  const now = Date.now();
+  let hasWarning = false;
+  let hasBlocked = false;
 
-      function setDayBookings(obj, y, m, d, list){
-        const keyYM = ym(y,m);
-        const keyYMD = ymd(y,m,d);
-        if(!obj[keyYM]) obj[keyYM] = {};
-        obj[keyYM][keyYMD] = list;
-      }
+  list.forEach(item=>{
+    if(
+      item.entityType === "Mairie" &&
+      item.paymentMode === "mairie_regularisation_30j" &&
+      item.due_ts &&
+      item.status !== "paid"
+    ){
+      const diffDays = Math.floor((item.due_ts - now) / (1000*60*60*24));
 
-      function daySlotsUsed(obj, y, m, d){
-        return getDayBookings(obj, y, m, d).length;
+      if(diffDays < 0){
+        hasBlocked = true;
+      }else if(diffDays <= 8){
+        hasWarning = true;
       }
+    }
+  });
 
-      function isFull(obj, y, m, d){
-        return daySlotsUsed(obj, y, m, d) >= PUB_MAX_PER_DAY;
-      }
+  if(hasBlocked) return "blocked";
+  if(hasWarning) return "warning";
+  return "";
+}
+
+function getDayBookings(obj, y, m, d){
+  const keyYM = ym(y,m);
+  const keyYMD = ymd(y,m,d);
+  return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : [];
+}
+
+function setDayBookings(obj, y, m, d, list){
+  const keyYM = ym(y,m);
+  const keyYMD = ymd(y,m,d);
+  if(!obj[keyYM]) obj[keyYM] = {};
+  obj[keyYM][keyYMD] = list;
+}
+
+function daySlotsUsed(obj, y, m, d){
+  return getDayBookings(obj, y, m, d).length;
+}
+
+function isFull(obj, y, m, d){
+  return daySlotsUsed(obj, y, m, d) >= PUB_MAX_PER_DAY;
+}
 
       const FEE_STORE_KEY = "bociteart_fee_demo_v1";
       const CITIZEN_WALLET_KEY = "bociteart_citizen_wallet_v1";
@@ -2878,20 +2936,30 @@ function renderCalendarInto(containerId){
     cells.push(`<div class="calDay disabled" aria-hidden="true"></div>`);
   }
 
-  for(let d=1; d<=daysInMonth; d++){
-    const used = daySlotsUsed(bookings, calYear, calMonth, d);
-    const full = used >= PUB_MAX_PER_DAY;
-    const cls = full ? "calDay full" : "calDay";
-    const remaining = Math.max(0, PUB_MAX_PER_DAY - used);
+for(let d=1; d<=daysInMonth; d++){
+  const used = daySlotsUsed(bookings, calYear, calMonth, d);
+  const full = used >= PUB_MAX_PER_DAY;
+  const cls = full ? "calDay full" : "calDay";
+  const remaining = Math.max(0, PUB_MAX_PER_DAY - used);
+  const alertState = getDayPaymentAlert(bookings, calYear, calMonth, d);
 
-    cells.push(`
-      <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
-        <div class="d">${d}</div>
-        <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
-        <div class="s" style="font-size:10px;">${full ? "Complet" : remaining + " dispo"}</div>
-      </div>
-    `);
+  let alertHtml = "";
+  if(alertState === "warning"){
+    alertHtml = `<div class="s" style="font-size:15px;color:#b06b00;">⚠️</div>`;
   }
+  if(alertState === "blocked"){
+    alertHtml = `<div class="s" style="font-size:15px;color:#a51e22;">⛔</div>`;
+  }
+
+  cells.push(`
+    <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
+      <div class="d">${d}</div>
+      <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
+      <div class="s" style="font-size:10px;">${full ? "Complet" : remaining + " dispo"}</div>
+      ${alertHtml}
+    </div>
+  `);
+}
 
   daysEl.innerHTML = cells.join("");
 
