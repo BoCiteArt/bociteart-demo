@@ -2986,14 +2986,16 @@ function renderCalendarInto(containerId){
       alertHtml = `<div class="s" style="font-size:15px;color:#a51e22;">⛔</div>`;
     }
 
-    cells.push(`
-      <div class="${cls}" ${full ? "" : `data-day="${d}" role="button"`}>
-        <div class="d">${d}</div>
-        <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
-        <div class="s" style="font-size:10px;">${full ? "Complet" : remaining + " dispo"}</div>
-        ${alertHtml}
-      </div>
-    `);
+ const dayAttr = full ? "" : 'data-day="' + d + '" role="button"';
+
+cells.push(`
+  <div class="${cls}" ${dayAttr}>
+    <div class="d">${d}</div>
+    <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
+    <div class="s" style="font-size:10px;">${full ? "Complet" : remaining + " dispo"}</div>
+    ${alertHtml}
+  </div>
+`);
   }
 
   daysEl.innerHTML = cells.join("");
