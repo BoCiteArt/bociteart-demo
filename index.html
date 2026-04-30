@@ -3318,7 +3318,9 @@ function openRecapModal(y, m){
 }
 
 function openTicker(){
-  const warningMsg = checkMairiePaymentWarnings ? checkMairiePaymentWarnings() : null;
+  const warningMsg = (typeof checkMairiePaymentWarnings === "function")
+  ? checkMairiePaymentWarnings()
+  : null;
 
   openModal("Publicités & visibilité", `
     <div style="font-weight:900;margin-bottom:8px;">Grand bandeau publicitaire — espace commun</div>
@@ -3443,7 +3445,10 @@ function openTicker(){
 }
 
 window.openTicker = openTicker;
-on($("ticker"), "click", openTicker);
+const tickerBtn = $("ticker");
+if(tickerBtn){
+  on(tickerBtn, "click", openTicker);
+}
 
       window.tapeAds = [
         { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
