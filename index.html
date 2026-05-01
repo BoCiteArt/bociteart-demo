@@ -8688,7 +8688,7 @@ if(mairiePubTransmitBtn){
       };
     }
 
-  const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
+const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
 
 if(merchantHistoryExportBtn){
   merchantHistoryExportBtn.onclick = ()=>{
@@ -8712,12 +8712,12 @@ if(merchantHistoryExportBtn){
     };
 
     const exportText =
-      "HISTORIQUE COMMERCE - EXPORT DEMO\n\n" +
+      "HISTORIQUE COMMERCE — EXPORT DÉMO\n\n" +
       JSON.stringify(exportObj, null, 2);
 
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(exportText)
-        .then(()=> alert("Historique commerce exporte et copie dans le presse-papiers."))
+        .then(()=> alert("Historique commerce exporté et copié dans le presse-papiers."))
         .catch(()=> alert(exportText));
     }else{
       alert(exportText);
@@ -8732,7 +8732,7 @@ if(xb && xb.focus) xb.focus();
   return;
 }
 };
- 
+
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
   if(!isFn(window.openModal)) return;
