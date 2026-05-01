@@ -1715,39 +1715,17 @@ setInterval(()=>{
   setTicker(tickerIdx);
 }, 10000);
 
-            window.__wellbeingHeadingTimer = setInterval(()=>{
-              if(wellbeingUserMarker){
-                wellbeingUserMarker.setIcon(createUserIcon(currentHeading));
-              }
-            }, 500);
-          };
+     function openWellbeingMap(){
+  openModal("Carte bien-être", `
+    <div class="box">
+      <div class="muted">
+        Carte bien-être temporairement désactivée dans cette version de test.
+      </div>
+    </div>
+  `);
+}
 
-          if(locateBtn){
-            locateBtn.onclick = startLocate;
-          }
-
-          if(refreshBtn){
-            refreshBtn.onclick = async ()=>{
-              if(wellbeingUserMarker){
-                const ll = wellbeingUserMarker.getLatLng();
-                if(status) status.textContent = "Rafraîchissement des lieux…";
-                await refreshNearbyPois(ll.lat, ll.lng, true);
-              }else{
-                startLocate();
-              }
-            };
-          }
-
-          if(stopBtn){
-            stopBtn.onclick = ()=>{
-              stopWellbeingLocate();
-              if(status) status.textContent = "Suivi arrêté.";
-            };
-          }
-        }, 0);
-      }
-
-      window.openWellbeingMap = openWellbeingMap;
+window.openWellbeingMap = openWellbeingMap;
 
       let calYear = new Date().getFullYear();
       let calMonth = new Date().getMonth();
