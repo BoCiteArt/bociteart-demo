@@ -1726,18 +1726,19 @@ setInterval(()=>{
 }
 
 window.openWellbeingMap = openWellbeingMap;
+      
+      let calYear = new Date().getFullYear();
+      let calMonth = new Date().getMonth();
 
-let calYear = new Date().getFullYear();
-let calMonth = new Date().getMonth();
+      function pad2(n){ return String(n).padStart(2, "0"); }
+      function ymd(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
+      function ym(y,m){ return `${y}-${pad2(m+1)}`; }
 
-function pad2(n){ return String(n).padStart(2, "0"); }
-function ymd(y,m,d){ return y + "-" + pad2(m+1) + "-" + pad2(d); }
-function ym(y,m){ return y + "-" + pad2(m+1); }
-
-function loadBookings(){
+ function loadBookings(){
   try{
-    const raw = localStorage.getItem("bociteart_pub_bookings_v1");
-    return raw ? JSON.parse(raw) : {};
+    const raw = localStorage.getItem(PUB_STORE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === "object" ? parsed : {};
   }catch(e){
     return {};
   }
@@ -1745,36 +1746,827 @@ function loadBookings(){
 
 function saveBookings(obj){
   try{
-    localStorage.setItem("bociteart_pub_bookings_v1", JSON.stringify(obj || {}));
+    localStorage.setItem(PUB_STORE_KEY, JSON.stringify(obj || {}));
   }catch(e){}
 }
 
-function openTicker(){
-  openModal("Publicités & visibilité", `
-    <div style="font-weight:900;margin-bottom:8px;">Grand bandeau publicitaire</div>
+function getDayBookings(obj, y, m, d){
+  const keyYM = ym(y,m);
+  const keyYMD = ymd(y,m,d);
 
+  if(!obj || typeof obj !== "object") return [];
+  if(!obj[keyYM] || typeof obj[keyYM] !== "object") return [];
+
+  const list = obj[keyYM][keyYMD];
+  return Array.isArray(list) ? list : [];
+}
+
+function setDayBookings(obj, y, m, d, list){
+  const keyYM = ym(y,m);
+  const keyYMD = ymd(y,m,d);
+
+  if(!obj[keyYM]) obj[keyYM] = {};
+  obj[keyYM][keyYMD] = Array.isArray(list) ? list : [];
+}
+
+function daySlotsUsed(obj, y, m, d){
+  return getDayBookings(obj, y, m, d).length;
+}
+
+function isFull(obj, y, m, d){
+  return daySlotsUsed(obj, y, m, d) >= PUB_MAX_PER_DAY;
+}
+
+function checkMairiePaymentWarnings(){
+  const bookings = loadBookings();
+  const now = Date.now();
+  let warningMsg = null;
+
+  Object.keys(bookings).forEach(monthKey=>{
+    const monthObj = bookings[monthKey];
+    if(!monthObj || typeof monthObj !== "object") return;
+
+    Object.keys(monthObj).forEach(dayKey=>{
+      const dayList = Array.isArray(monthObj[dayKey]) ? monthObj[dayKey] : [];
+
+      dayList.forEach(item=>{
+        if(
+          item &&
+          item.entityType === "Mairie" &&
+          item.paymentMode === "mairie_regularisation_30j" &&
+          item.due_ts &&
+          item.status !== "paid"
+        ){
+          const diffDays = Math.floor((Number(item.due_ts) - now) / (1000*60*60*24));
+
+          if(diffDays <= 8 && diffDays >= 0){
+            warningMsg =
+              "Information importante : une publicité mairie arrive bientôt à échéance.\n" +
+              "Merci de vérifier que la régularisation soit bien effectuée afin d’éviter toute interruption de l’accès publicitaire.\n\n" +
+              "Délai restant : " + diffDays + " jour(s).";
+          }
+        }
+      });
+    });
+  });
+
+  return warningMsg;
+}
+
+function getDayPaymentAlert(bookings, y, m, d){
+  const list = getDayBookings(bookings, y, m, d);
+  const now = Date.now();
+  let hasWarning = false;
+  let hasBlocked = false;
+
+  list.forEach(item=>{
+    if(
+      item &&
+      item.entityType === "Mairie" &&
+      item.paymentMode === "mairie_regularisation_30j" &&
+      item.due_ts &&
+      item.status !== "paid"
+    ){
+      const diffDays = Math.floor((Number(item.due_ts) - now) / (1000*60*60*24));
+
+      if(diffDays < 0){
+        hasBlocked = true;
+      }else if(diffDays <= 8){
+        hasWarning = true;
+      }
+    }
+  });
+
+  if(hasBlocked) return "blocked";
+  if(hasWarning) return "warning";
+  return "";
+}
+
+function getDayBookings(obj, y, m, d){
+  const keyYM = ym(y,m);
+  const keyYMD = ymd(y,m,d);
+  return (obj[keyYM] && obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : [];
+}
+
+function setDayBookings(obj, y, m, d, list){
+  const keyYM = ym(y,m);
+  const keyYMD = ymd(y,m,d);
+  if(!obj[keyYM]) obj[keyYM] = {};
+  obj[keyYM][keyYMD] = list;
+}
+
+function daySlotsUsed(obj, y, m, d){
+  return getDayBookings(obj, y, m, d).length;
+}
+
+function isFull(obj, y, m, d){
+  return daySlotsUsed(obj, y, m, d) >= PUB_MAX_PER_DAY;
+}
+
+      const FEE_STORE_KEY = "bociteart_fee_demo_v1";
+      const CITIZEN_WALLET_KEY = "bociteart_citizen_wallet_v1";
+      const SCHOOL_WALLET_KEY = "bociteart_school_wallet_v1";
+      const SPORT_WALLET_KEY = "bociteart_sport_wallet_v1";
+
+      function loadCitizenWallet(){
+        try{
+          const raw = localStorage.getItem(CITIZEN_WALLET_KEY);
+          return raw ? JSON.parse(raw) : { or:37 };
+        }catch(e){
+          return { or:37 };
+        }
+      }
+
+      function saveCitizenWallet(obj){
+        try{ localStorage.setItem(CITIZEN_WALLET_KEY, JSON.stringify(obj)); }catch(e){}
+      }
+
+      function loadSchoolWallet(){
+        try{
+          const raw = localStorage.getItem(SCHOOL_WALLET_KEY);
+          return raw ? JSON.parse(raw) : { jaune:0 };
+        }catch(e){
+          return { jaune:0 };
+        }
+      }
+
+      function saveSchoolWallet(obj){
+        try{ localStorage.setItem(SCHOOL_WALLET_KEY, JSON.stringify(obj)); }catch(e){}
+      }
+
+      function loadSportWallet(){
+        try{
+          const raw = localStorage.getItem(SPORT_WALLET_KEY);
+          return raw ? JSON.parse(raw) : { vert:0 };
+        }catch(e){
+          return { vert:0 };
+        }
+      }
+
+      function saveSportWallet(obj){
+        try{ localStorage.setItem(SPORT_WALLET_KEY, JSON.stringify(obj)); }catch(e){}
+      }
+
+      function walletAdd(key, field, delta){
+        let data = key === CITIZEN_WALLET_KEY
+          ? loadCitizenWallet()
+          : key === SCHOOL_WALLET_KEY
+            ? loadSchoolWallet()
+            : loadSportWallet();
+
+        data[field] = Math.max(0, Number(data[field] || 0) + Number(delta || 0));
+
+        if(key === CITIZEN_WALLET_KEY) saveCitizenWallet(data);
+        if(key === SCHOOL_WALLET_KEY) saveSchoolWallet(data);
+        if(key === SPORT_WALLET_KEY) saveSportWallet(data);
+
+        return data[field];
+      }
+
+      window.loadCitizenWallet = loadCitizenWallet;
+      window.saveCitizenWallet = saveCitizenWallet;
+      window.loadSchoolWallet = loadSchoolWallet;
+      window.saveSchoolWallet = saveSchoolWallet;
+      window.loadSportWallet = loadSportWallet;
+      window.saveSportWallet = saveSportWallet;
+      window.walletAdd = walletAdd;
+
+      function feeYM(d = new Date()){
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        return `${y}-${m}`;
+      }
+
+      function feeLoad(){
+        try{
+          const raw = localStorage.getItem(FEE_STORE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        }catch(e){
+          return {};
+        }
+      }
+
+      function feeSave(obj){
+        try{ localStorage.setItem(FEE_STORE_KEY, JSON.stringify(obj)); }catch(e){}
+      }
+
+      function calcFeeFromSales(eur){
+        const v = Number(eur || 0);
+        if(!Number.isFinite(v) || v <= 0) return 0;
+        const tranches = Math.floor(v / 10);
+        return tranches * 0.18;
+      }
+
+      function fmtEUR(x){
+        const n = Number(x || 0);
+        return n.toLocaleString("fr-FR", {
+          minimumFractionDigits:2,
+          maximumFractionDigits:2
+        }) + " €";
+      }
+
+      function initFeeUiInModal(){
+        const input = $("feeInputSales");
+        const outSales = $("feeSalesOut");
+        const outFee = $("feeOut");
+        const btnAdd = $("feeAddBtn");
+        const btnReset = $("feeResetBtn");
+        const resetClient = $("walletClientReset");
+        const outClient = $("citizenCoinBalance");
+
+        if(outClient){
+          outClient.textContent = Number(loadCitizenWallet().or || 0);
+        }
+
+        if(resetClient){
+          resetClient.onclick = ()=>{
+            saveCitizenWallet({ or:0 });
+            if(outClient) outClient.textContent = 0;
+          };
+        }
+
+        if(!input || !outSales || !outFee || !btnAdd || !btnReset) return;
+
+        const currentYm = feeYM();
+        const db = feeLoad();
+        const cur = db[currentYm] || { sales:0 };
+
+        outSales.textContent = fmtEUR(cur.sales || 0);
+        outFee.textContent = fmtEUR(calcFeeFromSales(cur.sales || 0));
+        input.value = cur.sales || 0;
+
+        btnAdd.onclick = ()=>{
+          const v = Number(input.value || 0);
+          if(!Number.isFinite(v) || v < 0){
+            alert("Montant invalide.");
+            return;
+          }
+          const db2 = feeLoad();
+          db2[currentYm] = { sales:v, ts_fr:new Date().toLocaleString("fr-FR") };
+          feeSave(db2);
+          outSales.textContent = fmtEUR(v);
+          outFee.textContent = fmtEUR(calcFeeFromSales(v));
+          alert("Suivi mis à jour (démo).");
+        };
+
+        btnReset.onclick = ()=>{
+          if(confirm("Réinitialiser le suivi du mois (démo) sur ce téléphone ?")){
+            const db2 = feeLoad();
+            delete db2[currentYm];
+            feeSave(db2);
+            input.value = "";
+            outSales.textContent = fmtEUR(0);
+            outFee.textContent = fmtEUR(0);
+            alert("Réinitialisé (démo).");
+          }
+        };
+      }
+      window.initFeeUiInModal = initFeeUiInModal;
+
+    function buildCalendarHTML(){
+  const first = new Date(calYear, calMonth, 1);
+  const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+  const labels = ["L","M","M","J","V","S","D"];
+
+  return `
+    <div class="calWrap">
+      <div class="calTop">
+        <div style="font-weight:900;">Calendrier commun des publicités — ${monthName}</div>
+        <div class="mini">
+          <button class="choiceBtn" id="calPrev" type="button">◀</button>
+          <button class="choiceBtn" id="calNext" type="button">▶</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <strong>Accès réservé :</strong> commerce, mairie ou association autorisée.
+        <div class="muted" style="margin-top:6px;">
+          Le calendrier est commun : chaque réservation prise ici compte dans le total du jour, quel que soit le profil.
+        </div>
+      </div>
+
+      <div class="muted">
+        Règle : <strong>${PUB_MAX_PER_DAY} publicités maximum par jour</strong>.
+      </div>
+      <div class="muted" style="margin-top:6px;">
+        Avant 16h00 : 1 seule publicité par entité et par jour.
+      </div>
+      <div class="muted" style="margin-top:6px;">
+        Après 16h00 : les places restantes peuvent être reprises par les mêmes entités jusqu’au plafond de 10.
+      </div>
+
+      <div class="calGrid" style="margin-top:10px;">
+        ${labels.map(x => `<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
+      </div>
+
+      <div class="calGrid" id="calDays"></div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
+        <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser test</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderCalendarInto(containerId){
+  const box = $(containerId);
+  if(!box) return;
+
+  box.innerHTML = buildCalendarHTML();
+
+  const daysEl = $("calDays");
+  const bookings = loadBookings();
+  const first = new Date(calYear, calMonth, 1);
+  const last = new Date(calYear, calMonth + 1, 0);
+  const startDow = (first.getDay() + 6) % 7;
+  const daysInMonth = last.getDate();
+
+  const cells = [];
+
+  for(let i = 0; i < startDow; i++){
+    cells.push('<div class="calDay disabled" aria-hidden="true"></div>');
+  }
+
+  for(let d = 1; d <= daysInMonth; d++){
+    const used = daySlotsUsed(bookings, calYear, calMonth, d);
+    const full = used >= PUB_MAX_PER_DAY;
+    const cls = full ? "calDay full" : "calDay";
+    const remaining = Math.max(0, PUB_MAX_PER_DAY - used);
+    const alertState = getDayPaymentAlert(bookings, calYear, calMonth, d);
+
+    let alertHtml = "";
+    if(alertState === "warning"){
+      alertHtml = '<div class="s" style="font-size:15px;color:#b06b00;">⚠️</div>';
+    }
+    if(alertState === "blocked"){
+      alertHtml = '<div class="s" style="font-size:15px;color:#a51e22;">⛔</div>';
+    }
+
+    const attrs = full ? "" : 'data-day="' + d + '" role="button"';
+
+    cells.push(
+      '<div class="' + cls + '" ' + attrs + '>' +
+        '<div class="d">' + d + '</div>' +
+        '<div class="s">' + used + '/' + PUB_MAX_PER_DAY + '</div>' +
+        '<div class="s" style="font-size:10px;">' + (full ? "Complet" : remaining + " dispo") + '</div>' +
+        alertHtml +
+      '</div>'
+    );
+  }
+
+  daysEl.innerHTML = cells.join("");
+
+  on($("calPrev"), "click", ()=>{
+    calMonth--;
+    if(calMonth < 0){
+      calMonth = 11;
+      calYear--;
+    }
+    renderCalendarInto(containerId);
+  });
+
+  on($("calNext"), "click", ()=>{
+    calMonth++;
+    if(calMonth > 11){
+      calMonth = 0;
+      calYear++;
+    }
+    renderCalendarInto(containerId);
+  });
+
+  on($("calRecap"), "click", ()=> openRecapModal(calYear, calMonth));
+
+  on($("calReset"), "click", ()=>{
+    if(confirm("Réinitialiser toutes les réservations publicitaires de test ?")){
+      localStorage.removeItem(PUB_STORE_KEY);
+      renderCalendarInto(containerId);
+    }
+  });
+
+  document.querySelectorAll(".calDay[data-day]").forEach((el)=>{
+    el.addEventListener("click", ()=>{
+      const d = parseInt(el.getAttribute("data-day"), 10);
+      const bookings2 = loadBookings();
+
+      if(isFull(bookings2, calYear, calMonth, d)){
+        alert("Cette journée est complète. Choisis une autre date.");
+        return;
+      }
+
+      const key = ymd(calYear, calMonth, d);
+      const used = daySlotsUsed(bookings2, calYear, calMonth, d);
+      const remaining = PUB_MAX_PER_DAY - used;
+
+      openModal("Réserver une publicité", `
+        <div class="box">
+          <div style="font-weight:900;">Date : ${key}</div>
+          <div class="muted" style="margin-top:6px;">
+            Déjà réservé : <strong>${used}/${PUB_MAX_PER_DAY}</strong><br>
+            Places restantes : <strong>${remaining}</strong>
+          </div>
+          <div class="muted" style="margin-top:8px;">
+            Tarif : 50 € HT pour 1 publicité, ou 200 € HT pour 5 publicités.
+          </div>
+          <div class="muted" style="margin-top:8px;">
+            Paiement immédiat pour commerce et association. Pour la mairie, blocage automatique si non régularisé à 30 jours.
+          </div>
+        </div>
+
+        <div class="choiceGrid">
+          <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
+          <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
+          <button class="choiceBtn" id="bkAsso" type="button">Association</button>
+        </div>
+      `);
+
+      setTimeout(()=>{
+        const doBook = (entityType)=>{
+          const now = new Date();
+          const currentHour = now.getHours();
+          const stampISO = now.toISOString();
+          const stampFR = now.toLocaleString("fr-FR");
+
+          const b = loadBookings();
+          let list = getDayBookings(b, calYear, calMonth, d);
+          if(!Array.isArray(list)) list = [];
+
+          if(list.length >= PUB_MAX_PER_DAY){
+            alert("Jour complet.");
+            closeModal();
+            renderCalendarInto(containerId);
+            return;
+          }
+
+          if(entityType === "Mairie"){
+            const allBookings = loadBookings();
+            const nowTs = Date.now();
+            let blocked = false;
+
+            Object.keys(allBookings).forEach(monthKey=>{
+              Object.keys(allBookings[monthKey]).forEach(dayKey=>{
+                (allBookings[monthKey][dayKey] || []).forEach(item=>{
+                  if(
+                    item.entityType === "Mairie" &&
+                    item.paymentMode === "mairie_regularisation_30j" &&
+                    item.due_ts &&
+                    nowTs > item.due_ts &&
+                    item.status !== "paid"
+                  ){
+                    blocked = true;
+                  }
+                });
+              });
+            });
+
+            if(blocked){
+              alert(
+                "Blocage automatique : une ou plusieurs publicités mairie ne sont pas régularisées après 30 jours.\n\n" +
+                "Impossible de réserver une nouvelle publicité tant que la situation n’est pas réglée."
+              );
+              return;
+            }
+          }
+
+          const entityLabel =
+            entityType === "Commerce"
+              ? "Nom du commerce"
+              : entityType === "Mairie"
+                ? "Nom de la mairie / service"
+                : "Nom de l’association";
+
+          const entityInput = prompt(entityLabel + " :");
+          if(!entityInput || !entityInput.trim()){
+            alert("Réservation annulée.");
+            return;
+          }
+
+          const entityName = entityInput.trim();
+          const normalizedEntityName = entityName.toLowerCase();
+
+          const alreadyBookedToday = list.some(item =>
+            String(item.entityType || item.who || "").trim().toLowerCase() === entityType.toLowerCase() &&
+            String(item.entityName || item.who || "").trim().toLowerCase() === normalizedEntityName
+          );
+
+          if(currentHour < 16 && alreadyBookedToday){
+            alert("Avant 16h00, cette entité a déjà réservé une publicité ce jour-là.");
+            return;
+          }
+
+          const title = prompt("Titre de la publicité :");
+          if(!title || !title.trim()){
+            alert("Réservation annulée : titre obligatoire.");
+            return;
+          }
+
+          const text = prompt("Texte court de la publicité :");
+          if(!text || !text.trim()){
+            alert("Réservation annulée : texte obligatoire.");
+            return;
+          }
+
+          list.push({
+            date: key,
+            who: entityType,
+            entityType: entityType,
+            entityName: entityName,
+            title: title.trim(),
+            text: text.trim(),
+            status: entityType === "Mairie" ? "quote_validated" : "paid",
+            paymentMode: entityType === "Mairie" ? "mairie_regularisation_30j" : "immediate",
+            due_ts: entityType === "Mairie" ? Date.now() + (30 * 24 * 60 * 60 * 1000) : null,
+            ts_iso: stampISO,
+            ts_fr: stampFR,
+            note: currentHour < 16 ? "Réservation avant 16h00" : "Réservation après 16h00"
+          });
+
+          setDayBookings(b, calYear, calMonth, d, list);
+          saveBookings(b);
+
+          closeModal();
+          renderCalendarInto(containerId);
+
+          alert(
+            "Réservation enregistrée.\n\n" +
+            "Date : " + key + "\n" +
+            "Type : " + entityType + "\n" +
+            "Entité : " + entityName + "\n" +
+            "Compteur jour : " + list.length + "/" + PUB_MAX_PER_DAY
+          );
+        };
+
+        on($("bkCommerce"), "click", ()=> doBook("Commerce"));
+        on($("bkMairie"), "click", ()=> doBook("Mairie"));
+        on($("bkAsso"), "click", ()=> doBook("Association"));
+      }, 0);
+    });
+  });
+}
+
+function openRecapModal(y, m){
+  const b = loadBookings();
+  const keyYM = ym(y, m);
+  const monthObj = b[keyYM] || {};
+
+  const cleanCsv = (value)=>{
+    return String(value || "").replace(/;/g, ",").replace(/\n/g, " ").trim();
+  };
+
+  const rows = [];
+
+  Object.keys(monthObj).sort().forEach((d)=>{
+    (monthObj[d] || []).forEach((it)=>{
+      rows.push({
+        date: it.date || d,
+        entityType: it.entityType || it.who || "",
+        entityName: it.entityName || it.who || "",
+        ts_iso: it.ts_iso || "",
+        ts_fr: it.ts_fr || "",
+        note: it.note || "",
+        status: it.status || "",
+        paymentMode: it.paymentMode || "",
+        due_ts: it.due_ts || null
+      });
+    });
+  });
+
+  const byEntity = {};
+  rows.forEach((r)=>{
+    const groupKey = (r.entityType || "Type inconnu") + " — " + (r.entityName || "Entité inconnue");
+    if(!byEntity[groupKey]){
+      byEntity[groupKey] = {
+        count: 0,
+        type: r.entityType,
+        name: r.entityName
+      };
+    }
+    byEntity[groupKey].count++;
+  });
+
+  let csv = "date;type_entite;entite;horodatage_iso;horodatage_fr;statut;paiement;note\n";
+  rows.forEach((r)=>{
+    csv += `${cleanCsv(r.date)};${cleanCsv(r.entityType)};${cleanCsv(r.entityName)};${cleanCsv(r.ts_iso)};${cleanCsv(r.ts_fr)};${cleanCsv(r.status)};${cleanCsv(r.paymentMode)};${cleanCsv(r.note)}\n`;
+  });
+
+  const total = rows.length;
+
+  const detailHtml = Object.keys(byEntity).length
+    ? Object.keys(byEntity).sort().map((groupKey)=>{
+        const e = byEntity[groupKey];
+        return `
+          <div class="box" style="margin-top:8px;background:var(--bg);">
+            <strong>${escapeHtml(e.type || "Type inconnu")}</strong><br>
+            ${escapeHtml(e.name || "Entité inconnue")}<br>
+            <span class="muted">${e.count} publicité(s) réservée(s) ce mois-ci</span>
+          </div>
+        `;
+      }).join("")
+    : `<div class="muted">Aucune réservation sur ce mois.</div>`;
+
+  openModal("Récap mensuel — publicités", `
     <div class="box">
-      <strong>Module publicité temporairement sécurisé.</strong>
-      <div class="muted" style="margin-top:8px;">
-        Le calendrier commun sera réactivé après correction complète. 
-        Cette version permet de relancer l’application sans casser le reste.
+      <div style="font-weight:900;">Mois : ${keyYM}</div>
+      <div class="muted" style="margin-top:6px;">
+        Total réservé ce mois-ci : <strong>${total}</strong> publicité(s).
       </div>
     </div>
 
     <div class="box" style="margin-top:12px;">
-      <div class="muted">
-        Règle prévue : maximum 10 publicités par jour, accès réservé mairie, commerce et association autorisée.
-      </div>
+      <div style="font-weight:900;">Détail par mairie / commerce / association</div>
+      ${detailHtml}
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
+      <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
+      <button class="choiceBtn" id="copySummary" type="button">📊 Copier résumé</button>
     </div>
   `);
+
+  setTimeout(()=>{
+    const btnCsv = $("copyCsv");
+    const btnJson = $("copyJson");
+    const btnSummary = $("copySummary");
+
+    if(btnCsv){
+      btnCsv.onclick = async ()=>{
+        try{
+          await navigator.clipboard.writeText(csv);
+          alert("CSV copié.");
+        }catch(e){
+          alert(csv);
+        }
+      };
+    }
+
+    if(btnJson){
+      btnJson.onclick = async ()=>{
+        try{
+          await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2));
+          alert("JSON copié.");
+        }catch(e){
+          alert(JSON.stringify(monthObj, null, 2));
+        }
+      };
+    }
+
+    if(btnSummary){
+      btnSummary.onclick = async ()=>{
+        const summary =
+          "RÉCAP PUBLICITÉS — " + keyYM + "\n\n" +
+          "Total : " + total + " publicité(s)\n\n" +
+          Object.keys(byEntity).sort().map((groupKey)=>{
+            const e = byEntity[groupKey];
+            return "- " + (e.type || "Type inconnu") + " / " + (e.name || "Entité inconnue") + " : " + e.count + " pub(s)";
+          }).join("\n");
+
+        try{
+          await navigator.clipboard.writeText(summary);
+          alert("Résumé copié.");
+        }catch(e){
+          alert(summary);
+        }
+      };
+    }
+  }, 0);
+}
+
+function openTicker(){
+  const warningMsg = (typeof checkMairiePaymentWarnings === "function")
+  ? checkMairiePaymentWarnings()
+  : null;
+
+  openModal("Publicités & visibilité", `
+    <div style="font-weight:900;margin-bottom:8px;">Grand bandeau publicitaire — espace commun</div>
+
+    ${warningMsg ? `
+      <div class="box" style="border-left:6px solid #b06b00;background:#fff8e8;">
+        <strong>Rappel mairie :</strong><br>
+        <div class="muted" style="white-space:pre-line;margin-top:6px;">${escapeHtml(warningMsg)}</div>
+      </div>
+    ` : ""}
+
+    <div class="box">
+      <strong>Cadre commun :</strong> ce calendrier centralise les réservations de publicité du grand bandeau supérieur.
+      Il est commun aux <strong>commerçants</strong>, à la <strong>mairie</strong> et aux <strong>associations autorisées</strong>.
+    </div>
+
+    <div class="box">
+      <div class="muted">
+        Maximum : <strong>${PUB_MAX_PER_DAY} publicités par jour</strong>.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Avant 16h00 : une même entité ne peut réserver qu’une seule publicité sur la journée concernée.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Après 16h00 : s’il reste des places, les entités peuvent reprendre des emplacements jusqu’au maximum de ${PUB_MAX_PER_DAY}.
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Tarif : <strong>50 € HT</strong> pour 1 publicité, ou <strong>200 € HT</strong> pour un forfait de 5 publicités.
+      </div>
+    </div>
+
+    <div class="box">
+      <div style="font-weight:900;">Accès réservé</div>
+      <div class="muted" style="margin-top:6px;">
+        Cet espace n’est pas destiné aux simples visiteurs. Il sert uniquement aux comptes autorisés :
+        mairie, commerces et associations validées.
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="tickerAccessCommerce" type="button">Commerce</button>
+        <button class="choiceBtn" id="tickerAccessMairie" type="button">Mairie</button>
+        <button class="choiceBtn" id="tickerAccessAsso" type="button">Association</button>
+      </div>
+
+      <div class="muted" id="tickerAccessStatus" style="margin-top:10px;">
+        Choisissez un profil autorisé pour ouvrir le calendrier commun.
+      </div>
+    </div>
+
+    <div id="tickerEntityInfo" class="box" style="display:none;margin-top:12px;background:var(--bg);"></div>
+    <div id="calHost" style="display:none;"></div>
+  `);
+
+  setTimeout(()=>{
+    const accessCommerce = $("tickerAccessCommerce");
+    const accessMairie = $("tickerAccessMairie");
+    const accessAsso = $("tickerAccessAsso");
+    const status = $("tickerAccessStatus");
+    const entityInfo = $("tickerEntityInfo");
+    const calHost = $("calHost");
+
+    function unlockTickerCalendar(profile){
+      let label = "";
+      let description = "";
+
+      if(profile === "commerce"){
+        label = "Commerce";
+        description = "Espace commerce : réservation avec paiement immédiat, visibilité locale, suivi des publicités achetées.";
+      }
+
+      if(profile === "mairie"){
+        label = "Mairie";
+        description = "Espace mairie : réservation dans le même calendrier commun, sans passe-droit, avec suivi des diffusions.";
+      }
+
+      if(profile === "asso"){
+        label = "Association";
+        description = "Espace association autorisée : réservation possible après validation, avec paiement immédiat et visibilité encadrée.";
+      }
+
+      if(status){
+        status.textContent = "Accès ouvert : " + label + ". Le calendrier commun est maintenant disponible.";
+      }
+
+      if(entityInfo){
+        entityInfo.style.display = "block";
+        entityInfo.innerHTML = `
+          <div style="font-weight:900;">Profil sélectionné : ${escapeHtml(label)}</div>
+          <div class="muted" style="margin-top:8px;">${escapeHtml(description)}</div>
+          <div class="muted" style="margin-top:8px;">
+            Les réservations enregistrées ici alimentent le même compteur journalier :
+            impossible de dépasser ${PUB_MAX_PER_DAY} publicités sur une même date.
+          </div>
+        `;
+      }
+
+      if(calHost){
+        calHost.style.display = "block";
+      }
+
+      renderCalendarInto("calHost");
+    }
+
+    if(accessCommerce){
+      accessCommerce.onclick = ()=>{
+        unlockTickerCalendar("commerce");
+      };
+    }
+
+    if(accessMairie){
+      accessMairie.onclick = ()=>{
+        unlockTickerCalendar("mairie");
+      };
+    }
+
+    if(accessAsso){
+      accessAsso.onclick = ()=>{
+        unlockTickerCalendar("asso");
+      };
+    }
+  }, 0);
 }
 
 window.openTicker = openTicker;
-
 const tickerBtn = $("ticker");
 if(tickerBtn){
   on(tickerBtn, "click", openTicker);
 }
+
+      window.tapeAds = [
+
         { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
         { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
         { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
