@@ -849,6 +849,40 @@
       color:#6e6a63;
       font-weight:800;
     }
+    .modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.modalContent {
+  background: #fff;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90%;
+  overflow: auto;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 900;
+}
+
+.modalBody {
+  margin-top: 10px;
+}
     @media (max-height:780px){
       .wrap{ padding:10px; gap:10px; }
       .ticker{ height:120px; }
@@ -2431,7 +2465,53 @@ function openRecapModal(y, m){
     }
   }, 0);
 }
+    // ===== FONCTIONS MODALE OBLIGATOIRES =====
+function openModal(title, html){
+  const modal = document.getElementById("modal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalBody = document.getElementById("modalBody");
 
+  if(!modal || !modalTitle || !modalBody){
+    alert("Erreur : structure modale introuvable.");
+    return;
+  }
+
+  modalTitle.textContent = title || "";
+  modalBody.innerHTML = html || "";
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+
+  if(typeof lockScroll === "function"){
+    lockScroll(true);
+  }
+}
+
+function closeModal(){
+  const modal = document.getElementById("modal");
+  if(!modal) return;
+
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+
+  if(typeof lockScroll === "function"){
+    lockScroll(false);
+  }
+}
+
+window.openModal = openModal;
+window.closeModal = closeModal;
+
+const modalCloseBtn = document.getElementById("xBtn");
+const modalBackdrop = document.getElementById("modalClose");
+
+if(modalCloseBtn){
+  modalCloseBtn.onclick = closeModal;
+}
+
+if(modalBackdrop){
+  modalBackdrop.onclick = closeModal;
+}
+// ===== FIN FONCTIONS MODALE =====  
 function openTicker(){
   const warningMsg = (typeof checkMairiePaymentWarnings === "function")
   ? checkMairiePaymentWarnings()
@@ -9286,5 +9366,14 @@ if(isFn(window.makeKeyboardClickable)){
   majBouton();
 })();
 </script>
+  <div id="modal" class="modal" aria-hidden="true">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <div id="modalTitle" class="modalTitle">Titre</div>
+      <button id="xBtn">✕</button>
+    </div>
+    <div id="modalBody" class="modalBody"></div>
+  </div>
+</div>
 </body>
 </html>
