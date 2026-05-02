@@ -4845,6 +4845,7 @@ if(key === "ecole"){
   });
 
   window.__bociteartOpenByKey = function(key){
+    
 
 if(key === "sport"){
   window.openSportPanel = function(){
@@ -6969,7 +6970,7 @@ if(mairiePubMarkPaidBtn){
   };
 }
 
-if(mairiePubTransmitBtn){
+     if(mairiePubTransmitBtn){
   mairiePubTransmitBtn.onclick = ()=>{
     alert(
       "L’activation des publicités se fait automatiquement via le système centralisé.\n\n" +
@@ -6977,8 +6978,15 @@ if(mairiePubTransmitBtn){
     );
   };
 }
-           
-  if(key === "commerces") {
+
+    const xb = $("xBtn");
+    if(xb && xb.focus) xb.focus();
+  },0);
+
+  return;
+}
+
+if(key === "commerces") {
   openModal("Commerces", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces</div>
 
