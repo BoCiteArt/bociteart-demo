@@ -2513,55 +2513,24 @@ if(modalBackdrop){
 }
 // ===== FIN FONCTIONS MODALE =====  
 function openTicker(){
-  const warningMsg = (typeof checkMairiePaymentWarnings === "function")
-  ? checkMairiePaymentWarnings()
-  : null;
-
-  openModal("Publicités & visibilité", `
-    <div style="font-weight:900;margin-bottom:8px;">Grand bandeau publicitaire — espace commun</div>
-
-    ${warningMsg ? `
-      <div class="box" style="border-left:6px solid #b06b00;background:#fff8e8;">
-        <strong>Rappel mairie :</strong><br>
-        <div class="muted" style="white-space:pre-line;margin-top:6px;">${escapeHtml(warningMsg)}</div>
-      </div>
-    ` : ""}
+  openModal("Publicités — accès unique", `
+    <div style="font-weight:900;margin-bottom:8px;">Grand rectangle publicitaire</div>
 
     <div class="box">
-      <strong>Cadre commun :</strong> ce calendrier centralise les réservations de publicité du grand bandeau supérieur.
-      Il est commun aux <strong>commerçants</strong>, à la <strong>mairie</strong> et aux <strong>associations autorisées</strong>.
+      <strong>Principe :</strong> toutes les publicités du grand rectangle passent ici uniquement.
+      Les onglets Mairie et Commerces ne doivent plus créer de publicité séparément.
     </div>
 
     <div class="box">
-      <div class="muted">
-        Maximum : <strong>${PUB_MAX_PER_DAY} publicités par jour</strong>.
-      </div>
-      <div class="muted" style="margin-top:8px;">
-        Avant 16h00 : une même entité ne peut réserver qu’une seule publicité sur la journée concernée.
-      </div>
-      <div class="muted" style="margin-top:8px;">
-        Après 16h00 : s’il reste des places, les entités peuvent reprendre des emplacements jusqu’au maximum de ${PUB_MAX_PER_DAY}.
-      </div>
-      <div class="muted" style="margin-top:8px;">
-        Tarif : <strong>50 € HT</strong> pour 1 publicité, ou <strong>200 € HT</strong> pour un forfait de 5 publicités.
-      </div>
-    </div>
-
-    <div class="box">
-      <div style="font-weight:900;">Accès réservé</div>
+      <div style="font-weight:900;">Choisir le profil</div>
       <div class="muted" style="margin-top:6px;">
-        Cet espace n’est pas destiné aux simples visiteurs. Il sert uniquement aux comptes autorisés :
-        mairie, commerces et associations validées.
+        Sélectionnez l’accès concerné pour ouvrir le calendrier publicitaire commun.
       </div>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="tickerAccessCommerce" type="button">Commerce</button>
         <button class="choiceBtn" id="tickerAccessMairie" type="button">Mairie</button>
         <button class="choiceBtn" id="tickerAccessAsso" type="button">Association</button>
-      </div>
-
-      <div class="muted" id="tickerAccessStatus" style="margin-top:10px;">
-        Choisissez un profil autorisé pour ouvrir le calendrier commun.
       </div>
     </div>
 
@@ -2573,7 +2542,6 @@ function openTicker(){
     const accessCommerce = $("tickerAccessCommerce");
     const accessMairie = $("tickerAccessMairie");
     const accessAsso = $("tickerAccessAsso");
-    const status = $("tickerAccessStatus");
     const entityInfo = $("tickerEntityInfo");
     const calHost = $("calHost");
 
@@ -2583,32 +2551,24 @@ function openTicker(){
 
       if(profile === "commerce"){
         label = "Commerce";
-        description = "Espace commerce : réservation avec paiement immédiat, visibilité locale, suivi des publicités achetées.";
+        description = "Réservation publicité commerce avec paiement immédiat.";
       }
 
       if(profile === "mairie"){
         label = "Mairie";
-        description = "Espace mairie : réservation dans le même calendrier commun, sans passe-droit, avec suivi des diffusions.";
+        description = "Réservation mairie avec devis validé, rappel à 8 jours, blocage au-delà de 30 jours si non payé.";
       }
 
       if(profile === "asso"){
         label = "Association";
-        description = "Espace association autorisée : réservation possible après validation, avec paiement immédiat et visibilité encadrée.";
-      }
-
-      if(status){
-        status.textContent = "Accès ouvert : " + label + ". Le calendrier commun est maintenant disponible.";
+        description = "Réservation association autorisée avec paiement immédiat.";
       }
 
       if(entityInfo){
         entityInfo.style.display = "block";
         entityInfo.innerHTML = `
-          <div style="font-weight:900;">Profil sélectionné : ${escapeHtml(label)}</div>
+          <div style="font-weight:900;">Accès sélectionné : ${escapeHtml(label)}</div>
           <div class="muted" style="margin-top:8px;">${escapeHtml(description)}</div>
-          <div class="muted" style="margin-top:8px;">
-            Les réservations enregistrées ici alimentent le même compteur journalier :
-            impossible de dépasser ${PUB_MAX_PER_DAY} publicités sur une même date.
-          </div>
         `;
       }
 
@@ -2619,30 +2579,17 @@ function openTicker(){
       renderCalendarInto("calHost");
     }
 
-    if(accessCommerce){
-      accessCommerce.onclick = ()=>{
-        unlockTickerCalendar("commerce");
-      };
-    }
-
-    if(accessMairie){
-      accessMairie.onclick = ()=>{
-        unlockTickerCalendar("mairie");
-      };
-    }
-
-    if(accessAsso){
-      accessAsso.onclick = ()=>{
-        unlockTickerCalendar("asso");
-      };
-    }
+    if(accessCommerce) accessCommerce.onclick = ()=> unlockTickerCalendar("commerce");
+    if(accessMairie) accessMairie.onclick = ()=> unlockTickerCalendar("mairie");
+    if(accessAsso) accessAsso.onclick = ()=> unlockTickerCalendar("asso");
   }, 0);
 }
 
 window.openTicker = openTicker;
+
 const tickerBtn = $("ticker");
 if(tickerBtn){
-  on(tickerBtn, "click", openTicker);
+  tickerBtn.onclick = openTicker;
 }
 
       window.tapeAds = [
