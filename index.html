@@ -6331,32 +6331,6 @@ if(key === "commerces") {
         </div>
       </div>
 
-      <div class="coinStack" aria-hidden="true">
-        <div class="stackCoin stackGold stack1">
-          <div class="stackCoinStars" aria-hidden="true">
-            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-            </svg>
-          </div>
-        </div>
-
-        <div class="stackCoin stackGold stack2">
-          <div class="stackCoinStars" aria-hidden="true">
-            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-            </svg>
-          </div>
-        </div>
-
-        <div class="stackCoin stackGold stack3">
-          <div class="stackCoinStars" aria-hidden="true">
-            <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-              <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-            </svg>
-          </div>
-        </div>
-      </div>
-
       <div class="walletBox">
         <div class="walletTitle">Wallet client — BoCitecoins OR</div>
         <div class="walletValue walletGold" id="citizenCoinBalance">37</div>
@@ -6391,16 +6365,6 @@ if(key === "commerces") {
         Les offres comprenant de la nourriture ou des boissons ne peuvent représenter plus de <strong>30 %</strong> de la valeur totale de l’avantage.
       </div>
     </div>
-
-   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-  <button class="choiceBtn" id="mairieOpenTickerCalendarBtn" type="button">
-    Réserver une publicité dans le bandeau commun
-  </button>
-
-  <button class="choiceBtn" id="mairiePubReadHistoryBtn" type="button" style="background:#fff;">
-    Lire historique pubs mairie
-  </button>
-</div>
 
     <div style="font-weight:900;margin-top:12px;">Bocitecoins couleur OR</div>
     <div class="box">
@@ -6483,8 +6447,8 @@ if(key === "commerces") {
     <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;">Accès interne commerce</div>
       <div class="muted" style="margin-top:6px;">
-        Cet espace regroupe la gestion commerçant : attribution des bocitecoins, fiche commerçant, historique,
-        règles internes, coûts de service et options publicitaires.
+        Cet espace regroupe la gestion commerçant : attribution des bocitecoins, fiche commerçant, historique et règles internes.
+        Les publicités du grand rectangle sont désormais gérées uniquement depuis l’accès central “Publicités & visibilité”.
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="toggleCommerceAdminBtn" type="button">Ouvrir l’espace interne commerce</button>
@@ -6526,41 +6490,6 @@ if(key === "commerces") {
         <div class="muted" style="margin-top:6px;">
           En cas d’erreur de saisie, le commerçant dispose d’une fenêtre de correction de 60 secondes après validation.
         </div>
-        <div class="muted" style="margin-top:6px;">
-          Si une anomalie persiste après ce délai, une demande de régularisation peut être transmise à l’administrateur Bo’CitéArt,
-          qui intervient après vérification dans un délai raisonnable.
-        </div>
-      </div>
-
-      <div style="font-weight:900;margin-top:12px;">Réserver une publicité commerce</div>
-      <div class="box">
-        <div style="font-weight:900;">Grand bandeau du haut</div>
-
-        <div class="muted" style="margin-top:6px;">
-          Le commerçant prépare sa publicité, paie immédiatement, puis la publicité peut être activée dans le grand bandeau supérieur.
-        </div>
-
-        <div style="margin-top:10px;font-weight:900;">Date souhaitée</div>
-        <input class="miniField" id="merchantPubDate" placeholder="AAAA-MM-JJ">
-
-        <div style="margin-top:10px;font-weight:900;">Titre publicité</div>
-        <input class="miniField" id="merchantPubTitle" placeholder="Ex : Offre spéciale du week-end">
-
-        <div style="margin-top:10px;font-weight:900;">Texte publicité</div>
-        <textarea id="merchantPubText" class="miniField" style="min-height:100px;" placeholder="Ex : 20 % de remise sur présentation de l’application Bo’CitéArt."></textarea>
-
-        <div class="box" style="margin-top:12px;background:var(--bg);">
-          <div style="font-weight:900;">Aperçu publicité commerce</div>
-          <div class="muted" id="merchantPubPreview" style="margin-top:8px;">
-            Aucune publicité commerce préparée.
-          </div>
-        </div>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="merchantPubPayBtn" type="button">Payer et activer — 60 € TTC</button>
-          <button class="choiceBtn" id="merchantPubHistoryBtn" type="button" style="background:#fff;">Voir pubs commerce</button>
-          <button class="choiceBtn" id="merchantPubResetBtn" type="button" style="background:#fff;">Réinitialiser</button>
-        </div>
       </div>
 
       <div style="font-weight:900;margin-top:12px;">Conditions commerçant Bo’CitéArt</div>
@@ -6586,15 +6515,8 @@ if(key === "commerces") {
         </ul>
 
         <div class="muted" style="margin-top:10px;">
-          Le commerçant conserve sa comptabilité habituelle. Bo’CitéArt ne gère que les éléments liés à son propre fonctionnement.
-        </div>
-
-        <div class="muted" style="margin-top:10px;">
-          Les frais PSP, la maintenance, et les mises à jour s’inscrivent dans la logique de service.
-        </div>
-
-        <div class="muted" style="margin-top:10px;">
-          Une facture / traçabilité adaptée est prévue selon les écritures Bo’CitéArt et le système PSP associé.
+          Les publicités du grand rectangle ne sont plus réservées depuis cet onglet.
+          Elles passent uniquement par le calendrier centralisé.
         </div>
       </div>
 
@@ -6630,27 +6552,18 @@ if(key === "commerces") {
         </div>
       </div>
 
-      <div style="font-weight:900;margin-top:12px;">Visibilité & publicités (interne)</div>
+      <div style="font-weight:900;margin-top:12px;">Visibilité locale</div>
       <div class="box">
         <div class="muted">
-          Votre publicité est vivante, visible dans l’architecture Bo’CitéArt et répétée dans l’environnement local.
-          Être visible ici, c’est exister davantage dans la mémoire des habitants.
-        </div>
-
-        <div class="muted" style="margin-top:8px;">
-          Bo’CitéArt a le plaisir d’offrir aux nouveaux partenaires leurs <strong>3 premières pubs</strong>.
-        </div>
-
-        <div class="muted" style="margin-top:8px;">
-          Parrainage partenaire : pour chaque parrainage validé, une dotation publicitaire peut être ajoutée selon les règles retenues.
+          La visibilité publicitaire du grand rectangle est désormais séparée de l’onglet commerce.
+          Le commerçant doit passer par l’accès central “Publicités & visibilité”, puis choisir le profil Commerce.
         </div>
 
         <ul style="margin:8px 0 0 18px;font-weight:800;">
-          <li>Plafond strict : ${window.PUB_MAX_PER_DAY} maximum / jour</li>
-          <li>Journée complète : grisée et non sélectionnable</li>
-          <li>Réservation via calendrier + horodatage + récap mensuel (démo)</li>
-          <li>Option : texte en gras (+4 € TTC)</li>
-          <li>Possibilité d’URL selon conformité</li>
+          <li>Réservation centralisée</li>
+          <li>Même calendrier pour commerce, mairie et association</li>
+          <li>Compteur commun par jour</li>
+          <li>Historique mensuel centralisé</li>
         </ul>
       </div>
 
@@ -6661,8 +6574,8 @@ if(key === "commerces") {
     </div>
   `);
 
-   setTimeout(()=>{
-  if(typeof window.initFeeUiInModal === "function") window.initFeeUiInModal();
+  setTimeout(()=>{
+    if(typeof window.initFeeUiInModal === "function") window.initFeeUiInModal();
 
     const toggleCommerceAdminBtn = $("toggleCommerceAdminBtn");
     const commerceAdminPanel = $("commerceAdminPanel");
@@ -6847,8 +6760,6 @@ if(key === "commerces") {
         }else{
           progressText.textContent = "Solde actuel : " + coins + " bocitecoins • Prochain palier : " + next + " • Niveau : " + getTargetLabel(next);
         }
-        progressText.style.whiteSpace = "normal";
-        progressText.style.wordBreak = "keep-all";
       }
 
       if(motivation){
@@ -6873,67 +6784,7 @@ if(key === "commerces") {
       saveCitizenMeta(meta);
     }
 
-    function redeemCoins(required){
-      const wallet = loadCitizenWallet();
-      const meta = ensureCitizenMeta();
-      const now = Date.now();
-      const coins = Number(wallet.or || 0);
-      const daysLeft = daysBetween(now, meta.expireTs);
-      const loweredThresholdAllowed = daysLeft <= 30;
-      const minimumAllowed = loweredThresholdAllowed ? 20 : 30;
-
-      if(required < minimumAllowed){
-        alert("Échange impossible sous " + minimumAllowed + " bocitecoins dans la période actuelle.");
-        return;
-      }
-
-      if(coins < required){
-        alert("Solde insuffisant. Il faut " + required + " bocitecoins.");
-        return;
-      }
-
-      if(confirm("Confirmer l’échange de " + required + " bocitecoins ?")){
-        wallet.or = Math.max(0, coins - required);
-        saveCitizenWallet(wallet);
-        registerTx({
-          type:"redeem",
-          amount:required,
-          previous:coins,
-          resulting:wallet.or,
-          ts:Date.now()
-        });
-        refreshWalletUi();
-        alert("Échange validé (démo) : " + required + " bocitecoins utilisés.");
-      }
-    }
-
     refreshWalletUi();
-
-    const rst = $("walletClientReset");
-    const r30 = $("walletClientRedeem30");
-    const r50 = $("walletClientRedeem50");
-    const r100 = $("walletClientRedeem100");
-
-    if(r30) r30.onclick = function(){ redeemCoins(30); };
-    if(r50) r50.onclick = function(){ redeemCoins(50); };
-    if(r100) r100.onclick = function(){ redeemCoins(100); };
-
-    if(rst){
-      rst.onclick = ()=>{
-        if(confirm("Réinitialiser le wallet Client (démo) sur ce téléphone ?")){
-          saveCitizenWallet({ or:0 });
-          const now = Date.now();
-          saveCitizenMeta({
-            firstEarnTs: now,
-            expireTs: now + (365 * 24 * 60 * 60 * 1000),
-            lastTx: null,
-            thirtyDayAlertShown: false,
-            tenDayAlertShown: false
-          });
-          refreshWalletUi();
-        }
-      };
-    }
 
     const amountInput = $("shopPurchaseAmount");
     const calcOut = $("shopCoinsCalc");
@@ -7136,50 +6987,40 @@ if(key === "commerces") {
       };
     }
 
-const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
+    const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
 
-if(merchantHistoryExportBtn){
-  merchantHistoryExportBtn.onclick = ()=>{
-    const wallet = loadCitizenWallet();
-    const meta = loadCitizenMeta();
+    if(merchantHistoryExportBtn){
+      merchantHistoryExportBtn.onclick = ()=>{
+        const wallet = loadCitizenWallet();
+        const meta = loadCitizenMeta();
 
-    let profile = {
-      shopName:"",
-      address:"",
-      phone:"",
-      email:""
-    };
+        const exportObj = {
+          exported_at_fr: new Date().toLocaleString("fr-FR"),
+          merchant_profile: loadMerchantProfile(),
+          citizen_wallet_or: Number(wallet.or || 0),
+          citizen_meta: meta
+        };
 
-    profile = loadMerchantProfile() || profile;
+        const exportText =
+          "HISTORIQUE COMMERCE — EXPORT DÉMO\n\n" +
+          JSON.stringify(exportObj, null, 2);
 
-    const exportObj = {
-      exported_at_fr: new Date().toLocaleString("fr-FR"),
-      merchant_profile: profile,
-      citizen_wallet_or: Number(wallet.or || 0),
-      citizen_meta: meta
-    };
-
-    const exportText =
-      "HISTORIQUE COMMERCE — EXPORT DÉMO\n\n" +
-      JSON.stringify(exportObj, null, 2);
-
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(exportText)
-        .then(()=> alert("Historique commerce exporté et copié dans le presse-papiers."))
-        .catch(()=> alert(exportText));
-    }else{
-      alert(exportText);
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(exportText)
+            .then(()=> alert("Historique commerce exporté et copié dans le presse-papiers."))
+            .catch(()=> alert(exportText));
+        }else{
+          alert(exportText);
+        }
+      };
     }
-  };
-}
 
-const xb = $("xBtn");
-if(xb && xb.focus) xb.focus();
+    const xb = $("xBtn");
+    if(xb && xb.focus) xb.focus();
   },0);
 
   return;
 }
-};
     
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
