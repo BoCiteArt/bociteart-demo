@@ -1761,15 +1761,61 @@ setInterval(()=>{
 
 window.openWellbeingMap = openWellbeingMap;
       
-   let calYear = new Date().getFullYear();
+  let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 
 window.PUB_STORE_KEY = window.PUB_STORE_KEY || "bociteart_pub_bookings_v1";
 window.PUB_MAX_PER_DAY = window.PUB_MAX_PER_DAY || 10;
 
-function pad2(n){ return String(n).padStart(2, "0"); }
-function ymd(y,m,d){ return y + "-" + pad2(m+1) + "-" + pad2(d); }
-function ym(y,m){ return y + "-" + pad2(m+1); }
+function ensureModalHelpers(){
+  if(typeof window.openModal === "function" && typeof window.closeModal === "function") return;
+
+  const modal = $("modal");
+  const modalTitle = $("modalTitle");
+  const modalBody = $("modalBody");
+
+  window.openModal = function(title, html){
+    if(!modal || !modalTitle || !modalBody){
+      alert("Fenêtre modale introuvable dans le HTML.");
+      return;
+    }
+
+    modalTitle.textContent = title || "";
+    modalBody.innerHTML = html || "";
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+
+    if(typeof lockScroll === "function") lockScroll(true);
+  };
+
+  window.closeModal = function(){
+    if(!modal) return;
+
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+
+    if(typeof lockScroll === "function") lockScroll(false);
+  };
+
+  const closeBtn = $("xBtn");
+  if(closeBtn){
+    closeBtn.onclick = window.closeModal;
+  }
+}
+
+ensureModalHelpers();
+
+function pad2(n){
+  return String(n).padStart(2, "0");
+}
+
+function ymd(y, m, d){
+  return y + "-" + pad2(m + 1) + "-" + pad2(d);
+}
+
+function ym(y, m){
+  return y + "-" + pad2(m + 1);
+}
 
 function loadBookings(){
   try{
@@ -1788,16 +1834,20 @@ function saveBookings(obj){
 }
 
 function getDayBookings(obj, y, m, d){
-  const keyYM = ym(y,m);
-  const keyYMD = ymd(y,m,d);
+  const keyYM = ym(y, m);
+  const keyYMD = ymd(y, m, d);
+
   if(!obj || typeof obj !== "object") return [];
   if(!obj[keyYM] || typeof obj[keyYM] !== "object") return [];
-  return Array.isArray(obj[keyYM][keyYMD]) ? obj[keyYM][keyYMD] : [];
+
+  const list = obj[keyYM][keyYMD];
+  return Array.isArray(list) ? list : [];
 }
 
 function setDayBookings(obj, y, m, d, list){
-  const keyYM = ym(y,m);
-  const keyYMD = ymd(y,m,d);
+  const keyYM = ym(y, m);
+  const keyYMD = ymd(y, m, d);
+
   if(!obj[keyYM]) obj[keyYM] = {};
   obj[keyYM][keyYMD] = Array.isArray(list) ? list : [];
 }
@@ -1820,9 +1870,13 @@ function getDayPaymentAlert(bookings, y, m, d){
       item.due_ts &&
       item.status !== "paid"
     ){
-      const diffDays = Math.floor((Number(item.due_ts) - now) / (1000*60*60*24));
-      if(diffDays < 0) hasBlocked = true;
-      else if(diffDays <= 8) hasWarning = true;
+      const diffDays = Math.floor((Number(item.due_ts) - now) / (1000 * 60 * 60 * 24));
+
+      if(diffDays < 0){
+        hasBlocked = true;
+      }else if(diffDays <= 8){
+        hasWarning = true;
+      }
     }
   });
 
@@ -1838,7 +1892,9 @@ function checkMairiePaymentWarnings(){
 
   Object.keys(bookings || {}).forEach(monthKey=>{
     Object.keys(bookings[monthKey] || {}).forEach(dayKey=>{
-      (bookings[monthKey][dayKey] || []).forEach(item=>{
+      const list = Array.isArray(bookings[monthKey][dayKey]) ? bookings[monthKey][dayKey] : [];
+
+      list.forEach(item=>{
         if(
           item &&
           item.entityType === "Mairie" &&
@@ -1846,12 +1902,12 @@ function checkMairiePaymentWarnings(){
           item.due_ts &&
           item.status !== "paid"
         ){
-          const daysLeft = Math.ceil((Number(item.due_ts) - now) / (1000*60*60*24));
+          const daysLeft = Math.ceil((Number(item.due_ts) - now) / (1000 * 60 * 60 * 24));
 
           if(daysLeft < 0){
-            warnings.push("Une publicité mairie est arrivée à échéance de paiement. Nouvelle réservation bloquée jusqu’à régularisation.");
+            warnings.push("Une publicité mairie est arrivée à échéance de paiement. Les nouvelles réservations sont temporairement bloquées jusqu’à régularisation.");
           }else if(daysLeft <= 8){
-            warnings.push("Rappel mairie : paiement attendu dans " + daysLeft + " jour(s). Merci de régulariser avant l’échéance de 30 jours.");
+            warnings.push("Rappel mairie : paiement attendu dans " + daysLeft + " jour(s). Merci de régulariser avant l’échéance prévue.");
           }
         }
       });
@@ -1868,7 +1924,9 @@ function isMairieBlockedFromBooking(){
 
   Object.keys(bookings || {}).forEach(monthKey=>{
     Object.keys(bookings[monthKey] || {}).forEach(dayKey=>{
-      (bookings[monthKey][dayKey] || []).forEach(item=>{
+      const list = Array.isArray(bookings[monthKey][dayKey]) ? bookings[monthKey][dayKey] : [];
+
+      list.forEach(item=>{
         if(
           item &&
           item.entityType === "Mairie" &&
@@ -1887,8 +1945,8 @@ function isMairieBlockedFromBooking(){
 }
 
 function safeCloseModal(){
-  if(typeof closeModal === "function"){
-    closeModal();
+  if(typeof window.closeModal === "function"){
+    window.closeModal();
     return;
   }
 
@@ -1900,9 +1958,11 @@ function safeCloseModal(){
 }
 
 function openAdBookingForProfile(profile, y, m, d, containerId){
-  const key = ymd(y,m,d);
+  ensureModalHelpers();
+
+  const key = ymd(y, m, d);
   const bookings = loadBookings();
-  let list = getDayBookings(bookings, y, m, d);
+  const list = getDayBookings(bookings, y, m, d);
 
   if(list.length >= window.PUB_MAX_PER_DAY){
     alert("Cette journée est complète. Choisis une autre date.");
@@ -1928,7 +1988,7 @@ function openAdBookingForProfile(profile, y, m, d, containerId){
       ? "Mode mairie : devis validé / paiement différé à 30 jours. Un rappel apparaît à 8 jours de l’échéance."
       : "Mode " + label.toLowerCase() + " : paiement immédiat requis pour activer la publicité.";
 
-  openModal("Réservation publicité — " + label, `
+  window.openModal("Réservation publicité — " + label, `
     <div class="box">
       <div style="font-weight:900;">Date : ${key}</div>
       <div class="muted" style="margin-top:6px;">
@@ -2003,7 +2063,7 @@ function openAdBookingForProfile(profile, y, m, d, containerId){
         return;
       }
 
-      for(let i=0; i<slots; i++){
+      for(let i = 0; i < slots; i++){
         list.push({
           date: key,
           entityType: label,
@@ -2036,7 +2096,7 @@ function openAdBookingForProfile(profile, y, m, d, containerId){
           : "Réservation enregistrée et publicité activée."
       );
     };
-  },0);
+  }, 0);
 }
 
 function renderCalendarInto(containerId){
@@ -2079,16 +2139,18 @@ function renderCalendarInto(containerId){
   `;
 
   const daysEl = $("calDays");
+  if(!daysEl) return;
+
   const bookings = loadBookings();
   const startDow = (first.getDay() + 6) % 7;
   const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
   const cells = [];
 
-  for(let i=0; i<startDow; i++){
+  for(let i = 0; i < startDow; i++){
     cells.push('<div class="calDay disabled"></div>');
   }
 
-  for(let d=1; d<=daysInMonth; d++){
+  for(let d = 1; d <= daysInMonth; d++){
     const used = daySlotsUsed(bookings, calYear, calMonth, d);
     const full = used >= window.PUB_MAX_PER_DAY;
     const alertState = getDayPaymentAlert(bookings, calYear, calMonth, d);
@@ -2129,9 +2191,13 @@ function renderCalendarInto(containerId){
     renderCalendarInto(containerId);
   });
 
-  if(typeof openRecapModal === "function"){
-    on($("calRecap"), "click", ()=> openRecapModal(calYear, calMonth));
-  }
+  on($("calRecap"), "click", ()=>{
+    if(typeof openRecapModal === "function"){
+      openRecapModal(calYear, calMonth);
+    }else{
+      alert("Récapitulatif indisponible dans cette version.");
+    }
+  });
 
   on($("calReset"), "click", ()=>{
     if(confirm("Réinitialiser toutes les réservations publicitaires de test ?")){
@@ -2142,16 +2208,18 @@ function renderCalendarInto(containerId){
 
   document.querySelectorAll(".calDay[data-day]").forEach(el=>{
     el.addEventListener("click", ()=>{
-      const d = parseInt(el.getAttribute("data-day"),10);
+      const d = parseInt(el.getAttribute("data-day"), 10);
       openAdBookingForProfile(profile, calYear, calMonth, d, containerId);
     });
   });
 }
 
 function openTicker(){
+  ensureModalHelpers();
+
   const warningMsg = checkMairiePaymentWarnings();
 
-  openModal("Publicités & visibilité", `
+  window.openModal("Publicités & visibilité", `
     <div style="font-weight:900;margin-bottom:8px;">Grand rectangle publicitaire — espace centralisé</div>
 
     ${warningMsg ? `
@@ -2203,7 +2271,7 @@ function openTicker(){
     on($("tickerAccessCommerce"), "click", ()=> unlock("commerce"));
     on($("tickerAccessMairie"), "click", ()=> unlock("mairie"));
     on($("tickerAccessAsso"), "click", ()=> unlock("asso"));
-  },0);
+  }, 0);
 }
 
 window.openTicker = openTicker;
@@ -2212,7 +2280,6 @@ const tickerBtn = $("ticker");
 if(tickerBtn){
   on(tickerBtn, "click", openTicker);
 }
-
       window.tapeAds = [
 
         { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
