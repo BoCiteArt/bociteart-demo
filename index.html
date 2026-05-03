@@ -2215,11 +2215,9 @@ function renderCalendarInto(containerId){
 }
 
 function openTicker(){
-  ensureModalHelpers();
-
   const warningMsg = checkMairiePaymentWarnings();
 
-  window.openModal("Publicités & visibilité", `
+  openModal("Publicités & visibilité", `
     <div style="font-weight:900;margin-bottom:8px;">Grand rectangle publicitaire — espace centralisé</div>
 
     ${warningMsg ? `
