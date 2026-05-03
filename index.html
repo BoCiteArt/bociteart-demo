@@ -2103,69 +2103,280 @@ function isFull(obj, y, m, d){
   `;
 }
 
+function checkMairiePaymentWarnings(){
+  const bookings = loadBookings();
+  const now = Date.now();
+  const warnings = [];
+
+  Object.keys(bookings || {}).forEach(monthKey=>{
+    Object.keys(bookings[monthKey] || {}).forEach(dayKey=>{
+      (bookings[monthKey][dayKey] || []).forEach(item=>{
+        if(
+          item.entityType === "Mairie" &&
+          item.paymentMode === "mairie_regularisation_30j" &&
+          item.due_ts &&
+          item.status !== "paid"
+        ){
+          const daysLeft = Math.ceil((Number(item.due_ts) - now) / (1000*60*60*24));
+
+          if(daysLeft < 0){
+            warnings.push("Une publicité mairie est arrivée à échéance de paiement. Nouvelle réservation bloquée jusqu’à régularisation.");
+          }else if(daysLeft <= 8){
+            warnings.push("Rappel mairie : paiement attendu dans " + daysLeft + " jour(s). Merci de régulariser avant l’échéance de 30 jours.");
+          }
+        }
+      });
+    });
+  });
+
+  return warnings.length ? warnings.join("\n") : "";
+}
+
+function isMairieBlockedFromBooking(){
+  const bookings = loadBookings();
+  const now = Date.now();
+  let blocked = false;
+
+  Object.keys(bookings || {}).forEach(monthKey=>{
+    Object.keys(bookings[monthKey] || {}).forEach(dayKey=>{
+      (bookings[monthKey][dayKey] || []).forEach(item=>{
+        if(
+          item.entityType === "Mairie" &&
+          item.paymentMode === "mairie_regularisation_30j" &&
+          item.due_ts &&
+          now > Number(item.due_ts) &&
+          item.status !== "paid"
+        ){
+          blocked = true;
+        }
+      });
+    });
+  });
+
+  return blocked;
+}
+
+function openAdBookingForProfile(profile, y, m, d, containerId){
+  const key = ymd(y,m,d);
+  const bookings = loadBookings();
+  let list = getDayBookings(bookings, y, m, d);
+  if(!Array.isArray(list)) list = [];
+
+  if(list.length >= PUB_MAX_PER_DAY){
+    alert("Cette journée est complète. Choisis une autre date.");
+    return;
+  }
+
+  if(profile === "mairie" && isMairieBlockedFromBooking()){
+    alert(
+      "Réservation temporairement bloquée.\n\n" +
+      "Une précédente publicité mairie est arrivée au terme de régularisation prévu.\n" +
+      "Dès que la situation est réglée, les nouvelles réservations pourront reprendre normalement."
+    );
+    return;
+  }
+
+  const label =
+    profile === "commerce" ? "Commerce" :
+    profile === "mairie" ? "Mairie" :
+    "Association";
+
+  const paymentText =
+    profile === "mairie"
+      ? "Mode mairie : devis validé / paiement différé à 30 jours. Un rappel apparaît à 8 jours de l’échéance."
+      : "Mode " + label.toLowerCase() + " : paiement immédiat requis pour activer la publicité.";
+
+  openModal("Réservation publicité — " + label, `
+    <div class="box">
+      <div style="font-weight:900;">Date : ${key}</div>
+      <div class="muted" style="margin-top:6px;">
+        Places déjà réservées : <strong>${list.length}/${PUB_MAX_PER_DAY}</strong>
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        ${paymentText}
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Nom de l’entité</div>
+      <input class="miniField" id="adEntityName" placeholder="Nom ${label}">
+
+      <div style="font-weight:900;margin-top:10px;">Titre publicité</div>
+      <input class="miniField" id="adTitle" placeholder="Ex : Offre spéciale / message local">
+
+      <div style="font-weight:900;margin-top:10px;">Texte court</div>
+      <textarea class="miniField" id="adText" style="min-height:90px;" placeholder="Texte diffusé dans le grand bandeau"></textarea>
+
+      <div style="font-weight:900;margin-top:10px;">Formule</div>
+      <select class="miniField" id="adPack">
+        <option value="1">1 publicité — 50 € HT</option>
+        <option value="5">Pack 5 publicités — 200 € HT</option>
+      </select>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button class="choiceBtn" id="adValidateBtn" type="button">
+        ${profile === "mairie" ? "Valider devis mairie" : "Payer et réserver"}
+      </button>
+    </div>
+  `);
+
+  setTimeout(()=>{
+    const btn = $("adValidateBtn");
+
+    if(btn){
+      btn.onclick = ()=>{
+        const entityName = String($("adEntityName")?.value || "").trim();
+        const title = String($("adTitle")?.value || "").trim();
+        const text = String($("adText")?.value || "").trim();
+        const pack = String($("adPack")?.value || "1");
+
+        if(!entityName){
+          alert("Renseigne le nom de l’entité.");
+          return;
+        }
+
+        if(!title || !text){
+          alert("Renseigne le titre et le texte de la publicité.");
+          return;
+        }
+
+        const now = new Date();
+        const currentHour = now.getHours();
+
+        const alreadyBookedToday = list.some(item =>
+          String(item.entityType || "").toLowerCase() === label.toLowerCase() &&
+          String(item.entityName || "").toLowerCase() === entityName.toLowerCase()
+        );
+
+        if(currentHour < 16 && alreadyBookedToday){
+          alert("Avant 16h00, une même entité ne peut réserver qu’une seule publicité sur cette date.");
+          return;
+        }
+
+        const slots = pack === "5" ? 5 : 1;
+
+        if(list.length + slots > PUB_MAX_PER_DAY){
+          alert("Il ne reste pas assez de places sur cette date pour cette formule.");
+          return;
+        }
+
+        for(let i=0; i<slots; i++){
+          list.push({
+            date: key,
+            entityType: label,
+            entityName: entityName,
+            title: title,
+            text: text,
+            pack: pack,
+            slotIndex: i + 1,
+            status: profile === "mairie" ? "quote_validated" : "paid",
+            paymentMode: profile === "mairie" ? "mairie_regularisation_30j" : "immediate",
+            due_ts: profile === "mairie" ? Date.now() + (30 * 24 * 60 * 60 * 1000) : null,
+            reminder_8d: profile === "mairie",
+            ts_iso: now.toISOString(),
+            ts_fr: now.toLocaleString("fr-FR"),
+            note: profile === "mairie"
+              ? "Devis mairie validé — régularisation attendue sous 30 jours"
+              : "Paiement immédiat validé"
+          });
+        }
+
+        setDayBookings(bookings, y, m, d, list);
+        saveBookings(bookings);
+
+        closeModal();
+        renderCalendarInto(containerId);
+
+        alert(
+          profile === "mairie"
+            ? "Devis mairie enregistré.\n\nUn rappel apparaîtra 8 jours avant l’échéance. Sans régularisation après 30 jours, les nouvelles réservations seront temporairement bloquées."
+            : "Réservation enregistrée et publicité activée."
+        );
+      };
+    }
+  },0);
+}
+
 function renderCalendarInto(containerId){
   const box = $(containerId);
   if(!box) return;
 
-  box.innerHTML = buildCalendarHTML();
+  const profile = window.__tickerProfile || "commerce";
+  const first = new Date(calYear, calMonth, 1);
+  const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+  const labels = ["L","M","M","J","V","S","D"];
+
+  box.innerHTML = `
+    <div class="calWrap">
+      <div class="calTop">
+        <div style="font-weight:900;">Calendrier commun des publicités — ${monthName}</div>
+        <div class="mini">
+          <button class="choiceBtn" id="calPrev" type="button">◀</button>
+          <button class="choiceBtn" id="calNext" type="button">▶</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <strong>Profil actif :</strong> ${profile === "commerce" ? "Commerce" : profile === "mairie" ? "Mairie" : "Association"}
+        <div class="muted" style="margin-top:6px;">
+          Toutes les réservations passent ici. Les onglets mairie et commerce ne réservent plus directement.
+        </div>
+      </div>
+
+      <div class="calGrid" style="margin-top:10px;">
+        ${labels.map(x => `<div class="muted" style="text-align:center;font-weight:900;">${x}</div>`).join("")}
+      </div>
+
+      <div class="calGrid" id="calDays"></div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
+        <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser test</button>
+      </div>
+    </div>
+  `;
 
   const daysEl = $("calDays");
   const bookings = loadBookings();
-  const first = new Date(calYear, calMonth, 1);
-  const last = new Date(calYear, calMonth + 1, 0);
   const startDow = (first.getDay() + 6) % 7;
-  const daysInMonth = last.getDate();
-
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
   const cells = [];
 
-  for(let i = 0; i < startDow; i++){
-    cells.push('<div class="calDay disabled" aria-hidden="true"></div>');
+  for(let i=0; i<startDow; i++){
+    cells.push('<div class="calDay disabled"></div>');
   }
 
-  for(let d = 1; d <= daysInMonth; d++){
+  for(let d=1; d<=daysInMonth; d++){
     const used = daySlotsUsed(bookings, calYear, calMonth, d);
     const full = used >= PUB_MAX_PER_DAY;
-    const cls = full ? "calDay full" : "calDay";
-    const remaining = Math.max(0, PUB_MAX_PER_DAY - used);
     const alertState = getDayPaymentAlert(bookings, calYear, calMonth, d);
 
     let alertHtml = "";
-    if(alertState === "warning"){
-      alertHtml = '<div class="s" style="font-size:15px;color:#b06b00;">⚠️</div>';
-    }
-    if(alertState === "blocked"){
-      alertHtml = '<div class="s" style="font-size:15px;color:#a51e22;">⛔</div>';
-    }
+    if(alertState === "warning") alertHtml = '<div class="s" style="color:#b06b00;">⚠️</div>';
+    if(alertState === "blocked") alertHtml = '<div class="s" style="color:#a51e22;">⛔</div>';
 
-    const attrs = full ? "" : 'data-day="' + d + '" role="button"';
-
-    cells.push(
-      '<div class="' + cls + '" ' + attrs + '>' +
-        '<div class="d">' + d + '</div>' +
-        '<div class="s">' + used + '/' + PUB_MAX_PER_DAY + '</div>' +
-        '<div class="s" style="font-size:10px;">' + (full ? "Complet" : remaining + " dispo") + '</div>' +
-        alertHtml +
-      '</div>'
-    );
+    cells.push(`
+      <div class="${full ? "calDay full" : "calDay"}" ${full ? "" : `data-day="${d}" role="button"`}>
+        <div class="d">${d}</div>
+        <div class="s">${used}/${PUB_MAX_PER_DAY}</div>
+        <div class="s" style="font-size:10px;">${full ? "Complet" : (PUB_MAX_PER_DAY - used) + " dispo"}</div>
+        ${alertHtml}
+      </div>
+    `);
   }
 
   daysEl.innerHTML = cells.join("");
 
   on($("calPrev"), "click", ()=>{
     calMonth--;
-    if(calMonth < 0){
-      calMonth = 11;
-      calYear--;
-    }
+    if(calMonth < 0){ calMonth = 11; calYear--; }
     renderCalendarInto(containerId);
   });
 
   on($("calNext"), "click", ()=>{
     calMonth++;
-    if(calMonth > 11){
-      calMonth = 0;
-      calYear++;
-    }
+    if(calMonth > 11){ calMonth = 0; calYear++; }
     renderCalendarInto(containerId);
   });
 
@@ -2178,398 +2389,57 @@ function renderCalendarInto(containerId){
     }
   });
 
-  document.querySelectorAll(".calDay[data-day]").forEach((el)=>{
+  document.querySelectorAll(".calDay[data-day]").forEach(el=>{
     el.addEventListener("click", ()=>{
-      const d = parseInt(el.getAttribute("data-day"), 10);
-      const bookings2 = loadBookings();
-
-      if(isFull(bookings2, calYear, calMonth, d)){
-        alert("Cette journée est complète. Choisis une autre date.");
-        return;
-      }
-
-      const key = ymd(calYear, calMonth, d);
-      const used = daySlotsUsed(bookings2, calYear, calMonth, d);
-      const remaining = PUB_MAX_PER_DAY - used;
-
-      openModal("Réserver une publicité", `
-        <div class="box">
-          <div style="font-weight:900;">Date : ${key}</div>
-          <div class="muted" style="margin-top:6px;">
-            Déjà réservé : <strong>${used}/${PUB_MAX_PER_DAY}</strong><br>
-            Places restantes : <strong>${remaining}</strong>
-          </div>
-          <div class="muted" style="margin-top:8px;">
-            Tarif : 50 € HT pour 1 publicité, ou 200 € HT pour 5 publicités.
-          </div>
-          <div class="muted" style="margin-top:8px;">
-            Paiement immédiat pour commerce et association. Pour la mairie, blocage automatique si non régularisé à 30 jours.
-          </div>
-        </div>
-
-        <div class="choiceGrid">
-          <button class="choiceBtn" id="bkCommerce" type="button">Commerce</button>
-          <button class="choiceBtn" id="bkMairie" type="button">Mairie</button>
-          <button class="choiceBtn" id="bkAsso" type="button">Association</button>
-        </div>
-      `);
-
-      setTimeout(()=>{
-        const doBook = (entityType)=>{
-          const now = new Date();
-          const currentHour = now.getHours();
-          const stampISO = now.toISOString();
-          const stampFR = now.toLocaleString("fr-FR");
-
-          const b = loadBookings();
-          let list = getDayBookings(b, calYear, calMonth, d);
-          if(!Array.isArray(list)) list = [];
-
-          if(list.length >= PUB_MAX_PER_DAY){
-            alert("Jour complet.");
-            closeModal();
-            renderCalendarInto(containerId);
-            return;
-          }
-
-          if(entityType === "Mairie"){
-            const allBookings = loadBookings();
-            const nowTs = Date.now();
-            let blocked = false;
-
-            Object.keys(allBookings).forEach(monthKey=>{
-              Object.keys(allBookings[monthKey]).forEach(dayKey=>{
-                (allBookings[monthKey][dayKey] || []).forEach(item=>{
-                  if(
-                    item.entityType === "Mairie" &&
-                    item.paymentMode === "mairie_regularisation_30j" &&
-                    item.due_ts &&
-                    nowTs > item.due_ts &&
-                    item.status !== "paid"
-                  ){
-                    blocked = true;
-                  }
-                });
-              });
-            });
-
-            if(blocked){
-              alert(
-                "Blocage automatique : une ou plusieurs publicités mairie ne sont pas régularisées après 30 jours.\n\n" +
-                "Impossible de réserver une nouvelle publicité tant que la situation n’est pas réglée."
-              );
-              return;
-            }
-          }
-
-          const entityLabel =
-            entityType === "Commerce"
-              ? "Nom du commerce"
-              : entityType === "Mairie"
-                ? "Nom de la mairie / service"
-                : "Nom de l’association";
-
-          const entityInput = prompt(entityLabel + " :");
-          if(!entityInput || !entityInput.trim()){
-            alert("Réservation annulée.");
-            return;
-          }
-
-          const entityName = entityInput.trim();
-          const normalizedEntityName = entityName.toLowerCase();
-
-          const alreadyBookedToday = list.some(item =>
-            String(item.entityType || item.who || "").trim().toLowerCase() === entityType.toLowerCase() &&
-            String(item.entityName || item.who || "").trim().toLowerCase() === normalizedEntityName
-          );
-
-          if(currentHour < 16 && alreadyBookedToday){
-            alert("Avant 16h00, cette entité a déjà réservé une publicité ce jour-là.");
-            return;
-          }
-
-          const title = prompt("Titre de la publicité :");
-          if(!title || !title.trim()){
-            alert("Réservation annulée : titre obligatoire.");
-            return;
-          }
-
-          const text = prompt("Texte court de la publicité :");
-          if(!text || !text.trim()){
-            alert("Réservation annulée : texte obligatoire.");
-            return;
-          }
-
-          list.push({
-            date: key,
-            who: entityType,
-            entityType: entityType,
-            entityName: entityName,
-            title: title.trim(),
-            text: text.trim(),
-            status: entityType === "Mairie" ? "quote_validated" : "paid",
-            paymentMode: entityType === "Mairie" ? "mairie_regularisation_30j" : "immediate",
-            due_ts: entityType === "Mairie" ? Date.now() + (30 * 24 * 60 * 60 * 1000) : null,
-            ts_iso: stampISO,
-            ts_fr: stampFR,
-            note: currentHour < 16 ? "Réservation avant 16h00" : "Réservation après 16h00"
-          });
-
-          setDayBookings(b, calYear, calMonth, d, list);
-          saveBookings(b);
-
-          closeModal();
-          renderCalendarInto(containerId);
-
-          alert(
-            "Réservation enregistrée.\n\n" +
-            "Date : " + key + "\n" +
-            "Type : " + entityType + "\n" +
-            "Entité : " + entityName + "\n" +
-            "Compteur jour : " + list.length + "/" + PUB_MAX_PER_DAY
-          );
-        };
-
-        on($("bkCommerce"), "click", ()=> doBook("Commerce"));
-        on($("bkMairie"), "click", ()=> doBook("Mairie"));
-        on($("bkAsso"), "click", ()=> doBook("Association"));
-      }, 0);
+      const d = parseInt(el.getAttribute("data-day"),10);
+      openAdBookingForProfile(profile, calYear, calMonth, d, containerId);
     });
   });
 }
 
-function openRecapModal(y, m){
-  const b = loadBookings();
-  const keyYM = ym(y, m);
-  const monthObj = b[keyYM] || {};
-
-  const cleanCsv = (value)=>{
-    return String(value || "").replace(/;/g, ",").replace(/\n/g, " ").trim();
-  };
-
-  const rows = [];
-
-  Object.keys(monthObj).sort().forEach((d)=>{
-    (monthObj[d] || []).forEach((it)=>{
-      rows.push({
-        date: it.date || d,
-        entityType: it.entityType || it.who || "",
-        entityName: it.entityName || it.who || "",
-        ts_iso: it.ts_iso || "",
-        ts_fr: it.ts_fr || "",
-        note: it.note || "",
-        status: it.status || "",
-        paymentMode: it.paymentMode || "",
-        due_ts: it.due_ts || null
-      });
-    });
-  });
-
-  const byEntity = {};
-  rows.forEach((r)=>{
-    const groupKey = (r.entityType || "Type inconnu") + " — " + (r.entityName || "Entité inconnue");
-    if(!byEntity[groupKey]){
-      byEntity[groupKey] = {
-        count: 0,
-        type: r.entityType,
-        name: r.entityName
-      };
-    }
-    byEntity[groupKey].count++;
-  });
-
-  let csv = "date;type_entite;entite;horodatage_iso;horodatage_fr;statut;paiement;note\n";
-  rows.forEach((r)=>{
-    csv += `${cleanCsv(r.date)};${cleanCsv(r.entityType)};${cleanCsv(r.entityName)};${cleanCsv(r.ts_iso)};${cleanCsv(r.ts_fr)};${cleanCsv(r.status)};${cleanCsv(r.paymentMode)};${cleanCsv(r.note)}\n`;
-  });
-
-  const total = rows.length;
-
-  const detailHtml = Object.keys(byEntity).length
-    ? Object.keys(byEntity).sort().map((groupKey)=>{
-        const e = byEntity[groupKey];
-        return `
-          <div class="box" style="margin-top:8px;background:var(--bg);">
-            <strong>${escapeHtml(e.type || "Type inconnu")}</strong><br>
-            ${escapeHtml(e.name || "Entité inconnue")}<br>
-            <span class="muted">${e.count} publicité(s) réservée(s) ce mois-ci</span>
-          </div>
-        `;
-      }).join("")
-    : `<div class="muted">Aucune réservation sur ce mois.</div>`;
-
-  openModal("Récap mensuel — publicités", `
-    <div class="box">
-      <div style="font-weight:900;">Mois : ${keyYM}</div>
-      <div class="muted" style="margin-top:6px;">
-        Total réservé ce mois-ci : <strong>${total}</strong> publicité(s).
-      </div>
-    </div>
-
-    <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;">Détail par mairie / commerce / association</div>
-      ${detailHtml}
-    </div>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-      <button class="choiceBtn" id="copyCsv" type="button">📋 Copier CSV</button>
-      <button class="choiceBtn" id="copyJson" type="button">📋 Copier JSON</button>
-      <button class="choiceBtn" id="copySummary" type="button">📊 Copier résumé</button>
-    </div>
-  `);
-
-  setTimeout(()=>{
-    const btnCsv = $("copyCsv");
-    const btnJson = $("copyJson");
-    const btnSummary = $("copySummary");
-
-    if(btnCsv){
-      btnCsv.onclick = async ()=>{
-        try{
-          await navigator.clipboard.writeText(csv);
-          alert("CSV copié.");
-        }catch(e){
-          alert(csv);
-        }
-      };
-    }
-
-    if(btnJson){
-      btnJson.onclick = async ()=>{
-        try{
-          await navigator.clipboard.writeText(JSON.stringify(monthObj, null, 2));
-          alert("JSON copié.");
-        }catch(e){
-          alert(JSON.stringify(monthObj, null, 2));
-        }
-      };
-    }
-
-    if(btnSummary){
-      btnSummary.onclick = async ()=>{
-        const summary =
-          "RÉCAP PUBLICITÉS — " + keyYM + "\n\n" +
-          "Total : " + total + " publicité(s)\n\n" +
-          Object.keys(byEntity).sort().map((groupKey)=>{
-            const e = byEntity[groupKey];
-            return "- " + (e.type || "Type inconnu") + " / " + (e.name || "Entité inconnue") + " : " + e.count + " pub(s)";
-          }).join("\n");
-
-        try{
-          await navigator.clipboard.writeText(summary);
-          alert("Résumé copié.");
-        }catch(e){
-          alert(summary);
-        }
-      };
-    }
-  }, 0);
-}
-    // ===== FONCTIONS MODALE OBLIGATOIRES =====
-function openModal(title, html){
-  const modal = document.getElementById("modal");
-  const modalTitle = document.getElementById("modalTitle");
-  const modalBody = document.getElementById("modalBody");
-
-  if(!modal || !modalTitle || !modalBody){
-    alert("Erreur : structure modale introuvable.");
-    return;
-  }
-
-  modalTitle.textContent = title || "";
-  modalBody.innerHTML = html || "";
-  modal.classList.add("open");
-  modal.setAttribute("aria-hidden", "false");
-
-  if(typeof lockScroll === "function"){
-    lockScroll(true);
-  }
-}
-
-function closeModal(){
-  const modal = document.getElementById("modal");
-  if(!modal) return;
-
-  modal.classList.remove("open");
-  modal.setAttribute("aria-hidden", "true");
-
-  if(typeof lockScroll === "function"){
-    lockScroll(false);
-  }
-}
-
-window.openModal = openModal;
-window.closeModal = closeModal;
-
-const modalCloseBtn = document.getElementById("xBtn");
-const modalBackdrop = document.getElementById("modalClose");
-
-if(modalCloseBtn){
-  modalCloseBtn.onclick = closeModal;
-}
-
-if(modalBackdrop){
-  modalBackdrop.onclick = closeModal;
-}
-// ===== FIN FONCTIONS MODALE =====  
 function openTicker(){
-  openModal("Publicités — accès unique", `
-    <div style="font-weight:900;margin-bottom:8px;">Grand rectangle publicitaire</div>
+  const warningMsg = checkMairiePaymentWarnings();
+
+  openModal("Publicités & visibilité", `
+    <div style="font-weight:900;margin-bottom:8px;">Grand rectangle publicitaire — espace centralisé</div>
+
+    ${warningMsg ? `
+      <div class="box" style="border-left:6px solid #b06b00;background:#fff8e8;">
+        <strong>Suivi mairie :</strong>
+        <div class="muted" style="white-space:pre-line;margin-top:6px;">${escapeHtml(warningMsg)}</div>
+      </div>
+    ` : ""}
 
     <div class="box">
-      <strong>Principe :</strong> toutes les publicités du grand rectangle passent ici uniquement.
-      Les onglets Mairie et Commerces ne doivent plus créer de publicité séparément.
+      <strong>Principe :</strong> toutes les publicités du grand bandeau passent par ce calendrier unique.
+      Les onglets mairie, commerce et association ne réservent plus directement.
     </div>
 
-    <div class="box">
-      <div style="font-weight:900;">Choisir le profil</div>
-      <div class="muted" style="margin-top:6px;">
-        Sélectionnez l’accès concerné pour ouvrir le calendrier publicitaire commun.
-      </div>
-
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="tickerAccessCommerce" type="button">Commerce</button>
-        <button class="choiceBtn" id="tickerAccessMairie" type="button">Mairie</button>
-        <button class="choiceBtn" id="tickerAccessAsso" type="button">Association</button>
-      </div>
+    <div class="choiceGrid">
+      <button class="choiceBtn" id="tickerAccessCommerce" type="button">Commerce</button>
+      <button class="choiceBtn" id="tickerAccessMairie" type="button">Mairie</button>
+      <button class="choiceBtn" id="tickerAccessAsso" type="button">Association</button>
     </div>
 
-    <div id="tickerEntityInfo" class="box" style="display:none;margin-top:12px;background:var(--bg);"></div>
-    <div id="calHost" style="display:none;"></div>
+    <div id="tickerAccessStatus" class="muted" style="margin-top:10px;">
+      Sélectionne un profil pour ouvrir son espace publicité.
+    </div>
+
+    <div id="calHost" style="display:none;margin-top:12px;"></div>
   `);
 
   setTimeout(()=>{
-    const accessCommerce = $("tickerAccessCommerce");
-    const accessMairie = $("tickerAccessMairie");
-    const accessAsso = $("tickerAccessAsso");
-    const entityInfo = $("tickerEntityInfo");
-    const calHost = $("calHost");
+    function unlock(profile){
+      window.__tickerProfile = profile;
 
-    function unlockTickerCalendar(profile){
-      let label = "";
-      let description = "";
+      const status = $("tickerAccessStatus");
+      const calHost = $("calHost");
 
-      if(profile === "commerce"){
-        label = "Commerce";
-        description = "Réservation publicité commerce avec paiement immédiat.";
-      }
-
-      if(profile === "mairie"){
-        label = "Mairie";
-        description = "Réservation mairie avec devis validé, rappel à 8 jours, blocage au-delà de 30 jours si non payé.";
-      }
-
-      if(profile === "asso"){
-        label = "Association";
-        description = "Réservation association autorisée avec paiement immédiat.";
-      }
-
-      if(entityInfo){
-        entityInfo.style.display = "block";
-        entityInfo.innerHTML = `
-          <div style="font-weight:900;">Accès sélectionné : ${escapeHtml(label)}</div>
-          <div class="muted" style="margin-top:8px;">${escapeHtml(description)}</div>
-        `;
+      if(status){
+        status.textContent =
+          profile === "commerce" ? "Espace publicité commerce ouvert." :
+          profile === "mairie" ? "Espace publicité mairie ouvert : devis signé, paiement différé à 30 jours, rappel à 8 jours." :
+          "Espace publicité association ouvert.";
       }
 
       if(calHost){
@@ -2579,10 +2449,10 @@ function openTicker(){
       renderCalendarInto("calHost");
     }
 
-    if(accessCommerce) accessCommerce.onclick = ()=> unlockTickerCalendar("commerce");
-    if(accessMairie) accessMairie.onclick = ()=> unlockTickerCalendar("mairie");
-    if(accessAsso) accessAsso.onclick = ()=> unlockTickerCalendar("asso");
-  }, 0);
+    on($("tickerAccessCommerce"), "click", ()=> unlock("commerce"));
+    on($("tickerAccessMairie"), "click", ()=> unlock("mairie"));
+    on($("tickerAccessAsso"), "click", ()=> unlock("asso"));
+  },0);
 }
 
 window.openTicker = openTicker;
