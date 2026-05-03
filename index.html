@@ -2215,6 +2215,8 @@ function renderCalendarInto(containerId){
 }
 
 function openTicker(){
+  ensureModalHelpers();
+  
   const warningMsg = checkMairiePaymentWarnings();
 
   openModal("Publicités & visibilité", `
