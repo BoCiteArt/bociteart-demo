@@ -6323,6 +6323,17 @@ if(key === "commerces") {
 
   return;
 }
+};
+
+document.querySelectorAll("[data-open]").forEach((el)=>{
+  el.addEventListener("click", ()=>{
+    const key = el.getAttribute("data-open");
+
+    if(typeof window.__bociteartOpenByKey === "function"){
+      window.__bociteartOpenByKey(key);
+    }
+  });
+});
     
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
@@ -7617,12 +7628,10 @@ if(isFn(window.makeKeyboardClickable)){
   });
 
   window.showTab("rgpd");
-  
-})();
-
+ })();
 })();   
 </script>
-
+  
 <script>
 (function () {
   const consentement = document.getElementById("consentement");
