@@ -1983,6 +1983,54 @@ function safeCloseModal(){
   }
 }
 
+function syncBookingsToTicker(){
+  const bookings = loadBookings();
+  const today = new Date();
+  const todayKey = ymd(today.getFullYear(), today.getMonth(), today.getDate());
+  const monthKey = ym(today.getFullYear(), today.getMonth());
+
+  const list =
+    bookings &&
+    bookings[monthKey] &&
+    Array.isArray(bookings[monthKey][todayKey])
+      ? bookings[monthKey][todayKey]
+      : [];
+
+  const activeAds = list.filter(item =>
+    item &&
+    (
+      item.status === "paid" ||
+      item.status === "quote_validated"
+    )
+  );
+
+  const defaultAds = [
+    {
+      title:"Annonce partenaire (démo)",
+      subtitle:"Exemple : avantage à partir de 30 bocitecoins couleur OR",
+      img:"https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+    },
+    {
+      title:"Mairie (démo) : informations & agenda",
+      subtitle:"Accès gratuit citoyen pour alertes d’intérêt général",
+      img:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
+    }
+  ];
+
+  const bookingAds = activeAds.map(ad => ({
+    title: ad.title || ad.entityName || "Publicité locale",
+    subtitle: ad.text || "",
+    img: ad.img || "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+  }));
+
+  window.tickerItems = bookingAds.length ? bookingAds.concat(defaultAds) : defaultAds;
+
+  if(typeof window.setTicker === "function"){
+    tickerIdx = 0;
+    window.setTicker(0);
+  }
+}
+
 function openAdBookingForProfile(profile, y, m, d, containerId){
   ensureModalHelpers();
 
@@ -2035,6 +2083,12 @@ function openAdBookingForProfile(profile, y, m, d, containerId){
       <div style="font-weight:900;margin-top:10px;">Texte court</div>
       <textarea class="miniField" id="adText" style="min-height:90px;" placeholder="Texte diffusé dans le grand bandeau"></textarea>
 
+      <div style="font-weight:900;margin-top:10px;">Image / logo / enseigne</div>
+      <input class="miniField" id="adImageFile" type="file" accept="image/*">
+      <div class="muted" style="margin-top:6px;">
+        Cette image sera affichée dans le fond du grand rectangle publicitaire.
+      </div>
+
       <div style="font-weight:900;margin-top:10px;">Formule</div>
       <select class="miniField" id="adPack">
         <option value="1">1 publicité — 50 € HT</option>
@@ -2053,7 +2107,7 @@ function openAdBookingForProfile(profile, y, m, d, containerId){
     const btn = $("adValidateBtn");
     if(!btn) return;
 
-    btn.onclick = ()=>{
+    btn.onclick = async ()=>{
       const entityName = String($("adEntityName") ? $("adEntityName").value : "").trim();
       const title = String($("adTitle") ? $("adTitle").value : "").trim();
       const text = String($("adText") ? $("adText").value : "").trim();
@@ -2067,6 +2121,20 @@ function openAdBookingForProfile(profile, y, m, d, containerId){
       if(!title || !text){
         alert("Renseigne le titre et le texte de la publicité.");
         return;
+      }
+
+      let imageData = "";
+
+      const fileInput = $("adImageFile");
+      const file = fileInput && fileInput.files && fileInput.files[0];
+
+      if(file){
+        imageData = await new Promise((resolve)=>{
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result || "");
+          reader.onerror = () => resolve("");
+          reader.readAsDataURL(file);
+        });
       }
 
       const now = new Date();
@@ -2096,6 +2164,7 @@ function openAdBookingForProfile(profile, y, m, d, containerId){
           entityName: entityName,
           title: title,
           text: text,
+          img: imageData,
           pack: pack,
           slotIndex: i + 1,
           status: profile === "mairie" ? "quote_validated" : "paid",
@@ -2112,15 +2181,16 @@ function openAdBookingForProfile(profile, y, m, d, containerId){
 
       setDayBookings(bookings, y, m, d, list);
       saveBookings(bookings);
+
       syncBookingsToTicker();
-      
+
       safeCloseModal();
       renderCalendarInto(containerId);
 
       alert(
         profile === "mairie"
-          ? "Devis mairie enregistré.\n\nUn rappel apparaîtra 8 jours avant l’échéance. Sans régularisation après 30 jours, les nouvelles réservations seront temporairement bloquées."
-          : "Réservation enregistrée et publicité activée."
+          ? "Devis mairie enregistré.\n\nLa publicité apparaît maintenant dans le grand rectangle. Un rappel apparaîtra 8 jours avant l’échéance."
+          : "Réservation enregistrée. La publicité apparaît maintenant dans le grand rectangle."
       );
     };
   }, 0);
