@@ -9058,5 +9058,152 @@ if(isFn(window.makeKeyboardClickable)){
   syncTickerFromToday();
 })();
 </script>
+  <script>
+/* === PATCH CORRECTION AFFICHAGE GRAND BANDEAU PUB + LOGO === */
+
+(function(){
+  console.log("✅ Patch affichage bandeau pub chargé");
+
+  const PUB_STORE_KEY = "bociteart_pub_bookings_v1";
+
+  function $(id){ return document.getElementById(id); }
+
+  function loadJson(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){
+      return fallback;
+    }
+  }
+
+  function pad2(n){
+    return String(n).padStart(2,"0");
+  }
+
+  function ym(y,m){
+    return y + "-" + pad2(m + 1);
+  }
+
+  function ymd(y,m,d){
+    return y + "-" + pad2(m + 1) + "-" + pad2(d);
+  }
+
+  function getTodayAds(){
+    const bookings = loadJson(PUB_STORE_KEY, {});
+    const now = new Date();
+    const todayKey = ymd(now.getFullYear(), now.getMonth(), now.getDate());
+    const monthKey = ym(now.getFullYear(), now.getMonth());
+
+    if(
+      !bookings ||
+      !bookings[monthKey] ||
+      !Array.isArray(bookings[monthKey][todayKey])
+    ){
+      return [];
+    }
+
+    return bookings[monthKey][todayKey].filter(ad =>
+      ad &&
+      (
+        ad.status === "paid" ||
+        ad.status === "demo_paid" ||
+        ad.status === "quote_validated"
+      )
+    );
+  }
+
+  window.forceRefreshBigTicker = function(){
+    const ads = getTodayAds();
+
+    const defaults = [
+      {
+        title:"Annonce partenaire (démo)",
+        subtitle:"Exemple : avantage à partir de 30 bocitecoins couleur OR",
+        img:"https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+      },
+      {
+        title:"Mairie (démo) : informations & agenda",
+        subtitle:"Accès gratuit citoyen pour alertes d’intérêt général",
+        img:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
+      }
+    ];
+
+    const dynamicAds = ads.map(ad => ({
+      title: ad.title || ad.entityName || "Publicité locale",
+      subtitle: ad.text || "",
+      img: ad.img || ad.logo || ad.image || defaults[0].img
+    }));
+
+    window.tickerItems = dynamicAds.length
+      ? dynamicAds.concat(defaults)
+      : defaults;
+
+    window.tickerIdx = 0;
+
+    const first = window.tickerItems[0];
+
+    const img = $("tickerImg");
+    const titleA = $("tickerTitleA");
+    const subA = $("tickerSubA");
+    const titleB = $("tickerTitleB");
+    const subB = $("tickerSubB");
+
+    if(img){
+      img.src = first.img || "";
+      img.style.display = "block";
+      img.style.opacity = "1";
+    }
+
+    if(titleA) titleA.textContent = first.title || "";
+    if(subA) subA.textContent = first.subtitle || "";
+    if(titleB) titleB.textContent = first.title || "";
+    if(subB) subB.textContent = first.subtitle || "";
+
+    console.log("✅ Bandeau actualisé :", first);
+  };
+
+  const oldSetTicker = window.setTicker;
+
+  window.setTicker = function(i){
+    if(!Array.isArray(window.tickerItems) || !window.tickerItems.length){
+      window.forceRefreshBigTicker();
+      return;
+    }
+
+    const item = window.tickerItems[i] || window.tickerItems[0];
+
+    const img = $("tickerImg");
+    const titleA = $("tickerTitleA");
+    const subA = $("tickerSubA");
+    const titleB = $("tickerTitleB");
+    const subB = $("tickerSubB");
+
+    if(img){
+      img.src = item.img || item.logo || item.image || "";
+      img.style.display = "block";
+      img.style.opacity = "1";
+    }
+
+    if(titleA) titleA.textContent = item.title || "";
+    if(subA) subA.textContent = item.subtitle || "";
+    if(titleB) titleB.textContent = item.title || "";
+    if(subB) subB.textContent = item.subtitle || "";
+  };
+
+  document.addEventListener("click", function(e){
+    const target = e.target;
+
+    if(target && target.id === "validateCampaignBtn"){
+      setTimeout(function(){
+        window.forceRefreshBigTicker();
+      }, 600);
+    }
+  }, true);
+
+  window.forceRefreshBigTicker();
+
+})();
+</script>
 </body>
 </html>
