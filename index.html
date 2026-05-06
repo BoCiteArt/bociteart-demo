@@ -8307,7 +8307,7 @@ if(isFn(window.makeKeyboardClickable)){
         display:flex;
         height:100%;
         width:max-content;
-        animation:bcaPubMoveV3 ${Math.max(20, ready.length * 8)}s linear infinite;
+        animation:bcaPubMoveV3 ${Math.max(35, ready.length * 14)}s linear infinite;
       ">
         ${doubled.map(ad=>`
           <div style="
@@ -8775,8 +8775,12 @@ if(isFn(window.makeKeyboardClickable)){
     };
   }
 
-  renderTicker();
-  setInterval(renderTicker, 5000);
+renderTicker();
+
+/* ne pas relancer automatiquement le bandeau :
+   sinon le défilement repart à zéro avant la fin des pubs */
+window.refreshPubTickerV3 = renderTicker;
+
 })();
 </script> 
 </body>
