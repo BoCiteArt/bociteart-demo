@@ -5908,7 +5908,9 @@ if(key === "mairie"){
 
   function renderHealthDirectoryHtml(){
     return `
-      <div style="font-weight:900;margin-bottom:8px;">Santé — médecins • spécialistes • kinés • infirmières • pharmacies</div>
+      <div style="font-weight:900;margin-bottom:8px;">
+        Santé — médecins • spécialistes • kinés • infirmières • pharmacies
+      </div>
 
       <div class="box">
         <div class="muted">
@@ -5961,32 +5963,29 @@ if(key === "mairie"){
       </div>
     </div>
 
-    <div class="box" style="margin-top:12px;">
-    <div style="font-weight:900;">Publicité mairie & association</div>
+    <div class="box" style="margin-top:12px;border-left:6px solid #2f5d46;font-size:13px;line-height:1.45;">
+      <div style="font-weight:800;margin-bottom:6px;">Publicité mairie & association</div>
 
-<div style="margin-top:8px;line-height:1.45;font-size:13px;">
-  Les publicités mairie et associations ne se gèrent plus dans l’onglet Mairie.
+      <div>
+        Cliquez directement sur le grand bandeau publicitaire en haut de l’application
+        pour accéder à votre espace : mairie ou association.
+      </div>
 
-  <div style="margin-top:8px;">
-    Elles passent uniquement par le grand rectangle publicitaire du haut.
-  </div>
+      <div style="margin-top:8px;">
+        Lors de la première utilisation, vous remplissez votre fiche.
+        Elle restera ensuite préremplie pour éviter de tout ressaisir.
+      </div>
 
-  <div style="margin-top:8px;">
-    Cliquez directement sur le grand bandeau pour accéder à votre espace :
-    mairie ou association.
-  </div>
+      <div style="margin-top:8px;">
+        Après validation, l’accès pourra se faire avec un code, un qr code,
+        ou un code de secours envoyé par email ou téléphone.
+      </div>
 
-  <div style="margin-top:8px;">
-    L’accès peut se faire avec un code,
-    un qr code,
-    ou un code de secours envoyé par email ou téléphone.
-  </div>
-
-  <div class="muted" style="margin-top:8px;">
-    Les associations disposent de leur propre accès indépendant
-    et n’entrent pas dans l’espace interne mairie.
-  </div>
-</div>
+      <div class="muted" style="margin-top:8px;">
+        Les associations disposent de leur propre accès indépendant
+        et n’entrent pas dans l’espace interne mairie.
+      </div>
+    </div>
 
     <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;">Accès interne mairie</div>
@@ -5995,7 +5994,9 @@ if(key === "mairie"){
         dispatch des échanges, validations, historiques et suivi des parrainages.
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="toggleMairieAdminBtn" type="button">Ouvrir l’espace interne mairie</button>
+        <button class="choiceBtn" id="toggleMairieAdminBtn" type="button">
+          Ouvrir l’espace interne mairie
+        </button>
       </div>
     </div>
 
@@ -6040,6 +6041,12 @@ if(key === "mairie"){
       </div>
 
       <div style="font-weight:900;margin-top:16px;color:#2f5d46;">Lecture sport → mairie</div>
+      <div class="box" style="border-left:6px solid #2f5d46;">
+        <div class="muted">
+          Espace prévu pour la lecture des codes sport et la validation des échanges clubs.
+        </div>
+      </div>
+
       <div style="font-weight:900;margin-top:16px;">Parrainages</div>
       <div class="box">
         <textarea id="mairieReferralInput" class="miniField" style="min-height:110px;" placeholder="Ex : Nom du parrain, type, date, contrôle 30 jours, commentaire (démo)"></textarea>
@@ -6131,7 +6138,7 @@ if(key === "mairie"){
 
   return;
 }
-    
+
 if(key === "commerces") {
   openModal("Commerces", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces</div>
@@ -6141,28 +6148,29 @@ if(key === "commerces") {
       Ils servent de repère local Bo’CitéArt pour encourager la fidélité, la circulation dans la ville et la découverte des commerces partenaires.
     </div>
 
-    <div class="box" style="border-left:6px solid #2f5d46;margin-top:10px;">
-      <strong>Comment diffuser une publicité dans le grand bandeau</strong>
-
-      <div style="margin-top:8px;line-height:1.5;">
-        1. remplissez votre fiche commerce une seule fois<br>
-        2. votre compte commerce sera ensuite prérempli automatiquement<br>
-        3. un code personnel ou un qr code commerce permettra l’accès sécurisé<br>
-        4. cliquez ensuite sur le grand bandeau publicitaire en haut de l’application<br>
-        5. scannez votre qr code ou entrez votre code personnel<br>
-        6. votre fiche commerce se recharge automatiquement<br>
-        7. choisissez vos dates, votre texte et votre photo/logo<br>
-        8. validez ensuite votre publicité et le paiement associé
+    <div class="box" style="border-left:6px solid #2f5d46;margin-top:10px;font-size:13px;line-height:1.45;">
+      <div style="font-weight:800;margin-bottom:6px;">
+        Comment diffuser une publicité dans le grand bandeau
       </div>
 
-      <div class="muted" style="margin-top:10px;">
-        en cas de panne ou perte d’accès, une validation de secours pourra être envoyée
-        par email ou téléphone afin de sécuriser votre compte commerce.
+      <div>
+        Remplissez votre fiche commerce une seule fois. Elle restera ensuite préremplie.
+      </div>
+
+      <div style="margin-top:8px;">
+        Cliquez sur le grand bandeau publicitaire en haut de l’application,
+        puis entrez votre code commerce, votre qr code ou un code de secours.
+      </div>
+
+      <div style="margin-top:8px;">
+        Vous choisissez ensuite vos dates, votre texte, votre photo/logo,
+        puis vous validez la publicité et le paiement associé.
       </div>
 
       <div class="muted" style="margin-top:8px;">
-        en version live, chaque commerce aura son propre compte indépendant, lié à sa fiche,
-        son siret/siren, ses informations de facturation et son accès sécurisé.
+        En version live, chaque commerce aura son propre compte indépendant,
+        lié à sa fiche, son siret/siren, ses informations de facturation
+        et son accès sécurisé.
       </div>
     </div>
 
@@ -6206,27 +6214,18 @@ if(key === "commerces") {
       </div>
     </div>
 
-  <div class="box" style="margin-top:12px;border-left:6px solid #2f5d46;font-size:13px;line-height:1.45;">
-  <div style="font-weight:800;margin-bottom:6px;">Publicité mairie & association</div>
-
-  <div>
-    Les publicités mairie et associations ne se gèrent pas dans l’espace interne mairie.
-    Elles passent uniquement par le grand bandeau publicitaire du haut.
-  </div>
-
-  <div style="margin-top:8px;">
-    Cliquez directement sur le grand bandeau pour accéder à votre espace :
-    mairie ou association.
-  </div>
-
-  <div style="margin-top:8px;">
-    L’accès pourra se faire avec un code, un qr code, ou un code de secours envoyé par email ou téléphone.
-  </div>
-
-  <div class="muted" style="margin-top:8px;">
-    Les associations disposent de leur propre accès indépendant et ne doivent pas entrer dans l’espace interne mairie.
-  </div>
-</div>
+    <div class="box" style="margin-top:12px;">
+      <div style="font-weight:900;">Accès interne commerce</div>
+      <div class="muted" style="margin-top:6px;">
+        Gestion commerçant : attribution des bocitecoins, fiche commerçant,
+        historique et règles internes.
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="choiceBtn" id="toggleCommerceAdminBtn" type="button">
+          Ouvrir l’espace interne commerce
+        </button>
+      </div>
+    </div>
 
     <div id="commerceAdminPanel" style="display:none;">
 
