@@ -8964,5 +8964,185 @@ if(isFn(window.makeKeyboardClickable)){
 
 })();
 </script>
+ <script>
+/* === PATCH COMMERCE DIRECT → BANDEAU PUB V2 === */
+
+(function(){
+  console.log("✅ Patch commerce direct chargé");
+
+  const PUB_STORE = "bociteart_pub_v2_bookings";
+  const PROFILE_STORE = "bociteart_pub_v2_profiles";
+
+  function $(id){ return document.getElementById(id); }
+
+  function loadJson(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){ return fallback; }
+  }
+
+  function saveJson(key, value){
+    try{
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    }catch(e){
+      alert("Image trop lourde. Choisis un JPG plus léger.");
+      return false;
+    }
+  }
+
+  function fileToDataUrl(file){
+    return new Promise(resolve=>{
+      if(!file) return resolve("");
+      const r = new FileReader();
+      r.onload = () => resolve(r.result || "");
+      r.onerror = () => resolve("");
+      r.readAsDataURL(file);
+    });
+  }
+
+  function pad2(n){ return String(n).padStart(2,"0"); }
+
+  function dateKeys(dateStr){
+    const d = new Date(dateStr + "T12:00:00");
+    const y = d.getFullYear();
+    const m = pad2(d.getMonth()+1);
+    const day = pad2(d.getDate());
+    return { monthKey:y+"-"+m, dayKey:y+"-"+m+"-"+day };
+  }
+
+  function today(){
+    const d = new Date();
+    return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());
+  }
+
+  function injectCommerceDirectPub(){
+    const title = $("modalTitle");
+    const body = $("modalBody");
+
+    if(!title || !body) return;
+    if(!String(title.textContent || "").toLowerCase().includes("commerces")) return;
+    if($("commerceDirectPubBox")) return;
+
+    body.insertAdjacentHTML("afterbegin", `
+      <div id="commerceDirectPubBox" class="box" style="border-left:6px solid #2f5d46;">
+        <strong>Créer une publicité commerce — grand bandeau</strong><br>
+        Cette fiche envoie directement le texte et le logo/photo dans le grand bandeau.
+
+        <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
+        <input class="miniField" id="commerceDirectName" placeholder="Nom de l’enseigne">
+
+        <div style="margin-top:10px;font-weight:900;">Email facturation</div>
+        <input class="miniField" id="commerceDirectBilling" placeholder="Email facture">
+
+        <div style="margin-top:10px;font-weight:900;">Logo / photo</div>
+        <input class="miniField" id="commerceDirectLogo" type="file" accept="image/*">
+
+        <div style="margin-top:10px;font-weight:900;">Date</div>
+        <input class="miniField" id="commerceDirectDate" type="date" value="${today()}">
+
+        <div style="margin-top:10px;font-weight:900;">Titre</div>
+        <input class="miniField" id="commerceDirectTitle" placeholder="Ex : Offre spéciale">
+
+        <div style="margin-top:10px;font-weight:900;">Texte</div>
+        <textarea class="miniField" id="commerceDirectText" style="min-height:70px;" placeholder="Texte de la publicité"></textarea>
+
+        <div class="box" style="margin-top:10px;background:var(--bg);">
+          <strong>Correction :</strong> une fois diffusée, la publicité pourra être corrigée pendant 1 heure.
+          Ensuite, elle sera bloquée pour la journée.
+        </div>
+
+        <button class="choiceBtn" id="commerceDirectSave" type="button" style="margin-top:10px;">
+          Valider la publicité commerce
+        </button>
+      </div>
+    `);
+
+    const profiles = loadJson(PROFILE_STORE, { commerce:{}, mairie:{}, asso:{} });
+    const p = profiles.commerce || {};
+
+    if($("commerceDirectName")) $("commerceDirectName").value = p.name || "";
+    if($("commerceDirectBilling")) $("commerceDirectBilling").value = p.billingEmail || "";
+
+    $("commerceDirectSave").onclick = async function(){
+      const name = $("commerceDirectName").value.trim();
+      const billing = $("commerceDirectBilling").value.trim();
+      const date = $("commerceDirectDate").value;
+      const title = $("commerceDirectTitle").value.trim();
+      const text = $("commerceDirectText").value.trim();
+      const file = $("commerceDirectLogo").files && $("commerceDirectLogo").files[0];
+
+      if(!name){
+        alert("Renseigne le nom du commerce.");
+        return;
+      }
+
+      if(!billing){
+        alert("Renseigne l’email de facturation.");
+        return;
+      }
+
+      if(!date || !title || !text){
+        alert("Renseigne la date, le titre et le texte.");
+        return;
+      }
+
+      let logo = p.logo || "";
+      const newLogo = await fileToDataUrl(file);
+      if(newLogo) logo = newLogo;
+
+      profiles.commerce = {
+        ...p,
+        name:name,
+        billingEmail:billing,
+        logo:logo,
+        updatedAt:new Date().toLocaleString("fr-FR")
+      };
+      saveJson(PROFILE_STORE, profiles);
+
+      const bookings = loadJson(PUB_STORE, {});
+      const k = dateKeys(date);
+
+      if(!bookings[k.monthKey]) bookings[k.monthKey] = {};
+      if(!bookings[k.monthKey][k.dayKey]) bookings[k.monthKey][k.dayKey] = [];
+
+      bookings[k.monthKey][k.dayKey].push({
+        profileType:"commerce",
+        entityType:"Commerce",
+        entityName:name,
+        title:title,
+        text:text,
+        logo:logo,
+        billingEmail:billing,
+        amountHT:50,
+        pack:1,
+        status:"demo_paid",
+        createdTs:Date.now(),
+        lastEditTs:Date.now(),
+        ts_fr:new Date().toLocaleString("fr-FR")
+      });
+
+      saveJson(PUB_STORE, bookings);
+
+      if(typeof window.forceRefreshBigTicker === "function"){
+        window.forceRefreshBigTicker();
+      }
+
+      alert("Publicité commerce enregistrée. Si la date est aujourd’hui, elle apparaît dans le grand bandeau.");
+    };
+  }
+
+  const oldOpenByKey = window.__bociteartOpenByKey;
+  if(typeof oldOpenByKey === "function"){
+    window.__bociteartOpenByKey = function(key){
+      oldOpenByKey(key);
+      setTimeout(injectCommerceDirectPub, 300);
+      setTimeout(injectCommerceDirectPub, 900);
+    };
+  }
+
+})();
+</script> 
 </body>
 </html>
