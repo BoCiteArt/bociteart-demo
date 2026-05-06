@@ -8441,337 +8441,236 @@ if(isFn(window.makeKeyboardClickable)){
     return html;
   }
 
-  function openProfile(type){
-    const zone = $("pubZoneV3");
-    if(!zone) return;
+function openProfile(type){
+  const zone = $("pubZoneV3");
+  if(!zone) return;
 
-    const profile = getProfile(type);
-    const selectedDates = [];
+  const profile = getProfile(type);
+  const selectedDates = [];
 
-    zone.innerHTML = `
-      <div class="box" style="border-left:6px solid #2f5d46;">
-        <strong>espace ${label(type)}</strong><br>
-        suivez les étapes. votre fiche sera enregistrée pour éviter de tout ressaisir.
+  zone.innerHTML = `
+    <div class="box" style="border-left:6px solid #2f5d46;">
+      <strong>espace ${label(type)}</strong><br>
+      suivez les étapes. votre fiche sera enregistrée pour éviter de tout ressaisir.
+    </div>
+
+    <div class="box" style="border-left:6px solid #b06b00;">
+      <strong>correction après diffusion :</strong><br>
+      une fois la publicité diffusée, vous disposez de <strong>1 heure</strong>
+      pour corriger une faute, une erreur ou un oubli depuis cette fiche.
+      passé ce délai, elle est bloquée pour la journée.
+    </div>
+
+    <div class="box">
+      <strong>1. fiche préremplie</strong>
+
+      <input class="miniField" id="pNameV3" value="${esc(profile.name)}" placeholder="nom / enseigne / structure" style="margin-top:8px;">
+      <input class="miniField" id="pBillingV3" value="${esc(profile.billing)}" placeholder="email facturation" style="margin-top:8px;">
+      <input class="miniField" id="pPhoneV3" value="${esc(profile.phone)}" placeholder="téléphone" style="margin-top:8px;">
+      <input class="miniField" id="pIbanV3" value="${esc(profile.iban)}" placeholder="iban / rib démo" style="margin-top:8px;">
+
+      <div style="font-weight:900;margin-top:10px;">logo / photo</div>
+      <input class="miniField" id="pLogoV3" type="file" accept="image/*" capture="environment">
+
+      <div class="muted" style="margin-top:6px;">
+        vous pouvez choisir une photo/logo déjà présent sur le téléphone ou prendre une photo directement.
       </div>
 
-      <div class="box" style="border-left:6px solid #b06b00;">
-        <strong>correction après diffusion :</strong><br>
-        une fois la publicité diffusée, vous disposez de <strong>1 heure</strong>
-        pour corriger une faute, une erreur ou un oubli depuis cette fiche.
-        passé ce délai, elle est bloquée pour la journée.
-      </div>
+      <button class="choiceBtn" id="saveProfilePubV3" type="button" style="margin-top:10px;">
+        enregistrer ma fiche
+      </button>
+    </div>
 
-      <div class="box">
-        <strong>1. fiche préremplie</strong>
+    <div class="box">
+      <strong>2. pack publicitaire</strong>
+      <select class="miniField" id="packPubV3">
+        <option value="1">1 publicité — 50 € ht</option>
+        <option value="5">pack 5 publicités — 200 € ht</option>
+      </select>
+      <div class="muted" id="packHelpV3" style="margin-top:8px;">vous pouvez sélectionner 1 date.</div>
+    </div>
 
-        <div class="box">
-  <strong>1. fiche structure préremplie</strong>
+    <div class="box">
+      <strong>3. choisir les dates</strong>
+      <div id="calendarPubV3"></div>
+    </div>
 
-  <input class="miniField" id="pNameV3"
-    value="${esc(profile.name)}"
-    placeholder="nom structure / commerce / mairie / association"
-    style="margin-top:8px;">
+    <div class="box">
+      <strong>4. texte par date</strong>
+      <div id="textsPubV3" class="muted" style="margin-top:8px;">sélectionnez une date.</div>
+    </div>
 
-  <input class="miniField" id="pManagerV3"
-    value="${esc(profile.manager)}"
-    placeholder="nom du responsable"
-    style="margin-top:8px;">
+    <div class="box">
+      <button class="choiceBtn" id="validatePubV3" type="button">
+        valider / simulation paiement
+      </button>
+      <button class="choiceBtn" id="editPubV3" type="button" style="background:#fff;margin-top:8px;">
+        modifier ma publicité du jour
+      </button>
+    </div>
+  `;
 
-  <input class="miniField" id="pAddressV3"
-    value="${esc(profile.address)}"
-    placeholder="adresse"
-    style="margin-top:8px;">
+  function refreshCalendar(){
+    const host = $("calendarPubV3");
+    if(!host) return;
 
-  <div style="display:flex;gap:8px;">
-    <input class="miniField" id="pZipV3"
-      value="${esc(profile.zip)}"
-      placeholder="code postal">
+    host.innerHTML = renderCalendar(selectedDates);
 
-    <input class="miniField" id="pCityV3"
-      value="${esc(profile.city)}"
-      placeholder="ville">
-  </div>
+    document.querySelectorAll(".bcaPubDateV3").forEach(btn=>{
+      btn.onclick = function(){
+        const date = btn.getAttribute("data-date");
+        const pack = Number($("packPubV3").value || 1);
+        const index = selectedDates.indexOf(date);
 
-  <input class="miniField" id="pCountryV3"
-    value="${esc(profile.country)}"
-    placeholder="pays"
-    style="margin-top:8px;">
-
-  <input class="miniField" id="pSiretV3"
-    value="${esc(profile.siret)}"
-    placeholder="siret"
-    style="margin-top:8px;">
-
-  <input class="miniField" id="pSirenV3"
-    value="${esc(profile.siren)}"
-    placeholder="siren"
-    style="margin-top:8px;">
-
-  <input class="miniField" id="pTvaV3"
-    value="${esc(profile.tva)}"
-    placeholder="numéro tva intracommunautaire"
-    style="margin-top:8px;">
-
-  <input class="miniField" id="pBillingV3"
-    value="${esc(profile.billing)}"
-    placeholder="email facturation"
-    style="margin-top:8px;">
-
-  <input class="miniField" id="pPhoneV3"
-    value="${esc(profile.phone)}"
-    placeholder="téléphone"
-    style="margin-top:8px;">
-
-  <input class="miniField" id="pEmergencyMailV3"
-    value="${esc(profile.emergencyMail)}"
-    placeholder="email secours"
-    style="margin-top:8px;">
-
-  <input class="miniField" id="pEmergencyPhoneV3"
-    value="${esc(profile.emergencyPhone)}"
-    placeholder="téléphone secours"
-    style="margin-top:8px;">
-
-  <input class="miniField" id="pBankV3"
-    value="${esc(profile.bank)}"
-    placeholder="banque"
-    style="margin-top:8px;">
-
-  <input class="miniField" id="pIbanV3"
-    value="${esc(profile.iban)}"
-    placeholder="iban / rib"
-    style="margin-top:8px;">
-
-  <div class="muted" style="margin-top:6px;">
-    certaines données pourront être masquées automatiquement en version live
-    pour des raisons de sécurité et conformité PSP.
-  </div>
-
-  <div style="font-weight:900;margin-top:10px;">logo / photo</div>
-
-  <input class="miniField"
-    id="pLogoV3"
-    type="file"
-    accept="image/*"
-    capture="environment">
-
-  <div class="muted" style="margin-top:6px;">
-    vous pouvez choisir une photo/logo depuis le téléphone
-    ou prendre une photo directement.
-  </div>
-
-  <button class="choiceBtn"
-    id="saveProfilePubV3"
-    type="button"
-    style="margin-top:10px;">
-
-    enregistrer ma fiche
-
-  </button>
-</div>
-
-        <div style="font-weight:900;margin-top:10px;">logo / photo</div>
-        <input class="miniField" id="pLogoV3" type="file" accept="image/*">
-
-        <div class="muted" style="margin-top:6px;">
-          vous pouvez choisir une photo/logo déjà présent sur le téléphone ou prendre une photo directement.
-        </div>
-
-        <button class="choiceBtn" id="saveProfilePubV3" type="button" style="margin-top:10px;">
-          enregistrer ma fiche
-        </button>
-      </div>
-
-      <div class="box">
-        <strong>2. pack publicitaire</strong>
-        <select class="miniField" id="packPubV3">
-          <option value="1">1 publicité — 50 € ht</option>
-          <option value="5">pack 5 publicités — 200 € ht</option>
-        </select>
-        <div class="muted" id="packHelpV3" style="margin-top:8px;">vous pouvez sélectionner 1 date.</div>
-      </div>
-
-      <div class="box">
-        <strong>3. choisir les dates</strong>
-        <div id="calendarPubV3"></div>
-      </div>
-
-      <div class="box">
-        <strong>4. texte par date</strong>
-        <div id="textsPubV3" class="muted" style="margin-top:8px;">sélectionnez une date.</div>
-      </div>
-
-      <div class="box">
-        <button class="choiceBtn" id="validatePubV3" type="button">
-          valider / simulation paiement
-        </button>
-        <button class="choiceBtn" id="editPubV3" type="button" style="background:#fff;margin-top:8px;">
-          modifier ma publicité du jour
-        </button>
-      </div>
-    `;
-
-    function refreshCalendar(){
-      const host = $("calendarPubV3");
-      if(!host) return;
-
-      host.innerHTML = renderCalendar(selectedDates);
-
-      document.querySelectorAll(".bcaPubDateV3").forEach(btn=>{
-        btn.onclick = function(){
-          const date = btn.getAttribute("data-date");
-          const pack = Number($("packPubV3").value || 1);
-          const index = selectedDates.indexOf(date);
-
-          if(index >= 0){
-            selectedDates.splice(index, 1);
-          }else{
-            if(selectedDates.length >= pack){
-              alert("pack limité à " + pack + " date(s).");
-              return;
-            }
-            selectedDates.push(date);
+        if(index >= 0){
+          selectedDates.splice(index, 1);
+        }else{
+          if(selectedDates.length >= pack){
+            alert("pack limité à " + pack + " date(s).");
+            return;
           }
-
-          refreshCalendar();
-          refreshTexts();
-        };
-      });
-    }
-
-    function refreshTexts(){
-      const host = $("textsPubV3");
-      if(!host) return;
-
-      if(!selectedDates.length){
-        host.innerHTML = "sélectionnez une date.";
-        return;
-      }
-
-      host.innerHTML = selectedDates.map(date=>`
-        <div class="box" style="background:var(--bg);">
-          <strong>${date}</strong>
-          <input class="miniField titleByDateV3" data-date="${date}" placeholder="titre de la publicité" style="margin-top:8px;">
-          <textarea class="miniField textByDateV3" data-date="${date}" style="min-height:70px;margin-top:8px;" placeholder="texte de la publicité"></textarea>
-        </div>
-      `).join("");
-    }
-
-    refreshCalendar();
-
-    const packSelect = $("packPubV3");
-    if(packSelect){
-      packSelect.onchange = function(){
-        const pack = Number(packSelect.value || 1);
-        const help = $("packHelpV3");
-        if(help) help.textContent = "vous pouvez sélectionner " + pack + " date(s).";
-
-        while(selectedDates.length > pack){
-          selectedDates.pop();
+          selectedDates.push(date);
         }
 
         refreshCalendar();
         refreshTexts();
       };
-    }
-
-    const saveBtn = $("saveProfilePubV3");
-    if(saveBtn){
-      saveBtn.onclick = async function(){
-        const current = getProfile(type);
-
-        current.name = $("pNameV3").value.trim();
-        current.billing = $("pBillingV3").value.trim();
-        current.phone = $("pPhoneV3").value.trim();
-        current.iban = $("pIbanV3").value.trim();
-
-        const fileInput = $("pLogoV3");
-        const file = fileInput && fileInput.files && fileInput.files[0];
-
-        if(file){
-          const imageData = await fileToCompressedDataUrl(file);
-
-          if(imageData){
-            const imageKey = type + "_" + Date.now();
-            await saveImage(imageKey, imageData);
-            current.imageKey = imageKey;
-          }
-        }
-
-        if(!current.name){
-          alert("renseignez le nom.");
-          return;
-        }
-
-        saveProfile(type, current);
-        alert("fiche enregistrée.");
-      };
-    }
-
-    const validateBtn = $("validatePubV3");
-    if(validateBtn){
-      validateBtn.onclick = function(){
-        const current = getProfile(type);
-
-        if(!current.name){
-          alert("enregistrez d’abord votre fiche.");
-          return;
-        }
-
-        if(!current.billing){
-          alert("renseignez l’email de facturation.");
-          return;
-        }
-
-        if(!selectedDates.length){
-          alert("sélectionnez une date.");
-          return;
-        }
-
-        const pack = Number($("packPubV3").value || 1);
-        const amount = pack === 5 ? 200 : 50;
-
-        const ok = confirm(
-          "simulation paiement\n\n" +
-          "montant : " + amount + " € ht\n\n" +
-          "confirmer ?"
-        );
-
-        if(!ok) return;
-
-        const bookings = getBookings();
-
-        selectedDates.forEach(date=>{
-          const titleInput = document.querySelector('.titleByDateV3[data-date="'+date+'"]');
-          const textInput = document.querySelector('.textByDateV3[data-date="'+date+'"]');
-
-          dayList(bookings, date).push({
-            profileType:type,
-            entityName:current.name,
-            title:(titleInput && titleInput.value.trim()) || current.name,
-            text:(textInput && textInput.value.trim()) || "publicité locale bo’citéart",
-            imageKey:current.imageKey || "",
-            status:type === "mairie" ? "quote_validated" : "demo_paid",
-            createdTs:Date.now(),
-            amountHT:amount,
-            pack:pack
-          });
-        });
-
-        saveBookings(bookings);
-        renderTicker();
-
-        alert("publicité enregistrée. si la date est aujourd’hui, elle apparaît dans le grand bandeau.");
-      };
-    }
-
-    const editBtn = $("editPubV3");
-    if(editBtn){
-      editBtn.onclick = function(){
-        openEditToday(type);
-      };
-    }
+    });
   }
+
+  function refreshTexts(){
+    const host = $("textsPubV3");
+    if(!host) return;
+
+    if(!selectedDates.length){
+      host.innerHTML = "sélectionnez une date.";
+      return;
+    }
+
+    host.innerHTML = selectedDates.map(date=>`
+      <div class="box" style="background:var(--bg);">
+        <strong>${date}</strong>
+        <input class="miniField titleByDateV3" data-date="${date}" placeholder="titre de la publicité" style="margin-top:8px;">
+        <textarea class="miniField textByDateV3" data-date="${date}" style="min-height:70px;margin-top:8px;" placeholder="texte de la publicité"></textarea>
+      </div>
+    `).join("");
+  }
+
+  refreshCalendar();
+
+  const packSelect = $("packPubV3");
+  if(packSelect){
+    packSelect.onchange = function(){
+      const pack = Number(packSelect.value || 1);
+      const help = $("packHelpV3");
+      if(help) help.textContent = "vous pouvez sélectionner " + pack + " date(s).";
+
+      while(selectedDates.length > pack){
+        selectedDates.pop();
+      }
+
+      refreshCalendar();
+      refreshTexts();
+    };
+  }
+
+  const saveBtn = $("saveProfilePubV3");
+  if(saveBtn){
+    saveBtn.onclick = async function(){
+      const current = getProfile(type);
+
+      current.name = $("pNameV3").value.trim();
+      current.billing = $("pBillingV3").value.trim();
+      current.phone = $("pPhoneV3").value.trim();
+      current.iban = $("pIbanV3").value.trim();
+
+      const fileInput = $("pLogoV3");
+      const file = fileInput && fileInput.files && fileInput.files[0];
+
+      if(file){
+        const imageData = await fileToCompressedDataUrl(file);
+
+        if(imageData){
+          const imageKey = type + "_" + Date.now();
+          await saveImage(imageKey, imageData);
+          current.imageKey = imageKey;
+        }
+      }
+
+      if(!current.name){
+        alert("renseignez le nom.");
+        return;
+      }
+
+      saveProfile(type, current);
+      alert("fiche enregistrée.");
+    };
+  }
+
+  const validateBtn = $("validatePubV3");
+  if(validateBtn){
+    validateBtn.onclick = function(){
+      const current = getProfile(type);
+
+      if(!current.name){
+        alert("enregistrez d’abord votre fiche.");
+        return;
+      }
+
+      if(!current.billing){
+        alert("renseignez l’email de facturation.");
+        return;
+      }
+
+      if(!selectedDates.length){
+        alert("sélectionnez une date.");
+        return;
+      }
+
+      const pack = Number($("packPubV3").value || 1);
+      const amount = pack === 5 ? 200 : 50;
+
+      const ok = confirm(
+        "simulation paiement\n\n" +
+        "montant : " + amount + " € ht\n\n" +
+        "confirmer ?"
+      );
+
+      if(!ok) return;
+
+      const bookings = getBookings();
+
+      selectedDates.forEach(date=>{
+        const titleInput = document.querySelector('.titleByDateV3[data-date="'+date+'"]');
+        const textInput = document.querySelector('.textByDateV3[data-date="'+date+'"]');
+
+        dayList(bookings, date).push({
+          profileType:type,
+          entityName:current.name,
+          title:(titleInput && titleInput.value.trim()) || current.name,
+          text:(textInput && textInput.value.trim()) || "publicité locale bo’citéart",
+          imageKey:current.imageKey || "",
+          status:type === "mairie" ? "quote_validated" : "demo_paid",
+          createdTs:Date.now(),
+          amountHT:amount,
+          pack:pack
+        });
+      });
+
+      saveBookings(bookings);
+      renderTicker();
+
+      alert("publicité enregistrée. si la date est aujourd’hui, elle apparaît dans le grand bandeau.");
+    };
+  }
+
+  const editBtn = $("editPubV3");
+  if(editBtn){
+    editBtn.onclick = function(){
+      openEditToday(type);
+    };
+  }
+}
 
   function openEditToday(type){
     const bookings = getBookings();
