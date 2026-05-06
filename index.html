@@ -9302,5 +9302,178 @@ if(isFn(window.makeKeyboardClickable)){
 
 })();
 </script>
+  <script>
+/* === PATCH DEFINITIF IMAGE / LOGO BANDEAU === */
+
+(function(){
+  console.log("✅ Patch définitif logo bandeau chargé");
+
+  const PROFILE_KEY = "bociteart_pub_profiles_v1";
+  const PUB_STORE_KEY = "bociteart_pub_bookings_v1";
+  let lastLogoData = "";
+
+  function $(id){ return document.getElementById(id); }
+
+  function loadJson(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){
+      return fallback;
+    }
+  }
+
+  function saveJson(key, value){
+    try{
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    }catch(e){
+      alert("Image trop lourde. Essaie avec un logo JPG plus léger.");
+      return false;
+    }
+  }
+
+  function fileToDataUrl(file){
+    return new Promise(resolve=>{
+      if(!file) return resolve("");
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result || "");
+      reader.onerror = () => resolve("");
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function getCurrentProfileType(){
+    if(window.__currentPubProfile) return window.__currentPubProfile;
+    if(window.__tickerProfile) return window.__tickerProfile;
+    return "commerce";
+  }
+
+  document.addEventListener("click", function(e){
+    if(e.target && e.target.id === "accessCommercePub") window.__currentPubProfile = "commerce";
+    if(e.target && e.target.id === "accessMairiePub") window.__currentPubProfile = "mairie";
+    if(e.target && e.target.id === "accessAssoPub") window.__currentPubProfile = "asso";
+  }, true);
+
+  document.addEventListener("change", async function(e){
+    if(e.target && e.target.id === "profLogoFile"){
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+
+      lastLogoData = await fileToDataUrl(file);
+
+      const type = getCurrentProfileType();
+      const profiles = loadJson(PROFILE_KEY, { commerce:{}, mairie:{}, asso:{} });
+
+      if(!profiles[type]) profiles[type] = {};
+      profiles[type].logo = lastLogoData;
+
+      saveJson(PROFILE_KEY, profiles);
+
+      alert("Logo chargé pour " + type + ". Il sera utilisé dans le grand bandeau.");
+    }
+  }, true);
+
+  document.addEventListener("click", function(e){
+    if(e.target && e.target.id === "validateCampaignBtn"){
+      setTimeout(function(){
+        const type = getCurrentProfileType();
+        const profiles = loadJson(PROFILE_KEY, { commerce:{}, mairie:{}, asso:{} });
+        const bookings = loadJson(PUB_STORE_KEY, {});
+
+        const logo =
+          lastLogoData ||
+          (profiles[type] && profiles[type].logo) ||
+          "";
+
+        if(!logo){
+          alert("Aucun logo détecté. Clique d’abord sur “Choisir un fichier”, puis enregistre la fiche.");
+          return;
+        }
+
+        Object.keys(bookings).forEach(monthKey=>{
+          Object.keys(bookings[monthKey]).forEach(dayKey=>{
+            bookings[monthKey][dayKey].forEach(ad=>{
+              if(
+                String(ad.entityType || "").toLowerCase().includes(type) ||
+                type === "commerce" ||
+                type === "mairie" ||
+                type === "asso"
+              ){
+                ad.img = logo;
+                ad.logo = logo;
+                ad.image = logo;
+              }
+            });
+          });
+        });
+
+        saveJson(PUB_STORE_KEY, bookings);
+
+        if(typeof window.forceRefreshBigTicker === "function"){
+          window.forceRefreshBigTicker();
+        }
+
+        setTimeout(function(){
+          forceTickerImageNow();
+        }, 300);
+      }, 800);
+    }
+  }, true);
+
+  function forceTickerImageNow(){
+    const bookings = loadJson(PUB_STORE_KEY, {});
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+
+    const monthKey = y + "-" + m;
+    const dayKey = y + "-" + m + "-" + d;
+
+    let logo = "";
+
+    if(bookings[monthKey] && bookings[monthKey][dayKey]){
+      const todayAds = bookings[monthKey][dayKey];
+      for(let i=0;i<todayAds.length;i++){
+        if(todayAds[i].img || todayAds[i].logo || todayAds[i].image){
+          logo = todayAds[i].img || todayAds[i].logo || todayAds[i].image;
+          break;
+        }
+      }
+    }
+
+    if(!logo) logo = lastLogoData;
+    if(!logo) return;
+
+    const ticker = $("ticker");
+    const tickerImg = $("tickerImg");
+
+    if(tickerImg){
+      tickerImg.src = logo;
+      tickerImg.removeAttribute("hidden");
+      tickerImg.style.display = "block";
+      tickerImg.style.opacity = "1";
+      tickerImg.style.visibility = "visible";
+      tickerImg.style.zIndex = "0";
+      tickerImg.style.objectFit = "cover";
+    }
+
+    if(ticker){
+      ticker.style.backgroundImage = "url('" + logo + "')";
+      ticker.style.backgroundSize = "cover";
+      ticker.style.backgroundPosition = "center";
+    }
+
+    console.log("✅ Logo forcé dans le bandeau");
+  }
+
+  window.forceTickerImageNow = forceTickerImageNow;
+
+  setInterval(forceTickerImageNow, 3000);
+  setTimeout(forceTickerImageNow, 500);
+
+})();
+</script>
 </body>
 </html>
