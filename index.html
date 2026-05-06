@@ -8464,10 +8464,111 @@ if(isFn(window.makeKeyboardClickable)){
       <div class="box">
         <strong>1. fiche préremplie</strong>
 
-        <input class="miniField" id="pNameV3" value="${esc(profile.name)}" placeholder="nom / enseigne / structure" style="margin-top:8px;">
-        <input class="miniField" id="pBillingV3" value="${esc(profile.billing)}" placeholder="email facturation" style="margin-top:8px;">
-        <input class="miniField" id="pPhoneV3" value="${esc(profile.phone)}" placeholder="téléphone" style="margin-top:8px;">
-        <input class="miniField" id="pIbanV3" value="${esc(profile.iban)}" placeholder="iban / rib démo" style="margin-top:8px;">
+        <div class="box">
+  <strong>1. fiche structure préremplie</strong>
+
+  <input class="miniField" id="pNameV3"
+    value="${esc(profile.name)}"
+    placeholder="nom structure / commerce / mairie / association"
+    style="margin-top:8px;">
+
+  <input class="miniField" id="pManagerV3"
+    value="${esc(profile.manager)}"
+    placeholder="nom du responsable"
+    style="margin-top:8px;">
+
+  <input class="miniField" id="pAddressV3"
+    value="${esc(profile.address)}"
+    placeholder="adresse"
+    style="margin-top:8px;">
+
+  <div style="display:flex;gap:8px;">
+    <input class="miniField" id="pZipV3"
+      value="${esc(profile.zip)}"
+      placeholder="code postal">
+
+    <input class="miniField" id="pCityV3"
+      value="${esc(profile.city)}"
+      placeholder="ville">
+  </div>
+
+  <input class="miniField" id="pCountryV3"
+    value="${esc(profile.country)}"
+    placeholder="pays"
+    style="margin-top:8px;">
+
+  <input class="miniField" id="pSiretV3"
+    value="${esc(profile.siret)}"
+    placeholder="siret"
+    style="margin-top:8px;">
+
+  <input class="miniField" id="pSirenV3"
+    value="${esc(profile.siren)}"
+    placeholder="siren"
+    style="margin-top:8px;">
+
+  <input class="miniField" id="pTvaV3"
+    value="${esc(profile.tva)}"
+    placeholder="numéro tva intracommunautaire"
+    style="margin-top:8px;">
+
+  <input class="miniField" id="pBillingV3"
+    value="${esc(profile.billing)}"
+    placeholder="email facturation"
+    style="margin-top:8px;">
+
+  <input class="miniField" id="pPhoneV3"
+    value="${esc(profile.phone)}"
+    placeholder="téléphone"
+    style="margin-top:8px;">
+
+  <input class="miniField" id="pEmergencyMailV3"
+    value="${esc(profile.emergencyMail)}"
+    placeholder="email secours"
+    style="margin-top:8px;">
+
+  <input class="miniField" id="pEmergencyPhoneV3"
+    value="${esc(profile.emergencyPhone)}"
+    placeholder="téléphone secours"
+    style="margin-top:8px;">
+
+  <input class="miniField" id="pBankV3"
+    value="${esc(profile.bank)}"
+    placeholder="banque"
+    style="margin-top:8px;">
+
+  <input class="miniField" id="pIbanV3"
+    value="${esc(profile.iban)}"
+    placeholder="iban / rib"
+    style="margin-top:8px;">
+
+  <div class="muted" style="margin-top:6px;">
+    certaines données pourront être masquées automatiquement en version live
+    pour des raisons de sécurité et conformité PSP.
+  </div>
+
+  <div style="font-weight:900;margin-top:10px;">logo / photo</div>
+
+  <input class="miniField"
+    id="pLogoV3"
+    type="file"
+    accept="image/*"
+    capture="environment">
+
+  <div class="muted" style="margin-top:6px;">
+    vous pouvez choisir une photo/logo depuis le téléphone
+    ou prendre une photo directement.
+  </div>
+
+  <button class="choiceBtn"
+    id="saveProfilePubV3"
+    type="button"
+    style="margin-top:10px;">
+
+    enregistrer ma fiche
+
+  </button>
+</div>
 
         <div style="font-weight:900;margin-top:10px;">logo / photo</div>
         <input class="miniField" id="pLogoV3" type="file" accept="image/*">
