@@ -8488,5 +8488,575 @@ if(isFn(window.makeKeyboardClickable)){
 
 })();
 </script>
+  <script>
+/* === PATCH PUB CALENDRIER MULTI-DATES + IMAGE BANDEAU === */
+
+(function(){
+  console.log("✅ Patch pub multi-dates chargé");
+
+  const PUB_STORE_KEY = "bociteart_pub_bookings_v1";
+  const PROFILE_KEY = "bociteart_pub_profiles_v1";
+  const ACCESS_CODES_KEY = "bociteart_pub_access_codes_v1";
+  const PUB_MAX_PER_DAY = 10;
+
+  const DEFAULT_CODES = {
+    commerce: "COM-1234",
+    mairie: "MAIRIE-1234",
+    asso: "ASSO-1234",
+    admin: "BCA-ADMIN"
+  };
+
+  function $(id){ return document.getElementById(id); }
+
+  function esc(s){
+    return String(s || "")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+  }
+
+  function loadJson(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){
+      return fallback;
+    }
+  }
+
+  function saveJson(key, value){
+    try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
+  }
+
+  function pad2(n){ return String(n).padStart(2,"0"); }
+  function ym(y,m){ return y + "-" + pad2(m + 1); }
+  function ymd(y,m,d){ return y + "-" + pad2(m + 1) + "-" + pad2(d); }
+
+  function loadBookings(){
+    return loadJson(PUB_STORE_KEY, {});
+  }
+
+  function saveBookings(obj){
+    saveJson(PUB_STORE_KEY, obj || {});
+  }
+
+  function loadProfiles(){
+    return loadJson(PROFILE_KEY, { commerce:{}, mairie:{}, asso:{} });
+  }
+
+  function saveProfiles(obj){
+    saveJson(PROFILE_KEY, obj || {});
+  }
+
+  function loadCodes(){
+    const codes = loadJson(ACCESS_CODES_KEY, null);
+    if(codes) return codes;
+    saveJson(ACCESS_CODES_KEY, DEFAULT_CODES);
+    return DEFAULT_CODES;
+  }
+
+  function label(type){
+    if(type === "commerce") return "Commerce";
+    if(type === "mairie") return "Mairie";
+    if(type === "asso") return "Association";
+    return "Profil";
+  }
+
+  function getProfile(type){
+    const all = loadProfiles();
+    if(!all[type]) all[type] = {};
+    return all[type];
+  }
+
+  function setProfile(type, data){
+    const all = loadProfiles();
+    all[type] = data;
+    saveProfiles(all);
+  }
+
+  function getDayList(bookings, dateStr){
+    const d = new Date(dateStr + "T12:00:00");
+    const monthKey = ym(d.getFullYear(), d.getMonth());
+    if(!bookings[monthKey]) bookings[monthKey] = {};
+    if(!bookings[monthKey][dateStr]) bookings[monthKey][dateStr] = [];
+    return bookings[monthKey][dateStr];
+  }
+
+  function usedSlots(dateStr){
+    const bookings = loadBookings();
+    return getDayList(bookings, dateStr).length;
+  }
+
+  function syncTickerFromToday(){
+    const bookings = loadBookings();
+    const today = new Date();
+    const todayKey = ymd(today.getFullYear(), today.getMonth(), today.getDate());
+    const monthKey = ym(today.getFullYear(), today.getMonth());
+
+    const list =
+      bookings[monthKey] && Array.isArray(bookings[monthKey][todayKey])
+        ? bookings[monthKey][todayKey]
+        : [];
+
+    const active = list.filter(x =>
+      x &&
+      (
+        x.status === "paid" ||
+        x.status === "quote_validated" ||
+        x.status === "demo_paid"
+      )
+    );
+
+    const defaults = [
+      {
+        title:"Annonce partenaire (démo)",
+        subtitle:"Exemple : avantage à partir de 30 bocitecoins couleur OR",
+        img:"https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+      },
+      {
+        title:"Mairie (démo) : informations & agenda",
+        subtitle:"Accès gratuit citoyen pour alertes d’intérêt général",
+        img:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
+      }
+    ];
+
+    const dynamic = active.map(ad => ({
+      title: ad.title || ad.entityName || "Publicité locale",
+      subtitle: ad.text || "",
+      img: ad.img || ad.logo || defaults[0].img
+    }));
+
+    window.tickerItems = dynamic.length ? dynamic.concat(defaults) : defaults;
+
+    if(typeof window.setTicker === "function"){
+      window.setTicker(0);
+    }
+  }
+
+  function fileToDataUrl(file){
+    return new Promise(resolve=>{
+      if(!file) return resolve("");
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result || "");
+      reader.onerror = () => resolve("");
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderQuarterCalendar(type, selectedDates){
+    const today = new Date();
+    const start = new Date(today.getFullYear(), today.getMonth(), 1);
+    const months = [];
+
+    for(let i=0;i<3;i++){
+      months.push(new Date(start.getFullYear(), start.getMonth() + i, 1));
+    }
+
+    const nextOpen = new Date(start.getFullYear(), start.getMonth() + 3, 1);
+    nextOpen.setDate(nextOpen.getDate() - 15);
+
+    return `
+      <div class="box">
+        <strong>Calendrier ouvert :</strong> 3 mois glissants.<br>
+        Le trimestre suivant sera ouvert environ <strong>15 jours avant</strong> son démarrage.
+        <div class="muted" style="margin-top:6px;">
+          Prochaine ouverture indicative : ${nextOpen.toLocaleDateString("fr-FR")}.
+        </div>
+      </div>
+
+      ${months.map(monthDate=>{
+        const y = monthDate.getFullYear();
+        const m = monthDate.getMonth();
+        const days = new Date(y, m + 1, 0).getDate();
+        const monthLabel = monthDate.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+
+        let cells = "";
+
+        for(let d=1; d<=days; d++){
+          const dateStr = ymd(y,m,d);
+          const used = usedSlots(dateStr);
+          const full = used >= PUB_MAX_PER_DAY;
+          const checked = selectedDates.includes(dateStr);
+
+          cells += `
+            <button
+              class="choiceBtn pubDateBtn"
+              data-date="${dateStr}"
+              type="button"
+              ${full ? "disabled" : ""}
+              style="
+                padding:8px 6px;
+                background:${checked ? "#2f5d46" : full ? "#ddd" : "#fff"};
+                color:${checked ? "#fff" : "#111"};
+                opacity:${full ? ".55" : "1"};
+              ">
+              <strong>${d}</strong><br>
+              <span style="font-size:10px;">${used}/${PUB_MAX_PER_DAY}</span>
+            </button>
+          `;
+        }
+
+        return `
+          <div style="font-weight:900;text-transform:capitalize;margin-top:14px;">${monthLabel}</div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px;">
+            ${cells}
+          </div>
+        `;
+      }).join("")}
+    `;
+  }
+
+  window.openTicker = function(){
+    if(typeof window.openModal !== "function") return;
+
+    const codes = loadCodes();
+
+    window.openModal("Publicités & visibilité", `
+      <div style="font-weight:900;margin-bottom:8px;">Grand bandeau publicitaire</div>
+
+      <div class="box">
+        <strong>Accès rapide :</strong><br>
+        Commerce, mairie et association accèdent chacun à leur espace avec un code personnel ou QR code.
+        La fiche signalétique, le logo/photo et la fiche facturation sont enregistrés pour éviter de tout retaper.
+      </div>
+
+      <div class="box">
+        <strong>Réservation :</strong><br>
+        Vous pouvez rester dans cette fiche, changer de date, sélectionner plusieurs dates,
+        préparer des promotions différentes par jour et réserver jusqu’à 3 mois à l’avance.
+      </div>
+
+      <div class="box">
+        <strong>Tarifs démo :</strong><br>
+        1 publicité = <strong>50 € HT</strong><br>
+        Pack 5 publicités = <strong>200 € HT</strong><br>
+        Le système bloque automatiquement si le nombre de dates dépasse le pack choisi.
+      </div>
+
+      <div class="choiceGrid">
+        <button class="choiceBtn" id="accessCommercePub" type="button">Commerce</button>
+        <button class="choiceBtn" id="accessMairiePub" type="button">Mairie</button>
+        <button class="choiceBtn" id="accessAssoPub" type="button">Association</button>
+        <button class="choiceBtn" id="accessAdminPub" type="button" style="background:#fff;">Admin Bo’CitéArt</button>
+      </div>
+
+      <div id="pubProfileZone" style="margin-top:12px;"></div>
+    `);
+
+    setTimeout(()=>{
+      function ask(type){
+        const code = prompt(
+          "Code d’accès démo :\n\n" +
+          "Commerce : COM-1234\n" +
+          "Mairie : MAIRIE-1234\n" +
+          "Association : ASSO-1234\n" +
+          "Admin : BCA-ADMIN"
+        );
+
+        if(!code) return;
+
+        if(type === "admin"){
+          if(code !== codes.admin){
+            alert("Code admin incorrect.");
+            return;
+          }
+          openAdmin();
+          return;
+        }
+
+        if(code !== codes[type]){
+          alert("Code incorrect.");
+          return;
+        }
+
+        openProfile(type);
+      }
+
+      function openProfile(type){
+        const zone = $("pubProfileZone");
+        const p = getProfile(type);
+        const selectedDates = [];
+
+        zone.innerHTML = `
+          <div class="box" style="border-left:6px solid #2f5d46;">
+            <strong>Espace ${label(type)}</strong><br>
+            Vous pouvez préparer plusieurs publicités sans sortir de cette fiche.
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">1. Fiche préremplie</div>
+
+            <input class="miniField" id="profName" value="${esc(p.name)}" placeholder="Nom enseigne / mairie / association" style="margin-top:8px;">
+            <input class="miniField" id="profAddress" value="${esc(p.address)}" placeholder="Adresse" style="margin-top:8px;">
+            <input class="miniField" id="profPhone" value="${esc(p.phone)}" placeholder="Téléphone" style="margin-top:8px;">
+            <input class="miniField" id="profEmail" value="${esc(p.email)}" placeholder="Email contact" style="margin-top:8px;">
+            <input class="miniField" id="profBillingEmail" value="${esc(p.billingEmail)}" placeholder="Email facturation" style="margin-top:8px;">
+            <input class="miniField" id="profIban" value="${esc(p.iban)}" placeholder="IBAN / RIB démo" style="margin-top:8px;">
+
+            <div style="font-weight:900;margin-top:10px;">Logo / photo de fond</div>
+            <input class="miniField" id="profLogoFile" type="file" accept="image/*">
+
+            <div class="muted" style="margin-top:6px;">
+              Si aucun nouveau logo n’est choisi, le logo/photo déjà enregistré sera conservé.
+            </div>
+
+            <button class="choiceBtn" id="saveProfileFast" type="button" style="margin-top:10px;">
+              Enregistrer / modifier ma fiche
+            </button>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">2. Choix du pack</div>
+            <select class="miniField" id="pubPackChoice">
+              <option value="1">1 publicité — 50 € HT</option>
+              <option value="5">Pack 5 publicités — 200 € HT</option>
+            </select>
+            <div class="muted" id="packHelp" style="margin-top:8px;">
+              Vous pouvez sélectionner 1 date.
+            </div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">3. Choisir les dates sans sortir</div>
+            <div id="quarterCalendarHost"></div>
+          </div>
+
+          <div class="box">
+            <div style="font-weight:900;">4. Promotions par date</div>
+            <div id="datePromosHost" class="muted" style="margin-top:8px;">
+              Sélectionnez une date dans le calendrier.
+            </div>
+          </div>
+
+          <div class="box">
+            <button class="choiceBtn" id="validateCampaignBtn" type="button">
+              Valider / payer la campagne
+            </button>
+          </div>
+        `;
+
+        function refreshCalendar(){
+          const host = $("quarterCalendarHost");
+          if(host) host.innerHTML = renderQuarterCalendar(type, selectedDates);
+
+          document.querySelectorAll(".pubDateBtn").forEach(btn=>{
+            btn.onclick = function(){
+              const date = btn.getAttribute("data-date");
+              const pack = Number($("pubPackChoice").value || 1);
+              const idx = selectedDates.indexOf(date);
+
+              if(idx >= 0){
+                selectedDates.splice(idx,1);
+              }else{
+                if(selectedDates.length >= pack){
+                  alert("Pack choisi : " + pack + " publicité(s). Impossible d’ajouter plus de dates sans changer de pack.");
+                  return;
+                }
+                selectedDates.push(date);
+              }
+
+              refreshCalendar();
+              refreshPromoForms();
+            };
+          });
+        }
+
+        function refreshPromoForms(){
+          const host = $("datePromosHost");
+          if(!host) return;
+
+          if(!selectedDates.length){
+            host.innerHTML = "Sélectionnez une date dans le calendrier.";
+            return;
+          }
+
+          host.innerHTML = selectedDates.map(date=>`
+            <div class="box" style="background:var(--bg);">
+              <strong>${date}</strong>
+
+              <div style="margin-top:8px;font-weight:900;">Titre</div>
+              <input class="miniField promoTitle" data-date="${date}" placeholder="Titre pub du ${date}">
+
+              <div style="margin-top:8px;font-weight:900;">Texte</div>
+              <textarea class="miniField promoText" data-date="${date}" style="min-height:70px;" placeholder="Texte ou promo différente pour ce jour"></textarea>
+            </div>
+          `).join("");
+        }
+
+        setTimeout(()=>{
+          refreshCalendar();
+
+          const packChoice = $("pubPackChoice");
+          if(packChoice){
+            packChoice.onchange = function(){
+              const pack = Number(packChoice.value || 1);
+              $("packHelp").textContent = "Vous pouvez sélectionner " + pack + " date(s).";
+
+              while(selectedDates.length > pack){
+                selectedDates.pop();
+              }
+
+              refreshCalendar();
+              refreshPromoForms();
+            };
+          }
+
+          $("saveProfileFast").onclick = async function(){
+            const current = getProfile(type);
+            const file = $("profLogoFile").files && $("profLogoFile").files[0];
+            const logoData = await fileToDataUrl(file);
+
+            current.name = $("profName").value.trim();
+            current.address = $("profAddress").value.trim();
+            current.phone = $("profPhone").value.trim();
+            current.email = $("profEmail").value.trim();
+            current.billingEmail = $("profBillingEmail").value.trim();
+            current.iban = $("profIban").value.trim();
+
+            if(logoData){
+              current.logo = logoData;
+            }
+
+            current.updatedAt = new Date().toLocaleString("fr-FR");
+
+            if(!current.name){
+              alert("Renseignez au minimum le nom.");
+              return;
+            }
+
+            setProfile(type, current);
+            alert("Fiche enregistrée. Elle sera préremplie la prochaine fois.");
+          };
+
+          $("validateCampaignBtn").onclick = async function(){
+            const pack = Number($("pubPackChoice").value || 1);
+            const current = getProfile(type);
+
+            if(!current.name){
+              alert("Enregistrez d’abord la fiche préremplie.");
+              return;
+            }
+
+            if(!current.billingEmail){
+              alert("Renseignez l’email de facturation avant validation.");
+              return;
+            }
+
+            if(!selectedDates.length){
+              alert("Sélectionnez au moins une date.");
+              return;
+            }
+
+            if(selectedDates.length > pack){
+              alert("Vous avez sélectionné trop de dates pour le pack choisi.");
+              return;
+            }
+
+            const bookings = loadBookings();
+
+            for(const date of selectedDates){
+              if(usedSlots(date) >= PUB_MAX_PER_DAY){
+                alert("La date " + date + " est complète.");
+                return;
+              }
+            }
+
+            const amount = pack === 5 ? 200 : 50;
+
+            const ok = confirm(
+              "Simulation PSP démo\n\n" +
+              "Pack : " + pack + " publicité(s)\n" +
+              "Montant : " + amount + " € HT\n\n" +
+              "Confirmer la validation ?"
+            );
+
+            if(!ok){
+              alert("Paiement / validation obligatoire pour activer la publicité.");
+              return;
+            }
+
+            selectedDates.forEach(date=>{
+              const titleInput = document.querySelector('.promoTitle[data-date="' + date + '"]');
+              const textInput = document.querySelector('.promoText[data-date="' + date + '"]');
+
+              const title = titleInput ? titleInput.value.trim() : "";
+              const text = textInput ? textInput.value.trim() : "";
+
+              const list = getDayList(bookings, date);
+
+              list.push({
+                date: date,
+                entityType: label(type),
+                entityName: current.name,
+                billingEmail: current.billingEmail,
+                title: title || current.name,
+                text: text || "Publicité locale Bo’CitéArt",
+                img: current.logo || "",
+                logo: current.logo || "",
+                pack: pack,
+                status: type === "mairie" ? "quote_validated" : "demo_paid",
+                paymentMode: type === "mairie" ? "devis_mairie" : "psp_demo",
+                amountHT: amount,
+                ts_iso: new Date().toISOString(),
+                ts_fr: new Date().toLocaleString("fr-FR")
+              });
+            });
+
+            saveBookings(bookings);
+            syncTickerFromToday();
+            refreshCalendar();
+
+            alert(
+              "Campagne enregistrée.\n\n" +
+              "Les publicités du jour apparaissent dans le grand bandeau.\n" +
+              "Les dates futures s’afficheront automatiquement le jour prévu."
+            );
+          };
+        },50);
+      }
+
+      function openAdmin(){
+        const zone = $("pubProfileZone");
+        const profiles = loadProfiles();
+        const bookings = loadBookings();
+
+        zone.innerHTML = `
+          <div class="box" style="border-left:6px solid #a51e22;">
+            <strong>Admin Bo’CitéArt</strong><br>
+            Vue dépannage démo : profils, réservations et contrôle global.
+          </div>
+
+          <div class="box">
+            <strong>Profils enregistrés</strong>
+            <pre style="white-space:pre-wrap;font-size:11px;background:#fff;padding:10px;border-radius:10px;overflow:auto;">${esc(JSON.stringify(profiles,null,2))}</pre>
+          </div>
+
+          <div class="box">
+            <strong>Réservations publicitaires</strong>
+            <pre style="white-space:pre-wrap;font-size:11px;background:#fff;padding:10px;border-radius:10px;overflow:auto;">${esc(JSON.stringify(bookings,null,2))}</pre>
+          </div>
+        `;
+      }
+
+      $("accessCommercePub").onclick = ()=> ask("commerce");
+      $("accessMairiePub").onclick = ()=> ask("mairie");
+      $("accessAssoPub").onclick = ()=> ask("asso");
+      $("accessAdminPub").onclick = ()=> ask("admin");
+
+    },50);
+  };
+
+  const ticker = $("ticker");
+  if(ticker){
+    ticker.onclick = function(){
+      window.openTicker();
+    };
+  }
+
+  syncTickerFromToday();
+})();
+</script>
 </body>
 </html>
