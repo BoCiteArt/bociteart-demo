@@ -8451,29 +8451,49 @@ function openProfile(type){
   zone.innerHTML = `
     <div class="box" style="border-left:6px solid #2f5d46;">
       <strong>espace ${label(type)}</strong><br>
-      suivez les étapes. votre fiche sera enregistrée pour éviter de tout ressaisir.
+      fiche préremplie, accès sécurisé et publicité dans le grand bandeau.
     </div>
 
     <div class="box" style="border-left:6px solid #b06b00;">
       <strong>correction après diffusion :</strong><br>
-      une fois la publicité diffusée, vous disposez de <strong>1 heure</strong>
-      pour corriger une faute, une erreur ou un oubli depuis cette fiche.
-      passé ce délai, elle est bloquée pour la journée.
+      vous disposez de <strong>1 heure</strong> pour corriger une erreur.
+      passé ce délai, la publicité est bloquée pour la journée.
     </div>
 
     <div class="box">
-      <strong>1. fiche préremplie</strong>
+      <strong>1. fiche structure préremplie</strong>
 
-      <input class="miniField" id="pNameV3" value="${esc(profile.name)}" placeholder="nom / enseigne / structure" style="margin-top:8px;">
-      <input class="miniField" id="pBillingV3" value="${esc(profile.billing)}" placeholder="email facturation" style="margin-top:8px;">
-      <input class="miniField" id="pPhoneV3" value="${esc(profile.phone)}" placeholder="téléphone" style="margin-top:8px;">
-      <input class="miniField" id="pIbanV3" value="${esc(profile.iban)}" placeholder="iban / rib démo" style="margin-top:8px;">
+      <input class="miniField" id="pNameV3" value="${esc(profile.name)}" placeholder="nom structure / commerce / mairie / association" style="margin-top:8px;">
+      <input class="miniField" id="pManagerV3" value="${esc(profile.manager)}" placeholder="nom du responsable" style="margin-top:8px;">
+      <input class="miniField" id="pAddressV3" value="${esc(profile.address)}" placeholder="adresse complète" style="margin-top:8px;">
+
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <input class="miniField" id="pZipV3" value="${esc(profile.zip)}" placeholder="code postal">
+        <input class="miniField" id="pCityV3" value="${esc(profile.city)}" placeholder="ville">
+      </div>
+
+      <input class="miniField" id="pCountryV3" value="${esc(profile.country || "France")}" placeholder="pays" style="margin-top:8px;">
+      <input class="miniField" id="pSiretV3" value="${esc(profile.siret)}" placeholder="siret" style="margin-top:8px;">
+      <input class="miniField" id="pSirenV3" value="${esc(profile.siren)}" placeholder="siren" style="margin-top:8px;">
+      <input class="miniField" id="pTvaV3" value="${esc(profile.tva)}" placeholder="numéro tva intracommunautaire si applicable" style="margin-top:8px;">
+
+      <input class="miniField" id="pBillingV3" value="${esc(profile.billing)}" placeholder="email de facturation" style="margin-top:8px;">
+      <input class="miniField" id="pPhoneV3" value="${esc(profile.phone)}" placeholder="téléphone principal" style="margin-top:8px;">
+      <input class="miniField" id="pEmergencyMailV3" value="${esc(profile.emergencyMail)}" placeholder="email de secours" style="margin-top:8px;">
+      <input class="miniField" id="pEmergencyPhoneV3" value="${esc(profile.emergencyPhone)}" placeholder="téléphone de secours" style="margin-top:8px;">
+
+      <input class="miniField" id="pBankV3" value="${esc(profile.bank)}" placeholder="nom banque" style="margin-top:8px;">
+      <input class="miniField" id="pIbanV3" value="${esc(profile.iban)}" placeholder="iban / rib" style="margin-top:8px;">
+
+      <div class="muted" style="margin-top:6px;">
+        En version live, le rib sera masqué partiellement et vérifié via le système sécurisé / PSP.
+      </div>
 
       <div style="font-weight:900;margin-top:10px;">logo / photo</div>
       <input class="miniField" id="pLogoV3" type="file" accept="image/*" capture="environment">
 
       <div class="muted" style="margin-top:6px;">
-        vous pouvez choisir une photo/logo déjà présent sur le téléphone ou prendre une photo directement.
+        choisissez une photo/logo depuis le téléphone ou prenez une photo directement.
       </div>
 
       <button class="choiceBtn" id="saveProfilePubV3" type="button" style="margin-top:10px;">
@@ -8580,8 +8600,19 @@ function openProfile(type){
       const current = getProfile(type);
 
       current.name = $("pNameV3").value.trim();
+      current.manager = $("pManagerV3").value.trim();
+      current.address = $("pAddressV3").value.trim();
+      current.zip = $("pZipV3").value.trim();
+      current.city = $("pCityV3").value.trim();
+      current.country = $("pCountryV3").value.trim();
+      current.siret = $("pSiretV3").value.trim();
+      current.siren = $("pSirenV3").value.trim();
+      current.tva = $("pTvaV3").value.trim();
       current.billing = $("pBillingV3").value.trim();
       current.phone = $("pPhoneV3").value.trim();
+      current.emergencyMail = $("pEmergencyMailV3").value.trim();
+      current.emergencyPhone = $("pEmergencyPhoneV3").value.trim();
+      current.bank = $("pBankV3").value.trim();
       current.iban = $("pIbanV3").value.trim();
 
       const fileInput = $("pLogoV3");
@@ -8589,7 +8620,6 @@ function openProfile(type){
 
       if(file){
         const imageData = await fileToCompressedDataUrl(file);
-
         if(imageData){
           const imageKey = type + "_" + Date.now();
           await saveImage(imageKey, imageData);
@@ -8598,7 +8628,12 @@ function openProfile(type){
       }
 
       if(!current.name){
-        alert("renseignez le nom.");
+        alert("renseignez le nom de la structure.");
+        return;
+      }
+
+      if(!current.billing){
+        alert("renseignez l’email de facturation.");
         return;
       }
 
@@ -8653,7 +8688,11 @@ function openProfile(type){
           status:type === "mairie" ? "quote_validated" : "demo_paid",
           createdTs:Date.now(),
           amountHT:amount,
-          pack:pack
+          pack:pack,
+          billing:current.billing,
+          siret:current.siret,
+          siren:current.siren,
+          tva:current.tva
         });
       });
 
@@ -8671,7 +8710,6 @@ function openProfile(type){
     };
   }
 }
-
   function openEditToday(type){
     const bookings = getBookings();
     const k = keys(today());
