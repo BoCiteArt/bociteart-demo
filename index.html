@@ -10031,5 +10031,205 @@ if(isFn(window.makeKeyboardClickable)){
 
 })();
 </script>
+  <script>
+/* === PATCH SYNCHRO TEXTE + PHOTO PAR PUB + MESSAGE MODIF 1H === */
+
+(function(){
+  console.log("✅ Patch synchro pub/image chargé");
+
+  const PUB_STORE_KEY = "bociteart_pub_bookings_v1";
+  let currentIndex = 0;
+
+  function $(id){ return document.getElementById(id); }
+
+  function loadJson(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){ return fallback; }
+  }
+
+  function pad2(n){ return String(n).padStart(2,"0"); }
+
+  function todayKeys(){
+    const n = new Date();
+    const y = n.getFullYear();
+    const m = pad2(n.getMonth()+1);
+    const d = pad2(n.getDate());
+    return { monthKey:y+"-"+m, dayKey:y+"-"+m+"-"+d };
+  }
+
+  function getTodayAds(){
+    const bookings = loadJson(PUB_STORE_KEY, {});
+    const k = todayKeys();
+
+    const list =
+      bookings[k.monthKey] && bookings[k.monthKey][k.dayKey]
+        ? bookings[k.monthKey][k.dayKey]
+        : [];
+
+    return list.filter(ad =>
+      ad && (
+        ad.status === "paid" ||
+        ad.status === "demo_paid" ||
+        ad.status === "quote_validated"
+      )
+    );
+  }
+
+  function ensureRealBg(){
+    const ticker = $("ticker");
+    if(!ticker) return null;
+
+    let bg = $("tickerRealBgSync");
+    if(!bg){
+      bg = document.createElement("div");
+      bg.id = "tickerRealBgSync";
+      bg.style.position = "absolute";
+      bg.style.inset = "0";
+      bg.style.backgroundSize = "cover";
+      bg.style.backgroundPosition = "center";
+      bg.style.backgroundRepeat = "no-repeat";
+      bg.style.zIndex = "0";
+      ticker.insertBefore(bg, ticker.firstChild);
+    }
+
+    const old1 = $("tickerRealBg");
+    if(old1) old1.style.display = "none";
+
+    const oldImg = $("tickerImg");
+    if(oldImg) oldImg.style.display = "none";
+
+    ticker.style.backgroundImage = "none";
+
+    const overlay = ticker.querySelector(".overlay");
+    if(overlay) overlay.style.zIndex = "1";
+
+    const row = ticker.querySelector(".row");
+    if(row) row.style.zIndex = "2";
+
+    return bg;
+  }
+
+  function showAd(ad){
+    if(!ad) return;
+
+    const bg = ensureRealBg();
+    const img = ad.img || ad.logo || ad.image || "";
+
+    if(bg){
+      bg.style.backgroundImage = img ? "url(" + img + ")" : "";
+    }
+
+    const title = ad.title || ad.entityName || "Publicité locale";
+    const text = ad.text || ad.subtitle || "";
+
+    if($("tickerTitleA")) $("tickerTitleA").textContent = title;
+    if($("tickerTitleB")) $("tickerTitleB").textContent = title;
+    if($("tickerSubA")) $("tickerSubA").textContent = text;
+    if($("tickerSubB")) $("tickerSubB").textContent = text;
+  }
+
+  function rotateAds(){
+    const ads = getTodayAds();
+
+    if(!ads.length) return;
+
+    if(currentIndex >= ads.length){
+      currentIndex = 0;
+    }
+
+    showAd(ads[currentIndex]);
+    currentIndex = (currentIndex + 1) % ads.length;
+  }
+
+  window.forceRefreshBigTicker = function(){
+    currentIndex = 0;
+    rotateAds();
+  };
+
+  window.setTicker = function(i){
+    const ads = getTodayAds();
+
+    if(ads.length){
+      const idx = Number.isFinite(i) ? i % ads.length : 0;
+      showAd(ads[idx]);
+      currentIndex = (idx + 1) % ads.length;
+      return;
+    }
+  };
+
+  if(window.__bociteartFinalPubRotation){
+    clearInterval(window.__bociteartFinalPubRotation);
+  }
+
+  window.__bociteartFinalPubRotation = setInterval(rotateAds, 8000);
+
+  setTimeout(rotateAds, 500);
+  setTimeout(rotateAds, 1500);
+  setTimeout(rotateAds, 3000);
+
+  function injectOneHourNotice(){
+    const hosts = [
+      $("datePromosHost"),
+      $("pubProfileZone"),
+      $("pubAccessZone")
+    ];
+
+    hosts.forEach(host=>{
+      if(!host) return;
+      if(host.querySelector(".noticeModif1h")) return;
+
+      const box = document.createElement("div");
+      box.className = "box noticeModif1h";
+      box.style.borderLeft = "6px solid #b06b00";
+      box.innerHTML = `
+        <strong>Correction après diffusion :</strong><br>
+        Une fois la publicité diffusée, vous disposez de <strong>1 heure</strong>
+        pour corriger une erreur, une faute ou un oubli depuis votre fiche.
+        Passé ce délai, la publicité est bloquée pour la journée afin d’éviter les abus
+        et de garantir la traçabilité.
+      `;
+
+      host.insertBefore(box, host.firstChild);
+    });
+  }
+
+  document.addEventListener("click", function(e){
+    const id = e.target && e.target.id ? e.target.id : "";
+
+    if(
+      id === "accessCommercePub" ||
+      id === "accessMairiePub" ||
+      id === "accessAssoPub" ||
+      id === "pubAccessCommerce" ||
+      id === "pubAccessMairie" ||
+      id === "pubAccessAsso" ||
+      id === "validateCampaignBtn"
+    ){
+      setTimeout(injectOneHourNotice, 400);
+      setTimeout(injectOneHourNotice, 1000);
+      setTimeout(function(){
+        currentIndex = 0;
+        rotateAds();
+      }, 1200);
+    }
+  }, true);
+
+  setInterval(function(){
+    injectOneHourNotice();
+
+    const oldButton = $("editTodayAdsBtn");
+    if(oldButton) oldButton.remove();
+
+    const oldBg = $("tickerRealBg");
+    if(oldBg) oldBg.style.display = "none";
+
+    const ticker = $("ticker");
+    if(ticker) ticker.style.backgroundImage = "none";
+  }, 1000);
+
+})();
+</script>
 </body>
 </html>
