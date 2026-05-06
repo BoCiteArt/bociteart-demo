@@ -9205,5 +9205,102 @@ if(isFn(window.makeKeyboardClickable)){
 
 })();
 </script>
+  <script>
+/* === PATCH LOGO GRAND BANDEAU === */
+
+(function(){
+  console.log("✅ Patch logo bandeau chargé");
+
+  const PROFILE_KEY = "bociteart_pub_profiles_v1";
+  const PUB_STORE_KEY = "bociteart_pub_bookings_v1";
+
+  function $(id){ return document.getElementById(id); }
+
+  function loadJson(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){
+      return fallback;
+    }
+  }
+
+  function saveJson(key, value){
+    try{
+      localStorage.setItem(key, JSON.stringify(value));
+    }catch(e){
+      alert("Logo trop lourd. Choisis une image plus légère.");
+    }
+  }
+
+  function fileToDataUrl(file){
+    return new Promise(resolve=>{
+      if(!file) return resolve("");
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result || "");
+      reader.onerror = () => resolve("");
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.addEventListener("click", async function(e){
+    if(e.target && e.target.id === "saveProfileFast"){
+      setTimeout(async function(){
+        const fileInput = $("profLogoFile");
+        if(!fileInput || !fileInput.files || !fileInput.files[0]) return;
+
+        const type =
+          window.__tickerProfile ||
+          window.__currentPubProfile ||
+          "commerce";
+
+        const logo = await fileToDataUrl(fileInput.files[0]);
+
+        const profiles = loadJson(PROFILE_KEY, { commerce:{}, mairie:{}, asso:{} });
+        if(!profiles[type]) profiles[type] = {};
+        profiles[type].logo = logo;
+
+        saveJson(PROFILE_KEY, profiles);
+
+        alert("Logo enregistré pour le grand bandeau.");
+      }, 200);
+    }
+  }, true);
+
+  document.addEventListener("click", function(e){
+    if(e.target && e.target.id === "validateCampaignBtn"){
+      setTimeout(function(){
+        const profiles = loadJson(PROFILE_KEY, { commerce:{}, mairie:{}, asso:{} });
+        const bookings = loadJson(PUB_STORE_KEY, {});
+
+        const type =
+          window.__tickerProfile ||
+          window.__currentPubProfile ||
+          "commerce";
+
+        const logo = profiles[type] && profiles[type].logo ? profiles[type].logo : "";
+
+        Object.keys(bookings).forEach(monthKey=>{
+          Object.keys(bookings[monthKey]).forEach(dayKey=>{
+            bookings[monthKey][dayKey].forEach(ad=>{
+              if(!ad.img && logo){
+                ad.img = logo;
+                ad.logo = logo;
+              }
+            });
+          });
+        });
+
+        saveJson(PUB_STORE_KEY, bookings);
+
+        if(typeof window.forceRefreshBigTicker === "function"){
+          window.forceRefreshBigTicker();
+        }
+      }, 700);
+    }
+  }, true);
+
+})();
+</script>
 </body>
 </html>
