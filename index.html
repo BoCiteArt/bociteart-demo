@@ -9475,5 +9475,281 @@ if(isFn(window.makeKeyboardClickable)){
 
 })();
 </script>
+<script>
+/* === PATCH FINAL LOGO + MODIFICATION PUB 1H === */
+
+(function(){
+  console.log("✅ Patch final logo + modification 1h chargé");
+
+  const PUB_STORE_KEY = "bociteart_pub_bookings_v1";
+  const PROFILE_KEY = "bociteart_pub_profiles_v1";
+  const LOGO_KEY = "bociteart_pub_logo_last_v1";
+  const ONE_HOUR = 60 * 60 * 1000;
+
+  function $(id){ return document.getElementById(id); }
+
+  function loadJson(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){ return fallback; }
+  }
+
+  function saveJson(key, value){
+    try{
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    }catch(e){
+      alert("Image trop lourde. Utilise un JPG plus léger.");
+      return false;
+    }
+  }
+
+  function fileToDataUrl(file){
+    return new Promise(resolve=>{
+      if(!file) return resolve("");
+      const r = new FileReader();
+      r.onload = () => resolve(r.result || "");
+      r.onerror = () => resolve("");
+      r.readAsDataURL(file);
+    });
+  }
+
+  function todayKeys(){
+    const n = new Date();
+    const y = n.getFullYear();
+    const m = String(n.getMonth()+1).padStart(2,"0");
+    const d = String(n.getDate()).padStart(2,"0");
+    return { monthKey:y+"-"+m, dayKey:y+"-"+m+"-"+d };
+  }
+
+  function ensureBgLayer(){
+    const ticker = $("ticker");
+    if(!ticker) return null;
+
+    let bg = $("tickerRealBg");
+    if(!bg){
+      bg = document.createElement("div");
+      bg.id = "tickerRealBg";
+      bg.style.position = "absolute";
+      bg.style.inset = "0";
+      bg.style.backgroundSize = "cover";
+      bg.style.backgroundPosition = "center";
+      bg.style.backgroundRepeat = "no-repeat";
+      bg.style.zIndex = "0";
+      ticker.insertBefore(bg, ticker.firstChild);
+    }
+
+    const oldImg = $("tickerImg");
+    if(oldImg){
+      oldImg.style.display = "none";
+    }
+
+    const overlay = ticker.querySelector(".overlay");
+    if(overlay) overlay.style.zIndex = "1";
+
+    const row = ticker.querySelector(".row");
+    if(row) row.style.zIndex = "2";
+
+    return bg;
+  }
+
+  function setTickerVisual(ad){
+    const bg = ensureBgLayer();
+    if(!bg || !ad) return;
+
+    const logo = ad.img || ad.logo || ad.image || loadJson(LOGO_KEY, "");
+    if(logo){
+      bg.style.backgroundImage = "url(" + logo + ")";
+    }
+
+    const titleA = $("tickerTitleA");
+    const titleB = $("tickerTitleB");
+    const subA = $("tickerSubA");
+    const subB = $("tickerSubB");
+
+    if(titleA) titleA.textContent = ad.title || ad.entityName || "Publicité locale";
+    if(titleB) titleB.textContent = ad.title || ad.entityName || "Publicité locale";
+    if(subA) subA.textContent = ad.text || ad.subtitle || "";
+    if(subB) subB.textContent = ad.text || ad.subtitle || "";
+  }
+
+  window.forceRefreshBigTicker = function(){
+    const bookings = loadJson(PUB_STORE_KEY, {});
+    const k = todayKeys();
+    const list =
+      bookings[k.monthKey] && bookings[k.monthKey][k.dayKey]
+        ? bookings[k.monthKey][k.dayKey]
+        : [];
+
+    const active = list.filter(ad =>
+      ad && (
+        ad.status === "paid" ||
+        ad.status === "demo_paid" ||
+        ad.status === "quote_validated"
+      )
+    );
+
+    if(active.length){
+      setTickerVisual(active[0]);
+    }
+  };
+
+  document.addEventListener("change", async function(e){
+    if(e.target && e.target.id === "profLogoFile"){
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+
+      const logo = await fileToDataUrl(file);
+      if(!logo) return;
+
+      saveJson(LOGO_KEY, logo);
+
+      const profiles = loadJson(PROFILE_KEY, { commerce:{}, mairie:{}, asso:{} });
+      const type = window.__currentPubProfile || window.__tickerProfile || "commerce";
+
+      if(!profiles[type]) profiles[type] = {};
+      profiles[type].logo = logo;
+      saveJson(PROFILE_KEY, profiles);
+
+      setTickerVisual({
+        title:"Aperçu logo enregistré",
+        text:"Ce logo sera utilisé dans le grand bandeau.",
+        img:logo
+      });
+
+      alert("Logo chargé et aperçu dans le grand bandeau.");
+    }
+  }, true);
+
+  document.addEventListener("click", function(e){
+    if(e.target && e.target.id === "validateCampaignBtn"){
+      setTimeout(function(){
+        const logo = loadJson(LOGO_KEY, "");
+        const bookings = loadJson(PUB_STORE_KEY, {});
+        const k = todayKeys();
+
+        if(bookings[k.monthKey] && bookings[k.monthKey][k.dayKey]){
+          bookings[k.monthKey][k.dayKey].forEach(ad=>{
+            ad.img = ad.img || logo;
+            ad.logo = ad.logo || logo;
+            ad.image = ad.image || logo;
+            ad.createdTs = ad.createdTs || Date.now();
+            ad.lastEditTs = ad.lastEditTs || Date.now();
+          });
+
+          saveJson(PUB_STORE_KEY, bookings);
+        }
+
+        window.forceRefreshBigTicker();
+      }, 800);
+    }
+  }, true);
+
+  function openEditTodayAds(){
+    if(typeof window.openModal !== "function") return;
+
+    const bookings = loadJson(PUB_STORE_KEY, {});
+    const k = todayKeys();
+    const list =
+      bookings[k.monthKey] && bookings[k.monthKey][k.dayKey]
+        ? bookings[k.monthKey][k.dayKey]
+        : [];
+
+    if(!list.length){
+      alert("Aucune publicité active aujourd’hui.");
+      return;
+    }
+
+    window.openModal("Modifier mes publicités du jour", `
+      <div class="box">
+        <strong>Règle :</strong> une publicité peut être modifiée librement pendant 1 heure après validation.
+        Ensuite, elle est bloquée pour la journée.
+      </div>
+
+      ${list.map((ad,i)=>{
+        const ts = Number(ad.createdTs || ad.lastEditTs || Date.now());
+        const remaining = ONE_HOUR - (Date.now() - ts);
+        const locked = remaining <= 0;
+
+        return `
+          <div class="box">
+            <strong>Pub ${i+1}</strong><br>
+            <div class="muted">${locked ? "Bloquée pour aujourd’hui" : "Modifiable encore " + Math.ceil(remaining/60000) + " minute(s)"}</div>
+
+            <div style="margin-top:8px;font-weight:900;">Titre</div>
+            <input class="miniField editAdTitle" data-index="${i}" value="${String(ad.title || "").replace(/"/g,"&quot;")}" ${locked ? "disabled" : ""}>
+
+            <div style="margin-top:8px;font-weight:900;">Texte</div>
+            <textarea class="miniField editAdText" data-index="${i}" style="min-height:70px;" ${locked ? "disabled" : ""}>${String(ad.text || "")}</textarea>
+
+            <button class="choiceBtn saveEditAdBtn" data-index="${i}" type="button" style="margin-top:8px;" ${locked ? "disabled" : ""}>
+              Enregistrer modification
+            </button>
+          </div>
+        `;
+      }).join("")}
+    `);
+
+    setTimeout(()=>{
+      document.querySelectorAll(".saveEditAdBtn").forEach(btn=>{
+        btn.onclick = function(){
+          const i = Number(btn.getAttribute("data-index"));
+          const bookings = loadJson(PUB_STORE_KEY, {});
+          const k = todayKeys();
+          const ad = bookings[k.monthKey][k.dayKey][i];
+
+          const ts = Number(ad.createdTs || ad.lastEditTs || Date.now());
+          if(Date.now() - ts > ONE_HOUR){
+            alert("Délai dépassé : modification bloquée pour aujourd’hui.");
+            return;
+          }
+
+          const title = document.querySelector('.editAdTitle[data-index="'+i+'"]').value.trim();
+          const text = document.querySelector('.editAdText[data-index="'+i+'"]').value.trim();
+
+          ad.title = title || ad.title;
+          ad.text = text || ad.text;
+          ad.lastEditTs = Date.now();
+
+          saveJson(PUB_STORE_KEY, bookings);
+          window.forceRefreshBigTicker();
+
+          alert("Publicité modifiée. Le grand bandeau est actualisé.");
+        };
+      });
+    },100);
+  }
+
+  if(!$("editTodayAdsBtn")){
+    const ticker = $("ticker");
+    if(ticker){
+      const btn = document.createElement("button");
+      btn.id = "editTodayAdsBtn";
+      btn.type = "button";
+      btn.textContent = "Modifier pub 1h";
+      btn.style.position = "absolute";
+      btn.style.right = "10px";
+      btn.style.bottom = "10px";
+      btn.style.zIndex = "5";
+      btn.style.border = "0";
+      btn.style.borderRadius = "10px";
+      btn.style.padding = "6px 8px";
+      btn.style.fontWeight = "900";
+      btn.style.fontSize = "10px";
+      btn.style.cursor = "pointer";
+      btn.onclick = function(e){
+        e.stopPropagation();
+        openEditTodayAds();
+      };
+      ticker.appendChild(btn);
+    }
+  }
+
+  setTimeout(window.forceRefreshBigTicker, 500);
+  setInterval(window.forceRefreshBigTicker, 3000);
+
+})();
+</script>  
 </body>
 </html>
