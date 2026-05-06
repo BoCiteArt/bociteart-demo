@@ -8175,51 +8175,58 @@ if(isFn(window.makeKeyboardClickable)){
     }
   }
 
-  function fileToCompressedDataUrl(file){
-    return new Promise(resolve=>{
-      if(!file) return resolve("");
+ function fileToCompressedDataUrl(file){
+  return new Promise(resolve=>{
+    if(!file) return resolve("");
 
-      const img = new Image();
-      const reader = new FileReader();
+    const img = new Image();
+    const reader = new FileReader();
 
-      reader.onload = function(e){
-        img.onload = function(){
-          const targetW = 1200;
-          const targetH = 370;
-          const targetRatio = targetW / targetH;
-          const sourceRatio = img.width / img.height;
+    reader.onload = function(e){
+      img.onload = function(){
 
-          let sx = 0;
-          let sy = 0;
-          let sw = img.width;
-          let sh = img.height;
+        const targetW = 1200;
+        const targetH = 370;
 
-          if(sourceRatio > targetRatio){
-            sw = img.height * targetRatio;
-            sx = (img.width - sw) / 2;
-          }else{
-            sh = img.width / targetRatio;
-            sy = (img.height - sh) / 2;
-          }
+        const canvas = document.createElement("canvas");
+        canvas.width = targetW;
+        canvas.height = targetH;
 
-          const canvas = document.createElement("canvas");
-          canvas.width = targetW;
-          canvas.height = targetH;
+        const ctx = canvas.getContext("2d");
 
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
+        ctx.fillStyle = "#222";
+        ctx.fillRect(0, 0, targetW, targetH);
 
-          resolve(canvas.toDataURL("image/jpeg", 0.82));
-        };
+        const ratio = Math.min(
+          targetW / img.width,
+          targetH / img.height
+        );
 
-        img.onerror = function(){ resolve(""); };
-        img.src = e.target.result;
+        const drawW = Math.round(img.width * ratio);
+        const drawH = Math.round(img.height * ratio);
+
+        const dx = Math.round((targetW - drawW) / 2);
+        const dy = Math.round((targetH - drawH) / 2);
+
+        ctx.drawImage(img, dx, dy, drawW, drawH);
+
+        resolve(canvas.toDataURL("image/jpeg", 0.86));
       };
 
-      reader.onerror = function(){ resolve(""); };
-      reader.readAsDataURL(file);
-    });
-  }
+      img.onerror = function(){
+        resolve("");
+      };
+
+      img.src = e.target.result;
+    };
+
+    reader.onerror = function(){
+      resolve("");
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
 
   function getProfiles(){
     return load(PROFILE, { commerce:{}, mairie:{}, asso:{} });
