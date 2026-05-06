@@ -8039,182 +8039,275 @@ if(isFn(window.makeKeyboardClickable)){
 })();
 </script> 
  <script>
-/* === PUB UNIQUE PROPRE — IMAGE + TEXTE ENSEMBLE === */
+/* === PUB UNIQUE V3 — IMAGE/TEXTE + PHOTO TÉLÉPHONE + CODES SIMPLES === */
 
 (function(){
-  console.log("✅ PUB UNIQUE PROPRE chargée");
+  console.log("✅ pub unique v3 chargée");
 
-  const STORE = "bociteart_pub_unique_v1";
-  const PROFILE = "bociteart_pub_profiles_unique_v1";
+  const STORE = "bociteart_pub_v3_bookings";
+  const PROFILE = "bociteart_pub_v3_profiles";
+  const DB_NAME = "bociteart_pub_v3_images";
+  const DB_STORE = "images";
   const MAX_DAY = 10;
   const ONE_HOUR = 60 * 60 * 1000;
 
   const CODES = {
-    commerce:"COM-1234",
-    mairie:"MAIRIE-1234",
-    asso:"ASSO-1234"
+    commerce:"com1234",
+    mairie:"mairie1234",
+    asso:"asso1234"
   };
 
   function $(id){ return document.getElementById(id); }
 
   function esc(s){
     return String(s || "")
-      .replace(/&/g,"&amp;").replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
       .replace(/'/g,"&#039;");
   }
 
-  function load(k,f){
-    try{ const r=localStorage.getItem(k); return r?JSON.parse(r):f; }
-    catch(e){ return f; }
+  function load(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){
+      return fallback;
+    }
   }
 
-  function save(k,v){
-    try{ localStorage.setItem(k,JSON.stringify(v)); return true; }
-    catch(e){
-  alert("Image encore trop lourde malgré la compression. Essaie une image plus simple ou moins détaillée.");
-  return false;
-}
+  function save(key, value){
+    try{
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    }catch(e){
+      alert("données trop lourdes ou stockage indisponible.");
+      return false;
+    }
+  }
 
-  function pad(n){ return String(n).padStart(2,"0"); }
+  function pad(n){
+    return String(n).padStart(2,"0");
+  }
 
   function today(){
-    const d=new Date();
-    return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
-  
-
-  function keys(date){
-    const d=new Date((date || today())+"T12:00:00");
-    const m=d.getFullYear()+"-"+pad(d.getMonth()+1);
-    const j=m+"-"+pad(d.getDate());
-    return {m,j};
+    const d = new Date();
+    return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
   }
 
-  function fileToDataUrl(file){
-  return new Promise(resolve=>{
-    if(!file) return resolve("");
+  function keys(date){
+    const d = new Date((date || today()) + "T12:00:00");
+    const m = d.getFullYear() + "-" + pad(d.getMonth()+1);
+    const j = m + "-" + pad(d.getDate());
+    return { m, j };
+  }
 
-    const img = new Image();
-    const reader = new FileReader();
+  function label(type){
+    if(type === "commerce") return "commerce";
+    if(type === "mairie") return "mairie";
+    return "association";
+  }
 
-    reader.onload = function(e){
-      img.onload = function(){
-        const maxWidth = 900;
-        const maxHeight = 500;
+  function openDb(){
+    return new Promise((resolve,reject)=>{
+      const req = indexedDB.open(DB_NAME, 1);
 
-        let width = img.width;
-        let height = img.height;
-
-        const ratio = Math.min(maxWidth / width, maxHeight / height, 1);
-
-        width = Math.round(width * ratio);
-        height = Math.round(height * ratio);
-
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
-
-        const compressed = canvas.toDataURL("image/jpeg", 0.62);
-
-        resolve(compressed);
+      req.onupgradeneeded = function(e){
+        const db = e.target.result;
+        if(!db.objectStoreNames.contains(DB_STORE)){
+          db.createObjectStore(DB_STORE);
+        }
       };
 
-      img.onerror = function(){
+      req.onsuccess = function(){
+        resolve(req.result);
+      };
+
+      req.onerror = function(){
+        reject(req.error);
+      };
+    });
+  }
+
+  async function saveImage(key, data){
+    const db = await openDb();
+    return new Promise((resolve,reject)=>{
+      const tx = db.transaction(DB_STORE, "readwrite");
+      tx.objectStore(DB_STORE).put(data, key);
+      tx.oncomplete = function(){ resolve(true); };
+      tx.onerror = function(){ reject(tx.error); };
+    });
+  }
+
+  async function loadImage(key){
+    if(!key) return "";
+
+    try{
+      const db = await openDb();
+      return await new Promise((resolve,reject)=>{
+        const tx = db.transaction(DB_STORE, "readonly");
+        const req = tx.objectStore(DB_STORE).get(key);
+        req.onsuccess = function(){ resolve(req.result || ""); };
+        req.onerror = function(){ reject(req.error); };
+      });
+    }catch(e){
+      return "";
+    }
+  }
+
+  function fileToCompressedDataUrl(file){
+    return new Promise(resolve=>{
+      if(!file) return resolve("");
+
+      const img = new Image();
+      const reader = new FileReader();
+
+      reader.onload = function(e){
+        img.onload = function(){
+          const maxW = 1400;
+          const maxH = 900;
+
+          let w = img.width;
+          let h = img.height;
+
+          const ratio = Math.min(maxW / w, maxH / h, 1);
+
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, w, h);
+
+          const compressed = canvas.toDataURL("image/jpeg", 0.72);
+          resolve(compressed);
+        };
+
+        img.onerror = function(){
+          resolve("");
+        };
+
+        img.src = e.target.result;
+      };
+
+      reader.onerror = function(){
         resolve("");
       };
 
-      img.src = e.target.result;
-    };
-
-    reader.onerror = function(){
-      resolve("");
-    };
-
-    reader.readAsDataURL(file);
-  });
-}
-
-  function label(type){
-    return type==="commerce" ? "Commerce" : type==="mairie" ? "Mairie" : "Association";
+      reader.readAsDataURL(file);
+    });
   }
 
   function getProfiles(){
-    return load(PROFILE,{commerce:{},mairie:{},asso:{}});
+    return load(PROFILE, { commerce:{}, mairie:{}, asso:{} });
   }
 
   function getProfile(type){
-    const p=getProfiles();
-    if(!p[type]) p[type]={};
-    return p[type];
+    const profiles = getProfiles();
+    if(!profiles[type]) profiles[type] = {};
+    return profiles[type];
   }
 
-  function saveProfile(type,data){
-    const p=getProfiles();
-    p[type]=data;
-    save(PROFILE,p);
+  function saveProfile(type, data){
+    const profiles = getProfiles();
+    profiles[type] = data;
+    save(PROFILE, profiles);
   }
 
   function getBookings(){
-    return load(STORE,{});
+    return load(STORE, {});
   }
 
-  function saveBookings(b){
-    save(STORE,b||{});
+  function saveBookings(bookings){
+    save(STORE, bookings || {});
   }
 
-  function dayList(b,date){
-    const k=keys(date);
-    if(!b[k.m]) b[k.m]={};
-    if(!b[k.m][k.j]) b[k.m][k.j]=[];
-    return b[k.m][k.j];
+  function dayList(bookings, date){
+    const k = keys(date);
+
+    if(!bookings[k.m]) bookings[k.m] = {};
+    if(!bookings[k.m][k.j]) bookings[k.m][k.j] = [];
+
+    return bookings[k.m][k.j];
   }
 
   function todayAds(){
-    const b=getBookings();
-    const k=keys(today());
-    const list=b[k.m] && b[k.m][k.j] ? b[k.m][k.j] : [];
-    return list.filter(x=>x && (x.status==="paid" || x.status==="demo_paid" || x.status==="quote_validated"));
+    const bookings = getBookings();
+    const k = keys(today());
+
+    const list =
+      bookings[k.m] && bookings[k.m][k.j]
+        ? bookings[k.m][k.j]
+        : [];
+
+    return list.filter(ad =>
+      ad &&
+      (
+        ad.status === "demo_paid" ||
+        ad.status === "quote_validated" ||
+        ad.status === "paid"
+      )
+    );
   }
 
-  function renderTicker(){
-    const ticker=$("ticker");
+  async function renderTicker(){
+    const ticker = $("ticker");
     if(!ticker) return;
 
-    const oldImg=$("tickerImg");
-    if(oldImg) oldImg.style.display="none";
+    const oldImg = $("tickerImg");
+    if(oldImg) oldImg.style.display = "none";
 
-    const oldRow=ticker.querySelector(".row");
-    if(oldRow) oldRow.style.display="none";
+    const oldRow = ticker.querySelector(".row");
+    if(oldRow) oldRow.style.display = "none";
 
-    let stage=$("bcaPubStage");
+    let stage = $("bcaPubStageV3");
+
     if(!stage){
-      stage=document.createElement("div");
-      stage.id="bcaPubStage";
-      stage.style.position="absolute";
-      stage.style.inset="0";
-      stage.style.overflow="hidden";
-      stage.style.zIndex="10";
+      stage = document.createElement("div");
+      stage.id = "bcaPubStageV3";
+      stage.style.position = "absolute";
+      stage.style.inset = "0";
+      stage.style.overflow = "hidden";
+      stage.style.zIndex = "10";
       ticker.appendChild(stage);
     }
 
-    const ads=todayAds();
-    const finalAds=ads.length ? ads : [{
-      title:"Publicité Bo’CitéArt",
-      text:"Aucune publicité enregistrée aujourd’hui.",
-      logo:"https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+    const ads = todayAds();
+
+    const finalAds = ads.length ? ads : [{
+      title:"publicité bo’citéart",
+      text:"aucune publicité enregistrée aujourd’hui.",
+      imageKey:"",
+      fallback:"https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
     }];
 
-    const doubled=finalAds.concat(finalAds);
+    const ready = [];
 
-    stage.innerHTML=`
+    for(const ad of finalAds){
+      let img = "";
+
+      if(ad.imageKey){
+        img = await loadImage(ad.imageKey);
+      }
+
+      ready.push({
+        ...ad,
+        imageData: img || ad.fallback || ""
+      });
+    }
+
+    const doubled = ready.concat(ready);
+
+    stage.innerHTML = `
       <div style="
         display:flex;
         height:100%;
         width:max-content;
-        animation:bcaPubMove ${Math.max(20, finalAds.length*8)}s linear infinite;
+        animation:bcaPubMoveV3 ${Math.max(20, ready.length * 8)}s linear infinite;
       ">
         ${doubled.map(ad=>`
           <div style="
@@ -8223,248 +8316,467 @@ if(isFn(window.makeKeyboardClickable)){
             max-width:100vw;
             height:100%;
             flex:0 0 420px;
-            background-image:url('${ad.logo || ""}');
+            background-image:url('${ad.imageData || ""}');
             background-size:cover;
             background-position:center;
+            background-color:#333;
           ">
-            <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.70),rgba(0,0,0,.22));"></div>
-            <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 18px;color:#fff;">
-              <div style="font-size:15px;font-weight:900;line-height:1.2;">${esc(ad.title || ad.entityName || "Publicité locale")}</div>
-              <div style="font-size:12px;font-weight:800;margin-top:6px;line-height:1.25;">${esc(ad.text || "")}</div>
+            <div style="
+              position:absolute;
+              inset:0;
+              background:linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,.24));
+            "></div>
+
+            <div style="
+              position:absolute;
+              inset:0;
+              display:flex;
+              flex-direction:column;
+              justify-content:center;
+              padding:0 18px;
+              color:#fff;
+            ">
+              <div style="font-size:15px;font-weight:900;line-height:1.2;">
+                ${esc(ad.title || ad.entityName || "publicité locale")}
+              </div>
+              <div style="font-size:12px;font-weight:800;margin-top:6px;line-height:1.25;">
+                ${esc(ad.text || "")}
+              </div>
             </div>
           </div>
         `).join("")}
       </div>
     `;
 
-    if(!$("bcaPubStyle")){
-      const st=document.createElement("style");
-      st.id="bcaPubStyle";
-      st.textContent="@keyframes bcaPubMove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}";
-      document.head.appendChild(st);
+    if(!$("bcaPubStyleV3")){
+      const style = document.createElement("style");
+      style.id = "bcaPubStyleV3";
+      style.textContent = `
+        @keyframes bcaPubMoveV3{
+          0%{ transform:translateX(0); }
+          100%{ transform:translateX(-50%); }
+        }
+      `;
+      document.head.appendChild(style);
     }
   }
 
-  function renderCalendar(selected){
-    const now=new Date();
-    let html=`<div class="box"><strong>Calendrier :</strong> ouvert sur 3 mois. Le trimestre suivant sera ouvert 15 jours avant.</div>`;
+  function renderCalendar(selectedDates){
+    const now = new Date();
+    let html = `
+      <div class="box">
+        <strong>calendrier :</strong> ouvert sur 3 mois.
+        <div class="muted" style="margin-top:6px;">
+          le trimestre suivant sera ouvert 15 jours avant son démarrage.
+        </div>
+      </div>
+    `;
 
-    for(let mm=0;mm<3;mm++){
-      const d=new Date(now.getFullYear(),now.getMonth()+mm,1);
-      const y=d.getFullYear();
-      const m=d.getMonth();
-      const days=new Date(y,m+1,0).getDate();
-      html+=`<div style="font-weight:900;text-transform:capitalize;margin-top:12px;">${d.toLocaleDateString("fr-FR",{month:"long",year:"numeric"})}</div>`;
-      html+=`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px;">`;
-      for(let j=1;j<=days;j++){
-        const date=y+"-"+pad(m+1)+"-"+pad(j);
-        const used=dayList(getBookings(),date).length;
-        const sel=selected.includes(date);
-        const full=used>=MAX_DAY;
-        html+=`
-          <button class="choiceBtn bcaDate" data-date="${date}" ${full?"disabled":""}
-            style="padding:8px 4px;background:${sel?"#2f5d46":full?"#ddd":"#fff"};color:${sel?"#fff":"#111"};">
-            <strong>${j}</strong><br><span style="font-size:10px;">${used}/${MAX_DAY}</span>
-          </button>`;
+    for(let offset=0; offset<3; offset++){
+      const month = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+      const y = month.getFullYear();
+      const m = month.getMonth();
+      const days = new Date(y, m + 1, 0).getDate();
+
+      html += `
+        <div style="font-weight:900;text-transform:capitalize;margin-top:12px;">
+          ${month.toLocaleDateString("fr-FR", { month:"long", year:"numeric" })}
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px;">
+      `;
+
+      for(let d=1; d<=days; d++){
+        const date = y + "-" + pad(m+1) + "-" + pad(d);
+        const used = dayList(getBookings(), date).length;
+        const selected = selectedDates.includes(date);
+        const full = used >= MAX_DAY;
+
+        html += `
+          <button class="choiceBtn bcaPubDateV3"
+            data-date="${date}"
+            ${full ? "disabled" : ""}
+            style="
+              padding:8px 4px;
+              background:${selected ? "#2f5d46" : full ? "#ddd" : "#fff"};
+              color:${selected ? "#fff" : "#111"};
+              opacity:${full ? ".55" : "1"};
+            ">
+            <strong>${d}</strong><br>
+            <span style="font-size:10px;">${used}/${MAX_DAY}</span>
+          </button>
+        `;
       }
-      html+=`</div>`;
+
+      html += `</div>`;
     }
+
     return html;
   }
 
   function openProfile(type){
-    const zone=$("pubZone");
-    const p=getProfile(type);
-    const selected=[];
+    const zone = $("pubZoneV3");
+    if(!zone) return;
 
-    zone.innerHTML=`
+    const profile = getProfile(type);
+    const selectedDates = [];
+
+    zone.innerHTML = `
       <div class="box" style="border-left:6px solid #2f5d46;">
-        <strong>Espace ${label(type)}</strong><br>
-        Chaque publicité garde son propre texte et son propre logo/photo.
+        <strong>espace ${label(type)}</strong><br>
+        suivez les étapes. votre fiche sera enregistrée pour éviter de tout ressaisir.
       </div>
 
       <div class="box" style="border-left:6px solid #b06b00;">
-        <strong>Correction après diffusion :</strong><br>
-        Une fois la publicité diffusée, vous avez <strong>1 heure</strong> pour corriger une faute, erreur ou oubli depuis cette fiche.
-        Ensuite, elle est bloquée pour la journée.
+        <strong>correction après diffusion :</strong><br>
+        une fois la publicité diffusée, vous disposez de <strong>1 heure</strong>
+        pour corriger une faute, une erreur ou un oubli depuis cette fiche.
+        passé ce délai, elle est bloquée pour la journée.
       </div>
 
       <div class="box">
-        <strong>Fiche préremplie</strong>
-        <input class="miniField" id="pName" value="${esc(p.name)}" placeholder="Nom / enseigne / structure" style="margin-top:8px;">
-        <input class="miniField" id="pBilling" value="${esc(p.billing)}" placeholder="Email facturation" style="margin-top:8px;">
-        <input class="miniField" id="pPhone" value="${esc(p.phone)}" placeholder="Téléphone" style="margin-top:8px;">
-        <input class="miniField" id="pIban" value="${esc(p.iban)}" placeholder="IBAN / RIB démo" style="margin-top:8px;">
-        <div style="font-weight:900;margin-top:10px;">Logo / photo</div>
-        <input class="miniField" id="pLogo" type="file" accept="image/*">
-        <button class="choiceBtn" id="saveProfilePub" type="button" style="margin-top:10px;">Enregistrer ma fiche</button>
+        <strong>1. fiche préremplie</strong>
+
+        <input class="miniField" id="pNameV3" value="${esc(profile.name)}" placeholder="nom / enseigne / structure" style="margin-top:8px;">
+        <input class="miniField" id="pBillingV3" value="${esc(profile.billing)}" placeholder="email facturation" style="margin-top:8px;">
+        <input class="miniField" id="pPhoneV3" value="${esc(profile.phone)}" placeholder="téléphone" style="margin-top:8px;">
+        <input class="miniField" id="pIbanV3" value="${esc(profile.iban)}" placeholder="iban / rib démo" style="margin-top:8px;">
+
+        <div style="font-weight:900;margin-top:10px;">logo / photo</div>
+        <input class="miniField" id="pLogoV3" type="file" accept="image/*" capture="environment">
+
+        <div class="muted" style="margin-top:6px;">
+          vous pouvez choisir une photo/logo déjà présent sur le téléphone ou prendre une photo directement.
+        </div>
+
+        <button class="choiceBtn" id="saveProfilePubV3" type="button" style="margin-top:10px;">
+          enregistrer ma fiche
+        </button>
       </div>
 
       <div class="box">
-        <strong>Pack</strong>
-        <select class="miniField" id="packPub">
-          <option value="1">1 publicité — 50 € HT</option>
-          <option value="5">Pack 5 publicités — 200 € HT</option>
+        <strong>2. pack publicitaire</strong>
+        <select class="miniField" id="packPubV3">
+          <option value="1">1 publicité — 50 € ht</option>
+          <option value="5">pack 5 publicités — 200 € ht</option>
         </select>
+        <div class="muted" id="packHelpV3" style="margin-top:8px;">vous pouvez sélectionner 1 date.</div>
       </div>
 
-      <div class="box"><strong>Dates</strong><div id="calPub"></div></div>
-      <div class="box"><strong>Textes par date</strong><div id="textsPub" class="muted">Sélectionnez une date.</div></div>
+      <div class="box">
+        <strong>3. choisir les dates</strong>
+        <div id="calendarPubV3"></div>
+      </div>
 
       <div class="box">
-        <button class="choiceBtn" id="validatePub" type="button">Valider / simulation paiement</button>
-        <button class="choiceBtn" id="editPub" type="button" style="background:#fff;margin-top:8px;">Modifier ma publicité du jour</button>
+        <strong>4. texte par date</strong>
+        <div id="textsPubV3" class="muted" style="margin-top:8px;">sélectionnez une date.</div>
+      </div>
+
+      <div class="box">
+        <button class="choiceBtn" id="validatePubV3" type="button">
+          valider / simulation paiement
+        </button>
+        <button class="choiceBtn" id="editPubV3" type="button" style="background:#fff;margin-top:8px;">
+          modifier ma publicité du jour
+        </button>
       </div>
     `;
 
-    function refreshCal(){
-      $("calPub").innerHTML=renderCalendar(selected);
-      document.querySelectorAll(".bcaDate").forEach(btn=>{
-        btn.onclick=()=>{
-          const date=btn.getAttribute("data-date");
-          const pack=Number($("packPub").value||1);
-          const i=selected.indexOf(date);
-          if(i>=0) selected.splice(i,1);
-          else{
-            if(selected.length>=pack){ alert("Pack limité à "+pack+" date(s)."); return; }
-            selected.push(date);
+    function refreshCalendar(){
+      const host = $("calendarPubV3");
+      if(!host) return;
+
+      host.innerHTML = renderCalendar(selectedDates);
+
+      document.querySelectorAll(".bcaPubDateV3").forEach(btn=>{
+        btn.onclick = function(){
+          const date = btn.getAttribute("data-date");
+          const pack = Number($("packPubV3").value || 1);
+          const index = selectedDates.indexOf(date);
+
+          if(index >= 0){
+            selectedDates.splice(index, 1);
+          }else{
+            if(selectedDates.length >= pack){
+              alert("pack limité à " + pack + " date(s).");
+              return;
+            }
+            selectedDates.push(date);
           }
-          refreshCal(); refreshTexts();
+
+          refreshCalendar();
+          refreshTexts();
         };
       });
     }
 
     function refreshTexts(){
-      if(!selected.length){ $("textsPub").innerHTML="Sélectionnez une date."; return; }
-      $("textsPub").innerHTML=selected.map(date=>`
+      const host = $("textsPubV3");
+      if(!host) return;
+
+      if(!selectedDates.length){
+        host.innerHTML = "sélectionnez une date.";
+        return;
+      }
+
+      host.innerHTML = selectedDates.map(date=>`
         <div class="box" style="background:var(--bg);">
           <strong>${date}</strong>
-          <input class="miniField titleByDate" data-date="${date}" placeholder="Titre" style="margin-top:8px;">
-          <textarea class="miniField textByDate" data-date="${date}" style="min-height:70px;margin-top:8px;" placeholder="Texte de la publicité"></textarea>
+          <input class="miniField titleByDateV3" data-date="${date}" placeholder="titre de la publicité" style="margin-top:8px;">
+          <textarea class="miniField textByDateV3" data-date="${date}" style="min-height:70px;margin-top:8px;" placeholder="texte de la publicité"></textarea>
         </div>
       `).join("");
     }
 
-    refreshCal();
+    refreshCalendar();
 
-    $("packPub").onchange=()=>{ while(selected.length>Number($("packPub").value||1)) selected.pop(); refreshCal(); refreshTexts(); };
+    const packSelect = $("packPubV3");
+    if(packSelect){
+      packSelect.onchange = function(){
+        const pack = Number(packSelect.value || 1);
+        const help = $("packHelpV3");
+        if(help) help.textContent = "vous pouvez sélectionner " + pack + " date(s).";
 
-    $("saveProfilePub").onclick=async()=>{
-      const file=$("pLogo").files && $("pLogo").files[0];
-      const logo=await fileToDataUrl(file);
-      const current=getProfile(type);
-      current.name=$("pName").value.trim();
-      current.billing=$("pBilling").value.trim();
-      current.phone=$("pPhone").value.trim();
-      current.iban=$("pIban").value.trim();
-      if(logo) current.logo=logo;
-      if(!current.name){ alert("Renseigne le nom."); return; }
-      saveProfile(type,current);
-      alert("Fiche enregistrée.");
-    };
+        while(selectedDates.length > pack){
+          selectedDates.pop();
+        }
 
-    $("validatePub").onclick=()=>{
-      const current=getProfile(type);
-      if(!current.name){ alert("Enregistre d’abord ta fiche."); return; }
-      if(!current.billing){ alert("Renseigne l’email facturation."); return; }
-      if(!selected.length){ alert("Sélectionne une date."); return; }
+        refreshCalendar();
+        refreshTexts();
+      };
+    }
 
-      const pack=Number($("packPub").value||1);
-      const amount=pack===5?200:50;
-      if(!confirm("Simulation paiement : "+amount+" € HT. Confirmer ?")) return;
+    const saveBtn = $("saveProfilePubV3");
+    if(saveBtn){
+      saveBtn.onclick = async function(){
+        const current = getProfile(type);
 
-      const b=getBookings();
+        current.name = $("pNameV3").value.trim();
+        current.billing = $("pBillingV3").value.trim();
+        current.phone = $("pPhoneV3").value.trim();
+        current.iban = $("pIbanV3").value.trim();
 
-      selected.forEach(date=>{
-        const t=document.querySelector('.titleByDate[data-date="'+date+'"]').value.trim();
-        const x=document.querySelector('.textByDate[data-date="'+date+'"]').value.trim();
-        dayList(b,date).push({
-          profileType:type,
-          entityName:current.name,
-          title:t||current.name,
-          text:x||"Publicité locale Bo’CitéArt",
-          logo:current.logo||"",
-          status:type==="mairie"?"quote_validated":"demo_paid",
-          createdTs:Date.now(),
-          amountHT:amount
+        const fileInput = $("pLogoV3");
+        const file = fileInput && fileInput.files && fileInput.files[0];
+
+        if(file){
+          const imageData = await fileToCompressedDataUrl(file);
+
+          if(imageData){
+            const imageKey = type + "_" + Date.now();
+            await saveImage(imageKey, imageData);
+            current.imageKey = imageKey;
+          }
+        }
+
+        if(!current.name){
+          alert("renseignez le nom.");
+          return;
+        }
+
+        saveProfile(type, current);
+        alert("fiche enregistrée.");
+      };
+    }
+
+    const validateBtn = $("validatePubV3");
+    if(validateBtn){
+      validateBtn.onclick = function(){
+        const current = getProfile(type);
+
+        if(!current.name){
+          alert("enregistrez d’abord votre fiche.");
+          return;
+        }
+
+        if(!current.billing){
+          alert("renseignez l’email de facturation.");
+          return;
+        }
+
+        if(!selectedDates.length){
+          alert("sélectionnez une date.");
+          return;
+        }
+
+        const pack = Number($("packPubV3").value || 1);
+        const amount = pack === 5 ? 200 : 50;
+
+        const ok = confirm(
+          "simulation paiement\n\n" +
+          "montant : " + amount + " € ht\n\n" +
+          "confirmer ?"
+        );
+
+        if(!ok) return;
+
+        const bookings = getBookings();
+
+        selectedDates.forEach(date=>{
+          const titleInput = document.querySelector('.titleByDateV3[data-date="'+date+'"]');
+          const textInput = document.querySelector('.textByDateV3[data-date="'+date+'"]');
+
+          dayList(bookings, date).push({
+            profileType:type,
+            entityName:current.name,
+            title:(titleInput && titleInput.value.trim()) || current.name,
+            text:(textInput && textInput.value.trim()) || "publicité locale bo’citéart",
+            imageKey:current.imageKey || "",
+            status:type === "mairie" ? "quote_validated" : "demo_paid",
+            createdTs:Date.now(),
+            amountHT:amount,
+            pack:pack
+          });
         });
-      });
 
-      saveBookings(b);
-      renderTicker();
-      alert("Publicité enregistrée. Si la date est aujourd’hui, elle apparaît dans le bandeau.");
-    };
+        saveBookings(bookings);
+        renderTicker();
 
-    $("editPub").onclick=()=>openEdit(type);
+        alert("publicité enregistrée. si la date est aujourd’hui, elle apparaît dans le grand bandeau.");
+      };
+    }
+
+    const editBtn = $("editPubV3");
+    if(editBtn){
+      editBtn.onclick = function(){
+        openEditToday(type);
+      };
+    }
   }
 
-  function openEdit(type){
-    const b=getBookings();
-    const k=keys(today());
-    const list=(b[k.m] && b[k.m][k.j]) ? b[k.m][k.j] : [];
-    const own=list.map((ad,i)=>({ad,i})).filter(x=>x.ad.profileType===type);
+  function openEditToday(type){
+    const bookings = getBookings();
+    const k = keys(today());
 
-    if(!own.length){ alert("Aucune publicité du jour."); return; }
+    const list =
+      bookings[k.m] && bookings[k.m][k.j]
+        ? bookings[k.m][k.j]
+        : [];
 
-    openModal("Modifier publicité du jour", own.map(x=>{
-      const locked=Date.now()-Number(x.ad.createdTs||0)>ONE_HOUR;
-      return `
-        <div class="box">
-          <input class="miniField editTitle" data-i="${x.i}" value="${esc(x.ad.title)}" ${locked?"disabled":""}>
-          <textarea class="miniField editText" data-i="${x.i}" style="min-height:70px;margin-top:8px;" ${locked?"disabled":""}>${esc(x.ad.text)}</textarea>
-          <button class="choiceBtn saveEdit" data-i="${x.i}" ${locked?"disabled":""} style="margin-top:8px;">Enregistrer</button>
-        </div>`;
-    }).join(""));
+    const own = list
+      .map((ad,index)=>({ ad,index }))
+      .filter(x=>x.ad.profileType === type);
+
+    if(!own.length){
+      alert("aucune publicité du jour pour ce profil.");
+      return;
+    }
+
+    openModal("modifier publicité du jour", `
+      <div class="box">
+        modification possible pendant <strong>1 heure</strong> après validation.
+        ensuite, la publicité est bloquée pour la journée.
+      </div>
+
+      ${own.map(x=>{
+        const locked = Date.now() - Number(x.ad.createdTs || 0) > ONE_HOUR;
+
+        return `
+          <div class="box">
+            <input class="miniField editTitleV3" data-index="${x.index}" value="${esc(x.ad.title)}" ${locked ? "disabled" : ""}>
+            <textarea class="miniField editTextV3" data-index="${x.index}" style="min-height:70px;margin-top:8px;" ${locked ? "disabled" : ""}>${esc(x.ad.text)}</textarea>
+            <button class="choiceBtn saveEditV3" data-index="${x.index}" type="button" style="margin-top:8px;" ${locked ? "disabled" : ""}>
+              enregistrer
+            </button>
+          </div>
+        `;
+      }).join("")}
+    `);
 
     setTimeout(()=>{
-      document.querySelectorAll(".saveEdit").forEach(btn=>{
-        btn.onclick=()=>{
-          const i=Number(btn.getAttribute("data-i"));
-          const b=getBookings();
-          const k=keys(today());
-          const ad=b[k.m][k.j][i];
-          if(Date.now()-Number(ad.createdTs||0)>ONE_HOUR){ alert("Délai dépassé."); return; }
-          ad.title=document.querySelector('.editTitle[data-i="'+i+'"]').value.trim()||ad.title;
-          ad.text=document.querySelector('.editText[data-i="'+i+'"]').value.trim()||ad.text;
-          saveBookings(b);
+      document.querySelectorAll(".saveEditV3").forEach(btn=>{
+        btn.onclick = function(){
+          const index = Number(btn.getAttribute("data-index"));
+          const bookings = getBookings();
+          const k = keys(today());
+          const ad = bookings[k.m][k.j][index];
+
+          if(Date.now() - Number(ad.createdTs || 0) > ONE_HOUR){
+            alert("délai dépassé.");
+            return;
+          }
+
+          const titleInput = document.querySelector('.editTitleV3[data-index="'+index+'"]');
+          const textInput = document.querySelector('.editTextV3[data-index="'+index+'"]');
+
+          ad.title = titleInput.value.trim() || ad.title;
+          ad.text = textInput.value.trim() || ad.text;
+
+          saveBookings(bookings);
           renderTicker();
-          alert("Publicité modifiée.");
+
+          alert("publicité modifiée.");
         };
       });
     },100);
   }
 
-  window.openTicker=function(){
-    openModal("Publicités & visibilité", `
+  window.openTicker = function(){
+    openModal("publicités & visibilité", `
       <div class="box">
-        <strong>Grand bandeau :</strong><br>
-        Chaque profil accède avec son code. Chaque publicité défile avec son propre logo/photo et son propre texte.
+        <strong>grand bandeau publicitaire</strong><br>
+        chaque publicité défile avec son propre logo/photo et son propre texte.
       </div>
+
+      <div class="box">
+        <strong>veuillez mettre votre code d’accès</strong><br>
+        exemples démo :<br>
+        commerce : <strong>com1234</strong><br>
+        mairie : <strong>mairie1234</strong><br>
+        association : <strong>asso1234</strong>
+      </div>
+
       <div class="choiceGrid">
-        <button class="choiceBtn" id="openPubCommerce" type="button">Commerce</button>
-        <button class="choiceBtn" id="openPubMairie" type="button">Mairie</button>
-        <button class="choiceBtn" id="openPubAsso" type="button">Association</button>
+        <button class="choiceBtn" id="openPubCommerceV3" type="button">commerce</button>
+        <button class="choiceBtn" id="openPubMairieV3" type="button">mairie</button>
+        <button class="choiceBtn" id="openPubAssoV3" type="button">association</button>
       </div>
-      <div id="pubZone" style="margin-top:12px;"></div>
+
+      <div id="pubZoneV3" style="margin-top:12px;"></div>
     `);
 
     setTimeout(()=>{
       function ask(type){
-        const code=prompt("Code "+label(type)+" :");
-        if(code!==CODES[type]){ alert("Code incorrect."); return; }
+        const code = prompt(
+          "veuillez mettre votre code d’accès\n\n" +
+          "exemples démo :\n" +
+          "commerce : com1234\n" +
+          "mairie : mairie1234\n" +
+          "association : asso1234\n\n" +
+          "écrivez votre code ici :"
+        );
+
+        if(!code) return;
+
+        const cleanCode = String(code).trim().toLowerCase();
+
+        if(cleanCode !== CODES[type]){
+          alert("code incorrect.");
+          return;
+        }
+
         openProfile(type);
       }
-      $("openPubCommerce").onclick=()=>ask("commerce");
-      $("openPubMairie").onclick=()=>ask("mairie");
-      $("openPubAsso").onclick=()=>ask("asso");
+
+      const c = $("openPubCommerceV3");
+      const m = $("openPubMairieV3");
+      const a = $("openPubAssoV3");
+
+      if(c) c.onclick = function(){ ask("commerce"); };
+      if(m) m.onclick = function(){ ask("mairie"); };
+      if(a) a.onclick = function(){ ask("asso"); };
     },100);
   };
 
-  const ticker=$("ticker");
-  if(ticker) ticker.onclick=()=>window.openTicker();
+  const ticker = $("ticker");
+  if(ticker){
+    ticker.onclick = function(){
+      window.openTicker();
+    };
+  }
 
   renderTicker();
-  setInterval(renderTicker,5000);
+  setInterval(renderTicker, 5000);
 })();
 </script> 
 </body>
