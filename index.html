@@ -8065,7 +8065,6 @@ if(isFn(window.makeKeyboardClickable)){
 </script> 
  <script>
 /* === PUB UNIQUE V3 — IMAGE/TEXTE + PHOTO TÉLÉPHONE + CODES SIMPLES === */
-
 (function(){
   console.log("✅ pub unique v3 chargée");
 
@@ -8145,13 +8144,8 @@ if(isFn(window.makeKeyboardClickable)){
         }
       };
 
-      req.onsuccess = function(){
-        resolve(req.result);
-      };
-
-      req.onerror = function(){
-        reject(req.error);
-      };
+      req.onsuccess = function(){ resolve(req.result); };
+      req.onerror = function(){ reject(req.error); };
     });
   }
 
@@ -8167,7 +8161,6 @@ if(isFn(window.makeKeyboardClickable)){
 
   async function loadImage(key){
     if(!key) return "";
-
     try{
       const db = await openDb();
       return await new Promise((resolve,reject)=>{
@@ -8190,39 +8183,39 @@ if(isFn(window.makeKeyboardClickable)){
 
       reader.onload = function(e){
         img.onload = function(){
-          const maxW = 1400;
-          const maxH = 900;
+          const targetW = 1200;
+          const targetH = 370;
+          const targetRatio = targetW / targetH;
+          const sourceRatio = img.width / img.height;
 
-          let w = img.width;
-          let h = img.height;
+          let sx = 0;
+          let sy = 0;
+          let sw = img.width;
+          let sh = img.height;
 
-          const ratio = Math.min(maxW / w, maxH / h, 1);
-
-          w = Math.round(w * ratio);
-          h = Math.round(h * ratio);
+          if(sourceRatio > targetRatio){
+            sw = img.height * targetRatio;
+            sx = (img.width - sw) / 2;
+          }else{
+            sh = img.width / targetRatio;
+            sy = (img.height - sh) / 2;
+          }
 
           const canvas = document.createElement("canvas");
-          canvas.width = w;
-          canvas.height = h;
+          canvas.width = targetW;
+          canvas.height = targetH;
 
           const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, w, h);
+          ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
 
-          const compressed = canvas.toDataURL("image/jpeg", 0.72);
-          resolve(compressed);
+          resolve(canvas.toDataURL("image/jpeg", 0.82));
         };
 
-        img.onerror = function(){
-          resolve("");
-        };
-
+        img.onerror = function(){ resolve(""); };
         img.src = e.target.result;
       };
 
-      reader.onerror = function(){
-        resolve("");
-      };
-
+      reader.onerror = function(){ resolve(""); };
       reader.readAsDataURL(file);
     });
   }
@@ -8253,21 +8246,15 @@ if(isFn(window.makeKeyboardClickable)){
 
   function dayList(bookings, date){
     const k = keys(date);
-
     if(!bookings[k.m]) bookings[k.m] = {};
     if(!bookings[k.m][k.j]) bookings[k.m][k.j] = [];
-
     return bookings[k.m][k.j];
   }
 
   function todayAds(){
     const bookings = getBookings();
     const k = keys(today());
-
-    const list =
-      bookings[k.m] && bookings[k.m][k.j]
-        ? bookings[k.m][k.j]
-        : [];
+    const list = bookings[k.m] && bookings[k.m][k.j] ? bookings[k.m][k.j] : [];
 
     return list.filter(ad =>
       ad &&
@@ -8314,7 +8301,6 @@ if(isFn(window.makeKeyboardClickable)){
 
     for(const ad of finalAds){
       let img = "";
-
       if(ad.imageKey){
         img = await loadImage(ad.imageKey);
       }
@@ -8339,12 +8325,13 @@ if(isFn(window.makeKeyboardClickable)){
             position:relative;
             width:420px;
             max-width:100vw;
-            height:100%;
+            height:130px;
             flex:0 0 420px;
             background-image:url('${ad.imageData || ""}');
             background-size:cover;
-            background-position:center;
-            background-color:#333;
+            background-position:center center;
+            background-repeat:no-repeat;
+            background-color:#222;
           ">
             <div style="
               position:absolute;
@@ -8467,7 +8454,7 @@ if(isFn(window.makeKeyboardClickable)){
         <input class="miniField" id="pIbanV3" value="${esc(profile.iban)}" placeholder="iban / rib démo" style="margin-top:8px;">
 
         <div style="font-weight:900;margin-top:10px;">logo / photo</div>
-        <input class="miniField" id="pLogoV3" type="file" accept="image/*" capture="environment">
+        <input class="miniField" id="pLogoV3" type="file" accept="image/*">
 
         <div class="muted" style="margin-top:6px;">
           vous pouvez choisir une photo/logo déjà présent sur le téléphone ou prendre une photo directement.
@@ -8672,11 +8659,7 @@ if(isFn(window.makeKeyboardClickable)){
   function openEditToday(type){
     const bookings = getBookings();
     const k = keys(today());
-
-    const list =
-      bookings[k.m] && bookings[k.m][k.j]
-        ? bookings[k.m][k.j]
-        : [];
+    const list = bookings[k.m] && bookings[k.m][k.j] ? bookings[k.m][k.j] : [];
 
     const own = list
       .map((ad,index)=>({ ad,index }))
@@ -8800,11 +8783,8 @@ if(isFn(window.makeKeyboardClickable)){
     };
   }
 
-renderTicker();
-
-/* ne pas relancer automatiquement le bandeau :
-   sinon le défilement repart à zéro avant la fin des pubs */
-window.refreshPubTickerV3 = renderTicker;
+  renderTicker();
+  window.refreshPubTickerV3 = renderTicker;
 
 })();
 </script> 
