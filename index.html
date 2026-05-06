@@ -8851,5 +8851,118 @@ if(isFn(window.makeKeyboardClickable)){
   setTimeout(buildTickerCards, 500);
 })();
 </script>
+  <script>
+/* === PATCH LIAISON COMMERCE → PUB V2 + LOGO AUTO === */
+
+(function(){
+  console.log("✅ Patch liaison commerce/pub chargé");
+
+  const PROFILE_STORE = "bociteart_pub_v2_profiles";
+
+  function $(id){ return document.getElementById(id); }
+
+  function loadJson(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){ return fallback; }
+  }
+
+  function saveJson(key, value){
+    try{
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    }catch(e){
+      alert("Image trop lourde. Utilise une photo JPG plus légère.");
+      return false;
+    }
+  }
+
+  function fileToDataUrl(file){
+    return new Promise(resolve=>{
+      if(!file) return resolve("");
+      const r = new FileReader();
+      r.onload = () => resolve(r.result || "");
+      r.onerror = () => resolve("");
+      r.readAsDataURL(file);
+    });
+  }
+
+  /* Sauvegarde automatique du logo dès sélection */
+  document.addEventListener("change", async function(e){
+    if(e.target && e.target.id === "pubV2LogoFile"){
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+
+      const logo = await fileToDataUrl(file);
+      if(!logo) return;
+
+      const profiles = loadJson(PROFILE_STORE, { commerce:{}, mairie:{}, asso:{} });
+      const type = window.__pubV2CurrentType || "commerce";
+
+      if(!profiles[type]) profiles[type] = {};
+      profiles[type].logo = logo;
+
+      saveJson(PROFILE_STORE, profiles);
+
+      alert("Logo/photo enregistré automatiquement pour la publicité.");
+    }
+  }, true);
+
+  /* Mémorise le profil ouvert */
+  document.addEventListener("click", function(e){
+    if(e.target && e.target.id === "pubV2Commerce") window.__pubV2CurrentType = "commerce";
+    if(e.target && e.target.id === "pubV2Mairie") window.__pubV2CurrentType = "mairie";
+    if(e.target && e.target.id === "pubV2Asso") window.__pubV2CurrentType = "asso";
+  }, true);
+
+  /* Ajoute l’accès publicité dans l’onglet Commerces */
+  function injectCommercePubAccess(){
+    const title = $("modalTitle");
+    const body = $("modalBody");
+
+    if(!title || !body) return;
+    if(!String(title.textContent || "").toLowerCase().includes("commerces")) return;
+    if($("commercePubV2AccessBox")) return;
+
+    body.insertAdjacentHTML("afterbegin", `
+      <div id="commercePubV2AccessBox" class="box" style="border-left:6px solid #2f5d46;">
+        <strong>Publicité grand bandeau :</strong><br>
+        Pour créer une publicité avec texte + logo/photo, le commerçant doit passer par l’accès sécurisé du grand bandeau.
+        Sa fiche est enregistrée une première fois, puis préremplie automatiquement.
+        <div style="margin-top:10px;">
+          <button class="choiceBtn" id="commerceOpenPubV2Btn" type="button">
+            Ouvrir mon espace publicité commerce
+          </button>
+        </div>
+      </div>
+    `);
+
+    const btn = $("commerceOpenPubV2Btn");
+    if(btn){
+      btn.onclick = function(){
+        if(typeof window.openTicker === "function"){
+          window.openTicker();
+
+          setTimeout(function(){
+            const commerceBtn = $("pubV2Commerce");
+            if(commerceBtn) commerceBtn.click();
+          }, 300);
+        }
+      };
+    }
+  }
+
+  const oldOpenByKey = window.__bociteartOpenByKey;
+  if(typeof oldOpenByKey === "function"){
+    window.__bociteartOpenByKey = function(key){
+      oldOpenByKey(key);
+      setTimeout(injectCommercePubAccess, 300);
+      setTimeout(injectCommercePubAccess, 800);
+    };
+  }
+
+})();
+</script>
 </body>
 </html>
