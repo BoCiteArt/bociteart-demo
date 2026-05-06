@@ -8071,15 +8071,17 @@ if(isFn(window.makeKeyboardClickable)){
 
   function save(k,v){
     try{ localStorage.setItem(k,JSON.stringify(v)); return true; }
-    catch(e){ alert("Image trop lourde. Prends un JPG plus léger."); return false; }
-  }
+    catch(e){
+  alert("Image encore trop lourde malgré la compression. Essaie une image plus simple ou moins détaillée.");
+  return false;
+}
 
   function pad(n){ return String(n).padStart(2,"0"); }
 
   function today(){
     const d=new Date();
     return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
-  }
+  
 
   function keys(date){
     const d=new Date((date || today())+"T12:00:00");
@@ -8089,14 +8091,51 @@ if(isFn(window.makeKeyboardClickable)){
   }
 
   function fileToDataUrl(file){
-    return new Promise(resolve=>{
-      if(!file) return resolve("");
-      const r=new FileReader();
-      r.onload=()=>resolve(r.result||"");
-      r.onerror=()=>resolve("");
-      r.readAsDataURL(file);
-    });
-  }
+  return new Promise(resolve=>{
+    if(!file) return resolve("");
+
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+      img.onload = function(){
+        const maxWidth = 900;
+        const maxHeight = 500;
+
+        let width = img.width;
+        let height = img.height;
+
+        const ratio = Math.min(maxWidth / width, maxHeight / height, 1);
+
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressed = canvas.toDataURL("image/jpeg", 0.62);
+
+        resolve(compressed);
+      };
+
+      img.onerror = function(){
+        resolve("");
+      };
+
+      img.src = e.target.result;
+    };
+
+    reader.onerror = function(){
+      resolve("");
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
 
   function label(type){
     return type==="commerce" ? "Commerce" : type==="mairie" ? "Mairie" : "Association";
