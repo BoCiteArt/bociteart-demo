@@ -897,6 +897,48 @@
       .sportTape{ height:34px; }
       .sportTapeTrack{ font-size:11px; }
     }
+    /* === PATCH STABILISATION DÉMO ÉLUS === */
+
+.demoBanner{
+  position:fixed;
+  left:50%;
+  bottom:8px;
+  transform:translateX(-50%);
+  z-index:100000;
+  background:#111;
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+  padding:6px 10px;
+  border-radius:999px;
+  opacity:.82;
+  pointer-events:none;
+}
+
+/* Stabilisation modales */
+.modal{
+  position:fixed !important;
+  inset:0 !important;
+  display:none !important;
+  z-index:9999 !important;
+}
+
+.modal.open{
+  display:block !important;
+}
+
+.modal .backdrop{
+  position:absolute !important;
+  inset:0 !important;
+  background:rgba(0,0,0,.40) !important;
+}
+
+.modal .sheet{
+  position:absolute !important;
+  left:50% !important;
+  top:50% !important;
+  transform:translate(-50%,-50%) !important;
+}
   </style>
 </head>
 <body>
@@ -7858,6 +7900,142 @@ if(isFn(window.makeKeyboardClickable)){
   }
 
   majBouton();
+})();
+</script>
+<script>
+/* === PATCH FINAL DÉMO ÉLUS — Bo’CitéArt === */
+/* Objectif : stabiliser la démo sans bloquer le futur passage live */
+
+(function(){
+  console.log("✅ Patch stabilisation Bo’CitéArt chargé");
+
+  const DEMO_MODE = true;
+
+  function safeJsonGet(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){
+      return fallback;
+    }
+  }
+
+  function safeJsonSet(key, value){
+    try{
+      localStorage.setItem(key, JSON.stringify(value));
+    }catch(e){}
+  }
+
+  window.loadSchoolWallet = window.loadSchoolWallet || function(){
+    return safeJsonGet("bociteart_wallet_school_v1", { jaune:0 });
+  };
+
+  window.saveSchoolWallet = window.saveSchoolWallet || function(wallet){
+    safeJsonSet("bociteart_wallet_school_v1", {
+      jaune: Math.max(0, Number(wallet && wallet.jaune || 0))
+    });
+  };
+
+  window.loadSportWallet = window.loadSportWallet || function(){
+    return safeJsonGet("bociteart_wallet_sport_v1", { vert:0 });
+  };
+
+  window.saveSportWallet = window.saveSportWallet || function(wallet){
+    safeJsonSet("bociteart_wallet_sport_v1", {
+      vert: Math.max(0, Number(wallet && wallet.vert || 0))
+    });
+  };
+
+  window.loadCitizenWallet = window.loadCitizenWallet || function(){
+    return safeJsonGet("bociteart_wallet_citizen_v1", { or:37 });
+  };
+
+  window.saveCitizenWallet = window.saveCitizenWallet || function(wallet){
+    safeJsonSet("bociteart_wallet_citizen_v1", {
+      or: Math.max(0, Number(wallet && wallet.or || 0))
+    });
+  };
+
+  function refreshCitizenWalletDisplay(){
+    const bal = document.getElementById("citizenCoinBalance");
+    const progress = document.getElementById("walletProgressBar");
+    const txt = document.getElementById("walletProgressText");
+    const motivation = document.getElementById("walletMotivation");
+    const expiry = document.getElementById("walletExpiryInfo");
+
+    const w = window.loadCitizenWallet();
+    const amount = Number(w.or || 0);
+
+    if(bal) bal.textContent = amount;
+
+    let next = 12;
+    if(amount >= 12) next = 30;
+    if(amount >= 30) next = 50;
+    if(amount >= 50) next = 100;
+    if(amount >= 100) next = 100;
+
+    const pct = next > 0 ? Math.min(100, Math.round((amount / next) * 100)) : 0;
+
+    if(progress) progress.style.width = pct + "%";
+
+    if(txt){
+      txt.textContent = amount >= 100
+        ? "Niveau premium atteint."
+        : "Encore " + Math.max(0, next - amount) + " bocitecoin(s) pour atteindre le palier " + next + ".";
+    }
+
+    if(motivation){
+      motivation.textContent = amount >= 100
+        ? "Bravo, vous êtes au niveau maximum de la démo."
+        : "Continuez à découvrir les commerces partenaires.";
+    }
+
+    if(expiry){
+      expiry.textContent = "Démo : solde conservé localement sur cet appareil.";
+    }
+  }
+
+  window.refreshCitizenWalletDisplay = refreshCitizenWalletDisplay;
+
+  if(!document.getElementById("demoBannerBociteart")){
+    const b = document.createElement("div");
+    b.id = "demoBannerBociteart";
+    b.className = "demoBanner";
+    b.textContent = "Version démonstration élus — données locales non contractuelles";
+    document.body.appendChild(b);
+  }
+
+  document.querySelectorAll("[data-open]").forEach(function(el){
+    el.addEventListener("click", function(e){
+      const key = el.getAttribute("data-open");
+
+      if(typeof window.__bociteartOpenByKey === "function"){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        window.__bociteartOpenByKey(key);
+
+        setTimeout(function(){
+          if(key === "commerces"){
+            refreshCitizenWalletDisplay();
+          }
+        }, 100);
+      }
+    }, true);
+  });
+
+  window.__bociteartLiveReadiness = {
+    mode: DEMO_MODE ? "DEMO_ELUS" : "LIVE",
+    liveRequiredLater: [
+      "backend sécurisé",
+      "authentification par rôles",
+      "base de données serveur",
+      "PSP avec webhook",
+      "factures serveur",
+      "journaux inviolables",
+      "validation juridique finale RGPD/CGU/CGV"
+    ]
+  };
+
 })();
 </script>
 </body>
