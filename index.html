@@ -9750,6 +9750,286 @@ if(isFn(window.makeKeyboardClickable)){
   setInterval(window.forceRefreshBigTicker, 3000);
 
 })();
-</script>  
+</script> 
+  <script>
+/* === PATCH ROTATION IMAGE + TEXTE + MODIF 1H DANS FICHE === */
+
+(function(){
+  console.log("✅ Patch rotation image/texte + modif fiche chargé");
+
+  const PUB_STORE_KEY = "bociteart_pub_bookings_v1";
+  const ONE_HOUR = 60 * 60 * 1000;
+  let tickerRotationIndex = 0;
+
+  function $(id){ return document.getElementById(id); }
+
+  function loadJson(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){ return fallback; }
+  }
+
+  function saveJson(key, value){
+    try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
+  }
+
+  function todayKeys(){
+    const n = new Date();
+    const y = n.getFullYear();
+    const m = String(n.getMonth()+1).padStart(2,"0");
+    const d = String(n.getDate()).padStart(2,"0");
+    return { monthKey:y+"-"+m, dayKey:y+"-"+m+"-"+d };
+  }
+
+  function ensureBgLayer(){
+    const ticker = $("ticker");
+    if(!ticker) return null;
+
+    let bg = $("tickerRealBg");
+    if(!bg){
+      bg = document.createElement("div");
+      bg.id = "tickerRealBg";
+      bg.style.position = "absolute";
+      bg.style.inset = "0";
+      bg.style.backgroundSize = "cover";
+      bg.style.backgroundPosition = "center";
+      bg.style.backgroundRepeat = "no-repeat";
+      bg.style.zIndex = "0";
+      ticker.insertBefore(bg, ticker.firstChild);
+    }
+
+    const oldImg = $("tickerImg");
+    if(oldImg) oldImg.style.display = "none";
+
+    const overlay = ticker.querySelector(".overlay");
+    if(overlay) overlay.style.zIndex = "1";
+
+    const row = ticker.querySelector(".row");
+    if(row) row.style.zIndex = "2";
+
+    return bg;
+  }
+
+  function getTodayAds(){
+    const bookings = loadJson(PUB_STORE_KEY, {});
+    const k = todayKeys();
+
+    const list =
+      bookings[k.monthKey] && bookings[k.monthKey][k.dayKey]
+        ? bookings[k.monthKey][k.dayKey]
+        : [];
+
+    return list.filter(ad =>
+      ad && (
+        ad.status === "paid" ||
+        ad.status === "demo_paid" ||
+        ad.status === "quote_validated"
+      )
+    );
+  }
+
+  function showTickerAd(ad){
+    const bg = ensureBgLayer();
+    if(!bg || !ad) return;
+
+    const img = ad.img || ad.logo || ad.image || "";
+
+    if(img){
+      bg.style.backgroundImage = "url(" + img + ")";
+    }else{
+      bg.style.backgroundImage = "";
+    }
+
+    const title = ad.title || ad.entityName || "Publicité locale";
+    const text = ad.text || ad.subtitle || "";
+
+    if($("tickerTitleA")) $("tickerTitleA").textContent = title;
+    if($("tickerTitleB")) $("tickerTitleB").textContent = title;
+    if($("tickerSubA")) $("tickerSubA").textContent = text;
+    if($("tickerSubB")) $("tickerSubB").textContent = text;
+  }
+
+  window.forceRefreshBigTicker = function(){
+    const ads = getTodayAds();
+
+    if(!ads.length) return;
+
+    if(tickerRotationIndex >= ads.length){
+      tickerRotationIndex = 0;
+    }
+
+    showTickerAd(ads[tickerRotationIndex]);
+  };
+
+  if(window.__bociteartTickerImageTimer){
+    clearInterval(window.__bociteartTickerImageTimer);
+  }
+
+  window.__bociteartTickerImageTimer = setInterval(function(){
+    const ads = getTodayAds();
+    if(!ads.length) return;
+
+    tickerRotationIndex = (tickerRotationIndex + 1) % ads.length;
+    showTickerAd(ads[tickerRotationIndex]);
+  }, 10000);
+
+  const badBtn = $("editTodayAdsBtn");
+  if(badBtn) badBtn.remove();
+
+  function openEditTodayAdsInProfile(){
+    if(typeof window.openModal !== "function") return;
+
+    const bookings = loadJson(PUB_STORE_KEY, {});
+    const k = todayKeys();
+
+    const list =
+      bookings[k.monthKey] && bookings[k.monthKey][k.dayKey]
+        ? bookings[k.monthKey][k.dayKey]
+        : [];
+
+    if(!list.length){
+      alert("Aucune publicité active aujourd’hui.");
+      return;
+    }
+
+    window.openModal("Modifier publicité du jour", `
+      <div class="box">
+        <strong>Règle :</strong> modification libre pendant 1 heure après validation.
+        Ensuite, la publicité est bloquée pour la journée.
+      </div>
+
+      ${list.map((ad,i)=>{
+        const ts = Number(ad.createdTs || ad.lastEditTs || Date.now());
+        const remaining = ONE_HOUR - (Date.now() - ts);
+        const locked = remaining <= 0;
+
+        return `
+          <div class="box">
+            <strong>${ad.entityName || "Publicité"} — Pub ${i+1}</strong>
+            <div class="muted" style="margin-top:6px;">
+              ${locked ? "Modification bloquée pour aujourd’hui." : "Modifiable encore " + Math.ceil(remaining/60000) + " minute(s)."}
+            </div>
+
+            <div style="margin-top:8px;font-weight:900;">Titre</div>
+            <input class="miniField editAdTitle" data-index="${i}" value="${String(ad.title || "").replace(/"/g,"&quot;")}" ${locked ? "disabled" : ""}>
+
+            <div style="margin-top:8px;font-weight:900;">Texte</div>
+            <textarea class="miniField editAdText" data-index="${i}" style="min-height:70px;" ${locked ? "disabled" : ""}>${String(ad.text || "")}</textarea>
+
+            <button class="choiceBtn saveEditAdBtn" data-index="${i}" type="button" style="margin-top:8px;" ${locked ? "disabled" : ""}>
+              Enregistrer la modification
+            </button>
+          </div>
+        `;
+      }).join("")}
+    `);
+
+    setTimeout(function(){
+      document.querySelectorAll(".saveEditAdBtn").forEach(btn=>{
+        btn.onclick = function(){
+          const i = Number(btn.getAttribute("data-index"));
+          const bookings = loadJson(PUB_STORE_KEY, {});
+          const k = todayKeys();
+          const ad = bookings[k.monthKey][k.dayKey][i];
+
+          const ts = Number(ad.createdTs || ad.lastEditTs || Date.now());
+
+          if(Date.now() - ts > ONE_HOUR){
+            alert("Délai dépassé : modification bloquée pour aujourd’hui.");
+            return;
+          }
+
+          const title = document.querySelector('.editAdTitle[data-index="'+i+'"]').value.trim();
+          const text = document.querySelector('.editAdText[data-index="'+i+'"]').value.trim();
+
+          ad.title = title || ad.title;
+          ad.text = text || ad.text;
+          ad.lastEditTs = Date.now();
+
+          saveJson(PUB_STORE_KEY, bookings);
+          tickerRotationIndex = i;
+          window.forceRefreshBigTicker();
+
+          alert("Publicité modifiée. Le grand bandeau est actualisé.");
+        };
+      });
+    },100);
+  }
+
+  window.openEditTodayAdsInProfile = openEditTodayAdsInProfile;
+
+  function injectEditButtonInProfile(){
+    const zone =
+      $("pubProfileZone") ||
+      $("pubAccessZone") ||
+      $("calHost");
+
+    if(!zone) return;
+    if($("profileEditTodayAdsBox")) return;
+
+    zone.insertAdjacentHTML("afterbegin", `
+      <div id="profileEditTodayAdsBox" class="box" style="border-left:6px solid #b06b00;">
+        <strong>Correction publicité du jour :</strong><br>
+        Si une erreur est visible pendant la diffusion, la publicité peut être modifiée pendant 1 heure après validation.
+        Ensuite, elle est bloquée pour la journée.
+        <div style="margin-top:10px;">
+          <button class="choiceBtn" id="profileEditTodayAdsBtn" type="button">
+            Modifier ma publicité du jour
+          </button>
+        </div>
+      </div>
+    `);
+
+    const btn = $("profileEditTodayAdsBtn");
+    if(btn){
+      btn.onclick = openEditTodayAdsInProfile;
+    }
+  }
+
+  document.addEventListener("click", function(e){
+    const id = e.target && e.target.id ? e.target.id : "";
+
+    if(
+      id === "accessCommercePub" ||
+      id === "accessMairiePub" ||
+      id === "accessAssoPub" ||
+      id === "pubAccessCommerce" ||
+      id === "pubAccessMairie" ||
+      id === "pubAccessAsso"
+    ){
+      setTimeout(injectEditButtonInProfile, 600);
+      setTimeout(injectEditButtonInProfile, 1200);
+    }
+
+    if(id === "validateCampaignBtn"){
+      setTimeout(function(){
+        const bookings = loadJson(PUB_STORE_KEY, {});
+        const k = todayKeys();
+
+        if(bookings[k.monthKey] && bookings[k.monthKey][k.dayKey]){
+          bookings[k.monthKey][k.dayKey].forEach(ad=>{
+            ad.createdTs = ad.createdTs || Date.now();
+            ad.lastEditTs = ad.lastEditTs || ad.createdTs;
+          });
+
+          saveJson(PUB_STORE_KEY, bookings);
+        }
+
+        tickerRotationIndex = 0;
+        window.forceRefreshBigTicker();
+      }, 800);
+    }
+  }, true);
+
+  setTimeout(function(){
+    const bad = $("editTodayAdsBtn");
+    if(bad) bad.remove();
+
+    window.forceRefreshBigTicker();
+  }, 500);
+
+})();
+</script>
 </body>
 </html>
