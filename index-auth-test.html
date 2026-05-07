@@ -2052,64 +2052,190 @@ function saveBookings(obj){
     },0);
   }
 
-  window.openTicker = function(){
-    openModal("Publicités & visibilité", `
+ <script>
+(function(){
+  const CODES = {
+    commerce: "com1234",
+    mairie: "mairie1234",
+    asso: "asso1234"
+  };
+
+  function $(id){ return document.getElementById(id); }
+
+  function label(type){
+    if(type === "commerce") return "Commerce";
+    if(type === "mairie") return "Mairie";
+    return "Association";
+  }
+
+  function openPubAccess(type){
+    const code = prompt("Entrez le code d’accès " + label(type));
+
+    if(!code) return;
+
+    if(String(code).trim().toLowerCase() !== CODES[type]){
+      alert("Code incorrect.");
+      return;
+    }
+
+    openPubCalendarQuarter(type);
+  }
+
+  function openPubCalendarQuarter(type){
+    const now = new Date();
+    let html = `
       <div class="box">
-        Choisissez votre espace, puis entrez votre code secteur.
+        <strong>Espace ${label(type)}</strong><br>
+        Remplissez votre publicité, choisissez une ou plusieurs dates sur le trimestre, puis validez le paiement.
       </div>
 
       <div class="box">
-        Codes secteur démo :<br>
+        <div style="font-weight:900;">Titre de la publicité</div>
+        <input class="miniField" id="pubTitle" placeholder="Ex : Offre spéciale">
+
+        <div style="font-weight:900;margin-top:10px;">Texte de la publicité</div>
+        <textarea class="miniField" id="pubText" style="min-height:90px;" placeholder="Texte à diffuser"></textarea>
+
+        <div style="font-weight:900;margin-top:10px;">Image / logo</div>
+        <input class="miniField" id="pubImage" type="file" accept="image/*">
+      </div>
+
+      <div style="font-weight:900;margin-top:12px;">Calendrier trimestriel</div>
+    `;
+
+    for(let m = 0; m < 3; m++){
+      const date = new Date(now.getFullYear(), now.getMonth() + m, 1);
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const days = new Date(year, month + 1, 0).getDate();
+
+      html += `
+        <div class="box">
+          <div style="font-weight:900;text-transform:capitalize;margin-bottom:10px;">
+            ${date.toLocaleDateString("fr-FR", { month:"long", year:"numeric" })}
+          </div>
+
+          <div class="calGrid">
+      `;
+
+      for(let d = 1; d <= days; d++){
+        html += `
+          <div class="calDay pubDay" data-date="${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}">
+            <div class="d">${d}</div>
+            <div class="s">dispo</div>
+          </div>
+        `;
+      }
+
+      html += `
+          </div>
+        </div>
+      `;
+    }
+
+    html += `
+      <div class="box">
+        <div style="font-weight:900;">Dates sélectionnées</div>
+        <div id="selectedPubDates" class="muted">Aucune date choisie.</div>
+
+        <button class="choiceBtn" id="payPubBtn" type="button" style="margin-top:12px;">
+          Valider et payer la publicité
+        </button>
+      </div>
+    `;
+
+    openModal("Publicité — " + label(type), html);
+
+    setTimeout(()=>{
+      const selected = [];
+
+      document.querySelectorAll(".pubDay").forEach(day=>{
+        day.onclick = function(){
+          const val = day.getAttribute("data-date");
+
+          if(selected.includes(val)){
+            selected.splice(selected.indexOf(val), 1);
+            day.style.background = "#fff";
+          }else{
+            selected.push(val);
+            day.style.background = "#dff7ea";
+          }
+
+          const out = $("selectedPubDates");
+          if(out){
+            out.textContent = selected.length ? selected.join(", ") : "Aucune date choisie.";
+          }
+        };
+      });
+
+      const pay = $("payPubBtn");
+      if(pay){
+        pay.onclick = function(){
+          const title = $("pubTitle") ? $("pubTitle").value.trim() : "";
+          const text = $("pubText") ? $("pubText").value.trim() : "";
+
+          if(!title || !text){
+            alert("Remplissez le titre et le texte de la publicité.");
+            return;
+          }
+
+          if(!selected.length){
+            alert("Choisissez au moins une date dans le calendrier trimestriel.");
+            return;
+          }
+
+          alert(
+            "Publicité enregistrée en démo.\n\n" +
+            "Profil : " + label(type) + "\n" +
+            "Dates : " + selected.join(", ") + "\n\n" +
+            "Paiement à brancher en version live."
+          );
+        };
+      }
+    },0);
+  }
+
+  window.openTicker = function(){
+    openModal("Publicités & visibilité", `
+      <div style="font-weight:900;margin-bottom:8px;">
+        Grand rectangle publicitaire
+      </div>
+
+      <div class="box">
+        Pour diffuser une publicité, choisissez votre profil ci-dessous.
+        Un code d’accès est obligatoire avant d’ouvrir l’espace publicité,
+        le calendrier trimestriel, la fiche de publicité et le paiement.
+      </div>
+
+      <div class="box">
+        Codes démo :<br>
         Commerce : <strong>com1234</strong><br>
         Mairie : <strong>mairie1234</strong><br>
         Association : <strong>asso1234</strong>
       </div>
 
       <div class="choiceGrid">
-        <button class="choiceBtn" id="pubCommerceBtn" type="button">Commerce</button>
-        <button class="choiceBtn" id="pubMairieBtn" type="button">Mairie</button>
-        <button class="choiceBtn" id="pubAssoBtn" type="button">Association</button>
+        <button class="choiceBtn" id="pubCommerceAccess" type="button">Commerce</button>
+        <button class="choiceBtn" id="pubMairieAccess" type="button">Mairie</button>
+        <button class="choiceBtn" id="pubAssoAccess" type="button">Association</button>
       </div>
     `);
 
     setTimeout(()=>{
-      function enter(type){
-        const sectorCode = prompt("Code secteur " + labelType(type));
-        if(!sectorCode) return;
-
-        if(sectorCode.trim().toLowerCase() !== CODES[type]){
-          alert("Code secteur incorrect.");
-          return;
-        }
-
-        const profile = getProfile(type);
-
-        if(!profile.accessCode){
-          alert("Aucune fiche enregistrée pour cet espace. Remplissez d’abord la fiche.");
-          openProfile(type);
-          return;
-        }
-
-        const personalCode = prompt("Code personnel de votre structure");
-        if(!personalCode) return;
-
-        if(personalCode.trim() !== profile.accessCode){
-          alert("Code personnel incorrect.");
-          return;
-        }
-
-        openQuarterCalendar(type);
-      }
-
-      $("pubCommerceBtn").onclick = ()=> enter("commerce");
-      $("pubMairieBtn").onclick = ()=> enter("mairie");
-      $("pubAssoBtn").onclick = ()=> enter("asso");
+      $("pubCommerceAccess").onclick = ()=> openPubAccess("commerce");
+      $("pubMairieAccess").onclick = ()=> openPubAccess("mairie");
+      $("pubAssoAccess").onclick = ()=> openPubAccess("asso");
     },0);
   };
 
   const ticker = document.getElementById("ticker");
   if(ticker){
-    ticker.onclick = window.openTicker;
+    ticker.onclick = null;
+    ticker.addEventListener("click", function(e){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      window.openTicker();
+    }, true);
   }
 })();
 </script>
