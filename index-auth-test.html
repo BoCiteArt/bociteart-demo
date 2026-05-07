@@ -1902,23 +1902,167 @@ function saveBookings(obj){
     return "Association";
   }
 
-  window.openTicker = function(){
-    if(typeof openModal !== "function"){
-      alert("Modale introuvable.");
-      return;
-    }
+ <script>
+(function(){
+  const CODES = {
+    commerce: "com1234",
+    mairie: "mairie1234",
+    asso: "asso1234"
+  };
 
-    openModal("Publicités & visibilité", `
+  const PROFILE_KEY = "bociteart_pub_profiles_v1";
+
+  function $(id){ return document.getElementById(id); }
+
+  function loadProfiles(){
+    try{
+      return JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
+    }catch(e){
+      return {};
+    }
+  }
+
+  function saveProfiles(data){
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(data || {}));
+  }
+
+  function getProfile(type){
+    const db = loadProfiles();
+    return db[type] || {};
+  }
+
+  function setProfile(type, profile){
+    const db = loadProfiles();
+    db[type] = profile;
+    saveProfiles(db);
+  }
+
+  function labelType(type){
+    if(type === "commerce") return "Commerce";
+    if(type === "mairie") return "Mairie";
+    return "Association";
+  }
+
+  function openProfile(type){
+    const old = getProfile(type);
+
+    openModal("Fiche préremplie — " + labelType(type), `
       <div class="box">
-        <strong>Grand bandeau publicitaire</strong><br>
-        Choisissez votre secteur. Le calendrier s’ouvre seulement après saisie du code.
+        Remplissez cette fiche une seule fois. Elle servira ensuite pour accéder au bandeau pub.
       </div>
 
       <div class="box">
-        <strong>Codes démo :</strong><br>
-        Commerce : com1234<br>
-        Mairie : mairie1234<br>
-        Association : asso1234
+        <div style="font-weight:900;">Nom structure</div>
+        <input class="miniField" id="pubProfileName" value="${old.name || ""}">
+
+        <div style="font-weight:900;margin-top:10px;">Adresse</div>
+        <input class="miniField" id="pubProfileAddress" value="${old.address || ""}">
+
+        <div style="font-weight:900;margin-top:10px;">Téléphone</div>
+        <input class="miniField" id="pubProfilePhone" value="${old.phone || ""}">
+
+        <div style="font-weight:900;margin-top:10px;">Email</div>
+        <input class="miniField" id="pubProfileEmail" value="${old.email || ""}">
+
+        <div style="font-weight:900;margin-top:10px;">Code personnel</div>
+        <input class="miniField" id="pubProfileCode" value="${old.accessCode || ""}" placeholder="Ex : moncode123">
+
+        <button class="choiceBtn" id="savePubProfile" type="button" style="margin-top:12px;">
+          Enregistrer ma fiche
+        </button>
+      </div>
+    `);
+
+    setTimeout(()=>{
+      const btn = $("savePubProfile");
+      if(!btn) return;
+
+      btn.onclick = function(){
+        const profile = {
+          type,
+          name: $("pubProfileName").value.trim(),
+          address: $("pubProfileAddress").value.trim(),
+          phone: $("pubProfilePhone").value.trim(),
+          email: $("pubProfileEmail").value.trim(),
+          accessCode: $("pubProfileCode").value.trim()
+        };
+
+        if(!profile.name || !profile.accessCode){
+          alert("Nom de structure et code personnel obligatoires.");
+          return;
+        }
+
+        setProfile(type, profile);
+        alert("Fiche enregistrée. Vous pouvez maintenant accéder au bandeau pub avec votre code personnel.");
+      };
+    },0);
+  }
+
+  function openQuarterCalendar(type){
+    const profile = getProfile(type);
+
+    openModal("Publicité — " + labelType(type), `
+      <div class="box">
+        <strong>${profile.name}</strong><br>
+        ${profile.address || ""}<br>
+        ${profile.phone || ""}<br>
+        ${profile.email || ""}
+      </div>
+
+      <div class="box">
+        Calendrier trimestriel publicitaire.<br>
+        Choisissez une date disponible pour diffuser votre publicité.
+      </div>
+
+      <div id="quarterCalendarPub"></div>
+    `);
+
+    setTimeout(()=>{
+      const box = $("quarterCalendarPub");
+      if(!box) return;
+
+      const now = new Date();
+      let html = "";
+
+      for(let i=0; i<3; i++){
+        const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+        html += `
+          <div class="box">
+            <div style="font-weight:900;text-transform:capitalize;">
+              ${d.toLocaleDateString("fr-FR", { month:"long", year:"numeric" })}
+            </div>
+            <div class="calGrid" style="margin-top:10px;">
+        `;
+
+        const days = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+
+        for(let j=1; j<=days; j++){
+          html += `
+            <div class="calDay" onclick="alert('Date choisie : ${String(j).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}')">
+              <div class="d">${j}</div>
+              <div class="s">dispo</div>
+            </div>
+          `;
+        }
+
+        html += `</div></div>`;
+      }
+
+      box.innerHTML = html;
+    },0);
+  }
+
+  window.openTicker = function(){
+    openModal("Publicités & visibilité", `
+      <div class="box">
+        Choisissez votre espace, puis entrez votre code secteur.
+      </div>
+
+      <div class="box">
+        Codes secteur démo :<br>
+        Commerce : <strong>com1234</strong><br>
+        Mairie : <strong>mairie1234</strong><br>
+        Association : <strong>asso1234</strong>
       </div>
 
       <div class="choiceGrid">
@@ -1926,53 +2070,47 @@ function saveBookings(obj){
         <button class="choiceBtn" id="pubMairieBtn" type="button">Mairie</button>
         <button class="choiceBtn" id="pubAssoBtn" type="button">Association</button>
       </div>
-
-      <div id="pubAccessStatus" class="muted" style="margin-top:10px;">
-        Sélectionnez un secteur.
-      </div>
-
-      <div id="calHost" style="display:none;margin-top:12px;"></div>
     `);
 
-    setTimeout(function(){
-      function unlock(type){
-        const code = prompt("Code secteur " + getLabel(type) + " :");
-        if(!code) return;
+    setTimeout(()=>{
+      function enter(type){
+        const sectorCode = prompt("Code secteur " + labelType(type));
+        if(!sectorCode) return;
 
-        if(String(code).trim().toLowerCase() !== CODES[type]){
-          alert("Code incorrect.");
+        if(sectorCode.trim().toLowerCase() !== CODES[type]){
+          alert("Code secteur incorrect.");
           return;
         }
 
-        window.__tickerProfile = type;
+        const profile = getProfile(type);
 
-        const status = document.getElementById("pubAccessStatus");
-        const host = document.getElementById("calHost");
-
-        if(status){
-          status.textContent = "Accès " + getLabel(type) + " validé.";
+        if(!profile.accessCode){
+          alert("Aucune fiche enregistrée pour cet espace. Remplissez d’abord la fiche.");
+          openProfile(type);
+          return;
         }
 
-        if(host){
-          host.style.display = "block";
+        const personalCode = prompt("Code personnel de votre structure");
+        if(!personalCode) return;
+
+        if(personalCode.trim() !== profile.accessCode){
+          alert("Code personnel incorrect.");
+          return;
         }
 
-        if(typeof renderCalendarInto === "function"){
-          renderCalendarInto("calHost");
-        }else{
-          alert("Calendrier publicitaire introuvable.");
-        }
+        openQuarterCalendar(type);
       }
 
-      const c = document.getElementById("pubCommerceBtn");
-      const m = document.getElementById("pubMairieBtn");
-      const a = document.getElementById("pubAssoBtn");
-
-      if(c) c.onclick = function(){ unlock("commerce"); };
-      if(m) m.onclick = function(){ unlock("mairie"); };
-      if(a) a.onclick = function(){ unlock("asso"); };
-    }, 0);
+      $("pubCommerceBtn").onclick = ()=> enter("commerce");
+      $("pubMairieBtn").onclick = ()=> enter("mairie");
+      $("pubAssoBtn").onclick = ()=> enter("asso");
+    },0);
   };
+
+  const ticker = document.getElementById("ticker");
+  if(ticker){
+    ticker.onclick = window.openTicker;
+  }
 })();
 </script>
 
