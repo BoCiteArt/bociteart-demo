@@ -1887,32 +1887,94 @@ function saveBookings(obj){
     localStorage.setItem(window.PUB_STORE_KEY, JSON.stringify(obj || {}));
   }catch(e){}
 }
-function syncBookingsToTicker(){
-  const bookings = loadBookings();
-  const items = [];
+<script>
+/* === BANDEAU PUB FINAL STABLE === */
+(function(){
+  const CODES = {
+    commerce: "com1234",
+    mairie: "mairie1234",
+    asso: "asso1234"
+  };
 
-  Object.keys(bookings || {}).forEach(monthKey=>{
-    Object.keys(bookings[monthKey] || {}).forEach(dayKey=>{
-      const list = bookings[monthKey][dayKey] || [];
-
-      list.forEach(ad=>{
-        if(ad && (ad.status === "paid" || ad.status === "quote_validated")){
-          items.push({
-            title: ad.title || ad.entityName || "Publicité locale",
-            subtitle: ad.text || "",
-            img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
-          });
-        }
-      });
-    });
-  });
-
-  if(items.length){
-    window.tickerItems = items;
-    tickerIdx = 0;
-    setTicker(0);
+  function getLabel(type){
+    if(type === "commerce") return "Commerce";
+    if(type === "mairie") return "Mairie";
+    return "Association";
   }
-} 
+
+  window.openTicker = function(){
+    if(typeof openModal !== "function"){
+      alert("Modale introuvable.");
+      return;
+    }
+
+    openModal("Publicités & visibilité", `
+      <div class="box">
+        <strong>Grand bandeau publicitaire</strong><br>
+        Choisissez votre secteur. Le calendrier s’ouvre seulement après saisie du code.
+      </div>
+
+      <div class="box">
+        <strong>Codes démo :</strong><br>
+        Commerce : com1234<br>
+        Mairie : mairie1234<br>
+        Association : asso1234
+      </div>
+
+      <div class="choiceGrid">
+        <button class="choiceBtn" id="pubCommerceBtn" type="button">Commerce</button>
+        <button class="choiceBtn" id="pubMairieBtn" type="button">Mairie</button>
+        <button class="choiceBtn" id="pubAssoBtn" type="button">Association</button>
+      </div>
+
+      <div id="pubAccessStatus" class="muted" style="margin-top:10px;">
+        Sélectionnez un secteur.
+      </div>
+
+      <div id="calHost" style="display:none;margin-top:12px;"></div>
+    `);
+
+    setTimeout(function(){
+      function unlock(type){
+        const code = prompt("Code secteur " + getLabel(type) + " :");
+        if(!code) return;
+
+        if(String(code).trim().toLowerCase() !== CODES[type]){
+          alert("Code incorrect.");
+          return;
+        }
+
+        window.__tickerProfile = type;
+
+        const status = document.getElementById("pubAccessStatus");
+        const host = document.getElementById("calHost");
+
+        if(status){
+          status.textContent = "Accès " + getLabel(type) + " validé.";
+        }
+
+        if(host){
+          host.style.display = "block";
+        }
+
+        if(typeof renderCalendarInto === "function"){
+          renderCalendarInto("calHost");
+        }else{
+          alert("Calendrier publicitaire introuvable.");
+        }
+      }
+
+      const c = document.getElementById("pubCommerceBtn");
+      const m = document.getElementById("pubMairieBtn");
+      const a = document.getElementById("pubAssoBtn");
+
+      if(c) c.onclick = function(){ unlock("commerce"); };
+      if(m) m.onclick = function(){ unlock("mairie"); };
+      if(a) a.onclick = function(){ unlock("asso"); };
+    }, 0);
+  };
+})();
+</script>
 
 function getDayBookings(obj, y, m, d){
   const keyYM = ym(y, m);
@@ -6511,16 +6573,6 @@ if(key === "commerces") {
   return;
 }
 };
-
-document.querySelectorAll("[data-open]").forEach((el)=>{
-  el.addEventListener("click", ()=>{
-    const key = el.getAttribute("data-open");
-
-    if(typeof window.__bociteartOpenByKey === "function"){
-      window.__bociteartOpenByKey(key);
-    }
-  });
-});
     
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
@@ -8086,93 +8138,92 @@ if(isFn(window.makeKeyboardClickable)){
 </script> 
  <script>
 window.openTicker = function(){
-  openModal("publicités & visibilité", `
-    <div class="box">
-      grand bandeau publicitaire<br>
-      choisissez d’abord votre secteur. le calendrier ne s’ouvre qu’après validation de votre accès.
-    </div>
+<script>
+/* === BANDEAU PUB FINAL STABLE === */
+(function(){
+  const CODES = {
+    commerce: "com1234",
+    mairie: "mairie1234",
+    asso: "asso1234"
+  };
 
-    <div class="box">
-      codes secteur démo :<br>
-      commerce : com1234<br>
-      mairie : mairie1234<br>
-      association : asso1234
-    </div>
+  function getLabel(type){
+    if(type === "commerce") return "Commerce";
+    if(type === "mairie") return "Mairie";
+    return "Association";
+  }
 
-    <div class="choiceGrid">
-      <button class="choiceBtn" id="openPubCommerceV3" type="button">commerce</button>
-      <button class="choiceBtn" id="openPubMairieV3" type="button">mairie</button>
-      <button class="choiceBtn" id="openPubAssoV3" type="button">association</button>
-    </div>
-
-    <div id="pubZoneV3" style="margin-top:12px;"></div>
-  `);
-
-  setTimeout(()=>{
-    function askSector(type){
-      const zone = $("pubZoneV3");
-      if(zone) zone.innerHTML = "";
-
-      const code = prompt(
-        "code secteur démo\n\n" +
-        "commerce : com1234\n" +
-        "mairie : mairie1234\n" +
-        "association : asso1234\n\n" +
-        "écrivez le code secteur :"
-      );
-
-      if(!code) return;
-
-      const cleanCode = String(code).trim().toLowerCase();
-
-      if(cleanCode !== CODES[type]){
-        alert("code secteur incorrect.");
-        return;
-      }
-
-      askPersonalAccess(type);
+  window.openTicker = function(){
+    if(typeof openModal !== "function"){
+      alert("Modale introuvable.");
+      return;
     }
 
-    function askPersonalAccess(type){
-      const profile = getProfile(type);
+    openModal("Publicités & visibilité", `
+      <div class="box">
+        <strong>Grand bandeau publicitaire</strong><br>
+        Choisissez votre secteur. Le calendrier s’ouvre seulement après saisie du code.
+      </div>
 
-      if(!profile.accessCode){
-        const create = confirm(
-          "aucun compte personnel n’est encore enregistré pour cet espace.\n\n" +
-          "voulez-vous créer la fiche personnelle maintenant ?"
-        );
+      <div class="box">
+        <strong>Codes démo :</strong><br>
+        Commerce : com1234<br>
+        Mairie : mairie1234<br>
+        Association : asso1234
+      </div>
 
-        if(!create) return;
+      <div class="choiceGrid">
+        <button class="choiceBtn" id="pubCommerceBtn" type="button">Commerce</button>
+        <button class="choiceBtn" id="pubMairieBtn" type="button">Mairie</button>
+        <button class="choiceBtn" id="pubAssoBtn" type="button">Association</button>
+      </div>
 
-        openProfile(type);
-        return;
+      <div id="pubAccessStatus" class="muted" style="margin-top:10px;">
+        Sélectionnez un secteur.
+      </div>
+
+      <div id="calHost" style="display:none;margin-top:12px;"></div>
+    `);
+
+    setTimeout(function(){
+      function unlock(type){
+        const code = prompt("Code secteur " + getLabel(type) + " :");
+        if(!code) return;
+
+        if(String(code).trim().toLowerCase() !== CODES[type]){
+          alert("Code incorrect.");
+          return;
+        }
+
+        window.__tickerProfile = type;
+
+        const status = document.getElementById("pubAccessStatus");
+        const host = document.getElementById("calHost");
+
+        if(status){
+          status.textContent = "Accès " + getLabel(type) + " validé.";
+        }
+
+        if(host){
+          host.style.display = "block";
+        }
+
+        if(typeof renderCalendarInto === "function"){
+          renderCalendarInto("calHost");
+        }else{
+          alert("Calendrier publicitaire introuvable.");
+        }
       }
 
-      const personalCode = prompt(
-        "accès compte personnel\n\n" +
-        "écrivez votre code personnel de structure.\n\n" +
-        "code démo actuel : " + profile.accessCode
-      );
+      const c = document.getElementById("pubCommerceBtn");
+      const m = document.getElementById("pubMairieBtn");
+      const a = document.getElementById("pubAssoBtn");
 
-      if(!personalCode) return;
-
-      if(String(personalCode).trim() !== String(profile.accessCode).trim()){
-        alert("code personnel incorrect.");
-        return;
-      }
-
-      openProfile(type);
-    }
-
-    const c = $("openPubCommerceV3");
-    const m = $("openPubMairieV3");
-    const a = $("openPubAssoV3");
-
-    if(c) c.onclick = function(){ askSector("commerce"); };
-    if(m) m.onclick = function(){ askSector("mairie"); };
-    if(a) a.onclick = function(){ askSector("asso"); };
-  },100);
-};  
+      if(c) c.onclick = function(){ unlock("commerce"); };
+      if(m) m.onclick = function(){ unlock("mairie"); };
+      if(a) a.onclick = function(){ unlock("asso"); };
+    }, 0);
+  };
    })();
 </script> 
 </body>
