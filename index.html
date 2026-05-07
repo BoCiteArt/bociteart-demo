@@ -1107,7 +1107,7 @@ function validerInscription() {
       return;
     }
     if (!rib || rib.length < 10) {
-      alert("Veuillez renseigner un RIB valide.");
+      alert("Veuillez renseigner un RIB valide.")
       return;
     }
   }
@@ -1654,6 +1654,18 @@ function validerInscription() {
     (function initBoCiteArtClean(){
       console.log("✅ JS démarré");
 
+      const CITY_CONFIG = {
+  cityName: "Wattignies",
+  coinName: "WattCoin",
+  coinPlural: "WattCoins",
+  mainColor: "#a51e22"
+};
+
+window.CITY_CONFIG = CITY_CONFIG;
+
+function cityText(key){
+return CITY_CONFIG[key] || "";
+}
       const $ = (id) => document.getElementById(id);
       const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
       const isFn = (v) => typeof v === "function";
