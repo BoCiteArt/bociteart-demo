@@ -8644,16 +8644,17 @@ function openProfile(type){
   if(saveBtn){
     saveBtn.onclick = async function(){
       const current = getProfile(type);
+
       if(!current.actorId){
-  current.actorId = makeActorId(type);
-}
+        current.actorId = makeActorId(type);
+      }
 
-if(!current.accessCode){
-  current.accessCode = makeAccessCode(type);
-}
+      if(!current.accessCode){
+        current.accessCode = makeAccessCode(type);
+      }
 
-current.role = type;
-current.updatedAt = new Date().toISOString();
+      current.role = type;
+      current.updatedAt = new Date().toISOString();
 
       current.name = $("pNameV3").value.trim();
       current.manager = $("pManagerV3").value.trim();
@@ -8694,12 +8695,15 @@ current.updatedAt = new Date().toISOString();
       }
 
       saveProfile(type, current);
-  alert(
-  "fiche enregistrée.\n\n" +
-  "identifiant interne : " + current.actorId + "\n" +
-  "code d’accès démo : " + current.accessCode + "\n\n" +
-  "en version live, ce code pourra être remplacé ou complété par un qr code dynamique."
-);
+
+      alert(
+        "fiche enregistrée.\n\n" +
+        "identifiant interne : " + current.actorId + "\n" +
+        "code d’accès démo : " + current.accessCode + "\n\n" +
+        "en version live, ce code pourra être remplacé ou complété par un qr code dynamique."
+      );
+    };
+  }
 
   const validateBtn = $("validatePubV3");
   if(validateBtn){
