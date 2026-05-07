@@ -8152,7 +8152,14 @@ if(isFn(window.makeKeyboardClickable)){
     if(type === "mairie") return "mairie";
     return "association";
   }
+  
+function makeActorId(type){
+  return "actor_" + type + "_" + Date.now() + "_" + Math.random().toString(36).slice(2,8);
+}
 
+function makeAccessCode(type){
+  return type + "-" + Math.random().toString(36).slice(2,8);
+}
   function openDb(){
     return new Promise((resolve,reject)=>{
       const req = indexedDB.open(DB_NAME, 1);
@@ -8636,6 +8643,16 @@ function openProfile(type){
   if(saveBtn){
     saveBtn.onclick = async function(){
       const current = getProfile(type);
+      if(!current.actorId){
+  current.actorId = makeActorId(type);
+}
+
+if(!current.accessCode){
+  current.accessCode = makeAccessCode(type);
+}
+
+current.role = type;
+current.updatedAt = new Date().toISOString();
 
       current.name = $("pNameV3").value.trim();
       current.manager = $("pManagerV3").value.trim();
@@ -8676,9 +8693,12 @@ function openProfile(type){
       }
 
       saveProfile(type, current);
-      alert("fiche enregistrée.");
-    };
-  }
+  alert(
+  "fiche enregistrée.\n\n" +
+  "identifiant interne : " + current.actorId + "\n" +
+  "code d’accès démo : " + current.accessCode + "\n\n" +
+  "en version live, ce code pourra être remplacé ou complété par un qr code dynamique."
+);
 
   const validateBtn = $("validatePubV3");
   if(validateBtn){
@@ -8720,6 +8740,8 @@ function openProfile(type){
         dayList(bookings, date).push({
           date: date,
           profileType:type,
+          actorId: current.actorId,
+          accessCode: current.accessCode,
           entityName:current.name,
           title:(titleInput && titleInput.value.trim()) || current.name,
           text:(textInput && textInput.value.trim()) || "publicité locale bo’citéart",
