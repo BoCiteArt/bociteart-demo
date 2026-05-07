@@ -2428,72 +2428,138 @@ function renderCalendarInto(containerId){
   });
 }
 
-function openTicker(){
-  ensureModalHelpers();
+<script>
+(function(){
+  const PUB_ACCESS_CODES = {
+    commerce: "com1234",
+    mairie: "mairie1234",
+    asso: "asso1234"
+  };
 
-  const warningMsg = checkMairiePaymentWarnings();
-
-  openModal("Publicités & visibilité", `
-    <div style="font-weight:900;margin-bottom:8px;">Grand rectangle publicitaire — espace centralisé</div>
-
-    ${warningMsg ? `
-      <div class="box" style="border-left:6px solid #b06b00;background:#fff8e8;">
-        <strong>Suivi mairie :</strong>
-        <div class="muted" style="white-space:pre-line;margin-top:6px;">${escapeHtml(warningMsg)}</div>
+  window.openTicker = function(){
+    openModal("Publicités & visibilité", `
+      <div class="box">
+        <strong>Accès publicité</strong><br>
+        Choisissez votre espace, entrez votre code d’accès, puis créez votre publicité.
       </div>
-    ` : ""}
 
-    <div class="box">
-      <strong>Principe :</strong> toutes les publicités du grand bandeau passent par ce calendrier unique.
-      Les onglets mairie, commerce et association ne réservent plus directement.
-    </div>
+      <div class="choiceGrid">
+        <button class="choiceBtn" id="pubCommerceBtn" type="button">Commerce</button>
+        <button class="choiceBtn" id="pubMairieBtn" type="button">Mairie</button>
+        <button class="choiceBtn" id="pubAssoBtn" type="button">Association</button>
+      </div>
 
-    <div class="choiceGrid">
-      <button class="choiceBtn" id="tickerAccessCommerce" type="button">Commerce</button>
-      <button class="choiceBtn" id="tickerAccessMairie" type="button">Mairie</button>
-      <button class="choiceBtn" id="tickerAccessAsso" type="button">Association</button>
-    </div>
+      <div id="pubAccessZone" style="margin-top:12px;"></div>
+    `);
 
-    <div id="tickerAccessStatus" class="muted" style="margin-top:10px;">
-      Sélectionne un profil pour ouvrir son espace publicité.
-    </div>
+    setTimeout(()=>{
+      function askCode(profile){
+        const code = prompt("Entrez votre code d’accès :");
+        if(!code) return;
 
-    <div id="calHost" style="display:none;margin-top:12px;"></div>
-  `);
+        if(String(code).trim().toLowerCase() !== PUB_ACCESS_CODES[profile]){
+          alert("Code incorrect.");
+          return;
+        }
 
-  setTimeout(()=>{
-    function unlock(profile){
-      window.__tickerProfile = profile;
-
-      const status = $("tickerAccessStatus");
-      const calHost = $("calHost");
-
-      if(status){
-        status.textContent =
-          profile === "commerce" ? "Espace publicité commerce ouvert." :
-          profile === "mairie" ? "Espace publicité mairie ouvert : devis signé, paiement différé à 30 jours, rappel à 8 jours." :
-          "Espace publicité association ouvert.";
+        openPubSpace(profile);
       }
 
-      if(calHost){
-        calHost.style.display = "block";
-      }
+      $("pubCommerceBtn").onclick = ()=> askCode("commerce");
+      $("pubMairieBtn").onclick = ()=> askCode("mairie");
+      $("pubAssoBtn").onclick = ()=> askCode("asso");
+    },0);
+  };
 
-      renderCalendarInto("calHost");
+  function openPubSpace(profile){
+    const label =
+      profile === "commerce" ? "Commerce" :
+      profile === "mairie" ? "Mairie" :
+      "Association";
+
+    openModal("Publicité — " + label, `
+      <div class="box">
+        <strong>Espace ${label}</strong><br>
+        Accès validé. Vous pouvez maintenant préparer votre publicité.
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Titre publicité</div>
+        <input class="miniField" id="pubTitle" placeholder="Ex : Offre spéciale">
+
+        <div style="font-weight:900;margin-top:10px;">Texte court</div>
+        <textarea class="miniField" id="pubText" style="min-height:90px;" placeholder="Texte diffusé dans le grand bandeau"></textarea>
+
+        <div style="font-weight:900;margin-top:10px;">Image / logo</div>
+        <input class="miniField" id="pubImage" type="file" accept="image/*">
+      </div>
+
+      <div class="box">
+        <strong>Calendrier trimestriel</strong>
+        <div id="pubQuarterCalendar" style="margin-top:10px;"></div>
+      </div>
+
+      <button class="choiceBtn" id="savePubBtn" type="button">Valider la publicité</button>
+    `);
+
+    setTimeout(()=>{
+      renderQuarterCalendar("pubQuarterCalendar");
+
+      $("savePubBtn").onclick = ()=>{
+        const title = $("pubTitle").value.trim();
+        const text = $("pubText").value.trim();
+
+        if(!title || !text){
+          alert("Renseignez le titre et le texte.");
+          return;
+        }
+
+        alert("Publicité enregistrée en démo.");
+      };
+    },0);
+  }
+
+  function renderQuarterCalendar(containerId){
+    const box = $(containerId);
+    if(!box) return;
+
+    const now = new Date();
+    let html = "";
+
+    for(let i = 0; i < 3; i++){
+      const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      const year = d.getFullYear();
+      const month = d.getMonth();
+      const monthName = d.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+      const days = new Date(year, month + 1, 0).getDate();
+
+      html += `
+        <div class="box">
+          <div style="font-weight:900;text-transform:capitalize;">${monthName}</div>
+          <div class="calGrid" style="margin-top:8px;">
+            ${Array.from({length:days}, (_,idx)=>{
+              const day = idx + 1;
+              return `
+                <div class="calDay" data-pub-day="${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}">
+                  <div class="d">${day}</div>
+                  <div class="s">dispo</div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
     }
 
-    on($("tickerAccessCommerce"), "click", ()=> unlock("commerce"));
-    on($("tickerAccessMairie"), "click", ()=> unlock("mairie"));
-    on($("tickerAccessAsso"), "click", ()=> unlock("asso"));
-  }, 0);
-}
+    box.innerHTML = html;
+  }
 
-window.openTicker = openTicker;
-
-const tickerBtn = $("ticker");
-if(tickerBtn){
-  on(tickerBtn, "click", openTicker);
-}
+  const tickerBtn = document.getElementById("ticker");
+  if(tickerBtn){
+    tickerBtn.onclick = window.openTicker;
+  }
+})();
+</script>
       window.tapeAds = [
 
         { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
