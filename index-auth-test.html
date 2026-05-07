@@ -8839,62 +8839,94 @@ function openProfile(type){
     },100);
   }
 
-  window.openTicker = function(){
-    openModal("publicités & visibilité", `
-      <div class="box">
-        <strong>grand bandeau publicitaire</strong><br>
-        chaque publicité défile avec son propre logo/photo et son propre texte.
-      </div>
+window.openTicker = function(){
+  openModal("publicités & visibilité", `
+    <div class="box">
+      grand bandeau publicitaire<br>
+      choisissez d’abord votre secteur. le calendrier ne s’ouvre qu’après validation de votre accès.
+    </div>
 
-      <div class="box">
-        <strong>veuillez mettre votre code d’accès</strong><br>
-        exemples démo :<br>
-        commerce : <strong>com1234</strong><br>
-        mairie : <strong>mairie1234</strong><br>
-        association : <strong>asso1234</strong>
-      </div>
+    <div class="box">
+      codes secteur démo :<br>
+      commerce : com1234<br>
+      mairie : mairie1234<br>
+      association : asso1234
+    </div>
 
-      <div class="choiceGrid">
-        <button class="choiceBtn" id="openPubCommerceV3" type="button">commerce</button>
-        <button class="choiceBtn" id="openPubMairieV3" type="button">mairie</button>
-        <button class="choiceBtn" id="openPubAssoV3" type="button">association</button>
-      </div>
+    <div class="choiceGrid">
+      <button class="choiceBtn" id="openPubCommerceV3" type="button">commerce</button>
+      <button class="choiceBtn" id="openPubMairieV3" type="button">mairie</button>
+      <button class="choiceBtn" id="openPubAssoV3" type="button">association</button>
+    </div>
 
-      <div id="pubZoneV3" style="margin-top:12px;"></div>
-    `);
+    <div id="pubZoneV3" style="margin-top:12px;"></div>
+  `);
 
-    setTimeout(()=>{
-      function ask(type){
-        const code = prompt(
-          "veuillez mettre votre code d’accès\n\n" +
-          "exemples démo :\n" +
-          "commerce : com1234\n" +
-          "mairie : mairie1234\n" +
-          "association : asso1234\n\n" +
-          "écrivez votre code ici :"
-        );
+  setTimeout(()=>{
+    function askSector(type){
+      const zone = $("pubZoneV3");
+      if(zone) zone.innerHTML = "";
 
-        if(!code) return;
+      const code = prompt(
+        "code secteur démo\n\n" +
+        "commerce : com1234\n" +
+        "mairie : mairie1234\n" +
+        "association : asso1234\n\n" +
+        "écrivez le code secteur :"
+      );
 
-        const cleanCode = String(code).trim().toLowerCase();
+      if(!code) return;
 
-        if(cleanCode !== CODES[type]){
-          alert("code incorrect.");
-          return;
-        }
+      const cleanCode = String(code).trim().toLowerCase();
 
-        openProfile(type);
+      if(cleanCode !== CODES[type]){
+        alert("code secteur incorrect.");
+        return;
       }
 
-      const c = $("openPubCommerceV3");
-      const m = $("openPubMairieV3");
-      const a = $("openPubAssoV3");
+      askPersonalAccess(type);
+    }
 
-      if(c) c.onclick = function(){ ask("commerce"); };
-      if(m) m.onclick = function(){ ask("mairie"); };
-      if(a) a.onclick = function(){ ask("asso"); };
-    },100);
-  };
+    function askPersonalAccess(type){
+      const profile = getProfile(type);
+
+      if(!profile.accessCode){
+        const create = confirm(
+          "aucun compte personnel n’est encore enregistré pour cet espace.\n\n" +
+          "voulez-vous créer la fiche personnelle maintenant ?"
+        );
+
+        if(!create) return;
+
+        openProfile(type);
+        return;
+      }
+
+      const personalCode = prompt(
+        "accès compte personnel\n\n" +
+        "écrivez votre code personnel de structure.\n\n" +
+        "code démo actuel : " + profile.accessCode
+      );
+
+      if(!personalCode) return;
+
+      if(String(personalCode).trim() !== String(profile.accessCode).trim()){
+        alert("code personnel incorrect.");
+        return;
+      }
+
+      openProfile(type);
+    }
+
+    const c = $("openPubCommerceV3");
+    const m = $("openPubMairieV3");
+    const a = $("openPubAssoV3");
+
+    if(c) c.onclick = function(){ askSector("commerce"); };
+    if(m) m.onclick = function(){ askSector("mairie"); };
+    if(a) a.onclick = function(){ askSector("asso"); };
+  },100);
+};
 
   const ticker = $("ticker");
   if(ticker){
