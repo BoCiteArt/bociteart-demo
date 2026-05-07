@@ -8279,19 +8279,24 @@ if(isFn(window.makeKeyboardClickable)){
   }
 
   function todayAds(){
-    const bookings = getBookings();
-    const k = keys(today());
-    const list = bookings[k.m] && bookings[k.m][k.j] ? bookings[k.m][k.j] : [];
+  const bookings = getBookings();
+  const k = keys(today());
 
-    return list.filter(ad =>
-      ad &&
-      (
-        ad.status === "demo_paid" ||
-        ad.status === "quote_validated" ||
-        ad.status === "paid"
-      )
-    );
-  }
+  const list =
+    bookings[k.m] && bookings[k.m][k.j]
+      ? bookings[k.m][k.j]
+      : [];
+
+  return list.filter(ad =>
+    ad &&
+    (
+      ad.status === "demo_paid" ||
+      ad.status === "quote_validated" ||
+      ad.status === "paid"
+    ) &&
+    ad.date === k.j
+  );
+}
 
   async function renderTicker(){
     const ticker = $("ticker");
@@ -8691,6 +8696,7 @@ function openProfile(type){
         const textInput = document.querySelector('.textByDateV3[data-date="'+date+'"]');
 
         dayList(bookings, date).push({
+          date: date,
           profileType:type,
           entityName:current.name,
           title:(titleInput && titleInput.value.trim()) || current.name,
@@ -8851,7 +8857,11 @@ function openProfile(type){
   renderTicker();
   window.refreshPubTickerV3 = renderTicker;
 
-})();
+   setInterval(function(){
+  renderTicker();
+}, 60000);
+  
+   })();
 </script> 
 </body>
 </html>
