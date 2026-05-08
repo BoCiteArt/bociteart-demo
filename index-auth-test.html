@@ -8331,8 +8331,8 @@ if(isFn(window.makeKeyboardClickable)){
 })();
 </script>
 <script>
+<script>
 /* === PATCH FINAL DÉMO ÉLUS — Bo’CitéArt === */
-/* Objectif : stabiliser la démo sans bloquer le futur passage live */
 
 (function(){
   console.log("✅ Patch stabilisation Bo’CitéArt chargé");
@@ -8463,13 +8463,11 @@ if(isFn(window.makeKeyboardClickable)){
       "validation juridique finale RGPD/CGU/CGV"
     ]
   };
-
 })();
-</script> 
- <script>
-window.openTicker = function(){
+</script>
+
 <script>
-/* === BANDEAU PUB FINAL STABLE === */
+/* === BANDEAU PUB FINAL STABLE — CODE + CALENDRIER TRIMESTRIEL === */
 (function(){
   const CODES = {
     commerce: "com1234",
@@ -8477,29 +8475,30 @@ window.openTicker = function(){
     asso: "asso1234"
   };
 
+  let selectedPubDates = [];
+
   function getLabel(type){
     if(type === "commerce") return "Commerce";
     if(type === "mairie") return "Mairie";
     return "Association";
   }
 
-  window.openTicker = function(){
-    if(typeof openModal !== "function"){
-      alert("Modale introuvable.");
-      return;
-    }
+  function dateKey(y, m, d){
+    return y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+  }
 
+  window.openTicker = function(){
     openModal("Publicités & visibilité", `
       <div class="box">
         <strong>Grand bandeau publicitaire</strong><br>
-        Choisissez votre secteur. Le calendrier s’ouvre seulement après saisie du code.
+        Choisissez votre secteur. Le calendrier trimestriel s’ouvre seulement après saisie du code.
       </div>
 
       <div class="box">
         <strong>Codes démo :</strong><br>
-        Commerce : com1234<br>
-        Mairie : mairie1234<br>
-        Association : asso1234
+        Commerce : <strong>com1234</strong><br>
+        Mairie : <strong>mairie1234</strong><br>
+        Association : <strong>asso1234</strong>
       </div>
 
       <div class="choiceGrid">
@@ -8507,54 +8506,175 @@ window.openTicker = function(){
         <button class="choiceBtn" id="pubMairieBtn" type="button">Mairie</button>
         <button class="choiceBtn" id="pubAssoBtn" type="button">Association</button>
       </div>
-
-      <div id="pubAccessStatus" class="muted" style="margin-top:10px;">
-        Sélectionnez un secteur.
-      </div>
-
-      <div id="calHost" style="display:none;margin-top:12px;"></div>
     `);
 
     setTimeout(function(){
-      function unlock(type){
-        const code = prompt("Code secteur " + getLabel(type) + " :");
-        if(!code) return;
-
-        if(String(code).trim().toLowerCase() !== CODES[type]){
-          alert("Code incorrect.");
-          return;
-        }
-
-        window.__tickerProfile = type;
-
-        const status = document.getElementById("pubAccessStatus");
-        const host = document.getElementById("calHost");
-
-        if(status){
-          status.textContent = "Accès " + getLabel(type) + " validé.";
-        }
-
-        if(host){
-          host.style.display = "block";
-        }
-
-        if(typeof renderCalendarInto === "function"){
-          renderCalendarInto("calHost");
-        }else{
-          alert("Calendrier publicitaire introuvable.");
-        }
-      }
-
       const c = document.getElementById("pubCommerceBtn");
       const m = document.getElementById("pubMairieBtn");
       const a = document.getElementById("pubAssoBtn");
 
-      if(c) c.onclick = function(){ unlock("commerce"); };
-      if(m) m.onclick = function(){ unlock("mairie"); };
-      if(a) a.onclick = function(){ unlock("asso"); };
+      if(c) c.onclick = function(){ askPubCode("commerce"); };
+      if(m) m.onclick = function(){ askPubCode("mairie"); };
+      if(a) a.onclick = function(){ askPubCode("asso"); };
     }, 0);
   };
-   })();
-</script> 
+
+  function askPubCode(type){
+    const code = prompt("Code secteur " + getLabel(type) + " :");
+    if(!code) return;
+
+    if(String(code).trim().toLowerCase() !== CODES[type]){
+      alert("Code incorrect.");
+      return;
+    }
+
+    openPubSpace(type);
+  }
+
+  function openPubSpace(type){
+    selectedPubDates = [];
+    const label = getLabel(type);
+
+    openModal("Publicité — " + label, `
+      <div class="box">
+        <strong>Accès ${label} validé.</strong><br>
+        Remplissez votre publicité, choisissez une ou plusieurs dates sur le trimestre, puis validez.
+      </div>
+
+      <div class="box">
+        <div style="font-weight:900;">Nom de l’entité</div>
+        <input class="miniField" id="pubEntityName" placeholder="Nom ${label}">
+
+        <div style="font-weight:900;margin-top:10px;">Titre publicité</div>
+        <input class="miniField" id="pubTitle" placeholder="Ex : Offre spéciale">
+
+        <div style="font-weight:900;margin-top:10px;">Texte court</div>
+        <textarea class="miniField" id="pubText" style="min-height:90px;" placeholder="Texte diffusé dans le grand bandeau"></textarea>
+
+        <div style="font-weight:900;margin-top:10px;">Image / logo</div>
+        <input class="miniField" id="pubImage" type="file" accept="image/*">
+      </div>
+
+      <div class="box">
+        <strong>Calendrier trimestriel</strong>
+        <div class="muted" style="margin-top:6px;">Cliquez sur les dates souhaitées.</div>
+        <div id="pubQuarterCalendar" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="box">
+        <strong>Dates sélectionnées :</strong>
+        <div id="pubSelectedDates" class="muted" style="margin-top:8px;">Aucune date sélectionnée.</div>
+      </div>
+
+      <button class="choiceBtn" id="savePubBtn" type="button">
+        ${type === "mairie" ? "Valider devis mairie" : "Payer et réserver"}
+      </button>
+    `);
+
+    setTimeout(function(){
+      renderQuarterCalendar();
+      refreshSelectedDates();
+
+      const save = document.getElementById("savePubBtn");
+      if(save){
+        save.onclick = function(){
+          const entity = document.getElementById("pubEntityName") ? document.getElementById("pubEntityName").value.trim() : "";
+          const title = document.getElementById("pubTitle") ? document.getElementById("pubTitle").value.trim() : "";
+          const text = document.getElementById("pubText") ? document.getElementById("pubText").value.trim() : "";
+
+          if(!entity || !title || !text){
+            alert("Remplissez le nom, le titre et le texte de la publicité.");
+            return;
+          }
+
+          if(!selectedPubDates.length){
+            alert("Choisissez au moins une date dans le calendrier trimestriel.");
+            return;
+          }
+
+          alert(
+            "Publicité enregistrée en démo.\n\n" +
+            "Profil : " + label + "\n" +
+            "Entité : " + entity + "\n" +
+            "Dates : " + selectedPubDates.join(", ") + "\n\n" +
+            "Paiement à brancher en version live."
+          );
+        };
+      }
+    }, 0);
+  }
+
+  function renderQuarterCalendar(){
+    const host = document.getElementById("pubQuarterCalendar");
+    if(!host) return;
+
+    const now = new Date();
+    let html = "";
+
+    for(let i = 0; i < 3; i++){
+      const first = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      const y = first.getFullYear();
+      const m = first.getMonth();
+      const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+      const days = new Date(y, m + 1, 0).getDate();
+
+      html += `
+        <div class="box">
+          <div style="font-weight:900;text-transform:capitalize;">${monthName}</div>
+          <div class="calGrid" style="margin-top:8px;">
+            ${Array.from({length:days}, function(_, index){
+              const d = index + 1;
+              const k = dateKey(y, m, d);
+              return `
+                <div class="calDay" data-pub-date="${k}">
+                  <div class="d">${d}</div>
+                  <div class="s">dispo</div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    host.innerHTML = html;
+
+    document.querySelectorAll("[data-pub-date]").forEach(function(el){
+      el.onclick = function(){
+        const k = el.getAttribute("data-pub-date");
+
+        if(selectedPubDates.includes(k)){
+          selectedPubDates = selectedPubDates.filter(x => x !== k);
+          el.style.background = "#fff";
+        }else{
+          selectedPubDates.push(k);
+          el.style.background = "#dff7ea";
+        }
+
+        refreshSelectedDates();
+      };
+    });
+  }
+
+  function refreshSelectedDates(){
+    const out = document.getElementById("pubSelectedDates");
+    if(!out) return;
+
+    out.textContent = selectedPubDates.length
+      ? selectedPubDates.join(", ")
+      : "Aucune date sélectionnée.";
+  }
+
+  const ticker = document.getElementById("ticker");
+  if(ticker){
+    ticker.onclick = null;
+    ticker.addEventListener("click", function(e){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      window.openTicker();
+    }, true);
+  }
+})();
+</script>
 </body>
 </html>
