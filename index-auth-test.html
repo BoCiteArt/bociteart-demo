@@ -8531,85 +8531,137 @@ if(isFn(window.makeKeyboardClickable)){
 </script>
 
 <script>
-/* === BANDEAU PUB FINAL STABLE — CODE + CALENDRIER TRIMESTRIEL === */
+<script>
+/* === BANDEAU PUB FINAL — ACCÈS CODE + CALENDRIER 3 MOIS === */
 (function(){
-  const CODES = {
+  const PUB_KEY = "bociteart_pub_bookings_v3";
+  const MAX_PER_DAY = 10;
+
+  const DEMO_CODES = {
     commerce: "com1234",
     mairie: "mairie1234",
-    asso: "asso1234"
+    asso: "asso1234",
+    sport: "sport1234",
+    bociteart: "michel"
   };
 
-  let selectedPubDates = [];
+  function $(id){ return document.getElementById(id); }
 
-  function getLabel(type){
-    if(type === "commerce") return "Commerce";
-    if(type === "mairie") return "Mairie";
-    return "Association";
+  function label(type){
+    return type === "commerce" ? "Commerce" :
+           type === "mairie" ? "Mairie" :
+           type === "asso" ? "Association" :
+           type === "sport" ? "Club sport" :
+           "Bo’CitéArt";
   }
 
-  function dateKey(y, m, d){
-    return y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+  function loadBookings(){
+    try{ return JSON.parse(localStorage.getItem(PUB_KEY) || "{}"); }
+    catch(e){ return {}; }
   }
 
-  window.openTicker = function(){
-    openModal("Publicités & visibilité", `
-      <div class="box">
-        <strong>Grand bandeau publicitaire</strong><br>
-        Choisissez votre secteur. Le calendrier trimestriel s’ouvre seulement après saisie du code.
-      </div>
+  function saveBookings(obj){
+    localStorage.setItem(PUB_KEY, JSON.stringify(obj || {}));
+  }
 
-      <div class="box">
-        <strong>Codes démo :</strong><br>
-        Commerce : <strong>com1234</strong><br>
-        Mairie : <strong>mairie1234</strong><br>
-        Association : <strong>asso1234</strong>
-      </div>
+  function todayIso(){
+    return new Date().toISOString().slice(0,10);
+  }
 
-      <div class="choiceGrid">
-        <button class="choiceBtn" id="pubCommerceBtn" type="button">Commerce</button>
-        <button class="choiceBtn" id="pubMairieBtn" type="button">Mairie</button>
-        <button class="choiceBtn" id="pubAssoBtn" type="button">Association</button>
-      </div>
-    `);
+  function getList(date){
+    const db = loadBookings();
+    return Array.isArray(db[date]) ? db[date] : [];
+  }
 
-    setTimeout(function(){
-      const c = document.getElementById("pubCommerceBtn");
-      const m = document.getElementById("pubMairieBtn");
-      const a = document.getElementById("pubAssoBtn");
+  function setList(date, list){
+    const db = loadBookings();
+    db[date] = list;
+    saveBookings(db);
+  }
 
-      if(c) c.onclick = function(){ askPubCode("commerce"); };
-      if(m) m.onclick = function(){ askPubCode("mairie"); };
-      if(a) a.onclick = function(){ askPubCode("asso"); };
-    }, 0);
-  };
+  function isPaidOrValidated(ad){
+    return ad.status === "paid" || ad.status === "quote_validated";
+  }
 
-  function askPubCode(type){
-    const code = prompt("Code secteur " + getLabel(type) + " :");
-    if(!code) return;
+  function askAccess(type){
+    const code = prompt(
+      "Accès " + label(type) + "\n\n" +
+      "Entrez votre code d’accès démo.\n\n" +
+      "Codes test :\n" +
+      "Commerce : com1234\n" +
+      "Mairie : mairie1234\n" +
+      "Association : asso1234\n" +
+      "Sport : sport1234"
+    );
 
-    if(String(code).trim().toLowerCase() !== CODES[type]){
-      alert("Code incorrect.");
-      return;
+    if(!code) return false;
+
+    if(String(code).trim().toLowerCase() !== DEMO_CODES[type]){
+      alert("Code incorrect. Accès refusé.");
+      return false;
     }
 
-    openPubSpace(type);
+    return true;
+  }
+
+  function canModify(ad){
+    return Date.now() - Number(ad.createdTs || 0) <= 60 * 60 * 1000;
+  }
+
+  function renderQuarterCalendar(type, selected){
+    const now = new Date();
+    let html = "";
+
+    for(let i = 0; i < 3; i++){
+      const base = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      const year = base.getFullYear();
+      const month = base.getMonth();
+      const title = base.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+      const days = new Date(year, month + 1, 0).getDate();
+
+      html += `
+        <div class="box" style="margin-top:12px;">
+          <div style="font-weight:900;text-transform:capitalize;margin-bottom:8px;">${title}</div>
+          <div class="calGrid">
+      `;
+
+      for(let d = 1; d <= days; d++){
+        const date = year + "-" + String(month + 1).padStart(2,"0") + "-" + String(d).padStart(2,"0");
+        const used = getList(date).filter(isPaidOrValidated).length;
+        const full = used >= MAX_PER_DAY;
+        const active = selected.includes(date);
+
+        html += `
+          <div class="calDay ${full ? "full" : ""}"
+               data-date="${date}"
+               style="${active ? "outline:4px solid #2f5d46;" : ""}">
+            <div class="d">${d}</div>
+            <div class="s">${used}/${MAX_PER_DAY}</div>
+            <div class="s">${full ? "Complet" : (MAX_PER_DAY-used) + " dispo"}</div>
+          </div>
+        `;
+      }
+
+      html += `
+          </div>
+        </div>
+      `;
+    }
+
+    return html;
   }
 
   function openPubSpace(type){
-    selectedPubDates = [];
-    const label = getLabel(type);
+    const selected = [];
 
-    openModal("Publicité — " + label, `
+    openModal("Publicité — " + label(type), `
       <div class="box">
-        <strong>Accès ${label} validé.</strong><br>
-        Remplissez votre publicité, choisissez une ou plusieurs dates sur le trimestre, puis validez.
+        <strong>Accès validé : ${label(type)}</strong><br>
+        Calendrier commun sur 3 mois. Maximum ${MAX_PER_DAY} publicités par jour.
       </div>
 
       <div class="box">
-        <div style="font-weight:900;">Nom de l’entité</div>
-        <input class="miniField" id="pubEntityName" placeholder="Nom ${label}">
-
-        <div style="font-weight:900;margin-top:10px;">Titre publicité</div>
+        <div style="font-weight:900;">Titre de la publicité</div>
         <input class="miniField" id="pubTitle" placeholder="Ex : Offre spéciale">
 
         <div style="font-weight:900;margin-top:10px;">Texte court</div>
@@ -8617,127 +8669,182 @@ if(isFn(window.makeKeyboardClickable)){
 
         <div style="font-weight:900;margin-top:10px;">Image / logo</div>
         <input class="miniField" id="pubImage" type="file" accept="image/*">
-      </div>
 
-      <div class="box">
-        <strong>Calendrier trimestriel</strong>
-        <div class="muted" style="margin-top:6px;">Cliquez sur les dates souhaitées.</div>
-        <div id="pubQuarterCalendar" style="margin-top:10px;"></div>
+        <div style="font-weight:900;margin-top:10px;">Formule</div>
+        <select class="miniField" id="pubPack">
+          <option value="1">1 publicité — 50 € HT</option>
+          <option value="5">Pack 5 publicités — 200 € HT</option>
+          <option value="10">Pack 10 publicités — 350 € HT</option>
+        </select>
       </div>
 
       <div class="box">
         <strong>Dates sélectionnées :</strong>
-        <div id="pubSelectedDates" class="muted" style="margin-top:8px;">Aucune date sélectionnée.</div>
+        <div id="selectedDates" class="muted" style="margin-top:6px;">Aucune date choisie.</div>
       </div>
 
-      <button class="choiceBtn" id="savePubBtn" type="button">
-        ${type === "mairie" ? "Valider devis mairie" : "Payer et réserver"}
+      <div id="quarterCalendar"></div>
+
+      <button class="choiceBtn" id="payPubBtn" type="button" style="width:100%;margin-top:12px;">
+        ${type === "mairie" ? "Valider devis mairie — paiement à 30 jours" : "Payer via PSP test et réserver"}
       </button>
     `);
 
-    setTimeout(function(){
-      renderQuarterCalendar();
-      refreshSelectedDates();
+    function refresh(){
+      const cal = $("quarterCalendar");
+      if(cal) cal.innerHTML = renderQuarterCalendar(type, selected);
 
-      const save = document.getElementById("savePubBtn");
-      if(save){
-        save.onclick = function(){
-          const entity = document.getElementById("pubEntityName") ? document.getElementById("pubEntityName").value.trim() : "";
-          const title = document.getElementById("pubTitle") ? document.getElementById("pubTitle").value.trim() : "";
-          const text = document.getElementById("pubText") ? document.getElementById("pubText").value.trim() : "";
+      const out = $("selectedDates");
+      if(out) out.textContent = selected.length ? selected.join(", ") : "Aucune date choisie.";
 
-          if(!entity || !title || !text){
-            alert("Remplissez le nom, le titre et le texte de la publicité.");
+      document.querySelectorAll("[data-date]").forEach(day=>{
+        day.onclick = function(){
+          const date = day.getAttribute("data-date");
+          if(day.classList.contains("full")){
+            alert("Cette date est complète.");
             return;
           }
 
-          if(!selectedPubDates.length){
-            alert("Choisissez au moins une date dans le calendrier trimestriel.");
-            return;
+          const idx = selected.indexOf(date);
+          if(idx >= 0){
+            selected.splice(idx,1);
+          }else{
+            selected.push(date);
           }
 
-          alert(
-            "Publicité enregistrée en démo.\n\n" +
-            "Profil : " + label + "\n" +
-            "Entité : " + entity + "\n" +
-            "Dates : " + selectedPubDates.join(", ") + "\n\n" +
-            "Paiement à brancher en version live."
-          );
+          refresh();
         };
-      }
-    }, 0);
-  }
-
-  function renderQuarterCalendar(){
-    const host = document.getElementById("pubQuarterCalendar");
-    if(!host) return;
-
-    const now = new Date();
-    let html = "";
-
-    for(let i = 0; i < 3; i++){
-      const first = new Date(now.getFullYear(), now.getMonth() + i, 1);
-      const y = first.getFullYear();
-      const m = first.getMonth();
-      const monthName = first.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
-      const days = new Date(y, m + 1, 0).getDate();
-
-      html += `
-        <div class="box">
-          <div style="font-weight:900;text-transform:capitalize;">${monthName}</div>
-          <div class="calGrid" style="margin-top:8px;">
-            ${Array.from({length:days}, function(_, index){
-              const d = index + 1;
-              const k = dateKey(y, m, d);
-              return `
-                <div class="calDay" data-pub-date="${k}">
-                  <div class="d">${d}</div>
-                  <div class="s">dispo</div>
-                </div>
-              `;
-            }).join("")}
-          </div>
-        </div>
-      `;
+      });
     }
 
-    host.innerHTML = html;
+    refresh();
 
-    document.querySelectorAll("[data-pub-date]").forEach(function(el){
-      el.onclick = function(){
-        const k = el.getAttribute("data-pub-date");
+    $("payPubBtn").onclick = async function(){
+      const title = $("pubTitle").value.trim();
+      const text = $("pubText").value.trim();
+      const pack = Number($("pubPack").value || 1);
 
-        if(selectedPubDates.includes(k)){
-          selectedPubDates = selectedPubDates.filter(x => x !== k);
-          el.style.background = "#fff";
-        }else{
-          selectedPubDates.push(k);
-          el.style.background = "#dff7ea";
+      if(!title || !text){
+        alert("Remplis le titre et le texte.");
+        return;
+      }
+
+      if(!selected.length){
+        alert("Choisis au moins une date dans le calendrier trimestriel.");
+        return;
+      }
+
+      if(selected.length > pack){
+        alert("Tu as choisi plus de dates que la formule achetée.");
+        return;
+      }
+
+      for(const date of selected){
+        const list = getList(date);
+
+        if(list.filter(isPaidOrValidated).length >= MAX_PER_DAY){
+          alert("La date " + date + " est devenue complète.");
+          return;
         }
 
-        refreshSelectedDates();
-      };
-    });
+        list.push({
+          ownerType: type,
+          ownerLabel: label(type),
+          title,
+          text,
+          pack,
+          date,
+          createdTs: Date.now(),
+          createdFr: new Date().toLocaleString("fr-FR"),
+          lockedAfter: "1 heure",
+          status: type === "mairie" ? "quote_validated" : "paid",
+          paymentMode: type === "mairie" ? "devis_30_jours" : "psp_test",
+          dueTs: type === "mairie" ? Date.now() + 30*24*60*60*1000 : null,
+          reminder8d: type === "mairie"
+        });
+
+        setList(date, list);
+      }
+
+      alert(
+        type === "mairie"
+        ? "Devis mairie validé en démo. Paiement attendu à 30 jours. Rappel prévu à J-8."
+        : "Paiement PSP test validé. La publicité est réservée."
+      );
+
+      syncTickerToday();
+      openTicker();
+    };
   }
 
-  function refreshSelectedDates(){
-    const out = document.getElementById("pubSelectedDates");
-    if(!out) return;
+  function syncTickerToday(){
+    if(typeof window.setTicker !== "function") return;
 
-    out.textContent = selectedPubDates.length
-      ? selectedPubDates.join(", ")
-      : "Aucune date sélectionnée.";
+    const today = todayIso();
+    const ads = getList(today).filter(isPaidOrValidated).map(ad=>({
+      title: ad.title,
+      subtitle: ad.text,
+      img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+    }));
+
+    const defaults = [
+      {
+        title:"Annonce partenaire (démo)",
+        subtitle:"Exemple de publicité locale",
+        img:"https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+      },
+      {
+        title:"Mairie (démo)",
+        subtitle:"Informations et alertes d’intérêt général",
+        img:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=60"
+      }
+    ];
+
+    window.tickerItems = ads.length ? ads.concat(defaults) : defaults;
+    window.setTicker(0);
   }
 
-  const ticker = document.getElementById("ticker");
-  if(ticker){
-    ticker.onclick = null;
-    ticker.addEventListener("click", function(e){
+  window.openTicker = function(){
+    openModal("Publicités & visibilité", `
+      <div class="box">
+        <strong>Grand bandeau publicitaire</strong><br>
+        Choisissez votre profil. Le calendrier trimestriel ne s’ouvre qu’après validation du code.
+      </div>
+
+      <div class="box">
+        En version live : accès par compte vérifié, SIRET/SIREN actif, RIB contrôlé, email validé, code à 4 chiffres envoyé par email, paiement PSP obligatoire sauf devis mairie.
+      </div>
+
+      <div class="choiceGrid">
+        <button class="choiceBtn" id="pubCommerceBtn" type="button">Commerce</button>
+        <button class="choiceBtn" id="pubMairieBtn" type="button">Mairie</button>
+        <button class="choiceBtn" id="pubAssoBtn" type="button">Association</button>
+        <button class="choiceBtn" id="pubSportBtn" type="button">Sport</button>
+      </div>
+    `);
+
+    setTimeout(function(){
+      $("pubCommerceBtn").onclick = function(){ if(askAccess("commerce")) openPubSpace("commerce"); };
+      $("pubMairieBtn").onclick = function(){ if(askAccess("mairie")) openPubSpace("mairie"); };
+      $("pubAssoBtn").onclick = function(){ if(askAccess("asso")) openPubSpace("asso"); };
+      $("pubSportBtn").onclick = function(){ if(askAccess("sport")) openPubSpace("sport"); };
+    },0);
+  };
+
+  const oldTicker = document.getElementById("ticker");
+  if(oldTicker){
+    const newTicker = oldTicker.cloneNode(true);
+    oldTicker.parentNode.replaceChild(newTicker, oldTicker);
+
+    newTicker.addEventListener("click", function(e){
       e.preventDefault();
+      e.stopPropagation();
       e.stopImmediatePropagation();
       window.openTicker();
     }, true);
   }
+
+  syncTickerToday();
 })();
 </script>
 </body>
