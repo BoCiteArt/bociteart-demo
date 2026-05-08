@@ -982,145 +982,209 @@
   <div class="page">
     <div class="wrap">
 
-<!-- DEBUT FORMULAIRE INSCRIPTION -->
-<div id="overlay-inscription" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.96);z-index:99990;display:none;overflow:auto;padding:20px;">
-  <div style="max-width:700px;margin:40px auto;padding:24px;border:1px solid #ccc;border-radius:18px;background:#f9f9f9;box-shadow:0 8px 30px rgba(0,0,0,0.08);">
-    <h2 style="margin-top:0;">Créer un compte</h2>
-
-    <label>Je suis :</label><br>
-    <select id="typeUser" onchange="toggleType()" style="margin-top:6px;padding:8px;width:100%;max-width:260px;">
-      <option value="particulier">Particulier</option>
-      <option value="pro">Professionnel</option>
-    </select>
-
-    <br><br>
-
-    <label>Nom :</label><br>
-    <input type="text" id="nom" style="margin-top:6px;padding:8px;width:100%;max-width:420px;"><br><br>
-
-    <label>Email :</label><br>
-    <input type="email" id="email" style="margin-top:6px;padding:8px;width:100%;max-width:420px;"><br><br>
-
-    <label>Date de naissance :</label><br>
-    <input type="date" id="birthdate" onchange="checkAge()" style="margin-top:6px;padding:8px;width:100%;max-width:220px;"><br><br>
-
-    <div id="mineurBlock" style="display:none;">
-      <h4>Responsable légal obligatoire</h4>
-
-      <label>Email parent :</label><br>
-      <input type="email" id="parentEmail" style="margin-top:6px;padding:8px;width:100%;max-width:420px;"><br><br>
-
-      <label>Téléphone parent :</label><br>
-      <input type="tel" id="parentTel" style="margin-top:6px;padding:8px;width:100%;max-width:420px;"><br><br>
-    </div>
-
-    <div id="proBlock" style="display:none;">
-      <h4>Informations professionnelles</h4>
-
-      <label>SIRET :</label><br>
-      <input type="text" id="siret" style="margin-top:6px;padding:8px;width:100%;max-width:420px;"><br><br>
-
-      <label>RIB :</label><br>
-      <input type="text" id="rib" style="margin-top:6px;padding:8px;width:100%;max-width:420px;"><br><br>
-    </div>
-
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;">
-      <button type="button" onclick="validerInscription()" style="padding:12px 20px;border-radius:10px;cursor:pointer;">
-        Créer mon compte
-      </button>
-
-      <button type="button" onclick="fermerInscription()" style="padding:12px 20px;border-radius:10px;cursor:pointer;">
-        Fermer
-      </button>
-    </div>
-  </div>
-</div>
+<!-- DEBUT FORMULAIRE INSCRIPTION NOUVELLE VERSION -->
+<div id="overlay-inscription" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.96);z-index:99990;display:none;overflow:auto;padding:20px;"></div>
 
 <script>
-function ouvrirInscription() {
+function ouvrirInscription(){
   const bloc = document.getElementById("overlay-inscription");
-  if (bloc) bloc.style.display = "block";
+  if(!bloc) return;
+
+  bloc.style.display = "block";
+
+  bloc.innerHTML = `
+    <div style="max-width:760px;margin:40px auto;padding:24px;border:1px solid #ccc;border-radius:18px;background:#f9f9f9;box-shadow:0 8px 30px rgba(0,0,0,.08);">
+      <h2 style="margin-top:0;">Créer mon accès Bo’CitéArt</h2>
+
+      <div class="box">
+        Choisissez votre profil. La fiche est remplie une seule fois.
+        Ensuite, un code d’accès démo est généré pour ouvrir uniquement votre espace.
+      </div>
+
+      <label style="font-weight:900;">Type de compte</label>
+      <select id="newRole" class="miniField" style="margin-top:6px;">
+        <option value="particulier">Particulier</option>
+        <option value="commerce">Commerçant / professionnel</option>
+        <option value="mairie">Mairie</option>
+        <option value="asso">Association</option>
+        <option value="bociteart">Bo’CitéArt administrateur</option>
+      </select>
+
+      <div id="dynamicForm" style="margin-top:14px;"></div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+        <button class="choiceBtn" id="saveProfileBtn" type="button">Valider la fiche</button>
+        <button class="choiceBtn" id="closeProfileBtn" type="button" style="background:#fff;">Fermer</button>
+      </div>
+    </div>
+  `;
+
+  function code4(){
+    return String(Math.floor(1000 + Math.random() * 9000));
+  }
+
+  function maskIban(value){
+    const clean = String(value || "").replace(/\s+/g, "");
+    if(clean.length <= 4) return "****";
+    return "**** **** **** " + clean.slice(-4);
+  }
+
+  function saveProfile(profile){
+    localStorage.setItem("bociteart_profile_v4", JSON.stringify(profile));
+  }
+
+  function renderForm(){
+    const role = document.getElementById("newRole").value;
+    const box = document.getElementById("dynamicForm");
+
+    if(role === "particulier"){
+      box.innerHTML = `
+        <div class="box">
+          <input class="miniField" id="pName" placeholder="Nom / prénom">
+          <input class="miniField" id="pEmail" placeholder="Email" style="margin-top:10px;">
+          <input class="miniField" id="pBirth" type="date" style="margin-top:10px;">
+        </div>
+      `;
+    }
+
+    if(role === "commerce"){
+      box.innerHTML = `
+        <div class="box">
+          <input class="miniField" id="pName" placeholder="Nom du commerce">
+          <input class="miniField" id="pEmail" placeholder="Email professionnel / facturation" style="margin-top:10px;">
+          <input class="miniField" id="pAddress" placeholder="Adresse complète" style="margin-top:10px;">
+          <input class="miniField" id="pPhone" placeholder="Téléphone" style="margin-top:10px;">
+          <input class="miniField" id="pSiret" placeholder="SIRET" style="margin-top:10px;">
+          <input class="miniField" id="pSiren" placeholder="SIREN" style="margin-top:10px;">
+          <input class="miniField" id="pTva" placeholder="N° TVA intracommunautaire" style="margin-top:10px;">
+          <input class="miniField" id="pIban" placeholder="IBAN / RIB pour PSP et facturation" style="margin-top:10px;">
+          <div class="muted" style="margin-top:8px;">
+            Le RIB sera masqué dans l’application. En version live, le paiement passera par un PSP sécurisé.
+            Bo’CitéArt ne doit pas accéder directement au compte bancaire.
+          </div>
+        </div>
+      `;
+    }
+
+    if(role === "mairie"){
+      box.innerHTML = `
+        <div class="box">
+          <input class="miniField" id="pName" placeholder="Nom de la mairie">
+          <input class="miniField" id="pEmail" placeholder="Email officiel mairie / facturation" style="margin-top:10px;">
+          <input class="miniField" id="pAddress" placeholder="Adresse mairie" style="margin-top:10px;">
+          <input class="miniField" id="pMain" placeholder="Nom du maire">
+          <input class="miniField" id="pRef" placeholder="Référent désigné par le maire" style="margin-top:10px;">
+          <input class="miniField" id="pIban" placeholder="IBAN / RIB si nécessaire pour facturation ou régularisation" style="margin-top:10px;">
+          <div class="muted" style="margin-top:8px;">
+            Accès réservé au maire et au référent officiellement désigné.
+          </div>
+        </div>
+      `;
+    }
+
+    if(role === "asso"){
+      box.innerHTML = `
+        <div class="box">
+          <input class="miniField" id="pName" placeholder="Nom de l’association">
+          <input class="miniField" id="pEmail" placeholder="Email association / facturation" style="margin-top:10px;">
+          <input class="miniField" id="pAddress" placeholder="Adresse" style="margin-top:10px;">
+          <input class="miniField" id="pMain" placeholder="Nom du président">
+          <input class="miniField" id="pRef" placeholder="Référent désigné par le président" style="margin-top:10px;">
+          <input class="miniField" id="pIban" placeholder="IBAN / RIB association si nécessaire" style="margin-top:10px;">
+          <div class="muted" style="margin-top:8px;">
+            Accès réservé au président et au référent désigné.
+          </div>
+        </div>
+      `;
+    }
+
+    if(role === "bociteart"){
+      box.innerHTML = `
+        <div class="box">
+          <input class="miniField" id="pName" placeholder="Bo’CitéArt / entité de facturation">
+          <input class="miniField" id="pEmail" placeholder="Email administratif Bo’CitéArt" style="margin-top:10px;">
+          <input class="miniField" id="pAddress" placeholder="Adresse siège / facturation" style="margin-top:10px;">
+          <input class="miniField" id="pSiret" placeholder="SIRET Bo’CitéArt" style="margin-top:10px;">
+          <input class="miniField" id="pSiren" placeholder="SIREN Bo’CitéArt" style="margin-top:10px;">
+          <input class="miniField" id="pTva" placeholder="N° TVA Bo’CitéArt si applicable" style="margin-top:10px;">
+          <input class="miniField" id="pIban" placeholder="IBAN Bo’CitéArt pour émission de factures / abonnements" style="margin-top:10px;">
+          <div class="muted" style="margin-top:8px;">
+            Bo’CitéArt garde la main administrative : dépannage, blocage, correction, facturation, journalisation.
+            Mais Bo’CitéArt ne doit jamais accéder directement aux comptes bancaires sensibles des tiers.
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  document.getElementById("newRole").onchange = renderForm;
+  renderForm();
+
+  document.getElementById("closeProfileBtn").onclick = function(){
+    bloc.style.display = "none";
+  };
+
+  document.getElementById("saveProfileBtn").onclick = function(){
+    const role = document.getElementById("newRole").value;
+
+    const profile = {
+      role: role,
+      name: document.getElementById("pName") ? document.getElementById("pName").value.trim() : "",
+      email: document.getElementById("pEmail") ? document.getElementById("pEmail").value.trim() : "",
+      address: document.getElementById("pAddress") ? document.getElementById("pAddress").value.trim() : "",
+      phone: document.getElementById("pPhone") ? document.getElementById("pPhone").value.trim() : "",
+      birth: document.getElementById("pBirth") ? document.getElementById("pBirth").value : "",
+      siret: document.getElementById("pSiret") ? document.getElementById("pSiret").value.trim() : "",
+      siren: document.getElementById("pSiren") ? document.getElementById("pSiren").value.trim() : "",
+      tva: document.getElementById("pTva") ? document.getElementById("pTva").value.trim() : "",
+      ibanMasked: document.getElementById("pIban") ? maskIban(document.getElementById("pIban").value) : "",
+      main: document.getElementById("pMain") ? document.getElementById("pMain").value.trim() : "",
+      ref: document.getElementById("pRef") ? document.getElementById("pRef").value.trim() : "",
+      pspStatus: role === "particulier" ? "non concerné" : "à connecter PSP live",
+      invoiceStatus: role === "particulier" ? "non concerné" : "facturation électronique à préparer",
+      accessCode: code4(),
+      createdAt: new Date().toLocaleString("fr-FR")
+    };
+
+    if(!profile.name || !profile.email){
+      alert("Nom et email obligatoires.");
+      return;
+    }
+
+    if(role === "commerce" && (!profile.siret || !profile.siren || !profile.ibanMasked)){
+      alert("Pour un professionnel : SIRET, SIREN et RIB/IBAN sont obligatoires.");
+      return;
+    }
+
+    if((role === "mairie" || role === "asso") && (!profile.main || !profile.ref)){
+      alert("Responsable principal et référent désigné obligatoires.");
+      return;
+    }
+
+    if(role === "bociteart" && !profile.ibanMasked){
+      alert("Le RIB/IBAN Bo’CitéArt est nécessaire pour préparer la facturation.");
+      return;
+    }
+
+    saveProfile(profile);
+    bloc.style.display = "none";
+
+    alert(
+      "Fiche enregistrée.\n\n" +
+      "Profil : " + role + "\n" +
+      "Code d’accès démo : " + profile.accessCode + "\n" +
+      "RIB affiché masqué : " + profile.ibanMasked + "\n\n" +
+      "En version live, ce code sera envoyé par email et le PSP gérera les paiements/factures."
+    );
+  };
 }
 
-function fermerInscription() {
+function fermerInscription(){
   const bloc = document.getElementById("overlay-inscription");
-  if (bloc) bloc.style.display = "none";
-}
-
-function checkAge() {
-  const valeur = document.getElementById("birthdate").value;
-  const mineurBlock = document.getElementById("mineurBlock");
-  if (!valeur) {
-    mineurBlock.style.display = "none";
-    return;
-  }
-
-  const birth = new Date(valeur);
-  const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
-  const m = today.getMonth() - birth.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-    age--;
-  }
-
-  mineurBlock.style.display = age < 18 ? "block" : "none";
-}
-
-function toggleType() {
-  const type = document.getElementById("typeUser").value;
-  const proBlock = document.getElementById("proBlock");
-  proBlock.style.display = type === "pro" ? "block" : "none";
-}
-
-function validerInscription() {
-  const nom = document.getElementById("nom").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const type = document.getElementById("typeUser").value;
-  const birthValue = document.getElementById("birthdate").value;
-
-  if (!nom || !email || !birthValue) {
-    alert("Veuillez remplir le nom, l’email et la date de naissance.");
-    return;
-  }
-
-  const birth = new Date(birthValue);
-  const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
-  const m = today.getMonth() - birth.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-    age--;
-  }
-
-  if (age < 18) {
-    const parentEmail = document.getElementById("parentEmail").value.trim();
-    const parentTel = document.getElementById("parentTel").value.trim();
-    if (!parentEmail || !parentTel) {
-      alert("Pour un mineur, email et téléphone du parent sont obligatoires.");
-      return;
-    }
-  }
-
-  if (type === "pro") {
-    const siret = document.getElementById("siret").value.trim();
-    const rib = document.getElementById("rib").value.trim();
-    if (!siret || siret.length < 10) {
-      alert("Veuillez renseigner un SIRET valide.");
-      return;
-    }
-    if (!rib || rib.length < 10) {
-      alert("Veuillez renseigner un RIB valide.")
-      return;
-    }
-  }
-
-  if (typeof initAccountDateIfNeeded === "function") {
-    initAccountDateIfNeeded();
-  }
-  alert("Compte créé (démo) ✅");
-  fermerInscription();
+  if(bloc) bloc.style.display = "none";
 }
 </script>
-<!-- FIN FORMULAIRE INSCRIPTION -->
+<!-- FIN FORMULAIRE INSCRIPTION NOUVELLE VERSION -->
 
       <div class="ticker" id="ticker" aria-label="Publicités (toucher pour détails)">
         <img id="tickerImg" alt="" />
