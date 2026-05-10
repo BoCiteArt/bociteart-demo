@@ -2218,73 +2218,7 @@ function fermerInscription(){
     openModal("Publicités & visibilité", `
       <div style="font-weight:900;margin-bottom:8px;">
         Grand rectangle publicitaire
-      </div>
-
-      <div class="box">
-        Pour diffuser une publicité, choisissez votre profil.
-        Un code d’accès est obligatoire avant d’ouvrir le calendrier trimestriel,
-        la fiche publicité et le paiement.
-      </div>
-
-      <div class="box">
-        Codes démo :<br>
-        Commerce : <strong>com1234</strong><br>
-        Mairie : <strong>mairie1234</strong><br>
-        Association : <strong>asso1234</strong>
-      </div>
-
-      <div class="choiceGrid">
-        <button class="choiceBtn" id="pubCommerceAccess" type="button">Commerce</button>
-        <button class="choiceBtn" id="pubMairieAccess" type="button">Mairie</button>
-        <button class="choiceBtn" id="pubAssoAccess" type="button">Association</button>
-      </div>
-    `);
-
-    setTimeout(()=>{
-      function askAccess(type){
-        const code = prompt("Code d’accès " + pubLabel(type) + " :");
-        if(!code) return;
-
-        if(String(code).trim().toLowerCase() !== pubCode(type)){
-          alert("Code incorrect.");
-          return;
-        }
-
-        openPubSpace(type);
-      }
-
-      const c = $("pubCommerceAccess");
-      const m = $("pubMairieAccess");
-      const a = $("pubAssoAccess");
-
-      if(c) c.onclick = ()=> askAccess("commerce");
-      if(m) m.onclick = ()=> askAccess("mairie");
-      if(a) a.onclick = ()=> askAccess("asso");
-    },0);
-  };
-
-  const tickerBtnFinal = $("ticker");
-  if(tickerBtnFinal){
-    tickerBtnFinal.onclick = null;
-    tickerBtnFinal.addEventListener("click", function(e){
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      window.openTicker();
-    }, true);
-  }
-
-        { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-        { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
-        { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
-        { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
-      ];
-
-      function renderTape(){
-        const track = $("sportTapeTrack");
-        if(!track) return;
-        if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
-
-        const doubled = window.tapeAds.concat(window.tapeAds);
+      </div>        const doubled = window.tapeAds.concat(window.tapeAds);
         track.innerHTML = doubled.map((a)=>{
           const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
           return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
@@ -7913,8 +7847,7 @@ if(isFn(window.makeKeyboardClickable)){
 })();
 </script>
 
-<script>
-<script>
+  <script>
 /* === BANDEAU PUB FINAL — ACCÈS CODE + CALENDRIER 3 MOIS === */
 (function(){
   const PUB_KEY = "bociteart_pub_bookings_v3";
