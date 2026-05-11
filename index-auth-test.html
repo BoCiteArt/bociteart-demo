@@ -2213,7 +2213,26 @@ function fermerInscription(){
       };
     });
   }
-      window.renderTape = renderTape;
+       window.tapeAds = window.tapeAds || [
+    { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
+    { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
+    { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
+    { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
+  ];
+
+  function renderTape(){
+    const track = $("sportTapeTrack");
+    if(!track) return;
+    if(!Array.isArray(window.tapeAds)) window.tapeAds = [];
+
+    const doubled = window.tapeAds.concat(window.tapeAds);
+    track.innerHTML = doubled.map((a)=>{
+      const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
+      return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
+    }).join("");
+  }
+
+  window.renderTape = renderTape;
       renderTape();
 
       const MAIRIE_STORE_KEY = "bociteart_mairie_msg";
