@@ -2213,17 +2213,6 @@ function fermerInscription(){
       };
     });
   }
-
-  window.openTicker = function(){
-    openModal("Publicités & visibilité", `
-      <div style="font-weight:900;margin-bottom:8px;">
-        Grand rectangle publicitaire
-      </div>        const doubled = window.tapeAds.concat(window.tapeAds);
-        track.innerHTML = doubled.map((a)=>{
-          const cls = a.bold ? "sportTapeItem bold" : "sportTapeItem";
-          return `<div class="${cls}">${escapeHtml(a.txt)}</div>`;
-        }).join("");
-      }
       window.renderTape = renderTape;
       renderTape();
 
