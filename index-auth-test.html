@@ -7782,38 +7782,49 @@ if(isFn(window.makeKeyboardClickable)){
   }
 
   function setJson(key, value){
-    try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
+    try{
+      localStorage.setItem(key, JSON.stringify(value));
+    }catch(e){}
   }
 
   window.loadSchoolWallet = window.loadSchoolWallet || function(){
     return getJson("bociteart_wallet_school_v1", { jaune:0 });
   };
+
   window.saveSchoolWallet = window.saveSchoolWallet || function(w){
-    setJson("bociteart_wallet_school_v1", { jaune:Math.max(0, Number(w && w.jaune || 0)) });
+    setJson("bociteart_wallet_school_v1", {
+      jaune: Math.max(0, Number(w && w.jaune || 0))
+    });
   };
 
   window.loadSportWallet = window.loadSportWallet || function(){
     return getJson("bociteart_wallet_sport_v1", { vert:0 });
   };
+
   window.saveSportWallet = window.saveSportWallet || function(w){
-    setJson("bociteart_wallet_sport_v1", { vert:Math.max(0, Number(w && w.vert || 0)) });
+    setJson("bociteart_wallet_sport_v1", {
+      vert: Math.max(0, Number(w && w.vert || 0))
+    });
   };
 
   window.loadCitizenWallet = window.loadCitizenWallet || function(){
     return getJson("bociteart_wallet_citizen_v1", { or:37 });
   };
+
   window.saveCitizenWallet = window.saveCitizenWallet || function(w){
-    setJson("bociteart_wallet_citizen_v1", { or:Math.max(0, Number(w && w.or || 0)) });
+    setJson("bociteart_wallet_citizen_v1", {
+      or: Math.max(0, Number(w && w.or || 0))
+    });
   };
 
   const PUB_KEY = "bociteart_pub_bookings_final_v1";
   const MAX_PER_DAY = 10;
 
   const DEMO_CODES = {
-    commerce:"com1234",
-    mairie:"mairie1234",
-    asso:"asso1234",
-    sport:"sport1234"
+    commerce: "com1234",
+    mairie: "mairie1234",
+    asso: "asso1234",
+    sport: "sport1234"
   };
 
   function label(type){
@@ -7867,7 +7878,10 @@ if(isFn(window.makeKeyboardClickable)){
       const base = new Date(now.getFullYear(), now.getMonth() + i, 1);
       const y = base.getFullYear();
       const m = base.getMonth();
-      const monthName = base.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+      const monthName = base.toLocaleDateString("fr-FR", {
+        month:"long",
+        year:"numeric"
+      });
       const days = new Date(y, m + 1, 0).getDate();
 
       html += `
@@ -7906,11 +7920,14 @@ if(isFn(window.makeKeyboardClickable)){
     if(typeof window.setTicker !== "function") return;
 
     const today = new Date().toISOString().slice(0,10);
-    const ads = getList(today).filter(isActiveAd).map(ad => ({
-      title: ad.title || "Publicité locale",
-      subtitle: ad.text || "",
-      img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
-    }));
+
+    const ads = getList(today).filter(isActiveAd).map(function(ad){
+      return {
+        title: ad.title || "Publicité locale",
+        subtitle: ad.text || "",
+        img: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+      };
+    });
 
     const defaults = [
       {
@@ -7960,12 +7977,16 @@ if(isFn(window.makeKeyboardClickable)){
 
     function refresh(){
       const box = $("pubQuarterCalendar");
-      if(box) box.innerHTML = renderQuarterCalendar(selected);
+      if(box){
+        box.innerHTML = renderQuarterCalendar(selected);
+      }
 
       const out = $("pubSelectedDates");
-      if(out) out.textContent = selected.length ? selected.join(", ") : "Aucune date sélectionnée.";
+      if(out){
+        out.textContent = selected.length ? selected.join(", ") : "Aucune date sélectionnée.";
+      }
 
-      document.querySelectorAll("[data-pub-date]").forEach(el=>{
+      document.querySelectorAll("[data-pub-date]").forEach(function(el){
         el.onclick = function(){
           if(el.classList.contains("full")){
             alert("Cette journée est complète.");
@@ -7975,8 +7996,11 @@ if(isFn(window.makeKeyboardClickable)){
           const date = el.getAttribute("data-pub-date");
           const idx = selected.indexOf(date);
 
-          if(idx >= 0) selected.splice(idx, 1);
-          else selected.push(date);
+          if(idx >= 0){
+            selected.splice(idx, 1);
+          }else{
+            selected.push(date);
+          }
 
           refresh();
         };
@@ -8001,27 +8025,32 @@ if(isFn(window.makeKeyboardClickable)){
           return;
         }
 
-        selected.forEach(date=>{
+        selected.forEach(function(date){
           const list = getList(date);
+
           if(list.filter(isActiveAd).length < MAX_PER_DAY){
             list.push({
-              ownerType:type,
-              ownerLabel:label(type),
-              title:title,
-              text:text,
-              date:date,
-              status:type === "mairie" ? "quote_validated" : "paid",
-              createdTs:Date.now(),
-              createdFr:new Date().toLocaleString("fr-FR")
+              ownerType: type,
+              ownerLabel: label(type),
+              title: title,
+              text: text,
+              date: date,
+              status: type === "mairie" ? "quote_validated" : "paid",
+              createdTs: Date.now(),
+              createdFr: new Date().toLocaleString("fr-FR")
             });
+
             setList(date, list);
           }
         });
 
         syncTickerToday();
+
         alert("Publicité enregistrée.\n\nDates : " + selected.join(", "));
 
-        if(typeof closeModal === "function") closeModal();
+        if(typeof closeModal === "function"){
+          closeModal();
+        }
       };
     }
   }
@@ -8068,6 +8097,7 @@ if(isFn(window.makeKeyboardClickable)){
   }
 
   syncTickerToday();
+
 })();
 </script>
 </body>
