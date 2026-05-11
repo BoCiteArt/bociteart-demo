@@ -8191,5 +8191,18 @@ if(isFn(window.makeKeyboardClickable)){
   setTimeout(forceTickerFinal, 1500);
 })();
 </script>
+  <script>
+alert("TEST FINAL CHARGÉ");
+
+document.addEventListener("click", function(e){
+  const t = e.target.closest("#ticker");
+  if(t){
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    alert("CLIC TICKER INTERCEPTÉ");
+  }
+}, true);
+</script>
 </body>
 </html>
