@@ -8153,55 +8153,16 @@ if(isFn(window.makeKeyboardClickable)){
 })();
 </script>
   <script>
-/* === FORCE OUVERTURE BANDEAU PUB FINAL — À METTRE TOUT EN BAS === */
-(function(){
-  function $(id){ return document.getElementById(id); }
-
-  function forceTickerFinal(){
-    const ticker = $("ticker");
-    if(!ticker || typeof window.openTicker !== "function") return;
-
-    const clone = ticker.cloneNode(true);
-    ticker.parentNode.replaceChild(clone, ticker);
-
-    clone.addEventListener("click", function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      window.openTicker();
-      return false;
-    }, true);
-
-    clone.onclick = function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      window.openTicker();
-      return false;
-    };
-  }
-
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", forceTickerFinal);
-  }else{
-    forceTickerFinal();
-  }
-
-  setTimeout(forceTickerFinal, 500);
-  setTimeout(forceTickerFinal, 1500);
-})();
-</script>
-  <script>
-alert("TEST FINAL CHARGÉ");
+alert("TEST CLIC GLOBAL CHARGÉ");
 
 document.addEventListener("click", function(e){
-  const t = e.target.closest("#ticker");
-  if(t){
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-    alert("CLIC TICKER INTERCEPTÉ");
-  }
+  const el = e.target;
+  alert(
+    "Élément cliqué :\n" +
+    "tag = " + el.tagName + "\n" +
+    "id = " + (el.id || "aucun") + "\n" +
+    "class = " + (el.className || "aucune")
+  );
 }, true);
 </script>
 </body>
