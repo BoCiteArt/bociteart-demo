@@ -2472,16 +2472,7 @@ if(tickerBtn){
       window.mairieLoad = mairieLoad;
       window.mairieSave = mairieSave;
 
-      document.querySelectorAll("[data-open]").forEach((el)=>{
-        el.addEventListener("click", ()=>{
-          const key = el.getAttribute("data-open");
-
-          if(key === "sport" || key === "mairie" || key === "commerces"){
-            if(typeof window.__bociteartOpenByKey === "function"){
-              window.__bociteartOpenByKey(key);
-              return;
-            }
-          }
+   window.__bociteartOpenByKey = function(key){
 
         if(key === "oeuvres"){
 
@@ -4698,8 +4689,6 @@ if(key === "ecole"){
            });
       });
      
-  window.__bociteartOpenByKey = function(key){
-
 if(key === "sport"){
   window.openSportPanel = function(){
     const openSport = ()=>{
