@@ -7586,9 +7586,9 @@ if(isFn(window.makeKeyboardClickable)){
   });
 
   window.showTab("rgpd");
-})();
  })(); 
 </script>
+  
   <script>
 (function () {
   const consentement = document.getElementById("consentement");
@@ -7670,99 +7670,6 @@ if(isFn(window.makeKeyboardClickable)){
   }
 
   majBouton();
-})();
-</script>
-
-<script>
-/* === OUTILS DÉMO — WALLETS UNIQUEMENT === */
-(function(){
-  function safeJsonGet(key, fallback){
-    try{
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : fallback;
-    }catch(e){
-      return fallback;
-    }
-  }
-
-  function safeJsonSet(key, value){
-    try{
-      localStorage.setItem(key, JSON.stringify(value));
-    }catch(e){}
-  }
-
-  window.loadSchoolWallet = window.loadSchoolWallet || function(){
-    return safeJsonGet("bociteart_wallet_school_v1", { jaune:0 });
-  };
-
-  window.saveSchoolWallet = window.saveSchoolWallet || function(wallet){
-    safeJsonSet("bociteart_wallet_school_v1", {
-      jaune: Math.max(0, Number(wallet?.jaune || 0))
-    });
-  };
-
-  window.loadSportWallet = window.loadSportWallet || function(){
-    return safeJsonGet("bociteart_wallet_sport_v1", { vert:0 });
-  };
-
-  window.saveSportWallet = window.saveSportWallet || function(wallet){
-    safeJsonSet("bociteart_wallet_sport_v1", {
-      vert: Math.max(0, Number(wallet?.vert || 0))
-    });
-  };
-
-  window.loadCitizenWallet = window.loadCitizenWallet || function(){
-    return safeJsonGet("bociteart_wallet_citizen_v1", { or:37 });
-  };
-
-  window.saveCitizenWallet = window.saveCitizenWallet || function(wallet){
-    safeJsonSet("bociteart_wallet_citizen_v1", {
-      or: Math.max(0, Number(wallet?.or || 0))
-    });
-  };
-
-  window.refreshCitizenWalletDisplay = function(){
-    const bal = document.getElementById("citizenCoinBalance");
-    const progress = document.getElementById("walletProgressBar");
-    const txt = document.getElementById("walletProgressText");
-    const motivation = document.getElementById("walletMotivation");
-    const expiry = document.getElementById("walletExpiryInfo");
-
-    const amount = Number(window.loadCitizenWallet().or || 0);
-    if(bal) bal.textContent = amount;
-
-    let next = 12;
-    if(amount >= 12) next = 30;
-    if(amount >= 30) next = 50;
-    if(amount >= 50) next = 100;
-
-    const pct = Math.min(100, Math.round((amount / next) * 100));
-    if(progress) progress.style.width = pct + "%";
-
-    if(txt){
-      txt.textContent = amount >= 100
-        ? "Niveau premium atteint."
-        : "Encore " + Math.max(0, next - amount) + " bocitecoin(s) pour atteindre le palier " + next + ".";
-    }
-
-    if(motivation){
-      motivation.textContent = amount >= 100
-        ? "Bravo, vous êtes au niveau maximum de la démo."
-        : "Continuez à découvrir les commerces partenaires.";
-    }
-
-    if(expiry){
-      expiry.textContent = "Démo : solde conservé localement sur cet appareil.";
-    }
-  };
-
-  if(!document.getElementById("demoBannerBociteart")){
-    const b = document.createElement("div");
-    b.id = "demoBannerBociteart";
-    b.className = "demoBanner";
-    b.textContent = "Version démonstration élus — données locales non contractuelles";
-    document.body.appendChild(b);
-  }
 })();
 </script>
 <script>
