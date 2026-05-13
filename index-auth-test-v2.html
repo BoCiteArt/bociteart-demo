@@ -8018,14 +8018,6 @@ if(isFn(window.makeKeyboardClickable)){
 
   window.refreshCitizenWalletDisplay = refreshCitizenWalletDisplay;
 
-  if(!document.getElementById("demoBannerBociteart")){
-    const b = document.createElement("div");
-    b.id = "demoBannerBociteart";
-    b.className = "demoBanner";
-    b.textContent = "Version démonstration élus — données locales non contractuelles";
-    document.body.appendChild(b);
-  }
-
   document.querySelectorAll("[data-open]").forEach(function(el){
     el.addEventListener("click", function(e){
       const key = el.getAttribute("data-open");
