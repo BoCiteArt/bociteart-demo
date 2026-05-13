@@ -7545,6 +7545,37 @@ if(openLegalBtn) openLegalBtn.onclick = openLegal;
 if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
 if(closeLegalX) closeLegalX.onclick = closeLegal;
 
+const openSecureBtn = $("openSecure");
+
+if(openSecureBtn){
+  openSecureBtn.onclick = ()=>{
+    if(typeof window.openModal !== "function"){
+      alert("Fenêtre Compte + aide indisponible.");
+      return;
+    }
+
+    window.openModal("Compte + aide", `
+      <div class="box">
+        <strong>Compte utilisateur</strong><br>
+        Espace prévu pour l’aide, l’accès au compte, la sécurité et les informations utiles.
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Aide rapide</strong><br>
+        • Présentation du fonctionnement Bo’CitéArt<br>
+        • Assistance utilisateur<br>
+        • Accès aux règles principales<br>
+        • Contact via le site Bo’CitéArt
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Version live</strong><br>
+        Cet espace pourra intégrer l’identification, le profil utilisateur, les paramètres et la sécurité.
+      </div>
+    `);
+  };
+}
+
 const ACK_PREFIX = "bociteart_ack_v2_";
 const ACK_SALT = "BoCiteArt|ack|v2";
 
