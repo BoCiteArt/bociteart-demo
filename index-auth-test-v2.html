@@ -8192,7 +8192,7 @@ if(isFn(window.makeKeyboardClickable)){
         ctx.fillStyle = "#222";
         ctx.fillRect(0, 0, targetW, targetH);
 
-        const ratio = Math.min(
+        const ratio = Math.max(
           targetW / img.width,
           targetH / img.height
         );
