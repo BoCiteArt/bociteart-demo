@@ -2746,18 +2746,21 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
     }catch(e){}
   }
 
-  function speakTextPremium(text){
-    try{
-      if(!("speechSynthesis" in window)){
-        alert("Synthèse vocale non supportée sur cet appareil.");
-        return;
-      }
+function speakTextPremium(text){
+  try{
+    if(!("speechSynthesis" in window)){
+      alert("Synthèse vocale non supportée sur cet appareil.");
+      return;
+    }
 
+    window.speechSynthesis.cancel();
+
+    function launch(){
       window.speechSynthesis.cancel();
 
       const utter = new SpeechSynthesisUtterance(String(text || ""));
-      utter.rate = 0.95;
-      utter.pitch = 1.05;
+      utter.rate = 0.82;
+      utter.pitch = 0.95;
       utter.volume = 1;
       utter.lang = "fr-FR";
 
@@ -2778,10 +2781,21 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
       }
 
       window.speechSynthesis.speak(utter);
-    }catch(e){
-      alert("Erreur de lecture vocale.");
     }
+
+    const voices = window.speechSynthesis.getVoices();
+
+    if(voices && voices.length){
+      launch();
+    }else{
+      window.speechSynthesis.onvoiceschanged = launch;
+      setTimeout(launch, 700);
+    }
+
+  }catch(e){
+    alert("Erreur de lecture vocale.");
   }
+}
 
   function stopSpeech(){
     try{
