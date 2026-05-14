@@ -6563,13 +6563,69 @@ if(key === "mairie"){
   return;
 }
       
-if(key === "commerces") {
+ if(key==="commerces"){
   openModal("Commerces", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces</div>
 
     <div class="box">
       <strong>Cadre :</strong> les bocitecoins ne sont ni une monnaie, ni un moyen de paiement, ni une conversion en euros.
       Ils servent de repère local Bo’CitéArt pour encourager la fidélité, la circulation dans la ville et la découverte des commerces partenaires.
+    </div>
+
+    <div class="box" style="border-left:6px solid #2f5d46;margin-top:10px;">
+      <div style="font-weight:900;">Accès partenaire commerce</div>
+
+      <div style="margin-top:8px;font-weight:800;">
+        Cotisation partenaire :
+        <strong>26,90 € HT / mois</strong>
+        soit <strong>32,28 € TTC / mois</strong>.
+      </div>
+
+      <div class="muted" style="margin-top:8px;">
+        Cette cotisation correspond à l’accès au réseau partenaire Bo’CitéArt
+        et aux services techniques associés.
+      </div>
+
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Accès au réseau commerçants partenaires</li>
+        <li>Fiche commerce sécurisée</li>
+        <li>Visibilité dans l’application</li>
+        <li>Historique et outils de suivi</li>
+        <li>Accès publicité et calendrier</li>
+        <li>Outils QR / scanner / sécurité</li>
+        <li>Maintenance et évolution technique</li>
+      </ul>
+
+      <div class="muted" style="margin-top:8px;">
+        Objectif : developper,favoriser la consommation chez les commerçants partenaires de la ville
+        (plutôt qu’en dehors de la ville).
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:10px;">
+      <div style="font-weight:900;">Fonctionnement des bocitecoins OR</div>
+
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Chaque tranche de <strong>10 € d’achat</strong> déclenche <strong>1 bocitecoin OR</strong> offert par le commerçant au client.</li>
+
+        <li>
+          Contribution technique :
+          <strong>0,09 € HT</strong>
+          soit <strong>0,108 € TTC</strong>
+          par tranche de 10 €.
+        </li>
+
+         <li>
+  Cette contribution sert au fonctionnement technique du système :
+  sécurité, maintenance, hébergement, génération des factures,
+  outils commerçants, traçabilité des opérations,
+  historique, support technique et maintien du réseau Bo’CitéArt.
+</li>
+
+      <div class="muted" style="margin-top:8px;">
+        Ce n’est pas une commission bancaire, ni un système de paiement,
+        ni une taxe sur le chiffre d’affaires.
+      </div>
     </div>
 
     <div class="box" style="border-left:6px solid #2f5d46;margin-top:10px;font-size:13px;line-height:1.45;">
@@ -6601,21 +6657,40 @@ if(key === "commerces") {
     <div class="walletBox">
       <div class="walletTitle">Wallet client — BoCitecoins OR</div>
       <div class="walletValue walletGold" id="citizenCoinBalance">37</div>
+
       <div class="walletSub">
         BoCitecoins disponibles pour échange chez les commerçants partenaires Bo’CitéArt selon les règles locales.
       </div>
 
-      <div style="margin-top:12px;font-weight:900;">Progression vers le prochain palier</div>
-      <div style="margin-top:8px;background:#efe4d3;border-radius:999px;overflow:hidden;height:14px;border:2px solid rgba(0,0,0,.08);">
-        <div id="walletProgressBar" style="height:100%;width:0%;border-radius:999px;transition:width .25s ease;background:linear-gradient(90deg,#e4c81c 0%, #88b84b 55%, #2f8f46 100%);"></div>
+      <div style="margin-top:12px;font-weight:900;">
+        Progression vers le prochain palier
       </div>
 
-      <div id="walletProgressText" class="walletSub" style="margin-top:8px;">Chargement...</div>
-      <div id="walletMotivation" class="walletSub" style="margin-top:6px;color:#2f5d46;font-weight:900;">&nbsp;</div>
-      <div id="walletExpiryInfo" class="walletSub" style="margin-top:6px;">&nbsp;</div>
+      <div style="margin-top:8px;background:#efe4d3;border-radius:999px;overflow:hidden;height:14px;border:2px solid rgba(0,0,0,.08);">
+        <div id="walletProgressBar"
+             style="height:100%;width:0%;border-radius:999px;transition:width .25s ease;background:linear-gradient(90deg,#e4c81c 0%, #88b84b 55%, #2f8f46 100%);">
+        </div>
+      </div>
+
+      <div id="walletProgressText" class="walletSub" style="margin-top:8px;">
+        Chargement...
+      </div>
+
+      <div id="walletMotivation"
+           class="walletSub"
+           style="margin-top:6px;color:#2f5d46;font-weight:900;">
+        &nbsp;
+      </div>
+
+      <div id="walletExpiryInfo"
+           class="walletSub"
+           style="margin-top:6px;">
+        &nbsp;
+      </div>
     </div>
 
     <div style="font-weight:900;margin-top:14px;">Paliers d’échange</div>
+
     <div class="box">
       <ul style="margin:8px 0 0 18px;font-weight:800;">
         <li><strong>12 bocitecoins</strong> : petits commerces partenaires identifiés</li>
@@ -6623,12 +6698,15 @@ if(key === "commerces") {
         <li><strong>50 bocitecoins</strong> : avantage renforcé</li>
         <li><strong>100 bocitecoins</strong> : niveau premium</li>
       </ul>
+
       <div class="muted" style="margin-top:8px;">
-        Les publicités du grand rectangle sont désormais gérées uniquement depuis l’accès central “Publicités & visibilité”.
+        Les publicités du grand rectangle sont désormais gérées uniquement
+        depuis l’accès central “Publicités & visibilité”.
       </div>
     </div>
 
     <div style="font-weight:900;margin-top:12px;">Commerces partenaires</div>
+
     <div class="box">
       <div style="margin-top:12px;display:grid;gap:8px;">
         <div style="font-weight:800;">Boulangerie Croquet Alex <span class="muted">• bronze</span></div>
@@ -6640,12 +6718,16 @@ if(key === "commerces") {
 
     <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;">Accès interne commerce</div>
+
       <div class="muted" style="margin-top:6px;">
-        Gestion commerçant : attribution des bocitecoins, fiche commerçant,
-        historique et règles internes.
+        Gestion commerçant : attribution des bocitecoins,
+        fiche commerçant, historique et règles internes.
       </div>
+
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="toggleCommerceAdminBtn" type="button">
+        <button class="choiceBtn"
+                id="toggleCommerceAdminBtn"
+                type="button">
           Ouvrir l’espace interne commerce
         </button>
       </div>
@@ -6653,53 +6735,129 @@ if(key === "commerces") {
 
     <div id="commerceAdminPanel" style="display:none;">
 
-      <div style="font-weight:900;margin-top:14px;">Attribution commerçant → client</div>
-      <div class="box">
-        <div style="margin-top:10px;font-weight:900;">Montant d’achat</div>
-        <input class="miniField" id="shopPurchaseAmount" type="number" min="0" step="0.01" placeholder="Ex : 47.00" />
+      <div style="font-weight:900;margin-top:14px;">
+        Attribution commerçant → client
+      </div>
 
-        <div style="margin-top:10px;font-weight:900;">Bocitecoins calculés</div>
+      <div class="box">
+
+        <div style="margin-top:10px;font-weight:900;">
+          Montant d’achat
+        </div>
+
+        <input class="miniField"
+               id="shopPurchaseAmount"
+               type="number"
+               min="0"
+               step="0.01"
+               placeholder="Ex : 47.00" />
+
+        <div style="margin-top:10px;font-weight:900;">
+          Bocitecoins calculés
+        </div>
+
         <div class="box" style="background:var(--bg);">
-          <strong id="shopCoinsCalc">0</strong> bocitecoin(s) OR à verser
+          <strong id="shopCoinsCalc">0</strong>
+          bocitecoin(s) OR à verser
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="shopCalcBtn" type="button">Calculer</button>
-          <button class="choiceBtn" id="shopScanClientBtn" type="button">Scanner le client</button>
-          <button class="choiceBtn" id="shopCreditClientBtn" type="button">Valider l’envoi</button>
-          <button class="choiceBtn" id="shopUndoBtn" type="button" style="background:#fff;">Correction 60 s</button>
+          <button class="choiceBtn" id="shopCalcBtn" type="button">
+            Calculer
+          </button>
+
+          <button class="choiceBtn" id="shopScanClientBtn" type="button">
+            Scanner le client
+          </button>
+
+          <button class="choiceBtn" id="shopCreditClientBtn" type="button">
+            Valider l’envoi
+          </button>
+
+          <button class="choiceBtn"
+                  id="shopUndoBtn"
+                  type="button"
+                  style="background:#fff;">
+            Correction 60 s
+          </button>
         </div>
       </div>
 
-      <div style="font-weight:900;margin-top:12px;">Fiche commerçant / code à scanner</div>
+      <div style="font-weight:900;margin-top:12px;">
+        Fiche commerçant / code à scanner
+      </div>
+
       <div class="box">
-        <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
-        <input class="miniField" id="merchantProfileName" placeholder="Nom du commerce">
 
-        <div style="margin-top:10px;font-weight:900;">Adresse</div>
-        <input class="miniField" id="merchantProfileAddress" placeholder="Adresse">
-
-        <div style="margin-top:10px;font-weight:900;">Téléphone</div>
-        <input class="miniField" id="merchantProfilePhone" placeholder="Téléphone">
-
-        <div style="margin-top:10px;font-weight:900;">Email</div>
-        <input class="miniField" id="merchantProfileEmail" placeholder="Email">
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="merchantProfileSaveBtn" type="button">Enregistrer la fiche</button>
-          <button class="choiceBtn" id="merchantShowQrBtn" type="button">Afficher mon code commerçant</button>
+        <div style="margin-top:10px;font-weight:900;">
+          Nom du commerce
         </div>
 
-        <div class="box" style="margin-top:12px;background:var(--bg);">
-          <div style="font-weight:900;">Format du code commerçant</div>
-          <div class="muted" id="merchantQrPreview" style="margin-top:8px;">
+        <input class="miniField"
+               id="merchantProfileName"
+               placeholder="Nom du commerce">
+
+        <div style="margin-top:10px;font-weight:900;">
+          Adresse
+        </div>
+
+        <input class="miniField"
+               id="merchantProfileAddress"
+               placeholder="Adresse">
+
+        <div style="margin-top:10px;font-weight:900;">
+          Téléphone
+        </div>
+
+        <input class="miniField"
+               id="merchantProfilePhone"
+               placeholder="Téléphone">
+
+        <div style="margin-top:10px;font-weight:900;">
+          Email
+        </div>
+
+        <input class="miniField"
+               id="merchantProfileEmail"
+               placeholder="Email">
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+
+          <button class="choiceBtn"
+                  id="merchantProfileSaveBtn"
+                  type="button">
+            Enregistrer la fiche
+          </button>
+
+          <button class="choiceBtn"
+                  id="merchantShowQrBtn"
+                  type="button">
+            Afficher mon code commerçant
+          </button>
+        </div>
+
+        <div class="box"
+             style="margin-top:12px;background:var(--bg);">
+
+          <div style="font-weight:900;">
+            Format du code commerçant
+          </div>
+
+          <div class="muted"
+               id="merchantQrPreview"
+               style="margin-top:8px;">
             Aucun code généré pour le moment.
           </div>
         </div>
       </div>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="merchantHistoryExportBtn" type="button" style="background:#fff;">Exporter historique</button>
+        <button class="choiceBtn"
+                id="merchantHistoryExportBtn"
+                type="button"
+                style="background:#fff;">
+          Exporter historique
+        </button>
       </div>
 
     </div>
@@ -6711,9 +6869,17 @@ if(key === "commerces") {
 
     if(toggleCommerceAdminBtn && commerceAdminPanel){
       toggleCommerceAdminBtn.onclick = ()=>{
-        const isHidden = commerceAdminPanel.style.display === "none" || commerceAdminPanel.style.display === "";
-        commerceAdminPanel.style.display = isHidden ? "block" : "none";
-        toggleCommerceAdminBtn.textContent = isHidden ? "Fermer l’espace interne commerce" : "Ouvrir l’espace interne commerce";
+        const isHidden =
+          commerceAdminPanel.style.display === "none"
+          || commerceAdminPanel.style.display === "";
+
+        commerceAdminPanel.style.display =
+          isHidden ? "block" : "none";
+
+        toggleCommerceAdminBtn.textContent =
+          isHidden
+            ? "Fermer l’espace interne commerce"
+            : "Ouvrir l’espace interne commerce";
       };
     }
 
@@ -6730,9 +6896,17 @@ if(key === "commerces") {
     let undoDeadlineTs = 0;
 
     const computeCoins = ()=>{
-      const amount = Number(amountInput ? amountInput.value : 0);
-      lastCalculatedCoins = Number.isFinite(amount) && amount >= 0 ? Math.floor(amount / 10) : 0;
-      if(calcOut) calcOut.textContent = String(lastCalculatedCoins);
+      const amount =
+        Number(amountInput ? amountInput.value : 0);
+
+      lastCalculatedCoins =
+        Number.isFinite(amount) && amount >= 0
+          ? Math.floor(amount / 10)
+          : 0;
+
+      if(calcOut){
+        calcOut.textContent = String(lastCalculatedCoins);
+      }
     };
 
     if(calcBtn){
@@ -6780,14 +6954,21 @@ if(key === "commerces") {
         lastClientScanned = false;
 
         const bal = $("citizenCoinBalance");
-        if(bal) bal.textContent = after;
 
-        alert(lastCalculatedCoins + " bocitecoin(s) OR versé(s) au client. Correction possible pendant 60 secondes.");
+        if(bal){
+          bal.textContent = after;
+        }
+
+        alert(
+          lastCalculatedCoins
+          + " bocitecoin(s) OR versé(s) au client. Correction possible pendant 60 secondes."
+        );
       };
     }
 
     if(undoBtn){
       undoBtn.onclick = ()=>{
+
         if(!lastCreditTx){
           alert("Aucune opération récente à corriger.");
           return;
@@ -6798,10 +6979,16 @@ if(key === "commerces") {
           return;
         }
 
-        saveCitizenWallet({ or: Math.max(0, Number(lastCreditTx.previous || 0)) });
+        saveCitizenWallet({
+          or: Math.max(0, Number(lastCreditTx.previous || 0))
+        });
 
         const bal = $("citizenCoinBalance");
-        if(bal) bal.textContent = Number(lastCreditTx.previous || 0);
+
+        if(bal){
+          bal.textContent =
+            Number(lastCreditTx.previous || 0);
+        }
 
         lastCreditTx = null;
 
@@ -6809,25 +6996,46 @@ if(key === "commerces") {
       };
     }
 
-    const MERCHANT_PROFILE_KEY = "bociteart_merchant_profile_v1";
+    const MERCHANT_PROFILE_KEY =
+      "bociteart_merchant_profile_v1";
 
     function loadMerchantProfile(){
       try{
-        const raw = localStorage.getItem(MERCHANT_PROFILE_KEY);
-        return raw ? JSON.parse(raw) : { shopName:"", address:"", phone:"", email:"" };
+        const raw =
+          localStorage.getItem(MERCHANT_PROFILE_KEY);
+
+        return raw
+          ? JSON.parse(raw)
+          : {
+              shopName:"",
+              address:"",
+              phone:"",
+              email:""
+            };
+
       }catch(e){
-        return { shopName:"", address:"", phone:"", email:"" };
+
+        return {
+          shopName:"",
+          address:"",
+          phone:"",
+          email:""
+        };
       }
     }
 
     function saveMerchantProfile(obj){
       try{
-        localStorage.setItem(MERCHANT_PROFILE_KEY, JSON.stringify(obj));
+        localStorage.setItem(
+          MERCHANT_PROFILE_KEY,
+          JSON.stringify(obj)
+        );
       }catch(e){}
     }
 
     function buildMerchantProfilePayload(){
       const p = loadMerchantProfile();
+
       return {
         type: "merchant_profile",
         shopName: p.shopName || "",
@@ -6847,25 +7055,64 @@ if(key === "commerces") {
 
     const profile = loadMerchantProfile();
 
-    if(merchantProfileName) merchantProfileName.value = profile.shopName || "";
-    if(merchantProfileAddress) merchantProfileAddress.value = profile.address || "";
-    if(merchantProfilePhone) merchantProfilePhone.value = profile.phone || "";
-    if(merchantProfileEmail) merchantProfileEmail.value = profile.email || "";
+    if(merchantProfileName){
+      merchantProfileName.value =
+        profile.shopName || "";
+    }
+
+    if(merchantProfileAddress){
+      merchantProfileAddress.value =
+        profile.address || "";
+    }
+
+    if(merchantProfilePhone){
+      merchantProfilePhone.value =
+        profile.phone || "";
+    }
+
+    if(merchantProfileEmail){
+      merchantProfileEmail.value =
+        profile.email || "";
+    }
 
     function refreshMerchantQrPreview(){
+
       if(!merchantQrPreview) return;
-      merchantQrPreview.textContent = JSON.stringify(buildMerchantProfilePayload(), null, 2);
+
+      merchantQrPreview.textContent =
+        JSON.stringify(
+          buildMerchantProfilePayload(),
+          null,
+          2
+        );
     }
 
     refreshMerchantQrPreview();
 
     if(merchantProfileSaveBtn){
+
       merchantProfileSaveBtn.onclick = ()=>{
+
         const data = {
-          shopName: merchantProfileName ? String(merchantProfileName.value || "").trim() : "",
-          address: merchantProfileAddress ? String(merchantProfileAddress.value || "").trim() : "",
-          phone: merchantProfilePhone ? String(merchantProfilePhone.value || "").trim() : "",
-          email: merchantProfileEmail ? String(merchantProfileEmail.value || "").trim() : ""
+          shopName:
+            merchantProfileName
+              ? String(merchantProfileName.value || "").trim()
+              : "",
+
+          address:
+            merchantProfileAddress
+              ? String(merchantProfileAddress.value || "").trim()
+              : "",
+
+          phone:
+            merchantProfilePhone
+              ? String(merchantProfilePhone.value || "").trim()
+              : "",
+
+          email:
+            merchantProfileEmail
+              ? String(merchantProfileEmail.value || "").trim()
+              : ""
         };
 
         if(!data.shopName){
@@ -6875,13 +7122,17 @@ if(key === "commerces") {
 
         saveMerchantProfile(data);
         refreshMerchantQrPreview();
+
         alert("Fiche commerçant enregistrée.");
       };
     }
 
     if(merchantShowQrBtn){
+
       merchantShowQrBtn.onclick = ()=>{
-        const payload = buildMerchantProfilePayload();
+
+        const payload =
+          buildMerchantProfilePayload();
 
         if(!payload.shopName){
           alert("Enregistre d’abord la fiche commerçant.");
@@ -6889,26 +7140,48 @@ if(key === "commerces") {
         }
 
         refreshMerchantQrPreview();
-        alert("Code commerçant à scanner :\n\n" + JSON.stringify(payload, null, 2));
+
+        alert(
+          "Code commerçant à scanner :\n\n"
+          + JSON.stringify(payload, null, 2)
+        );
       };
     }
 
-    const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
+    const merchantHistoryExportBtn =
+      $("merchantHistoryExportBtn");
 
     if(merchantHistoryExportBtn){
+
       merchantHistoryExportBtn.onclick = ()=>{
+
         const exportObj = {
-          exported_at_fr: new Date().toLocaleString("fr-FR"),
-          merchant_profile: loadMerchantProfile(),
-          citizen_wallet_or: Number(loadCitizenWallet().or || 0)
+          exported_at_fr:
+            new Date().toLocaleString("fr-FR"),
+
+          merchant_profile:
+            loadMerchantProfile(),
+
+          citizen_wallet_or:
+            Number(loadCitizenWallet().or || 0)
         };
 
-        const exportText = "HISTORIQUE COMMERCE — EXPORT DÉMO\n\n" + JSON.stringify(exportObj, null, 2);
+        const exportText =
+          "HISTORIQUE COMMERCE — EXPORT DÉMO\n\n"
+          + JSON.stringify(exportObj, null, 2);
 
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(exportText)
-            .then(()=> alert("Historique commerce copié."))
-            .catch(()=> alert(exportText));
+        if(navigator.clipboard
+           && navigator.clipboard.writeText){
+
+          navigator.clipboard
+            .writeText(exportText)
+            .then(()=>{
+              alert("Historique commerce copié.");
+            })
+            .catch(()=>{
+              alert(exportText);
+            });
+
         }else{
           alert(exportText);
         }
@@ -6916,12 +7189,15 @@ if(key === "commerces") {
     }
 
     const xb = $("xBtn");
-    if(xb && xb.focus) xb.focus();
+
+    if(xb && xb.focus){
+      xb.focus();
+    }
+
   },0);
 
   return;
 }
-  };   
 
 document.querySelectorAll("[data-open]").forEach((el)=>{
   el.addEventListener("click", ()=>{
