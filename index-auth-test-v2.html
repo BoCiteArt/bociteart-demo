@@ -2050,6 +2050,12 @@ function validerInscription() {
 
 </div>
 
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="choice" aria-hidden="true">
+
   <div class="modal" id="choice" aria-hidden="true">
     <div class="backdrop" id="choiceClose"></div>
     <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="choiceTitle">
@@ -6559,6 +6565,9 @@ if(key === "mairie"){
     const xb = $("xBtn");
     if(xb && xb.focus) xb.focus();
   },0);
+
+    return;
+   }
       
  if(key==="commerces"){
   openModal("Commerces", `
