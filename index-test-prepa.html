@@ -5,406 +5,75 @@
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="geolocation=(self)">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests; img-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; font-src 'self' https: data:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests; img-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' https: data:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Bo’CitéArt</title>
-  <meta name="theme-color" content="#a51e22">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 
   <style>
     :root{
-      --bg:#f1e6d6;
-      --surface:#ffffff;
-      --beige:#efe4d3;
-      --green:#2f5d46;
-      --red:#a51e22;
-      --redSoft:#7f1a1d;
-      --text:#1f1f1f;
-      --muted:#6e6a63;
-      --link:#1d4ed8;
-      --vh:1vh;
+      --bg:#f1e6d6;--beige:#efe4d3;--green:#2f5d46;--red:#a51e22;
+      --redSoft:#7f1a1d;--text:#1f1f1f;--muted:#6e6a63;
     }
-    *{ box-sizing:border-box; }
-    html, body{ height:100%; margin:0; padding:0; }
-    body{
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      -webkit-text-size-adjust:100%;
-      text-size-adjust:100%;
-      overscroll-behavior:none;
-    }
-    body.modalOpen{ overflow:hidden; }
-    .page{
-      min-height:100vh;
-      min-height:100dvh;
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
-    }
-    .wrap{
-      width:100%;
-      max-width:420px;
-      margin:0 auto;
-      padding:10px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;height:100%}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    body.modalOpen{overflow:hidden}
+    .page{min-height:100vh;min-height:100dvh;display:flex;justify-content:center}
+    .wrap{width:100%;max-width:420px;padding:10px;display:flex;flex-direction:column;gap:10px}
 
-    .ticker{
-      position:relative;
-      overflow:hidden;
-      border-radius:18px;
-      background:var(--beige);
-      height:130px;
-      min-height:130px;
-      cursor:pointer;
-    }
-    .ticker img{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-    }
-    .ticker .overlay{
-      position:absolute;
-      inset:0;
-      background:linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.12));
-    }
-    .ticker .row{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:center;
-      padding:0 14px;
-      gap:12px;
-      overflow:hidden;
-      min-height:100%;
-    }
-    .marquee{
-      display:flex;
-      gap:0;
-      white-space:nowrap;
-      animation:marquee 32s linear infinite;
-      will-change:transform;
-      width:max-content;
-    }
-    .marquee .item{
-      display:flex;
-      flex-direction:column;
-      min-width:520px;
-      padding-right:80px;
-    }
-    .ticker .title{ color:#fff; font-weight:800; font-size:14px; }
-    .ticker .sub{ color:rgba(255,255,255,.92); font-weight:700; font-size:12px; margin-top:2px; }
-    .ticker .rule{
-      margin-left:auto;
-      color:rgba(255,255,255,.92);
-      font-size:11px;
-      font-weight:700;
-      flex:0 0 auto;
-    }
-    @keyframes marquee{
-      0%{ transform:translateX(0); }
-      100%{ transform:translateX(-50%); }
-    }
+    .ticker{position:relative;height:130px;min-height:130px;border-radius:18px;overflow:hidden;background:var(--beige);cursor:pointer}
+    .ticker img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .ticker .overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.12))}
+    .ticker .row{position:absolute;inset:0;display:flex;align-items:center;overflow:hidden;padding:0 14px}
+    .marquee{display:flex;width:max-content;white-space:nowrap;animation:marquee 32s linear infinite}
+    .marquee .item{min-width:520px;padding-right:80px;display:flex;flex-direction:column}
+    .title{color:#fff;font-weight:900;font-size:14px}
+    .sub{color:rgba(255,255,255,.92);font-weight:700;font-size:12px;margin-top:2px}
+    @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-    .gridWrap{ position:relative; }
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-    }
-    .tile{
-      position:relative;
-      width:100%;
-      aspect-ratio:1 / 0.58;
-      border-radius:22px;
-      overflow:hidden;
-      background:var(--beige);
-      cursor:pointer;
-    }
-    .tile img{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-    }
-    .tile .overlay{
-      position:absolute;
-      inset:0;
-      background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.55));
-    }
-    .tile .content{
-      position:absolute;
-      inset:0;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      text-align:center;
-      padding:12px;
-      color:#fff;
-    }
-    .tile .h{ font-weight:900; font-size:18px; line-height:1.15; }
-    .tile .p{ margin-top:8px; font-weight:700; font-size:12px; color:rgba(255,255,255,.92); }
+    .gridWrap{position:relative}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .tile{position:relative;width:100%;aspect-ratio:1/.58;border-radius:22px;overflow:hidden;background:var(--beige);cursor:pointer}
+    .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .tile .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.22),rgba(0,0,0,.55))}
+    .tile .content{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:12px;color:#fff}
+    .tile .h{font-weight:900;font-size:18px;line-height:1.15}
+    .tile .p{margin-top:8px;font-weight:700;font-size:12px;color:rgba(255,255,255,.92)}
+    .tile.logoOnly{background:#fff}
+    .tile.logoOnly img{object-fit:cover;background:#fff}
+    .tile.logoOnly .overlay{display:none}
 
-    .tile.logoOnly{
-      background:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .tile.logoOnly img{
-      object-fit:cover;
-      padding:0;
-      background:#fff;
-    }
-    .tile.logoOnly .overlay{ display:none; }
+    .tileBadge{position:absolute;top:10px;right:10px;width:14px;height:14px;border-radius:999px;background:#1f8f4d;border:2px solid #fff;z-index:3;animation:badgePulse 1.2s infinite}
+    @keyframes badgePulse{0%{transform:scale(1);opacity:1}50%{transform:scale(1.18);opacity:.75}100%{transform:scale(1);opacity:1}}
 
-    .tileBadge{
-      position:absolute;
-      top:10px;
-      right:10px;
-      width:14px;
-      height:14px;
-      border-radius:999px;
-      background:#1f8f4d;
-      border:2px solid #fff;
-      box-shadow:0 0 0 2px rgba(0,0,0,.08);
-      z-index:3;
-      animation:badgePulse 1.2s infinite;
-    }
-    @keyframes badgePulse{
-      0%{ transform:scale(1); opacity:1; }
-      50%{ transform:scale(1.18); opacity:.75; }
-      100%{ transform:scale(1); opacity:1; }
-    }
+    .emgSlot{position:absolute;left:50%;transform:translate(-50%,-50%);padding:6px;border-radius:999px;background:var(--bg);z-index:20}
+    .emgTop{top:33.333%}.emgBottom{top:66.666%}
+    .lpBtn{position:relative;width:90px;height:90px;border:none;background:transparent;padding:0;touch-action:none;cursor:pointer}
+    .lpRing{position:absolute;inset:0}
+    .lpCore{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:74px;height:74px;border-radius:999px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;box-shadow:0 10px 20px rgba(0,0,0,.18);user-select:none}
+    .lpSmall{width:68px;height:68px}
+    .red{background:linear-gradient(180deg,var(--red),var(--redSoft))}
+    .green{background:linear-gradient(180deg,#3c7b5d,#2f5d46)}
+    .lbl{font-size:12px}.lblSmall{font-size:8px}.icon{width:14px;height:14px;margin:2px 0}
 
-    .emgSlot{
-      position:absolute;
-      left:50%;
-      transform:translate(-50%,-50%);
-      padding:6px;
-      border-radius:999px;
-      background:var(--bg);
-      z-index:20;
-    }
-    .emgTop{ top:33.333%; }
-    .emgBottom{ top:66.666%; }
+    .bottomBar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .miniBtn{border:none;border-radius:18px;background:#f7efe3;border:3px solid var(--red);padding:10px;min-height:72px;cursor:pointer}
+    .miniClock{display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .time{font-size:20px;font-weight:900}.date{font-size:11px;font-weight:800;margin-top:4px}.saint{font-size:10px;color:#555;font-weight:800;margin-top:3px}
+    .miniDae{text-align:center;font-weight:900}.daeIcon{font-size:24px}.daeText{font-size:12px;margin-top:4px}
 
-    .lpBtn{
-      position:relative;
-      width:90px;
-      height:90px;
-      border:none;
-      background:transparent;
-      padding:0;
-      touch-action:none;
-      cursor:pointer;
-    }
-    .lpRing{ position:absolute; inset:0; }
-    .lpCore{
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform:translate(-50%,-50%);
-      width:74px;
-      height:74px;
-      border-radius:999px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      color:#fff;
-      font-weight:700;
-      box-shadow:0 10px 20px rgba(0,0,0,.18);
-      user-select:none;
-    }
-    .lpSmall{ width:68px; height:68px; }
-    .lpCore .icon{ width:16px; height:16px; margin-bottom:2px; opacity:.95; }
-    .lpCore .lbl{ font-size:12px !important; line-height:1; font-weight:700 !important; }
-    .lpCore .lblSmall{ font-size:8px !important; line-height:1; font-weight:700 !important; }
-
-    #btn112 .lblSmallTop{ font-size:7px !important; line-height:1 !important; }
-    #btn112 .icon{ width:14px !important; height:14px !important; margin-bottom:1px !important; }
-    #btnSos .lblTop{ font-size:7px !important; line-height:1.05 !important; font-weight:800 !important; }
-    #btnSos .icon{ width:12px !important; height:12px !important; margin:2px 0 !important; }
-    #btnSos #sosLabel{ font-size:7px !important; line-height:1 !important; font-weight:900 !important; }
-    .red{ background:linear-gradient(180deg,var(--red),var(--redSoft)); }
-    .green{ background:linear-gradient(180deg,#3c7b5d,#2f5d46); }
-    .bottomBar{
-      display:grid;
-      grid-template-columns:1fr auto 1fr;
-      align-items:center;
-      gap:10px;
-      margin-top:2px;
-    }
-
-    .miniBtn{
-      border:none;
-      border-radius:18px;
-      background:var(--beige);
-      padding:10px;
-      min-height:72px;
-      position:relative;
-      overflow:hidden;
-      cursor:pointer;
-    }
-
-    .miniClock{
-      display:flex;
-      flex-direction:column;
-      align-items:flex-start;
-      justify-content:center;
-      min-height:72px;
-    }
-
-    .miniClock .time{
-      font-size:22px;
-      font-weight:900;
-      line-height:1;
-    }
-
-    .miniClock .date{
-      margin-top:4px;
-      font-size:12px;
-      font-weight:800;
-    }
-
-    .miniClock .saint{
-      margin-top:2px;
-      font-size:10px;
-      color:#555;
-      font-weight:700;
-    }
-
-    .miniDae{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      min-height:72px;
-      text-align:center;
-    }
-
-    .miniDae .daeIcon{
-      font-size:22px;
-      line-height:1;
-    }
-
-    .miniDae .daeText{
-      margin-top:4px;
-      font-size:11px;
-      font-weight:900;
-    }
-
-    .modal{
-      position:fixed;
-      inset:0;
-      display:none;
-      align-items:flex-end;
-      justify-content:center;
-      background:rgba(0,0,0,.45);
-      z-index:9999;
-      padding:0;
-    }
-
-    .modal.open{ display:flex; }
-
-    .sheet{
-      width:100%;
-      max-width:420px;
-      max-height:92vh;
-      background:#fff;
-      border-radius:22px 22px 0 0;
-      overflow:auto;
-      padding:18px;
-      animation:sheetUp .22s ease-out;
-    }
-
-    @keyframes sheetUp{
-      from{
-        transform:translateY(30px);
-        opacity:0;
-      }
-      to{
-        transform:translateY(0);
-        opacity:1;
-      }
-    }
-
-    .sheetHead{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:14px;
-    }
-
-    .sheetTitle{
-      font-size:18px;
-      font-weight:900;
-    }
-
-    .closeBtn{
-      border:none;
-      background:#eee;
-      width:34px;
-      height:34px;
-      border-radius:999px;
-      font-size:18px;
-      font-weight:900;
-      cursor:pointer;
-    }
-
-    .box{
-      border-radius:16px;
-      background:#f8f6f2;
-      padding:12px;
-      margin-top:10px;
-    }
-
-    .choiceBtn{
-      border:none;
-      border-radius:14px;
-      background:var(--green);
-      color:#fff;
-      padding:12px 14px;
-      font-weight:900;
-      cursor:pointer;
-    }
-
-    .muted{
-      color:#666;
-      font-size:12px;
-    }
-
-    iframe{
-      border:none;
-      width:100%;
-    }
-
-    @media (max-width:390px){
-      .lpBtn{
-        width:82px;
-        height:82px;
-      }
-
-      .lpCore{
-        width:66px;
-        height:66px;
-      }
-
-      .lpSmall{
-        width:62px;
-        height:62px;
-      }
-    }
+    .modal{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45);z-index:9999}
+    .modal.open{display:flex}
+    .sheet{width:100%;max-width:420px;max-height:92vh;background:#fff;border-radius:22px 22px 0 0;overflow:auto;padding:18px}
+    .sheetHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+    .sheetTitle{font-size:18px;font-weight:900}
+    .closeBtn{border:none;background:#eee;width:34px;height:34px;border-radius:999px;font-size:18px;font-weight:900;cursor:pointer}
+    .box{border-radius:16px;background:#f8f6f2;padding:12px;margin-top:10px;font-weight:800}
+    .choiceBtn{border:none;border-radius:14px;background:var(--green);color:#fff;padding:12px 14px;font-weight:900;cursor:pointer}
+    .choiceBtn.white{background:#fff;color:#111;border:1px solid #ddd}
+    .muted{color:#666;font-size:12px}
+    input,textarea,select{width:100%;border:2px solid rgba(0,0,0,.12);border-radius:12px;padding:10px;font-weight:800;margin-top:8px}
+    iframe{border:none;width:100%}
   </style>
 </head>
 
@@ -413,290 +82,135 @@
 <div class="page">
   <div class="wrap">
 
-    <!-- GRAND BANDEAU -->
     <div class="ticker" id="ticker">
-
-      <img src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60" alt="Bo'CitéArt">
-
+      <img src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60" alt="">
       <div class="overlay"></div>
-
       <div class="row">
-
         <div class="marquee">
-
-          <div class="item">
-            <div class="title">Bo’CitéArt — ville citoyenne connectée</div>
-            <div class="sub">fresques • commerces • sport • musique • écoles • mairie</div>
-          </div>
-
-          <div class="item">
-            <div class="title">Publicité locale</div>
-            <div class="sub">bandeau dynamique multi-acteurs</div>
-          </div>
-
-          <div class="item">
-            <div class="title">Bo’CitéArt — participation citoyenne</div>
-            <div class="sub">application territoriale vivante</div>
-          </div>
-
-          <div class="item">
-            <div class="title">Bo’CitéArt — ville citoyenne connectée</div>
-            <div class="sub">fresques • commerces • sport • musique • écoles • mairie</div>
-          </div>
-
+          <div class="item"><div class="title">Bo’CitéArt — ville citoyenne connectée</div><div class="sub">fresques • commerces • sport • écoles • mairie</div></div>
+          <div class="item"><div class="title">Publicité locale</div><div class="sub">bandeau dynamique multi-acteurs</div></div>
+          <div class="item"><div class="title">Bo’CitéArt — participation citoyenne</div><div class="sub">application territoriale vivante</div></div>
+          <div class="item"><div class="title">Bo’CitéArt — ville citoyenne connectée</div><div class="sub">fresques • commerces • sport • écoles • mairie</div></div>
         </div>
-
       </div>
-
     </div>
 
-    <!-- TUILES -->
     <div class="gridWrap">
 
-      <!-- 112 -->
       <div class="emgSlot emgTop">
-
-        <button class="lpBtn" id="btn112">
-
+        <button class="lpBtn" id="btn112" type="button">
           <svg class="lpRing" viewBox="0 0 90 90">
-            <circle cx="45" cy="45" r="35"
-              fill="none"
-              stroke="rgba(255,255,255,.22)"
-              stroke-width="6"/>
-            <circle id="ring112"
-              cx="45"
-              cy="45"
-              r="35"
-              fill="none"
-              stroke="#ffffff"
-              stroke-width="6"
-              stroke-linecap="round"
-              transform="rotate(-90 45 45)"
-              stroke-dasharray="220"
-              stroke-dashoffset="220"/>
+            <circle cx="45" cy="45" r="35" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="6"/>
+            <circle id="ring112" cx="45" cy="45" r="35" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" transform="rotate(-90 45 45)" stroke-dasharray="220" stroke-dashoffset="220"/>
           </svg>
-
           <div class="lpCore red">
-
-            <div class="lblSmall lblSmallTop">urgence</div>
-
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <path d="M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7l7-4z"
-                stroke="white"
-                stroke-width="2"/>
-            </svg>
-
+            <div class="lblSmall">urgence</div>
             <div class="lbl">112</div>
-
           </div>
-
         </button>
-
       </div>
 
-      <!-- 3919 / 119 -->
       <div class="emgSlot emgBottom">
-
-        <button class="lpBtn" id="btnSos">
-
+        <button class="lpBtn" id="btnSos" type="button">
           <svg class="lpRing" viewBox="0 0 90 90">
-            <circle cx="45" cy="45" r="35"
-              fill="none"
-              stroke="rgba(255,255,255,.22)"
-              stroke-width="6"/>
-            <circle id="ringSos"
-              cx="45"
-              cy="45"
-              r="35"
-              fill="none"
-              stroke="#ffffff"
-              stroke-width="6"
-              stroke-linecap="round"
-              transform="rotate(-90 45 45)"
-              stroke-dasharray="220"
-              stroke-dashoffset="220"/>
+            <circle cx="45" cy="45" r="35" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="6"/>
+            <circle id="ringSos" cx="45" cy="45" r="35" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" transform="rotate(-90 45 45)" stroke-dasharray="220" stroke-dashoffset="220"/>
           </svg>
-
           <div class="lpCore green lpSmall">
-
-            <div class="lblSmall lblTop">aide</div>
-
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 6.5-7 11-7 11z"
-                stroke="white"
-                stroke-width="2"/>
-            </svg>
-
+            <div class="lblSmall">aide</div>
             <div id="sosLabel" class="lblSmall">3919 / 119</div>
-
           </div>
-
         </button>
-
       </div>
 
       <div class="grid">
 
-        <!-- Bo'CitéArt -->
-        <div class="tile logoOnly">
-
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg"
-               alt="Bo'CitéArt">
-
+        <div class="tile logoOnly" data-open="admin">
+          <img src="https://bociteart.com/logo-bociteart.png" alt="Bo'CitéArt">
         </div>
 
-        <!-- Œuvres -->
-        <div class="tile">
-          <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=60">
+        <div class="tile" data-open="oeuvres">
+          <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=60" alt="">
           <div class="overlay"></div>
-          <div class="content">
-            <div class="h">Œuvres</div>
-            <div class="p">fresques & patrimoine</div>
-          </div>
+          <div class="content"><div class="h">Œuvres</div><div class="p">fresques & patrimoine</div></div>
         </div>
 
-        <!-- Commerces -->
-        <div class="tile">
-          <img src="https://images.unsplash.com/photo-1481437156560-3205f6a55735?auto=format&fit=crop&w=1200&q=60">
+        <div class="tile" data-open="commerces">
+          <img src="https://images.unsplash.com/photo-1481437156560-3205f6a55735?auto=format&fit=crop&w=1200&q=60" alt="">
           <div class="overlay"></div>
-          <div class="content">
-            <div class="h">Commerces</div>
-            <div class="p">bons plans & WattCoins</div>
-          </div>
+          <div class="content"><div class="h">Commerces</div><div class="p">bons plans & WattCoins</div></div>
         </div>
 
-        <!-- École -->
-        <div class="tile">
-          <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=60">
+        <div class="tile" data-open="ecole">
+          <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=60" alt="">
           <div class="overlay"></div>
-          <div class="content">
-            <div class="h">École</div>
-            <div class="p">mot du jour & citoyenneté</div>
-          </div>
+          <div class="tileBadge"></div>
+          <div class="content"><div class="h">École</div><div class="p">mot du jour & citoyenneté</div></div>
         </div>
 
-        <!-- Sport -->
-        <div class="tile">
-          <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=60">
+        <div class="tile" data-open="sport">
+          <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=60" alt="">
           <div class="overlay"></div>
-          <div class="content">
-            <div class="h">Sport</div>
-            <div class="p">clubs & engagement civique</div>
-          </div>
+          <div class="content"><div class="h">Sport</div><div class="p">clubs & engagement civique</div></div>
         </div>
 
-        <!-- Mairie -->
-        <div class="tile">
-          <img src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1200&q=60">
+        <div class="tile" data-open="mairie">
+          <img src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1200&q=60" alt="">
           <div class="overlay"></div>
-          <div class="content">
-            <div class="h">Mairie</div>
-            <div class="p">infos & alertes</div>
-          </div>
+          <div class="content"><div class="h">Mairie</div><div class="p">infos & alertes</div></div>
         </div>
 
       </div>
-
     </div>
 
-    <!-- BAS -->
     <div class="bottomBar">
-
-      <!-- HORLOGE -->
-      <button class="miniBtn" id="clockBtn">
-
+      <button class="miniBtn" id="clockBtn" type="button">
         <div class="miniClock">
-
           <div id="clockTimeMini" class="time">00:00</div>
-
           <div id="clockDateMini" class="date">00/00/0000</div>
-
           <div id="clockSaintMini" class="saint">Saint du jour</div>
-
         </div>
-
       </button>
 
-      <!-- DAE -->
-      <button class="miniBtn" id="daeBtn">
-
+      <button class="miniBtn" id="daeBtn" type="button">
         <div class="miniDae">
-
           <div class="daeIcon">❤️</div>
-
-          <div class="daeText">
-            DAE<br>
-            Défibrillateur
-          </div>
-
+          <div class="daeText">DAE<br>Défibrillateur</div>
         </div>
-
       </button>
-
     </div>
 
   </div>
 </div>
 
-<!-- MODAL -->
 <div class="modal" id="modal">
-
   <div class="sheet">
-
     <div class="sheetHead">
-
       <div id="modalTitle" class="sheetTitle"></div>
-
-      <button id="modalClose" class="closeBtn">×</button>
-
+      <button id="modalClose" class="closeBtn" type="button">×</button>
     </div>
-
     <div id="modalBody"></div>
-
   </div>
-
 </div>
 
-<!-- CHOIX SOS -->
 <div class="modal" id="choice">
-
   <div class="sheet">
-
     <div class="sheetHead">
-
       <div class="sheetTitle">Choisir un numéro</div>
-
-      <button id="choiceX" class="closeBtn">×</button>
-
+      <button id="choiceX" class="closeBtn" type="button">×</button>
     </div>
-
-    <div class="box">
-      Sélectionnez le numéro d’aide souhaité.
-    </div>
-
+    <div class="box">Sélectionnez le numéro d’aide souhaité.</div>
     <div style="display:grid;gap:10px;margin-top:14px;">
-
-      <button class="choiceBtn" data-pick="3919">
-        3919 — violences
-      </button>
-
-      <button class="choiceBtn" data-pick="119">
-        119 — enfance en danger
-      </button>
-
-      <button class="choiceBtn" id="choiceClose" style="background:#999;">
-        fermer
-      </button>
-
+      <button class="choiceBtn" data-pick="3919" type="button">3919 — violences</button>
+      <button class="choiceBtn" data-pick="119" type="button">119 — enfance en danger</button>
+      <button class="choiceBtn" id="choiceClose" style="background:#999;" type="button">fermer</button>
     </div>
-
   </div>
-
 </div>
 
 <script>
-
 (function(){
+  "use strict";
 
   const $ = (id)=>document.getElementById(id);
 
@@ -708,463 +222,250 @@
     modalTitle.innerHTML = title || "";
     modalBody.innerHTML = html || "";
     modal.classList.add("open");
-    document.body.style.overflow = "hidden";
+    document.body.classList.add("modalOpen");
   }
 
   function closeModal(){
     modal.classList.remove("open");
-    document.body.style.overflow = "";
+    document.body.classList.remove("modalOpen");
   }
-
-  $("modalClose").onclick = closeModal;
-
-  modal.addEventListener("click",(e)=>{
-    if(e.target === modal){
-      closeModal();
-    }
-  });
 
   window.openModal = openModal;
   window.closeModal = closeModal;
 
+  $("modalClose").onclick = closeModal;
+  modal.addEventListener("click", function(e){
+    if(e.target === modal) closeModal();
+  });
+
+  function escapeHtml(s){
+    return String(s || "")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+  }
+
   function getSaintOfDay(){
-    return "Saint du jour";
+    const now = new Date();
+    const key = String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0");
+    const map = {"05-17":"Saint Pascal","05-18":"Saint Éric","05-19":"Saint Yves"};
+    return map[key] || "Saint du jour";
   }
 
   function refreshMiniClock(){
-
     const now = new Date();
-
-    $("clockTimeMini").textContent =
-      now.toLocaleTimeString("fr-FR",{
-        hour:"2-digit",
-        minute:"2-digit"
-      });
-
-    $("clockDateMini").textContent =
-      now.toLocaleDateString("fr-FR");
-
-    $("clockSaintMini").textContent =
-      getSaintOfDay();
-
+    $("clockTimeMini").textContent = now.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+    $("clockDateMini").textContent = now.toLocaleDateString("fr-FR");
+    $("clockSaintMini").textContent = getSaintOfDay();
   }
-
   refreshMiniClock();
-
   setInterval(refreshMiniClock,30000);
 
-  // DAE
-  $("daeBtn").onclick = ()=>{
+  function openOeuvres(){
+    openModal("Œuvres", `
+      <div class="box"><strong>Parcours des œuvres</strong><br><br>
+      Fresques citoyennes, QR codes, mécènes, artistes, audio et parcours culturels.</div>
+      <div class="box"><strong>Exemple :</strong><br>Libre et Fleurie — L’Arbrisseau — artiste Julot — mécène Garage Planque Citroën.</div>
+      <div class="box"><button class="choiceBtn" onclick="alert('QR démo : œuvre ouverte')">Scanner / saisir QR démo</button></div>
+    `);
+  }
 
-    openModal("Défibrillateur (DAE)",`
+  function openEcole(){
+    openModal("École", `
+      <div class="box"><strong>Espace école</strong><br><br>
+      Mot du jour, lecture audio, citoyenneté, participation des enfants et écoles.</div>
+      <div class="box" style="background:#efe4d3;">« Je suis ravi aujourd’hui. »</div>
+      <div class="box"><button class="choiceBtn" onclick="speechSynthesis.speak(new SpeechSynthesisUtterance('Je suis ravi aujourd’hui'))">Lire le mot du jour</button></div>
+    `);
+  }
 
-      <div class="box">
+  function openCommerces(){
+    openModal("Commerces", `
+      <div class="box"><strong>Commerces partenaires</strong><br><br>
+      Bons plans, offres et système WattCoins.</div>
+      <div class="box"><strong>Cotisation partenaire :</strong><br>26,90 € HT / mois.</div>
+      <div class="box"><strong>Fonctionnement :</strong><br>1 WattCoin par tranche de 10 € d’achat. Contribution technique : 0,09 € HT par tranche.</div>
+    `);
+  }
 
-        <strong>Défibrillateur le plus proche</strong><br><br>
+  function openSport(){
+    openModal("Sport", `
+      <div class="box"><strong>Sport</strong><br><br>
+      Clubs partenaires, engagement civique, résultats du week-end, soutien associations.</div>
+      <div class="box"><strong>BoCitecoins verts :</strong><br>réservés au club, jamais à une personne physique.</div>
+    `);
+  }
 
-        En cas d’urgence vitale, appelez immédiatement le <strong>112</strong>.
+  function openMairie(){
+    openModal("Mairie", `
+      <div class="box"><strong>Mairie</strong><br><br>
+      Informations utiles, alertes, agenda, services et lecture des codes école/sport.</div>
+      <div class="box"><strong>Message mairie :</strong><br>Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet.</div>
+    `);
+  }
 
+  function openAdmin(){
+    openModal("Bo’CitéArt", `
+      <div class="box"><strong>Accès projet</strong><br><br>
+      Version démonstration conservée par le porteur du projet.</div>
+      <div class="box"><strong>Attention :</strong><br>en live, cette partie devra passer côté serveur avec authentification par rôles.</div>
+    `);
+  }
+
+  document.querySelectorAll("[data-open]").forEach(function(tile){
+    tile.addEventListener("click", function(){
+      const key = tile.getAttribute("data-open");
+      if(key === "oeuvres") openOeuvres();
+      if(key === "ecole") openEcole();
+      if(key === "commerces") openCommerces();
+      if(key === "sport") openSport();
+      if(key === "mairie") openMairie();
+      if(key === "admin") openAdmin();
+    });
+  });
+
+  function buildQuarterCalendar(){
+    const now = new Date();
+    let html = `<div class="box"><strong>Calendrier trimestriel</strong><br><br>Réservation ouverte sur 3 mois.</div>`;
+    for(let i=0;i<3;i++){
+      const month = new Date(now.getFullYear(), now.getMonth()+i, 1);
+      const y = month.getFullYear();
+      const m = month.getMonth();
+      const days = new Date(y, m+1, 0).getDate();
+      const monthName = month.toLocaleDateString("fr-FR",{month:"long",year:"numeric"});
+      html += `
+        <div class="box">
+          <strong style="text-transform:capitalize;">${monthName}</strong>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px;">
+      `;
+      for(let d=1; d<=days; d++){
+        html += `<button class="choiceBtn white" type="button">${d}</button>`;
+      }
+      html += `</div></div>`;
+    }
+    return html;
+  }
+
+  window.openTicker = function(){
+    openModal("Publicités & visibilité", `
+      <div class="box"><strong>Accès sécurisé publicité</strong><br><br>
+      Sélectionnez votre profil puis entrez votre code.</div>
+
+      <div style="display:grid;gap:10px;margin-top:14px;">
+        <button class="choiceBtn" id="pubCommerceBtn" type="button">Commerce</button>
+        <button class="choiceBtn" id="pubMairieBtn" type="button">Mairie</button>
+        <button class="choiceBtn" id="pubAssoBtn" type="button">Association</button>
       </div>
 
-      <div class="box">
+      <div id="pubCalendarZone" style="margin-top:14px;"></div>
+    `);
 
-        <strong>Fonctions prévues :</strong>
+    setTimeout(function(){
+      function openQuarter(type){
+        const codes = {
+          commerce:"com1234",
+          mairie:"mairie1234",
+          association:"asso1234"
+        };
 
+        const code = prompt("Entrez votre code d’accès " + type);
+        if(!code) return;
+
+        if(String(code).trim() !== codes[type]){
+          alert("Code incorrect.");
+          return;
+        }
+
+        const zone = $("pubCalendarZone");
+        if(zone){
+          zone.innerHTML = `
+            <div class="box"><strong>Profil validé :</strong> ${escapeHtml(type)}</div>
+            ${buildQuarterCalendar()}
+          `;
+        }
+      }
+
+      $("pubCommerceBtn").onclick = ()=>openQuarter("commerce");
+      $("pubMairieBtn").onclick = ()=>openQuarter("mairie");
+      $("pubAssoBtn").onclick = ()=>openQuarter("association");
+    },50);
+  };
+
+  $("ticker").onclick = window.openTicker;
+
+  $("daeBtn").onclick = function(){
+    openModal("Défibrillateur (DAE)", `
+      <div class="box"><strong>Défibrillateur le plus proche</strong><br><br>
+      En cas d’urgence vitale, appelez immédiatement le <strong>112</strong>.</div>
+
+      <div class="box"><strong>Fonctions prévues :</strong>
         <ul style="margin:8px 0 0 18px;font-weight:800;">
           <li>localisation GPS ;</li>
           <li>itinéraire réel ;</li>
           <li>guidage vers DAE ;</li>
           <li>compatibilité mobile HTTPS ;</li>
         </ul>
-
       </div>
 
       <div class="box">
-
         <strong>🎥 Vidéo DAE</strong>
-
         <div style="margin-top:10px;border-radius:14px;overflow:hidden;background:#000;">
-
-          <iframe
-            height="220"
-            src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1"
-            allowfullscreen
-            loading="lazy">
-          </iframe>
-
+          <iframe height="220" src="https://www.youtube.com/embed/3CAmp8yKYEg?rel=0&modestbranding=1" allowfullscreen loading="lazy"></iframe>
         </div>
-
-        <div class="muted" style="margin-top:8px;">
-          Vidéo d’explication des gestes essentiels.
-        </div>
-
+        <div class="muted" style="margin-top:8px;">Vidéo d’explication des gestes essentiels.</div>
       </div>
 
       <div class="box">
-
-        <button class="choiceBtn"
-          onclick="window.open('https://www.google.com/maps','_blank')">
-
-          ouvrir l’itinéraire
-
-        </button>
-
+        <button class="choiceBtn" onclick="window.open('https://www.google.com/maps','_blank','noopener,noreferrer')">ouvrir l’itinéraire</button>
       </div>
-
     `);
-
   };
 
-  // HORLOGE
-  $("clockBtn").onclick = ()=>{
-
-    openModal("Calendrier • météo • informations du jour",`
-
+  $("clockBtn").onclick = function(){
+    const now = new Date();
+    openModal("Calendrier • météo • informations du jour", `
       <div class="box" style="text-align:center;">
-
-        <div style="
-          font-size:42px;
-          font-weight:900;
-          line-height:1;
-        ">
-          ${new Date().toLocaleTimeString("fr-FR")}
-        </div>
-
-        <div style="
-          margin-top:8px;
-          font-size:18px;
-          font-weight:800;
-        ">
-          ${new Date().toLocaleDateString("fr-FR")}
-        </div>
-
-        <div class="muted" style="margin-top:10px;">
-          météo locale • calendrier • informations du jour
-        </div>
-
+        <div style="font-size:42px;font-weight:900;line-height:1;">${now.toLocaleTimeString("fr-FR")}</div>
+        <div style="margin-top:8px;font-size:18px;font-weight:800;">${now.toLocaleDateString("fr-FR")}</div>
+        <div class="muted" style="margin-top:10px;">météo locale • calendrier • informations du jour</div>
       </div>
-
     `);
-
   };
 
-})();
-</script>
-<script>
+  $("btn112").onclick = function(){
+    alert("Démo : appel 112 simulé.");
+  };
 
-/* ===== PATCH FINAL OUVERTURE ONGLETS + PUB TRIMESTRIELLE ===== */
+  const choice = $("choice");
 
-(function(){
-
-  console.log("✅ patch final ouverture + pub chargé");
-
-  const $ = (id)=>document.getElementById(id);
-
-  /* =========================
-     OUVERTURE ONGLETS
-  ========================= */
-
-  function openSimpleModal(title, html){
-
-    if(typeof window.openModal === "function"){
-      window.openModal(title, html);
-      return;
-    }
-
-    alert(title);
-
+  function closeChoice(){
+    choice.classList.remove("open");
+    document.body.classList.remove("modalOpen");
   }
 
-  function openOeuvres(){
+  $("btnSos").onclick = function(){
+    choice.classList.add("open");
+    document.body.classList.add("modalOpen");
+  };
 
-    openSimpleModal("Œuvres", `
+  $("choiceX").onclick = closeChoice;
+  $("choiceClose").onclick = closeChoice;
 
-      <div class="box">
-
-        <strong>Parcours des œuvres</strong><br><br>
-
-        Fresques citoyennes, QR codes, mécènes,
-        artistes, audio et parcours culturels.
-
-      </div>
-
-    `);
-
-  }
-
-  function openEcole(){
-
-    openSimpleModal("École", `
-
-      <div class="box">
-
-        <strong>Espace école</strong><br><br>
-
-        Mot du jour, lecture audio, citoyenneté,
-        participation des enfants et écoles.
-
-      </div>
-
-    `);
-
-  }
-
-  function openSport(){
-
-    openSimpleModal("Sport", `
-
-      <div class="box">
-
-        <strong>Sport</strong><br><br>
-
-        Clubs partenaires et engagement civique.
-
-      </div>
-
-    `);
-
-  }
-
-  function openMairie(){
-
-    openSimpleModal("Mairie", `
-
-      <div class="box">
-
-        <strong>Mairie</strong><br><br>
-
-        Informations utiles, alertes et services.
-
-      </div>
-
-    `);
-
-  }
-
-  function openCommerces(){
-
-    openSimpleModal("Commerces", `
-
-      <div class="box">
-
-        <strong>Commerces partenaires</strong><br><br>
-
-        Bons plans, offres et système WattCoins.
-
-      </div>
-
-    `);
-
-  }
-
-  document.querySelectorAll("[data-open]").forEach(tile=>{
-
-    tile.onclick = ()=>{
-
-      const key = tile.getAttribute("data-open");
-
-      if(key === "oeuvres") openOeuvres();
-
-      if(key === "ecole") openEcole();
-
-      if(key === "sport") openSport();
-
-      if(key === "mairie") openMairie();
-
-      if(key === "commerces") openCommerces();
-
+  document.querySelectorAll("#choice [data-pick]").forEach(function(btn){
+    btn.onclick = function(){
+      const n = btn.getAttribute("data-pick");
+      $("sosLabel").textContent = n;
+      closeChoice();
+      alert("Démo : numéro sélectionné " + n);
     };
-
   });
 
-  /* =========================
-     PUB TRIMESTRIELLE
-  ========================= */
-
-  window.openTicker = function(){
-
-    if(typeof window.openModal !== "function"){
-      alert("modal indisponible");
-      return;
-    }
-
-    window.openModal("Publicités & visibilité", `
-
-      <div class="box">
-
-        <strong>Accès sécurisé publicité</strong><br><br>
-
-        Sélectionnez votre profil puis entrez votre code.
-
-      </div>
-
-      <div style="
-        display:grid;
-        gap:10px;
-        margin-top:14px;
-      ">
-
-        <button class="choiceBtn" id="pubCommerceBtn">
-          Commerce
-        </button>
-
-        <button class="choiceBtn" id="pubMairieBtn">
-          Mairie
-        </button>
-
-        <button class="choiceBtn" id="pubAssoBtn">
-          Association
-        </button>
-
-      </div>
-
-      <div id="pubCalendarZone" style="margin-top:14px;"></div>
-
-    `);
-
-    setTimeout(()=>{
-
-      function openQuarter(type){
-
-        const code = prompt(
-          "Entrez votre code d’accès " + type
-        );
-
-        if(!code) return;
-
-        const ok =
-          (type === "commerce" && code === "com1234")
-          ||
-          (type === "mairie" && code === "mairie1234")
-          ||
-          (type === "association" && code === "asso1234");
-
-        if(!ok){
-
-          alert("Code incorrect");
-
-          return;
-
-        }
-
-        const zone = $("pubCalendarZone");
-
-        if(!zone) return;
-
-        const now = new Date();
-
-        let html = `
-
-          <div class="box">
-
-            <strong>Calendrier trimestriel</strong><br><br>
-
-            Réservation publicitaire sécurisée.
-
-          </div>
-
-        `;
-
-        for(let i=0;i<3;i++){
-
-          const d = new Date(
-            now.getFullYear(),
-            now.getMonth() + i,
-            1
-          );
-
-          html += `
-
-            <div class="box">
-
-              <strong style="
-                text-transform:capitalize;
-              ">
-                ${d.toLocaleDateString("fr-FR",{
-                  month:"long",
-                  year:"numeric"
-                })}
-              </strong>
-
-              <div style="
-                margin-top:10px;
-                display:grid;
-                grid-template-columns:repeat(7,1fr);
-                gap:6px;
-              ">
-
-          `;
-
-          const days =
-            new Date(
-              d.getFullYear(),
-              d.getMonth()+1,
-              0
-            ).getDate();
-
-          for(let day=1;day<=days;day++){
-
-            html += `
-
-              <button class="choiceBtn"
-                style="
-                  padding:8px 4px;
-                  background:#fff;
-                  color:#111;
-                ">
-                ${day}
-              </button>
-
-            `;
-
-          }
-
-          html += `
-              </div>
-            </div>
-          `;
-
-        }
-
-        zone.innerHTML = html;
-
-      }
-
-      const c = $("pubCommerceBtn");
-      const m = $("pubMairieBtn");
-      const a = $("pubAssoBtn");
-
-      if(c){
-        c.onclick = ()=>openQuarter("commerce");
-      }
-
-      if(m){
-        m.onclick = ()=>openQuarter("mairie");
-      }
-
-      if(a){
-        a.onclick = ()=>openQuarter("association");
-      }
-
-    },100);
-
-  };
-
-  const ticker = $("ticker");
-
-  if(ticker){
-
-    ticker.onclick = function(){
-
-      window.openTicker();
-
-    };
-
-  }
+  console.log("✅ Bo’CitéArt démo corrigée chargée");
 
 })();
-
 </script>
+
 </body>
 </html>
-
