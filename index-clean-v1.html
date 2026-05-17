@@ -1,1 +1,453 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Bo’CitéArt — Démo nettoyée</title>
+  <meta name="theme-color" content="#9f1d22" />
+
+  <style>
+    :root{
+      --red:#a51e22;
+      --red2:#7f1519;
+      --gold:#f3c15b;
+      --cream:#fff7df;
+      --paper:#fffdf5;
+      --ink:#2c2020;
+      --muted:#756969;
+      --green:#1f7a45;
+      --blue:#245c9f;
+      --orange:#d46b08;
+      --shadow:0 16px 34px rgba(60,30,20,.22);
+      --radius:22px;
+      --bottom:88px;
+      --vh:1vh;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;min-height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:#401116;}
+    body{background:radial-gradient(circle at top,#b9363d 0,#7d171b 34%,#3b1115 100%);overflow-x:hidden;}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer;border:0}
+    a{color:inherit}
+
+    .app{
+      width:min(440px,100vw);
+      min-height:calc(var(--vh) * 100);
+      margin:0 auto;
+      background:linear-gradient(180deg,#b52a30 0,#8c1e23 34%,#571418 100%);
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 0 0 1px rgba(255,255,255,.08),0 20px 70px rgba(0,0,0,.45);
+      padding-bottom:calc(var(--bottom) + env(safe-area-inset-bottom));
+    }
+
+    .topHero{padding:18px 16px 12px;color:white;position:relative;}
+    .brandRow{display:flex;align-items:center;gap:12px;}
+    .logo{
+      width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,#fff7df,#f3c15b);
+      display:grid;place-items:center;color:var(--red);font-weight:1000;font-size:22px;box-shadow:0 8px 20px rgba(0,0,0,.25);
+      border:2px solid rgba(255,255,255,.65);
+    }
+    .brandTitle{font-size:25px;line-height:1.05;font-weight:1000;letter-spacing:.2px;}
+    .brandSub{font-size:12px;opacity:.92;margin-top:4px;line-height:1.25;}
+    .statusPill{margin-left:auto;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.26);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:900;white-space:nowrap;}
+
+    .tickerBox{margin:14px 0 0;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:16px;overflow:hidden;}
+    .ticker{display:flex;gap:34px;white-space:nowrap;animation:ticker 22s linear infinite;padding:10px 0;font-weight:900;font-size:13px;}
+    .ticker span{display:inline-block;padding-left:18px;}
+    @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+    .screen{display:none;padding:0 14px 18px;animation:fade .18s ease-out;}
+    .screen.active{display:block;}
+    @keyframes fade{from{opacity:.6;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+    .card{background:var(--paper);border-radius:var(--radius);padding:16px;margin:12px 0;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.75);}
+    .card h2,.card h3{margin:0 0 8px;line-height:1.12}.card h2{font-size:21px}.card h3{font-size:17px}
+    .muted{color:var(--muted);font-size:13px;line-height:1.35}.small{font-size:12px}.strong{font-weight:1000}.center{text-align:center}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+    .tile{background:#fff;border-radius:18px;padding:13px;min-height:108px;box-shadow:0 8px 18px rgba(50,20,10,.12);border:1px solid #f2e5c9;text-align:left;}
+    .tileIcon{font-size:26px;margin-bottom:6px}.tileTitle{font-weight:1000;font-size:14px}.tileText{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.25}
+
+    .btn{border-radius:15px;background:var(--red);color:white;font-weight:1000;padding:12px 14px;box-shadow:0 8px 18px rgba(165,30,34,.22);display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;}
+    .btn.secondary{background:#fff;color:var(--red);border:1px solid #f0d2d2;box-shadow:none}.btn.gold{background:linear-gradient(135deg,#f6ca63,#d89a22);color:#3d2200}.btn.green{background:var(--green)}.btn.blue{background:var(--blue)}
+    .btn.danger,.urgent{background:#d60000!important;color:#fff!important;box-shadow:0 8px 18px rgba(214,0,0,.28)!important;}
+    .btnRow{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.btnRow .btn{flex:1 1 auto}
+
+    .bottomNav{position:fixed;z-index:50;left:50%;bottom:0;transform:translateX(-50%);width:min(440px,100vw);background:rgba(255,253,245,.98);border-top:1px solid rgba(80,20,20,.15);box-shadow:0 -12px 30px rgba(0,0,0,.22);padding:7px 8px calc(7px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(6,1fr);gap:4px;}
+    .navBtn{background:transparent;border-radius:14px;padding:7px 2px;color:#6d3030;font-size:10px;font-weight:900;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;}
+    .navBtn .ico{font-size:19px;line-height:1}.navBtn.active{background:#f6dfdf;color:var(--red)}
+
+    .quickLinks{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 14px 0;}
+    .quickLinks button{background:rgba(255,255,255,.92);color:var(--red);font-weight:1000;border-radius:14px;padding:9px 4px;font-size:11px;box-shadow:0 6px 16px rgba(0,0,0,.12)}
+
+    .emergencyGrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}.emergencyGrid .btn{padding:11px 8px;font-size:13px;}
+    .inlineTicker{background:#fff0d0;border:1px solid #f1c768;border-radius:15px;overflow:hidden;margin-top:10px}.inlineTicker .ticker{color:#7a3100;animation-duration:18s;padding:9px 0;font-size:12px}
+    .sportTicker{background:#eaf5ff;border:1px solid #b7d8ff;border-radius:15px;overflow:hidden;margin-top:10px}.sportTicker .ticker{color:#124a82;animation-duration:20s;padding:9px 0;font-size:12px}
+
+    .section{display:none}.section.active{display:block}.chip{display:inline-flex;background:#f4e4c2;border-radius:999px;padding:6px 9px;margin:3px;font-size:12px;font-weight:900;color:#634000}
+    .list{display:grid;gap:8px;margin-top:10px}.item{background:#fff;border:1px solid #f1e6cf;border-radius:15px;padding:11px}.itemTitle{font-weight:1000}.itemMeta{font-size:12px;color:var(--muted);margin-top:3px}
+
+    .modalBack{position:fixed;inset:0;background:rgba(0,0,0,.54);z-index:90;display:none;align-items:flex-end;justify-content:center}.modalBack.open{display:flex}.modal{width:min(440px,100vw);max-height:88vh;overflow:auto;background:var(--paper);border-radius:24px 24px 0 0;padding:18px;box-shadow:0 -20px 50px rgba(0,0,0,.35)}
+    .modalHead{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}.close{width:40px;height:40px;border-radius:14px;background:#f3dddd;color:var(--red);font-weight:1000;font-size:18px}
+    .field{display:grid;gap:6px;margin:10px 0}.field label{font-weight:900;font-size:13px}.field input,.field select,.field textarea{border:1px solid #ead7b5;border-radius:14px;padding:12px;background:white;width:100%;}
+    .notice{border-left:6px solid var(--red);background:#fff1f1;border-radius:16px;padding:12px;margin:10px 0;font-size:13px;line-height:1.35}.ok{border-left-color:var(--green);background:#effaf3}.warn{border-left-color:var(--orange);background:#fff7e9}
+
+    .rgpd{font-size:11px;line-height:1.25;color:#5c4c4c;background:rgba(255,255,255,.9);border-radius:15px;padding:10px;margin:10px 14px;border:1px solid rgba(255,255,255,.7)}
+    .hidden{display:none!important}
+  </style>
+</head>
+
+<body>
+<div class="app" id="app">
+  <header class="topHero">
+    <div class="brandRow">
+      <div class="logo">B’C</div>
+      <div>
+        <div class="brandTitle">Bo’CitéArt</div>
+        <div class="brandSub">Art urbain · WattCoins · commerces · école · mairie · citoyenneté</div>
+      </div>
+      <div class="statusPill" id="rolePill">Démo</div>
+    </div>
+
+    <div class="tickerBox" aria-label="Publicités partenaires défilantes">
+      <div class="ticker">
+        <span>🎁 Pharmacie Richardson — offre bien-être avec vos WattCoins</span>
+        <span>🥐 Boulangerie Croquet Alex — 5 WattCoins = surprise gourmande</span>
+        <span>🌸 Anaïs Fleurs — bouquet partenaire Bo’CitéArt</span>
+        <span>🎨 Concours fresque citoyenne — 500 € en valeur WattCoins</span>
+        <span>🎁 Pharmacie Richardson — offre bien-être avec vos WattCoins</span>
+        <span>🥐 Boulangerie Croquet Alex — 5 WattCoins = surprise gourmande</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="quickLinks">
+    <button onclick="openExternal('site')">🌐 Site</button>
+    <button onclick="openExternal('insta')">📸 Insta</button>
+    <button onclick="openExternal('link')">🔗 Link</button>
+    <button onclick="openLogin()">👤 Compte</button>
+    <button onclick="openHelp()">❔ Aide</button>
+  </div>
+
+  <div class="rgpd">
+    RGPD/CGU/CGV : démonstration non contractuelle. Les données, paiements PSP, validations mineurs, rôles, historiques et factures devront être activés uniquement dans la version live après structure juridique, DPA, mentions validées et paramétrage sécurisé.
+  </div>
+
+  <main>
+    <section id="home" class="screen active">
+      <div class="card center">
+        <h2>Démo nettoyée et testable</h2>
+        <p class="muted">Cette version garde la logique de présentation élus/partenaires tout en préparant le cloisonnement live : rôles, permissions, PSP, RGPD et journaux.</p>
+        <div class="btnRow">
+          <button class="btn gold" onclick="openLogin()">Entrer en mode démo</button>
+          <button class="btn secondary" onclick="showScreen('oeuvres')">Voir les fresques</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Accès rapides par univers</h3>
+        <div class="grid">
+          <button class="tile" onclick="showScreen('oeuvres')"><div class="tileIcon">🎨</div><div class="tileTitle">Œuvres</div><div class="tileText">Fresques, artistes, mécènes, QR et audio.</div></button>
+          <button class="tile" onclick="showScreen('commerce')"><div class="tileIcon">🛍️</div><div class="tileTitle">Commerce</div><div class="tileText">Offres, WattCoins, clics et future facturation.</div></button>
+          <button class="tile" onclick="showScreen('ecole')"><div class="tileIcon">🏫</div><div class="tileTitle">École</div><div class="tileText">Mot du jour écoutable et espace pédagogique.</div></button>
+          <button class="tile" onclick="showScreen('mairie')"><div class="tileIcon">🏛️</div><div class="tileTitle">Mairie</div><div class="tileText">Infos locales, alertes, urgences et calendrier.</div></button>
+          <button class="tile" onclick="showScreen('sport')"><div class="tileIcon">⚽</div><div class="tileTitle">Sport</div><div class="tileText">Clubs, actions civiques, rapport du week-end.</div></button>
+          <button class="tile" onclick="showScreen('admin')"><div class="tileIcon">🔐</div><div class="tileTitle">Admin</div><div class="tileText">Permissions, PSP, sécurité et contrôle.</div></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="oeuvres" class="screen">
+      <div class="card">
+        <h2>🎨 Œuvres connectées</h2>
+        <p class="muted">Clique sur une tuile pour ouvrir directement le bon chapitre : présentation, audio, QR, artiste ou mécène.</p>
+        <div class="grid" id="oeuvresGrid"></div>
+      </div>
+    </section>
+
+    <section id="commerce" class="screen">
+      <div class="card">
+        <h2>🛍️ Commerçants</h2>
+        <p class="muted">Espace de démonstration. En live, chaque commerçant aura un compte indépendant, une fiche préremplie, un QR/code personnel, vérification SIRET/SIREN/RIB et PSP avant activation payante.</p>
+        <div class="list" id="commerceList"></div>
+      </div>
+    </section>
+
+    <section id="ecole" class="screen">
+      <div class="card">
+        <h2>🏫 École — mot du jour</h2>
+        <p class="muted">Le mot du jour est écoutable directement. Dans la version live, seul le profil professeur autorisé pourra modifier ce contenu.</p>
+        <div class="notice ok"><strong>Mot du jour :</strong><br>“Je suis ravi aujourd’hui.”<br><span class="small">Alan, 11 ans — École Jules Ferry</span></div>
+        <div class="btnRow">
+          <button class="btn blue" onclick="speakText('Je suis ravi aujourd’hui. Mot du jour proposé par Alan, onze ans.')">🔊 Écouter</button>
+          <button class="btn secondary" onclick="openSchoolPanel()">Modifier côté professeur</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="mairie" class="screen">
+      <div class="card">
+        <h2>🏛️ Infos mairie</h2>
+        <div class="inlineTicker">
+          <div class="ticker"><span>⚠️ Rue du 14 juillet fermée du 04/08 au 09/08 — déviation par rue Michelet</span><span>📅 Calendrier vivant en attente d’accord officiel mairie</span><span>⚠️ Rue du 14 juillet fermée du 04/08 au 09/08 — déviation par rue Michelet</span></div>
+        </div>
+        <div class="emergencyGrid">
+          <button class="btn danger" onclick="callInfo('112')">112</button>
+          <button class="btn danger" onclick="callInfo('119')">119</button>
+          <button class="btn danger" onclick="callInfo('3919')">3919</button>
+        </div>
+        <div class="notice warn">Les numéros d’urgence sont visibles en rouge. En live, les informations mairie devront être validées par un profil habilité.</div>
+      </div>
+    </section>
+
+    <section id="sport" class="screen">
+      <div class="card">
+        <h2>⚽ Sport & civisme</h2>
+        <div class="sportTicker"><div class="ticker"><span>🏆 Club du week-end — action propreté validée</span><span>🤝 Mécénat local — récompenses remises au nom de la ville</span><span>🏆 Club du week-end — action propreté validée</span></div></div>
+        <div class="list">
+          <div class="item"><div class="itemTitle">Rapport du week-end</div><div class="itemMeta">Fair-play, nettoyage, engagement jeunes, photos/preuves à valider.</div></div>
+          <div class="item"><div class="itemTitle">Candidature club</div><div class="itemMeta">Formulaire simple avec justificatifs avant récompense.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="admin" class="screen">
+      <div class="card">
+        <h2>🔐 Administration</h2>
+        <p class="muted">Mode démo : mot de passe simple <strong>michel</strong>. En live : authentification forte, rôles séparés, 2FA, journal inviolable, PSP obligatoire avant actions payantes.</p>
+        <div id="adminLocked">
+          <button class="btn" onclick="openLogin()">Déverrouiller</button>
+        </div>
+        <div id="adminPanel" class="hidden">
+          <div class="notice ok">Accès admin démo ouvert. Aucun paiement réel, aucune donnée réelle.</div>
+          <div class="grid">
+            <button class="tile" onclick="openRoleMatrix()"><div class="tileIcon">👥</div><div class="tileTitle">Rôles</div><div class="tileText">Admin, mairie, commerçant, école, association.</div></button>
+            <button class="tile" onclick="openPspPanel()"><div class="tileIcon">💳</div><div class="tileTitle">PSP</div><div class="tileText">Stripe/SEPA simulé avant activation live.</div></button>
+            <button class="tile" onclick="openSecurityPanel()"><div class="tileIcon">🧱</div><div class="tileTitle">Sécurité</div><div class="tileText">2FA, blocage, logs, double validation.</div></button>
+            <button class="tile" onclick="openLogs()"><div class="tileIcon">📜</div><div class="tileTitle">Historique</div><div class="tileText">Journal mensuel, litiges, blocages.</div></button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottomNav" aria-label="Navigation principale">
+    <button class="navBtn active" data-target="home" onclick="showScreen('home')"><span class="ico">🏠</span><span>Accueil</span></button>
+    <button class="navBtn" data-target="oeuvres" onclick="showScreen('oeuvres')"><span class="ico">🎨</span><span>Œuvres</span></button>
+    <button class="navBtn" data-target="commerce" onclick="showScreen('commerce')"><span class="ico">🛍️</span><span>Commerce</span></button>
+    <button class="navBtn" data-target="ecole" onclick="showScreen('ecole')"><span class="ico">🏫</span><span>École</span></button>
+    <button class="navBtn" data-target="mairie" onclick="showScreen('mairie')"><span class="ico">🏛️</span><span>Mairie</span></button>
+    <button class="navBtn" data-target="admin" onclick="showScreen('admin')"><span class="ico">🔐</span><span>Admin</span></button>
+  </nav>
+</div>
+
+<div class="modalBack" id="modalBack" onclick="backdropClose(event)">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modalHead">
+      <h3 id="modalTitle">Titre</h3>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  const DEMO_PASSWORD = 'michel';
+  const state = {
+    role:'demo',
+    admin:false,
+    pspReady:false,
+    logs:[]
+  };
+
+  const oeuvres = [
+    {title:'Libre et Fleurie', quartier:'L’Arbrisseau', artiste:'Julot', mecene:'Garage Planque Citroën', open:true},
+    {title:'Les Racines du Cœur', quartier:'Centre-ville', artiste:'Mina K.', mecene:'Atelier du Parc', open:false},
+    {title:'La Voix des Enfants', quartier:'Blanc-Riez', artiste:'Nora L.', mecene:'Librairie des Écoles', open:false},
+    {title:'Jardin de Nuit', quartier:'Sapins', artiste:'Style Buster', mecene:'Paysages du Nord', open:false},
+    {title:'Le Visage des Fleurs', quartier:'Marlière', artiste:'Eko', mecene:'Anaïs Fleurs', open:false},
+    {title:'Main Tendue', quartier:'Crétinier', artiste:'Luma', mecene:'Pharmacie Richardson', open:false},
+    {title:'Wattignies Demain', quartier:'Village', artiste:'Collectif citoyen', mecene:'Commerces partenaires', open:false}
+  ];
+
+  const commerces = [
+    {name:'Pharmacie Richardson', offer:'1 produit bien-être tous les 10 WattCoins', rule:'Compte commerce indépendant + clics tracés'},
+    {name:'Boulangerie Croquet Alex', offer:'1 pain ou pâtisserie tous les 5 WattCoins', rule:'Seuil d’achat à vérifier avant attribution'},
+    {name:'Anaïs Fleurs', offer:'1 bouquet à 50 € = 1 coin / 2 bouquets = 3 coins', rule:'QR ou code personnel généré depuis la fiche'}
+  ];
+
+  function $(id){return document.getElementById(id)}
+  window.$ = $;
+
+  function setVh(){document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`)}
+  setVh(); window.addEventListener('resize', setVh); window.addEventListener('orientationchange', setVh);
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  }
+
+  function log(action){
+    state.logs.unshift({date:new Date().toLocaleString('fr-FR'), action});
+    state.logs = state.logs.slice(0,30);
+  }
+
+  window.showScreen = function(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    const screen = $(id); if(screen) screen.classList.add('active');
+    document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active', b.dataset.target === id));
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+
+  function modal(title, html){
+    $('modalTitle').textContent = title;
+    $('modalBody').innerHTML = html;
+    $('modalBack').classList.add('open');
+  }
+  window.closeModal = function(){ $('modalBack').classList.remove('open') };
+  window.backdropClose = function(e){ if(e.target && e.target.id === 'modalBack') closeModal(); };
+
+  window.openLogin = function(){
+    modal('Accès compte / démo', `
+      <div class="notice warn">Démo locale : entrez <strong>michel</strong> pour ouvrir l’accès administrateur de test. En version live, ce système sera remplacé par une vraie authentification sécurisée.</div>
+      <div class="field"><label>Mot de passe démo</label><input id="pwd" type="password" autocomplete="current-password" placeholder="mot de passe"></div>
+      <button class="btn" onclick="validateLogin()">Valider</button>
+    `);
+    setTimeout(()=>{ const p=$('pwd'); if(p) p.focus(); },100);
+  };
+
+  window.validateLogin = function(){
+    const v = ($('pwd')?.value || '').trim();
+    if(v === DEMO_PASSWORD){
+      state.admin = true;
+      $('rolePill').textContent = 'Admin démo';
+      $('adminLocked').classList.add('hidden');
+      $('adminPanel').classList.remove('hidden');
+      log('Connexion admin démo réussie');
+      closeModal();
+      showScreen('admin');
+    }else{
+      log('Tentative accès admin refusée');
+      modal('Accès refusé', '<div class="notice">Mot de passe incorrect. En live : blocage progressif, alerte email/SMS et journalisation.</div><button class="btn" onclick="openLogin()">Réessayer</button>');
+    }
+  };
+
+  window.openExternal = function(type){
+    const labels = {site:'Site officiel', insta:'Instagram', link:'Lien utile'};
+    modal(labels[type] || 'Lien', `<div class="notice warn">Lien de démonstration. En live, ces boutons pointeront vers les pages officielles Bo’CitéArt validées.</div>`);
+  };
+
+  window.openHelp = function(){
+    modal('Aide', `
+      <div class="list">
+        <div class="item"><div class="itemTitle">Navigation</div><div class="itemMeta">Les onglets bas restent accessibles : Accueil, Œuvres, Commerce, École, Mairie, Admin.</div></div>
+        <div class="item"><div class="itemTitle">Démo admin</div><div class="itemMeta">Mot de passe : michel.</div></div>
+        <div class="item"><div class="itemTitle">Version live</div><div class="itemMeta">Chaque profil sera cloisonné par rôle et permissions.</div></div>
+      </div>
+    `);
+  };
+
+  window.speakText = function(text){
+    try{
+      if(!('speechSynthesis' in window)) throw new Error('unsupported');
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'fr-FR'; u.rate = .95; u.pitch = 1.05;
+      window.speechSynthesis.speak(u);
+      log('Lecture audio du mot du jour');
+    }catch(e){
+      modal('Audio indisponible', '<div class="notice">La synthèse vocale du navigateur n’est pas disponible ici. En live, prévoir des voix naturelles via service TTS conforme RGPD.</div>');
+    }
+  };
+
+  window.callInfo = function(num){
+    modal('Numéro d’urgence '+num, `<div class="notice"><strong>${escapeHtml(num)}</strong><br>Affichage démonstratif. Sur mobile, le bouton pourra déclencher un appel direct après confirmation utilisateur.</div>`);
+  };
+
+  window.openOeuvre = function(i){
+    const o = oeuvres[i];
+    modal(o.title, `
+      <div class="notice ok"><strong>Quartier :</strong> ${escapeHtml(o.quartier)}<br><strong>Artiste :</strong> ${escapeHtml(o.artiste)}<br><strong>Mécène :</strong> ${escapeHtml(o.mecene)}</div>
+      <div class="btnRow">
+        <button class="btn blue" onclick="speakText('Bienvenue devant la fresque ${escapeHtml(o.title)} située à ${escapeHtml(o.quartier)}.')">🔊 Audio</button>
+        <button class="btn gold" onclick="simulateQr('${escapeHtml(o.title)}')">📲 Scanner QR</button>
+      </div>
+      <div class="list">
+        <div class="item"><div class="itemTitle">Chapitre artiste</div><div class="itemMeta">Biographie, démarche artistique, remerciements.</div></div>
+        <div class="item"><div class="itemTitle">Chapitre mécène</div><div class="itemMeta">Entreprise partenaire valorisée sans excès publicitaire.</div></div>
+        <div class="item"><div class="itemTitle">Chapitre citoyen</div><div class="itemMeta">Déblocage de WattCoin ou surprise selon règle validée.</div></div>
+      </div>
+    `);
+  };
+
+  window.simulateQr = function(title){
+    log('QR scanné : '+title);
+    modal('QR validé', `<div class="notice ok">Œuvre reconnue : <strong>${escapeHtml(title)}</strong><br>Simulation : +1 WattCoin. En live : anti-fraude, limite de scan, horodatage et contrôle serveur.</div>`);
+  };
+
+  window.openSchoolPanel = function(){
+    if(!state.admin){openLogin();return;}
+    modal('Modification professeur', `
+      <div class="notice warn">Démo admin ouverte. En live : seul un compte professeur rattaché à l’école pourra modifier le mot du jour.</div>
+      <div class="field"><label>Nouveau mot du jour</label><textarea rows="3">Je suis ravi aujourd’hui.</textarea></div>
+      <button class="btn" onclick="closeModal();">Enregistrer la simulation</button>
+    `);
+  };
+
+  window.openRoleMatrix = function(){
+    modal('Matrice des rôles', `
+      <div class="list">
+        <div class="item"><div class="itemTitle">Admin principal</div><div class="itemMeta">Accès total, blocage, validation, logs, PSP, paramètres.</div></div>
+        <div class="item"><div class="itemTitle">Mairie</div><div class="itemMeta">Infos mairie, alertes, surprises, contenus validés.</div></div>
+        <div class="item"><div class="itemTitle">Commerçant</div><div class="itemMeta">Offres, QR/code personnel, clics visibles limités, aucune donnée concurrente.</div></div>
+        <div class="item"><div class="itemTitle">École</div><div class="itemMeta">Mot du jour, contenus pédagogiques, validation mineurs.</div></div>
+        <div class="item"><div class="itemTitle">Association/club</div><div class="itemMeta">Candidatures, preuves, suivi civique.</div></div>
+      </div>
+    `);
+  };
+
+  window.openPspPanel = function(){
+    modal('Préparation PSP', `
+      <div class="notice warn">Aucun paiement réel dans cette démo. La version live devra passer par un PSP agréé, mandat SEPA/carte, facturation automatisée et activation après paiement confirmé.</div>
+      <div class="list">
+        <div class="item"><div class="itemTitle">À tester</div><div class="itemMeta">Création compte marchand, statut paiement, échec paiement, blocage automatique, facture PDF.</div></div>
+        <div class="item"><div class="itemTitle">À ne pas faire dans la démo</div><div class="itemMeta">Collecter un vrai RIB complet ou lancer une transaction réelle sans structure juridique prête.</div></div>
+      </div>
+      <button class="btn green" onclick="state.pspReady=true; log('PSP simulé prêt'); modal('PSP simulé','<div class=&quot;notice ok&quot;>Statut PSP de test activé localement.</div>')">Activer PSP test</button>
+    `);
+  };
+
+  window.openSecurityPanel = function(){
+    modal('Sécurité live à prévoir', `
+      <div class="list">
+        <div class="item"><div class="itemTitle">Authentification</div><div class="itemMeta">Email vérifié, mot de passe fort, 2FA optionnelle/obligatoire selon rôle.</div></div>
+        <div class="item"><div class="itemTitle">Cloisonnement</div><div class="itemMeta">Chaque action contrôlée côté serveur, jamais seulement côté interface.</div></div>
+        <div class="item"><div class="itemTitle">Double validation</div><div class="itemMeta">Actions critiques validées par second facteur ou tiers désigné.</div></div>
+        <div class="item"><div class="itemTitle">Journalisation</div><div class="itemMeta">Historique horodaté, export mensuel, alertes tentative non autorisée.</div></div>
+      </div>
+    `);
+  };
+
+  window.openLogs = function(){
+    const rows = state.logs.length ? state.logs.map(l=>`<div class="item"><div class="itemTitle">${escapeHtml(l.action)}</div><div class="itemMeta">${escapeHtml(l.date)}</div></div>`).join('') : '<div class="notice">Aucune action enregistrée dans cette session.</div>';
+    modal('Historique session', `<div class="list">${rows}</div>`);
+  };
+
+  function render(){
+    const og = $('oeuvresGrid');
+    og.innerHTML = oeuvres.map((o,i)=>`<button class="tile" onclick="openOeuvre(${i})"><div class="tileIcon">${o.open?'🌺':'🎨'}</div><div class="tileTitle">${escapeHtml(o.title)}</div><div class="tileText">${escapeHtml(o.quartier)} · ${escapeHtml(o.artiste)}</div></button>`).join('');
+    const cl = $('commerceList');
+    cl.innerHTML = commerces.map(c=>`<div class="item"><div class="itemTitle">${escapeHtml(c.name)}</div><div class="itemMeta"><strong>Offre :</strong> ${escapeHtml(c.offer)}<br><strong>Live :</strong> ${escapeHtml(c.rule)}</div></div>`).join('');
+    log('Application démo nettoyée initialisée');
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
