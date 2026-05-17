@@ -850,7 +850,321 @@
 
 })();
 </script>
+<script>
 
+/* ===== PATCH FINAL OUVERTURE ONGLETS + PUB TRIMESTRIELLE ===== */
+
+(function(){
+
+  console.log("✅ patch final ouverture + pub chargé");
+
+  const $ = (id)=>document.getElementById(id);
+
+  /* =========================
+     OUVERTURE ONGLETS
+  ========================= */
+
+  function openSimpleModal(title, html){
+
+    if(typeof window.openModal === "function"){
+      window.openModal(title, html);
+      return;
+    }
+
+    alert(title);
+
+  }
+
+  function openOeuvres(){
+
+    openSimpleModal("Œuvres", `
+
+      <div class="box">
+
+        <strong>Parcours des œuvres</strong><br><br>
+
+        Fresques citoyennes, QR codes, mécènes,
+        artistes, audio et parcours culturels.
+
+      </div>
+
+    `);
+
+  }
+
+  function openEcole(){
+
+    openSimpleModal("École", `
+
+      <div class="box">
+
+        <strong>Espace école</strong><br><br>
+
+        Mot du jour, lecture audio, citoyenneté,
+        participation des enfants et écoles.
+
+      </div>
+
+    `);
+
+  }
+
+  function openSport(){
+
+    openSimpleModal("Sport", `
+
+      <div class="box">
+
+        <strong>Sport</strong><br><br>
+
+        Clubs partenaires et engagement civique.
+
+      </div>
+
+    `);
+
+  }
+
+  function openMairie(){
+
+    openSimpleModal("Mairie", `
+
+      <div class="box">
+
+        <strong>Mairie</strong><br><br>
+
+        Informations utiles, alertes et services.
+
+      </div>
+
+    `);
+
+  }
+
+  function openCommerces(){
+
+    openSimpleModal("Commerces", `
+
+      <div class="box">
+
+        <strong>Commerces partenaires</strong><br><br>
+
+        Bons plans, offres et système WattCoins.
+
+      </div>
+
+    `);
+
+  }
+
+  document.querySelectorAll("[data-open]").forEach(tile=>{
+
+    tile.onclick = ()=>{
+
+      const key = tile.getAttribute("data-open");
+
+      if(key === "oeuvres") openOeuvres();
+
+      if(key === "ecole") openEcole();
+
+      if(key === "sport") openSport();
+
+      if(key === "mairie") openMairie();
+
+      if(key === "commerces") openCommerces();
+
+    };
+
+  });
+
+  /* =========================
+     PUB TRIMESTRIELLE
+  ========================= */
+
+  window.openTicker = function(){
+
+    if(typeof window.openModal !== "function"){
+      alert("modal indisponible");
+      return;
+    }
+
+    window.openModal("Publicités & visibilité", `
+
+      <div class="box">
+
+        <strong>Accès sécurisé publicité</strong><br><br>
+
+        Sélectionnez votre profil puis entrez votre code.
+
+      </div>
+
+      <div style="
+        display:grid;
+        gap:10px;
+        margin-top:14px;
+      ">
+
+        <button class="choiceBtn" id="pubCommerceBtn">
+          Commerce
+        </button>
+
+        <button class="choiceBtn" id="pubMairieBtn">
+          Mairie
+        </button>
+
+        <button class="choiceBtn" id="pubAssoBtn">
+          Association
+        </button>
+
+      </div>
+
+      <div id="pubCalendarZone" style="margin-top:14px;"></div>
+
+    `);
+
+    setTimeout(()=>{
+
+      function openQuarter(type){
+
+        const code = prompt(
+          "Entrez votre code d’accès " + type
+        );
+
+        if(!code) return;
+
+        const ok =
+          (type === "commerce" && code === "com1234")
+          ||
+          (type === "mairie" && code === "mairie1234")
+          ||
+          (type === "association" && code === "asso1234");
+
+        if(!ok){
+
+          alert("Code incorrect");
+
+          return;
+
+        }
+
+        const zone = $("pubCalendarZone");
+
+        if(!zone) return;
+
+        const now = new Date();
+
+        let html = `
+
+          <div class="box">
+
+            <strong>Calendrier trimestriel</strong><br><br>
+
+            Réservation publicitaire sécurisée.
+
+          </div>
+
+        `;
+
+        for(let i=0;i<3;i++){
+
+          const d = new Date(
+            now.getFullYear(),
+            now.getMonth() + i,
+            1
+          );
+
+          html += `
+
+            <div class="box">
+
+              <strong style="
+                text-transform:capitalize;
+              ">
+                ${d.toLocaleDateString("fr-FR",{
+                  month:"long",
+                  year:"numeric"
+                })}
+              </strong>
+
+              <div style="
+                margin-top:10px;
+                display:grid;
+                grid-template-columns:repeat(7,1fr);
+                gap:6px;
+              ">
+
+          `;
+
+          const days =
+            new Date(
+              d.getFullYear(),
+              d.getMonth()+1,
+              0
+            ).getDate();
+
+          for(let day=1;day<=days;day++){
+
+            html += `
+
+              <button class="choiceBtn"
+                style="
+                  padding:8px 4px;
+                  background:#fff;
+                  color:#111;
+                ">
+                ${day}
+              </button>
+
+            `;
+
+          }
+
+          html += `
+              </div>
+            </div>
+          `;
+
+        }
+
+        zone.innerHTML = html;
+
+      }
+
+      const c = $("pubCommerceBtn");
+      const m = $("pubMairieBtn");
+      const a = $("pubAssoBtn");
+
+      if(c){
+        c.onclick = ()=>openQuarter("commerce");
+      }
+
+      if(m){
+        m.onclick = ()=>openQuarter("mairie");
+      }
+
+      if(a){
+        a.onclick = ()=>openQuarter("association");
+      }
+
+    },100);
+
+  };
+
+  const ticker = $("ticker");
+
+  if(ticker){
+
+    ticker.onclick = function(){
+
+      window.openTicker();
+
+    };
+
+  }
+
+})();
+
+</script>
 </body>
 </html>
 
