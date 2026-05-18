@@ -849,18 +849,41 @@
   };
 
 })();
- function openOeuvres(){
+})();
+
+function speakTextPremium(text){
+  if(!("speechSynthesis" in window)){
+    alert("Audio indisponible sur cet appareil.");
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "fr-FR";
+  u.rate = 0.9;
+  u.pitch = 1;
+  window.speechSynthesis.speak(u);
+}
+
+function openOeuvres(){
   openModal("Œuvres", `
     <div class="box">
-      <strong>Parcours des œuvres</strong><br><br>
-      Exemple démo : fiche œuvre avec texte, audio, artiste, mécène et QR code.
+      <strong>Libre et Fleurie</strong><br><br>
+      Quartier : L’Arbrisseau<br>
+      Artiste : Julot<br>
+      Mécène : Garage Planque Citroën<br><br>
+      Bienvenue devant Libre et Fleurie. Cette œuvre rend hommage au quartier, aux habitants et à la mémoire vivante de Wattignies.
     </div>
     <div class="box">
-      <button class="choiceBtn" onclick="speakTextPremium ? speakTextPremium('Bienvenue devant Libre et Fleurie. Cette œuvre rend hommage au quartier et aux habitants de Wattignies.') : alert('Audio indisponible dans cette version')">
-        ▶ Écouter l’œuvre
-      </button>
+      <button class="choiceBtn" id="listenOeuvreBtn">▶ Écouter l’œuvre</button>
     </div>
   `);
+
+  setTimeout(()=>{
+    const b = document.getElementById("listenOeuvreBtn");
+    if(b){
+      b.onclick = ()=>speakTextPremium("Bienvenue devant Libre et Fleurie. Cette œuvre rend hommage au quartier, aux habitants et à la mémoire vivante de Wattignies.");
+    }
+  },50);
 }
 
 function openEcole(){
@@ -870,11 +893,16 @@ function openEcole(){
       « Je suis ravi aujourd’hui. »
     </div>
     <div class="box">
-      <button class="choiceBtn" onclick="speakTextPremium ? speakTextPremium('Je suis ravi aujourd’hui.') : alert('Audio indisponible dans cette version')">
-        ▶ Écouter le mot du jour
-      </button>
+      <button class="choiceBtn" id="listenEcoleBtn">▶ Écouter le mot du jour</button>
     </div>
   `);
+
+  setTimeout(()=>{
+    const b = document.getElementById("listenEcoleBtn");
+    if(b){
+      b.onclick = ()=>speakTextPremium("Je suis ravi aujourd’hui.");
+    }
+  },50);
 }
 
 function openSport(){
@@ -889,16 +917,18 @@ function openCommerces(){
   openModal("Commerces", `<div class="box"><strong>Commerces</strong><br><br>Bons plans, partenaires et avantages locaux.</div>`);
 }
 
-document.querySelectorAll("[data-open]").forEach(tile=>{
-  tile.onclick = ()=>{
-    const key = tile.getAttribute("data-open");
-    if(key === "oeuvres") openOeuvres();
-    if(key === "ecole") openEcole();
-    if(key === "sport") openSport();
-    if(key === "mairie") openMairie();
-    if(key === "commerces") openCommerces();
-  };
-}); 
+document.addEventListener("click", function(e){
+  const tile = e.target.closest("[data-open]");
+  if(!tile) return;
+
+  const key = tile.getAttribute("data-open");
+
+  if(key === "oeuvres") openOeuvres();
+  if(key === "ecole") openEcole();
+  if(key === "sport") openSport();
+  if(key === "mairie") openMairie();
+  if(key === "commerces") openCommerces();
+});
 </script>
 
 </body>
