@@ -1062,5 +1062,221 @@ document.body.appendChild(testForceBtn);
 
 console.log("Bouton de test forcé ajouté en bas à droite de l'écran.");
 </script>
+<script>
+/* === TEST PSP Bo’CitéArt — à coller avant </body> === */
+(function(){
+  console.log("✅ Module TEST PSP chargé");
+
+  const PSP_KEY = "bociteart_psp_tests_v1";
+
+  function $(id){ return document.getElementById(id); }
+
+  function loadPsp(){
+    try{ return JSON.parse(localStorage.getItem(PSP_KEY) || "[]"); }
+    catch(e){ return []; }
+  }
+
+  function savePsp(arr){
+    try{ localStorage.setItem(PSP_KEY, JSON.stringify(arr || [])); }
+    catch(e){ alert("Stockage PSP indisponible."); }
+  }
+
+  function maskIban(v){
+    v = String(v || "").replace(/\s+/g,"");
+    if(v.length < 8) return "IBAN incomplet";
+    return v.slice(0,4) + " **** **** **** " + v.slice(-4);
+  }
+
+  function openPspTest(){
+    if(typeof window.openModal !== "function"){
+      alert("Fenêtre modale indisponible.");
+      return;
+    }
+
+    window.openModal("TEST PSP — Bo’CitéArt", `
+      <div class="box">
+        <strong>Mode test PSP</strong><br><br>
+        Cet espace sert uniquement à vérifier les paiements, profils, facturation,
+        justificatifs et flux avant passage live.
+      </div>
+
+      <div class="box">
+        <strong>Profil payeur</strong>
+
+        <select class="miniField" id="pspType" style="margin-top:8px;">
+          <option value="commerce">Commerce</option>
+          <option value="mairie">Mairie</option>
+          <option value="association">Association</option>
+          <option value="sport">Club sportif</option>
+        </select>
+
+        <input class="miniField" id="pspName" placeholder="Nom structure / commerce / mairie / asso" style="margin-top:8px;">
+        <input class="miniField" id="pspSiret" placeholder="SIRET / SIREN" style="margin-top:8px;">
+        <input class="miniField" id="pspEmail" placeholder="Email facturation" style="margin-top:8px;">
+        <input class="miniField" id="pspIban" placeholder="IBAN / RIB test" style="margin-top:8px;">
+      </div>
+
+      <div class="box">
+        <strong>Service testé</strong>
+
+        <select class="miniField" id="pspService" style="margin-top:8px;">
+          <option value="abonnement_commerce">Abonnement commerce — 26,90 € HT</option>
+          <option value="pub_grand_bandeau">Publicité grand bandeau — 50 € HT</option>
+          <option value="pack_pub">Pack publicité — 200 € HT</option>
+          <option value="service_client">Option compte + aide — 2,99 € TTC</option>
+          <option value="soutien_sport_asso">Soutien sport + association — 60 € TTC</option>
+        </select>
+
+        <input class="miniField" id="pspAmount" type="number" step="0.01" placeholder="Montant payé" style="margin-top:8px;">
+      </div>
+
+      <div class="box">
+        <strong>Simulation PSP sandbox</strong><br><br>
+        <button class="choiceBtn" id="pspPayOk" type="button">Paiement accepté</button>
+        <button class="choiceBtn" id="pspPayFail" type="button" style="background:#a51e22;margin-top:8px;">Paiement refusé</button>
+        <button class="choiceBtn" id="pspHistory" type="button" style="background:#fff;color:#111;margin-top:8px;">Voir historique PSP</button>
+        <button class="choiceBtn" id="pspExport" type="button" style="background:#fff;color:#111;margin-top:8px;">Exporter historique</button>
+      </div>
+
+      <div class="box">
+        <strong>Résultat test</strong>
+        <div class="muted" id="pspResult" style="margin-top:8px;">Aucun test effectué.</div>
+      </div>
+    `);
+
+    setTimeout(()=>{
+      const payOk = $("pspPayOk");
+      const payFail = $("pspPayFail");
+      const histBtn = $("pspHistory");
+      const exportBtn = $("pspExport");
+      const result = $("pspResult");
+
+      function buildTx(status){
+        const tx = {
+          id: "PSP-TEST-" + Date.now(),
+          status,
+          type: $("pspType") ? $("pspType").value : "",
+          name: $("pspName") ? $("pspName").value.trim() : "",
+          siret: $("pspSiret") ? $("pspSiret").value.trim() : "",
+          email: $("pspEmail") ? $("pspEmail").value.trim() : "",
+          iban_masked: maskIban($("pspIban") ? $("pspIban").value : ""),
+          service: $("pspService") ? $("pspService").value : "",
+          amount: Number($("pspAmount") ? $("pspAmount").value : 0),
+          date_fr: new Date().toLocaleString("fr-FR"),
+          sandbox: true
+        };
+
+        if(!tx.name){
+          alert("Renseigne le nom de la structure.");
+          return null;
+        }
+
+        if(!tx.email || !tx.email.includes("@")){
+          alert("Renseigne un email de facturation valide.");
+          return null;
+        }
+
+        if(!tx.amount || tx.amount <= 0){
+          alert("Renseigne le montant payé.");
+          return null;
+        }
+
+        return tx;
+      }
+
+      function saveTx(status){
+        const tx = buildTx(status);
+        if(!tx) return;
+
+        const arr = loadPsp();
+        arr.push(tx);
+        savePsp(arr);
+
+        if(result){
+          result.innerHTML =
+            "<strong>Transaction :</strong> " + tx.id + "<br>" +
+            "<strong>Statut :</strong> " + tx.status + "<br>" +
+            "<strong>Structure :</strong> " + tx.name + "<br>" +
+            "<strong>Service :</strong> " + tx.service + "<br>" +
+            "<strong>Montant :</strong> " + tx.amount + " €<br>" +
+            "<strong>IBAN masqué :</strong> " + tx.iban_masked + "<br>" +
+            "<strong>Date :</strong> " + tx.date_fr;
+        }
+
+        alert(status === "accepted"
+          ? "Paiement test accepté et enregistré."
+          : "Paiement test refusé et enregistré."
+        );
+      }
+
+      if(payOk) payOk.onclick = ()=>saveTx("accepted");
+      if(payFail) payFail.onclick = ()=>saveTx("refused");
+
+      if(histBtn){
+        histBtn.onclick = ()=>{
+          const arr = loadPsp();
+          if(!arr.length){
+            alert("Aucun test PSP enregistré.");
+            return;
+          }
+          alert(arr.slice(-10).map(x =>
+            x.date_fr + "\\n" +
+            x.status + " — " + x.name + "\\n" +
+            x.service + " — " + x.amount + " €\\n" +
+            x.id
+          ).join("\\n\\n----------------\\n\\n"));
+        };
+      }
+
+      if(exportBtn){
+        exportBtn.onclick = ()=>{
+          const arr = loadPsp();
+          const txt =
+            "EXPORT TEST PSP Bo’CitéArt\\n" +
+            "Date export : " + new Date().toLocaleString("fr-FR") + "\\n\\n" +
+            JSON.stringify(arr, null, 2);
+
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(txt)
+              .then(()=>alert("Historique PSP copié dans le presse-papiers."))
+              .catch(()=>alert(txt));
+          }else{
+            alert(txt);
+          }
+        };
+      }
+    },100);
+  }
+
+  window.openPspTest = openPspTest;
+
+  const oldOpenTicker = window.openTicker;
+
+  window.openTicker = function(){
+    if(typeof oldOpenTicker === "function"){
+      oldOpenTicker();
+      setTimeout(()=>{
+        const body = document.getElementById("modalBody");
+        if(body && !document.getElementById("openPspTestBtn")){
+          const div = document.createElement("div");
+          div.className = "box";
+          div.innerHTML = `
+            <strong>Test PSP interne</strong><br><br>
+            <button class="choiceBtn" id="openPspTestBtn" type="button">
+              Ouvrir TEST PSP
+            </button>
+          `;
+          body.appendChild(div);
+          document.getElementById("openPspTestBtn").onclick = openPspTest;
+        }
+      },150);
+      return;
+    }
+
+    openPspTest();
+  };
+
+})();
+</script>
 </body>
 </html>
