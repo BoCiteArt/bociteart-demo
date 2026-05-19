@@ -8639,197 +8639,123 @@ function openProfile(type){
     };
   }
 
-const saveBtn = $("saveProfilePubV3");
+  const saveBtn = $("saveProfilePubV3");
+  if(saveBtn){
+    saveBtn.onclick = async function(){
+      const current = getProfile(type);
 
-if(saveBtn){
+      current.name = $("pNameV3").value.trim();
+      current.manager = $("pManagerV3").value.trim();
+      current.address = $("pAddressV3").value.trim();
+      current.zip = $("pZipV3").value.trim();
+      current.city = $("pCityV3").value.trim();
+      current.country = $("pCountryV3").value.trim();
+      current.siret = $("pSiretV3").value.trim();
+      current.siren = $("pSirenV3").value.trim();
+      current.tva = $("pTvaV3").value.trim();
+      current.billing = $("pBillingV3").value.trim();
+      current.phone = $("pPhoneV3").value.trim();
+      current.emergencyMail = $("pEmergencyMailV3").value.trim();
+      current.emergencyPhone = $("pEmergencyPhoneV3").value.trim();
+      current.bank = $("pBankV3").value.trim();
+      current.iban = $("pIbanV3").value.trim();
 
-  saveBtn.onclick = async function(){
+      const fileInput = $("pLogoV3");
+      const file = fileInput && fileInput.files && fileInput.files[0];
 
-    const current = getProfile(type);
-
-    if(!current.actorId){
-      current.actorId = makeActorId(type);
-    }
-
-    if(!current.accessCode){
-      current.accessCode = makeAccessCode(type);
-    }
-
-    current.role = type;
-    current.updatedAt = new Date().toISOString();
-
-    current.name = $("pNameV3").value.trim();
-    current.manager = $("pManagerV3").value.trim();
-    current.address = $("pAddressV3").value.trim();
-    current.zip = $("pZipV3").value.trim();
-    current.city = $("pCityV3").value.trim();
-    current.country = $("pCountryV3").value.trim();
-    current.siret = $("pSiretV3").value.trim();
-    current.siren = $("pSirenV3").value.trim();
-    current.tva = $("pTvaV3").value.trim();
-    current.billing = $("pBillingV3").value.trim();
-    current.phone = $("pPhoneV3").value.trim();
-    current.emergencyMail = $("pEmergencyMailV3").value.trim();
-    current.emergencyPhone = $("pEmergencyPhoneV3").value.trim();
-    current.bank = $("pBankV3").value.trim();
-    current.iban = $("pIbanV3").value.trim();
-
-    const fileInput = $("pLogoV3");
-    const file =
-      fileInput &&
-      fileInput.files &&
-      fileInput.files[0];
-
-    if(file){
-
-      const imageData =
-        await fileToCompressedDataUrl(file);
-
-      if(imageData){
-
-        const imageKey =
-          type + "_" + Date.now();
-
-        await saveImage(imageKey, imageData);
-
-        current.imageKey = imageKey;
+      if(file){
+        const imageData = await fileToCompressedDataUrl(file);
+        if(imageData){
+          const imageKey = type + "_" + Date.now();
+          await saveImage(imageKey, imageData);
+          current.imageKey = imageKey;
+        }
       }
-    }
 
-    if(!current.name){
-      alert("renseignez le nom de la structure.");
-      return;
-    }
+      if(!current.name){
+        alert("renseignez le nom de la structure.");
+        return;
+      }
 
-    if(!current.billing){
-      alert("renseignez l’email de facturation.");
-      return;
-    }
+      if(!current.billing){
+        alert("renseignez l’email de facturation.");
+        return;
+      }
 
-    saveProfile(type, current);
+      saveProfile(type, current);
+      alert("fiche enregistrée.");
+    };
+  }
 
-    alert(
-      "fiche enregistrée.\n\n" +
-      "identifiant interne : " + current.actorId + "\n" +
-      "code d’accès démo : " + current.accessCode + "\n\n" +
-      "en version live, ce code pourra être remplacé ou complété par un qr code dynamique."
-    );
-  };
-}
+  const validateBtn = $("validatePubV3");
+  if(validateBtn){
+    validateBtn.onclick = function(){
+      const current = getProfile(type);
 
-const validateBtn = $("validatePubV3");
+      if(!current.name){
+        alert("enregistrez d’abord votre fiche.");
+        return;
+      }
 
-if(validateBtn){
+      if(!current.billing){
+        alert("renseignez l’email de facturation.");
+        return;
+      }
 
-  validateBtn.onclick = function(){
+      if(!selectedDates.length){
+        alert("sélectionnez une date.");
+        return;
+      }
 
-    const current = getProfile(type);
+      const pack = Number($("packPubV3").value || 1);
+      const amount = pack === 5 ? 200 : 50;
 
-    if(!current.name){
-      alert("enregistrez d’abord votre fiche.");
-      return;
-    }
+      const ok = confirm(
+        "simulation paiement\n\n" +
+        "montant : " + amount + " € ht\n\n" +
+        "confirmer ?"
+      );
 
-    if(!current.billing){
-      alert("renseignez l’email de facturation.");
-      return;
-    }
+      if(!ok) return;
 
-    if(!selectedDates.length){
-      alert("sélectionnez une date.");
-      return;
-    }
+      const bookings = getBookings();
 
-    const pack =
-      Number($("packPubV3").value || 1);
+      selectedDates.forEach(date=>{
+        const titleInput = document.querySelector('.titleByDateV3[data-date="'+date+'"]');
+        const textInput = document.querySelector('.textByDateV3[data-date="'+date+'"]');
 
-    const amount =
-      pack === 5 ? 200 : 50;
-
-    const ok = confirm(
-      "simulation paiement\n\n" +
-      "montant : " + amount + " € ht\n\n" +
-      "confirmer ?"
-    );
-
-    if(!ok) return;
-
-    const bookings = getBookings();
-
-    selectedDates.forEach(date=>{
-
-      const titleInput =
-        document.querySelector(
-          '.titleByDateV3[data-date="'+date+'"]'
-        );
-
-      const textInput =
-        document.querySelector(
-          '.textByDateV3[data-date="'+date+'"]'
-        );
-
-      dayList(bookings, date).push({
-
-        date: date,
-        profileType:type,
-        actorId: current.actorId,
-        accessCode: current.accessCode,
-        entityName:current.name,
-
-        title:
-          (titleInput && titleInput.value.trim())
-          || current.name,
-
-        text:
-          (textInput && textInput.value.trim())
-          || "publicité locale bo’citéart",
-
-        imageKey:current.imageKey || "",
-
-        status:
-          type === "mairie"
-            ? "quote_validated"
-            : "demo_paid",
-
-        createdTs:Date.now(),
-
-        amountHT:amount,
-        pack:pack,
-
-        billing:current.billing,
-        siret:current.siret,
-        siren:current.siren,
-        tva:current.tva
-
+        dayList(bookings, date).push({
+          profileType:type,
+          entityName:current.name,
+          title:(titleInput && titleInput.value.trim()) || current.name,
+          text:(textInput && textInput.value.trim()) || "publicité locale bo’citéart",
+          imageKey:current.imageKey || "",
+          status:type === "mairie" ? "quote_validated" : "demo_paid",
+          createdTs:Date.now(),
+          amountHT:amount,
+          pack:pack,
+          billing:current.billing,
+          siret:current.siret,
+          siren:current.siren,
+          tva:current.tva
+        });
       });
 
-    });
+      saveBookings(bookings);
+      renderTicker();
 
-    saveBookings(bookings);
+      alert("publicité enregistrée. si la date est aujourd’hui, elle apparaît dans le grand bandeau.");
+    };
+  }
 
-    renderTicker();
-
-    alert(
-      "publicité enregistrée. " +
-      "si la date est aujourd’hui, " +
-      "elle apparaît dans le grand bandeau."
-    );
-
-  };
-
+  const editBtn = $("editPubV3");
+  if(editBtn){
+    editBtn.onclick = function(){
+      openEditToday(type);
+    };
+  }
 }
 
-const editBtn = $("editPubV3");
-
-if(editBtn){
-
-  editBtn.onclick = function(){
-
-    openEditToday(type);
-
-  };
-
-}
   function openEditToday(type){
     const bookings = getBookings();
     const k = keys(today());
