@@ -1,4 +1,4 @@
-<!DOCTYPE html>  
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
@@ -8,7 +8,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests; img-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; font-src 'self' https: data:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Bo’CitéArt – Démo</title>
-  <link rel="manifest" href="manifest.json">
+ <!-- <link rel="manifest" href="manifest.json"> -->
   <meta name="theme-color" content="#a51e22">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
@@ -149,7 +149,7 @@
     .tile{
       position:relative;
       width:100%;
-      aspect-ratio:1 / 0.70;
+      aspect-ratio:1 / 0.58;
       border-radius:22px;
       overflow:hidden;
       background:var(--beige);
@@ -885,10 +885,10 @@
 }
     @media (max-height:780px){
       .wrap{ padding:10px; gap:10px; }
-      .ticker{ height:120px; }
-      .grid{ gap:10px; }
-      .tile .h{ font-size:16px; }
-      .tile .p{ margin-top:6px; }
+      .ticker{ height:92px; }
+      .grid{ gap:6px; }
+      .tile .h{ font-size:14px; line-height:1.05; }
+      .tile .p{ font-size:10px; margin-top:4px; line-height:1.1; }
       .dae{ padding:8px 10px; font-size:14px; border-radius:18px; min-height:86px; }
       .heart{ width:44px; height:44px; }
       .footerRow{ padding-bottom:8px; }
@@ -1107,7 +1107,7 @@ function validerInscription() {
       return;
     }
     if (!rib || rib.length < 10) {
-      alert("Veuillez renseigner un RIB valide.")
+      alert("Veuillez renseigner un RIB valide.");
       return;
     }
   }
@@ -1337,295 +1337,715 @@ function validerInscription() {
         </div>
         
 <div id="p-rgpd" class="doc">
-  <div style="font-weight:900;font-size:15px;">📗 Politique de protection des données (RGPD) — Bo’CitéArt</div>
-  <div class="muted" style="margin-top:4px;">Version pré-structuration — entités juridiques en cours de constitution</div>
 
-  <div class="box">
-    Bo’CitéArt est un projet territorial en cours de structuration juridique. Les mentions complètes (raison sociale, SIRET, siège, représentant légal, contact juridique et contact RGPD définitif) seront publiées avant toute exploitation contractuelle ferme.
+  <div style="font-weight:900;font-size:15px;">
+    📗 Politique de protection des données — RGPD — Bo’CitéArt
+  </div>
+
+  <div class="muted" style="margin-top:4px;">
+    Version pré-live — documents à compléter avant exploitation officielle
+  </div>
+
+  <div class="box" style="margin-top:10px;">
+  
+    <div style="margin-top:10px;font-weight:800;">• Structure exploitante : sas et asso 1901 à but non lucratif </div>
+    <div style="margin-top:6px;font-weight:800;">• SIRET / SIREN : [À COMPLÉTER]</div>
+    <div style="margin-top:6px;font-weight:800;">• Adresse siège : [À COMPLÉTER]</div>
+    <div style="margin-top:6px;font-weight:800;">• Représentant légal : [À COMPLÉTER]</div>
+    <div style="margin-top:6px;font-weight:800;">• Contact RGPD / DPO : contact@bociteart.com</div>
+    <div style="margin-top:6px;font-weight:800;">• Hébergeur : OVH </div>
+    <div style="margin-top:6px;font-weight:800;">• Prestataire paiement : [À COMPLÉTER]</div>
+
+    <div class="muted" style="margin-top:10px;">
+      Ces informations seront renseignées avant toute exploitation officielle du service.
+    </div>
   </div>
 
   <h2>1. Responsable du traitement</h2>
-  <p>
-    Responsable provisoire : <strong>Bo’CitéArt — en cours de constitution</strong><br>
-    Représentant du projet : [Nom du porteur du projet]<br>
-    Contact RGPD : <a href="mailto:contact@bociteart.com">contact@bociteart.com</a><br>
-    Adresse : [à compléter]
-  </p>
-
   <div class="box">
-    À terme, les responsabilités exactes entre la SAS commerciale et l'Association 1901 à but non lucrative, seront précisées dans la version officielle des présentes mentions.
+    Bo’CitéArt est actuellement présenté en version de démonstration,
+    de pré-structuration ou de préfiguration technique.
+    <br><br>
+    Le responsable définitif du traitement sera officiellement identifié avant la mise en exploitation complète du service.
   </div>
 
   <h2>2. Principe général</h2>
   <div class="box">
-    Bo’CitéArt ne collecte pas de données inutiles. Seules les données strictement nécessaires au fonctionnement du service, à la sécurité des comptes, à la gestion des BoCitéCoins, aux réservations, aux abonnements, aux paiements, à la facturation, à la vérification des comptes professionnels, et, le cas échéant, à l’encadrement des comptes mineurs, ont vocation à être traitées.
+    Bo’CitéArt applique un principe de minimisation des données.
+    Seules les données strictement nécessaires au fonctionnement du service,
+    à la sécurité, aux comptes utilisateurs, aux réservations, aux services optionnels,
+    aux paiements, à la facturation, à la prévention des abus et à la gestion des rôles
+    peuvent être traitées.
   </div>
 
-  <h2>3. Données pouvant être traitées selon les fonctions activées</h2>
+  <h2>3. Données pouvant être traitées</h2>
   <ul>
-    <li><strong>Compte particulier</strong> : nom ou pseudonyme, email, téléphone, date de naissance, rôle, paramètres du compte.</li>
-    <li><strong>Compte mineur</strong> : données du compte utilisateur + email et téléphone du parent ou représentant légal lorsque requis.</li>
-    <li><strong>Compte professionnel</strong> : identité de la SAS Bo'CitéArt, nom du responsable, email, téléphone, adresse, SIRET, KBIS ou justificatifs équivalents, statut de validation du compte, RIB professionnel validé selon le processus prévu, historique de mise à jour du moyen de paiement.</li>
-    <li><strong>Sécurité</strong> : journaux techniques, horodatages, tentatives d’accès, opérations sensibles, changements de RIB, validations, blocages, réactivations, éléments nécessaires à la prévention de la fraude, à la sécurité et à la traçabilité.</li>
-    <li><strong>Publicité</strong> : entité réservante, contenu fourni, dates souhaitées, créneaux réservés, options choisies, état de validation, état de paiement, historique de modification.</li>
-    <li><strong>BoCitéCoins</strong> : opérations d’attribution, d’échange, solde, historique, statut garanti / non garanti selon abonnement, règles de péremption et de redémarrage annuel.</li>
-    <li><strong>Abonnement “compte sécurisé”</strong> : statut d’abonnement, date de début, date de fin, historique de paiement, options activées.</li>
-    <li><strong>Transactions / PSP</strong> : identifiants techniques de paiement, statut, référence de règlement, journaux de preuve. Les données bancaires complètes ne sont pas stockées par Bo’CitéArt lorsque le règlement est confié à un prestataire de paiement.</li>
-    <li><strong>Démo</strong> : certaines données peuvent être conservées localement sur l’appareil dans le cadre d’une démonstration.</li>
+    <li><strong>Compte utilisateur :</strong> nom, pseudonyme, email, téléphone, paramètres, préférences, rôle utilisateur.</li>
+    <li><strong>Compte professionnel :</strong> nom commercial, responsable, coordonnées, justificatifs, SIRET/SIREN, éléments de validation.</li>
+    <li><strong>Compte mineur :</strong> informations limitées nécessaires au fonctionnement du service, avec cadre renforcé si requis.</li>
+    <li><strong>Sécurité :</strong> journaux techniques, connexions, validations, tentatives d’accès, blocages, opérations sensibles, horodatages.</li>
+    <li><strong>Bocitecoins :</strong> attribution, retrait, historique, opérations, règles de fonctionnement.</li>
+    <li><strong>Publicité :</strong> contenus, réservations, validations, historique, paiements associés.</li>
+    <li><strong>Services optionnels :</strong> sauvegarde, récupération, sécurité, continuité de compte, statut abonnement.</li>
+    <li><strong>Paiement :</strong> références techniques, statut paiement, preuve transaction.</li>
   </ul>
 
-  <h2>4. Mineurs — cadre renforcé</h2>
   <div class="box">
-    Pour les utilisateurs de moins de 15 ans, lorsque le traitement repose sur le consentement, l’accès complet au service est conditionné à la validation préalable par un titulaire de l’autorité parentale via les coordonnées renseignées lors de l’inscription. Tant que cette validation n’a pas eu lieu, le compte peut rester limité, inactif ou en attente.
+    Les données bancaires complètes ne sont pas stockées directement par Bo’CitéArt lorsque le paiement est confié à un prestataire spécialisé.
   </div>
-  <ul>
-    <li>En cas d’inscription d’un mineur, un <strong>email parent</strong> et un <strong>téléphone parent</strong> doivent être renseignés.</li>
-    <li>Bo’CitéArt peut envoyer un message d’information ou de validation au responsable légal renseigné.</li>
-    <li>La date, l’heure et le statut de cette validation peuvent être conservés à titre de preuve.</li>
-    <li>Les contenus identifiants concernant les enfants ne doivent pas être publiés sans cadre approprié.</li>
-  </ul>
+
+  <h2>4. Mineurs</h2>
+  <h2>4. Mineurs — cadre renforcé</h2>
+
+<div class="box">
+  Pour les utilisateurs de moins de 15 ans,
+  lorsque le traitement repose sur le consentement,
+  l’accès complet au service
+  est conditionné à la validation préalable
+  par un titulaire de l’autorité parentale
+  via les coordonnées renseignées lors de l’inscription.
+
+  <br><br>
+
+  Tant que cette validation n’a pas eu lieu,
+  le compte peut rester limité,
+  inactif
+  ou en attente.
+</div>
+
+<ul>
+  <li>
+    En cas d’inscription d’un mineur,
+    un <strong>email parent</strong>
+    et un <strong>téléphone parent</strong>
+    doivent être renseignés.
+  </li>
+
+  <li>
+    Bo’CitéArt peut envoyer
+    un message d’information,
+    de validation
+    ou de sécurité
+    au responsable légal renseigné.
+  </li>
+
+  <li>
+    La date,
+    l’heure
+    et le statut de validation
+    peuvent être conservés
+    à titre de preuve.
+  </li>
+
+  <li>
+    Certaines fonctionnalités,
+    contenus
+    ou espaces
+    peuvent rester limités
+    tant que les validations nécessaires
+    ne sont pas obtenues.
+  </li>
+
+  <li>
+    Les contenus identifiants concernant les enfants
+    ne doivent pas être publiés
+    sans cadre approprié,
+    autorisation adaptée
+    ou validation requise.
+  </li>
+</ul>
 
   <h2>5. Données sensibles / contenus interdits</h2>
-  <div class="box">
-    Bo’CitéArt n’a pas vocation à collecter des données sensibles (santé, opinions politiques, convictions religieuses, orientation sexuelle, etc.). Tout contenu illicite, haineux, diffamatoire, violent, discriminatoire, ou comportant des données personnelles non autorisées, peut être retiré immédiatement, avec suspension d’accès si nécessaire.
-  </div>
+
+<div class="box">
+  Bo’CitéArt n’a pas vocation
+  à collecter des données sensibles,
+  notamment :
+  santé,
+  opinions politiques,
+  convictions religieuses,
+  orientation sexuelle,
+  données biométriques,
+  données médicales
+  ou informations particulièrement sensibles
+  au sens des réglementations applicables.
+</div>
+
+<div class="box" style="margin-top:10px;">
+  Tout contenu :
+  illicite,
+  haineux,
+  diffamatoire,
+  violent,
+  discriminatoire,
+  frauduleux,
+  trompeur,
+  portant atteinte aux mineurs,
+  aux droits d’auteur,
+  à la vie privée
+  ou comportant des données personnelles non autorisées,
+  peut être :
+  suspendu,
+  limité,
+  masqué,
+  retiré
+  ou signalé,
+  avec restriction d’accès
+  si nécessaire.
+</div>
+
+<div class="box" style="margin-top:10px;">
+  Bo’CitéArt peut mettre en place
+  des mécanismes :
+  de modération,
+  signalement,
+  vérification,
+  limitation,
+  journalisation
+  ou protection,
+  afin de préserver
+  la sécurité des utilisateurs,
+  des partenaires,
+  des établissements,
+  des collectivités
+  et du service.
+</div>
+
+<div class="muted" style="margin-top:10px;">
+  Certaines opérations de contrôle,
+  vérification,
+  suspension
+  ou suppression
+  peuvent être réalisées
+  sans préavis immédiat
+  lorsqu’un risque important est identifié.
+</div>
 
   <h2>6. Bases légales</h2>
   <ul>
-    <li><strong>Exécution du service</strong> : création et gestion de compte, accès aux fonctionnalités, réservation publicitaire, gestion des BoCitéCoins, gestion des abonnements, exécution des prestations et des accès associés.</li>
-    <li><strong>Intérêt légitime</strong> : sécurité, journalisation, prévention de la fraude, protection du service, contrôle des abus, traçabilité interne, gestion des incidents.</li>
-    <li><strong>Obligations légales</strong> : comptabilité, facturation, conservation probatoire ou traitement des litiges selon la réglementation applicable dans la version officielle.</li>
-    <li><strong>Consentement</strong> : lorsqu’il est juridiquement requis pour certaines fonctionnalités ou certains profils, notamment pour certains traitements liés aux mineurs ou à des fonctionnalités optionnelles.</li>
+    <li><strong>Exécution du service :</strong> accès, compte, fonctionnalités, réservations, options activées.</li>
+    <li><strong>Intérêt légitime :</strong> sécurité, preuve, prévention fraude, protection du service.</li>
+    <li><strong>Obligation légale :</strong> comptabilité, facturation, conservation légale.</li>
+    <li><strong>Consentement :</strong> lorsque requis pour certaines fonctions ou certains profils.</li>
   </ul>
 
-  <h2>7. Finalités</h2>
-  <ul>
-    <li>Permettre l’accès et le fonctionnement de l’application.</li>
-    <li>Gérer les comptes particuliers, professionnels, institutionnels et associatifs.</li>
-    <li>Vérifier et valider les comptes professionnels.</li>
-    <li>Gérer l’attribution, la conservation, la sécurisation, l’échange et les règles de péremption des BoCitéCoins.</li>
-    <li>Gérer les abonnements, les réservations publicitaires et les options associées.</li>
-    <li>Assurer la sécurité, la journalisation et la prévention des abus.</li>
-    <li>Gérer la facturation, le suivi des règlements et les justificatifs associés.</li>
-  </ul>
-
-  <h2>8. Journalisation et sécurité</h2>
+  <h2>7. Sécurité et journalisation</h2>
   <div class="box">
-    Bo’CitéArt peut mettre en place une journalisation des opérations sensibles afin de protéger les comptes, de détecter les accès non autorisés, de tracer les changements importants et de gérer les incidents de sécurité. L’utilisateur est informé de cette journalisation lors de l’accès au service ou de l’utilisation des fonctions concernées.
+    Bo’CitéArt peut journaliser certaines opérations sensibles : connexions,
+    tentatives d’accès, blocages, validations, paiements, changements importants,
+    actions administratives et opérations Bocitecoins.
+    <br><br>
+    Cette journalisation vise à protéger les utilisateurs, prévenir les abus et gérer les incidents.
   </div>
 
-  <h2>9. Durées de conservation</h2>
+  <h2>8. Durées de conservation</h2>
   <ul>
-    <li><strong>Données de compte</strong> : pendant la durée nécessaire à la gestion du compte et, le cas échéant, au traitement des demandes de suppression ou des litiges.</li>
-    <li><strong>Logs et sécurité</strong> : durée limitée et proportionnée à la finalité de sécurité.</li>
-    <li><strong>Réservations, opérations BoCitéCoins, abonnement, justificatifs de validation</strong> : pendant la durée utile à l’exécution du service, à la preuve des opérations et à la gestion des litiges.</li>
-    <li><strong>Données comptables / facturation</strong> : selon les durées légales applicables dans la version officielle.</li>
+    <li><strong>Données de compte :</strong> pendant la durée d’utilisation du compte, puis jusqu’à 3 ans après inactivité ou demande de suppression, sauf obligation légale ou litige.</li>
+    <li><strong>Logs de sécurité :</strong> jusqu’à 12 mois, sauf incident, fraude ou nécessité probatoire.</li>
+    <li><strong>Opérations Bocitecoins :</strong> jusqu’à 3 ans après la dernière opération utile, sauf litige ou obligation légale.</li>
+    <li><strong>Réservations publicitaires et historiques associés :</strong> jusqu’à 5 ans pour la preuve commerciale, sauf obligation comptable plus longue.</li>
+    <li><strong>Factures, pièces comptables et justificatifs de paiement :</strong> 10 ans à compter de la clôture de l’exercice concerné.</li>
+    <li><strong>Données liées aux demandes d’aide :</strong> durée nécessaire au traitement, puis jusqu’à 3 ans si besoin de suivi ou preuve.</li>
+    <li><strong>Données de démonstration :</strong> stockage local ou temporaire selon l’appareil et la version utilisée.</li>
   </ul>
 
-  <h2>10. Destinataires</h2>
+  <h2>9. Destinataires</h2>
   <ul>
-    <li>Administrateurs et personnes habilitées selon leurs droits.</li>
-    <li>Les partenaires autorisées dans la limite de leurs missions et de leurs habilitations.</li>
-    <li>Sous-traitants techniques strictement nécessaires (hébergement, prestataire de paiement, services d’envoi d’email/SMS, etc.).</li>
-    <li>Autorités compétentes si la loi l’impose ou si une situation le justifie.</li>
+    <li>Administrateurs habilités ;</li>
+    <li>prestataires techniques nécessaires ;</li>
+    <li>partenaires autorisés selon leur rôle ;</li>
+    <li>autorités compétentes si obligation légale.</li>
   </ul>
 
-  <h2>11. Vos droits</h2>
+  <h2>10. Droits des utilisateurs</h2>
   <ul>
-    <li>Droit d’accès.</li>
-    <li>Droit de rectification.</li>
-    <li>Droit d’effacement, dans les limites légales et contractuelles applicables.</li>
-    <li>Droit d’opposition et de limitation dans les conditions prévues par la réglementation.</li>
-    <li>Droit à la portabilité lorsque ce droit est applicable.</li>
-    <li>Droit d’introduire une réclamation auprès de la CNIL.</li>
+    <li>Droit d’accès ;</li>
+    <li>droit de rectification ;</li>
+    <li>droit d’effacement ;</li>
+    <li>droit d’opposition ;</li>
+    <li>droit de limitation ;</li>
+    <li>droit à la portabilité lorsque applicable ;</li>
+    <li>droit de réclamation auprès de la CNIL.</li>
   </ul>
 
-  <h2>12. Compte sécurisé (si activé)</h2>
+  <h2>11. Contenus interdits</h2>
   <div class="box">
-    L’option “compte sécurisé” peut permettre une conservation sur serveur du solde BoCitéCoins et l’activation de fonctions complémentaires. En cas d’arrêt de l’abonnement, les BoCitéCoins ne sont pas automatiquement supprimés, mais ils ne bénéficient plus du même niveau de garantie ou de récupération prévu par l’option sécurisée.
+    Les contenus haineux, diffamatoires, violents, discriminatoires, frauduleux,
+    illicites ou portant atteinte aux mineurs peuvent être retirés immédiatement,
+    avec suspension du compte si nécessaire.
   </div>
 
+  <h2>12. Sauvegarde et récupération</h2>
   <div class="box">
-    Bo’CitéArt s’engage à ne pas vendre les données personnelles et à mettre en œuvre des mesures raisonnables de protection adaptées à la nature du service. Aucune solution technique ne peut toutefois garantir un risque zéro.
+    Les services de sauvegarde, restauration ou récupération restent des services techniques dépendants du téléphone,
+    du réseau, des sauvegardes disponibles, des prestataires techniques et des paramètres activés.
+    <br><br>
+    Bo’CitéArt ne garantit pas une récupération dans tous les cas.
   </div>
+  <div class="box" style="margin-top:10px;">
+
+  <strong>Œuvres, campagnes artistiques et renouvellement</strong><br><br>
+
+  Les œuvres,
+  fresques,
+  contenus artistiques,
+  campagnes visuelles
+  et espaces associés à Bo’CitéArt
+  peuvent être intégrés
+  dans le cadre de campagnes territoriales,
+  culturelles,
+  citoyennes
+  ou participatives évolutives.
+
+  <br><br>
+
+  Sauf accord spécifique différent,
+  les emplacements artistiques,
+  supports numériques,
+  espaces associés
+  ou campagnes visuelles
+  peuvent être exploités
+  jusqu’à la campagne suivante,
+  généralement estimée à environ 2 ans.
+
+  <br><br>
+
+  À l’issue de cette période,
+  les espaces concernés
+  peuvent être renouvelés,
+  modifiés,
+  remplacés,
+  retirés
+  ou réattribués
+  afin de permettre
+  de nouvelles campagnes artistiques,
+  citoyennes,
+  territoriales
+  ou participatives.
+
+  <br><br>
+
+  La participation d’un artiste,
+  mécène,
+  association,
+  établissement,
+  partenaire
+  ou contributeur
+  ne confère pas automatiquement
+  un droit permanent
+  sur l’emplacement,
+  la campagne,
+  l’espace numérique
+  ou le support concerné,
+  sauf accord écrit spécifique.
+
+  <div class="muted" style="margin-top:10px;">
+    Les droits d’auteur restent encadrés
+    par la réglementation applicable
+    et les éventuels accords conclus avec les artistes.
+  </div>
+
+</div>
+
+  <div class="box">
+    Bo’CitéArt ne vend pas les données personnelles et met en œuvre des mesures raisonnables de protection.
+    Aucun système numérique ne peut toutefois garantir un risque zéro.
+  </div>
+
 </div>
 
 <div id="p-cgu" class="doc" style="display:none;">
-  <div style="font-weight:900;font-size:15px;">📘 Conditions Générales d’Utilisation — Bo’CitéArt</div>
 
-  <div class="box">
-    Bo’CitéArt est une application territoriale de services citoyens. Elle ne constitue ni un service d’urgence, ni un réseau social ouvert, ni un établissement bancaire, ni un établissement de paiement, ni un service financier réglementé.
+  <div style="font-weight:900;font-size:15px;">
+    📘 Conditions Générales d’Utilisation — Bo’CitéArt
   </div>
 
-  <h2>0. Version démo / pré-structuration</h2>
-  <div class="box">
-    Certaines fonctionnalités peuvent être en version de démonstration, évolutives ou non opposables juridiquement à ce stade.
+  <div class="muted" style="margin-top:4px;">
+    Version pré-live — fonctionnalités évolutives avant ouverture officielle
   </div>
 
-  <h2>1. Acceptation obligatoire</h2>
-  <div class="box">
-    L’utilisation de l’application implique l’acceptation des CGU, CGV et du RGPD.
+  <div class="box" style="margin-top:10px;">
+
+    <div style="margin-top:10px;font-weight:800;">• Structure exploitante : sas et asso 1901 à but non lucratif </div>
+    <div style="margin-top:6px;font-weight:800;">• Adresse officielle : [À COMPLÉTER]</div>
+    <div style="margin-top:6px;font-weight:800;">• Contact support : contact@bociteart.com</div>
+    <div style="margin-top:6px;font-weight:800;">• Procédure signalement : contact@bociteart.com</div>
   </div>
 
-  <h2>2. Accès et responsabilité</h2>
+  <h2>1. Objet</h2>
+  <div class="box">
+    Bo’CitéArt est une application territoriale, citoyenne, culturelle, associative et commerciale locale.
+    <br><br>
+    Elle ne constitue ni un établissement bancaire, ni un service financier,
+    ni un réseau social ouvert, ni un service d’urgence, ni un système officiel de secours.
+  </div>
+
+  <h2>2. Démonstration et pré-live</h2>
+  <div class="box">
+    Certaines fonctionnalités peuvent être simulées, simplifiées, limitées,
+    évolutives ou non contractuelles dans cette version de démonstration.
+  </div>
+
+  <h2>3. Acceptation</h2>
+  <div class="box">
+    L’utilisation du service implique l’acceptation des CGU,
+    des CGV lorsque des services payants sont activés,
+    ainsi que de la politique de protection des données.
+  </div>
+
+  <h2>4. Comptes et accès</h2>
   <ul>
-    <li>Chaque utilisateur est responsable de son compte.</li>
-    <li>Les accès sont différenciés (citoyen, commerçant, mairie, etc.).</li>
+    <li>Chaque utilisateur reste responsable de son accès ;</li>
+    <li>les rôles peuvent être différenciés ;</li>
+    <li>certaines fonctions peuvent nécessiter validation ou autorisation ;</li>
+    <li>un compte peut être suspendu en cas d’abus, fraude, impayé ou risque sécurité.</li>
   </ul>
 
-  <h2>3. Géolocalisation</h2>
+  <h2>5. Mineurs et écoles</h2>
   <div class="box">
-    Certaines fonctionnalités utilisent la localisation :
-    météo, DAE, orientation, services locaux.
+    Les fonctions liées aux écoles, enfants, classes, messages, voix ou contenus pédagogiques
+    doivent rester encadrées, adaptées et conformes au cadre applicable.
   </div>
+
+  <h2>6. Comportements interdits</h2>
   <ul>
-    <li>Activation facultative</li>
-    <li>Dépend du téléphone</li>
-    <li>Peut être imprécise</li>
+    <li>Fraude ;</li>
+    <li>usurpation identité ;</li>
+    <li>faux comptes ;</li>
+    <li>piratage ou tentative intrusion ;</li>
+    <li>contenus illicites ;</li>
+    <li>contenus haineux ou diffamatoires ;</li>
+    <li>atteinte aux mineurs ;</li>
+    <li>détournement du service ;</li>
+    <li>usage des Bocitecoins comme monnaie réelle.</li>
   </ul>
 
-  <h2>4. Services externes</h2>
+  <h2>7. Bocitecoins</h2>
   <div class="box">
-    L’application utilise des services tiers (météo, cartographie, vidéo, site mairie).
-    Bo’CitéArt ne garantit pas leur disponibilité ou exactitude.
+    Les Bocitecoins sont des points promotionnels internes.
+    Ils ne disposent d’aucune valeur monétaire, d’aucune convertibilité en argent,
+    d’aucun statut bancaire, ni d’aucun droit financier garanti.
   </div>
 
-  <h2>5. Mineurs</h2>
+  <h2>8. Publicités et contenus partenaires</h2>
   <div class="box">
-    Autorisation parentale requise si nécessaire.
+    Les contenus, publicités, visuels, logos et messages fournis par les partenaires restent sous leur responsabilité.
+    Bo’CitéArt peut refuser, suspendre, retirer ou modifier un contenu contraire aux règles,
+    à la loi, à la sécurité, à l’image du projet ou aux droits de tiers.
   </div>
 
-  <h2>6. Comptes</h2>
+  <h2>9. Géolocalisation, météo, DAE et services externes</h2>
+  <div class="box">
+    Les fonctions météo, géolocalisation, cartographie, DAE, orientation ou services tiers
+    sont fournies à titre indicatif. Leur fonctionnement dépend du téléphone,
+    du réseau, des fournisseurs externes et des autorisations utilisateur.
+    <br><br>
+    En cas d’urgence, contacter immédiatement les services compétents, notamment le 112.
+  </div>
+
+  <h2>10. Disponibilité</h2>
+  <div class="box">
+    Bo’CitéArt est fourni selon disponibilité technique.
+    Le service peut être interrompu pour maintenance, sécurité, incident,
+    évolution technique, panne réseau, prestataire indisponible ou force majeure.
+  </div>
+
+  <h2>11. Responsabilité</h2>
   <ul>
-    <li>Un compte peut être suspendu en cas d’abus</li>
-    <li>Vérification obligatoire pour les pros</li>
+    <li>Pas de garantie de résultat commercial ;</li>
+    <li>pas de garantie disponibilité permanente ;</li>
+    <li>pas de responsabilité sur erreurs utilisateur ;</li>
+    <li>pas de responsabilité sur services externes ;</li>
+    <li>possibilité de correction des opérations manifestement erronées.</li>
   </ul>
 
-  <h2>7. Comportement interdit</h2>
-  <ul>
-    <li>Fraude</li>
-    <li>Faux comptes</li>
-    <li>Contenus illégaux</li>
+  <h2>12. Propriété intellectuelle</h2>
+  <div class="box">
+    Le concept, nom, logique, contenus, organisation, visuels, structure,
+    textes et éléments Bo’CitéArt sont protégés.
+    Toute reproduction, extraction ou exploitation non autorisée peut être interdite.
+  </div>
+  
+  <div class="box" style="margin-top:10px;">
+
+  <strong>Protection du projet Bo’CitéArt</strong><br><br>
+
+  Bo’CitéArt constitue une création originale
+  développée par Jean-Michel Brulé.
+
+  <br><br>
+
+  © 2025 Bo’CitéArt — Tous droits réservés.
+
+  <br><br>
+
+  Le projet,
+  le concept,
+  le logo,
+  la structuration fonctionnelle,
+  l’architecture économique,
+  les logiques territoriales,
+  les mécanismes participatifs,
+  les systèmes BoCiteCoins,
+  les interfaces,
+  les contenus,
+  les principes d’organisation,
+  les déclinaisons territoriales
+  et les éléments associés
+  sont protégés
+  par le Code de la propriété intellectuelle,
+  notamment les articles L.111-1 et suivants,
+  ainsi que par les réglementations européennes applicables.
+
+  <br><br>
+
+  Dépôts et protections déclarés :
+
+  <ul style="margin-top:10px;">
+    <li>INPI n°5161859 — 05/07/2025 ;</li>
+    <li>e-Soleau n°DS02025014876 — 10/07/2025 ;</li>
+    <li>e-Soleau n°DS02026004926 — 08/02/2026 ;</li>
+    <li>EUIPO réf. SFE44A12 — 05/08/2025.</li>
   </ul>
 
-  <h2>8. BoCitéCoins</h2>
-  <div class="box">
-    Les BoCitéCoins sont des unités promotionnelles sans valeur monétaire.
+  <div class="muted" style="margin-top:10px;">
+    Toute reproduction,
+    extraction,
+    adaptation,
+    imitation,
+    réutilisation,
+    exploitation,
+    diffusion,
+    duplication
+    ou tentative d’appropriation non autorisée
+    peut faire l’objet de mesures de protection,
+    limitation d’accès,
+    suspension,
+    actions amiables
+    ou procédures adaptées.
   </div>
 
-  <h2>9. Publicité</h2>
+</div>
+
+  <h2>13. Signalement et modération</h2>
   <div class="box">
-    Les publications peuvent être refusées ou suspendues.
+    Un contenu, comportement ou usage litigieux peut être signalé, modéré,
+    suspendu ou transmis aux autorités compétentes si nécessaire.
   </div>
+  <div class="box" style="margin-top:10px;">
+  <strong>Responsabilité des contenus transmis</strong><br><br>
 
-  <h2>10. Urgences et DAE</h2>
+  Chaque utilisateur, commerçant, association, établissement, partenaire,
+  artiste, annonceur ou contributeur reste responsable des contenus,
+  informations, images, messages, publicités, visuels, œuvres,
+  déclarations et éléments transmis ou diffusés sous son contrôle.
+
+  <br><br>
+
+  Bo’CitéArt agit comme plateforme, support technique,
+  outil territorial et dispositif d’organisation.
+
+  <br><br>
+
+  Bo’CitéArt peut suspendre, limiter, masquer, retirer ou refuser
+  tout contenu, accès ou publication présentant un risque juridique,
+  technique, sécuritaire, réputationnel, territorial ou contraire
+  aux règles applicables.
+</div>
+
+  <h2>14. Évolution des CGU</h2>
   <div class="box">
-    Les fonctions DAE, localisation et urgence sont des aides :
-    <ul>
-      <li>Pas une garantie de précision</li>
-      <li>Pas un service de secours</li>
-      <li>En cas d’urgence → appeler 112 immédiatement</li>
-    </ul>
-  </div>
-
-  <h2>11. Disponibilité</h2>
-  <div class="box">
-    Service fourni "tel quel", sans garantie de continuité.
-  </div>
-
-  <h2>12. Responsabilité</h2>
-  <ul>
-    <li>Pas responsable des erreurs utilisateur</li>
-    <li>Pas responsable des services externes</li>
-    <li>Pas responsable des interruptions techniques</li>
-  </ul>
-
-  <h2>13. Propriété intellectuelle</h2>
-  <div class="box">
-    Bo’CitéArt est protégé (concept, app, visuels, logique).
-  </div>
-
-  <h2>14. Évolution</h2>
-  <div class="box">
-    Les CGU peuvent évoluer à tout moment.
+    Les CGU peuvent évoluer afin de tenir compte des évolutions légales,
+    techniques, économiques ou fonctionnelles.
   </div>
 
   <h2>15. Droit applicable</h2>
-  <p>Droit français</p>
+  <p>Droit français, sous réserve des règles impératives applicables.</p>
+
 </div>
-        <div id="p-cgv" class="doc" style="display:none;">
-  <div style="font-weight:900;font-size:15px;">📄 Conditions Générales de Vente — Bo’CitéArt</div>
 
-  <div class="box">
-    Les présentes CGV encadrent les services payants de Bo’CitéArt.
+<div id="p-cgv" class="doc" style="display:none;">
+
+  <div style="font-weight:900;font-size:15px;">
+    📄 Conditions Générales de Vente — Bo’CitéArt
   </div>
 
-  <h2>1. Nature du service</h2>
-  <div class="box">
-    Bo’CitéArt est une plateforme de valorisation locale.
+  <div class="muted" style="margin-top:4px;">
+    Version pré-live — services payants à finaliser avant ouverture officielle
   </div>
 
-  <h2>2. BoCitéCoins</h2>
-  <div class="box">
-    Aucun statut monétaire — usage promotionnel uniquement.
+  <div class="box" style="margin-top:10px;">
+   
+    <div style="margin-top:10px;font-weight:800;">• Vendeur / structure exploitante : sas et asso 1901 à but non lucratif </div>
+    <div style="margin-top:6px;font-weight:800;">• SIRET / SIREN : [À COMPLÉTER]</div>
+    <div style="margin-top:6px;font-weight:800;">• Adresse siège : [À COMPLÉTER]</div>
+    <div style="margin-top:6px;font-weight:800;">• Contact officiel :contact@bociteart.com </div>
+    <div style="margin-top:6px;font-weight:800;">• Prestataire paiement : [À COMPLÉTER]</div>
+    <div style="margin-top:6px;font-weight:800;">• TVA applicable : [À COMPLÉTER]</div>
+
+    <div class="muted" style="margin-top:10px;">
+      Ces informations seront renseignées avant toute exploitation commerciale officielle.
+    </div>
   </div>
 
-  <h2>3. Accès pro</h2>
+  <h2>1. Objet</h2>
   <div class="box">
-    Validation obligatoire (SIRET, identité, etc.).
+    Les présentes CGV encadrent uniquement les éventuels services payants,
+    abonnements, options numériques, réservations publicitaires ou prestations professionnelles proposées par Bo’CitéArt.
   </div>
 
-  <h2>4. Abonnements</h2>
+  <h2>2. Application limitée aux services payants</h2>
   <div class="box">
-    Conditions définies dans l’application.
+    Les présentes CGV ne deviennent applicables qu’à partir du moment où un utilisateur
+    choisit volontairement d’activer une fonctionnalité, option ou prestation payante.
   </div>
+
+  <div class="box" style="margin-top:10px;">
+    L’accès général à l’application, aux contenus publics, aux œuvres, aux informations citoyennes,
+    aux alertes utiles, aux espaces mairie, aux contenus école, sport, culture ou commerces
+    reste accessible selon les modalités prévues, sans obligation de souscription payante.
+  </div>
+
+  <h2>3. Bocitecoins</h2>
+  <div class="box">
+    Les Bocitecoins sont des points promotionnels internes.
+    Ils ne constituent ni une monnaie, ni un moyen de paiement, ni une monnaie électronique,
+    ni un actif financier, ni une créance remboursable.
+    <br><br>
+    Les Bocitecoins ne sont pas convertibles en argent et ne disposent d’aucune valeur monétaire garantie.
+  </div>
+
+  <h2>4. Services numériques optionnels</h2>
+  <div class="box">
+    Bo’CitéArt pourra proposer, selon les versions, certains services numériques optionnels :
+    sauvegarde, récupération, sécurité renforcée, restauration de compteur,
+    assistance simplifiée ou continuité multi-appareils.
+    <br><br>
+    Exemple démo : <strong>2,99 € TTC / mois</strong>.
+  </div>
+  <div class="box" style="margin-top:10px;">
+  <strong>Abonnement professionnel commerçant</strong><br><br>
+
+  Un abonnement professionnel commerçant peut être proposé,
+  selon la version activée,
+  au tarif indicatif de
+  <strong>26,90 € TTC / mois</strong>.
+
+  <br><br>
+
+  Cet abonnement peut donner accès notamment :
+  <ul style="margin:8px 0 0 18px;font-weight:800;">
+    <li>à l’espace commerçant ;</li>
+    <li>à la fiche commerce ;</li>
+    <li>au QR code ou code personnel commerçant ;</li>
+    <li>à la gestion des offres et avantages ;</li>
+    <li>à certaines fonctions de visibilité locale ;</li>
+    <li>à l’historique des opérations ;</li>
+    <li>aux outils de suivi et d’assistance liés au compte professionnel.</li>
+  </ul>
+
+  <div class="muted" style="margin-top:10px;">
+    Aucun résultat commercial, chiffre d’affaires,
+    fréquentation minimale ou retour financier
+    n’est garanti.
+  </div>
+</div>
 
   <h2>5. Paiement</h2>
   <ul>
-    <li>PSP sécurisé</li>
-    <li>Prélèvement possible</li>
-    <li>Suspendu en cas d’impayé</li>
+    <li>Paiement sécurisé via prestataire spécialisé ;</li>
+    <li>prélèvement ou autre moyen selon la version ;</li>
+    <li>preuve technique de transaction conservée ;</li>
+    <li>suspension possible en cas d’impayé ou fraude.</li>
   </ul>
 
-  <h2>6. Publicité</h2>
   <div class="box">
-    Diffusion soumise à validation et paiement.
+    Bo’CitéArt ne stocke pas directement les données bancaires complètes
+    lorsque le paiement est traité par un prestataire spécialisé.
   </div>
 
-  <h2>7. Facturation</h2>
+  <h2>6. Services payants optionnels et droits applicables</h2>
   <div class="box">
-    Historique disponible — valeur indicative possible en démo.
+    Les obligations liées aux services payants ne concernent que les services volontairement activés.
+    Le simple téléchargement ou accès gratuit à l’application n’active pas ces obligations.
+    <br><br>
+    Les modalités contractuelles, durées, conditions, limitations, paiements
+    et éventuels droits applicables seront précisés dans la version officielle concernée.
   </div>
 
-  <h2>8. Suspension</h2>
+  <h2>7. Publicités et réservations</h2>
+  <div class="box">
+    Les espaces publicitaires, réservations et contenus sponsorisés restent soumis
+    à validation, disponibilité, paiement et respect des règles de diffusion.
+    <br><br>
+    Bo’CitéArt ne garantit aucun résultat commercial, fréquentation, visibilité minimale ou retour financier.
+  </div>
+
+  <h2>8. Comptes professionnels</h2>
+  <div class="box">
+    Les comptes professionnels peuvent être soumis à des vérifications : identité,
+    justificatifs, SIRET/SIREN, coordonnées, validation paiement, conformité des informations.
+    <br><br>
+    Un compte professionnel peut être suspendu, limité ou refusé en cas d’impayé,
+    fraude, abus, tentative de détournement ou non-respect des règles.
+  </div>
+
+  <h2>9. Sauvegarde et récupération</h2>
+  <div class="box">
+    Les fonctions de sauvegarde, restauration ou récupération sont des services techniques
+    dépendant du téléphone, du réseau, des sauvegardes disponibles, des prestataires techniques,
+    de l’identification utilisateur et des paramètres activés.
+    <br><br>
+    Bo’CitéArt ne garantit pas une récupération dans tous les cas.
+  </div>
+
+  <h2>10. Résiliation</h2>
+  <div class="box">
+    Les services optionnels peuvent être arrêtés selon les modalités affichées lors de l’activation concernée.
+    <br><br>
+    L’arrêt d’un service payant ne transforme pas les BoCitéCoins en argent et n’ouvre aucun droit automatique
+    à remboursement, sauf obligation légale applicable.
+  </div>
+
+  <h2>11. Responsabilité</h2>
   <ul>
-    <li>Impayé</li>
-    <li>Fraude</li>
-    <li>Non-respect règles</li>
+    <li>Pas de garantie de résultat commercial ;</li>
+    <li>pas de garantie de disponibilité permanente ;</li>
+    <li>pas de garantie de récupération dans tous les cas ;</li>
+    <li>responsabilité limitée dans les conditions permises par la loi.</li>
   </ul>
 
-  <h2>9. Responsabilité</h2>
-  <ul>
-    <li>Pas de garantie de résultat commercial</li>
-    <li>Responsabilité limitée au montant payé</li>
-  </ul>
-
-  <h2>10. Force majeure</h2>
+  <h2>12. Force majeure et incidents externes</h2>
   <div class="box">
-    Aucun engagement en cas d’événement externe (panne, attaque, etc.).
+    Bo’CitéArt ne peut être tenu responsable des événements extérieurs :
+    panne réseau, cyberattaque, incident prestataire, erreur utilisateur,
+    panne appareil, indisponibilité technique, force majeure ou événement hors contrôle raisonnable.
   </div>
 
-  <h2>11. Évolution</h2>
+  <h2>13. Conservation commerciale</h2>
   <div class="box">
-    CGV modifiables.
+    Les factures, pièces comptables et justificatifs liés aux services payants
+    peuvent être conservés pendant 10 ans à compter de la clôture de l’exercice concerné.
+    Les contrats, échanges commerciaux et preuves utiles peuvent être conservés jusqu’à 5 ans,
+    sauf durée légale différente ou litige en cours.
   </div>
 
-  <h2>12. Droit applicable</h2>
-  <p>Droit français</p>
+  <h2>14. Évolution des services</h2>
+  <div class="box">
+    Les services, options, prix, fonctionnalités et modalités peuvent évoluer selon les versions.
+    Les informations officielles applicables seront celles affichées lors de l’activation réelle du service concerné.
+  </div>
+
+  <h2>15. Droit applicable</h2>
+  <p>Droit français, sous réserve des règles impératives applicables.</p>
+
 </div>
+
       </div>
     </div>
   </div>
+
+  <div class="modal" id="choice" aria-hidden="true">
 
   <div class="modal" id="choice" aria-hidden="true">
     <div class="backdrop" id="choiceClose"></div>
@@ -1654,18 +2074,6 @@ function validerInscription() {
     (function initBoCiteArtClean(){
       console.log("✅ JS démarré");
 
-      const CITY_CONFIG = {
-  cityName: "Wattignies",
-  coinName: "WattCoin",
-  coinPlural: "WattCoins",
-  mainColor: "#a51e22"
-};
-
-window.CITY_CONFIG = CITY_CONFIG;
-
-function cityText(key){
-return CITY_CONFIG[key] || "";
-}
       const $ = (id) => document.getElementById(id);
       const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
       const isFn = (v) => typeof v === "function";
@@ -2484,16 +2892,7 @@ if(tickerBtn){
       window.mairieLoad = mairieLoad;
       window.mairieSave = mairieSave;
 
-      document.querySelectorAll("[data-open]").forEach((el)=>{
-        el.addEventListener("click", ()=>{
-          const key = el.getAttribute("data-open");
-
-          if(key === "sport" || key === "mairie" || key === "commerces"){
-            if(typeof window.__bociteartOpenByKey === "function"){
-              window.__bociteartOpenByKey(key);
-              return;
-            }
-          }
+   window.__bociteartOpenByKey = function(key){
 
         if(key === "oeuvres"){
 
@@ -2767,18 +3166,21 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
     }catch(e){}
   }
 
-  function speakTextPremium(text){
-    try{
-      if(!("speechSynthesis" in window)){
-        alert("Synthèse vocale non supportée sur cet appareil.");
-        return;
-      }
+function speakTextPremium(text){
+  try{
+    if(!("speechSynthesis" in window)){
+      alert("Synthèse vocale non supportée sur cet appareil.");
+      return;
+    }
 
+    window.speechSynthesis.cancel();
+
+    function launch(){
       window.speechSynthesis.cancel();
 
       const utter = new SpeechSynthesisUtterance(String(text || ""));
-      utter.rate = 0.95;
-      utter.pitch = 1.05;
+      utter.rate = 0.82;
+      utter.pitch = 0.95;
       utter.volume = 1;
       utter.lang = "fr-FR";
 
@@ -2799,10 +3201,21 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
       }
 
       window.speechSynthesis.speak(utter);
-    }catch(e){
-      alert("Erreur de lecture vocale.");
     }
+
+    const voices = window.speechSynthesis.getVoices();
+
+    if(voices && voices.length){
+      launch();
+    }else{
+      window.speechSynthesis.onvoiceschanged = launch;
+      setTimeout(launch, 700);
+    }
+
+  }catch(e){
+    alert("Erreur de lecture vocale.");
   }
+}
 
   function stopSpeech(){
     try{
@@ -4707,12 +5120,7 @@ if(key === "ecole"){
 
   return;
 } 
- });
-});  
-          
-  window.__bociteartOpenByKey = function(key){
-    
-
+     
 if(key === "sport"){
   window.openSportPanel = function(){
     const openSport = ()=>{
@@ -5837,6 +6245,7 @@ if(key === "sport"){
   window.openSportPanel();
   return;
 }
+    
 if(key === "mairie"){
   const CITY_SERVICES_DATA = [
     {
@@ -6148,16 +6557,72 @@ if(key === "mairie"){
     if(xb && xb.focus) xb.focus();
   },0);
 
-  return;
-}
-
-if(key === "commerces") {
+    return;
+   }
+      
+ if(key==="commerces"){
   openModal("Commerces", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces</div>
 
     <div class="box">
       <strong>Cadre :</strong> les bocitecoins ne sont ni une monnaie, ni un moyen de paiement, ni une conversion en euros.
       Ils servent de repère local Bo’CitéArt pour encourager la fidélité, la circulation dans la ville et la découverte des commerces partenaires.
+    </div>
+
+    <div class="box" style="border-left:6px solid #2f5d46;margin-top:10px;">
+      <div style="font-weight:900;">Accès partenaire commerce</div>
+
+      <div style="margin-top:8px;font-weight:800;">
+        Cotisation partenaire :
+        <strong>26,90 € HT / mois</strong>
+        soit <strong>32,28 € TTC / mois</strong>.
+      </div>
+
+      <div class="muted" style="margin-top:8px;">
+        Cette cotisation correspond à l’accès au réseau partenaire Bo’CitéArt
+        et aux services techniques associés.
+      </div>
+
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Accès au réseau commerçants partenaires</li>
+        <li>Fiche commerce sécurisée</li>
+        <li>Visibilité dans l’application</li>
+        <li>Historique et outils de suivi</li>
+        <li>Accès publicité et calendrier</li>
+        <li>Outils QR / scanner / sécurité</li>
+        <li>Maintenance et évolution technique</li>
+      </ul>
+
+      <div class="muted" style="margin-top:8px;">
+        Objectif : developper,favoriser la consommation chez les commerçants partenaires de la ville
+        (plutôt qu’en dehors de la ville).
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:10px;">
+      <div style="font-weight:900;">Fonctionnement des bocitecoins OR</div>
+
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Chaque tranche de <strong>10 € d’achat</strong> déclenche <strong>1 bocitecoin OR</strong> offert par le commerçant au client.</li>
+
+        <li>
+          Contribution technique :
+          <strong>0,09 € HT</strong>
+          soit <strong>0,108 € TTC</strong>
+          par tranche de 10 €.
+        </li>
+
+         <li>
+  Cette contribution sert au fonctionnement technique du système :
+  sécurité, maintenance, hébergement, génération des factures,
+  outils commerçants, traçabilité des opérations,
+  historique, support technique et maintien du réseau Bo’CitéArt.
+</li>
+</ul>
+      <div class="muted" style="margin-top:8px;">
+        Ce n’est pas une commission bancaire, ni un système de paiement,
+        ni une taxe sur le chiffre d’affaires.
+      </div>
     </div>
 
     <div class="box" style="border-left:6px solid #2f5d46;margin-top:10px;font-size:13px;line-height:1.45;">
@@ -6189,21 +6654,40 @@ if(key === "commerces") {
     <div class="walletBox">
       <div class="walletTitle">Wallet client — BoCitecoins OR</div>
       <div class="walletValue walletGold" id="citizenCoinBalance">37</div>
+
       <div class="walletSub">
         BoCitecoins disponibles pour échange chez les commerçants partenaires Bo’CitéArt selon les règles locales.
       </div>
 
-      <div style="margin-top:12px;font-weight:900;">Progression vers le prochain palier</div>
-      <div style="margin-top:8px;background:#efe4d3;border-radius:999px;overflow:hidden;height:14px;border:2px solid rgba(0,0,0,.08);">
-        <div id="walletProgressBar" style="height:100%;width:0%;border-radius:999px;transition:width .25s ease;background:linear-gradient(90deg,#e4c81c 0%, #88b84b 55%, #2f8f46 100%);"></div>
+      <div style="margin-top:12px;font-weight:900;">
+        Progression vers le prochain palier
       </div>
 
-      <div id="walletProgressText" class="walletSub" style="margin-top:8px;">Chargement...</div>
-      <div id="walletMotivation" class="walletSub" style="margin-top:6px;color:#2f5d46;font-weight:900;">&nbsp;</div>
-      <div id="walletExpiryInfo" class="walletSub" style="margin-top:6px;">&nbsp;</div>
+      <div style="margin-top:8px;background:#efe4d3;border-radius:999px;overflow:hidden;height:14px;border:2px solid rgba(0,0,0,.08);">
+        <div id="walletProgressBar"
+             style="height:100%;width:0%;border-radius:999px;transition:width .25s ease;background:linear-gradient(90deg,#e4c81c 0%, #88b84b 55%, #2f8f46 100%);">
+        </div>
+      </div>
+
+      <div id="walletProgressText" class="walletSub" style="margin-top:8px;">
+        Chargement...
+      </div>
+
+      <div id="walletMotivation"
+           class="walletSub"
+           style="margin-top:6px;color:#2f5d46;font-weight:900;">
+        &nbsp;
+      </div>
+
+      <div id="walletExpiryInfo"
+           class="walletSub"
+           style="margin-top:6px;">
+        &nbsp;
+      </div>
     </div>
 
     <div style="font-weight:900;margin-top:14px;">Paliers d’échange</div>
+
     <div class="box">
       <ul style="margin:8px 0 0 18px;font-weight:800;">
         <li><strong>12 bocitecoins</strong> : petits commerces partenaires identifiés</li>
@@ -6211,12 +6695,15 @@ if(key === "commerces") {
         <li><strong>50 bocitecoins</strong> : avantage renforcé</li>
         <li><strong>100 bocitecoins</strong> : niveau premium</li>
       </ul>
+
       <div class="muted" style="margin-top:8px;">
-        Les publicités du grand rectangle sont désormais gérées uniquement depuis l’accès central “Publicités & visibilité”.
+        Les publicités du grand rectangle sont désormais gérées uniquement
+        depuis l’accès central “Publicités & visibilité”.
       </div>
     </div>
 
     <div style="font-weight:900;margin-top:12px;">Commerces partenaires</div>
+
     <div class="box">
       <div style="margin-top:12px;display:grid;gap:8px;">
         <div style="font-weight:800;">Boulangerie Croquet Alex <span class="muted">• bronze</span></div>
@@ -6228,12 +6715,16 @@ if(key === "commerces") {
 
     <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;">Accès interne commerce</div>
+
       <div class="muted" style="margin-top:6px;">
-        Gestion commerçant : attribution des bocitecoins, fiche commerçant,
-        historique et règles internes.
+        Gestion commerçant : attribution des bocitecoins,
+        fiche commerçant, historique et règles internes.
       </div>
+
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="toggleCommerceAdminBtn" type="button">
+        <button class="choiceBtn"
+                id="toggleCommerceAdminBtn"
+                type="button">
           Ouvrir l’espace interne commerce
         </button>
       </div>
@@ -6241,53 +6732,129 @@ if(key === "commerces") {
 
     <div id="commerceAdminPanel" style="display:none;">
 
-      <div style="font-weight:900;margin-top:14px;">Attribution commerçant → client</div>
-      <div class="box">
-        <div style="margin-top:10px;font-weight:900;">Montant d’achat</div>
-        <input class="miniField" id="shopPurchaseAmount" type="number" min="0" step="0.01" placeholder="Ex : 47.00" />
+      <div style="font-weight:900;margin-top:14px;">
+        Attribution commerçant → client
+      </div>
 
-        <div style="margin-top:10px;font-weight:900;">Bocitecoins calculés</div>
+      <div class="box">
+
+        <div style="margin-top:10px;font-weight:900;">
+          Montant d’achat
+        </div>
+
+        <input class="miniField"
+               id="shopPurchaseAmount"
+               type="number"
+               min="0"
+               step="0.01"
+               placeholder="Ex : 47.00" />
+
+        <div style="margin-top:10px;font-weight:900;">
+          Bocitecoins calculés
+        </div>
+
         <div class="box" style="background:var(--bg);">
-          <strong id="shopCoinsCalc">0</strong> bocitecoin(s) OR à verser
+          <strong id="shopCoinsCalc">0</strong>
+          bocitecoin(s) OR à verser
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="shopCalcBtn" type="button">Calculer</button>
-          <button class="choiceBtn" id="shopScanClientBtn" type="button">Scanner le client</button>
-          <button class="choiceBtn" id="shopCreditClientBtn" type="button">Valider l’envoi</button>
-          <button class="choiceBtn" id="shopUndoBtn" type="button" style="background:#fff;">Correction 60 s</button>
+          <button class="choiceBtn" id="shopCalcBtn" type="button">
+            Calculer
+          </button>
+
+          <button class="choiceBtn" id="shopScanClientBtn" type="button">
+            Scanner le client
+          </button>
+
+          <button class="choiceBtn" id="shopCreditClientBtn" type="button">
+            Valider l’envoi
+          </button>
+
+          <button class="choiceBtn"
+                  id="shopUndoBtn"
+                  type="button"
+                  style="background:#fff;">
+            Correction 60 s
+          </button>
         </div>
       </div>
 
-      <div style="font-weight:900;margin-top:12px;">Fiche commerçant / code à scanner</div>
+      <div style="font-weight:900;margin-top:12px;">
+        Fiche commerçant / code à scanner
+      </div>
+
       <div class="box">
-        <div style="margin-top:10px;font-weight:900;">Nom du commerce</div>
-        <input class="miniField" id="merchantProfileName" placeholder="Nom du commerce">
 
-        <div style="margin-top:10px;font-weight:900;">Adresse</div>
-        <input class="miniField" id="merchantProfileAddress" placeholder="Adresse">
-
-        <div style="margin-top:10px;font-weight:900;">Téléphone</div>
-        <input class="miniField" id="merchantProfilePhone" placeholder="Téléphone">
-
-        <div style="margin-top:10px;font-weight:900;">Email</div>
-        <input class="miniField" id="merchantProfileEmail" placeholder="Email">
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="merchantProfileSaveBtn" type="button">Enregistrer la fiche</button>
-          <button class="choiceBtn" id="merchantShowQrBtn" type="button">Afficher mon code commerçant</button>
+        <div style="margin-top:10px;font-weight:900;">
+          Nom du commerce
         </div>
 
-        <div class="box" style="margin-top:12px;background:var(--bg);">
-          <div style="font-weight:900;">Format du code commerçant</div>
-          <div class="muted" id="merchantQrPreview" style="margin-top:8px;">
+        <input class="miniField"
+               id="merchantProfileName"
+               placeholder="Nom du commerce">
+
+        <div style="margin-top:10px;font-weight:900;">
+          Adresse
+        </div>
+
+        <input class="miniField"
+               id="merchantProfileAddress"
+               placeholder="Adresse">
+
+        <div style="margin-top:10px;font-weight:900;">
+          Téléphone
+        </div>
+
+        <input class="miniField"
+               id="merchantProfilePhone"
+               placeholder="Téléphone">
+
+        <div style="margin-top:10px;font-weight:900;">
+          Email
+        </div>
+
+        <input class="miniField"
+               id="merchantProfileEmail"
+               placeholder="Email">
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+
+          <button class="choiceBtn"
+                  id="merchantProfileSaveBtn"
+                  type="button">
+            Enregistrer la fiche
+          </button>
+
+          <button class="choiceBtn"
+                  id="merchantShowQrBtn"
+                  type="button">
+            Afficher mon code commerçant
+          </button>
+        </div>
+
+        <div class="box"
+             style="margin-top:12px;background:var(--bg);">
+
+          <div style="font-weight:900;">
+            Format du code commerçant
+          </div>
+
+          <div class="muted"
+               id="merchantQrPreview"
+               style="margin-top:8px;">
             Aucun code généré pour le moment.
           </div>
         </div>
       </div>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="merchantHistoryExportBtn" type="button" style="background:#fff;">Exporter historique</button>
+        <button class="choiceBtn"
+                id="merchantHistoryExportBtn"
+                type="button"
+                style="background:#fff;">
+          Exporter historique
+        </button>
       </div>
 
     </div>
@@ -6299,9 +6866,17 @@ if(key === "commerces") {
 
     if(toggleCommerceAdminBtn && commerceAdminPanel){
       toggleCommerceAdminBtn.onclick = ()=>{
-        const isHidden = commerceAdminPanel.style.display === "none" || commerceAdminPanel.style.display === "";
-        commerceAdminPanel.style.display = isHidden ? "block" : "none";
-        toggleCommerceAdminBtn.textContent = isHidden ? "Fermer l’espace interne commerce" : "Ouvrir l’espace interne commerce";
+        const isHidden =
+          commerceAdminPanel.style.display === "none"
+          || commerceAdminPanel.style.display === "";
+
+        commerceAdminPanel.style.display =
+          isHidden ? "block" : "none";
+
+        toggleCommerceAdminBtn.textContent =
+          isHidden
+            ? "Fermer l’espace interne commerce"
+            : "Ouvrir l’espace interne commerce";
       };
     }
 
@@ -6318,9 +6893,17 @@ if(key === "commerces") {
     let undoDeadlineTs = 0;
 
     const computeCoins = ()=>{
-      const amount = Number(amountInput ? amountInput.value : 0);
-      lastCalculatedCoins = Number.isFinite(amount) && amount >= 0 ? Math.floor(amount / 10) : 0;
-      if(calcOut) calcOut.textContent = String(lastCalculatedCoins);
+      const amount =
+        Number(amountInput ? amountInput.value : 0);
+
+      lastCalculatedCoins =
+        Number.isFinite(amount) && amount >= 0
+          ? Math.floor(amount / 10)
+          : 0;
+
+      if(calcOut){
+        calcOut.textContent = String(lastCalculatedCoins);
+      }
     };
 
     if(calcBtn){
@@ -6368,14 +6951,21 @@ if(key === "commerces") {
         lastClientScanned = false;
 
         const bal = $("citizenCoinBalance");
-        if(bal) bal.textContent = after;
 
-        alert(lastCalculatedCoins + " bocitecoin(s) OR versé(s) au client. Correction possible pendant 60 secondes.");
+        if(bal){
+          bal.textContent = after;
+        }
+
+        alert(
+          lastCalculatedCoins
+          + " bocitecoin(s) OR versé(s) au client. Correction possible pendant 60 secondes."
+        );
       };
     }
 
     if(undoBtn){
       undoBtn.onclick = ()=>{
+
         if(!lastCreditTx){
           alert("Aucune opération récente à corriger.");
           return;
@@ -6386,10 +6976,16 @@ if(key === "commerces") {
           return;
         }
 
-        saveCitizenWallet({ or: Math.max(0, Number(lastCreditTx.previous || 0)) });
+        saveCitizenWallet({
+          or: Math.max(0, Number(lastCreditTx.previous || 0))
+        });
 
         const bal = $("citizenCoinBalance");
-        if(bal) bal.textContent = Number(lastCreditTx.previous || 0);
+
+        if(bal){
+          bal.textContent =
+            Number(lastCreditTx.previous || 0);
+        }
 
         lastCreditTx = null;
 
@@ -6397,25 +6993,46 @@ if(key === "commerces") {
       };
     }
 
-    const MERCHANT_PROFILE_KEY = "bociteart_merchant_profile_v1";
+    const MERCHANT_PROFILE_KEY =
+      "bociteart_merchant_profile_v1";
 
     function loadMerchantProfile(){
       try{
-        const raw = localStorage.getItem(MERCHANT_PROFILE_KEY);
-        return raw ? JSON.parse(raw) : { shopName:"", address:"", phone:"", email:"" };
+        const raw =
+          localStorage.getItem(MERCHANT_PROFILE_KEY);
+
+        return raw
+          ? JSON.parse(raw)
+          : {
+              shopName:"",
+              address:"",
+              phone:"",
+              email:""
+            };
+
       }catch(e){
-        return { shopName:"", address:"", phone:"", email:"" };
+
+        return {
+          shopName:"",
+          address:"",
+          phone:"",
+          email:""
+        };
       }
     }
 
     function saveMerchantProfile(obj){
       try{
-        localStorage.setItem(MERCHANT_PROFILE_KEY, JSON.stringify(obj));
+        localStorage.setItem(
+          MERCHANT_PROFILE_KEY,
+          JSON.stringify(obj)
+        );
       }catch(e){}
     }
 
     function buildMerchantProfilePayload(){
       const p = loadMerchantProfile();
+
       return {
         type: "merchant_profile",
         shopName: p.shopName || "",
@@ -6435,25 +7052,64 @@ if(key === "commerces") {
 
     const profile = loadMerchantProfile();
 
-    if(merchantProfileName) merchantProfileName.value = profile.shopName || "";
-    if(merchantProfileAddress) merchantProfileAddress.value = profile.address || "";
-    if(merchantProfilePhone) merchantProfilePhone.value = profile.phone || "";
-    if(merchantProfileEmail) merchantProfileEmail.value = profile.email || "";
+    if(merchantProfileName){
+      merchantProfileName.value =
+        profile.shopName || "";
+    }
+
+    if(merchantProfileAddress){
+      merchantProfileAddress.value =
+        profile.address || "";
+    }
+
+    if(merchantProfilePhone){
+      merchantProfilePhone.value =
+        profile.phone || "";
+    }
+
+    if(merchantProfileEmail){
+      merchantProfileEmail.value =
+        profile.email || "";
+    }
 
     function refreshMerchantQrPreview(){
+
       if(!merchantQrPreview) return;
-      merchantQrPreview.textContent = JSON.stringify(buildMerchantProfilePayload(), null, 2);
+
+      merchantQrPreview.textContent =
+        JSON.stringify(
+          buildMerchantProfilePayload(),
+          null,
+          2
+        );
     }
 
     refreshMerchantQrPreview();
 
     if(merchantProfileSaveBtn){
+
       merchantProfileSaveBtn.onclick = ()=>{
+
         const data = {
-          shopName: merchantProfileName ? String(merchantProfileName.value || "").trim() : "",
-          address: merchantProfileAddress ? String(merchantProfileAddress.value || "").trim() : "",
-          phone: merchantProfilePhone ? String(merchantProfilePhone.value || "").trim() : "",
-          email: merchantProfileEmail ? String(merchantProfileEmail.value || "").trim() : ""
+          shopName:
+            merchantProfileName
+              ? String(merchantProfileName.value || "").trim()
+              : "",
+
+          address:
+            merchantProfileAddress
+              ? String(merchantProfileAddress.value || "").trim()
+              : "",
+
+          phone:
+            merchantProfilePhone
+              ? String(merchantProfilePhone.value || "").trim()
+              : "",
+
+          email:
+            merchantProfileEmail
+              ? String(merchantProfileEmail.value || "").trim()
+              : ""
         };
 
         if(!data.shopName){
@@ -6463,13 +7119,17 @@ if(key === "commerces") {
 
         saveMerchantProfile(data);
         refreshMerchantQrPreview();
+
         alert("Fiche commerçant enregistrée.");
       };
     }
 
     if(merchantShowQrBtn){
+
       merchantShowQrBtn.onclick = ()=>{
-        const payload = buildMerchantProfilePayload();
+
+        const payload =
+          buildMerchantProfilePayload();
 
         if(!payload.shopName){
           alert("Enregistre d’abord la fiche commerçant.");
@@ -6477,26 +7137,48 @@ if(key === "commerces") {
         }
 
         refreshMerchantQrPreview();
-        alert("Code commerçant à scanner :\n\n" + JSON.stringify(payload, null, 2));
+
+        alert(
+          "Code commerçant à scanner :\n\n"
+          + JSON.stringify(payload, null, 2)
+        );
       };
     }
 
-    const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
+    const merchantHistoryExportBtn =
+      $("merchantHistoryExportBtn");
 
     if(merchantHistoryExportBtn){
+
       merchantHistoryExportBtn.onclick = ()=>{
+
         const exportObj = {
-          exported_at_fr: new Date().toLocaleString("fr-FR"),
-          merchant_profile: loadMerchantProfile(),
-          citizen_wallet_or: Number(loadCitizenWallet().or || 0)
+          exported_at_fr:
+            new Date().toLocaleString("fr-FR"),
+
+          merchant_profile:
+            loadMerchantProfile(),
+
+          citizen_wallet_or:
+            Number(loadCitizenWallet().or || 0)
         };
 
-        const exportText = "HISTORIQUE COMMERCE — EXPORT DÉMO\n\n" + JSON.stringify(exportObj, null, 2);
+        const exportText =
+          "HISTORIQUE COMMERCE — EXPORT DÉMO\n\n"
+          + JSON.stringify(exportObj, null, 2);
 
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(exportText)
-            .then(()=> alert("Historique commerce copié."))
-            .catch(()=> alert(exportText));
+        if(navigator.clipboard
+           && navigator.clipboard.writeText){
+
+          navigator.clipboard
+            .writeText(exportText)
+            .then(()=>{
+              alert("Historique commerce copié.");
+            })
+            .catch(()=>{
+              alert(exportText);
+            });
+
         }else{
           alert(exportText);
         }
@@ -6504,12 +7186,16 @@ if(key === "commerces") {
     }
 
     const xb = $("xBtn");
-    if(xb && xb.focus) xb.focus();
+
+    if(xb && xb.focus){
+      xb.focus();
+    }
+
   },0);
 
   return;
 }
-};
+    }; 
 
 document.querySelectorAll("[data-open]").forEach((el)=>{
   el.addEventListener("click", ()=>{
@@ -7556,6 +8242,97 @@ if(openLegalBtn) openLegalBtn.onclick = openLegal;
 if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
 if(closeLegalX) closeLegalX.onclick = closeLegal;
 
+const openSecureBtn = $("openSecure");
+
+if(openSecureBtn){
+  openSecureBtn.onclick = ()=>{
+    if(typeof window.openModal !== "function"){
+      alert("Fenêtre Compte + aide indisponible.");
+      return;
+    }
+
+    window.openModal("Compte + aide", `
+      <div class="box">
+        <strong>Compte & aide — version officielle</strong><br><br>
+        Création de compte sécurisé, récupération du compteur bocitecoins,
+        paramètres utilisateur, assistance, sécurité et options d’abonnement.
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Compte utilisateur</strong><br><br>
+        Cet espace pourra permettre :
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>connexion sécurisée ;</li>
+          <li>gestion du profil ;</li>
+          <li>personnalisation légère ;</li>
+          <li>historique des activités liées au compte ;</li>
+          <li>gestion des paramètres et notifications ;</li>
+          <li>sécurisation du compteur bocitecoins.</li>
+        </ul>
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Service optionnel — 2,99 € TTC / mois</strong><br><br>
+        Exemple de service optionnel permettant certaines fonctions numériques supplémentaires :
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>sauvegarder/restaurer le compteur bocitecoins ;</li>
+          <li>récupérer l’accès au compte en cas de perte, vol ou changement de téléphone ;</li>
+          <li>activer des options de confort ou d’alerte ;</li>
+          <li>sécuriser davantage le profil utilisateur ;</li>
+          <li>accéder à une assistance simplifiée.</li>
+        </ul>
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Important</strong><br><br>
+        L’abonnement reste facultatif. Les contenus publics, alertes utiles, infos mairie,
+        œuvres, école, sport, commerces et DAE restent accessibles selon les règles prévues,
+        sans obligation d’abonnement.
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Limites importantes</strong><br><br>
+        Ce service n’est pas bancaire, ne transforme pas les bocitecoins en argent,
+        ne donne pas une valeur monétaire aux points et ne garantit pas une récupération
+        dans tous les cas.
+        <div class="muted" style="margin-top:8px;">
+          Son fonctionnement dépend du téléphone, du réseau, des sauvegardes disponibles
+          et des prestataires techniques.
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Sécurité & récupération</strong><br><br>
+        Selon les options activées dans la version officielle, certains éléments pourront être associés à :
+        <ul style="margin:8px 0 0 18px;font-weight:800;">
+          <li>double authentification ;</li>
+          <li>validation email/SMS ;</li>
+          <li>journal de sécurité ;</li>
+          <li>protection anti-abus ;</li>
+          <li>récupération de compte ;</li>
+          <li>sauvegarde technique du compteur.</li>
+        </ul>
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Vision Bo’CitéArt</strong><br><br>
+        L’objectif est de garder une application largement accessible gratuitement,
+        tout en permettant de financer une partie des coûts techniques, de sécurité,
+        de maintenance et d’assistance grâce à des services optionnels limités.
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <strong>Protection des données</strong><br><br>
+        Bo’CitéArt applique une logique de minimisation des données.
+        Les données sensibles bancaires ne sont pas stockées directement dans l’application.
+        <div class="muted" style="margin-top:8px;">
+          Les traitements sont encadrés par les documents RGPD, CGU et CGV affichés dans l’application.
+        </div>
+      </div>
+    `);
+  };
+}
+
 const ACK_PREFIX = "bociteart_ack_v2_";
 const ACK_SALT = "BoCiteArt|ack|v2";
 
@@ -7814,11 +8591,12 @@ if(isFn(window.makeKeyboardClickable)){
   });
 
   window.showTab("rgpd");
- })();
-})();   
-</script>
-  
+  })();
+
+      })();                   
+</script>  
 <script>
+  
 (function () {
   const consentement = document.getElementById("consentement");
   const checkRgpd = document.getElementById("check-rgpd");
@@ -8042,14 +8820,6 @@ if(isFn(window.makeKeyboardClickable)){
 
   window.refreshCitizenWalletDisplay = refreshCitizenWalletDisplay;
 
-  if(!document.getElementById("demoBannerBociteart")){
-    const b = document.createElement("div");
-    b.id = "demoBannerBociteart";
-    b.className = "demoBanner";
-    b.textContent = "Version démonstration élus — données locales non contractuelles";
-    document.body.appendChild(b);
-  }
-
   document.querySelectorAll("[data-open]").forEach(function(el){
     el.addEventListener("click", function(e){
       const key = el.getAttribute("data-open");
@@ -8152,14 +8922,7 @@ if(isFn(window.makeKeyboardClickable)){
     if(type === "mairie") return "mairie";
     return "association";
   }
-  
-function makeActorId(type){
-  return "actor_" + type + "_" + Date.now() + "_" + Math.random().toString(36).slice(2,8);
-}
 
-function makeAccessCode(type){
-  return type + "-" + Math.random().toString(36).slice(2,8);
-}
   function openDb(){
     return new Promise((resolve,reject)=>{
       const req = indexedDB.open(DB_NAME, 1);
@@ -8223,7 +8986,7 @@ function makeAccessCode(type){
         ctx.fillStyle = "#222";
         ctx.fillRect(0, 0, targetW, targetH);
 
-        const ratio = Math.min(
+        const ratio = Math.max(
           targetW / img.width,
           targetH / img.height
         );
@@ -8286,24 +9049,19 @@ function makeAccessCode(type){
   }
 
   function todayAds(){
-  const bookings = getBookings();
-  const k = keys(today());
+    const bookings = getBookings();
+    const k = keys(today());
+    const list = bookings[k.m] && bookings[k.m][k.j] ? bookings[k.m][k.j] : [];
 
-  const list =
-    bookings[k.m] && bookings[k.m][k.j]
-      ? bookings[k.m][k.j]
-      : [];
-
-  return list.filter(ad =>
-    ad &&
-    (
-      ad.status === "demo_paid" ||
-      ad.status === "quote_validated" ||
-      ad.status === "paid"
-    ) &&
-    ad.date === k.j
-  );
-}
+    return list.filter(ad =>
+      ad &&
+      (
+        ad.status === "demo_paid" ||
+        ad.status === "quote_validated" ||
+        ad.status === "paid"
+      )
+    );
+  }
 
   async function renderTicker(){
     const ticker = $("ticker");
@@ -8329,34 +9087,12 @@ function makeAccessCode(type){
 
     const ads = todayAds();
 
-  const promoSlots = [
-  {
-    title:"commerçants de proximité",
-    text:"achetez cet espace : votre publicité peut apparaître ici, au cœur de la ville.",
-    imageKey:"",
-    fallback:"https://bociteart.com/logo-bociteart.png"
-  },
-  {
-    title:"maximum 10 publicités par jour",
-    text:"chaque jour, votre commerce peut être visible dans le grand bandeau Bo’CitéArt.",
-    imageKey:"",
-    fallback:"https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
-  },
-  {
-    title:"faites parler de vous localement",
-    text:"vous ne trouverez pas plus direct pour toucher les habitants et visiteurs de votre ville.",
-    imageKey:"",
-    fallback:"https://images.unsplash.com/photo-1556745757-8d76bdb6984b?auto=format&fit=crop&w=1200&q=60"
-  }
-];
-
-let finalAds = [];
-
-if(ads.length){
-  finalAds = ads.concat(promoSlots).slice(0, 10);
-}else{
-  finalAds = promoSlots;
-}
+    const finalAds = ads.length ? ads : [{
+      title:"publicité bo’citéart",
+      text:"aucune publicité enregistrée aujourd’hui.",
+      imageKey:"",
+      fallback:"https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1200&q=60"
+    }];
 
     const ready = [];
 
@@ -8755,7 +9491,6 @@ function openProfile(type){
     };
   }
 }
-
   function openEditToday(type){
     const bookings = getBookings();
     const k = keys(today());
@@ -8886,12 +9621,26 @@ function openProfile(type){
   renderTicker();
   window.refreshPubTickerV3 = renderTicker;
 
-   setInterval(function(){
-  renderTicker();
-}, 60000);
-  
-   })();
+})();
 </script> 
+  
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    registrations.forEach(function(registration) {
+      registration.unregister();
+    });
+  });
+
+  if (window.caches) {
+    caches.keys().then(function(names) {
+      names.forEach(function(name) {
+        caches.delete(name);
+      });
+    });
+  }
+}
+</script>
 </body>
 </html>
 
