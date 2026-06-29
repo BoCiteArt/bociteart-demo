@@ -8032,7 +8032,10 @@ if(isFn(window.makeKeyboardClickable)){
     el.addEventListener("click", function(e){
       const key = el.getAttribute("data-open");
 
-      if(typeof window.__bociteartOpenByKey === "function"){
+      if(
+        (key === "sport" || key === "mairie" || key === "commerces") &&
+        typeof window.__bociteartOpenByKey === "function"
+      ){
         e.preventDefault();
         e.stopImmediatePropagation();
         window.__bociteartOpenByKey(key);
