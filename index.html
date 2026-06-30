@@ -7905,7 +7905,7 @@ if(isFn(window.makeKeyboardClickable)){
 </script>
 <script>
 /* === PATCH FINAL DÉMO ÉLUS — Bo’CitéArt === */
-/* Objectif : stabiliser la démo sans bloquer le futur passage live */
+/* Objectif : stabiliser la démo sans bloquer les tuiles existantes */
 
 (function(){
   console.log("✅ Patch stabilisation Bo’CitéArt chargé");
@@ -8006,24 +8006,6 @@ if(isFn(window.makeKeyboardClickable)){
     document.body.appendChild(b);
   }
 
-  document.querySelectorAll("[data-open]").forEach(function(el){
-    el.addEventListener("click", function(e){
-      const key = el.getAttribute("data-open");
-
-      if(typeof window.__bociteartOpenByKey === "function"){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        window.__bociteartOpenByKey(key);
-
-        setTimeout(function(){
-          if(key === "commerces"){
-            refreshCitizenWalletDisplay();
-          }
-        }, 100);
-      }
-    }, true);
-  });
-
   window.__bociteartLiveReadiness = {
     mode: DEMO_MODE ? "DEMO_ELUS" : "LIVE",
     liveRequiredLater: [
@@ -8038,7 +8020,7 @@ if(isFn(window.makeKeyboardClickable)){
   };
 
 })();
-</script> 
+</script>
  <script>
 /* === PUB UNIQUE V3 — IMAGE/TEXTE + PHOTO TÉLÉPHONE + CODES SIMPLES === */
 (function(){
