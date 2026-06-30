@@ -6519,9 +6519,34 @@ if(openSecureBtn){
   openSecureBtn.onclick = function(){
     openModal("Compte + aide", `
       <div class="box">
-        <strong>Compte sécurisé + aide</strong><br>
-        Gestion du compte, aide utilisateur, récupération, historique et sécurité.
+        <strong>Compte sécurisé — 2,99 € / mois</strong><br>
+        Sauvegarde du compte, récupération en cas de perte de téléphone, historique et sécurité renforcée.
       </div>
+
+      <div class="box">
+        <strong>Ce que l’abonnement permet :</strong><br>
+        • conserver son solde BoCitéCoins<br>
+        • récupérer son compte sur un nouveau téléphone<br>
+        • garder un historique des opérations<br>
+        • limiter les pertes en cas de changement ou panne d’appareil<br>
+        • accéder à une aide utilisateur prioritaire
+      </div>
+
+      <div class="box">
+        <strong>Sans compte sécurisé :</strong><br>
+        Les données peuvent rester limitées à l’appareil utilisé.  
+        En cas de perte, changement ou réinitialisation du téléphone, la récupération n’est pas garantie.
+      </div>
+
+      <div class="box">
+        <strong>Cadre :</strong><br>
+        2,99 € / mois — option facultative.  
+        L’accès gratuit à l’application reste possible.
+      </div>
+
+      <button class="choiceBtn" type="button" onclick="alert('Démo : abonnement compte sécurisé 2,99 € / mois')">
+        Activer le compte sécurisé
+      </button>
     `);
   };
 }
