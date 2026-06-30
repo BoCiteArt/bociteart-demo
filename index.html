@@ -6600,6 +6600,7 @@ window.openComptaBoCiteArt = function(){
       <button class="choiceBtn" onclick="openPaiementDocuments()">Paiements & documents</button>
       <button class="choiceBtn" onclick="openFiscaliteBoCiteArt()">Fiscalité</button>
       <button class="choiceBtn" onclick="openRelancesBoCiteArt()">Relances automatiques</button>
+      <button class="choiceBtn" onclick="openGestionAccesDelegues()">Accès délégués</button>
       <button class="choiceBtn" onclick="openPilotagePrive()">Pilotage privé</button>
     </div>
   `);
@@ -6705,6 +6706,44 @@ window.openSanteBociteart = function(){
       Fiscalité : ★★★★★<br>
       IA : ★★★★★<br>
       Sécurité : ★★★★★
+    </div>
+  `);
+};
+      window.openGestionAccesDelegues = function(){
+  openModal("Gestion des accès délégués", `
+    <div class="box">
+      <strong>Principe</strong><br>
+      Chaque structure reste responsable de ses accès internes.
+      Bo’CitéArt fournit l’outil de création, modification, blocage et traçabilité.
+    </div>
+
+    <div class="box">
+      <strong>Comptes prévus</strong><br>
+      Responsable principal : maire, président, gérant, directeur ou responsable légal.<br>
+      Accès délégués : adjoint, secrétaire, trésorier, salarié, bénévole ou personne autorisée.
+    </div>
+
+    <div class="box">
+      <strong>Droits possibles</strong><br>
+      Voir • modifier • publier • payer • exporter • bloquer • gérer les accès.
+    </div>
+
+    <div class="box">
+      <strong>Sécurité</strong><br>
+      Le responsable principal peut changer un code, bloquer un accès ou révoquer immédiatement un utilisateur en cas de départ, conflit, erreur ou changement d’organisation.
+    </div>
+
+    <div class="box">
+      <strong>Journal des actions</strong><br>
+      Chaque action importante est tracée : utilisateur, date, heure, action réalisée, profil concerné.
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="alert('Démo : créer un accès délégué')">Créer un accès</button>
+      <button class="choiceBtn" onclick="alert('Démo : modifier un code')">Modifier un code</button>
+      <button class="choiceBtn" onclick="alert('Démo : bloquer immédiatement')">Bloquer</button>
+      <button class="choiceBtn" onclick="alert('Démo : révoquer un utilisateur')">Révoquer</button>
+      <button class="choiceBtn" onclick="alert('Démo : journal des actions')">Journal</button>
     </div>
   `);
 };
