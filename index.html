@@ -2484,18 +2484,18 @@ if(tickerBtn){
       window.mairieLoad = mairieLoad;
       window.mairieSave = mairieSave;
 
-      document.querySelectorAll("[data-open]").forEach((el)=>{
-        el.addEventListener("click", ()=>{
-          const key = el.getAttribute("data-open");
+     document.querySelectorAll("[data-open]").forEach((el)=>{
+  el.addEventListener("click", ()=>{
+    const key = el.getAttribute("data-open");
 
-          if(key === "sport" || key === "mairie" || key === "commerces"){
-            if(typeof window.__bociteartOpenByKey === "function"){
-              window.__bociteartOpenByKey(key);
-              return;
-            }
-          }
+    if(key === "sport" || key === "mairie" || key === "commerces"){
+      if(typeof window.__bociteartOpenByKey === "function"){
+        window.__bociteartOpenByKey(key);
+        return;
+      }
+    }
 
-        if(key === "oeuvres"){
+    if(key === "oeuvres"){
 
   const STORAGE_KEY = "boc_oeuvres_unlock_v2";
   const LAST_KEY = "boc_oeuvres_last_v2";
@@ -6461,53 +6461,7 @@ if(key === "commerces") {
           return;
         }
 
-        saveMerchantProfile(data);
-        refreshMerchantQrPreview();
-        alert("Fiche commerçant enregistrée.");
-      };
-    }
-
-    if(merchantShowQrBtn){
-      merchantShowQrBtn.onclick = ()=>{
-        const payload = buildMerchantProfilePayload();
-
-        if(!payload.shopName){
-          alert("Enregistre d’abord la fiche commerçant.");
-          return;
-        }
-
-        refreshMerchantQrPreview();
-        alert("Code commerçant à scanner :\n\n" + JSON.stringify(payload, null, 2));
-      };
-    }
-
-    const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
-
-    if(merchantHistoryExportBtn){
-      merchantHistoryExportBtn.onclick = ()=>{
-        const exportObj = {
-          exported_at_fr: new Date().toLocaleString("fr-FR"),
-          merchant_profile: loadMerchantProfile(),
-          citizen_wallet_or: Number(loadCitizenWallet().or || 0)
-        };
-
-        const exportText = "HISTORIQUE COMMERCE — EXPORT DÉMO\n\n" + JSON.stringify(exportObj, null, 2);
-
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(exportText)
-            .then(()=> alert("Historique commerce copié."))
-            .catch(()=> alert(exportText));
-        }else{
-          alert(exportText);
-        }
-      };
-    }
-
-    const xb = $("xBtn");
-    if(xb && xb.focus) xb.focus();
-  },0);
-
-  return;
+        return;
 }
 };
 
@@ -6515,12 +6469,27 @@ document.querySelectorAll("[data-open]").forEach((el)=>{
   el.addEventListener("click", ()=>{
     const key = el.getAttribute("data-open");
 
-    if(typeof window.__bociteartOpenByKey === "function"){
+    if(
+      (key === "sport" || key === "mairie" || key === "commerces") &&
+      typeof window.__bociteartOpenByKey === "function"
+    ){
       window.__bociteartOpenByKey(key);
     }
   });
 });
-    
+
+const openSecureBtn = $("openSecure");
+if(openSecureBtn){
+  openSecureBtn.onclick = function(){
+    openModal("Compte + aide", `
+      <div class="box">
+        <strong>Compte sécurisé + aide</strong><br>
+        Gestion du compte, aide utilisateur, récupération, historique et sécurité.
+      </div>
+    `);
+  };
+}
+
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
   if(!isFn(window.openModal)) return;
