@@ -6552,12 +6552,53 @@ if(openSecureBtn){
         Réponse simple : 🟢 Tout va bien / 🟡 Rappelez-moi / 🔴 Besoin d’aide.
       </div>
 
-      <div class="box">
-        <strong>Tarifs</strong><br>
-        • 2 contacts inclus : 2,99 € / mois<br>
-        • jusqu’à 5 contacts : 3,99 € / mois<br>
-        • jusqu’à 10 contacts : 5 € / mois
-      </div>
+     <div class="box">
+  <strong>Je choisis mon offre</strong><br><br>
+
+  <label>
+    <input type="radio" name="securePlan" value="2.99" checked>
+    2 contacts de confiance — 2,99 € / mois
+  </label><br><br>
+
+  <label>
+    <input type="radio" name="securePlan" value="3.99">
+    Jusqu’à 5 contacts — 3,99 € / mois
+  </label><br><br>
+
+  <label>
+    <input type="radio" name="securePlan" value="5">
+    Jusqu’à 10 contacts — 5 € / mois
+  </label>
+</div>
+
+<div class="box">
+  <strong>Validation avant paiement</strong><br>
+  <label>
+    <input type="checkbox" id="secureAccept">
+    Je comprends que cette option est un outil volontaire de notification entre proches,
+    et non un service d’assistance, de surveillance ou d’urgence.
+  </label>
+</div>
+
+<div class="choiceGrid">
+  <button class="choiceBtn" type="button" onclick="
+    const plan = document.querySelector('input[name=securePlan]:checked');
+    const ok = document.getElementById('secureAccept');
+    if(!ok || !ok.checked){ alert('Veuillez accepter le cadre du service avant paiement.'); return; }
+    alert('Démo : paiement CB — formule ' + (plan ? plan.value : '2.99') + ' € / mois');
+  ">
+    Payer par CB
+  </button>
+
+  <button class="choiceBtn" type="button" onclick="
+    const plan = document.querySelector('input[name=securePlan]:checked');
+    const ok = document.getElementById('secureAccept');
+    if(!ok || !ok.checked){ alert('Veuillez accepter le cadre du service avant paiement.'); return; }
+    alert('Démo : paiement RIB / IBAN — formule ' + (plan ? plan.value : '2.99') + ' € / mois');
+  ">
+    Payer par RIB
+  </button>
+</div>
 
       <div class="box">
         <strong>Mode de paiement</strong><br>
