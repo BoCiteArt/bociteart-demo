@@ -6498,7 +6498,17 @@ if(key === "commerces") {
   return;
 }
 };
-   
+
+   const openSecureBtn = $("openSecure");
+on(openSecureBtn, "click", ()=>{
+  openModal("Compte + aide", `
+    <div class="box">
+      <strong>Compte sécurisé + aide</strong><br>
+      Gestion du compte, aide utilisateur, récupération, historique et sécurité.
+    </div>
+  `);
+});
+
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
   if(!isFn(window.openModal)) return;
