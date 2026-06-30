@@ -6557,19 +6557,77 @@ if(openSecureBtn){
   };
 }
 
+function openComptaBoCiteArt(){
+  openModal("Comptabilité Bo’CitéArt", `
+    <div class="box">
+      <strong>Principe comptable</strong><br>
+      Une ville = un onglet. Une opération = une ligne. Une facture = un PDF.  
+      La SAS garde une vue globale. L’association garde un journal séparé.
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="openComptaVille('GLOBAL')">Vue générale SAS</button>
+      <button class="choiceBtn" onclick="openComptaVille('WAT')">Wattignies</button>
+      <button class="choiceBtn" onclick="openComptaVille('SEC')">Seclin</button>
+      <button class="choiceBtn" onclick="openComptaVille('LOO')">Loos</button>
+      <button class="choiceBtn" onclick="openComptaVille('ASSO')">Journal Association</button>
+      <button class="choiceBtn" onclick="alert('Démo : ajout future ville')">Ajouter une ville</button>
+    </div>
+  `);
+}
+
+window.openComptaVille = function(ville){
+  openModal("Journal comptable — " + ville, `
+    <div class="box">
+      <strong>Onglet :</strong> ${ville}<br>
+      Journal des ventes, factures, paiements, TVA, exports mensuels et annuels.
+    </div>
+
+    <div class="box">
+      <strong>Actions disponibles</strong><br><br>
+      <button class="choiceBtn" onclick="alert('Démo : export mensuel comptable')">Export mensuel</button><br><br>
+      <button class="choiceBtn" onclick="alert('Démo : export annuel comptable')">Export annuel</button><br><br>
+      <button class="choiceBtn" onclick="alert('Démo : export TVA / facturation électronique')">Export TVA</button><br><br>
+      <button class="choiceBtn" onclick="alert('Démo : historique factures client')">Historique factures</button>
+    </div>
+
+    <div class="box">
+      <strong>Structure d’une opération</strong><br>
+      ID unique • ville • client • type client • service • HT • TVA • TTC • paiement • facture PDF • mail envoyé • export comptable.
+    </div>
+  `);
+};
+
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
   if(!isFn(window.openModal)) return;
   openModal("Accès Administrateur", `
     <div style="font-weight:900;margin-bottom:8px;">Administration</div>
+
     <div class="box">
       <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
     </div>
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" type="button" onclick="openComptaBoCiteArt()">
+        Comptabilité
+      </button>
+      <button class="choiceBtn" type="button" onclick="alert('Démo : gestion des rôles')">
+        Rôles
+      </button>
+      <button class="choiceBtn" type="button" onclick="alert('Démo : sécurité')">
+        Sécurité
+      </button>
+      <button class="choiceBtn" type="button" onclick="alert('Démo : exports')">
+        Exports
+      </button>
+    </div>
+
+    <ul style="margin:12px 0 0 18px;font-weight:800;">
       <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
       <li>Activation / blocage / désactivation</li>
       <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
-      <li>Suivi interne (litiges) : historique, traçabilité</li>
+      <li>Suivi interne : historique, traçabilité, journal comptable</li>
     </ul>
   `);
 });
