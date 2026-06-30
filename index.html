@@ -6284,7 +6284,7 @@ if(key === "commerces") {
             Aucun code généré pour le moment.
           </div>
         </div>
-      </div>
+      </div> 
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button class="choiceBtn" id="merchantHistoryExportBtn" type="button" style="background:#fff;">Exporter historique</button>
@@ -6447,21 +6447,70 @@ if(key === "commerces") {
 
     refreshMerchantQrPreview();
 
-    if(merchantProfileSaveBtn){
-      merchantProfileSaveBtn.onclick = ()=>{
-        const data = {
-          shopName: merchantProfileName ? String(merchantProfileName.value || "").trim() : "",
-          address: merchantProfileAddress ? String(merchantProfileAddress.value || "").trim() : "",
-          phone: merchantProfilePhone ? String(merchantProfilePhone.value || "").trim() : "",
-          email: merchantProfileEmail ? String(merchantProfileEmail.value || "").trim() : ""
-        };
+  if(merchantProfileSaveBtn){
+  merchantProfileSaveBtn.onclick = ()=>{
+    const data = {
+      shopName: merchantProfileName ? String(merchantProfileName.value || "").trim() : "",
+      address: merchantProfileAddress ? String(merchantProfileAddress.value || "").trim() : "",
+      phone: merchantProfilePhone ? String(merchantProfilePhone.value || "").trim() : "",
+      email: merchantProfileEmail ? String(merchantProfileEmail.value || "").trim() : ""
+    };
 
-        if(!data.shopName){
-          alert("Renseigne au minimum le nom du commerce.");
-          return;
-        }
+    if(!data.shopName){
+      alert("Renseigne au minimum le nom du commerce.");
+      return;
+    }
 
-        return;
+    saveMerchantProfile(data);
+    refreshMerchantQrPreview();
+    alert("Fiche commerçant enregistrée.");
+  };
+}
+
+if(merchantShowQrBtn){
+  merchantShowQrBtn.onclick = ()=>{
+    const payload = buildMerchantProfilePayload();
+
+    if(!payload.shopName){
+      alert("Enregistre d’abord la fiche commerçant.");
+      return;
+    }
+
+    refreshMerchantQrPreview();
+    alert("Code commerçant à scanner :\n\n" + JSON.stringify(payload, null, 2));
+  };
+}
+
+const merchantHistoryExportBtn = $("merchantHistoryExportBtn");
+
+if(merchantHistoryExportBtn){
+  merchantHistoryExportBtn.onclick = ()=>{
+    const exportObj = {
+      exported_at_fr: new Date().toLocaleString("fr-FR"),
+      merchant_profile: loadMerchantProfile(),
+      citizen_wallet_or: Number(loadCitizenWallet().or || 0)
+    };
+
+    const exportText =
+      "HISTORIQUE COMMERCE — EXPORT DÉMO\n\n" +
+      JSON.stringify(exportObj, null, 2);
+
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(exportText)
+        .then(()=>alert("Historique commerce copié."))
+        .catch(()=>alert(exportText));
+    }else{
+      alert(exportText);
+    }
+  };
+}
+
+const xb = $("xBtn");
+if(xb && xb.focus) xb.focus();
+
+},0);
+
+return;
 }
 };
 
