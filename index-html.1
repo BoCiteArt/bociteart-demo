@@ -6501,15 +6501,17 @@ if(key === "commerces") {
 }
 };
 
-   const openSecureBtn = $("openSecure");
-on(openSecureBtn, "click", ()=>{
-  openModal("Compte + aide", `
-    <div class="box">
-      <strong>Compte sécurisé + aide</strong><br>
-      Gestion du compte, aide utilisateur, récupération, historique et sécurité.
-    </div>
-  `);
-});
+const openSecureBtn = $("openSecure");
+if(openSecureBtn){
+  openSecureBtn.onclick = function(){
+    openModal("Compte + aide", `
+      <div class="box">
+        <strong>Compte sécurisé + aide</strong><br>
+        Gestion du compte, aide utilisateur, récupération, historique et sécurité.
+      </div>
+    `);
+  };
+}
 
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
@@ -8040,26 +8042,27 @@ if(isFn(window.makeKeyboardClickable)){
     document.body.appendChild(b);
   }
 
-  document.querySelectorAll("[data-open]").forEach(function(el){
-    el.addEventListener("click", function(e){
-      const key = el.getAttribute("data-open");
+document.querySelectorAll("[data-open]").forEach(function(el){
+  el.addEventListener("click", function(e){
+    const key = el.getAttribute("data-open");
 
-      if(
-        (key === "sport" || key === "mairie" || key === "commerces") &&
-        typeof window.__bociteartOpenByKey === "function"
-      ){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        window.__bociteartOpenByKey(key);
+    if(key !== "sport" && key !== "mairie" && key !== "commerces"){
+      return;
+    }
 
-        setTimeout(function(){
-          if(key === "commerces"){
-            refreshCitizenWalletDisplay();
-          }
-        }, 100);
-      }
-    }, true);
-  });
+    if(typeof window.__bociteartOpenByKey === "function"){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      window.__bociteartOpenByKey(key);
+
+      setTimeout(function(){
+        if(key === "commerces"){
+          refreshCitizenWalletDisplay();
+        }
+      }, 100);
+    }
+  }, true);
+});
 
   window.__bociteartLiveReadiness = {
     mode: DEMO_MODE ? "DEMO_ELUS" : "LIVE",
