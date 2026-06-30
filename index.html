@@ -6519,61 +6519,65 @@ if(openSecureBtn){
   openSecureBtn.onclick = function(){
     openModal("Compte + aide", `
       <div class="box">
-        <strong>Compte sécurisé — 2,99 € / mois</strong><br>
-        Sauvegarde du compte, récupération en cas de perte de téléphone, historique et sécurité renforcée.
+        <strong>Compte sécurisé — application Bo’CitéArt</strong><br>
+        Sauvegarde du compte Bo’CitéArt, du solde de BociteCoins, jetons, ou coins, de l’historique utile et des réglages de sécurité.
+        Cela ne sauvegarde pas tout le téléphone.
       </div>
 
       <div class="box">
         <strong>Cercle de confiance inclus</strong><br>
-        L’abonné peut enregistrer 2 contacts de confiance.  
-        Un proche âgé, un enfant ou une personne isolée peut appeler un simple contact “Bo’CitéArt” enregistré dans son téléphone, même sans installer l’application.
+        2 numéros de téléphone sont inclus dès l’abonnement à 2,99 € / mois.
+        L’abonné choisit les personnes à prévenir et leurs numéros.
       </div>
 
       <div class="box">
-        <strong>Exemple concret</strong><br>
-        Jean active l’option pour sa mère.  
-        Sa mère n’a rien à télécharger. Elle garde seulement le contact “Bo’CitéArt – appeler Jean”.  
-        Si elle a un souci, elle appelle ce contact. Jean est prévenu.  
-        Si Jean ne répond pas, un second contact peut être prévenu selon l’ordre choisi.
+        <strong>Exemple simple</strong><br>
+        Jean active l’option pour sa mère.
+        Sur le téléphone de sa mère, il enregistre un contact clair :<br><br>
+        <strong>Bo’CitéArt — appeler Jean</strong><br>
+        avec le numéro de téléphone de Jean.<br><br>
+        Sa mère n’a pas besoin de télécharger l’application. En cas de besoin, elle appelle simplement ce contact.
       </div>
 
       <div class="box">
-        <strong>Veille volontaire</strong><br>
-        Le proche peut accepter de recevoir un message simple à l’heure choisie :<br><br>
+        <strong>Si le proche installe aussi l’application</strong><br>
+        Il peut créer son propre cercle de confiance : son fils, une voisine, un proche, etc.
+        Chacun garde le contrôle de ses propres contacts.
+      </div>
+
+      <div class="box">
+        <strong>Veille volontaire par message</strong><br>
+        Si la personne l’accepte, un message peut être envoyé à l’heure choisie :<br><br>
         “Tout va bien aujourd’hui ?”<br><br>
-        Réponse par un seul bouton :<br>
-        🟢 Tout va bien<br>
-        🟡 Rappelez-moi<br>
-        🔴 Besoin d’aide
+        Réponse simple : 🟢 Tout va bien / 🟡 Rappelez-moi / 🔴 Besoin d’aide.
       </div>
 
       <div class="box">
-        <strong>Extensions possibles</strong><br>
+        <strong>Tarifs</strong><br>
         • 2 contacts inclus : 2,99 € / mois<br>
         • jusqu’à 5 contacts : 3,99 € / mois<br>
         • jusqu’à 10 contacts : 5 € / mois
       </div>
 
       <div class="box">
+        <strong>Mode de paiement</strong><br>
+        Paiement possible par carte bancaire ou prélèvement RIB/IBAN selon l’option choisie.
+      </div>
+
+      <div class="box">
         <strong>Cadre important</strong><br>
-        Bo’CitéArt est un outil volontaire de notification entre proches.  
-        Ce service n’est pas un service d’assistance, de téléassistance, de surveillance, d’urgence ou d’intervention.
+        Bo’CitéArt est un outil volontaire de notification entre proches.
+        Ce n’est pas un service d’assistance, de téléassistance, de surveillance, d’urgence ou d’intervention.
       </div>
 
-      <div class="box">
-        <strong>Limites du service</strong><br>
-        Les notifications dépendent du réseau, du téléphone, de la connexion et de la disponibilité des contacts.  
-        Bo’CitéArt ne garantit ni la réception, ni le délai, ni la prise en charge par un proche.
+      <div class="choiceGrid">
+        <button class="choiceBtn" type="button" onclick="alert('Démo : paiement carte bancaire — 2,99 € / mois')">
+          Activer par CB
+        </button>
+        <button class="choiceBtn" type="button" onclick="alert('Démo : paiement par RIB / IBAN — 2,99 € / mois')">
+          Activer par RIB
+        </button>
       </div>
-
-      <div class="box">
-        <strong>Acceptation obligatoire</strong><br>
-        Avant activation, l’utilisateur reconnaît que Bo’CitéArt fournit uniquement un outil technique de mise en relation entre personnes de confiance.
-      </div>
-
-      <button class="choiceBtn" type="button" onclick="alert('Démo : activation du compte sécurisé avec cercle de confiance')">
-        Activer le compte sécurisé
-      </button>
     `);
   };
 }
