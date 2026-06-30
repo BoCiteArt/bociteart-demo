@@ -6578,16 +6578,76 @@ window.openComptaBoCiteArt = function(){
   `);
 };
 
+window.openComptaBoCiteArt = function(){
+  openModal("Comptabilité & fiscalité Bo’CitéArt", `
+    <div class="box">
+      <strong>Principe</strong><br>
+      Une ville = un onglet. Une opération = une ligne. Une facture ou justificatif = un PDF.
+      La SAS, l’association, les mécènes et les bocitecoins restent séparés.
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="openComptaVille('GLOBAL')">Vue générale SAS</button>
+      <button class="choiceBtn" onclick="openComptaVille('WAT')">Wattignies</button>
+      <button class="choiceBtn" onclick="openComptaVille('SEC')">Seclin</button>
+      <button class="choiceBtn" onclick="openComptaVille('LOO')">Loos</button>
+      <button class="choiceBtn" onclick="openJournalSpecial('ASSO')">Association</button>
+      <button class="choiceBtn" onclick="openJournalSpecial('MECENES')">Mécènes</button>
+      <button class="choiceBtn" onclick="openJournalSpecial('COINS')">bocitecoins</button>
+      <button class="choiceBtn" onclick="openFiscaliteBoCiteArt()">Fiscalité</button>
+      <button class="choiceBtn" onclick="openPaiementDocuments()">Paiements & documents</button>
+    </div>
+  `);
+};
+
+window.openPaiementDocuments = function(){
+  openModal("Paiements & documents", `
+    <div class="box">
+      <strong>Règle générale</strong><br>
+      Après chaque paiement, l’utilisateur peut recevoir une facture, un justificatif de paiement, ou les deux.
+      Les documents restent aussi disponibles dans son espace.
+    </div>
+
+    <div class="box">
+      <strong>Préférences documents</strong><br><br>
+      <label><input type="checkbox" checked> Recevoir une facture</label><br><br>
+      <label><input type="checkbox" checked> Recevoir un justificatif de paiement</label><br><br>
+      <label><input type="checkbox" checked> Recevoir les documents par e-mail</label><br><br>
+      <label><input type="checkbox" checked> Conserver les documents dans mon espace</label><br><br>
+      <label><input type="checkbox" checked> Recevoir un récapitulatif mensuel</label><br><br>
+      <label><input type="checkbox" checked> Recevoir un récapitulatif annuel</label>
+    </div>
+
+    <div class="box">
+      <strong>Blocage en cas de non-paiement</strong><br>
+      Non-paiement → rappel automatique → délai de régularisation → suspension des nouveaux services payants.
+      L’accès aux factures, justificatifs, historiques et régularisation reste disponible.
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="alert('Démo : facture PDF générée')">Facture PDF</button>
+      <button class="choiceBtn" onclick="alert('Démo : justificatif de paiement généré')">Justificatif PDF</button>
+      <button class="choiceBtn" onclick="alert('Démo : envoi automatique par e-mail')">Envoi e-mail</button>
+      <button class="choiceBtn" onclick="alert('Démo : historique mensuel / annuel')">Historique</button>
+    </div>
+  `);
+};
+
 window.openComptaVille = function(ville){
   openModal("Journal comptable — " + ville, `
     <div class="box">
       <strong>Ville / vue :</strong> ${ville}<br>
-      Journal ventes, factures, paiements, TVA, clients, exports mensuels et annuels.
+      Journal ventes, factures, justificatifs, paiements, TVA, clients, exports mensuels et annuels.
     </div>
 
     <div class="box">
       <strong>Structure d’une opération</strong><br>
-      ID unique • ville • client • type client • service • HT • TVA • TTC • paiement • facture PDF • mail envoyé • export comptable • statut facturation électronique.
+      ID unique • ville • client • type client • service • HT • TVA • TTC • paiement • facture PDF • justificatif PDF • mail envoyé • export comptable • statut facturation électronique.
+    </div>
+
+    <div class="box">
+      <strong>Documents client</strong><br>
+      Chaque client peut télécharger ses factures, justificatifs de paiement, récapitulatifs mensuels et récapitulatifs annuels.
     </div>
 
     <div class="choiceGrid">
@@ -6603,14 +6663,14 @@ window.openJournalSpecial = function(type){
   const titre =
     type === "ASSO" ? "Journal Association" :
     type === "MECENES" ? "Journal Mécènes" :
-    "Journal BoCiteCoins";
+    "Journal bocitecoins";
 
   const texte =
     type === "ASSO"
       ? "Cotisations, dons, subventions, dépenses, justificatifs, solde et export annuel."
       : type === "MECENES"
       ? "Mécène, ville, projet financé, montant, convention, reçu fiscal si applicable, historique et export."
-      : "Création, attribution, utilisation, solde, ville, client, commerçant, école, sport, mairie et traçabilité complète des BoCiteCoins.";
+      : "Création, attribution, utilisation, solde, ville, client, commerçant, école, sport, mairie et traçabilité complète des bocitecoins.";
 
   openModal(titre, `
     <div class="box">
@@ -6645,38 +6705,11 @@ window.openFiscaliteBoCiteArt = function(){
 
     <div class="box">
       <strong>À prévoir pour la production</strong><br>
-      Numéro facture • journal ventes • TVA • e-reporting • Factur-X • plateforme de facturation électronique • accusé de transmission.
+      Numéro facture • justificatif paiement • journal ventes • TVA • e-reporting • Factur-X • plateforme de facturation électronique • accusé de transmission.
     </div>
   `);
 };
-
-window.openAdminSection = function(type){
-  const contenus = {
-    roles: `
-      <div class="box"><strong>Gestion des rôles</strong><br>
-      Admin • mairie • commerçant • association • école • sport • invité.</div>
-      <div class="box">Activation, blocage, déblocage, désactivation, changement de rôle et journal des accès.</div>
-    `,
-    securite: `
-      <div class="box"><strong>Sécurité</strong><br>
-      Accès restreints, double validation, journal des actions sensibles, alertes et blocages.</div>
-      <div class="box">Traçabilité : qui a fait quoi, quand, depuis quel profil.</div>
-    `,
-    exports: `
-      <div class="box"><strong>Exports</strong><br>
-      Exports mensuels, annuels, factures, clients, paiements, TVA, comptabilité et historiques.</div>
-      <div class="box">Chaque client peut récupérer ses documents. L’admin peut exporter par ville ou globalement.</div>
-    `,
-    parametres: `
-      <div class="box"><strong>Paramètres</strong><br>
-      Réglages ville, comptes, publicités, plafonds, bocitecoins, modules actifs et options futures.</div>
-      <div class="box">Les règles internes restent administrables sans modifier toute l’application.</div>
-    `
-  };
-
-  openModal("Administration — " + type, contenus[type] || "<div class='box'>Module en préparation.</div>");
-};
-
+      
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
   if(!isFn(window.openModal)) return;
