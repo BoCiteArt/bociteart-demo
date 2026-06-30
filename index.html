@@ -6562,7 +6562,7 @@ window.openComptaBoCiteArt = function(){
     <div class="box">
       <strong>Principe</strong><br>
       Une ville = un onglet. Une opération = une ligne. Une facture = un PDF.
-      La SAS, l’association, les mécènes et les BoCitéCoins restent séparés.
+      La SAS, l’association, les mécènes et les BoCiteCoins restent séparés.
     </div>
 
     <div class="choiceGrid">
@@ -6572,7 +6572,7 @@ window.openComptaBoCiteArt = function(){
       <button class="choiceBtn" onclick="openComptaVille('LOO')">Loos</button>
       <button class="choiceBtn" onclick="openJournalSpecial('ASSO')">Association</button>
       <button class="choiceBtn" onclick="openJournalSpecial('MECENES')">Mécènes</button>
-      <button class="choiceBtn" onclick="openJournalSpecial('COINS')">BoCitéCoins</button>
+      <button class="choiceBtn" onclick="openJournalSpecial('COINS')">BoCiteCoins</button>
       <button class="choiceBtn" onclick="openFiscaliteBoCiteArt()">Fiscalité</button>
     </div>
   `);
@@ -6603,14 +6603,14 @@ window.openJournalSpecial = function(type){
   const titre =
     type === "ASSO" ? "Journal Association" :
     type === "MECENES" ? "Journal Mécènes" :
-    "Journal BoCitéCoins";
+    "Journal BoCiteCoins";
 
   const texte =
     type === "ASSO"
       ? "Cotisations, dons, subventions, dépenses, justificatifs, solde et export annuel."
       : type === "MECENES"
       ? "Mécène, ville, projet financé, montant, convention, reçu fiscal si applicable, historique et export."
-      : "Création, attribution, utilisation, solde, ville, client, commerçant, école, sport, mairie et traçabilité complète des BoCitéCoins.";
+      : "Création, attribution, utilisation, solde, ville, client, commerçant, école, sport, mairie et traçabilité complète des BoCiteCoins.";
 
   openModal(titre, `
     <div class="box">
