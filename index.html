@@ -6558,11 +6558,11 @@ if(openSecureBtn){
 }
 
 function openComptaBoCiteArt(){
-  openModal("Comptabilité Bo’CitéArt", `
+  openModal("Comptabilité & fiscalité Bo’CitéArt", `
     <div class="box">
-      <strong>Principe comptable</strong><br>
-      Une ville = un onglet. Une opération = une ligne. Une facture = un PDF.  
-      La SAS garde une vue globale. L’association garde un journal séparé.
+      <strong>Principe</strong><br>
+      Une ville = un onglet. Une opération = une ligne. Une facture = un PDF.
+      La SAS, l’association, les mécènes et les BoCitéCoins restent séparés.
     </div>
 
     <div class="choiceGrid">
@@ -6570,8 +6570,10 @@ function openComptaBoCiteArt(){
       <button class="choiceBtn" onclick="openComptaVille('WAT')">Wattignies</button>
       <button class="choiceBtn" onclick="openComptaVille('SEC')">Seclin</button>
       <button class="choiceBtn" onclick="openComptaVille('LOO')">Loos</button>
-      <button class="choiceBtn" onclick="openComptaVille('ASSO')">Journal Association</button>
-      <button class="choiceBtn" onclick="alert('Démo : ajout future ville')">Ajouter une ville</button>
+      <button class="choiceBtn" onclick="openJournalSpecial('ASSO')">Association</button>
+      <button class="choiceBtn" onclick="openJournalSpecial('MECENES')">Mécènes</button>
+      <button class="choiceBtn" onclick="openJournalSpecial('COINS')">BoCitéCoins</button>
+      <button class="choiceBtn" onclick="openFiscaliteBoCiteArt()">Fiscalité</button>
     </div>
   `);
 }
@@ -6579,21 +6581,71 @@ function openComptaBoCiteArt(){
 window.openComptaVille = function(ville){
   openModal("Journal comptable — " + ville, `
     <div class="box">
-      <strong>Onglet :</strong> ${ville}<br>
-      Journal des ventes, factures, paiements, TVA, exports mensuels et annuels.
-    </div>
-
-    <div class="box">
-      <strong>Actions disponibles</strong><br><br>
-      <button class="choiceBtn" onclick="alert('Démo : export mensuel comptable')">Export mensuel</button><br><br>
-      <button class="choiceBtn" onclick="alert('Démo : export annuel comptable')">Export annuel</button><br><br>
-      <button class="choiceBtn" onclick="alert('Démo : export TVA / facturation électronique')">Export TVA</button><br><br>
-      <button class="choiceBtn" onclick="alert('Démo : historique factures client')">Historique factures</button>
+      <strong>Ville / vue :</strong> ${ville}<br>
+      Journal ventes, factures, paiements, TVA, clients, exports mensuels et annuels.
     </div>
 
     <div class="box">
       <strong>Structure d’une opération</strong><br>
-      ID unique • ville • client • type client • service • HT • TVA • TTC • paiement • facture PDF • mail envoyé • export comptable.
+      ID unique • ville • client • type client • service • HT • TVA • TTC • paiement • facture PDF • mail envoyé • export comptable • statut facturation électronique.
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="alert('Démo : export mensuel')">Export mensuel</button>
+      <button class="choiceBtn" onclick="alert('Démo : export annuel')">Export annuel</button>
+      <button class="choiceBtn" onclick="alert('Démo : export TVA')">Export TVA</button>
+      <button class="choiceBtn" onclick="alert('Démo : facturation électronique / Factur-X')">Facturation électronique</button>
+    </div>
+  `);
+};
+
+window.openJournalSpecial = function(type){
+  const titre =
+    type === "ASSO" ? "Journal Association" :
+    type === "MECENES" ? "Journal Mécènes" :
+    "Journal BoCitéCoins";
+
+  const texte =
+    type === "ASSO"
+      ? "Cotisations, dons, subventions, dépenses, justificatifs, solde et export annuel."
+      : type === "MECENES"
+      ? "Mécène, ville, projet financé, montant, convention, reçu fiscal si applicable, historique et export."
+      : "Création, attribution, utilisation, solde, ville, client, commerçant, école, sport, mairie et traçabilité complète des BoCitéCoins.";
+
+  openModal(titre, `
+    <div class="box">
+      <strong>${titre}</strong><br>
+      ${texte}
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="alert('Démo : historique')">Historique</button>
+      <button class="choiceBtn" onclick="alert('Démo : export mensuel')">Export mensuel</button>
+      <button class="choiceBtn" onclick="alert('Démo : export annuel')">Export annuel</button>
+      <button class="choiceBtn" onclick="alert('Démo : justificatifs / reçus')">Justificatifs</button>
+    </div>
+  `);
+};
+
+window.openFiscaliteBoCiteArt = function(){
+  openModal("Fiscalité Bo’CitéArt", `
+    <div class="box">
+      <strong>Fiscalité préparée automatiquement</strong><br>
+      Le module ne remplace pas l’expert-comptable. Il prépare les exports, les journaux, les justificatifs et les données nécessaires.
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="alert('Démo : TVA SAS mensuelle / trimestrielle')">TVA SAS</button>
+      <button class="choiceBtn" onclick="alert('Démo : journal fiscal association')">Fiscalité association</button>
+      <button class="choiceBtn" onclick="alert('Démo : mécénat, conventions, reçus si conditions réunies')">Mécénat</button>
+      <button class="choiceBtn" onclick="alert('Démo : dossier comptable mensuel')">Clôture mensuelle</button>
+      <button class="choiceBtn" onclick="alert('Démo : dossier annuel comptable')">Clôture annuelle</button>
+      <button class="choiceBtn" onclick="alert('Démo : export compatible facturation électronique')">Facturation électronique</button>
+    </div>
+
+    <div class="box">
+      <strong>À prévoir pour la production</strong><br>
+      Numéro facture • journal ventes • TVA • e-reporting • Factur-X • plateforme de facturation électronique • accusé de transmission.
     </div>
   `);
 };
