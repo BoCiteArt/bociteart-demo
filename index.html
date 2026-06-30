@@ -6465,19 +6465,6 @@ if(key === "commerces") {
 }
 };
 
-document.querySelectorAll("[data-open]").forEach((el)=>{
-  el.addEventListener("click", ()=>{
-    const key = el.getAttribute("data-open");
-
-    if(
-      (key === "sport" || key === "mairie" || key === "commerces") &&
-      typeof window.__bociteartOpenByKey === "function"
-    ){
-      window.__bociteartOpenByKey(key);
-    }
-  });
-});
-
 const openSecureBtn = $("openSecure");
 if(openSecureBtn){
   openSecureBtn.onclick = function(){
