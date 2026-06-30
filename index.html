@@ -8850,7 +8850,19 @@ function openProfile(type){
           return;
         }
 
-        openProfile(type);
+        window.__tickerProfile = type === "asso" ? "asso" : type;
+
+openModal("Calendrier publicitaire — " + type, `
+  <div id="calHost" style="margin-top:12px;"></div>
+`);
+
+setTimeout(function(){
+  if(typeof renderCalendarInto === "function"){
+    renderCalendarInto("calHost");
+  }else{
+    alert("Calendrier publicitaire introuvable.");
+  }
+}, 0);
       }
 
       const c = $("openPubCommerceV3");
