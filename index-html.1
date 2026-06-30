@@ -2472,32 +2472,34 @@ if(tickerBtn){
       window.mairieLoad = mairieLoad;
       window.mairieSave = mairieSave;
 
-      document.querySelectorAll("[data-open]").forEach((el)=>{
-        el.addEventListener("click", ()=>{
-          const key = el.getAttribute("data-open");
+   document.querySelectorAll("[data-open]").forEach((el)=>{
+  el.addEventListener("click", ()=>{
+    const key = el.getAttribute("data-open");
+    console.log("TUILE CLIQUÉE :", key);
 
-          if(key === "sport" || key === "mairie" || key === "commerces"){
-            if(typeof window.__bociteartOpenByKey === "function"){
-              window.__bociteartOpenByKey(key);
-              return;
-            }
-          }
+    if(
+      (key === "sport" || key === "mairie" || key === "commerces") &&
+      typeof window.__bociteartOpenByKey === "function"
+    ){
+      window.__bociteartOpenByKey(key);
+      return;
+    }
 
-        if(key === "oeuvres"){
+    if(key === "oeuvres"){
 
-  const STORAGE_KEY = "boc_oeuvres_unlock_v2";
-  const LAST_KEY = "boc_oeuvres_last_v2";
-  const AUDIO_BASE = "audio/oeuvres/";
-  const LOCAL_OEUVRE_AUDIO_KEY = "boc_oeuvres_local_audio_v1";
-  const LOCAL_ADMIN_PASSWORD = "bociteart-demo";
+      const STORAGE_KEY = "boc_oeuvres_unlock_v2";
+      const LAST_KEY = "boc_oeuvres_last_v2";
+      const AUDIO_BASE = "audio/oeuvres/";
+      const LOCAL_OEUVRE_AUDIO_KEY = "boc_oeuvres_local_audio_v1";
+      const LOCAL_ADMIN_PASSWORD = "bociteart-demo";
 
-  const oeuvres = [
-    {
-      id: "1",
-      qr: "QR-BOCITEART-001",
-      titre: "Libre et Fleurie",
-      quartier: "L’Arbrisseau",
-      artiste: "Julot",
+      const oeuvres = [
+        {
+          id: "1",
+          qr: "QR-BOCITEART-001",
+          titre: "Libre et Fleurie",
+          quartier: "L’Arbrisseau",
+          artiste: "Julot",
       mecene: "Garage Planque Citroën",
       open: true,
       audio: AUDIO_BASE + "oeuvre-1.mp3",
