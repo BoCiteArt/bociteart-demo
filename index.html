@@ -6557,7 +6557,7 @@ if(openSecureBtn){
   };
 }
 
-function openComptaBoCiteArt(){
+window.openComptaBoCiteArt = function(){
   openModal("Comptabilité & fiscalité Bo’CitéArt", `
     <div class="box">
       <strong>Principe</strong><br>
@@ -6576,7 +6576,7 @@ function openComptaBoCiteArt(){
       <button class="choiceBtn" onclick="openFiscaliteBoCiteArt()">Fiscalité</button>
     </div>
   `);
-}
+};
 
 window.openComptaVille = function(ville){
   openModal("Journal comptable — " + ville, `
