@@ -6650,6 +6650,33 @@ window.openFiscaliteBoCiteArt = function(){
   `);
 };
 
+window.openAdminSection = function(type){
+  const contenus = {
+    roles: `
+      <div class="box"><strong>Gestion des rôles</strong><br>
+      Admin • mairie • commerçant • association • école • sport • invité.</div>
+      <div class="box">Activation, blocage, déblocage, désactivation, changement de rôle et journal des accès.</div>
+    `,
+    securite: `
+      <div class="box"><strong>Sécurité</strong><br>
+      Accès restreints, double validation, journal des actions sensibles, alertes et blocages.</div>
+      <div class="box">Traçabilité : qui a fait quoi, quand, depuis quel profil.</div>
+    `,
+    exports: `
+      <div class="box"><strong>Exports</strong><br>
+      Exports mensuels, annuels, factures, clients, paiements, TVA, comptabilité et historiques.</div>
+      <div class="box">Chaque client peut récupérer ses documents. L’admin peut exporter par ville ou globalement.</div>
+    `,
+    parametres: `
+      <div class="box"><strong>Paramètres</strong><br>
+      Réglages ville, comptes, publicités, plafonds, bocitecoins, modules actifs et options futures.</div>
+      <div class="box">Les règles internes restent administrables sans modifier toute l’application.</div>
+    `
+  };
+
+  openModal("Administration — " + type, contenus[type] || "<div class='box'>Module en préparation.</div>");
+};
+
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
   if(!isFn(window.openModal)) return;
@@ -6661,18 +6688,11 @@ on(adminTile, "click", ()=>{
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" type="button" onclick="openComptaBoCiteArt()">
-        Comptabilité
-      </button>
-      <button class="choiceBtn" type="button" onclick="alert('Démo : gestion des rôles')">
-        Rôles
-      </button>
-      <button class="choiceBtn" type="button" onclick="alert('Démo : sécurité')">
-        Sécurité
-      </button>
-      <button class="choiceBtn" type="button" onclick="alert('Démo : exports')">
-        Exports
-      </button>
+      <button class="choiceBtn" type="button" onclick="openComptaBoCiteArt()">Comptabilité</button>
+      <button class="choiceBtn" type="button" onclick="openAdminSection('roles')">Rôles</button>
+      <button class="choiceBtn" type="button" onclick="openAdminSection('securite')">Sécurité</button>
+      <button class="choiceBtn" type="button" onclick="openAdminSection('exports')">Exports</button>
+      <button class="choiceBtn" type="button" onclick="openAdminSection('parametres')">Paramètres</button>
     </div>
 
     <ul style="margin:12px 0 0 18px;font-weight:800;">
