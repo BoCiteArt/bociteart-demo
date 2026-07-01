@@ -6843,6 +6843,65 @@ window.openParametresBociteart = function(){
   openModal("Paramètres privés", `<div class="box"><strong>Réglages</strong><br>TVA • relances • modèles mails • modèles factures • publicités • bocitecoins • sécurité • profils.</div>`);
 };
       
+window.openAdminSection = function(type){
+  const contenus = {
+    roles: `
+      <div class="box"><strong>Rôles</strong><br>
+      Fondateur • mairie • commerçant • association • sport • école • citoyen • mécène.</div>
+      <div class="box">Chaque profil voit uniquement ses propres accès. Les fonctions sensibles restent privées.</div>
+    `,
+    securite: `
+      <div class="box"><strong>Sécurité</strong><br>
+      Codes par profil • 2FA prévu • accès délégués • blocage immédiat • journal des actions.</div>
+    `,
+    exports: `
+      <div class="box"><strong>Exports</strong><br>
+      Factures • justificatifs • TVA • journal comptable • historiques mensuels • historiques annuels.</div>
+    `,
+    parametres: `
+      <div class="box"><strong>Paramètres</strong><br>
+      Villes • quartiers • tuiles • contenus publics • modules actifs • règles bocitecoins • relances.</div>
+    `
+  };
+
+  openModal("Administration — " + type, contenus[type] || "<div class='box'>Module en préparation.</div>");
+};
+
+window.openSanteVille = function(){
+  openModal("Santé & professionnels utiles", `
+    <div class="box">
+      <strong>Principe</strong><br>
+      Dès qu'une ville partenaire est validée, Bo'CitéArt peut préparer automatiquement une liste locale :
+      médecins, kinés, hôpitaux, pharmacies, infirmiers, urgences, centres utiles et contacts publics.
+    </div>
+
+    <div class="box">
+      <strong>Mode IA prévu</strong><br>
+      L'IA propose les données à partir de sources publiques ou des informations validées par la mairie.
+      Les professionnels peuvent ensuite compléter ou corriger leur fiche eux-mêmes.
+    </div>
+
+    <div class="box">
+      <strong>Mise à jour</strong><br>
+      L'IA signale les fiches inactives, les coordonnées manquantes, les doublons, les départs possibles
+      ou les nouveaux professionnels à intégrer.
+    </div>
+
+    <div class="box">
+      <strong>Important</strong><br>
+      Bo'CitéArt ne traite pas de données médicales personnelles des habitants. Il affiche uniquement
+      des informations pratiques publiques ou validées.
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="alert('Démo : préremplissage IA par ville')">Préremplir ville</button>
+      <button class="choiceBtn" onclick="alert('Démo : professionnels à vérifier')">À vérifier</button>
+      <button class="choiceBtn" onclick="alert('Démo : nouveaux détectés')">Nouveaux</button>
+      <button class="choiceBtn" onclick="alert('Démo : fiches sorties / archivées')">Sortants</button>
+    </div>
+  `);
+};
+
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
   if(!isFn(window.openModal)) return;
@@ -6850,26 +6909,26 @@ on(adminTile, "click", ()=>{
     <div style="font-weight:900;margin-bottom:8px;">Administration</div>
 
     <div class="box">
-      <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, mesures de sécurité.
+      <strong>Cadre :</strong> accès restreint, gestion des rôles, cohérence des opérations, sécurité, documents et pilotage.
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" type="button" onclick="openComptaBoCiteArt()">Comptabilité</button>
+      <button class="choiceBtn" type="button" onclick="openComptaBoCiteArt()">Administration centrale</button>
       <button class="choiceBtn" type="button" onclick="openAdminSection('roles')">Rôles</button>
       <button class="choiceBtn" type="button" onclick="openAdminSection('securite')">Sécurité</button>
       <button class="choiceBtn" type="button" onclick="openAdminSection('exports')">Exports</button>
       <button class="choiceBtn" type="button" onclick="openAdminSection('parametres')">Paramètres</button>
+      <button class="choiceBtn" type="button" onclick="openSanteVille()">Santé / pros utiles</button>
     </div>
 
     <ul style="margin:12px 0 0 18px;font-weight:800;">
-      <li>Gestion des rôles : admin • mairie • commerçants • école • sport</li>
-      <li>Activation / blocage / désactivation</li>
-      <li>Paramètres : règles bocitecoins • plafonds • publicités</li>
-      <li>Suivi interne : historique, traçabilité, journal comptable</li>
+      <li>Administration centrale : partenaires, villes, licences, comptabilité, fiscalité, IA</li>
+      <li>Gestion des rôles et accès délégués</li>
+      <li>Paramètres par ville : quartiers, tuiles, contenus, services</li>
+      <li>Professionnels utiles : préremplissage IA, vérification, mise à jour</li>
     </ul>
   `);
 });
-
 const daeBtn = $("daeBtn");
 const clockBtn = $("clockBtn");
 
