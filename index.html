@@ -5674,7 +5674,7 @@ if(key === "sport"){
             const address = sportMerchantAddress ? String(sportMerchantAddress.value || "").trim() : "";
 
             if(!company){
-              alert("Scanne d’abord le commerçant pour préremplir la fiche.");
+              alert("Scanne d’abord le commerçant pour Revendiquer ma fiche.");
               return;
             }
 
@@ -6596,7 +6596,8 @@ window.openProspectsPartenaires = function(){
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="openNouveauProspect()">Créer / inviter prospect</button>
+      <button class="choiceBtn" onclick="openNouveauProspect()">Inviter / revendiquer une fiche</button>
+      <button class="choiceBtn" onclick="openKitBienvenue()">Kit de bienvenue</button>
       <button class="choiceBtn" onclick="alert('Démo : recherche prospect')">Rechercher</button>
       <button class="choiceBtn" onclick="alert('Démo : relancer prospect')">Relancer</button>
       <button class="choiceBtn" onclick="alert('Démo : transformer en partenaire')">Valider partenaire</button>
@@ -6637,32 +6638,128 @@ window.openNouveauProspect = function(){
   `);
 };
 
-window.openVillesLicences = function(){
-  openModal("Villes / Licences", `
-    <div class="box">
-      <strong>Licence mairie</strong><br>
-      Licence annuelle par ville, calculable selon la base prévue au contrat. Tacite reconduction avec relance avant échéance.
-    </div>
+window.openDeploiementVille = function(){
 
-    <div class="box">
-      <strong>Personnalisation ville</strong><br>
-      Quartiers • tuiles visibles • services mairie • contacts utiles • modules actifs • contenus publics • accès privés.
-    </div>
+openModal("Déploiement automatique d'une ville",`
 
-    <div class="box">
-      <strong>Transition municipale</strong><br>
-      En cas de changement d’équipe : résumé Bo’CitéArt, résultats obtenus, bénéfices, documents, historique et proposition de continuité.
-    </div>
+<div class="box">
+<strong>Principe</strong><br>
+Une fois la licence validée, Bo'CitéArt prépare automatiquement l'ensemble de la ville. Le fondateur supervise uniquement les étapes.
+</div>
 
-    <div class="choiceGrid">
-      <button class="choiceBtn" onclick="openComptaVille('WAT')">Wattignies</button>
-      <button class="choiceBtn" onclick="openComptaVille('SEC')">Seclin</button>
-      <button class="choiceBtn" onclick="openComptaVille('LOO')">Loos</button>
-      <button class="choiceBtn" onclick="alert('Démo : ajouter ville')">Ajouter ville</button>
-      <button class="choiceBtn" onclick="alert('Démo : pack transition élu')">Pack transition</button>
-    </div>
-  `);
-};
+<div class="box">
+
+✔ Création du dossier Ville<br>
+✔ Licence annuelle<br>
+✔ Comptabilité dédiée<br>
+✔ Personnalisation des tuiles<br>
+✔ Quartiers<br>
+✔ Services municipaux<br>
+✔ Contacts utiles
+</div>
+
+<div class="box">
+
+<strong>Préparation IA</strong><br>
+
+• Commerces<br>
+• Santé<br>
+• Associations<br>
+• Sport<br>
+• Culture<br>
+• Écoles<br>
+• Services municipaux
+
+</div>
+
+<div class="box">
+
+<strong>Pour chaque fiche</strong><br>
+
+Préparation automatique
+
+↓
+
+Invitation
+
+↓
+
+Le professionnel revendique sa fiche
+
+↓
+
+Il complète uniquement ce qui manque
+
+↓
+
+Validation
+
+↓
+
+Publication
+
+</div>
+
+<div class="box">
+
+<strong>Suivi IA</strong><br>
+
+✔ nouveaux détectés
+
+✔ doublons
+
+✔ fiches inactives
+
+✔ changements administratifs
+
+✔ relances automatiques
+
+✔ journal
+
+✔ conformité
+
+</div>
+
+<div class="box">
+
+<strong>Centre de déploiement</strong><br>
+
+Mairie
+
+██████████
+
+Commerces
+
+67 %
+
+Santé
+
+51 %
+
+Associations
+
+82 %
+
+Sport
+
+46 %
+
+Culture
+
+39 %
+
+Communication
+
+En cours
+
+IA
+
+Surveillance active
+
+</div>
+
+`);
+}
 
 window.openComptaVille = function(ville){
   openModal("Journal comptable — " + ville, `
