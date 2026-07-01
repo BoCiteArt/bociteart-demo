@@ -6557,20 +6557,19 @@ if(openSecureBtn){
   };
 }
 
-/* === MODULE COMPTABILITÉ / FISCALITÉ / IA / PILOTAGE — VERSION PROPRE === */
+/* === MODULE ADMIN / COMPTA / PARTENAIRES / IA — VERSION PROPRE === */
 
 window.openComptaBoCiteArt = function(){
-  openModal("Comptabilité & fiscalité Bo’CitéArt", `
+  openModal("Administration Bo’CitéArt", `
     <div class="box">
-      <strong>Vision visible</strong><br>
-      Comptabilité par ville, factures, justificatifs, paiements, relances, fiscalité et exports.
+      <strong>Administration centrale</strong><br>
+      Partenaires, villes, licences, comptabilité, fiscalité, documents, relances, IA, sauvegardes et sécurité.
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="openComptaVille('GLOBAL')">Vue générale SAS</button>
-      <button class="choiceBtn" onclick="openComptaVille('WAT')">Wattignies</button>
-      <button class="choiceBtn" onclick="openComptaVille('SEC')">Seclin</button>
-      <button class="choiceBtn" onclick="openComptaVille('LOO')">Loos</button>
+      <button class="choiceBtn" onclick="openProspectsPartenaires()">Prospects / Partenaires</button>
+      <button class="choiceBtn" onclick="openVillesLicences()">Villes / Licences</button>
+      <button class="choiceBtn" onclick="openComptaVille('GLOBAL')">Comptabilité SAS</button>
       <button class="choiceBtn" onclick="openJournalSpecial('ASSO')">Association</button>
       <button class="choiceBtn" onclick="openJournalSpecial('MECENES')">Mécènes</button>
       <button class="choiceBtn" onclick="openJournalSpecial('COINS')">bocitecoins</button>
@@ -6578,7 +6577,89 @@ window.openComptaBoCiteArt = function(){
       <button class="choiceBtn" onclick="openFiscaliteBoCiteArt()">Fiscalité</button>
       <button class="choiceBtn" onclick="openRelancesBoCiteArt()">Relances automatiques</button>
       <button class="choiceBtn" onclick="openGestionAccesDelegues()">Accès délégués</button>
+      <button class="choiceBtn" onclick="openSauvegardesBociteart()">Sauvegardes</button>
       <button class="choiceBtn" onclick="openPilotagePrive()">Pilotage privé</button>
+    </div>
+  `);
+};
+
+window.openProspectsPartenaires = function(){
+  openModal("Prospects / Partenaires", `
+    <div class="box">
+      <strong>Principe</strong><br>
+      Le partenaire remplit lui-même sa fiche. Tant que ce n’est pas signé et validé, il reste prospect et ne pollue pas la comptabilité.
+    </div>
+
+    <div class="box">
+      <strong>Cycle de vie</strong><br>
+      Prospect → En discussion → Devis envoyé → Contrat signé → Partenaire actif → Suspendu → Résilié → Archivé.
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="openNouveauProspect()">Créer / inviter prospect</button>
+      <button class="choiceBtn" onclick="alert('Démo : recherche prospect')">Rechercher</button>
+      <button class="choiceBtn" onclick="alert('Démo : relancer prospect')">Relancer</button>
+      <button class="choiceBtn" onclick="alert('Démo : transformer en partenaire')">Valider partenaire</button>
+      <button class="choiceBtn" onclick="alert('Démo : archiver sans suite')">Archiver</button>
+    </div>
+  `);
+};
+
+window.openNouveauProspect = function(){
+  openModal("Fiche prospect / partenaire", `
+    <div class="box">
+      <strong>À remplir par le partenaire</strong><br>
+      Identité • ville • adresse • responsable • e-mail • téléphone • SIRET • pièces justificatives.
+    </div>
+
+    <div class="box">
+      <strong>Certification obligatoire</strong><br>
+      Le partenaire certifie l’exactitude des informations et documents transmis, et s’engage à les maintenir à jour.
+    </div>
+
+    <div class="box">
+      <strong>Pièces déposées</strong><br>
+      KBIS • RIB • justificatif d’adresse • assurance • statuts association • convention • autre pièce utile.
+    </div>
+
+    <div class="box">
+      <strong>Contrôle IA</strong><br>
+      Document lisible • date visible • nom cohérent • SIRET cohérent • adresse cohérente • pièce expirée ou à surveiller.
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="alert('Démo : invitation envoyée')">Envoyer invitation</button>
+      <button class="choiceBtn" onclick="alert('Démo : fiche enregistrée en brouillon')">Brouillon</button>
+      <button class="choiceBtn" onclick="alert('Démo : certification horodatée')">Certifier</button>
+      <button class="choiceBtn" onclick="alert('Démo : contrat préparé')">Préparer contrat</button>
+      <button class="choiceBtn" onclick="alert('Démo : compte activé après signature')">Activer</button>
+    </div>
+  `);
+};
+
+window.openVillesLicences = function(){
+  openModal("Villes / Licences", `
+    <div class="box">
+      <strong>Licence mairie</strong><br>
+      Licence annuelle par ville, calculable selon la base prévue au contrat. Tacite reconduction avec relance avant échéance.
+    </div>
+
+    <div class="box">
+      <strong>Personnalisation ville</strong><br>
+      Quartiers • tuiles visibles • services mairie • contacts utiles • modules actifs • contenus publics • accès privés.
+    </div>
+
+    <div class="box">
+      <strong>Transition municipale</strong><br>
+      En cas de changement d’équipe : résumé Bo’CitéArt, résultats obtenus, bénéfices, documents, historique et proposition de continuité.
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="openComptaVille('WAT')">Wattignies</button>
+      <button class="choiceBtn" onclick="openComptaVille('SEC')">Seclin</button>
+      <button class="choiceBtn" onclick="openComptaVille('LOO')">Loos</button>
+      <button class="choiceBtn" onclick="alert('Démo : ajouter ville')">Ajouter ville</button>
+      <button class="choiceBtn" onclick="alert('Démo : pack transition élu')">Pack transition</button>
     </div>
   `);
 };
@@ -6587,26 +6668,21 @@ window.openComptaVille = function(ville){
   openModal("Journal comptable — " + ville, `
     <div class="box">
       <strong>Tableau de bord</strong><br>
-      CA HT : démo • TVA : démo • TTC encaissé : démo • Factures : démo • Impayés : démo • Relances : démo.
+      CA HT • TVA • TTC encaissé • factures • impayés • relances • documents • exports.
     </div>
 
     <div class="box">
       <strong>Journal des opérations</strong><br><br>
-      BO-${ville}-2026-000001 — Garage Dupont — Publicité — Payé — Facture PDF — Justificatif PDF — Mail envoyé<br><br>
-      BO-${ville}-2026-000002 — Association locale — Option — En attente — Relance prévue<br><br>
-      BO-${ville}-2026-000003 — Mairie — Devis validé — Paiement différé — Facture émise
-    </div>
-
-    <div class="box">
-      <strong>Structure obligatoire</strong><br>
-      ID unique • ville • client • type client • service • HT • TVA • TTC • mode paiement • statut • facture • justificatif • mail • export comptable • facturation électronique.
+      BCA-FAC-${ville}-2026-000001 — Garage Dupont — Publicité — Payé — PDF envoyé<br><br>
+      BCA-DEV-${ville}-2026-000002 — Mairie — Devis validé — Paiement différé<br><br>
+      BCA-JUS-${ville}-2026-000003 — Association — Justificatif généré
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="alert('Démo : export mensuel généré')">Export mensuel</button>
-      <button class="choiceBtn" onclick="alert('Démo : export annuel généré')">Export annuel</button>
-      <button class="choiceBtn" onclick="alert('Démo : export TVA prêt')">Export TVA</button>
-      <button class="choiceBtn" onclick="alert('Démo : Factur-X / e-reporting prêt')">Facturation électronique</button>
+      <button class="choiceBtn" onclick="alert('Démo : export mensuel')">Export mensuel</button>
+      <button class="choiceBtn" onclick="alert('Démo : export annuel')">Export annuel</button>
+      <button class="choiceBtn" onclick="alert('Démo : TVA prête')">TVA</button>
+      <button class="choiceBtn" onclick="alert('Démo : Factur-X / e-reporting')">Facturation électronique</button>
     </div>
   `);
 };
@@ -6614,30 +6690,19 @@ window.openComptaVille = function(ville){
 window.openPaiementDocuments = function(){
   openModal("Paiements & documents", `
     <div class="box">
-      <strong>Après chaque paiement</strong><br>
-      L’utilisateur peut recevoir une facture, un justificatif de paiement, ou les deux.
-      Tous les documents restent disponibles dans son espace documentaire.
+      <strong>Documents au choix</strong><br>
+      Facture • justificatif de paiement • les deux • envoi e-mail • archivage espace client • récapitulatif mensuel / annuel.
     </div>
 
     <div class="box">
-      <strong>Préférences documentaires</strong><br><br>
-      <label><input type="checkbox" checked> Recevoir une facture</label><br><br>
-      <label><input type="checkbox" checked> Recevoir un justificatif de paiement</label><br><br>
-      <label><input type="checkbox" checked> Envoi automatique par e-mail</label><br><br>
-      <label><input type="checkbox" checked> Conserver dans mon espace</label><br><br>
-      <label><input type="checkbox" checked> Récapitulatif mensuel</label><br><br>
-      <label><input type="checkbox" checked> Récapitulatif annuel</label>
-    </div>
-
-    <div class="box">
-      <strong>Modes de paiement prévus</strong><br>
+      <strong>Paiements prévus</strong><br>
       CB via PSP • prélèvement SEPA • virement • devis mairie • mandat administratif • régularisation.
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="alert('Démo : facture PDF')">Facture PDF</button>
-      <button class="choiceBtn" onclick="alert('Démo : justificatif PDF')">Justificatif PDF</button>
-      <button class="choiceBtn" onclick="alert('Démo : envoi e-mail')">Envoi e-mail</button>
+      <button class="choiceBtn" onclick="alert('Démo : facture PDF')">Facture</button>
+      <button class="choiceBtn" onclick="alert('Démo : justificatif PDF')">Justificatif</button>
+      <button class="choiceBtn" onclick="alert('Démo : e-mail envoyé')">Envoyer</button>
       <button class="choiceBtn" onclick="alert('Démo : historique client')">Historique</button>
     </div>
   `);
@@ -6646,96 +6711,51 @@ window.openPaiementDocuments = function(){
 window.openRelancesBoCiteArt = function(){
   openModal("Relances automatiques", `
     <div class="box">
-      <strong>Principe</strong><br>
-      Non-paiement ou paiement refusé → rappel automatique → nouvelle relance après délai → suspension des nouveaux services payants si non régularisé.
+      <strong>Règle</strong><br>
+      Paiement refusé ou retard → relance J+5 → relance J+7 → limitation des nouveaux services → déblocage après régularisation.
     </div>
 
     <div class="box">
-      <strong>Délais prévus</strong><br>
-      J+5 : rappel courtois pour oubli ou problème de paiement.<br>
-      J+7 : seconde relance avec lien de régularisation.<br>
-      Après délai : suspension des nouveaux services payants, sans suppression du compte.
-    </div>
-
-    <div class="box">
-      <strong>Support automatisé</strong><br>
-      L’utilisateur peut répondre via un assistant intégré. Si le problème n’est pas résolu, le dossier remonte vers Bo’CitéArt sans communiquer les coordonnées personnelles du fondateur.
+      <strong>Support</strong><br>
+      L’utilisateur peut répondre via assistant. Si non résolu, le dossier remonte vers Bo’CitéArt sans donner les coordonnées personnelles du fondateur.
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="alert('Démo : relance J+5 envoyée')">Relance J+5</button>
-      <button class="choiceBtn" onclick="alert('Démo : relance J+7 envoyée')">Relance J+7</button>
-      <button class="choiceBtn" onclick="alert('Démo : suspension nouveaux services')">Suspendre</button>
-      <button class="choiceBtn" onclick="alert('Démo : déblocage après paiement')">Débloquer</button>
+      <button class="choiceBtn" onclick="alert('Démo : relance J+5')">Relance J+5</button>
+      <button class="choiceBtn" onclick="alert('Démo : relance J+7')">Relance J+7</button>
+      <button class="choiceBtn" onclick="alert('Démo : compte limité')">Limiter</button>
+      <button class="choiceBtn" onclick="alert('Démo : compte débloqué')">Débloquer</button>
     </div>
   `);
 };
 
 window.openGestionAccesDelegues = function(){
-  openModal("Gestion des accès délégués", `
+  openModal("Accès délégués", `
     <div class="box">
-      <strong>Principe</strong><br>
-      Chaque structure reste responsable de ses accès internes.
-      Bo’CitéArt fournit l’outil de création, modification, blocage et traçabilité.
+      <strong>Responsabilité</strong><br>
+      Chaque structure gère ses accès internes. Le responsable principal peut créer, bloquer, révoquer ou modifier un code.
     </div>
 
     <div class="box">
-      <strong>Comptes prévus</strong><br>
-      Responsable principal : maire, président, gérant, directeur ou responsable légal.<br>
-      Accès délégués : adjoint, secrétaire, trésorier, salarié, bénévole ou personne autorisée.
-    </div>
-
-    <div class="box">
-      <strong>Droits possibles</strong><br>
-      Voir • modifier • publier • payer • exporter • bloquer • gérer les accès.
-    </div>
-
-    <div class="box">
-      <strong>Sécurité</strong><br>
-      Le responsable principal peut changer un code, bloquer un accès ou révoquer immédiatement un utilisateur.
+      <strong>Droits</strong><br>
+      Voir • modifier • publier • payer • exporter • gérer les accès.
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="alert('Démo : créer un accès délégué')">Créer un accès</button>
-      <button class="choiceBtn" onclick="alert('Démo : modifier un code')">Modifier un code</button>
-      <button class="choiceBtn" onclick="alert('Démo : bloquer immédiatement')">Bloquer</button>
-      <button class="choiceBtn" onclick="alert('Démo : révoquer un utilisateur')">Révoquer</button>
-      <button class="choiceBtn" onclick="alert('Démo : journal des actions')">Journal</button>
+      <button class="choiceBtn" onclick="alert('Démo : créer accès')">Créer</button>
+      <button class="choiceBtn" onclick="alert('Démo : modifier code')">Modifier code</button>
+      <button class="choiceBtn" onclick="alert('Démo : bloquer')">Bloquer</button>
+      <button class="choiceBtn" onclick="alert('Démo : journal')">Journal</button>
     </div>
   `);
 };
 
 window.openJournalSpecial = function(type){
-  const titre =
-    type === "ASSO" ? "Journal Association" :
-    type === "MECENES" ? "Journal Mécènes" :
-    "Journal bocitecoins";
-
-  const texte =
-    type === "ASSO"
-      ? "Cotisations, dons, subventions, dépenses, justificatifs, solde, export annuel et suivi séparé de la SAS."
-      : type === "MECENES"
-      ? "Mécène, ville, projet financé, montant, convention, reçu fiscal si applicable, historique, remerciement et export."
-      : "Création, attribution, utilisation, solde, ville, client, commerçant, école, sport, mairie et traçabilité complète des bocitecoins.";
-
+  const titre = type === "ASSO" ? "Journal Association" : type === "MECENES" ? "Journal Mécènes" : "Journal bocitecoins";
   openModal(titre, `
     <div class="box">
       <strong>${titre}</strong><br>
-      ${texte}
-    </div>
-
-    <div class="box">
-      <strong>Lignes exemples</strong><br><br>
-      2026-0001 — Wattignies — Projet local — Statut : validé<br><br>
-      2026-0002 — Seclin — En attente de justificatif<br><br>
-      2026-0003 — Loos — Export annuel disponible
-    </div>
-
-    <div class="choiceGrid">
-      <button class="choiceBtn" onclick="alert('Démo : historique')">Historique</button>
-      <button class="choiceBtn" onclick="alert('Démo : export mensuel')">Export mensuel</button>
-      <button class="choiceBtn" onclick="alert('Démo : export annuel')">Export annuel</button>
-      <button class="choiceBtn" onclick="alert('Démo : justificatifs / reçus')">Justificatifs</button>
+      Suivi séparé, historique, justificatifs, exports, alertes et archivage.
     </div>
   `);
 };
@@ -6743,288 +6763,84 @@ window.openJournalSpecial = function(type){
 window.openFiscaliteBoCiteArt = function(){
   openModal("Fiscalité Bo’CitéArt", `
     <div class="box">
-      <strong>Fiscalité préparée automatiquement</strong><br>
-      Le module ne remplace pas l’expert-comptable. Il prépare les journaux, exports, justificatifs, TVA, clôtures et données nécessaires.
+      <strong>Préparation comptable</strong><br>
+      TVA • journal ventes • journal association • mécénat • clôture mensuelle • clôture annuelle • facturation électronique.
+    </div>
+  `);
+};
+
+window.openSauvegardesBociteart = function(){
+  openModal("Sauvegardes Bo’CitéArt", `
+    <div class="box">
+      <strong>Architecture prévue</strong><br>
+      Serveur principal : OVH.<br>
+      Sauvegarde secondaire : prestataire européen séparé.<br>
+      Sauvegarde quotidienne • chiffrement • contrôle d’intégrité • test de restauration mensuel.
     </div>
 
     <div class="box">
-      <strong>Dossier comptable du mois</strong><br>
-      Factures • justificatifs • paiements • impayés • TVA • exports • journal ventes • journal association • mécènes • facturation électronique.
-    </div>
-
-    <div class="choiceGrid">
-      <button class="choiceBtn" onclick="alert('Démo : TVA SAS prête')">TVA SAS</button>
-      <button class="choiceBtn" onclick="alert('Démo : fiscalité association')">Association</button>
-      <button class="choiceBtn" onclick="alert('Démo : reçus fiscaux si conditions réunies')">Mécénat</button>
-      <button class="choiceBtn" onclick="alert('Démo : clôture mensuelle')">Clôture mensuelle</button>
-      <button class="choiceBtn" onclick="alert('Démo : clôture annuelle')">Clôture annuelle</button>
-      <button class="choiceBtn" onclick="alert('Démo : Factur-X / e-reporting')">Facturation électronique</button>
+      <strong>Objectif</strong><br>
+      Éviter toute perte de données en cas de panne, erreur, incident serveur ou indisponibilité d’un prestataire.
     </div>
   `);
 };
 
 window.openPilotagePrive = function(){
   const code = prompt("Accès réservé administrateur\n\nCode privé :");
-  if(code !== "bociteart-admin"){
-    alert("Accès refusé.");
-    return;
-  }
+  if(code !== "bociteart-admin"){ alert("Accès refusé."); return; }
 
   const twofa = prompt("Double validation démo\n\nCode 2FA :");
-  if(twofa !== "2026"){
-    alert("Double validation refusée.");
-    return;
-  }
+  if(twofa !== "2026"){ alert("Double validation refusée."); return; }
 
   openModal("Pilotage privé Bo’CitéArt", `
     <div class="box">
-      <strong>Accès privé</strong><br>
-      Espace réservé au fondateur / administrateur principal. Non visible des élus, commerçants, associations ou partenaires.
+      <strong>Privé fondateur</strong><br>
+      Centre IA, conformité, trésorerie, anomalies, documents, contrats, licences, paramètres, audit et santé du système.
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="openCentrePilotage()">Centre de pilotage IA</button>
-      <button class="choiceBtn" onclick="openPrioritesIA()">Priorités du jour</button>
-      <button class="choiceBtn" onclick="openTresorerieIA()">Prévision trésorerie</button>
-      <button class="choiceBtn" onclick="openAnomaliesIA()">Anomalies IA</button>
-      <button class="choiceBtn" onclick="openNotificationsPrivees()">Notifications</button>
-      <button class="choiceBtn" onclick="openJournalActivite()">Journal activité</button>
-      <button class="choiceBtn" onclick="openCoffreFortDoc()">Coffre-fort documentaire</button>
-      <button class="choiceBtn" onclick="openHistoriqueClient()">Historique client</button>
+      <button class="choiceBtn" onclick="openCentrePilotage()">Centre IA</button>
+      <button class="choiceBtn" onclick="openConformiteBociteart()">Conformité</button>
+      <button class="choiceBtn" onclick="openTresorerieIA()">Trésorerie</button>
+      <button class="choiceBtn" onclick="openAnomaliesIA()">Anomalies</button>
+      <button class="choiceBtn" onclick="openCoffreFortDoc()">Coffre-fort</button>
       <button class="choiceBtn" onclick="openContratsBoCiteArt()">Contrats</button>
-      <button class="choiceBtn" onclick="openLicencesVilles()">Licences villes</button>
       <button class="choiceBtn" onclick="openEtatSysteme()">État système</button>
       <button class="choiceBtn" onclick="openParametresBociteart()">Paramètres</button>
-      <button class="choiceBtn" onclick="openAuditAuto()">Audit automatique</button>
-      <button class="choiceBtn" onclick="openSanteBociteart()">Santé Bo’CitéArt</button>
     </div>
   `);
 };
 
 window.openCentrePilotage = function(){
-  openModal("Centre de pilotage privé", `
-    <div class="box">
-      <strong>À traiter aujourd’hui</strong><br>
-      2 paiements en attente • 1 devis à relancer • 3 abonnements à surveiller • TVA prête • dossier comptable prêt.
-    </div>
-    <div class="box">
-      <strong>Recommandations IA</strong><br>
-      Renforcer les mécènes • vérifier une facture non téléchargée • surveiller une publicité programmée sans paiement confirmé.
-    </div>
-  `);
+  openModal("Centre IA", `<div class="box"><strong>Priorités</strong><br>Relances • contrats • TVA • sauvegardes • prospects • anomalies • documents à vérifier.</div>`);
 };
 
-window.openPrioritesIA = function(){
-  openModal("Priorités du jour — IA", `
-    <div class="box">
-      <strong>À traiter aujourd’hui</strong><br>
-      2 paiements à régulariser • 1 devis à relancer • TVA prête • 1 publicité à vérifier • 2 mécènes à remercier.
-    </div>
-  `);
+window.openConformiteBociteart = function(){
+  openModal("Conformité Bo’CitéArt", `<div class="box"><strong>Contrôles</strong><br>CGU/CGV/RGPD • signatures • pièces • factures • sauvegardes • journaux • accès • partenaires.</div>`);
 };
 
 window.openTresorerieIA = function(){
-  openModal("Prévision de trésorerie", `
-    <div class="box">
-      <strong>Prévision</strong><br>
-      Recettes attendues • abonnements à venir • publicités réservées • paiements mairie en attente • impayés à régulariser.
-    </div>
-  `);
+  openModal("Prévision trésorerie", `<div class="box"><strong>Prévision</strong><br>Abonnements attendus • publicités réservées • licences mairie • paiements en retard • recettes prévisionnelles.</div>`);
 };
 
 window.openAnomaliesIA = function(){
-  openModal("Détection d’anomalies", `
-    <div class="box">
-      <strong>Contrôles automatiques</strong><br>
-      Paiement sans facture • facture non envoyée • abonnement actif non payé • publicité programmée non réglée • export TVA manquant.
-    </div>
-  `);
-};
-
-window.openNotificationsPrivees = function(){
-  openModal("Notifications privées", `
-    <div class="box">
-      <strong>Centre d’alertes</strong><br>
-      Paiement refusé • facture envoyée • relance faite • sauvegarde terminée • anomalie détectée • dossier comptable prêt.
-    </div>
-  `);
-};
-
-window.openJournalActivite = function(){
-  openModal("Journal d’activité", `
-    <div class="box">
-      <strong>Traçabilité générale</strong><br>
-      09h10 — Commerce — publicité validée<br>
-      10h20 — Mairie — facture générée<br>
-      11h05 — Association — document ajouté<br>
-      14h30 — IA — anomalie détectée
-    </div>
-  `);
+  openModal("Anomalies IA", `<div class="box"><strong>Détection</strong><br>Paiement sans facture • facture non envoyée • partenaire actif sans contrat • document expiré • sauvegarde échouée.</div>`);
 };
 
 window.openCoffreFortDoc = function(){
-  openModal("Coffre-fort documentaire", `
-    <div class="box">
-      <strong>Documents classés</strong><br>
-      Contrats • devis • factures • justificatifs • conventions • reçus fiscaux si applicables • autorisations • historiques.
-    </div>
-  `);
-};
-
-window.openHistoriqueClient = function(){
-  openModal("Historique complet client", `
-    <div class="box">
-      <strong>Fiche client unique</strong><br>
-      Identité • ville • paiements • factures • justificatifs • publicités • bocitecoins • relances • échanges assistant.
-    </div>
-  `);
+  openModal("Coffre-fort documentaire", `<div class="box"><strong>Documents</strong><br>Contrats • devis • factures • justificatifs • conventions • KBIS • RIB • reçus • historiques.</div>`);
 };
 
 window.openContratsBoCiteArt = function(){
-  openModal("Contrats Bo’CitéArt", `
-    <div class="box">
-      <strong>Contrats suivis</strong><br>
-      Contrat mairie • commerçant • association • sport • école • mécène • avenants • renouvellements • signatures.
-    </div>
-  `);
-};
-
-window.openLicencesVilles = function(){
-  openModal("Licences villes", `
-    <div class="box">
-      <strong>Suivi par ville</strong><br>
-      Ville • date début • date fin • renouvellement • licence active • facturation • historique.
-    </div>
-  `);
+  openModal("Contrats", `<div class="box"><strong>Suivi</strong><br>Mairie • commerce • association • sport • école • mécène • avenants • renouvellements • signatures.</div>`);
 };
 
 window.openEtatSysteme = function(){
-  openModal("État du système", `
-    <div class="box">
-      <strong>Contrôle technique</strong><br>
-      Serveur : OK<br>
-      Paiements : OK<br>
-      Factures : OK<br>
-      E-mails : OK<br>
-      Sauvegardes : OK<br>
-      Exports : OK<br>
-      IA : OK
-    </div>
-  `);
+  openModal("État système", `<div class="box"><strong>État</strong><br>Serveur OK • paiements OK • factures OK • e-mails OK • sauvegardes OK • IA OK • sécurité OK.</div>`);
 };
 
 window.openParametresBociteart = function(){
-  openModal("Paramètres Bo’CitéArt", `
-    <div class="box">
-      <strong>Réglages privés</strong><br>
-      TVA • délais relance • modèles mails • modèles factures • règles publicités • règles bocitecoins • profils • sécurité.
-    </div>
-    <div class="box">
-      Ces paramètres restent privés et ne doivent pas être visibles par les utilisateurs publics.
-    </div>
-  `);
-};
-
-window.openAuditAuto = function(){
-  openModal("Audit automatique", `
-    <div class="box">
-      <strong>Audit nocturne</strong><br>
-      Sauvegardes • paiements • factures • e-mails • exports • base de données • alertes en cas d’anomalie.
-    </div>
-  `);
-};
-
-window.openSanteBociteart = function(){
-  openModal("Santé Bo’CitéArt", `
-    <div class="box">
-      <strong>État général</strong><br>
-      Application : ★★★★★<br>
-      Paiements : ★★★★★<br>
-      Factures : ★★★★★<br>
-      Sauvegardes : ★★★★★<br>
-      Fiscalité : ★★★★★<br>
-      IA : ★★★★★<br>
-      Sécurité : ★★★★★
-    </div>
-  `);
-};
-      window.openPartenairesPrives = function(){
-  openModal("Partenaires Bo’CitéArt", `
-    <div class="box">
-      <strong>Module privé fondateur</strong><br>
-      Création d’un partenaire : mairie, commerce, association, école, sport, mécène ou citoyen.
-      Une seule fiche alimente ensuite les contrats, devis, factures, accès, documents, relances et exports.
-    </div>
-
-    <div class="choiceGrid">
-      <button class="choiceBtn" onclick="openNouveauPartenaire('mairie')">+ Mairie</button>
-      <button class="choiceBtn" onclick="openNouveauPartenaire('commerce')">+ Commerce</button>
-      <button class="choiceBtn" onclick="openNouveauPartenaire('association')">+ Association</button>
-      <button class="choiceBtn" onclick="openNouveauPartenaire('sport')">+ Sport</button>
-      <button class="choiceBtn" onclick="openNouveauPartenaire('ecole')">+ École</button>
-      <button class="choiceBtn" onclick="openNouveauPartenaire('mecene')">+ Mécène</button>
-    </div>
-  `);
-};
-
-window.openNouveauPartenaire = function(type){
-  openModal("Nouveau partenaire — " + type, `
-    <div class="box">
-      <strong>Fiche partenaire unique</strong><br>
-      À remplir une seule fois. Bo’CitéArt utilisera ensuite ces données pour générer automatiquement les documents, accès, journaux et relances.
-    </div>
-
-    <div class="box">
-      <strong>Identité</strong><br>
-      Nom / structure<br>
-      Ville<br>
-      Adresse<br>
-      Code postal<br>
-      Téléphone<br>
-      E-mail principal
-    </div>
-
-    <div class="box">
-      <strong>Responsable principal</strong><br>
-      Nom<br>
-      Prénom<br>
-      Fonction<br>
-      Téléphone<br>
-      E-mail
-    </div>
-
-    <div class="box">
-      <strong>Comptabilité</strong><br>
-      SIRET / identifiant<br>
-      TVA si applicable<br>
-      Mode de paiement<br>
-      Délai de paiement<br>
-      Référence comptable / Chorus Pro si mairie
-    </div>
-
-    <div class="box">
-      <strong>Contrat & accès</strong><br>
-      Services retenus<br>
-      Options choisies<br>
-      Date de début<br>
-      Durée<br>
-      Gestionnaire principal<br>
-      Accès délégués autorisés
-    </div>
-
-    <div class="choiceGrid">
-      <button class="choiceBtn" onclick="alert('Démo : partenaire enregistré')">Enregistrer</button>
-      <button class="choiceBtn" onclick="alert('Démo : devis généré')">Créer devis</button>
-      <button class="choiceBtn" onclick="alert('Démo : contrat généré')">Créer contrat</button>
-      <button class="choiceBtn" onclick="alert('Démo : compte partenaire créé')">Créer accès</button>
-      <button class="choiceBtn" onclick="alert('Démo : dossier documentaire créé')">Créer dossier</button>
-    </div>
-
-    <div class="box">
-      <strong>Automatisation prévue</strong><br>
-      Après validation : client créé • contrat préparé • devis généré • compte ouvert • journal initialisé • documents archivés • relances prêtes • exports comptables préparés.
-    </div>
-  `);
+  openModal("Paramètres privés", `<div class="box"><strong>Réglages</strong><br>TVA • relances • modèles mails • modèles factures • publicités • bocitecoins • sécurité • profils.</div>`);
 };
       
 const adminTile = $("adminTile");
