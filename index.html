@@ -6626,14 +6626,20 @@ window.openPilotagePrive = function(){
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="openCentrePilotage()">Centre de pilotage</button>
-      <button class="choiceBtn" onclick="openTresorerieIA()">Prévision trésorerie</button>
-      <button class="choiceBtn" onclick="openAnomaliesIA()">Anomalies IA</button>
-      <button class="choiceBtn" onclick="openCoffreFortDoc()">Coffre-fort documentaire</button>
-      <button class="choiceBtn" onclick="openHistoriqueClient()">Historique client</button>
-      <button class="choiceBtn" onclick="openAuditAuto()">Audit automatique</button>
-      <button class="choiceBtn" onclick="openSanteBociteart()">Santé Bo’CitéArt</button>
-    </div>
+     <button class="choiceBtn" onclick="openCentrePilotage()">Centre de pilotage IA</button>
+<button class="choiceBtn" onclick="openPrioritesIA()">Priorités du jour</button>
+<button class="choiceBtn" onclick="openTresorerieIA()">Prévision trésorerie</button>
+<button class="choiceBtn" onclick="openAnomaliesIA()">Anomalies IA</button>
+<button class="choiceBtn" onclick="openNotificationsPrivees()">Notifications</button>
+<button class="choiceBtn" onclick="openJournalActivite()">Journal activité</button>
+<button class="choiceBtn" onclick="openCoffreFortDoc()">Coffre-fort documentaire</button>
+<button class="choiceBtn" onclick="openHistoriqueClient()">Historique client</button>
+<button class="choiceBtn" onclick="openContratsBoCiteArt()">Contrats</button>
+<button class="choiceBtn" onclick="openLicencesVilles()">Licences villes</button>
+<button class="choiceBtn" onclick="openEtatSysteme()">État système</button>
+<button class="choiceBtn" onclick="openParametresBociteart()">Paramètres</button>
+<button class="choiceBtn" onclick="openAuditAuto()">Audit automatique</button>
+<button class="choiceBtn" onclick="openSanteBociteart()">Santé Bo’CitéArt</button>
   `);
 };
 
@@ -6744,6 +6750,84 @@ window.openSanteBociteart = function(){
       <button class="choiceBtn" onclick="alert('Démo : bloquer immédiatement')">Bloquer</button>
       <button class="choiceBtn" onclick="alert('Démo : révoquer un utilisateur')">Révoquer</button>
       <button class="choiceBtn" onclick="alert('Démo : journal des actions')">Journal</button>
+    </div>
+  `);
+};
+      window.openPrioritesIA = function(){
+  openModal("Priorités du jour — IA", `
+    <div class="box">
+      <strong>À traiter aujourd’hui</strong><br>
+      2 paiements à régulariser • 1 devis à relancer • TVA prête • 1 publicité à vérifier • 2 mécènes à remercier.
+    </div>
+    <div class="box">
+      <strong>IA</strong><br>
+      L’IA classe les urgences, évite les oublis et remonte uniquement ce qui nécessite une action.
+    </div>
+  `);
+};
+
+window.openNotificationsPrivees = function(){
+  openModal("Notifications privées", `
+    <div class="box">
+      <strong>Centre d’alertes</strong><br>
+      Paiement refusé • facture envoyée • relance faite • sauvegarde terminée • anomalie détectée • dossier comptable prêt.
+    </div>
+  `);
+};
+
+window.openJournalActivite = function(){
+  openModal("Journal d’activité", `
+    <div class="box">
+      <strong>Traçabilité générale</strong><br>
+      09h10 — Commerce — publicité validée<br>
+      10h20 — Mairie — facture générée<br>
+      11h05 — Association — document ajouté<br>
+      14h30 — IA — anomalie détectée
+    </div>
+  `);
+};
+
+window.openContratsBoCiteArt = function(){
+  openModal("Contrats Bo’CitéArt", `
+    <div class="box">
+      <strong>Contrats suivis</strong><br>
+      Contrat mairie • commerçant • association • sport • école • mécène • avenants • renouvellements • signatures.
+    </div>
+  `);
+};
+
+window.openLicencesVilles = function(){
+  openModal("Licences villes", `
+    <div class="box">
+      <strong>Suivi par ville</strong><br>
+      Ville • date début • date fin • renouvellement • licence active • facturation • historique.
+    </div>
+  `);
+};
+
+window.openEtatSysteme = function(){
+  openModal("État du système", `
+    <div class="box">
+      <strong>Contrôle technique</strong><br>
+      Serveur : OK<br>
+      Paiements : OK<br>
+      Factures : OK<br>
+      E-mails : OK<br>
+      Sauvegardes : OK<br>
+      Exports : OK<br>
+      IA : OK
+    </div>
+  `);
+};
+
+window.openParametresBociteart = function(){
+  openModal("Paramètres Bo’CitéArt", `
+    <div class="box">
+      <strong>Réglages privés</strong><br>
+      TVA • délais relance • modèles mails • modèles factures • règles publicités • règles bocitecoins • profils • sécurité.
+    </div>
+    <div class="box">
+      Ces paramètres restent privés et ne doivent pas être visibles par les utilisateurs publics.
     </div>
   `);
 };
