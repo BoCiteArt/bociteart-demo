@@ -6948,6 +6948,84 @@ window.openSanteBociteart = function(){
     </div>
   `);
 };
+      window.openPartenairesPrives = function(){
+  openModal("Partenaires Bo’CitéArt", `
+    <div class="box">
+      <strong>Module privé fondateur</strong><br>
+      Création d’un partenaire : mairie, commerce, association, école, sport, mécène ou citoyen.
+      Une seule fiche alimente ensuite les contrats, devis, factures, accès, documents, relances et exports.
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="openNouveauPartenaire('mairie')">+ Mairie</button>
+      <button class="choiceBtn" onclick="openNouveauPartenaire('commerce')">+ Commerce</button>
+      <button class="choiceBtn" onclick="openNouveauPartenaire('association')">+ Association</button>
+      <button class="choiceBtn" onclick="openNouveauPartenaire('sport')">+ Sport</button>
+      <button class="choiceBtn" onclick="openNouveauPartenaire('ecole')">+ École</button>
+      <button class="choiceBtn" onclick="openNouveauPartenaire('mecene')">+ Mécène</button>
+    </div>
+  `);
+};
+
+window.openNouveauPartenaire = function(type){
+  openModal("Nouveau partenaire — " + type, `
+    <div class="box">
+      <strong>Fiche partenaire unique</strong><br>
+      À remplir une seule fois. Bo’CitéArt utilisera ensuite ces données pour générer automatiquement les documents, accès, journaux et relances.
+    </div>
+
+    <div class="box">
+      <strong>Identité</strong><br>
+      Nom / structure<br>
+      Ville<br>
+      Adresse<br>
+      Code postal<br>
+      Téléphone<br>
+      E-mail principal
+    </div>
+
+    <div class="box">
+      <strong>Responsable principal</strong><br>
+      Nom<br>
+      Prénom<br>
+      Fonction<br>
+      Téléphone<br>
+      E-mail
+    </div>
+
+    <div class="box">
+      <strong>Comptabilité</strong><br>
+      SIRET / identifiant<br>
+      TVA si applicable<br>
+      Mode de paiement<br>
+      Délai de paiement<br>
+      Référence comptable / Chorus Pro si mairie
+    </div>
+
+    <div class="box">
+      <strong>Contrat & accès</strong><br>
+      Services retenus<br>
+      Options choisies<br>
+      Date de début<br>
+      Durée<br>
+      Gestionnaire principal<br>
+      Accès délégués autorisés
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="alert('Démo : partenaire enregistré')">Enregistrer</button>
+      <button class="choiceBtn" onclick="alert('Démo : devis généré')">Créer devis</button>
+      <button class="choiceBtn" onclick="alert('Démo : contrat généré')">Créer contrat</button>
+      <button class="choiceBtn" onclick="alert('Démo : compte partenaire créé')">Créer accès</button>
+      <button class="choiceBtn" onclick="alert('Démo : dossier documentaire créé')">Créer dossier</button>
+    </div>
+
+    <div class="box">
+      <strong>Automatisation prévue</strong><br>
+      Après validation : client créé • contrat préparé • devis généré • compte ouvert • journal initialisé • documents archivés • relances prêtes • exports comptables préparés.
+    </div>
+  `);
+};
       
 const adminTile = $("adminTile");
 on(adminTile, "click", ()=>{
