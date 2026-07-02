@@ -6696,6 +6696,36 @@ window.openNouveauProspect = function(){
 };
 
 window.openVillesLicences = function(){
+  const demo = typeof getDemoCity === "function" ? getDemoCity() : null;
+
+  if(demo && demo.mode === "DEMO"){
+    openModal("Villes / Licences — Mode démonstration", `
+      <div class="box">
+        <strong>Ville de démonstration active</strong><br>
+        ${demo.titre}<br>
+        ${demo.habitants} habitants<br>
+        Données fictives séparées de la production.
+      </div>
+
+      <div class="box">
+        <strong>Licence simulée</strong><br>
+        Licence annuelle mairie : active<br>
+        Contrat : généré<br>
+        Facture : simulée<br>
+        Paiement : fictif validé<br>
+        Déploiement : prêt
+      </div>
+
+      <div class="choiceGrid">
+        <button class="choiceBtn" onclick="openDeploiementVille()">Déploiement ville</button>
+        <button class="choiceBtn" onclick="openParametresVille()">Paramètres ville</button>
+        <button class="choiceBtn" onclick="openComptaVille('DEMO')">Comptabilité démo</button>
+        <button class="choiceBtn" onclick="alert('Démo : dossier transition élu généré')">Transition élu</button>
+      </div>
+    `);
+    return;
+  }
+
   openModal("Villes / Licences", `
     <div class="box">
       <strong>Licence mairie</strong><br>
