@@ -6955,10 +6955,10 @@ window.openModeDemonstration = function(){
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="genererDemoVille('petite')">Petite commune</button>
-      <button class="choiceBtn" onclick="genererDemoVille('moyenne')">Ville moyenne</button>
-      <button class="choiceBtn" onclick="genererDemoVille('grande')">Grande ville</button>
-      <button class="choiceBtn" onclick="genererDemoVille('perso')">Personnalisée</button>
+      <button class="choiceBtn" onclick="genererDemoVille('pilote')">Ville pilote<br><small>15 000 habitants</small></button>
+      <button class="choiceBtn" onclick="genererDemoVille('moyenne')">Ville moyenne<br><small>35 000 habitants</small></button>
+      <button class="choiceBtn" onclick="genererDemoVille('grande')">Grande ville<br><small>100 000 habitants</small></button>
+      <button class="choiceBtn" onclick="genererDemoVille('perso')">Configuration<br>personnalisée</button>
       <button class="choiceBtn" onclick="alert('Démo : mode élu activé')">Présentation élu</button>
       <button class="choiceBtn" onclick="resetDemoVille()">Effacer démonstration</button>
     </div>
@@ -6968,6 +6968,117 @@ window.openModeDemonstration = function(){
       Mode démonstration — données fictives générées pour illustrer le fonctionnement de Bo’CitéArt.
     </div>
   `);
+};
+
+window.genererDemoVille = function(type){
+  const demos = {
+    pilote: {
+      titre: "Ville pilote",
+      habitants: "15 000",
+      quartiers: 6,
+      commerces: 120,
+      associations: 25,
+      clubs: 12,
+      ecoles: 6,
+      sante: 45,
+      fresques: 6,
+      temps: "2,4 secondes"
+    },
+    moyenne: {
+      titre: "Ville moyenne",
+      habitants: "35 000",
+      quartiers: 10,
+      commerces: 320,
+      associations: 55,
+      clubs: 22,
+      ecoles: 12,
+      sante: 90,
+      fresques: 10,
+      temps: "2,8 secondes"
+    },
+    grande: {
+      titre: "Grande ville",
+      habitants: "100 000",
+      quartiers: 18,
+      commerces: 900,
+      associations: 150,
+      clubs: 60,
+      ecoles: 30,
+      sante: 250,
+      fresques: 20,
+      temps: "3,2 secondes"
+    },
+    perso: {
+      titre: "Configuration personnalisée",
+      habitants: "à définir",
+      quartiers: "à définir",
+      commerces: "à définir",
+      associations: "à définir",
+      clubs: "à définir",
+      ecoles: "à définir",
+      sante: "à définir",
+      fresques: "à définir",
+      temps: "selon configuration"
+    }
+  };
+
+  const d = demos[type] || demos.pilote;
+
+  openModal("Préparation de la démonstration", `
+    <div class="box">
+      <strong>Préparation de la démonstration...</strong><br><br>
+      ✓ Analyse de la commune<br>
+      ✓ Configuration des quartiers<br>
+      ✓ Création des commerces<br>
+      ✓ Création des associations<br>
+      ✓ Création des écoles<br>
+      ✓ Création des clubs sportifs<br>
+      ✓ Création des professionnels de santé<br>
+      ✓ Configuration des services municipaux<br>
+      ✓ Génération des QR Codes<br>
+      ✓ Préparation des statistiques<br>
+      ✓ Initialisation terminée
+    </div>
+
+    <div class="box">
+      <strong>Mode démonstration</strong><br>
+      Données fictives générées uniquement pour illustrer le fonctionnement de Bo’CitéArt.
+    </div>
+  `);
+
+  setTimeout(function(){
+    openModal("Votre commune est prête", `
+      <div class="box">
+        <strong>${d.titre}</strong><br>
+        ${d.habitants} habitants
+      </div>
+
+      <div class="box">
+        ${d.commerces} commerces<br>
+        ${d.associations} associations<br>
+        ${d.clubs} clubs sportifs<br>
+        ${d.sante} professionnels de santé<br>
+        ${d.ecoles} écoles<br>
+        ${d.quartiers} quartiers<br>
+        ${d.fresques} fresques
+      </div>
+
+      <div class="box">
+        <strong>Simulation 12 mois</strong><br>
+        Téléchargements • utilisateurs actifs • QR scannés • partenaires actifs • publicités • bocitecoins distribués • événements consultés.
+      </div>
+
+      <div class="box">
+        <strong>Temps de préparation :</strong><br>
+        ${d.temps}
+      </div>
+
+      <div class="box">
+        <strong>Votre commune est prête.</strong><br>
+        Découvrez maintenant ce que Bo’CitéArt peut apporter à votre territoire.
+      </div>
+    `);
+  }, 2000);
 };
 
 window.genererDemoVille = function(type){
