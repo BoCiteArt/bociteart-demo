@@ -7148,18 +7148,179 @@ window.buildDemoDatabase = function(demo){
 
 }
 
-    for(let i=1;i<=demo.commerces;i++){
+  const types = [
+ "Boulangerie",
+ "Pharmacie",
+ "Boucherie",
+ "Poissonnerie",
+ "Primeur",
+ "Fleuriste",
+ "Garage",
+ "Coiffeur",
+ "Institut de beauté",
+ "Restaurant",
+ "Pizzeria",
+ "Brasserie",
+ "Librairie",
+ "Papeterie",
+ "Opticien",
+ "Bijouterie",
+ "Pressing",
+ "Cordonnerie",
+ "Électricien",
+ "Plombier",
+ "Menuisier",
+ "Peintre",
+ "Agence immobilière",
+ "Assurance",
+ "Banque",
+ "Café",
+ "Salon de thé",
+ "Pâtisserie",
+ "Fromagerie",
+ "Caviste"
+];
 
-        window.demoDatabase.commerces.push({
-            id:i,
-            nom:"Commerce "+i,
-            categorie:"Commerce local",
-            quartier:((i-1)%demo.quartiers)+1,
-            actif:true
-        });
+const rues = [
+ "du Centre",
+ "de la Gare",
+ "de la République",
+ "Victor Hugo",
+ "Jean Jaurès",
+ "du Parc",
+ "des Écoles",
+ "des Acacias",
+ "des Tilleuls",
+ "Saint-Martin",
+ "Pasteur",
+ "Carnot",
+ "Faidherbe",
+ "du Moulin",
+ "de Lille"
+];
 
-    }
+const types = [
+ "Boulangerie",
+ "Pharmacie",
+ "Boucherie",
+ "Poissonnerie",
+ "Primeur",
+ "Fleuriste",
+ "Garage",
+ "Coiffeur",
+ "Institut de beauté",
+ "Restaurant",
+ "Pizzeria",
+ "Brasserie",
+ "Librairie",
+ "Papeterie",
+ "Opticien",
+ "Bijouterie",
+ "Pressing",
+ "Cordonnerie",
+ "Électricien",
+ "Plombier",
+ "Menuisier",
+ "Peintre",
+ "Agence immobilière",
+ "Assurance",
+ "Banque",
+ "Café",
+ "Salon de thé",
+ "Pâtisserie",
+ "Fromagerie",
+ "Caviste"
+];
 
+const rues = [
+ "du Centre",
+ "de la Gare",
+ "de la République",
+ "Victor Hugo",
+ "Jean Jaurès",
+ "du Parc",
+ "des Écoles",
+ "des Acacias",
+ "des Tilleuls",
+ "Saint-Martin",
+ "Pasteur",
+ "Carnot",
+ "Faidherbe",
+ "du Moulin",
+ "de Lille"
+];
+
+const types = [
+ "Boulangerie",
+ "Pharmacie",
+ "Boucherie",
+ "Poissonnerie",
+ "Primeur",
+ "Fleuriste",
+ "Garage",
+ "Coiffeur",
+ "Institut de beauté",
+ "Restaurant",
+ "Pizzeria",
+ "Brasserie",
+ "Librairie",
+ "Papeterie",
+ "Opticien",
+ "Bijouterie",
+ "Pressing",
+ "Cordonnerie",
+ "Électricien",
+ "Plombier",
+ "Menuisier",
+ "Peintre",
+ "Agence immobilière",
+ "Assurance",
+ "Banque",
+ "Café",
+ "Salon de thé",
+ "Pâtisserie",
+ "Fromagerie",
+ "Caviste"
+];
+
+const rues = [
+ "du Centre",
+ "de la Gare",
+ "de la République",
+ "Victor Hugo",
+ "Jean Jaurès",
+ "du Parc",
+ "des Écoles",
+ "des Acacias",
+ "des Tilleuls",
+ "Saint-Martin",
+ "Pasteur",
+ "Carnot",
+ "Faidherbe",
+ "du Moulin",
+ "de Lille"
+];
+
+for(let i=1;i<=demo.commerces;i++){
+
+    const type = types[(i-1)%types.length];
+    const rue = rues[(i-1)%rues.length];
+
+    window.demoDatabase.commerces.push({
+
+        id:i,
+
+        nom:type + " " + rue,
+
+        categorie:type,
+
+        quartier:((i-1)%demo.quartiers)+1,
+
+        actif:true
+
+    });
+
+}
     for(let i=1;i<=demo.associations;i++){
 
         window.demoDatabase.associations.push({
