@@ -7089,6 +7089,115 @@ window.getDemoCity = function(){
 window.saveDemoCity = function(city){
   localStorage.setItem(window.BOC_DEMO_KEY, JSON.stringify(city));
 };
+   window.demoDatabase = {
+    quartiers: [],
+    commerces: [],
+    associations: [],
+    clubs: [],
+    ecoles: [],
+    sante: [],
+    fresques: [],
+    publicites: [],
+    statistiques: {}
+};
+
+window.buildDemoDatabase = function(demo){
+
+    window.demoDatabase.quartiers = [];
+    window.demoDatabase.commerces = [];
+    window.demoDatabase.associations = [];
+    window.demoDatabase.clubs = [];
+    window.demoDatabase.ecoles = [];
+    window.demoDatabase.sante = [];
+    window.demoDatabase.fresques = [];
+    window.demoDatabase.publicites = [];
+
+    for(let i=1;i<=demo.quartiers;i++){
+
+        window.demoDatabase.quartiers.push({
+            id:i,
+            nom:"Quartier "+i
+        });
+
+    }
+
+    for(let i=1;i<=demo.commerces;i++){
+
+        window.demoDatabase.commerces.push({
+            id:i,
+            nom:"Commerce "+i,
+            categorie:"Commerce local",
+            quartier:(i%demo.quartiers)+1
+        });
+
+    }
+
+    for(let i=1;i<=demo.associations;i++){
+
+        window.demoDatabase.associations.push({
+            id:i,
+            nom:"Association "+i
+        });
+
+    }
+
+    for(let i=1;i<=demo.clubs;i++){
+
+        window.demoDatabase.clubs.push({
+            id:i,
+            nom:"Club sportif "+i
+        });
+
+    }
+
+    for(let i=1;i<=demo.ecoles;i++){
+
+        window.demoDatabase.ecoles.push({
+            id:i,
+            nom:"École "+i
+        });
+
+    }
+
+    for(let i=1;i<=demo.sante;i++){
+
+        window.demoDatabase.sante.push({
+            id:i,
+            nom:"Professionnel santé "+i
+        });
+
+    }
+
+    for(let i=1;i<=demo.fresques;i++){
+
+        window.demoDatabase.fresques.push({
+            id:i,
+            nom:"Fresque "+i
+        });
+
+    }
+
+    window.demoDatabase.statistiques = {
+
+        habitants:demo.habitants,
+
+        commerces:demo.commerces,
+
+        associations:demo.associations,
+
+        clubs:demo.clubs,
+
+        ecoles:demo.ecoles,
+
+        sante:demo.sante,
+
+        quartiers:demo.quartiers,
+
+        fresques:demo.fresques
+
+    };
+
+};   
 
 window.openModeDemonstration = function(){
   openModal("Mode démonstration", `
@@ -7134,6 +7243,7 @@ window.genererDemoVille = function(type){
     createdAt:new Date().toLocaleString("fr-FR"),
     ...d
   });
+  buildDemoDatabase(d);
 
   openModal("Préparation de la démonstration", `
     <div class="box">
