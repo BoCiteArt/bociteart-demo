@@ -6585,6 +6585,46 @@ window.openComptaBoCiteArt = function(){
 };
 
 window.openTableauMatin = function(){
+  const demo = typeof getDemoCity === "function" ? getDemoCity() : null;
+
+  if(demo && demo.mode === "DEMO"){
+    openModal("Tableau du matin — Mode démonstration", `
+      <div class="box">
+        <strong>Mode démonstration actif</strong><br>
+        ${demo.titre}<br>
+        ${demo.habitants} habitants<br>
+        Créée le : ${demo.createdAt}
+      </div>
+
+      <div class="box">
+        <strong>Ville simulée</strong><br>
+        ${demo.quartiers} quartiers<br>
+        ${demo.commerces} commerces<br>
+        ${demo.associations} associations<br>
+        ${demo.clubs} clubs sportifs<br>
+        ${demo.ecoles} écoles<br>
+        ${demo.sante} professionnels de santé<br>
+        ${demo.fresques} fresques
+      </div>
+
+      <div class="box">
+        <strong>Simulation 12 mois</strong><br>
+        ${demo.pubs} publicités diffusées<br>
+        ${demo.coins} bocitecoins distribués<br>
+        ${demo.scans} QR codes scannés
+      </div>
+
+      <div class="box">
+        <strong>À traiter aujourd’hui</strong><br>
+        4 fiches partenaires à compléter<br>
+        2 commerces à relancer<br>
+        1 association à valider<br>
+        Sauvegarde démo : OK
+      </div>
+    `);
+    return;
+  }
+
   openModal("Tableau du matin", `
     <div class="box">
       <strong>À traiter aujourd’hui</strong><br>
