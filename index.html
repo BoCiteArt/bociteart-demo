@@ -4643,10 +4643,9 @@ if(key === "ecole"){
 } 
  });
 });  
-          
+
   window.__bociteartOpenByKey = function(key){
     
-
 if(key === "sport"){
   window.openSportPanel = function(){
     const openSport = ()=>{
@@ -6153,6 +6152,8 @@ if(key === "commerces") {
    <div style="font-weight:900;margin-top:12px;">Commerces partenaires</div>
 <div class="box">
   <div id="demoCommercesList" style="margin-top:12px;display:grid;gap:8px;">
+  ${renderDemoCommercesPartenaires()}
+</div>
     <div class="muted">Chargement des commerces partenaires...</div>
   </div>
 </div>
@@ -7141,17 +7142,14 @@ window.buildDemoDatabase = function(demo){
     window.demoDatabase.fresques = [];
     window.demoDatabase.publicites = [];
 
-    for(let i=1;i<=demo.quartiers;i++){
+ for(let i=1;i<=demo.quartiers;i++){
 
-       window.demoDatabase.commerces.push({
-  id:i,
-  nom:"Commerce "+i,
-  categorie:"Commerce local",
-  quartier:((i-1)%demo.quartiers)+1,
-  actif:true
-});
+   window.demoDatabase.quartiers.push({
+      id:i,
+      nom:"Quartier "+i
+   });
 
-    }
+}
 
     for(let i=1;i<=demo.commerces;i++){
 
@@ -7159,7 +7157,8 @@ window.buildDemoDatabase = function(demo){
             id:i,
             nom:"Commerce "+i,
             categorie:"Commerce local",
-            quartier:(i%demo.quartiers)+1
+            quartier:((i-1)%demo.quartiers)+1,
+            actif:true
         });
 
     }
