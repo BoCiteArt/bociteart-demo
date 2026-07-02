@@ -6150,15 +6150,12 @@ if(key === "commerces") {
       </div>
     </div>
 
-    <div style="font-weight:900;margin-top:12px;">Commerces partenaires</div>
-    <div class="box">
-      <div style="margin-top:12px;display:grid;gap:8px;">
-        <div style="font-weight:800;">Boulangerie Croquet Alex <span class="muted">• bronze</span></div>
-        <div style="font-weight:800;">Pharmacie Richardson <span class="muted">• argent</span></div>
-        <div style="font-weight:800;">Anaïs Fleurs <span class="muted">• or</span></div>
-        <div style="font-weight:800;">Garage Planque <span class="muted">• trophée</span></div>
-      </div>
-    </div>
+   <div style="font-weight:900;margin-top:12px;">Commerces partenaires</div>
+<div class="box">
+  <div id="demoCommercesList" style="margin-top:12px;display:grid;gap:8px;">
+    <div class="muted">Chargement des commerces partenaires...</div>
+  </div>
+</div>
 
     <div class="box" style="margin-top:12px;">
       <div style="font-weight:900;">Accès interne commerce</div>
@@ -6230,6 +6227,32 @@ if(key === "commerces") {
   setTimeout(()=>{
     const toggleCommerceAdminBtn = $("toggleCommerceAdminBtn");
     const commerceAdminPanel = $("commerceAdminPanel");
+    const demoCommercesList = $("demoCommercesList");
+
+if(demoCommercesList){
+  const demo = typeof getDemoCity === "function" ? getDemoCity() : null;
+  const db = window.demoDatabase || null;
+
+  if(demo && demo.mode === "DEMO" && db && Array.isArray(db.commerces) && db.commerces.length){
+    demoCommercesList.innerHTML = db.commerces.slice(0, 20).map(c => `
+      <div style="font-weight:800;">
+        ${escapeHtml(c.nom || "Commerce")}
+        <span class="muted">• quartier ${escapeHtml(String(c.quartier || ""))}</span>
+      </div>
+    `).join("") + `
+      <div class="muted" style="margin-top:8px;">
+        Affichage de 20 commerces sur ${db.commerces.length} partenaires générés pour la démonstration.
+      </div>
+    `;
+  } else {
+    demoCommercesList.innerHTML = `
+      <div style="font-weight:800;">Boulangerie Croquet Alex <span class="muted">• bronze</span></div>
+      <div style="font-weight:800;">Pharmacie Richardson <span class="muted">• argent</span></div>
+      <div style="font-weight:800;">Anaïs Fleurs <span class="muted">• or</span></div>
+      <div style="font-weight:800;">Garage Planque <span class="muted">• trophée</span></div>
+    `;
+  }
+}
 
     if(toggleCommerceAdminBtn && commerceAdminPanel){
       toggleCommerceAdminBtn.onclick = ()=>{
@@ -7114,10 +7137,13 @@ window.buildDemoDatabase = function(demo){
 
     for(let i=1;i<=demo.quartiers;i++){
 
-        window.demoDatabase.quartiers.push({
-            id:i,
-            nom:"Quartier "+i
-        });
+       window.demoDatabase.commerces.push({
+  id:i,
+  nom:"Commerce "+i,
+  categorie:"Commerce local",
+  quartier:((i-1)%demo.quartiers)+1,
+  actif:true
+});
 
     }
 
