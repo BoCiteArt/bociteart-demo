@@ -6747,6 +6747,74 @@ window.openVillesLicences = function(){
 };
 
 window.openDeploiementVille = function(){
+
+  const demo = typeof getDemoCity==="function" ? getDemoCity() : null;
+
+  if(demo && demo.mode==="DEMO"){
+
+    openModal("Déploiement automatique — Mode démonstration",`
+
+      <div class="box">
+        <strong>${demo.titre}</strong><br>
+        ${demo.habitants} habitants<br>
+        Déploiement simulé entièrement par l'IA.
+      </div>
+
+      <div class="box">
+        <strong>Progression</strong><br>
+
+        ✔ Ville créée<br>
+        ✔ Quartiers configurés (${demo.quartiers})<br>
+        ✔ Commerces importés (${demo.commerces})<br>
+        ✔ Associations créées (${demo.associations})<br>
+        ✔ Clubs sportifs créés (${demo.clubs})<br>
+        ✔ Écoles créées (${demo.ecoles})<br>
+        ✔ Professionnels de santé (${demo.sante})<br>
+        ✔ Fresques (${demo.fresques})<br>
+        ✔ QR Codes générés<br>
+        ✔ Publicités prêtes<br>
+        ✔ BocitéCoins initialisés
+      </div>
+
+      <div class="box">
+        <strong>Temps estimé</strong><br>
+
+        Préparation de la commune : 2 minutes<br>
+        Validation mairie : immédiate<br>
+        Activation partenaires : progressive<br>
+        Mise en ligne : prête
+      </div>
+
+      <div class="choiceGrid">
+
+        <button class="choiceBtn"
+        onclick="openParametresVille()">
+        Paramètres
+        </button>
+
+        <button class="choiceBtn"
+        onclick="openProspectsPartenaires()">
+        Partenaires
+        </button>
+
+        <button class="choiceBtn"
+        onclick="openSanteVille()">
+        Santé
+        </button>
+
+        <button class="choiceBtn"
+        onclick="openComptaVille('DEMO')">
+        Comptabilité
+        </button>
+
+      </div>
+
+    `);
+
+    return;
+
+  }
+
   openModal("Déploiement automatique d’une ville", `
     <div class="box">
       <strong>Après signature mairie</strong><br>
@@ -6760,21 +6828,12 @@ window.openDeploiementVille = function(){
 
     <div class="box">
       <strong>Parcours partenaire</strong><br>
-      Fiche préparée → revendication → complément en 2 minutes → signature → QR généré → publication → suivi annuel.
+      Fiche préparée → revendication → complément → signature → QR généré → publication.
     </div>
 
-    <div class="box">
-      <strong>Centre de déploiement</strong><br>
-      Commerces : 67 %<br>
-      Santé : 51 %<br>
-      Associations : 82 %<br>
-      Sport : 46 %<br>
-      Communication habitants : en cours<br>
-      IA : surveillance active
-    </div>
   `);
-};
 
+};
 window.openParametresVille = function(){
   openModal("Paramètres de la ville", `
     <div class="box">
