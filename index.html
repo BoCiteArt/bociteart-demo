@@ -7060,27 +7060,6 @@ window.resetDemoVille = function(){
   alert("Démo effacée. Les données fictives sont remises à zéro sans toucher à la production.");
 };
 
-  openModal("Ville fictive générée", `
-    <div class="box">
-      <strong>Mode démonstration actif</strong><br>
-      ${data[type] || data.petite}
-    </div>
-
-    <div class="box">
-      <strong>Simulation 12 mois</strong><br>
-      Téléchargements • utilisateurs actifs • QR scannés • partenaires actifs • publicités • bocitecoins distribués • événements consultés.
-    </div>
-
-    <div class="box">
-      <strong>Important</strong><br>
-      Ces données sont fictives et ne doivent jamais être mélangées avec la production.
-    </div>
-  `);
-};
-
-window.resetDemoVille = function(){
-  alert("Démo effacée. Les données fictives sont remises à zéro sans toucher à la production.");
-};
 window.openAdminSection = function(type){
   const contenus = {
     roles: "Fondateur • mairie • commerçant • association • sport • école • citoyen • mécène.",
