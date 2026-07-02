@@ -6947,6 +6947,20 @@ window.openParametresBociteart = function(){
   `);
 };
       
+window.BOC_DEMO_KEY = "bociteart_demo_city_v1";
+
+window.getDemoCity = function(){
+  try{
+    return JSON.parse(localStorage.getItem(window.BOC_DEMO_KEY) || "null");
+  }catch(e){
+    return null;
+  }
+};
+
+window.saveDemoCity = function(city){
+  localStorage.setItem(window.BOC_DEMO_KEY, JSON.stringify(city));
+};
+
 window.openModeDemonstration = function(){
   openModal("Mode démonstration", `
     <div class="box">
@@ -6954,8 +6968,14 @@ window.openModeDemonstration = function(){
       Données fictives séparées de la production. Aucun vrai paiement, aucune vraie facture, aucun vrai partenaire.
     </div>
 
+    <div class="box">
+      Choisissez le profil de commune à simuler. Bo’CitéArt prépare automatiquement une démonstration adaptée à la taille de la collectivité.
+    </div>
+
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="genererDemoVille('pilote')">Ville pilote<br><small>15 000 habitants</small></button>
+      <button class="choiceBtn" style="border:3px solid var(--green);" onclick="genererDemoVille('pilote')">
+        Démonstration mairie<br><small>15 000 habitants</small>
+      </button>
       <button class="choiceBtn" onclick="genererDemoVille('moyenne')">Ville moyenne<br><small>35 000 habitants</small></button>
       <button class="choiceBtn" onclick="genererDemoVille('grande')">Grande ville<br><small>100 000 habitants</small></button>
       <button class="choiceBtn" onclick="genererDemoVille('perso')">Configuration<br>personnalisée</button>
@@ -6972,57 +6992,19 @@ window.openModeDemonstration = function(){
 
 window.genererDemoVille = function(type){
   const demos = {
-    pilote: {
-      titre: "Ville pilote",
-      habitants: "15 000",
-      quartiers: 6,
-      commerces: 120,
-      associations: 25,
-      clubs: 12,
-      ecoles: 6,
-      sante: 45,
-      fresques: 6,
-      temps: "2,4 secondes"
-    },
-    moyenne: {
-      titre: "Ville moyenne",
-      habitants: "35 000",
-      quartiers: 10,
-      commerces: 320,
-      associations: 55,
-      clubs: 22,
-      ecoles: 12,
-      sante: 90,
-      fresques: 10,
-      temps: "2,8 secondes"
-    },
-    grande: {
-      titre: "Grande ville",
-      habitants: "100 000",
-      quartiers: 18,
-      commerces: 900,
-      associations: 150,
-      clubs: 60,
-      ecoles: 30,
-      sante: 250,
-      fresques: 20,
-      temps: "3,2 secondes"
-    },
-    perso: {
-      titre: "Configuration personnalisée",
-      habitants: "à définir",
-      quartiers: "à définir",
-      commerces: "à définir",
-      associations: "à définir",
-      clubs: "à définir",
-      ecoles: "à définir",
-      sante: "à définir",
-      fresques: "à définir",
-      temps: "selon configuration"
-    }
+    pilote: { titre:"Démonstration mairie", habitants:15000, quartiers:6, commerces:120, associations:25, clubs:12, ecoles:6, sante:45, fresques:6, pubs:42, coins:18500, scans:2400 },
+    moyenne: { titre:"Ville moyenne", habitants:35000, quartiers:10, commerces:320, associations:55, clubs:22, ecoles:12, sante:90, fresques:10, pubs:95, coins:52000, scans:7600 },
+    grande: { titre:"Grande ville", habitants:100000, quartiers:18, commerces:900, associations:150, clubs:60, ecoles:30, sante:250, fresques:20, pubs:240, coins:160000, scans:24500 },
+    perso: { titre:"Configuration personnalisée", habitants:"à définir", quartiers:"à définir", commerces:"à définir", associations:"à définir", clubs:"à définir", ecoles:"à définir", sante:"à définir", fresques:"à définir", pubs:"à définir", coins:"à définir", scans:"à définir" }
   };
 
   const d = demos[type] || demos.pilote;
+  saveDemoCity({
+    mode:"DEMO",
+    type:type,
+    createdAt:new Date().toLocaleString("fr-FR"),
+    ...d
+  });
 
   openModal("Préparation de la démonstration", `
     <div class="box">
@@ -7038,11 +7020,6 @@ window.genererDemoVille = function(type){
       ✓ Génération des QR Codes<br>
       ✓ Préparation des statistiques<br>
       ✓ Initialisation terminée
-    </div>
-
-    <div class="box">
-      <strong>Mode démonstration</strong><br>
-      Données fictives générées uniquement pour illustrer le fonctionnement de Bo’CitéArt.
     </div>
   `);
 
@@ -7065,12 +7042,9 @@ window.genererDemoVille = function(type){
 
       <div class="box">
         <strong>Simulation 12 mois</strong><br>
-        Téléchargements • utilisateurs actifs • QR scannés • partenaires actifs • publicités • bocitecoins distribués • événements consultés.
-      </div>
-
-      <div class="box">
-        <strong>Temps de préparation :</strong><br>
-        ${d.temps}
+        ${d.pubs} publicités diffusées<br>
+        ${d.coins} bocitecoins distribués<br>
+        ${d.scans} QR codes scannés
       </div>
 
       <div class="box">
@@ -7081,13 +7055,10 @@ window.genererDemoVille = function(type){
   }, 2000);
 };
 
-window.genererDemoVille = function(type){
-  let data = {
-    petite: "3 500 habitants • 3 quartiers • 35 commerces • 5 associations • 3 clubs • 2 écoles • 10 pros santé • 2 fresques",
-    moyenne: "18 000 habitants • 8 quartiers • 180 commerces • 35 associations • 15 clubs • 8 écoles • 60 pros santé • 8 fresques",
-    grande: "120 000 habitants • 20 quartiers • 900 commerces • 140 associations • 70 clubs • 35 écoles • 250 pros santé • 25 fresques",
-    perso: "Ville personnalisée : paramètres modifiables selon le rendez-vous."
-  };
+window.resetDemoVille = function(){
+  localStorage.removeItem(window.BOC_DEMO_KEY);
+  alert("Démo effacée. Les données fictives sont remises à zéro sans toucher à la production.");
+};
 
   openModal("Ville fictive générée", `
     <div class="box">
