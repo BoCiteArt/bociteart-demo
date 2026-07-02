@@ -6608,9 +6608,15 @@ window.openComptaBoCiteArt = function(){
 };
 
 window.openTableauMatin = function(){
-  const demo = typeof getDemoCity === "function" ? getDemoCity() : null;
+ const demo = typeof getDemoCity === "function" ? getDemoCity() : null;
 
-  if(demo && demo.mode === "DEMO"){
+if(demo && demo.mode === "DEMO" && typeof buildDemoDatabase === "function"){
+  buildDemoDatabase(demo);
+}
+
+const db = window.demoDatabase || null;
+
+if(demo && demo.mode === "DEMO" && db && Array.isArray(db.commerces) && db.commerces.length){
     openModal("Tableau du matin — Mode démonstration", `
       <div class="box">
         <strong>Mode démonstration actif</strong><br>
