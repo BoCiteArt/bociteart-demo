@@ -6866,7 +6866,61 @@ window.openDeploiementVille = function(){
 
   }
 
-  openModal("Déploiement automatique d’une ville", `
+window.openDeploiementVille = function(){
+
+  const demo = typeof getDemoCity === "function" ? getDemoCity() : null;
+
+  if(demo && demo.mode === "DEMO"){
+
+    openModal("Assistant de déploiement", `
+
+      <div class="box">
+        <strong>Commune</strong><br>
+        ${demo.titre}<br>
+        ${demo.habitants} habitants
+      </div>
+
+      <div class="box">
+        <strong>État général</strong><br>
+        Déploiement : 82 %<br>
+        Statut : prêt pour validation mairie<br>
+        Mode : démonstration
+      </div>
+
+      <div class="box">
+        <strong>Progression</strong><br>
+        Quartiers : ${demo.quartiers} / ${demo.quartiers}<br>
+        Commerces : ${demo.commerces} / ${demo.commerces}<br>
+        Associations : ${demo.associations} / ${demo.associations}<br>
+        Clubs sportifs : ${demo.clubs} / ${demo.clubs}<br>
+        Écoles : ${demo.ecoles} / ${demo.ecoles}<br>
+        Professionnels de santé : ${demo.sante} / ${demo.sante}<br>
+        Fresques : ${demo.fresques} / ${demo.fresques}
+      </div>
+
+      <div class="box">
+        <strong>Contrôles</strong><br>
+        Licence créée<br>
+        Base de données générée<br>
+        QR Codes préparés<br>
+        Publicités prêtes<br>
+        BoCitéCoins initialisés<br>
+        Sauvegarde validée
+      </div>
+
+      <div class="choiceGrid">
+        <button class="choiceBtn" onclick="openParametresVille()">Configuration</button>
+        <button class="choiceBtn" onclick="openConformiteBociteart()">Contrôles</button>
+        <button class="choiceBtn" onclick="openTableauBordCommune()">Prévisualisation</button>
+        <button class="choiceBtn" onclick="alert('Démo : ville prête pour publication après validation mairie')">Publier la ville</button>
+      </div>
+
+    `);
+
+    return;
+  }
+
+  openModal("Assistant de déploiement", `
     <div class="box">
       <strong>Après signature mairie</strong><br>
       Création ville • licence • contrat • facture • personnalisation • invitations • annuaire local • suivi IA.
@@ -6881,7 +6935,6 @@ window.openDeploiementVille = function(){
       <strong>Parcours partenaire</strong><br>
       Fiche préparée → revendication → complément → signature → QR généré → publication.
     </div>
-
   `);
 
 };
