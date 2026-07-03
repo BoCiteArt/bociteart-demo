@@ -6979,22 +6979,56 @@ window.openRelancesBoCiteArt = function(){
 };
 
 window.openSanteVille = function(){
-  openModal("Santé & professionnels utiles", `
+
+  const demo = typeof getDemoCity==="function" ? getDemoCity() : null;
+
+  let contenu = `
     <div class="box">
       <strong>IA par ville</strong><br>
       Médecins • kinés • pharmacies • infirmiers • hôpitaux • laboratoires • défibrillateurs • numéros utiles.
     </div>
+  `;
 
-    <div class="box">
-      <strong>Principe</strong><br>
-      Bo’CitéArt prépare des fiches publiques. Les professionnels peuvent les revendiquer, les compléter ou les corriger.
-    </div>
+  if(demo && demo.mode==="DEMO"){
 
-    <div class="box">
-      <strong>Important</strong><br>
-      Bo’CitéArt affiche des informations pratiques publiques. Aucune donnée médicale des habitants n’est traitée.
-    </div>
-  `);
+    contenu += `
+      <div class="box">
+        <strong>Professionnels générés automatiquement</strong><br><br>
+
+        • 12 médecins généralistes<br>
+        • 6 pharmacies<br>
+        • 8 infirmiers<br>
+        • 6 kinésithérapeutes<br>
+        • 2 laboratoires<br>
+        • 1 hôpital<br>
+        • ${demo.sante} professionnels référencés<br>
+        • 18 défibrillateurs géolocalisés
+      </div>
+
+      <div class="box">
+        <strong>Mode démonstration</strong><br>
+        Les fiches sont générées automatiquement pour illustrer le fonctionnement de Bo'CitéArt.
+      </div>
+    `;
+
+  }else{
+
+    contenu += `
+      <div class="box">
+        <strong>Principe</strong><br>
+        Bo’CitéArt prépare des fiches publiques. Les professionnels peuvent les revendiquer, les compléter ou les corriger.
+      </div>
+
+      <div class="box">
+        <strong>Important</strong><br>
+        Bo’CitéArt affiche des informations pratiques publiques. Aucune donnée médicale des habitants n’est traitée.
+      </div>
+    `;
+
+  }
+
+  openModal("Santé & professionnels utiles", contenu);
+
 };
 
 window.openSauvegardesBociteart = function(){
