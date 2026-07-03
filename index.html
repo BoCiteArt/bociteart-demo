@@ -6643,93 +6643,159 @@ window.openTableauMatin = function(){
 
     openModal("Tableau du matin",`
 
-      <div class="box">
-        <strong>Synthèse du jour</strong><br>
-        Commune : ${demo.titre}<br>
-        Population : ${demo.habitants} habitants<br>
-        Tous les services sont opérationnels<br>
-        Dernière synchronisation : ${demo.createdAt}
-      </div>
+<div class="box">
+<strong>${demo.titre}</strong><br>
+${demo.habitants} habitants
 
-      <div class="box">
-        <strong>Actions prioritaires</strong><br>
-        2 partenaires à valider<br>
-        1 campagne publicitaire aujourd'hui<br>
-        3 fiches commerçants à compléter<br>
-        1 contrat en attente
-      </div>
+<hr>
 
-      <div class="box">
-        <strong>Activité des dernières 24 h</strong><br>
-        +2 commerces intégrés<br>
-        +1 association créée<br>
-        +5 QR codes générés<br>
-        +420 bocitecoins distribués
-      </div>
+<div style="display:flex;justify-content:space-between;">
+<div><strong>Services</strong><br>Opérationnels</div>
+<div><strong>Disponibilité</strong><br>99,9 %</div>
+<div><strong>Synchronisation</strong><br>Aujourd'hui</div>
+</div>
 
-      <div class="box">
-        <strong>Indicateurs clés</strong><br>
-        Commerces actifs : ${demo.commerces}<br>
-        Associations : ${demo.associations}<br>
-        Publicités actives : 12<br>
-        Disponibilité : 99,9 %
-      </div>
+</div>
 
-      <div class="box">
-        <strong>Agenda</strong><br>
-        Forum des associations<br>
-        Publication municipale<br>
-        Campagne commerçants<br>
-        Réunion mairie
-      </div>
+<div class="box">
 
-      <div class="choiceGrid">
+<strong>Actions prioritaires</strong>
 
-        <button class="choiceBtn"
-        onclick="openTableauBordCommune()">
-        Tableau de bord
-        </button>
+<div style="margin-top:10px">
 
-        <button class="choiceBtn"
-        onclick="openDeploiementVille()">
-        Déploiement
-        </button>
+<div style="display:flex;justify-content:space-between;">
+<span>Partenaires à valider</span>
+<strong>2</strong>
+</div>
 
-        <button class="choiceBtn"
-        onclick="openProspectsPartenaires()">
-        Partenaires
-        </button>
+<div style="display:flex;justify-content:space-between;">
+<span>Campagnes à lancer</span>
+<strong>1</strong>
+</div>
 
-        <button class="choiceBtn"
-        onclick="openComptaBoCiteArt()">
-        Centre Bo'CitéArt
-        </button>
+<div style="display:flex;justify-content:space-between;">
+<span>Fiches commerçants</span>
+<strong>3</strong>
+</div>
 
-      </div>
+<div style="display:flex;justify-content:space-between;">
+<span>Contrats</span>
+<strong>1</strong>
+</div>
 
-    `);
+</div>
 
-    return;
+</div>
 
-  }
+<div class="box">
 
-  openModal("Tableau du matin",`
+<strong>Activité des dernières 24 heures</strong>
 
-    <div class="box">
-      <strong>À traiter aujourd'hui</strong><br>
-      Relances • devis • contrats • licences • paiements • sauvegardes.
-    </div>
+<div style="margin-top:10px">
 
-    <div class="box">
-      <strong>Vue rapide</strong><br>
-      2 relances à envoyer<br>
-      1 devis en attente<br>
-      Sauvegarde : OK
-    </div>
++2 commerces intégrés<br>
++1 association validée<br>
++5 QR Codes publiés<br>
++420 bocitecoins distribués
 
-  `);
+</div>
+
+</div>
+
+<div class="box">
+
+<strong>Indicateurs du territoire</strong>
+
+<div style="display:flex;justify-content:space-between;margin-top:10px;">
+<span>Commerces</span>
+<strong>${demo.commerces}</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>Associations</span>
+<strong>${demo.associations}</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>Clubs sportifs</span>
+<strong>${demo.clubs}</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>Écoles</span>
+<strong>${demo.ecoles}</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>Professionnels de santé</span>
+<strong>${demo.sante}</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>Fresques</span>
+<strong>${demo.fresques}</strong>
+</div>
+
+</div>
+
+<div class="box">
+
+<strong>Agenda</strong>
+
+Aujourd'hui
+<ul style="margin-top:8px;padding-left:18px;">
+<li>Validation partenaires</li>
+<li>Publication municipale</li>
+<li>Communication commerçants</li>
+<li>Préparation événement local</li>
+</ul>
+
+</div>
+
+<div class="choiceGrid">
+
+<button class="choiceBtn"
+onclick="openTableauBordCommune()">
+Tableau de bord
+</button>
+
+<button class="choiceBtn"
+onclick="openDeploiementVille()">
+Déploiement
+</button>
+
+<button class="choiceBtn"
+onclick="openProspectsPartenaires()">
+Partenaires
+</button>
+
+<button class="choiceBtn"
+onclick="openComptaBoCiteArt()">
+Centre Bo'CitéArt
+</button>
+
+</div>
+
+`);
+
+return;
+
+}
+
+openModal("Tableau du matin",`
+
+<div class="box">
+
+<strong>Tableau du matin</strong><br>
+
+Aucune commune n'est encore configurée.
+
+</div>
+
+`);
 
 };
+     
 window.openProspectsPartenaires = function(){
   openModal("Prospects / Partenaires", `
     <div class="box">
