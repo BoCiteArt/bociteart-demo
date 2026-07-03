@@ -7086,6 +7086,7 @@ window.openPilotagePrive = function(){
 
     <div class="choiceGrid">
       <button class="choiceBtn" onclick="openTableauMatin()">Tableau matin</button>
+      <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau de bord commune</button>
       <button class="choiceBtn" onclick="openModeDemonstration()">Mode démonstration</button>
       <button class="choiceBtn" onclick="openConformiteBociteart()">Conformité</button>
       <button class="choiceBtn" onclick="openTresorerieIA()">Trésorerie</button>
@@ -7320,41 +7321,102 @@ for(let i=1;i<=demo.associations;i++){
 
 }
 
-    for(let i=1;i<=demo.clubs;i++){
+ const clubsNoms = [
+  "Football Club",
+  "Basket Club",
+  "Judo Club",
+  "Tennis Club",
+  "Handball Club",
+  "Club de Gymnastique",
+  "Badminton Club",
+  "Club Cycliste",
+  "Club de Natation",
+  "Karaté Club",
+  "Athlétisme Club",
+  "Pétanque Club"
+];
 
-        window.demoDatabase.clubs.push({
-            id:i,
-            nom:"Club sportif "+i
-        });
+for(let i=1;i<=demo.clubs;i++){
 
-    }
+  window.demoDatabase.clubs.push({
+    id:i,
+    nom:clubsNoms[(i-1)%clubsNoms.length],
+    quartier:((i-1)%demo.quartiers)+1,
+    actif:true
+  });
 
-    for(let i=1;i<=demo.ecoles;i++){
+}
+   const ecolesNoms = [
+  "École Jean Jaurès",
+  "École Victor Hugo",
+  "École Jules Ferry",
+  "École Pasteur",
+  "École Saint-Exupéry",
+  "École du Centre",
+  "École des Tilleuls",
+  "École du Parc",
+  "École Louise Michel",
+  "École Marie Curie"
+];
 
-        window.demoDatabase.ecoles.push({
-            id:i,
-            nom:"École "+i
-        });
+for(let i=1;i<=demo.ecoles;i++){
 
-    }
+  window.demoDatabase.ecoles.push({
+    id:i,
+    nom:ecolesNoms[(i-1)%ecolesNoms.length],
+    quartier:((i-1)%demo.quartiers)+1,
+    actif:true
+  });
 
-    for(let i=1;i<=demo.sante;i++){
+}
+   const santeTypes = [
+  "Médecin généraliste",
+  "Pharmacie",
+  "Kinésithérapeute",
+  "Infirmier",
+  "Dentiste",
+  "Ophtalmologue",
+  "Orthophoniste",
+  "Laboratoire",
+  "Podologue",
+  "Sage-femme"
+];
 
-        window.demoDatabase.sante.push({
-            id:i,
-            nom:"Professionnel santé "+i
-        });
+for(let i=1;i<=demo.sante;i++){
 
-    }
+  const type = santeTypes[(i-1)%santeTypes.length];
 
-    for(let i=1;i<=demo.fresques;i++){
+  window.demoDatabase.sante.push({
+    id:i,
+    nom:type + " " + i,
+    categorie:type,
+    quartier:((i-1)%demo.quartiers)+1,
+    actif:true
+  });
 
-        window.demoDatabase.fresques.push({
-            id:i,
-            nom:"Fresque "+i
-        });
+}
 
-    }
+  const fresquesNoms = [
+  "Fresque du Centre",
+  "Fresque des Écoles",
+  "Fresque du Parc",
+  "Fresque de la Gare",
+  "Fresque des Associations",
+  "Fresque du Marché",
+  "Fresque du Sport",
+  "Fresque de la Mémoire"
+];
+
+for(let i=1;i<=demo.fresques;i++){
+
+  window.demoDatabase.fresques.push({
+    id:i,
+    nom:fresquesNoms[(i-1)%fresquesNoms.length],
+    quartier:((i-1)%demo.quartiers)+1,
+    actif:true
+  });
+
+} 
 
     window.demoDatabase.statistiques = {
 
@@ -7477,7 +7539,80 @@ window.resetDemoVille = function(){
   localStorage.removeItem(window.BOC_DEMO_KEY);
   alert("Démo effacée. Les données fictives sont remises à zéro sans toucher à la production.");
 };
+window.openTableauBordCommune = function(){
+  const demo = typeof getDemoCity === "function" ? getDemoCity() : null;
 
+  if(!demo || demo.mode !== "DEMO"){
+    openModal("Tableau de bord de la commune", `
+      <div class="box">
+        <strong>Aucune commune de démonstration active</strong><br>
+        Active d'abord une démonstration depuis Pilotage privé → Mode démonstration.
+      </div>
+    `);
+    return;
+  }
+
+  if(typeof buildDemoDatabase === "function"){
+    buildDemoDatabase(demo);
+  }
+
+  const db = window.demoDatabase || {};
+  const commerces = Array.isArray(db.commerces) ? db.commerces : [];
+  const associations = Array.isArray(db.associations) ? db.associations : [];
+  const clubs = Array.isArray(db.clubs) ? db.clubs : [];
+  const ecoles = Array.isArray(db.ecoles) ? db.ecoles : [];
+  const sante = Array.isArray(db.sante) ? db.sante : [];
+  const fresques = Array.isArray(db.fresques) ? db.fresques : [];
+  const quartiers = Array.isArray(db.quartiers) ? db.quartiers : [];
+
+  openModal("Tableau de bord de la commune", `
+    <div class="box">
+      <strong>Commune simulée</strong><br>
+      ${demo.titre}<br>
+      Population : ${demo.habitants} habitants<br>
+      Dernière génération : ${demo.createdAt || "non renseignée"}
+    </div>
+
+    <div class="box">
+      <strong>Structure territoriale</strong><br>
+      Quartiers : ${quartiers.length}<br>
+      Commerces : ${commerces.length}<br>
+      Associations : ${associations.length}<br>
+      Clubs sportifs : ${clubs.length}<br>
+      Écoles : ${ecoles.length}<br>
+      Professionnels de santé : ${sante.length}<br>
+      Fresques : ${fresques.length}
+    </div>
+
+    <div class="box">
+      <strong>Activité simulée sur 12 mois</strong><br>
+      Publicités diffusées : ${demo.pubs}<br>
+      BoCitéCoins distribués : ${demo.coins}<br>
+      QR codes scannés : ${demo.scans}
+    </div>
+
+    <div class="box">
+      <strong>État de la démonstration</strong><br>
+      Base de données générée<br>
+      Commerces générés<br>
+      Associations générées<br>
+      Écoles générées<br>
+      Clubs sportifs générés<br>
+      Santé générée<br>
+      Fresques générées
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="window.__bociteartOpenByKey('commerces')">Commerces</button>
+      <button class="choiceBtn" onclick="window.__bociteartOpenByKey('mairie')">Mairie</button>
+      <button class="choiceBtn" onclick="window.__bociteartOpenByKey('sport')">Sport</button>
+      <button class="choiceBtn" onclick="openSanteVille()">Santé administrative</button>
+      <button class="choiceBtn" onclick="openDeploiementVille()">Déploiement</button>
+      <button class="choiceBtn" onclick="openTableauMatin()">Tableau du matin</button>
+    </div>
+  `);
+};
+     
 window.openAdminSection = function(type){
   const contenus = {
     roles: "Fondateur • mairie • commerçant • association • sport • école • citoyen • mécène.",
