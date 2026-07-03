@@ -6605,10 +6605,39 @@ if(openSecureBtn){
 /* === MODULE ADMIN / COMPTA / PARTENAIRES / IA — V1 CONSOLIDÉE === */
 
 window.openComptaBoCiteArt = function(){
+
   openModal("Centre Bo’CitéArt", `
+
     <div class="box">
-      <strong>Centre administrateur</strong><br>
-      Tableau du matin, villes, partenaires, licences, comptabilité, fiscalité, IA, documents, sauvegardes et sécurité.
+      <strong>Vue générale</strong><br>
+      Communes suivies : 4<br>
+      Communes prêtes : 1<br>
+      Partenaires actifs : 157<br>
+      Contrats à finaliser : 2<br>
+      Services : opérationnels
+    </div>
+
+    <div class="box">
+      <strong>Actions prioritaires</strong><br>
+      2 dossiers mairie à suivre<br>
+      3 partenaires à valider<br>
+      1 contrat en attente<br>
+      1 relance paiement à contrôler
+    </div>
+
+    <div class="box">
+      <strong>Activité récente</strong><br>
+      Nouvelle commune préparée<br>
+      Données locales vérifiées<br>
+      Documents disponibles<br>
+      Sauvegarde conforme
+    </div>
+
+    <div class="box">
+      <strong>État du service</strong><br>
+      Disponibilité : 99,9 %<br>
+      Dernière vérification : aujourd’hui<br>
+      Aucun incident bloquant
     </div>
 
     <div class="choiceGrid">
@@ -6620,13 +6649,15 @@ window.openComptaBoCiteArt = function(){
       <button class="choiceBtn" onclick="openComptaVille('GLOBAL')">Comptabilité</button>
       <button class="choiceBtn" onclick="openPaiementDocuments()">Paiements & documents</button>
       <button class="choiceBtn" onclick="openFiscaliteBoCiteArt()">Fiscalité</button>
-      <button class="choiceBtn" onclick="openRelancesBoCiteArt()">Relances IA</button>
+      <button class="choiceBtn" onclick="openRelancesBoCiteArt()">Relances</button>
       <button class="choiceBtn" onclick="openKitBienvenue()">Kit / autocollants</button>
       <button class="choiceBtn" onclick="openSanteVille()">Santé / pros utiles</button>
       <button class="choiceBtn" onclick="openSauvegardesBociteart()">Sauvegardes</button>
       <button class="choiceBtn" onclick="openPilotagePrive()">Pilotage privé</button>
     </div>
+
   `);
+
 };
 
 window.openTableauMatin = function(){
