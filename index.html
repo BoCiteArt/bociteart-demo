@@ -6630,75 +6630,106 @@ window.openComptaBoCiteArt = function(){
 };
 
 window.openTableauMatin = function(){
- const demo = typeof getDemoCity === "function" ? getDemoCity() : null;
 
-if(demo && demo.mode === "DEMO" && typeof buildDemoDatabase === "function"){
-  buildDemoDatabase(demo);
-}
+  const demo = typeof getDemoCity==="function" ? getDemoCity() : null;
 
-const db = window.demoDatabase || null;
-
-if(demo && demo.mode === "DEMO" && db && Array.isArray(db.commerces) && db.commerces.length){
-    openModal("Tableau du matin — Mode démonstration", `
-      <div class="box">
-        <strong>Mode démonstration actif</strong><br>
-        ${demo.titre}<br>
-        ${demo.habitants} habitants<br>
-        Créée le : ${demo.createdAt}
-      </div>
-
-      <div class="box">
-        <strong>Ville simulée</strong><br>
-        ${demo.quartiers} quartiers<br>
-        ${demo.commerces} commerces<br>
-        ${demo.associations} associations<br>
-        ${demo.clubs} clubs sportifs<br>
-        ${demo.ecoles} écoles<br>
-        ${demo.sante} professionnels de santé<br>
-        ${demo.fresques} fresques
-      </div>
-
-      <div class="box">
-        <strong>Simulation 12 mois</strong><br>
-        ${demo.pubs} publicités diffusées<br>
-        ${demo.coins} bocitecoins distribués<br>
-        ${demo.scans} QR codes scannés
-      </div>
-
-      <div class="box">
-        <strong>À traiter aujourd’hui</strong><br>
-        4 fiches partenaires à compléter<br>
-        2 commerces à relancer<br>
-        1 association à valider<br>
-        Sauvegarde démo : OK
-      </div>
-    `);
-    return;
+  if(demo && demo.mode==="DEMO" && typeof buildDemoDatabase==="function"){
+    buildDemoDatabase(demo);
   }
 
-  openModal("Tableau du matin", `
+  const db = window.demoDatabase || null;
+
+  if(demo && demo.mode==="DEMO" && db && Array.isArray(db.commerces) && db.commerces.length){
+
+    openModal("Tableau du matin",`
+
+      <div class="box">
+        <strong>Synthèse du jour</strong><br>
+        Commune : ${demo.titre}<br>
+        Population : ${demo.habitants} habitants<br>
+        Tous les services sont opérationnels<br>
+        Dernière synchronisation : ${demo.createdAt}
+      </div>
+
+      <div class="box">
+        <strong>Actions prioritaires</strong><br>
+        2 partenaires à valider<br>
+        1 campagne publicitaire aujourd'hui<br>
+        3 fiches commerçants à compléter<br>
+        1 contrat en attente
+      </div>
+
+      <div class="box">
+        <strong>Activité des dernières 24 h</strong><br>
+        +2 commerces intégrés<br>
+        +1 association créée<br>
+        +5 QR codes générés<br>
+        +420 bocitecoins distribués
+      </div>
+
+      <div class="box">
+        <strong>Indicateurs clés</strong><br>
+        Commerces actifs : ${demo.commerces}<br>
+        Associations : ${demo.associations}<br>
+        Publicités actives : 12<br>
+        Disponibilité : 99,9 %
+      </div>
+
+      <div class="box">
+        <strong>Agenda</strong><br>
+        Forum des associations<br>
+        Publication municipale<br>
+        Campagne commerçants<br>
+        Réunion mairie
+      </div>
+
+      <div class="choiceGrid">
+
+        <button class="choiceBtn"
+        onclick="openTableauBordCommune()">
+        Tableau de bord
+        </button>
+
+        <button class="choiceBtn"
+        onclick="openDeploiementVille()">
+        Déploiement
+        </button>
+
+        <button class="choiceBtn"
+        onclick="openProspectsPartenaires()">
+        Partenaires
+        </button>
+
+        <button class="choiceBtn"
+        onclick="openComptaBoCiteArt()">
+        Centre Bo'CitéArt
+        </button>
+
+      </div>
+
+    `);
+
+    return;
+
+  }
+
+  openModal("Tableau du matin",`
+
     <div class="box">
-      <strong>À traiter aujourd’hui</strong><br>
-      Relances • devis • contrats • licences • paiements • autocollants • anomalies IA • sauvegardes.
+      <strong>À traiter aujourd'hui</strong><br>
+      Relances • devis • contrats • licences • paiements • sauvegardes.
     </div>
 
     <div class="box">
       <strong>Vue rapide</strong><br>
       2 relances à envoyer<br>
       1 devis en attente<br>
-      1 licence à renouveler<br>
-      3 autocollants à préparer<br>
-      0 paiement bloquant<br>
-      Sauvegarde nuit : OK
+      Sauvegarde : OK
     </div>
 
-    <div class="box">
-      <strong>IA</strong><br>
-      L’IA prépare les courriers, détecte les incohérences, signale les fiches incomplètes et propose les actions à valider.
-    </div>
   `);
-};
 
+};
 window.openProspectsPartenaires = function(){
   openModal("Prospects / Partenaires", `
     <div class="box">
