@@ -7277,14 +7277,48 @@ for(let i=1;i<=demo.commerces;i++){
     });
 
 }
-    for(let i=1;i<=demo.associations;i++){
+   const associationsTypes = [
+ "Football",
+ "Basket",
+ "Handball",
+ "Tennis",
+ "Danse",
+ "Musique",
+ "Théâtre",
+ "Peinture",
+ "Randonnée",
+ "Pétanque",
+ "Jardin partagé",
+ "Parents d'élèves",
+ "Anciens combattants",
+ "Solidarité",
+ "Culture",
+ "Patrimoine",
+ "Écologie",
+ "Loisirs",
+ "Jeunesse",
+ "Seniors"
+];
 
-        window.demoDatabase.associations.push({
-            id:i,
-            nom:"Association "+i
-        });
+for(let i=1;i<=demo.associations;i++){
 
-    }
+    const type = associationsTypes[(i-1)%associationsTypes.length];
+
+    window.demoDatabase.associations.push({
+
+        id:i,
+
+        nom:"Association " + type,
+
+        categorie:type,
+
+        quartier:((i-1)%demo.quartiers)+1,
+
+        actif:true
+
+    });
+
+}
 
     for(let i=1;i<=demo.clubs;i++){
 
