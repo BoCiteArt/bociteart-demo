@@ -6927,36 +6927,84 @@ window.openNouveauProspect = function(){
   `);
 };
 
-window.openVillesLicences = function(){
-  const demo = typeof getDemoCity === "function" ? getDemoCity() : null;
+if(demo && demo.mode === "DEMO"){
 
-  if(demo && demo.mode === "DEMO"){
-    openModal("Villes / Licences — Mode démonstration", `
-      <div class="box">
-        <strong>Ville de démonstration active</strong><br>
-        ${demo.titre}<br>
-        ${demo.habitants} habitants<br>
-        Données fictives séparées de la production.
-      </div>
+  openModal("Villes / Licences",`
 
-      <div class="box">
-        <strong>Licence simulée</strong><br>
-        Licence annuelle mairie : active<br>
-        Contrat : généré<br>
-        Facture : simulée<br>
-        Paiement : fictif validé<br>
-        Déploiement : prêt
-      </div>
+    <div class="box">
 
-      <div class="choiceGrid">
-        <button class="choiceBtn" onclick="openDeploiementVille()">Déploiement ville</button>
-        <button class="choiceBtn" onclick="openParametresVille()">Paramètres ville</button>
-        <button class="choiceBtn" onclick="openComptaVille('DEMO')">Comptabilité démo</button>
-        <button class="choiceBtn" onclick="alert('Démo : dossier transition élu généré')">Transition élu</button>
-      </div>
-    `);
-    return;
-  }
+      <strong>Communes déployées</strong><br>
+
+      Démonstration mairie<br>
+      ${demo.habitants} habitants<br>
+      Licence : Active<br>
+      État : Déploiement en cours
+
+    </div>
+
+    <div class="box">
+
+      <strong>Suivi des licences</strong><br>
+
+      Licences actives : 4<br>
+      Renouvellements : 1<br>
+      Contrats à signer : 2<br>
+      Échéances prochaines : 1
+
+    </div>
+
+    <div class="box">
+
+      <strong>Déploiement</strong><br>
+
+      Paramètres validés<br>
+      Base locale créée<br>
+      Services synchronisés<br>
+      Sauvegarde vérifiée<br>
+      Publication prête
+
+    </div>
+
+    <div class="box">
+
+      <strong>Gestion automatique</strong><br>
+
+      Renouvellement des licences<br>
+      Facturation<br>
+      Archivage sécurisé<br>
+      Historique des versions
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choiceBtn"
+      onclick="openDeploiementVille()">
+      Déploiement
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openParametresVille()">
+      Paramètres
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openComptaVille('DEMO')">
+      Comptabilité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openTableauBordCommune()">
+      Tableau de bord
+      </button>
+
+    </div>
+
+  `);
+
+  return;
+
+}
 
   openModal("Villes / Licences", `
     <div class="box">
