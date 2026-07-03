@@ -7567,11 +7567,12 @@ window.openTableauBordCommune = function(){
 
   openModal("Tableau de bord de la commune", `
     <div class="box">
-      <strong>Commune simulée</strong><br>
-      ${demo.titre}<br>
-      Population : ${demo.habitants} habitants<br>
-      Dernière génération : ${demo.createdAt || "non renseignée"}
-    </div>
+    <strong>Commune simulée</strong><br>
+${demo.titre}<br>
+Population : ${demo.habitants} habitants<br><br>
+
+<strong>Démonstration générée le :</strong><br>
+${(demo.createdAt || "non renseignée").replace(",", " à")}
 
     <div class="box">
       <strong>Structure territoriale</strong><br>
