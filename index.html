@@ -7581,15 +7581,32 @@ const commercesRestauration = commerces.filter(c =>
 ).length;
 
 const commercesAutres = Math.max(0, commerces.length - commercesAlimentation - commercesServices - commercesArtisans - commercesRestauration);
- 
- <div class="muted" style="margin-top:6px;">
-Sport : ${associationsSport}<br>
-Culture : ${associationsCulture}<br>
-Solidarité : ${associationsSolidarite}<br>
-Nature : ${associationsNature}<br>
-Autres : ${associationsAutres}
-</div>
 
+const associationsSport = associations.filter(a =>
+  ["Football","Basket","Handball","Tennis","Pétanque"].includes(a.categorie)
+).length;
+
+const associationsCulture = associations.filter(a =>
+  ["Musique","Théâtre","Peinture","Patrimoine","Culture"].includes(a.categorie)
+).length;
+
+const associationsSolidarite = associations.filter(a =>
+  ["Solidarité"].includes(a.categorie)
+).length;
+
+const associationsNature = associations.filter(a =>
+  ["Écologie","Jardin partagé","Randonnée"].includes(a.categorie)
+).length;
+
+const associationsAutres = Math.max(
+  0,
+  associations.length -
+  associationsSport -
+  associationsCulture -
+  associationsSolidarite -
+  associationsNature
+);
+ 
   openModal("Tableau de bord de la commune", `
     <div class="box">
     <strong>Commune simulée</strong><br>
@@ -7598,6 +7615,7 @@ Population : ${demo.habitants} habitants<br><br>
 
 <strong>Démonstration générée le :</strong><br>
 ${(demo.createdAt || "non renseignée").replace(",", " à")}
+</div>
 
     <div class="box">
       <strong>Structure territoriale</strong><br>
