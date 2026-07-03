@@ -6801,6 +6801,17 @@ window.openDeploiementVille = function(){
 
   const demo = typeof getDemoCity === "function" ? getDemoCity() : null;
 
+  const progressBar = function(label, percent){
+    const filled = Math.round(percent / 10);
+    const empty = 10 - filled;
+    return `
+      <div style="margin-top:10px;">
+        <strong>${label}</strong><br>
+        <span style="letter-spacing:2px;">${"█".repeat(filled)}${"░".repeat(empty)}</span> ${percent} %
+      </div>
+    `;
+  };
+
   if(demo && demo.mode === "DEMO"){
 
     openModal("Assistant de déploiement", `
@@ -6808,42 +6819,47 @@ window.openDeploiementVille = function(){
       <div class="box">
         <strong>Commune</strong><br>
         ${demo.titre}<br>
-        ${demo.habitants} habitants
+        ${demo.habitants} habitants<br><br>
+        <strong>Déploiement global</strong><br>
+        <span style="letter-spacing:2px;">████████░░</span> 82 %<br><br>
+        Statut : prêt pour validation mairie
       </div>
 
       <div class="box">
-        <strong>État général</strong><br>
-        Déploiement : 82 %<br>
-        Statut : prêt pour validation mairie<br>
-        Mode : démonstration
+        <strong>Progression des services</strong><br>
+        ${progressBar("Quartiers", 96)}
+        ${progressBar("Commerces", 91)}
+        ${progressBar("Associations", 88)}
+        ${progressBar("Sport", 93)}
+        ${progressBar("Écoles", 95)}
+        ${progressBar("Santé", 89)}
+        ${progressBar("Fresques", 76)}
       </div>
 
       <div class="box">
-        <strong>Progression</strong><br>
-        Quartiers : ${demo.quartiers} / ${demo.quartiers}<br>
-        Commerces : ${demo.commerces} / ${demo.commerces}<br>
-        Associations : ${demo.associations} / ${demo.associations}<br>
-        Clubs sportifs : ${demo.clubs} / ${demo.clubs}<br>
-        Écoles : ${demo.ecoles} / ${demo.ecoles}<br>
-        Professionnels de santé : ${demo.sante} / ${demo.sante}<br>
-        Fresques : ${demo.fresques} / ${demo.fresques}
+        <strong>Vérifications automatiques</strong><br>
+        Configuration validée<br>
+        Données disponibles<br>
+        Signalétique prête<br>
+        Communication locale prête<br>
+        Programme de fidélisation actif<br>
+        Sauvegarde conforme<br>
+        Contrôles réglementaires conformes
       </div>
 
       <div class="box">
-        <strong>Contrôles</strong><br>
-        Licence créée<br>
-        Base de données générée<br>
-        QR Codes préparés<br>
-        Publicités prêtes<br>
-        BoCitéCoins initialisés<br>
-        Sauvegarde validée
+        <strong>Étapes restantes</strong><br>
+        Validation mairie<br>
+        Activation progressive des partenaires<br>
+        Communication de lancement<br>
+        Ouverture publique
       </div>
 
       <div class="choiceGrid">
         <button class="choiceBtn" onclick="openParametresVille()">Configuration</button>
-        <button class="choiceBtn" onclick="openConformiteBociteart()">Contrôles</button>
-        <button class="choiceBtn" onclick="openTableauBordCommune()">Prévisualisation</button>
-        <button class="choiceBtn" onclick="alert('Démo : ville prête pour publication après validation mairie')">Publier la ville</button>
+        <button class="choiceBtn" onclick="openConformiteBociteart()">Vérifications</button>
+        <button class="choiceBtn" onclick="openTableauBordCommune()">Prévisualiser</button>
+        <button class="choiceBtn" onclick="alert('Commune prête pour publication après validation mairie.')">Publier</button>
       </div>
 
     `);
@@ -6854,17 +6870,17 @@ window.openDeploiementVille = function(){
   openModal("Assistant de déploiement", `
     <div class="box">
       <strong>Après signature mairie</strong><br>
-      Création ville • licence • contrat • facture • personnalisation • invitations • annuaire local • suivi IA.
+      Création ville • licence • contrat • facture • personnalisation • invitations • annuaire local • suivi.
     </div>
 
     <div class="box">
-      <strong>Préparation IA</strong><br>
+      <strong>Préparation</strong><br>
       Commerces • santé • associations • sport • écoles • culture • services municipaux • quartiers • fresques.
     </div>
 
     <div class="box">
       <strong>Parcours partenaire</strong><br>
-      Fiche préparée → revendication → complément → signature → QR généré → publication.
+      Fiche préparée → revendication → complément → signature → publication.
     </div>
   `);
 
