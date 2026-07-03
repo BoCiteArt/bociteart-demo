@@ -6828,26 +6828,79 @@ Aucune commune n'est encore configurée.
 };
      
 window.openProspectsPartenaires = function(){
-  openModal("Prospects / Partenaires", `
+
+  openModal("Prospects / Partenaires",`
+
     <div class="box">
-      <strong>Principe</strong><br>
-      Le partenaire remplit lui-même sa fiche. Tant que rien n’est signé, il reste prospect et ne pollue pas la comptabilité.
+      <strong>Vue générale</strong><br>
+      Prospects : 18<br>
+      Partenaires actifs : 157<br>
+      Dossiers en validation : 5<br>
+      Renouvellements à prévoir : 3
     </div>
 
     <div class="box">
-      <strong>Cycle de vie</strong><br>
-      Prospect → fiche revendiquée → contrat signé → partenaire actif → renouvellement annuel → archivé si nécessaire.
+      <strong>Actions prioritaires</strong><br>
+      2 commerces à contacter<br>
+      1 association en attente<br>
+      1 contrat à signer<br>
+      1 dossier incomplet
+    </div>
+
+    <div class="box">
+      <strong>Parcours partenaire</strong><br>
+      Invitation envoyée<br>
+      → fiche revendiquée<br>
+      → informations complétées<br>
+      → contrat signé<br>
+      → QR Code généré<br>
+      → partenaire actif
+    </div>
+
+    <div class="box">
+      <strong>Suivi automatique</strong><br>
+      Relances programmées<br>
+      Vérification des pièces<br>
+      Contrôle des informations<br>
+      Archivage sécurisé
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="openNouveauProspect()">Inviter / revendiquer</button>
-      <button class="choiceBtn" onclick="openKitBienvenue()">Kit bienvenue</button>
-      <button class="choiceBtn" onclick="alert('Démo : recherche prospect')">Rechercher</button>
-      <button class="choiceBtn" onclick="alert('Démo : relance prospect')">Relancer</button>
-      <button class="choiceBtn" onclick="alert('Démo : partenaire validé')">Valider</button>
-      <button class="choiceBtn" onclick="alert('Démo : archivé sans suppression')">Archiver</button>
+
+      <button class="choiceBtn"
+      onclick="openNouveauProspect()">
+      Nouveau partenaire
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openKitBienvenue()">
+      Kit de bienvenue
+      </button>
+
+      <button class="choiceBtn"
+      onclick="alert('Démo : recherche partenaire')">
+      Rechercher
+      </button>
+
+      <button class="choiceBtn"
+      onclick="alert('Démo : relances automatiques')">
+      Relances
+      </button>
+
+      <button class="choiceBtn"
+      onclick="alert('Démo : validation du partenaire')">
+      Valider
+      </button>
+
+      <button class="choiceBtn"
+      onclick="alert('Démo : archivage sécurisé')">
+      Archiver
+      </button>
+
     </div>
+
   `);
+
 };
 
 window.openNouveauProspect = function(){
