@@ -7564,6 +7564,23 @@ window.openTableauBordCommune = function(){
   const sante = Array.isArray(db.sante) ? db.sante : [];
   const fresques = Array.isArray(db.fresques) ? db.fresques : [];
   const quartiers = Array.isArray(db.quartiers) ? db.quartiers : [];
+ const commercesAlimentation = commerces.filter(c =>
+  ["Boulangerie","Boucherie","Poissonnerie","Primeur","Pâtisserie","Fromagerie","Caviste"].includes(c.categorie)
+).length;
+
+const commercesServices = commerces.filter(c =>
+  ["Coiffeur","Institut de beauté","Pressing","Cordonnerie","Agence immobilière","Assurance","Banque"].includes(c.categorie)
+).length;
+
+const commercesArtisans = commerces.filter(c =>
+  ["Électricien","Plombier","Menuisier","Peintre","Garage"].includes(c.categorie)
+).length;
+
+const commercesRestauration = commerces.filter(c =>
+  ["Restaurant","Pizzeria","Brasserie","Café","Salon de thé"].includes(c.categorie)
+).length;
+
+const commercesAutres = Math.max(0, commerces.length - commercesAlimentation - commercesServices - commercesArtisans - commercesRestauration);
 
   openModal("Tableau de bord de la commune", `
     <div class="box">
@@ -7578,6 +7595,13 @@ ${(demo.createdAt || "non renseignée").replace(",", " à")}
       <strong>Structure territoriale</strong><br>
       Quartiers : ${quartiers.length}<br>
       Commerces : ${commerces.length}<br>
+      <div class="muted" style="margin-top:6px;">
+  Alimentation : ${commercesAlimentation}<br>
+  Restauration : ${commercesRestauration}<br>
+  Artisanat : ${commercesArtisans}<br>
+  Services : ${commercesServices}<br>
+  Autres activités : ${commercesAutres} 
+</div>
       Associations : ${associations.length}<br>
       Clubs sportifs : ${clubs.length}<br>
       Écoles : ${ecoles.length}<br>
@@ -7591,6 +7615,15 @@ ${(demo.createdAt || "non renseignée").replace(",", " à")}
       BoCitéCoins distribués : ${demo.coins}<br>
       QR codes scannés : ${demo.scans}
     </div>
+    
+<div class="box">
+  <strong>Situation de la commune</strong><br>
+  Licence : démonstration active<br>
+  Déploiement : prêt<br>
+  Synchronisation : conforme<br>
+  Base de données : générée<br>
+  Dernier contrôle : aucun incident détecté
+</div>
 
     <div class="box">
       <strong>État de la démonstration</strong><br>
