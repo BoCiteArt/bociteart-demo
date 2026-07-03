@@ -7581,6 +7581,14 @@ const commercesRestauration = commerces.filter(c =>
 ).length;
 
 const commercesAutres = Math.max(0, commerces.length - commercesAlimentation - commercesServices - commercesArtisans - commercesRestauration);
+ 
+ <div class="muted" style="margin-top:6px;">
+Sport : ${associationsSport}<br>
+Culture : ${associationsCulture}<br>
+Solidarité : ${associationsSolidarite}<br>
+Nature : ${associationsNature}<br>
+Autres : ${associationsAutres}
+</div>
 
   openModal("Tableau de bord de la commune", `
     <div class="box">
@@ -7603,6 +7611,15 @@ ${(demo.createdAt || "non renseignée").replace(",", " à")}
   Autres activités : ${commercesAutres} 
 </div>
       Associations : ${associations.length}<br>
+      
+      <div class="muted" style="margin-top:6px;">
+  Sport : ${associationsSport}<br>
+  Culture : ${associationsCulture}<br>
+  Solidarité : ${associationsSolidarite}<br>
+  Nature : ${associationsNature}<br>
+  Autres : ${associationsAutres}
+</div>
+
       Clubs sportifs : ${clubs.length}<br>
       Écoles : ${ecoles.length}<br>
       Professionnels de santé : ${sante.length}<br>
