@@ -5814,23 +5814,47 @@ if(key === "mairie"){
     }
   ];
 
-  const HEALTH_DIRECTORY_DATA = {
-    medecins: [
-      { nom:"Dr à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-    ],
-    specialistes: [
-      { nom:"Spécialiste à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-    ],
-    kines: [
-      { nom:"Kiné à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-    ],
-    infirmieres: [
-      { nom:"Cabinet infirmier à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-    ],
-    pharmacies: [
-      { nom:"Pharmacie Richardson", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-    ]
-  };
+const demoHealthActive = (typeof getDemoCity === "function" && getDemoCity() && getDemoCity().mode === "DEMO");
+
+const HEALTH_DIRECTORY_DATA = demoHealthActive ? {
+  medecins: [
+    { nom:"Dr Martin", adresse:"12 rue du Centre", telephone:"03 20 00 10 01" },
+    { nom:"Dr Lefèvre", adresse:"8 avenue de la Gare", telephone:"03 20 00 10 02" },
+    { nom:"Dr Moreau", adresse:"22 rue Jean Jaurès", telephone:"03 20 00 10 03" }
+  ],
+  specialistes: [
+    { nom:"Cabinet dentaire République", adresse:"4 rue de la République", telephone:"03 20 00 11 01" },
+    { nom:"Ophtalmologie du Parc", adresse:"15 rue du Parc", telephone:"03 20 00 11 02" }
+  ],
+  kines: [
+    { nom:"Cabinet Kiné du Centre", adresse:"18 rue du Centre", telephone:"03 20 00 12 01" },
+    { nom:"Kiné des Écoles", adresse:"7 rue des Écoles", telephone:"03 20 00 12 02" }
+  ],
+  infirmieres: [
+    { nom:"Cabinet infirmier Saint-Martin", adresse:"3 place Saint-Martin", telephone:"03 20 00 13 01" },
+    { nom:"Infirmiers des Acacias", adresse:"10 rue des Acacias", telephone:"03 20 00 13 02" }
+  ],
+  pharmacies: [
+    { nom:"Pharmacie du Centre", adresse:"1 rue du Centre", telephone:"03 20 00 14 01" },
+    { nom:"Pharmacie de la Gare", adresse:"2 avenue de la Gare", telephone:"03 20 00 14 02" }
+  ]
+} : {
+  medecins: [
+    { nom:"Dr à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
+  ],
+  specialistes: [
+    { nom:"Spécialiste à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
+  ],
+  kines: [
+    { nom:"Kiné à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
+  ],
+  infirmieres: [
+    { nom:"Cabinet infirmier à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
+  ],
+  pharmacies: [
+    { nom:"Pharmacie Richardson", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
+  ]
+};
 
   function renderHealthBlock(title, list){
     return `
