@@ -7056,15 +7056,16 @@ window.openSauvegardesBociteart = function(){
 };
 
 window.openPilotagePrive = function(){
- 
-  const code = prompt("Code privé administrateur :");
-  if(code !== "bociteart-admin"){ alert("Accès refusé."); return; }
 
-  const twofa = prompt("Code 2FA démo :");
-  if(twofa !== "2026"){ alert("2FA refusé."); return; }
+  if(!window.bociteartAdminSession){
+    const code = prompt("Code privé administrateur :");
+    if(code !== "bociteart-admin"){ alert("Accès refusé."); return; }
 
-  window.bociteartAdminSession = true;
-}
+    const twofa = prompt("Code 2FA démo :");
+    if(twofa !== "2026"){ alert("2FA refusé."); return; }
+
+    window.bociteartAdminSession = true;
+  }
 
   openModal("Pilotage privé", `
     <div class="box">
