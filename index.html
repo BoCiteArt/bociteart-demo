@@ -7143,31 +7143,45 @@ Statut : prêt pour validation mairie
   `);
 
 };
-window.openParametresVille = function(){
+
+     window.openParametresVille = function(){
+
   openModal("Paramètres de la ville", `
+
     <div class="box">
-      <strong>Contenus locaux modifiables</strong><br>
-      Quartiers • fresques • clubs • associations • commerces • écoles • professionnels de santé • services mairie.
+      <strong>Configuration locale</strong><br>
+      Quartiers • fresques • commerces • associations • clubs sportifs • écoles • santé • services municipaux.
+    </div>
+
+    <div class="box">
+      <strong>Gestion des contenus</strong><br>
+      Ajouter un élément<br>
+      Mettre à jour une fiche<br>
+      Archiver un contenu<br>
+      Préparer une publication
+    </div>
+
+    <div class="box">
+      <strong>Règle de sécurité</strong><br>
+      Les contenus sont archivés, jamais supprimés définitivement.
+      Chaque modification est historisée.
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="alert('Démo : ajouter quartier')">Ajouter quartier</button>
-      <button class="choiceBtn" onclick="alert('Démo : archiver quartier')">Archiver quartier</button>
-      <button class="choiceBtn" onclick="alert('Démo : ajouter fresque')">Ajouter fresque</button>
-      <button class="choiceBtn" onclick="alert('Démo : archiver fresque')">Archiver fresque</button>
-      <button class="choiceBtn" onclick="alert('Démo : ajouter club')">Ajouter club</button>
-      <button class="choiceBtn" onclick="alert('Démo : archiver club')">Archiver club</button>
-      <button class="choiceBtn" onclick="alert('Démo : ajouter association')">Ajouter association</button>
-      <button class="choiceBtn" onclick="alert('Démo : archiver association')">Archiver association</button>
+      <button class="choiceBtn" onclick="alert('Ajout quartier préparé.')">Quartiers</button>
+      <button class="choiceBtn" onclick="alert('Ajout fresque préparé.')">Fresques</button>
+      <button class="choiceBtn" onclick="alert('Ajout commerce préparé.')">Commerces</button>
+      <button class="choiceBtn" onclick="alert('Ajout association préparé.')">Associations</button>
+      <button class="choiceBtn" onclick="alert('Ajout club préparé.')">Clubs sportifs</button>
+      <button class="choiceBtn" onclick="alert('Ajout école préparé.')">Écoles</button>
+      <button class="choiceBtn" onclick="openSanteVille()">Santé</button>
+      <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau de bord</button>
     </div>
 
-    <div class="box">
-      <strong>Règle</strong><br>
-      On archive, on ne supprime jamais définitivement.
-    </div>
   `);
-};
 
+};
+     
 window.openKitBienvenue = function(){
 
   openModal("Kit de bienvenue",`
@@ -7701,33 +7715,125 @@ window.openSauvegardesBociteart = function(){
 window.openPilotagePrive = function(){
 
   if(!window.bociteartAdminSession){
-    const code = prompt("Code privé administrateur :");
-    if(code !== "bociteart-admin"){ alert("Accès refusé."); return; }
 
-    const twofa = prompt("Code 2FA démo :");
-    if(twofa !== "2026"){ alert("2FA refusé."); return; }
+    const code = prompt("Code privé administrateur :");
+    if(code!=="bociteart-admin"){
+      alert("Accès refusé.");
+      return;
+    }
+
+    const twofa = prompt("Code 2FA démonstration :");
+    if(twofa!=="2026"){
+      alert("2FA refusé.");
+      return;
+    }
 
     window.bociteartAdminSession = true;
-}
-  openModal("Pilotage privé", `
+  }
+
+  openModal("Pilotage privé Bo'CitéArt",`
+
     <div class="box">
-      <strong>Super-administrateur</strong><br>
-      IA • conformité • trésorerie • anomalies • contrats • sauvegardes • licences • état système.
+
+      <strong>Centre de supervision</strong><br>
+
+      Disponibilité : 99,9 %<br>
+      IA opérationnelle<br>
+      Sauvegardes conformes<br>
+      Aucun incident critique
+
+    </div>
+
+    <div class="box">
+
+      <strong>Pilotage stratégique</strong><br>
+
+      Communes suivies : 4<br>
+      Licences actives : 4<br>
+      Partenaires actifs : 157<br>
+      Déploiements en cours : 1
+
+    </div>
+
+    <div class="box">
+
+      <strong>Administration</strong><br>
+
+      Contrats<br>
+      Comptabilité<br>
+      Conformité<br>
+      Coffre-fort documentaire<br>
+      Journaux système
+
+    </div>
+
+    <div class="box">
+
+      <strong>Sécurité</strong><br>
+
+      Double authentification active<br>
+      Journal des connexions<br>
+      Contrôle des accès<br>
+      Sauvegardes vérifiées
+
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="openTableauMatin()">Tableau matin</button>
-      <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau de bord commune</button>
-      <button class="choiceBtn" onclick="openModeDemonstration()">Mode démonstration</button>
-      <button class="choiceBtn" onclick="openConformiteBociteart()">Conformité</button>
-      <button class="choiceBtn" onclick="openTresorerieIA()">Trésorerie</button>
-      <button class="choiceBtn" onclick="openAnomaliesIA()">Anomalies IA</button>
-      <button class="choiceBtn" onclick="openCoffreFortDoc()">Coffre-fort</button>
-      <button class="choiceBtn" onclick="openContratsBoCiteArt()">Contrats</button>
-      <button class="choiceBtn" onclick="openEtatSysteme()">État système</button>
-      <button class="choiceBtn" onclick="openParametresBociteart()">Paramètres</button>
+
+      <button class="choiceBtn"
+      onclick="openTableauMatin()">
+      Tableau matin
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openTableauBordCommune()">
+      Commune
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openPresentationBoCiteArt()"
+      Démonstration
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openConformiteBociteart()">
+      Conformité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openTresorerieIA()">
+      Trésorerie
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openAnomaliesIA()">
+      Anomalies IA
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openCoffreFortDoc()">
+      Coffre-fort
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openContratsBoCiteArt()">
+      Contrats
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openEtatSysteme()">
+      État système
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openParametresBociteart()">
+      Paramètres
+      </button>
+
     </div>
+
   `);
+
 };
 
 window.openConformiteBociteart = function(){
@@ -7808,40 +7914,268 @@ window.openConformiteBociteart = function(){
 };
 
 window.openTresorerieIA = function(){
-  openModal("Prévision trésorerie", `
+
+  openModal("Prévision de trésorerie",`
+
     <div class="box">
-      <strong>Prévision</strong><br>
-      Abonnements attendus • publicités réservées • licences mairie • paiements en retard • recettes prévisionnelles.
+
+      <strong>Situation financière</strong><br>
+
+      Trésorerie disponible<br>
+      Encaissements prévus<br>
+      Paiements attendus<br>
+      Prévision à 30 jours
+
     </div>
+
+    <div class="box">
+
+      <strong>Recettes</strong><br>
+
+      Licences communes<br>
+      Abonnements partenaires<br>
+      Publicités<br>
+      Prestations<br>
+      Mécénat
+
+    </div>
+
+    <div class="box">
+
+      <strong>Suivi IA</strong><br>
+
+      Prévisions automatiques<br>
+      Détection des retards<br>
+      Alerte de trésorerie<br>
+      Projection financière
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choiceBtn"
+      onclick="openComptaVille('GLOBAL')">
+      Comptabilité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openRelancesBoCiteArt()">
+      Relances
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openFiscaliteBoCiteArt()">
+      Fiscalité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openPilotagePrive()">
+      Pilotage privé
+      </button>
+
+    </div>
+
   `);
+
 };
 
 window.openAnomaliesIA = function(){
-  openModal("Anomalies IA", `
+
+  openModal("Anomalies détectées par l'IA",`
+
     <div class="box">
-      <strong>Détection</strong><br>
-      Paiement sans facture • facture non envoyée • partenaire actif sans contrat • document expiré • sauvegarde échouée.
+
+      <strong>Contrôles automatiques</strong><br>
+
+      Paiements<br>
+      Factures<br>
+      Contrats<br>
+      Licences<br>
+      Sauvegardes
+
     </div>
+
+    <div class="box">
+
+      <strong>Anomalies surveillées</strong><br>
+
+      Facture absente<br>
+      Paiement incomplet<br>
+      Contrat expiré<br>
+      Document manquant<br>
+      Sauvegarde échouée
+
+    </div>
+
+    <div class="box">
+
+      <strong>Traitement</strong><br>
+
+      Analyse automatique<br>
+      Proposition de correction<br>
+      Validation administrateur<br>
+      Archivage
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choiceBtn"
+      onclick="openRelancesBoCiteArt()">
+      Relances
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openEtatSysteme()">
+      État système
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openConformiteBociteart()">
+      Conformité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openPilotagePrive()">
+      Pilotage privé
+      </button>
+
+    </div>
+
   `);
+
 };
 
 window.openCoffreFortDoc = function(){
-  openModal("Coffre-fort documentaire", `
+
+  openModal("Coffre-fort documentaire",`
+
     <div class="box">
-      <strong>Documents</strong><br>
-      Contrats • devis • factures • justificatifs • conventions • KBIS • RIB • reçus • historiques.
+
+      <strong>Documents sécurisés</strong><br>
+
+      Contrats<br>
+      Factures<br>
+      Devis<br>
+      Conventions<br>
+      Reçus fiscaux
+
     </div>
+
+    <div class="box">
+
+      <strong>Archivage</strong><br>
+
+      Versionnement<br>
+      Historique<br>
+      Signature<br>
+      Horodatage
+
+    </div>
+
+    <div class="box">
+
+      <strong>Sécurité</strong><br>
+
+      Chiffrement<br>
+      Accès contrôlés<br>
+      Sauvegardes<br>
+      Journal d'accès
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choiceBtn"
+      onclick="openContratsBoCiteArt()">
+      Contrats
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openConformiteBociteart()">
+      Conformité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openSauvegardesBociteart()">
+      Sauvegardes
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openPilotagePrive()">
+      Pilotage privé
+      </button>
+
+    </div>
+
   `);
+
 };
 
-window.openContratsBoCiteArt = function(){
-  openModal("Contrats", `
+    window.openContratsBoCiteArt = function(){
+
+  openModal("Contrats Bo'CitéArt",`
+
     <div class="box">
-      <strong>Suivi</strong><br>
-      Mairie • commerce • association • sport • école • mécène • avenants • renouvellements • signatures.
+
+      <strong>Contrats actifs</strong><br>
+
+      Communes<br>
+      Commerces<br>
+      Associations<br>
+      Entreprises<br>
+      Mécènes
+
     </div>
+
+    <div class="box">
+
+      <strong>Gestion</strong><br>
+
+      Signatures<br>
+      Renouvellements<br>
+      Avenants<br>
+      Archivage
+
+    </div>
+
+    <div class="box">
+
+      <strong>Contrôle IA</strong><br>
+
+      Échéances<br>
+      Pièces manquantes<br>
+      Vérification automatique
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choiceBtn"
+      onclick="openCoffreFortDoc()">
+      Coffre-fort
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openPaiementDocuments()">
+      Documents
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openConformiteBociteart()">
+      Conformité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openPilotagePrive()">
+      Pilotage privé
+      </button>
+
+    </div>
+
   `);
-};
+
+}; 
 
 window.openEtatSysteme = function(){
 
@@ -7920,15 +8254,72 @@ window.openEtatSysteme = function(){
   `);
 
 };
-window.openParametresBociteart = function(){
-  openModal("Paramètres privés", `
+ 
+     window.openParametresBociteart = function(){
+
+  openModal("Paramètres Bo'CitéArt",`
+
     <div class="box">
-      <strong>Réglages</strong><br>
-      TVA • relances • modèles mails • modèles factures • publicités • bocitecoins • sécurité • profils.
+
+      <strong>Configuration générale</strong><br>
+
+      TVA<br>
+      bocitecoins<br>
+      Publicités<br>
+      Licences<br>
+      Relances
+
     </div>
+
+    <div class="box">
+
+      <strong>Communication</strong><br>
+
+      Courriels<br>
+      Documents<br>
+      Modèles<br>
+      Notifications
+
+    </div>
+
+    <div class="box">
+
+      <strong>Sécurité</strong><br>
+
+      Profils<br>
+      Accès<br>
+      Double authentification<br>
+      Journaux
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choiceBtn"
+      onclick="openConformiteBociteart()">
+      Conformité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openEtatSysteme()">
+      État système
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openPilotagePrive()">
+      Pilotage privé
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openComptaBoCiteArt()">
+      Centre Bo'CitéArt
+      </button>
+
+    </div>
+
   `);
-};
-      
+
+};     
 window.BOC_DEMO_KEY = "bociteart_demo_city_v1";
 
 window.getDemoCity = function(){
@@ -8207,38 +8598,109 @@ for(let i=1;i<=demo.fresques;i++){
 
 };   
 
-window.openModeDemonstration = function(){
-  openModal("Mode démonstration", `
+  window.openPresentationBoCiteArt = function(){
+
+  openModal("Préparer une présentation Bo'CitéArt",`
+
     <div class="box">
-      <strong>Mode réservé super-administrateur</strong><br>
-      Données fictives séparées de la production. Aucun vrai paiement, aucune vraie facture, aucun vrai partenaire.
+
+      <strong>Environnement sécurisé</strong><br>
+
+      Toutes les données présentées sont fictives.<br>
+      Aucun paiement réel.<br>
+      Aucun contrat réel.<br>
+      Aucun partenaire réel.<br>
+      Aucune donnée citoyenne.
+
     </div>
 
     <div class="box">
-      Choisissez le profil de commune à simuler. Bo’CitéArt prépare automatiquement une démonstration adaptée à la taille de la collectivité.
+
+      <strong>Choisir une démonstration</strong><br>
+
+      Bo'CitéArt adapte automatiquement les commerces,
+      associations, écoles, quartiers, services,
+      statistiques et tableaux de bord selon la taille
+      de la commune sélectionnée.
+
+    </div>
+
+    <div class="box">
+
+      <strong>Objectif</strong><br>
+
+      Permettre aux élus, services municipaux,
+      partenaires et financeurs de découvrir une
+      commune entièrement opérationnelle avant tout
+      déploiement réel.
+
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" style="border:3px solid var(--green);" onclick="genererDemoVille('pilote')">
-        Démonstration mairie<br><small>15 000 habitants</small>
+
+      <button class="choiceBtn"
+      style="border:3px solid var(--green);"
+      onclick="genererDemoVille('pilote')">
+      Commune pilote<br>
+      <small>15 000 habitants</small>
       </button>
-      <button class="choiceBtn" onclick="genererDemoVille('moyenne')">Ville moyenne<br><small>35 000 habitants</small></button>
-      <button class="choiceBtn" onclick="genererDemoVille('grande')">Grande ville<br><small>100 000 habitants</small></button>
-      <button class="choiceBtn" onclick="genererDemoVille('perso')">Configuration<br>personnalisée</button>
-      <button class="choiceBtn" onclick="alert('Démo : mode élu activé')">Présentation élu</button>
-      <button class="choiceBtn" onclick="resetDemoVille()">Effacer démonstration</button>
+
+      <button class="choiceBtn"
+      onclick="genererDemoVille('moyenne')">
+      Ville moyenne<br>
+      <small>35 000 habitants</small>
+      </button>
+
+      <button class="choiceBtn"
+      onclick="genererDemoVille('grande')">
+      Grande ville<br>
+      <small>100 000 habitants</small>
+      </button>
+
+      <button class="choiceBtn"
+      onclick="genererDemoVille('perso')">
+      Configuration personnalisée
+      </button>
+
+      <button class="choiceBtn"
+      onclick="alert('Mode présentation élu activé.')">
+      Présentation élu
+      </button>
+
+      <button class="choiceBtn"
+      onclick="alert('Mode présentation partenaires activé.')">
+      Présentation partenaires
+      </button>
+
+      <button class="choiceBtn"
+      onclick="alert('Mode présentation investisseurs activé.')">
+      Présentation investisseurs
+      </button>
+
+      <button class="choiceBtn"
+      onclick="resetDemoVille()">
+      Réinitialiser la démonstration
+      </button>
+
     </div>
 
     <div class="box">
-      <strong>Bandeau obligatoire</strong><br>
-      Mode démonstration — données fictives générées pour illustrer le fonctionnement de Bo’CitéArt.
-    </div>
-  `);
-};
 
+      <strong>Information</strong><br>
+
+      Le bandeau « Mode démonstration » reste visible
+      afin qu'aucune confusion ne soit possible entre
+      cette présentation et une commune réellement
+      déployée.
+
+    </div>
+
+  `);
+
+};
 window.genererDemoVille = function(type){
   const demos = {
-    pilote: { titre:"Démonstration mairie", habitants:15000, quartiers:6, commerces:120, associations:25, clubs:12, ecoles:6, sante:45, fresques:6, pubs:42, coins:18500, scans:2400 },
+    pilote: { titre:"commune mairie", habitants:15000, quartiers:6, commerces:120, associations:25, clubs:12, ecoles:6, sante:45, fresques:6, pubs:42, coins:18500, scans:2400 },
     moyenne: { titre:"Ville moyenne", habitants:35000, quartiers:10, commerces:320, associations:55, clubs:22, ecoles:12, sante:90, fresques:10, pubs:95, coins:52000, scans:7600 },
     grande: { titre:"Grande ville", habitants:100000, quartiers:18, commerces:900, associations:150, clubs:60, ecoles:30, sante:250, fresques:20, pubs:240, coins:160000, scans:24500 },
     perso: { titre:"Configuration personnalisée", habitants:"à définir", quartiers:"à définir", commerces:"à définir", associations:"à définir", clubs:"à définir", ecoles:"à définir", sante:"à définir", fresques:"à définir", pubs:"à définir", coins:"à définir", scans:"à définir" }
@@ -8308,13 +8770,14 @@ window.resetDemoVille = function(){
 };
      
 window.openTableauBordCommune = function(){
+
   const demo = typeof getDemoCity === "function" ? getDemoCity() : null;
 
   if(!demo || demo.mode !== "DEMO"){
     openModal("Tableau de bord de la commune", `
       <div class="box">
-        <strong>Aucune commune de démonstration active</strong><br>
-        Active d'abord une démonstration depuis Pilotage privé → Mode démonstration.
+        <strong>Aucune commune de présentation active</strong><br>
+        Prépare d'abord une commune depuis Pilotage privé → Préparer une présentation.
       </div>
     `);
     return;
@@ -8325,6 +8788,7 @@ window.openTableauBordCommune = function(){
   }
 
   const db = window.demoDatabase || {};
+
   const commerces = Array.isArray(db.commerces) ? db.commerces : [];
   const associations = Array.isArray(db.associations) ? db.associations : [];
   const clubs = Array.isArray(db.clubs) ? db.clubs : [];
@@ -8349,7 +8813,14 @@ window.openTableauBordCommune = function(){
     ["Restaurant","Pizzeria","Brasserie","Café","Salon de thé"].includes(c.categorie)
   ).length;
 
-  const commercesAutres = Math.max(0, commerces.length - commercesAlimentation - commercesServices - commercesArtisans - commercesRestauration);
+  const commercesAutres = Math.max(
+    0,
+    commerces.length -
+    commercesAlimentation -
+    commercesServices -
+    commercesArtisans -
+    commercesRestauration
+  );
 
   const associationsSport = associations.filter(a =>
     ["Football","Basket","Handball","Tennis","Pétanque"].includes(a.categorie)
@@ -8364,85 +8835,95 @@ window.openTableauBordCommune = function(){
   ).length;
 
   const associationsNature = associations.filter(a =>
-    ["Écologie","Jardin partagé","Randonnée"].includes(a.categorie) 
+    ["Écologie","Jardin partagé","Randonnée"].includes(a.categorie)
   ).length;
 
-  const associationsAutres = Math.max(0, associations.length - associationsSport - associationsCulture - associationsSolidarite - associationsNature);
+  const associationsAutres = Math.max(
+    0,
+    associations.length -
+    associationsSport -
+    associationsCulture -
+    associationsSolidarite -
+    associationsNature
+  );
 
   openModal("Tableau de bord de la commune", `
+
     <div class="box">
-      <strong>Commune simulée</strong><br>
+      <strong>Commune de présentation</strong><br>
       ${demo.titre}<br>
       Population : ${demo.habitants} habitants<br><br>
-      <strong>Démonstration générée le :</strong><br>
+      <strong>Présentation préparée le :</strong><br>
       ${(demo.createdAt || "non renseignée").replace(",", " à")}
     </div>
 
     <div class="box">
-      <strong>Structure territoriale</strong><br>
+      <strong>Indicateurs principaux</strong><br>
       Quartiers : ${quartiers.length}<br>
-      Commerces : ${commerces.length}<br>
-
-      <div class="muted" style="margin-top:6px;">
-        Alimentation : ${commercesAlimentation}<br>
-        Restauration : ${commercesRestauration}<br>
-        Artisanat : ${commercesArtisans}<br>
-        Services : ${commercesServices}<br>
-        Autres activités : ${commercesAutres}
-      </div>
-
-      Associations : ${associations.length}<br>
-
-      <div class="muted" style="margin-top:6px;">
-        Sport : ${associationsSport}<br>
-        Culture : ${associationsCulture}<br>
-        Solidarité : ${associationsSolidarite}<br>
-        Nature : ${associationsNature}<br>
-        Autres : ${associationsAutres}
-      </div>
-
+      Commerces référencés : ${commerces.length}<br>
+      Associations référencées : ${associations.length}<br>
       Clubs sportifs : ${clubs.length}<br>
       Écoles : ${ecoles.length}<br>
       Professionnels de santé : ${sante.length}<br>
-      Fresques : ${fresques.length}
+      Fresques prêtes : ${fresques.length}
     </div>
 
     <div class="box">
-      <strong>Activité simulée sur 12 mois</strong><br>
+      <strong>Répartition commerces</strong><br>
+      Alimentation : ${commercesAlimentation}<br>
+      Restauration : ${commercesRestauration}<br>
+      Artisanat : ${commercesArtisans}<br>
+      Services : ${commercesServices}<br>
+      Autres activités : ${commercesAutres}
+    </div>
+
+    <div class="box">
+      <strong>Répartition associations</strong><br>
+      Sport : ${associationsSport}<br>
+      Culture : ${associationsCulture}<br>
+      Solidarité : ${associationsSolidarite}<br>
+      Nature : ${associationsNature}<br>
+      Autres : ${associationsAutres}
+    </div>
+
+    <div class="box">
+      <strong>Activité estimée sur 12 mois</strong><br>
       Publicités diffusées : ${demo.pubs}<br>
-      BoCitéCoins distribués : ${demo.coins}<br>
+      bocitecoins distribués : ${demo.coins}<br>
       QR codes scannés : ${demo.scans}
     </div>
 
     <div class="box">
       <strong>Situation de la commune</strong><br>
-      Licence : démonstration active<br>
+      Licence : présentation active<br>
       Déploiement : prêt<br>
       Synchronisation : conforme<br>
-      Base de données : générée<br>
+      Données locales : disponibles<br>
       Dernier contrôle : aucun incident détecté
     </div>
 
     <div class="box">
-      <strong>État de la démonstration</strong><br>
-      Base de données générée<br>
-      Commerces générés<br>
-      Associations générées<br>
-      Écoles générées<br>
-      Clubs sportifs générés<br>
-      Santé générée<br>
-      Fresques générées
+      <strong>État des services</strong><br>
+      Données locales disponibles<br>
+      Commerces référencés<br>
+      Associations référencées<br>
+      Écoles référencées<br>
+      Clubs sportifs référencés<br>
+      Santé disponible<br>
+      Fresques prêtes
     </div>
 
     <div class="choiceGrid">
       <button class="choiceBtn" onclick="window.__bociteartOpenByKey('commerces')">Commerces</button>
       <button class="choiceBtn" onclick="window.__bociteartOpenByKey('mairie')">Mairie</button>
       <button class="choiceBtn" onclick="window.__bociteartOpenByKey('sport')">Sport</button>
-      <button class="choiceBtn" onclick="openSanteVille()">Santé administrative</button>
+      <button class="choiceBtn" onclick="openSanteVille()">Santé</button>
       <button class="choiceBtn" onclick="openDeploiementVille()">Déploiement</button>
       <button class="choiceBtn" onclick="openTableauMatin()">Tableau du matin</button>
     </div>
+
   `);
+
 };
      
 window.openAdminSection = function(type){
