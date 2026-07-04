@@ -7188,29 +7188,138 @@ window.openKitBienvenue = function(){
 };
 
 window.openComptaVille = function(ville){
-  openModal("Comptabilité — " + ville, `
-    <div class="box">
-      <strong>Codes flux</strong><br>
-      F001 Licence mairie<br>
-      F002 Abonnement partenaire<br>
-      F003 Publicité<br>
-      F004 Mécénat<br>
-      F005 Soutien club<br>
-      F006 bocitecoins<br>
-      F007 Kit / autocollants<br>
-      F008 Prestations diverses
-    </div>
 
-    <div class="box">
-      <strong>Documents</strong><br>
-      Devis • contrat • facture • avoir • justificatif • reçu mécénat • export TVA • export expert-comptable.
-    </div>
+openModal("Comptabilité — " + ville,`
 
-    <div class="box">
-      <strong>Journal</strong><br>
-      Toutes les opérations sont datées, historisées, exportables et séparées par ville.
-    </div>
-  `);
+<div class="box">
+
+<strong>Vue financière</strong>
+
+<div style="display:flex;justify-content:space-between;margin-top:10px;">
+<span>Documents générés</span>
+<strong>248</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>Factures émises</span>
+<strong>91</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>Paiements reçus</span>
+<strong>89</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>En attente</span>
+<strong>2</strong>
+</div>
+
+</div>
+
+
+<div class="box">
+
+<strong>Flux comptables</strong>
+
+<div style="display:flex;justify-content:space-between;">
+<span>F001 Licence mairie</span>
+<strong>OK</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>F002 Partenaires</span>
+<strong>OK</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>F003 Publicités</span>
+<strong>OK</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>F004 Mécénat</span>
+<strong>OK</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>F005 Clubs</span>
+<strong>OK</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>F006 bocitecoins</span>
+<strong>OK</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>F007 Kits</span>
+<strong>OK</strong>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>F008 Prestations</span>
+<strong>OK</strong>
+</div>
+
+</div>
+
+
+<div class="box">
+
+<strong>Documents disponibles</strong>
+
+Devis<br>
+Contrats<br>
+Factures<br>
+Avoirs<br>
+Justificatifs<br>
+Reçus mécénat<br>
+Export TVA<br>
+Export expert-comptable
+
+</div>
+
+
+<div class="box">
+
+<strong>Sécurité</strong>
+
+Journal horodaté<br>
+Archivage automatique<br>
+Sauvegarde quotidienne<br>
+Export sécurisé<br>
+Historique des opérations
+
+</div>
+
+
+<div class="choiceGrid">
+
+<button class="choiceBtn"
+onclick="openPaiementDocuments()">
+Documents
+</button>
+
+<button class="choiceBtn"
+onclick="openFiscaliteBoCiteArt()">
+Fiscalité
+</button>
+
+<button class="choiceBtn"
+onclick="openRelancesBoCiteArt()">
+Relances
+</button>
+
+<button class="choiceBtn"
+onclick="openComptaBoCiteArt()">
+Centre Bo'CitéArt
+</button>
+
+</div>
+
+`);
+
 };
 
 window.openPaiementDocuments = function(){
