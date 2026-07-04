@@ -6906,12 +6906,12 @@ window.openProspectsPartenaires = function(){
 window.openNouveauProspect = function(){
   openModal("Fiche partenaire", `
     <div class="box">
-      <strong>À remplir par le partenaire</strong><br>
+      <strong>Fiche partenaire</strong><br>
       Identité • ville • adresse • SIRET • téléphone • e-mail • horaires • logo • photo • description • documents.
     </div>
 
     <div class="box">
-      <strong>Certification obligatoire</strong><br>
+      <strong>Engagement</strong><br>
       Le partenaire certifie l’exactitude des informations transmises et s’engage à les maintenir à jour.
     </div>
 
@@ -6922,106 +6922,80 @@ window.openNouveauProspect = function(){
 
     <div class="box">
       <strong>Après validation</strong><br>
-      QR partenaire généré • fiche publiée • contrat archivé • facture créée • autocollant préparé.
+      Fiche publiée • contrat archivé • facture créée • autocollant préparé • signalétique disponible.
     </div>
   `);
 };
 
-if(demo && demo.mode === "DEMO"){
+window.openVillesLicences = function(){
 
-  openModal("Villes / Licences",`
+  const demo = typeof getDemoCity === "function" ? getDemoCity() : null;
 
-    <div class="box">
+  if(demo && demo.mode === "DEMO"){
 
-      <strong>Communes déployées</strong><br>
+    openModal("Villes / Licences", `
 
-      Démonstration mairie<br>
-      ${demo.habitants} habitants<br>
-      Licence : Active<br>
-      État : Déploiement en cours
+      <div class="box">
+        <strong>Communes suivies</strong><br>
+        Commune active : ${demo.titre}<br>
+        Population : ${demo.habitants} habitants<br>
+        Licence : active<br>
+        État : déploiement en cours
+      </div>
 
-    </div>
+      <div class="box">
+        <strong>Suivi des licences</strong><br>
+        Licences actives : 4<br>
+        Renouvellements à prévoir : 1<br>
+        Contrats à signer : 2<br>
+        Échéances prochaines : 1
+      </div>
 
-    <div class="box">
+      <div class="box">
+        <strong>État de la commune</strong><br>
+        Paramètres validés<br>
+        Données locales disponibles<br>
+        Services synchronisés<br>
+        Sauvegarde vérifiée<br>
+        Publication prête
+      </div>
 
-      <strong>Suivi des licences</strong><br>
+      <div class="box">
+        <strong>Gestion</strong><br>
+        Suivi licence<br>
+        Facturation<br>
+        Archivage sécurisé<br>
+        Historique des versions
+      </div>
 
-      Licences actives : 4<br>
-      Renouvellements : 1<br>
-      Contrats à signer : 2<br>
-      Échéances prochaines : 1
+      <div class="choiceGrid">
+        <button class="choiceBtn" onclick="openDeploiementVille()">Déploiement</button>
+        <button class="choiceBtn" onclick="openParametresVille()">Paramètres</button>
+        <button class="choiceBtn" onclick="openComptaVille('DEMO')">Comptabilité</button>
+        <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau de bord</button>
+      </div>
 
-    </div>
+    `);
 
-    <div class="box">
-
-      <strong>Déploiement</strong><br>
-
-      Paramètres validés<br>
-      Base locale créée<br>
-      Services synchronisés<br>
-      Sauvegarde vérifiée<br>
-      Publication prête
-
-    </div>
-
-    <div class="box">
-
-      <strong>Gestion automatique</strong><br>
-
-      Renouvellement des licences<br>
-      Facturation<br>
-      Archivage sécurisé<br>
-      Historique des versions
-
-    </div>
-
-    <div class="choiceGrid">
-
-      <button class="choiceBtn"
-      onclick="openDeploiementVille()">
-      Déploiement
-      </button>
-
-      <button class="choiceBtn"
-      onclick="openParametresVille()">
-      Paramètres
-      </button>
-
-      <button class="choiceBtn"
-      onclick="openComptaVille('DEMO')">
-      Comptabilité
-      </button>
-
-      <button class="choiceBtn"
-      onclick="openTableauBordCommune()">
-      Tableau de bord
-      </button>
-
-    </div>
-
-  `);
-
-  return;
-
-}
+    return;
+  }
 
   openModal("Villes / Licences", `
     <div class="box">
       <strong>Licence mairie</strong><br>
-      Licence annuelle par ville. Renouvellement prévu avec relance, courrier IA, facture, historique et suivi.
+      Licence annuelle par ville. Renouvellement prévu avec relance, facture, historique et suivi.
     </div>
 
     <div class="box">
       <strong>Ville configurable</strong><br>
-      Chaque ville garde la même architecture Bo’CitéArt. Seuls ses contenus locaux changent. 
+      Chaque ville garde la même architecture Bo’CitéArt. Seuls ses contenus locaux changent.
     </div>
 
     <div class="choiceGrid">
       <button class="choiceBtn" onclick="openDeploiementVille()">Déployer une ville</button>
       <button class="choiceBtn" onclick="openParametresVille()">Paramètres ville</button>
       <button class="choiceBtn" onclick="openComptaVille('WAT')">Wattignies</button>
-      <button class="choiceBtn" onclick="alert('Démo : pack transition nouvel élu')">Transition élu</button>
+      <button class="choiceBtn" onclick="alert('Pack transition nouvel élu préparé.')">Transition élu</button>
     </div>
   `);
 };
