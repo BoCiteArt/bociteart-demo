@@ -7191,7 +7191,7 @@ window.openKitBienvenue = function(){
       Présentation dans Bo'CitéArt<br>
       Présence sur la carte interactive<br>
       Intégration aux recherches locales<br>
-      Participation au programme Bo'CitéCoins
+      Participation au programme Bo'CiteCoins
 
     </div>
 
@@ -7619,71 +7619,85 @@ window.openSanteVille = function(){
 
   const demo = typeof getDemoCity==="function" ? getDemoCity() : null;
 
-  let contenu = `
+  openModal("Santé & professionnels utiles", `
+
     <div class="box">
-      <strong>IA par ville</strong><br>
-      Médecins • kinés • pharmacies • infirmiers • hôpitaux • laboratoires • défibrillateurs • numéros utiles.
+      <strong>Annuaire santé de la commune</strong><br>
+      Médecins • pharmacies • kinés • infirmiers • laboratoires • défibrillateurs • numéros utiles.
     </div>
-  `;
 
-  if(demo && demo.mode==="DEMO"){
+    <div class="box">
+      <strong>Référencement local</strong><br>
+      Professionnels suivis : ${demo && demo.sante ? demo.sante : 45}<br>
+      Pharmacies : 6<br>
+      Médecins généralistes : 12<br>
+      Défibrillateurs signalés : 18
+    </div>
 
-    contenu += `
-      <div class="box">
-        <strong>Professionnels générés automatiquement</strong><br><br>
+    <div class="box">
+      <strong>Utilité citoyenne</strong><br>
+      Informations pratiques accessibles rapidement<br>
+      Aucune donnée médicale des habitants n’est traitée<br>
+      Les professionnels peuvent demander une correction
+    </div>
 
-        • 12 médecins généralistes<br>
-        • 6 pharmacies<br>
-        • 8 infirmiers<br>
-        • 6 kinésithérapeutes<br>
-        • 2 laboratoires<br>
-        • 1 hôpital<br>
-        • ${demo.sante} professionnels référencés<br>
-        • 18 défibrillateurs géolocalisés
-      </div>
+    <div class="box">
+      <strong>État du service</strong><br>
+      Annuaire disponible<br>
+      Informations vérifiées<br>
+      Mise à jour possible<br>
+      Service opérationnel
+    </div>
 
-      <div class="box">
-        <strong>Mode démonstration</strong><br>
-        Les fiches sont générées automatiquement pour illustrer le fonctionnement de Bo'CitéArt.
-      </div>
-    `;
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau de bord</button>
+      <button class="choiceBtn" onclick="openComptaBoCiteArt()">Centre Bo'CitéArt</button>
+      <button class="choiceBtn" onclick="openSauvegardesBociteart()">Sauvegardes</button>
+      <button class="choiceBtn" onclick="openDeploiementVille()">Déploiement</button>
+    </div>
 
-  }else{
-
-    contenu += `
-      <div class="box">
-        <strong>Principe</strong><br>
-        Bo’CitéArt prépare des fiches publiques. Les professionnels peuvent les revendiquer, les compléter ou les corriger.
-      </div>
-
-      <div class="box">
-        <strong>Important</strong><br>
-        Bo’CitéArt affiche des informations pratiques publiques. Aucune donnée médicale des habitants n’est traitée.
-      </div>
-    `;
-
-  }
-
-  openModal("Santé & professionnels utiles", contenu);
+  `);
 
 };
 
 window.openSauvegardesBociteart = function(){
+
   openModal("Sauvegardes", `
+
     <div class="box">
-      <strong>Architecture</strong><br>
-      Serveur principal : OVH.<br>
-      Sauvegarde secondaire : Scaleway.<br>
-      Sauvegarde quotidienne • chiffrement • contrôle d’intégrité • test mensuel de restauration.
+      <strong>État des sauvegardes</strong><br>
+      Dernière sauvegarde : aujourd’hui<br>
+      Contrôle d’intégrité : conforme<br>
+      Restauration test : validée<br>
+      Aucun incident détecté
     </div>
 
     <div class="box">
-      <strong>Objectif</strong><br>
-      Éviter toute perte de données en cas de panne, erreur ou indisponibilité d’un prestataire.
+      <strong>Protection des données</strong><br>
+      Sauvegarde quotidienne<br>
+      Copie secondaire<br>
+      Chiffrement<br>
+      Historique conservé
     </div>
+
+    <div class="box">
+      <strong>Continuité de service</strong><br>
+      Vérification automatique<br>
+      Alerte en cas d’anomalie<br>
+      Plan de reprise prévu<br>
+      Suivi mensuel
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" onclick="openEtatSysteme()">État système</button>
+      <button class="choiceBtn" onclick="openConformiteBociteart()">Conformité</button>
+      <button class="choiceBtn" onclick="openComptaBoCiteArt()">Centre Bo'CitéArt</button>
+      <button class="choiceBtn" onclick="openPilotagePrive()">Pilotage privé</button>
+    </div>
+
   `);
-};
 
+};
 window.openPilotagePrive = function(){
 
   if(!window.bociteartAdminSession){
