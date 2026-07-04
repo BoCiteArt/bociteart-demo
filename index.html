@@ -7169,24 +7169,83 @@ window.openParametresVille = function(){
 };
 
 window.openKitBienvenue = function(){
-  openModal("Kit de bienvenue / autocollants", `
+
+  openModal("Kit de bienvenue",`
+
     <div class="box">
-      <strong>Kit partenaire</strong><br>
-      Autocollant vitrine intérieur • QR partenaire généré après fiche complète • guide rapide • fiche A4.
+
+      <strong>Kit partenaire prêt à remettre</strong><br>
+
+      QR Code personnel généré<br>
+      Autocollant vitrine<br>
+      Guide de démarrage<br>
+      Fiche pratique<br>
+      Accès partenaire activé
+
     </div>
 
     <div class="box">
-      <strong>Autocollant</strong><br>
-      Modèle unique pour tous. Le partenaire colle son QR personnel dans le cadre prévu.
+
+      <strong>Communication</strong><br>
+
+      Présentation dans Bo'CitéArt<br>
+      Présence sur la carte interactive<br>
+      Intégration aux recherches locales<br>
+      Participation au programme Bo'CitéCoins
+
     </div>
 
     <div class="box">
-      <strong>Renouvellement annuel</strong><br>
-      À date anniversaire : courrier IA, bilan global, nouveautés, rappel de mise à jour et nouvel autocollant si nécessaire.
+
+      <strong>Documents fournis</strong><br>
+
+      Contrat signé<br>
+      Facture<br>
+      Conditions d'utilisation<br>
+      Guide QR Code<br>
+      Conseils de visibilité
+
     </div>
+
+    <div class="box">
+
+      <strong>Suivi annuel</strong><br>
+
+      Courrier IA automatique<br>
+      Vérification des informations<br>
+      Renouvellement de licence<br>
+      Nouvel autocollant si nécessaire<br>
+      Historique conservé
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choiceBtn"
+      onclick="openNouveauProspect()">
+      Nouveau partenaire
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openProspectsPartenaires()">
+      Partenaires
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openPaiementDocuments()">
+      Documents
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openComptaBoCiteArt()">
+      Centre Bo'CitéArt
+      </button>
+
+    </div>
+
   `);
-};
 
+};
 window.openComptaVille = function(ville){
 
 openModal("Comptabilité — " + ville,`
