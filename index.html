@@ -7731,12 +7731,80 @@ window.openPilotagePrive = function(){
 };
 
 window.openConformiteBociteart = function(){
-  openModal("Conformité Bo’CitéArt", `
+
+  openModal("Conformité Bo'CitéArt",`
+
     <div class="box">
-      <strong>Contrôles</strong><br>
-      CGU • CGV • RGPD • signatures • pièces • factures • sauvegardes • journaux • accès • partenaires.
+
+      <strong>Conformité réglementaire</strong><br>
+
+      RGPD : conforme<br>
+      Mentions légales : disponibles<br>
+      Conditions d'utilisation : validées<br>
+      Politique de confidentialité : active
+
     </div>
+
+    <div class="box">
+
+      <strong>Contrôles automatiques</strong><br>
+
+      Signatures électroniques<br>
+      Vérification des pièces<br>
+      Contrôle des contrats<br>
+      Archivage sécurisé<br>
+      Journal des accès
+
+    </div>
+
+    <div class="box">
+
+      <strong>Protection des données</strong><br>
+
+      Sauvegardes contrôlées<br>
+      Chiffrement actif<br>
+      Historique des modifications<br>
+      Export des données disponible
+
+    </div>
+
+    <div class="box">
+
+      <strong>Audit permanent</strong><br>
+
+      Vérification quotidienne<br>
+      Alertes automatiques<br>
+      Contrôle des licences<br>
+      Contrôle des partenaires
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choiceBtn"
+      onclick="openSauvegardesBociteart()">
+      Sauvegardes
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openEtatSysteme()">
+      État système
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openFiscaliteBoCiteArt()">
+      Fiscalité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openComptaBoCiteArt()">
+      Centre Bo'CitéArt
+      </button>
+
+    </div>
+
   `);
+
 };
 
 window.openTresorerieIA = function(){
