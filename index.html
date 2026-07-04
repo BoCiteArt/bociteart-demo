@@ -7776,14 +7776,82 @@ window.openContratsBoCiteArt = function(){
 };
 
 window.openEtatSysteme = function(){
-  openModal("État système", `
-    <div class="box">
-      <strong>État</strong><br>
-      Serveur OK • paiements OK • factures OK • e-mails OK • sauvegardes OK • IA OK • sécurité OK.
-    </div>
-  `);
-};
 
+  openModal("État du système Bo'CitéArt",`
+
+    <div class="box">
+
+      <strong>Disponibilité générale</strong><br>
+
+      Plateforme : opérationnelle<br>
+      Disponibilité : 99,9 %<br>
+      Dernière vérification : aujourd'hui<br>
+      Aucun incident détecté
+
+    </div>
+
+    <div class="box">
+
+      <strong>Services techniques</strong><br>
+
+      Serveur principal : OK<br>
+      Base de données : OK<br>
+      Paiements : OK<br>
+      IA : OK<br>
+      Notifications : OK<br>
+      Sauvegardes : OK
+
+    </div>
+
+    <div class="box">
+
+      <strong>Sécurité</strong><br>
+
+      Chiffrement actif<br>
+      Journal des événements<br>
+      Surveillance automatique<br>
+      Contrôle d'intégrité validé
+
+    </div>
+
+    <div class="box">
+
+      <strong>Supervision</strong><br>
+
+      Vérification continue<br>
+      Alertes automatiques<br>
+      Historique disponible<br>
+      Maintenance préventive
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choiceBtn"
+      onclick="openSauvegardesBociteart()">
+      Sauvegardes
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openConformiteBociteart()">
+      Conformité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openComptaBoCiteArt()">
+      Centre Bo'CitéArt
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openPilotagePrive()">
+      Pilotage privé
+      </button>
+
+    </div>
+
+  `);
+
+};
 window.openParametresBociteart = function(){
   openModal("Paramètres privés", `
     <div class="box">
