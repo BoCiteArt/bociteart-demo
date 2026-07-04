@@ -7403,33 +7403,159 @@ window.openPaiementDocuments = function(){
 
 };
 window.openFiscaliteBoCiteArt = function(){
-  openModal("Fiscalité", `
+
+  openModal("Fiscalité",`
+
     <div class="box">
-      <strong>Préparation comptable</strong><br>
-      TVA • facturation électronique • journal ventes • association • mécénat • clôture mensuelle • clôture annuelle.
+
+      <strong>Situation fiscale</strong><br>
+
+      Déclarations préparées<br>
+      TVA contrôlée<br>
+      Facturation conforme<br>
+      Exports disponibles
+
     </div>
 
     <div class="box">
-      <strong>Objectif</strong><br>
-      Produire des exports propres pour limiter le travail du comptable.
+
+      <strong>Contrôles automatiques</strong><br>
+
+      Vérification TVA<br>
+      Numérotation des factures<br>
+      Pièces justificatives<br>
+      Cohérence comptable<br>
+      Archivage légal
+
     </div>
+
+    <div class="box">
+
+      <strong>Exports</strong><br>
+
+      Journal des ventes<br>
+      Journal des règlements<br>
+      TVA<br>
+      Grand livre<br>
+      Balance<br>
+      Export expert-comptable
+
+    </div>
+
+    <div class="box">
+
+      <strong>Clôtures</strong><br>
+
+      Clôture mensuelle<br>
+      Clôture annuelle<br>
+      Sauvegarde avant clôture<br>
+      Historique des exercices
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choiceBtn"
+      onclick="openComptaVille('GLOBAL')">
+      Comptabilité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openPaiementDocuments()">
+      Paiements
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openRelancesBoCiteArt()">
+      Relances
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openComptaBoCiteArt()">
+      Centre Bo'CitéArt
+      </button>
+
+    </div>
+
   `);
-};
 
+};
 window.openRelancesBoCiteArt = function(){
-  openModal("Relances automatiques IA", `
+
+  openModal("Relances automatiques IA",`
+
     <div class="box">
-      <strong>Règle</strong><br>
-      Relance J+5 • relance J+7 • limitation progressive • déblocage après régularisation.
+
+      <strong>Situation actuelle</strong><br>
+
+      Relances en attente : 3<br>
+      Dossiers résolus : 41<br>
+      Paiements en attente : 2<br>
+      Aucun blocage critique
+
     </div>
 
     <div class="box">
-      <strong>Support</strong><br>
-      L’utilisateur répond via assistant. Si non résolu, le dossier remonte à Bo’CitéArt sans coordonnées personnelles du fondateur.
+
+      <strong>Cycle automatique</strong><br>
+
+      J+5 : premier rappel<br>
+      J+7 : deuxième rappel<br>
+      Relance personnalisée IA<br>
+      Limitation progressive si nécessaire<br>
+      Réactivation après régularisation
+
     </div>
+
+    <div class="box">
+
+      <strong>Traitement intelligent</strong><br>
+
+      Analyse automatique des réponses<br>
+      Détection des dossiers incomplets<br>
+      Préparation des courriers<br>
+      Proposition d'actions à valider
+
+    </div>
+
+    <div class="box">
+
+      <strong>Sécurité</strong><br>
+
+      Historique des échanges<br>
+      Archivage automatique<br>
+      Journal des actions<br>
+      Protection des données personnelles
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choiceBtn"
+      onclick="openPaiementDocuments()">
+      Paiements
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openComptaVille('GLOBAL')">
+      Comptabilité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openFiscaliteBoCiteArt()">
+      Fiscalité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openComptaBoCiteArt()">
+      Centre Bo'CitéArt
+      </button>
+
+    </div>
+
   `);
-};
 
+};
 window.openSanteVille = function(){
 
   const demo = typeof getDemoCity==="function" ? getDemoCity() : null;
