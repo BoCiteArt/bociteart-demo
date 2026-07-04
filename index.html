@@ -1756,35 +1756,66 @@ window.PUB_STORE_KEY = window.PUB_STORE_KEY || "bociteart_pub_bookings_v1";
 window.PUB_MAX_PER_DAY = window.PUB_MAX_PER_DAY || 10;
 
 function ensureModalHelpers(){
-  if(typeof window.openModal === "function" && typeof window.closeModal === "function") return;
+window.modalHistory = window.modalHistory || [];
 
-  const modal = $("modal");
-  const modalTitle = $("modalTitle");
-  const modalBody = $("modalBody");
+window.openModal = function(title, html, options){
+  if(!modal || !modalTitle || !modalBody){
+    alert("Fenêtre modale introuvable dans le HTML.");
+    return;
+  }
 
-  window.openModal = function(title, html){
-    if(!modal || !modalTitle || !modalBody){
-      alert("Fenêtre modale introuvable dans le HTML.");
-      return;
-    }
+  options = options || {};
 
-    modalTitle.textContent = title || "";
-    modalBody.innerHTML = html || "";
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
+  if(!options.noHistory && modal.classList.contains("open")){
+    window.modalHistory.push({
+      title: modalTitle.textContent || "",
+      html: modalBody.innerHTML || ""
+    });
+  }
 
-    if(typeof lockScroll === "function") lockScroll(true);
-  };
+  modalTitle.textContent = title || "";
 
-  window.closeModal = function(){
-    if(!modal) return;
+  const backBtn = window.modalHistory.length
+    ? `<button class="choiceBtn" style="margin-bottom:12px;" onclick="window.backModal()">Retour</button>`
+    : "";
 
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
+  modalBody.innerHTML = backBtn + (html || "");
 
-    if(typeof lockScroll === "function") lockScroll(false);
-  };
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
 
+  if(typeof lockScroll === "function") lockScroll(true);
+};
+
+window.backModal = function(){
+  if(!modal || !modalTitle || !modalBody) return;
+
+  const previous = window.modalHistory.pop();
+
+  if(!previous){
+    window.closeModal();
+    return;
+  }
+
+  modalTitle.textContent = previous.title || "";
+
+  const backBtn = window.modalHistory.length
+    ? `<button class="choiceBtn" style="margin-bottom:12px;" onclick="window.backModal()">Retour</button>`
+    : "";
+
+  modalBody.innerHTML = backBtn + (previous.html || "");
+};
+
+window.closeModal = function(){
+  if(!modal) return;
+
+  window.modalHistory = [];
+
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+
+  if(typeof lockScroll === "function") lockScroll(false);
+};
   const closeBtn = $("xBtn");
   if(closeBtn){
     closeBtn.onclick = window.closeModal;
