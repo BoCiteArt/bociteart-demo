@@ -8228,7 +8228,7 @@ window.openTableauBordCommune = function(){
   ).length;
 
   const associationsNature = associations.filter(a =>
-    ["Écologie","Jardin partagé","Randonnée"].includes(a.categorie)
+    ["Écologie","Jardin partagé","Randonnée"].includes(a.categorie) 
   ).length;
 
   const associationsAutres = Math.max(0, associations.length - associationsSport - associationsCulture - associationsSolidarite - associationsNature);
