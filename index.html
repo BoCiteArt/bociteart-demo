@@ -7323,24 +7323,85 @@ Centre Bo'CitéArt
 };
 
 window.openPaiementDocuments = function(){
-  openModal("Paiements & documents", `
+
+  openModal("Paiements & documents",`
+
     <div class="box">
-      <strong>PSP</strong><br>
-      Stripe principal • GoCardless option SEPA • mairie par devis / facture / virement / mandat administratif.
+
+      <strong>Situation financière</strong><br>
+
+      Paiements validés : 89<br>
+      Paiements en attente : 2<br>
+      Relances automatiques : 1<br>
+      Aucun incident critique
+
     </div>
 
     <div class="box">
-      <strong>Documents client</strong><br>
-      Facture ou justificatif ou les deux • envoi e-mail • historique mensuel • export annuel.
+
+      <strong>Modes de règlement</strong><br>
+
+      Carte bancaire<br>
+      Prélèvement SEPA<br>
+      Virement bancaire<br>
+      Mandat administratif<br>
+      Paiement mairie sur facture
+
     </div>
 
     <div class="box">
-      <strong>Blocage</strong><br>
-      En cas d’impayé : relance, limitation progressive, déblocage après régularisation.
+
+      <strong>Documents générés</strong><br>
+
+      Devis<br>
+      Contrats<br>
+      Factures<br>
+      Avoirs<br>
+      Justificatifs<br>
+      Reçus<br>
+      Exports comptables
+
     </div>
+
+    <div class="box">
+
+      <strong>Contrôles automatiques</strong><br>
+
+      Vérification des règlements<br>
+      Archivage sécurisé<br>
+      Historique complet<br>
+      Relances automatiques<br>
+      Déblocage après régularisation
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choiceBtn"
+      onclick="openComptaVille('GLOBAL')">
+      Comptabilité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openFiscaliteBoCiteArt()">
+      Fiscalité
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openRelancesBoCiteArt()">
+      Relances
+      </button>
+
+      <button class="choiceBtn"
+      onclick="openComptaBoCiteArt()">
+      Centre Bo'CitéArt
+      </button>
+
+    </div>
+
   `);
-};
 
+};
 window.openFiscaliteBoCiteArt = function(){
   openModal("Fiscalité", `
     <div class="box">
