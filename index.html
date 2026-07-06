@@ -1561,30 +1561,46 @@ Bo’CitéArt peut faire évoluer ses fonctionnalités, ses offres, ses modalit�
   
  </div> 
   
-  <div class="modal" id="choice" aria-hidden="true">
-    <div class="backdrop" id="choiceClose"></div>
-    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="choiceTitle">
-      <div class="head">
-        <div id="choiceTitle">Choisir le numéro</div>
-        <button class="xbtn" id="choiceX" aria-label="Fermer" type="button">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2">
-            <path d="M18 6L6 18M6 6l12 12"/>
-          </svg>
+ <div class="modal" id="choice" aria-hidden="true">
+  <div class="backdrop" id="choiceClose"></div>
+
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="choiceTitle">
+    <div class="head">
+      <div id="choiceTitle">Choisir le service d'aide</div>
+
+      <button class="xbtn" id="choiceX" aria-label="Fermer" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="body">
+      <div style="font-weight:800">
+        Choisissez le service à appeler. Ensuite, revenez au bouton d’aide et maintenez l’appui pour confirmer l’appel.
+      </div>
+
+      <div class="choiceGrid">
+        <button class="choiceBtn" data-pick="3919" type="button">
+          3919<br>
+          <small>Écoute et orientation</small>
+        </button>
+
+        <button class="choiceBtn" data-pick="119" type="button">
+          119<br>
+          <small>Enfance en danger</small>
         </button>
       </div>
-      <div class="body">
-        <div style="font-weight:800">Appuyez une fois pour choisir, puis revenez au bouton et faites un appui long pour appeler.</div>
-        <div class="choiceGrid">
-          <button class="choiceBtn" data-pick="3919" type="button">3919</button>
-          <button class="choiceBtn" data-pick="119" type="button">119</button>
-        </div>
-        <div class="muted" style="margin-top:10px">3919 : écoute/orientation • 119 : enfance en danger • danger immédiat : 112</div>
+
+      <div class="muted" style="margin-top:10px">
+        Danger immédiat : appelez le 112. Bo'CitéArt sert uniquement de raccourci d'appel.
       </div>
     </div>
   </div>
+</div>
 
- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
     (function initBoCiteArtClean(){
       console.log("✅ JS démarré");
 
@@ -1641,8 +1657,10 @@ return CITY_CONFIG[key] || "";
       function callPhone(number){
         const n = String(number || "").trim();
         if(!/^\d{2,4}$/.test(n)) return;
-        if(APP_MODE === "DEMO"){
-          alert("Démo : appel " + n + " (appui long validé).");
+       if(APP_MODE === "DEMO"){
+    alert("Présentation : l'appel du " + n + " est simulé dans cet environnement.");
+    return;
+}
           return;
         }
         window.location.href = "tel:" + n;
@@ -2116,9 +2134,11 @@ function openAdBookingForProfile(profile, y, m, d, containerId){
     </div>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-      <button class="choiceBtn" id="adValidateBtn" type="button">
-        ${profile === "mairie" ? "Valider devis mairie" : "Payer et réserver"}
-      </button>
+ <button class="choiceBtn" id="adValidateBtn" type="button">
+${profile === "mairie"
+  ? "✅ Valider la réservation"
+  : " Confirmer et payer"}
+</button>
     </div>
   `);
 
@@ -2229,8 +2249,13 @@ function renderCalendarInto(containerId){
       <div class="calTop">
         <div style="font-weight:900;">Calendrier commun des publicités — ${monthName}</div>
         <div class="mini">
-          <button class="choiceBtn" id="calPrev" type="button">◀</button>
-          <button class="choiceBtn" id="calNext" type="button">▶</button>
+       <button class="choiceBtn" id="calPrev" type="button">
+◀ Jour précédent
+</button>
+
+<button class="choiceBtn" id="calNext" type="button">
+Jour suivant ▶
+</button>
         </div>
       </div>
 
@@ -2248,8 +2273,13 @@ function renderCalendarInto(containerId){
       <div class="calGrid" id="calDays"></div>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="calRecap" type="button">📄 Récap du mois</button>
-        <button class="choiceBtn" id="calReset" type="button" style="background:#fff;">🧹 Réinitialiser test</button>
+      <button class="choiceBtn" id="calRecap" type="button">
+ Consulter le récapitulatif du mois
+</button>
+
+<button class="choiceBtn" id="calReset" type="button" style="background:#fff;">
+🔄 Recommencer la simulation
+</button>
       </div>
     </div>
   `;
@@ -2335,35 +2365,6 @@ function openTicker(){
 
   const warningMsg = checkMairiePaymentWarnings();
 
-  openModal("Publicités & visibilité", `
-    <div style="font-weight:900;margin-bottom:8px;">Grand rectangle publicitaire — espace centralisé</div>
-
-    ${warningMsg ? `
-      <div class="box" style="border-left:6px solid #b06b00;background:#fff8e8;">
-        <strong>Suivi mairie :</strong>
-        <div class="muted" style="white-space:pre-line;margin-top:6px;">${escapeHtml(warningMsg)}</div>
-      </div>
-    ` : ""}
-
-    <div class="box">
-      <strong>Principe :</strong> toutes les publicités du grand bandeau passent par ce calendrier unique.
-      Les onglets mairie, commerce et association ne réservent plus directement.
-    </div>
-
-    <div class="choiceGrid">
-      <button class="choiceBtn" id="tickerAccessCommerce" type="button">Commerce</button>
-      <button class="choiceBtn" id="tickerAccessMairie" type="button">Mairie</button>
-      <button class="choiceBtn" id="tickerAccessAsso" type="button">Association</button>
-    </div>
-
-    <div id="tickerAccessStatus" class="muted" style="margin-top:10px;">
-      Sélectionne un profil pour ouvrir son espace publicité.
-    </div>
-
-    <div id="calHost" style="display:none;margin-top:12px;"></div>
-  `);
-
-  setTimeout(()=>{
     function unlock(profile){
       window.__tickerProfile = profile;
 
@@ -3357,8 +3358,13 @@ if(key === "ecole"){
     </div>
 
     <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-      <button class="choiceBtn" type="button" id="playChild">Lire (voix enfant — démo)</button>
-      <button class="choiceBtn" type="button" id="playFemale">Lire (voix synthétique)</button>
+     <button class="choiceBtn" type="button" id="playChild">
+▶ Écouter avec une voix d'enfant
+</button>
+
+<button class="choiceBtn" type="button" id="playFemale">
+▶ Écouter avec une voix féminine
+</button>
     </div>
 
     <div style="margin-top:10px;"></div>
@@ -3371,10 +3377,21 @@ if(key === "ecole"){
       </div>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="schoolRecordVoiceBtn" type="button">Enregistrer</button>
-        <button class="choiceBtn" id="schoolStopRecordVoiceBtn" type="button" style="background:#fff;">Stop</button>
-        <button class="choiceBtn" id="schoolPlayRecordedVoiceBtn" type="button" style="background:#fff;">Écouter</button>
-        <button class="choiceBtn" id="schoolDeleteRecordedVoiceBtn" type="button" style="background:#fff;">Supprimer</button>
+       <button class="choiceBtn" id="schoolRecordVoiceBtn" type="button">
+▶Commencer l'enregistrement
+</button>
+
+<button class="choiceBtn" id="schoolStopRecordVoiceBtn" type="button" style="background:#fff;">
+Arrêter l'enregistrement
+</button>
+
+<button class="choiceBtn" id="schoolPlayRecordedVoiceBtn" type="button" style="background:#fff;">
+▶Écouter l'enregistrement
+</button>
+
+<button class="choiceBtn" id="schoolDeleteRecordedVoiceBtn" type="button" style="background:#fff;">
+Supprimer l'enregistrement
+</button>
       </div>
 
       <div class="muted" id="schoolRecordedVoiceStatus" style="margin-top:8px;">
@@ -3443,7 +3460,9 @@ if(key === "ecole"){
         solidarité, génération du code classe et suivi du parrainage.
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="toggleSchoolAdminBtn" type="button">Ouvrir l’espace interne école</button>
+       <button class="choiceBtn" id="toggleSchoolAdminBtn" type="button">
+espace de gestion de l'école
+</button> 
       </div>
     </div>
 
@@ -3482,9 +3501,17 @@ if(key === "ecole"){
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="schoolConfigSaveBtn" type="button">Enregistrer la configuration</button>
-          <button class="choiceBtn" id="schoolConfigReadBtn" type="button" style="background:#fff;">Lire la configuration</button>
-          <button class="choiceBtn" id="schoolConfigCalendarBtn" type="button" style="background:#fff;">Voir calendrier préparé</button>
+         <button class="choiceBtn" id="schoolConfigSaveBtn" type="button">
+Enregistrer les paramètres
+</button>
+
+<button class="choiceBtn" id="schoolConfigReadBtn" type="button" style="background:#fff;">
+Consulter les paramètres
+</button>
+
+<button class="choiceBtn" id="schoolConfigCalendarBtn" type="button" style="background:#fff;">
+Consulter le calendrier préparé
+</button>
         </div>
 
         <div class="muted" id="schoolCalendarPreview" style="margin-top:10px;"></div>
@@ -3504,8 +3531,13 @@ if(key === "ecole"){
       </div>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="schoolSaveBtn" type="button">Valider aujourd’hui</button>
-        <button class="choiceBtn" id="schoolResetBtn" type="button" style="background:#fff;">Réinitialiser (démo)</button>
+       <button class="choiceBtn" id="schoolSaveBtn" type="button">
+Enregistrer la journée
+</button>
+
+<button class="choiceBtn" id="schoolResetBtn" type="button" style="background:#fff;">
+Recommencer la simulation
+</button>
       </div>
 
       <div class="muted" id="schoolDayStatus" style="margin-top:10px;"></div>
@@ -3611,8 +3643,13 @@ if(key === "ecole"){
           </div>
 
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="schoolAssoPreview" type="button">Aperçu partage</button>
-            <button class="choiceBtn" id="schoolAssoSave" type="button">Enregistrer (démo)</button>
+           <button class="choiceBtn" id="schoolAssoPreview" type="button">
+Consulter le partage
+</button>
+
+<button class="choiceBtn" id="schoolAssoSave" type="button">
+Enregistrer le partage
+</button>
           </div>
 
           <div class="muted" style="margin-top:10px;">
@@ -3654,10 +3691,21 @@ if(key === "ecole"){
         <textarea id="schoolReferralNote" class="miniField" style="min-height:110px;" placeholder="Ex : prise de contact faite, accord de principe, date, élément de contrôle"></textarea>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="schoolReferralSaveBtn" type="button">Enregistrer parrainage</button>
-          <button class="choiceBtn" id="schoolReferralReadBtn" type="button" style="background:#fff;">Lire parrainage</button>
-          <button class="choiceBtn" id="schoolReferralResetBtn" type="button" style="background:#fff;">Réinitialiser parrainage</button>
-          <button class="choiceBtn" id="schoolHistoryReadBtn" type="button" style="background:#fff;">Lire historique école</button>
+         <button class="choiceBtn" id="schoolReferralSaveBtn" type="button">
+Enregistrer le parrainage
+</button>
+
+<button class="choiceBtn" id="schoolReferralReadBtn" type="button" style="background:#fff;">
+Consulter le parrainage
+</button>
+
+<button class="choiceBtn" id="schoolReferralResetBtn" type="button" style="background:#fff;">
+Réinitialiser le parrainage
+</button>
+
+<button class="choiceBtn" id="schoolHistoryReadBtn" type="button" style="background:#fff;">
+Consulter l'historique de l'école
+</button>
         </div>
 
         <div class="muted" style="margin-top:10px;">
@@ -4751,7 +4799,9 @@ if(key === "sport"){
             participe à la dynamique de la ville et peut renforcer son image dans le temps.
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="openSportFicheBtn" type="button">Ouvrir la fiche</button>
+          <button class="choiceBtn" id="openSportFicheBtn" type="button">
+Consulter la fiche du club
+</button>
           </div>
         </div>
 
@@ -4819,9 +4869,17 @@ if(key === "sport"){
           <textarea id="sportWeekendReport" class="miniField" style="min-height:120px;" placeholder="Ex : Victoire 3-1 à domicile, bon état d’esprit, fair-play exemplaire"></textarea>
 
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="sportWeekendSave" type="button">Enregistrer le résultat</button>
-            <button class="choiceBtn" id="sportWeekendRead" type="button" style="background:#fff;">Lire le résultat</button>
-            <button class="choiceBtn" id="sportWeekendReset" type="button" style="background:#fff;">Réinitialiser le résultat</button>
+         <button class="choiceBtn" id="sportWeekendSave" type="button">
+Enregistrer le résultat
+</button>
+
+<button class="choiceBtn" id="sportWeekendRead" type="button" style="background:#fff;">
+Consulter le résultat
+</button>
+
+<button class="choiceBtn" id="sportWeekendReset" type="button" style="background:#fff;">
+Réinitialiser le résultat
+</button> 
           </div>
 
           <div class="muted" style="margin-top:10px;">
@@ -4907,8 +4965,13 @@ if(key === "sport"){
             </div>
 
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn" id="sportAssoPreview" type="button">👁️ Aperçu partage</button>
-              <button class="choiceBtn" id="sportAssoSave" type="button">💾 Enregistrer (démo)</button>
+             <button class="choiceBtn" id="sportAssoPreview" type="button">
+Consulter le partage
+</button>
+
+<button class="choiceBtn" id="sportAssoSave" type="button">
+Enregistrer le partage
+</button>
             </div>
 
             <div class="muted" style="margin-top:10px;">
@@ -4939,7 +5002,9 @@ if(key === "sport"){
           <textarea id="sportMerchantScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan commerçant (démo)"></textarea>
 
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="sportMerchantReadBtn" type="button">Lire le scan commerçant</button>
+        <button class="choiceBtn" id="sportMerchantReadBtn" type="button">
+Consulter le scan du commerçant
+</button>
           </div>
 
           <div class="box" style="margin-top:12px;background:var(--bg);">
@@ -4996,8 +5061,13 @@ if(key === "sport"){
             </div>
 
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn" id="sportPubPayBtn" type="button">Payer 60 € TTC</button>
-              <button class="choiceBtn" id="sportPubHistoryBtn" type="button" style="background:#fff;">Voir pubs actives</button>
+             <button class="choiceBtn" id="sportPubPayBtn" type="button">
+Confirmer et payer 60 € TTC
+</button>
+
+<button class="choiceBtn" id="sportPubHistoryBtn" type="button" style="background:#fff;">
+Consulter les publications actives
+</button>
             </div>
           </div>
         </div>
@@ -5026,11 +5096,25 @@ if(key === "sport"){
           <textarea id="sportScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan club (démo)"></textarea>
 
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="sportReadBtn" type="button">Lire le scan</button>
-            <button class="choiceBtn" id="sportValidate10Btn" type="button">Valider échange 10</button>
-            <button class="choiceBtn" id="sportValidate20Btn" type="button">Valider échange 20</button>
-            <button class="choiceBtn" id="sportHistoryBtn" type="button" style="background:#fff;">Voir historique</button>
-            <button class="choiceBtn" id="sportExportBtn" type="button" style="background:#fff;">Exporter historique</button>
+            <button class="choiceBtn" id="sportReadBtn" type="button">
+Consulter le scan
+</button>
+
+<button class="choiceBtn" id="sportValidate10Btn" type="button">
+Confirmer l'échange de 10 Bo'CitéCoins
+</button>
+
+<button class="choiceBtn" id="sportValidate20Btn" type="button">
+Confirmer l'échange de 20 Bo'CitéCoins
+</button>
+
+<button class="choiceBtn" id="sportHistoryBtn" type="button" style="background:#fff;">
+Consulter l'historique
+</button>
+
+<button class="choiceBtn" id="sportExportBtn" type="button" style="background:#fff;">
+Exporter l'historique
+</button>
           </div>
 
           <div class="box" style="margin-top:12px;background:var(--bg);">
@@ -5064,7 +5148,9 @@ if(key === "sport"){
             Ouvre la carte plein écran avec points utiles autour de vous.
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="openMap" type="button">Carte bien-être</button>
+       <button class="choiceBtn" id="openMap" type="button">
+Consulter la carte bien-être
+</button>
           </div>
         </div>
 
@@ -5939,11 +6025,11 @@ const HEALTH_DIRECTORY_DATA = demoHealthActive ? {
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
         <button class="choiceBtn" id="openMairieServicesBtn" type="button" style="background:#fff4f4;">
-          🏛️ Services mairie / ville
+         Services mairie / ville
         </button>
 
         <button class="choiceBtn" id="openHealthServicesBtn" type="button" style="background:#f2fff7;">
-          🩺 Médecins • spécialistes • kinés • infirmières • pharmacies
+          Médecins • spécialistes • kinés • infirmières • pharmacies
         </button>
       </div>
     </div>
@@ -5994,7 +6080,9 @@ const HEALTH_DIRECTORY_DATA = demoHealthActive ? {
         dispatch des échanges, validations, historiques et suivi des parrainages.
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="toggleMairieAdminBtn" type="button">
+ <button class="choiceBtn" id="toggleMairieAdminBtn" type="button">
+Espace de gestion de la mairie
+</button>
           Ouvrir l’espace interne mairie
         </button>
       </div>
@@ -6012,8 +6100,13 @@ const HEALTH_DIRECTORY_DATA = demoHealthActive ? {
         <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="mairieMsgSave" type="button">Enregistrer</button>
-          <button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">Réinitialiser</button>
+        <button class="choiceBtn" id="mairieMsgSave" type="button">
+Enregistrer le message
+</button>
+
+<button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">
+Effacer le message
+</button>
         </div>
       </div>
 
@@ -6027,11 +6120,25 @@ const HEALTH_DIRECTORY_DATA = demoHealthActive ? {
         <textarea id="mairieScanInput" class="miniField" style="min-height:120px;margin-top:10px;" placeholder="Lecture / scan classe (démo)"></textarea>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="mairieReadBtn" type="button" style="background:#f2df58;">Lire le scan</button>
-          <button class="choiceBtn" id="mairieValidateBtn" type="button" style="background:#f2df58;">Valider échange école</button>
-          <button class="choiceBtn" id="mairieHistoryBtn" type="button" style="background:#f2df58;">Voir historique</button>
-          <button class="choiceBtn" id="mairieHistoryResetBtn" type="button" style="background:#f2df58;">Réinitialiser historique</button>
-          <button class="choiceBtn" id="mairieExportBtn" type="button" style="background:#f2df58;">Exporter historique</button>
+         <button class="choiceBtn" id="mairieReadBtn" type="button" style="background:#f2df58;">
+Consulter le scan
+</button>
+
+<button class="choiceBtn" id="mairieValidateBtn" type="button" style="background:#f2df58;">
+Confirmer l'échange avec l'école
+</button>
+
+<button class="choiceBtn" id="mairieHistoryBtn" type="button" style="background:#f2df58;">
+Consulter l'historique
+</button>
+
+<button class="choiceBtn" id="mairieHistoryResetBtn" type="button" style="background:#f2df58;">
+Réinitialiser l'historique
+</button>
+
+<button class="choiceBtn" id="mairieExportBtn" type="button" style="background:#f2df58;">
+Exporter l'historique
+</button>
         </div>
 
         <div class="box" style="margin-top:12px;background:var(--bg);">
@@ -6052,9 +6159,17 @@ const HEALTH_DIRECTORY_DATA = demoHealthActive ? {
         <textarea id="mairieReferralInput" class="miniField" style="min-height:110px;" placeholder="Ex : Nom du parrain, type, date, contrôle 30 jours, commentaire (démo)"></textarea>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="mairieReferralSaveBtn" type="button">Enregistrer suivi parrainage</button>
-          <button class="choiceBtn" id="mairieReferralReadBtn" type="button" style="background:#fff;">Lire suivi</button>
-          <button class="choiceBtn" id="mairieReferralResetBtn" type="button" style="background:#fff;">Réinitialiser suivi</button>
+         <button class="choiceBtn" id="mairieReferralSaveBtn" type="button">
+Enregistrer le suivi du parrainage
+</button>
+
+<button class="choiceBtn" id="mairieReferralReadBtn" type="button" style="background:#fff;">
+Consulter le suivi du parrainage
+</button>
+
+<button class="choiceBtn" id="mairieReferralResetBtn" type="button" style="background:#fff;">
+Réinitialiser le suivi du parrainage
+</button>
         </div>
       </div>
     </div>
@@ -6217,8 +6332,8 @@ if(key === "commerces") {
         historique et règles internes.
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="toggleCommerceAdminBtn" type="button">
-          Ouvrir l’espace interne commerce
+     <button class="choiceBtn" id="toggleCommerceAdminBtn" type="button">
+Espace de gestion du commerce
         </button>
       </div>
     </div>
@@ -6236,10 +6351,21 @@ if(key === "commerces") {
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="shopCalcBtn" type="button">Calculer</button>
-          <button class="choiceBtn" id="shopScanClientBtn" type="button">Scanner le client</button>
-          <button class="choiceBtn" id="shopCreditClientBtn" type="button">Valider l’envoi</button>
-          <button class="choiceBtn" id="shopUndoBtn" type="button" style="background:#fff;">Correction 60 s</button>
+         <button class="choiceBtn" id="shopCalcBtn" type="button">
+Calculer les Bo'CitéCoins
+</button>
+
+<button class="choiceBtn" id="shopScanClientBtn" type="button">
+Scanner la carte du client
+</button>
+
+<button class="choiceBtn" id="shopCreditClientBtn" type="button">
+Confirmer l'attribution
+</button>
+
+<button class="choiceBtn" id="shopUndoBtn" type="button" style="background:#fff;">
+Annuler l'attribution (60 s)
+</button>
         </div>
       </div>
 
@@ -6258,8 +6384,13 @@ if(key === "commerces") {
         <input class="miniField" id="merchantProfileEmail" placeholder="Email">
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="merchantProfileSaveBtn" type="button">Enregistrer la fiche</button>
-          <button class="choiceBtn" id="merchantShowQrBtn" type="button">Afficher mon code commerçant</button>
+<button class="choiceBtn" id="merchantProfileSaveBtn" type="button">
+Enregistrer mes informations
+</button>
+
+<button class="choiceBtn" id="merchantShowQrBtn" type="button">
+Afficher mon QR Code commerçant
+</button>
         </div>
 
         <div class="box" style="margin-top:12px;background:var(--bg);">
@@ -6271,7 +6402,7 @@ if(key === "commerces") {
       </div> 
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="merchantHistoryExportBtn" type="button" style="background:#fff;">Exporter historique</button>
+        <button class="choiceBtn" id="merchantHistoryExportBtn" type="button" style="background:#fff;">Exporter l'historique</button>
       </div>
 
     </div>
@@ -6672,19 +6803,31 @@ window.openComptaBoCiteArt = function(){
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="openTableauMatin()">Tableau du matin</button>
-      <button class="choiceBtn" onclick="openProspectsPartenaires()">Prospects / Partenaires</button>
-      <button class="choiceBtn" onclick="openVillesLicences()">Villes / Licences</button>
-      <button class="choiceBtn" onclick="openDeploiementVille()">Déployer une ville</button>
-      <button class="choiceBtn" onclick="openParametresVille()">Paramètres ville</button>
-      <button class="choiceBtn" onclick="openComptaVille('GLOBAL')">Comptabilité</button>
-      <button class="choiceBtn" onclick="openPaiementDocuments()">Paiements & documents</button>
-      <button class="choiceBtn" onclick="openFiscaliteBoCiteArt()">Fiscalité</button>
-      <button class="choiceBtn" onclick="openRelancesBoCiteArt()">Relances</button>
-      <button class="choiceBtn" onclick="openKitBienvenue()">Kit / autocollants</button>
-      <button class="choiceBtn" onclick="openSanteVille()">Santé / pros utiles</button>
-      <button class="choiceBtn" onclick="openSauvegardesBociteart()">Sauvegardes</button>
-      <button class="choiceBtn" onclick="openPilotagePrive()">Pilotage privé</button>
+     <button class="choiceBtn" onclick="openTableauMatin()">Tableau de pilotage</button>
+
+<button class="choiceBtn" onclick="openProspectsPartenaires()">Prospects & partenaires</button>
+
+<button class="choiceBtn" onclick="openVillesLicences()">Communes & licences</button>
+
+<button class="choiceBtn" onclick="openDeploiementVille()">Déploiement des communes</button>
+
+<button class="choiceBtn" onclick="openParametresVille()">Paramètres des communes</button>
+
+<button class="choiceBtn" onclick="openComptaVille('GLOBAL')">Comptabilité générale</button>
+
+<button class="choiceBtn" onclick="openPaiementDocuments()">Paiements & documents</button>
+
+<button class="choiceBtn" onclick="openFiscaliteBoCiteArt()">Fiscalité</button>
+
+<button class="choiceBtn" onclick="openRelancesBoCiteArt()">Relances automatiques</button>
+
+<button class="choiceBtn" onclick="openKitBienvenue()">Kit de bienvenue</button>
+
+<button class="choiceBtn" onclick="openSanteVille()">Santé du système</button>
+
+<button class="choiceBtn" onclick="openSauvegardesBociteart()">Sauvegardes</button>
+
+<button class="choiceBtn" onclick="openPilotagePrive()">Pilotage privé</button>
     </div>
 
   `);
@@ -7722,7 +7865,7 @@ window.openPilotagePrive = function(){
       return;
     }
 
-    const twofa = prompt("Code 2FA démonstration :");
+    const twofa = prompt("Code 2FA Environnement de présentation :");
     if(twofa!=="2026"){
       alert("2FA refusé.");
       return;
@@ -7791,8 +7934,8 @@ window.openPilotagePrive = function(){
       </button>
 
       <button class="choiceBtn"
-      onclick="openPresentationBoCiteArt()"
-      Démonstration
+      onclick="openPresentationBoCiteArt()">
+      Présentation
       </button>
 
       <button class="choiceBtn"
@@ -8606,7 +8749,7 @@ for(let i=1;i<=demo.fresques;i++){
 
       <strong>Environnement sécurisé</strong><br>
 
-      Toutes les données présentées sont fictives.<br>
+      Environnement de présentation préparé pour sécuriser les échanges avant déploiement.<br>
       Aucun paiement réel.<br>
       Aucun contrat réel.<br>
       Aucun partenaire réel.<br>
@@ -8616,7 +8759,7 @@ for(let i=1;i<=demo.fresques;i++){
 
     <div class="box">
 
-      <strong>Choisir une démonstration</strong><br>
+      <strong>Choisir un scénario de présentation</strong><br>
 
       Bo'CitéArt adapte automatiquement les commerces,
       associations, écoles, quartiers, services,
@@ -8679,7 +8822,7 @@ for(let i=1;i<=demo.fresques;i++){
 
       <button class="choiceBtn"
       onclick="resetDemoVille()">
-      Réinitialiser la démonstration
+      Réinitialiser la présentation
       </button>
 
     </div>
@@ -8688,7 +8831,7 @@ for(let i=1;i<=demo.fresques;i++){
 
       <strong>Information</strong><br>
 
-      Le bandeau « Mode démonstration » reste visible
+      Le bandeau « Mode présentation » reste visible
       afin qu'aucune confusion ne soit possible entre
       cette présentation et une commune réellement
       déployée.
@@ -8715,9 +8858,9 @@ window.genererDemoVille = function(type){
   });
   buildDemoDatabase(d);
 
-  openModal("Préparation de la démonstration", `
+  openModal("Préparation de la présentation", `
     <div class="box">
-      <strong>Préparation de la démonstration...</strong><br><br>
+      <strong>Préparation de la présentation...</strong><br><br>
       ✓ Analyse de la commune<br>
       ✓ Configuration des quartiers<br>
       ✓ Création des commerces<br>
@@ -8750,7 +8893,7 @@ window.genererDemoVille = function(type){
       </div>
 
       <div class="box">
-        <strong>Simulation 12 mois</strong><br>
+        <strong>projection 12 mois</strong><br>
         ${d.pubs} publicités diffusées<br>
         ${d.coins} bocitecoins distribués<br>
         ${d.scans} QR codes scannés
@@ -8766,7 +8909,7 @@ window.genererDemoVille = function(type){
 
 window.resetDemoVille = function(){
   localStorage.removeItem(window.BOC_DEMO_KEY);
-  alert("Démo effacée. Les données fictives sont remises à zéro sans toucher à la production.");
+  alert("Présentation réinitialisée. Les données de préparation sont remises à zéro sans toucher à la production.");
 };
      
 window.openTableauBordCommune = function(){
@@ -8887,7 +9030,7 @@ window.openTableauBordCommune = function(){
     </div>
 
     <div class="box">
-      <strong>Activité estimée sur 12 mois</strong><br>
+      <strong>Projection 12 mois</strong><br>
       Publicités diffusées : ${demo.pubs}<br>
       bocitecoins distribués : ${demo.coins}<br>
       QR codes scannés : ${demo.scans}
@@ -8914,12 +9057,39 @@ window.openTableauBordCommune = function(){
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="window.__bociteartOpenByKey('commerces')">Commerces</button>
-      <button class="choiceBtn" onclick="window.__bociteartOpenByKey('mairie')">Mairie</button>
-      <button class="choiceBtn" onclick="window.__bociteartOpenByKey('sport')">Sport</button>
-      <button class="choiceBtn" onclick="openSanteVille()">Santé</button>
-      <button class="choiceBtn" onclick="openDeploiementVille()">Déploiement</button>
-      <button class="choiceBtn" onclick="openTableauMatin()">Tableau du matin</button>
+     <div class="choiceGrid">
+
+  <button class="choiceBtn"
+  onclick="window.__bociteartOpenByKey('commerces')">
+  Commerces partenaires
+  </button>
+
+  <button class="choiceBtn"
+  onclick="window.__bociteartOpenByKey('mairie')">
+  Services municipaux
+  </button>
+
+  <button class="choiceBtn"
+  onclick="window.__bociteartOpenByKey('sport')">
+  Clubs sportifs
+  </button>
+
+  <button class="choiceBtn"
+  onclick="openSanteVille()">
+  Santé & secours
+  </button>
+
+  <button class="choiceBtn"
+  onclick="openDeploiementVille()">
+  État du déploiement
+  </button>
+
+  <button class="choiceBtn"
+  onclick="openTableauMatin()">
+  Tableau de pilotage
+  </button>
+
+</div>
     </div>
 
   `);
@@ -8946,12 +9116,17 @@ on(adminTile, "click", ()=>{
     </div>
 
     <div class="choiceGrid">
-      <button class="choiceBtn" onclick="openComptaBoCiteArt()">Centre Bo’CitéArt</button>
-      <button class="choiceBtn" onclick="openAdminSection('roles')">Rôles</button>
-      <button class="choiceBtn" onclick="openAdminSection('securite')">Sécurité</button>
-      <button class="choiceBtn" onclick="openAdminSection('exports')">Exports</button>
-      <button class="choiceBtn" onclick="openAdminSection('parametres')">Paramètres</button>
-      <button class="choiceBtn" onclick="openSanteVille()">Santé / pros utiles</button>
+   <button class="choiceBtn" onclick="openComptaBoCiteArt()">Pilotage Bo'CitéArt</button>
+
+<button class="choiceBtn" onclick="openAdminSection('roles')">Profils & accès</button>
+
+<button class="choiceBtn" onclick="openAdminSection('securite')">Sécurité des accès</button>
+
+<button class="choiceBtn" onclick="openAdminSection('exports')">Exports & archives</button>
+
+<button class="choiceBtn" onclick="openAdminSection('parametres')">Réglages généraux</button>
+
+<button class="choiceBtn" onclick="openSanteVille()">Santé & services utiles</button>
     </div>
   `);
 });
@@ -9495,8 +9670,13 @@ on(daeBtn, "click", ()=>{
       </div>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="daeLocate" type="button">📍 Me localiser</button>
-        <button class="choiceBtn" id="daeRoute" type="button">➡️ Ouvrir l’itinéraire</button>
+      <button class="choiceBtn" id="daeLocate" type="button">
+📍 Trouver le défibrillateur le plus proche
+</button>
+
+<button class="choiceBtn" id="daeRoute" type="button">
+🧭 M'y rendre
+</button>
       </div>
     </div>
   `);
@@ -9643,8 +9823,13 @@ on(clockBtn, "click", ()=>{
       <div id="clockWeatherSource" style="margin-top:4px;font-size:11px;color:#555;">Source météo : Open-Meteo</div>
 
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
-        <button class="choiceBtn" id="clockAskLocationBtn" type="button">📍 Activer ma position météo</button>
-        <button class="choiceBtn" id="clockRetryLocationBtn" type="button" style="background:#fff;">↻ Refaire la localisation</button>
+     <button class="choiceBtn" id="clockAskLocationBtn" type="button">
+🌤️ Afficher la météo chez moi
+</button>
+
+<button class="choiceBtn" id="clockRetryLocationBtn" type="button" style="background:#fff;">
+📍 Actualiser ma position
+</button>
       </div>
     </div>
 
@@ -9655,9 +9840,17 @@ on(clockBtn, "click", ()=>{
 
     <div class="box" style="margin-top:12px;">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
-        <button class="choiceBtn" id="clockPrevMonth" type="button" style="background:#fff;padding:10px 12px;">← Préc.</button>
-        <div id="clockMonthTitle" style="font-weight:900;font-size:16px;text-transform:capitalize;">${getMonthLabelFr(now.getFullYear(), now.getMonth())}</div>
-        <button class="choiceBtn" id="clockNextMonth" type="button" style="background:#fff;padding:10px 12px;">Suiv. →</button>
+      <button class="choiceBtn" id="clockPrevMonth" type="button" style="background:#fff;padding:10px 12px;">
+← Mois précédent
+</button>
+
+<div id="clockMonthTitle" style="font-weight:900;font-size:16px;text-transform:capitalize;">
+${getMonthLabelFr(now.getFullYear(), now.getMonth())}
+</div>
+
+<button class="choiceBtn" id="clockNextMonth" type="button" style="background:#fff;padding:10px 12px;">
+Mois suivant →
+</button>
       </div>
 
       <div style="margin-top:8px;font-size:12px;font-weight:800;color:#9a6b00;">
@@ -10077,64 +10270,81 @@ function emergencyGate(kind, onOk){
     return;
   }
 
-  const title = (kind === "112")
-    ? "Urgence 112 — usage responsable"
-    : "Aide 3919 / 119 — usage responsable";
+const title = (kind === "112")
+  ? "Urgence 112 — usage responsable"
+  : "Appel " + kind + " — usage responsable";
 
-  const body = (kind === "112") ? `
-    <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
-    <div class="box">
-      <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
-      Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
-    </div>
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
-      <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
-      <li>Appui long = réduction des appels accidentels (sans garantie d’erreur zéro).</li>
-    </ul>
-    <div class="box" style="margin-top:10px;">
-      <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
-        <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-        J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
-      </label>
-    </div>
-    <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer vers 112</button>
-  ` : `
-    <div style="font-weight:900;margin-bottom:8px;">Ces numéros sont sérieux — ne pas jouer avec.</div>
-    <div class="box">
-      <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
-      Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
-    </div>
-    <ul style="margin:8px 0 0 18px;font-weight:800;">
-      <li><strong>3919</strong> : écoute/orientation (pas une intervention immédiate).</li>
-      <li><strong>119</strong> : enfance en danger.</li>
-      <li><strong>Danger immédiat</strong> : appeler le 112.</li>
-    </ul>
-    <div class="box" style="margin-top:10px;">
-      <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
-        <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
-        J’ai compris : j’utiliserai ces numéros uniquement en cas de situation réelle.
-      </label>
-    </div>
-    <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">Continuer</button>
-  `;
+const body = (kind === "112") ? `
+  <div style="font-weight:900;margin-bottom:8px;">Attention : numéro d’urgence — ne pas jouer avec.</div>
 
-  if(isFn(window.openModal)) window.openModal(title, body);
+  <div class="box">
+    <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
+    Bo’CitéArt ne fournit pas de secours et ne garantit pas la connexion réseau.
+  </div>
 
-  setTimeout(()=>{
-    const box = $("ackBox");
-    const btn = $("ackBtn");
-    if(!btn) return;
-    btn.onclick = ()=>{
-      if(!box || !box.checked){
-        alert("Veuillez cocher la case pour confirmer que vous avez compris.");
-        return;
-      }
-      ackSet(kind);
-      if(isFn(window.closeModal)) window.closeModal();
-      onOk();
-    };
-  }, 0);
+  <ul style="margin:8px 0 0 18px;font-weight:800;">
+    <li>Utiliser le 112 uniquement en cas de danger réel ou urgence avérée.</li>
+    <li>Ne pas retarder l’appel aux secours pour consulter l’application.</li>
+    <li>Appui long = réduction des appels accidentels, sans garantie d’erreur zéro.</li>
+  </ul>
+
+  <div class="box" style="margin-top:10px;">
+    <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
+      <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
+      J’ai compris : je n’utiliserai ce bouton qu’en cas de nécessité absolue.
+    </label>
+  </div>
+
+  <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">
+    📞 Appeler le 112
+  </button>
+` : `
+  <div style="font-weight:900;margin-bottom:8px;">Ce numéro est sérieux — ne pas jouer avec.</div>
+
+  <div class="box">
+    <strong>Bo’CitéArt est un raccourci :</strong> l’appel est passé via votre téléphone.
+    Bo’CitéArt ne fournit pas d’intervention et ne garantit pas la connexion réseau.
+  </div>
+
+  <ul style="margin:8px 0 0 18px;font-weight:800;">
+    <li><strong>3919</strong> : écoute et orientation, pas une intervention immédiate.</li>
+    <li><strong>119</strong> : enfance en danger.</li>
+    <li><strong>Danger immédiat</strong> : appeler le 112.</li>
+  </ul>
+
+  <div class="box" style="margin-top:10px;">
+    <label style="display:flex;gap:10px;align-items:flex-start;font-weight:900;">
+      <input id="ackBox" type="checkbox" style="transform:scale(1.15);margin-top:2px;">
+      J’ai compris : j’utiliserai ce numéro uniquement en cas de situation réelle.
+    </label>
+  </div>
+
+  <button class="choiceBtn" id="ackBtn" type="button" style="width:100%;margin-top:10px;">
+    📞 Appeler le ${kind}
+  </button>
+`;
+
+if(isFn(window.openModal)) window.openModal(title, body);
+
+setTimeout(()=>{
+  const box = $("ackBox");
+  const btn = $("ackBtn");
+
+  if(!btn) return;
+
+  btn.onclick = ()=>{
+    if(!box || !box.checked){
+      alert("Veuillez cocher la case pour confirmer que vous avez compris.");
+      return;
+    }
+
+    ackSet(kind);
+
+    if(isFn(window.closeModal)) window.closeModal();
+
+    onOk();
+  };
+}, 0);
 }
 
 makeLongPress(
@@ -10151,9 +10361,13 @@ const choice = $("choice");
 
 const closeChoice = ()=>{
   if(!choice) return;
+
   choice.classList.remove("open");
+
   if(isFn(window.lockScroll)) window.lockScroll(false);
+
   if(window.__lastFocus?.focus) window.__lastFocus.focus();
+
   window.__lastFocus = null;
 };
 
@@ -10163,8 +10377,10 @@ on($("choiceX"), "click", closeChoice);
 document.querySelectorAll("#choice .choiceBtn[data-pick]").forEach((b)=>{
   b.addEventListener("click", ()=>{
     sosNumber = b.getAttribute("data-pick");
+
     const lab = $("sosLabel");
     if(lab) lab.textContent = sosNumber;
+
     closeChoice();
   });
 });
@@ -10175,12 +10391,16 @@ makeLongPress(
   2000,
   ()=>{
     if(!choice) return;
+
     if(!sosNumber){
       window.__lastFocus = document.activeElement;
       choice.classList.add("open");
+
       if(isFn(window.lockScroll)) window.lockScroll(true);
+
       return;
     }
+
     emergencyGate(sosNumber, ()=> {
       if(isFn(window.callPhone)) window.callPhone(sosNumber);
     });
@@ -10231,8 +10451,8 @@ if(isFn(window.makeKeyboardClickable)){
   });
 
   window.showTab("rgpd");
- })();
-})();   
+})();
+})();
 </script>
   
 <script>
@@ -10933,8 +11153,8 @@ function openProfile(type){
       </div>
  
       <button class="choiceBtn" id="saveProfilePubV3" type="button" style="margin-top:10px;">
-        enregistrer ma fiche
-      </button>
+💾 Enregistrer mes informations
+</button>
     </div>
  
     <div class="box">
@@ -10967,12 +11187,13 @@ function openProfile(type){
     </div>
  
     <div class="box">
-      <button class="choiceBtn" id="validatePubV3" type="button">
-        valider et payer la réservation ferme / simulation
-      </button>
-      <button class="choiceBtn" id="editPubV3" type="button" style="background:#fff;margin-top:8px;">
-        modifier ma publicité du jour
-      </button>
+  <button class="choiceBtn" id="validatePubV3" type="button">
+✅ Confirmer ma réservation
+</button>
+
+<button class="choiceBtn" id="editPubV3" type="button" style="background:#fff;margin-top:8px;">
+✏️ Modifier ma réservation
+</button>
     </div>
   `;
  
@@ -11222,62 +11443,90 @@ function openProfile(type){
     },100);
   }
  
-  window.openTicker = function(){
-    openModal("publicités & visibilité", `
-      <div class="box">
-        <strong>grand bandeau publicitaire</strong><br>
-        chaque publicité défile avec son propre logo/photo et son propre texte.
-      </div>
- 
-      <div class="box">
-        <strong>veuillez mettre votre code d’accès</strong><br>
-        exemples démo :<br>
-        commerce : <strong>com1234</strong><br>
-        mairie : <strong>mairie1234</strong><br>
-        association : <strong>asso1234</strong>
-      </div>
- 
-      <div class="choiceGrid">
-        <button class="choiceBtn" id="openPubCommerceV3" type="button">commerce</button>
-        <button class="choiceBtn" id="openPubMairieV3" type="button">mairie</button>
-        <button class="choiceBtn" id="openPubAssoV3" type="button">association</button>
-      </div>
- 
-      <div id="pubZoneV3" style="margin-top:12px;"></div>
-    `);
- 
-    setTimeout(()=>{
-      function ask(type){
-        const code = prompt(
-          "veuillez mettre votre code d’accès\n\n" +
-          "exemples démo :\n" +
-          "commerce : com1234\n" +
-          "mairie : mairie1234\n" +
-          "association : asso1234\n\n" +
-          "écrivez votre code ici :"
-        );
- 
-        if(!code) return;
- 
-        const cleanCode = String(code).trim().toLowerCase();
- 
-        if(cleanCode !== CODES[type]){
-          alert("code incorrect.");
-          return;
-        }
- 
-        openProfile(type);
+ window.openTicker = function(){
+  openModal("Publicités & visibilité", `
+    <div class="box">
+      <strong>Calendrier des communications locales</strong><br>
+      Chaque communication peut intégrer un logo, une image et un texte court.
+    </div>
+
+    <div class="box">
+      <strong>Accès sécurisé</strong><br>
+      Codes de présentation :<br>
+      Commerçants : <strong>com1234</strong><br>
+      Entreprises : <strong>ent1234</strong><br>
+      Mairie : <strong>mairie1234</strong><br>
+      Associations : <strong>asso1234</strong>
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" id="openPubCommerceV3" type="button">
+        Diffuser une offre commerçant
+      </button>
+
+      <button class="choiceBtn" id="openPubEntrepriseV3" type="button">
+        Espace entreprises
+      </button>
+
+      <button class="choiceBtn" id="openPubMairieV3" type="button">
+        Informer les habitants
+      </button>
+
+      <button class="choiceBtn" id="openPubAssoV3" type="button">
+        Annoncer un événement associatif
+      </button>
+    </div>
+
+    <div id="pubZoneV3" style="margin-top:12px;"></div>
+  `);
+
+  setTimeout(()=>{
+    function ask(type){
+      const codes = {
+        commerce: "com1234",
+        entreprise: "ent1234",
+        mairie: "mairie1234",
+        asso: "asso1234"
+      };
+
+      const code = prompt(
+        "Veuillez saisir votre code d'accès\n\n" +
+        "Commerçants : com1234\n" +
+        "Entreprises : ent1234\n" +
+        "Mairie : mairie1234\n" +
+        "Associations : asso1234\n\n" +
+        "Votre code :"
+      );
+
+      if(!code) return;
+
+      const cleanCode = String(code).trim().toLowerCase();
+
+      if(cleanCode !== codes[type]){
+        alert("Code incorrect.");
+        return;
       }
- 
-      const c = $("openPubCommerceV3");
-      const m = $("openPubMairieV3");
-      const a = $("openPubAssoV3");
- 
-      if(c) c.onclick = function(){ ask("commerce"); };
-      if(m) m.onclick = function(){ ask("mairie"); };
-      if(a) a.onclick = function(){ ask("asso"); };
-    },100);
-  };
+
+      if(type === "entreprise"){
+        alert("Espace entreprises activé.\n\nPour cette version, l'entreprise utilise le même parcours de communication que les commerçants. Le module mécénat et visibilité entreprise sera ajouté ensuite.");
+        openProfile("commerce");
+        return;
+      }
+
+      openProfile(type);
+    }
+
+    const c = $("openPubCommerceV3");
+    const e = $("openPubEntrepriseV3");
+    const m = $("openPubMairieV3");
+    const a = $("openPubAssoV3");
+
+    if(c) c.onclick = function(){ ask("commerce"); };
+    if(e) e.onclick = function(){ ask("entreprise"); };
+    if(m) m.onclick = function(){ ask("mairie"); };
+    if(a) a.onclick = function(){ ask("asso"); };
+  },100);
+};
  
   const ticker = $("ticker");
   if(ticker){
