@@ -1601,106 +1601,118 @@ Bo’CitéArt peut faire évoluer ses fonctionnalités, ses offres, ses modalit�
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    (function initBoCiteArtClean(){
-      console.log("✅ JS démarré");
+ 
+  (function initBoCiteArtClean(){
+  console.log("✅ JS démarré");
 
-      const CITY_CONFIG = {
-  cityName: "Wattignies",
-  coinName: "WattCoin",
-  coinPlural: "WattCoins",
-  mainColor: "#a51e22"
-};
+  const CITY_CONFIG = {
+    cityName: "Wattignies",
+    coinName: "WattCoin",
+    coinPlural: "WattCoins",
+    mainColor: "#a51e22"
+  };
 
-window.CITY_CONFIG = CITY_CONFIG;
+  window.CITY_CONFIG = CITY_CONFIG;
 
-function cityText(key){
-return CITY_CONFIG[key] || "";
-}
-      const $ = (id) => document.getElementById(id);
-      const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
-      const isFn = (v) => typeof v === "function";
-      
-      window.$ = $;
-      window.on = on;
-      window.isFn = isFn;
-     
-      function setVh(){
-        const vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty("--vh", `${vh}px`);
+  function cityText(key){
+    return CITY_CONFIG[key] || "";
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
+  const isFn = (v) => typeof v === "function";
+
+  window.$ = $;
+  window.on = on;
+  window.isFn = isFn;
+
+  function setVh(){
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+  }
+
+  setVh();
+  window.addEventListener("resize", setVh);
+  window.addEventListener("orientationchange", setVh);
+
+  window.__lastFocus = null;
+
+  function lockScroll(state){
+    document.body.classList.toggle("modalOpen", !!state);
+  }
+
+  window.lockScroll = lockScroll;
+
+  function makeKeyboardClickable(el, onActivate){
+    if(!el) return;
+
+    el.setAttribute("tabindex", "0");
+    el.setAttribute("role", "button");
+
+    el.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        onActivate();
       }
-      setVh();
-      window.addEventListener("resize", setVh);
-      window.addEventListener("orientationchange", setVh);
+    });
+  }
 
-      window.__lastFocus = null;
+  window.makeKeyboardClickable = makeKeyboardClickable;
 
-      function lockScroll(state){
-        document.body.classList.toggle("modalOpen", !!state);
-      }
-      window.lockScroll = lockScroll;
+  const APP_MODE = "DEMO";
 
-      function makeKeyboardClickable(el, onActivate){
-        if(!el) return;
-        el.setAttribute("tabindex","0");
-        el.setAttribute("role","button");
-        el.addEventListener("keydown", (e)=>{
-          if(e.key === "Enter" || e.key === " "){
-            e.preventDefault();
-            onActivate();
-          }
-        });
-      }
-      window.makeKeyboardClickable = makeKeyboardClickable;
+  function callPhone(number){
+    const n = String(number || "").trim();
 
-      const APP_MODE = "DEMO";
+    if(!/^\d{2,4}$/.test(n)) return;
 
-      function callPhone(number){
-        const n = String(number || "").trim();
-        if(!/^\d{2,4}$/.test(n)) return;
-       if(APP_MODE === "DEMO"){
-    alert("Présentation : l'appel du " + n + " est simulé dans cet environnement.");
-    return;
-}
-          return;
-        }
-        window.location.href = "tel:" + n;
-      }
-      window.callPhone = callPhone;
+    if(APP_MODE === "DEMO"){
+      alert("Présentation : l'appel du " + n + " est simulé dans cet environnement.");
+      return;
+    }
 
-      function escapeHtml(s){
-        return String(s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      }
+    window.location.href = "tel:" + n;
+  }
 
-      window.escapeHtml = escapeHtml;
+  window.callPhone = callPhone;
 
-      window.boScanEngine = window.boScanEngine || {
-        buildSchoolWalletPayload(cls, wallet, solidarity){
-          return {
-            type: "school_wallet",
-            class: cls,
-            wallet: Number(wallet || 0),
-            solidarity: solidarity || { mode:"none", map:{} },
-            ts: Date.now()
-          };
-        },
-        parse(raw){
-          return JSON.parse(raw);
-        },
-        isSupported(payload){
-          return !!payload && typeof payload === "object" && !!payload.type;
-        },
-        formatSchoolPayload(payload){
-          return ""
-            + "<strong>Classe :</strong> " + escapeHtml(payload.class || "Non renseignée") + "<br>"
-            + "<strong>Montant :</strong> " + Number(payload.wallet || 0) + " bocitecoins JAUNE<br>"
-            + "<strong>Date :</strong> " + new Date(payload.ts || Date.now()).toLocaleString("fr-FR");
-        }
+  function escapeHtml(s){
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  window.escapeHtml = escapeHtml;
+
+  window.boScanEngine = window.boScanEngine || {
+    buildSchoolWalletPayload(cls, wallet, solidarity){
+      return {
+        type: "school_wallet",
+        class: cls,
+        wallet: Number(wallet || 0),
+        solidarity: solidarity || { mode:"none", map:{} },
+        ts: Date.now()
       };
+    },
+
+    parse(raw){
+      return JSON.parse(raw);
+    },
+
+    isSupported(payload){
+      return !!payload && typeof payload === "object" && !!payload.type;
+    },
+
+    formatSchoolPayload(payload){
+      return ""
+        + "<strong>Classe :</strong> " + escapeHtml(payload.class || "Non renseignée") + "<br>"
+        + "<strong>Montant :</strong> " + Number(payload.wallet || 0) + " bocitecoins JAUNE<br>"
+        + "<strong>Date :</strong> " + new Date(payload.ts || Date.now()).toLocaleString("fr-FR");
+    }
+  };
 
       function openSportFiche(){
         openModal("Fiche élus / CCI / commerçants — soutien Club + Association", `
