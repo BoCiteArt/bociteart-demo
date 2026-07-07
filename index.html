@@ -1181,7 +1181,7 @@ function validerInscription() {
             </div>
           </div>
 
-          <div class="tile logoOnly" id="adminTile">
+         <div class="tile logoOnly" id="pilotageTile">
             <img alt="" src="https://bociteart.com/logo-bociteart.png"/>
           </div>
 
@@ -1189,8 +1189,8 @@ function validerInscription() {
             <img alt="" src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=900&q=60"/>
             <div class="overlay"></div>
             <div class="content">
-              <div class="h">Commerces</div>
-              <div class="p">Bons plans</div>
+              <div class="h">Commerces & entreprises</div>
+              <div class="p">Bons plans • services • emploi</div>
             </div>
           </div>
         </div>
@@ -9171,29 +9171,49 @@ window.openAdminSection = function(type){
   openModal("Administration — " + type, `<div class="box">${contenus[type] || "Module en préparation."}</div>`);
 };
 
-const adminTile = $("adminTile");
-on(adminTile, "click", ()=>{
-  openModal("Administration", `
-    <div class="box">
-      <strong>Accès administrateur</strong><br>
-      Gestion centrale, comptabilité, villes, partenaires, sécurité, IA et déploiement.
-    </div>
+const pilotageTile = $("pilotageTile");
 
-    <div class="choiceGrid">
-   <button class="choiceBtn" onclick="openComptaBoCiteArt()">Pilotage Bo'CitéArt</button>
+function openAccesPilotage(){
+  const code = prompt("Code privé Bo'CitéArt :");
 
-<button class="choiceBtn" onclick="openAdminSection('roles')">Profils & accès</button>
+  if(code !== "bociteart-admin"){
+    alert("Accès refusé.");
+    return;
+  }
 
-<button class="choiceBtn" onclick="openAdminSection('securite')">Sécurité des accès</button>
+  const twofa = prompt("Code 2FA :");
 
-<button class="choiceBtn" onclick="openAdminSection('exports')">Exports & archives</button>
+  if(twofa !== "2026"){
+    alert("2FA refusé.");
+    return;
+  }
 
-<button class="choiceBtn" onclick="openAdminSection('parametres')">Réglages généraux</button>
+  openPilotagePrive();
+}
 
-<button class="choiceBtn" onclick="openSanteVille()">Santé & services utiles</button>
-    </div>
-  `);
-});
+if(pilotageTile){
+  let pilotageTimer = null;
+
+  pilotageTile.addEventListener("mousedown", ()=>{
+    pilotageTimer = setTimeout(openAccesPilotage, 2500);
+  });
+
+  pilotageTile.addEventListener("mouseup", ()=>{
+    clearTimeout(pilotageTimer);
+  });
+
+  pilotageTile.addEventListener("mouseleave", ()=>{
+    clearTimeout(pilotageTimer);
+  });
+
+  pilotageTile.addEventListener("touchstart", ()=>{
+    pilotageTimer = setTimeout(openAccesPilotage, 2500);
+  });
+
+  pilotageTile.addEventListener("touchend", ()=>{
+    clearTimeout(pilotageTimer);
+  });
+}
 const daeBtn = $("daeBtn");
 const clockBtn = $("clockBtn");
 
