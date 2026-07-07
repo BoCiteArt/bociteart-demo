@@ -2103,6 +2103,7 @@ function openAdBookingForProfile(profile, y, m, d, containerId){
 
   const label =
     profile === "commerce" ? "Commerce" :
+    profile === "entreprise" ? "Entreprise" :
     profile === "mairie" ? "Mairie" :
     "Association";
 
@@ -2272,7 +2273,12 @@ Jour suivant ▶
       </div>
 
       <div class="box">
-        <strong>Profil actif :</strong> ${profile === "commerce" ? "Commerce" : profile === "mairie" ? "Mairie" : "Association"}
+       <strong>Profil actif :</strong> ${
+  profile === "commerce" ? "Commerce" :
+  profile === "entreprise" ? "Entreprise" :
+  profile === "mairie" ? "Mairie" :
+  "Association"
+}
         <div class="muted" style="margin-top:6px;">
           Toutes les réservations passent ici. Les onglets mairie et commerce ne réservent plus directement.
         </div>
