@@ -7922,12 +7922,9 @@ window.openSauvegardesBociteart = function(){
 window.openPilotagePrive = function(){
 
   if(!window.bociteartAdminSession){
-
-    const code = prompt("Code privé administrateur :");
-    if(code!=="bociteart-admin"){
-      alert("Accès refusé.");
-      return;
-    }
+    alert("Accès privé requis.");
+    return;
+  }
 
     const twofa = prompt("Code 2FA Environnement de présentation :");
     if(twofa!=="2026"){
