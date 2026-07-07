@@ -2377,6 +2377,52 @@ function openTicker(){
 
   const warningMsg = checkMairiePaymentWarnings();
 
+  openModal("Publicités & visibilité", `
+    <div style="font-weight:900;margin-bottom:8px;">
+      Calendrier des communications locales
+    </div>
+
+    ${warningMsg ? `
+      <div class="box" style="border-left:6px solid #b06b00;background:#fff8e8;">
+        <strong>Information de la mairie :</strong>
+        <div class="muted" style="white-space:pre-line;margin-top:6px;">
+          ${escapeHtml(warningMsg)}
+        </div>
+      </div>
+    ` : ""}
+
+    <div class="box">
+      <strong>Principe :</strong><br>
+      Toutes les communications diffusées dans le grand bandeau sont planifiées depuis ce calendrier unique.
+      Chaque espace dispose ensuite de ses propres règles de réservation.
+    </div>
+
+    <div class="choiceGrid">
+      <button class="choiceBtn" id="tickerAccessCommerce" type="button">
+        Espace commerçants
+      </button>
+
+      <button class="choiceBtn" id="tickerAccessEntreprise" type="button">
+        Espace entreprises
+      </button>
+
+      <button class="choiceBtn" id="tickerAccessMairie" type="button">
+        Espace mairie
+      </button>
+
+      <button class="choiceBtn" id="tickerAccessAsso" type="button">
+        Espace associations
+      </button>
+    </div>
+
+    <div id="tickerAccessStatus" class="muted" style="margin-top:10px;">
+      Sélectionnez votre espace pour accéder au calendrier de réservation.
+    </div>
+
+    <div id="calHost" style="display:none;margin-top:12px;"></div>
+  `);
+
+  setTimeout(()=>{
     function unlock(profile){
       window.__tickerProfile = profile;
 
@@ -2385,9 +2431,10 @@ function openTicker(){
 
       if(status){
         status.textContent =
-          profile === "commerce" ? "Espace publicité commerce ouvert." :
-          profile === "mairie" ? "Espace publicité mairie ouvert : devis signé, paiement différé à 30 jours, rappel à 8 jours." :
-          "Espace publicité association ouvert.";
+          profile === "commerce" ? "Espace commerçants ouvert." :
+          profile === "entreprise" ? "Espace entreprises ouvert." :
+          profile === "mairie" ? "Espace mairie ouvert : devis validé, paiement à 30 jours." :
+          "Espace associations ouvert.";
       }
 
       if(calHost){
@@ -2398,12 +2445,11 @@ function openTicker(){
     }
 
     on($("tickerAccessCommerce"), "click", ()=> unlock("commerce"));
+    on($("tickerAccessEntreprise"), "click", ()=> unlock("entreprise"));
     on($("tickerAccessMairie"), "click", ()=> unlock("mairie"));
     on($("tickerAccessAsso"), "click", ()=> unlock("asso"));
   }, 0);
 }
-
-window.openTicker = openTicker;
 
 const tickerBtn = $("ticker");
 if(tickerBtn){
