@@ -7926,122 +7926,59 @@ window.openPilotagePrive = function(){
     return;
   }
 
-    const twofa = prompt("Code 2FA Environnement de présentation :");
-    if(twofa!=="2026"){
-      alert("2FA refusé.");
-      return;
-    }
-
-    window.bociteartAdminSession = true;
-  }
-
   openModal("Pilotage privé Bo'CitéArt",`
 
     <div class="box">
-
       <strong>Centre de supervision</strong><br>
-
       Disponibilité : 99,9 %<br>
       IA opérationnelle<br>
       Sauvegardes conformes<br>
       Aucun incident critique
-
     </div>
 
     <div class="box">
-
       <strong>Pilotage stratégique</strong><br>
-
       Communes suivies : 4<br>
       Licences actives : 4<br>
       Partenaires actifs : 157<br>
       Déploiements en cours : 1
-
     </div>
 
     <div class="box">
-
       <strong>Administration</strong><br>
-
       Contrats<br>
       Comptabilité<br>
       Conformité<br>
       Coffre-fort documentaire<br>
       Journaux système
-
     </div>
 
     <div class="box">
-
       <strong>Sécurité</strong><br>
-
       Double authentification active<br>
       Journal des connexions<br>
       Contrôle des accès<br>
       Sauvegardes vérifiées
-
     </div>
 
     <div class="choiceGrid">
 
-      <button class="choiceBtn"
-      onclick="openTableauMatin()">
-      Tableau matin
-      </button>
-
-      <button class="choiceBtn"
-      onclick="openTableauBordCommune()">
-      Commune
-      </button>
-
-      <button class="choiceBtn"
-      onclick="openPresentationBoCiteArt()">
-      Présentation
-      </button>
-
-      <button class="choiceBtn"
-      onclick="openConformiteBociteart()">
-      Conformité
-      </button>
-
-      <button class="choiceBtn"
-      onclick="openTresorerieIA()">
-      Trésorerie
-      </button>
-
-      <button class="choiceBtn"
-      onclick="openAnomaliesIA()">
-      Anomalies IA
-      </button>
-
-      <button class="choiceBtn"
-      onclick="openCoffreFortDoc()">
-      Coffre-fort
-      </button>
-
-      <button class="choiceBtn"
-      onclick="openContratsBoCiteArt()">
-      Contrats
-      </button>
-
-      <button class="choiceBtn"
-      onclick="openEtatSysteme()">
-      État système
-      </button>
-
-      <button class="choiceBtn"
-      onclick="openParametresBociteart()">
-      Paramètres
-      </button>
+      <button class="choiceBtn" onclick="openTableauMatin()">Tableau de pilotage</button>
+      <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau commune</button>
+      <button class="choiceBtn" onclick="openPresentationBoCiteArt()">Environnement</button>
+      <button class="choiceBtn" onclick="openConformiteBociteart()">Conformité</button>
+      <button class="choiceBtn" onclick="openTresorerieIA()">Trésorerie</button>
+      <button class="choiceBtn" onclick="openAnomaliesIA()">Anomalies IA</button>
+      <button class="choiceBtn" onclick="openCoffreFortDoc()">Coffre-fort</button>
+      <button class="choiceBtn" onclick="openContratsBoCiteArt()">Contrats</button>
+      <button class="choiceBtn" onclick="openEtatSysteme()">État système</button>
+      <button class="choiceBtn" onclick="openParametresBociteart()">Paramètres</button>
 
     </div>
 
   `);
 
 };
-
-window.openConformiteBociteart = function(){
-
   openModal("Conformité Bo'CitéArt",`
 
     <div class="box">
