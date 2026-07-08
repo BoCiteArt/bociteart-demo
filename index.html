@@ -1,4 +1,4 @@
- <!DOCTYPE html>             
+ <!DOCTYPE html>    f         
 <html lang="fr"> 
 <head>
   <meta charset="UTF-8" />
@@ -9108,7 +9108,21 @@ window.openAdminSection = function(type){
 };
 
 const pilotageTile = $("pilotageTile");
+function logPilotageAccess(user, action){
+  try{
+    const key = "bociteart_pilotage_access_log";
+    const logs = JSON.parse(localStorage.getItem(key) || "[]");
 
+    logs.push({
+      user: user || "Fondateur",
+      action: action || "Connexion pilotage",
+      date: new Date().toLocaleString("fr-FR"),
+      device: navigator.userAgent || "appareil inconnu"
+    });
+
+    localStorage.setItem(key, JSON.stringify(logs.slice(-100)));
+  }catch(e){}
+}
 function openAccesPilotage(){
   const code = prompt("Code privé Bo'CitéArt :");
 
@@ -9124,6 +9138,7 @@ function openAccesPilotage(){
     return;
   }
 
+ logPilotageAccess("Jean-Michel Brulé", "Accès pilotage privé validé");
  window.bociteartAdminSession = true;
   openPilotagePrive();
 }
