@@ -9135,14 +9135,38 @@ const pilotageUsers = {
   }
 };
 
+const pilotageUsers = {
+  "jean-michel": {
+    name: "Jean-Michel Brulé",
+    role: "Fondateur",
+    code: "bociteart-admin",
+    twofa: "2026",
+    rights: ["all"]
+  },
+  "enfant-1": {
+    name: "Enfant 1",
+    role: "Accès familial limité",
+    code: "bociteart-enfant1",
+    twofa: "1111",
+    rights: ["lecture", "journal"]
+  },
+  "enfant-2": {
+    name: "Enfant 2",
+    role: "Accès familial limité",
+    code: "bociteart-enfant2",
+    twofa: "2222",
+    rights: ["lecture", "journal"]
+  }
+};
+
 function logPilotageAccess(user, action){
   try{
     const key = "bociteart_pilotage_access_log";
     const logs = JSON.parse(localStorage.getItem(key) || "[]");
 
     logs.push({
-      user: user || "Fondateur",
-      action: action || "Connexion pilotage",
+      user: user || "Inconnu",
+      action: action || "Action pilotage",
       date: new Date().toLocaleString("fr-FR"),
       device: navigator.userAgent || "appareil inconnu"
     });
@@ -9150,7 +9174,7 @@ function logPilotageAccess(user, action){
     localStorage.setItem(key, JSON.stringify(logs.slice(-100)));
   }catch(e){}
 }
-   
+
 function showPilotageAccessLog(){
   const logs = JSON.parse(localStorage.getItem("bociteart_pilotage_access_log") || "[]");
 
@@ -9163,18 +9187,24 @@ function showPilotageAccessLog(){
 
   const html = logs.slice().reverse().map(l=>`
     <div class="box">
-      <strong>${l.user}</strong><br>
-      ${l.action}<br>
-      <small>${l.date}</small>
+      <strong>${l.user || "Inconnu"}</strong><br>
+      ${l.action || ""}<br>
+      <small>${l.date || ""}</small>
     </div>
   `).join("");
 
   openModal("Journal des accès", html);
 }
+
+function findPilotageUserByCode(code){
+  return Object.values(pilotageUsers).find(u => u.code === code) || null;
+}
+
 function openAccesPilotage(){
   const code = prompt("Code privé Bo'CitéArt :");
+  const user = findPilotageUserByCode(code);
 
-  if(code !== "bociteart-admin"){
+  if(!user){
     logPilotageAccess("Inconnu", "Tentative avec mauvais code administrateur");
     alert("Accès refusé.");
     return;
@@ -9182,20 +9212,24 @@ function openAccesPilotage(){
 
   const twofa = prompt("Code 2FA :");
 
-  if(twofa !== "2026"){
-    logPilotageAccess("Jean-Michel Brulé", "Échec du code 2FA");
+  if(twofa !== user.twofa){
+    logPilotageAccess(user.name, "Échec du code 2FA");
     alert("2FA refusé.");
     return;
   }
 
-  logPilotageAccess("Jean-Michel Brulé", "Accès pilotage privé validé");
+  window.bociteartCurrentPilotageUser = user;
   window.bociteartAdminSession = true;
+
+  logPilotageAccess(user.name, "Accès pilotage privé validé");
   openPilotagePrive();
 }
 
 function fermerPilotagePrive(){
-  logPilotageAccess("Jean-Michel Brulé", "Déconnexion du pilotage privé");
+  const user = window.bociteartCurrentPilotageUser;
+  logPilotageAccess(user ? user.name : "Inconnu", "Déconnexion du pilotage privé");
   window.bociteartAdminSession = false;
+  window.bociteartCurrentPilotageUser = null;
   closeModal();
 }
 
@@ -9222,9 +9256,9 @@ if(pilotageTile){
     clearTimeout(pilotageTimer);
   });
 }
+
 const daeBtn = $("daeBtn");
 const clockBtn = $("clockBtn");
-
 // ===== SAINT DU JOUR =====
 function getSaintOfDay(d){
   const map = {
