@@ -7921,72 +7921,64 @@ window.openSauvegardesBociteart = function(){
 };
 window.openPilotagePrive = function(){
 
-  if(!window.bociteartAdminSession){
-    alert("Accès privé requis.");
-    return;
-  }
+ if(!window.bociteartAdminSession){
+  alert("Accès privé requis.");
+  return;
+}
 
-  openModal("Pilotage privé Bo'CitéArt",`
+openModal("Pilotage privé Bo'CitéArt",`
 
-    <div class="box">
-      <strong>Centre de supervision</strong><br>
-      Disponibilité : 99,9 %<br>
-      IA opérationnelle<br>
-      Sauvegardes conformes<br>
-      Aucun incident critique
-    </div>
+  <div class="box">
+    <strong>Centre de supervision</strong><br>
+    Disponibilité : 99,9 %<br>
+    IA opérationnelle<br>
+    Sauvegardes conformes<br>
+    Aucun incident critique
+  </div>
 
-    <div class="box">
-      <strong>Pilotage stratégique</strong><br>
-      Communes suivies : 4<br>
-      Licences actives : 4<br>
-      Partenaires actifs : 157<br>
-      Déploiements en cours : 1
-    </div>
+  <div class="box">
+    <strong>Pilotage stratégique</strong><br>
+    Communes suivies : 4<br>
+    Licences actives : 4<br>
+    Partenaires actifs : 157<br>
+    Déploiements en cours : 1
+  </div>
 
-    <div class="box">
-      <strong>Administration</strong><br>
-      Contrats<br>
-      Comptabilité<br>
-      Conformité<br>
-      Coffre-fort documentaire<br>
-      Journaux système
-    </div>
+  <div class="box">
+    <strong>Administration</strong><br>
+    Contrats<br>
+    Comptabilité<br>
+    Conformité<br>
+    Coffre-fort documentaire<br>
+    Journaux système
+  </div>
 
-    <div class="box">
-      <strong>Sécurité</strong><br>
-      Double authentification active<br>
-      Journal des connexions<br>
-      Contrôle des accès<br>
-      Sauvegardes vérifiées
-    </div>
+  <div class="box">
+    <strong>Sécurité</strong><br>
+    Double authentification active<br>
+    Journal des connexions<br>
+    Contrôle des accès<br>
+    Sauvegardes vérifiées
+  </div>
 
-    <div class="choiceGrid">
+  <div class="choiceGrid">
 
-      <button class="choiceBtn"
-onclick="openTableauMatin()">
-Tableau de pilotage
-</button>
+    <button class="choiceBtn" onclick="openTableauMatin()">Tableau de pilotage</button>
+    <button class="choiceBtn" onclick="showPilotageAccessLog()">Journal des accès</button>
+    <button class="choiceBtn" onclick="fermerPilotagePrive()">Déconnexion pilotage</button>
+    <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau commune</button>
+    <button class="choiceBtn" onclick="openPresentationBoCiteArt()">Environnement</button>
+    <button class="choiceBtn" onclick="openConformiteBociteart()">Conformité</button>
+    <button class="choiceBtn" onclick="openTresorerieIA()">Trésorerie</button>
+    <button class="choiceBtn" onclick="openAnomaliesIA()">Anomalies IA</button>
+    <button class="choiceBtn" onclick="openCoffreFortDoc()">Coffre-fort</button>
+    <button class="choiceBtn" onclick="openContratsBoCiteArt()">Contrats</button>
+    <button class="choiceBtn" onclick="openEtatSysteme()">État système</button>
+    <button class="choiceBtn" onclick="openParametresBociteart()">Paramètres</button>
 
-<button class="choiceBtn"
-onclick="showPilotageAccessLog()">
-Journal des accès
-</button>
+  </div>
 
-</div>
-      <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau commune</button>
-      <button class="choiceBtn" onclick="openPresentationBoCiteArt()">Environnement</button>
-      <button class="choiceBtn" onclick="openConformiteBociteart()">Conformité</button>
-      <button class="choiceBtn" onclick="openTresorerieIA()">Trésorerie</button>
-      <button class="choiceBtn" onclick="openAnomaliesIA()">Anomalies IA</button>
-      <button class="choiceBtn" onclick="openCoffreFortDoc()">Coffre-fort</button>
-      <button class="choiceBtn" onclick="openContratsBoCiteArt()">Contrats</button>
-      <button class="choiceBtn" onclick="openEtatSysteme()">État système</button>
-      <button class="choiceBtn" onclick="openParametresBociteart()">Paramètres</button>
-
-    </div>
-
-  `);
+`);
 
 };
    window.openConformiteBociteart = function(){
