@@ -7926,10 +7926,22 @@ window.openPilotagePrive = function(){
   return;
 }
 
+const currentUser = window.bociteartCurrentPilotageUser || {
+  name:"Jean-Michel Brulé",
+  role:"Fondateur"
+};
+
 openModal("Pilotage privé Bo'CitéArt",`
 
-  <div class="box">
-    <strong>Centre de supervision</strong><br>
+<div class="box">
+  <strong>Utilisateur connecté</strong><br>
+  ${currentUser.name}<br>
+  ${currentUser.role}<br>
+  ${new Date().toLocaleString("fr-FR")}
+</div>
+
+<div class="box">
+  <strong>Centre de supervision</strong><br>
     Disponibilité : 99,9 %<br>
     IA opérationnelle<br>
     Sauvegardes conformes<br>
