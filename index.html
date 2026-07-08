@@ -1785,6 +1785,26 @@ function openWellbeingMap(){
       <span style="color:#2a9d8f;">●</span> Espaces verts
 
     </div>
+   
+    <div class="box">
+
+<strong>Filtrer l'affichage</strong><br><br>
+
+<button class="choiceBtn">Tous</button>
+
+<button class="choiceBtn">Sport</button>
+
+<button class="choiceBtn">Mairie</button>
+
+<button class="choiceBtn">Commerce</button>
+
+<button class="choiceBtn">Santé</button>
+
+<button class="choiceBtn">Culture</button>
+
+<button class="choiceBtn">Écoles</button>
+
+</div>
 
     <div class="box">
 
@@ -1825,41 +1845,43 @@ function openWellbeingMap(){
       }
     ).addTo(map);
 
-    const points=[
+const points=[
 
-      ["Sport","Parc sportif",50.5880,3.0415],
+["Sport","Parc sportif","Rue du Parc",50.5880,3.0415],
 
-      ["Parc","Bois et parcours",50.5900,3.0470],
+["Parc","Bois et parcours","Bois communal",50.5900,3.0470],
 
-      ["Vélo","Piste cyclable",50.5920,3.0440],
+["Vélo","Piste cyclable","Voie verte",50.5920,3.0440],
 
-      ["Bus","Arrêt Mairie",50.5855,3.0418],
+["Bus","Arrêt Mairie","Place de la Mairie",50.5855,3.0418],
 
-      ["Commerce","Commerce partenaire",50.5848,3.0452],
+["Commerce","Commerce partenaire","Centre-ville",50.5848,3.0452],
 
-      ["Restaurant","Restaurant",50.5872,3.0460],
+["Restaurant","Restaurant","Place centrale",50.5872,3.0460],
 
-      ["DAE","Défibrillateur",50.5859,3.0425]
+["DAE","Défibrillateur","Mairie",50.5859,3.0425]
 
-    ];
+];
 
-    points.forEach(p=>{
+points.forEach(p=>{
 
-      L.marker([p[2],p[3]])
-      .addTo(map)
-      .bindPopup(
+  L.marker([p[3],p[4]])
+    .addTo(map)
+    .bindPopup(
 
-        "<strong>"+p[1]+"</strong><br>"+
+      "<strong>"+p[1]+"</strong><br>" +
 
-        "Catégorie : "+p[0]+"<br><br>"+
+      "Catégorie : "+p[0]+"<br>" +
 
-        "<button class='choiceBtn'>Voir la fiche</button>"
+      "Adresse : "+p[2]+"<br><br>" +
 
-      );
+      "<button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+p[3]+","+p[4]+"')\">Itinéraire</button>"
 
-    });
+    );
 
-    setTimeout(()=>map.invalidateSize(),200);
+});
+
+setTimeout(()=>map.invalidateSize(),200);
 
   },0);
 
