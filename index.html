@@ -9111,6 +9111,126 @@ window.openAdminSection = function(type){
 
 const pilotageTile = $("pilotageTile");
 
+const pilotageUsers = {
+  "jean-michel": {
+    name: "Jean-Michel Brulé",
+    role: "Fondateur",
+    code: "bociteart-admin",
+    twofa: "2026",
+    rights: ["all"]
+  },
+  "enfant-1": {
+    name: "Enfant 1",
+    role: "Accès familial limité",
+    code: "bociteart-enfant1",
+    twofa: "1111",
+    rights: ["lecture", "journal"]
+  },
+  "enfant-2": {
+    name: "Enfant 2",
+    role: "Accès familial limité",
+    code: "bociteart-enfant2",
+    twofa: "2222",
+    rights: ["lecture", "journal"]
+  }
+};
+
+const pilotageUsers = {
+  "jean-michel": {
+    name: "Jean-Michel Brulé",
+    role: "Fondateur",
+    code: "bociteart-admin",
+    twofa: "2026",
+    rights: ["all"]
+  },
+  "enfant-1": {
+    name: "Enfant 1",
+    role: "Accès familial limité",
+    code: "bociteart-enfant1",
+    twofa: "1111",
+    rights: ["lecture", "journal"]
+  },
+  "enfant-2": {
+    name: "Enfant 2",
+    role: "Accès familial limité",
+    code: "bociteart-enfant2",
+    twofa: "2222",
+    rights: ["lecture", "journal"]
+  }
+};
+
+const pilotageUsers = {
+  "jean-michel": {
+    name: "Jean-Michel Brulé",
+    role: "Fondateur",
+    code: "bociteart-admin",
+    twofa: "2026",
+    rights: ["all"]
+  },
+  "enfant-1": {
+    name: "Enfant 1",
+    role: "Accès familial limité",
+    code: "bociteart-enfant1",
+    twofa: "1111",
+    rights: ["lecture", "journal"]
+  },
+  "enfant-2": {
+    name: "Enfant 2",
+    role: "Accès familial limité",
+    code: "bociteart-enfant2",
+    twofa: "2222",
+    rights: ["lecture", "journal"]
+  }
+};
+
+const pilotageUsers = {
+  "jean-michel": {
+    name: "Jean-Michel Brulé",
+    role: "Fondateur",
+    code: "bociteart-admin",
+    twofa: "2026",
+    rights: ["all"]
+  },
+  "enfant-1": {
+    name: "Enfant 1",
+    role: "Accès familial limité",
+    code: "bociteart-enfant1",
+    twofa: "1111",
+    rights: ["lecture", "journal"]
+  },
+  "enfant-2": {
+    name: "Enfant 2",
+    role: "Accès familial limité",
+    code: "bociteart-enfant2",
+    twofa: "2222",
+    rights: ["lecture", "journal"]
+  }
+};
+
+const pilotageUsers = {
+  "jean-michel": {
+    name: "Jean-Michel Brulé",
+    role: "Fondateur",
+    code: "bociteart-admin",
+    twofa: "2026",
+    rights: ["all"]
+  },
+  "enfant-1": {
+    name: "Enfant 1",
+    role: "Accès familial limité",
+    code: "bociteart-enfant1",
+    twofa: "1111",
+    rights: ["lecture", "journal"]
+  },
+  "enfant-2": {
+    name: "Enfant 2",
+    role: "Accès familial limité",
+    code: "bociteart-enfant2",
+    twofa: "2222",
+    rights: ["lecture", "journal"]
+  }
+};
+
 function logPilotageAccess(user, action){
   try{
     const key = "bociteart_pilotage_access_log";
@@ -9126,7 +9246,7 @@ function logPilotageAccess(user, action){
     localStorage.setItem(key, JSON.stringify(logs.slice(-100)));
   }catch(e){}
 }
-
+   
 function showPilotageAccessLog(){
   const logs = JSON.parse(localStorage.getItem("bociteart_pilotage_access_log") || "[]");
 
