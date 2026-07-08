@@ -1804,50 +1804,42 @@ function openWellbeingMap(){
 
   `);
 
-  setTimeout(()=>{
+setTimeout(()=>{
 
-    if(typeof L==="undefined"){
-      alert("Carte indisponible.");
-      return;
-    }
+  if(typeof L==="undefined"){
+    alert("Carte indisponible.");
+    return;
+  }
 
-    const ville=(window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
+  const ville=(window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
 
-    const cityCenters={
-      wattignies:[50.5865,3.0430],
-      seclin:[50.5487,3.0277],
-      loos:[50.6098,3.0188],
-      templemars:[50.5746,3.0546]
-    };
+  const cityCenters={
+    wattignies:[50.5865,3.0430],
+    seclin:[50.5487,3.0277],
+    loos:[50.6098,3.0188],
+    templemars:[50.5746,3.0546]
+  };
 
-    const centre=cityCenters[ville] || cityCenters.wattignies;
+  const centre=cityCenters[ville] || cityCenters.wattignies;
 
-    const map=L.map("wellbeingMap").setView(centre,14);
+  const map=L.map("wellbeingMap").setView(centre,14);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-      attribution:"© OpenStreetMap",
-      maxZoom:19
-    }).addTo(map);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+    attribution:"© OpenStreetMap",
+    maxZoom:19
+  }).addTo(map);
 
-   const points=[
-  /* Les points réels de la commune seront ajoutés ici */
-];
+  const points=[];
 
-    if(!points.length){
-      L.marker(centre).addTo(map).bindPopup("Centre de la commune");
-    }
-   
-if(!points.length){
-  document.querySelectorAll(".mapFilterBtn").forEach(btn=>{
-    btn.disabled = true;
-    btn.style.opacity = "0.45";
-    btn.style.cursor = "not-allowed";
-  });
-}
-   
-    setTimeout(()=>map.invalidateSize(),200);
+  if(!points.length){
+    L.marker(centre).addTo(map).bindPopup(
+      "Centre de la commune<br>Données locales à intégrer"
+    );
+  }
 
-  },0);
+  setTimeout(()=>map.invalidateSize(),200);
+
+},0);
 }
 
 window.openWellbeingMap = openWellbeingMap;
