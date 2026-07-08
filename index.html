@@ -1829,15 +1829,59 @@ setTimeout(()=>{
     maxZoom:19
   }).addTo(map);
 
-  const points=[];
+ const points=[
+  ["Sport","Parc sportif","Rue du Parc",50.5880,3.0415],
+  ["Mairie","Mairie","Place de la Mairie",50.5855,3.0418],
+  ["Commerce","Commerce partenaire","Centre-ville",50.5848,3.0452],
+  ["Santé","Défibrillateur","Mairie",50.5859,3.0425],
+  ["Culture","Bibliothèque","Rue principale",50.5862,3.0408],
+  ["Écoles","École primaire","Rue des Écoles",50.5849,3.0399]
+];
 
-  if(!points.length){
-    L.marker(centre).addTo(map).bindPopup(
-      "Centre de la commune<br>Données locales à intégrer"
+const couleurs={
+  Sport:"#1fa34a",
+  Mairie:"#1f6fd6",
+  Commerce:"#ff8c00",
+  Santé:"#d62828",
+  Culture:"#7b2cbf",
+  Écoles:"#d9a404"
+};
+
+const marqueurs=[];
+
+points.forEach(p=>{
+  const icone=L.divIcon({
+    className:"",
+    html:"<div style='width:18px;height:18px;border-radius:50%;background:"+couleurs[p[0]]+";border:3px solid white;box-shadow:0 0 6px rgba(0,0,0,.35);'></div>",
+    iconSize:[18,18],
+    iconAnchor:[9,9]
+  });
+
+  const m=L.marker([p[3],p[4]],{icon:icone})
+    .addTo(map)
+    .bindPopup(
+      "<strong>"+p[1]+"</strong><br>"+
+      p[2]+"<br><br>"+
+      "<button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+p[3]+","+p[4]+"')\">Itinéraire</button>"
     );
-  }
 
-  setTimeout(()=>map.invalidateSize(),200);
+  marqueurs.push({cat:p[0], marker:m});
+});
+
+function filtre(cat){
+  marqueurs.forEach(x=>map.removeLayer(x.marker));
+  marqueurs.forEach(x=>{
+    if(cat==="Tous" || x.cat===cat){
+      x.marker.addTo(map);
+    }
+  });
+}
+
+document.querySelectorAll(".mapFilterBtn").forEach(btn=>{
+  btn.onclick=()=>filtre(btn.dataset.cat);
+});
+
+setTimeout(()=>map.invalidateSize(),200);
 
 },0);
 }
