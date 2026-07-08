@@ -1836,6 +1836,23 @@ function openWellbeingMap(){
     }
 
     const map=L.map("wellbeingMap").setView([50.5865,3.0430],14);
+   let allMarkers=[];
+
+function showCategory(cat){
+
+  allMarkers.forEach(x=>{
+    map.removeLayer(x.marker);
+  });
+
+  allMarkers.forEach(x=>{
+
+    if(cat==="Tous" || x.cat===cat){
+      x.marker.addTo(map);
+    }
+
+  });
+
+}
 
     L.tileLayer(
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -1865,23 +1882,52 @@ const points=[
 
 points.forEach(p=>{
 
-  L.marker([p[3],p[4]])
-    .addTo(map)
-    .bindPopup(
+  const marker=L.marker([p[3],p[4]]);
 
-      "<strong>"+p[1]+"</strong><br>" +
+  marker.bindPopup(
 
-      "Catégorie : "+p[0]+"<br>" +
+    "<strong>"+p[1]+"</strong><br>" +
 
-      "Adresse : "+p[2]+"<br><br>" +
+    "Catégorie : "+p[0]+"<br>" +
 
-      "<button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+p[3]+","+p[4]+"')\">Itinéraire</button>"
+    "Adresse : "+p[2]+"<br><br>" +
 
-    );
+    "<button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+p[3]+","+p[4]+"')\">Itinéraire</button>"
+
+  );
+
+  marker.addTo(map);
+
+  allMarkers.push({
+
+    cat:p[0],
+
+    marker:marker
+
+  });
 
 });
 
 setTimeout(()=>map.invalidateSize(),200);
+   document.querySelectorAll(".choiceBtn").forEach(btn=>{
+
+  const txt=btn.textContent.trim();
+
+  if(
+     txt==="Tous" ||
+     txt==="Sport" ||
+     txt==="Mairie" ||
+     txt==="Commerce" ||
+     txt==="Santé" ||
+     txt==="Culture" ||
+     txt==="Écoles"
+  ){
+
+      btn.onclick=()=>showCategory(txt);
+
+  }
+
+});
 
   },0);
 
