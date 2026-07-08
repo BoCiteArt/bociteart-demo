@@ -1829,12 +1829,22 @@ function openWellbeingMap(){
       maxZoom:19
     }).addTo(map);
 
-    const points=[];
+   const points=[
+  /* Les points réels de la commune seront ajoutés ici */
+];
 
     if(!points.length){
       L.marker(centre).addTo(map).bindPopup("Centre de la commune");
     }
-
+   
+if(!points.length){
+  document.querySelectorAll(".mapFilterBtn").forEach(btn=>{
+    btn.disabled = true;
+    btn.style.opacity = "0.45";
+    btn.style.cursor = "not-allowed";
+  });
+}
+   
     setTimeout(()=>map.invalidateSize(),200);
 
   },0);
