@@ -5927,10 +5927,45 @@ window.openClubAccess = openClubAccess;
 window.openSportPanel = function(){
   openModal("Sport", `
 
-    <div style="font-weight:900;margin-bottom:10px;">
-      Explorer les alentours
-    </div>
+   <div style="font-weight:900;margin-bottom:10px;">
+  Explorer les alentours
+</div>
 
+<div class="box">
+  <strong>Parcours, plans et repères utiles</strong><br><br>
+  Retrouvez les parcs, parcours, pistes cyclables, équipements sportifs,
+  espaces verts, arrêts de bus, commerces utiles et points de repère de la ville.
+</div>
+
+<div class="box">
+  <strong>Repères utiles</strong>
+  <ul style="margin:8px 0 0 18px;font-weight:800;">
+    <li>Parc sportif</li>
+    <li>Bois et parcours</li>
+    <li>Salle de sport</li>
+    <li>Parc urbain</li>
+    <li>Espace vert central</li>
+    <li>Piste cyclable nord</li>
+    <li>Piste cyclable centre</li>
+    <li>Arrêt de bus Mairie</li>
+    <li>Arrêt de bus Centre</li>
+    <li>Supérette du centre</li>
+    <li>Mini-market quartier nord</li>
+    <li>Restaurant place centrale</li>
+    <li>Snack du quartier</li>
+  </ul>
+</div>
+
+<div class="box">
+  <strong>Carte interactive</strong><br>
+  Explorer les alentours avec les points utiles autour de vous.
+
+  <br><br>
+
+  <button class="choiceBtn" id="openMap" type="button">
+    Consulter la carte
+  </button>
+</div>
     <div class="box">
       <strong>Découvrir les lieux utiles autour de vous</strong><br><br>
       Retrouvez les parcs, parcours, pistes cyclables, équipements sportifs,
