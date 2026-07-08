@@ -1772,9 +1772,7 @@ function openWellbeingMap(){
   openModal("Explorer les alentours",`
 
     <div class="box">
-
       <strong>Légende</strong><br><br>
-
       <span style="color:#1fa34a;">●</span> Sport & loisirs<br>
       <span style="color:#1f6fd6;">●</span> Mairie & services publics<br>
       <span style="color:#ff8c00;">●</span> Commerces partenaires<br>
@@ -1783,152 +1781,148 @@ function openWellbeingMap(){
       <span style="color:#d9a404;">●</span> Écoles<br>
       <span style="color:#666;">●</span> Parkings<br>
       <span style="color:#2a9d8f;">●</span> Espaces verts
-
     </div>
-   
-    <div class="box">
-
-<strong>Filtrer l'affichage</strong><br><br>
-
-<button class="choiceBtn">Tous</button>
-
-<button class="choiceBtn">Sport</button>
-
-<button class="choiceBtn">Mairie</button>
-
-<button class="choiceBtn">Commerce</button>
-
-<button class="choiceBtn">Santé</button>
-
-<button class="choiceBtn">Culture</button>
-
-<button class="choiceBtn">Écoles</button>
-
-</div>
 
     <div class="box">
+      <strong>Filtrer l'affichage</strong><br><br>
+      <button class="choiceBtn mapFilterBtn" data-cat="Tous">Tous</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Sport">Sport</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Mairie">Mairie</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Commerce">Commerce</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Santé">Santé</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Culture">Culture</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Écoles">Écoles</button>
+    </div>
 
+    <div class="box">
       <strong>Rechercher</strong><br><br>
-
-      <input
-        id="mapSearch"
-        type="text"
-        placeholder="Commerce, parc, mairie..."
-        style="width:100%;padding:10px;border-radius:10px;">
-
+      <input id="mapSearch" type="text" placeholder="Commerce, parc, mairie..."
+      style="width:100%;padding:10px;border-radius:10px;">
     </div>
 
     <div id="wellbeingMap"
-      style="
-      height:430px;
-      border-radius:14px;
-      overflow:hidden;
-      border:2px solid #ddd;">
+      style="height:430px;border-radius:14px;overflow:hidden;border:2px solid #ddd;">
     </div>
 
   `);
 
   setTimeout(()=>{
 
-    if(typeof L==="undefined"){
-      alert("Carte indisponible.");
-      return;
-    }
+   if(typeof L==="undefined"){
+  alert("Carte indisponible.");
+  return;
+}
 
-    const map=L.map("wellbeingMap").setView([50.5865,3.0430],14);
-   let allMarkers=[];
+const map=L.map("wellbeingMap").setView([50.5865,3.0430],14);
 
-function showCategory(cat){
+L.tileLayer(
+  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  {
+    attribution:"© OpenStreetMap",
+    maxZoom:19
+  }
+).addTo(map);
 
-  allMarkers.forEach(x=>{
-    map.removeLayer(x.marker);
+const ville=(window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
+
+const points=[
+["Sport","Parc sportif","Rue du Parc",50.5880,3.0415],
+["Sport","Salle de sport","Complexe sportif",50.5874,3.0398],
+["Sport","Piste cyclable","Voie verte",50.5920,3.0440],
+["Mairie","Mairie","Place de la Mairie",50.5855,3.0418],
+["Commerce","Commerce partenaire","Centre-ville",50.5848,3.0452],
+["Santé","Défibrillateur","Mairie",50.5859,3.0425],
+["Culture","Bibliothèque","Rue principale",50.5862,3.0408],
+["Écoles","École primaire","Rue des Écoles",50.5849,3.0399]
+];
+
+const couleurs={
+Sport:"#1fa34a",
+Mairie:"#1f6fd6",
+Commerce:"#ff8c00",
+Santé:"#d62828",
+Culture:"#7b2cbf",
+Écoles:"#d9a404"
+};
+
+const marqueurs=[];
+
+points.forEach(p=>{
+
+  const icone=L.divIcon({
+    className:"",
+    html:"<div style='width:18px;height:18px;border-radius:50%;background:"+couleurs[p[0]]+";border:3px solid white;box-shadow:0 0 6px rgba(0,0,0,.35);'></div>",
+    iconSize:[18,18],
+    iconAnchor:[9,9]
   });
 
-  allMarkers.forEach(x=>{
+  const m=L.marker([p[3],p[4]],{icon:icone})
+  .addTo(map)
+  .bindPopup(
+    "<strong>"+p[1]+"</strong><br>"+
+    p[2]+"<br><br>"+
+    "<button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+p[3]+","+p[4]+"')\">Itinéraire</button>"
+  );
+
+  marqueurs.push({
+    cat:p[0],
+    nom:p[1].toLowerCase(),
+    marker:m,
+    lat:p[3],
+    lng:p[4]
+  });
+
+});
+
+function filtre(cat){
+
+  marqueurs.forEach(x=>map.removeLayer(x.marker));
+
+  marqueurs.forEach(x=>{
 
     if(cat==="Tous" || x.cat===cat){
+
       x.marker.addTo(map);
+
     }
 
   });
 
 }
 
-    L.tileLayer(
-      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      {
-        attribution:"© OpenStreetMap",
-        maxZoom:19
-      }
-    ).addTo(map);
+document.querySelectorAll(".mapFilterBtn").forEach(btn=>{
 
-const points=[
-
-["Sport","Parc sportif","Rue du Parc",50.5880,3.0415],
-
-["Parc","Bois et parcours","Bois communal",50.5900,3.0470],
-
-["Vélo","Piste cyclable","Voie verte",50.5920,3.0440],
-
-["Bus","Arrêt Mairie","Place de la Mairie",50.5855,3.0418],
-
-["Commerce","Commerce partenaire","Centre-ville",50.5848,3.0452],
-
-["Restaurant","Restaurant","Place centrale",50.5872,3.0460],
-
-["DAE","Défibrillateur","Mairie",50.5859,3.0425]
-
-];
-
-points.forEach(p=>{
-
-  const marker=L.marker([p[3],p[4]]);
-
-  marker.bindPopup(
-
-    "<strong>"+p[1]+"</strong><br>" +
-
-    "Catégorie : "+p[0]+"<br>" +
-
-    "Adresse : "+p[2]+"<br><br>" +
-
-    "<button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+p[3]+","+p[4]+"')\">Itinéraire</button>"
-
-  );
-
-  marker.addTo(map);
-
-  allMarkers.push({
-
-    cat:p[0],
-
-    marker:marker
-
-  });
+  btn.onclick=()=>filtre(btn.dataset.cat);
 
 });
 
+const recherche=document.getElementById("mapSearch");
+
+if(recherche){
+
+  recherche.oninput=()=>{
+
+    const txt=recherche.value.toLowerCase();
+
+    const f=marqueurs.find(x=>
+      x.nom.includes(txt) ||
+      x.cat.toLowerCase().includes(txt)
+    );
+
+    if(f){
+
+      map.setView([f.lat,f.lng],16);
+
+      f.marker.openPopup();
+
+    }
+
+  };
+
+}
+   
 setTimeout(()=>map.invalidateSize(),200);
-   document.querySelectorAll(".choiceBtn").forEach(btn=>{
-
-  const txt=btn.textContent.trim();
-
-  if(
-     txt==="Tous" ||
-     txt==="Sport" ||
-     txt==="Mairie" ||
-     txt==="Commerce" ||
-     txt==="Santé" ||
-     txt==="Culture" ||
-     txt==="Écoles"
-  ){
-
-      btn.onclick=()=>showCategory(txt);
-
-  }
-
-});
-
+  
   },0);
 
 }
