@@ -5218,17 +5218,28 @@ Consulter la carte bien-être
           </div>
         </div>
 
-        <div style="font-weight:900;margin-top:16px;">Nombre de clubs partenaires</div>
-        <div class="box">
-          Actuellement : 12 clubs engagés (démo)<br><br>
-          Chaque club peut proposer :<br>
-          • Rapport du week-end<br>
-          • Actions citoyennes<br>
-          • Partenariats commerçants<br>
-          • Soutien associatif
-        </div>
-      `);
+  <div style="font-weight:900;margin-top:16px;">Espace Clubs partenaires</div>
 
+<div class="box">
+
+Les fonctionnalités réservées aux clubs
+(rapport du week-end, gestion des équipes,
+partenariats commerçants, mécénat,
+bocitecoins club, actions citoyennes...)
+
+sont accessibles uniquement
+aux clubs partenaires autorisés.
+
+<br><br>
+
+<button class="choiceBtn"
+onclick="openClubAccess()">
+
+Accéder à l'espace Club
+
+</button>
+
+</div>
       setTimeout(()=>{
         const SPORT_HISTORY_KEY = "bociteart_sport_history_v1";
         const SPORT_REPORT_KEY = "bociteart_sport_report_v1";
