@@ -1767,14 +1767,53 @@ setInterval(()=>{
   setTicker(tickerIdx);
 }, 10000);
 
- function openWellbeingMap(){
+function openWellbeingMap(){
   openModal("Explorer les alentours", `
     <div class="box">
-      <div class="muted">
-        La carte “Explorer les alentours” est temporairement désactivée dans cette version de test.
-      </div>
+      <strong>Carte interactive</strong><br>
+      Repères utiles autour de vous : parcs, pistes cyclables, commerces, bus, équipements et services.
+    </div>
+
+    <div id="wellbeingMap"
+      style="height:420px;border-radius:16px;overflow:hidden;border:2px solid rgba(0,0,0,.10);background:#fff;">
     </div>
   `);
+
+  setTimeout(()=>{
+    if(typeof L === "undefined"){
+      alert("Carte indisponible : Leaflet n’est pas chargé.");
+      return;
+    }
+
+    const mapBox = document.getElementById("wellbeingMap");
+    if(!mapBox) return;
+
+    const map = L.map("wellbeingMap").setView([50.5865, 3.0430], 14);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "© OpenStreetMap"
+    }).addTo(map);
+
+    const points = [
+      ["Parc sportif", 50.5880, 3.0415],
+      ["Bois et parcours", 50.5900, 3.0470],
+      ["Piste cyclable nord", 50.5920, 3.0440],
+      ["Piste cyclable centre", 50.5860, 3.0430],
+      ["Arrêt de bus Mairie", 50.5855, 3.0418],
+      ["Commerce utile", 50.5848, 3.0452],
+      ["Restaurant / snack", 50.5872, 3.0460],
+      ["Défibrillateur", 50.5859, 3.0425]
+    ];
+
+    points.forEach(p=>{
+      L.marker([p[1], p[2]])
+        .addTo(map)
+        .bindPopup("<strong>" + p[0] + "</strong><br>Repère Bo’CitéArt");
+    });
+
+    setTimeout(()=>map.invalidateSize(), 200);
+  },0);
 }
 
 window.openWellbeingMap = openWellbeingMap;
