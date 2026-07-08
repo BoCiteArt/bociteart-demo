@@ -1,4 +1,4 @@
- <!DOCTYPE html>    f         
+ <!DOCTYPE html>             
 <html lang="fr"> 
 <head>
   <meta charset="UTF-8" />
@@ -7963,7 +7963,17 @@ window.openPilotagePrive = function(){
 
     <div class="choiceGrid">
 
-      <button class="choiceBtn" onclick="openTableauMatin()">Tableau de pilotage</button>
+      <button class="choiceBtn"
+onclick="openTableauMatin()">
+Tableau de pilotage
+</button>
+
+<button class="choiceBtn"
+onclick="showPilotageAccessLog()">
+Journal des accès
+</button>
+
+</div>
       <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau commune</button>
       <button class="choiceBtn" onclick="openPresentationBoCiteArt()">Environnement</button>
       <button class="choiceBtn" onclick="openConformiteBociteart()">Conformité</button>
@@ -9108,6 +9118,7 @@ window.openAdminSection = function(type){
 };
 
 const pilotageTile = $("pilotageTile");
+
 function logPilotageAccess(user, action){
   try{
     const key = "bociteart_pilotage_access_log";
@@ -9123,10 +9134,32 @@ function logPilotageAccess(user, action){
     localStorage.setItem(key, JSON.stringify(logs.slice(-100)));
   }catch(e){}
 }
+
+function showPilotageAccessLog(){
+  const logs = JSON.parse(localStorage.getItem("bociteart_pilotage_access_log") || "[]");
+
+  if(!logs.length){
+    openModal("Journal des accès",`
+      <div class="box">Aucun accès enregistré.</div>
+    `);
+    return;
+  }
+
+  const html = logs.slice().reverse().map(l=>`
+    <div class="box">
+      <strong>${l.user}</strong><br>
+      ${l.action}<br>
+      <small>${l.date}</small>
+    </div>
+  `).join("");
+
+  openModal("Journal des accès", html);
+}
 function openAccesPilotage(){
   const code = prompt("Code privé Bo'CitéArt :");
 
   if(code !== "bociteart-admin"){
+    logPilotageAccess("Inconnu", "Tentative avec mauvais code administrateur");
     alert("Accès refusé.");
     return;
   }
@@ -9134,13 +9167,20 @@ function openAccesPilotage(){
   const twofa = prompt("Code 2FA :");
 
   if(twofa !== "2026"){
+    logPilotageAccess("Jean-Michel Brulé", "Échec du code 2FA");
     alert("2FA refusé.");
     return;
   }
 
- logPilotageAccess("Jean-Michel Brulé", "Accès pilotage privé validé");
- window.bociteartAdminSession = true;
+  logPilotageAccess("Jean-Michel Brulé", "Accès pilotage privé validé");
+  window.bociteartAdminSession = true;
   openPilotagePrive();
+}
+
+function fermerPilotagePrive(){
+  logPilotageAccess("Jean-Michel Brulé", "Déconnexion du pilotage privé");
+  window.bociteartAdminSession = false;
+  closeModal();
 }
 
 if(pilotageTile){
