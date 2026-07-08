@@ -1768,52 +1768,101 @@ setInterval(()=>{
 }, 10000);
 
 function openWellbeingMap(){
-  openModal("Explorer les alentours", `
+
+  openModal("Explorer les alentours",`
+
     <div class="box">
-      <strong>Carte interactive</strong><br>
-      Repères utiles autour de vous : parcs, pistes cyclables, commerces, bus, équipements et services.
+
+      <strong>Légende</strong><br><br>
+
+      <span style="color:#1fa34a;">●</span> Sport & loisirs<br>
+      <span style="color:#1f6fd6;">●</span> Mairie & services publics<br>
+      <span style="color:#ff8c00;">●</span> Commerces partenaires<br>
+      <span style="color:#d62828;">●</span> Santé & défibrillateurs<br>
+      <span style="color:#7b2cbf;">●</span> Culture & patrimoine<br>
+      <span style="color:#d9a404;">●</span> Écoles<br>
+      <span style="color:#666;">●</span> Parkings<br>
+      <span style="color:#2a9d8f;">●</span> Espaces verts
+
+    </div>
+
+    <div class="box">
+
+      <strong>Rechercher</strong><br><br>
+
+      <input
+        id="mapSearch"
+        type="text"
+        placeholder="Commerce, parc, mairie..."
+        style="width:100%;padding:10px;border-radius:10px;">
+
     </div>
 
     <div id="wellbeingMap"
-      style="height:420px;border-radius:16px;overflow:hidden;border:2px solid rgba(0,0,0,.10);background:#fff;">
+      style="
+      height:430px;
+      border-radius:14px;
+      overflow:hidden;
+      border:2px solid #ddd;">
     </div>
+
   `);
 
   setTimeout(()=>{
-    if(typeof L === "undefined"){
-      alert("Carte indisponible : Leaflet n’est pas chargé.");
+
+    if(typeof L==="undefined"){
+      alert("Carte indisponible.");
       return;
     }
 
-    const mapBox = document.getElementById("wellbeingMap");
-    if(!mapBox) return;
+    const map=L.map("wellbeingMap").setView([50.5865,3.0430],14);
 
-    const map = L.map("wellbeingMap").setView([50.5865, 3.0430], 14);
+    L.tileLayer(
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {
+        attribution:"© OpenStreetMap",
+        maxZoom:19
+      }
+    ).addTo(map);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: "© OpenStreetMap"
-    }).addTo(map);
+    const points=[
 
-    const points = [
-      ["Parc sportif", 50.5880, 3.0415],
-      ["Bois et parcours", 50.5900, 3.0470],
-      ["Piste cyclable nord", 50.5920, 3.0440],
-      ["Piste cyclable centre", 50.5860, 3.0430],
-      ["Arrêt de bus Mairie", 50.5855, 3.0418],
-      ["Commerce utile", 50.5848, 3.0452],
-      ["Restaurant / snack", 50.5872, 3.0460],
-      ["Défibrillateur", 50.5859, 3.0425]
+      ["Sport","Parc sportif",50.5880,3.0415],
+
+      ["Parc","Bois et parcours",50.5900,3.0470],
+
+      ["Vélo","Piste cyclable",50.5920,3.0440],
+
+      ["Bus","Arrêt Mairie",50.5855,3.0418],
+
+      ["Commerce","Commerce partenaire",50.5848,3.0452],
+
+      ["Restaurant","Restaurant",50.5872,3.0460],
+
+      ["DAE","Défibrillateur",50.5859,3.0425]
+
     ];
 
     points.forEach(p=>{
-      L.marker([p[1], p[2]])
-        .addTo(map)
-        .bindPopup("<strong>" + p[0] + "</strong><br>Repère Bo’CitéArt");
+
+      L.marker([p[2],p[3]])
+      .addTo(map)
+      .bindPopup(
+
+        "<strong>"+p[1]+"</strong><br>"+
+
+        "Catégorie : "+p[0]+"<br><br>"+
+
+        "<button class='choiceBtn'>Voir la fiche</button>"
+
+      );
+
     });
 
-    setTimeout(()=>map.invalidateSize(), 200);
+    setTimeout(()=>map.invalidateSize(),200);
+
   },0);
+
 }
 
 window.openWellbeingMap = openWellbeingMap;
