@@ -1767,11 +1767,11 @@ setInterval(()=>{
   setTicker(tickerIdx);
 }, 10000);
 
-     function openWellbeingMap(){
-  openModal("Carte bien-être", `
+ function openWellbeingMap(){
+  openModal("Explorer les alentours", `
     <div class="box">
       <div class="muted">
-        Carte bien-être temporairement désactivée dans cette version de test.
+        La carte “Explorer les alentours” est temporairement désactivée dans cette version de test.
       </div>
     </div>
   `);
@@ -5187,60 +5187,6 @@ Exporter l'historique
           </div>
         </div>
 
-        <div style="font-weight:900;margin-top:14px;">Plan / parcours / repères utiles</div>
-        <div class="box">
-          <ul style="margin:8px 0 0 18px;font-weight:800;">
-            <li>Parc sportif</li>
-            <li>Bois et parcours</li>
-            <li>Salle de sport</li>
-            <li>Parc urbain</li>
-            <li>Espace vert central</li>
-            <li>Piste cyclable nord</li>
-            <li>Piste cyclable centre</li>
-            <li>Arrêt de bus Mairie</li>
-            <li>Arrêt de bus Centre</li>
-            <li>Supérette du centre</li>
-            <li>Mini-market quartier nord</li>
-            <li>Restaurant place centrale</li>
-            <li>Snack du quartier</li>
-          </ul>
-        </div>
-
-        <div class="box" style="margin-top:10px;">
-          <div style="font-weight:900;">Carte bien-être</div>
-          <div class="muted" style="margin-top:6px;">
-            Ouvre la carte plein écran avec points utiles autour de vous.
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-       <button class="choiceBtn" id="openMap" type="button">
-Consulter la carte bien-être
-</button>
-          </div>
-        </div>
-
-  <div style="font-weight:900;margin-top:16px;">Espace Clubs partenaires</div>
-
-<div class="box">
-
-Les fonctionnalités réservées aux clubs
-(rapport du week-end, gestion des équipes,
-partenariats commerçants, mécénat,
-bocitecoins club, actions citoyennes...)
-
-sont accessibles uniquement
-aux clubs partenaires autorisés.
-
-<br><br>
-
-<button class="choiceBtn"
-onclick="openClubAccess()">
-
-Accéder à l'espace Club
-
-</button>
-
-</div>
-`);
       setTimeout(()=>{
         const SPORT_HISTORY_KEY = "bociteart_sport_history_v1";
         const SPORT_REPORT_KEY = "bociteart_sport_report_v1";
