@@ -4790,9 +4790,9 @@ Consulter l'historique de l'école
   window.__bociteartOpenByKey = function(key){
     
 if(key === "sport"){
-  window.openSportPanel = function(){
+  window.openClubReserve = function(){
     const openSport = ()=>{
-      openModal("Sport", `
+     openModal("Espace Club réservé", `
         <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
         <div class="box">
           <strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.
@@ -5957,11 +5957,90 @@ Accéder à l'espace Club
       },0);
     };
 
-    openSport();
+     openSport();
   };
 
-  window.openSportPanel();
+  window.openClubReserve();
   return;
+}
+
+function openClubAccess(){
+  const code = prompt("Code club partenaire :");
+
+  if(code !== "club-demo"){
+    alert("Accès réservé aux clubs partenaires autorisés.");
+    return;
+  }
+
+  openClubReserve();
+}
+
+window.openClubAccess = openClubAccess;
+
+window.openSportPanel = function(){
+  openModal("Sport", `
+
+    <div style="font-weight:900;margin-bottom:10px;">
+      Explorer les alentours
+    </div>
+
+    <div class="box">
+      <strong>Découvrir les lieux utiles autour de vous</strong><br><br>
+      Retrouvez les parcs, parcours, pistes cyclables, équipements sportifs,
+      espaces verts, arrêts de bus, commerces utiles et points de repère de la ville.
+    </div>
+
+    <div class="box">
+      <strong>Repères utiles</strong>
+      <ul style="margin:8px 0 0 18px;font-weight:800;">
+        <li>Parc sportif</li>
+        <li>Bois et parcours</li>
+        <li>Salle de sport</li>
+        <li>Parc urbain</li>
+        <li>Espace vert central</li>
+        <li>Pistes cyclables</li>
+        <li>Arrêts de bus</li>
+        <li>Commerces de proximité</li>
+        <li>Restaurants et snacks</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <strong>Carte interactive</strong><br>
+      Ouvre la carte plein écran avec les points utiles autour de vous.
+
+      <br><br>
+
+      <button class="choiceBtn" id="openMap" type="button">
+        Consulter la carte
+      </button>
+    </div>
+
+    <div style="font-weight:900;margin-top:16px;">
+      Espace Clubs partenaires
+    </div>
+
+    <div class="box">
+      Les fonctionnalités réservées aux clubs
+      sont accessibles uniquement aux clubs partenaires autorisés.
+
+      <br><br>
+
+      <button class="choiceBtn" onclick="openClubAccess()">
+        Accéder à l'espace Club
+      </button>
+    </div>
+
+  `);
+
+  setTimeout(()=>{
+    const btnMap = $("openMap");
+    if(btnMap) btnMap.onclick = openWellbeingMap;
+  },0);
+};
+
+window.openSportPanel();
+return;
 }
 if(key === "mairie"){
   const CITY_SERVICES_DATA = [
