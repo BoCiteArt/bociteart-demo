@@ -1778,9 +1778,7 @@ function openWellbeingMap(){
       <span style="color:#ff8c00;">●</span> Commerces partenaires<br>
       <span style="color:#d62828;">●</span> Santé & défibrillateurs<br>
       <span style="color:#7b2cbf;">●</span> Culture & patrimoine<br>
-      <span style="color:#d9a404;">●</span> Écoles<br>
-      <span style="color:#666;">●</span> Parkings<br>
-      <span style="color:#2a9d8f;">●</span> Espaces verts
+      <span style="color:#d9a404;">●</span> Écoles
     </div>
 
     <div class="box">
@@ -1796,7 +1794,7 @@ function openWellbeingMap(){
 
     <div class="box">
       <strong>Rechercher</strong><br><br>
-      <input id="mapSearch" type="text" placeholder="Commerce, parc, mairie..."
+      <input id="mapSearch" type="text" placeholder="Mairie, école, commerce..."
       style="width:100%;padding:10px;border-radius:10px;">
     </div>
 
@@ -1808,123 +1806,38 @@ function openWellbeingMap(){
 
   setTimeout(()=>{
 
-   if(typeof L==="undefined"){
-  alert("Carte indisponible.");
-  return;
-}
-
-const map=L.map("wellbeingMap").setView([50.5865,3.0430],14);
-
-L.tileLayer(
-  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  {
-    attribution:"© OpenStreetMap",
-    maxZoom:19
-  }
-).addTo(map);
-
-const ville=(window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
-
-const points=[
-["Sport","Parc sportif","Rue du Parc",50.5880,3.0415],
-["Sport","Salle de sport","Complexe sportif",50.5874,3.0398],
-["Sport","Piste cyclable","Voie verte",50.5920,3.0440],
-["Mairie","Mairie","Place de la Mairie",50.5855,3.0418],
-["Commerce","Commerce partenaire","Centre-ville",50.5848,3.0452],
-["Santé","Défibrillateur","Mairie",50.5859,3.0425],
-["Culture","Bibliothèque","Rue principale",50.5862,3.0408],
-["Écoles","École primaire","Rue des Écoles",50.5849,3.0399]
-];
-
-const couleurs={
-Sport:"#1fa34a",
-Mairie:"#1f6fd6",
-Commerce:"#ff8c00",
-Santé:"#d62828",
-Culture:"#7b2cbf",
-Écoles:"#d9a404"
-};
-
-const marqueurs=[];
-
-points.forEach(p=>{
-
-  const icone=L.divIcon({
-    className:"",
-    html:"<div style='width:18px;height:18px;border-radius:50%;background:"+couleurs[p[0]]+";border:3px solid white;box-shadow:0 0 6px rgba(0,0,0,.35);'></div>",
-    iconSize:[18,18],
-    iconAnchor:[9,9]
-  });
-
-  const m=L.marker([p[3],p[4]],{icon:icone})
-  .addTo(map)
-  .bindPopup(
-    "<strong>"+p[1]+"</strong><br>"+
-    p[2]+"<br><br>"+
-    "<button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+p[3]+","+p[4]+"')\">Itinéraire</button>"
-  );
-
-  marqueurs.push({
-    cat:p[0],
-    nom:p[1].toLowerCase(),
-    marker:m,
-    lat:p[3],
-    lng:p[4]
-  });
-
-});
-
-function filtre(cat){
-
-  marqueurs.forEach(x=>map.removeLayer(x.marker));
-
-  marqueurs.forEach(x=>{
-
-    if(cat==="Tous" || x.cat===cat){
-
-      x.marker.addTo(map);
-
+    if(typeof L==="undefined"){
+      alert("Carte indisponible.");
+      return;
     }
 
-  });
+    const ville=(window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
 
-}
+    const cityCenters={
+      wattignies:[50.5865,3.0430],
+      seclin:[50.5487,3.0277],
+      loos:[50.6098,3.0188],
+      templemars:[50.5746,3.0546]
+    };
 
-document.querySelectorAll(".mapFilterBtn").forEach(btn=>{
+    const centre=cityCenters[ville] || cityCenters.wattignies;
 
-  btn.onclick=()=>filtre(btn.dataset.cat);
+    const map=L.map("wellbeingMap").setView(centre,14);
 
-});
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+      attribution:"© OpenStreetMap",
+      maxZoom:19
+    }).addTo(map);
 
-const recherche=document.getElementById("mapSearch");
+    const points=[];
 
-if(recherche){
-
-  recherche.oninput=()=>{
-
-    const txt=recherche.value.toLowerCase();
-
-    const f=marqueurs.find(x=>
-      x.nom.includes(txt) ||
-      x.cat.toLowerCase().includes(txt)
-    );
-
-    if(f){
-
-      map.setView([f.lat,f.lng],16);
-
-      f.marker.openPopup();
-
+    if(!points.length){
+      L.marker(centre).addTo(map).bindPopup("Centre de la commune");
     }
 
-  };
+    setTimeout(()=>map.invalidateSize(),200);
 
-}
-   
-setTimeout(()=>map.invalidateSize(),200);
-  
   },0);
-
 }
 
 window.openWellbeingMap = openWellbeingMap;
