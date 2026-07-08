@@ -5970,10 +5970,6 @@ window.openSportPanel = function(){
   },0);
 };
 
-window.openSportPanel();
-return;
-}
-
 function openClubAccess(){
   const code = prompt("Code club partenaire :");
 
@@ -5986,6 +5982,10 @@ function openClubAccess(){
 }
 
 window.openClubAccess = openClubAccess;
+
+window.openSportPanel();
+return;
+}
 
 if(key === "mairie"){
   const CITY_SERVICES_DATA = [
@@ -6752,6 +6752,7 @@ if(xb && xb.focus) xb.focus();
 },0);
 
 return;
+} 
 };
 
 const openSecureBtn = $("openSecure");
@@ -10600,6 +10601,7 @@ if(isFn(window.makeKeyboardClickable)){
   });
 
   window.showTab("rgpd");
+})(); 
 })();
 </script>
  
