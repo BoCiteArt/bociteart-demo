@@ -1790,8 +1790,8 @@ function openWellbeingMap(){
       <button class="choiceBtn mapFilterBtn" data-cat="Santé">Santé</button>
       <button class="choiceBtn mapFilterBtn" data-cat="Culture">Culture</button>
       <button class="choiceBtn mapFilterBtn" data-cat="Écoles">Écoles</button>
-      <button class="choiceBtn mapFilterBtn" data-cat="Parc">Parcs</button>
-      <button class="choiceBtn mapFilterBtn" data-cat="Parking">Parkings</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Parcs">Parcs</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Parkings">Parkings</button>
     </div>
 
     <div class="box">
@@ -1892,19 +1892,23 @@ function openWellbeingMap(){
       btn.onclick=()=>filtrer(btn.dataset.cat);
     });
 
-    const query=
-      "[out:json][timeout:25];("+
-      "node(around:2500,"+centre[0]+","+centre[1]+")[amenity=townhall];"+
-      "node(around:2500,"+centre[0]+","+centre[1]+")[amenity=school];"+
-      "node(around:2500,"+centre[0]+","+centre[1]+")[shop];"+
-      "node(around:2500,"+centre[0]+","+centre[1]+")[amenity=pharmacy];"+
-      "node(around:2500,"+centre[0]+","+centre[1]+")[emergency=defibrillator];"+
-      "node(around:2500,"+centre[0]+","+centre[1]+")[amenity=library];"+
-      "node(around:2500,"+centre[0]+","+centre[1]+")[leisure=park];"+
-      "node(around:2500,"+centre[0]+","+centre[1]+")[leisure=sports_centre];"+
-      "node(around:2500,"+centre[0]+","+centre[1]+")[leisure=pitch];"+
-      "node(around:2500,"+centre[0]+","+centre[1]+")[amenity=parking];"+
-      ");out center 120;";
+    const cityName = ville.charAt(0).toUpperCase() + ville.slice(1);
+
+const query =
+  "[out:json][timeout:25];" +
+  "area[\"boundary\"=\"administrative\"][\"name\"=\"" + cityName + "\"][\"admin_level\"=\"8\"]->.searchArea;" +
+  "(" +
+  "node(area.searchArea)[amenity=townhall];" +
+  "node(area.searchArea)[amenity=school];" +
+  "node(area.searchArea)[shop];" +
+  "node(area.searchArea)[amenity=pharmacy];" +
+  "node(area.searchArea)[emergency=defibrillator];" +
+  "node(area.searchArea)[amenity=library];" +
+  "node(area.searchArea)[leisure=park];" +
+  "node(area.searchArea)[leisure=sports_centre];" +
+  "node(area.searchArea)[leisure=pitch];" +
+  "node(area.searchArea)[amenity=parking];" +
+  ");out center 200;";
 
     fetch("https://overpass-api.de/api/interpreter?data="+encodeURIComponent(query))
       .then(r=>r.json())
@@ -1921,8 +1925,8 @@ function openWellbeingMap(){
           else if(t.shop) cat="Commerce";
           else if(t.amenity==="pharmacy" || t.emergency==="defibrillator") cat="Santé";
           else if(t.leisure==="sports_centre" || t.leisure==="pitch") cat="Sport";
-          else if(t.leisure==="park") cat="Parc";
-          else if(t.amenity==="parking") cat="Parking";
+          else if(t.leisure==="park") cat="Parcs";
+          else if(t.amenity==="parking") cat="Parkings";
           else if(t.amenity==="library") cat="Culture";
 
           ajouterPoint(cat, t.name || cat, lat, lng);
