@@ -1953,6 +1953,10 @@ function openWellbeingMap(){
         });
 
         console.log("Points récupérés OSM :", marqueurs.length);
+       if(window.BOCITEART_MAP_FILTER){
+       filtrer(window.BOCITEART_MAP_FILTER);
+       window.BOCITEART_MAP_FILTER = null;
+     }
 
         if(!marqueurs.length){
           L.circleMarker(centre,{
@@ -9522,6 +9526,12 @@ if(pilotageTile){
 }
 
 const daeBtn = $("daeBtn");
+   if(daeBtn){
+  daeBtn.onclick = function(){
+    window.BOCITEART_MAP_FILTER = "Santé";
+    window.openWellbeingMap();
+  };
+}
 const clockBtn = $("clockBtn");
 // ===== SAINT DU JOUR =====
 function getSaintOfDay(d){
