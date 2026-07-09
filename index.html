@@ -6113,9 +6113,26 @@ window.openSportPanel = function(){
 
   <br><br>
 
-  <button class="choiceBtn" type="button" onclick="window.openWellbeingMap()">
-    Consulter la carte
+ <div class="box">
+
+  <strong>Explorer les alentours</strong><br><br>
+
+  Parcs, écoles, commerces, services, équipements sportifs et points utiles autour de vous.
+
+  <br><br>
+
+  <button
+      class="choiceBtn"
+      id="openMap"
+      type="button"
+      onclick="if(window.openWellbeingMap){ window.openWellbeingMap(); } else { alert('La carte est en cours de chargement.'); }">
+      Consulter la carte
   </button>
+
+</div>
+
+<div style="font-weight:900;margin-top:16px;">
+  Espace Clubs partenaires
 </div>
 
 <div style="font-weight:900;margin-top:16px;">
