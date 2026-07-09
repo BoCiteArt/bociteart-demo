@@ -1800,7 +1800,35 @@ function openWellbeingMap(){
       maxZoom:19
     }).addTo(map);
 
-    L.marker(city.center).addTo(map).bindPopup("Centre de la commune");
+   const points = [
+  ["Sport","Parc sportif",50.5849,3.0388,"#1fa34a"],
+  ["Parc","Bois et parcours",50.5898,3.0402,"#2a9d8f"],
+  ["Sport","Salle de sport",50.5857,3.0395,"#1fa34a"],
+  ["Parc","Parc urbain",50.5872,3.0440,"#2a9d8f"],
+  ["Parc","Espace vert central",50.5864,3.0421,"#2a9d8f"],
+  ["Sport","Piste cyclable nord",50.5908,3.0432,"#1fa34a"],
+  ["Sport","Piste cyclable centre",50.5860,3.0431,"#1fa34a"],
+  ["Mairie","Arrêt de bus Mairie",50.5856,3.0419,"#1f6fd6"],
+  ["Mairie","Arrêt de bus Centre",50.5868,3.0447,"#1f6fd6"],
+  ["Commerce","Supérette du centre",50.5867,3.0442,"#ff8c00"],
+  ["Commerce","Mini-market quartier nord",50.5902,3.0445,"#ff8c00"],
+  ["Commerce","Restaurant place centrale",50.5869,3.0436,"#ff8c00"],
+  ["Commerce","Snack du quartier",50.5846,3.0450,"#ff8c00"]
+];
+
+points.forEach(p=>{
+  L.circleMarker([p[2],p[3]],{
+    radius:8,
+    color:"#ffffff",
+    weight:3,
+    fillColor:p[4],
+    fillOpacity:1
+  }).addTo(map).bindPopup(
+    "<strong>"+p[1]+"</strong><br>"+
+    "Catégorie : "+p[0]+"<br><br>"+
+    "<button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+p[2]+","+p[3]+"')\">Itinéraire</button>"
+  );
+});
 
     setTimeout(()=>map.invalidateSize(),200);
   },0);
