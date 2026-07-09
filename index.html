@@ -1771,8 +1771,17 @@ function openWellbeingMap(){
   openModal("Explorer les alentours",`
 
     <div class="box">
-      <strong>Légende</strong><br><br>
+      <strong>Commune</strong><br><br>
+      <select id="citySelect" style="width:100%;padding:12px;border-radius:12px;font-size:16px;">
+        <option value="wattignies">Wattignies</option>
+        <option value="seclin">Seclin</option>
+        <option value="loos">Loos</option>
+        <option value="templemars">Templemars</option>
+      </select>
+    </div>
 
+    <div class="box">
+      <strong>Légende</strong><br><br>
       <span style="color:#1fa34a;">●</span> Sport<br>
       <span style="color:#1f6fd6;">●</span> Mairie<br>
       <span style="color:#ff8c00;">●</span> Commerce<br>
@@ -1784,20 +1793,7 @@ function openWellbeingMap(){
     </div>
 
     <div class="box">
-      <strong>Commune</strong><br><br>
-
-      <select id="citySelect" style="width:100%;padding:12px;border-radius:12px;font-size:16px;">
-        <option value="wattignies">Wattignies</option>
-        <option value="seclin">Seclin</option>
-        <option value="loos">Loos</option>
-        <option value="templemars">Templemars</option>
-      </select>
-
-    </div>
-
-    <div class="box">
       <strong>Filtrer</strong><br><br>
-
       <button class="choiceBtn mapFilterBtn" data-cat="Tous">Tous</button>
       <button class="choiceBtn mapFilterBtn" data-cat="Sport">Sport</button>
       <button class="choiceBtn mapFilterBtn" data-cat="Mairie">Mairie</button>
@@ -1807,24 +1803,14 @@ function openWellbeingMap(){
       <button class="choiceBtn mapFilterBtn" data-cat="Écoles">Écoles</button>
       <button class="choiceBtn mapFilterBtn" data-cat="Parcs">Parcs</button>
       <button class="choiceBtn mapFilterBtn" data-cat="Parkings">Parkings</button>
-
     </div>
 
     <div class="box">
       <strong>Rechercher un lieu dans la commune</strong><br><br>
-
-      <input
-        id="mapSearch"
-        type="text"
-        placeholder="Mairie, école, parc, commerce..."
-        style="width:100%;padding:10px;border-radius:10px;"
-      >
-
+      <input id="mapSearch" type="text" placeholder="Mairie, école, parc, commerce..." style="width:100%;padding:10px;border-radius:10px;">
     </div>
 
-    <div id="wellbeingMap"
-         style="height:430px;border-radius:14px;overflow:hidden;border:2px solid #ddd;">
-    </div>
+    <div id="wellbeingMap" style="height:430px;border-radius:14px;overflow:hidden;border:2px solid #ddd;"></div>
 
   `);
 
@@ -1834,15 +1820,12 @@ function openWellbeingMap(){
       return;
     }
 
-    const ville=(window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
-    const citySelect=document.getElementById("citySelect");
-  if(citySelect){
-    citySelect.value=ville;
-    citySelect.onchange=()=>{
-    window.BOCITEART_CURRENT_CITY=citySelect.value;
-    window.openWellbeingMap();
-  };
-}
+    const cityNames={
+      wattignies:"Wattignies",
+      seclin:"Seclin",
+      loos:"Loos",
+      templemars:"Templemars"
+    };
 
     const centres={
       wattignies:[50.5865,3.0430],
@@ -1851,7 +1834,18 @@ function openWellbeingMap(){
       templemars:[50.5746,3.0546]
     };
 
+    const ville=(window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
+    const cityName=cityNames[ville] || "Wattignies";
     const centre=centres[ville] || centres.wattignies;
+
+    const citySelect=document.getElementById("citySelect");
+    if(citySelect){
+      citySelect.value=ville;
+      citySelect.onchange=()=>{
+        window.BOCITEART_CURRENT_CITY=citySelect.value;
+        window.openWellbeingMap();
+      };
+    }
 
     const map=L.map("wellbeingMap").setView(centre,14);
 
@@ -1860,29 +1854,25 @@ function openWellbeingMap(){
       maxZoom:19
     }).addTo(map);
 
-   const couleurs={
-  Sport:"#1fa34a",
-  Mairie:"#1f6fd6",
-  Commerce:"#ff8c00",
-  Santé:"#d62828",
-  Culture:"#7b2cbf",
-  "Écoles":"#d9a404",
-  Parcs:"#2a9d8f",
-  Parkings:"#666666"
-};
+    const couleurs={
+      Sport:"#1fa34a",
+      Mairie:"#1f6fd6",
+      Commerce:"#ff8c00",
+      Santé:"#d62828",
+      Culture:"#7b2cbf",
+      "Écoles":"#d9a404",
+      Parcs:"#2a9d8f",
+      Parkings:"#666666"
+    };
 
     const marqueurs=[];
-
-    function couleur(cat){
-      return couleurs[cat] || "#333333";
-    }
 
     function ajouterPoint(cat, nom, lat, lng){
       const point=L.circleMarker([lat,lng],{
         radius:8,
         color:"#ffffff",
         weight:3,
-        fillColor:couleur(cat),
+        fillColor:couleurs[cat] || "#333333",
         fillOpacity:1
       }).addTo(map);
 
@@ -1901,49 +1891,44 @@ function openWellbeingMap(){
       });
     }
 
-   function filtrer(cat){
-  const visibles = [];
+    function filtrer(cat){
+      const visibles=[];
+      marqueurs.forEach(x=>map.removeLayer(x.marker));
+      marqueurs.forEach(x=>{
+        if(cat==="Tous" || x.cat===cat){
+          x.marker.addTo(map);
+          visibles.push(x);
+        }
+      });
 
-  marqueurs.forEach(x=>map.removeLayer(x.marker));
-
-  marqueurs.forEach(x=>{
-    if(cat==="Tous" || x.cat===cat){
-      x.marker.addTo(map);
-      visibles.push(x);
+      if(visibles.length){
+        map.fitBounds(L.latLngBounds(visibles.map(x=>[x.lat,x.lng])),{padding:[30,30]});
+      }else{
+        alert("Aucun point trouvé pour : " + cat);
+      }
     }
-  });
-
-  if(visibles.length){
-    const bounds = L.latLngBounds(visibles.map(x=>[x.lat,x.lng]));
-    map.fitBounds(bounds,{padding:[30,30]});
-  }else{
-    alert("Aucun point trouvé pour : " + cat);
-  }
-}
 
     document.querySelectorAll(".mapFilterBtn").forEach(btn=>{
       btn.onclick=()=>filtrer(btn.dataset.cat);
     });
 
-    const cityName = ville.charAt(0).toUpperCase() + ville.slice(1);
-
-const query =
-  "[out:json][timeout:25];" +
-  "area[\"boundary\"=\"administrative\"][\"name\"=\"" + cityName + "\"][\"admin_level\"=\"8\"]->.searchArea;" +
-  "(" +
-  "nwr(area.searchArea)[amenity=townhall];" +
-  "nwr(area.searchArea)[office=government];" +
-  "nwr(area.searchArea)[amenity=school];" +
-  "nwr(area.searchArea)[shop];" +
-  "nwr(area.searchArea)[amenity=pharmacy];" +
-  "nwr(area.searchArea)[emergency=defibrillator];" +
-  "nwr(area.searchArea)[amenity=library];" +
-  "nwr(area.searchArea)[leisure=park];" +
-  "nwr(area.searchArea)[landuse=recreation_ground];" +
-  "nwr(area.searchArea)[leisure=sports_centre];" +
-  "nwr(area.searchArea)[leisure=pitch];" +
-  "nwr(area.searchArea)[amenity=parking];" +
-  ");out center 300;";
+    const query =
+      "[out:json][timeout:25];" +
+      "area[\"boundary\"=\"administrative\"][\"name\"=\"" + cityName + "\"][\"admin_level\"=\"8\"]->.searchArea;" +
+      "(" +
+      "nwr(area.searchArea)[amenity=townhall];" +
+      "nwr(area.searchArea)[office=government];" +
+      "nwr(area.searchArea)[amenity=school];" +
+      "nwr(area.searchArea)[shop];" +
+      "nwr(area.searchArea)[amenity=pharmacy];" +
+      "nwr(area.searchArea)[emergency=defibrillator];" +
+      "nwr(area.searchArea)[amenity=library];" +
+      "nwr(area.searchArea)[leisure=park];" +
+      "nwr(area.searchArea)[landuse=recreation_ground];" +
+      "nwr(area.searchArea)[leisure=sports_centre];" +
+      "nwr(area.searchArea)[leisure=pitch];" +
+      "nwr(area.searchArea)[amenity=parking];" +
+      ");out center 300;";
 
     fetch("https://overpass-api.de/api/interpreter?data="+encodeURIComponent(query))
       .then(r=>r.json())
@@ -1967,8 +1952,9 @@ const query =
           ajouterPoint(cat, t.name || cat, lat, lng);
         });
 
-       console.log("Points récupérés OSM :", marqueurs.length); 
-       if(!marqueurs.length){
+        console.log("Points récupérés OSM :", marqueurs.length);
+
+        if(!marqueurs.length){
           L.circleMarker(centre,{
             radius:8,
             color:"#ffffff",
@@ -1989,32 +1975,24 @@ const query =
         }
       })
       .catch(()=>{
-        L.circleMarker(centre,{
-          radius:8,
-          color:"#ffffff",
-          weight:3,
-          fillColor:"#1f6fd6",
-          fillOpacity:1
-        }).addTo(map).bindPopup("Centre de la commune");
+        alert("Chargement des points locaux impossible.");
       });
 
     const recherche=document.getElementById("mapSearch");
     if(recherche){
-    recherche.onchange=()=>{
-  const txt=recherche.value.trim().toLowerCase();
-  if(!txt) return;
+      recherche.onchange=()=>{
+        const txt=recherche.value.trim().toLowerCase();
+        if(!txt) return;
 
-  const found=marqueurs.find(x=>{
-    return x.nom.includes(txt) || x.cat.toLowerCase().includes(txt);
-  });
+        const found=marqueurs.find(x=>x.nom.includes(txt) || x.cat.toLowerCase().includes(txt));
 
-  if(found){
-    map.setView([found.lat,found.lng],17);
-    found.marker.openPopup();
-  }else{
-    alert("Aucun résultat trouvé pour : " + recherche.value);
-  }
-};
+        if(found){
+          map.setView([found.lat,found.lng],17);
+          found.marker.openPopup();
+        }else{
+          alert("Aucun résultat trouvé pour : " + recherche.value);
+        }
+      };
     }
 
     setTimeout(()=>map.invalidateSize(),200);
