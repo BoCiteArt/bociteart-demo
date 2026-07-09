@@ -1868,14 +1868,25 @@ function openWellbeingMap(){
       });
     }
 
-    function filtrer(cat){
-      marqueurs.forEach(x=>map.removeLayer(x.marker));
-      marqueurs.forEach(x=>{
-        if(cat==="Tous" || x.cat===cat){
-          x.marker.addTo(map);
-        }
-      });
+   function filtrer(cat){
+  const visibles = [];
+
+  marqueurs.forEach(x=>map.removeLayer(x.marker));
+
+  marqueurs.forEach(x=>{
+    if(cat==="Tous" || x.cat===cat){
+      x.marker.addTo(map);
+      visibles.push(x);
     }
+  });
+
+  if(visibles.length){
+    const bounds = L.latLngBounds(visibles.map(x=>[x.lat,x.lng]));
+    map.fitBounds(bounds,{padding:[30,30]});
+  }else{
+    alert("Aucun point trouvé pour : " + cat);
+  }
+}
 
     document.querySelectorAll(".mapFilterBtn").forEach(btn=>{
       btn.onclick=()=>filtrer(btn.dataset.cat);
@@ -1950,15 +1961,21 @@ function openWellbeingMap(){
 
     const recherche=document.getElementById("mapSearch");
     if(recherche){
-      recherche.oninput=()=>{
-        const txt=recherche.value.trim().toLowerCase();
-        if(!txt) return;
-        const found=marqueurs.find(x=>x.nom.includes(txt) || x.cat.toLowerCase().includes(txt));
-        if(found){
-          map.setView([found.lat,found.lng],16);
-          found.marker.openPopup();
-        }
-      };
+    recherche.onchange=()=>{
+  const txt=recherche.value.trim().toLowerCase();
+  if(!txt) return;
+
+  const found=marqueurs.find(x=>{
+    return x.nom.includes(txt) || x.cat.toLowerCase().includes(txt);
+  });
+
+  if(found){
+    map.setView([found.lat,found.lng],17);
+    found.marker.openPopup();
+  }else{
+    alert("Aucun résultat trouvé pour : " + recherche.value);
+  }
+};
     }
 
     setTimeout(()=>map.invalidateSize(),200);
