@@ -2012,8 +2012,8 @@ function openWellbeingMap(){
 }
 
 window.openWellbeingMap = openWellbeingMap;
-      
-  let calYear = new Date().getFullYear();
+    
+let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 
 window.PUB_STORE_KEY = window.PUB_STORE_KEY || "bociteart_pub_bookings_v1";
@@ -2694,20 +2694,6 @@ function openTicker(){
 const tickerBtn = $("ticker");
 if(tickerBtn){
   on(tickerBtn, "click", openTicker);
-}
-
-const daeBtn = $("daeBtn");
-
-if(daeBtn){
-  on(daeBtn, "click", ()=>{
-
-    // on demande à la carte de filtrer uniquement les DAE / Santé
-    window.BOCITEART_MAP_FILTER = "Santé";
-
-    // on ouvre directement la carte
-    window.openWellbeingMap();
-
-  });
 }
 
 window.tapeAds = [
