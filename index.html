@@ -1769,8 +1769,10 @@ setInterval(()=>{
 
 function openWellbeingMap(){
   openModal("Explorer les alentours",`
+
     <div class="box">
       <strong>Légende</strong><br><br>
+
       <span style="color:#1fa34a;">●</span> Sport<br>
       <span style="color:#1f6fd6;">●</span> Mairie<br>
       <span style="color:#ff8c00;">●</span> Commerce<br>
@@ -1782,7 +1784,20 @@ function openWellbeingMap(){
     </div>
 
     <div class="box">
+      <strong>Commune</strong><br><br>
+
+      <select id="citySelect" style="width:100%;padding:12px;border-radius:12px;font-size:16px;">
+        <option value="wattignies">Wattignies</option>
+        <option value="seclin">Seclin</option>
+        <option value="loos">Loos</option>
+        <option value="templemars">Templemars</option>
+      </select>
+
+    </div>
+
+    <div class="box">
       <strong>Filtrer</strong><br><br>
+
       <button class="choiceBtn mapFilterBtn" data-cat="Tous">Tous</button>
       <button class="choiceBtn mapFilterBtn" data-cat="Sport">Sport</button>
       <button class="choiceBtn mapFilterBtn" data-cat="Mairie">Mairie</button>
@@ -1792,15 +1807,25 @@ function openWellbeingMap(){
       <button class="choiceBtn mapFilterBtn" data-cat="Écoles">Écoles</button>
       <button class="choiceBtn mapFilterBtn" data-cat="Parcs">Parcs</button>
       <button class="choiceBtn mapFilterBtn" data-cat="Parkings">Parkings</button>
+
     </div>
 
     <div class="box">
-      <strong>Rechercher</strong><br><br>
-      <input id="mapSearch" type="text" placeholder="Mairie, école, parc, commerce..."
-      style="width:100%;padding:10px;border-radius:10px;">
+      <strong>Rechercher un lieu dans la commune</strong><br><br>
+
+      <input
+        id="mapSearch"
+        type="text"
+        placeholder="Mairie, école, parc, commerce..."
+        style="width:100%;padding:10px;border-radius:10px;"
+      >
+
     </div>
 
-    <div id="wellbeingMap" style="height:430px;border-radius:14px;overflow:hidden;border:2px solid #ddd;"></div>
+    <div id="wellbeingMap"
+         style="height:430px;border-radius:14px;overflow:hidden;border:2px solid #ddd;">
+    </div>
+
   `);
 
   setTimeout(()=>{
@@ -1810,6 +1835,14 @@ function openWellbeingMap(){
     }
 
     const ville=(window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
+    const citySelect=document.getElementById("citySelect");
+  if(citySelect){
+    citySelect.value=ville;
+    citySelect.onchange=()=>{
+    window.BOCITEART_CURRENT_CITY=citySelect.value;
+    window.openWellbeingMap();
+  };
+}
 
     const centres={
       wattignies:[50.5865,3.0430],
