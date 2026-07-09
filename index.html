@@ -1834,13 +1834,43 @@ const BOCITEART_CITY_DATA = window.BOCITEART_CITY_DATA || {
     center:[50.5865,3.0430],
     points:[]
   },
-  seclin:{ center:[50.5487,3.0277], points:[] },
-  loos:{ center:[50.6098,3.0188], points:[] },
-  templemars:{ center:[50.5746,3.0546], points:[] }
+  seclin:{
+    center:[50.5487,3.0277],
+    points:[]
+  },
+  loos:{
+    center:[50.6098,3.0188],
+    points:[]
+  },
+  templemars:{
+    center:[50.5746,3.0546],
+    points:[]
+  }
 };
 
 const cityData = BOCITEART_CITY_DATA[ville] || BOCITEART_CITY_DATA.wattignies;
 const points = cityData.points || [];
+
+const couleurs = {
+  sport:"#1fa34a",
+  mairie:"#1f6fd6",
+  commerce:"#ff8c00",
+  sante:"#d62828",
+  culture:"#7b2cbf",
+  ecole:"#d9a404",
+  parking:"#666666",
+  parc:"#2a9d8f"
+};
+
+function createColorIcon(type){
+  const c = couleurs[type] || "#333333";
+  return L.divIcon({
+    className:"",
+    html:"<div style='width:18px;height:18px;border-radius:50%;background:"+c+";border:3px solid white;box-shadow:0 0 6px rgba(0,0,0,.35);'></div>",
+    iconSize:[18,18],
+    iconAnchor:[9,9]
+  });
+}
 
 if(!points.length){
   L.marker(cityData.center).addTo(map).bindPopup(
@@ -1848,7 +1878,18 @@ if(!points.length){
   );
 }
 
-setTimeout(()=>map.invalidateSize(),200);
+points.forEach(p=>{
+  const marker = L.marker([p.lat,p.lng],{
+    icon:createColorIcon(p.type)
+  }).addTo(map);
+
+  marker.bindPopup(
+    "<strong>"+p.nom+"</strong><br>"+
+    (p.adresse || "")+"<br>"+
+    "<br><button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+p.lat+","+p.lng+"')\">Itinéraire</button>"
+  );
+});
+ setTimeout(()=>map.invalidateSize(),200);
 
 },0);
 }
