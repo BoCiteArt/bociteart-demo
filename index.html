@@ -1770,65 +1770,195 @@ setInterval(()=>{
 function openWellbeingMap(){
   openModal("Explorer les alentours",`
     <div class="box">
-      <strong>Carte locale</strong><br>
-      Les points réels seront alimentés par les données de la commune.
+      <strong>Légende</strong><br><br>
+      <span style="color:#1fa34a;">●</span> Sport<br>
+      <span style="color:#1f6fd6;">●</span> Mairie<br>
+      <span style="color:#ff8c00;">●</span> Commerce<br>
+      <span style="color:#d62828;">●</span> Santé<br>
+      <span style="color:#7b2cbf;">●</span> Culture<br>
+      <span style="color:#d9a404;">●</span> Écoles<br>
+      <span style="color:#2a9d8f;">●</span> Parcs<br>
+      <span style="color:#666666;">●</span> Parkings
+    </div>
+
+    <div class="box">
+      <strong>Filtrer</strong><br><br>
+      <button class="choiceBtn mapFilterBtn" data-cat="Tous">Tous</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Sport">Sport</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Mairie">Mairie</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Commerce">Commerce</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Santé">Santé</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Culture">Culture</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Écoles">Écoles</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Parc">Parcs</button>
+      <button class="choiceBtn mapFilterBtn" data-cat="Parking">Parkings</button>
+    </div>
+
+    <div class="box">
+      <strong>Rechercher</strong><br><br>
+      <input id="mapSearch" type="text" placeholder="Mairie, école, parc, commerce..."
+      style="width:100%;padding:10px;border-radius:10px;">
     </div>
 
     <div id="wellbeingMap" style="height:430px;border-radius:14px;overflow:hidden;border:2px solid #ddd;"></div>
   `);
 
   setTimeout(()=>{
-    if(typeof L === "undefined"){
+    if(typeof L==="undefined"){
       alert("Carte indisponible.");
       return;
     }
 
-    const ville = (window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
+    const ville=(window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
 
-    const DATA = window.BOCITEART_CITY_DATA || {
-      wattignies:{ center:[50.5865,3.0430], points:[] },
-      seclin:{ center:[50.5487,3.0277], points:[] },
-      loos:{ center:[50.6098,3.0188], points:[] },
-      templemars:{ center:[50.5746,3.0546], points:[] }
+    const centres={
+      wattignies:[50.5865,3.0430],
+      seclin:[50.5487,3.0277],
+      loos:[50.6098,3.0188],
+      templemars:[50.5746,3.0546]
     };
 
-    const city = DATA[ville] || DATA.wattignies;
-    const map = L.map("wellbeingMap").setView(city.center,14);
+    const centre=centres[ville] || centres.wattignies;
+
+    const map=L.map("wellbeingMap").setView(centre,14);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
       attribution:"© OpenStreetMap",
       maxZoom:19
     }).addTo(map);
 
-   const points = [
-  ["Sport","Parc sportif",50.5849,3.0388,"#1fa34a"],
-  ["Parc","Bois et parcours",50.5898,3.0402,"#2a9d8f"],
-  ["Sport","Salle de sport",50.5857,3.0395,"#1fa34a"],
-  ["Parc","Parc urbain",50.5872,3.0440,"#2a9d8f"],
-  ["Parc","Espace vert central",50.5864,3.0421,"#2a9d8f"],
-  ["Sport","Piste cyclable nord",50.5908,3.0432,"#1fa34a"],
-  ["Sport","Piste cyclable centre",50.5860,3.0431,"#1fa34a"],
-  ["Mairie","Arrêt de bus Mairie",50.5856,3.0419,"#1f6fd6"],
-  ["Mairie","Arrêt de bus Centre",50.5868,3.0447,"#1f6fd6"],
-  ["Commerce","Supérette du centre",50.5867,3.0442,"#ff8c00"],
-  ["Commerce","Mini-market quartier nord",50.5902,3.0445,"#ff8c00"],
-  ["Commerce","Restaurant place centrale",50.5869,3.0436,"#ff8c00"],
-  ["Commerce","Snack du quartier",50.5846,3.0450,"#ff8c00"]
-];
+    const couleurs={
+      Sport:"#1fa34a",
+      Mairie:"#1f6fd6",
+      Commerce:"#ff8c00",
+      Santé:"#d62828",
+      Culture:"#7b2cbf",
+      "Écoles":"#d9a404",
+      Parc:"#2a9d8f",
+      Parking:"#666666"
+    };
 
-points.forEach(p=>{
-  L.circleMarker([p[2],p[3]],{
-    radius:8,
-    color:"#ffffff",
-    weight:3,
-    fillColor:p[4],
-    fillOpacity:1
-  }).addTo(map).bindPopup(
-    "<strong>"+p[1]+"</strong><br>"+
-    "Catégorie : "+p[0]+"<br><br>"+
-    "<button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+p[2]+","+p[3]+"')\">Itinéraire</button>"
-  );
-});
+    const marqueurs=[];
+
+    function couleur(cat){
+      return couleurs[cat] || "#333333";
+    }
+
+    function ajouterPoint(cat, nom, lat, lng){
+      const point=L.circleMarker([lat,lng],{
+        radius:8,
+        color:"#ffffff",
+        weight:3,
+        fillColor:couleur(cat),
+        fillOpacity:1
+      }).addTo(map);
+
+      point.bindPopup(
+        "<strong>"+nom+"</strong><br>"+
+        "Catégorie : "+cat+"<br><br>"+
+        "<button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+lat+","+lng+"')\">Itinéraire</button>"
+      );
+
+      marqueurs.push({
+        cat:cat,
+        nom:String(nom || "").toLowerCase(),
+        marker:point,
+        lat:lat,
+        lng:lng
+      });
+    }
+
+    function filtrer(cat){
+      marqueurs.forEach(x=>map.removeLayer(x.marker));
+      marqueurs.forEach(x=>{
+        if(cat==="Tous" || x.cat===cat){
+          x.marker.addTo(map);
+        }
+      });
+    }
+
+    document.querySelectorAll(".mapFilterBtn").forEach(btn=>{
+      btn.onclick=()=>filtrer(btn.dataset.cat);
+    });
+
+    const query=
+      "[out:json][timeout:25];("+
+      "node(around:2500,"+centre[0]+","+centre[1]+")[amenity=townhall];"+
+      "node(around:2500,"+centre[0]+","+centre[1]+")[amenity=school];"+
+      "node(around:2500,"+centre[0]+","+centre[1]+")[shop];"+
+      "node(around:2500,"+centre[0]+","+centre[1]+")[amenity=pharmacy];"+
+      "node(around:2500,"+centre[0]+","+centre[1]+")[emergency=defibrillator];"+
+      "node(around:2500,"+centre[0]+","+centre[1]+")[amenity=library];"+
+      "node(around:2500,"+centre[0]+","+centre[1]+")[leisure=park];"+
+      "node(around:2500,"+centre[0]+","+centre[1]+")[leisure=sports_centre];"+
+      "node(around:2500,"+centre[0]+","+centre[1]+")[leisure=pitch];"+
+      "node(around:2500,"+centre[0]+","+centre[1]+")[amenity=parking];"+
+      ");out center 120;";
+
+    fetch("https://overpass-api.de/api/interpreter?data="+encodeURIComponent(query))
+      .then(r=>r.json())
+      .then(data=>{
+        (data.elements || []).forEach(el=>{
+          const t=el.tags || {};
+          const lat=el.lat || (el.center && el.center.lat);
+          const lng=el.lon || (el.center && el.center.lon);
+          if(!lat || !lng) return;
+
+          let cat="Culture";
+          if(t.amenity==="townhall") cat="Mairie";
+          else if(t.amenity==="school") cat="Écoles";
+          else if(t.shop) cat="Commerce";
+          else if(t.amenity==="pharmacy" || t.emergency==="defibrillator") cat="Santé";
+          else if(t.leisure==="sports_centre" || t.leisure==="pitch") cat="Sport";
+          else if(t.leisure==="park") cat="Parc";
+          else if(t.amenity==="parking") cat="Parking";
+          else if(t.amenity==="library") cat="Culture";
+
+          ajouterPoint(cat, t.name || cat, lat, lng);
+        });
+
+        if(!marqueurs.length){
+          L.circleMarker(centre,{
+            radius:8,
+            color:"#ffffff",
+            weight:3,
+            fillColor:"#1f6fd6",
+            fillOpacity:1
+          }).addTo(map).bindPopup("Centre de la commune");
+        }
+
+        const cible=window.BOCITEART_MAP_TARGET;
+        if(cible){
+          const found=marqueurs.find(x=>x.nom.includes(String(cible).toLowerCase()));
+          if(found){
+            map.setView([found.lat,found.lng],16);
+            found.marker.openPopup();
+          }
+          window.BOCITEART_MAP_TARGET=null;
+        }
+      })
+      .catch(()=>{
+        L.circleMarker(centre,{
+          radius:8,
+          color:"#ffffff",
+          weight:3,
+          fillColor:"#1f6fd6",
+          fillOpacity:1
+        }).addTo(map).bindPopup("Centre de la commune");
+      });
+
+    const recherche=document.getElementById("mapSearch");
+    if(recherche){
+      recherche.oninput=()=>{
+        const txt=recherche.value.trim().toLowerCase();
+        if(!txt) return;
+        const found=marqueurs.find(x=>x.nom.includes(txt) || x.cat.toLowerCase().includes(txt));
+        if(found){
+          map.setView([found.lat,found.lng],16);
+          found.marker.openPopup();
+        }
+      };
+    }
 
     setTimeout(()=>map.invalidateSize(),200);
   },0);
