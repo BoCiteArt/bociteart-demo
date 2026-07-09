@@ -1768,128 +1768,42 @@ setInterval(()=>{
 }, 10000);
 
 function openWellbeingMap(){
- const couleurs={
-  Sport:"#1fa34a",
-  Mairie:"#1f6fd6",
-  Commerce:"#ff8c00",
-  Santé:"#d62828",
-  Culture:"#7b2cbf",
-  Écoles:"#d9a404",
-  Parking:"#666666",
-  Parc:"#2a9d8f"
-};
+  openModal("Explorer les alentours",`
+    <div class="box">
+      <strong>Carte locale</strong><br>
+      Les points réels seront alimentés par les données de la commune.
+    </div>
 
-const marqueurs=[];
+    <div id="wellbeingMap" style="height:430px;border-radius:14px;overflow:hidden;border:2px solid #ddd;"></div>
+  `);
 
-function addPoint(cat, nom, lat, lng){
-  const marker=L.circleMarker([lat,lng],{
-    radius:8,
-    color:"#ffffff",
-    weight:3,
-    fillColor:couleurs[cat] || "#333",
-    fillOpacity:1
-  }).addTo(map);
-
-  marker.bindPopup(
-    "<strong>"+nom+"</strong><br>"+
-    "Catégorie : "+cat+"<br><br>"+
-    "<button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+lat+","+lng+"')\">Itinéraire</button>"
-  );
-
-  marqueurs.push({cat:cat, marker:marker});
-}
-
-function filtre(cat){
-  marqueurs.forEach(x=>map.removeLayer(x.marker));
-  marqueurs.forEach(x=>{
-    if(cat==="Tous" || x.cat===cat){
-      x.marker.addTo(map);
+  setTimeout(()=>{
+    if(typeof L === "undefined"){
+      alert("Carte indisponible.");
+      return;
     }
-  });
-}
 
-document.querySelectorAll(".mapFilterBtn").forEach(btn=>{
-  btn.onclick=()=>filtre(btn.dataset.cat);
-});
+    const ville = (window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
 
-const overpassQuery = `
-[out:json][timeout:25];
-(
-  node(around:2500,${centre[0]},${centre[1]})[amenity=townhall];
-  node(around:2500,${centre[0]},${centre[1]})[amenity=school];
-  node(around:2500,${centre[0]},${centre[1]})[shop];
-  node(around:2500,${centre[0]},${centre[1]})[amenity=pharmacy];
-  node(around:2500,${centre[0]},${centre[1]})[emergency=defibrillator];
-  node(around:2500,${centre[0]},${centre[1]})[leisure=park];
-  node(around:2500,${centre[0]},${centre[1]})[leisure=sports_centre];
-  node(around:2500,${centre[0]},${centre[1]})[leisure=pitch];
-  node(around:2500,${centre[0]},${centre[1]})[amenity=library];
-  node(around:2500,${centre[0]},${centre[1]})[amenity=parking];
-);
-out center 80;
-`;
+    const DATA = window.BOCITEART_CITY_DATA || {
+      wattignies:{ center:[50.5865,3.0430], points:[] },
+      seclin:{ center:[50.5487,3.0277], points:[] },
+      loos:{ center:[50.6098,3.0188], points:[] },
+      templemars:{ center:[50.5746,3.0546], points:[] }
+    };
 
-fetch("https://overpass-api.de/api/interpreter?data="+encodeURIComponent(overpassQuery))
-.then(r=>r.json())
-.then(data=>{
-  (data.elements || []).forEach(el=>{
-    const tags=el.tags || {};
-    const lat=el.lat || (el.center && el.center.lat);
-    const lng=el.lon || (el.center && el.center.lon);
-    if(!lat || !lng) return;
+    const city = DATA[ville] || DATA.wattignies;
+    const map = L.map("wellbeingMap").setView(city.center,14);
 
-    let cat="Culture";
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+      attribution:"© OpenStreetMap",
+      maxZoom:19
+    }).addTo(map);
 
-    if(tags.amenity==="townhall") cat="Mairie";
-    else if(tags.amenity==="school") cat="Écoles";
-    else if(tags.shop) cat="Commerce";
-    else if(tags.amenity==="pharmacy" || tags.emergency==="defibrillator") cat="Santé";
-    else if(tags.leisure==="park") cat="Parc";
-    else if(tags.leisure==="sports_centre" || tags.leisure==="pitch") cat="Sport";
-    else if(tags.amenity==="parking") cat="Parking";
-    else if(tags.amenity==="library") cat="Culture";
+    L.marker(city.center).addTo(map).bindPopup("Centre de la commune");
 
-    addPoint(cat, tags.name || cat, lat, lng);
-  });
-})
-.catch(()=>{
-  alert("Les points locaux n'ont pas pu être chargés.");
-});
-setTimeout(()=>{
-
-  if(typeof L==="undefined"){
-    alert("Carte indisponible.");
-    return;
-  }
-
-  const ville=(window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
-
-  const BOCITEART_CITY_DATA = window.BOCITEART_CITY_DATA || {
-    wattignies:{ center:[50.5865,3.0430], points:[] },
-    seclin:{ center:[50.5487,3.0277], points:[] },
-    loos:{ center:[50.6098,3.0188], points:[] },
-    templemars:{ center:[50.5746,3.0546], points:[] }
-  };
-
-  const cityData = BOCITEART_CITY_DATA[ville] || BOCITEART_CITY_DATA.wattignies;
-  const centre = cityData.center;
-
-  const map=L.map("wellbeingMap").setView(centre,14);
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-    attribution:"© OpenStreetMap",
-    maxZoom:19
-  }).addTo(map);
-
-  const points = cityData.points || [];
-
-  if(!points.length){
-    L.marker(centre).addTo(map).bindPopup("Centre de la commune");
-  }
-
-  setTimeout(()=>map.invalidateSize(),200);
-
-},0);
+    setTimeout(()=>map.invalidateSize(),200);
+  },0);
 }
 
 window.openWellbeingMap = openWellbeingMap;
