@@ -1917,7 +1917,8 @@ function openWellbeingMap(){
           ajouterPoint(cat, t.name || cat, lat, lng);
         });
 
-        if(!marqueurs.length){
+       console.log("Points récupérés OSM :", marqueurs.length); 
+       if(!marqueurs.length){
           L.circleMarker(centre,{
             radius:8,
             color:"#ffffff",
