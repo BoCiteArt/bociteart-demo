@@ -1943,7 +1943,15 @@ function openWellbeingMap(){
           if(t.amenity==="townhall") cat="Mairie";
           else if(t.amenity==="school") cat="Écoles";
           else if(t.shop) cat="Commerce";
-          else if(t.amenity==="pharmacy" || t.emergency==="defibrillator") cat="Santé";
+          else if(
+          t.emergency==="defibrillator" ||
+          t.emergency==="aed"
+       ){
+          cat="Santé";
+        }
+          else if(t.amenity==="pharmacy"){
+          cat="Santé";
+}
           else if(t.leisure==="sports_centre" || t.leisure==="pitch") cat="Sport";
           else if(t.leisure==="park" || t.landuse==="recreation_ground") cat="Parcs";
           else if(t.amenity==="parking" || t.parking) cat="Parkings";
@@ -2687,8 +2695,23 @@ const tickerBtn = $("ticker");
 if(tickerBtn){
   on(tickerBtn, "click", openTicker);
 }
-      window.tapeAds = [
 
+const daeBtn = $("daeBtn");
+
+if(daeBtn){
+  on(daeBtn, "click", ()=>{
+
+    // on demande à la carte de filtrer uniquement les DAE / Santé
+    window.BOCITEART_MAP_FILTER = "Santé";
+
+    // on ouvre directement la carte
+    window.openWellbeingMap();
+
+  });
+}
+
+window.tapeAds = [
+ 
         { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
         { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
         { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
