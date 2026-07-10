@@ -1768,24 +1768,44 @@ setInterval(()=>{
 }, 10000);
 
 function openWellbeingMap(){
-  openModal("Explorer les alentours",`
+
+  openModal("Explorer les alentours", `
 
     <div class="box">
-      <strong>Commune</strong><br><br>
-      <select id="citySelect" style="width:100%;padding:12px;border-radius:12px;font-size:16px;">
-        <option value="wattignies">Wattignies</option>
-        <option value="seclin">Seclin</option>
-        <option value="loos">Loos</option>
-        <option value="templemars">Templemars</option>
-      </select>
+      <strong>Choisir une commune française</strong><br><br>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <input
+          id="citySearchInput"
+          type="text"
+          class="miniField"
+          placeholder="Exemple : Wattignies"
+          style="flex:1;min-width:190px;"
+        >
+
+        <button
+          class="choiceBtn"
+          id="citySearchBtn"
+          type="button">
+          Charger la commune
+        </button>
+      </div>
+
+      <div
+        id="citySearchStatus"
+        class="muted"
+        style="margin-top:8px;">
+        Saisissez le nom d’une commune.
+      </div>
     </div>
 
     <div class="box">
       <strong>Légende</strong><br><br>
+
       <span style="color:#1fa34a;">●</span> Sport<br>
-      <span style="color:#1f6fd6;">●</span> Mairie<br>
-      <span style="color:#ff8c00;">●</span> Commerce<br>
-      <span style="color:#d62828;">●</span> Santé<br>
+      <span style="color:#1f6fd6;">●</span> Mairie et services publics<br>
+      <span style="color:#ff8c00;">●</span> Commerces<br>
+      <span style="color:#d62828;">●</span> Santé et DAE<br>
       <span style="color:#7b2cbf;">●</span> Culture<br>
       <span style="color:#d9a404;">●</span> Écoles<br>
       <span style="color:#2a9d8f;">●</span> Parcs<br>
@@ -1793,7 +1813,8 @@ function openWellbeingMap(){
     </div>
 
     <div class="box">
-      <strong>Filtrer</strong><br><br>
+      <strong>Filtrer l’affichage</strong><br><br>
+
       <button class="choiceBtn mapFilterBtn" data-cat="Tous">Tous</button>
       <button class="choiceBtn mapFilterBtn" data-cat="Sport">Sport</button>
       <button class="choiceBtn mapFilterBtn" data-cat="Mairie">Mairie</button>
@@ -1807,54 +1828,62 @@ function openWellbeingMap(){
 
     <div class="box">
       <strong>Rechercher un lieu dans la commune</strong><br><br>
-      <input id="mapSearch" type="text" placeholder="Mairie, école, parc, commerce..." style="width:100%;padding:10px;border-radius:10px;">
+
+      <input
+        id="mapSearch"
+        type="text"
+        class="miniField"
+        placeholder="Mairie, école, parc, commerce..."
+      >
     </div>
 
-    <div id="wellbeingMap" style="height:430px;border-radius:14px;overflow:hidden;border:2px solid #ddd;"></div>
+    <div
+      id="wellbeingMap"
+      style="
+        height:430px;
+        border-radius:14px;
+        overflow:hidden;
+        border:2px solid #ddd;
+      ">
+    </div>
 
   `);
 
   setTimeout(()=>{
-    if(typeof L==="undefined"){
+
+    if(typeof L === "undefined"){
       alert("Carte indisponible.");
       return;
     }
 
-    const cityNames={
-      wattignies:"Wattignies",
-      seclin:"Seclin",
-      loos:"Loos",
-      templemars:"Templemars"
-    };
+    const cityInput = $("citySearchInput");
+    const cityBtn = $("citySearchBtn");
+    const cityStatus = $("citySearchStatus");
+    const searchInput = $("mapSearch");
 
-    const centres={
-      wattignies:[50.5865,3.0430],
-      seclin:[50.5487,3.0277],
-      loos:[50.6098,3.0188],
-      templemars:[50.5746,3.0546]
-    };
+    const savedCity =
+      localStorage.getItem("bociteart_current_city") ||
+      window.BOCITEART_CURRENT_CITY ||
+      "Wattignies";
 
-    const ville=(window.BOCITEART_CURRENT_CITY || "wattignies").toLowerCase();
-    const cityName=cityNames[ville] || "Wattignies";
-    const centre=centres[ville] || centres.wattignies;
-
-    const citySelect=document.getElementById("citySelect");
-    if(citySelect){
-      citySelect.value=ville;
-      citySelect.onchange=()=>{
-        window.BOCITEART_CURRENT_CITY=citySelect.value;
-        window.openWellbeingMap();
-      };
+    if(cityInput){
+      cityInput.value = savedCity;
     }
 
-    const map=L.map("wellbeingMap").setView(centre,14);
+    const map = L.map("wellbeingMap").setView(
+      [46.603354, 1.888334],
+      6
+    );
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-      attribution:"© OpenStreetMap",
-      maxZoom:19
-    }).addTo(map);
+    L.tileLayer(
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {
+        attribution:"© OpenStreetMap",
+        maxZoom:19
+      }
+    ).addTo(map);
 
-    const couleurs={
+    const couleurs = {
       Sport:"#1fa34a",
       Mairie:"#1f6fd6",
       Commerce:"#ff8c00",
@@ -1865,149 +1894,561 @@ function openWellbeingMap(){
       Parkings:"#666666"
     };
 
-    const marqueurs=[];
+    let marqueurs = [];
+    let loadingLayer = null;
 
-    function ajouterPoint(cat, nom, lat, lng){
-      const point=L.circleMarker([lat,lng],{
-        radius:8,
-        color:"#ffffff",
-        weight:3,
-        fillColor:couleurs[cat] || "#333333",
-        fillOpacity:1
-      }).addTo(map);
+    function nettoyerCarte(){
+      marqueurs.forEach(item=>{
+        if(map.hasLayer(item.marker)){
+          map.removeLayer(item.marker);
+        }
+      });
 
-      point.bindPopup(
-        "<strong>"+nom+"</strong><br>"+
-        "Catégorie : "+cat+"<br><br>"+
-        "<button class='choiceBtn' onclick=\"window.open('https://www.google.com/maps/search/?api=1&query="+lat+","+lng+"')\">Itinéraire</button>"
+      marqueurs = [];
+
+      if(loadingLayer && map.hasLayer(loadingLayer)){
+        map.removeLayer(loadingLayer);
+      }
+
+      loadingLayer = null;
+    }
+
+    function ajouterPoint(cat, nom, lat, lng, tags){
+      const marker = L.circleMarker(
+        [lat, lng],
+        {
+          radius:8,
+          color:"#ffffff",
+          weight:3,
+          fillColor:couleurs[cat] || "#333333",
+          fillOpacity:1
+        }
+      ).addTo(map);
+
+      const adresse = [
+        tags && tags["addr:housenumber"],
+        tags && tags["addr:street"],
+        tags && tags["addr:postcode"],
+        tags && tags["addr:city"]
+      ].filter(Boolean).join(" ");
+
+      marker.bindPopup(
+        "<strong>" + escapeHtml(nom) + "</strong><br>" +
+        "Catégorie : " + escapeHtml(cat) + "<br>" +
+        (adresse
+          ? "Adresse : " + escapeHtml(adresse) + "<br>"
+          : ""
+        ) +
+        "<br>" +
+        "<button class='choiceBtn' " +
+        "onclick=\"window.open(" +
+        "'https://www.google.com/maps/dir/?api=1&destination=" +
+        lat + "," + lng +
+        "&travelmode=walking'," +
+        "'_blank'," +
+        "'noopener,noreferrer'" +
+        ")\">M’y rendre</button>"
       );
 
       marqueurs.push({
         cat:cat,
-        nom:String(nom || "").toLowerCase(),
-        marker:point,
-        lat:lat,
-        lng:lng
+        nom:String(nom || cat).toLowerCase(),
+        marker:marker,
+        lat:Number(lat),
+        lng:Number(lng)
       });
     }
 
     function filtrer(cat){
-      const visibles=[];
-      marqueurs.forEach(x=>map.removeLayer(x.marker));
-      marqueurs.forEach(x=>{
-        if(cat==="Tous" || x.cat===cat){
-          x.marker.addTo(map);
-          visibles.push(x);
+      const visibles = [];
+
+      marqueurs.forEach(item=>{
+        if(map.hasLayer(item.marker)){
+          map.removeLayer(item.marker);
+        }
+      });
+
+      marqueurs.forEach(item=>{
+        if(cat === "Tous" || item.cat === cat){
+          item.marker.addTo(map);
+          visibles.push(item);
         }
       });
 
       if(visibles.length){
-        map.fitBounds(L.latLngBounds(visibles.map(x=>[x.lat,x.lng])),{padding:[30,30]});
+        const bounds = L.latLngBounds(
+          visibles.map(item=>[item.lat, item.lng])
+        );
+
+        map.fitBounds(bounds, {
+          padding:[25,25],
+          maxZoom:16
+        });
       }else{
-        alert("Aucun point trouvé pour : " + cat);
+        alert("Aucun point renseigné pour cette catégorie dans OpenStreetMap.");
       }
     }
 
     document.querySelectorAll(".mapFilterBtn").forEach(btn=>{
-      btn.onclick=()=>filtrer(btn.dataset.cat);
+      btn.onclick = ()=>{
+        filtrer(btn.dataset.cat);
+      };
     });
 
-    const query =
-      "[out:json][timeout:25];" +
-      "area[\"boundary\"=\"administrative\"][\"name\"=\"" + cityName + "\"][\"admin_level\"=\"8\"]->.searchArea;" +
-      "(" +
-      "nwr(area.searchArea)[amenity=townhall];" +
-      "nwr(area.searchArea)[office=government];" +
-      "nwr(area.searchArea)[amenity=school];" +
-      "nwr(area.searchArea)[shop];" +
-      "nwr(area.searchArea)[amenity=pharmacy];" +
-      "nwr(area.searchArea)[emergency=defibrillator];" +
-      "nwr(area.searchArea)[amenity=library];" +
-      "nwr(area.searchArea)[leisure=park];" +
-      "nwr(area.searchArea)[landuse=recreation_ground];" +
-      "nwr(area.searchArea)[leisure=sports_centre];" +
-      "nwr(area.searchArea)[leisure=pitch];" +
-      "nwr(area.searchArea)[amenity=parking];" +
-      ");out center 300;";
+    function classerLieu(tags){
+      if(
+        tags.amenity === "townhall" ||
+        tags.office === "government"
+      ){
+        return "Mairie";
+      }
 
-    fetch("https://overpass-api.de/api/interpreter?data="+encodeURIComponent(query))
-      .then(r=>r.json())
-      .then(data=>{
-        (data.elements || []).forEach(el=>{
-          const t=el.tags || {};
-          const lat=el.lat || (el.center && el.center.lat);
-          const lng=el.lon || (el.center && el.center.lon);
-          if(!lat || !lng) return;
+      if(
+        tags.amenity === "school" ||
+        tags.amenity === "kindergarten" ||
+        tags.amenity === "college"
+      ){
+        return "Écoles";
+      }
 
-          let cat="Culture";
-          if(t.amenity==="townhall") cat="Mairie";
-          else if(t.amenity==="school") cat="Écoles";
-          else if(t.shop) cat="Commerce";
-          else if(
-          t.emergency==="defibrillator" ||
-          t.emergency==="aed"
-       ){
-          cat="Santé";
+      if(
+        tags.emergency === "defibrillator" ||
+        tags.emergency === "aed" ||
+        tags.amenity === "pharmacy" ||
+        tags.amenity === "clinic" ||
+        tags.amenity === "doctors"
+      ){
+        return "Santé";
+      }
+
+      if(
+        tags.leisure === "sports_centre" ||
+        tags.leisure === "pitch" ||
+        tags.leisure === "stadium" ||
+        tags.sport
+      ){
+        return "Sport";
+      }
+
+      if(
+        tags.leisure === "park" ||
+        tags.landuse === "recreation_ground" ||
+        tags.leisure === "garden"
+      ){
+        return "Parcs";
+      }
+
+      if(
+        tags.amenity === "parking" ||
+        tags.parking
+      ){
+        return "Parkings";
+      }
+
+      if(
+        tags.amenity === "library" ||
+        tags.amenity === "theatre" ||
+        tags.amenity === "cinema" ||
+        tags.tourism === "museum" ||
+        tags.amenity === "arts_centre"
+      ){
+        return "Culture";
+      }
+
+      if(tags.shop){
+        return "Commerce";
+      }
+
+      return "Culture";
+    }
+
+    function construireRequeteZone(areaId){
+      return (
+        "[out:json][timeout:40];" +
+        "area(" + areaId + ")->.searchArea;" +
+        "(" +
+          "nwr(area.searchArea)[amenity=townhall];" +
+          "nwr(area.searchArea)[office=government];" +
+
+          "nwr(area.searchArea)[amenity=school];" +
+          "nwr(area.searchArea)[amenity=kindergarten];" +
+          "nwr(area.searchArea)[amenity=college];" +
+
+          "nwr(area.searchArea)[shop];" +
+
+          "nwr(area.searchArea)[amenity=pharmacy];" +
+          "nwr(area.searchArea)[amenity=clinic];" +
+          "nwr(area.searchArea)[amenity=doctors];" +
+          "nwr(area.searchArea)[emergency=defibrillator];" +
+
+          "nwr(area.searchArea)[amenity=library];" +
+          "nwr(area.searchArea)[amenity=theatre];" +
+          "nwr(area.searchArea)[amenity=cinema];" +
+          "nwr(area.searchArea)[amenity=arts_centre];" +
+          "nwr(area.searchArea)[tourism=museum];" +
+
+          "nwr(area.searchArea)[leisure=park];" +
+          "nwr(area.searchArea)[leisure=garden];" +
+          "nwr(area.searchArea)[landuse=recreation_ground];" +
+
+          "nwr(area.searchArea)[leisure=sports_centre];" +
+          "nwr(area.searchArea)[leisure=pitch];" +
+          "nwr(area.searchArea)[leisure=stadium];" +
+          "nwr(area.searchArea)[sport];" +
+
+          "nwr(area.searchArea)[amenity=parking];" +
+        ");" +
+        "out center 1000;"
+      );
+    }
+
+    function construireRequeteCadre(bbox){
+      const sud = bbox[0];
+      const nord = bbox[1];
+      const ouest = bbox[2];
+      const est = bbox[3];
+
+      const zone =
+        sud + "," + ouest + "," + nord + "," + est;
+
+      return (
+        "[out:json][timeout:40];" +
+        "(" +
+          "nwr(" + zone + ")[amenity=townhall];" +
+          "nwr(" + zone + ")[office=government];" +
+          "nwr(" + zone + ")[amenity=school];" +
+          "nwr(" + zone + ")[amenity=kindergarten];" +
+          "nwr(" + zone + ")[shop];" +
+          "nwr(" + zone + ")[amenity=pharmacy];" +
+          "nwr(" + zone + ")[emergency=defibrillator];" +
+          "nwr(" + zone + ")[amenity=library];" +
+          "nwr(" + zone + ")[leisure=park];" +
+          "nwr(" + zone + ")[landuse=recreation_ground];" +
+          "nwr(" + zone + ")[leisure=sports_centre];" +
+          "nwr(" + zone + ")[leisure=pitch];" +
+          "nwr(" + zone + ")[amenity=parking];" +
+        ");" +
+        "out center 1000;"
+      );
+    }
+
+    async function chargerCommune(nomCommune){
+      const villeDemandee =
+        String(nomCommune || "").trim();
+
+      if(!villeDemandee){
+        alert("Saisissez le nom d’une commune.");
+        return;
+      }
+
+      nettoyerCarte();
+
+      if(cityStatus){
+        cityStatus.textContent =
+          "Recherche de la commune en cours…";
+      }
+
+      try{
+        const nominatimUrl =
+          "https://nominatim.openstreetmap.org/search" +
+          "?format=jsonv2" +
+          "&countrycodes=fr" +
+          "&limit=1" +
+          "&addressdetails=1" +
+          "&q=" +
+          encodeURIComponent(villeDemandee + ", France");
+
+        const geoResponse = await fetch(
+          nominatimUrl,
+          {
+            headers:{
+              "Accept":"application/json"
+            }
+          }
+        );
+
+        if(!geoResponse.ok){
+          throw new Error("Recherche de commune impossible.");
         }
-          else if(t.amenity==="pharmacy"){
-          cat="Santé";
-}
-          else if(t.leisure==="sports_centre" || t.leisure==="pitch") cat="Sport";
-          else if(t.leisure==="park" || t.landuse==="recreation_ground") cat="Parcs";
-          else if(t.amenity==="parking" || t.parking) cat="Parkings";
-          else if(t.amenity==="library") cat="Culture";
 
-          ajouterPoint(cat, t.name || cat, lat, lng);
-        });
+        const geoResults = await geoResponse.json();
 
-        console.log("Points récupérés OSM :", marqueurs.length);
-       if(window.BOCITEART_MAP_FILTER){
-       filtrer(window.BOCITEART_MAP_FILTER);
-       window.BOCITEART_MAP_FILTER = null;
-     }
+        if(!Array.isArray(geoResults) || !geoResults.length){
+          throw new Error(
+            "Commune française introuvable."
+          );
+        }
 
-        if(!marqueurs.length){
-          L.circleMarker(centre,{
-            radius:8,
+        const commune = geoResults[0];
+
+        const lat = Number(commune.lat);
+        const lng = Number(commune.lon);
+
+        if(!Number.isFinite(lat) || !Number.isFinite(lng)){
+          throw new Error(
+            "Coordonnées de la commune indisponibles."
+          );
+        }
+
+        const cityLabel =
+          commune.address &&
+          (
+            commune.address.city ||
+            commune.address.town ||
+            commune.address.village ||
+            commune.address.municipality
+          )
+            ? (
+                commune.address.city ||
+                commune.address.town ||
+                commune.address.village ||
+                commune.address.municipality
+              )
+            : villeDemandee;
+
+        window.BOCITEART_CURRENT_CITY = cityLabel;
+
+        localStorage.setItem(
+          "bociteart_current_city",
+          cityLabel
+        );
+
+        if(cityInput){
+          cityInput.value = cityLabel;
+        }
+
+        map.setView([lat,lng],14);
+
+        loadingLayer = L.circleMarker(
+          [lat,lng],
+          {
+            radius:7,
             color:"#ffffff",
             weight:3,
             fillColor:"#1f6fd6",
             fillOpacity:1
-          }).addTo(map).bindPopup("Centre de la commune");
-        }
-
-        const cible=window.BOCITEART_MAP_TARGET;
-        if(cible){
-          const found=marqueurs.find(x=>x.nom.includes(String(cible).toLowerCase()));
-          if(found){
-            map.setView([found.lat,found.lng],16);
-            found.marker.openPopup();
           }
-          window.BOCITEART_MAP_TARGET=null;
+        ).addTo(map);
+
+        if(cityStatus){
+          cityStatus.textContent =
+            "Chargement des lieux de " +
+            cityLabel +
+            "…";
         }
-      })
-      .catch(()=>{
-        alert("Chargement des points locaux impossible.");
-      });
 
-    const recherche=document.getElementById("mapSearch");
-    if(recherche){
-      recherche.onchange=()=>{
-        const txt=recherche.value.trim().toLowerCase();
-        if(!txt) return;
+        let query = "";
+        let areaId = null;
 
-        const found=marqueurs.find(x=>x.nom.includes(txt) || x.cat.toLowerCase().includes(txt));
+        const osmId = Number(commune.osm_id);
 
-        if(found){
-          map.setView([found.lat,found.lng],17);
-          found.marker.openPopup();
+        if(
+          commune.osm_type === "relation" &&
+          Number.isFinite(osmId)
+        ){
+          areaId = 3600000000 + osmId;
+        }
+
+        if(
+          commune.osm_type === "way" &&
+          Number.isFinite(osmId)
+        ){
+          areaId = 2400000000 + osmId;
+        }
+
+        if(areaId){
+          query = construireRequeteZone(areaId);
         }else{
-          alert("Aucun résultat trouvé pour : " + recherche.value);
+          query = construireRequeteCadre(
+            commune.boundingbox
+          );
+        }
+
+        const overpassUrl =
+          "https://overpass-api.de/api/interpreter?data=" +
+          encodeURIComponent(query);
+
+        const osmResponse = await fetch(overpassUrl);
+
+        if(!osmResponse.ok){
+          throw new Error(
+            "Chargement des lieux impossible."
+          );
+        }
+
+        const osmData = await osmResponse.json();
+
+        if(loadingLayer && map.hasLayer(loadingLayer)){
+          map.removeLayer(loadingLayer);
+        }
+
+        loadingLayer = null;
+
+        (osmData.elements || []).forEach(element=>{
+          const tags = element.tags || {};
+
+          const pointLat =
+            element.lat ||
+            (
+              element.center &&
+              element.center.lat
+            );
+
+          const pointLng =
+            element.lon ||
+            (
+              element.center &&
+              element.center.lon
+            );
+
+          if(
+            !Number.isFinite(Number(pointLat)) ||
+            !Number.isFinite(Number(pointLng))
+          ){
+            return;
+          }
+
+          const categorie = classerLieu(tags);
+
+          const nom =
+            tags.name ||
+            tags.brand ||
+            tags.operator ||
+            categorie;
+
+          ajouterPoint(
+            categorie,
+            nom,
+            Number(pointLat),
+            Number(pointLng),
+            tags
+          );
+        });
+
+        if(cityStatus){
+          cityStatus.textContent =
+            marqueurs.length +
+            " lieu(x) chargé(s) pour " +
+            cityLabel +
+            ".";
+        }
+
+        if(marqueurs.length){
+          const bounds = L.latLngBounds(
+            marqueurs.map(item=>[
+              item.lat,
+              item.lng
+            ])
+          );
+
+          map.fitBounds(bounds,{
+            padding:[25,25],
+            maxZoom:15
+          });
+        }
+
+        if(window.BOCITEART_MAP_FILTER){
+          filtrer(window.BOCITEART_MAP_FILTER);
+          window.BOCITEART_MAP_FILTER = null;
+        }
+
+        const cible = window.BOCITEART_MAP_TARGET;
+
+        if(cible){
+          const cibleTexte =
+            String(cible).toLowerCase();
+
+          const trouve = marqueurs.find(item=>
+            item.nom.includes(cibleTexte)
+          );
+
+          if(trouve){
+            map.setView(
+              [trouve.lat,trouve.lng],
+              17
+            );
+
+            trouve.marker.openPopup();
+          }
+
+          window.BOCITEART_MAP_TARGET = null;
+        }
+
+      }catch(error){
+        console.error(error);
+
+        if(cityStatus){
+          cityStatus.textContent =
+            error.message ||
+            "Impossible de charger cette commune.";
+        }
+
+        alert(
+          error.message ||
+          "Impossible de charger cette commune."
+        );
+      }
+
+      setTimeout(()=>{
+        map.invalidateSize();
+      },200);
+    }
+
+    if(cityBtn){
+      cityBtn.onclick = ()=>{
+        chargerCommune(
+          cityInput ? cityInput.value : ""
+        );
+      };
+    }
+
+    if(cityInput){
+      cityInput.addEventListener(
+        "keydown",
+        event=>{
+          if(event.key === "Enter"){
+            event.preventDefault();
+            chargerCommune(cityInput.value);
+          }
+        }
+      );
+    }
+
+    if(searchInput){
+      searchInput.onchange = ()=>{
+        const texte =
+          searchInput.value.trim().toLowerCase();
+
+        if(!texte){
+          return;
+        }
+
+        const trouve = marqueurs.find(item=>
+          item.nom.includes(texte) ||
+          item.cat.toLowerCase().includes(texte)
+        );
+
+        if(trouve){
+          map.setView(
+            [trouve.lat,trouve.lng],
+            17
+          );
+
+          trouve.marker.openPopup();
+        }else{
+          alert(
+            "Aucun résultat trouvé dans cette commune."
+          );
         }
       };
     }
 
-    setTimeout(()=>map.invalidateSize(),200);
+    chargerCommune(savedCity);
+
+    setTimeout(()=>{
+      map.invalidateSize();
+    },200);
+
   },0);
 }
 
