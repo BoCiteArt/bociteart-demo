@@ -2280,17 +2280,47 @@ function openWellbeingMap(){
           );
         }
 
-        const overpassUrl =
-          "https://overpass-api.de/api/interpreter?data=" +
-          encodeURIComponent(query);
+     const overpassServers = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter"
+];
 
-        const osmResponse = await fetch(overpassUrl);
+let osmData = null;
+let lastStatus = "";
 
-        if(!osmResponse.ok){
-          throw new Error(
-            "Chargement des lieux impossible."
-          );
-        }
+for(const server of overpassServers){
+  try{
+    if(cityStatus){
+      cityStatus.innerHTML =
+        "<strong>Chargement des lieux…</strong><br>" +
+        "Merci de patienter quelques secondes.";
+    }
+
+    const response = await fetch(
+      server + "?data=" + encodeURIComponent(query)
+    );
+
+    lastStatus = response.status + " " + response.statusText;
+
+    if(!response.ok){
+      continue;
+    }
+
+    osmData = await response.json();
+    break;
+
+  }catch(error){
+    console.warn("Serveur cartographique indisponible :", server, error);
+  }
+}
+
+if(!osmData){
+  throw new Error(
+    "Le service cartographique est temporairement indisponible" +
+    (lastStatus ? " (" + lastStatus + ")" : "") +
+    ". Réessayez dans quelques instants."
+  );
+}
 
         const osmData = await osmResponse.json();
 
