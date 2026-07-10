@@ -7093,33 +7093,18 @@ Réinitialiser le suivi du parrainage
 }
 
 if(key === "commerces") {
-openModal("Commerces & Entreprises", `
+  openModal("Commerces & Entreprises", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces & Entreprises</div>
-    <div class="box" style="text-align:center;">
 
-<div style="font-size:20px;font-weight:900;margin-bottom:18px;">
-Choisissez votre espace
-</div>
+    <div class="box" id="commerceEntrepriseChoice" style="text-align:center;">
+      <div style="font-weight:900;font-size:18px;margin-bottom:12px;">Choisissez votre espace</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="choiceBtn" id="openCommerceSpace" type="button">Commerce</button>
+        <button class="choiceBtn" id="openEntrepriseSpace" type="button">Entreprise</button>
+      </div>
+    </div>
 
-<div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
-
-<button class="choiceBtn"
-        id="openCommerceSpace"
-        style="min-width:220px;">
-Commerce
-</button>
-
-<button class="choiceBtn"
-        id="openEntrepriseSpace"
-        style="min-width:220px;">
-Entreprise
-</button>
-
-</div>
-
-</div>
-
-<div id="commerceSpace" style="display:none;">
+    <div id="commerceSpace" style="display:none;">
 
     <div class="box">
       <strong>Cadre :</strong> les bocitecoins ne sont ni une monnaie, ni un moyen de paiement, ni une conversion en euros.
@@ -7184,9 +7169,8 @@ Entreprise
 
    <div style="font-weight:900;margin-top:12px;">Commerces partenaires</div>
 <div class="box">
-  <div id="demoCommercesList" style="margin-top:12px;display:grid;gap:8px;">
-    <div class="muted">Chargement des commerces partenaires...</div>
-  </div>
+ <div id="demoCommercesList" style="margin-top:12px;display:grid;gap:8px;">
+  <div class="muted">Chargement des commerces partenaires...</div>
 </div>
 
     <div class="box" style="margin-top:12px;">
@@ -7270,104 +7254,88 @@ Afficher mon QR Code commerçant
       </div>
 
     </div>
+    </div>
 
     <div id="entrepriseSpace" style="display:none;">
       <style>
-        @keyframes bociteEntrepriseScroll {
+        @keyframes entrepriseBandScroll {
           from { transform:translateX(100%); }
           to { transform:translateX(-100%); }
         }
-        .bociteEntrepriseBand {
+        .entrepriseBand {
+          display:block;
           width:100%;
           overflow:hidden;
+          margin:7px 0;
+          padding:0;
           border:2px solid #2f5d46;
+          border-radius:10px;
           background:#fffaf1;
           color:#111;
-          border-radius:10px;
-          padding:0;
-          margin:7px 0;
-          cursor:pointer;
           text-align:left;
+          cursor:pointer;
         }
-        .bociteEntrepriseBandInner {
+        .entrepriseBandText {
           display:inline-block;
           min-width:100%;
-          white-space:nowrap;
           padding:12px 0;
+          white-space:nowrap;
           font-weight:900;
-          animation:bociteEntrepriseScroll 18s linear infinite;
+          animation:entrepriseBandScroll 18s linear infinite;
         }
-        .bociteEntrepriseBand:focus {
-          outline:3px solid rgba(176,0,32,.25);
-          outline-offset:2px;
-        }
-        .bociteEntrepriseClick {
+        .entrepriseBandAction {
           color:#b00020;
           font-weight:900;
         }
       </style>
 
-      <div style="font-weight:900;font-size:20px;margin:4px 0 10px;">
-        Entreprises
-      </div>
+      <div style="font-weight:900;font-size:20px;margin:4px 0 10px;">Entreprise</div>
 
-      <div class="muted" style="margin-bottom:8px;">
-        Touchez la bande qui vous intéresse.
-      </div>
-
-      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="emploi">
-        <span class="bociteEntrepriseBandInner" style="animation-delay:-1s;">
-          Déposez votre offre • Trouvez la personne près de chez vous •
-          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+      <button class="entrepriseBand" type="button" data-enterprise-topic="emploi">
+        <span class="entrepriseBandText" style="animation-delay:-1s;">
+          Déposez votre offre • Trouvez la personne près de chez vous • <span class="entrepriseBandAction">Cliquez ici…</span>
         </span>
       </button>
 
-      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="fidelisation">
-        <span class="bociteEntrepriseBandInner" style="animation-delay:-3s;">
-          Attirez • Fidélisez vos salariés autrement •
-          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+      <button class="entrepriseBand" type="button" data-enterprise-topic="fidelisation">
+        <span class="entrepriseBandText" style="animation-delay:-3s;">
+          Attirez • Fidélisez vos salariés autrement • <span class="entrepriseBandAction">Cliquez ici…</span>
         </span>
       </button>
 
-      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="developpement">
-        <span class="bociteEntrepriseBandInner" style="animation-delay:-5s;">
-          Développement de votre entreprise • Pensez à faire cela •
-          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+      <button class="entrepriseBand" type="button" data-enterprise-topic="developpement">
+        <span class="entrepriseBandText" style="animation-delay:-5s;">
+          Développement de votre entreprise • Pensez à faire cela • <span class="entrepriseBandAction">Cliquez ici…</span>
         </span>
       </button>
 
-      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="mutualisation">
-        <span class="bociteEntrepriseBandInner" style="animation-delay:-7s;">
-          Réduisez vos charges • Élec • Gaz • Assur. • Tél. • Mutualisez •
-          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+      <button class="entrepriseBand" type="button" data-enterprise-topic="mutualisation">
+        <span class="entrepriseBandText" style="animation-delay:-7s;">
+          Réduisez vos charges • Élec • Gaz • Assur. • Tél. • <span class="entrepriseBandAction">Cliquez ici…</span>
         </span>
       </button>
 
-      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="visibilite">
-        <span class="bociteEntrepriseBandInner" style="animation-delay:-9s;">
-          Faites connaître vos métiers • Votre savoir-faire •
-          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+      <button class="entrepriseBand" type="button" data-enterprise-topic="visibilite">
+        <span class="entrepriseBandText" style="animation-delay:-9s;">
+          Faites connaître vos métiers • Votre savoir-faire • <span class="entrepriseBandAction">Cliquez ici…</span>
         </span>
       </button>
 
-      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="economies">
-        <span class="bociteEntrepriseBandInner" style="animation-delay:-11s;">
-          Comparez • Choisissez • Validez •
-          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+      <button class="entrepriseBand" type="button" data-enterprise-topic="economies">
+        <span class="entrepriseBandText" style="animation-delay:-11s;">
+          Comparez • Choisissez • Validez • <span class="entrepriseBandAction">Cliquez ici…</span>
         </span>
       </button>
 
-      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="perennite">
-        <span class="bociteEntrepriseBandInner" style="animation-delay:-13s;">
-          Préparez l’avenir • Valorisez votre savoir-faire •
-          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+      <button class="entrepriseBand" type="button" data-enterprise-topic="perennite">
+        <span class="entrepriseBandText" style="animation-delay:-13s;">
+          Préparez l’avenir • Valorisez votre savoir-faire • <span class="entrepriseBandAction">Cliquez ici…</span>
         </span>
       </button>
 
-      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="mecenat">
-        <span class="bociteEntrepriseBandInner" style="animation-delay:-15s;">
-          Savez-vous à qui et à quoi sert le mécénat ? •
-          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+      <button class="entrepriseBand" type="button" data-enterprise-topic="mecenat">
+        <span class="entrepriseBandText" style="animation-delay:-15s;">
+          Savez-vous à qui et à quoi sert le mécénat ? • <span class="entrepriseBandAction">Cliquez ici…</span>
         </span>
       </button>
 
@@ -7387,7 +7355,7 @@ Afficher mon QR Code commerçant
     const commerceSpace = $("commerceSpace");
     const entrepriseSpace = $("entrepriseSpace");
 
-    function showCommerceOrEntreprise(spaceName){
+    function showProfessionalSpace(spaceName){
       if(commerceSpace){
         commerceSpace.style.display = spaceName === "commerce" ? "block" : "none";
       }
@@ -7397,21 +7365,17 @@ Afficher mon QR Code commerçant
     }
 
     if(openCommerceSpace){
-      openCommerceSpace.onclick = ()=>{
-        showCommerceOrEntreprise("commerce");
-      };
+      openCommerceSpace.onclick = ()=>showProfessionalSpace("commerce");
     }
 
     if(openEntrepriseSpace){
-      openEntrepriseSpace.onclick = ()=>{
-        showCommerceOrEntreprise("entreprise");
-      };
+      openEntrepriseSpace.onclick = ()=>showProfessionalSpace("entreprise");
     }
 
     const entrepriseTopics = {
       emploi: {
         title: "Emploi local",
-        text: "Commerçants, entreprises et associations peuvent publier un besoin. Les citoyens peuvent rechercher un emploi, un stage ou une alternance, répondre à une offre et déposer gratuitement leur CV.",
+        text: "Commerçants, entreprises et associations peuvent publier une offre. Les citoyens peuvent rechercher un emploi, un stage ou une alternance, répondre à une offre et déposer gratuitement leur CV.",
         actions: ["Publier une offre", "Rechercher", "Déposer mon CV"]
       },
       fidelisation: {
@@ -7425,8 +7389,8 @@ Afficher mon QR Code commerçant
         actions: ["Découvrir"]
       },
       mutualisation: {
-        title: "Mutualisation",
-        text: "Cochez les charges qui vous intéressent : électricité, gaz, assurances, téléphonie ou autres. Votre réponse manifeste seulement votre intérêt et ne vous engage pas.",
+        title: "Réduire vos charges",
+        text: "Électricité, gaz, assurances, téléphonie : indiquez simplement les sujets qui vous intéressent. Cette démarche ne vous engage pas.",
         actions: ["Indiquer mes intérêts"]
       },
       visibilite: {
@@ -7436,7 +7400,7 @@ Afficher mon QR Code commerçant
       },
       economies: {
         title: "Comparer, choisir, valider",
-        text: "Recevez des informations claires, comparez les possibilités puis restez entièrement libre de votre décision.",
+        text: "Recevez des informations claires, comparez les possibilités puis restez libre de votre décision.",
         actions: ["Être informé"]
       },
       perennite: {
@@ -7446,7 +7410,7 @@ Afficher mon QR Code commerçant
       },
       mecenat: {
         title: "Le mécénat",
-        text: "Découvrez simplement à qui il sert, ce qu’il permet de soutenir et comment une entreprise, petite ou grande, peut participer à un projet utile.",
+        text: "Découvrez simplement à qui il sert, ce qu’il permet de soutenir et comment une entreprise, petite ou grande, peut participer.",
         actions: ["Comprendre le mécénat"]
       }
     };
@@ -7458,28 +7422,29 @@ Afficher mon QR Code commerçant
 
     document.querySelectorAll("[data-enterprise-topic]").forEach((band)=>{
       band.onclick = ()=>{
-        const topic = entrepriseTopics[band.getAttribute("data-enterprise-topic")];
+        const topicKey = band.getAttribute("data-enterprise-topic");
+        const topic = entrepriseTopics[topicKey];
         if(!topic || !entrepriseTopicPanel) return;
 
         if(entrepriseTopicTitle) entrepriseTopicTitle.textContent = topic.title;
         if(entrepriseTopicText) entrepriseTopicText.textContent = topic.text;
 
         if(entrepriseTopicActions){
-          entrepriseTopicActions.innerHTML = topic.actions.map((label)=>`
-            <button class="choiceBtn" type="button" data-enterprise-action="${escapeHtml(label)}">
-              ${escapeHtml(label)}
-            </button>
-          `).join("");
-
-          entrepriseTopicActions.querySelectorAll("[data-enterprise-action]").forEach((btn)=>{
-            btn.onclick = ()=>{
-              alert("Démo : " + btn.getAttribute("data-enterprise-action"));
-            };
+          entrepriseTopicActions.innerHTML = "";
+          topic.actions.forEach((label)=>{
+            const button = document.createElement("button");
+            button.className = "choiceBtn";
+            button.type = "button";
+            button.textContent = label;
+            button.onclick = ()=>alert("Démo : " + label);
+            entrepriseTopicActions.appendChild(button);
           });
         }
 
         entrepriseTopicPanel.style.display = "block";
-        entrepriseTopicPanel.scrollIntoView({ behavior:"smooth", block:"nearest" });
+        if(entrepriseTopicPanel.scrollIntoView){
+          entrepriseTopicPanel.scrollIntoView({ behavior:"smooth", block:"nearest" });
+        }
       };
     });
 
