@@ -7093,8 +7093,33 @@ Réinitialiser le suivi du parrainage
 }
 
 if(key === "commerces") {
-  openModal("Commerces", `
-    <div style="font-weight:900;margin-bottom:8px;">Commerces</div>
+openModal("Commerces & Entreprises", `
+    <div style="font-weight:900;margin-bottom:8px;">Commerces & Entreprises</div>
+    <div class="box" style="text-align:center;">
+
+<div style="font-size:20px;font-weight:900;margin-bottom:18px;">
+Choisissez votre espace
+</div>
+
+<div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
+
+<button class="choiceBtn"
+        id="openCommerceSpace"
+        style="min-width:220px;">
+Commerce
+</button>
+
+<button class="choiceBtn"
+        id="openEntrepriseSpace"
+        style="min-width:220px;">
+Entreprise
+</button>
+
+</div>
+
+</div>
+
+<div id="commerceSpace" style="display:none;">
 
     <div class="box">
       <strong>Cadre :</strong> les bocitecoins ne sont ni une monnaie, ni un moyen de paiement, ni une conversion en euros.
@@ -7159,8 +7184,9 @@ if(key === "commerces") {
 
    <div style="font-weight:900;margin-top:12px;">Commerces partenaires</div>
 <div class="box">
- <div id="demoCommercesList" style="margin-top:12px;display:grid;gap:8px;">
-  <div class="muted">Chargement des commerces partenaires...</div>
+  <div id="demoCommercesList" style="margin-top:12px;display:grid;gap:8px;">
+    <div class="muted">Chargement des commerces partenaires...</div>
+  </div>
 </div>
 
     <div class="box" style="margin-top:12px;">
@@ -7244,9 +7270,219 @@ Afficher mon QR Code commerçant
       </div>
 
     </div>
+
+    <div id="entrepriseSpace" style="display:none;">
+      <style>
+        @keyframes bociteEntrepriseScroll {
+          from { transform:translateX(100%); }
+          to { transform:translateX(-100%); }
+        }
+        .bociteEntrepriseBand {
+          width:100%;
+          overflow:hidden;
+          border:2px solid #2f5d46;
+          background:#fffaf1;
+          color:#111;
+          border-radius:10px;
+          padding:0;
+          margin:7px 0;
+          cursor:pointer;
+          text-align:left;
+        }
+        .bociteEntrepriseBandInner {
+          display:inline-block;
+          min-width:100%;
+          white-space:nowrap;
+          padding:12px 0;
+          font-weight:900;
+          animation:bociteEntrepriseScroll 18s linear infinite;
+        }
+        .bociteEntrepriseBand:focus {
+          outline:3px solid rgba(176,0,32,.25);
+          outline-offset:2px;
+        }
+        .bociteEntrepriseClick {
+          color:#b00020;
+          font-weight:900;
+        }
+      </style>
+
+      <div style="font-weight:900;font-size:20px;margin:4px 0 10px;">
+        Entreprises
+      </div>
+
+      <div class="muted" style="margin-bottom:8px;">
+        Touchez la bande qui vous intéresse.
+      </div>
+
+      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="emploi">
+        <span class="bociteEntrepriseBandInner" style="animation-delay:-1s;">
+          Déposez votre offre • Trouvez la personne près de chez vous •
+          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+        </span>
+      </button>
+
+      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="fidelisation">
+        <span class="bociteEntrepriseBandInner" style="animation-delay:-3s;">
+          Attirez • Fidélisez vos salariés autrement •
+          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+        </span>
+      </button>
+
+      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="developpement">
+        <span class="bociteEntrepriseBandInner" style="animation-delay:-5s;">
+          Développement de votre entreprise • Pensez à faire cela •
+          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+        </span>
+      </button>
+
+      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="mutualisation">
+        <span class="bociteEntrepriseBandInner" style="animation-delay:-7s;">
+          Réduisez vos charges • Élec • Gaz • Assur. • Tél. • Mutualisez •
+          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+        </span>
+      </button>
+
+      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="visibilite">
+        <span class="bociteEntrepriseBandInner" style="animation-delay:-9s;">
+          Faites connaître vos métiers • Votre savoir-faire •
+          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+        </span>
+      </button>
+
+      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="economies">
+        <span class="bociteEntrepriseBandInner" style="animation-delay:-11s;">
+          Comparez • Choisissez • Validez •
+          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+        </span>
+      </button>
+
+      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="perennite">
+        <span class="bociteEntrepriseBandInner" style="animation-delay:-13s;">
+          Préparez l’avenir • Valorisez votre savoir-faire •
+          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+        </span>
+      </button>
+
+      <button class="bociteEntrepriseBand" type="button" data-enterprise-topic="mecenat">
+        <span class="bociteEntrepriseBandInner" style="animation-delay:-15s;">
+          Savez-vous à qui et à quoi sert le mécénat ? •
+          <span class="bociteEntrepriseClick">Cliquez ici…</span>
+        </span>
+      </button>
+
+      <div id="entrepriseTopicPanel" class="box" style="display:none;margin-top:12px;">
+        <div id="entrepriseTopicTitle" style="font-weight:900;font-size:18px;"></div>
+        <div id="entrepriseTopicText" style="margin-top:8px;line-height:1.45;"></div>
+        <div id="entrepriseTopicActions" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;"></div>
+      </div>
+    </div>
+
   `);
 
   setTimeout(()=>{
+
+    const openCommerceSpace = $("openCommerceSpace");
+    const openEntrepriseSpace = $("openEntrepriseSpace");
+    const commerceSpace = $("commerceSpace");
+    const entrepriseSpace = $("entrepriseSpace");
+
+    function showCommerceOrEntreprise(spaceName){
+      if(commerceSpace){
+        commerceSpace.style.display = spaceName === "commerce" ? "block" : "none";
+      }
+      if(entrepriseSpace){
+        entrepriseSpace.style.display = spaceName === "entreprise" ? "block" : "none";
+      }
+    }
+
+    if(openCommerceSpace){
+      openCommerceSpace.onclick = ()=>{
+        showCommerceOrEntreprise("commerce");
+      };
+    }
+
+    if(openEntrepriseSpace){
+      openEntrepriseSpace.onclick = ()=>{
+        showCommerceOrEntreprise("entreprise");
+      };
+    }
+
+    const entrepriseTopics = {
+      emploi: {
+        title: "Emploi local",
+        text: "Commerçants, entreprises et associations peuvent publier un besoin. Les citoyens peuvent rechercher un emploi, un stage ou une alternance, répondre à une offre et déposer gratuitement leur CV.",
+        actions: ["Publier une offre", "Rechercher", "Déposer mon CV"]
+      },
+      fidelisation: {
+        title: "Attirer et fidéliser",
+        text: "Découvrez des solutions simples pour renforcer l’attractivité de votre entreprise et donner davantage envie à vos salariés de rester.",
+        actions: ["Être informé"]
+      },
+      developpement: {
+        title: "Développement de votre entreprise",
+        text: "Recrutement, réseau, partenariats, visibilité et nouvelles opportunités : choisissez librement ce qui peut être utile à votre activité.",
+        actions: ["Découvrir"]
+      },
+      mutualisation: {
+        title: "Mutualisation",
+        text: "Cochez les charges qui vous intéressent : électricité, gaz, assurances, téléphonie ou autres. Votre réponse manifeste seulement votre intérêt et ne vous engage pas.",
+        actions: ["Indiquer mes intérêts"]
+      },
+      visibilite: {
+        title: "Métiers et savoir-faire",
+        text: "Présentez votre activité, vos métiers et votre savoir-faire aux habitants, aux futurs salariés et aux autres acteurs du territoire.",
+        actions: ["Présenter mon entreprise"]
+      },
+      economies: {
+        title: "Comparer, choisir, valider",
+        text: "Recevez des informations claires, comparez les possibilités puis restez entièrement libre de votre décision.",
+        actions: ["Être informé"]
+      },
+      perennite: {
+        title: "Préparer l’avenir",
+        text: "Valorisez votre savoir-faire, votre réputation et votre ancrage pour soutenir la pérennité, la transmission ou la reprise future de votre entreprise.",
+        actions: ["Découvrir"]
+      },
+      mecenat: {
+        title: "Le mécénat",
+        text: "Découvrez simplement à qui il sert, ce qu’il permet de soutenir et comment une entreprise, petite ou grande, peut participer à un projet utile.",
+        actions: ["Comprendre le mécénat"]
+      }
+    };
+
+    const entrepriseTopicPanel = $("entrepriseTopicPanel");
+    const entrepriseTopicTitle = $("entrepriseTopicTitle");
+    const entrepriseTopicText = $("entrepriseTopicText");
+    const entrepriseTopicActions = $("entrepriseTopicActions");
+
+    document.querySelectorAll("[data-enterprise-topic]").forEach((band)=>{
+      band.onclick = ()=>{
+        const topic = entrepriseTopics[band.getAttribute("data-enterprise-topic")];
+        if(!topic || !entrepriseTopicPanel) return;
+
+        if(entrepriseTopicTitle) entrepriseTopicTitle.textContent = topic.title;
+        if(entrepriseTopicText) entrepriseTopicText.textContent = topic.text;
+
+        if(entrepriseTopicActions){
+          entrepriseTopicActions.innerHTML = topic.actions.map((label)=>`
+            <button class="choiceBtn" type="button" data-enterprise-action="${escapeHtml(label)}">
+              ${escapeHtml(label)}
+            </button>
+          `).join("");
+
+          entrepriseTopicActions.querySelectorAll("[data-enterprise-action]").forEach((btn)=>{
+            btn.onclick = ()=>{
+              alert("Démo : " + btn.getAttribute("data-enterprise-action"));
+            };
+          });
+        }
+
+        entrepriseTopicPanel.style.display = "block";
+        entrepriseTopicPanel.scrollIntoView({ behavior:"smooth", block:"nearest" });
+      };
+    });
+
     const toggleCommerceAdminBtn = $("toggleCommerceAdminBtn");
     const commerceAdminPanel = $("commerceAdminPanel");
     const demoCommercesList = $("demoCommercesList");
@@ -7490,116 +7726,6 @@ if(xb && xb.focus) xb.focus();
 },0);
 
 return;
-} 
-};
-
-const openSecureBtn = $("openSecure");
-if(openSecureBtn){
-  openSecureBtn.onclick = function(){
-    openModal("Compte + aide", `
-      <div class="box">
-        <strong>Compte sécurisé — application Bo’CitéArt</strong><br>
-        Sauvegarde du compte Bo’CitéArt, du solde de BociteCoins, jetons, ou coins, de l’historique utile et des réglages de sécurité.
-        Cela ne sauvegarde pas tout le téléphone.
-      </div>
-
-      <div class="box">
-        <strong>Cercle de confiance inclus</strong><br>
-        2 numéros de téléphone sont inclus dès l’abonnement à 2,99 € / mois.
-        L’abonné choisit les personnes à prévenir et leurs numéros.
-      </div>
-
-      <div class="box">
-        <strong>Exemple simple</strong><br>
-        Jean active l’option pour sa mère.
-        Sur le téléphone de sa mère, il enregistre un contact clair :<br><br>
-        <strong>Bo’CitéArt — appeler Jean</strong><br>
-        avec le numéro de téléphone de Jean.<br><br>
-        Sa mère n’a pas besoin de télécharger l’application. En cas de besoin, elle appelle simplement ce contact.
-      </div>
-
-      <div class="box">
-        <strong>Si le proche installe aussi l’application</strong><br>
-        Il peut créer son propre cercle de confiance : son fils, une voisine, un proche, etc.
-        Chacun garde le contrôle de ses propres contacts.
-      </div>
-
-      <div class="box">
-        <strong>Veille volontaire par message</strong><br>
-        Si la personne l’accepte, un message peut être envoyé à l’heure choisie :<br><br>
-        “Tout va bien aujourd’hui ?”<br><br>
-        Réponse simple : 🟢 Tout va bien / 🟡 Rappelez-moi / 🔴 Besoin d’aide.
-      </div>
-
-     <div class="box">
-  <strong>Je choisis mon offre</strong><br><br>
-
-  <label>
-    <input type="radio" name="securePlan" value="2.99" checked>
-    2 contacts de confiance — 2,99 € / mois 
-  </label><br><br>
-
-  <label>
-    <input type="radio" name="securePlan" value="3.99">
-    Jusqu’à 5 contacts — 3,99 € / mois
-  </label><br><br>
-
-  <label>
-    <input type="radio" name="securePlan" value="5">
-    Jusqu’à 10 contacts — 5 € / mois
-  </label>
-</div>
-
-<div class="box">
-  <strong>Validation avant paiement</strong><br>
-  <label>
-    <input type="checkbox" id="secureAccept">
-    Je comprends que cette option est un outil volontaire de notification entre proches,
-    et non un service d’assistance, de surveillance ou d’urgence.
-  </label>
-</div>
-
-<div class="choiceGrid">
-  <button class="choiceBtn" type="button" onclick="
-    const plan = document.querySelector('input[name=securePlan]:checked');
-    const ok = document.getElementById('secureAccept');
-    if(!ok || !ok.checked){ alert('Veuillez accepter le cadre du service avant paiement.'); return; }
-    alert('Démo : paiement CB — formule ' + (plan ? plan.value : '2.99') + ' € / mois');
-  ">
-    Payer par CB
-  </button>
-
-  <button class="choiceBtn" type="button" onclick="
-    const plan = document.querySelector('input[name=securePlan]:checked');
-    const ok = document.getElementById('secureAccept');
-    if(!ok || !ok.checked){ alert('Veuillez accepter le cadre du service avant paiement.'); return; }
-    alert('Démo : paiement RIB / IBAN — formule ' + (plan ? plan.value : '2.99') + ' € / mois');
-  ">
-    Payer par RIB
-  </button>
-</div>
-
-      <div class="box">
-        <strong>Mode de paiement</strong><br>
-        Paiement possible par carte bancaire ou prélèvement RIB/IBAN selon l’option choisie.
-      </div>
-
-      <div class="box">
-        <strong>Cadre important</strong><br>
-        Bo’CitéArt est un outil volontaire de notification entre proches.
-        Ce n’est pas un service d’assistance, de téléassistance, de surveillance, d’urgence ou d’intervention.
-      </div>
-
-      <div class="choiceGrid">
-        <button class="choiceBtn" type="button" onclick="alert('Démo : paiement carte bancaire — 2,99 € / mois')">
-          Activer par CB
-        </button>
-        <button class="choiceBtn" type="button" onclick="alert('Démo : paiement par RIB / IBAN — 2,99 € / mois')">
-          Activer par RIB
-        </button>
-      </div>
-    `);
-  };
 }
 
 /* === MODULE ADMIN / COMPTA / PARTENAIRES / IA — V1 CONSOLIDÉE === */
