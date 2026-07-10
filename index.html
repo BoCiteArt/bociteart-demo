@@ -2322,8 +2322,6 @@ if(!osmData){
   );
 }
 
-        const osmData = await osmResponse.json();
-
         if(loadingLayer && map.hasLayer(loadingLayer)){
           map.removeLayer(loadingLayer);
         }
