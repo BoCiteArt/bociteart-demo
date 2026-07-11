@@ -1886,10 +1886,21 @@ function openWellbeingMap(){
       cityInput.value = savedCity;
     }
 
-    const map = L.map("wellbeingMap").setView(
-      [46.603354, 1.888334],
-      6
-    );
+    const mapContainer = document.getElementById("wellbeingMap");
+
+if(!mapContainer){
+  console.warn("Carte non créée : wellbeingMap absent.");
+  return;
+}
+
+if(mapContainer._leaflet_id){
+  mapContainer._leaflet_id = null;
+}
+
+const map = L.map(mapContainer).setView(
+  [46.603354, 1.888334],
+  6
+);
 
     L.tileLayer(
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
