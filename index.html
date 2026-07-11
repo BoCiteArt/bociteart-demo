@@ -1,4 +1,4 @@
- <!DOCTYPE html>   F                
+ <!DOCTYPE html>                  
 <html lang="fr">    
 <head>
   <meta charset="UTF-8" />
@@ -11176,6 +11176,43 @@ const closeLegal = ()=>{
 if(openLegalBtn) openLegalBtn.onclick = openLegal;
 if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
 if(closeLegalX) closeLegalX.onclick = closeLegal;
+   
+const openSecureBtn = $("openSecure");
+
+if(openSecureBtn){
+  openSecureBtn.onclick = function(){
+    openModal("Compte + aide", `
+      <div class="box">
+        <strong>Compte sécurisé Bo'CitéArt</strong><br>
+        Retrouvez ici votre compte, vos informations utiles, votre historique et les réglages liés à votre utilisation de l'application.
+      </div>
+
+      <div class="box">
+        <strong>Mon compte</strong><br><br>
+
+        <button class="choiceBtn" type="button" onclick="ouvrirInscription()">
+          Créer ou compléter mon compte
+        </button>
+      </div>
+
+      <div class="box">
+        <strong>Aide et assistance</strong><br>
+        Cette rubrique regroupera progressivement l'aide à l'utilisation, les contacts utiles et les réponses aux difficultés rencontrées.
+      </div>
+
+      <div class="box">
+        <strong>Sécurité et confidentialité</strong><br>
+        Consultez vos paramètres de sécurité et les documents applicables à votre compte.
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+        <button class="choiceBtn" type="button" onclick="document.getElementById('openLegal').click()">
+          RGPD • CGU • CGV
+        </button>
+      </div>
+    `);
+  };
+}
 
 const ACK_PREFIX = "bociteart_ack_v2_";
 const ACK_SALT = "BoCiteArt|ack|v2";
