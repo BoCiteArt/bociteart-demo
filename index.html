@@ -2159,286 +2159,300 @@ const map = L.map(mapContainer).setView(
       );
     }
 
-    async function chargerCommune(nomCommune){
-      const villeDemandee =
-        String(nomCommune || "").trim();
+async function chargerCommune(nomCommune){
+  const villeDemandee =
+    String(nomCommune || "").trim();
 
-      if(!villeDemandee){
-        alert("Saisissez le nom d’une commune.");
-        return;
+  if(!villeDemandee){
+    alert("Saisissez le nom d’une commune.");
+    return;
+  }
+
+  nettoyerCarte();
+
+  if(cityStatus){
+    cityStatus.textContent =
+      "Recherche de la commune en cours…";
+  }
+
+  try{
+    const nominatimUrl =
+      "https://nominatim.openstreetmap.org/search" +
+      "?format=jsonv2" +
+      "&countrycodes=fr" +
+      "&limit=1" +
+      "&addressdetails=1" +
+      "&q=" +
+      encodeURIComponent(villeDemandee + ", France");
+
+    const geoResponse = await fetch(
+      nominatimUrl,
+      {
+        headers:{
+          "Accept":"application/json"
+        }
       }
+    );
 
-      nettoyerCarte();
+    if(!geoResponse.ok){
+      throw new Error("Recherche de commune impossible.");
+    }
 
-      if(cityStatus){
-        cityStatus.textContent =
-          "Recherche de la commune en cours…";
-      }
+    const geoResults = await geoResponse.json();
 
-      try{
-        const nominatimUrl =
-          "https://nominatim.openstreetmap.org/search" +
-          "?format=jsonv2" +
-          "&countrycodes=fr" +
-          "&limit=1" +
-          "&addressdetails=1" +
-          "&q=" +
-          encodeURIComponent(villeDemandee + ", France");
+    if(!Array.isArray(geoResults) || !geoResults.length){
+      throw new Error("Commune française introuvable.");
+    }
 
-        const geoResponse = await fetch(
-          nominatimUrl,
-          {
-            headers:{
-              "Accept":"application/json"
-            }
-          }
-        );
+    const commune = geoResults[0];
 
-        if(!geoResponse.ok){
-          throw new Error("Recherche de commune impossible.");
-        }
+    const lat = Number(commune.lat);
+    const lng = Number(commune.lon);
 
-        const geoResults = await geoResponse.json();
+    if(!Number.isFinite(lat) || !Number.isFinite(lng)){
+      throw new Error("Coordonnées de la commune indisponibles.");
+    }
 
-        if(!Array.isArray(geoResults) || !geoResults.length){
-          throw new Error(
-            "Commune française introuvable."
-          );
-        }
-
-        const commune = geoResults[0];
-
-        const lat = Number(commune.lat);
-        const lng = Number(commune.lon);
-
-        if(!Number.isFinite(lat) || !Number.isFinite(lng)){
-          throw new Error(
-            "Coordonnées de la commune indisponibles."
-          );
-        }
-
-        const cityLabel =
-          commune.address &&
-          (
+    const cityLabel =
+      commune.address &&
+      (
+        commune.address.city ||
+        commune.address.town ||
+        commune.address.village ||
+        commune.address.municipality
+      )
+        ? (
             commune.address.city ||
             commune.address.town ||
             commune.address.village ||
             commune.address.municipality
           )
-            ? (
-                commune.address.city ||
-                commune.address.town ||
-                commune.address.village ||
-                commune.address.municipality
-              )
-            : villeDemandee;
+        : villeDemandee;
 
-        window.BOCITEART_CURRENT_CITY = cityLabel;
+    window.BOCITEART_CURRENT_CITY = cityLabel;
 
-        localStorage.setItem(
-          "bociteart_current_city",
-          cityLabel
-        );
-
-        if(cityInput){
-          cityInput.value = cityLabel;
-        }
-
-        map.setView([lat,lng],14);
-
-        loadingLayer = L.circleMarker(
-          [lat,lng],
-          {
-            radius:7,
-            color:"#ffffff",
-            weight:3,
-            fillColor:"#1f6fd6",
-            fillOpacity:1
-          }
-        ).addTo(map);
-
-        if(cityStatus){
-          cityStatus.textContent =
-            "Chargement des lieux de " +
-            cityLabel +
-            "…";
-        }
-
-        let query = "";
-        let areaId = null;
-
-        const osmId = Number(commune.osm_id);
-
-        if(
-          commune.osm_type === "relation" &&
-          Number.isFinite(osmId)
-        ){
-          areaId = 3600000000 + osmId;
-        }
-
-        if(
-          commune.osm_type === "way" &&
-          Number.isFinite(osmId)
-        ){
-          areaId = 2400000000 + osmId;
-        }
-
-        if(areaId){
-          query = construireRequeteZone(areaId);
-        }else{
-          query = construireRequeteCadre(
-            commune.boundingbox
-          );
-        }
-
-     const overpassServers = [
-  "https://overpass-api.de/api/interpreter",
-  "https://overpass.kumi.systems/api/interpreter"
-];
-
-let osmData = null;
-let lastStatus = "";
-
-for(const server of overpassServers){
-  try{
-    if(cityStatus){
-      cityStatus.innerHTML =
-        "<strong>Chargement des lieux…</strong><br>" +
-        "Merci de patienter quelques secondes.";
-    }
-
-    const response = await fetch(
-      server + "?data=" + encodeURIComponent(query)
+    localStorage.setItem(
+      "bociteart_current_city",
+      cityLabel
     );
 
-    lastStatus = response.status + " " + response.statusText;
-
-    if(!response.ok){
-      continue;
+    if(cityInput){
+      cityInput.value = cityLabel;
     }
 
-    osmData = await response.json();
-    break;
+    map.setView([lat,lng],14);
 
-}catch(error){
-  console.warn("Serveur cartographique indisponible :", server, error);
-}
-        if(loadingLayer && map.hasLayer(loadingLayer)){
-          map.removeLayer(loadingLayer);
-        }
+    loadingLayer = L.circleMarker(
+      [lat,lng],
+      {
+        radius:7,
+        color:"#ffffff",
+        weight:3,
+        fillColor:"#1f6fd6",
+        fillOpacity:1
+      }
+    ).addTo(map);
 
-        loadingLayer = null;
+    if(cityStatus){
+      cityStatus.textContent =
+        "Chargement des lieux de " +
+        cityLabel +
+        "…";
+    }
 
-        (osmData.elements || []).forEach(element=>{
-          const tags = element.tags || {};
+    let query = "";
+    let areaId = null;
 
-          const pointLat =
-            element.lat ||
-            (
-              element.center &&
-              element.center.lat
-            );
+    const osmId = Number(commune.osm_id);
 
-          const pointLng =
-            element.lon ||
-            (
-              element.center &&
-              element.center.lon
-            );
+    if(
+      commune.osm_type === "relation" &&
+      Number.isFinite(osmId)
+    ){
+      areaId = 3600000000 + osmId;
+    }
 
-          if(
-            !Number.isFinite(Number(pointLat)) ||
-            !Number.isFinite(Number(pointLng))
-          ){
-            return;
-          }
+    if(
+      commune.osm_type === "way" &&
+      Number.isFinite(osmId)
+    ){
+      areaId = 2400000000 + osmId;
+    }
 
-          const categorie = classerLieu(tags);
+    if(areaId){
+      query = construireRequeteZone(areaId);
+    }else{
+      query = construireRequeteCadre(
+        commune.boundingbox
+      );
+    }
 
-          const nom =
-            tags.name ||
-            tags.brand ||
-            tags.operator ||
-            categorie;
+    const overpassServers = [
+      "https://overpass-api.de/api/interpreter",
+      "https://overpass.kumi.systems/api/interpreter"
+    ];
 
-          ajouterPoint(
-            categorie,
-            nom,
-            Number(pointLat),
-            Number(pointLng),
-            tags
-          );
-        });
+    let osmData = null;
+    let lastStatus = "";
 
+    for(const server of overpassServers){
+      try{
         if(cityStatus){
-          cityStatus.textContent =
-            marqueurs.length +
-            " lieu(x) chargé(s) pour " +
-            cityLabel +
-            ".";
+          cityStatus.innerHTML =
+            "<strong>Chargement des lieux…</strong><br>" +
+            "Merci de patienter quelques secondes.";
         }
 
-        if(marqueurs.length){
-          const bounds = L.latLngBounds(
-            marqueurs.map(item=>[
-              item.lat,
-              item.lng
-            ])
-          );
+        const response = await fetch(
+          server + "?data=" + encodeURIComponent(query)
+        );
 
-          map.fitBounds(bounds,{
-            padding:[25,25],
-            maxZoom:15
-          });
+        lastStatus =
+          response.status + " " + response.statusText;
+
+        if(!response.ok){
+          continue;
         }
 
-        if(window.BOCITEART_MAP_FILTER){
-          filtrer(window.BOCITEART_MAP_FILTER);
-          window.BOCITEART_MAP_FILTER = null;
-        }
+        osmData = await response.json();
+        break;
 
-        const cible = window.BOCITEART_MAP_TARGET;
-
-        if(cible){
-          const cibleTexte =
-            String(cible).toLowerCase();
-
-          const trouve = marqueurs.find(item=>
-            item.nom.includes(cibleTexte)
-          );
-
-          if(trouve){
-            map.setView(
-              [trouve.lat,trouve.lng],
-              17
-            );
-
-            trouve.marker.openPopup();
-          }
-
-          window.BOCITEART_MAP_TARGET = null;
-        }
-
- }catch(error){
-  console.warn("Chargement cartographique :", error);
-
-  const message =
-    error.message ||
-    "Le service cartographique est temporairement indisponible.";
-
-  if(cityStatus){
-    cityStatus.textContent = message;
-  }
-
-  if(!marqueurs.length){
-    alert(message);
-  }
-}
-
-      setTimeout(()=>{
-        map.invalidateSize();
-      },200);
+      }catch(error){
+        console.warn(
+          "Serveur cartographique indisponible :",
+          server,
+          error
+        );
+      }
     }
+
+    if(!osmData){
+      throw new Error(
+        "Le service cartographique est temporairement indisponible" +
+        (lastStatus ? " (" + lastStatus + ")" : "") +
+        ". Réessayez dans quelques instants."
+      );
+    }
+
+    if(loadingLayer && map.hasLayer(loadingLayer)){
+      map.removeLayer(loadingLayer);
+    }
+
+    loadingLayer = null;
+
+    (osmData.elements || []).forEach(element=>{
+      const tags = element.tags || {};
+
+      const pointLat =
+        element.lat ||
+        (
+          element.center &&
+          element.center.lat
+        );
+
+      const pointLng =
+        element.lon ||
+        (
+          element.center &&
+          element.center.lon
+        );
+
+      if(
+        !Number.isFinite(Number(pointLat)) ||
+        !Number.isFinite(Number(pointLng))
+      ){
+        return;
+      }
+
+      const categorie = classerLieu(tags);
+
+      const nom =
+        tags.name ||
+        tags.brand ||
+        tags.operator ||
+        categorie;
+
+      ajouterPoint(
+        categorie,
+        nom,
+        Number(pointLat),
+        Number(pointLng),
+        tags
+      );
+    });
+
+    if(cityStatus){
+      cityStatus.textContent =
+        marqueurs.length +
+        " lieu(x) chargé(s) pour " +
+        cityLabel +
+        ".";
+    }
+
+    if(marqueurs.length){
+      const bounds = L.latLngBounds(
+        marqueurs.map(item=>[
+          item.lat,
+          item.lng
+        ])
+      );
+
+      map.fitBounds(bounds,{
+        padding:[25,25],
+        maxZoom:15
+      });
+    }
+
+    if(window.BOCITEART_MAP_FILTER){
+      filtrer(window.BOCITEART_MAP_FILTER);
+      window.BOCITEART_MAP_FILTER = null;
+    }
+
+    const cible = window.BOCITEART_MAP_TARGET;
+
+    if(cible){
+      const cibleTexte =
+        String(cible).toLowerCase();
+
+      const trouve = marqueurs.find(item=>
+        item.nom.includes(cibleTexte)
+      );
+
+      if(trouve){
+        map.setView(
+          [trouve.lat,trouve.lng],
+          17
+        );
+
+        trouve.marker.openPopup();
+      }
+
+      window.BOCITEART_MAP_TARGET = null;
+    }
+
+  }catch(error){
+    console.warn(
+      "Chargement cartographique :",
+      error
+    );
+
+    const message =
+      error.message ||
+      "Le service cartographique est temporairement indisponible.";
+
+    if(cityStatus){
+      cityStatus.textContent = message;
+    }
+
+    if(!marqueurs.length){
+      alert(message);
+    }
+  }
+
+  setTimeout(()=>{
+    map.invalidateSize();
+  },200);
+}
 
     if(cityBtn){
       cityBtn.onclick = ()=>{
