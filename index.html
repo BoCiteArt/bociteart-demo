@@ -1,4 +1,4 @@
- <!DOCTYPE html>                  
+ <!DOCTYPE html>   F                
 <html lang="fr">    
 <head>
   <meta charset="UTF-8" />
@@ -2321,26 +2321,8 @@ for(const server of overpassServers){
     break;
 
 }catch(error){
-  console.warn("Chargement cartographique temporairement indisponible :", error);
-
-  const message =
-    error.message ||
-    "Le service cartographique est temporairement indisponible.";
-
-  if(marqueurs.length){
-    if(cityStatus){
-      cityStatus.textContent =
-        marqueurs.length +
-        " lieu(x) chargé(s). Certaines informations peuvent être momentanément indisponibles.";
-    }
-  }else{
-    if(cityStatus){
-      cityStatus.textContent =
-        message + " Réessayez dans quelques instants.";
-    }
-  }
+  console.warn("Serveur cartographique indisponible :", server, error);
 }
-
         if(loadingLayer && map.hasLayer(loadingLayer)){
           map.removeLayer(loadingLayer);
         }
@@ -2437,20 +2419,21 @@ for(const server of overpassServers){
           window.BOCITEART_MAP_TARGET = null;
         }
 
-      }catch(error){
-        console.error(error);
+ }catch(error){
+  console.warn("Chargement cartographique :", error);
 
-        if(cityStatus){
-          cityStatus.textContent =
-            error.message ||
-            "Impossible de charger cette commune.";
-        }
+  const message =
+    error.message ||
+    "Le service cartographique est temporairement indisponible.";
 
-        alert(
-          error.message ||
-          "Impossible de charger cette commune."
-        );
-      }
+  if(cityStatus){
+    cityStatus.textContent = message;
+  }
+
+  if(!marqueurs.length){
+    alert(message);
+  }
+}
 
       setTimeout(()=>{
         map.invalidateSize();
