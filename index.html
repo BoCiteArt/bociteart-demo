@@ -2320,17 +2320,25 @@ for(const server of overpassServers){
     osmData = await response.json();
     break;
 
-  }catch(error){
-    console.warn("Serveur cartographique indisponible :", server, error);
-  }
-}
+}catch(error){
+  console.warn("Chargement cartographique temporairement indisponible :", error);
 
-if(!osmData){
-  throw new Error(
-    "Le service cartographique est temporairement indisponible" +
-    (lastStatus ? " (" + lastStatus + ")" : "") +
-    ". Réessayez dans quelques instants."
-  );
+  const message =
+    error.message ||
+    "Le service cartographique est temporairement indisponible.";
+
+  if(marqueurs.length){
+    if(cityStatus){
+      cityStatus.textContent =
+        marqueurs.length +
+        " lieu(x) chargé(s). Certaines informations peuvent être momentanément indisponibles.";
+    }
+  }else{
+    if(cityStatus){
+      cityStatus.textContent =
+        message + " Réessayez dans quelques instants.";
+    }
+  }
 }
 
         if(loadingLayer && map.hasLayer(loadingLayer)){
