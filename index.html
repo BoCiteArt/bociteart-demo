@@ -11178,41 +11178,114 @@ if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
 if(closeLegalX) closeLegalX.onclick = closeLegal;
    
 const openSecureBtn = $("openSecure");
-
 if(openSecureBtn){
   openSecureBtn.onclick = function(){
     openModal("Compte + aide", `
       <div class="box">
-        <strong>Compte sécurisé Bo'CitéArt</strong><br>
-        Retrouvez ici votre compte, vos informations utiles, votre historique et les réglages liés à votre utilisation de l'application.
+        <strong>Compte sécurisé — application Bo’CitéArt</strong><br>
+        Sauvegarde du compte Bo’CitéArt, du solde de BociteCoins, jetons, ou coins, de l’historique utile et des réglages de sécurité.
+        Cela ne sauvegarde pas tout le téléphone.
       </div>
 
       <div class="box">
-        <strong>Mon compte</strong><br><br>
+        <strong>Cercle de confiance inclus</strong><br>
+        2 numéros de téléphone sont inclus dès l’abonnement à 2,99 € / mois.
+        L’abonné choisit les personnes à prévenir et leurs numéros.
+      </div>
 
-        <button class="choiceBtn" type="button" onclick="ouvrirInscription()">
-          Créer ou compléter mon compte
+      <div class="box">
+        <strong>Exemple simple</strong><br>
+        Jean active l’option pour sa mère.
+        Sur le téléphone de sa mère, il enregistre un contact clair :<br><br>
+        <strong>Bo’CitéArt — appeler Jean</strong><br>
+        avec le numéro de téléphone de Jean.<br><br>
+        Sa mère n’a pas besoin de télécharger l’application. En cas de besoin, elle appelle simplement ce contact.
+      </div>
+
+      <div class="box">
+        <strong>Si le proche installe aussi l’application</strong><br>
+        Il peut créer son propre cercle de confiance : son fils, une voisine, un proche, etc.
+        Chacun garde le contrôle de ses propres contacts.
+      </div>
+
+      <div class="box">
+        <strong>Veille volontaire par message</strong><br>
+        Si la personne l’accepte, un message peut être envoyé à l’heure choisie :<br><br>
+        “Tout va bien aujourd’hui ?”<br><br>
+        Réponse simple : 🟢 Tout va bien / 🟡 Rappelez-moi / 🔴 Besoin d’aide.
+      </div>
+
+     <div class="box">
+  <strong>Je choisis mon offre</strong><br><br>
+
+  <label>
+    <input type="radio" name="securePlan" value="2.99" checked>
+    2 contacts de confiance — 2,99 € / mois 
+  </label><br><br>
+
+  <label>
+    <input type="radio" name="securePlan" value="3.99">
+    Jusqu’à 5 contacts — 3,99 € / mois
+  </label><br><br>
+
+  <label>
+    <input type="radio" name="securePlan" value="5">
+    Jusqu’à 10 contacts — 5 € / mois
+  </label>
+</div>
+
+<div class="box">
+  <strong>Validation avant paiement</strong><br>
+  <label>
+    <input type="checkbox" id="secureAccept">
+    Je comprends que cette option est un outil volontaire de notification entre proches,
+    et non un service d’assistance, de surveillance ou d’urgence.
+  </label>
+</div>
+
+<div class="choiceGrid">
+  <button class="choiceBtn" type="button" onclick="
+    const plan = document.querySelector('input[name=securePlan]:checked');
+    const ok = document.getElementById('secureAccept');
+    if(!ok || !ok.checked){ alert('Veuillez accepter le cadre du service avant paiement.'); return; }
+    alert('Démo : paiement CB — formule ' + (plan ? plan.value : '2.99') + ' € / mois');
+  ">
+    Payer par CB
+  </button>
+
+  <button class="choiceBtn" type="button" onclick="
+    const plan = document.querySelector('input[name=securePlan]:checked');
+    const ok = document.getElementById('secureAccept');
+    if(!ok || !ok.checked){ alert('Veuillez accepter le cadre du service avant paiement.'); return; }
+    alert('Démo : paiement RIB / IBAN — formule ' + (plan ? plan.value : '2.99') + ' € / mois');
+  ">
+    Payer par RIB
+  </button>
+</div>
+
+      <div class="box">
+        <strong>Mode de paiement</strong><br>
+        Paiement possible par carte bancaire ou prélèvement RIB/IBAN selon l’option choisie.
+      </div>
+
+      <div class="box">
+        <strong>Cadre important</strong><br>
+        Bo’CitéArt est un outil volontaire de notification entre proches.
+        Ce n’est pas un service d’assistance, de téléassistance, de surveillance, d’urgence ou d’intervention.
+      </div>
+
+      <div class="choiceGrid">
+        <button class="choiceBtn" type="button" onclick="alert('Démo : paiement carte bancaire — 2,99 € / mois')">
+          Activer par CB
         </button>
-      </div>
-
-      <div class="box">
-        <strong>Aide et assistance</strong><br>
-        Cette rubrique regroupera progressivement l'aide à l'utilisation, les contacts utiles et les réponses aux difficultés rencontrées.
-      </div>
-
-      <div class="box">
-        <strong>Sécurité et confidentialité</strong><br>
-        Consultez vos paramètres de sécurité et les documents applicables à votre compte.
-      </div>
-
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
-        <button class="choiceBtn" type="button" onclick="document.getElementById('openLegal').click()">
-          RGPD • CGU • CGV
+        <button class="choiceBtn" type="button" onclick="alert('Démo : paiement par RIB / IBAN — 2,99 € / mois')">
+          Activer par RIB
         </button>
       </div>
     `);
   };
 }
+
 
 const ACK_PREFIX = "bociteart_ack_v2_";
 const ACK_SALT = "BoCiteArt|ack|v2";
