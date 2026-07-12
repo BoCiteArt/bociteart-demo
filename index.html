@@ -2540,9 +2540,30 @@ window.openModal = function(title, html, options){
 
   modalTitle.textContent = title || "";
 
-  const backBtn = window.modalHistory.length
-    ? `<button class="choiceBtn" style="margin-bottom:12px;" onclick="window.backModal()">Retour</button>`
-    : "";
+let backBtn = "";
+
+if(
+  window.currentModule === "entreprise" &&
+  window.currentEntrepriseScreen &&
+  window.currentEntrepriseScreen !== "home"
+){
+  backBtn =
+    `<button
+        class="choiceBtn"
+        style="margin-bottom:12px;"
+        onclick="openEntrepriseHome()">
+        Retour
+     </button>`;
+}
+else if(window.modalHistory.length){
+  backBtn =
+    `<button
+        class="choiceBtn"
+        style="margin-bottom:12px;"
+        onclick="window.backModal()">
+        Retour
+     </button>`;
+}
 
   modalBody.innerHTML = backBtn + (html || "");
 
@@ -7596,6 +7617,8 @@ function entrepriseOtherTopics(current){
 }
 
 function renderEntrepriseTopic(topicKey){
+ window.currentModule = "entreprise";
+window.currentEntrepriseScreen = topicKey;
   const panel = $("entrepriseTopicPanel");
   const title = $("entrepriseTopicTitle");
   const text = $("entrepriseTopicText");
@@ -8085,7 +8108,21 @@ function renderEntrepriseTopic(topicKey){
   panel.querySelectorAll("[data-related-topic]").forEach(button=>{
     button.onclick = ()=>{
       renderEntrepriseTopic(
+       window.currentModule = "entreprise";
+window.currentEntrepriseScreen = topicKey;
         button.getAttribute("data-related-topic")
+    function openEntrepriseHome(){
+
+  window.currentModule = "entreprise";
+  window.currentEntrepriseScreen = "home";
+
+  const commerceBtn =
+    document.querySelector('[data-commerce-space="entreprise"]');
+
+  if(commerceBtn){
+    commerceBtn.click();
+  }
+} 
       );
     };
   });
