@@ -8088,53 +8088,39 @@ window.currentEntrepriseScreen = topicKey;
   text.innerHTML = topic.html;
   actions.innerHTML = "";
 
-  topic.actions.forEach(action=>{
-    const button = document.createElement("button");
+topic.actions.forEach(action=>{
+  const button = document.createElement("button");
 
-    button.className = "choiceBtn";
-    button.type = "button";
-    button.textContent = action[0];
-    button.dataset.entrepriseAction = action[1];
+  button.className = "choiceBtn";
+  button.type = "button";
+  button.textContent = action[0];
+  button.dataset.entrepriseAction = action[1];
 
-    button.onclick = ()=>{
-      handleEntrepriseAction(action[1]);
-    };
+  button.onclick = ()=>{
+    handleEntrepriseAction(action[1]);
+  };
 
-    actions.appendChild(button);
-  });
+  actions.appendChild(button);
+});
 
-  panel.style.display = "block";
+panel.style.display = "block";
 
-  panel.querySelectorAll("[data-related-topic]").forEach(button=>{
-    button.onclick = ()=>{
-      renderEntrepriseTopic(
-       window.currentModule = "entreprise";
-window.currentEntrepriseScreen = topicKey;
-        button.getAttribute("data-related-topic")
-    function openEntrepriseHome(){
+panel.querySelectorAll("[data-related-topic]").forEach(button=>{
+  button.onclick = ()=>{
+    renderEntrepriseTopic(
+      button.getAttribute("data-related-topic")
+    );
+  };
+});
 
-  window.currentModule = "entreprise";
-  window.currentEntrepriseScreen = "home";
+if(topicKey === "mutualisation"){
+  renderEntrepriseMutualisation();
+}
 
-  const commerceBtn =
-    document.querySelector('[data-commerce-space="entreprise"]');
-
-  if(commerceBtn){
-    commerceBtn.click();
-  }
-} 
-      );
-    };
-  });
-
-  if(topicKey === "mutualisation"){
-    renderEntrepriseMutualisation();
-  }
-
-  panel.scrollIntoView({
-    behavior:"smooth",
-    block:"nearest"
-  });
+panel.scrollIntoView({
+  behavior:"smooth",
+  block:"nearest"
+});
 }
 
 function renderEntrepriseMutualisation(){
