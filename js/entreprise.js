@@ -8267,11 +8267,11 @@ function getHomeHtml(){
 })();
 
 /* =========================================================
-   BO'CITÉART — CORRECTIF RECHERCHE PROFESSIONNELLE
-   COMMUNE • FRANCE • EUROPE
+   BO'CITÉART — RECHERCHE PROFESSIONNELLE PRIVÉE
+   COMMUNE INDÉPENDANTE • FRANCE • EUROPE
    ========================================================= */
 
-(function patchBociteEntrepriseDirectory(){
+(function patchBociteEntrepriseDirectoryV2(){
 
   "use strict";
 
@@ -8287,8 +8287,8 @@ function getHomeHtml(){
   const SEARCH_PLAN_KEY =
     "bociteart_entreprise_search_plan_v1";
 
-  const ACCOUNT_CITY_KEY =
-    "bociteart_current_city";
+  const SEARCH_CITY_KEY =
+    "bociteart_entreprise_search_city_v2";
 
   function getElement(id){
     return document.getElementById(id);
@@ -8303,6 +8303,8 @@ function getHomeHtml(){
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[-_/]/g, " ")
+      .replace(/\s+/g, " ")
       .trim();
   }
 
@@ -8319,18 +8321,14 @@ function getHomeHtml(){
       }
     }catch(error){
       console.warn(
-        "Lecture de l’abonnement de recherche impossible :",
+        "Lecture de l’abonnement impossible :",
         error
       );
     }
 
     return {
       plan:"commune",
-      active:true,
-      billingMode:"",
-      nextBillingDate:"",
-      invoiceNumber:"",
-      updatedAtFr:""
+      active:true
     };
   }
 
@@ -8338,7 +8336,7 @@ function getHomeHtml(){
     try{
       localStorage.setItem(
         SEARCH_PLAN_KEY,
-        JSON.stringify(data)
+        JSON.stringify(data || {})
       );
     }catch(error){
       console.warn(
@@ -8348,28 +8346,181 @@ function getHomeHtml(){
     }
   }
 
-  function getAccountCity(){
+  function loadIndependentCity(){
     return (
-      localStorage.getItem(ACCOUNT_CITY_KEY) ||
-      window.BOCITEART_CURRENT_CITY ||
+      localStorage.getItem(SEARCH_CITY_KEY) ||
       "Wattignies"
     );
   }
 
-  function getSearchHtml(){
-    const accountCity =
-      getAccountCity();
+  function saveIndependentCity(city){
+    try{
+      localStorage.setItem(
+        SEARCH_CITY_KEY,
+        city
+      );
+    }catch(error){}
+  }
 
+  const tradeDictionary = {
+    "macon":[
+      "maçon",
+      "macon",
+      "masonry",
+      "mason",
+      "bricklayer",
+      "construction",
+      "building"
+    ],
+
+    "carreleur":[
+      "carreleur",
+      "tiler",
+      "tiling",
+      "tiles",
+      "flooring",
+      "carrelage"
+    ],
+
+    "electricien":[
+      "électricien",
+      "electricien",
+      "electrician",
+      "electrical",
+      "electricity"
+    ],
+
+    "plombier":[
+      "plombier",
+      "plumber",
+      "plumbing",
+      "sanitary"
+    ],
+
+    "menuisier":[
+      "menuisier",
+      "carpenter",
+      "joiner",
+      "wood",
+      "menuiserie"
+    ],
+
+    "couvreur":[
+      "couvreur",
+      "roofer",
+      "roofing",
+      "toiture"
+    ],
+
+    "peintre":[
+      "peintre",
+      "painter",
+      "painting",
+      "peinture"
+    ],
+
+    "avocat":[
+      "avocat",
+      "lawyer",
+      "solicitor",
+      "legal"
+    ],
+
+    "comptable":[
+      "comptable",
+      "accountant",
+      "accounting",
+      "expertise comptable"
+    ],
+
+    "transporteur":[
+      "transporteur",
+      "transport",
+      "logistics",
+      "logistique",
+      "freight"
+    ],
+
+    "nettoyage":[
+      "nettoyage",
+      "cleaning",
+      "cleaner",
+      "entretien",
+      "propreté"
+    ],
+
+    "vitres":[
+      "vitres",
+      "vitrage",
+      "window cleaning",
+      "cleaning",
+      "nettoyage"
+    ],
+
+    "repreneur":[
+      "repreneur",
+      "reprise entreprise",
+      "transmission entreprise",
+      "business transfer",
+      "business buyer"
+    ]
+  };
+
+  function expandKeyword(keyword){
+    const normalized =
+      normalizeText(keyword);
+
+    const words = [normalized];
+
+    Object.keys(tradeDictionary)
+      .forEach(function(key){
+
+        const aliases =
+          tradeDictionary[key].map(
+            normalizeText
+          );
+
+        if(
+          normalized.includes(key) ||
+          aliases.some(function(alias){
+            return (
+              normalized.includes(alias) ||
+              alias.includes(normalized)
+            );
+          })
+        ){
+          words.push(key);
+
+          tradeDictionary[key]
+            .forEach(function(alias){
+              words.push(
+                normalizeText(alias)
+              );
+            });
+        }
+      });
+
+    return Array.from(
+      new Set(
+        words.filter(Boolean)
+      )
+    );
+  }
+
+  function getSearchHtml(){
     const plan =
       loadSearchPlan();
+
+    const savedCity =
+      loadIndependentCity();
 
     return `
       <style>
         .professionalSearchPlan {
           display:block;
           width:100%;
-          padding:12px;
           margin-top:8px;
+          padding:12px;
           border:2px solid #2f5d46;
           border-radius:10px;
           background:#fffaf1;
@@ -8379,13 +8530,13 @@ function getHomeHtml(){
         }
 
         .professionalSearchPlan.active {
-          outline:3px solid rgba(47,93,70,.22);
-          background:#f2f8f3;
+          background:#edf6ef;
+          outline:3px solid rgba(47,93,70,.20);
         }
 
         .professionalSearchPrice {
           display:block;
-          margin-top:5px;
+          margin-top:6px;
           color:#2f5d46;
           font-weight:900;
         }
@@ -8415,23 +8566,25 @@ function getHomeHtml(){
         style="border-left:6px solid #2f5d46;">
 
         <strong style="font-size:18px;">
-          Rechercher une entreprise ou une compétence
+          Recherche professionnelle privée
         </strong>
 
         <br><br>
 
-        Recherchez un artisan, une entreprise,
-        un fournisseur, un sous-traitant,
-        une profession libérale ou un partenaire.
+        Cette recherche appartient à l’espace sécurisé
+        de votre entreprise.
 
         <br><br>
 
-        La recherche dans votre commune est incluse.
+        Le métier recherché, la commune choisie,
+        l’historique et les résultats ne sont pas visibles
+        par les habitants ni par les autres entreprises.
 
         <br><br>
 
-        Les recherches élargies à la France
-        et à l’Europe nécessitent un abonnement professionnel.
+        La ville choisie ici est indépendante
+        de la carte, du Sport et de l’onglet
+        « Explorer les alentours ».
       </div>
 
       <label style="display:block;font-weight:900;">
@@ -8442,7 +8595,7 @@ function getHomeHtml(){
         id="professionalSearchKeyword"
         class="miniField"
         type="search"
-        placeholder="Exemple : carreleur, électricien, avocat, transporteur">
+        placeholder="Exemple : maçon, carreleur, avocat, transporteur">
 
       <label
         style="
@@ -8450,7 +8603,27 @@ function getHomeHtml(){
           margin-top:12px;
           font-weight:900;
         ">
-        Zone de recherche
+        Dans quelle commune souhaitez-vous chercher ?
+      </label>
+
+      <input
+        id="professionalSearchCity"
+        class="miniField"
+        type="text"
+        value="${escapeValue(savedCity)}"
+        placeholder="Exemple : Wattignies, Lille, Bordeaux">
+
+      <div class="muted" style="margin-top:6px;">
+        Vous pouvez modifier cette ville à chaque recherche.
+      </div>
+
+      <label
+        style="
+          display:block;
+          margin-top:14px;
+          font-weight:900;
+        ">
+        Étendue de la recherche
       </label>
 
       <button
@@ -8459,16 +8632,11 @@ function getHomeHtml(){
         data-search-zone="commune">
 
         <strong>
-          Ma commune
+          Commune choisie
         </strong>
 
         <span class="professionalSearchPrice">
-          Inclus dans l’espace professionnel
-        </span>
-
-        <span class="muted">
-          Commune du compte :
-          ${escapeValue(accountCity)}
+          Inclus
         </span>
       </button>
 
@@ -8484,20 +8652,17 @@ function getHomeHtml(){
         ${
           plan.plan !== "france" &&
           plan.plan !== "europe"
-            ? `<span class="professionalSearchLocked">
-                 Abonnement
-               </span>`
+            ? `
+              <span class="professionalSearchLocked">
+                Abonnement
+              </span>
+            `
             : ""
         }
 
         <span class="professionalSearchPrice">
           26,50 € HT par mois
           ou 300 € HT par an
-        </span>
-
-        <span class="muted">
-          Recherche par commune, département,
-          région ou dans toute la France.
         </span>
       </button>
 
@@ -8512,21 +8677,17 @@ function getHomeHtml(){
 
         ${
           plan.plan !== "europe"
-            ? `<span class="professionalSearchLocked">
-                 Abonnement
-               </span>`
+            ? `
+              <span class="professionalSearchLocked">
+                Abonnement
+              </span>
+            `
             : ""
         }
 
         <span class="professionalSearchPrice">
           44,90 € HT par mois
           ou 500 € HT par an
-        </span>
-
-        <span class="muted">
-          Recherche de fournisseurs,
-          partenaires et sous-traitants
-          dans les pays européens disponibles.
         </span>
       </button>
 
@@ -8535,22 +8696,7 @@ function getHomeHtml(){
         style="display:none;margin-top:12px;">
 
         <label style="display:block;font-weight:900;">
-          Commune, département ou région
-        </label>
-
-        <input
-          id="professionalFranceLocation"
-          class="miniField"
-          type="text"
-          placeholder="Exemple : Lille, Gironde, Bretagne">
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Périmètre
+          Périmètre en France
         </label>
 
         <select
@@ -8562,11 +8708,11 @@ function getHomeHtml(){
           </option>
 
           <option value="20">
-            Dans un rayon de 20 km
+            Rayon de 20 km
           </option>
 
           <option value="50">
-            Dans un rayon de 50 km
+            Rayon de 50 km
           </option>
 
           <option value="departement">
@@ -8612,29 +8758,42 @@ function getHomeHtml(){
           <option value="Pologne">Pologne</option>
           <option value="Tchéquie">Tchéquie</option>
         </select>
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Ville ou région
-        </label>
-
-        <input
-          id="professionalEuropeLocation"
-          class="miniField"
-          type="text"
-          placeholder="Exemple : Bruxelles, Lombardie, Barcelone">
       </div>
 
       <button
         id="professionalSearchBtn"
         class="choiceBtn"
         type="button"
-        style="width:100%;margin-top:14px;">
+        style="
+          width:100%;
+          margin-top:14px;
+          font-size:17px;
+        ">
         Rechercher
+      </button>
+
+      <button
+        id="professionalClearSearchBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+          background:#fff;
+        ">
+        Effacer la recherche
+      </button>
+
+      <button
+        id="professionalBillingOpenBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+          background:#fff;
+        ">
+        Mon abonnement et mes factures
       </button>
 
       <div
@@ -8700,16 +8859,8 @@ function getHomeHtml(){
     const results =
       getElement("professionalSearchResults");
 
-    const subscription =
-      getElement("professionalSubscriptionBox");
-
     if(results){
       results.innerHTML = "";
-    }
-
-    if(subscription){
-      subscription.style.display = "none";
-      subscription.innerHTML = "";
     }
   }
 
@@ -8722,7 +8873,7 @@ function getHomeHtml(){
     }
 
     if(zone === "france"){
-      return (
+      return !!(
         plan.active &&
         (
           plan.plan === "france" ||
@@ -8732,7 +8883,7 @@ function getHomeHtml(){
     }
 
     if(zone === "europe"){
-      return (
+      return !!(
         plan.active &&
         plan.plan === "europe"
       );
@@ -8742,23 +8893,8 @@ function getHomeHtml(){
   }
 
   function getSubscriptionHtml(zone){
-    const isEurope =
+    const europe =
       zone === "europe";
-
-    const title =
-      isEurope
-        ? "Recherche professionnelle Europe"
-        : "Recherche professionnelle France";
-
-    const monthly =
-      isEurope
-        ? "44,90 € HT par mois"
-        : "26,50 € HT par mois";
-
-    const annual =
-      isEurope
-        ? "500 € HT par an"
-        : "300 € HT par an";
 
     return `
       <div
@@ -8766,44 +8902,31 @@ function getHomeHtml(){
         style="border-left:6px solid #b00020;">
 
         <strong style="font-size:18px;">
-          ${title}
+          ${
+            europe
+              ? "Recherche professionnelle Europe"
+              : "Recherche professionnelle France"
+          }
         </strong>
 
         <br><br>
 
-        Cette recherche élargie nécessite
-        un abonnement professionnel actif.
+        Cette zone nécessite un abonnement actif.
 
         <br><br>
 
-        <strong>${monthly}</strong>
-
-        <br>
-
-        ou
-
-        <br>
-
-        <strong>${annual}</strong>
+        <strong>
+          ${
+            europe
+              ? "44,90 € HT par mois ou 500 € HT par an"
+              : "26,50 € HT par mois ou 300 € HT par an"
+          }
+        </strong>
 
         <br><br>
 
-        L’abonnement comprend :
-
-        <br><br>
-
-        • les recherches illimitées dans la zone choisie ;<br>
-        • la recherche par métier, activité ou service ;<br>
-        • l’accès aux fiches professionnelles disponibles ;<br>
-        • les favoris ;<br>
-        • l’historique des recherches ;<br>
-        • les factures automatiques ;<br>
-        • les rappels avant renouvellement.
-
-        <br><br>
-
-        La recherche dans la commune du compte
-        reste toujours accessible.
+        La recherche dans la commune choisie
+        reste accessible sans cette option.
       </div>
 
       <button
@@ -8840,27 +8963,43 @@ function getHomeHtml(){
     host.innerHTML =
       getSubscriptionHtml(zone);
 
-    const monthlyButton =
+    const monthly =
       getElement("professionalMonthlySubscribeBtn");
 
-    const annualButton =
+    const annual =
       getElement("professionalAnnualSubscribeBtn");
 
-    if(monthlyButton){
-      monthlyButton.onclick = function(){
-        activateDemoSubscription(
-          zone,
-          "mensuel"
-        );
+    if(monthly){
+      monthly.onclick = function(){
+        if(
+          typeof module.activateSearchSubscription === "function"
+        ){
+          module.activateSearchSubscription(
+            zone,
+            "mensuel"
+          );
+        }else{
+          alert(
+            "La gestion de l’abonnement est momentanément indisponible."
+          );
+        }
       };
     }
 
-    if(annualButton){
-      annualButton.onclick = function(){
-        activateDemoSubscription(
-          zone,
-          "annuel"
-        );
+    if(annual){
+      annual.onclick = function(){
+        if(
+          typeof module.activateSearchSubscription === "function"
+        ){
+          module.activateSearchSubscription(
+            zone,
+            "annuel"
+          );
+        }else{
+          alert(
+            "La gestion de l’abonnement est momentanément indisponible."
+          );
+        }
       };
     }
 
@@ -8870,84 +9009,34 @@ function getHomeHtml(){
     });
   }
 
-  function activateDemoSubscription(zone, billingMode){
-    const now =
-      new Date();
-
-    const nextDate =
-      new Date(now);
-
-    if(billingMode === "annuel"){
-      nextDate.setFullYear(
-        nextDate.getFullYear() + 1
-      );
-    }else{
-      nextDate.setMonth(
-        nextDate.getMonth() + 1
-      );
-    }
-
-    const plan = {
-      plan:zone,
-      active:true,
-      billingMode:billingMode,
-      nextBillingDate:
-        nextDate.toISOString().slice(0,10),
-      invoiceNumber:
-        "DEMO-RECH-" + Date.now(),
-      updatedAtFr:
-        now.toLocaleString("fr-FR")
-    };
-
-    saveSearchPlan(plan);
-
-    alert(
-      "Abonnement de démonstration activé.\n\n" +
-      "Dans la version définitive, le paiement, " +
-      "la facture et les rappels seront automatiques."
-    );
-
-    module.openScreen("annuaire");
-  }
-
   function getSearchLocation(zone){
-    if(zone === "commune"){
-      return getAccountCity() + ", France";
+    const cityInput =
+      getElement("professionalSearchCity");
+
+    const city =
+      cityInput
+        ? String(cityInput.value || "").trim()
+        : "";
+
+    if(!city){
+      return "";
     }
 
-    if(zone === "france"){
-      const input =
-        getElement("professionalFranceLocation");
+    saveIndependentCity(city);
 
-      const value =
-        input
-          ? String(input.value || "").trim()
+    if(zone === "europe"){
+      const country =
+        getElement("professionalEuropeCountry");
+
+      const countryValue =
+        country
+          ? String(country.value || "").trim()
           : "";
 
-      return value
-        ? value + ", France"
-        : "France";
+      return city + ", " + countryValue;
     }
 
-    const country =
-      getElement("professionalEuropeCountry");
-
-    const location =
-      getElement("professionalEuropeLocation");
-
-    const countryValue =
-      country
-        ? String(country.value || "").trim()
-        : "";
-
-    const locationValue =
-      location
-        ? String(location.value || "").trim()
-        : "";
-
-    return locationValue
-      ? locationValue + ", " + countryValue
-      : countryValue;
+    return city + ", France";
   }
 
   async function geocodeLocation(location){
@@ -8971,78 +9060,79 @@ function getHomeHtml(){
 
     if(!response.ok){
       throw new Error(
-        "La localisation demandée est indisponible."
+        "La commune indiquée est momentanément indisponible."
       );
     }
 
-    const results =
+    const data =
       await response.json();
 
-    if(
-      !Array.isArray(results) ||
-      !results.length
-    ){
+    if(!Array.isArray(data) || !data.length){
       throw new Error(
-        "La commune ou la zone indiquée est introuvable."
+        "La commune indiquée est introuvable."
       );
     }
 
-    return results[0];
+    return data[0];
   }
 
   function getSearchRadius(zone){
     if(zone === "commune"){
-      return 7000;
+      return 8000;
     }
 
-    if(zone === "france"){
-      const scope =
-        getElement("professionalFranceScope");
-
-      const value =
-        scope
-          ? String(scope.value || "")
-          : "commune";
-
-      if(value === "20"){
-        return 20000;
-      }
-
-      if(value === "50"){
-        return 50000;
-      }
-
-      if(value === "departement"){
-        return 80000;
-      }
-
-      if(value === "region"){
-        return 180000;
-      }
-
-      if(value === "france"){
-        return 500000;
-      }
-
-      return 10000;
+    if(zone === "europe"){
+      return 80000;
     }
 
-    return 80000;
+    const scope =
+      getElement("professionalFranceScope");
+
+    const value =
+      scope
+        ? String(scope.value || "")
+        : "commune";
+
+    if(value === "20"){
+      return 20000;
+    }
+
+    if(value === "50"){
+      return 50000;
+    }
+
+    if(value === "departement"){
+      return 90000;
+    }
+
+    if(value === "region"){
+      return 180000;
+    }
+
+    if(value === "france"){
+      return 500000;
+    }
+
+    return 10000;
   }
 
-  function buildOverpassQuery(lat, lng, radius){
+  function buildOverpassQuery(lat, lon, radius){
     return `
-      [out:json][timeout:35];
+      [out:json][timeout:40];
       (
-        node["name"](around:${radius},${lat},${lng});
-        way["name"](around:${radius},${lat},${lng});
-        relation["name"](around:${radius},${lat},${lng});
+        node["name"](around:${radius},${lat},${lon});
+        way["name"](around:${radius},${lat},${lon});
+        relation["name"](around:${radius},${lat},${lon});
       );
-      out center tags 300;
+      out center tags 500;
     `;
   }
 
-  async function fetchProfessionalPlaces(lat, lng, radius){
+  async function fetchProfessionalPlaces(
+    lat,
+    lon,
+    radius
+  ){
     const servers = [
       "https://overpass-api.de/api/interpreter",
       "https://overpass.kumi.systems/api/interpreter"
@@ -9051,7 +9141,7 @@ function getHomeHtml(){
     const query =
       buildOverpassQuery(
         lat,
-        lng,
+        lon,
         radius
       );
 
@@ -9089,48 +9179,65 @@ function getHomeHtml(){
     throw (
       lastError ||
       new Error(
-        "La recherche professionnelle est temporairement indisponible."
+        "La recherche est temporairement indisponible."
       )
     );
   }
 
-  function elementMatchesKeyword(element, keyword){
+  function getSearchableText(element){
     const tags =
       element.tags || {};
 
-    const searchable = [
-      tags.name,
-      tags.brand,
-      tags.operator,
-      tags.shop,
-      tags.craft,
-      tags.office,
-      tags.industry,
-      tags.description,
-      tags["contact:website"],
-      tags.website
-    ]
-      .filter(Boolean)
-      .join(" ");
+    return normalizeText(
+      [
+        tags.name,
+        tags.brand,
+        tags.operator,
+        tags.shop,
+        tags.craft,
+        tags.office,
+        tags.industry,
+        tags.description,
+        tags.service,
+        tags["contact:website"],
+        tags.website
+      ]
+        .filter(Boolean)
+        .join(" ")
+    );
+  }
 
-    return normalizeText(searchable)
-      .includes(
-        normalizeText(keyword)
-      );
+  function elementMatchesKeyword(
+    element,
+    expandedKeywords
+  ){
+    const searchable =
+      getSearchableText(element);
+
+    return expandedKeywords.some(
+      function(keyword){
+        return searchable.includes(keyword);
+      }
+    );
   }
 
   function formatActivity(tags){
     return (
+      tags.description ||
       tags.craft ||
       tags.shop ||
       tags.office ||
       tags.industry ||
-      tags.description ||
+      tags.service ||
       "Activité professionnelle"
     );
   }
 
-  function renderSearchResults(elements, keyword, location){
+  function renderSearchResults(
+    elements,
+    keyword,
+    location
+  ){
     const host =
       getElement("professionalSearchResults");
 
@@ -9138,12 +9245,15 @@ function getHomeHtml(){
       return;
     }
 
+    const expandedKeywords =
+      expandKeyword(keyword);
+
     const matches =
       elements
         .filter(function(element){
           return elementMatchesKeyword(
             element,
-            keyword
+            expandedKeywords
           );
         })
         .slice(0,30);
@@ -9170,7 +9280,7 @@ function getHomeHtml(){
 
           <br><br>
 
-          n’a été trouvée dans la zone :
+          n’a été trouvée autour de :
 
           <br><br>
 
@@ -9180,8 +9290,20 @@ function getHomeHtml(){
 
           <br><br>
 
-          Vous pouvez modifier le métier recherché
-          ou élargir la zone de recherche.
+          Cela ne signifie pas nécessairement
+          qu’aucune entreprise n’existe.
+
+          <br><br>
+
+          Certaines entreprises peuvent ne pas encore
+          être correctement renseignées
+          dans les données publiques utilisées.
+
+          <br><br>
+
+          Vous pouvez modifier le métier,
+          choisir une autre commune
+          ou élargir la zone.
         </div>
       `;
 
@@ -9196,17 +9318,22 @@ function getHomeHtml(){
 
         <br><br>
 
-        Recherche :
-        ${escapeValue(keyword)}
+        Métier ou activité :
+        <strong>
+          ${escapeValue(keyword)}
+        </strong>
 
-        <br>
+        <br><br>
 
         Zone :
-        ${escapeValue(location)}
+        <strong>
+          ${escapeValue(location)}
+        </strong>
       </div>
 
       ${
         matches.map(function(element){
+
           const tags =
             element.tags || {};
 
@@ -9214,10 +9341,7 @@ function getHomeHtml(){
             tags.name ||
             tags.brand ||
             tags.operator ||
-            "Entreprise";
-
-          const activity =
-            formatActivity(tags);
+            "Entreprise référencée";
 
           const address = [
             tags["addr:housenumber"],
@@ -9249,13 +9373,16 @@ function getHomeHtml(){
 
               Activité :
               <strong>
-                ${escapeValue(activity)}
+                ${escapeValue(
+                  formatActivity(tags)
+                )}
               </strong>
 
               ${
                 address
                   ? `
                     <br><br>
+
                     Adresse :
                     ${escapeValue(address)}
                   `
@@ -9266,6 +9393,7 @@ function getHomeHtml(){
                 phone
                   ? `
                     <br><br>
+
                     Téléphone :
                     ${escapeValue(phone)}
                   `
@@ -9276,7 +9404,8 @@ function getHomeHtml(){
                 website
                   ? `
                     <br><br>
-                    Site :
+
+                    Site internet :
                     ${escapeValue(website)}
                   `
                   : ""
@@ -9292,6 +9421,9 @@ function getHomeHtml(){
     const keywordInput =
       getElement("professionalSearchKeyword");
 
+    const cityInput =
+      getElement("professionalSearchCity");
+
     const status =
       getElement("professionalSearchStatus");
 
@@ -9301,6 +9433,11 @@ function getHomeHtml(){
     const keyword =
       keywordInput
         ? String(keywordInput.value || "").trim()
+        : "";
+
+    const city =
+      cityInput
+        ? String(cityInput.value || "").trim()
         : "";
 
     const zone =
@@ -9313,6 +9450,13 @@ function getHomeHtml(){
       return;
     }
 
+    if(!city){
+      alert(
+        "Indiquez la commune dans laquelle vous souhaitez chercher."
+      );
+      return;
+    }
+
     if(!hasAccessToZone(zone)){
       showSubscription(zone);
       return;
@@ -9321,16 +9465,9 @@ function getHomeHtml(){
     const location =
       getSearchLocation(zone);
 
-    if(!location){
-      alert(
-        "Indiquez la commune ou la zone de recherche."
-      );
-      return;
-    }
-
     if(status){
       status.textContent =
-        "Recherche de la zone en cours…";
+        "Recherche de la commune en cours…";
     }
 
     if(results){
@@ -9344,15 +9481,15 @@ function getHomeHtml(){
       const lat =
         Number(geo.lat);
 
-      const lng =
+      const lon =
         Number(geo.lon);
 
       if(
         !Number.isFinite(lat) ||
-        !Number.isFinite(lng)
+        !Number.isFinite(lon)
       ){
         throw new Error(
-          "Les coordonnées de la zone sont indisponibles."
+          "Les coordonnées de cette commune sont indisponibles."
         );
       }
 
@@ -9361,14 +9498,11 @@ function getHomeHtml(){
           "Recherche des entreprises en cours…";
       }
 
-      const radius =
-        getSearchRadius(zone);
-
       const elements =
         await fetchProfessionalPlaces(
           lat,
-          lng,
-          radius
+          lon,
+          getSearchRadius(zone)
         );
 
       renderSearchResults(
@@ -9405,16 +9539,48 @@ function getHomeHtml(){
 
             <br><br>
 
-            ${
-              escapeValue(
-                error.message ||
-                "Veuillez recommencer dans quelques instants."
-              )
-            }
+            ${escapeValue(
+              error.message ||
+              "Veuillez recommencer dans quelques instants."
+            )}
           </div>
         `;
       }
     }
+  }
+
+  function clearProfessionalSearch(){
+    const keyword =
+      getElement("professionalSearchKeyword");
+
+    const city =
+      getElement("professionalSearchCity");
+
+    const results =
+      getElement("professionalSearchResults");
+
+    const status =
+      getElement("professionalSearchStatus");
+
+    if(keyword){
+      keyword.value = "";
+    }
+
+    if(city){
+      city.value = "";
+    }
+
+    if(results){
+      results.innerHTML = "";
+    }
+
+    if(status){
+      status.textContent = "";
+    }
+
+    localStorage.removeItem(
+      SEARCH_CITY_KEY
+    );
   }
 
   function bindProfessionalSearch(){
@@ -9434,35 +9600,92 @@ function getHomeHtml(){
     const searchButton =
       getElement("professionalSearchBtn");
 
+    const clearButton =
+      getElement("professionalClearSearchBtn");
+
+    const billingButton =
+      getElement("professionalBillingOpenBtn");
+
     const keywordInput =
       getElement("professionalSearchKeyword");
+
+    const cityInput =
+      getElement("professionalSearchCity");
 
     if(searchButton){
       searchButton.onclick =
         runProfessionalSearch;
     }
 
-    if(keywordInput){
-      keywordInput.addEventListener(
-        "keydown",
-        function(event){
-          if(event.key === "Enter"){
-            event.preventDefault();
-            runProfessionalSearch();
-          }
-        }
-      );
+    if(clearButton){
+      clearButton.onclick =
+        clearProfessionalSearch;
     }
+
+    if(billingButton){
+      billingButton.onclick = function(){
+        if(
+          typeof module.openSearchBilling === "function"
+        ){
+          module.openSearchBilling();
+        }else{
+          alert(
+            "L’espace abonnement et factures est momentanément indisponible."
+          );
+        }
+      };
+    }
+
+    [keywordInput, cityInput]
+      .filter(Boolean)
+      .forEach(function(input){
+
+        input.addEventListener(
+          "keydown",
+          function(event){
+
+            if(event.key === "Enter"){
+              event.preventDefault();
+              runProfessionalSearch();
+            }
+          }
+        );
+      });
   }
 
-  function openProfessionalDirectory(){
+  function openProfessionalDirectory(options){
+    options = options || {};
+
     module.renderModal(
       "Recherche professionnelle",
       getSearchHtml()
     );
 
     window.setTimeout(function(){
+
       bindProfessionalSearch();
+
+      const keywordInput =
+        getElement("professionalSearchKeyword");
+
+      const cityInput =
+        getElement("professionalSearchCity");
+
+      if(
+        keywordInput &&
+        options.keyword
+      ){
+        keywordInput.value =
+          options.keyword;
+      }
+
+      if(
+        cityInput &&
+        options.city
+      ){
+        cityInput.value =
+          options.city;
+      }
     },0);
   }
 
@@ -9480,17 +9703,20 @@ function getHomeHtml(){
   module.saveProfessionalSearchPlan =
     saveSearchPlan;
 
+  module.runProfessionalSearch =
+    runProfessionalSearch;
+
   console.log(
-    "✅ Recherche professionnelle Commune • France • Europe chargée"
+    "✅ Recherche privée et commune indépendante chargée"
   );
 
 })();
-
 /* =========================================================
-   BO'CITÉART — CORRECTIF OPPORTUNITÉS DE MUTUALISATION
+   BO'CITÉART — OPPORTUNITÉS DE MUTUALISATION
+   CHARGES RÉCURRENTES • SERVICES COMMUNS • EXEMPLES
    ========================================================= */
 
-(function patchBociteEntrepriseMutualisation(){
+(function patchBociteEntrepriseMutualisationV2(){
 
   "use strict";
 
@@ -9504,7 +9730,7 @@ function getHomeHtml(){
   }
 
   const MUTUALISATION_KEY =
-    "bociteart_entreprise_mutualisation_v3";
+    "bociteart_entreprise_mutualisation_v4";
 
   function getElement(id){
     return document.getElementById(id);
@@ -9518,6 +9744,8 @@ function getHomeHtml(){
     return {
       electricite:{
         label:"Électricité",
+        description:
+          "Contrats d’électricité pour bureaux, ateliers, commerces ou sites professionnels.",
         count:17,
         target:30,
         interested:false
@@ -9525,6 +9753,8 @@ function getHomeHtml(){
 
       gaz:{
         label:"Gaz",
+        description:
+          "Contrats de gaz destinés aux locaux et installations professionnelles.",
         count:9,
         target:30,
         interested:false
@@ -9532,6 +9762,8 @@ function getHomeHtml(){
 
       telephonie:{
         label:"Téléphonie et Internet",
+        description:
+          "Téléphonie fixe, mobile, accès Internet, fibre et solutions professionnelles.",
         count:24,
         target:30,
         interested:false
@@ -9539,6 +9771,8 @@ function getHomeHtml(){
 
       assurances:{
         label:"Assurances professionnelles",
+        description:
+          "Responsabilité civile, multirisque, véhicules, locaux et risques professionnels.",
         count:12,
         target:30,
         interested:false
@@ -9546,6 +9780,8 @@ function getHomeHtml(){
 
       mutuelle:{
         label:"Mutuelle collective",
+        description:
+          "Recherche de propositions communes pour la complémentaire santé des salariés.",
         count:8,
         target:30,
         interested:false
@@ -9553,6 +9789,8 @@ function getHomeHtml(){
 
       flotte:{
         label:"Flotte automobile",
+        description:
+          "Location, entretien ou gestion de plusieurs véhicules professionnels.",
         count:7,
         target:20,
         interested:false
@@ -9560,13 +9798,44 @@ function getHomeHtml(){
 
       carburant:{
         label:"Cartes carburant",
+        description:
+          "Solutions de carburant ou de recharge pour les véhicules professionnels.",
         count:11,
         target:25,
         interested:false
       },
 
+      nettoyage:{
+        label:"Nettoyage des bureaux et locaux",
+        description:
+          "Entretien régulier des bureaux, ateliers, sanitaires et espaces professionnels.",
+        count:6,
+        target:20,
+        interested:false
+      },
+
+      vitres:{
+        label:"Entretien des vitres",
+        description:
+          "Nettoyage périodique des vitrages, vitrines, baies et façades vitrées.",
+        count:5,
+        target:20,
+        interested:false
+      },
+
+      espacesVerts:{
+        label:"Entretien des espaces verts",
+        description:
+          "Tonte, taille, entretien des abords, parkings et terrains professionnels.",
+        count:4,
+        target:20,
+        interested:false
+      },
+
       maintenance:{
-        label:"Contrats de maintenance",
+        label:"Maintenance des locaux",
+        description:
+          "Petits travaux, chauffage, ventilation, portes, équipements et entretien technique.",
         count:6,
         target:20,
         interested:false
@@ -9574,6 +9843,8 @@ function getHomeHtml(){
 
       dechets:{
         label:"Collecte et traitement des déchets",
+        description:
+          "Déchets de bureaux, déchets industriels, cartons, bois, métaux ou déchets spécifiques.",
         count:5,
         target:20,
         interested:false
@@ -9581,6 +9852,8 @@ function getHomeHtml(){
 
       alarmes:{
         label:"Alarmes et télésurveillance",
+        description:
+          "Protection des locaux, détection d’intrusion, vidéosurveillance et télésurveillance.",
         count:9,
         target:20,
         interested:false
@@ -9588,6 +9861,8 @@ function getHomeHtml(){
 
       controles:{
         label:"Vérifications réglementaires",
+        description:
+          "Exemples : installations électriques, extincteurs, appareils de levage, portes automatiques et contrôles périodiques obligatoires.",
         count:4,
         target:20,
         interested:false
@@ -9595,6 +9870,8 @@ function getHomeHtml(){
 
       formation:{
         label:"Formations professionnelles communes",
+        description:
+          "Exemples : sauveteur secouriste du travail, habilitation électrique, conduite d’engins, sécurité incendie, anglais professionnel et cybersécurité.",
         count:5,
         target:20,
         interested:false
@@ -9651,6 +9928,9 @@ function getHomeHtml(){
       "mutuelle",
       "flotte",
       "carburant",
+      "nettoyage",
+      "vitres",
+      "espacesVerts",
       "maintenance",
       "dechets",
       "alarmes",
@@ -9679,20 +9959,20 @@ function getHomeHtml(){
 
         <strong>
           Chaque entreprise reste totalement libre
-          d’accepter ou non une offre.
+          d’accepter ou non une proposition.
         </strong>
       </div>
 
       <div class="box">
         <strong>
-          Le rôle de Bo'CitéArt
+          Bo'CitéArt ne devient pas un groupement d’achat
         </strong>
 
         <br><br>
 
         Bo'CitéArt ne vend aucun contrat,
-        ne recommande aucun fournisseur
-        et ne devient pas un groupement d’achat.
+        ne choisit aucun prestataire à la place de l’entreprise
+        et ne recommande aucun fournisseur.
 
         <br><br>
 
@@ -9700,8 +9980,8 @@ function getHomeHtml(){
 
         <br><br>
 
-        • recueillir l’intérêt des entreprises ;<br>
-        • identifier les besoins communs ;<br>
+        • recueillir les besoins communs ;<br>
+        • comptabiliser les entreprises intéressées ;<br>
         • organiser une consultation ;<br>
         • centraliser les propositions reçues ;<br>
         • présenter les résultats clairement.
@@ -9709,23 +9989,40 @@ function getHomeHtml(){
         <br><br>
 
         Le contrat éventuel reste conclu directement
-        entre l’entreprise et le prestataire retenu.
+        entre chaque entreprise et le prestataire retenu.
       </div>
 
       <div class="box">
         <strong>
-          Quels postes peuvent être mutualisés ?
+          Quelles prestations sont concernées ?
         </strong>
 
         <br><br>
 
-        La mutualisation concerne uniquement
-        des charges et prestations professionnelles
-        communes à plusieurs entreprises.
+        Il s’agit de charges ou de prestations
+        professionnelles récurrentes pouvant concerner
+        plusieurs entreprises.
 
         <br><br>
 
-        Bo'CitéArt ne propose pas l’achat groupé
+        Exemples :
+
+        <br><br>
+
+        • énergie ;<br>
+        • assurances ;<br>
+        • mutuelle collective ;<br>
+        • véhicules ;<br>
+        • nettoyage des bureaux ;<br>
+        • entretien des vitres ;<br>
+        • maintenance des locaux ;<br>
+        • espaces verts ;<br>
+        • contrôles réglementaires ;<br>
+        • formations communes.
+
+        <br><br>
+
+        Bo'CitéArt ne propose pas d’achat groupé
         de marchandises destinées à la revente.
       </div>
 
@@ -9734,33 +10031,58 @@ function getHomeHtml(){
         style="margin-top:12px;">
       </div>
 
-      <div class="box" style="margin-top:14px;">
+      <div
+        class="box"
+        style="margin-top:14px;">
+
         <strong>
-          Vous avez identifié une autre charge commune ?
+          Vous avez identifié une autre charge
+          ou une prestation récurrente ?
         </strong>
 
         <br><br>
 
-        Proposez-la.
+        Vous pouvez la proposer ci-dessous.
 
         <br><br>
 
-        Elle ne sera étudiée que si elle correspond
-        à une dépense professionnelle récurrente
-        pouvant concerner plusieurs entreprises.
+        Exemple :
+
+        <br><br>
+
+        <strong>
+          Entretien mensuel des vitres de bureaux
+        </strong>
       </div>
+
+      <label
+        style="
+          display:block;
+          font-weight:900;
+        ">
+        Quelle charge ou prestation proposez-vous ?
+      </label>
 
       <input
         id="mutualisationCorrectedTitle"
         class="miniField"
         type="text"
-        placeholder="Exemple : entretien des véhicules">
+        placeholder="Exemple : entretien des vitres">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Précisez votre besoin
+      </label>
 
       <textarea
         id="mutualisationCorrectedDescription"
         class="miniField"
-        style="min-height:90px;margin-top:8px;"
-        placeholder="Expliquez brièvement la charge ou la prestation concernée.">
+        style="min-height:90px;"
+        placeholder="Exemple : nettoyage mensuel des vitrages de bureaux et des baies vitrées.">
       </textarea>
 
       <button
@@ -9778,19 +10100,23 @@ function getHomeHtml(){
 
       <div
         class="box"
-        style="margin-top:14px;border-left:6px solid #b00020;">
+        style="
+          margin-top:14px;
+          border-left:6px solid #b00020;
+        ">
 
         <strong>
-          Votre clic ne constitue pas un engagement
+          Votre intérêt ne constitue pas un engagement
         </strong>
 
         <br><br>
 
-        Il indique uniquement votre intérêt.
+        Le clic indique uniquement que le sujet
+        peut vous intéresser.
 
         <br><br>
 
-        Vous pourrez consulter les propositions reçues
+        Vous pourrez ensuite consulter les propositions reçues
         et rester libre de les accepter ou de les refuser.
       </div>
     `;
@@ -9829,6 +10155,7 @@ function getHomeHtml(){
 
         return `
           <div class="box">
+
             <div
               style="
                 display:flex;
@@ -9852,6 +10179,14 @@ function getHomeHtml(){
 
             <div
               style="
+                margin-top:8px;
+                line-height:1.45;
+              ">
+              ${escapeValue(item.description || "")}
+            </div>
+
+            <div
+              style="
                 height:12px;
                 margin-top:10px;
                 overflow:hidden;
@@ -9868,7 +10203,9 @@ function getHomeHtml(){
               </div>
             </div>
 
-            <div class="muted" style="margin-top:6px;">
+            <div
+              class="muted"
+              style="margin-top:6px;">
               ${percent} % de l’objectif indicatif
             </div>
 
@@ -9881,6 +10218,7 @@ function getHomeHtml(){
                 margin-top:10px;
                 ${item.interested ? "opacity:.65;" : ""}
               ">
+
               ${
                 item.interested
                   ? "Intérêt enregistré"
@@ -9929,6 +10267,7 @@ function getHomeHtml(){
     }
 
     item.interested = true;
+
     item.count =
       Number(item.count || 0) + 1;
 
@@ -9939,12 +10278,13 @@ function getHomeHtml(){
       new Date().toLocaleString("fr-FR");
 
     saveData(data);
+
     renderMainList();
 
     alert(
       "Votre intérêt est enregistré.\n\n" +
       "Vous ne prenez aucun engagement à ce stade.\n\n" +
-      "Vous resterez libre d’accepter ou non " +
+      "Vous resterez libre d’accepter ou de refuser " +
       "les propositions qui seront présentées."
     );
   }
@@ -9972,14 +10312,16 @@ function getHomeHtml(){
 
     if(!title){
       alert(
-        "Indiquez la charge ou la prestation concernée."
+        "Indiquez clairement la charge ou la prestation proposée.\n\n" +
+        "Exemple : entretien des vitres."
       );
       return;
     }
 
     if(!description){
       alert(
-        "Expliquez brièvement votre proposition."
+        "Précisez votre besoin.\n\n" +
+        "Exemple : nettoyage mensuel des vitrages de bureaux."
       );
       return;
     }
@@ -10024,8 +10366,8 @@ function getHomeHtml(){
 
     alert(
       "Votre proposition est enregistrée.\n\n" +
-      "Elle sera étudiée uniquement si elle correspond " +
-      "à une charge professionnelle commune."
+      "Elle pourra être présentée aux autres entreprises " +
+      "si elle correspond à une charge professionnelle récurrente."
     );
   }
 
@@ -10060,7 +10402,10 @@ function getHomeHtml(){
       ${
         list.map(function(item){
           return `
-            <div class="box" style="margin-top:8px;">
+            <div
+              class="box"
+              style="margin-top:8px;">
+
               <strong>
                 ${escapeValue(item.title)}
               </strong>
@@ -10072,6 +10417,7 @@ function getHomeHtml(){
               <br><br>
 
               Statut :
+
               <strong>
                 À étudier
               </strong>
@@ -10125,7 +10471,7 @@ function getHomeHtml(){
     saveData;
 
   console.log(
-    "✅ Opportunités de mutualisation corrigées"
+    "✅ Mutualisations détaillées et exemples ajoutés"
   );
 
 })();
@@ -11865,13 +12211,12 @@ function getHomeHtml(){
   );
 
 })();
-
 /* =========================================================
-   BO'CITÉART — GESTION DES ABONNEMENTS DE RECHERCHE
-   RAPPELS J-7 • J-3 • FACTURES • SUSPENSION
+   BO'CITÉART — FACTURES DISPONIBLES 24 MOIS
+   RESPONSABILITÉ D’ARCHIVAGE DE L’ENTREPRISE
    ========================================================= */
 
-(function addBociteSearchBillingManagement(){
+(function patchBociteInvoiceRetention(){
 
   "use strict";
 
@@ -11884,14 +12229,13 @@ function getHomeHtml(){
     return;
   }
 
-  const PLAN_KEY =
-    "bociteart_entreprise_search_plan_v1";
-
   const INVOICE_KEY =
     "bociteart_entreprise_search_invoices_v1";
 
-  const ALERT_KEY =
-    "bociteart_entreprise_search_alerts_v1";
+  const PLAN_KEY =
+    "bociteart_entreprise_search_plan_v1";
+
+  const RETENTION_MONTHS = 24;
 
   function getElement(id){
     return document.getElementById(id);
@@ -11938,7 +12282,7 @@ function getHomeHtml(){
     }
   }
 
-  function loadInvoices(){
+  function loadAllInvoices(){
     try{
       const raw =
         localStorage.getItem(INVOICE_KEY);
@@ -11968,30 +12312,43 @@ function getHomeHtml(){
     }
   }
 
-  function loadAlerts(){
-    try{
-      const raw =
-        localStorage.getItem(ALERT_KEY);
+  function getRetentionLimit(){
+    const limit =
+      new Date();
 
-      const parsed =
-        raw ? JSON.parse(raw) : {};
+    limit.setMonth(
+      limit.getMonth() -
+      RETENTION_MONTHS
+    );
 
-      return parsed &&
-        typeof parsed === "object"
-          ? parsed
-          : {};
-    }catch(error){
-      return {};
-    }
+    return limit.getTime();
   }
 
-  function saveAlerts(data){
-    try{
-      localStorage.setItem(
-        ALERT_KEY,
-        JSON.stringify(data || {})
-      );
-    }catch(error){}
+  function cleanExpiredInvoices(){
+    const invoices =
+      loadAllInvoices();
+
+    const limit =
+      getRetentionLimit();
+
+    const retained =
+      invoices.filter(function(invoice){
+
+        const timestamp =
+          Number(invoice.createdAt || 0);
+
+        if(!timestamp){
+          return true;
+        }
+
+        return timestamp >= limit;
+      });
+
+    if(retained.length !== invoices.length){
+      saveInvoices(retained);
+    }
+
+    return retained;
   }
 
   function getPlanLabel(planName){
@@ -12006,315 +12363,39 @@ function getHomeHtml(){
     return "Recherche locale";
   }
 
-  function getPlanPrice(planName, billingMode){
-    if(planName === "europe"){
-      return billingMode === "annuel"
-        ? 500
-        : 44.90;
-    }
-
-    if(planName === "france"){
-      return billingMode === "annuel"
-        ? 300
-        : 26.50;
-    }
-
-    return 0;
-  }
-
-  function formatDate(dateValue){
-    if(!dateValue){
+  function formatDate(value){
+    if(!value){
       return "Non renseignée";
     }
 
     const date =
-      new Date(dateValue + "T12:00:00");
+      new Date(value + "T12:00:00");
 
     if(Number.isNaN(date.getTime())){
-      return dateValue;
+      return value;
     }
 
     return date.toLocaleDateString("fr-FR");
   }
 
-  function daysUntil(dateValue){
-    if(!dateValue){
-      return null;
-    }
-
-    const today =
-      new Date();
-
-    today.setHours(0,0,0,0);
-
-    const target =
-      new Date(dateValue + "T00:00:00");
-
-    if(Number.isNaN(target.getTime())){
-      return null;
-    }
-
-    return Math.ceil(
-      (
-        target.getTime() -
-        today.getTime()
-      ) /
-      (
-        1000 *
-        60 *
-        60 *
-        24
-      )
-    );
+  function formatMoney(value){
+    return Number(value || 0)
+      .toFixed(2)
+      .replace(".",",");
   }
 
-  function createInvoice(plan){
-    if(
-      !plan ||
-      plan.plan === "commune"
-    ){
-      return null;
-    }
-
-    const invoices =
-      loadInvoices();
-
-    const price =
-      getPlanPrice(
-        plan.plan,
-        plan.billingMode
+  function getInvoiceExpiryDate(invoice){
+    const created =
+      new Date(
+        Number(invoice.createdAt || Date.now())
       );
 
-    const invoice = {
-      id:
-        "FACT-RECH-" +
-        Date.now(),
-
-      number:
-        "BCA-RECH-" +
-        new Date()
-          .toISOString()
-          .slice(0,10)
-          .replace(/-/g,"") +
-        "-" +
-        String(
-          invoices.length + 1
-        ).padStart(4,"0"),
-
-      plan:plan.plan,
-
-      planLabel:
-        getPlanLabel(plan.plan),
-
-      billingMode:
-        plan.billingMode,
-
-      amountHT:price,
-
-      vatRate:20,
-
-      amountVAT:
-        Number(
-          (price * 0.20).toFixed(2)
-        ),
-
-      amountTTC:
-        Number(
-          (price * 1.20).toFixed(2)
-        ),
-
-      status:"paid",
-
-      paymentMethod:
-        "Carte bancaire — démonstration",
-
-      createdAt:
-        Date.now(),
-
-      createdAtFr:
-        new Date().toLocaleString("fr-FR")
-    };
-
-    invoices.unshift(invoice);
-
-    saveInvoices(invoices);
-
-    plan.invoiceNumber =
-      invoice.number;
-
-    plan.lastInvoiceDate =
-      new Date()
-        .toISOString()
-        .slice(0,10);
-
-    savePlan(plan);
-
-    return invoice;
-  }
-
-  function getNextBillingDate(billingMode){
-    const date =
-      new Date();
-
-    if(billingMode === "annuel"){
-      date.setFullYear(
-        date.getFullYear() + 1
-      );
-    }else{
-      date.setMonth(
-        date.getMonth() + 1
-      );
-    }
-
-    return date
-      .toISOString()
-      .slice(0,10);
-  }
-
-  function activateSearchSubscription(
-    planName,
-    billingMode
-  ){
-    const now =
-      new Date();
-
-    const plan = {
-      plan:planName,
-      active:true,
-      paymentStatus:"paid",
-      billingMode:billingMode,
-      autoRenew:true,
-
-      nextBillingDate:
-        getNextBillingDate(
-          billingMode
-        ),
-
-      cancellationRequested:false,
-      suspendedAt:"",
-      updatedAt:Date.now(),
-      updatedAtFr:
-        now.toLocaleString("fr-FR")
-    };
-
-    savePlan(plan);
-
-    const invoice =
-      createInvoice(plan);
-
-    alert(
-      getPlanLabel(planName) +
-      " activée.\n\n" +
-      "Montant : " +
-      getPlanPrice(
-        planName,
-        billingMode
-      )
-        .toFixed(2)
-        .replace(".",",") +
-      " € HT.\n\n" +
-      (
-        invoice
-          ? "Facture : " +
-            invoice.number +
-            "."
-          : ""
-      )
+    created.setMonth(
+      created.getMonth() +
+      RETENTION_MONTHS
     );
 
-    if(
-      typeof module.openScreen === "function"
-    ){
-      module.openScreen("annuaire");
-    }
-  }
-
-  function checkBillingStatus(){
-    const plan =
-      loadPlan();
-
-    if(
-      !plan ||
-      plan.plan === "commune" ||
-      !plan.nextBillingDate
-    ){
-      return;
-    }
-
-    const remaining =
-      daysUntil(
-        plan.nextBillingDate
-      );
-
-    if(remaining === null){
-      return;
-    }
-
-    const alerts =
-      loadAlerts();
-
-    const alertBase =
-      plan.plan +
-      "-" +
-      plan.nextBillingDate;
-
-    if(
-      remaining === 7 &&
-      !alerts[alertBase + "-7"]
-    ){
-      alerts[alertBase + "-7"] = true;
-
-      alert(
-        "Rappel d’abonnement\n\n" +
-        getPlanLabel(plan.plan) +
-        " sera renouvelée dans 7 jours.\n\n" +
-        "Échéance : " +
-        formatDate(
-          plan.nextBillingDate
-        ) +
-        "."
-      );
-    }
-
-    if(
-      remaining === 3 &&
-      !alerts[alertBase + "-3"]
-    ){
-      alerts[alertBase + "-3"] = true;
-
-      alert(
-        "Second rappel d’abonnement\n\n" +
-        getPlanLabel(plan.plan) +
-        " sera renouvelée dans 3 jours.\n\n" +
-        "Vérifiez que votre carte bancaire est toujours valide."
-      );
-    }
-
-    if(
-      remaining < 0 &&
-      plan.paymentStatus !== "paid"
-    ){
-      plan.active = false;
-      plan.paymentStatus = "suspended";
-      plan.suspendedAt =
-        new Date()
-          .toISOString()
-          .slice(0,10);
-
-      savePlan(plan);
-
-      if(!alerts[alertBase + "-suspended"]){
-        alerts[alertBase + "-suspended"] = true;
-
-        alert(
-          "Option de recherche suspendue\n\n" +
-          "Le paiement de l’abonnement n’a pas été confirmé.\n\n" +
-          "La recherche locale reste accessible."
-        );
-      }
-    }
-
-    saveAlerts(alerts);
+    return created.toLocaleDateString("fr-FR");
   }
 
   function getBillingHtml(){
@@ -12322,7 +12403,7 @@ function getHomeHtml(){
       loadPlan();
 
     const invoices =
-      loadInvoices();
+      cleanExpiredInvoices();
 
     return `
       <div
@@ -12401,8 +12482,22 @@ function getHomeHtml(){
       </div>
 
       ${
-        plan.plan === "commune"
+        plan.plan !== "commune"
           ? `
+            <button
+              id="invoiceRetentionRenewBtn"
+              class="choiceBtn"
+              type="button"
+              style="width:100%;">
+
+              ${
+                plan.autoRenew
+                  ? "Désactiver le renouvellement automatique"
+                  : "Réactiver le renouvellement automatique"
+              }
+            </button>
+          `
+          : `
             <div class="box">
               La recherche dans votre commune
               est incluse dans votre espace professionnel.
@@ -12413,126 +12508,7 @@ function getHomeHtml(){
               nécessitent une option payante.
             </div>
           `
-          : `
-            <button
-              id="searchBillingToggleRenewBtn"
-              class="choiceBtn"
-              type="button"
-              style="width:100%;">
-              ${
-                plan.autoRenew
-                  ? "Désactiver le renouvellement automatique"
-                  : "Réactiver le renouvellement automatique"
-              }
-            </button>
-          `
       }
-
-      <div
-        style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
-          color:#2f5d46;
-        ">
-        Mes factures
-      </div>
-
-      <div
-        id="searchInvoiceList"
-        style="margin-top:10px;">
-
-        ${
-          invoices.length
-            ? invoices.map(function(invoice){
-                return `
-                  <div class="box">
-                    <strong>
-                      ${escapeValue(
-                        invoice.number
-                      )}
-                    </strong>
-
-                    <br><br>
-
-                    ${escapeValue(
-                      invoice.planLabel
-                    )}
-
-                    <br><br>
-
-                    Montant HT :
-                    <strong>
-                      ${Number(
-                        invoice.amountHT
-                      )
-                        .toFixed(2)
-                        .replace(".",",")}
-                      €
-                    </strong>
-
-                    <br>
-
-                    TVA :
-                    ${Number(
-                      invoice.amountVAT
-                    )
-                      .toFixed(2)
-                      .replace(".",",")}
-                    €
-
-                    <br>
-
-                    Total TTC :
-                    <strong>
-                      ${Number(
-                        invoice.amountTTC
-                      )
-                        .toFixed(2)
-                        .replace(".",",")}
-                      €
-                    </strong>
-
-                    <br><br>
-
-                    Date :
-                    ${escapeValue(
-                      invoice.createdAtFr
-                    )}
-
-                    <br><br>
-
-                    Statut :
-                    <strong>
-                      ${
-                        invoice.status === "paid"
-                          ? "Payée"
-                          : "En attente"
-                      }
-                    </strong>
-
-                    <button
-                      class="choiceBtn searchInvoiceDownloadBtn"
-                      type="button"
-                      data-invoice-id="${escapeValue(
-                        invoice.id
-                      )}"
-                      style="
-                        width:100%;
-                        margin-top:10px;
-                      ">
-                      Télécharger la facture
-                    </button>
-                  </div>
-                `;
-              }).join("")
-            : `
-              <div class="box">
-                Aucune facture disponible.
-              </div>
-            `
-        }
-      </div>
 
       <div
         class="box"
@@ -12542,12 +12518,171 @@ function getHomeHtml(){
         ">
 
         <strong>
-          Fonctionnement prévu
+          Conservation de vos factures
         </strong>
 
         <br><br>
 
-        Un rappel est envoyé 7 jours avant l’échéance,
+        Les factures Bo'CitéArt restent disponibles
+        dans votre espace pendant
+        <strong>24 mois à compter de leur émission</strong>.
+
+        <br><br>
+
+        Téléchargez-les dès leur réception
+        et transmettez-les à votre service comptable.
+
+        <br><br>
+
+        <strong>
+          La conservation légale des documents comptables
+          reste sous la responsabilité de votre entreprise.
+        </strong>
+
+        <br><br>
+
+        Bo'CitéArt n’assure pas un archivage permanent
+        de vos pièces comptables.
+
+        <br><br>
+
+        Après 24 mois, les factures peuvent être
+        automatiquement retirées de votre espace.
+      </div>
+
+      <div
+        style="
+          margin-top:18px;
+          font-size:18px;
+          font-weight:900;
+          color:#2f5d46;
+        ">
+        Mes factures disponibles
+      </div>
+
+      <div
+        id="invoiceRetentionList"
+        style="margin-top:10px;">
+
+        ${
+          invoices.length
+            ? invoices.map(function(invoice){
+
+                return `
+                  <div class="box">
+
+                    <strong>
+                      ${escapeValue(
+                        invoice.number || "Facture"
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    ${escapeValue(
+                      invoice.planLabel ||
+                      "Service Bo'CitéArt"
+                    )}
+
+                    <br><br>
+
+                    Montant HT :
+
+                    <strong>
+                      ${formatMoney(
+                        invoice.amountHT
+                      )}
+                      €
+                    </strong>
+
+                    <br>
+
+                    TVA :
+
+                    ${formatMoney(
+                      invoice.amountVAT
+                    )}
+                    €
+
+                    <br>
+
+                    Total TTC :
+
+                    <strong>
+                      ${formatMoney(
+                        invoice.amountTTC
+                      )}
+                      €
+                    </strong>
+
+                    <br><br>
+
+                    Émise le :
+
+                    ${escapeValue(
+                      invoice.createdAtFr || ""
+                    )}
+
+                    <br><br>
+
+                    Disponible dans cet espace jusqu’au :
+
+                    <strong>
+                      ${escapeValue(
+                        getInvoiceExpiryDate(invoice)
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Statut :
+
+                    <strong>
+                      ${
+                        invoice.status === "paid"
+                          ? "Payée"
+                          : "En attente"
+                      }
+                    </strong>
+
+                    <button
+                      class="choiceBtn invoiceRetentionDownloadBtn"
+                      type="button"
+                      data-invoice-id="${escapeValue(
+                        invoice.id
+                      )}"
+                      style="
+                        width:100%;
+                        margin-top:10px;
+                      ">
+                      Télécharger et archiver la facture
+                    </button>
+                  </div>
+                `;
+              }).join("")
+            : `
+              <div class="box">
+                Aucune facture disponible
+                dans les 24 derniers mois.
+              </div>
+            `
+        }
+      </div>
+
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          border-left:6px solid #2f5d46;
+        ">
+
+        <strong>
+          Renouvellement et paiement
+        </strong>
+
+        <br><br>
+
+        Un rappel est prévu 7 jours avant l’échéance,
         puis un second rappel 3 jours avant.
 
         <br><br>
@@ -12564,14 +12699,26 @@ function getHomeHtml(){
 
   function downloadInvoice(invoiceId){
     const invoice =
-      loadInvoices().find(function(item){
+      cleanExpiredInvoices().find(function(item){
         return item.id === invoiceId;
       });
 
     if(!invoice){
       alert(
-        "Facture introuvable."
+        "Cette facture n’est plus disponible dans votre espace."
       );
+      return;
+    }
+
+    const confirmation =
+      confirm(
+        "Téléchargez et archivez cette facture dès maintenant.\n\n" +
+        "Bo'CitéArt la conserve dans votre espace pendant 24 mois seulement.\n\n" +
+        "La conservation comptable reste sous la responsabilité de votre entreprise.\n\n" +
+        "Continuer le téléchargement ?"
+      );
+
+    if(!confirmation){
       return;
     }
 
@@ -12580,15 +12727,18 @@ function getHomeHtml(){
       "FACTURE DE DÉMONSTRATION\n\n" +
 
       "Facture : " +
-      invoice.number +
+      (invoice.number || "") +
       "\n" +
 
       "Date : " +
-      invoice.createdAtFr +
+      (invoice.createdAtFr || "") +
       "\n\n" +
 
       "Service : " +
-      invoice.planLabel +
+      (
+        invoice.planLabel ||
+        "Service Bo'CitéArt"
+      ) +
       "\n" +
 
       "Périodicité : " +
@@ -12600,24 +12750,28 @@ function getHomeHtml(){
       "\n\n" +
 
       "Montant HT : " +
-      invoice.amountHT
-        .toFixed(2)
-        .replace(".",",") +
+      formatMoney(invoice.amountHT) +
       " €\n" +
 
-      "TVA 20 % : " +
-      invoice.amountVAT
-        .toFixed(2)
-        .replace(".",",") +
+      "TVA : " +
+      formatMoney(invoice.amountVAT) +
       " €\n" +
 
       "Total TTC : " +
-      invoice.amountTTC
-        .toFixed(2)
-        .replace(".",",") +
+      formatMoney(invoice.amountTTC) +
       " €\n\n" +
 
-      "Statut : Payée\n\n" +
+      "Statut : " +
+      (
+        invoice.status === "paid"
+          ? "Payée"
+          : "En attente"
+      ) +
+      "\n\n" +
+
+      "IMPORTANT\n" +
+      "Cette facture reste disponible dans l’espace Bo'CitéArt pendant 24 mois.\n" +
+      "La conservation légale du document reste sous la responsabilité de l’entreprise.\n\n" +
 
       "Document de démonstration — sans valeur comptable.";
 
@@ -12625,8 +12779,7 @@ function getHomeHtml(){
       new Blob(
         [content],
         {
-          type:
-            "text/plain;charset=utf-8"
+          type:"text/plain;charset=utf-8"
         }
       );
 
@@ -12639,7 +12792,11 @@ function getHomeHtml(){
     link.href = url;
 
     link.download =
-      invoice.number + ".txt";
+      (
+        invoice.number ||
+        "facture-bociteart"
+      ) +
+      ".txt";
 
     document.body.appendChild(link);
     link.click();
@@ -12654,11 +12811,12 @@ function getHomeHtml(){
 
     const renewButton =
       getElement(
-        "searchBillingToggleRenewBtn"
+        "invoiceRetentionRenewBtn"
       );
 
     if(renewButton){
       renewButton.onclick = function(){
+
         plan.autoRenew =
           !plan.autoRenew;
 
@@ -12676,7 +12834,7 @@ function getHomeHtml(){
 
     document
       .querySelectorAll(
-        ".searchInvoiceDownloadBtn"
+        ".invoiceRetentionDownloadBtn"
       )
       .forEach(function(button){
 
@@ -12701,24 +12859,16 @@ function getHomeHtml(){
     },0);
   }
 
-  module.activateSearchSubscription =
-    activateSearchSubscription;
-
   module.openSearchBilling =
     openBilling;
 
-  module.checkSearchBillingStatus =
-    checkBillingStatus;
+  module.cleanExpiredSearchInvoices =
+    cleanExpiredInvoices;
 
-  module.loadSearchInvoices =
-    loadInvoices;
-
-  window.setTimeout(function(){
-    checkBillingStatus();
-  },1000);
+  cleanExpiredInvoices();
 
   console.log(
-    "✅ Gestion des abonnements, rappels et factures chargée"
+    "✅ Factures limitées à 24 mois et archivage responsabilisé"
   );
 
 })();
@@ -12921,6 +13071,4981 @@ function getHomeHtml(){
 
   console.log(
     "✅ Abonnements et factures raccordés à la recherche"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — RACCORDEMENT QUESTION VERS RECHERCHE
+   ========================================================= */
+
+(function connectEntrepriseQuestionToSearch(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function normalizeText(value){
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  }
+
+  function extractSearchKeyword(question){
+    const normalized =
+      normalizeText(question);
+
+    const knownTrades = [
+      "maçon",
+      "macon",
+      "carreleur",
+      "électricien",
+      "electricien",
+      "plombier",
+      "menuisier",
+      "couvreur",
+      "peintre",
+      "avocat",
+      "comptable",
+      "transporteur",
+      "nettoyage",
+      "vitres",
+      "repreneur",
+      "fournisseur",
+      "sous-traitant",
+      "sous traitant",
+      "partenaire"
+    ];
+
+    const found =
+      knownTrades.find(function(trade){
+        return normalized.includes(
+          normalizeText(trade)
+        );
+      });
+
+    return found || question.trim();
+  }
+
+  function extractCity(question){
+    const patterns = [
+      /(?:à|a|sur|dans|près de|pres de)\s+([A-Za-zÀ-ÿ' -]{2,40})/i,
+      /ville de\s+([A-Za-zÀ-ÿ' -]{2,40})/i,
+      /commune de\s+([A-Za-zÀ-ÿ' -]{2,40})/i
+    ];
+
+    for(const pattern of patterns){
+      const match =
+        String(question || "").match(pattern);
+
+      if(match && match[1]){
+        return match[1]
+          .replace(
+            /\b(pour|afin|avec|qui|où|ou|dans)\b.*$/i,
+            ""
+          )
+          .trim();
+      }
+    }
+
+    return "";
+  }
+
+  function bindQuestionButton(){
+    const button =
+      getElement("entrepriseAiAskBtn");
+
+    if(!button){
+      return;
+    }
+
+    button.onclick = function(){
+
+      const input =
+        getElement("entrepriseAiQuestion");
+
+      const answer =
+        getElement("entrepriseAiAnswer");
+
+      const question =
+        input
+          ? String(input.value || "").trim()
+          : "";
+
+      if(!question){
+        alert(
+          "Écrivez votre question."
+        );
+        return;
+      }
+
+      const keyword =
+        extractSearchKeyword(question);
+
+      const city =
+        extractCity(question);
+
+      if(answer){
+        answer.innerHTML = `
+          <div class="box">
+            <strong>
+              Recherche préparée
+            </strong>
+
+            <br><br>
+
+            Activité ou besoin détecté :
+
+            <br><br>
+
+            <strong>
+              ${module.safeEscape(keyword)}
+            </strong>
+
+            <br><br>
+
+            ${
+              city
+                ? `
+                  Commune détectée :
+
+                  <br><br>
+
+                  <strong>
+                    ${module.safeEscape(city)}
+                  </strong>
+
+                  <br><br>
+                `
+                : `
+                  Vous pourrez choisir librement
+                  la commune dans l’écran suivant.
+
+                  <br><br>
+                `
+            }
+
+            <button
+              id="entrepriseAiOpenSearchBtn"
+              class="choiceBtn"
+              type="button"
+              style="width:100%;">
+              Ouvrir la recherche
+            </button>
+          </div>
+        `;
+      }
+
+      window.setTimeout(function(){
+
+        const openButton =
+          getElement(
+            "entrepriseAiOpenSearchBtn"
+          );
+
+        if(!openButton){
+          return;
+        }
+
+        openButton.onclick = function(){
+
+          if(
+            typeof module.openProfessionalDirectory ===
+            "function"
+          ){
+            module.openProfessionalDirectory({
+              keyword:keyword,
+              city:city
+            });
+
+            return;
+          }
+
+          module.openScreen("annuaire");
+        };
+      },0);
+    };
+  }
+
+  const originalOpenHome =
+    module.openHome;
+
+  if(
+    typeof originalOpenHome === "function" &&
+    !module.__questionSearchConnected
+  ){
+    module.__questionSearchConnected = true;
+
+    module.openHome = function(){
+
+      originalOpenHome.apply(
+        module,
+        arguments
+      );
+
+      window.setTimeout(function(){
+        bindQuestionButton();
+      },0);
+    };
+
+    module.registerScreen(
+      "home",
+      module.openHome
+    );
+  }
+
+  console.log(
+    "✅ Bouton Poser ma question raccordé à la recherche"
+  );
+
+})();
+/* =========================================================
+   BO'CITÉART — MÉCÉNAT
+   PARTIE 1 — PRÉSENTATION PUBLIQUE ET ATTRACTIVE
+   ========================================================= */
+
+(function addBociteMecenatPublicPresentation(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function getMecenatPublicPresentationHtml(){
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.55;
+        ">
+
+        <strong style="font-size:20px;">
+          Et si une partie de votre effort fiscal
+          devenait une action visible et durable
+          pour votre ville ?
+        </strong>
+
+        <br><br>
+
+        Le mécénat permet à une entreprise
+        de soutenir directement un projet utile
+        à son territoire :
+
+        <br><br>
+
+        • culture ;<br>
+        • sport ;<br>
+        • éducation ;<br>
+        • patrimoine ;<br>
+        • environnement ;<br>
+        • solidarité ;<br>
+        • création artistique ;<br>
+        • valorisation des métiers et des talents locaux.
+
+        <br><br>
+
+        Votre entreprise ne finance pas seulement
+        une réalisation.
+
+        <br><br>
+
+        Elle participe concrètement
+        au développement de sa ville
+        et laisse une trace utile dans le temps.
+      </div>
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid #b00020;
+          line-height:1.55;
+        ">
+
+        <strong style="font-size:19px;">
+          Une réduction d’impôt particulièrement attractive
+          peut s’appliquer
+        </strong>
+
+        <br><br>
+
+        Lorsqu’un projet et son bénéficiaire
+        remplissent les conditions prévues
+        par la réglementation,
+        le mécénat peut ouvrir droit
+        à une réduction d’impôt
+        pouvant atteindre généralement
+        <strong>60 % du montant du don</strong>.
+
+        <br><br>
+
+        Exemple indicatif :
+
+        <br><br>
+
+        Pour une contribution de :
+
+        <br>
+
+        <strong style="font-size:18px;">
+          1 000 €
+        </strong>
+
+        <br><br>
+
+        la réduction d’impôt peut représenter :
+
+        <br>
+
+        <strong style="font-size:18px;">
+          600 €
+        </strong>
+
+        <br><br>
+
+        Le coût restant pour l’entreprise
+        peut alors être de :
+
+        <br>
+
+        <strong style="font-size:18px;">
+          400 €
+        </strong>
+
+        <br><br>
+
+        Cet exemple reste soumis
+        aux conditions juridiques et fiscales applicables.
+
+        <br><br>
+
+        Votre expert-comptable doit confirmer
+        l’éligibilité du projet,
+        du bénéficiaire et de votre entreprise.
+      </div>
+
+      <div class="box" style="line-height:1.55;">
+
+        <strong style="font-size:18px;">
+          Une contribution utile plutôt qu’un simple coût
+        </strong>
+
+        <br><br>
+
+        Lorsqu’elle est éligible,
+        l’entreprise peut choisir d’affecter
+        une partie de son effort financier
+        à une action concrète sur son territoire.
+
+        <br><br>
+
+        Elle participe ainsi directement :
+
+        <br><br>
+
+        • à l’embellissement de la ville ;<br>
+        • à la découverte de nouveaux artistes ;<br>
+        • au soutien des associations ;<br>
+        • au développement du sport ;<br>
+        • aux projets culturels et éducatifs ;<br>
+        • à la valorisation de l’histoire locale ;<br>
+        • à la création de liens entre les habitants.
+
+        <br><br>
+
+        L’entreprise voit ce qu’elle soutient
+        et peut suivre l’évolution du projet.
+      </div>
+
+      <div class="box" style="line-height:1.55;">
+
+        <strong style="font-size:18px;">
+          Des retombées durables pour votre entreprise
+        </strong>
+
+        <br><br>
+
+        Le mécénat n’est pas une publicité traditionnelle.
+
+        <br><br>
+
+        Il peut néanmoins produire
+        des effets importants sur le long terme :
+
+        <br><br>
+
+        • faire connaître l’existence de l’entreprise ;<br>
+        • expliquer ses métiers et son savoir-faire ;<br>
+        • renforcer sa réputation locale ;<br>
+        • créer de la confiance ;<br>
+        • développer le bouche-à-oreille ;<br>
+        • valoriser les salariés ;<br>
+        • renforcer la fierté d’appartenance ;<br>
+        • faciliter les recrutements futurs ;<br>
+        • associer durablement son nom à un projet utile.
+
+        <br><br>
+
+        Une entreprise connue et reconnue
+        dans son territoire devient plus facilement
+        une entreprise à laquelle les habitants pensent,
+        qu’ils recommandent et qu’ils souhaitent rejoindre.
+      </div>
+
+      <div class="box" style="line-height:1.55;">
+
+        <strong style="font-size:18px;">
+          Révéler les talents artistiques de nos villes
+        </strong>
+
+        <br><br>
+
+        De nombreux artistes amateurs ou professionnels
+        restent encore invisibles dans nos communes.
+
+        <br><br>
+
+        Bo'CitéArt souhaite leur ouvrir la porte
+        en développant des projets capables
+        de révéler leur travail :
+
+        <br><br>
+
+        • œuvres murales peintes ;<br>
+        • sculptures ;<br>
+        • œuvres en bronze ;<br>
+        • installations artistiques ;<br>
+        • photographies ;<br>
+        • créations numériques ;<br>
+        • tableaux d’artistes locaux ;<br>
+        • mobilier artistique ;<br>
+        • mise en valeur d’un véhicule ancien
+          ou exceptionnel ;<br>
+        • œuvres liées à l’histoire,
+          aux métiers ou à la vie de la ville.
+
+        <br><br>
+
+        Le projet artistique doit toujours
+        créer un lien avec le territoire,
+        ses habitants, son patrimoine,
+        ses entreprises ou ses activités.
+      </div>
+
+      <div class="box" style="line-height:1.55;">
+
+        <strong style="font-size:18px;">
+          Une entreprise peut accueillir une œuvre
+          sur son propre site
+        </strong>
+
+        <br><br>
+
+        Lorsqu’aucun projet municipal
+        ne correspond aux espaces disponibles,
+        une entreprise peut proposer
+        l’accueil d’une ou plusieurs œuvres
+        sur :
+
+        <br><br>
+
+        • son siège ;<br>
+        • son terrain ;<br>
+        • un mur d’entrepôt ;<br>
+        • son atelier ;<br>
+        • ses bureaux ;<br>
+        • ses espaces extérieurs ;<br>
+        • tout autre lieu adapté.
+
+        <br><br>
+
+        Le projet reste soumis
+        aux autorisations nécessaires
+        et aux conditions juridiques,
+        fiscales, techniques et artistiques applicables.
+      </div>
+
+      <div class="box" style="line-height:1.55;">
+
+        <strong style="font-size:18px;">
+          Comment les projets sont-ils préparés ?
+        </strong>
+
+        <br><br>
+
+        Bo'CitéArt prépare un thème
+        lié à la vie de la ville,
+        à ses métiers,
+        à son histoire,
+        à ses habitants
+        ou à son évolution.
+
+        <br><br>
+
+        Le thème est ensuite présenté à la mairie.
+
+        <br><br>
+
+        La commune peut :
+
+        <br><br>
+
+        • valider le thème ;<br>
+        • demander une adaptation ;<br>
+        • proposer une évolution ;<br>
+        • refuser le projet en indiquant son motif.
+
+        <br><br>
+
+        Les échanges ont lieu avant la validation définitive
+        afin de conserver la cohérence artistique du projet
+        tout en tenant compte de la vision de la commune.
+      </div>
+
+      <div class="box" style="line-height:1.55;">
+
+        <strong style="font-size:18px;">
+          Les citoyens et les artistes restent au cœur du projet
+        </strong>
+
+        <br><br>
+
+        Les dessins et propositions visuelles
+        sont recherchés en priorité
+        auprès des citoyens et artistes de la ville.
+
+        <br><br>
+
+        Lorsqu’une réalisation à grande échelle
+        exige une compétence particulière,
+        Bo'CitéArt recherche un artiste capable
+        de la réaliser :
+
+        <br><br>
+
+        1. dans la commune ;<br>
+        2. dans les communes voisines ;<br>
+        3. dans le territoire ;<br>
+        4. dans la région si nécessaire.
+
+        <br><br>
+
+        Lorsqu’une ville comprend plusieurs quartiers
+        ou plusieurs espaces,
+        plusieurs artistes peuvent être sollicités.
+
+        <br><br>
+
+        Cette organisation permet
+        de valoriser davantage de créateurs
+        et de renouveler régulièrement
+        le regard porté sur la ville.
+      </div>
+
+      <div
+        class="box"
+        style="
+          line-height:1.55;
+          border-left:6px solid #2f5d46;
+        ">
+
+        <strong style="font-size:18px;">
+          Un renouvellement régulier des thèmes
+        </strong>
+
+        <br><br>
+
+        Les grandes réalisations visuelles
+        peuvent être renouvelées selon un rythme prévu,
+        par exemple tous les deux ans.
+
+        <br><br>
+
+        L’année intermédiaire permet de préparer :
+
+        <br><br>
+
+        • le thème suivant ;<br>
+        • les consultations citoyennes ;<br>
+        • la sélection des dessins ;<br>
+        • les validations ;<br>
+        • la recherche des artistes ;<br>
+        • les partenariats et le mécénat.
+
+        <br><br>
+
+        Ce roulement crée une attente,
+        renouvelle l’intérêt des habitants
+        et permet de révéler progressivement
+        les différentes dimensions de la ville.
+      </div>
+
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+          margin-top:14px;
+        ">
+
+        <button
+          id="mecenatPublicDiscoverProjectsBtn"
+          class="choiceBtn"
+          type="button">
+          Découvrir les projets proposés
+        </button>
+
+        <button
+          id="mecenatPublicInterestedBtn"
+          class="choiceBtn"
+          type="button">
+          Je suis intéressé
+        </button>
+
+        <button
+          id="mecenatPublicPrivateSpaceBtn"
+          class="choiceBtn"
+          type="button">
+          Mon espace mécénat privé
+        </button>
+      </div>
+
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          border-left:6px solid #b00020;
+          line-height:1.55;
+        ">
+
+        <strong>
+          Vos choix restent confidentiels
+        </strong>
+
+        <br><br>
+
+        Les montants envisagés,
+        vos notes,
+        les projets étudiés,
+        vos conditions
+        et votre décision
+        restent dans l’espace sécurisé
+        de votre entreprise.
+
+        <br><br>
+
+        Rien n’est publié
+        sans votre validation explicite.
+      </div>
+
+      <div
+        id="mecenatPublicPresentationStatus"
+        class="muted"
+        style="margin-top:10px;">
+      </div>
+    `;
+  }
+
+  function bindMecenatPublicPresentation(){
+
+    const discoverButton =
+      getElement(
+        "mecenatPublicDiscoverProjectsBtn"
+      );
+
+    const interestedButton =
+      getElement(
+        "mecenatPublicInterestedBtn"
+      );
+
+    const privateButton =
+      getElement(
+        "mecenatPublicPrivateSpaceBtn"
+      );
+
+    const status =
+      getElement(
+        "mecenatPublicPresentationStatus"
+      );
+
+    if(discoverButton){
+      discoverButton.onclick = function(){
+
+        if(status){
+          status.innerHTML = `
+            <div class="box">
+              La liste complète des projets
+              proposés ou validés
+              sera intégrée dans la prochaine partie.
+            </div>
+          `;
+        }
+      };
+    }
+
+    if(interestedButton){
+      interestedButton.onclick = function(){
+
+        try{
+          localStorage.setItem(
+            "bociteart_mecenat_general_interest_v1",
+            JSON.stringify({
+              interested:true,
+              createdAt:Date.now(),
+              createdAtFr:
+                new Date().toLocaleString("fr-FR"),
+              status:"interet_enregistre"
+            })
+          );
+        }catch(error){}
+
+        if(status){
+          status.innerHTML = `
+            <div
+              class="box"
+              style="border-left:6px solid #2f5d46;">
+
+              <strong>
+                Votre intérêt est enregistré
+              </strong>
+
+              <br><br>
+
+              Cela ne constitue pas encore
+              un engagement financier ou contractuel.
+
+              <br><br>
+
+              Vous pourrez ensuite consulter
+              les projets disponibles
+              et choisir librement
+              celui que vous souhaitez étudier.
+            </div>
+          `;
+        }
+
+        status.scrollIntoView({
+          behavior:"smooth",
+          block:"nearest"
+        });
+      };
+    }
+
+    if(privateButton){
+      privateButton.onclick = function(){
+
+        if(
+          typeof module.openMecenatPrivateSpace ===
+          "function"
+        ){
+          module.openMecenatPrivateSpace("");
+          return;
+        }
+
+        alert(
+          "L’espace mécénat privé est momentanément indisponible."
+        );
+      };
+    }
+  }
+
+  function openMecenatPublicPresentation(){
+
+    module.renderModal(
+      "Mécénat — Entreprise et territoire",
+      getMecenatPublicPresentationHtml()
+    );
+
+    window.setTimeout(function(){
+      bindMecenatPublicPresentation();
+    },0);
+  }
+
+  module.registerScreen(
+    "mecenat",
+    openMecenatPublicPresentation
+  );
+
+  module.openMecenatPublicPresentation =
+    openMecenatPublicPresentation;
+
+  console.log(
+    "✅ Mécénat — partie 1 présentation publique chargée"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — MÉCÉNAT
+   PARTIE 2 — PROJETS VALIDÉS ET MANIFESTATIONS D’INTÉRÊT
+   ========================================================= */
+
+(function addBociteMecenatProjectsCatalogue(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  const PROJECTS_KEY =
+    "bociteart_mecenat_validated_projects_v2";
+
+  const INTERESTS_KEY =
+    "bociteart_mecenat_company_interests_v2";
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return module.safeEscape(value);
+  }
+
+  function getDefaultProjects(){
+    return [
+      {
+        id:"ART-VILLE-001",
+
+        title:
+          "Œuvres et parcours artistiques liés à la vie de la ville",
+
+        category:
+          "Création artistique",
+
+        promoter:
+          "Bo'CitéArt",
+
+        municipalStatus:
+          "valide",
+
+        companyStatus:
+          "ouvert",
+
+        location:
+          "Espaces proposés et validés avec la commune",
+
+        description:
+          "Création d’un ensemble d’œuvres révélant les habitants, les métiers, l’histoire, les quartiers et les activités de la ville.",
+
+        possibleWorks:[
+          "Œuvre murale peinte",
+          "Sculpture",
+          "Œuvre en bronze",
+          "Photographie",
+          "Création numérique",
+          "Tableaux d’artistes locaux",
+          "Installation artistique",
+          "Mobilier artistique"
+        ],
+
+        artists:
+          "Citoyens et artistes recherchés prioritairement dans la commune, puis autour et dans la région.",
+
+        rhythm:
+          "Préparation annuelle et renouvellement visuel possible tous les deux ans.",
+
+        fundingGoal:
+          "À définir selon les œuvres et les espaces",
+
+        visible:true
+      },
+
+      {
+        id:"SPORT-LOCAL-001",
+
+        title:
+          "Soutien à une action sportive locale",
+
+        category:
+          "Sport",
+
+        promoter:
+          "Mairie",
+
+        municipalStatus:
+          "valide",
+
+        companyStatus:
+          "ouvert",
+
+        location:
+          "Commune pilote",
+
+        description:
+          "Soutien à une action sportive, à un équipement ou à un projet porté dans un cadre local éligible.",
+
+        possibleWorks:[
+          "Équipement",
+          "Action éducative",
+          "Événement local",
+          "Projet d’inclusion"
+        ],
+
+        artists:"",
+        rhythm:
+          "Selon le calendrier du projet",
+
+        fundingGoal:
+          "À définir par le porteur du projet",
+
+        visible:true
+      },
+
+      {
+        id:"ECOLE-LOCAL-001",
+
+        title:
+          "Projet éducatif et culturel pour les écoles",
+
+        category:
+          "Éducation",
+
+        promoter:
+          "Mairie",
+
+        municipalStatus:
+          "adapte",
+
+        companyStatus:
+          "ouvert",
+
+        location:
+          "Écoles de la commune",
+
+        description:
+          "Soutien à une action pédagogique, culturelle ou artistique construite avec les établissements concernés.",
+
+        possibleWorks:[
+          "Atelier artistique",
+          "Projet pédagogique",
+          "Découverte des métiers",
+          "Création collective"
+        ],
+
+        artists:
+          "Intervenants et artistes locaux recherchés en priorité.",
+
+        rhythm:
+          "Selon le calendrier scolaire",
+
+        fundingGoal:
+          "À définir après validation définitive",
+
+        visible:true
+      },
+
+      {
+        id:"PATRIMOINE-LOCAL-001",
+
+        title:
+          "Mise en valeur du patrimoine et de l’histoire locale",
+
+        category:
+          "Patrimoine",
+
+        promoter:
+          "Bo'CitéArt et mairie",
+
+        municipalStatus:
+          "en_etude",
+
+        companyStatus:
+          "ferme",
+
+        location:
+          "Lieu à confirmer",
+
+        description:
+          "Projet destiné à raconter un élément du patrimoine, une activité ancienne, un métier ou une évolution importante de la ville.",
+
+        possibleWorks:[
+          "Parcours historique",
+          "Photographie",
+          "Œuvre sculptée",
+          "Création graphique",
+          "Installation extérieure"
+        ],
+
+        artists:
+          "Sélection après validation du thème et du lieu.",
+
+        rhythm:
+          "Projet en préparation",
+
+        fundingGoal:
+          "Non ouvert au mécénat pour le moment",
+
+        visible:false
+      }
+    ];
+  }
+
+  function loadProjects(){
+    try{
+      const raw =
+        localStorage.getItem(PROJECTS_KEY);
+
+      const parsed =
+        raw ? JSON.parse(raw) : null;
+
+      if(Array.isArray(parsed)){
+        return parsed;
+      }
+    }catch(error){
+      console.warn(
+        "Lecture des projets mécénat impossible :",
+        error
+      );
+    }
+
+    const defaults =
+      getDefaultProjects();
+
+    try{
+      localStorage.setItem(
+        PROJECTS_KEY,
+        JSON.stringify(defaults)
+      );
+    }catch(error){}
+
+    return defaults;
+  }
+
+  function saveProjects(projects){
+    try{
+      localStorage.setItem(
+        PROJECTS_KEY,
+        JSON.stringify(projects || [])
+      );
+    }catch(error){
+      console.warn(
+        "Enregistrement des projets mécénat impossible :",
+        error
+      );
+    }
+  }
+
+  function loadInterests(){
+    try{
+      const raw =
+        localStorage.getItem(INTERESTS_KEY);
+
+      const parsed =
+        raw ? JSON.parse(raw) : [];
+
+      return Array.isArray(parsed)
+        ? parsed
+        : [];
+    }catch(error){
+      return [];
+    }
+  }
+
+  function saveInterests(interests){
+    try{
+      localStorage.setItem(
+        INTERESTS_KEY,
+        JSON.stringify(interests || [])
+      );
+    }catch(error){
+      console.warn(
+        "Enregistrement de l’intérêt mécénat impossible :",
+        error
+      );
+    }
+  }
+
+  function getMunicipalStatusLabel(status){
+    const labels = {
+      propose:
+        "Thème proposé à la mairie",
+
+      en_etude:
+        "En cours d’étude par la mairie",
+
+      adaptation_demandee:
+        "Adaptation demandée",
+
+      adapte:
+        "Projet adapté avec la mairie",
+
+      valide:
+        "Projet validé par la mairie",
+
+      refuse:
+        "Projet refusé"
+    };
+
+    return labels[status] || status;
+  }
+
+  function getVisibleProjects(){
+    return loadProjects().filter(function(project){
+      return (
+        project.visible === true &&
+        project.companyStatus === "ouvert" &&
+        (
+          project.municipalStatus === "valide" ||
+          project.municipalStatus === "adapte"
+        )
+      );
+    });
+  }
+
+  function hasCompanyInterest(projectId){
+    return loadInterests().some(function(item){
+      return item.projectId === projectId;
+    });
+  }
+
+  function getProjectsHtml(){
+    const projects =
+      getVisibleProjects();
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.5;
+        ">
+
+        <strong style="font-size:19px;">
+          Projets ouverts aux entreprises
+        </strong>
+
+        <br><br>
+
+        L’entreprise ne voit ici que les projets
+        validés, adaptés avec la mairie
+        ou officiellement ouverts
+        à une manifestation d’intérêt.
+
+        <br><br>
+
+        Les thèmes encore en préparation,
+        en discussion ou refusés
+        ne sont pas présentés aux entreprises.
+      </div>
+
+      <div
+        class="box"
+        style="line-height:1.5;">
+
+        <strong>
+          Comment fonctionne la sélection ?
+        </strong>
+
+        <br><br>
+
+        1. Bo'CitéArt prépare un thème
+        lié à la vie du territoire.
+
+        <br><br>
+
+        2. Le projet est présenté à la mairie.
+
+        <br><br>
+
+        3. La mairie peut le valider,
+        demander une adaptation ou le refuser.
+
+        <br><br>
+
+        4. Après validation,
+        le projet peut être présenté
+        aux entreprises intéressées.
+
+        <br><br>
+
+        5. L’intérêt d’une entreprise reste privé
+        jusqu’à la conclusion d’un accord.
+      </div>
+
+      <div
+        id="mecenatValidatedProjectList"
+        style="margin-top:12px;">
+
+        ${
+          projects.length
+            ? projects.map(function(project){
+
+                const interested =
+                  hasCompanyInterest(project.id);
+
+                return `
+                  <div
+                    class="box"
+                    style="
+                      margin-top:10px;
+                      border-left:6px solid #2f5d46;
+                    ">
+
+                    <strong style="font-size:18px;">
+                      ${escapeValue(project.title)}
+                    </strong>
+
+                    <br><br>
+
+                    Catégorie :
+
+                    <strong>
+                      ${escapeValue(project.category)}
+                    </strong>
+
+                    <br><br>
+
+                    Présenté par :
+
+                    <strong>
+                      ${escapeValue(project.promoter)}
+                    </strong>
+
+                    <br><br>
+
+                    État municipal :
+
+                    <strong>
+                      ${escapeValue(
+                        getMunicipalStatusLabel(
+                          project.municipalStatus
+                        )
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Lieu ou territoire :
+
+                    <strong>
+                      ${escapeValue(project.location)}
+                    </strong>
+
+                    <br><br>
+
+                    ${escapeValue(project.description)}
+
+                    ${
+                      Array.isArray(project.possibleWorks) &&
+                      project.possibleWorks.length
+                        ? `
+                          <br><br>
+
+                          <strong>
+                            Exemples de réalisations possibles
+                          </strong>
+
+                          <br><br>
+
+                          ${project.possibleWorks
+                            .map(function(item){
+                              return (
+                                "• " +
+                                escapeValue(item)
+                              );
+                            })
+                            .join("<br>")}
+                        `
+                        : ""
+                    }
+
+                    ${
+                      project.artists
+                        ? `
+                          <br><br>
+
+                          <strong>
+                            Artistes et intervenants
+                          </strong>
+
+                          <br><br>
+
+                          ${escapeValue(project.artists)}
+                        `
+                        : ""
+                    }
+
+                    <br><br>
+
+                    Rythme ou calendrier :
+
+                    <strong>
+                      ${escapeValue(project.rhythm)}
+                    </strong>
+
+                    <br><br>
+
+                    Besoin de financement :
+
+                    <strong>
+                      ${escapeValue(project.fundingGoal)}
+                    </strong>
+
+                    <button
+                      class="choiceBtn mecenatProjectInterestBtn"
+                      type="button"
+                      data-mecenat-project-id="${escapeValue(project.id)}"
+                      style="
+                        width:100%;
+                        margin-top:12px;
+                        ${interested ? "opacity:.65;" : ""}
+                      ">
+
+                      ${
+                        interested
+                          ? "Intérêt privé déjà enregistré"
+                          : "Ce projet peut m’intéresser"
+                      }
+                    </button>
+
+                    <button
+                      class="choiceBtn mecenatProjectPrivateBtn"
+                      type="button"
+                      data-mecenat-project-id="${escapeValue(project.id)}"
+                      style="
+                        width:100%;
+                        margin-top:8px;
+                        background:#fff;
+                      ">
+                      Étudier ce projet dans mon espace privé
+                    </button>
+                  </div>
+                `;
+              }).join("")
+            : `
+              <div class="box">
+                Aucun projet n’est actuellement ouvert
+                à une manifestation d’intérêt.
+              </div>
+            `
+        }
+      </div>
+
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          border-left:6px solid #b00020;
+        ">
+
+        <strong>
+          Confidentialité
+        </strong>
+
+        <br><br>
+
+        Le fait de cliquer sur un projet
+        n’est pas rendu public.
+
+        <br><br>
+
+        La mairie, les habitants
+        et les autres entreprises
+        ne voient ni votre intérêt,
+        ni vos notes,
+        ni le montant envisagé.
+
+        <br><br>
+
+        Un engagement ne devient effectif
+        qu’après validation contractuelle.
+      </div>
+    `;
+  }
+
+  function registerProjectInterest(projectId){
+    const project =
+      getVisibleProjects().find(function(item){
+        return item.id === projectId;
+      });
+
+    if(!project){
+      alert(
+        "Ce projet n’est plus ouvert aux entreprises."
+      );
+      return;
+    }
+
+    const interests =
+      loadInterests();
+
+    const existing =
+      interests.find(function(item){
+        return item.projectId === projectId;
+      });
+
+    if(existing){
+      alert(
+        "Votre intérêt privé est déjà enregistré pour ce projet."
+      );
+      return;
+    }
+
+    interests.push({
+      id:
+        "MEC-INT-" +
+        Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .slice(2,7),
+
+      projectId:project.id,
+      projectTitle:project.title,
+
+      status:
+        "interet_prive_enregistre",
+
+      private:true,
+
+      contractSigned:false,
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date().toLocaleString("fr-FR")
+    });
+
+    saveInterests(interests);
+
+    alert(
+      "Votre intérêt privé est enregistré.\n\n" +
+      "Cela ne constitue ni un engagement financier " +
+      "ni un accord contractuel.\n\n" +
+      "Vous pouvez maintenant étudier ce projet " +
+      "dans votre espace mécénat privé."
+    );
+
+    openProjectsCatalogue();
+  }
+
+  function openProjectPrivateSpace(projectId){
+    registerProjectInterestSilently(projectId);
+
+    if(
+      typeof module.openMecenatPrivateSpace ===
+      "function"
+    ){
+      module.openMecenatPrivateSpace(projectId);
+      return;
+    }
+
+    alert(
+      "L’espace mécénat privé est momentanément indisponible."
+    );
+  }
+
+  function registerProjectInterestSilently(projectId){
+    const project =
+      getVisibleProjects().find(function(item){
+        return item.id === projectId;
+      });
+
+    if(!project){
+      return;
+    }
+
+    const interests =
+      loadInterests();
+
+    if(
+      interests.some(function(item){
+        return item.projectId === projectId;
+      })
+    ){
+      return;
+    }
+
+    interests.push({
+      id:
+        "MEC-INT-" +
+        Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .slice(2,7),
+
+      projectId:project.id,
+      projectTitle:project.title,
+
+      status:
+        "etude_privee",
+
+      private:true,
+
+      contractSigned:false,
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date().toLocaleString("fr-FR")
+    });
+
+    saveInterests(interests);
+  }
+
+  function bindProjectsCatalogue(){
+    document
+      .querySelectorAll(
+        ".mecenatProjectInterestBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+          registerProjectInterest(
+            button.getAttribute(
+              "data-mecenat-project-id"
+            )
+          );
+        };
+      });
+
+    document
+      .querySelectorAll(
+        ".mecenatProjectPrivateBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+          openProjectPrivateSpace(
+            button.getAttribute(
+              "data-mecenat-project-id"
+            )
+          );
+        };
+      });
+  }
+
+  function openProjectsCatalogue(){
+    module.renderModal(
+      "Projets ouverts au mécénat",
+      getProjectsHtml()
+    );
+
+    window.setTimeout(function(){
+      bindProjectsCatalogue();
+    },0);
+  }
+
+  module.openMecenatProjectsCatalogue =
+    openProjectsCatalogue;
+
+  module.loadMecenatValidatedProjects =
+    loadProjects;
+
+  module.saveMecenatValidatedProjects =
+    saveProjects;
+
+  module.loadMecenatCompanyInterests =
+    loadInterests;
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const button =
+        event.target &&
+        typeof event.target.closest === "function"
+          ? event.target.closest(
+              "#mecenatPublicDiscoverProjectsBtn"
+            )
+          : null;
+
+      if(!button){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+        "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+
+      openProjectsCatalogue();
+    },
+    true
+  );
+
+  console.log(
+    "✅ Mécénat — partie 2 projets validés chargée"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — MÉCÉNAT
+   PARTIE 3 — PROJETS PROPOSÉS PAR LES ENTREPRISES
+   ========================================================= */
+
+(function addBociteMecenatCompanyProjects(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  const COMPANY_PROJECTS_KEY =
+    "bociteart_mecenat_company_projects_v1";
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return module.safeEscape(value);
+  }
+
+  function loadCompanyProjects(){
+    try{
+      const raw =
+        localStorage.getItem(
+          COMPANY_PROJECTS_KEY
+        );
+
+      const parsed =
+        raw ? JSON.parse(raw) : [];
+
+      return Array.isArray(parsed)
+        ? parsed
+        : [];
+    }catch(error){
+      console.warn(
+        "Lecture des projets proposés par les entreprises impossible :",
+        error
+      );
+
+      return [];
+    }
+  }
+
+  function saveCompanyProjects(projects){
+    try{
+      localStorage.setItem(
+        COMPANY_PROJECTS_KEY,
+        JSON.stringify(projects || [])
+      );
+    }catch(error){
+      console.warn(
+        "Enregistrement du projet impossible :",
+        error
+      );
+    }
+  }
+
+  function getCompanyProjectHtml(){
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.5;
+        ">
+
+        <strong style="font-size:19px;">
+          Proposer l’accueil d’une œuvre
+          ou d’un projet artistique sur votre site
+        </strong>
+
+        <br><br>
+
+        Une entreprise peut proposer
+        un espace situé sur son siège,
+        son terrain, son atelier,
+        ses bureaux ou son entrepôt.
+
+        <br><br>
+
+        Il ne s’agit pas de choisir seul
+        une œuvre ou un artiste.
+
+        <br><br>
+
+        Bo'CitéArt prépare d’abord
+        une proposition artistique cohérente
+        avec la ville, ses habitants,
+        ses métiers, son patrimoine
+        et les caractéristiques du lieu.
+      </div>
+
+      <div class="box" style="line-height:1.5;">
+
+        <strong>
+          Exemples de projets possibles
+        </strong>
+
+        <br><br>
+
+        • œuvre murale peinte ;<br>
+        • sculpture ;<br>
+        • œuvre en bronze ;<br>
+        • installation artistique ;<br>
+        • exposition photographique ;<br>
+        • tableau ou série de tableaux ;<br>
+        • création numérique ;<br>
+        • mobilier artistique ;<br>
+        • présentation d’un véhicule ancien
+          ou exceptionnel ;<br>
+        • œuvre consacrée à l’histoire
+          ou aux métiers de la ville.
+
+        <br><br>
+
+        Cette liste n’est pas limitative.
+
+        <br><br>
+
+        Le projet doit cependant conserver
+        un lien réel avec le territoire
+        et présenter un intérêt artistique,
+        culturel ou citoyen.
+      </div>
+
+      <div class="box" style="line-height:1.5;">
+
+        <strong>
+          Le rôle de Bo'CitéArt
+        </strong>
+
+        <br><br>
+
+        Bo'CitéArt organise automatiquement
+        les premières étapes :
+
+        <br><br>
+
+        1. enregistrement confidentiel
+        de l’intérêt de l’entreprise ;<br><br>
+
+        2. analyse de l’espace proposé ;<br><br>
+
+        3. préparation d’un thème
+        ou d’une orientation artistique ;<br><br>
+
+        4. présentation du thème à la mairie ;<br><br>
+
+        5. adaptation éventuelle
+        après échange avec la commune ;<br><br>
+
+        6. recherche d’artistes
+        en priorité dans la ville,
+        puis autour et dans la région ;<br><br>
+
+        7. préparation du projet,
+        du budget et du contrat.
+
+        <br><br>
+
+        L’entreprise reste libre
+        de poursuivre ou non
+        tant qu’aucun contrat n’est signé.
+      </div>
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid #b00020;
+          line-height:1.5;
+        ">
+
+        <strong>
+          Cette demande reste confidentielle
+        </strong>
+
+        <br><br>
+
+        Le lieu proposé,
+        les dimensions,
+        les photographies,
+        le budget envisagé,
+        les notes et les échanges
+        restent dans l’espace professionnel privé.
+
+        <br><br>
+
+        Rien n’est rendu public
+        avant validation du projet
+        et accord de l’entreprise.
+      </div>
+
+      <label style="display:block;font-weight:900;">
+        Nom de l’entreprise
+      </label>
+
+      <input
+        id="companyMecenatProjectCompany"
+        class="miniField"
+        type="text"
+        placeholder="Nom de l’entreprise">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Commune du site proposé
+      </label>
+
+      <input
+        id="companyMecenatProjectCity"
+        class="miniField"
+        type="text"
+        placeholder="Exemple : Wattignies">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Type de lieu
+      </label>
+
+      <select
+        id="companyMecenatProjectPlaceType"
+        class="miniField">
+
+        <option value="">
+          Choisir
+        </option>
+
+        <option value="siege">
+          Siège de l’entreprise
+        </option>
+
+        <option value="entrepot">
+          Entrepôt
+        </option>
+
+        <option value="atelier">
+          Atelier
+        </option>
+
+        <option value="bureaux">
+          Bureaux
+        </option>
+
+        <option value="terrain">
+          Terrain ou espace extérieur
+        </option>
+
+        <option value="mur">
+          Mur ou pignon
+        </option>
+
+        <option value="hall">
+          Hall d’accueil
+        </option>
+
+        <option value="autre">
+          Autre espace
+        </option>
+      </select>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Décrivez l’espace proposé
+      </label>
+
+      <textarea
+        id="companyMecenatProjectPlaceDescription"
+        class="miniField"
+        style="min-height:110px;"
+        placeholder="Dimensions approximatives, visibilité, accès, état du support, contraintes éventuelles.">
+      </textarea>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Type de projet souhaité
+      </label>
+
+      <select
+        id="companyMecenatProjectArtType"
+        class="miniField">
+
+        <option value="">
+          Je souhaite être conseillé
+        </option>
+
+        <option value="oeuvre_murale">
+          Œuvre murale peinte
+        </option>
+
+        <option value="sculpture">
+          Sculpture
+        </option>
+
+        <option value="bronze">
+          Œuvre en bronze
+        </option>
+
+        <option value="photographie">
+          Photographie
+        </option>
+
+        <option value="tableaux">
+          Tableaux d’artistes locaux
+        </option>
+
+        <option value="installation">
+          Installation artistique
+        </option>
+
+        <option value="numerique">
+          Création numérique
+        </option>
+
+        <option value="vehicule">
+          Véhicule ancien ou exceptionnel
+        </option>
+
+        <option value="autre">
+          Autre projet artistique
+        </option>
+      </select>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Avez-vous une idée de thème ?
+      </label>
+
+      <textarea
+        id="companyMecenatProjectTheme"
+        class="miniField"
+        style="min-height:100px;"
+        placeholder="Exemple : histoire de l’entreprise, métiers de la ville, industrie locale, patrimoine, habitants, jeunesse.">
+      </textarea>
+
+      <div class="box" style="margin-top:12px;">
+
+        <strong>
+          Important
+        </strong>
+
+        <br><br>
+
+        L’idée exprimée par l’entreprise
+        constitue un point de départ.
+
+        <br><br>
+
+        Le thème définitif sera travaillé
+        avec Bo'CitéArt,
+        puis présenté à la mairie.
+
+        <br><br>
+
+        La commune pourra le valider,
+        demander une adaptation
+        ou proposer une évolution
+        avant sa validation définitive.
+      </div>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Budget indicatif envisagé
+      </label>
+
+      <select
+        id="companyMecenatProjectBudget"
+        class="miniField">
+
+        <option value="">
+          Je ne sais pas encore
+        </option>
+
+        <option value="moins_2500">
+          Moins de 2 500 € HT
+        </option>
+
+        <option value="2500_5000">
+          De 2 500 à 5 000 € HT
+        </option>
+
+        <option value="5000_10000">
+          De 5 000 à 10 000 € HT
+        </option>
+
+        <option value="10000_25000">
+          De 10 000 à 25 000 € HT
+        </option>
+
+        <option value="plus_25000">
+          Plus de 25 000 € HT
+        </option>
+      </select>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Échéance souhaitée
+      </label>
+
+      <input
+        id="companyMecenatProjectDeadline"
+        class="miniField"
+        type="date">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Notes confidentielles
+      </label>
+
+      <textarea
+        id="companyMecenatProjectNotes"
+        class="miniField"
+        style="min-height:100px;"
+        placeholder="Indiquez ici vos questions, conditions ou contraintes.">
+      </textarea>
+
+      <div class="box" style="margin-top:12px;">
+
+        <label class="miniCheck">
+          <input
+            id="companyMecenatProjectInterestCheck"
+            type="checkbox">
+
+          <span>
+            Je confirme être intéressé
+            par l’étude confidentielle
+            d’un projet sur le site de mon entreprise.
+          </span>
+        </label>
+
+        <label class="miniCheck">
+          <input
+            id="companyMecenatProjectNoCommitmentCheck"
+            type="checkbox">
+
+          <span>
+            Je comprends que cette demande
+            ne constitue pas encore
+            un engagement financier ou contractuel.
+          </span>
+        </label>
+      </div>
+
+      <button
+        id="companyMecenatProjectPreviewBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:12px;">
+        Prévisualiser ma proposition
+      </button>
+
+      <button
+        id="companyMecenatProjectSaveBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:8px;">
+        Enregistrer confidentiellement
+      </button>
+
+      <div
+        id="companyMecenatProjectStatus"
+        class="muted"
+        style="margin-top:10px;">
+      </div>
+
+      <div
+        style="
+          margin-top:18px;
+          font-size:18px;
+          font-weight:900;
+          color:#2f5d46;
+        ">
+        Mes projets proposés
+      </div>
+
+      <div
+        id="companyMecenatProjectList"
+        style="margin-top:10px;">
+      </div>
+    `;
+  }
+
+  function readCompanyProjectForm(){
+    return {
+      company:
+        String(
+          getElement("companyMecenatProjectCompany")
+            ? getElement("companyMecenatProjectCompany").value
+            : ""
+        ).trim(),
+
+      city:
+        String(
+          getElement("companyMecenatProjectCity")
+            ? getElement("companyMecenatProjectCity").value
+            : ""
+        ).trim(),
+
+      placeType:
+        String(
+          getElement("companyMecenatProjectPlaceType")
+            ? getElement("companyMecenatProjectPlaceType").value
+            : ""
+        ).trim(),
+
+      placeDescription:
+        String(
+          getElement("companyMecenatProjectPlaceDescription")
+            ? getElement("companyMecenatProjectPlaceDescription").value
+            : ""
+        ).trim(),
+
+      artType:
+        String(
+          getElement("companyMecenatProjectArtType")
+            ? getElement("companyMecenatProjectArtType").value
+            : ""
+        ).trim(),
+
+      theme:
+        String(
+          getElement("companyMecenatProjectTheme")
+            ? getElement("companyMecenatProjectTheme").value
+            : ""
+        ).trim(),
+
+      budget:
+        String(
+          getElement("companyMecenatProjectBudget")
+            ? getElement("companyMecenatProjectBudget").value
+            : ""
+        ).trim(),
+
+      deadline:
+        String(
+          getElement("companyMecenatProjectDeadline")
+            ? getElement("companyMecenatProjectDeadline").value
+            : ""
+        ).trim(),
+
+      notes:
+        String(
+          getElement("companyMecenatProjectNotes")
+            ? getElement("companyMecenatProjectNotes").value
+            : ""
+        ).trim(),
+
+      interestAccepted:
+        !!(
+          getElement("companyMecenatProjectInterestCheck") &&
+          getElement("companyMecenatProjectInterestCheck").checked
+        ),
+
+      noCommitmentAccepted:
+        !!(
+          getElement("companyMecenatProjectNoCommitmentCheck") &&
+          getElement("companyMecenatProjectNoCommitmentCheck").checked
+        )
+    };
+  }
+
+  function validateCompanyProject(data, requireChecks){
+    if(!data.company){
+      alert(
+        "Indiquez le nom de l’entreprise."
+      );
+      return false;
+    }
+
+    if(!data.city){
+      alert(
+        "Indiquez la commune du site proposé."
+      );
+      return false;
+    }
+
+    if(!data.placeType){
+      alert(
+        "Choisissez le type de lieu."
+      );
+      return false;
+    }
+
+    if(!data.placeDescription){
+      alert(
+        "Décrivez l’espace proposé."
+      );
+      return false;
+    }
+
+    if(
+      requireChecks &&
+      !data.interestAccepted
+    ){
+      alert(
+        "Confirmez votre intérêt pour l’étude du projet."
+      );
+      return false;
+    }
+
+    if(
+      requireChecks &&
+      !data.noCommitmentAccepted
+    ){
+      alert(
+        "Confirmez que vous avez compris " +
+        "que cette demande ne constitue pas encore un engagement."
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  function getPlaceTypeLabel(value){
+    const labels = {
+      siege:"Siège de l’entreprise",
+      entrepot:"Entrepôt",
+      atelier:"Atelier",
+      bureaux:"Bureaux",
+      terrain:"Terrain ou espace extérieur",
+      mur:"Mur ou pignon",
+      hall:"Hall d’accueil",
+      autre:"Autre espace"
+    };
+
+    return labels[value] || value;
+  }
+
+  function getArtTypeLabel(value){
+    const labels = {
+      oeuvre_murale:"Œuvre murale peinte",
+      sculpture:"Sculpture",
+      bronze:"Œuvre en bronze",
+      photographie:"Photographie",
+      tableaux:"Tableaux d’artistes locaux",
+      installation:"Installation artistique",
+      numerique:"Création numérique",
+      vehicule:"Véhicule ancien ou exceptionnel",
+      autre:"Autre projet artistique"
+    };
+
+    return labels[value] ||
+      "Projet à définir avec Bo'CitéArt";
+  }
+
+  function getBudgetLabel(value){
+    const labels = {
+      moins_2500:"Moins de 2 500 € HT",
+      "2500_5000":"De 2 500 à 5 000 € HT",
+      "5000_10000":"De 5 000 à 10 000 € HT",
+      "10000_25000":"De 10 000 à 25 000 € HT",
+      plus_25000:"Plus de 25 000 € HT"
+    };
+
+    return labels[value] ||
+      "Budget non défini";
+  }
+
+  function previewCompanyProject(){
+    const data =
+      readCompanyProjectForm();
+
+    if(!validateCompanyProject(data, false)){
+      return;
+    }
+
+    module.renderModal(
+      "Prévisualisation privée du projet",
+      `
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            ${escapeValue(data.company)}
+          </strong>
+
+          <br><br>
+
+          Projet proposé à :
+
+          <strong>
+            ${escapeValue(data.city)}
+          </strong>
+        </div>
+
+        <div class="box">
+          <strong>Lieu proposé</strong><br><br>
+
+          ${escapeValue(
+            getPlaceTypeLabel(
+              data.placeType
+            )
+          )}
+
+          <br><br>
+
+          ${escapeValue(
+            data.placeDescription
+          )}
+        </div>
+
+        <div class="box">
+          <strong>Orientation artistique</strong><br><br>
+
+          ${escapeValue(
+            getArtTypeLabel(
+              data.artType
+            )
+          )}
+
+          <br><br>
+
+          Thème proposé :
+
+          <br><br>
+
+          ${escapeValue(
+            data.theme ||
+            "À définir avec Bo'CitéArt"
+          )}
+        </div>
+
+        <div class="box">
+          <strong>Budget indicatif</strong><br><br>
+
+          ${escapeValue(
+            getBudgetLabel(
+              data.budget
+            )
+          )}
+        </div>
+
+        <div class="box">
+          <strong>Échéance souhaitée</strong><br><br>
+
+          ${escapeValue(
+            data.deadline ||
+            "Non renseignée"
+          )}
+        </div>
+
+        <div class="box">
+          <strong>Notes confidentielles</strong><br><br>
+
+          ${escapeValue(
+            data.notes ||
+            "Aucune note"
+          )}
+        </div>
+
+        <div
+          class="box"
+          style="border-left:6px solid #b00020;">
+
+          Cette prévisualisation reste privée.
+
+          <br><br>
+
+          Le projet n’est pas transmis
+          à la mairie et n’est pas publié
+          tant que vous ne l’avez pas enregistré.
+        </div>
+      `
+    );
+  }
+
+  function saveCompanyProject(){
+    const data =
+      readCompanyProjectForm();
+
+    if(!validateCompanyProject(data, true)){
+      return;
+    }
+
+    const projects =
+      loadCompanyProjects();
+
+    const project = {
+      id:
+        "MEC-ENT-" +
+        Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .slice(2,7),
+
+      company:data.company,
+      city:data.city,
+      placeType:data.placeType,
+      placeDescription:data.placeDescription,
+      artType:data.artType,
+      theme:data.theme,
+      budget:data.budget,
+      deadline:data.deadline,
+      notes:data.notes,
+
+      private:true,
+
+      status:
+        "demande_confidentielle_enregistree",
+
+      municipalStatus:
+        "non_transmis",
+
+      artisticStatus:
+        "a_etudier",
+
+      contractStatus:
+        "aucun_engagement",
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date().toLocaleString("fr-FR"),
+
+      updatedAt:
+        Date.now(),
+
+      updatedAtFr:
+        new Date().toLocaleString("fr-FR")
+    };
+
+    projects.unshift(project);
+
+    saveCompanyProjects(projects);
+
+    const status =
+      getElement("companyMecenatProjectStatus");
+
+    if(status){
+      status.innerHTML = `
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong>
+            Votre proposition privée est enregistrée
+          </strong>
+
+          <br><br>
+
+          Référence :
+
+          <strong>
+            ${escapeValue(project.id)}
+          </strong>
+
+          <br><br>
+
+          Statut :
+
+          <strong>
+            À étudier par le processus Bo'CitéArt
+          </strong>
+
+          <br><br>
+
+          Aucun engagement financier
+          ou contractuel n’est encore créé.
+        </div>
+      `;
+    }
+
+    renderCompanyProjects();
+
+    alert(
+      "Votre proposition a été enregistrée confidentiellement.\n\n" +
+      "Elle devra ensuite être étudiée, structurée " +
+      "et présentée à la mairie avant toute validation."
+    );
+  }
+
+  function deleteCompanyProject(projectId){
+    const projects =
+      loadCompanyProjects();
+
+    const project =
+      projects.find(function(item){
+        return item.id === projectId;
+      });
+
+    if(!project){
+      alert(
+        "Projet introuvable."
+      );
+      return;
+    }
+
+    if(
+      project.contractStatus ===
+      "contrat_signe"
+    ){
+      alert(
+        "Ce projet ne peut plus être supprimé " +
+        "car un contrat est déjà signé."
+      );
+      return;
+    }
+
+    const confirmation =
+      confirm(
+        "Supprimer cette proposition privée ?\n\n" +
+        "Cette suppression est définitive."
+      );
+
+    if(!confirmation){
+      return;
+    }
+
+    const updated =
+      projects.filter(function(item){
+        return item.id !== projectId;
+      });
+
+    saveCompanyProjects(updated);
+
+    renderCompanyProjects();
+  }
+
+  function renderCompanyProjects(){
+    const host =
+      getElement("companyMecenatProjectList");
+
+    if(!host){
+      return;
+    }
+
+    const projects =
+      loadCompanyProjects();
+
+    if(!projects.length){
+      host.innerHTML = `
+        <div class="box">
+          Aucun projet proposé par votre entreprise.
+        </div>
+      `;
+
+      return;
+    }
+
+    host.innerHTML =
+      projects.map(function(project){
+
+        return `
+          <div
+            class="box"
+            style="
+              margin-top:8px;
+              border-left:6px solid #2f5d46;
+            ">
+
+            <strong style="font-size:17px;">
+              ${escapeValue(
+                getArtTypeLabel(
+                  project.artType
+                )
+              )}
+            </strong>
+
+            <br><br>
+
+            Commune :
+
+            <strong>
+              ${escapeValue(project.city)}
+            </strong>
+
+            <br><br>
+
+            Lieu :
+
+            <strong>
+              ${escapeValue(
+                getPlaceTypeLabel(
+                  project.placeType
+                )
+              )}
+            </strong>
+
+            <br><br>
+
+            Thème :
+
+            ${escapeValue(
+              project.theme ||
+              "À définir avec Bo'CitéArt"
+            )}
+
+            <br><br>
+
+            Budget :
+
+            <strong>
+              ${escapeValue(
+                getBudgetLabel(
+                  project.budget
+                )
+              )}
+            </strong>
+
+            <br><br>
+
+            Statut :
+
+            <strong>
+              Proposition privée enregistrée
+            </strong>
+
+            <br><br>
+
+            Mairie :
+
+            <strong>
+              Non transmise
+            </strong>
+
+            <br><br>
+
+            Contrat :
+
+            <strong>
+              Aucun engagement
+            </strong>
+
+            <button
+              class="choiceBtn companyMecenatDeleteBtn"
+              type="button"
+              data-company-mecenat-project-id="${escapeValue(project.id)}"
+              style="
+                width:100%;
+                margin-top:10px;
+                background:#fff;
+              ">
+              Supprimer cette proposition
+            </button>
+          </div>
+        `;
+      }).join("");
+
+    host
+      .querySelectorAll(
+        ".companyMecenatDeleteBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+          deleteCompanyProject(
+            button.getAttribute(
+              "data-company-mecenat-project-id"
+            )
+          );
+        };
+      });
+  }
+
+  function bindCompanyProjectForm(){
+    const previewButton =
+      getElement(
+        "companyMecenatProjectPreviewBtn"
+      );
+
+    const saveButton =
+      getElement(
+        "companyMecenatProjectSaveBtn"
+      );
+
+    if(previewButton){
+      previewButton.onclick =
+        previewCompanyProject;
+    }
+
+    if(saveButton){
+      saveButton.onclick =
+        saveCompanyProject;
+    }
+
+    renderCompanyProjects();
+  }
+
+  function openCompanyProjectProposal(){
+    module.renderModal(
+      "Proposer un projet sur le site de l’entreprise",
+      getCompanyProjectHtml()
+    );
+
+    window.setTimeout(function(){
+      bindCompanyProjectForm();
+    },0);
+  }
+
+  module.openMecenatCompanyProjectProposal =
+    openCompanyProjectProposal;
+
+  module.loadMecenatCompanyProjects =
+    loadCompanyProjects;
+
+  module.saveMecenatCompanyProjects =
+    saveCompanyProjects;
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const button =
+        event.target &&
+        typeof event.target.closest === "function"
+          ? event.target.closest(
+              "#mecenatPublicInterestedBtn"
+            )
+          : null;
+
+      if(!button){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+        "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+
+      openCompanyProjectProposal();
+    },
+    true
+  );
+
+  console.log(
+    "✅ Mécénat — partie 3 projets entreprise chargée"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — MÉCÉNAT
+   PARTIE 4 — ESPACE PRIVÉ ET SUIVI AUTOMATISÉ
+   ========================================================= */
+
+(function addBociteMecenatPrivateDashboard(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  const INTERESTS_KEY =
+    "bociteart_mecenat_company_interests_v2";
+
+  const COMPANY_PROJECTS_KEY =
+    "bociteart_mecenat_company_projects_v1";
+
+  const PRIVATE_DECISIONS_KEY =
+    "bociteart_mecenat_private_decisions_v1";
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return module.safeEscape(value);
+  }
+
+  function loadArray(key){
+    try{
+      const raw =
+        localStorage.getItem(key);
+
+      const parsed =
+        raw ? JSON.parse(raw) : [];
+
+      return Array.isArray(parsed)
+        ? parsed
+        : [];
+    }catch(error){
+      return [];
+    }
+  }
+
+  function saveArray(key, list){
+    try{
+      localStorage.setItem(
+        key,
+        JSON.stringify(list || [])
+      );
+    }catch(error){
+      console.warn(
+        "Enregistrement mécénat impossible :",
+        error
+      );
+    }
+  }
+
+  function loadInterests(){
+    return loadArray(INTERESTS_KEY);
+  }
+
+  function loadCompanyProjects(){
+    return loadArray(COMPANY_PROJECTS_KEY);
+  }
+
+  function loadDecisions(){
+    return loadArray(PRIVATE_DECISIONS_KEY);
+  }
+
+  function saveDecisions(list){
+    saveArray(
+      PRIVATE_DECISIONS_KEY,
+      list
+    );
+  }
+
+  function getInterestStatusLabel(status){
+    const labels = {
+      interet_prive_enregistre:
+        "Intérêt privé enregistré",
+
+      etude_privee:
+        "Projet en étude privée",
+
+      informations_a_completer:
+        "Informations à compléter",
+
+      pret_pour_validation:
+        "Prêt pour validation",
+
+      accord_de_principe:
+        "Accord de principe enregistré",
+
+      contrat_a_preparer:
+        "Contrat à préparer",
+
+      contrat_signe:
+        "Contrat signé",
+
+      abandonne:
+        "Projet abandonné"
+    };
+
+    return labels[status] || status;
+  }
+
+  function getCompanyProjectStatusLabel(status){
+    const labels = {
+      demande_confidentielle_enregistree:
+        "Demande confidentielle enregistrée",
+
+      analyse_automatique:
+        "Analyse automatique en cours",
+
+      informations_a_completer:
+        "Informations à compléter",
+
+      theme_a_preparer:
+        "Thème à préparer",
+
+      mairie_a_consulter:
+        "Projet à présenter à la mairie",
+
+      adaptation_demandee:
+        "Adaptation demandée",
+
+      valide_par_mairie:
+        "Validé par la mairie",
+
+      contrat_a_preparer:
+        "Contrat à préparer",
+
+      contrat_signe:
+        "Contrat signé",
+
+      abandonne:
+        "Projet abandonné"
+    };
+
+    return labels[status] || status;
+  }
+
+  function getPrivateDashboardHtml(){
+    const interests =
+      loadInterests();
+
+    const companyProjects =
+      loadCompanyProjects();
+
+    const decisions =
+      loadDecisions();
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.5;
+        ">
+
+        <strong style="font-size:19px;">
+          Mon espace mécénat privé
+        </strong>
+
+        <br><br>
+
+        Cet espace est réservé
+        au compte professionnel de l’entreprise.
+
+        <br><br>
+
+        Les projets étudiés,
+        les montants envisagés,
+        les notes,
+        les décisions
+        et les documents préparatoires
+        restent confidentiels.
+
+        <br><br>
+
+        Ils ne sont pas visibles
+        par les habitants,
+        les autres entreprises
+        ou le public.
+      </div>
+
+      <div class="box">
+
+        <strong>
+          Fonctionnement automatisé
+        </strong>
+
+        <br><br>
+
+        L’application suit automatiquement
+        les différentes étapes :
+
+        <br><br>
+
+        1. intérêt enregistré ;<br>
+        2. informations à compléter ;<br>
+        3. étude privée ;<br>
+        4. thème ou projet préparé ;<br>
+        5. validation municipale si nécessaire ;<br>
+        6. accord de principe de l’entreprise ;<br>
+        7. préparation du contrat ;<br>
+        8. signature ;<br>
+        9. suivi du projet.
+
+        <br><br>
+
+        Bo'CitéArt n’intervient directement
+        que lorsqu’une validation artistique,
+        municipale ou contractuelle est nécessaire.
+      </div>
+
+      <div
+        style="
+          display:grid;
+          grid-template-columns:repeat(2,minmax(0,1fr));
+          gap:10px;
+          margin-top:12px;
+        ">
+
+        <div class="box">
+          <strong style="font-size:21px;">
+            ${interests.length}
+          </strong>
+
+          <br>
+
+          Projet(s) étudié(s)
+        </div>
+
+        <div class="box">
+          <strong style="font-size:21px;">
+            ${companyProjects.length}
+          </strong>
+
+          <br>
+
+          Projet(s) proposé(s)
+        </div>
+
+        <div class="box">
+          <strong style="font-size:21px;">
+            ${
+              decisions.filter(function(item){
+                return item.status === "accord_de_principe";
+              }).length
+            }
+          </strong>
+
+          <br>
+
+          Accord(s) de principe
+        </div>
+
+        <div class="box">
+          <strong style="font-size:21px;">
+            ${
+              decisions.filter(function(item){
+                return item.contractSigned === true;
+              }).length
+            }
+          </strong>
+
+          <br>
+
+          Contrat(s) signé(s)
+        </div>
+      </div>
+
+      <div
+        style="
+          margin-top:18px;
+          font-size:18px;
+          font-weight:900;
+          color:#2f5d46;
+        ">
+        Projets proposés par la mairie ou Bo'CitéArt
+      </div>
+
+      <div
+        id="privateMecenatInterestList"
+        style="margin-top:10px;">
+
+        ${
+          interests.length
+            ? interests.map(function(item){
+
+                const decision =
+                  decisions.find(function(entry){
+                    return entry.sourceId === item.projectId;
+                  });
+
+                return `
+                  <div
+                    class="box"
+                    style="border-left:6px solid #2f5d46;">
+
+                    <strong style="font-size:17px;">
+                      ${escapeValue(item.projectTitle)}
+                    </strong>
+
+                    <br><br>
+
+                    Statut :
+
+                    <strong>
+                      ${escapeValue(
+                        getInterestStatusLabel(
+                          decision
+                            ? decision.status
+                            : item.status
+                        )
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Enregistré le :
+
+                    ${escapeValue(
+                      item.createdAtFr || ""
+                    )}
+
+                    <button
+                      class="choiceBtn privateMecenatStudyBtn"
+                      type="button"
+                      data-private-project-id="${escapeValue(item.projectId)}"
+                      data-private-project-title="${escapeValue(item.projectTitle)}"
+                      style="width:100%;margin-top:10px;">
+                      Étudier ce projet
+                    </button>
+                  </div>
+                `;
+              }).join("")
+            : `
+              <div class="box">
+                Aucun projet public
+                n’est actuellement étudié.
+              </div>
+            `
+        }
+      </div>
+
+      <div
+        style="
+          margin-top:18px;
+          font-size:18px;
+          font-weight:900;
+          color:#2f5d46;
+        ">
+        Projets proposés sur le site de l’entreprise
+      </div>
+
+      <div
+        id="privateMecenatCompanyProjectList"
+        style="margin-top:10px;">
+
+        ${
+          companyProjects.length
+            ? companyProjects.map(function(project){
+
+                return `
+                  <div
+                    class="box"
+                    style="border-left:6px solid #2f5d46;">
+
+                    <strong style="font-size:17px;">
+                      ${escapeValue(
+                        project.theme ||
+                        "Projet artistique à définir"
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Commune :
+
+                    <strong>
+                      ${escapeValue(project.city)}
+                    </strong>
+
+                    <br><br>
+
+                    Statut :
+
+                    <strong>
+                      ${escapeValue(
+                        getCompanyProjectStatusLabel(
+                          project.status
+                        )
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Mairie :
+
+                    <strong>
+                      ${escapeValue(
+                        project.municipalStatus === "non_transmis"
+                          ? "Non transmis"
+                          : project.municipalStatus
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Contrat :
+
+                    <strong>
+                      ${escapeValue(
+                        project.contractStatus === "aucun_engagement"
+                          ? "Aucun engagement"
+                          : project.contractStatus
+                      )}
+                    </strong>
+
+                    <button
+                      class="choiceBtn privateMecenatCompanyOpenBtn"
+                      type="button"
+                      data-company-project-id="${escapeValue(project.id)}"
+                      style="width:100%;margin-top:10px;">
+                      Consulter le suivi privé
+                    </button>
+                  </div>
+                `;
+              }).join("")
+            : `
+              <div class="box">
+                Aucun projet proposé
+                sur le site de l’entreprise.
+              </div>
+            `
+        }
+      </div>
+
+      <button
+        id="privateMecenatOpenProjectsBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:14px;">
+        Découvrir les projets ouverts
+      </button>
+
+      <button
+        id="privateMecenatNewCompanyProjectBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:8px;">
+        Proposer un projet sur mon site
+      </button>
+
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          border-left:6px solid #b00020;
+        ">
+
+        <strong>
+          Aucun engagement automatique
+        </strong>
+
+        <br><br>
+
+        L’enregistrement d’un intérêt,
+        d’un budget indicatif
+        ou d’une proposition
+        ne vaut pas signature.
+
+        <br><br>
+
+        L’entreprise reste libre
+        tant qu’elle n’a pas validé
+        son accord de principe,
+        puis signé le contrat définitif.
+      </div>
+    `;
+  }
+
+  function getPrivateStudyHtml(
+    projectId,
+    projectTitle
+  ){
+    const decisions =
+      loadDecisions();
+
+    const saved =
+      decisions.find(function(item){
+        return item.sourceId === projectId;
+      }) || {};
+
+    return `
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
+
+        <strong style="font-size:18px;">
+          ${escapeValue(projectTitle)}
+        </strong>
+
+        <br><br>
+
+        Étude strictement confidentielle.
+      </div>
+
+      <label style="display:block;font-weight:900;">
+        Montant envisagé
+      </label>
+
+      <input
+        id="privateMecenatAmount"
+        class="miniField"
+        type="number"
+        min="0"
+        step="1"
+        value="${escapeValue(saved.amount || "")}"
+        placeholder="Montant en euros">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Forme de contribution
+      </label>
+
+      <select
+        id="privateMecenatContributionType"
+        class="miniField">
+
+        <option value="">
+          Choisir
+        </option>
+
+        <option value="financier">
+          Contribution financière
+        </option>
+
+        <option value="competences">
+          Mécénat de compétences
+        </option>
+
+        <option value="materiel">
+          Matériel ou produits
+        </option>
+
+        <option value="mixte">
+          Contribution mixte
+        </option>
+      </select>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Questions ou conditions
+      </label>
+
+      <textarea
+        id="privateMecenatConditions"
+        class="miniField"
+        style="min-height:110px;"
+        placeholder="Indiquez ici vos questions, contraintes ou conditions.">${escapeValue(saved.conditions || "")}</textarea>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Notes internes
+      </label>
+
+      <textarea
+        id="privateMecenatNotes"
+        class="miniField"
+        style="min-height:100px;"
+        placeholder="Ces notes restent privées.">${escapeValue(saved.notes || "")}</textarea>
+
+      <div class="box" style="margin-top:12px;">
+
+        <label class="miniCheck">
+          <input
+            id="privateMecenatAccountantCheck"
+            type="checkbox"
+            ${saved.accountantChecked ? "checked" : ""}>
+
+          <span>
+            Je consulterai mon expert-comptable
+            avant tout engagement définitif.
+          </span>
+        </label>
+
+        <label class="miniCheck">
+          <input
+            id="privateMecenatPrincipleCheck"
+            type="checkbox"
+            ${saved.principleAccepted ? "checked" : ""}>
+
+          <span>
+            Je souhaite enregistrer
+            un accord de principe,
+            sans signature définitive à ce stade.
+          </span>
+        </label>
+      </div>
+
+      <button
+        id="privateMecenatSaveStudyBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:12px;">
+        Enregistrer mon étude privée
+      </button>
+
+      <button
+        id="privateMecenatAbandonBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+          background:#fff;
+        ">
+        Abandonner l’étude de ce projet
+      </button>
+
+      <div
+        id="privateMecenatStudyStatus"
+        class="muted"
+        style="margin-top:10px;">
+      </div>
+    `;
+  }
+
+  function restoreContributionType(projectId){
+    const decisions =
+      loadDecisions();
+
+    const saved =
+      decisions.find(function(item){
+        return item.sourceId === projectId;
+      });
+
+    const select =
+      getElement(
+        "privateMecenatContributionType"
+      );
+
+    if(
+      select &&
+      saved &&
+      saved.contributionType
+    ){
+      select.value =
+        saved.contributionType;
+    }
+  }
+
+  function savePrivateStudy(
+    projectId,
+    projectTitle
+  ){
+    const amount =
+      String(
+        getElement("privateMecenatAmount")
+          ? getElement("privateMecenatAmount").value
+          : ""
+      ).trim();
+
+    const contributionType =
+      String(
+        getElement("privateMecenatContributionType")
+          ? getElement("privateMecenatContributionType").value
+          : ""
+      ).trim();
+
+    const conditions =
+      String(
+        getElement("privateMecenatConditions")
+          ? getElement("privateMecenatConditions").value
+          : ""
+      ).trim();
+
+    const notes =
+      String(
+        getElement("privateMecenatNotes")
+          ? getElement("privateMecenatNotes").value
+          : ""
+      ).trim();
+
+    const accountantChecked =
+      !!(
+        getElement("privateMecenatAccountantCheck") &&
+        getElement("privateMecenatAccountantCheck").checked
+      );
+
+    const principleAccepted =
+      !!(
+        getElement("privateMecenatPrincipleCheck") &&
+        getElement("privateMecenatPrincipleCheck").checked
+      );
+
+    if(!contributionType){
+      alert(
+        "Choisissez une forme de contribution."
+      );
+      return;
+    }
+
+    if(
+      contributionType === "financier" &&
+      !amount
+    ){
+      alert(
+        "Indiquez le montant envisagé."
+      );
+      return;
+    }
+
+    const decisions =
+      loadDecisions();
+
+    const existingIndex =
+      decisions.findIndex(function(item){
+        return item.sourceId === projectId;
+      });
+
+    const decision = {
+      id:
+        existingIndex >= 0
+          ? decisions[existingIndex].id
+          : "MEC-DEC-" + Date.now(),
+
+      sourceId:projectId,
+      sourceTitle:projectTitle,
+      sourceType:"projet_ouvert",
+
+      amount:amount,
+      contributionType:contributionType,
+      conditions:conditions,
+      notes:notes,
+      accountantChecked:accountantChecked,
+      principleAccepted:principleAccepted,
+
+      status:
+        principleAccepted
+          ? "accord_de_principe"
+          : "etude_privee",
+
+      private:true,
+      contractSigned:false,
+
+      updatedAt:Date.now(),
+      updatedAtFr:
+        new Date().toLocaleString("fr-FR")
+    };
+
+    if(existingIndex >= 0){
+      decisions[existingIndex] =
+        decision;
+    }else{
+      decisions.unshift(
+        decision
+      );
+    }
+
+    saveDecisions(decisions);
+
+    const status =
+      getElement(
+        "privateMecenatStudyStatus"
+      );
+
+    if(status){
+      status.innerHTML = `
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong>
+            Étude privée enregistrée
+          </strong>
+
+          <br><br>
+
+          Statut :
+
+          <strong>
+            ${
+              principleAccepted
+                ? "Accord de principe"
+                : "Projet en étude privée"
+            }
+          </strong>
+
+          <br><br>
+
+          Aucun contrat n’est signé à ce stade.
+        </div>
+      `;
+    }
+
+    alert(
+      "Votre étude privée est enregistrée."
+    );
+  }
+
+  function abandonPrivateStudy(projectId){
+    const confirmation =
+      confirm(
+        "Abandonner l’étude de ce projet ?\n\n" +
+        "Votre décision restera enregistrée dans votre espace privé."
+      );
+
+    if(!confirmation){
+      return;
+    }
+
+    const decisions =
+      loadDecisions();
+
+    const existing =
+      decisions.find(function(item){
+        return item.sourceId === projectId;
+      });
+
+    if(existing){
+      existing.status =
+        "abandonne";
+
+      existing.principleAccepted =
+        false;
+
+      existing.contractSigned =
+        false;
+
+      existing.updatedAt =
+        Date.now();
+
+      existing.updatedAtFr =
+        new Date().toLocaleString("fr-FR");
+    }else{
+      decisions.unshift({
+        id:"MEC-DEC-" + Date.now(),
+        sourceId:projectId,
+        sourceTitle:"",
+        sourceType:"projet_ouvert",
+        status:"abandonne",
+        principleAccepted:false,
+        contractSigned:false,
+        private:true,
+        updatedAt:Date.now(),
+        updatedAtFr:
+          new Date().toLocaleString("fr-FR")
+      });
+    }
+
+    saveDecisions(decisions);
+
+    alert(
+      "L’étude de ce projet est abandonnée."
+    );
+
+    openPrivateDashboard();
+  }
+
+  function openPrivateStudy(
+    projectId,
+    projectTitle
+  ){
+    module.renderModal(
+      "Étude privée du projet",
+      getPrivateStudyHtml(
+        projectId,
+        projectTitle
+      )
+    );
+
+    window.setTimeout(function(){
+
+      restoreContributionType(
+        projectId
+      );
+
+      const saveButton =
+        getElement(
+          "privateMecenatSaveStudyBtn"
+        );
+
+      const abandonButton =
+        getElement(
+          "privateMecenatAbandonBtn"
+        );
+
+      if(saveButton){
+        saveButton.onclick = function(){
+          savePrivateStudy(
+            projectId,
+            projectTitle
+          );
+        };
+      }
+
+      if(abandonButton){
+        abandonButton.onclick = function(){
+          abandonPrivateStudy(
+            projectId
+          );
+        };
+      }
+    },0);
+  }
+
+  function bindPrivateDashboard(){
+
+    document
+      .querySelectorAll(
+        ".privateMecenatStudyBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+          openPrivateStudy(
+            button.getAttribute(
+              "data-private-project-id"
+            ),
+            button.getAttribute(
+              "data-private-project-title"
+            )
+          );
+        };
+      });
+
+    document
+      .querySelectorAll(
+        ".privateMecenatCompanyOpenBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          const projectId =
+            button.getAttribute(
+              "data-company-project-id"
+            );
+
+          const projects =
+            loadCompanyProjects();
+
+          const project =
+            projects.find(function(item){
+              return item.id === projectId;
+            });
+
+          if(!project){
+            alert(
+              "Projet introuvable."
+            );
+            return;
+          }
+
+          module.renderModal(
+            "Suivi privé du projet",
+            `
+              <div
+                class="box"
+                style="border-left:6px solid #2f5d46;">
+
+                <strong style="font-size:18px;">
+                  ${
+                    escapeValue(
+                      project.theme ||
+                      "Projet artistique à définir"
+                    )
+                  }
+                </strong>
+              </div>
+
+              <div class="box">
+                <strong>Entreprise</strong><br><br>
+                ${escapeValue(project.company)}
+              </div>
+
+              <div class="box">
+                <strong>Commune</strong><br><br>
+                ${escapeValue(project.city)}
+              </div>
+
+              <div class="box">
+                <strong>Espace proposé</strong><br><br>
+                ${escapeValue(project.placeDescription)}
+              </div>
+
+              <div class="box">
+                <strong>Statut actuel</strong><br><br>
+
+                ${
+                  escapeValue(
+                    getCompanyProjectStatusLabel(
+                      project.status
+                    )
+                  )
+                }
+              </div>
+
+              <div class="box">
+                <strong>Validation municipale</strong><br><br>
+
+                ${
+                  project.municipalStatus === "non_transmis"
+                    ? "Le projet n’a pas encore été transmis à la mairie."
+                    : escapeValue(project.municipalStatus)
+                }
+              </div>
+
+              <div
+                class="box"
+                style="border-left:6px solid #b00020;">
+
+                Aucun engagement contractuel
+                n’existe tant que le contrat définitif
+                n’est pas signé.
+              </div>
+            `
+          );
+        };
+      });
+
+    const projectsButton =
+      getElement(
+        "privateMecenatOpenProjectsBtn"
+      );
+
+    const newProjectButton =
+      getElement(
+        "privateMecenatNewCompanyProjectBtn"
+      );
+
+    if(projectsButton){
+      projectsButton.onclick = function(){
+
+        if(
+          typeof module.openMecenatProjectsCatalogue ===
+          "function"
+        ){
+          module.openMecenatProjectsCatalogue();
+        }
+      };
+    }
+
+    if(newProjectButton){
+      newProjectButton.onclick = function(){
+
+        if(
+          typeof module.openMecenatCompanyProjectProposal ===
+          "function"
+        ){
+          module.openMecenatCompanyProjectProposal();
+        }
+      };
+    }
+  }
+
+  function openPrivateDashboard(){
+    module.renderModal(
+      "Mon espace mécénat privé",
+      getPrivateDashboardHtml()
+    );
+
+    window.setTimeout(function(){
+      bindPrivateDashboard();
+    },0);
+  }
+
+  module.openMecenatPrivateSpace =
+    openPrivateDashboard;
+
+  module.openMecenatPrivateDashboard =
+    openPrivateDashboard;
+
+  module.loadMecenatPrivateDecisions =
+    loadDecisions;
+
+  console.log(
+    "✅ Mécénat — partie 4 espace privé automatisé chargé"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — MÉCÉNAT
+   PARTIE 5 — VALIDATION MAIRIE ET SUIVI AUTOMATIQUE
+   ========================================================= */
+
+(function addBociteMecenatMunicipalWorkflow(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  const COMPANY_PROJECTS_KEY =
+    "bociteart_mecenat_company_projects_v1";
+
+  const MUNICIPAL_WORKFLOW_KEY =
+    "bociteart_mecenat_municipal_workflow_v1";
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return module.safeEscape(value);
+  }
+
+  function loadArray(key){
+    try{
+      const raw =
+        localStorage.getItem(key);
+
+      const parsed =
+        raw ? JSON.parse(raw) : [];
+
+      return Array.isArray(parsed)
+        ? parsed
+        : [];
+    }catch(error){
+      return [];
+    }
+  }
+
+  function saveArray(key, list){
+    try{
+      localStorage.setItem(
+        key,
+        JSON.stringify(list || [])
+      );
+    }catch(error){
+      console.warn(
+        "Enregistrement du suivi mécénat impossible :",
+        error
+      );
+    }
+  }
+
+  function loadCompanyProjects(){
+    return loadArray(
+      COMPANY_PROJECTS_KEY
+    );
+  }
+
+  function saveCompanyProjects(projects){
+    saveArray(
+      COMPANY_PROJECTS_KEY,
+      projects
+    );
+  }
+
+  function loadWorkflow(){
+    return loadArray(
+      MUNICIPAL_WORKFLOW_KEY
+    );
+  }
+
+  function saveWorkflow(workflow){
+    saveArray(
+      MUNICIPAL_WORKFLOW_KEY,
+      workflow
+    );
+  }
+
+  function getMunicipalStatusLabel(status){
+    const labels = {
+      non_transmis:
+        "Non transmis à la mairie",
+
+      a_transmettre:
+        "Prêt à être présenté à la mairie",
+
+      transmis:
+        "Transmis à la mairie",
+
+      en_etude:
+        "En cours d’étude par la mairie",
+
+      adaptation_demandee:
+        "Adaptation demandée par la mairie",
+
+      adaptation_preparee:
+        "Nouvelle proposition préparée",
+
+      valide:
+        "Validé par la mairie",
+
+      refuse:
+        "Refusé par la mairie"
+    };
+
+    return labels[status] || status;
+  }
+
+  function getProjectStatusLabel(status){
+    const labels = {
+      demande_confidentielle_enregistree:
+        "Demande confidentielle enregistrée",
+
+      analyse_automatique:
+        "Analyse automatique en cours",
+
+      informations_a_completer:
+        "Informations à compléter",
+
+      theme_a_preparer:
+        "Thème à préparer",
+
+      mairie_a_consulter:
+        "Projet prêt à être présenté à la mairie",
+
+      adaptation_demandee:
+        "Adaptation demandée",
+
+      valide_par_mairie:
+        "Validé par la mairie",
+
+      contrat_a_preparer:
+        "Contrat à préparer",
+
+      contrat_signe:
+        "Contrat signé",
+
+      abandonne:
+        "Projet abandonné"
+    };
+
+    return labels[status] || status;
+  }
+
+  function analyseProjectAutomatically(project){
+    const missing = [];
+
+    if(!project.company){
+      missing.push(
+        "nom de l’entreprise"
+      );
+    }
+
+    if(!project.city){
+      missing.push(
+        "commune"
+      );
+    }
+
+    if(!project.placeType){
+      missing.push(
+        "type de lieu"
+      );
+    }
+
+    if(!project.placeDescription){
+      missing.push(
+        "description de l’espace"
+      );
+    }
+
+    if(missing.length){
+      project.status =
+        "informations_a_completer";
+
+      project.automaticAnalysis = {
+        complete:false,
+        missing:missing,
+        message:
+          "Certaines informations doivent être complétées."
+      };
+
+      return project;
+    }
+
+    project.status =
+      "theme_a_preparer";
+
+    project.automaticAnalysis = {
+      complete:true,
+      missing:[],
+      message:
+        "Les informations principales sont complètes. Le thème artistique peut être préparé."
+    };
+
+    return project;
+  }
+
+  function prepareAutomaticTheme(project){
+    const place =
+      project.placeType || "site";
+
+    const city =
+      project.city || "la commune";
+
+    const companyTheme =
+      String(
+        project.theme || ""
+      ).trim();
+
+    const preparedTheme =
+      companyTheme
+        ? companyTheme
+        : (
+            "Création artistique liée à la vie de " +
+            city +
+            ", à ses habitants, ses métiers, " +
+            "son patrimoine et son évolution."
+          );
+
+    project.preparedTheme =
+      preparedTheme;
+
+    project.preparedOrientation =
+      "Le projet devra être adapté au " +
+      place +
+      " proposé par l’entreprise, " +
+      "tout en conservant un lien réel " +
+      "avec le territoire.";
+
+    project.status =
+      "mairie_a_consulter";
+
+    project.municipalStatus =
+      "a_transmettre";
+
+    project.themePreparedAt =
+      Date.now();
+
+    project.themePreparedAtFr =
+      new Date().toLocaleString("fr-FR");
+
+    return project;
+  }
+
+  function runAutomaticPreparation(){
+    const projects =
+      loadCompanyProjects();
+
+    let changed = false;
+
+    projects.forEach(function(project){
+
+      if(
+        project.status ===
+        "demande_confidentielle_enregistree"
+      ){
+        project.status =
+          "analyse_automatique";
+
+        analyseProjectAutomatically(
+          project
+        );
+
+        changed = true;
+      }
+
+      if(
+        project.status ===
+        "theme_a_preparer"
+      ){
+        prepareAutomaticTheme(
+          project
+        );
+
+        changed = true;
+      }
+    });
+
+    if(changed){
+      saveCompanyProjects(
+        projects
+      );
+    }
+
+    return projects;
+  }
+
+  function ensureWorkflowEntry(project){
+    const workflow =
+      loadWorkflow();
+
+    let entry =
+      workflow.find(function(item){
+        return item.projectId === project.id;
+      });
+
+    if(!entry){
+      entry = {
+        id:
+          "MEC-MAIRIE-" +
+          Date.now() +
+          "-" +
+          Math.random()
+            .toString(36)
+            .slice(2,7),
+
+        projectId:
+          project.id,
+
+        company:
+          project.company,
+
+        city:
+          project.city,
+
+        projectTitle:
+          project.preparedTheme ||
+          project.theme ||
+          "Projet artistique à définir",
+
+        municipalStatus:
+          project.municipalStatus ||
+          "a_transmettre",
+
+        municipalityComment:"",
+        adaptationRequest:"",
+        adaptedTheme:"",
+        refusalReason:"",
+
+        createdAt:
+          Date.now(),
+
+        createdAtFr:
+          new Date().toLocaleString("fr-FR"),
+
+        updatedAt:
+          Date.now(),
+
+        updatedAtFr:
+          new Date().toLocaleString("fr-FR")
+      };
+
+      workflow.unshift(entry);
+
+      saveWorkflow(workflow);
+    }
+
+    return entry;
+  }
+
+  function transmitToMunicipality(projectId){
+    const projects =
+      loadCompanyProjects();
+
+    const project =
+      projects.find(function(item){
+        return item.id === projectId;
+      });
+
+    if(!project){
+      alert(
+        "Projet introuvable."
+      );
+      return;
+    }
+
+    if(
+      project.status !==
+      "mairie_a_consulter"
+    ){
+      alert(
+        "Ce projet n’est pas encore prêt à être présenté à la mairie."
+      );
+      return;
+    }
+
+    project.municipalStatus =
+      "transmis";
+
+    project.transmittedAt =
+      Date.now();
+
+    project.transmittedAtFr =
+      new Date().toLocaleString("fr-FR");
+
+    project.updatedAt =
+      Date.now();
+
+    project.updatedAtFr =
+      new Date().toLocaleString("fr-FR");
+
+    saveCompanyProjects(
+      projects
+    );
+
+    const entry =
+      ensureWorkflowEntry(
+        project
+      );
+
+    const workflow =
+      loadWorkflow();
+
+    const workflowEntry =
+      workflow.find(function(item){
+        return item.id === entry.id;
+      });
+
+    if(workflowEntry){
+      workflowEntry.municipalStatus =
+        "transmis";
+
+      workflowEntry.updatedAt =
+        Date.now();
+
+      workflowEntry.updatedAtFr =
+        new Date().toLocaleString("fr-FR");
+
+      saveWorkflow(
+        workflow
+      );
+    }
+
+    alert(
+      "Le projet est maintenant indiqué comme transmis à la mairie.\n\n" +
+      "Dans la version définitive, la transmission sera envoyée automatiquement dans l’espace sécurisé de la commune."
+    );
+
+    openMunicipalWorkflow();
+  }
+
+  function getWorkflowHtml(){
+    const projects =
+      runAutomaticPreparation();
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.5;
+        ">
+
+        <strong style="font-size:19px;">
+          Suivi automatisé des projets artistiques
+        </strong>
+
+        <br><br>
+
+        Cet écran permet de suivre les projets
+        proposés par les entreprises
+        sans devoir traiter manuellement
+        chaque première demande.
+
+        <br><br>
+
+        L’application réalise automatiquement :
+
+        <br><br>
+
+        • le contrôle des informations principales ;<br>
+        • l’identification des éléments manquants ;<br>
+        • la préparation d’une première orientation artistique ;<br>
+        • la création du dossier de présentation ;<br>
+        • le suivi de la validation municipale ;<br>
+        • l’information de l’entreprise sur l’avancement.
+      </div>
+
+      <div
+        class="box"
+        style="border-left:6px solid #b00020;">
+
+        <strong>
+          Les décisions artistiques et contractuelles
+          ne sont pas automatiques
+        </strong>
+
+        <br><br>
+
+        Bo'CitéArt reste responsable
+        de la cohérence artistique du thème.
+
+        <br><br>
+
+        La mairie reste responsable
+        de sa validation municipale.
+
+        <br><br>
+
+        L’entreprise reste responsable
+        de son engagement et de la signature du contrat.
+      </div>
+
+      <div
+        id="mecenatAutomaticWorkflowList"
+        style="margin-top:12px;">
+
+        ${
+          projects.length
+            ? projects.map(function(project){
+
+                const missing =
+                  project.automaticAnalysis &&
+                  Array.isArray(
+                    project.automaticAnalysis.missing
+                  )
+                    ? project.automaticAnalysis.missing
+                    : [];
+
+                return `
+                  <div
+                    class="box"
+                    style="
+                      margin-top:10px;
+                      border-left:6px solid #2f5d46;
+                    ">
+
+                    <strong style="font-size:17px;">
+                      ${escapeValue(
+                        project.company ||
+                        "Entreprise"
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Commune :
+
+                    <strong>
+                      ${escapeValue(
+                        project.city || ""
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Statut du projet :
+
+                    <strong>
+                      ${escapeValue(
+                        getProjectStatusLabel(
+                          project.status
+                        )
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    État mairie :
+
+                    <strong>
+                      ${escapeValue(
+                        getMunicipalStatusLabel(
+                          project.municipalStatus ||
+                          "non_transmis"
+                        )
+                      )}
+                    </strong>
+
+                    ${
+                      missing.length
+                        ? `
+                          <br><br>
+
+                          <strong>
+                            Informations manquantes
+                          </strong>
+
+                          <br><br>
+
+                          ${missing
+                            .map(function(item){
+                              return (
+                                "• " +
+                                escapeValue(item)
+                              );
+                            })
+                            .join("<br>")}
+                        `
+                        : ""
+                    }
+
+                    ${
+                      project.preparedTheme
+                        ? `
+                          <br><br>
+
+                          <strong>
+                            Thème préparé
+                          </strong>
+
+                          <br><br>
+
+                          ${escapeValue(
+                            project.preparedTheme
+                          )}
+
+                          <br><br>
+
+                          ${escapeValue(
+                            project.preparedOrientation ||
+                            ""
+                          )}
+                        `
+                        : ""
+                    }
+
+                    ${
+                      project.status ===
+                      "mairie_a_consulter"
+                        ? `
+                          <button
+                            class="choiceBtn mecenatTransmitMunicipalityBtn"
+                            type="button"
+                            data-mecenat-workflow-project-id="${escapeValue(
+                              project.id
+                            )}"
+                            style="
+                              width:100%;
+                              margin-top:12px;
+                            ">
+                            Présenter le projet à la mairie
+                          </button>
+                        `
+                        : ""
+                    }
+
+                    ${
+                      project.municipalStatus ===
+                      "transmis"
+                        ? `
+                          <button
+                            class="choiceBtn mecenatOpenMunicipalDecisionBtn"
+                            type="button"
+                            data-mecenat-workflow-project-id="${escapeValue(
+                              project.id
+                            )}"
+                            style="
+                              width:100%;
+                              margin-top:8px;
+                              background:#fff;
+                            ">
+                            Ouvrir l’espace de décision mairie
+                          </button>
+                        `
+                        : ""
+                    }
+                  </div>
+                `;
+              }).join("")
+            : `
+              <div class="box">
+                Aucun projet d’entreprise enregistré.
+              </div>
+            `
+        }
+      </div>
+    `;
+  }
+
+  function getMunicipalDecisionHtml(project){
+    const entry =
+      ensureWorkflowEntry(
+        project
+      );
+
+    return `
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
+
+        <strong style="font-size:18px;">
+          Décision de la mairie
+        </strong>
+
+        <br><br>
+
+        Projet proposé par :
+
+        <strong>
+          ${escapeValue(project.company)}
+        </strong>
+
+        <br><br>
+
+        Commune :
+
+        <strong>
+          ${escapeValue(project.city)}
+        </strong>
+      </div>
+
+      <div class="box">
+        <strong>
+          Thème préparé par Bo'CitéArt
+        </strong>
+
+        <br><br>
+
+        ${escapeValue(
+          project.preparedTheme ||
+          project.theme ||
+          "Thème à définir"
+        )}
+
+        <br><br>
+
+        ${escapeValue(
+          project.preparedOrientation ||
+          ""
+        )}
+      </div>
+
+      <label style="display:block;font-weight:900;">
+        Décision municipale
+      </label>
+
+      <select
+        id="mecenatMunicipalDecision"
+        class="miniField">
+
+        <option value="en_etude">
+          Mettre le projet en étude
+        </option>
+
+        <option value="valide">
+          Valider le projet
+        </option>
+
+        <option value="adaptation_demandee">
+          Demander une adaptation
+        </option>
+
+        <option value="refuse">
+          Refuser le projet
+        </option>
+      </select>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Commentaire de la mairie
+      </label>
+
+      <textarea
+        id="mecenatMunicipalComment"
+        class="miniField"
+        style="min-height:100px;"
+        placeholder="Indiquez la motivation, les observations ou les conditions.">${escapeValue(
+          entry.municipalityComment || ""
+        )}</textarea>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Adaptation demandée
+      </label>
+
+      <textarea
+        id="mecenatMunicipalAdaptation"
+        class="miniField"
+        style="min-height:100px;"
+        placeholder="À remplir uniquement si une adaptation est demandée.">${escapeValue(
+          entry.adaptationRequest || ""
+        )}</textarea>
+
+      <button
+        id="mecenatMunicipalSaveDecisionBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:12px;">
+        Enregistrer la décision municipale
+      </button>
+
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          border-left:6px solid #b00020;
+        ">
+
+        La validation municipale
+        ne constitue pas encore
+        un contrat de mécénat.
+
+        <br><br>
+
+        Après validation,
+        le budget,
+        les artistes,
+        les autorisations techniques
+        et le contrat devront encore être finalisés.
+      </div>
+    `;
+  }
+
+  function saveMunicipalDecision(projectId){
+    const decisionInput =
+      getElement(
+        "mecenatMunicipalDecision"
+      );
+
+    const commentInput =
+      getElement(
+        "mecenatMunicipalComment"
+      );
+
+    const adaptationInput =
+      getElement(
+        "mecenatMunicipalAdaptation"
+      );
+
+    const decision =
+      decisionInput
+        ? String(decisionInput.value || "")
+        : "";
+
+    const comment =
+      commentInput
+        ? String(commentInput.value || "").trim()
+        : "";
+
+    const adaptation =
+      adaptationInput
+        ? String(adaptationInput.value || "").trim()
+        : "";
+
+    if(
+      decision === "adaptation_demandee" &&
+      !adaptation
+    ){
+      alert(
+        "Précisez l’adaptation demandée par la mairie."
+      );
+      return;
+    }
+
+    if(
+      decision === "refuse" &&
+      !comment
+    ){
+      alert(
+        "Indiquez le motif du refus."
+      );
+      return;
+    }
+
+    const projects =
+      loadCompanyProjects();
+
+    const project =
+      projects.find(function(item){
+        return item.id === projectId;
+      });
+
+    if(!project){
+      alert(
+        "Projet introuvable."
+      );
+      return;
+    }
+
+    project.municipalStatus =
+      decision;
+
+    if(decision === "valide"){
+      project.status =
+        "valide_par_mairie";
+    }
+
+    if(
+      decision ===
+      "adaptation_demandee"
+    ){
+      project.status =
+        "adaptation_demandee";
+    }
+
+    if(decision === "en_etude"){
+      project.status =
+        "mairie_a_consulter";
+    }
+
+    if(decision === "refuse"){
+      project.status =
+        "abandonne";
+    }
+
+    project.municipalityComment =
+      comment;
+
+    project.adaptationRequest =
+      adaptation;
+
+    project.updatedAt =
+      Date.now();
+
+    project.updatedAtFr =
+      new Date().toLocaleString("fr-FR");
+
+    saveCompanyProjects(
+      projects
+    );
+
+    const workflow =
+      loadWorkflow();
+
+    const entry =
+      workflow.find(function(item){
+        return item.projectId === projectId;
+      });
+
+    if(entry){
+      entry.municipalStatus =
+        decision;
+
+      entry.municipalityComment =
+        comment;
+
+      entry.adaptationRequest =
+        adaptation;
+
+      entry.updatedAt =
+        Date.now();
+
+      entry.updatedAtFr =
+        new Date().toLocaleString("fr-FR");
+
+      saveWorkflow(
+        workflow
+      );
+    }
+
+    alert(
+      "La décision municipale est enregistrée."
+    );
+
+    openMunicipalWorkflow();
+  }
+
+  function openMunicipalDecision(projectId){
+    const project =
+      loadCompanyProjects()
+        .find(function(item){
+          return item.id === projectId;
+        });
+
+    if(!project){
+      alert(
+        "Projet introuvable."
+      );
+      return;
+    }
+
+    module.renderModal(
+      "Validation municipale",
+      getMunicipalDecisionHtml(
+        project
+      )
+    );
+
+    window.setTimeout(function(){
+
+      const button =
+        getElement(
+          "mecenatMunicipalSaveDecisionBtn"
+        );
+
+      if(button){
+        button.onclick = function(){
+          saveMunicipalDecision(
+            projectId
+          );
+        };
+      }
+    },0);
+  }
+
+  function bindMunicipalWorkflow(){
+    document
+      .querySelectorAll(
+        ".mecenatTransmitMunicipalityBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+          transmitToMunicipality(
+            button.getAttribute(
+              "data-mecenat-workflow-project-id"
+            )
+          );
+        };
+      });
+
+    document
+      .querySelectorAll(
+        ".mecenatOpenMunicipalDecisionBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+          openMunicipalDecision(
+            button.getAttribute(
+              "data-mecenat-workflow-project-id"
+            )
+          );
+        };
+      });
+  }
+
+  function openMunicipalWorkflow(){
+    module.renderModal(
+      "Suivi des projets mécénat",
+      getWorkflowHtml()
+    );
+
+    window.setTimeout(function(){
+      bindMunicipalWorkflow();
+    },0);
+  }
+
+  module.openMecenatMunicipalWorkflow =
+    openMunicipalWorkflow;
+
+  module.runMecenatAutomaticPreparation =
+    runAutomaticPreparation;
+
+  module.loadMecenatMunicipalWorkflow =
+    loadWorkflow;
+
+  window.setTimeout(function(){
+    runAutomaticPreparation();
+  },1000);
+
+  console.log(
+    "✅ Mécénat — partie 5 validation mairie chargée"
   );
 
 })();
