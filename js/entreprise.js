@@ -177,7 +177,7 @@ function getHomeHtml(){
         font-weight:900;
         color:#111;
         animation-name:entrepriseBandScroll;
-        animation-duration:95s;
+        animation-duration:70s;
         animation-timing-function:linear;
         animation-iteration-count:infinite;
         animation-delay:0s;
@@ -191,7 +191,7 @@ function getHomeHtml(){
 
       @media (prefers-reduced-motion: reduce) {
         #entrepriseHomeBands .entrepriseBandText {
-          animation-duration:95s;
+          animation-duration:70s;
         }
       }
     </style>
@@ -18046,6 +18046,6126 @@ function getHomeHtml(){
 
   console.log(
     "✅ Mécénat — partie 5 validation mairie chargée"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — ARCHITECTURE ENTREPRISE
+   PARTIE 1 — ACCÈS PARTENAIRE ET ESPACE PRIVÉ
+   ========================================================= */
+
+(function addBociteEntreprisePrivateAccess(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  const PARTNER_ACCOUNT_KEY =
+    "bociteart_entreprise_partner_account_v1";
+
+  const PARTNER_SESSION_KEY =
+    "bociteart_entreprise_partner_session_v1";
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return module.safeEscape(value);
+  }
+
+  function generatePartnerCode(){
+
+    const firstPart =
+      Math.random()
+        .toString(36)
+        .slice(2,6)
+        .toUpperCase();
+
+    const secondPart =
+      Math.random()
+        .toString(36)
+        .slice(2,6)
+        .toUpperCase();
+
+    return (
+      "BCA-" +
+      firstPart +
+      "-" +
+      secondPart
+    );
+  }
+
+  function loadPartnerAccount(){
+
+    try{
+      const raw =
+        localStorage.getItem(
+          PARTNER_ACCOUNT_KEY
+        );
+
+      const parsed =
+        raw ? JSON.parse(raw) : null;
+
+      if(
+        parsed &&
+        typeof parsed === "object"
+      ){
+        return parsed;
+      }
+    }catch(error){
+      console.warn(
+        "Lecture du compte partenaire impossible :",
+        error
+      );
+    }
+
+    return null;
+  }
+
+  function savePartnerAccount(account){
+
+    try{
+      localStorage.setItem(
+        PARTNER_ACCOUNT_KEY,
+        JSON.stringify(account)
+      );
+    }catch(error){
+      console.warn(
+        "Enregistrement du compte partenaire impossible :",
+        error
+      );
+    }
+  }
+
+  function createDemoPartnerAccount(){
+
+    const existing =
+      loadPartnerAccount();
+
+    if(existing){
+      return existing;
+    }
+
+    const account = {
+      id:
+        "ENT-" +
+        Date.now(),
+
+      companyName:
+        "Entreprise de démonstration",
+
+      partnerCode:
+        generatePartnerCode(),
+
+      partnerStatus:
+        "active",
+
+      partnershipAccepted:
+        true,
+
+      accessLevel:
+        "partner",
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date().toLocaleString("fr-FR")
+    };
+
+    savePartnerAccount(account);
+
+    return account;
+  }
+
+  function loadPartnerSession(){
+
+    try{
+      const raw =
+        sessionStorage.getItem(
+          PARTNER_SESSION_KEY
+        );
+
+      const parsed =
+        raw ? JSON.parse(raw) : null;
+
+      return !!(
+        parsed &&
+        parsed.authenticated === true
+      );
+    }catch(error){
+      return false;
+    }
+  }
+
+  function savePartnerSession(){
+
+    try{
+      sessionStorage.setItem(
+        PARTNER_SESSION_KEY,
+        JSON.stringify({
+          authenticated:true,
+          connectedAt:Date.now(),
+          connectedAtFr:
+            new Date().toLocaleString("fr-FR")
+        })
+      );
+    }catch(error){}
+  }
+
+  function closePartnerSession(){
+
+    try{
+      sessionStorage.removeItem(
+        PARTNER_SESSION_KEY
+      );
+    }catch(error){}
+  }
+
+  function isPartnerAccountActive(){
+
+    const account =
+      loadPartnerAccount();
+
+    return !!(
+      account &&
+      account.partnerStatus === "active" &&
+      account.partnershipAccepted === true
+    );
+  }
+
+  function isPartnerAuthenticated(){
+
+    return (
+      isPartnerAccountActive() &&
+      loadPartnerSession()
+    );
+  }
+
+  function getAccessHtml(){
+
+    const account =
+      createDemoPartnerAccount();
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.5;
+        ">
+
+        <strong style="font-size:19px;">
+          Espace réservé aux entreprises partenaires
+        </strong>
+
+        <br><br>
+
+        Les tarifs, abonnements, paiements,
+        factures, contrats, recherches privées
+        et données professionnelles
+        sont accessibles uniquement
+        depuis l’espace sécurisé de l’entreprise.
+
+        <br><br>
+
+        Chaque entreprise partenaire reçoit
+        un code d’accès personnel
+        après la validation de son partenariat
+        avec Bo'CitéArt.
+      </div>
+
+      <div class="box">
+
+        <strong>
+          Compte de démonstration
+        </strong>
+
+        <br><br>
+
+        Entreprise :
+
+        <strong>
+          ${escapeValue(account.companyName)}
+        </strong>
+
+        <br><br>
+
+        Code personnel de démonstration :
+
+        <br><br>
+
+        <strong
+          style="
+            display:inline-block;
+            padding:8px 12px;
+            border:2px solid #2f5d46;
+            border-radius:8px;
+            font-size:18px;
+          ">
+          ${escapeValue(account.partnerCode)}
+        </strong>
+
+        <br><br>
+
+        Dans la version définitive,
+        ce code sera communiqué automatiquement
+        après l’enregistrement de la fiche entreprise
+        et la validation du partenariat.
+      </div>
+
+      <label
+        style="
+          display:block;
+          font-weight:900;
+        ">
+        Code d’accès entreprise
+      </label>
+
+      <input
+        id="entreprisePartnerAccessCode"
+        class="miniField"
+        type="password"
+        autocomplete="off"
+        placeholder="Saisissez votre code personnel">
+
+      <button
+        id="entreprisePartnerConnectBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:12px;
+        ">
+        Accéder à mon espace privé
+      </button>
+
+      <button
+        id="entreprisePartnerReturnBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+          background:#fff;
+        ">
+        Retour à l’espace Entreprise
+      </button>
+
+      <div
+        id="entreprisePartnerAccessStatus"
+        class="muted"
+        style="margin-top:10px;">
+      </div>
+
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          border-left:6px solid #b00020;
+        ">
+
+        <strong>
+          Important
+        </strong>
+
+        <br><br>
+
+        Le code utilisé dans cette démonstration
+        sert uniquement à représenter
+        le futur fonctionnement.
+
+        <br><br>
+
+        Dans la version définitive,
+        l’identification et les données privées
+        devront être sécurisées par le serveur,
+        et non uniquement dans le navigateur.
+      </div>
+    `;
+  }
+
+  function connectPartnerAccount(
+    successCallback
+  ){
+
+    const account =
+      loadPartnerAccount();
+
+    const input =
+      getElement(
+        "entreprisePartnerAccessCode"
+      );
+
+    const status =
+      getElement(
+        "entreprisePartnerAccessStatus"
+      );
+
+    const enteredCode =
+      input
+        ? String(input.value || "")
+            .trim()
+            .toUpperCase()
+        : "";
+
+    if(!enteredCode){
+
+      alert(
+        "Saisissez votre code d’accès entreprise."
+      );
+
+      return;
+    }
+
+    if(
+      !account ||
+      enteredCode !==
+        String(account.partnerCode || "")
+          .toUpperCase()
+    ){
+
+      if(status){
+        status.innerHTML = `
+          <div
+            class="box"
+            style="border-left:6px solid #b00020;">
+
+            <strong>
+              Code incorrect
+            </strong>
+
+            <br><br>
+
+            Vérifiez le code communiqué
+            à votre entreprise.
+          </div>
+        `;
+      }
+
+      return;
+    }
+
+    if(
+      account.partnerStatus !== "active" ||
+      account.partnershipAccepted !== true
+    ){
+
+      alert(
+        "Le partenariat de cette entreprise n’est pas actif."
+      );
+
+      return;
+    }
+
+    savePartnerSession();
+
+    if(
+      typeof successCallback ===
+      "function"
+    ){
+      successCallback();
+      return;
+    }
+
+    openPrivateHome();
+  }
+
+  function getPrivateHomeHtml(){
+
+    const account =
+      loadPartnerAccount();
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.5;
+        ">
+
+        <strong style="font-size:19px;">
+          Espace privé de l’entreprise
+        </strong>
+
+        <br><br>
+
+        Entreprise connectée :
+
+        <strong>
+          ${escapeValue(
+            account
+              ? account.companyName
+              : "Entreprise"
+          )}
+        </strong>
+
+        <br><br>
+
+        Cet espace regroupera :
+
+        <br><br>
+
+        • les offres et tarifs Bo'CitéArt ;<br>
+        • les abonnements actifs ;<br>
+        • les recherches professionnelles ;<br>
+        • les opportunités publiées ;<br>
+        • les demandes collectives ;<br>
+        • les factures disponibles ;<br>
+        • les projets de mécénat ;<br>
+        • les conventions et contrats ;<br>
+        • le suivi confidentiel de l’entreprise.
+      </div>
+
+      <button
+        id="entreprisePrivateOffersBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;">
+        Mes offres et abonnements
+      </button>
+
+      <button
+        id="entreprisePrivateSearchBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:8px;">
+        Recherche professionnelle
+      </button>
+
+      <button
+        id="entreprisePrivateMecenatBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:8px;">
+        Mon espace mécénat privé
+      </button>
+
+      <button
+        id="entreprisePrivateBillingBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:8px;">
+        Abonnements et factures
+      </button>
+
+      <button
+        id="entreprisePrivateDisconnectBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+          background:#fff;
+        ">
+        Fermer mon espace privé
+      </button>
+
+      <button
+        id="entreprisePrivateReturnBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+          background:#fff;
+        ">
+        Retour à l’espace Entreprise
+      </button>
+    `;
+  }
+
+  function bindPrivateHome(){
+
+    const offersButton =
+      getElement(
+        "entreprisePrivateOffersBtn"
+      );
+
+    const searchButton =
+      getElement(
+        "entreprisePrivateSearchBtn"
+      );
+
+    const mecenatButton =
+      getElement(
+        "entreprisePrivateMecenatBtn"
+      );
+
+    const billingButton =
+      getElement(
+        "entreprisePrivateBillingBtn"
+      );
+
+    const disconnectButton =
+      getElement(
+        "entreprisePrivateDisconnectBtn"
+      );
+
+    const returnButton =
+      getElement(
+        "entreprisePrivateReturnBtn"
+      );
+
+    if(offersButton){
+      offersButton.onclick = function(){
+
+        if(
+          typeof module.openPrivateOffers ===
+          "function"
+        ){
+          module.openPrivateOffers();
+          return;
+        }
+
+        alert(
+          "La page des offres privées sera ajoutée à l’étape suivante."
+        );
+      };
+    }
+
+    if(searchButton){
+      searchButton.onclick = function(){
+
+        if(
+          typeof module.openProfessionalDirectory ===
+          "function"
+        ){
+          module.openProfessionalDirectory();
+        }
+      };
+    }
+
+    if(mecenatButton){
+      mecenatButton.onclick = function(){
+
+        if(
+          typeof module.openMecenatPrivateSpace ===
+          "function"
+        ){
+          module.openMecenatPrivateSpace();
+        }
+      };
+    }
+
+    if(billingButton){
+      billingButton.onclick = function(){
+
+        if(
+          typeof module.openSearchBilling ===
+          "function"
+        ){
+          module.openSearchBilling();
+        }
+      };
+    }
+
+    if(disconnectButton){
+      disconnectButton.onclick = function(){
+
+        closePartnerSession();
+
+        alert(
+          "L’espace privé est fermé."
+        );
+
+        if(
+          typeof module.openHome ===
+          "function"
+        ){
+          module.openHome();
+        }
+      };
+    }
+
+    if(returnButton){
+      returnButton.onclick = function(){
+
+        if(
+          typeof module.openHome ===
+          "function"
+        ){
+          module.openHome();
+        }
+      };
+    }
+  }
+
+  function openPrivateHome(){
+
+    if(!isPartnerAuthenticated()){
+      openPartnerAccess(
+        openPrivateHome
+      );
+
+      return;
+    }
+
+    module.renderModal(
+      "Espace privé Entreprise",
+      getPrivateHomeHtml()
+    );
+
+    window.setTimeout(function(){
+      bindPrivateHome();
+    },0);
+  }
+
+  function openPartnerAccess(
+    successCallback
+  ){
+
+    if(isPartnerAuthenticated()){
+
+      if(
+        typeof successCallback ===
+        "function"
+      ){
+        successCallback();
+      }else{
+        openPrivateHome();
+      }
+
+      return;
+    }
+
+    module.renderModal(
+      "Accès partenaire Bo'CitéArt",
+      getAccessHtml()
+    );
+
+    window.setTimeout(function(){
+
+      const connectButton =
+        getElement(
+          "entreprisePartnerConnectBtn"
+        );
+
+      const returnButton =
+        getElement(
+          "entreprisePartnerReturnBtn"
+        );
+
+      const codeInput =
+        getElement(
+          "entreprisePartnerAccessCode"
+        );
+
+      if(connectButton){
+        connectButton.onclick = function(){
+          connectPartnerAccount(
+            successCallback
+          );
+        };
+      }
+
+      if(codeInput){
+        codeInput.addEventListener(
+          "keydown",
+          function(event){
+
+            if(event.key === "Enter"){
+              event.preventDefault();
+
+              connectPartnerAccount(
+                successCallback
+              );
+            }
+          }
+        );
+      }
+
+      if(returnButton){
+        returnButton.onclick = function(){
+
+          if(
+            typeof module.openHome ===
+            "function"
+          ){
+            module.openHome();
+          }
+        };
+      }
+    },0);
+  }
+
+  function requirePartnerAccess(
+    callback
+  ){
+
+    if(isPartnerAuthenticated()){
+
+      if(
+        typeof callback ===
+        "function"
+      ){
+        callback();
+      }
+
+      return true;
+    }
+
+    openPartnerAccess(
+      callback
+    );
+
+    return false;
+  }
+
+  module.openPartnerAccess =
+    openPartnerAccess;
+
+  module.openPrivateHome =
+    openPrivateHome;
+
+  module.requirePartnerAccess =
+    requirePartnerAccess;
+
+  module.isPartnerAuthenticated =
+    isPartnerAuthenticated;
+
+  module.isPartnerAccountActive =
+    isPartnerAccountActive;
+
+  module.loadPartnerAccount =
+    loadPartnerAccount;
+
+  module.createDemoPartnerAccount =
+    createDemoPartnerAccount;
+
+  module.closePartnerSession =
+    closePartnerSession;
+
+  createDemoPartnerAccount();
+
+  console.log(
+    "✅ Accès partenaire et espace privé Entreprise chargés"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — ARCHITECTURE ENTREPRISE
+   PARTIE 2 — OFFRES PRIVÉES ET VERROUILLAGE DES TARIFS
+   ========================================================= */
+
+(function connectBociteEntreprisePrivateServices(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function protectFunction(
+    functionName,
+    screenName
+  ){
+    const originalFunction =
+      module[functionName];
+
+    if(
+      typeof originalFunction !== "function"
+    ){
+      return;
+    }
+
+    if(
+      originalFunction.__bocitePrivateProtected
+    ){
+      return;
+    }
+
+    const protectedFunction =
+      function(){
+
+        const args =
+          arguments;
+
+        if(
+          typeof module.requirePartnerAccess !==
+          "function"
+        ){
+          originalFunction.apply(
+            module,
+            args
+          );
+
+          return;
+        }
+
+        module.requirePartnerAccess(
+          function(){
+
+            originalFunction.apply(
+              module,
+              args
+            );
+          }
+        );
+      };
+
+    protectedFunction.__bocitePrivateProtected =
+      true;
+
+    module[functionName] =
+      protectedFunction;
+
+    if(
+      screenName &&
+      typeof module.registerScreen ===
+      "function"
+    ){
+      module.registerScreen(
+        screenName,
+        protectedFunction
+      );
+    }
+  }
+
+  function getPrivateOffersHtml(){
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.5;
+        ">
+
+        <strong style="font-size:19px;">
+          Offres et services professionnels Bo'CitéArt
+        </strong>
+
+        <br><br>
+
+        Cette page est réservée
+        aux entreprises partenaires connectées.
+
+        <br><br>
+
+        Elle regroupe les services disponibles,
+        leurs conditions,
+        leurs tarifs
+        et les accès correspondants.
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Partenariat professionnel Bo'CitéArt
+        </strong>
+
+        <br><br>
+
+        Le partenariat donne accès
+        à l’espace sécurisé de l’entreprise
+        et aux services professionnels disponibles.
+
+        <br><br>
+
+        Il permet notamment :
+
+        <br><br>
+
+        • de gérer la fiche de l’entreprise ;<br>
+        • d’accéder aux services privés ;<br>
+        • de consulter ses abonnements ;<br>
+        • de retrouver ses factures disponibles ;<br>
+        • de suivre ses demandes ;<br>
+        • d’utiliser les services de recherche ;<br>
+        • d’étudier des projets de mécénat ;<br>
+        • de recevoir les informations professionnelles.
+
+        <br><br>
+
+        Les conditions définitives du partenariat
+        seront précisées avant la mise en production.
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Recherche professionnelle — commune
+        </strong>
+
+        <br><br>
+
+        Recherche d’une entreprise,
+        d’un artisan,
+        d’un fournisseur,
+        d’un sous-traitant
+        ou d’une compétence
+        dans la commune choisie.
+
+        <br><br>
+
+        <strong>
+          Incluse dans l’espace professionnel.
+        </strong>
+
+        <button
+          id="privateOffersLocalSearchBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Ouvrir la recherche professionnelle
+        </button>
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Recherche professionnelle — France
+        </strong>
+
+        <br><br>
+
+        Permet d’élargir la recherche :
+
+        <br><br>
+
+        • par commune ;<br>
+        • par rayon ;<br>
+        • par département ;<br>
+        • par région ;<br>
+        • dans toute la France.
+
+        <br><br>
+
+        Tarif :
+
+        <br><br>
+
+        <strong style="font-size:18px;">
+          26,50 € HT par mois
+        </strong>
+
+        <br>
+
+        ou
+
+        <br>
+
+        <strong style="font-size:18px;">
+          300 € HT par an
+        </strong>
+
+        <button
+          class="choiceBtn privateOffersSubscribeBtn"
+          type="button"
+          data-private-offer-plan="france"
+          style="width:100%;margin-top:12px;">
+          Choisir l’offre France
+        </button>
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Recherche professionnelle — Europe
+        </strong>
+
+        <br><br>
+
+        Permet de rechercher
+        des entreprises,
+        fournisseurs,
+        partenaires
+        et sous-traitants
+        dans les pays européens disponibles.
+
+        <br><br>
+
+        Tarif :
+
+        <br><br>
+
+        <strong style="font-size:18px;">
+          44,90 € HT par mois
+        </strong>
+
+        <br>
+
+        ou
+
+        <br>
+
+        <strong style="font-size:18px;">
+          500 € HT par an
+        </strong>
+
+        <button
+          class="choiceBtn privateOffersSubscribeBtn"
+          type="button"
+          data-private-offer-plan="europe"
+          style="width:100%;margin-top:12px;">
+          Choisir l’offre Europe
+        </button>
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Opportunité professionnelle
+        </strong>
+
+        <br><br>
+
+        Cette publication est destinée
+        uniquement aux entreprises.
+
+        <br><br>
+
+        Elle peut concerner :
+
+        <br><br>
+
+        • une recherche de partenaire ;<br>
+        • un sous-traitant ;<br>
+        • un fournisseur ;<br>
+        • une compétence ;<br>
+        • une collaboration ;<br>
+        • une formation ;<br>
+        • une rencontre professionnelle ;<br>
+        • un événement économique.
+
+        <br><br>
+
+        Tarif :
+
+        <br><br>
+
+        <strong style="font-size:18px;">
+          50 € HT par publication
+        </strong>
+
+        <button
+          id="privateOffersOpportunityBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Publier une opportunité professionnelle
+        </button>
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Fiche entreprise enrichie
+        </strong>
+
+        <br><br>
+
+        Elle permet d’ajouter à la fiche officielle :
+
+        <br><br>
+
+        • une présentation ;<br>
+        • les métiers ;<br>
+        • les services ;<br>
+        • les réalisations ;<br>
+        • les recrutements ;<br>
+        • les actualités ;<br>
+        • l’engagement en mécénat ;<br>
+        • les demandes de devis ;<br>
+        • les coordonnées professionnelles.
+
+        <br><br>
+
+        Cette fiche constitue
+        une option complémentaire
+        proposée aux entreprises partenaires.
+
+        <br><br>
+
+        Tarif actuellement prévu :
+
+        <br><br>
+
+        <strong style="font-size:18px;">
+          199 € HT par an
+        </strong>
+
+        <button
+          id="privateOffersEnrichedProfileBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Gérer ma fiche entreprise
+        </button>
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Mécénat
+        </strong>
+
+        <br><br>
+
+        L’entreprise peut :
+
+        <br><br>
+
+        • découvrir les projets ouverts ;<br>
+        • enregistrer un intérêt privé ;<br>
+        • étudier un projet ;<br>
+        • proposer un espace sur son site ;<br>
+        • suivre les validations ;<br>
+        • préparer une contribution ;<br>
+        • retrouver ses documents privés.
+
+        <br><br>
+
+        Les conventions liées
+        aux projets Bo'CitéArt
+        sont préparées et coordonnées
+        par Bo'CitéArt,
+        en lien avec les partenaires concernés
+        et dans le respect
+        des règles juridiques et fiscales applicables.
+
+        <br><br>
+
+        La structure associative
+        sans but lucratif prévue par Bo'CitéArt
+        pourra porter les opérations éligibles,
+        lorsque les conditions juridiques
+        et fiscales seront réunies.
+
+        <br><br>
+
+        L’entreprise devra faire confirmer
+        l’éligibilité de son opération
+        par son expert-comptable.
+
+        <button
+          id="privateOffersMecenatBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Ouvrir mon espace mécénat privé
+        </button>
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Mes abonnements et mes factures
+        </strong>
+
+        <br><br>
+
+        Cet espace permet de consulter :
+
+        <br><br>
+
+        • les services souscrits ;<br>
+        • le mode de paiement ;<br>
+        • les prochaines échéances ;<br>
+        • le renouvellement automatique ;<br>
+        • les factures encore disponibles.
+
+        <br><br>
+
+        Bo'CitéArt n’assure pas
+        un archivage permanent
+        des pièces comptables.
+
+        <br><br>
+
+        Chaque entreprise doit télécharger,
+        transmettre et conserver ses factures
+        dans son propre système comptable.
+
+        <button
+          id="privateOffersBillingBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Consulter mes abonnements et factures
+        </button>
+      </div>
+
+      <button
+        id="privateOffersReturnBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:14px;
+          background:#fff;
+        ">
+        Retour à mon espace privé
+      </button>
+    `;
+  }
+
+  function bindPrivateOffers(){
+
+    const localSearchButton =
+      getElement(
+        "privateOffersLocalSearchBtn"
+      );
+
+    const opportunityButton =
+      getElement(
+        "privateOffersOpportunityBtn"
+      );
+
+    const profileButton =
+      getElement(
+        "privateOffersEnrichedProfileBtn"
+      );
+
+    const mecenatButton =
+      getElement(
+        "privateOffersMecenatBtn"
+      );
+
+    const billingButton =
+      getElement(
+        "privateOffersBillingBtn"
+      );
+
+    const returnButton =
+      getElement(
+        "privateOffersReturnBtn"
+      );
+
+    if(localSearchButton){
+      localSearchButton.onclick = function(){
+
+        if(
+          typeof module.openProfessionalDirectory ===
+          "function"
+        ){
+          module.openProfessionalDirectory();
+        }
+      };
+    }
+
+    document
+      .querySelectorAll(
+        ".privateOffersSubscribeBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          const plan =
+            button.getAttribute(
+              "data-private-offer-plan"
+            );
+
+          if(
+            typeof module.activateSearchSubscription ===
+            "function"
+          ){
+            const annual =
+              confirm(
+                "Choisissez le paiement.\n\n" +
+                "OK : abonnement annuel\n" +
+                "Annuler : abonnement mensuel"
+              );
+
+            module.activateSearchSubscription(
+              plan,
+              annual
+                ? "annuel"
+                : "mensuel"
+            );
+
+            return;
+          }
+
+          alert(
+            "La souscription est momentanément indisponible."
+          );
+        };
+      });
+
+    if(opportunityButton){
+      opportunityButton.onclick = function(){
+
+        if(
+          typeof module.openProfessionalOpportunities ===
+          "function"
+        ){
+          module.openProfessionalOpportunities();
+          return;
+        }
+
+        module.openScreen(
+          "opportunites"
+        );
+      };
+    }
+
+    if(profileButton){
+      profileButton.onclick = function(){
+
+        if(
+          typeof module.openScreen ===
+          "function"
+        ){
+          module.openScreen(
+            "visibilite"
+          );
+        }
+      };
+    }
+
+    if(mecenatButton){
+      mecenatButton.onclick = function(){
+
+        if(
+          typeof module.openMecenatPrivateSpace ===
+          "function"
+        ){
+          module.openMecenatPrivateSpace();
+        }
+      };
+    }
+
+    if(billingButton){
+      billingButton.onclick = function(){
+
+        if(
+          typeof module.openSearchBilling ===
+          "function"
+        ){
+          module.openSearchBilling();
+        }
+      };
+    }
+
+    if(returnButton){
+      returnButton.onclick = function(){
+
+        if(
+          typeof module.openPrivateHome ===
+          "function"
+        ){
+          module.openPrivateHome();
+        }
+      };
+    }
+  }
+
+  function openPrivateOffers(){
+
+    if(
+      typeof module.isPartnerAuthenticated ===
+      "function" &&
+      !module.isPartnerAuthenticated()
+    ){
+      module.openPartnerAccess(
+        openPrivateOffers
+      );
+
+      return;
+    }
+
+    module.renderModal(
+      "Offres professionnelles",
+      getPrivateOffersHtml()
+    );
+
+    window.setTimeout(function(){
+      bindPrivateOffers();
+    },0);
+  }
+
+  module.openPrivateOffers =
+    openPrivateOffers;
+
+  /*
+    Les fonctions suivantes existent déjà.
+    Elles sont maintenant protégées par le code entreprise.
+  */
+
+  protectFunction(
+    "openProfessionalDirectory",
+    "annuaire"
+  );
+
+  protectFunction(
+    "openProfessionalOpportunities",
+    "opportunites"
+  );
+
+  protectFunction(
+    "openSearchBilling"
+  );
+
+  protectFunction(
+    "openMecenatPrivateSpace"
+  );
+
+  protectFunction(
+    "openMecenatPrivateDashboard"
+  );
+
+  /*
+    Protection particulière de la fiche enrichie.
+    Le contenu d’information peut rester public,
+    mais le formulaire privé sera protégé
+    à l’étape suivante.
+  */
+
+  console.log(
+    "✅ Offres privées et services payants protégés"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART
+   PARTIE 3
+   SUPPRESSION DES TARIFS DES FICHES PUBLIQUES
+   ========================================================= */
+
+(function(){
+
+"use strict";
+
+const module = window.BociteEntreprise;
+
+if(!module){
+    return;
+}
+
+function createPartnerInformationBox(){
+
+return `
+
+<div class="box"
+style="
+border-left:6px solid #2f5d46;
+margin-top:18px;
+">
+
+<strong>
+Vous souhaitez utiliser ce service ?
+</strong>
+
+<br><br>
+
+Toutes les informations présentes dans cette fiche
+sont librement consultables.
+
+<br><br>
+
+Les modalités de souscription,
+les abonnements,
+les paiements,
+les tarifs,
+les factures
+et les espaces privés
+sont accessibles uniquement
+depuis l'Espace Partenaire Bo'CitéArt.
+
+<br><br>
+
+<button
+id="openPartnerPrivateSpace"
+class="choiceBtn"
+type="button"
+style="width:100%;">
+
+Accéder à l'Espace Partenaire
+
+</button>
+
+</div>
+
+`;
+
+}
+
+function connectPartnerButtons(){
+
+const button =
+document.getElementById(
+"openPartnerPrivateSpace"
+);
+
+if(button){
+
+button.onclick=function(){
+
+if(typeof module.openPartnerAccess==="function"){
+
+module.openPartnerAccess();
+
+}
+
+};
+
+}
+
+}
+
+module.appendPartnerInformationBox =
+createPartnerInformationBox;
+
+module.bindPartnerInformationBox =
+connectPartnerButtons;
+
+console.log(
+"✅ Fiches publiques raccordées à l'espace partenaire"
+);
+
+})();
+
+/* =========================================================
+   BO'CITÉART — ARCHITECTURE ENTREPRISE
+   PARTIE 4 — OPPORTUNITÉS PUBLIQUES ET FORMULAIRE PRIVÉ
+   ========================================================= */
+
+(function separatePublicAndPrivateOpportunities(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  /*
+    La fonction actuelle contient le formulaire,
+    le tarif et le paiement.
+    Nous la conservons comme fonction privée.
+  */
+
+  const privateOpportunityFunction =
+    module.openProfessionalOpportunities;
+
+  if(
+    typeof privateOpportunityFunction === "function"
+  ){
+    module.openPrivateProfessionalOpportunities =
+      privateOpportunityFunction;
+  }
+
+  function getPublicOpportunityHtml(){
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.55;
+        ">
+
+        <strong style="font-size:19px;">
+          Opportunités professionnelles
+        </strong>
+
+        <br><br>
+
+        Cette rubrique permet aux entreprises,
+        artisans et professionnels
+        de publier une information destinée
+        exclusivement à d’autres professionnels.
+
+        <br><br>
+
+        Elle est distincte de la publicité
+        destinée aux habitants.
+      </div>
+
+      <div class="box" style="line-height:1.55;">
+
+        <strong style="font-size:18px;">
+          À quoi sert une opportunité professionnelle ?
+        </strong>
+
+        <br><br>
+
+        Elle peut permettre de rechercher :
+
+        <br><br>
+
+        • un partenaire ;<br>
+        • un sous-traitant ;<br>
+        • un fournisseur ;<br>
+        • une compétence particulière ;<br>
+        • un intervenant ;<br>
+        • un formateur ;<br>
+        • une entreprise disponible dans une autre région ;<br>
+        • un repreneur ;<br>
+        • une solution technique ;<br>
+        • une collaboration temporaire ou durable.
+
+        <br><br>
+
+        Elle peut également servir à présenter :
+
+        <br><br>
+
+        • une formation professionnelle ;<br>
+        • une conférence ;<br>
+        • une rencontre entre entreprises ;<br>
+        • une démonstration de matériel ;<br>
+        • un salon professionnel ;<br>
+        • un appel à candidatures ;<br>
+        • un événement économique ;<br>
+        • une proposition de coopération.
+
+        <br><br>
+
+        Cette liste est volontairement non exhaustive.
+      </div>
+
+      <div class="box" style="line-height:1.55;">
+
+        <strong style="font-size:18px;">
+          Une publication différente de la publicité locale
+        </strong>
+
+        <br><br>
+
+        <strong>
+          La publicité locale
+        </strong>
+
+        s’adresse principalement aux habitants
+        pour présenter un produit,
+        un service,
+        une promotion
+        ou un événement.
+
+        <br><br>
+
+        <strong>
+          L’opportunité professionnelle
+        </strong>
+
+        s’adresse aux entreprises
+        pour répondre à un besoin professionnel précis.
+
+        <br><br>
+
+        Elle n’est donc pas mélangée
+        avec les publicités grand public.
+      </div>
+
+      <div class="box" style="line-height:1.55;">
+
+        <strong style="font-size:18px;">
+          Une demande peut créer un intérêt collectif
+        </strong>
+
+        <br><br>
+
+        Lorsqu’une même recherche intéresse
+        plusieurs entreprises,
+        Bo'CitéArt peut identifier
+        un besoin commun.
+
+        <br><br>
+
+        Exemples :
+
+        <br><br>
+
+        • plusieurs entreprises recherchent
+          une formation SST ;<br>
+        • plusieurs entreprises recherchent
+          un prestataire pour l’entretien des vitres ;<br>
+        • plusieurs entreprises recherchent
+          un carreleur disponible dans une région ;<br>
+        • plusieurs entreprises recherchent
+          une formation d’anglais professionnel ;<br>
+        • plusieurs entreprises recherchent
+          une solution de recrutement ;<br>
+        • plusieurs entreprises recherchent
+          un fournisseur ou un sous-traitant.
+
+        <br><br>
+
+        Lorsque l’intérêt devient suffisant,
+        Bo'CitéArt peut être alerté
+        afin d’étudier une réponse collective.
+      </div>
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid #b00020;
+          line-height:1.55;
+        ">
+
+        <strong>
+          Publication réservée aux entreprises partenaires
+        </strong>
+
+        <br><br>
+
+        Le formulaire,
+        les conditions de publication,
+        le tarif,
+        le paiement,
+        les brouillons
+        et le suivi de l’annonce
+        sont accessibles uniquement
+        dans l’espace privé de l’entreprise.
+      </div>
+
+      <button
+        id="publicOpportunityPrivateAccessBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:12px;">
+        Publier une opportunité professionnelle
+      </button>
+
+      <button
+        id="publicOpportunityReturnBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+          background:#fff;
+        ">
+        Retour à l’espace Entreprise
+      </button>
+    `;
+  }
+
+  function bindPublicOpportunity(){
+
+    const privateButton =
+      getElement(
+        "publicOpportunityPrivateAccessBtn"
+      );
+
+    const returnButton =
+      getElement(
+        "publicOpportunityReturnBtn"
+      );
+
+    if(privateButton){
+
+      privateButton.onclick = function(){
+
+        const openPrivateForm =
+          function(){
+
+            if(
+              typeof module.openPrivateProfessionalOpportunities ===
+              "function"
+            ){
+              module.openPrivateProfessionalOpportunities();
+              return;
+            }
+
+            alert(
+              "Le formulaire privé est momentanément indisponible."
+            );
+          };
+
+        if(
+          typeof module.requirePartnerAccess ===
+          "function"
+        ){
+          module.requirePartnerAccess(
+            openPrivateForm
+          );
+
+          return;
+        }
+
+        openPrivateForm();
+      };
+    }
+
+    if(returnButton){
+
+      returnButton.onclick = function(){
+
+        if(
+          typeof module.openHome ===
+          "function"
+        ){
+          module.openHome();
+        }
+      };
+    }
+  }
+
+  function openPublicOpportunities(){
+
+    module.renderModal(
+      "Opportunités professionnelles",
+      getPublicOpportunityHtml()
+    );
+
+    window.setTimeout(function(){
+      bindPublicOpportunity();
+    },0);
+  }
+
+  /*
+    L’entrée publique « opportunites »
+    ouvre maintenant la fiche explicative sans prix.
+  */
+
+  module.registerScreen(
+    "opportunites",
+    openPublicOpportunities
+  );
+
+  module.openPublicProfessionalOpportunities =
+    openPublicOpportunities;
+
+  /*
+    Le bouton de la page privée des offres
+    doit ouvrir directement le formulaire privé.
+  */
+
+  const originalOpenPrivateOffers =
+    module.openPrivateOffers;
+
+  if(
+    typeof originalOpenPrivateOffers === "function" &&
+    !module.__privateOpportunityOfferPatched
+  ){
+    module.__privateOpportunityOfferPatched = true;
+
+    module.openPrivateOffers = function(){
+
+      originalOpenPrivateOffers.apply(
+        module,
+        arguments
+      );
+
+      window.setTimeout(function(){
+
+        const button =
+          getElement(
+            "privateOffersOpportunityBtn"
+          );
+
+        if(!button){
+          return;
+        }
+
+        button.onclick = function(){
+
+          if(
+            typeof module.openPrivateProfessionalOpportunities ===
+            "function"
+          ){
+            module.openPrivateProfessionalOpportunities();
+            return;
+          }
+
+          alert(
+            "Le formulaire privé est momentanément indisponible."
+          );
+        };
+      },0);
+    };
+  }
+
+  console.log(
+    "✅ Opportunités : information publique et formulaire privé séparés"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART
+   RECHERCHE ENTREPRISE V2
+   ========================================================= */
+
+(function(){
+
+"use strict";
+
+const module=window.BociteEntreprise;
+
+if(!module){
+    return;
+}
+
+/*
+Cette version remplace complètement
+l'ancienne recherche.
+
+Elle devient totalement indépendante
+du module Sport.
+*/
+
+module.professionalSearchSettings={
+
+city:"",
+department:"",
+region:"",
+country:"France",
+
+scope:"commune",
+
+durationDays:90,
+
+counterVisible:true,
+
+automaticDelete:true,
+
+automaticAlert:true
+
+};
+
+console.log(
+"✅ Recherche Entreprise V2 initialisée"
+);
+
+})();
+
+/* =========================================================
+   BO'CITÉART — RECHERCHE ENTREPRISE
+   PARTIE 5A — ZONE INDÉPENDANTE ET NAVIGATION
+   ========================================================= */
+
+(function addBociteProfessionalSearchHub(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  const SEARCH_SETTINGS_KEY =
+    "bociteart_professional_search_settings_v3";
+
+  const previousDirectory =
+    module.openProfessionalDirectory;
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return module.safeEscape(value);
+  }
+
+  function loadSettings(){
+
+    try{
+      const raw =
+        localStorage.getItem(
+          SEARCH_SETTINGS_KEY
+        );
+
+      const parsed =
+        raw
+          ? JSON.parse(raw)
+          : null;
+
+      if(
+        parsed &&
+        typeof parsed === "object"
+      ){
+        return parsed;
+      }
+
+    }catch(error){
+      console.warn(
+        "Lecture des paramètres de recherche impossible :",
+        error
+      );
+    }
+
+    return {
+      keyword:"",
+      city:"",
+      department:"",
+      region:"",
+      country:"France",
+      scope:"commune"
+    };
+  }
+
+  function saveSettings(settings){
+
+    try{
+      localStorage.setItem(
+        SEARCH_SETTINGS_KEY,
+        JSON.stringify(settings)
+      );
+    }catch(error){
+      console.warn(
+        "Enregistrement des paramètres de recherche impossible :",
+        error
+      );
+    }
+  }
+
+  function getSearchHubHtml(){
+
+    const saved =
+      loadSettings();
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.5;
+        ">
+
+        <strong style="font-size:19px;">
+          Recherche professionnelle
+        </strong>
+
+        <br><br>
+
+        Recherchez une entreprise,
+        un artisan,
+        un fournisseur,
+        un sous-traitant,
+        un partenaire
+        ou une compétence.
+
+        <br><br>
+
+        La zone indiquée ici
+        est totalement indépendante
+        des villes choisies dans le Sport,
+        la carte
+        ou « Explorer les alentours ».
+      </div>
+
+      <label
+        style="
+          display:block;
+          font-weight:900;
+        ">
+        Que recherchez-vous ?
+      </label>
+
+      <input
+        id="professionalHubKeyword"
+        class="miniField"
+        type="search"
+        value="${escapeValue(saved.keyword || "")}"
+        placeholder="Exemple : maçon, fleuriste, carreleur, repreneur">
+
+      <label
+        style="
+          display:block;
+          margin-top:12px;
+          font-weight:900;
+        ">
+        Étendue de la recherche
+      </label>
+
+      <select
+        id="professionalHubScope"
+        class="miniField">
+
+        <option value="commune">
+          Une commune
+        </option>
+
+        <option value="department">
+          Un département
+        </option>
+
+        <option value="region">
+          Une région
+        </option>
+
+        <option value="france">
+          Toute la France
+        </option>
+
+        <option value="europe">
+          Un pays européen
+        </option>
+      </select>
+
+      <div
+        id="professionalHubCityFields"
+        style="margin-top:12px;">
+
+        <label
+          style="
+            display:block;
+            font-weight:900;
+          ">
+          Commune
+        </label>
+
+        <input
+          id="professionalHubCity"
+          class="miniField"
+          type="text"
+          value="${escapeValue(saved.city || "")}"
+          placeholder="Exemple : Wattignies">
+      </div>
+
+      <div
+        id="professionalHubDepartmentFields"
+        style="display:none;margin-top:12px;">
+
+        <label
+          style="
+            display:block;
+            font-weight:900;
+          ">
+          Département
+        </label>
+
+        <input
+          id="professionalHubDepartment"
+          class="miniField"
+          type="text"
+          value="${escapeValue(saved.department || "")}"
+          placeholder="Exemple : Nord ou 59">
+      </div>
+
+      <div
+        id="professionalHubRegionFields"
+        style="display:none;margin-top:12px;">
+
+        <label
+          style="
+            display:block;
+            font-weight:900;
+          ">
+          Région
+        </label>
+
+        <input
+          id="professionalHubRegion"
+          class="miniField"
+          type="text"
+          value="${escapeValue(saved.region || "")}"
+          placeholder="Exemple : Hauts-de-France">
+      </div>
+
+      <div
+        id="professionalHubEuropeFields"
+        style="display:none;margin-top:12px;">
+
+        <label
+          style="
+            display:block;
+            font-weight:900;
+          ">
+          Pays
+        </label>
+
+        <select
+          id="professionalHubCountry"
+          class="miniField">
+
+          <option value="Belgique">
+            Belgique
+          </option>
+
+          <option value="Luxembourg">
+            Luxembourg
+          </option>
+
+          <option value="Pays-Bas">
+            Pays-Bas
+          </option>
+
+          <option value="Allemagne">
+            Allemagne
+          </option>
+
+          <option value="Espagne">
+            Espagne
+          </option>
+
+          <option value="Italie">
+            Italie
+          </option>
+
+          <option value="Portugal">
+            Portugal
+          </option>
+
+          <option value="Suisse">
+            Suisse
+          </option>
+
+          <option value="Autriche">
+            Autriche
+          </option>
+
+          <option value="Irlande">
+            Irlande
+          </option>
+
+          <option value="Danemark">
+            Danemark
+          </option>
+
+          <option value="Suède">
+            Suède
+          </option>
+
+          <option value="Finlande">
+            Finlande
+          </option>
+
+          <option value="Pologne">
+            Pologne
+          </option>
+        </select>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Ville ou région dans ce pays
+        </label>
+
+        <input
+          id="professionalHubEuropeLocation"
+          class="miniField"
+          type="text"
+          placeholder="Exemple : Bruxelles, Milan, Barcelone">
+      </div>
+
+      <button
+        id="professionalHubSearchBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:14px;
+          font-size:17px;
+        ">
+        Rechercher
+      </button>
+
+      <button
+        id="professionalHubClearBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+          background:#fff;
+        ">
+        Effacer les critères
+      </button>
+
+      <button
+        id="professionalHubReturnBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+          background:#fff;
+        ">
+        Retour à l’espace Entreprise
+      </button>
+
+      <div
+        id="professionalHubStatus"
+        class="muted"
+        style="margin-top:10px;">
+      </div>
+
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          border-left:6px solid #b00020;
+        ">
+
+        <strong>
+          Recherche privée
+        </strong>
+
+        <br><br>
+
+        Les métiers recherchés,
+        les zones choisies
+        et les résultats consultés
+        restent dans l’espace privé
+        de l’entreprise.
+      </div>
+    `;
+  }
+
+  function updateVisibleFields(){
+
+    const scopeInput =
+      getElement(
+        "professionalHubScope"
+      );
+
+    const scope =
+      scopeInput
+        ? scopeInput.value
+        : "commune";
+
+    const cityFields =
+      getElement(
+        "professionalHubCityFields"
+      );
+
+    const departmentFields =
+      getElement(
+        "professionalHubDepartmentFields"
+      );
+
+    const regionFields =
+      getElement(
+        "professionalHubRegionFields"
+      );
+
+    const europeFields =
+      getElement(
+        "professionalHubEuropeFields"
+      );
+
+    if(cityFields){
+      cityFields.style.display =
+        scope === "commune"
+          ? "block"
+          : "none";
+    }
+
+    if(departmentFields){
+      departmentFields.style.display =
+        scope === "department"
+          ? "block"
+          : "none";
+    }
+
+    if(regionFields){
+      regionFields.style.display =
+        scope === "region"
+          ? "block"
+          : "none";
+    }
+
+    if(europeFields){
+      europeFields.style.display =
+        scope === "europe"
+          ? "block"
+          : "none";
+    }
+  }
+
+  function readSearchSettings(){
+
+    const keywordInput =
+      getElement(
+        "professionalHubKeyword"
+      );
+
+    const scopeInput =
+      getElement(
+        "professionalHubScope"
+      );
+
+    const cityInput =
+      getElement(
+        "professionalHubCity"
+      );
+
+    const departmentInput =
+      getElement(
+        "professionalHubDepartment"
+      );
+
+    const regionInput =
+      getElement(
+        "professionalHubRegion"
+      );
+
+    const countryInput =
+      getElement(
+        "professionalHubCountry"
+      );
+
+    const europeLocationInput =
+      getElement(
+        "professionalHubEuropeLocation"
+      );
+
+    return {
+      keyword:
+        keywordInput
+          ? String(
+              keywordInput.value || ""
+            ).trim()
+          : "",
+
+      scope:
+        scopeInput
+          ? String(
+              scopeInput.value || "commune"
+            )
+          : "commune",
+
+      city:
+        cityInput
+          ? String(
+              cityInput.value || ""
+            ).trim()
+          : "",
+
+      department:
+        departmentInput
+          ? String(
+              departmentInput.value || ""
+            ).trim()
+          : "",
+
+      region:
+        regionInput
+          ? String(
+              regionInput.value || ""
+            ).trim()
+          : "",
+
+      country:
+        countryInput
+          ? String(
+              countryInput.value || "France"
+            ).trim()
+          : "France",
+
+      europeLocation:
+        europeLocationInput
+          ? String(
+              europeLocationInput.value || ""
+            ).trim()
+          : ""
+    };
+  }
+
+  function validateSearchSettings(settings){
+
+    if(!settings.keyword){
+
+      alert(
+        "Indiquez le métier, l’activité ou le service recherché."
+      );
+
+      return false;
+    }
+
+    if(
+      settings.scope === "commune" &&
+      !settings.city
+    ){
+
+      alert(
+        "Indiquez la commune de recherche."
+      );
+
+      return false;
+    }
+
+    if(
+      settings.scope === "department" &&
+      !settings.department
+    ){
+
+      alert(
+        "Indiquez le département de recherche."
+      );
+
+      return false;
+    }
+
+    if(
+      settings.scope === "region" &&
+      !settings.region
+    ){
+
+      alert(
+        "Indiquez la région de recherche."
+      );
+
+      return false;
+    }
+
+    if(
+      settings.scope === "europe" &&
+      !settings.europeLocation
+    ){
+
+      alert(
+        "Indiquez une ville ou une région dans le pays choisi."
+      );
+
+      return false;
+    }
+
+    return true;
+  }
+
+  function buildSearchLocation(settings){
+
+    if(settings.scope === "commune"){
+      return settings.city;
+    }
+
+    if(settings.scope === "department"){
+      return settings.department;
+    }
+
+    if(settings.scope === "region"){
+      return settings.region;
+    }
+
+    if(settings.scope === "france"){
+      return "France";
+    }
+
+    if(settings.scope === "europe"){
+      return (
+        settings.europeLocation +
+        ", " +
+        settings.country
+      );
+    }
+
+    return "";
+  }
+
+  function addReturnButtonToSearchResults(){
+
+    window.setTimeout(function(){
+
+      const existing =
+        getElement(
+          "professionalSearchReturnToHubBtn"
+        );
+
+      if(existing){
+        return;
+      }
+
+      const modal =
+        document.querySelector(
+          ".modalContent, .modal-content, #modalContent"
+        );
+
+      if(!modal){
+        return;
+      }
+
+      const button =
+        document.createElement("button");
+
+      button.id =
+        "professionalSearchReturnToHubBtn";
+
+      button.type =
+        "button";
+
+      button.className =
+        "choiceBtn";
+
+      button.style.width =
+        "100%";
+
+      button.style.marginTop =
+        "12px";
+
+      button.style.background =
+        "#fff";
+
+      button.textContent =
+        "Retour aux critères de recherche";
+
+      button.onclick = function(){
+        openProfessionalSearchHub();
+      };
+
+      modal.appendChild(button);
+
+    },100);
+  }
+
+  function launchSearch(){
+
+    const settings =
+      readSearchSettings();
+
+    if(
+      !validateSearchSettings(
+        settings
+      )
+    ){
+      return;
+    }
+
+    saveSettings(settings);
+
+    const location =
+      buildSearchLocation(
+        settings
+      );
+
+    if(
+      typeof previousDirectory !==
+      "function"
+    ){
+
+      alert(
+        "Le moteur de recherche actuel est introuvable."
+      );
+
+      return;
+    }
+
+    previousDirectory.call(
+      module,
+      {
+        keyword:
+          settings.keyword,
+
+        city:
+          location
+      }
+    );
+
+    addReturnButtonToSearchResults();
+  }
+
+  function clearSearchHub(){
+
+    saveSettings({
+      keyword:"",
+      city:"",
+      department:"",
+      region:"",
+      country:"France",
+      scope:"commune"
+    });
+
+    openProfessionalSearchHub();
+  }
+
+  function bindSearchHub(){
+
+    const saved =
+      loadSettings();
+
+    const scopeInput =
+      getElement(
+        "professionalHubScope"
+      );
+
+    const countryInput =
+      getElement(
+        "professionalHubCountry"
+      );
+
+    const searchButton =
+      getElement(
+        "professionalHubSearchBtn"
+      );
+
+    const clearButton =
+      getElement(
+        "professionalHubClearBtn"
+      );
+
+    const returnButton =
+      getElement(
+        "professionalHubReturnBtn"
+      );
+
+    const keywordInput =
+      getElement(
+        "professionalHubKeyword"
+      );
+
+    if(scopeInput){
+
+      scopeInput.value =
+        saved.scope || "commune";
+
+      scopeInput.onchange =
+        updateVisibleFields;
+    }
+
+    if(
+      countryInput &&
+      saved.country
+    ){
+      countryInput.value =
+        saved.country;
+    }
+
+    updateVisibleFields();
+
+    if(searchButton){
+      searchButton.onclick =
+        launchSearch;
+    }
+
+    if(clearButton){
+      clearButton.onclick =
+        clearSearchHub;
+    }
+
+    if(returnButton){
+      returnButton.onclick = function(){
+
+        if(
+          typeof module.openHome ===
+          "function"
+        ){
+          module.openHome();
+        }
+      };
+    }
+
+    if(keywordInput){
+      keywordInput.addEventListener(
+        "keydown",
+        function(event){
+
+          if(event.key === "Enter"){
+            event.preventDefault();
+            launchSearch();
+          }
+        }
+      );
+    }
+  }
+
+  function openProfessionalSearchHub(){
+
+    const openHub =
+      function(){
+
+        module.renderModal(
+          "Recherche professionnelle",
+          getSearchHubHtml()
+        );
+
+        window.setTimeout(function(){
+          bindSearchHub();
+        },0);
+      };
+
+    if(
+      typeof module.requirePartnerAccess ===
+      "function"
+    ){
+      module.requirePartnerAccess(
+        openHub
+      );
+
+      return;
+    }
+
+    openHub();
+  }
+
+  module.openProfessionalSearchHub =
+    openProfessionalSearchHub;
+
+  module.openProfessionalDirectory =
+    openProfessionalSearchHub;
+
+  module.registerScreen(
+    "annuaire",
+    openProfessionalSearchHub
+  );
+
+  console.log(
+    "✅ Recherche professionnelle indépendante — partie 5A chargée"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — RECHERCHE ENTREPRISE
+   PARTIE 5B — DEMANDES, COMPTEURS ET ALERTES
+   ========================================================= */
+
+(function addBociteProfessionalSearchDemandTracking(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  const DEMANDS_KEY =
+    "bociteart_professional_search_demands_v1";
+
+  const ALERTS_KEY =
+    "bociteart_professional_search_alerts_v1";
+
+  const VALIDITY_DAYS = 90;
+
+  const ALERT_THRESHOLD = 5;
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return module.safeEscape(value);
+  }
+
+  function normalizeText(value){
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s-]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function loadArray(key){
+
+    try{
+      const raw =
+        localStorage.getItem(key);
+
+      const parsed =
+        raw ? JSON.parse(raw) : [];
+
+      return Array.isArray(parsed)
+        ? parsed
+        : [];
+    }catch(error){
+      return [];
+    }
+  }
+
+  function saveArray(key, list){
+
+    try{
+      localStorage.setItem(
+        key,
+        JSON.stringify(list || [])
+      );
+    }catch(error){
+      console.warn(
+        "Enregistrement des demandes impossible :",
+        error
+      );
+    }
+  }
+
+  function loadDemands(){
+    return loadArray(DEMANDS_KEY);
+  }
+
+  function saveDemands(list){
+    saveArray(DEMANDS_KEY, list);
+  }
+
+  function loadAlerts(){
+    return loadArray(ALERTS_KEY);
+  }
+
+  function saveAlerts(list){
+    saveArray(ALERTS_KEY, list);
+  }
+
+  function getExpiryTimestamp(){
+
+    return (
+      Date.now() +
+      VALIDITY_DAYS *
+      24 *
+      60 *
+      60 *
+      1000
+    );
+  }
+
+  function formatDate(timestamp){
+
+    if(!timestamp){
+      return "";
+    }
+
+    return new Date(timestamp)
+      .toLocaleDateString("fr-FR");
+  }
+
+  function cleanExpiredDemands(){
+
+    const now =
+      Date.now();
+
+    const demands =
+      loadDemands();
+
+    const active =
+      demands.filter(function(item){
+
+        return (
+          item.status === "active" &&
+          Number(item.expiresAt || 0) > now
+        );
+      });
+
+    if(active.length !== demands.length){
+      saveDemands(active);
+    }
+
+    return active;
+  }
+
+  function readCurrentSearch(){
+
+    const keywordInput =
+      getElement(
+        "professionalHubKeyword"
+      );
+
+    const scopeInput =
+      getElement(
+        "professionalHubScope"
+      );
+
+    const cityInput =
+      getElement(
+        "professionalHubCity"
+      );
+
+    const departmentInput =
+      getElement(
+        "professionalHubDepartment"
+      );
+
+    const regionInput =
+      getElement(
+        "professionalHubRegion"
+      );
+
+    const countryInput =
+      getElement(
+        "professionalHubCountry"
+      );
+
+    const europeLocationInput =
+      getElement(
+        "professionalHubEuropeLocation"
+      );
+
+    const scope =
+      scopeInput
+        ? String(scopeInput.value || "commune")
+        : "commune";
+
+    let location = "";
+
+    if(scope === "commune"){
+      location =
+        cityInput
+          ? String(cityInput.value || "").trim()
+          : "";
+    }
+
+    if(scope === "department"){
+      location =
+        departmentInput
+          ? String(departmentInput.value || "").trim()
+          : "";
+    }
+
+    if(scope === "region"){
+      location =
+        regionInput
+          ? String(regionInput.value || "").trim()
+          : "";
+    }
+
+    if(scope === "france"){
+      location = "France";
+    }
+
+    if(scope === "europe"){
+
+      const country =
+        countryInput
+          ? String(countryInput.value || "").trim()
+          : "";
+
+      const europeLocation =
+        europeLocationInput
+          ? String(europeLocationInput.value || "").trim()
+          : "";
+
+      location =
+        europeLocation && country
+          ? europeLocation + ", " + country
+          : "";
+    }
+
+    return {
+      keyword:
+        keywordInput
+          ? String(keywordInput.value || "").trim()
+          : "",
+
+      scope:scope,
+      location:location
+    };
+  }
+
+  function registerSearchDemand(){
+
+    const search =
+      readCurrentSearch();
+
+    if(
+      !search.keyword ||
+      !search.location
+    ){
+      return null;
+    }
+
+    const normalizedKeyword =
+      normalizeText(search.keyword);
+
+    const normalizedLocation =
+      normalizeText(search.location);
+
+    const demands =
+      cleanExpiredDemands();
+
+    let demand =
+      demands.find(function(item){
+
+        return (
+          item.normalizedKeyword ===
+            normalizedKeyword &&
+          item.normalizedLocation ===
+            normalizedLocation &&
+          item.scope === search.scope
+        );
+      });
+
+    if(demand){
+
+      demand.count =
+        Number(demand.count || 0) + 1;
+
+      demand.lastSearchAt =
+        Date.now();
+
+      demand.lastSearchAtFr =
+        new Date()
+          .toLocaleString("fr-FR");
+
+      demand.expiresAt =
+        getExpiryTimestamp();
+
+      demand.expiresAtFr =
+        formatDate(demand.expiresAt);
+
+    }else{
+
+      demand = {
+        id:
+          "DEM-RECH-" +
+          Date.now() +
+          "-" +
+          Math.random()
+            .toString(36)
+            .slice(2,7),
+
+        keyword:
+          search.keyword,
+
+        normalizedKeyword:
+          normalizedKeyword,
+
+        scope:
+          search.scope,
+
+        location:
+          search.location,
+
+        normalizedLocation:
+          normalizedLocation,
+
+        count:1,
+
+        status:"active",
+
+        createdAt:
+          Date.now(),
+
+        createdAtFr:
+          new Date()
+            .toLocaleString("fr-FR"),
+
+        lastSearchAt:
+          Date.now(),
+
+        lastSearchAtFr:
+          new Date()
+            .toLocaleString("fr-FR"),
+
+        expiresAt:
+          getExpiryTimestamp(),
+
+        expiresAtFr:
+          formatDate(
+            getExpiryTimestamp()
+          ),
+
+        alertCreated:false
+      };
+
+      demands.unshift(demand);
+    }
+
+    createBociteAlertIfNeeded(
+      demand
+    );
+
+    saveDemands(demands);
+
+    showDemandCounter(
+      demand
+    );
+
+    return demand;
+  }
+
+  function createBociteAlertIfNeeded(demand){
+
+    if(
+      Number(demand.count || 0) <
+      ALERT_THRESHOLD
+    ){
+      return;
+    }
+
+    if(demand.alertCreated){
+      return;
+    }
+
+    const alerts =
+      loadAlerts();
+
+    alerts.unshift({
+      id:
+        "ALERTE-RECH-" +
+        Date.now(),
+
+      demandId:
+        demand.id,
+
+      type:
+        "fort_interet_professionnel",
+
+      title:
+        demand.keyword,
+
+      location:
+        demand.location,
+
+      scope:
+        demand.scope,
+
+      count:
+        demand.count,
+
+      status:
+        "a_traiter",
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date()
+          .toLocaleString("fr-FR")
+    });
+
+    demand.alertCreated = true;
+
+    saveAlerts(alerts);
+
+    console.warn(
+      "🔔 Alerte Bo'CitéArt : forte demande pour " +
+      demand.keyword +
+      " — " +
+      demand.location +
+      " — " +
+      demand.count +
+      " recherches"
+    );
+  }
+
+  function showDemandCounter(demand){
+
+    window.setTimeout(function(){
+
+      const status =
+        getElement(
+          "professionalHubStatus"
+        );
+
+      if(!status){
+        return;
+      }
+
+      status.innerHTML = `
+        <div
+          class="box"
+          style="
+            border-left:6px solid #2f5d46;
+            line-height:1.5;
+          ">
+
+          <strong>
+            Intérêt professionnel enregistré
+          </strong>
+
+          <br><br>
+
+          Recherche :
+
+          <strong>
+            ${escapeValue(demand.keyword)}
+          </strong>
+
+          <br><br>
+
+          Zone :
+
+          <strong>
+            ${escapeValue(demand.location)}
+          </strong>
+
+          <br><br>
+
+          Nombre de recherches enregistrées :
+
+          <strong style="font-size:18px;">
+            ${Number(demand.count || 0)}
+          </strong>
+
+          <br><br>
+
+          Cette demande collective reste active
+          pendant trois mois après
+          la dernière recherche enregistrée.
+
+          <br><br>
+
+          Échéance actuelle :
+
+          <strong>
+            ${escapeValue(demand.expiresAtFr)}
+          </strong>
+
+          ${
+            Number(demand.count || 0) >=
+            ALERT_THRESHOLD
+              ? `
+                <br><br>
+
+                <strong>
+                  L’intérêt est suffisant pour alerter Bo'CitéArt.
+                </strong>
+
+                <br><br>
+
+                Bo'CitéArt pourra étudier
+                une réponse collective
+                et suivre la demande
+                en dehors de l’application.
+              `
+              : ""
+          }
+        </div>
+      `;
+
+    },50);
+  }
+
+  function addDemandInformationToHub(){
+
+    const searchButton =
+      getElement(
+        "professionalHubSearchBtn"
+      );
+
+    if(!searchButton){
+      return;
+    }
+
+    if(
+      getElement(
+        "professionalDemandInformationBox"
+      )
+    ){
+      return;
+    }
+
+    const box =
+      document.createElement("div");
+
+    box.id =
+      "professionalDemandInformationBox";
+
+    box.className =
+      "box";
+
+    box.style.marginTop =
+      "14px";
+
+    box.style.borderLeft =
+      "6px solid #2f5d46";
+
+    box.innerHTML = `
+      <strong>
+        Recherche et intérêt collectif
+      </strong>
+
+      <br><br>
+
+      Chaque recherche peut alimenter
+      anonymement un compteur d’intérêt professionnel.
+
+      <br><br>
+
+      Lorsqu’un besoin identique
+      est recherché par plusieurs entreprises,
+      Bo'CitéArt peut être alerté
+      afin d’étudier une solution commune.
+
+      <br><br>
+
+      Exemples non exhaustifs :
+
+      <br><br>
+
+      • artisan disponible ;<br>
+      • prestataire de nettoyage ;<br>
+      • entretien des vitres ;<br>
+      • formation SST ;<br>
+      • formation à la conduite d’engins ;<br>
+      • anglais professionnel ;<br>
+      • fournisseur ;<br>
+      • sous-traitant ;<br>
+      • repreneur ;<br>
+      • compétence spécialisée.
+
+      <br><br>
+
+      Une demande reste active
+      pendant trois mois après
+      la dernière recherche correspondante.
+    `;
+
+    searchButton.insertAdjacentElement(
+      "afterend",
+      box
+    );
+  }
+
+  function bindDemandTracking(){
+
+    const searchButton =
+      getElement(
+        "professionalHubSearchBtn"
+      );
+
+    if(!searchButton){
+      return;
+    }
+
+    if(
+      searchButton
+        .dataset
+        .demandTrackingBound === "1"
+    ){
+      return;
+    }
+
+    searchButton
+      .dataset
+      .demandTrackingBound = "1";
+
+    searchButton.addEventListener(
+      "click",
+      function(){
+
+        registerSearchDemand();
+
+      },
+      true
+    );
+
+    addDemandInformationToHub();
+  }
+
+  const originalOpenHub =
+    module.openProfessionalSearchHub;
+
+  if(
+    typeof originalOpenHub === "function" &&
+    !module.__professionalDemandTrackingPatched
+  ){
+
+    module.__professionalDemandTrackingPatched =
+      true;
+
+    const correctedOpenHub =
+      function(){
+
+        originalOpenHub.apply(
+          module,
+          arguments
+        );
+
+        window.setTimeout(function(){
+
+          cleanExpiredDemands();
+
+          bindDemandTracking();
+
+        },50);
+      };
+
+    module.openProfessionalSearchHub =
+      correctedOpenHub;
+
+    module.openProfessionalDirectory =
+      correctedOpenHub;
+
+    module.registerScreen(
+      "annuaire",
+      correctedOpenHub
+    );
+  }
+
+  module.loadProfessionalSearchDemands =
+    cleanExpiredDemands;
+
+  module.loadProfessionalSearchAlerts =
+    loadAlerts;
+
+  module.registerProfessionalSearchDemand =
+    registerSearchDemand;
+
+  cleanExpiredDemands();
+
+  console.log(
+    "✅ Recherche professionnelle — compteurs et alertes chargés"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — RECHERCHE ENTREPRISE
+   PARTIE 5C — TABLEAU PRIVÉ DES DEMANDES ET ALERTES
+   ========================================================= */
+
+(function addBociteProfessionalDemandDashboard(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  const DEMANDS_KEY =
+    "bociteart_professional_search_demands_v1";
+
+  const ALERTS_KEY =
+    "bociteart_professional_search_alerts_v1";
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return module.safeEscape(value);
+  }
+
+  function loadArray(key){
+
+    try{
+      const raw =
+        localStorage.getItem(key);
+
+      const parsed =
+        raw ? JSON.parse(raw) : [];
+
+      return Array.isArray(parsed)
+        ? parsed
+        : [];
+
+    }catch(error){
+      return [];
+    }
+  }
+
+  function saveArray(key, list){
+
+    try{
+      localStorage.setItem(
+        key,
+        JSON.stringify(list || [])
+      );
+
+    }catch(error){
+      console.warn(
+        "Enregistrement du suivi impossible :",
+        error
+      );
+    }
+  }
+
+  function loadDemands(){
+    return loadArray(DEMANDS_KEY);
+  }
+
+  function saveDemands(list){
+    saveArray(DEMANDS_KEY, list);
+  }
+
+  function loadAlerts(){
+    return loadArray(ALERTS_KEY);
+  }
+
+  function saveAlerts(list){
+    saveArray(ALERTS_KEY, list);
+  }
+
+  function formatDate(timestamp){
+
+    if(!timestamp){
+      return "Non renseignée";
+    }
+
+    return new Date(
+      Number(timestamp)
+    ).toLocaleDateString("fr-FR");
+  }
+
+  function getRemainingDays(timestamp){
+
+    if(!timestamp){
+      return 0;
+    }
+
+    return Math.max(
+      0,
+      Math.ceil(
+        (
+          Number(timestamp) -
+          Date.now()
+        ) /
+        (
+          24 *
+          60 *
+          60 *
+          1000
+        )
+      )
+    );
+  }
+
+  function getDemandStatusLabel(status){
+
+    const labels = {
+      active:
+        "Demande active",
+
+      a_etudier:
+        "À étudier",
+
+      recherche_en_cours:
+        "Recherche de solution en cours",
+
+      entreprises_contactees:
+        "Entreprises concernées contactées",
+
+      solution_trouvee:
+        "Solution trouvée",
+
+      cloturee:
+        "Demande clôturée",
+
+      abandonnee:
+        "Demande abandonnée",
+
+      expiree:
+        "Demande expirée"
+    };
+
+    return labels[status] || status;
+  }
+
+  function getAlertStatusLabel(status){
+
+    const labels = {
+      a_traiter:
+        "À traiter",
+
+      prise_en_compte:
+        "Prise en compte",
+
+      suivi_externe:
+        "Suivi réalisé hors application",
+
+      resolue:
+        "Résolue",
+
+      classee:
+        "Classée sans suite"
+    };
+
+    return labels[status] || status;
+  }
+
+  function cleanAndClassifyDemands(){
+
+    const demands =
+      loadDemands();
+
+    let changed = false;
+
+    demands.forEach(function(demand){
+
+      if(
+        demand.status === "active" &&
+        Number(demand.expiresAt || 0) <= Date.now()
+      ){
+        demand.status =
+          "expiree";
+
+        demand.expiredAt =
+          Date.now();
+
+        demand.expiredAtFr =
+          new Date().toLocaleString("fr-FR");
+
+        changed = true;
+      }
+    });
+
+    if(changed){
+      saveDemands(demands);
+    }
+
+    return demands;
+  }
+
+  function getDashboardHtml(){
+
+    const demands =
+      cleanAndClassifyDemands();
+
+    const alerts =
+      loadAlerts();
+
+    const activeDemands =
+      demands.filter(function(item){
+        return (
+          item.status !== "cloturee" &&
+          item.status !== "abandonnee" &&
+          item.status !== "expiree"
+        );
+      });
+
+    const expiredDemands =
+      demands.filter(function(item){
+        return item.status === "expiree";
+      });
+
+    const openAlerts =
+      alerts.filter(function(item){
+        return (
+          item.status !== "resolue" &&
+          item.status !== "classee"
+        );
+      });
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.5;
+        ">
+
+        <strong style="font-size:19px;">
+          Suivi Bo'CitéArt des besoins professionnels
+        </strong>
+
+        <br><br>
+
+        Ce tableau est réservé
+        au pilotage de Bo'CitéArt.
+
+        <br><br>
+
+        Il permet d’identifier
+        les recherches qui reviennent régulièrement,
+        de suivre leur niveau d’intérêt
+        et d’organiser une réponse
+        en dehors de l’application lorsque cela est utile.
+      </div>
+
+      <div
+        style="
+          display:grid;
+          grid-template-columns:repeat(2,minmax(0,1fr));
+          gap:10px;
+          margin-top:12px;
+        ">
+
+        <div class="box">
+          <strong style="font-size:22px;">
+            ${activeDemands.length}
+          </strong>
+
+          <br>
+
+          Demande(s) active(s)
+        </div>
+
+        <div class="box">
+          <strong style="font-size:22px;">
+            ${openAlerts.length}
+          </strong>
+
+          <br>
+
+          Alerte(s) à suivre
+        </div>
+
+        <div class="box">
+          <strong style="font-size:22px;">
+            ${
+              activeDemands.reduce(
+                function(total, item){
+                  return (
+                    total +
+                    Number(item.count || 0)
+                  );
+                },
+                0
+              )
+            }
+          </strong>
+
+          <br>
+
+          Recherche(s) enregistrée(s)
+        </div>
+
+        <div class="box">
+          <strong style="font-size:22px;">
+            ${expiredDemands.length}
+          </strong>
+
+          <br>
+
+          Demande(s) expirée(s)
+        </div>
+      </div>
+
+      <div
+        style="
+          margin-top:18px;
+          font-size:18px;
+          font-weight:900;
+          color:#2f5d46;
+        ">
+        Alertes Bo'CitéArt
+      </div>
+
+      <div
+        id="bociteProfessionalAlertList"
+        style="margin-top:10px;">
+
+        ${
+          alerts.length
+            ? alerts.map(function(alert){
+
+                return `
+                  <div
+                    class="box"
+                    style="
+                      margin-top:8px;
+                      border-left:6px solid ${
+                        alert.status === "a_traiter"
+                          ? "#b00020"
+                          : "#2f5d46"
+                      };
+                    ">
+
+                    <strong style="font-size:17px;">
+                      ${escapeValue(alert.title)}
+                    </strong>
+
+                    <br><br>
+
+                    Zone :
+
+                    <strong>
+                      ${escapeValue(alert.location)}
+                    </strong>
+
+                    <br><br>
+
+                    Nombre de recherches :
+
+                    <strong style="font-size:18px;">
+                      ${Number(alert.count || 0)}
+                    </strong>
+
+                    <br><br>
+
+                    Statut :
+
+                    <strong>
+                      ${escapeValue(
+                        getAlertStatusLabel(
+                          alert.status
+                        )
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Créée le :
+
+                    ${escapeValue(
+                      alert.createdAtFr || ""
+                    )}
+
+                    <label
+                      style="
+                        display:block;
+                        margin-top:12px;
+                        font-weight:900;
+                      ">
+                      Suivi de l’alerte
+                    </label>
+
+                    <select
+                      class="miniField bociteProfessionalAlertStatus"
+                      data-alert-id="${escapeValue(alert.id)}">
+
+                      <option value="a_traiter">
+                        À traiter
+                      </option>
+
+                      <option value="prise_en_compte">
+                        Prise en compte
+                      </option>
+
+                      <option value="suivi_externe">
+                        Suivi réalisé hors application
+                      </option>
+
+                      <option value="resolue">
+                        Résolue
+                      </option>
+
+                      <option value="classee">
+                        Classée sans suite
+                      </option>
+                    </select>
+
+                    <textarea
+                      class="miniField bociteProfessionalAlertNotes"
+                      data-alert-notes-id="${escapeValue(alert.id)}"
+                      style="
+                        min-height:90px;
+                        margin-top:8px;
+                      "
+                      placeholder="Indiquez les démarches réalisées, les entreprises contactées ou la solution envisagée.">${escapeValue(
+                        alert.notes || ""
+                      )}</textarea>
+
+                    <button
+                      class="choiceBtn bociteProfessionalAlertSaveBtn"
+                      type="button"
+                      data-alert-save-id="${escapeValue(alert.id)}"
+                      style="width:100%;margin-top:8px;">
+                      Enregistrer le suivi
+                    </button>
+                  </div>
+                `;
+              }).join("")
+            : `
+              <div class="box">
+                Aucune alerte enregistrée.
+              </div>
+            `
+        }
+      </div>
+
+      <div
+        style="
+          margin-top:18px;
+          font-size:18px;
+          font-weight:900;
+          color:#2f5d46;
+        ">
+        Demandes professionnelles
+      </div>
+
+      <div
+        id="bociteProfessionalDemandList"
+        style="margin-top:10px;">
+
+        ${
+          demands.length
+            ? demands.map(function(demand){
+
+                const remainingDays =
+                  getRemainingDays(
+                    demand.expiresAt
+                  );
+
+                return `
+                  <div
+                    class="box"
+                    style="
+                      margin-top:8px;
+                      border-left:6px solid ${
+                        demand.status === "expiree"
+                          ? "#777"
+                          : "#2f5d46"
+                      };
+                    ">
+
+                    <strong style="font-size:17px;">
+                      ${escapeValue(demand.keyword)}
+                    </strong>
+
+                    <br><br>
+
+                    Zone :
+
+                    <strong>
+                      ${escapeValue(demand.location)}
+                    </strong>
+
+                    <br><br>
+
+                    Compteur :
+
+                    <strong style="font-size:18px;">
+                      ${Number(demand.count || 0)}
+                    </strong>
+
+                    <br><br>
+
+                    Statut :
+
+                    <strong>
+                      ${escapeValue(
+                        getDemandStatusLabel(
+                          demand.status
+                        )
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Dernière recherche :
+
+                    ${escapeValue(
+                      demand.lastSearchAtFr ||
+                      demand.createdAtFr ||
+                      ""
+                    )}
+
+                    <br><br>
+
+                    ${
+                      demand.status === "expiree"
+                        ? `
+                          Cette demande est expirée.
+                        `
+                        : `
+                          Validité restante :
+
+                          <strong>
+                            ${remainingDays} jour(s)
+                          </strong>
+
+                          <br><br>
+
+                          Échéance :
+
+                          <strong>
+                            ${escapeValue(
+                              demand.expiresAtFr ||
+                              formatDate(
+                                demand.expiresAt
+                              )
+                            )}
+                          </strong>
+                        `
+                    }
+
+                    <label
+                      style="
+                        display:block;
+                        margin-top:12px;
+                        font-weight:900;
+                      ">
+                      État du suivi
+                    </label>
+
+                    <select
+                      class="miniField bociteProfessionalDemandStatus"
+                      data-demand-id="${escapeValue(demand.id)}">
+
+                      <option value="active">
+                        Demande active
+                      </option>
+
+                      <option value="a_etudier">
+                        À étudier
+                      </option>
+
+                      <option value="recherche_en_cours">
+                        Recherche de solution en cours
+                      </option>
+
+                      <option value="entreprises_contactees">
+                        Entreprises concernées contactées
+                      </option>
+
+                      <option value="solution_trouvee">
+                        Solution trouvée
+                      </option>
+
+                      <option value="cloturee">
+                        Demande clôturée
+                      </option>
+
+                      <option value="abandonnee">
+                        Demande abandonnée
+                      </option>
+
+                      <option value="expiree">
+                        Demande expirée
+                      </option>
+                    </select>
+
+                    <textarea
+                      class="miniField bociteProfessionalDemandNotes"
+                      data-demand-notes-id="${escapeValue(demand.id)}"
+                      style="
+                        min-height:90px;
+                        margin-top:8px;
+                      "
+                      placeholder="Notes internes Bo'CitéArt.">${escapeValue(
+                        demand.notes || ""
+                      )}</textarea>
+
+                    <button
+                      class="choiceBtn bociteProfessionalDemandSaveBtn"
+                      type="button"
+                      data-demand-save-id="${escapeValue(demand.id)}"
+                      style="width:100%;margin-top:8px;">
+                      Enregistrer le suivi
+                    </button>
+
+                    ${
+                      demand.status !== "expiree"
+                        ? `
+                          <button
+                            class="choiceBtn bociteProfessionalDemandExtendBtn"
+                            type="button"
+                            data-demand-extend-id="${escapeValue(demand.id)}"
+                            style="
+                              width:100%;
+                              margin-top:8px;
+                              background:#fff;
+                            ">
+                            Prolonger de trois mois
+                          </button>
+                        `
+                        : ""
+                    }
+                  </div>
+                `;
+              }).join("")
+            : `
+              <div class="box">
+                Aucune demande professionnelle enregistrée.
+              </div>
+            `
+        }
+      </div>
+
+      <button
+        id="bociteProfessionalDashboardReturnBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:14px;
+          background:#fff;
+        ">
+        Retour au pilotage
+      </button>
+    `;
+  }
+
+  function saveAlertTracking(alertId){
+
+    const alerts =
+      loadAlerts();
+
+    const alert =
+      alerts.find(function(item){
+        return item.id === alertId;
+      });
+
+    if(!alert){
+      alert(
+        "Alerte introuvable."
+      );
+      return;
+    }
+
+    const statusInput =
+      document.querySelector(
+        '[data-alert-id="' +
+        CSS.escape(alertId) +
+        '"]'
+      );
+
+    const notesInput =
+      document.querySelector(
+        '[data-alert-notes-id="' +
+        CSS.escape(alertId) +
+        '"]'
+      );
+
+    alert.status =
+      statusInput
+        ? String(statusInput.value || "")
+        : alert.status;
+
+    alert.notes =
+      notesInput
+        ? String(notesInput.value || "").trim()
+        : "";
+
+    alert.updatedAt =
+      Date.now();
+
+    alert.updatedAtFr =
+      new Date().toLocaleString("fr-FR");
+
+    saveAlerts(alerts);
+
+    openDemandDashboard();
+  }
+
+  function saveDemandTracking(demandId){
+
+    const demands =
+      loadDemands();
+
+    const demand =
+      demands.find(function(item){
+        return item.id === demandId;
+      });
+
+    if(!demand){
+      window.alert(
+        "Demande introuvable."
+      );
+      return;
+    }
+
+    const statusInput =
+      document.querySelector(
+        '[data-demand-id="' +
+        CSS.escape(demandId) +
+        '"]'
+      );
+
+    const notesInput =
+      document.querySelector(
+        '[data-demand-notes-id="' +
+        CSS.escape(demandId) +
+        '"]'
+      );
+
+    demand.status =
+      statusInput
+        ? String(statusInput.value || "")
+        : demand.status;
+
+    demand.notes =
+      notesInput
+        ? String(notesInput.value || "").trim()
+        : "";
+
+    demand.updatedAt =
+      Date.now();
+
+    demand.updatedAtFr =
+      new Date().toLocaleString("fr-FR");
+
+    saveDemands(demands);
+
+    openDemandDashboard();
+  }
+
+  function extendDemand(demandId){
+
+    const demands =
+      loadDemands();
+
+    const demand =
+      demands.find(function(item){
+        return item.id === demandId;
+      });
+
+    if(!demand){
+      alert(
+        "Demande introuvable."
+      );
+      return;
+    }
+
+    demand.status =
+      "active";
+
+    demand.expiresAt =
+      Date.now() +
+      (
+        90 *
+        24 *
+        60 *
+        60 *
+        1000
+      );
+
+    demand.expiresAtFr =
+      formatDate(
+        demand.expiresAt
+      );
+
+    demand.updatedAt =
+      Date.now();
+
+    demand.updatedAtFr =
+      new Date().toLocaleString("fr-FR");
+
+    saveDemands(demands);
+
+    alert(
+      "La demande est prolongée de trois mois."
+    );
+
+    openDemandDashboard();
+  }
+
+  function restoreSelectedStatuses(){
+
+    const alerts =
+      loadAlerts();
+
+    alerts.forEach(function(alert){
+
+      const input =
+        document.querySelector(
+          '[data-alert-id="' +
+          CSS.escape(alert.id) +
+          '"]'
+        );
+
+      if(input){
+        input.value =
+          alert.status || "a_traiter";
+      }
+    });
+
+    const demands =
+      loadDemands();
+
+    demands.forEach(function(demand){
+
+      const input =
+        document.querySelector(
+          '[data-demand-id="' +
+          CSS.escape(demand.id) +
+          '"]'
+        );
+
+      if(input){
+        input.value =
+          demand.status || "active";
+      }
+    });
+  }
+
+  function bindDemandDashboard(){
+
+    restoreSelectedStatuses();
+
+    document
+      .querySelectorAll(
+        ".bociteProfessionalAlertSaveBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          saveAlertTracking(
+            button.getAttribute(
+              "data-alert-save-id"
+            )
+          );
+        };
+      });
+
+    document
+      .querySelectorAll(
+        ".bociteProfessionalDemandSaveBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          saveDemandTracking(
+            button.getAttribute(
+              "data-demand-save-id"
+            )
+          );
+        };
+      });
+
+    document
+      .querySelectorAll(
+        ".bociteProfessionalDemandExtendBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          extendDemand(
+            button.getAttribute(
+              "data-demand-extend-id"
+            )
+          );
+        };
+      });
+
+    const returnButton =
+      getElement(
+        "bociteProfessionalDashboardReturnBtn"
+      );
+
+    if(returnButton){
+
+      returnButton.onclick = function(){
+
+        if(
+          typeof module.openDirection ===
+          "function"
+        ){
+          module.openDirection();
+          return;
+        }
+
+        if(
+          typeof module.openHome ===
+          "function"
+        ){
+          module.openHome();
+        }
+      };
+    }
+  }
+
+  function openDemandDashboard(){
+
+    module.renderModal(
+      "Suivi des demandes professionnelles",
+      getDashboardHtml()
+    );
+
+    window.setTimeout(function(){
+      bindDemandDashboard();
+    },0);
+  }
+
+  module.openProfessionalDemandDashboard =
+    openDemandDashboard;
+
+  module.loadProfessionalDemandDashboard =
+    cleanAndClassifyDemands;
+
+  console.log(
+    "✅ Tableau privé des demandes professionnelles chargé"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — RECHERCHE ENTREPRISE
+   PARTIE 5D — RACCORDEMENT AU PILOTAGE PRIVÉ
+   ========================================================= */
+
+(function connectProfessionalDemandDashboardToDirection(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function findDirectionHost(){
+
+    const possibleHosts = [
+      getElement("directionActions"),
+      getElement("directionButtons"),
+      getElement("entrepriseDirectionActions"),
+      getElement("directionProposalSummary"),
+      getElement("directionMutualisationList"),
+      document.querySelector(
+        "#modalContent"
+      ),
+      document.querySelector(
+        ".modalContent"
+      ),
+      document.querySelector(
+        ".modal-content"
+      ),
+      document.querySelector(
+        "[role='dialog']"
+      )
+    ];
+
+    return possibleHosts.find(function(host){
+      return !!host;
+    }) || null;
+  }
+
+  function openProfessionalDemandDashboard(){
+
+    if(
+      typeof module.openProfessionalDemandDashboard ===
+      "function"
+    ){
+      module.openProfessionalDemandDashboard();
+      return;
+    }
+
+    alert(
+      "Le tableau de suivi des demandes professionnelles " +
+      "est momentanément indisponible."
+    );
+  }
+
+  function addProfessionalDemandDashboardButton(){
+
+    if(
+      getElement(
+        "directionProfessionalDemandDashboardBtn"
+      )
+    ){
+      return;
+    }
+
+    const host =
+      findDirectionHost();
+
+    if(!host){
+      console.warn(
+        "Bo'CitéArt : emplacement du bouton de suivi introuvable."
+      );
+      return;
+    }
+
+    const container =
+      document.createElement("div");
+
+    container.id =
+      "directionProfessionalDemandDashboardBox";
+
+    container.className =
+      "box";
+
+    container.style.marginTop =
+      "14px";
+
+    container.style.borderLeft =
+      "6px solid #2f5d46";
+
+    container.innerHTML = `
+      <strong style="font-size:17px;">
+        Besoins professionnels détectés
+      </strong>
+
+      <br><br>
+
+      Consultez les recherches récurrentes,
+      les compteurs d’intérêt
+      et les alertes nécessitant
+      un suivi par Bo'CitéArt.
+
+      <br><br>
+
+      Cet accès est réservé
+      au pilotage privé Bo'CitéArt.
+
+      <button
+        id="directionProfessionalDemandDashboardBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:12px;
+        ">
+        Ouvrir le suivi des demandes professionnelles
+      </button>
+    `;
+
+    host.appendChild(container);
+
+    const button =
+      getElement(
+        "directionProfessionalDemandDashboardBtn"
+      );
+
+    if(button){
+      button.onclick =
+        openProfessionalDemandDashboard;
+    }
+  }
+
+  function scheduleButtonInsertion(){
+
+    window.setTimeout(function(){
+      addProfessionalDemandDashboardButton();
+    },50);
+
+    window.setTimeout(function(){
+      addProfessionalDemandDashboardButton();
+    },200);
+  }
+
+  const originalOpenDirection =
+    module.openDirection;
+
+  if(
+    typeof originalOpenDirection === "function" &&
+    !module.__professionalDemandDashboardConnected
+  ){
+    module.__professionalDemandDashboardConnected =
+      true;
+
+    const patchedOpenDirection =
+      function(){
+
+        originalOpenDirection.apply(
+          module,
+          arguments
+        );
+
+        scheduleButtonInsertion();
+      };
+
+    module.openDirection =
+      patchedOpenDirection;
+
+    if(
+      typeof module.registerScreen ===
+      "function"
+    ){
+      module.registerScreen(
+        "direction",
+        patchedOpenDirection
+      );
+    }
+  }
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const button =
+        event.target &&
+        typeof event.target.closest === "function"
+          ? event.target.closest(
+              "#directionProfessionalDemandDashboardBtn"
+            )
+          : null;
+
+      if(!button){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+        "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+
+      openProfessionalDemandDashboard();
+    },
+    true
+  );
+
+  module.addProfessionalDemandDashboardButton =
+    addProfessionalDemandDashboardButton;
+
+  console.log(
+    "✅ Suivi des demandes raccordé au pilotage privé"
+  );
+
+})();
+
+  /* =========================================================
+   BO'CITÉART — MODULE ENTREPRISE
+   PARTIE 5B — ACTUALITÉS ET VISIBILITÉ ENTREPRISE
+   ========================================================= */
+
+(function initBociteEntrepriseVisibilityNews(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  const NEWS_STORE_KEY =
+    "bociteart_entreprise_visibility_news_v1";
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return module.safeEscape(value);
+  }
+
+  function loadNews(){
+    try{
+      const raw =
+        localStorage.getItem(NEWS_STORE_KEY);
+
+      const parsed =
+        raw ? JSON.parse(raw) : null;
+
+      return Array.isArray(parsed)
+        ? parsed
+        : [];
+    }catch(error){
+      console.warn(
+        "Lecture des actualités impossible :",
+        error
+      );
+
+      return [];
+    }
+  }
+
+  function saveNews(news){
+    try{
+      localStorage.setItem(
+        NEWS_STORE_KEY,
+        JSON.stringify(news || [])
+      );
+    }catch(error){
+      console.warn(
+        "Enregistrement des actualités impossible :",
+        error
+      );
+    }
+  }
+
+  function createNewsId(){
+    return (
+      "ACTU-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2,7)
+    );
+  }
+
+  function getNewsManagerHtml(){
+    return `
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
+
+        <strong style="font-size:18px;">
+          Faites vivre votre fiche entreprise
+        </strong>
+
+        <br><br>
+
+        Présentez une nouveauté, un savoir-faire,
+        une porte ouverte, un nouveau service
+        ou une réalisation récente.
+
+        <br><br>
+
+        Les habitants doivent d’abord savoir
+        que votre entreprise existe et comprendre
+        ce qu’elle peut leur apporter.
+      </div>
+
+      <div class="box">
+        <strong>Ajouter une actualité</strong>
+      </div>
+
+      <label
+        style="
+          display:block;
+          font-weight:900;
+        ">
+        Titre
+      </label>
+
+      <input
+        id="visibilityNewsTitle"
+        class="miniField"
+        type="text"
+        placeholder="Exemple : nouveau service proposé">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Type d’actualité
+      </label>
+
+      <select
+        id="visibilityNewsType"
+        class="miniField">
+
+        <option value="Nouveauté">
+          Nouveauté
+        </option>
+
+        <option value="Savoir-faire">
+          Savoir-faire
+        </option>
+
+        <option value="Réalisation">
+          Réalisation
+        </option>
+
+        <option value="Portes ouvertes">
+          Portes ouvertes
+        </option>
+
+        <option value="Événement">
+          Événement
+        </option>
+
+        <option value="Promotion">
+          Promotion
+        </option>
+
+        <option value="Information">
+          Information
+        </option>
+      </select>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Présentation
+      </label>
+
+      <textarea
+        id="visibilityNewsDescription"
+        class="miniField"
+        style="min-height:120px;"
+        placeholder="Expliquez clairement ce que les habitants doivent retenir.">
+      </textarea>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Date de début
+      </label>
+
+      <input
+        id="visibilityNewsStartDate"
+        class="miniField"
+        type="date">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Date de fin
+      </label>
+
+      <input
+        id="visibilityNewsEndDate"
+        class="miniField"
+        type="date">
+
+      <button
+        id="visibilityNewsSaveBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:14px;
+        ">
+        Enregistrer cette actualité
+      </button>
+
+      <div
+        style="
+          margin-top:18px;
+          font-size:17px;
+          font-weight:900;
+        ">
+        Mes actualités
+      </div>
+
+      <div
+        id="visibilityNewsList"
+        style="margin-top:10px;">
+      </div>
+    `;
+  }
+
+  function renderNewsList(){
+    const host =
+      getElement("visibilityNewsList");
+
+    if(!host){
+      return;
+    }
+
+    const news =
+      loadNews()
+        .slice()
+        .sort(function(a,b){
+          return Number(b.createdAt) -
+            Number(a.createdAt);
+        });
+
+    if(!news.length){
+      host.innerHTML = `
+        <div class="box">
+          Aucune actualité enregistrée.
+        </div>
+      `;
+      return;
+    }
+
+    host.innerHTML =
+      news.map(function(item){
+
+        return `
+          <div class="box">
+
+            <strong style="font-size:16px;">
+              ${escapeValue(item.title)}
+            </strong>
+
+            <br><br>
+
+            <span
+              style="
+                font-weight:900;
+                color:#2f5d46;
+              ">
+              ${escapeValue(item.type)}
+            </span>
+
+            <div
+              style="
+                margin-top:8px;
+                line-height:1.5;
+              ">
+              ${escapeValue(item.description)}
+            </div>
+
+            ${
+              item.startDate || item.endDate
+                ? `
+                  <div style="margin-top:10px;">
+                    ${
+                      item.startDate
+                        ? "Du " +
+                          escapeValue(item.startDate)
+                        : ""
+                    }
+
+                    ${
+                      item.endDate
+                        ? " au " +
+                          escapeValue(item.endDate)
+                        : ""
+                    }
+                  </div>
+                `
+                : ""
+            }
+
+            <div
+              style="
+                margin-top:10px;
+                font-size:12px;
+                color:#666;
+              ">
+              Enregistrée le
+              ${escapeValue(item.createdAtFr)}
+            </div>
+
+            <button
+              class="choiceBtn visibilityNewsDeleteBtn"
+              type="button"
+              data-news-id="${escapeValue(item.id)}"
+              style="
+                width:100%;
+                margin-top:10px;
+                background:#fff;
+              ">
+              Supprimer cette actualité
+            </button>
+          </div>
+        `;
+      }).join("");
+
+    host
+      .querySelectorAll(
+        ".visibilityNewsDeleteBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+          deleteNews(
+            button.getAttribute("data-news-id")
+          );
+        };
+      });
+  }
+
+  function saveNewsForm(){
+    const title =
+      String(
+        getElement("visibilityNewsTitle")
+          ? getElement("visibilityNewsTitle").value
+          : ""
+      ).trim();
+
+    const type =
+      String(
+        getElement("visibilityNewsType")
+          ? getElement("visibilityNewsType").value
+          : ""
+      ).trim();
+
+    const description =
+      String(
+        getElement("visibilityNewsDescription")
+          ? getElement("visibilityNewsDescription").value
+          : ""
+      ).trim();
+
+    const startDate =
+      String(
+        getElement("visibilityNewsStartDate")
+          ? getElement("visibilityNewsStartDate").value
+          : ""
+      ).trim();
+
+    const endDate =
+      String(
+        getElement("visibilityNewsEndDate")
+          ? getElement("visibilityNewsEndDate").value
+          : ""
+      ).trim();
+
+    if(!title){
+      alert(
+        "Indiquez le titre de l’actualité."
+      );
+      return;
+    }
+
+    if(!description){
+      alert(
+        "Présentez cette actualité."
+      );
+      return;
+    }
+
+    if(
+      startDate &&
+      endDate &&
+      endDate < startDate
+    ){
+      alert(
+        "La date de fin ne peut pas être antérieure à la date de début."
+      );
+      return;
+    }
+
+    const news =
+      loadNews();
+
+    news.push({
+      id:createNewsId(),
+      title:title,
+      type:type,
+      description:description,
+      startDate:startDate,
+      endDate:endDate,
+      createdAt:Date.now(),
+      createdAtFr:
+        new Date().toLocaleString("fr-FR")
+    });
+
+    saveNews(news);
+
+    alert(
+      "L’actualité a été enregistrée."
+    );
+
+    openNewsManager();
+  }
+
+  function deleteNews(newsId){
+    const confirmation =
+      confirm(
+        "Supprimer définitivement cette actualité ?"
+      );
+
+    if(!confirmation){
+      return;
+    }
+
+    const news =
+      loadNews().filter(function(item){
+        return item.id !== newsId;
+      });
+
+    saveNews(news);
+    renderNewsList();
+  }
+
+  function bindNewsManager(){
+    const saveButton =
+      getElement("visibilityNewsSaveBtn");
+
+    if(saveButton){
+      saveButton.onclick =
+        saveNewsForm;
+    }
+
+    renderNewsList();
+  }
+
+  function openNewsManager(){
+    module.renderModal(
+      "Actualités de mon entreprise",
+      getNewsManagerHtml()
+    );
+
+    window.setTimeout(function(){
+      bindNewsManager();
+    },0);
+  }
+
+  function addNewsButtonToVisibility(){
+    const status =
+      getElement("visibilityStatus");
+
+    if(!status){
+      return;
+    }
+
+    if(
+      getElement(
+        "visibilityManageNewsBtn"
+      )
+    ){
+      return;
+    }
+
+    const button =
+      document.createElement("button");
+
+    button.id =
+      "visibilityManageNewsBtn";
+
+    button.className =
+      "choiceBtn";
+
+    button.type =
+      "button";
+
+    button.style.width =
+      "100%";
+
+    button.style.marginTop =
+      "10px";
+
+    button.textContent =
+      "Gérer mes actualités";
+
+    button.onclick = function(){
+      openNewsManager();
+    };
+
+    status.insertAdjacentElement(
+      "afterend",
+      button
+    );
+  }
+
+  const originalVisibilityScreen =
+    module.screens.visibilite;
+
+  if(
+    typeof originalVisibilityScreen ===
+    "function"
+  ){
+    module.registerScreen(
+      "visibilite",
+      function(){
+
+        originalVisibilityScreen();
+
+        window.setTimeout(function(){
+          addNewsButtonToVisibility();
+        },50);
+      }
+    );
+  }
+
+  module.openVisibilityNews =
+    openNewsManager;
+
+  module.loadVisibilityNews =
+    loadNews;
+
+  module.saveVisibilityNews =
+    saveNews;
+
+  console.log(
+    "✅ Module Entreprise — partie 5B Actualités chargée"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — MODULE ENTREPRISE
+   PARTIE 5C — ABONNEMENT ET VISIBILITÉ PROFESSIONNELLE
+   ========================================================= */
+
+(function initBociteEntrepriseSubscriptionVisibility(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  const SUBSCRIPTION_KEY =
+    "bociteart_entreprise_subscription_demo_v1";
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return module.safeEscape(value);
+  }
+
+  function hasSubscription(){
+    return (
+      localStorage.getItem(SUBSCRIPTION_KEY) ===
+      "active"
+    );
+  }
+
+  function setSubscription(active){
+    localStorage.setItem(
+      SUBSCRIPTION_KEY,
+      active ? "active" : "inactive"
+    );
+  }
+
+  function loadVisibility(){
+    if(
+      typeof module.loadVisibilityData ===
+      "function"
+    ){
+      return module.loadVisibilityData();
+    }
+
+    return {
+      companyName:"",
+      activity:"",
+      phone:"",
+      email:"",
+      presentation:"",
+      knowHow:"",
+      services:"",
+      website:"",
+      updatedAt:null,
+      updatedAtFr:""
+    };
+  }
+
+  function saveVisibility(data){
+    if(
+      typeof module.saveVisibilityData ===
+      "function"
+    ){
+      module.saveVisibilityData(data);
+    }
+  }
+
+  function getLockedFeature(title, text){
+    return `
+      <button
+        class="subscriptionLockedFeature"
+        type="button"
+        style="
+          display:block;
+          width:100%;
+          margin:8px 0;
+          padding:13px;
+          border:2px solid #2f5d46;
+          border-radius:10px;
+          background:#f3eee5;
+          color:#111;
+          text-align:left;
+          cursor:pointer;
+        ">
+
+        <strong>
+          Accès avec abonnement — ${escapeValue(title)}
+        </strong>
+
+        <br><br>
+
+        ${escapeValue(text)}
+
+        <br><br>
+
+        <span
+          style="
+            color:#b00020;
+            font-weight:900;
+          ">
+          Découvrir ce que cette fonction peut vous apporter
+        </span>
+      </button>
+    `;
+  }
+
+  function getSubscriptionArgumentHtml(){
+    return `
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
+
+        <strong style="font-size:19px;">
+          Votre référencement gratuit vous permet d’exister.
+        </strong>
+
+        <br><br>
+
+        L’abonnement vous permet réellement
+        de faire connaître votre entreprise,
+        ses compétences et ce qui la distingue.
+      </div>
+
+      <div class="box">
+        <strong>
+          Une économie peut déjà rembourser votre abonnement
+        </strong>
+
+        <br><br>
+
+        Imaginez que la mutualisation vous permette
+        d’économiser seulement :
+
+        <br><br>
+
+        • 15 € par mois sur l’électricité ;<br>
+        • 10 € par mois sur la téléphonie ;<br>
+        • 8 € par mois sur une assurance ou un service.
+
+        <br><br>
+
+        Cela représente déjà :
+
+        <br><br>
+
+        <strong style="font-size:20px;">
+          396 € d’économies sur une année.
+        </strong>
+
+        <br><br>
+
+        Rien que ces quelques économies peuvent couvrir
+        une grande partie, voire la totalité,
+        du coût de l’abonnement selon la formule retenue.
+
+        <br><br>
+
+        Et ce calcul ne tient encore compte
+        ni des nouveaux clients,
+        ni des nouveaux partenaires,
+        ni des opportunités commerciales.
+      </div>
+
+      <div class="box">
+        <strong>
+          Savez-vous réellement ce que votre manque
+          de visibilité vous coûte ?
+        </strong>
+
+        <br><br>
+
+        Vous connaissez probablement le montant
+        de votre électricité, de votre assurance
+        ou de votre carburant.
+
+        <br><br>
+
+        Mais avez-vous déjà calculé combien de clients,
+        de fournisseurs ou de partenaires
+        ne vous contactent jamais simplement
+        parce qu’ils ignorent que votre entreprise existe
+        ou ne savent pas précisément ce qu’elle propose ?
+
+        <br><br>
+
+        Une seule nouvelle relation commerciale
+        peut parfois rapporter davantage
+        que plusieurs années d’abonnement.
+      </div>
+
+      <div class="box">
+        <strong>
+          Avec l’abonnement, vous pourrez notamment :
+        </strong>
+
+        <br><br>
+
+        • ajouter votre logo ;<br>
+        • présenter votre entreprise ;<br>
+        • expliquer votre savoir-faire ;<br>
+        • présenter vos services ;<br>
+        • indiquer votre adresse et votre localisation ;<br>
+        • ajouter votre site Internet ;<br>
+        • publier vos actualités ;<br>
+        • montrer vos réalisations ;<br>
+        • présenter vos nouveautés et promotions ;<br>
+        • recevoir des demandes de devis ;<br>
+        • accéder aux fonctions professionnelles ;<br>
+        • participer pleinement aux mutualisations.
+      </div>
+
+      <button
+        id="subscriptionDemoActivateBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
+        Simuler l’activation de l’abonnement
+      </button>
+
+      <div
+        class="muted"
+        style="
+          margin-top:9px;
+          text-align:center;
+        ">
+        Bouton de démonstration uniquement.
+        Le paiement réel sera raccordé ultérieurement.
+      </div>
+    `;
+  }
+
+  function openSubscriptionArgument(){
+    module.renderModal(
+      "Pourquoi activer l’abonnement ?",
+      getSubscriptionArgumentHtml()
+    );
+
+    window.setTimeout(function(){
+
+      const activateButton =
+        getElement(
+          "subscriptionDemoActivateBtn"
+        );
+
+      if(activateButton){
+        activateButton.onclick = function(){
+
+          setSubscription(true);
+
+          alert(
+            "Abonnement activé pour la démonstration."
+          );
+
+          module.openScreen("visibilite");
+        };
+      }
+    },0);
+  }
+
+  function getVisibilityHtml(){
+    const data = loadVisibility();
+    const subscribed = hasSubscription();
+
+    return `
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
+
+        <strong style="font-size:18px;">
+          Faites connaître votre entreprise
+        </strong>
+
+        <br><br>
+
+        Être référencé permet d’être trouvé.
+
+        <br><br>
+
+        Présenter votre activité, votre savoir-faire
+        et vos réalisations permet d’être choisi.
+      </div>
+
+      <div class="box">
+        <strong>
+          Votre formule actuelle
+        </strong>
+
+        <br><br>
+
+        ${
+          subscribed
+            ? `
+              <span
+                style="
+                  color:#2f5d46;
+                  font-weight:900;
+                ">
+                Abonnement professionnel actif
+              </span>
+            `
+            : `
+              <span
+                style="
+                  color:#b00020;
+                  font
+                                  style="
+                  color:#b00020;
+                  font-weight:900;
+                ">
+                Référencement gratuit
+              </span>
+
+              <br><br>
+
+              Votre fiche gratuite comprend uniquement :
+
+              <br><br>
+
+              • le nom de l’entreprise ;<br>
+              • son activité ;<br>
+              • son téléphone ;<br>
+              • son adresse e-mail.
+            `
+        }
+      </div>
+
+      <label style="display:block;font-weight:900;">
+        Nom de l’entreprise
+      </label>
+
+      <input
+        id="subscriptionVisibilityCompanyName"
+        class="miniField"
+        type="text"
+        value="${escapeValue(data.companyName || "")}"
+        placeholder="Nom de l’entreprise">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Activité
+      </label>
+
+      <input
+        id="subscriptionVisibilityActivity"
+        class="miniField"
+        type="text"
+        value="${escapeValue(data.activity || "")}"
+        placeholder="Activité principale">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Téléphone
+      </label>
+
+      <input
+        id="subscriptionVisibilityPhone"
+        class="miniField"
+        type="tel"
+        value="${escapeValue(data.phone || "")}"
+        placeholder="Téléphone">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Adresse e-mail
+      </label>
+
+      <input
+        id="subscriptionVisibilityEmail"
+        class="miniField"
+        type="email"
+        value="${escapeValue(data.email || "")}"
+        placeholder="Adresse e-mail">
+
+      ${
+        subscribed
+          ? `
+            <div
+              class="box"
+              style="margin-top:15px;">
+
+              <strong>
+                Présentation professionnelle
+              </strong>
+
+              <br><br>
+
+              Votre abonnement vous permet de compléter
+              et de valoriser votre entreprise.
+            </div>
+
+            <label style="display:block;font-weight:900;">
+              Présentation de l’entreprise
+            </label>
+
+            <textarea
+              id="subscriptionVisibilityPresentation"
+              class="miniField"
+              style="min-height:110px;"
+              placeholder="Présentez votre entreprise.">${escapeValue(data.presentation || "")}</textarea>
+
+            <label
+              style="
+                display:block;
+                margin-top:10px;
+                font-weight:900;
+              ">
+              Savoir-faire
+            </label>
+
+            <textarea
+              id="subscriptionVisibilityKnowHow"
+              class="miniField"
+              style="min-height:100px;"
+              placeholder="Expliquez ce qui vous distingue.">${escapeValue(data.knowHow || "")}</textarea>
+
+            <label
+              style="
+                display:block;
+                margin-top:10px;
+                font-weight:900;
+              ">
+              Services proposés
+            </label>
+
+            <textarea
+              id="subscriptionVisibilityServices"
+              class="miniField"
+              style="min-height:100px;"
+              placeholder="Présentez vos services.">${escapeValue(data.services || "")}</textarea>
+
+            <label
+              style="
+                display:block;
+                margin-top:10px;
+                font-weight:900;
+              ">
+              Site Internet
+            </label>
+
+            <input
+              id="subscriptionVisibilityWebsite"
+              class="miniField"
+              type="url"
+              value="${escapeValue(data.website || "")}"
+              placeholder="https://">
+
+            <div
+              class="box"
+              style="margin-top:14px;">
+
+              <strong>
+                Fonctions professionnelles ouvertes
+              </strong>
+
+              <br><br>
+
+              • ajouter votre logo ;<br>
+              • présenter votre adresse et votre localisation ;<br>
+              • indiquer vos horaires et votre zone d’intervention ;<br>
+              • publier vos actualités ;<br>
+              • montrer vos réalisations ;<br>
+              • présenter vos nouveautés et promotions ;<br>
+              • recevoir des demandes de devis ;<br>
+              • consulter vos statistiques ;<br>
+              • participer pleinement aux mutualisations ;<br>
+              • découvrir et soutenir les projets de mécénat ;<br>
+              • valoriser votre engagement comme mécène local.
+            </div>
+
+            <button
+              id="subscriptionVisibilityNewsBtn"
+              class="choiceBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:10px;
+              ">
+              Gérer mes actualités
+            </button>
+
+            <button
+              id="subscriptionVisibilityPatronageBtn"
+              class="choiceBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:8px;
+              ">
+              Découvrir le mécénat
+            </button>
+
+            <button
+              id="subscriptionDemoDeactivateBtn"
+              class="choiceBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:8px;
+                background:#fff;
+              ">
+              Désactiver l’abonnement de démonstration
+            </button>
+          `
+          : `
+            <div
+              style="
+                margin-top:15px;
+              ">
+
+              ${getLockedFeature(
+                "Logo et identité visuelle",
+                "Ajoutez votre logo afin que les habitants reconnaissent immédiatement votre entreprise."
+              )}
+
+              ${getLockedFeature(
+                "Présentation de votre entreprise",
+                "Expliquez ce que vous faites, ce qui vous distingue et pourquoi les habitants peuvent faire appel à vous."
+              )}
+
+              ${getLockedFeature(
+                "Savoir-faire et réalisations",
+                "Montrez vos compétences, vos métiers et vos réalisations concrètes."
+              )}
+
+              ${getLockedFeature(
+                "Adresse et localisation",
+                "Permettez aux habitants et aux entreprises de savoir précisément où vous trouver."
+              )}
+
+              ${getLockedFeature(
+                "Actualités et nouveautés",
+                "Publiez vos nouveaux services, réalisations, événements et promotions."
+              )}
+
+              ${getLockedFeature(
+                "Mutualisation",
+                "Accédez pleinement aux regroupements pouvant réduire certaines charges de votre entreprise."
+              )}
+
+              ${getLockedFeature(
+                "Mécénat local",
+                "Soutenez des projets utiles à votre ville tout en valorisant discrètement et durablement l’engagement de votre entreprise."
+              )}
+
+              ${getLockedFeature(
+                "Statistiques",
+                "Découvrez combien de personnes consultent votre fiche et ce qui attire leur attention."
+              )}
+            </div>
+
+            <button
+              id="subscriptionOpenArgumentBtn"
+              class="choiceBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:14px;
+              ">
+              Découvrir les avantages de l’abonnement
+            </button>
+          `
+      }
+
+      <button
+        id="subscriptionVisibilitySaveBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:14px;
+        ">
+        Enregistrer ma fiche
+      </button>
+
+      <div
+        id="subscriptionVisibilityStatus"
+        class="muted"
+        style="margin-top:10px;">
+      </div>
+    `;
+  }
+
+  function saveVisibilityForm(){
+    const oldData = loadVisibility();
+    const subscribed = hasSubscription();
+
+    const companyName =
+      String(
+        getElement("subscriptionVisibilityCompanyName")
+          ? getElement("subscriptionVisibilityCompanyName").value
+          : ""
+      ).trim();
+
+    const activity =
+      String(
+        getElement("subscriptionVisibilityActivity")
+          ? getElement("subscriptionVisibilityActivity").value
+          : ""
+      ).trim();
+
+    const phone =
+      String(
+        getElement("subscriptionVisibilityPhone")
+          ? getElement("subscriptionVisibilityPhone").value
+          : ""
+      ).trim();
+
+    const email =
+      String(
+        getElement("subscriptionVisibilityEmail")
+          ? getElement("subscriptionVisibilityEmail").value
+          : ""
+      ).trim();
+
+    if(
+      !companyName ||
+      !activity ||
+      !phone ||
+      !email
+    ){
+      alert(
+        "Renseignez le nom, l’activité, le téléphone et l’adresse e-mail."
+      );
+      return;
+    }
+
+    if(!email.includes("@")){
+      alert(
+        "Renseignez une adresse e-mail valide."
+      );
+      return;
+    }
+
+    const newData =
+      Object.assign({}, oldData, {
+        companyName:companyName,
+        activity:activity,
+        phone:phone,
+        email:email,
+        updatedAt:Date.now(),
+        updatedAtFr:
+          new Date().toLocaleString("fr-FR")
+      });
+
+    if(subscribed){
+      newData.presentation =
+        String(
+          getElement("subscriptionVisibilityPresentation")
+            ? getElement("subscriptionVisibilityPresentation").value
+            : ""
+        ).trim();
+
+      newData.knowHow =
+        String(
+          getElement("subscriptionVisibilityKnowHow")
+            ? getElement("subscriptionVisibilityKnowHow").value
+            : ""
+        ).trim();
+
+      newData.services =
+        String(
+          getElement("subscriptionVisibilityServices")
+            ? getElement("subscriptionVisibilityServices").value
+            : ""
+        ).trim();
+
+      newData.website =
+        String(
+          getElement("subscriptionVisibilityWebsite")
+            ? getElement("subscriptionVisibilityWebsite").value
+            : ""
+        ).trim();
+    }
+
+    saveVisibility(newData);
+
+    const status =
+      getElement("subscriptionVisibilityStatus");
+
+    if(status){
+      status.textContent =
+        "Fiche enregistrée le " +
+        newData.updatedAtFr +
+        ".";
+    }
+
+    alert(
+      "Votre fiche entreprise a été enregistrée."
+    );
+  }
+
+  function bindVisibilityScreen(){
+    const saveButton =
+      getElement("subscriptionVisibilitySaveBtn");
+
+    const argumentButton =
+      getElement("subscriptionOpenArgumentBtn");
+
+    const deactivateButton =
+      getElement("subscriptionDemoDeactivateBtn");
+
+    const newsButton =
+      getElement("subscriptionVisibilityNewsBtn");
+
+    const patronageButton =
+      getElement("subscriptionVisibilityPatronageBtn");
+
+    if(saveButton){
+      saveButton.onclick =
+        saveVisibilityForm;
+    }
+
+    if(argumentButton){
+      argumentButton.onclick =
+        openSubscriptionArgument;
+    }
+
+    if(deactivateButton){
+      deactivateButton.onclick = function(){
+        setSubscription(false);
+
+        alert(
+          "Abonnement de démonstration désactivé."
+        );
+
+        module.openScreen("visibilite");
+      };
+    }
+
+    if(newsButton){
+      newsButton.onclick = function(){
+        if(
+          typeof module.openVisibilityNews ===
+          "function"
+        ){
+          module.openVisibilityNews();
+          return;
+        }
+
+        alert(
+          "La gestion des actualités sera disponible après chargement du module correspondant."
+        );
+      };
+    }
+
+    if(patronageButton){
+      patronageButton.onclick = function(){
+        module.openScreen("mecenat");
+      };
+    }
+
+    document
+      .querySelectorAll(
+        ".subscriptionLockedFeature"
+      )
+      .forEach(function(button){
+        button.onclick =
+          openSubscriptionArgument;
+      });
+  }
+
+  function openSubscriptionVisibility(){
+    module.renderModal(
+      "Faites connaître votre entreprise",
+      getVisibilityHtml()
+    );
+
+    window.setTimeout(function(){
+      bindVisibilityScreen();
+    },0);
+  }
+
+  module.registerScreen(
+    "visibilite",
+    openSubscriptionVisibility
+  );
+
+  module.hasEntrepriseSubscription =
+    hasSubscription;
+
+  module.setEntrepriseSubscription =
+    setSubscription;
+
+  module.openEntrepriseSubscription =
+    openSubscriptionArgument;
+
+  console.log(
+    "✅ Abonnement Entreprise et visibilité professionnelle chargés"
   );
 
 })();
