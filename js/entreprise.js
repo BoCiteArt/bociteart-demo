@@ -24170,3 +24170,1085 @@ console.log(
 
 })();
 
+/* =========================================================
+   BO'CITÉART — CORRECTIONS ENTREPRISE
+   RECHERCHE • RETOUR • EMPLOI PRIVÉ
+   ========================================================= */
+
+(function correctBociteEntrepriseScreens(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function getModalContent(){
+    return document.querySelector(
+      ".modal-content, .modalContent, #modalContent"
+    );
+  }
+
+  function cleanProfessionalSearchScreen(){
+
+    const modal =
+      getModalContent();
+
+    if(!modal){
+      return;
+    }
+
+    modal
+      .querySelectorAll(".box")
+      .forEach(function(box){
+
+        const text =
+          String(box.textContent || "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        if(
+          text.includes(
+            "La zone indiquée ici est totalement indépendante"
+          )
+        ){
+          box.innerHTML = `
+            <strong style="font-size:19px;">
+              Recherche professionnelle
+            </strong>
+
+            <br><br>
+
+            Recherchez une entreprise,
+            un artisan,
+            un fournisseur,
+            un sous-traitant,
+            un partenaire
+            ou une compétence.
+          `;
+        }
+
+        if(
+          text.includes("Types de recherche") ||
+          (
+            text.includes("Formations") &&
+            text.includes("Repreneurs")
+          )
+        ){
+          box.remove();
+        }
+      });
+  }
+
+  function ensureEntrepriseBackButton(){
+
+    const modal =
+      getModalContent();
+
+    if(!modal){
+      return;
+    }
+
+    if(
+      getElement("entrepriseBackBtn")
+    ){
+      return;
+    }
+
+    const button =
+      document.createElement("button");
+
+    button.id =
+      "entrepriseBackBtn";
+
+    button.className =
+      "choiceBtn";
+
+    button.type =
+      "button";
+
+    button.style.width =
+      "100%";
+
+    button.style.marginBottom =
+      "12px";
+
+    button.textContent =
+      "Retour à l’espace Entreprise";
+
+    button.onclick = function(){
+
+      if(
+        typeof module.openHome ===
+        "function"
+      ){
+        module.openHome();
+      }
+    };
+
+    modal.insertBefore(
+      button,
+      modal.firstChild
+    );
+  }
+
+  function hideEmploymentPrice(){
+
+    const modal =
+      getModalContent();
+
+    if(!modal){
+      return;
+    }
+
+    modal
+      .querySelectorAll(".box")
+      .forEach(function(box){
+
+        const text =
+          String(box.textContent || "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        if(
+          text.includes(
+            "Tarif professionnel prévu"
+          ) ||
+          text.includes("50 € HT")
+        ){
+          box.innerHTML = `
+            <strong>
+              Publication réservée à l’espace professionnel
+            </strong>
+
+            <br><br>
+
+            Les conditions de publication,
+            la tarification,
+            le paiement
+            et la facturation
+            sont accessibles uniquement
+            après connexion à l’espace privé
+            de l’entreprise.
+          `;
+        }
+      });
+  }
+
+  function applyScreenCorrections(){
+
+    window.setTimeout(function(){
+
+      cleanProfessionalSearchScreen();
+      ensureEntrepriseBackButton();
+      hideEmploymentPrice();
+
+    },50);
+  }
+
+  const originalSearchHub =
+    module.openProfessionalSearchHub;
+
+  if(
+    typeof originalSearchHub ===
+    "function"
+  ){
+    module.openProfessionalSearchHub =
+      function(){
+
+        originalSearchHub.apply(
+          module,
+          arguments
+        );
+
+        applyScreenCorrections();
+      };
+
+    module.registerScreen(
+      "annuaire",
+      module.openProfessionalSearchHub
+    );
+  }
+
+  const originalEmploymentScreen =
+    module.screens.emploi;
+
+  if(
+    typeof originalEmploymentScreen ===
+    "function"
+  ){
+    module.registerScreen(
+      "emploi",
+      function(){
+
+        originalEmploymentScreen();
+
+        window.setTimeout(function(){
+
+          ensureEntrepriseBackButton();
+
+          const createButton =
+            getElement(
+              "employmentCreateOfferBtn"
+            );
+
+          if(createButton){
+
+            createButton.onclick =
+              function(){
+
+                const openPrivateForm =
+                  function(){
+
+                    if(
+                      typeof module.openEmploymentForm ===
+                      "function"
+                    ){
+                      module.openEmploymentForm();
+
+                      window.setTimeout(function(){
+                        hideEmploymentPrice();
+                        ensureEntrepriseBackButton();
+                      },50);
+                    }
+                  };
+
+                if(
+                  typeof module.requirePartnerAccess ===
+                  "function"
+                ){
+                  module.requirePartnerAccess(
+                    openPrivateForm
+                  );
+
+                  return;
+                }
+
+                openPrivateForm();
+              };
+          }
+
+        },50);
+      }
+    );
+  }
+
+  const observer =
+    new MutationObserver(function(){
+
+      window.setTimeout(function(){
+
+        cleanProfessionalSearchScreen();
+        hideEmploymentPrice();
+
+      },20);
+    });
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  console.log(
+    "✅ Corrections Recherche, Retour et tarif privé chargées"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — ENTREPRISE
+   MUTUALISATION — EXEMPLES CONCRETS ET ABONNEMENT
+   ========================================================= */
+
+(function improveEntrepriseMutualisation(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function addConcreteMutualisationExample(){
+
+    const list =
+      getElement("mutualisationList");
+
+    if(!list){
+      return;
+    }
+
+    if(
+      getElement("mutualisationConcreteExample")
+    ){
+      return;
+    }
+
+    const example =
+      document.createElement("div");
+
+    example.id =
+      "mutualisationConcreteExample";
+
+    example.className =
+      "box";
+
+    example.style.marginTop =
+      "14px";
+
+    example.style.borderLeft =
+      "6px solid #2f5d46";
+
+    example.innerHTML = `
+      <strong style="font-size:18px;">
+        Concrètement, que pouvez-vous économiser ?
+      </strong>
+
+      <br><br>
+
+      Prenons un exemple volontairement prudent :
+
+      <br><br>
+
+      • 15 € par mois sur l’électricité ;<br>
+      • 10 € par mois sur la téléphonie ou Internet ;<br>
+      • 8 € par mois sur une assurance ou un autre contrat.
+
+      <br><br>
+
+      Cela représente déjà :
+
+      <br><br>
+
+      <strong style="font-size:21px;color:#2f5d46;">
+        396 € d’économies sur une année
+      </strong>
+
+      <br><br>
+
+      Rien que ces trois économies peuvent couvrir
+      une grande partie, voire la totalité,
+      de votre abonnement Bo'CitéArt
+      selon la formule choisie.
+
+      <br><br>
+
+      Et ce calcul ne tient pas encore compte :
+
+      <br><br>
+
+      • d’un nouveau client ;<br>
+      • d’un nouveau fournisseur ;<br>
+      • d’un partenaire rencontré localement ;<br>
+      • d’un recrutement plus proche ;<br>
+      • des possibilités offertes par le mécénat.
+
+      <br><br>
+
+      <strong>
+        L’abonnement ne doit donc pas seulement être considéré
+        comme une charge.
+      </strong>
+
+      <br><br>
+
+      Il peut devenir un outil qui contribue lui-même
+      à financer son coût et à développer votre entreprise.
+    `;
+
+    list.insertAdjacentElement(
+      "afterend",
+      example
+    );
+  }
+
+  function addIsolationMessage(){
+
+    if(
+      getElement("mutualisationIsolationMessage")
+    ){
+      return;
+    }
+
+    const example =
+      getElement("mutualisationConcreteExample");
+
+    if(!example){
+      return;
+    }
+
+    const message =
+      document.createElement("div");
+
+    message.id =
+      "mutualisationIsolationMessage";
+
+    message.className =
+      "box";
+
+    message.style.marginTop =
+      "12px";
+
+    message.innerHTML = `
+      <strong style="font-size:18px;">
+        Combien vous coûte le fait de rester seul ?
+      </strong>
+
+      <br><br>
+
+      Une entreprise seule dispose souvent
+      d’un pouvoir de négociation limité.
+
+      <br><br>
+
+      En se regroupant avec d’autres entreprises,
+      elle peut comparer davantage,
+      recevoir des propositions collectives
+      et décider librement de les accepter ou non.
+
+      <br><br>
+
+      Refuser de participer reste toujours possible.
+
+      <br><br>
+
+      Mais cela signifie aussi continuer à négocier seul,
+      alors que d’autres entreprises du territoire
+      peuvent obtenir ensemble de meilleures conditions.
+    `;
+
+    example.insertAdjacentElement(
+      "afterend",
+      message
+    );
+  }
+
+  function addSubscriptionMutualisationButton(){
+
+    if(
+      getElement("mutualisationSubscriptionBtn")
+    ){
+      return;
+    }
+
+    const message =
+      getElement("mutualisationIsolationMessage");
+
+    if(!message){
+      return;
+    }
+
+    const button =
+      document.createElement("button");
+
+    button.id =
+      "mutualisationSubscriptionBtn";
+
+    button.className =
+      "choiceBtn";
+
+    button.type =
+      "button";
+
+    button.style.width =
+      "100%";
+
+    button.style.marginTop =
+      "12px";
+
+    button.textContent =
+      "Voir ce que l’abonnement peut m’apporter";
+
+    button.onclick = function(){
+
+      if(
+        typeof module.openEntrepriseSubscription ===
+        "function"
+      ){
+        module.openEntrepriseSubscription();
+        return;
+      }
+
+      alert(
+        "La présentation de l’abonnement est momentanément indisponible."
+      );
+    };
+
+    message.insertAdjacentElement(
+      "afterend",
+      button
+    );
+  }
+
+  function applyMutualisationImprovements(){
+
+    window.setTimeout(function(){
+
+      addConcreteMutualisationExample();
+      addIsolationMessage();
+      addSubscriptionMutualisationButton();
+
+    },80);
+  }
+
+  const originalMutualisation =
+    module.screens.mutualisation;
+
+  if(
+    typeof originalMutualisation ===
+    "function"
+  ){
+    module.registerScreen(
+      "mutualisation",
+      function(){
+
+        originalMutualisation();
+
+        applyMutualisationImprovements();
+      }
+    );
+  }
+
+  console.log(
+    "✅ Mutualisation concrète et abonnement chargés"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — ENTREPRISE
+   MÉCÉNAT — IMPACT LOCAL ET ABONNEMENT
+   ========================================================= */
+
+(function improveEntrepriseMecenat(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function getModalContent(){
+    return document.querySelector(
+      ".modal-content, .modalContent, #modalContent"
+    );
+  }
+
+  function addMecenatIntroduction(){
+
+    const modal = getModalContent();
+
+    if(
+      !modal ||
+      getElement("mecenatLocalIntroduction")
+    ){
+      return;
+    }
+
+    const block = document.createElement("div");
+
+    block.id = "mecenatLocalIntroduction";
+    block.className = "box";
+    block.style.borderLeft = "6px solid #2f5d46";
+    block.style.marginBottom = "12px";
+
+    block.innerHTML = `
+      <strong style="font-size:18px;">
+        Votre entreprise peut agir directement
+        pour sa ville
+      </strong>
+
+      <br><br>
+
+      Le mécénat permet de soutenir des projets
+      concrets au bénéfice des habitants :
+
+      <br><br>
+
+      • écoles ;<br>
+      • culture ;<br>
+      • sport ;<br>
+      • associations ;<br>
+      • patrimoine ;<br>
+      • actions citoyennes ;<br>
+      • amélioration du cadre de vie.
+
+      <br><br>
+
+      Votre engagement devient visible
+      par les réalisations qu’il rend possibles,
+      sans transformer le mécénat
+      en publicité commerciale classique.
+    `;
+
+    modal.insertBefore(
+      block,
+      modal.firstChild
+    );
+  }
+
+  function addMecenatFiscalExplanation(){
+
+    const modal = getModalContent();
+
+    if(
+      !modal ||
+      getElement("mecenatFiscalExplanation")
+    ){
+      return;
+    }
+
+    const block = document.createElement("div");
+
+    block.id = "mecenatFiscalExplanation";
+    block.className = "box";
+
+    block.innerHTML = `
+      <strong style="font-size:18px;">
+        Donner une utilité locale
+        à une partie de votre effort financier
+      </strong>
+
+      <br><br>
+
+      Une entreprise qui réalise un bénéfice
+      peut choisir de soutenir un projet éligible
+      au mécénat, dans le respect
+      des règles fiscales applicables.
+
+      <br><br>
+
+      Le mécénat ne remplace pas automatiquement
+      l’impôt sur les sociétés.
+
+      <br><br>
+
+      Il permet cependant, sous conditions,
+      de bénéficier du régime fiscal prévu par la loi
+      tout en dirigeant une partie de son engagement
+      vers une action concrète utile au territoire.
+
+      <br><br>
+
+      L’entreprise sait alors à quoi
+      son soutien contribue réellement.
+    `;
+
+    modal.appendChild(block);
+  }
+
+  function addMecenatNotorietyBlock(){
+
+    const modal = getModalContent();
+
+    if(
+      !modal ||
+      getElement("mecenatNotorietyBlock")
+    ){
+      return;
+    }
+
+    const block = document.createElement("div");
+
+    block.id = "mecenatNotorietyBlock";
+    block.className = "box";
+
+    block.innerHTML = `
+      <strong style="font-size:18px;">
+        Une autre manière de faire connaître
+        votre entreprise
+      </strong>
+
+      <br><br>
+
+      Une publicité indique ce que vous vendez.
+
+      <br><br>
+
+      Le mécénat montre ce que votre entreprise
+      apporte à son territoire.
+
+      <br><br>
+
+      Les habitants peuvent découvrir
+      qu’une entreprise locale a contribué
+      à une action utile, à une école,
+      à un club, à une association
+      ou à un projet de la ville.
+
+      <br><br>
+
+      Cette reconnaissance se construit
+      avec discrétion, confiance et durée.
+
+      <br><br>
+
+      Elle peut renforcer naturellement :
+
+      <br><br>
+
+      • votre notoriété locale ;<br>
+      • votre image ;<br>
+      • votre ancrage territorial ;<br>
+      • la confiance des habitants ;<br>
+      • la fierté de vos salariés.
+    `;
+
+    modal.appendChild(block);
+  }
+
+  function addMecenatConcreteExample(){
+
+    const modal = getModalContent();
+
+    if(
+      !modal ||
+      getElement("mecenatConcreteExample")
+    ){
+      return;
+    }
+
+    const block = document.createElement("div");
+
+    block.id = "mecenatConcreteExample";
+    block.className = "box";
+
+    block.innerHTML = `
+      <strong style="font-size:18px;">
+        Imaginez concrètement
+      </strong>
+
+      <br><br>
+
+      Votre entreprise participe
+      au financement d’un projet local.
+
+      <br><br>
+
+      Quelques mois plus tard,
+      les habitants voient :
+
+      <br><br>
+
+      • une action réalisée dans une école ;<br>
+      • un équipement sportif soutenu ;<br>
+      • une œuvre culturelle créée ;<br>
+      • une association accompagnée ;<br>
+      • un projet citoyen devenu possible.
+
+      <br><br>
+
+      Votre entreprise n’est plus seulement
+      un nom ou une activité.
+
+      <br><br>
+
+      Elle devient un acteur identifié
+      de la vie locale.
+    `;
+
+    modal.appendChild(block);
+  }
+
+  function addMecenatSubscriptionBlock(){
+
+    const modal = getModalContent();
+
+    if(
+      !modal ||
+      getElement("mecenatSubscriptionBlock")
+    ){
+      return;
+    }
+
+    const subscribed =
+      typeof module.hasEntrepriseSubscription ===
+        "function"
+        ? module.hasEntrepriseSubscription()
+        : false;
+
+    const block = document.createElement("div");
+
+    block.id = "mecenatSubscriptionBlock";
+    block.className = "box";
+    block.style.borderLeft = "6px solid #b00020";
+
+    block.innerHTML = subscribed
+      ? `
+        <strong style="font-size:18px;">
+          Accès professionnel actif
+        </strong>
+
+        <br><br>
+
+        Votre abonnement vous permet :
+
+        <br><br>
+
+        • de découvrir les projets proposés ;<br>
+        • de suivre leur avancement ;<br>
+        • d’indiquer les projets qui vous intéressent ;<br>
+        • de valoriser votre engagement local ;<br>
+        • de conserver l’historique de vos actions ;<br>
+        • d’accéder aux informations professionnelles.
+      `
+      : `
+        <strong style="font-size:18px;">
+          Accès réservé aux entreprises abonnées
+        </strong>
+
+        <br><br>
+
+        Vous pouvez découvrir gratuitement
+        le principe du mécénat
+        et les bénéfices possibles pour la ville.
+
+        <br><br>
+
+        L’abonnement professionnel permet ensuite
+        d’accéder aux projets,
+        de suivre leur réalisation
+        et de valoriser l’engagement
+        de votre entreprise.
+
+        <br><br>
+
+        <button
+          id="mecenatSubscriptionOpenBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;">
+          Découvrir les avantages de l’abonnement
+        </button>
+      `;
+
+    modal.appendChild(block);
+
+    const button =
+      getElement("mecenatSubscriptionOpenBtn");
+
+    if(button){
+      button.onclick = function(){
+
+        if(
+          typeof module.openEntrepriseSubscription ===
+          "function"
+        ){
+          module.openEntrepriseSubscription();
+          return;
+        }
+
+        alert(
+          "La présentation de l’abonnement est momentanément indisponible."
+        );
+      };
+    }
+  }
+
+  function applyMecenatImprovements(){
+
+    window.setTimeout(function(){
+
+      addMecenatIntroduction();
+      addMecenatFiscalExplanation();
+      addMecenatNotorietyBlock();
+      addMecenatConcreteExample();
+      addMecenatSubscriptionBlock();
+
+    },80);
+  }
+
+  const originalMecenat =
+    module.screens.mecenat;
+
+  if(
+    typeof originalMecenat ===
+    "function"
+  ){
+    module.registerScreen(
+      "mecenat",
+      function(){
+
+        originalMecenat();
+
+        applyMecenatImprovements();
+      }
+    );
+  }
+
+  console.log(
+    "✅ Mécénat local et abonnement chargés"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART
+   ACCÉLÉRATION DES BANDES + HARMONISATION
+   ========================================================= */
+
+(function improveEntrepriseHome(){
+
+"use strict";
+
+const styleId =
+"bociteartEntrepriseSpeed";
+
+if(document.getElementById(styleId)){
+    return;
+}
+
+const style =
+document.createElement("style");
+
+style.id = styleId;
+
+style.textContent = `
+
+#entrepriseHomeBands .entrepriseBandText{
+
+animation-duration:58s !important;
+
+}
+
+#entrepriseHomeBands .entrepriseBand{
+
+min-height:64px;
+
+}
+
+#entrepriseHomeBands .entrepriseBand strong{
+
+font-size:18px;
+
+}
+
+#entrepriseHomeBands .entrepriseBand button{
+
+font-size:15px;
+
+}
+
+.choiceBtn{
+
+transition:.20s;
+
+}
+
+.choiceBtn:hover{
+
+transform:translateY(-1px);
+
+}
+
+.box{
+
+border-radius:10px;
+
+}
+
+`;
+
+document.head.appendChild(style);
+
+/* ===========================
+Bouton retour automatique
+=========================== */
+
+const observer =
+new MutationObserver(function(){
+
+const modal =
+document.querySelector(
+".modal-content,.modalContent,#modalContent"
+);
+
+if(!modal){
+return;
+}
+
+if(
+modal.querySelector(
+"#globalEntrepriseBackButton"
+)
+){
+return;
+}
+
+const button =
+document.createElement("button");
+
+button.id =
+"globalEntrepriseBackButton";
+
+button.className =
+"choiceBtn";
+
+button.style.width =
+"100%";
+
+button.style.marginBottom =
+"10px";
+
+button.textContent =
+"← Retour à l'espace Entreprise";
+
+button.onclick=function(){
+
+if(
+window.BociteEntreprise &&
+typeof window.BociteEntreprise.openHome==="function"
+){
+window.BociteEntreprise.openHome();
+}
+
+};
+
+modal.prepend(button);
+
+});
+
+observer.observe(
+document.body,
+{
+childList:true,
+subtree:true
+});
+
+console.log(
+"✅ Harmonisation Entreprise chargée"
+);
+
+})();
+
+
