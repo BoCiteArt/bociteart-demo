@@ -10,8 +10,12 @@
   const MODULE_NAME = "entreprise";
 
   const state = {
-    currentScreen: "home",
-    previousScreen: null
+    currentScreen:"home",
+    previousScreen:null,
+    history:["home"],
+    renderingScreen:false,
+    nestedParentScreen:null,
+    goingBack:false
   };
 
   const screens = {};
@@ -34,7 +38,9 @@
   }
 
   function requireOpenModal(){
+
     if(typeof window.openModal !== "function"){
+
       console.error(
         "Bo'CitéArt Entreprise : window.openModal est introuvable."
       );
@@ -50,7 +56,11 @@
   }
 
   function registerScreen(name, renderer){
-    if(!name || typeof renderer !== "function"){
+
+    if(
+      !name ||
+      typeof renderer !== "function"
+    ){
       return;
     }
 
@@ -61,9 +71,11 @@
 
     options = options || {};
 
-    const renderer = screens[name];
+    const renderer =
+      screens[name];
 
     if(typeof renderer !== "function"){
+
       console.warn(
         "Écran Entreprise introuvable :",
         name
@@ -72,17 +84,152 @@
       return;
     }
 
-    if(state.currentScreen !== name){
-      state.previousScreen = state.currentScreen;
+    const oldScreen =
+      state.currentScreen;
+
+    if(
+      !options.fromBack &&
+      oldScreen !== name
+    ){
+
+      const lastHistory =
+        state.history.length
+          ? state.history[
+              state.history.length - 1
+            ]
+          : "";
+
+      if(lastHistory !== oldScreen){
+        state.history.push(oldScreen);
+      }
     }
 
-    state.currentScreen = name;
+    state.previousScreen =
+      oldScreen;
 
-    renderer(options);
+    state.currentScreen =
+      name;
+
+    state.nestedParentScreen =
+      null;
+
+    state.renderingScreen =
+      true;
+
+    try{
+
+      renderer(options);
+
+    }finally{
+
+      window.setTimeout(function(){
+        state.renderingScreen = false;
+      },0);
+    }
+  }
+
+  function goBack(){
+
+    if(state.goingBack){
+      return;
+    }
+
+    state.goingBack = true;
+
+    try{
+
+      /*
+        Une fenêtre interne a été ouverte
+        depuis une rubrique principale.
+      */
+
+      if(
+        state.nestedParentScreen &&
+        screens[state.nestedParentScreen]
+      ){
+
+        const parentScreen =
+          state.nestedParentScreen;
+
+        state.nestedParentScreen =
+          null;
+
+        openScreen(
+          parentScreen,
+          {
+            fromBack:true
+          }
+        );
+
+        return;
+      }
+
+      /*
+        Retour à la rubrique précédente.
+      */
+
+      while(state.history.length){
+
+        const previous =
+          state.history.pop();
+
+        if(
+          previous &&
+          previous !== state.currentScreen &&
+          screens[previous]
+        ){
+
+          openScreen(
+            previous,
+            {
+              fromBack:true
+            }
+          );
+
+          return;
+        }
+      }
+
+      /*
+        Aucun historique :
+        retour aux bandes Entreprise.
+      */
+
+      openScreen(
+        "home",
+        {
+          fromBack:true
+        }
+      );
+
+    }finally{
+
+      window.setTimeout(function(){
+        state.goingBack = false;
+      },100);
+    }
+  }
+
+  function returnToEntrepriseHome(){
+
+    state.history = ["home"];
+    state.previousScreen = null;
+    state.nestedParentScreen = null;
+
+    openScreen(
+      "home",
+      {
+        fromBack:true
+      }
+    );
   }
 
   function buildBackButton(){
-    if(state.currentScreen === "home"){
+
+    if(
+      state.currentScreen === "home" &&
+      !state.nestedParentScreen
+    ){
       return "";
     }
 
@@ -91,39 +238,144 @@
         class="choiceBtn"
         id="entrepriseBackBtn"
         type="button"
-        style="margin-bottom:12px;">
-        Retour à l’espace Entreprise
+        style="
+          width:100%;
+          margin-bottom:14px;
+        ">
+        ← Retour à la page précédente
       </button>
     `;
   }
 
+  function buildPresentationFooter(){
+
+    return `
+      <div
+        class="box entreprisePresentationFooter"
+        style="
+          margin-top:18px;
+          border-left:6px solid #2f5d46;
+          cursor:pointer;
+        "
+        role="button"
+        tabindex="0">
+
+        <strong style="font-size:17px;">
+          Vous pourriez également être intéressé.
+        </strong>
+
+        <br><br>
+
+        Cliquez ici pour revenir
+        aux propositions en bandes défilantes
+        de l’espace Entreprise.
+
+        <button
+          class="choiceBtn entrepriseReturnToBandsBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:12px;
+          ">
+          Revenir aux bandes défilantes
+        </button>
+      </div>
+    `;
+  }
+
   function bindBackButton(){
-    const button = getElement("entrepriseBackBtn");
+
+    const button =
+      getElement("entrepriseBackBtn");
 
     if(button){
-      button.onclick = function(){
-        openScreen("home");
+
+      button.onclick = function(event){
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        goBack();
       };
     }
   }
 
-  function renderModal(title, html){
+  function bindPresentationFooter(){
+
+    document
+      .querySelectorAll(
+        ".entrepriseReturnToBandsBtn," +
+        ".entreprisePresentationFooter"
+      )
+      .forEach(function(element){
+
+        element.onclick = function(event){
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          returnToEntrepriseHome();
+        };
+
+        element.onkeydown = function(event){
+
+          if(
+            event.key === "Enter" ||
+            event.key === " "
+          ){
+
+            event.preventDefault();
+
+            returnToEntrepriseHome();
+          }
+        };
+      });
+  }
+
+  function renderModal(title, html, options){
+
+    options = options || {};
 
     if(!requireOpenModal()){
       return;
     }
 
+    /*
+      Lorsqu’une fonction ouvre directement
+      une nouvelle fenêtre sans openScreen(),
+      on mémorise la rubrique principale
+      afin que Retour y ramène.
+    */
+
+    if(
+      !state.renderingScreen &&
+      state.currentScreen !== "home"
+    ){
+      state.nestedParentScreen =
+        state.currentScreen;
+    }
+
+    const footer =
+      options.presentationFooter
+        ? buildPresentationFooter()
+        : "";
+
     window.openModal(
       title,
-      buildBackButton() + html,
+      buildBackButton() +
+      html +
+      footer,
       {
         noHistory:true
       }
     );
 
     window.setTimeout(function(){
+
       bindBackButton();
-    }, 0);
+      bindPresentationFooter();
+
+    },0);
   }
 
 function getHomeHtml(){
@@ -151,7 +403,7 @@ function getHomeHtml(){
         display:block;
         position:relative;
         width:100%;
-        height:48px;
+        height:50px;
         margin:0;
         padding:0;
         overflow:hidden;
@@ -172,14 +424,15 @@ function getHomeHtml(){
       #entrepriseHomeBands .entrepriseBandText {
         display:inline-block;
         min-width:100%;
-        padding:12px 0;
+        padding:13px 0;
         white-space:nowrap;
         font-weight:900;
         color:#111;
-        animation-name:entrepriseBandScroll;
-        animation-duration:70s;
-        animation-timing-function:linear;
-        animation-iteration-count:infinite;
+        animation:
+          entrepriseBandScroll
+          85s
+          linear
+          infinite;
         animation-delay:0s;
         will-change:transform;
       }
@@ -189,10 +442,9 @@ function getHomeHtml(){
         font-weight:900;
       }
 
-      @media (prefers-reduced-motion: reduce) {
-        #entrepriseHomeBands .entrepriseBandText {
-          animation-duration:70s;
-        }
+      #entrepriseHomeBands .entrepriseBandPrivate {
+        border-color:#b00020;
+        background:#fff7f7;
       }
     </style>
 
@@ -204,13 +456,14 @@ function getHomeHtml(){
       ">
 
       <strong style="font-size:18px;">
-        Développez votre entreprise grâce aux ressources
-        de votre territoire
+        Développez votre entreprise grâce
+        aux ressources de votre territoire
       </strong>
 
       <br><br>
 
-      Bo'CitéArt réunit, dans un même espace,
+      Bo'CitéArt réunit,
+      dans un même espace,
       des services utiles pour :
 
       <br><br>
@@ -226,8 +479,9 @@ function getHomeHtml(){
 
       <br><br>
 
-      Commencez par votre commune, puis élargissez
-      votre recherche lorsque votre activité le nécessite.
+      Commencez par votre commune,
+      puis élargissez votre recherche
+      lorsque votre activité le nécessite.
     </div>
 
     <div
@@ -241,15 +495,15 @@ function getHomeHtml(){
       <button
         class="choiceBtn"
         type="button"
-        data-entreprise-screen="annuaire">
-        Rechercher une entreprise
+        data-entreprise-screen="annuaire_local">
+        Entreprises et commerces de ma ville
       </button>
 
       <button
         class="choiceBtn"
         type="button"
-        data-entreprise-screen="direction">
-        Tableau de Direction
+        data-entreprise-screen="annuaire">
+        Recherche professionnelle
       </button>
     </div>
 
@@ -261,7 +515,10 @@ function getHomeHtml(){
         data-entreprise-screen="emploi">
 
         <span class="entrepriseBandText">
-          Déposez votre offre • Trouvez la personne près de chez vous •
+          Déposez votre offre
+          • Trouvez la personne près de chez vous
+          • Consultez les candidatures
+          •
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
@@ -274,7 +531,10 @@ function getHomeHtml(){
         data-entreprise-screen="fidelisation">
 
         <span class="entrepriseBandText">
-          Attirez • Fidélisez vos salariés autrement •
+          Attirez vos salariés
+          • Fidélisez-les autrement
+          • Faites connaître les services proches du travail
+          •
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
@@ -287,7 +547,12 @@ function getHomeHtml(){
         data-entreprise-screen="developpement">
 
         <span class="entrepriseBandText">
-          Développez votre entreprise • Partenaires • Sous-traitants • Nouvelles opportunités •
+          Développez votre entreprise
+          • Clients
+          • Fournisseurs
+          • Sous-traitants
+          • Partenaires locaux
+          •
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
@@ -300,7 +565,18 @@ function getHomeHtml(){
         data-entreprise-screen="mutualisation">
 
         <span class="entrepriseBandText">
-          Réduisez certaines charges • Électricité • Gaz • Assurances • Mutuelle • Flotte automobile •
+          Réduisez vos charges grâce à la mutualisation
+          • Électricité
+          • Gaz
+          • Assurances
+          • Téléphonie
+          • Véhicules
+          • Entretien
+          • Formations
+          • Comparez
+          • Choisissez
+          • Validez
+          •
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
@@ -313,20 +589,11 @@ function getHomeHtml(){
         data-entreprise-screen="visibilite">
 
         <span class="entrepriseBandText">
-          Faites connaître vos métiers • Votre entreprise • Votre savoir-faire •
-          <span class="entrepriseBandAction">
-            Cliquez ici…
-          </span>
-        </span>
-      </button>
-
-      <button
-        class="entrepriseBand"
-        type="button"
-        data-entreprise-screen="economies">
-
-        <span class="entrepriseBandText">
-          Opportunités de mutualisation • Recevez des propositions communes • Vous restez libre de votre décision •
+          Faites connaître votre entreprise
+          • Vos métiers
+          • Votre savoir-faire
+          • Votre présence dans la ville
+          •
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
@@ -339,7 +606,12 @@ function getHomeHtml(){
         data-entreprise-screen="perennite">
 
         <span class="entrepriseBandText">
-          Préparez l’avenir de votre entreprise • Transmission • Reprise • Continuité •
+          Préparez l’avenir de votre entreprise
+          • Transmission
+          • Reprise
+          • Continuité
+          • Valorisation
+          •
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
@@ -352,12 +624,36 @@ function getHomeHtml(){
         data-entreprise-screen="mecenat">
 
         <span class="entrepriseBandText">
-          Connaissez-vous le mécénat ? • Projets locaux • Avantage fiscal sous conditions •
+          Connaissez-vous réellement le mécénat ?
+          • Soutien financier
+          • Compétences
+          • Matériel
+          • Projets locaux
+          •
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
         </span>
       </button>
+
+      <button
+        class="entrepriseBand entrepriseBandPrivate"
+        type="button"
+        data-entreprise-screen="acces_partenaire">
+
+        <span class="entrepriseBandText">
+          Accès partenaire
+          • Fiche entreprise
+          • Tableau de Direction
+          • Services privés
+          • Factures
+          •
+          <span class="entrepriseBandAction">
+            Cliquez ici…
+          </span>
+        </span>
+      </button>
+
     </div>
 
     <div
@@ -370,10 +666,10 @@ function getHomeHtml(){
 
       <br><br>
 
-      Bo'CitéArt recherchera d’abord les solutions
-      présentes dans votre commune, puis pourra élargir
-      la recherche à la France ou à l’Europe
-      selon l’abonnement choisi.
+      Bo'CitéArt recherchera d’abord
+      les solutions présentes dans votre commune,
+      puis pourra élargir la recherche
+      lorsque cela sera nécessaire.
 
       <textarea
         id="entrepriseAiQuestion"
@@ -382,14 +678,17 @@ function getHomeHtml(){
           min-height:85px;
           margin-top:10px;
         "
-        placeholder="Exemple : je recherche un salarié, un carreleur, un fournisseur ou une solution pour réduire mes charges.">
+        placeholder="Exemple : je recherche un salarié, un fournisseur, un sous-traitant ou une solution pour réduire mes charges.">
       </textarea>
 
       <button
         class="choiceBtn"
         id="entrepriseAiAskBtn"
         type="button"
-        style="margin-top:10px;">
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
         Poser ma question
       </button>
 
@@ -402,13 +701,47 @@ function getHomeHtml(){
   `;
 }
 
+  function synchronizeHomeBands(){
+
+    const texts =
+      document.querySelectorAll(
+        "#entrepriseHomeBands .entrepriseBandText"
+      );
+
+    if(!texts.length){
+      return;
+    }
+
+    texts.forEach(function(text){
+      text.style.animation = "none";
+      text.style.transform = "translateX(100%)";
+    });
+
+    void document.body.offsetWidth;
+
+    window.requestAnimationFrame(function(){
+
+      texts.forEach(function(text){
+
+        text.style.animation =
+          "entrepriseBandScroll 85s linear infinite";
+      });
+    });
+  }
+
   function bindHomeButtons(){
 
     document
-      .querySelectorAll("[data-entreprise-screen]")
+      .querySelectorAll(
+        "#entrepriseHomeBands [data-entreprise-screen]," +
+        "[data-entreprise-screen]"
+      )
       .forEach(function(button){
 
-        button.onclick = function(){
+        button.onclick = function(event){
+
+          event.preventDefault();
+          event.stopPropagation();
 
           const screenName =
             button.getAttribute(
@@ -423,6 +756,7 @@ function getHomeHtml(){
       getElement("entrepriseAiAskBtn");
 
     if(aiButton){
+
       aiButton.onclick = function(){
 
         const input =
@@ -437,29 +771,62 @@ function getHomeHtml(){
             : "";
 
         if(!question){
-          alert("Écrivez votre question.");
+
+          alert(
+            "Écrivez votre question."
+          );
+
+          return;
+        }
+
+        if(
+          typeof window.BociteEntreprise
+            .runEnterpriseAssistant ===
+          "function"
+        ){
+
+          window.BociteEntreprise
+            .runEnterpriseAssistant(
+              question,
+              answer
+            );
+
           return;
         }
 
         if(answer){
+
           answer.innerHTML = `
             <div class="box">
-              Votre question a bien été enregistrée.<br><br>
 
-              Le moteur Bo'CitéArt recherchera d’abord
-              les solutions disponibles dans votre ville,
-              puis élargira progressivement la recherche
-              lorsque cela sera nécessaire.
+              Votre question a bien été enregistrée.
+
+              <br><br>
+
+              Bo'CitéArt recherchera d’abord
+              les solutions disponibles
+              dans votre ville,
+              puis élargira progressivement
+              la recherche lorsque cela sera nécessaire.
             </div>
           `;
         }
       };
     }
+
+    synchronizeHomeBands();
   }
 
   function openHome(){
 
-    state.currentScreen = "home";
+    state.currentScreen =
+      "home";
+
+    state.previousScreen =
+      null;
+
+    state.nestedParentScreen =
+      null;
 
     renderModal(
       "Commerces & Entreprises — Entreprise",
@@ -467,94 +834,193 @@ function getHomeHtml(){
     );
 
     window.setTimeout(function(){
+
       bindHomeButtons();
-    }, 0);
+
+    },0);
   }
 
-  function openWaitingScreen(screenName, screenTitle){
+  function openWaitingScreen(
+    screenName,
+    screenTitle
+  ){
 
     renderModal(
       screenTitle,
       `
         <div class="box">
-          Cette rubrique sera intégrée dans la prochaine partie
+          Cette rubrique sera intégrée
+          dans la partie correspondante
           du module Entreprise.
         </div>
-      `
+      `,
+      {
+        presentationFooter:true
+      }
     );
   }
 
-  registerScreen("home", openHome);
+  registerScreen(
+    "home",
+    openHome
+  );
 
-  registerScreen("annuaire", function(){
-    openWaitingScreen(
-      "annuaire",
-      "Les entreprises de votre ville"
-    );
-  });
+  registerScreen(
+    "annuaire_local",
+    function(){
 
-  registerScreen("direction", function(){
-    openWaitingScreen(
-      "direction",
-      "Tableau de Direction"
-    );
-  });
+      if(
+        typeof window.BociteEntreprise
+          .openLocalDirectory ===
+        "function"
+      ){
 
-  registerScreen("emploi", function(){
-    openWaitingScreen(
-      "emploi",
-      "Vous recherchez du personnel ?"
-    );
-  });
+        window.BociteEntreprise
+          .openLocalDirectory();
 
-  registerScreen("fidelisation", function(){
-    openWaitingScreen(
-      "fidelisation",
-      "Attirez et fidélisez vos salariés autrement"
-    );
-  });
+        return;
+      }
 
-  registerScreen("developpement", function(){
-    openWaitingScreen(
-      "developpement",
-      "Développez votre entreprise"
-    );
-  });
+      openWaitingScreen(
+        "annuaire_local",
+        "Entreprises et commerces de votre ville"
+      );
+    }
+  );
 
-  registerScreen("mutualisation", function(){
-    openWaitingScreen(
-      "mutualisation",
-      "Réduisez vos charges"
-    );
-  });
+  registerScreen(
+    "annuaire",
+    function(){
 
-  registerScreen("visibilite", function(){
-    openWaitingScreen(
-      "visibilite",
-      "Faites connaître vos métiers et votre savoir-faire"
-    );
-  });
+      openWaitingScreen(
+        "annuaire",
+        "Recherche professionnelle"
+      );
+    }
+  );
 
-  registerScreen("economies", function(){
-    openWaitingScreen(
-      "economies",
-      "Comparez, choisissez, validez"
-    );
-  });
+  registerScreen(
+    "direction",
+    function(){
 
-  registerScreen("perennite", function(){
-    openWaitingScreen(
-      "perennite",
-      "Préparez l’avenir de votre entreprise"
-    );
-  });
+      openWaitingScreen(
+        "direction",
+        "Tableau de Direction"
+      );
+    }
+  );
 
-  registerScreen("mecenat", function(){
-    openWaitingScreen(
-      "mecenat",
-      "Savez-vous à qui et à quoi sert le mécénat ?"
-    );
-  });
+  registerScreen(
+    "emploi",
+    function(){
+
+      openWaitingScreen(
+        "emploi",
+        "Vous recherchez du personnel ?"
+      );
+    }
+  );
+
+  registerScreen(
+    "fidelisation",
+    function(){
+
+      openWaitingScreen(
+        "fidelisation",
+        "Attirez et fidélisez vos salariés autrement"
+      );
+    }
+  );
+
+  registerScreen(
+    "developpement",
+    function(){
+
+      openWaitingScreen(
+        "developpement",
+        "Développez votre entreprise"
+      );
+    }
+  );
+
+  registerScreen(
+    "mutualisation",
+    function(){
+
+      openWaitingScreen(
+        "mutualisation",
+        "Réduisez vos charges"
+      );
+    }
+  );
+
+  registerScreen(
+    "visibilite",
+    function(){
+
+      openWaitingScreen(
+        "visibilite",
+        "Faites connaître vos métiers et votre savoir-faire"
+      );
+    }
+  );
+
+  registerScreen(
+    "perennite",
+    function(){
+
+      openWaitingScreen(
+        "perennite",
+        "Préparez l’avenir de votre entreprise"
+      );
+    }
+  );
+
+  registerScreen(
+    "mecenat",
+    function(){
+
+      openWaitingScreen(
+        "mecenat",
+        "Connaissez-vous réellement le mécénat ?"
+      );
+    }
+  );
+
+  registerScreen(
+    "acces_partenaire",
+    function(){
+
+      if(
+        typeof window.BociteEntreprise
+          .openPrivateEntrepriseAccess ===
+        "function"
+      ){
+
+        window.BociteEntreprise
+          .openPrivateEntrepriseAccess();
+
+        return;
+      }
+
+      if(
+        typeof window.BociteEntreprise
+          .openPartnerAccess ===
+        "function"
+      ){
+
+        window.BociteEntreprise
+          .openPartnerAccess();
+
+        return;
+      }
+
+      openWaitingScreen(
+        "acces_partenaire",
+        "Accès partenaire"
+      );
+    }
+  );
 
   window.BociteEntreprise = {
     moduleName:MODULE_NAME,
@@ -563,11 +1029,14 @@ function getHomeHtml(){
     registerScreen:registerScreen,
     openScreen:openScreen,
     openHome:openHome,
+    goBack:goBack,
+    returnToEntrepriseHome:returnToEntrepriseHome,
     renderModal:renderModal,
     safeEscape:safeEscape
   };
 
-  window.openEntrepriseHome = openHome;
+  window.openEntrepriseHome =
+    openHome;
 
   console.log(
     "✅ Module Entreprise — partie 1 chargée"
@@ -1324,69 +1793,182 @@ function getHomeHtml(){
   }
 
   function getEmploymentHomeHtml(){
+
+    const data =
+      loadEmploymentData();
+
+    const activeOffers =
+      data.offers.filter(function(offer){
+
+        return (
+          offer.status === "publiee" ||
+          offer.status === "modifiee" ||
+          offer.status === "published"
+        );
+      });
+
     return `
-      <div class="box" style="border-left:6px solid #2f5d46;">
-        <strong style="font-size:18px;">
-          Vous recherchez du personnel ?
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
+
+        <strong style="font-size:19px;">
+          Trouvez un emploi,
+          un stage
+          ou une alternance près de chez vous
         </strong>
 
         <br><br>
 
-        Faites votre recrutement dans cet espace unique.
+        Les entreprises de votre ville
+        peuvent publier ici leurs besoins
+        en recrutement.
 
         <br><br>
+
+        Les habitants peuvent consulter gratuitement
+        les offres disponibles
+        et transmettre leur candidature
+        directement à l’entreprise concernée.
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:17px;">
+          Pourquoi recruter localement ?
+        </strong>
+
+        <br><br>
+
+        Les compétences recherchées
+        sont parfois déjà présentes
+        dans votre commune
+        ou dans les communes voisines.
+
+        <br><br>
+
+        Une personne qui travaille près de chez elle
+        réduit ses déplacements,
+        ses frais
+        et le temps passé sur la route.
+
+        <br><br>
+
+        L’entreprise améliore également
+        son ancrage local
+        et sa connaissance auprès des habitants.
+      </div>
+
+      <div class="box">
 
         <strong>
-          Les habitants de votre ville seront les premiers informés.
+          Aucune offre ne correspond actuellement ?
         </strong>
 
         <br><br>
 
-        Pourquoi chercher plus loin lorsque les compétences
-        sont souvent déjà près de chez vous ?
-      </div>
-
-      <div class="box">
-        <strong>Un recrutement plus local</strong><br><br>
-
-        L’offre est présentée en priorité dans votre commune.
+        Le citoyen peut envoyer
+        une candidature spontanée
+        à une entreprise de sa ville,
+        même si celle-ci
+        n’a pas encore publié d’offre.
 
         <br><br>
 
-        Le citoyen répond uniquement à l’annonce
-        qui correspond à son profil.
+        La candidature reste conservée
+        dans l’espace privé de l’entreprise.
 
         <br><br>
 
-        Son CV et son message restent associés
-        à cette offre précise.
+        Elle pourra retrouver le candidat
+        plusieurs mois plus tard
+        lorsqu’un nouveau besoin apparaîtra.
       </div>
 
-      <div class="box">
-        <strong>Votre historique vous est offert</strong><br><br>
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
 
-        L’entreprise conserve les candidatures reçues
-        dans son Tableau de Direction.
+        <strong>
+          Offres actuellement disponibles
+        </strong>
 
         <br><br>
 
-        Elle peut retrouver un candidat plusieurs mois plus tard
-        et lui demander s’il est encore disponible.
+        Nombre d’offres ouvertes :
+
+        <strong style="font-size:20px;">
+          ${activeOffers.length}
+        </strong>
       </div>
 
-      <div class="box">
-        <strong>Respect du candidat</strong><br><br>
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+        ">
 
-        Lorsque le poste est pourvu, l’entreprise doit clôturer
-        son annonce.
+        <button
+          class="choiceBtn"
+          id="employmentViewOffersBtn"
+          type="button">
+          Consulter toutes les offres
+        </button>
+
+        <button
+          class="choiceBtn"
+          id="employmentSpontaneousBtn"
+          type="button">
+          Envoyer une candidature spontanée
+        </button>
+
+        <button
+          class="choiceBtn"
+          id="employmentLocalCompaniesBtn"
+          type="button">
+          Voir les entreprises de ma ville
+        </button>
+      </div>
+
+      <div
+        class="box"
+        style="
+          margin-top:16px;
+          border-left:6px solid #b00020;
+        ">
+
+        <strong style="font-size:17px;">
+          Espace réservé à l’entreprise
+        </strong>
 
         <br><br>
 
-        Cela évite aux citoyens de perdre leur temps
-        à répondre à une offre qui n’est plus disponible.
+        La publication d’une offre,
+        sa modification,
+        sa clôture
+        et l’historique des candidatures
+        sont accessibles uniquement
+        depuis l’espace professionnel privé.
+
+        <br><br>
+
+        Une entreprise doit clôturer son annonce
+        dès que le poste est pourvu.
+
+        <br><br>
+
+        Cela évite les annonces fantômes
+        et respecte le temps des candidats.
       </div>
 
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+        ">
+
         <button
           class="choiceBtn"
           id="employmentCreateOfferBtn"
@@ -1396,76 +1978,183 @@ function getHomeHtml(){
 
         <button
           class="choiceBtn"
-          id="employmentViewOffersBtn"
+          id="employmentApplicationsBtn"
           type="button">
-          Consulter les offres
+          Historique des candidatures
         </button>
 
         <button
           class="choiceBtn"
-          id="employmentApplicationsBtn"
+          id="employmentDirectionBtn"
           type="button">
-          Candidatures reçues
+          Tableau de Direction
         </button>
-      </div>
-
-      <div class="box" style="margin-top:14px;">
-        <strong>Règle de diffusion</strong><br><br>
-
-        Une offre publiée doit être modifiée ou clôturée
-        dès que la situation évolue.
-
-        <br><br>
-
-        Statuts possibles :
-
-        <br><br>
-
-        • publiée<br>
-        • modifiée<br>
-        • poste pourvu<br>
-        • clôturée
       </div>
     `;
   }
 
   function bindEmploymentHome(){
+
     const createButton =
-      getElement("employmentCreateOfferBtn");
+      getElement(
+        "employmentCreateOfferBtn"
+      );
 
     const offersButton =
-      getElement("employmentViewOffersBtn");
+      getElement(
+        "employmentViewOffersBtn"
+      );
 
     const applicationsButton =
-      getElement("employmentApplicationsBtn");
+      getElement(
+        "employmentApplicationsBtn"
+      );
+
+    const spontaneousButton =
+      getElement(
+        "employmentSpontaneousBtn"
+      );
+
+    const companiesButton =
+      getElement(
+        "employmentLocalCompaniesBtn"
+      );
+
+    const directionButton =
+      getElement(
+        "employmentDirectionBtn"
+      );
 
     if(createButton){
+
       createButton.onclick = function(){
+
+        if(
+          typeof module.requirePrivateAccess ===
+          "function"
+        ){
+
+          module.requirePrivateAccess(
+            openEmploymentForm
+          );
+
+          return;
+        }
+
         openEmploymentForm();
       };
     }
 
     if(offersButton){
+
       offersButton.onclick = function(){
+
         openEmploymentOffers();
       };
     }
 
     if(applicationsButton){
+
       applicationsButton.onclick = function(){
+
+        if(
+          typeof module.requirePrivateAccess ===
+          "function"
+        ){
+
+          module.requirePrivateAccess(
+            openEmploymentApplications
+          );
+
+          return;
+        }
+
         openEmploymentApplications();
+      };
+    }
+
+    if(spontaneousButton){
+
+      spontaneousButton.onclick = function(){
+
+        if(
+          typeof module.openLocalDirectory ===
+          "function"
+        ){
+
+          module.openLocalDirectory({
+            spontaneousApplication:true
+          });
+
+          return;
+        }
+
+        module.openScreen(
+          "annuaire_local"
+        );
+      };
+    }
+
+    if(companiesButton){
+
+      companiesButton.onclick = function(){
+
+        if(
+          typeof module.openLocalDirectory ===
+          "function"
+        ){
+
+          module.openLocalDirectory();
+          return;
+        }
+
+        module.openScreen(
+          "annuaire_local"
+        );
+      };
+    }
+
+    if(directionButton){
+
+      directionButton.onclick = function(){
+
+        if(
+          typeof module.requirePrivateAccess ===
+          "function"
+        ){
+
+          module.requirePrivateAccess(
+            function(){
+              module.openScreen(
+                "direction"
+              );
+            }
+          );
+
+          return;
+        }
+
+        module.openScreen(
+          "direction"
+        );
       };
     }
   }
 
   function openEmployment(){
+
     module.renderModal(
-      "Vous recherchez du personnel ?",
-      getEmploymentHomeHtml()
+      "Emploi dans votre ville",
+      getEmploymentHomeHtml(),
+      {
+        presentationFooter:true
+      }
     );
 
     window.setTimeout(function(){
+
       bindEmploymentHome();
+
     },0);
   }
 
@@ -2235,21 +2924,83 @@ function getHomeHtml(){
       }).join("");
   }
 
-  function getLoyaltyHtml(){
+   function getLoyaltyHtml(){
+
     return `
-      <div class="box" style="border-left:6px solid #2f5d46;">
-        <strong style="font-size:18px;">
-          Attirez et fidélisez vos salariés autrement
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
+
+        <strong style="font-size:19px;">
+          Faites d’abord connaître votre entreprise
+          partout dans la ville
         </strong>
 
         <br><br>
 
-        Recruter près de l’entreprise peut déjà réduire
-        les temps de déplacement et les frais de transport.
+        Les citoyens doivent savoir
+        ce que fait votre entreprise,
+        où elle se trouve
+        et quels métiers elle propose.
+
+        <br><br>
+
+        Cette visibilité locale peut faciliter
+        le recrutement,
+        développer le bouche-à-oreille
+        et renforcer la fierté
+        d’appartenance des salariés.
       </div>
 
       <div class="box">
-        <strong>La proximité compte</strong><br><br>
+
+        <strong style="font-size:17px;">
+          Faites connaître ce qui existe
+          autour du lieu de travail
+        </strong>
+
+        <br><br>
+
+        Faire connaître aux salariés :
+
+        <br><br>
+
+        • les commerces ;<br>
+        • les services ;<br>
+        • les clubs ;<br>
+        • les activités ;<br>
+        • les initiatives locales accessibles
+        près du lieu de travail.
+
+        <br><br>
+
+        Valorisez également
+        les initiatives auxquelles
+        l’entreprise participe,
+        mais aussi celles qui existent déjà
+        sur le territoire.
+      </div>
+
+      <div class="box">
+
+        <strong>
+          La proximité améliore le quotidien
+        </strong>
+
+        <br><br>
+
+        Recruter dans la commune
+        ou dans les communes voisines
+        peut réduire :
+
+        <br><br>
+
+        • les temps de déplacement ;<br>
+        • les frais de transport ;<br>
+        • la fatigue quotidienne ;<br>
+        • les difficultés liées aux horaires.
+
+        <br><br>
 
         Un salarié regarde la rémunération,
         mais également :
@@ -2261,46 +3012,59 @@ function getHomeHtml(){
         • la reconnaissance ;<br>
         • l’ambiance ;<br>
         • les services accessibles près de l’entreprise ;<br>
-        • l’engagement de son employeur.
+        • l’engagement local de son employeur.
       </div>
 
       <div class="box">
-        <strong>Des actions concrètes</strong><br><br>
 
-        Recruter en priorité dans la commune
-        ou dans les communes voisines.
-
-        <br><br>
-
-        Faire connaître aux salariés les commerces,
-        les services, les activités et les clubs
-        présents autour de l’entreprise.
+        <strong>
+          Des actions concrètes pour fidéliser
+        </strong>
 
         <br><br>
 
-        Valoriser les métiers et le savoir-faire
-        des équipes.
-
-        <br><br>
-
-        Associer les salariés à une action locale,
-        un mécénat ou un projet utile à la ville.
+        • faire connaître les métiers de l’entreprise ;<br>
+        • valoriser le savoir-faire des équipes ;<br>
+        • présenter les services disponibles autour du travail ;<br>
+        • associer les salariés à une action locale ;<br>
+        • soutenir un projet utile à la ville ;<br>
+        • reconnaître les initiatives internes ;<br>
+        • faciliter l’accès aux commerces et activités locales.
       </div>
 
       <div class="box">
-        <strong>Une entreprise mieux connue</strong><br><br>
 
-        Lorsque les habitants connaissent votre activité,
-        vos métiers et votre présence dans la ville,
+        <strong>
+          Une entreprise mieux connue
+        </strong>
+
+        <br><br>
+
+        Lorsque les habitants connaissent
+        votre activité,
+        vos métiers
+        et votre présence dans la ville,
         ils peuvent parler de vous naturellement.
 
         <br><br>
 
-        Cela favorise aussi les recrutements futurs
-        et la fierté d’appartenance des salariés.
+        Cela favorise :
+
+        <br><br>
+
+        • les recrutements futurs ;<br>
+        • la recommandation ;<br>
+        • la reconnaissance locale ;<br>
+        • la fierté d’appartenance des salariés.
       </div>
 
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+        ">
+
         <button
           class="choiceBtn"
           id="loyaltyEmploymentBtn"
@@ -2310,9 +3074,16 @@ function getHomeHtml(){
 
         <button
           class="choiceBtn"
-          id="loyaltyDirectoryBtn"
+          id="loyaltyLocalDirectoryBtn"
           type="button">
-          Découvrir les services locaux
+          Entreprises et commerces de la ville
+        </button>
+
+        <button
+          class="choiceBtn"
+          id="loyaltyVisibilityBtn"
+          type="button">
+          Faire connaître mon entreprise
         </button>
 
         <button
@@ -2326,38 +3097,86 @@ function getHomeHtml(){
   }
 
   function openLoyalty(){
+
     module.renderModal(
       "Attirez et fidélisez vos salariés autrement",
-      getLoyaltyHtml()
+      getLoyaltyHtml(),
+      {
+        presentationFooter:true
+      }
     );
 
     window.setTimeout(function(){
+
       const employmentButton =
-        getElement("loyaltyEmploymentBtn");
+        getElement(
+          "loyaltyEmploymentBtn"
+        );
 
       const directoryButton =
-        getElement("loyaltyDirectoryBtn");
+        getElement(
+          "loyaltyLocalDirectoryBtn"
+        );
+
+      const visibilityButton =
+        getElement(
+          "loyaltyVisibilityBtn"
+        );
 
       const patronageButton =
-        getElement("loyaltyPatronageBtn");
+        getElement(
+          "loyaltyPatronageBtn"
+        );
 
       if(employmentButton){
+
         employmentButton.onclick = function(){
-          module.openScreen("emploi");
+
+          module.openScreen(
+            "emploi"
+          );
         };
       }
 
       if(directoryButton){
+
         directoryButton.onclick = function(){
-          module.openScreen("annuaire");
+
+          if(
+            typeof module.openLocalDirectory ===
+            "function"
+          ){
+
+            module.openLocalDirectory();
+            return;
+          }
+
+          module.openScreen(
+            "annuaire_local"
+          );
+        };
+      }
+
+      if(visibilityButton){
+
+        visibilityButton.onclick = function(){
+
+          module.openScreen(
+            "visibilite"
+          );
         };
       }
 
       if(patronageButton){
+
         patronageButton.onclick = function(){
-          module.openScreen("mecenat");
+
+          module.openScreen(
+            "mecenat"
+          );
         };
       }
+
     },0);
   }
 
@@ -2460,6 +3279,7 @@ function getHomeHtml(){
   }
 
   function getDevelopmentHtml(){
+
     const saved =
       loadDevelopmentData();
 
@@ -2468,61 +3288,210 @@ function getHomeHtml(){
         class="box"
         style="border-left:6px solid #2f5d46;">
 
+        <strong style="font-size:19px;">
+          Connaissez-vous le nom de cinq entreprises
+          présentes dans votre ville ?
+        </strong>
+
+        <br><br>
+
+        Probablement pas.
+
+        <br><br>
+
+        Nous ne parlons pas seulement
+        des grandes enseignes connues de tous,
+        mais de toutes les autres entreprises,
+        artisans,
+        prestataires
+        et commerces qui travaillent
+        chaque jour dans votre commune.
+
+        <br><br>
+
+        Elles produisent,
+        recrutent,
+        proposent des services
+        et participent à la vie économique locale,
+        sans être suffisamment connues
+        des habitants
+        ni même des autres professionnels.
+
+        <br><br>
+
+        <strong>
+          Ce manque de connaissance
+          représente une véritable perte pour la ville.
+        </strong>
+
+        <br><br>
+
+        Avant de chercher ailleurs,
+        commencez par découvrir
+        les compétences déjà présentes
+        sur votre territoire.
+      </div>
+
+      <div class="box">
+
         <strong style="font-size:18px;">
           Développez votre entreprise
         </strong>
 
         <br><br>
 
-        Votre prochain client, fournisseur, salarié
-        ou partenaire se trouve peut-être déjà
+        Votre prochain client,
+        fournisseur,
+        salarié,
+        sous-traitant
+        ou partenaire
+        se trouve peut-être déjà
         dans votre ville.
+
+        <br><br>
+
+        Une entreprise se développe
+        grâce à ses produits
+        et à ses services,
+        mais aussi grâce aux rencontres,
+        aux informations
+        et aux bonnes décisions
+        prises au bon moment.
       </div>
 
       <div class="box">
+
         <strong>
           Commencez par regarder autour de vous
         </strong>
 
         <br><br>
 
-        Découvrez les entreprises présentes dans votre commune,
-        leurs métiers, leurs savoir-faire et leurs besoins.
+        Découvrez les entreprises
+        et les commerces présents
+        dans votre commune :
 
         <br><br>
 
-        Recherchez un fournisseur, un sous-traitant,
-        une compétence complémentaire ou un partenaire local.
+        • leurs métiers ;<br>
+        • leurs savoir-faire ;<br>
+        • leurs produits ;<br>
+        • leurs services ;<br>
+        • leurs besoins ;<br>
+        • leurs recherches professionnelles.
 
         <br><br>
 
-        Avant de chercher loin, regardez ce qui existe déjà
-        près de chez vous.
+        Recherchez localement :
+
+        <br><br>
+
+        • un fournisseur ;<br>
+        • un sous-traitant ;<br>
+        • une compétence complémentaire ;<br>
+        • un partenaire ;<br>
+        • un futur salarié ;<br>
+        • un nouveau client professionnel.
       </div>
 
       <div class="box">
+
+        <strong>
+          Une liste locale commune
+        </strong>
+
+        <br><br>
+
+        Les citoyens,
+        les entreprises
+        et les commerces
+        doivent pouvoir retrouver
+        les acteurs économiques
+        présents dans leur ville.
+
+        <br><br>
+
+        Cette liste permet de se rappeler
+        qui travaille,
+        produit
+        et propose des services
+        près de chez soi,
+        avant de chercher systématiquement ailleurs.
+      </div>
+
+      <div class="box">
+
+        <strong>
+          Favoriser les relations entre professionnels locaux
+        </strong>
+
+        <br><br>
+
+        Une entreprise ou un commerce partenaire
+        pourra choisir librement
+        de proposer un avantage professionnel
+        aux autres partenaires locaux.
+
+        <br><br>
+
+        Cet avantage pourra être par exemple :
+
+        <br><br>
+
+        • une remise de 5 % ;<br>
+        • une remise de 10 % ;<br>
+        • un montant personnalisé ;<br>
+        • une condition commerciale spécifique.
+
+        <br><br>
+
+        Cette remise restera facultative
+        et devra être plus favorable
+        que l’avantage habituellement proposé
+        aux clients ordinaires,
+        afin de réellement encourager
+        les professionnels locaux
+        à travailler davantage ensemble.
+      </div>
+
+      <div class="box">
+
         <strong>
           Bo'CitéArt prépare des connexions utiles
         </strong>
 
         <br><br>
 
-        L’objectif n’est pas seulement d’afficher des noms
-        dans un annuaire.
+        L’objectif n’est pas seulement
+        d’afficher des noms dans un annuaire.
 
         <br><br>
 
-        Il s’agit de permettre aux entreprises de mieux
-        se connaître, de travailler ensemble et de découvrir
-        des opportunités qu’elles ne voyaient pas auparavant.
+        Il s’agit de permettre
+        aux entreprises et aux commerces :
+
+        <br><br>
+
+        • de mieux se connaître ;<br>
+        • de travailler ensemble ;<br>
+        • de découvrir de nouveaux besoins ;<br>
+        • d’identifier des opportunités ;<br>
+        • de favoriser les échanges locaux ;<br>
+        • de développer leur activité.
       </div>
 
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+        ">
+
         <button
           class="choiceBtn"
           id="developmentDirectoryBtn"
           type="button">
-          Les entreprises de ma ville
+          Entreprises et commerces de ma ville
         </button>
 
         <button
@@ -2536,25 +3505,41 @@ function getHomeHtml(){
           class="choiceBtn"
           id="developmentPartnerBtn"
           type="button">
-          Rechercher un partenaire
+          Rechercher un partenaire professionnel
         </button>
       </div>
 
       <div
         class="box"
-        style="margin-top:14px;">
+        style="
+          margin-top:16px;
+          border-left:6px solid #b00020;
+        ">
 
         <strong style="font-size:17px;">
-          Préparez votre prochaine action
+          Espace professionnel privé
         </strong>
 
         <br><br>
 
-        Répondez simplement aux questions suivantes.
-        Votre réponse restera dans votre espace professionnel.
+        Le plan de développement ci-dessous
+        est réservé à l’entreprise.
+
+        <br><br>
+
+        Il permet d’enregistrer
+        un objectif,
+        un besoin,
+        une action
+        et une date de suivi
+        dans le Tableau de Direction.
       </div>
 
-      <label style="display:block;font-weight:900;">
+      <label
+        style="
+          display:block;
+          font-weight:900;
+        ">
         Quel est votre objectif principal ?
       </label>
 
@@ -2612,7 +3597,9 @@ function getHomeHtml(){
         id="developmentNeed"
         class="miniField"
         style="min-height:110px;"
-        placeholder="Expliquez simplement ce que vous recherchez.">${escapeValue(saved.need || "")}</textarea>
+        placeholder="Expliquez simplement ce que vous recherchez.">${escapeValue(
+          saved.need || ""
+        )}</textarea>
 
       <label
         style="
@@ -2627,7 +3614,9 @@ function getHomeHtml(){
         id="developmentLocalSearch"
         class="miniField"
         style="min-height:90px;"
-        placeholder="Indiquez les démarches déjà réalisées.">${escapeValue(saved.localSearch || "")}</textarea>
+        placeholder="Indiquez les démarches déjà réalisées.">${escapeValue(
+          saved.localSearch || ""
+        )}</textarea>
 
       <label
         style="
@@ -2642,7 +3631,9 @@ function getHomeHtml(){
         id="developmentAction"
         class="miniField"
         style="min-height:90px;"
-        placeholder="Exemple : contacter trois entreprises locales, demander un devis ou organiser une rencontre.">${escapeValue(saved.action || "")}</textarea>
+        placeholder="Exemple : contacter trois entreprises locales, demander un devis ou organiser une rencontre.">${escapeValue(
+          saved.action || ""
+        )}</textarea>
 
       <label
         style="
@@ -2657,14 +3648,19 @@ function getHomeHtml(){
         id="developmentDeadline"
         class="miniField"
         type="date"
-        value="${escapeValue(saved.deadline || "")}">
+        value="${escapeValue(
+          saved.deadline || ""
+        )}">
 
       <button
         id="developmentSaveBtn"
         class="choiceBtn"
         type="button"
-        style="width:100%;margin-top:14px;">
-        Enregistrer mon plan d’action
+        style="
+          width:100%;
+          margin-top:14px;
+        ">
+        Enregistrer ou modifier mon plan d’action
       </button>
 
       <button
@@ -2690,7 +3686,7 @@ function getHomeHtml(){
         style="margin-top:14px;">
 
         <strong>
-          Besoin d’une réponse rapide ?
+          Besoin d’une première orientation ?
         </strong>
 
         <br><br>
@@ -2699,8 +3695,12 @@ function getHomeHtml(){
 
         <br><br>
 
-        La réponse commencera toujours par les ressources
-        disponibles dans votre ville avant de s’élargir.
+        La recherche commencera
+        par les entreprises,
+        commerces
+        et compétences disponibles
+        dans votre ville,
+        avant de s’élargir.
       </div>
 
       <textarea
@@ -2714,7 +3714,10 @@ function getHomeHtml(){
         id="developmentQuestionBtn"
         class="choiceBtn"
         type="button"
-        style="width:100%;margin-top:10px;">
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
         Rechercher une première solution
       </button>
 
@@ -3274,516 +4277,172 @@ function getHomeHtml(){
     );
   }
 
-  function getMutualisationHtml(){
-    return `
-      <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
+function getMutualisationHtml(){
 
-        <strong style="font-size:18px;">
-          Réduisez vos charges
-        </strong>
+return `
 
-        <br><br>
+<div class="box" style="border-left:6px solid #2f5d46;">
 
-        Pourquoi continuer à négocier seul
-        lorsqu’il est possible de se regrouper ?
+<strong style="font-size:19px;">
 
-        <br><br>
+Réduisez vos charges grâce à la mutualisation
 
-        Tout le monde en parle.
-        Peu le font réellement.
+</strong>
 
-        <br><br>
+<br><br>
 
-        Bo'CitéArt organise la démarche.
-      </div>
+Une entreprise seule
+n'obtient pas toujours
+les meilleures conditions.
 
-      <div class="box">
-        <strong>Comment cela fonctionne ?</strong>
+<br><br>
 
-        <br><br>
+En regroupant plusieurs entreprises
+ou commerces,
+il devient parfois possible
+de négocier davantage.
 
-        1. Vous indiquez les sujets qui vous intéressent.
+</div>
 
-        <br><br>
+<div class="box">
 
-        2. Le compteur augmente immédiatement.
+<strong>
 
-        <br><br>
+Comparez • Choisissez • Validez
 
-        3. Lorsque le nombre nécessaire est atteint,
-        Bo'CitéArt prépare la consultation.
+</strong>
 
-        <br><br>
+<br><br>
 
-        4. Les propositions sont présentées
-        dans votre Tableau de Direction.
+Bo'CitéArt permettra progressivement
+de comparer les propositions reçues
+pour différents postes de dépenses.
 
-        <br><br>
+</div>
 
-        5. Chaque entreprise choisit librement
-        la proposition qu’elle souhaite.
-      </div>
+<div class="box">
 
-      <div
-        id="mutualisationList"
-        style="margin-top:12px;">
-      </div>
+Les principales mutualisations
+pourront concerner :
 
-      <div
-        class="box"
-        style="margin-top:14px;">
+<br><br>
 
-        <strong>
-          Vous souhaitez proposer un autre regroupement ?
-        </strong>
+• Électricité
 
-        <br><br>
+<br>
 
-        Décrivez simplement votre besoin.
+• Gaz
 
-        <br><br>
+<br>
 
-        Si plusieurs entreprises expriment la même demande,
-        Bo'CitéArt pourra l’étudier.
-      </div>
+• Téléphonie
 
-      <input
-        id="mutualisationOtherTitle"
-        class="miniField"
-        type="text"
-        placeholder="Exemple : entretien des véhicules">
+<br>
 
-      <textarea
-        id="mutualisationOtherDescription"
-        class="miniField"
-        style="min-height:90px;margin-top:8px;"
-        placeholder="Expliquez brièvement le besoin.">
-      </textarea>
+• Internet
 
-      <button
-        id="mutualisationOtherSaveBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;margin-top:10px;">
-        Proposer ce regroupement
-      </button>
-
-      <div
-        id="mutualisationOtherList"
-        style="margin-top:12px;">
-      </div>
-
-      <div
-        class="box"
-        style="margin-top:14px;">
-
-        <strong>
-          Information importante
-        </strong>
-
-        <br><br>
-
-        Le premier clic indique seulement votre intérêt.
-
-        <br><br>
-
-        Il ne constitue pas encore
-        un engagement définitif.
-
-        <br><br>
-
-        L’engagement final interviendra
-        uniquement après présentation
-        des propositions et confirmation
-        dans le Tableau de Direction.
-      </div>
-    `;
-  }
-
-  function renderMutualisationList(){
-    const host =
-      getElement("mutualisationList");
-
-    if(!host){
-      return;
-    }
-
-    const data =
-      loadMutualisationData();
-
-    const keys = [
-      "electricite",
-      "gaz",
-      "telephonie",
-      "assurances",
-      "mutuelle",
-      "fournitures",
-      "carburant",
-      "formation"
-    ];
-
-    host.innerHTML =
-      keys.map(function(key){
-
-        const item = data[key];
-        const percent =
-          getProgressPercent(
-            item.count,
-            item.target
-          );
-
-        const buttonText =
-          item.interested
-            ? "Intérêt enregistré"
-            : "Je suis intéressé";
-
-        return `
-          <div class="box">
-            <div
-              style="
-                display:flex;
-                justify-content:space-between;
-                gap:10px;
-                align-items:flex-start;
-              ">
-
-              <div style="flex:1;">
-                <strong style="font-size:16px;">
-                  ${escapeValue(item.label)}
-                </strong>
-
-                <div
-                  class="muted"
-                  style="margin-top:5px;">
-                  Objectif conseillé :
-                  ${Number(item.target)} participants
-                </div>
-              </div>
-
-              <div
-                style="
-                  font-size:18px;
-                  font-weight:900;
-                  color:#2f5d46;
-                  white-space:nowrap;
-                ">
-                ${Number(item.count)}
-                /
-                ${Number(item.target)}
-              </div>
-            </div>
-
-            <div
-              style="
-                margin-top:10px;
-                height:12px;
-                border-radius:999px;
-                background:#e6e0d7;
-                overflow:hidden;
-              ">
-
-              <div
-                style="
-                  width:${percent}%;
-                  height:100%;
-                  background:#2f5d46;
-                ">
-              </div>
-            </div>
-
-            <div
-              class="muted"
-              style="margin-top:6px;">
-              Progression :
-              ${percent} %
-            </div>
-
-            <button
-              class="choiceBtn mutualisationInterestBtn"
-              type="button"
-              data-mutualisation-key="${escapeValue(key)}"
-              style="
-                width:100%;
-                margin-top:10px;
-                ${item.interested ? "opacity:.65;" : ""}
-              ">
-              ${escapeValue(buttonText)}
-            </button>
-          </div>
-        `;
-      }).join("");
-
-    host
-      .querySelectorAll(".mutualisationInterestBtn")
-      .forEach(function(button){
-
-        button.onclick = function(){
-          registerInterest(
-            button.getAttribute(
-              "data-mutualisation-key"
-            )
-          );
-        };
-      });
-  }
-
-  function registerInterest(key){
-    const data =
-      loadMutualisationData();
-
-    const item =
-      data[key];
-
-    if(!item){
-      alert(
-        "Cette mutualisation est introuvable."
-      );
-      return;
-    }
-
-    if(item.interested){
-      alert(
-        "Votre intérêt est déjà enregistré."
-      );
-      return;
-    }
-
-    item.interested = true;
-    item.count =
-      Number(item.count || 0) + 1;
-
-    item.interestDate =
-      Date.now();
-
-    item.interestDateFr =
-      new Date().toLocaleString("fr-FR");
-
-    saveMutualisationData(data);
-    renderMutualisationList();
-
-    if(
-      Number(item.count) >=
-      Number(item.target)
-    ){
-      alert(
-        "Votre intérêt est enregistré.\n\n" +
-        "Le nombre conseillé de participants est maintenant atteint.\n\n" +
-        "Bo'CitéArt peut préparer l’étude de cette demande."
-      );
-      return;
-    }
-
-    alert(
-      "Votre intérêt est enregistré.\n\n" +
-      "Le compteur vient d’augmenter.\n\n" +
-      "Plus les entreprises seront nombreuses, " +
-      "plus la négociation pourra devenir favorable."
-    );
-  }
-
-  function saveOtherRequest(){
-    const title =
-      String(
-        getElement("mutualisationOtherTitle")
-          ? getElement("mutualisationOtherTitle").value
-          : ""
-      ).trim();
-
-    const description =
-      String(
-        getElement("mutualisationOtherDescription")
-          ? getElement("mutualisationOtherDescription").value
-          : ""
-      ).trim();
-
-    if(!title){
-      alert(
-        "Indiquez le regroupement souhaité."
-      );
-      return;
-    }
-
-    if(!description){
-      alert(
-        "Expliquez brièvement votre besoin."
-      );
-      return;
-    }
-
-    const data =
-      loadMutualisationData();
-
-    if(!Array.isArray(data.autres)){
-      data.autres = [];
-    }
-
-    const normalizedTitle =
-      title.toLowerCase();
-
-    const existing =
-      data.autres.find(function(item){
-        return String(item.title || "")
-          .toLowerCase() ===
-          normalizedTitle;
-      });
-
-    if(existing){
-      if(existing.interested){
-        alert(
-          "Vous avez déjà participé à cette demande."
-        );
-        return;
-      }
-
-      existing.count =
-        Number(existing.count || 0) + 1;
-
-      existing.interested = true;
-
-      existing.lastUpdate =
-        Date.now();
-
-      existing.lastUpdateFr =
-        new Date().toLocaleString("fr-FR");
-    }else{
-      data.autres.push({
-        id:
-          "AUTRE-" +
-          Date.now() +
-          "-" +
-          Math.random()
-            .toString(36)
-            .slice(2,7),
-
-        title:title,
-        description:description,
-        count:1,
-        target:10,
-        interested:true,
-        createdAt:Date.now(),
-        createdAtFr:
-          new Date().toLocaleString("fr-FR"),
-        status:"en_observation"
-      });
-    }
-
-    saveMutualisationData(data);
-
-    const titleInput =
-      getElement("mutualisationOtherTitle");
-
-    const descriptionInput =
-      getElement("mutualisationOtherDescription");
-
-    if(titleInput){
-      titleInput.value = "";
-    }
-
-    if(descriptionInput){
-      descriptionInput.value = "";
-    }
-
-    renderOtherRequests();
-
-    alert(
-      "Votre demande est enregistrée.\n\n" +
-      "Bo'CitéArt suivra automatiquement son évolution."
-    );
-  }
-
-  function renderOtherRequests(){
-    const host =
-      getElement("mutualisationOtherList");
-
-    if(!host){
-      return;
-    }
-
-    const data =
-      loadMutualisationData();
-
-    const requests =
-      Array.isArray(data.autres)
-        ? data.autres
-        : [];
-
-    if(!requests.length){
-      host.innerHTML = "";
-      return;
-    }
-
-    host.innerHTML = `
-      <div
-        style="
-          font-weight:900;
-          font-size:17px;
-          margin-bottom:8px;
-        ">
-        Demandes proposées
-      </div>
-
-      ${
-        requests.map(function(item){
-
-          const count =
-            Number(item.count || 0);
-
-          const target =
-            Number(item.target || 10);
-
-          const reached =
-            count >= target;
-
-          return `
-            <div class="box">
-              <strong>
-                ${escapeValue(item.title)}
-              </strong>
-
-              <br><br>
-
-              ${escapeValue(item.description)}
-
-              <br><br>
-
-              Participants :
-              <strong>
-                ${count}
-                /
-                ${target}
-              </strong>
-
-              <br><br>
-
-              Statut :
-              <strong>
-                ${
-                  reached
-                    ? "Demande à étudier"
-                    : "En observation"
-                }
-              </strong>
-            </div>
-          `;
-        }).join("")
-      }
-    `;
-  }
-
-  function bindMutualisation(){
-    const otherButton =
-      getElement("mutualisationOtherSaveBtn");
-
-    if(otherButton){
-      otherButton.onclick =
-        saveOtherRequest;
-    }
-
-    renderMutualisationList();
-    renderOtherRequests();
-  }
+<br>
+
+• Assurances
+
+<br>
+
+• Véhicules
+
+<br>
+
+• Entretien
+
+<br>
+
+• Formation
+
+<br>
+
+• Fournitures
+
+<br>
+
+• Achats groupés
+
+</div>
+
+<div class="box">
+
+<strong>
+
+Comment cela fonctionne ?
+
+</strong>
+
+<br><br>
+
+Lorsqu'un nombre suffisant
+d'entreprises
+exprime le même besoin,
+Bo'CitéArt peut lancer
+une recherche commune.
+
+<br><br>
+
+Les propositions reçues
+seront regroupées
+dans votre Tableau de Direction.
+
+</div>
+
+<div class="box">
+
+Vous resterez toujours libre :
+
+<br><br>
+
+• d'accepter
+
+<br>
+
+• de refuser
+
+<br>
+
+• de comparer
+
+<br>
+
+• de demander un autre devis
+
+</div>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;">
+
+<button
+id="mutualisationRequestBtn"
+class="choiceBtn">
+
+Déclarer un besoin
+
+</button>
+
+<button
+id="mutualisationAnswersBtn"
+class="choiceBtn">
+
+Voir les réponses reçues
+
+</button>
+
+<button
+id="mutualisationDirectionBtn"
+class="choiceBtn">
+
+Ouvrir le Tableau de Direction
+
+</button>
+
+</div>
+
+`;
+}
 
   function openMutualisation(){
     module.renderModal(
@@ -4662,705 +5321,172 @@ function getHomeHtml(){
     }
   }
 
-  function getVisibilityHtml(){
-    const saved =
-      loadVisibilityData();
-
-    return `
-      <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
-
-        <strong style="font-size:18px;">
-          Faites connaître vos métiers et votre savoir-faire
-        </strong>
-
-        <br><br>
-
-        Parce qu’avant d’acheter ou de chercher ailleurs,
-        les habitants doivent déjà savoir que vous existez.
-      </div>
-
-      <div class="box">
-        <strong>
-          Il est encore trop difficile de savoir
-          qui fait quoi dans sa propre ville
-        </strong>
-
-        <br><br>
-
-        Même lorsque vos produits ou services
-        ne s’adressent pas directement aux particuliers,
-        les habitants peuvent connaître votre activité,
-        parler de vous ou transmettre votre nom.
-      </div>
-
-      <div class="box">
-        <strong>
-          Faire connaître votre entreprise crée plusieurs leviers
-        </strong>
-
-        <br><br>
-
-        • l’emploi ;<br>
-        • le bouche-à-oreille ;<br>
-        • les partenariats ;<br>
-        • la découverte des métiers ;<br>
-        • les vocations chez les jeunes ;<br>
-        • la transmission future ;<br>
-        • la reconnaissance locale.
-      </div>
-
-      <div class="box">
-        <strong>
-          Chaque année, des entreprises disparaissent
-          faute de repreneur
-        </strong>
-
-        <br><br>
-
-        Parfois simplement parce que personne
-        ne connaissait réellement leur activité.
-
-        <br><br>
-
-        Faire connaître votre métier aujourd’hui,
-        c’est aussi préparer demain.
-      </div>
-
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button
-          id="visibilityDirectoryBtn"
-          class="choiceBtn"
-          type="button">
-          Voir les entreprises de la ville
-        </button>
-
-        <button
-          id="visibilityAdvertisementBtn"
-          class="choiceBtn"
-          type="button">
-          Diffuser une publicité
-        </button>
-
-        <button
-          id="visibilityEditCardBtn"
-          class="choiceBtn"
-          type="button">
-          Présenter mon entreprise
-        </button>
-      </div>
-
-      <div
-        class="box"
-        style="margin-top:14px;">
-
-        <strong style="font-size:17px;">
-          Fiche Bo'CitéArt enrichie
-        </strong>
-
-        <br><br>
-
-        Les informations officielles de l’entreprise
-        peuvent apparaître dans l’annuaire.
-
-        <br><br>
-
-        La fiche enrichie permet d’ajouter volontairement :
-
-        <br><br>
-
-        • une présentation ;<br>
-        • les métiers ;<br>
-        • les services ;<br>
-        • les réalisations ;<br>
-        • les recrutements ;<br>
-        • les actualités ;<br>
-        • l’engagement en mécénat ;<br>
-        • une demande de devis ;<br>
-        • un contact direct.
-      </div>
-
-      <div
-        class="box">
-
-        <strong>
-          Tarif professionnel prévu
-        </strong>
-
-        <br><br>
-
-        Fiche enrichie :
-        <strong>199 € HT par an</strong>.
-
-        <br><br>
-
-        Publicité ponctuelle :
-        <strong>50 € HT</strong>.
-      </div>
-
-      <div
-        id="visibilityForm"
-        style="margin-top:12px;">
-
-        <label style="display:block;font-weight:900;">
-          Nom de l’entreprise
-        </label>
-
-        <input
-          id="visibilityCompanyName"
-          class="miniField"
-          type="text"
-          value="${escapeValue(saved.companyName || "")}"
-          placeholder="Nom de l’entreprise">
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Activité principale
-        </label>
-
-        <input
-          id="visibilityActivity"
-          class="miniField"
-          type="text"
-          value="${escapeValue(saved.activity || "")}"
-          placeholder="Exemple : installation électrique">
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Présentation
-        </label>
-
-        <textarea
-          id="visibilityPresentation"
-          class="miniField"
-          style="min-height:100px;"
-          placeholder="Présentez votre entreprise.">${escapeValue(saved.presentation || "")}</textarea>
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Savoir-faire
-        </label>
-
-        <textarea
-          id="visibilityKnowHow"
-          class="miniField"
-          style="min-height:90px;"
-          placeholder="Décrivez ce qui vous distingue.">${escapeValue(saved.knowHow || "")}</textarea>
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Services proposés
-        </label>
-
-        <textarea
-          id="visibilityServices"
-          class="miniField"
-          style="min-height:90px;"
-          placeholder="Indiquez vos principaux services.">${escapeValue(saved.services || "")}</textarea>
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Site internet
-        </label>
-
-        <input
-          id="visibilityWebsite"
-          class="miniField"
-          type="url"
-          value="${escapeValue(saved.website || "")}"
-          placeholder="https://">
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Téléphone
-        </label>
-
-        <input
-          id="visibilityPhone"
-          class="miniField"
-          type="tel"
-          value="${escapeValue(saved.phone || "")}"
-          placeholder="Téléphone professionnel">
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Adresse e-mail
-        </label>
-
-        <input
-          id="visibilityEmail"
-          class="miniField"
-          type="email"
-          value="${escapeValue(saved.email || "")}"
-          placeholder="Adresse e-mail professionnelle">
-
-        <div class="box" style="margin-top:12px;">
-          <strong>Choisir les services visibles</strong>
-
-          <label class="miniCheck">
-            <input
-              id="visibilityQuoteEnabled"
-              type="checkbox"
-              ${saved.quoteEnabled ? "checked" : ""}>
-
-            <span>
-              Autoriser les demandes de devis
-            </span>
-          </label>
-
-          <label class="miniCheck">
-            <input
-              id="visibilityRecruitmentEnabled"
-              type="checkbox"
-              ${saved.recruitmentEnabled ? "checked" : ""}>
-
-            <span>
-              Afficher les recrutements en cours
-            </span>
-          </label>
-
-          <label class="miniCheck">
-            <input
-              id="visibilityPatronageEnabled"
-              type="checkbox"
-              ${saved.patronageEnabled ? "checked" : ""}>
-
-            <span>
-              Afficher les engagements en mécénat
-            </span>
-          </label>
-
-          <label class="miniCheck">
-            <input
-              id="visibilityNewsEnabled"
-              type="checkbox"
-              ${saved.newsEnabled ? "checked" : ""}>
-
-            <span>
-              Afficher les actualités de l’entreprise
-            </span>
-          </label>
-        </div>
-
-        <button
-          id="visibilitySaveBtn"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;margin-top:12px;">
-          Enregistrer ma fiche
-        </button>
-
-        <button
-          id="visibilityPreviewBtn"
-          class="choiceBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:8px;
-            background:#fff;
-          ">
-          Prévisualiser ma fiche
-        </button>
-
-        <div
-          id="visibilityStatus"
-          class="muted"
-          style="margin-top:10px;">
-        </div>
-      </div>
-    `;
-  }
-
-  function saveVisibilityForm(){
-    const companyName =
-      String(
-        getElement("visibilityCompanyName")
-          ? getElement("visibilityCompanyName").value
-          : ""
-      ).trim();
-
-    const activity =
-      String(
-        getElement("visibilityActivity")
-          ? getElement("visibilityActivity").value
-          : ""
-      ).trim();
-
-    const presentation =
-      String(
-        getElement("visibilityPresentation")
-          ? getElement("visibilityPresentation").value
-          : ""
-      ).trim();
-
-    const knowHow =
-      String(
-        getElement("visibilityKnowHow")
-          ? getElement("visibilityKnowHow").value
-          : ""
-      ).trim();
-
-    const services =
-      String(
-        getElement("visibilityServices")
-          ? getElement("visibilityServices").value
-          : ""
-      ).trim();
-
-    const website =
-      String(
-        getElement("visibilityWebsite")
-          ? getElement("visibilityWebsite").value
-          : ""
-      ).trim();
-
-    const phone =
-      String(
-        getElement("visibilityPhone")
-          ? getElement("visibilityPhone").value
-          : ""
-      ).trim();
-
-    const email =
-      String(
-        getElement("visibilityEmail")
-          ? getElement("visibilityEmail").value
-          : ""
-      ).trim();
-
-    if(
-      !companyName ||
-      !activity ||
-      !presentation
-    ){
-      alert(
-        "Renseignez au minimum le nom, l’activité et la présentation."
-      );
-      return;
-    }
-
-    if(email && !email.includes("@")){
-      alert(
-        "L’adresse e-mail renseignée n’est pas valide."
-      );
-      return;
-    }
-
-    const data = {
-      companyName:companyName,
-      activity:activity,
-      presentation:presentation,
-      knowHow:knowHow,
-      services:services,
-      website:website,
-      phone:phone,
-      email:email,
-
-      quoteEnabled:
-        !!(
-          getElement("visibilityQuoteEnabled") &&
-          getElement("visibilityQuoteEnabled").checked
-        ),
-
-      recruitmentEnabled:
-        !!(
-          getElement("visibilityRecruitmentEnabled") &&
-          getElement("visibilityRecruitmentEnabled").checked
-        ),
-
-      patronageEnabled:
-        !!(
-          getElement("visibilityPatronageEnabled") &&
-          getElement("visibilityPatronageEnabled").checked
-        ),
-
-      newsEnabled:
-        !!(
-          getElement("visibilityNewsEnabled") &&
-          getElement("visibilityNewsEnabled").checked
-        ),
-
-      updatedAt:Date.now(),
-      updatedAtFr:
-        new Date().toLocaleString("fr-FR")
-    };
-
-    saveVisibilityData(data);
-
-    const status =
-      getElement("visibilityStatus");
-
-    if(status){
-      status.textContent =
-        "Fiche enregistrée le " +
-        data.updatedAtFr +
-        ".";
-    }
-
-    alert(
-      "Votre fiche a été enregistrée dans la démonstration."
-    );
-  }
-
-  function openVisibilityPreview(){
-    const data =
-      loadVisibilityData();
-
-    if(
-      !data.companyName ||
-      !data.presentation
-    ){
-      alert(
-        "Enregistrez d’abord votre fiche."
-      );
-      return;
-    }
-
-    const actions = [];
-
-    if(data.quoteEnabled){
-      actions.push(
-        `<button class="choiceBtn" type="button">
-          Demander un devis
-        </button>`
-      );
-    }
-
-    if(data.recruitmentEnabled){
-      actions.push(
-        `<button
-          class="choiceBtn"
-          id="visibilityPreviewEmploymentBtn"
-          type="button">
-          Recrutements en cours
-        </button>`
-      );
-    }
-
-    if(data.patronageEnabled){
-      actions.push(
-        `<button
-          class="choiceBtn"
-          id="visibilityPreviewPatronageBtn"
-          type="button">
-          Engagement en mécénat
-        </button>`
-      );
-    }
-
-    module.renderModal(
-      data.companyName,
-      `
-        <div
-          class="box"
-          style="border-left:6px solid #2f5d46;">
-
-          <strong style="font-size:18px;">
-            ${escapeValue(data.companyName)}
-          </strong>
-
-          <br><br>
-
-          <strong>
-            ${escapeValue(data.activity)}
-          </strong>
-        </div>
-
-        <div class="box">
-          ${escapeValue(data.presentation)}
-        </div>
-
-        ${
-          data.knowHow
-            ? `
-              <div class="box">
-                <strong>Savoir-faire</strong><br><br>
-                ${escapeValue(data.knowHow)}
-              </div>
-            `
-            : ""
-        }
-
-        ${
-          data.services
-            ? `
-              <div class="box">
-                <strong>Services proposés</strong><br><br>
-                ${escapeValue(data.services)}
-              </div>
-            `
-            : ""
-        }
-
-        ${
-          data.phone || data.email || data.website
-            ? `
-              <div class="box">
-                <strong>Contact</strong><br><br>
-
-                ${
-                  data.phone
-                    ? "Téléphone : " +
-                      escapeValue(data.phone) +
-                      "<br>"
-                    : ""
-                }
-
-                ${
-                  data.email
-                    ? "E-mail : " +
-                      escapeValue(data.email) +
-                      "<br>"
-                    : ""
-                }
-
-                ${
-                  data.website
-                    ? "Site internet : " +
-                      escapeValue(data.website)
-                    : ""
-                }
-              </div>
-            `
-            : ""
-        }
-
-        ${
-          actions.length
-            ? `
-              <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                ${actions.join("")}
-              </div>
-            `
-            : ""
-        }
-      `
-    );
-
-    window.setTimeout(function(){
-      const employmentButton =
-        getElement("visibilityPreviewEmploymentBtn");
-
-      const patronageButton =
-        getElement("visibilityPreviewPatronageBtn");
-
-      if(employmentButton){
-        employmentButton.onclick = function(){
-          module.openScreen("emploi");
-        };
-      }
-
-      if(patronageButton){
-        patronageButton.onclick = function(){
-          module.openScreen("mecenat");
-        };
-      }
-    },0);
-  }
-
-  function bindVisibility(){
-    const directoryButton =
-      getElement("visibilityDirectoryBtn");
-
-    const advertisementButton =
-      getElement("visibilityAdvertisementBtn");
-
-    const editButton =
-      getElement("visibilityEditCardBtn");
-
-    const saveButton =
-      getElement("visibilitySaveBtn");
-
-    const previewButton =
-      getElement("visibilityPreviewBtn");
-
-    if(directoryButton){
-      directoryButton.onclick = function(){
-        module.openScreen("annuaire");
-      };
-    }
-
-    if(advertisementButton){
-      advertisementButton.onclick = function(){
-        if(typeof window.openTicker === "function"){
-          window.openTicker();
-        }else{
-          alert(
-            "Le calendrier publicitaire est momentanément indisponible."
-          );
-        }
-      };
-    }
-
-    if(editButton){
-      editButton.onclick = function(){
-        const form =
-          getElement("visibilityForm");
-
-        if(form){
-          form.scrollIntoView({
-            behavior:"smooth",
-            block:"start"
-          });
-        }
-      };
-    }
-
-    if(saveButton){
-      saveButton.onclick =
-        saveVisibilityForm;
-    }
-
-    if(previewButton){
-      previewButton.onclick =
-        openVisibilityPreview;
-    }
-
-    const saved =
-      loadVisibilityData();
-
-    const status =
-      getElement("visibilityStatus");
-
-    if(
-      status &&
-      saved.updatedAtFr
-    ){
-      status.textContent =
-        "Dernière mise à jour : " +
-        saved.updatedAtFr +
-        ".";
-    }
-  }
+function getVisibilityHtml(){
+
+  return `
+
+<div class="box" style="border-left:6px solid #2f5d46;">
+
+<strong style="font-size:19px;">
+
+Connaissez-vous le nom de cinq entreprises présentes dans votre ville ?
+
+</strong>
+
+<br><br>
+
+Probablement pas.
+
+<br><br>
+
+Nous ne parlons pas uniquement
+des grandes enseignes,
+mais également des artisans,
+des entreprises,
+des ateliers,
+des prestataires,
+des professions libérales,
+des PME
+et des nombreux savoir-faire
+présents dans votre commune.
+
+<br><br>
+
+Cette méconnaissance est aujourd'hui
+l'un des principaux freins
+au développement économique local.
+
+</div>
+
+<div class="box">
+
+<strong style="font-size:18px;">
+
+Faites connaître votre entreprise
+
+</strong>
+
+<br><br>
+
+Avant d'acheter ailleurs,
+encore faut-il savoir
+que votre entreprise existe.
+
+<br><br>
+
+Bo'CitéArt permet
+aux habitants,
+aux entreprises,
+aux commerces,
+aux associations
+et aux écoles
+de découvrir votre activité.
+
+</div>
+
+<div class="box">
+
+<strong>
+
+Présentez :
+
+</strong>
+
+<br><br>
+
+• votre activité
+
+<br>
+
+• vos métiers
+
+<br>
+
+• votre savoir-faire
+
+<br>
+
+• vos réalisations
+
+<br>
+
+• vos produits
+
+<br>
+
+• vos services
+
+<br>
+
+• votre histoire
+
+<br>
+
+• vos recrutements
+
+<br>
+
+• vos apprentissages
+
+</div>
+
+<div class="box">
+
+Une entreprise connue
+a beaucoup plus de chances :
+
+<br><br>
+
+• d'être recommandée
+
+<br>
+
+• de recruter
+
+<br>
+
+• d'être contactée
+
+<br>
+
+• d'obtenir des devis
+
+<br>
+
+• d'être sollicitée
+
+</div>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;">
+
+<button
+id="visibilityPresentationBtn"
+class="choiceBtn">
+
+Présenter mon entreprise
+
+</button>
+
+<button
+id="visibilityModifyBtn"
+class="choiceBtn">
+
+Modifier ma présentation
+
+</button>
+
+<button
+id="visibilityDirectoryBtn"
+class="choiceBtn">
+
+Voir les entreprises de ma ville
+
+</button>
+
+</div>
+
+`;
+}
 
   function openVisibility(){
     module.renderModal(
@@ -6535,6 +6661,7 @@ function getHomeHtml(){
   }
 
   function getMecenatHtml(){
+
     const saved =
       loadMecenatData();
 
@@ -6543,30 +6670,73 @@ function getHomeHtml(){
         class="box"
         style="border-left:6px solid #2f5d46;">
 
-        <strong style="font-size:18px;">
-          Savez-vous à qui et à quoi sert le mécénat ?
+        <strong style="font-size:19px;">
+          Connaissez-vous réellement le mécénat ?
         </strong>
 
         <br><br>
 
-        Beaucoup d’entreprises connaissent peu le mécénat,
-        n’y pensent jamais ou imaginent qu’il est réservé
+        Beaucoup d’entreprises
+        connaissent mal le mécénat.
+
+        <br><br>
+
+        Certaines pensent
+        qu’il est réservé
         aux grandes entreprises.
 
         <br><br>
 
-        Pourtant, il est accessible à toutes,
-        quelle que soit leur taille.
+        D’autres imaginent
+        qu’il nécessite obligatoirement
+        des moyens financiers importants.
+
+        <br><br>
+
+        Pourtant,
+        une petite entreprise,
+        une PME,
+        un artisan,
+        un commerce
+        ou une structure plus importante
+        peut participer
+        à la vie de son territoire.
       </div>
 
       <div class="box">
-        <strong>
-          Le mécénat permet de soutenir un projet utile
+
+        <strong style="font-size:17px;">
+          Le mécénat ne consiste pas uniquement
+          à donner de l’argent
         </strong>
 
         <br><br>
 
-        Il peut concerner :
+        Il peut aussi prendre la forme :
+
+        <br><br>
+
+        • d’un soutien financier ;<br>
+        • d’un prêt de matériel ;<br>
+        • d’un don de produit ;<br>
+        • d’une compétence ;<br>
+        • d’un savoir-faire ;<br>
+        • d’un lieu ;<br>
+        • d’un véhicule ;<br>
+        • d’un accompagnement ;<br>
+        • ou de temps consacré à un projet.
+      </div>
+
+      <div class="box">
+
+        <strong>
+          Chaque entreprise peut contribuer
+          selon ses possibilités
+        </strong>
+
+        <br><br>
+
+        Le mécénat peut soutenir :
 
         <br><br>
 
@@ -6580,85 +6750,52 @@ function getHomeHtml(){
       </div>
 
       <div class="box">
+
         <strong>
-          Il permet aussi de faire connaître l’entreprise autrement
+          Faire connaître l’entreprise autrement
         </strong>
 
         <br><br>
 
-        La première chose à comprendre,
-        c’est que les habitants doivent savoir
-        que votre entreprise existe,
-        ce qu’elle fait et où elle se trouve.
+        Lorsqu’une entreprise soutient
+        un projet utile,
+        elle peut être remerciée
+        dans le cadre autorisé.
 
         <br><br>
 
-        L’emploi est l’un des exemples les plus parlants.
+        Ce n’est pas une publicité classique.
 
         <br><br>
 
-        Lorsqu’une personne connaît déjà votre activité,
-        vos métiers et votre présence dans la ville,
-        elle peut plus facilement penser à vous,
-        parler de vous ou envisager de vous rejoindre.
+        C’est la reconnaissance
+        de son engagement
+        auprès du territoire.
       </div>
 
       <div class="box">
+
         <strong>
-          Une présence discrète mais durable
+          Le retour est souvent indirect
         </strong>
 
         <br><br>
 
-        Lorsqu’une entreprise participe à un projet,
-        un remerciement rappelle sa contribution.
+        Il se construit progressivement par :
 
         <br><br>
 
-        Le mécénat est encadré.
-        Il ne s’agit pas d’une publicité classique.
-
-        <br><br>
-
-        Mais cette présence contribue progressivement
-        à construire une image forte,
-        locale et durable.
+        • la confiance ;<br>
+        • la réputation ;<br>
+        • le bouche-à-oreille ;<br>
+        • la connaissance des métiers ;<br>
+        • la fierté des salariés ;<br>
+        • de futurs recrutements ;<br>
+        • de nouveaux liens locaux.
       </div>
 
       <div class="box">
-        <strong>
-          Un simple geste peut produire plusieurs effets
-        </strong>
 
-        <br><br>
-
-        • améliorer la connaissance de l’entreprise ;<br>
-        • renforcer la confiance ;<br>
-        • développer le bouche-à-oreille ;<br>
-        • valoriser les salariés ;<br>
-        • faciliter de futurs recrutements ;<br>
-        • montrer l’engagement local ;<br>
-        • associer l’entreprise à un projet utile.
-      </div>
-
-      <div class="box">
-        <strong>
-          Le retour sur investissement est souvent indirect
-        </strong>
-
-        <br><br>
-
-        Il ne se mesure pas uniquement en chiffre d’affaires immédiat.
-
-        <br><br>
-
-        Il se construit avec le temps,
-        par la réputation, la confiance,
-        la reconnaissance et les liens créés
-        dans la ville.
-      </div>
-
-      <div class="box">
         <strong>
           Un avantage fiscal peut exister
         </strong>
@@ -6667,36 +6804,27 @@ function getHomeHtml(){
 
         Sous certaines conditions,
         le mécénat peut ouvrir droit
-        à des avantages fiscaux prévus par la loi.
+        à un avantage fiscal.
 
         <br><br>
 
-        Ces règles peuvent évoluer.
+        Les règles peuvent évoluer.
 
         <br><br>
 
-        Votre expert-comptable vous précisera
-        les conditions applicables à votre entreprise.
+        L’entreprise devra vérifier
+        sa situation
+        avec son expert-comptable
+        ou son conseil habituel.
       </div>
 
-      <div class="box">
-        <strong>
-          Bo'CitéArt fait le lien
-        </strong>
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+        ">
 
-        <br><br>
-
-        Bo'CitéArt peut présenter les projets disponibles,
-        enregistrer les entreprises intéressées
-        et suivre les engagements.
-
-        <br><br>
-
-        Le dirigeant conserve la maîtrise
-        de sa décision.
-      </div>
-
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button
           id="mecenatProjectsBtn"
           class="choiceBtn"
@@ -6721,15 +6849,23 @@ function getHomeHtml(){
 
       <div
         class="box"
-        style="margin-top:14px;">
+        style="
+          margin-top:16px;
+          border-left:6px solid #b00020;
+        ">
 
         <strong style="font-size:17px;">
-          Préparer ma participation
+          Espace privé de l’entreprise
         </strong>
 
         <br><br>
 
-        Cet espace reste réservé à l’entreprise.
+        La préparation d’un projet de mécénat,
+        les montants,
+        les compétences proposées,
+        le matériel disponible
+        et les notes internes
+        restent confidentiels.
       </div>
 
       <label style="display:block;font-weight:900;">
@@ -6740,7 +6876,9 @@ function getHomeHtml(){
         id="mecenatCompanyName"
         class="miniField"
         type="text"
-        value="${escapeValue(saved.companyName || "")}"
+        value="${escapeValue(
+          saved.companyName || ""
+        )}"
         placeholder="Nom de l’entreprise">
 
       <label
@@ -6829,7 +6967,7 @@ function getHomeHtml(){
           margin-top:10px;
           font-weight:900;
         ">
-        Montant envisagé, si contribution financière
+        Montant envisagé
       </label>
 
       <input
@@ -6838,7 +6976,9 @@ function getHomeHtml(){
         type="number"
         min="0"
         step="1"
-        value="${escapeValue(saved.contributionAmount || "")}"
+        value="${escapeValue(
+          saved.contributionAmount || ""
+        )}"
         placeholder="Montant en euros">
 
       <label
@@ -6854,7 +6994,9 @@ function getHomeHtml(){
         id="mecenatSkillsDescription"
         class="miniField"
         style="min-height:90px;"
-        placeholder="Exemple : communication, bâtiment, informatique, logistique.">${escapeValue(saved.skillsDescription || "")}</textarea>
+        placeholder="Exemple : communication, bâtiment, informatique, transport ou logistique.">${escapeValue(
+          saved.skillsDescription || ""
+        )}</textarea>
 
       <label
         style="
@@ -6862,14 +7004,16 @@ function getHomeHtml(){
           margin-top:10px;
           font-weight:900;
         ">
-        Matériel ou produits que vous pourriez fournir
+        Matériel ou produits disponibles
       </label>
 
       <textarea
         id="mecenatMaterialDescription"
         class="miniField"
         style="min-height:90px;"
-        placeholder="Décrivez ce que vous pourriez mettre à disposition.">${escapeValue(saved.materialDescription || "")}</textarea>
+        placeholder="Décrivez ce que vous pourriez mettre à disposition.">${escapeValue(
+          saved.materialDescription || ""
+        )}</textarea>
 
       <label
         style="
@@ -6884,30 +7028,43 @@ function getHomeHtml(){
         id="mecenatSelectedProject"
         class="miniField"
         type="text"
-        value="${escapeValue(saved.selectedProject || "")}"
+        value="${escapeValue(
+          saved.selectedProject || ""
+        )}"
         placeholder="Nom du projet choisi">
 
-      <div class="box" style="margin-top:12px;">
+      <div
+        class="box"
+        style="margin-top:12px;">
+
         <label class="miniCheck">
+
           <input
             id="mecenatVisibilityAccepted"
             type="checkbox"
-            ${saved.visibilityAccepted ? "checked" : ""}>
+            ${saved.visibilityAccepted
+              ? "checked"
+              : ""}>
 
           <span>
-            J’accepte que l’entreprise soit remerciée
+            J’accepte que l’entreprise
+            soit remerciée
             dans le cadre autorisé du projet.
           </span>
         </label>
 
         <label class="miniCheck">
+
           <input
             id="mecenatAccountantContacted"
             type="checkbox"
-            ${saved.accountantContacted ? "checked" : ""}>
+            ${saved.accountantContacted
+              ? "checked"
+              : ""}>
 
           <span>
-            J’ai demandé ou je demanderai conseil
+            J’ai demandé
+            ou je demanderai conseil
             à mon expert-comptable.
           </span>
         </label>
@@ -6926,14 +7083,19 @@ function getHomeHtml(){
         id="mecenatNotes"
         class="miniField"
         style="min-height:100px;"
-        placeholder="Indiquez ici vos questions ou vos conditions.">${escapeValue(saved.notes || "")}</textarea>
+        placeholder="Indiquez ici vos questions ou vos conditions.">${escapeValue(
+          saved.notes || ""
+        )}</textarea>
 
       <button
         id="mecenatSaveBtn"
         class="choiceBtn"
         type="button"
-        style="width:100%;margin-top:12px;">
-        Enregistrer ma réflexion
+        style="
+          width:100%;
+          margin-top:12px;
+        ">
+        Enregistrer ou modifier ma réflexion
       </button>
 
       <button
@@ -23625,339 +23787,371 @@ console.log(
     },0);
   }
 
-  function getVisibilityHtml(){
-    const data = loadVisibility();
-    const subscribed = hasSubscription();
+   function saveSubscriptionVisibilityForm(){
 
-    return `
-      <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
+    const companyName =
+      String(
+        getElement("visibilityCompanyName")
+          ? getElement("visibilityCompanyName").value
+          : ""
+      ).trim();
 
-        <strong style="font-size:18px;">
-          Faites connaître votre entreprise
-        </strong>
+    const activity =
+      String(
+        getElement("visibilityActivity")
+          ? getElement("visibilityActivity").value
+          : ""
+      ).trim();
 
-        <br><br>
+    const presentation =
+      String(
+        getElement("visibilityPresentation")
+          ? getElement("visibilityPresentation").value
+          : ""
+      ).trim();
 
-        Être référencé permet d’être trouvé.
+    const knowHow =
+      String(
+        getElement("visibilityKnowHow")
+          ? getElement("visibilityKnowHow").value
+          : ""
+      ).trim();
 
-        <br><br>
+    const services =
+      String(
+        getElement("visibilityServices")
+          ? getElement("visibilityServices").value
+          : ""
+      ).trim();
 
-        Présenter votre activité, votre savoir-faire
-        et vos réalisations permet d’être choisi.
-      </div>
+    const website =
+      String(
+        getElement("visibilityWebsite")
+          ? getElement("visibilityWebsite").value
+          : ""
+      ).trim();
 
-      <div class="box">
-        <strong>
-          Votre formule actuelle
-        </strong>
+    const phone =
+      String(
+        getElement("visibilityPhone")
+          ? getElement("visibilityPhone").value
+          : ""
+      ).trim();
 
-        <br><br>
+    const email =
+      String(
+        getElement("visibilityEmail")
+          ? getElement("visibilityEmail").value
+          : ""
+      ).trim();
+
+    if(
+      !companyName ||
+      !activity ||
+      !presentation
+    ){
+      alert(
+        "Renseignez au minimum le nom, l’activité et la présentation."
+      );
+      return;
+    }
+
+    if(
+      email &&
+      !email.includes("@")
+    ){
+      alert(
+        "L’adresse e-mail renseignée n’est pas valide."
+      );
+      return;
+    }
+
+    const data = {
+      companyName:companyName,
+      activity:activity,
+      presentation:presentation,
+      knowHow:knowHow,
+      services:services,
+      website:website,
+      phone:phone,
+      email:email,
+
+      quoteEnabled:
+        !!(
+          getElement("visibilityQuoteEnabled") &&
+          getElement("visibilityQuoteEnabled").checked
+        ),
+
+      recruitmentEnabled:
+        !!(
+          getElement("visibilityRecruitmentEnabled") &&
+          getElement("visibilityRecruitmentEnabled").checked
+        ),
+
+      patronageEnabled:
+        !!(
+          getElement("visibilityPatronageEnabled") &&
+          getElement("visibilityPatronageEnabled").checked
+        ),
+
+      newsEnabled:false,
+
+      updatedAt:Date.now(),
+
+      updatedAtFr:
+        new Date().toLocaleString("fr-FR")
+    };
+
+    saveVisibilityData(data);
+
+    const status =
+      getElement("visibilityStatus");
+
+    if(status){
+      status.textContent =
+        "Présentation enregistrée le " +
+        data.updatedAtFr +
+        ".";
+    }
+
+    alert(
+      "La présentation de votre entreprise est enregistrée."
+    );
+  }
+
+  function openVisibilityPreview(){
+
+    const data =
+      loadVisibilityData();
+
+    if(
+      !data.companyName ||
+      !data.presentation
+    ){
+      alert(
+        "Enregistrez d’abord la présentation de votre entreprise."
+      );
+      return;
+    }
+
+    module.renderModal(
+      data.companyName,
+      `
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:19px;">
+            ${escapeValue(data.companyName)}
+          </strong>
+
+          <br><br>
+
+          <strong>
+            ${escapeValue(data.activity || "")}
+          </strong>
+        </div>
+
+        <div class="box">
+          ${escapeValue(data.presentation)}
+        </div>
 
         ${
-          subscribed
+          data.knowHow
             ? `
-              <span
-                style="
-                  color:#2f5d46;
-                  font-weight:900;
-                ">
-                Abonnement professionnel actif
-              </span>
+              <div class="box">
+                <strong>
+                  Métiers et savoir-faire
+                </strong>
+
+                <br><br>
+
+                ${escapeValue(data.knowHow)}
+              </div>
             `
-            : `
-              <span
-                style="
-                  color:#b00020;
-                  font
-                                  style="
-                  color:#b00020;
-                  font-weight:900;
-                ">
-                Référencement gratuit
-              </span>
-
-              <br><br>
-
-              Votre fiche gratuite comprend uniquement :
-
-              <br><br>
-
-              • le nom de l’entreprise ;<br>
-              • son activité ;<br>
-              • son téléphone ;<br>
-              • son adresse e-mail.
-            `
+            : ""
         }
-      </div>
 
-      <label style="display:block;font-weight:900;">
-        Nom de l’entreprise
-      </label>
+        ${
+          data.services
+            ? `
+              <div class="box">
+                <strong>
+                  Services proposés
+                </strong>
 
-      <input
-        id="subscriptionVisibilityCompanyName"
-        class="miniField"
-        type="text"
-        value="${escapeValue(data.companyName || "")}"
-        placeholder="Nom de l’entreprise">
+                <br><br>
 
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Activité
-      </label>
+                ${escapeValue(data.services)}
+              </div>
+            `
+            : ""
+        }
 
-      <input
-        id="subscriptionVisibilityActivity"
-        class="miniField"
-        type="text"
-        value="${escapeValue(data.activity || "")}"
-        placeholder="Activité principale">
+        ${
+          data.phone ||
+          data.email ||
+          data.website
+            ? `
+              <div class="box">
 
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Téléphone
-      </label>
+                <strong>
+                  Contact
+                </strong>
 
-      <input
-        id="subscriptionVisibilityPhone"
-        class="miniField"
-        type="tel"
-        value="${escapeValue(data.phone || "")}"
-        placeholder="Téléphone">
+                <br><br>
 
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Adresse e-mail
-      </label>
+                ${
+                  data.phone
+                    ? `
+                      Téléphone :
+                      ${escapeValue(data.phone)}
+                      <br>
+                    `
+                    : ""
+                }
 
-      <input
-        id="subscriptionVisibilityEmail"
-        class="miniField"
-        type="email"
-        value="${escapeValue(data.email || "")}"
-        placeholder="Adresse e-mail">
+                ${
+                  data.email
+                    ? `
+                      E-mail :
+                      ${escapeValue(data.email)}
+                      <br>
+                    `
+                    : ""
+                }
 
-      ${
-        subscribed
-          ? `
-            <div
-              class="box"
-              style="margin-top:15px;">
+                ${
+                  data.website
+                    ? `
+                      Site Internet :
+                      ${escapeValue(data.website)}
+                    `
+                    : ""
+                }
+              </div>
+            `
+            : ""
+        }
 
-              <strong>
-                Présentation professionnelle
-              </strong>
+        <button
+          id="visibilityPreviewModifyBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;">
+          Modifier ces renseignements
+        </button>
+      `
+    );
 
-              <br><br>
+    window.setTimeout(function(){
 
-              Votre abonnement vous permet de compléter
-              et de valoriser votre entreprise.
-            </div>
+      const modifyButton =
+        getElement(
+          "visibilityPreviewModifyBtn"
+        );
 
-            <label style="display:block;font-weight:900;">
-              Présentation de l’entreprise
-            </label>
+      if(modifyButton){
 
-            <textarea
-              id="subscriptionVisibilityPresentation"
-              class="miniField"
-              style="min-height:110px;"
-              placeholder="Présentez votre entreprise.">${escapeValue(data.presentation || "")}</textarea>
+        modifyButton.onclick = function(){
 
-            <label
-              style="
-                display:block;
-                margin-top:10px;
-                font-weight:900;
-              ">
-              Savoir-faire
-            </label>
-
-            <textarea
-              id="subscriptionVisibilityKnowHow"
-              class="miniField"
-              style="min-height:100px;"
-              placeholder="Expliquez ce qui vous distingue.">${escapeValue(data.knowHow || "")}</textarea>
-
-            <label
-              style="
-                display:block;
-                margin-top:10px;
-                font-weight:900;
-              ">
-              Services proposés
-            </label>
-
-            <textarea
-              id="subscriptionVisibilityServices"
-              class="miniField"
-              style="min-height:100px;"
-              placeholder="Présentez vos services.">${escapeValue(data.services || "")}</textarea>
-
-            <label
-              style="
-                display:block;
-                margin-top:10px;
-                font-weight:900;
-              ">
-              Site Internet
-            </label>
-
-            <input
-              id="subscriptionVisibilityWebsite"
-              class="miniField"
-              type="url"
-              value="${escapeValue(data.website || "")}"
-              placeholder="https://">
-
-            <div
-              class="box"
-              style="margin-top:14px;">
-
-              <strong>
-                Fonctions professionnelles ouvertes
-              </strong>
-
-              <br><br>
-
-              • ajouter votre logo ;<br>
-              • présenter votre adresse et votre localisation ;<br>
-              • indiquer vos horaires et votre zone d’intervention ;<br>
-              • publier vos actualités ;<br>
-              • montrer vos réalisations ;<br>
-              • présenter vos nouveautés et promotions ;<br>
-              • recevoir des demandes de devis ;<br>
-              • consulter vos statistiques ;<br>
-              • participer pleinement aux mutualisations ;<br>
-              • découvrir et soutenir les projets de mécénat ;<br>
-              • valoriser votre engagement comme mécène local.
-            </div>
-
-            <button
-              id="subscriptionVisibilityNewsBtn"
-              class="choiceBtn"
-              type="button"
-              style="
-                width:100%;
-                margin-top:10px;
-              ">
-              Gérer mes actualités
-            </button>
-
-            <button
-              id="subscriptionVisibilityPatronageBtn"
-              class="choiceBtn"
-              type="button"
-              style="
-                width:100%;
-                margin-top:8px;
-              ">
-              Découvrir le mécénat
-            </button>
-
-            <button
-              id="subscriptionDemoDeactivateBtn"
-              class="choiceBtn"
-              type="button"
-              style="
-                width:100%;
-                margin-top:8px;
-                background:#fff;
-              ">
-              Désactiver l’abonnement de démonstration
-            </button>
-          `
-          : `
-            <div
-              style="
-                margin-top:15px;
-              ">
-
-              ${getLockedFeature(
-                "Logo et identité visuelle",
-                "Ajoutez votre logo afin que les habitants reconnaissent immédiatement votre entreprise."
-              )}
-
-              ${getLockedFeature(
-                "Présentation de votre entreprise",
-                "Expliquez ce que vous faites, ce qui vous distingue et pourquoi les habitants peuvent faire appel à vous."
-              )}
-
-              ${getLockedFeature(
-                "Savoir-faire et réalisations",
-                "Montrez vos compétences, vos métiers et vos réalisations concrètes."
-              )}
-
-              ${getLockedFeature(
-                "Adresse et localisation",
-                "Permettez aux habitants et aux entreprises de savoir précisément où vous trouver."
-              )}
-
-              ${getLockedFeature(
-                "Actualités et nouveautés",
-                "Publiez vos nouveaux services, réalisations, événements et promotions."
-              )}
-
-              ${getLockedFeature(
-                "Mutualisation",
-                "Accédez pleinement aux regroupements pouvant réduire certaines charges de votre entreprise."
-              )}
-
-              ${getLockedFeature(
-                "Mécénat local",
-                "Soutenez des projets utiles à votre ville tout en valorisant discrètement et durablement l’engagement de votre entreprise."
-              )}
-
-              ${getLockedFeature(
-                "Statistiques",
-                "Découvrez combien de personnes consultent votre fiche et ce qui attire leur attention."
-              )}
-            </div>
-
-            <button
-              id="subscriptionOpenArgumentBtn"
-              class="choiceBtn"
-              type="button"
-              style="
-                width:100%;
-                margin-top:14px;
-              ">
-              Découvrir les avantages de l’abonnement
-            </button>
-          `
+          module.openScreen(
+            "visibilite"
+          );
+        };
       }
 
-      <button
-        id="subscriptionVisibilitySaveBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:14px;
-        ">
-        Enregistrer ma fiche
-      </button>
+    },0);
+  }
 
-      <div
-        id="subscriptionVisibilityStatus"
-        class="muted"
-        style="margin-top:10px;">
-      </div>
-    `;
+  function bindVisibility(){
+
+    const directoryButton =
+      getElement(
+        "visibilityDirectoryBtn"
+      );
+
+    const editButton =
+      getElement(
+        "visibilityEditCardBtn"
+      );
+
+    const previewButton =
+      getElement(
+        "visibilityPreviewBtn"
+      );
+
+    const saveButton =
+      getElement(
+        "visibilitySaveBtn"
+      );
+
+    if(directoryButton){
+
+      directoryButton.onclick = function(){
+
+        if(
+          typeof module.openLocalDirectory ===
+          "function"
+        ){
+          module.openLocalDirectory();
+          return;
+        }
+
+        module.openScreen(
+          "annuaire_local"
+        );
+      };
+    }
+
+    if(editButton){
+
+      editButton.onclick = function(){
+
+        const form =
+          getElement(
+            "visibilityForm"
+          );
+
+        if(form){
+
+          form.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+          });
+        }
+      };
+    }
+
+    if(previewButton){
+
+      previewButton.onclick =
+        openVisibilityPreview;
+    }
+
+    if(saveButton){
+
+      saveButton.onclick =
+        saveVisibilityForm;
+    }
+
+    const saved =
+      loadVisibilityData();
+
+    const status =
+      getElement(
+        "visibilityStatus"
+      );
+
+    if(
+      status &&
+      saved.updatedAtFr
+    ){
+      status.textContent =
+        "Dernière modification : " +
+        saved.updatedAtFr +
+        ".";
+    }
   }
 
   function saveVisibilityForm(){
@@ -24087,7 +24281,7 @@ console.log(
 
     if(saveButton){
       saveButton.onclick =
-        saveVisibilityForm;
+      saveSubscriptionVisibilityForm;
     }
 
     if(argumentButton){
