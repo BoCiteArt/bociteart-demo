@@ -28245,33 +28245,16 @@ Suppression des éléments démonstration
 
 function removeDemoTexts(){
 
-document
-.querySelectorAll("*")
-.forEach(function(node){
+  /*
+    Fonction volontairement neutralisée.
 
-const text=
-String(node.textContent||"");
+    L’ancienne version parcourait toute la page
+    et pouvait supprimer les balises STYLE,
+    SCRIPT et certains éléments indispensables
+    à l’affichage général de Bo'CitéArt.
+  */
 
-if(
-
-text.includes("démonstration") ||
-
-text.includes("simulation") ||
-
-text.includes("demo")
-
-){
-
-if(
-node.children.length===0
-){
-node.remove();
-}
-
-}
-
-});
-
+  return;
 }
 
 /* ===========================================
