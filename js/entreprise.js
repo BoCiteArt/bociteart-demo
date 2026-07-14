@@ -28239,22 +28239,6 @@ console.log(
 
 })();
 
-/* =========================================================
-   BO'CITÉART
-   FINALISATION ENTREPRISE — PHASE 1
-   ========================================================= */
-
-(function finalEntrepriseCleanup(){
-
-"use strict";
-
-const module=
-window.BociteEntreprise;
-
-if(!module){
-return;
-}
-
 /* ===========================================
 Suppression des éléments démonstration
 =========================================== */
