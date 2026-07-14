@@ -31223,6 +31223,7438 @@ console.log("✅ Correctif Emploi chargé");
 
 })();
 
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 07
+   NETTOYAGE DES ENCARTS
+   RETOUR SUR CHAQUE PAGE
+   BANDES DÉFILANTES SYNCHRONISÉES
+   PROTECTION DES TARIFS DU TABLEAU DE DIRECTION
+   ========================================================== */
+
+(function cleanAndSynchronizeEntreprisePages(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  if(
+    window.BOCITEART_ENTREPRISE_CLEANUP_07
+  ){
+    return;
+  }
+
+  window.BOCITEART_ENTREPRISE_CLEANUP_07 =
+    true;
+
+  const STYLE_ID =
+    "bociteartEntrepriseCleanup07Style";
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(
+        /[\u0300-\u036f]/g,
+        ""
+      )
+      .replace(
+        /[’']/g,
+        " "
+      )
+      .replace(
+        /\s+/g,
+        " "
+      )
+      .trim();
+  }
+
+  function getModalContent(){
+
+    return document.querySelector(
+      ".modal-content," +
+      ".modalContent," +
+      "#modalContent"
+    );
+  }
+
+  function getModalTitle(){
+
+    const titleElement =
+      document.querySelector(
+        ".modal-title," +
+        ".modalTitle," +
+        "#modalTitle," +
+        ".modalHeader h1," +
+        ".modalHeader h2," +
+        ".modal-header h1," +
+        ".modal-header h2"
+      );
+
+    if(titleElement){
+      return normalizeText(
+        titleElement.textContent
+      );
+    }
+
+    const modal =
+      getModalContent();
+
+    return normalizeText(
+      modal ? modal.textContent : ""
+    );
+  }
+
+  function installStyles(){
+
+    if(
+      document.getElementById(
+        STYLE_ID
+      )
+    ){
+      return;
+    }
+
+    const style =
+      document.createElement("style");
+
+    style.id =
+      STYLE_ID;
+
+    style.textContent = `
+
+      @keyframes bociteEntrepriseUnifiedScroll {
+
+        from {
+          transform:translateX(100%);
+        }
+
+        to {
+          transform:translateX(-100%);
+        }
+      }
+
+      #entrepriseHomeBands
+      .entrepriseBandText,
+
+      .entrepriseUnifiedBandText {
+
+        animation-name:
+          bociteEntrepriseUnifiedScroll
+          !important;
+
+        animation-duration:
+          78s
+          !important;
+
+        animation-delay:
+          0s
+          !important;
+
+        animation-timing-function:
+          linear
+          !important;
+
+        animation-iteration-count:
+          infinite
+          !important;
+
+        animation-play-state:
+          paused;
+
+        will-change:
+          transform;
+      }
+
+      .entrepriseUnifiedSuggestions {
+
+        margin-top:18px;
+      }
+
+      .entrepriseUnifiedSuggestionsTitle {
+
+        margin-bottom:9px;
+        padding:12px;
+        border-left:6px solid #2f5d46;
+        border-radius:10px;
+        background:#fff;
+        line-height:1.45;
+      }
+
+      .entrepriseUnifiedBands {
+
+        display:flex;
+        flex-direction:column;
+        gap:7px;
+      }
+
+      .entrepriseUnifiedBand {
+
+        display:block;
+        position:relative;
+        width:100%;
+        height:56px;
+        margin:0;
+        padding:0;
+        overflow:hidden;
+        border:2px solid #2f5d46;
+        border-radius:10px;
+        background:#fffaf1;
+        color:#111;
+        cursor:pointer;
+        appearance:none;
+        -webkit-appearance:none;
+      }
+
+      .entrepriseUnifiedBandText {
+
+        display:inline-block;
+        min-width:100%;
+        padding:15px 0;
+        white-space:nowrap;
+        color:#111;
+        font-weight:900;
+      }
+
+      .entrepriseUnifiedBandAction {
+
+        color:#b00020;
+        font-weight:900;
+      }
+
+      #entrepriseUniversalBackButton {
+
+        display:block;
+        width:auto;
+        margin:0 0 14px 0;
+      }
+
+      .entreprisePrivatePricesHidden {
+
+        display:none !important;
+      }
+    `;
+
+    document.head.appendChild(
+      style
+    );
+  }
+
+  function buildSuggestionsHtml(){
+
+    return `
+      <div
+        id="entrepriseUnifiedSuggestions"
+        class="entrepriseUnifiedSuggestions">
+
+        <div
+          class="entrepriseUnifiedSuggestionsTitle">
+
+          <strong>
+            Vous pourriez également être intéressé.
+          </strong>
+
+          <br><br>
+
+          Cliquez dans l’une des propositions
+          en bandes défilantes.
+        </div>
+
+        <div class="entrepriseUnifiedBands">
+
+          <button
+            class="entrepriseUnifiedBand"
+            type="button"
+            data-unified-entreprise-screen="emploi">
+
+            <span class="entrepriseUnifiedBandText">
+              Recherche de personnel • Offres locales • Candidatures •
+              <span class="entrepriseUnifiedBandAction">
+                Cliquez ici…
+              </span>
+            </span>
+          </button>
+
+          <button
+            class="entrepriseUnifiedBand"
+            type="button"
+            data-unified-entreprise-screen="fidelisation">
+
+            <span class="entrepriseUnifiedBandText">
+              Fidélisation • Salariés • Services de proximité •
+              <span class="entrepriseUnifiedBandAction">
+                Cliquez ici…
+              </span>
+            </span>
+          </button>
+
+          <button
+            class="entrepriseUnifiedBand"
+            type="button"
+            data-unified-entreprise-screen="developpement">
+
+            <span class="entrepriseUnifiedBandText">
+              Développement • Fournisseurs • Partenaires • Sous-traitants •
+              <span class="entrepriseUnifiedBandAction">
+                Cliquez ici…
+              </span>
+            </span>
+          </button>
+
+          <button
+            class="entrepriseUnifiedBand"
+            type="button"
+            data-unified-entreprise-screen="mutualisation">
+
+            <span class="entrepriseUnifiedBandText">
+              Réduisez vos charges • Comparez • Choisissez • Validez •
+              <span class="entrepriseUnifiedBandAction">
+                Cliquez ici…
+              </span>
+            </span>
+          </button>
+
+          <button
+            class="entrepriseUnifiedBand"
+            type="button"
+            data-unified-entreprise-screen="visibilite">
+
+            <span class="entrepriseUnifiedBandText">
+              Visibilité • Métiers • Savoir-faire •
+              <span class="entrepriseUnifiedBandAction">
+                Cliquez ici…
+              </span>
+            </span>
+          </button>
+
+          <button
+            class="entrepriseUnifiedBand"
+            type="button"
+            data-unified-entreprise-screen="perennite">
+
+            <span class="entrepriseUnifiedBandText">
+              Pérennité • Transmission • Reprise • Continuité •
+              <span class="entrepriseUnifiedBandAction">
+                Cliquez ici…
+              </span>
+            </span>
+          </button>
+
+          <button
+            class="entrepriseUnifiedBand"
+            type="button"
+            data-unified-entreprise-screen="mecenat">
+
+            <span class="entrepriseUnifiedBandText">
+              Mécénat • Projets locaux • Engagement territorial •
+              <span class="entrepriseUnifiedBandAction">
+                Cliquez ici…
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function addUniversalBackButton(
+    modal,
+    title
+  ){
+
+    if(!modal){
+      return;
+    }
+
+    if(
+      title.includes(
+        "commerces & entreprises"
+      ) ||
+      title.includes(
+        "commerces et entreprises"
+      )
+    ){
+      return;
+    }
+
+    const oldButtons =
+      modal.querySelectorAll(
+        "#entrepriseBackBtn," +
+        "#entrepriseCorrectedBackBtn," +
+        "#globalEntrepriseBackButton," +
+        "[data-entreprise-back]"
+      );
+
+    oldButtons.forEach(
+      function(button){
+
+        if(
+          button.id !==
+          "entrepriseUniversalBackButton"
+        ){
+          button.remove();
+        }
+      }
+    );
+
+    let button =
+      modal.querySelector(
+        "#entrepriseUniversalBackButton"
+      );
+
+    if(!button){
+
+      button =
+        document.createElement(
+          "button"
+        );
+
+      button.id =
+        "entrepriseUniversalBackButton";
+
+      button.className =
+        "choiceBtn";
+
+      button.type =
+        "button";
+
+      button.textContent =
+        "Retour";
+
+      modal.prepend(
+        button
+      );
+    }
+
+    button.onclick =
+      function(event){
+
+        if(event){
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        if(
+          typeof app.openHome ===
+          "function"
+        ){
+          app.openHome();
+        }
+      };
+  }
+
+  function isSmallUnwantedBox(
+    element,
+    title
+  ){
+
+    const text =
+      normalizeText(
+        element.textContent
+      );
+
+    if(!text){
+      return false;
+    }
+
+    const exactSmallLabels = [
+      "recherche de personnel",
+      "fidelisation",
+      "developpement",
+      "mutualisation",
+      "visibilite",
+      "economies",
+      "perennite",
+      "mecenat",
+      "rechercher du personnel",
+      "decouvrir les services locaux",
+      "decouvrir le mecenat"
+    ];
+
+    if(
+      exactSmallLabels.includes(
+        text
+      )
+    ){
+      return true;
+    }
+
+    if(
+      text.startsWith(
+        "vous pourriez egalement etre interesse par"
+      )
+    ){
+      return true;
+    }
+
+    if(
+      text.startsWith(
+        "vous pourriez etre interesse par"
+      )
+    ){
+      return true;
+    }
+
+    if(
+      title.includes(
+        "reduisez vos charges"
+      ) ||
+      title.includes(
+        "opportunites de mutualisation"
+      )
+    ){
+
+      if(
+        text.includes(
+          "decouvrez les entreprises de votre ville"
+        ) &&
+        text.includes(
+          "la recherche commence toujours dans votre commune"
+        )
+      ){
+        return true;
+      }
+
+      if(
+        text.includes(
+          "choisissez votre espace"
+        ) &&
+        text.includes(
+          "commerce"
+        ) &&
+        text.includes(
+          "entreprise"
+        )
+      ){
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function removeUnwantedBoxes(
+    modal,
+    title
+  ){
+
+    if(!modal){
+      return;
+    }
+
+    const candidates =
+      modal.querySelectorAll(
+        ".box," +
+        ".choiceBtn," +
+        "button," +
+        ".miniCard," +
+        ".choiceCard"
+      );
+
+    candidates.forEach(
+      function(element){
+
+        if(
+          element.id ===
+          "entrepriseUniversalBackButton"
+        ){
+          return;
+        }
+
+        if(
+          element.closest(
+            "#entrepriseUnifiedSuggestions"
+          )
+        ){
+          return;
+        }
+
+        if(
+          isSmallUnwantedBox(
+            element,
+            title
+          )
+        ){
+          element.remove();
+        }
+      }
+    );
+  }
+
+  function protectDirectionPrices(
+    modal,
+    title
+  ){
+
+    if(
+      !modal ||
+      !title.includes(
+        "tableau de direction"
+      )
+    ){
+      return;
+    }
+
+    const blocks =
+      modal.querySelectorAll(
+        ".box"
+      );
+
+    blocks.forEach(
+      function(block){
+
+        const text =
+          normalizeText(
+            block.textContent
+          );
+
+        const containsPrivatePrice =
+          text.includes(
+            "329 € ht"
+          ) ||
+          text.includes(
+            "199 € ht"
+          ) ||
+          text.includes(
+            "50 € ht par publication"
+          ) ||
+          text.includes(
+            "adhesion annuelle professionnelle"
+          ) ||
+          text.includes(
+            "services professionnels"
+          );
+
+        if(
+          containsPrivatePrice
+        ){
+          block.classList.add(
+            "entreprisePrivatePricesHidden"
+          );
+        }
+      }
+    );
+
+    const existing =
+      modal.querySelector(
+        "#entreprisePrivateAccessNotice"
+      );
+
+    if(existing){
+      return;
+    }
+
+    const notice =
+      document.createElement(
+        "div"
+      );
+
+    notice.id =
+      "entreprisePrivateAccessNotice";
+
+    notice.className =
+      "box";
+
+    notice.style.borderLeft =
+      "6px solid #b00020";
+
+    notice.innerHTML = `
+      <strong>
+        Informations professionnelles privées
+      </strong>
+
+      <br><br>
+
+      Les abonnements,
+      les tarifs,
+      les factures
+      et les informations propres à l’entreprise
+      seront accessibles uniquement
+      après identification de l’entreprise.
+
+      <br><br>
+
+      La fiche de renseignements
+      et le code d’accès de chaque entreprise
+      seront ajoutés dans la prochaine étape.
+    `;
+
+    modal.appendChild(
+      notice
+    );
+  }
+
+  function addSuggestions(
+    modal,
+    title
+  ){
+
+    if(!modal){
+      return;
+    }
+
+    if(
+      title.includes(
+        "commerces & entreprises"
+      ) ||
+      title.includes(
+        "commerces et entreprises"
+      )
+    ){
+      return;
+    }
+
+    if(
+      modal.querySelector(
+        "#entrepriseUnifiedSuggestions"
+      )
+    ){
+      return;
+    }
+
+    const host =
+      document.createElement(
+        "div"
+      );
+
+    host.innerHTML =
+      buildSuggestionsHtml();
+
+    const suggestions =
+      host.firstElementChild;
+
+    if(suggestions){
+      modal.appendChild(
+        suggestions
+      );
+    }
+  }
+
+  function bindUnifiedBands(
+    modal
+  ){
+
+    if(!modal){
+      return;
+    }
+
+    modal
+      .querySelectorAll(
+        "[data-unified-entreprise-screen]"
+      )
+      .forEach(
+        function(button){
+
+          button.onclick =
+            function(event){
+
+              if(event){
+                event.preventDefault();
+                event.stopPropagation();
+              }
+
+              const screen =
+                button.getAttribute(
+                  "data-unified-entreprise-screen"
+                );
+
+              if(
+                screen &&
+                typeof app.openScreen ===
+                "function"
+              ){
+                app.openScreen(
+                  screen
+                );
+              }
+            };
+        }
+      );
+  }
+
+  function synchronizeBands(){
+
+    const texts =
+      document.querySelectorAll(
+        "#entrepriseHomeBands " +
+        ".entrepriseBandText," +
+        ".entrepriseUnifiedBandText"
+      );
+
+    texts.forEach(
+      function(text){
+
+        text.style.animation =
+          "none";
+
+        text.style.transform =
+          "translateX(100%)";
+
+        text.style.animationPlayState =
+          "paused";
+      }
+    );
+
+    void document.body.offsetWidth;
+
+    window.requestAnimationFrame(
+      function(){
+
+        texts.forEach(
+          function(text){
+
+            text.style.animation = "";
+
+            text.style.animationPlayState =
+              "running";
+          }
+        );
+      }
+    );
+  }
+
+  function applyCorrections(){
+
+    const modal =
+      getModalContent();
+
+    if(!modal){
+      return;
+    }
+
+    installStyles();
+
+    const title =
+      getModalTitle();
+
+    addUniversalBackButton(
+      modal,
+      title
+    );
+
+    removeUnwantedBoxes(
+      modal,
+      title
+    );
+
+    protectDirectionPrices(
+      modal,
+      title
+    );
+
+    addSuggestions(
+      modal,
+      title
+    );
+
+    bindUnifiedBands(
+      modal
+    );
+
+    synchronizeBands();
+  }
+
+  let correctionTimer = null;
+
+  const observer =
+    new MutationObserver(
+      function(){
+
+        window.clearTimeout(
+          correctionTimer
+        );
+
+        correctionTimer =
+          window.setTimeout(
+            applyCorrections,
+            80
+          );
+      }
+    );
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const target =
+        event.target &&
+        typeof event.target.closest ===
+        "function"
+          ? event.target.closest(
+              "[data-entreprise-screen]," +
+              "[data-corrected-screen]," +
+              "[data-unified-entreprise-screen]"
+            )
+          : null;
+
+      if(!target){
+        return;
+      }
+
+      window.setTimeout(
+        applyCorrections,
+        100
+      );
+    },
+    true
+  );
+
+  window.setTimeout(
+    applyCorrections,
+    200
+  );
+
+  console.log(
+    "✅ Nettoyage, retours et bandes synchronisées chargés"
+  );
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 08
+   NOUVELLE INTRODUCTION DE LA PAGE VISIBILITÉ
+   ========================================================== */
+
+(function correctEntrepriseVisibilityIntroduction(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  function insertVisibilityIntroduction(){
+
+    const modal =
+      document.querySelector(
+        ".modal-content," +
+        ".modalContent," +
+        "#modalContent"
+      );
+
+    if(!modal){
+      return;
+    }
+
+    const modalText =
+      String(
+        modal.textContent || ""
+      )
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(
+          /[\u0300-\u036f]/g,
+          ""
+        );
+
+    if(
+      !modalText.includes(
+        "faites connaitre vos metiers"
+      ) &&
+      !modalText.includes(
+        "votre savoir-faire"
+      )
+    ){
+      return;
+    }
+
+    if(
+      modal.querySelector(
+        "#entrepriseVisibilityNewIntroduction"
+      )
+    ){
+      return;
+    }
+
+    const introduction =
+      document.createElement(
+        "div"
+      );
+
+    introduction.id =
+      "entrepriseVisibilityNewIntroduction";
+
+    introduction.className =
+      "box";
+
+    introduction.style.borderLeft =
+      "6px solid #2f5d46";
+
+    introduction.style.marginBottom =
+      "14px";
+
+    introduction.innerHTML = `
+      <strong style="font-size:18px;">
+        Connaissez-vous le nom
+        de cinq entreprises
+        présentes dans votre ville ?
+      </strong>
+
+      <br><br>
+
+      Probablement pas.
+
+      <br><br>
+
+      Et vous n’êtes pas le seul.
+
+      <br><br>
+
+      Il est encore trop difficile
+      pour les habitants de savoir
+      quelles entreprises existent,
+      ce qu’elles font
+      et où elles se trouvent
+      dans leur propre ville.
+
+      <br><br>
+
+      <strong>
+        Cela n’est pas normal.
+      </strong>
+
+      <br><br>
+
+      Avant de chercher des clients,
+      des salariés,
+      des partenaires
+      ou des fournisseurs plus loin,
+      faites connaître votre entreprise
+      en priorité à toute votre ville.
+
+      <br><br>
+
+      Les citoyens doivent savoir
+      que vous existez,
+      comprendre vos métiers,
+      connaître votre savoir-faire
+      et pouvoir vous situer.
+
+      <br><br>
+
+      Cette visibilité locale
+      peut favoriser le recrutement,
+      le bouche-à-oreille,
+      les partenariats,
+      les vocations chez les jeunes
+      et la transmission future
+      de l’entreprise.
+    `;
+
+    const firstExistingBox =
+      modal.querySelector(
+        ".box"
+      );
+
+    if(firstExistingBox){
+      firstExistingBox.before(
+        introduction
+      );
+    }else{
+      modal.prepend(
+        introduction
+      );
+    }
+  }
+
+  const observer =
+    new MutationObserver(
+      function(){
+        window.setTimeout(
+          insertVisibilityIntroduction,
+          60
+        );
+      }
+    );
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  window.setTimeout(
+    insertVisibilityIntroduction,
+    200
+  );
+
+  console.log(
+    "✅ Introduction Visibilité corrigée"
+  );
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 09
+   FICHE DE RENSEIGNEMENTS ENTREPRISE
+   ET CODE D’ACCÈS PRIVÉ
+   ========================================================== */
+
+(function addEntrepriseProfileAndPrivateAccess(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  if(
+    window.BOCITEART_ENTREPRISE_PROFILE_09
+  ){
+    return;
+  }
+
+  window.BOCITEART_ENTREPRISE_PROFILE_09 =
+    true;
+
+  const PROFILE_KEY =
+    "bociteart_entreprise_profile_v1";
+
+  const ACCESS_KEY =
+    "bociteart_entreprise_private_access_v1";
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return app.safeEscape(value);
+  }
+
+  function loadProfile(){
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          PROFILE_KEY
+        );
+
+      const data =
+        raw ? JSON.parse(raw) : null;
+
+      if(
+        data &&
+        typeof data === "object"
+      ){
+        return data;
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Lecture de la fiche entreprise impossible :",
+        error
+      );
+    }
+
+    return {
+      companyName:"",
+      legalForm:"",
+      siret:"",
+      activity:"",
+      address:"",
+      postalCode:"",
+      city:"Wattignies",
+      managerName:"",
+      email:"",
+      phone:"",
+      employeeCount:"",
+      website:"",
+      accessCode:"",
+      updatedAt:"",
+      updatedAtFr:""
+    };
+  }
+
+  function saveProfile(profile){
+
+    try{
+
+      localStorage.setItem(
+        PROFILE_KEY,
+        JSON.stringify(profile)
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Enregistrement de la fiche entreprise impossible :",
+        error
+      );
+    }
+  }
+
+  function createAccessCode(){
+
+    return String(
+      Math.floor(
+        100000 +
+        Math.random() * 900000
+      )
+    );
+  }
+
+  function isPrivateAccessOpen(){
+
+    try{
+
+      const raw =
+        sessionStorage.getItem(
+          ACCESS_KEY
+        );
+
+      const data =
+        raw ? JSON.parse(raw) : null;
+
+      return !!(
+        data &&
+        data.open === true
+      );
+
+    }catch(error){
+
+      return false;
+    }
+  }
+
+  function openPrivateAccess(){
+
+    try{
+
+      sessionStorage.setItem(
+        ACCESS_KEY,
+        JSON.stringify({
+          open:true,
+          openedAt:Date.now()
+        })
+      );
+
+    }catch(error){}
+  }
+
+  function closePrivateAccess(){
+
+    try{
+
+      sessionStorage.removeItem(
+        ACCESS_KEY
+      );
+
+    }catch(error){}
+  }
+
+  function getProfileHtml(){
+
+    const saved =
+      loadProfile();
+
+    return `
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
+
+        <strong style="font-size:18px;">
+          Fiche de renseignements de l’entreprise
+        </strong>
+
+        <br><br>
+
+        Cette fiche permet d’identifier
+        l’entreprise et d’ouvrir
+        son espace professionnel privé.
+
+        <br><br>
+
+        Les informations confidentielles,
+        les candidatures,
+        les mutualisations,
+        les tarifs et les factures
+        ne sont pas visibles par les citoyens.
+      </div>
+
+      <label style="font-weight:900;">
+        Nom de l’entreprise
+      </label>
+
+      <input
+        id="entrepriseProfileName"
+        class="miniField"
+        type="text"
+        value="${escapeValue(
+          saved.companyName || ""
+        )}"
+        placeholder="Nom de l’entreprise">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Forme juridique
+      </label>
+
+      <select
+        id="entrepriseProfileLegalForm"
+        class="miniField">
+
+        <option value="">
+          Choisir
+        </option>
+
+        <option value="EI">
+          Entreprise individuelle
+        </option>
+
+        <option value="EURL">
+          EURL
+        </option>
+
+        <option value="SARL">
+          SARL
+        </option>
+
+        <option value="SAS">
+          SAS
+        </option>
+
+        <option value="SASU">
+          SASU
+        </option>
+
+        <option value="SA">
+          SA
+        </option>
+
+        <option value="Association">
+          Association
+        </option>
+
+        <option value="Autre">
+          Autre
+        </option>
+      </select>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        SIRET ou SIREN
+      </label>
+
+      <input
+        id="entrepriseProfileSiret"
+        class="miniField"
+        type="text"
+        value="${escapeValue(
+          saved.siret || ""
+        )}"
+        placeholder="SIRET ou SIREN">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Activité principale
+      </label>
+
+      <input
+        id="entrepriseProfileActivity"
+        class="miniField"
+        type="text"
+        value="${escapeValue(
+          saved.activity || ""
+        )}"
+        placeholder="Activité principale">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Adresse
+      </label>
+
+      <input
+        id="entrepriseProfileAddress"
+        class="miniField"
+        type="text"
+        value="${escapeValue(
+          saved.address || ""
+        )}"
+        placeholder="Adresse">
+
+      <div
+        style="
+          display:grid;
+          grid-template-columns:120px 1fr;
+          gap:8px;
+          margin-top:8px;
+        ">
+
+        <input
+          id="entrepriseProfilePostalCode"
+          class="miniField"
+          type="text"
+          value="${escapeValue(
+            saved.postalCode || ""
+          )}"
+          placeholder="Code postal">
+
+        <input
+          id="entrepriseProfileCity"
+          class="miniField"
+          type="text"
+          value="${escapeValue(
+            saved.city || "Wattignies"
+          )}"
+          placeholder="Commune">
+      </div>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Nom du responsable
+      </label>
+
+      <input
+        id="entrepriseProfileManager"
+        class="miniField"
+        type="text"
+        value="${escapeValue(
+          saved.managerName || ""
+        )}"
+        placeholder="Nom et prénom">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Adresse e-mail professionnelle
+      </label>
+
+      <input
+        id="entrepriseProfileEmail"
+        class="miniField"
+        type="email"
+        value="${escapeValue(
+          saved.email || ""
+        )}"
+        placeholder="Adresse e-mail">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Téléphone
+      </label>
+
+      <input
+        id="entrepriseProfilePhone"
+        class="miniField"
+        type="tel"
+        value="${escapeValue(
+          saved.phone || ""
+        )}"
+        placeholder="Téléphone">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Nombre de salariés
+      </label>
+
+      <input
+        id="entrepriseProfileEmployees"
+        class="miniField"
+        type="number"
+        min="0"
+        value="${escapeValue(
+          saved.employeeCount || ""
+        )}"
+        placeholder="Nombre de salariés">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Site Internet
+      </label>
+
+      <input
+        id="entrepriseProfileWebsite"
+        class="miniField"
+        type="url"
+        value="${escapeValue(
+          saved.website || ""
+        )}"
+        placeholder="https://">
+
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          border-left:6px solid #b00020;
+        ">
+
+        <strong>
+          Code d’accès de l’entreprise
+        </strong>
+
+        <br><br>
+
+        Lors du premier enregistrement,
+        un code personnel à six chiffres
+        est créé pour cette entreprise.
+
+        <br><br>
+
+        Ce même code restera ensuite associé
+        à la fiche de l’entreprise.
+
+        <br><br>
+
+        Conservez-le soigneusement.
+      </div>
+
+      <button
+        id="entrepriseProfileSaveBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:12px;">
+        Enregistrer la fiche entreprise
+      </button>
+
+      ${
+        saved.accessCode
+          ? `
+            <button
+              id="entrepriseProfileShowCodeBtn"
+              class="choiceBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:8px;
+                background:#fff;
+              ">
+              Afficher mon code d’accès
+            </button>
+          `
+          : ""
+      }
+
+      <div
+        id="entrepriseProfileStatus"
+        class="muted"
+        style="margin-top:10px;">
+      </div>
+    `;
+  }
+
+  function restoreLegalForm(){
+
+    const saved =
+      loadProfile();
+
+    const select =
+      getElement(
+        "entrepriseProfileLegalForm"
+      );
+
+    if(
+      select &&
+      saved.legalForm
+    ){
+      select.value =
+        saved.legalForm;
+    }
+  }
+
+  function saveProfileForm(){
+
+    const current =
+      loadProfile();
+
+    const companyName =
+      String(
+        getElement("entrepriseProfileName")
+          ? getElement("entrepriseProfileName").value
+          : ""
+      ).trim();
+
+    const legalForm =
+      String(
+        getElement("entrepriseProfileLegalForm")
+          ? getElement("entrepriseProfileLegalForm").value
+          : ""
+      ).trim();
+
+    const siret =
+      String(
+        getElement("entrepriseProfileSiret")
+          ? getElement("entrepriseProfileSiret").value
+          : ""
+      )
+        .replace(/\s+/g, "")
+        .trim();
+
+    const activity =
+      String(
+        getElement("entrepriseProfileActivity")
+          ? getElement("entrepriseProfileActivity").value
+          : ""
+      ).trim();
+
+    const address =
+      String(
+        getElement("entrepriseProfileAddress")
+          ? getElement("entrepriseProfileAddress").value
+          : ""
+      ).trim();
+
+    const postalCode =
+      String(
+        getElement("entrepriseProfilePostalCode")
+          ? getElement("entrepriseProfilePostalCode").value
+          : ""
+      ).trim();
+
+    const city =
+      String(
+        getElement("entrepriseProfileCity")
+          ? getElement("entrepriseProfileCity").value
+          : ""
+      ).trim();
+
+    const managerName =
+      String(
+        getElement("entrepriseProfileManager")
+          ? getElement("entrepriseProfileManager").value
+          : ""
+      ).trim();
+
+    const email =
+      String(
+        getElement("entrepriseProfileEmail")
+          ? getElement("entrepriseProfileEmail").value
+          : ""
+      ).trim();
+
+    const phone =
+      String(
+        getElement("entrepriseProfilePhone")
+          ? getElement("entrepriseProfilePhone").value
+          : ""
+      ).trim();
+
+    const employeeCount =
+      String(
+        getElement("entrepriseProfileEmployees")
+          ? getElement("entrepriseProfileEmployees").value
+          : ""
+      ).trim();
+
+    const website =
+      String(
+        getElement("entrepriseProfileWebsite")
+          ? getElement("entrepriseProfileWebsite").value
+          : ""
+      ).trim();
+
+    if(
+      !companyName ||
+      !legalForm ||
+      !siret ||
+      !activity ||
+      !address ||
+      !postalCode ||
+      !city ||
+      !managerName ||
+      !email ||
+      !phone
+    ){
+      alert(
+        "Veuillez remplir toutes les informations obligatoires."
+      );
+      return;
+    }
+
+    if(
+      siret.length !== 9 &&
+      siret.length !== 14
+    ){
+      alert(
+        "Le numéro SIREN doit contenir 9 chiffres ou le SIRET 14 chiffres."
+      );
+      return;
+    }
+
+    if(
+      !/^\d+$/.test(siret)
+    ){
+      alert(
+        "Le SIRET ou SIREN doit contenir uniquement des chiffres."
+      );
+      return;
+    }
+
+    if(!email.includes("@")){
+      alert(
+        "Veuillez renseigner une adresse e-mail valide."
+      );
+      return;
+    }
+
+    const firstCreation =
+      !current.accessCode;
+
+    const profile = {
+      companyName:companyName,
+      legalForm:legalForm,
+      siret:siret,
+      activity:activity,
+      address:address,
+      postalCode:postalCode,
+      city:city,
+      managerName:managerName,
+      email:email,
+      phone:phone,
+      employeeCount:employeeCount,
+      website:website,
+
+      accessCode:
+        current.accessCode ||
+        createAccessCode(),
+
+      updatedAt:
+        Date.now(),
+
+      updatedAtFr:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+    };
+
+    saveProfile(profile);
+
+    const status =
+      getElement(
+        "entrepriseProfileStatus"
+      );
+
+    if(status){
+      status.textContent =
+        "Fiche enregistrée le " +
+        profile.updatedAtFr +
+        ".";
+    }
+
+    if(firstCreation){
+
+      alert(
+        "La fiche entreprise est enregistrée.\n\n" +
+        "Votre code d’accès personnel est :\n\n" +
+        profile.accessCode +
+        "\n\nConservez soigneusement ce code."
+      );
+
+    }else{
+
+      alert(
+        "La fiche entreprise a été mise à jour.\n\n" +
+        "Votre code d’accès reste inchangé."
+      );
+    }
+
+    openEntrepriseProfile();
+  }
+
+  function showAccessCode(){
+
+    const profile =
+      loadProfile();
+
+    if(!profile.accessCode){
+      alert(
+        "Enregistrez d’abord la fiche entreprise."
+      );
+      return;
+    }
+
+    const confirmation =
+      confirm(
+        "Afficher le code d’accès privé de l’entreprise ?"
+      );
+
+    if(!confirmation){
+      return;
+    }
+
+    alert(
+      "Code d’accès de l’entreprise :\n\n" +
+      profile.accessCode
+    );
+  }
+
+  function bindProfile(){
+
+    restoreLegalForm();
+
+    const saveButton =
+      getElement(
+        "entrepriseProfileSaveBtn"
+      );
+
+    const showCodeButton =
+      getElement(
+        "entrepriseProfileShowCodeBtn"
+      );
+
+    if(saveButton){
+      saveButton.onclick =
+        saveProfileForm;
+    }
+
+    if(showCodeButton){
+      showCodeButton.onclick =
+        showAccessCode;
+    }
+
+    const saved =
+      loadProfile();
+
+    const status =
+      getElement(
+        "entrepriseProfileStatus"
+      );
+
+    if(
+      status &&
+      saved.updatedAtFr
+    ){
+      status.textContent =
+        "Dernière mise à jour : " +
+        saved.updatedAtFr +
+        ".";
+    }
+  }
+
+  function openEntrepriseProfile(){
+
+    app.renderModal(
+      "Fiche de l’entreprise",
+      getProfileHtml()
+    );
+
+    window.setTimeout(
+      bindProfile,
+      0
+    );
+  }
+
+  function openPrivateLogin(
+    successCallback
+  ){
+
+    const profile =
+      loadProfile();
+
+    if(
+      !profile.companyName ||
+      !profile.accessCode
+    ){
+
+      app.renderModal(
+        "Accès professionnel",
+        `
+          <div
+            class="box"
+            style="border-left:6px solid #b00020;">
+
+            <strong style="font-size:18px;">
+              La fiche entreprise doit être complétée
+            </strong>
+
+            <br><br>
+
+            Avant d’ouvrir le Tableau de Direction,
+            renseignez l’identité de l’entreprise.
+
+            <br><br>
+
+            Un code d’accès personnel
+            sera créé lors de l’enregistrement.
+          </div>
+
+          <button
+            id="privateAccessCreateProfileBtn"
+            class="choiceBtn"
+            type="button"
+            style="width:100%;">
+            Compléter la fiche entreprise
+          </button>
+        `
+      );
+
+      window.setTimeout(function(){
+
+        const button =
+          getElement(
+            "privateAccessCreateProfileBtn"
+          );
+
+        if(button){
+          button.onclick =
+            openEntrepriseProfile;
+        }
+
+      },0);
+
+      return;
+    }
+
+    app.renderModal(
+      "Accès privé de l’entreprise",
+      `
+        <div
+          class="box"
+          style="border-left:6px solid #b00020;">
+
+          <strong style="font-size:18px;">
+            ${escapeValue(
+              profile.companyName
+            )}
+          </strong>
+
+          <br><br>
+
+          Cet espace contient
+          les informations privées de l’entreprise :
+
+          <br><br>
+
+          • candidatures reçues ;<br>
+          • mutualisations suivies ;<br>
+          • propositions et décisions ;<br>
+          • abonnements ;<br>
+          • tarifs ;<br>
+          • factures.
+        </div>
+
+        <label style="font-weight:900;">
+          Code d’accès de l’entreprise
+        </label>
+
+        <input
+          id="entreprisePrivateCodeInput"
+          class="miniField"
+          type="password"
+          inputmode="numeric"
+          maxlength="6"
+          placeholder="Code à six chiffres">
+
+        <button
+          id="entreprisePrivateLoginBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Ouvrir l’espace privé
+        </button>
+
+        <button
+          id="entreprisePrivateProfileBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:8px;
+            background:#fff;
+          ">
+          Consulter la fiche entreprise
+        </button>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const codeInput =
+        getElement(
+          "entreprisePrivateCodeInput"
+        );
+
+      const loginButton =
+        getElement(
+          "entreprisePrivateLoginBtn"
+        );
+
+      const profileButton =
+        getElement(
+          "entreprisePrivateProfileBtn"
+        );
+
+      function verifyCode(){
+
+        const entered =
+          String(
+            codeInput
+              ? codeInput.value
+              : ""
+          ).trim();
+
+        if(
+          entered !==
+          String(
+            profile.accessCode
+          )
+        ){
+          alert(
+            "Le code d’accès est incorrect."
+          );
+          return;
+        }
+
+        openPrivateAccess();
+
+        if(
+          typeof successCallback ===
+          "function"
+        ){
+          successCallback();
+        }
+      }
+
+      if(loginButton){
+        loginButton.onclick =
+          verifyCode;
+      }
+
+      if(codeInput){
+        codeInput.addEventListener(
+          "keydown",
+          function(event){
+
+            if(event.key === "Enter"){
+
+              event.preventDefault();
+              verifyCode();
+            }
+          }
+        );
+      }
+
+      if(profileButton){
+        profileButton.onclick =
+          openEntrepriseProfile;
+      }
+
+    },0);
+  }
+
+  /*
+    Conservation de la dernière version
+    du Tableau de Direction déjà enregistrée.
+  */
+
+  const previousDirectionScreen =
+    app.screens &&
+    typeof app.screens.direction ===
+    "function"
+      ? app.screens.direction
+      : null;
+
+  function openProtectedDirection(){
+
+    if(isPrivateAccessOpen()){
+
+      if(previousDirectionScreen){
+        previousDirectionScreen();
+      }
+
+      return;
+    }
+
+    openPrivateLogin(
+      function(){
+
+        if(previousDirectionScreen){
+          previousDirectionScreen();
+        }
+      }
+    );
+  }
+
+  /*
+    Ajout des boutons sur l’accueil Entreprise.
+  */
+
+  function addProfileButtonsToHome(){
+
+    const modal =
+      document.querySelector(
+        ".modal-content," +
+        ".modalContent," +
+        "#modalContent"
+      );
+
+    if(!modal){
+      return;
+    }
+
+    const text =
+      String(
+        modal.textContent || ""
+      )
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(
+          /[\u0300-\u036f]/g,
+          ""
+        );
+
+    if(
+      !text.includes(
+        "commerces & entreprises"
+      ) &&
+      !text.includes(
+        "developpez votre entreprise"
+      )
+    ){
+      return;
+    }
+
+    if(
+      modal.querySelector(
+        "#entrepriseProfileHomeBox"
+      )
+    ){
+      return;
+    }
+
+    const box =
+      document.createElement(
+        "div"
+      );
+
+    box.id =
+      "entrepriseProfileHomeBox";
+
+    box.className =
+      "box";
+
+    box.style.borderLeft =
+      "6px solid #2f5d46";
+
+    box.innerHTML = `
+      <strong>
+        Espace professionnel de l’entreprise
+      </strong>
+
+      <br><br>
+
+      Complétez la fiche de l’entreprise
+      pour recevoir votre code d’accès privé.
+
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+          margin-top:12px;
+        ">
+
+        <button
+          id="entrepriseHomeProfileBtn"
+          class="choiceBtn"
+          type="button">
+          Ma fiche entreprise
+        </button>
+
+        <button
+          id="entrepriseHomePrivateBtn"
+          class="choiceBtn"
+          type="button">
+          Accès privé entreprise
+        </button>
+      </div>
+    `;
+
+    const bands =
+      modal.querySelector(
+        "#entrepriseHomeBands"
+      );
+
+    if(bands){
+      bands.before(box);
+    }else{
+      modal.appendChild(box);
+    }
+
+    const profileButton =
+      getElement(
+        "entrepriseHomeProfileBtn"
+      );
+
+    const privateButton =
+      getElement(
+        "entrepriseHomePrivateBtn"
+      );
+
+    if(profileButton){
+      profileButton.onclick =
+        openEntrepriseProfile;
+    }
+
+    if(privateButton){
+      privateButton.onclick =
+        openProtectedDirection;
+    }
+  }
+
+  const observer =
+    new MutationObserver(
+      function(){
+
+        window.setTimeout(
+          addProfileButtonsToHome,
+          80
+        );
+      }
+    );
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  app.registerScreen(
+    "fiche_entreprise",
+    openEntrepriseProfile
+  );
+
+  app.registerScreen(
+    "direction",
+    openProtectedDirection
+  );
+
+  app.openEntrepriseProfile =
+    openEntrepriseProfile;
+
+  app.openPrivateEntrepriseAccess =
+    openProtectedDirection;
+
+  app.closePrivateEntrepriseAccess =
+    closePrivateAccess;
+
+  app.loadEntrepriseProfile =
+    loadProfile;
+
+  window.setTimeout(
+    addProfileButtonsToHome,
+    200
+  );
+
+  console.log(
+    "✅ Fiche entreprise et accès privé chargés"
+  );
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 10
+   PAGE DÉVELOPPEZ VOTRE ENTREPRISE
+   LISTE LOCALE • RECHERCHE • REMISE PARTENAIRE
+   ========================================================== */
+
+(function correctEntrepriseDevelopmentPage(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function openCorrectedDevelopmentPage(){
+
+    app.renderModal(
+      "Développez votre entreprise",
+      `
+        <button
+          id="developmentCorrectedBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="margin-bottom:14px;">
+          Retour
+        </button>
+
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            Votre prochain client,
+            fournisseur,
+            salarié
+            ou partenaire
+            se trouve peut-être déjà
+            dans votre ville
+          </strong>
+
+          <br><br>
+
+          Une entreprise se développe
+          grâce à ses produits
+          et à ses services,
+          mais aussi grâce aux rencontres,
+          aux informations
+          et aux bonnes décisions
+          prises au bon moment.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Commencez par regarder autour de vous
+          </strong>
+
+          <br><br>
+
+          Découvrez les entreprises
+          et les commerces présents
+          dans votre commune,
+          leurs métiers,
+          leurs savoir-faire
+          et leurs besoins.
+
+          <br><br>
+
+          Recherchez un fournisseur,
+          un sous-traitant,
+          une compétence complémentaire,
+          un commerce
+          ou un partenaire local.
+
+          <br><br>
+
+          Avant de chercher loin,
+          regardez ce qui existe déjà
+          près de chez vous.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Une liste locale réellement utile
+          </strong>
+
+          <br><br>
+
+          Les citoyens,
+          les entreprises
+          et les commerces
+          doivent pouvoir retrouver
+          les acteurs présents dans leur ville.
+
+          <br><br>
+
+          Cette connaissance locale
+          permet de se rappeler
+          qui travaille,
+          produit
+          et propose des services
+          sur le territoire.
+        </div>
+
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+          ">
+
+          <button
+            id="developmentCorrectedDirectoryBtn"
+            class="choiceBtn"
+            type="button">
+            Voir les entreprises et commerces de ma ville
+          </button>
+
+          <button
+            id="developmentCorrectedSearchBtn"
+            class="choiceBtn"
+            type="button">
+            Rechercher un professionnel
+          </button>
+
+          <button
+            id="developmentCorrectedVisibilityBtn"
+            class="choiceBtn"
+            type="button">
+            Faire connaître mon entreprise
+          </button>
+
+          <button
+            id="developmentCorrectedEmploymentBtn"
+            class="choiceBtn"
+            type="button">
+            Trouver du personnel
+          </button>
+        </div>
+
+        <div
+          class="box"
+          style="
+            margin-top:16px;
+            border-left:6px solid #2f5d46;
+          ">
+
+          <strong style="font-size:17px;">
+            Favoriser les échanges entre professionnels locaux
+          </strong>
+
+          <br><br>
+
+          Une entreprise ou un commerce
+          pourra choisir librement
+          de proposer un avantage
+          aux autres professionnels partenaires
+          de sa ville.
+
+          <br><br>
+
+          Cet avantage pourra être :
+
+          <br><br>
+
+          • une remise de 5 % ;<br>
+          • une remise de 10 % ;<br>
+          • ou un avantage personnalisé.
+
+          <br><br>
+
+          Cette remise ne sera jamais obligatoire.
+
+          <br><br>
+
+          Pour produire un véritable effet,
+          elle devra toutefois être plus avantageuse
+          que les conditions habituellement accordées
+          aux clients.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Le principe est réciproque
+          </strong>
+
+          <br><br>
+
+          Lorsque deux professionnels partenaires
+          choisissent de participer,
+          chacun peut bénéficier
+          des conditions proposées par l’autre.
+
+          <br><br>
+
+          L’objectif est de favoriser
+          davantage de relations commerciales locales,
+          sans imposer de fournisseur
+          ni limiter la liberté de choix.
+        </div>
+
+        <div
+          class="box"
+          style="
+            margin-top:16px;
+            border-left:6px solid #2f5d46;
+          ">
+
+          <strong>
+            Vous pourriez également être intéressé.
+          </strong>
+
+          <br><br>
+
+          Cliquez dans l’une des propositions
+          en bandes défilantes
+          situées en bas de cette page.
+        </div>
+
+        <div
+          id="developmentCorrectedBandsHost">
+        </div>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const backButton =
+        getElement(
+          "developmentCorrectedBackBtn"
+        );
+
+      const directoryButton =
+        getElement(
+          "developmentCorrectedDirectoryBtn"
+        );
+
+      const searchButton =
+        getElement(
+          "developmentCorrectedSearchBtn"
+        );
+
+      const visibilityButton =
+        getElement(
+          "developmentCorrectedVisibilityBtn"
+        );
+
+      const employmentButton =
+        getElement(
+          "developmentCorrectedEmploymentBtn"
+        );
+
+      if(backButton){
+        backButton.onclick = function(){
+          app.openHome();
+        };
+      }
+
+      if(directoryButton){
+        directoryButton.onclick = function(){
+
+          if(
+            typeof app.openLocalDirectory ===
+            "function"
+          ){
+            app.openLocalDirectory();
+            return;
+          }
+
+          if(
+            typeof app.openCorrectedDirectory ===
+            "function"
+          ){
+            app.openCorrectedDirectory();
+            return;
+          }
+
+          app.openScreen(
+            "annuaire"
+          );
+        };
+      }
+
+      if(searchButton){
+        searchButton.onclick = function(){
+
+          if(
+            typeof app.openProfessionalDirectory ===
+            "function"
+          ){
+            app.openProfessionalDirectory();
+            return;
+          }
+
+          app.openScreen(
+            "annuaire"
+          );
+        };
+      }
+
+      if(visibilityButton){
+        visibilityButton.onclick = function(){
+          app.openScreen(
+            "visibilite"
+          );
+        };
+      }
+
+      if(employmentButton){
+        employmentButton.onclick = function(){
+          app.openScreen(
+            "emploi"
+          );
+        };
+      }
+
+    },0);
+  }
+
+  /*
+    Le dernier écran enregistré
+    remplace les anciennes versions
+    de la page Développement.
+  */
+
+  app.registerScreen(
+    "developpement",
+    openCorrectedDevelopmentPage
+  );
+
+  app.openCorrectedDevelopmentPage =
+    openCorrectedDevelopmentPage;
+
+  console.log(
+    "✅ Page Développement corrigée"
+  );
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 11
+   RÉDUISEZ VOS CHARGES
+   MUTUALISATIONS • COMPARAISON • DÉCISION PRIVÉE
+   ========================================================== */
+
+(function correctEntrepriseMutualisationPage(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return app.safeEscape(value);
+  }
+
+  function loadData(){
+
+    if(
+      typeof app.loadMutualisationData ===
+      "function"
+    ){
+      const data =
+        app.loadMutualisationData();
+
+      if(
+        data &&
+        typeof data === "object"
+      ){
+        return data;
+      }
+    }
+
+    return {};
+  }
+
+  function saveData(data){
+
+    if(
+      typeof app.saveMutualisationData ===
+      "function"
+    ){
+      app.saveMutualisationData(
+        data
+      );
+    }
+  }
+
+  function getMutualisationKeys(data){
+
+    return Object.keys(data)
+      .filter(function(key){
+
+        const item =
+          data[key];
+
+        return (
+          key !== "autres" &&
+          item &&
+          typeof item === "object" &&
+          item.label
+        );
+      });
+  }
+
+  function getProgressPercent(
+    count,
+    target
+  ){
+
+    const safeTarget =
+      Number(target || 0);
+
+    if(!safeTarget){
+      return 0;
+    }
+
+    return Math.min(
+      100,
+      Math.round(
+        Number(count || 0) /
+        safeTarget *
+        100
+      )
+    );
+  }
+
+  function getMutualisationCards(){
+
+    const data =
+      loadData();
+
+    const keys =
+      getMutualisationKeys(
+        data
+      );
+
+    if(!keys.length){
+
+      return `
+        <div class="box">
+          Aucune mutualisation
+          n’est disponible pour le moment.
+        </div>
+      `;
+    }
+
+    return keys
+      .map(function(key){
+
+        const item =
+          data[key];
+
+        const count =
+          Number(
+            item.count || 0
+          );
+
+        const target =
+          Number(
+            item.target || 0
+          );
+
+        const percent =
+          getProgressPercent(
+            count,
+            target
+          );
+
+        return `
+          <div class="box">
+
+            <div
+              style="
+                display:flex;
+                justify-content:space-between;
+                gap:10px;
+                align-items:flex-start;
+              ">
+
+              <div style="flex:1;">
+
+                <strong style="font-size:16px;">
+                  ${escapeValue(
+                    item.label
+                  )}
+                </strong>
+
+                ${
+                  item.description
+                    ? `
+                      <div
+                        style="
+                          margin-top:8px;
+                          line-height:1.45;
+                        ">
+                        ${escapeValue(
+                          item.description
+                        )}
+                      </div>
+                    `
+                    : ""
+                }
+              </div>
+
+              <strong
+                style="
+                  color:#2f5d46;
+                  white-space:nowrap;
+                ">
+                ${count} / ${target}
+              </strong>
+            </div>
+
+            <div
+              style="
+                height:12px;
+                margin-top:10px;
+                overflow:hidden;
+                border-radius:999px;
+                background:#e5dfd5;
+              ">
+
+              <div
+                style="
+                  width:${percent}%;
+                  height:100%;
+                  background:#2f5d46;
+                ">
+              </div>
+            </div>
+
+            <div
+              class="muted"
+              style="margin-top:6px;">
+              ${percent} % de l’objectif indicatif
+            </div>
+
+            <button
+              class="choiceBtn correctedChargesInterestBtn"
+              type="button"
+              data-charges-key="${escapeValue(
+                key
+              )}"
+              style="
+                width:100%;
+                margin-top:10px;
+                ${
+                  item.interested
+                    ? "opacity:.65;"
+                    : ""
+                }
+              ">
+
+              ${
+                item.interested
+                  ? "Intérêt enregistré"
+                  : "Cette mutualisation m’intéresse"
+              }
+            </button>
+
+            <button
+              class="choiceBtn correctedChargesProposalBtn"
+              type="button"
+              data-charges-key="${escapeValue(
+                key
+              )}"
+              style="
+                width:100%;
+                margin-top:8px;
+                background:#fff;
+              ">
+              Voir les propositions
+            </button>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  function openCorrectedChargesPage(){
+
+    app.renderModal(
+      "Réduisez vos charges",
+      `
+        <button
+          id="correctedChargesBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="margin-bottom:14px;">
+          Retour
+        </button>
+
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            Réduisez vos charges
+          </strong>
+
+          <br><br>
+
+          Pourquoi continuer
+          à négocier seul
+          lorsqu’il est possible
+          de regrouper les besoins
+          de plusieurs entreprises ?
+
+          <br><br>
+
+          Bo'CitéArt recueille
+          les entreprises intéressées,
+          organise la consultation
+          et rassemble les propositions reçues.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Bo'CitéArt ne choisit pas à votre place
+          </strong>
+
+          <br><br>
+
+          Bo'CitéArt ne vend aucun contrat,
+          ne recommande aucun prestataire
+          et ne devient pas un groupement d’achat.
+
+          <br><br>
+
+          Chaque entreprise reste libre :
+
+          <br><br>
+
+          • de consulter les propositions ;<br>
+          • de les comparer ;<br>
+          • d’en choisir une ;<br>
+          • de refuser toutes les propositions ;<br>
+          • ou de confirmer sa participation.
+        </div>
+
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:17px;">
+            Comparez, choisissez, validez
+          </strong>
+
+          <br><br>
+
+          Lorsque les propositions sont disponibles,
+          elles sont présentées clairement
+          dans le Tableau de Direction privé
+          de l’entreprise.
+
+          <br><br>
+
+          Vous pourrez y consulter :
+
+          <br><br>
+
+          • le nom du prestataire ;<br>
+          • la proposition reçue ;<br>
+          • les délais ;<br>
+          • les économies estimées ;<br>
+          • les votes enregistrés ;<br>
+          • l’état d’avancement.
+
+          <br><br>
+
+          Votre choix reste modifiable
+          tant que vous n’avez pas confirmé
+          définitivement votre participation.
+        </div>
+
+        <div
+          style="
+            margin-top:16px;
+            margin-bottom:10px;
+            font-size:18px;
+            font-weight:900;
+            color:#2f5d46;
+          ">
+          Mutualisations proposées
+        </div>
+
+        <div id="correctedChargesList">
+          ${getMutualisationCards()}
+        </div>
+
+        <div
+          class="box"
+          style="
+            margin-top:16px;
+            border-left:6px solid #b00020;
+          ">
+
+          <strong>
+            Votre premier clic
+            ne constitue pas un engagement
+          </strong>
+
+          <br><br>
+
+          Il indique uniquement
+          que le sujet peut vous intéresser.
+
+          <br><br>
+
+          L’engagement éventuel
+          intervient uniquement
+          après consultation des propositions
+          et confirmation
+          dans le Tableau de Direction privé.
+        </div>
+
+        <button
+          id="correctedChargesDirectionBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Ouvrir le Tableau de Direction
+        </button>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const backButton =
+        getElement(
+          "correctedChargesBackBtn"
+        );
+
+      const directionButton =
+        getElement(
+          "correctedChargesDirectionBtn"
+        );
+
+      if(backButton){
+
+        backButton.onclick = function(){
+          app.openHome();
+        };
+      }
+
+      if(directionButton){
+
+        directionButton.onclick =
+          openProtectedDirection;
+      }
+
+      document
+        .querySelectorAll(
+          ".correctedChargesInterestBtn"
+        )
+        .forEach(function(button){
+
+          button.onclick = function(){
+
+            registerInterest(
+              button.getAttribute(
+                "data-charges-key"
+              )
+            );
+          };
+        });
+
+      document
+        .querySelectorAll(
+          ".correctedChargesProposalBtn"
+        )
+        .forEach(function(button){
+
+          button.onclick = function(){
+
+            openProposals(
+              button.getAttribute(
+                "data-charges-key"
+              )
+            );
+          };
+        });
+
+    },0);
+  }
+
+  function registerInterest(key){
+
+    const data =
+      loadData();
+
+    const item =
+      data[key];
+
+    if(!item){
+
+      alert(
+        "Cette mutualisation est introuvable."
+      );
+
+      return;
+    }
+
+    if(item.interested){
+
+      alert(
+        "Votre intérêt est déjà enregistré."
+      );
+
+      return;
+    }
+
+    item.interested =
+      true;
+
+    item.count =
+      Number(
+        item.count || 0
+      ) + 1;
+
+    item.updatedAt =
+      Date.now();
+
+    item.updatedAtFr =
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        );
+
+    saveData(
+      data
+    );
+
+    alert(
+      "Votre intérêt est enregistré.\n\n" +
+      "Vous ne prenez aucun engagement à ce stade."
+    );
+
+    openCorrectedChargesPage();
+  }
+
+  function openProtectedDirection(){
+
+    if(
+      typeof app.openPrivateEntrepriseAccess ===
+      "function"
+    ){
+      app.openPrivateEntrepriseAccess();
+      return;
+    }
+
+    app.openScreen(
+      "direction"
+    );
+  }
+
+  function openProposals(key){
+
+    const data =
+      loadData();
+
+    const item =
+      data[key];
+
+    if(!item){
+
+      alert(
+        "Cette mutualisation est introuvable."
+      );
+
+      return;
+    }
+
+    if(!item.interested){
+
+      alert(
+        "Enregistrez d’abord votre intérêt " +
+        "pour cette mutualisation."
+      );
+
+      return;
+    }
+
+    /*
+      Les propositions et les décisions
+      appartiennent à l’espace privé.
+    */
+
+    if(
+      typeof app.openPrivateEntrepriseAccess ===
+      "function"
+    ){
+      app.openPrivateEntrepriseAccess();
+      return;
+    }
+
+    if(
+      typeof app.openMutualisationVotes ===
+      "function"
+    ){
+      app.openMutualisationVotes(
+        key
+      );
+
+      return;
+    }
+
+    alert(
+      "Les propositions ne sont pas encore disponibles."
+    );
+  }
+
+  /*
+    « Économies » ne reste plus
+    comme une page séparée.
+
+    Elle ouvre désormais directement
+    la page Réduisez vos charges,
+    qui contient aussi :
+    Comparez, choisissez, validez.
+  */
+
+  app.registerScreen(
+    "mutualisation",
+    openCorrectedChargesPage
+  );
+
+  app.registerScreen(
+    "economies",
+    openCorrectedChargesPage
+  );
+
+  app.openCorrectedChargesPage =
+    openCorrectedChargesPage;
+
+  console.log(
+    "✅ Page Réduisez vos charges corrigée"
+  );
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 12
+   PAGE VISIBILITÉ COMPLÈTE
+   PRÉSENTATION DE L’ENTREPRISE • FICHE ENRICHIE
+   ========================================================== */
+
+(function correctEntrepriseVisibilityPage(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return app.safeEscape(value);
+  }
+
+  function loadVisibilityData(){
+
+    if(
+      typeof app.loadVisibilityData ===
+      "function"
+    ){
+      const data =
+        app.loadVisibilityData();
+
+      if(
+        data &&
+        typeof data === "object"
+      ){
+        return data;
+      }
+    }
+
+    return {
+      companyName:"",
+      activity:"",
+      presentation:"",
+      knowHow:"",
+      services:"",
+      website:"",
+      phone:"",
+      email:"",
+      quoteEnabled:false,
+      recruitmentEnabled:false,
+      patronageEnabled:false,
+      newsEnabled:false,
+      updatedAtFr:""
+    };
+  }
+
+  function saveVisibilityData(data){
+
+    if(
+      typeof app.saveVisibilityData ===
+      "function"
+    ){
+      app.saveVisibilityData(
+        data
+      );
+
+      return;
+    }
+
+    try{
+      localStorage.setItem(
+        "bociteart_entreprise_visibility_v1",
+        JSON.stringify(data)
+      );
+    }catch(error){
+      console.warn(
+        "Enregistrement de la visibilité impossible :",
+        error
+      );
+    }
+  }
+
+  function openCorrectedVisibilityPage(){
+
+    const saved =
+      loadVisibilityData();
+
+    app.renderModal(
+      "Faites connaître vos métiers et votre savoir-faire",
+      `
+        <button
+          id="correctedVisibilityBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="margin-bottom:14px;">
+          Retour
+        </button>
+
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            Connaissez-vous le nom
+            de cinq entreprises
+            présentes dans votre ville ?
+          </strong>
+
+          <br><br>
+
+          Probablement pas.
+
+          <br><br>
+
+          Et vous n’êtes pas le seul.
+
+          <br><br>
+
+          Il est encore trop difficile
+          pour les habitants de savoir
+          quelles entreprises existent,
+          ce qu’elles font
+          et où elles se trouvent
+          dans leur propre ville.
+
+          <br><br>
+
+          <strong>
+            Cela n’est pas normal.
+          </strong>
+        </div>
+
+        <div class="box">
+
+          <strong style="font-size:17px;">
+            Faites connaître votre entreprise
+            en priorité à toute votre ville
+          </strong>
+
+          <br><br>
+
+          Avant de chercher des clients,
+          des salariés,
+          des partenaires
+          ou des fournisseurs plus loin,
+          les citoyens doivent déjà savoir
+          que votre entreprise existe.
+
+          <br><br>
+
+          Ils doivent comprendre :
+
+          <br><br>
+
+          • ce que vous faites ;<br>
+          • où vous vous trouvez ;<br>
+          • quels métiers vous exercez ;<br>
+          • quels services vous proposez ;<br>
+          • quels savoir-faire vous possédez.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Faire connaître votre entreprise
+            crée plusieurs leviers
+          </strong>
+
+          <br><br>
+
+          • le recrutement ;<br>
+          • le bouche-à-oreille ;<br>
+          • les partenariats ;<br>
+          • la découverte des métiers ;<br>
+          • les vocations chez les jeunes ;<br>
+          • la transmission future ;<br>
+          • la reconnaissance locale.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Même si vous travaillez
+            uniquement avec des professionnels
+          </strong>
+
+          <br><br>
+
+          Les habitants peuvent connaître
+          votre activité,
+          parler de vous,
+          transmettre votre nom,
+          penser à vous pour un emploi
+          ou vous mettre en relation
+          avec une autre entreprise.
+        </div>
+
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+          ">
+
+          <button
+            id="correctedVisibilityDirectoryBtn"
+            class="choiceBtn"
+            type="button">
+            Voir les entreprises et commerces de la ville
+          </button>
+
+          <button
+            id="correctedVisibilityProfileBtn"
+            class="choiceBtn"
+            type="button">
+            Ma fiche entreprise
+          </button>
+
+          <button
+            id="correctedVisibilityAdvertisementBtn"
+            class="choiceBtn"
+            type="button">
+            Diffuser une publicité
+          </button>
+        </div>
+
+        <div
+          class="box"
+          style="
+            margin-top:16px;
+            border-left:6px solid #2f5d46;
+          ">
+
+          <strong style="font-size:17px;">
+            Présenter mon entreprise
+          </strong>
+
+          <br><br>
+
+          Complétez les informations
+          que vous souhaitez rendre visibles
+          dans la fiche enrichie Bo'CitéArt.
+        </div>
+
+        <label style="font-weight:900;">
+          Nom de l’entreprise
+        </label>
+
+        <input
+          id="correctedVisibilityCompanyName"
+          class="miniField"
+          type="text"
+          value="${escapeValue(
+            saved.companyName || ""
+          )}"
+          placeholder="Nom de l’entreprise">
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Activité principale
+        </label>
+
+        <input
+          id="correctedVisibilityActivity"
+          class="miniField"
+          type="text"
+          value="${escapeValue(
+            saved.activity || ""
+          )}"
+          placeholder="Exemple : installation électrique">
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Présentation de l’entreprise
+        </label>
+
+        <textarea
+          id="correctedVisibilityPresentation"
+          class="miniField"
+          style="min-height:110px;"
+          placeholder="Présentez votre entreprise.">${escapeValue(
+            saved.presentation || ""
+          )}</textarea>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Métiers et savoir-faire
+        </label>
+
+        <textarea
+          id="correctedVisibilityKnowHow"
+          class="miniField"
+          style="min-height:100px;"
+          placeholder="Décrivez vos métiers et votre savoir-faire.">${escapeValue(
+            saved.knowHow || ""
+          )}</textarea>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Services proposés
+        </label>
+
+        <textarea
+          id="correctedVisibilityServices"
+          class="miniField"
+          style="min-height:100px;"
+          placeholder="Indiquez vos principaux services.">${escapeValue(
+            saved.services || ""
+          )}</textarea>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Téléphone
+        </label>
+
+        <input
+          id="correctedVisibilityPhone"
+          class="miniField"
+          type="tel"
+          value="${escapeValue(
+            saved.phone || ""
+          )}"
+          placeholder="Téléphone professionnel">
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Adresse e-mail
+        </label>
+
+        <input
+          id="correctedVisibilityEmail"
+          class="miniField"
+          type="email"
+          value="${escapeValue(
+            saved.email || ""
+          )}"
+          placeholder="Adresse e-mail professionnelle">
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Site Internet
+        </label>
+
+        <input
+          id="correctedVisibilityWebsite"
+          class="miniField"
+          type="url"
+          value="${escapeValue(
+            saved.website || ""
+          )}"
+          placeholder="https://">
+
+        <div
+          class="box"
+          style="margin-top:12px;">
+
+          <strong>
+            Services visibles sur la fiche
+          </strong>
+
+          <label class="miniCheck">
+
+            <input
+              id="correctedVisibilityQuote"
+              type="checkbox"
+              ${
+                saved.quoteEnabled
+                  ? "checked"
+                  : ""
+              }>
+
+            <span>
+              Autoriser les demandes de devis
+            </span>
+          </label>
+
+          <label class="miniCheck">
+
+            <input
+              id="correctedVisibilityRecruitment"
+              type="checkbox"
+              ${
+                saved.recruitmentEnabled
+                  ? "checked"
+                  : ""
+              }>
+
+            <span>
+              Afficher les recrutements en cours
+            </span>
+          </label>
+
+          <label class="miniCheck">
+
+            <input
+              id="correctedVisibilityPatronage"
+              type="checkbox"
+              ${
+                saved.patronageEnabled
+                  ? "checked"
+                  : ""
+              }>
+
+            <span>
+              Afficher les engagements en mécénat
+            </span>
+          </label>
+
+          <label class="miniCheck">
+
+            <input
+              id="correctedVisibilityNews"
+              type="checkbox"
+              ${
+                saved.newsEnabled
+                  ? "checked"
+                  : ""
+              }>
+
+            <span>
+              Afficher les actualités de l’entreprise
+            </span>
+          </label>
+        </div>
+
+        <button
+          id="correctedVisibilitySaveBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Enregistrer ma présentation
+        </button>
+
+        <button
+          id="correctedVisibilityPreviewBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:8px;
+            background:#fff;
+          ">
+          Prévisualiser ma fiche
+        </button>
+
+        <div
+          id="correctedVisibilityStatus"
+          class="muted"
+          style="margin-top:10px;">
+        </div>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const backButton =
+        getElement(
+          "correctedVisibilityBackBtn"
+        );
+
+      const directoryButton =
+        getElement(
+          "correctedVisibilityDirectoryBtn"
+        );
+
+      const profileButton =
+        getElement(
+          "correctedVisibilityProfileBtn"
+        );
+
+      const advertisementButton =
+        getElement(
+          "correctedVisibilityAdvertisementBtn"
+        );
+
+      const saveButton =
+        getElement(
+          "correctedVisibilitySaveBtn"
+        );
+
+      const previewButton =
+        getElement(
+          "correctedVisibilityPreviewBtn"
+        );
+
+      if(backButton){
+        backButton.onclick = function(){
+          app.openHome();
+        };
+      }
+
+      if(directoryButton){
+        directoryButton.onclick = function(){
+
+          if(
+            typeof app.openLocalDirectory ===
+            "function"
+          ){
+            app.openLocalDirectory();
+            return;
+          }
+
+          if(
+            typeof app.openCorrectedDirectory ===
+            "function"
+          ){
+            app.openCorrectedDirectory();
+            return;
+          }
+
+          app.openScreen(
+            "annuaire"
+          );
+        };
+      }
+
+      if(profileButton){
+        profileButton.onclick = function(){
+
+          if(
+            typeof app.openEntrepriseProfile ===
+            "function"
+          ){
+            app.openEntrepriseProfile();
+          }
+        };
+      }
+
+      if(advertisementButton){
+        advertisementButton.onclick = function(){
+
+          if(
+            typeof window.openTicker ===
+            "function"
+          ){
+            window.openTicker();
+          }else{
+            alert(
+              "Le calendrier publicitaire est momentanément indisponible."
+            );
+          }
+        };
+      }
+
+      if(saveButton){
+        saveButton.onclick =
+          saveCorrectedVisibility;
+      }
+
+      if(previewButton){
+        previewButton.onclick =
+          openCorrectedVisibilityPreview;
+      }
+
+      const status =
+        getElement(
+          "correctedVisibilityStatus"
+        );
+
+      if(
+        status &&
+        saved.updatedAtFr
+      ){
+        status.textContent =
+          "Dernière mise à jour : " +
+          saved.updatedAtFr +
+          ".";
+      }
+
+    },0);
+  }
+
+  function saveCorrectedVisibility(){
+
+    const companyName =
+      String(
+        getElement("correctedVisibilityCompanyName")
+          ? getElement("correctedVisibilityCompanyName").value
+          : ""
+      ).trim();
+
+    const activity =
+      String(
+        getElement("correctedVisibilityActivity")
+          ? getElement("correctedVisibilityActivity").value
+          : ""
+      ).trim();
+
+    const presentation =
+      String(
+        getElement("correctedVisibilityPresentation")
+          ? getElement("correctedVisibilityPresentation").value
+          : ""
+      ).trim();
+
+    const knowHow =
+      String(
+        getElement("correctedVisibilityKnowHow")
+          ? getElement("correctedVisibilityKnowHow").value
+          : ""
+      ).trim();
+
+    const services =
+      String(
+        getElement("correctedVisibilityServices")
+          ? getElement("correctedVisibilityServices").value
+          : ""
+      ).trim();
+
+    const phone =
+      String(
+        getElement("correctedVisibilityPhone")
+          ? getElement("correctedVisibilityPhone").value
+          : ""
+      ).trim();
+
+    const email =
+      String(
+        getElement("correctedVisibilityEmail")
+          ? getElement("correctedVisibilityEmail").value
+          : ""
+      ).trim();
+
+    const website =
+      String(
+        getElement("correctedVisibilityWebsite")
+          ? getElement("correctedVisibilityWebsite").value
+          : ""
+      ).trim();
+
+    if(
+      !companyName ||
+      !activity ||
+      !presentation
+    ){
+      alert(
+        "Renseignez au minimum le nom, l’activité et la présentation."
+      );
+      return;
+    }
+
+    if(
+      email &&
+      !email.includes("@")
+    ){
+      alert(
+        "L’adresse e-mail renseignée n’est pas valide."
+      );
+      return;
+    }
+
+    const data = {
+      companyName:companyName,
+      activity:activity,
+      presentation:presentation,
+      knowHow:knowHow,
+      services:services,
+      phone:phone,
+      email:email,
+      website:website,
+
+      quoteEnabled:
+        !!(
+          getElement("correctedVisibilityQuote") &&
+          getElement("correctedVisibilityQuote").checked
+        ),
+
+      recruitmentEnabled:
+        !!(
+          getElement("correctedVisibilityRecruitment") &&
+          getElement("correctedVisibilityRecruitment").checked
+        ),
+
+      patronageEnabled:
+        !!(
+          getElement("correctedVisibilityPatronage") &&
+          getElement("correctedVisibilityPatronage").checked
+        ),
+
+      newsEnabled:
+        !!(
+          getElement("correctedVisibilityNews") &&
+          getElement("correctedVisibilityNews").checked
+        ),
+
+      updatedAt:
+        Date.now(),
+
+      updatedAtFr:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+    };
+
+    saveVisibilityData(
+      data
+    );
+
+    const status =
+      getElement(
+        "correctedVisibilityStatus"
+      );
+
+    if(status){
+      status.textContent =
+        "Présentation enregistrée le " +
+        data.updatedAtFr +
+        ".";
+    }
+
+    alert(
+      "La présentation de l’entreprise est enregistrée."
+    );
+  }
+
+  function openCorrectedVisibilityPreview(){
+
+    const data =
+      loadVisibilityData();
+
+    if(
+      !data.companyName ||
+      !data.presentation
+    ){
+      alert(
+        "Enregistrez d’abord la présentation de l’entreprise."
+      );
+      return;
+    }
+
+    app.renderModal(
+      data.companyName,
+      `
+        <button
+          id="correctedVisibilityPreviewBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="margin-bottom:14px;">
+          Retour
+        </button>
+
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            ${escapeValue(
+              data.companyName
+            )}
+          </strong>
+
+          <br><br>
+
+          <strong>
+            ${escapeValue(
+              data.activity || ""
+            )}
+          </strong>
+        </div>
+
+        <div class="box">
+          ${escapeValue(
+            data.presentation
+          )}
+        </div>
+
+        ${
+          data.knowHow
+            ? `
+              <div class="box">
+
+                <strong>
+                  Métiers et savoir-faire
+                </strong>
+
+                <br><br>
+
+                ${escapeValue(
+                  data.knowHow
+                )}
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          data.services
+            ? `
+              <div class="box">
+
+                <strong>
+                  Services proposés
+                </strong>
+
+                <br><br>
+
+                ${escapeValue(
+                  data.services
+                )}
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          data.phone ||
+          data.email ||
+          data.website
+            ? `
+              <div class="box">
+
+                <strong>
+                  Contact
+                </strong>
+
+                <br><br>
+
+                ${
+                  data.phone
+                    ? `
+                      Téléphone :
+                      ${escapeValue(
+                        data.phone
+                      )}
+                      <br>
+                    `
+                    : ""
+                }
+
+                ${
+                  data.email
+                    ? `
+                      E-mail :
+                      ${escapeValue(
+                        data.email
+                      )}
+                      <br>
+                    `
+                    : ""
+                }
+
+                ${
+                  data.website
+                    ? `
+                      Site Internet :
+                      ${escapeValue(
+                        data.website
+                      )}
+                    `
+                    : ""
+                }
+              </div>
+            `
+            : ""
+        }
+
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+          ">
+
+          ${
+            data.quoteEnabled
+              ? `
+                <button
+                  class="choiceBtn"
+                  type="button">
+                  Demander un devis
+                </button>
+              `
+              : ""
+          }
+
+          ${
+            data.recruitmentEnabled
+              ? `
+                <button
+                  id="correctedPreviewEmploymentBtn"
+                  class="choiceBtn"
+                  type="button">
+                  Voir les recrutements
+                </button>
+              `
+              : ""
+          }
+
+          ${
+            data.patronageEnabled
+              ? `
+                <button
+                  id="correctedPreviewMecenatBtn"
+                  class="choiceBtn"
+                  type="button">
+                  Voir l’engagement en mécénat
+                </button>
+              `
+              : ""
+          }
+        </div>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const backButton =
+        getElement(
+          "correctedVisibilityPreviewBackBtn"
+        );
+
+      const employmentButton =
+        getElement(
+          "correctedPreviewEmploymentBtn"
+        );
+
+      const mecenatButton =
+        getElement(
+          "correctedPreviewMecenatBtn"
+        );
+
+      if(backButton){
+        backButton.onclick =
+          openCorrectedVisibilityPage;
+      }
+
+      if(employmentButton){
+        employmentButton.onclick = function(){
+          app.openScreen(
+            "emploi"
+          );
+        };
+      }
+
+      if(mecenatButton){
+        mecenatButton.onclick = function(){
+          app.openScreen(
+            "mecenat"
+          );
+        };
+      }
+
+    },0);
+  }
+
+  app.registerScreen(
+    "visibilite",
+    openCorrectedVisibilityPage
+  );
+
+  app.openCorrectedVisibilityPage =
+    openCorrectedVisibilityPage;
+
+  app.openCorrectedVisibilityPreview =
+    openCorrectedVisibilityPreview;
+
+  console.log(
+    "✅ Page Visibilité complète corrigée"
+  );
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 13
+   PAGE MÉCÉNAT COMPLÈTE
+   COMPRENDRE • CHOISIR • PRÉPARER SA PARTICIPATION
+   ========================================================== */
+
+(function correctEntrepriseMecenatPage(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return app.safeEscape(value);
+  }
+
+  function loadMecenatData(){
+
+    if(
+      typeof app.loadMecenatData ===
+      "function"
+    ){
+      const data =
+        app.loadMecenatData();
+
+      if(
+        data &&
+        typeof data === "object"
+      ){
+        return data;
+      }
+    }
+
+    return {
+      companyName:"",
+      projectType:"",
+      contributionType:"",
+      contributionAmount:"",
+      skillsDescription:"",
+      materialDescription:"",
+      selectedProject:"",
+      visibilityAccepted:false,
+      accountantContacted:false,
+      notes:"",
+      updatedAtFr:""
+    };
+  }
+
+  function saveMecenatData(data){
+
+    if(
+      typeof app.saveMecenatData ===
+      "function"
+    ){
+      app.saveMecenatData(
+        data
+      );
+
+      return;
+    }
+
+    try{
+      localStorage.setItem(
+        "bociteart_entreprise_mecenat_v1",
+        JSON.stringify(data)
+      );
+    }catch(error){
+      console.warn(
+        "Enregistrement du mécénat impossible :",
+        error
+      );
+    }
+  }
+
+  function openCorrectedMecenatPage(){
+
+    const saved =
+      loadMecenatData();
+
+    app.renderModal(
+      "Connaissez-vous le mécénat ?",
+      `
+        <button
+          id="correctedMecenatBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="margin-bottom:14px;">
+          Retour
+        </button>
+
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            Connaissez-vous réellement
+            le mécénat
+            et savez-vous à quoi il peut servir ?
+          </strong>
+
+          <br><br>
+
+          Beaucoup d’entreprises
+          connaissent peu le mécénat,
+          n’y pensent jamais
+          ou imaginent qu’il est réservé
+          aux grandes entreprises.
+
+          <br><br>
+
+          Pourtant,
+          une petite entreprise,
+          un commerce,
+          un artisan
+          ou une structure plus importante
+          peut soutenir un projet utile
+          à son territoire.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Le mécénat ne consiste pas seulement
+            à donner de l’argent
+          </strong>
+
+          <br><br>
+
+          Une entreprise peut contribuer :
+
+          <br><br>
+
+          • financièrement ;<br>
+          • avec ses compétences ;<br>
+          • avec du matériel ;<br>
+          • avec des produits ;<br>
+          • avec du temps ;<br>
+          • ou avec plusieurs formes d’aide.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            À quoi peut servir le mécénat ?
+          </strong>
+
+          <br><br>
+
+          Il peut soutenir :
+
+          <br><br>
+
+          • la culture ;<br>
+          • l’éducation ;<br>
+          • le sport ;<br>
+          • le patrimoine ;<br>
+          • la solidarité ;<br>
+          • l’environnement ;<br>
+          • une action locale d’intérêt général.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Le mécénat permet aussi
+            de faire connaître l’entreprise autrement
+          </strong>
+
+          <br><br>
+
+          Avant de pouvoir soutenir
+          ou rejoindre votre entreprise,
+          les habitants doivent déjà savoir
+          qu’elle existe,
+          comprendre ce qu’elle fait
+          et connaître les métiers
+          qui y sont exercés.
+
+          <br><br>
+
+          Lorsqu’une entreprise participe
+          à un projet local,
+          elle peut être remerciée
+          dans le cadre autorisé.
+
+          <br><br>
+
+          Ce n’est pas une publicité classique,
+          mais une reconnaissance
+          de son engagement.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Le retour est souvent indirect
+          </strong>
+
+          <br><br>
+
+          Il peut se construire avec le temps
+          par :
+
+          <br><br>
+
+          • la confiance ;<br>
+          • la réputation ;<br>
+          • le bouche-à-oreille ;<br>
+          • la fierté des salariés ;<br>
+          • la connaissance des métiers ;<br>
+          • de futurs recrutements ;<br>
+          • de nouveaux liens locaux.
+        </div>
+
+        <div
+          class="box"
+          style="border-left:6px solid #b00020;">
+
+          <strong>
+            Un avantage fiscal peut exister
+          </strong>
+
+          <br><br>
+
+          Le mécénat peut ouvrir droit,
+          sous certaines conditions,
+          à un avantage fiscal.
+
+          <br><br>
+
+          Les règles peuvent évoluer
+          selon la nature du projet
+          et la situation de l’entreprise.
+
+          <br><br>
+
+          L’entreprise doit vérifier
+          les conditions applicables
+          avec son expert-comptable
+          ou son conseil.
+        </div>
+
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+          ">
+
+          <button
+            id="correctedMecenatProjectsBtn"
+            class="choiceBtn"
+            type="button">
+            Découvrir les projets locaux
+          </button>
+
+          <button
+            id="correctedMecenatVisibilityBtn"
+            class="choiceBtn"
+            type="button">
+            Faire connaître mon engagement
+          </button>
+
+          <button
+            id="correctedMecenatDirectoryBtn"
+            class="choiceBtn"
+            type="button">
+            Rechercher un expert local
+          </button>
+        </div>
+
+        <div
+          class="box"
+          style="
+            margin-top:16px;
+            border-left:6px solid #2f5d46;
+          ">
+
+          <strong style="font-size:17px;">
+            Préparer ma réflexion
+          </strong>
+
+          <br><br>
+
+          Cet espace appartient
+          à l’entreprise
+          et reste privé.
+        </div>
+
+        <label style="font-weight:900;">
+          Nom de l’entreprise
+        </label>
+
+        <input
+          id="correctedMecenatCompanyName"
+          class="miniField"
+          type="text"
+          value="${escapeValue(
+            saved.companyName || ""
+          )}"
+          placeholder="Nom de l’entreprise">
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Quel type de projet souhaitez-vous soutenir ?
+        </label>
+
+        <select
+          id="correctedMecenatProjectType"
+          class="miniField">
+
+          <option value="">
+            Choisir
+          </option>
+
+          <option value="culture">
+            Culture
+          </option>
+
+          <option value="education">
+            Éducation
+          </option>
+
+          <option value="sport">
+            Sport
+          </option>
+
+          <option value="patrimoine">
+            Patrimoine
+          </option>
+
+          <option value="solidarite">
+            Solidarité
+          </option>
+
+          <option value="environnement">
+            Environnement
+          </option>
+
+          <option value="autre">
+            Autre projet d’intérêt général
+          </option>
+        </select>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Sous quelle forme souhaitez-vous contribuer ?
+        </label>
+
+        <select
+          id="correctedMecenatContributionType"
+          class="miniField">
+
+          <option value="">
+            Choisir
+          </option>
+
+          <option value="financier">
+            Contribution financière
+          </option>
+
+          <option value="competences">
+            Mécénat de compétences
+          </option>
+
+          <option value="materiel">
+            Don de matériel ou de produits
+          </option>
+
+          <option value="mixte">
+            Contribution mixte
+          </option>
+        </select>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Montant envisagé
+        </label>
+
+        <input
+          id="correctedMecenatAmount"
+          class="miniField"
+          type="number"
+          min="0"
+          value="${escapeValue(
+            saved.contributionAmount || ""
+          )}"
+          placeholder="Montant en euros">
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Compétences que vous pourriez proposer
+        </label>
+
+        <textarea
+          id="correctedMecenatSkills"
+          class="miniField"
+          style="min-height:90px;"
+          placeholder="Exemple : communication, bâtiment, informatique, logistique.">${escapeValue(
+            saved.skillsDescription || ""
+          )}</textarea>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Matériel ou produits disponibles
+        </label>
+
+        <textarea
+          id="correctedMecenatMaterial"
+          class="miniField"
+          style="min-height:90px;"
+          placeholder="Décrivez le matériel ou les produits proposés.">${escapeValue(
+            saved.materialDescription || ""
+          )}</textarea>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Projet éventuellement retenu
+        </label>
+
+        <input
+          id="correctedMecenatSelectedProject"
+          class="miniField"
+          type="text"
+          value="${escapeValue(
+            saved.selectedProject || ""
+          )}"
+          placeholder="Nom du projet">
+
+        <div
+          class="box"
+          style="margin-top:12px;">
+
+          <label class="miniCheck">
+
+            <input
+              id="correctedMecenatVisibility"
+              type="checkbox"
+              ${
+                saved.visibilityAccepted
+                  ? "checked"
+                  : ""
+              }>
+
+            <span>
+              J’accepte que l’entreprise
+              soit remerciée
+              dans le cadre autorisé du projet.
+            </span>
+          </label>
+
+          <label class="miniCheck">
+
+            <input
+              id="correctedMecenatAccountant"
+              type="checkbox"
+              ${
+                saved.accountantContacted
+                  ? "checked"
+                  : ""
+              }>
+
+            <span>
+              J’ai demandé
+              ou je demanderai conseil
+              à mon expert-comptable.
+            </span>
+          </label>
+        </div>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Questions ou conditions
+        </label>
+
+        <textarea
+          id="correctedMecenatNotes"
+          class="miniField"
+          style="min-height:100px;"
+          placeholder="Indiquez ici vos questions ou vos conditions.">${escapeValue(
+            saved.notes || ""
+          )}</textarea>
+
+        <button
+          id="correctedMecenatSaveBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Enregistrer ma réflexion
+        </button>
+
+        <button
+          id="correctedMecenatSummaryBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:8px;
+            background:#fff;
+          ">
+          Consulter mon récapitulatif
+        </button>
+
+        <div
+          id="correctedMecenatStatus"
+          class="muted"
+          style="margin-top:10px;">
+        </div>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const backButton =
+        getElement(
+          "correctedMecenatBackBtn"
+        );
+
+      const projectsButton =
+        getElement(
+          "correctedMecenatProjectsBtn"
+        );
+
+      const visibilityButton =
+        getElement(
+          "correctedMecenatVisibilityBtn"
+        );
+
+      const directoryButton =
+        getElement(
+          "correctedMecenatDirectoryBtn"
+        );
+
+      const saveButton =
+        getElement(
+          "correctedMecenatSaveBtn"
+        );
+
+      const summaryButton =
+        getElement(
+          "correctedMecenatSummaryBtn"
+        );
+
+      if(backButton){
+        backButton.onclick = function(){
+          app.openHome();
+        };
+      }
+
+      if(projectsButton){
+        projectsButton.onclick = function(){
+
+          if(
+            typeof app.openMecenatProjects ===
+            "function"
+          ){
+            app.openMecenatProjects();
+          }else{
+            openCorrectedMecenatProjects();
+          }
+        };
+      }
+
+      if(visibilityButton){
+        visibilityButton.onclick = function(){
+          app.openScreen(
+            "visibilite"
+          );
+        };
+      }
+
+      if(directoryButton){
+        directoryButton.onclick = function(){
+
+          if(
+            typeof app.openLocalDirectory ===
+            "function"
+          ){
+            app.openLocalDirectory();
+            return;
+          }
+
+          app.openScreen(
+            "annuaire"
+          );
+        };
+      }
+
+      if(saveButton){
+        saveButton.onclick =
+          saveCorrectedMecenat;
+      }
+
+      if(summaryButton){
+        summaryButton.onclick =
+          openCorrectedMecenatSummary;
+      }
+
+      restoreMecenatSelects();
+
+      const status =
+        getElement(
+          "correctedMecenatStatus"
+        );
+
+      if(
+        status &&
+        saved.updatedAtFr
+      ){
+        status.textContent =
+          "Dernière mise à jour : " +
+          saved.updatedAtFr +
+          ".";
+      }
+
+    },0);
+  }
+
+  function restoreMecenatSelects(){
+
+    const saved =
+      loadMecenatData();
+
+    const projectType =
+      getElement(
+        "correctedMecenatProjectType"
+      );
+
+    const contributionType =
+      getElement(
+        "correctedMecenatContributionType"
+      );
+
+    if(
+      projectType &&
+      saved.projectType
+    ){
+      projectType.value =
+        saved.projectType;
+    }
+
+    if(
+      contributionType &&
+      saved.contributionType
+    ){
+      contributionType.value =
+        saved.contributionType;
+    }
+  }
+
+  function saveCorrectedMecenat(){
+
+    const companyName =
+      String(
+        getElement("correctedMecenatCompanyName")
+          ? getElement("correctedMecenatCompanyName").value
+          : ""
+      ).trim();
+
+    const projectType =
+      String(
+        getElement("correctedMecenatProjectType")
+          ? getElement("correctedMecenatProjectType").value
+          : ""
+      ).trim();
+
+    const contributionType =
+      String(
+        getElement("correctedMecenatContributionType")
+          ? getElement("correctedMecenatContributionType").value
+          : ""
+      ).trim();
+
+    const contributionAmount =
+      String(
+        getElement("correctedMecenatAmount")
+          ? getElement("correctedMecenatAmount").value
+          : ""
+      ).trim();
+
+    const skillsDescription =
+      String(
+        getElement("correctedMecenatSkills")
+          ? getElement("correctedMecenatSkills").value
+          : ""
+      ).trim();
+
+    const materialDescription =
+      String(
+        getElement("correctedMecenatMaterial")
+          ? getElement("correctedMecenatMaterial").value
+          : ""
+      ).trim();
+
+    const selectedProject =
+      String(
+        getElement("correctedMecenatSelectedProject")
+          ? getElement("correctedMecenatSelectedProject").value
+          : ""
+      ).trim();
+
+    const notes =
+      String(
+        getElement("correctedMecenatNotes")
+          ? getElement("correctedMecenatNotes").value
+          : ""
+      ).trim();
+
+    if(!companyName){
+      alert(
+        "Indiquez le nom de l’entreprise."
+      );
+      return;
+    }
+
+    if(!projectType){
+      alert(
+        "Choisissez le type de projet."
+      );
+      return;
+    }
+
+    if(!contributionType){
+      alert(
+        "Choisissez la forme de contribution."
+      );
+      return;
+    }
+
+    if(
+      contributionType === "financier" &&
+      !contributionAmount
+    ){
+      alert(
+        "Indiquez le montant envisagé."
+      );
+      return;
+    }
+
+    if(
+      contributionType === "competences" &&
+      !skillsDescription
+    ){
+      alert(
+        "Décrivez les compétences proposées."
+      );
+      return;
+    }
+
+    if(
+      contributionType === "materiel" &&
+      !materialDescription
+    ){
+      alert(
+        "Décrivez le matériel ou les produits proposés."
+      );
+      return;
+    }
+
+    const data = {
+      companyName:companyName,
+      projectType:projectType,
+      contributionType:contributionType,
+      contributionAmount:contributionAmount,
+      skillsDescription:skillsDescription,
+      materialDescription:materialDescription,
+      selectedProject:selectedProject,
+
+      visibilityAccepted:
+        !!(
+          getElement("correctedMecenatVisibility") &&
+          getElement("correctedMecenatVisibility").checked
+        ),
+
+      accountantContacted:
+        !!(
+          getElement("correctedMecenatAccountant") &&
+          getElement("correctedMecenatAccountant").checked
+        ),
+
+      notes:notes,
+
+      status:
+        "en_reflexion",
+
+      updatedAt:
+        Date.now(),
+
+      updatedAtFr:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+    };
+
+    saveMecenatData(
+      data
+    );
+
+    const status =
+      getElement(
+        "correctedMecenatStatus"
+      );
+
+    if(status){
+      status.textContent =
+        "Réflexion enregistrée le " +
+        data.updatedAtFr +
+        ".";
+    }
+
+    alert(
+      "Votre réflexion sur le mécénat est enregistrée."
+    );
+  }
+
+  function getProjectLabel(value){
+
+    const labels = {
+      culture:"Culture",
+      education:"Éducation",
+      sport:"Sport",
+      patrimoine:"Patrimoine",
+      solidarite:"Solidarité",
+      environnement:"Environnement",
+      autre:"Autre projet d’intérêt général"
+    };
+
+    return labels[value] ||
+      "Non renseigné";
+  }
+
+  function getContributionLabel(value){
+
+    const labels = {
+      financier:"Contribution financière",
+      competences:"Mécénat de compétences",
+      materiel:"Don de matériel ou de produits",
+      mixte:"Contribution mixte"
+    };
+
+    return labels[value] ||
+      "Non renseigné";
+  }
+
+  function openCorrectedMecenatSummary(){
+
+    const data =
+      loadMecenatData();
+
+    if(
+      !data.companyName ||
+      !data.projectType ||
+      !data.contributionType
+    ){
+      alert(
+        "Aucune réflexion complète n’est enregistrée."
+      );
+      return;
+    }
+
+    app.renderModal(
+      "Mon projet de mécénat",
+      `
+        <button
+          id="correctedMecenatSummaryBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="margin-bottom:14px;">
+          Retour
+        </button>
+
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            ${escapeValue(
+              data.companyName
+            )}
+          </strong>
+        </div>
+
+        <div class="box">
+          <strong>
+            Type de projet
+          </strong>
+
+          <br><br>
+
+          ${escapeValue(
+            getProjectLabel(
+              data.projectType
+            )
+          )}
+        </div>
+
+        <div class="box">
+          <strong>
+            Forme de contribution
+          </strong>
+
+          <br><br>
+
+          ${escapeValue(
+            getContributionLabel(
+              data.contributionType
+            )
+          )}
+        </div>
+
+        ${
+          data.contributionAmount
+            ? `
+              <div class="box">
+                <strong>
+                  Montant envisagé
+                </strong>
+
+                <br><br>
+
+                ${escapeValue(
+                  data.contributionAmount
+                )} €
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          data.skillsDescription
+            ? `
+              <div class="box">
+                <strong>
+                  Compétences proposées
+                </strong>
+
+                <br><br>
+
+                ${escapeValue(
+                  data.skillsDescription
+                )}
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          data.materialDescription
+            ? `
+              <div class="box">
+                <strong>
+                  Matériel ou produits proposés
+                </strong>
+
+                <br><br>
+
+                ${escapeValue(
+                  data.materialDescription
+                )}
+              </div>
+            `
+            : ""
+        }
+
+        <div class="box">
+          <strong>
+            Projet retenu
+          </strong>
+
+          <br><br>
+
+          ${escapeValue(
+            data.selectedProject ||
+            "Non renseigné"
+          )}
+        </div>
+
+        <div class="box">
+          <strong>
+            Remerciement autorisé
+          </strong>
+
+          <br><br>
+
+          ${
+            data.visibilityAccepted
+              ? "Oui"
+              : "Non"
+          }
+        </div>
+
+        <div class="box">
+          <strong>
+            Expert-comptable consulté
+          </strong>
+
+          <br><br>
+
+          ${
+            data.accountantContacted
+              ? "Oui"
+              : "Pas encore"
+          }
+        </div>
+
+        <div class="box">
+          <strong>
+            Notes
+          </strong>
+
+          <br><br>
+
+          ${escapeValue(
+            data.notes ||
+            "Aucune note"
+          )}
+        </div>
+
+        <div class="box">
+          <strong>
+            Dernière mise à jour
+          </strong>
+
+          <br><br>
+
+          ${escapeValue(
+            data.updatedAtFr ||
+            ""
+          )}
+        </div>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const backButton =
+        getElement(
+          "correctedMecenatSummaryBackBtn"
+        );
+
+      if(backButton){
+        backButton.onclick =
+          openCorrectedMecenatPage;
+      }
+
+    },0);
+  }
+
+  function openCorrectedMecenatProjects(){
+
+    app.renderModal(
+      "Projets locaux ouverts au mécénat",
+      `
+        <button
+          id="correctedMecenatProjectsBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="margin-bottom:14px;">
+          Retour
+        </button>
+
+        <div class="box">
+          <strong>
+            Projets proposés par la ville
+          </strong>
+
+          <br><br>
+
+          Les projets ouverts au mécénat
+          devront être clairement présentés,
+          validés
+          et accompagnés
+          des informations nécessaires.
+        </div>
+
+        <div class="box">
+          <strong>
+            Culture
+          </strong>
+
+          <br><br>
+
+          Fresques,
+          œuvres,
+          expositions,
+          patrimoine
+          ou parcours culturel.
+        </div>
+
+        <div class="box">
+          <strong>
+            Éducation
+          </strong>
+
+          <br><br>
+
+          Actions pédagogiques,
+          projets scolaires,
+          équipements
+          ou découverte des métiers.
+        </div>
+
+        <div class="box">
+          <strong>
+            Sport
+          </strong>
+
+          <br><br>
+
+          Actions sportives locales
+          portées dans le cadre prévu
+          et validé.
+        </div>
+
+        <div class="box">
+          <strong>
+            Solidarité et environnement
+          </strong>
+
+          <br><br>
+
+          Projets locaux
+          utiles aux habitants,
+          à la qualité de vie
+          ou à la préservation du territoire.
+        </div>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const backButton =
+        getElement(
+          "correctedMecenatProjectsBackBtn"
+        );
+
+      if(backButton){
+        backButton.onclick =
+          openCorrectedMecenatPage;
+      }
+
+    },0);
+  }
+
+  app.registerScreen(
+    "mecenat",
+    openCorrectedMecenatPage
+  );
+
+  app.openCorrectedMecenatPage =
+    openCorrectedMecenatPage;
+
+  app.openCorrectedMecenatSummary =
+    openCorrectedMecenatSummary;
+
+  app.openCorrectedMecenatProjects =
+    openCorrectedMecenatProjects;
+
+  console.log(
+    "✅ Page Mécénat complète corrigée"
+  );
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 14
+   IA ENTREPRISE
+   ANALYSE DE LA QUESTION ET ORIENTATION UTILE
+   ========================================================== */
+
+(function improveEntrepriseArtificialIntelligence(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  if(
+    window.BOCITEART_ENTREPRISE_AI_14
+  ){
+    return;
+  }
+
+  window.BOCITEART_ENTREPRISE_AI_14 =
+    true;
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return app.safeEscape(value);
+  }
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(
+        /[\u0300-\u036f]/g,
+        ""
+      )
+      .replace(
+        /[’']/g,
+        " "
+      )
+      .replace(
+        /[^a-z0-9\s-]/g,
+        " "
+      )
+      .replace(
+        /\s+/g,
+        " "
+      )
+      .trim();
+  }
+
+  function containsAny(
+    text,
+    words
+  ){
+
+    return words.some(
+      function(word){
+
+        return text.includes(
+          normalizeText(word)
+        );
+      }
+    );
+  }
+
+  function analyseQuestion(
+    question
+  ){
+
+    const text =
+      normalizeText(
+        question
+      );
+
+    if(
+      containsAny(
+        text,
+        [
+          "emploi",
+          "recrutement",
+          "recruter",
+          "personnel",
+          "salarie",
+          "candidat",
+          "cv",
+          "stage",
+          "alternance",
+          "apprenti",
+          "poste",
+          "embauche"
+        ]
+      )
+    ){
+
+      return {
+        category:"emploi",
+
+        title:
+          "Recherche de personnel ou d’emploi",
+
+        answer:
+          "Votre demande concerne l’emploi. " +
+          "Bo'CitéArt peut vous orienter vers les offres locales, " +
+          "les candidatures reçues ou l’envoi d’un CV spontané.",
+
+        primaryLabel:
+          "Ouvrir la rubrique Emploi",
+
+        primaryAction:
+          function(){
+            app.openScreen(
+              "emploi"
+            );
+          },
+
+        secondaryLabel:
+          "Consulter l’historique des candidatures",
+
+        secondaryAction:
+          function(){
+
+            if(
+              typeof app.openCandidateHistory ===
+              "function"
+            ){
+              app.openCandidateHistory();
+              return;
+            }
+
+            app.openScreen(
+              "direction"
+            );
+          }
+      };
+    }
+
+    if(
+      containsAny(
+        text,
+        [
+          "electricien",
+          "plombier",
+          "macon",
+          "carreleur",
+          "menuisier",
+          "peintre",
+          "couvreur",
+          "avocat",
+          "comptable",
+          "transporteur",
+          "nettoyage",
+          "fournisseur",
+          "sous traitant",
+          "sous-traitant",
+          "prestataire",
+          "professionnel",
+          "entreprise",
+          "commerce",
+          "partenaire"
+        ]
+      )
+    ){
+
+      return {
+        category:"recherche_professionnelle",
+
+        title:
+          "Recherche d’une entreprise ou d’un professionnel",
+
+        answer:
+          "Bo'CitéArt commence par rechercher les entreprises, " +
+          "les commerces et les compétences présents dans la commune. " +
+          "La recherche peut ensuite être élargie selon le besoin.",
+
+        primaryLabel:
+          "Rechercher un professionnel",
+
+        primaryAction:
+          function(){
+
+            if(
+              typeof app.openProfessionalDirectory ===
+              "function"
+            ){
+              app.openProfessionalDirectory({
+                keyword:question
+              });
+
+              return;
+            }
+
+            app.openScreen(
+              "annuaire"
+            );
+          },
+
+        secondaryLabel:
+          "Voir les entreprises et commerces locaux",
+
+        secondaryAction:
+          function(){
+
+            if(
+              typeof app.openLocalDirectory ===
+              "function"
+            ){
+              app.openLocalDirectory();
+              return;
+            }
+
+            if(
+              typeof app.openCorrectedDirectory ===
+              "function"
+            ){
+              app.openCorrectedDirectory();
+              return;
+            }
+
+            app.openScreen(
+              "annuaire"
+            );
+          }
+      };
+    }
+
+    if(
+      containsAny(
+        text,
+        [
+          "charge",
+          "charges",
+          "electricite",
+          "gaz",
+          "assurance",
+          "mutuelle",
+          "telephone",
+          "telephonie",
+          "internet",
+          "fibre",
+          "vehicule",
+          "flotte",
+          "carburant",
+          "nettoyage",
+          "vitre",
+          "maintenance",
+          "alarme",
+          "formation",
+          "mutualisation",
+          "economiser",
+          "economie",
+          "reduire"
+        ]
+      )
+    ){
+
+      return {
+        category:"charges",
+
+        title:
+          "Réduction des charges",
+
+        answer:
+          "Votre demande concerne une charge professionnelle " +
+          "ou une prestation pouvant être mutualisée. " +
+          "Vous pouvez consulter les regroupements ouverts, " +
+          "indiquer votre intérêt et suivre les propositions reçues.",
+
+        primaryLabel:
+          "Voir les mutualisations",
+
+        primaryAction:
+          function(){
+            app.openScreen(
+              "mutualisation"
+            );
+          },
+
+        secondaryLabel:
+          "Ouvrir le Tableau de Direction",
+
+        secondaryAction:
+          function(){
+
+            if(
+              typeof app.openPrivateEntrepriseAccess ===
+              "function"
+            ){
+              app.openPrivateEntrepriseAccess();
+              return;
+            }
+
+            app.openScreen(
+              "direction"
+            );
+          }
+      };
+    }
+
+    if(
+      containsAny(
+        text,
+        [
+          "visibilite",
+          "faire connaitre",
+          "publicite",
+          "communication",
+          "presentation",
+          "savoir faire",
+          "metier",
+          "faire connaitre mon entreprise",
+          "clients",
+          "bouche a oreille"
+        ]
+      )
+    ){
+
+      return {
+        category:"visibilite",
+
+        title:
+          "Visibilité de l’entreprise",
+
+        answer:
+          "Votre demande concerne la connaissance de l’entreprise " +
+          "dans la ville. Commencez par présenter clairement vos métiers, " +
+          "vos services, votre savoir-faire et votre localisation.",
+
+        primaryLabel:
+          "Faire connaître mon entreprise",
+
+        primaryAction:
+          function(){
+            app.openScreen(
+              "visibilite"
+            );
+          },
+
+        secondaryLabel:
+          "Voir les acteurs locaux",
+
+        secondaryAction:
+          function(){
+
+            if(
+              typeof app.openLocalDirectory ===
+              "function"
+            ){
+              app.openLocalDirectory();
+              return;
+            }
+
+            app.openScreen(
+              "annuaire"
+            );
+          }
+      };
+    }
+
+    if(
+      containsAny(
+        text,
+        [
+          "mecenat",
+          "don",
+          "soutenir",
+          "projet local",
+          "culture",
+          "education",
+          "sport",
+          "patrimoine",
+          "solidarite",
+          "environnement",
+          "interet general"
+        ]
+      )
+    ){
+
+      return {
+        category:"mecenat",
+
+        title:
+          "Mécénat et projets locaux",
+
+        answer:
+          "Votre demande concerne le mécénat. " +
+          "Vous pouvez découvrir les projets locaux, " +
+          "choisir une forme de contribution " +
+          "et préparer votre réflexion dans l’espace privé de l’entreprise.",
+
+        primaryLabel:
+          "Découvrir le mécénat",
+
+        primaryAction:
+          function(){
+            app.openScreen(
+              "mecenat"
+            );
+          },
+
+        secondaryLabel:
+          "Découvrir les projets locaux",
+
+        secondaryAction:
+          function(){
+
+            if(
+              typeof app.openCorrectedMecenatProjects ===
+              "function"
+            ){
+              app.openCorrectedMecenatProjects();
+              return;
+            }
+
+            if(
+              typeof app.openMecenatProjects ===
+              "function"
+            ){
+              app.openMecenatProjects();
+              return;
+            }
+
+            app.openScreen(
+              "mecenat"
+            );
+          }
+      };
+    }
+
+    if(
+      containsAny(
+        text,
+        [
+          "transmission",
+          "reprise",
+          "repreneur",
+          "vendre entreprise",
+          "succession",
+          "continuité",
+          "continuite",
+          "avenir entreprise",
+          "valorisation",
+          "valeur entreprise"
+        ]
+      )
+    ){
+
+      return {
+        category:"perennite",
+
+        title:
+          "Pérennité et transmission",
+
+        answer:
+          "Votre demande concerne l’avenir de l’entreprise. " +
+          "Vous pouvez préparer la transmission, la reprise, " +
+          "la continuité de l’activité et votre prochaine action.",
+
+        primaryLabel:
+          "Préparer l’avenir de l’entreprise",
+
+        primaryAction:
+          function(){
+            app.openScreen(
+              "perennite"
+            );
+          },
+
+        secondaryLabel:
+          "Préparer un plan de développement",
+
+        secondaryAction:
+          function(){
+            app.openScreen(
+              "developpement"
+            );
+          }
+      };
+    }
+
+    if(
+      containsAny(
+        text,
+        [
+          "developpement",
+          "developper",
+          "nouveau client",
+          "nouveaux clients",
+          "opportunite",
+          "partenariat",
+          "partenaire",
+          "fournisseur",
+          "sous traitant",
+          "sous-traitant",
+          "croissance"
+        ]
+      )
+    ){
+
+      return {
+        category:"developpement",
+
+        title:
+          "Développement de l’entreprise",
+
+        answer:
+          "Votre demande concerne le développement de l’activité. " +
+          "Commencez par regarder les ressources, entreprises, " +
+          "fournisseurs et partenaires présents dans votre ville.",
+
+        primaryLabel:
+          "Ouvrir la rubrique Développement",
+
+        primaryAction:
+          function(){
+            app.openScreen(
+              "developpement"
+            );
+          },
+
+        secondaryLabel:
+          "Voir les acteurs locaux",
+
+        secondaryAction:
+          function(){
+
+            if(
+              typeof app.openLocalDirectory ===
+              "function"
+            ){
+              app.openLocalDirectory();
+              return;
+            }
+
+            app.openScreen(
+              "annuaire"
+            );
+          }
+      };
+    }
+
+    return {
+      category:"general",
+
+      title:
+        "Recherche Bo'CitéArt",
+
+      answer:
+        "Votre demande a bien été analysée. " +
+        "Bo'CitéArt vous propose de commencer par les ressources " +
+        "présentes dans votre commune, puis d’élargir la recherche " +
+        "si aucune solution locale ne correspond.",
+
+      primaryLabel:
+        "Rechercher un professionnel",
+
+      primaryAction:
+        function(){
+
+          if(
+            typeof app.openProfessionalDirectory ===
+            "function"
+          ){
+            app.openProfessionalDirectory({
+              keyword:question
+            });
+
+            return;
+          }
+
+          app.openScreen(
+            "annuaire"
+          );
+        },
+
+      secondaryLabel:
+        "Voir les entreprises et commerces locaux",
+
+      secondaryAction:
+        function(){
+
+          if(
+            typeof app.openLocalDirectory ===
+            "function"
+          ){
+            app.openLocalDirectory();
+            return;
+          }
+
+          app.openScreen(
+            "annuaire"
+          );
+        }
+    };
+  }
+
+  function renderAiAnswer(
+    host,
+    result
+  ){
+
+    host.innerHTML = `
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
+
+        <strong style="font-size:17px;">
+          ${escapeValue(
+            result.title
+          )}
+        </strong>
+
+        <br><br>
+
+        ${escapeValue(
+          result.answer
+        )}
+
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+            margin-top:12px;
+          ">
+
+          <button
+            id="entrepriseAiPrimaryActionBtn"
+            class="choiceBtn"
+            type="button">
+            ${escapeValue(
+              result.primaryLabel
+            )}
+          </button>
+
+          ${
+            result.secondaryLabel
+              ? `
+                <button
+                  id="entrepriseAiSecondaryActionBtn"
+                  class="choiceBtn"
+                  type="button"
+                  style="background:#fff;">
+                  ${escapeValue(
+                    result.secondaryLabel
+                  )}
+                </button>
+              `
+              : ""
+          }
+        </div>
+      </div>
+    `;
+
+    window.setTimeout(function(){
+
+      const primaryButton =
+        getElement(
+          "entrepriseAiPrimaryActionBtn"
+        );
+
+      const secondaryButton =
+        getElement(
+          "entrepriseAiSecondaryActionBtn"
+        );
+
+      if(primaryButton){
+        primaryButton.onclick =
+          result.primaryAction;
+      }
+
+      if(
+        secondaryButton &&
+        typeof result.secondaryAction ===
+        "function"
+      ){
+        secondaryButton.onclick =
+          result.secondaryAction;
+      }
+
+    },0);
+  }
+
+  function bindEntrepriseAi(){
+
+    const button =
+      getElement(
+        "entrepriseAiAskBtn"
+      );
+
+    const input =
+      getElement(
+        "entrepriseAiQuestion"
+      );
+
+    const answer =
+      getElement(
+        "entrepriseAiAnswer"
+      );
+
+    if(
+      !button ||
+      !input ||
+      !answer
+    ){
+      return;
+    }
+
+    if(
+      button.dataset.aiImproved ===
+      "true"
+    ){
+      return;
+    }
+
+    button.dataset.aiImproved =
+      "true";
+
+    function runAnalysis(){
+
+      const question =
+        String(
+          input.value || ""
+        ).trim();
+
+      if(!question){
+
+        alert(
+          "Écrivez votre question."
+        );
+
+        return;
+      }
+
+      answer.innerHTML = `
+        <div class="box">
+          Analyse de votre demande en cours…
+        </div>
+      `;
+
+      window.setTimeout(function(){
+
+        const result =
+          analyseQuestion(
+            question
+          );
+
+        renderAiAnswer(
+          answer,
+          result
+        );
+
+      },300);
+    }
+
+    button.onclick =
+      runAnalysis;
+
+    input.addEventListener(
+      "keydown",
+      function(event){
+
+        if(
+          event.key ===
+          "Enter" &&
+          !event.shiftKey
+        ){
+
+          event.preventDefault();
+
+          runAnalysis();
+        }
+      }
+    );
+  }
+
+  const observer =
+    new MutationObserver(
+      function(){
+
+        window.setTimeout(
+          bindEntrepriseAi,
+          80
+        );
+      }
+    );
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  window.setTimeout(
+    bindEntrepriseAi,
+    200
+  );
+
+  app.analyseEntrepriseQuestion =
+    analyseQuestion;
+
+  console.log(
+    "✅ IA Entreprise améliorée et orientée"
+  );
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 15
+   PÉRENNITÉ • TRANSMISSION • REPRISE • CONTINUITÉ
+   ========================================================== */
+
+(function correctEntrepriseSustainabilityPage(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return app.safeEscape(value);
+  }
+
+  function loadData(){
+
+    if(
+      typeof app.loadSustainabilityData ===
+      "function"
+    ){
+      const data =
+        app.loadSustainabilityData();
+
+      if(
+        data &&
+        typeof data === "object"
+      ){
+        return data;
+      }
+    }
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          "bociteart_entreprise_sustainability_v1"
+        );
+
+      const parsed =
+        raw ? JSON.parse(raw) : null;
+
+      return parsed || {};
+
+    }catch(error){
+
+      return {};
+    }
+  }
+
+  function saveData(data){
+
+    if(
+      typeof app.saveSustainabilityData ===
+      "function"
+    ){
+      app.saveSustainabilityData(
+        data
+      );
+
+      return;
+    }
+
+    try{
+
+      localStorage.setItem(
+        "bociteart_entreprise_sustainability_v1",
+        JSON.stringify(data)
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Enregistrement du projet de pérennité impossible :",
+        error
+      );
+    }
+  }
+
+  function getProjectLabel(value){
+
+    const labels = {
+
+      transmission_familiale:
+        "Transmission familiale",
+
+      reprise_salarie:
+        "Reprise par un salarié",
+
+      vente_exterieure:
+        "Vente à un repreneur extérieur",
+
+      cession_progressive:
+        "Cession progressive",
+
+      succession:
+        "Préparation de la succession",
+
+      continuite:
+        "Assurer la continuité de l’activité",
+
+      indecis:
+        "Projet encore indécis"
+    };
+
+    return labels[value] ||
+      "Non renseigné";
+  }
+
+  function getBuyerLabel(value){
+
+    const labels = {
+
+      enfant:
+        "Enfant ou membre de la famille",
+
+      salarie:
+        "Salarié",
+
+      associe:
+        "Associé",
+
+      exterieur:
+        "Repreneur extérieur",
+
+      inconnu:
+        "Non déterminé"
+    };
+
+    return labels[value] ||
+      "Non renseigné";
+  }
+
+  function openCorrectedSustainabilityPage(){
+
+    const saved =
+      loadData();
+
+    app.renderModal(
+      "Préparez l’avenir de votre entreprise",
+      `
+        <button
+          id="correctedSustainabilityBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="margin-bottom:14px;">
+          Retour
+        </button>
+
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            Préparez l’avenir
+            de votre entreprise
+          </strong>
+
+          <br><br>
+
+          Votre entreprise possède
+          une histoire,
+          des clients,
+          des salariés,
+          un savoir-faire
+          et une valeur.
+
+          <br><br>
+
+          Pourtant,
+          la transmission
+          ou la continuité
+          est souvent préparée trop tard.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            À qui souhaiteriez-vous
+            transmettre votre entreprise ?
+          </strong>
+
+          <br><br>
+
+          À vos enfants,
+          à un salarié,
+          à un associé
+          ou à un repreneur extérieur ?
+
+          <br><br>
+
+          Même si vous ne souhaitez pas
+          transmettre immédiatement,
+          commencer à réfléchir
+          ne vous engage à rien.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Combien vaut réellement votre entreprise ?
+          </strong>
+
+          <br><br>
+
+          Le chiffre d’affaires
+          ne suffit pas
+          pour déterminer sa valeur.
+
+          <br><br>
+
+          Il faut également regarder :
+
+          <br><br>
+
+          • la rentabilité ;<br>
+          • la clientèle ;<br>
+          • les contrats ;<br>
+          • l’équipe ;<br>
+          • le matériel ;<br>
+          • l’organisation ;<br>
+          • la réputation ;<br>
+          • le savoir-faire ;<br>
+          • la dépendance au dirigeant.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Faites d’abord connaître votre entreprise
+          </strong>
+
+          <br><br>
+
+          Chaque année,
+          des entreprises disparaissent
+          faute de repreneur.
+
+          <br><br>
+
+          Parfois simplement
+          parce que personne
+          ne connaissait réellement
+          leur activité,
+          leurs métiers
+          ou leur valeur locale.
+
+          <br><br>
+
+          Faire connaître votre entreprise aujourd’hui,
+          c’est aussi préparer sa continuité demain.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Les premiers interlocuteurs possibles
+          </strong>
+
+          <br><br>
+
+          Vous pouvez commencer par échanger
+          avec :
+
+          <br><br>
+
+          • votre expert-comptable ;<br>
+          • votre avocat ;<br>
+          • votre notaire ;<br>
+          • la CCI ;<br>
+          • la CMA ;<br>
+          • votre organisation professionnelle.
+
+          <br><br>
+
+          Les consulter
+          ne vous oblige pas
+          à vendre ou à transmettre.
+        </div>
+
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+          ">
+
+          <button
+            id="correctedSustainabilityVisibilityBtn"
+            class="choiceBtn"
+            type="button">
+            Faire connaître mon entreprise
+          </button>
+
+          <button
+            id="correctedSustainabilityExpertBtn"
+            class="choiceBtn"
+            type="button">
+            Rechercher un expert local
+          </button>
+
+          <button
+            id="correctedSustainabilityDevelopmentBtn"
+            class="choiceBtn"
+            type="button">
+            Préparer un plan d’action
+          </button>
+        </div>
+
+        <div
+          class="box"
+          style="
+            margin-top:16px;
+            border-left:6px solid #2f5d46;
+          ">
+
+          <strong style="font-size:17px;">
+            Mon projet de transmission
+            ou de continuité
+          </strong>
+
+          <br><br>
+
+          Ces informations restent réservées
+          à l’entreprise.
+        </div>
+
+        <label style="font-weight:900;">
+          Nom de l’entreprise
+        </label>
+
+        <input
+          id="correctedSustainabilityCompanyName"
+          class="miniField"
+          type="text"
+          value="${escapeValue(
+            saved.companyName || ""
+          )}"
+          placeholder="Nom de l’entreprise">
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Quel projet envisagez-vous ?
+        </label>
+
+        <select
+          id="correctedSustainabilityProjectType"
+          class="miniField">
+
+          <option value="">
+            Choisir
+          </option>
+
+          <option value="transmission_familiale">
+            Transmission familiale
+          </option>
+
+          <option value="reprise_salarie">
+            Reprise par un salarié
+          </option>
+
+          <option value="vente_exterieure">
+            Vente à un repreneur extérieur
+          </option>
+
+          <option value="cession_progressive">
+            Cession progressive
+          </option>
+
+          <option value="succession">
+            Préparation de la succession
+          </option>
+
+          <option value="continuite">
+            Assurer la continuité de l’activité
+          </option>
+
+          <option value="indecis">
+            Je ne sais pas encore
+          </option>
+        </select>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Repreneur envisagé
+        </label>
+
+        <select
+          id="correctedSustainabilityBuyer"
+          class="miniField">
+
+          <option value="">
+            Choisir
+          </option>
+
+          <option value="enfant">
+            Enfant ou membre de la famille
+          </option>
+
+          <option value="salarie">
+            Salarié
+          </option>
+
+          <option value="associe">
+            Associé
+          </option>
+
+          <option value="exterieur">
+            Repreneur extérieur
+          </option>
+
+          <option value="inconnu">
+            Je ne sais pas encore
+          </option>
+        </select>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Échéance envisagée
+        </label>
+
+        <input
+          id="correctedSustainabilityDeadline"
+          class="miniField"
+          type="date"
+          value="${escapeValue(
+            saved.estimatedDeadline || ""
+          )}">
+
+        <div
+          class="box"
+          style="margin-top:12px;">
+
+          <strong>
+            Démarches déjà engagées
+          </strong>
+
+          <label class="miniCheck">
+
+            <input
+              id="correctedSustainabilityAccountant"
+              type="checkbox"
+              ${
+                saved.accountantContacted
+                  ? "checked"
+                  : ""
+              }>
+
+            <span>
+              J’en ai parlé
+              à mon expert-comptable
+            </span>
+          </label>
+
+          <label class="miniCheck">
+
+            <input
+              id="correctedSustainabilityChamber"
+              type="checkbox"
+              ${
+                saved.chamberContacted
+                  ? "checked"
+                  : ""
+              }>
+
+            <span>
+              J’ai contacté la CCI,
+              la CMA
+              ou une organisation professionnelle
+            </span>
+          </label>
+
+          <label class="miniCheck">
+
+            <input
+              id="correctedSustainabilityLawyer"
+              type="checkbox"
+              ${
+                saved.lawyerContacted
+                  ? "checked"
+                  : ""
+              }>
+
+            <span>
+              J’ai consulté un avocat
+            </span>
+          </label>
+
+          <label class="miniCheck">
+
+            <input
+              id="correctedSustainabilityNotary"
+              type="checkbox"
+              ${
+                saved.notaryContacted
+                  ? "checked"
+                  : ""
+              }>
+
+            <span>
+              J’ai consulté un notaire
+            </span>
+          </label>
+
+          <label class="miniCheck">
+
+            <input
+              id="correctedSustainabilityValuation"
+              type="checkbox"
+              ${
+                saved.valuationStarted
+                  ? "checked"
+                  : ""
+              }>
+
+            <span>
+              Une première valorisation
+              a été engagée
+            </span>
+          </label>
+        </div>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Notes confidentielles
+        </label>
+
+        <textarea
+          id="correctedSustainabilityNotes"
+          class="miniField"
+          style="min-height:110px;"
+          placeholder="Indiquez les éléments utiles à votre réflexion.">${escapeValue(
+            saved.confidentialNotes || ""
+          )}</textarea>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Prochaine action
+        </label>
+
+        <textarea
+          id="correctedSustainabilityNextAction"
+          class="miniField"
+          style="min-height:90px;"
+          placeholder="Exemple : prendre rendez-vous avec l’expert-comptable.">${escapeValue(
+            saved.nextAction || ""
+          )}</textarea>
+
+        <button
+          id="correctedSustainabilitySaveBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Enregistrer mon projet
+        </button>
+
+        <button
+          id="correctedSustainabilitySummaryBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:8px;
+            background:#fff;
+          ">
+          Consulter mon récapitulatif
+        </button>
+
+        <div
+          id="correctedSustainabilityStatus"
+          class="muted"
+          style="margin-top:10px;">
+        </div>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const backButton =
+        getElement(
+          "correctedSustainabilityBackBtn"
+        );
+
+      const visibilityButton =
+        getElement(
+          "correctedSustainabilityVisibilityBtn"
+        );
+
+      const expertButton =
+        getElement(
+          "correctedSustainabilityExpertBtn"
+        );
+
+      const developmentButton =
+        getElement(
+          "correctedSustainabilityDevelopmentBtn"
+        );
+
+      const saveButton =
+        getElement(
+          "correctedSustainabilitySaveBtn"
+        );
+
+      const summaryButton =
+        getElement(
+          "correctedSustainabilitySummaryBtn"
+        );
+
+      if(backButton){
+        backButton.onclick = function(){
+          app.openHome();
+        };
+      }
+
+      if(visibilityButton){
+        visibilityButton.onclick = function(){
+          app.openScreen(
+            "visibilite"
+          );
+        };
+      }
+
+      if(expertButton){
+        expertButton.onclick = function(){
+
+          if(
+            typeof app.openLocalDirectory ===
+            "function"
+          ){
+            app.openLocalDirectory();
+            return;
+          }
+
+          app.openScreen(
+            "annuaire"
+          );
+        };
+      }
+
+      if(developmentButton){
+        developmentButton.onclick = function(){
+          app.openScreen(
+            "developpement"
+          );
+        };
+      }
+
+      if(saveButton){
+        saveButton.onclick =
+          saveCorrectedSustainability;
+      }
+
+      if(summaryButton){
+        summaryButton.onclick =
+          openCorrectedSustainabilitySummary;
+      }
+
+      const projectSelect =
+        getElement(
+          "correctedSustainabilityProjectType"
+        );
+
+      const buyerSelect =
+        getElement(
+          "correctedSustainabilityBuyer"
+        );
+
+      if(
+        projectSelect &&
+        saved.projectType
+      ){
+        projectSelect.value =
+          saved.projectType === "continuité"
+            ? "continuite"
+            : saved.projectType;
+      }
+
+      if(
+        buyerSelect &&
+        saved.preferredBuyer
+      ){
+        buyerSelect.value =
+          saved.preferredBuyer;
+      }
+
+      const status =
+        getElement(
+          "correctedSustainabilityStatus"
+        );
+
+      if(
+        status &&
+        saved.updatedAtFr
+      ){
+        status.textContent =
+          "Dernière mise à jour : " +
+          saved.updatedAtFr +
+          ".";
+      }
+
+    },0);
+  }
+
+  function saveCorrectedSustainability(){
+
+    const companyName =
+      String(
+        getElement(
+          "correctedSustainabilityCompanyName"
+        )
+          ? getElement(
+              "correctedSustainabilityCompanyName"
+            ).value
+          : ""
+      ).trim();
+
+    const projectType =
+      String(
+        getElement(
+          "correctedSustainabilityProjectType"
+        )
+          ? getElement(
+              "correctedSustainabilityProjectType"
+            ).value
+          : ""
+      ).trim();
+
+    const preferredBuyer =
+      String(
+        getElement(
+          "correctedSustainabilityBuyer"
+        )
+          ? getElement(
+              "correctedSustainabilityBuyer"
+            ).value
+          : ""
+      ).trim();
+
+    const estimatedDeadline =
+      String(
+        getElement(
+          "correctedSustainabilityDeadline"
+        )
+          ? getElement(
+              "correctedSustainabilityDeadline"
+            ).value
+          : ""
+      ).trim();
+
+    const confidentialNotes =
+      String(
+        getElement(
+          "correctedSustainabilityNotes"
+        )
+          ? getElement(
+              "correctedSustainabilityNotes"
+            ).value
+          : ""
+      ).trim();
+
+    const nextAction =
+      String(
+        getElement(
+          "correctedSustainabilityNextAction"
+        )
+          ? getElement(
+              "correctedSustainabilityNextAction"
+            ).value
+          : ""
+      ).trim();
+
+    if(!companyName){
+
+      alert(
+        "Indiquez le nom de l’entreprise."
+      );
+
+      return;
+    }
+
+    if(!projectType){
+
+      alert(
+        "Choisissez le projet envisagé."
+      );
+
+      return;
+    }
+
+    if(!nextAction){
+
+      alert(
+        "Indiquez au moins votre prochaine action."
+      );
+
+      return;
+    }
+
+    const data = {
+
+      companyName:
+        companyName,
+
+      projectType:
+        projectType,
+
+      preferredBuyer:
+        preferredBuyer,
+
+      estimatedDeadline:
+        estimatedDeadline,
+
+      accountantContacted:
+        !!(
+          getElement(
+            "correctedSustainabilityAccountant"
+          ) &&
+          getElement(
+            "correctedSustainabilityAccountant"
+          ).checked
+        ),
+
+      chamberContacted:
+        !!(
+          getElement(
+            "correctedSustainabilityChamber"
+          ) &&
+          getElement(
+            "correctedSustainabilityChamber"
+          ).checked
+        ),
+
+      lawyerContacted:
+        !!(
+          getElement(
+            "correctedSustainabilityLawyer"
+          ) &&
+          getElement(
+            "correctedSustainabilityLawyer"
+          ).checked
+        ),
+
+      notaryContacted:
+        !!(
+          getElement(
+            "correctedSustainabilityNotary"
+          ) &&
+          getElement(
+            "correctedSustainabilityNotary"
+          ).checked
+        ),
+
+      valuationStarted:
+        !!(
+          getElement(
+            "correctedSustainabilityValuation"
+          ) &&
+          getElement(
+            "correctedSustainabilityValuation"
+          ).checked
+        ),
+
+      confidentialNotes:
+        confidentialNotes,
+
+      nextAction:
+        nextAction,
+
+      status:
+        "en_cours",
+
+      updatedAt:
+        Date.now(),
+
+      updatedAtFr:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+    };
+
+    saveData(
+      data
+    );
+
+    const status =
+      getElement(
+        "correctedSustainabilityStatus"
+      );
+
+    if(status){
+      status.textContent =
+        "Projet enregistré le " +
+        data.updatedAtFr +
+        ".";
+    }
+
+    alert(
+      "Votre projet est enregistré dans l’espace privé de l’entreprise."
+    );
+  }
+
+  function openCorrectedSustainabilitySummary(){
+
+    const data =
+      loadData();
+
+    if(
+      !data.companyName ||
+      !data.projectType
+    ){
+
+      alert(
+        "Aucun projet n’est encore enregistré."
+      );
+
+      return;
+    }
+
+    const steps = [];
+
+    if(data.accountantContacted){
+      steps.push(
+        "Expert-comptable contacté"
+      );
+    }
+
+    if(data.chamberContacted){
+      steps.push(
+        "CCI, CMA ou organisation professionnelle contactée"
+      );
+    }
+
+    if(data.lawyerContacted){
+      steps.push(
+        "Avocat consulté"
+      );
+    }
+
+    if(data.notaryContacted){
+      steps.push(
+        "Notaire consulté"
+      );
+    }
+
+    if(data.valuationStarted){
+      steps.push(
+        "Valorisation engagée"
+      );
+    }
+
+    app.renderModal(
+      "Mon projet de pérennité",
+      `
+        <button
+          id="correctedSustainabilitySummaryBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="margin-bottom:14px;">
+          Retour
+        </button>
+
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            ${escapeValue(
+              data.companyName
+            )}
+          </strong>
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Projet envisagé
+          </strong>
+
+          <br><br>
+
+          ${escapeValue(
+            getProjectLabel(
+              data.projectType
+            )
+          )}
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Repreneur envisagé
+          </strong>
+
+          <br><br>
+
+          ${escapeValue(
+            getBuyerLabel(
+              data.preferredBuyer
+            )
+          )}
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Échéance envisagée
+          </strong>
+
+          <br><br>
+
+          ${escapeValue(
+            data.estimatedDeadline ||
+            "Non renseignée"
+          )}
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Démarches engagées
+          </strong>
+
+          <br><br>
+
+          ${
+            steps.length
+              ? steps
+                  .map(function(step){
+                    return escapeValue(
+                      step
+                    );
+                  })
+                  .join("<br>")
+              : "Aucune démarche renseignée"
+          }
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Notes confidentielles
+          </strong>
+
+          <br><br>
+
+          ${escapeValue(
+            data.confidentialNotes ||
+            "Aucune note"
+          )}
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Prochaine action
+          </strong>
+
+          <br><br>
+
+          ${escapeValue(
+            data.nextAction ||
+            "Non renseignée"
+          )}
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Dernière mise à jour
+          </strong>
+
+          <br><br>
+
+          ${escapeValue(
+            data.updatedAtFr ||
+            ""
+          )}
+        </div>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const backButton =
+        getElement(
+          "correctedSustainabilitySummaryBackBtn"
+        );
+
+      if(backButton){
+        backButton.onclick =
+          openCorrectedSustainabilityPage;
+      }
+
+    },0);
+  }
+
+  app.registerScreen(
+    "perennite",
+    openCorrectedSustainabilityPage
+  );
+
+  app.openCorrectedSustainabilityPage =
+    openCorrectedSustainabilityPage;
+
+  app.openCorrectedSustainabilitySummary =
+    openCorrectedSustainabilitySummary;
+
+  console.log(
+    "✅ Page Pérennité corrigée"
+  );
+
+})();
+
+
+
 
 
 
