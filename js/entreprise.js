@@ -38653,6 +38653,238 @@ console.log("✅ Correctif Emploi chargé");
 
 })();
 
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 16
+   DÉBLOCAGE DÉFINITIF DES BANDES DÉFILANTES
+   ========================================================== */
+
+(function definitivelyRepairEntrepriseBands(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  if(
+    window.BOCITEART_ENTREPRISE_BANDS_FINAL_16
+  ){
+    return;
+  }
+
+  window.BOCITEART_ENTREPRISE_BANDS_FINAL_16 =
+    true;
+
+  function openDirectly(screenName){
+
+    if(!screenName){
+      return;
+    }
+
+    const renderer =
+      app.screens &&
+      app.screens[screenName];
+
+    if(
+      typeof renderer ===
+      "function"
+    ){
+      if(app.state){
+
+        if(
+          app.state.currentScreen !==
+          screenName
+        ){
+          app.state.previousScreen =
+            app.state.currentScreen;
+        }
+
+        app.state.currentScreen =
+          screenName;
+      }
+
+      renderer();
+
+      return;
+    }
+
+    if(
+      typeof app.openScreen ===
+      "function"
+    ){
+      app.openScreen(
+        screenName
+      );
+
+      return;
+    }
+
+    alert(
+      "Cette rubrique est momentanément indisponible."
+    );
+  }
+
+  /*
+    Le gestionnaire est placé sur WINDOW
+    en phase de capture.
+
+    Il agit avant les anciens gestionnaires
+    installés sur DOCUMENT qui bloquaient les clics.
+  */
+
+  window.addEventListener(
+    "click",
+    function(event){
+
+      const target =
+        event.target;
+
+      if(
+        !target ||
+        typeof target.closest !==
+        "function"
+      ){
+        return;
+      }
+
+      const button =
+        target.closest(
+          "#entrepriseHomeBands " +
+          "[data-entreprise-screen]," +
+
+          ".entrepriseUnifiedBands " +
+          "[data-unified-entreprise-screen]," +
+
+          ".entrepriseCorrectionBands " +
+          "[data-corrected-screen]," +
+
+          "[data-final-entreprise-screen]"
+        );
+
+      if(!button){
+        return;
+      }
+
+      const screenName =
+        button.getAttribute(
+          "data-entreprise-screen"
+        ) ||
+        button.getAttribute(
+          "data-unified-entreprise-screen"
+        ) ||
+        button.getAttribute(
+          "data-corrected-screen"
+        ) ||
+        button.getAttribute(
+          "data-final-entreprise-screen"
+        );
+
+      if(!screenName){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+        "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+
+      window.requestAnimationFrame(
+        function(){
+
+          openDirectly(
+            screenName
+          );
+        }
+      );
+
+    },
+    true
+  );
+
+  /*
+    Rend explicitement les bandes cliquables.
+  */
+
+  function reinforceButtons(){
+
+    document
+      .querySelectorAll(
+        "#entrepriseHomeBands " +
+        "[data-entreprise-screen]," +
+
+        ".entrepriseUnifiedBands " +
+        "[data-unified-entreprise-screen]," +
+
+        ".entrepriseCorrectionBands " +
+        "[data-corrected-screen]"
+      )
+      .forEach(function(button){
+
+        button.style.pointerEvents =
+          "auto";
+
+        button.style.cursor =
+          "pointer";
+
+        button.disabled =
+          false;
+
+        const text =
+          button.querySelector(
+            ".entrepriseBandText," +
+            ".entrepriseUnifiedBandText," +
+            ".entrepriseCorrectionBandText"
+          );
+
+        if(text){
+          text.style.pointerEvents =
+            "none";
+        }
+      });
+  }
+
+  const observer =
+    new MutationObserver(
+      function(){
+
+        window.setTimeout(
+          reinforceButtons,
+          30
+        );
+      }
+    );
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  window.setTimeout(
+    reinforceButtons,
+    100
+  );
+
+  console.log(
+    "✅ Bandes Entreprise définitivement débloquées"
+  );
+
+})();
+
 
 
 
