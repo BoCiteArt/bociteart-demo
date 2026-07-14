@@ -28280,63 +28280,74 @@ Tous les prix deviennent privés
 
 function hidePrices(){
 
-document
-.querySelectorAll("*")
-.forEach(function(node){
+  document
+    .querySelectorAll(
+      ".box," +
+      ".choiceBtn," +
+      ".professionalSearchPrice"
+    )
+    .forEach(function(node){
 
-const text=
-String(node.textContent||"");
+      /*
+        Ne jamais remplacer un grand conteneur,
+        la page entière ou la fenêtre modale.
+      */
 
-if(
+      if(
+        node.children.length > 8
+      ){
+        return;
+      }
 
-text.includes("€") ||
+      const text =
+        String(
+          node.textContent || ""
+        );
 
-text.includes("HT") ||
+      const lowerText =
+        text.toLowerCase();
 
-text.includes("TTC")
+      const containsPrice =
+        text.includes("€") ||
+        text.includes(" HT") ||
+        text.includes(" TTC");
 
-){
+      const containsPrivateSubject =
+        lowerText.includes("abonnement") ||
+        lowerText.includes("facture") ||
+        lowerText.includes("paiement") ||
+        lowerText.includes("tarif professionnel") ||
+        lowerText.includes("adhésion annuelle") ||
+        lowerText.includes("publication");
 
-if(
+      if(
+        !containsPrice ||
+        !containsPrivateSubject
+      ){
+        return;
+      }
 
-text.includes("emploi") ||
+      /*
+        On masque seulement le petit encart tarifaire,
+        jamais ses parents.
+      */
 
-text.includes("abonnement") ||
+      node.innerHTML = `
+        <strong>
+          Information réservée
+        </strong>
 
-text.includes("publicité") ||
+        <br><br>
 
-text.includes("professionnel")
-
-){
-
-node.innerHTML=
-
-`
-
-<strong>
-
-Information réservée
-
-</strong>
-
-<br><br>
-
-Les tarifs,
-abonnements,
-paiements,
-factures
-et options commerciales
-sont visibles uniquement
-dans votre espace professionnel privé.
-
-`;
-
-}
-
-}
-
-});
-
+        Les tarifs,
+        abonnements,
+        paiements,
+        factures
+        et options commerciales
+        sont visibles uniquement
+        dans votre espace professionnel privé.
+      `;
+    });
 }
 
 /* ===========================================
