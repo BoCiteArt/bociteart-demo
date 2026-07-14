@@ -1,7 +1,7 @@
 /* =========================================================
    BO'CITÉART — MODULE ENTREPRISE
    PARTIE 1 — NAVIGATION ET ACCUEIL
-   ========================================================= */
+========================================================= */
 
 (function initBociteEntrepriseModule(){
  
@@ -28509,13 +28509,8 @@ subtree:true
 apply();
 
 console.log(
+  "✅ Nettoyage des textes et accès privés chargé"
 );
-
-}
-   
-});
-
-}  
 
 /* =========================================================
    BO'CITÉART — FACTURATION PROFESSIONNELLE
