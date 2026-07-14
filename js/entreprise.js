@@ -28510,10 +28510,6 @@ apply();
 
 console.log(
 
-"✅ Finalisation Entreprise Phase 1 chargée"
 
-);
-
-})();
 
 
