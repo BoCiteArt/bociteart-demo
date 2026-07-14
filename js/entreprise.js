@@ -31100,6 +31100,128 @@ console.log("✅ Correctif Emploi chargé");
 
 })();
 
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 06
+   RÉPARATION DES CLICS SUR LES BANDES ENTREPRISE
+   ========================================================== */
+
+(function repairEntrepriseBandClicks(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  if(
+    window.BOCITEART_ENTREPRISE_BAND_CLICKS_FIXED
+  ){
+    return;
+  }
+
+  window.BOCITEART_ENTREPRISE_BAND_CLICKS_FIXED =
+    true;
+
+  function openEntrepriseScreen(screenName){
+
+    if(!screenName){
+      return;
+    }
+
+    /*
+      On appelle directement l’écran enregistré.
+      Cela évite les anciens correctifs
+      qui bloquent actuellement les clics.
+    */
+
+    if(
+      app.screens &&
+      typeof app.screens[screenName] ===
+      "function"
+    ){
+      app.state.previousScreen =
+        app.state.currentScreen;
+
+      app.state.currentScreen =
+        screenName;
+
+      app.screens[screenName]();
+
+      return;
+    }
+
+    if(
+      typeof app.openScreen ===
+      "function"
+    ){
+      app.openScreen(screenName);
+      return;
+    }
+
+    alert(
+      "Cette rubrique est momentanément indisponible."
+    );
+  }
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const button =
+        event.target &&
+        typeof event.target.closest ===
+        "function"
+          ? event.target.closest(
+              "[data-entreprise-screen]," +
+              "[data-corrected-screen]"
+            )
+          : null;
+
+      if(!button){
+        return;
+      }
+
+      const screenName =
+        button.getAttribute(
+          "data-entreprise-screen"
+        ) ||
+        button.getAttribute(
+          "data-corrected-screen"
+        );
+
+      if(!screenName){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+        "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+
+      openEntrepriseScreen(
+        screenName
+      );
+    },
+    true
+  );
+
+  console.log(
+    "✅ Clics des bandes Entreprise réparés"
+  );
+
+})();
 
 
 
