@@ -4111,13 +4111,19 @@ function getHomeHtml(){
   }
 
   function openDevelopment(){
+
     module.renderModal(
       "Développez votre entreprise",
-      getDevelopmentHtml()
+      getDevelopmentHtml(),
+      {
+        presentationFooter:true
+      }
     );
 
     window.setTimeout(function(){
+
       bindDevelopment();
+
     },0);
   }
 
@@ -6545,13 +6551,19 @@ Voir les entreprises de ma ville
   }
 
   function openSustainability(){
+
     module.renderModal(
       "Préparez l’avenir de votre entreprise",
-      getSustainabilityHtml()
+      getSustainabilityHtml(),
+      {
+        presentationFooter:true
+      }
     );
 
     window.setTimeout(function(){
+
       bindSustainability();
+
     },0);
   }
 
@@ -7555,16 +7567,22 @@ Voir les entreprises de ma ville
   }
 
   function openMecenat(){
+
     module.renderModal(
       "Savez-vous à qui et à quoi sert le mécénat ?",
-      getMecenatHtml()
+      getMecenatHtml(),
+      {
+        presentationFooter:true
+      }
     );
 
     window.setTimeout(function(){
-      bindMecenat();
-    },0);
-  }
 
+      bindMecenat();
+
+    },0);
+  }   
+   
   module.registerScreen(
     "mecenat",
     openMecenat
@@ -9816,11 +9834,15 @@ Voir les entreprises de ma ville
   }
 
   function openProfessionalDirectory(options){
+
     options = options || {};
 
     module.renderModal(
       "Recherche professionnelle",
-      getSearchHtml()
+      getSearchHtml(),
+      {
+        presentationFooter:false
+      }
     );
 
     window.setTimeout(function(){
@@ -9828,10 +9850,14 @@ Voir les entreprises de ma ville
       bindProfessionalSearch();
 
       const keywordInput =
-        getElement("professionalSearchKeyword");
+        getElement(
+          "professionalSearchKeyword"
+        );
 
       const cityInput =
-        getElement("professionalSearchCity");
+        getElement(
+          "professionalSearchCity"
+        );
 
       if(
         keywordInput &&
@@ -9848,6 +9874,7 @@ Voir les entreprises de ma ville
         cityInput.value =
           options.city;
       }
+
     },0);
   }
 
@@ -10605,17 +10632,23 @@ Voir les entreprises de ma ville
     renderOtherList();
   }
 
-  function openMutualisation(){
-    module.renderModal(
-      "Opportunités de mutualisation",
-      getHtml()
-    );
+function openMutualisation(){
 
-    window.setTimeout(function(){
-      bindMutualisation();
-    },0);
-  }
+  module.renderModal(
+    "Opportunités de mutualisation",
+    getHtml(),
+    {
+      presentationFooter:true
+    }
+  );
 
+  window.setTimeout(function(){
+
+    bindMutualisation();
+
+  },0);
+}
+   
   module.registerScreen(
     "mutualisation",
     openMutualisation
@@ -24333,14 +24366,20 @@ console.log(
       });
   }
 
-  function openSubscriptionVisibility(){
+   function openSubscriptionVisibility(){
+
     module.renderModal(
       "Faites connaître votre entreprise",
-      getVisibilityHtml()
+      getVisibilityHtml(),
+      {
+        presentationFooter:true
+      }
     );
 
     window.setTimeout(function(){
+
       bindVisibilityScreen();
+
     },0);
   }
 
@@ -29264,491 +29303,6 @@ console.log(
 
   console.log(
     "✅ Facturation professionnelle Bo'CitéArt chargée"
-  );
-
-})();
-
-/* =========================================================
-   BO'CITÉART — CORRECTIF EMPLOI
-   ACCÈS DIRECT À LA PAGE PUBLIQUE DES OFFRES
-   À CONSERVER TOUT EN BAS DU FICHIER
-   ========================================================= */
-
-(function correctEntrepriseEmploymentAccess(){
-
-  "use strict";
-
-  const module =
-    window.BociteEntreprise;
-
-  if(!module){
-    console.error(
-      "Bo'CitéArt Entreprise : module principal introuvable."
-    );
-    return;
-  }
-
-  function openEmploymentDirectly(){
-
-    /*
-      La page Emploi doit rester visible
-      par les citoyens.
-
-      Les actions professionnelles sensibles,
-      comme la publication d'une offre
-      ou l'accès aux candidatures reçues,
-      restent protégées séparément.
-    */
-
-    if(
-      typeof module.openPublicEmploymentList ===
-      "function"
-    ){
-      module.openPublicEmploymentList();
-      return;
-    }
-
-    if(
-      typeof module.openEmploymentOffers ===
-      "function"
-    ){
-      module.openEmploymentOffers();
-      return;
-    }
-
-    module.renderModal(
-      "Emploi dans votre ville",
-      `
-        <div
-          class="box"
-          style="border-left:6px solid #2f5d46;">
-
-          <strong style="font-size:18px;">
-            Emploi dans votre ville
-          </strong>
-
-          <br><br>
-
-          Consultez les offres proposées
-          par les entreprises locales.
-
-          <br><br>
-
-          Les fonctions réservées aux entreprises,
-          comme la publication d'une offre
-          ou la consultation des candidatures,
-          restent accessibles uniquement
-          depuis l'espace professionnel privé.
-        </div>
-      `
-    );
-  }
-
-  /*
-    Ce dernier enregistrement remplace uniquement
-    la mauvaise redirection de l'écran Emploi.
-  */
-
-  module.registerScreen(
-    "emploi",
-    openEmploymentDirectly
-  );
-
-  module.openEmploymentDirectly =
-    openEmploymentDirectly;
-
-  console.log(
-    "✅ Correctif Emploi public chargé"
-  );
-
-})();
-
-/* ==========================================================
-   BO'CITÉART
-   CORRECTIF 01
-   OUVERTURE DIRECTE DE LA PAGE EMPLOI
-   ========================================================== */
-
-(function(){
-
-"use strict";
-
-if(!window.BociteEntreprise) return;
-
-const app = window.BociteEntreprise;
-
-/*---------------------------------------------------------
-  Remplace uniquement l'ouverture du bouton Emploi
----------------------------------------------------------*/
-
-app.openScreen = (function(oldOpen){
-
-return function(screen){
-
-if(screen==="emploi"){
-
-if(typeof app.openEmployment==="function"){
-return app.openEmployment();
-}
-
-if(typeof app.openEmploymentPage==="function"){
-return app.openEmploymentPage();
-}
-
-if(typeof app.showEmployment==="function"){
-return app.showEmployment();
-}
-
-}
-
-return oldOpen.call(this,screen);
-
-};
-
-})(app.openScreen);
-
-console.log("✅ Correctif Emploi chargé");
-
-})();
-
-/* ==========================================================
-   BO'CITÉART
-   CORRECTIF 02
-   EMPLOI PUBLIC DIRECT + BOUTON RETOUR
-   ========================================================== */
-
-(function correctEntrepriseEmploymentAndBack(){
-
-  "use strict";
-
-  const app =
-    window.BociteEntreprise;
-
-  if(!app){
-    console.error(
-      "Bo'CitéArt Entreprise : module introuvable."
-    );
-    return;
-  }
-
-  function openEmploymentPage(){
-
-    /*
-      La fonction existe déjà dans entreprise.js.
-      Elle ouvre la véritable page publique Emploi.
-    */
-
-    if(
-      typeof app.openPublicEmploymentList ===
-      "function"
-    ){
-      app.openPublicEmploymentList();
-      return;
-    }
-
-    if(
-      typeof app.openEmploymentOffers ===
-      "function"
-    ){
-      app.openEmploymentOffers();
-      return;
-    }
-
-    app.renderModal(
-      "Emploi dans votre ville",
-      `
-        <div
-          class="box"
-          style="border-left:6px solid #2f5d46;">
-
-          <strong style="font-size:18px;">
-            Emploi dans votre ville
-          </strong>
-
-          <br><br>
-
-          Consultez les offres proposées
-          par les entreprises locales.
-        </div>
-      `
-    );
-  }
-
-  /*
-    Le dernier écran enregistré prend la priorité
-    sur les anciennes redirections privées.
-  */
-
-  app.registerScreen(
-    "emploi",
-    openEmploymentPage
-  );
-
-  /*
-    Réparation générale du bouton Retour
-    après chaque ouverture de fenêtre Entreprise.
-  */
-
-  const oldRenderModal =
-    app.renderModal;
-
-  app.renderModal = function(title, html){
-
-    oldRenderModal.call(
-      app,
-      title,
-      html
-    );
-
-    window.setTimeout(function(){
-
-      const buttons =
-        document.querySelectorAll(
-          "#entrepriseBackBtn," +
-          "#entrepriseCorrectedBackBtn," +
-          "[data-entreprise-back]"
-        );
-
-      buttons.forEach(function(button){
-
-        button.onclick = function(event){
-
-          if(event){
-            event.preventDefault();
-            event.stopPropagation();
-          }
-
-          app.openHome();
-        };
-      });
-
-    },0);
-  };
-
-  app.openEmploymentDirectly =
-    openEmploymentPage;
-
-  console.log(
-    "✅ Emploi direct et bouton Retour réparés"
-  );
-
-})();
-
-/* ==========================================================
-   BO'CITÉART
-   CORRECTIF 03
-   PAGE FIDÉLISATION
-   VISIBILITÉ DE L’ENTREPRISE ET SERVICES DE PROXIMITÉ
-   ========================================================== */
-
-(function correctEntrepriseLoyaltyPage(){
-
-  "use strict";
-
-  const app =
-    window.BociteEntreprise;
-
-  if(!app){
-    console.error(
-      "Bo'CitéArt Entreprise : module introuvable."
-    );
-    return;
-  }
-
-  function getElement(id){
-    return document.getElementById(id);
-  }
-
-  function openCorrectedLoyaltyPage(){
-
-    app.renderModal(
-      "Attirez et fidélisez vos salariés autrement",
-      `
-        <div
-          class="box"
-          style="border-left:6px solid #2f5d46;">
-
-          <strong style="font-size:18px;">
-            Faites d’abord connaître votre entreprise
-            partout dans la ville
-          </strong>
-
-          <br><br>
-
-          Les citoyens doivent savoir
-          ce que fait votre entreprise,
-          où elle se trouve
-          et quels métiers elle propose.
-
-          <br><br>
-
-          Cette visibilité locale peut faciliter
-          le recrutement,
-          développer le bouche-à-oreille
-          et renforcer la fierté
-          d’appartenance des salariés.
-        </div>
-
-        <div class="box">
-
-          <strong>
-            Faites connaître ce qui existe
-            autour du lieu de travail
-          </strong>
-
-          <br><br>
-
-          Faire connaître les commerces,
-          les services,
-          les clubs
-          et les activités accessibles
-          près du lieu de travail.
-
-          <br><br>
-
-          Valoriser les initiatives locales
-          auxquelles l’entreprise participe,
-          mais aussi celles qui existent déjà
-          sur le territoire.
-        </div>
-
-        <div class="box">
-
-          <strong>
-            La proximité améliore aussi
-            le quotidien des salariés
-          </strong>
-
-          <br><br>
-
-          Recruter dans la commune
-          ou dans les communes voisines
-          peut réduire les temps de déplacement,
-          les frais de transport
-          et la fatigue quotidienne.
-
-          <br><br>
-
-          Un salarié regarde la rémunération,
-          mais également :
-
-          <br><br>
-
-          • la distance entre son domicile et son travail ;<br>
-          • la qualité de vie ;<br>
-          • la reconnaissance ;<br>
-          • l’ambiance ;<br>
-          • les services accessibles près de l’entreprise ;<br>
-          • l’engagement local de son employeur.
-        </div>
-
-        <div
-          style="
-            display:flex;
-            gap:8px;
-            flex-wrap:wrap;
-          ">
-
-          <button
-            id="loyaltyCorrectedEmploymentBtn"
-            class="choiceBtn"
-            type="button">
-            Trouver du personnel
-          </button>
-
-          <button
-            id="loyaltyCorrectedVisibilityBtn"
-            class="choiceBtn"
-            type="button">
-            Faire connaître mon entreprise
-          </button>
-
-          <button
-            id="loyaltyCorrectedDirectoryBtn"
-            class="choiceBtn"
-            type="button">
-            Découvrir les acteurs locaux
-          </button>
-        </div>
-
-        <div
-          class="box"
-          style="
-            margin-top:14px;
-            border-left:6px solid #2f5d46;
-          ">
-
-          <strong>
-            Vous pourriez être intéressé
-            par d’autres services.
-          </strong>
-
-          <br><br>
-
-          Cliquez sur l’une des propositions
-          dans les bandes défilantes
-          de l’espace Entreprise.
-        </div>
-      `
-    );
-
-    window.setTimeout(function(){
-
-      const employmentButton =
-        getElement(
-          "loyaltyCorrectedEmploymentBtn"
-        );
-
-      const visibilityButton =
-        getElement(
-          "loyaltyCorrectedVisibilityBtn"
-        );
-
-      const directoryButton =
-        getElement(
-          "loyaltyCorrectedDirectoryBtn"
-        );
-
-      if(employmentButton){
-        employmentButton.onclick = function(){
-          app.openScreen("emploi");
-        };
-      }
-
-      if(visibilityButton){
-        visibilityButton.onclick = function(){
-          app.openScreen("visibilite");
-        };
-      }
-
-      if(directoryButton){
-        directoryButton.onclick = function(){
-
-          if(
-            typeof app.openCorrectedDirectory ===
-            "function"
-          ){
-            app.openCorrectedDirectory();
-            return;
-          }
-
-          app.openScreen("annuaire");
-        };
-      }
-
-    },0);
-  }
-
-  app.registerScreen(
-    "fidelisation",
-    openCorrectedLoyaltyPage
-  );
-
-  app.openCorrectedLoyaltyPage =
-    openCorrectedLoyaltyPage;
-
-  console.log(
-    "✅ Page Fidélisation corrigée"
   );
 
 })();
