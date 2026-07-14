@@ -39921,7 +39921,360 @@ console.log("✅ Correctif Emploi chargé");
 
 })();
 
+/* ==========================================================
+   BO'CITÉART — EMPLOI PUBLIC
+   PRÉSENTATION COMPLÈTE AVANT LA LISTE DES OFFRES
+   ========================================================== */
 
+(function completePublicEmploymentPage(){
+
+  "use strict";
+
+  const app = window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[’']/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function getModalContent(){
+
+    return document.querySelector(
+      ".modal-content," +
+      ".modalContent," +
+      "#modalContent," +
+      ".modal-body," +
+      ".modalBody"
+    );
+  }
+
+  function getModalTitle(){
+
+    const title =
+      document.querySelector(
+        ".modal-title," +
+        ".modalTitle," +
+        "#modalTitle," +
+        ".modal-header h1," +
+        ".modal-header h2," +
+        ".modalHeader h1," +
+        ".modalHeader h2"
+      );
+
+    return title
+      ? normalizeText(title.textContent)
+      : "";
+  }
+
+  function applyEmploymentPresentation(){
+
+    const modal = getModalContent();
+
+    if(!modal){
+      return;
+    }
+
+    const title = getModalTitle();
+
+    if(
+      !title.includes(
+        "toutes les offres d emploi"
+      )
+    ){
+      return;
+    }
+
+    if(
+      modal.querySelector(
+        "#bocitePublicEmploymentIntroduction"
+      )
+    ){
+      return;
+    }
+
+    /*
+      Le retour doit revenir à la page Emploi,
+      et non directement à l’accueil Entreprise.
+    */
+
+    const oldReturnButton =
+      Array.from(
+        modal.querySelectorAll("button")
+      )
+      .find(function(button){
+
+        const text =
+          normalizeText(
+            button.textContent
+          );
+
+        return text.includes(
+          "retour a l espace entreprise"
+        );
+      });
+
+    if(oldReturnButton){
+
+      oldReturnButton.textContent =
+        "← Retour à la page Emploi";
+
+      oldReturnButton.onclick =
+        function(event){
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          if(
+            typeof app.openScreen ===
+            "function"
+          ){
+            app.openScreen("emploi");
+          }
+        };
+    }
+
+    const introduction =
+      document.createElement("div");
+
+    introduction.id =
+      "bocitePublicEmploymentIntroduction";
+
+    introduction.innerHTML = `
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
+
+        <strong style="font-size:19px;">
+          Trouvez un emploi,
+          un stage
+          ou une alternance près de chez vous
+        </strong>
+
+        <br><br>
+
+        Les entreprises de votre ville
+        peuvent publier ici leurs besoins
+        en recrutement.
+
+        <br><br>
+
+        Vous pouvez consulter gratuitement
+        les offres disponibles
+        et transmettre votre candidature
+        directement à l’entreprise concernée.
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:17px;">
+          Aucune offre ne correspond actuellement
+          à votre recherche ?
+        </strong>
+
+        <br><br>
+
+        Vous pouvez malgré tout
+        déposer une candidature spontanée.
+
+        <br><br>
+
+        Votre CV pourra être adressé
+        à une entreprise de votre ville,
+        même si elle n’a pas encore publié d’offre.
+
+        <br><br>
+
+        Les candidatures restent conservées
+        dans l’espace privé de l’entreprise,
+        afin qu’elle puisse retrouver votre profil
+        lorsqu’un nouveau besoin apparaît.
+      </div>
+
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+          margin-bottom:16px;
+        ">
+
+        <button
+          id="publicEmploymentDirectoryBtn"
+          class="choiceBtn"
+          type="button">
+          Voir les entreprises de ma ville
+        </button>
+
+        <button
+          id="publicEmploymentSpontaneousBtn"
+          class="choiceBtn"
+          type="button">
+          Envoyer une candidature spontanée
+        </button>
+
+        <button
+          id="publicEmploymentReturnBtn"
+          class="choiceBtn"
+          type="button">
+          Retour à la page Emploi
+        </button>
+      </div>
+
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
+
+        <strong style="font-size:17px;">
+          Offres actuellement disponibles
+        </strong>
+
+        <br><br>
+
+        Les offres publiées par les entreprises
+        apparaissent ci-dessous.
+      </div>
+    `;
+
+    /*
+      On place la présentation avant
+      le message indiquant qu’aucune offre n’existe.
+    */
+
+    const emptyOfferBox =
+      Array.from(
+        modal.querySelectorAll(".box")
+      )
+      .find(function(box){
+
+        return normalizeText(
+          box.textContent
+        ).includes(
+          "aucune offre d emploi n est actuellement disponible"
+        );
+      });
+
+    if(emptyOfferBox){
+      emptyOfferBox.before(
+        introduction
+      );
+    }else{
+      modal.appendChild(
+        introduction
+      );
+    }
+
+    const directoryButton =
+      document.getElementById(
+        "publicEmploymentDirectoryBtn"
+      );
+
+    const spontaneousButton =
+      document.getElementById(
+        "publicEmploymentSpontaneousBtn"
+      );
+
+    const returnButton =
+      document.getElementById(
+        "publicEmploymentReturnBtn"
+      );
+
+    if(directoryButton){
+
+      directoryButton.onclick =
+        function(){
+
+          if(
+            typeof app.openLocalDirectory ===
+            "function"
+          ){
+            app.openLocalDirectory();
+            return;
+          }
+
+          if(
+            typeof app.openCorrectedDirectory ===
+            "function"
+          ){
+            app.openCorrectedDirectory();
+            return;
+          }
+
+          app.openScreen("annuaire_local");
+        };
+    }
+
+    if(spontaneousButton){
+
+      spontaneousButton.onclick =
+        function(){
+
+          if(
+            typeof app.openLocalDirectory ===
+            "function"
+          ){
+            app.openLocalDirectory();
+            return;
+          }
+
+          app.openScreen("annuaire_local");
+        };
+    }
+
+    if(returnButton){
+
+      returnButton.onclick =
+        function(){
+
+          app.openScreen("emploi");
+        };
+    }
+  }
+
+  let timer = null;
+
+  const observer =
+    new MutationObserver(function(){
+
+      window.clearTimeout(timer);
+
+      timer =
+        window.setTimeout(
+          applyEmploymentPresentation,
+          60
+        );
+    });
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  window.setTimeout(
+    applyEmploymentPresentation,
+    200
+  );
+
+  console.log(
+    "✅ Présentation complète des offres d’emploi chargée"
+  );
+
+})();
 
 
 
