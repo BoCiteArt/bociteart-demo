@@ -28509,6 +28509,2599 @@ subtree:true
 apply();
 
 console.log(
+);
+
+}
+   
+});
+
+}  
+
+/* =========================================================
+   BO'CITÉART — FACTURATION PROFESSIONNELLE
+   PAIEMENT CONFIRMÉ • FACTURE • ARCHIVAGE • ENVOI SERVEUR
+   ========================================================= */
+
+(function initBociteProfessionalInvoiceSystem(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt : module Entreprise introuvable."
+    );
+    return;
+  }
+
+  const INVOICE_KEY =
+    "bociteart_entreprise_search_invoices_v1";
+
+  const PARTNER_ACCOUNT_KEY =
+    "bociteart_entreprise_partner_account_v1";
+
+  function escapeValue(value){
+    return module.safeEscape(value);
+  }
+
+  function formatMoney(value){
+    return Number(value || 0)
+      .toFixed(2)
+      .replace(".", ",");
+  }
+
+  function loadInvoices(){
+    try{
+      const raw =
+        localStorage.getItem(INVOICE_KEY);
+
+      const parsed =
+        raw ? JSON.parse(raw) : [];
+
+      return Array.isArray(parsed)
+        ? parsed
+        : [];
+    }catch(error){
+      return [];
+    }
+  }
+
+  function saveInvoices(invoices){
+    try{
+      localStorage.setItem(
+        INVOICE_KEY,
+        JSON.stringify(invoices || [])
+      );
+    }catch(error){
+      console.warn(
+        "Enregistrement des factures impossible :",
+        error
+      );
+    }
+  }
+
+  function loadPartnerAccount(){
+    try{
+      const raw =
+        localStorage.getItem(
+          PARTNER_ACCOUNT_KEY
+        );
+
+      const parsed =
+        raw ? JSON.parse(raw) : null;
+
+      return parsed &&
+        typeof parsed === "object"
+          ? parsed
+          : {};
+    }catch(error){
+      return {};
+    }
+  }
+
+  function getLogoUrl(){
+    const selectors = [
+      "#bociteartLogo img",
+      ".bociteartLogo img",
+      ".appLogo img",
+      ".logo img",
+      "header img",
+      "img[alt*=\"Bo'CitéArt\"]",
+      "img[alt*=\"Bo’CitéArt\"]",
+      "img[alt*=\"Bociteart\"]"
+    ];
+
+    for(const selector of selectors){
+      const image =
+        document.querySelector(selector);
+
+      if(image && image.src){
+        return image.src;
+      }
+    }
+
+    return "";
+  }
+
+  function createInvoiceNumber(){
+    const date = new Date();
+
+    const year =
+      date.getFullYear();
+
+    const month =
+      String(
+        date.getMonth() + 1
+      ).padStart(2, "0");
+
+    const day =
+      String(
+        date.getDate()
+      ).padStart(2, "0");
+
+    const random =
+      Math.random()
+        .toString(36)
+        .slice(2, 7)
+        .toUpperCase();
+
+    return (
+      "BCA-" +
+      year +
+      month +
+      day +
+      "-" +
+      random
+    );
+  }
+
+  function getInvoiceFooterHtml(){
+    return `
+      <div class="invoiceFooter">
+        <strong>Bo'CitéArt</strong><br>
+        Plateforme de dynamisation économique,
+        citoyenne et territoriale.<br><br>
+
+        Document établi électroniquement.<br>
+        La facture doit être conservée par l’entreprise
+        conformément à ses obligations comptables.<br><br>
+
+        Les mentions juridiques définitives,
+        l’adresse du siège,
+        le numéro SIREN,
+        le numéro de TVA
+        et les coordonnées bancaires seront repris
+        automatiquement depuis les paramètres officiels
+        de Bo'CitéArt.
+      </div>
+    `;
+  }
+
+  function getInvoiceHtml(invoice){
+    const account =
+      loadPartnerAccount();
+
+    const logoUrl =
+      getLogoUrl();
+
+    const customerName =
+      invoice.customerName ||
+      account.companyName ||
+      "Entreprise cliente";
+
+    const customerEmail =
+      invoice.customerEmail ||
+      account.email ||
+      "";
+
+    const customerAddress =
+      invoice.customerAddress ||
+      account.address ||
+      "";
+
+    const customerId =
+      invoice.customerId ||
+      account.siret ||
+      account.siren ||
+      "";
+
+    const paymentReference =
+      invoice.paymentReference ||
+      "Non renseignée";
+
+    return `
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Facture ${escapeValue(invoice.number || "")}</title>
+
+<style>
+  *{
+    box-sizing:border-box;
+  }
+
+  body{
+    margin:0;
+    padding:28px;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#111;
+    background:#fff;
+    line-height:1.45;
+  }
+
+  .invoice{
+    width:100%;
+    max-width:850px;
+    margin:0 auto;
+  }
+
+  .invoiceHeader{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:24px;
+    padding-bottom:20px;
+    border-bottom:3px solid #2f5d46;
+  }
+
+  .invoiceLogo{
+    max-width:210px;
+    max-height:90px;
+    object-fit:contain;
+  }
+
+  .textLogo{
+    font-size:31px;
+    font-weight:900;
+    color:#2f5d46;
+  }
+
+  .textLogo span{
+    color:#b00020;
+    font-style:italic;
+  }
+
+  .invoiceTitle{
+    text-align:right;
+  }
+
+  .invoiceTitle h1{
+    margin:0 0 8px;
+    font-size:30px;
+    color:#2f5d46;
+  }
+
+  .paidBadge{
+    display:inline-block;
+    margin-top:10px;
+    padding:7px 14px;
+    border:2px solid #2f5d46;
+    border-radius:999px;
+    color:#2f5d46;
+    font-weight:900;
+  }
+
+  .columns{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+    margin-top:24px;
+  }
+
+  .card{
+    padding:16px;
+    border:1px solid #bbb;
+    border-radius:10px;
+  }
+
+  .card h2{
+    margin:0 0 12px;
+    font-size:17px;
+    color:#2f5d46;
+  }
+
+  table{
+    width:100%;
+    margin-top:24px;
+    border-collapse:collapse;
+  }
+
+  th,
+  td{
+    padding:12px;
+    border:1px solid #aaa;
+    text-align:left;
+    vertical-align:top;
+  }
+
+  th{
+    background:#f3eee5;
+  }
+
+  .money{
+    text-align:right;
+    white-space:nowrap;
+  }
+
+  .totals{
+    width:360px;
+    max-width:100%;
+    margin:18px 0 0 auto;
+  }
+
+  .totals div{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    padding:8px 0;
+  }
+
+  .totalTTC{
+    padding-top:12px !important;
+    border-top:3px solid #2f5d46;
+    font-size:20px;
+    font-weight:900;
+  }
+
+  .paymentBox{
+    margin-top:24px;
+    padding:16px;
+    border-left:6px solid #2f5d46;
+    background:#f8f5ef;
+  }
+
+  .invoiceFooter{
+    margin-top:35px;
+    padding-top:18px;
+    border-top:2px solid #2f5d46;
+    text-align:center;
+    font-size:12px;
+    color:#444;
+  }
+
+  .printActions{
+    display:flex;
+    gap:10px;
+    margin:24px 0;
+  }
+
+  .printActions button{
+    padding:11px 16px;
+    border:0;
+    border-radius:8px;
+    background:#2f5d46;
+    color:#fff;
+    font-weight:900;
+    cursor:pointer;
+  }
+
+  @media print{
+    body{
+      padding:0;
+    }
+
+    .printActions{
+      display:none;
+    }
+  }
+
+  @media(max-width:650px){
+    .invoiceHeader,
+    .columns{
+      display:block;
+    }
+
+    .invoiceTitle{
+      margin-top:20px;
+      text-align:left;
+    }
+
+    .card{
+      margin-top:12px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="invoice">
+
+  <div class="printActions">
+    <button onclick="window.print()">
+      Imprimer ou enregistrer en PDF
+    </button>
+  </div>
+
+  <div class="invoiceHeader">
+
+    <div>
+      ${
+        logoUrl
+          ? `
+            <img
+              class="invoiceLogo"
+              src="${escapeValue(logoUrl)}"
+              alt="Bo'CitéArt">
+          `
+          : `
+            <div class="textLogo">
+              Bo'Cité<span>Art</span>
+            </div>
+          `
+      }
+    </div>
+
+    <div class="invoiceTitle">
+      <h1>FACTURE</h1>
+
+      <strong>
+        ${escapeValue(invoice.number || "")}
+      </strong>
+
+      <br>
+
+      Date :
+      ${escapeValue(
+        invoice.createdAtFr ||
+        new Date().toLocaleString("fr-FR")
+      )}
+
+      <br>
+
+      <span class="paidBadge">
+        PAYÉE
+      </span>
+    </div>
+  </div>
+
+  <div class="columns">
+
+    <div class="card">
+      <h2>Émetteur</h2>
+
+      <strong>Bo'CitéArt</strong><br>
+      Les coordonnées officielles seront reprises
+      depuis les paramètres administratifs
+      de la structure porteuse.
+    </div>
+
+    <div class="card">
+      <h2>Client</h2>
+
+      <strong>
+        ${escapeValue(customerName)}
+      </strong>
+
+      ${
+        customerId
+          ? `
+            <br>SIREN / SIRET :
+            ${escapeValue(customerId)}
+          `
+          : ""
+      }
+
+      ${
+        customerAddress
+          ? `
+            <br>${escapeValue(customerAddress)}
+          `
+          : ""
+      }
+
+      ${
+        customerEmail
+          ? `
+            <br>${escapeValue(customerEmail)}
+          `
+          : ""
+      }
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Service</th>
+        <th>Période</th>
+        <th class="money">Montant HT</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>
+          ${escapeValue(
+            invoice.planLabel ||
+            invoice.serviceLabel ||
+            "Service professionnel Bo'CitéArt"
+          )}
+        </td>
+
+        <td>
+          ${
+            invoice.billingMode === "annuel"
+              ? "Abonnement annuel"
+              : invoice.billingMode === "mensuel"
+                ? "Abonnement mensuel"
+                : escapeValue(
+                    invoice.billingMode ||
+                    "Paiement ponctuel"
+                  )
+          }
+        </td>
+
+        <td class="money">
+          ${formatMoney(invoice.amountHT)} €
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="totals">
+
+    <div>
+      <span>Total HT</span>
+
+      <strong>
+        ${formatMoney(invoice.amountHT)} €
+      </strong>
+    </div>
+
+    <div>
+      <span>TVA</span>
+
+      <strong>
+        ${formatMoney(invoice.amountVAT)} €
+      </strong>
+    </div>
+
+    <div class="totalTTC">
+      <span>Total TTC</span>
+
+      <span>
+        ${formatMoney(invoice.amountTTC)} €
+      </span>
+    </div>
+  </div>
+
+  <div class="paymentBox">
+    <strong>Paiement confirmé</strong>
+
+    <br><br>
+
+    Mode de paiement :
+    ${escapeValue(
+      invoice.paymentMethod ||
+      "Paiement électronique"
+    )}
+
+    <br>
+
+    Référence :
+    ${escapeValue(paymentReference)}
+
+    <br>
+
+    Date de confirmation :
+    ${escapeValue(
+      invoice.paidAtFr ||
+      invoice.createdAtFr ||
+      new Date().toLocaleString("fr-FR")
+    )}
+  </div>
+
+  ${getInvoiceFooterHtml()}
+
+</div>
+
+</body>
+</html>
+    `;
+  }
+
+  function openInvoice(invoiceId){
+    const invoice =
+      loadInvoices().find(function(item){
+        return item.id === invoiceId;
+      });
+
+    if(!invoice){
+      alert(
+        "Cette facture est introuvable."
+      );
+      return;
+    }
+
+    const html =
+      getInvoiceHtml(invoice);
+
+    const invoiceWindow =
+      window.open("", "_blank");
+
+    if(!invoiceWindow){
+      alert(
+        "Le navigateur a bloqué l’ouverture de la facture."
+      );
+      return;
+    }
+
+    invoiceWindow.document.open();
+    invoiceWindow.document.write(html);
+    invoiceWindow.document.close();
+  }
+
+  function createPaidInvoice(paymentData){
+    paymentData = paymentData || {};
+
+    const account =
+      loadPartnerAccount();
+
+    const amountHT =
+      Number(paymentData.amountHT || 0);
+
+    const vatRate =
+      Number(
+        paymentData.vatRate == null
+          ? 20
+          : paymentData.vatRate
+      );
+
+    const amountVAT =
+      Number(
+        paymentData.amountVAT != null
+          ? paymentData.amountVAT
+          : amountHT * vatRate / 100
+      );
+
+    const amountTTC =
+      Number(
+        paymentData.amountTTC != null
+          ? paymentData.amountTTC
+          : amountHT + amountVAT
+      );
+
+    const now =
+      new Date();
+
+    const invoice = {
+      id:
+        "INV-" +
+        Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .slice(2, 7),
+
+      number:
+        paymentData.number ||
+        createInvoiceNumber(),
+
+      customerName:
+        paymentData.customerName ||
+        account.companyName ||
+        "",
+
+      customerEmail:
+        paymentData.customerEmail ||
+        account.email ||
+        "",
+
+      customerAddress:
+        paymentData.customerAddress ||
+        account.address ||
+        "",
+
+      customerId:
+        paymentData.customerId ||
+        account.siret ||
+        account.siren ||
+        "",
+
+      plan:
+        paymentData.plan || "",
+
+      planLabel:
+        paymentData.planLabel ||
+        paymentData.serviceLabel ||
+        "Service professionnel Bo'CitéArt",
+
+      billingMode:
+        paymentData.billingMode ||
+        "ponctuel",
+
+      amountHT:amountHT,
+      amountVAT:amountVAT,
+      amountTTC:amountTTC,
+
+      vatRate:vatRate,
+
+      status:"paid",
+
+      paymentMethod:
+        paymentData.paymentMethod ||
+        "Paiement électronique",
+
+      paymentReference:
+        paymentData.paymentReference ||
+        "",
+
+      createdAt:now.getTime(),
+      createdAtFr:
+        now.toLocaleString("fr-FR"),
+
+      paidAt:now.getTime(),
+      paidAtFr:
+        now.toLocaleString("fr-FR"),
+
+      emailDeliveryStatus:
+        "a_envoyer"
+    };
+
+    const invoices =
+      loadInvoices();
+
+    invoices.unshift(invoice);
+
+    saveInvoices(invoices);
+
+    /*
+      Ce signal permettra au serveur de production
+      d’envoyer automatiquement la facture par e-mail.
+    */
+    window.dispatchEvent(
+      new CustomEvent(
+        "bociteart:invoice-ready",
+        {
+          detail:{
+            invoice:invoice,
+            recipient:
+              invoice.customerEmail
+          }
+        }
+      )
+    );
+
+    return invoice;
+  }
+
+  /*
+    Cette fonction devra être appelée uniquement
+    par le retour sécurisé du prestataire de paiement.
+  */
+  module.confirmPaidSubscription =
+    function(paymentData){
+
+      const invoice =
+        createPaidInvoice(paymentData);
+
+      alert(
+        "Paiement confirmé.\n\n" +
+        "L’abonnement est activé et la facture a été créée."
+      );
+
+      openInvoice(invoice.id);
+
+      return invoice;
+    };
+
+  module.openProfessionalInvoice =
+    openInvoice;
+
+  module.createPaidInvoice =
+    createPaidInvoice;
+
+  /*
+    Intercepte les anciens boutons afin
+    de ne plus télécharger la facture texte.
+  */
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const button =
+        event.target &&
+        typeof event.target.closest === "function"
+          ? event.target.closest(
+              ".invoiceRetentionDownloadBtn"
+            )
+          : null;
+
+      if(!button){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+        "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+
+      openInvoice(
+        button.getAttribute(
+          "data-invoice-id"
+        )
+      );
+    },
+    true
+  );
+
+  console.log(
+    "✅ Facturation professionnelle Bo'CitéArt chargée"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — CORRECTIF EMPLOI
+   ACCÈS DIRECT À LA PAGE PUBLIQUE DES OFFRES
+   À CONSERVER TOUT EN BAS DU FICHIER
+   ========================================================= */
+
+(function correctEntrepriseEmploymentAccess(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  function openEmploymentDirectly(){
+
+    /*
+      La page Emploi doit rester visible
+      par les citoyens.
+
+      Les actions professionnelles sensibles,
+      comme la publication d'une offre
+      ou l'accès aux candidatures reçues,
+      restent protégées séparément.
+    */
+
+    if(
+      typeof module.openPublicEmploymentList ===
+      "function"
+    ){
+      module.openPublicEmploymentList();
+      return;
+    }
+
+    if(
+      typeof module.openEmploymentOffers ===
+      "function"
+    ){
+      module.openEmploymentOffers();
+      return;
+    }
+
+    module.renderModal(
+      "Emploi dans votre ville",
+      `
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            Emploi dans votre ville
+          </strong>
+
+          <br><br>
+
+          Consultez les offres proposées
+          par les entreprises locales.
+
+          <br><br>
+
+          Les fonctions réservées aux entreprises,
+          comme la publication d'une offre
+          ou la consultation des candidatures,
+          restent accessibles uniquement
+          depuis l'espace professionnel privé.
+        </div>
+      `
+    );
+  }
+
+  /*
+    Ce dernier enregistrement remplace uniquement
+    la mauvaise redirection de l'écran Emploi.
+  */
+
+  module.registerScreen(
+    "emploi",
+    openEmploymentDirectly
+  );
+
+  module.openEmploymentDirectly =
+    openEmploymentDirectly;
+
+  console.log(
+    "✅ Correctif Emploi public chargé"
+  );
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 01
+   OUVERTURE DIRECTE DE LA PAGE EMPLOI
+   ========================================================== */
+
+(function(){
+
+"use strict";
+
+if(!window.BociteEntreprise) return;
+
+const app = window.BociteEntreprise;
+
+/*---------------------------------------------------------
+  Remplace uniquement l'ouverture du bouton Emploi
+---------------------------------------------------------*/
+
+app.openScreen = (function(oldOpen){
+
+return function(screen){
+
+if(screen==="emploi"){
+
+if(typeof app.openEmployment==="function"){
+return app.openEmployment();
+}
+
+if(typeof app.openEmploymentPage==="function"){
+return app.openEmploymentPage();
+}
+
+if(typeof app.showEmployment==="function"){
+return app.showEmployment();
+}
+
+}
+
+return oldOpen.call(this,screen);
+
+};
+
+})(app.openScreen);
+
+console.log("✅ Correctif Emploi chargé");
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 02
+   EMPLOI PUBLIC DIRECT + BOUTON RETOUR
+   ========================================================== */
+
+(function correctEntrepriseEmploymentAndBack(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  function openEmploymentPage(){
+
+    /*
+      La fonction existe déjà dans entreprise.js.
+      Elle ouvre la véritable page publique Emploi.
+    */
+
+    if(
+      typeof app.openPublicEmploymentList ===
+      "function"
+    ){
+      app.openPublicEmploymentList();
+      return;
+    }
+
+    if(
+      typeof app.openEmploymentOffers ===
+      "function"
+    ){
+      app.openEmploymentOffers();
+      return;
+    }
+
+    app.renderModal(
+      "Emploi dans votre ville",
+      `
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            Emploi dans votre ville
+          </strong>
+
+          <br><br>
+
+          Consultez les offres proposées
+          par les entreprises locales.
+        </div>
+      `
+    );
+  }
+
+  /*
+    Le dernier écran enregistré prend la priorité
+    sur les anciennes redirections privées.
+  */
+
+  app.registerScreen(
+    "emploi",
+    openEmploymentPage
+  );
+
+  /*
+    Réparation générale du bouton Retour
+    après chaque ouverture de fenêtre Entreprise.
+  */
+
+  const oldRenderModal =
+    app.renderModal;
+
+  app.renderModal = function(title, html){
+
+    oldRenderModal.call(
+      app,
+      title,
+      html
+    );
+
+    window.setTimeout(function(){
+
+      const buttons =
+        document.querySelectorAll(
+          "#entrepriseBackBtn," +
+          "#entrepriseCorrectedBackBtn," +
+          "[data-entreprise-back]"
+        );
+
+      buttons.forEach(function(button){
+
+        button.onclick = function(event){
+
+          if(event){
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          app.openHome();
+        };
+      });
+
+    },0);
+  };
+
+  app.openEmploymentDirectly =
+    openEmploymentPage;
+
+  console.log(
+    "✅ Emploi direct et bouton Retour réparés"
+  );
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 03
+   PAGE FIDÉLISATION
+   VISIBILITÉ DE L’ENTREPRISE ET SERVICES DE PROXIMITÉ
+   ========================================================== */
+
+(function correctEntrepriseLoyaltyPage(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function openCorrectedLoyaltyPage(){
+
+    app.renderModal(
+      "Attirez et fidélisez vos salariés autrement",
+      `
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            Faites d’abord connaître votre entreprise
+            partout dans la ville
+          </strong>
+
+          <br><br>
+
+          Les citoyens doivent savoir
+          ce que fait votre entreprise,
+          où elle se trouve
+          et quels métiers elle propose.
+
+          <br><br>
+
+          Cette visibilité locale peut faciliter
+          le recrutement,
+          développer le bouche-à-oreille
+          et renforcer la fierté
+          d’appartenance des salariés.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Faites connaître ce qui existe
+            autour du lieu de travail
+          </strong>
+
+          <br><br>
+
+          Faire connaître les commerces,
+          les services,
+          les clubs
+          et les activités accessibles
+          près du lieu de travail.
+
+          <br><br>
+
+          Valoriser les initiatives locales
+          auxquelles l’entreprise participe,
+          mais aussi celles qui existent déjà
+          sur le territoire.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            La proximité améliore aussi
+            le quotidien des salariés
+          </strong>
+
+          <br><br>
+
+          Recruter dans la commune
+          ou dans les communes voisines
+          peut réduire les temps de déplacement,
+          les frais de transport
+          et la fatigue quotidienne.
+
+          <br><br>
+
+          Un salarié regarde la rémunération,
+          mais également :
+
+          <br><br>
+
+          • la distance entre son domicile et son travail ;<br>
+          • la qualité de vie ;<br>
+          • la reconnaissance ;<br>
+          • l’ambiance ;<br>
+          • les services accessibles près de l’entreprise ;<br>
+          • l’engagement local de son employeur.
+        </div>
+
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+          ">
+
+          <button
+            id="loyaltyCorrectedEmploymentBtn"
+            class="choiceBtn"
+            type="button">
+            Trouver du personnel
+          </button>
+
+          <button
+            id="loyaltyCorrectedVisibilityBtn"
+            class="choiceBtn"
+            type="button">
+            Faire connaître mon entreprise
+          </button>
+
+          <button
+            id="loyaltyCorrectedDirectoryBtn"
+            class="choiceBtn"
+            type="button">
+            Découvrir les acteurs locaux
+          </button>
+        </div>
+
+        <div
+          class="box"
+          style="
+            margin-top:14px;
+            border-left:6px solid #2f5d46;
+          ">
+
+          <strong>
+            Vous pourriez être intéressé
+            par d’autres services.
+          </strong>
+
+          <br><br>
+
+          Cliquez sur l’une des propositions
+          dans les bandes défilantes
+          de l’espace Entreprise.
+        </div>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const employmentButton =
+        getElement(
+          "loyaltyCorrectedEmploymentBtn"
+        );
+
+      const visibilityButton =
+        getElement(
+          "loyaltyCorrectedVisibilityBtn"
+        );
+
+      const directoryButton =
+        getElement(
+          "loyaltyCorrectedDirectoryBtn"
+        );
+
+      if(employmentButton){
+        employmentButton.onclick = function(){
+          app.openScreen("emploi");
+        };
+      }
+
+      if(visibilityButton){
+        visibilityButton.onclick = function(){
+          app.openScreen("visibilite");
+        };
+      }
+
+      if(directoryButton){
+        directoryButton.onclick = function(){
+
+          if(
+            typeof app.openCorrectedDirectory ===
+            "function"
+          ){
+            app.openCorrectedDirectory();
+            return;
+          }
+
+          app.openScreen("annuaire");
+        };
+      }
+
+    },0);
+  }
+
+  app.registerScreen(
+    "fidelisation",
+    openCorrectedLoyaltyPage
+  );
+
+  app.openCorrectedLoyaltyPage =
+    openCorrectedLoyaltyPage;
+
+  console.log(
+    "✅ Page Fidélisation corrigée"
+  );
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 04
+   LISTE LOCALE DES ENTREPRISES
+   ET CANDIDATURES SPONTANÉES
+   ========================================================== */
+
+(function addEntrepriseLocalDirectoryAndSpontaneousCv(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  const SPONTANEOUS_STORE_KEY =
+    "bociteart_entreprise_spontaneous_cv_v1";
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return app.safeEscape(value);
+  }
+
+  function normalizeText(value){
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  }
+
+  function loadCompanies(){
+
+    if(
+      typeof app.loadDirectory ===
+      "function"
+    ){
+      const companies =
+        app.loadDirectory();
+
+      if(Array.isArray(companies)){
+        return companies;
+      }
+    }
+
+    return [];
+  }
+
+  function loadSpontaneousApplications(){
+
+    try{
+      const raw =
+        localStorage.getItem(
+          SPONTANEOUS_STORE_KEY
+        );
+
+      const parsed =
+        raw ? JSON.parse(raw) : [];
+
+      return Array.isArray(parsed)
+        ? parsed
+        : [];
+
+    }catch(error){
+
+      console.warn(
+        "Lecture des candidatures spontanées impossible :",
+        error
+      );
+
+      return [];
+    }
+  }
+
+  function saveSpontaneousApplications(list){
+
+    try{
+      localStorage.setItem(
+        SPONTANEOUS_STORE_KEY,
+        JSON.stringify(list || [])
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Enregistrement de la candidature impossible :",
+        error
+      );
+    }
+  }
+
+  function openLocalDirectory(){
+
+    app.renderModal(
+      "Entreprises et commerces de votre ville",
+      `
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            Découvrez les entreprises
+            et les commerces de votre ville
+          </strong>
+
+          <br><br>
+
+          Avant de chercher ailleurs,
+          les citoyens et les professionnels
+          doivent pouvoir connaître
+          ce qui existe déjà près de chez eux.
+
+          <br><br>
+
+          Cette liste permet de retrouver
+          les métiers,
+          les activités,
+          les savoir-faire
+          et les services présents localement.
+        </div>
+
+        <div class="box">
+
+          <strong>
+            Rechercher une entreprise,
+            un commerce ou un métier
+          </strong>
+
+          <br><br>
+
+          <input
+            id="localDirectorySearchInput"
+            class="miniField"
+            type="search"
+            placeholder="Exemple : électricien, comptable, menuisier">
+        </div>
+
+        <div
+          id="localDirectoryResultCount"
+          class="muted"
+          style="margin-top:10px;">
+        </div>
+
+        <div
+          id="localDirectoryResultList"
+          style="margin-top:10px;">
+        </div>
+
+        <div
+          class="box"
+          style="
+            margin-top:14px;
+            border-left:6px solid #2f5d46;
+          ">
+
+          <strong>
+            Favoriser les échanges entre professionnels locaux
+          </strong>
+
+          <br><br>
+
+          Chaque entreprise ou commerce
+          pourra choisir librement
+          de proposer un avantage partenaire :
+
+          <br><br>
+
+          • 5 % ;<br>
+          • 10 % ;<br>
+          • ou un avantage personnalisé.
+
+          <br><br>
+
+          Cet avantage restera facultatif.
+
+          <br><br>
+
+          Pour être réellement utile,
+          il devra être plus favorable
+          que les conditions habituellement proposées
+          aux clients.
+        </div>
+
+        <div
+          class="box"
+          style="
+            margin-top:14px;
+            border-left:6px solid #2f5d46;
+          ">
+
+          <strong>
+            Vous pourriez être intéressé
+            par d’autres services.
+          </strong>
+
+          <br><br>
+
+          Cliquez sur l’une des propositions
+          dans les bandes défilantes
+          de l’espace Entreprise.
+        </div>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const input =
+        getElement(
+          "localDirectorySearchInput"
+        );
+
+      if(input){
+        input.oninput =
+          renderLocalDirectory;
+      }
+
+      renderLocalDirectory();
+
+    },0);
+  }
+
+  function renderLocalDirectory(){
+
+    const host =
+      getElement(
+        "localDirectoryResultList"
+      );
+
+    const count =
+      getElement(
+        "localDirectoryResultCount"
+      );
+
+    const input =
+      getElement(
+        "localDirectorySearchInput"
+      );
+
+    if(!host){
+      return;
+    }
+
+    const query =
+      normalizeText(
+        input ? input.value : ""
+      );
+
+    const companies =
+      loadCompanies()
+        .filter(function(company){
+
+          const searchable =
+            normalizeText(
+              [
+                company.name,
+                company.activity,
+                company.description,
+                company.city
+              ].join(" ")
+            );
+
+          return (
+            !query ||
+            searchable.includes(query)
+          );
+        })
+        .sort(function(a,b){
+
+          return String(
+            a.name || ""
+          ).localeCompare(
+            String(b.name || ""),
+            "fr",
+            {
+              sensitivity:"base"
+            }
+          );
+        });
+
+    if(count){
+      count.textContent =
+        companies.length +
+        " entreprise(s) ou commerce(s) trouvé(s).";
+    }
+
+    if(!companies.length){
+
+      host.innerHTML = `
+        <div class="box">
+          Aucun résultat ne correspond
+          à votre recherche.
+        </div>
+      `;
+
+      return;
+    }
+
+    host.innerHTML =
+      companies.map(function(company){
+
+        return `
+          <div class="box">
+
+            <strong style="font-size:17px;">
+              ${escapeValue(
+                company.name || ""
+              )}
+            </strong>
+
+            <br><br>
+
+            <strong style="color:#2f5d46;">
+              ${escapeValue(
+                company.activity || ""
+              )}
+            </strong>
+
+            <br><br>
+
+            ${escapeValue(
+              company.description || ""
+            )}
+
+            ${
+              company.city
+                ? `
+                  <br><br>
+
+                  Commune :
+                  <strong>
+                    ${escapeValue(
+                      company.city
+                    )}
+                  </strong>
+                `
+                : ""
+            }
+
+            <button
+              class="choiceBtn localDirectoryCvBtn"
+              type="button"
+              data-company-id="${escapeValue(
+                company.id
+              )}"
+              style="width:100%;margin-top:12px;">
+              Envoyer une candidature spontanée
+            </button>
+          </div>
+        `;
+      }).join("");
+
+    host
+      .querySelectorAll(
+        ".localDirectoryCvBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          openSpontaneousApplicationForm(
+            button.getAttribute(
+              "data-company-id"
+            )
+          );
+        };
+      });
+  }
+
+  function openSpontaneousApplicationForm(companyId){
+
+    const company =
+      loadCompanies()
+        .find(function(item){
+
+          return item.id === companyId;
+        });
+
+    if(!company){
+
+      alert(
+        "Cette entreprise est introuvable."
+      );
+
+      return;
+    }
+
+    app.renderModal(
+      "Candidature spontanée",
+      `
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong style="font-size:18px;">
+            ${escapeValue(
+              company.name
+            )}
+          </strong>
+
+          <br><br>
+
+          ${escapeValue(
+            company.activity || ""
+          )}
+
+          <br><br>
+
+          Vous pouvez envoyer votre candidature
+          même si cette entreprise
+          n’a pas publié d’offre.
+        </div>
+
+        <label style="font-weight:900;">
+          Nom et prénom
+        </label>
+
+        <input
+          id="spontaneousCvName"
+          class="miniField"
+          type="text"
+          placeholder="Nom et prénom">
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Adresse e-mail
+        </label>
+
+        <input
+          id="spontaneousCvEmail"
+          class="miniField"
+          type="email"
+          placeholder="Adresse e-mail">
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Téléphone
+        </label>
+
+        <input
+          id="spontaneousCvPhone"
+          class="miniField"
+          type="tel"
+          placeholder="Téléphone">
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Métier ou poste recherché
+        </label>
+
+        <input
+          id="spontaneousCvJob"
+          class="miniField"
+          type="text"
+          placeholder="Exemple : vendeur, comptable, technicien">
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          Message à l’entreprise
+        </label>
+
+        <textarea
+          id="spontaneousCvMessage"
+          class="miniField"
+          style="min-height:110px;"
+          placeholder="Présentez brièvement votre candidature.">
+        </textarea>
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            font-weight:900;
+          ">
+          CV
+        </label>
+
+        <input
+          id="spontaneousCvFile"
+          class="miniField"
+          type="file"
+          accept=".pdf,.doc,.docx">
+
+        <div
+          class="box"
+          style="margin-top:12px;">
+
+          Votre candidature sera transmise
+          uniquement à cette entreprise.
+
+          <br><br>
+
+          Elle ne sera pas visible publiquement
+          ni accessible aux autres entreprises.
+        </div>
+
+        <label class="miniCheck">
+
+          <input
+            id="spontaneousCvConsent"
+            type="checkbox">
+
+          <span>
+            J’accepte que cette entreprise
+            conserve ma candidature
+            dans son historique privé
+            afin de pouvoir me recontacter
+            ultérieurement.
+          </span>
+        </label>
+
+        <button
+          id="spontaneousCvSendBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Envoyer ma candidature
+        </button>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const sendButton =
+        getElement(
+          "spontaneousCvSendBtn"
+        );
+
+      if(sendButton){
+
+        sendButton.onclick = function(){
+
+          saveSpontaneousApplication(
+            company
+          );
+        };
+      }
+
+    },0);
+  }
+
+  function saveSpontaneousApplication(company){
+
+    const name =
+      String(
+        getElement("spontaneousCvName")
+          ? getElement("spontaneousCvName").value
+          : ""
+      ).trim();
+
+    const email =
+      String(
+        getElement("spontaneousCvEmail")
+          ? getElement("spontaneousCvEmail").value
+          : ""
+      ).trim();
+
+    const phone =
+      String(
+        getElement("spontaneousCvPhone")
+          ? getElement("spontaneousCvPhone").value
+          : ""
+      ).trim();
+
+    const job =
+      String(
+        getElement("spontaneousCvJob")
+          ? getElement("spontaneousCvJob").value
+          : ""
+      ).trim();
+
+    const message =
+      String(
+        getElement("spontaneousCvMessage")
+          ? getElement("spontaneousCvMessage").value
+          : ""
+      ).trim();
+
+    const fileInput =
+      getElement(
+        "spontaneousCvFile"
+      );
+
+    const consent =
+      getElement(
+        "spontaneousCvConsent"
+      );
+
+    if(
+      !name ||
+      !email ||
+      !phone ||
+      !job ||
+      !message
+    ){
+
+      alert(
+        "Veuillez remplir toutes les informations."
+      );
+
+      return;
+    }
+
+    if(!email.includes("@")){
+
+      alert(
+        "Veuillez renseigner une adresse e-mail valide."
+      );
+
+      return;
+    }
+
+    if(
+      !fileInput ||
+      !fileInput.files ||
+      !fileInput.files.length
+    ){
+
+      alert(
+        "Veuillez sélectionner votre CV."
+      );
+
+      return;
+    }
+
+    if(
+      !consent ||
+      !consent.checked
+    ){
+
+      alert(
+        "Vous devez accepter la conservation de votre candidature."
+      );
+
+      return;
+    }
+
+    const applications =
+      loadSpontaneousApplications();
+
+    applications.unshift({
+
+      id:
+        "CANDIDATURE-SPONTANEE-" +
+        Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .slice(2,7),
+
+      companyId:company.id,
+
+      companyName:
+        company.name,
+
+      candidateName:name,
+
+      candidateEmail:email,
+
+      candidatePhone:phone,
+
+      requestedJob:job,
+
+      message:message,
+
+      cvName:
+        fileInput.files[0].name,
+
+      status:"recue",
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+    });
+
+    saveSpontaneousApplications(
+      applications
+    );
+
+    alert(
+      "Votre candidature spontanée a été enregistrée."
+    );
+
+    openLocalDirectory();
+  }
+
+  app.registerScreen(
+    "annuaire_local",
+    openLocalDirectory
+  );
+
+  app.openCorrectedDirectory =
+    openLocalDirectory;
+
+  app.openLocalDirectory =
+    openLocalDirectory;
+
+  app.openSpontaneousApplicationForm =
+    openSpontaneousApplicationForm;
+
+  app.loadSpontaneousApplications =
+    loadSpontaneousApplications;
+
+  console.log(
+    "✅ Liste locale et candidatures spontanées chargées"
+  );
+
+})();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 05
+   HISTORIQUE DES CANDIDATURES
+   DANS LE TABLEAU DE DIRECTION
+   ========================================================== */
+
+(function addCandidateHistoryToDirection(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module introuvable."
+    );
+    return;
+  }
+
+  const EMPLOYMENT_STORE_KEY =
+    "bociteart_entreprise_employment_v1";
+
+  const SPONTANEOUS_STORE_KEY =
+    "bociteart_entreprise_spontaneous_cv_v1";
+
+  function escapeValue(value){
+    return app.safeEscape(value);
+  }
+
+  function loadJson(key, fallback){
+
+    try{
+
+      const raw =
+        localStorage.getItem(key);
+
+      const parsed =
+        raw ? JSON.parse(raw) : null;
+
+      return parsed == null
+        ? fallback
+        : parsed;
+
+    }catch(error){
+
+      console.warn(
+        "Lecture des candidatures impossible :",
+        error
+      );
+
+      return fallback;
+    }
+  }
+
+  function loadEmploymentApplications(){
+
+    const data =
+      loadJson(
+        EMPLOYMENT_STORE_KEY,
+        {
+          offers:[],
+          applications:[]
+        }
+      );
+
+    return Array.isArray(
+      data.applications
+    )
+      ? data.applications
+      : [];
+  }
+
+  function loadSpontaneousApplications(){
+
+    const list =
+      loadJson(
+        SPONTANEOUS_STORE_KEY,
+        []
+      );
+
+    return Array.isArray(list)
+      ? list
+      : [];
+  }
+
+  function getCandidateHistoryButtonHtml(){
+
+    const offerApplications =
+      loadEmploymentApplications();
+
+    const spontaneousApplications =
+      loadSpontaneousApplications();
+
+    const total =
+      offerApplications.length +
+      spontaneousApplications.length;
+
+    return `
+      <div
+        class="box"
+        style="
+          margin-top:16px;
+          border-left:6px solid #2f5d46;
+        ">
+
+        <strong style="font-size:17px;">
+          Historique des candidatures
+        </strong>
+
+        <br><br>
+
+        Toutes les candidatures restent disponibles
+        dans votre espace privé.
+
+        <br><br>
+
+        Vous pouvez retrouver un candidat
+        plusieurs mois plus tard
+        lorsqu’un nouveau besoin apparaît.
+
+        <br><br>
+
+        Votre carnet de candidats
+        se construit progressivement.
+
+        <br><br>
+
+        Candidatures reçues :
+
+        <strong>
+          ${total}
+        </strong>
+
+        <br><br>
+
+        • réponses à une offre :
+        <strong>
+          ${offerApplications.length}
+        </strong>
+
+        <br>
+
+        • candidatures spontanées :
+        <strong>
+          ${spontaneousApplications.length}
+        </strong>
+
+        <button
+          id="directionCandidateHistoryBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Consulter l’historique des candidatures
+        </button>
+      </div>
+    `;
+  }
+
+  function openCandidateHistory(){
+
+    const offerApplications =
+      loadEmploymentApplications()
+        .slice()
+        .sort(function(a,b){
+
+          return Number(
+            b.createdAt || 0
+          ) -
+          Number(
+            a.createdAt || 0
+          );
+        });
+
+    const spontaneousApplications =
+      loadSpontaneousApplications()
+        .slice()
+        .sort(function(a,b){
+
+          return Number(
+            b.createdAt || 0
+          ) -
+          Number(
+            a.createdAt || 0
+          );
+        });
+
+    app.renderModal(
+      "Historique des candidatures",
+      `
+        <div
+          class="box"
+          style="border-left:6px solid #b00020;">
+
+          <strong style="font-size:18px;">
+            Espace privé de l’entreprise
+          </strong>
+
+          <br><br>
+
+          Cet historique n’est pas visible
+          par les citoyens
+          ni par les autres entreprises.
+
+          <br><br>
+
+          Il permet de retrouver
+          les candidatures reçues
+          lorsqu’un nouveau besoin apparaît.
+        </div>
+
+        <div
+          class="box"
+          style="border-left:6px solid #2f5d46;">
+
+          <strong>
+            Candidatures liées à une offre
+          </strong>
+
+          <br><br>
+
+          Nombre reçu :
+
+          <strong>
+            ${offerApplications.length}
+          </strong>
+        </div>
+
+        ${
+          offerApplications.length
+            ? offerApplications.map(function(application){
+
+                return `
+                  <div class="box">
+
+                    <strong style="font-size:16px;">
+                      ${escapeValue(
+                        application.candidateName ||
+                        "Candidat"
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Offre :
+
+                    <strong>
+                      ${escapeValue(
+                        application.offerTitle ||
+                        "Non renseignée"
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Entreprise :
+
+                    ${escapeValue(
+                      application.companyName ||
+                      ""
+                    )}
+
+                    <br><br>
+
+                    E-mail :
+
+                    ${escapeValue(
+                      application.candidateEmail ||
+                      ""
+                    )}
+
+                    <br>
+
+                    Téléphone :
+
+                    ${escapeValue(
+                      application.candidatePhone ||
+                      ""
+                    )}
+
+                    <br><br>
+
+                    CV :
+
+                    ${escapeValue(
+                      application.cvName ||
+                      "Non renseigné"
+                    )}
+
+                    <br><br>
+
+                    Message :
+
+                    ${escapeValue(
+                      application.message ||
+                      ""
+                    )}
+
+                    <br><br>
+
+                    Reçue le :
+
+                    ${escapeValue(
+                      application.createdAtFr ||
+                      ""
+                    )}
+                  </div>
+                `;
+              }).join("")
+            : `
+              <div class="box">
+                Aucune candidature liée
+                à une offre n’est enregistrée.
+              </div>
+            `
+        }
+
+        <div
+          class="box"
+          style="
+            margin-top:16px;
+            border-left:6px solid #2f5d46;
+          ">
+
+          <strong>
+            Candidatures spontanées
+          </strong>
+
+          <br><br>
+
+          Nombre reçu :
+
+          <strong>
+            ${spontaneousApplications.length}
+          </strong>
+        </div>
+
+        ${
+          spontaneousApplications.length
+            ? spontaneousApplications.map(function(application){
+
+                return `
+                  <div class="box">
+
+                    <strong style="font-size:16px;">
+                      ${escapeValue(
+                        application.candidateName ||
+                        "Candidat"
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Entreprise destinataire :
+
+                    <strong>
+                      ${escapeValue(
+                        application.companyName ||
+                        ""
+                      )}
+                    </strong>
+
+                    <br><br>
+
+                    Métier ou poste recherché :
+
+                    ${escapeValue(
+                      application.requestedJob ||
+                      ""
+                    )}
+
+                    <br><br>
+
+                    E-mail :
+
+                    ${escapeValue(
+                      application.candidateEmail ||
+                      ""
+                    )}
+
+                    <br>
+
+                    Téléphone :
+
+                    ${escapeValue(
+                      application.candidatePhone ||
+                      ""
+                    )}
+
+                    <br><br>
+
+                    CV :
+
+                    ${escapeValue(
+                      application.cvName ||
+                      "Non renseigné"
+                    )}
+
+                    <br><br>
+
+                    Message :
+
+                    ${escapeValue(
+                      application.message ||
+                      ""
+                    )}
+
+                    <br><br>
+
+                    Reçue le :
+
+                    ${escapeValue(
+                      application.createdAtFr ||
+                      ""
+                    )}
+                  </div>
+                `;
+              }).join("")
+            : `
+              <div class="box">
+                Aucune candidature spontanée
+                n’est enregistrée.
+              </div>
+            `
+        }
+
+        <button
+          id="candidateHistoryReturnDirectionBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;margin-top:12px;">
+          Retour au Tableau de Direction
+        </button>
+      `
+    );
+
+    window.setTimeout(function(){
+
+      const returnButton =
+        document.getElementById(
+          "candidateHistoryReturnDirectionBtn"
+        );
+
+      if(returnButton){
+
+        returnButton.onclick = function(){
+
+          app.openScreen(
+            "direction"
+          );
+        };
+      }
+
+    },0);
+  }
+
+  /*
+    Ce correctif ajoute automatiquement
+    le bloc Historique lorsque le Tableau
+    de Direction est ouvert.
+
+    Il ne remplace pas les autres informations
+    déjà présentes dans le Tableau de Direction.
+  */
+
+  if(
+    !app.__candidateHistoryDirectionPatched
+  ){
+
+    app.__candidateHistoryDirectionPatched =
+      true;
+
+    const previousRenderModal =
+      app.renderModal;
+
+    app.renderModal = function(
+      title,
+      html
+    ){
+
+      let correctedHtml =
+        html;
+
+      if(
+        String(title || "")
+          .toLowerCase()
+          .includes(
+            "tableau de direction"
+          )
+      ){
+
+        correctedHtml =
+          String(html || "") +
+          getCandidateHistoryButtonHtml();
+      }
+
+      previousRenderModal.call(
+        app,
+        title,
+        correctedHtml
+      );
+
+      if(
+        String(title || "")
+          .toLowerCase()
+          .includes(
+            "tableau de direction"
+          )
+      ){
+
+        window.setTimeout(function(){
+
+          const historyButton =
+            document.getElementById(
+              "directionCandidateHistoryBtn"
+            );
+
+          if(historyButton){
+
+            historyButton.onclick =
+              openCandidateHistory;
+          }
+
+        },0);
+      }
+    };
+  }
+
+  app.openCandidateHistory =
+    openCandidateHistory;
+
+  console.log(
+    "✅ Historique des candidatures ajouté au Tableau de Direction"
+  );
+
+})();
+
+
+
 
 
 
