@@ -3361,41 +3361,57 @@ function getHomeHtml(){
 
       <div class="box">
 
-        <strong>
-          Commencez par regarder autour de vous
-        </strong>
+  <strong style="font-size:22px;color:#2f5d46;">
+    Connaissez-vous le nom de cinq entreprises de votre commune ?
+  </strong>
 
-        <br><br>
+  <br><br>
 
-        Découvrez les entreprises
-        et les commerces présents
-        dans votre commune :
+  Probablement pas. Pourtant, combien de fois entend-on :
 
-        <br><br>
+  <br><br>
 
-        • leurs métiers ;<br>
-        • leurs savoir-faire ;<br>
-        • leurs produits ;<br>
-        • leurs services ;<br>
-        • leurs besoins ;<br>
-        • leurs recherches professionnelles.
+  « Je ne savais pas qu'ils faisaient cela. »
 
-        <br><br>
+  <br>
 
-        Recherchez localement :
+  ou
 
-        <br><br>
+  <br>
 
-        • un fournisseur ;<br>
-        • un sous-traitant ;<br>
-        • une compétence complémentaire ;<br>
-        • un partenaire ;<br>
-        • un futur salarié ;<br>
-        • un nouveau client professionnel.
-      </div>
+  « Je ne savais même pas que cette entreprise existait. »
 
-      <div class="box">
+  <br><br>
 
+  Bo'CitéArt rend enfin visibles les savoir-faire du territoire afin de créer de nouvelles rencontres, de nouveaux partenariats et de nouvelles opportunités pour tous.
+
+  <br><br>
+
+  Vous pourrez découvrir les entreprises et commerces présents dans votre commune :
+
+  <br><br>
+
+  • leurs métiers ;<br>
+  • leurs savoir-faire ;<br>
+  • leurs produits ;<br>
+  • leurs services ;<br>
+  • leurs besoins ;<br>
+  • leurs recherches professionnelles.
+
+  <br><br>
+
+  Vous pourrez également rechercher localement :
+
+  <br><br>
+
+  • un fournisseur ;<br>
+  • un sous-traitant ;<br>
+  • une compétence complémentaire ;<br>
+  • un partenaire ;<br>
+  • un futur salarié ;<br>
+  • un nouveau client professionnel.
+
+</div>
         <strong>
           Une liste locale commune
         </strong>
