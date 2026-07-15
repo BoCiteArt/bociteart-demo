@@ -41528,6 +41528,384 @@ console.log(
 
 })();
 
+/* =========================================================
+   BO'CITÉART — CORRECTIF FINAL ASSISTANT ENTREPRISE
+   RÉPONSE AFFICHÉE DIRECTEMENT DANS L’ENCART
+   ========================================================= */
+
+(function forceEntrepriseAssistantAnswer(){
+
+  "use strict";
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[’']/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function escapeHtml(value){
+
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function findCity(question){
+
+    const text =
+      String(question || "").trim();
+
+    const match =
+      text.match(
+        /(?:ville de|commune de|sur|à|au|dans)\s+([a-zA-ZÀ-ÿ' -]{2,35})(?:\?|$)/i
+      );
+
+    return match
+      ? String(match[1] || "").trim()
+      : "";
+  }
+
+  function buildAnswer(question){
+
+    const normalized =
+      normalizeText(question);
+
+    const city =
+      findCity(question);
+
+    if(
+      normalized.includes("gros oeuvre") ||
+      normalized.includes("batiment") ||
+      normalized.includes("macon") ||
+      normalized.includes("construction") ||
+      normalized.includes("renovation") ||
+      normalized.includes("bricolage") ||
+      normalized.includes("artisan") ||
+      normalized.includes("entreprise")
+    ){
+      return {
+        title:
+          "Recherche d’une entreprise ou d’un professionnel",
+
+        text:
+          city
+            ? (
+                "Bo'CitéArt recherchera d’abord les entreprises correspondant à votre besoin à " +
+                city +
+                ", puis dans les communes voisines et, si nécessaire, dans la région."
+              )
+            : (
+                "Bo'CitéArt recherchera d’abord les entreprises correspondant à votre besoin dans votre commune, puis dans les communes voisines et dans la région."
+              ),
+
+        advice:[
+          "Précisez le métier recherché : gros œuvre, maçonnerie, couverture, plomberie, électricité ou rénovation.",
+          "Consultez les fiches des entreprises locales.",
+          "Vérifiez leurs métiers, leurs services et leurs coordonnées.",
+          "Demandez ensuite un ou plusieurs devis."
+        ],
+
+        buttonText:
+          "Rechercher les entreprises",
+
+        screen:
+          "annuaire"
+      };
+    }
+
+    if(
+      normalized.includes("emploi") ||
+      normalized.includes("personnel") ||
+      normalized.includes("recrut") ||
+      normalized.includes("salarie") ||
+      normalized.includes("apprenti")
+    ){
+      return {
+        title:
+          "Votre demande concerne l’emploi",
+
+        text:
+          "Bo'CitéArt peut vous orienter vers les offres locales, les candidatures spontanées et les entreprises qui recrutent.",
+
+        advice:[
+          "Consultez les offres disponibles.",
+          "Déposez une offre depuis l’espace professionnel.",
+          "Consultez les candidatures reçues.",
+          "Élargissez aux communes voisines lorsque cela est nécessaire."
+        ],
+
+        buttonText:
+          "Ouvrir la rubrique Emploi",
+
+        screen:
+          "emploi"
+      };
+    }
+
+    if(
+      normalized.includes("charge") ||
+      normalized.includes("electricite") ||
+      normalized.includes("gaz") ||
+      normalized.includes("assurance") ||
+      normalized.includes("telephonie") ||
+      normalized.includes("mutualisation")
+    ){
+      return {
+        title:
+          "Votre demande concerne la réduction des charges",
+
+        text:
+          "Plusieurs entreprises peuvent se regrouper pour comparer des propositions et améliorer leur pouvoir de négociation.",
+
+        advice:[
+          "Consultez les mutualisations proposées.",
+          "Déclarez votre intérêt sans engagement.",
+          "Attendez que le nombre nécessaire d’entreprises soit atteint.",
+          "Comparez ensuite les offres reçues."
+        ],
+
+        buttonText:
+          "Voir les mutualisations",
+
+        screen:
+          "mutualisation"
+      };
+    }
+
+    if(
+      normalized.includes("mecenat") ||
+      normalized.includes("mecene") ||
+      normalized.includes("don")
+    ){
+      return {
+        title:
+          "Votre demande concerne le mécénat",
+
+        text:
+          "Bo'CitéArt peut vous présenter les projets locaux et les différentes formes de contribution possibles.",
+
+        advice:[
+          "Soutien financier.",
+          "Don de matériel ou de produits.",
+          "Mécénat de compétences.",
+          "Accompagnement d’un projet local."
+        ],
+
+        buttonText:
+          "Découvrir le mécénat",
+
+        screen:
+          "mecenat"
+      };
+    }
+
+    return {
+      title:
+        "Première orientation Bo'CitéArt",
+
+      text:
+        city
+          ? (
+              "Votre demande sera recherchée en priorité à " +
+              city +
+              ", puis dans les communes voisines."
+            )
+          : (
+              "Votre demande sera recherchée en priorité dans votre commune, puis dans les communes voisines."
+            ),
+
+      advice:[
+        "Précisez le métier, le service ou le type d’entreprise recherché.",
+        "Consultez les acteurs locaux disponibles.",
+        "Élargissez progressivement la zone de recherche.",
+        "Contactez directement les professionnels correspondant à votre besoin."
+      ],
+
+      buttonText:
+        "Ouvrir la recherche professionnelle",
+
+      screen:
+        "annuaire"
+    };
+  }
+
+  function displayAnswer(){
+
+    const input =
+      document.getElementById(
+        "entrepriseAiQuestion"
+      );
+
+    const host =
+      document.getElementById(
+        "entrepriseAiAnswer"
+      );
+
+    if(!input || !host){
+      return;
+    }
+
+    const question =
+      String(input.value || "").trim();
+
+    if(!question){
+
+      alert(
+        "Écrivez votre question."
+      );
+
+      return;
+    }
+
+    const answer =
+      buildAnswer(question);
+
+    host.innerHTML = `
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          border-left:6px solid #2f5d46;
+          color:#111;
+        ">
+
+        <strong style="font-size:19px;">
+          ${escapeHtml(answer.title)}
+        </strong>
+
+        <br><br>
+
+        ${escapeHtml(answer.text)}
+
+        <br><br>
+
+        ${
+          answer.advice.map(function(line){
+
+            return `
+              • ${escapeHtml(line)}
+              <br>
+            `;
+          }).join("")
+        }
+
+        <button
+          id="entrepriseFinalAiActionBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:14px;
+          ">
+          ${escapeHtml(answer.buttonText)}
+        </button>
+      </div>
+    `;
+
+    const actionButton =
+      document.getElementById(
+        "entrepriseFinalAiActionBtn"
+      );
+
+    if(actionButton){
+
+      actionButton.onclick = function(event){
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const app =
+          window.BociteEntreprise;
+
+        if(
+          app &&
+          typeof app.openScreen ===
+          "function"
+        ){
+          app.openScreen(
+            answer.screen
+          );
+        }
+      };
+    }
+
+    host.scrollIntoView({
+      behavior:"smooth",
+      block:"nearest"
+    });
+  }
+
+  /*
+    Capture prioritaire du clic :
+    empêche l’ancien message provisoire
+    de remplacer notre véritable réponse.
+  */
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const target =
+        event.target;
+
+      if(
+        !target ||
+        typeof target.closest !==
+        "function"
+      ){
+        return;
+      }
+
+      const button =
+        target.closest(
+          "#entrepriseAiAskBtn"
+        );
+
+      if(!button){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      displayAnswer();
+
+    },
+    true
+  );
+
+  document.addEventListener(
+    "keydown",
+    function(event){
+
+      if(
+        event.key === "Enter" &&
+        event.target &&
+        event.target.id ===
+        "entrepriseAiQuestion"
+      ){
+        event.preventDefault();
+        displayAnswer();
+      }
+    },
+    true
+  );
+
+  console.log(
+    "✅ Réponse visible de l’assistant Entreprise installée"
+  );
+
+})();
+
 
 
 
