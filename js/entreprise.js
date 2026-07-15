@@ -40023,7 +40023,471 @@ console.log(
   );
 
 })();
+/* =========================================================
+   BO'CITÉART — CORRECTIF FINAL
+   RETOUR UNIQUE • ANNUAIRE LOCAL RÉEL
+   ========================================================= */
 
+(function correctEntrepriseNavigationAndDirectory(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[’']/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function getModalContent(){
+
+    return document.querySelector(
+      "#modalContent," +
+      ".modal-content," +
+      ".modalContent," +
+      ".modal-body," +
+      ".modalBody"
+    );
+  }
+
+  function openPreviousPage(){
+
+    if(
+      typeof app.goBack ===
+      "function"
+    ){
+      app.goBack();
+      return;
+    }
+
+    if(
+      typeof app.openHome ===
+      "function"
+    ){
+      app.openHome();
+    }
+  }
+
+  function correctBackButtons(){
+
+    const modal =
+      getModalContent();
+
+    if(!modal){
+      return;
+    }
+
+    const buttons =
+      Array.from(
+        modal.querySelectorAll("button")
+      );
+
+    /*
+      Suppression du grand bouton :
+      « Retour à la page précédente ».
+    */
+
+    buttons.forEach(function(button){
+
+      const text =
+        normalizeText(
+          button.textContent
+        );
+
+      if(
+        text.includes(
+          "retour a la page precedente"
+        )
+      ){
+        button.remove();
+      }
+    });
+
+    /*
+      Recherche des petits boutons Retour.
+    */
+
+    const returnButtons =
+      Array.from(
+        modal.querySelectorAll("button")
+      )
+      .filter(function(button){
+
+        const text =
+          normalizeText(
+            button.textContent
+          );
+
+        return (
+          text === "retour" ||
+          text === "retour a l espace entreprise"
+        );
+      });
+
+    /*
+      On ne conserve qu’un seul bouton Retour.
+    */
+
+    returnButtons.forEach(function(button, index){
+
+      if(index > 0){
+        button.remove();
+        return;
+      }
+
+      button.textContent =
+        "Retour";
+
+      button.onclick = function(event){
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        openPreviousPage();
+      };
+    });
+  }
+
+  function openRealLocalDirectory(){
+
+    if(
+      typeof app.openLocalDirectory ===
+      "function"
+    ){
+      app.openLocalDirectory();
+      return;
+    }
+
+    if(
+      typeof app.openCorrectedDirectory ===
+      "function"
+    ){
+      app.openCorrectedDirectory();
+      return;
+    }
+
+    alert(
+      "L’annuaire local est momentanément indisponible."
+    );
+  }
+
+  /*
+    Le véritable annuaire local remplace
+    définitivement l’écran d’attente inutile.
+  */
+
+  app.registerScreen(
+    "annuaire_local",
+    openRealLocalDirectory
+  );
+
+  /*
+    Correction directe des boutons
+    « Entreprises et commerces de ma ville ».
+  */
+
+  function correctDirectoryButtons(){
+
+    document
+      .querySelectorAll(
+        "[data-entreprise-screen='annuaire_local']," +
+        "#employmentLocalCompaniesBtn," +
+        "#developmentDirectoryBtn," +
+        "#loyaltyLocalDirectoryBtn," +
+        "#visibilityDirectoryBtn," +
+        "#bociteEmploymentDirectoryBtn," +
+        "#publicEmploymentDirectoryBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(event){
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          openRealLocalDirectory();
+        };
+      });
+  }
+
+  function applyCorrections(){
+
+    window.setTimeout(function(){
+
+      correctBackButtons();
+      correctDirectoryButtons();
+
+    },30);
+  }
+
+  const observer =
+    new MutationObserver(function(){
+
+      applyCorrections();
+    });
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  applyCorrections();
+
+  console.log(
+    "✅ Retour unique et annuaire local réel corrigés"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — CORRECTIF FINAL
+   RETOUR UNIQUE • ANNUAIRE LOCAL RÉEL
+   ========================================================= */
+
+(function correctEntrepriseNavigationAndDirectory(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[’']/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function getModalContent(){
+
+    return document.querySelector(
+      "#modalContent," +
+      ".modal-content," +
+      ".modalContent," +
+      ".modal-body," +
+      ".modalBody"
+    );
+  }
+
+  function openPreviousPage(){
+
+    if(
+      typeof app.goBack ===
+      "function"
+    ){
+      app.goBack();
+      return;
+    }
+
+    if(
+      typeof app.openHome ===
+      "function"
+    ){
+      app.openHome();
+    }
+  }
+
+  function correctBackButtons(){
+
+    const modal =
+      getModalContent();
+
+    if(!modal){
+      return;
+    }
+
+    const buttons =
+      Array.from(
+        modal.querySelectorAll("button")
+      );
+
+    /*
+      Suppression du grand bouton :
+      « Retour à la page précédente ».
+    */
+
+    buttons.forEach(function(button){
+
+      const text =
+        normalizeText(
+          button.textContent
+        );
+
+      if(
+        text.includes(
+          "retour a la page precedente"
+        )
+      ){
+        button.remove();
+      }
+    });
+
+    /*
+      Recherche des petits boutons Retour.
+    */
+
+    const returnButtons =
+      Array.from(
+        modal.querySelectorAll("button")
+      )
+      .filter(function(button){
+
+        const text =
+          normalizeText(
+            button.textContent
+          );
+
+        return (
+          text === "retour" ||
+          text === "retour a l espace entreprise"
+        );
+      });
+
+    /*
+      On ne conserve qu’un seul bouton Retour.
+    */
+
+    returnButtons.forEach(function(button, index){
+
+      if(index > 0){
+        button.remove();
+        return;
+      }
+
+      button.textContent =
+        "Retour";
+
+      button.onclick = function(event){
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        openPreviousPage();
+      };
+    });
+  }
+
+  function openRealLocalDirectory(){
+
+    if(
+      typeof app.openLocalDirectory ===
+      "function"
+    ){
+      app.openLocalDirectory();
+      return;
+    }
+
+    if(
+      typeof app.openCorrectedDirectory ===
+      "function"
+    ){
+      app.openCorrectedDirectory();
+      return;
+    }
+
+    alert(
+      "L’annuaire local est momentanément indisponible."
+    );
+  }
+
+  /*
+    Le véritable annuaire local remplace
+    définitivement l’écran d’attente inutile.
+  */
+
+  app.registerScreen(
+    "annuaire_local",
+    openRealLocalDirectory
+  );
+
+  /*
+    Correction directe des boutons
+    « Entreprises et commerces de ma ville ».
+  */
+
+  function correctDirectoryButtons(){
+
+    document
+      .querySelectorAll(
+        "[data-entreprise-screen='annuaire_local']," +
+        "#employmentLocalCompaniesBtn," +
+        "#developmentDirectoryBtn," +
+        "#loyaltyLocalDirectoryBtn," +
+        "#visibilityDirectoryBtn," +
+        "#bociteEmploymentDirectoryBtn," +
+        "#publicEmploymentDirectoryBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(event){
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          openRealLocalDirectory();
+        };
+      });
+  }
+
+  function applyCorrections(){
+
+    window.setTimeout(function(){
+
+      correctBackButtons();
+      correctDirectoryButtons();
+
+    },30);
+  }
+
+  const observer =
+    new MutationObserver(function(){
+
+      applyCorrections();
+    });
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  applyCorrections();
+
+  console.log(
+    "✅ Retour unique et annuaire local réel corrigés"
+  );
+
+})();
 
 
 
