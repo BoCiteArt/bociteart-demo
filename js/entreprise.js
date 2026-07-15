@@ -41079,6 +41079,455 @@ console.log(
 
 })();
 
+/* =========================================================
+   BO'CITÉART — ASSISTANT ENTREPRISE V2
+   RÉPONSES IMMÉDIATES ET ORIENTATION
+   ========================================================= */
+
+(function installEntrepriseAssistantV2(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+
+    return;
+  }
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[’']/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function escapeValue(value){
+
+    if(
+      typeof app.safeEscape ===
+      "function"
+    ){
+      return app.safeEscape(value);
+    }
+
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function extractCity(question){
+
+    const text =
+      String(question || "").trim();
+
+    const patterns = [
+
+      /(?:dans la ville de)\s+([a-zA-ZÀ-ÿ' -]{2,40})$/i,
+
+      /(?:dans|à|au|sur|vers|près de)\s+([a-zA-ZÀ-ÿ' -]{2,40})$/i
+    ];
+
+    for(
+      let index = 0;
+      index < patterns.length;
+      index++
+    ){
+
+      const match =
+        text.match(
+          patterns[index]
+        );
+
+      if(match){
+
+        return String(
+          match[1] || ""
+        ).trim();
+      }
+    }
+
+    return "";
+  }
+
+  function extractNeed(question){
+
+    return String(question || "")
+      .replace(
+        /^(je|nous|mon entreprise|notre entreprise)\s+/i,
+        ""
+      )
+      .replace(
+        /^(recherche|cherche|voudrais|souhaite|veux|ai besoin de)\s+/i,
+        ""
+      )
+      .replace(
+        /(?:dans la ville de|dans|à|au|sur|vers|près de)\s+[a-zA-ZÀ-ÿ' -]{2,40}$/i,
+        ""
+      )
+      .trim();
+  }
+
+  function getAnswer(question){
+
+    const normalized =
+      normalizeText(question);
+
+    const city =
+      extractCity(question);
+
+    const need =
+      extractNeed(question) ||
+      String(question || "").trim();
+
+    if(
+      normalized.includes("emploi") ||
+      normalized.includes("recrut") ||
+      normalized.includes("personnel") ||
+      normalized.includes("salarie") ||
+      normalized.includes("apprenti") ||
+      normalized.includes("alternance") ||
+      normalized.includes("stage")
+    ){
+
+      return {
+        title:
+          "Votre recherche concerne l’emploi.",
+        lines:[
+          "Consultez les offres disponibles dans votre ville.",
+          "Déposez une offre depuis l’espace professionnel.",
+          "Consultez les candidatures spontanées reçues.",
+          "Élargissez ensuite aux communes voisines si nécessaire."
+        ],
+        button:
+          "Ouvrir la rubrique Emploi",
+        screen:
+          "emploi"
+      };
+    }
+
+    if(
+      normalized.includes("charge") ||
+      normalized.includes("electricite") ||
+      normalized.includes("gaz") ||
+      normalized.includes("assurance") ||
+      normalized.includes("telephonie") ||
+      normalized.includes("internet") ||
+      normalized.includes("mutualis")
+    ){
+
+      return {
+        title:
+          "Plusieurs solutions peuvent réduire vos charges.",
+        lines:[
+          "Vérifiez les mutualisations déjà proposées.",
+          "Déclarez votre intérêt sans engagement immédiat.",
+          "Attendez que le nombre nécessaire d’entreprises soit atteint.",
+          "Comparez ensuite les offres reçues avant de décider."
+        ],
+        button:
+          "Voir les mutualisations",
+        screen:
+          "mutualisation"
+      };
+    }
+
+    if(
+      normalized.includes("mecenat") ||
+      normalized.includes("mecene") ||
+      normalized.includes("don") ||
+      normalized.includes("projet local")
+    ){
+
+      return {
+        title:
+          "Le mécénat peut répondre à votre demande.",
+        lines:[
+          "Découvrez les projets locaux pouvant être soutenus.",
+          "Choisissez entre un apport financier, du matériel ou des compétences.",
+          "Préparez votre engagement dans votre espace privé.",
+          "Vérifiez l’aspect fiscal avec votre expert-comptable."
+        ],
+        button:
+          "Découvrir le mécénat",
+        screen:
+          "mecenat"
+      };
+    }
+
+    if(
+      normalized.includes("retraite") ||
+      normalized.includes("transmission") ||
+      normalized.includes("transmettre") ||
+      normalized.includes("cession") ||
+      normalized.includes("repreneur") ||
+      normalized.includes("succession")
+    ){
+
+      return {
+        title:
+          "Il faut préparer l’avenir de votre entreprise.",
+        lines:[
+          "Identifiez ce qui doit être transmis.",
+          "Valorisez les métiers et le savoir-faire de l’entreprise.",
+          "Préparez les documents utiles.",
+          "Recherchez progressivement un repreneur ou une solution de continuité."
+        ],
+        button:
+          "Ouvrir la rubrique Pérennité",
+        screen:
+          "perennite"
+      };
+    }
+
+    if(
+      normalized.includes("visibilite") ||
+      normalized.includes("faire connaitre") ||
+      normalized.includes("publicite") ||
+      normalized.includes("notoriete") ||
+      normalized.includes("presentation")
+    ){
+
+      return {
+        title:
+          "Votre entreprise doit d’abord être visible localement.",
+        lines:[
+          "Complétez votre fiche entreprise.",
+          "Présentez vos métiers et votre savoir-faire.",
+          "Indiquez vos services et vos coordonnées.",
+          "Diffusez ensuite vos actualités ou vos besoins."
+        ],
+        button:
+          "Faire connaître mon entreprise",
+        screen:
+          "visibilite"
+      };
+    }
+
+    return {
+      title:
+        city
+          ? (
+              "Recherche de « " +
+              need +
+              " » à " +
+              city
+            )
+          : (
+              "Recherche de « " +
+              need +
+              " » dans votre ville"
+            ),
+
+      lines:[
+        city
+          ? (
+              "La recherche commencera dans la commune de " +
+              city +
+              "."
+            )
+          : (
+              "La recherche commencera dans votre commune."
+            ),
+
+        "Les entreprises, commerces, artisans et services correspondants seront recherchés en priorité.",
+
+        "En l’absence de résultat suffisant, la recherche pourra être élargie aux communes voisines.",
+
+        "Vous pourrez ensuite consulter les fiches disponibles et contacter directement les professionnels."
+      ],
+
+      button:
+        "Rechercher les professionnels",
+
+      action:
+        "search",
+
+      keyword:
+        need,
+
+      city:
+        city
+    };
+  }
+
+  function openSearch(
+    keyword,
+    city
+  ){
+
+    if(
+      typeof app.openProfessionalDirectory ===
+      "function"
+    ){
+
+      app.openProfessionalDirectory({
+        keyword:keyword || "",
+        city:city || ""
+      });
+
+      return;
+    }
+
+    if(
+      typeof app.openProfessionalSearch ===
+      "function"
+    ){
+
+      app.openProfessionalSearch();
+
+      window.setTimeout(function(){
+
+        const input =
+          document.getElementById(
+            "professionalPublicSearchNeed"
+          );
+
+        if(input){
+          input.value =
+            keyword || "";
+        }
+
+      },80);
+
+      return;
+    }
+
+    app.openScreen(
+      "annuaire"
+    );
+  }
+
+  function renderAnswer(
+    question,
+    answerHost
+  ){
+
+    const host =
+      answerHost ||
+      document.getElementById(
+        "entrepriseAiAnswer"
+      );
+
+    if(!host){
+      return;
+    }
+
+    const result =
+      getAnswer(question);
+
+    host.innerHTML = `
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          border-left:6px solid #2f5d46;
+        ">
+
+        <strong style="font-size:19px;">
+          ${escapeValue(result.title)}
+        </strong>
+
+        <br><br>
+
+        ${
+          result.lines
+            .map(function(line){
+
+              return `
+                • ${escapeValue(line)}
+                <br><br>
+              `;
+            })
+            .join("")
+        }
+
+        <button
+          id="entrepriseAiResultActionBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;">
+          ${escapeValue(result.button)}
+        </button>
+      </div>
+    `;
+
+    const button =
+      document.getElementById(
+        "entrepriseAiResultActionBtn"
+      );
+
+    if(!button){
+      return;
+    }
+
+    button.onclick = function(event){
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        result.action ===
+        "search"
+      ){
+
+        openSearch(
+          result.keyword,
+          result.city
+        );
+
+        return;
+      }
+
+      if(result.screen){
+
+        app.openScreen(
+          result.screen
+        );
+      }
+    };
+
+    host.scrollIntoView({
+      behavior:"smooth",
+      block:"nearest"
+    });
+  }
+
+  /*
+    Cette fonction est celle appelée
+    par le bouton déjà présent dans la page.
+  */
+
+  app.runEnterpriseAssistant =
+    function(
+      question,
+      answerHost
+    ){
+
+      renderAnswer(
+        question,
+        answerHost
+      );
+    };
+
+  console.log(
+    "✅ Assistant Entreprise V2 avec réponses installé"
+  );
+
+})();
+
 
 
 
