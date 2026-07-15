@@ -41906,7 +41906,571 @@ console.log(
 
 })();
 
+/* =========================================================
+   BO'CITÉART — ASSISTANT ENTREPRISE V3
+   NEUTRALISATION DE L’ANCIEN BOUTON
+   RÉPONSE VISIBLE • ÉLARGISSEMENT DE LA RECHERCHE
+   ========================================================= */
 
+(function installEntrepriseAssistantV3(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
+    );
+    return;
+  }
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[’']/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function escapeHtml(value){
+
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function findCity(question){
+
+    const text =
+      String(question || "").trim();
+
+    const patterns = [
+      /ville de\s+([a-zA-ZÀ-ÿ' -]{2,45})/i,
+      /commune de\s+([a-zA-ZÀ-ÿ' -]{2,45})/i,
+      /autour de\s+([a-zA-ZÀ-ÿ' -]{2,45})/i,
+      /près de\s+([a-zA-ZÀ-ÿ' -]{2,45})/i,
+      /sur\s+([a-zA-ZÀ-ÿ' -]{2,45})/i,
+      /à\s+([a-zA-ZÀ-ÿ' -]{2,45})/i
+    ];
+
+    for(
+      let index = 0;
+      index < patterns.length;
+      index++
+    ){
+      const match =
+        text.match(patterns[index]);
+
+      if(match){
+
+        return String(match[1] || "")
+          .replace(
+            /\b(?:dans|puis|et|pour|avec|éventuellement)\b.*$/i,
+            ""
+          )
+          .trim();
+      }
+    }
+
+    return "";
+  }
+
+  function determineCategory(question){
+
+    const text =
+      normalizeText(question);
+
+    if(
+      text.includes("emploi") ||
+      text.includes("recrut") ||
+      text.includes("personnel") ||
+      text.includes("salarie") ||
+      text.includes("apprenti") ||
+      text.includes("stage")
+    ){
+      return "emploi";
+    }
+
+    if(
+      text.includes("charge") ||
+      text.includes("electricite") ||
+      text.includes("gaz") ||
+      text.includes("assurance") ||
+      text.includes("telephone") ||
+      text.includes("internet") ||
+      text.includes("mutualis")
+    ){
+      return "mutualisation";
+    }
+
+    if(
+      text.includes("mecenat") ||
+      text.includes("mecene") ||
+      text.includes("don")
+    ){
+      return "mecenat";
+    }
+
+    if(
+      text.includes("transmission") ||
+      text.includes("repreneur") ||
+      text.includes("cession") ||
+      text.includes("retraite")
+    ){
+      return "perennite";
+    }
+
+    if(
+      text.includes("visibilite") ||
+      text.includes("faire connaitre") ||
+      text.includes("publicite")
+    ){
+      return "visibilite";
+    }
+
+    return "recherche";
+  }
+
+  function getAnswerHost(){
+
+    let host =
+      document.getElementById(
+        "entrepriseAiAnswer"
+      );
+
+    if(host){
+      return host;
+    }
+
+    const input =
+      document.getElementById(
+        "entrepriseAiQuestion"
+      );
+
+    if(!input){
+      return null;
+    }
+
+    host =
+      document.createElement("div");
+
+    host.id =
+      "entrepriseAiAnswer";
+
+    host.style.marginTop =
+      "12px";
+
+    input.parentElement.appendChild(
+      host
+    );
+
+    return host;
+  }
+
+  function openScreen(screenName){
+
+    if(
+      typeof app.openScreen ===
+      "function"
+    ){
+      app.openScreen(screenName);
+    }
+  }
+
+  function displayAnswer(question){
+
+    const host =
+      getAnswerHost();
+
+    if(!host){
+      alert(
+        "L’encart de réponse est introuvable."
+      );
+      return;
+    }
+
+    const category =
+      determineCategory(question);
+
+    const city =
+      findCity(question);
+
+    const locationText =
+      city
+        ? city
+        : "votre commune";
+
+    let title =
+      "Recherche professionnelle locale";
+
+    let mainText =
+      "Aucun résultat confirmé ne peut encore être affiché automatiquement dans cette démonstration.";
+
+    let advice = [
+      "La recherche doit commencer dans " +
+        locationText +
+        ".",
+
+      "Elle doit ensuite être élargie aux communes voisines.",
+
+      "En l’absence de résultat suffisant, elle pourra être étendue au département puis à la région.",
+
+      "La version définitive utilisera l’annuaire économique et les données professionnelles mises à jour."
+    ];
+
+    let mainButtonText =
+      "Consulter l’annuaire professionnel";
+
+    let mainScreen =
+      "annuaire";
+
+    if(category === "emploi"){
+
+      title =
+        "Votre question concerne l’emploi";
+
+      mainText =
+        "Bo'CitéArt peut vous orienter vers les offres locales, les candidatures spontanées et les entreprises qui recrutent.";
+
+      advice = [
+        "Consultez les offres disponibles.",
+        "Recherchez d’abord dans " + locationText + ".",
+        "Élargissez ensuite aux communes voisines.",
+        "Une entreprise peut publier son offre depuis son espace privé."
+      ];
+
+      mainButtonText =
+        "Ouvrir la rubrique Emploi";
+
+      mainScreen =
+        "emploi";
+    }
+
+    if(category === "mutualisation"){
+
+      title =
+        "Votre question concerne la réduction des charges";
+
+      mainText =
+        "Bo'CitéArt peut regrouper plusieurs entreprises ayant le même besoin afin de rechercher des propositions communes.";
+
+      advice = [
+        "Déclarez votre intérêt sans engagement immédiat.",
+        "Attendez que le nombre nécessaire d’entreprises soit atteint.",
+        "Comparez les propositions reçues.",
+        "Chaque entreprise reste libre d’accepter ou de refuser."
+      ];
+
+      mainButtonText =
+        "Voir les mutualisations";
+
+      mainScreen =
+        "mutualisation";
+    }
+
+    if(category === "mecenat"){
+
+      title =
+        "Votre question concerne le mécénat";
+
+      mainText =
+        "Bo'CitéArt peut vous présenter les projets locaux et les différentes formes de contribution possibles.";
+
+      advice = [
+        "Soutien financier.",
+        "Don de matériel ou de produits.",
+        "Mécénat de compétences.",
+        "Vérification avec votre expert-comptable."
+      ];
+
+      mainButtonText =
+        "Découvrir le mécénat";
+
+      mainScreen =
+        "mecenat";
+    }
+
+    if(category === "perennite"){
+
+      title =
+        "Votre question concerne l’avenir de l’entreprise";
+
+      mainText =
+        "Bo'CitéArt peut vous aider à préparer la transmission, la reprise ou la continuité de votre activité.";
+
+      advice = [
+        "Identifier ce qui doit être transmis.",
+        "Valoriser le savoir-faire de l’entreprise.",
+        "Préparer les informations utiles.",
+        "Rechercher progressivement un repreneur."
+      ];
+
+      mainButtonText =
+        "Ouvrir la rubrique Pérennité";
+
+      mainScreen =
+        "perennite";
+    }
+
+    if(category === "visibilite"){
+
+      title =
+        "Votre question concerne la visibilité";
+
+      mainText =
+        "La première étape consiste à présenter clairement votre entreprise, ses métiers, ses services et ses coordonnées.";
+
+      advice = [
+        "Complétez votre fiche entreprise.",
+        "Présentez vos métiers et votre savoir-faire.",
+        "Indiquez vos services.",
+        "Diffusez ensuite vos actualités."
+      ];
+
+      mainButtonText =
+        "Faire connaître mon entreprise";
+
+      mainScreen =
+        "visibilite";
+    }
+
+    host.innerHTML = `
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          border-left:6px solid #2f5d46;
+          color:#111;
+        ">
+
+        <strong style="font-size:19px;">
+          ${escapeHtml(title)}
+        </strong>
+
+        <br><br>
+
+        ${escapeHtml(mainText)}
+
+        <br><br>
+
+        ${
+          advice.map(function(line){
+
+            return `
+              • ${escapeHtml(line)}
+              <br><br>
+            `;
+          }).join("")
+        }
+
+        <div
+          class="box"
+          style="
+            margin-top:12px;
+            border-left:6px solid #b00020;
+          ">
+
+          <strong>
+            Souhaitez-vous élargir la recherche ?
+          </strong>
+
+          <br><br>
+
+          Si aucun résultat n’est disponible autour de vous,
+          Bo'CitéArt peut poursuivre progressivement
+          dans les communes voisines,
+          le département,
+          puis la région.
+        </div>
+
+        <button
+          id="entrepriseAiMainActionBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:12px;
+          ">
+          ${escapeHtml(mainButtonText)}
+        </button>
+
+        <button
+          id="entrepriseAiExpandSearchBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:8px;
+            background:#fff;
+          ">
+          Continuer la recherche plus loin
+        </button>
+      </div>
+    `;
+
+    const mainButton =
+      document.getElementById(
+        "entrepriseAiMainActionBtn"
+      );
+
+    if(mainButton){
+
+      mainButton.onclick = function(event){
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        openScreen(mainScreen);
+      };
+    }
+
+    const expandButton =
+      document.getElementById(
+        "entrepriseAiExpandSearchBtn"
+      );
+
+    if(expandButton){
+
+      expandButton.onclick = function(event){
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        host.insertAdjacentHTML(
+          "beforeend",
+          `
+            <div
+              class="box"
+              style="
+                margin-top:12px;
+                border-left:6px solid #2f5d46;
+              ">
+
+              <strong>
+                Recherche élargie demandée
+              </strong>
+
+              <br><br>
+
+              La recherche sera poursuivie :
+
+              <br><br>
+
+              • dans les communes voisines ;<br>
+              • dans le département ;<br>
+              • puis dans la région si nécessaire.
+
+              <br><br>
+
+              Dans la version définitive,
+              les résultats disponibles seront affichés ici.
+            </div>
+          `
+        );
+      };
+    }
+
+    host.scrollIntoView({
+      behavior:"smooth",
+      block:"nearest"
+    });
+  }
+
+  function replaceAssistantButton(){
+
+    const oldButton =
+      document.getElementById(
+        "entrepriseAiAskBtn"
+      );
+
+    if(
+      !oldButton ||
+      oldButton.dataset.assistantV3 === "ok"
+    ){
+      return;
+    }
+
+    /*
+      La copie supprime tous les anciens
+      événements onclick attachés au bouton.
+    */
+
+    const newButton =
+      oldButton.cloneNode(true);
+
+    newButton.dataset.assistantV3 =
+      "ok";
+
+    oldButton.parentNode.replaceChild(
+      newButton,
+      oldButton
+    );
+
+    newButton.onclick = function(event){
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const input =
+        document.getElementById(
+          "entrepriseAiQuestion"
+        );
+
+      const question =
+        input
+          ? String(input.value || "").trim()
+          : "";
+
+      if(!question){
+
+        alert(
+          "Écrivez votre question."
+        );
+        return;
+      }
+
+      displayAnswer(question);
+    };
+  }
+
+  function applyAssistantRepair(){
+
+    window.setTimeout(function(){
+
+      replaceAssistantButton();
+
+    },20);
+  }
+
+  const observer =
+    new MutationObserver(function(){
+
+      applyAssistantRepair();
+    });
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  applyAssistantRepair();
+
+  console.log(
+    "✅ Assistant Entreprise V3 réellement prioritaire installé"
+  );
+
+})();
 
 
 
