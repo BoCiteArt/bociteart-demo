@@ -1398,3 +1398,294 @@
 
 })();
 
+/* =========================================================
+   BO'CITÉART — CORRECTIF BANDES DÉFILANTES
+   CLIC • TOUCHER • NAVIGATION
+   ========================================================= */
+
+(function repairEntrepriseScrollingBands(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    return;
+  }
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[’']/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function installBandStyles(){
+
+    if(
+      document.getElementById(
+        "entrepriseBandClickRepairStyle"
+      )
+    ){
+      return;
+    }
+
+    const style =
+      document.createElement("style");
+
+    style.id =
+      "entrepriseBandClickRepairStyle";
+
+    style.textContent = `
+      .entrepriseBand,
+      .entreprise-band,
+      [data-entreprise-screen],
+      [data-screen],
+      .marquee,
+      .ticker,
+      .scrollingBand {
+        pointer-events:auto !important;
+        cursor:pointer !important;
+        touch-action:manipulation !important;
+        position:relative !important;
+        z-index:5 !important;
+      }
+
+      .entrepriseBand *,
+      .entreprise-band *,
+      [data-entreprise-screen] *,
+      [data-screen] *,
+      .marquee *,
+      .ticker *,
+      .scrollingBand * {
+        pointer-events:none !important;
+      }
+    `;
+
+    document.head.appendChild(
+      style
+    );
+  }
+
+  function detectScreen(element){
+
+    if(!element){
+      return "";
+    }
+
+    const directScreen =
+      element.getAttribute(
+        "data-entreprise-screen"
+      ) ||
+      element.getAttribute(
+        "data-screen"
+      );
+
+    if(directScreen){
+      return directScreen;
+    }
+
+    const text =
+      normalizeText(
+        element.textContent
+      );
+
+    if(
+      text.includes("deposez une offre") ||
+      text.includes("emploi") ||
+      text.includes("recrut")
+    ){
+      return "emploi";
+    }
+
+    if(
+      text.includes("attirez") ||
+      text.includes("fidelisez") ||
+      text.includes("fidelisation")
+    ){
+      return "fidelisation";
+    }
+
+    if(
+      text.includes("developpez") ||
+      text.includes("developpement")
+    ){
+      return "developpement";
+    }
+
+    if(
+      text.includes("reduisez vos charges") ||
+      text.includes("mutualisation")
+    ){
+      return "mutualisation";
+    }
+
+    if(
+      text.includes("faites connaitre") ||
+      text.includes("visibilite")
+    ){
+      return "visibilite";
+    }
+
+    if(
+      text.includes("comparez") ||
+      text.includes("economies")
+    ){
+      return "economies";
+    }
+
+    if(
+      text.includes("preparez l avenir") ||
+      text.includes("perennite")
+    ){
+      return "perennite";
+    }
+
+    if(
+      text.includes("mecenat")
+    ){
+      return "mecenat";
+    }
+
+    if(
+      text.includes("entreprises de votre ville") ||
+      text.includes("annuaire")
+    ){
+      return "annuaire_local";
+    }
+
+    return "";
+  }
+
+  function findClickableBand(target){
+
+    if(
+      !target ||
+      typeof target.closest !==
+      "function"
+    ){
+      return null;
+    }
+
+    return target.closest(
+      ".entrepriseBand," +
+      ".entreprise-band," +
+      "[data-entreprise-screen]," +
+      "[data-screen]," +
+      ".marquee," +
+      ".ticker," +
+      ".scrollingBand"
+    );
+  }
+
+  function openBandScreen(element){
+
+    const screen =
+      detectScreen(
+        element
+      );
+
+    if(
+      !screen ||
+      typeof app.openScreen !==
+      "function"
+    ){
+      return;
+    }
+
+    app.openScreen(
+      screen
+    );
+  }
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const band =
+        findClickableBand(
+          event.target
+        );
+
+      if(!band){
+        return;
+      }
+
+      const screen =
+        detectScreen(
+          band
+        );
+
+      if(!screen){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+        "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+
+      openBandScreen(
+        band
+      );
+
+    },
+    true
+  );
+
+  document.addEventListener(
+    "touchend",
+    function(event){
+
+      const band =
+        findClickableBand(
+          event.target
+        );
+
+      if(!band){
+        return;
+      }
+
+      const screen =
+        detectScreen(
+          band
+        );
+
+      if(!screen){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      openBandScreen(
+        band
+      );
+
+    },
+    {
+      capture:true,
+      passive:false
+    }
+  );
+
+  installBandStyles();
+
+  console.log(
+    "✅ Bandes défilantes Entreprise rendues cliquables"
+  );
+
+})();
+
+
+
