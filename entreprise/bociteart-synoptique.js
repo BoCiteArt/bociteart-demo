@@ -8,7 +8,7 @@
    ========================================================= */
 
 (function initBociteartSynoptique(){
-
+ 
   "use strict";
 
   if(window.BociteSynoptique){
