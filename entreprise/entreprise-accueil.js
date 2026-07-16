@@ -1,6 +1,9 @@
 /* =========================================================
    BO'CITÉART — ENTREPRISE
-   ACCUEIL • SYNOPTIQUE • PRÉSENTATION DES RUBRIQUES
+   ACCUEIL EN TROIS ÉTAPES
+   1. INTRODUCTION
+   2. SYNOPTIQUE
+   3. BANDES DÉFILANTES
    ========================================================= */
 
 (function initEntrepriseAccueil(){
@@ -11,6 +14,7 @@
     window.BociteEntreprise;
 
   if(!app){
+
     console.error(
       "Bo'CitéArt : entreprise.js doit être chargé avant entreprise-accueil.js."
     );
@@ -19,12 +23,14 @@
   }
 
   /*
-    On conserve l’ancien accueil avec les bandes défilantes.
-    Il sera ouvert après la présentation générale.
+    On conserve l’accueil historique
+    contenant les bandes défilantes.
   */
 
   const originalEntrepriseHome =
-    app.openHome;
+    typeof app.openHome === "function"
+      ? app.openHome
+      : null;
 
   function getElement(id){
 
@@ -34,15 +40,35 @@
   function getLogoHtml(){
 
     return `
-      <span style="color:#2f5d46;">
+      <span
+        style="
+          color:#2f5d46;
+          font-weight:900;
+        ">
         Bo'Cité
-      </span><span style="color:#b00020;">
+      </span><span
+        style="
+          color:#b00020;
+          font-weight:900;
+        ">
         Art
       </span>
     `;
   }
 
   function renderPage(html){
+
+    if(
+      typeof app.renderModal !==
+      "function"
+    ){
+
+      console.error(
+        "Bo'CitéArt : fonction renderModal introuvable."
+      );
+
+      return;
+    }
 
     app.renderModal(
       "Commerces & Entreprises",
@@ -51,7 +77,7 @@
   }
 
   /* =======================================================
-     ÉTAPE 1 — ACCROCHE
+     PAGE 1 — INTRODUCTION PERCUTANTE
      ======================================================= */
 
   function getIntroductionHtml(){
@@ -59,19 +85,23 @@
     return `
       <div
         class="box"
-        style="border-left:6px solid #2f5d46;">
+        style="
+          border-left:6px solid #2f5d46;
+        ">
 
         <strong
           style="
             display:block;
+            color:#2f5d46;
             font-size:23px;
             line-height:1.35;
-            color:#2f5d46;
           ">
-          Connaissez-vous le nom de cinq entreprises
-          de votre commune,
+
+          Connaissez-vous le nom
+          de cinq entreprises de votre commune,
           en dehors des hypermarchés
           et des grandes enseignes ?
+
         </strong>
 
         <br>
@@ -82,19 +112,8 @@
 
         <br><br>
 
-        Pourtant, elles pourraient devenir :
-
-        <br><br>
-
-        • vos prochains clients ;<br>
-        • vos futurs salariés ;<br>
-        • vos fournisseurs ;<br>
-        • vos sous-traitants ;<br>
-        • vos partenaires.
-
-        <br><br>
-
-        Combien de fois entend-on :
+        Pourtant,
+        combien de fois entend-on :
 
         <br><br>
 
@@ -113,6 +132,18 @@
           « Je ne savais pas
           qu’elle faisait cela. »
         </strong>
+
+        <br><br>
+
+        Ces entreprises pourraient pourtant devenir :
+
+        <br><br>
+
+        • vos prochains clients ;<br>
+        • vos futurs salariés ;<br>
+        • vos fournisseurs ;<br>
+        • vos sous-traitants ;<br>
+        • vos partenaires.
       </div>
 
       <div class="box">
@@ -120,10 +151,12 @@
         <strong
           style="
             display:block;
-            font-size:20px;
             color:#2f5d46;
+            font-size:20px;
           ">
+
           Les règles du jeu ont changé
+
         </strong>
 
         <br><br>
@@ -133,8 +166,9 @@
 
         <br><br>
 
-        Mais les grandes plateformes
-        disposent de moyens considérables
+        Mais les plus grandes plateformes
+        disposent désormais
+        de moyens considérables
         pour capter l’attention,
         les clients
         et la visibilité.
@@ -148,39 +182,89 @@
 
       <div
         class="box"
-        style="border-left:6px solid #b00020;">
+        style="
+          border-left:6px solid #b00020;
+        ">
 
         <strong style="font-size:20px;">
+
           ${getLogoHtml()}
-          ne vous demande pas
-          de travailler davantage.
-        </strong>
+       <strong style="font-size:20px;">
 
-        <br><br>
+  ${getLogoHtml()}
+  a été imaginé par un entrepreneur,
+  pour répondre aux réalités
+  vécues par les entrepreneurs.
 
-        <strong
-          style="
-            font-size:22px;
-            color:#2f5d46;
-          ">
-          Il vous propose de travailler autrement.
-        </strong>
+</strong>
 
-        <br><br>
+<br><br>
 
-        Commencez par rendre visibles
-        votre entreprise,
-        vos métiers,
-        vos équipes
-        et votre savoir-faire
-        dans votre propre territoire.
+<strong
+  style="
+    color:#2f5d46;
+    font-size:22px;
+  ">
 
-        <br><br>
+  Il ne vous demande pas
+  de travailler davantage.
 
-        Puis élargissez votre recherche
-        en France
-        ou en Europe
-        lorsque cela devient nécessaire.
+  <br><br>
+
+  Il vous propose
+  de travailler autrement,
+  avec un outil simple,
+  réactif
+  et directement accessible
+  depuis votre téléphone.
+
+</strong>
+
+<br><br>
+
+Développement,
+emploi,
+visibilité,
+recherche professionnelle,
+mutualisation,
+mécénat
+et pérennité :
+
+<br><br>
+
+<strong>
+  les informations et les outils utiles
+  sont réunis dans une seule application,
+  à portée de main.
+</strong>
+
+<br><br>
+
+Commencez par rendre visibles
+votre entreprise,
+vos métiers,
+vos équipes
+et votre savoir-faire
+dans votre commune
+et votre territoire.
+
+<br><br>
+
+Restez indépendant,
+mais devenez plus visible,
+plus réactif,
+plus proche
+et mieux relié
+aux autres acteurs économiques.
+
+<br><br>
+
+<strong>
+  Dans un monde qui accélère,
+  connaître rapidement les ressources disponibles
+  et pouvoir agir sans perdre de temps
+  devient essentiel.
+</strong>
       </div>
 
       <button
@@ -191,13 +275,15 @@
           width:100%;
           margin-top:14px;
         ">
-        Découvrir ${getLogoHtml()} Entreprise
+
+        Découvrir l’application
+
       </button>
     `;
   }
 
   /* =======================================================
-     ÉTAPE 2 — IMAGE SYNOPTIQUE
+     PAGE 2 — SYNOPTIQUE
      ======================================================= */
 
   function getOverviewHtml(){
@@ -205,7 +291,9 @@
     return `
       <div
         class="box"
-        style="border-left:6px solid #2f5d46;">
+        style="
+          border-left:6px solid #2f5d46;
+        ">
 
         <strong
           style="
@@ -213,15 +301,19 @@
             font-size:22px;
             line-height:1.35;
           ">
-          ${getLogoHtml()} Entreprise
-          en un coup d’œil
+
+          ${getLogoHtml()}
+          Entreprise en un coup d’œil
+
         </strong>
 
         <br><br>
 
-        Découvrez en quelques secondes
+        Découvrez visuellement
         les principaux services
-        mis à votre disposition.
+        et les différentes possibilités
+        proposées aux commerces
+        et aux entreprises.
       </div>
 
       <div
@@ -232,6 +324,7 @@
         ">
 
         <img
+          id="entrepriseSynoptiqueImage"
           src="./entreprise/bociteart-entreprise-synoptique.png"
           alt="Présentation générale des fonctions Bo'CitéArt Entreprise"
           style="
@@ -239,17 +332,11 @@
             width:100%;
             height:auto;
             border-radius:12px;
-          "
-          onerror="
-            this.style.display='none';
-            document.getElementById(
-              'entrepriseImageError'
-            ).style.display='block';
           ">
       </div>
 
       <div
-        id="entrepriseImageError"
+        id="entrepriseSynoptiqueError"
         class="box"
         style="
           display:none;
@@ -258,15 +345,19 @@
         ">
 
         <strong>
-          L’image du synoptique est introuvable.
+          L’image du synoptique
+          n’a pas été trouvée.
         </strong>
 
         <br><br>
 
-        Vérifiez que le fichier
-        <strong>bociteart-entreprise-synoptique.png</strong>
-        est bien enregistré dans le dossier
-        <strong>entreprise</strong>.
+        Vérifiez que le fichier porte exactement le nom :
+
+        <br><br>
+
+        <strong>
+          bociteart-entreprise-synoptique.png
+        </strong>
       </div>
 
       <div
@@ -277,131 +368,98 @@
         ">
 
         <strong style="font-size:19px;">
-          Cette image présente le contenu général.
+          Cette image présente
+          le contenu général de l’application.
         </strong>
 
         <br><br>
 
-        L’interface réelle de l’application
+        L’interface réelle,
+        accessible à l’étape suivante,
         vous permettra ensuite
-        de découvrir chaque rubrique
-        et ses différents outils.
+        de parcourir les bandes défilantes
+        et d’ouvrir chaque rubrique.
       </div>
 
       <button
-        id="entrepriseShowSummaryBtn"
+        id="entrepriseEnterRealHomeBtn"
         class="choiceBtn"
         type="button"
         style="
           width:100%;
           margin-top:12px;
         ">
-        Voir les principales rubriques
+
+        Entrer dans l’espace Entreprise
+
       </button>
-    `;
-  }
-
-  /* =======================================================
-     ÉTAPE 3 — LISTE SIMPLE NON CLIQUABLE
-     ======================================================= */
-
-  function getSummaryHtml(){
-
-    return `
-      <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
-
-        <strong
-          style="
-            display:block;
-            font-size:22px;
-            line-height:1.35;
-          ">
-          Ce que vous découvrirez dans
-          ${getLogoHtml()} Entreprise
-        </strong>
-
-        <br><br>
-
-        Cette présentation reste volontairement simple.
-
-        <br><br>
-
-        Les bandes défilantes
-        et les véritables rubriques de l’application
-        vous permettront ensuite
-        de découvrir chaque sujet plus en détail.
-      </div>
-
-      <div
-        style="
-          margin-top:16px;
-          padding:0 8px;
-          font-size:18px;
-          line-height:1.55;
-        ">
-
-        <div>• Développement</div>
-
-        <div>• Emploi</div>
-
-        <div>• Fidélisation des salariés</div>
-
-        <div>• Visibilité de l’entreprise</div>
-
-        <div>• Mutualisation</div>
-
-        <div>• Économies</div>
-
-        <div>• Pérennité et transmission</div>
-
-        <div>• Mécénat</div>
-
-        <div>• Annuaire économique local</div>
-
-        <div>• Recherche professionnelle en France et en Europe</div>
-
-        <div>• Abonnement professionnel</div>
-      </div>
-
-      <div
-        class="box"
-        style="
-          margin-top:18px;
-          border-left:6px solid #b00020;
-        ">
-
-        <strong style="font-size:20px;">
-          ${getLogoHtml()} ne remplace pas
-          votre indépendance.
-        </strong>
-
-        <br><br>
-
-        Il permet aux commerces
-        et aux entreprises
-        de rester indépendants
-        tout en devenant plus visibles,
-        plus solidaires
-        et mieux reliés à leur territoire.
-      </div>
 
       <button
-        id="entrepriseOpenRealHomeBtn"
+        id="entrepriseOverviewBackBtn"
         class="choiceBtn"
         type="button"
         style="
           width:100%;
-          margin-top:14px;
+          margin-top:8px;
+          background:#fff;
         ">
-        Découvrir maintenant les bandes défilantes
+
+        Retour
+
       </button>
     `;
   }
 
+  function bindSynoptiqueImage(){
+
+    const image =
+      getElement(
+        "entrepriseSynoptiqueImage"
+      );
+
+    const errorBox =
+      getElement(
+        "entrepriseSynoptiqueError"
+      );
+
+    if(!image){
+      return;
+    }
+
+    let secondPathTried =
+      false;
+
+    image.onerror = function(){
+
+      /*
+        Ce second chemin fonctionne aussi
+        si l’image est encore placée
+        dans entreprise/entreprise/.
+      */
+
+      if(!secondPathTried){
+
+        secondPathTried = true;
+
+        image.src =
+          "./entreprise/entreprise/bociteart-entreprise-synoptique.png";
+
+        return;
+      }
+
+      image.style.display =
+        "none";
+
+      if(errorBox){
+
+        errorBox.style.display =
+          "block";
+      }
+    };
+  }
+
   /* =======================================================
-     OUVERTURES ET RACCORDEMENTS
+     OUVERTURE DES TROIS ÉTAPES
      ======================================================= */
 
   function openIntroduction(){
@@ -434,57 +492,55 @@
 
     window.setTimeout(function(){
 
-      const button =
+      bindSynoptiqueImage();
+
+      const enterButton =
         getElement(
-          "entrepriseShowSummaryBtn"
+          "entrepriseEnterRealHomeBtn"
         );
 
-      if(button){
+      const backButton =
+        getElement(
+          "entrepriseOverviewBackBtn"
+        );
 
-        button.onclick =
-          openSummary;
+      if(enterButton){
+
+        enterButton.onclick =
+          openRealEntrepriseHome;
+      }
+
+      if(backButton){
+
+        backButton.onclick =
+          openIntroduction;
       }
 
     },0);
   }
 
-  function openSummary(){
+  function openRealEntrepriseHome(){
 
-    renderPage(
-      getSummaryHtml()
+    if(
+      typeof originalEntrepriseHome ===
+      "function"
+    ){
+
+      originalEntrepriseHome.call(
+        app
+      );
+
+      return;
+    }
+
+    alert(
+      "L’accueil avec les bandes défilantes est momentanément indisponible."
     );
-
-    window.setTimeout(function(){
-
-      const button =
-        getElement(
-          "entrepriseOpenRealHomeBtn"
-        );
-
-      if(button){
-
-        button.onclick = function(){
-
-          if(
-            typeof originalEntrepriseHome ===
-            "function"
-          ){
-            originalEntrepriseHome.apply(
-              app,
-              arguments
-            );
-
-            return;
-          }
-
-          alert(
-            "L’accueil avec les bandes défilantes est momentanément indisponible."
-          );
-        };
-      }
-
-    },0);
   }
+
+  /* =======================================================
+     ENREGISTREMENT
+     ======================================================= */
 
   app.openHome =
     openIntroduction;
@@ -495,21 +551,27 @@
   app.openEntrepriseOverview =
     openOverview;
 
-  app.openEntrepriseSummary =
-    openSummary;
+  app.openRealEntrepriseHome =
+    openRealEntrepriseHome;
 
-  app.registerScreen(
-    "home",
-    openIntroduction
-  );
+  if(
+    typeof app.registerScreen ===
+    "function"
+  ){
 
-  app.registerScreen(
-    "accueil",
-    openIntroduction
-  );
+    app.registerScreen(
+      "home",
+      openIntroduction
+    );
+
+    app.registerScreen(
+      "accueil",
+      openIntroduction
+    );
+  }
 
   console.log(
-    "✅ Accueil Entreprise simplifié chargé"
+    "✅ Accueil Entreprise en trois étapes chargé"
   );
 
 })();
