@@ -1098,3 +1098,303 @@
   );
 
 })();
+
+/* =========================================================
+   BO'CITÉART — RECHERCHE PROFESSIONNELLE
+   MODES FRANCE ET EUROPE
+   ========================================================= */
+
+(function addFranceEuropeSearchModes(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    return;
+  }
+
+  function escapeHtml(value){
+
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function getCurrentQuestion(){
+
+    const input =
+      document.getElementById(
+        "entrepriseAiQuestion"
+      );
+
+    return input
+      ? String(input.value || "").trim()
+      : "";
+  }
+
+  function getResponseHost(){
+
+    return (
+      document.querySelector(
+        ".bociteAssistantResponse"
+      ) ||
+      document.getElementById(
+        "entrepriseAiAnswer"
+      ) ||
+      document.getElementById(
+        "entrepriseAiAnswerV4"
+      )
+    );
+  }
+
+  function openSearchMode(mode){
+
+    const question =
+      getCurrentQuestion();
+
+    if(!question){
+
+      alert(
+        "Écrivez d’abord votre recherche."
+      );
+
+      return;
+    }
+
+    const host =
+      getResponseHost();
+
+    if(!host){
+      return;
+    }
+
+    const isEurope =
+      mode === "europe";
+
+    host.insertAdjacentHTML(
+      "beforeend",
+      `
+        <div
+          class="box"
+          style="
+            margin-top:12px;
+            border-left:6px solid #2f5d46;
+          ">
+
+          <strong style="font-size:19px;">
+            Recherche ${
+              isEurope
+                ? "européenne"
+                : "nationale"
+            }
+          </strong>
+
+          <br><br>
+
+          Recherche demandée :
+
+          <br><br>
+
+          <strong>
+            ${escapeHtml(question)}
+          </strong>
+
+          <br><br>
+
+          ${
+            isEurope
+              ? `
+                La recherche sera effectuée
+                séparément dans les pays européens
+                connectés au réseau Bo'CitéArt.
+
+                <br><br>
+
+                Les résultats pourront être classés
+                par pays,
+                distance,
+                activité,
+                disponibilité
+                et niveau de vérification.
+              `
+              : `
+                La recherche sera étendue
+                à l’ensemble de la France.
+
+                <br><br>
+
+                Les résultats pourront être classés
+                par région,
+                département,
+                distance,
+                activité
+                et disponibilité.
+              `
+          }
+
+          <br><br>
+
+          <strong>
+            Mode préparé pour le raccordement officiel.
+          </strong>
+
+          <br><br>
+
+          Dès que le serveur professionnel sera connecté,
+          les entreprises trouvées apparaîtront ici
+          avec leurs coordonnées,
+          leur activité
+          et leur fiche détaillée.
+        </div>
+      `
+    );
+
+    /*
+      Plus tard, le serveur recevra directement :
+      scope = "france" ou scope = "europe".
+    */
+
+    if(
+      typeof app.runProfessionalNetworkSearch ===
+      "function"
+    ){
+      app.runProfessionalNetworkSearch({
+        question:question,
+        scope:mode
+      });
+    }
+  }
+
+  function addSearchModeButtons(){
+
+    const host =
+      getResponseHost();
+
+    if(!host){
+      return;
+    }
+
+    if(
+      host.querySelector(
+        "#bociteFranceSearchBtn"
+      )
+    ){
+      return;
+    }
+
+    const container =
+      document.createElement("div");
+
+    container.className =
+      "box";
+
+    container.style.marginTop =
+      "12px";
+
+    container.style.borderLeft =
+      "6px solid #b00020";
+
+    container.innerHTML = `
+      <strong style="font-size:18px;">
+        Étendre directement la recherche
+      </strong>
+
+      <br><br>
+
+      Vous pouvez choisir immédiatement
+      une recherche nationale
+      ou une recherche européenne séparée.
+
+      <br><br>
+
+      <button
+        id="bociteFranceSearchBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;">
+        Rechercher dans toute la France
+      </button>
+
+      <button
+        id="bociteEuropeSearchBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+          background:#fff;
+        ">
+        Rechercher en Europe
+      </button>
+    `;
+
+    host.appendChild(
+      container
+    );
+
+    const franceButton =
+      document.getElementById(
+        "bociteFranceSearchBtn"
+      );
+
+    const europeButton =
+      document.getElementById(
+        "bociteEuropeSearchBtn"
+      );
+
+    if(franceButton){
+
+      franceButton.onclick =
+        function(){
+
+          openSearchMode(
+            "france"
+          );
+        };
+    }
+
+    if(europeButton){
+
+      europeButton.onclick =
+        function(){
+
+          openSearchMode(
+            "europe"
+          );
+        };
+    }
+  }
+
+  const observer =
+    new MutationObserver(function(){
+
+      window.setTimeout(
+        addSearchModeButtons,
+        40
+      );
+    });
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  window.setTimeout(
+    addSearchModeButtons,
+    100
+  );
+
+  console.log(
+    "✅ Recherches France et Europe préparées"
+  );
+
+})();
+
