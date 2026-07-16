@@ -2083,3 +2083,165 @@
   );
 
 })();
+
+/* =========================================================
+   BO'CITÉART — SUPPRESSION DÉFINITIVE
+   "RETOUR À LA PAGE PRÉCÉDENTE"
+   CONSERVE UNIQUEMENT "RETOUR"
+   ========================================================= */
+
+(function removeAllPreviousPageLinks(){
+
+  "use strict";
+
+  if(
+    window.__BOCITE_PREVIOUS_BACK_REMOVED__
+  ){
+    return;
+  }
+
+  window.__BOCITE_PREVIOUS_BACK_REMOVED__ =
+    true;
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[←⟵‹«→]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function cleanCurrentModal(){
+
+    const modal =
+      document.querySelector(
+        ".modal-content, .modalContent, #modalContent"
+      );
+
+    if(!modal){
+      return;
+    }
+
+    /*
+      Recherche dans tous les éléments,
+      car l'ancien "Retour à la page précédente"
+      n'est visiblement pas toujours un vrai bouton.
+    */
+
+    Array.from(
+      modal.querySelectorAll("*")
+    ).forEach(function(element){
+
+      const text =
+        normalizeText(
+          element.textContent
+        );
+
+      if(
+        text === "retour a la page precedente"
+      ){
+        element.remove();
+      }
+    });
+
+    /*
+      On conserve un seul bouton simple "Retour".
+    */
+
+    const simpleReturns =
+      Array.from(
+        modal.querySelectorAll(
+          "button, a, [role='button'], .choiceBtn"
+        )
+      )
+      .filter(function(element){
+
+        return normalizeText(
+          element.textContent
+        ) === "retour";
+      });
+
+    simpleReturns.forEach(
+      function(element,index){
+
+        if(index > 0){
+          element.remove();
+        }
+      }
+    );
+  }
+
+  /*
+    Nettoyage après chaque ouverture d'écran.
+  */
+
+  const app =
+    window.BociteEntreprise;
+
+  if(
+    app &&
+    typeof app.renderModal ===
+    "function" &&
+    !app.__previousBackRenderPatched
+  ){
+    app.__previousBackRenderPatched =
+      true;
+
+    const originalRenderModal =
+      app.renderModal;
+
+    app.renderModal = function(){
+
+      const result =
+        originalRenderModal.apply(
+          app,
+          arguments
+        );
+
+      window.setTimeout(
+        cleanCurrentModal,
+        0
+      );
+
+      window.setTimeout(
+        cleanCurrentModal,
+        50
+      );
+
+      window.setTimeout(
+        cleanCurrentModal,
+        200
+      );
+
+      return result;
+    };
+  }
+
+  /*
+    Nettoyage de tout ajout dynamique.
+  */
+
+  const observer =
+    new MutationObserver(function(){
+
+      cleanCurrentModal();
+    });
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  cleanCurrentModal();
+
+  console.log(
+    "✅ Tous les anciens retours à la page précédente sont supprimés"
+  );
+
+})();
