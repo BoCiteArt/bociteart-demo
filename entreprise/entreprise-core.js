@@ -291,7 +291,7 @@
       options.showBack !== false;
 
     const showFooter =
-      options.showFooter !== false;
+      options.showFooter === true;
 
     const completeHtml =
       (
