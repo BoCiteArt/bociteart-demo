@@ -2245,3 +2245,281 @@
   );
 
 })();
+
+/* =========================================================
+   BO'CITÉART — NETTOYAGE DÉFINITIF DES PAGES ENTREPRISE
+   SUPPRESSION :
+   - RETOUR À LA PAGE PRÉCÉDENTE
+   - VOUS POURRIEZ ÉGALEMENT ÊTRE INTÉRESSÉ
+   ========================================================= */
+
+(function cleanEntreprisePagesPermanently(){
+
+  "use strict";
+
+  if(window.__BOCITE_FINAL_PAGE_CLEANER__){
+    return;
+  }
+
+  window.__BOCITE_FINAL_PAGE_CLEANER__ = true;
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[←⟵‹«→]/g, " ")
+      .replace(/[’']/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function findRemovableContainer(element){
+
+    if(!element){
+      return null;
+    }
+
+    return element.closest(
+      "button," +
+      "a," +
+      "[role='button']," +
+      ".choiceBtn," +
+      ".entrepriseModuleFooter," +
+      ".box"
+    );
+  }
+
+  function mustRemovePreviousBack(text){
+
+    return (
+      text.includes(
+        "retour a la page precedente"
+      )
+    );
+  }
+
+  function mustRemoveSuggestion(text){
+
+    return (
+      text.includes(
+        "vous pourriez egalement etre interesse"
+      ) ||
+      text.includes(
+        "vous pourriez egalement etre interesses"
+      ) ||
+      text.includes(
+        "cliquez ici pour revenir aux propositions"
+      ) ||
+      text.includes(
+        "revenir aux propositions de l espace entreprise"
+      ) ||
+      text.includes(
+        "revenir aux bandes defilantes"
+      )
+    );
+  }
+
+  function cleanModal(){
+
+    const modals =
+      document.querySelectorAll(
+        ".modal-content, .modalContent, #modalContent"
+      );
+
+    modals.forEach(function(modal){
+
+      /*
+        On analyse d’abord les éléments les plus précis :
+        boutons, liens et encarts.
+      */
+
+      const candidates =
+        Array.from(
+          modal.querySelectorAll(
+            "button," +
+            "a," +
+            "[role='button']," +
+            ".choiceBtn," +
+            ".entrepriseModuleFooter," +
+            ".box"
+          )
+        );
+
+      candidates.forEach(function(element){
+
+        if(!element.isConnected){
+          return;
+        }
+
+        const text =
+          normalizeText(
+            element.textContent
+          );
+
+        if(
+          mustRemovePreviousBack(text) ||
+          mustRemoveSuggestion(text)
+        ){
+          element.remove();
+        }
+      });
+
+      /*
+        Sécurité supplémentaire :
+        recherche dans les textes lorsque l’ancien code
+        place le contenu dans un élément inattendu.
+      */
+
+      const walker =
+        document.createTreeWalker(
+          modal,
+          NodeFilter.SHOW_TEXT
+        );
+
+      const textNodes = [];
+
+      while(walker.nextNode()){
+        textNodes.push(
+          walker.currentNode
+        );
+      }
+
+      textNodes.forEach(function(textNode){
+
+        const text =
+          normalizeText(
+            textNode.nodeValue
+          );
+
+        if(
+          !mustRemovePreviousBack(text) &&
+          !mustRemoveSuggestion(text)
+        ){
+          return;
+        }
+
+        const container =
+          findRemovableContainer(
+            textNode.parentElement
+          );
+
+        if(
+          container &&
+          container !== modal
+        ){
+          container.remove();
+        }
+      });
+
+      /*
+        On conserve un seul bouton simple « Retour ».
+      */
+
+      const simpleBackButtons =
+        Array.from(
+          modal.querySelectorAll(
+            "button, a, [role='button'], .choiceBtn"
+          )
+        )
+        .filter(function(element){
+
+          return normalizeText(
+            element.textContent
+          ) === "retour";
+        });
+
+      simpleBackButtons.forEach(
+        function(button,index){
+
+          if(index > 0){
+            button.remove();
+          }
+        }
+      );
+    });
+  }
+
+  let cleaningScheduled = false;
+
+  function scheduleCleaning(){
+
+    if(cleaningScheduled){
+      return;
+    }
+
+    cleaningScheduled = true;
+
+    window.requestAnimationFrame(function(){
+
+      cleaningScheduled = false;
+      cleanModal();
+    });
+  }
+
+  const observer =
+    new MutationObserver(
+      scheduleCleaning
+    );
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true,
+      characterData:true
+    }
+  );
+
+  /*
+    Nettoyage après chaque ouverture de fenêtre.
+  */
+
+  const app =
+    window.BociteEntreprise;
+
+  if(
+    app &&
+    typeof app.renderModal === "function" &&
+    !app.__finalPageCleanerPatched
+  ){
+    app.__finalPageCleanerPatched = true;
+
+    const originalRenderModal =
+      app.renderModal;
+
+    app.renderModal = function(){
+
+      const result =
+        originalRenderModal.apply(
+          app,
+          arguments
+        );
+
+      window.setTimeout(
+        cleanModal,
+        0
+      );
+
+      window.setTimeout(
+        cleanModal,
+        50
+      );
+
+      window.setTimeout(
+        cleanModal,
+        200
+      );
+
+      return result;
+    };
+  }
+
+  cleanModal();
+
+  console.log(
+    "✅ Retours précédents et suggestions supprimés sur toutes les pages"
+  );
+
+})();
