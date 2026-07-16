@@ -196,7 +196,7 @@
   ">
 
   <img
-    src="bociteart-logo-officiel.png"
+    src="/bociteart-demo/entreprise/bociteart-logo-officiel.png" 
     alt="Logo officiel Bo'CitéArt"
     style="
       display:block;
