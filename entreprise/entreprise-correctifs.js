@@ -155,3 +155,946 @@
   );
 
 })();
+
+/* =========================================================
+   BO'CITÉART — ASSISTANT ENTREPRISE RÉSEAU
+   RÉPONSE DANS LE MÊME ENCART
+   MODE DÉMONSTRATION + API DE PRODUCTION
+   ========================================================= */
+
+(function installBociteNetworkAssistant(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt : module Entreprise introuvable."
+    );
+    return;
+  }
+
+  if(window.BOCITE_NETWORK_ASSISTANT_INSTALLED){
+    return;
+  }
+
+  window.BOCITE_NETWORK_ASSISTANT_INSTALLED =
+    true;
+
+  /*
+    En production, cette route sera raccordée
+    au serveur sécurisé Bo'CitéArt.
+
+    Aucun changement ne sera nécessaire
+    dans l'application.
+  */
+
+  const ASSISTANT_ENDPOINT =
+    "/api/bociteart-assistant";
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[’']/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function escapeHtml(value){
+
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function findAssistantArea(button){
+
+    if(!button){
+      return null;
+    }
+
+    let area =
+      button.closest(".box");
+
+    if(
+      area &&
+      area.querySelector(
+        "textarea, input[type='text'], input[type='search']"
+      )
+    ){
+      return area;
+    }
+
+    const modal =
+      button.closest(
+        ".modal-content, .modalContent, #modalContent"
+      );
+
+    if(!modal){
+      return null;
+    }
+
+    const fields =
+      Array.from(
+        modal.querySelectorAll(
+          "textarea, input[type='text'], input[type='search']"
+        )
+      );
+
+    const field =
+      fields.find(function(item){
+
+        return (
+          item.id === "entrepriseAiQuestion" ||
+          normalizeText(
+            item.placeholder
+          ).includes("question") ||
+          normalizeText(
+            item.placeholder
+          ).includes("recherche")
+        );
+      });
+
+    if(!field){
+      return null;
+    }
+
+    return (
+      field.closest(".box") ||
+      field.parentElement ||
+      modal
+    );
+  }
+
+  function findQuestionField(area){
+
+    if(!area){
+      return null;
+    }
+
+    return (
+      area.querySelector(
+        "#entrepriseAiQuestion"
+      ) ||
+      area.querySelector("textarea") ||
+      area.querySelector(
+        "input[type='search']"
+      ) ||
+      area.querySelector(
+        "input[type='text']"
+      )
+    );
+  }
+
+  function getResponseHost(area, button){
+
+    if(!area){
+      return null;
+    }
+
+    let host =
+      area.querySelector(
+        ".bociteAssistantResponse"
+      );
+
+    if(host){
+      return host;
+    }
+
+    const oldHost =
+      area.querySelector(
+        "#entrepriseAiAnswer," +
+        "#entrepriseAiAnswerV4"
+      );
+
+    if(oldHost){
+
+      oldHost.classList.add(
+        "bociteAssistantResponse"
+      );
+
+      oldHost.innerHTML = "";
+
+      return oldHost;
+    }
+
+    host =
+      document.createElement("div");
+
+    host.className =
+      "bociteAssistantResponse";
+
+    host.style.marginTop =
+      "14px";
+
+    if(button){
+
+      button.insertAdjacentElement(
+        "afterend",
+        host
+      );
+
+    }else{
+
+      area.appendChild(host);
+    }
+
+    return host;
+  }
+
+  function getCurrentPageTitle(){
+
+    const modalTitle =
+      document.querySelector(
+        ".modal-title," +
+        ".modalTitle," +
+        "#modalTitle," +
+        ".modal-header h1," +
+        ".modal-header h2"
+      );
+
+    return modalTitle
+      ? String(
+          modalTitle.textContent || ""
+        ).trim()
+      : "Entreprise";
+  }
+
+  function extractLocation(question){
+
+    const text =
+      String(question || "").trim();
+
+    const patterns = [
+      /\bville de\s+([a-zA-ZÀ-ÿ' -]{2,45})/i,
+      /\bcommune de\s+([a-zA-ZÀ-ÿ' -]{2,45})/i,
+      /\bautour de\s+([a-zA-ZÀ-ÿ' -]{2,45})/i,
+      /\bprès de\s+([a-zA-ZÀ-ÿ' -]{2,45})/i,
+      /\bsur\s+([a-zA-ZÀ-ÿ' -]{2,45})/i,
+      /\bà\s+([a-zA-ZÀ-ÿ' -]{2,45})/i
+    ];
+
+    for(
+      let index = 0;
+      index < patterns.length;
+      index++
+    ){
+
+      const match =
+        text.match(
+          patterns[index]
+        );
+
+      if(match){
+
+        return String(
+          match[1] || ""
+        )
+          .replace(
+            /\b(?:rapidement|urgent|pour|avec|dans|et)\b.*$/i,
+            ""
+          )
+          .trim();
+      }
+    }
+
+    return "";
+  }
+
+  function buildLocalFallback(question){
+
+    const normalized =
+      normalizeText(question);
+
+    const location =
+      extractLocation(question);
+
+    let category =
+      "professionnel";
+
+    let screen =
+      "annuaire";
+
+    if(
+      normalized.includes("emploi") ||
+      normalized.includes("recrut") ||
+      normalized.includes("salarie") ||
+      normalized.includes("candidat") ||
+      normalized.includes("apprenti") ||
+      normalized.includes("stage")
+    ){
+      category =
+        "emploi";
+
+      screen =
+        "emploi";
+    }
+
+    if(
+      normalized.includes("charge") ||
+      normalized.includes("electricite") ||
+      normalized.includes("gaz") ||
+      normalized.includes("assurance") ||
+      normalized.includes("mutualis")
+    ){
+      category =
+        "mutualisation";
+
+      screen =
+        "mutualisation";
+    }
+
+    if(
+      normalized.includes("mecenat") ||
+      normalized.includes("mecene") ||
+      normalized.includes("don")
+    ){
+      category =
+        "mécénat";
+
+      screen =
+        "mecenat";
+    }
+
+    return {
+      mode:"demonstration",
+
+      answer:
+        location
+          ? (
+              "Votre demande a été comprise. " +
+              "La recherche doit commencer à " +
+              location +
+              ", puis être élargie aux communes voisines si aucun résultat suffisant n’est disponible."
+            )
+          : (
+              "Votre demande a été comprise. " +
+              "La recherche doit commencer dans votre commune, puis être élargie progressivement si nécessaire."
+            ),
+
+      notice:
+        "Aucun résultat professionnel réel ne peut encore être confirmé tant que l’annuaire économique et le serveur de recherche Bo'CitéArt ne sont pas raccordés.",
+
+      category:category,
+
+      screen:screen,
+
+      results:[],
+
+      canExpand:true
+    };
+  }
+
+  async function requestNetworkAnswer(question){
+
+    const controller =
+      new AbortController();
+
+    const timeout =
+      window.setTimeout(function(){
+
+        controller.abort();
+
+      },12000);
+
+    try{
+
+      const response =
+        await fetch(
+          ASSISTANT_ENDPOINT,
+          {
+            method:"POST",
+
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:JSON.stringify({
+              question:question,
+              location:
+                extractLocation(question),
+              page:
+                getCurrentPageTitle(),
+              source:
+                "bociteart-entreprise"
+            }),
+
+            signal:
+              controller.signal
+          }
+        );
+
+      window.clearTimeout(
+        timeout
+      );
+
+      if(!response.ok){
+
+        throw new Error(
+          "Réponse réseau " +
+          response.status
+        );
+      }
+
+      const data =
+        await response.json();
+
+      if(
+        !data ||
+        !String(
+          data.answer || ""
+        ).trim()
+      ){
+        throw new Error(
+          "Réponse vide"
+        );
+      }
+
+      return data;
+
+    }catch(error){
+
+      window.clearTimeout(
+        timeout
+      );
+
+      console.info(
+        "Assistant réseau indisponible, utilisation du mode démonstration.",
+        error
+      );
+
+      return buildLocalFallback(
+        question
+      );
+    }
+  }
+
+  function renderLoading(host){
+
+    host.innerHTML = `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          color:#111;
+        ">
+
+        <strong>
+          Recherche Bo'CitéArt en cours…
+        </strong>
+
+        <br><br>
+
+        La recherche commence localement
+        avant d’être élargie si nécessaire.
+      </div>
+    `;
+  }
+
+  function renderResults(results){
+
+    if(
+      !Array.isArray(results) ||
+      !results.length
+    ){
+      return "";
+    }
+
+    return results
+      .map(function(result){
+
+        return `
+          <div
+            class="box"
+            style="
+              margin-top:10px;
+              border-left:6px solid #2f5d46;
+            ">
+
+            <strong style="font-size:18px;">
+              ${escapeHtml(
+                result.name ||
+                "Professionnel"
+              )}
+            </strong>
+
+            ${
+              result.activity
+                ? `
+                  <br><br>
+                  ${escapeHtml(
+                    result.activity
+                  )}
+                `
+                : ""
+            }
+
+            ${
+              result.city
+                ? `
+                  <br><br>
+                  Commune :
+                  ${escapeHtml(
+                    result.city
+                  )}
+                `
+                : ""
+            }
+
+            ${
+              result.phone
+                ? `
+                  <br><br>
+                  Téléphone :
+                  ${escapeHtml(
+                    result.phone
+                  )}
+                `
+                : ""
+            }
+
+            ${
+              result.email
+                ? `
+                  <br>
+                  E-mail :
+                  ${escapeHtml(
+                    result.email
+                  )}
+                `
+                : ""
+            }
+
+            ${
+              result.url
+                ? `
+                  <br><br>
+
+                  <a
+                    href="${escapeHtml(
+                      result.url
+                    )}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="choiceBtn"
+                    style="
+                      display:block;
+                      text-align:center;
+                      text-decoration:none;
+                    ">
+                    Consulter la fiche
+                  </a>
+                `
+                : ""
+            }
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  function renderAnswer(
+    host,
+    data,
+    question
+  ){
+
+    const results =
+      Array.isArray(data.results)
+        ? data.results
+        : [];
+
+    const noResultsText =
+      results.length
+        ? ""
+        : `
+          <div
+            class="box"
+            style="
+              margin-top:12px;
+              border-left:6px solid #b00020;
+            ">
+
+            <strong>
+              Aucun résultat confirmé
+              n’est disponible dans la zone recherchée.
+            </strong>
+
+            <br><br>
+
+            Souhaitez-vous poursuivre
+            dans les communes voisines,
+            le département,
+            la région,
+            puis au niveau national si nécessaire ?
+          </div>
+        `;
+
+    host.innerHTML = `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          color:#111;
+        ">
+
+        <strong style="font-size:19px;">
+          Réponse Bo'CitéArt
+        </strong>
+
+        <br><br>
+
+        ${escapeHtml(
+          data.answer ||
+          "Votre demande a été comprise."
+        )}
+
+        ${
+          data.notice
+            ? `
+              <br><br>
+
+              <span style="font-weight:700;">
+                ${escapeHtml(
+                  data.notice
+                )}
+              </span>
+            `
+            : ""
+        }
+      </div>
+
+      ${renderResults(results)}
+
+      ${noResultsText}
+
+      <button
+        class="choiceBtn bociteAssistantOpenSectionBtn"
+        type="button"
+        data-screen="${escapeHtml(
+          data.screen ||
+          "annuaire"
+        )}"
+        style="
+          width:100%;
+          margin-top:12px;
+        ">
+        Ouvrir la rubrique correspondante
+      </button>
+
+      ${
+        data.canExpand !== false
+          ? `
+            <button
+              class="choiceBtn bociteAssistantExpandBtn"
+              type="button"
+              data-question="${escapeHtml(
+                question
+              )}"
+              style="
+                width:100%;
+                margin-top:8px;
+                background:#fff;
+              ">
+              Continuer la recherche plus loin
+            </button>
+          `
+          : ""
+      }
+
+      <div
+        class="bociteAssistantExpandedHost">
+      </div>
+    `;
+
+    const sectionButton =
+      host.querySelector(
+        ".bociteAssistantOpenSectionBtn"
+      );
+
+    if(sectionButton){
+
+      sectionButton.onclick = function(){
+
+        const screen =
+          sectionButton.getAttribute(
+            "data-screen"
+          ) || "annuaire";
+
+        if(
+          typeof app.openScreen ===
+          "function"
+        ){
+          app.openScreen(
+            screen
+          );
+        }
+      };
+    }
+
+    const expandButton =
+      host.querySelector(
+        ".bociteAssistantExpandBtn"
+      );
+
+    if(expandButton){
+
+      expandButton.onclick =
+        async function(){
+
+          expandButton.disabled =
+            true;
+
+          expandButton.textContent =
+            "Recherche élargie en cours…";
+
+          const expandedHost =
+            host.querySelector(
+              ".bociteAssistantExpandedHost"
+            );
+
+          const expandedQuestion =
+            question +
+            " Élargir la recherche aux communes voisines, au département, à la région puis au niveau national.";
+
+          const expandedData =
+            await requestNetworkAnswer(
+              expandedQuestion
+            );
+
+          if(expandedHost){
+
+            expandedHost.innerHTML = `
+              <div
+                class="box"
+                style="
+                  margin-top:12px;
+                  border-left:6px solid #2f5d46;
+                ">
+
+                <strong>
+                  Recherche élargie
+                </strong>
+
+                <br><br>
+
+                ${escapeHtml(
+                  expandedData.answer ||
+                  "La recherche a été élargie."
+                )}
+              </div>
+
+              ${renderResults(
+                expandedData.results
+              )}
+            `;
+          }
+
+          expandButton.remove();
+        };
+    }
+
+    host.scrollIntoView({
+      behavior:"smooth",
+      block:"nearest"
+    });
+  }
+
+  async function answerQuestion(button){
+
+    const area =
+      findAssistantArea(
+        button
+      );
+
+    const field =
+      findQuestionField(
+        area
+      );
+
+    const host =
+      getResponseHost(
+        area,
+        button
+      );
+
+    if(
+      !area ||
+      !field ||
+      !host
+    ){
+      alert(
+        "La zone de question est momentanément indisponible."
+      );
+
+      return;
+    }
+
+    const question =
+      String(
+        field.value || ""
+      ).trim();
+
+    if(!question){
+
+      alert(
+        "Écrivez votre question avant de continuer."
+      );
+
+      field.focus();
+
+      return;
+    }
+
+    renderLoading(
+      host
+    );
+
+    const data =
+      await requestNetworkAnswer(
+        question
+      );
+
+    renderAnswer(
+      host,
+      data,
+      question
+    );
+  }
+
+  /*
+    Capture prioritaire :
+    l’ancien message provisoire
+    ne peut plus remplacer la réponse.
+  */
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const target =
+        event.target;
+
+      if(
+        !target ||
+        typeof target.closest !==
+        "function"
+      ){
+        return;
+      }
+
+      const button =
+        target.closest("button");
+
+      if(!button){
+        return;
+      }
+
+      const text =
+        normalizeText(
+          button.textContent
+        );
+
+      const isAssistantButton =
+        button.id ===
+          "entrepriseAiAskBtn" ||
+
+        button.id ===
+          "entrepriseAiAskBtnV4" ||
+
+        text ===
+          "poser ma question";
+
+      if(!isAssistantButton){
+        return;
+      }
+
+      const area =
+        findAssistantArea(
+          button
+        );
+
+      if(!area){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+        "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+
+      answerQuestion(
+        button
+      );
+
+    },
+    true
+  );
+
+  document.addEventListener(
+    "keydown",
+    function(event){
+
+      if(
+        event.key !== "Enter" ||
+        !event.target
+      ){
+        return;
+      }
+
+      if(
+        event.target.id !==
+        "entrepriseAiQuestion"
+      ){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const area =
+        event.target.closest(".box");
+
+      const button =
+        area
+          ? Array.from(
+              area.querySelectorAll(
+                "button"
+              )
+            )
+            .find(function(item){
+
+              return normalizeText(
+                item.textContent
+              ) ===
+                "poser ma question";
+            })
+          : null;
+
+      answerQuestion(
+        button
+      );
+
+    },
+    true
+  );
+
+  console.log(
+    "✅ Assistant Entreprise réseau raccordé"
+  );
+
+})();
