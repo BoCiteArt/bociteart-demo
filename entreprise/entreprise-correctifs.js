@@ -1970,3 +1970,116 @@
   );
 
 })();
+
+/* =========================================================
+   BO'CITÉART — SUPPRESSION GÉNÉRALE
+   DES RETOURS À LA PAGE PRÉCÉDENTE
+   ========================================================= */
+
+(function removePreviousPageBackButtonsEverywhere(){
+
+  "use strict";
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[←⟵‹«]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function cleanBackButtons(){
+
+    const modals =
+      document.querySelectorAll(
+        ".modal-content, .modalContent, #modalContent"
+      );
+
+    modals.forEach(function(modal){
+
+      const candidates =
+        Array.from(
+          modal.querySelectorAll(
+            "button, .choiceBtn, [role='button'], a"
+          )
+        );
+
+      const simpleBackButtons = [];
+
+      candidates.forEach(function(element){
+
+        const text =
+          normalizeText(
+            element.textContent
+          );
+
+        if(
+          text === "retour a la page precedente" ||
+          text.includes(
+            "retour a la page precedente"
+          )
+        ){
+          element.remove();
+          return;
+        }
+
+        if(text === "retour"){
+          simpleBackButtons.push(
+            element
+          );
+        }
+      });
+
+      /*
+        S'il reste plusieurs boutons simples "Retour",
+        on conserve uniquement le premier.
+      */
+
+      simpleBackButtons.forEach(
+        function(button,index){
+
+          if(index > 0){
+            button.remove();
+          }
+        }
+      );
+
+    });
+  }
+
+  const observer =
+    new MutationObserver(function(){
+
+      window.setTimeout(
+        cleanBackButtons,
+        20
+      );
+    });
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true,
+      characterData:true
+    }
+  );
+
+  window.setTimeout(
+    cleanBackButtons,
+    50
+  );
+
+  window.setInterval(
+    cleanBackButtons,
+    500
+  );
+
+  console.log(
+    "✅ Retours à la page précédente supprimés partout"
+  );
+
+})();
