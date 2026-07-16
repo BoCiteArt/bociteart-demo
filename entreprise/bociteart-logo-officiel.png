@@ -1,1 +1,10 @@
-
+<img
+    src="bociteart-logo-officiel.png"
+    alt="Logo officiel Bo'CitéArt"
+    style="
+        display:block;
+        width:210px;
+        max-width:70%;
+        height:auto;
+        margin:0 auto;
+    ">
