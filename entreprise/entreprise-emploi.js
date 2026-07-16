@@ -145,3 +145,284 @@
         se présentera.
 
       </div>
+            <div class="box">
+
+        <strong
+          class="entrepriseModuleSubtitle">
+
+          Les habitants connaissent-ils
+          réellement votre entreprise ?
+
+        </strong>
+
+        <br><br>
+
+        Combien de personnes
+        connaissent aujourd'hui :
+
+        <br><br>
+
+        • vos métiers ;<br>
+        • vos compétences ;<br>
+        • vos réalisations ;<br>
+        • vos équipes ;<br>
+        • vos valeurs ;<br>
+        • vos besoins de recrutement ?
+
+        <br><br>
+
+        Lorsqu'une entreprise devient
+        mieux connue dans sa commune,
+
+        les recommandations,
+        les candidatures spontanées
+        et le bouche-à-oreille
+        prennent naturellement
+        davantage d'importance.
+
+      </div>
+
+      <div class="box">
+
+        <strong
+          class="entrepriseModuleSubtitle">
+
+          Les outils Bo'CitéArt
+          pour recruter autrement
+
+        </strong>
+
+        <br><br>
+
+        Bo'CitéArt met progressivement
+        à votre disposition
+        plusieurs outils complémentaires :
+
+        <br><br>
+
+        • publier une offre d'emploi ;<br>
+        • rechercher un salarié ;<br>
+        • recevoir des candidatures spontanées ;<br>
+        • proposer un stage ;<br>
+        • accueillir un alternant ;<br>
+        • renforcer votre visibilité locale.
+
+        <br><br>
+
+        Chaque outil poursuit
+        le même objectif :
+
+        <br><br>
+
+        <strong>
+
+        rapprocher durablement
+        les entreprises,
+        les habitants
+        et les talents
+        de votre territoire.
+
+        </strong>
+
+      </div>
+
+      <div
+        class="entrepriseModuleActions">
+
+        <button
+          id="emploiOffersBtn"
+          class="choiceBtn"
+          type="button">
+
+          Consulter les offres
+
+        </button>
+
+        <button
+          id="emploiCvBtn"
+          class="choiceBtn"
+          type="button">
+
+          Déposer un CV
+
+        </button>
+
+        <button
+          id="emploiPublishBtn"
+          class="choiceBtn"
+          type="button">
+
+          Publier une offre
+
+        </button>
+
+        <button
+          id="emploiApplicationsBtn"
+          class="choiceBtn"
+          type="button">
+
+          Voir mes candidatures
+
+        </button>
+
+      </div>
+
+      <div
+        class="box entrepriseModuleConclusion">
+
+        <strong
+          style="font-size:20px;">
+
+          Recruter autrement
+          commence souvent
+          par être connu
+          près de chez soi.
+
+        </strong>
+
+      </div>
+
+    `;
+  }
+
+  function bindEmployment(){
+         const offersButton =
+      getElement(
+        "emploiOffersBtn"
+      );
+
+    const cvButton =
+      getElement(
+        "emploiCvBtn"
+      );
+
+    const publishButton =
+      getElement(
+        "emploiPublishBtn"
+      );
+
+    const applicationsButton =
+      getElement(
+        "emploiApplicationsBtn"
+      );
+
+    if(offersButton){
+
+      offersButton.onclick = function(){
+
+        if(
+          typeof module.openEmploymentOffers ===
+          "function"
+        ){
+          module.openEmploymentOffers();
+          return;
+        }
+
+        module.openScreen(
+          "emploi"
+        );
+      };
+    }
+
+    if(cvButton){
+
+      cvButton.onclick = function(){
+
+        if(
+          typeof module.openSpontaneousCv ===
+          "function"
+        ){
+          module.openSpontaneousCv();
+          return;
+        }
+
+        alert(
+          "Le dépôt de CV sera disponible dans la prochaine étape."
+        );
+      };
+    }
+
+    if(publishButton){
+
+      publishButton.onclick = function(){
+
+        const openForm =
+          function(){
+
+            if(
+              typeof module.openEmploymentForm ===
+              "function"
+            ){
+              module.openEmploymentForm();
+              return;
+            }
+
+            alert(
+              "Le formulaire de publication est momentanément indisponible."
+            );
+          };
+
+        if(
+          typeof module.requirePartnerAccess ===
+          "function"
+        ){
+          module.requirePartnerAccess(
+            openForm
+          );
+          return;
+        }
+
+        openForm();
+      };
+    }
+
+    if(applicationsButton){
+
+      applicationsButton.onclick = function(){
+
+        if(
+          typeof module.openEmploymentApplications ===
+          "function"
+        ){
+          module.openEmploymentApplications();
+          return;
+        }
+
+        alert(
+          "Les candidatures seront disponibles après chargement du module correspondant."
+        );
+      };
+    }
+
+  }
+
+  function openEmploymentModule(){
+
+    module.renderModulePage(
+
+      "Recruter autrement",
+
+      getEmploymentHtml(),
+
+      {
+        afterRender:
+          bindEmployment
+      }
+
+    );
+  }
+
+  module.registerScreen(
+    "emploi",
+    openEmploymentModule
+  );
+
+  module.openEmploymentModule =
+    openEmploymentModule;
+
+  console.log(
+    "✅ Module Emploi nouvelle génération chargé"
+  );
+
+})();
+
