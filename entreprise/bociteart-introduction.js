@@ -57,7 +57,7 @@
         overflow-y:auto;
         box-sizing:border-box;
         padding:16px 10px 34px;
-        background:#f3eddf;
+        background:#f1e5cf;
         color:#111;
         font-family:Arial, sans-serif;
       }
@@ -70,8 +70,9 @@
         padding:24px 18px;
         border:2px solid #2f5d46;
         border-radius:15px;
-        background:#fffdf7;
-        box-shadow:0 8px 28px rgba(0,0,0,.13);
+        background:#f1e5cf;
+        border:none;
+        box-shadow:none;
       }
 
       .bociteIntroductionLogo {
@@ -94,7 +95,9 @@
       }
 
       .bociteIntroductionSignature strong {
-        font-size:24px;
+      font-size:21px;
+      font-weight:400;
+}
       }
 
       .bociteIntroductionSeparator {
@@ -132,8 +135,8 @@
         padding:15px 12px;
         border:2px solid #2f5d46;
         border-radius:10px;
-        background:#b00020;
-        color:#fff;
+        background:#f1e5cf;
+        color:#111;
         font-size:18px;
         font-weight:900;
         cursor:pointer;
@@ -186,9 +189,23 @@
     return `
       <div id="bociteIntroductionCard">
 
-        <h1 class="bociteIntroductionLogo">
-          ${getLogoHtml()}
-        </h1>
+        <div
+  style="
+    text-align:center;
+    margin-bottom:20px;
+  ">
+
+  <img
+    src="./entreprise/bociteart-logo-officiel.png"
+    alt="Logo officiel Bo'CitéArt"
+    style="
+      display:block;
+      width:210px;
+      max-width:70%;
+      height:auto;
+      margin:0 auto;
+    ">
+</div>
 
         <div class="bociteIntroductionSignature">
 
@@ -249,15 +266,19 @@
 
         </div>
 
-        <div class="bociteIntroductionConclusion">
+       <div
+  style="
+    margin-top:28px;
+    color:#111;
+    font-size:17px;
+    line-height:1.55;
+    font-weight:400;
+  ">
 
-          <strong>
-            ${getLogoHtml()}
-            relie les énergies
-            pour faire vivre chaque territoire.
-          </strong>
+  Bo'CitéArt relie les énergies
+  pour faire vivre chaque territoire.
 
-        </div>
+</div>
 
         <button
           id="bociteIntroductionStartBtn"
