@@ -11,7 +11,6 @@
     window.BociteEntreprise;
 
   if(!app){
-
     console.error(
       "Bo'CitéArt : entreprise.js doit être chargé avant entreprise-accueil.js."
     );
