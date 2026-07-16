@@ -1881,3 +1881,92 @@
 
 })();
 
+/* =========================================================
+   BO'CITÉART — RETOUR UNIQUE
+   SUPPRESSION DES BOUTONS RETOUR EN DOUBLE
+   ========================================================= */
+
+(function keepSingleEntrepriseBackButton(){
+
+  "use strict";
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function removeDuplicateBackButtons(){
+
+    const modal =
+      document.querySelector(
+        ".modal-content, .modalContent, #modalContent"
+      );
+
+    if(!modal){
+      return;
+    }
+
+    const buttons =
+      Array.from(
+        modal.querySelectorAll(
+          "button, .choiceBtn, [role='button']"
+        )
+      )
+      .filter(function(button){
+
+        const text =
+          normalizeText(
+            button.textContent
+          );
+
+        return (
+          text === "retour" ||
+          text === "retour a la page precedente" ||
+          text === "← retour a la page precedente"
+        );
+      });
+
+    if(buttons.length <= 1){
+      return;
+    }
+
+    buttons.forEach(function(button,index){
+
+      if(index > 0){
+        button.remove();
+      }
+    });
+  }
+
+  const observer =
+    new MutationObserver(function(){
+
+      window.setTimeout(
+        removeDuplicateBackButtons,
+        30
+      );
+    });
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  window.setTimeout(
+    removeDuplicateBackButtons,
+    80
+  );
+
+  console.log(
+    "✅ Un seul bouton Retour conservé"
+  );
+
+})();
