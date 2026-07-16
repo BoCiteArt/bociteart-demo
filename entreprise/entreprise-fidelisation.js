@@ -4,7 +4,7 @@
    ATTIRER ET FIDÉLISER AUTREMENT
    ========================================================= */
 
-(function initEntrepriseFidelisation(){
+(function initEntrepriseFidelisation(){ 
 
   "use strict";
 
