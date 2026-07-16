@@ -1687,5 +1687,197 @@
 
 })();
 
+/* =========================================================
+   BO'CITÉART — TABLEAU DE DIRECTION
+   ACCÈS PRIVÉ COMMERCES ET ENTREPRISES
+   ========================================================= */
 
+(function protectEntrepriseDirectionBoard(){
+
+  "use strict";
+
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+    console.error(
+      "Bo'CitéArt : module Entreprise introuvable."
+    );
+    return;
+  }
+
+  if(
+    app.__directionBoardProtectionInstalled
+  ){
+    return;
+  }
+
+  app.__directionBoardProtectionInstalled =
+    true;
+
+  /*
+    On conserve la fonction actuelle
+    avant de la protéger.
+  */
+
+  const originalOpenDevelopmentPlan =
+    app.openDevelopmentPlan;
+
+  function openProtectedDirectionBoard(){
+
+    const openBoard = function(){
+
+      if(
+        typeof originalOpenDevelopmentPlan ===
+        "function"
+      ){
+        originalOpenDevelopmentPlan.apply(
+          app,
+          arguments
+        );
+
+        return;
+      }
+
+      alert(
+        "Le Tableau de Direction est momentanément indisponible."
+      );
+    };
+
+    /*
+      Accès professionnel commun :
+      commerces et entreprises utilisent
+      leur code privé professionnel.
+    */
+
+    if(
+      typeof app.requirePartnerAccess ===
+      "function"
+    ){
+      app.requirePartnerAccess(
+        openBoard
+      );
+
+      return;
+    }
+
+    if(
+      typeof app.requirePrivateAccess ===
+      "function"
+    ){
+      app.requirePrivateAccess(
+        openBoard
+      );
+
+      return;
+    }
+
+    alert(
+      "Accès privé réservé aux commerces et aux entreprises."
+    );
+  }
+
+  app.openDevelopmentPlan =
+    openProtectedDirectionBoard;
+
+  /*
+    Si le Tableau de Direction possède
+    déjà un écran enregistré,
+    on remplace son accès par la version protégée.
+  */
+
+  if(
+    typeof app.registerScreen ===
+    "function"
+  ){
+    [
+      "tableau_direction",
+      "tableau-de-direction",
+      "direction",
+      "direction_board"
+    ].forEach(function(screenName){
+
+      app.registerScreen(
+        screenName,
+        openProtectedDirectionBoard
+      );
+    });
+  }
+
+  /*
+    Sécurité complémentaire :
+    si un ancien bouton tente d’ouvrir directement
+    le Tableau de Direction, le clic est intercepté.
+  */
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const target =
+        event.target;
+
+      if(
+        !target ||
+        typeof target.closest !==
+        "function"
+      ){
+        return;
+      }
+
+      const button =
+        target.closest(
+          "button, [role='button'], .choiceBtn"
+        );
+
+      if(!button){
+        return;
+      }
+
+      const text =
+        String(
+          button.textContent || ""
+        )
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(
+            /[\u0300-\u036f]/g,
+            ""
+          )
+          .replace(
+            /\s+/g,
+            " "
+          )
+          .trim();
+
+      if(
+        text !== "tableau de direction" &&
+        !text.includes(
+          "ouvrir mon tableau de direction"
+        )
+      ){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+        "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+
+      openProtectedDirectionBoard();
+
+    },
+    true
+  );
+
+  console.log(
+    "✅ Tableau de Direction protégé pour commerces et entreprises"
+  );
+
+})();
 
