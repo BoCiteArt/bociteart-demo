@@ -1,7 +1,6 @@
 /* =========================================================
    BO'CITÉART — ENTREPRISE
-   ACCUEIL EN TROIS ÉTAPES
-   ACCROCHE • SYNOPTIQUE • INTERFACE
+   ACCUEIL • SYNOPTIQUE • PRÉSENTATION DES RUBRIQUES
    ========================================================= */
 
 (function initEntrepriseAccueil(){
@@ -20,16 +19,47 @@
     return;
   }
 
+  /*
+    On conserve l’ancien accueil avec les bandes défilantes.
+    Il sera ouvert après la présentation générale.
+  */
+
+  const originalEntrepriseHome =
+    app.openHome;
+
   function getElement(id){
 
     return document.getElementById(id);
   }
 
+  function getLogoHtml(){
+
+    return `
+      <span style="color:#2f5d46;">
+        Bo'Cité
+      </span><span style="color:#b00020;">
+        Art
+      </span>
+    `;
+  }
+
+  function renderPage(html){
+
+    app.renderModal(
+      "Commerces & Entreprises",
+      html
+    );
+  }
+
+  /* =======================================================
+     ÉTAPE 1 — ACCROCHE
+     ======================================================= */
+
   function getIntroductionHtml(){
 
     return `
       <div
-        class="box entrepriseModuleIntro"
+        class="box"
         style="border-left:6px solid #2f5d46;">
 
         <strong
@@ -122,7 +152,8 @@
         style="border-left:6px solid #b00020;">
 
         <strong style="font-size:20px;">
-          Bo'CitéArt ne vous demande pas
+          ${getLogoHtml()}
+          ne vous demande pas
           de travailler davantage.
         </strong>
 
@@ -161,38 +192,42 @@
           width:100%;
           margin-top:14px;
         ">
-        Découvrir Bo'CitéArt Entreprise
+        Découvrir ${getLogoHtml()} Entreprise
       </button>
     `;
   }
+
+  /* =======================================================
+     ÉTAPE 2 — IMAGE SYNOPTIQUE
+     ======================================================= */
 
   function getOverviewHtml(){
 
     return `
       <div
-        class="box entrepriseModuleIntro"
+        class="box"
         style="border-left:6px solid #2f5d46;">
 
         <strong
           style="
             display:block;
             font-size:22px;
-            color:#2f5d46;
+            line-height:1.35;
           ">
-          Bo'CitéArt Entreprise en un coup d’œil
+          ${getLogoHtml()} Entreprise
+          en un coup d’œil
         </strong>
 
         <br><br>
 
         Découvrez en quelques secondes
         les principaux services
-        qui seront mis à votre disposition.
+        mis à votre disposition.
       </div>
 
       <div
-        class="box"
         style="
-          padding:8px;
+          margin-top:12px;
           overflow:hidden;
           text-align:center;
         ">
@@ -204,13 +239,43 @@
             display:block;
             width:100%;
             height:auto;
-            border-radius:10px;
+            border-radius:12px;
+          "
+          onerror="
+            this.style.display='none';
+            document.getElementById(
+              'entrepriseImageError'
+            ).style.display='block';
           ">
       </div>
 
       <div
+        id="entrepriseImageError"
         class="box"
-        style="border-left:6px solid #2f5d46;">
+        style="
+          display:none;
+          margin-top:12px;
+          border-left:6px solid #b00020;
+        ">
+
+        <strong>
+          L’image du synoptique est introuvable.
+        </strong>
+
+        <br><br>
+
+        Vérifiez que le fichier
+        <strong>bociteart-entreprise-synoptique.png</strong>
+        est bien enregistré dans le dossier
+        <strong>entreprise</strong>.
+      </div>
+
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          border-left:6px solid #2f5d46;
+        ">
 
         <strong style="font-size:19px;">
           Cette image présente le contenu général.
@@ -219,238 +284,126 @@
         <br><br>
 
         L’interface réelle de l’application
-        est différente
-        et vous permettra ensuite
-        d’ouvrir chaque rubrique,
-        d’utiliser ses outils
-        et de gérer votre espace professionnel.
-      </div>
-
-      <div
-        class="box"
-        style="border-left:6px solid #b00020;">
-
-        <strong style="font-size:19px;">
-          Bo'CitéArt évoluera régulièrement.
-        </strong>
-
-        <br><br>
-
-        De nouveaux services
-        pourront enrichir progressivement
-        l’application
-        selon les besoins des entreprises,
-        des commerces
-        et des territoires.
+        vous permettra ensuite
+        de découvrir chaque rubrique
+        et ses différents outils.
       </div>
 
       <button
-        id="entrepriseEnterAppBtn"
+        id="entrepriseShowSummaryBtn"
         class="choiceBtn"
         type="button"
         style="
           width:100%;
           margin-top:12px;
         ">
-        Entrer dans l’application
-      </button>
-
-      <button
-        id="entrepriseOverviewBackBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:8px;
-          background:#fff;
-        ">
-        Retour
+        Voir les principales rubriques
       </button>
     `;
   }
 
-  function getApplicationHtml(){
+  /* =======================================================
+     ÉTAPE 3 — LISTE SIMPLE NON CLIQUABLE
+     ======================================================= */
+
+  function getSummaryHtml(){
 
     return `
       <div
-        class="box entrepriseModuleIntro"
+        class="box"
         style="border-left:6px solid #2f5d46;">
 
         <strong
           style="
             display:block;
             font-size:22px;
-            color:#2f5d46;
+            line-height:1.35;
           ">
-          Que souhaitez-vous faire ?
+          Ce que vous découvrirez dans
+          ${getLogoHtml()} Entreprise
         </strong>
 
         <br><br>
 
-        Ouvrez la rubrique
-        correspondant à votre besoin.
+        Cette présentation reste volontairement simple.
+
+        <br><br>
+
+        Les bandes défilantes
+        et les véritables rubriques de l’application
+        vous permettront ensuite
+        de découvrir chaque sujet plus en détail.
       </div>
 
       <div
         style="
-          display:flex;
-          flex-direction:column;
-          gap:9px;
-          margin-top:14px;
+          margin-top:16px;
+          padding:0 8px;
+          font-size:18px;
+          line-height:1.55;
         ">
 
-        <button
-          id="entrepriseHomeDevelopmentBtn"
-          class="choiceBtn"
-          type="button">
-          Développer autrement
-        </button>
+        <div>• Développement</div>
 
-        <button
-          id="entrepriseHomeEmploymentBtn"
-          class="choiceBtn"
-          type="button">
-          Recruter autrement
-        </button>
+        <div>• Emploi</div>
 
-        <button
-          id="entrepriseHomeLoyaltyBtn"
-          class="choiceBtn"
-          type="button">
-          Attirer et fidéliser vos salariés
-        </button>
+        <div>• Fidélisation des salariés</div>
 
-        <button
-          id="entrepriseHomeVisibilityBtn"
-          class="choiceBtn"
-          type="button">
-          Faire connaître votre entreprise
-        </button>
+        <div>• Visibilité de l’entreprise</div>
 
-        <button
-          id="entrepriseHomeMutualisationBtn"
-          class="choiceBtn"
-          type="button">
-          Réduire vos charges par la mutualisation
-        </button>
+        <div>• Mutualisation</div>
 
-        <button
-          id="entrepriseHomePatronageBtn"
-          class="choiceBtn"
-          type="button">
-          Découvrir le mécénat
-        </button>
+        <div>• Économies</div>
 
-        <button
-          id="entrepriseHomeSustainabilityBtn"
-          class="choiceBtn"
-          type="button">
-          Préparer l’avenir de votre entreprise
-        </button>
+        <div>• Pérennité et transmission</div>
 
-        <button
-          id="entrepriseHomeDirectoryBtn"
-          class="choiceBtn"
-          type="button">
-          Entreprises et commerces de ma ville
-        </button>
+        <div>• Mécénat</div>
 
-        <button
-          id="entrepriseHomeProfessionalSearchBtn"
-          class="choiceBtn"
-          type="button">
-          Recherche professionnelle
-        </button>
+        <div>• Annuaire économique local</div>
 
-        <button
-          id="entrepriseHomeSubscriptionBtn"
-          class="choiceBtn"
-          type="button">
-          Abonnement professionnel
-        </button>
+        <div>• Recherche professionnelle en France et en Europe</div>
+
+        <div>• Abonnement professionnel</div>
       </div>
 
       <div
         class="box"
         style="
           margin-top:18px;
-          border-left:6px solid #2f5d46;
+          border-left:6px solid #b00020;
         ">
 
-        <strong style="font-size:19px;">
-          Vous avez une question précise ?
+        <strong style="font-size:20px;">
+          ${getLogoHtml()} ne remplace pas
+          votre indépendance.
         </strong>
 
         <br><br>
 
-        Décrivez votre besoin.
-        Bo'CitéArt recherchera d’abord localement,
-        puis pourra élargir en France
-        ou en Europe.
-
-        <textarea
-          id="entrepriseAiQuestion"
-          class="miniField"
-          style="
-            width:100%;
-            min-height:105px;
-            margin-top:12px;
-            box-sizing:border-box;
-          "
-          placeholder="Exemple : je recherche un fournisseur spécialisé en France ou en Europe.">
-        </textarea>
-
-        <button
-          id="entrepriseAiAskBtn"
-          class="choiceBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:10px;
-          ">
-          Poser ma question
-        </button>
-
-        <div
-          id="entrepriseAiAnswer"
-          class="bociteAssistantResponse"
-          style="margin-top:12px;">
-        </div>
+        Il permet aux commerces
+        et aux entreprises
+        de rester indépendants
+        tout en devenant plus visibles,
+        plus solidaires
+        et mieux reliés à leur territoire.
       </div>
 
       <button
-        id="entrepriseAppBackBtn"
+        id="entrepriseOpenRealHomeBtn"
         class="choiceBtn"
         type="button"
         style="
           width:100%;
-          margin-top:12px;
-          background:#fff;
+          margin-top:14px;
         ">
-        Retour au synoptique
+        Découvrir maintenant les bandes défilantes
       </button>
     `;
   }
 
-  function renderPage(html){
-
-    app.renderModal(
-      "Commerces & Entreprises",
-      html
-    );
-  }
-
-  function openScreen(screenName){
-
-    if(
-      typeof app.openScreen ===
-      "function"
-    ){
-      app.openScreen(
-        screenName
-      );
-    }
-  }
+  /* =======================================================
+     OUVERTURES ET RACCORDEMENTS
+     ======================================================= */
 
   function openIntroduction(){
 
@@ -482,116 +435,56 @@
 
     window.setTimeout(function(){
 
-      const enterButton =
+      const button =
         getElement(
-          "entrepriseEnterAppBtn"
+          "entrepriseShowSummaryBtn"
         );
 
-      const backButton =
-        getElement(
-          "entrepriseOverviewBackBtn"
-        );
+      if(button){
 
-      if(enterButton){
-
-        enterButton.onclick =
-          openApplication;
-      }
-
-      if(backButton){
-
-        backButton.onclick =
-          openIntroduction;
+        button.onclick =
+          openSummary;
       }
 
     },0);
   }
 
-  function bindApplication(){
+  function openSummary(){
 
-    const routes = [
-      [
-        "entrepriseHomeDevelopmentBtn",
-        "developpement"
-      ],
-      [
-        "entrepriseHomeEmploymentBtn",
-        "emploi"
-      ],
-      [
-        "entrepriseHomeLoyaltyBtn",
-        "fidelisation"
-      ],
-      [
-        "entrepriseHomeVisibilityBtn",
-        "visibilite"
-      ],
-      [
-        "entrepriseHomeMutualisationBtn",
-        "mutualisation"
-      ],
-      [
-        "entrepriseHomePatronageBtn",
-        "mecenat"
-      ],
-      [
-        "entrepriseHomeSustainabilityBtn",
-        "perennite"
-      ],
-      [
-        "entrepriseHomeDirectoryBtn",
-        "annuaire_local"
-      ],
-      [
-        "entrepriseHomeProfessionalSearchBtn",
-        "annuaire"
-      ],
-      [
-        "entrepriseHomeSubscriptionBtn",
-        "abonnement"
-      ]
-    ];
+    renderPage(
+      getSummaryHtml()
+    );
 
-    routes.forEach(function(route){
+    window.setTimeout(function(){
 
       const button =
         getElement(
-          route[0]
+          "entrepriseOpenRealHomeBtn"
         );
 
       if(button){
 
         button.onclick = function(){
 
-          openScreen(
-            route[1]
+          if(
+            typeof originalEntrepriseHome ===
+            "function"
+          ){
+            originalEntrepriseHome.apply(
+              app,
+              arguments
+            );
+
+            return;
+          }
+
+          alert(
+            "L’accueil avec les bandes défilantes est momentanément indisponible."
           );
         };
       }
-    });
 
-    const backButton =
-      getElement(
-        "entrepriseAppBackBtn"
-      );
-
-    if(backButton){
-
-      backButton.onclick =
-        openOverview;
-    }
-  }
-
-  function openApplication(){
-
-    renderPage(
-      getApplicationHtml()
-    );
-
-    window.setTimeout(
-      bindApplication,
-      0
-    );
+    },0);
   }
 
   app.openHome =
@@ -603,8 +496,8 @@
   app.openEntrepriseOverview =
     openOverview;
 
-  app.openEntrepriseApplication =
-    openApplication;
+  app.openEntrepriseSummary =
+    openSummary;
 
   app.registerScreen(
     "home",
@@ -617,7 +510,7 @@
   );
 
   console.log(
-    "✅ Accueil Entreprise en trois étapes chargé"
+    "✅ Accueil Entreprise simplifié chargé"
   );
 
 })();
