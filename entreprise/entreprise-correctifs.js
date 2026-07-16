@@ -2523,3 +2523,72 @@
   );
 
 })();
+
+/* =========================================================
+   BO'CITÉART — RETRAIT DIRECT DES ANCIENS ENCARTS
+   ========================================================= */
+
+(function removeLegacyEntrepriseBlocks(){
+
+  "use strict";
+
+  function normalize(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[←⟵]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function clean(){
+
+    document
+      .querySelectorAll(
+        "button, a, [role='button'], .choiceBtn, .box, div"
+      )
+      .forEach(function(element){
+
+        if(!element.isConnected){
+          return;
+        }
+
+        const text =
+          normalize(element.textContent);
+
+        if(
+          text === "retour a la page precedente" ||
+          text.startsWith(
+            "vous pourriez egalement etre interesse"
+          )
+        ){
+          element.remove();
+        }
+      });
+  }
+
+  const observer =
+    new MutationObserver(clean);
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+  window.setInterval(
+    clean,
+    250
+  );
+
+  clean();
+
+  console.log(
+    "✅ Anciens encarts retirés directement"
+  );
+
+})();
