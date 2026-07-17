@@ -1,9 +1,6 @@
 /* =========================================================
-   BO'CITÉART — PORTE D'ENTRÉE
-   ÉTAPE 1 — INTRODUCTION GÉNÉRALE
-
-   Fichier indépendant.
-   Aucun onglet existant n'est modifié.
+   BO'CITÉART — PAGE D'INTRODUCTION
+   Après validation RGPD / CGU / CGV
    ========================================================= */
 
 (function initBociteartIntroduction(){
@@ -16,19 +13,13 @@
 
   function installStyles(){
 
-    if(
-      document.getElementById(
-        "bociteIntroductionStyles"
-      )
-    ){
+    if(document.getElementById("bociteIntroductionStyles")){
       return;
     }
 
-    const style =
-      document.createElement("style");
+    const style = document.createElement("style");
 
-    style.id =
-      "bociteIntroductionStyles";
+    style.id = "bociteIntroductionStyles";
 
     style.textContent = `
       #bociteIntroductionOverlay {
@@ -37,7 +28,7 @@
         z-index: 999999;
         overflow-y: auto;
         box-sizing: border-box;
-        padding: 16px 10px 34px;
+        padding: 18px 10px 36px;
         background: #f1e5cf;
         color: #111;
         font-family: Arial, sans-serif;
@@ -45,13 +36,11 @@
 
       #bociteIntroductionCard {
         width: 100%;
-        max-width: 620px;
+        max-width: 650px;
         margin: 0 auto;
         box-sizing: border-box;
-        padding: 24px 18px;
+        padding: 20px 20px 28px;
         background: #f1e5cf;
-        border: none;
-        box-shadow: none;
       }
 
       .bociteIntroductionLogoBox {
@@ -61,92 +50,94 @@
 
       .bociteIntroductionLogoImage {
         display: block;
-        width: 250px;
-        max-width: 82%;
+        width: 310px;
+        max-width: 88%;
         height: auto;
         margin: 0 auto;
         object-fit: contain;
       }
 
       .bociteIntroductionSignature {
-        margin-top: 24px;
+        margin-top: 22px;
         color: #111;
-        line-height: 1.5;
+        line-height: 1.55;
         text-align: center;
       }
 
       .bociteIntroductionSignature div {
-        margin: 6px 0;
+        margin: 5px 0;
         font-size: 21px;
         font-weight: 400;
       }
 
       .bociteIntroductionSeparator {
-        width: 78px;
+        width: 74px;
         height: 2px;
         margin: 24px auto;
-        background: #2f5d46;
+        background: #315d46;
       }
 
       .bociteIntroductionActors {
         color: #111;
         font-size: 17px;
-        line-height: 1.55;
+        line-height: 1.6;
       }
 
       .bociteIntroductionActors p {
-        margin: 12px 0;
+        margin: 13px 0;
       }
 
-      .bociteIntroductionFinalSentence {
-        margin-top: 28px;
+      .bociteIntroductionConclusion {
+        margin-top: 26px;
         color: #111;
-        font-size: 17px;
+        font-size: 18px;
         line-height: 1.55;
-        font-weight: 400;
         text-align: center;
+        font-weight: 400;
       }
 
       #bociteIntroductionStartBtn {
         display: block;
         width: 100%;
-        margin-top: 24px;
-        padding: 15px 12px;
-        border: 2px solid #2f5d46;
-        border-radius: 10px;
-        background: #f1e5cf;
+        margin-top: 25px;
+        padding: 15px 14px;
+        border: 2px solid #315d46;
+        border-radius: 9px;
+        background: transparent;
         color: #111;
         font-size: 18px;
         font-weight: 700;
         cursor: pointer;
-        touch-action: manipulation;
       }
 
-      #bociteIntroductionStartBtn:focus {
-        outline: 3px solid rgba(47, 93, 70, 0.25);
+      #bociteIntroductionStartBtn:hover {
+        background: rgba(49, 93, 70, 0.07);
       }
 
       @media (max-width: 600px) {
 
         #bociteIntroductionOverlay {
-          padding: 9px 7px 26px;
+          padding: 10px 7px 28px;
         }
 
         #bociteIntroductionCard {
-          padding: 21px 15px;
+          padding: 18px 15px 24px;
         }
 
         .bociteIntroductionLogoImage {
-          width: 220px;
+          width: 265px;
         }
 
         .bociteIntroductionSignature div {
           font-size: 19px;
         }
 
-        .bociteIntroductionActors,
-        .bociteIntroductionFinalSentence {
+        .bociteIntroductionActors {
           font-size: 16px;
+        }
+
+        .bociteIntroductionConclusion {
+          font-size: 17px;
         }
       }
     `;
@@ -157,23 +148,19 @@
   function closeIntroduction(){
 
     const overlay =
-      document.getElementById(
-        "bociteIntroductionOverlay"
-      );
+      document.getElementById("bociteIntroductionOverlay");
 
     if(overlay){
       overlay.remove();
     }
   }
 
-    function openSynoptiquePage(){
+  function openPresentationPage(){
 
     closeIntroduction();
 
     window.dispatchEvent(
-      new CustomEvent(
-        "bociteart:open-synoptique"
-      )
+      new CustomEvent("bociteart:open-synoptique")
     );
   }
 
@@ -182,11 +169,9 @@
     installStyles();
     closeIntroduction();
 
-    const overlay =
-      document.createElement("div");
- 
-    overlay.id =
-      "bociteIntroductionOverlay";
+    const overlay = document.createElement("div");
+
+    overlay.id = "bociteIntroductionOverlay";
 
     overlay.innerHTML = `
       <div id="bociteIntroductionCard">
@@ -194,7 +179,7 @@
         <div class="bociteIntroductionLogoBox">
           <img
             class="bociteIntroductionLogoImage"
-            src="./entreprise/bociteart_logo.png"
+            src="./entreprise/bociteart_logo.png?v=20260717-44"
             alt="Logo officiel Bo'CitéArt">
         </div>
 
@@ -243,7 +228,7 @@
 
         <div class="bociteIntroductionSeparator"></div>
 
-        <div class="bociteIntroductionFinalSentence">
+        <div class="bociteIntroductionConclusion">
           Bo'CitéArt relie les énergies<br>
           pour faire vivre chaque territoire.
         </div>
@@ -260,14 +245,12 @@
     document.body.appendChild(overlay);
 
     const button =
-      document.getElementById(
-        "bociteIntroductionStartBtn"
-      );
+      document.getElementById("bociteIntroductionStartBtn");
 
     if(button){
       button.addEventListener(
         "click",
-        openSynoptiquePage
+        openPresentationPage
       );
     }
   }
@@ -279,7 +262,7 @@
   };
 
   console.log(
-    "✅ Introduction générale Bo'CitéArt prête"
+    "✅ Introduction officielle Bo'CitéArt prête"
   );
 
 })();
