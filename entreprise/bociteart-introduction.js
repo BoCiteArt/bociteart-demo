@@ -166,16 +166,15 @@
     }
   }
 
-  function openLegalPage(){
+    function openSynoptiquePage(){
 
     closeIntroduction();
 
-    const event =
+    window.dispatchEvent(
       new CustomEvent(
-        "bociteart:open-legal"
-      );
-
-    window.dispatchEvent(event);
+        "bociteart:open-synoptique"
+      )
+    );
   }
 
   function renderIntroduction(){
@@ -268,7 +267,7 @@
     if(button){
       button.addEventListener(
         "click",
-        openLegalPage
+        openSynoptiquePage
       );
     }
   }
