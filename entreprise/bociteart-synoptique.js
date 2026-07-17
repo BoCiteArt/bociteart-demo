@@ -215,77 +215,38 @@
 
         </div>
 
-        <div class="bociteSynoptiqueImageBox">
+      <div class="bociteSynoptiqueImageBox">
 
-          <img
-            id="bociteSynoptiqueImage"
-            src="${IMAGE_PATHS[0]}"
-            alt="Présentation générale des fonctions de Bo'CitéArt">
+  <img
+    id="bociteSynoptiqueImage"
+    src="${IMAGE_PATHS[0]}"
+    alt="Présentation générale des fonctions de Bo'CitéArt">
 
-        </div>
+</div>
 
-        <div id="bociteSynoptiqueError">
+<div id="bociteSynoptiqueError" style="display:none;"></div>
 
-          <strong>
-            L'image du synoptique
-            n'a pas été trouvée.
-          </strong>
+<div class="bociteSynoptiqueNotice" style="display:none;"></div>
 
-          <br><br>
+<button
+  id="bociteSynoptiqueContinueBtn"
+  type="button">
 
-          Vérifiez que le fichier porte exactement le nom :
+  Choisir mon espace
 
-          <br><br>
+</button>
 
-          <strong>
-            bociteart-entreprise-synoptique.png
-          </strong>
+<button
+  id="bociteSynoptiqueBackBtn"
+  type="button">
 
-          <br><br>
+  Retour
 
-          et qu'il se trouve dans le dossier :
+</button>
 
-          <br><br>
-
-          <strong>
-            entreprise
-          </strong>
-
-        </div>
-
-        <div class="bociteSynoptiqueNotice">
-
-          Cette image reste volontairement fixe.
-
-          <br><br>
-
-          L'interface réelle de l'application
-          sera accessible à l'étape suivante
-          et permettra ensuite
-          de découvrir chaque espace
-          et chaque rubrique.
-
-        </div>
-
-        <button
-          id="bociteSynoptiqueContinueBtn"
-          type="button">
-
-          Choisir mon espace
-
-        </button>
-
-        <button
-          id="bociteSynoptiqueBackBtn"
-          type="button">
-
-          Retour
-
-        </button>
-
-      </div>
-    `;
-  }
+</div>
+`;
+} 
 
   function removeSynoptique(){
 
@@ -311,40 +272,35 @@
         "bociteSynoptiqueError"
       );
 
-    if(!image){
-      return;
-    }
+ if(!image){
+  return;
+}
 
-    let currentPathIndex = 0;
+let currentPathIndex = 0;
 
-    image.onerror = function(){
+image.onerror = function(){
 
-      currentPathIndex += 1;
+  currentPathIndex += 1;
 
-      if(
-        currentPathIndex <
-        IMAGE_PATHS.length
-      ){
+  if(currentPathIndex < IMAGE_PATHS.length){
 
-        image.src =
-          IMAGE_PATHS[
-            currentPathIndex
-          ];
-
-        return;
-      }
-
-      image.style.display =
-        "none";
-
-      if(errorBox){
-
-        errorBox.style.display =
-          "block";
-      }
-    };
+    image.src = IMAGE_PATHS[currentPathIndex];
+    return;
   }
 
+  console.warn(
+    "Image du synoptique introuvable :",
+    IMAGE_PATHS
+  );
+
+  /* On ne montre plus de message à l'utilisateur */
+
+  image.style.display = "block";
+
+  if(errorBox){
+    errorBox.style.display = "none";
+  }
+};
   function continueJourney(){
 
     removeSynoptique();
