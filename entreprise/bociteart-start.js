@@ -21,6 +21,63 @@
 
   const SESSION_KEY =
     "bociteart_entry_session_v1";
+   
+let pendingCommerceEntrepriseButton = null;
+let allowCommerceEntrepriseOpening = false;
+
+  function bindCommerceEntrepriseTile(){
+
+    document.addEventListener(
+      "click",
+      function(event){
+
+        const trigger =
+          event.target.closest(
+            "button, a, [role='button'], [onclick]"
+          );
+
+        if(!trigger){
+          return;
+        }
+
+        const text =
+          String(trigger.textContent || "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .toLowerCase();
+
+        if(
+          !text.includes(
+            "commerces & entreprises"
+          )
+        ){
+          return;
+        }
+
+        /*
+          Ce passage autorise le clic automatique final
+          sans relancer une deuxième fois l'introduction.
+        */
+
+        if(allowCommerceEntrepriseOpening){
+
+          allowCommerceEntrepriseOpening = false;
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        pendingCommerceEntrepriseButton =
+          trigger;
+
+        openIntroduction();
+
+      },
+      true
+    );
+  }
 
   function closeAllEntryScreens(){
 
@@ -196,59 +253,123 @@
         }
       )
     );
-  }
 
+    /*
+      Après le parcours :
+      ouverture de la véritable page
+      Commerces & Entreprises déjà existante.
+    */
+
+    if(
+      pendingCommerceEntrepriseButton &&
+      document.body.contains(
+        pendingCommerceEntrepriseButton
+      )
+    ){
+
+      const buttonToOpen =
+        pendingCommerceEntrepriseButton;
+
+      pendingCommerceEntrepriseButton =
+        null;
+
+      allowCommerceEntrepriseOpening =
+        true;
+
+      window.setTimeout(
+        function(){
+
+          buttonToOpen.click();
+
+        },
+        100
+      );
+    }
+  }
+   
   function bindJourneyEvents(){
+
+    function handleOpenLegal(){
+      openLegal();
+    }
+
+    function handleOpenSynoptique(){
+      openSynoptique();
+    }
+
+    function handleOpenProfiles(){
+      openProfiles();
+    }
+
+    function handleProfileSelected(event){
+
+      enterExistingApplication(
+        event.detail
+          ? event.detail.profile
+          : null
+      );
+    }
+
+    function handleEnterExistingApp(event){
+
+      enterExistingApplication(
+        event.detail
+          ? event.detail.profile
+          : null
+      );
+    }
+
+    window.addEventListener(
+      "bociteart:open-legal",
+      handleOpenLegal
+    );
 
     document.addEventListener(
       "bociteart:open-legal",
-      function(){
+      handleOpenLegal
+    );
 
-        openLegal();
-      }
+    window.addEventListener(
+      "bociteart:open-synoptique",
+      handleOpenSynoptique
     );
 
     document.addEventListener(
       "bociteart:open-synoptique",
-      function(){
+      handleOpenSynoptique
+    );
 
-        openSynoptique();
-      }
+    window.addEventListener(
+      "bociteart:open-profils",
+      handleOpenProfiles
     );
 
     document.addEventListener(
       "bociteart:open-profils",
-      function(){
+      handleOpenProfiles
+    );
 
-        openProfiles();
-      }
+    window.addEventListener(
+      "bociteart:profile-selected",
+      handleProfileSelected
     );
 
     document.addEventListener(
       "bociteart:profile-selected",
-      function(event){
+      handleProfileSelected
+    );
 
-        enterExistingApplication(
-          event.detail
-            ? event.detail.profile
-            : null
-        );
-      }
+    window.addEventListener(
+      "bociteart:enter-existing-app",
+      handleEnterExistingApp
     );
 
     document.addEventListener(
       "bociteart:enter-existing-app",
-      function(event){
-
-        enterExistingApplication(
-          event.detail
-            ? event.detail.profile
-            : null
-        );
-      }
+      handleEnterExistingApp
     );
   }
-
+   
   function startJourney(){
 
     /*
@@ -322,6 +443,7 @@
   };
 
   bindJourneyEvents();
+  bindCommerceEntrepriseTile();
 
   if(
     document.readyState ===
