@@ -101,21 +101,15 @@
     return "";
   }
 
-  function getOfficialLogoHtml(){
+    function getOfficialLogoHtml(){
 
-    const logoSource =
-      findExistingOfficialLogo();
-
-    if(logoSource){
-
-      return `
-        <img
-          class="bociteIntroductionLogoImage"
-          src="${escapeHtml(logoSource)}"
-          alt="Logo officiel Bo'CitéArt">
-      `;
-    }
-
+    return `
+      <img
+        class="bociteIntroductionLogoImage"
+        src="./entreprise/bociteart_logo.png"
+        alt="Logo officiel Bo'CitéArt">
+    `;
+  }
     /*
       Solution de secours uniquement si aucun logo
       déjà présent dans l'application n'est détecté.
