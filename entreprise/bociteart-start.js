@@ -289,10 +289,6 @@ let allowCommerceEntrepriseOpening = false;
    
   function bindJourneyEvents(){
 
-    function handleOpenLegal(){
-      openLegal();
-    }
-
     function handleOpenSynoptique(){
       openSynoptique();
     }
@@ -318,16 +314,6 @@ let allowCommerceEntrepriseOpening = false;
           : null
       );
     }
-
-    window.addEventListener(
-      "bociteart:open-legal",
-      handleOpenLegal
-    );
-
-    document.addEventListener(
-      "bociteart:open-legal",
-      handleOpenLegal
-    );
 
     window.addEventListener(
       "bociteart:open-synoptique",
@@ -370,20 +356,20 @@ let allowCommerceEntrepriseOpening = false;
     );
   }
    
-   function startJourney(){
+  function startJourney(){
 
     /*
-      À l'ouverture générale de l'application :
-      affichage préalable des informations légales,
-      RGPD, CGU et CGV.
+      Aucun écran supplémentaire ne s'ouvre ici.
 
-      L'introduction sera ouverte seulement après
-      un clic sur la tuile Commerces & Entreprises.
+      La fiche RGPD / CGU / CGV déjà existante
+      dans l'application reste l'unique fiche juridique.
+
+      Après sa validation, le parcours devra ouvrir :
+      introduction → présentation visuelle → application.
     */
 
-    openLegal();
+    closeAllEntryScreens();
   }
-
   function restartJourney(){
 
     try{
