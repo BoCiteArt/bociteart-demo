@@ -29,7 +29,7 @@ style.textContent = `
     overflow-y: auto;
     box-sizing: border-box;
     padding: 18px 10px 36px;
-    background: #f7f3e8;
+    background: #f2ecde;
     color: #111111;
     font-family: Arial, sans-serif;
   }
@@ -40,7 +40,7 @@ style.textContent = `
     margin: 0 auto;
     box-sizing: border-box;
     padding: 20px 20px 28px;
-    background: #f7f3e8;
+    background: #f2ecde;
   }
 
   .bociteIntroductionLogoBox {
@@ -117,7 +117,7 @@ style.textContent = `
     padding: 15px 14px;
     border: 2px solid #315d46;
     border-radius: 9px;
-    background: #f7f3e8;
+    background: #f2ecde;
     color: #111111;
     font-size: 18px;
     font-weight: 700;
