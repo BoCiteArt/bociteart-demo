@@ -300,3 +300,185 @@
       style
     );
   }
+
+    function renderIntroduction(){
+
+    installStyles();
+
+    const old =
+      document.getElementById(
+        "bociteIntroductionOverlay"
+      );
+
+    if(old){
+      old.remove();
+    }
+
+    const overlay =
+      document.createElement("div");
+
+    overlay.id =
+      "bociteIntroductionOverlay";
+
+    overlay.innerHTML = `
+
+      <div id="bociteIntroductionCard">
+
+        <div class="bociteIntroductionLogoBox">
+
+          ${getOfficialLogoHtml()}
+
+        </div>
+
+        <div class="bociteIntroductionSignature">
+
+          <div>Découvrir ce qui existe.</div>
+
+          <div>RELIER les énergies.</div>
+
+          <div>Faire vivre chaque territoire.</div>
+
+        </div>
+
+        <div class="bociteIntroductionSeparator"></div>
+
+        <div class="bociteIntroductionActors">
+
+          <p>
+            Les œuvres rapprochent les artistes,
+            les habitants.
+          </p>
+
+          <p>
+            L'école révèle ses talents.
+          </p>
+
+          <p>
+            Les associations rassemblent
+            les sourires.
+          </p>
+
+          <p>
+            Les clubs sportifs développent
+            leurs forces et l'esprit d'équipe.
+          </p>
+
+          <p>
+            Les commerces renforcent
+            et fidélisent leur clientèle.
+          </p>
+
+          <p>
+            Les entreprises véritablement visibles
+            trouvent leurs futurs collaborateurs.
+          </p>
+
+          <p>
+            La mairie révèle les trésors
+            et les richesses de son territoire.
+          </p>
+
+        </div>
+
+        <div class="bociteIntroductionSeparator"></div>
+
+        <div class="bociteIntroductionFinalSentence">
+
+          Bo'CitéArt relie les énergies
+          pour faire vivre chaque territoire.
+
+        </div>
+
+        <button
+          id="bociteIntroductionStartBtn"
+          type="button">
+
+          Commencer la découverte
+
+        </button>
+
+      </div>
+
+    `;
+
+    document.body.appendChild(
+      overlay
+    );
+
+    document
+      .getElementById(
+        "bociteIntroductionStartBtn"
+      )
+      .addEventListener(
+        "click",
+        function(){
+
+          overlay.remove();
+
+          if(
+            typeof window.dispatchEvent ===
+            "function"
+          ){
+
+            window.dispatchEvent(
+              new CustomEvent(
+                "bociteart:open-legal"
+              )
+            );
+
+            return;
+          }
+
+          if(
+            typeof window.openLegalPage ===
+            "function"
+          ){
+
+            window.openLegalPage();
+
+            return;
+          }
+
+          if(
+            typeof window.showLegalPage ===
+            "function"
+          ){
+
+            window.showLegalPage();
+
+            return;
+          }
+
+          console.log(
+            "Étape suivante : ouverture de la page légale."
+          );
+
+        }
+      );
+  }
+
+  window.BociteIntroduction = {
+
+    open: renderIntroduction,
+
+    show: renderIntroduction
+
+  };
+
+  if(
+    document.readyState ===
+    "loading"
+  ){
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      renderIntroduction
+    );
+
+  }else{
+
+    renderIntroduction();
+
+  }
+
+})(); 
