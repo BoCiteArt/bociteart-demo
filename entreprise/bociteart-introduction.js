@@ -4,6 +4,9 @@
 
    FICHIER INDÉPENDANT :
    aucune modification des onglets existants
+
+   Le véritable logo déjà présent dans l'application
+   est réutilisé automatiquement.
    ========================================================= */
 
 (function initBociteartIntroduction(){
@@ -14,22 +17,120 @@
     return;
   }
 
-  function getLogoHtml(){
+  function escapeHtml(value){
+
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function findExistingOfficialLogo(){
+
+    const directSelectors = [
+      "#bociteLogo",
+      "#bociteartLogo",
+      "#mainLogo",
+      ".bocite-logo img",
+      ".bociteart-logo img",
+      ".logo img",
+      "header img"
+    ];
+
+    for(
+      let index = 0;
+      index < directSelectors.length;
+      index++
+    ){
+
+      const image =
+        document.querySelector(
+          directSelectors[index]
+        );
+
+      if(
+        image &&
+        image.tagName === "IMG" &&
+        (image.currentSrc || image.src)
+      ){
+        return image.currentSrc || image.src;
+      }
+    }
+
+    const images =
+      Array.from(
+        document.querySelectorAll("img")
+      );
+
+    const probableLogo =
+      images.find(function(image){
+
+        const information =
+          String(
+            (image.alt || "") +
+            " " +
+            (image.title || "") +
+            " " +
+            (image.currentSrc || image.src || "")
+          )
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(
+              /[\u0300-\u036f]/g,
+              ""
+            );
+
+        return (
+          information.includes("bocite") ||
+          information.includes("bo-cite") ||
+          information.includes("logo")
+        );
+      });
+
+    if(probableLogo){
+
+      return (
+        probableLogo.currentSrc ||
+        probableLogo.src ||
+        ""
+      );
+    }
+
+    return "";
+  }
+
+  function getOfficialLogoHtml(){
+
+    const logoSource =
+      findExistingOfficialLogo();
+
+    if(logoSource){
+
+      return `
+        <img
+          class="bociteIntroductionLogoImage"
+          src="${escapeHtml(logoSource)}"
+          alt="Logo officiel Bo'CitéArt">
+      `;
+    }
+
+    /*
+      Solution de secours uniquement si aucun logo
+      déjà présent dans l'application n'est détecté.
+    */
 
     return `
-      <span
-        style="
-          color:#2f5d46;
-          font-weight:900;
-        ">
-        Bo'Cité
-      </span><span
-        style="
-          color:#b00020;
-          font-weight:900;
-        ">
-        Art
-      </span>
+      <div class="bociteIntroductionLogoFallback">
+
+        <span class="bociteIntroductionLogoGreen">
+          Bo'Cité
+        </span><span class="bociteIntroductionLogoRed">
+          Art
+        </span>
+
+      </div>
     `;
   }
 
@@ -68,36 +169,54 @@
         margin:0 auto;
         box-sizing:border-box;
         padding:24px 18px;
-        border:2px solid #2f5d46;
-        border-radius:15px;
         background:#f1e5cf;
         border:none;
+        border-radius:15px;
         box-shadow:none;
       }
 
-      .bociteIntroductionLogo {
-        margin:0;
+      .bociteIntroductionLogoBox {
+        margin:0 0 20px;
         text-align:center;
+      }
+
+      .bociteIntroductionLogoImage {
+        display:block;
+        width:230px;
+        max-width:76%;
+        height:auto;
+        margin:0 auto;
+        object-fit:contain;
+      }
+
+      .bociteIntroductionLogoFallback {
+        color:#111;
         font-size:34px;
-        line-height:1.2;
+        font-weight:900;
+        line-height:1.15;
+        text-align:center;
+      }
+
+      .bociteIntroductionLogoGreen {
+        color:#2f5d46;
+      }
+
+      .bociteIntroductionLogoRed {
+        color:#b00020;
+        font-style:italic;
       }
 
       .bociteIntroductionSignature {
         margin-top:24px;
-        text-align:center;
         color:#111;
         line-height:1.5;
+        text-align:center;
       }
 
       .bociteIntroductionSignature div {
         margin:6px 0;
         font-size:21px;
-      }
-
-      .bociteIntroductionSignature strong {
-      font-size:21px;
-      font-weight:400;
-}
+        font-weight:400;
       }
 
       .bociteIntroductionSeparator {
@@ -117,15 +236,12 @@
         margin:12px 0;
       }
 
-      .bociteIntroductionConclusion {
-        margin-top:25px;
-        padding:17px 14px;
-        border-left:6px solid #2f5d46;
-        background:#f6f2e9;
+      .bociteIntroductionFinalSentence {
+        margin-top:28px;
         color:#111;
-        font-size:20px;
-        line-height:1.45;
-        text-align:center;
+        font-size:17px;
+        line-height:1.55;
+        font-weight:400;
       }
 
       #bociteIntroductionStartBtn {
@@ -148,6 +264,7 @@
       }
 
       @media (max-width:600px) {
+
         #bociteIntroductionOverlay {
           padding:9px 7px 26px;
         }
@@ -157,7 +274,11 @@
           border-radius:12px;
         }
 
-        .bociteIntroductionLogo {
+        .bociteIntroductionLogoImage {
+          width:195px;
+        }
+
+        .bociteIntroductionLogoFallback {
           font-size:30px;
         }
 
@@ -165,16 +286,12 @@
           font-size:19px;
         }
 
-        .bociteIntroductionSignature strong {
-          font-size:22px;
-        }
-
         .bociteIntroductionActors {
           font-size:16px;
         }
 
-        .bociteIntroductionConclusion {
-          font-size:18px;
+        .bociteIntroductionFinalSentence {
+          font-size:16px;
         }
       }
     `;
@@ -183,184 +300,3 @@
       style
     );
   }
-
-  function getIntroductionHtml(){
-
-    return `
-      <div id="bociteIntroductionCard">
-
-        <div
-  style="
-    text-align:center;
-    margin-bottom:20px;
-  ">
-
-  <img
-  src="/bociteart-demo/entreprise/bociteart-logo-officiel.png"
-  alt="Logo officiel Bo'CitéArt"
-  style="
-    display:block;
-    width:210px;
-    max-width:70%;
-    height:auto;
-    margin:0 auto;
-    ">
-</div>
-
-        <div class="bociteIntroductionSignature">
-
-          <div>
-            Découvrir ce qui existe.
-          </div>
-
-          <div>
-            <strong>
-              RELIER les énergies.
-            </strong>
-          </div>
-
-          <div>
-            Faire vivre chaque territoire.
-          </div>
-
-        </div>
-
-        <div class="bociteIntroductionSeparator">
-        </div>
-
-        <div class="bociteIntroductionActors">
-
-          <p>
-            Les œuvres rapprochent
-            les artistes, les habitants.
-          </p>
-
-          <p>
-            L'école révèle ses talents.
-          </p>
-
-          <p>
-            Les associations rassemblent
-            les sourires.
-          </p>
-
-          <p>
-            Les clubs sportifs développent
-            leurs forces et l'esprit d'équipe.
-          </p>
-
-          <p>
-            Les commerces renforcent
-            et fidélisent leur clientèle.
-          </p>
-
-          <p>
-            Les entreprises véritablement visibles
-            trouvent leurs futurs collaborateurs.
-          </p>
-
-          <p>
-            La mairie révèle les trésors
-            et les richesses de son territoire.
-          </p>
-
-        </div>
-
-       <div
-  style="
-    margin-top:28px;
-    color:#111;
-    font-size:17px;
-    line-height:1.55;
-    font-weight:400;
-  ">
-
-  Bo'CitéArt relie les énergies
-  pour faire vivre chaque territoire.
-
-</div>
-
-        <button
-          id="bociteIntroductionStartBtn"
-          type="button">
-          Commencer la découverte
-        </button>
-
-      </div>
-    `;
-  }
-
-  function removeIntroduction(){
-
-    const overlay =
-      document.getElementById(
-        "bociteIntroductionOverlay"
-      );
-
-    if(overlay){
-      overlay.remove();
-    }
-  }
-
-  function continueJourney(){
-
-    removeIntroduction();
-
-    /*
-      Le fichier juridique écoutera cet événement.
-      Aucun onglet existant n'est modifié.
-    */
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:open-legal"
-      )
-    );
-  }
-
-  function openIntroduction(){
-
-    installStyles();
-    removeIntroduction();
-
-    const overlay =
-      document.createElement("div");
-
-    overlay.id =
-      "bociteIntroductionOverlay";
-
-    overlay.innerHTML =
-      getIntroductionHtml();
-
-    document.body.appendChild(
-      overlay
-    );
-
-    const button =
-      document.getElementById(
-        "bociteIntroductionStartBtn"
-      );
-
-    if(button){
-
-      button.onclick =
-        continueJourney;
-    }
-
-    window.setTimeout(function(){
-
-      overlay.scrollTop = 0;
-
-    },0);
-  }
-
-  window.BociteIntroduction = {
-    open:openIntroduction,
-    close:removeIntroduction
-  };
-
-  console.log(
-    "✅ Introduction générale Bo'CitéArt prête"
-  );
-
-})();
