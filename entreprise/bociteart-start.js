@@ -370,16 +370,18 @@ let allowCommerceEntrepriseOpening = false;
     );
   }
    
-  function startJourney(){
+   function startJourney(){
 
     /*
-      Pour le premier raccordement,
-      l'introduction s'ouvre systématiquement.
+      À l'ouverture générale de l'application :
+      affichage préalable des informations légales,
+      RGPD, CGU et CGV.
 
-      Aucun onglet existant n'est remplacé.
+      L'introduction sera ouverte seulement après
+      un clic sur la tuile Commerces & Entreprises.
     */
 
-    openIntroduction();
+    openLegal();
   }
 
   function restartJourney(){
