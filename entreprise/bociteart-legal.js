@@ -168,26 +168,31 @@
         cursor:pointer;
       }
 
-      #bociteLegalContinueBtn {
+#bociteLegalContinueBtn {
         display:block;
         width:100%;
         margin-top:18px;
         padding:15px 12px;
         border:2px solid #2f5d46;
         border-radius:10px;
-        background:#b00020;
-        color:#fff;
+        background:#ffffff;
+        color:#111;
         font-size:18px;
         font-weight:900;
         cursor:pointer;
         touch-action:manipulation;
+        transition:all .2s ease;
       }
 
+      #bociteLegalContinueBtn:enabled:hover{
+        background:#f6f2e9;
+      }
       #bociteLegalContinueBtn:disabled {
-        background:#aaa;
-        border-color:#888;
-        cursor:not-allowed;
-        opacity:.75;
+      background:#aaa;
+      color:#ffffff;
+      border-color:#888;
+      cursor:not-allowed;
+      opacity:.75;
       }
 
       #bociteLegalMessage {
