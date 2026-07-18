@@ -430,8 +430,13 @@ let allowCommerceEntrepriseOpening = false;
     close:closeAllEntryScreens
   };
 
-  bindJourneyEvents();
-  bindCommerceEntrepriseTile();
+ bindJourneyEvents();
+
+/*
+  La tuile Commerces & Entreprises conserve désormais
+  son fonctionnement normal dans l’application.
+  Elle ne relance plus la page d’introduction.
+*/
 
   if(
     document.readyState ===
