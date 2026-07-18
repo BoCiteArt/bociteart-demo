@@ -136,19 +136,19 @@
       }
 
       #bociteSynoptiqueContinueBtn {
-        display:block;
-        width:100%;
-        margin-top:20px;
-        padding:15px 12px;
-        border:2px solid #2f5d46;
-        border-radius:10px;
-        background:#b00020;
-        color:#fff;
-        font-size:18px;
-        font-weight:900;
-        cursor:pointer;
-        touch-action:manipulation;
-      }
+  display:block;
+  width:100%;
+  margin-top:20px;
+  padding:15px 12px;
+  border:2px solid #2f5d46;
+  border-radius:10px;
+  background:#fffdf7;
+  color:#111;
+  font-size:18px;
+  font-weight:900;
+  cursor:pointer;
+  touch-action:manipulation;
+}
 
       #bociteSynoptiqueBackBtn {
         display:block;
@@ -313,27 +313,30 @@ image.onerror = function(){
     );
   }
 
-  function returnToLegal(){
+ function returnToIntroduction(){
 
-    removeSynoptique();
+  removeSynoptique();
 
-    if(
-      window.BociteLegal &&
-      typeof window.BociteLegal.open ===
-      "function"
-    ){
+  if(
+    window.BociteIntroduction &&
+    typeof window.BociteIntroduction.open ===
+    "function"
+  ){
 
-      window.BociteLegal.open();
-      return;
-    }
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:open-legal"
-      )
-    );
+    window.BociteIntroduction.open();
+    return;
   }
 
+  if(
+    window.BociteStart &&
+    typeof window.BociteStart.openIntroduction ===
+    "function"
+  ){
+
+    window.BociteStart.openIntroduction();
+  }
+}
+   
   function bindSynoptique(){
 
     const continueButton =
@@ -354,9 +357,8 @@ image.onerror = function(){
 
     if(backButton){
 
-      backButton.onclick =
-        returnToLegal;
-    }
+   backButton.onclick =
+  returnToIntroduction;
 
     bindImage();
   }
