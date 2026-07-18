@@ -297,15 +297,15 @@ let allowCommerceEntrepriseOpening = false;
       openProfiles();
     }
 
-    function handleProfileSelected(event){
+   function handleProfileSelected(event){
 
-      enterExistingApplication(
-        event.detail
-          ? event.detail.profile
-          : null
-      );
-    }
+  /*
+    Une fois le compte créé ou le profil choisi,
+    le visiteur découvre d'abord l'introduction.
+  */
 
+  openIntroduction();
+}
     function handleEnterExistingApp(event){
 
       enterExistingApplication(
