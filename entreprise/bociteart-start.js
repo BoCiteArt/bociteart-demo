@@ -416,7 +416,7 @@ let allowCommerceEntrepriseOpening = false;
 
       default:
         openIntroduction();
-    }
+    } 
   }
 
   window.BociteStart = {
