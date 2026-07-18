@@ -301,6 +301,7 @@ image.onerror = function(){
     errorBox.style.display = "none";
   }
 };
+ }    
   function continueJourney(){
 
     removeSynoptique();
