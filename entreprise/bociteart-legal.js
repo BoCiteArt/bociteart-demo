@@ -1,10 +1,11 @@
-
 /* =========================================================
    BO'CITÉART — PORTE D'ENTRÉE
    ÉTAPE 2 — INFORMATIONS LÉGALES
 
-   FICHIER INDÉPENDANT :
-   aucun onglet existant n'est modifié
+   INFORMATIONS LÉGALES
+   → SYNOPTIQUE
+
+   Aucun onglet existant n'est modifié.
    ========================================================= */
 
 (function initBociteartLegal(){
@@ -16,37 +17,42 @@
   }
 
   const LEGAL_VERSION = {
-    rgpd:"2026-07-16",
-    cgu:"2026-07-16",
-    cgv:"2026-07-16"
+    rgpd:"2026-07-19",
+    cgu:"2026-07-19",
+    cgv:"2026-07-19"
   };
 
   const STORAGE_KEY =
     "bociteart_legal_acceptance_v1";
 
+  /* =====================================================
+     OUTILS
+     ===================================================== */
+
+  function getElement(id){
+
+    return document.getElementById(id);
+  }
+
   function getLogoHtml(){
 
     return `
-      <span
-        style="
-          color:#2f5d46;
-          font-weight:900;
-        ">
+      <span style="color:#2f5d46;font-weight:900;">
         Bo'Cité
-      </span><span
-        style="
-          color:#b00020;
-          font-weight:900;
-        ">
+      </span><span style="color:#b00020;font-weight:900;">
         Art
       </span>
     `;
   }
 
+  /* =====================================================
+     STYLES
+     ===================================================== */
+
   function installStyles(){
 
     if(
-      document.getElementById(
+      getElement(
         "bociteLegalStyles"
       )
     ){
@@ -168,31 +174,33 @@
         cursor:pointer;
       }
 
-#bociteLegalContinueBtn {
+      #bociteLegalContinueBtn {
         display:block;
         width:100%;
         margin-top:18px;
         padding:15px 12px;
         border:2px solid #2f5d46;
         border-radius:10px;
-        background:#ffffff;
+        background:#fff;
         color:#111;
         font-size:18px;
         font-weight:900;
         cursor:pointer;
         touch-action:manipulation;
-        transition:all .2s ease;
       }
 
-      #bociteLegalContinueBtn:enabled:hover{
+      #bociteLegalContinueBtn:enabled:hover,
+      #bociteLegalContinueBtn:enabled:focus {
         background:#f6f2e9;
+        outline:3px solid rgba(47,93,70,.16);
       }
+
       #bociteLegalContinueBtn:disabled {
-      background:#aaa;
-      color:#ffffff;
-      border-color:#888;
-      cursor:not-allowed;
-      opacity:.75;
+        background:#aaa;
+        color:#fff;
+        border-color:#888;
+        cursor:not-allowed;
+        opacity:.75;
       }
 
       #bociteLegalMessage {
@@ -214,7 +222,23 @@
         text-align:center;
       }
 
+      #bociteLegalBackBtn {
+        display:block;
+        width:100%;
+        margin-top:10px;
+        padding:13px 12px;
+        border:2px solid #2f5d46;
+        border-radius:10px;
+        background:#fff;
+        color:#111;
+        font-size:17px;
+        font-weight:800;
+        cursor:pointer;
+        touch-action:manipulation;
+      }
+
       @media (max-width:600px) {
+
         #bociteLegalOverlay {
           padding:9px 7px 26px;
         }
@@ -247,6 +271,10 @@
     );
   }
 
+  /* =====================================================
+     CONTENU
+     ===================================================== */
+
   function getLegalHtml(){
 
     return `
@@ -272,6 +300,7 @@
           Aucune date
           ni aucune heure
           ne vous seront demandées.
+
         </div>
 
         <button
@@ -279,7 +308,9 @@
           class="bociteLegalDocumentBtn"
           type="button"
           aria-expanded="false">
+
           Protection des données — RGPD
+
         </button>
 
         <div
@@ -329,6 +360,7 @@
             n’a pas vocation
             à recevoir les fiches parentales signées.
           </p>
+
         </div>
 
         <button
@@ -336,7 +368,9 @@
           class="bociteLegalDocumentBtn"
           type="button"
           aria-expanded="false">
+
           Conditions générales d’utilisation
+
         </button>
 
         <div
@@ -374,6 +408,7 @@
             qu’il publie
             ou transmet.
           </p>
+
         </div>
 
         <button
@@ -381,7 +416,9 @@
           class="bociteLegalDocumentBtn"
           type="button"
           aria-expanded="false">
+
           Conditions générales de vente
+
         </button>
 
         <div
@@ -415,6 +452,7 @@
             des espaces publics
             ne crée aucun abonnement.
           </p>
+
         </div>
 
         <label
@@ -426,11 +464,14 @@
             type="checkbox">
 
           <span>
+
             J’ai pris connaissance
             des informations applicables
             et je souhaite poursuivre
             la découverte de ${getLogoHtml()}.
+
           </span>
+
         </label>
 
         <div id="bociteLegalMessage">
@@ -439,13 +480,24 @@
           pour confirmer
           que vous avez pris connaissance
           des informations.
+
         </div>
 
         <button
           id="bociteLegalContinueBtn"
           type="button"
           disabled>
+
           Continuer
+
+        </button>
+
+        <button
+          id="bociteLegalBackBtn"
+          type="button">
+
+          Retour
+
         </button>
 
         <div class="bociteLegalPrivacyNote">
@@ -461,10 +513,9 @@
     `;
   }
 
-  function getElement(id){
-
-    return document.getElementById(id);
-  }
+  /* =====================================================
+     OUVERTURE ET FERMETURE
+     ===================================================== */
 
   function removeLegal(){
 
@@ -477,6 +528,40 @@
       overlay.remove();
     }
   }
+
+  function openLegal(){
+
+    installStyles();
+    removeLegal();
+
+    const overlay =
+      document.createElement("div");
+
+    overlay.id =
+      "bociteLegalOverlay";
+
+    overlay.innerHTML =
+      getLegalHtml();
+
+    document.body.appendChild(
+      overlay
+    );
+
+    bindLegal();
+
+    window.setTimeout(
+      function(){
+
+        overlay.scrollTop = 0;
+
+      },
+      0
+    );
+  }
+
+  /* =====================================================
+     DOCUMENTS
+     ===================================================== */
 
   function toggleDocument(
     buttonId,
@@ -512,6 +597,10 @@
     );
   }
 
+  /* =====================================================
+     ENREGISTREMENT DE L'ACCEPTATION
+     ===================================================== */
+
   function createAcceptanceRecord(){
 
     const now =
@@ -519,26 +608,19 @@
 
     return {
       accepted:true,
-      acceptedAt:
-        now.toISOString(),
-      localDate:
-        now.toLocaleDateString("fr-FR"),
-      localTime:
-        now.toLocaleTimeString("fr-FR"),
+      acceptedAt:now.toISOString(),
+      localDate:now.toLocaleDateString("fr-FR"),
+      localTime:now.toLocaleTimeString("fr-FR"),
       timezone:
         Intl.DateTimeFormat()
           .resolvedOptions()
           .timeZone || "",
       documents:{
-        rgpd:
-          LEGAL_VERSION.rgpd,
-        cgu:
-          LEGAL_VERSION.cgu,
-        cgv:
-          LEGAL_VERSION.cgv
+        rgpd:LEGAL_VERSION.rgpd,
+        cgu:LEGAL_VERSION.cgu,
+        cgv:LEGAL_VERSION.cgv
       },
-      source:
-        "bociteart-entry"
+      source:"bociteart-entry"
     };
   }
 
@@ -557,7 +639,7 @@
     }catch(error){
 
       console.warn(
-        "Bo'CitéArt : horodatage local non enregistré.",
+        "Bo'CitéArt : acceptation légale non enregistrée.",
         error
       );
     }
@@ -567,6 +649,29 @@
 
     return record;
   }
+
+  function getSavedAcceptance(){
+
+    try{
+
+      const saved =
+        localStorage.getItem(
+          STORAGE_KEY
+        );
+
+      return saved
+        ? JSON.parse(saved)
+        : null;
+
+    }catch(error){
+
+      return null;
+    }
+  }
+
+  /* =====================================================
+     NAVIGATION
+     ===================================================== */
 
   function continueJourney(){
 
@@ -593,23 +698,63 @@
       return;
     }
 
-    const record =
-      saveAcceptance();
-
+    saveAcceptance();
     removeLegal();
+
+    if(
+      window.BociteStart &&
+      typeof window.BociteStart.openSynoptique ===
+      "function"
+    ){
+
+      window.BociteStart.openSynoptique();
+      return;
+    }
+
+    if(
+      window.BociteSynoptique &&
+      typeof window.BociteSynoptique.open ===
+      "function"
+    ){
+
+      window.BociteSynoptique.open();
+      return;
+    }
 
     document.dispatchEvent(
       new CustomEvent(
-        "bociteart:open-synoptique",
-        {
-          detail:{
-            acceptance:
-              record
-          }
-        }
+        "bociteart:open-synoptique"
       )
     );
   }
+
+  function returnToIntroduction(){
+
+    removeLegal();
+
+    if(
+      window.BociteStart &&
+      typeof window.BociteStart.openIntroduction ===
+      "function"
+    ){
+
+      window.BociteStart.openIntroduction();
+      return;
+    }
+
+    if(
+      window.BociteIntroduction &&
+      typeof window.BociteIntroduction.open ===
+      "function"
+    ){
+
+      window.BociteIntroduction.open();
+    }
+  }
+
+  /* =====================================================
+     ÉVÉNEMENTS
+     ===================================================== */
 
   function bindLegal(){
 
@@ -621,6 +766,11 @@
     const continueButton =
       getElement(
         "bociteLegalContinueBtn"
+      );
+
+    const backButton =
+      getElement(
+        "bociteLegalBackBtn"
       );
 
     const message =
@@ -706,69 +856,25 @@
       continueButton.onclick =
         continueJourney;
     }
-  }
 
-  function openLegal(){
+    if(backButton){
 
-    installStyles();
-    removeLegal();
-
-    const overlay =
-      document.createElement("div");
-
-    overlay.id =
-      "bociteLegalOverlay";
-
-    overlay.innerHTML =
-      getLegalHtml();
-
-    document.body.appendChild(
-      overlay
-    );
-
-    bindLegal();
-
-    window.setTimeout(function(){
-
-      overlay.scrollTop = 0;
-
-    },0);
-  }
-
-  function getSavedAcceptance(){
-
-    try{
-
-      const saved =
-        localStorage.getItem(
-          STORAGE_KEY
-        );
-
-      return saved
-        ? JSON.parse(saved)
-        : null;
-
-    }catch(error){
-
-      return null;
+      backButton.onclick =
+        returnToIntroduction;
     }
   }
+
+  /* =====================================================
+     API PUBLIQUE
+     ===================================================== */
 
   window.BociteLegal = {
     open:openLegal,
     close:removeLegal,
-    getAcceptance:
-      getSavedAcceptance,
-    storageKey:
-      STORAGE_KEY,
-    version:
-      LEGAL_VERSION
+    getAcceptance:getSavedAcceptance,
+    storageKey:STORAGE_KEY,
+    version:LEGAL_VERSION
   };
-
-  document.addEventListener(
-    "bociteart:open-legal",
-    openLegal
-  );
 
   console.log(
     "✅ Informations légales Bo'CitéArt prêtes"
