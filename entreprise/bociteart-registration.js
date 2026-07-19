@@ -10,45 +10,26 @@
 
 /* ---------- Constantes ---------- */
 
-const FORM_ID = "overlay-inscription";
-
 const STORAGE = {
-
     installation : "bociteart_installation_id_v1",
-
     activation   : "bociteart_activation_v1",
-
     account      : "bociteart_account_demo_v1",
-
     registration : "bociteart_registration_completed_v1",
-
     statistics   : "bociteart_statistics_queue_v1"
-
 };
 
-let validationEnCours = false;
-
-/* ---------- Outils ---------- */
-
-function $(id){
-
-    return document.getElementById(id);
-
-}
+/* ---------- Installation ---------- */
 
 function createInstallationId(){
 
     if(window.crypto && crypto.randomUUID){
-
         return crypto.randomUUID();
-
     }
 
     return "bociteart-"
         + Date.now().toString(36)
         + "-"
         + Math.random().toString(36).substring(2,10);
-
 }
 
 function getInstallationId(){
@@ -56,53 +37,83 @@ function getInstallationId(){
     let id = localStorage.getItem(STORAGE.installation);
 
     if(!id){
-
         id = createInstallationId();
-
         localStorage.setItem(STORAGE.installation,id);
-
     }
 
     return id;
-
 }
 
-function calculateAge(dateValue){
+/* ---------- Statistiques ---------- */
 
-    if(!dateValue) return null;
+function loadStatisticsQueue(){
 
-    const birth = new Date(dateValue);
-
-    const today = new Date();
-
-    let age = today.getFullYear()-birth.getFullYear();
-
-    const m = today.getMonth()-birth.getMonth();
-
-    if(m<0 || (m===0 && today.getDate()<birth.getDate())){
-
-        age--;
-
+    try{
+        return JSON.parse(localStorage.getItem(STORAGE.statistics) || "[]");
+    }catch(e){
+        return [];
     }
 
-    return age;
+}
+
+function saveStatisticsQueue(queue){
+
+    localStorage.setItem(
+        STORAGE.statistics,
+        JSON.stringify(queue)
+    );
 
 }
 
-function ageGroup(age){
+function addStatistic(data){
 
-    if(age<18) return "moins18";
+    const queue = loadStatisticsQueue();
 
-    if(age<30) return "18-29";
+    queue.push({
 
-    if(age<45) return "30-44";
+        installationId:getInstallationId(),
+        date:new Date().toISOString(),
+        ...data
 
-    if(age<60) return "45-59";
+    });
 
-    return "60+";
+    saveStatisticsQueue(queue);
 
 }
 
-console.log("✅ bociteart-registration Bloc 1 chargé");
+/* ---------- Compte ---------- */
+
+function createAccount(data){
+
+    localStorage.setItem(
+        STORAGE.account,
+        JSON.stringify(data)
+    );
+
+    localStorage.setItem(
+        STORAGE.registration,
+        "true"
+    );
+
+}
+
+function registrationCompleted(){
+
+    return localStorage.getItem(STORAGE.registration)==="true";
+
+}
+
+/* ---------- API publique ---------- */
+
+window.BoCiteArtRegistration = {
+
+    createAccount,
+    registrationCompleted,
+    addStatistic,
+    getInstallationId
+
+};
+
+console.log("✅ bociteart-registration chargé");
 
 })();
