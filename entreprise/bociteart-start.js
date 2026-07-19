@@ -1,8 +1,9 @@
 /* =========================================================
    BO'CITÉART — PORTE D'ENTRÉE
-   CHEF D'ORCHESTRE DU PARCOURS
+   CHEF D'ORCHESTRE UNIQUE DU PARCOURS
 
-   INTRODUCTION
+   CLIC COMMERCES & ENTREPRISES
+   → INTRODUCTION
    → INFORMATIONS LÉGALES
    → SYNOPTIQUE
    → CHOIX DE L'UNIVERS
@@ -20,83 +21,50 @@
   }
 
   const SESSION_KEY =
-    "bociteart_entry_session_v1";
-   
-let pendingCommerceEntrepriseButton = null;
-let allowCommerceEntrepriseOpening = false;
+    "bociteart_entry_session_v2";
 
-  function bindCommerceEntrepriseTile(){
+  let pendingCommerceEntrepriseButton = null;
+  let journeyIsRunning = false;
+  let allowNextExistingOpening = false;
 
-    document.addEventListener(
-      "click",
-      function(event){
+  /* =====================================================
+     OUTILS
+     ===================================================== */
 
-        const trigger =
-          event.target.closest(
-            "button, a, [role='button'], [onclick]"
-          );
+  function normalizeText(value){
 
-        if(!trigger){
-          return;
-        }
-
-        const text =
-          String(trigger.textContent || "")
-            .replace(/\s+/g, " ")
-            .trim()
-            .toLowerCase();
-
-        if(
-          !text.includes(
-            "commerces & entreprises"
-          )
-        ){
-          return;
-        }
-
-        /*
-          Ce passage autorise le clic automatique final
-          sans relancer une deuxième fois l'introduction.
-        */
-
-        if(allowCommerceEntrepriseOpening){
-
-          allowCommerceEntrepriseOpening = false;
-          return;
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-
-        pendingCommerceEntrepriseButton =
-          trigger;
-
-        openIntroduction();
-
-      },
-      true
-    );
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
   }
 
-  function closeAllEntryScreens(){
+  function saveSession(step, detail){
 
-    const ids = [
-      "bociteIntroductionOverlay",
-      "bociteLegalOverlay",
-      "bociteSynoptiqueOverlay",
-      "bociteProfilsOverlay"
-    ];
+    const record = {
+      step:step,
+      detail:detail || null,
+      updatedAt:new Date().toISOString()
+    };
 
-    ids.forEach(function(id){
+    try{
 
-      const element =
-        document.getElementById(id);
+      sessionStorage.setItem(
+        SESSION_KEY,
+        JSON.stringify(record)
+      );
 
-      if(element){
-        element.remove();
-      }
-    });
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : session d'entrée non enregistrée.",
+        error
+      );
+    }
+
+    return record;
   }
 
   function getSavedSession(){
@@ -118,37 +86,46 @@ let allowCommerceEntrepriseOpening = false;
     }
   }
 
-  function saveSession(step){
-
-    const record = {
-      step:step,
-      updatedAt:
-        new Date().toISOString()
-    };
+  function clearSession(){
 
     try{
 
-      sessionStorage.setItem(
-        SESSION_KEY,
-        JSON.stringify(record)
+      sessionStorage.removeItem(
+        SESSION_KEY
       );
 
     }catch(error){
-
-      console.warn(
-        "Bo'CitéArt : session d'entrée non enregistrée.",
-        error
-      );
+      /* Rien à faire. */
     }
-
-    return record;
   }
+
+  function closeAllEntryScreens(){
+
+    [
+      "bociteIntroductionOverlay",
+      "bociteLegalOverlay",
+      "bociteSynoptiqueOverlay",
+      "bociteProfilsOverlay"
+    ].forEach(function(id){
+
+      const element =
+        document.getElementById(id);
+
+      if(element){
+        element.remove();
+      }
+    });
+  }
+
+  /* =====================================================
+     OUVERTURE DES ÉTAPES
+     ===================================================== */
 
   function openIntroduction(){
 
-   console.log(">>> OPEN INTRODUCTION APPELÉE");  
-
     closeAllEntryScreens();
+
+    journeyIsRunning = true;
 
     saveSession(
       "introduction"
@@ -159,6 +136,7 @@ let allowCommerceEntrepriseOpening = false;
       typeof window.BociteIntroduction.open ===
       "function"
     ){
+
       window.BociteIntroduction.open();
       return;
     }
@@ -172,6 +150,8 @@ let allowCommerceEntrepriseOpening = false;
 
     closeAllEntryScreens();
 
+    journeyIsRunning = true;
+
     saveSession(
       "legal"
     );
@@ -181,6 +161,7 @@ let allowCommerceEntrepriseOpening = false;
       typeof window.BociteLegal.open ===
       "function"
     ){
+
       window.BociteLegal.open();
       return;
     }
@@ -194,6 +175,8 @@ let allowCommerceEntrepriseOpening = false;
 
     closeAllEntryScreens();
 
+    journeyIsRunning = true;
+
     saveSession(
       "synoptique"
     );
@@ -203,6 +186,7 @@ let allowCommerceEntrepriseOpening = false;
       typeof window.BociteSynoptique.open ===
       "function"
     ){
+
       window.BociteSynoptique.open();
       return;
     }
@@ -216,6 +200,8 @@ let allowCommerceEntrepriseOpening = false;
 
     closeAllEntryScreens();
 
+    journeyIsRunning = true;
+
     saveSession(
       "profils"
     );
@@ -225,6 +211,7 @@ let allowCommerceEntrepriseOpening = false;
       typeof window.BociteProfils.open ===
       "function"
     ){
+
       window.BociteProfils.open();
       return;
     }
@@ -234,12 +221,22 @@ let allowCommerceEntrepriseOpening = false;
     );
   }
 
-  function enterExistingApplication(profile){
+  /* =====================================================
+     FIN DU PARCOURS
+     ===================================================== */
+
+  function completeJourney(profile){
 
     closeAllEntryScreens();
 
+    journeyIsRunning = false;
+    allowNextExistingOpening = true;
+
     saveSession(
-      "application"
+      "application",
+      {
+        profile:profile || null
+      }
     );
 
     document.dispatchEvent(
@@ -247,142 +244,307 @@ let allowCommerceEntrepriseOpening = false;
         "bociteart:entry-complete",
         {
           detail:{
-            profile:
-              profile || null,
-            enteredAt:
-              new Date().toISOString()
+            profile:profile || null,
+            enteredAt:new Date().toISOString()
           }
         }
       )
     );
+  }
 
-    /*
-      Après le parcours :
-      ouverture de la véritable page
-      Commerces & Entreprises déjà existante.
-    */
+  function openPendingCommerceEntreprise(){
 
     if(
-      pendingCommerceEntrepriseButton &&
-      document.body.contains(
+      !pendingCommerceEntrepriseButton ||
+      !document.body.contains(
         pendingCommerceEntrepriseButton
       )
     ){
 
-      const buttonToOpen =
-        pendingCommerceEntrepriseButton;
-
-      pendingCommerceEntrepriseButton =
-        null;
-
-      allowCommerceEntrepriseOpening =
-        true;
-
-      window.setTimeout(
-        function(){
-
-          buttonToOpen.click();
-
-        },
-        100
-      );
+      pendingCommerceEntrepriseButton = null;
+      return false;
     }
+
+    const buttonToOpen =
+      pendingCommerceEntrepriseButton;
+
+    pendingCommerceEntrepriseButton = null;
+    allowNextExistingOpening = true;
+
+    window.setTimeout(
+      function(){
+
+        buttonToOpen.click();
+
+      },
+      80
+    );
+
+    return true;
   }
-   
+
+  /* =====================================================
+     DÉTECTION DE LA TUILE COMMERCES & ENTREPRISES
+     ===================================================== */
+
+  function isCommerceEntrepriseTrigger(element){
+
+    if(!element){
+      return false;
+    }
+
+    const text =
+      normalizeText(
+        element.textContent
+      );
+
+    return (
+      text.includes(
+        "commerces & entreprises"
+      ) ||
+      text.includes(
+        "commerces et entreprises"
+      )
+    );
+  }
+
+  function bindCommerceEntrepriseTile(){
+
+    document.addEventListener(
+      "click",
+      function(event){
+
+        const trigger =
+          event.target.closest(
+            "button, a, [role='button'], [onclick], .choiceBtn"
+          );
+
+        if(
+          !trigger ||
+          !isCommerceEntrepriseTrigger(
+            trigger
+          )
+        ){
+          return;
+        }
+
+        /*
+          Autorisation donnée après le parcours :
+          le clic final ouvre normalement l'espace existant.
+        */
+
+        if(allowNextExistingOpening){
+
+          allowNextExistingOpening = false;
+          return;
+        }
+
+        /*
+          Pendant le parcours, aucun nouveau départ.
+        */
+
+        if(journeyIsRunning){
+
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        pendingCommerceEntrepriseButton =
+          trigger;
+
+        openIntroduction();
+
+      },
+      true
+    );
+  }
+
+  /* =====================================================
+     ÉVÉNEMENTS DU PARCOURS
+     ===================================================== */
+
   function bindJourneyEvents(){
 
-    function handleOpenSynoptique(){
-      openSynoptique();
-    }
+    /*
+      Le bouton de l'introduction envoie actuellement :
+      window → bociteart:open-synoptique
 
-    function handleOpenProfiles(){
-      openProfiles();
-    }
-
-   function handleProfileSelected(event){
-
-  /*
-    Une fois le compte créé ou le profil choisi,
-    le visiteur découvre d'abord l'introduction.
-  */
-
-  openIntroduction();
-}
-    function handleEnterExistingApp(event){
-
-      enterExistingApplication(
-        event.detail
-          ? event.detail.profile
-          : null
-      );
-    }
+      Le chef d'orchestre le transforme en :
+      INTRODUCTION → INFORMATIONS LÉGALES
+    */
 
     window.addEventListener(
       "bociteart:open-synoptique",
-      handleOpenSynoptique
+      function(){
+
+        const session =
+          getSavedSession();
+
+        if(
+          session &&
+          session.step === "introduction"
+        ){
+
+          openLegal();
+          return;
+        }
+
+        openSynoptique();
+      }
     );
+
+    /*
+      Après validation légale :
+      document → bociteart:open-synoptique
+    */
 
     document.addEventListener(
       "bociteart:open-synoptique",
-      handleOpenSynoptique
+      function(){
+
+        const session =
+          getSavedSession();
+
+        if(
+          session &&
+          session.step === "legal"
+        ){
+
+          saveSession(
+            "synoptique"
+          );
+
+          journeyIsRunning = true;
+        }
+      },
+      true
     );
 
-    window.addEventListener(
-      "bociteart:open-profils",
-      handleOpenProfiles
-    );
+    /*
+      Après le synoptique :
+      document → bociteart:open-profils
+    */
 
     document.addEventListener(
       "bociteart:open-profils",
-      handleOpenProfiles
+      function(){
+
+        saveSession(
+          "profils"
+        );
+
+        journeyIsRunning = true;
+      },
+      true
+    );
+
+    /*
+      Le profil est enregistré.
+
+      On ne relance surtout plus l'introduction.
+    */
+
+    document.addEventListener(
+      "bociteart:profile-selected",
+      function(event){
+
+        const profile =
+          event.detail &&
+          event.detail.profile
+            ? event.detail.profile
+            : null;
+
+        completeJourney(
+          profile
+        );
+      },
+      true
     );
 
     window.addEventListener(
       "bociteart:profile-selected",
-      handleProfileSelected
+      function(event){
+
+        const profile =
+          event.detail &&
+          event.detail.profile
+            ? event.detail.profile
+            : null;
+
+        completeJourney(
+          profile
+        );
+      },
+      true
     );
 
+    /*
+      Solution de secours lorsqu'un module
+      ne trouve pas directement son espace.
+    */
+
     document.addEventListener(
-      "bociteart:profile-selected",
-      handleProfileSelected
+      "bociteart:enter-existing-app",
+      function(event){
+
+        const profile =
+          event.detail &&
+          event.detail.profile
+            ? event.detail.profile
+            : null;
+
+        completeJourney(
+          profile
+        );
+
+        openPendingCommerceEntreprise();
+      }
     );
 
     window.addEventListener(
       "bociteart:enter-existing-app",
-      handleEnterExistingApp
-    );
+      function(event){
 
-    document.addEventListener(
-      "bociteart:enter-existing-app",
-      handleEnterExistingApp
+        const profile =
+          event.detail &&
+          event.detail.profile
+            ? event.detail.profile
+            : null;
+
+        completeJourney(
+          profile
+        );
+
+        openPendingCommerceEntreprise();
+      }
     );
   }
-   
-function startJourney(){
 
-  /*
-    Au chargement de la page, le parcours juridique
-    et l'inscription existants restent prioritaires.
+  /* =====================================================
+     DÉMARRAGE
+     ===================================================== */
 
-    Ce fichier ne ferme plus automatiquement
-    les écrans d'entrée.
-  */
+  function startJourney(){
 
-  console.log(
-    "✅ Chef d'orchestre prêt — attente de la validation de l'inscription"
-  );
-}
+    journeyIsRunning = false;
+
+    console.log(
+      "✅ Chef d'orchestre Bo'CitéArt prêt"
+    );
+  }
+
   function restartJourney(){
 
-    try{
+    clearSession();
 
-      sessionStorage.removeItem(
-        SESSION_KEY
-      );
-
-    }catch(error){
-      /* Rien à faire. */
-    }
+    journeyIsRunning = false;
+    allowNextExistingOpening = false;
 
     openIntroduction();
   }
@@ -400,6 +562,10 @@ function startJourney(){
 
     switch(session.step){
 
+      case "introduction":
+        openIntroduction();
+        break;
+
       case "legal":
         openLegal();
         break;
@@ -414,12 +580,17 @@ function startJourney(){
 
       case "application":
         closeAllEntryScreens();
+        journeyIsRunning = false;
         break;
 
       default:
         openIntroduction();
-    } 
+    }
   }
+
+  /* =====================================================
+     API PUBLIQUE
+     ===================================================== */
 
   window.BociteStart = {
     start:startJourney,
@@ -429,16 +600,12 @@ function startJourney(){
     openLegal:openLegal,
     openSynoptique:openSynoptique,
     openProfiles:openProfiles,
+    complete:completeJourney,
     close:closeAllEntryScreens
   };
 
- bindJourneyEvents();
-
-/*
-  La tuile Commerces & Entreprises conserve désormais
-  son fonctionnement normal dans l’application.
-  Elle ne relance plus la page d’introduction.
-*/
+  bindCommerceEntrepriseTile();
+  bindJourneyEvents();
 
   if(
     document.readyState ===
@@ -462,7 +629,7 @@ function startJourney(){
   }
 
   console.log(
-    "✅ Parcours d'entrée général Bo'CitéArt démarré"
+    "✅ Parcours d'entrée général Bo'CitéArt chargé"
   );
 
 })();
