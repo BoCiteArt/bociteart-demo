@@ -5672,8 +5672,11 @@ Voir les entreprises de ma ville
   module.saveVisibilityData =
     saveVisibilityData;
 
+  if(typeof openVisibilityPreview === "function"){
+
   module.openVisibilityPreview =
     openVisibilityPreview;
+}
 
   console.log(
     "✅ Module Entreprise — partie 5 chargée"
