@@ -1135,8 +1135,11 @@ alert("Compte créé (démo) ✅");
 
 fermerInscription();
 
-if (typeof openIntroduction === "function") {
-  openIntroduction();
+if(
+  window.BociteStart &&
+  typeof window.BociteStart.openIntroduction === "function"
+){
+  window.BociteStart.openIntroduction();
 }
 }
 </script>
