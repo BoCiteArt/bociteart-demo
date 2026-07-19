@@ -1,14 +1,15 @@
-
 /* =========================================================
    BO'CITÉART — PORTE D'ENTRÉE
    ÉTAPE 3 — SYNOPTIQUE GÉNÉRAL
 
-   FICHIER INDÉPENDANT :
-   aucun onglet existant n'est modifié
+   SYNOPTIQUE
+   → CHOIX DE L'UNIVERS
+
+   Aucun onglet existant n'est modifié.
    ========================================================= */
 
 (function initBociteartSynoptique(){
- 
+
   "use strict";
 
   if(window.BociteSynoptique){
@@ -16,9 +17,13 @@
   }
 
   const IMAGE_PATHS = [
-    "./entreprise/bociteart-entreprise-synoptique.png",
-    "./entreprise/entreprise/bociteart-entreprise-synoptique.png"
+    "./entreprise/bociteart-entreprise-synoptique.png?v=20260719-01",
+    "./entreprise/entreprise/bociteart-entreprise-synoptique.png?v=20260719-01"
   ];
+
+  /* =====================================================
+     OUTILS
+     ===================================================== */
 
   function getElement(id){
 
@@ -28,21 +33,17 @@
   function getLogoHtml(){
 
     return `
-      <span
-        style="
-          color:#2f5d46;
-          font-weight:900;
-        ">
+      <span style="color:#2f5d46;font-weight:900;">
         Bo'Cité
-      </span><span
-        style="
-          color:#b00020;
-          font-weight:900;
-        ">
+      </span><span style="color:#b00020;font-weight:900;">
         Art
       </span>
     `;
   }
+
+  /* =====================================================
+     STYLES
+     ===================================================== */
 
   function installStyles(){
 
@@ -125,30 +126,26 @@
         line-height:1.5;
       }
 
-      .bociteSynoptiqueNotice {
-        margin-top:18px;
-        padding:16px 14px;
-        border-left:6px solid #2f5d46;
-        background:#f6f2e9;
+      #bociteSynoptiqueContinueBtn {
+        display:block;
+        width:100%;
+        margin-top:20px;
+        padding:15px 12px;
+        border:2px solid #2f5d46;
+        border-radius:10px;
+        background:#fffdf7;
         color:#111;
-        font-size:16px;
-        line-height:1.5;
+        font-size:18px;
+        font-weight:900;
+        cursor:pointer;
+        touch-action:manipulation;
       }
 
-      #bociteSynoptiqueContinueBtn {
-  display:block;
-  width:100%;
-  margin-top:20px;
-  padding:15px 12px;
-  border:2px solid #2f5d46;
-  border-radius:10px;
-  background:#fffdf7;
-  color:#111;
-  font-size:18px;
-  font-weight:900;
-  cursor:pointer;
-  touch-action:manipulation;
-}
+      #bociteSynoptiqueContinueBtn:hover,
+      #bociteSynoptiqueContinueBtn:focus {
+        background:#f6f2e9;
+        outline:3px solid rgba(47,93,70,.16);
+      }
 
       #bociteSynoptiqueBackBtn {
         display:block;
@@ -165,7 +162,14 @@
         touch-action:manipulation;
       }
 
+      #bociteSynoptiqueBackBtn:hover,
+      #bociteSynoptiqueBackBtn:focus {
+        background:#f6f2e9;
+        outline:3px solid rgba(47,93,70,.16);
+      }
+
       @media (max-width:600px) {
+
         #bociteSynoptiqueOverlay {
           padding:9px 7px 26px;
         }
@@ -182,10 +186,6 @@
         .bociteSynoptiqueIntro {
           font-size:16px;
         }
-
-        .bociteSynoptiqueNotice {
-          font-size:15px;
-        }
       }
     `;
 
@@ -193,6 +193,10 @@
       style
     );
   }
+
+  /* =====================================================
+     CONTENU
+     ===================================================== */
 
   function getSynoptiqueHtml(){
 
@@ -215,38 +219,44 @@
 
         </div>
 
-      <div class="bociteSynoptiqueImageBox">
+        <div class="bociteSynoptiqueImageBox">
 
-  <img
-    id="bociteSynoptiqueImage"
-    src="${IMAGE_PATHS[0]}"
-    alt="Présentation générale des fonctions de Bo'CitéArt">
+          <img
+            id="bociteSynoptiqueImage"
+            src="${IMAGE_PATHS[0]}"
+            alt="Présentation générale des fonctions de Bo'CitéArt">
 
-</div>
+        </div>
 
-<div id="bociteSynoptiqueError" style="display:none;"></div>
+        <div id="bociteSynoptiqueError">
 
-<div class="bociteSynoptiqueNotice" style="display:none;"></div>
+          Le synoptique n’a pas pu être affiché.
 
-<button
-  id="bociteSynoptiqueContinueBtn"
-  type="button">
+        </div>
 
-  Choisir mon espace
+        <button
+          id="bociteSynoptiqueContinueBtn"
+          type="button">
 
-</button>
+          Choisir mon espace
 
-<button
-  id="bociteSynoptiqueBackBtn"
-  type="button">
+        </button>
 
-  Retour
+        <button
+          id="bociteSynoptiqueBackBtn"
+          type="button">
 
-</button>
+          Retour
 
-</div>
-`;
-} 
+        </button>
+
+      </div>
+    `;
+  }
+
+  /* =====================================================
+     OUVERTURE ET FERMETURE
+     ===================================================== */
 
   function removeSynoptique(){
 
@@ -258,112 +268,6 @@
     if(overlay){
       overlay.remove();
     }
-  }
-
-  function bindImage(){
-
-    const image =
-      getElement(
-        "bociteSynoptiqueImage"
-      );
-
-    const errorBox =
-      getElement(
-        "bociteSynoptiqueError"
-      );
-
- if(!image){
-  return;
-}
-
-let currentPathIndex = 0;
-
-image.onerror = function(){
-
-  currentPathIndex += 1;
-
-  if(currentPathIndex < IMAGE_PATHS.length){
-
-    image.src = IMAGE_PATHS[currentPathIndex];
-    return;
-  }
-
-  console.warn(
-    "Image du synoptique introuvable :",
-    IMAGE_PATHS
-  );
-
-  /* On ne montre plus de message à l'utilisateur */
-
-  image.style.display = "block";
-
-  if(errorBox){
-    errorBox.style.display = "none";
-  }
-};
- }    
-  function continueJourney(){
-
-    removeSynoptique();
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:open-profils"
-      )
-    );
-  }
-
- function returnToIntroduction(){
-
-  removeSynoptique();
-
-  if(
-    window.BociteIntroduction &&
-    typeof window.BociteIntroduction.open ===
-    "function"
-  ){
-
-    window.BociteIntroduction.open();
-    return;
-  }
-
-  if(
-    window.BociteStart &&
-    typeof window.BociteStart.openIntroduction ===
-    "function"
-  ){
-
-    window.BociteStart.openIntroduction();
-  }
-}
-   
-  function bindSynoptique(){
-
-    const continueButton =
-      getElement(
-        "bociteSynoptiqueContinueBtn"
-      );
-
-    const backButton =
-      getElement(
-        "bociteSynoptiqueBackBtn"
-      );
-
-    if(continueButton){
-
-      continueButton.onclick =
-        continueJourney;
-    }
-
-    if(backButton){
-
-   backButton.onclick =
-  returnToIntroduction;
-
-  }
-     
-    bindImage();
-     
   }
 
   function openSynoptique(){
@@ -386,22 +290,182 @@ image.onerror = function(){
 
     bindSynoptique();
 
-    window.setTimeout(function(){
+    window.setTimeout(
+      function(){
 
-      overlay.scrollTop = 0;
+        overlay.scrollTop = 0;
 
-    },0);
+      },
+      0
+    );
   }
+
+  /* =====================================================
+     IMAGE
+     ===================================================== */
+
+  function bindImage(){
+
+    const image =
+      getElement(
+        "bociteSynoptiqueImage"
+      );
+
+    const errorBox =
+      getElement(
+        "bociteSynoptiqueError"
+      );
+
+    if(!image){
+      return;
+    }
+
+    let currentPathIndex = 0;
+
+    image.onload =
+      function(){
+
+        image.style.display =
+          "block";
+
+        if(errorBox){
+          errorBox.style.display =
+            "none";
+        }
+      };
+
+    image.onerror =
+      function(){
+
+        currentPathIndex += 1;
+
+        if(
+          currentPathIndex <
+          IMAGE_PATHS.length
+        ){
+
+          image.src =
+            IMAGE_PATHS[
+              currentPathIndex
+            ];
+
+          return;
+        }
+
+        console.warn(
+          "Image du synoptique introuvable :",
+          IMAGE_PATHS
+        );
+
+        image.style.display =
+          "none";
+
+        if(errorBox){
+
+          errorBox.style.display =
+            "block";
+        }
+      };
+  }
+
+  /* =====================================================
+     NAVIGATION
+     ===================================================== */
+
+  function continueJourney(){
+
+    removeSynoptique();
+
+    if(
+      window.BociteStart &&
+      typeof window.BociteStart.openProfiles ===
+      "function"
+    ){
+
+      window.BociteStart.openProfiles();
+      return;
+    }
+
+    if(
+      window.BociteProfils &&
+      typeof window.BociteProfils.open ===
+      "function"
+    ){
+
+      window.BociteProfils.open();
+      return;
+    }
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:open-profils"
+      )
+    );
+  }
+
+  function returnToLegal(){
+
+    removeSynoptique();
+
+    if(
+      window.BociteStart &&
+      typeof window.BociteStart.openLegal ===
+      "function"
+    ){
+
+      window.BociteStart.openLegal();
+      return;
+    }
+
+    if(
+      window.BociteLegal &&
+      typeof window.BociteLegal.open ===
+      "function"
+    ){
+
+      window.BociteLegal.open();
+    }
+  }
+
+  /* =====================================================
+     ÉVÉNEMENTS
+     ===================================================== */
+
+  function bindSynoptique(){
+
+    const continueButton =
+      getElement(
+        "bociteSynoptiqueContinueBtn"
+      );
+
+    const backButton =
+      getElement(
+        "bociteSynoptiqueBackBtn"
+      );
+
+    if(continueButton){
+
+      continueButton.onclick =
+        continueJourney;
+    }
+
+    if(backButton){
+
+      backButton.onclick =
+        returnToLegal;
+    }
+
+    bindImage();
+  }
+
+  /* =====================================================
+     API PUBLIQUE
+     ===================================================== */
 
   window.BociteSynoptique = {
     open:openSynoptique,
     close:removeSynoptique
   };
-
-  document.addEventListener(
-    "bociteart:open-synoptique",
-    openSynoptique
-  );
 
   console.log(
     "✅ Synoptique général Bo'CitéArt prêt"
