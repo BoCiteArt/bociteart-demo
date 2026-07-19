@@ -1,57 +1,100 @@
 /* =========================================================
-   BO'CITÉART — PORTE D'ENTRÉE GÉNÉRALE
-   CHEF D'ORCHESTRE UNIQUE — VERSION 4
+   BO'CITÉART — PORTE D'ENTRÉE
+   CHEF D'ORCHESTRE UNIQUE DU PARCOURS
 
-   ORDRE OBLIGATOIRE :
+   1. INFORMATIONS LÉGALES
+   2. INTRODUCTION
+   3. CRÉATION DU COMPTE
+   4. SYNOPTIQUE
+   5. APPLICATION OFFICIELLE
 
-   1 — RGPD / CGU / CGV
-   2 — INTRODUCTION
-   3 — JE CRÉE MON COMPTE
-   4 — SYNOPTIQUE
-   5 — APPLICATION EXISTANTE
-
-   La tuile « Commerces & Entreprises »
-   n'est pas interceptée par ce fichier.
+   RÈGLE ESSENTIELLE :
+   → seul ce fichier décide de l'étape suivante ;
+   → aucun écran ne doit ouvrir directement un autre écran ;
+   → aucun onglet existant de l'application n'est modifié.
    ========================================================= */
 
-(function initBociteartStartV4(){
+(function initBociteartStart(){
 
   "use strict";
 
-  if(window.BociteStartV4Loaded){
+  if(window.BociteStart){
     return;
   }
 
-  window.BociteStartV4Loaded = true;
+  /* =====================================================
+     VERSION DU PARCOURS
+     ===================================================== */
+
+  const JOURNEY_VERSION =
+    "6";
+
+  const STORAGE = {
+    session:
+      "bociteart_entry_session_v6",
+
+    completed:
+      "bociteart_entry_completed_v6"
+  };
+
+  const STEPS = {
+    legal:
+      "legal",
+
+    introduction:
+      "introduction",
+
+    registration:
+      "registration",
+
+    synoptique:
+      "synoptique",
+
+    application:
+      "application"
+  };
+
+  let currentStep =
+    "";
+
+  let transitionLocked =
+    false;
 
   /* =====================================================
      STOCKAGE
      ===================================================== */
 
- const STORAGE = {
-  session:
-    "bociteart_entry_session_v5",
-
-  completed:
-    "bociteart_entry_completed_v5"
-};
-  let currentStep = "";
-  let transitionRunning = false;
-
-  /* =====================================================
-     OUTILS DE STOCKAGE
-     ===================================================== */
-
-  function safeParse(value, fallback){
+  function safeParse(
+    value,
+    fallback
+  ){
 
     try{
+
       return JSON.parse(value);
+
     }catch(error){
+
       return fallback;
     }
   }
 
-  function saveLocal(key, value){
+  function getStorageItem(key){
+
+    try{
+
+      return localStorage.getItem(key);
+
+    }catch(error){
+
+      return null;
+    }
+  }
+
+  function setStorageItem(
+    key,
+    value
+  ){
 
     try{
 
@@ -65,7 +108,7 @@
     }catch(error){
 
       console.warn(
-        "Bo'CitéArt : stockage local indisponible.",
+        "Bo'CitéArt : stockage du parcours indisponible.",
         error
       );
 
@@ -73,55 +116,28 @@
     }
   }
 
-  function getLocal(key){
+  function removeStorageItem(key){
 
     try{
 
-      return localStorage.getItem(
-        key
-      );
+      localStorage.removeItem(key);
+
+      return true;
 
     }catch(error){
 
-      return null;
+      return false;
     }
   }
 
-  function removeLocal(key){
+  /* =====================================================
+     ÉTAT DU PARCOURS
+     ===================================================== */
 
-    try{
-
-      localStorage.removeItem(
-        key
-      );
-
-    }catch(error){
-      /* Rien à faire. */
-    }
-  }
-
-  function saveStep(step, detail){
-
-    currentStep = step;
-
-    const record = {
-      step:step,
-      detail:detail || null,
-      updatedAt:new Date().toISOString()
-    };
-
-    saveLocal(
-      STORAGE.session,
-      JSON.stringify(record)
-    );
-
-    return record;
-  }
-
-  function getSavedStep(){
+  function getSession(){
 
     const saved =
-      getLocal(
+      getStorageItem(
         STORAGE.session
       );
 
@@ -130,20 +146,84 @@
       : null;
   }
 
-  function isCompleted(){
+  function saveSession(step){
 
-    return (
-      getLocal(
+    const session = {
+      version:
+        JOURNEY_VERSION,
+
+      step:
+        step,
+
+      updatedAt:
+        new Date().toISOString()
+    };
+
+    setStorageItem(
+      STORAGE.session,
+      JSON.stringify(session)
+    );
+
+    currentStep =
+      step;
+
+    return session;
+  }
+
+  function getCompletion(){
+
+    const saved =
+      getStorageItem(
         STORAGE.completed
-      ) === "true"
+      );
+
+    return saved
+      ? safeParse(saved, null)
+      : null;
+  }
+
+  function journeyCompleted(){
+
+    const completion =
+      getCompletion();
+
+    return Boolean(
+      completion &&
+      completion.completed === true &&
+      completion.version ===
+        JOURNEY_VERSION
     );
   }
 
+  function saveCompletion(){
+
+    const completion = {
+      completed:true,
+
+      version:
+        JOURNEY_VERSION,
+
+      completedAt:
+        new Date().toISOString()
+    };
+
+    setStorageItem(
+      STORAGE.completed,
+      JSON.stringify(completion)
+    );
+
+    saveSession(
+      STEPS.application
+    );
+
+    return completion;
+  }
+
   /* =====================================================
-     FERMETURE DES ÉCRANS DU PARCOURS
+     FERMETURE DES ÉCRANS DU NOUVEAU PARCOURS
      ===================================================== */
 
-  function removeElement(id){
+  function closeKnownOverlay(id){
 
     const element =
       document.getElementById(id);
@@ -155,149 +235,120 @@
 
   function closeAllEntryScreens(){
 
-    [
-      "bociteLegalOverlay",
-      "bociteIntroductionOverlay",
-      "bociteRegistrationOverlay",
-      "bociteSynoptiqueOverlay",
-      "bociteProfilsOverlay"
-    ].forEach(
-      removeElement
+    if(
+      window.BociteLegal &&
+      typeof window.BociteLegal.close ===
+        "function"
+    ){
+
+      window.BociteLegal.close();
+    }
+
+    if(
+      window.BociteIntroduction &&
+      typeof window.BociteIntroduction.close ===
+        "function"
+    ){
+
+      window.BociteIntroduction.close();
+    }
+
+    if(
+      window.BoCiteArtRegistration &&
+      typeof window.BoCiteArtRegistration.close ===
+        "function"
+    ){
+
+      window.BoCiteArtRegistration.close();
+    }
+
+    if(
+      window.BociteSynoptique &&
+      typeof window.BociteSynoptique.close ===
+        "function"
+    ){
+
+      window.BociteSynoptique.close();
+    }
+
+    closeKnownOverlay(
+      "bociteLegalOverlay"
+    );
+
+    closeKnownOverlay(
+      "bociteIntroductionOverlay"
+    );
+
+    closeKnownOverlay(
+      "bociteRegistrationOverlay"
+    );
+
+    closeKnownOverlay(
+      "bociteSynoptiqueOverlay"
     );
   }
 
   /* =====================================================
-     ANCIENS ÉCRANS DE INDEX.HTML
-
-     Ils sont uniquement masqués.
-     Ils ne sont ni supprimés
-     ni modifiés dans ce fichier.
+     VERROU DE TRANSITION
+     Empêche un double clic d'ouvrir deux étapes.
      ===================================================== */
 
-  function installLegacyScreenProtection(){
+  function runTransition(callback){
 
-    if(
-      document.getElementById(
-        "bociteLegacyEntryProtection"
-      )
-    ){
+    if(transitionLocked){
       return;
     }
 
-    const style =
-      document.createElement("style");
+    transitionLocked =
+      true;
 
-    style.id =
-      "bociteLegacyEntryProtection";
+    try{
 
-    style.textContent = `
-      body.bocite-entry-running
-      #welcomeScreen,
+      callback();
 
-      body.bocite-entry-running
-      #registrationScreen,
+    }finally{
 
-      body.bocite-entry-running
-      #registerScreen,
+      window.setTimeout(
+        function(){
 
-      body.bocite-entry-running
-      #accountCreationScreen,
-
-      body.bocite-entry-running
-      .welcome-screen,
-
-      body.bocite-entry-running
-      .registration-screen,
-
-      body.bocite-entry-running
-      .register-screen,
-
-      body.bocite-entry-running
-      [data-screen="welcome"],
-
-      body.bocite-entry-running
-      [data-screen="registration"] {
-        display:none !important;
-        visibility:hidden !important;
-        pointer-events:none !important;
-      }
-    `;
-
-    document.head.appendChild(
-      style
-    );
-  }
-
-  /* =====================================================
-     MASQUAGE DE L'APPLICATION PENDANT LE PARCOURS
-     ===================================================== */
-
-  function hideApplication(){
-
-    document.body.classList.add(
-      "bocite-entry-running"
-    );
-  }
-
-  function showApplication(){
-
-    document.body.classList.remove(
-      "bocite-entry-running"
-    );
-  }
-
-  /* =====================================================
-     PROTECTION CONTRE LES DOUBLES TRANSITIONS
-     ===================================================== */
-
-  function beginTransition(){
-
-    if(transitionRunning){
-      return false;
+          transitionLocked =
+            false;
+        },
+        250
+      );
     }
-
-    transitionRunning = true;
-
-    window.setTimeout(
-      function(){
-
-        transitionRunning = false;
-
-      },
-      250
-    );
-
-    return true;
   }
 
   /* =====================================================
-     ÉTAPE 1 — RGPD / CGU / CGV
+     ÉTAPE 1 — INFORMATIONS LÉGALES
      ===================================================== */
 
   function openLegal(){
 
-    closeAllEntryScreens();
-    hideApplication();
+    runTransition(
+      function(){
 
-    saveStep(
-      "legal"
+        closeAllEntryScreens();
+
+        saveSession(
+          STEPS.legal
+        );
+
+        if(
+          window.BociteLegal &&
+          typeof window.BociteLegal.open ===
+            "function"
+        ){
+
+          window.BociteLegal.open();
+          return;
+        }
+
+        console.error(
+          "Bo'CitéArt : le module bociteart-legal.js n'est pas disponible."
+        );
+      }
     );
-
-    if(
-      window.BociteLegal &&
-      typeof window.BociteLegal.open ===
-      "function"
-    ){
-
-      window.BociteLegal.open();
-      return true;
-    }
-
-    console.error(
-      "Bo'CitéArt : bociteart-legal.js n'est pas disponible."
-    );
-
-    return false;
   }
 
   /* =====================================================
@@ -306,68 +357,62 @@
 
   function openIntroduction(){
 
-    closeAllEntryScreens();
-    hideApplication();
+    runTransition(
+      function(){
 
-    saveStep(
-      "introduction"
+        closeAllEntryScreens();
+
+        saveSession(
+          STEPS.introduction
+        );
+
+        if(
+          window.BociteIntroduction &&
+          typeof window.BociteIntroduction.open ===
+            "function"
+        ){
+
+          window.BociteIntroduction.open();
+          return;
+        }
+
+        console.error(
+          "Bo'CitéArt : le module bociteart-introduction.js n'est pas disponible."
+        );
+      }
     );
-
-    if(
-      window.BociteIntroduction &&
-      typeof window.BociteIntroduction.open ===
-      "function"
-    ){
-
-      window.BociteIntroduction.open();
-      return true;
-    }
-
-    console.error(
-      "Bo'CitéArt : bociteart-introduction.js n'est pas disponible."
-    );
-
-    return false;
   }
 
   /* =====================================================
-     ÉTAPE 3 — JE CRÉE MON COMPTE
+     ÉTAPE 3 — CRÉATION DU COMPTE
      ===================================================== */
 
   function openRegistration(){
 
-    closeAllEntryScreens();
-    hideApplication();
+    runTransition(
+      function(){
 
-    saveStep(
-      "registration"
+        closeAllEntryScreens();
+
+        saveSession(
+          STEPS.registration
+        );
+
+        if(
+          window.BoCiteArtRegistration &&
+          typeof window.BoCiteArtRegistration.open ===
+            "function"
+        ){
+
+          window.BoCiteArtRegistration.open();
+          return;
+        }
+
+        console.error(
+          "Bo'CitéArt : le module bociteart-registration.js n'est pas disponible."
+        );
+      }
     );
-
-    if(
-      window.BociteRegistration &&
-      typeof window.BociteRegistration.open ===
-      "function"
-    ){
-
-      window.BociteRegistration.open();
-      return true;
-    }
-
-    if(
-      window.BoCiteArtRegistration &&
-      typeof window.BoCiteArtRegistration.open ===
-      "function"
-    ){
-
-      window.BoCiteArtRegistration.open();
-      return true;
-    }
-
-    console.error(
-      "Bo'CitéArt : la nouvelle page « Je crée mon compte » n'est pas encore disponible."
-    );
-
-    return false;
   }
 
   /* =====================================================
@@ -376,62 +421,74 @@
 
   function openSynoptique(){
 
-    closeAllEntryScreens();
-    hideApplication();
+    runTransition(
+      function(){
 
-    saveStep(
-      "synoptique"
+        closeAllEntryScreens();
+
+        saveSession(
+          STEPS.synoptique
+        );
+
+        if(
+          window.BociteSynoptique &&
+          typeof window.BociteSynoptique.open ===
+            "function"
+        ){
+
+          window.BociteSynoptique.open();
+          return;
+        }
+
+        console.error(
+          "Bo'CitéArt : le module bociteart-synoptique.js n'est pas disponible."
+        );
+      }
     );
-
-    if(
-      window.BociteSynoptique &&
-      typeof window.BociteSynoptique.open ===
-      "function"
-    ){
-
-      window.BociteSynoptique.open();
-      return true;
-    }
-
-    console.error(
-      "Bo'CitéArt : bociteart-synoptique.js n'est pas disponible."
-    );
-
-    return false;
   }
 
   /* =====================================================
-     ÉTAPE 5 — APPLICATION
+     ÉTAPE 5 — APPLICATION OFFICIELLE
      ===================================================== */
 
-  function enterApplication(){
+  function openApplication(){
 
     closeAllEntryScreens();
-    showApplication();
 
-    currentStep =
-      "application";
+    saveCompletion();
 
-    saveLocal(
-      STORAGE.completed,
-      "true"
+    document.documentElement.style
+      .removeProperty("overflow");
+
+    document.body.style
+      .removeProperty("overflow");
+
+    window.scrollTo(
+      0,
+      0
     );
 
-    saveStep(
-      "application",
-      {
-        completedAt:
-          new Date().toISOString()
-      }
-    );
+    /*
+      Aucun espace particulier n'est ouvert ici.
+
+      L'application officielle déjà présente
+      dans index.html reste affichée sous les écrans
+      de la porte d'entrée.
+
+      Le parcours n'envoie donc pas l'utilisateur
+      directement vers Entreprise, Commerce
+      ou un autre onglet.
+    */
 
     document.dispatchEvent(
       new CustomEvent(
-        "bociteart:entry-complete",
+        "bociteart:application-ready",
         {
           detail:{
-            completed:true,
-            enteredAt:
+            journeyVersion:
+              JOURNEY_VERSION,
+
+            completedAt:
               new Date().toISOString()
           }
         }
@@ -439,19 +496,19 @@
     );
 
     console.log(
-      "✅ Parcours terminé — application Bo'CitéArt ouverte"
+      "✅ Parcours terminé — application officielle affichée"
     );
   }
 
   /* =====================================================
-     ÉVÉNEMENTS DU NOUVEAU PARCOURS
+     RÉCEPTION DES VALIDATIONS
      ===================================================== */
 
   function handleLegalCompleted(){
 
     if(
-      currentStep !== "legal" ||
-      !beginTransition()
+      currentStep !==
+      STEPS.legal
     ){
       return;
     }
@@ -462,8 +519,8 @@
   function handleIntroductionCompleted(){
 
     if(
-      currentStep !== "introduction" ||
-      !beginTransition()
+      currentStep !==
+      STEPS.introduction
     ){
       return;
     }
@@ -471,21 +528,14 @@
     openRegistration();
   }
 
-  function handleRegistrationCompleted(event){
+  function handleRegistrationCompleted(){
 
     if(
-      currentStep !== "registration" ||
-      !beginTransition()
+      currentStep !==
+      STEPS.registration
     ){
       return;
     }
-
-    saveStep(
-      "registration",
-      event && event.detail
-        ? event.detail
-        : null
-    );
 
     openSynoptique();
   }
@@ -493,76 +543,34 @@
   function handleSynoptiqueCompleted(){
 
     if(
-      currentStep !== "synoptique" ||
-      !beginTransition()
+      currentStep !==
+      STEPS.synoptique
     ){
       return;
     }
 
-    enterApplication();
+    openApplication();
   }
 
-  function bindJourneyEvents(){
+  document.addEventListener(
+    "bociteart:legal-completed",
+    handleLegalCompleted
+  );
 
-    document.addEventListener(
-      "bociteart:legal-completed",
-      handleLegalCompleted
-    );
+  document.addEventListener(
+    "bociteart:introduction-completed",
+    handleIntroductionCompleted
+  );
 
-    window.addEventListener(
-      "bociteart:legal-completed",
-      handleLegalCompleted
-    );
+  document.addEventListener(
+    "bociteart:registration-completed",
+    handleRegistrationCompleted
+  );
 
-    document.addEventListener(
-      "bociteart:introduction-completed",
-      handleIntroductionCompleted
-    );
-
-    window.addEventListener(
-      "bociteart:introduction-completed",
-      handleIntroductionCompleted
-    );
-
-    document.addEventListener(
-      "bociteart:registration-completed",
-      handleRegistrationCompleted
-    );
-
-    window.addEventListener(
-      "bociteart:registration-completed",
-      handleRegistrationCompleted
-    );
-
-    document.addEventListener(
-      "bociteart:synoptique-completed",
-      handleSynoptiqueCompleted
-    );
-
-    window.addEventListener(
-      "bociteart:synoptique-completed",
-      handleSynoptiqueCompleted
-    );
-  }
-
-  /* =====================================================
-     RETOURS
-     ===================================================== */
-
-  function backToLegal(){
-
-    openLegal();
-  }
-
-  function backToIntroduction(){
-
-    openIntroduction();
-  }
-
-  function backToRegistration(){
-
-    openRegistration();
-  }
+  document.addEventListener(
+    "bociteart:synoptique-completed",
+    handleSynoptiqueCompleted
+  );
 
   /* =====================================================
      REPRISE DU PARCOURS
@@ -570,94 +578,79 @@
 
   function resume(){
 
-    const saved =
-      getSavedStep();
+    if(journeyCompleted()){
 
-    if(!saved || !saved.step){
+      closeAllEntryScreens();
 
-      openLegal();
+      currentStep =
+        STEPS.application;
+
+      console.log(
+        "✅ Porte d'entrée déjà terminée — application affichée"
+      );
+
       return;
     }
 
-    switch(saved.step){
+    const session =
+      getSession();
 
-      case "legal":
+    const savedStep =
+      session &&
+      session.version ===
+        JOURNEY_VERSION
+        ? session.step
+        : "";
 
-        openLegal();
-        break;
+    switch(savedStep){
 
-      case "introduction":
+      case STEPS.introduction:
 
         openIntroduction();
         break;
 
-      case "registration":
+      case STEPS.registration:
 
         openRegistration();
         break;
 
-      case "synoptique":
+      case STEPS.synoptique:
 
         openSynoptique();
         break;
 
-      case "application":
-
-        enterApplication();
-        break;
-
+      case STEPS.legal:
       default:
 
         openLegal();
+        break;
     }
   }
 
   /* =====================================================
-     RECOMMENCER DEPUIS LE DÉBUT
+     RÉINITIALISATION DE TEST
      ===================================================== */
 
-  function restart(){
+  function resetJourney(){
 
-    removeLocal(
+    removeStorageItem(
       STORAGE.session
     );
 
-    removeLocal(
+    removeStorageItem(
       STORAGE.completed
     );
 
-    currentStep = "";
-    transitionRunning = false;
+    currentStep =
+      "";
+
+    closeAllEntryScreens();
 
     openLegal();
-  }
 
-  /* =====================================================
-     DÉMARRAGE
-     ===================================================== */
-
-  function start(){
-
-    installLegacyScreenProtection();
-
-    /*
-      Si le parcours V4 est déjà terminé,
-      l'application s'ouvre directement.
-    */
-
-    if(isCompleted()){
-
-      enterApplication();
-      return;
-    }
-
-    /*
-      Sinon, reprise de l'étape enregistrée.
-      À la première visite :
-      ouverture obligatoire du RGPD.
-    */
-
-    resume();
+    console.log(
+      "✅ Parcours Bo'CitéArt réinitialisé"
+    );
   }
 
   /* =====================================================
@@ -665,15 +658,11 @@
      ===================================================== */
 
   window.BociteStart = {
-
-    start:
-      start,
-
-    restart:
-      restart,
-
     resume:
       resume,
+
+    reset:
+      resetJourney,
 
     openLegal:
       openLegal,
@@ -687,20 +676,8 @@
     openSynoptique:
       openSynoptique,
 
-    enterApplication:
-      enterApplication,
-
-    backToLegal:
-      backToLegal,
-
-    backToIntroduction:
-      backToIntroduction,
-
-    backToRegistration:
-      backToRegistration,
-
-    closeEntryScreens:
-      closeAllEntryScreens,
+    openApplication:
+      openApplication,
 
     getCurrentStep:
       function(){
@@ -708,11 +685,30 @@
         return currentStep;
       },
 
-    isCompleted:
-      isCompleted
+    journeyCompleted:
+      journeyCompleted,
+
+    storageKeys:
+      Object.assign(
+        {},
+        STORAGE
+      ),
+
+    version:
+      JOURNEY_VERSION
   };
 
-  bindJourneyEvents();
+  /* =====================================================
+     DÉMARRAGE UNIQUE
+     ===================================================== */
+
+  function startJourney(){
+
+    window.setTimeout(
+      resume,
+      0
+    );
+  }
 
   if(
     document.readyState ===
@@ -721,7 +717,7 @@
 
     document.addEventListener(
       "DOMContentLoaded",
-      start,
+      startJourney,
       {
         once:true
       }
@@ -729,14 +725,11 @@
 
   }else{
 
-    window.setTimeout(
-      start,
-      0
-    );
+    startJourney();
   }
 
   console.log(
-    "✅ Chef d'orchestre Bo'CitéArt V4 chargé"
+    "✅ Chef d'orchestre Bo'CitéArt V6 chargé"
   );
 
 })();
