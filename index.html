@@ -955,16 +955,44 @@ html.bocite-entry-pending body > .page{
     "bocite-entry-pending"
   );
 
+  function revealBociteartApplication(){
+
+    document.documentElement.classList.remove(
+      "bocite-entry-pending"
+    );
+  }
+
   document.addEventListener(
     "bociteart:application-ready",
-    function(){
-
-      document.documentElement.classList.remove(
-        "bocite-entry-pending"
-      );
-    },
+    revealBociteartApplication,
     {
       once:true
+    }
+  );
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+      try{
+
+        const journeyCompleted =
+          localStorage.getItem(
+            "bociteart_entry_completed_v7"
+          );
+
+        if(journeyCompleted){
+
+          revealBociteartApplication();
+        }
+
+      }catch(error){
+
+        console.warn(
+          "Bo'CitéArt : vérification du parcours impossible.",
+          error
+        );
+      }
     }
   );
 </script>
