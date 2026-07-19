@@ -673,61 +673,42 @@
      NAVIGATION
      ===================================================== */
 
-  function continueJourney(){
+ function continueJourney(){
 
-    const checkbox =
-      getElement(
-        "bociteLegalAcceptCheckbox"
-      );
-
-    const message =
-      getElement(
-        "bociteLegalMessage"
-      );
-
-    if(
-      !checkbox ||
-      !checkbox.checked
-    ){
-
-      if(message){
-        message.style.display =
-          "block";
-      }
-
-      return;
-    }
-
-    saveAcceptance();
-    removeLegal();
-
-    if(
-      window.BociteStart &&
-      typeof window.BociteStart.openSynoptique ===
-      "function"
-    ){
-
-      window.BociteStart.openSynoptique();
-      return;
-    }
-
-    if(
-      window.BociteSynoptique &&
-      typeof window.BociteSynoptique.open ===
-      "function"
-    ){
-
-      window.BociteSynoptique.open();
-      return;
-    }
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:open-synoptique"
-      )
+  const checkbox =
+    getElement(
+      "bociteLegalAcceptCheckbox"
     );
+
+  const message =
+    getElement(
+      "bociteLegalMessage"
+    );
+
+  if(
+    !checkbox ||
+    !checkbox.checked
+  ){
+
+    if(message){
+      message.style.display =
+        "block";
+    }
+
+    return;
   }
 
+  saveAcceptance();
+  removeLegal();
+
+  document.dispatchEvent(
+    new CustomEvent(
+      "bociteart:legal-completed"
+    )
+  );
+
+}
+   
   function returnToIntroduction(){
 
     removeLegal();
