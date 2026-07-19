@@ -2,8 +2,10 @@
    BO'CITÉART — PORTE D'ENTRÉE
    ÉTAPE 4 — CHOIX DE L'UNIVERS
 
-   FICHIER INDÉPENDANT :
-   aucun onglet existant n'est modifié
+   CHOIX DU PROFIL
+   → OUVERTURE DE L'ESPACE EXISTANT
+
+   Aucun onglet existant n'est modifié.
    ========================================================= */
 
 (function initBociteartProfils(){
@@ -68,9 +70,23 @@
     }
   ];
 
+  /* =====================================================
+     OUTILS
+     ===================================================== */
+
   function getElement(id){
 
     return document.getElementById(id);
+  }
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
   }
 
   function getLogoHtml(){
@@ -83,6 +99,10 @@
       </span>
     `;
   }
+
+  /* =====================================================
+     STYLES
+     ===================================================== */
 
   function installStyles(){
 
@@ -204,9 +224,17 @@
         font-size:17px;
         font-weight:800;
         cursor:pointer;
+        touch-action:manipulation;
+      }
+
+      #bociteProfilsBackBtn:hover,
+      #bociteProfilsBackBtn:focus {
+        background:#f4f0e7;
+        outline:3px solid rgba(47,93,70,.18);
       }
 
       @media (max-width:600px) {
+
         #bociteProfilsOverlay {
           padding:9px 7px 26px;
         }
@@ -238,6 +266,10 @@
       style
     );
   }
+
+  /* =====================================================
+     CONTENU
+     ===================================================== */
 
   function getProfilesHtml(){
 
@@ -307,12 +339,18 @@
         <button
           id="bociteProfilsBackBtn"
           type="button">
+
           Retour
+
         </button>
 
       </div>
     `;
   }
+
+  /* =====================================================
+     OUVERTURE ET FERMETURE
+     ===================================================== */
 
   function removeProfiles(){
 
@@ -323,267 +361,6 @@
 
     if(overlay){
       overlay.remove();
-    }
-  }
-
-  function saveProfile(profileId){
-
-    const record = {
-      profile:profileId,
-      selectedAt:
-        new Date().toISOString()
-    };
-
-    try{
-
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(record)
-      );
-
-    }catch(error){
-
-      console.warn(
-        "Bo'CitéArt : profil de visite non enregistré.",
-        error
-      );
-    }
-
-    window.BociteCurrentProfile =
-      record;
-
-    return record;
-  }
-
-  function dispatchProfile(profileId){
-
-    const record =
-      saveProfile(
-        profileId
-      );
-
-    removeProfiles();
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:profile-selected",
-        {
-          detail:record
-        }
-      )
-    );
-
-    openExistingSpace(
-      profileId
-    );
-  }
-
-  function openEntrepriseChoice(){
-
-    const app =
-      window.BociteEntreprise;
-
-    if(
-      app &&
-      typeof app.openEntrepriseIntroduction ===
-      "function"
-    ){
-      app.openEntrepriseIntroduction();
-      return true;
-    }
-
-    if(
-      app &&
-      typeof app.openEntrepriseHome ===
-      "function"
-    ){
-      app.openEntrepriseHome();
-      return true;
-    }
-
-    if(
-      app &&
-      typeof app.openHome ===
-      "function"
-    ){
-      app.openHome();
-      return true;
-    }
-
-    return false;
-  }
-
-  function clickExistingButton(words){
-
-    const candidates =
-      Array.from(
-        document.querySelectorAll(
-          "button, .choiceBtn, [role='button'], a"
-        )
-      );
-
-    const button =
-      candidates.find(function(element){
-
-        const text =
-          String(
-            element.textContent || ""
-          )
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(
-              /[\u0300-\u036f]/g,
-              ""
-            )
-            .replace(
-              /\s+/g,
-              " "
-            )
-            .trim();
-
-        return words.some(function(word){
-
-          return text === word ||
-            text.includes(word);
-        });
-      });
-
-    if(button){
-
-      button.click();
-      return true;
-    }
-
-    return false;
-  }
-
-  function openExistingSpace(profileId){
-
-    /*
-      Aucun onglet existant n’est modifié.
-      Ce fichier tente uniquement d’ouvrir
-      les accès déjà présents.
-    */
-
-    if(
-      profileId === "entreprise"
-    ){
-
-      if(openEntrepriseChoice()){
-        return;
-      }
-    }
-
-    const labels = {
-      jeune:[
-        "jeune",
-        "enfant"
-      ],
-      citoyen:[
-        "citoyen",
-        "habitant"
-      ],
-      ecole:[
-        "ecole",
-        "école"
-      ],
-      association:[
-        "association",
-        "associations"
-      ],
-      sport:[
-        "sport",
-        "club sportif"
-      ],
-      commerce:[
-        "commerce",
-        "commerçant",
-        "commercant"
-      ],
-      mairie:[
-        "mairie",
-        "ville"
-      ]
-    };
-
-    if(
-      labels[profileId] &&
-      clickExistingButton(
-        labels[profileId]
-      )
-    ){
-      return;
-    }
-
-    /*
-      Si l’accès existant n’est pas encore identifiable,
-      on revient simplement à l’application actuelle.
-    */
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:enter-existing-app",
-        {
-          detail:{
-            profile:profileId
-          }
-        }
-      )
-    );
-
-    alert(
-      "Votre univers est sélectionné. " +
-      "Le raccordement à cet espace existant sera réalisé sans modifier son contenu."
-    );
-  }
-
-  function returnToSynoptique(){
-
-    removeProfiles();
-
-    if(
-      window.BociteSynoptique &&
-      typeof window.BociteSynoptique.open ===
-      "function"
-    ){
-      window.BociteSynoptique.open();
-      return;
-    }
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:open-synoptique"
-      )
-    );
-  }
-
-  function bindProfiles(){
-
-    document
-      .querySelectorAll(
-        "[data-bocite-profile]"
-      )
-      .forEach(function(button){
-
-        button.onclick = function(){
-
-          dispatchProfile(
-            button.getAttribute(
-              "data-bocite-profile"
-            )
-          );
-        };
-      });
-
-    const backButton =
-      getElement(
-        "bociteProfilsBackBtn"
-      );
-
-    if(backButton){
-
-      backButton.onclick =
-        returnToSynoptique;
     }
   }
 
@@ -607,11 +384,46 @@
 
     bindProfiles();
 
-    window.setTimeout(function(){
+    window.setTimeout(
+      function(){
 
-      overlay.scrollTop = 0;
+        overlay.scrollTop = 0;
 
-    },0);
+      },
+      0
+    );
+  }
+
+  /* =====================================================
+     ENREGISTREMENT DU PROFIL
+     ===================================================== */
+
+  function saveProfile(profileId){
+
+    const record = {
+      profile:profileId,
+      selectedAt:new Date().toISOString()
+    };
+
+    try{
+
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(record)
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : profil de visite non enregistré.",
+        error
+      );
+    }
+
+    window.BociteCurrentProfile =
+      record;
+
+    return record;
   }
 
   function getSavedProfile(){
@@ -633,17 +445,278 @@
     }
   }
 
+  /* =====================================================
+     OUVERTURE DES ESPACES EXISTANTS
+     ===================================================== */
+
+  function openEntrepriseSpace(){
+
+    const app =
+      window.BociteEntreprise;
+
+    if(
+      app &&
+      typeof app.openEntrepriseIntroduction ===
+      "function"
+    ){
+
+      app.openEntrepriseIntroduction();
+      return true;
+    }
+
+    if(
+      app &&
+      typeof app.openEntrepriseHome ===
+      "function"
+    ){
+
+      app.openEntrepriseHome();
+      return true;
+    }
+
+    if(
+      app &&
+      typeof app.openHome ===
+      "function"
+    ){
+
+      app.openHome();
+      return true;
+    }
+
+    return false;
+  }
+
+  function clickExistingButton(labels){
+
+    const candidates =
+      Array.from(
+        document.querySelectorAll(
+          "button, a, [role='button'], [onclick], .choiceBtn"
+        )
+      );
+
+    const button =
+      candidates.find(function(element){
+
+        if(
+          element.closest(
+            "#bociteIntroductionOverlay, " +
+            "#bociteLegalOverlay, " +
+            "#bociteSynoptiqueOverlay, " +
+            "#bociteProfilsOverlay"
+          )
+        ){
+          return false;
+        }
+
+        const text =
+          normalizeText(
+            element.textContent
+          );
+
+        return labels.some(function(label){
+
+          const normalizedLabel =
+            normalizeText(label);
+
+          return (
+            text === normalizedLabel ||
+            text.includes(normalizedLabel)
+          );
+        });
+      });
+
+    if(!button){
+      return false;
+    }
+
+    button.click();
+
+    return true;
+  }
+
+  function openExistingSpace(profileId){
+
+    if(profileId === "entreprise"){
+
+      if(openEntrepriseSpace()){
+        return true;
+      }
+    }
+
+    const labels = {
+      jeune:[
+        "jeune",
+        "enfant"
+      ],
+      citoyen:[
+        "citoyen",
+        "habitant"
+      ],
+      ecole:[
+        "école",
+        "ecole"
+      ],
+      association:[
+        "association"
+      ],
+      sport:[
+        "sport",
+        "club sportif"
+      ],
+      commerce:[
+        "commerce",
+        "commerçant",
+        "commercant"
+      ],
+      entreprise:[
+        "entreprise",
+        "commerces & entreprises",
+        "commerces et entreprises"
+      ],
+      mairie:[
+        "mairie",
+        "ville"
+      ]
+    };
+
+    if(
+      labels[profileId] &&
+      clickExistingButton(
+        labels[profileId]
+      )
+    ){
+      return true;
+    }
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:enter-existing-app",
+        {
+          detail:{
+            profile:profileId
+          }
+        }
+      )
+    );
+
+    return false;
+  }
+
+  /* =====================================================
+     SÉLECTION
+     ===================================================== */
+
+  function selectProfile(profileId){
+
+    const record =
+      saveProfile(
+        profileId
+      );
+
+    removeProfiles();
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:profile-selected",
+        {
+          detail:record
+        }
+      )
+    );
+
+    window.setTimeout(
+      function(){
+
+        openExistingSpace(
+          profileId
+        );
+
+      },
+      80
+    );
+  }
+
+  /* =====================================================
+     RETOUR
+     ===================================================== */
+
+  function returnToSynoptique(){
+
+    removeProfiles();
+
+    if(
+      window.BociteStart &&
+      typeof window.BociteStart.openSynoptique ===
+      "function"
+    ){
+
+      window.BociteStart.openSynoptique();
+      return;
+    }
+
+    if(
+      window.BociteSynoptique &&
+      typeof window.BociteSynoptique.open ===
+      "function"
+    ){
+
+      window.BociteSynoptique.open();
+    }
+  }
+
+  /* =====================================================
+     ÉVÉNEMENTS
+     ===================================================== */
+
+  function bindProfiles(){
+
+    document
+      .querySelectorAll(
+        "[data-bocite-profile]"
+      )
+      .forEach(function(button){
+
+        button.onclick =
+          function(){
+
+            const profileId =
+              button.getAttribute(
+                "data-bocite-profile"
+              );
+
+            if(profileId){
+
+              selectProfile(
+                profileId
+              );
+            }
+          };
+      });
+
+    const backButton =
+      getElement(
+        "bociteProfilsBackBtn"
+      );
+
+    if(backButton){
+
+      backButton.onclick =
+        returnToSynoptique;
+    }
+  }
+
+  /* =====================================================
+     API PUBLIQUE
+     ===================================================== */
+
   window.BociteProfils = {
     open:openProfiles,
     close:removeProfiles,
     getProfile:getSavedProfile,
     storageKey:STORAGE_KEY
   };
-
-  document.addEventListener(
-    "bociteart:open-profils",
-    openProfiles
-  );
 
   console.log(
     "✅ Choix des univers Bo'CitéArt prêt"
