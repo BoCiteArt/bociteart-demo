@@ -1,10 +1,13 @@
 /* =========================================================
-   BO'CITÉART — PAGE D'INTRODUCTION
+   BO'CITÉART — PORTE D'ENTRÉE
+   ÉTAPE 2 — INTRODUCTION
 
-   INTRODUCTION
-   → INFORMATIONS LÉGALES
+   INFORMATIONS LÉGALES
+   → INTRODUCTION
+   → CRÉATION DU COMPTE
 
-   Aucun onglet existant n'est modifié.
+   Ce fichier affiche uniquement l'introduction.
+   Il ne décide jamais lui-même de la page suivante.
    ========================================================= */
 
 (function initBociteartIntroduction(){
@@ -15,6 +18,18 @@
     return;
   }
 
+  const OVERLAY_ID =
+    "bociteIntroductionOverlay";
+
+  /* =====================================================
+     OUTILS
+     ===================================================== */
+
+  function getElement(id){
+
+    return document.getElementById(id);
+  }
+
   /* =====================================================
      STYLES
      ===================================================== */
@@ -22,7 +37,7 @@
   function installStyles(){
 
     if(
-      document.getElementById(
+      getElement(
         "bociteIntroductionStyles"
       )
     ){
@@ -36,7 +51,7 @@
       "bociteIntroductionStyles";
 
     style.textContent = `
-      #bociteIntroductionOverlay {
+      #${OVERLAY_ID} {
         position:fixed;
         inset:0;
         z-index:999999;
@@ -45,7 +60,7 @@
         padding:18px 10px 36px;
         background:#f2ecde;
         color:#111;
-        font-family:Arial, sans-serif;
+        font-family:Arial,sans-serif;
       }
 
       #bociteIntroductionCard {
@@ -124,7 +139,7 @@
         font-weight:700;
       }
 
-      #bociteIntroductionStartBtn {
+      #bociteIntroductionContinueBtn {
         display:block;
         width:100%;
         margin-top:25px;
@@ -134,20 +149,20 @@
         background:#f2ecde;
         color:#111;
         font-size:18px;
-        font-weight:700;
+        font-weight:800;
         cursor:pointer;
         touch-action:manipulation;
       }
 
-      #bociteIntroductionStartBtn:hover,
-      #bociteIntroductionStartBtn:focus {
+      #bociteIntroductionContinueBtn:hover,
+      #bociteIntroductionContinueBtn:focus {
         background:rgba(49,93,70,.07);
         outline:3px solid rgba(49,93,70,.16);
       }
 
-      @media (max-width:600px) {
+      @media(max-width:600px){
 
-        #bociteIntroductionOverlay {
+        #${OVERLAY_ID} {
           padding:10px 7px 28px;
         }
 
@@ -189,57 +204,6 @@
   }
 
   /* =====================================================
-     FERMETURE
-     ===================================================== */
-
-  function closeIntroduction(){
-
-    const overlay =
-      document.getElementById(
-        "bociteIntroductionOverlay"
-      );
-
-    if(overlay){
-      overlay.remove();
-    }
-  }
-
-  /* =====================================================
-     ÉTAPE SUIVANTE
-     ===================================================== */
-
-  function openLegalPage(){
-
-    closeIntroduction();
-
-    if(
-      window.BociteStart &&
-      typeof window.BociteStart.openLegal ===
-      "function"
-    ){
-
-      window.BociteStart.openLegal();
-      return;
-    }
-
-    if(
-      window.BociteLegal &&
-      typeof window.BociteLegal.open ===
-      "function"
-    ){
-
-      window.BociteLegal.open();
-      return;
-    }
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:open-legal"
-      )
-    );
-  }
-
-  /* =====================================================
      CONTENU
      ===================================================== */
 
@@ -252,7 +216,7 @@
 
           <img
             class="bociteIntroductionLogoImage"
-            src="./entreprise/bociteart_logo.png?v=20260719-01"
+            src="./entreprise/bociteart_logo.png?v=20260719-02"
             alt="Logo officiel Bo'CitéArt">
 
         </div>
@@ -260,21 +224,15 @@
         <div class="bociteIntroductionSignature">
 
           <div>
-            <strong>
-              Découvrir ce qui existe.
-            </strong>
+            Découvrir ce qui existe.
           </div>
 
           <div>
-            <strong>
-              RELIER les énergies.
-            </strong>
+            RELIER les énergies.
           </div>
 
           <div>
-            <strong>
-              Faire vivre chaque territoire.
-            </strong>
+            Faire vivre chaque territoire.
           </div>
 
         </div>
@@ -364,7 +322,7 @@
         </div>
 
         <button
-          id="bociteIntroductionStartBtn"
+          id="bociteIntroductionContinueBtn"
           type="button">
 
           Commencer la découverte
@@ -376,10 +334,22 @@
   }
 
   /* =====================================================
-     OUVERTURE
+     OUVERTURE ET FERMETURE
      ===================================================== */
 
-  function renderIntroduction(){
+  function closeIntroduction(){
+
+    const overlay =
+      getElement(
+        OVERLAY_ID
+      );
+
+    if(overlay){
+      overlay.remove();
+    }
+  }
+
+  function openIntroduction(){
 
     installStyles();
     closeIntroduction();
@@ -388,7 +358,7 @@
       document.createElement("div");
 
     overlay.id =
-      "bociteIntroductionOverlay";
+      OVERLAY_ID;
 
     overlay.innerHTML =
       getIntroductionHtml();
@@ -397,25 +367,42 @@
       overlay
     );
 
-    const button =
-      document.getElementById(
-        "bociteIntroductionStartBtn"
+    bindIntroduction();
+
+    overlay.scrollTop = 0;
+  }
+
+  /* =====================================================
+     VALIDATION DE L'ÉTAPE
+     ===================================================== */
+
+  function completeIntroduction(){
+
+    closeIntroduction();
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:introduction-completed"
+      )
+    );
+  }
+
+  /* =====================================================
+     ÉVÉNEMENTS
+     ===================================================== */
+
+  function bindIntroduction(){
+
+    const continueButton =
+      getElement(
+        "bociteIntroductionContinueBtn"
       );
 
-    if(button){
+    if(continueButton){
 
-      button.onclick =
-        openLegalPage;
+      continueButton.onclick =
+        completeIntroduction;
     }
-
-    window.setTimeout(
-      function(){
-
-        overlay.scrollTop = 0;
-
-      },
-      0
-    );
   }
 
   /* =====================================================
@@ -423,13 +410,13 @@
      ===================================================== */
 
   window.BociteIntroduction = {
-    open:renderIntroduction,
-    show:renderIntroduction,
+    open:openIntroduction,
+    show:openIntroduction,
     close:closeIntroduction
   };
 
   console.log(
-    "✅ Introduction officielle Bo'CitéArt prête"
+    "✅ Étape introduction Bo'CitéArt V6 prête"
   );
 
 })();
