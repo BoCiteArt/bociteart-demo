@@ -1115,9 +1115,30 @@ function validerInscription() {
   if (typeof initAccountDateIfNeeded === "function") {
     initAccountDateIfNeeded();
   }
-  alert("Compte créé (démo) ✅");
-  fermerInscription();
+ const compte = {
+  nom: nom,
+  email: email,
+  type: type,
+  naissance: birthValue
+};
+
+if (window.BoCiteArtRegistration) {
+  BoCiteArtRegistration.createAccount(compte);
+
+  BoCiteArtRegistration.addStatistic({
+    type: type,
+    naissance: birthValue
+  });
 }
+
+alert("Compte créé (démo) ✅");
+
+fermerInscription();
+
+if (typeof openIntroduction === "function") {
+  openIntroduction();
+}
+ 
 </script>
 <!-- FIN FORMULAIRE INSCRIPTION -->
 
