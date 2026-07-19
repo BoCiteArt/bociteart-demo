@@ -28,14 +28,13 @@
      STOCKAGE
      ===================================================== */
 
-  const STORAGE = {
-    session:
-      "bociteart_entry_session_v4",
+ const STORAGE = {
+  session:
+    "bociteart_entry_session_v5",
 
-    completed:
-      "bociteart_entry_completed_v4"
-  };
-
+  completed:
+    "bociteart_entry_completed_v5"
+};
   let currentStep = "";
   let transitionRunning = false;
 
