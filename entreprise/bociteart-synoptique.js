@@ -1,11 +1,13 @@
 /* =========================================================
    BO'CITÉART — PORTE D'ENTRÉE
-   ÉTAPE 3 — SYNOPTIQUE GÉNÉRAL
+   ÉTAPE 4 — SYNOPTIQUE GÉNÉRAL
 
-   SYNOPTIQUE
-   → CHOIX DE L'UNIVERS
+   CRÉATION DU COMPTE
+   → SYNOPTIQUE
+   → APPLICATION OFFICIELLE
 
-   Aucun onglet existant n'est modifié.
+   Ce fichier affiche uniquement le synoptique.
+   Il ne décide jamais lui-même de la page suivante.
    ========================================================= */
 
 (function initBociteartSynoptique(){
@@ -16,9 +18,12 @@
     return;
   }
 
+  const OVERLAY_ID =
+    "bociteSynoptiqueOverlay";
+
   const IMAGE_PATHS = [
-    "./entreprise/bociteart-entreprise-synoptique.png?v=20260719-01",
-    "./entreprise/entreprise/bociteart-entreprise-synoptique.png?v=20260719-01"
+    "./entreprise/bociteart-entreprise-synoptique.png?v=20260719-03",
+    "./entreprise/entreprise/bociteart-entreprise-synoptique.png?v=20260719-03"
   ];
 
   /* =====================================================
@@ -62,7 +67,7 @@
       "bociteSynoptiqueStyles";
 
     style.textContent = `
-      #bociteSynoptiqueOverlay {
+      #${OVERLAY_ID} {
         position:fixed;
         inset:0;
         z-index:999999;
@@ -71,7 +76,7 @@
         padding:16px 10px 34px;
         background:#f3eddf;
         color:#111;
-        font-family:Arial, sans-serif;
+        font-family:Arial,sans-serif;
       }
 
       #bociteSynoptiqueCard {
@@ -147,30 +152,17 @@
         outline:3px solid rgba(47,93,70,.16);
       }
 
-      #bociteSynoptiqueBackBtn {
-        display:block;
-        width:100%;
-        margin-top:9px;
-        padding:13px 12px;
-        border:2px solid #2f5d46;
-        border-radius:10px;
-        background:#fff;
-        color:#111;
-        font-size:17px;
-        font-weight:800;
-        cursor:pointer;
-        touch-action:manipulation;
+      .bociteSynoptiqueNote {
+        margin-top:15px;
+        color:#333;
+        font-size:14px;
+        line-height:1.45;
+        text-align:center;
       }
 
-      #bociteSynoptiqueBackBtn:hover,
-      #bociteSynoptiqueBackBtn:focus {
-        background:#f6f2e9;
-        outline:3px solid rgba(47,93,70,.16);
-      }
+      @media(max-width:600px){
 
-      @media (max-width:600px) {
-
-        #bociteSynoptiqueOverlay {
+        #${OVERLAY_ID} {
           padding:9px 7px 26px;
         }
 
@@ -228,7 +220,9 @@
 
         </div>
 
-        <div id="bociteSynoptiqueError">
+        <div
+          id="bociteSynoptiqueError"
+          role="alert">
 
           Le synoptique n’a pas pu être affiché.
 
@@ -238,17 +232,16 @@
           id="bociteSynoptiqueContinueBtn"
           type="button">
 
-          Choisir mon espace
+          Entrer dans l'application
 
         </button>
 
-        <button
-          id="bociteSynoptiqueBackBtn"
-          type="button">
+        <div class="bociteSynoptiqueNote">
 
-          Retour
+          Vous allez maintenant arriver
+          sur la page officielle de l'application Bo'CitéArt.
 
-        </button>
+        </div>
 
       </div>
     `;
@@ -258,11 +251,11 @@
      OUVERTURE ET FERMETURE
      ===================================================== */
 
-  function removeSynoptique(){
+  function closeSynoptique(){
 
     const overlay =
       getElement(
-        "bociteSynoptiqueOverlay"
+        OVERLAY_ID
       );
 
     if(overlay){
@@ -273,13 +266,13 @@
   function openSynoptique(){
 
     installStyles();
-    removeSynoptique();
+    closeSynoptique();
 
     const overlay =
       document.createElement("div");
 
     overlay.id =
-      "bociteSynoptiqueOverlay";
+      OVERLAY_ID;
 
     overlay.innerHTML =
       getSynoptiqueHtml();
@@ -290,14 +283,7 @@
 
     bindSynoptique();
 
-    window.setTimeout(
-      function(){
-
-        overlay.scrollTop = 0;
-
-      },
-      0
-    );
+    overlay.scrollTop = 0;
   }
 
   /* =====================================================
@@ -329,6 +315,7 @@
           "block";
 
         if(errorBox){
+
           errorBox.style.display =
             "none";
         }
@@ -369,62 +356,18 @@
   }
 
   /* =====================================================
-     NAVIGATION
+     VALIDATION DE L'ÉTAPE
      ===================================================== */
 
-  function continueJourney(){
+  function completeSynoptique(){
 
-    removeSynoptique();
-
-    if(
-      window.BociteStart &&
-      typeof window.BociteStart.openProfiles ===
-      "function"
-    ){
-
-      window.BociteStart.openProfiles();
-      return;
-    }
-
-    if(
-      window.BociteProfils &&
-      typeof window.BociteProfils.open ===
-      "function"
-    ){
-
-      window.BociteProfils.open();
-      return;
-    }
+    closeSynoptique();
 
     document.dispatchEvent(
       new CustomEvent(
-        "bociteart:open-profils"
+        "bociteart:synoptique-completed"
       )
     );
-  }
-
-  function returnToLegal(){
-
-    removeSynoptique();
-
-    if(
-      window.BociteStart &&
-      typeof window.BociteStart.openLegal ===
-      "function"
-    ){
-
-      window.BociteStart.openLegal();
-      return;
-    }
-
-    if(
-      window.BociteLegal &&
-      typeof window.BociteLegal.open ===
-      "function"
-    ){
-
-      window.BociteLegal.open();
-    }
   }
 
   /* =====================================================
@@ -438,21 +381,10 @@
         "bociteSynoptiqueContinueBtn"
       );
 
-    const backButton =
-      getElement(
-        "bociteSynoptiqueBackBtn"
-      );
-
     if(continueButton){
 
       continueButton.onclick =
-        continueJourney;
-    }
-
-    if(backButton){
-
-      backButton.onclick =
-        returnToLegal;
+        completeSynoptique;
     }
 
     bindImage();
@@ -463,12 +395,18 @@
      ===================================================== */
 
   window.BociteSynoptique = {
-    open:openSynoptique,
-    close:removeSynoptique
+    open:
+      openSynoptique,
+
+    show:
+      openSynoptique,
+
+    close:
+      closeSynoptique
   };
 
   console.log(
-    "✅ Synoptique général Bo'CitéArt prêt"
+    "✅ Étape synoptique Bo'CitéArt V6 prête"
   );
 
 })();
