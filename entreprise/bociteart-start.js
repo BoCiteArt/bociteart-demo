@@ -1,15 +1,24 @@
 /* =========================================================
-   BO'CITÉART — PORTE D'ENTRÉE
-   CHEF D'ORCHESTRE UNIQUE DU PARCOURS
+   BO'CITÉART — PORTE D'ENTRÉE GÉNÉRALE
+   CHEF D'ORCHESTRE UNIQUE
 
-   CLIC COMMERCES & ENTREPRISES
-   → INTRODUCTION
-   → INFORMATIONS LÉGALES
-   → SYNOPTIQUE
-   → CHOIX DE L'UNIVERS
-   → APPLICATION EXISTANTE
+   ORDRE DÉFINITIF :
 
-   Aucun onglet existant n'est modifié.
+   1 — RGPD / CGU / CGV
+   2 — INTRODUCTION
+   3 — CRÉER MON COMPTE
+   4 — SYNOPTIQUE
+   5 — APPLICATION EXISTANTE
+
+   IMPORTANT :
+
+   → Le parcours se déroule avant l’application.
+   → La tuile « Commerces & Entreprises »
+     n’est plus interceptée.
+   → Une fois dans l’application,
+     cette tuile fonctionne normalement.
+   → Aucun module existant de l’application
+     n’est modifié par ce fichier.
    ========================================================= */
 
 (function initBociteartStart(){
@@ -20,65 +29,79 @@
     return;
   }
 
-  const SESSION_KEY =
-    "bociteart_entry_session_v2";
+  /* =====================================================
+     STOCKAGE DU PARCOURS
+     ===================================================== */
 
-  let pendingCommerceEntrepriseButton = null;
-  let journeyIsRunning = false;
-  let allowNextExistingOpening = false;
+  const STORAGE = {
+
+    session:
+      "bociteart_entry_session_v3",
+
+    completed:
+      "bociteart_entry_completed_v3"
+  };
+
+  let currentStep =
+    "";
+
+  let journeyRunning =
+    false;
+
+  let applicationEntered =
+    false;
 
   /* =====================================================
      OUTILS
      ===================================================== */
 
-  function normalizeText(value){
-
-    return String(value || "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\s+/g, " ")
-      .trim()
-      .toLowerCase();
-  }
-
-  function saveSession(step, detail){
-
-    const record = {
-      step:step,
-      detail:detail || null,
-      updatedAt:new Date().toISOString()
-    };
+  function safeParse(
+    value,
+    fallback
+  ){
 
     try{
 
-      sessionStorage.setItem(
-        SESSION_KEY,
-        JSON.stringify(record)
+      return JSON.parse(value);
+
+    }catch(error){
+
+      return fallback;
+    }
+  }
+
+  function saveLocal(
+    key,
+    value
+  ){
+
+    try{
+
+      localStorage.setItem(
+        key,
+        value
       );
+
+      return true;
 
     }catch(error){
 
       console.warn(
-        "Bo'CitéArt : session d'entrée non enregistrée.",
+        "Bo'CitéArt : stockage local indisponible.",
         error
       );
-    }
 
-    return record;
+      return false;
+    }
   }
 
-  function getSavedSession(){
+  function getLocal(key){
 
     try{
 
-      const saved =
-        sessionStorage.getItem(
-          SESSION_KEY
-        );
-
-      return saved
-        ? JSON.parse(saved)
-        : null;
+      return localStorage.getItem(
+        key
+      );
 
     }catch(error){
 
@@ -86,12 +109,12 @@
     }
   }
 
-  function clearSession(){
+  function removeLocal(key){
 
     try{
 
-      sessionStorage.removeItem(
-        SESSION_KEY
+      localStorage.removeItem(
+        key
       );
 
     }catch(error){
@@ -99,11 +122,84 @@
     }
   }
 
-  function closeAllEntryScreens(){
+  function saveSession(
+    step,
+    detail
+  ){
+
+    currentStep =
+      step;
+
+    const record = {
+
+      step:
+        step,
+
+      detail:
+        detail || null,
+
+      updatedAt:
+        new Date().toISOString()
+    };
+
+    saveLocal(
+      STORAGE.session,
+      JSON.stringify(record)
+    );
+
+    return record;
+  }
+
+  function getSession(){
+
+    const saved =
+      getLocal(
+        STORAGE.session
+      );
+
+    return saved
+      ? safeParse(
+          saved,
+          null
+        )
+      : null;
+  }
+
+  function isJourneyCompleted(){
+
+    return (
+      getLocal(
+        STORAGE.completed
+      ) === "true"
+    );
+  }
+
+  function markJourneyCompleted(){
+
+    saveLocal(
+      STORAGE.completed,
+      "true"
+    );
+
+    saveSession(
+      "application",
+      {
+        completedAt:
+          new Date().toISOString()
+      }
+    );
+  }
+
+  /* =====================================================
+     SUPPRESSION DES ÉCRANS DE LA PORTE D'ENTRÉE
+     ===================================================== */
+
+  function closeEntryScreens(){
 
     [
-      "bociteIntroductionOverlay",
       "bociteLegalOverlay",
+      "bociteIntroductionOverlay",
+      "bociteRegistrationOverlay",
       "bociteSynoptiqueOverlay",
       "bociteProfilsOverlay"
     ].forEach(function(id){
@@ -118,39 +214,82 @@
   }
 
   /* =====================================================
-     OUVERTURE DES ÉTAPES
+     MASQUAGE TEMPORAIRE DE L'APPLICATION
+
+     Le contenu existant n'est ni supprimé,
+     ni modifié.
+
+     Il est seulement masqué pendant
+     le parcours d'entrée.
      ===================================================== */
 
-  function openIntroduction(){
-
-    closeAllEntryScreens();
-
-    journeyIsRunning = true;
-
-    saveSession(
-      "introduction"
-    );
+  function hideExistingApplication(){
 
     if(
-      window.BociteIntroduction &&
-      typeof window.BociteIntroduction.open ===
-      "function"
+      document.getElementById(
+        "bociteEntryApplicationMask"
+      )
     ){
-
-      window.BociteIntroduction.open();
       return;
     }
 
-    console.error(
-      "Bo'CitéArt : introduction indisponible."
+    const mask =
+      document.createElement("style");
+
+    mask.id =
+      "bociteEntryApplicationMask";
+
+    mask.textContent = `
+      body > *:not(
+        script
+      ):not(
+        style
+      ):not(
+        #bociteLegalOverlay
+      ):not(
+        #bociteIntroductionOverlay
+      ):not(
+        #bociteRegistrationOverlay
+      ):not(
+        #bociteSynoptiqueOverlay
+      ):not(
+        #bociteProfilsOverlay
+      ) {
+        visibility:hidden !important;
+      }
+    `;
+
+    document.head.appendChild(
+      mask
     );
   }
 
+  function showExistingApplication(){
+
+    const mask =
+      document.getElementById(
+        "bociteEntryApplicationMask"
+      );
+
+    if(mask){
+      mask.remove();
+    }
+  }
+
+  /* =====================================================
+     ÉTAPE 1 — INFORMATIONS LÉGALES
+     ===================================================== */
+
   function openLegal(){
 
-    closeAllEntryScreens();
+    closeEntryScreens();
+    hideExistingApplication();
 
-    journeyIsRunning = true;
+    journeyRunning =
+      true;
+
+    applicationEntered =
+      false;
 
     saveSession(
       "legal"
@@ -163,19 +302,131 @@
     ){
 
       window.BociteLegal.open();
-      return;
+      return true;
     }
 
     console.error(
-      "Bo'CitéArt : informations légales indisponibles."
+      "Bo'CitéArt : le module légal est indisponible."
     );
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:open-legal"
+      )
+    );
+
+    return false;
   }
+
+  /* =====================================================
+     ÉTAPE 2 — INTRODUCTION
+     ===================================================== */
+
+  function openIntroduction(){
+
+    closeEntryScreens();
+    hideExistingApplication();
+
+    journeyRunning =
+      true;
+
+    saveSession(
+      "introduction"
+    );
+
+    if(
+      window.BociteIntroduction &&
+      typeof window.BociteIntroduction.open ===
+      "function"
+    ){
+
+      window.BociteIntroduction.open();
+      return true;
+    }
+
+    console.error(
+      "Bo'CitéArt : le module d'introduction est indisponible."
+    );
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:open-introduction"
+      )
+    );
+
+    return false;
+  }
+
+  /* =====================================================
+     ÉTAPE 3 — CRÉER MON COMPTE
+     ===================================================== */
+
+  function openRegistration(){
+
+    closeEntryScreens();
+    hideExistingApplication();
+
+    journeyRunning =
+      true;
+
+    saveSession(
+      "registration"
+    );
+
+    /*
+      API prévue pour la nouvelle page
+      « Créer mon compte ».
+    */
+
+    if(
+      window.BociteRegistration &&
+      typeof window.BociteRegistration.open ===
+      "function"
+    ){
+
+      window.BociteRegistration.open();
+      return true;
+    }
+
+    /*
+      Compatibilité si l'API porte
+      le nom complet du module.
+    */
+
+    if(
+      window.BoCiteArtRegistration &&
+      typeof window.BoCiteArtRegistration.open ===
+      "function"
+    ){
+
+      window.BoCiteArtRegistration.open();
+      return true;
+    }
+
+    console.error(
+      "Bo'CitéArt : la page Créer mon compte est indisponible."
+    );
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:open-registration"
+      )
+    );
+
+    return false;
+  }
+
+  /* =====================================================
+     ÉTAPE 4 — SYNOPTIQUE
+     ===================================================== */
 
   function openSynoptique(){
 
-    closeAllEntryScreens();
+    closeEntryScreens();
+    hideExistingApplication();
 
-    journeyIsRunning = true;
+    journeyRunning =
+      true;
 
     saveSession(
       "synoptique"
@@ -188,404 +439,277 @@
     ){
 
       window.BociteSynoptique.open();
-      return;
+      return true;
     }
 
     console.error(
-      "Bo'CitéArt : synoptique indisponible."
-    );
-  }
-
-  function openProfiles(){
-
-    closeAllEntryScreens();
-
-    journeyIsRunning = true;
-
-    saveSession(
-      "profils"
+      "Bo'CitéArt : le synoptique est indisponible."
     );
 
-    if(
-      window.BociteProfils &&
-      typeof window.BociteProfils.open ===
-      "function"
-    ){
-
-      window.BociteProfils.open();
-      return;
-    }
-
-    console.error(
-      "Bo'CitéArt : choix des univers indisponible."
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:open-synoptique"
+      )
     );
+
+    return false;
   }
 
   /* =====================================================
-     FIN DU PARCOURS
+     ÉTAPE 5 — APPLICATION EXISTANTE
      ===================================================== */
 
-  function completeJourney(profile){
+  function enterExistingApplication(){
 
-    closeAllEntryScreens();
+    closeEntryScreens();
+    showExistingApplication();
 
-    journeyIsRunning = false;
-    allowNextExistingOpening = true;
+    journeyRunning =
+      false;
 
-    saveSession(
-      "application",
-      {
-        profile:profile || null
-      }
-    );
+    applicationEntered =
+      true;
+
+    markJourneyCompleted();
 
     document.dispatchEvent(
       new CustomEvent(
         "bociteart:entry-complete",
         {
           detail:{
-            profile:profile || null,
-            enteredAt:new Date().toISOString()
+
+            completed:
+              true,
+
+            enteredAt:
+              new Date().toISOString()
           }
         }
       )
     );
-  }
-
-  function openPendingCommerceEntreprise(){
-
-    if(
-      !pendingCommerceEntrepriseButton ||
-      !document.body.contains(
-        pendingCommerceEntrepriseButton
-      )
-    ){
-
-      pendingCommerceEntrepriseButton = null;
-      return false;
-    }
-
-    const buttonToOpen =
-      pendingCommerceEntrepriseButton;
-
-    pendingCommerceEntrepriseButton = null;
-    allowNextExistingOpening = true;
-
-    window.setTimeout(
-      function(){
-
-        buttonToOpen.click();
-
-      },
-      80
-    );
-
-    return true;
-  }
-
-  /* =====================================================
-     DÉTECTION DE LA TUILE COMMERCES & ENTREPRISES
-     ===================================================== */
-
-  function isCommerceEntrepriseTrigger(element){
-
-    if(!element){
-      return false;
-    }
-
-    const text =
-      normalizeText(
-        element.textContent
-      );
-
-    return (
-      text.includes(
-        "commerces & entreprises"
-      ) ||
-      text.includes(
-        "commerces et entreprises"
-      )
-    );
-  }
-
-  function bindCommerceEntrepriseTile(){
-
-    document.addEventListener(
-      "click",
-      function(event){
-
-        const trigger =
-          event.target.closest(
-            "button, a, [role='button'], [onclick], .choiceBtn"
-          );
-
-        if(
-          !trigger ||
-          !isCommerceEntrepriseTrigger(
-            trigger
-          )
-        ){
-          return;
-        }
-
-        /*
-          Autorisation donnée après le parcours :
-          le clic final ouvre normalement l'espace existant.
-        */
-
-        if(allowNextExistingOpening){
-
-          allowNextExistingOpening = false;
-          return;
-        }
-
-        /*
-          Pendant le parcours, aucun nouveau départ.
-        */
-
-        if(journeyIsRunning){
-
-          event.preventDefault();
-          event.stopPropagation();
-          event.stopImmediatePropagation();
-          return;
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-
-        pendingCommerceEntrepriseButton =
-          trigger;
-
-        openIntroduction();
-
-      },
-      true
-    );
-  }
-
-  /* =====================================================
-     ÉVÉNEMENTS DU PARCOURS
-     ===================================================== */
-
-  function bindJourneyEvents(){
-
-    /*
-      Le bouton de l'introduction envoie actuellement :
-      window → bociteart:open-synoptique
-
-      Le chef d'orchestre le transforme en :
-      INTRODUCTION → INFORMATIONS LÉGALES
-    */
-
-    window.addEventListener(
-      "bociteart:open-synoptique",
-      function(){
-
-        const session =
-          getSavedSession();
-
-        if(
-          session &&
-          session.step === "introduction"
-        ){
-
-          openLegal();
-          return;
-        }
-
-        openSynoptique();
-      }
-    );
-
-    /*
-      Après validation légale :
-      document → bociteart:open-synoptique
-    */
-
-    document.addEventListener(
-      "bociteart:open-synoptique",
-      function(){
-
-        const session =
-          getSavedSession();
-
-        if(
-          session &&
-          session.step === "legal"
-        ){
-
-          saveSession(
-            "synoptique"
-          );
-
-          journeyIsRunning = true;
-        }
-      },
-      true
-    );
-
-    /*
-      Après le synoptique :
-      document → bociteart:open-profils
-    */
-
-    document.addEventListener(
-      "bociteart:open-profils",
-      function(){
-
-        saveSession(
-          "profils"
-        );
-
-        journeyIsRunning = true;
-      },
-      true
-    );
-
-    /*
-      Le profil est enregistré.
-
-      On ne relance surtout plus l'introduction.
-    */
-
-    document.addEventListener(
-      "bociteart:profile-selected",
-      function(event){
-
-        const profile =
-          event.detail &&
-          event.detail.profile
-            ? event.detail.profile
-            : null;
-
-        completeJourney(
-          profile
-        );
-      },
-      true
-    );
-
-    window.addEventListener(
-      "bociteart:profile-selected",
-      function(event){
-
-        const profile =
-          event.detail &&
-          event.detail.profile
-            ? event.detail.profile
-            : null;
-
-        completeJourney(
-          profile
-        );
-      },
-      true
-    );
-
-    /*
-      Solution de secours lorsqu'un module
-      ne trouve pas directement son espace.
-    */
-
-    document.addEventListener(
-      "bociteart:enter-existing-app",
-      function(event){
-
-        const profile =
-          event.detail &&
-          event.detail.profile
-            ? event.detail.profile
-            : null;
-
-        completeJourney(
-          profile
-        );
-
-        openPendingCommerceEntreprise();
-      }
-    );
-
-    window.addEventListener(
-      "bociteart:enter-existing-app",
-      function(event){
-
-        const profile =
-          event.detail &&
-          event.detail.profile
-            ? event.detail.profile
-            : null;
-
-        completeJourney(
-          profile
-        );
-
-        openPendingCommerceEntreprise();
-      }
-    );
-  }
-
-  /* =====================================================
-     DÉMARRAGE
-     ===================================================== */
-
-  function startJourney(){
-
-    journeyIsRunning = false;
 
     console.log(
-      "✅ Chef d'orchestre Bo'CitéArt prêt"
+      "✅ Porte d'entrée terminée — application Bo'CitéArt ouverte"
     );
   }
 
-  function restartJourney(){
+  /* =====================================================
+     NAVIGATION RETOUR
+     ===================================================== */
 
-    clearSession();
+  function backFromLegal(){
 
-    journeyIsRunning = false;
-    allowNextExistingOpening = false;
+    /*
+      Première page du parcours :
+      aucun écran précédent.
+    */
+
+    openLegal();
+  }
+
+  function backFromIntroduction(){
+
+    openLegal();
+  }
+
+  function backFromRegistration(){
 
     openIntroduction();
   }
 
+  function backFromSynoptique(){
+
+    openRegistration();
+  }
+
+  /* =====================================================
+     REPRISE DU PARCOURS
+     ===================================================== */
+
   function resumeJourney(){
 
     const session =
-      getSavedSession();
+      getSession();
 
     if(!session){
 
-      openIntroduction();
+      openLegal();
       return;
     }
 
     switch(session.step){
 
-      case "introduction":
-        openIntroduction();
-        break;
-
       case "legal":
+
         openLegal();
         break;
 
+      case "introduction":
+
+        openIntroduction();
+        break;
+
+      case "registration":
+
+        openRegistration();
+        break;
+
       case "synoptique":
+
         openSynoptique();
         break;
 
-      case "profils":
-        openProfiles();
-        break;
-
       case "application":
-        closeAllEntryScreens();
-        journeyIsRunning = false;
+
+        enterExistingApplication();
         break;
 
       default:
-        openIntroduction();
+
+        openLegal();
     }
+  }
+
+  /* =====================================================
+     NOUVEAU DÉPART COMPLET
+     ===================================================== */
+
+  function restartJourney(){
+
+    removeLocal(
+      STORAGE.session
+    );
+
+    removeLocal(
+      STORAGE.completed
+    );
+
+    currentStep =
+      "";
+
+    journeyRunning =
+      false;
+
+    applicationEntered =
+      false;
+
+    openLegal();
+  }
+
+  /* =====================================================
+     ÉVÉNEMENTS UNIQUES DU PARCOURS
+     ===================================================== */
+
+  function bindJourneyEvents(){
+
+    /*
+      RGPD / CGU / CGV validés
+      → Introduction
+    */
+
+    document.addEventListener(
+      "bociteart:legal-completed",
+      function(){
+
+        if(
+          currentStep !== "legal"
+        ){
+          return;
+        }
+
+        openIntroduction();
+      }
+    );
+
+    /*
+      Introduction terminée
+      → Créer mon compte
+    */
+
+    document.addEventListener(
+      "bociteart:introduction-completed",
+      function(){
+
+        if(
+          currentStep !== "introduction"
+        ){
+          return;
+        }
+
+        openRegistration();
+      }
+    );
+
+    /*
+      Compte créé ou activation confirmée
+      → Synoptique
+    */
+
+    document.addEventListener(
+      "bociteart:registration-completed",
+      function(event){
+
+        if(
+          currentStep !== "registration"
+        ){
+          return;
+        }
+
+        saveSession(
+          "registration",
+          event && event.detail
+            ? event.detail
+            : null
+        );
+
+        openSynoptique();
+      }
+    );
+
+    /*
+      Synoptique terminé
+      → Application existante
+    */
+
+    document.addEventListener(
+      "bociteart:synoptique-completed",
+      function(){
+
+        if(
+          currentStep !== "synoptique"
+        ){
+          return;
+        }
+
+        enterExistingApplication();
+      }
+    );
+  }
+
+  /* =====================================================
+     DÉMARRAGE AUTOMATIQUE
+     ===================================================== */
+
+  function start(){
+
+    /*
+      Parcours déjà terminé :
+      l'application s'affiche immédiatement.
+    */
+
+    if(
+      isJourneyCompleted()
+    ){
+
+      enterExistingApplication();
+      return;
+    }
+
+    /*
+      Première utilisation ou parcours inachevé.
+    */
+
+    resumeJourney();
   }
 
   /* =====================================================
@@ -593,18 +717,68 @@
      ===================================================== */
 
   window.BociteStart = {
-    start:startJourney,
-    restart:restartJourney,
-    resume:resumeJourney,
-    openIntroduction:openIntroduction,
-    openLegal:openLegal,
-    openSynoptique:openSynoptique,
-    openProfiles:openProfiles,
-    complete:completeJourney,
-    close:closeAllEntryScreens
+
+    start:
+      start,
+
+    restart:
+      restartJourney,
+
+    resume:
+      resumeJourney,
+
+    openLegal:
+      openLegal,
+
+    openIntroduction:
+      openIntroduction,
+
+    openRegistration:
+      openRegistration,
+
+    openSynoptique:
+      openSynoptique,
+
+    enterApplication:
+      enterExistingApplication,
+
+    backFromLegal:
+      backFromLegal,
+
+    backFromIntroduction:
+      backFromIntroduction,
+
+    backFromRegistration:
+      backFromRegistration,
+
+    backFromSynoptique:
+      backFromSynoptique,
+
+    closeEntryScreens:
+      closeEntryScreens,
+
+    isCompleted:
+      isJourneyCompleted,
+
+    getCurrentStep:
+      function(){
+
+        return currentStep;
+      },
+
+    isRunning:
+      function(){
+
+        return journeyRunning;
+      },
+
+    applicationIsOpen:
+      function(){
+
+        return applicationEntered;
+      }
   };
 
-  bindCommerceEntrepriseTile();
   bindJourneyEvents();
 
   if(
@@ -614,7 +788,7 @@
 
     document.addEventListener(
       "DOMContentLoaded",
-      startJourney,
+      start,
       {
         once:true
       }
@@ -623,13 +797,13 @@
   }else{
 
     window.setTimeout(
-      startJourney,
+      start,
       0
     );
   }
 
   console.log(
-    "✅ Parcours d'entrée général Bo'CitéArt chargé"
+    "✅ Chef d'orchestre Bo'CitéArt V3 chargé"
   );
 
 })();
