@@ -939,10 +939,28 @@
   top:50% !important;
   transform:translate(-50%,-50%) !important;
 }
-  </style>
+ </style>
+ document.documentElement.classList.add(
+    "bocite-entry-pending"
+  );
+
+  document.addEventListener(
+    "bociteart:application-ready",
+    function(){
+
+      document.documentElement.classList.remove(
+        "bocite-entry-pending"
+      );
+    },
+    {
+      once:true
+    }
+  );
+</script>
+
 </head>
- 
-<body>
+
+ <body>
 
   <div class="page">
     <div class="wrap">
