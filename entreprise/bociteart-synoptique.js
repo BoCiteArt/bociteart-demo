@@ -360,9 +360,11 @@ image.onerror = function(){
    backButton.onclick =
   returnToIntroduction;
 
-    bindImage();
   }
-      }
+     
+    bindImage();
+     
+  }
 
   function openSynoptique(){
 
