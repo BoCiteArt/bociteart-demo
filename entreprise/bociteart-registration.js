@@ -1,18 +1,22 @@
 /* =========================================================
-   BO'CITÉART — MODULE INSCRIPTION ET STATISTIQUES ANONYMES
+   BO'CITÉART — PORTE D'ENTRÉE
+   ÉTAPE 3 — CRÉATION DU COMPTE
 
-   Fichier :
-   entreprise/bociteart-registration.js
+   INTRODUCTION
+   → CRÉATION DU COMPTE
+   → SYNOPTIQUE
 
-   Ce module gère :
-   → l’identifiant anonyme d’installation ;
-   → l’activation unique ;
-   → le profil déclaré ;
+   Ce fichier gère :
+   → l'écran « Je crée mon compte » ;
+   → l'identifiant anonyme d'installation ;
+   → l'activation unique ;
+   → la catégorie déclarée ;
    → la commune déclarée ;
-   → l’enregistrement local d’un compte ;
-   → la file statistique anonyme.
+   → le compte local de démonstration ;
+   → les statistiques anonymes.
 
-   Aucun nom n’est ajouté aux statistiques anonymes.
+   Ce fichier ne décide jamais lui-même
+   de la page suivante.
    ========================================================= */
 
 (function initBociteartRegistration(){
@@ -22,6 +26,9 @@
   if(window.BoCiteArtRegistration){
     return;
   }
+
+  const OVERLAY_ID =
+    "bociteRegistrationOverlay";
 
   /* =====================================================
      CLÉS DE STOCKAGE
@@ -68,7 +75,15 @@
      OUTILS
      ===================================================== */
 
-  function safeParse(value, fallback){
+  function getElement(id){
+
+    return document.getElementById(id);
+  }
+
+  function safeParse(
+    value,
+    fallback
+  ){
 
     try{
 
@@ -85,6 +100,13 @@
     return String(value || "")
       .replace(/\s+/g, " ")
       .trim();
+  }
+
+  function normalizeEmail(value){
+
+    return String(value || "")
+      .trim()
+      .toLowerCase();
   }
 
   function normalizeCategory(value){
@@ -215,6 +237,187 @@
     }
   }
 
+  function getLogoHtml(){
+
+    return `
+      <span style="color:#2f5d46;font-weight:900;">
+        Bo'Cité
+      </span><span style="color:#b00020;font-weight:900;">
+        Art
+      </span>
+    `;
+  }
+
+  /* =====================================================
+     STYLES
+     ===================================================== */
+
+  function installStyles(){
+
+    if(
+      getElement(
+        "bociteRegistrationStyles"
+      )
+    ){
+      return;
+    }
+
+    const style =
+      document.createElement("style");
+
+    style.id =
+      "bociteRegistrationStyles";
+
+    style.textContent = `
+      #${OVERLAY_ID} {
+        position:fixed;
+        inset:0;
+        z-index:999999;
+        overflow-y:auto;
+        box-sizing:border-box;
+        padding:16px 10px 34px;
+        background:#f3eddf;
+        color:#111;
+        font-family:Arial,sans-serif;
+      }
+
+      #bociteRegistrationCard {
+        width:100%;
+        max-width:650px;
+        margin:0 auto;
+        box-sizing:border-box;
+        padding:23px 18px;
+        border:2px solid #2f5d46;
+        border-radius:15px;
+        background:#fffdf7;
+        box-shadow:0 8px 28px rgba(0,0,0,.13);
+      }
+
+      .bociteRegistrationTitle {
+        margin:0;
+        color:#111;
+        font-size:28px;
+        line-height:1.3;
+        text-align:center;
+      }
+
+      .bociteRegistrationIntro {
+        margin-top:16px;
+        color:#111;
+        font-size:17px;
+        line-height:1.55;
+        text-align:center;
+      }
+
+      .bociteRegistrationForm {
+        margin-top:22px;
+      }
+
+      .bociteRegistrationField {
+        margin-top:16px;
+      }
+
+      .bociteRegistrationField label {
+        display:block;
+        margin-bottom:7px;
+        color:#111;
+        font-size:16px;
+        font-weight:800;
+      }
+
+      .bociteRegistrationField input,
+      .bociteRegistrationField select {
+        display:block;
+        width:100%;
+        box-sizing:border-box;
+        padding:13px 12px;
+        border:2px solid #2f5d46;
+        border-radius:9px;
+        background:#fff;
+        color:#111;
+        font-size:16px;
+      }
+
+      .bociteRegistrationField input:focus,
+      .bociteRegistrationField select:focus {
+        outline:3px solid rgba(47,93,70,.17);
+      }
+
+      .bociteRegistrationHelp {
+        margin-top:6px;
+        color:#444;
+        font-size:14px;
+        line-height:1.45;
+      }
+
+      #bociteRegistrationMessage {
+        display:none;
+        margin-top:17px;
+        padding:13px 12px;
+        border-left:6px solid #b00020;
+        background:#f7f3ea;
+        color:#111;
+        font-size:15px;
+        line-height:1.45;
+      }
+
+      #bociteRegistrationContinueBtn {
+        display:block;
+        width:100%;
+        margin-top:21px;
+        padding:15px 12px;
+        border:2px solid #2f5d46;
+        border-radius:10px;
+        background:#fff;
+        color:#111;
+        font-size:18px;
+        font-weight:900;
+        cursor:pointer;
+        touch-action:manipulation;
+      }
+
+      #bociteRegistrationContinueBtn:hover,
+      #bociteRegistrationContinueBtn:focus {
+        background:#f6f2e9;
+        outline:3px solid rgba(47,93,70,.16);
+      }
+
+      .bociteRegistrationPrivacy {
+        margin-top:17px;
+        padding:14px 13px;
+        border-left:6px solid #2f5d46;
+        background:#f7f3ea;
+        color:#111;
+        font-size:14px;
+        line-height:1.5;
+      }
+
+      @media(max-width:600px){
+
+        #${OVERLAY_ID} {
+          padding:9px 7px 26px;
+        }
+
+        #bociteRegistrationCard {
+          padding:20px 14px;
+          border-radius:12px;
+        }
+
+        .bociteRegistrationTitle {
+          font-size:24px;
+        }
+
+        .bociteRegistrationIntro {
+          font-size:16px;
+        }
+      }
+    `;
+
+    document.head.appendChild(
+      style
+    );
+  }
+
   /* =====================================================
      INSTALLATION ANONYME
      ===================================================== */
@@ -343,7 +546,7 @@
   }
 
   /* =====================================================
-     PROFIL DÉCLARÉ
+     PROFIL ET COMMUNE
      ===================================================== */
 
   function saveDeclaredProfile(profile){
@@ -383,11 +586,6 @@
       );
     }
 
-    addStatistic({
-      type:"categorie_declaree",
-      category:category
-    });
-
     return record;
   }
 
@@ -403,22 +601,13 @@
         ? safeParse(saved, null)
         : null;
 
-    if(
-      record &&
+    return record &&
       record.profile
-    ){
-
-      return normalizeCategory(
-        record.profile
-      );
-    }
-
-    return "";
+        ? normalizeCategory(
+            record.profile
+          )
+        : "";
   }
-
-  /* =====================================================
-     COMMUNE DÉCLARÉE
-     ===================================================== */
 
   function saveDeclaredCommune(commune){
 
@@ -458,11 +647,6 @@
         JSON.stringify(activation)
       );
     }
-
-    addStatistic({
-      type:"commune_declaree",
-      commune:normalizedCommune
-    });
 
     return record;
   }
@@ -533,19 +717,6 @@
         ? data
         : {};
 
-    const category =
-      normalizeCategory(
-        source.category ||
-        source.profile ||
-        getDeclaredProfile()
-      );
-
-    const commune =
-      normalizeText(
-        source.commune ||
-        getDeclaredCommune()
-      );
-
     return {
       statisticId:
         createUniqueId(
@@ -558,15 +729,21 @@
       type:
         normalizeText(
           source.type ||
-          source.event ||
           "information"
         ),
 
       category:
-        category || null,
+        normalizeCategory(
+          source.category ||
+          source.profile ||
+          getDeclaredProfile()
+        ) || null,
 
       commune:
-        commune || null,
+        normalizeText(
+          source.commune ||
+          getDeclaredCommune()
+        ) || null,
 
       sector:
         normalizeText(
@@ -597,21 +774,6 @@
       queue
     );
 
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:statistic-added",
-        {
-          detail:{
-            statisticId:
-              statistic.statisticId,
-
-            type:
-              statistic.type
-          }
-        }
-      )
-    );
-
     return statistic;
   }
 
@@ -620,11 +782,13 @@
     return loadStatisticsQueue();
   }
 
-  function clearStatistics(){
+  function getPendingStatistics(){
 
-    saveStatisticsQueue([]);
+    return loadStatisticsQueue()
+      .filter(function(statistic){
 
-    return true;
+        return statistic.sent !== true;
+      });
   }
 
   function markStatisticsAsSent(
@@ -635,10 +799,6 @@
       Array.isArray(statisticIds)
         ? statisticIds
         : [];
-
-    if(!ids.length){
-      return loadStatisticsQueue();
-    }
 
     const queue =
       loadStatisticsQueue()
@@ -670,13 +830,11 @@
     );
   }
 
-  function getPendingStatistics(){
+  function clearStatistics(){
 
-    return loadStatisticsQueue()
-      .filter(function(statistic){
+    saveStatisticsQueue([]);
 
-        return statistic.sent !== true;
-      });
+    return true;
   }
 
   /* =====================================================
@@ -691,57 +849,44 @@
         ? data
         : {};
 
-    const account =
-      Object.assign(
-        {},
-        source
-      );
+    return {
+      accountId:
+        source.accountId ||
+        createUniqueId(
+          "bociteart-account"
+        ),
 
-    account.accountId =
-      source.accountId ||
-      createUniqueId(
-        "bociteart-account"
-      );
+      displayName:
+        normalizeText(
+          source.displayName
+        ),
 
-    account.createdAt =
-      source.createdAt ||
-      new Date().toISOString();
+      email:
+        normalizeEmail(
+          source.email
+        ),
 
-    account.updatedAt =
-      new Date().toISOString();
+      category:
+        normalizeCategory(
+          source.category ||
+          source.profile
+        ),
 
-    const category =
-      normalizeCategory(
-        source.category ||
-        source.profile
-      );
+      commune:
+        normalizeText(
+          source.commune
+        ),
 
-    if(category){
+      createdAt:
+        source.createdAt ||
+        new Date().toISOString(),
 
-      account.category =
-        category;
+      updatedAt:
+        new Date().toISOString(),
 
-      saveDeclaredProfile(
-        category
-      );
-    }
-
-    const commune =
-      normalizeText(
-        source.commune
-      );
-
-    if(commune){
-
-      account.commune =
-        commune;
-
-      saveDeclaredCommune(
-        commune
-      );
-    }
-
-    return account;
+      version:
+        "1"
+    };
   }
 
   function createAccount(data){
@@ -757,6 +902,14 @@
     setLocalStorageItem(
       STORAGE.registration,
       "true"
+    );
+
+    saveDeclaredProfile(
+      account.category
+    );
+
+    saveDeclaredCommune(
+      account.commune
     );
 
     activateInstallation({
@@ -776,26 +929,6 @@
       commune:
         account.commune
     });
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:registration-completed",
-        {
-          detail:{
-            accountId:
-              account.accountId,
-
-            category:
-              account.category ||
-              null,
-
-            commune:
-              account.commune ||
-              null
-          }
-        }
-      )
-    );
 
     return account;
   }
@@ -857,48 +990,407 @@
   }
 
   /* =====================================================
-     SYNCHRONISATION AVEC LE CHOIX DU PROFIL
+     CONTENU DE LA PAGE
      ===================================================== */
 
-  document.addEventListener(
-    "bociteart:profile-selected",
-    function(event){
+  function getRegistrationHtml(){
 
-      const detail =
-        event &&
-        event.detail
-          ? event.detail
-          : {};
+    const account =
+      getAccount() || {};
 
-      const profile =
-        detail.profile ||
-        detail.category;
+    const savedProfile =
+      account.category ||
+      getDeclaredProfile();
 
-      if(profile){
+    const savedCommune =
+      account.commune ||
+      getDeclaredCommune();
 
-        saveDeclaredProfile(
-          profile
-        );
-      }
+    return `
+      <div id="bociteRegistrationCard">
 
-      if(!hasActivation()){
+        <h2 class="bociteRegistrationTitle">
 
-        activateInstallation({
-          category:
-            profile,
+          Je crée mon compte
 
-          commune:
-            getDeclaredCommune()
-        });
-      }
+          <br>
+
+          ${getLogoHtml()}
+
+        </h2>
+
+        <div class="bociteRegistrationIntro">
+
+          Cette étape permet d'adapter
+          votre accès à votre situation
+          et à votre commune.
+
+        </div>
+
+        <div class="bociteRegistrationForm">
+
+          <div class="bociteRegistrationField">
+
+            <label for="bociteRegistrationName">
+              Nom ou prénom d'affichage
+            </label>
+
+            <input
+              id="bociteRegistrationName"
+              type="text"
+              autocomplete="name"
+              value="${account.displayName || ""}"
+              placeholder="Exemple : Jean-Michel">
+
+            <div class="bociteRegistrationHelp">
+
+              Ce nom reste associé
+              à votre compte local.
+
+            </div>
+
+          </div>
+
+          <div class="bociteRegistrationField">
+
+            <label for="bociteRegistrationEmail">
+              Adresse électronique
+            </label>
+
+            <input
+              id="bociteRegistrationEmail"
+              type="email"
+              autocomplete="email"
+              value="${account.email || ""}"
+              placeholder="exemple@adresse.fr">
+
+          </div>
+
+          <div class="bociteRegistrationField">
+
+            <label for="bociteRegistrationCategory">
+              Je suis
+            </label>
+
+            <select id="bociteRegistrationCategory">
+
+              <option value="">
+                Choisissez votre catégorie
+              </option>
+
+              <option value="jeune">
+                Jeune ou mineur
+              </option>
+
+              <option value="citoyen">
+                Citoyen majeur
+              </option>
+
+              <option value="commerce">
+                Commerçant
+              </option>
+
+              <option value="entreprise">
+                Entreprise
+              </option>
+
+              <option value="association">
+                Association
+              </option>
+
+              <option value="sport">
+                Club sportif
+              </option>
+
+              <option value="ecole">
+                École ou milieu scolaire
+              </option>
+
+              <option value="mairie">
+                Mairie ou collectivité
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="bociteRegistrationField">
+
+            <label for="bociteRegistrationCommune">
+              Ma commune
+            </label>
+
+            <input
+              id="bociteRegistrationCommune"
+              type="text"
+              autocomplete="address-level2"
+              value="${savedCommune || ""}"
+              placeholder="Exemple : Wattignies">
+
+          </div>
+
+        </div>
+
+        <div
+          id="bociteRegistrationMessage"
+          role="alert">
+
+          Complétez tous les champs
+          avant de continuer.
+
+        </div>
+
+        <button
+          id="bociteRegistrationContinueBtn"
+          type="button">
+
+          Créer mon compte et continuer
+
+        </button>
+
+        <div class="bociteRegistrationPrivacy">
+
+          Les statistiques anonymes
+          ne contiennent pas votre nom
+          ni votre adresse électronique.
+
+          <br><br>
+
+          Elles distinguent uniquement,
+          lorsque vous les déclarez,
+          l'activation,
+          la catégorie d'utilisateur
+          et la commune.
+
+        </div>
+
+      </div>
+    `;
+  }
+
+  /* =====================================================
+     OUVERTURE ET FERMETURE
+     ===================================================== */
+
+  function closeRegistration(){
+
+    const overlay =
+      getElement(
+        OVERLAY_ID
+      );
+
+    if(overlay){
+      overlay.remove();
     }
-  );
+  }
+
+  function openRegistration(){
+
+    installStyles();
+    closeRegistration();
+
+    const overlay =
+      document.createElement("div");
+
+    overlay.id =
+      OVERLAY_ID;
+
+    overlay.innerHTML =
+      getRegistrationHtml();
+
+    document.body.appendChild(
+      overlay
+    );
+
+    const category =
+      getElement(
+        "bociteRegistrationCategory"
+      );
+
+    const account =
+      getAccount() || {};
+
+    const savedProfile =
+      account.category ||
+      getDeclaredProfile();
+
+    if(
+      category &&
+      savedProfile
+    ){
+
+      category.value =
+        savedProfile;
+    }
+
+    bindRegistration();
+
+    overlay.scrollTop = 0;
+  }
+
+  /* =====================================================
+     VALIDATION DE L'ÉTAPE
+     ===================================================== */
+
+  function completeRegistration(){
+
+    const nameField =
+      getElement(
+        "bociteRegistrationName"
+      );
+
+    const emailField =
+      getElement(
+        "bociteRegistrationEmail"
+      );
+
+    const categoryField =
+      getElement(
+        "bociteRegistrationCategory"
+      );
+
+    const communeField =
+      getElement(
+        "bociteRegistrationCommune"
+      );
+
+    const message =
+      getElement(
+        "bociteRegistrationMessage"
+      );
+
+    const displayName =
+      normalizeText(
+        nameField
+          ? nameField.value
+          : ""
+      );
+
+    const email =
+      normalizeEmail(
+        emailField
+          ? emailField.value
+          : ""
+      );
+
+    const category =
+      normalizeCategory(
+        categoryField
+          ? categoryField.value
+          : ""
+      );
+
+    const commune =
+      normalizeText(
+        communeField
+          ? communeField.value
+          : ""
+      );
+
+    if(
+      !displayName ||
+      !email ||
+      !category ||
+      !commune
+    ){
+
+      if(message){
+
+        message.textContent =
+          "Complétez tous les champs avant de continuer.";
+
+        message.style.display =
+          "block";
+      }
+
+      return;
+    }
+
+    if(
+      !email.includes("@") ||
+      !email.includes(".")
+    ){
+
+      if(message){
+
+        message.textContent =
+          "Indiquez une adresse électronique valide.";
+
+        message.style.display =
+          "block";
+      }
+
+      return;
+    }
+
+    const account =
+      createAccount({
+        displayName:
+          displayName,
+
+        email:
+          email,
+
+        category:
+          category,
+
+        commune:
+          commune
+      });
+
+    closeRegistration();
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:registration-completed",
+        {
+          detail:{
+            accountId:
+              account.accountId,
+
+            category:
+              account.category,
+
+            commune:
+              account.commune
+          }
+        }
+      )
+    );
+  }
+
+  /* =====================================================
+     ÉVÉNEMENTS
+     ===================================================== */
+
+  function bindRegistration(){
+
+    const button =
+      getElement(
+        "bociteRegistrationContinueBtn"
+      );
+
+    if(button){
+
+      button.onclick =
+        completeRegistration;
+    }
+  }
 
   /* =====================================================
      API PUBLIQUE
      ===================================================== */
 
   window.BoCiteArtRegistration = {
+    open:
+      openRegistration,
+
+    show:
+      openRegistration,
+
+    close:
+      closeRegistration,
+
     createAccount:
       createAccount,
 
@@ -966,7 +1458,7 @@
   getInstallationId();
 
   console.log(
-    "✅ Inscription et statistiques anonymes Bo'CitéArt chargées"
+    "✅ Étape création du compte Bo'CitéArt V6 prête"
   );
 
 })();
