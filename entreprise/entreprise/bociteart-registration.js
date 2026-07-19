@@ -1,1 +1,1 @@
-
+../bociteart-registration.js
