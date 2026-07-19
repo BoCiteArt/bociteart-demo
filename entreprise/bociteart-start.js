@@ -1,79 +1,58 @@
 /* =========================================================
    BO'CITÉART — PORTE D'ENTRÉE GÉNÉRALE
-   CHEF D'ORCHESTRE UNIQUE
+   CHEF D'ORCHESTRE UNIQUE — VERSION 4
 
-   ORDRE DÉFINITIF :
+   ORDRE OBLIGATOIRE :
 
    1 — RGPD / CGU / CGV
    2 — INTRODUCTION
-   3 — CRÉER MON COMPTE
+   3 — JE CRÉE MON COMPTE
    4 — SYNOPTIQUE
    5 — APPLICATION EXISTANTE
 
-   IMPORTANT :
-
-   → Le parcours se déroule avant l’application.
-   → La tuile « Commerces & Entreprises »
-     n’est plus interceptée.
-   → Une fois dans l’application,
-     cette tuile fonctionne normalement.
-   → Aucun module existant de l’application
-     n’est modifié par ce fichier.
+   La tuile « Commerces & Entreprises »
+   n'est pas interceptée par ce fichier.
    ========================================================= */
 
-(function initBociteartStart(){
+(function initBociteartStartV4(){
 
   "use strict";
 
-  if(window.BociteStart){
+  if(window.BociteStartV4Loaded){
     return;
   }
 
+  window.BociteStartV4Loaded = true;
+
   /* =====================================================
-     STOCKAGE DU PARCOURS
+     STOCKAGE
      ===================================================== */
 
   const STORAGE = {
-
     session:
-      "bociteart_entry_session_v3",
+      "bociteart_entry_session_v4",
 
     completed:
-      "bociteart_entry_completed_v3"
+      "bociteart_entry_completed_v4"
   };
 
-  let currentStep =
-    "";
-
-  let journeyRunning =
-    false;
-
-  let applicationEntered =
-    false;
+  let currentStep = "";
+  let transitionRunning = false;
 
   /* =====================================================
-     OUTILS
+     OUTILS DE STOCKAGE
      ===================================================== */
 
-  function safeParse(
-    value,
-    fallback
-  ){
+  function safeParse(value, fallback){
 
     try{
-
       return JSON.parse(value);
-
     }catch(error){
-
       return fallback;
     }
   }
 
-  function saveLocal(
-    key,
-    value
-  ){
+  function saveLocal(key, value){
 
     try{
 
@@ -122,24 +101,14 @@
     }
   }
 
-  function saveSession(
-    step,
-    detail
-  ){
+  function saveStep(step, detail){
 
-    currentStep =
-      step;
+    currentStep = step;
 
     const record = {
-
-      step:
-        step,
-
-      detail:
-        detail || null,
-
-      updatedAt:
-        new Date().toISOString()
+      step:step,
+      detail:detail || null,
+      updatedAt:new Date().toISOString()
     };
 
     saveLocal(
@@ -150,7 +119,7 @@
     return record;
   }
 
-  function getSession(){
+  function getSavedStep(){
 
     const saved =
       getLocal(
@@ -158,14 +127,11 @@
       );
 
     return saved
-      ? safeParse(
-          saved,
-          null
-        )
+      ? safeParse(saved, null)
       : null;
   }
 
-  function isJourneyCompleted(){
+  function isCompleted(){
 
     return (
       getLocal(
@@ -174,27 +140,21 @@
     );
   }
 
-  function markJourneyCompleted(){
-
-    saveLocal(
-      STORAGE.completed,
-      "true"
-    );
-
-    saveSession(
-      "application",
-      {
-        completedAt:
-          new Date().toISOString()
-      }
-    );
-  }
-
   /* =====================================================
-     SUPPRESSION DES ÉCRANS DE LA PORTE D'ENTRÉE
+     FERMETURE DES ÉCRANS DU PARCOURS
      ===================================================== */
 
-  function closeEntryScreens(){
+  function removeElement(id){
+
+    const element =
+      document.getElementById(id);
+
+    if(element){
+      element.remove();
+    }
+  }
+
+  function closeAllEntryScreens(){
 
     [
       "bociteLegalOverlay",
@@ -202,96 +162,125 @@
       "bociteRegistrationOverlay",
       "bociteSynoptiqueOverlay",
       "bociteProfilsOverlay"
-    ].forEach(function(id){
-
-      const element =
-        document.getElementById(id);
-
-      if(element){
-        element.remove();
-      }
-    });
+    ].forEach(
+      removeElement
+    );
   }
 
   /* =====================================================
-     MASQUAGE TEMPORAIRE DE L'APPLICATION
+     ANCIENS ÉCRANS DE INDEX.HTML
 
-     Le contenu existant n'est ni supprimé,
-     ni modifié.
-
-     Il est seulement masqué pendant
-     le parcours d'entrée.
+     Ils sont uniquement masqués.
+     Ils ne sont ni supprimés
+     ni modifiés dans ce fichier.
      ===================================================== */
 
-  function hideExistingApplication(){
+  function installLegacyScreenProtection(){
 
     if(
       document.getElementById(
-        "bociteEntryApplicationMask"
+        "bociteLegacyEntryProtection"
       )
     ){
       return;
     }
 
-    const mask =
+    const style =
       document.createElement("style");
 
-    mask.id =
-      "bociteEntryApplicationMask";
+    style.id =
+      "bociteLegacyEntryProtection";
 
-    mask.textContent = `
-      body > *:not(
-        script
-      ):not(
-        style
-      ):not(
-        #bociteLegalOverlay
-      ):not(
-        #bociteIntroductionOverlay
-      ):not(
-        #bociteRegistrationOverlay
-      ):not(
-        #bociteSynoptiqueOverlay
-      ):not(
-        #bociteProfilsOverlay
-      ) {
+    style.textContent = `
+      body.bocite-entry-running
+      #welcomeScreen,
+
+      body.bocite-entry-running
+      #registrationScreen,
+
+      body.bocite-entry-running
+      #registerScreen,
+
+      body.bocite-entry-running
+      #accountCreationScreen,
+
+      body.bocite-entry-running
+      .welcome-screen,
+
+      body.bocite-entry-running
+      .registration-screen,
+
+      body.bocite-entry-running
+      .register-screen,
+
+      body.bocite-entry-running
+      [data-screen="welcome"],
+
+      body.bocite-entry-running
+      [data-screen="registration"] {
+        display:none !important;
         visibility:hidden !important;
+        pointer-events:none !important;
       }
     `;
 
     document.head.appendChild(
-      mask
+      style
     );
   }
 
-  function showExistingApplication(){
+  /* =====================================================
+     MASQUAGE DE L'APPLICATION PENDANT LE PARCOURS
+     ===================================================== */
 
-    const mask =
-      document.getElementById(
-        "bociteEntryApplicationMask"
-      );
+  function hideApplication(){
 
-    if(mask){
-      mask.remove();
-    }
+    document.body.classList.add(
+      "bocite-entry-running"
+    );
+  }
+
+  function showApplication(){
+
+    document.body.classList.remove(
+      "bocite-entry-running"
+    );
   }
 
   /* =====================================================
-     ÉTAPE 1 — INFORMATIONS LÉGALES
+     PROTECTION CONTRE LES DOUBLES TRANSITIONS
+     ===================================================== */
+
+  function beginTransition(){
+
+    if(transitionRunning){
+      return false;
+    }
+
+    transitionRunning = true;
+
+    window.setTimeout(
+      function(){
+
+        transitionRunning = false;
+
+      },
+      250
+    );
+
+    return true;
+  }
+
+  /* =====================================================
+     ÉTAPE 1 — RGPD / CGU / CGV
      ===================================================== */
 
   function openLegal(){
 
-    closeEntryScreens();
-    hideExistingApplication();
+    closeAllEntryScreens();
+    hideApplication();
 
-    journeyRunning =
-      true;
-
-    applicationEntered =
-      false;
-
-    saveSession(
+    saveStep(
       "legal"
     );
 
@@ -306,13 +295,7 @@
     }
 
     console.error(
-      "Bo'CitéArt : le module légal est indisponible."
-    );
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:open-legal"
-      )
+      "Bo'CitéArt : bociteart-legal.js n'est pas disponible."
     );
 
     return false;
@@ -324,13 +307,10 @@
 
   function openIntroduction(){
 
-    closeEntryScreens();
-    hideExistingApplication();
+    closeAllEntryScreens();
+    hideApplication();
 
-    journeyRunning =
-      true;
-
-    saveSession(
+    saveStep(
       "introduction"
     );
 
@@ -345,38 +325,24 @@
     }
 
     console.error(
-      "Bo'CitéArt : le module d'introduction est indisponible."
-    );
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:open-introduction"
-      )
+      "Bo'CitéArt : bociteart-introduction.js n'est pas disponible."
     );
 
     return false;
   }
 
   /* =====================================================
-     ÉTAPE 3 — CRÉER MON COMPTE
+     ÉTAPE 3 — JE CRÉE MON COMPTE
      ===================================================== */
 
   function openRegistration(){
 
-    closeEntryScreens();
-    hideExistingApplication();
+    closeAllEntryScreens();
+    hideApplication();
 
-    journeyRunning =
-      true;
-
-    saveSession(
+    saveStep(
       "registration"
     );
-
-    /*
-      API prévue pour la nouvelle page
-      « Créer mon compte ».
-    */
 
     if(
       window.BociteRegistration &&
@@ -387,11 +353,6 @@
       window.BociteRegistration.open();
       return true;
     }
-
-    /*
-      Compatibilité si l'API porte
-      le nom complet du module.
-    */
 
     if(
       window.BoCiteArtRegistration &&
@@ -404,13 +365,7 @@
     }
 
     console.error(
-      "Bo'CitéArt : la page Créer mon compte est indisponible."
-    );
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:open-registration"
-      )
+      "Bo'CitéArt : la nouvelle page « Je crée mon compte » n'est pas encore disponible."
     );
 
     return false;
@@ -422,13 +377,10 @@
 
   function openSynoptique(){
 
-    closeEntryScreens();
-    hideExistingApplication();
+    closeAllEntryScreens();
+    hideApplication();
 
-    journeyRunning =
-      true;
-
-    saveSession(
+    saveStep(
       "synoptique"
     );
 
@@ -443,44 +395,43 @@
     }
 
     console.error(
-      "Bo'CitéArt : le synoptique est indisponible."
-    );
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:open-synoptique"
-      )
+      "Bo'CitéArt : bociteart-synoptique.js n'est pas disponible."
     );
 
     return false;
   }
 
   /* =====================================================
-     ÉTAPE 5 — APPLICATION EXISTANTE
+     ÉTAPE 5 — APPLICATION
      ===================================================== */
 
-  function enterExistingApplication(){
+  function enterApplication(){
 
-    closeEntryScreens();
-    showExistingApplication();
+    closeAllEntryScreens();
+    showApplication();
 
-    journeyRunning =
-      false;
+    currentStep =
+      "application";
 
-    applicationEntered =
-      true;
+    saveLocal(
+      STORAGE.completed,
+      "true"
+    );
 
-    markJourneyCompleted();
+    saveStep(
+      "application",
+      {
+        completedAt:
+          new Date().toISOString()
+      }
+    );
 
     document.dispatchEvent(
       new CustomEvent(
         "bociteart:entry-complete",
         {
           detail:{
-
-            completed:
-              true,
-
+            completed:true,
             enteredAt:
               new Date().toISOString()
           }
@@ -489,35 +440,127 @@
     );
 
     console.log(
-      "✅ Porte d'entrée terminée — application Bo'CitéArt ouverte"
+      "✅ Parcours terminé — application Bo'CitéArt ouverte"
     );
   }
 
   /* =====================================================
-     NAVIGATION RETOUR
+     ÉVÉNEMENTS DU NOUVEAU PARCOURS
      ===================================================== */
 
-  function backFromLegal(){
+  function handleLegalCompleted(){
 
-    /*
-      Première page du parcours :
-      aucun écran précédent.
-    */
-
-    openLegal();
-  }
-
-  function backFromIntroduction(){
-
-    openLegal();
-  }
-
-  function backFromRegistration(){
+    if(
+      currentStep !== "legal" ||
+      !beginTransition()
+    ){
+      return;
+    }
 
     openIntroduction();
   }
 
-  function backFromSynoptique(){
+  function handleIntroductionCompleted(){
+
+    if(
+      currentStep !== "introduction" ||
+      !beginTransition()
+    ){
+      return;
+    }
+
+    openRegistration();
+  }
+
+  function handleRegistrationCompleted(event){
+
+    if(
+      currentStep !== "registration" ||
+      !beginTransition()
+    ){
+      return;
+    }
+
+    saveStep(
+      "registration",
+      event && event.detail
+        ? event.detail
+        : null
+    );
+
+    openSynoptique();
+  }
+
+  function handleSynoptiqueCompleted(){
+
+    if(
+      currentStep !== "synoptique" ||
+      !beginTransition()
+    ){
+      return;
+    }
+
+    enterApplication();
+  }
+
+  function bindJourneyEvents(){
+
+    document.addEventListener(
+      "bociteart:legal-completed",
+      handleLegalCompleted
+    );
+
+    window.addEventListener(
+      "bociteart:legal-completed",
+      handleLegalCompleted
+    );
+
+    document.addEventListener(
+      "bociteart:introduction-completed",
+      handleIntroductionCompleted
+    );
+
+    window.addEventListener(
+      "bociteart:introduction-completed",
+      handleIntroductionCompleted
+    );
+
+    document.addEventListener(
+      "bociteart:registration-completed",
+      handleRegistrationCompleted
+    );
+
+    window.addEventListener(
+      "bociteart:registration-completed",
+      handleRegistrationCompleted
+    );
+
+    document.addEventListener(
+      "bociteart:synoptique-completed",
+      handleSynoptiqueCompleted
+    );
+
+    window.addEventListener(
+      "bociteart:synoptique-completed",
+      handleSynoptiqueCompleted
+    );
+  }
+
+  /* =====================================================
+     RETOURS
+     ===================================================== */
+
+  function backToLegal(){
+
+    openLegal();
+  }
+
+  function backToIntroduction(){
+
+    openIntroduction();
+  }
+
+  function backToRegistration(){
 
     openRegistration();
   }
@@ -526,18 +569,18 @@
      REPRISE DU PARCOURS
      ===================================================== */
 
-  function resumeJourney(){
+  function resume(){
 
-    const session =
-      getSession();
+    const saved =
+      getSavedStep();
 
-    if(!session){
+    if(!saved || !saved.step){
 
       openLegal();
       return;
     }
 
-    switch(session.step){
+    switch(saved.step){
 
       case "legal":
 
@@ -561,7 +604,7 @@
 
       case "application":
 
-        enterExistingApplication();
+        enterApplication();
         break;
 
       default:
@@ -571,10 +614,10 @@
   }
 
   /* =====================================================
-     NOUVEAU DÉPART COMPLET
+     RECOMMENCER DEPUIS LE DÉBUT
      ===================================================== */
 
-  function restartJourney(){
+  function restart(){
 
     removeLocal(
       STORAGE.session
@@ -584,132 +627,38 @@
       STORAGE.completed
     );
 
-    currentStep =
-      "";
-
-    journeyRunning =
-      false;
-
-    applicationEntered =
-      false;
+    currentStep = "";
+    transitionRunning = false;
 
     openLegal();
   }
 
   /* =====================================================
-     ÉVÉNEMENTS UNIQUES DU PARCOURS
-     ===================================================== */
-
-  function bindJourneyEvents(){
-
-    /*
-      RGPD / CGU / CGV validés
-      → Introduction
-    */
-
-    document.addEventListener(
-      "bociteart:legal-completed",
-      function(){
-
-        if(
-          currentStep !== "legal"
-        ){
-          return;
-        }
-
-        openIntroduction();
-      }
-    );
-
-    /*
-      Introduction terminée
-      → Créer mon compte
-    */
-
-    document.addEventListener(
-      "bociteart:introduction-completed",
-      function(){
-
-        if(
-          currentStep !== "introduction"
-        ){
-          return;
-        }
-
-        openRegistration();
-      }
-    );
-
-    /*
-      Compte créé ou activation confirmée
-      → Synoptique
-    */
-
-    document.addEventListener(
-      "bociteart:registration-completed",
-      function(event){
-
-        if(
-          currentStep !== "registration"
-        ){
-          return;
-        }
-
-        saveSession(
-          "registration",
-          event && event.detail
-            ? event.detail
-            : null
-        );
-
-        openSynoptique();
-      }
-    );
-
-    /*
-      Synoptique terminé
-      → Application existante
-    */
-
-    document.addEventListener(
-      "bociteart:synoptique-completed",
-      function(){
-
-        if(
-          currentStep !== "synoptique"
-        ){
-          return;
-        }
-
-        enterExistingApplication();
-      }
-    );
-  }
-
-  /* =====================================================
-     DÉMARRAGE AUTOMATIQUE
+     DÉMARRAGE
      ===================================================== */
 
   function start(){
 
+    installLegacyScreenProtection();
+
     /*
-      Parcours déjà terminé :
-      l'application s'affiche immédiatement.
+      Si le parcours V4 est déjà terminé,
+      l'application s'ouvre directement.
     */
 
-    if(
-      isJourneyCompleted()
-    ){
+    if(isCompleted()){
 
-      enterExistingApplication();
+      enterApplication();
       return;
     }
 
     /*
-      Première utilisation ou parcours inachevé.
+      Sinon, reprise de l'étape enregistrée.
+      À la première visite :
+      ouverture obligatoire du RGPD.
     */
 
-    resumeJourney();
+    resume();
   }
 
   /* =====================================================
@@ -722,10 +671,10 @@
       start,
 
     restart:
-      restartJourney,
+      restart,
 
     resume:
-      resumeJourney,
+      resume,
 
     openLegal:
       openLegal,
@@ -740,25 +689,19 @@
       openSynoptique,
 
     enterApplication:
-      enterExistingApplication,
+      enterApplication,
 
-    backFromLegal:
-      backFromLegal,
+    backToLegal:
+      backToLegal,
 
-    backFromIntroduction:
-      backFromIntroduction,
+    backToIntroduction:
+      backToIntroduction,
 
-    backFromRegistration:
-      backFromRegistration,
-
-    backFromSynoptique:
-      backFromSynoptique,
+    backToRegistration:
+      backToRegistration,
 
     closeEntryScreens:
-      closeEntryScreens,
-
-    isCompleted:
-      isJourneyCompleted,
+      closeAllEntryScreens,
 
     getCurrentStep:
       function(){
@@ -766,17 +709,8 @@
         return currentStep;
       },
 
-    isRunning:
-      function(){
-
-        return journeyRunning;
-      },
-
-    applicationIsOpen:
-      function(){
-
-        return applicationEntered;
-      }
+    isCompleted:
+      isCompleted
   };
 
   bindJourneyEvents();
@@ -803,7 +737,7 @@
   }
 
   console.log(
-    "✅ Chef d'orchestre Bo'CitéArt V3 chargé"
+    "✅ Chef d'orchestre Bo'CitéArt V4 chargé"
   );
 
 })();
