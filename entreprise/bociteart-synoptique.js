@@ -362,6 +362,7 @@ image.onerror = function(){
 
     bindImage();
   }
+      }
 
   function openSynoptique(){
 
