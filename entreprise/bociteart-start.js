@@ -146,6 +146,8 @@ let allowCommerceEntrepriseOpening = false;
 
   function openIntroduction(){
 
+   console.log(">>> OPEN INTRODUCTION APPELÉE");  
+
     closeAllEntryScreens();
 
     saveSession(
