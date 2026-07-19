@@ -1,11 +1,12 @@
 /* =========================================================
    BO'CITÉART — PORTE D'ENTRÉE
-   ÉTAPE 2 — INFORMATIONS LÉGALES
+   ÉTAPE 1 — INFORMATIONS LÉGALES
 
-   INFORMATIONS LÉGALES
-   → SYNOPTIQUE
+   RGPD / CGU / CGV
+   → INTRODUCTION
 
-   Aucun onglet existant n'est modifié.
+   Ce fichier affiche uniquement l'écran légal.
+   Il ne décide jamais lui-même de la page suivante.
    ========================================================= */
 
 (function initBociteartLegal(){
@@ -16,14 +17,17 @@
     return;
   }
 
+  const OVERLAY_ID =
+    "bociteLegalOverlay";
+
+  const STORAGE_KEY =
+    "bociteart_legal_acceptance_v2";
+
   const LEGAL_VERSION = {
     rgpd:"2026-07-19",
     cgu:"2026-07-19",
     cgv:"2026-07-19"
   };
-
-  const STORAGE_KEY =
-    "bociteart_legal_acceptance_v1";
 
   /* =====================================================
      OUTILS
@@ -66,7 +70,7 @@
       "bociteLegalStyles";
 
     style.textContent = `
-      #bociteLegalOverlay {
+      #${OVERLAY_ID} {
         position:fixed;
         inset:0;
         z-index:999999;
@@ -75,7 +79,7 @@
         padding:16px 10px 34px;
         background:#f3eddf;
         color:#111;
-        font-family:Arial, sans-serif;
+        font-family:Arial,sans-serif;
       }
 
       #bociteLegalCard {
@@ -99,7 +103,6 @@
 
       .bociteLegalIntro {
         margin-top:18px;
-        color:#111;
         font-size:17px;
         line-height:1.55;
       }
@@ -117,7 +120,6 @@
         font-weight:800;
         text-align:left;
         cursor:pointer;
-        touch-action:manipulation;
       }
 
       .bociteLegalDocumentBtn[aria-expanded="true"] {
@@ -131,7 +133,6 @@
         border-left:6px solid #2f5d46;
         border-radius:8px;
         background:#f7f3ea;
-        color:#111;
         font-size:15px;
         line-height:1.55;
       }
@@ -142,7 +143,6 @@
 
       .bociteLegalDocumentContent h3 {
         margin:0 0 12px;
-        color:#111;
         font-size:19px;
       }
 
@@ -159,7 +159,6 @@
         border:2px solid #2f5d46;
         border-radius:10px;
         background:#fff;
-        color:#111;
         font-size:16px;
         line-height:1.45;
         cursor:pointer;
@@ -186,13 +185,6 @@
         font-size:18px;
         font-weight:900;
         cursor:pointer;
-        touch-action:manipulation;
-      }
-
-      #bociteLegalContinueBtn:enabled:hover,
-      #bociteLegalContinueBtn:enabled:focus {
-        background:#f6f2e9;
-        outline:3px solid rgba(47,93,70,.16);
       }
 
       #bociteLegalContinueBtn:disabled {
@@ -209,7 +201,6 @@
         padding:12px;
         border-left:6px solid #b00020;
         background:#f7f3ea;
-        color:#111;
         font-size:15px;
         line-height:1.45;
       }
@@ -222,24 +213,9 @@
         text-align:center;
       }
 
-      #bociteLegalBackBtn {
-        display:block;
-        width:100%;
-        margin-top:10px;
-        padding:13px 12px;
-        border:2px solid #2f5d46;
-        border-radius:10px;
-        background:#fff;
-        color:#111;
-        font-size:17px;
-        font-weight:800;
-        cursor:pointer;
-        touch-action:manipulation;
-      }
+      @media(max-width:600px){
 
-      @media (max-width:600px) {
-
-        #bociteLegalOverlay {
+        #${OVERLAY_ID} {
           padding:9px 7px 26px;
         }
 
@@ -254,14 +230,6 @@
 
         .bociteLegalIntro {
           font-size:16px;
-        }
-
-        .bociteLegalDocumentBtn {
-          font-size:16px;
-        }
-
-        .bociteLegalAcceptance {
-          font-size:15px;
         }
       }
     `;
@@ -288,18 +256,16 @@
 
           Avant de poursuivre,
           vous pouvez consulter les informations
-          relatives à l’utilisation de l’application,
-          à la protection des données
+          relatives à l'utilisation de l'application,
+          à la protection de vos données
           et aux services proposés.
 
           <br><br>
 
-          Votre validation sera horodatée
-          automatiquement en arrière-plan.
-
-          Aucune date
-          ni aucune heure
-          ne vous seront demandées.
+          Votre validation sera enregistrée
+          automatiquement avec sa date,
+          son heure
+          et la version des documents acceptés.
 
         </div>
 
@@ -323,42 +289,33 @@
 
           <p>
             ${getLogoHtml()}
-            limite la collecte
-            aux informations nécessaires
+            limite la collecte des informations
+            aux données nécessaires
             au fonctionnement des services utilisés.
           </p>
 
           <p>
-            Les espaces publics peuvent être consultés
-            sans créer immédiatement
-            une fiche professionnelle complète.
+            Les statistiques d'installation
+            et d'activation sont enregistrées
+            sans intégrer le nom de l'utilisateur.
           </p>
 
           <p>
-            Les informations supplémentaires
+            Elles peuvent distinguer
+            une catégorie déclarée,
+            une commune
+            et un secteur d'activité,
+            afin de produire des bilans anonymes.
+          </p>
+
+          <p>
+            Les informations personnelles complémentaires
             sont demandées uniquement
-            lorsqu’une action privée,
+            lorsqu'une action privée,
             une publication,
             un abonnement,
             un paiement
-            ou une facturation
-            l’exige.
-          </p>
-
-          <p>
-            Pour les projets scolaires,
-            les autorisations parentales
-            relatives à l’enregistrement
-            de la voix des enfants
-            restent conservées
-            par l’établissement scolaire
-            selon son organisation.
-          </p>
-
-          <p>
-            ${getLogoHtml()}
-            n’a pas vocation
-            à recevoir les fiches parentales signées.
+            ou une facturation l'exige.
           </p>
 
         </div>
@@ -369,7 +326,7 @@
           type="button"
           aria-expanded="false">
 
-          Conditions générales d’utilisation
+          Conditions générales d'utilisation
 
         </button>
 
@@ -378,35 +335,33 @@
           class="bociteLegalDocumentContent">
 
           <h3>
-            Conditions d’utilisation
+            Conditions d'utilisation
           </h3>
 
           <p>
-            L’application permet de découvrir,
+            L'application permet de découvrir,
             relier
-            et valoriser
-            les acteurs et les initiatives
-            d’un territoire.
-          </p>
-
-          <p>
-            Les informations publiques
-            peuvent être consultées librement.
-          </p>
-
-          <p>
-            Certaines fonctions nécessitent
-            un compte,
-            une vérification,
-            un code d’accès
-            ou un abonnement adapté au profil.
+            et valoriser les habitants,
+            les commerces,
+            les entreprises,
+            les associations,
+            les écoles,
+            les clubs sportifs
+            et les services du territoire.
           </p>
 
           <p>
             Chaque utilisateur reste responsable
-            des informations
-            qu’il publie
+            des informations qu'il publie
             ou transmet.
+          </p>
+
+          <p>
+            Les accès privés,
+            professionnels
+            ou administratifs
+            ne doivent pas être communiqués
+            à une personne non autorisée.
           </p>
 
         </div>
@@ -431,8 +386,8 @@
 
           <p>
             Les conditions commerciales
-            s’appliquent uniquement
-            lorsqu’un utilisateur choisit
+            s'appliquent uniquement
+            lorsqu'un utilisateur choisit
             un service payant,
             un abonnement,
             une publicité
@@ -448,7 +403,7 @@
           </p>
 
           <p>
-            La simple découverte
+            La simple consultation
             des espaces publics
             ne crée aucun abonnement.
           </p>
@@ -464,22 +419,22 @@
             type="checkbox">
 
           <span>
-
-            J’ai pris connaissance
-            des informations applicables
-            et je souhaite poursuivre
-            la découverte de ${getLogoHtml()}.
-
+            J'ai pris connaissance
+            des informations relatives au RGPD,
+            aux conditions générales d'utilisation
+            et aux conditions générales de vente,
+            et je souhaite poursuivre.
           </span>
 
         </label>
 
-        <div id="bociteLegalMessage">
+        <div
+          id="bociteLegalMessage"
+          role="alert">
 
           Cochez la case
-          pour confirmer
-          que vous avez pris connaissance
-          des informations.
+          pour confirmer votre acceptation
+          avant de continuer.
 
         </div>
 
@@ -488,24 +443,15 @@
           type="button"
           disabled>
 
-          Continuer
-
-        </button>
-
-        <button
-          id="bociteLegalBackBtn"
-          type="button">
-
-          Retour
+          Valider et continuer
 
         </button>
 
         <div class="bociteLegalPrivacyNote">
 
-          L’acceptation est enregistrée
-          automatiquement avec sa date,
-          son heure
-          et la version des documents.
+          Cette page ne peut pas passer
+          à l'étape suivante
+          sans votre clic.
 
         </div>
 
@@ -517,11 +463,11 @@
      OUVERTURE ET FERMETURE
      ===================================================== */
 
-  function removeLegal(){
+  function closeLegal(){
 
     const overlay =
       getElement(
-        "bociteLegalOverlay"
+        OVERLAY_ID
       );
 
     if(overlay){
@@ -532,13 +478,13 @@
   function openLegal(){
 
     installStyles();
-    removeLegal();
+    closeLegal();
 
     const overlay =
       document.createElement("div");
 
     overlay.id =
-      "bociteLegalOverlay";
+      OVERLAY_ID;
 
     overlay.innerHTML =
       getLegalHtml();
@@ -549,18 +495,61 @@
 
     bindLegal();
 
-    window.setTimeout(
-      function(){
-
-        overlay.scrollTop = 0;
-
-      },
-      0
-    );
+    overlay.scrollTop = 0;
   }
 
   /* =====================================================
-     DOCUMENTS
+     ACCEPTATION
+     ===================================================== */
+
+  function createAcceptanceRecord(){
+
+    const now =
+      new Date();
+
+    return {
+      accepted:true,
+      acceptedAt:
+        now.toISOString(),
+      localDate:
+        now.toLocaleDateString("fr-FR"),
+      localTime:
+        now.toLocaleTimeString("fr-FR"),
+      documents:
+        Object.assign(
+          {},
+          LEGAL_VERSION
+        ),
+      source:
+        "bociteart-entry-v6"
+    };
+  }
+
+  function saveAcceptance(){
+
+    const record =
+      createAcceptanceRecord();
+
+    try{
+
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(record)
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : validation légale non enregistrée.",
+        error
+      );
+    }
+
+    return record;
+  }
+
+  /* =====================================================
+     ÉVÉNEMENTS
      ===================================================== */
 
   function toggleDocument(
@@ -581,161 +570,64 @@
       return;
     }
 
-    const isOpen =
-      content.classList.contains(
+    const opening =
+      !content.classList.contains(
         "isOpen"
       );
 
     content.classList.toggle(
       "isOpen",
-      !isOpen
+      opening
     );
 
     button.setAttribute(
       "aria-expanded",
-      String(!isOpen)
+      String(opening)
     );
   }
 
-  /* =====================================================
-     ENREGISTREMENT DE L'ACCEPTATION
-     ===================================================== */
+  function completeLegal(){
 
-  function createAcceptanceRecord(){
-
-    const now =
-      new Date();
-
-    return {
-      accepted:true,
-      acceptedAt:now.toISOString(),
-      localDate:now.toLocaleDateString("fr-FR"),
-      localTime:now.toLocaleTimeString("fr-FR"),
-      timezone:
-        Intl.DateTimeFormat()
-          .resolvedOptions()
-          .timeZone || "",
-      documents:{
-        rgpd:LEGAL_VERSION.rgpd,
-        cgu:LEGAL_VERSION.cgu,
-        cgv:LEGAL_VERSION.cgv
-      },
-      source:"bociteart-entry"
-    };
-  }
-
-  function saveAcceptance(){
-
-    const record =
-      createAcceptanceRecord();
-
-    try{
-
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(record)
+    const checkbox =
+      getElement(
+        "bociteLegalAcceptCheckbox"
       );
 
-    }catch(error){
-
-      console.warn(
-        "Bo'CitéArt : acceptation légale non enregistrée.",
-        error
+    const message =
+      getElement(
+        "bociteLegalMessage"
       );
-    }
-
-    window.BociteLegalAcceptance =
-      record;
-
-    return record;
-  }
-
-  function getSavedAcceptance(){
-
-    try{
-
-      const saved =
-        localStorage.getItem(
-          STORAGE_KEY
-        );
-
-      return saved
-        ? JSON.parse(saved)
-        : null;
-
-    }catch(error){
-
-      return null;
-    }
-  }
-
-  /* =====================================================
-     NAVIGATION
-     ===================================================== */
-
- function continueJourney(){
-
-  const checkbox =
-    getElement(
-      "bociteLegalAcceptCheckbox"
-    );
-
-  const message =
-    getElement(
-      "bociteLegalMessage"
-    );
-
-  if(
-    !checkbox ||
-    !checkbox.checked
-  ){
-
-    if(message){
-      message.style.display =
-        "block";
-    }
-
-    return;
-  }
-
-  saveAcceptance();
-  removeLegal();
-
-  document.dispatchEvent(
-    new CustomEvent(
-      "bociteart:legal-completed"
-    )
-  );
-
-}
-   
-  function returnToIntroduction(){
-
-    removeLegal();
 
     if(
-      window.BociteStart &&
-      typeof window.BociteStart.openIntroduction ===
-      "function"
+      !checkbox ||
+      !checkbox.checked
     ){
 
-      window.BociteStart.openIntroduction();
+      if(message){
+        message.style.display =
+          "block";
+      }
+
       return;
     }
 
-    if(
-      window.BociteIntroduction &&
-      typeof window.BociteIntroduction.open ===
-      "function"
-    ){
+    const acceptance =
+      saveAcceptance();
 
-      window.BociteIntroduction.open();
-    }
+    closeLegal();
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:legal-completed",
+        {
+          detail:{
+            acceptance:
+              acceptance
+          }
+        }
+      )
+    );
   }
-
-  /* =====================================================
-     ÉVÉNEMENTS
-     ===================================================== */
 
   function bindLegal(){
 
@@ -747,11 +639,6 @@
     const continueButton =
       getElement(
         "bociteLegalContinueBtn"
-      );
-
-    const backButton =
-      getElement(
-        "bociteLegalBackBtn"
       );
 
     const message =
@@ -835,13 +722,7 @@
     if(continueButton){
 
       continueButton.onclick =
-        continueJourney;
-    }
-
-    if(backButton){
-
-      backButton.onclick =
-        returnToIntroduction;
+        completeLegal;
     }
   }
 
@@ -851,14 +732,13 @@
 
   window.BociteLegal = {
     open:openLegal,
-    close:removeLegal,
-    getAcceptance:getSavedAcceptance,
+    close:closeLegal,
     storageKey:STORAGE_KEY,
     version:LEGAL_VERSION
   };
 
   console.log(
-    "✅ Informations légales Bo'CitéArt prêtes"
+    "✅ Étape légale Bo'CitéArt V6 prête"
   );
 
 })();
