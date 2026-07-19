@@ -356,20 +356,20 @@ let allowCommerceEntrepriseOpening = false;
     );
   }
    
-  function startJourney(){
+function startJourney(){
 
-    /*
-      Aucun écran supplémentaire ne s'ouvre ici.
+  /*
+    Au chargement de la page, le parcours juridique
+    et l'inscription existants restent prioritaires.
 
-      La fiche RGPD / CGU / CGV déjà existante
-      dans l'application reste l'unique fiche juridique.
+    Ce fichier ne ferme plus automatiquement
+    les écrans d'entrée.
+  */
 
-      Après sa validation, le parcours devra ouvrir :
-      introduction → présentation visuelle → application.
-    */
-
-    closeAllEntryScreens();
-  }
+  console.log(
+    "✅ Chef d'orchestre prêt — attente de la validation de l'inscription"
+  );
+}
   function restartJourney(){
 
     try{
