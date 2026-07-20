@@ -30,16 +30,12 @@
     return document.getElementById(id);
   }
 
-  function getLogoHtml(){
+function getLogoHtml(){
 
-    return `
-      <span class="bociteIntroductionLogoGreen">
-        Bo'Cité
-      </span><span class="bociteIntroductionLogoRed">
-        Art
-      </span>
-    `;
-  }
+  return `
+    <span class="bociteIntroductionLogoGreen">Bo'Cité</span><span class="bociteIntroductionLogoRed">Art</span>
+  `;
+}
 
   /* =====================================================
      STYLES
@@ -119,22 +115,17 @@
 
       .bociteIntroductionNameMeaning {
         margin:0 auto;
-        padding:18px 14px;
-        border:2px solid #315d46;
-        border-radius:12px;
-        background:#fffdf7;
         color:#111;
         text-align:center;
       }
 
       .bociteIntroductionNameMeaningLine {
-        margin:7px 0;
-        font-size:19px;
-        line-height:1.45;
+        margin:0;
+        font-size:18px;
+        line-height:1.5;
       }
 
       .bociteIntroductionNameWord {
-        font-size:24px;
         font-weight:900;
       }
 
@@ -147,9 +138,9 @@
       }
 
       .bociteIntroductionMeaning {
-        font-size:16px;
+        font-size:17px;
         font-style:italic;
-        font-weight:700;
+        font-weight:400;
       }
 
       .bociteIntroductionSeparator {
@@ -183,24 +174,30 @@
         text-align:center;
       }
 
-      .bociteIntroductionConclusion {
-        margin-top:27px;
-        padding:4px 8px;
+        .bociteIntroductionConclusion {
+        margin-top:26px;
         color:#111;
-        font-size:18px;
-        line-height:1.55;
-        text-align:center;
+        font-size:17px;
+        line-height:1.6;
+        text-align:left;
       }
 
       .bociteIntroductionConclusionTitle {
-        margin:0 0 15px;
-        font-size:18px;
-        font-weight:800;
+       margin:0 0 18px;
+       color:#111;
+       font-size:25px;
+       font-weight:600;
+       line-height:1.3;
+       text-align:center;
       }
 
       .bociteIntroductionConclusion p {
-        margin:12px 0;
-        font-weight:700;
+        display:flex;
+        align-items:flex-start;
+        gap:10px;
+        margin:14px 0;
+        font-weight:400;
+        text-align:left;
       }
 
       #bociteIntroductionContinueBtn {
@@ -224,14 +221,14 @@
         outline:3px solid rgba(49,93,70,.16);
       }
 
-      @media(max-width:600px){
+          @media(max-width:600px){
 
         #${OVERLAY_ID} {
           padding:10px 7px 28px;
         }
 
         #bociteIntroductionCard {
-          padding:18px 15px 24px;
+          padding:18px 12px 24px;
         }
 
         .bociteIntroductionLogoImage {
@@ -243,11 +240,21 @@
         }
 
         .bociteIntroductionNameMeaningLine {
-          font-size:18px;
+          width:100%;
+          margin:0 auto;
+          font-size:clamp(10px, 3vw, 15px);
+          line-height:1.5;
+          letter-spacing:-0.15px;
+          white-space:nowrap;
+          text-align:center;
         }
 
         .bociteIntroductionNameWord {
-          font-size:22px;
+          font-size:inherit;
+        }
+
+        .bociteIntroductionMeaning {
+          font-size:inherit;
         }
 
         .bociteIntroductionActors {
@@ -265,11 +272,25 @@
         }
 
         .bociteIntroductionConclusion {
+          padding:0;
+          font-size:16px;
+        }
+
+        .bociteIntroductionConclusionTitle {
+          font-size:22px;
+          line-height:1.3;
+        }
+
+        .bociteIntroductionConclusion p {
+          gap:8px;
+        }
+
+        #bociteIntroductionContinueBtn {
           font-size:17px;
         }
       }
     `;
-
+ 
     document.head.appendChild(
       style
     );
@@ -297,18 +318,13 @@
           Pourquoi ce nom ?
         </h2>
 
-        <div class="bociteIntroductionNameMeaning">
+              <div class="bociteIntroductionNameMeaning">
 
           <div class="bociteIntroductionNameMeaningLine">
+
             Parce que rien n'est plus
-          </div>
 
-          <div class="bociteIntroductionNameMeaningLine">
-
-            <span class="
-              bociteIntroductionNameWord
-              bociteIntroductionNameGreen
-            ">
+            <span class="bociteIntroductionNameWord bociteIntroductionNameGreen">
               Bo
             </span>
 
@@ -316,18 +332,9 @@
               (Beau)
             </span>
 
-          </div>
-
-          <div class="bociteIntroductionNameMeaningLine">
             qu'une
-          </div>
 
-          <div class="bociteIntroductionNameMeaningLine">
-
-            <span class="
-              bociteIntroductionNameWord
-              bociteIntroductionNameGreen
-            ">
+            <span class="bociteIntroductionNameWord bociteIntroductionNameGreen">
               Cité
             </span>
 
@@ -335,18 +342,9 @@
               (ville)
             </span>
 
-          </div>
-
-          <div class="bociteIntroductionNameMeaningLine">
             révélée par
-          </div>
 
-          <div class="bociteIntroductionNameMeaningLine">
-
-            <span class="
-              bociteIntroductionNameWord
-              bociteIntroductionNameRed
-            ">
+            <span class="bociteIntroductionNameWord bociteIntroductionNameRed">
               l'Art.
             </span>
 
@@ -425,22 +423,34 @@
 
         <div class="bociteIntroductionSeparator"></div>
 
-        <div class="bociteIntroductionConclusion">
+               <div class="bociteIntroductionConclusion">
 
           <div class="bociteIntroductionConclusionTitle">
             ${getLogoHtml()}, c'est :
           </div>
 
           <p>
-            Rallumer la lumière sur ce qui est dans l'ombre.
+            <span class="introBullet">–</span>
+
+            <span>
+              Rallumer la lumière sur ce qui est dans l'ombre.
+            </span>
           </p>
 
           <p>
-            Développer les richesses de votre territoire.
+            <span class="introBullet">–</span>
+
+            <span>
+              Développer les richesses de votre territoire.
+            </span>
           </p>
 
           <p>
-            Relier les citoyens et leur faire redécouvrir leur ville.
+            <span class="introBullet">–</span>
+
+            <span>
+              Relier les citoyens et leur faire redécouvrir leur ville.
+            </span>
           </p>
 
         </div>
