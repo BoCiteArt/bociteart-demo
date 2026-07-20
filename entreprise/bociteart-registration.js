@@ -1156,19 +1156,21 @@
 
         </button>
 
-        <div class="bociteRegistrationPrivacy">
+       <div class="bociteRegistrationPrivacy">
 
-          Les statistiques anonymes
-          ne contiennent pas votre nom
-          ni votre adresse électronique.
+  Les statistiques anonymes
+  ne contiennent ni votre nom
+  ni votre adresse électronique.
 
-          <br><br>
+  <br><br>
 
-          Elles distinguent uniquement,
-          lorsque vous les déclarez,
-          l'activation,
-          la catégorie d'utilisateur
-          et la commune.
+  Elles distinguent uniquement
+  l'activation,
+  la catégorie d'utilisateur déclarée
+  et la commune afin de produire
+  des bilans anonymes.
+
+</div>
 
         </div>
 
