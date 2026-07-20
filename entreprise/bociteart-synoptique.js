@@ -203,10 +203,11 @@
 
         <h2 class="bociteSynoptiqueTitle">
 
-          ${getLogoHtml()}
-          en un coup d'œil
+  <span style="color:#2f5d46;font-weight:900;">Bo'Cité</span><span style="color:#b00020;font-weight:900;">Art</span>
 
-        </h2>
+  en un coup d'œil
+
+</h2>
 
         <div class="bociteSynoptiqueIntro">
 
@@ -244,8 +245,9 @@
 
         <div class="bociteSynoptiqueNote">
 
-          Vous allez maintenant arriver
-          sur la page officielle de l'application Bo'CitéArt.
+        Vous allez maintenant arriver
+sur la page officielle de l'application
+<span style="color:#2f5d46;font-weight:900;">Bo'Cité</span><span style="color:#b00020;font-weight:900;">Art</span>.
 
         </div>
 
