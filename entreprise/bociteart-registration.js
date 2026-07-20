@@ -237,16 +237,13 @@
     }
   }
 
-  function getLogoHtml(){
+ function getLogoHtml(){
 
-    return `
-      <span style="color:#2f5d46;font-weight:900;">
-        Bo'Cité
-      </span><span style="color:#b00020;font-weight:900;">
-        Art
-      </span>
-    `;
-  }
+  return `
+    <span style="color:#2f5d46;font-weight:900;">Bo'Cité</span><span style="color:#b00020;font-weight:900;">Art</span>
+  `;
+
+}
 
   /* =====================================================
      STYLES
@@ -1027,9 +1024,8 @@
 
         <div class="bociteRegistrationIntro">
 
-          Cette étape permet d'adapter
-          votre accès à votre situation
-          et à votre commune.
+         Quelques informations suffisent
+         pour personnaliser votre accès.
 
         </div>
 
@@ -1038,7 +1034,7 @@
           <div class="bociteRegistrationField">
 
             <label for="bociteRegistrationName">
-              Nom ou prénom d'affichage
+              Mon nom, prénom ou pseudonyme
             </label>
 
             <input
@@ -1050,8 +1046,8 @@
 
             <div class="bociteRegistrationHelp">
 
-              Ce nom reste associé
-              à votre compte local.
+             Ce nom sera affiché
+             dans votre espace.
 
             </div>
 
@@ -1069,6 +1065,12 @@
               autocomplete="email"
               value="${account.email || ""}"
               placeholder="exemple@adresse.fr">
+              <div class="bociteRegistrationHelp">
+
+              Elle vous permet de retrouver
+              plus facilement votre compte.
+
+</div>
 
           </div>
 
@@ -1150,7 +1152,7 @@
           id="bociteRegistrationContinueBtn"
           type="button">
 
-          Créer mon compte et continuer
+          Continuer
 
         </button>
 
