@@ -104,14 +104,14 @@ function getLogoHtml(){
         font-weight:900;
       }
 
-      .bociteIntroductionTitle {
-        margin:0 0 19px;
-        color:#111;
-        font-size:25px;
-        line-height:1.3;
-        font-weight:800;
-        text-align:center;
-      }
+     .bociteIntroductionTitle {
+  margin:0 0 18px;
+  color:#111;
+  font-size:22px;
+  line-height:1.3;
+  font-weight:700;
+  text-align:center;
+}
 
       .bociteIntroductionNameMeaning {
         margin:0 auto;
@@ -182,14 +182,14 @@ function getLogoHtml(){
         text-align:left;
       }
 
-      .bociteIntroductionConclusionTitle {
-       margin:0 0 18px;
-       color:#111;
-       font-size:25px;
-       font-weight:600;
-       line-height:1.3;
-       text-align:center;
-      }
+     .bociteIntroductionConclusionTitle {
+  margin:0 0 18px;
+  color:#111;
+  font-size:22px;
+  line-height:1.3;
+  font-weight:700;
+  text-align:center;
+}
 
       .bociteIntroductionConclusion p {
         display:flex;
@@ -314,10 +314,6 @@ function getLogoHtml(){
 
         </div>
 
-        <h2 class="bociteIntroductionTitle">
-          Pourquoi ce nom ?
-        </h2>
-
               <div class="bociteIntroductionNameMeaning">
 
           <div class="bociteIntroductionNameMeaningLine">
@@ -356,8 +352,7 @@ function getLogoHtml(){
 
         <h2 class="bociteIntroductionTitle">
 
-          À quoi sert
-          ${getLogoHtml()} ?
+         ${getLogoHtml()} sert à quoi ?
 
         </h2>
 
