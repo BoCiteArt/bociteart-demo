@@ -22,9 +22,9 @@
     "bociteSynoptiqueOverlay";
 
   const IMAGE_PATHS = [
-    "./entreprise/bociteart-entreprise-synoptique.png?v=20260719-03",
-    "./entreprise/entreprise/bociteart-entreprise-synoptique.png?v=20260719-03"
-  ];
+  "./entreprise/bociteart-entreprise-synoptique.png?v=20260720-08",
+  "./entreprise/entreprise/bociteart-entreprise-synoptique.png?v=20260720-08"
+];
 
   /* =====================================================
      OUTILS
