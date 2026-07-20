@@ -11072,9 +11072,21 @@ function findPilotageUserByCode(code){
   return Object.values(pilotageUsers).find(u => u.code === code) || null;
 }
 
+  /* =========================================================
+   BO'CITÉART — SÉCURITÉ DU PILOTAGE
+
+   false = un seul code pendant la démonstration
+   true  = contrôle 2FA activé après raccordement au serveur
+   ========================================================= */
+
+const PILOTAGE_SECURITY = {
+  use2FA: false
+}; 
 function openAccesPilotage(){
   const code = prompt("Code privé Bo'CitéArt :");
-  const user = findPilotageUserByCode(code);
+  if(code === null) return;
+
+  const user = findPilotageUserByCode(code.trim());
 
   if(!user){
     logPilotageAccess("Inconnu", "Tentative avec mauvais code administrateur");
@@ -11082,12 +11094,16 @@ function openAccesPilotage(){
     return;
   }
 
-  const twofa = prompt("Code 2FA :");
+  /* Le 2FA est conservé mais désactivé pendant la démonstration. */
+  if(PILOTAGE_SECURITY.use2FA){
+    const twofa = prompt("Code 2FA :");
+    if(twofa === null) return;
 
-  if(twofa !== user.twofa){
-    logPilotageAccess(user.name, "Échec du code 2FA");
-    alert("2FA refusé.");
-    return;
+    if(twofa.trim() !== user.twofa){
+      logPilotageAccess(user.name, "Échec du code 2FA");
+      alert("2FA refusé.");
+      return;
+    }
   }
 
   window.bociteartCurrentPilotageUser = user;
