@@ -38,17 +38,13 @@
     return document.getElementById(id);
   }
 
-  function getLogoHtml(){
+function getLogoHtml(){
 
-    return `
-      <span style="color:#2f5d46;font-weight:900;">
-        Bo'Cité
-      </span><span style="color:#b00020;font-weight:900;">
-        Art
-      </span>
-    `;
-  }
+  return `
+    <span style="color:#2f5d46;font-weight:900;">Bo'Cité</span><span style="color:#b00020;font-weight:900;">Art</span>
+  `;
 
+}
   /* =====================================================
      STYLES
      ===================================================== */
@@ -280,43 +276,153 @@
         </button>
 
         <div
+         <div
           id="bociteLegalRgpdContent"
-          class="bociteLegalDocumentContent">
+          class="bociteLegalDocumentContent"
+          style="padding:0; overflow:hidden;">
 
-          <h3>
-            Protection des données
-          </h3>
+          <div
+            style="
+              max-height:320px;
+              overflow-y:auto;
+              padding:22px;
+            ">
 
-          <p>
-            ${getLogoHtml()}
-            limite la collecte des informations
-            aux données nécessaires
-            au fonctionnement des services utilisés.
-          </p>
+            <h3>Politique de confidentialité — RGPD</h3>
 
-          <p>
-            Les statistiques d'installation
-            et d'activation sont enregistrées
-            sans intégrer le nom de l'utilisateur.
-          </p>
+            <p>
+              <strong>
+                <span style="color:#17613b;">Bo'Cité</span><span style="color:#c40021;">Art</span>
+              </strong>
+              attache une importance particulière à la protection
+              des données personnelles et applique les principes
+              du Règlement général sur la protection des données
+              ainsi que la réglementation française applicable.
+            </p>
 
-          <p>
-            Elles peuvent distinguer
-            une catégorie déclarée,
-            une commune
-            et un secteur d'activité,
-            afin de produire des bilans anonymes.
-          </p>
+            <h4>1. Responsable du traitement</h4>
 
-          <p>
-            Les informations personnelles complémentaires
-            sont demandées uniquement
-            lorsqu'une action privée,
-            une publication,
-            un abonnement,
-            un paiement
-            ou une facturation l'exige.
-          </p>
+            <p>
+              Le responsable du traitement est l'éditeur de
+              Bo'CitéArt. Ses coordonnées légales définitives
+              seront précisées lors de la mise en exploitation
+              officielle du service.
+            </p>
+
+            <h4>2. Données utilisées</h4>
+
+            <p>
+              Seules les informations nécessaires au fonctionnement
+              des services utilisés, à la gestion des accès,
+              à la sécurité, à l'assistance, aux prestations choisies
+              et au respect des obligations légales sont susceptibles
+              d'être traitées.
+            </p>
+
+            <h4>3. Statistiques anonymes</h4>
+
+            <p>
+              Des statistiques d'installation, d'activation
+              et d'utilisation peuvent être établies sans enregistrer
+              le nom de l'utilisateur.
+            </p>
+
+            <p>
+              Elles peuvent notamment distinguer une catégorie déclarée,
+              une commune et un secteur d'activité afin de produire
+              des bilans anonymes ou agrégés.
+            </p>
+
+            <h4>4. Finalités</h4>
+
+            <p>
+              Les données sont utilisées pour assurer le fonctionnement
+              et la sécurité de Bo'CitéArt, permettre l'accès
+              aux fonctionnalités choisies, gérer les demandes,
+              les publications, les abonnements, les paiements,
+              la facturation et satisfaire aux obligations légales.
+            </p>
+
+            <h4>5. Paiements</h4>
+
+            <p>
+              Les données bancaires complètes sont traitées
+              par les prestataires de paiement sécurisés concernés.
+              Bo'CitéArt ne les conserve pas.
+            </p>
+
+            <h4>6. Conservation et destinataires</h4>
+
+            <p>
+              Les informations sont conservées pendant la durée
+              nécessaire aux finalités poursuivies ou pendant
+              les délais imposés par la réglementation.
+            </p>
+
+            <p>
+              Elles sont accessibles uniquement aux personnes
+              et prestataires autorisés qui doivent en connaître
+              pour assurer le fonctionnement du service.
+            </p>
+
+            <h4>7. Droits des personnes</h4>
+
+            <p>
+              Chaque utilisateur peut exercer ses droits d'accès,
+              de rectification, d'effacement, d'opposition,
+              de limitation et de portabilité dans les conditions
+              prévues par la réglementation.
+            </p>
+
+            <h4>8. Sécurité</h4>
+
+            <p>
+              Des mesures techniques et organisationnelles adaptées
+              sont mises en œuvre afin de limiter les risques
+              d'accès non autorisé, de perte, d'altération
+              ou de divulgation des informations.
+            </p>
+
+            <h4>9. Protection des traitements et du savoir-faire</h4>
+
+            <p>
+              Les méthodes d'organisation, traitements, interfaces,
+              architectures, processus, développements, logiques
+              fonctionnelles et évolutions propres à Bo'CitéArt
+              constituent des éléments protégés.
+            </p>
+
+            <p>
+              Les présentes informations répondent aux obligations
+              légales sans divulguer les mécanismes internes,
+              procédés techniques ou méthodes propriétaires
+              mis en œuvre.
+            </p>
+
+            <h4>10. Évolution</h4>
+
+            <p>
+              La présente politique peut être adaptée afin de tenir
+              compte des évolutions légales, réglementaires,
+              techniques ou fonctionnelles du service.
+            </p>
+
+          </div>
+
+          <div
+            style="
+              border-top:2px solid #2e684d;
+              padding:10px 16px;
+              background:#eee9df;
+              font-size:13px;
+              font-weight:800;
+              text-align:center;
+            ">
+
+            Faites défiler le contenu de ce cadre
+            pour lire le document jusqu'au bout.
+
+          </div>
 
         </div>
 
@@ -332,37 +438,187 @@
 
         <div
           id="bociteLegalCguContent"
-          class="bociteLegalDocumentContent">
+          class="bociteLegalDocumentContent"
+          style="padding:0; overflow:hidden;">
 
-          <h3>
-            Conditions d'utilisation
-          </h3>
+          <div
+            style="
+              max-height:320px;
+              overflow-y:auto;
+              padding:22px;
+            ">
 
-          <p>
-            L'application permet de découvrir,
-            relier
-            et valoriser les habitants,
-            les commerces,
-            les entreprises,
-            les associations,
-            les écoles,
-            les clubs sportifs
-            et les services du territoire.
-          </p>
+            <h3>Conditions générales d'utilisation</h3>
 
-          <p>
-            Chaque utilisateur reste responsable
-            des informations qu'il publie
-            ou transmet.
-          </p>
+            <h4>1. Objet</h4>
 
-          <p>
-            Les accès privés,
-            professionnels
-            ou administratifs
-            ne doivent pas être communiqués
-            à une personne non autorisée.
-          </p>
+            <p>
+              Bo'CitéArt est une plateforme numérique proposant
+              différents services et espaces accessibles selon
+              le profil de l'utilisateur et les fonctionnalités
+              disponibles.
+            </p>
+
+            <h4>2. Acceptation</h4>
+
+            <p>
+              L'accès ou l'utilisation de tout ou partie
+              de Bo'CitéArt implique l'acceptation des présentes
+              conditions.
+            </p>
+
+            <h4>3. Comptes et accès</h4>
+
+            <p>
+              L'utilisateur s'engage à fournir des informations
+              exactes et à protéger ses identifiants.
+            </p>
+
+            <p>
+              Les accès privés, professionnels ou administratifs
+              ne doivent pas être communiqués à une personne
+              non autorisée.
+            </p>
+
+            <h4>4. Utilisation loyale</h4>
+
+            <p>
+              Chaque utilisateur doit respecter les lois,
+              les droits des tiers, les présentes conditions
+              et le bon fonctionnement du service.
+            </p>
+
+            <p>
+              Toute utilisation frauduleuse, détournée, abusive
+              ou susceptible de nuire à Bo'CitéArt peut entraîner
+              la limitation, la suspension ou la suppression
+              de l'accès concerné.
+            </p>
+
+            <h4>5. Contenus publiés</h4>
+
+            <p>
+              Chaque utilisateur demeure responsable des informations,
+              annonces, documents, images ou contenus qu'il publie
+              ou transmet.
+            </p>
+
+            <p>
+              Bo'CitéArt peut refuser, suspendre ou retirer
+              tout contenu manifestement illicite, trompeur,
+              inapproprié ou portant atteinte aux droits d'autrui.
+            </p>
+
+            <h4>6. Disponibilité</h4>
+
+            <p>
+              Bo'CitéArt met en œuvre les moyens raisonnables
+              pour assurer la disponibilité du service,
+              sans garantir un fonctionnement permanent
+              ou exempt d'interruption.
+            </p>
+
+            <h4>7. Responsabilité</h4>
+
+            <p>
+              Bo'CitéArt est un outil numérique de services
+              et de communication. Il ne constitue pas un service
+              de secours, de surveillance, de téléassistance
+              ou d'intervention.
+            </p>
+
+            <p>
+              Sa responsabilité ne peut être engagée pour les dommages
+              résultant d'une mauvaise utilisation, d'une défaillance
+              des réseaux ou équipements, d'un prestataire extérieur
+              ou d'un événement indépendant de sa volonté,
+              dans les limites prévues par la loi.
+            </p>
+
+            <h4>8. Propriété intellectuelle</h4>
+
+            <p>
+              Le nom Bo'CitéArt, sa marque, son identité visuelle,
+              son concept, ses textes, contenus, interfaces,
+              architectures, développements, bases de données,
+              traitements, méthodes, processus, organisations
+              et savoir-faire sont protégés.
+            </p>
+
+            <p>
+              La consultation du service ne confère aucun droit
+              de reproduction, d'exploitation, d'adaptation,
+              d'extraction, de diffusion ou de réutilisation,
+              totale ou partielle, sans autorisation écrite préalable.
+            </p>
+
+            <h4>9. Protection contre le picking et l'analyse automatisée</h4>
+
+            <p>
+              Toute collecte systématique, aspiration, extraction,
+              analyse, copie, décompilation, contournement,
+              ingénierie inverse ou réutilisation de tout ou partie
+              de Bo'CitéArt est interdite sans autorisation écrite
+              préalable.
+            </p>
+
+            <p>
+              Cette interdiction concerne également l'utilisation
+              de robots, scripts, outils automatisés, systèmes
+              d'intelligence artificielle, techniques d'exploration
+              de données ou procédés similaires, sous réserve
+              des droits impérativement prévus par la loi.
+            </p>
+
+            <h4>10. Évolution des services</h4>
+
+            <p>
+              Bo'CitéArt peut modifier, compléter, suspendre
+              ou faire évoluer ses fonctionnalités pour assurer
+              son développement, sa sécurité et sa conformité.
+            </p>
+
+            <h4>11. Acceptation électronique</h4>
+
+            <p>
+              La validation électronique des présentes conditions
+              matérialise leur acceptation dans les conditions
+              prévues par la réglementation applicable.
+            </p>
+
+            <h4>12. Divisibilité</h4>
+
+            <p>
+              Si une disposition devait être déclarée nulle
+              ou inapplicable, les autres dispositions
+              conserveraient leur effet.
+            </p>
+
+            <h4>13. Droit applicable</h4>
+
+            <p>
+              Les présentes conditions sont régies par le droit français.
+              Une recherche de solution amiable sera privilégiée
+              avant toute procédure, sans préjudice des dispositions
+              impératives applicables.
+            </p>
+
+          </div>
+
+          <div
+            style="
+              border-top:2px solid #2e684d;
+              padding:10px 16px;
+              background:#eee9df;
+              font-size:13px;
+              font-weight:800;
+              text-align:center;
+            ">
+
+            Faites défiler le contenu de ce cadre
+            pour lire le document jusqu'au bout.
+
+          </div>
 
         </div>
 
@@ -378,35 +634,185 @@
 
         <div
           id="bociteLegalCgvContent"
-          class="bociteLegalDocumentContent">
+          class="bociteLegalDocumentContent"
+          style="padding:0; overflow:hidden;">
 
-          <h3>
-            Services payants
-          </h3>
+          <div
+            style="
+              max-height:320px;
+              overflow-y:auto;
+              padding:22px;
+            ">
 
-          <p>
-            Les conditions commerciales
-            s'appliquent uniquement
-            lorsqu'un utilisateur choisit
-            un service payant,
-            un abonnement,
-            une publicité
-            ou une prestation professionnelle.
-          </p>
+            <h3>Conditions générales de vente</h3>
 
-          <p>
-            Les tarifs,
-            les modalités de paiement,
-            les conditions de facturation
-            et les engagements correspondants
-            sont présentés avant validation.
-          </p>
+            <h4>1. Services concernés</h4>
 
-          <p>
-            La simple consultation
-            des espaces publics
-            ne crée aucun abonnement.
-          </p>
+            <p>
+              Les présentes conditions encadrent les services payants,
+              abonnements, prestations, publications, réservations
+              publicitaires et accès professionnels proposés
+              par Bo'CitéArt.
+            </p>
+
+            <p>
+              La simple consultation des espaces publics ne crée
+              aucun abonnement ni engagement de paiement.
+            </p>
+
+            <h4>2. Information préalable</h4>
+
+            <p>
+              Les caractéristiques essentielles, le tarif,
+              la durée, les modalités de paiement et les conditions
+              applicables sont présentés avant toute validation.
+            </p>
+
+            <h4>3. Commande</h4>
+
+            <p>
+              Toute commande, souscription ou réservation devient
+              effective après validation et, lorsque cela est requis,
+              après confirmation du paiement ou acceptation
+              par Bo'CitéArt.
+            </p>
+
+            <h4>4. Tarifs et paiement</h4>
+
+            <p>
+              Les tarifs applicables sont ceux affichés au moment
+              de la validation.
+            </p>
+
+            <p>
+              Les paiements sont réalisés par l'intermédiaire
+              de prestataires sécurisés. L'accès à un service payant
+              peut être suspendu tant que le règlement n'est pas confirmé.
+            </p>
+
+            <h4>5. Réservations et diffusions</h4>
+
+            <p>
+              Certaines prestations nécessitent une réservation préalable.
+              Une réservation validée devient ferme selon les conditions
+              présentées avant sa confirmation.
+            </p>
+
+            <h4>6. Annulation et droit de rétractation</h4>
+
+            <p>
+              Les possibilités d'annulation, de modification,
+              de report ou de rétractation dépendent de la nature
+              du service, de la qualité du client et des conditions
+              présentées lors de la commande.
+            </p>
+
+            <p>
+              Les droits légaux impératifs du consommateur restent
+              applicables lorsqu'ils sont prévus par la réglementation.
+            </p>
+
+            <h4>7. Facturation</h4>
+
+            <p>
+              Une facture ou un justificatif est établi lorsque
+              la nature de la prestation ou la réglementation
+              l'exige.
+            </p>
+
+            <h4>8. Absence de garantie de résultat</h4>
+
+            <p>
+              Bo'CitéArt met en œuvre des moyens raisonnables
+              pour assurer ses prestations, sans garantir
+              un résultat économique, commercial, financier,
+              publicitaire ou un niveau de fréquentation déterminé.
+            </p>
+
+            <h4>9. Responsabilité</h4>
+
+            <p>
+              La responsabilité de Bo'CitéArt ne peut être engagée
+              en cas de force majeure, d'interruption indépendante
+              de sa volonté, de défaillance d'un réseau, d'un équipement,
+              d'un prestataire ou d'une utilisation non conforme,
+              dans les limites autorisées par la loi.
+            </p>
+
+            <h4>10. Propriété intellectuelle et protection du savoir-faire</h4>
+
+            <p>
+              Le concept Bo'CitéArt, sa marque, son identité,
+              ses architectures, interfaces, développements,
+              contenus, méthodes, traitements, processus,
+              logiques fonctionnelles et savoir-faire demeurent
+              la propriété de leurs titulaires.
+            </p>
+
+            <p>
+              Toute reproduction, extraction, adaptation, analyse,
+              décompilation, ingénierie inverse, diffusion,
+              réutilisation ou exploitation, totale ou partielle,
+              est interdite sans autorisation écrite préalable.
+            </p>
+
+            <p>
+              Cette interdiction s'applique également aux opérations
+              réalisées au moyen d'outils automatisés, de robots,
+              de scripts, de techniques d'exploration de données
+              ou de systèmes d'intelligence artificielle,
+              sauf disposition légale impérative contraire.
+            </p>
+
+            <h4>11. Évolution</h4>
+
+            <p>
+              Les offres, services et fonctionnalités peuvent évoluer
+              afin de répondre aux besoins des utilisateurs
+              et aux évolutions techniques, réglementaires ou légales.
+            </p>
+
+            <h4>12. Acceptation électronique</h4>
+
+            <p>
+              La validation électronique d'une commande
+              ou des présentes conditions matérialise leur acceptation
+              dans les conditions prévues par la réglementation.
+            </p>
+
+            <h4>13. Divisibilité</h4>
+
+            <p>
+              Si une disposition devait être déclarée nulle
+              ou inapplicable, les autres dispositions
+              conserveraient leur effet.
+            </p>
+
+            <h4>14. Droit applicable</h4>
+
+            <p>
+              Les présentes conditions sont régies par le droit français.
+              Une recherche de solution amiable sera privilégiée
+              avant toute procédure, sans préjudice des règles
+              impératives applicables.
+            </p>
+
+          </div>
+
+          <div
+            style="
+              border-top:2px solid #2e684d;
+              padding:10px 16px;
+              background:#eee9df;
+              font-size:13px;
+              font-weight:800;
+              text-align:center;
+            ">
+
+            Faites défiler le contenu de ce cadre
+            pour lire le document jusqu'au bout.
+
+          </div>
 
         </div>
 
