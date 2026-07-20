@@ -77,66 +77,71 @@
           line-height:1.5;
         ">
 
-        <strong
+        <div
           style="
-            display:block;
             color:#2f5d46;
-            font-size:20px;
-            line-height:1.35;
+            font-size:16px;
+            line-height:1.4;
+            font-weight:700;
           ">
 
           Connaissez-vous le nom
           de cinq entreprises de votre commune,
-          en dehors des grandes enseignes?
+          en dehors des grandes enseignes ?
 
-        </strong>
+        </div>
 
-        <br>
-
-        <strong
+        <div
           style="
-            font-size:18px;
+            margin-top:14px;
+            color:#111;
+            font-size:16px;
             line-height:1.4;
+            font-weight:700;
           ">
 
-          Comme 99% des personnnes, Probablement pas.
+          Comme 99 % des personnes,
+          probablement pas.
 
-        </strong>
+        </div>
 
-        <br><br>
+        <div
+          style="
+            margin-top:14px;
+            color:#111;
+            font-size:16px;
+            line-height:1.5;
+            font-weight:400;
+          ">
 
-        Pourtant,
-        combien de fois entend-on :
+          Pourtant, combien de fois entend-on :
 
-        <br><br>
+          <br><br>
 
-        <strong>
-          « Je ne savais pas que cette 
-          entreprise existait ici. »
-        </strong>
+          « Je ne savais pas que cette entreprise
+          existait ici. »
 
-        <br><br>
+          <br><br>
 
-        ou :
+          ou :
 
-        <br><br>
+          <br><br>
 
-        <strong>
-          « Je ne savais pas
-          qu’elle faisait cela. »
-        </strong>
+          « Je ne savais pas qu’elle faisait cela. »
 
-        <br><br>
+          <br><br>
 
-        Ces entreprises pourraient pourtant devenir :
+          Ces entreprises pourraient pourtant devenir :
 
-        <br><br>
+          <br><br>
 
-        • vos prochains clients ;<br>
-        • vos futurs salariés ;<br>
-        • vos fournisseurs ;<br>
-        • vos sous-traitants ;<br>
-        • vos partenaires.
+          • vos prochains clients ;<br>
+          • vos futurs salariés ;<br>
+          • vos fournisseurs ;<br>
+          • vos sous-traitants ;<br>
+          • vos partenaires.
+
+        </div>
 
       </div>
 
@@ -147,134 +152,145 @@
           line-height:1.5;
         ">
 
-        <strong
+        <div
           style="
-            display:block;
             color:#2f5d46;
-            font-size:18px;
+            font-size:16px;
             line-height:1.4;
+            font-weight:700;
+            text-align:center;
           ">
 
           Les règles du jeu ont changé.
 
-        </strong>
+        </div>
 
-        <br><br>
+        <div
+          style="
+            margin-top:16px;
+            color:#111;
+            font-size:16px;
+            line-height:1.5;
+            font-weight:400;
+          ">
 
-        Internet, le commerce en ligne
-        ont ouvert de nouvelles possibilités.
+          Internet et le commerce en ligne
+          ont ouvert de nouvelles possibilités.
 
-        <br><br>
+          <br><br>
 
-        Les plus grandes plateformes
-        disposent de moyens considérables
-        pour capter, ou apsirerd'avantage 
-        les clients et toute la visibilité.
+          Les plus grandes plateformes
+          disposent de moyens considérables
+          pour capter davantage les clients
+          et la visibilité.
 
-        <br><br>
+          <br><br>
 
-        Pour une entreprise locale,
-        il devient de plus en plus difficile
-        d'avancer, d'exister seule, ou presque.
+          Pour une entreprise locale,
+          il devient de plus en plus difficile
+          d’avancer, d’exister seule,
+          ou presque.
+
+        </div>
 
       </div>
 
-           <div
+      <div
         class="box"
         style="
           border-left:6px solid #b00020;
-          font-size:16px !important;
-          line-height:1.5 !important;
-          font-weight:400 !important;
+          font-size:16px;
+          line-height:1.5;
+          font-weight:400;
         ">
 
         <div
           style="
-            font-size:17px !important;
-            line-height:1.45 !important;
-            font-weight:700 !important;
+            font-size:16px;
+            line-height:1.45;
+            font-weight:700;
           ">
 
-          ${getLogoHtml()} a été imaginé, pour 
-          répondre aux réalités efficacement à tous types 
-          d'entrepreneurs ou commerçants.
+          ${getLogoHtml()} a été imaginé
+          pour répondre efficacement
+          aux réalités de tous les entrepreneurs
+          et commerçants.
 
         </div>
-
-        <br><br>
 
         <div
           style="
+            margin-top:16px;
             color:#2f5d46;
-            font-size:17px !important;
-            line-height:1.45 !important;
-            font-weight:700 !important;
+            font-size:16px;
+            line-height:1.45;
+            font-weight:700;
           ">
 
-          <br><br>
-
-          Il vous propose, un outil simple, réactif,
-          directement depuis votre téléphone.
+          Il vous propose un outil simple,
+          réactif,
+          toujours accessible
+          depuis votre téléphone.
 
         </div>
 
-        <br><br>
+        <div
+          style="
+            margin-top:16px;
+            color:#111;
+            font-size:16px;
+            line-height:1.5;
+            font-weight:400;
+          ">
 
-        Développement, emploi, visibilité,
-        recherche professionnelle, mutualisation,
-        mécénat et pérennité:
+          Développement, emploi, visibilité,
+          recherche professionnelle, mutualisation,
+          mécénat et pérennité :
 
-        <br><br>
+          <br><br>
 
-        <span style="font-weight:700 !important;">
-
-          les informations, des outils utiles
+          Les informations et les outils utiles
           sont réunis dans une seule application,
           toujours à portée de main.
 
-        </span>
+          <br><br>
 
-        <br><br>
+          Commencez d’abord ici,
+          par rendre visibles
+          votre entreprise,
+          vos métiers
+          et votre savoir-faire
+          dans votre commune.
 
-        Commencez d'abord ici, par rendre visibles
-        votre entreprise, vos métiers, votre savoir-faire
-        dans votre commune.
+          <br><br>
 
-        <br><br>
+          Restez indépendant,
+          mais devenez plus visible,
+          plus réactif
+          et mieux connecté
+          aux autres acteurs économiques
+          de votre commune
+          et de votre territoire.
 
-        Restez indépendant,
-        mais devenez enfin plus visible,
-        plus réactif, plus proche
-        et surtout mieux relié aux autres acteurs
-        économiques de votre ville.
+          <br><br>
 
-        <br><br>
+          Dans un monde où tout s’accélère,
+          l’intelligence artificielle
+          et les nouvelles technologies
+          transforment les usages.
 
-        <span style="font-weight:700 !important;">
+          <br><br>
 
-        <span style="font-weight:700 !important;">
+          Pouvoir accéder immédiatement
+          aux bons outils,
+          aux bonnes informations
+          et agir rapidement
+          fait aujourd’hui toute la différence.
 
-        Dans un monde où tout s'accélère,
-        l'intelligence artificielle,
-        les nouvelles technologies
-        transforment les usages.
-
-       <br><br>
-
-        Pouvoir accéder immédiatement
-        aux bons outils,
-        aux bonnes informations,
-        agir rapidement,
-        fait aujourd'hui toute la différence.
-
-</span>
-
-</span>
-
-        </span>
+        </div>
 
       </div>
-      
+
       <button
         id="entrepriseDiscoverOverviewBtn"
         class="choiceBtn"
@@ -289,7 +305,6 @@
       </button>
     `;
   }
-
   /* =======================================================
      PAGE 2 — SYNOPTIQUE
      ======================================================= */
