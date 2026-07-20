@@ -175,7 +175,7 @@
 
         Pour une entreprise locale,
         il devient de plus en plus difficile
-        d’avancer seule, ou presque isolée.
+        d'avancer, d'exister seule, ou presque.
 
       </div>
 
@@ -245,18 +245,31 @@
         Restez indépendant,
         mais devenez enfin plus visible,
         plus réactif, plus proche
-        et surtout mieux relié aux autres acteurs 
+        et surtout mieux relié aux autres acteurs
         économiques de votre ville.
 
         <br><br>
 
         <span style="font-weight:700 !important;">
 
-          Dans un monde qui accélère,l'IA etc...
-          connaître rapidement des ressources disponibles
-          pour vous, pour votre entreprise ou commerce
-          pouvoir agir sans perdre de temps, 
-          devient indispensable, essentiel.
+        <span style="font-weight:700 !important;">
+
+        Dans un monde où tout s'accélère,
+        l'intelligence artificielle,
+        les nouvelles technologies
+        transforment les usages.
+
+       <br><br>
+
+        Pouvoir accéder immédiatement
+        aux bons outils,
+        aux bonnes informations,
+        agir rapidement,
+        fait aujourd'hui toute la différence.
+
+</span>
+
+</span>
 
         </span>
 
