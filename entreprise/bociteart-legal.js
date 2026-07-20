@@ -9,7 +9,7 @@
    Il ne décide jamais lui-même de la page suivante.
    ========================================================= */
 
-(function initBociteartLegal(){
+(function initBociteartLegal(){ 
 
   "use strict";
 
@@ -275,7 +275,6 @@ function getLogoHtml(){
 
         </button>
 
-        <div
          <div
           id="bociteLegalRgpdContent"
           class="bociteLegalDocumentContent"
