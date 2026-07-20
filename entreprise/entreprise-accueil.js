@@ -1,9 +1,9 @@
 /* =========================================================
    BO'CITÉART — ENTREPRISE
-   ACCUEIL EN TROIS ÉTAPES
+   ACCUEIL EN DEUX ÉTAPES
+
    1. INTRODUCTION
-   2. SYNOPTIQUE
-   3. BANDES DÉFILANTES
+   2. ESPACE ENTREPRISE AVEC BANDES DÉFILANTES
    ========================================================= */
 
 (function initEntrepriseAccueil(){
@@ -16,7 +16,7 @@
   if(!app){
 
     console.error(
-      "Bo'CitéArt : entreprise.js doit être chargé avant entreprise-accueil.js."
+      "Bo'CitéArt : le module Entreprise doit être chargé avant entreprise-accueil.js."
     );
 
     return;
@@ -39,7 +39,21 @@
 
   function getLogoHtml(){
 
-    return `<span style="white-space:nowrap;font-weight:900;"><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span></span>`;
+    return `
+      <span
+        style="
+          white-space:nowrap;
+          font-weight:900;
+        ">
+
+        <span style="color:#2f5d46;">
+          Bo'Cité
+        </span><span style="color:#b00020;">
+          Art
+        </span>
+
+      </span>
+    `;
   }
 
   function renderPage(html){
@@ -63,7 +77,7 @@
   }
 
   /* =======================================================
-     PAGE 1 — INTRODUCTION PERCUTANTE
+     PAGE 1 — INTRODUCTION
      ======================================================= */
 
   function getIntroductionHtml(){
@@ -292,7 +306,7 @@
       </div>
 
       <button
-        id="entrepriseDiscoverOverviewBtn"
+        id="entrepriseEnterSpaceBtn"
         class="choiceBtn"
         type="button"
         style="
@@ -300,14 +314,14 @@
           margin-top:14px;
         ">
 
-        Découvrir l’application
+        Découvrir l’espace Entreprise
 
       </button>
     `;
   }
-  
+
   /* =======================================================
-     OUVERTURE DES TROIS ÉTAPES
+     OUVERTURE DE L’INTRODUCTION
      ======================================================= */
 
   function openIntroduction(){
@@ -320,52 +334,27 @@
 
       const button =
         getElement(
-          "entrepriseDiscoverOverviewBtn"
+          "entrepriseEnterSpaceBtn"
         );
 
       if(button){
 
         button.onclick =
-          openOverview;
+          function(event){
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            openRealEntrepriseHome();
+          };
       }
 
     },0);
   }
 
-  function openOverview(){
-
-    renderPage(
-      getOverviewHtml()
-    );
-
-    window.setTimeout(function(){
-
-      bindSynoptiqueImage();
-
-      const enterButton =
-        getElement(
-          "entrepriseEnterRealHomeBtn"
-        );
-
-      const backButton =
-        getElement(
-          "entrepriseOverviewBackBtn"
-        );
-
-      if(enterButton){
-
-        enterButton.onclick =
-          openRealEntrepriseHome;
-      }
-
-      if(backButton){
-
-        backButton.onclick =
-          openIntroduction;
-      }
-
-    },0);
-  }
+  /* =======================================================
+     OUVERTURE DE L’ESPACE ENTREPRISE EXISTANT
+     ======================================================= */
 
   function openRealEntrepriseHome(){
 
@@ -396,6 +385,9 @@
   app.openEntrepriseHome =
     openIntroduction;
 
+  app.openEntrepriseIntroduction =
+    openIntroduction;
+
   app.openRealEntrepriseHome =
     openRealEntrepriseHome;
 
@@ -416,7 +408,7 @@
   }
 
   console.log(
-    "✅ Accueil Entreprise en trois étapes chargé"
+    "✅ Accueil Entreprise en deux étapes chargé"
   );
 
 })();
