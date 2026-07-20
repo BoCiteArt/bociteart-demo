@@ -293,13 +293,19 @@
         box-shadow:0 8px 28px rgba(0,0,0,.13);
       }
 
-      .bociteRegistrationTitle {
-        margin:0;
-        color:#111;
-        font-size:28px;
-        line-height:1.3;
-        text-align:center;
-      }
+     .bociteRegistrationTitle {
+  margin:0;
+  color:#111;
+  font-size:28px;
+  line-height:1.25;
+  text-align:center;
+}
+
+.bociteRegistrationTitle span{
+  display:inline;
+  margin:0;
+  padding:0;
+}
 
       .bociteRegistrationIntro {
         margin-top:16px;
