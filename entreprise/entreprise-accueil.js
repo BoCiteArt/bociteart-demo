@@ -191,26 +191,27 @@
         <strong
           style="
             display:block;
-            font-size:19px;
-            line-height:1.4;
+            font-size:17px;
+            line-height:1.45;
           ">
 
-          ${getLogoHtml()}
-          a été imaginé par un entrepreneur,
-          pour répondre aux réalités
-          vécues par les entrepreneurs.
+         <span style="white-space:nowrap;">
+  ${getLogoHtml()}
+</span>
+a été imaginé par un entrepreneur,
 
         </strong>
 
         <br><br>
 
-        <strong
-          style="
-            display:block;
-            color:#2f5d46;
-            font-size:19px;
-            line-height:1.45;
-          ">
+       <strong
+  style="
+    display:block;
+    color:#2f5d46;
+    font-size:17px;
+    line-height:1.45;
+    font-weight:700;
+  ">
 
           Il ne vous demande pas
           de travailler davantage.
