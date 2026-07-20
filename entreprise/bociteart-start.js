@@ -593,10 +593,41 @@
 
 function resume(){
 
-  if(
-    !ALWAYS_SHOW_ENTRY_FLOW &&
-    journeyCompleted()
-  ){
+  /*
+    MODE PRÉSENTATION :
+    le parcours complet recommence
+    depuis les informations légales.
+  */
+
+  if(PRESENTATION_MODE){
+
+    removeStorageItem(
+      STORAGE.session
+    );
+
+    removeStorageItem(
+      STORAGE.completed
+    );
+
+    currentStep =
+      "";
+
+    openLegal();
+
+    console.log(
+      "✅ Parcours complet affiché"
+    );
+
+    return;
+  }
+
+  /*
+    MODE UTILISATEUR NORMAL :
+    après la première validation complète,
+    l'application s'ouvre directement.
+  */
+
+  if(journeyCompleted()){
 
     closeAllEntryScreens();
 
@@ -610,52 +641,40 @@ function resume(){
     return;
   }
 
-  if(ALWAYS_SHOW_ENTRY_FLOW){
+  const session =
+    getSession();
 
-    removeStorageItem(STORAGE.session);
-    removeStorageItem(STORAGE.completed);
-
-    currentStep = "";
-
-    openLegal();
-    return;
-  }
-
-    const session =
-      getSession();
-
-    const savedStep =
-      session &&
-      session.version ===
-        JOURNEY_VERSION
+  const savedStep =
+    session &&
+    session.version ===
+      JOURNEY_VERSION
         ? session.step
         : "";
 
-    switch(savedStep){
+  switch(savedStep){
 
-      case STEPS.introduction:
+    case STEPS.introduction:
 
-        openIntroduction();
-        break;
+      openIntroduction();
+      break;
 
-      case STEPS.registration:
+    case STEPS.registration:
 
-        openRegistration();
-        break;
+      openRegistration();
+      break;
 
-      case STEPS.synoptique:
+    case STEPS.synoptique:
 
-        openSynoptique();
-        break;
+      openSynoptique();
+      break;
 
-      case STEPS.legal:
-      default:
+    case STEPS.legal:
+    default:
 
-        openLegal();
-        break;
-    }
+      openLegal();
+      break;
   }
-
+}
   /* =====================================================
      RÉINITIALISATION DE TEST
      ===================================================== */
