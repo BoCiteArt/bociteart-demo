@@ -29,6 +29,21 @@
   const JOURNEY_VERSION =
     "8";
 
+  /* =====================================================
+     MODE PRÉSENTATION
+
+     Avec ?presentation=1 dans l'adresse :
+     le parcours complet recommence à chaque ouverture.
+
+     Sans ce paramètre :
+     le parcours apparaît seulement à la première utilisation.
+     ===================================================== */
+
+  const PRESENTATION_MODE =
+    new URLSearchParams(
+      window.location.search
+    ).get("presentation") === "1";
+   
   const STORAGE = {
     session:
       "bociteart_entry_session_v8",
@@ -576,21 +591,35 @@
      REPRISE DU PARCOURS
      ===================================================== */
 
-  function resume(){
+function resume(){
 
-    if(journeyCompleted()){
+  if(
+    !ALWAYS_SHOW_ENTRY_FLOW &&
+    journeyCompleted()
+  ){
 
-      closeAllEntryScreens();
+    closeAllEntryScreens();
 
-      currentStep =
-        STEPS.application;
+    currentStep =
+      STEPS.application;
 
-      console.log(
-        "✅ Porte d'entrée déjà terminée — application affichée"
-      );
+    console.log(
+      "✅ Porte d'entrée déjà terminée — application affichée"
+    );
 
-      return;
-    }
+    return;
+  }
+
+  if(ALWAYS_SHOW_ENTRY_FLOW){
+
+    removeStorageItem(STORAGE.session);
+    removeStorageItem(STORAGE.completed);
+
+    currentStep = "";
+
+    openLegal();
+    return;
+  }
 
     const session =
       getSession();
