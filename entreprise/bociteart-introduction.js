@@ -30,6 +30,17 @@
     return document.getElementById(id);
   }
 
+  function getLogoHtml(){
+
+    return `
+      <span class="bociteIntroductionLogoGreen">
+        Bo'Cité
+      </span><span class="bociteIntroductionLogoRed">
+        Art
+      </span>
+    `;
+  }
+
   /* =====================================================
      STYLES
      ===================================================== */
@@ -51,6 +62,7 @@
       "bociteIntroductionStyles";
 
     style.textContent = `
+
       #${OVERLAY_ID} {
         position:fixed;
         inset:0;
@@ -73,7 +85,7 @@
       }
 
       .bociteIntroductionLogoBox {
-        margin:0 0 22px;
+        margin:0 0 26px;
         text-align:center;
       }
 
@@ -86,23 +98,64 @@
         object-fit:contain;
       }
 
-      .bociteIntroductionSignature {
-        margin-top:22px;
+      .bociteIntroductionLogoGreen {
+        color:#315d46;
+        font-weight:900;
+      }
+
+      .bociteIntroductionLogoRed {
+        color:#b00020;
+        font-weight:900;
+      }
+
+      .bociteIntroductionTitle {
+        margin:0 0 19px;
         color:#111;
-        line-height:1.55;
+        font-size:25px;
+        line-height:1.3;
+        font-weight:800;
         text-align:center;
       }
 
-      .bociteIntroductionSignature div {
-        margin:5px 0;
-        font-size:21px;
+      .bociteIntroductionNameMeaning {
+        margin:0 auto;
+        padding:18px 14px;
+        border:2px solid #315d46;
+        border-radius:12px;
+        background:#fffdf7;
+        color:#111;
+        text-align:center;
+      }
+
+      .bociteIntroductionNameMeaningLine {
+        margin:7px 0;
+        font-size:19px;
+        line-height:1.45;
+      }
+
+      .bociteIntroductionNameWord {
+        font-size:24px;
+        font-weight:900;
+      }
+
+      .bociteIntroductionNameGreen {
+        color:#315d46;
+      }
+
+      .bociteIntroductionNameRed {
+        color:#b00020;
+      }
+
+      .bociteIntroductionMeaning {
+        font-size:16px;
+        font-style:italic;
         font-weight:700;
       }
 
       .bociteIntroductionSeparator {
         width:74px;
         height:2px;
-        margin:24px auto;
+        margin:26px auto;
         background:#315d46;
       }
 
@@ -116,7 +169,7 @@
         display:flex;
         align-items:flex-start;
         gap:10px;
-        margin:13px 0;
+        margin:14px 0;
         text-align:left;
       }
 
@@ -131,18 +184,29 @@
       }
 
       .bociteIntroductionConclusion {
-        margin-top:26px;
+        margin-top:27px;
+        padding:4px 8px;
         color:#111;
         font-size:18px;
         line-height:1.55;
         text-align:center;
+      }
+
+      .bociteIntroductionConclusionTitle {
+        margin:0 0 15px;
+        font-size:18px;
+        font-weight:800;
+      }
+
+      .bociteIntroductionConclusion p {
+        margin:12px 0;
         font-weight:700;
       }
 
       #bociteIntroductionContinueBtn {
         display:block;
         width:100%;
-        margin-top:25px;
+        margin-top:27px;
         padding:15px 14px;
         border:2px solid #315d46;
         border-radius:9px;
@@ -174,8 +238,16 @@
           width:265px;
         }
 
-        .bociteIntroductionSignature div {
-          font-size:19px;
+        .bociteIntroductionTitle {
+          font-size:22px;
+        }
+
+        .bociteIntroductionNameMeaningLine {
+          font-size:18px;
+        }
+
+        .bociteIntroductionNameWord {
+          font-size:22px;
         }
 
         .bociteIntroductionActors {
@@ -216,28 +288,80 @@
 
           <img
             class="bociteIntroductionLogoImage"
-            src="./entreprise/bociteart_logo.png?v=20260719-02"
+            src="./entreprise/bociteart_logo.png?v=20260720-01"
             alt="Logo officiel Bo'CitéArt">
 
         </div>
 
-        <div class="bociteIntroductionSignature">
+        <h2 class="bociteIntroductionTitle">
+          Pourquoi ce nom ?
+        </h2>
 
-          <div>
-            Découvrir ce qui existe.
+        <div class="bociteIntroductionNameMeaning">
+
+          <div class="bociteIntroductionNameMeaningLine">
+            Parce que rien n'est plus
           </div>
 
-          <div>
-            RELIER les énergies.
+          <div class="bociteIntroductionNameMeaningLine">
+
+            <span class="
+              bociteIntroductionNameWord
+              bociteIntroductionNameGreen
+            ">
+              Bo
+            </span>
+
+            <span class="bociteIntroductionMeaning">
+              (Beau)
+            </span>
+
           </div>
 
-          <div>
-            Faire vivre chaque territoire.
+          <div class="bociteIntroductionNameMeaningLine">
+            qu'une
+          </div>
+
+          <div class="bociteIntroductionNameMeaningLine">
+
+            <span class="
+              bociteIntroductionNameWord
+              bociteIntroductionNameGreen
+            ">
+              Cité
+            </span>
+
+            <span class="bociteIntroductionMeaning">
+              (ville)
+            </span>
+
+          </div>
+
+          <div class="bociteIntroductionNameMeaningLine">
+            révélée par
+          </div>
+
+          <div class="bociteIntroductionNameMeaningLine">
+
+            <span class="
+              bociteIntroductionNameWord
+              bociteIntroductionNameRed
+            ">
+              l'Art.
+            </span>
+
           </div>
 
         </div>
 
         <div class="bociteIntroductionSeparator"></div>
+
+        <h2 class="bociteIntroductionTitle">
+
+          À quoi sert
+          ${getLogoHtml()} ?
+
+        </h2>
 
         <div class="bociteIntroductionActors">
 
@@ -245,9 +369,7 @@
             <span class="introBullet">–</span>
 
             <span>
-              Les œuvres rapprochent
-              les artistes
-              et les habitants.
+              Les œuvres rapprochent les artistes et les habitants.
             </span>
           </p>
 
@@ -255,7 +377,7 @@
             <span class="introBullet">–</span>
 
             <span>
-              L'école révèle ses talents.
+              L'école révèle les talents de demain.
             </span>
           </p>
 
@@ -263,8 +385,7 @@
             <span class="introBullet">–</span>
 
             <span>
-              Les associations
-              rassemblent les sourires.
+              Les associations recréent du lien, l'entraide et les sourires.
             </span>
           </p>
 
@@ -272,9 +393,7 @@
             <span class="introBullet">–</span>
 
             <span>
-              Les clubs sportifs
-              développent leurs forces
-              et l'esprit d'équipe.
+              Les clubs sportifs gagnent en visibilité et trouvent de nouveaux partenaires et adhérents.
             </span>
           </p>
 
@@ -282,8 +401,7 @@
             <span class="introBullet">–</span>
 
             <span>
-              Les commerces renforcent
-              et fidélisent leur clientèle.
+              Les commerces développent, fidélisent enfin durablement une clientèle perdue dans leur ville.
             </span>
           </p>
 
@@ -291,8 +409,7 @@
             <span class="introBullet">–</span>
 
             <span>
-              Les entreprises véritablement visibles
-              trouvent leurs futurs collaborateurs.
+              Les entreprises trouvent enfin des outils incontournables pour être véritablement visibles, développer leur activité, recruter plus facilement leurs collaborateurs.
             </span>
           </p>
 
@@ -300,10 +417,7 @@
             <span class="introBullet">–</span>
 
             <span>
-              La mairie révèle
-              les trésors
-              et les richesses
-              de son territoire.
+              La mairie révèle ses trésors cachés, les talents, sa richesse mieux partagée, qui font la force de son territoire.
             </span>
           </p>
 
@@ -313,11 +427,21 @@
 
         <div class="bociteIntroductionConclusion">
 
-          Bo'CitéArt relie les énergies
+          <div class="bociteIntroductionConclusionTitle">
+            ${getLogoHtml()}, c'est :
+          </div>
 
-          <br>
+          <p>
+            Rallumer la lumière sur ce qui est dans l'ombre.
+          </p>
 
-          pour faire vivre chaque territoire.
+          <p>
+            Développer les richesses de votre territoire.
+          </p>
+
+          <p>
+            Relier les citoyens et leur faire redécouvrir leur ville.
+          </p>
 
         </div>
 
@@ -416,7 +540,7 @@
   };
 
   console.log(
-    "✅ Étape introduction Bo'CitéArt V6 prête"
+    "✅ Étape introduction Bo'CitéArt officielle prête"
   );
 
 })();
