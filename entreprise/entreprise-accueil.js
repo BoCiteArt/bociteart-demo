@@ -39,21 +39,7 @@
 
   function getLogoHtml(){
 
-    return `
-      <span
-        style="
-          color:#2f5d46;
-          font-weight:900;
-        ">
-        Bo'Cité
-      </span><span
-        style="
-          color:#b00020;
-          font-weight:900;
-        ">
-        Art
-      </span>
-    `;
+    return `<span style="white-space:nowrap;font-weight:900;"><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span></span>`;
   }
 
   function renderPage(html){
@@ -196,107 +182,90 @@
 
       </div>
 
-      <div
+           <div
         class="box"
         style="
           border-left:6px solid #b00020;
-          font-size:16px;
-          line-height:1.5;
+          font-size:16px !important;
+          line-height:1.5 !important;
+          font-weight:400 !important;
         ">
 
-        <strong
+        <div
           style="
-            display:block;
-            font-size:17px;
-            line-height:1.45;
+            font-size:17px !important;
+            line-height:1.45 !important;
+            font-weight:700 !important;
           ">
 
-          <span style="white-space:nowrap;">
-            ${getLogoHtml()}
-          </span>
-          a été imaginé par un entrepreneur,
-          pour répondre aux réalités
-          vécues par les entrepreneurs.
+          ${getLogoHtml()} a été imaginé par un entrepreneur,
+          pour répondre aux réalités vécues par les entrepreneurs.
 
-        </strong>
+        </div>
 
         <br><br>
 
-        <strong
+        <div
           style="
-            display:block;
             color:#2f5d46;
-            font-size:17px;
-            line-height:1.45;
-            font-weight:700;
+            font-size:17px !important;
+            line-height:1.45 !important;
+            font-weight:700 !important;
           ">
 
-          Il ne vous demande pas
-          de travailler davantage.
+          Il ne vous demande pas de travailler davantage.
 
           <br><br>
 
-          Il vous propose
-          de travailler autrement,
-          avec un outil simple,
-          réactif
-          et directement accessible
-          depuis votre téléphone.
+          Il vous propose de travailler autrement,
+          avec un outil simple, réactif
+          et directement accessible depuis votre téléphone.
 
-        </strong>
+        </div>
 
         <br><br>
 
-        Développement,
-        emploi,
-        visibilité,
-        recherche professionnelle,
-        mutualisation,
-        mécénat
-        et pérennité :
+        Développement, emploi, visibilité,
+        recherche professionnelle, mutualisation,
+        mécénat et pérennité :
 
         <br><br>
 
-        <strong>
+        <span style="font-weight:700 !important;">
 
           les informations et les outils utiles
           sont réunis dans une seule application,
           à portée de main.
 
-        </strong>
+        </span>
 
         <br><br>
 
         Commencez par rendre visibles
-        votre entreprise,
-        vos métiers,
-        vos équipes
-        et votre savoir-faire
-        dans votre commune
-        et votre territoire.
+        votre entreprise, vos métiers,
+        vos équipes et votre savoir-faire
+        dans votre commune et votre territoire.
 
         <br><br>
 
         Restez indépendant,
         mais devenez plus visible,
-        plus réactif,
-        plus proche
-        et mieux relié
-        aux autres acteurs économiques.
+        plus réactif, plus proche
+        et mieux relié aux autres acteurs économiques.
 
         <br><br>
 
-        <strong>
+        <span style="font-weight:700 !important;">
 
           Dans un monde qui accélère,
           connaître rapidement les ressources disponibles
           et pouvoir agir sans perdre de temps
           devient essentiel.
 
-        </strong>
+        </span>
 
       </div>
-
+      
       <button
         id="entrepriseDiscoverOverviewBtn"
         class="choiceBtn"
