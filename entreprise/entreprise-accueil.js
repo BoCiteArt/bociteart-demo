@@ -184,87 +184,98 @@
         class="box"
         style="
           border-left:6px solid #b00020;
+          font-size:17px;
+          line-height:1.5;
         ">
 
-        <strong style="font-size:20px;">
+        <strong
+          style="
+            display:block;
+            font-size:19px;
+            line-height:1.4;
+          ">
 
           ${getLogoHtml()}
-       <strong style="font-size:20px;">
+          a été imaginé par un entrepreneur,
+          pour répondre aux réalités
+          vécues par les entrepreneurs.
 
-  ${getLogoHtml()}
-  a été imaginé par un entrepreneur,
-  pour répondre aux réalités
-  vécues par les entrepreneurs.
+        </strong>
 
-</strong>
+        <br><br>
 
-<br><br>
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:19px;
+            line-height:1.45;
+          ">
 
-<strong
-  style="
-    color:#2f5d46;
-    font-size:22px;
-  ">
+          Il ne vous demande pas
+          de travailler davantage.
 
-  Il ne vous demande pas
-  de travailler davantage.
+          <br><br>
 
-  <br><br>
+          Il vous propose
+          de travailler autrement,
+          avec un outil simple,
+          réactif
+          et directement accessible
+          depuis votre téléphone.
 
-  Il vous propose
-  de travailler autrement,
-  avec un outil simple,
-  réactif
-  et directement accessible
-  depuis votre téléphone.
+        </strong>
 
-</strong>
+        <br><br>
 
-<br><br>
+        Développement,
+        emploi,
+        visibilité,
+        recherche professionnelle,
+        mutualisation,
+        mécénat
+        et pérennité :
 
-Développement,
-emploi,
-visibilité,
-recherche professionnelle,
-mutualisation,
-mécénat
-et pérennité :
+        <br><br>
 
-<br><br>
+        <strong>
 
-<strong>
-  les informations et les outils utiles
-  sont réunis dans une seule application,
-  à portée de main.
-</strong>
+          les informations et les outils utiles
+          sont réunis dans une seule application,
+          à portée de main.
 
-<br><br>
+        </strong>
 
-Commencez par rendre visibles
-votre entreprise,
-vos métiers,
-vos équipes
-et votre savoir-faire
-dans votre commune
-et votre territoire.
+        <br><br>
 
-<br><br>
+        Commencez par rendre visibles
+        votre entreprise,
+        vos métiers,
+        vos équipes
+        et votre savoir-faire
+        dans votre commune
+        et votre territoire.
 
-Restez indépendant,
-mais devenez plus visible,
-plus réactif,
-plus proche
-et mieux relié
-aux autres acteurs économiques.
+        <br><br>
 
-<br><br>
+        Restez indépendant,
+        mais devenez plus visible,
+        plus réactif,
+        plus proche
+        et mieux relié
+        aux autres acteurs économiques.
 
-<strong>
-  Dans un monde qui accélère,
-  connaître rapidement les ressources disponibles
-  et pouvoir agir sans perdre de temps
-  devient essentiel.
-</strong>
+        <br><br>
+
+        <strong>
+
+          Dans un monde qui accélère,
+          connaître rapidement les ressources disponibles
+          et pouvoir agir sans perdre de temps
+          devient essentiel.
+
+        </strong>
+
       </div>
 
       <button
