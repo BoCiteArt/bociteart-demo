@@ -87,8 +87,7 @@
 
           Connaissez-vous le nom
           de cinq entreprises de votre commune,
-          en dehors des hypermarchés
-          et des grandes enseignes ?
+          en dehors des grandes enseignes?
 
         </strong>
 
@@ -100,7 +99,7 @@
             line-height:1.4;
           ">
 
-          Probablement pas.
+          Comme 99% des personnnes, Probablement pas.
 
         </strong>
 
@@ -112,8 +111,8 @@
         <br><br>
 
         <strong>
-          « Je ne savais même pas
-          que cette entreprise existait. »
+          « Je ne savais pas que cette 
+          entreprise existait ici. »
         </strong>
 
         <br><br>
@@ -156,29 +155,27 @@
             line-height:1.4;
           ">
 
-          Les règles du jeu ont changé
+          Les règles du jeu ont changé.
 
         </strong>
 
         <br><br>
 
-        Internet et le commerce en ligne
+        Internet, le commerce en ligne
         ont ouvert de nouvelles possibilités.
 
         <br><br>
 
-        Mais les plus grandes plateformes
-        disposent désormais
-        de moyens considérables
-        pour capter l’attention,
-        les clients
-        et la visibilité.
+        Les plus grandes plateformes
+        disposent de moyens considérables
+        pour capter, ou apsirerd'avantage 
+        les clients et toute la visibilité.
 
         <br><br>
 
         Pour une entreprise locale,
         il devient de plus en plus difficile
-        d’avancer seule.
+        d’avancer seule, ou presque isolée.
 
       </div>
 
@@ -198,8 +195,9 @@
             font-weight:700 !important;
           ">
 
-          ${getLogoHtml()} a été imaginé par un entrepreneur,
-          pour répondre aux réalités vécues par les entrepreneurs.
+          ${getLogoHtml()} a été imaginé, pour 
+          répondre aux réalités efficacement à tous types 
+          d'entrepreneurs ou commerçants.
 
         </div>
 
@@ -213,13 +211,10 @@
             font-weight:700 !important;
           ">
 
-          Il ne vous demande pas de travailler davantage.
-
           <br><br>
 
-          Il vous propose de travailler autrement,
-          avec un outil simple, réactif
-          et directement accessible depuis votre téléphone.
+          Il vous propose, un outil simple, réactif,
+          directement depuis votre téléphone.
 
         </div>
 
@@ -227,40 +222,41 @@
 
         Développement, emploi, visibilité,
         recherche professionnelle, mutualisation,
-        mécénat et pérennité :
+        mécénat et pérennité:
 
         <br><br>
 
         <span style="font-weight:700 !important;">
 
-          les informations et les outils utiles
+          les informations, des outils utiles
           sont réunis dans une seule application,
-          à portée de main.
+          toujours à portée de main.
 
         </span>
 
         <br><br>
 
-        Commencez par rendre visibles
-        votre entreprise, vos métiers,
-        vos équipes et votre savoir-faire
-        dans votre commune et votre territoire.
+        Commencez d'abord ici, par rendre visibles
+        votre entreprise, vos métiers, votre savoir-faire
+        dans votre commune.
 
         <br><br>
 
         Restez indépendant,
-        mais devenez plus visible,
+        mais devenez enfin plus visible,
         plus réactif, plus proche
-        et mieux relié aux autres acteurs économiques.
+        et surtout mieux relié aux autres acteurs 
+        économiques de votre ville.
 
         <br><br>
 
         <span style="font-weight:700 !important;">
 
-          Dans un monde qui accélère,
-          connaître rapidement les ressources disponibles
-          et pouvoir agir sans perdre de temps
-          devient essentiel.
+          Dans un monde qui accélère,l'IA etc...
+          connaître rapidement des ressources disponibles
+          pour vous, pour votre entreprise ou commerce
+          pouvoir agir sans perdre de temps, 
+          devient indispensable, essentiel.
 
         </span>
 
