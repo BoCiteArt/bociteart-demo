@@ -27,14 +27,14 @@
      ===================================================== */
 
   const JOURNEY_VERSION =
-    "7";
+    "8";
 
   const STORAGE = {
     session:
-      "bociteart_entry_session_v7",
+      "bociteart_entry_session_v8",
 
     completed:
-      "bociteart_entry_completed_v7"
+      "bociteart_entry_completed_v8"
   };
 
   const STEPS = {
@@ -729,7 +729,7 @@
   }
 
   console.log(
-    "✅ Chef d'orchestre Bo'CitéArt V7 chargé"
+    "✅ Chef d'orchestre Bo'CitéArt V8 chargé"
   );
 
 })();
