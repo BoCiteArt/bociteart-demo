@@ -87,13 +87,15 @@
         class="box"
         style="
           border-left:6px solid #2f5d46;
+          font-size:16px;
+          line-height:1.5;
         ">
 
         <strong
           style="
             display:block;
             color:#2f5d46;
-            font-size:23px;
+            font-size:20px;
             line-height:1.35;
           ">
 
@@ -106,8 +108,14 @@
 
         <br>
 
-        <strong style="font-size:20px;">
+        <strong
+          style="
+            font-size:18px;
+            line-height:1.4;
+          ">
+
           Probablement pas.
+
         </strong>
 
         <br><br>
@@ -144,15 +152,22 @@
         • vos fournisseurs ;<br>
         • vos sous-traitants ;<br>
         • vos partenaires.
+
       </div>
 
-      <div class="box">
+      <div
+        class="box"
+        style="
+          font-size:16px;
+          line-height:1.5;
+        ">
 
         <strong
           style="
             display:block;
             color:#2f5d46;
-            font-size:20px;
+            font-size:18px;
+            line-height:1.4;
           ">
 
           Les règles du jeu ont changé
@@ -178,13 +193,14 @@
         Pour une entreprise locale,
         il devient de plus en plus difficile
         d’avancer seule.
+
       </div>
 
       <div
         class="box"
         style="
           border-left:6px solid #b00020;
-          font-size:17px;
+          font-size:16px;
           line-height:1.5;
         ">
 
@@ -195,23 +211,25 @@
             line-height:1.45;
           ">
 
-         <span style="white-space:nowrap;">
-  ${getLogoHtml()}
-</span>
-a été imaginé par un entrepreneur,
+          <span style="white-space:nowrap;">
+            ${getLogoHtml()}
+          </span>
+          a été imaginé par un entrepreneur,
+          pour répondre aux réalités
+          vécues par les entrepreneurs.
 
         </strong>
 
         <br><br>
 
-       <strong
-  style="
-    display:block;
-    color:#2f5d46;
-    font-size:17px;
-    line-height:1.45;
-    font-weight:700;
-  ">
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:17px;
+            line-height:1.45;
+            font-weight:700;
+          ">
 
           Il ne vous demande pas
           de travailler davantage.
@@ -305,16 +323,20 @@ a été imaginé par un entrepreneur,
         class="box"
         style="
           border-left:6px solid #2f5d46;
+          font-size:16px;
+          line-height:1.5;
         ">
 
         <strong
           style="
             display:block;
-            font-size:22px;
+            font-size:19px;
             line-height:1.35;
           ">
 
-          ${getLogoHtml()}
+          <span style="white-space:nowrap;">
+            ${getLogoHtml()}
+          </span>
           Entreprise en un coup d’œil
 
         </strong>
@@ -326,6 +348,7 @@ a été imaginé par un entrepreneur,
         et les différentes possibilités
         proposées aux commerces
         et aux entreprises.
+
       </div>
 
       <div
@@ -345,6 +368,7 @@ a été imaginé par un entrepreneur,
             height:auto;
             border-radius:12px;
           ">
+
       </div>
 
       <div
@@ -354,6 +378,8 @@ a été imaginé par un entrepreneur,
           display:none;
           margin-top:12px;
           border-left:6px solid #b00020;
+          font-size:16px;
+          line-height:1.5;
         ">
 
         <strong>
@@ -370,6 +396,7 @@ a été imaginé par un entrepreneur,
         <strong>
           bociteart-entreprise-synoptique.png
         </strong>
+
       </div>
 
       <div
@@ -377,11 +404,19 @@ a été imaginé par un entrepreneur,
         style="
           margin-top:14px;
           border-left:6px solid #2f5d46;
+          font-size:16px;
+          line-height:1.5;
         ">
 
-        <strong style="font-size:19px;">
+        <strong
+          style="
+            font-size:17px;
+            line-height:1.4;
+          ">
+
           Cette image présente
           le contenu général de l’application.
+
         </strong>
 
         <br><br>
@@ -391,6 +426,7 @@ a été imaginé par un entrepreneur,
         vous permettra ensuite
         de parcourir les bandes défilantes
         et d’ouvrir chaque rubrique.
+
       </div>
 
       <button
@@ -421,7 +457,6 @@ a été imaginé par un entrepreneur,
       </button>
     `;
   }
-
   function bindSynoptiqueImage(){
 
     const image =
