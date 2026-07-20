@@ -387,7 +387,7 @@
 
   app.openEntrepriseIntroduction =
     openIntroduction;
-
+   
   app.openRealEntrepriseHome =
     openRealEntrepriseHome;
 
