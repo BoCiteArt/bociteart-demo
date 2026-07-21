@@ -25,331 +25,261 @@
     return document.getElementById(id);
   }
 
+  /* =======================================================
+     PAGE PRINCIPALE — ANNUAIRE ÉCONOMIQUE
+     ======================================================= */
+
   function getDirectoryHtml(){
 
     return `
 
       <div
-        class="box entrepriseModuleIntro">
+        class="box entrepriseModuleIntro"
+        style="
+          font-size:15px;
+          line-height:1.5;
+          font-weight:400;
+        ">
 
-        <strong
-          class="entrepriseModuleTitle">
+        <div
+          class="entrepriseModuleTitle"
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            line-height:1.4;
+            font-weight:700;
+          ">
 
-          L'annuaire devient
-          un véritable outil
+          L’annuaire devient
+          votre véritable outil
           de développement économique.
 
-        </strong>
+        </div>
 
-        <br>
+        <div
+          style="
+            margin-top:14px;
+            color:#111;
+            font-size:15px;
+            line-height:1.5;
+            font-weight:400;
+          ">
 
-        Il ne s'agit plus
-        d'une simple liste de noms.
+          Ce n’est pas
+          une simple liste d’entreprises.
 
-        <br><br>
+          <br><br>
 
-        Bo'CitéArt souhaite permettre
-        aux habitants,
-        aux entreprises
-        et aux collectivités
-        de mieux connaître
-        les richesses économiques
-        présentes sur leur territoire.
+          C’est votre véritable outil
+          de développement économique.
 
-      </div>
+          <br><br>
 
-      <div class="box">
+          Et il ne vous coûte rien.
 
-        <strong
-          class="entrepriseModuleSubtitle">
+          <br><br>
 
-          Connaissez-vous
-          cinq entreprises
-          de votre commune
-          en dehors
-          des grandes enseignes ?
+          Prenez quelques minutes
+          pour le découvrir
+          et mesurez par vous-même
+          tout ce qu’il peut vous apporter.
 
-        </strong>
+          <br><br>
 
-        <br><br>
+          Bo'CitéArt permet
+          aux habitants,
+          aux entreprises,
+          aux commerçants
+          et aux collectivités
+          de découvrir rapidement
+          les richesses économiques,
+          les métiers
+          et les savoir-faire
+          présents dans leur commune
+          et leur territoire.
 
-        Probablement pas.
-
-        <br><br>
-
-        Pourtant,
-        combien de fois entend-on :
-
-        <br><br>
-
-        « Je ne savais pas
-        que cette entreprise
-        faisait cela. »
-
-        <br><br>
-
-        Ou encore :
-
-        <br><br>
-
-        « Je ne savais même pas
-        qu'elle existait. »
-
-        <br><br>
-
-        C'est précisément
-        ce manque de visibilité
-        que Bo'CitéArt souhaite corriger.
+        </div>
 
       </div>
 
-      <div class="box">
+      <div
+        class="box"
+        style="
+          font-size:15px;
+          line-height:1.5;
+          font-weight:400;
+        ">
 
-        <strong
-          class="entrepriseModuleSubtitle">
+        <div
+          class="entrepriseModuleSubtitle"
+          style="
+            color:#2f5d46;
+            font-size:16px;
+            line-height:1.4;
+            font-weight:700;
+          ">
+
+          Qui vous dit
+          qu’il faut aller loin
+          pour trouver ce qui existe peut-être déjà
+          à quelques pas de chez vous ?
+
+        </div>
+
+        <div
+          style="
+            margin-top:14px;
+            color:#111;
+            font-size:15px;
+            line-height:1.5;
+            font-weight:400;
+          ">
+
+          Chaque jour,
+          des entreprises cherchent :
+
+          <br><br>
+
+          • de nouveaux clients ;<br>
+          • des fournisseurs ;<br>
+          • des partenaires ;<br>
+          • des salariés ;<br>
+          • des sous-traitants ;<br>
+          • des compétences particulières.
+
+          <br><br>
+
+          Trop souvent,
+          la réponse se trouve
+          à deux pas de votre entreprise.
+
+          <br><br>
+
+          Encore faut-il savoir
+          qu’elle existe.
+
+        </div>
+
+      </div>
+
+      <div
+        class="box"
+        style="
+          font-size:15px;
+          line-height:1.5;
+          font-weight:400;
+        ">
+
+        <div
+          class="entrepriseModuleSubtitle"
+          style="
+            color:#2f5d46;
+            font-size:16px;
+            line-height:1.4;
+            font-weight:700;
+          ">
 
           Un annuaire vivant
 
-        </strong>
+        </div>
 
-        <br><br>
+        <div
+          style="
+            margin-top:14px;
+            color:#111;
+            font-size:15px;
+            line-height:1.5;
+            font-weight:400;
+          ">
 
-        Vous pourrez découvrir :
+          Découvrez et trouvez rapidement :
 
-        <br><br>
+          <br><br>
 
-        • les métiers ;<br>
-        • les savoir-faire ;<br>
-        • les produits ;<br>
-        • les services ;<br>
-        • les partenaires ;<br>
-        • les recherches professionnelles.
+          • les métiers ;<br>
+          • les savoir-faire ;<br>
+          • les produits ;<br>
+          • les services ;<br>
+          • les partenaires ;<br>
+          • les fournisseurs ;<br>
+          • les sous-traitants ;<br>
+          • les recherches professionnelles ;<br>
+          • les besoins des entreprises.
 
-      </div>
-
-      <div class="box">
-
-        <strong
-          class="entrepriseModuleSubtitle">
-
-          Rechercher autrement
-
-        </strong>
-
-        <br><br>
-
-        Avant d'aller chercher loin,
-
-        regardez déjà
-        ce qui existe
-        autour de vous.
-
-        <br><br>
-
-        Votre prochain fournisseur,
-        partenaire,
-        sous-traitant
-        ou client
-        est peut-être déjà
-        dans votre commune.
-
-      </div>
-
-            <div class="box">
-
-        <strong
-          class="entrepriseModuleSubtitle">
-
-          Un annuaire qui crée
-          des opportunités
-
-        </strong>
-
-        <br><br>
-
-        Bo'CitéArt ne souhaite pas
-        simplement afficher
-        des entreprises.
-
-        <br><br>
-
-        Son objectif est de favoriser :
-
-        <br><br>
-
-        • les rencontres ;<br>
-        • les échanges ;<br>
-        • les partenariats ;<br>
-        • les recrutements ;<br>
-        • les recommandations ;<br>
-        • les collaborations locales.
-
-      </div>
-
-      <div class="box">
-
-        <strong
-          class="entrepriseModuleSubtitle">
-
-          Une base vivante
-
-        </strong>
-
-        <br><br>
-
-        Les entreprises,
-        commerces,
-        artisans
-        et professions
-        pourront mettre à jour
-        leurs informations.
-
-        <br><br>
-
-        Bo'CitéArt enrichira
-        progressivement
-        cette base
-        afin qu'elle reste
-        la plus fiable possible.
+        </div>
 
       </div>
 
       <div
-        class="entrepriseModuleActions">
+        class="box"
+        style="
+          font-size:15px;
+          line-height:1.5;
+          font-weight:400;
+        ">
 
-        <button
-          id="directorySearchBtn"
-          class="choiceBtn"
-          type="button">
+        <div
+          class="entrepriseModuleSubtitle"
+          style="
+            color:#2f5d46;
+            font-size:16px;
+            line-height:1.4;
+            font-weight:700;
+          ">
 
-          Rechercher une entreprise
+          Faire connaître son entreprise
+          devient aujourd’hui
+          un véritable atout concurrentiel.
 
-        </button>
+        </div>
 
-        <button
-          id="directoryProfessionalBtn"
-          class="choiceBtn"
-          type="button">
+        <div
+          style="
+            margin-top:14px;
+            color:#111;
+            font-size:15px;
+            line-height:1.5;
+            font-weight:400;
+          ">
 
-          Recherche professionnelle
+          Lorsqu’une entreprise
+          est facilement identifiée
+          par les habitants
+          et les professionnels,
 
-        </button>
+          elle augmente naturellement
+          ses opportunités.
 
-        <button
-          id="directoryVisibilityBtn"
-          class="choiceBtn"
-          type="button">
+          <br><br>
 
-          Faire connaître mon entreprise
+          Plus de visibilité.<br>
+          Plus de contacts.<br>
+          Plus de recommandations.<br>
+          Plus de collaborations.<br>
+          Plus de possibilités de recrutement.
 
-        </button>
+          <br><br>
+
+          Aujourd’hui,
+          être excellent ne suffit plus.
+
+          <br><br>
+
+          Encore faut-il être vu,
+          connu
+          et surtout reconnu.
+
+        </div>
 
       </div>
 
       <div
-        class="box entrepriseModuleConclusion">
+        class="box"
+        style="
+          font-size:15px;
+          line-height:1.5;
+          font-weight:400;
+        ">
 
-        <strong
-          style="font-size:20px;">
-
-          Plus nous connaîtrons
-          les entreprises
-          de notre territoire,
-
-          plus elles auront
-          d'opportunités
-          de travailler ensemble.
-
-        </strong>
-
-      </div>
-
-    `;
-  }
-
-  function bindDirectory(){
-
-    const searchButton =
-      getElement(
-        "directorySearchBtn"
-      );
-
-    const professionalButton =
-      getElement(
-        "directoryProfessionalBtn"
-      );
-
-    const visibilityButton =
-      getElement(
-        "directoryVisibilityBtn"
-      );
-
-    if(searchButton){
-
-      searchButton.onclick = function(){
-
-        if(
-          typeof module.openLocalDirectory ===
-          "function"
-        ){
-          module.openLocalDirectory();
-          return;
-        }
-
-        module.openScreen(
-          "annuaire_local"
-        );
-      };
-    }
-
-    if(professionalButton){
-
-      professionalButton.onclick = function(){
-
-        module.openScreen(
-          "annuaire"
-        );
-      };
-    }
-
-    if(visibilityButton){
-
-      visibilityButton.onclick = function(){
-
-        module.openScreen(
-          "visibilite"
-        );
-      };
-    }
-
-  }
-
-  function openDirectoryModule(){
-
-    module.renderModulePage(
-
-      "Annuaire économique",
-
-      getDirectoryHtml(),
-
-      {
-        afterRender:
-          bindDirectory
-      }
-
-    );
-  }
-
-  module.registerScreen(
-    "annuaire_local",
-    openDirectoryModule
-  );
-
-  module.openDirectoryModule =
-    openDirectoryModule;
-
-  console.log(
-    "✅ Nouveau module Annuaire chargé"
-  );
-
-})();
+        <div
+          class="
