@@ -4,7 +4,7 @@
    DÉVELOPPER AUTREMENT
    ========================================================= */
 
-(function initEntrepriseDeveloppement(){
+(function initEntrepriseDeveloppement(){ 
 
   "use strict";
 
