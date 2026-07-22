@@ -276,6 +276,14 @@ function getIntroductionHtml(){
 
         <br>
 
+        <div
+  style="
+    margin-top:6px;
+    color:#111;
+    font-size:16px;
+    line-height:1.55;
+    font-weight:400;
+  ">
         Rendez visibles votre entreprise,
         vos métiers
         et votre savoir-faire
@@ -297,7 +305,14 @@ function getIntroductionHtml(){
         </span>
 
         <br>
-
+<div
+  style="
+    margin-top:6px;
+    color:#111;
+    font-size:16px;
+    line-height:1.55;
+    font-weight:400;
+  ">
         Développez votre activité
         en recherchant de nouveaux clients,
         fournisseurs,
@@ -316,7 +331,14 @@ function getIntroductionHtml(){
         </span>
 
         <br>
-
+<div
+  style="
+    margin-top:6px;
+    color:#111;
+    font-size:16px;
+    line-height:1.55;
+    font-weight:400;
+  ">
         Publiez une offre d’emploi
         et recrutez autrement,
         en donnant d’abord leur chance
@@ -336,7 +358,14 @@ function getIntroductionHtml(){
         </span>
 
         <br>
-
+<div
+  style="
+    margin-top:6px;
+    color:#111;
+    font-size:16px;
+    line-height:1.55;
+    font-weight:400;
+  ">
         Faites connaître votre entreprise autrement,
         attirez plus facilement
         de futurs salariés,
@@ -354,7 +383,14 @@ function getIntroductionHtml(){
         </span>
 
         <br>
-
+<div
+  style="
+    margin-top:6px;
+    color:#111;
+    font-size:16px;
+    line-height:1.55;
+    font-weight:400;
+  ">
         Présentez vos activités,
         vos métiers,
         vos réalisations
@@ -374,7 +410,14 @@ function getIntroductionHtml(){
         </span>
 
         <br>
-
+<div
+  style="
+    margin-top:6px;
+    color:#111;
+    font-size:16px;
+    line-height:1.55;
+    font-weight:400;
+  ">
         Gardez toujours à l’esprit
         de rechercher un métier,
         une compétence,
@@ -396,7 +439,14 @@ function getIntroductionHtml(){
         </span>
 
         <br>
-
+<div
+  style="
+    margin-top:6px;
+    color:#111;
+    font-size:16px;
+    line-height:1.55;
+    font-weight:400;
+  ">
         Face à des charges
         de plus en plus lourdes,
         rapprochez les entreprises partenaires
@@ -421,7 +471,14 @@ function getIntroductionHtml(){
         </span>
 
         <br>
-
+<div
+  style="
+    margin-top:6px;
+    color:#111;
+    font-size:16px;
+    line-height:1.55;
+    font-weight:400;
+  ">
         Découvrez ce puissant levier
         de développement local,
         encore largement méconnu,
@@ -443,7 +500,14 @@ function getIntroductionHtml(){
         </span>
 
         <br>
-
+<div
+  style="
+    margin-top:6px;
+    color:#111;
+    font-size:16px;
+    line-height:1.55;
+    font-weight:400;
+  ">
         Préparez dès aujourd’hui
         la continuité,
         la valorisation,
