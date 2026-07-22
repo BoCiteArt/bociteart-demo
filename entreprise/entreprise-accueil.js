@@ -532,14 +532,14 @@ function getIntroductionHtml(){
           font-weight:400;
         ">
 
-        <strong
-          style="
-            display:block;
-            color:#2f5d46;
-            font-size:19px;
-          ">
-          Commencez ICI&nbsp;!
-        </strong>
+      <strong
+  style="
+    display:block;
+    color:#111;
+    font-size:19px;
+  ">
+  Commencez ICI&nbsp;!
+</strong>
 
         <br>
 
