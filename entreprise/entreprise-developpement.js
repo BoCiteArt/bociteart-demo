@@ -363,11 +363,9 @@
         </div>
 
         <!--
-          EMPLACEMENT RÉSERVÉ À LA FUTURE CONCLUSION.
-
-          La conclusion sera rédigée uniquement
-          lorsque l’ensemble du parcours Entreprise
-          sera terminé et validé.
+          Emplacement réservé à la future conclusion.
+          Elle sera ajoutée lorsque l’ensemble
+          du parcours Entreprise sera terminé.
         -->
 
         <button
@@ -381,29 +379,79 @@
     `;
   }
 
-     if(partnerButton){
+  function bindDevelopment(){
 
-      partnerButton.onclick = function(){
+    function connectButton(id, action){
+
+      const button =
+        getElement(id);
+
+      if(button){
+        button.onclick = action;
+      }
+    }
+
+    connectButton(
+      "developmentDirectoryBtnNew",
+      function(){
+
+        if(
+          typeof module.openLocalDirectory ===
+          "function"
+        ){
+          module.openLocalDirectory();
+          return;
+        }
+
+        module.openScreen(
+          "annuaire_local"
+        );
+      }
+    );
+
+    connectButton(
+      "developmentVisibilityBtnNew",
+      function(){
+
+        module.openScreen(
+          "visibilite"
+        );
+      }
+    );
+
+    connectButton(
+      "developmentEmploymentBtnNew",
+      function(){
+
+        module.openScreen(
+          "emploi"
+        );
+      }
+    );
+
+    connectButton(
+      "developmentPartnerBtnNew",
+      function(){
 
         module.openScreen(
           "annuaire"
         );
-      };
-    }
+      }
+    );
 
-    if(mutualisationButton){
-
-      mutualisationButton.onclick = function(){
+    connectButton(
+      "developmentMutualisationBtnNew",
+      function(){
 
         module.openScreen(
           "mutualisation"
         );
-      };
-    }
+      }
+    );
 
-    if(privatePlanButton){
-
-      privatePlanButton.onclick = function(){
+    connectButton(
+      "developmentPrivatePlanBtnNew",
+      function(){
 
         const openPlan = function(){
 
@@ -441,8 +489,8 @@
         }
 
         openPlan();
-      };
-    }
+      }
+    );
   }
 
   function openDevelopment(){
