@@ -446,6 +446,13 @@ function getHomeHtml(){
         border-color:#b00020;
         background:#fff7f7;
       }
+
+      .entrepriseInfoBox{
+        font-size:16px;
+        line-height:1.7;
+        color:#222;
+      }
+
     </style>
 
     <div style="margin-bottom:12px;">
@@ -455,9 +462,9 @@ function getHomeHtml(){
         type="button"
         data-entreprise-back
         onclick="
-          if (typeof openEntrepriseHome === 'function') {
+          if(typeof openEntrepriseHome==='function'){
             openEntrepriseHome();
-          } else if (typeof openHome === 'function') {
+          }else if(typeof openHome==='function'){
             openHome();
           }
         ">
@@ -467,10 +474,9 @@ function getHomeHtml(){
     </div>
 
     <div
-      class="box"
+      class="box entrepriseInfoBox"
       style="
         border-left:6px solid #2f5d46;
-        line-height:1.5;
       ">
 
       <span
@@ -482,7 +488,7 @@ function getHomeHtml(){
         ">
         Développez votre entreprise grâce
         aux ressources de votre territoire
-      </span> 
+      </span>
 
 <br><br>
 
