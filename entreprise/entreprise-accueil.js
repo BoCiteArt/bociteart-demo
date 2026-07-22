@@ -7,7 +7,7 @@
    ========================================================= */
 
 (function initEntrepriseAccueil(){     
-
+ 
   "use strict";
 
   const app =
