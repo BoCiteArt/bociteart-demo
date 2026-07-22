@@ -30055,10 +30055,10 @@ console.log(
     openLocalDirectory();
   }
 
-  app.registerScreen(
-    "annuaire_local",
-    openLocalDirectory
-  );
+ /*
+  L’ancien annuaire reste disponible,
+  mais il ne remplace plus l’Observatoire économique.
+*/
 
   app.openCorrectedDirectory =
     openLocalDirectory;
