@@ -455,27 +455,49 @@ function getHomeHtml(){
         line-height:1.5;
       ">
 
-      <strong style="font-size:18px;">
-        Développez votre entreprise grâce
-        aux ressources de votre territoire
-      </strong>
+ <button
+  class="choiceBtn"
+  type="button"
+  data-entreprise-back
+  style="
+    margin:0 0 12px 0;
+    font-weight:400;
+  ">
+  Retour
+</button>
 
-      <br><br>
+<span
+  style="
+    display:block;
+    color:#2f5d46;
+    font-size:18px;
+    font-weight:700;
+  ">
+  Développez votre entreprise grâce
+  aux ressources de votre territoire
+</span>
 
-      Bo'CitéArt réunit,
-      dans un même espace,
-      des services utiles pour :
+<br><br>
 
-      <br><br>
+<span style="font-weight:400;">
+  <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c00020;">Art</span>
+  réunit,
+  dans un même espace,
+  des services utiles pour :
+</span>
 
-      • recruter plus facilement ;<br>
-      • rechercher des entreprises et des compétences ;<br>
-      • développer votre activité ;<br>
-      • réduire certaines charges ;<br>
-      • améliorer votre visibilité ;<br>
-      • découvrir des opportunités professionnelles ;<br>
-      • préparer l’avenir de votre entreprise ;<br>
-      • comprendre et utiliser le mécénat.
+<br><br>
+
+<span style="font-weight:400;">
+  • recruter plus facilement ;<br>
+  • rechercher des entreprises et des compétences ;<br>
+  • développer votre activité ;<br>
+  • réduire certaines charges ;<br>
+  • améliorer votre visibilité ;<br>
+  • découvrir des opportunités professionnelles ;<br>
+  • préparer l’avenir de votre entreprise ;<br>
+  • comprendre et utiliser le mécénat.
+</span>
 
       <br><br>
 
@@ -545,9 +567,7 @@ function getHomeHtml(){
         class="entrepriseBand"
         type="button"
         data-entreprise-screen="developpement">
-
-<div class="box">
-
+        
         <span class="entrepriseBandText">
           Développez votre entreprise
           • Clients
