@@ -6,7 +6,7 @@
    2. ESPACE ENTREPRISE AVEC BANDES DÉFILANTES
    ========================================================= */
 
-(function initEntrepriseAccueil(){   
+(function initEntrepriseAccueil(){    
 
   "use strict";
 
@@ -227,20 +227,6 @@ function getIntroductionHtml(){
         des entrepreneurs
         et des commerçants.
       </div>
-
-      <div
-         style="
-         margin-top:10px;
-         color:<div
-  style="
-    color:#2f5d46;
-    font-size:18px;
-    line-height:1.5;
-    font-weight:700;
-  ">
-  Découvrez les thèmes suivants
-</div>
-
 <div
   style="
     color:#2f5d46;
