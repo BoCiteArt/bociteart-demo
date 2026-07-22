@@ -6,7 +6,7 @@
    2. ESPACE ENTREPRISE AVEC BANDES DÉFILANTES
    ========================================================= */
 
-(function initEntrepriseAccueil(){    
+(function initEntrepriseAccueil(){     
 
   "use strict";
 
