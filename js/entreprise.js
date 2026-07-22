@@ -442,39 +442,47 @@ function getHomeHtml(){
         font-weight:900;
       }
 
-      #entrepriseHomeBands .entrepriseBandPrivate {
+        #entrepriseHomeBands .entrepriseBandPrivate {
         border-color:#b00020;
         background:#fff7f7;
       }
     </style>
 
-<div style="margin-bottom:12px;">
+    <div style="margin-bottom:12px;">
 
-  <button
-    class="choiceBtn"
-    type="button"
-    data-entreprise-back>
-    Retour
-  </button>
+      <button
+        class="choiceBtn"
+        type="button"
+        data-entreprise-back
+        onclick="
+          if (typeof openEntrepriseHome === 'function') {
+            openEntrepriseHome();
+          } else if (typeof openHome === 'function') {
+            openHome();
+          }
+        ">
+        Retour
+      </button>
 
-</div>
-    
+    </div>
+
     <div
       class="box"
       style="
         border-left:6px solid #2f5d46;
         line-height:1.5;
       ">
-<span
-  style="
-    display:block;
-    color:#2f5d46;
-    font-size:18px;
-    font-weight:700;
-  ">
-  Développez votre entreprise grâce
-  aux ressources de votre territoire
-</span>
+
+      <span
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:18px;
+          font-weight:700;
+        ">
+        Développez votre entreprise grâce
+        aux ressources de votre territoire
+      </span> 
 
 <br><br>
 
