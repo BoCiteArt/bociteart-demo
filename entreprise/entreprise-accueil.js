@@ -110,7 +110,7 @@ function getIntroductionHtml(){
           font-weight:700;
         ">
         Connaissez-vous le nom
-        de cinq entreprises de votre commune,
+        de 5 entreprises de votre commune,
         en dehors des grandes enseignes ?
       </div>
 
@@ -127,7 +127,9 @@ function getIntroductionHtml(){
 
         <br><br>
 
-        <strong>probablement NON&nbsp;!</strong>
+        <strong>
+          probablement NON&nbsp;!
+        </strong>
 
         <br><br>
 
@@ -225,7 +227,8 @@ function getIntroductionHtml(){
           font-weight:700;
         ">
         ${getLogoHtml()} a été imaginé
-        pour répondre aux réalités
+        pour vous
+        et pour répondre aux réalités
         des entrepreneurs
         et des commerçants.
       </div>
@@ -238,10 +241,11 @@ function getIntroductionHtml(){
           line-height:1.5;
           font-weight:700;
         ">
-        Il vous propose un outil simple,
+        À l’aide d’un outil simple,
         réactif
         et toujours accessible
-        depuis votre téléphone.
+        depuis votre poche,
+        sur votre téléphone portable.
       </div>
 
       <div
@@ -253,126 +257,205 @@ function getIntroductionHtml(){
           font-weight:400;
         ">
 
-        Vous pourrez progressivement découvrir :
+        <div
+          style="
+            color:#2f5d46;
+            font-size:18px;
+            font-weight:700;
+          ">
+          Découvrez les thèmes suivants
+        </div>
 
-        <br><br>
+        <br>
 
-        <span style="color:#2f5d46;font-weight:700;">
+        <span
+          style="
+            color:#2f5d46;
+            font-weight:700;
+          ">
           L’annuaire économique
         </span>
 
         <br>
 
-        pour identifier les entreprises,
-        les commerces,
-        les artisans,
-        les métiers
-        et les savoir-faire présents
-        dans votre commune.
+        Rendez visibles votre entreprise,
+        vos métiers
+        et votre savoir-faire
+        afin d’être trouvé plus facilement
+        par les habitants,
+        les entreprises,
+        les collectivités
+        et les futurs partenaires
+        de votre territoire.
 
         <br><br>
 
-        <span style="color:#2f5d46;font-weight:700;">
+        <span
+          style="
+            color:#2f5d46;
+            font-weight:700;
+          ">
           Le développement
         </span>
 
         <br>
 
-        pour rechercher des clients,
-        des fournisseurs,
-        des sous-traitants
-        et des partenaires professionnels.
+        Développez votre activité
+        en recherchant de nouveaux clients,
+        fournisseurs,
+        sous-traitants
+        et partenaires professionnels,
+        d’abord près de chez vous.
 
         <br><br>
 
-        <span style="color:#2f5d46;font-weight:700;">
+        <span
+          style="
+            color:#2f5d46;
+            font-weight:700;
+          ">
           L’emploi
         </span>
 
         <br>
 
-        pour publier une offre,
-        recruter localement
-        et consulter les candidatures reçues.
+        Publiez une offre d’emploi
+        et recrutez autrement,
+        en donnant d’abord leur chance
+        aux compétences présentes
+        sur votre territoire,
+        puis en élargissant progressivement
+        votre recherche si nécessaire.
 
         <br><br>
 
-        <span style="color:#2f5d46;font-weight:700;">
+        <span
+          style="
+            color:#2f5d46;
+            font-weight:700;
+          ">
           La fidélisation
         </span>
 
         <br>
 
-        pour mieux faire connaître l’entreprise,
-        attirer des salariés
-        et valoriser les services accessibles
-        autour de leur lieu de travail.
+        Faites connaître votre entreprise autrement,
+        attirez plus facilement
+        de futurs salariés,
+        valorisez vos services
+        et renforcez votre attractivité locale.
 
         <br><br>
 
-        <span style="color:#2f5d46;font-weight:700;">
+        <span
+          style="
+            color:#2f5d46;
+            font-weight:700;
+          ">
           La visibilité
         </span>
 
         <br>
 
-        pour présenter votre activité,
+        Présentez vos activités,
         vos métiers,
         vos réalisations
-        et votre savoir-faire.
+        et votre savoir-faire,
+        sans bruit,
+        mais différemment
+        des moyens de communication traditionnels.
 
         <br><br>
 
-        <span style="color:#2f5d46;font-weight:700;">
+        <span
+          style="
+            color:#2f5d46;
+            font-weight:700;
+          ">
           La recherche professionnelle
         </span>
 
         <br>
 
-        pour trouver un métier,
+        Gardez toujours à l’esprit
+        de rechercher un métier,
         une compétence,
         un fournisseur,
         un expert
-        ou une entreprise,
+        ou une entreprise
         d’abord dans votre commune,
-        puis sur un territoire plus large.
+        puis d’élargir éventuellement
+        votre recherche si nécessaire.
 
         <br><br>
 
-        <span style="color:#2f5d46;font-weight:700;">
+        <span
+          style="
+            color:#2f5d46;
+            font-weight:700;
+          ">
           La mutualisation
         </span>
 
         <br>
 
-        pour rapprocher les entreprises
-        qui rencontrent les mêmes besoins
-        et comparer des propositions communes.
+        Face à des charges
+        de plus en plus lourdes,
+        rapprochez les entreprises partenaires
+        ${getLogoHtml()}
+        ayant les mêmes besoins.
 
         <br><br>
 
-        <span style="color:#2f5d46;font-weight:700;">
+        Mutualisez certaines charges,
+        comparez plusieurs propositions communes
+        et recherchez ensemble
+        de meilleures conditions tarifaires.
+
+        <br><br>
+
+        <span
+          style="
+            color:#2f5d46;
+            font-weight:700;
+          ">
           Le mécénat
         </span>
 
         <br>
 
-        pour découvrir les projets locaux
-        et contribuer selon les possibilités
-        de votre entreprise.
+        Découvrez ce puissant levier
+        de développement local,
+        encore largement méconnu,
+        qui permet aux entreprises
+        de renforcer discrètement
+        mais efficacement leur visibilité,
+        de valoriser leur image
+        et de découvrir des opportunités
+        auxquelles beaucoup ne pensent jamais.
 
         <br><br>
 
-        <span style="color:#2f5d46;font-weight:700;">
+        <span
+          style="
+            color:#2f5d46;
+            font-weight:700;
+          ">
           La pérennité
         </span>
 
         <br>
 
-        pour préparer la continuité,
+        Préparez dès aujourd’hui
+        la continuité,
         la valorisation,
         la transmission
-        ou la reprise de l’entreprise.
+        ou la reprise de votre entreprise.
+
+        <br><br>
+
+        Les plus belles réussites
+        se construisent dans le temps.
       </div>
 
       <div
@@ -386,43 +469,43 @@ function getIntroductionHtml(){
           line-height:1.55;
           font-weight:400;
         ">
-        <strong>
-          Commencez d’abord ici,
-          impérativement,
-          par rendre visibles votre entreprise,
-          vos métiers
-          et votre savoir-faire
-          dans votre commune.
-        </strong>
-      </div>
 
-      <div
-        style="
-          margin-top:18px;
-          color:#111;
-          font-size:16px;
-          line-height:1.55;
-          font-weight:400;
-        ">
-        Car avant de pouvoir travailler ensemble,
-        recruter,
-        recommander,
-        mutualiser
-        ou créer de nouveaux partenariats,
-        encore faut-il savoir
-        que votre entreprise existe,
-        où elle se trouve
-        et ce qu’elle propose.
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:19px;
+          ">
+          Commencez ICI&nbsp;!
+        </strong>
+
+        <br>
+
+        Impérativement,
+        commencez par rendre visibles
+        votre entreprise,
+        vos métiers
+        et votre savoir-faire
+        dans votre commune.
 
         <br><br>
 
         Restez indépendant,
-        mais devenez plus visible,
-        plus réactif
+        OUI,
+        mais devenez véritablement visible,
+        réactif
         et mieux relié
         aux autres acteurs économiques
         de votre commune
         et de votre territoire.
+
+        <br><br>
+
+        Devenez désormais
+        un acteur identifié,
+        reconnu
+        et incontournable
+        de votre environnement économique.
       </div>
 
     </div>
