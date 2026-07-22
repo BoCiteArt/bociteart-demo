@@ -252,12 +252,12 @@ function getIntroductionHtml(){
           font-weight:400;
         ">
 
-        <div
+       <div
   style="
-    color:#2f5d46;
+    color:#111;
     font-size:18px;
     line-height:1.5;
-    font-weight:700;
+    font-weight:900;
   ">
   Découvrez les thèmes suivants
 </div>
@@ -268,11 +268,14 @@ function getIntroductionHtml(){
     color:#111;
     font-size:16px;
     line-height:1.55;
-    font-weight:400;
+    font-weight:900;
   ">
   Sur la prochaine page,
   cliquez dans la bande défilante
-  correspondant au thème choisi
+  correspondant au thème choisi.
+
+  <br><br>
+
   Des explications plus approfondies
   vous y attendent.
 </div>
