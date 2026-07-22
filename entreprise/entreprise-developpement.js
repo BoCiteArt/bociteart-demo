@@ -458,7 +458,6 @@
         }
 
         if(
-              if(
           typeof module.openHome ===
           "function"
         ){
