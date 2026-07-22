@@ -227,36 +227,42 @@ function getIntroductionHtml(){
         des entrepreneurs
         et des commerçants.
       </div>
-<div
-  style="
-    color:#2f5d46;
-    font-size:18px;
-    line-height:1.5;
-    font-weight:700;
-  ">
-  Découvrez les thèmes suivants
-</div>
 
-<div
-  style="
-    margin-top:8px;
-    color:#111;
-    font-size:16px;
-    line-height:1.45;
-    font-weight:900;
-  ">
-  Sur la prochaine page, cliquez dans la bande défilante correspondant au thème choisi.<br>
-  Des explications plus approfondies vous y attendent.
-</div>
-         font-size:16px;
-         line-height:1.55;
-         font-weight:900;
+      <br>
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:18px;
+          line-height:1.5;
+          font-weight:700;
         ">
-        À l’aide d’un outil simple,
-        réactif
-        et toujours accessible
-        depuis votre poche,
-        sur votre téléphone portable.
+        Découvrez les thèmes suivants
+      </div>
+
+      <div
+        style="
+          margin-top:8px;
+          color:#111;
+          font-size:16px;
+          line-height:1.45;
+          font-weight:900;
+        ">
+        Sur la prochaine page, cliquez dans la bande défilante correspondant au thème choisi.<br>
+        Des explications plus approfondies vous y attendent.
+      </div>
+
+      <br>
+
+      <div
+        style="
+          color:#111;
+          font-size:16px;
+          line-height:1.55;
+          font-weight:400;
+        ">
+        À l’aide d’un outil simple, réactif et toujours accessible
+        depuis votre poche, sur votre téléphone portable.
       </div>
 
       <div
