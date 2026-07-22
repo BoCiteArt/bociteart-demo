@@ -674,47 +674,70 @@ function getHomeHtml(){
 
     </div>
 
-    <div
+     <div
       class="box"
-      style="margin-top:14px;">
+      style="
+        margin-top:14px;
+        border-left:6px solid #2f5d46;
+        line-height:1.5;
+      ">
 
-      <strong>
-        Vous avez une question précise ?
+      <strong
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:18px;
+          line-height:1.4;
+        ">
+        Recherchez une entreprise,
+        un métier ou un savoir-faire
       </strong>
+
+      <br>
+
+      Commencez toujours votre recherche
+      dans votre commune.
 
       <br><br>
 
-      Bo'CitéArt recherchera d’abord
-      les solutions présentes dans votre commune,
-      puis pourra élargir la recherche
-      lorsque cela sera nécessaire.
+      Vous pouvez rechercher :
 
-      <textarea
-        id="entrepriseAiQuestion"
-        class="miniField"
-        style="
-          min-height:85px;
-          margin-top:10px;
-        "
-        placeholder="Exemple : je recherche un salarié, un fournisseur, un sous-traitant ou une solution pour réduire mes charges.">
-      </textarea>
+      <br><br>
+
+      • le nom d’une entreprise ;<br>
+      • un métier ;<br>
+      • une activité ;<br>
+      • un produit ;<br>
+      • un service ;<br>
+      • un fournisseur ;<br>
+      • un sous-traitant ;<br>
+      • un partenaire professionnel.
+
+      <br><br>
+
+      Si aucun résultat n’est trouvé localement,
+
+      <strong>
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </strong>
+
+      pourra progressivement élargir la recherche
+      aux communes voisines,
+      au département,
+      à la région,
+      puis à l’ensemble du territoire.
 
       <button
         class="choiceBtn"
-        id="entrepriseAiAskBtn"
         type="button"
+        data-entreprise-screen="annuaire_local"
         style="
           width:100%;
-          margin-top:10px;
+          margin-top:14px;
         ">
-        Poser ma question
+        Rechercher une entreprise
       </button>
 
-      <div
-        id="entrepriseAiAnswer"
-        class="muted"
-        style="margin-top:10px;">
-      </div>
     </div>
   `;
 }
@@ -1216,61 +1239,187 @@ function synchronizeHomeBands(){
     });
   }
 
-  function getDirectoryHtml(){
-    return `
-      <div class="box" style="border-left:6px solid #2f5d46;">
-        <strong>Les entreprises de votre ville</strong><br><br>
+ function getDirectoryHtml(){
+  return `
 
-        Retrouvez les activités et les savoir-faire présents
-        dans votre commune.
+    <div
+      class="box"
+      style="border-left:6px solid #2f5d46;line-height:1.6;">
 
-        <br><br>
+      <strong
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:20px;
+          line-height:1.4;
+        ">
+        Un annuaire économique vivant
+        et régulièrement actualisé
+      </strong>
 
-        Dans la version définitive, cette liste sera alimentée
-        et actualisée à partir des données publiques officielles.
-      </div>
+      <br>
 
-      <div class="box">
-        <strong>Rechercher</strong><br><br>
+      Connaissiez-vous 5 entreprises de votre ville ?
 
-        <input
-          id="entrepriseDirectorySearch"
-          class="miniField"
-          type="search"
-          placeholder="Nom, métier ou activité">
+      <strong>Probablement NON&nbsp;!</strong>
 
-        <select
-          id="entrepriseDirectoryFilter"
-          class="miniField"
-          style="margin-top:9px;">
+      <br><br>
 
-          <option value="all">
-            Toutes les entreprises
-          </option>
+      Pourtant, elles sont présentes autour de vous
+      et représentent un véritable potentiel
+      pour les habitants,
+      les commerces,
+      les associations,
+      les collectivités
+      et les autres entreprises.
 
-          <option value="partner">
-            Partenaires Bo'CitéArt
-          </option>
+      <br><br>
 
-          <option value="official">
-            Référencement officiel
-          </option>
-        </select>
-      </div>
+      <strong>
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </strong>
 
-      <div
-        id="entrepriseDirectoryCount"
-        class="muted"
+      a pour objectif de rendre cette richesse locale
+      plus visible et plus facilement accessible.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="border-left:6px solid #2f5d46;line-height:1.6;">
+
+      <strong
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:18px;
+        ">
+        Comprendre les couleurs
+      </strong>
+
+      <br>
+
+      Chaque fiche pourra être identifiée rapidement.
+
+      <br><br>
+
+      🟢 Entreprise active
+
+      <br>
+
+      🟠 Procédure collective publiée
+
+      <br>
+
+      🔴 Liquidation judiciaire publiée
+
+      <br>
+
+      ⚪ Entreprise radiée ou activité cessée
+
+      <br>
+
+      🔵 Informations récemment mises à jour
+
+      <br><br>
+
+      Les informations affichées proviendront
+      exclusivement de données publiques officielles.
+
+    </div>
+
+
+    <div class="box">
+
+      <strong
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:18px;
+        ">
+        Rechercher une entreprise,
+        un métier ou un savoir-faire
+      </strong>
+
+      <br>
+
+      Recherchez rapidement :
+
+      <br><br>
+
+      • une entreprise ;
+
+      <br>
+
+      • un artisan ;
+
+      <br>
+
+      • un commerce ;
+
+      <br>
+
+      • un métier ;
+
+      <br>
+
+      • un produit ;
+
+      <br>
+
+      • un service ;
+
+      <br>
+
+      • un fournisseur ;
+
+      <br>
+
+      • un sous-traitant.
+
+      <br><br>
+
+      <input
+        id="entrepriseDirectorySearch"
+        class="miniField"
+        type="search"
+        placeholder="Nom, métier ou activité">
+
+      <select
+        id="entrepriseDirectoryFilter"
+        class="miniField"
         style="margin-top:10px;">
-      </div>
 
-      <div
-        id="entrepriseDirectoryList"
-        style="margin-top:10px;">
-      </div>
-    `;
-  }
+        <option value="all">
+          Toutes les entreprises
+        </option>
 
+        <option value="partner">
+          Partenaires Bo'CitéArt
+        </option>
+
+        <option value="official">
+          Référencement officiel
+        </option>
+
+      </select>
+
+    </div>
+
+    <div
+      id="entrepriseDirectoryCount"
+      class="muted"
+      style="margin-top:10px;">
+    </div>
+
+    <div
+      id="entrepriseDirectoryList"
+      style="margin-top:10px;">
+    </div>
+
+  `;
+}
   function renderDirectoryList(){
     const input =
       getElement("entrepriseDirectorySearch");
