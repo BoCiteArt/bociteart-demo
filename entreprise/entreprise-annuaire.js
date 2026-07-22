@@ -1,37 +1,28 @@
-/* =========================================================
-   BO'CITÉART — ENTREPRISE
-   MODULE ANNUAIRE ÉCONOMIQUE
-   DÉCOUVRIR LES ENTREPRISES AUTREMENT
-   ========================================================= */
-
-(function initEntrepriseAnnuaire(){
-
-  "use strict";
-
-  const module =
-    window.BociteEntreprise;
-
-  if(!module){
-
-    console.error(
-      "Bo'CitéArt : entreprise.js doit être chargé avant entreprise-annuaire.js."
-    );
-
-    return;
-  }
-
-  function getElement(id){
-
-    return document.getElementById(id);
-  }
-
   /* =======================================================
-     PAGE PRINCIPALE — ANNUAIRE ÉCONOMIQUE
+     PAGE PRINCIPALE — ANNUAIRE ÉCONOMIQUE VIVANT
      ======================================================= */
+
+  function getAnnuaireLogoHtml(){
+
+    return `
+      <strong
+        style="
+          display:inline-block;
+          white-space:nowrap;
+          font-weight:900;
+        ">
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </strong>
+    `;
+  }
 
   function getDirectoryHtml(){
 
     return `
+
+      <!-- =================================================
+           INTRODUCTION
+           ================================================= -->
 
       <div
         class="box entrepriseModuleIntro"
@@ -49,10 +40,8 @@
             line-height:1.4;
             font-weight:700;
           ">
-
-          L’annuaire devient votre véritable outil
-          de développement économique.
-
+          L’annuaire économique vivant devient votre outil
+          de développement local
         </div>
 
         <div
@@ -69,8 +58,9 @@
 
           <br><br>
 
-          L’annuaire Bo'CitéArt révèle
-          les entreprises,
+          L’annuaire vivant
+          ${getAnnuaireLogoHtml()}
+          révèle les entreprises,
           les commerces,
           les artisans,
           les métiers
@@ -95,11 +85,21 @@
 
           <br><br>
 
-          Et il ne vous coûte rien.
+          <strong
+            style="
+              color:#111;
+              font-weight:900;
+            ">
+            Et il ne vous coûte rien.
+          </strong>
 
         </div>
 
       </div>
+
+      <!-- =================================================
+           ENTREPRISE ENCORE MÉCONNUE
+           ================================================= -->
 
       <div
         class="box"
@@ -117,9 +117,7 @@
             line-height:1.4;
             font-weight:700;
           ">
-
-          Connaissez-vous vraiment votre entreprise ?
-
+          Connaît-on vraiment votre entreprise ?
         </div>
 
         <div
@@ -131,44 +129,32 @@
             font-weight:400;
           ">
 
-          Vous connaissez votre métier.
-
-          <br><br>
-
-          Vous connaissez vos produits,
+          Vous connaissez votre métier,
+          vos produits,
           vos services,
           vos équipes
           et vos clients.
 
           <br><br>
 
-          Mais connaissez-vous réellement
-          l’image que votre entreprise renvoie
-          à celles et ceux
-          qui passent devant elle chaque jour ?
+          Mais les habitants savent-ils
+          ce que vous fabriquez
+          et ce que vous proposez réellement ?
 
           <br><br>
 
-          Les habitants savent-ils
-          ce que vous fabriquez ?
+          Connaissent-ils vos métiers,
+          vos compétences
+          et vos savoir-faire ?
 
           <br><br>
 
-          Connaissent-ils vos métiers ?
-
-          <br><br>
-
-          Savent-ils que vous recrutez,
-          que vous recherchez des partenaires,
+          Savent-ils que vous recrutez
+          ou que vous recherchez
+          des partenaires,
           des fournisseurs,
           des sous-traitants
-          ou de nouvelles compétences ?
-
-          <br><br>
-
-          Connaissent-ils les savoir-faire
-          développés par votre entreprise
-          depuis parfois plusieurs décennies ?
+          et de nouvelles compétences ?
 
           <br><br>
 
@@ -177,35 +163,71 @@
 
           <br><br>
 
-          Votre entreprise est présente.
-
-          <br>
-
-          Elle est visible physiquement.
-
-          <br>
-
-          Mais elle reste inconnue
-          d’une grande partie de son territoire.
+          L’entreprise est bien là.
 
           <br><br>
 
-          Ce n’est plus un simple angle mort.
+          Elle travaille.
 
           <br>
+
+          Elle produit.
+
+          <br>
+
+          Elle possède des compétences,
+          des savoir-faire
+          et des richesses
+          que beaucoup ignorent encore.
+
+          <br><br>
+
+          Ce n’est pas toujours visible.
+
+          <br>
+
+          Pourtant,
+          cet écart existe réellement.
+
+          <br><br>
+
+          Il est invisible,
+          mais tellement présent.
+
+          <br><br>
 
           C’est un véritable ravin
           entre ce que votre entreprise possède
-          et ce que les autres en connaissent.
+          et ce que les autres
+          en connaissent réellement.
 
           <br><br>
 
-          L’annuaire Bo'CitéArt
-          commence à combler ce ravin.
+          L’annuaire vivant
+          ${getAnnuaireLogoHtml()}
+          commence à combler
+          ce ravin invisible.
+
+          <br><br>
+
+          Il permet enfin
+          de rendre visibles
+          vos compétences,
+          vos métiers,
+          vos savoir-faire
+          et les richesses
+          que votre entreprise apporte
+          chaque jour
+          à votre commune
+          et à votre territoire.
 
         </div>
 
       </div>
+
+      <!-- =================================================
+           PREMIER RÉFLEXE LOCAL
+           ================================================= -->
 
       <div
         class="box"
@@ -223,9 +245,7 @@
             line-height:1.4;
             font-weight:700;
           ">
-
-          Commencez par regarder autour de vous.
-
+          Commencez par regarder autour de vous
         </div>
 
         <div
@@ -258,10 +278,10 @@
           des compétences particulières ;<br>
 
           <span style="color:#2f5d46;">–</span>
-          des salariés ;<br>
+          de futurs salariés ;<br>
 
           <span style="color:#2f5d46;">–</span>
-          une solution à un besoin précis.
+          une réponse à un besoin précis.
 
           <br><br>
 
@@ -272,7 +292,7 @@
           <br><br>
 
           Pourtant,
-          la réponse existe déjà
+          la réponse existe parfois déjà
           à quelques rues
           ou à quelques kilomètres.
 
@@ -283,13 +303,23 @@
 
           <br><br>
 
-          Pourquoi aller chercher loin
-          ce qui existe déjà
-          près de chez vous ?
+          <strong
+            style="
+              color:#111;
+              font-weight:900;
+            ">
+            Pourquoi aller chercher loin
+            ce qui existe déjà
+            près de chez vous ?
+          </strong>
 
         </div>
 
       </div>
+
+      <!-- =================================================
+           CONTENU DE L'ANNUAIRE VIVANT
+           ================================================= -->
 
       <div
         class="box"
@@ -307,9 +337,7 @@
             line-height:1.4;
             font-weight:700;
           ">
-
           Un annuaire vivant
-
         </div>
 
         <div
@@ -344,10 +372,7 @@
           les savoir-faire ;<br>
 
           <span style="color:#2f5d46;">–</span>
-          les produits ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          les services ;<br>
+          les produits et les services ;<br>
 
           <span style="color:#2f5d46;">–</span>
           les partenaires ;<br>
@@ -366,7 +391,7 @@
 
           <br><br>
 
-          L’annuaire devient
+          L’annuaire vivant devient
           un point de rencontre économique
           entre les besoins
           et les compétences disponibles.
@@ -374,6 +399,10 @@
         </div>
 
       </div>
+
+      <!-- =================================================
+           RECHERCHE DU DIRIGEANT
+           ================================================= -->
 
       <div
         class="box"
@@ -392,7 +421,7 @@
             font-weight:700;
           ">
 
-          Un dirigeant ne recherche pas seulement un client.
+          Un dirigeant ne recherche pas seulement un client
 
         </div>
 
@@ -431,31 +460,53 @@
           un expert ;<br>
 
           <span style="color:#2f5d46;">–</span>
-          un futur partenaire ;<br>
+          un partenaire ou un futur collaborateur ;<br>
 
           <span style="color:#2f5d46;">–</span>
           une réponse rapide à un problème concret.
 
           <br><br>
 
-          L’annuaire Bo'CitéArt
-          rassemble ces possibilités
+          L’annuaire vivant
+          ${getAnnuaireLogoHtml()}
+          rassemble toutes ces possibilités
           dans un même espace.
 
           <br><br>
 
-          Vous ne perdez plus votre premier réflexe
+          Ne perdez plus votre temps
           à chercher partout.
 
           <br><br>
 
-          Vous commencez
-          par découvrir les forces
+          Toutes ces ressources
+          sont désormais regroupées.
+
+          <br><br>
+
+          Commencez vraiment
+          à découvrir les forces
           déjà présentes autour de vous.
 
+          <br><br>
+
+          <strong
+            style="
+              color:#111;
+              font-weight:900;
+            ">
+            Ensemble,
+            nous allons plus loin
+            et plus durablement.
+          </strong>
+
         </div>
 
       </div>
+      
+            <!-- =================================================
+           PARTIE 4 — BASE VIVANTE, CONCLUSION ET ACTIONS
+           ================================================= -->
 
       <div
         class="box"
@@ -474,171 +525,7 @@
             font-weight:700;
           ">
 
-          Être connu devient un avantage concurrentiel.
-
-        </div>
-
-        <div
-          style="
-            margin-top:14px;
-            color:#111;
-            font-size:15px;
-            line-height:1.55;
-            font-weight:400;
-          ">
-
-          Les meilleures entreprises
-          ne sont pas toujours
-          les plus connues.
-
-          <br><br>
-
-          Pourtant,
-          une entreprise clairement identifiée
-          multiplie ses opportunités.
-
-          <br><br>
-
-          Elle reçoit davantage de contacts.
-
-          <br>
-
-          Elle développe les recommandations.
-
-          <br>
-
-          Elle facilite les collaborations.
-
-          <br>
-
-          Elle attire de nouveaux partenaires.
-
-          <br>
-
-          Elle fait connaître ses besoins.
-
-          <br>
-
-          Elle devient plus facilement
-          une référence sur son territoire.
-
-          <br><br>
-
-          Aujourd’hui,
-          être excellent ne suffit plus.
-
-          <br><br>
-
-          Il faut être vu.
-
-          <br>
-
-          Il faut être connu.
-
-          <br>
-
-          Il faut être reconnu.
-
-          <br><br>
-
-          L’annuaire Bo'CitéArt
-          constitue la première porte d’entrée
-          vers cette reconnaissance.
-
-        </div>
-
-      </div>
-
-      <div
-        class="box"
-        style="
-          font-size:15px;
-          line-height:1.55;
-          font-weight:400;
-        ">
-
-        <div
-          class="entrepriseModuleSubtitle"
-          style="
-            color:#2f5d46;
-            font-size:16px;
-            line-height:1.4;
-            font-weight:700;
-          ">
-
-          Des opportunités locales qui peuvent aller plus loin.
-
-        </div>
-
-        <div
-          style="
-            margin-top:14px;
-            color:#111;
-            font-size:15px;
-            line-height:1.55;
-            font-weight:400;
-          ">
-
-          Bo'CitéArt commence
-          par révéler les richesses
-          de votre commune
-          et de votre territoire.
-
-          <br><br>
-
-          Les entreprises inscrites
-          développent ensuite
-          leurs relations
-          selon leurs activités,
-          leurs besoins
-          et leur capacité à intervenir.
-
-          <br><br>
-
-          Une compétence locale
-          peut répondre à un besoin local.
-
-          <br><br>
-
-          Elle peut également
-          ouvrir une collaboration
-          départementale,
-          régionale,
-          nationale
-          ou européenne.
-
-          <br><br>
-
-          Le point de départ reste le même :
-
-          <br><br>
-
-          mieux connaître
-          ce qui existe déjà autour de soi
-          avant d’élargir sa recherche.
-
-        </div>
-
-      </div>
-
-      <div
-        class="box"
-        style="
-          font-size:15px;
-          line-height:1.55;
-          font-weight:400;
-        ">
-
-        <div
-          class="entrepriseModuleSubtitle"
-          style="
-            color:#2f5d46;
-            font-size:16px;
-            line-height:1.4;
-            font-weight:700;
-          ">
-
-          Une base économique régulièrement enrichie
+          Une base économique enrichie quotidiennement
 
         </div>
 
@@ -657,35 +544,174 @@
           et les professionnels
           disposent d’un espace
           pour présenter
-          et mettre à jour leurs informations.
+          et actualiser leurs informations.
 
           <br><br>
 
-          Bo'CitéArt enrichit progressivement
-          cette base économique
-          afin qu’elle reste
-          claire,
+          L’annuaire vivant
+          ${getAnnuaireLogoHtml()}
+          est enrichi quotidiennement
+          afin de rester
+          le plus clair,
+          le plus utile
+          et le plus fiable possible.
+
+          <br><br>
+
+          Des repères visuels simples
+          permettent notamment de signaler :
+
+          <br><br>
+
+          <span style="color:#2f5d46;">–</span>
+          une nouvelle entreprise ;<br>
+
+          <span style="color:#2f5d46;">–</span>
+          des informations vérifiées
+          ou mises à jour ;<br>
+
+          <span style="color:#2f5d46;">–</span>
+          un changement d’activité ;<br>
+
+          <span style="color:#2f5d46;">–</span>
+          une reprise d’entreprise ;<br>
+
+          <span style="color:#b00020;">–</span>
+          une liquidation ;<br>
+
+          <span style="color:#b00020;">–</span>
+          une fermeture.
+
+          <br><br>
+
+          L’objectif est de proposer
+          une information claire,
           utile
-          et la plus fiable possible.
-
-          <br><br>
-
-          Une base vivante
-          ne se contente pas d’exister.
-
-          <br><br>
-
-          Elle évolue avec les entreprises,
-          leurs métiers,
-          leurs recherches
-          et les besoins du territoire.
+          et toujours la plus récente possible.
 
         </div>
 
       </div>
 
+      <!-- =================================================
+           CONCLUSION
+           ================================================= -->
+
       <div
-        class="entrepriseModuleActions">
+        class="box entrepriseModuleConclusion"
+        style="
+          color:#111;
+          font-size:15px;
+          line-height:1.55;
+          font-weight:400;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:16px;
+            line-height:1.4;
+            font-weight:700;
+          ">
+
+          Ce qui existe autour de nous
+          ne doit plus rester invisible
+
+        </div>
+
+        <div
+          style="
+            margin-top:14px;
+            color:#111;
+            font-size:15px;
+            line-height:1.55;
+            font-weight:400;
+          ">
+
+          Plus les entreprises
+          d’une commune sont connues,
+
+          <br><br>
+
+          plus elles développent
+          leurs contacts,
+          leurs collaborations,
+          leurs recommandations
+          et leurs possibilités d’activité.
+
+          <br><br>
+
+          L’entreprise découvre,
+          gratuitement,
+          de nouvelles ressources.
+
+          <br><br>
+
+          Les professionnels travaillent
+          plus facilement ensemble.
+
+          <br><br>
+
+          Les habitants identifient mieux
+          qui vous êtes
+          et ce que vous faites.
+
+          <br><br>
+
+          Ils en parlent naturellement
+          autour d’eux.
+
+          <br><br>
+
+          Ce bouche-à-oreille devient
+          l’un de vos meilleurs ambassadeurs,
+          sans vous coûter davantage.
+
+          <br><br>
+
+          Il renforce également
+          l’attractivité de votre entreprise
+          et peut favoriser le recrutement.
+
+          <br><br>
+
+          La collectivité connaît réellement
+          davantage les forces
+          et les richesses
+          présentes sur son territoire.
+
+          <br><br>
+
+          L’annuaire vivant
+          ne crée pas les compétences.
+
+          <br><br>
+
+          <strong
+            style="
+              color:#111;
+              font-weight:900;
+            ">
+
+            Il révèle enfin,
+            de manière visible,
+            celles qui existaient déjà.
+
+          </strong>
+
+        </div>
+
+      </div>
+
+      <!-- =================================================
+           ACTIONS — PLACÉES APRÈS LA CONCLUSION
+           ================================================= -->
+
+      <div
+        class="entrepriseModuleActions"
+        style="
+          margin-top:16px;
+        ">
 
         <button
           id="directorySearchBtn"
@@ -716,86 +742,8 @@
 
       </div>
 
-      <div
-        class="box entrepriseModuleConclusion"
-        style="
-          color:#111;
-          font-size:15px;
-          line-height:1.55;
-          font-weight:400;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:16px;
-            line-height:1.4;
-            font-weight:700;
-          ">
-
-          Ce qui existe autour de nous
-          ne doit plus rester invisible.
-
-        </div>
-
-        <div
-          style="
-            margin-top:14px;
-            color:#111;
-            font-size:15px;
-            line-height:1.55;
-            font-weight:400;
-          ">
-
-          Plus les entreprises
-          d’une commune sont connues,
-
-          <br><br>
-
-          plus elles développent
-          leurs contacts,
-          leurs collaborations,
-          leurs recommandations
-          et leurs possibilités d’activité.
-
-          <br><br>
-
-          L’entreprise découvre
-          de nouvelles ressources.
-
-          <br>
-
-          Les professionnels travaillent
-          plus facilement ensemble.
-
-          <br>
-
-          Les habitants comprennent mieux
-          les richesses économiques
-          présentes autour d’eux.
-
-          <br>
-
-          La collectivité connaît davantage
-          les forces de son territoire.
-
-          <br><br>
-
-          L’annuaire ne crée pas
-          les compétences.
-
-          <br><br>
-
-          Il révèle enfin
-          celles qui existaient déjà.
-
-        </div>
-
-      </div>
-
       <!-- =================================================
            INFORMATION BERCY INFOS ENTREPRISES
-           Placée en fin de page
            ================================================= -->
 
       <div
@@ -861,264 +809,3 @@
 
     `;
   }
-
-  /* =======================================================
-     ACTIONS DE L'ANNUAIRE
-     ======================================================= */
-
-  function bindDirectory(){
-
-    const searchButton =
-      getElement(
-        "directorySearchBtn"
-      );
-
-    const professionalButton =
-      getElement(
-        "directoryProfessionalBtn"
-      );
-
-    const visibilityButton =
-      getElement(
-        "directoryVisibilityBtn"
-      );
-
-    const bercyInfoButton =
-      getElement(
-        "directoryBercyInfoBtn"
-      );
-
-    if(searchButton){
-
-      searchButton.onclick = function(){
-
-        if(
-          typeof module.openLocalDirectory ===
-          "function"
-        ){
-
-          module.openLocalDirectory();
-          return;
-        }
-
-        module.openScreen(
-          "annuaire_local"
-        );
-      };
-    }
-
-    if(professionalButton){
-
-      professionalButton.onclick = function(){
-
-        module.openScreen(
-          "annuaire"
-        );
-      };
-    }
-
-    if(visibilityButton){
-
-      visibilityButton.onclick = function(){
-
-        module.openScreen(
-          "visibilite"
-        );
-      };
-    }
-
-    if(bercyInfoButton){
-
-      bercyInfoButton.onclick = function(){
-
-        openBercyInfoPage();
-      };
-    }
-
-  }
-
-  /* =======================================================
-     PAGE BERCY INFOS ENTREPRISES
-     ======================================================= */
-
-  function getBercyInfoHtml(){
-
-    return `
-
-      <div
-        class="box"
-        style="
-          border-left:6px solid #2f5d46;
-          font-size:15px;
-          line-height:1.55;
-          font-weight:400;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            line-height:1.4;
-            font-weight:700;
-          ">
-
-          Pourquoi s’abonner
-          à Bercy Infos Entreprises ?
-
-        </div>
-
-        <div
-          style="
-            margin-top:14px;
-            color:#111;
-            font-size:15px;
-            line-height:1.55;
-            font-weight:400;
-          ">
-
-          Recevez régulièrement
-          les informations officielles
-          utiles à votre entreprise :
-
-          <br><br>
-
-          <span style="color:#2f5d46;">–</span>
-          nouvelles aides et subventions ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          crédits d’impôt ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          TVA et facturation électronique ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          nouvelles obligations légales ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          évolutions fiscales et comptables ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          conseils pratiques de gestion.
-
-          <br><br>
-
-          Les informations sont officielles,
-          régulièrement mises à jour
-          et sans publicité commerciale.
-
-          <br><br>
-
-          Ce service du ministère
-          de l’Économie est gratuit.
-
-        </div>
-
-      </div>
-
-      <a
-        href="https://www.economie.gouv.fr/abonnement"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="choiceBtn"
-        style="
-          display:block;
-          width:100%;
-          box-sizing:border-box;
-          margin-top:14px;
-          text-align:center;
-          text-decoration:none;
-        ">
-
-        S’abonner gratuitement
-
-      </a>
-
-      <button
-        id="directoryBercyBackBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:10px;
-        ">
-
-        Retour à l’annuaire économique
-
-      </button>
-
-    `;
-  }
-
-  function bindBercyInfoPage(){
-
-    const backButton =
-      getElement(
-        "directoryBercyBackBtn"
-      );
-
-    if(backButton){
-
-      backButton.onclick = function(){
-
-        openDirectoryModule();
-      };
-    }
-
-  }
-
-  function openBercyInfoPage(){
-
-    module.renderModulePage(
-
-      "Bercy Infos Entreprises",
-
-      getBercyInfoHtml(),
-
-      {
-        afterRender:
-          bindBercyInfoPage
-      }
-
-    );
-  }
-
-  /* =======================================================
-     OUVERTURE DE L'ANNUAIRE
-     ======================================================= */
-
-  function openDirectoryModule(){
-
-    module.renderModulePage(
-
-      "Annuaire économique",
-
-      getDirectoryHtml(),
-
-      {
-        afterRender:
-          bindDirectory
-      }
-
-    );
-  }
-
-  /* =======================================================
-     ENREGISTREMENT
-     ======================================================= */
-
-  module.registerScreen(
-    "annuaire_local",
-    openDirectoryModule
-  );
-
-  module.openDirectoryModule =
-    openDirectoryModule;
-
-  module.openBercyInfoPage =
-    openBercyInfoPage;
-
-  console.log(
-    "✅ Module Annuaire économique avec Bercy Infos chargé"
-  );
-
-})();
