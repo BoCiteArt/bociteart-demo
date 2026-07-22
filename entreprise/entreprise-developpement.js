@@ -25,394 +25,363 @@
     return document.getElementById(id);
   }
 
+  function installDevelopmentStyles(){
+
+    if(
+      getElement(
+        "entrepriseDevelopmentStyles"
+      )
+    ){
+      return;
+    }
+
+    const style =
+      document.createElement("style");
+
+    style.id =
+      "entrepriseDevelopmentStyles";
+
+    style.textContent = `
+      .entrepriseDevelopmentPage {
+        color:#111;
+        line-height:1.55;
+      }
+
+      .entrepriseDevelopmentPage .developmentBox {
+        margin-top:14px;
+      }
+
+      .entrepriseDevelopmentPage .developmentBox:first-child {
+        margin-top:0;
+      }
+
+      .entrepriseDevelopmentPage .developmentIntro {
+        border-left:6px solid #2f5d46;
+      }
+
+      .entrepriseDevelopmentPage .developmentTitle {
+        display:block;
+        margin:0;
+        color:#2f5d46;
+        font-size:20px;
+        font-weight:700;
+        line-height:1.4;
+      }
+
+      .entrepriseDevelopmentPage .developmentAnswer {
+        display:block;
+        color:#111;
+        font-size:19px;
+        font-weight:400;
+        line-height:1.45;
+      }
+
+      .entrepriseDevelopmentPage .developmentQuote {
+        display:block;
+        color:#111;
+        font-style:italic;
+        font-weight:400;
+        line-height:1.5;
+      }
+
+      .entrepriseDevelopmentPage .developmentActions {
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        margin-top:14px;
+      }
+
+      .entrepriseDevelopmentPage .developmentActions .choiceBtn {
+        width:100%;
+      }
+
+      .entrepriseDevelopmentPage .developmentPrivateBtn {
+        width:100%;
+        margin-top:14px;
+      }
+
+      @media (max-width:600px) {
+
+        .entrepriseDevelopmentPage .developmentTitle {
+          font-size:19px;
+        }
+
+        .entrepriseDevelopmentPage .developmentAnswer {
+          font-size:18px;
+        }
+
+        .entrepriseDevelopmentPage .developmentActions {
+          gap:8px;
+        }
+      }
+    `;
+
+    document.head.appendChild(
+      style
+    );
+  }
+
   function getDevelopmentHtml(){
 
     return `
-      <div
-        class="box"
-        style="
-          border-left:6px solid #2f5d46;
-        ">
+      <div class="entrepriseDevelopmentPage">
 
-        <strong
-          style="
-            display:block;
-            font-size:22px;
-            color:#2f5d46;
-            line-height:1.35;
-          ">
-          Connaissez-vous le nom de cinq entreprises
-          de votre commune,
-          en dehors des hypermarchés
-          et des grandes enseignes ?
-        </strong>
+        <div
+          class="box developmentBox developmentIntro">
 
-        <br>
+          <span class="developmentTitle">
+            Connaissez-vous le nom de cinq entreprises
+            de votre commune,
+            en dehors des hypermarchés
+            et des grandes enseignes ?
+          </span>
 
-        <strong style="font-size:19px;">
-          Probablement pas.
-        </strong>
+          <br>
 
-        <br><br>
+          <span class="developmentAnswer">
+            Probablement pas.
+          </span>
 
-        Pourtant, combien de fois entend-on :
+          <br><br>
 
-        <br><br>
+          Pourtant, combien de fois entend-on :
 
-        <strong>
-          « Je ne savais même pas
-          que cette entreprise existait. »
-        </strong>
+          <br><br>
 
-        <br><br>
+          <span class="developmentQuote">
+            « Je ne savais même pas
+            que cette entreprise existait. »
+          </span>
 
-        ou :
+          <br><br>
 
-        <br><br>
+          ou :
 
-        <strong>
-          « Je ne savais pas
-          qu’elle faisait cela. »
-        </strong>
+          <br><br>
 
-        <br><br>
+          <span class="developmentQuote">
+            « Je ne savais pas
+            qu’elle faisait cela. »
+          </span>
 
-        Si les habitants ne connaissent pas
-        les entreprises qui les entourent,
-        comment pourraient-ils devenir
-        leurs clients,
-        leurs futurs salariés
-        ou parler d’elles autour d’eux ?
-      </div>
+          <br><br>
 
-      <div class="box">
+          Si les habitants ne connaissent pas
+          les entreprises qui les entourent,
+          comment pourraient-ils devenir
+          leurs clients,
+          leurs futurs salariés
+          ou parler d’elles autour d’eux ?
+        </div>
 
-        <strong
-          style="
-            font-size:20px;
-            color:#2f5d46;
-          ">
-          Les règles du jeu ont changé
-        </strong>
+        <div class="box developmentBox">
 
-        <br><br>
+          <span class="developmentTitle">
+            Les règles du jeu ont changé
+          </span>
 
-        Internet et le commerce en ligne
-        ont ouvert de nouvelles possibilités,
-        et de nombreuses entreprises
-        ont su s’y adapter.
+          <br><br>
 
-        <br><br>
+          Internet et le commerce en ligne
+          ont ouvert de nouvelles possibilités,
+          et de nombreuses entreprises
+          ont su s’y adapter.
 
-        Mais les plus grandes plateformes
-        disposent désormais de moyens considérables
-        pour attirer les clients,
-        capter leur attention
-        et occuper toujours davantage de place.
+          <br><br>
 
-        <br><br>
+          Mais les plus grandes plateformes
+          disposent désormais de moyens considérables
+          pour attirer les clients,
+          capter leur attention
+          et occuper toujours davantage de place.
 
-        Pour une entreprise locale,
-        il devient de plus en plus difficile
-        d’être visible seule.
+          <br><br>
 
-        <br><br>
+          Pour une entreprise locale,
+          il devient de plus en plus difficile
+          d’être visible seule.
 
-        Bo'CitéArt ne vous propose pas
-        de renoncer au numérique.
+          <br><br>
 
-        <br><br>
+          Bo'CitéArt ne vous propose pas
+          de renoncer au numérique.
 
-        Il vous propose de renforcer
-        ce que les grandes plateformes
-        ne pourront jamais remplacer :
+          <br><br>
 
-        <br><br>
+          Il vous propose de renforcer
+          ce que les grandes plateformes
+          ne pourront jamais remplacer :
 
-        • votre proximité ;<br>
-        • votre savoir-faire ;<br>
-        • votre indépendance ;<br>
-        • la confiance des habitants ;<br>
-        • votre ancrage dans le territoire.
-      </div>
+          <br><br>
 
-      <div class="box">
+          • votre proximité ;<br>
+          • votre savoir-faire ;<br>
+          • votre indépendance ;<br>
+          • la confiance des habitants ;<br>
+          • votre ancrage dans le territoire.
+        </div>
 
-        <strong
-          style="
-            font-size:20px;
-            color:#2f5d46;
-          ">
-          Et si votre développement commençait
-          simplement par votre propre ville ?
-        </strong>
+                <div class="box developmentBox">
 
-        <br><br>
+          <span class="developmentTitle">
+            Et si votre développement commençait
+            simplement par votre propre ville ?
+          </span>
 
-        Avant de chercher plus loin,
-        commencez par être connu.
+          <br><br>
 
-        <br><br>
+          Avant de chercher plus loin,
+          commencez par être connu.
 
-        Comment un habitant pourrait-il postuler
-        dans une entreprise
-        dont il ignore l’existence ?
+          <br><br>
 
-        <br><br>
+          Comment un habitant pourrait-il postuler
+          dans une entreprise
+          dont il ignore l’existence ?
 
-        Comment un futur client
-        pourrait-il vous choisir
-        s’il ne connaît ni votre métier,
-        ni vos services,
-        ni votre savoir-faire ?
+          <br><br>
 
-        <br><br>
+          Comment un futur client
+          pourrait-il vous choisir
+          s’il ne connaît ni votre métier,
+          ni vos services,
+          ni votre savoir-faire ?
 
-        Faire connaître votre entreprise
-        dans sa propre commune
-        peut favoriser :
+          <br><br>
 
-        <br><br>
+          Faire connaître votre entreprise
+          dans sa propre commune
+          peut favoriser :
 
-        • le bouche-à-oreille ;<br>
-        • les recommandations ;<br>
-        • les recrutements de proximité ;<br>
-        • les candidatures spontanées ;<br>
-        • les relations entre professionnels ;<br>
-        • de nouvelles opportunités commerciales.
-      </div>
+          <br><br>
 
-      <div class="box">
+          • le bouche-à-oreille ;<br>
+          • les recommandations ;<br>
+          • les recrutements de proximité ;<br>
+          • les candidatures spontanées ;<br>
+          • les relations entre professionnels ;<br>
+          • de nouvelles opportunités commerciales.
+        </div>
 
-        <strong
-          style="
-            font-size:20px;
-            color:#2f5d46;
-          ">
-          Seul, il devient plus difficile d’être visible
-        </strong>
+        <div class="box developmentBox">
 
-        <br><br>
+          <span class="developmentTitle">
+            Seul, il devient plus difficile d’être visible
+          </span>
 
-        Travailler ensemble
-        ne signifie pas perdre son indépendance.
+          <br><br>
 
-        <br><br>
+          Travailler ensemble
+          ne signifie pas perdre son indépendance.
 
-        Chaque entreprise conserve :
+          <br><br>
 
-        <br><br>
+          Chaque entreprise conserve :
 
-        • son identité ;<br>
-        • ses décisions ;<br>
-        • ses clients ;<br>
-        • ses méthodes ;<br>
-        • sa liberté.
+          <br><br>
 
-        <br><br>
+          • son identité ;<br>
+          • ses décisions ;<br>
+          • ses clients ;<br>
+          • ses méthodes ;<br>
+          • sa liberté.
 
-        Mais en devenant plus visibles ensemble,
-        les entreprises peuvent renforcer
-        leur territoire
-        et leur propre avenir.
+          <br><br>
 
-        <br><br>
+          Mais en devenant plus visibles ensemble,
+          les entreprises peuvent renforcer
+          leur territoire
+          et leur propre avenir.
 
-        <strong>
+          <br><br>
+
           Seul, on résiste difficilement.
           Ensemble, on avance mieux.
-        </strong>
+        </div>
+
+        <div class="box developmentBox">
+
+          <span class="developmentTitle">
+            Commencez près de chez vous
+          </span>
+
+          <br><br>
+
+          Votre prochain client,
+          fournisseur,
+          sous-traitant,
+          partenaire
+          ou futur salarié
+          se trouve peut-être déjà
+          à quelques kilomètres.
+
+          <br><br>
+
+          Bo'CitéArt vous permet de commencer
+          par les ressources présentes dans votre commune,
+          puis d’élargir la recherche
+          lorsque cela devient nécessaire.
+        </div>
+
+        <div class="developmentActions">
+
+          <button
+            id="developmentDirectoryBtnNew"
+            class="choiceBtn"
+            type="button">
+            Découvrir les entreprises de ma ville
+          </button>
+
+          <button
+            id="developmentVisibilityBtnNew"
+            class="choiceBtn"
+            type="button">
+            Faire connaître mon entreprise
+          </button>
+
+          <button
+            id="developmentEmploymentBtnNew"
+            class="choiceBtn"
+            type="button">
+            Rechercher ou recruter localement
+          </button>
+
+          <button
+            id="developmentPartnerBtnNew"
+            class="choiceBtn"
+            type="button">
+            Rechercher un partenaire professionnel
+          </button>
+
+          <button
+            id="developmentMutualisationBtnNew"
+            class="choiceBtn"
+            type="button">
+            Découvrir la force de la mutualisation
+          </button>
+
+        </div>
+
+        <!--
+          EMPLACEMENT RÉSERVÉ À LA FUTURE CONCLUSION.
+
+          La conclusion sera rédigée uniquement
+          lorsque l’ensemble du parcours Entreprise
+          sera terminé et validé.
+        -->
+
+        <button
+          id="developmentPrivatePlanBtnNew"
+          class="choiceBtn developmentPrivateBtn"
+          type="button">
+          Ouvrir mon plan de développement privé
+        </button>
+
       </div>
-
-      <div class="box">
-
-        <strong
-          style="
-            font-size:20px;
-            color:#2f5d46;
-          ">
-          Commencez près de chez vous
-        </strong>
-
-        <br><br>
-
-        Votre prochain client,
-        fournisseur,
-        sous-traitant,
-        partenaire
-        ou futur salarié
-        se trouve peut-être déjà
-        à quelques kilomètres.
-
-        <br><br>
-
-        Bo'CitéArt vous permet de commencer
-        par les ressources présentes dans votre commune,
-        puis d’élargir la recherche
-        lorsque cela devient nécessaire.
-      </div>
-
-      <div
-        style="
-          display:flex;
-          flex-direction:column;
-          gap:10px;
-          margin-top:14px;
-        ">
-
-        <button
-          id="developmentDirectoryBtnNew"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;">
-          Découvrir les entreprises de ma ville
-        </button>
-
-        <button
-          id="developmentVisibilityBtnNew"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;">
-          Faire connaître mon entreprise
-        </button>
-
-        <button
-          id="developmentEmploymentBtnNew"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;">
-          Rechercher ou recruter localement
-        </button>
-
-        <button
-          id="developmentPartnerBtnNew"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;">
-          Rechercher un partenaire professionnel
-        </button>
-
-        <button
-          id="developmentMutualisationBtnNew"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;">
-          Découvrir la force de la mutualisation
-        </button>
-      </div>
-
-      <div
-        class="box"
-        style="
-          margin-top:16px;
-          border-left:6px solid #b00020;
-        ">
-
-        <strong style="font-size:19px;">
-          Les excuses ne créent jamais d’opportunités.
-        </strong>
-
-        <br><br>
-
-        <strong style="font-size:21px;color:#2f5d46;">
-          Les solutions, oui.
-        </strong>
-
-        <br><br>
-
-        Bo'CitéArt ne vous demande pas
-        de travailler davantage.
-
-        <br><br>
-
-        Il vous propose
-        de regarder votre territoire autrement.
-      </div>
-
-      <button
-        id="developmentPrivatePlanBtnNew"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:12px;
-        ">
-        Ouvrir mon plan de développement privé
-      </button>
     `;
   }
 
-  function bindDevelopment(){
-
-    const directoryButton =
-      getElement(
-        "developmentDirectoryBtnNew"
-      );
-
-    const visibilityButton =
-      getElement(
-        "developmentVisibilityBtnNew"
-      );
-
-    const employmentButton =
-      getElement(
-        "developmentEmploymentBtnNew"
-      );
-
-    const partnerButton =
-      getElement(
-        "developmentPartnerBtnNew"
-      );
-
-    const mutualisationButton =
-      getElement(
-        "developmentMutualisationBtnNew"
-      );
-
-    const privatePlanButton =
-      getElement(
-        "developmentPrivatePlanBtnNew"
-      );
-
-    if(directoryButton){
-
-      directoryButton.onclick = function(){
-
-        if(
-          typeof module.openLocalDirectory ===
-          "function"
-        ){
-          module.openLocalDirectory();
-          return;
-        }
-
-        module.openScreen(
-          "annuaire_local"
-        );
-      };
-    }
-
-    if(visibilityButton){
-
-      visibilityButton.onclick = function(){
-
-        module.openScreen(
-          "visibilite"
-        );
-      };
-    }
-
-    if(employmentButton){
-
-      employmentButton.onclick = function(){
-
-        module.openScreen(
-          "emploi"
-        );
-      };
-    }
-
-    if(partnerButton){
+     if(partnerButton){
 
       partnerButton.onclick = function(){
 
@@ -478,12 +447,30 @@
 
   function openDevelopment(){
 
+    const pageHtml =
+      getDevelopmentHtml();
+
+    if(
+      typeof module.renderModulePage ===
+      "function"
+    ){
+
+      module.renderModulePage(
+        "Développer autrement",
+        pageHtml,
+        {
+          showBack:true,
+          showFooter:false,
+          afterRender:bindDevelopment
+        }
+      );
+
+      return;
+    }
+
     module.renderModal(
       "Développer autrement",
-      getDevelopmentHtml(),
-      {
-        presentationFooter:true
-      }
+      pageHtml
     );
 
     window.setTimeout(function(){
@@ -493,12 +480,7 @@
     },0);
   }
 
-  /*
-    Le nouveau fichier remplace seulement
-    l’écran Développement enregistré auparavant.
-    Le gros entreprise.js reste chargé
-    et conserve les autres fonctionnalités.
-  */
+  installDevelopmentStyles();
 
   module.registerScreen(
     "developpement",
