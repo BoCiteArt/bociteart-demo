@@ -124,21 +124,35 @@
         font-weight:400;
       }
 
-      .entrepriseDevelopmentPage .developmentBackBtn {
-        display:block;
-        width:max-content;
-        max-width:100%;
-        margin:0 0 14px 0;
-        padding:10px 16px;
-        border:2px solid #2f5d46;
-        border-radius:14px;
-        background:#f7edda;
-        color:#111;
-        font:inherit;
-        font-weight:400;
-        cursor:pointer;
+            .entrepriseDevelopmentPage,
+      .entrepriseDevelopmentPage *,
+      .entrepriseDevelopmentPage .box,
+      .entrepriseDevelopmentPage .choiceBtn {
+        font-weight:400 !important;
       }
 
+      .entrepriseDevelopmentPage .developmentTitle {
+        color:#2f5d46 !important;
+        font-weight:700 !important;
+      }
+
+      .entrepriseDevelopmentPage .developmentBox,
+      .entrepriseDevelopmentPage .choiceBtn {
+        background:#f7edda !important;
+      }
+
+      .entrepriseDevelopmentPage .developmentBackBtn {
+        display:block !important;
+        width:auto !important;
+        margin:0 0 14px 0 !important;
+        padding:10px 16px !important;
+        border:2px solid #2f5d46 !important;
+        border-radius:14px !important;
+        background:#f7edda !important;
+        color:#111 !important;
+        font-weight:400 !important;
+        cursor:pointer !important;
+      }
       @media (max-width:600px) {
 
         .entrepriseDevelopmentPage .developmentTitle {
@@ -444,11 +458,15 @@
         }
 
         if(
+              if(
           typeof module.openHome ===
           "function"
         ){
           module.openHome();
+          return;
         }
+
+        window.history.back();
       };
     }
 
