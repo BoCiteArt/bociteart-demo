@@ -11,7 +11,7 @@
   "use strict";
 
   const app =
-    window.BociteEntreprise;
+    window.BociteEntreprise; 
 
   if(!app){
 
@@ -215,11 +215,11 @@ function getIntroductionHtml(){
       ">
 
       <div
-        style="
-          color:#111;
-          font-size:17px;
-          line-height:1.5;
-          font-weight:700;
+         style="
+         color:#111;
+         font-size:18px;
+         line-height:1.5;
+         font-weight:900;
         ">
         ${getLogoHtml()} a été imaginé
         pour vous
@@ -229,12 +229,12 @@ function getIntroductionHtml(){
       </div>
 
       <div
-        style="
-          margin-top:16px;
-          color:#2f5d46;
-          font-size:17px;
-          line-height:1.5;
-          font-weight:700;
+         style="
+         margin-top:10px;
+         color:#111;
+         font-size:16px;
+         line-height:1.55;
+         font-weight:900;
         ">
         À l’aide d’un outil simple,
         réactif
