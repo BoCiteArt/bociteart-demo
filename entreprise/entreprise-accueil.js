@@ -262,16 +262,18 @@ function getIntroductionHtml(){
           font-weight:400;
         ">
         À l’aide d’un outil simple, réactif et toujours accessible
-        depuis votre poche, sur votre téléphone portable.
+        depuis votre poche, sur votre téléphone portable.    
       </div>
-
+      
+        <br>
+        
       <div
 
           style="
             color:#2f5d46;
             font-weight:700;
           ">
-          L’annuaire économique
+          L’annuaire économique vivant
         </span>
 
         <br>
@@ -533,13 +535,13 @@ function getIntroductionHtml(){
         ">
 
       <strong
-  style="
+    style="
     display:block;
     color:#111;
     font-size:19px;
-  ">
-  Commencez ICI&nbsp;!
-</strong>
+    ">
+    Commencez ICI&nbsp;!
+    </strong>
 
         <br>
 
