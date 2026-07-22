@@ -37,24 +37,19 @@
     return document.getElementById(id);
   }
 
-  function getLogoHtml(){
+ function getLogoHtml(){
 
-    return `
-      <span
-        style="
-          white-space:nowrap;
-          font-weight:900;
-        ">
-
-        <span style="color:#2f5d46;">
-          Bo'Cité
-        </span><span style="color:#b00020;">
-          Art
-        </span>
-
-      </span>
-    `;
-  }
+  return `
+    <span
+      style="
+        display:inline-block;
+        white-space:nowrap;
+        font-weight:900;
+      ">
+      <span style="color:#2f5d46;">Bo'Cité&nbsp;</span><span style="color:#b00020;">Art</span>
+    </span>
+  `;
+}
 
   function renderPage(html){
 
@@ -258,13 +253,32 @@ function getIntroductionHtml(){
         ">
 
         <div
-          style="
-            color:#2f5d46;
-            font-size:18px;
-            font-weight:700;
-          ">
-          Découvrez les thèmes suivants
-        </div>
+  style="
+    color:#2f5d46;
+    font-size:18px;
+    line-height:1.5;
+    font-weight:700;
+  ">
+  Découvrez les thèmes suivants
+</div>
+
+<div
+  style="
+    margin-top:10px;
+    color:#111;
+    font-size:16px;
+    line-height:1.55;
+    font-weight:400;
+  ">
+  Sur la prochaine page,
+  cliquez dans la bande défilante
+  correspondant au thème choisi.
+
+  <br><br>
+
+  Des explications plus approfondies
+  vous y attendent.
+</div>
 
         <br>
 
