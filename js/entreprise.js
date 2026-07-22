@@ -448,24 +448,23 @@ function getHomeHtml(){
       }
     </style>
 
+<div style="margin-bottom:12px;">
+
+  <button
+    class="choiceBtn"
+    type="button"
+    data-entreprise-back>
+    Retour
+  </button>
+
+</div>
+    
     <div
       class="box"
       style="
         border-left:6px solid #2f5d46;
         line-height:1.5;
       ">
-
- <button
-  class="choiceBtn"
-  type="button"
-  data-entreprise-back
-  style="
-    margin:0 0 12px 0;
-    font-weight:400;
-  ">
-  Retour
-</button>
-
 <span
   style="
     display:block;
@@ -479,11 +478,12 @@ function getHomeHtml(){
 
 <br><br>
 
-<span style="font-weight:400;">
-  <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c00020;">Art</span>
-  réunit,
-  dans un même espace,
-  des services utiles pour :
+<strong>
+<span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c00020;">Art</span>
+</strong>
+ réunit,
+ dans un même espace,
+ des services utiles pour :
 </span>
 
 <br><br>
@@ -501,9 +501,12 @@ function getHomeHtml(){
 
       <br><br>
 
+      <span style="color:#2f5d46;font-weight:700;">
       Commencez par votre commune,
       puis élargissez votre recherche
       lorsque votre activité le nécessite.
+      </span>
+      
     </div>
 
     <div
