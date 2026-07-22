@@ -37,17 +37,17 @@
     return document.getElementById(id);
   }
 
- function getLogoHtml(){
+function getLogoHtml(){
 
   return `
-    <span
+    <strong
       style="
         display:inline-block;
         white-space:nowrap;
         font-weight:900;
       ">
-      <span style="color:#2f5d46;">Bo'Cité&nbsp;</span><span style="color:#b00020;">Art</span>
-    </span>
+      <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+    </strong>
   `;
 }
 
@@ -272,10 +272,7 @@ function getIntroductionHtml(){
   ">
   Sur la prochaine page,
   cliquez dans la bande défilante
-  correspondant au thème choisi.
-
-  <br><br>
-
+  correspondant au thème choisi
   Des explications plus approfondies
   vous y attendent.
 </div>
