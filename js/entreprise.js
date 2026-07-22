@@ -504,7 +504,7 @@ function getHomeHtml(){
 
 <span style="font-weight:400;">
   • recruter plus facilement ;<br>
-  • rechercher des entreprises et des compétences;<br>
+  • rechercher des entreprises et des compétences <br>
   • développer votre activité ;<br>
   • réduire certaines charges ;<br>
   • améliorer votre visibilité ;<br>
