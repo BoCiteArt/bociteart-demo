@@ -637,6 +637,24 @@ function getHomeHtml(){
       </button>
 
       <button
+        class="entrepriseBand"
+        type="button"
+        data-entreprise-screen="annuaire_local">
+
+        <span class="entrepriseBandText">
+          Découvrez les entreprises, commerces et artisans de votre commune
+          • Trouvez un fournisseur
+          • Un sous-traitant
+          • Un partenaire
+          • Des compétences près de chez vous
+          •
+          <span class="entrepriseBandAction">
+            Cliquez ici…
+          </span>
+        </span>
+      </button>
+
+      <button
         class="entrepriseBand entrepriseBandPrivate"
         type="button"
         data-entreprise-screen="acces_partenaire">
@@ -701,21 +719,29 @@ function getHomeHtml(){
   `;
 }
 
-  function synchronizeHomeBands(){
+function synchronizeHomeBands(){
 
-    const texts =
-      document.querySelectorAll(
-        "#entrepriseHomeBands .entrepriseBandText"
-      );
+  const texts = document.querySelectorAll(
+    "#entrepriseHomeBands .entrepriseBandText"
+  );
 
-    if(!texts.length){
-      return;
-    }
+  if(!texts.length){
+    return;
+  }
 
-    texts.forEach(function(text){
-      text.style.animation = "none";
-      text.style.transform = "translateX(100%)";
-    });
+  texts.forEach(function(text){
+
+    text.style.animation = "none";
+    text.style.transform = "";
+
+    void text.offsetWidth;
+
+    text.style.animation =
+      "entrepriseBandScroll 85s linear infinite";
+
+    text.style.animationDelay = "-42.5s";
+  });
+}
 
     void document.body.offsetWidth;
 
