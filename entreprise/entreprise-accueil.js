@@ -231,7 +231,37 @@ function getIntroductionHtml(){
       <div
          style="
          margin-top:10px;
-         color:#111;
+         color:<div
+  style="
+    color:#2f5d46;
+    font-size:18px;
+    line-height:1.5;
+    font-weight:700;
+  ">
+  Découvrez les thèmes suivants
+</div>
+
+<div
+  style="
+    color:#2f5d46;
+    font-size:18px;
+    line-height:1.5;
+    font-weight:700;
+  ">
+  Découvrez les thèmes suivants
+</div>
+
+<div
+  style="
+    margin-top:8px;
+    color:#111;
+    font-size:16px;
+    line-height:1.45;
+    font-weight:900;
+  ">
+  Sur la prochaine page, cliquez dans la bande défilante correspondant au thème choisi.<br>
+  Des explications plus approfondies vous y attendent.
+</div>
          font-size:16px;
          line-height:1.55;
          font-weight:900;
