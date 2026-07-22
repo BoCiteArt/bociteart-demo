@@ -43990,7 +43990,33 @@ console.log(
 
 })();
 
+(function(){
 
+  const module = window.BociteEntreprise;
+
+  if(
+    !module ||
+    typeof module.openObservatoireEconomique !== "function"
+  ){
+    console.warn(
+      "Observatoire économique introuvable"
+    );
+    return;
+  }
+
+  module.openLocalDirectory =
+    module.openObservatoireEconomique;
+
+  module.registerScreen(
+    "annuaire_local",
+    module.openObservatoireEconomique
+  );
+
+  console.log(
+    "✅ Observatoire économique remis en priorité"
+  );
+
+})();
 
 
 
