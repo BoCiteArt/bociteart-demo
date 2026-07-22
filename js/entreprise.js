@@ -743,18 +743,6 @@ function synchronizeHomeBands(){
   });
 }
 
-    void document.body.offsetWidth;
-
-    window.requestAnimationFrame(function(){
-
-      texts.forEach(function(text){
-
-        text.style.animation =
-          "entrepriseBandScroll 85s linear infinite";
-      });
-    });
-  }
-
   function bindHomeButtons(){
 
     document
@@ -43064,6 +43052,946 @@ console.log(
   );
 
 })();
+
+/* =========================================================
+   BO'CITÉART — OBSERVATOIRE ET ANNUAIRE ÉCONOMIQUE VIVANT
+   LECTURE OBLIGATOIRE • TERRITOIRE • ANNUAIRE
+   ========================================================= */
+
+(function patchBociteObservatoireEconomique(){
+
+  "use strict";
+
+  const module = window.BociteEntreprise;
+
+  if(!module){
+    console.error(
+      "Bo'CitéArt : module Entreprise introuvable."
+    );
+    return;
+  }
+
+  const INTRO_KEY =
+    "bociteart_observatoire_intro_lue_v1";
+
+  const TERRITORY_KEY =
+    "bociteart_observatoire_territoire_v1";
+
+  function getElement(id){
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+    return module.safeEscape(value);
+  }
+
+  function introIsRead(){
+    return (
+      localStorage.getItem(INTRO_KEY) === "oui"
+    );
+  }
+
+  function getTerritoryLabel(value){
+
+    const labels = {
+      commune:"Ma commune",
+      voisines:"Communes voisines",
+      departement:"Mon département",
+      region:"Ma région",
+      france:"Toute la France"
+    };
+
+    return labels[value] || "Ma commune";
+  }
+
+  function getPresentationHtml(showContinueButton){
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.55;
+        ">
+
+        <strong style="font-size:20px;">
+          Comprendre l’Observatoire économique Bo'CitéArt
+        </strong>
+
+        <br><br>
+
+        L’annuaire est souvent utilisé
+        comme une simple liste de noms.
+
+        <br><br>
+
+        Bo'CitéArt veut en faire
+        un véritable outil de découverte,
+        de recherche
+        et de développement économique.
+
+        <br><br>
+
+        Il permet aux habitants,
+        aux entreprises,
+        aux commerces,
+        aux artisans
+        et aux collectivités
+        de mieux connaître les richesses économiques
+        présentes autour d’eux
+        et partout en France.
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Un annuaire vivant
+        </strong>
+
+        <br><br>
+
+        Vous pourrez découvrir :
+
+        <br><br>
+
+        • les entreprises ;<br>
+        • les commerces ;<br>
+        • les artisans ;<br>
+        • leurs métiers ;<br>
+        • leurs savoir-faire ;<br>
+        • leurs produits ;<br>
+        • leurs services ;<br>
+        • leurs besoins ;<br>
+        • leurs recherches professionnelles.
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Commencer par regarder autour de soi
+        </strong>
+
+        <br><br>
+
+        Avant de rechercher systématiquement loin,
+        il est utile de vérifier
+        ce qui existe déjà dans sa commune,
+        dans les communes voisines,
+        dans son département
+        ou dans sa région.
+
+        <br><br>
+
+        Votre prochain fournisseur,
+        sous-traitant,
+        partenaire,
+        client
+        ou futur salarié
+        se trouve peut-être déjà près de vous.
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Rechercher partout en France
+        </strong>
+
+        <br><br>
+
+        Une entreprise doit également pouvoir élargir
+        sa recherche lorsque son besoin l’exige.
+
+        <br><br>
+
+        L’Observatoire économique Bo'CitéArt
+        permettra de rechercher une activité,
+        un métier,
+        un commerce,
+        un artisan
+        ou une entreprise
+        partout en France.
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Des informations régulièrement actualisées
+        </strong>
+
+        <br><br>
+
+        L’objectif est de relier l’annuaire
+        aux informations publiques officielles
+        afin d’identifier régulièrement :
+
+        <br><br>
+
+        • les nouvelles entreprises ;<br>
+        • les nouveaux commerces ;<br>
+        • les changements d’adresse ;<br>
+        • les changements d’activité ;<br>
+        • les cessations ;<br>
+        • les fermetures ;<br>
+        • les éventuels doublons.
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Le rôle de l’intelligence artificielle
+        </strong>
+
+        <br><br>
+
+        L’intelligence artificielle aidera
+        à rapprocher,
+        classer
+        et contrôler les informations disponibles.
+
+        <br><br>
+
+        Elle ne devra pas inventer une entreprise
+        ni supprimer seule une fiche.
+
+        <br><br>
+
+        Les mises à jour devront s’appuyer
+        sur des données officielles
+        et sur des contrôles réguliers.
+      </div>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Pourquoi cette lecture est importante
+        </strong>
+
+        <br><br>
+
+        Bo'CitéArt ne propose pas seulement
+        de rechercher un nom.
+
+        <br><br>
+
+        L’objectif est aussi de faire connaître
+        les acteurs économiques,
+        de favoriser les relations locales,
+        de créer de nouvelles opportunités
+        et d’aider chacun
+        à prendre de meilleures décisions.
+
+        <br><br>
+
+        Cette présentation vous permet de comprendre
+        tout ce que cet outil va vous apporter.
+      </div>
+
+           ${
+        showContinueButton
+          ? `
+            <button
+              id="observatoireFinishReadingBtn"
+              class="choiceBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:14px;
+                background:#b00020;
+                color:#fff;
+              ">
+              J’ai terminé la lecture — accéder à l’Observatoire
+            </button>
+          `
+          : ""
+      }
+    `;
+  }
+
+  function getMandatoryIntroductionHtml(){
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.55;
+        ">
+
+        <strong style="font-size:21px;">
+          Observatoire économique Bo'CitéArt
+        </strong>
+
+        <br><br>
+
+        <strong>
+          L’annuaire vivant des entreprises,
+          commerces et artisans de France
+        </strong>
+      </div>
+
+      <div
+        class="box"
+        style="border-left:6px solid #b00020;">
+
+        <strong style="font-size:18px;">
+          Lecture nécessaire avant le premier accès
+        </strong>
+
+        <br><br>
+
+        Avant d’accéder à l’Observatoire économique
+        Bo'CitéArt,
+        la lecture de cette présentation est nécessaire.
+
+        <br><br>
+
+        Cette présentation ne dure que quelques minutes
+        et vous permettra de comprendre
+        tout ce que cet outil va vous apporter,
+        que vous soyez citoyen,
+        artisan,
+        commerçant,
+        entrepreneur,
+        association
+        ou collectivité.
+      </div>
+
+      ${getPresentationHtml(true)}
+    `;
+  }
+
+  function getObservatoireHomeHtml(){
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.55;
+        ">
+
+        <strong style="font-size:21px;">
+          Observatoire économique Bo'CitéArt
+        </strong>
+
+        <br><br>
+
+        <strong>
+          L’annuaire vivant des entreprises,
+          commerces et artisans de France
+        </strong>
+
+        <br><br>
+
+        Recherchez près de chez vous
+        ou élargissez directement votre recherche
+        à toute la France.
+      </div>
+
+      <details
+        id="observatoirePresentationDetails"
+        class="box">
+
+        <summary
+          style="
+            cursor:pointer;
+            font-weight:900;
+            color:#2f5d46;
+          ">
+          Relire la présentation complète
+        </summary>
+
+        <div style="margin-top:14px;">
+          ${getPresentationHtml(false)}
+        </div>
+      </details>
+
+      <div class="box">
+
+        <strong style="font-size:18px;">
+          Rechercher dans
+        </strong>
+
+        <br><br>
+
+        Choisissez votre territoire.
+        Vous arriverez directement
+        dans l’annuaire correspondant.
+      </div>
+
+      <div
+        style="
+          display:grid;
+          grid-template-columns:1fr;
+          gap:9px;
+        ">
+
+        <button
+          class="choiceBtn observatoireTerritoryBtn"
+          type="button"
+          data-observatoire-territory="commune">
+          Ma commune
+        </button>
+
+        <button
+          class="choiceBtn observatoireTerritoryBtn"
+          type="button"
+          data-observatoire-territory="voisines">
+          Communes voisines
+        </button>
+
+        <button
+          class="choiceBtn observatoireTerritoryBtn"
+          type="button"
+          data-observatoire-territory="departement">
+          Mon département
+        </button>
+
+        <button
+          class="choiceBtn observatoireTerritoryBtn"
+          type="button"
+          data-observatoire-territory="region">
+          Ma région
+        </button>
+
+        <button
+          class="choiceBtn observatoireTerritoryBtn"
+          type="button"
+          data-observatoire-territory="france">
+          Toute la France
+        </button>
+      </div>
+    `;
+  }
+
+     function getDirectoryHtml(territory){
+
+    const territoryLabel =
+      getTerritoryLabel(territory);
+
+    return `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.55;
+        ">
+
+        <strong style="font-size:20px;">
+          Annuaire économique vivant
+        </strong>
+
+        <br><br>
+
+        Territoire sélectionné :
+
+        <br><br>
+
+        <strong
+          style="
+            font-size:18px;
+            color:#2f5d46;
+          ">
+          ${escapeValue(territoryLabel)}
+        </strong>
+      </div>
+
+      <button
+        id="observatoireChangeTerritoryBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-bottom:12px;
+        ">
+        Changer de territoire
+      </button>
+
+      <details class="box">
+
+        <summary
+          style="
+            cursor:pointer;
+            font-weight:900;
+            color:#2f5d46;
+          ">
+          Relire la présentation de l’Observatoire
+        </summary>
+
+        <div style="margin-top:14px;">
+          ${getPresentationHtml(false)}
+        </div>
+      </details>
+
+      <div class="box">
+
+        <strong>
+          Rechercher
+        </strong>
+
+        <br><br>
+
+        <input
+          id="observatoireDirectorySearch"
+          class="miniField"
+          type="search"
+          placeholder="Nom, métier, activité, produit ou service">
+
+        <select
+          id="observatoireDirectoryCategory"
+          class="miniField"
+          style="margin-top:9px;">
+
+          <option value="all">
+            Toutes les activités
+          </option>
+
+          <option value="artisan">
+            Artisans
+          </option>
+
+          <option value="commerce">
+            Commerces
+          </option>
+
+          <option value="entreprise">
+            Entreprises
+          </option>
+
+          <option value="partner">
+            Partenaires Bo'CitéArt
+          </option>
+
+          <option value="official">
+            Référencement officiel
+          </option>
+        </select>
+      </div>
+
+      <div
+        class="box"
+        style="border-left:6px solid #2f5d46;">
+
+        <strong>
+          Mise à jour de l’annuaire
+        </strong>
+
+        <br><br>
+
+        La démonstration utilise actuellement
+        les fiches enregistrées dans l’application.
+
+        <br><br>
+
+        La connexion nationale aux données officielles
+        et leur actualisation assistée
+        par intelligence artificielle
+        seront raccordées dans la version définitive.
+      </div>
+
+      <div
+        id="observatoireDirectoryCount"
+        class="muted"
+        style="margin-top:10px;">
+      </div>
+
+      <div
+        id="observatoireDirectoryList"
+        style="margin-top:10px;">
+      </div>
+    `;
+  }
+
+    function loadCompanies(){
+
+    if(
+      typeof module.loadDirectory === "function"
+    ){
+      return module.loadDirectory();
+    }
+
+    return [];
+  }
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function getCompanyCategory(company){
+
+    const text =
+      normalizeText(
+        [
+          company.name,
+          company.activity,
+          company.description
+        ].join(" ")
+      );
+
+    if(
+      text.includes("menuiser") ||
+      text.includes("electric") ||
+      text.includes("batiment") ||
+      text.includes("métaller") ||
+      text.includes("metaller") ||
+      text.includes("plomb") ||
+      text.includes("peint") ||
+      text.includes("couvreur") ||
+      text.includes("maçon") ||
+      text.includes("macon")
+    ){
+      return "artisan";
+    }
+
+    if(
+      text.includes("commerce") ||
+      text.includes("magasin") ||
+      text.includes("boutique") ||
+      text.includes("restaurant") ||
+      text.includes("boulanger") ||
+      text.includes("coiffeur")
+    ){
+      return "commerce";
+    }
+
+    return "entreprise";
+  }
+
+  function renderDirectoryList(){
+
+    const input =
+      getElement("observatoireDirectorySearch");
+
+    const category =
+      getElement("observatoireDirectoryCategory");
+
+    const list =
+      getElement("observatoireDirectoryList");
+
+    const count =
+      getElement("observatoireDirectoryCount");
+
+    if(!list){
+      return;
+    }
+
+    const query =
+      normalizeText(
+        input ? input.value : ""
+      );
+
+    const categoryValue =
+      category ? category.value : "all";
+
+    let companies =
+      loadCompanies().filter(function(company){
+
+        const searchable =
+          normalizeText(
+            [
+              company.name,
+              company.activity,
+              company.description,
+              company.city,
+              company.address
+            ].join(" ")
+          );
+
+        if(
+          query &&
+          !searchable.includes(query)
+        ){
+          return false;
+        }
+
+        if(
+          categoryValue === "partner" &&
+          !company.partner
+        ){
+          return false;
+        }
+
+        if(
+          categoryValue === "official" &&
+          company.partner
+        ){
+          return false;
+        }
+
+        if(
+          categoryValue === "artisan" ||
+          categoryValue === "commerce" ||
+          categoryValue === "entreprise"
+        ){
+          if(
+            getCompanyCategory(company) !==
+            categoryValue
+          ){
+            return false;
+          }
+        }
+
+        return true;
+      });
+
+    companies.sort(function(a,b){
+
+      return String(a.name || "").localeCompare(
+        String(b.name || ""),
+        "fr",
+        {
+          sensitivity:"base"
+        }
+      );
+    });
+
+         if(count){
+
+      count.textContent =
+        companies.length +
+        " résultat(s) trouvé(s).";
+    }
+
+    if(!companies.length){
+
+      list.innerHTML = `
+        <div class="box">
+          Aucun résultat ne correspond
+          à votre recherche actuelle.
+        </div>
+      `;
+
+      return;
+    }
+
+    list.innerHTML =
+      companies.map(function(company){
+
+        return `
+          <div class="box">
+
+            <strong style="font-size:17px;">
+              ${escapeValue(company.name)}
+            </strong>
+
+            <br><br>
+
+            <span
+              style="
+                color:#2f5d46;
+                font-weight:900;
+              ">
+              ${escapeValue(company.activity)}
+            </span>
+
+            <div
+              style="
+                margin-top:9px;
+                line-height:1.5;
+              ">
+              ${escapeValue(company.description)}
+            </div>
+
+            <div style="margin-top:9px;">
+              Commune :
+              <strong>
+                ${escapeValue(company.city || "")}
+              </strong>
+            </div>
+
+            <div style="margin-top:10px;">
+
+              <button
+                class="choiceBtn observatoireOpenCompanyBtn"
+                type="button"
+                data-company-id="${escapeValue(company.id)}">
+
+                Consulter la fiche
+
+              </button>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
+
+    list
+      .querySelectorAll(
+        ".observatoireOpenCompanyBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          const companyId =
+            button.getAttribute(
+              "data-company-id"
+            );
+
+          if(
+            typeof module.openCompanyCard ===
+            "function"
+          ){
+
+            module.openCompanyCard(
+              companyId
+            );
+
+          }
+
+        };
+
+      });
+
+  }
+
+     function bindDirectory(){
+
+    const input =
+      getElement("observatoireDirectorySearch");
+
+    const category =
+      getElement("observatoireDirectoryCategory");
+
+    const changeButton =
+      getElement("observatoireChangeTerritoryBtn");
+
+    if(input){
+      input.oninput = renderDirectoryList;
+    }
+
+    if(category){
+      category.onchange = renderDirectoryList;
+    }
+
+    if(changeButton){
+
+      changeButton.onclick = function(){
+
+        openObservatoireHome();
+
+      };
+
+    }
+
+    renderDirectoryList();
+
+  }
+
+  function openTerritoryDirectory(territory){
+
+    localStorage.setItem(
+      TERRITORY_KEY,
+      territory
+    );
+
+    module.renderModal(
+      "Annuaire économique — " +
+      getTerritoryLabel(territory),
+      getDirectoryHtml(territory)
+    );
+
+    setTimeout(function(){
+
+      bindDirectory();
+
+    },0);
+
+  }
+
+  function bindObservatoireHome(){
+
+    document
+      .querySelectorAll(
+        ".observatoireTerritoryBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          openTerritoryDirectory(
+            button.getAttribute(
+              "data-observatoire-territory"
+            ) || "commune"
+          );
+
+        };
+
+      });
+
+  }
+
+  function openObservatoireHome(){
+
+    if(!introIsRead()){
+
+      module.renderModal(
+        "Observatoire économique Bo'CitéArt",
+        getMandatoryIntroductionHtml()
+      );
+
+      setTimeout(function(){
+
+        const btn =
+          getElement(
+            "observatoireFinishReadingBtn"
+          );
+
+        if(btn){
+
+          btn.onclick = function(){
+
+            localStorage.setItem(
+              INTRO_KEY,
+              "oui"
+            );
+
+            openObservatoireHome();
+
+          };
+
+        }
+
+      },0);
+
+      return;
+
+    }
+
+    module.renderModal(
+      "Observatoire économique Bo'CitéArt",
+      getObservatoireHomeHtml()
+    );
+
+    setTimeout(bindObservatoireHome,0);
+
+  }
+
+  module.registerScreen(
+    "annuaire_local",
+    openObservatoireHome
+  );
+
+  module.openLocalDirectory =
+    openObservatoireHome;
+
+  module.openObservatoireEconomique =
+    openObservatoireHome;
+
+  console.log(
+    "✅ Observatoire économique Bo'CitéArt chargé"
+  );
+
+})();
+
+})();
+
 
 
 
