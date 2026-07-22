@@ -546,6 +546,8 @@ function getHomeHtml(){
         type="button"
         data-entreprise-screen="developpement">
 
+<div class="box">
+
         <span class="entrepriseBandText">
           Développez votre entreprise
           • Clients
@@ -1239,12 +1241,16 @@ function synchronizeHomeBands(){
     });
   }
 
- function getDirectoryHtml(){
+function getDirectoryHtml(){
+
   return `
 
     <div
       class="box"
-      style="border-left:6px solid #2f5d46;line-height:1.6;">
+      style="
+        border-left:6px solid #2f5d46;
+        line-height:1.6;
+      ">
 
       <strong
         style="
@@ -1254,40 +1260,52 @@ function synchronizeHomeBands(){
           line-height:1.4;
         ">
         Un annuaire économique vivant
-        et régulièrement actualisé
       </strong>
 
       <br>
 
-      Connaissiez-vous 5 entreprises de votre ville ?
-
-      <strong>Probablement NON&nbsp;!</strong>
-
-      <br><br>
-
-      Pourtant, elles sont présentes autour de vous
-      et représentent un véritable potentiel
-      pour les habitants,
-      les commerces,
-      les associations,
-      les collectivités
-      et les autres entreprises.
+      Connaissez-vous le nom de cinq entreprises
+      présentes dans votre commune ?
 
       <br><br>
 
       <strong>
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+        Probablement pas.
       </strong>
 
-      a pour objectif de rendre cette richesse locale
-      plus visible et plus facilement accessible.
+      <br><br>
+
+      Pourtant, des entreprises,
+      des commerces,
+      des artisans,
+      des professions libérales
+      et de nombreux savoir-faire
+      sont déjà présents près de vous.
+
+      <br><br>
+
+      Ils produisent,
+      recrutent
+      et proposent des produits
+      ou des services,
+      sans toujours être suffisamment connus
+      des habitants
+      ni même des autres professionnels.
+
+      <br><br>
+
+      <strong>
+        Avant de rechercher ailleurs,
+        commencez par découvrir
+        ce qui existe déjà dans votre commune.
+      </strong>
 
     </div>
 
 
     <div
       class="box"
-      style="border-left:6px solid #2f5d46;line-height:1.6;">
+      style="line-height:1.6;">
 
       <strong
         style="
@@ -1295,131 +1313,189 @@ function synchronizeHomeBands(){
           color:#2f5d46;
           font-size:18px;
         ">
-        Comprendre les couleurs
+        À quoi sert cet annuaire ?
       </strong>
 
       <br>
 
-      Chaque fiche pourra être identifiée rapidement.
+      Il permet de rechercher rapidement :
 
       <br><br>
 
-      🟢 Entreprise active
-
-      <br>
-
-      🟠 Procédure collective publiée
-
-      <br>
-
-      🔴 Liquidation judiciaire publiée
-
-      <br>
-
-      ⚪ Entreprise radiée ou activité cessée
-
-      <br>
-
-      🔵 Informations récemment mises à jour
+      • une entreprise ;<br>
+      • un commerce ;<br>
+      • un artisan ;<br>
+      • un métier ;<br>
+      • un savoir-faire ;<br>
+      • un produit ;<br>
+      • un service ;<br>
+      • un fournisseur ;<br>
+      • un sous-traitant ;<br>
+      • un partenaire professionnel.
 
       <br><br>
 
-      Les informations affichées proviendront
-      exclusivement de données publiques officielles.
-
-    </div>
-
-
-    <div class="box">
-
-      <strong
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:18px;
-        ">
-        Rechercher une entreprise,
-        un métier ou un savoir-faire
-      </strong>
-
-      <br>
-
-      Recherchez rapidement :
+      Cette visibilité constitue
+      le point de départ
+      de nouvelles relations locales :
 
       <br><br>
 
-      • une entreprise ;
+      • recommandations ;<br>
+      • demandes de devis ;<br>
+      • recrutements ;<br>
+      • partenariats ;<br>
+• sous-traitance ;<br>
+• développement de l’activité.
 
-      <br>
+<br><br>
 
-      • un artisan ;
+L’annuaire ne remplace pas
+les autres thèmes de l’application.
 
-      <br>
+<br><br>
 
-      • un commerce ;
+Il permet d’abord
+de savoir qui existe,
+où se trouve l’entreprise
+et ce qu’elle peut proposer.
 
-      <br>
+</div>
 
-      • un métier ;
 
-      <br>
+<div
+  class="box"
+  style="
+    border-left:6px solid #2f5d46;
+    line-height:1.6;
+  ">
 
-      • un produit ;
+  <strong
+    style="
+      display:block;
+      color:#2f5d46;
+      font-size:18px;
+    ">
+    Un annuaire régulièrement actualisé
+  </strong>
 
-      <br>
+  <br>
 
-      • un service ;
+  Contrairement à une simple liste,
 
-      <br>
+  <strong>
+    <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+  </strong>
 
-      • un fournisseur ;
+  a vocation à suivre
+  l’évolution des entreprises.
 
-      <br>
+  <br><br>
 
-      • un sous-traitant.
+  Les informations de situation
+  proviendront exclusivement
+  de données publiques officielles.
 
-      <br><br>
+  <br><br>
 
-      <input
-        id="entrepriseDirectorySearch"
-        class="miniField"
-        type="search"
-        placeholder="Nom, métier ou activité">
+  Elles permettront notamment
+  de repérer une entreprise :
 
-      <select
-        id="entrepriseDirectoryFilter"
-        class="miniField"
-        style="margin-top:10px;">
+  <br><br>
 
-        <option value="all">
-          Toutes les entreprises
-        </option>
+  🟢 active ;<br><br>
 
-        <option value="partner">
-          Partenaires Bo'CitéArt
-        </option>
+  🔵 dont les informations
+  ont récemment été mises à jour ;<br><br>
 
-        <option value="official">
-          Référencement officiel
-        </option>
+  🟠 faisant l’objet
+  d’une procédure collective publiée ;<br><br>
 
-      </select>
+  🔴 faisant l’objet
+  d’une liquidation judiciaire publiée ;<br><br>
 
-    </div>
+  ⚪ radiée
+  ou dont l’activité a cessé.
 
-    <div
-      id="entrepriseDirectoryCount"
-      class="muted"
-      style="margin-top:10px;">
-    </div>
+  <br><br>
 
-    <div
-      id="entrepriseDirectoryList"
-      style="margin-top:10px;">
-    </div>
+  Ces indications auront pour objectif
+  de mieux informer les utilisateurs.
 
-  `;
+  <br><br>
+
+  Elles ne remplaceront jamais
+  la consultation des publications
+  et registres officiels.
+
+</div>
+
+
+<div class="box">
+
+  <strong
+    style="
+      display:block;
+      color:#2f5d46;
+      font-size:18px;
+    ">
+    Rechercher une entreprise,
+    un métier ou un savoir-faire
+  </strong>
+
+  <br>
+
+  Saisissez un nom,
+  un métier,
+  une activité,
+  un produit
+  ou un service.
+
+  <br><br>
+
+  <input
+    id="entrepriseDirectorySearch"
+    class="miniField"
+    type="search"
+    placeholder="Nom, métier, activité, produit ou service">
+
+  <select
+    id="entrepriseDirectoryFilter"
+    class="miniField"
+    style="margin-top:10px;">
+
+    <option value="all">
+      Toutes les entreprises
+    </option>
+
+    <option value="partner">
+      Partenaires Bo'CitéArt
+    </option>
+
+    <option value="official">
+      Référencement officiel
+    </option>
+
+  </select>
+
+</div>
+
+
+<div
+  id="entrepriseDirectoryCount"
+  class="muted"
+  style="margin-top:10px;">
+</div>
+
+
+<div
+  id="entrepriseDirectoryList"
+  style="margin-top:10px;">
+</div>
+
+`;
 }
+      
   function renderDirectoryList(){
     const input =
       getElement("entrepriseDirectorySearch");
@@ -3522,142 +3598,149 @@ function synchronizeHomeBands(){
         prises au bon moment.
       </div>
 
+
+       <div class="box">
+
+  <div
+    class="sectionTitle"
+    style="
+      color:#2f5d46;
+      font-weight:400;
+    ">
+    Une liste économique locale commune
+  </div>
+
+  <br>
+
+  Les habitants,
+  les entreprises,
+  les commerces,
+  les artisans
+  et les professionnels
+  doivent pouvoir retrouver facilement
+  les acteurs économiques
+  présents dans leur ville.
+
+  <br><br>
+
+  Cet annuaire permet de savoir
+  qui travaille,
+  produit,
+  recrute
+  et propose des services
+  près de chez soi.
+
+  <br><br>
+
+  Il aide chacun à rechercher
+  une solution locale en priorité,
+  avant de se tourner systématiquement
+  vers une autre commune
+  ou un territoire plus éloigné.
+
+</div>
       <div class="box">
 
-  <strong style="font-size:22px;color:#2f5d46;">
-    Connaissez-vous le nom de cinq entreprises de votre commune ?
+  <div class="sectionTitle">
+    Développer les relations entre professionnels locaux
+  </div>
+
+  <br>
+
+  Une entreprise,
+  un commerce,
+  un artisan
+  ou un professionnel
+  peut choisir librement de proposer
+  un avantage réservé
+  aux autres partenaires
+  <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>.
+
+  <br><br>
+
+  Cet avantage peut prendre différentes formes :
+
+  <br><br>
+
+  • une remise de X % ;<br>
+  • un montant personnalisé ;<br>
+  • une condition commerciale spécifique ;<br>
+  • une priorité d'intervention ;<br>
+  • une prestation complémentaire ;<br>
+  • ou tout autre avantage décidé librement par l'entreprise.
+
+  <br><br>
+
+  Cet avantage reste entièrement facultatif.
+
+  <br><br>
+
+  Lorsqu'il est proposé,
+  il a pour vocation de créer
+  une relation privilégiée
+  entre les acteurs économiques locaux
+  et d'encourager les entreprises d'abord
+  à travailler davantage ensemble.
+
+  <br><br>
+
+  Mais l'objectif de
+  <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+  va bien au-delà.
+
+  <br><br>
+
+  Tout commence par une étape essentielle :
+
+  <br><br>
+
+  <strong>
+  rendre les entreprises visibles.
   </strong>
 
   <br><br>
 
-  Probablement pas. Pourtant, combien de fois entend-on :
+  Car avant de pouvoir travailler ensemble,
+  encore faut-il savoir :
 
   <br><br>
 
-  « Je ne savais pas qu'ils faisaient cela. »
-
-  <br>
-
-  ou
-
-  <br>
-
-  « Je ne savais même pas que cette entreprise existait. »
+  • qu'une entreprise existe ;<br>
+  • où elle se trouve ;<br>
+  • quel est son métier ;<br>
+  • quels sont ses savoir-faire ;<br>
+  • quels produits ou services elle propose.
 
   <br><br>
 
-  Bo'CitéArt rend enfin visibles les savoir-faire du territoire afin de créer de nouvelles rencontres, de nouveaux partenariats et de nouvelles opportunités pour tous.
+  Une fois cette visibilité retrouvée,
+  les habitants,
+  les entreprises,
+  les commerces,
+  les artisans
+  et les professionnels
+  peuvent enfin apprendre
+  à se connaître,
+  à se rencontrer
+  et à créer de nouvelles opportunités.
 
   <br><br>
 
-  Vous pourrez découvrir les entreprises et commerces présents dans votre commune :
+  C'est alors que peuvent naturellement se développer :
 
   <br><br>
 
-  • leurs métiers ;<br>
-  • leurs savoir-faire ;<br>
-  • leurs produits ;<br>
-  • leurs services ;<br>
-  • leurs besoins ;<br>
-  • leurs recherches professionnelles.
-
-  <br><br>
-
-  Vous pourrez également rechercher localement :
-
-  <br><br>
-
-  • un fournisseur ;<br>
-  • un sous-traitant ;<br>
-  • une compétence complémentaire ;<br>
-  • un partenaire ;<br>
-  • un futur salarié ;<br>
-  • un nouveau client professionnel.
+  • les partenariats ;<br>
+  • la sous-traitance ;<br>
+  • les recommandations ;<br>
+  • les recrutements ;<br>
+  • le mécénat ;<br>
+  • la mutualisation ;<br>
+  • les nouveaux clients ;<br>
+  • et plus largement,
+  le développement économique local.
 
 </div>
-        <strong>
-          Une liste locale commune
-        </strong>
-
-        <br><br>
-
-        Les citoyens,
-        les entreprises
-        et les commerces
-        doivent pouvoir retrouver
-        les acteurs économiques
-        présents dans leur ville.
-
-        <br><br>
-
-        Cette liste permet de se rappeler
-        qui travaille,
-        produit
-        et propose des services
-        près de chez soi,
-        avant de chercher systématiquement ailleurs.
-      </div>
-
-      <div class="box">
-
-        <strong>
-          Favoriser les relations entre professionnels locaux
-        </strong>
-
-        <br><br>
-
-        Une entreprise ou un commerce partenaire
-        pourra choisir librement
-        de proposer un avantage professionnel
-        aux autres partenaires locaux.
-
-        <br><br>
-
-        Cet avantage pourra être par exemple :
-
-        <br><br>
-
-        • une remise de 5 % ;<br>
-        • une remise de 10 % ;<br>
-        • un montant personnalisé ;<br>
-        • une condition commerciale spécifique.
-
-        <br><br>
-
-        Cette remise restera facultative
-        et devra être plus favorable
-        que l’avantage habituellement proposé
-        aux clients ordinaires,
-        afin de réellement encourager
-        les professionnels locaux
-        à travailler davantage ensemble.
-      </div>
-
-      <div class="box">
-
-        <strong>
-          Bo'CitéArt prépare des connexions utiles
-        </strong>
-
-        <br><br>
-
-        L’objectif n’est pas seulement
-        d’afficher des noms dans un annuaire.
-
-        <br><br>
-
-        Il s’agit de permettre
-        aux entreprises et aux commerces :
-
-        <br><br>
-
-        • de mieux se connaître ;<br>
-        • de travailler ensemble ;<br>
-        • de découvrir de nouveaux besoins ;<br>
-        • d’identifier des opportunités ;<br>
-        • de favoriser les échanges locaux ;<br>
-        • de développer leur activité.
-      </div>
 
       <div
         style="
@@ -4466,27 +4549,55 @@ function getMutualisationHtml(){
 
 return `
 
-<div class="box" style="border-left:6px solid #2f5d46;">
+<div
+  class="box"
+  style="border-left:6px solid #2f5d46;">
 
-<strong style="font-size:19px;">
+  <div class="sectionTitle">
+    Connaissez-vous le nom de cinq entreprises
+    présentes dans votre ville ?
+  </div>
 
-Réduisez vos charges grâce à la mutualisation
+  <br>
 
-</strong>
+  Comme une très grande majorité des habitants,
 
-<br><br>
+  <strong>probablement NON&nbsp;!</strong>
 
-Une entreprise seule
-n'obtient pas toujours
-les meilleures conditions.
+  <br><br>
 
-<br><br>
+  Pourtant, votre commune possède des entreprises,
+  des artisans,
+  des commerces,
+  des prestataires de services
+  et de nombreux savoir-faire
+  souvent méconnus.
 
-En regroupant plusieurs entreprises
-ou commerces,
-il devient parfois possible
-de négocier davantage.
+  <br><br>
 
+  Avant de rechercher une solution ailleurs,
+  prenez le temps de découvrir
+  les compétences déjà présentes
+  sur votre territoire.
+
+  <br><br>
+
+  <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+a pour vocation de rendre ces acteurs plus visibles
+afin de renforcer et de favoriser avant tout
+les échanges,
+les partenariats,
+l'emploi
+et le développement économique local,
+en permettant à chaque entreprise,
+artisan,
+commerce
+et professionnel
+d'être vu,
+connu
+et reconnu
+d'abord dans sa ville,
+puis sur son territoire.
 </div>
 
 <div class="box">
