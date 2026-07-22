@@ -100,6 +100,45 @@
         margin-top:14px;
       }
 
+            .entrepriseDevelopmentPage,
+      .entrepriseDevelopmentPage p,
+      .entrepriseDevelopmentPage li,
+      .entrepriseDevelopmentPage span:not(.developmentTitle) {
+        font-weight:400;
+      }
+
+      .entrepriseDevelopmentPage .box,
+      .entrepriseDevelopmentPage .developmentBox,
+      .entrepriseDevelopmentPage .developmentActions,
+      .entrepriseDevelopmentPage .choiceBtn {
+        background:#f7edda;
+      }
+
+      .entrepriseDevelopmentPage .developmentTitle {
+        color:#2f5d46;
+        font-weight:700;
+      }
+
+      .entrepriseDevelopmentPage .choiceBtn {
+        color:#111;
+        font-weight:400;
+      }
+
+      .entrepriseDevelopmentPage .developmentBackBtn {
+        display:block;
+        width:max-content;
+        max-width:100%;
+        margin:0 0 14px 0;
+        padding:10px 16px;
+        border:2px solid #2f5d46;
+        border-radius:14px;
+        background:#f7edda;
+        color:#111;
+        font:inherit;
+        font-weight:400;
+        cursor:pointer;
+      }
+
       @media (max-width:600px) {
 
         .entrepriseDevelopmentPage .developmentTitle {
@@ -124,7 +163,14 @@
   function getDevelopmentHtml(){
 
     return `
-      <div class="entrepriseDevelopmentPage">
+    
+      <div class="entrepriseDevelopmentPage">  
+              <button
+          id="developmentBackBtnNew"
+          class="developmentBackBtn"
+          type="button">
+          Retour
+        </button>
 
         <div
           class="box developmentBox developmentIntro">
@@ -380,6 +426,31 @@
   }
 
   function bindDevelopment(){
+         const backButton =
+      getElement(
+        "developmentBackBtnNew"
+      );
+
+    if(backButton){
+
+      backButton.onclick = function(){
+
+        if(
+          typeof module.goBack ===
+          "function"
+        ){
+          module.goBack();
+          return;
+        }
+
+        if(
+          typeof module.openHome ===
+          "function"
+        ){
+          module.openHome();
+        }
+      };
+    }
 
     function connectButton(id, action){
 
