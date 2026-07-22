@@ -447,10 +447,22 @@ function getHomeHtml(){
         background:#fff7f7;
       }
 
-      .entrepriseInfoBox{
-        font-size:16px;
-        line-height:1.7;
-        color:#222;
+     .entrepriseInfoBox{
+  font-size:16px;
+  line-height:1.7;
+  color:#222;
+  font-weight:400;
+}
+
+.entrepriseInfoBox p,
+.entrepriseInfoBox li{
+  font-size:16px;
+  line-height:1.7;
+  font-weight:400;
+}
+
+.entrepriseInfoBox strong{
+  font-weight:700;
       }
 
     </style>
