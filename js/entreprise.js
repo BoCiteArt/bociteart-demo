@@ -44879,7 +44879,7 @@ console.log(
   ){
     console.warn(
       "Observatoire économique introuvable"
-    );
+    ); 
     return;
   }
 
