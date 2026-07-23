@@ -3,7 +3,7 @@
    PARTIE 1 — NAVIGATION ET ACCUEIL
 ========================================================= */
 
-(function initBociteEntrepriseModule(){
+(function initBociteEntrepriseModule(){ 
  
   "use strict";
 
@@ -735,67 +735,32 @@ function getHomeHtml(){
     </div>
 
     <div
+    <div
       class="box entrepriseInfoBox"
       style="
         margin-top:14px;
         border-left:6px solid #2f5d46;
       ">
 
-      <strong
+      <span
         style="
           display:block;
           color:#2f5d46;
           font-size:18px;
           line-height:1.4;
+          font-weight:700;
         ">
-        Recherchez une entreprise,
-        un métier ou un savoir-faire
-      </strong>
+        Choisissez le service correspondant
+        à votre besoin dans les bandes défilantes
+      </span>
 
       <br>
 
-      Commencez toujours votre recherche
-      dans votre commune.
+      Chaque proposition ci-dessus vous permet de mieux comprendre son impact pour votre entreprise.
 
       <br><br>
 
-      Vous pouvez rechercher :
-
-      <br><br>
-
-      • le nom d’une entreprise ;<br>
-      • un métier ;<br>
-      • une activité ;<br>
-      • un produit ;<br>
-      • un service ;<br>
-      • un fournisseur ;<br>
-      • un sous-traitant ;<br>
-      • un partenaire professionnel.
-
-      <br><br>
-
-      Si aucun résultat n’est trouvé localement,
-
-      <strong>
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-      </strong>
-
-      pourra progressivement élargir la recherche
-      aux communes voisines,
-      au département,
-      à la région,
-      puis à l’ensemble du territoire.
-
-      <button
-        class="choiceBtn"
-        type="button"
-        data-entreprise-screen="annuaire_local"
-        style="
-          width:100%;
-          margin-top:14px;
-        ">
-        Rechercher une entreprise
-      </button>
+      Cliquez sur l'une des bandes de votre choix pour découvrir l'idée, la vision et l'impact de ce service, puis agir selon vos objectifs.
 
     </div>
   `;
