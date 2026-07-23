@@ -6,7 +6,7 @@
 
 (function initEntrepriseEmploi(){
 
-  "use strict";
+  "use strict"; 
 
   const module =
     window.BociteEntreprise;
