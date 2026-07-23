@@ -27,17 +27,16 @@
 
   function getBociteArtHtml(){
 
-    return `
-      <span
-        class="bociteartName"
-        style="
-          white-space:nowrap;
-          font-weight:700;
-        ">
-        <span style="color:#21624d;">Bo'Cité</span><span style="color:#c8102e;">Art</span>
-      </span>
-    `;
-  }
+  return `
+    <span
+      style="
+        white-space:nowrap;
+        font-weight:700;
+      ">
+      <span style="color:#21624d;">Bo'Cité</span><span style="color:#d40000;">Art</span>
+    </span>
+  `;
+}
 
   function getTitleHtml(title, centered){
 
