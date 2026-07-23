@@ -802,9 +802,13 @@
           line-height:1.65;
         ">
 
-        ${getTitleHtml(
-          "Les outils Bo'CitéArt pour passer à l'action"
-        )}
+       ${getTitleHtml(
+  `Les outils
+  <span style="white-space:nowrap;">
+    <span style="color:#21624d;">Bo'Cité</span><span style="color:#d40000;">Art</span>
+  </span>
+  pour passer à l'action`
+)}
 
         ${bociteart}
         met progressivement
