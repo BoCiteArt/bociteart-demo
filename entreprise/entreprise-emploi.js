@@ -30,22 +30,26 @@
     return `
       <span
         class="bociteartName"
-        style="white-space:nowrap; font-weight:400;">
+        style="
+          white-space:nowrap;
+          font-weight:700;
+        ">
         <span style="color:#21624d;">Bo'Cité</span><span style="color:#c8102e;">Art</span>
       </span>
     `;
   }
 
-  function getTitleHtml(title){
+  function getTitleHtml(title, centered){
 
     return `
       <div
         class="entrepriseModuleSubtitle"
         style="
           color:#21624d;
-          font-weight:400;
+          font-weight:700;
           margin:0 0 24px 0;
           line-height:1.35;
+          ${centered ? "text-align:center;" : ""}
         ">
         ${title}
       </div>
@@ -105,11 +109,24 @@
 
         <br><br>
 
+        Les entreprises publient.
+
+        Les candidats recherchent.
+
+        Les écoles orientent.
+
+        Les collectivités accompagnent.
+
+        <br><br>
+
+        Mais ces actions restent encore
+        trop souvent séparées.
+
+        <br><br>
+
         Les outils existent.
 
         Les compétences existent.
-
-        Les entreprises existent.
 
         Les besoins existent.
 
@@ -133,7 +150,9 @@
         )}
 
         Une entreprise peut être reconnue
-        dans son secteur professionnel,
+        par ses clients,
+        ses fournisseurs
+        ou son secteur professionnel,
 
         tout en restant presque inconnue
         des habitants
@@ -145,8 +164,10 @@
 
         Son savoir-faire est mal identifié.
 
+        Ses réalisations restent méconnues.
+
         Ses besoins de recrutement
-        ne circulent pas suffisamment.
+        circulent insuffisamment.
 
         <br><br>
 
@@ -160,8 +181,11 @@
         Des jeunes découvrent parfois
         des métiers présents
         dans leur propre commune
-        seulement lorsqu'ils cherchent
-        un stage ou une orientation.
+
+        uniquement lorsqu'ils commencent
+        à rechercher un stage,
+        une alternance
+        ou une orientation.
 
         <br><br>
 
@@ -169,8 +193,8 @@
         plusieurs dizaines de kilomètres
 
         alors qu'une entreprise proche
-        pourrait avoir besoin
-        de leurs compétences.
+        pourrait rechercher
+        exactement leurs compétences.
 
         <br><br>
 
@@ -337,6 +361,51 @@
 
         <br><br>
 
+        Vous pensez peut-être
+        que votre entreprise
+        est déjà connue.
+
+        <br><br>
+
+        Pourtant,
+        rappelez-vous cette simple question :
+
+        <br><br>
+
+        <span
+          style="
+            display:block;
+            color:#21624d;
+            font-weight:700;
+            text-align:center;
+            line-height:1.5;
+          ">
+          « Pourriez-vous me donner
+          cinq noms d'entreprises
+          dans votre ville ? »
+        </span>
+
+        <br>
+
+        Pour la plupart des habitants,
+        la réponse est difficile.
+
+        <br><br>
+
+        Et si les habitants
+        ne connaissent pas
+        les entreprises présentes
+        autour d'eux,
+
+        comment pourraient-ils
+        penser spontanément à elles
+        pour travailler,
+        recommander un proche,
+        proposer une candidature
+        ou orienter un jeune ?
+
+        <br><br>
+
         La première mission
         consiste donc à rendre visibles :
 
@@ -470,15 +539,19 @@
         <br><br>
 
         ${bociteart}
-        ne prétend pas remplacer
+        ne remplace pas
         ce qui existe.
 
         <br><br>
 
         ${bociteart}
-        réunit les conditions
-        pour que ce qui existe déjà
-        produise davantage de résultats.
+        relie les acteurs,
+        les outils
+        et les initiatives
+
+        afin que chacun
+        puisse produire davantage
+        de résultats.
 
         <br><br>
 
@@ -498,11 +571,53 @@
 
         <br><br>
 
-        L'excuse du manque d'outil
-        ou du manque de lien
-        ne peut alors plus
-        continuer à servir
-        de frein à l'action.
+        Un jeune peut découvrir
+        un métier présent
+        dans sa propre ville.
+
+        <br><br>
+
+        Un habitant peut identifier
+        une entreprise
+        qu'il ne connaissait pas.
+
+        <br><br>
+
+        Une personne en recherche
+        peut découvrir une opportunité
+        à proximité.
+
+        <br><br>
+
+        Une entreprise peut trouver
+        une compétence
+        qu'elle recherchait loin,
+
+        alors qu'elle existait déjà
+        sur son territoire.
+
+        <br><br>
+
+        Tout le monde dit
+        qu'il faudrait mieux relier
+        les entreprises,
+        les habitants,
+        les écoles
+        et les collectivités.
+
+        <br><br>
+
+        ${bociteart}
+        réunit enfin
+        les outils nécessaires
+        pour le faire concrètement.
+
+        <br><br>
+
+        Le manque de lien
+        ne peut donc plus
+        rester une excuse
+        pour ne pas agir.
 
       </div>
 
@@ -741,6 +856,26 @@
         peut ensuite favoriser
         une relation plus durable.
 
+        <br><br>
+
+        La priorité,
+        pour l'entreprise,
+        est donc de prendre rapidement
+        toute sa place
+        dans cette dynamique locale.
+
+        <br><br>
+
+        Tant qu'elle reste invisible
+        pour une grande partie
+        de son propre territoire,
+
+        une partie de ses opportunités,
+        de ses futurs candidats
+        et de ses futurs relais
+
+        reste elle aussi invisible.
+
       </div>
 
       <div
@@ -792,16 +927,18 @@
         ">
 
         ${getTitleHtml(
-          "Conclusion"
+          "Conclusion",
+          true
         )}
 
         <div
           class="entrepriseModuleSubtitle"
           style="
             color:#21624d;
-            font-weight:400;
-            margin:0 0 24px 0;
-            line-height:1.35;
+            font-weight:700;
+            margin:0 0 28px 0;
+            line-height:1.4;
+            text-align:center;
           ">
 
           Une richesse pour l'entreprise,
@@ -876,8 +1013,9 @@
         et montrer que les entreprises
         de la commune
         ne sont pas oubliées
-        dans un annuaire
-        ou dans un dispositif isolé.
+        dans un annuaire,
+        un dossier
+        ou un dispositif isolé.
 
         <br><br>
 
@@ -898,7 +1036,8 @@
         qu'il faut rapprocher
         l'emploi,
         les habitants,
-        les entreprises
+        les entreprises,
+        les écoles
         et les institutions.
 
         <br><br>
