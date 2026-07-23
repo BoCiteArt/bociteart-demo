@@ -534,30 +534,6 @@ function getHomeHtml(){
 
     </div>
 
-    <div
-      style="
-        display:flex;
-        gap:8px;
-        flex-wrap:wrap;
-        margin:12px 0;
-      ">
-
-      <button
-        class="choiceBtn"
-        type="button"
-        data-entreprise-screen="annuaire_local">
-        Entreprises et commerces de ma ville
-      </button>
-
-      <button
-        class="choiceBtn"
-        type="button"
-        data-entreprise-screen="annuaire">
-        Recherche professionnelle
-      </button>
-
-    </div>
-
     <div id="entrepriseHomeBands">
 
        <button
@@ -763,6 +739,31 @@ function getHomeHtml(){
       Cliquez sur l'une des bandes de votre choix pour découvrir l'idée, la vision et l'impact de ce service, puis agir selon vos objectifs.
 
     </div>
+
+        <div
+      style="
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+        margin:12px 0;
+      ">
+
+      <button
+        class="choiceBtn"
+        type="button"
+        data-entreprise-screen="annuaire_local">
+        Entreprises et commerces de ma ville
+      </button>
+
+      <button
+        class="choiceBtn"
+        type="button"
+        data-entreprise-screen="annuaire">
+        Recherche professionnelle
+      </button>
+
+    </div>
+    
   `;
 }
 
