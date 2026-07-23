@@ -4,7 +4,7 @@
    RECRUTER AUTREMENT
    ========================================================= */
 
-(function initEntrepriseEmploi(){
+(function initEntrepriseEmploi(){ 
 
   "use strict"; 
 
