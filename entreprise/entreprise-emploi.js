@@ -5,7 +5,7 @@
 function getEmploymentHtml() {
   return `
 <div
-  class="box entrepriseModuleIntro" 
+  class="box entrepriseModuleIntro"  
   style="
     font-weight:400;
     line-height:1.65;
