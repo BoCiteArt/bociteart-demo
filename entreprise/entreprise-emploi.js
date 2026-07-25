@@ -2,7 +2,8 @@
    BLOC 1/3
    REMPLACE LE PREMIER CONTENU DE getEmploymentHtml()
    ========================================================= */
-
+function getEmploymentHtml() {
+  return `
 <div
   class="box entrepriseModuleIntro" 
   style="
