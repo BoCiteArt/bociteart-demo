@@ -627,19 +627,12 @@ function resume(){
     l'application s'ouvre directement.
   */
 
-  if(journeyCompleted()){
+ if(journeyCompleted()){
 
-    closeAllEntryScreens();
+  openApplication();
 
-    currentStep =
-      STEPS.application;
-
-    console.log(
-      "✅ Porte d'entrée déjà terminée — application affichée"
-    );
-
-    return;
-  }
+  return;
+}
 
   const session =
     getSession();
