@@ -67,95 +67,123 @@
     screens[name] = renderer;
   }
 
-  function openScreen(name, options){
+function openScreen(name, options){
 
-    options = options || {};
+  options = options || {};
 
-    const renderer =
-      screens[name];
+  const renderer =
+    screens[name];
 
-    if(typeof renderer !== "function"){
+  if(typeof renderer !== "function"){
 
-      console.warn(
-        "Écran Entreprise introuvable :",
-        name
+    console.warn(
+      "Écran Entreprise introuvable :",
+      name
+    );
+
+    return;
+  }
+
+  const oldScreen =
+    state.currentScreen;
+
+  if(
+    !options.fromBack &&
+    oldScreen !== name
+  ){
+
+    const lastHistory =
+      state.history.length
+        ? state.history[
+            state.history.length - 1
+          ]
+        : "";
+
+    if(
+      oldScreen &&
+      lastHistory !== oldScreen
+    ){
+      state.history.push(oldScreen);
+    }
+  }
+
+  state.previousScreen =
+    oldScreen;
+
+  state.currentScreen =
+    name;
+
+  state.nestedParentScreen =
+    null;
+
+  state.renderingScreen =
+    true;
+
+  try{
+
+    renderer(options);
+
+  }finally{
+
+    window.setTimeout(function(){
+      state.renderingScreen = false;
+    },0);
+  }
+}
+
+function goBack(){
+
+  if(state.goingBack){
+    return;
+  }
+
+  state.goingBack = true;
+
+  try{
+
+    /*
+      Une fenêtre interne a été ouverte
+      depuis une rubrique principale.
+    */
+
+    if(
+      state.nestedParentScreen &&
+      screens[state.nestedParentScreen]
+    ){
+
+      const parentScreen =
+        state.nestedParentScreen;
+
+      state.nestedParentScreen =
+        null;
+
+      openScreen(
+        parentScreen,
+        {
+          fromBack:true
+        }
       );
 
       return;
     }
 
-    const oldScreen =
-      state.currentScreen;
+    /*
+      Retour à la rubrique précédente.
+    */
 
-    if(
-      !options.fromBack &&
-      oldScreen !== name
-    ){
+    while(state.history.length){
 
-      const lastHistory =
-        state.history.length
-          ? state.history[
-              state.history.length - 1
-            ]
-          : "";
-
-      if(lastHistory !== oldScreen){
-        state.history.push(oldScreen);
-      }
-    }
-
-    state.previousScreen =
-      oldScreen;
-
-    state.currentScreen =
-      name;
-
-    state.nestedParentScreen =
-      null;
-
-    state.renderingScreen =
-      true;
-
-    try{
-
-      renderer(options);
-
-    }finally{
-
-      window.setTimeout(function(){
-        state.renderingScreen = false;
-      },0);
-    }
-  }
-
-  function goBack(){
-
-    if(state.goingBack){
-      return;
-    }
-
-    state.goingBack = true;
-
-    try{
-
-      /*
-        Une fenêtre interne a été ouverte
-        depuis une rubrique principale.
-      */
+      const previous =
+        state.history.pop();
 
       if(
-        state.nestedParentScreen &&
-        screens[state.nestedParentScreen]
+        previous &&
+        previous !== state.currentScreen &&
+        screens[previous]
       ){
 
-        const parentScreen =
-          state.nestedParentScreen;
-
-        state.nestedParentScreen =
-          null;
-
         openScreen(
-          parentScreen,
+          previous,
           {
             fromBack:true
           }
@@ -163,58 +191,12 @@
 
         return;
       }
-
-      /*
-        Retour à la rubrique précédente.
-      */
-
-      while(state.history.length){
-
-        const previous =
-          state.history.pop();
-
-        if(
-          previous &&
-          previous !== state.currentScreen &&
-          screens[previous]
-        ){
-
-          openScreen(
-            previous,
-            {
-              fromBack:true
-            }
-          );
-
-          return;
-        }
-      }
-
-      /*
-        Aucun historique :
-        retour aux bandes Entreprise.
-      */
-
-      openScreen(
-        "home",
-        {
-          fromBack:true
-        }
-      );
-
-    }finally{
-
-      window.setTimeout(function(){
-        state.goingBack = false;
-      },100);
     }
-  }
 
-  function returnToEntrepriseHome(){
-
-    state.history = ["home"];
-    state.previousScreen = null;
-    state.nestedParentScreen = null;
+    /*
+      Aucun historique :
+      retour aux bandes Entreprise.
+    */
 
     openScreen(
       "home",
@@ -222,9 +204,30 @@
         fromBack:true
       }
     );
-  }
 
-  function buildBackButton(){
+  }finally{
+
+    window.setTimeout(function(){
+      state.goingBack = false;
+    },100);
+  }
+}
+
+function returnToEntrepriseHome(){
+
+  state.history = ["home"];
+  state.previousScreen = null;
+  state.nestedParentScreen = null;
+
+  openScreen(
+    "home",
+    {
+      fromBack:true
+    }
+  );
+}
+
+  function returnToEntrepriseHome(){
 
     if(
       state.currentScreen === "home" &&
@@ -466,23 +469,7 @@ function getHomeHtml(){
       }
     </style>
 
-    <div style="margin-bottom:12px;">
-
-      <button
-        class="choiceBtn"
-        type="button"
-        data-entreprise-back
-        onclick="
-          if(typeof openEntrepriseHome==='function'){
-            openEntrepriseHome();
-          }else if(typeof openHome==='function'){
-            openHome();
-          }
-        ">
-        Retour
-      </button>
-
-    </div>
+  <!-- Bouton Retour géré automatiquement par buildBackButton() -->
 
     <div
       class="box entrepriseInfoBox"
@@ -2202,7 +2189,7 @@ console.log(
     );
   }
 
-  function getEmploymentHomeHtml(){
+ function getEmploymentHomeHtml(){
 
     const data =
       loadEmploymentData();
@@ -2218,6 +2205,27 @@ console.log(
       });
 
     return `
+
+      <div
+        style="
+          display:flex;
+          justify-content:flex-start;
+          margin-bottom:16px;
+        ">
+
+        <button
+          class="choiceBtn"
+          id="employmentBackBtn"
+          type="button"
+          style="
+            width:auto;
+            min-width:120px;
+          ">
+          ← Retour
+        </button>
+
+      </div>
+
       <div
         class="box entrepriseInfoBox"
         style="
@@ -2424,9 +2432,23 @@ console.log(
 
       </div>
     `;
-  }
+}
   function bindEmploymentHome(){
 
+    const backButton =
+  getElement(
+    "employmentBackBtn"
+  );
+
+if(backButton){
+
+  backButton.onclick = function(){
+
+    module.openScreen("home");
+
+  };
+
+} 
     const createButton =
       getElement(
         "employmentCreateOfferBtn"
@@ -25361,57 +25383,16 @@ console.log(
       });
   }
 
-  function ensureEntrepriseBackButton(){
+function ensureEntrepriseBackButton(){
 
-    const modal =
-      getModalContent();
+  /*
+    Le bouton Retour est désormais créé
+    automatiquement par renderModal()
+    et utilise l’historique avec goBack().
+  */
 
-    if(!modal){
-      return;
-    }
-
-    if(
-      getElement("entrepriseBackBtn")
-    ){
-      return;
-    }
-
-    const button =
-      document.createElement("button");
-
-    button.id =
-      "entrepriseBackBtn";
-
-    button.className =
-      "choiceBtn";
-
-    button.type =
-      "button";
-
-    button.style.width =
-      "100%";
-
-    button.style.marginBottom =
-      "12px";
-
-    button.textContent =
-      "Retour à l’espace Entreprise";
-
-    button.onclick = function(){
-
-      if(
-        typeof module.openHome ===
-        "function"
-      ){
-        module.openHome();
-      }
-    };
-
-    modal.insertBefore(
-      button,
-      modal.firstChild
-    );
-  }
+  return;
+}
 
   function hideEmploymentPrice(){
 
