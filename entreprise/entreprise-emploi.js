@@ -1,1677 +1,1171 @@
-  function getEmploymentHtml(){
+/* =========================================================
+   BLOC 1/3
+   REMPLACE LE PREMIER CONTENU DE getEmploymentHtml()
+   ========================================================= */
 
-    const bociteart =
-      getBociteArtHtml();
+<div
+  class="box entrepriseModuleIntro"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-    return `
+  ${getTitleHtml(
+    "Pourquoi recrutons-nous de plus en plus difficilement ?"
+  )}
 
-      <!-- ==================================================
-           BLOC 1 — LE CONSTAT ET LA PRISE DE CONSCIENCE
-           ================================================== -->
+  Les entreprises cherchent.
 
-      <div
-        class="box entrepriseModuleIntro"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  <br><br>
 
-        ${getTitleHtml(
-          "Pourquoi recrutons-nous de plus en plus difficilement ?"
-        )}
+  Les habitants cherchent.
 
-        Chaque matin,
-        des milliers d'entreprises
-        ouvrent leurs portes
-        avec une même préoccupation :
+  <br><br>
 
-        <br><br>
+  Les jeunes cherchent leur voie.
 
-        trouver les femmes
-        et les hommes
-        qui leur permettront
-        de continuer à avancer,
-        de transmettre leurs savoir-faire
-        et de préparer leur avenir.
+  <br><br>
 
-        <br><br>
+  Les collectivités cherchent des solutions.
 
-        Chaque matin également,
-        des femmes
-        et des hommes
-        recherchent un emploi,
+  <br><br>
 
-        <br><br>
+  Pourtant...
 
-        un emploi qui leur permette
-        de vivre dignement
-        de leur travail,
+  <br><br>
 
-        <br><br>
+  ils se rencontrent de moins en moins.
 
-        sans sacrifier
-        leur vie familiale,
-        leur temps
-        ou leur pouvoir d'achat.
+</div>
 
-        <br><br>
 
-        Des jeunes cherchent leur voie,
-        un stage,
-        une alternance,
-        un apprentissage
-        ou un premier emploi.
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        <br><br>
+  ${getTitleHtml(
+    "Et si nous commencions par regarder autrement ?"
+  )}
 
-        Des établissements scolaires
-        essaient de leur faire découvrir
-        les métiers
-        et de les rapprocher
-        du monde professionnel.
+  Avant de chercher une réponse...
 
-        <br><br>
+  <br><br>
 
-        Les communes souhaitent préserver
-        leurs entreprises,
-        leurs emplois,
-        leurs savoir-faire
-        et la vitalité
-        de leur territoire.
+  prenons quelques secondes.
 
-        <br><br>
+  <br><br>
 
-        Finalement,
-        chacun poursuit
-        une partie du même objectif.
+  Essayez de répondre spontanément
+  à cette question.
 
-        <br><br>
+  <br><br>
 
-        Les besoins existent.
+  <span
+    style="
+      display:block;
+      color:#21624d;
+      font-weight:700;
+      text-align:center;
+      line-height:1.6;
+    "
+  >
 
-        <br><br>
+  Pourriez-vous citer
 
-        Les compétences existent.
+  <br><br>
 
-        <br><br>
+  cinq entreprises
+  de votre commune,
 
-        Les volontés existent.
+  <br><br>
 
-        <br><br>
+  en dehors
+  des grandes enseignes ?
 
-        Alors pourquoi
-        avons-nous parfois le sentiment
-        que tout devient
-        de plus en plus difficile ?
+  </span>
 
-      </div>
+  <br>
 
+  Connaissez-vous
+  leur activité ?
 
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  <br><br>
 
-        ${getTitleHtml(
-          "Et si le problème n'était pas seulement le recrutement ?"
-        )}
+  Les métiers
+  qu'elles exercent ?
 
-        Lorsqu'une entreprise
-        ne trouve pas de candidat,
-        elle publie une nouvelle annonce.
+  <br><br>
 
-        <br><br>
+  Les compétences
+  qu'elles recherchent ?
 
-        Elle consulte des plateformes.
+  <br><br>
 
-        <br><br>
+  Les savoir-faire
+  qu'elles développent ?
 
-        Elle sollicite
-        ses réseaux,
-        les professionnels de l'emploi,
-        les agences
-        ou le bouche-à-oreille.
+  <br><br>
 
-        <br><br>
+  Pour beaucoup d'entre nous...
 
-        Elle participe parfois
-        à des salons,
-        multiplie les démarches
-        et consacre toujours plus
-        de temps et de moyens
-        à sa recherche.
+  <br><br>
 
-        <br><br>
+  la réponse sera incomplète.
 
-        Lorsqu'une personne
-        cherche un emploi,
-        elle consulte elle aussi
-        des annonces,
-        dépose des candidatures
-        et élargit progressivement
-        son périmètre de recherche.
+</div>
 
-        <br><br>
 
-        Chacun cherche.
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        <br><br>
+  ${getTitleHtml(
+    "Pourtant..."
+  )}
 
-        Chacun agit.
+  Ces entreprises existent.
 
-        <br><br>
+  <br><br>
 
-        Chacun fait sa part.
+  Elles sont parfois installées
 
-        <br><br>
+  <br><br>
 
-        Pourtant,
-        l'entreprise
-        et la personne qu'elle recherche
-        peuvent parfois vivre
-        à seulement quelques rues
-        l'une de l'autre...
+  à quelques centaines
+  de mètres de chez nous.
 
-        <br><br>
+  <br><br>
 
-        sans jamais se rencontrer.
+  Nous passons devant elles.
 
-        <br><br>
+  <br><br>
 
-        Le problème ne vient donc pas
-        toujours d'un manque
-        de compétences,
+  Nous voyons leurs bâtiments.
 
-        <br><br>
+  <br><br>
 
-        ni d'un manque
-        de volonté.
+  Leurs ateliers.
 
-        <br><br>
+  <br><br>
 
-        Il commence parfois
-        bien avant
-        la publication d'une annonce.
+  Leurs entrepôts.
 
-      </div>
+  <br><br>
 
+  Leurs véhicules.
 
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  <br><br>
 
-        ${getTitleHtml(
-          "Regardons simplement ce qui nous entoure"
-        )}
+  Mais à force
+  de les voir...
 
-        Une entreprise peut être reconnue
-        par ses clients,
-        ses fournisseurs
-        ou son secteur professionnel,
+  <br><br>
 
-        <br><br>
+  nous ne les regardons plus.
 
-        tout en restant presque inconnue
-        des habitants
-        qui vivent à quelques rues
-        de ses locaux.
+  <br><br>
 
-        <br><br>
+  Elles deviennent
+  une partie du décor.
 
-        Ses bâtiments sont visibles.
+  <br><br>
 
-        <br><br>
+  Puis...
 
-        Son enseigne est visible.
+  <br><br>
 
-        <br><br>
+  elles disparaissent
+  progressivement
+  de notre mémoire.
 
-        Ses véhicules circulent
-        dans la ville.
+</div>
 
-        <br><br>
 
-        Pourtant,
-        ses métiers,
-        ses compétences,
-        ses réalisations
-        et ses besoins
-        restent souvent méconnus.
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        <br><br>
+  ${getTitleHtml(
+    "Derrière les murs..."
+  )}
 
-        Derrière ses murs,
-        ses bardages,
-        ses clôtures
-        ou ses portails,
+  Derrière les murs...
 
-        <br><br>
+  <br><br>
 
-        des femmes et des hommes
-        exercent parfois
-        des métiers remarquables...
+  les bardages...
 
-        <br><br>
+  <br><br>
 
-        que les habitants
-        et les jeunes
-        de la commune
-        ne découvriront jamais.
+  les clôtures...
 
-        <br><br>
+  <br><br>
 
-        Comment un jeune
-        pourrait-il imaginer son avenir
-        dans un métier
-        dont il ignore l'existence ?
+  les portails...
 
-        <br><br>
+  <br><br>
 
-        Comment un habitant
-        pourrait-il recommander
-        une entreprise
-        qu'il ne connaît pas ?
+  des femmes
+  et des hommes imaginent.
 
-        <br><br>
+  <br><br>
 
-        Comment une entreprise
-        pourrait-elle repérer
-        les compétences présentes
-        autour d'elle,
+  Créent.
 
-        <br><br>
+  <br><br>
 
-        lorsque chacun évolue
-        dans son propre univers ?
+  Fabriquent.
 
-      </div>
+  <br><br>
 
+  Innovent.
 
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  <br><br>
 
-        ${getTitleHtml(
-          "Une simple question permet de mesurer cette distance"
-        )}
+  Réparent.
 
-        Prenez quelques secondes.
+  <br><br>
 
-        <br><br>
+  Transmettent.
 
-        Essayez de répondre
-        spontanément à cette question :
+  <br><br>
 
-        <br><br>
+  Des métiers existent.
 
-        <span
-          style="
-            display:block;
-            color:#21624d;
-            font-weight:700;
-            text-align:center;
-            line-height:1.5;
-          "
-        >
-          « Pourriez-vous citer
-          5 entreprises installées
-          dans votre commune,
-          en dehors des grandes enseignes ? »
-        </span>
+  <br><br>
 
-        <br>
+  Des compétences existent.
 
-        Pour beaucoup d'entre nous,
-        la réponse est NON!.
+  <br><br>
 
-        <br><br>
+  Des emplois existent.
 
-        Pourtant,
-        nous passons parfois
-        devant ces entreprises
-        presque chaque jour.
+  <br><br>
 
-        <br><br>
+  Mais une grande partie
+  de cette richesse
 
-        Nous voyons leurs bâtiments,
-        leurs ateliers,
-        leurs enseignes
-        ou leurs véhicules.
+  <br><br>
 
-        <br><br>
+  demeure invisible.
 
-        Mais à force de les voir,
-        nous ne les regardons plus.
+</div>
 
-        <br><br>
 
-        Elles font partie du paysage.
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        <br><br>
+  ${getTitleHtml(
+    "Que se passe-t-il lorsqu'une entreprise devient invisible ?"
+  )}
 
-        Elles deviennent
-        presque invisibles.
+  Elle disparaît
+  peu à peu
+  de notre mémoire.
 
-        <br><br>
+  <br><br>
 
-        Et lorsqu'une entreprise
-        devient invisible
-        aux yeux de sa propre commune, territoire...
+  Et lorsqu'une entreprise
+  disparaît
+  de notre mémoire...
 
-        <br><br>
+  <br><br>
 
-        ses métiers,
-        ses opportunités
-        et ses besoins
-        le deviennent également.
+  ses métiers
+  disparaissent avec elle.
 
-        <br><br>
+  <br><br>
 
-        <span
-          style="
-            display:block;
-            color:#21624d;
-            font-weight:700;
-            text-align:center;
-            line-height:1.5;
-          "
-        >
-          Le recrutement ne commence pas
-          par une annonce.
-        </span>
+  Ses savoir-faire aussi.
 
-        <br>
+  <br><br>
 
-        Il commence
-        par la connaissance
-        de ce qui existe déjà
-        autour de nous.
+  Ses opportunités également.
 
-      </div>
+  <br><br>
 
+  Comment un habitant
+  pourrait-il recommander
 
-      <!-- ===== FIN DU BLOC 1 — NE PAS FERMER LA FONCTION ICI ===== -->
+  <br><br>
 
-            <!-- ==================================================
-           BLOC 2 — LES RICHESSES ET LES LIENS MANQUANTS
-           ================================================== -->
+  une entreprise
+  qu'il ne connaît pas ?
 
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  <br><br>
 
-        ${getTitleHtml(
-          "Les richesses d'une ville sont déjà présentes"
-        )}
+  Comment un parent
+  pourrait-il parler
+  d'un métier
 
-        Une ville ne part jamais de rien.
+  <br><br>
 
-        <br><br>
+  qu'il ignore ?
 
-        Elle possède déjà
-        des entreprises,
-        des commerces,
-        des artisans,
-        des établissements scolaires,
-        des associations,
-        des clubs sportifs,
-        des artistes,
-        des services publics
-        et des habitants engagés.
+  <br><br>
 
-        <br><br>
+  Comment un jeune
+  pourrait-il rêver
 
-        Elle possède des expériences.
+  <br><br>
 
-        <br><br>
+  d'un métier
+  qu'il ne découvre jamais ?
 
-        Des compétences.
+</div>
 
-        <br><br>
 
-        Des métiers.
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        <br><br>
+  ${getTitleHtml(
+    "L'imaginaire construit l'avenir"
+  )}
 
-        Des savoir-faire.
+  Chaque entreprise connue
 
-        <br><br>
+  <br><br>
 
-        Des projets.
+  ouvre une possibilité.
 
-        <br><br>
+  <br><br>
 
-        Des lieux.
+  Chaque métier découvert
 
-        <br><br>
+  <br><br>
 
-        Des femmes et des hommes
-        qui agissent chaque jour.
+  élargit l'imaginaire.
 
-        <br><br>
+  <br><br>
 
-        Pourtant,
-        ces richesses peuvent rester
-        dispersées dans la ville,
+  Chaque rencontre
 
-        <br><br>
+  <br><br>
 
-        présentes les unes
-        à côté des autres,
+  peut faire naître
+  une vocation.
 
-        <br><br>
+  <br><br>
 
-        sans réellement
-        se connaître,
+  On ne choisit
+  pas facilement
+  un avenir...
 
-        <br><br>
+  <br><br>
 
-        sans toujours savoir
-        ce qu'elles pourraient
-        construire ensemble.
+  lorsqu'on ne peut pas
+  l'imaginer.
 
-        <br><br>
+</div>
 
-        <span
-          style="
-            display:block;
-            color:#21624d;
-            font-weight:700;
-            text-align:center;
-            line-height:1.5;
-          "
-        >
-          Une ville ne manque pas forcément
-          de richesses.
-        </span>
+<!-- ===== FIN BLOC 1 ===== -->
 
-        <br>
+   /* =========================================================
+   BLOC 2/3
+   À COLLER IMMÉDIATEMENT APRÈS LE BLOC 1
+   ========================================================= */
 
-        <span
-          style="
-            display:block;
-            color:#21624d;
-            font-weight:700;
-            text-align:center;
-            line-height:1.5;
-          "
-        >
-          Elle manque parfois simplement
-          des liens qui permettraient
-          à ces richesses de se rencontrer.
-        </span>
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-      </div>
+  ${getTitleHtml(
+    "Le problème n'est peut-être pas seulement le recrutement"
+  )}
 
+  Il est peut-être
+  plus profond.
 
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  <br><br>
 
-        ${getTitleHtml(
-          "Nous vivons souvent dans la même ville, mais dans des univers différents"
-        )}
+  Au fil des années...
 
-        Les entreprises connaissent
-        leur activité,
-        leur marché,
-        leurs clients
-        et leur secteur professionnel.
+  <br><br>
 
-        <br><br>
+  des ravins
+  sont apparus.
 
-        Les établissements scolaires
-        connaissent leurs élèves,
-        leurs programmes
-        et leurs missions éducatives.
+  <br><br>
 
-        <br><br>
+  Puis des fossés.
 
-        Les associations
-        connaissent leurs adhérents,
-        leurs bénévoles
-        et les besoins
-        auxquels elles répondent.
+  <br><br>
 
-        <br><br>
+  Puis des silos.
 
-        Les commerces
-        connaissent leurs clients
-        et les réalités
-        de leur quartier.
+  <br><br>
 
-        <br><br>
+  Entre les entreprises.
 
-        Les clubs sportifs
-        connaissent leurs licenciés,
-        leurs éducateurs
-        et les familles
-        qui les accompagnent.
+  <br><br>
 
-        <br><br>
+  Les écoles.
 
-        Les services municipaux
-        connaissent les demandes,
-        les urgences
-        et les contraintes
-        de la collectivité.
+  <br><br>
 
-        <br><br>
+  Les habitants.
 
-        Chacun connaît
-        son propre environnement.
+  <br><br>
 
-        <br><br>
+  Les commerces.
 
-        Mais combien connaissent
-        réellement celui des autres ?
+  <br><br>
 
-        <br><br>
+  Les associations.
 
-        Combien d'entreprises
-        connaissent les projets
-        des établissements scolaires
-        de leur commune ?
+  <br><br>
 
-        <br><br>
+  La culture.
 
-        Combien de jeunes
-        connaissent les métiers
-        exercés dans les zones d'activités
-        proches de leur domicile ?
+  <br><br>
 
-        <br><br>
+  Le sport.
 
-        Combien d'associations
-        savent qu'une entreprise voisine
-        pourrait partager
-        une compétence,
-        un matériau,
-        un conseil
-        ou un soutien ?
+  <br><br>
 
-        <br><br>
+  Les collectivités.
 
-        Combien d'habitants
-        connaissent les besoins
-        des entreprises
-        qui participent pourtant
-        à la vie économique
-        de leur ville ?
+  <br><br>
 
-        <br><br>
+  Chacun avance.
 
-        Nous partageons
-        le même territoire.
+  <br><br>
 
-        <br><br>
+  Souvent avec conviction.
 
-        Mais nous n'en partageons pas
-        toujours la connaissance.
+  <br><br>
 
-      </div>
+  Mais de plus en plus
+  séparément.
 
+</div>
 
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
 
-        ${getTitleHtml(
-          "À force de travailler séparément, des distances se sont installées"
-        )}
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        Ces distances
-        ne sont pas apparues
-        par manque de bonne volonté.
+  ${getTitleHtml(
+    "Nous avons appris à répondre aux difficultés"
+  )}
 
-        <br><br>
+  Une plateforme.
 
-        Elles se sont installées
-        progressivement.
+  <br><br>
 
-        <br><br>
+  Puis une autre.
 
-        Chaque secteur
-        a construit ses outils.
+  <br><br>
 
-        <br><br>
+  Une aide.
 
-        Ses habitudes.
+  <br><br>
 
-        <br><br>
+  Puis une autre.
 
-        Ses réseaux.
+  <br><br>
 
-        <br><br>
+  Un dispositif.
 
-        Ses interlocuteurs.
+  <br><br>
 
-        <br><br>
+  Puis un autre.
 
-        Ses dispositifs.
+  <br><br>
 
-        <br><br>
+  Chaque réponse
+  possède son utilité.
 
-        Chaque acteur
-        a appris à répondre
-        à ses propres contraintes.
+  <br><br>
 
-        <br><br>
+  Chaque réponse
+  répond à un besoin.
 
-        Peu à peu,
-        des passages se sont refermés.
+  <br><br>
 
-        <br><br>
+  Mais une question demeure.
 
-        Entre l'école
-        et l'entreprise.
+  <br><br>
 
-        <br><br>
+  <span
+    style="
+      display:block;
+      color:#21624d;
+      font-weight:700;
+      text-align:center;
+      font-size:1.08em;
+      line-height:1.7;
+    "
+  >
 
-        Entre les habitants
-        et les métiers locaux.
+  Qui construit
+  les ponts ?
 
-        <br><br>
+  </span>
 
-        Entre les associations
-        et le monde économique.
+</div>
 
-        <br><br>
 
-        Entre les entreprises
-        et la vie quotidienne
-        de la ville.
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        <br><br>
+  ${getTitleHtml(
+    "Un territoire ne fonctionne pas en morceaux"
+  )}
 
-        Entre les besoins
-        et les compétences
-        pourtant disponibles
-        à proximité.
+  L'emploi influence
+  l'école.
 
-        <br><br>
+  <br><br>
 
-        Ces distances
-        ne sont pas toujours visibles.
+  L'école influence
+  les vocations.
 
-        <br><br>
+  <br><br>
 
-        Pourtant,
-        leurs conséquences
-        le deviennent.
+  Les vocations influencent
+  les entreprises.
 
-        <br><br>
+  <br><br>
 
-        Difficultés de recrutement.
+  Les entreprises influencent
+  le commerce.
 
-        <br><br>
+  <br><br>
 
-        Métiers méconnus.
+  Le commerce influence
+  l'attractivité.
 
-        <br><br>
+  <br><br>
 
-        Stages difficiles à trouver.
+  L'attractivité influence
+  la qualité de vie.
 
-        <br><br>
+  <br><br>
 
-        Départs vers des emplois
-        toujours plus éloignés.
+  Tout est déjà lié.
 
-        <br><br>
+  <br><br>
 
-        Entreprises locales
-        insuffisamment identifiées.
+  Pourtant...
 
-        <br><br>
+  <br><br>
 
-        Savoir-faire
-        qui ne trouvent pas
-        de successeurs.
+  nous continuons souvent
+  à traiter chaque sujet
 
-        <br><br>
+  <br><br>
 
-        Nous tentons alors
-        de réparer les conséquences,
+  séparément.
 
-        <br><br>
+</div>
 
-        sans toujours reconstruire
-        les passages
-        qui se sont effacés.
 
-      </div>
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
+  ${getTitleHtml(
+    "Être connu de ses clients ne suffit pas toujours"
+  )}
 
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  Une entreprise
+  peut être connue
+  de ses clients...
 
-        ${getTitleHtml(
-          "L'orientation commence bien avant la recherche d'un emploi"
-        )}
+  <br><br>
 
-        Lorsqu'un jeune doit choisir
-        une orientation,
+  sans être réellement connue
 
-        <br><br>
+  <br><br>
 
-        il s'appuie naturellement
-        sur ce qu'il connaît.
+  de sa propre ville.
 
-        <br><br>
+  <br><br>
 
-        Sur ce qu'il a vu.
+  Or...
 
-        <br><br>
+  <br><br>
 
-        Sur les métiers
-        dont il a entendu parler.
+  on ne recommande
+  que ce que l'on connaît.
 
-        <br><br>
+  <br><br>
 
-        Sur les expériences
-        de sa famille,
-        de ses enseignants
-        ou de son entourage.
+  On ne parle
+  que de ce dont
+  on se souvient.
 
-        <br><br>
+  <br><br>
 
-        Mais comment choisir
-        un métier invisible ?
+  On ne pense
+  qu'à ce qui existe
 
-        <br><br>
+  <br><br>
 
-        Comment se projeter
-        dans une entreprise
-        dont on ne connaît
-        ni l'activité,
-        ni les réalisations,
-        ni les métiers ?
+  dans notre mémoire.
 
-        <br><br>
+  <br><br>
 
-        Derrière un mur,
-        une clôture,
-        un bardage
-        ou un portail,
+  La première visibilité...
 
-        <br><br>
+  <br><br>
 
-        il peut exister
-        un atelier,
-        un bureau d'études,
-        un laboratoire,
-        un centre logistique,
-        une entreprise numérique,
-        un fabricant,
-        un artisan
-        ou une activité industrielle.
+  commence donc
+  dans la mémoire
+  des habitants.
 
-        <br><br>
+</div>
 
-        Il peut exister
-        des métiers techniques,
-        créatifs,
-        manuels,
-        scientifiques,
-        administratifs
-        ou commerciaux.
 
-        <br><br>
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        Il peut exister
-        une voie professionnelle
-        correspondant parfaitement
-        à un jeune vivant
-        à quelques rues de là.
+  ${getTitleHtml(
+    "Imaginez maintenant..."
+  )}
 
-        <br><br>
+  Une commune
+  où chacun sait
+  naturellement...
 
-        Pourtant,
-        s'ils ne se découvrent jamais,
+  <br><br>
 
-        <br><br>
+  qui fabrique quoi.
 
-        ni le jeune,
-        ni l'entreprise
-        ne pourront imaginer
-        ce qu'ils auraient pu
-        construire ensemble.
+  <br><br>
 
-      </div>
+  Qui répare.
 
+  <br><br>
 
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  Qui innove.
 
-        ${getTitleHtml(
-          "Les collectivités ne manquent pas de volonté"
-        )}
+  <br><br>
 
-        Les maires,
-        les élus
-        et les services municipaux
-        connaissent parfaitement
-        les réalités de leur territoire.
+  Qui recrute.
 
-        <br><br>
+  <br><br>
 
-        Ils accompagnent
-        les habitants.
+  Qui accueille
+  des stagiaires.
 
-        <br><br>
+  <br><br>
 
-        Ils soutiennent
-        les associations.
+  Qui recherche
+  un apprenti.
 
-        <br><br>
+  <br><br>
 
-        Ils entretiennent
-        les équipements.
+  Qui possède
+  un savoir-faire particulier.
 
-        <br><br>
+  <br><br>
 
-        Ils répondent
-        aux difficultés sociales,
-        économiques,
-        éducatives,
-        environnementales
-        et sécuritaires.
+  Chaque habitant
+  devient alors,
 
-        <br><br>
+  <br><br>
 
-        Ils organisent,
-        arbitrent,
-        réparent,
-        préparent
-        et anticipent.
+  sans même
+  s'en rendre compte...
 
-        <br><br>
+  <br><br>
 
-        Chaque journée apporte
-        de nouvelles demandes.
+  un relais.
 
-        <br><br>
+  <br><br>
 
-        De nouvelles urgences.
+  Un ambassadeur.
 
-        <br><br>
+  <br><br>
 
-        De nouveaux imprévus.
+  Un créateur
+  de rencontres.
 
-        <br><br>
+  <br><br>
 
-        Le problème n'est donc pas
-        un manque d'engagement.
+  Le bouche-à-oreille
+  cesse d'être
+  le fruit du hasard.
 
-        <br><br>
+  <br><br>
 
-        Il est souvent
-        un manque de temps.
+  Il devient
+  une richesse
+  du territoire.
 
-        <br><br>
+</div>
 
-        Car lorsque l'on doit
-        résoudre les difficultés d'hier
-        et répondre
-        aux urgences d'aujourd'hui,
+<!-- ===== FIN BLOC 2 ===== -->
 
-        <br><br>
+   /* =========================================================
+   BLOC 3/3
+   À COLLER À LA SUITE DU BLOC 2
+   FIN DE getEmploymentHtml()
+   ========================================================= */
 
-        il reste peu de disponibilité
-        pour construire patiemment
-        les liens qui pourraient
-        éviter certaines difficultés
-        de demain.
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        <br><br>
+  ${getTitleHtml(
+    "C'est à partir de cette réflexion qu'est née Bo'CitéArt"
+  )}
 
-        Ce travail est discret.
+  ${bociteart}
 
-        <br><br>
+  n'a pas été imaginé
 
-        Il demande de relier
-        des acteurs
-        qui ne se rencontrent pas
-        naturellement.
+  <br><br>
 
-        <br><br>
+  pour ajouter
+  un outil de plus.
 
-        Il demande de créer
-        de la continuité,
+  <br><br>
 
-        <br><br>
+  Ni pour remplacer
+  ce qui existe déjà.
 
-        là où se sont installées
-        des habitudes séparées.
+  <br><br>
 
-      </div>
+  Sa vocation
+  est différente.
 
+  <br><br>
 
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  Répondre
+  à une question simple.
 
-        ${getTitleHtml(
-          "Nous avons multiplié les réponses, mais qui relie l'ensemble ?"
-        )}
+  <br><br>
 
-        Au fil des années,
-        nous avons créé
-        des plateformes.
+  <span
+    style="
+      display:block;
+      color:#21624d;
+      font-weight:700;
+      text-align:center;
+      font-size:1.08em;
+      line-height:1.7;
+    "
+  >
 
-        <br><br>
+  Qui relie durablement
 
-        Des dispositifs.
+  <br><br>
 
-        <br><br>
+  les forces
+  d'un territoire ?
 
-        Des aides.
+  </span>
 
-        <br><br>
+</div>
 
-        Des accompagnements.
 
-        <br><br>
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        Des salons.
+  ${getTitleHtml(
+    "La vocation de Bo'CitéArt"
+  )}
 
-        <br><br>
+  <span
+    style="
+      display:block;
+      color:#21624d;
+      font-weight:700;
+      text-align:center;
+      font-size:1.10em;
+      line-height:1.8;
+    "
+  >
 
-        Des formations.
+  Bo'CitéArt est
 
-        <br><br>
+  <br><br>
 
-        Des réseaux spécialisés.
+  une architecture
+  territoriale
 
-        <br><br>
+  <br><br>
 
-        Chacune de ces réponses
-        peut être utile.
+  qui relie progressivement
 
-        <br><br>
+  <br><br>
 
-        Chacune répond
-        à une difficulté précise.
+  les différents secteurs
+  d'une ville
 
-        <br><br>
+  <br><br>
 
-        Mais une question demeure :
+  afin qu'ils produisent
 
-        <br><br>
+  <br><br>
 
-        <span
-          style="
-            display:block;
-            color:#21624d;
-            font-weight:700;
-            text-align:center;
-            line-height:1.5;
-          "
-        >
-          Qui relie durablement
-          les différents secteurs
-          qui composent une ville ?
-        </span>
+  davantage de valeur
 
-        <br>
+  <br><br>
 
-        Qui permet à l'entreprise
-        de mieux connaître
-        les habitants ?
+  ensemble.
 
-        <br><br>
+  </span>
 
-        À l'école
-        de mieux connaître
-        les métiers locaux ?
+</div>
 
-        <br><br>
 
-        Aux jeunes
-        de découvrir concrètement
-        ce qui existe près d'eux ?
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        <br><br>
+  ${getTitleHtml(
+    "L'emploi devient une conséquence"
+  )}
 
-        Aux associations,
-        aux commerces,
-        aux artisans,
-        aux clubs sportifs,
-        à la culture
-        et aux acteurs économiques
-        de mieux se rendre visibles
-        les uns aux autres ?
+  Cette architecture
 
-        <br><br>
+  <br><br>
 
-        Nous avons souvent appris
-        à traiter chaque sujet
-        séparément.
+  ne traite pas
+  uniquement l'emploi.
 
-        <br><br>
+  <br><br>
 
-        Pourtant,
-        dans une ville,
-        ces sujets ne sont jamais
-        réellement séparés.
+  Elle permet
+  progressivement
 
-      </div>
+  <br><br>
 
+  aux entreprises
 
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  <br><br>
 
-        ${getTitleHtml(
-          "L'emploi n'est jamais isolé du reste de la ville"
-        )}
+  d'être mieux connues.
 
-        Une personne
-        ne choisit pas seulement
-        un poste.
+  <br><br>
 
-        <br><br>
+  Aux métiers
 
-        Elle choisit aussi
-        un trajet.
+  <br><br>
 
-        <br><br>
+  d'être plus visibles.
 
-        Une organisation familiale.
+  <br><br>
 
-        <br><br>
+  Aux jeunes
 
-        Un rythme de vie.
+  <br><br>
 
-        <br><br>
+  de découvrir
+  plus tôt
 
-        Des dépenses de transport.
+  <br><br>
 
-        <br><br>
+  les possibilités
+  qui existent
+  autour d'eux.
 
-        Du temps disponible.
+  <br><br>
 
-        <br><br>
+  Aux habitants
 
-        Une proximité
-        avec les écoles,
-        les commerces,
-        les services,
-        les activités sportives
-        ou culturelles.
+  <br><br>
 
-        <br><br>
+  de mieux connaître
 
-        Une entreprise
-        ne recrute pas seulement
-        une compétence.
+  <br><br>
 
-        <br><br>
+  les richesses
+  de leur commune.
 
-        Elle accueille
-        une personne
-        qui vit dans un territoire,
+  <br><br>
 
-        <br><br>
+  Aux acteurs
+  du territoire
 
-        avec ses contraintes,
-        ses besoins,
-        ses habitudes
-        et ses projets.
+  <br><br>
 
-        <br><br>
+  de coopérer davantage.
 
-        L'emploi est donc lié
-        au logement.
+</div>
 
-        <br><br>
 
-        Aux déplacements.
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        <br><br>
+  ${getTitleHtml(
+    "Chaque rubrique complète les autres"
+  )}
 
-        À la formation.
+  L'emploi
 
-        <br><br>
+  <br><br>
 
-        À l'orientation.
+  n'est qu'une
+  porte d'entrée.
 
-        <br><br>
+  <br><br>
 
-        Au commerce local.
+  D'autres leviers
+  existent.
 
-        <br><br>
+  <br><br>
 
-        À la vie familiale.
+  Faire connaître.
 
-        <br><br>
+  <br><br>
 
-        À la culture.
+  Développer
+  sa visibilité.
 
-        <br><br>
+  <br><br>
 
-        Au sport.
+  Fidéliser.
 
-        <br><br>
+  <br><br>
 
-        À la vie associative.
+  Mutualiser.
 
-        <br><br>
+  <br><br>
 
-        À l'attractivité
-        et à la qualité de vie.
+  Développer
+  des partenariats.
 
-        <br><br>
+  <br><br>
 
-        Continuer à traiter
-        le recrutement seul,
+  Soutenir
+  des projets.
 
-        <br><br>
+  <br><br>
 
-        c'est parfois tenter
-        de résoudre une difficulté
-        sans regarder
-        tout ce qui l'entoure.
+  Préparer
+  la transmission.
 
-      </div>
+  <br><br>
 
+  Pérenniser
+  les entreprises.
 
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  <br><br>
 
-        ${getTitleHtml(
-          "Une autre évidence commence alors à apparaître"
-        )}
+  Chaque espace
+  de Bo'CitéArt
 
-        Si les entreprises
-        sont mieux connues
-        des habitants,
+  <br><br>
 
-        <br><br>
+  répond
+  à un besoin.
 
-        leurs métiers
-        deviennent plus visibles.
+  <br><br>
 
-        <br><br>
+  Ensemble...
 
-        Si les métiers
-        deviennent plus visibles,
+  <br><br>
 
-        <br><br>
+  ils reconstruisent
+  progressivement
 
-        les jeunes peuvent
-        plus facilement
-        imaginer leur avenir.
+  <br><br>
 
-        <br><br>
+  les ponts
 
-        Si les écoles
-        connaissent mieux
-        les entreprises locales,
+  <br><br>
 
-        <br><br>
+  entre tous
+  les acteurs
+  d'une ville.
 
-        elles peuvent enrichir
-        la découverte
-        des métiers du territoire.
+</div>
 
-        <br><br>
 
-        Si les habitants
-        connaissent davantage
-        les savoir-faire
-        présents autour d'eux,
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        <br><br>
+  ${getTitleHtml(
+    "La véritable richesse d'un territoire"
+  )}
 
-        ils peuvent mieux
-        les recommander,
-        les soutenir
-        et les valoriser.
+  Une ville
 
-        <br><br>
+  <br><br>
 
-        Si les différents secteurs
-        se connaissent mieux,
+  ne manque pas
+  toujours
+  de richesses.
 
-        <br><br>
+  <br><br>
 
-        des projets,
-        des stages,
-        des emplois,
-        des partenariats
-        et des coopérations
-        peuvent apparaître
-        plus naturellement.
+  Elles existent déjà.
 
-        <br><br>
+  <br><br>
 
-        Le premier levier
-        n'est donc peut-être pas
-        de créer encore
-        un nouvel outil spécialisé.
+  Elles entreprennent.
 
-        <br><br>
+  <br><br>
 
-        Il est peut-être
-        de permettre enfin
-        à ce qui existe déjà
-        de mieux se voir,
+  Elles créent.
 
-        <br><br>
+  <br><br>
 
-        de mieux se connaître
+  Elles produisent.
 
-        <br><br>
+  <br><br>
 
-        et de commencer
-        à agir ensemble.
+  Elles enseignent.
 
-      </div>
+  <br><br>
 
+  Elles innovent.
 
-      <!-- ===== FIN DU BLOC 2 — NE PAS FERMER LA FONCTION ICI ===== -->
+  <br><br>
 
-            <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  Elles transmettent.
 
-        ${getTitleHtml(
-          "Lorsque l'évidence apparaît"
-        )}
+  <br><br>
 
-        Plus nous avançons,
+  Elles s'engagent.
 
-        <br><br>
+  <br><br>
 
-        plus une idée
-        semble se dessiner.
+  Mais elles révèlent
+  pleinement
+  leur potentiel
 
-        <br><br>
+  <br><br>
 
-        Le recrutement
-        n'est peut-être pas
-        uniquement un problème
-        de recrutement.
+  lorsqu'elles apprennent
 
-        <br><br>
+  <br><br>
 
-        Les difficultés rencontrées
-        aujourd'hui
-        prennent souvent naissance
-        bien en amont.
+  à mieux se connaître.
 
-        <br><br>
+  <br><br>
 
-        Elles apparaissent
-        lorsque les entreprises
-        deviennent peu visibles.
+  À mieux se reconnaître.
 
-        <br><br>
+  <br><br>
 
-        Lorsque les jeunes
-        découvrent trop tard
-        les métiers
-        présents autour d'eux.
+  À mieux construire
+  ensemble.
 
-        <br><br>
+</div>
 
-        Lorsque les habitants
-        ignorent les richesses
-        de leur propre territoire.
 
-        <br><br>
+<div
+  class="box"
+  style="
+    font-weight:400;
+    line-height:1.65;
+  "
+>
 
-        Lorsque chacun
-        poursuit ses missions,
+  ${getTitleHtml(
+    "La première richesse"
+  )}
 
-        <br><br>
+  <span
+    style="
+      display:block;
+      color:#21624d;
+      font-weight:700;
+      text-align:center;
+      font-size:1.10em;
+      line-height:1.9;
+    "
+  >
 
-        sans toujours connaître
-        celles des autres.
+  La première richesse
 
-        <br><br>
+  <br><br>
 
-        Nous avons appris
-        à gérer
-        les conséquences.
+  d'un territoire
 
-        <br><br>
+  <br><br>
 
-        Peut-être est-il temps
-        de reconstruire
-        ce qui permet
-        à ces conséquences
-        de diminuer naturellement.
+  n'est pas seulement
 
-      </div>
+  <br><br>
 
+  ce qu'il possède.
 
+  <br><br>
 
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
+  C'est ce qu'il connaît
 
-        ${getTitleHtml(
-          "Bo'CitéArt"
-        )}
+  <br><br>
 
-        ${bociteart}
+  de lui-même.
 
-        n'a pas été imaginé
-        comme une application supplémentaire.
+  </span>
 
-        <br><br>
+</div>
 
-        Il n'a pas vocation
-        à remplacer
-        les outils existants.
-
-        <br><br>
-
-        Il n'a pas été conçu
-        pour se substituer
-        aux collectivités,
-        aux entreprises,
-        aux associations
-        ou aux établissements scolaires.
-
-        <br><br>
-
-        Sa vocation est différente.
-
-        <br><br>
-
-        <span
-          style="
-            display:block;
-            text-align:center;
-            color:#21624d;
-            font-weight:700;
-            font-size:1.12em;
-            line-height:1.6;
-          "
-        >
-          Bo'CitéArt est une architecture
-          qui relie progressivement
-          les différents secteurs
-          qui composent une ville.
-        </span>
-
-        <br>
-
-        Une architecture
-
-        <br><br>
-
-        qui facilite
-        les rencontres,
-
-        <br><br>
-
-        améliore la connaissance
-        mutuelle,
-
-        <br><br>
-
-        développe la visibilité,
-
-        <br><br>
-
-        favorise les coopérations,
-
-        <br><br>
-
-        et permet progressivement
-        à des acteurs
-        qui évoluaient côte à côte
-
-        <br><br>
-
-        de commencer
-        à construire ensemble.
-
-      </div>
-
-
-
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
-
-        ${getTitleHtml(
-          "L'emploi devient alors une conséquence"
-        )}
-
-        Lorsqu'une entreprise
-        devient davantage visible,
-
-        <br><br>
-
-        ses métiers
-        deviennent eux aussi
-        plus visibles.
-
-        <br><br>
-
-        Lorsqu'un jeune
-        découvre plus tôt
-        les métiers
-        présents sur son territoire,
-
-        <br><br>
-
-        il peut envisager
-        un avenir
-        qu'il n'aurait jamais imaginé.
-
-        <br><br>
-
-        Lorsqu'un habitant
-        connaît mieux
-        les entreprises
-        de sa commune,
-
-        <br><br>
-
-        il peut les recommander,
-
-        <br><br>
-
-        les faire connaître,
-
-        <br><br>
-
-        ou même
-        y découvrir
-        une opportunité.
-
-        <br><br>
-
-        Lorsque les établissements scolaires,
-        les associations,
-        les commerces,
-        les entreprises
-        et les collectivités
-
-        <br><br>
-
-        apprennent progressivement
-        à mieux se connaître,
-
-        <br><br>
-
-        ce ne sont plus
-        uniquement
-        les recrutements
-        qui évoluent.
-
-        <br><br>
-
-        C'est progressivement
-        toute la dynamique
-        du territoire
-        qui se transforme.
-
-      </div>
-
-
-
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          line-height:1.65;
-        "
-      >
-
-        ${getTitleHtml(
-          "Une autre manière de regarder son territoire"
-        )}
-
-        Une ville
-        ne manque pas forcément
-        de richesses.
-
-        <br><br>
-
-        Elles sont déjà là.
-
-        <br><br>
-
-        Elles entreprennent.
-
-        <br><br>
-
-        Elles enseignent.
-
-        <br><br>
-
-        Elles créent.
-
-        <br><br>
-
-        Elles produisent.
-
-        <br><br>
-
-        Elles innovent.
-
-        <br><br>
-
-        Elles transmettent.
-
-        <br><br>
-
-        Elles s'engagent.
-
-        <br><br>
-
-        Elles font vivre
-        chaque quartier.
-
-        <br><br>
-
-        Mais ces richesses
-        ne produisent pleinement
-        leur potentiel
-
-        <br><br>
-
-        que lorsqu'elles
-        apprennent
-        à mieux se connaître,
-
-        <br><br>
-
-        à mieux se comprendre,
-
-        <br><br>
-
-        et à construire ensemble.
-
-        <br><br>
-
-        <span
-          style="
-            display:block;
-            text-align:center;
-            color:#21624d;
-            font-weight:700;
-            font-size:1.10em;
-            line-height:1.7;
-          "
-        >
-          Bo'CitéArt ne crée pas
-          les richesses d'un territoire.
-          <br><br>
-          Il les révèle,
-          les rapproche
-          et leur permet
-          de produire
-          davantage de valeur ensemble.
-        </span>
-
-      </div>
-
-    `;
-}
+  `;
+} 
