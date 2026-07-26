@@ -4040,6 +4040,9 @@ if(backButton){
     openEmployment
   );
 
+     module.openEmployment =
+    openEmployment;
+
   module.registerScreen(
     "fidelisation",
     openLoyalty
@@ -25473,7 +25476,7 @@ function ensureEntrepriseBackButton(){
   }
 
   const originalEmploymentScreen =
-    module.screens.emploi;
+    module.openEmployment;
 
   if(
     typeof originalEmploymentScreen ===
@@ -25509,8 +25512,10 @@ function ensureEntrepriseBackButton(){
                       module.openEmploymentForm();
 
                       window.setTimeout(function(){
+
                         hideEmploymentPrice();
                         ensureEntrepriseBackButton();
+
                       },50);
                     }
                   };
@@ -28235,11 +28240,6 @@ console.log(
 
     },0);
   }
-
-    module.registerScreen(
-    "emploi",
-    openEmployment
-  );
 
   module.openEmploymentPublicHome =
     openEmploymentPublicHome;
