@@ -2198,25 +2198,34 @@ function getEmploymentIntroductionHtml(){
 
   return `
 
-    <div class="box" style="border-left:6px solid #2f5d46;">
+    <div
+      class="box"
+      style="
+        border-left:6px solid #2f5d46;
+        font-weight:400;
+      ">
 
-      <h2 style="color:#2f5d46;margin-top:0;">
+      <h2
+        style="
+          color:#2f5d46;
+          margin-top:0;
+        ">
         Pourquoi recrutons-nous de plus en plus difficilement ?
       </h2>
 
-      <p>
+      <p style="font-weight:400;">
         Dans de nombreux territoires, les entreprises,
         les commerces, les artisans, les associations
         et les collectivités rencontrent les mêmes difficultés.
       </p>
 
-      <p>
+      <p style="font-weight:400;">
         Les offres existent.
         Les compétences existent.
         Les personnes existent.
       </p>
 
-      <p>
+      <p style="font-weight:400;">
         Pourtant la rencontre entre les besoins
         et les candidats devient chaque année
         plus compliquée.
@@ -2226,11 +2235,14 @@ function getEmploymentIntroductionHtml(){
         Et si le problème n'était pas seulement le recrutement ?
       </h2>
 
-      <p>
-        Bo'CitéArt propose une approche différente.
+      <p style="font-weight:400;">
+        <strong style="font-weight:700;">
+          <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>
+        </strong>
+        propose une approche différente.
       </p>
 
-      <p>
+      <p style="font-weight:400;">
         Avant de publier davantage d'annonces,
         l'objectif consiste à recréer
         des liens entre les habitants,
@@ -2241,12 +2253,12 @@ function getEmploymentIntroductionHtml(){
         et tous les acteurs d'un même territoire.
       </p>
 
-      <p>
+      <p style="font-weight:400;">
         Plus un territoire est connecté,
         plus les opportunités deviennent visibles.
       </p>
 
-      <p>
+      <p style="font-weight:400;">
         Le recrutement ne devient plus
         une action isolée,
         mais une conséquence
@@ -2267,7 +2279,6 @@ function getEmploymentIntroductionHtml(){
 
   `;
 }
-
 function openEmploymentIntroduction(){
 
   module.renderModal(
