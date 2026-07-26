@@ -28237,6 +28237,11 @@ console.log(
     },0);
   }
 
+    module.registerScreen(
+    "emploi",
+    openEmployment
+  );
+
   module.openEmploymentPublicHome =
     openEmploymentPublicHome;
 
