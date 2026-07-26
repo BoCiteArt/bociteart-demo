@@ -28237,10 +28237,8 @@ console.log(
     },0);
   }
 
-  module.registerScreen(
-    "emploi",
-    openEmploymentPublicHome
-  );
+  module.openEmploymentPublicHome =
+    openEmploymentPublicHome;
 
   module.openPublicEmploymentList =
     openPublicEmploymentList;
