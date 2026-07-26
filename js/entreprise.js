@@ -2189,60 +2189,75 @@ console.log(
     );
   }
 
- function getEmploymentHomeHtml(){
+function getEmploymentHomeHtml(){
 
-    const data =
-      loadEmploymentData();
+  const data =
+    loadEmploymentData();
 
-    const activeOffers =
-      data.offers.filter(function(offer){
+  const activeOffers =
+    data.offers.filter(function(offer){
 
-        return (
-          offer.status === "publiee" ||
-          offer.status === "modifiee" ||
-          offer.status === "published"
-        );
-      });
+      return (
+        offer.status === "publiee" ||
+        offer.status === "modifiee" ||
+        offer.status === "published"
+      );
+    });
 
-    return `
+  const titleStyle = `
+    color:#2f5d46;
+    font-weight:700;
+    line-height:1.4;
+  `;
+
+  const textStyle = `
+    color:#111;
+    font-weight:400;
+    line-height:1.7;
+  `;
+
+  return `
+
+    <div
+      style="
+        display:flex;
+        justify-content:flex-start;
+        margin-bottom:16px;
+      ">
+
+      <button
+        class="choiceBtn"
+        id="employmentBackBtn"
+        type="button"
+        style="
+          width:auto;
+          min-width:120px;
+        ">
+        ← Retour
+      </button>
+
+    </div>
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        border-left:6px solid #2f5d46;
+        ${textStyle}
+      ">
 
       <div
         style="
-          display:flex;
-          justify-content:flex-start;
-          margin-bottom:16px;
+          ${titleStyle}
+          font-size:19px;
         ">
-
-        <button
-          class="choiceBtn"
-          id="employmentBackBtn"
-          type="button"
-          style="
-            width:auto;
-            min-width:120px;
-          ">
-          ← Retour
-        </button>
-
+        Trouvez un emploi,
+        un stage
+        ou une alternance près de chez vous
       </div>
 
-      <div
-        class="box entrepriseInfoBox"
-        style="
-          border-left:6px solid #2f5d46;
-        ">
+      <br>
 
-        <strong
-          style="
-            font-size:19px;
-          ">
-          Trouvez un emploi,
-          un stage
-          ou une alternance près de chez vous
-        </strong>
-
-        <br><br>
-
+      <div style="${textStyle}">
         Les entreprises de votre ville
         peuvent publier ici leurs besoins
         en recrutement.
@@ -2253,20 +2268,25 @@ console.log(
         les offres disponibles
         et transmettre leur candidature
         directement à l’entreprise concernée.
-
       </div>
 
-      <div class="box entrepriseInfoBox">
+    </div>
 
-        <strong
-          style="
-            font-size:17px;
-          ">
-          Pourquoi recruter localement ?
-        </strong>
+    <div
+      class="box entrepriseInfoBox"
+      style="${textStyle}">
 
-        <br><br>
+      <div
+        style="
+          ${titleStyle}
+          font-size:17px;
+        ">
+        Pourquoi recruter localement ?
+      </div>
 
+      <br>
+
+      <div style="${textStyle}">
         Les compétences recherchées
         sont parfois déjà présentes
         dans votre commune
@@ -2284,17 +2304,25 @@ console.log(
         L’entreprise améliore également
         son ancrage local
         et sa connaissance auprès des habitants.
-
       </div>
 
-      <div class="box entrepriseInfoBox">
+    </div>
 
-        <strong>
-          Aucune offre ne correspond actuellement ?
-        </strong>
+    <div
+      class="box entrepriseInfoBox"
+      style="${textStyle}">
 
-        <br><br>
+      <div
+        style="
+          ${titleStyle}
+          font-size:17px;
+        ">
+        Aucune offre ne correspond actuellement ?
+      </div>
 
+      <br>
+
+      <div style="${textStyle}">
         Le citoyen peut envoyer
         une candidature spontanée
         à une entreprise de sa ville,
@@ -2311,78 +2339,91 @@ console.log(
         Elle pourra retrouver le candidat
         plusieurs mois plus tard
         lorsqu’un nouveau besoin apparaîtra.
-
       </div>
 
+    </div>
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        border-left:6px solid #2f5d46;
+        ${textStyle}
+      ">
+
       <div
-        class="box entrepriseInfoBox"
         style="
-          border-left:6px solid #2f5d46;
+          ${titleStyle}
+          font-size:17px;
         ">
+        Offres actuellement disponibles
+      </div>
 
-        <strong>
-          Offres actuellement disponibles
-        </strong>
+      <br>
 
-        <br><br>
-
+      <div style="${textStyle}">
         Nombre d’offres ouvertes :
 
-        <strong
+        <span
           style="
+            color:#2f5d46;
             font-size:20px;
+            font-weight:700;
           ">
           ${activeOffers.length}
-        </strong>
-
+        </span>
       </div>
+
+    </div>
+
+    <div
+      style="
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+      ">
+
+      <button
+        class="choiceBtn"
+        id="employmentViewOffersBtn"
+        type="button">
+        Consulter toutes les offres
+      </button>
+
+      <button
+        class="choiceBtn"
+        id="employmentSpontaneousBtn"
+        type="button">
+        Envoyer une candidature spontanée
+      </button>
+
+      <button
+        class="choiceBtn"
+        id="employmentLocalCompaniesBtn"
+        type="button">
+        Voir les entreprises de ma ville
+      </button>
+
+    </div>
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        margin-top:16px;
+        border-left:6px solid #b00020;
+        ${textStyle}
+      ">
 
       <div
         style="
-          display:flex;
-          gap:8px;
-          flex-wrap:wrap;
+          ${titleStyle}
+          font-size:17px;
         ">
-
-        <button
-          class="choiceBtn"
-          id="employmentViewOffersBtn"
-          type="button">
-          Consulter toutes les offres
-        </button>
-
-        <button
-          class="choiceBtn"
-          id="employmentSpontaneousBtn"
-          type="button">
-          Envoyer une candidature spontanée
-        </button>
-
-        <button
-          class="choiceBtn"
-          id="employmentLocalCompaniesBtn"
-          type="button">
-          Voir les entreprises de ma ville
-        </button>
-
+        Espace réservé à l’entreprise
       </div>
 
-      <div
-        class="box entrepriseInfoBox"
-        style="
-          margin-top:16px;
-          border-left:6px solid #b00020;
-        ">
+      <br>
 
-        <strong
-          style="
-            font-size:17px;
-          ">
-          Espace réservé à l’entreprise
-        </strong>
-
-        <br><br>
-
+      <div style="${textStyle}">
         La publication d’une offre,
         sa modification,
         sa clôture
@@ -2399,39 +2440,40 @@ console.log(
 
         Cela évite les annonces fantômes
         et respecte le temps des candidats.
-
       </div>
 
-      <div
-        style="
-          display:flex;
-          gap:8px;
-          flex-wrap:wrap;
-        ">
+    </div>
 
-        <button
-          class="choiceBtn"
-          id="employmentCreateOfferBtn"
-          type="button">
-          Publier une offre
-        </button>
+    <div
+      style="
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+      ">
 
-        <button
-          class="choiceBtn"
-          id="employmentApplicationsBtn"
-          type="button">
-          Historique des candidatures
-        </button>
+      <button
+        class="choiceBtn"
+        id="employmentCreateOfferBtn"
+        type="button">
+        Publier une offre
+      </button>
 
-        <button
-          class="choiceBtn"
-          id="employmentDirectionBtn"
-          type="button">
-          Tableau de Direction
-        </button>
+      <button
+        class="choiceBtn"
+        id="employmentApplicationsBtn"
+        type="button">
+        Historique des candidatures
+      </button>
 
-      </div>
-    `;
+      <button
+        class="choiceBtn"
+        id="employmentDirectionBtn"
+        type="button">
+        Tableau de Direction
+      </button>
+
+    </div>
+  `;
 }
   function bindEmploymentHome(){
 
