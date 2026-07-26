@@ -2189,6 +2189,112 @@ console.log(
     );
   }
 
+  /* =========================================================
+   BO'CITÉART
+   INTRODUCTION GÉNÉRALE - EMPLOI
+   ========================================================= */
+
+function getEmploymentIntroductionHtml(){
+
+  return `
+
+    <div class="box" style="border-left:6px solid #2f5d46;">
+
+      <h2 style="color:#2f5d46;margin-top:0;">
+        Pourquoi recrutons-nous de plus en plus difficilement ?
+      </h2>
+
+      <p>
+        Dans de nombreux territoires, les entreprises,
+        les commerces, les artisans, les associations
+        et les collectivités rencontrent les mêmes difficultés.
+      </p>
+
+      <p>
+        Les offres existent.
+        Les compétences existent.
+        Les personnes existent.
+      </p>
+
+      <p>
+        Pourtant la rencontre entre les besoins
+        et les candidats devient chaque année
+        plus compliquée.
+      </p>
+
+      <h2 style="color:#2f5d46;">
+        Et si le problème n'était pas seulement le recrutement ?
+      </h2>
+
+      <p>
+        Bo'CitéArt propose une approche différente.
+      </p>
+
+      <p>
+        Avant de publier davantage d'annonces,
+        l'objectif consiste à recréer
+        des liens entre les habitants,
+        les entreprises,
+        les commerces,
+        les écoles,
+        les associations
+        et tous les acteurs d'un même territoire.
+      </p>
+
+      <p>
+        Plus un territoire est connecté,
+        plus les opportunités deviennent visibles.
+      </p>
+
+      <p>
+        Le recrutement ne devient plus
+        une action isolée,
+        mais une conséquence
+        d'un territoire vivant.
+      </p>
+
+    </div>
+
+    <button
+      id="employmentIntroductionContinueBtn"
+      class="choiceBtn"
+      type="button"
+      style="width:100%;">
+
+      Découvrir l'espace Emploi
+
+    </button>
+
+  `;
+}
+
+function openEmploymentIntroduction(){
+
+  module.renderModal(
+    "Emploi",
+    getEmploymentIntroductionHtml()
+  );
+
+  window.setTimeout(function(){
+
+    const btn =
+      getElement(
+        "employmentIntroductionContinueBtn"
+      );
+
+    if(btn){
+
+      btn.onclick=function(){
+
+        openEmploymentPublicHome();
+
+      };
+
+    }
+
+  },0);
+
+} 
 function getEmploymentHomeHtml(){
 
   const data =
@@ -2639,22 +2745,11 @@ if(backButton){
     }
   }
 
-  function openEmployment(){
+function openEmployment(){
 
-    module.renderModal(
-      "Emploi dans votre ville",
-      getEmploymentHomeHtml(),
-      {
-        presentationFooter:true
-      }
-    );
+  openEmploymentIntroduction();
 
-    window.setTimeout(function(){
-
-      bindEmploymentHome();
-
-    },0);
-  }
+}
 
   function openEmploymentForm(){
 
