@@ -2198,84 +2198,151 @@ function getEmploymentIntroductionHtml(){
 
   return `
 
-    <div
-      class="box"
-      style="
-        border-left:6px solid #2f5d46;
-        font-weight:400;
-      ">
-
-      <h2
-        style="
-          color:#2f5d46;
-          margin-top:0;
-        ">
-        Pourquoi recrutons-nous de plus en plus difficilement ?
-      </h2>
-
-      <p style="font-weight:400;">
-        Dans de nombreux territoires, les entreprises,
-        les commerces, les artisans, les associations
-        et les collectivités rencontrent les mêmes difficultés.
-      </p>
-
-      <p style="font-weight:400;">
-        Les offres existent.
-        Les compétences existent.
-        Les personnes existent.
-      </p>
-
-      <p style="font-weight:400;">
-        Pourtant la rencontre entre les besoins
-        et les candidats devient chaque année
-        plus compliquée.
-      </p>
+    <div class="box" style="border-left:6px solid #2f5d46;">
 
       <h2 style="color:#2f5d46;">
-        Et si le problème n'était pas seulement le recrutement ?
+        EMPLOI
       </h2>
 
-      <p style="font-weight:400;">
-        <strong style="font-weight:700;">
-          <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>
-        </strong>
-        propose une approche différente.
-      </p>
+      <h3 style="margin-top:25px;color:#2f5d46;">
+        Pourquoi recrutons-nous de plus en plus difficilement ?
+      </h3>
 
-      <p style="font-weight:400;">
-        Avant de publier davantage d'annonces,
-        l'objectif consiste à recréer
-        des liens entre les habitants,
-        les entreprises,
-        les commerces,
-        les écoles,
-        les associations
-        et tous les acteurs d'un même territoire.
-      </p>
+      <p>Les entreprises cherchent.</p>
+      <p>Les habitants cherchent.</p>
+      <p>Les jeunes cherchent leur voie.</p>
+      <p>Les collectivités cherchent des solutions.</p>
 
-      <p style="font-weight:400;">
-        Plus un territoire est connecté,
-        plus les opportunités deviennent visibles.
-      </p>
+      <p><strong>Pourtant...</strong></p>
 
-      <p style="font-weight:400;">
-        Le recrutement ne devient plus
-        une action isolée,
-        mais une conséquence
-        d'un territoire vivant.
-      </p>
+      <p>Ils se rencontrent de moins en moins.</p>
+
+      <hr>
+
+      <p>Nous parlons de pénurie.</p>
+      <p>De difficultés de recrutement.</p>
+      <p>De manque de compétences.</p>
+
+      <p>Et si nous regardions un peu plus loin ?</p>
+
+      <hr>
+
+      <p>Avant de chercher une réponse...</p>
+
+      <p>Essayons un exercice très simple.</p>
+
+      <p>Pouvez-vous citer, sans réfléchir, cinq entreprises de votre commune en dehors des grandes enseignes ?</p>
+
+      <p>Connaissez-vous leur activité ?</p>
+
+      <p>Les métiers qu'elles exercent ?</p>
+
+      <p>Les compétences qu'elles recherchent ?</p>
+
+      <p>Leurs savoir-faire ?</p>
+
+      <hr>
+
+      <p>Pour beaucoup d'entre nous...</p>
+
+      <p>La réponse sera incomplète.</p>
+
+      <p>Pourtant...</p>
+
+      <p>Ces entreprises sont parfois installées à quelques centaines de mètres de chez nous.</p>
+
+      <p>Nous passons devant elles presque chaque jour.</p>
+
+      <p>Nous voyons leurs bâtiments.</p>
+
+      <p>Leurs ateliers.</p>
+
+      <p>Leurs véhicules.</p>
+
+      <p>Leurs entrepôts.</p>
+
+      <p>Mais à force de les voir...</p>
+
+      <p>Nous ne les regardons plus.</p>
+
+      <hr>
+
+      <p>Derrière les murs...</p>
+
+      <p>Les bardages...</p>
+
+      <p>Les clôtures...</p>
+
+      <p>Les portails...</p>
+
+      <p>Des femmes et des hommes imaginent.</p>
+
+      <p>Créent.</p>
+
+      <p>Fabriquent.</p>
+
+      <p>Réparent.</p>
+
+      <p>Innovent.</p>
+
+      <p>Transmettent.</p>
+
+      <p>Des métiers existent.</p>
+
+      <p>Des compétences existent.</p>
+
+      <p>Des emplois existent.</p>
+
+      <p>Mais une grande partie de cette richesse demeure invisible.</p>
+
+      <hr>
+
+      <p>Cette invisibilité a un coût.</p>
+
+      <p>Les entreprises peinent à recruter.</p>
+
+      <p>Les habitants cherchent parfois loin ce qui existe près de chez eux.</p>
+
+      <p>Les jeunes ignorent des métiers qui pourraient pourtant les passionner.</p>
+
+      <p>Les collectivités perdent une partie de leur dynamique locale.</p>
+
+      <hr>
+
+      <p>Bo'CitéArt propose une autre approche.</p>
+
+      <p>Avant de vouloir recruter davantage...</p>
+
+      <p>Commençons par rendre visible ce qui existe déjà.</p>
+
+      <p>Faire connaître les entreprises.</p>
+
+      <p>Faire connaître leurs métiers.</p>
+
+      <p>Faire connaître leurs savoir-faire.</p>
+
+      <p>Créer des passerelles entre écoles, habitants, associations, commerces et entreprises.</p>
+
+      <p>Aujourd'hui, recruter ne consiste plus uniquement à publier une annonce.</p>
+
+      <p>Cela consiste également à créer un environnement où chacun découvre progressivement les richesses de son territoire.</p>
+
+      <p>Parce que la première richesse d'un territoire...</p>
+
+      <p>n'est pas seulement ce qu'il possède.</p>
+
+      <p><strong>C'est ce qu'il connaît de lui-même.</strong></p>
+
+      <div style="text-align:center;margin-top:35px;">
+
+        <button class="action-btn"
+                onclick="openEmploymentHome();">
+          Découvrir l'espace Emploi
+        </button>
+
+      </div>
 
     </div>
-
-    <button
-      id="employmentIntroductionContinueBtn"
-      class="choiceBtn"
-      type="button"
-      style="width:100%;">
-
-      Découvrir l'espace Emploi
-
-    </button>
 
   `;
 }
@@ -2286,26 +2353,7 @@ function openEmploymentIntroduction(){
     getEmploymentIntroductionHtml()
   );
 
-  window.setTimeout(function(){
-
-    const btn =
-      getElement(
-        "employmentIntroductionContinueBtn"
-      );
-
-    if(btn){
-
-      btn.onclick=function(){
-
-        openEmploymentPublicHome();
-
-      };
-
-    }
-
-  },0);
-
-} 
+}
 function getEmploymentHomeHtml(){
 
   const data =
