@@ -2614,7 +2614,66 @@ function openEmploymentIntroduction(){
     getEmploymentIntroductionHtml()
   );
 
+  window.setTimeout(function(){
+
+    const employmentButton =
+      getElement(
+        "employmentIntroductionHomeBtn"
+      );
+
+    const directoryButton =
+      getElement(
+        "employmentIntroductionDirectoryBtn"
+      );
+
+    if(employmentButton){
+
+      employmentButton.onclick = function(){
+
+        openEmploymentHome();
+      };
+    }
+
+    if(directoryButton){
+
+      directoryButton.onclick = function(){
+
+        openEmploymentCompaniesDirectory();
+      };
+    }
+
+  },0);
 }
+ function openEmploymentHome(){
+
+  module.renderModal(
+    "Emploi dans votre ville",
+    getEmploymentHomeHtml()
+  );
+
+  window.setTimeout(function(){
+
+    bindEmploymentHome();
+
+  },0);
+}
+
+function openEmploymentCompaniesDirectory(){
+
+  if(
+    typeof module.openLocalDirectory ===
+    "function"
+  ){
+
+    module.openLocalDirectory();
+
+    return;
+  }
+
+  module.openScreen(
+    "annuaire_local"
+  );
+}  
 function getEmploymentHomeHtml(){
 
   const data =
@@ -4497,8 +4556,17 @@ function openEmployment(){
     openEmployment
   );
 
-     module.openEmployment =
-    openEmployment;
+    module.openEmploymentHome =
+  openEmploymentHome;
+
+module.openEmploymentCompaniesDirectory =
+  openEmploymentCompaniesDirectory;
+
+window.openEmploymentHome =
+  openEmploymentHome;
+
+window.openEmploymentCompaniesDirectory =
+  openEmploymentCompaniesDirectory;
 
   module.registerScreen(
     "fidelisation",
