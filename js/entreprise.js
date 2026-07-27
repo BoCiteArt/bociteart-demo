@@ -2583,12 +2583,6 @@ Un territoire ne manque pas de richesses. Il manque simplement d'un moyen de les
 <div style="text-align:center;margin-top:35px;">
 
 <button class="action-btn"
-        onclick="openEntrepriseHome();"
-        style="margin:6px;">
-Retour
-</button>
-
-<button class="action-btn"
         onclick="openEmploymentHome();"
         style="margin:6px;">
 Découvrir l'espace Emploi
@@ -2600,6 +2594,47 @@ Découvrir l'espace Emploi
 Découvrir les entreprises autour de moi
 </button>
 
+<div
+  class="box entrepriseInfoBox"
+  style="
+    margin-top:22px;
+    border-left:4px solid #2f5d46;
+    text-align:left;
+  ">
+
+  <span
+    style="
+      display:block;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+    ">
+    Et après le recrutement ?
+  </span>
+
+  <br>
+
+  Recruter est une première étape.
+
+  <br><br>
+
+  Découvrez ensuite comment créer un environnement
+  permettant aux salariés de mieux connaître
+  les ressources disponibles autour de leur lieu de travail.
+
+  <br><br>
+
+  <button
+    class="choiceBtn"
+    type="button"
+    onclick="window.BociteEntreprise.openScreen('fidelisation');">
+
+    Découvrir la rubrique suivante : Fidélisation
+
+  </button>
+
+</div>
+
 </div>
 
 </div>
@@ -2610,9 +2645,11 @@ Découvrir les entreprises autour de moi
 function openEmploymentIntroduction(){
 
   module.renderModal(
-    "Emploi",
+    "Bo'CitéArt — Emploi • Recrutement",
     getEmploymentIntroductionHtml()
   );
+
+}
 
   window.setTimeout(function(){
 
@@ -3347,116 +3384,569 @@ function openEmployment(){
     },0);
   }
    
-  function saveEmploymentOffer(){
-    const companyName =
-      String(
-        getElement("employmentCompanyName")
-          ? getElement("employmentCompanyName").value
-          : ""
-      ).trim();
+/* =========================================================
+   BO'CITÉART — EMPLOI • RECRUTEMENT
+   PAIEMENT DE L'ANNONCE ET FACTURE ACQUITTÉE
+   ========================================================= */
 
-    const companyId =
-      String(
-        getElement("employmentCompanyId")
-          ? getElement("employmentCompanyId").value
-          : ""
-      ).trim();
+const EMPLOYMENT_OFFER_PRICE_HT =
+  50;
 
-    const email =
-      String(
-        getElement("employmentContactEmail")
-          ? getElement("employmentContactEmail").value
-          : ""
-      ).trim();
+/*
+  Modifier uniquement cette valeur
+  si le taux de TVA de Bo'CitéArt évolue.
+*/
 
-    const title =
-      String(
-        getElement("employmentJobTitle")
-          ? getElement("employmentJobTitle").value
-          : ""
-      ).trim();
+const BOCITEART_VAT_RATE =
+  20;
 
-    const description =
-      String(
-        getElement("employmentDescription")
-          ? getElement("employmentDescription").value
-          : ""
-      ).trim();
+function formatEmploymentMoney(value){
 
-    const contract =
-      String(
-        getElement("employmentContractType")
-          ? getElement("employmentContractType").value
-          : ""
-      ).trim();
+  return Number(value || 0)
+    .toLocaleString(
+      "fr-FR",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+}
 
-    const city =
-      String(
-        getElement("employmentCity")
-          ? getElement("employmentCity").value
-          : ""
-      ).trim();
+function saveEmploymentOffer(){
 
-    const commitment =
-      getElement("employmentCommitmentCheck");
+  const companyName =
+    String(
+      getElement("employmentCompanyName")
+        ? getElement("employmentCompanyName").value
+        : ""
+    ).trim();
 
-    if(
-      !companyName ||
-      !companyId ||
-      !email ||
-      !title ||
-      !description ||
-      !city
-    ){
-      alert(
-        "Veuillez remplir toutes les informations obligatoires."
-      );
-      return;
-    }
+  const companyId =
+    String(
+      getElement("employmentCompanyId")
+        ? getElement("employmentCompanyId").value
+        : ""
+    ).trim();
 
-    if(!email.includes("@")){
-      alert(
-        "Veuillez renseigner une adresse e-mail valide."
-      );
-      return;
-    }
+  const email =
+    String(
+      getElement("employmentContactEmail")
+        ? getElement("employmentContactEmail").value
+        : ""
+    ).trim();
 
-    if(!commitment || !commitment.checked){
-      alert(
-        "Vous devez confirmer que l’offre sera clôturée lorsque le poste sera pourvu."
-      );
-      return;
-    }
+  const title =
+    String(
+      getElement("employmentJobTitle")
+        ? getElement("employmentJobTitle").value
+        : ""
+    ).trim();
 
-    const data =
-      loadEmploymentData();
+  const description =
+    String(
+      getElement("employmentDescription")
+        ? getElement("employmentDescription").value
+        : ""
+    ).trim();
 
-    data.offers.push({
-      id:createOfferId(),
-      companyName:companyName,
-      companyId:companyId,
-      email:email,
-      title:title,
-      description:description,
-      contract:contract,
-      city:city,
-      status:"publiee",
-      createdAt:Date.now(),
-      createdAtFr:
-        new Date().toLocaleString("fr-FR"),
-      updatedAt:null,
-      closedAt:null
-    });
+  const contract =
+    String(
+      getElement("employmentContractType")
+        ? getElement("employmentContractType").value
+        : ""
+    ).trim();
 
-    saveEmploymentData(data);
+  const city =
+    String(
+      getElement("employmentCity")
+        ? getElement("employmentCity").value
+        : ""
+    ).trim();
 
-    alert(
-      "Offre enregistrée dans la démonstration.\n\n" +
-      "Elle sera diffusée après validation du paiement."
+  const commitment =
+    getElement(
+      "employmentCommitmentCheck"
     );
 
-    openEmploymentOffers();
+  if(
+    !companyName ||
+    !companyId ||
+    !email ||
+    !title ||
+    !description ||
+    !city
+  ){
+
+    alert(
+      "Veuillez remplir toutes les informations obligatoires."
+    );
+
+    return;
   }
+
+  if(!email.includes("@")){
+
+    alert(
+      "Veuillez renseigner une adresse e-mail valide."
+    );
+
+    return;
+  }
+
+  if(
+    !commitment ||
+    !commitment.checked
+  ){
+
+    alert(
+      "Vous devez confirmer que l’offre sera clôturée lorsque le poste sera pourvu."
+    );
+
+    return;
+  }
+
+  const amountHT =
+    EMPLOYMENT_OFFER_PRICE_HT;
+
+  const vatRate =
+    BOCITEART_VAT_RATE;
+
+  const amountVAT =
+    Number(
+      (
+        amountHT *
+        vatRate /
+        100
+      ).toFixed(2)
+    );
+
+  const amountTTC =
+    Number(
+      (
+        amountHT +
+        amountVAT
+      ).toFixed(2)
+    );
+
+  const pendingOffer = {
+    id:createOfferId(),
+    companyName:companyName,
+    companyId:companyId,
+    email:email,
+    title:title,
+    description:description,
+    contract:contract,
+    city:city,
+    status:"en_attente_paiement",
+    amountHT:amountHT,
+    vatRate:vatRate,
+    amountVAT:amountVAT,
+    amountTTC:amountTTC,
+    createdAt:Date.now(),
+    createdAtFr:
+      new Date()
+        .toLocaleString("fr-FR"),
+    updatedAt:null,
+    closedAt:null,
+    paidAt:null,
+    invoiceId:null
+  };
+
+  openEmploymentPayment(
+    pendingOffer
+  );
+}
+
+function openEmploymentPayment(offer){
+
+  module.renderModal(
+    "Paiement de l’annonce",
+    `
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          border-left:6px solid #2f5d46;
+        ">
+
+        <strong
+          style="
+            color:#2f5d46;
+            font-size:18px;
+          ">
+          Récapitulatif avant publication
+        </strong>
+
+        <br><br>
+
+        <strong>
+          Entreprise
+        </strong>
+
+        <br>
+
+        ${escapeValue(offer.companyName)}
+
+        <br><br>
+
+        <strong>
+          Offre
+        </strong>
+
+        <br>
+
+        ${escapeValue(offer.title)}
+
+      </div>
+
+      <div
+        class="box entrepriseInfoBox">
+
+        <div
+          style="
+            display:flex;
+            justify-content:space-between;
+            gap:15px;
+          ">
+
+          <span>
+            Prix hors taxes
+          </span>
+
+          <strong>
+            ${formatEmploymentMoney(
+              offer.amountHT
+            )} €
+          </strong>
+
+        </div>
+
+        <br>
+
+        <div
+          style="
+            display:flex;
+            justify-content:space-between;
+            gap:15px;
+          ">
+
+          <span>
+            TVA (${escapeValue(
+              offer.vatRate
+            )} %)
+          </span>
+
+          <strong>
+            ${formatEmploymentMoney(
+              offer.amountVAT
+            )} €
+          </strong>
+
+        </div>
+
+        <hr
+          style="
+            border:none;
+            border-top:1px solid #b7d2c2;
+            margin:18px 0;
+          ">
+
+        <div
+          style="
+            display:flex;
+            justify-content:space-between;
+            gap:15px;
+            font-size:18px;
+          ">
+
+          <strong>
+            Total à payer
+          </strong>
+
+          <strong
+            style="
+              color:#2f5d46;
+            ">
+            ${formatEmploymentMoney(
+              offer.amountTTC
+            )} € TTC
+          </strong>
+
+        </div>
+
+      </div>
+
+      <div
+        class="box entrepriseInfoBox">
+
+        Le paiement est effectué immédiatement
+        par carte bancaire.
+
+        <br><br>
+
+        L’annonce ne sera publiée
+        qu’après confirmation du paiement.
+
+        <br><br>
+
+        Dès que le paiement est confirmé :
+
+        <br><br>
+
+        l’annonce apparaît dans l’espace Emploi,
+        le voyant vert de recrutement est activé
+        et la facture acquittée est créée
+        dans le dossier Factures.
+
+      </div>
+
+      <label
+        class="miniCheck">
+
+        <input
+          id="employmentPaymentConfirmation"
+          type="checkbox">
+
+        <span>
+          Je confirme avoir vérifié l’annonce
+          et j’accepte le paiement immédiat
+          de ${formatEmploymentMoney(
+            offer.amountTTC
+          )} € TTC.
+        </span>
+
+      </label>
+
+      <button
+        id="employmentPayByCardBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:14px;
+          background:#b00020;
+          color:#fff;
+          border-color:#b00020;
+        ">
+
+        Payer par carte bancaire
+        et publier l’annonce
+
+      </button>
+    `
+  );
+
+  window.setTimeout(function(){
+
+    const paymentButton =
+      getElement(
+        "employmentPayByCardBtn"
+      );
+
+    if(!paymentButton){
+      return;
+    }
+
+    paymentButton.onclick =
+      function(){
+
+        const confirmation =
+          getElement(
+            "employmentPaymentConfirmation"
+          );
+
+        if(
+          !confirmation ||
+          !confirmation.checked
+        ){
+
+          alert(
+            "Veuillez confirmer le paiement avant de continuer."
+          );
+
+          return;
+        }
+
+        /*
+          DÉMONSTRATION
+
+          En production, cette fonction devra être appelée
+          uniquement après le retour sécurisé
+          du prestataire de paiement par carte bancaire.
+        */
+
+        confirmEmploymentCardPayment(
+          offer,
+          {
+            paid:true,
+            paymentMethod:
+              "Carte bancaire",
+            paymentReference:
+              "CB-DEMO-" +
+              Date.now()
+          }
+        );
+      };
+
+  },0);
+}
+
+function confirmEmploymentCardPayment(
+  offer,
+  paymentResult
+){
+
+  if(
+    !paymentResult ||
+    paymentResult.paid !== true
+  ){
+
+    alert(
+      "Le paiement n’a pas été confirmé.\n\n" +
+      "L’annonce n’est pas publiée " +
+      "et aucune facture n’est créée."
+    );
+
+    return;
+  }
+
+  if(
+    typeof module.createPaidInvoice !==
+    "function"
+  ){
+
+    alert(
+      "Le système de facturation est momentanément indisponible.\n\n" +
+      "L’annonce n’a pas été publiée."
+    );
+
+    return;
+  }
+
+  const invoice =
+    module.createPaidInvoice({
+      customerName:
+        offer.companyName,
+
+      customerEmail:
+        offer.email,
+
+      customerId:
+        offer.companyId,
+
+      plan:
+        "emploi_recrutement",
+
+      planLabel:
+        "Publication d’une annonce d’emploi — " +
+        offer.title,
+
+      serviceLabel:
+        "Publication d’une annonce d’emploi",
+
+      billingMode:
+        "ponctuel",
+
+      amountHT:
+        offer.amountHT,
+
+      vatRate:
+        offer.vatRate,
+
+      amountVAT:
+        offer.amountVAT,
+
+      amountTTC:
+        offer.amountTTC,
+
+      paymentMethod:
+        paymentResult.paymentMethod ||
+        "Carte bancaire",
+
+      paymentReference:
+        paymentResult.paymentReference ||
+        ""
+    });
+
+  if(!invoice){
+
+    alert(
+      "La facture n’a pas pu être créée.\n\n" +
+      "L’annonce n’a pas été publiée."
+    );
+
+    return;
+  }
+
+  const data =
+    loadEmploymentData();
+
+  offer.status =
+    "publiee";
+
+  offer.paidAt =
+    Date.now();
+
+  offer.paidAtFr =
+    new Date()
+      .toLocaleString("fr-FR");
+
+  offer.paymentMethod =
+    paymentResult.paymentMethod ||
+    "Carte bancaire";
+
+  offer.paymentReference =
+    paymentResult.paymentReference ||
+    "";
+
+  offer.invoiceId =
+    invoice.id;
+
+  offer.invoiceNumber =
+    invoice.number || "";
+
+  data.offers.push(
+    offer
+  );
+
+  saveEmploymentData(
+    data
+  );
+
+  window.dispatchEvent(
+    new CustomEvent(
+      "bociteart:employment-offer-paid",
+      {
+        detail:{
+          offer:offer,
+          invoice:invoice
+        }
+      }
+    )
+  );
+
+  alert(
+    "Paiement confirmé.\n\n" +
+    "L’annonce est maintenant publiée.\n\n" +
+    "La facture acquittée a été créée " +
+    "dans votre dossier Factures."
+  );
+
+  if(
+    typeof module.openProfessionalInvoice ===
+    "function"
+  ){
+
+    module.openProfessionalInvoice(
+      invoice.id
+    );
+  }
+
+  window.setTimeout(function(){
+
+    openEmploymentOffers();
+
+  },200);
+}
 
   function getOfferStatusLabel(status){
 
@@ -43834,6 +44324,634 @@ console.log(
 
   console.log(
     "✅ Observatoire économique remis en priorité"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — EMPLOI • RECRUTEMENT
+   VOYANT ANNUAIRE ET SUIVI DES OFFRES
+   ========================================================= */
+
+(function initBociteEmploymentRecruitmentFollowUp(){
+
+  "use strict";
+
+  const EMPLOYMENT_STORE_KEY =
+    "bociteart_entreprise_employment_v1";
+
+  const REMINDER_STORE_KEY =
+    "bociteart_entreprise_employment_reminders_v1";
+
+  const SEVEN_DAYS =
+    7 * 24 * 60 * 60 * 1000;
+
+  const MAX_REMINDERS =
+    4;
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[’']/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function loadEmploymentData(){
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          EMPLOYMENT_STORE_KEY
+        );
+
+      const parsed =
+        raw ? JSON.parse(raw) : {};
+
+      return {
+        offers:
+          Array.isArray(parsed.offers)
+            ? parsed.offers
+            : [],
+        applications:
+          Array.isArray(parsed.applications)
+            ? parsed.applications
+            : []
+      };
+
+    }catch(error){
+
+      console.warn(
+        "Lecture des offres de recrutement impossible :",
+        error
+      );
+
+      return {
+        offers:[],
+        applications:[]
+      };
+    }
+  }
+
+  function saveEmploymentData(data){
+
+    try{
+
+      localStorage.setItem(
+        EMPLOYMENT_STORE_KEY,
+        JSON.stringify(data)
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Enregistrement des offres impossible :",
+        error
+      );
+    }
+  }
+
+  function loadReminders(){
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          REMINDER_STORE_KEY
+        );
+
+      const parsed =
+        raw ? JSON.parse(raw) : {};
+
+      return (
+        parsed &&
+        typeof parsed === "object"
+      )
+        ? parsed
+        : {};
+
+    }catch(error){
+
+      return {};
+    }
+  }
+
+  function saveReminders(reminders){
+
+    try{
+
+      localStorage.setItem(
+        REMINDER_STORE_KEY,
+        JSON.stringify(reminders || {})
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Enregistrement des rappels impossible :",
+        error
+      );
+    }
+  }
+
+  function isOfferActive(offer){
+
+    if(!offer){
+      return false;
+    }
+
+    return (
+      offer.status === "publiee" ||
+      offer.status === "modifiee" ||
+      offer.status === "published" ||
+      offer.status === "active"
+    );
+  }
+
+  function getActiveOffers(){
+
+    return loadEmploymentData()
+      .offers
+      .filter(isOfferActive);
+  }
+
+  function companyHasActiveOffer(companyName){
+
+    const normalizedCompanyName =
+      normalizeText(companyName);
+
+    if(!normalizedCompanyName){
+      return false;
+    }
+
+    return getActiveOffers()
+      .some(function(offer){
+
+        return (
+          normalizeText(
+            offer.companyName
+          ) === normalizedCompanyName
+        );
+      });
+  }
+
+  function installRecruitmentStyles(){
+
+    if(
+      document.getElementById(
+        "bociteRecruitmentStyles"
+      )
+    ){
+      return;
+    }
+
+    const style =
+      document.createElement("style");
+
+    style.id =
+      "bociteRecruitmentStyles";
+
+    style.textContent = `
+
+      @keyframes bociteRecruitmentPulse {
+
+        0%,
+        100% {
+          opacity:.38;
+          transform:scale(.88);
+          box-shadow:
+            0 0 0 0
+            rgba(47,138,82,.10);
+        }
+
+        50% {
+          opacity:1;
+          transform:scale(1);
+          box-shadow:
+            0 0 0 4px
+            rgba(47,138,82,.13);
+        }
+      }
+
+      .bociteRecruitmentIndicator {
+        display:flex;
+        align-items:center;
+        gap:7px;
+        width:max-content;
+        margin-top:8px;
+        color:#2f5d46;
+        font-size:11px;
+        line-height:1.2;
+        font-weight:700;
+        cursor:pointer;
+      }
+
+      .bociteRecruitmentLight {
+        display:inline-block;
+        width:7px;
+        height:7px;
+        flex:0 0 7px;
+        border-radius:50%;
+        background:#2f8a52;
+        animation:
+          bociteRecruitmentPulse
+          1.7s
+          ease-in-out
+          infinite;
+      }
+
+      @media (
+        prefers-reduced-motion:
+        reduce
+      ){
+
+        .bociteRecruitmentLight {
+          animation:none;
+          opacity:1;
+        }
+      }
+
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  function updateDirectoryRecruitmentLights(){
+
+    installRecruitmentStyles();
+
+    const app =
+      window.BociteEntreprise;
+
+    if(
+      !app ||
+      typeof app.loadDirectory !==
+      "function"
+    ){
+      return;
+    }
+
+    const companies =
+      app.loadDirectory();
+
+    document
+      .querySelectorAll(
+        ".entrepriseDirectoryOpen"
+      )
+      .forEach(function(button){
+
+        const companyId =
+          button.getAttribute(
+            "data-company-id"
+          );
+
+        const company =
+          companies.find(function(item){
+
+            return (
+              String(item.id) ===
+              String(companyId)
+            );
+          });
+
+        const card =
+          button.closest(
+            ".box"
+          );
+
+        if(!card || !company){
+          return;
+        }
+
+        const oldIndicator =
+          card.querySelector(
+            ".bociteRecruitmentIndicator"
+          );
+
+        if(
+          !companyHasActiveOffer(
+            company.name
+          )
+        ){
+
+          if(oldIndicator){
+            oldIndicator.remove();
+          }
+
+          return;
+        }
+
+        if(oldIndicator){
+          return;
+        }
+
+        const indicator =
+          document.createElement("div");
+
+        indicator.className =
+          "bociteRecruitmentIndicator";
+
+        indicator.setAttribute(
+          "role",
+          "button"
+        );
+
+        indicator.setAttribute(
+          "tabindex",
+          "0"
+        );
+
+        indicator.setAttribute(
+          "title",
+          "Cette entreprise recrute actuellement"
+        );
+
+        indicator.innerHTML = `
+          <span
+            class="bociteRecruitmentLight"
+            aria-hidden="true">
+          </span>
+
+          <span>
+            Recrute actuellement
+          </span>
+        `;
+
+        indicator.onclick = function(){
+
+          if(
+            window.BociteEntreprise &&
+            typeof window.BociteEntreprise
+              .openScreen === "function"
+          ){
+
+            window.BociteEntreprise
+              .openScreen("emploi");
+          }
+        };
+
+        indicator.onkeydown =
+          function(event){
+
+            if(
+              event.key === "Enter" ||
+              event.key === " "
+            ){
+
+              event.preventDefault();
+              indicator.click();
+            }
+          };
+
+        const actionArea =
+          button.parentElement;
+
+        card.insertBefore(
+          indicator,
+          actionArea
+        );
+      });
+  }
+
+  function getOfferReferenceDate(
+    offer,
+    reminder
+  ){
+
+    if(
+      reminder &&
+      Number(reminder.lastReminderAt)
+    ){
+
+      return Number(
+        reminder.lastReminderAt
+      );
+    }
+
+    const offerDate =
+      Number(
+        offer.createdAt ||
+        offer.updatedAt ||
+        offer.publishedAt
+      );
+
+    return Number.isFinite(offerDate)
+      ? offerDate
+      : Date.now();
+  }
+
+  function checkRecruitmentReminders(){
+
+    const data =
+      loadEmploymentData();
+
+    const reminders =
+      loadReminders();
+
+    const now =
+      Date.now();
+
+    let employmentChanged =
+      false;
+
+    let remindersChanged =
+      false;
+
+    data.offers.forEach(function(offer){
+
+      const offerId =
+        String(
+          offer.id || ""
+        );
+
+      if(!offerId){
+        return;
+      }
+
+      if(!isOfferActive(offer)){
+
+        if(reminders[offerId]){
+
+          delete reminders[offerId];
+
+          remindersChanged = true;
+        }
+
+        return;
+      }
+
+      const currentReminder =
+        reminders[offerId] || {
+          count:0,
+          lastReminderAt:0
+        };
+
+      const referenceDate =
+        getOfferReferenceDate(
+          offer,
+          currentReminder
+        );
+
+      if(
+        now - referenceDate <
+        SEVEN_DAYS
+      ){
+        return;
+      }
+
+      const newCount =
+        Number(
+          currentReminder.count || 0
+        ) + 1;
+
+      if(
+        newCount >=
+        MAX_REMINDERS
+      ){
+
+        offer.status =
+          "masquee_absence_reponse";
+
+        offer.hiddenAt =
+          now;
+
+        offer.hiddenReason =
+          "Absence de réponse après quatre rappels de suivi.";
+
+        reminders[offerId] = {
+          count:newCount,
+          lastReminderAt:now,
+          status:"annonce_masquee",
+          companyName:
+            offer.companyName || "",
+          email:
+            offer.email ||
+            offer.contactEmail ||
+            "",
+          title:
+            offer.title || ""
+        };
+
+        employmentChanged = true;
+        remindersChanged = true;
+
+        console.info(
+          "Bo'CitéArt Emploi : annonce masquée après quatre rappels.",
+          offer.companyName,
+          offer.title
+        );
+
+        return;
+      }
+
+      reminders[offerId] = {
+        count:newCount,
+        lastReminderAt:now,
+        status:"rappel_a_envoyer",
+        companyName:
+          offer.companyName || "",
+        email:
+          offer.email ||
+          offer.contactEmail ||
+          "",
+        title:
+          offer.title || "",
+        question:
+          "Avez-vous terminé votre recrutement ?",
+        answers:[
+          "Oui",
+          "Non"
+        ]
+      };
+
+      remindersChanged = true;
+
+      console.info(
+        "Bo'CitéArt Emploi : rappel de recrutement préparé.",
+        offer.companyName,
+        offer.title,
+        "Rappel " +
+        newCount +
+        " sur " +
+        MAX_REMINDERS
+      );
+    });
+
+    if(employmentChanged){
+
+      saveEmploymentData(data);
+    }
+
+    if(remindersChanged){
+
+      saveReminders(reminders);
+    }
+
+    updateDirectoryRecruitmentLights();
+  }
+
+  function observeDirectory(){
+
+    const observer =
+      new MutationObserver(function(){
+
+        updateDirectoryRecruitmentLights();
+      });
+
+    observer.observe(
+      document.body,
+      {
+        childList:true,
+        subtree:true
+      }
+    );
+  }
+
+  installRecruitmentStyles();
+
+  observeDirectory();
+
+  window.setTimeout(function(){
+
+    checkRecruitmentReminders();
+
+  },1200);
+
+  window.setInterval(function(){
+
+    checkRecruitmentReminders();
+
+  },60 * 60 * 1000);
+
+  window.addEventListener(
+    "storage",
+    function(event){
+
+      if(
+        event.key ===
+        EMPLOYMENT_STORE_KEY
+      ){
+
+        updateDirectoryRecruitmentLights();
+      }
+    }
+  );
+
+  window.BociteEmploymentRecruitment = {
+    updateDirectoryRecruitmentLights:
+      updateDirectoryRecruitmentLights,
+    checkRecruitmentReminders:
+      checkRecruitmentReminders,
+    companyHasActiveOffer:
+      companyHasActiveOffer
+  };
+
+  console.log(
+    "✅ Bo'CitéArt — Emploi • Recrutement chargé"
   );
 
 })();
