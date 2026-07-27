@@ -344,51 +344,307 @@ function buildBackButton(options){
       });
   }
 
-  function renderModal(title, html, options){
+ function cleanEntrepriseModalPresentation(title){
 
-    options = options || {};
-
-    if(!requireOpenModal()){
-      return;
-    }
+  window.setTimeout(function(){
 
     /*
-      Lorsqu’une fonction ouvre directement
-      une nouvelle fenêtre sans openScreen(),
-      on mémorise la rubrique principale
-      afin que Retour y ramène.
+      1. Supprimer les anciens boutons Retour
+      présents directement dans certaines pages.
+      Le nouveau bouton général reste conservé.
     */
 
-    if(
-      !state.renderingScreen &&
-      state.currentScreen !== "home"
-    ){
-      state.nestedParentScreen =
-        state.currentScreen;
+    document
+      .querySelectorAll(
+        "button, [role='button']"
+      )
+      .forEach(function(button){
+
+        if(
+          button.classList.contains(
+            "bociteEntrepriseProtectedBackBtn"
+          )
+        ){
+          return;
+        }
+
+        const text =
+          String(
+            button.textContent || ""
+          )
+          .replace(/\s+/g," ")
+          .trim()
+          .toLowerCase();
+
+        if(
+          text ===
+            "← retour à commerces & entreprises" ||
+          text ===
+            "retour à commerces & entreprises" ||
+          text ===
+            "← retour à la page précédente" ||
+          text ===
+            "retour à la page précédente"
+        ){
+          button.remove();
+        }
+      });
+
+    /*
+      2. Toujours replacer la nouvelle page
+      en haut de la fenêtre.
+    */
+
+    const dialogs =
+      document.querySelectorAll(
+        '[role="dialog"],' +
+        '.modal,' +
+        '.modal-content,' +
+        '.modalContent,' +
+        '.modal-body,' +
+        '.modalBody'
+      );
+
+    dialogs.forEach(function(element){
+
+      if(
+        element.scrollHeight >
+        element.clientHeight
+      ){
+        element.scrollTop = 0;
+      }
+
+      element
+        .querySelectorAll("*")
+        .forEach(function(child){
+
+          if(
+            child.scrollHeight >
+            child.clientHeight &&
+            (
+              getComputedStyle(child)
+                .overflowY === "auto" ||
+              getComputedStyle(child)
+                .overflowY === "scroll"
+            )
+          ){
+            child.scrollTop = 0;
+          }
+        });
+    });
+
+    /*
+      3. Présentation particulière
+      de l’Observatoire et de l’Annuaire.
+    */
+
+    const normalizedTitle =
+      String(title || "")
+        .toLowerCase();
+
+    const isEconomicPage =
+      normalizedTitle.includes(
+        "observatoire économique"
+      ) ||
+      normalizedTitle.includes(
+        "annuaire économique"
+      );
+
+    if(isEconomicPage){
+
+      document
+        .querySelectorAll(
+          ".entrepriseInfoBox," +
+          ".observatoireReadableBox"
+        )
+        .forEach(function(box){
+
+          box.style.fontWeight =
+            "400";
+
+          box.style.lineHeight =
+            "1.65";
+        });
+
+      document
+        .querySelectorAll(
+          ".entrepriseInfoBox p," +
+          ".entrepriseInfoBox div," +
+          ".entrepriseInfoBox span," +
+          ".observatoireReadableBox p," +
+          ".observatoireReadableBox div"
+        )
+        .forEach(function(element){
+
+          if(
+            element.tagName !== "BUTTON" &&
+            element.tagName !== "STRONG"
+          ){
+            element.style.fontWeight =
+              "400";
+          }
+        });
+
+      document
+        .querySelectorAll(
+          ".entrepriseInfoBox h2," +
+          ".entrepriseInfoBox h3," +
+          ".entrepriseInfoBox .sectionTitle," +
+          ".observatoireReadableTitle"
+        )
+        .forEach(function(titleElement){
+
+          titleElement.style.color =
+            "#2f5d46";
+
+          titleElement.style.fontWeight =
+            "700";
+        });
+
+      /*
+        Remise aux couleurs officielles
+        des écritures Bo'CitéArt trouvées.
+      */
+
+      document
+        .querySelectorAll(
+          ".entrepriseInfoBox," +
+          ".observatoireReadableBox"
+        )
+        .forEach(function(box){
+
+          const walker =
+            document.createTreeWalker(
+              box,
+              NodeFilter.SHOW_TEXT
+            );
+
+          const nodes = [];
+
+          while(walker.nextNode()){
+            nodes.push(
+              walker.currentNode
+            );
+          }
+
+          nodes.forEach(function(node){
+
+            const value =
+              node.nodeValue || "";
+
+            if(
+              !value.includes("Bo'CitéArt")
+            ){
+              return;
+            }
+
+            const parent =
+              node.parentElement;
+
+            if(
+              !parent ||
+              parent.closest(
+                "button,script,style"
+              )
+            ){
+              return;
+            }
+
+            const fragment =
+              document.createDocumentFragment();
+
+            const parts =
+              value.split(
+                "Bo'CitéArt"
+              );
+
+            parts.forEach(function(part,index){
+
+              if(part){
+                fragment.appendChild(
+                  document.createTextNode(
+                    part
+                  )
+                );
+              }
+
+              if(
+                index <
+                parts.length - 1
+              ){
+
+                const brand =
+                  document.createElement(
+                    "strong"
+                  );
+
+                brand.innerHTML =
+                  '<span style="color:#2f5d46;">' +
+                  "Bo'Cité" +
+                  '</span>' +
+                  '<span style="color:#c62828;">' +
+                  "Art" +
+                  '</span>';
+
+                fragment.appendChild(
+                  brand
+                );
+              }
+            });
+
+            node.parentNode.replaceChild(
+              fragment,
+              node
+            );
+          });
+        });
     }
 
-    const footer =
-      options.presentationFooter
-        ? buildPresentationFooter()
-        : "";
+  },0);
+}
 
-    window.openModal(
-  title,
-  buildBackButton(options) +
-  html +
-  footer,
-      {
-        noHistory:true
-      }
+function renderModal(title, html, options){
+
+  options = options || {};
+
+  if(!requireOpenModal()){
+    return;
+  }
+
+  if(
+    !state.renderingScreen &&
+    state.currentScreen !== "home"
+  ){
+    state.nestedParentScreen =
+      state.currentScreen;
+  }
+
+  const footer =
+    options.presentationFooter
+      ? buildPresentationFooter()
+      : "";
+
+  window.openModal(
+    title,
+    buildBackButton(options) +
+    html +
+    footer,
+    {
+      noHistory:true
+    }
+  );
+
+  window.setTimeout(function(){
+
+    bindBackButton();
+    bindPresentationFooter();
+
+    cleanEntrepriseModalPresentation(
+      title
     );
 
-    window.setTimeout(function(){
-
-      bindBackButton();
-      bindPresentationFooter();
-
-    },0);
-  }
+  },0);
+}
 
 function getHomeHtml(){
 
@@ -887,12 +1143,9 @@ function openHome(){
   state.nestedParentScreen =
     null;
 
- renderModal(
+renderModal(
   "Commerces & Entreprises — Entreprise",
-  getHomeHtml(),
-  {
-    hideBack:true
-  }
+  getHomeHtml()
 );
 
   window.setTimeout(function(){
@@ -2594,17 +2847,57 @@ Un territoire ne manque pas de richesses. Il manque simplement d'un moyen de les
 
 <div style="text-align:center;margin-top:35px;">
 
-<button class="action-btn"
-        onclick="openEmploymentHome();"
-        style="margin:6px;">
-Découvrir l'espace Emploi
-</button>
+<div
+  style="
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+  ">
 
-<button class="action-btn"
-        onclick="openEmploymentCompaniesDirectory();"
-        style="margin:6px;">
-Découvrir les entreprises autour de moi
-</button>
+  <button
+    class="choiceBtn"
+    type="button"
+    onclick="window.BociteEntreprise.openEmploymentOffers();"
+    style="
+      width:100%;
+      max-width:430px;
+      background:#b00020;
+      color:#fff;
+      border-color:#b00020;
+    ">
+
+    Consulter directement les offres d’emploi
+
+  </button>
+
+  <button
+    class="choiceBtn"
+    type="button"
+    onclick="openEmploymentHome();"
+    style="
+      width:100%;
+      max-width:430px;
+    ">
+
+    Découvrir l’espace Emploi et Recrutement
+
+  </button>
+
+  <button
+    class="choiceBtn"
+    type="button"
+    onclick="openEmploymentCompaniesDirectory();"
+    style="
+      width:100%;
+      max-width:430px;
+    ">
+
+    Découvrir les entreprises autour de moi
+
+  </button>
+
+</div>
 
 <div
   class="box entrepriseInfoBox"
@@ -2626,13 +2919,30 @@ Découvrir les entreprises autour de moi
 
   <br>
 
+ <p
+  style="
+    margin:0;
+    color:#222;
+    font-weight:400;
+    line-height:1.7;
+  ">
+
   Recruter est une première étape.
 
-  <br><br>
+</p>
+
+<p
+  style="
+    color:#222;
+    font-weight:400;
+    line-height:1.7;
+  ">
 
   Découvrez ensuite comment créer un environnement
   permettant aux salariés de mieux connaître
   les ressources disponibles autour de leur lieu de travail.
+
+</p>
 
   <br><br>
 
@@ -2691,7 +3001,7 @@ function openEmploymentIntroduction(){
 
   },0);
 }
- function openEmploymentHome(){
+function openEmploymentHome(){
 
   module.renderModal(
     "Emploi dans votre ville",
@@ -2701,6 +3011,19 @@ function openEmploymentIntroduction(){
   window.setTimeout(function(){
 
     bindEmploymentHome();
+
+    document
+      .querySelectorAll(
+        ".modal-body," +
+        ".modalBody," +
+        ".modal-content," +
+        ".modalContent," +
+        '[role="dialog"]'
+      )
+      .forEach(function(element){
+
+        element.scrollTop = 0;
+      });
 
   },0);
 }
@@ -2749,24 +3072,6 @@ function getEmploymentHomeHtml(){
   `;
 
   return `
-
-    <div
-      style="
-        display:flex;
-        justify-content:flex-start;
-        margin-bottom:16px;
-      ">
-
-      <button
-        class="choiceBtn"
-        id="employmentBackBtn"
-        type="button"
-        style="
-          width:auto;
-          min-width:120px;
-        ">
-        ← Retour
-      </button>
 
     </div>
 
@@ -3007,22 +3312,7 @@ function getEmploymentHomeHtml(){
     </div>
   `;
 }
-  function bindEmploymentHome(){
-
-    const backButton =
-  getElement(
-    "employmentBackBtn"
-  );
-
-if(backButton){
-
-  backButton.onclick = function(){
-
-    module.openScreen("home");
-
-  };
-
-} 
+ 
     const createButton =
       getElement(
         "employmentCreateOfferBtn"
