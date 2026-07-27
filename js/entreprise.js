@@ -2198,334 +2198,442 @@ function getEmploymentIntroductionHtml(){
 
   return `
 
-    <div class="box" style="
-      border-left:6px solid #2f5d46;
-      font-weight:400;
-      color:#222;
-      line-height:1.8;
-    ">
+<div class="box" style="
+border-left:6px solid #2f5d46; 
+font-weight:400;
+color:#222;
+line-height:1.8;
+">
 
-      <h2 style="color:#2f5d46;font-weight:700;">
-        BO'CITÉ<span style="color:#c62828;">ART</span> — EMPLOI
-      </h2>
+<h2 style="color:#2f5d46;font-weight:700;">
+BO'CITÉ<span style="color:#c62828;">ART</span> — EMPLOI
+</h2>
 
-      <h3 style="margin-top:25px;color:#2f5d46;font-weight:600;">
-        Pourquoi recrutons-nous de plus en plus difficilement ?
-      </h3>
+<h3 style="margin-top:25px;color:#2f5d46;font-weight:600;">
+Pourquoi recrutons-nous de plus en plus difficilement ?
+</h3>
 
-      <p>Les entreprises cherchent.</p>
+<p>Chaque jour, des entreprises recrutent.</p>
 
-      <p>Les habitants cherchent.</p>
+<p>Chaque jour, des habitants recherchent un emploi.</p>
 
-      <p>Les jeunes cherchent leur voie.</p>
+<p>Des jeunes cherchent leur voie.</p>
 
-      <p>Les collectivités cherchent des solutions.</p>
+<p>Des adultes souhaitent se reconvertir.</p>
 
-      <p>Pourtant…</p>
+<p>Des écoles recherchent des entreprises pour les stages, les alternances et les apprentissages.</p>
 
-      <p>Ils se rencontrent de moins en moins.</p>
+<p>Des collectivités souhaitent préserver l'emploi local.</p>
 
-      <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+<p>Pourtant, malgré tous ces besoins, les rencontres deviennent plus difficiles.</p>
 
-      <p>Nous parlons souvent de pénurie.</p>
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-      <p>De difficultés de recrutement.</p>
+<p>Nous parlons souvent de pénurie de main-d'œuvre.</p>
 
-      <p>De manque de compétences.</p>
+<p>De difficultés de recrutement.</p>
 
-      <p>Et si nous regardions un peu plus loin&nbsp;?</p>
+<p>De manque de compétences.</p>
 
-      <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+<p>Mais si le véritable problème se trouvait ailleurs&nbsp;?</p>
 
-      <p>Pouvez-vous citer spontanément cinq entreprises de votre commune, en dehors des grandes enseignes&nbsp;?</p>
+<p>Avant de pouvoir recruter, encore faut-il être connu.</p>
 
-      <p>Connaissez-vous réellement leurs activités&nbsp;?</p>
+<p>Avant de choisir une entreprise, encore faut-il savoir qu'elle existe.</p>
 
-      <p>Les métiers qu'elles exercent&nbsp;?</p>
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-      <p>Les compétences qu'elles recherchent&nbsp;?</p>
+<h3 style="color:#2f5d46;font-weight:600;">
+Un territoire rempli d'entreprises... souvent invisibles
+</h3>
 
-      <p>Leurs savoir-faire&nbsp;?</p>
+<p>Pouvez-vous citer spontanément cinq entreprises de votre commune, en dehors des grandes enseignes&nbsp;?</p>
 
-      <p>Très souvent… la réponse est incomplète.</p>
+<p>Connaissez-vous réellement leurs activités&nbsp;?</p>
 
-      <p>Pourtant ces entreprises sont parfois installées à quelques centaines de mètres de chez vous.</p>
+<p>Les métiers qu'elles exercent&nbsp;?</p>
 
-      <p>Nous passons devant elles chaque jour.</p>
+<p>Leurs savoir-faire&nbsp;?</p>
 
-      <p>Nous voyons leurs bâtiments.</p>
+<p>Les postes qu'elles recrutent régulièrement&nbsp;?</p>
 
-      <p>Leurs ateliers.</p>
+<p>Très souvent, la réponse est non.</p>
 
-      <p>Leurs véhicules.</p>
+<p>Pourtant, ces entreprises sont parfois installées à quelques centaines de mètres de chez vous.</p>
 
-      <p>Leurs entrepôts.</p>
+<p>Nous passons devant leurs bâtiments chaque jour.</p>
 
-      <p>Mais à force de les voir… nous ne les regardons plus.</p>
+<p>Nous voyons leurs ateliers.</p>
 
-      <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+<p>Leurs véhicules.</p>
 
-      <p>Derrière ces murs travaillent pourtant des femmes et des hommes qui créent, innovent, fabriquent, entretiennent, réparent, conçoivent et transmettent leur savoir-faire.</p>
+<p>Leurs entrepôts.</p>
 
-      <p>Des métiers existent.</p>
+<p>Mais à force de les voir... nous ne les regardons plus.</p>
 
-      <p>Des carrières existent.</p>
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-      <p>Des emplois existent.</p>
+<p>Derrière ces murs travaillent pourtant des femmes et des hommes qui créent, fabriquent, innovent, réparent, entretiennent, conçoivent et transmettent leur savoir-faire.</p>
 
-      <p>Des stages existent.</p>
+<p>Des métiers existent.</p>
 
-      <p>Des apprentissages existent.</p>
+<p>Des emplois existent.</p>
 
-      <p>Des alternances existent.</p>
+<p>Des CDI existent.</p>
 
-      <p>Des CDI existent.</p>
+<p>Des stages existent.</p>
 
-      <p>Mais une grande partie de cette richesse reste invisible.</p>
+<p>Des alternances existent.</p>
 
-      <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+<p>Des apprentissages existent.</p>
 
-      <p>Cette invisibilité a un coût.</p>
+<p>Des opportunités existent.</p>
 
-      <p>Les entreprises peinent à recruter.</p>
+<p>Mais une grande partie de cette richesse économique reste encore invisible.</p>
 
-      <p>Les jeunes ignorent des métiers qui pourraient pourtant les passionner.</p>
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-      <p>Les habitants cherchent parfois loin ce qui existe tout près de chez eux.</p>
+<h3 style="color:#2f5d46;font-weight:600;">
+Cette invisibilité a un coût
+</h3>
 
-      <p>Les écoles ont davantage de difficultés à trouver des partenaires pour les visites, les stages ou les découvertes professionnelles.</p>
+<p>Les entreprises peinent davantage à recruter.</p>
 
-      <p>Les collectivités perdent une partie de leur dynamique économique locale.</p>
+<p>Les habitants cherchent parfois loin ce qui existe pourtant près de chez eux.</p>
 
-      <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+<p>Les jeunes ignorent des métiers qui pourraient les passionner.</p>
 
-      <h3 style="color:#2f5d46;font-weight:600;">
-        Et si nous commencions simplement par mieux nous connaître ?
-      </h3>
+<p>Les établissements scolaires rencontrent davantage de difficultés pour trouver des partenaires.</p>
 
-      <p>Bo'CITÉ<span style="color:#c62828;">ART</span> propose une autre approche.</p>
+<p>Les collectivités perdent une partie de leur dynamique économique.</p>
 
-      <p>Avant de vouloir recruter davantage…</p>
+<p>Chaque acteur avance souvent de son côté alors que tous poursuivent finalement le même objectif&nbsp;: faire vivre durablement leur territoire.</p>
 
-      <p>Commençons par rendre visibles les entreprises qui existent déjà.</p>
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-      <p>Faire connaître leurs métiers.</p>
+<h3 style="color:#2f5d46;font-weight:600;">
+Et si nous commencions simplement par mieux nous connaître ?
+</h3>
 
-      <p>Faire connaître leurs savoir-faire.</p>
+<p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> propose une approche différente.</p>
 
-      <p>Faire connaître leurs équipes.</p>
+<p>Avant de vouloir recruter davantage...</p>
 
-      <p>Faire connaître leurs besoins.</p>
+<p>Commençons par rendre visibles les entreprises qui existent déjà.</p>
 
-      <p>Car une entreprise connue inspire davantage confiance qu'une entreprise que personne ne connaît.</p>
+<p>Faire connaître leurs métiers.</p>
 
-      <p>Lorsqu'un citoyen découvre les entreprises de sa ville, il devient naturellement un relais d'information.</p>
+<p>Leurs savoir-faire.</p>
 
-      <p>Il peut orienter un proche vers une entreprise qui recrute.</p>
+<p>Leurs équipes.</p>
 
-      <p>Il peut conseiller un jeune recherchant un stage.</p>
+<p>Leurs produits.</p>
 
-      <p>Il peut parler d'une alternance.</p>
+<p>Leurs services.</p>
 
-      <p>Il peut recommander un apprentissage.</p>
+<p>Leurs recrutements.</p>
 
-      <p>Il devient progressivement un véritable ambassadeur économique de son territoire.</p>
+<p>Leurs besoins.</p>
 
-           <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+<p>Car une entreprise connue inspire davantage confiance qu'une entreprise que personne ne connaît.</p>
 
-      <h3 style="color:#2f5d46;font-weight:600;">
-        Une entreprise mieux connue recrute plus facilement
-      </h3>
+<p>Lorsqu'un habitant découvre les entreprises de sa commune, il devient naturellement un relais d'information.</p>
 
-      <p>Aujourd'hui, publier une annonce ne suffit plus.</p>
+<p>Il peut orienter un proche vers une entreprise qui recrute.</p>
 
-      <p>Encore faut-il que l'entreprise soit connue avant même d'avoir besoin de recruter.</p>
+<p>Conseiller un jeune recherchant un stage.</p>
 
-      <p>Lorsqu'une entreprise est régulièrement mise en valeur, ses métiers deviennent familiers.</p>
+<p>Parler d'une alternance.</p>
 
-      <p>Ses savoir-faire sont mieux compris.</p>
+<p>Faire découvrir un apprentissage.</p>
 
-      <p>Ses besoins sont davantage identifiés.</p>
+<p>Recommander un savoir-faire local.</p>
 
-      <p>Le recrutement devient alors plus naturel.</p>
+<p>Petit à petit, chaque habitant devient lui aussi un ambassadeur économique de son territoire.</p>
 
-      <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-      <h3 style="color:#2f5d46;font-weight:600;">
-        Les écoles y trouvent également leur place
-      </h3>
+<h3 style="color:#2f5d46;font-weight:600;">
+Les écoles retrouvent naturellement leur place
+</h3>
 
-      <p>Les élèves découvrent progressivement les métiers qui existent autour d'eux.</p>
+<p>Les élèves découvrent progressivement les métiers qui existent autour d'eux.</p>
 
-      <p>Ils peuvent imaginer leur avenir professionnel beaucoup plus concrètement.</p>
+<p>Ils imaginent plus concrètement leur avenir professionnel.</p>
 
-      <p>Les établissements scolaires trouvent plus facilement des entreprises pour les stages.</p>
+<p>Les établissements scolaires trouvent plus facilement des entreprises pour :</p>
 
-      <p>Pour les apprentissages.</p>
+<p>Les stages.</p>
 
-      <p>Pour les alternances.</p>
+<p>Les apprentissages.</p>
 
-      <p>Pour les visites d'entreprises.</p>
+<p>Les alternances.</p>
 
-      <p>Pour les rencontres entre professionnels et jeunes.</p>
+<p>Les visites d'entreprises.</p>
 
-      <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+<p>Les rencontres entre professionnels et jeunes.</p>
 
-      <h3 style="color:#2f5d46;font-weight:600;">
-        La commune devient un véritable facilitateur
-      </h3>
+<p>L'entreprise redevient ainsi un acteur naturel de la vie locale.</p>
 
-      <p>la mairie accompagné de Bo'CITÉ<span style="color:#c62828;">ART</span> fera d'avantage connaître les richesses économiques de son territoire.</p>
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-      <p>Son rôle étant de diffuser l'information utile.</p>
+<h3 style="color:#2f5d46;font-weight:600;">
+La commune devient un véritable facilitateur
+</h3>
 
-      <p>Faire connaître les entreprises.</p>
+<p>Accompagnée par <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>, la mairie dispose enfin d'un outil lui permettant de mieux faire connaître les richesses économiques de son territoire.</p>
 
-      <p>Les commerces.</p>
+<p>Son rôle n'est pas de remplacer les entreprises.</p>
 
-      <p>Les artisans.</p>
+<p>Son rôle est de faciliter leur visibilité.</p>
 
-      <p>Les associations.</p>
+<p>Son rôle est de rendre plus visibles les entreprises, les commerces, les artisans, les associations, les emplois et les initiatives qui contribuent chaque jour au dynamisme du territoire.</p>
 
-      <p>Les emplois.</p>
+<p>Parce qu'un territoire ne peut valoriser que ce qu'il rend vraiment visible.</p>
 
-      <p>Les initiatives locales.</p>
+<p>Aucun acteur local ne devrait rester invisible sur son propre territoire.</p>
 
-      <p>Plus aucun acteur local ne doit rester invisible.</p>
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-      <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+<h3 style="color:#2f5d46;font-weight:600;">
+Découvrir avant de rechercher
+</h3>
 
-      <h3 style="color:#2f5d46;font-weight:600;">
-        Bo'CITÉ<span style="color:#c62828;">ART</span> met ces outils à disposition
-      </h3>
+<p>La plupart des recherches d'emploi commencent aujourd'hui par une annonce.</p>
 
-      <p>Des bandeaux d'informations, de pubs permettent de présenter régulièrement les entreprises locales.</p>
+<p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> propose de commencer autrement.</p>
 
-      <p>Un annuaire Bo'CITÉ<span style="color:#c62828;">ART</span> enrichi facilite leur découverte.</p>
+<p>Avant même de rechercher un emploi, un stage, une alternance ou un apprentissage, encore faut-il connaître les entreprises qui existent réellement autour de soi.</p>
 
-      <p>Chaque entreprise doit, peut mieux présenter son activité.</p>
+<p>Chaque commune possède des entreprises parfois installées depuis plusieurs dizaines d'années que beaucoup d'habitants ignorent totalement.</p>
 
-      <p>Ses métiers.</p>
+<p>Grâce à <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>, chacun découvre progressivement le tissu économique de son territoire.</p>
 
-      <p>Ses services.</p>
+<p>Une liste simple présente les entreprises implantées dans chaque commune partenaire.</p>
 
-      <p>Ses savoir-faire.</p>
+<p>Au fil des adhésions des collectivités, de nouvelles communes viennent enrichir automatiquement cet annuaire vivant.</p>
 
-      <p>Ses opportunités professionnelles.</p>
+<p>Les entreprises sont ensuite proposées par proximité afin de permettre à chacun de découvrir naturellement les richesses économiques situées autour de son domicile.</p>
 
-      <p>Ses recrutements.</p>
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-      <p>Ses coordonnées.</p>
+<h3 style="color:#2f5d46;font-weight:600;">
+Les entreprises partenaires vont encore plus loin
+</h3>
 
-      <p>Chaque citoyen dispose ainsi d'un véritable reflex, rapide, utile, de son guide économique et territoire en poche.</p>
+<p>Toutes les entreprises participent à la richesse économique d'un territoire.</p>
 
-      <p>Et lorsqu'il recherche une compétence ailleurs en France, il retrouve également tout sur l'entreprise recherchée ou partenaires Bo'CITÉ<span style="color:#c62828;">ART</span>.</p>
+<p>C'est pourquoi chacune peut être identifiée dans l'annuaire afin de faire connaître l'ensemble du tissu économique local.</p>
 
-      <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+<p>Les entreprises qui choisissent de devenir partenaires de <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> bénéficient d'une visibilité renforcée.</p>
 
-      <p>Aujourd'hui, la richesse d'un territoire ne dépend plus uniquement de ce qu'il possède.</p>
+<p>Leur fiche devient alors un véritable espace de présentation.</p>
 
-      <p>Elle dépend surtout de sa capacité à faire connaître celles et ceux qui y travail et qui le font vivre.</p>
+<p>Les habitants peuvent découvrir leurs activités, leurs métiers, leurs savoir-faire, leurs coordonnées, leurs horaires, leurs recrutements, leurs stages, leurs apprentissages, leurs alternances ainsi que les informations utiles qu'elles souhaitent partager.</p>
 
-      <p>Parce qu'une entreprise véritablement visible est une entreprise qui inspire.</p>
+<p>Cette présence permanente permet à l'entreprise d'être identifiée avant même qu'un besoin n'apparaisse.</p>
 
-      <p>Une entreprise qui recrute.</p>
+<p>Lorsqu'elle recrute, recherche un partenaire, souhaite développer son activité ou faire connaître un nouveau service, elle s'appuie déjà sur une visibilité construite dans le temps.</p>
 
-      <p>Une entreprise qui transmet.</p>
+<p>Elle ne devient plus seulement visible lorsqu'elle publie une annonce ; elle devient naturellement identifiable tout au long de l'année.</p>
 
-      <p>Une entreprise qui participe pleinement à la vitalité de son territoire, qui trouve ou retrouve de nouvelles affaires ou embauches beaucoup plus facilement.</p>
+<p>Ainsi, chaque entreprise choisit librement le niveau de visibilité qu'elle souhaite donner à son activité, tout en participant au rayonnement économique de son territoire.</p>
 
-      <div style="text-align:center;margin-top:35px;">
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-        <button class="action-btn"
-                onclick="openEmploymentHome();">
-          Découvrir l'espace Emploi
-        </button>
-              <h3 style="color:#2f5d46;font-weight:600;">
-        La commune devient un véritable facilitateur
-      </h3>
+<h3 style="color:#2f5d46;font-weight:600;">
+Un annuaire vivant et régulièrement actualisé
+</h3>
 
-      <p>
-        Accompagnée par
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>,
-        la mairie peut mieux faire connaître les richesses économiques de son territoire.
-      </p>
+<p>L'annuaire <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> évolue avec la vie économique du territoire.</p>
 
-      <p>Elle remplit ainsi pleinement son rôle de relais de l'information locale utile.</p>
+<p>Grâce à l'intelligence artificielle et aux sources d'information disponibles, les nouvelles entreprises, les changements d'activité, les modifications d'adresse et les fermetures peuvent être repérés plus rapidement.</p>
 
-      <p>Faire connaître les entreprises.</p>
+<p>Ces informations sont ensuite vérifiées et actualisées régulièrement afin de proposer un guide économique aussi fidèle et utile que possible.</p>
 
-      <p>Les commerces.</p>
+<p>Les entreprises partenaires peuvent également compléter directement leur fiche et maintenir leurs informations à jour.</p>
 
-      <p>Les artisans.</p>
+<p>Au fil de l'arrivée de nouvelles communes partenaires, la cartographie économique s'enrichit progressivement et permet de découvrir les entreprises situées de plus en plus largement autour de soi.</p>
 
-      <p>Les associations.</p>
+<p>L'annuaire devient ainsi un outil vivant, construit dans le temps avec les collectivités, les entreprises et les acteurs du territoire.</p>
 
-      <p>Les emplois.</p>
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-      <p>Les initiatives locales.</p>
+<h3 style="color:#2f5d46;font-weight:600;">
+Une démarche où chacun est gagnant
+</h3>
 
-      <p>Plus aucun acteur local ne doit rester invisible sur son propre territoire.</p>
+<p>Le citoyen découvre plus facilement les entreprises, les métiers, les commerces, les artisans et les services qui existent autour de lui.</p>
 
-      <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+<p>L'entreprise développe sa visibilité, facilite ses recrutements et crée plus naturellement de nouvelles opportunités.</p>
 
-      <h3 style="color:#2f5d46;font-weight:600;">
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>
-        met les outils nécessaires à disposition
-      </h3>
+<p>Les écoles trouvent davantage de partenaires pour les stages, les apprentissages, les alternances et les projets pédagogiques.</p>
 
-      <p>Des bandeaux d'information et des espaces publicitaires permettent de présenter régulièrement les entreprises locales.</p>
+<p>Les associations gagnent en visibilité et créent plus facilement de nouveaux liens avec les habitants et les entreprises.</p>
 
-      <p>
-        Un annuaire enrichi
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>
-        facilite leur découverte.
-      </p>
+<p>La mairie dispose d'une méthode concrète pour mieux relier les acteurs de son territoire et valoriser les initiatives locales.</p>
 
-      <p>Chaque entreprise peut mieux présenter son activité.</p>
+<p>Lorsque chacun trouve plus facilement les autres, les échanges se développent, les collaborations se multiplient et le territoire devient progressivement plus dynamique.</p>
 
-      <p>Ses métiers.</p>
+<p>Bo'Cité<span style="color:#c62828;">Art</span> ne crée pas cette richesse.</p>
 
-      <p>Ses services.</p>
+<p>Elle existe déjà.</p>
 
-      <p>Ses savoir-faire.</p>
+<p>Il la révèle, la relie et contribue à la rendre plus visible.</p>
 
-      <p>Ses opportunités professionnelles.</p>
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-      <p>Ses recrutements.</p>
+<h3 style="color:#2f5d46;font-weight:600;">
+Une dynamique portée par tout un territoire
+</h3>
 
-      <p>Ses coordonnées.</p>
+<p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> n'a pas vocation à agir à la place des entreprises, des collectivités, des associations ou des habitants.</p>
 
-      <p>Le citoyen dispose ainsi d'un réflexe simple, rapide et utile : consulter directement le guide économique de son territoire, toujours accessible dans sa poche.</p>
+<p>Son rôle est de leur permettre de mieux se connaître, de mieux se rencontrer et de mieux coopérer autour d'une vision commune du territoire.</p>
 
-      <p>
-        Lorsqu'il recherche une compétence ailleurs en France, il peut également découvrir l'entreprise recherchée ainsi que les entreprises partenaires de
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>.
-      </p>
+<p>Chaque entreprise qui rejoint cette démarche renforce la visibilité du tissu économique local. Chaque habitant qui découvre une activité près de chez lui participe à cette dynamique. Chaque école, chaque association et chaque collectivité vient enrichir ce réseau de relations.</p>
 
-      <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+<p>Progressivement, les initiatives cessent d'évoluer côte à côte pour commencer à avancer ensemble.</p>
 
-      <p>Aujourd'hui, la richesse d'un territoire ne dépend plus uniquement de ce qu'il possède.</p>
+<p>C'est cette mise en relation permanente qui crée de nouvelles opportunités, favorise l'emploi, développe les partenariats et contribue à renforcer durablement l'attractivité du territoire.</p>
 
-      <p>Elle dépend surtout de sa capacité à faire connaître celles et ceux qui y travaillent et qui le font vivre.</p>
+<p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> n'est pas la richesse du territoire.</p>
 
-      <p>Parce qu'une entreprise véritablement visible est une entreprise qui inspire.</p>
+<p>La richesse existe déjà.</p>
 
-      <p>Une entreprise qui recrute.</p>
+<p>Son ambition est de la révéler, de la relier et de permettre à chacun d'en devenir pleinement acteur.</p>
 
-      <p>Une entreprise qui transmet.</p>
+<h3 style="color:#2f5d46;font-weight:600;">
+Une nouvelle façon de faire vivre son territoire
+</h3>
 
-      <p>Une entreprise qui développe plus facilement de nouvelles activités, trouve de nouveaux clients et recrute plus naturellement.</p>
+<p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> n'a pas vocation à remplacer ce qui existe déjà.</p>
 
-      <p>Une entreprise qui participe pleinement à la vitalité et à l'avenir de son territoire.</p>
+<p>Sa vocation est de relier durablement les habitants, les entreprises, les commerces, les artisans, les associations, les établissements scolaires, les clubs sportifs et les collectivités autour d'une même dynamique territoriale.</p>
 
-      </div>
+<p>Chaque acteur conserve son identité, son rôle et son autonomie, tout en devenant plus facilement visible, accessible et identifiable par les autres.</p>
 
-    </div>
+<p>En facilitant ces rencontres, le territoire apprend progressivement à mieux se connaître, à mieux consommer localement, à mieux recruter, à mieux transmettre ses savoir-faire et à développer davantage de coopérations.</p>
 
-  `;
+<p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> n'ajoute pas une structure supplémentaire. Il crée les liens qui permettent aux initiatives déjà présentes de produire davantage de valeur lorsqu'elles agissent ensemble.</p>
 
-} 
+<p>Parce qu'un territoire devient véritablement plus fort lorsque chacun connaît enfin les richesses qui l'entourent et peut naturellement entrer en relation avec elles.</p>
+
+<h3 style="color:#2f5d46;font-weight:600;">
+Pourquoi devenir partenaire Bo'CitéArt ?
+</h3>
+
+<p>Rejoindre Bo'Cité<span style="color:#c62828;">Art</span>, ce n'est pas simplement apparaître dans un annuaire économique.</p>
+
+<p>C'est intégrer un écosystème où chaque rubrique renforce les autres.</p>
+
+<p>Une entreprise peut d'abord rechercher de nouveaux collaborateurs.</p>
+
+<p>Puis développer sa visibilité.</p>
+
+<p>Fidéliser sa clientèle.</p>
+
+<p>Mutualiser certaines dépenses avec d'autres entreprises.</p>
+
+<p>Découvrir de nouvelles opportunités de développement.</p>
+
+<p>S'engager dans des actions de mécénat.</p>
+
+<p>Préparer la transmission de son activité.</p>
+
+<p>Valoriser ses métiers.</p>
+
+<p>Faire connaître ses savoir-faire.</p>
+
+<p>Créer de nouveaux partenariats.</p>
+
+<p>Aucune de ces rubriques n'a été pensée pour fonctionner seule.</p>
+
+<p>Elles ont été conçues pour se compléter et produire davantage de valeur lorsqu'elles sont utilisées ensemble.</p>
+
+<p>La mairie, accompagnée par Bo'Cité<span style="color:#c62828;">Art</span>, devient alors le facilitateur de cette dynamique territoriale.</p>
+
+<p>Les entreprises gagnent en visibilité.</p>
+
+<p>Les habitants découvrent plus facilement les richesses économiques de leur territoire.</p>
+
+<p>Les écoles trouvent davantage de partenaires.</p>
+
+<p>Les associations créent de nouveaux liens.</p>
+
+<p>Les collectivités disposent enfin d'un outil capable de relier durablement l'ensemble des acteurs locaux.</p>
+
+<p>Chacun y trouve plus facilement sa place, ses besoins, ses opportunités et de nouvelles perspectives de développement.</p>
+
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
+
+<h3 style="color:#2f5d46;font-weight:600;">
+Un territoire ne manque pas de richesses. Il manque simplement d'un moyen de les rendre visibles, de les relier et de leur permettre d'agir ensemble. Voilà toute l'ambition de <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> : l'Art de relier les femmes, les hommes, les initiatives et les opportunités qui font vivre un territoire.
+</h3>
+
+<p>Cette introduction constitue la porte d'entrée de l'univers Entreprise de <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>.</p>
+
+<p>En découvrant progressivement les différentes rubriques, chaque dirigeant comprend que l'objectif n'est pas de proposer un outil supplémentaire.</p>
+
+<p>L'objectif est de relier durablement les entreprises, les habitants, les collectivités, les écoles, les associations et l'ensemble des acteurs du territoire.</p>
+
+<p>Communication, visibilité, emploi, fidélisation, mutualisation, mécénat, développement, économies, transmission…</p>
+
+<p>Chaque rubrique répond à un besoin concret.</p>
+
+<p>Mais c'est lorsqu'elles fonctionnent ensemble qu'elles prennent toute leur valeur.</p>
+
+<p>Une entreprise devient plus visible.</p>
+
+<p>Elle recrute plus facilement.</p>
+
+<p>Elle développe plus naturellement son activité.</p>
+
+<p>Les habitants découvrent les richesses économiques de leur territoire.</p>
+
+<p>Les écoles trouvent davantage de partenaires.</p>
+
+<p>Les collectivités disposent enfin d'un véritable outil de mise en relation.</p>
+
+<p>Progressivement, chacun comprend mieux le rôle des autres et les collaborations deviennent plus naturelles.</p>
+
+<p>Bo'Cité<span style="color:#c62828;">Art</span> ne relie pas uniquement des fonctionnalités.</p>
+
+<p>Il relie les femmes, les hommes, les compétences, les initiatives et les opportunités qui font vivre un territoire.</p>
+
+<p>C'est en créant ces liens que l'on renforce durablement l'économie locale.</p>
+
+<p>Parce qu'un territoire devient plus fort lorsque chacun peut enfin découvrir, connaître et rencontrer les autres.</p>
+
+<p>Et lorsque tous avancent enfin dans la même direction.</p>
+
+<div style="text-align:center;margin-top:35px;">
+
+<button class="action-btn"
+        onclick="openEntrepriseHome();"
+        style="margin:6px;">
+Retour
+</button>
+
+<button class="action-btn"
+        onclick="openEmploymentHome();"
+        style="margin:6px;">
+Découvrir l'espace Emploi
+</button>
+
+<button class="action-btn"
+        onclick="openEmploymentCompaniesDirectory();"
+        style="margin:6px;">
+Découvrir les entreprises autour de moi
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}
 function openEmploymentIntroduction(){
 
   module.renderModal(
