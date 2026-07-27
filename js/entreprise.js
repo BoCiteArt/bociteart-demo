@@ -2372,7 +2372,7 @@ La commune devient un véritable facilitateur
 Découvrir avant de rechercher
 </h3>
 
-<p>La plupart des recherches d'emploi commencent aujourd'hui par une annonce.</p>
+<p>La plupart des recherches d'emploi commencent aujourd'hui par une annonce.</p> 
 
 <p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> propose de commencer autrement.</p>
 
