@@ -2317,23 +2317,8 @@ Et si nous commencions simplement par mieux nous connaître ?
 
 <p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> propose une approche différente.</p>
 
-<p>Avant de vouloir recruter davantage...</p>
+<p>Avant de vouloir recruter davantage, commençons par rendre plus visibles les entreprises qui existent déjà en faisant connaître leurs métiers, leurs savoir-faire, leurs équipes, leurs produits, leurs services et leurs opportunités de recrutement.</p>
 
-<p>Commençons par rendre visibles les entreprises qui existent déjà.</p>
-
-<p>Faire connaître leurs métiers.</p>
-
-<p>Leurs savoir-faire.</p>
-
-<p>Leurs équipes.</p>
-
-<p>Leurs produits.</p>
-
-<p>Leurs services.</p>
-
-<p>Leurs recrutements.</p>
-
-<p>Leurs besoins.</p>
 
 <p>Car une entreprise connue inspire davantage confiance qu'une entreprise que personne ne connaît.</p>
 
