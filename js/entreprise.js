@@ -2275,19 +2275,7 @@ Un territoire rempli d'entreprises... souvent invisibles
 
 <p>Derrière ces murs travaillent pourtant des femmes et des hommes qui créent, fabriquent, innovent, réparent, entretiennent, conçoivent et transmettent leur savoir-faire.</p>
 
-<p>Des métiers existent.</p>
-
-<p>Des emplois existent.</p>
-
-<p>Des CDI existent.</p>
-
-<p>Des stages existent.</p>
-
-<p>Des alternances existent.</p>
-
-<p>Des apprentissages existent.</p>
-
-<p>Des opportunités existent.</p>
+<p>Des métiers, des emplois, des CDI, des stages, des alternances, des apprentissages et des opportunités existent.</p>
 
 <p>Mais une grande partie de cette richesse économique reste encore invisible.</p>
 
@@ -2460,7 +2448,7 @@ Une démarche où chacun est gagnant
 
 <p>Lorsque chacun trouve plus facilement les autres, les échanges se développent, les collaborations se multiplient et le territoire devient progressivement plus dynamique.</p>
 
-<p>Bo'Cité<span style="color:#c62828;">Art</span> ne crée pas cette richesse.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>ne crée pas cette richesse.</p>
 
 <p>Elle existe déjà.</p>
 
@@ -2508,7 +2496,7 @@ Une nouvelle façon de faire vivre son territoire
 Pourquoi devenir partenaire Bo'CitéArt ?
 </h3>
 
-<p>Rejoindre Bo'Cité<span style="color:#c62828;">Art</span>, ce n'est pas simplement apparaître dans un annuaire économique.</p>
+<p>Rejoindre <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>, ce n'est pas simplement apparaître dans un annuaire économique.</p>
 
 <p>C'est intégrer un écosystème où chaque rubrique renforce les autres.</p>
 
@@ -2516,7 +2504,7 @@ Pourquoi devenir partenaire Bo'CitéArt ?
 
 <p>Puis développer sa visibilité.</p>
 
-<p>Fidéliser sa clientèle.</p>
+<p>Fidéliser sa clientèle et ses employés, en découvrant notamment la rubrique suivante consacrée à la fidélisation.</p>
 
 <p>Mutualiser certaines dépenses avec d'autres entreprises.</p>
 
@@ -2536,7 +2524,7 @@ Pourquoi devenir partenaire Bo'CitéArt ?
 
 <p>Elles ont été conçues pour se compléter et produire davantage de valeur lorsqu'elles sont utilisées ensemble.</p>
 
-<p>La mairie, accompagnée par Bo'Cité<span style="color:#c62828;">Art</span>, devient alors le facilitateur de cette dynamique territoriale.</p>
+<p>La mairie, accompagnée par <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>, devient alors le facilitateur de cette dynamique territoriale.</p>
 
 <p>Les entreprises gagnent en visibilité.</p>
 
@@ -2582,7 +2570,7 @@ Un territoire ne manque pas de richesses. Il manque simplement d'un moyen de les
 
 <p>Progressivement, chacun comprend mieux le rôle des autres et les collaborations deviennent plus naturelles.</p>
 
-<p>Bo'Cité<span style="color:#c62828;">Art</span> ne relie pas uniquement des fonctionnalités.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> ne relie pas uniquement des fonctionnalités.</p>
 
 <p>Il relie les femmes, les hommes, les compétences, les initiatives et les opportunités qui font vivre un territoire.</p>
 
