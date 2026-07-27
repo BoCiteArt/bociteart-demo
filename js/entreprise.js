@@ -3312,7 +3312,9 @@ function getEmploymentHomeHtml(){
     </div>
   `;
 }
- 
+
+   function bindEmploymentHome(){
+   
     const createButton =
       getElement(
         "employmentCreateOfferBtn"
