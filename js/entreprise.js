@@ -2198,13 +2198,22 @@ function getEmploymentIntroductionHtml(){
 
   return `
 
-    <div class="box" style="border-left:6px solid #2f5d46;">
+    <div class="box" style="
+border-left:6px solid #2f5d46;
+font-weight:400;
+color:#222;
+line-height:1.8;
+">
 
       <h2 style="color:#2f5d46;">
         EMPLOI
       </h2>
 
-      <h3 style="margin-top:25px;color:#2f5d46;">
+      <h3 style="
+margin-top:25px;
+color:#2f5d46;
+font-weight:600;
+">
         Pourquoi recrutons-nous de plus en plus difficilement ?
       </h3>
 
@@ -2213,11 +2222,15 @@ function getEmploymentIntroductionHtml(){
       <p>Les jeunes cherchent leur voie.</p>
       <p>Les collectivités cherchent des solutions.</p>
 
-      <p><strong>Pourtant...</strong></p>
+      <p>Pourtant...</p>
 
       <p>Ils se rencontrent de moins en moins.</p>
 
-      <hr>
+      <hr style="
+border:none;
+border-top:1px solid #b7d2c2;
+margin:28px 0;
+">
 
       <p>Nous parlons de pénurie.</p>
       <p>De difficultés de recrutement.</p>
@@ -2225,7 +2238,11 @@ function getEmploymentIntroductionHtml(){
 
       <p>Et si nous regardions un peu plus loin ?</p>
 
-      <hr>
+      <hr style="
+border:none;
+border-top:1px solid #b7d2c2;
+margin:28px 0;
+">
 
       <p>Avant de chercher une réponse...</p>
 
@@ -2241,7 +2258,11 @@ function getEmploymentIntroductionHtml(){
 
       <p>Leurs savoir-faire ?</p>
 
-      <hr>
+      <hr style="
+border:none;
+border-top:1px solid #b7d2c2;
+margin:28px 0;
+">
 
       <p>Pour beaucoup d'entre nous...</p>
 
@@ -2265,7 +2286,11 @@ function getEmploymentIntroductionHtml(){
 
       <p>Nous ne les regardons plus.</p>
 
-      <hr>
+      <hr style="
+border:none;
+border-top:1px solid #b7d2c2;
+margin:28px 0;
+">
 
       <p>Derrière les murs...</p>
 
@@ -2295,7 +2320,11 @@ function getEmploymentIntroductionHtml(){
 
       <p>Mais une grande partie de cette richesse demeure invisible.</p>
 
-      <hr>
+      <hr style="
+border:none;
+border-top:1px solid #b7d2c2;
+margin:28px 0;
+">
 
       <p>Cette invisibilité a un coût.</p>
 
@@ -2307,7 +2336,11 @@ function getEmploymentIntroductionHtml(){
 
       <p>Les collectivités perdent une partie de leur dynamique locale.</p>
 
-      <hr>
+      <hr style="
+border:none;
+border-top:1px solid #b7d2c2;
+margin:28px 0;
+">
 
       <p>Bo'CitéArt propose une autre approche.</p>
 
@@ -2331,7 +2364,7 @@ function getEmploymentIntroductionHtml(){
 
       <p>n'est pas seulement ce qu'il possède.</p>
 
-      <p><strong>C'est ce qu'il connaît de lui-même.</strong></p>
+     <p>C'est ce qu'il connaît de lui-même.</p>
 
       <div style="text-align:center;margin-top:35px;">
 
