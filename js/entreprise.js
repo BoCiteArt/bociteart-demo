@@ -2205,8 +2205,8 @@ color:#222;
 line-height:1.8;
 ">
 
-<h2 style="color:#2f5d46;font-weight:700;">
-BO'CITÉ<span style="color:#c62828;">ART</span> — EMPLOI
+<h2>
+<strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> — EMPLOI
 </h2>
 
 <h3 style="margin-top:25px;color:#2f5d46;font-weight:600;">
@@ -2315,7 +2315,7 @@ Cette invisibilité a un coût
 Et si nous commencions simplement par mieux nous connaître ?
 </h3>
 
-<p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> propose une approche différente.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> propose une approche différente.</p>
 
 <p>Avant de vouloir recruter davantage, commençons par rendre plus visibles les entreprises qui existent déjà en faisant connaître leurs métiers, leurs savoir-faire, leurs équipes, leurs produits, leurs services et leurs opportunités de recrutement.</p>
 
@@ -2366,7 +2366,7 @@ Les écoles retrouvent naturellement leur place
 La commune devient un véritable facilitateur
 </h3>
 
-<p>Accompagnée par <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>, la mairie dispose enfin d'un outil lui permettant de mieux faire connaître les richesses économiques de son territoire.</p>
+<p>Accompagnée par <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>, la mairie dispose enfin d'un outil lui permettant de mieux faire connaître les richesses économiques de son territoire.</p>
 
 <p>Son rôle n'est pas de remplacer les entreprises.</p>
 
@@ -2386,13 +2386,13 @@ Découvrir avant de rechercher
 
 <p>La plupart des recherches d'emploi commencent aujourd'hui par une annonce.</p>
 
-<p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> propose de commencer autrement.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> propose de commencer autrement.</p>
 
 <p>Avant même de rechercher un emploi, un stage, une alternance ou un apprentissage, encore faut-il connaître les entreprises qui existent réellement autour de soi.</p>
 
 <p>Chaque commune possède des entreprises parfois installées depuis plusieurs dizaines d'années que beaucoup d'habitants ignorent totalement.</p>
 
-<p>Grâce à <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>, chacun découvre progressivement le tissu économique de son territoire.</p>
+<p>Grâce à <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>, chacun découvre progressivement le tissu économique de son territoire.</p>
 
 <p>Une liste simple présente les entreprises implantées dans chaque commune partenaire.</p>
 
@@ -2410,7 +2410,7 @@ Les entreprises partenaires vont encore plus loin
 
 <p>C'est pourquoi chacune peut être identifiée dans l'annuaire afin de faire connaître l'ensemble du tissu économique local.</p>
 
-<p>Les entreprises qui choisissent de devenir partenaires de <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> bénéficient d'une visibilité renforcée.</p>
+<p>Les entreprises qui choisissent de devenir partenaires de <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> bénéficient d'une visibilité renforcée.</p>
 
 <p>Leur fiche devient alors un véritable espace de présentation.</p>
 
@@ -2430,7 +2430,7 @@ Les entreprises partenaires vont encore plus loin
 Un annuaire vivant et régulièrement actualisé
 </h3>
 
-<p>L'annuaire <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> évolue avec la vie économique du territoire.</p>
+<p>L'annuaire <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> évolue avec la vie économique du territoire.</p>
 
 <p>Grâce à l'intelligence artificielle et aux sources d'information disponibles, les nouvelles entreprises, les changements d'activité, les modifications d'adresse et les fermetures peuvent être repérés plus rapidement.</p>
 
@@ -2472,7 +2472,7 @@ Une démarche où chacun est gagnant
 Une dynamique portée par tout un territoire
 </h3>
 
-<p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> n'a pas vocation à agir à la place des entreprises, des collectivités, des associations ou des habitants.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> n'a pas vocation à agir à la place des entreprises, des collectivités, des associations ou des habitants.</p>
 
 <p>Son rôle est de leur permettre de mieux se connaître, de mieux se rencontrer et de mieux coopérer autour d'une vision commune du territoire.</p>
 
@@ -2482,7 +2482,7 @@ Une dynamique portée par tout un territoire
 
 <p>C'est cette mise en relation permanente qui crée de nouvelles opportunités, favorise l'emploi, développe les partenariats et contribue à renforcer durablement l'attractivité du territoire.</p>
 
-<p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> n'est pas la richesse du territoire.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> n'est pas la richesse du territoire.</p>
 
 <p>La richesse existe déjà.</p>
 
@@ -2492,7 +2492,7 @@ Une dynamique portée par tout un territoire
 Une nouvelle façon de faire vivre son territoire
 </h3>
 
-<p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> n'a pas vocation à remplacer ce qui existe déjà.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> n'a pas vocation à remplacer ce qui existe déjà.</p>
 
 <p>Sa vocation est de relier durablement les habitants, les entreprises, les commerces, les artisans, les associations, les établissements scolaires, les clubs sportifs et les collectivités autour d'une même dynamique territoriale.</p>
 
@@ -2500,7 +2500,7 @@ Une nouvelle façon de faire vivre son territoire
 
 <p>En facilitant ces rencontres, le territoire apprend progressivement à mieux se connaître, à mieux consommer localement, à mieux recruter, à mieux transmettre ses savoir-faire et à développer davantage de coopérations.</p>
 
-<p><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> n'ajoute pas une structure supplémentaire. Il crée les liens qui permettent aux initiatives déjà présentes de produire davantage de valeur lorsqu'elles agissent ensemble.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> n'ajoute pas une structure supplémentaire. Il crée les liens qui permettent aux initiatives déjà présentes de produire davantage de valeur lorsqu'elles agissent ensemble.</p>
 
 <p>Parce qu'un territoire devient véritablement plus fort lorsque chacun connaît enfin les richesses qui l'entourent et peut naturellement entrer en relation avec elles.</p>
 
@@ -2556,7 +2556,7 @@ Pourquoi devenir partenaire Bo'CitéArt ?
 Un territoire ne manque pas de richesses. Il manque simplement d'un moyen de les rendre visibles, de les relier et de leur permettre d'agir ensemble. Voilà toute l'ambition de <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> : l'Art de relier les femmes, les hommes, les initiatives et les opportunités qui font vivre un territoire.
 </h3>
 
-<p>Cette introduction constitue la porte d'entrée de l'univers Entreprise de <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>.</p>
+<p>Cette introduction constitue la porte d'entrée de l'univers Entreprise de <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>.</p>
 
 <p>En découvrant progressivement les différentes rubriques, chaque dirigeant comprend que l'objectif n'est pas de proposer un outil supplémentaire.</p>
 
@@ -28265,7 +28265,7 @@ console.log(
 })();
 
 /* =========================================================
-   BO'CITÉART — EMPLOI
+   Bo'CitéART — EMPLOI
    LISTE PUBLIQUE DES OFFRES + PUBLICATION PRIVÉE
    ========================================================= */
 
