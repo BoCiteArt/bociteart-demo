@@ -227,29 +227,37 @@ function returnToEntrepriseHome(){
   );
 }
 
- function buildBackButton(){
-    
-    if(
-      state.currentScreen === "home" &&
-      !state.nestedParentScreen
-    ){
-      return "";
-    }
+function buildBackButton(options){
 
-    return `
-      <button
-        class="choiceBtn"
-        id="entrepriseBackBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-bottom:14px;
-        ">
-        ← Retour à la page précédente
-      </button>
-    `;
+  options = options || {};
+
+  if(options.hideBack === true){
+    return "";
   }
 
+  return `
+    <div
+      class="bociteEntrepriseBackArea"
+      style="
+        display:flex;
+        justify-content:flex-start;
+        margin-bottom:16px;
+      ">
+
+      <button
+        class="choiceBtn bociteEntrepriseProtectedBackBtn"
+        type="button"
+        style="
+          width:auto;
+          min-width:130px;
+          margin:0;
+        ">
+        ← Retour
+      </button>
+
+    </div>
+  `;
+}
   function buildPresentationFooter(){
 
     return `
@@ -286,12 +294,13 @@ function returnToEntrepriseHome(){
     `;
   }
 
-  function bindBackButton(){
+ function bindBackButton(){
 
-    const button =
-      getElement("entrepriseBackBtn");
-
-    if(button){
+  document
+    .querySelectorAll(
+      ".bociteEntrepriseProtectedBackBtn"
+    )
+    .forEach(function(button){
 
       button.onclick = function(event){
 
@@ -300,8 +309,8 @@ function returnToEntrepriseHome(){
 
         goBack();
       };
-    }
-  }
+    });
+}
 
   function bindPresentationFooter(){
 
@@ -364,10 +373,10 @@ function returnToEntrepriseHome(){
         : "";
 
     window.openModal(
-      title,
-      buildBackButton() +
-      html +
-      footer,
+  title,
+  buildBackButton(options) +
+  html +
+  footer,
       {
         noHistory:true
       }
@@ -878,10 +887,13 @@ function openHome(){
   state.nestedParentScreen =
     null;
 
-  renderModal(
-    "Commerces & Entreprises — Entreprise",
-    getHomeHtml()
-  );
+ renderModal(
+  "Commerces & Entreprises — Entreprise",
+  getHomeHtml(),
+  {
+    hideBack:true
+  }
+);
 
   window.setTimeout(function(){
 
@@ -2205,8 +2217,8 @@ color:#222;
 line-height:1.8;
 ">
 
-<h2>
-<strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> — EMPLOI
+<h2 style="color:#2f5d46;">
+<strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> — Emploi — Recrutement
 </h2>
 
 <h3 style="margin-top:25px;color:#2f5d46;font-weight:600;">
