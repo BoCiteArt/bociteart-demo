@@ -2855,21 +2855,21 @@ Un territoire ne manque pas de richesses. Il manque simplement d'un moyen de les
     gap:10px;
   ">
 
-  <button
-    class="choiceBtn"
-    type="button"
-    onclick="window.BociteEntreprise.openEmploymentOffers();"
-    style="
-      width:100%;
-      max-width:430px;
-      background:#b00020;
-      color:#fff;
-      border-color:#b00020;
-    ">
+<button
+  class="choiceBtn"
+  type="button"
+  onclick="window.BociteEntreprise.openEmploymentOffers();"
+  style="
+    width:100%;
+    max-width:430px;
+    background:#f4ead7;
+    color:#111;
+    border:2px solid #d8cdb9;
+  ">
 
-    Consulter directement les offres d’emploi
+  Consulter directement les offres d’emploi
 
-  </button>
+</button>
 
   <button
     class="choiceBtn"
@@ -4275,36 +4275,193 @@ function confirmEmploymentCardPayment(
     return "Inconnue";
   }
 
-  function openEmploymentOffers(){
+/* =========================================================
+   ÇA COMMENCE ICI — PAGE PUBLIQUE OFFRES D’EMPLOI
+   ========================================================= */
 
-    module.renderModal(
-      "Offres d’emploi",
-      `
-        <div class="box entrepriseInfoBox">
+function openEmploymentOffers(){
 
-          Les habitants consultent ici
-          les offres disponibles
-          dans leur ville.
+  module.renderModal(
+    "Offres d’emploi",
+    `
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          border-left:6px solid #2f5d46;
+          color:#222;
+          font-weight:400;
+          line-height:1.7;
+        ">
 
-          <br><br>
+        <span
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:18px;
+            font-weight:700;
+            line-height:1.4;
+          ">
+          Consultez les offres disponibles dans votre ville
+        </span>
 
-          Ils peuvent répondre uniquement
-          à l’annonce choisie.
+        <br>
 
-        </div>
+        Vous trouverez ici les offres d’emploi,
+        de stage et d’alternance publiées
+        par les entreprises de votre territoire.
 
-        <div id="employmentOffersList"></div>
-      `
-    );
+        <br><br>
 
-    window.setTimeout(function(){
+        Chaque annonce présente le poste recherché,
+        le type de contrat,
+        la commune,
+        les missions proposées
+        et les compétences souhaitées.
 
-      renderEmploymentOffers();
+        <br><br>
 
-    },0);
-  }
+        Vous pouvez consulter librement les offres
+        puis répondre directement
+        à celle qui vous intéresse.
 
-  function renderEmploymentOffers(){
+      </div>
+
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          border-left:6px solid #2f5d46;
+          color:#222;
+          font-weight:400;
+          line-height:1.7;
+        ">
+
+        <span
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+          ">
+          Comment répondre à une annonce ?
+        </span>
+
+        <br>
+
+        Sélectionnez l’offre correspondant
+        à votre recherche,
+        puis utilisez le bouton prévu
+        pour transmettre votre candidature
+        à l’entreprise concernée.
+
+        <br><br>
+
+        Votre réponse est liée uniquement
+        à l’annonce choisie.
+
+        <br><br>
+
+        Vous pourrez ensuite consulter
+        et sélectionner une autre annonce
+        lorsque vous le souhaiterez.
+
+      </div>
+
+      <div id="employmentOffersList"></div>
+
+      <button
+        id="employmentOffersHomeBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:12px;
+          background:#f4ead7;
+          color:#111;
+          border:2px solid #d8cdb9;
+        ">
+        Découvrir l’espace Emploi et Recrutement
+      </button>
+
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          margin-top:12px;
+          border-left:6px solid #2f5d46;
+          color:#222;
+          font-weight:400;
+          line-height:1.7;
+        ">
+
+        <span
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+          ">
+          Vous ne trouvez pas encore l’offre recherchée ?
+        </span>
+
+        <br>
+
+        Dans l’espace Emploi et Recrutement,
+        vous pouvez également envoyer
+        une candidature spontanée
+        et découvrir les entreprises présentes
+        autour de vous.
+
+      </div>
+    `
+  );
+
+  window.setTimeout(function(){
+
+    renderEmploymentOffers();
+
+    const homeButton =
+      getElement(
+        "employmentOffersHomeBtn"
+      );
+
+    if(homeButton){
+
+      homeButton.onclick = function(){
+
+        openEmploymentHome();
+      };
+    }
+
+    document
+      .querySelectorAll(
+        ".modal-title," +
+        ".modalTitle," +
+        ".modal-header h1," +
+        ".modal-header h2," +
+        ".modalHeader h1," +
+        ".modalHeader h2"
+      )
+      .forEach(function(titleElement){
+
+        if(
+          String(
+            titleElement.textContent || ""
+          ).trim() === "Offres d’emploi"
+        ){
+
+          titleElement.style.color =
+            "#2f5d46";
+
+          titleElement.style.fontWeight =
+            "700";
+        }
+      });
+
+  },0);
+}
+
+/* =========================================================
+   ÇA FINIT ICI — PAGE PUBLIQUE OFFRES D’EMPLOI
+   ========================================================= */
 
     const host =
       getElement(
@@ -4329,19 +4486,56 @@ function confirmEmploymentCardPayment(
           );
         });
 
-    if(!offers.length){
+  /* =========================================================
+   ÇA COMMENCE ICI — AUCUNE OFFRE DISPONIBLE
+   ========================================================= */
 
-      host.innerHTML = `
-        <div class="box entrepriseInfoBox">
+if(!offers.length){
 
-          Aucune offre n’est enregistrée
-          pour le moment.
+  host.innerHTML = `
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        border-left:6px solid #2f5d46;
+        color:#222;
+        font-weight:400;
+        line-height:1.7;
+      ">
 
-        </div>
-      `;
+      <span
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+        ">
+        Aucune offre n’est enregistrée pour le moment
+      </span>
 
-      return;
-    }
+      <br>
+
+      Il n’y a actuellement aucune offre ouverte
+      dans votre ville.
+
+      <br><br>
+
+      Les entreprises peuvent publier
+      de nouveaux besoins à tout moment.
+
+      <br><br>
+
+      Revenez régulièrement consulter cette page
+      afin de découvrir les prochaines opportunités.
+
+    </div>
+  `;
+
+  return;
+}
+
+/* =========================================================
+   ÇA FINIT ICI — AUCUNE OFFRE DISPONIBLE
+   ========================================================= */
 
     host.innerHTML =
       offers.map(function(offer){
