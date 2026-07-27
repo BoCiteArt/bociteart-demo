@@ -2448,7 +2448,7 @@ Une démarche où chacun est gagnant
 
 <p>Lorsque chacun trouve plus facilement les autres, les échanges se développent, les collaborations se multiplient et le territoire devient progressivement plus dynamique.</p>
 
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>ne crée pas cette richesse.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> ne crée pas cette richesse.</p>
 
 <p>Elle existe déjà.</p>
 
