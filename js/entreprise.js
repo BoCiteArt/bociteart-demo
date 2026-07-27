@@ -2649,8 +2649,6 @@ function openEmploymentIntroduction(){
     getEmploymentIntroductionHtml()
   );
 
-}
-
   window.setTimeout(function(){
 
     const employmentButton =
