@@ -2504,8 +2504,6 @@ Pourquoi recrutons-nous de plus en plus difficilement ?
 
 <p>Avant de pouvoir recruter, encore faut-il être connu.</p>
 
-<p>Avant de choisir une entreprise, encore faut-il savoir qu'elle existe.</p>
-
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
 <h3 style="color:#2f5d46;font-weight:600;">
@@ -2526,19 +2524,13 @@ Un territoire rempli d'entreprises... souvent invisibles
 
 <p>Pourtant, ces entreprises sont parfois installées à quelques centaines de mètres de chez vous.</p>
 
-<p>Nous passons devant leurs bâtiments chaque jour.</p>
-
-<p>Nous voyons leurs ateliers.</p>
-
-<p>Leurs véhicules.</p>
-
-<p>Leurs entrepôts.</p>
+<p>Nous passons devant leurs bâtiments, leurs ateliers, leurs véhicules et leurs entrepôts chaque jour.</p>
 
 <p>Mais à force de les voir... nous ne les regardons plus.</p>
 
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-<p>Derrière ces murs travaillent pourtant des femmes et des hommes qui créent, fabriquent, innovent, réparent, entretiennent, conçoivent et transmettent leur savoir-faire.</p>
+<p>Des métiers, des carrières, des emplois, des stages, des apprentissages et des alternances existent déjà autour de nous.</p>
 
 <p>Des métiers, des emplois, des CDI, des stages, des alternances, des apprentissages et des opportunités existent.</p>
 
@@ -2587,7 +2579,7 @@ Et si nous commencions simplement par mieux nous connaître ?
 
 <p>Recommander un savoir-faire local.</p>
 
-<p>Petit à petit, chaque habitant devient lui aussi un ambassadeur économique de son territoire.</p>
+<p>Petit à petit, chaque habitant devient lui aussi un "Ambassadeur économique", "le Bouche à Oreille naturel" de son territoire.</p>
 
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
@@ -43901,9 +43893,13 @@ console.log(
           line-height:1.55;
         ">
 
-        <strong style="font-size:20px;">
-          Comprendre l’Observatoire économique Bo'CitéArt
-        </strong>
+       <strong
+  style="
+    font-size:20px;
+    color:#2f5d46;
+  ">
+  Comprendre l’Observatoire économique Bo'CitéArt
+</strong>
 
         <br><br>
 
@@ -43931,7 +43927,11 @@ console.log(
 
       <div class="box">
 
-        <strong style="font-size:18px;">
+           <strong
+  style="
+    font-size:20px;
+    color:#2f5d46;
+  ">
           Un annuaire vivant
         </strong>
 
@@ -43954,7 +43954,11 @@ console.log(
 
       <div class="box">
 
-        <strong style="font-size:18px;">
+           <strong
+  style="
+    font-size:20px;
+    color:#2f5d46;
+  ">
           Commencer par regarder autour de soi
         </strong>
 
@@ -43979,7 +43983,11 @@ console.log(
 
       <div class="box">
 
-        <strong style="font-size:18px;">
+           <strong
+  style="
+    font-size:20px;
+    color:#2f5d46;
+  ">
           Rechercher partout en France
         </strong>
 
@@ -44001,7 +44009,11 @@ console.log(
 
       <div class="box">
 
-        <strong style="font-size:18px;">
+           <strong
+  style="
+    font-size:20px;
+    color:#2f5d46;
+  ">
           Des informations régulièrement actualisées
         </strong>
 
@@ -44024,54 +44036,27 @@ console.log(
 
       <div class="box">
 
-        <strong style="font-size:18px;">
-          Le rôle de l’intelligence artificielle
-        </strong>
+<strong
+  style="
+    font-size:20px;
+    color:#2f5d46;
+  ">
+  Pourquoi cette lecture est importante
+</strong>
 
-        <br><br>
+<br><br>
 
-        L’intelligence artificielle aidera
-        à rapprocher,
-        classer
-        et contrôler les informations disponibles.
+Bo'CitéArt ne propose pas seulement un annuaire.
 
-        <br><br>
+<br><br>
 
-        Elle ne devra pas inventer une entreprise
-        ni supprimer seule une fiche.
+Il permet de mieux faire connaître les acteurs économiques, de favoriser les relations locales, de créer de nouvelles opportunités et d'aider chacun à prendre de meilleures décisions.
 
-        <br><br>
+<br><br>
 
-        Les mises à jour devront s’appuyer
-        sur des données officielles
-        et sur des contrôles réguliers.
-      </div>
+Cette présentation vous permettra d'en comprendre tout le potentiel.
 
-      <div class="box">
-
-        <strong style="font-size:18px;">
-          Pourquoi cette lecture est importante
-        </strong>
-
-        <br><br>
-
-        Bo'CitéArt ne propose pas seulement
-        de rechercher un nom.
-
-        <br><br>
-
-        L’objectif est aussi de faire connaître
-        les acteurs économiques,
-        de favoriser les relations locales,
-        de créer de nouvelles opportunités
-        et d’aider chacun
-        à prendre de meilleures décisions.
-
-        <br><br>
-
-        Cette présentation vous permet de comprendre
-        tout ce que cet outil va vous apporter.
-      </div>
+</div>
 
            ${
         showContinueButton
@@ -44104,17 +44089,24 @@ console.log(
           line-height:1.55;
         ">
 
-        <strong style="font-size:21px;">
+        <strong
+        style="
+        font-size:21px;
+        color:#2f5d46;
+       ">
           Observatoire économique Bo'CitéArt
         </strong>
 
         <br><br>
 
-        <strong>
-          L’annuaire vivant des entreprises,
-          commerces et artisans de France
-        </strong>
-      </div>
+       <div
+  style="
+    font-weight:400;
+    color:#111;
+  ">
+  L’annuaire vivant des entreprises,
+  commerces et artisans de France
+</div>
 
       <div
         class="box"
@@ -44195,7 +44187,11 @@ console.log(
 
       <div class="box">
 
-        <strong style="font-size:18px;">
+        <strong
+  style="
+    font-size:18px;
+    color:#2f5d46;
+  ">
           Rechercher dans
         </strong>
 
@@ -44312,9 +44308,13 @@ console.log(
 
       <div class="box">
 
-        <strong>
-          Rechercher
-        </strong>
+       <strong
+  style="
+    font-size:18px;
+    color:#2f5d46;
+  ">
+  Rechercher
+</strong>
 
         <br><br>
 
@@ -44359,9 +44359,13 @@ console.log(
         class="box"
         style="border-left:6px solid #2f5d46;">
 
-        <strong>
-          Mise à jour de l’annuaire
-        </strong>
+       <strong
+  style="
+    color:#2f5d46;
+    font-size:18px;
+  ">
+  Mise à jour de l’annuaire
+</strong>
 
         <br><br>
 
