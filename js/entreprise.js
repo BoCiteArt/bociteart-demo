@@ -2051,20 +2051,35 @@ function openCompanyCard(companyId){
   const partnerContent =
     company.partner
       ? `
-        <div class="box entrepriseInfoBox">
+        <div
+          class="box entrepriseInfoBox"
+          style="
+            font-weight:400;
+            color:#111;
+            line-height:1.55;
+          ">
 
-          <strong>
+          <strong
+            style="
+              display:block;
+              color:#2f5d46;
+              font-size:20px;
+              font-weight:900;
+              line-height:1.4;
+            ">
             Fiche Bo'CitéArt enrichie
           </strong>
 
-          <br><br>
+          <div style="margin-top:14px;">
 
-          Cette entreprise peut présenter
-          ses services,
-          ses réalisations,
-          ses recrutements,
-          ses actualités
-          et ses engagements locaux.
+            Cette entreprise peut présenter
+            ses services,
+            ses réalisations,
+            ses recrutements,
+            ses actualités
+            et ses engagements locaux.
+
+          </div>
 
         </div>
 
@@ -2096,16 +2111,37 @@ function openCompanyCard(companyId){
         </div>
       `
       : `
-        <div class="box entrepriseInfoBox">
+        <div
+          class="box entrepriseInfoBox"
+          style="
+            font-weight:400;
+            color:#111;
+            line-height:1.55;
+          ">
 
-          Cette fiche reprend actuellement
-          les informations publiques disponibles.
+          <strong
+            style="
+              display:block;
+              color:#2f5d46;
+              font-size:20px;
+              font-weight:900;
+              line-height:1.4;
+            ">
+            Informations publiques
+          </strong>
 
-          <br><br>
+          <div style="margin-top:14px;">
 
-          L’entreprise pourra enrichir volontairement
-          sa présentation
-          en devenant partenaire Bo'CitéArt.
+            Cette fiche reprend actuellement
+            les informations publiques disponibles.
+
+            <br><br>
+
+            L’entreprise pourra enrichir volontairement
+            sa présentation
+            en devenant partenaire Bo'CitéArt.
+
+          </div>
 
         </div>
       `;
@@ -2113,37 +2149,85 @@ function openCompanyCard(companyId){
   module.renderModal(
     company.name,
     `
-      <div class="box entrepriseInfoBox">
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          font-weight:400;
+          color:#111;
+          line-height:1.55;
+        ">
 
-        <strong>
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:20px;
+            font-weight:900;
+            line-height:1.4;
+          ">
           Que fait cette entreprise ?
         </strong>
 
-        <br><br>
+        <div style="margin-top:14px;">
 
-        ${escapeValue(company.description)}
+          ${escapeValue(company.description)}
+
+        </div>
 
       </div>
 
-      <div class="box entrepriseInfoBox">
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          font-weight:400;
+          color:#111;
+          line-height:1.55;
+        ">
 
-        <strong>
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:20px;
+            font-weight:900;
+            line-height:1.4;
+          ">
           Activité
         </strong>
 
-        <br>
+        <div
+          style="
+            margin-top:10px;
+            color:#111;
+            font-weight:400;
+          ">
 
-        ${escapeValue(company.activity)}
+          ${escapeValue(company.activity)}
 
-        <br><br>
+        </div>
 
-        <strong>
+        <strong
+          style="
+            display:block;
+            margin-top:18px;
+            color:#2f5d46;
+            font-size:20px;
+            font-weight:900;
+            line-height:1.4;
+          ">
           Commune
         </strong>
 
-        <br>
+        <div
+          style="
+            margin-top:10px;
+            color:#111;
+            font-weight:400;
+          ">
 
-        ${escapeValue(company.city)}
+          ${escapeValue(company.city)}
+
+        </div>
 
       </div>
 
@@ -2181,167 +2265,7 @@ function openCompanyCard(companyId){
 
   },0);
 }
-
-function getLocalAnswer(question){
-
-  const normalized =
-    normalizeText(question);
-
-  if(
-    normalized.includes("electricien") ||
-    normalized.includes("plombier") ||
-    normalized.includes("menuisier") ||
-    normalized.includes("comptable") ||
-    normalized.includes("avocat")
-  ){
-
-    return {
-      text:
-        "Bo'CitéArt vous propose de commencer par les professionnels présents dans votre commune.",
-      actionLabel:
-        "Consulter les entreprises de la ville",
-      actionScreen:
-        "annuaire"
-    };
-  }
-
-  if(
-    normalized.includes("personnel") ||
-    normalized.includes("salarie") ||
-    normalized.includes("recrut") ||
-    normalized.includes("emploi")
-  ){
-
-    return {
-      text:
-        "Commencez par informer les habitants de votre ville. Les compétences recherchées sont souvent déjà près de chez vous.",
-      actionLabel:
-        "Ouvrir la rubrique Emploi",
-      actionScreen:
-        "emploi"
-    };
-  }
-
-  if(
-    normalized.includes("charge") ||
-    normalized.includes("electricite") ||
-    normalized.includes("gaz") ||
-    normalized.includes("assurance") ||
-    normalized.includes("telephone")
-  ){
-
-    return {
-      text:
-        "Consultez les regroupements déjà ouverts. Plus les participants sont nombreux, plus la négociation peut devenir favorable.",
-      actionLabel:
-        "Voir les mutualisations",
-      actionScreen:
-        "mutualisation"
-    };
-  }
-
-  if(
-    normalized.includes("mecenat") ||
-    normalized.includes("don") ||
-    normalized.includes("soutenir")
-  ){
-
-    return {
-      text:
-        "Le mécénat peut renforcer votre présence locale tout en soutenant une action utile au territoire.",
-      actionLabel:
-        "Découvrir le mécénat",
-      actionScreen:
-        "mecenat"
-    };
-  }
-
-  return {
-    text:
-      "Votre demande a bien été prise en compte. La version définitive recherchera d’abord les solutions de votre ville, puis celles des communes voisines.",
-    actionLabel:
-      "Voir les entreprises de la ville",
-    actionScreen:
-      "annuaire"
-  };
-}
-
-function bindHomeAi(){
-
-  const button =
-    getElement("entrepriseAiAskBtn");
-
-  if(!button){
-    return;
-  }
-
-  button.onclick = function(){
-
-    const input =
-      getElement("entrepriseAiQuestion");
-
-    const answerBox =
-      getElement("entrepriseAiAnswer");
-
-    const question =
-      input
-        ? String(input.value || "").trim()
-        : "";
-
-    if(!question){
-
-      alert(
-        "Écrivez votre question."
-      );
-
-      return;
-    }
-
-    if(!answerBox){
-      return;
-    }
-
-    const result =
-      getLocalAnswer(question);
-
-    answerBox.innerHTML = `
-      <div class="box entrepriseInfoBox">
-
-        ${escapeValue(result.text)}
-
-        <br><br>
-
-        <button
-          class="choiceBtn"
-          id="entrepriseAiResultBtn"
-          type="button">
-
-          ${escapeValue(result.actionLabel)}
-
-        </button>
-
-      </div>
-    `;
-
-    window.setTimeout(function(){
-
-      const resultButton =
-        getElement("entrepriseAiResultBtn");
-
-      if(resultButton){
-
-        resultButton.onclick = function(){
-
-          module.openScreen(
-            result.actionScreen
-          );
-        };
-      }
-
-    },0);
-  };
-}
-
+   
 const originalHome =
   module.screens.home;
 
@@ -44386,7 +44310,7 @@ function getDirectoryHtml(territory){
       <strong
         style="
           display:block;
-          font-size:20px;
+          font-size:24px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
@@ -44403,7 +44327,7 @@ function getDirectoryHtml(territory){
       <strong
         style="
           display:block;
-          font-size:18px;
+          font-size:22px;
           color:#2f5d46;
           font-weight:900;
         ">
@@ -44432,7 +44356,7 @@ function getDirectoryHtml(territory){
       <summary
         style="
           cursor:pointer;
-          font-size:18px;
+          font-size:20px;
           font-weight:900;
           color:#2f5d46;
         ">
@@ -44455,7 +44379,7 @@ function getDirectoryHtml(territory){
       <strong
         style="
           display:block;
-          font-size:18px;
+          font-size:20px;
           color:#2f5d46;
           font-weight:900;
         ">
@@ -44513,7 +44437,7 @@ function getDirectoryHtml(territory){
       <strong
         style="
           display:block;
-          font-size:18px;
+          font-size:20px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
