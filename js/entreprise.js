@@ -43856,7 +43856,7 @@ function getPresentationHtml(showContinueButton){
       <strong
         style="
           display:block;
-          font-size:20px;
+          font-size:18px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
@@ -43899,7 +43899,7 @@ function getPresentationHtml(showContinueButton){
       <strong
         style="
           display:block;
-          font-size:18px;
+          font-size:17px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
@@ -43935,7 +43935,7 @@ function getPresentationHtml(showContinueButton){
       <strong
         style="
           display:block;
-          font-size:18px;
+          font-size:17px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
@@ -43973,7 +43973,7 @@ function getPresentationHtml(showContinueButton){
       <strong
         style="
           display:block;
-          font-size:18px;
+          font-size:17px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
@@ -44008,7 +44008,7 @@ function getPresentationHtml(showContinueButton){
       <strong
         style="
           display:block;
-          font-size:18px;
+          font-size:17px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
@@ -44044,7 +44044,7 @@ function getPresentationHtml(showContinueButton){
       <strong
         style="
           display:block;
-          font-size:18px;
+          font-size:17px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
@@ -44106,7 +44106,7 @@ function getMandatoryIntroductionHtml(){
       <strong
         style="
           display:block;
-          font-size:21px;
+          font-size:19px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
@@ -44132,7 +44132,7 @@ function getMandatoryIntroductionHtml(){
       <strong
         style="
           display:block;
-          font-size:18px;
+          font-size:17px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
@@ -44178,7 +44178,7 @@ function getObservatoireHomeHtml(){
       <strong
         style="
           display:block;
-          font-size:21px;
+          font-size:19px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
@@ -44209,7 +44209,7 @@ function getObservatoireHomeHtml(){
       <summary
         style="
           cursor:pointer;
-          font-size:18px;
+          font-size:17px;
           font-weight:900;
           color:#2f5d46;
         ">
@@ -44232,7 +44232,7 @@ function getObservatoireHomeHtml(){
       <strong
         style="
           display:block;
-          font-size:18px;
+          font-size:17px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
@@ -44303,7 +44303,7 @@ function getDirectoryHtml(territory){
       style="
         border-left:6px solid #2f5d46;
         line-height:1.6;
-        font-size:16px;
+        font-size:17px;
         font-weight:400;
         color:#111;
       ">
@@ -44312,7 +44312,7 @@ function getDirectoryHtml(territory){
         style="
           display:block;
           color:#2f5d46;
-          font-size:20px;
+          font-size:19px;
           line-height:1.4;
           font-weight:700;
         ">
@@ -44322,7 +44322,7 @@ function getDirectoryHtml(territory){
       <div
         style="
           margin-top:24px;
-          font-size:16px;
+          font-size:17px;
           line-height:1.6;
           font-weight:400;
           color:#111;
@@ -44333,9 +44333,9 @@ function getDirectoryHtml(territory){
       <strong
         style="
           display:block;
-          margin-top:18px;
+          margin-top:19px;
           color:#2f5d46;
-          font-size:18px;
+          font-size:17px;
           line-height:1.4;
           font-weight:700;
         ">
@@ -44357,7 +44357,7 @@ function getDirectoryHtml(territory){
     <details
       class="box"
       style="
-        font-size:16px;
+        font-size:17px;
         line-height:1.6;
         font-weight:400;
         color:#111;
@@ -44367,7 +44367,7 @@ function getDirectoryHtml(territory){
         style="
           cursor:pointer;
           color:#2f5d46;
-          font-size:18px;
+          font-size:17px;
           line-height:1.4;
           font-weight:700;
         ">
@@ -44377,7 +44377,7 @@ function getDirectoryHtml(territory){
       <div
         style="
           margin-top:14px;
-          font-size:16px;
+          font-size:17px;
           line-height:1.6;
           font-weight:400;
           color:#111;
@@ -44389,7 +44389,7 @@ function getDirectoryHtml(territory){
     <div
       class="box"
       style="
-        font-size:16px;
+        font-size:17px;
         line-height:1.6;
         font-weight:400;
         color:#111;
@@ -44399,7 +44399,7 @@ function getDirectoryHtml(territory){
         style="
           display:block;
           color:#2f5d46;
-          font-size:18px;
+          font-size:17px;
           line-height:1.4;
           font-weight:700;
         ">
@@ -44412,7 +44412,7 @@ function getDirectoryHtml(territory){
         type="search"
         placeholder="Nom, métier, activité, produit ou service"
         style="
-          margin-top:20px;
+          margin-top:19px;
           font-size:16px;
           font-weight:400;
         ">
@@ -44422,7 +44422,7 @@ function getDirectoryHtml(territory){
         class="miniField"
         style="
           margin-top:9px;
-          font-size:16px;
+          font-size:17px;
           font-weight:400;
         ">
 
@@ -44456,7 +44456,7 @@ function getDirectoryHtml(territory){
       class="box"
       style="
         border-left:6px solid #2f5d46;
-        font-size:16px;
+        font-size:17px;
         line-height:1.6;
         font-weight:400;
         color:#111;
@@ -44466,7 +44466,7 @@ function getDirectoryHtml(territory){
         style="
           display:block;
           color:#2f5d46;
-          font-size:18px;
+          font-size:17px;
           line-height:1.4;
           font-weight:700;
         ">
@@ -44476,7 +44476,7 @@ function getDirectoryHtml(territory){
       <div
         style="
           margin-top:18px;
-          font-size:16px;
+          font-size:17px;
           line-height:1.6;
           font-weight:400;
           color:#111;
@@ -44499,7 +44499,7 @@ function getDirectoryHtml(territory){
       class="muted"
       style="
         margin-top:10px;
-        font-size:16px;
+        font-size:17px;
         line-height:1.5;
         font-weight:400;
       ">
@@ -44509,7 +44509,7 @@ function getDirectoryHtml(territory){
       id="observatoireDirectoryList"
       style="
         margin-top:10px;
-        font-size:16px;
+        font-size:17px;
         line-height:1.6;
         font-weight:400;
       ">
