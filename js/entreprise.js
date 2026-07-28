@@ -2438,29 +2438,19 @@ Pourquoi recrutons-nous de plus en plus difficilement ?
 
 <p>Chaque jour, des entreprises recrutent.</p>
 
-<p>Chaque jour, des habitants recherchent un emploi.</p>
+<p>Chaque jour, des habitants recherchent un emploi, une reconversion, un stage, une alternance ou un apprentissage.</p>
 
-<p>Des jeunes cherchent leur voie.</p>
-
-<p>Des adultes souhaitent se reconvertir.</p>
-
-<p>Des écoles recherchent des entreprises pour les stages, les alternances et les apprentissages.</p>
-
-<p>Des collectivités souhaitent préserver l'emploi local.</p>
+<p>Les écoles recherchent des entreprises partenaires et les collectivités souhaitent préserver l'emploi local.</p>
 
 <p>Pourtant, malgré tous ces besoins, les rencontres deviennent plus difficiles.</p>
 
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-<p>Nous parlons souvent de pénurie de main-d'œuvre.</p>
+<p>Nous parlons souvent de pénurie de main-d'œuvre, de difficultés de recrutement ou de manque de compétences.</p>
 
-<p>De difficultés de recrutement.</p>
+<p>Mais si le véritable problème commençait plus tôt&nbsp;?</p>
 
-<p>De manque de compétences.</p>
-
-<p>Mais si le véritable problème se trouvait ailleurs&nbsp;?</p>
-
-<p>Avant de pouvoir recruter, encore faut-il être connu.</p>
+<p><strong>Avant de pouvoir recruter, encore faut-il que les entreprises et les commerces de votre territoire soient visibles, connus et reconnus.</strong></p>
 
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
@@ -2470,27 +2460,17 @@ Un territoire rempli d'entreprises... souvent invisibles
 
 <p>Pouvez-vous citer spontanément cinq entreprises de votre commune, en dehors des grandes enseignes&nbsp;?</p>
 
-<p>Connaissez-vous réellement leurs activités&nbsp;?</p>
+<p>Connaissez-vous réellement leurs activités, leurs métiers, leurs savoir-faire ou leurs besoins en recrutement&nbsp;?</p>
 
-<p>Les métiers qu'elles exercent&nbsp;?</p>
-
-<p>Leurs savoir-faire&nbsp;?</p>
-
-<p>Les postes qu'elles recrutent régulièrement&nbsp;?</p>
-
-<p>Très souvent, la réponse est non.</p>
+<p>Très souvent, la réponse est NON!.</p>
 
 <p>Pourtant, ces entreprises sont parfois installées à quelques centaines de mètres de chez vous.</p>
 
-<p>Nous passons devant leurs bâtiments, leurs ateliers, leurs véhicules et leurs entrepôts chaque jour.</p>
+<p>Nous passons chaque jour devant leurs ateliers, leurs bureaux, leurs véhicules ou leurs entrepôts.</p>
 
-<p>Mais à force de les voir... nous ne les regardons plus.</p>
+<p>À force de les voir, nous ne les regardons plus.</p>
 
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<p>Des métiers, des carrières, des emplois, des stages, des apprentissages et des alternances existent déjà autour de nous.</p>
-
-<p>Des métiers, des emplois, des CDI, des stages, des alternances, des apprentissages et des opportunités existent.</p>
+<p>Des emplois, des carrières, des stages, des alternances, des apprentissages et de nombreuses opportunités existent déjà autour de nous.</p>
 
 <p>Mais une grande partie de cette richesse économique reste encore invisible.</p>
 
@@ -2500,44 +2480,34 @@ Un territoire rempli d'entreprises... souvent invisibles
 Cette invisibilité a un coût
 </h3>
 
-<p>Les entreprises peinent davantage à recruter.</p>
+<p>Les entreprises recrutent plus difficilement.</p>
 
 <p>Les habitants cherchent parfois loin ce qui existe pourtant près de chez eux.</p>
 
-<p>Les jeunes ignorent des métiers qui pourraient les passionner.</p>
+<p>Les jeunes méconnaissent des métiers qui pourraient leur correspondre.</p>
 
-<p>Les établissements scolaires rencontrent davantage de difficultés pour trouver des partenaires.</p>
+<p>Les établissements scolaires trouvent plus difficilement des entreprises partenaires.</p>
 
 <p>Les collectivités perdent une partie de leur dynamique économique.</p>
 
-<p>Chaque acteur avance souvent de son côté alors que tous poursuivent finalement le même objectif&nbsp;: faire vivre durablement leur territoire.</p>
+<p>Pourtant, tous poursuivent le même objectif&nbsp;: faire vivre durablement leur territoire.</p>
 
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
-<h3 style="color:#2f5d46;font-weight:600;">
-Et si nous commencions simplement par mieux nous connaître ?
+Et si nous commencions simplement par mieux vous connaître&nbsp;?
 </h3>
 
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> propose une approche différente.</p>
+<p>Bo'CitéArt propose une approche différente.</p>
 
-<p>Avant de vouloir recruter davantage, commençons par rendre plus visibles les entreprises qui existent déjà en faisant connaître leurs métiers, leurs savoir-faire, leurs équipes, leurs produits, leurs services et leurs opportunités de recrutement.</p>
+<p>Avant de recruter davantage, commençons par rendre plus visibles les entreprises et les commerces déjà présents en faisant connaître leurs métiers, leurs savoir-faire, leurs équipes, leurs produits, leurs services et leurs opportunités.</p>
 
+<p>Un acteur économique visible, connu et reconnu inspire naturellement davantage confiance.</p>
 
-<p>Car une entreprise connue inspire davantage confiance qu'une entreprise que personne ne connaît.</p>
+<p>Lorsqu'un habitant découvre les acteurs économiques de sa commune, il devient naturellement un relais d'information.</p>
 
-<p>Lorsqu'un habitant découvre les entreprises de sa commune, il devient naturellement un relais d'information.</p>
+<p>Il peut orienter un proche, conseiller un jeune, faire découvrir un métier, une alternance, un apprentissage ou recommander un savoir-faire local.</p>
 
-<p>Il peut orienter un proche vers une entreprise qui recrute.</p>
-
-<p>Conseiller un jeune recherchant un stage.</p>
-
-<p>Parler d'une alternance.</p>
-
-<p>Faire découvrir un apprentissage.</p>
-
-<p>Recommander un savoir-faire local.</p>
-
-<p>Petit à petit, chaque habitant devient lui aussi un "Ambassadeur économique", "le Bouche à Oreille naturel" de son territoire.</p>
+<p>Progressivement, chaque habitant devient un véritable <strong>Ambassadeur économique</strong>, le bouche-à-oreille naturel de son territoire.</p>
 
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
@@ -2545,21 +2515,9 @@ Et si nous commencions simplement par mieux nous connaître ?
 Les écoles retrouvent naturellement leur place
 </h3>
 
-<p>Les élèves découvrent progressivement les métiers qui existent autour d'eux.</p>
+<p>En découvrant les acteurs économiques de leur territoire, les élèves identifient plus facilement les métiers qui les entourent et imaginent plus concrètement leur avenir professionnel.</p>
 
-<p>Ils imaginent plus concrètement leur avenir professionnel.</p>
-
-<p>Les établissements scolaires trouvent plus facilement des entreprises pour :</p>
-
-<p>Les stages.</p>
-
-<p>Les apprentissages.</p>
-
-<p>Les alternances.</p>
-
-<p>Les visites d'entreprises.</p>
-
-<p>Les rencontres entre professionnels et jeunes.</p>
+<p>Les établissements scolaires trouvent plus naturellement des partenaires pour les stages, les apprentissages, les alternances, les visites d'entreprises et les rencontres avec les professionnels.</p>
 
 <p>L'entreprise redevient ainsi un acteur naturel de la vie locale.</p>
 
@@ -2569,17 +2527,15 @@ Les écoles retrouvent naturellement leur place
 La commune devient un véritable facilitateur
 </h3>
 
-<p>Accompagnée par <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>, la mairie dispose enfin d'un outil lui permettant de mieux faire connaître les richesses économiques de son territoire.</p>
+<p>Accompagnée par Bo'CitéArt, la mairie dispose d'un outil pour mieux faire connaître les richesses économiques de son territoire.</p>
 
-<p>Son rôle n'est pas de remplacer les entreprises.</p>
+<p>Son rôle n'est pas de remplacer les acteurs économiques, mais de faciliter leur visibilité et leurs mises en relation.</p>
 
-<p>Son rôle est de faciliter leur visibilité.</p>
+<p>Elle valorise ainsi les entreprises, les commerces, les artisans, les associations, les emplois et les initiatives qui contribuent chaque jour au dynamisme local.</p>
 
-<p>Son rôle est de rendre plus visibles les entreprises, les commerces, les artisans, les associations, les emplois et les initiatives qui contribuent chaque jour au dynamisme du territoire.</p>
+<p>Car un territoire ne peut valoriser que ce qu'il rend visible.</p>
 
-<p>Parce qu'un territoire ne peut valoriser que ce qu'il rend vraiment visible.</p>
-
-<p>Aucun acteur local ne devrait rester invisible sur son propre territoire.</p>
+<p>Aucun acteur local ne doit rester invisible sur son propre territoire.</p>
 
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
@@ -2587,45 +2543,31 @@ La commune devient un véritable facilitateur
 Découvrir avant de rechercher
 </h3>
 
-<p>La plupart des recherches d'emploi commencent aujourd'hui par une annonce.</p> 
+<p>La plupart des recherches d'emploi commencent aujourd'hui par une annonce diffusée sur les réseaux et plateformes habituels. Ces outils sont utiles, mais ils interviennent souvent lorsque le besoin est déjà présent. Ils peuvent être coûteux, parfois peu consultés et certaines annonces restent encore publiées alors que le poste est déjà pourvu.</p>
 
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> propose de commencer autrement.</p>
+<p>Bo'CitéArt propose une autre approche&nbsp;: avant même d'avoir besoin de recruter, encore faut-il que vous soyez visible, connu et reconnu.</p>
 
-<p>Avant même de rechercher un emploi, un stage, une alternance ou un apprentissage, encore faut-il connaître les entreprises qui existent réellement autour de soi.</p>
+<p>Chaque commune compte des entreprises et des commerces parfois présents depuis des dizaines d'années, mais encore méconnus de nombreux habitants.</p>
 
-<p>Chaque commune possède des entreprises parfois installées depuis plusieurs dizaines d'années que beaucoup d'habitants ignorent totalement.</p>
+<p>Bo'CitéArt permet de découvrir progressivement le tissu économique de son territoire grâce à un annuaire vivant, enrichi au fil des communes partenaires et actualisé quotidiennement pour refléter au mieux l'évolution de la vie économique locale.</p>
 
-<p>Grâce à <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>, chacun découvre progressivement le tissu économique de son territoire.</p>
-
-<p>Une liste simple présente les entreprises implantées dans chaque commune partenaire.</p>
-
-<p>Au fil des adhésions des collectivités, de nouvelles communes viennent enrichir automatiquement cet annuaire vivant.</p>
-
-<p>Les entreprises sont ensuite proposées par proximité afin de permettre à chacun de découvrir naturellement les richesses économiques situées autour de son domicile.</p>
+<p>Les acteurs économiques sont ensuite proposés par proximité afin de faciliter les découvertes autour de son domicile.</p>
 
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
 <h3 style="color:#2f5d46;font-weight:600;">
-Les entreprises partenaires vont encore plus loin
+Les entreprises partenaires vont encore plus loin!
 </h3>
 
-<p>Toutes les entreprises participent à la richesse économique d'un territoire.</p>
+<p>Toutes les entreprises participent à la richesse économique de leur commune & territoire.</p>
 
-<p>C'est pourquoi chacune peut être identifiée dans l'annuaire afin de faire connaître l'ensemble du tissu économique local.</p>
+<p>Les entreprises qui deviennent partenaires de Bo'CitéArt bénéficient d'une visibilité renforcée grâce à une fiche de présentation complète. C'est un avantage considérable, bien au-delà du seul recrutement.</p>
 
-<p>Les entreprises qui choisissent de devenir partenaires de <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> bénéficient d'une visibilité renforcée.</p>
+<p>Habitants, entreprises, commerces et partenaires vous retrouvent plus facilement. Ils découvrent directement vos activités, vos métiers, vos savoir-faire, vos coordonnées, vos horaires, vos recrutements en cours ainsi que toutes les informations utiles que vous souhaitez partager.</p>
 
-<p>Leur fiche devient alors un véritable espace de présentation.</p>
+<p>Ainsi, votre entreprise construit sa visibilité tout au long de l'année. Lorsqu'elle recrute, développe son activité, recherche un partenaire ou présente un nouveau service, elle est déjà visible, connue et reconnue.</p>
 
-<p>Les habitants peuvent découvrir leurs activités, leurs métiers, leurs savoir-faire, leurs coordonnées, leurs horaires, leurs recrutements, leurs stages, leurs apprentissages, leurs alternances ainsi que les informations utiles qu'elles souhaitent partager.</p>
-
-<p>Cette présence permanente permet à l'entreprise d'être identifiée avant même qu'un besoin n'apparaisse.</p>
-
-<p>Lorsqu'elle recrute, recherche un partenaire, souhaite développer son activité ou faire connaître un nouveau service, elle s'appuie déjà sur une visibilité construite dans le temps.</p>
-
-<p>Elle ne devient plus seulement visible lorsqu'elle publie une annonce ; elle devient naturellement identifiable tout au long de l'année.</p>
-
-<p>Ainsi, chaque entreprise choisit librement le niveau de visibilité qu'elle souhaite donner à son activité, tout en participant au rayonnement économique de son territoire.</p>
+<p>Chaque entreprise choisit librement le niveau de visibilité qu'elle souhaite donner à son activité, tout en renforçant sa notoriété et en contribuant au rayonnement économique de son territoire.</p>
 
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
@@ -2633,17 +2575,17 @@ Les entreprises partenaires vont encore plus loin
 Un annuaire vivant et régulièrement actualisé
 </h3>
 
-<p>L'annuaire <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> évolue avec la vie économique du territoire.</p>
+<p>L'annuaire Bo'CitéArt évolue au rythme de la vie économique du territoire.</p>
 
-<p>Grâce à l'intelligence artificielle et aux sources d'information disponibles, les nouvelles entreprises, les changements d'activité, les modifications d'adresse et les fermetures peuvent être repérés plus rapidement.</p>
+<p>Grâce aux différentes sources d'informations légales disponibles, les créations d'entreprises, les changements d'activité, les déménagements et les cessations d'activité sont détectés plus rapidement.</p>
 
-<p>Ces informations sont ensuite vérifiées et actualisées régulièrement afin de proposer un guide économique aussi fidèle et utile que possible.</p>
+<p>Les informations sont ensuite vérifiées puis actualisées quotidiennement afin de proposer un annuaire aussi fiable, pertinent et à jour que possible.</p>
 
-<p>Les entreprises partenaires peuvent également compléter directement leur fiche et maintenir leurs informations à jour.</p>
+<p>Les entreprises et les commerces partenaires peuvent également compléter et mettre à jour leur fiche à tout moment.</p>
 
-<p>Au fil de l'arrivée de nouvelles communes partenaires, la cartographie économique s'enrichit progressivement et permet de découvrir les entreprises situées de plus en plus largement autour de soi.</p>
+<p>Au fil de l'arrivée de nouvelles communes partenaires, l'annuaire s'enrichit progressivement et permet de découvrir toujours plus d'acteurs économiques autour de soi.</p>
 
-<p>L'annuaire devient ainsi un outil vivant, construit dans le temps avec les collectivités, les entreprises et les acteurs du territoire.</p>
+<p>Bo'CitéArt met ainsi à disposition un annuaire vivant, toujours dans votre poche, rapide, actif et construit dans le temps, au service des collectivités et de l'ensemble des acteurs économiques du territoire.</p>
 
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
@@ -2651,19 +2593,19 @@ Un annuaire vivant et régulièrement actualisé
 Une démarche où chacun est gagnant
 </h3>
 
-<p>Le citoyen découvre plus facilement les entreprises, les métiers, les commerces, les artisans et les services qui existent autour de lui.</p>
+<p>Le citoyen découvre plus facilement les entreprises, les commerces, les artisans, les métiers et les services qui existent autour de lui.</p>
 
-<p>L'entreprise développe sa visibilité, facilite ses recrutements et crée plus naturellement de nouvelles opportunités.</p>
+<p>Les acteurs économiques développent leur visibilité, facilitent leurs recrutements et créent plus naturellement de nouvelles opportunités.</p>
 
-<p>Les écoles trouvent davantage de partenaires pour les stages, les apprentissages, les alternances et les projets pédagogiques.</p>
+<p>Les établissements scolaires trouvent davantage de partenaires pour les stages, les apprentissages, les alternances et les projets pédagogiques.</p>
 
-<p>Les associations gagnent en visibilité et créent plus facilement de nouveaux liens avec les habitants et les entreprises.</p>
+<p>Les associations développent plus facilement de nouveaux liens avec les habitants et les acteurs économiques.</p>
 
-<p>La mairie dispose d'une méthode concrète pour mieux relier les acteurs de son territoire et valoriser les initiatives locales.</p>
+<p>Les collectivités disposent d'une véritable méthode, d'une architecture complète et concrète pour relier les acteurs de leur commune et de leur territoire, avec fluidité, afin de valoriser leurs initiatives et de créer davantage de connexions.</p>
 
-<p>Lorsque chacun trouve plus facilement les autres, les échanges se développent, les collaborations se multiplient et le territoire devient progressivement plus dynamique.</p>
+<p>Lorsque chacun se connaît mieux, les échanges se développent, les collaborations se multiplient et le territoire devient plus vertueux, plus attractif et plus dynamique.</p>
 
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> ne crée pas cette richesse.</p>
+<p>Bo'CitéArt ne crée pas cette richesse.</p>
 
 <p>Elle existe déjà.</p>
 
@@ -2675,128 +2617,35 @@ Une démarche où chacun est gagnant
 Une dynamique portée par tout un territoire
 </h3>
 
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> n'a pas vocation à agir à la place des entreprises, des collectivités, des associations ou des habitants.</p>
+<p>Bo'CitéArt n'a pas vocation à agir à la place des entreprises, des collectivités, des associations ou des habitants.</p>
 
 <p>Son rôle est de leur permettre de mieux se connaître, de mieux se rencontrer et de mieux coopérer autour d'une vision commune du territoire.</p>
 
-<p>Chaque entreprise qui rejoint cette démarche renforce la visibilité du tissu économique local. Chaque habitant qui découvre une activité près de chez lui participe à cette dynamique. Chaque école, chaque association et chaque collectivité vient enrichir ce réseau de relations.</p>
+<p>Chaque nouvel acteur qui rejoint cette démarche renforce naturellement la valeur, la visibilité et les connexions de son territoire.</p>
 
-<p>Progressivement, les initiatives cessent d'évoluer côte à côte pour commencer à avancer ensemble.</p>
+<p>Habitants, entreprises, commerces, associations, établissements scolaires et collectivités participent progressivement à un réseau vivant où chacun découvre, échange, collabore et crée de nouvelles opportunités.</p>
 
-<p>C'est cette mise en relation permanente qui crée de nouvelles opportunités, favorise l'emploi, développe les partenariats et contribue à renforcer durablement l'attractivité du territoire.</p>
+<p>Progressivement, les initiatives ne se développent plus côte à côte, mais ensemble.</p>
 
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> n'est pas la richesse du territoire.</p>
+<p>C'est cette mise en relation permanente, enrichie par une actualisation continue des informations, qui favorise l'emploi, les partenariats, le développement économique et renforce durablement l'attractivité de votre commune et de votre territoire.</p>
 
-<p>La richesse existe déjà.</p>
+<p>Bo'CitéArt ne crée pas cette richesse.</p>
+
+<p>Elle existe déjà.</p>
 
 <p>Son ambition est de la révéler, de la relier et de permettre à chacun d'en devenir pleinement acteur.</p>
 
-<h3 style="color:#2f5d46;font-weight:600;">
-Une nouvelle façon de faire vivre son territoire
-</h3>
-
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> n'a pas vocation à remplacer ce qui existe déjà.</p>
-
-<p>Sa vocation est de relier durablement les habitants, les entreprises, les commerces, les artisans, les associations, les établissements scolaires, les clubs sportifs et les collectivités autour d'une même dynamique territoriale.</p>
-
-<p>Chaque acteur conserve son identité, son rôle et son autonomie, tout en devenant plus facilement visible, accessible et identifiable par les autres.</p>
-
-<p>En facilitant ces rencontres, le territoire apprend progressivement à mieux se connaître, à mieux consommer localement, à mieux recruter, à mieux transmettre ses savoir-faire et à développer davantage de coopérations.</p>
-
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> n'ajoute pas une structure supplémentaire. Il crée les liens qui permettent aux initiatives déjà présentes de produire davantage de valeur lorsqu'elles agissent ensemble.</p>
-
-<p>Parce qu'un territoire devient véritablement plus fort lorsque chacun connaît enfin les richesses qui l'entourent et peut naturellement entrer en relation avec elles.</p>
+<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
 <h3 style="color:#2f5d46;font-weight:600;">
 Pourquoi devenir partenaire Bo'CitéArt ?
 </h3>
 
-<p>Rejoindre <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>, ce n'est pas simplement apparaître dans un annuaire économique.</p>
+<p>Vous venez de découvrir les fondements de l'univers Entreprise de <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>.</p>
 
-<p>C'est intégrer un écosystème où chaque rubrique renforce les autres.</p>
-
-<p>Une entreprise peut d'abord rechercher de nouveaux collaborateurs.</p>
-
-<p>Puis développer sa visibilité.</p>
-
-<p>Fidéliser sa clientèle et ses employés, en découvrant notamment la rubrique suivante consacrée à la fidélisation.</p>
-
-<p>Mutualiser certaines dépenses avec d'autres entreprises.</p>
-
-<p>Découvrir de nouvelles opportunités de développement.</p>
-
-<p>S'engager dans des actions de mécénat.</p>
-
-<p>Préparer la transmission de son activité.</p>
-
-<p>Valoriser ses métiers.</p>
-
-<p>Faire connaître ses savoir-faire.</p>
-
-<p>Créer de nouveaux partenariats.</p>
-
-<p>Aucune de ces rubriques n'a été pensée pour fonctionner seule.</p>
-
-<p>Elles ont été conçues pour se compléter et produire davantage de valeur lorsqu'elles sont utilisées ensemble.</p>
-
-<p>La mairie, accompagnée par <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>, devient alors le facilitateur de cette dynamique territoriale.</p>
-
-<p>Les entreprises gagnent en visibilité.</p>
-
-<p>Les habitants découvrent plus facilement les richesses économiques de leur territoire.</p>
-
-<p>Les écoles trouvent davantage de partenaires.</p>
-
-<p>Les associations créent de nouveaux liens.</p>
-
-<p>Les collectivités disposent enfin d'un outil capable de relier durablement l'ensemble des acteurs locaux.</p>
-
-<p>Chacun y trouve plus facilement sa place, ses besoins, ses opportunités et de nouvelles perspectives de développement.</p>
-
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<h3 style="color:#2f5d46;font-weight:600;">
-Un territoire ne manque pas de richesses. Il manque simplement d'un moyen de les rendre visibles, de les relier et de leur permettre d'agir ensemble. Voilà toute l'ambition de <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span> : l'Art de relier les femmes, les hommes, les initiatives et les opportunités qui font vivre un territoire.
-</h3>
-
-<p>Cette introduction constitue la porte d'entrée de l'univers Entreprise de <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>.</p>
-
-<p>En découvrant progressivement les différentes rubriques, chaque dirigeant comprend que l'objectif n'est pas de proposer un outil supplémentaire.</p>
-
-<p>L'objectif est de relier durablement les entreprises, les habitants, les collectivités, les écoles, les associations et l'ensemble des acteurs du territoire.</p>
-
-<p>Communication, visibilité, emploi, fidélisation, mutualisation, mécénat, développement, économies, transmission…</p>
-
-<p>Chaque rubrique répond à un besoin concret.</p>
-
-<p>Mais c'est lorsqu'elles fonctionnent ensemble qu'elles prennent toute leur valeur.</p>
-
-<p>Une entreprise devient plus visible.</p>
-
-<p>Elle recrute plus facilement.</p>
-
-<p>Elle développe plus naturellement son activité.</p>
-
-<p>Les habitants découvrent les richesses économiques de leur territoire.</p>
-
-<p>Les écoles trouvent davantage de partenaires.</p>
-
-<p>Les collectivités disposent enfin d'un véritable outil de mise en relation.</p>
-
-<p>Progressivement, chacun comprend mieux le rôle des autres et les collaborations deviennent plus naturelles.</p>
-
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> ne relie pas uniquement des fonctionnalités.</p>
-
-<p>Il relie les femmes, les hommes, les compétences, les initiatives et les opportunités qui font vivre un territoire.</p>
-
-<p>C'est en créant ces liens que l'on renforce durablement l'économie locale.</p>
-
-<p>Parce qu'un territoire devient plus fort lorsque chacun peut enfin découvrir, connaître et rencontrer les autres.</p>
-
-<p>Et lorsque tous avancent enfin dans la même direction.</p>
+<p>Chaque bande défilante développe ensuite un thème précis : communication, emploi, fidélisation, mutualisation, développement, mécénat, transmission et bien d'autres services conçus pour vous éclairer, vous accompagner dans vos démarches et vos réflexions, avec un objectif essentiel : être visible, connu et reconnu avant même que le besoin n'apparaisse.</p>
 
 <div style="text-align:center;margin-top:35px;">
-
 <div
   style="
     display:flex;
