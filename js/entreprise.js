@@ -2855,22 +2855,6 @@ Un territoire ne manque pas de richesses. Il manque simplement d'un moyen de les
     gap:10px;
   ">
 
-<button
-  class="choiceBtn"
-  type="button"
-  onclick="window.BociteEntreprise.openEmploymentOffers();"
-  style="
-    width:100%;
-    max-width:430px;
-    background:#f4ead7;
-    color:#111;
-    border:2px solid #d8cdb9;
-  ">
-
-  Consulter directement les offres d’emploi
-
-</button>
-
   <button
     class="choiceBtn"
     type="button"
@@ -4462,7 +4446,8 @@ function openEmploymentOffers(){
 /* =========================================================
    ÇA FINIT ICI — PAGE PUBLIQUE OFFRES D’EMPLOI
    ========================================================= */
-
+function renderEmploymentOffers(){
+   
     const host =
       getElement(
         "employmentOffersList"
@@ -4485,10 +4470,6 @@ function openEmploymentOffers(){
             Number(a.createdAt)
           );
         });
-
-  /* =========================================================
-   ÇA COMMENCE ICI — AUCUNE OFFRE DISPONIBLE
-   ========================================================= */
 
 if(!offers.length){
 
