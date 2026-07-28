@@ -44302,7 +44302,8 @@ function getDirectoryHtml(territory){
       class="box"
       style="
         border-left:6px solid #2f5d46;
-        line-height:1.55;
+        line-height:1.6;
+        font-size:16px;
         font-weight:400;
         color:#111;
       ">
@@ -44310,26 +44311,33 @@ function getDirectoryHtml(territory){
       <strong
         style="
           display:block;
-          font-size:24px;
           color:#2f5d46;
-          font-weight:900;
+          font-size:20px;
           line-height:1.4;
+          font-weight:700;
         ">
         Annuaire économique vivant
       </strong>
 
-      <br>
-
-      Territoire sélectionné :
-
-      <br><br>
+      <div
+        style="
+          margin-top:24px;
+          font-size:16px;
+          line-height:1.6;
+          font-weight:400;
+          color:#111;
+        ">
+        Territoire sélectionné :
+      </div>
 
       <strong
         style="
           display:block;
-          font-size:22px;
+          margin-top:18px;
           color:#2f5d46;
-          font-weight:900;
+          font-size:18px;
+          line-height:1.4;
+          font-weight:700;
         ">
         ${escapeValue(territoryLabel)}
       </strong>
@@ -44349,6 +44357,8 @@ function getDirectoryHtml(territory){
     <details
       class="box"
       style="
+        font-size:16px;
+        line-height:1.6;
         font-weight:400;
         color:#111;
       ">
@@ -44356,14 +44366,22 @@ function getDirectoryHtml(territory){
       <summary
         style="
           cursor:pointer;
-          font-size:20px;
-          font-weight:900;
           color:#2f5d46;
+          font-size:18px;
+          line-height:1.4;
+          font-weight:700;
         ">
         Relire la présentation de l’Observatoire
       </summary>
 
-      <div style="margin-top:14px;">
+      <div
+        style="
+          margin-top:14px;
+          font-size:16px;
+          line-height:1.6;
+          font-weight:400;
+          color:#111;
+        ">
         ${getPresentationHtml(false)}
       </div>
     </details>
@@ -44371,7 +44389,8 @@ function getDirectoryHtml(territory){
     <div
       class="box"
       style="
-        line-height:1.55;
+        font-size:16px;
+        line-height:1.6;
         font-weight:400;
         color:#111;
       ">
@@ -44379,25 +44398,33 @@ function getDirectoryHtml(territory){
       <strong
         style="
           display:block;
-          font-size:20px;
           color:#2f5d46;
-          font-weight:900;
+          font-size:18px;
+          line-height:1.4;
+          font-weight:700;
         ">
         Rechercher
       </strong>
-
-      <br>
 
       <input
         id="observatoireDirectorySearch"
         class="miniField"
         type="search"
-        placeholder="Nom, métier, activité, produit ou service">
+        placeholder="Nom, métier, activité, produit ou service"
+        style="
+          margin-top:20px;
+          font-size:16px;
+          font-weight:400;
+        ">
 
       <select
         id="observatoireDirectoryCategory"
         class="miniField"
-        style="margin-top:9px;">
+        style="
+          margin-top:9px;
+          font-size:16px;
+          font-weight:400;
+        ">
 
         <option value="all">
           Toutes les activités
@@ -44429,7 +44456,8 @@ function getDirectoryHtml(territory){
       class="box"
       style="
         border-left:6px solid #2f5d46;
-        line-height:1.55;
+        font-size:16px;
+        line-height:1.6;
         font-weight:400;
         color:#111;
       ">
@@ -44437,24 +44465,33 @@ function getDirectoryHtml(territory){
       <strong
         style="
           display:block;
-          font-size:20px;
           color:#2f5d46;
-          font-weight:900;
+          font-size:18px;
           line-height:1.4;
+          font-weight:700;
         ">
         Mise à jour de l’annuaire
       </strong>
 
-      <br>
+      <div
+        style="
+          margin-top:18px;
+          font-size:16px;
+          line-height:1.6;
+          font-weight:400;
+          color:#111;
+        ">
 
-      La démonstration utilise actuellement
-      les fiches enregistrées dans l’application.
+        La démonstration utilise actuellement
+        les fiches enregistrées dans l’application.
 
-      <br><br>
+        <br><br>
 
-      La connexion nationale aux données officielles
-      et leur actualisation assistée
-      seront raccordées dans la version définitive.
+        La connexion nationale aux données officielles
+        et leur actualisation assistée
+        seront raccordées dans la version définitive.
+
+      </div>
     </div>
 
     <div
@@ -44462,6 +44499,8 @@ function getDirectoryHtml(territory){
       class="muted"
       style="
         margin-top:10px;
+        font-size:16px;
+        line-height:1.5;
         font-weight:400;
       ">
     </div>
@@ -44470,6 +44509,8 @@ function getDirectoryHtml(territory){
       id="observatoireDirectoryList"
       style="
         margin-top:10px;
+        font-size:16px;
+        line-height:1.6;
         font-weight:400;
       ">
     </div>
