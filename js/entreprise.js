@@ -2556,19 +2556,18 @@ Découvrir avant de rechercher
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
 <h3 style="color:#2f5d46;font-weight:600;">
-Les entreprises partenaires vont encore plus loin!
+Les entreprises partenaires vont beaucoup plus loin
 </h3>
 
-<p>Toutes les entreprises participent à la richesse économique de leur commune & territoire.</p>
+<p>Chaque entreprise peut et doit contribuer à la richesse économique de sa commune et de son territoire.</p>
 
-<p>Les entreprises qui deviennent partenaires de Bo'CitéArt bénéficient d'une visibilité renforcée grâce à une fiche de présentation complète. C'est un avantage considérable, bien au-delà du seul recrutement.</p>
+<p>Les entreprises qui deviennent partenaires de <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> bénéficient d'une visibilité renforcée grâce à une fiche de présentation complète et à un ensemble de services conçus pour accompagner durablement leur développement, bien au-delà du seul recrutement.</p>
 
-<p>Habitants, entreprises, commerces et partenaires vous retrouvent plus facilement. Ils découvrent directement vos activités, vos métiers, vos savoir-faire, vos coordonnées, vos horaires, vos recrutements en cours ainsi que toutes les informations utiles que vous souhaitez partager.</p>
+<p>Habitants, entreprises, commerces, collectivités, associations et établissements scolaires découvrent plus facilement votre activité, vos métiers, vos savoir-faire, vos coordonnées, vos horaires, vos recrutements en cours ainsi que les informations que vous souhaitez partager.</p>
 
-<p>Ainsi, votre entreprise construit sa visibilité tout au long de l'année. Lorsqu'elle recrute, développe son activité, recherche un partenaire ou présente un nouveau service, elle est déjà visible, connue et reconnue.</p>
+<p>Votre entreprise construit progressivement sa visibilité tout au long de l'année afin d'être visible, connue et reconnue avant même qu'un besoin n'apparaisse.</p>
 
-<p>Chaque entreprise choisit librement le niveau de visibilité qu'elle souhaite donner à son activité, tout en renforçant sa notoriété et en contribuant au rayonnement économique de son territoire.</p>
-
+<p>Cette présence régulière favorise les rencontres, les échanges, les opportunités, les recrutements, les partenariats et contribue au rayonnement économique de votre commune et de votre territoire.</p>
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
 <h3 style="color:#2f5d46;font-weight:600;">
@@ -2610,30 +2609,6 @@ Une démarche où chacun est gagnant
 <p>Elle existe déjà.</p>
 
 <p>Il la révèle, la relie et contribue à la rendre plus visible.</p>
-
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<h3 style="color:#2f5d46;font-weight:600;">
-Une dynamique portée par tout un territoire
-</h3>
-
-<p>Bo'CitéArt n'a pas vocation à agir à la place des entreprises, des collectivités, des associations ou des habitants.</p>
-
-<p>Son rôle est de leur permettre de mieux se connaître, de mieux se rencontrer et de mieux coopérer autour d'une vision commune du territoire.</p>
-
-<p>Chaque nouvel acteur qui rejoint cette démarche renforce naturellement la valeur, la visibilité et les connexions de son territoire.</p>
-
-<p>Habitants, entreprises, commerces, associations, établissements scolaires et collectivités participent progressivement à un réseau vivant où chacun découvre, échange, collabore et crée de nouvelles opportunités.</p>
-
-<p>Progressivement, les initiatives ne se développent plus côte à côte, mais ensemble.</p>
-
-<p>C'est cette mise en relation permanente, enrichie par une actualisation continue des informations, qui favorise l'emploi, les partenariats, le développement économique et renforce durablement l'attractivité de votre commune et de votre territoire.</p>
-
-<p>Bo'CitéArt ne crée pas cette richesse.</p>
-
-<p>Elle existe déjà.</p>
-
-<p>Son ambition est de la révéler, de la relier et de permettre à chacun d'en devenir pleinement acteur.</p>
 
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
