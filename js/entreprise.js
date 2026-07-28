@@ -2462,7 +2462,7 @@ Un territoire rempli d'entreprises... souvent invisibles
 
 <p>Connaissez-vous réellement leurs activités, leurs métiers, leurs savoir-faire ou leurs besoins en recrutement&nbsp;?</p>
 
-<p>Très souvent, la réponse est NON!.</p>
+<p>Très souvent, la réponse est Non!.</p>
 
 <p>Pourtant, ces entreprises sont parfois installées à quelques centaines de mètres de chez vous.</p>
 
@@ -2497,7 +2497,7 @@ Cette invisibilité a un coût
 Et si nous commencions simplement par mieux vous connaître&nbsp;?
 </h3>
 
-<p>Bo'CitéArt propose une approche différente.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> propose une approche différente.</p>
 
 <p>Avant de recruter davantage, commençons par rendre plus visibles les entreprises et les commerces déjà présents en faisant connaître leurs métiers, leurs savoir-faire, leurs équipes, leurs produits, leurs services et leurs opportunités.</p>
 
@@ -2527,7 +2527,7 @@ Les écoles retrouvent naturellement leur place
 La commune devient un véritable facilitateur
 </h3>
 
-<p>Accompagnée par Bo'CitéArt, la mairie dispose d'un outil pour mieux faire connaître les richesses économiques de son territoire.</p>
+<p>Accompagnée par <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>, la mairie dispose d'un outil pour mieux faire connaître les richesses économiques de son territoire.</p>
 
 <p>Son rôle n'est pas de remplacer les acteurs économiques, mais de faciliter leur visibilité et leurs mises en relation.</p>
 
@@ -2545,11 +2545,11 @@ Découvrir avant de rechercher
 
 <p>La plupart des recherches d'emploi commencent aujourd'hui par une annonce diffusée sur les réseaux et plateformes habituels. Ces outils sont utiles, mais ils interviennent souvent lorsque le besoin est déjà présent. Ils peuvent être coûteux, parfois peu consultés et certaines annonces restent encore publiées alors que le poste est déjà pourvu.</p>
 
-<p>Bo'CitéArt propose une autre approche&nbsp;: avant même d'avoir besoin de recruter, encore faut-il que vous soyez visible, connu et reconnu.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> propose une autre approche&nbsp;: avant même d'avoir besoin de recruter, encore faut-il que vous soyez visible, connu et reconnu.</p>
 
 <p>Chaque commune compte des entreprises et des commerces parfois présents depuis des dizaines d'années, mais encore méconnus de nombreux habitants.</p>
 
-<p>Bo'CitéArt permet de découvrir progressivement le tissu économique de son territoire grâce à un annuaire vivant, enrichi au fil des communes partenaires et actualisé quotidiennement pour refléter au mieux l'évolution de la vie économique locale.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> permet de découvrir progressivement le tissu économique de son territoire grâce à un annuaire vivant, enrichi au fil des communes partenaires et actualisé quotidiennement pour refléter au mieux l'évolution de la vie économique locale.</p>
 
 <p>Les acteurs économiques sont ensuite proposés par proximité afin de faciliter les découvertes autour de son domicile.</p>
 
@@ -2574,7 +2574,7 @@ Les entreprises partenaires vont beaucoup plus loin
 Un annuaire vivant et régulièrement actualisé
 </h3>
 
-<p>L'annuaire Bo'CitéArt évolue au rythme de la vie économique du territoire.</p>
+<p>L'annuaire <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> évolue au rythme de la vie économique du territoire.</p>
 
 <p>Grâce aux différentes sources d'informations légales disponibles, les créations d'entreprises, les changements d'activité, les déménagements et les cessations d'activité sont détectés plus rapidement.</p>
 
@@ -2584,7 +2584,7 @@ Un annuaire vivant et régulièrement actualisé
 
 <p>Au fil de l'arrivée de nouvelles communes partenaires, l'annuaire s'enrichit progressivement et permet de découvrir toujours plus d'acteurs économiques autour de soi.</p>
 
-<p>Bo'CitéArt met ainsi à disposition un annuaire vivant, toujours dans votre poche, rapide, actif et construit dans le temps, au service des collectivités et de l'ensemble des acteurs économiques du territoire.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> met ainsi à disposition un annuaire vivant, toujours dans votre poche, rapide, actif et construit dans le temps, au service des collectivités et de l'ensemble des acteurs économiques du territoire.</p>
 
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
@@ -2604,7 +2604,7 @@ Une démarche où chacun est gagnant
 
 <p>Lorsque chacun se connaît mieux, les échanges se développent, les collaborations se multiplient et le territoire devient plus vertueux, plus attractif et plus dynamique.</p>
 
-<p>Bo'CitéArt ne crée pas cette richesse.</p>
+<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> ne crée pas cette richesse.</p>
 
 <p>Elle existe déjà.</p>
 
@@ -2613,7 +2613,7 @@ Une démarche où chacun est gagnant
 <hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
 
 <h3 style="color:#2f5d46;font-weight:600;">
-Pourquoi devenir partenaire Bo'CitéArt ?
+Pourquoi devenir partenaire <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> ?
 </h3>
 
 <p>Vous venez de découvrir les fondements de l'univers Entreprise de <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>.</p>
@@ -2672,12 +2672,12 @@ Pourquoi devenir partenaire Bo'CitéArt ?
       font-size:16px;
       font-weight:700;
     ">
-    Et après le recrutement ?
-  </span>
+Et après le recrutement ?
+</span>
 
-  <br>
+<br>
 
- <p
+<p
   style="
     margin:0;
     color:#222;
@@ -2685,7 +2685,7 @@ Pourquoi devenir partenaire Bo'CitéArt ?
     line-height:1.7;
   ">
 
-  Recruter est une première étape.
+  Le recrutement constitue une première étape.
 
 </p>
 
@@ -2696,22 +2696,27 @@ Pourquoi devenir partenaire Bo'CitéArt ?
     line-height:1.7;
   ">
 
-  Découvrez ensuite comment créer un environnement
-  permettant aux salariés de mieux connaître
-  les ressources disponibles autour de leur lieu de travail.
+  <strong>
+    <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>
+  </strong>
+  vous propose ensuite d'autres thèmes utiles et complémentaires
+  pour développer la visibilité de votre entreprise,
+  renforcer son attractivité,
+  fidéliser ses salariés
+  et accompagner durablement son développement.
 
 </p>
 
-  <br><br>
+<br><br>
 
-  <button
-    class="choiceBtn"
-    type="button"
-    onclick="window.BociteEntreprise.openScreen('fidelisation');">
+<button
+  class="choiceBtn"
+  type="button"
+  onclick="window.BociteEntreprise.openHome();">
 
-    Découvrir la rubrique suivante : Fidélisation
+  Découvrir les thèmes utiles et complémentaires
 
-  </button>
+</button>
 
 </div>
 
