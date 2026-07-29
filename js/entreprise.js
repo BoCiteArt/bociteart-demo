@@ -2672,51 +2672,57 @@ Pourquoi devenir partenaire <strong><span style="color:#2f5d46;">Bo'Cité</span>
       font-size:16px;
       font-weight:700;
     ">
-Et après le recrutement ?
-</span>
+    Et après le recrutement ?
+  </span>
 
-<br>
+  <br>
 
-<p
-  style="
-    margin:0;
-    color:#222;
-    font-weight:400;
-    line-height:1.7;
-  ">
+  <p
+    style="
+      margin:0;
+      color:#222;
+      font-weight:400;
+      line-height:1.7;
+    ">
+    Le recrutement constitue une première étape.
+  </p>
 
-  Le recrutement constitue une première étape.
+  <p
+    style="
+      color:#222;
+      font-weight:400;
+      line-height:1.7;
+    ">
+    <strong>
+      <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>
+    </strong>
+    vous propose ensuite d'autres thèmes utiles et complémentaires
+    pour développer la visibilité de votre entreprise,
+    renforcer son attractivité,
+    fidéliser ses salariés
+    et accompagner durablement son développement.
+  </p>
 
-</p>
+  <p
+    style="
+      margin-bottom:0;
+      color:#222;
+      font-weight:700;
+      line-height:1.7;
+    ">
+    Appuyez sur le bouton « Retour » situé en haut de cette page
+    pour retrouver les autres bandes défilantes.
 
-<p
-  style="
-    color:#222;
-    font-weight:400;
-    line-height:1.7;
-  ">
+    <br><br>
 
-  <strong>
-    <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>
-  </strong>
-  vous propose ensuite d'autres thèmes utiles et complémentaires
-  pour développer la visibilité de votre entreprise,
-  renforcer son attractivité,
-  fidéliser ses salariés
-  et accompagner durablement son développement.
+    La prochaine proposition suivant celle que vous venez de découvrir sera :
 
-</p>
+    <br><br>
 
-<br><br>
-
-<button
-  class="choiceBtn"
-  type="button"
-  onclick="window.BociteEntreprise.openScreen('bandesEntreprise', { fromBack:true });">
-
-  Découvrir les thèmes utiles et complémentaires
-
-</button>
+    <span style="color:#2f5d46;">
+      « Fidéliser ne consiste plus uniquement à augmenter les salaires. »
+    </span>
+  </p>
 
 </div>
 
@@ -2762,8 +2768,38 @@ function openEmploymentIntroduction(){
       };
     }
 
+    /*
+      Retour direct aux bandes défilantes
+      en un seul clic depuis cette page.
+    */
+
+ const backButton =
+  document.querySelector(
+    ".bociteEntrepriseProtectedBackBtn"
+  );
+
+if(backButton){
+
+  const directBackButton =
+    backButton.cloneNode(true);
+
+  backButton.replaceWith(
+    directBackButton
+  );
+
+  directBackButton.onclick =
+    function(event){
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      module.returnToEntrepriseHome();
+    };
+}
+
   },0);
 }
+   
 function openEmploymentHome(){
 
   module.renderModal(
