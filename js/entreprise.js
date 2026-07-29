@@ -44100,7 +44100,7 @@ function getMandatoryIntroductionHtml(){
         <strong
           style="
             display:block;
-            font-size:17px;
+            font-size:16px;
             color:#2f5d46;
             font-weight:700;
             line-height:1.4;
@@ -44137,6 +44137,7 @@ function getMandatoryIntroductionHtml(){
         style="
           font-weight:400;
           color:#111;
+          line-height:1.55;
         ">
 
         ${getPresentationHtml(false)}
@@ -44155,7 +44156,7 @@ function getMandatoryIntroductionHtml(){
         <strong
           style="
             display:block;
-            font-size:17px;
+            font-size:16px;
             color:#2f5d46;
             font-weight:700;
             line-height:1.4;
@@ -44201,7 +44202,7 @@ function getMandatoryIntroductionHtml(){
         <strong
           style="
             display:block;
-            font-size:17px;
+            font-size:16px;
             color:#2f5d46;
             font-weight:700;
             line-height:1.4;
@@ -44234,231 +44235,185 @@ function getMandatoryIntroductionHtml(){
     `;
   }
 
-function getDirectoryHtml(territory){
+  function getDirectoryHtml(territory){
 
-  const territoryLabel =
-    getTerritoryLabel(territory);
+    const territoryLabel =
+      getTerritoryLabel(territory);
 
-  return `
-    <div
-      class="box"
-      style="
-        border-left:6px solid #2f5d46;
-        line-height:1.6;
-        font-size:17px;
-        font-weight:400;
-        color:#111;
-      ">
-
-      <strong
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:19px;
-          line-height:1.4;
-          font-weight:700;
-        ">
-        Annuaire économique vivant
-      </strong>
-
+    return `
       <div
+        class="box"
         style="
-          margin-top:24px;
-          font-size:17px;
-          line-height:1.6;
+          border-left:6px solid #2f5d46;
+          line-height:1.55;
           font-weight:400;
           color:#111;
         ">
+
+        <strong
+          style="
+            display:block;
+            font-size:16px;
+            color:#2f5d46;
+            font-weight:700;
+            line-height:1.4;
+          ">
+          Annuaire économique vivant
+        </strong>
+
+        <br>
+
         Territoire sélectionné :
-      </div>
-
-      <strong
-        style="
-          display:block;
-          margin-top:19px;
-          color:#2f5d46;
-          font-size:17px;
-          line-height:1.4;
-          font-weight:700;
-        ">
-        ${escapeValue(territoryLabel)}
-      </strong>
-    </div>
-
-    <button
-      id="observatoireChangeTerritoryBtn"
-      class="choiceBtn"
-      type="button"
-      style="
-        width:100%;
-        margin-bottom:12px;
-      ">
-      Changer de territoire
-    </button>
-
-    <details
-      class="box"
-      style="
-        font-size:17px;
-        line-height:1.6;
-        font-weight:400;
-        color:#111;
-      ">
-
-      <summary
-        style="
-          cursor:pointer;
-          color:#2f5d46;
-          font-size:17px;
-          line-height:1.4;
-          font-weight:700;
-        ">
-        Relire la présentation de l’Observatoire
-      </summary>
-
-      <div
-        style="
-          margin-top:14px;
-          font-size:17px;
-          line-height:1.6;
-          font-weight:400;
-          color:#111;
-        ">
-        ${getPresentationHtml(false)}
-      </div>
-    </details>
-
-    <div
-      class="box"
-      style="
-        font-size:17px;
-        line-height:1.6;
-        font-weight:400;
-        color:#111;
-      ">
-
-      <strong
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:17px;
-          line-height:1.4;
-          font-weight:700;
-        ">
-        Rechercher
-      </strong>
-
-      <input
-        id="observatoireDirectorySearch"
-        class="miniField"
-        type="search"
-        placeholder="Nom, métier, activité, produit ou service"
-        style="
-          margin-top:19px;
-          font-size:16px;
-          font-weight:400;
-        ">
-
-      <select
-        id="observatoireDirectoryCategory"
-        class="miniField"
-        style="
-          margin-top:9px;
-          font-size:17px;
-          font-weight:400;
-        ">
-
-        <option value="all">
-          Toutes les activités
-        </option>
-
-        <option value="artisan">
-          Artisans
-        </option>
-
-        <option value="commerce">
-          Commerces
-        </option>
-
-        <option value="entreprise">
-          Entreprises
-        </option>
-
-        <option value="partner">
-          Partenaires Bo'CitéArt
-        </option>
-
-        <option value="official">
-          Référencement officiel
-        </option>
-      </select>
-    </div>
-
-    <div
-      class="box"
-      style="
-        border-left:6px solid #2f5d46;
-        font-size:17px;
-        line-height:1.6;
-        font-weight:400;
-        color:#111;
-      ">
-
-      <strong
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:17px;
-          line-height:1.4;
-          font-weight:700;
-        ">
-        Mise à jour de l’annuaire
-      </strong>
-
-      <div
-        style="
-          margin-top:18px;
-          font-size:17px;
-          line-height:1.6;
-          font-weight:400;
-          color:#111;
-        ">
-
-        La démonstration utilise actuellement
-        les fiches enregistrées dans l’application.
 
         <br><br>
 
-        La connexion nationale aux données officielles
-        et leur actualisation assistée
-        seront raccordées dans la version définitive.
+        <span
+          style="
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:700;
+          ">
+          ${escapeValue(territoryLabel)}
+        </span>
 
       </div>
-    </div>
 
-    <div
-      id="observatoireDirectoryCount"
-      class="muted"
-      style="
-        margin-top:10px;
-        font-size:17px;
-        line-height:1.5;
-        font-weight:400;
-      ">
-    </div>
+      <button
+        id="observatoireChangeTerritoryBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-bottom:12px;
+        ">
+        Changer de territoire
+      </button>
 
-    <div
-      id="observatoireDirectoryList"
-      style="
-        margin-top:10px;
-        font-size:17px;
-        line-height:1.6;
-        font-weight:400;
-      ">
-    </div>
-  `;
-}
+      <div
+        style="
+          font-weight:400;
+          color:#111;
+          line-height:1.55;
+        ">
 
+        ${getPresentationHtml(false)}
+
+      </div>
+
+      <div
+        class="box"
+        style="
+          font-weight:400;
+          color:#111;
+          line-height:1.55;
+        ">
+
+        <strong
+          style="
+            display:block;
+            font-size:16px;
+            color:#2f5d46;
+            font-weight:700;
+            line-height:1.4;
+          ">
+          Rechercher
+        </strong>
+
+        <br>
+
+        <input
+          id="observatoireDirectorySearch"
+          class="miniField"
+          type="search"
+          placeholder="Nom, métier, activité, produit ou service">
+
+        <select
+          id="observatoireDirectoryCategory"
+          class="miniField"
+          style="margin-top:9px;">
+
+          <option value="all">
+            Toutes les activités
+          </option>
+
+          <option value="artisan">
+            Artisans
+          </option>
+
+          <option value="commerce">
+            Commerces
+          </option>
+
+          <option value="entreprise">
+            Entreprises
+          </option>
+
+          <option value="partner">
+            Partenaires Bo'CitéArt
+          </option>
+
+          <option value="official">
+            Référencement officiel
+          </option>
+
+        </select>
+
+      </div>
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          font-weight:400;
+          color:#111;
+          line-height:1.55;
+        ">
+
+        <strong
+          style="
+            display:block;
+            font-size:16px;
+            color:#2f5d46;
+            font-weight:700;
+            line-height:1.4;
+          ">
+          Mise à jour de l’annuaire
+        </strong>
+
+        <br>
+
+        L’annuaire sera progressivement raccordé
+        aux données publiques officielles
+        des entreprises françaises.
+
+        <br><br>
+
+        Les informations permettront
+        d’identifier les créations,
+        les changements d’adresse,
+        les changements d’activité,
+        les cessations
+        et les fermetures publiées officiellement.
+
+      </div>
+
+      <div
+        id="observatoireDirectoryCount"
+        style="
+          margin-top:10px;
+          color:#111;
+          font-size:16px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+      </div>
+
+      <div
+        id="observatoireDirectoryList"
+        style="margin-top:10px;">
+      </div>
+    `;
+  }
     function loadCompanies(){
 
     if(
@@ -44613,18 +44568,27 @@ function getDirectoryHtml(territory){
         " résultat(s) trouvé(s).";
     }
 
-    if(!companies.length){
+     if(!companies.length){
 
       list.innerHTML = `
-        <div class="box">
+        <div
+          class="box"
+          style="
+            border-left:6px solid #2f5d46;
+            color:#111;
+            font-size:16px;
+            font-weight:400;
+            line-height:1.55;
+          ">
+
           Aucun résultat ne correspond
           à votre recherche actuelle.
+
         </div>
       `;
 
       return;
     }
-
     list.innerHTML =
       companies.map(function(company){
 
@@ -44789,7 +44753,7 @@ function getDirectoryHtml(territory){
     if(!introIsRead()){
 
       module.renderModal(
-        "Observatoire économique Bo'CitéArt",
+        "Observatoire économique <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>",
         getMandatoryIntroductionHtml()
       );
 
@@ -44822,7 +44786,7 @@ function getDirectoryHtml(territory){
     }
 
     module.renderModal(
-      "Observatoire économique Bo'CitéArt",
+      "Observatoire économique <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>",
       getObservatoireHomeHtml()
     );
 
@@ -44842,7 +44806,7 @@ function getDirectoryHtml(territory){
     openObservatoireHome;
 
   console.log(
-    "✅ Observatoire économique Bo'CitéArt chargé"
+    "✅ Observatoire économique <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span> chargé"
   );
 
 })();
@@ -45387,7 +45351,7 @@ function getDirectoryHtml(territory){
         remindersChanged = true;
 
         console.info(
-          "Bo'CitéArt Emploi : annonce masquée après quatre rappels.",
+          "<span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span> Emploi : annonce masquée après quatre rappels.",
           offer.companyName,
           offer.title
         );
@@ -45418,7 +45382,7 @@ function getDirectoryHtml(territory){
       remindersChanged = true;
 
       console.info(
-        "Bo'CitéArt Emploi : rappel de recrutement préparé.",
+        "<span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span> Emploi : rappel de recrutement préparé.",
         offer.companyName,
         offer.title,
         "Rappel " +
