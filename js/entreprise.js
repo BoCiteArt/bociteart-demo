@@ -2,7 +2,7 @@
    BO'CITÉART — MODULE ENTREPRISE
    PARTIE 1 — NAVIGATION ET ACCUEIL
 ========================================================= */
-
+ 
 (function initBociteEntrepriseModule(){ 
  
   "use strict";
