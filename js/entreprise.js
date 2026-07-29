@@ -1373,95 +1373,24 @@ console.log(
   const module = window.BociteEntreprise;
 
   if(!module){
+
     console.error(
       "Bo'CitéArt Entreprise : la partie 1 doit être chargée avant la partie 2."
     );
+
     return;
   }
 
   const DIRECTORY_STORE_KEY =
-    "bociteart_entreprise_directory_demo_v1";
-
-  const demoCompanies = [
-    {
-      id:"ENT-001",
-      name:"ABC Électricité",
-      activity:"Installation électrique",
-      description:
-        "Installation, dépannage et entretien électrique pour particuliers et professionnels.",
-      city:"Wattignies",
-      address:"Wattignies",
-      phone:"",
-      website:"",
-      partner:false
-    },
-    {
-      id:"ENT-002",
-      name:"Acier Nord",
-      activity:"Métallerie industrielle",
-      description:
-        "Fabrication et transformation de pièces métalliques pour les professionnels.",
-      city:"Wattignies",
-      address:"Wattignies",
-      phone:"",
-      website:"",
-      partner:false
-    },
-    {
-      id:"ENT-003",
-      name:"Bâtir Conseil",
-      activity:"Conseil dans le bâtiment",
-      description:
-        "Conseil, accompagnement et préparation de projets dans le secteur du bâtiment.",
-      city:"Wattignies",
-      address:"Wattignies",
-      phone:"",
-      website:"",
-      partner:true
-    },
-    {
-      id:"ENT-004",
-      name:"Cabinet Horizon",
-      activity:"Expertise comptable",
-      description:
-        "Expertise comptable, gestion et accompagnement des entreprises.",
-      city:"Wattignies",
-      address:"Wattignies",
-      phone:"",
-      website:"",
-      partner:true
-    },
-    {
-      id:"ENT-005",
-      name:"Menuiserie du Centre",
-      activity:"Menuiserie",
-      description:
-        "Menuiserie intérieure, extérieure et réalisations sur mesure.",
-      city:"Wattignies",
-      address:"Wattignies",
-      phone:"",
-      website:"",
-      partner:false
-    },
-    {
-      id:"ENT-006",
-      name:"Services Techniques du Nord",
-      activity:"Maintenance professionnelle",
-      description:
-        "Maintenance, entretien et services techniques destinés aux entreprises.",
-      city:"Wattignies",
-      address:"Wattignies",
-      phone:"",
-      website:"",
-      partner:false
-    }
-  ];
+    "bociteart_entreprise_directory_v1";
 
   function getElement(id){
+
     return document.getElementById(id);
   }
 
   function escapeValue(value){
+
     return module.safeEscape(value);
   }
 
@@ -1470,24 +1399,27 @@ console.log(
     try{
 
       const raw =
-        localStorage.getItem(DIRECTORY_STORE_KEY);
+        localStorage.getItem(
+          DIRECTORY_STORE_KEY
+        );
 
       const parsed =
         raw ? JSON.parse(raw) : null;
 
-      if(Array.isArray(parsed) && parsed.length){
+      if(Array.isArray(parsed)){
+
         return parsed;
       }
 
     }catch(error){
 
       console.warn(
-        "Lecture de l’annuaire local impossible :",
+        "Lecture de l’annuaire économique impossible :",
         error
       );
     }
 
-    return demoCompanies.slice();
+    return [];
   }
 
   function saveDirectory(companies){
@@ -1496,13 +1428,17 @@ console.log(
 
       localStorage.setItem(
         DIRECTORY_STORE_KEY,
-        JSON.stringify(companies || [])
+        JSON.stringify(
+          Array.isArray(companies)
+            ? companies
+            : []
+        )
       );
 
     }catch(error){
 
       console.warn(
-        "Enregistrement de l’annuaire impossible :",
+        "Enregistrement de l’annuaire économique impossible :",
         error
       );
     }
@@ -1513,37 +1449,55 @@ console.log(
     return String(value || "")
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+      .replace(
+        /[\u0300-\u036f]/g,
+        ""
+      );
   }
 
   function sortCompanies(companies){
 
-    return companies.slice().sort(function(a,b){
+    const companyList =
+      Array.isArray(companies)
+        ? companies
+        : [];
 
-      return String(a.name || "").localeCompare(
-        String(b.name || ""),
-        "fr",
-        {
-          sensitivity:"base"
-        }
-      );
-    });
+    return companyList
+      .slice()
+      .sort(function(a,b){
+
+        return String(
+          a.name || ""
+        ).localeCompare(
+          String(
+            b.name || ""
+          ),
+          "fr",
+          {
+            sensitivity:"base"
+          }
+        );
+      });
   }
 
-  function getDirectoryHtml(){
+    function getDirectoryHtml(){
 
     return `
       <div
         class="box entrepriseInfoBox"
         style="
           border-left:6px solid #2f5d46;
+          font-weight:400;
+          color:#111;
+          line-height:1.55;
         ">
 
         <strong
           style="
             display:block;
             color:#2f5d46;
-            font-size:20px;
+            font-size:18px;
+            font-weight:700;
             line-height:1.4;
           ">
           Un annuaire économique vivant
@@ -1571,38 +1525,33 @@ console.log(
 
         <br><br>
 
-        Ils produisent,
-        recrutent
-        et proposent des produits
-        ou des services,
-        sans toujours être suffisamment connus
-        des habitants
-        ni même des autres professionnels.
-
-        <br><br>
-
-        <strong>
-          Avant de rechercher ailleurs,
-          commencez par découvrir
-          ce qui existe déjà dans votre commune.
-        </strong>
+        Avant de rechercher ailleurs,
+        commencez par découvrir
+        ce qui existe déjà dans votre commune.
 
       </div>
 
-      <div class="box entrepriseInfoBox">
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          font-weight:400;
+          color:#111;
+          line-height:1.55;
+        ">
 
         <strong
           style="
             display:block;
             color:#2f5d46;
             font-size:18px;
+            font-weight:700;
           ">
           À quoi sert cet annuaire ?
         </strong>
 
         <br>
 
-        Il permet de rechercher rapidement :
+        Il permettra de rechercher rapidement :
 
         <br><br>
 
@@ -1619,30 +1568,12 @@ console.log(
 
         <br><br>
 
-        Cette visibilité constitue
-        le point de départ
-        de nouvelles relations locales :
-
-        <br><br>
-
-        • recommandations ;<br>
-        • demandes de devis ;<br>
-        • recrutements ;<br>
-        • partenariats ;<br>
-        • sous-traitance ;<br>
-        • développement de l’activité.
-
-        <br><br>
-
-        L’annuaire ne remplace pas
-        les autres thèmes de l’application.
-
-        <br><br>
-
-        Il permet d’abord
-        de savoir qui existe,
-        où se trouve l’entreprise
-        et ce qu’elle peut proposer.
+        Cette visibilité favorisera
+        les recommandations,
+        les demandes de devis,
+        les recrutements,
+        les partenariats
+        et le développement de l’activité locale.
 
       </div>
 
@@ -1650,6 +1581,9 @@ console.log(
         class="box entrepriseInfoBox"
         style="
           border-left:6px solid #2f5d46;
+          font-weight:400;
+          color:#111;
+          line-height:1.55;
         ">
 
         <strong
@@ -1657,68 +1591,48 @@ console.log(
             display:block;
             color:#2f5d46;
             font-size:18px;
+            font-weight:700;
           ">
-          Un annuaire régulièrement actualisé
+          Des informations issues de sources officielles
         </strong>
 
         <br>
 
-        Contrairement à une simple liste,
-
-        <strong>
-          <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-        </strong>
-
-        a vocation à suivre
-        l’évolution des entreprises.
+        L’annuaire Bo'CitéArt sera alimenté
+        lors de son raccordement
+        aux données publiques officielles
+        des entreprises françaises.
 
         <br><br>
 
-        Les informations de situation
-        proviendront exclusivement
-        de données publiques officielles.
+        Chaque entreprise pourra ensuite
+        compléter volontairement sa fiche,
+        présenter son activité,
+        ses services,
+        ses recrutements
+        et ses engagements locaux.
 
         <br><br>
 
-        Elles permettront notamment
-        de repérer une entreprise :
-
-        <br><br>
-
-        🟢 active ;<br><br>
-
-        🔵 dont les informations
-        ont récemment été mises à jour ;<br><br>
-
-        🟠 faisant l’objet
-        d’une procédure collective publiée ;<br><br>
-
-        🔴 faisant l’objet
-        d’une liquidation judiciaire publiée ;<br><br>
-
-        ⚪ radiée
-        ou dont l’activité a cessé.
-
-        <br><br>
-
-        Ces indications auront pour objectif
-        de mieux informer les utilisateurs.
-
-        <br><br>
-
-        Elles ne remplaceront jamais
-        la consultation des publications
-        et registres officiels.
+        Aucune entreprise inventée
+        n’est affichée dans cet annuaire.
 
       </div>
 
-      <div class="box">
+      <div
+        class="box"
+        style="
+          font-weight:400;
+          color:#111;
+          line-height:1.55;
+        ">
 
         <strong
           style="
             display:block;
             color:#2f5d46;
             font-size:18px;
+            font-weight:700;
           ">
           Rechercher une entreprise,
           un métier ou un savoir-faire
@@ -1774,129 +1688,395 @@ console.log(
     `;
   }
 
-function renderDirectoryList(){
+  function renderDirectoryList(){
 
-  const input =
-    getElement("observatoireDirectorySearch");
+    const input =
+      getElement(
+        "entrepriseDirectorySearch"
+      );
 
-  const category =
-    getElement("observatoireDirectoryCategory");
+    const filter =
+      getElement(
+        "entrepriseDirectoryFilter"
+      );
 
-  const list =
-    getElement("observatoireDirectoryList");
+    const list =
+      getElement(
+        "entrepriseDirectoryList"
+      );
 
-  const count =
-    getElement("observatoireDirectoryCount");
+    const count =
+      getElement(
+        "entrepriseDirectoryCount"
+      );
 
-  if(!list){
-    return;
-  }
+    if(!list){
 
-  const query =
-    normalizeText(
-      input ? input.value : ""
-    );
+      return;
+    }
 
-  const categoryValue =
-    category ? category.value : "all";
+    const query =
+      normalizeText(
+        input ? input.value : ""
+      );
 
-  let companies =
-    loadCompanies().filter(function(company){
+    const filterValue =
+      filter ? filter.value : "all";
 
-      const searchable =
-        normalizeText(
-          [
-            company.name,
-            company.activity,
-            company.description,
-            company.city,
-            company.address
-          ].join(" ")
-        );
+    let companies =
+      loadDirectory().filter(
+        function(company){
 
-      if(
-        query &&
-        !searchable.includes(query)
-      ){
-        return false;
-      }
+          const searchable =
+            normalizeText(
+              [
+                company.name,
+                company.activity,
+                company.description,
+                company.city,
+                company.address
+              ].join(" ")
+            );
 
-      if(
-        categoryValue === "partner" &&
-        !company.partner
-      ){
-        return false;
-      }
+          if(
+            query &&
+            !searchable.includes(query)
+          ){
 
-      if(
-        categoryValue === "official" &&
-        company.partner
-      ){
-        return false;
-      }
+            return false;
+          }
 
-      if(
-        categoryValue === "artisan" ||
-        categoryValue === "commerce" ||
-        categoryValue === "entreprise"
-      ){
-        if(
-          getCompanyCategory(company) !==
-          categoryValue
-        ){
-          return false;
+          if(
+            filterValue === "partner" &&
+            !company.partner
+          ){
+
+            return false;
+          }
+
+          if(
+            filterValue === "official" &&
+            company.partner
+          ){
+
+            return false;
+          }
+
+          return true;
         }
-      }
+      );
 
-      return true;
-    });
+    companies =
+      sortCompanies(companies);
 
-  companies.sort(function(a,b){
+    if(count){
 
-    return String(a.name || "").localeCompare(
-      String(b.name || ""),
-      "fr",
-      {
-        sensitivity:"base"
-      }
-    );
-  });
+      count.textContent =
+        companies.length
+          ? companies.length +
+            " entreprise(s) trouvée(s)."
+          : "L’annuaire sera disponible après son raccordement officiel.";
+    }
 
-  if(count){
+    if(!companies.length){
 
-    count.textContent =
-      companies.length +
-      " résultat(s) trouvé(s).";
-  }
-
-  if(!companies.length){
-
-    list.innerHTML = `
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          color:#111;
-          line-height:1.5;
-        ">
-        Aucun résultat ne correspond
-        à votre recherche actuelle.
-      </div>
-    `;
-
-    return;
-  }
-
-  list.innerHTML =
-    companies.map(function(company){
-
-      return `
+      list.innerHTML = `
         <div
           class="box"
           style="
+            border-left:6px solid #2f5d46;
             font-weight:400;
             color:#111;
-            line-height:1.5;
+            line-height:1.55;
+          ">
+
+          L’annuaire économique Bo'CitéArt
+          ne contient actuellement
+          aucune entreprise enregistrée.
+
+          <br><br>
+
+          Les entreprises apparaîtront ici
+          dès le raccordement officiel
+          aux données publiques nationales.
+
+          <br><br>
+
+          Les outils de recherche,
+          de filtrage
+          et de consultation des fiches
+          sont déjà préparés.
+
+        </div>
+      `;
+
+      return;
+    }
+
+    list.innerHTML =
+      companies.map(function(company){
+
+        return `
+          <div
+            class="box"
+            style="
+              font-weight:400;
+              color:#111;
+              line-height:1.5;
+            ">
+
+            <strong
+              style="
+                display:block;
+                color:#2f5d46;
+                font-size:18px;
+                font-weight:700;
+                line-height:1.4;
+              ">
+              ${escapeValue(
+                company.name || ""
+              )}
+            </strong>
+
+            <div
+              style="
+                margin-top:9px;
+                color:#2f5d46;
+                font-size:16px;
+                font-weight:600;
+              ">
+              ${escapeValue(
+                company.activity || ""
+              )}
+            </div>
+
+            <div style="margin-top:9px;">
+              ${escapeValue(
+                company.description || ""
+              )}
+            </div>
+
+            ${
+              company.city
+                ? `
+                  <div style="margin-top:9px;">
+
+                    Commune :
+
+                    <strong
+                      style="
+                        color:#2f5d46;
+                        font-weight:600;
+                      ">
+                      ${escapeValue(
+                        company.city
+                      )}
+                    </strong>
+
+                  </div>
+                `
+                : ""
+            }
+
+            <button
+              class="choiceBtn entrepriseOpenCompanyBtn"
+              type="button"
+              data-company-id="${escapeValue(
+                company.id || ""
+              )}"
+              style="width:100%;margin-top:12px;">
+              Consulter la fiche
+            </button>
+
+          </div>
+        `;
+      }).join("");
+
+    list
+      .querySelectorAll(
+        ".entrepriseOpenCompanyBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          openCompanyCard(
+            button.getAttribute(
+              "data-company-id"
+            )
+          );
+        };
+      });
+  }
+
+  function bindDirectory(){
+
+    const input =
+      getElement(
+        "entrepriseDirectorySearch"
+      );
+
+    const filter =
+      getElement(
+        "entrepriseDirectoryFilter"
+      );
+
+    if(input){
+
+      input.oninput =
+        renderDirectoryList;
+    }
+
+    if(filter){
+
+      filter.onchange =
+        renderDirectoryList;
+    }
+
+    renderDirectoryList();
+  }
+
+    function openDirectory(){
+
+    module.renderModal(
+      "Les entreprises de votre ville",
+      getDirectoryHtml()
+    );
+
+    window.setTimeout(function(){
+
+      bindDirectory();
+
+    },0);
+  }
+
+  function openCompanyCard(companyId){
+
+    const company =
+      loadDirectory().find(function(item){
+
+        return item.id === companyId;
+      });
+
+    if(!company){
+
+      alert(
+        "Cette entreprise est introuvable."
+      );
+
+      return;
+    }
+
+    const partnerContent =
+      company.partner
+        ? `
+          <div
+            class="box entrepriseInfoBox"
+            style="
+              font-weight:400;
+              color:#111;
+              line-height:1.55;
+            ">
+
+            <strong
+              style="
+                display:block;
+                color:#2f5d46;
+                font-size:18px;
+                font-weight:700;
+                line-height:1.4;
+              ">
+              Fiche Bo'CitéArt enrichie
+            </strong>
+
+            <div style="margin-top:14px;">
+
+              Cette entreprise peut présenter
+              ses services,
+              ses réalisations,
+              ses recrutements,
+              ses actualités
+              et ses engagements locaux.
+
+            </div>
+
+          </div>
+
+          <div
+            style="
+              display:flex;
+              gap:8px;
+              flex-wrap:wrap;
+            ">
+
+            <button
+              class="choiceBtn"
+              id="companyRequestQuoteBtn"
+              type="button">
+
+              Demander un devis
+
+            </button>
+
+            <button
+              class="choiceBtn"
+              id="companyRecruitmentBtn"
+              type="button">
+
+              Recrutements
+
+            </button>
+
+          </div>
+        `
+        : `
+          <div
+            class="box entrepriseInfoBox"
+            style="
+              font-weight:400;
+              color:#111;
+              line-height:1.55;
+            ">
+
+            <strong
+              style="
+                display:block;
+                color:#2f5d46;
+                font-size:18px;
+                font-weight:700;
+                line-height:1.4;
+              ">
+              Informations publiques
+            </strong>
+
+            <div style="margin-top:14px;">
+
+              Cette fiche reprend
+              les informations publiques disponibles.
+
+              <br><br>
+
+              L’entreprise pourra compléter
+              sa présentation,
+              ses services,
+              ses recrutements
+              et ses engagements locaux
+              depuis son espace professionnel.
+
+            </div>
+
+          </div>
+        `;
+
+    module.renderModal(
+      company.name || "Fiche entreprise",
+      `
+        <div
+          class="box entrepriseInfoBox"
+          style="
+            font-weight:400;
+            color:#111;
+            line-height:1.55;
           ">
 
           <strong
@@ -1904,153 +2084,22 @@ function renderDirectoryList(){
               display:block;
               color:#2f5d46;
               font-size:18px;
-              font-weight:900;
-              line-height:1.4;
-            ">
-            ${escapeValue(company.name)}
-          </strong>
-
-          <div
-            style="
-              margin-top:9px;
-              color:#2f5d46;
-              font-size:16px;
               font-weight:700;
               line-height:1.4;
             ">
-            ${escapeValue(company.activity)}
-          </div>
+            Que fait cette entreprise ?
+          </strong>
 
-          <div
-            style="
-              margin-top:9px;
-              color:#111;
-              font-weight:400;
-              line-height:1.5;
-            ">
-            ${escapeValue(company.description)}
-          </div>
+          <div style="margin-top:14px;">
 
-          <div
-            style="
-              margin-top:9px;
-              color:#111;
-              font-weight:400;
-            ">
-
-            Commune :
-
-            <span
-              style="
-                color:#2f5d46;
-                font-weight:700;
-              ">
-              ${escapeValue(company.city || "")}
-            </span>
-
-          </div>
-
-          <div style="margin-top:12px;">
-
-            <button
-              class="choiceBtn observatoireOpenCompanyBtn"
-              type="button"
-              data-company-id="${escapeValue(company.id)}">
-
-              Consulter la fiche
-
-            </button>
+            ${escapeValue(
+              company.description || ""
+            )}
 
           </div>
 
         </div>
-      `;
 
-    }).join("");
-
-  list
-    .querySelectorAll(
-      ".observatoireOpenCompanyBtn"
-    )
-    .forEach(function(button){
-
-      button.onclick = function(){
-
-        const companyId =
-          button.getAttribute(
-            "data-company-id"
-          );
-
-        if(
-          typeof module.openCompanyCard ===
-          "function"
-        ){
-
-          module.openCompanyCard(
-            companyId
-          );
-        }
-      };
-
-    });
-}
-
- function bindDirectory(){
-
-  const input =
-    getElement("entrepriseDirectorySearch");
-
-  const filter =
-    getElement("entrepriseDirectoryFilter");
-
-  if(input){
-    input.oninput =
-      renderDirectoryList;
-  }
-
-  if(filter){
-    filter.onchange =
-      renderDirectoryList;
-  }
-
-  renderDirectoryList();
-}
-
-function openDirectory(){
-
-  module.renderModal(
-    "Les entreprises de votre ville",
-    getDirectoryHtml()
-  );
-
-  window.setTimeout(function(){
-
-    bindDirectory();
-
-  },0);
-}
-
-function openCompanyCard(companyId){
-
-  const company =
-    loadDirectory().find(function(item){
-
-      return item.id === companyId;
-
-    });
-
-  if(!company){
-
-    alert(
-      "Cette entreprise est introuvable."
-    );
-
-    return;
-  }
-
-  const partnerContent =
-    company.partner
-      ? `
         <div
           class="box entrepriseInfoBox"
           style="
@@ -2063,243 +2112,132 @@ function openCompanyCard(companyId){
             style="
               display:block;
               color:#2f5d46;
-              font-size:20px;
-              font-weight:900;
+              font-size:18px;
+              font-weight:700;
               line-height:1.4;
             ">
-            Fiche Bo'CitéArt enrichie
+            Activité
           </strong>
 
-          <div style="margin-top:14px;">
+          <div
+            style="
+              margin-top:10px;
+              color:#111;
+              font-weight:400;
+            ">
 
-            Cette entreprise peut présenter
-            ses services,
-            ses réalisations,
-            ses recrutements,
-            ses actualités
-            et ses engagements locaux.
+            ${escapeValue(
+              company.activity || ""
+            )}
+
+          </div>
+
+          <strong
+            style="
+              display:block;
+              margin-top:18px;
+              color:#2f5d46;
+              font-size:18px;
+              font-weight:700;
+              line-height:1.4;
+            ">
+            Commune
+          </strong>
+
+          <div
+            style="
+              margin-top:10px;
+              color:#111;
+              font-weight:400;
+            ">
+
+            ${escapeValue(
+              company.city || ""
+            )}
 
           </div>
 
         </div>
 
-        <div
-          style="
-            display:flex;
-            gap:8px;
-            flex-wrap:wrap;
-          ">
-
-          <button
-            class="choiceBtn"
-            id="companyRequestQuoteBtn"
-            type="button">
-
-            Demander un devis
-
-          </button>
-
-          <button
-            class="choiceBtn"
-            id="companyRecruitmentBtn"
-            type="button">
-
-            Recrutements
-
-          </button>
-
-        </div>
+        ${partnerContent}
       `
-      : `
-        <div
-          class="box entrepriseInfoBox"
-          style="
-            font-weight:400;
-            color:#111;
-            line-height:1.55;
-          ">
-
-          <strong
-            style="
-              display:block;
-              color:#2f5d46;
-              font-size:20px;
-              font-weight:900;
-              line-height:1.4;
-            ">
-            Informations publiques
-          </strong>
-
-          <div style="margin-top:14px;">
-
-            Cette fiche reprend actuellement
-            les informations publiques disponibles.
-
-            <br><br>
-
-            L’entreprise pourra enrichir volontairement
-            sa présentation
-            en devenant partenaire Bo'CitéArt.
-
-          </div>
-
-        </div>
-      `;
-
-  module.renderModal(
-    company.name,
-    `
-      <div
-        class="box entrepriseInfoBox"
-        style="
-          font-weight:400;
-          color:#111;
-          line-height:1.55;
-        ">
-
-        <strong
-          style="
-            display:block;
-            color:#2f5d46;
-            font-size:20px;
-            font-weight:900;
-            line-height:1.4;
-          ">
-          Que fait cette entreprise ?
-        </strong>
-
-        <div style="margin-top:14px;">
-
-          ${escapeValue(company.description)}
-
-        </div>
-
-      </div>
-
-      <div
-        class="box entrepriseInfoBox"
-        style="
-          font-weight:400;
-          color:#111;
-          line-height:1.55;
-        ">
-
-        <strong
-          style="
-            display:block;
-            color:#2f5d46;
-            font-size:20px;
-            font-weight:900;
-            line-height:1.4;
-          ">
-          Activité
-        </strong>
-
-        <div
-          style="
-            margin-top:10px;
-            color:#111;
-            font-weight:400;
-          ">
-
-          ${escapeValue(company.activity)}
-
-        </div>
-
-        <strong
-          style="
-            display:block;
-            margin-top:18px;
-            color:#2f5d46;
-            font-size:20px;
-            font-weight:900;
-            line-height:1.4;
-          ">
-          Commune
-        </strong>
-
-        <div
-          style="
-            margin-top:10px;
-            color:#111;
-            font-weight:400;
-          ">
-
-          ${escapeValue(company.city)}
-
-        </div>
-
-      </div>
-
-      ${partnerContent}
-    `
-  );
-
-  window.setTimeout(function(){
-
-    const quoteButton =
-      getElement("companyRequestQuoteBtn");
-
-    const recruitmentButton =
-      getElement("companyRecruitmentBtn");
-
-    if(quoteButton){
-
-      quoteButton.onclick = function(){
-
-        alert(
-          "La demande de devis sera transmise depuis le compte sécurisé de l’utilisateur."
-        );
-      };
-    }
-
-    if(recruitmentButton){
-
-      recruitmentButton.onclick = function(){
-
-        module.openScreen(
-          "emploi"
-        );
-      };
-    }
-
-  },0);
-}
-   
-const originalHome =
-  module.screens.home;
-
-module.registerScreen(
-  "home",
-  function(){
-
-    originalHome();
+    );
 
     window.setTimeout(function(){
 
-      bindHomeAi();
+      const quoteButton =
+        getElement(
+          "companyRequestQuoteBtn"
+        );
+
+      const recruitmentButton =
+        getElement(
+          "companyRecruitmentBtn"
+        );
+
+      if(quoteButton){
+
+        quoteButton.onclick = function(){
+
+          alert(
+            "La demande de devis sera transmise depuis le compte sécurisé de l’utilisateur."
+          );
+        };
+      }
+
+      if(recruitmentButton){
+
+        recruitmentButton.onclick = function(){
+
+          module.openScreen(
+            "emploi"
+          );
+        };
+      }
 
     },0);
   }
-);
 
-module.registerScreen(
-  "annuaire",
-  openDirectory
-);
+     const originalHome =
+    module.screens.home;
 
-module.openCompanyCard =
-  openCompanyCard;
+  module.registerScreen(
+    "home",
+    function(){
 
-module.loadDirectory =
-  loadDirectory;
+      originalHome();
 
-module.saveDirectory =
-  saveDirectory;
+      window.setTimeout(function(){
 
-console.log(
-  "✅ Module Entreprise — partie 2 chargée"
-);
+        if(
+          typeof bindHomeAi ===
+          "function"
+        ){
+
+          bindHomeAi();
+        }
+
+      },0);
+    }
+  );
+
+  module.registerScreen(
+    "annuaire",
+    openDirectory
+  );
+
+  module.openCompanyCard =
+    openCompanyCard;
+
+  module.loadDirectory =
+    loadDirectory;
+
+  module.saveDirectory =
+    saveDirectory;
+
+  console.log(
+    "✅ Module Entreprise — partie 2 chargée"
+  );
 
 })();
 
@@ -3402,21 +3340,35 @@ function openEmployment(){
 
         </select>
 
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Commune du poste
-        </label>
+      <label
+  style="
+    display:block;
+    margin-top:10px;
+    font-weight:900;
+  ">
+  Commune du poste
+</label>
 
-        <input
-          id="employmentCity"
-          class="miniField"
-          type="text"
-          value="Wattignies"
-          placeholder="Commune">
+<input
+  id="employmentCity"
+  class="miniField"
+  type="text"
+  autocomplete="address-level2"
+  placeholder="Indiquez la commune du poste"
+  required>
+
+<div
+  class="muted"
+  style="
+    margin-top:7px;
+    color:#555;
+    font-size:14px;
+    line-height:1.5;
+  ">
+  Indiquez uniquement la commune dans laquelle
+  le poste est proposé.
+  Aucune adresse personnelle n’est demandée.
+</div>
 
         <div
           class="box entrepriseInfoBox"
@@ -20755,43 +20707,59 @@ function openMutualisation(){
         avec Bo'CitéArt.
       </div>
 
-      <div class="box">
-
-        <strong>
-          Compte de démonstration
-        </strong>
-
-        <br><br>
-
-        Entreprise :
-
-        <strong>
-          ${escapeValue(account.companyName)}
-        </strong>
-
-        <br><br>
-
-        Code personnel de démonstration :
-
-        <br><br>
+       <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.55;
+        ">
 
         <strong
           style="
-            display:inline-block;
-            padding:8px 12px;
-            border:2px solid #2f5d46;
-            border-radius:8px;
-            font-size:18px;
+            font-size:16px;
+            color:#2f5d46;
           ">
-          ${escapeValue(account.partnerCode)}
+          Activation de votre espace professionnel
         </strong>
 
         <br><br>
 
-        Dans la version définitive,
-        ce code sera communiqué automatiquement
-        après l’enregistrement de la fiche entreprise
-        et la validation du partenariat.
+        Complétez les renseignements demandés
+        afin de préparer l’ouverture
+        de votre espace professionnel Bo'CitéArt.
+
+        <br><br>
+
+        Vous pouvez dès maintenant parcourir
+        et tester l’ensemble du fonctionnement.
+
+        <br><br>
+
+        Lors de l’ouverture officielle,
+        votre accès sera activé après confirmation
+        de votre abonnement.
+
+        <br><br>
+
+        Le paiement pourra être réalisé :
+
+        <br><br>
+
+        • immédiatement par carte bancaire ;<br>
+        • par prélèvement bancaire à partir d’un RIB ou d’un IBAN.
+
+        <br><br>
+
+        En cas de prélèvement bancaire,
+        l’activation pourra être décalée
+        pendant le délai de confirmation
+        imposé par le système bancaire.
+
+        <br><br>
+
+        Vos données professionnelles
+        et vos accès privés seront alors
+        sécurisés par le serveur Bo'CitéArt.
       </div>
 
       <label
@@ -31847,75 +31815,58 @@ console.log(
       return;
     }
 
-    host.innerHTML =
-      companies.map(function(company){
+     host.innerHTML = `
 
-        return `
-          <div class="box">
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.55;
+        ">
 
-            <strong style="font-size:17px;">
-              ${escapeValue(
-                company.name || ""
-              )}
-            </strong>
+        <strong
+          style="
+            font-size:16px;
+            color:#2f5d46;
+          ">
+          Annuaire économique national
+        </strong>
 
-            <br><br>
+        <br><br>
 
-            <strong style="color:#2f5d46;">
-              ${escapeValue(
-                company.activity || ""
-              )}
-            </strong>
+        L’annuaire Bo'CitéArt sera alimenté
+        lors de son raccordement officiel
+        aux bases nationales des entreprises.
 
-            <br><br>
+        <br><br>
 
-            ${escapeValue(
-              company.description || ""
-            )}
+        Les entreprises pourront alors compléter :
 
-            ${
-              company.city
-                ? `
-                  <br><br>
+        <br><br>
 
-                  Commune :
-                  <strong>
-                    ${escapeValue(
-                      company.city
-                    )}
-                  </strong>
-                `
-                : ""
-            }
+        • leur présentation ;<br>
+        • leurs activités ;<br>
+        • leurs services ;<br>
+        • leurs offres d’emploi ;<br>
+        • leurs informations publiques.
 
-            <button
-              class="choiceBtn localDirectoryCvBtn"
-              type="button"
-              data-company-id="${escapeValue(
-                company.id
-              )}"
-              style="width:100%;margin-top:12px;">
-              Envoyer une candidature spontanée
-            </button>
-          </div>
-        `;
-      }).join("");
+        <br><br>
 
-    host
-      .querySelectorAll(
-        ".localDirectoryCvBtn"
-      )
-      .forEach(function(button){
+        Les recherches, les filtres
+        et les candidatures spontanées
+        pourront être utilisés dès que les entreprises
+        seront officiellement enregistrées
+        dans Bo'CitéArt.
 
-        button.onclick = function(){
+        <br><br>
 
-          openSpontaneousApplicationForm(
-            button.getAttribute(
-              "data-company-id"
-            )
-          );
-        };
-      });
+        Pour le moment,
+        aucune entreprise fictive
+        n’est affichée dans l’annuaire.
+
+      </div>
+
+    `;
   }
 
   function openSpontaneousApplicationForm(companyId){
@@ -45491,6 +45442,7 @@ function getDirectoryHtml(territory){
   );
 
 })();
+
 
 
 
