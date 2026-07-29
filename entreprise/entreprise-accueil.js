@@ -733,16 +733,11 @@ if(backButton){
     "function"
   ){
 
-    app.registerScreen(
-      "home",
-      openIntroduction
-    );
-
-    app.registerScreen(
-      "accueil",
-      openIntroduction
-    );
-  }
+ app.registerScreen(
+  "introductionEntreprise",
+  openIntroduction
+);
+}
 
   console.log(
     "✅ Accueil Entreprise en deux étapes chargé"
