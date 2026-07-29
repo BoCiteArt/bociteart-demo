@@ -693,25 +693,41 @@ if(backButton){
      OUVERTURE DE L’ESPACE ENTREPRISE EXISTANT
      ======================================================= */
 
-  function openRealEntrepriseHome(){
+function openRealEntrepriseHome(){
 
-    if(
-      typeof originalEntrepriseHome ===
-      "function"
-    ){
+  if(
+    typeof originalEntrepriseHome ===
+    "function"
+  ){
 
-      originalEntrepriseHome.call(
-        app
-      );
-
-      return;
-    }
-
-    alert(
-      "L’accueil avec les bandes défilantes est momentanément indisponible."
+    originalEntrepriseHome.call(
+      app
     );
+
+    window.setTimeout(function(){
+
+      const bands =
+        document.getElementById(
+          "entrepriseHomeBands"
+        );
+
+      if(bands){
+
+        bands.scrollIntoView({
+          behavior:"smooth",
+          block:"start"
+        });
+      }
+
+    },100);
+
+    return;
   }
 
+  alert(
+    "L’accueil avec les bandes défilantes est momentanément indisponible."
+  );
+}
   /* =======================================================
      ENREGISTREMENT
      ======================================================= */
