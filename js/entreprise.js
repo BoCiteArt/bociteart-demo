@@ -2891,31 +2891,71 @@ function getEmploymentHomeHtml(){
           ${titleStyle}
           font-size:17px;
         ">
-        Aucune offre ne correspond actuellement ?
-      </div>
+<div
+  class="box entrepriseInfoBox"
+  style="
+    border-left:6px solid #2f5d46;
+    color:#111;
+    font-weight:400;
+    line-height:1.55;
+  ">
 
-      <br>
+  <strong
+    style="
+      display:block;
+      color:#2f5d46;
+      font-size:18px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Aucune offre ne correspond actuellement ?
+  </strong>
 
-      <div style="${textStyle}">
-        Le citoyen peut envoyer
-        une candidature spontanée
-        à une entreprise de sa ville,
-        même si celle-ci
-        n’a pas encore publié d’offre.
+  <div style="margin-top:14px;">
 
-        <br><br>
+    Le citoyen peut envoyer une candidature spontanée
+    à une entreprise de sa ville,
+    même si celle-ci n’a pas encore publié d’offre.
 
-        La candidature reste conservée
-        dans l’espace privé de l’entreprise.
+    <br><br>
 
-        <br><br>
+    La candidature reste conservée
+    dans l’espace privé de l’entreprise.
 
-        Elle pourra retrouver le candidat
-        plusieurs mois plus tard
-        lorsqu’un nouveau besoin apparaîtra.
-      </div>
+    <br><br>
 
-    </div>
+    Elle pourra ainsi retrouver le candidat
+    plusieurs mois plus tard,
+    lorsqu’un nouveau besoin apparaîtra.
+
+    <br><br>
+
+    Grâce à
+
+    <strong>
+      <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+    </strong>,
+
+    les habitants disposent également
+    d’une vision plus précise
+    des entreprises,
+    des commerces,
+    des artisans
+    et des savoir-faire présents dans leur ville.
+
+    <br><br>
+
+    Cette meilleure connaissance réciproque
+    permet aux habitants
+    et aux professionnels
+    de mieux se connaître,
+    de renforcer leurs échanges
+    et de devenir durablement
+    plus connectés les uns aux autres.
+
+  </div>
+
+</div>
 
     <div
       class="box entrepriseInfoBox"
@@ -43743,7 +43783,7 @@ function getPresentationHtml(showContinueButton){
           font-weight:900;
           line-height:1.4;
         ">
-        Comprendre l’Observatoire économique Bo'CitéArt
+        Comprendre l’Observatoire économique <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
       </strong>
 
       <br>
@@ -43753,7 +43793,7 @@ function getPresentationHtml(showContinueButton){
 
       <br><br>
 
-      Bo'CitéArt veut en faire
+      <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span> veut en faire
       un véritable outil de découverte,
       de recherche
       et de développement économique.
@@ -43870,7 +43910,7 @@ function getPresentationHtml(showContinueButton){
 
       <br><br>
 
-      L’Observatoire économique Bo'CitéArt
+      L’Observatoire économique <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
       permettra de rechercher une activité,
       un métier,
       un commerce,
@@ -43936,7 +43976,7 @@ function getPresentationHtml(showContinueButton){
 
       <br>
 
-      Bo'CitéArt ne propose pas seulement un annuaire.
+      <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span> ne propose pas seulement un annuaire.
 
       <br><br>
 
@@ -43993,7 +44033,7 @@ function getMandatoryIntroductionHtml(){
           font-weight:900;
           line-height:1.4;
         ">
-        Observatoire économique Bo'CitéArt
+        Observatoire économique <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
       </strong>
 
       <br>
@@ -44025,7 +44065,7 @@ function getMandatoryIntroductionHtml(){
       <br>
 
       Avant d’accéder à l’Observatoire économique
-      Bo'CitéArt,
+      <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>,
       la lecture de cette présentation est nécessaire.
 
       <br><br>
@@ -44045,134 +44085,154 @@ function getMandatoryIntroductionHtml(){
   `;
 }
 
-function getObservatoireHomeHtml(){
+  function getObservatoireHomeHtml(){
 
-  return `
-    <div
-      class="box"
-      style="
-        border-left:6px solid #2f5d46;
-        line-height:1.55;
-        font-weight:400;
-        color:#111;
-      ">
-
-      <strong
+    return `
+      <div
+        class="box"
         style="
-          display:block;
-          font-size:19px;
-          color:#2f5d46;
-          font-weight:900;
-          line-height:1.4;
+          border-left:6px solid #2f5d46;
+          line-height:1.55;
+          font-weight:400;
+          color:#111;
         ">
-        Observatoire économique Bo'CitéArt
-      </strong>
 
-      <br>
+        <strong
+          style="
+            display:block;
+            font-size:17px;
+            color:#2f5d46;
+            font-weight:700;
+            line-height:1.4;
+          ">
+          Observatoire économique
+          <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+        </strong>
 
-      L’annuaire vivant des entreprises,
-      commerces et artisans de France
+        <br>
 
-      <br><br>
+        L’annuaire vivant des entreprises,
+        des commerces,
+        des artisans
+        et des savoir-faire présents en France.
 
-      Recherchez près de chez vous
-      ou élargissez directement votre recherche
-      à toute la France.
-    </div>
+        <br><br>
 
-    <details
-      id="observatoirePresentationDetails"
-      class="box"
-      style="
-        font-weight:400;
-        color:#111;
-      ">
+        Les habitants peuvent découvrir gratuitement
+        les professionnels présents dans leur commune
+        et dans un rayon allant jusqu’à 20 kilomètres.
 
-      <summary
-        style="
-          cursor:pointer;
-          font-size:17px;
-          font-weight:900;
-          color:#2f5d46;
-        ">
-        Relire la présentation complète
-      </summary>
+        <br><br>
 
-      <div style="margin-top:14px;">
-        ${getPresentationHtml(false)}
+        Cette meilleure visibilité permet
+        aux habitants et aux professionnels
+        de mieux se connaître,
+        de renforcer leurs échanges
+        et de devenir plus directement connectés
+        à la vie économique de leur territoire.
+
       </div>
-    </details>
 
-    <div
-      class="box"
-      style="
-        line-height:1.55;
-        font-weight:400;
-        color:#111;
-      ">
-
-      <strong
+      <div
         style="
-          display:block;
-          font-size:17px;
-          color:#2f5d46;
-          font-weight:900;
-          line-height:1.4;
+          font-weight:400;
+          color:#111;
         ">
-        Rechercher dans
-      </strong>
 
-      <br>
+        ${getPresentationHtml(false)}
 
-      Choisissez votre territoire.
-      Vous arriverez directement
-      dans l’annuaire correspondant.
-    </div>
+      </div>
 
-    <div
-      style="
-        display:grid;
-        grid-template-columns:1fr;
-        gap:9px;
-      ">
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          line-height:1.55;
+          font-weight:400;
+          color:#111;
+        ">
 
-      <button
-        class="choiceBtn observatoireTerritoryBtn"
-        type="button"
-        data-observatoire-territory="commune">
-        Ma commune
-      </button>
+        <strong
+          style="
+            display:block;
+            font-size:17px;
+            color:#2f5d46;
+            font-weight:700;
+            line-height:1.4;
+          ">
+          Rechercher autour de votre ville
+        </strong>
 
-      <button
-        class="choiceBtn observatoireTerritoryBtn"
-        type="button"
-        data-observatoire-territory="voisines">
-        Communes voisines
-      </button>
+        <br>
 
-      <button
-        class="choiceBtn observatoireTerritoryBtn"
-        type="button"
-        data-observatoire-territory="departement">
-        Mon département
-      </button>
+        Choisissez votre commune
+        pour découvrir les entreprises,
+        les commerces,
+        les artisans
+        et les savoir-faire présents
+        dans un rayon allant jusqu’à 20 kilomètres.
 
-      <button
-        class="choiceBtn observatoireTerritoryBtn"
-        type="button"
-        data-observatoire-territory="region">
-        Ma région
-      </button>
+        <br><br>
+
+        Les informations publiques
+        restent accessibles gratuitement
+        aux habitants.
+
+      </div>
 
       <button
         class="choiceBtn observatoireTerritoryBtn"
         type="button"
-        data-observatoire-territory="france">
-        Toute la France
+        data-observatoire-territory="commune"
+        style="width:100%;">
+        Choisir ma ville
       </button>
-    </div>
-  `;
-}
+
+      <div
+        class="box"
+        style="
+          margin-top:10px;
+          border-left:6px solid #2f5d46;
+          line-height:1.55;
+          font-weight:400;
+          color:#111;
+        ">
+
+        <strong
+          style="
+            display:block;
+            font-size:17px;
+            color:#2f5d46;
+            font-weight:700;
+            line-height:1.4;
+          ">
+          Services professionnels
+        </strong>
+
+        <br>
+
+        Les entreprises et les commerces
+        souhaitant élargir leurs recherches
+        à toute la France,
+        développer leurs relations professionnelles
+        ou accéder aux outils complémentaires en B2B
+        peuvent consulter la page
+        « Abonnement et avantages professionnels ».
+
+        <br><br>
+
+        L’abonnement finance
+        la maintenance,
+        l’actualisation des services
+        et les outils professionnels proposés par
+
+        <strong>
+          <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>.
+        </strong>
+
+      </div>
+    `;
+  }
 
 function getDirectoryHtml(territory){
 
