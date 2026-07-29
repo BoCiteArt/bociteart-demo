@@ -716,38 +716,49 @@ if(backButton){
      ENREGISTREMENT
      ======================================================= */
 
-  app.openHome =
-    openIntroduction;
+app.openEntrepriseIntroduction =
+  openIntroduction;
 
-  app.openEntrepriseHome =
-    openIntroduction;
-
-  app.openEntrepriseIntroduction =
-    openIntroduction;
-   
-  app.openRealEntrepriseHome =
-    openRealEntrepriseHome;
-
-  if(
-    typeof app.registerScreen ===
-    "function"
-  ){
-
-app.registerScreen(
-  "introductionEntreprise",
-  openIntroduction
-);
+app.openRealEntrepriseHome =
+  openRealEntrepriseHome;
 
 if(
   typeof originalEntrepriseHome ===
   "function"
 ){
 
-  app.registerScreen(
-    "bandesEntreprise",
-    originalEntrepriseHome
-  );
+  app.openHome =
+    originalEntrepriseHome;
+
+  app.openEntrepriseHome =
+    originalEntrepriseHome;
 }
+
+if(
+  typeof app.registerScreen ===
+  "function"
+){
+
+  app.registerScreen(
+    "introductionEntreprise",
+    openIntroduction
+  );
+
+  if(
+    typeof originalEntrepriseHome ===
+    "function"
+  ){
+
+    app.registerScreen(
+      "home",
+      originalEntrepriseHome
+    );
+
+    app.registerScreen(
+      "bandesEntreprise",
+      originalEntrepriseHome
+    );
+  }
 }
   console.log(
     "✅ Accueil Entreprise en deux étapes chargé"
