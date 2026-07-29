@@ -692,7 +692,6 @@ if(backButton){
   /* =======================================================
      OUVERTURE DE L’ESPACE ENTREPRISE EXISTANT
      ======================================================= */
-
 function openRealEntrepriseHome(){
 
   if(
@@ -700,32 +699,12 @@ function openRealEntrepriseHome(){
     "function"
   ){
 
-    originalEntrepriseHome.call(
-      app
-    );
-
-    window.setTimeout(function(){
-
-      const bands =
-        document.getElementById(
-          "entrepriseHomeBands"
-        );
-
-      if(bands){
-
-        bands.scrollIntoView({
-          behavior:"smooth",
-          block:"start"
-        });
-      }
-
-    },100);
-
+    originalEntrepriseHome.call(app);
     return;
   }
 
   alert(
-    "L’accueil avec les bandes défilantes est momentanément indisponible."
+    "L’espace Entreprise est momentanément indisponible."
   );
 }
   /* =======================================================
@@ -739,18 +718,6 @@ app.openRealEntrepriseHome =
   openRealEntrepriseHome;
 
 if(
-  typeof originalEntrepriseHome ===
-  "function"
-){
-
-  app.openHome =
-    originalEntrepriseHome;
-
-  app.openEntrepriseHome =
-    originalEntrepriseHome;
-}
-
-if(
   typeof app.registerScreen ===
   "function"
 ){
@@ -759,23 +726,8 @@ if(
     "introductionEntreprise",
     openIntroduction
   );
-
-  if(
-    typeof originalEntrepriseHome ===
-    "function"
-  ){
-
-    app.registerScreen(
-      "home",
-      originalEntrepriseHome
-    );
-
-    app.registerScreen(
-      "bandesEntreprise",
-      originalEntrepriseHome
-    );
-  }
 }
+
   console.log(
     "✅ Accueil Entreprise en deux étapes chargé"
   );
