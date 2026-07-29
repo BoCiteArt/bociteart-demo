@@ -44753,7 +44753,7 @@ function getMandatoryIntroductionHtml(){
     if(!introIsRead()){
 
       module.renderModal(
-        "Observatoire économique <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>",
+              "Observatoire économique Bo'CitéArt",
         getMandatoryIntroductionHtml()
       );
 
@@ -44786,7 +44786,7 @@ function getMandatoryIntroductionHtml(){
     }
 
     module.renderModal(
-      "Observatoire économique <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>",
+      "Observatoire économique Bo'CitéArt",
       getObservatoireHomeHtml()
     );
 
@@ -44806,7 +44806,7 @@ function getMandatoryIntroductionHtml(){
     openObservatoireHome;
 
   console.log(
-    "✅ Observatoire économique <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span> chargé"
+       "✅ Observatoire économique Bo'CitéArt chargé"
   );
 
 })();
@@ -45351,7 +45351,7 @@ function getMandatoryIntroductionHtml(){
         remindersChanged = true;
 
         console.info(
-          "<span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span> Emploi : annonce masquée après quatre rappels.",
+         "Bo'CitéArt Emploi : annonce masquée après quatre rappels.",
           offer.companyName,
           offer.title
         );
@@ -45382,7 +45382,7 @@ function getMandatoryIntroductionHtml(){
       remindersChanged = true;
 
       console.info(
-        "<span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span> Emploi : rappel de recrutement préparé.",
+         "Bo'CitéArt Emploi : rappel de recrutement préparé.",
         offer.companyName,
         offer.title,
         "Rappel " +
