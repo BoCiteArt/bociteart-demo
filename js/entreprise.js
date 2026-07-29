@@ -10554,10 +10554,15 @@ Voir les entreprises de ma ville
 
   "use strict";
 
-  if(!window.BociteEntreprise){
+  const app =
+    window.BociteEntreprise;
+
+  if(!app){
+
     console.error(
       "Bo'CitéArt Entreprise : module principal introuvable."
     );
+
     return;
   }
 
@@ -10565,22 +10570,87 @@ Voir les entreprises de ma ville
     return;
   }
 
-  window.BOCITEART_ENTREPRISE_CONNECTED = true;
+  window.BOCITEART_ENTREPRISE_CONNECTED =
+    true;
 
   function openEntrepriseModule(event){
 
     if(event){
+
       event.preventDefault();
       event.stopPropagation();
 
       if(
-        typeof event.stopImmediatePropagation === "function"
+        typeof event.stopImmediatePropagation ===
+        "function"
       ){
         event.stopImmediatePropagation();
       }
     }
 
-    window.BociteEntreprise.openHome();
+    /*
+      Premier choix :
+      écran officiel d’introduction Entreprise.
+    */
+
+    if(
+      app.screens &&
+      typeof app.screens.introductionEntreprise ===
+      "function"
+    ){
+
+      app.openScreen(
+        "introductionEntreprise"
+      );
+
+      return;
+    }
+
+    /*
+      Deuxième choix :
+      fonction officielle fournie
+      par entreprise-accueil.js.
+    */
+
+    if(
+      typeof app.openEntrepriseIntroduction ===
+      "function"
+    ){
+
+      app.openEntrepriseIntroduction();
+
+      return;
+    }
+
+    /*
+      Compatibilité avec l’ancienne version
+      de entreprise-accueil.js.
+    */
+
+    if(
+      app.screens &&
+      typeof app.screens.accueil ===
+      "function"
+    ){
+
+      app.openScreen(
+        "accueil"
+      );
+
+      return;
+    }
+
+    /*
+      Dernier recours seulement.
+    */
+
+    if(
+      typeof app.openHome ===
+      "function"
+    ){
+
+      app.openHome();
+    }
   }
 
   document.addEventListener(
@@ -10589,7 +10659,8 @@ Voir les entreprises de ma ville
 
       const target =
         event.target &&
-        typeof event.target.closest === "function"
+        typeof event.target.closest ===
+        "function"
           ? event.target.closest(
               '[data-commerce-space="entreprise"],' +
               '#openEntrepriseSpace,' +
@@ -10602,6 +10673,7 @@ Voir les entreprises de ma ville
       }
 
       openEntrepriseModule(event);
+
     },
     true
   );
@@ -10609,17 +10681,11 @@ Voir les entreprises de ma ville
   window.openEntrepriseSpace =
     openEntrepriseModule;
 
-  window.openEntrepriseHome =
-    function(){
-      window.BociteEntreprise.openHome();
-    };
-
   console.log(
-    "✅ Module Entreprise raccordé à Bo'CitéArt"
+    "✅ Module Entreprise raccordé à son introduction"
   );
 
 })();
-
 /* =========================================================
    BO'CITÉART — RECHERCHE PROFESSIONNELLE PRIVÉE
    COMMUNE INDÉPENDANTE • FRANCE • EUROPE
