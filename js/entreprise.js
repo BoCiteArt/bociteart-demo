@@ -2712,20 +2712,7 @@ Et après le recrutement ?
 <button
   class="choiceBtn"
   type="button"
-  onclick="
-    if (
-      window.BociteEntreprise &&
-      window.BociteEntreprise.screens &&
-      typeof window.BociteEntreprise.screens.home === 'function'
-    ) {
-      window.BociteEntreprise.state.previousScreen =
-        window.BociteEntreprise.state.currentScreen;
-
-      window.BociteEntreprise.state.currentScreen = 'home';
-
-      window.BociteEntreprise.screens.home();
-    }
-  ">
+  onclick="window.BociteEntreprise.openScreen('home', { fromBack:true });">
 
   Découvrir les thèmes utiles et complémentaires
 
