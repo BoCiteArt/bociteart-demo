@@ -733,12 +733,22 @@ if(backButton){
     "function"
   ){
 
- app.registerScreen(
+app.registerScreen(
   "introductionEntreprise",
   openIntroduction
 );
-}
 
+if(
+  typeof originalEntrepriseHome ===
+  "function"
+){
+
+  app.registerScreen(
+    "bandesEntreprise",
+    originalEntrepriseHome
+  );
+}
+}
   console.log(
     "✅ Accueil Entreprise en deux étapes chargé"
   );
