@@ -43779,6 +43779,90 @@ ${brandHtml} enrichira les résultats au fur et à mesure du raccordement des so
    LECTURE OBLIGATOIRE • TERRITOIRE • ANNUAIRE
    ========================================================= */
 
+(function patchBociteObservatoireEconomique(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+
+    console.error(
+      "Bo'CitéArt Observatoire : module Entreprise introuvable."
+    );
+
+    return;
+  }
+
+  const INTRO_KEY =
+    "bociteart_observatoire_introduction_lue_v1";
+
+  function getElement(id){
+
+    return document.getElementById(id);
+  }
+
+  function escapeValue(value){
+
+    return module.safeEscape(value);
+  }
+
+  function introIsRead(){
+
+    return (
+      localStorage.getItem(INTRO_KEY) ===
+      "oui"
+    );
+  }
+
+  function getTerritoryLabel(territory){
+
+    if(
+      territory === "commune" ||
+      !territory
+    ){
+
+      return "Votre commune";
+    }
+
+    return territory;
+  }
+
+  function openTerritoryDirectory(territory){
+
+    module.renderModal(
+      "Annuaire économique vivant",
+      getDirectoryHtml(
+        territory || "commune"
+      )
+    );
+
+    window.setTimeout(function(){
+
+      bindDirectory();
+
+      const cityInput =
+        getElement(
+          "observatoireDirectoryCity"
+        );
+
+      if(
+        cityInput &&
+        territory &&
+        territory !== "commune"
+      ){
+
+        cityInput.value =
+          territory;
+      }
+
+    },0);
+  }
+
+function getPresentationHtml(showContinueButton){
+
+  return `
 function getPresentationHtml(showContinueButton){
 
   return `
