@@ -17547,7 +17547,9 @@ function openMutualisation(){
         <br><br>
 
         Le thème définitif sera travaillé
-        avec Bo'CitéArt,
+        avec <strong>
+  <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+</strong>,
         puis présenté à la mairie.
 
         <br><br>
@@ -17853,7 +17855,7 @@ function openMutualisation(){
     };
 
     return labels[value] ||
-      "Projet à définir avec Bo'CitéArt";
+      "Projet à définir avec Bo'CitéArt"
   }
 
   function getBudgetLabel(value){
@@ -20713,165 +20715,210 @@ function openMutualisation(){
     );
   }
 
-  function getAccessHtml(){
+ function getAccessHtml(){
 
-    const account =
-      createDemoPartnerAccount();
+  const account =
+    createDemoPartnerAccount();
 
-    return `
-      <div
-        class="box"
-        style="
-          border-left:6px solid #2f5d46;
-          line-height:1.5;
-        ">
+  return `
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        border-left:6px solid #2f5d46;
+        line-height:1.55;
+        font-weight:400;
+        color:#111;
+      ">
 
-        <strong style="font-size:19px;">
-          Espace réservé aux entreprises partenaires
-        </strong>
-
-        <br><br>
-
-        Les tarifs, abonnements, paiements,
-        factures, contrats, recherches privées
-        et données professionnelles
-        sont accessibles uniquement
-        depuis l’espace sécurisé de l’entreprise.
-
-        <br><br>
-
-        Chaque entreprise partenaire reçoit
-        un code d’accès personnel
-        après la validation de son partenariat
-        avec Bo'CitéArt.
-      </div>
-
-       <div
-        class="box"
-        style="
-          border-left:6px solid #2f5d46;
-          line-height:1.55;
-        ">
-
-        <strong
-          style="
-            font-size:16px;
-            color:#2f5d46;
-          ">
-          Activation de votre espace professionnel
-        </strong>
-
-        <br><br>
-
-        Complétez les renseignements demandés
-        afin de préparer l’ouverture
-        de votre espace professionnel Bo'CitéArt.
-
-        <br><br>
-
-        Vous pouvez dès maintenant parcourir
-        et tester l’ensemble du fonctionnement.
-
-        <br><br>
-
-        Lors de l’ouverture officielle,
-        votre accès sera activé après confirmation
-        de votre abonnement.
-
-        <br><br>
-
-        Le paiement pourra être réalisé :
-
-        <br><br>
-
-        • immédiatement par carte bancaire ;<br>
-        • par prélèvement bancaire à partir d’un RIB ou d’un IBAN.
-
-        <br><br>
-
-        En cas de prélèvement bancaire,
-        l’activation pourra être décalée
-        pendant le délai de confirmation
-        imposé par le système bancaire.
-
-        <br><br>
-
-        Vos données professionnelles
-        et vos accès privés seront alors
-        sécurisés par le serveur Bo'CitéArt.
-      </div>
-
-      <label
+      <strong
         style="
           display:block;
-          font-weight:900;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:700;
+          line-height:1.4;
         ">
-        Code d’accès entreprise
-      </label>
+        Espace réservé aux entreprises partenaires
+      </strong>
 
-      <input
-        id="entreprisePartnerAccessCode"
-        class="miniField"
-        type="password"
-        autocomplete="off"
-        placeholder="Saisissez votre code personnel">
+      <br>
 
-      <button
-        id="entreprisePartnerConnectBtn"
-        class="choiceBtn"
-        type="button"
+      Les tarifs, abonnements, paiements,
+      factures, contrats, recherches privées
+      et données professionnelles
+      sont accessibles uniquement
+      depuis l’espace sécurisé de l’entreprise.
+
+      <br><br>
+
+      Chaque entreprise partenaire reçoit
+      un code d’accès personnel
+      après la validation de son partenariat
+      avec
+
+      <strong>
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </strong>.
+
+    </div>
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        border-left:6px solid #2f5d46;
+        line-height:1.55;
+        font-weight:400;
+        color:#111;
+      ">
+
+      <strong
         style="
-          width:100%;
-          margin-top:12px;
+          display:block;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:700;
+          line-height:1.4;
         ">
-        Accéder à mon espace privé
-      </button>
+        Activation de votre espace professionnel
+      </strong>
 
-      <button
-        id="entreprisePartnerReturnBtn"
-        class="choiceBtn"
-        type="button"
+      <br>
+
+      Complétez les renseignements demandés
+      afin de préparer l’ouverture
+      de votre espace professionnel
+
+      <strong>
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </strong>.
+
+      <br><br>
+
+      Vous pouvez dès maintenant parcourir
+      et tester l’ensemble du fonctionnement.
+
+      <br><br>
+
+      Lors de l’ouverture officielle,
+      votre accès sera activé
+      après confirmation
+      de votre abonnement.
+
+      <br><br>
+
+      Le paiement pourra être réalisé :
+
+      <br><br>
+
+      • immédiatement par carte bancaire ;<br>
+      • par prélèvement bancaire à partir d’un RIB ou d’un IBAN.
+
+      <br><br>
+
+      En cas de prélèvement bancaire,
+      l’activation pourra être décalée
+      pendant le délai de confirmation
+      imposé par le système bancaire.
+
+      <br><br>
+
+      Vos données professionnelles
+      et vos accès privés
+      seront sécurisés
+      par le serveur
+
+      <strong>
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </strong>.
+
+    </div>
+
+    <label
+      style="
+        display:block;
+        font-weight:700;
+        margin-top:12px;
+      ">
+      Code d’accès entreprise
+    </label>
+
+    <input
+      id="entreprisePartnerAccessCode"
+      class="miniField"
+      type="password"
+      autocomplete="off"
+      placeholder="Saisissez votre code personnel">
+
+    <button
+      id="entreprisePartnerConnectBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:12px;
+      ">
+      Accéder à mon espace privé
+    </button>
+
+    <button
+      id="entreprisePartnerReturnBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:8px;
+        background:#fff;
+      ">
+      Retour à l’espace Entreprise
+    </button>
+
+    <div
+      id="entreprisePartnerAccessStatus"
+      class="muted"
+      style="margin-top:10px;">
+    </div>
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        margin-top:14px;
+        border-left:6px solid #2f5d46;
+        line-height:1.55;
+        font-weight:400;
+        color:#111;
+      ">
+
+      <strong
         style="
-          width:100%;
-          margin-top:8px;
-          background:#fff;
+          display:block;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:700;
+          line-height:1.4;
         ">
-        Retour à l’espace Entreprise
-      </button>
+        Protection de vos données
+      </strong>
 
-      <div
-        id="entreprisePartnerAccessStatus"
-        class="muted"
-        style="margin-top:10px;">
-      </div>
+      <br>
 
-      <div
-        class="box"
-        style="
-          margin-top:14px;
-          border-left:6px solid #b00020;
-        ">
+      Les informations professionnelles
+      et les accès privés
+      de votre entreprise
+      sont destinés à être protégés
+      par un espace sécurisé.
 
-        <strong>
-          Important
-        </strong>
+      <br><br>
 
-        <br><br>
+      Seules les personnes autorisées
+      par l’entreprise
+      pourront accéder
+      aux données confidentielles
+      et aux outils réservés
+      aux partenaires.
 
-        Le code utilisé dans cette démonstration
-        sert uniquement à représenter
-        le futur fonctionnement.
-
-        <br><br>
-
-        Dans la version définitive,
-        l’identification et les données privées
-        devront être sécurisées par le serveur,
-        et non uniquement dans le navigateur.
-      </div>
-    `;
-  }
-
+    </div>
+  `;
+}
   function connectPartnerAccount(
     successCallback
   ){
