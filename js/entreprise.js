@@ -43863,9 +43863,6 @@ ${brandHtml} enrichira les résultats au fur et à mesure du raccordement des so
 function getPresentationHtml(showContinueButton){
 
   return `
-function getPresentationHtml(showContinueButton){
-
-  return `
     <div
       class="box"
       style="
