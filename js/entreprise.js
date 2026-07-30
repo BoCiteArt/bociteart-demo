@@ -963,7 +963,6 @@ function getHomeHtml(){
     </div>
 
     <div
-    <div
       class="box entrepriseInfoBox"
       style="
         margin-top:14px;
