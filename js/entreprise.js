@@ -43875,7 +43875,7 @@ function getPresentationHtml(showContinueButton){
 
       <div
         style="
-          font-size:19px;
+          font-size:17px;
           color:#2f5d46;
           font-weight:900;
           line-height:1.4;
@@ -43886,7 +43886,7 @@ function getPresentationHtml(showContinueButton){
       <div
         style="
           margin-top:4px;
-          font-size:19px;
+          font-size:17px;
           line-height:1.4;
         ">
         <strong>
@@ -43896,7 +43896,7 @@ function getPresentationHtml(showContinueButton){
 
       <br>
 
-      L’annuaire est souvent utilisé
+      Un annuaire est souvent utilisé
       comme une simple liste de noms.
 
       <br><br>
@@ -43904,8 +43904,8 @@ function getPresentationHtml(showContinueButton){
       <strong>
         <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
       </strong>
-      veut en faire un véritable outil
-      de découverte,
+      vous en propose une autre vision :
+      un véritable outil de découverte,
       de recherche
       et de développement économique.
 
@@ -43917,8 +43917,16 @@ function getPresentationHtml(showContinueButton){
       aux artisans
       et aux collectivités
       de mieux connaître les richesses économiques
-      présentes autour d’eux
-      et partout en France.
+      présentes autour d’eux.
+
+      <br><br>
+
+      Il apporte également aux entreprises
+      des informations plus précises
+      pour développer leur activité,
+      trouver de nouveaux partenaires
+      et effectuer leurs recherches
+      partout en France.
     </div>
 
     <div
@@ -43942,6 +43950,20 @@ function getPresentationHtml(showContinueButton){
 
       <br>
 
+      Découvrez d’abord dans votre ville,
+      puis ailleurs,
+      qui sont les acteurs économiques,
+      ce qu’ils font réellement
+      et ce qu’ils peuvent vous apporter.
+
+      <br><br>
+
+      Les informations seront regroupées
+      dans un registre vivant,
+      régulièrement actualisé.
+
+      <br><br>
+
       Vous pourrez découvrir :
 
       <br><br>
@@ -43955,6 +43977,12 @@ function getPresentationHtml(showContinueButton){
       • leurs services ;<br>
       • leurs besoins ;<br>
       • leurs recherches professionnelles.
+
+      <br><br>
+
+      Les recherches pourront ainsi être
+      plus précises
+      et mieux adaptées aux besoins de chacun.
     </div>
 
     <div
@@ -43973,17 +44001,34 @@ function getPresentationHtml(showContinueButton){
           font-weight:900;
           line-height:1.4;
         ">
-        Commencer par regarder autour de soi
+        Pourquoi commencer par regarder autour de soi ?
       </div>
 
       <br>
 
-      Avant de rechercher systématiquement loin,
-      il est utile de vérifier
-      ce qui existe déjà dans sa commune,
-      dans les communes voisines,
-      dans son département
-      ou dans sa région.
+      Avant de rechercher,
+      de diffuser une demande
+      ou de tenter de trouver des candidats
+      un peu partout,
+      il sera plus naturel
+      et plus utile de vérifier
+      ce qui existe déjà dans sa commune.
+
+      <br><br>
+
+      Les entreprises locales pourront ainsi
+      être mieux connues
+      et reconnues.
+
+      <br><br>
+
+      Si la recherche locale
+      ne permet pas de trouver la réponse attendue,
+      elle pourra ensuite être élargie
+      aux communes voisines,
+      au département,
+      à la région
+      puis au reste de la France.
 
       <br><br>
 
@@ -44025,12 +44070,23 @@ function getPresentationHtml(showContinueButton){
       <strong>
         <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
       </strong>
-      permet de rechercher une activité,
+      permettra de rechercher
+      une activité,
       un métier,
       un commerce,
       un artisan
       ou une entreprise
       partout en France.
+
+      <br><br>
+
+      Cette recherche élargie
+      permettra de trouver
+      de nouveaux fournisseurs,
+      partenaires,
+      clients,
+      compétences
+      ou opportunités professionnelles.
     </div>
 
     <div
@@ -44056,7 +44112,8 @@ function getPresentationHtml(showContinueButton){
 
       L’objectif est de relier progressivement
       l’annuaire aux informations publiques officielles
-      afin d’identifier et d’actualiser :
+      afin de mieux identifier
+      et d’actualiser régulièrement :
 
       <br><br>
 
@@ -44067,70 +44124,21 @@ function getPresentationHtml(showContinueButton){
       • les cessations ;<br>
       • les fermetures ;<br>
       • les éventuels doublons.
-    </div>
-
-    <div
-      class="box"
-      style="
-        color:#111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
-        style="
-          font-size:17px;
-          color:#2f5d46;
-          font-weight:900;
-          line-height:1.4;
-        ">
-        Pourquoi cette lecture est importante
-      </div>
-
-      <br>
-
-      <strong>
-        <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
-      </strong>
-      ne propose pas seulement un annuaire.
 
       <br><br>
 
-      Il permet de mieux faire connaître
-      les acteurs économiques,
-      de favoriser les relations locales,
-      de créer de nouvelles opportunités
-      et d’aider chacun
-      à prendre de meilleures décisions.
-
-      <br><br>
-
-      Cette présentation vous permet
-      d’en comprendre tout le potentiel.
+      Toutes ces informations permettront
+      de mieux connaître l’activité économique réelle,
+      de faciliter les recherches,
+      de développer les relations locales
+      et de créer de nouvelles opportunités
+      pour les habitants,
+      les entreprises
+      et les collectivités.
     </div>
-
-    ${
-      showContinueButton
-        ? `
-          <button
-            id="observatoireFinishReadingBtn"
-            class="choiceBtn"
-            type="button"
-            style="
-              width:100%;
-              margin-top:14px;
-              background:#b00020;
-              color:#fff;
-            ">
-            J’ai terminé la lecture — accéder à l’Observatoire
-          </button>
-        `
-        : ""
-    }
   `;
 }
-
+   
 function getMandatoryIntroductionHtml(){
 
   return `
@@ -44220,71 +44228,7 @@ function getMandatoryIntroductionHtml(){
 function getObservatoireHomeHtml(){
 
   return `
-    <div
-      class="box"
-      style="
-        border-left:6px solid #2f5d46;
-        color:#111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
-        style="
-          font-size:19px;
-          color:#2f5d46;
-          font-weight:900;
-          line-height:1.4;
-        ">
-        Observatoire économique
-      </div>
-
-      <div
-        style="
-          margin-top:4px;
-          font-size:19px;
-          line-height:1.4;
-        ">
-        <strong>
-          <span style="color:#2f5d46;font-weight:900;">Bo'Cité</span><span style="color:#b00020;font-weight:900;">Art</span>
-        </strong>
-      </div>
-
-      <br>
-
-      L’annuaire vivant des entreprises,
-      des commerces,
-      des artisans
-      et des savoir-faire présents en France.
-
-      <br><br>
-
-      Les habitants peuvent découvrir gratuitement
-      les professionnels présents dans leur commune
-      et dans un rayon allant jusqu’à 20 kilomètres.
-
-      <br><br>
-
-      Cette visibilité permet
-      aux habitants et aux professionnels
-      de mieux se connaître,
-      de renforcer leurs échanges
-      et de se connecter plus directement
-      à la vie économique de leur territoire.
-    </div>
-
-    <div
-      style="
-        color:#111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      ${getPresentationHtml(false)}
-
-    </div>
+    ${getPresentationHtml(false)}
 
     <div
       class="box"
@@ -44317,8 +44261,8 @@ function getObservatoireHomeHtml(){
 
       <br><br>
 
-      Les informations publiques
-      restent accessibles gratuitement
+      Cette recherche locale
+      reste accessible gratuitement
       aux habitants.
     </div>
 
@@ -44353,30 +44297,32 @@ function getObservatoireHomeHtml(){
 
       <br>
 
-      Les entreprises souhaitant développer
-      leurs relations professionnelles,
-      accéder aux services B2B
-      ou étendre leurs recherches
-      au niveau national
-      peuvent bénéficier des services professionnels
-      proposés par
-      <strong>
-        <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
-      </strong>.
+      Les entreprises pourront accéder
+      à des services complémentaires
+      pour développer leurs relations professionnelles,
+      effectuer des recherches plus précises
+      et étendre leurs démarches
+      à l’ensemble de la France.
 
       <br><br>
 
-      L’abonnement finance
-      la maintenance,
-      l’actualisation des services
-      et les outils professionnels proposés par
+      Ces services professionnels
+      seront proposés par abonnement.
+
+      <br><br>
+
+      L’abonnement participera
+      au financement de la maintenance,
+      de l’actualisation des informations
+      et du développement des outils proposés par
+
       <strong>
         <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
       </strong>.
     </div>
   `;
 }
-
+   
 function getDirectoryHtml(territory){
 
   const territoryLabel =
