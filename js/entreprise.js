@@ -44288,19 +44288,20 @@ function getMandatoryIntroductionHtml(){
 
     return `
       <div
-        class="box"
+        class="box entrepriseInfoBox"
         style="
           border-left:6px solid #2f5d46;
-          line-height:1.55;
-          font-weight:400;
           color:#111;
+          font-size:15px;
+          font-weight:400;
+          line-height:1.6;
         ">
 
         <strong
           style="
             display:block;
-            font-size:16px;
             color:#2f5d46;
+            font-size:16px;
             font-weight:700;
             line-height:1.4;
           ">
@@ -44316,7 +44317,7 @@ function getMandatoryIntroductionHtml(){
         <span
           style="
             color:#2f5d46;
-            font-size:16px;
+            font-size:15px;
             font-weight:700;
           ">
           ${escapeValue(territoryLabel)}
@@ -44337,9 +44338,10 @@ function getMandatoryIntroductionHtml(){
 
       <div
         style="
-          font-weight:400;
           color:#111;
-          line-height:1.55;
+          font-size:15px;
+          font-weight:400;
+          line-height:1.6;
         ">
 
         ${getPresentationHtml(false)}
@@ -44347,18 +44349,19 @@ function getMandatoryIntroductionHtml(){
       </div>
 
       <div
-        class="box"
+        class="box entrepriseInfoBox"
         style="
-          font-weight:400;
           color:#111;
-          line-height:1.55;
+          font-size:15px;
+          font-weight:400;
+          line-height:1.6;
         ">
 
         <strong
           style="
             display:block;
-            font-size:16px;
             color:#2f5d46;
+            font-size:16px;
             font-weight:700;
             line-height:1.4;
           ">
@@ -44367,16 +44370,57 @@ function getMandatoryIntroductionHtml(){
 
         <br>
 
+        <label
+          for="observatoireDirectoryCity"
+          style="
+            display:block;
+            color:#111;
+            font-size:15px;
+            font-weight:400;
+          ">
+          Ville ou commune
+        </label>
+
+        <input
+          id="observatoireDirectoryCity"
+          class="miniField"
+          type="text"
+          autocomplete="address-level2"
+          placeholder="Exemple : Wattignies">
+
+        <label
+          for="observatoireDirectorySearch"
+          style="
+            display:block;
+            margin-top:10px;
+            color:#111;
+            font-size:15px;
+            font-weight:400;
+          ">
+          Métier, activité, produit ou service
+        </label>
+
         <input
           id="observatoireDirectorySearch"
           class="miniField"
           type="search"
-          placeholder="Nom, métier, activité, produit ou service">
+          placeholder="Exemple : carreleur, comptable, menuisier">
+
+        <label
+          for="observatoireDirectoryCategory"
+          style="
+            display:block;
+            margin-top:10px;
+            color:#111;
+            font-size:15px;
+            font-weight:400;
+          ">
+          Type de professionnel
+        </label>
 
         <select
           id="observatoireDirectoryCategory"
-          class="miniField"
-          style="margin-top:9px;">
+          class="miniField">
 
           <option value="all">
             Toutes les activités
@@ -44404,22 +44448,34 @@ function getMandatoryIntroductionHtml(){
 
         </select>
 
+        <button
+          id="observatoireDirectorySearchBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:12px;
+          ">
+          Lancer la recherche
+        </button>
+
       </div>
 
       <div
-        class="box"
+        class="box entrepriseInfoBox"
         style="
           border-left:6px solid #2f5d46;
-          font-weight:400;
           color:#111;
-          line-height:1.55;
+          font-size:15px;
+          font-weight:400;
+          line-height:1.6;
         ">
 
         <strong
           style="
             display:block;
-            font-size:16px;
             color:#2f5d46;
+            font-size:16px;
             font-weight:700;
             line-height:1.4;
           ">
@@ -44448,7 +44504,7 @@ function getMandatoryIntroductionHtml(){
         style="
           margin-top:10px;
           color:#111;
-          font-size:16px;
+          font-size:15px;
           font-weight:400;
           line-height:1.5;
         ">
@@ -44521,85 +44577,157 @@ function getMandatoryIntroductionHtml(){
 
   function renderDirectoryList(){
 
-    const input =
-      getElement("observatoireDirectorySearch");
+    const cityInput =
+      getElement(
+        "observatoireDirectoryCity"
+      );
+
+    const searchInput =
+      getElement(
+        "observatoireDirectorySearch"
+      );
 
     const category =
-      getElement("observatoireDirectoryCategory");
+      getElement(
+        "observatoireDirectoryCategory"
+      );
 
     const list =
-      getElement("observatoireDirectoryList");
+      getElement(
+        "observatoireDirectoryList"
+      );
 
     const count =
-      getElement("observatoireDirectoryCount");
+      getElement(
+        "observatoireDirectoryCount"
+      );
 
     if(!list){
       return;
     }
 
+    const city =
+      normalizeText(
+        cityInput
+          ? cityInput.value
+          : ""
+      );
+
     const query =
       normalizeText(
-        input ? input.value : ""
+        searchInput
+          ? searchInput.value
+          : ""
       );
 
     const categoryValue =
-      category ? category.value : "all";
+      category
+        ? category.value
+        : "all";
+
+  if(!city){
+
+  if(count){
+    count.textContent = "";
+  }
+
+  list.innerHTML = `
+        <div
+          class="box entrepriseInfoBox"
+          style="
+            border-left:6px solid #2f5d46;
+            color:#111;
+            font-size:15px;
+            font-weight:400;
+            line-height:1.6;
+          ">
+
+          Indiquez d’abord votre ville
+          ou votre commune,
+          puis lancez la recherche.
+
+        </div>
+      `;
+
+      return;
+    }
 
     let companies =
-      loadCompanies().filter(function(company){
+      loadCompanies().filter(
+        function(company){
 
-        const searchable =
-          normalizeText(
-            [
-              company.name,
-              company.activity,
-              company.description,
-              company.city,
-              company.address
-            ].join(" ")
-          );
+          const companyCity =
+            normalizeText(
+              company.city ||
+              company.address ||
+              ""
+            );
 
-        if(
-          query &&
-          !searchable.includes(query)
-        ){
-          return false;
-        }
-
-        if(
-          categoryValue === "partner" &&
-          !company.partner
-        ){
-          return false;
-        }
-
-        if(
-          categoryValue === "official" &&
-          company.partner
-        ){
-          return false;
-        }
-
-        if(
-          categoryValue === "artisan" ||
-          categoryValue === "commerce" ||
-          categoryValue === "entreprise"
-        ){
           if(
-            getCompanyCategory(company) !==
-            categoryValue
+            city &&
+            !companyCity.includes(city)
           ){
             return false;
           }
-        }
 
-        return true;
-      });
+          const searchable =
+            normalizeText(
+              [
+                company.name,
+                company.activity,
+                company.description,
+                company.city,
+                company.address
+              ].join(" ")
+            );
+
+          if(
+            query &&
+            !searchable.includes(query)
+          ){
+            return false;
+          }
+
+          if(
+            categoryValue === "partner" &&
+            !company.partner
+          ){
+            return false;
+          }
+
+          if(
+            categoryValue === "official" &&
+            company.partner
+          ){
+            return false;
+          }
+
+          if(
+            categoryValue === "artisan" ||
+            categoryValue === "commerce" ||
+            categoryValue === "entreprise"
+          ){
+
+            if(
+              getCompanyCategory(company) !==
+              categoryValue
+            ){
+              return false;
+            }
+          }
+
+          return true;
+        }
+      );
 
     companies.sort(function(a,b){
 
-      return String(a.name || "").localeCompare(
-        String(b.name || ""),
+      return String(
+        a.name || ""
+      ).localeCompare(
+        String(
+          b.name || ""
+        ),
         "fr",
         {
           sensitivity:"base"
@@ -44607,85 +44735,114 @@ function getMandatoryIntroductionHtml(){
       );
     });
 
-         if(count){
+    if(count){
 
       count.textContent =
-        companies.length +
-        " résultat(s) trouvé(s).";
+        companies.length
+          ? companies.length +
+            " résultat(s) trouvé(s) à " +
+            (
+              cityInput
+                ? cityInput.value.trim()
+                : ""
+            ) +
+            "."
+          : "";
     }
 
-     if(!companies.length){
+    if(!companies.length){
 
       list.innerHTML = `
         <div
-          class="box"
+          class="box entrepriseInfoBox"
           style="
             border-left:6px solid #2f5d46;
             color:#111;
-            font-size:16px;
+            font-size:15px;
             font-weight:400;
-            line-height:1.55;
+            line-height:1.6;
           ">
 
           Aucun résultat ne correspond
-          à votre recherche actuelle.
+          actuellement à votre recherche
+          dans cette commune.
+
+          <br><br>
+
+          L’annuaire sera progressivement alimenté
+          lors de son raccordement
+          aux données publiques officielles.
 
         </div>
       `;
 
       return;
     }
+
     list.innerHTML =
       companies.map(function(company){
 
         return `
-          <div class="box">
+          <div
+            class="box entrepriseInfoBox"
+            style="
+              color:#111;
+              font-size:15px;
+              font-weight:400;
+              line-height:1.6;
+            ">
 
-            <strong style="font-size:17px;">
-              ${escapeValue(company.name)}
-            </strong>
-
-            <br><br>
-
-            <span
+            <strong
               style="
+                display:block;
                 color:#2f5d46;
-                font-weight:900;
+                font-size:16px;
+                font-weight:700;
               ">
-              ${escapeValue(company.activity)}
-            </span>
+              ${escapeValue(
+                company.name || ""
+              )}
+            </strong>
 
             <div
               style="
-                margin-top:9px;
-                line-height:1.5;
+                margin-top:8px;
+                color:#2f5d46;
+                font-weight:700;
               ">
-              ${escapeValue(company.description)}
+              ${escapeValue(
+                company.activity || ""
+              )}
             </div>
 
-            <div style="margin-top:9px;">
+            <div style="margin-top:8px;">
+              ${escapeValue(
+                company.description || ""
+              )}
+            </div>
+
+            <div style="margin-top:8px;">
               Commune :
-              <strong>
-                ${escapeValue(company.city || "")}
-              </strong>
+              ${escapeValue(
+                company.city || ""
+              )}
             </div>
 
-            <div style="margin-top:10px;">
-
-              <button
-                class="choiceBtn observatoireOpenCompanyBtn"
-                type="button"
-                data-company-id="${escapeValue(company.id)}">
-
-                Consulter la fiche
-
-              </button>
-
-            </div>
+            <button
+              class="choiceBtn observatoireOpenCompanyBtn"
+              type="button"
+              data-company-id="${escapeValue(
+                company.id || ""
+              )}"
+              style="
+                width:100%;
+                margin-top:10px;
+              ">
+              Consulter la fiche
+            </button>
 
           </div>
         `;
-
       }).join("");
 
     list
@@ -44709,69 +44866,133 @@ function getMandatoryIntroductionHtml(){
             module.openCompanyCard(
               companyId
             );
-
           }
-
         };
-
       });
-
   }
 
-     function bindDirectory(){
+  function bindDirectory(){
 
-    const input =
-      getElement("observatoireDirectorySearch");
+    const cityInput =
+      getElement(
+        "observatoireDirectoryCity"
+      );
+
+    const searchInput =
+      getElement(
+        "observatoireDirectorySearch"
+      );
 
     const category =
-      getElement("observatoireDirectoryCategory");
+      getElement(
+        "observatoireDirectoryCategory"
+      );
+
+    const searchButton =
+      getElement(
+        "observatoireDirectorySearchBtn"
+      );
 
     const changeButton =
-      getElement("observatoireChangeTerritoryBtn");
+      getElement(
+        "observatoireChangeTerritoryBtn"
+      );
 
-    if(input){
-      input.oninput = renderDirectoryList;
+    const count =
+      getElement(
+        "observatoireDirectoryCount"
+      );
+
+    if(searchButton){
+
+      searchButton.onclick =
+        renderDirectoryList;
+    }
+
+    if(cityInput){
+
+      cityInput.onkeydown =
+        function(event){
+
+          if(event.key === "Enter"){
+
+            event.preventDefault();
+
+            renderDirectoryList();
+          }
+        };
+    }
+
+    if(searchInput){
+
+      searchInput.onkeydown =
+        function(event){
+
+          if(event.key === "Enter"){
+
+            event.preventDefault();
+
+            renderDirectoryList();
+          }
+        };
     }
 
     if(category){
-      category.onchange = renderDirectoryList;
+
+      category.onchange =
+        function(){
+
+          if(
+            cityInput &&
+            cityInput.value.trim()
+          ){
+
+            renderDirectoryList();
+          }
+        };
     }
 
     if(changeButton){
 
-      changeButton.onclick = function(){
+      changeButton.onclick =
+        function(){
 
-        openObservatoireHome();
-
-      };
-
+          openObservatoireHome();
+        };
     }
 
-    renderDirectoryList();
+    if(count){
 
+      count.textContent = "";
+    }
+
+    const list =
+      getElement(
+        "observatoireDirectoryList"
+      );
+
+    if(list){
+
+      list.innerHTML = `
+        <div
+          class="box entrepriseInfoBox"
+          style="
+            border-left:6px solid #2f5d46;
+            color:#111;
+            font-size:15px;
+            font-weight:400;
+            line-height:1.6;
+          ">
+
+          Indiquez votre ville ou votre commune,
+          précisez éventuellement le métier recherché,
+          puis appuyez sur « Lancer la recherche ».
+
+        </div>
+      `;
+    }
   }
-
-  function openTerritoryDirectory(territory){
-
-    localStorage.setItem(
-      TERRITORY_KEY,
-      territory
-    );
-
-    module.renderModal(
-      "Annuaire économique — " +
-      getTerritoryLabel(territory),
-      getDirectoryHtml(territory)
-    );
-
-    setTimeout(function(){
-
-      bindDirectory();
-
-    },0);
-
-  }
-
+   
   function bindObservatoireHome(){
 
     document
