@@ -43414,7 +43414,9 @@ console.log(
           "Recherche de personnel ou de compétence",
 
         text:
-          "Aucun résultat confirmé ne peut encore être affiché automatiquement dans cette démonstration. Bo'CitéArt recherchera d’abord les profils et les entreprises présents dans la métropole lilloise, puis élargira progressivement la recherche.",
+          "Aucun résultat confirmé ne peut encore être affiché automatiquement dans cette démonstration. <strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+</strong> recherchera d’abord les profils des entreprises, commerces présents dans la ville, partenaire, puis élargit progressivement la recherche.",
 
         lines:[
           "Consulter les offres et candidatures disponibles.",
@@ -43435,10 +43437,12 @@ console.log(
 
       return {
         title:
-          "Recherche d’une solution pour réduire vos charges",
+          "Recherche de solutions pour réduire les charges mutualisables, (edf, gaz, tel etc...)",
 
         text:
-          "Bo'CitéArt peut regrouper plusieurs entreprises ayant le même besoin afin de lancer une recherche commune et comparer les propositions reçues.",
+          "<strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+</strong> propose de regrouper plusieurs entreprises ayant le même besoin afin de lancer une recherche commune et comparer les propositions reçues.",
 
         lines:[
           "Déclarer votre intérêt.",
@@ -43462,7 +43466,9 @@ console.log(
           "Recherche liée au mécénat",
 
         text:
-          "Bo'CitéArt peut vous orienter vers les projets locaux et les différentes formes de contribution possibles.",
+          "<strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+</strong> oriente vers des projets locaux Bo'CitéArt et différentes formes de contribution possibles.",
 
         lines:[
           "Soutien financier.",
@@ -43486,7 +43492,9 @@ console.log(
           "Préparer l’avenir de votre entreprise",
 
         text:
-          "Bo'CitéArt peut vous aider à préparer progressivement la transmission, la reprise ou la continuité de votre activité.",
+          "<strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+</strong> c'est aussi comment préparer progressivement la transmission, la reprise ou la continuité de votre activité.",
 
         lines:[
           "Valoriser le savoir-faire.",
@@ -43510,7 +43518,9 @@ console.log(
           "Faire connaître votre entreprise",
 
         text:
-          "Bo'CitéArt peut rendre visibles vos métiers, votre savoir-faire, vos services et vos coordonnées auprès des habitants et des professionnels.",
+          " <strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+</strong> rend visibles vos métiers, votre savoir-faire, vos services et vos coordonnées auprès des habitants et des professionnels.",
 
         lines:[
           "Compléter votre fiche.",
@@ -43532,7 +43542,7 @@ console.log(
         "Recherche professionnelle",
 
       text:
-        "Aucun résultat confirmé ne peut encore être affiché automatiquement dans cette démonstration. La recherche commencera dans votre commune, puis dans les communes voisines, le département et la région.",
+        "Aucun résultat confirmé ne peut encore être affiché automatiquement dans cette démonstration. La recherche commencera dans votre commune, puis dans les communes voisines, etc...",
 
       lines:[
         "Identifier précisément le métier ou le service recherché.",
@@ -43829,8 +43839,9 @@ function getPresentationHtml(showContinueButton){
           font-weight:900;
           line-height:1.4;
         ">
-        Comprendre l’Observatoire économique <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-      </strong>
+        Comprendre l’Observatoire économique <strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+</strong>
 
       <br>
 
@@ -43839,7 +43850,9 @@ function getPresentationHtml(showContinueButton){
 
       <br><br>
 
-      <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span> veut en faire
+      <strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+</strong> veut en faire
       un véritable outil de découverte,
       de recherche
       et de développement économique.
@@ -44022,7 +44035,9 @@ function getPresentationHtml(showContinueButton){
 
       <br>
 
-      <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span> ne propose pas seulement un annuaire.
+      <strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+</strong> ne propose pas seulement un annuaire.
 
       <br><br>
 
@@ -44079,8 +44094,9 @@ function getMandatoryIntroductionHtml(){
           font-weight:900;
           line-height:1.4;
         ">
-        Observatoire économique <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-      </strong>
+        Observatoire économique <strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+</strong>
 
       <br>
 
@@ -44111,7 +44127,9 @@ function getMandatoryIntroductionHtml(){
       <br>
 
       Avant d’accéder à l’Observatoire économique
-      <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>,
+     <strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+</strong>
       la lecture de cette présentation est nécessaire.
 
       <br><br>
@@ -44146,14 +44164,15 @@ function getMandatoryIntroductionHtml(){
         <strong
           style="
             display:block;
-            font-size:16px;
+            font-size:14px;
             color:#2f5d46;
             font-weight:700;
             line-height:1.4;
           ">
           Observatoire économique
-          <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-        </strong>
+          <strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+</strong>
 
         <br>
 
@@ -44202,7 +44221,7 @@ function getMandatoryIntroductionHtml(){
         <strong
           style="
             display:block;
-            font-size:16px;
+            font-size:14px;
             color:#2f5d46;
             font-weight:700;
             line-height:1.4;
@@ -44248,7 +44267,7 @@ function getMandatoryIntroductionHtml(){
         <strong
           style="
             display:block;
-            font-size:16px;
+            font-size:14px;
             color:#2f5d46;
             font-weight:700;
             line-height:1.4;
@@ -44273,9 +44292,9 @@ function getMandatoryIntroductionHtml(){
         l’actualisation des services
         et les outils professionnels proposés par
 
-        <strong>
-          <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>.
-        </strong>
+         <strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+</strong>
 
       </div>
     `;
@@ -44292,7 +44311,7 @@ function getMandatoryIntroductionHtml(){
         style="
           border-left:6px solid #2f5d46;
           color:#111;
-          font-size:15px;
+          font-size:14px;
           font-weight:400;
           line-height:1.6;
         ">
@@ -44301,7 +44320,7 @@ function getMandatoryIntroductionHtml(){
           style="
             display:block;
             color:#2f5d46;
-            font-size:16px;
+            font-size:14px;
             font-weight:700;
             line-height:1.4;
           ">
@@ -44317,7 +44336,7 @@ function getMandatoryIntroductionHtml(){
         <span
           style="
             color:#2f5d46;
-            font-size:15px;
+            font-size:14px;
             font-weight:700;
           ">
           ${escapeValue(territoryLabel)}
@@ -44339,7 +44358,7 @@ function getMandatoryIntroductionHtml(){
       <div
         style="
           color:#111;
-          font-size:15px;
+          font-size:14px;
           font-weight:400;
           line-height:1.6;
         ">
@@ -44352,7 +44371,7 @@ function getMandatoryIntroductionHtml(){
         class="box entrepriseInfoBox"
         style="
           color:#111;
-          font-size:15px;
+          font-size:14px;
           font-weight:400;
           line-height:1.6;
         ">
@@ -44361,7 +44380,7 @@ function getMandatoryIntroductionHtml(){
           style="
             display:block;
             color:#2f5d46;
-            font-size:16px;
+            font-size:14px;
             font-weight:700;
             line-height:1.4;
           ">
@@ -44375,7 +44394,7 @@ function getMandatoryIntroductionHtml(){
           style="
             display:block;
             color:#111;
-            font-size:15px;
+            font-size:14px;
             font-weight:400;
           ">
           Ville ou commune
@@ -44394,7 +44413,7 @@ function getMandatoryIntroductionHtml(){
             display:block;
             margin-top:10px;
             color:#111;
-            font-size:15px;
+            font-size:14px;
             font-weight:400;
           ">
           Métier, activité, produit ou service
@@ -44412,7 +44431,7 @@ function getMandatoryIntroductionHtml(){
             display:block;
             margin-top:10px;
             color:#111;
-            font-size:15px;
+            font-size:14px;
             font-weight:400;
           ">
           Type de professionnel
@@ -44466,7 +44485,7 @@ function getMandatoryIntroductionHtml(){
         style="
           border-left:6px solid #2f5d46;
           color:#111;
-          font-size:15px;
+          font-size:14px;
           font-weight:400;
           line-height:1.6;
         ">
@@ -44475,7 +44494,7 @@ function getMandatoryIntroductionHtml(){
           style="
             display:block;
             color:#2f5d46;
-            font-size:16px;
+            font-size:14px;
             font-weight:700;
             line-height:1.4;
           ">
@@ -44504,7 +44523,7 @@ function getMandatoryIntroductionHtml(){
         style="
           margin-top:10px;
           color:#111;
-          font-size:15px;
+          font-size:14px;
           font-weight:400;
           line-height:1.5;
         ">
@@ -44637,7 +44656,7 @@ function getMandatoryIntroductionHtml(){
           style="
             border-left:6px solid #2f5d46;
             color:#111;
-            font-size:15px;
+            font-size:14px;
             font-weight:400;
             line-height:1.6;
           ">
@@ -44758,7 +44777,7 @@ function getMandatoryIntroductionHtml(){
           style="
             border-left:6px solid #2f5d46;
             color:#111;
-            font-size:15px;
+            font-size:14px;
             font-weight:400;
             line-height:1.6;
           ">
@@ -44787,7 +44806,7 @@ function getMandatoryIntroductionHtml(){
             class="box entrepriseInfoBox"
             style="
               color:#111;
-              font-size:15px;
+              font-size:14px;
               font-weight:400;
               line-height:1.6;
             ">
@@ -44979,7 +44998,7 @@ function getMandatoryIntroductionHtml(){
           style="
             border-left:6px solid #2f5d46;
             color:#111;
-            font-size:15px;
+            font-size:14px;
             font-weight:400;
             line-height:1.6;
           ">
@@ -45057,7 +45076,26 @@ function getMandatoryIntroductionHtml(){
       getObservatoireHomeHtml()
     );
 
-    setTimeout(bindObservatoireHome,0);
+  setTimeout(function(){
+
+  bindObservatoireHome();
+
+  const btn =
+    document.querySelector(
+      ".observatoireTerritoryBtn"
+    );
+
+  if(btn){
+
+    btn.onclick = function(){
+
+      openTerritoryDirectory("commune");
+
+    };
+
+  }
+
+},50);
 
   }
 
