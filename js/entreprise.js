@@ -42849,13 +42849,12 @@ console.log(
     let title =
       "Recherche professionnelle locale";
 
-    let mainText =
-      text:
-`Aucun professionnel ne correspond actuellement à votre recherche.
+   let mainText =
+  `Aucun professionnel ne correspond actuellement à votre recherche.
 
-Au fur et à mesure du raccordement des différentes bases de données publiques autorisées et des inscriptions des professionnels, l'annuaire Bo'CitéArt s'enrichira automatiquement.
+Au fur et à mesure du raccordement des différentes bases de données publiques autorisées et des inscriptions des professionnels, l’annuaire Bo'CitéArt s’enrichira automatiquement.
 
-La recherche commence toujours par votre commune, puis s'étend progressivement jusqu'à un rayon de 20 kilomètres afin de privilégier les ressources de proximité avant d'élargir le périmètre de recherche.`
+La recherche commence toujours par votre commune, puis s’étend progressivement jusqu’à un rayon de 20 kilomètres afin de privilégier les ressources de proximité avant d’élargir le périmètre de recherche.`;
 
     let advice = [
       "La recherche doit commencer dans " +
@@ -43407,162 +43406,164 @@ La recherche commence toujours par votre commune, puis s'étend progressivement 
     return "recherche";
   }
 
-  function buildAnswer(question){
+function buildAnswer(question){
 
-    const category =
-      determineCategory(question);
+  const category =
+    determineCategory(question);
 
-    if(category === "emploi"){
+  const brandHtml = `
+    <strong>
+      <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+    </strong>
+  `;
 
-      return {
-        title:
-          "Recherche de personnel ou de compétence",
-
-        text:
-          "Aucun résultat confirmé ne peut encore être affiché automatiquement dans cette démonstration. <strong>
-  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
-</strong> recherchera d’abord les profils des entreprises, commerces présents dans la ville, partenaire, puis élargit progressivement la recherche.",
-
-        lines:[
-          "Consulter les offres et candidatures disponibles.",
-          "Rechercher les entreprises du métier concerné.",
-          "Élargir aux communes voisines si aucun résultat n’est trouvé.",
-          "Poursuivre ensuite dans le département et la région."
-        ],
-
-        buttonText:
-          "Ouvrir la rubrique Emploi",
-
-        screen:
-          "emploi"
-      };
-    }
-
-    if(category === "mutualisation"){
-
-      return {
-        title:
-          "Recherche de solutions pour réduire les charges mutualisables, (edf, gaz, tel etc...)",
-
-        text:
-          "<strong>
-  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
-</strong> propose de regrouper plusieurs entreprises ayant le même besoin afin de lancer une recherche commune et comparer les propositions reçues.",
-
-        lines:[
-          "Déclarer votre intérêt.",
-          "Attendre que le nombre nécessaire d’entreprises soit atteint.",
-          "Comparer les offres.",
-          "Accepter ou refuser librement."
-        ],
-
-        buttonText:
-          "Voir les mutualisations",
-
-        screen:
-          "mutualisation"
-      };
-    }
-
-    if(category === "mecenat"){
-
-      return {
-        title:
-          "Recherche liée au mécénat",
-
-        text:
-          "<strong>
-  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
-</strong> oriente vers des projets locaux Bo'CitéArt et différentes formes de contribution possibles.",
-
-        lines:[
-          "Soutien financier.",
-          "Don de matériel.",
-          "Mécénat de compétences.",
-          "Accompagnement d’un projet local."
-        ],
-
-        buttonText:
-          "Découvrir le mécénat",
-
-        screen:
-          "mecenat"
-      };
-    }
-
-    if(category === "perennite"){
-
-      return {
-        title:
-          "Préparer l’avenir de votre entreprise",
-
-        text:
-          "<strong>
-  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
-</strong> c'est aussi comment préparer progressivement la transmission, la reprise ou la continuité de votre activité.",
-
-        lines:[
-          "Valoriser le savoir-faire.",
-          "Préparer les informations utiles.",
-          "Identifier les besoins de transmission.",
-          "Rechercher un repreneur."
-        ],
-
-        buttonText:
-          "Ouvrir la rubrique Pérennité",
-
-        screen:
-          "perennite"
-      };
-    }
-
-    if(category === "visibilite"){
-
-      return {
-        title:
-          "Faire connaître votre entreprise",
-
-        text:
-          " <strong>
-  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
-</strong> rend visibles vos métiers, votre savoir-faire, vos services et vos coordonnées auprès des habitants et des professionnels.",
-
-        lines:[
-          "Compléter votre fiche.",
-          "Présenter vos métiers.",
-          "Présenter vos services.",
-          "Publier vos actualités."
-        ],
-
-        buttonText:
-          "Faire connaître mon entreprise",
-
-        screen:
-          "visibilite"
-      };
-    }
+  if(category === "emploi"){
 
     return {
       title:
-        "Recherche professionnelle",
+        "Recherche de personnel ou de compétence",
 
       text:
-        "Aucun résultat confirmé ne peut encore être affiché automatiquement dans cette démonstration. La recherche commencera dans votre commune, puis dans les communes voisines, etc...",
+        `Aucun profil ne correspond actuellement à votre recherche.
+
+${brandHtml} recherchera d’abord les profils, les candidatures et les besoins disponibles dans votre commune, puis élargira progressivement la recherche aux communes voisines, jusqu’à un rayon de 20 kilomètres.`,
 
       lines:[
-        "Identifier précisément le métier ou le service recherché.",
-        "Consulter les entreprises et commerces locaux.",
-        "Élargir progressivement la zone si aucun résultat n’est trouvé.",
-        "Contacter directement les professionnels disponibles."
+        "Consulter les offres et les candidatures disponibles.",
+        "Rechercher les entreprises du métier concerné.",
+        "Élargir aux communes voisines si aucun résultat n’est trouvé.",
+        "Poursuivre ensuite dans le département et la région."
       ],
 
       buttonText:
-        "Ouvrir la recherche professionnelle",
+        "Ouvrir la rubrique Emploi",
 
       screen:
-        "annuaire"
+        "emploi"
     };
   }
+
+  if(category === "mutualisation"){
+
+    return {
+      title:
+        "Réduire les charges mutualisables",
+
+      text:
+        `${brandHtml} permet de regrouper plusieurs entreprises ayant le même besoin afin de lancer une recherche commune et de comparer les propositions reçues.`,
+
+      lines:[
+        "Déclarer votre intérêt.",
+        "Attendre que le nombre nécessaire d’entreprises soit atteint.",
+        "Comparer les propositions reçues.",
+        "Accepter ou refuser librement."
+      ],
+
+      buttonText:
+        "Voir les mutualisations",
+
+      screen:
+        "mutualisation"
+    };
+  }
+
+  if(category === "mecenat"){
+
+    return {
+      title:
+        "Recherche liée au mécénat",
+
+      text:
+        `${brandHtml} oriente les entreprises vers les projets locaux et les différentes formes de contribution possibles.`,
+
+      lines:[
+        "Soutien financier.",
+        "Don de matériel.",
+        "Mécénat de compétences.",
+        "Accompagnement d’un projet local."
+      ],
+
+      buttonText:
+        "Découvrir le mécénat",
+
+      screen:
+        "mecenat"
+    };
+  }
+
+  if(category === "perennite"){
+
+    return {
+      title:
+        "Préparer l’avenir de votre entreprise",
+
+      text:
+        `${brandHtml} accompagne progressivement la réflexion autour de la transmission, de la reprise et de la continuité de votre activité.`,
+
+      lines:[
+        "Valoriser le savoir-faire.",
+        "Préparer les informations utiles.",
+        "Identifier les besoins liés à la transmission.",
+        "Rechercher un repreneur."
+      ],
+
+      buttonText:
+        "Ouvrir la rubrique Pérennité",
+
+      screen:
+        "perennite"
+    };
+  }
+
+  if(category === "visibilite"){
+
+    return {
+      title:
+        "Faire connaître votre entreprise",
+
+      text:
+        `${brandHtml} rend visibles vos métiers, votre savoir-faire, vos services et vos coordonnées auprès des habitants et des professionnels.`,
+
+      lines:[
+        "Compléter votre fiche.",
+        "Présenter vos métiers.",
+        "Présenter vos services.",
+        "Publier vos actualités."
+      ],
+
+      buttonText:
+        "Faire connaître mon entreprise",
+
+      screen:
+        "visibilite"
+    };
+  }
+
+  return {
+    title:
+      "Recherche professionnelle",
+
+    text:
+      `Aucun professionnel ne correspond actuellement à votre recherche.
+
+La recherche commence dans votre commune, puis s’étend progressivement aux communes voisines, jusqu’à un rayon de 20 kilomètres.
+
+${brandHtml} enrichira les résultats au fur et à mesure du raccordement des sources publiques autorisées et des inscriptions des professionnels.`,
+
+    lines:[
+      "Identifier précisément le métier ou le service recherché.",
+      "Consulter les entreprises et les commerces locaux.",
+      "Élargir progressivement la zone si aucun résultat n’est trouvé.",
+      "Contacter directement les professionnels disponibles."
+    ],
+
+    buttonText:
+      "Ouvrir la recherche professionnelle",
+
+    screen:
+      "annuaire"
+  };
+}
 
   function answerQuestion(){
 
@@ -43608,7 +43609,7 @@ La recherche commence toujours par votre commune, puis s'étend progressivement 
 
         <br><br>
 
-        ${escapeHtml(answer.text)}
+       ${answer.text}
 
         <br><br>
 
