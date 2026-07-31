@@ -33568,15 +33568,7 @@ function openPublicEmploymentOffer(offerId){
     },0);
   }
 
-/* =========================================================
-   ÇA COMMENCE ICI — ANNUAIRE LOCAL SANS ENTREPRISE FICTIVE
-   ========================================================= */
-
-/* =========================================================
-   ÇA COMMENCE ICI — ANNUAIRE LOCAL PROPRE
-   ========================================================= */
-
-function renderLocalDirectory(){
+   function renderLocalDirectory(){
 
   const host =
     getElement(
@@ -33613,7 +33605,6 @@ function renderLocalDirectory(){
           display:block;
           color:#2f5d46;
           font-size:16px;
-          line-height:1.4;
           font-weight:700;
         ">
         Annuaire officiel de la commune
@@ -33628,8 +33619,7 @@ function renderLocalDirectory(){
       </strong>
 
       sera alimenté lors de son raccordement
-      aux données publiques officielles
-      des entreprises françaises.
+      aux données publiques officielles.
 
       <br><br>
 
@@ -33640,12 +33630,6 @@ function renderLocalDirectory(){
   `;
 }
 
-/* =========================================================
-   ÇA FINIT ICI — ANNUAIRE LOCAL PROPRE
-   ========================================================= */
-/* =========================================================
-   ÇA FINIT ICI — ANNUAIRE LOCAL SANS ENTREPRISE FICTIVE
-   ========================================================= */
 function saveSpontaneousApplication(company){
 
   const name =
