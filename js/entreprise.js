@@ -31212,39 +31212,6 @@ function openPublicEmploymentList(){
       });
 
     const emptyApplyButton =
-      getElement("employmentEmptyApplyBtn");
-
-    if(emptyApplyButton){
-
-      emptyApplyButton.onclick = function(){
-
-        if(
-function openPublicEmploymentList(){
-
-  module.renderModal(
-    "Offres d’emploi",
-    getPublicEmploymentListHtml()
-  );
-
-  window.setTimeout(function(){
-
-    document
-      .querySelectorAll(
-        ".employmentPublicOfferCard"
-      )
-      .forEach(function(button){
-
-        button.onclick = function(){
-
-          openPublicEmploymentOffer(
-            button.getAttribute(
-              "data-offer-id"
-            )
-          );
-        };
-      });
-
-    const emptyApplyButton =
       getElement(
         "employmentEmptyApplyBtn"
       );
