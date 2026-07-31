@@ -33568,7 +33568,11 @@ function openPublicEmploymentOffer(offerId){
     },0);
   }
 
- function renderLocalDirectory(){
+/* =========================================================
+   ÇA COMMENCE ICI — ANNUAIRE LOCAL SANS ENTREPRISE FICTIVE
+   ========================================================= */
+
+function renderLocalDirectory(){
 
   const host =
     getElement(
@@ -33593,22 +33597,38 @@ function openPublicEmploymentOffer(offerId){
       class="box"
       style="
         border-left:6px solid #2f5d46;
+        color:#111;
+        font-size:14px;
         line-height:1.55;
+        font-weight:400;
       ">
 
       <strong
         style="
-          font-size:16px;
+          display:block;
           color:#2f5d46;
+          font-size:16px;
+          line-height:1.4;
+          font-weight:700;
         ">
         Annuaire officiel de la commune
       </strong>
 
-      <br><br>
+      <br>
 
       Le système de recherche sera activé
-      lors du branchement officiel de Bo'CitéArt
+      lors du branchement officiel de
+
+      <strong>
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </strong>
+
       aux données publiques officielles.
+
+      <br><br>
+
+      Aucune entreprise fictive
+      n’est affichée dans cet annuaire.
 
     </div>
   `;
@@ -33626,7 +33646,7 @@ function openSpontaneousApplicationForm(companyId){
   if(!company){
 
     alert(
-      "Cette entreprise est introuvable."
+      "La candidature spontanée sera disponible lorsqu’une entreprise officielle pourra être sélectionnée dans l’annuaire."
     );
 
     return;
@@ -33637,28 +33657,37 @@ function openSpontaneousApplicationForm(companyId){
     `
       <div
         class="box"
-        style="border-left:6px solid #2f5d46;">
+        style="
+          border-left:6px solid #2f5d46;
+          color:#111;
+          font-size:14px;
+          line-height:1.55;
+          font-weight:400;
+        ">
 
-        <strong style="font-size:18px;">
-          ${escapeValue(
-            company.name
-          )}
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:700;
+          ">
+          ${escapeValue(company.name)}
         </strong>
 
-        <br><br>
+        <br>
 
-        ${escapeValue(
-          company.activity || ""
-        )}
+        Votre candidature sera transmise
+        uniquement à cette entreprise.
 
-        <br><br>
-
-        Vous pouvez envoyer votre candidature
-        même si cette entreprise
-        n’a pas publié d’offre.
       </div>
 
-      <label style="font-weight:900;">
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:700;
+        ">
         Nom et prénom
       </label>
 
@@ -33672,7 +33701,7 @@ function openSpontaneousApplicationForm(companyId){
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+          font-weight:700;
         ">
         Adresse e-mail
       </label>
@@ -33687,7 +33716,7 @@ function openSpontaneousApplicationForm(companyId){
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+          font-weight:700;
         ">
         Téléphone
       </label>
@@ -33702,7 +33731,7 @@ function openSpontaneousApplicationForm(companyId){
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+          font-weight:700;
         ">
         Métier ou poste recherché
       </label>
@@ -33717,7 +33746,7 @@ function openSpontaneousApplicationForm(companyId){
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+          font-weight:700;
         ">
         Message à l’entreprise
       </label>
@@ -33726,14 +33755,13 @@ function openSpontaneousApplicationForm(companyId){
         id="spontaneousCvMessage"
         class="miniField"
         style="min-height:110px;"
-        placeholder="Présentez brièvement votre candidature.">
-      </textarea>
+        placeholder="Présentez brièvement votre candidature."></textarea>
 
       <label
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+          font-weight:700;
         ">
         CV
       </label>
@@ -33743,19 +33771,6 @@ function openSpontaneousApplicationForm(companyId){
         class="miniField"
         type="file"
         accept=".pdf,.doc,.docx">
-
-      <div
-        class="box"
-        style="margin-top:12px;">
-
-        Votre candidature sera transmise
-        uniquement à cette entreprise.
-
-        <br><br>
-
-        Elle ne sera pas visible publiquement
-        ni accessible aux autres entreprises.
-      </div>
 
       <label class="miniCheck">
 
@@ -33770,13 +33785,17 @@ function openSpontaneousApplicationForm(companyId){
           afin de pouvoir me recontacter
           ultérieurement.
         </span>
+
       </label>
 
       <button
         id="spontaneousCvSendBtn"
         class="choiceBtn"
         type="button"
-        style="width:100%;margin-top:12px;">
+        style="
+          width:100%;
+          margin-top:12px;
+        ">
         Envoyer ma candidature
       </button>
     `
@@ -33802,6 +33821,9 @@ function openSpontaneousApplicationForm(companyId){
   },0);
 }
 
+/* =========================================================
+   ÇA FINIT ICI — ANNUAIRE LOCAL SANS ENTREPRISE FICTIVE
+   ========================================================= */
 function saveSpontaneousApplication(company){
 
   const name =
