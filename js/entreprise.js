@@ -33601,497 +33601,412 @@ function openPublicEmploymentOffer(offerId){
     },0);
   }
 
-  function renderLocalDirectory(){
+ function renderLocalDirectory(){
 
-    const host =
-      getElement(
-        "localDirectoryResultList"
-      );
+  const host =
+    getElement(
+      "localDirectoryResultList"
+    );
 
-    const count =
-      getElement(
-        "localDirectoryResultCount"
-      );
+  const count =
+    getElement(
+      "localDirectoryResultCount"
+    );
 
-    const input =
-      getElement(
-        "localDirectorySearchInput"
-      );
+  if(!host){
+    return;
+  }
 
-    if(!host){
-      return;
-    }
+  if(count){
+    count.textContent = "";
+  }
 
-    const query =
-      normalizeText(
-        input ? input.value : ""
-      );
+  host.innerHTML = `
+    <div
+      class="box"
+      style="
+        border-left:6px solid #2f5d46;
+        line-height:1.55;
+      ">
 
-    const companies =
-      loadCompanies()
-        .filter(function(company){
+      <strong
+        style="
+          font-size:16px;
+          color:#2f5d46;
+        ">
+        Annuaire officiel de la commune
+      </strong>
 
-          const searchable =
-            normalizeText(
-              [
-                company.name,
-                company.activity,
-                company.description,
-                company.city
-              ].join(" ")
-            );
+      <br><br>
 
-          return (
-            !query ||
-            searchable.includes(query)
-          );
-        })
-        .sort(function(a,b){
+      Le système de recherche sera activé
+      lors du branchement officiel de Bo'CitéArt
+      aux données publiques officielles.
 
-          return String(
-            a.name || ""
-          ).localeCompare(
-            String(b.name || ""),
-            "fr",
-            {
-              sensitivity:"base"
-            }
-          );
-        });
+    </div>
+  `;
+}
 
-    if(count){
-      count.textContent =
-        companies.length +
-        " entreprise(s) ou commerce(s) trouvé(s).";
-    }
+function openSpontaneousApplicationForm(companyId){
 
-    if(!companies.length){
+  const company =
+    loadCompanies()
+      .find(function(item){
 
-      host.innerHTML = `
-        <div class="box">
-          Aucun résultat ne correspond
-          à votre recherche.
-        </div>
-      `;
+        return item.id === companyId;
+      });
 
-      return;
-    }
+  if(!company){
 
-     host.innerHTML = `
+    alert(
+      "Cette entreprise est introuvable."
+    );
 
+    return;
+  }
+
+  app.renderModal(
+    "Candidature spontanée",
+    `
       <div
         class="box"
-        style="
-          border-left:6px solid #2f5d46;
-          line-height:1.55;
-        ">
+        style="border-left:6px solid #2f5d46;">
 
-        <strong
-          style="
-            font-size:16px;
-            color:#2f5d46;
-          ">
-          Annuaire économique national
+        <strong style="font-size:18px;">
+          ${escapeValue(
+            company.name
+          )}
         </strong>
 
         <br><br>
 
-        L’annuaire Bo'CitéArt sera alimenté
-        lors de son raccordement officiel
-        aux bases nationales des entreprises.
+        ${escapeValue(
+          company.activity || ""
+        )}
 
         <br><br>
 
-        Les entreprises pourront alors compléter :
-
-        <br><br>
-
-        • leur présentation ;<br>
-        • leurs activités ;<br>
-        • leurs services ;<br>
-        • leurs offres d’emploi ;<br>
-        • leurs informations publiques.
-
-        <br><br>
-
-        Les recherches, les filtres
-        et les candidatures spontanées
-        pourront être utilisés dès que les entreprises
-        seront officiellement enregistrées
-        dans Bo'CitéArt.
-
-        <br><br>
-
-        Pour le moment,
-        aucune entreprise fictive
-        n’est affichée dans l’annuaire.
-
+        Vous pouvez envoyer votre candidature
+        même si cette entreprise
+        n’a pas publié d’offre.
       </div>
 
-    `;
-  }
+      <label style="font-weight:900;">
+        Nom et prénom
+      </label>
 
-  function openSpontaneousApplicationForm(companyId){
+      <input
+        id="spontaneousCvName"
+        class="miniField"
+        type="text"
+        placeholder="Nom et prénom">
 
-    const company =
-      loadCompanies()
-        .find(function(item){
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Adresse e-mail
+      </label>
 
-          return item.id === companyId;
-        });
+      <input
+        id="spontaneousCvEmail"
+        class="miniField"
+        type="email"
+        placeholder="Adresse e-mail">
 
-    if(!company){
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Téléphone
+      </label>
 
-      alert(
-        "Cette entreprise est introuvable."
+      <input
+        id="spontaneousCvPhone"
+        class="miniField"
+        type="tel"
+        placeholder="Téléphone">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Métier ou poste recherché
+      </label>
+
+      <input
+        id="spontaneousCvJob"
+        class="miniField"
+        type="text"
+        placeholder="Exemple : vendeur, comptable, technicien">
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        Message à l’entreprise
+      </label>
+
+      <textarea
+        id="spontaneousCvMessage"
+        class="miniField"
+        style="min-height:110px;"
+        placeholder="Présentez brièvement votre candidature.">
+      </textarea>
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          font-weight:900;
+        ">
+        CV
+      </label>
+
+      <input
+        id="spontaneousCvFile"
+        class="miniField"
+        type="file"
+        accept=".pdf,.doc,.docx">
+
+      <div
+        class="box"
+        style="margin-top:12px;">
+
+        Votre candidature sera transmise
+        uniquement à cette entreprise.
+
+        <br><br>
+
+        Elle ne sera pas visible publiquement
+        ni accessible aux autres entreprises.
+      </div>
+
+      <label class="miniCheck">
+
+        <input
+          id="spontaneousCvConsent"
+          type="checkbox">
+
+        <span>
+          J’accepte que cette entreprise
+          conserve ma candidature
+          dans son historique privé
+          afin de pouvoir me recontacter
+          ultérieurement.
+        </span>
+      </label>
+
+      <button
+        id="spontaneousCvSendBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:12px;">
+        Envoyer ma candidature
+      </button>
+    `
+  );
+
+  window.setTimeout(function(){
+
+    const sendButton =
+      getElement(
+        "spontaneousCvSendBtn"
       );
 
-      return;
-    }
+    if(sendButton){
 
-    app.renderModal(
-      "Candidature spontanée",
-      `
-        <div
-          class="box"
-          style="border-left:6px solid #2f5d46;">
+      sendButton.onclick = function(){
 
-          <strong style="font-size:18px;">
-            ${escapeValue(
-              company.name
-            )}
-          </strong>
-
-          <br><br>
-
-          ${escapeValue(
-            company.activity || ""
-          )}
-
-          <br><br>
-
-          Vous pouvez envoyer votre candidature
-          même si cette entreprise
-          n’a pas publié d’offre.
-        </div>
-
-        <label style="font-weight:900;">
-          Nom et prénom
-        </label>
-
-        <input
-          id="spontaneousCvName"
-          class="miniField"
-          type="text"
-          placeholder="Nom et prénom">
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Adresse e-mail
-        </label>
-
-        <input
-          id="spontaneousCvEmail"
-          class="miniField"
-          type="email"
-          placeholder="Adresse e-mail">
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Téléphone
-        </label>
-
-        <input
-          id="spontaneousCvPhone"
-          class="miniField"
-          type="tel"
-          placeholder="Téléphone">
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Métier ou poste recherché
-        </label>
-
-        <input
-          id="spontaneousCvJob"
-          class="miniField"
-          type="text"
-          placeholder="Exemple : vendeur, comptable, technicien">
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Message à l’entreprise
-        </label>
-
-        <textarea
-          id="spontaneousCvMessage"
-          class="miniField"
-          style="min-height:110px;"
-          placeholder="Présentez brièvement votre candidature.">
-        </textarea>
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          CV
-        </label>
-
-        <input
-          id="spontaneousCvFile"
-          class="miniField"
-          type="file"
-          accept=".pdf,.doc,.docx">
-
-        <div
-          class="box"
-          style="margin-top:12px;">
-
-          Votre candidature sera transmise
-          uniquement à cette entreprise.
-
-          <br><br>
-
-          Elle ne sera pas visible publiquement
-          ni accessible aux autres entreprises.
-        </div>
-
-        <label class="miniCheck">
-
-          <input
-            id="spontaneousCvConsent"
-            type="checkbox">
-
-          <span>
-            J’accepte que cette entreprise
-            conserve ma candidature
-            dans son historique privé
-            afin de pouvoir me recontacter
-            ultérieurement.
-          </span>
-        </label>
-
-        <button
-          id="spontaneousCvSendBtn"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;margin-top:12px;">
-          Envoyer ma candidature
-        </button>
-      `
-    );
-
-    window.setTimeout(function(){
-
-      const sendButton =
-        getElement(
-          "spontaneousCvSendBtn"
+        saveSpontaneousApplication(
+          company
         );
-
-      if(sendButton){
-
-        sendButton.onclick = function(){
-
-          saveSpontaneousApplication(
-            company
-          );
-        };
-      }
-
-    },0);
-  }
-
-  function saveSpontaneousApplication(company){
-
-    const name =
-      String(
-        getElement("spontaneousCvName")
-          ? getElement("spontaneousCvName").value
-          : ""
-      ).trim();
-
-    const email =
-      String(
-        getElement("spontaneousCvEmail")
-          ? getElement("spontaneousCvEmail").value
-          : ""
-      ).trim();
-
-    const phone =
-      String(
-        getElement("spontaneousCvPhone")
-          ? getElement("spontaneousCvPhone").value
-          : ""
-      ).trim();
-
-    const job =
-      String(
-        getElement("spontaneousCvJob")
-          ? getElement("spontaneousCvJob").value
-          : ""
-      ).trim();
-
-    const message =
-      String(
-        getElement("spontaneousCvMessage")
-          ? getElement("spontaneousCvMessage").value
-          : ""
-      ).trim();
-
-    const fileInput =
-      getElement(
-        "spontaneousCvFile"
-      );
-
-    const consent =
-      getElement(
-        "spontaneousCvConsent"
-      );
-
-    if(
-      !name ||
-      !email ||
-      !phone ||
-      !job ||
-      !message
-    ){
-
-      alert(
-        "Veuillez remplir toutes les informations."
-      );
-
-      return;
+      };
     }
 
-    if(!email.includes("@")){
+  },0);
+}
 
-      alert(
-        "Veuillez renseigner une adresse e-mail valide."
-      );
+function saveSpontaneousApplication(company){
 
-      return;
-    }
+  const name =
+    String(
+      getElement("spontaneousCvName")
+        ? getElement("spontaneousCvName").value
+        : ""
+    ).trim();
 
-    if(
-      !fileInput ||
-      !fileInput.files ||
-      !fileInput.files.length
-    ){
+  const email =
+    String(
+      getElement("spontaneousCvEmail")
+        ? getElement("spontaneousCvEmail").value
+        : ""
+    ).trim();
 
-      alert(
-        "Veuillez sélectionner votre CV."
-      );
+  const phone =
+    String(
+      getElement("spontaneousCvPhone")
+        ? getElement("spontaneousCvPhone").value
+        : ""
+    ).trim();
 
-      return;
-    }
+  const job =
+    String(
+      getElement("spontaneousCvJob")
+        ? getElement("spontaneousCvJob").value
+        : ""
+    ).trim();
 
-    if(
-      !consent ||
-      !consent.checked
-    ){
+  const message =
+    String(
+      getElement("spontaneousCvMessage")
+        ? getElement("spontaneousCvMessage").value
+        : ""
+    ).trim();
 
-      alert(
-        "Vous devez accepter la conservation de votre candidature."
-      );
-
-      return;
-    }
-
-    const applications =
-      loadSpontaneousApplications();
-
-    applications.unshift({
-
-      id:
-        "CANDIDATURE-SPONTANEE-" +
-        Date.now() +
-        "-" +
-        Math.random()
-          .toString(36)
-          .slice(2,7),
-
-      companyId:company.id,
-
-      companyName:
-        company.name,
-
-      candidateName:name,
-
-      candidateEmail:email,
-
-      candidatePhone:phone,
-
-      requestedJob:job,
-
-      message:message,
-
-      cvName:
-        fileInput.files[0].name,
-
-      status:"recue",
-
-      createdAt:
-        Date.now(),
-
-      createdAtFr:
-        new Date()
-          .toLocaleString(
-            "fr-FR"
-          )
-    });
-
-    saveSpontaneousApplications(
-      applications
+  const fileInput =
+    getElement(
+      "spontaneousCvFile"
     );
+
+  const consent =
+    getElement(
+      "spontaneousCvConsent"
+    );
+
+  if(
+    !name ||
+    !email ||
+    !phone ||
+    !job ||
+    !message
+  ){
 
     alert(
-      "Votre candidature spontanée a été enregistrée."
+      "Veuillez remplir toutes les informations."
     );
 
-    openLocalDirectory();
+    return;
   }
 
- /*
+  if(!email.includes("@")){
+
+    alert(
+      "Veuillez renseigner une adresse e-mail valide."
+    );
+
+    return;
+  }
+
+  if(
+    !fileInput ||
+    !fileInput.files ||
+    !fileInput.files.length
+  ){
+
+    alert(
+      "Veuillez sélectionner votre CV."
+    );
+
+    return;
+  }
+
+  if(
+    !consent ||
+    !consent.checked
+  ){
+
+    alert(
+      "Vous devez accepter la conservation de votre candidature."
+    );
+
+    return;
+  }
+
+  const applications =
+    loadSpontaneousApplications();
+
+  applications.unshift({
+
+    id:
+      "CANDIDATURE-SPONTANEE-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2,7),
+
+    companyId:company.id,
+
+    companyName:
+      company.name,
+
+    candidateName:name,
+
+    candidateEmail:email,
+
+    candidatePhone:phone,
+
+    requestedJob:job,
+
+    message:message,
+
+    cvName:
+      fileInput.files[0].name,
+
+    status:"recue",
+
+    createdAt:
+      Date.now(),
+
+    createdAtFr:
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        )
+  });
+
+  saveSpontaneousApplications(
+    applications
+  );
+
+  alert(
+    "Votre candidature spontanée a été enregistrée."
+  );
+
+  openLocalDirectory();
+}
+
+/*
   L’ancien annuaire reste disponible,
   mais il ne remplace plus l’Observatoire économique.
 */
 
-  app.openCorrectedDirectory =
-    openLocalDirectory;
+app.openCorrectedDirectory =
+  openLocalDirectory;
 
-  app.openLocalDirectory =
-    openLocalDirectory;
+app.openLocalDirectory =
+  openLocalDirectory;
 
-  app.openSpontaneousApplicationForm =
-    openSpontaneousApplicationForm;
+app.openSpontaneousApplicationForm =
+  openSpontaneousApplicationForm;
 
-  app.loadSpontaneousApplications =
-    loadSpontaneousApplications;
+app.loadSpontaneousApplications =
+  loadSpontaneousApplications;
 
-  console.log(
-    "✅ Liste locale et candidatures spontanées chargées"
-  );
+console.log(
+  "✅ Liste locale et candidatures spontanées chargées"
+);
 
 })();
-
 /* ==========================================================
    BO'CITÉART
    CORRECTIF 05
@@ -41973,55 +41888,39 @@ function openPublicEmploymentOffer(offerId){
   window.BOCITEART_ENTREPRISE_BANDS_FINAL_16 =
     true;
 
-  function openDirectly(screenName){
+function openDirectly(screenName){
 
-    if(!screenName){
-      return;
-    }
-
-    const renderer =
-      app.screens &&
-      app.screens[screenName];
-
-    if(
-      typeof renderer ===
-      "function"
-    ){
-      if(app.state){
-
-        if(
-          app.state.currentScreen !==
-          screenName
-        ){
-          app.state.previousScreen =
-            app.state.currentScreen;
-        }
-
-        app.state.currentScreen =
-          screenName;
-      }
-
-      renderer();
-
-      return;
-    }
-
-    if(
-      typeof app.openScreen ===
-      "function"
-    ){
-      app.openScreen(
-        screenName
-      );
-
-      return;
-    }
-
-    alert(
-      "Cette rubrique est momentanément indisponible."
-    );
+  if(!screenName){
+    return;
   }
 
+  if(
+    typeof app.openScreen ===
+    "function"
+  ){
+    app.openScreen(
+      screenName
+    );
+
+    return;
+  }
+
+  const renderer =
+    app.screens &&
+    app.screens[screenName];
+
+  if(
+    typeof renderer ===
+    "function"
+  ){
+    renderer();
+    return;
+  }
+
+  alert(
+    "Cette rubrique est momentanément indisponible."
+  );
+}
   /*
     Le gestionnaire est placé sur WINDOW
     en phase de capture.
