@@ -34541,6 +34541,7 @@ console.log(
       );
 
     if(titleElement){
+
       return normalizeText(
         titleElement.textContent
       );
@@ -34550,7 +34551,9 @@ console.log(
       getModalContent();
 
     return normalizeText(
-      modal ? modal.textContent : ""
+      modal
+        ? modal.textContent
+        : ""
     );
   }
 
@@ -34565,7 +34568,9 @@ console.log(
     }
 
     const style =
-      document.createElement("style");
+      document.createElement(
+        "style"
+      );
 
     style.id =
       STYLE_ID;
@@ -34707,6 +34712,7 @@ console.log(
 
           Cliquez dans l’une des propositions
           en bandes défilantes.
+
         </div>
 
         <div class="entrepriseUnifiedBands">
@@ -34722,6 +34728,7 @@ console.log(
                 Cliquez ici…
               </span>
             </span>
+
           </button>
 
           <button
@@ -34730,11 +34737,12 @@ console.log(
             data-unified-entreprise-screen="fidelisation">
 
             <span class="entrepriseUnifiedBandText">
-              Fidélisation • Salariés • Services de proximité •
+              Fidélisation • Salariés • Services proches du travail •
               <span class="entrepriseUnifiedBandAction">
                 Cliquez ici…
               </span>
             </span>
+
           </button>
 
           <button
@@ -34748,6 +34756,7 @@ console.log(
                 Cliquez ici…
               </span>
             </span>
+
           </button>
 
           <button
@@ -34761,6 +34770,7 @@ console.log(
                 Cliquez ici…
               </span>
             </span>
+
           </button>
 
           <button
@@ -34774,6 +34784,7 @@ console.log(
                 Cliquez ici…
               </span>
             </span>
+
           </button>
 
           <button
@@ -34787,6 +34798,7 @@ console.log(
                 Cliquez ici…
               </span>
             </span>
+
           </button>
 
           <button
@@ -34800,7 +34812,9 @@ console.log(
                 Cliquez ici…
               </span>
             </span>
+
           </button>
+
         </div>
       </div>
     `;
@@ -34952,6 +34966,32 @@ console.log(
         "opportunites de mutualisation"
       )
     ){
+
+      if(
+        text.includes(
+          "decouvrez les entreprises de votre ville"
+        ) &&
+        text.includes(
+          "la recherche commence toujours dans votre commune"
+        )
+      ){
+        return true;
+      }
+
+      if(
+        text.includes(
+          "choisissez votre espace"
+        ) &&
+        text.includes(
+          "commerce"
+        ) &&
+        text.includes(
+          "entreprise"
+        )
+      ){
+        return true;
+      }
+    }
 
     return false;
   }
@@ -35147,6 +35187,7 @@ console.log(
       host.firstElementChild;
 
     if(suggestions){
+
       modal.appendChild(
         suggestions
       );
@@ -35186,6 +35227,7 @@ console.log(
                 typeof app.openScreen ===
                 "function"
               ){
+
                 app.openScreen(
                   screen
                 );
@@ -35226,7 +35268,8 @@ console.log(
         texts.forEach(
           function(text){
 
-            text.style.animation = "";
+            text.style.animation =
+              "";
 
             text.style.animationPlayState =
               "running";
@@ -35277,7 +35320,8 @@ console.log(
     synchronizeBands();
   }
 
-  let correctionTimer = null;
+  let correctionTimer =
+    null;
 
   const observer =
     new MutationObserver(
@@ -35340,6 +35384,12 @@ console.log(
   );
 
 })();
+
+/* ==========================================================
+   BO'CITÉART
+   CORRECTIF 08
+   NOUVELLE INTRODUCTION DE LA PAGE VISIBILITÉ
+   ========================================================== */
 
 /* ==========================================================
    BO'CITÉART
