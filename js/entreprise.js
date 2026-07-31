@@ -4541,25 +4541,28 @@ if(!offers.length){
     );
   }
 
-  function openApplicationForm(offerId){
+function openApplicationForm(offerId){
 
-    const data =
-      loadEmploymentData();
+  const data =
+    loadEmploymentData();
 
-    const offer =
-      data.offers.find(function(item){
+  const offer =
+    offerId
+      ? data.offers.find(function(item){
+          return item.id === offerId;
+        })
+      : null;
 
-        return item.id === offerId;
-      });
+  if(offerId && !offer){
 
-    if(!offer){
+    alert(
+      "Cette offre est introuvable."
+    );
 
-      alert(
-        "Offre introuvable."
-      );
+    return;
+  }
 
-      return;
-    }
+  if(offer){
 
     const active =
       offer.status === "publiee" ||
@@ -4576,106 +4579,434 @@ if(!offers.length){
 
       return;
     }
+  }
 
-    module.renderModal(
-      "Répondre à l’offre",
-      `
-        <div
-          class="box entrepriseInfoBox"
-          style="
-            border-left:6px solid #2f5d46;
-          ">
+  let savedProfile = {};
 
-          <strong
-            style="
-              font-size:17px;
-            ">
-            ${escapeValue(offer.title)}
-          </strong>
+  try{
 
-          <br><br>
+    savedProfile =
+      JSON.parse(
+        localStorage.getItem(
+          "bociteart_candidate_profile_v1"
+        ) || "{}"
+      );
 
-          <strong>
-            ${escapeValue(offer.companyName)}
-          </strong>
+  }catch(error){
 
-          <br><br>
+    savedProfile = {};
+  }
 
-          ${escapeValue(offer.city)}
+  const savedName =
+    escapeValue(
+      savedProfile.name || ""
+    );
 
-          •
+  const savedFirstName =
+    escapeValue(
+      savedProfile.firstName || ""
+    );
 
-          ${escapeValue(offer.contract)}
+  const savedPhone =
+    escapeValue(
+      savedProfile.phone || ""
+    );
 
-        </div>
+  const savedEmail =
+    escapeValue(
+      savedProfile.email || ""
+    );
 
-        <label
-          style="
-            font-weight:900;
-          ">
-          Nom et prénom
-        </label>
+  const savedCity =
+    escapeValue(
+      savedProfile.city || ""
+    );
 
-        <input
-          id="applicationCandidateName"
-          class="miniField"
-          type="text"
-          autocomplete="name"
-          placeholder="Nom et prénom">
+  const companyName =
+    offer
+      ? escapeValue(
+          offer.companyName || ""
+        )
+      : "";
 
-        <label
+  const position =
+    offer
+      ? escapeValue(
+          offer.title || ""
+        )
+      : "";
+
+  module.renderModal(
+    offer
+      ? "Déposer votre candidature"
+      : "Candidature spontanée",
+    `
+      ${
+        offer
+          ? `
+            <div
+              class="box entrepriseInfoBox"
+              style="
+                border-left:6px solid #2f5d46;
+                color:#111;
+                font-size:14px;
+                font-weight:400;
+              ">
+
+              <strong
+                style="
+                  display:block;
+                  color:#2f5d46;
+                  font-size:16px;
+                  font-weight:900;
+                  margin-bottom:8px;
+                ">
+                ${escapeValue(
+                  offer.title
+                )}
+              </strong>
+
+              ${escapeValue(
+                offer.companyName
+              )}
+
+              <br><br>
+
+              ${escapeValue(
+                offer.city
+              )}
+
+              •
+
+              ${escapeValue(
+                offer.contract
+              )}
+            </div>
+          `
+          : `
+            <div
+              class="box entrepriseInfoBox"
+              style="
+                border-left:6px solid #2f5d46;
+                color:#111;
+                font-size:14px;
+                font-weight:400;
+              ">
+
+              <strong
+                style="
+                  display:block;
+                  color:#2f5d46;
+                  font-size:16px;
+                  font-weight:900;
+                  margin-bottom:8px;
+                ">
+                Candidature spontanée
+              </strong>
+
+              Présentez directement votre candidature
+              à l’entreprise de votre choix.
+            </div>
+          `
+      }
+
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <strong
           style="
             display:block;
-            margin-top:10px;
+            color:#2f5d46;
+            font-size:16px;
             font-weight:900;
+            margin-bottom:10px;
           ">
-          Adresse e-mail
+          Vous recherchez ?
+        </strong>
+
+        <label class="miniCheck">
+          <input
+            class="applicationSearchType"
+            type="checkbox"
+            value="Stage">
+          <span>Stage</span>
         </label>
 
-        <input
-          id="applicationCandidateEmail"
-          class="miniField"
-          type="email"
-          autocomplete="email"
-          placeholder="Adresse e-mail">
+        <label class="miniCheck">
+          <input
+            class="applicationSearchType"
+            type="checkbox"
+            value="Apprentissage">
+          <span>Apprentissage</span>
+        </label>
 
-        <label
+        <label class="miniCheck">
+          <input
+            class="applicationSearchType"
+            type="checkbox"
+            value="Alternance">
+          <span>Alternance</span>
+        </label>
+
+        <label class="miniCheck">
+          <input
+            class="applicationSearchType"
+            type="checkbox"
+            value="CDD">
+          <span>CDD</span>
+        </label>
+
+        <label class="miniCheck">
+          <input
+            class="applicationSearchType"
+            type="checkbox"
+            value="CDI">
+          <span>CDI</span>
+        </label>
+
+        <label class="miniCheck">
+          <input
+            class="applicationSearchType"
+            type="checkbox"
+            value="Intérim">
+          <span>Intérim</span>
+        </label>
+
+        <label class="miniCheck">
+          <input
+            class="applicationSearchType"
+            type="checkbox"
+            value="Emploi saisonnier">
+          <span>Emploi saisonnier</span>
+        </label>
+
+        <label class="miniCheck">
+          <input
+            class="applicationSearchType"
+            type="checkbox"
+            value="Autre">
+          <span>Autre</span>
+        </label>
+      </div>
+
+      ${
+        offer
+          ? `
+            <input
+              id="applicationCompanyName"
+              type="hidden"
+              value="${companyName}">
+          `
+          : `
+            <label
+              style="
+                display:block;
+                color:#2f5d46;
+                font-size:16px;
+                font-weight:900;
+                margin-top:10px;
+              ">
+              Entreprise destinataire
+            </label>
+
+            <input
+              id="applicationCompanyName"
+              class="miniField"
+              type="text"
+              placeholder="Nom de l’entreprise">
+          `
+      }
+
+      <label
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:900;
+          margin-top:10px;
+        ">
+        Poste recherché
+      </label>
+
+      <input
+        id="applicationPosition"
+        class="miniField"
+        type="text"
+        value="${position}"
+        placeholder="Poste recherché">
+
+      <label
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:900;
+          margin-top:10px;
+        ">
+        Disponibilité
+      </label>
+
+      <input
+        id="applicationAvailability"
+        class="miniField"
+        type="text"
+        placeholder="Immédiate, date ou période">
+
+      <label
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:900;
+          margin-top:10px;
+        ">
+        Nom
+      </label>
+
+      <input
+        id="applicationCandidateName"
+        class="miniField"
+        type="text"
+        autocomplete="family-name"
+        value="${savedName}"
+        placeholder="Nom">
+
+      <label
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:900;
+          margin-top:10px;
+        ">
+        Prénom
+      </label>
+
+      <input
+        id="applicationCandidateFirstName"
+        class="miniField"
+        type="text"
+        autocomplete="given-name"
+        value="${savedFirstName}"
+        placeholder="Prénom">
+
+      <label
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:900;
+          margin-top:10px;
+        ">
+        Téléphone
+      </label>
+
+      <input
+        id="applicationCandidatePhone"
+        class="miniField"
+        type="tel"
+        autocomplete="tel"
+        value="${savedPhone}"
+        placeholder="Téléphone">
+
+      <label
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:900;
+          margin-top:10px;
+        ">
+        Adresse e-mail
+      </label>
+
+      <input
+        id="applicationCandidateEmail"
+        class="miniField"
+        type="email"
+        autocomplete="email"
+        value="${savedEmail}"
+        placeholder="Adresse e-mail">
+
+      <label
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:900;
+          margin-top:10px;
+        ">
+        Commune
+      </label>
+
+      <input
+        id="applicationCandidateCity"
+        class="miniField"
+        type="text"
+        autocomplete="address-level2"
+        value="${savedCity}"
+        placeholder="Commune">
+
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          margin-top:12px;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <strong
           style="
             display:block;
-            margin-top:10px;
+            color:#2f5d46;
+            font-size:16px;
             font-weight:900;
+            margin-bottom:10px;
           ">
-          Téléphone
-        </label>
-
-        <input
-          id="applicationCandidatePhone"
-          class="miniField"
-          type="tel"
-          autocomplete="tel"
-          placeholder="Téléphone">
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Message au recruteur
-        </label>
+          Votre message
+        </strong>
 
         <textarea
           id="applicationCandidateMessage"
           class="miniField"
           style="
-            min-height:110px;
-          "
-          placeholder="Présentez brièvement votre candidature"></textarea>
+            min-height:130px;
+            color:#111;
+            font-size:14px;
+            font-weight:400;
+          ">Votre entreprise a retenu toute mon attention.
+Je souhaite vous proposer ma candidature pour un poste de ${position}.</textarea>
+      </div>
+
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:900;
+            margin-bottom:10px;
+          ">
+          Documents facultatifs
+        </strong>
 
         <label
           style="
             display:block;
-            margin-top:10px;
+            margin-bottom:6px;
             font-weight:900;
           ">
           CV
@@ -4687,170 +5018,289 @@ if(!offers.length){
           type="file"
           accept=".pdf,.doc,.docx">
 
-        <div
-          class="box entrepriseInfoBox"
+        <label
           style="
-            margin-top:12px;
+            display:block;
+            margin-top:10px;
+            margin-bottom:6px;
+            font-weight:900;
           ">
-
-          Le CV est transmis uniquement
-          pour cette offre.
-
-          <br><br>
-
-          Il n’est pas déposé
-          dans un espace public
-          et n’est pas accessible
-          à l’ensemble des entreprises.
-
-          <br><br>
-
-          Dans cette démonstration,
-          seul le nom du fichier est enregistré localement.
-          Le contenu réel du CV n’est pas envoyé
-          vers un serveur.
-
-        </div>
-
-        <label class="miniCheck">
-
-          <input
-            id="applicationConsentCheck"
-            type="checkbox">
-
-          <span>
-            J’accepte que cette entreprise conserve
-            ma candidature dans son historique
-            afin de pouvoir me recontacter ultérieurement.
-          </span>
-
+          Lettre
         </label>
 
-        <button
-          id="applicationSendBtn"
-          class="choiceBtn"
-          type="button"
+        <input
+          id="applicationCandidateLetter"
+          class="miniField"
+          type="file"
+          accept=".pdf,.doc,.docx">
+
+        <label
           style="
-            width:100%;
-            margin-top:14px;
+            display:block;
+            margin-top:10px;
+            margin-bottom:6px;
+            font-weight:900;
           ">
-          Envoyer ma candidature
-        </button>
-      `
+          Autre document
+        </label>
+
+        <input
+          id="applicationCandidateOtherDocument"
+          class="miniField"
+          type="file"
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+      </div>
+
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        Chaque envoi et chaque réponse sont automatiquement
+        classés, enregistrés, datés et horodatés.
+      </div>
+
+      <button
+        id="applicationSendBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
+        Envoyer ma candidature
+      </button>
+    `
+  );
+
+  window.setTimeout(function(){
+
+    const positionInput =
+      getElement(
+        "applicationPosition"
+      );
+
+    const messageInput =
+      getElement(
+        "applicationCandidateMessage"
+      );
+
+    if(
+      positionInput &&
+      messageInput
+    ){
+
+      positionInput.oninput = function(){
+
+        const selectedPosition =
+          String(
+            positionInput.value || ""
+          ).trim();
+
+        messageInput.value =
+          "Votre entreprise a retenu toute mon attention.\n" +
+          "Je souhaite vous proposer ma candidature pour un poste de " +
+          (
+            selectedPosition ||
+            "..."
+          ) +
+          ".";
+      };
+    }
+
+    const sendButton =
+      getElement(
+        "applicationSendBtn"
+      );
+
+    if(sendButton){
+
+      sendButton.onclick = function(){
+
+        saveApplication(
+          offerId || ""
+        );
+      };
+    }
+
+  },0);
+}
+   
+function saveApplication(offerId){
+
+  const searchTypes =
+    Array.from(
+      document.querySelectorAll(
+        ".applicationSearchType:checked"
+      )
+    ).map(function(input){
+
+      return String(
+        input.value || ""
+      ).trim();
+    });
+
+  const companyName =
+    String(
+      getElement("applicationCompanyName")
+        ? getElement("applicationCompanyName").value
+        : ""
+    ).trim();
+
+  const position =
+    String(
+      getElement("applicationPosition")
+        ? getElement("applicationPosition").value
+        : ""
+    ).trim();
+
+  const availability =
+    String(
+      getElement("applicationAvailability")
+        ? getElement("applicationAvailability").value
+        : ""
+    ).trim();
+
+  const name =
+    String(
+      getElement("applicationCandidateName")
+        ? getElement("applicationCandidateName").value
+        : ""
+    ).trim();
+
+  const firstName =
+    String(
+      getElement("applicationCandidateFirstName")
+        ? getElement("applicationCandidateFirstName").value
+        : ""
+    ).trim();
+
+  const phone =
+    String(
+      getElement("applicationCandidatePhone")
+        ? getElement("applicationCandidatePhone").value
+        : ""
+    ).trim();
+
+  const email =
+    String(
+      getElement("applicationCandidateEmail")
+        ? getElement("applicationCandidateEmail").value
+        : ""
+    ).trim();
+
+  const city =
+    String(
+      getElement("applicationCandidateCity")
+        ? getElement("applicationCandidateCity").value
+        : ""
+    ).trim();
+
+  const message =
+    String(
+      getElement("applicationCandidateMessage")
+        ? getElement("applicationCandidateMessage").value
+        : ""
+    ).trim();
+
+  const cvInput =
+    getElement(
+      "applicationCandidateCv"
     );
 
-    window.setTimeout(function(){
+  const letterInput =
+    getElement(
+      "applicationCandidateLetter"
+    );
 
-      const sendButton =
-        getElement(
-          "applicationSendBtn"
-        );
+  const otherDocumentInput =
+    getElement(
+      "applicationCandidateOtherDocument"
+    );
 
-      if(sendButton){
+  if(!searchTypes.length){
 
-        sendButton.onclick = function(){
+    alert(
+      "Veuillez sélectionner le type de recherche."
+    );
 
-          saveApplication(
-            offerId
-          );
-        };
-      }
-
-    },0);
+    return;
   }
 
-  function saveApplication(offerId){
+  if(!companyName){
 
-    const name =
-      String(
-        getElement("applicationCandidateName")
-          ? getElement("applicationCandidateName").value
-          : ""
-      ).trim();
+    alert(
+      "Veuillez renseigner l’entreprise destinataire."
+    );
 
-    const email =
-      String(
-        getElement("applicationCandidateEmail")
-          ? getElement("applicationCandidateEmail").value
-          : ""
-      ).trim();
+    return;
+  }
 
-    const phone =
-      String(
-        getElement("applicationCandidatePhone")
-          ? getElement("applicationCandidatePhone").value
-          : ""
-      ).trim();
+  if(!position){
 
-    const message =
-      String(
-        getElement("applicationCandidateMessage")
-          ? getElement("applicationCandidateMessage").value
-          : ""
-      ).trim();
+    alert(
+      "Veuillez renseigner le poste recherché."
+    );
 
-    const cvInput =
-      getElement(
-        "applicationCandidateCv"
-      );
+    return;
+  }
 
-    const consent =
-      getElement(
-        "applicationConsentCheck"
-      );
+  if(!availability){
 
-    if(
-      !name ||
-      !email ||
-      !phone ||
-      !message
-    ){
+    alert(
+      "Veuillez renseigner votre disponibilité."
+    );
 
-      alert(
-        "Veuillez remplir vos coordonnées et votre message."
-      );
+    return;
+  }
 
-      return;
-    }
+  if(
+    !name ||
+    !firstName ||
+    !phone ||
+    !email ||
+    !city
+  ){
 
-    if(!email.includes("@")){
+    alert(
+      "Veuillez remplir toutes vos coordonnées."
+    );
 
-      alert(
-        "Veuillez renseigner une adresse e-mail valide."
-      );
+    return;
+  }
 
-      return;
-    }
+  if(
+    !email.includes("@") ||
+    !email.includes(".")
+  ){
 
-    if(
-      !cvInput ||
-      !cvInput.files ||
-      !cvInput.files.length
-    ){
+    alert(
+      "Veuillez renseigner une adresse e-mail valide."
+    );
 
-      alert(
-        "Veuillez sélectionner votre CV."
-      );
+    return;
+  }
 
-      return;
-    }
+  if(!message){
 
-    if(
-      !consent ||
-      !consent.checked
-    ){
+    alert(
+      "Votre message ne peut pas être vide."
+    );
 
-      alert(
-        "Vous devez accepter la conservation de votre candidature."
-      );
+    return;
+  }
 
-      return;
-    }
+  const data =
+    loadEmploymentData();
 
-    const data =
-      loadEmploymentData();
+  let offer = null;
 
-    const offer =
+  if(offerId){
+
+    offer =
       data.offers.find(function(item){
 
         return item.id === offerId;
@@ -4871,188 +5321,1228 @@ if(!offers.length){
 
       return;
     }
-
-    data.applications.push({
-
-      id:
-        "CAND-" +
-        Date.now() +
-        "-" +
-        Math.random()
-          .toString(36)
-          .slice(2,7),
-
-      offerId:
-        offerId,
-
-      offerTitle:
-        offer.title,
-
-      companyName:
-        offer.companyName,
-
-      candidateName:
-        name,
-
-      candidateEmail:
-        email,
-
-      candidatePhone:
-        phone,
-
-      message:
-        message,
-
-      cvName:
-        cvInput.files[0].name,
-
-      createdAt:
-        Date.now(),
-
-      createdAtFr:
-        new Date()
-          .toLocaleString(
-            "fr-FR"
-          ),
-
-      status:
-        "recue"
-    });
-
-    saveEmploymentData(
-      data
-    );
-
-    alert(
-      "Votre candidature a été transmise à l’entreprise."
-    );
-
-    openEmploymentOffers();
   }
 
-  function openEmploymentApplications(){
+  const now =
+    Date.now();
 
-    module.renderModal(
-      "Candidatures reçues",
-      `
-        <div class="box entrepriseInfoBox">
+  const dateFr =
+    new Date(now)
+      .toLocaleString(
+        "fr-FR"
+      );
 
-          Cet espace appartient au Tableau de Direction
-          de l’entreprise.
+  const cvName =
+    (
+      cvInput &&
+      cvInput.files &&
+      cvInput.files.length
+    )
+      ? cvInput.files[0].name
+      : "";
+
+  const letterName =
+    (
+      letterInput &&
+      letterInput.files &&
+      letterInput.files.length
+    )
+      ? letterInput.files[0].name
+      : "";
+
+  const otherDocumentName =
+    (
+      otherDocumentInput &&
+      otherDocumentInput.files &&
+      otherDocumentInput.files.length
+    )
+      ? otherDocumentInput.files[0].name
+      : "";
+
+  const candidateProfile = {
+
+    name:
+      name,
+
+    firstName:
+      firstName,
+
+    phone:
+      phone,
+
+    email:
+      email,
+
+    city:
+      city
+  };
+
+  try{
+
+    localStorage.setItem(
+      "bociteart_candidate_profile_v1",
+      JSON.stringify(
+        candidateProfile
+      )
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Profil candidat non enregistré.",
+      error
+    );
+  }
+
+  if(
+    !Array.isArray(
+      data.applications
+    )
+  ){
+
+    data.applications = [];
+  }
+
+  data.applications.push({
+
+    id:
+      "CAND-" +
+      now +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2,7),
+
+    offerId:
+      offerId || "",
+
+    offerTitle:
+      offer
+        ? offer.title
+        : position,
+
+    companyName:
+      offer
+        ? offer.companyName
+        : companyName,
+
+    searchTypes:
+      searchTypes,
+
+    searchType:
+      searchTypes.join(", "),
+
+    position:
+      position,
+
+    availability:
+      availability,
+
+    candidateName:
+      name,
+
+    candidateFirstName:
+      firstName,
+
+    candidateFullName:
+      firstName + " " + name,
+
+    candidateEmail:
+      email,
+
+    candidatePhone:
+      phone,
+
+    candidateCity:
+      city,
+
+    message:
+      message,
+
+    cvName:
+      cvName,
+
+    letterName:
+      letterName,
+
+    otherDocumentName:
+      otherDocumentName,
+
+    createdAt:
+      now,
+
+    createdAtFr:
+      dateFr,
+
+    sentAt:
+      now,
+
+    sentAtFr:
+      dateFr,
+
+    status:
+      "recue",
+
+    replyStatus:
+      "en_attente",
+
+    replyMessage:
+      "",
+
+    repliedAt:
+      null,
+
+    repliedAtFr:
+      ""
+  });
+
+  saveEmploymentData(
+    data
+  );
+
+  alert(
+    "Votre candidature a été envoyée.\n\n" +
+    "Elle est désormais classée, enregistrée, datée et horodatée."
+  );
+
+  if(
+    typeof module.openEmploymentHistory ===
+    "function"
+  ){
+
+    module.openEmploymentHistory();
+
+    return;
+  }
+
+  if(
+    typeof module.openEmploymentApplications ===
+    "function"
+  ){
+
+    module.openEmploymentApplications();
+
+    return;
+  }
+
+  openEmploymentPublicHome();
+}
+
+function openEmploymentApplications(){
+
+  module.renderModal(
+    "Candidatures reçues",
+    `
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          border-left:6px solid #2f5d46;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:900;
+            margin-bottom:10px;
+          ">
+          Candidatures reçues
+        </strong>
+
+        Chaque candidature est automatiquement
+        classée selon le type de recherche.
+
+        <br><br>
+
+        Chaque envoi et chaque réponse sont
+        enregistrés, datés et horodatés.
+      </div>
+
+      <div id="employmentApplicationsList"></div>
+    `
+  );
+
+  window.setTimeout(function(){
+
+    renderEmploymentApplications();
+
+  },0);
+}
+
+function renderEmploymentApplications(){
+
+  const host =
+    getElement(
+      "employmentApplicationsList"
+    );
+
+  if(!host){
+    return;
+  }
+
+  const data =
+    loadEmploymentData();
+
+  const applications =
+    Array.isArray(
+      data.applications
+    )
+      ? data.applications
+          .slice()
+          .sort(function(a,b){
+
+            return (
+              Number(b.createdAt || 0) -
+              Number(a.createdAt || 0)
+            );
+          })
+      : [];
+
+  if(!applications.length){
+
+    host.innerHTML = `
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        Aucune candidature reçue.
+      </div>
+    `;
+
+    return;
+  }
+
+  host.innerHTML =
+    applications.map(function(application){
+
+      const applicationId =
+        escapeValue(
+          application.id || ""
+        );
+
+      const fullName =
+        application.candidateFullName ||
+        (
+          (
+            application.candidateFirstName ||
+            ""
+          ) +
+          " " +
+          (
+            application.candidateName ||
+            ""
+          )
+        ).trim() ||
+        application.candidateName ||
+        "Candidat";
+
+      const searchType =
+        application.searchType ||
+        (
+          Array.isArray(
+            application.searchTypes
+          )
+            ? application.searchTypes.join(", ")
+            : ""
+        ) ||
+        "Non précisé";
+
+      const replySent =
+        application.replyStatus ===
+        "repondue";
+
+      return `
+        <div
+          class="box entrepriseInfoBox"
+          style="
+            border-left:6px solid #2f5d46;
+            color:#111;
+            font-size:14px;
+            font-weight:400;
+          ">
+
+          <strong
+            style="
+              display:block;
+              color:#2f5d46;
+              font-size:16px;
+              font-weight:900;
+              margin-bottom:10px;
+            ">
+            ${escapeValue(
+              fullName
+            )}
+          </strong>
+
+          <strong>Recherche :</strong>
+
+          ${escapeValue(
+            searchType
+          )}
 
           <br><br>
 
-          Les candidatures sont conservées dans l’historique
-          afin de permettre un contact ultérieur.
+          <strong>Poste recherché :</strong>
 
-        </div>
+          ${escapeValue(
+            application.position ||
+            application.offerTitle ||
+            ""
+          )}
 
-        <div id="employmentApplicationsList"></div>
-      `
-    );
+          <br><br>
 
-    window.setTimeout(function(){
+          <strong>Disponibilité :</strong>
 
-      renderEmploymentApplications();
+          ${escapeValue(
+            application.availability ||
+            "Non précisée"
+          )}
 
-    },0);
-  }
+          <br><br>
 
-  function renderEmploymentApplications(){
+          <strong>Commune :</strong>
 
-    const host =
-      getElement(
-        "employmentApplicationsList"
-      );
+          ${escapeValue(
+            application.candidateCity ||
+            "Non précisée"
+          )}
 
-    if(!host){
-      return;
-    }
+          <br><br>
 
-    const data =
-      loadEmploymentData();
+          <strong>E-mail :</strong>
 
-    const applications =
-      data.applications
-        .slice()
-        .sort(function(a,b){
+          ${escapeValue(
+            application.candidateEmail ||
+            ""
+          )}
 
-          return (
-            Number(b.createdAt) -
-            Number(a.createdAt)
-          );
-        });
+          <br>
 
-    if(!applications.length){
+          <strong>Téléphone :</strong>
 
-      host.innerHTML = `
-        <div class="box entrepriseInfoBox">
+          ${escapeValue(
+            application.candidatePhone ||
+            ""
+          )}
 
-          Aucune candidature reçue.
+          <br><br>
 
+          <strong>Message :</strong>
+
+          <br>
+
+          ${escapeValue(
+            application.message ||
+            ""
+          )}
+
+          <br><br>
+
+          <strong>Documents :</strong>
+
+          <br>
+
+          CV :
+          ${escapeValue(
+            application.cvName ||
+            "Non joint"
+          )}
+
+          <br>
+
+          Lettre :
+          ${escapeValue(
+            application.letterName ||
+            "Non jointe"
+          )}
+
+          <br>
+
+          Autre document :
+          ${escapeValue(
+            application.otherDocumentName ||
+            "Non joint"
+          )}
+
+          <br><br>
+
+          <strong>Candidature reçue le :</strong>
+
+          ${escapeValue(
+            application.createdAtFr ||
+            ""
+          )}
+
+          ${
+            replySent
+              ? `
+                <div
+                  style="
+                    margin-top:14px;
+                    padding-top:12px;
+                    border-top:1px solid #2f5d46;
+                  ">
+
+                  <strong
+                    style="
+                      display:block;
+                      color:#2f5d46;
+                      font-size:16px;
+                      font-weight:900;
+                      margin-bottom:8px;
+                    ">
+                    Réponse envoyée
+                  </strong>
+
+                  ${escapeValue(
+                    application.replyMessage ||
+                    ""
+                  )}
+
+                  <br><br>
+
+                  Envoyée le :
+
+                  ${escapeValue(
+                    application.repliedAtFr ||
+                    ""
+                  )}
+                </div>
+              `
+              : `
+                <button
+                  class="choiceBtn employmentReplyOpenBtn"
+                  type="button"
+                  data-application-id="${applicationId}"
+                  style="
+                    width:100%;
+                    margin-top:14px;
+                  ">
+                  Répondre au candidat
+                </button>
+              `
+          }
         </div>
       `;
+    }).join("");
 
-      return;
-    }
+  document
+    .querySelectorAll(
+      ".employmentReplyOpenBtn"
+    )
+    .forEach(function(button){
 
-    host.innerHTML =
-      applications.map(function(application){
+      button.onclick = function(){
 
-        return `
-          <div class="box entrepriseInfoBox">
+        openEmploymentReplyForm(
+          button.getAttribute(
+            "data-application-id"
+          )
+        );
+      };
+    });
+}
 
-            <strong>
-              ${escapeValue(application.candidateName)}
-            </strong>
+function openEmploymentReplyForm(applicationId){
 
-            <br><br>
+  const data =
+    loadEmploymentData();
 
-            Offre :
+  const application =
+    Array.isArray(
+      data.applications
+    )
+      ? data.applications.find(function(item){
 
-            ${escapeValue(application.offerTitle)}
+          return item.id ===
+            applicationId;
+        })
+      : null;
 
-            <br>
+  if(!application){
 
-            Entreprise :
+    alert(
+      "Cette candidature est introuvable."
+    );
 
-            ${escapeValue(application.companyName)}
-
-            <br><br>
-
-            E-mail :
-
-            ${escapeValue(application.candidateEmail)}
-
-            <br>
-
-            Téléphone :
-
-            ${escapeValue(application.candidatePhone)}
-
-            <br><br>
-
-            Message :
-
-            ${escapeValue(application.message)}
-
-            <br><br>
-
-            CV :
-
-            ${escapeValue(application.cvName)}
-
-            <br><br>
-
-            Reçue le :
-
-            ${escapeValue(application.createdAtFr)}
-
-          </div>
-        `;
-      }).join("");
+    return;
   }
 
+  const candidateName =
+    application.candidateFullName ||
+    (
+      (
+        application.candidateFirstName ||
+        ""
+      ) +
+      " " +
+      (
+        application.candidateName ||
+        ""
+      )
+    ).trim() ||
+    "le candidat";
+
+  module.renderModal(
+    "Répondre au candidat",
+    `
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          border-left:6px solid #2f5d46;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:900;
+            margin-bottom:10px;
+          ">
+          ${escapeValue(
+            candidateName
+          )}
+        </strong>
+
+        Poste recherché :
+
+        ${escapeValue(
+          application.position ||
+          application.offerTitle ||
+          ""
+        )}
+      </div>
+
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:900;
+            margin-bottom:10px;
+          ">
+          Votre réponse
+        </strong>
+
+        <label class="miniCheck">
+
+          <input
+            class="employmentReplyChoice"
+            type="checkbox"
+            value="Votre candidature a retenu notre attention.">
+
+          <span>
+            Votre candidature a retenu notre attention.
+          </span>
+        </label>
+
+        <label class="miniCheck">
+
+          <input
+            class="employmentReplyChoice"
+            type="checkbox"
+            value="Merci de nous contacter.">
+
+          <span>
+            Merci de nous contacter.
+          </span>
+        </label>
+
+        <label class="miniCheck">
+
+          <input
+            class="employmentReplyChoice"
+            type="checkbox"
+            value="Nous conservons votre candidature dans notre historique.">
+
+          <span>
+            Nous conservons votre candidature dans notre historique.
+          </span>
+        </label>
+      </div>
+
+      <label
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:900;
+          margin-top:10px;
+        ">
+        Précision facultative
+      </label>
+
+      <textarea
+        id="employmentReplyAdditionalMessage"
+        class="miniField"
+        style="
+          min-height:90px;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        "
+        placeholder="Ajoutez une précision si nécessaire"></textarea>
+
+      <label
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:900;
+          margin-top:10px;
+        ">
+        Document facultatif
+      </label>
+
+      <input
+        id="employmentReplyDocument"
+        class="miniField"
+        type="file"
+        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+
+      <button
+        id="employmentReplySendBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:14px;
+        ">
+        Envoyer la réponse
+      </button>
+
+      <button
+        id="employmentReplyBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+        ">
+        Retour aux candidatures
+      </button>
+    `
+  );
+
+  window.setTimeout(function(){
+
+    const sendButton =
+      getElement(
+        "employmentReplySendBtn"
+      );
+
+    const backButton =
+      getElement(
+        "employmentReplyBackBtn"
+      );
+
+    if(sendButton){
+
+      sendButton.onclick = function(){
+
+        saveEmploymentReply(
+          applicationId
+        );
+      };
+    }
+
+    if(backButton){
+
+      backButton.onclick =
+        openEmploymentApplications;
+    }
+
+  },0);
+}
+
+function saveEmploymentReply(applicationId){
+
+  const selectedReplies =
+    Array.from(
+      document.querySelectorAll(
+        ".employmentReplyChoice:checked"
+      )
+    ).map(function(input){
+
+      return String(
+        input.value || ""
+      ).trim();
+    });
+
+  const additionalMessage =
+    String(
+      getElement(
+        "employmentReplyAdditionalMessage"
+      )
+        ? getElement(
+            "employmentReplyAdditionalMessage"
+          ).value
+        : ""
+    ).trim();
+
+  const documentInput =
+    getElement(
+      "employmentReplyDocument"
+    );
+
+  if(!selectedReplies.length){
+
+    alert(
+      "Veuillez sélectionner au moins une réponse."
+    );
+
+    return;
+  }
+
+  const data =
+    loadEmploymentData();
+
+  const application =
+    Array.isArray(
+      data.applications
+    )
+      ? data.applications.find(function(item){
+
+          return item.id ===
+            applicationId;
+        })
+      : null;
+
+  if(!application){
+
+    alert(
+      "Cette candidature est introuvable."
+    );
+
+    return;
+  }
+
+  const now =
+    Date.now();
+
+  const dateFr =
+    new Date(now)
+      .toLocaleString(
+        "fr-FR"
+      );
+
+  let replyMessage =
+    selectedReplies.join("\n\n");
+
+  if(additionalMessage){
+
+    replyMessage +=
+      "\n\n" +
+      additionalMessage;
+  }
+
+  const replyDocumentName =
+    (
+      documentInput &&
+      documentInput.files &&
+      documentInput.files.length
+    )
+      ? documentInput.files[0].name
+      : "";
+
+  application.replyStatus =
+    "repondue";
+
+  application.status =
+    "repondue";
+
+  application.replyChoices =
+    selectedReplies;
+
+  application.replyMessage =
+    replyMessage;
+
+  application.replyDocumentName =
+    replyDocumentName;
+
+  application.repliedAt =
+    now;
+
+  application.repliedAtFr =
+    dateFr;
+
+  saveEmploymentData(
+    data
+  );
+
+  alert(
+    "La réponse a été envoyée au candidat.\n\n" +
+    "Elle est désormais classée, enregistrée, datée et horodatée."
+  );
+
+  openEmploymentApplications();
+}
+
+   function openEmploymentHistory(){
+
+  let savedProfile = {};
+
+  try{
+
+    savedProfile =
+      JSON.parse(
+        localStorage.getItem(
+          "bociteart_candidate_profile_v1"
+        ) || "{}"
+      );
+
+  }catch(error){
+
+    savedProfile = {};
+  }
+
+  const savedEmail =
+    String(
+      savedProfile.email || ""
+    ).trim().toLowerCase();
+
+  const savedPhone =
+    String(
+      savedProfile.phone || ""
+    ).replace(/\s+/g,"");
+
+  const data =
+    loadEmploymentData();
+
+  const applications =
+    Array.isArray(
+      data.applications
+    )
+      ? data.applications
+          .filter(function(application){
+
+            const applicationEmail =
+              String(
+                application.candidateEmail || ""
+              ).trim().toLowerCase();
+
+            const applicationPhone =
+              String(
+                application.candidatePhone || ""
+              ).replace(/\s+/g,"");
+
+            if(
+              savedEmail &&
+              applicationEmail === savedEmail
+            ){
+              return true;
+            }
+
+            if(
+              savedPhone &&
+              applicationPhone === savedPhone
+            ){
+              return true;
+            }
+
+            return false;
+          })
+          .sort(function(a,b){
+
+            return (
+              Number(b.createdAt || 0) -
+              Number(a.createdAt || 0)
+            );
+          })
+      : [];
+
+  module.renderModal(
+    "Votre historique",
+    `
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          border-left:6px solid #2f5d46;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:900;
+            margin-bottom:10px;
+          ">
+          Vos candidatures
+        </strong>
+
+        Chaque envoi et chaque réponse sont automatiquement
+        classés, enregistrés, datés et horodatés.
+      </div>
+
+      ${
+        !savedEmail &&
+        !savedPhone
+          ? `
+            <div
+              class="box entrepriseInfoBox"
+              style="
+                color:#111;
+                font-size:14px;
+                font-weight:400;
+              ">
+
+              Aucune identité de candidat
+              n’est encore enregistrée.
+
+              <br><br>
+
+              Déposez une première candidature
+              pour créer automatiquement votre historique.
+            </div>
+          `
+          : ""
+      }
+
+      ${
+        applications.length
+          ? applications.map(function(application){
+
+              const replySent =
+                application.replyStatus ===
+                "repondue";
+
+              const searchType =
+                application.searchType ||
+                (
+                  Array.isArray(
+                    application.searchTypes
+                  )
+                    ? application.searchTypes.join(", ")
+                    : ""
+                ) ||
+                "Non précisé";
+
+              return `
+                <div
+                  class="box entrepriseInfoBox"
+                  style="
+                    border-left:6px solid ${
+                      replySent
+                        ? "#2f5d46"
+                        : "#b00020"
+                    };
+                    color:#111;
+                    font-size:14px;
+                    font-weight:400;
+                  ">
+
+                  <strong
+                    style="
+                      display:block;
+                      color:#2f5d46;
+                      font-size:16px;
+                      font-weight:900;
+                      margin-bottom:10px;
+                    ">
+                    ${escapeValue(
+                      application.companyName ||
+                      "Entreprise"
+                    )}
+                  </strong>
+
+                  <strong>Poste recherché :</strong>
+
+                  ${escapeValue(
+                    application.position ||
+                    application.offerTitle ||
+                    ""
+                  )}
+
+                  <br><br>
+
+                  <strong>Type de recherche :</strong>
+
+                  ${escapeValue(
+                    searchType
+                  )}
+
+                  <br><br>
+
+                  <strong>Envoyée le :</strong>
+
+                  ${escapeValue(
+                    application.sentAtFr ||
+                    application.createdAtFr ||
+                    ""
+                  )}
+
+                  <br><br>
+
+                  <strong>État :</strong>
+
+                  ${
+                    replySent
+                      ? "Réponse reçue"
+                      : "En attente de réponse"
+                  }
+
+                  ${
+                    replySent
+                      ? `
+                        <div
+                          style="
+                            margin-top:14px;
+                            padding-top:12px;
+                            border-top:1px solid #2f5d46;
+                          ">
+
+                          <strong
+                            style="
+                              display:block;
+                              color:#2f5d46;
+                              font-size:16px;
+                              font-weight:900;
+                              margin-bottom:8px;
+                            ">
+                            Réponse de l’entreprise
+                          </strong>
+
+                          ${escapeValue(
+                            application.replyMessage ||
+                            ""
+                          )}
+
+                          ${
+                            application.replyDocumentName
+                              ? `
+                                <br><br>
+
+                                <strong>Document joint :</strong>
+
+                                ${escapeValue(
+                                  application.replyDocumentName
+                                )}
+                              `
+                              : ""
+                          }
+
+                          <br><br>
+
+                          <strong>Réponse reçue le :</strong>
+
+                          ${escapeValue(
+                            application.repliedAtFr ||
+                            ""
+                          )}
+                        </div>
+                      `
+                      : ""
+                  }
+                </div>
+              `;
+            }).join("")
+          : (
+              savedEmail ||
+              savedPhone
+                ? `
+                  <div
+                    class="box entrepriseInfoBox"
+                    style="
+                      color:#111;
+                      font-size:14px;
+                      font-weight:400;
+                    ">
+
+                    Aucune candidature enregistrée
+                    dans votre historique.
+                  </div>
+                `
+                : ""
+            )
+      }
+
+      <button
+        id="employmentHistoryApplyBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
+        Déposer une candidature
+      </button>
+
+      <button
+        id="employmentHistoryBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+        ">
+        Retour à l’emploi
+      </button>
+    `
+  );
+
+  window.setTimeout(function(){
+
+    const applyButton =
+      getElement(
+        "employmentHistoryApplyBtn"
+      );
+
+    const backButton =
+      getElement(
+        "employmentHistoryBackBtn"
+      );
+
+    if(applyButton){
+
+      applyButton.onclick = function(){
+
+        openApplicationForm();
+      };
+    }
+
+    if(backButton){
+
+      backButton.onclick = function(){
+
+        if(
+          typeof module.openEmploymentPublicHome ===
+          "function"
+        ){
+          module.openEmploymentPublicHome();
+          return;
+        }
+
+        openEmployment();
+      };
+    }
+
+  },0);
+}
   function getLoyaltyHtml(){
 
     return `
@@ -5354,6 +6844,15 @@ window.openEmploymentCompaniesDirectory =
 
   module.openEmploymentApplications =
     openEmploymentApplications;
+
+   module.openApplicationForm =
+  openApplicationForm;
+
+   module.openEmploymentHistory =
+  openEmploymentHistory;
+
+   module.openEmploymentReplyForm =
+  openEmploymentReplyForm;
 
   console.log(
     "✅ Module Entreprise — partie 3 chargée"
@@ -29322,122 +30821,196 @@ console.log(
     return labels[status] || "Inconnue";
   }
 
-  function getEmploymentPublicHomeHtml(){
+ function getEmploymentPublicHomeHtml(){
 
-    return `
-      <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
+  return `
 
-        <strong style="font-size:18px;">
-          Les offres d’emploi de votre territoire
-        </strong>
+    <div
+      class="box"
+      style="border-left:6px solid #2f5d46;">
 
-        <br><br>
-
-        Consultez dans une seule page
-        toutes les offres actuellement disponibles.
-
-        <br><br>
-
-        Ouvrez ensuite uniquement l’annonce
-        qui correspond à votre recherche.
-      </div>
-
-      <button
-        id="employmentPublicListBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;">
-        Consulter toutes les offres
-      </button>
-
-      <div
-        class="box"
-        style="margin-top:14px;">
-
-        <strong>
-          Vous êtes une entreprise ou un commerce ?
-        </strong>
-
-        <br><br>
-
-        La publication d’une offre,
-        sa modification,
-        sa clôture,
-        les candidatures reçues
-        et les conditions tarifaires
-        sont accessibles uniquement
-        depuis votre espace professionnel privé.
-      </div>
-
-      <button
-        id="employmentPrivatePublishBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;">
-        Accéder à la publication professionnelle
-      </button>
-
-      <button
-        id="employmentPrivateApplicationsBtn"
-        class="choiceBtn"
-        type="button"
+      <strong
         style="
-          width:100%;
-          margin-top:8px;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:900;
         ">
-        Consulter mes candidatures
-      </button>
-    `;
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span> fait...
+        <br>
+        ...et relie pour vous !
+      </strong>
+
+      <br><br>
+
+      Aujourd'hui, de nombreuses candidatures restent sans réponse.
+
+      <br><br>
+
+      <span style="color:#2f5d46;font-weight:700;">
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </span>
+      simplifie les échanges entre les habitants et les entreprises de votre commune.
+
+      <br><br>
+
+      • Consultez les offres.
+
+      <br>
+
+      • Déposez votre candidature.
+
+      <br>
+
+      • Consultez votre historique.
+
+      <br><br>
+
+      Chaque envoi et chaque réponse sont automatiquement classés,
+      enregistrés, datés et horodatés.
+
+      <br><br>
+
+      L'entreprise vous adressera une réponse.
+
+      <br><br>
+
+      Les habitants découvrent mieux les entreprises de leur commune.
+
+      <br><br>
+
+      Les entreprises deviennent enfin plus visibles dans leur ville.
+
+      <br><br>
+
+      Chacun identifie plus facilement l'autre.
+
+      <br><br>
+
+      À terme, cette proximité facilite les recrutements,
+      encourage les candidatures et renforce durablement l'emploi local.
+
+    </div>
+
+    <button
+      id="employmentPublicListBtn"
+      class="choiceBtn"
+      type="button"
+      style="width:100%;">
+      Consulter les offres
+    </button>
+
+    <button
+      id="employmentPublicApplyBtn"
+      class="choiceBtn"
+      type="button"
+      style="width:100%;margin-top:8px;">
+      Déposer votre candidature
+    </button>
+
+    <button
+      id="employmentHistoryBtn"
+      class="choiceBtn"
+      type="button"
+      style="width:100%;margin-top:8px;">
+      Consulter votre historique
+    </button>
+
+    <button
+      id="employmentPrivatePublishBtn"
+      class="choiceBtn"
+      type="button"
+      style="width:100%;margin-top:18px;">
+      Accès entreprise
+    </button>
+
+  `;
+}
+   
+function bindEmploymentPublicHome(){
+
+  const listButton =
+    getElement("employmentPublicListBtn");
+
+  const applyButton =
+    getElement("employmentPublicApplyBtn");
+
+  const historyButton =
+    getElement("employmentHistoryBtn");
+
+  const companyButton =
+    getElement("employmentPrivatePublishBtn");
+
+  if(listButton){
+
+    listButton.onclick =
+      openPublicEmploymentList;
   }
 
-  function bindEmploymentPublicHome(){
+  if(applyButton){
 
-    const listButton =
-      getElement("employmentPublicListBtn");
+    applyButton.onclick = function(){
 
-    const publishButton =
-      getElement("employmentPrivatePublishBtn");
+      if(
+        typeof module.openApplicationForm ===
+        "function"
+      ){
+        module.openApplicationForm();
+        return;
+      }
 
-    const applicationsButton =
-      getElement("employmentPrivateApplicationsBtn");
-
-    if(listButton){
-      listButton.onclick =
-        openPublicEmploymentList;
-    }
-
-    if(publishButton){
-      publishButton.onclick = function(){
-
-        requirePrivateAccess(function(){
-
-          if(
-            typeof module.openEmploymentForm ===
-            "function"
-          ){
-            module.openEmploymentForm();
-          }
-        });
-      };
-    }
-
-    if(applicationsButton){
-      applicationsButton.onclick = function(){
-
-        requirePrivateAccess(function(){
-
-          if(
-            typeof module.openEmploymentApplications ===
-            "function"
-          ){
-            module.openEmploymentApplications();
-          }
-        });
-      };
-    }
+      alert(
+        "La fiche de candidature est momentanément indisponible."
+      );
+    };
   }
+
+  if(historyButton){
+
+    historyButton.onclick = function(){
+
+      if(
+        typeof module.openEmploymentHistory ===
+        "function"
+      ){
+        module.openEmploymentHistory();
+        return;
+      }
+
+      if(
+        typeof module.openEmploymentApplications ===
+        "function"
+      ){
+        module.openEmploymentApplications();
+        return;
+      }
+
+      alert(
+        "Votre historique est momentanément indisponible."
+      );
+    };
+  }
+
+  if(companyButton){
+
+    companyButton.onclick = function(){
+
+      requirePrivateAccess(function(){
+
+        if(
+          typeof module.openEmploymentForm ===
+          "function"
+        ){
+          module.openEmploymentForm();
+          return;
+        }
+
+        alert(
+          "L’espace entreprise est momentanément indisponible."
+        );
+      });
+    };
+  }
+}
 
   function openEmploymentPublicHome(){
 
@@ -29451,222 +31024,425 @@ console.log(
     },0);
   }
 
-  function getPublicEmploymentListHtml(){
+function getPublicEmploymentListHtml(){
 
-    const data = loadEmploymentData();
+  const data = loadEmploymentData();
 
-    const offers =
-      data.offers
-        .filter(function(offer){
+  const offers =
+    data.offers
+      .filter(function(offer){
 
-          return (
-            offer.status === "publiee" ||
-            offer.status === "modifiee"
-          );
-        })
-        .sort(function(a,b){
+        return (
+          offer.status === "publiee" ||
+          offer.status === "modifiee"
+        );
+      })
+      .sort(function(a,b){
 
-          return (
-            Number(b.createdAt || 0) -
-            Number(a.createdAt || 0)
-          );
-        });
+        return (
+          Number(b.createdAt || 0) -
+          Number(a.createdAt || 0)
+        );
+      });
 
-    if(!offers.length){
-
-      return `
-        <div class="box">
-          Aucune offre d’emploi
-          n’est actuellement disponible.
-        </div>
-      `;
-    }
+  if(!offers.length){
 
     return `
       <div
         class="box"
-        style="border-left:6px solid #2f5d46;">
+        style="
+          border-left:6px solid #2f5d46;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
 
-        <strong style="font-size:18px;">
-          Toutes les offres disponibles
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:900;
+            margin-bottom:10px;
+          ">
+          Offres disponibles
         </strong>
 
-        <br><br>
-
-        ${offers.length}
-        offre(s) actuellement accessible(s).
+        Aucune offre d’emploi n’est actuellement disponible.
 
         <br><br>
 
-        Cliquez sur une annonce
-        pour consulter son contenu complet.
+        Vous pouvez toutefois déposer directement votre candidature
+        auprès de l’entreprise de votre choix.
       </div>
 
-      ${offers.map(function(offer){
-
-        return `
-          <button
-            class="employmentPublicOfferCard"
-            type="button"
-            data-offer-id="${escapeValue(offer.id)}"
-            style="
-              display:block;
-              width:100%;
-              margin:9px 0;
-              padding:14px;
-              border:2px solid #2f5d46;
-              border-radius:10px;
-              background:#fffaf1;
-              color:#111;
-              text-align:left;
-              cursor:pointer;
-            ">
-
-            <strong style="font-size:17px;">
-              ${escapeValue(offer.title)}
-            </strong>
-
-            <br><br>
-
-            <span
-              style="
-                color:#2f5d46;
-                font-weight:900;
-              ">
-              ${escapeValue(offer.companyName)}
-            </span>
-
-            <br><br>
-
-            ${escapeValue(offer.city)}
-            •
-            ${escapeValue(offer.contract)}
-
-            <br><br>
-
-            <span
-              style="
-                color:#b00020;
-                font-weight:900;
-              ">
-              Voir cette offre
-            </span>
-          </button>
-        `;
-      }).join("")}
+      <button
+        id="employmentEmptyApplyBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;margin-top:10px;">
+        Déposer votre candidature
+      </button>
     `;
   }
 
-  function openPublicEmploymentList(){
+  return `
+    <div
+      class="box"
+      style="
+        border-left:6px solid #2f5d46;
+        color:#111;
+        font-size:14px;
+        font-weight:400;
+      ">
 
-    module.renderModal(
-      "Toutes les offres d’emploi",
-      getPublicEmploymentListHtml()
-    );
+      <strong
+        style="
+          display:block;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:900;
+          margin-bottom:10px;
+        ">
+        Offres disponibles
+      </strong>
 
-    window.setTimeout(function(){
+      Consultez les offres publiées par les entreprises de votre commune.
 
-      document
-        .querySelectorAll(
-          ".employmentPublicOfferCard"
-        )
-        .forEach(function(button){
+      <br><br>
 
-          button.onclick = function(){
+      Choisissez celle qui correspond à votre recherche.
 
-            openPublicEmploymentOffer(
-              button.getAttribute(
-                "data-offer-id"
-              )
-            );
-          };
-        });
+      <br><br>
 
-    },0);
-  }
+      <strong
+        style="
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:900;
+        ">
+        ${offers.length} offre${offers.length > 1 ? "s" : ""} disponible${offers.length > 1 ? "s" : ""}
+      </strong>
+    </div>
 
-  function openPublicEmploymentOffer(offerId){
+    ${offers.map(function(offer){
 
-    const data = loadEmploymentData();
+      return `
+        <button
+          class="employmentPublicOfferCard"
+          type="button"
+          data-offer-id="${escapeValue(offer.id)}"
+          style="
+            display:block;
+            width:100%;
+            margin:9px 0;
+            padding:14px;
+            border:2px solid #2f5d46;
+            border-radius:10px;
+            background:#fffaf1;
+            color:#111;
+            font-size:14px;
+            font-weight:400;
+            text-align:left;
+            cursor:pointer;
+          ">
 
-    const offer =
-      data.offers.find(function(item){
-        return item.id === offerId;
-      });
+          <strong
+            style="
+              display:block;
+              color:#2f5d46;
+              font-size:16px;
+              font-weight:900;
+              margin-bottom:10px;
+            ">
+            ${escapeValue(offer.title)}
+          </strong>
 
-    if(!offer){
-      alert("Cette offre est introuvable.");
-      return;
-    }
-
-    module.renderModal(
-      offer.title,
-      `
-        <div class="box">
-          <strong>Entreprise</strong><br><br>
-          ${escapeValue(offer.companyName)}
-        </div>
-
-        <div class="box">
-          <strong>Type de contrat</strong><br><br>
-          ${escapeValue(offer.contract)}
+          <span style="color:#111;">
+            ${escapeValue(offer.companyName)}
+          </span>
 
           <br><br>
 
-          <strong>Commune du poste</strong><br><br>
-          ${escapeValue(offer.city)}
-        </div>
+          <span style="color:#111;">
+            ${escapeValue(offer.city)}
+            •
+            ${escapeValue(offer.contract)}
+          </span>
 
-        <div class="box">
-          <strong>Description de l’offre</strong><br><br>
-          ${escapeValue(offer.description)}
-        </div>
+          <br><br>
 
-        <div class="box">
-          <strong>Statut</strong><br><br>
-          ${escapeValue(
-            getStatusLabel(offer.status)
-          )}
-        </div>
-
-        <button
-          id="employmentPublicApplyBtn"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;">
-          Répondre à cette offre
+          <span
+            style="
+              color:#b00020;
+              font-size:14px;
+              font-weight:900;
+            ">
+            Voir cette offre
+          </span>
         </button>
-      `
+      `;
+    }).join("")}
+  `;
+}
+
+function openPublicEmploymentList(){
+
+  module.renderModal(
+    "Offres d’emploi",
+    getPublicEmploymentListHtml()
+  );
+
+  window.setTimeout(function(){
+
+    document
+      .querySelectorAll(
+        ".employmentPublicOfferCard"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          openPublicEmploymentOffer(
+            button.getAttribute(
+              "data-offer-id"
+            )
+          );
+        };
+      });
+
+    const emptyApplyButton =
+      getElement("employmentEmptyApplyBtn");
+
+    if(emptyApplyButton){
+
+      emptyApplyButton.onclick = function(){
+
+        if(
+function openPublicEmploymentList(){
+
+  module.renderModal(
+    "Offres d’emploi",
+    getPublicEmploymentListHtml()
+  );
+
+  window.setTimeout(function(){
+
+    document
+      .querySelectorAll(
+        ".employmentPublicOfferCard"
+      )
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          openPublicEmploymentOffer(
+            button.getAttribute(
+              "data-offer-id"
+            )
+          );
+        };
+      });
+
+    const emptyApplyButton =
+      getElement(
+        "employmentEmptyApplyBtn"
+      );
+
+    if(emptyApplyButton){
+
+      emptyApplyButton.onclick = function(){
+
+        if(
+          typeof module.openApplicationForm ===
+          "function"
+        ){
+          module.openApplicationForm();
+          return;
+        }
+
+        alert(
+          "La fiche de candidature est momentanément indisponible."
+        );
+      };
+    }
+
+  },0);
+}
+
+function openPublicEmploymentOffer(offerId){
+
+  const data = loadEmploymentData();
+
+  const offer =
+    data.offers.find(function(item){
+      return item.id === offerId;
+    });
+
+  if(!offer){
+
+    alert(
+      "Cette offre est introuvable."
     );
 
-    window.setTimeout(function(){
-
-      const applyButton =
-        getElement("employmentPublicApplyBtn");
-
-      if(applyButton){
-
-        applyButton.onclick = function(){
-
-          if(
-            typeof module.openApplicationForm ===
-            "function"
-          ){
-            module.openApplicationForm(offerId);
-            return;
-          }
-
-          if(
-            typeof module.openEmploymentOffers ===
-            "function"
-          ){
-            module.openEmploymentOffers();
-          }
-        };
-      }
-
-    },0);
+    return;
   }
+
+  module.renderModal(
+    offer.title,
+    `
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:900;
+            margin-bottom:8px;
+          ">
+          Entreprise
+        </strong>
+
+        ${escapeValue(
+          offer.companyName
+        )}
+      </div>
+
+      <div
+        class="box"
+        style="
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:900;
+            margin-bottom:8px;
+          ">
+          Type de contrat
+        </strong>
+
+        ${escapeValue(
+          offer.contract
+        )}
+
+        <br><br>
+
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:900;
+            margin-bottom:8px;
+          ">
+          Commune du poste
+        </strong>
+
+        ${escapeValue(
+          offer.city
+        )}
+      </div>
+
+      <div
+        class="box"
+        style="
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:900;
+            margin-bottom:8px;
+          ">
+          Description de l’offre
+        </strong>
+
+        ${escapeValue(
+          offer.description
+        )}
+      </div>
+
+      <button
+        id="employmentPublicApplyBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;">
+        Déposer votre candidature
+      </button>
+
+      <button
+        id="employmentOfferBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+        ">
+        Retour aux offres
+      </button>
+    `
+  );
+
+  window.setTimeout(function(){
+
+    const applyButton =
+      getElement(
+        "employmentPublicApplyBtn"
+      );
+
+    const backButton =
+      getElement(
+        "employmentOfferBackBtn"
+      );
+
+    if(applyButton){
+
+      applyButton.onclick = function(){
+
+        if(
+          typeof module.openApplicationForm ===
+          "function"
+        ){
+          module.openApplicationForm(
+            offerId
+          );
+
+          return;
+        }
+
+        alert(
+          "La fiche de candidature est momentanément indisponible."
+        );
+      };
+    }
+
+    if(backButton){
+
+      backButton.onclick =
+        openPublicEmploymentList;
+    }
+
+  },0);
+}
 
   module.openEmploymentPublicHome =
     openEmploymentPublicHome;
