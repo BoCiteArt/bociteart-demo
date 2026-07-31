@@ -16837,7 +16837,7 @@ function openMutualisation(){
 /* =========================================================
    BO'CITÉART — RACCORDEMENT ABONNEMENTS ET FACTURES
    ========================================================= */
-
+/*
 (function connectBociteSearchSubscriptions(){
 
   "use strict";
@@ -17034,7 +17034,7 @@ function openMutualisation(){
     "✅ Abonnements et factures raccordés à la recherche"
   );
 
-})();
+})();  /*
 
 /* =========================================================
    BO'CITÉART — RACCORDEMENT QUESTION VERS RECHERCHE
