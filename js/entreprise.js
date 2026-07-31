@@ -35243,32 +35243,6 @@ function openPublicEmploymentOffer(offerId){
       )
     ){
 
-      if(
-        text.includes(
-          "decouvrez les entreprises de votre ville"
-        ) &&
-        text.includes(
-          "la recherche commence toujours dans votre commune"
-        )
-      ){
-        return true;
-      }
-
-      if(
-        text.includes(
-          "choisissez votre espace"
-        ) &&
-        text.includes(
-          "commerce"
-        ) &&
-        text.includes(
-          "entreprise"
-        )
-      ){
-        return true;
-      }
-    }
-
     return false;
   }
 
@@ -40823,219 +40797,6 @@ function openPublicEmploymentOffer(offerId){
     };
   }
 
-  function renderAiAnswer(
-    host,
-    result
-  ){
-
-    host.innerHTML = `
-      <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
-
-        <strong style="font-size:17px;">
-          ${escapeValue(
-            result.title
-          )}
-        </strong>
-
-        <br><br>
-
-        ${escapeValue(
-          result.answer
-        )}
-
-        <div
-          style="
-            display:flex;
-            gap:8px;
-            flex-wrap:wrap;
-            margin-top:12px;
-          ">
-
-          <button
-            id="entrepriseAiPrimaryActionBtn"
-            class="choiceBtn"
-            type="button">
-            ${escapeValue(
-              result.primaryLabel
-            )}
-          </button>
-
-          ${
-            result.secondaryLabel
-              ? `
-                <button
-                  id="entrepriseAiSecondaryActionBtn"
-                  class="choiceBtn"
-                  type="button"
-                  style="background:#fff;">
-                  ${escapeValue(
-                    result.secondaryLabel
-                  )}
-                </button>
-              `
-              : ""
-          }
-        </div>
-      </div>
-    `;
-
-    window.setTimeout(function(){
-
-      const primaryButton =
-        getElement(
-          "entrepriseAiPrimaryActionBtn"
-        );
-
-      const secondaryButton =
-        getElement(
-          "entrepriseAiSecondaryActionBtn"
-        );
-
-      if(primaryButton){
-        primaryButton.onclick =
-          result.primaryAction;
-      }
-
-      if(
-        secondaryButton &&
-        typeof result.secondaryAction ===
-        "function"
-      ){
-        secondaryButton.onclick =
-          result.secondaryAction;
-      }
-
-    },0);
-  }
-
-  function bindEntrepriseAi(){
-
-    const button =
-      getElement(
-        "entrepriseAiAskBtn"
-      );
-
-    const input =
-      getElement(
-        "entrepriseAiQuestion"
-      );
-
-    const answer =
-      getElement(
-        "entrepriseAiAnswer"
-      );
-
-    if(
-      !button ||
-      !input ||
-      !answer
-    ){
-      return;
-    }
-
-    if(
-      button.dataset.aiImproved ===
-      "true"
-    ){
-      return;
-    }
-
-    button.dataset.aiImproved =
-      "true";
-
-    function runAnalysis(){
-
-      const question =
-        String(
-          input.value || ""
-        ).trim();
-
-      if(!question){
-
-        alert(
-          "Écrivez votre question."
-        );
-
-        return;
-      }
-
-      answer.innerHTML = `
-        <div class="box">
-          Analyse de votre demande en cours…
-        </div>
-      `;
-
-      window.setTimeout(function(){
-
-        const result =
-          analyseQuestion(
-            question
-          );
-
-        renderAiAnswer(
-          answer,
-          result
-        );
-
-      },300);
-    }
-
-    button.onclick =
-      runAnalysis;
-
-    input.addEventListener(
-      "keydown",
-      function(event){
-
-        if(
-          event.key ===
-          "Enter" &&
-          !event.shiftKey
-        ){
-
-          event.preventDefault();
-
-          runAnalysis();
-        }
-      }
-    );
-  }
-
-  const observer =
-    new MutationObserver(
-      function(){
-
-        window.setTimeout(
-          bindEntrepriseAi,
-          80
-        );
-      }
-    );
-
-  observer.observe(
-    document.body,
-    {
-      childList:true,
-      subtree:true
-    }
-  );
-
-  window.setTimeout(
-    bindEntrepriseAi,
-    200
-  );
-
-  app.analyseEntrepriseQuestion =
-    analyseQuestion;
-
-  console.log(
-    "✅ IA Entreprise améliorée et orientée"
-  );
-
-})();
-
 /* ==========================================================
    BO'CITÉART
    CORRECTIF 15
@@ -43005,10 +42766,10 @@ function openPublicEmploymentOffer(offerId){
 
 /* =========================================================
    BO'CITÉART — CORRECTIF ENTREPRISE
-   BANDES CLIQUABLES • ASSISTANT IMMÉDIAT
+   BANDES CLIQUABLES
    ========================================================= */
 
-(function repairEntrepriseBandsAndAssistant(){
+(function repairEntrepriseBands(){
 
   "use strict";
 
@@ -43025,41 +42786,13 @@ function openPublicEmploymentOffer(offerId){
   }
 
   if(
-    window.BOCITE_ENTREPRISE_ASSISTANT_REPAIRED
+    window.BOCITE_ENTREPRISE_BANDS_REPAIRED
   ){
     return;
   }
 
-  window.BOCITE_ENTREPRISE_ASSISTANT_REPAIRED =
+  window.BOCITE_ENTREPRISE_BANDS_REPAIRED =
     true;
-
-  function normalizeText(value){
-
-    return String(value || "")
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[’']/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  function escapeValue(value){
-
-    if(
-      typeof app.safeEscape ===
-      "function"
-    ){
-      return app.safeEscape(value);
-    }
-
-    return String(value || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
 
   function installClickableBandStyle(){
 
@@ -43090,20 +42823,16 @@ function openPublicEmploymentOffer(offerId){
       #entrepriseHomeBands .entrepriseBandText * {
         pointer-events:none !important;
       }
-
-      #entrepriseAiAskBtn {
-        position:relative !important;
-        z-index:3 !important;
-        pointer-events:auto !important;
-        cursor:pointer !important;
-        touch-action:manipulation !important;
-      }
     `;
 
-    document.head.appendChild(style);
+    document.head.appendChild(
+      style
+    );
   }
 
-  function openEntrepriseScreen(screenName){
+  function openEntrepriseScreen(
+    screenName
+  ){
 
     if(
       !screenName ||
@@ -43115,377 +42844,6 @@ function openPublicEmploymentOffer(offerId){
 
     app.openScreen(
       screenName
-    );
-  }
-
-  function extractCity(question){
-
-    const original =
-      String(question || "").trim();
-
-    const match =
-      original.match(
-        /(?:\bà\b|\bau\b|\bsur\b|\bvers\b|\bprès de\b)\s+([a-zA-ZÀ-ÿ' -]{2,40})$/i
-      );
-
-    if(!match){
-      return "";
-    }
-
-    return String(
-      match[1] || ""
-    )
-      .replace(
-        /\b(?:et|pour|dans)\b.*$/i,
-        ""
-      )
-      .trim();
-  }
-
-  function extractSearchNeed(question){
-
-    return String(question || "")
-      .replace(
-        /^(je|nous|mon entreprise|notre entreprise)\s+/i,
-        ""
-      )
-      .replace(
-        /^(recherche|cherche|voudrais|souhaite|veux)\s+/i,
-        ""
-      )
-      .replace(
-        /\b(?:à|au|sur|vers|près de)\s+[a-zA-ZÀ-ÿ' -]{2,40}$/i,
-        ""
-      )
-      .trim();
-  }
-
-  function getAssistantResult(question){
-
-    const normalized =
-      normalizeText(question);
-
-    const city =
-      extractCity(question);
-
-    const searchNeed =
-      extractSearchNeed(question);
-
-    if(
-      normalized.includes("emploi") ||
-      normalized.includes("recrut") ||
-      normalized.includes("salarie") ||
-      normalized.includes("personnel") ||
-      normalized.includes("apprenti") ||
-      normalized.includes("alternance") ||
-      normalized.includes("stage")
-    ){
-      return {
-        title:
-          "Votre demande concerne l’emploi.",
-        text:
-          "Bo'CitéArt peut vous orienter vers les offres locales, les candidatures spontanées et les entreprises qui recrutent.",
-        actionLabel:
-          "Ouvrir la rubrique Emploi",
-        screen:
-          "emploi"
-      };
-    }
-
-    if(
-      normalized.includes("charge") ||
-      normalized.includes("electricite") ||
-      normalized.includes("gaz") ||
-      normalized.includes("assurance") ||
-      normalized.includes("telephone") ||
-      normalized.includes("internet") ||
-      normalized.includes("mutualis")
-    ){
-      return {
-        title:
-          "Votre demande concerne la réduction des charges.",
-        text:
-          "Vous pouvez consulter les regroupements existants et déclarer votre intérêt sans engagement immédiat.",
-        actionLabel:
-          "Voir les mutualisations",
-        screen:
-          "mutualisation"
-      };
-    }
-
-    if(
-      normalized.includes("mecenat") ||
-      normalized.includes("mecene") ||
-      normalized.includes("don") ||
-      normalized.includes("soutenir un projet")
-    ){
-      return {
-        title:
-          "Votre demande concerne le mécénat.",
-        text:
-          "Bo'CitéArt peut vous présenter les formes de mécénat et les projets locaux susceptibles d’être soutenus.",
-        actionLabel:
-          "Découvrir le mécénat",
-        screen:
-          "mecenat"
-      };
-    }
-
-    if(
-      normalized.includes("transmission") ||
-      normalized.includes("transmettre") ||
-      normalized.includes("repreneur") ||
-      normalized.includes("retraite") ||
-      normalized.includes("cession") ||
-      normalized.includes("succession")
-    ){
-      return {
-        title:
-          "Votre demande concerne l’avenir de l’entreprise.",
-        text:
-          "Vous pouvez préparer progressivement la transmission, la reprise ou la continuité de votre activité.",
-        actionLabel:
-          "Ouvrir la rubrique Pérennité",
-        screen:
-          "perennite"
-      };
-    }
-
-    if(
-      normalized.includes("visibilite") ||
-      normalized.includes("faire connaitre") ||
-      normalized.includes("publicite") ||
-      normalized.includes("notoriete") ||
-      normalized.includes("presentation")
-    ){
-      return {
-        title:
-          "Votre demande concerne la visibilité.",
-        text:
-          "Présentez votre entreprise, ses métiers, ses services et son savoir-faire à l’ensemble de la ville.",
-        actionLabel:
-          "Faire connaître mon entreprise",
-        screen:
-          "visibilite"
-      };
-    }
-
-    if(
-      normalized.includes("fournisseur") ||
-      normalized.includes("sous traitant") ||
-      normalized.includes("sous-traitant") ||
-      normalized.includes("partenaire") ||
-      normalized.includes("artisan") ||
-      normalized.includes("entreprise") ||
-      normalized.includes("commerce") ||
-      normalized.includes("repasseuse") ||
-      normalized.includes("plombier") ||
-      normalized.includes("electricien") ||
-      normalized.includes("comptable") ||
-      normalized.includes("avocat") ||
-      normalized.includes("menuisier") ||
-      normalized.includes("carreleur")
-    ){
-      return {
-        title:
-          "Une recherche professionnelle peut être lancée.",
-        text:
-          city
-            ? (
-                "Bo'CitéArt recherchera en priorité « " +
-                searchNeed +
-                " » à " +
-                city +
-                ", puis dans les communes voisines."
-              )
-            : (
-                "Bo'CitéArt recherchera en priorité « " +
-                searchNeed +
-                " » dans votre commune, puis dans les communes voisines."
-              ),
-        actionLabel:
-          "Lancer la recherche",
-        action:
-          "professional_search",
-        keyword:
-          searchNeed,
-        city:
-          city
-      };
-    }
-
-    return {
-      title:
-        "Votre demande a été comprise.",
-      text:
-        "Bo'CitéArt commencera par rechercher une solution dans votre commune. Vous pouvez également ouvrir la recherche professionnelle pour préciser le métier, le service ou l’entreprise recherchée.",
-      actionLabel:
-        "Ouvrir la recherche professionnelle",
-      action:
-        "professional_search",
-      keyword:
-        searchNeed,
-      city:
-        city
-    };
-  }
-
-  function openProfessionalSearch(
-    keyword,
-    city
-  ){
-
-    const options = {
-      keyword:
-        keyword || "",
-      city:
-        city || ""
-    };
-
-    if(
-      typeof app.openProfessionalDirectory ===
-      "function"
-    ){
-      app.openProfessionalDirectory(
-        options
-      );
-
-      return;
-    }
-
-    if(
-      typeof app.openProfessionalSearch ===
-      "function"
-    ){
-      app.openProfessionalSearch(
-        options
-      );
-
-      window.setTimeout(function(){
-
-        const needInput =
-          document.getElementById(
-            "professionalPublicSearchNeed"
-          );
-
-        if(
-          needInput &&
-          keyword
-        ){
-          needInput.value =
-            keyword;
-        }
-
-      },100);
-
-      return;
-    }
-
-    openEntrepriseScreen(
-      "annuaire"
-    );
-  }
-
-  function renderAssistantAnswer(question){
-
-    const answerBox =
-      document.getElementById(
-        "entrepriseAiAnswer"
-      );
-
-    if(!answerBox){
-      return;
-    }
-
-    const result =
-      getAssistantResult(
-        question
-      );
-
-    answerBox.innerHTML = `
-      <div
-        class="box"
-        style="
-          border-left:6px solid #2f5d46;
-          margin-top:12px;
-        ">
-
-        <strong style="font-size:18px;">
-          ${escapeValue(result.title)}
-        </strong>
-
-        <br><br>
-
-        ${escapeValue(result.text)}
-
-        <button
-          id="entrepriseAssistantActionBtn"
-          class="choiceBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:12px;
-          ">
-          ${escapeValue(result.actionLabel)}
-        </button>
-      </div>
-    `;
-
-    const actionButton =
-      document.getElementById(
-        "entrepriseAssistantActionBtn"
-      );
-
-    if(!actionButton){
-      return;
-    }
-
-    actionButton.onclick = function(event){
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      if(
-        result.action ===
-        "professional_search"
-      ){
-        openProfessionalSearch(
-          result.keyword,
-          result.city
-        );
-
-        return;
-      }
-
-      openEntrepriseScreen(
-        result.screen
-      );
-    };
-  }
-
-  function askEntrepriseAssistant(){
-
-    const input =
-      document.getElementById(
-        "entrepriseAiQuestion"
-      );
-
-    const question =
-      input
-        ? String(input.value || "").trim()
-        : "";
-
-    if(!question){
-
-      alert(
-        "Écrivez votre question avant de continuer."
-      );
-
-      return;
-    }
-
-    renderAssistantAnswer(
-      question
     );
   }
 
@@ -43501,28 +42859,6 @@ function openPublicEmploymentOffer(offerId){
         typeof target.closest !==
         "function"
       ){
-        return;
-      }
-
-      const aiButton =
-        target.closest(
-          "#entrepriseAiAskBtn"
-        );
-
-      if(aiButton){
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        if(
-          typeof event.stopImmediatePropagation ===
-          "function"
-        ){
-          event.stopImmediatePropagation();
-        }
-
-        askEntrepriseAssistant();
-
         return;
       }
 
@@ -43562,37 +42898,13 @@ function openPublicEmploymentOffer(offerId){
     true
   );
 
-  document.addEventListener(
-    "keydown",
-    function(event){
-
-      if(
-        event.key !== "Enter"
-      ){
-        return;
-      }
-
-      if(
-        event.target &&
-        event.target.id ===
-        "entrepriseAiQuestion"
-      ){
-
-        event.preventDefault();
-
-        askEntrepriseAssistant();
-      }
-    }
-  );
-
   installClickableBandStyle();
 
   console.log(
-    "✅ Bandes Entreprise et assistant local réparés"
+    "✅ Bandes Entreprise réparées"
   );
 
 })();
-
 /* =========================================================
    BO'CITÉART — ASSISTANT ENTREPRISE V2
    RÉPONSES IMMÉDIATES ET ORIENTATION
