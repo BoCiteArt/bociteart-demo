@@ -33572,6 +33572,10 @@ function openPublicEmploymentOffer(offerId){
    ÇA COMMENCE ICI — ANNUAIRE LOCAL SANS ENTREPRISE FICTIVE
    ========================================================= */
 
+/* =========================================================
+   ÇA COMMENCE ICI — ANNUAIRE LOCAL PROPRE
+   ========================================================= */
+
 function renderLocalDirectory(){
 
   const host =
@@ -33589,7 +33593,8 @@ function renderLocalDirectory(){
   }
 
   if(count){
-    count.textContent = "";
+    count.textContent =
+      "L’annuaire sera disponible après son raccordement officiel.";
   }
 
   host.innerHTML = `
@@ -33616,14 +33621,15 @@ function renderLocalDirectory(){
 
       <br>
 
-      Le système de recherche sera activé
-      lors du branchement officiel de
+      L’annuaire économique
 
       <strong>
         <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
       </strong>
 
-      aux données publiques officielles.
+      sera alimenté lors de son raccordement
+      aux données publiques officielles
+      des entreprises françaises.
 
       <br><br>
 
@@ -33634,193 +33640,9 @@ function renderLocalDirectory(){
   `;
 }
 
-function openSpontaneousApplicationForm(companyId){
-
-  const company =
-    loadCompanies()
-      .find(function(item){
-
-        return item.id === companyId;
-      });
-
-  if(!company){
-
-    alert(
-      "La candidature spontanée sera disponible lorsqu’une entreprise officielle pourra être sélectionnée dans l’annuaire."
-    );
-
-    return;
-  }
-
-  app.renderModal(
-    "Candidature spontanée",
-    `
-      <div
-        class="box"
-        style="
-          border-left:6px solid #2f5d46;
-          color:#111;
-          font-size:14px;
-          line-height:1.55;
-          font-weight:400;
-        ">
-
-        <strong
-          style="
-            display:block;
-            color:#2f5d46;
-            font-size:16px;
-            font-weight:700;
-          ">
-          ${escapeValue(company.name)}
-        </strong>
-
-        <br>
-
-        Votre candidature sera transmise
-        uniquement à cette entreprise.
-
-      </div>
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:700;
-        ">
-        Nom et prénom
-      </label>
-
-      <input
-        id="spontaneousCvName"
-        class="miniField"
-        type="text"
-        placeholder="Nom et prénom">
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:700;
-        ">
-        Adresse e-mail
-      </label>
-
-      <input
-        id="spontaneousCvEmail"
-        class="miniField"
-        type="email"
-        placeholder="Adresse e-mail">
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:700;
-        ">
-        Téléphone
-      </label>
-
-      <input
-        id="spontaneousCvPhone"
-        class="miniField"
-        type="tel"
-        placeholder="Téléphone">
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:700;
-        ">
-        Métier ou poste recherché
-      </label>
-
-      <input
-        id="spontaneousCvJob"
-        class="miniField"
-        type="text"
-        placeholder="Exemple : vendeur, comptable, technicien">
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:700;
-        ">
-        Message à l’entreprise
-      </label>
-
-      <textarea
-        id="spontaneousCvMessage"
-        class="miniField"
-        style="min-height:110px;"
-        placeholder="Présentez brièvement votre candidature."></textarea>
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:700;
-        ">
-        CV
-      </label>
-
-      <input
-        id="spontaneousCvFile"
-        class="miniField"
-        type="file"
-        accept=".pdf,.doc,.docx">
-
-      <label class="miniCheck">
-
-        <input
-          id="spontaneousCvConsent"
-          type="checkbox">
-
-        <span>
-          J’accepte que cette entreprise
-          conserve ma candidature
-          dans son historique privé
-          afin de pouvoir me recontacter
-          ultérieurement.
-        </span>
-
-      </label>
-
-      <button
-        id="spontaneousCvSendBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:12px;
-        ">
-        Envoyer ma candidature
-      </button>
-    `
-  );
-
-  window.setTimeout(function(){
-
-    const sendButton =
-      getElement(
-        "spontaneousCvSendBtn"
-      );
-
-    if(sendButton){
-
-      sendButton.onclick = function(){
-
-        saveSpontaneousApplication(
-          company
-        );
-      };
-    }
-
-  },0);
-}
-
+/* =========================================================
+   ÇA FINIT ICI — ANNUAIRE LOCAL PROPRE
+   ========================================================= */
 /* =========================================================
    ÇA FINIT ICI — ANNUAIRE LOCAL SANS ENTREPRISE FICTIVE
    ========================================================= */
