@@ -35391,12 +35391,6 @@ console.log(
    NOUVELLE INTRODUCTION DE LA PAGE VISIBILITÉ
    ========================================================== */
 
-/* ==========================================================
-   BO'CITÉART
-   CORRECTIF 08
-   NOUVELLE INTRODUCTION DE LA PAGE VISIBILITÉ
-   ========================================================== */
-
 (function correctEntrepriseVisibilityIntroduction(){
 
   "use strict";
