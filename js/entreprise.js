@@ -29225,7 +29225,7 @@ console.log(
 /* =========================================================
    Bo'CitéART — EMPLOI
    LISTE PUBLIQUE DES OFFRES + PUBLICATION PRIVÉE
-   ========================================================= */
+   ========================================================= */ 
 
 (function reorganizeEntrepriseEmployment(){
 
