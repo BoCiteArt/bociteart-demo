@@ -45589,7 +45589,74 @@ Statistiques
 
 })();
 
+/* =========================================================
+   BO'CITÉART — DIAGNOSTIC DU BOUTON RETOUR EMPLOI
+   ========================================================= */
 
+document.addEventListener(
+  "click",
+  function(event){
+
+    const button =
+      event.target &&
+      typeof event.target.closest === "function"
+        ? event.target.closest(
+            "button"
+          )
+        : null;
+
+    if(!button){
+      return;
+    }
+
+    const text =
+      String(
+        button.textContent || ""
+      )
+      .replace(/\s+/g," ")
+      .trim()
+      .toLowerCase();
+
+    if(
+      text !== "retour" &&
+      text !== "← retour"
+    ){
+      return;
+    }
+
+    const titleElement =
+      document.querySelector(
+        ".modal-title," +
+        ".modalTitle," +
+        ".modal-header h1," +
+        ".modal-header h2," +
+        ".modalHeader h1," +
+        ".modalHeader h2"
+      );
+
+    console.log(
+      "🔎 DIAGNOSTIC RETOUR",
+      {
+        buttonId:
+          button.id || "",
+        buttonClass:
+          button.className || "",
+        buttonText:
+          button.textContent || "",
+        modalTitle:
+          titleElement
+            ? titleElement.textContent
+            : "",
+        currentScreen:
+          window.BociteEntreprise &&
+          window.BociteEntreprise.state
+            ? window.BociteEntreprise.state.currentScreen
+            : ""
+      }
+    );
+  },
+  true
+);
 
 
 
