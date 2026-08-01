@@ -40552,6 +40552,15 @@ console.log(
     };
   }
 
+    app.analyseEntrepriseQuestion =
+    analyseQuestion;
+
+  console.log(
+    "✅ IA Entreprise améliorée et orientée"
+  );
+
+})();
+
 /* ==========================================================
    BO'CITÉART
    CORRECTIF 15
