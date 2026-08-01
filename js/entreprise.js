@@ -3,7 +3,7 @@
    PARTIE 1 — NAVIGATION ET ACCUEIL
 ========================================================= */
  
-(function initBociteEntrepriseModule(){  
+(function initBociteEntrepriseModule(){   
   
   "use strict";
 
@@ -33792,8 +33792,10 @@ app.openCorrectedDirectory =
 app.openLocalDirectory =
   openLocalDirectory;
 
-app.openSpontaneousApplicationForm =
-  openSpontaneousApplicationForm;
+  /*
+  L’ancienne fonction de candidature spontanée
+  n’est plus utilisée dans cette version.
+*/ 
 
 app.loadSpontaneousApplications =
   loadSpontaneousApplications;
