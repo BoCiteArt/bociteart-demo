@@ -312,24 +312,10 @@ function bindBackButton(){
         ){
 
           if(
-            typeof window.closeModal ===
+            typeof window.openEntrepriseIntroduction ===
             "function"
           ){
-            window.closeModal();
-            return;
-          }
-
-          const closeButton =
-            document.querySelector(
-              ".modal-close," +
-              ".modalClose," +
-              "[data-close-modal]," +
-              ".closeModal," +
-              "button[aria-label='Fermer']"
-            );
-
-          if(closeButton){
-            closeButton.click();
+            window.openEntrepriseIntroduction();
             return;
           }
 
@@ -340,7 +326,6 @@ function bindBackButton(){
       };
     });
 }
-
         /*
           Depuis Mécénat, Emploi, Développement, etc.,
           retour à la page des bandes défilantes.
