@@ -294,7 +294,7 @@ function buildBackButton(options){
     `;
   }
 
- function bindBackButton(){
+function bindBackButton(){
 
   document
     .querySelectorAll(
@@ -307,11 +307,40 @@ function buildBackButton(options){
         event.preventDefault();
         event.stopPropagation();
 
+        if(
+          state.currentScreen === "home"
+        ){
+
+          if(
+            typeof window.closeModal ===
+            "function"
+          ){
+            window.closeModal();
+            return;
+          }
+
+          const closeButton =
+            document.querySelector(
+              ".modal-close," +
+              ".modalClose," +
+              "[data-close-modal]," +
+              ".closeModal," +
+              "button[aria-label='Fermer']"
+            );
+
+          if(closeButton){
+            closeButton.click();
+            return;
+          }
+
+          return;
+        }
+
         goBack();
       };
     });
 }
-
+   
   function bindPresentationFooter(){
 
     document
