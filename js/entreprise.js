@@ -2566,18 +2566,18 @@ Pourquoi devenir partenaire <strong><span style="color:#2f5d46;">Bo'Cité</span>
     gap:10px;
   ">
 
-  <button
-    class="choiceBtn"
-    type="button"
-    onclick="window.BociteEntreprise.openEmploymentHome();"
-    style="
-      width:100%;
-      max-width:430px;
-    ">
+<button
+  id="employmentIntroductionHomeBtn"
+  class="choiceBtn"
+  type="button"
+  style="
+    width:100%;
+    max-width:430px;
+  ">
 
-    Découvrir l’espace Emploi et Recrutement
+  Découvrir l’espace Emploi et Recrutement
 
-  </button>
+</button>
 
   <button
     class="choiceBtn"
