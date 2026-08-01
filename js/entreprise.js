@@ -307,34 +307,49 @@ function bindBackButton(){
         event.preventDefault();
         event.stopPropagation();
 
+        /*
+          Depuis la page avec les bandes défilantes,
+          retour à la page de présentation
+          « Découvrir l’espace Entreprise ».
+        */
+
         if(
           state.currentScreen === "home"
         ){
 
           if(
-            typeof window.closeModal ===
+            window.BociteEntreprise &&
+            typeof window.BociteEntreprise
+              .openEntrepriseIntroduction ===
             "function"
           ){
-            window.closeModal();
+
+            window.BociteEntreprise
+              .openEntrepriseIntroduction();
+
             return;
           }
 
-          const closeButton =
-            document.querySelector(
-              ".modal-close," +
-              ".modalClose," +
-              "[data-close-modal]," +
-              ".closeModal," +
-              "button[aria-label='Fermer']"
-            );
+          if(
+            window.BociteEntreprise &&
+            typeof window.BociteEntreprise
+              .openIntroduction ===
+            "function"
+          ){
 
-          if(closeButton){
-            closeButton.click();
+            window.BociteEntreprise
+              .openIntroduction();
+
             return;
           }
 
           return;
         }
+
+        /*
+          Depuis Mécénat, Emploi, Développement, etc.,
+          retour à la page des bandes défilantes.
+        */
 
         goBack();
       };
