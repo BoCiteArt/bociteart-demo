@@ -2569,7 +2569,7 @@ Pourquoi devenir partenaire <strong><span style="color:#2f5d46;">Bo'Cité</span>
   <button
     class="choiceBtn"
     type="button"
-    onclick="openEmploymentHome();"
+    onclick="window.BociteEntreprise.openEmploymentHome();"
     style="
       width:100%;
       max-width:430px;
@@ -2684,26 +2684,28 @@ function openEmploymentIntroduction(){
         "employmentIntroductionHomeBtn"
       );
 
-    const directoryButton =
-      getElement(
-        "employmentIntroductionDirectoryBtn"
-      );
+ const directoryButton =
+  getElement(
+    "employmentIntroductionDirectoryBtn"
+  );
 
-    if(employmentButton){
+if(employmentButton){
 
-      employmentButton.onclick = function(){
+  employmentButton.onclick = function(){
 
-        openEmploymentHome();
-      };
-    }
+    module.openScreen(
+      "emploi_home"
+    );
+  };
+}
 
-    if(directoryButton){
+if(directoryButton){
 
-      directoryButton.onclick = function(){
+  directoryButton.onclick = function(){
 
-        openEmploymentCompaniesDirectory();
-      };
-    }
+    openEmploymentCompaniesDirectory();
+  };
+}
 
     /*
       Retour direct aux bandes défilantes
@@ -4163,19 +4165,6 @@ function openEmploymentOffers(){
   window.setTimeout(function(){
 
     renderEmploymentOffers();
-
-    const homeButton =
-      getElement(
-        "employmentOffersHomeBtn"
-      );
-
-    if(homeButton){
-
-      homeButton.onclick = function(){
-
-        openEmploymentHome();
-      };
-    }
 
     document
       .querySelectorAll(
@@ -6774,6 +6763,11 @@ function saveEmploymentReply(applicationId){
     "emploi",
     openEmployment
   );
+
+   module.registerScreen(
+  "emploi_home",
+  openEmploymentHome
+);
 
     module.openEmploymentHome =
   openEmploymentHome;
