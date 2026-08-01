@@ -312,10 +312,14 @@ function bindBackButton(){
         ){
 
           if(
-            typeof window.openEntrepriseIntroduction ===
+            window.BociteEntreprise &&
+            typeof window.BociteEntreprise
+              .openEntrepriseIntroduction ===
             "function"
           ){
-            window.openEntrepriseIntroduction();
+            window.BociteEntreprise
+              .openEntrepriseIntroduction();
+
             return;
           }
 
