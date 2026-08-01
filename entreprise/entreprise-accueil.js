@@ -707,6 +707,10 @@ function openRealEntrepriseHome(){
     "L’espace Entreprise est momentanément indisponible."
   );
 }
+ 
+   window.openRealEntrepriseHome =
+  openRealEntrepriseHome;
+   
   /* =======================================================
      ENREGISTREMENT
      ======================================================= */
