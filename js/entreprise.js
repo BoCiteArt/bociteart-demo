@@ -307,59 +307,37 @@ function bindBackButton(){
         event.preventDefault();
         event.stopPropagation();
 
-        const titleElement =
-          document.querySelector(
-            ".modal-title," +
-            ".modalTitle," +
-            ".modal-header h1," +
-            ".modal-header h2," +
-            ".modalHeader h1," +
-            ".modalHeader h2"
-          );
+ /*
+  Depuis la liste « Offres d’emploi »,
+  retour à « Emploi dans votre ville ».
+*/
 
-        const modalTitle =
-          String(
-            titleElement
-              ? titleElement.textContent
-              : ""
-          )
-          .replace(/\s+/g," ")
-          .trim()
-          .toLowerCase();
+const employmentOffersList =
+  document.getElementById(
+    "employmentOffersList"
+  );
 
-        /*
-          Depuis « Offres d’emploi »,
-          retour à « Emploi dans votre ville ».
-        */
+if(employmentOffersList){
 
-        if(
-          modalTitle.includes(
-            "offres d’emploi"
-          ) ||
-          modalTitle.includes(
-            "offres d'emploi"
-          )
-        ){
+  if(
+    window.BociteEntreprise &&
+    typeof window.BociteEntreprise
+      .openEmploymentHome ===
+    "function"
+  ){
+    window.BociteEntreprise
+      .openEmploymentHome();
 
-        if(
-  window.BociteEntreprise &&
-  typeof window.BociteEntreprise
-    .openEmploymentHome ===
-  "function"
-){
-  window.BociteEntreprise
-    .openEmploymentHome();
+    return;
+  }
 
-  return;
-}
+  if(
+    typeof window.openEmploymentHome ===
+    "function"
+  ){
+    window.openEmploymentHome();
 
-if(
-  typeof window.openEmploymentHome ===
-  "function"
-){
-  window.openEmploymentHome();
-
-  return;
+    return;
   }
 }
         /*
