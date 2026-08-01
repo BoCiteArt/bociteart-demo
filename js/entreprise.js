@@ -34949,7 +34949,7 @@ button.onclick =
       app.openHome();
     }
   };
-
+}
   function isSmallUnwantedBox(
     element,
     title
