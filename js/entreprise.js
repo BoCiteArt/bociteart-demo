@@ -17277,7 +17277,7 @@ function openMutualisation(){
    BO'CITÉART — MÉCÉNAT
    PARTIE 1 — PRÉSENTATION PUBLIQUE ET ATTRACTIVE
    ========================================================= */
-
+/*
 (function addBociteMecenatPublicPresentation(){
 
   "use strict";
@@ -17858,7 +17858,8 @@ function openMutualisation(){
     "✅ Mécénat — partie 1 présentation publique chargée"
   );
 
-})();
+})();    
+/*
 
 /* =========================================================
    BO'CITÉART — MÉCÉNAT
