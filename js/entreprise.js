@@ -45635,29 +45635,42 @@ document.addEventListener(
       );
 
     console.log(
-      "🔎 DIAGNOSTIC RETOUR",
-      {
+      "🔎 DIAGNOSTIC RETOUR = " +
+      JSON.stringify({
         buttonId:
           button.id || "",
+
         buttonClass:
-          button.className || "",
+          String(
+            button.className || ""
+          ),
+
         buttonText:
-          button.textContent || "",
+          String(
+            button.textContent || ""
+          )
+          .replace(/\s+/g," ")
+          .trim(),
+
         modalTitle:
           titleElement
-            ? titleElement.textContent
+            ? String(
+                titleElement.textContent || ""
+              )
+              .replace(/\s+/g," ")
+              .trim()
             : "",
+
         currentScreen:
           window.BociteEntreprise &&
           window.BociteEntreprise.state
             ? window.BociteEntreprise.state.currentScreen
             : ""
-      }
+      })
     );
   },
   true
 );
-
 
 
 
