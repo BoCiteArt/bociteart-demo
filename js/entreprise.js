@@ -31168,20 +31168,6 @@ function getPublicEmploymentListHtml(){
 
 function openPublicEmploymentList(){
 
-  /*
-    Depuis la liste publique des offres,
-    le bouton Retour doit revenir
-    à la page « Emploi dans votre ville ».
-  */
-
-  if(
-    module.state &&
-    typeof module.state === "object"
-  ){
-    module.state.nestedParentScreen =
-      "emploi";
-  }
-
   module.renderModal(
     "Offres d’emploi",
     getPublicEmploymentListHtml()
@@ -31229,6 +31215,45 @@ function openPublicEmploymentList(){
     }
 
   },0);
+
+  window.setTimeout(function(){
+
+    const backButton =
+      document.querySelector(
+        "#entrepriseUniversalBackButton," +
+        ".bociteEntrepriseProtectedBackBtn," +
+        "#entrepriseBackBtn," +
+        "[data-entreprise-back]"
+      );
+
+    if(!backButton){
+      return;
+    }
+
+    backButton.onclick = function(event){
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+        "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+
+      if(
+        typeof module.openEmploymentPublicHome ===
+        "function"
+      ){
+        module.openEmploymentPublicHome();
+        return;
+      }
+
+      openEmploymentPublicHome();
+    };
+
+  },180);
 }
    
 function openPublicEmploymentOffer(offerId){
