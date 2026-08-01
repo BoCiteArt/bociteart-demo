@@ -35022,21 +35022,53 @@ console.log(
       );
     }
 
-    button.onclick =
-      function(event){
+button.onclick =
+  function(event){
 
-        if(event){
-          event.preventDefault();
-          event.stopPropagation();
-        }
+    if(event){
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
-        if(
-          typeof app.openHome ===
-          "function"
-        ){
-          app.openHome();
-        }
-      };
+    const currentTitle =
+      String(title || "")
+        .replace(/\s+/g," ")
+        .trim()
+        .toLowerCase();
+
+    if(
+      currentTitle.includes(
+        "offres d’emploi"
+      ) ||
+      currentTitle.includes(
+        "offres d'emploi"
+      )
+    ){
+
+      if(
+        typeof app.openEmploymentHome ===
+        "function"
+      ){
+        app.openEmploymentHome();
+        return;
+      }
+
+      if(
+        typeof window.openEmploymentHome ===
+        "function"
+      ){
+        window.openEmploymentHome();
+        return;
+      }
+    }
+
+    if(
+      typeof app.openHome ===
+      "function"
+    ){
+      app.openHome();
+     }
+   };
   }
 
   function isSmallUnwantedBox(
