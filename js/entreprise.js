@@ -2818,298 +2818,268 @@ function getEmploymentHomeHtml(){
       );
     });
 
-  const titleStyle = `
-    color:#2f5d46;
-    font-weight:700;
-    line-height:1.4;
-  `;
+const titleStyle = `
+  color:#2f5d46;
+  font-size:16px;
+  font-weight:700;
+  line-height:1.45;
+`;
 
-  const textStyle = `
-    color:#111;
-    font-weight:400;
-    line-height:1.7;
-  `;
+const textStyle = `
+  color:#111;
+  font-size:14px;
+  font-weight:400;
+  line-height:1.55;
+`;
 
-  return `
+return `
 
-    </div>
-
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        border-left:6px solid #2f5d46;
-        ${textStyle}
-      ">
-
-      <div
-        style="
-          ${titleStyle}
-          font-size:19px;
-        ">
-        Trouvez un emploi,
-        un stage
-        ou une alternance près de chez vous
-      </div>
-
-      <br>
-
-      <div style="${textStyle}">
-        Les entreprises de votre ville
-        peuvent publier ici leurs besoins
-        en recrutement.
-
-        <br><br>
-
-        Les habitants peuvent consulter gratuitement
-        les offres disponibles
-        et transmettre leur candidature
-        directement à l’entreprise concernée.
-      </div>
-
-    </div>
-
-    <div
-      class="box entrepriseInfoBox"
-      style="${textStyle}">
-
-      <div
-        style="
-          ${titleStyle}
-          font-size:17px;
-        ">
-        Pourquoi recruter localement ?
-      </div>
-
-      <br>
-
-      <div style="${textStyle}">
-        Les compétences recherchées
-        sont parfois déjà présentes
-        dans votre commune
-        ou dans les communes voisines.
-
-        <br><br>
-
-        Une personne qui travaille près de chez elle
-        réduit ses déplacements,
-        ses frais
-        et le temps passé sur la route.
-
-        <br><br>
-
-        L’entreprise améliore également
-        son ancrage local
-        et sa connaissance auprès des habitants.
-      </div>
-
-    </div>
-
-    <div
-      class="box entrepriseInfoBox"
-      style="${textStyle}">
-
-      <div
-        style="
-          ${titleStyle}
-          font-size:17px;
-        ">
-<div
-  class="box entrepriseInfoBox"
-  style="
-    border-left:6px solid #2f5d46;
-    color:#111;
-    font-weight:400;
-    line-height:1.55;
-  ">
-
-  <strong
+  <div
+    class="box entrepriseInfoBox"
     style="
-      display:block;
-      color:#2f5d46;
-      font-size:18px;
-      font-weight:700;
-      line-height:1.4;
+      border-left:6px solid #2f5d46;
+      ${textStyle}
     ">
-    Aucune offre ne correspond actuellement ?
-  </strong>
 
-  <div style="margin-top:14px;">
+    <div style="${titleStyle}">
+      Trouvez un emploi,
+      un stage
+      ou une alternance près de chez vous
+    </div>
 
-    Le citoyen peut envoyer une candidature spontanée
-    à une entreprise de sa ville,
-    même si celle-ci n’a pas encore publié d’offre.
+    <br>
 
-    <br><br>
+    <div style="${textStyle}">
+      Les entreprises de votre ville
+      peuvent publier ici leurs besoins
+      en recrutement.
 
-    La candidature reste conservée
-    dans l’espace privé de l’entreprise.
+      <br><br>
 
-    <br><br>
-
-    Elle pourra ainsi retrouver le candidat
-    plusieurs mois plus tard,
-    lorsqu’un nouveau besoin apparaîtra.
-
-    <br><br>
-
-    Grâce à
-
-    <strong>
-      <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-    </strong>,
-
-    les habitants disposent également
-    d’une vision plus précise
-    des entreprises,
-    des commerces,
-    des artisans
-    et des savoir-faire présents dans leur ville.
-
-    <br><br>
-
-    Cette meilleure connaissance réciproque
-    permet aux habitants
-    et aux professionnels
-    de mieux se connaître,
-    de renforcer leurs échanges
-    et de devenir durablement
-    plus connectés les uns aux autres.
+      Les habitants peuvent consulter gratuitement
+      les offres disponibles
+      et transmettre leur candidature
+      directement à l’entreprise concernée.
+    </div>
 
   </div>
 
-</div>
+  <div
+    class="box entrepriseInfoBox"
+    style="${textStyle}">
+
+    <div style="${titleStyle}">
+      Pourquoi recruter localement ?
+    </div>
+
+    <br>
+
+    <div style="${textStyle}">
+      Les compétences recherchées
+      sont parfois déjà présentes
+      dans votre commune
+      ou dans les communes voisines.
+
+      <br><br>
+
+      Une personne qui travaille près de chez elle
+      réduit ses déplacements,
+      ses frais
+      et le temps passé sur la route.
+
+      <br><br>
+
+      L’entreprise améliore également
+      son ancrage local
+      et sa connaissance auprès des habitants.
+    </div>
+
+  </div>
+
+  <div
+    class="box entrepriseInfoBox"
+    style="
+      border-left:6px solid #2f5d46;
+      ${textStyle}
+    ">
+
+    <div style="${titleStyle}">
+      Aucune offre ne correspond actuellement ?
+    </div>
 
     <div
-      class="box entrepriseInfoBox"
       style="
-        border-left:6px solid #2f5d46;
+        margin-top:14px;
         ${textStyle}
       ">
 
-      <div
+      Le citoyen peut envoyer une candidature spontanée
+      à une entreprise de sa ville,
+      même si celle-ci n’a pas encore publié d’offre.
+
+      <br><br>
+
+      La candidature reste conservée
+      dans l’espace privé de l’entreprise.
+
+      <br><br>
+
+      Elle pourra ainsi retrouver le candidat
+      plusieurs mois plus tard,
+      lorsqu’un nouveau besoin apparaîtra.
+
+      <br><br>
+
+      Grâce à
+
+      <strong>
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </strong>,
+
+      les habitants disposent également
+      d’une vision plus précise
+      des entreprises,
+      des commerces,
+      des artisans
+      et des savoir-faire présents dans leur ville.
+
+      <br><br>
+
+      Cette meilleure connaissance réciproque
+      permet aux habitants
+      et aux professionnels
+      de mieux se connaître,
+      de renforcer leurs échanges
+      et de devenir durablement
+      plus connectés les uns aux autres.
+
+    </div>
+
+  </div>
+
+  <div
+    class="box entrepriseInfoBox"
+    style="
+      border-left:6px solid #2f5d46;
+      ${textStyle}
+    ">
+
+    <div style="${titleStyle}">
+      Offres actuellement disponibles
+    </div>
+
+    <br>
+
+    <div style="${textStyle}">
+      Nombre d’offres ouvertes :
+
+      <span
         style="
-          ${titleStyle}
-          font-size:17px;
+          color:#2f5d46;
+          font-size:18px;
+          font-weight:700;
         ">
-        Offres actuellement disponibles
-      </div>
-
-      <br>
-
-      <div style="${textStyle}">
-        Nombre d’offres ouvertes :
-
-        <span
-          style="
-            color:#2f5d46;
-            font-size:20px;
-            font-weight:700;
-          ">
-          ${activeOffers.length}
-        </span>
-      </div>
-
+        ${activeOffers.length}
+      </span>
     </div>
 
-    <div
-      style="
-        display:flex;
-        gap:8px;
-        flex-wrap:wrap;
-      ">
+  </div>
 
-      <button
-        class="choiceBtn"
-        id="employmentViewOffersBtn"
-        type="button">
-        Consulter toutes les offres
-      </button>
+  <div
+    style="
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    ">
 
-      <button
-        class="choiceBtn"
-        id="employmentSpontaneousBtn"
-        type="button">
-        Envoyer une candidature spontanée
-      </button>
+    <button
+      class="choiceBtn"
+      id="employmentViewOffersBtn"
+      type="button">
+      Consulter toutes les offres
+    </button>
 
-      <button
-        class="choiceBtn"
-        id="employmentLocalCompaniesBtn"
-        type="button">
-        Voir les entreprises de ma ville
-      </button>
+    <button
+      class="choiceBtn"
+      id="employmentSpontaneousBtn"
+      type="button">
+      Envoyer une candidature spontanée
+    </button>
 
+    <button
+      class="choiceBtn"
+      id="employmentLocalCompaniesBtn"
+      type="button">
+      Voir les entreprises de ma ville
+    </button>
+
+  </div>
+
+  <div
+    class="box entrepriseInfoBox"
+    style="
+      margin-top:16px;
+      border-left:6px solid #b00020;
+      ${textStyle}
+    ">
+
+    <div style="${titleStyle}">
+      Espace réservé à l’entreprise
     </div>
 
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        margin-top:16px;
-        border-left:6px solid #b00020;
-        ${textStyle}
-      ">
+    <br>
 
-      <div
-        style="
-          ${titleStyle}
-          font-size:17px;
-        ">
-        Espace réservé à l’entreprise
-      </div>
+    <div style="${textStyle}">
+      La publication d’une offre,
+      sa modification,
+      sa clôture
+      et l’historique des candidatures
+      sont accessibles uniquement
+      depuis l’espace professionnel privé.
 
-      <br>
+      <br><br>
 
-      <div style="${textStyle}">
-        La publication d’une offre,
-        sa modification,
-        sa clôture
-        et l’historique des candidatures
-        sont accessibles uniquement
-        depuis l’espace professionnel privé.
+      Une entreprise doit clôturer son annonce
+      dès que le poste est pourvu.
 
-        <br><br>
+      <br><br>
 
-        Une entreprise doit clôturer son annonce
-        dès que le poste est pourvu.
-
-        <br><br>
-
-        Cela évite les annonces fantômes
-        et respecte le temps des candidats.
-      </div>
-
+      Cela évite les annonces fantômes
+      et respecte le temps des candidats.
     </div>
 
-    <div
-      style="
-        display:flex;
-        gap:8px;
-        flex-wrap:wrap;
-      ">
+  </div>
 
-      <button
-        class="choiceBtn"
-        id="employmentCreateOfferBtn"
-        type="button">
-        Publier une offre
-      </button>
+  <div
+    style="
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    ">
 
-      <button
-        class="choiceBtn"
-        id="employmentApplicationsBtn"
-        type="button">
-        Historique des candidatures
-      </button>
+    <button
+      class="choiceBtn"
+      id="employmentCreateOfferBtn"
+      type="button">
+      Publier une offre
+    </button>
 
-      <button
-        class="choiceBtn"
-        id="employmentDirectionBtn"
-        type="button">
-        Tableau de Direction
-      </button>
+    <button
+      class="choiceBtn"
+      id="employmentApplicationsBtn"
+      type="button">
+      Historique des candidatures
+    </button>
 
-    </div>
-  `;
+    <button
+      class="choiceBtn"
+      id="employmentDirectionBtn"
+      type="button">
+      Tableau de Direction
+    </button>
+
+  </div>
+`;
 }
 
    function bindEmploymentHome(){
