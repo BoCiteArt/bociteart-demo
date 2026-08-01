@@ -214,44 +214,43 @@ function getIntroductionHtml(){
         font-weight:400;
       ">
 
-      <div
-         style="
-         color:#111;
-         font-size:18px;
-         line-height:1.5;
-         font-weight:900;
-        ">
-        ${getLogoHtml()} a été imaginé
-        pour vous
-        et pour répondre aux réalités
-        des entrepreneurs
-        et des commerçants.
-      </div>
+   <div
+  style="
+    color:#2f5d46;
+    font-size:16px;
+    line-height:1.45;
+    font-weight:700;
+  ">
+  ${getLogoHtml()} a été imaginé
+  pour vous
+  et pour répondre aux réalités
+  des entrepreneurs
+  et des commerçants.
+</div>
 
-      <br>
+<br>
 
-      <div
-        style="
-          color:#2f5d46;
-          font-size:18px;
-          line-height:1.5;
-          font-weight:700;
-        ">
-        Découvrez les thèmes suivants
-      </div>
+<div
+  style="
+    color:#2f5d46;
+    font-size:16px;
+    line-height:1.45;
+    font-weight:700;
+  ">
+  Découvrez les thèmes suivants
+</div>
 
-      <div
-        style="
-          margin-top:8px;
-          color:#111;
-          font-size:16px;
-          line-height:1.45;
-          font-weight:900;
-        ">
-        Sur la prochaine page, cliquez dans la bande défilante correspondant au thème choisi.<br>
-        Des explications plus approfondies vous y attendent.
-      </div>
-
+<div
+  style="
+    margin-top:8px;
+    color:#111;
+    font-size:14px;
+    line-height:1.55;
+    font-weight:400;
+  ">
+  Sur la prochaine page, cliquez dans la bande défilante correspondant au thème choisi.<br>
+  Des explications plus approfondies vous y attendent.
+</div>
       <br>
 
       <div
