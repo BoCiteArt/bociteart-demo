@@ -307,24 +307,97 @@ function bindBackButton(){
         event.preventDefault();
         event.stopPropagation();
 
+        const titleElement =
+          document.querySelector(
+            ".modal-title," +
+            ".modalTitle," +
+            ".modal-header h1," +
+            ".modal-header h2," +
+            ".modalHeader h1," +
+            ".modalHeader h2"
+          );
+
+        const modalTitle =
+          String(
+            titleElement
+              ? titleElement.textContent
+              : ""
+          )
+          .replace(/\s+/g," ")
+          .trim()
+          .toLowerCase();
+
+        /*
+          Depuis « Offres d’emploi »,
+          retour à « Emploi dans votre ville ».
+        */
+
+        if(
+          modalTitle.includes(
+            "offres d’emploi"
+          ) ||
+          modalTitle.includes(
+            "offres d'emploi"
+          )
+        ){
+
+        if(
+  window.BociteEntreprise &&
+  typeof window.BociteEntreprise
+    .openEmploymentHome ===
+  "function"
+){
+  window.BociteEntreprise
+    .openEmploymentHome();
+
+  return;
+}
+
+if(
+  typeof window.openEmploymentHome ===
+  "function"
+){
+  window.openEmploymentHome();
+
+  return;
+  }
+}
+        /*
+          Depuis la page des bandes défilantes,
+          retour à l’introduction Entreprise.
+        */
+
         if(
           state.currentScreen === "home"
         ){
 
-          if(
-            window.BociteEntreprise &&
-            typeof window.BociteEntreprise
-              .openEntrepriseIntroduction ===
-            "function"
-          ){
-            window.BociteEntreprise
-              .openEntrepriseIntroduction();
+if(
+  window.BociteEntreprise &&
+  typeof window.BociteEntreprise
+    .openEmploymentPublicHome ===
+  "function"
+){
+  window.BociteEntreprise
+    .openEmploymentPublicHome();
 
-            return;
-          }
+  return;
+}
+
+if(
+  typeof window.openEmploymentHome ===
+  "function"
+){
+  window.openEmploymentHome();
+  return;
+}
 
           return;
         }
+
+        /*
+          Depuis une rubrique interne,
+          retour à la page précédente.
+        */
 
         goBack();
       };
