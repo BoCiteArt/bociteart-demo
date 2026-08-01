@@ -34713,6 +34713,45 @@ console.log(
 
         display:none !important;
       }
+      
+   /* =====================================================
+   BO'CITÉART — TYPOGRAPHIE GLOBALE
+   ===================================================== */
+
+.box{
+  font-size:14px;
+  color:#111;
+  font-weight:400;
+  line-height:1.55;
+}
+
+.box p,
+.box div,
+.box li,
+.box span{
+  font-size:14px;
+  color:#111;
+  font-weight:400;
+  line-height:1.55;
+}
+
+.box h1,
+.box h2,
+.box h3,
+.box h4{
+  color:#2f5d46;
+  font-size:16px;
+  font-weight:700;
+  line-height:1.35;
+}
+
+.box ul{
+  padding-left:22px;
+}
+
+.box li{
+  margin-bottom:8px;
+}
     `;
 
     document.head.appendChild(
