@@ -307,44 +307,39 @@ function bindBackButton(){
         event.preventDefault();
         event.stopPropagation();
 
-        /*
-          Depuis la page avec les bandes défilantes,
-          retour à la page de présentation
-          « Découvrir l’espace Entreprise ».
-        */
-
         if(
           state.currentScreen === "home"
         ){
 
           if(
-            window.BociteEntreprise &&
-            typeof window.BociteEntreprise
-              .openEntrepriseIntroduction ===
+            typeof window.closeModal ===
             "function"
           ){
-
-            window.BociteEntreprise
-              .openEntrepriseIntroduction();
-
+            window.closeModal();
             return;
           }
 
-          if(
-            window.BociteEntreprise &&
-            typeof window.BociteEntreprise
-              .openIntroduction ===
-            "function"
-          ){
+          const closeButton =
+            document.querySelector(
+              ".modal-close," +
+              ".modalClose," +
+              "[data-close-modal]," +
+              ".closeModal," +
+              "button[aria-label='Fermer']"
+            );
 
-            window.BociteEntreprise
-              .openIntroduction();
-
+          if(closeButton){
+            closeButton.click();
             return;
           }
 
           return;
         }
+
+        goBack();
+      };
+    });
+}
 
         /*
           Depuis Mécénat, Emploi, Développement, etc.,
