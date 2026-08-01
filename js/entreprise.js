@@ -4151,20 +4151,6 @@ function openEmploymentOffers(){
 
       <div id="employmentOffersList"></div>
 
-      <button
-        id="employmentOffersHomeBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:12px;
-          background:#f4ead7;
-          color:#111;
-          border:2px solid #d8cdb9;
-        ">
-        Découvrir l’espace Emploi et Recrutement
-      </button>
-
       <div
         class="box entrepriseInfoBox"
         style="
@@ -31182,6 +31168,20 @@ function getPublicEmploymentListHtml(){
 
 function openPublicEmploymentList(){
 
+  /*
+    Depuis la liste publique des offres,
+    le bouton Retour doit revenir
+    à la page « Emploi dans votre ville ».
+  */
+
+  if(
+    module.state &&
+    typeof module.state === "object"
+  ){
+    module.state.nestedParentScreen =
+      "emploi";
+  }
+
   module.renderModal(
     "Offres d’emploi",
     getPublicEmploymentListHtml()
@@ -31230,7 +31230,7 @@ function openPublicEmploymentList(){
 
   },0);
 }
-
+   
 function openPublicEmploymentOffer(offerId){
 
   const data = loadEmploymentData();
