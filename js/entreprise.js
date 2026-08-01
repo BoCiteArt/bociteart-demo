@@ -334,11 +334,6 @@ function bindBackButton(){
           Depuis Mécénat, Emploi, Développement, etc.,
           retour à la page des bandes défilantes.
         */
-
-        goBack();
-      };
-    });
-}
    
   function bindPresentationFooter(){
 
