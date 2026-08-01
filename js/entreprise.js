@@ -307,84 +307,10 @@ function bindBackButton(){
         event.preventDefault();
         event.stopPropagation();
 
- /*
-  Depuis la liste « Offres d’emploi »,
-  retour à « Emploi dans votre ville ».
-*/
-
-const employmentOffersList =
-  document.getElementById(
-    "employmentOffersList"
-  );
-
-if(employmentOffersList){
-
-  if(
-    window.BociteEntreprise &&
-    typeof window.BociteEntreprise
-      .openEmploymentHome ===
-    "function"
-  ){
-    window.BociteEntreprise
-      .openEmploymentHome();
-
-    return;
-  }
-
-  if(
-    typeof window.openEmploymentHome ===
-    "function"
-  ){
-    window.openEmploymentHome();
-
-    return;
-  }
-}
-        /*
-          Depuis la page des bandes défilantes,
-          retour à l’introduction Entreprise.
-        */
-
-        if(
-          state.currentScreen === "home"
-        ){
-
-if(
-  window.BociteEntreprise &&
-  typeof window.BociteEntreprise
-    .openEmploymentPublicHome ===
-  "function"
-){
-  window.BociteEntreprise
-    .openEmploymentPublicHome();
-
-  return;
-}
-
-if(
-  typeof window.openEmploymentHome ===
-  "function"
-){
-  window.openEmploymentHome();
-  return;
-}
-
-          return;
-        }
-
-        /*
-          Depuis une rubrique interne,
-          retour à la page précédente.
-        */
-
         goBack();
       };
     });
 }
-        /*
-          Depuis Mécénat, Emploi, Développement, etc.,
-          retour à la page des bandes défilantes.
-        */
    
   function bindPresentationFooter(){
 
@@ -35008,36 +34934,12 @@ button.onclick =
       event.stopPropagation();
     }
 
-    const currentTitle =
-      String(title || "")
-        .replace(/\s+/g," ")
-        .trim()
-        .toLowerCase();
-
     if(
-      currentTitle.includes(
-        "offres d’emploi"
-      ) ||
-      currentTitle.includes(
-        "offres d'emploi"
-      )
+      typeof app.goBack ===
+      "function"
     ){
-
-      if(
-        typeof app.openEmploymentHome ===
-        "function"
-      ){
-        app.openEmploymentHome();
-        return;
-      }
-
-      if(
-        typeof window.openEmploymentHome ===
-        "function"
-      ){
-        window.openEmploymentHome();
-        return;
-      }
+      app.goBack();
+      return;
     }
 
     if(
@@ -35045,9 +34947,8 @@ button.onclick =
       "function"
     ){
       app.openHome();
-     }
-   };
-  }
+    }
+  };
 
   function isSmallUnwantedBox(
     element,
