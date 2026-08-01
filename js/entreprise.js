@@ -3,7 +3,7 @@
    PARTIE 1 — NAVIGATION ET ACCUEIL
 ========================================================= */
  
-(function initBociteEntrepriseModule(){   
+(function initBociteEntrepriseModule(){    
    
   "use strict";
 
