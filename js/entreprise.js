@@ -4,7 +4,7 @@
 ========================================================= */
  
 (function initBociteEntrepriseModule(){   
-  
+   
   "use strict";
 
   const MODULE_NAME = "entreprise";
