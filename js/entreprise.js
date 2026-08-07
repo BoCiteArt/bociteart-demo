@@ -2358,517 +2358,947 @@ function getEmploymentIntroductionHtml(){
 
 return `
 
-<div class="screen">
-
-<div class="hero">
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Tout commence bien avant le recrutement
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Une entreprise sera véritablement...
-<br>...comprise.
-<br>...connue.
-<br>...et reconnue.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Si l'on comprend ce qu'elle fait...
-<br>Si l'on découvre ses métiers...
-<br>Si l'on identifie son savoir-faire...
-</p>
-
-<p style="font-size:14px;color:#000;">
-Alors chacun sait naturellement mieux en parler.
-<br>Les ambassadeurs naissent ainsi... naturellement.
-<br>Les regards changent.
-<br>Les idées s'ouvrent.
-<br>Les vocations apparaissent.
-<br>Les rencontres deviennent alors nettement plus naturelles.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Pourquoi tant de jeunes répondent-ils :
-</h2>
-
-<p style="font-size:14px;color:#000;">
-« Je ne sais pas... »
-</p>
-
-<p style="font-size:14px;color:#000;">
-Lorsqu'on demande à un enfant ou à un jeune :
-<br>
-« Que souhaites-tu faire plus tard ? »
-</p>
-
-<p style="font-size:14px;color:#000;">
-La réponse est encore trop souvent :
-<br>
-« Je ne sais pas. »
-</p>
-
-<p style="font-size:14px;color:#000;">
-Comment choisir un métier...
-<br>...que l'on n'a jamais réellement découvert ?
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Découvrir fait naître l'envie
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Un livre explique...
-<br>Oui, mais !
-<br><br>
-Une vidéo montre...
-<br>Oui, mais !
-</p>
-
-<p style="font-size:14px;color:#000;">
-Une véritable visite fait vivre.
-<br>Elle s'imprime naturellement.
-<br>Elle s'imprime durablement.
-<br>Elle reste dans le cerveau.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Entrer dans une entreprise.
-<br>Découvrir ses métiers.
-<br>Voir les équipes au travail.
-<br>Échanger avec des professionnels.
-<br>Comprendre leur quotidien.
-</p>
-
-<p style="font-size:14px;color:#000;">
-On retient durablement ce que l'on a vécu.
-<br>Une visite n'apprend pas seulement un métier.
-<br>Elle ouvre le champ des possibles.
-<br>C'est là que naît une vocation.
-</p>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-L'école devient un véritable trait d'union
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Les visites deviennent le berceau du concret.
-<br>Les métiers prennent vie.
-<br>Les élèves imaginent leur avenir.
-<br>Ils découvrent que leur futur existe déjà autour d'eux.
-<br>Ils découvrent des opportunités à quelques minutes de chez eux.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Toute personne découvrant réellement une entreprise devient naturellement son ambassadeur.
-<br>L'entreprise imprime durablement son image dans l'esprit des jeunes, de leurs familles, de la commune et de son territoire.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Les entreprises y gagnent aussi
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Elles ne présentent plus uniquement un poste.
-<br>Elles font découvrir leur univers.
-<br>Leurs métiers.
-<br>Leurs équipes.
-<br>Leurs savoir-faire.
-<br>Leurs valeurs.
-<br>Leur engagement.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Ainsi, leurs recrutements commencent bien avant leurs besoins.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Les commerces aussi
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Combien d'entreprises connaissent réellement les commerces qui les entourent ?
-<br>Et inversement ?
-</p>
-
-<p style="font-size:14px;color:#000;">
-Ils partagent pourtant le même territoire.
-<br>Mieux se connaître crée naturellement de nouveaux clients.
-<br>De nouveaux fournisseurs.
-<br>De nouveaux partenaires.
-<br>De nouvelles opportunités.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-<span style="color:#2e7d32;font-weight:bold;">Bo'Cité</span><span style="color:#c62828;font-weight:bold;">Art</span> change le point de départ
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Avant de rechercher un salarié...
-<br>commençons par faire découvrir l'entreprise.
-<br><br>
-Avant de rechercher une orientation...
-<br>commençons par faire découvrir les métiers.
-<br><br>
-Avant de rechercher un partenaire...
-<br>commençons par faire se rencontrer les acteurs.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Le reste devient nettement plus simple.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Le recrutement devient une conséquence
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Les offres d'emploi.
-<br>Les candidatures spontanées.
-<br>Les stages.
-<br>Les alternances.
-<br>Les apprentissages.
-<br>...reposent désormais sur un territoire qui se connaît.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-<span style="color:#2e7d32;font-weight:bold;">Bo'Cité</span><span style="color:#c62828;font-weight:bold;">Art</span> est le pont
-</h2>
-
-<p style="font-size:14px;color:#000;">
-<span style="color:#2e7d32;font-weight:bold;">Bo'Cité</span><span style="color:#c62828;font-weight:bold;">Art</span> est une méthode simple, frappée de bon sens, qui remet naturellement en relation ce que nous avons progressivement appris à séparer.
-</p>
-
-<p style="font-size:14px;color:#000;">
-<span style="color:#2e7d32;font-weight:bold;">Bo'Cité</span><span style="color:#c62828;font-weight:bold;">Art</span> relie durablement les habitants.
-<br>Les écoles.
-<br>Les commerces.
-<br>Les entreprises.
-<br>Les associations.
-<br>Les collectivités.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Les rencontres se multiplient.
-<br>Les vocations naissent.
-<br>Les partenariats se développent.
-<br>Les opportunités grandissent.
-<br>Le territoire se renforce.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Combien de bouteilles avez-vous déjà jetées à la mer ?
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Combien de candidatures sont restées sans réponse ?
-<br>Combien de fois avez-vous entendu :
-<br>« Ça ne sert à rien d'envoyer un CV... personne ne répond. »
-<br>Quel gâchis... pour les deux parties !
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Pourquoi ?
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Le problème ne commence pas avec la candidature.
-<br>Il commence bien avant.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Aujourd'hui, tout va très vite.
-<br>Une commande arrive.
-<br>Un salarié quitte l'entreprise.
-<br>Un marché s'ouvre.
-<br>Vite... il faut recruter !
-</p>
-
-<p style="font-size:14px;color:#000;">
-Les annonces sont publiées partout.
-<br>Les réseaux sont sollicités.
-<br>Les plateformes sont consultées.
-<br>En espérant trouver rapidement la bonne personne.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Puis vient la frustration
-</h2>
-
-<p style="font-size:14px;color:#000;">
-L'entreprise dit :
-<br>« Je manque de bras. »
-<br>« Je ne trouve personne. »
-</p>
-
-<p style="font-size:14px;color:#000;">
-Pendant ce temps, les candidats envoient leurs CV, attendent une réponse...
-<br>et finissent souvent par perdre espoir.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Combien de bouteilles continuent ainsi d'être jetées à la mer...
-<br>des deux côtés ?
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Le constat est sans appel
-</h2>
-
-<p style="font-size:14px;color:#000;">
-On recrute dans l'urgence.
-<br>On forme dans l'urgence.
-<br>On recommence dans l'urgence.
-<br>Le salarié doute.
-<br>L'entreprise recommence.
-<br>Le cercle se répète.
-<br>Tout le monde perd du temps.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-<span style="color:#2e7d32;font-weight:bold;">Bo'Cité</span><span style="color:#c62828;font-weight:bold;">Art</span> vous a déjà montré les causes
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Vous connaissez maintenant les conséquences.
-<br>Découvrons la solution.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Le véritable fossé est ici
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Une entreprise qui se fait véritablement connaître construit durablement son image.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Les habitants savent qui elle est,
-<br>où elle se situe,
-<br>ce qu'elle fait
-<br>et les métiers qu'elle propose.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Elle devient une entreprise que l'on comprend,
-<br>que l'on connaît...
-<br>et que l'on choisit.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Les candidatures changent alors de nature
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Le candidat choisit une entreprise qu'il connaît.
-<br>Il comprend son activité.
-<br>Il connaît ses métiers.
-<br>Il sait pourquoi il souhaite la rejoindre.
-</p>
-
-<p style="font-size:14px;color:#000;">
-L'entreprise comprend immédiatement pourquoi cette candidature lui est adressée.
-<br>La confiance est déjà installée des deux côtés.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-L'entreprise prépare alors bien mieux son avenir
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Elle attire davantage de candidatures de qualité.
-<br>Elle développe son image,
-<br>sa réputation
-<br>et sa notoriété.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Elle inspire davantage confiance.
-<br>Elle attire naturellement de nouveaux clients,
-<br>de nouveaux partenaires
-<br>et de nouvelles opportunités.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Son carnet de commandes se développe plus sereinement.
-<br>Les recrutements deviennent alors plus naturels...
-<br>et beaucoup moins dans l'urgence.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-La candidature continue de vivre
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Le candidat conserve l'historique de toutes ses démarches.
-<br>L'entreprise conserve son portefeuille de candidats.
-<br>Chacun retrouve facilement ses échanges depuis son téléphone.
-<br>Une réponse est apportée.
-<br>Le respect s'installe.
-<br>La confiance grandit.
-<br>La rencontre continue de vivre dans le temps.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Deux possibilités. Un seul objectif.
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Vous connaissez déjà l'entreprise ?
-<br>Rendez-vous directement dans <strong>Candidature spontanée</strong>.
-<br>Complétez librement votre demande.
-</p>
-
-<p style="font-size:14px;color:#000;">
-L'entreprise n'est pas encore présente dans l'annuaire ?
-<br>Aucun problème.
-<br>Vous pouvez saisir vous-même les informations dont vous disposez.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Vous recherchez une entreprise ?
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Consultez simplement l'annuaire
-<strong><span style="color:#2e7d32;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>,
-classé par métiers et par activités.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Faites défiler les entreprises jusqu'à trouver celle qui correspond à vos compétences,
-à votre projet ou à votre talent.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Depuis sa fiche, cliquez sur :
-<br><strong>Déposer une candidature spontanée.</strong>
-</p>
-
-<p style="font-size:14px;color:#000;">
-Le formulaire s'ouvre automatiquement.
-<br>Lors de votre première candidature, vous complétez votre fiche.
-<br>Par la suite,
-<strong><span style="color:#2e7d32;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>
-retrouve automatiquement vos informations
-et préremplit le formulaire.
-</p>
-
-<p style="font-size:14px;color:#000;">
-Vous pouvez toujours les modifier avant l'envoi.
-<br>En quelques secondes...
-<br>votre candidature est prête à être transmise
-à l'entreprise choisie.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Dans les deux cas...
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Vous retrouvez :
-<br>Le même formulaire.
-<br>Le même historique.
-<br>Les mêmes informations personnelles automatiquement retrouvées lors de vos prochaines candidatures.
-</p>
-
-<p style="font-size:14px;color:#000;">
-<strong><span style="color:#2e7d32;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>
-supprime ainsi les recherches inutiles
-et vous permet de passer immédiatement à l'essentiel :
-proposer votre candidature à l'entreprise de votre choix.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Les bénéfices deviennent concrets
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Le candidat trouve plus facilement une entreprise proche de chez lui.
-<br>Il réduit parfois ses déplacements.
-<br>Il gagne du temps.
-</p>
-
-<p style="font-size:14px;color:#000;">
-L'entreprise stabilise davantage ses équipes
-et poursuit plus sereinement son développement.
-<br>Tout le monde avance enfin dans la même direction.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-<span style="color:#2e7d32;">Bo'Cité</span><span style="color:#c62828;">Art</span> ouvre le champ des possibles
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Envoyer rapidement une candidature.
-<br>Recevoir systématiquement une réponse.
-<br>Retrouver l'historique de ses échanges.
-<br>Construire un véritable portefeuille de candidats.
-<br>Développer durablement la notoriété de son entreprise.
-<br>Créer davantage de confiance.
-<br>Attirer naturellement de nouvelles compétences.
-</p>
-
-<p style="font-size:14px;color:#000;">
-On ne recrute jamais durablement par hasard.
-<br>On recrute durablement parce que l'on s'est d'abord fait connaître,
-comprendre...
-puis reconnaître.
-</p>
-
-<hr>
-
-<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
-Découvrons maintenant pourquoi fidéliser devient aussi important que recruter.
-</h2>
-
-<p style="font-size:14px;color:#000;">
-Recruter répond à un besoin.
-<br><br>
-Fidéliser construit durablement l'avenir.
-</p>
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Tout commence bien avant le recrutement
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Une entreprise sera véritablement...
+    <br>...comprise.
+    <br>...connue.
+    <br>...et reconnue.
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Si l'on comprend ce qu'elle fait...
+    <br>Si l'on découvre ses métiers...
+    <br>Si l'on identifie son savoir-faire...
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Alors chacun sait naturellement mieux en parler.
+    <br>Les ambassadeurs naissent ainsi... naturellement.
+    <br>Les regards changent.
+    <br>Les idées s'ouvrent.
+    <br>Les vocations apparaissent.
+    <br>Les rencontres deviennent alors nettement plus naturelles.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Pourquoi tant de jeunes répondent-ils :
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    « Je ne sais pas... »
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Lorsqu'on demande à un enfant ou à un jeune :
+    <br>« Que souhaites-tu faire plus tard ? »
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    La réponse est encore trop souvent :
+    <br>« Je ne sais pas. »
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Comment choisir un métier...
+    <br>...que l'on n'a jamais réellement découvert ?
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Découvrir fait naître l'envie
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Un livre explique...
+    <br>Oui, mais !
+    <br><br>
+    Une vidéo montre...
+    <br>Oui, mais !
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Une véritable visite fait vivre.
+    <br>Elle s'imprime naturellement.
+    <br>Elle s'imprime durablement.
+    <br>Elle reste dans le cerveau.
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Entrer dans une entreprise.
+    <br>Découvrir ses métiers.
+    <br>Voir les équipes au travail.
+    <br>Échanger avec des professionnels.
+    <br>Comprendre leur quotidien.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    On retient durablement ce que l'on a vécu.
+    <br>Une visite n'apprend pas seulement un métier.
+    <br>Elle ouvre le champ des possibles.
+    <br>C'est là que naît une vocation.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    L'école devient un véritable trait d'union
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Les visites deviennent le berceau du concret.
+    <br>Les métiers prennent vie.
+    <br>Les élèves imaginent leur avenir.
+    <br>Ils découvrent que leur futur existe déjà autour d'eux.
+    <br>Ils découvrent des opportunités à quelques minutes de chez eux.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Toute personne découvrant réellement une entreprise devient naturellement son ambassadeur.
+    <br>L'entreprise imprime durablement son image dans l'esprit des jeunes, de leurs familles, de la commune et de son territoire.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Les entreprises y gagnent aussi
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Elles ne présentent plus uniquement un poste.
+    <br>Elles font découvrir leur univers.
+    <br>Leurs métiers.
+    <br>Leurs équipes.
+    <br>Leurs savoir-faire.
+    <br>Leurs valeurs.
+    <br>Leur engagement.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Ainsi, leurs recrutements commencent bien avant leurs besoins.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Les commerces aussi
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Combien d'entreprises connaissent réellement les commerces qui les entourent ?
+    <br>Et inversement ?
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Ils partagent pourtant le même territoire.
+    <br>Mieux se connaître crée naturellement de nouveaux clients.
+    <br>De nouveaux fournisseurs.
+    <br>De nouveaux partenaires.
+    <br>De nouvelles opportunités.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span> change le point de départ
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Avant de rechercher un salarié...
+    <br>commençons par faire découvrir l'entreprise.
+    <br><br>
+    Avant de rechercher une orientation...
+    <br>commençons par faire découvrir les métiers.
+    <br><br>
+    Avant de rechercher un partenaire...
+    <br>commençons par faire se rencontrer les acteurs.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Le reste devient nettement plus simple.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Le recrutement devient une conséquence
+  </h2>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Les offres d'emploi.
+    <br>Les candidatures spontanées.
+    <br>Les stages.
+    <br>Les alternances.
+    <br>Les apprentissages.
+    <br>...reposent désormais sur un territoire qui se connaît.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span> est le pont
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span> est une méthode simple, frappée de bon sens, qui remet naturellement en relation ce que nous avons progressivement appris à séparer.
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span> relie durablement les habitants.
+    <br>Les écoles.
+    <br>Les commerces.
+    <br>Les entreprises.
+    <br>Les associations.
+    <br>Les collectivités.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Les rencontres se multiplient.
+    <br>Les vocations naissent.
+    <br>Les partenariats se développent.
+    <br>Les opportunités grandissent.
+    <br>Le territoire se renforce.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Combien de bouteilles avez-vous déjà jetées à la mer ?
+  </h2>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Combien de candidatures sont restées sans réponse ?
+    <br>Combien de fois avez-vous entendu :
+    <br>« Ça ne sert à rien d'envoyer un CV... personne ne répond. »
+    <br>Quel gâchis... pour les deux parties !
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Pourquoi ?
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Le problème ne commence pas avec la candidature.
+    <br>Il commence bien avant.
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Aujourd'hui, tout va très vite.
+    <br>Une commande arrive.
+    <br>Un salarié quitte l'entreprise.
+    <br>Un marché s'ouvre.
+    <br>Vite... il faut recruter !
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Les annonces sont publiées partout.
+    <br>Les réseaux sont sollicités.
+    <br>Les plateformes sont consultées.
+    <br>En espérant trouver rapidement la bonne personne.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Puis vient la frustration
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    L'entreprise dit :
+    <br>« Je manque de bras. »
+    <br>« Je ne trouve personne. »
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Pendant ce temps, les candidats envoient leurs CV, attendent une réponse...
+    <br>et finissent souvent par perdre espoir.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Combien de bouteilles continuent ainsi d'être jetées à la mer...
+    <br>des deux côtés ?
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Le constat est sans appel
+  </h2>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    On recrute dans l'urgence.
+    <br>On forme dans l'urgence.
+    <br>On recommence dans l'urgence.
+    <br>Le salarié doute.
+    <br>L'entreprise recommence.
+    <br>Le cercle se répète.
+    <br>Tout le monde perd du temps.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span> vous a déjà montré les causes
+  </h2>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Vous connaissez maintenant les conséquences.
+    <br>Découvrons la solution.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Le véritable fossé est ici
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Une entreprise qui se fait véritablement connaître construit durablement son image.
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Les habitants savent qui elle est,
+    <br>où elle se situe,
+    <br>ce qu'elle fait
+    <br>et les métiers qu'elle propose.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Elle devient une entreprise que l'on comprend,
+    <br>que l'on connaît...
+    <br>et que l'on choisit.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Les candidatures changent alors de nature
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Le candidat choisit une entreprise qu'il connaît.
+    <br>Il comprend son activité.
+    <br>Il connaît ses métiers.
+    <br>Il sait pourquoi il souhaite la rejoindre.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    L'entreprise comprend immédiatement pourquoi cette candidature lui est adressée.
+    <br>La confiance est déjà installée des deux côtés.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    L'entreprise prépare alors bien mieux son avenir
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Elle attire davantage de candidatures de qualité.
+    <br>Elle développe son image,
+    <br>sa réputation
+    <br>et sa notoriété.
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Elle inspire davantage confiance.
+    <br>Elle attire naturellement de nouveaux clients,
+    <br>de nouveaux partenaires
+    <br>et de nouvelles opportunités.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Son carnet de commandes se développe plus sereinement.
+    <br>Les recrutements deviennent alors plus naturels...
+    <br>et beaucoup moins dans l'urgence.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    La candidature continue de vivre
+  </h2>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Le candidat conserve l'historique de toutes ses démarches.
+    <br>L'entreprise conserve son portefeuille de candidats.
+    <br>Chacun retrouve facilement ses échanges depuis son téléphone.
+    <br>Une réponse est apportée.
+    <br>Le respect s'installe.
+    <br>La confiance grandit.
+    <br>La rencontre continue de vivre dans le temps.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Deux possibilités. Un seul objectif.
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Vous connaissez déjà l'entreprise ?
+    <br>Rendez-vous directement dans <strong>Candidature spontanée</strong>.
+    <br>Complétez librement votre demande.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    L'entreprise n'est pas encore présente dans l'annuaire ?
+    <br>Aucun problème.
+    <br>Vous pouvez saisir vous-même les informations dont vous disposez.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Vous recherchez une entreprise ?
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Consultez simplement l'annuaire
+    <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>,
+    classé par métiers et par activités.
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Faites défiler les entreprises jusqu'à trouver celle qui correspond à vos compétences,
+    à votre projet ou à votre talent.
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Depuis sa fiche, cliquez sur :
+    <br><strong>Déposer une candidature spontanée.</strong>
+  </p>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Le formulaire s'ouvre automatiquement.
+    <br>Lors de votre première candidature, vous complétez votre fiche.
+    <br>Par la suite,
+    <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>
+    retrouve automatiquement vos informations
+    et préremplit le formulaire.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Vous pouvez toujours les modifier avant l'envoi.
+    <br>En quelques secondes...
+    <br>votre candidature est prête à être transmise
+    à l'entreprise choisie.
+  </p>
+
+</div>
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Dans les deux cas...
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Vous retrouvez :
+    <br>Le même formulaire.
+    <br>Le même historique.
+    <br>Les mêmes informations personnelles automatiquement retrouvées lors de vos prochaines candidatures.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>
+    supprime ainsi les recherches inutiles
+    et vous permet de passer immédiatement à l'essentiel :
+    proposer votre candidature à l'entreprise de votre choix.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Les bénéfices deviennent concrets
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Le candidat trouve plus facilement une entreprise proche de chez lui.
+    <br>Il réduit parfois ses déplacements.
+    <br>Il gagne du temps.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    L'entreprise stabilise davantage ses équipes
+    et poursuit plus sereinement son développement.
+    <br>Tout le monde avance enfin dans la même direction.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span> ouvre le champ des possibles
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Envoyer rapidement une candidature.
+    <br>Recevoir systématiquement une réponse.
+    <br>Retrouver l'historique de ses échanges.
+    <br>Construire un véritable portefeuille de candidats.
+    <br>Développer durablement la notoriété de son entreprise.
+    <br>Créer davantage de confiance.
+    <br>Attirer naturellement de nouvelles compétences.
+  </p>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    On ne recrute jamais durablement par hasard.
+    <br>On recrute durablement parce que l'on s'est d'abord fait connaître,
+    comprendre...
+    puis reconnaître.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Découvrons maintenant pourquoi fidéliser devient aussi important que recruter.
+  </h2>
+
+  <p style="margin:0;font-size:14px;font-weight:400;line-height:1.6;color:#000;">
+    Recruter répond à un besoin.
+    <br><br>
+    Fidéliser construit durablement l'avenir.
+  </p>
+
+</div>
+
 <div
   style="
     display:flex;
@@ -2899,10 +3329,6 @@ Fidéliser construit durablement l'avenir.
     ">
     Découvrir les entreprises autour de moi
   </button>
-
-</div>
-
-</div>
 
 </div>
 
