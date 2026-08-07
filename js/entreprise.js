@@ -2356,228 +2356,538 @@ console.log(
 
 function getEmploymentIntroductionHtml(){
 
-  return `
+return `
 
-<div class="box" style="
-border-left:6px solid #2f5d46; 
-font-weight:400;
-color:#222;
-line-height:1.8;
-">
+<div class="screen">
 
-<h2 style="color:#2f5d46;">
-<strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> — Emploi — Recrutement
+<div class="hero">
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Tout commence bien avant le recrutement
 </h2>
 
-<h3 style="margin-top:25px;color:#2f5d46;font-weight:600;">
-Pourquoi recrutons-nous de plus en plus difficilement ?
-</h3>
-
-<p>Chaque jour, des entreprises recrutent.</p>
-
-<p>Chaque jour, des habitants recherchent un emploi, une reconversion, un stage, une alternance ou un apprentissage.</p>
-
-<p>Les écoles recherchent des entreprises partenaires et les collectivités souhaitent préserver l'emploi local.</p>
-
-<p>Pourtant, malgré tous ces besoins, les rencontres deviennent plus difficiles.</p>
-
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<p>Nous parlons souvent de pénurie de main-d'œuvre, de difficultés de recrutement ou de manque de compétences.</p>
-
-<p>Mais si le véritable problème commençait plus tôt&nbsp;?</p>
-
-<p><strong>Avant de pouvoir recruter, encore faut-il que les entreprises et les commerces de votre territoire soient visibles, connus et reconnus.</strong></p>
-
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<h3 style="color:#2f5d46;font-weight:600;">
-Un territoire rempli d'entreprises... souvent invisibles
-</h3>
-
-<p>Pouvez-vous citer spontanément cinq entreprises de votre commune, en dehors des grandes enseignes&nbsp;?</p>
-
-<p>Connaissez-vous réellement leurs activités, leurs métiers, leurs savoir-faire ou leurs besoins en recrutement&nbsp;?</p>
-
-<p>Très souvent, la réponse est Non!.</p>
-
-<p>Pourtant, ces entreprises sont parfois installées à quelques centaines de mètres de chez vous.</p>
-
-<p>Nous passons chaque jour devant leurs ateliers, leurs bureaux, leurs véhicules ou leurs entrepôts.</p>
-
-<p>À force de les voir, nous ne les regardons plus.</p>
-
-<p>Des emplois, des carrières, des stages, des alternances, des apprentissages et de nombreuses opportunités existent déjà autour de nous.</p>
-
-<p>Mais une grande partie de cette richesse économique reste encore invisible.</p>
-
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<h3 style="color:#2f5d46;font-weight:600;">
-Cette invisibilité a un coût
-</h3>
-
-<p>Les entreprises recrutent plus difficilement.</p>
-
-<p>Les habitants cherchent parfois loin ce qui existe pourtant près de chez eux.</p>
-
-<p>Les jeunes méconnaissent des métiers qui pourraient leur correspondre.</p>
-
-<p>Les établissements scolaires trouvent plus difficilement des entreprises partenaires.</p>
-
-<p>Les collectivités perdent une partie de leur dynamique économique.</p>
-
-<p>Pourtant, tous poursuivent le même objectif&nbsp;: faire vivre durablement leur territoire.</p>
-
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-Et si nous commencions simplement par mieux vous connaître&nbsp;?
-</h3>
-
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> propose une approche différente.</p>
-
-<p>Avant de recruter davantage, commençons par rendre plus visibles les entreprises et les commerces déjà présents en faisant connaître leurs métiers, leurs savoir-faire, leurs équipes, leurs produits, leurs services et leurs opportunités.</p>
-
-<p>Un acteur économique visible, connu et reconnu inspire naturellement davantage confiance.</p>
-
-<p>Lorsqu'un habitant découvre les acteurs économiques de sa commune, il devient naturellement un relais d'information.</p>
-
-<p>Il peut orienter un proche, conseiller un jeune, faire découvrir un métier, une alternance, un apprentissage ou recommander un savoir-faire local.</p>
-
-<p>Progressivement, chaque habitant devient un véritable <strong>Ambassadeur économique</strong>, le bouche-à-oreille naturel de son territoire.</p>
-
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<h3 style="color:#2f5d46;font-weight:600;">
-Les écoles retrouvent naturellement leur place
-</h3>
-
-<p>En découvrant les acteurs économiques de leur territoire, les élèves identifient plus facilement les métiers qui les entourent et imaginent plus concrètement leur avenir professionnel.</p>
-
-<p>Les établissements scolaires trouvent plus naturellement des partenaires pour les stages, les apprentissages, les alternances, les visites d'entreprises et les rencontres avec les professionnels.</p>
-
-<p>L'entreprise redevient ainsi un acteur naturel de la vie locale.</p>
-
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<h3 style="color:#2f5d46;font-weight:600;">
-La commune devient un véritable facilitateur
-</h3>
-
-<p>Accompagnée par <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>, la mairie dispose d'un outil pour mieux faire connaître les richesses économiques de son territoire.</p>
-
-<p>Son rôle n'est pas de remplacer les acteurs économiques, mais de faciliter leur visibilité et leurs mises en relation.</p>
-
-<p>Elle valorise ainsi les entreprises, les commerces, les artisans, les associations, les emplois et les initiatives qui contribuent chaque jour au dynamisme local.</p>
-
-<p>Car un territoire ne peut valoriser que ce qu'il rend visible.</p>
-
-<p>Aucun acteur local ne doit rester invisible sur son propre territoire.</p>
-
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<h3 style="color:#2f5d46;font-weight:600;">
-Découvrir avant de rechercher
-</h3>
-
-<p>La plupart des recherches d'emploi commencent aujourd'hui par une annonce diffusée sur les réseaux et plateformes habituels. Ces outils sont utiles, mais ils interviennent souvent lorsque le besoin est déjà présent. Ils peuvent être coûteux, parfois peu consultés et certaines annonces restent encore publiées alors que le poste est déjà pourvu.</p>
-
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> propose une autre approche&nbsp;: avant même d'avoir besoin de recruter, encore faut-il que vous soyez visible, connu et reconnu.</p>
-
-<p>Chaque commune compte des entreprises et des commerces parfois présents depuis des dizaines d'années, mais encore méconnus de nombreux habitants.</p>
-
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> permet de découvrir progressivement le tissu économique de son territoire grâce à un annuaire vivant, enrichi au fil des communes partenaires et actualisé quotidiennement pour refléter au mieux l'évolution de la vie économique locale.</p>
-
-<p>Les acteurs économiques sont ensuite proposés par proximité afin de faciliter les découvertes autour de son domicile.</p>
-
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<h3 style="color:#2f5d46;font-weight:600;">
-Les entreprises partenaires vont beaucoup plus loin
-</h3>
-
-<p>Chaque entreprise peut et doit contribuer à la richesse économique de sa commune et de son territoire.</p>
-
-<p>Les entreprises qui deviennent partenaires de <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> bénéficient d'une visibilité renforcée grâce à une fiche de présentation complète et à un ensemble de services conçus pour accompagner durablement leur développement, bien au-delà du seul recrutement.</p>
-
-<p>Habitants, entreprises, commerces, collectivités, associations et établissements scolaires découvrent plus facilement votre activité, vos métiers, vos savoir-faire, vos coordonnées, vos horaires, vos recrutements en cours ainsi que les informations que vous souhaitez partager.</p>
-
-<p>Votre entreprise construit progressivement sa visibilité tout au long de l'année afin d'être visible, connue et reconnue avant même qu'un besoin n'apparaisse.</p>
-
-<p>Cette présence régulière favorise les rencontres, les échanges, les opportunités, les recrutements, les partenariats et contribue au rayonnement économique de votre commune et de votre territoire.</p>
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<h3 style="color:#2f5d46;font-weight:600;">
-Un annuaire vivant et régulièrement actualisé
-</h3>
-
-<p>L'annuaire <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> évolue au rythme de la vie économique du territoire.</p>
-
-<p>Grâce aux différentes sources d'informations légales disponibles, les créations d'entreprises, les changements d'activité, les déménagements et les cessations d'activité sont détectés plus rapidement.</p>
-
-<p>Les informations sont ensuite vérifiées puis actualisées quotidiennement afin de proposer un annuaire aussi fiable, pertinent et à jour que possible.</p>
-
-<p>Les entreprises et les commerces partenaires peuvent également compléter et mettre à jour leur fiche à tout moment.</p>
-
-<p>Au fil de l'arrivée de nouvelles communes partenaires, l'annuaire s'enrichit progressivement et permet de découvrir toujours plus d'acteurs économiques autour de soi.</p>
-
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> met ainsi à disposition un annuaire vivant, toujours dans votre poche, rapide, actif et construit dans le temps, au service des collectivités et de l'ensemble des acteurs économiques du territoire.</p>
-
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<h3 style="color:#2f5d46;font-weight:600;">
-Une démarche où chacun est gagnant
-</h3>
-
-<p>Le citoyen découvre plus facilement les entreprises, les commerces, les artisans, les métiers et les services qui existent autour de lui.</p>
-
-<p>Les acteurs économiques développent leur visibilité, facilitent leurs recrutements et créent plus naturellement de nouvelles opportunités.</p>
-
-<p>Les établissements scolaires trouvent davantage de partenaires pour les stages, les apprentissages, les alternances et les projets pédagogiques.</p>
-
-<p>Les associations développent plus facilement de nouveaux liens avec les habitants et les acteurs économiques.</p>
-
-<p>Les collectivités disposent d'une véritable méthode, d'une architecture complète et concrète pour relier les acteurs de leur commune et de leur territoire, avec fluidité, afin de valoriser leurs initiatives et de créer davantage de connexions.</p>
-
-<p>Lorsque chacun se connaît mieux, les échanges se développent, les collaborations se multiplient et le territoire devient plus vertueux, plus attractif et plus dynamique.</p>
-
-<p><strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> ne crée pas cette richesse.</p>
-
-<p>Elle existe déjà.</p>
-
-<p>Il la révèle, la relie et contribue à la rendre plus visible.</p>
-
-<hr style="border:none;border-top:1px solid #b7d2c2;margin:28px 0;">
-
-<h3 style="color:#2f5d46;font-weight:600;">
-Pourquoi devenir partenaire <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> ?
-</h3>
-
-<p>Vous venez de découvrir les fondements de l'univers Entreprise de <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>.</p>
-
-<p>Chaque bande défilante développe ensuite un thème précis : communication, emploi, fidélisation, mutualisation, développement, mécénat, transmission et bien d'autres services conçus pour vous éclairer, vous accompagner dans vos démarches et vos réflexions, avec un objectif essentiel : être visible, connu et reconnu avant même que le besoin n'apparaisse.</p>
-
-<div style="text-align:center;margin-top:35px;">
+<p style="font-size:14px;color:#000;">
+Une entreprise sera véritablement...
+<br>...comprise.
+<br>...connue.
+<br>...et reconnue.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Si l'on comprend ce qu'elle fait...
+<br>Si l'on découvre ses métiers...
+<br>Si l'on identifie son savoir-faire...
+</p>
+
+<p style="font-size:14px;color:#000;">
+Alors chacun sait naturellement mieux en parler.
+<br>Les ambassadeurs naissent ainsi... naturellement.
+<br>Les regards changent.
+<br>Les idées s'ouvrent.
+<br>Les vocations apparaissent.
+<br>Les rencontres deviennent alors nettement plus naturelles.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Pourquoi tant de jeunes répondent-ils :
+</h2>
+
+<p style="font-size:14px;color:#000;">
+« Je ne sais pas... »
+</p>
+
+<p style="font-size:14px;color:#000;">
+Lorsqu'on demande à un enfant ou à un jeune :
+<br>
+« Que souhaites-tu faire plus tard ? »
+</p>
+
+<p style="font-size:14px;color:#000;">
+La réponse est encore trop souvent :
+<br>
+« Je ne sais pas. »
+</p>
+
+<p style="font-size:14px;color:#000;">
+Comment choisir un métier...
+<br>...que l'on n'a jamais réellement découvert ?
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Découvrir fait naître l'envie
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Un livre explique...
+<br>Oui, mais !
+<br><br>
+Une vidéo montre...
+<br>Oui, mais !
+</p>
+
+<p style="font-size:14px;color:#000;">
+Une véritable visite fait vivre.
+<br>Elle s'imprime naturellement.
+<br>Elle s'imprime durablement.
+<br>Elle reste dans le cerveau.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Entrer dans une entreprise.
+<br>Découvrir ses métiers.
+<br>Voir les équipes au travail.
+<br>Échanger avec des professionnels.
+<br>Comprendre leur quotidien.
+</p>
+
+<p style="font-size:14px;color:#000;">
+On retient durablement ce que l'on a vécu.
+<br>Une visite n'apprend pas seulement un métier.
+<br>Elle ouvre le champ des possibles.
+<br>C'est là que naît une vocation.
+</p>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+L'école devient un véritable trait d'union
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Les visites deviennent le berceau du concret.
+<br>Les métiers prennent vie.
+<br>Les élèves imaginent leur avenir.
+<br>Ils découvrent que leur futur existe déjà autour d'eux.
+<br>Ils découvrent des opportunités à quelques minutes de chez eux.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Toute personne découvrant réellement une entreprise devient naturellement son ambassadeur.
+<br>L'entreprise imprime durablement son image dans l'esprit des jeunes, de leurs familles, de la commune et de son territoire.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Les entreprises y gagnent aussi
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Elles ne présentent plus uniquement un poste.
+<br>Elles font découvrir leur univers.
+<br>Leurs métiers.
+<br>Leurs équipes.
+<br>Leurs savoir-faire.
+<br>Leurs valeurs.
+<br>Leur engagement.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Ainsi, leurs recrutements commencent bien avant leurs besoins.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Les commerces aussi
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Combien d'entreprises connaissent réellement les commerces qui les entourent ?
+<br>Et inversement ?
+</p>
+
+<p style="font-size:14px;color:#000;">
+Ils partagent pourtant le même territoire.
+<br>Mieux se connaître crée naturellement de nouveaux clients.
+<br>De nouveaux fournisseurs.
+<br>De nouveaux partenaires.
+<br>De nouvelles opportunités.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+<span style="color:#2e7d32;font-weight:bold;">Bo'Cité</span><span style="color:#c62828;font-weight:bold;">Art</span> change le point de départ
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Avant de rechercher un salarié...
+<br>commençons par faire découvrir l'entreprise.
+<br><br>
+Avant de rechercher une orientation...
+<br>commençons par faire découvrir les métiers.
+<br><br>
+Avant de rechercher un partenaire...
+<br>commençons par faire se rencontrer les acteurs.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Le reste devient nettement plus simple.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Le recrutement devient une conséquence
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Les offres d'emploi.
+<br>Les candidatures spontanées.
+<br>Les stages.
+<br>Les alternances.
+<br>Les apprentissages.
+<br>...reposent désormais sur un territoire qui se connaît.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+<span style="color:#2e7d32;font-weight:bold;">Bo'Cité</span><span style="color:#c62828;font-weight:bold;">Art</span> est le pont
+</h2>
+
+<p style="font-size:14px;color:#000;">
+<span style="color:#2e7d32;font-weight:bold;">Bo'Cité</span><span style="color:#c62828;font-weight:bold;">Art</span> est une méthode simple, frappée de bon sens, qui remet naturellement en relation ce que nous avons progressivement appris à séparer.
+</p>
+
+<p style="font-size:14px;color:#000;">
+<span style="color:#2e7d32;font-weight:bold;">Bo'Cité</span><span style="color:#c62828;font-weight:bold;">Art</span> relie durablement les habitants.
+<br>Les écoles.
+<br>Les commerces.
+<br>Les entreprises.
+<br>Les associations.
+<br>Les collectivités.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Les rencontres se multiplient.
+<br>Les vocations naissent.
+<br>Les partenariats se développent.
+<br>Les opportunités grandissent.
+<br>Le territoire se renforce.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Combien de bouteilles avez-vous déjà jetées à la mer ?
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Combien de candidatures sont restées sans réponse ?
+<br>Combien de fois avez-vous entendu :
+<br>« Ça ne sert à rien d'envoyer un CV... personne ne répond. »
+<br>Quel gâchis... pour les deux parties !
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Pourquoi ?
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Le problème ne commence pas avec la candidature.
+<br>Il commence bien avant.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Aujourd'hui, tout va très vite.
+<br>Une commande arrive.
+<br>Un salarié quitte l'entreprise.
+<br>Un marché s'ouvre.
+<br>Vite... il faut recruter !
+</p>
+
+<p style="font-size:14px;color:#000;">
+Les annonces sont publiées partout.
+<br>Les réseaux sont sollicités.
+<br>Les plateformes sont consultées.
+<br>En espérant trouver rapidement la bonne personne.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Puis vient la frustration
+</h2>
+
+<p style="font-size:14px;color:#000;">
+L'entreprise dit :
+<br>« Je manque de bras. »
+<br>« Je ne trouve personne. »
+</p>
+
+<p style="font-size:14px;color:#000;">
+Pendant ce temps, les candidats envoient leurs CV, attendent une réponse...
+<br>et finissent souvent par perdre espoir.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Combien de bouteilles continuent ainsi d'être jetées à la mer...
+<br>des deux côtés ?
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Le constat est sans appel
+</h2>
+
+<p style="font-size:14px;color:#000;">
+On recrute dans l'urgence.
+<br>On forme dans l'urgence.
+<br>On recommence dans l'urgence.
+<br>Le salarié doute.
+<br>L'entreprise recommence.
+<br>Le cercle se répète.
+<br>Tout le monde perd du temps.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+<span style="color:#2e7d32;font-weight:bold;">Bo'Cité</span><span style="color:#c62828;font-weight:bold;">Art</span> vous a déjà montré les causes
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Vous connaissez maintenant les conséquences.
+<br>Découvrons la solution.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Le véritable fossé est ici
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Une entreprise qui se fait véritablement connaître construit durablement son image.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Les habitants savent qui elle est,
+<br>où elle se situe,
+<br>ce qu'elle fait
+<br>et les métiers qu'elle propose.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Elle devient une entreprise que l'on comprend,
+<br>que l'on connaît...
+<br>et que l'on choisit.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Les candidatures changent alors de nature
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Le candidat choisit une entreprise qu'il connaît.
+<br>Il comprend son activité.
+<br>Il connaît ses métiers.
+<br>Il sait pourquoi il souhaite la rejoindre.
+</p>
+
+<p style="font-size:14px;color:#000;">
+L'entreprise comprend immédiatement pourquoi cette candidature lui est adressée.
+<br>La confiance est déjà installée des deux côtés.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+L'entreprise prépare alors bien mieux son avenir
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Elle attire davantage de candidatures de qualité.
+<br>Elle développe son image,
+<br>sa réputation
+<br>et sa notoriété.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Elle inspire davantage confiance.
+<br>Elle attire naturellement de nouveaux clients,
+<br>de nouveaux partenaires
+<br>et de nouvelles opportunités.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Son carnet de commandes se développe plus sereinement.
+<br>Les recrutements deviennent alors plus naturels...
+<br>et beaucoup moins dans l'urgence.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+La candidature continue de vivre
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Le candidat conserve l'historique de toutes ses démarches.
+<br>L'entreprise conserve son portefeuille de candidats.
+<br>Chacun retrouve facilement ses échanges depuis son téléphone.
+<br>Une réponse est apportée.
+<br>Le respect s'installe.
+<br>La confiance grandit.
+<br>La rencontre continue de vivre dans le temps.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Deux possibilités. Un seul objectif.
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Vous connaissez déjà l'entreprise ?
+<br>Rendez-vous directement dans <strong>Candidature spontanée</strong>.
+<br>Complétez librement votre demande.
+</p>
+
+<p style="font-size:14px;color:#000;">
+L'entreprise n'est pas encore présente dans l'annuaire ?
+<br>Aucun problème.
+<br>Vous pouvez saisir vous-même les informations dont vous disposez.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Vous recherchez une entreprise ?
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Consultez simplement l'annuaire
+<strong><span style="color:#2e7d32;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>,
+classé par métiers et par activités.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Faites défiler les entreprises jusqu'à trouver celle qui correspond à vos compétences,
+à votre projet ou à votre talent.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Depuis sa fiche, cliquez sur :
+<br><strong>Déposer une candidature spontanée.</strong>
+</p>
+
+<p style="font-size:14px;color:#000;">
+Le formulaire s'ouvre automatiquement.
+<br>Lors de votre première candidature, vous complétez votre fiche.
+<br>Par la suite,
+<strong><span style="color:#2e7d32;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>
+retrouve automatiquement vos informations
+et préremplit le formulaire.
+</p>
+
+<p style="font-size:14px;color:#000;">
+Vous pouvez toujours les modifier avant l'envoi.
+<br>En quelques secondes...
+<br>votre candidature est prête à être transmise
+à l'entreprise choisie.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Dans les deux cas...
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Vous retrouvez :
+<br>Le même formulaire.
+<br>Le même historique.
+<br>Les mêmes informations personnelles automatiquement retrouvées lors de vos prochaines candidatures.
+</p>
+
+<p style="font-size:14px;color:#000;">
+<strong><span style="color:#2e7d32;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong>
+supprime ainsi les recherches inutiles
+et vous permet de passer immédiatement à l'essentiel :
+proposer votre candidature à l'entreprise de votre choix.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Les bénéfices deviennent concrets
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Le candidat trouve plus facilement une entreprise proche de chez lui.
+<br>Il réduit parfois ses déplacements.
+<br>Il gagne du temps.
+</p>
+
+<p style="font-size:14px;color:#000;">
+L'entreprise stabilise davantage ses équipes
+et poursuit plus sereinement son développement.
+<br>Tout le monde avance enfin dans la même direction.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+<span style="color:#2e7d32;">Bo'Cité</span><span style="color:#c62828;">Art</span> ouvre le champ des possibles
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Envoyer rapidement une candidature.
+<br>Recevoir systématiquement une réponse.
+<br>Retrouver l'historique de ses échanges.
+<br>Construire un véritable portefeuille de candidats.
+<br>Développer durablement la notoriété de son entreprise.
+<br>Créer davantage de confiance.
+<br>Attirer naturellement de nouvelles compétences.
+</p>
+
+<p style="font-size:14px;color:#000;">
+On ne recrute jamais durablement par hasard.
+<br>On recrute durablement parce que l'on s'est d'abord fait connaître,
+comprendre...
+puis reconnaître.
+</p>
+
+<hr>
+
+<h2 style="font-size:16px;font-weight:bold;color:#2e7d32;">
+Découvrons maintenant pourquoi fidéliser devient aussi important que recruter.
+</h2>
+
+<p style="font-size:14px;color:#000;">
+Recruter répond à un besoin.
+<br><br>
+Fidéliser construit durablement l'avenir.
+</p>
 <div
   style="
     display:flex;
     flex-direction:column;
     align-items:center;
     gap:10px;
+    margin-top:24px;
   ">
 
-<button
-  id="employmentIntroductionHomeBtn"
-  class="choiceBtn"
-  type="button"
-  style="
-    width:100%;
-    max-width:430px;
-  ">
-
-  Découvrir l’espace Emploi et Recrutement
-
-</button>
+  <button
+    id="employmentIntroductionHomeBtn"
+    class="choiceBtn"
+    type="button"
+    style="
+      width:100%;
+      max-width:430px;
+    ">
+    Découvrir l’espace Emploi et Recrutement
+  </button>
 
   <button
     class="choiceBtn"
@@ -2587,79 +2897,8 @@ Pourquoi devenir partenaire <strong><span style="color:#2f5d46;">Bo'Cité</span>
       width:100%;
       max-width:430px;
     ">
-
     Découvrir les entreprises autour de moi
-
   </button>
-
-</div>
-
-<div
-  class="box entrepriseInfoBox"
-  style="
-    margin-top:22px;
-    border-left:4px solid #2f5d46;
-    text-align:left;
-  ">
-
-  <span
-    style="
-      display:block;
-      color:#2f5d46;
-      font-size:16px;
-      font-weight:700;
-    ">
-    Et après le recrutement ?
-  </span>
-
-  <br>
-
-  <p
-    style="
-      margin:0;
-      color:#222;
-      font-weight:400;
-      line-height:1.7;
-    ">
-    Le recrutement constitue une première étape.
-  </p>
-
-  <p
-    style="
-      color:#222;
-      font-weight:400;
-      line-height:1.7;
-    ">
-    <strong>
-      <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span>
-    </strong>
-    vous propose ensuite d'autres thèmes utiles et complémentaires
-    pour développer la visibilité de votre entreprise,
-    renforcer son attractivité,
-    fidéliser ses salariés
-    et accompagner durablement son développement.
-  </p>
-
-  <p
-    style="
-      margin-bottom:0;
-      color:#222;
-      font-weight:700;
-      line-height:1.7;
-    ">
-    Appuyez sur le bouton « Retour » situé en haut de cette page
-    pour retrouver les autres bandes défilantes.
-
-    <br><br>
-
-    La prochaine proposition suivant celle que vous venez de découvrir sera :
-
-    <br><br>
-
-    <span style="color:#2f5d46;">
-      « Fidéliser ne consiste plus uniquement à augmenter les salaires. »
-    </span>
-  </p>
 
 </div>
 
@@ -2670,6 +2909,12 @@ Pourquoi devenir partenaire <strong><span style="color:#2f5d46;">Bo'Cité</span>
 `;
 
 }
+
+<!-- REPRENDRE ICI TOUS LES BOUTONS DÉJÀ EXISTANTS
+     (Retour, Déposer une candidature, Consulter les offres,
+      Historique, etc.) SANS LES MODIFIER -->
+
+      
 function openEmploymentIntroduction(){
 
   module.renderModal(
