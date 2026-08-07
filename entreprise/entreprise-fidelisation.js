@@ -1,10 +1,9 @@
 /* =========================================================
    BO'CITÉART — ENTREPRISE
    MODULE FIDÉLISATION
-   ATTIRER ET FIDÉLISER AUTREMENT
    ========================================================= */
 
-(function initEntrepriseFidelisation(){ 
+(function initEntrepriseFidelisation(){
 
   "use strict";
 
@@ -29,222 +28,527 @@
 
     return `
 
-      <div
-        class="box entrepriseModuleIntro">
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-        <strong
-          class="entrepriseModuleTitle">
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    L'herbe est-elle vraiment plus verte ailleurs ?
+  </h2>
 
-          Fidéliser ne consiste plus
-          uniquement à augmenter les salaires
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Tout le monde sourit en entendant cette question...
+    <br><br>
 
-        </strong>
+    Pourtant, combien de salariés sont partis en pensant trouver mieux ?
+    <br><br>
 
-        <br>
+    Pour un salaire plus élevé.
+    <br>Pour un poste plus attractif.
+    <br>Pour une nouvelle aventure.
+    <br><br>
 
-        Bien sûr,
-        la rémunération reste importante.
+    Qui ne l'aurait pas fait ?
+  </p>
 
-        <br><br>
+</div>
 
-        Mais aujourd'hui,
-        les salariés recherchent également :
 
-        <br><br>
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-        • du sens ;<br>
-        • de la confiance ;<br>
-        • un employeur reconnu ;<br>
-        • une bonne qualité de vie ;<br>
-        • un équilibre durable.
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Puis vient parfois la réalité.
+  </h2>
 
-      </div>
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Les promesses s'effacent.
+    <br>Les salaires arrivent en retard.
+    <br>L'organisation devient plus difficile.
+    <br>L'ambiance change.
+    <br>Parfois, l'entreprise ferme.
+    <br><br>
 
-      <div class="box">
+    Et un jour, cette phrase revient souvent :
+    <br><br>
 
-        <strong
-          class="entrepriseModuleSubtitle">
+    « Finalement... j'étais bien où j'étais. »
+  </p>
 
-          Faites connaître votre entreprise
+</div>
 
-        </strong>
 
-        <br><br>
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-        Combien de personnes
-        connaissent réellement
-        votre entreprise,
-        vos équipes,
-        vos métiers
-        et votre savoir-faire ?
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Pourquoi ?
+  </h2>
 
-        <br><br>
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Une entreprise n'embauche jamais pour voir partir un bon salarié.
+    <br><br>
 
-        Une entreprise reconnue
-        attire naturellement
-        davantage de candidatures
-        et renforce
-        la fierté d'appartenance
-        de ses collaborateurs.
+    Un salarié n'entre jamais dans une entreprise avec l'envie de la quitter.
+    <br><br>
 
-      </div>
+    Les deux recherchent pourtant la même chose :
+    <br>la stabilité.
+    <br><br>
 
-      <div class="box">
+    Lorsque chacun est au rendez-vous de ses engagements, la confiance grandit.
+    <br><br>
 
-        <strong
-          class="entrepriseModuleSubtitle">
+    L'entreprise développe les compétences de ses collaborateurs.
+    <br>Le salarié développe son savoir-faire et son expérience.
+    <br><br>
 
-          Valorisez vos équipes
+    Ensemble, ils construisent l'avenir.
+  </p>
 
-        </strong>
+</div>
 
-        <br><br>
 
-        Présentez :
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-        <br><br>
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    La fidélisation ne repose pas uniquement sur le salaire.
+  </h2>
 
-        • vos métiers ;<br>
-        • vos collaborateurs ;<br>
-        • vos réussites ;<br>
-        • vos innovations ;<br>
-        • vos engagements.
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    L'entreprise ne peut pas toujours augmenter davantage.
+    <br><br>
 
-        <br><br>
+    Le salarié aimerait parfois gagner plus.
+    <br><br>
 
-        Les habitants découvrent
-        l'entreprise.
+    Les deux se retrouvent face à une même réalité.
+    <br><br>
 
-        Les salariés voient
-        leur travail reconnu.
+    Alors, que faire ?
+  </p>
 
-      </div>
+</div>
 
-      <div class="box">
 
-        <strong
-          class="entrepriseModuleSubtitle">
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-          Donner envie de rester
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Le temps devient une richesse.
+  </h2>
 
-        </strong>
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Travailler plus près de chez soi, c'est souvent :
+    <br><br>
 
-        <br><br>
+    moins de transports,
+    <br>moins de fatigue,
+    <br>moins de stress,
+    <br>moins de dépenses,
+    <br>plus de temps pour sa famille,
+    <br>pour ses proches,
+    <br>pour vivre.
+    <br><br>
 
-        La fidélisation passe aussi par :
+    Cette richesse n'apparaît sur aucune fiche de paie.
+    <br><br>
 
-        <br><br>
+    Pourtant, elle améliore profondément la qualité de vie.
+  </p>
 
-        • la proximité ;<br>
-        • les initiatives locales ;<br>
-        • la participation à la vie du territoire ;<br>
-        • le sentiment d'appartenir
-          à une entreprise utile.
+</div>
 
-      </div>
 
-      <div
-        class="entrepriseModuleActions">
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-        <button
-          id="loyaltyVisibilityBtnNew"
-          class="choiceBtn"
-          type="button">
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Puis viennent les petits plus.
+  </h2>
 
-          Faire connaître mon entreprise
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Les titres-restaurant.
+    <br>Les chèques-vacances.
+    <br>Les avantages proposés par l'entreprise.
+    <br>Les partenaires locaux.
+    <br>Les activités.
+    <br>Les œuvres.
+    <br><br>
 
-        </button>
+    Pris séparément, ils semblent modestes.
+    <br><br>
 
-        <button
-          id="loyaltyEmploymentBtnNew"
-          class="choiceBtn"
-          type="button">
+    Ensemble, ils améliorent réellement le quotidien.
+  </p>
 
-          Recruter autrement
+</div>
 
-        </button>
 
-        <button
-          id="loyaltyPatronageBtnNew"
-          class="choiceBtn"
-          type="button">
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-          Découvrir le mécénat
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    La confiance donne envie de rester.
+  </h2>
 
-        </button>
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Une entreprise qui respecte ses équipes.
+    <br>Qui les fait progresser.
+    <br>Qui reconnaît leurs compétences.
+    <br>Qui améliore progressivement leur qualité de vie.
+    <br><br>
 
-      </div>
+    Construit naturellement une fidélité durable.
+    <br><br>
 
-      <div
-        class="box entrepriseModuleConclusion">
+    Le salarié, lui aussi, comprend mieux les contraintes de son entreprise
+    et participe davantage à son développement.
+  </p>
 
-        <strong style="font-size:20px;">
+</div>
 
-          Les salariés restent plus facilement
-          lorsqu'ils sont fiers
-          de leur entreprise.
 
-        </strong>
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-      </div>
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Et si partir n'était pas toujours une fin ?
+  </h2>
 
-    `;
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Pourquoi ne pas reprendre contact lorsqu'un départ s'est fait dans le respect ?
+    <br><br>
+
+    Les erreurs existent.
+    <br>Les parcours évoluent.
+    <br><br>
+
+    Une candidature spontanée permet parfois de retrouver une entreprise
+    que l'on sait désormais apprécier à sa juste valeur.
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Quel gâchis... pour les deux parties.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    L'entreprise a perdu un bon collaborateur.
+    <br>Le salarié a perdu une entreprise sérieuse.
+    <br>Chacun pensait trouver mieux.
+    <br><br>
+
+    Chacun a parfois perdu davantage.
+    <br><br>
+
+    Pourtant, une entreprise qui fidélise ses équipes construit aussi
+    sa stabilité, son image, sa réputation et son avenir.
+    <br><br>
+
+    Le salarié retrouve progressivement un meilleur équilibre de vie,
+    davantage de sérénité et une qualité de travail plus durable.
+    <br><br>
+
+    La confiance se construit jour après jour.
+    <br><br>
+
+    C'est elle qui fait grandir durablement les femmes,
+    les hommes... et les entreprises.
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Découvrons maintenant comment développer durablement votre entreprise.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    La page suivante vous explique comment développer naturellement
+    votre entreprise, votre commerce, créer de nouvelles opportunités
+    et révéler des richesses déjà présentes autour de vous...
+    sans toujours les voir.
+  </p>
+
+</div>
+
+
+<div
+  style="
+    margin-top:16px;
+  ">
+
+  <button
+    id="loyaltyDevelopmentBtn"
+    class="choiceBtn"
+    type="button"
+    style="
+      width:100%;
+    ">
+    Développement
+  </button>
+
+</div>
+
+`;
+
   }
+
 
   function bindLoyalty(){
 
-    const visibilityButton =
+    const developmentButton =
       getElement(
-        "loyaltyVisibilityBtnNew"
+        "loyaltyDevelopmentBtn"
       );
 
-    const employmentButton =
-      getElement(
-        "loyaltyEmploymentBtnNew"
-      );
+    if(developmentButton){
 
-    const patronageButton =
-      getElement(
-        "loyaltyPatronageBtnNew"
-      );
+      developmentButton.onclick =
+        function(){
 
-    if(visibilityButton){
-
-      visibilityButton.onclick = function(){
-
-        module.openScreen(
-          "visibilite"
-        );
-      };
+          module.openScreen(
+            "developpement"
+          );
+        };
     }
-
-    if(employmentButton){
-
-      employmentButton.onclick = function(){
-
-        module.openScreen(
-          "emploi"
-        );
-      };
-    }
-
-    if(patronageButton){
-
-      patronageButton.onclick = function(){
-
-        module.openScreen(
-          "mecenat"
-        );
-      };
-    }
-
   }
+
 
   function openLoyaltyModule(){
 
     module.renderModulePage(
 
-      "Attirer et fidéliser autrement",
+      "Fidélisation",
 
       getLoyaltyHtml(),
 
@@ -256,6 +560,7 @@
     );
   }
 
+
   module.registerScreen(
     "fidelisation",
     openLoyaltyModule
@@ -263,6 +568,7 @@
 
   module.openLoyaltyModule =
     openLoyaltyModule;
+
 
   console.log(
     "✅ Nouveau module Fidélisation chargé"
