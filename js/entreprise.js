@@ -2909,11 +2909,6 @@ Fidéliser construit durablement l'avenir.
 `;
 
 }
-
-<!-- REPRENDRE ICI TOUS LES BOUTONS DÉJÀ EXISTANTS
-     (Retour, Déposer une candidature, Consulter les offres,
-      Historique, etc.) SANS LES MODIFIER -->
-
       
 function openEmploymentIntroduction(){
 
