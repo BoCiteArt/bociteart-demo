@@ -174,460 +174,787 @@
     );
   }
 
-  function getDevelopmentHtml(){
-
-    return `
-    
-      <div class="entrepriseDevelopmentPage">  
-              <button
-          id="developmentBackBtnNew"
-          class="developmentBackBtn"
-          type="button">
-          Retour
-        </button>
-
-        <div
-          class="box developmentBox developmentIntro">
-
-          <span class="developmentTitle">
-            Connaissez-vous le nom de cinq entreprises
-            de votre commune,
-            en dehors des hypermarchés
-            et des grandes enseignes ?
-          </span>
-
-          <br>
-
-          <span class="developmentAnswer">
-            Probablement pas.
-          </span>
-
-          <br><br>
-
-          Pourtant, combien de fois entend-on :
-
-          <br><br>
-
-          <span class="developmentQuote">
-            « Je ne savais même pas
-            que cette entreprise existait. »
-          </span>
-
-          <br><br>
-
-          ou :
-
-          <br><br>
-
-          <span class="developmentQuote">
-            « Je ne savais pas
-            qu’elle faisait cela. »
-          </span>
-
-          <br><br>
-
-          Si les habitants ne connaissent pas
-          les entreprises qui les entourent,
-          comment pourraient-ils devenir
-          leurs clients,
-          leurs futurs salariés
-          ou parler d’elles autour d’eux ?
-        </div>
-
-        <div class="box developmentBox">
-
-          <span class="developmentTitle">
-            Les règles du jeu ont changé
-          </span>
-
-          <br><br>
-
-          Internet et le commerce en ligne
-          ont ouvert de nouvelles possibilités,
-          et de nombreuses entreprises
-          ont su s’y adapter.
-
-          <br><br>
-
-          Mais les plus grandes plateformes
-          disposent désormais de moyens considérables
-          pour attirer les clients,
-          capter leur attention
-          et occuper toujours davantage de place.
-
-          <br><br>
-
-          Pour une entreprise locale,
-          il devient de plus en plus difficile
-          d’être visible seule.
-
-          <br><br>
-
-          Bo'CitéArt ne vous propose pas
-          de renoncer au numérique.
-
-          <br><br>
-
-          Il vous propose de renforcer
-          ce que les grandes plateformes
-          ne pourront jamais remplacer :
-
-          <br><br>
-
-          • votre proximité ;<br>
-          • votre savoir-faire ;<br>
-          • votre indépendance ;<br>
-          • la confiance des habitants ;<br>
-          • votre ancrage dans le territoire.
-        </div>
-
-                <div class="box developmentBox">
-
-          <span class="developmentTitle">
-            Et si votre développement commençait
-            simplement par votre propre ville ?
-          </span>
-
-          <br><br>
-
-          Avant de chercher plus loin,
-          commencez par être connu.
-
-          <br><br>
-
-          Comment un habitant pourrait-il postuler
-          dans une entreprise
-          dont il ignore l’existence ?
-
-          <br><br>
-
-          Comment un futur client
-          pourrait-il vous choisir
-          s’il ne connaît ni votre métier,
-          ni vos services,
-          ni votre savoir-faire ?
-
-          <br><br>
-
-          Faire connaître votre entreprise
-          dans sa propre commune
-          peut favoriser :
-
-          <br><br>
-
-          • le bouche-à-oreille ;<br>
-          • les recommandations ;<br>
-          • les recrutements de proximité ;<br>
-          • les candidatures spontanées ;<br>
-          • les relations entre professionnels ;<br>
-          • de nouvelles opportunités commerciales.
-        </div>
-
-        <div class="box developmentBox">
-
-          <span class="developmentTitle">
-            Seul, il devient plus difficile d’être visible
-          </span>
-
-          <br><br>
-
-          Travailler ensemble
-          ne signifie pas perdre son indépendance.
-
-          <br><br>
-
-          Chaque entreprise conserve :
-
-          <br><br>
-
-          • son identité ;<br>
-          • ses décisions ;<br>
-          • ses clients ;<br>
-          • ses méthodes ;<br>
-          • sa liberté.
-
-          <br><br>
-
-          Mais en devenant plus visibles ensemble,
-          les entreprises peuvent renforcer
-          leur territoire
-          et leur propre avenir.
-
-          <br><br>
-
-          Seul, on résiste difficilement.
-          Ensemble, on avance mieux.
-        </div>
-
-        <div class="box developmentBox">
-
-          <span class="developmentTitle">
-            Commencez près de chez vous
-          </span>
-
-          <br><br>
-
-          Votre prochain client,
-          fournisseur,
-          sous-traitant,
-          partenaire
-          ou futur salarié
-          se trouve peut-être déjà
-          à quelques kilomètres.
-
-          <br><br>
-
-          Bo'CitéArt vous permet de commencer
-          par les ressources présentes dans votre commune,
-          puis d’élargir la recherche
-          lorsque cela devient nécessaire.
-        </div>
-
-        <div class="developmentActions">
-
-          <button
-            id="developmentDirectoryBtnNew"
-            class="choiceBtn"
-            type="button">
-            Découvrir les entreprises de ma ville
-          </button>
-
-          <button
-            id="developmentVisibilityBtnNew"
-            class="choiceBtn"
-            type="button">
-            Faire connaître mon entreprise
-          </button>
-
-          <button
-            id="developmentEmploymentBtnNew"
-            class="choiceBtn"
-            type="button">
-            Rechercher ou recruter localement
-          </button>
-
-          <button
-            id="developmentPartnerBtnNew"
-            class="choiceBtn"
-            type="button">
-            Rechercher un partenaire professionnel
-          </button>
-
-          <button
-            id="developmentMutualisationBtnNew"
-            class="choiceBtn"
-            type="button">
-            Découvrir la force de la mutualisation
-          </button>
-
-        </div>
-
-        <!--
-          Emplacement réservé à la future conclusion.
-          Elle sera ajoutée lorsque l’ensemble
-          du parcours Entreprise sera terminé.
-        -->
-
-        <button
-          id="developmentPrivatePlanBtnNew"
-          class="choiceBtn developmentPrivateBtn"
-          type="button">
-          Ouvrir mon plan de développement privé
-        </button>
-
-      </div>
-    `;
-  }
-
-  function bindDevelopment(){
-         const backButton =
-      getElement(
-        "developmentBackBtnNew"
+ function getDevelopmentHtml(){
+
+  return `
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Votre développement commence bien avant la vente.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Pensez-vous que votre entreprise soit connue dans votre commune ?
+    <br><br>
+
+    Comme beaucoup de dirigeants,
+    votre première réponse sera probablement :
+    <br><br>
+
+    « Bien sûr ! »
+    <br><br>
+
+    Alors, permettez-moi de vous poser une autre question.
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Pouvez-vous citer cinq entreprises de votre commune ?
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    En dehors des grandes surfaces...
+    <br>de votre boulanger...
+    <br>de votre pharmacie...
+    <br>de votre garagiste...
+    <br>des commerces que tout le monde fréquente...
+    <br><br>
+
+    Pouvez-vous citer cinq entreprises ?
+    <br><br>
+
+    Leur nom.
+    <br>Leurs métiers.
+    <br>Ce qu'elles fabriquent.
+    <br>Ce qu'elles proposent.
+    <br><br>
+
+    Bien souvent...
+    <br>nous restons sans réponse.
+    <br><br>
+
+    Pourquoi ?
+    <br><br>
+
+    Parce que nous passons devant elles...
+    <br>sans jamais vraiment les découvrir.
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Notre mémoire est pourtant étonnante.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Combien de fois vous êtes-vous arrêté devant une nouvelle vitrine
+    en vous demandant :
+    <br><br>
+
+    « Qu'y avait-il ici avant ? »
+    <br><br>
+
+    Très souvent...
+    <br>personne ne s'en souvient.
+    <br><br>
+
+    Pourtant...
+    <br>nous sommes parfois passés devant des centaines de fois.
+    <br><br>
+
+    Pourquoi ?
+    <br><br>
+
+    Parce que voir...
+    <br>n'est pas découvrir.
+    <br><br>
+
+    Et notre cerveau retient rarement ce qu'il ne vit pas.
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Être vu ne suffit plus.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Une publicité s'oublie.
+    <br>Un logo s'oublie.
+    <br>Un nom s'oublie.
+    <br><br>
+
+    Mais une entreprise que l'on visite...
+    <br>des femmes et des hommes que l'on rencontre...
+    <br>un savoir-faire que l'on découvre...
+    <br><br>
+
+    laissent une empreinte durable dans la mémoire.
+    <br><br>
+
+    Lorsqu'un besoin apparaît...
+    <br>le cerveau retrouve naturellement ce souvenir.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Les règles du jeu ont changé.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Internet est devenu indispensable.
+    <br><br>
+
+    Les grandes plateformes disposent aujourd'hui
+    de moyens considérables pour attirer l'attention.
+    <br><br>
+
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+    ne vous demande pas de renoncer au numérique.
+    <br><br>
+
+    Il vous aide à renforcer ce que les grandes plateformes
+    ne pourront jamais remplacer :
+    <br><br>
+
+    • votre proximité ;
+    <br>• votre savoir-faire ;
+    <br>• votre histoire ;
+    <br>• la confiance ;
+    <br>• votre ancrage dans votre territoire.
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Pourquoi ouvrir ponctuellement les portes de votre entreprise ?
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Beaucoup de dirigeants pensent immédiatement :
+    <br><br>
+
+    « Je n'ai pas le temps. »
+    <br><br>
+
+    « Cela coûte trop cher. »
+    <br><br>
+
+    « Nous avons des contraintes de sécurité. »
+    <br><br>
+
+    « Nous devons protéger notre savoir-faire. »
+    <br><br>
+
+    Toutes ces raisons existent.
+    <br><br>
+
+    Mais permettez-moi de partager une conviction
+    qui guide la création de
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span> :
+    <br><br>
+
+    <strong>
+      Lorsque l'on ne souhaite pas faire quelque chose,
+      on trouve des excuses.
+    </strong>
+    <br><br>
+
+    <strong>
+      Lorsque l'on décide de le faire,
+      on trouve des solutions.
+    </strong>
+    <br><br>
+
+    Une visite peut être organisée.
+    <br>Des parcours adaptés peuvent être créés.
+    <br>Des zones peuvent être protégées.
+    <br>Des groupes peuvent être encadrés.
+    <br><br>
+
+    Il existe presque toujours une solution.
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Il ne s'agit pas d'un stage.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Il ne s'agit pas de recruter immédiatement.
+    <br><br>
+
+    Il ne s'agit pas d'embaucher.
+    <br><br>
+
+    Il s'agit simplement de permettre aux élèves
+    de découvrir les entreprises de leur propre commune.
+    <br><br>
+
+    Ils voient.
+    <br>Ils comprennent.
+    <br>Ils mémorisent.
+    <br>Ils imaginent.
+    <br><br>
+
+    Ils découvrent enfin des métiers qui existent parfois...
+    <br>à seulement quelques minutes de chez eux.
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    C'est ici que naissent souvent les vocations.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Un jour, on demandera à ces jeunes :
+    <br><br>
+
+    « Que souhaites-tu faire plus tard ? »
+    <br><br>
+
+    Au lieu de répondre :
+    <br><br>
+
+    « Je ne sais pas... »
+    <br><br>
+
+    certains répondront peut-être :
+    <br><br>
+
+    « J'ai visité cette entreprise...
+    j'aimerais faire ce métier. »
+    <br><br>
+
+    Une seule visite peut parfois ouvrir un avenir.
+    <br><br>
+
+    Et quelques années plus tard...
+    <br><br>
+
+    ce même jeune vous adressera peut-être
+    une candidature spontanée.
+    <br><br>
+
+    Non pas par hasard.
+    <br><br>
+
+    Mais parce qu'il sait qui vous êtes.
+    <br>Il comprend votre activité.
+    <br>Il connaît vos métiers.
+    <br>Il sait pourquoi il souhaite rejoindre votre entreprise.
+    <br><br>
+
+    <strong>
+      La découverte d'aujourd'hui construit
+      le recrutement plus solide de demain.
+    </strong>
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Vous venez aussi de créer vos premiers ambassadeurs.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Le soir même...
+    <br><br>
+
+    ces jeunes racontent leur visite.
+    <br><br>
+
+    À leurs parents.
+    <br>À leurs proches.
+    <br>À leurs amis.
+    <br><br>
+
+    Votre entreprise cesse d'être un simple bâtiment.
+    <br><br>
+
+    Elle devient une entreprise que l'on connaît.
+    <br>Que l'on comprend.
+    <br>Et dont on parle.
+    <br><br>
+
+    Sans publicité.
+    <br>Sans démarchage.
+    <br>Naturellement.
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Votre développement commence ici.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Avant de chercher davantage de clients...
+    <br>commencez par être connu.
+    <br><br>
+
+    Avant de vouloir recruter...
+    <br>commencez par être compris.
+    <br><br>
+
+    Avant d'espérer être choisi...
+    <br>commencez par être mémorisé.
+    <br><br>
+
+    Une entreprise connue attire plus facilement :
+    <br><br>
+
+    • des clients ;
+    <br>• des candidats ;
+    <br>• des partenaires ;
+    <br>• des fournisseurs ;
+    <br>• des recommandations.
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span> renforce vos fondations.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Il rapproche les habitants de leurs entreprises.
+    <br><br>
+
+    Il développe naturellement le bouche-à-oreille.
+    <br><br>
+
+    Il favorise les rencontres.
+    <br><br>
+
+    Il crée davantage d'opportunités.
+    <br><br>
+
+    Il transforme progressivement une entreprise que l'on ignore...
+    <br><br>
+
+    en une entreprise que l'on connaît...
+    <br>que l'on comprend...
+    <br>que l'on recommande...
+    <br><br>
+
+    et à laquelle on pense naturellement lorsqu'un besoin apparaît.
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Une entreprise peut grandir seule...
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Mais lorsqu'un territoire apprend à mieux se connaître...
+    <br><br>
+
+    chaque entreprise devient aussi une opportunité pour les autres.
+    <br><br>
+
+    <strong>
+      Découvrons maintenant comment la mutualisation
+      transforme cette force collective
+      en nouvelles opportunités.
+    </strong>
+  </p>
+
+</div>
+
+
+<div
+  style="
+    display:flex;
+    margin-top:16px;
+  ">
+
+ <button
+  id="developmentNextBtn"
+  class="choiceBtn"
+  type="button"
+  style="
+    width:100%;
+  ">
+  Pourquoi payer plus cher ?
+</button>
+
+</div>
+
+`;
+}
+  
+function bindDevelopment(){
+
+  const nextButton =
+    getElement(
+      "developmentNextBtn"
+    );
+
+  if(nextButton){
+
+    nextButton.onclick = function(){
+
+      module.openScreen(
+        "mutualisation"
       );
 
-    if(backButton){
-
-      backButton.onclick = function(){
-
-        if(
-          typeof module.goBack ===
-          "function"
-        ){
-          module.goBack();
-          return;
-        }
-
-        if(
-          typeof module.openHome ===
-          "function"
-        ){
-          module.openHome();
-          return;
-        }
-
-        window.history.back();
-      };
-    }
-
-    function connectButton(id, action){
-
-      const button =
-        getElement(id);
-
-      if(button){
-        button.onclick = action;
-      }
-    }
-
-    connectButton(
-      "developmentDirectoryBtnNew",
-      function(){
-
-        if(
-          typeof module.openLocalDirectory ===
-          "function"
-        ){
-          module.openLocalDirectory();
-          return;
-        }
-
-        module.openScreen(
-          "annuaire_local"
-        );
-      }
-    );
-
-    connectButton(
-      "developmentVisibilityBtnNew",
-      function(){
-
-        module.openScreen(
-          "visibilite"
-        );
-      }
-    );
-
-    connectButton(
-      "developmentEmploymentBtnNew",
-      function(){
-
-        module.openScreen(
-          "emploi"
-        );
-      }
-    );
-
-    connectButton(
-      "developmentPartnerBtnNew",
-      function(){
-
-        module.openScreen(
-          "annuaire"
-        );
-      }
-    );
-
-    connectButton(
-      "developmentMutualisationBtnNew",
-      function(){
-
-        module.openScreen(
-          "mutualisation"
-        );
-      }
-    );
-
-    connectButton(
-      "developmentPrivatePlanBtnNew",
-      function(){
-
-        const openPlan = function(){
-
-          if(
-            typeof module.openDevelopmentPlan ===
-            "function"
-          ){
-            module.openDevelopmentPlan();
-            return;
-          }
-
-          alert(
-            "Le plan de développement privé est momentanément indisponible."
-          );
-        };
-
-        if(
-          typeof module.requirePrivateAccess ===
-          "function"
-        ){
-          module.requirePrivateAccess(
-            openPlan
-          );
-          return;
-        }
-
-        if(
-          typeof module.requirePartnerAccess ===
-          "function"
-        ){
-          module.requirePartnerAccess(
-            openPlan
-          );
-          return;
-        }
-
-        openPlan();
-      }
-    );
+    };
   }
 
-  function openDevelopment(){
+}
 
-    const pageHtml =
-      getDevelopmentHtml();
+function openDevelopment(){
 
-    if(
-      typeof module.renderModulePage ===
-      "function"
-    ){
+  const pageHtml =
+    getDevelopmentHtml();
 
-      module.renderModulePage(
-        "Développer autrement",
-        pageHtml,
-        {
-          showBack:true,
-          showFooter:false,
-          afterRender:bindDevelopment
-        }
-      );
+  if(
+    typeof module.renderModulePage ===
+    "function"
+  ){
 
-      return;
-    }
-
-    module.renderModal(
+    module.renderModulePage(
       "Développer autrement",
-      pageHtml
+      pageHtml,
+      {
+        showBack:false,
+        showFooter:false,
+        afterRender:bindDevelopment
+      }
     );
 
-    window.setTimeout(function(){
-
-      bindDevelopment();
-
-    },0);
+    return;
   }
 
-  installDevelopmentStyles();
-
-  module.registerScreen(
-    "developpement",
-    openDevelopment
+  module.renderModal(
+    "Développer autrement",
+    pageHtml
   );
 
-  module.openDevelopmentNew =
-    openDevelopment;
+  window.setTimeout(function(){
 
-  console.log(
-    "✅ Nouveau module Développement chargé"
-  );
+    bindDevelopment();
+
+  },0);
+
+}
+
+installDevelopmentStyles();
+
+module.registerScreen(
+  "developpement",
+  openDevelopment
+);
+
+module.openDevelopmentNew =
+  openDevelopment;
+
+console.log(
+  "✅ Nouveau module Développement chargé"
+);
 
 })();
