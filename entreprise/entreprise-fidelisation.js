@@ -544,22 +544,23 @@
   }
 
 
-  function openLoyaltyModule(){
+function openLoyaltyModule(){
 
-    module.renderModulePage(
+  module.renderModulePage(
 
-      "Fidélisation",
+    "Fidélisation",
 
-      getLoyaltyHtml(),
+    getLoyaltyHtml(),
 
-      {
-        afterRender:
-          bindLoyalty
-      }
+    {
+      showBack:false,
+      showFooter:false,
+      afterRender:
+        bindLoyalty
+    }
 
-    );
-  }
-
+  );
+}
 
   module.registerScreen(
     "fidelisation",
