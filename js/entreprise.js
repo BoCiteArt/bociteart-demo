@@ -294,7 +294,7 @@ function buildBackButton(options){
     `;
   }
 
- function bindBackButton(){
+function bindBackButton(){
 
   document
     .querySelectorAll(
@@ -308,79 +308,30 @@ function buildBackButton(options){
         event.stopPropagation();
 
         /*
-          Si nous sommes sur l'accueil Entreprise
-          avec les bandes défilantes,
-          il n'y a plus de rubrique Entreprise précédente.
-
-          Le bouton Retour doit donc fermer
-          l'espace Entreprise pour revenir
-          à la page qui l'avait ouvert.
+          SUR LA PAGE DES BANDES ENTREPRISE :
+          retour à l'introduction Entreprise,
+          sans fermer la fenêtre.
         */
 
         if(
           state.currentScreen === "home"
         ){
 
-          const modal =
-            button.closest(
-              ".modal-content, .modalContent, #modalContent"
-            );
-
-          if(modal){
-
-            const closeButton =
-              modal.querySelector(
-                ".modal-close," +
-                ".modalClose," +
-                ".close-modal," +
-                "[data-close-modal]," +
-                "button[aria-label='Fermer']," +
-                "button[aria-label='Close']"
-              );
-
-            if(closeButton){
-
-              closeButton.click();
-              return;
-            }
-          }
-
-          /*
-            Sécurité si le bouton X
-            n'est pas trouvé dans la fenêtre.
-          */
-
-          const globalCloseButton =
-            document.querySelector(
-              ".modal-close," +
-              ".modalClose," +
-              ".close-modal," +
-              "[data-close-modal]," +
-              "button[aria-label='Fermer']," +
-              "button[aria-label='Close']"
-            );
-
-          if(globalCloseButton){
-
-            globalCloseButton.click();
-            return;
-          }
-
           if(
-            typeof window.closeModal ===
+            window.BociteEntreprise &&
+            typeof window.BociteEntreprise.openEntrepriseIntroduction ===
             "function"
           ){
 
-            window.closeModal();
+            window.BociteEntreprise.openEntrepriseIntroduction();
             return;
           }
 
         }
 
         /*
-          Dans toutes les sous-rubriques,
-          comportement normal :
-          retour à l'écran précédent.
+          DANS LES SOUS-PAGES :
+          retour normal à la page précédente.
         */
 
         goBack();
