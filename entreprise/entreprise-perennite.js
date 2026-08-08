@@ -6,7 +6,7 @@ function getSustainabilityHtml(){
   style="
     background:#ffffff;
     border:1px solid #e6e6e6;
-    border-left:6px solid #2f5d46;
+    border-left:6px solid #2f5d46; 
     border-radius:16px;
     padding:18px;
     margin:0 0 16px 0;
