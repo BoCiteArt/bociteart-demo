@@ -193,7 +193,7 @@ function getDevelopmentHtml(){
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -217,7 +217,7 @@ function getDevelopmentHtml(){
     <strong>« Bien sûr ! »</strong>
     <br><br>
 
-    Permettez-moi de vous poser une autre question.
+    Permettez-moi de vous poser cette question.
   </p>
 
 </div>
@@ -238,7 +238,7 @@ function getDevelopmentHtml(){
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -298,7 +298,7 @@ function getDevelopmentHtml(){
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -361,7 +361,7 @@ function getDevelopmentHtml(){
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -410,11 +410,11 @@ function getDevelopmentHtml(){
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
-    Les règles du jeu ont changé.
+    Les règles du jeu ont bien changé.
   </h2>
 
   <p
@@ -433,7 +433,7 @@ function getDevelopmentHtml(){
 
     <br><br>
 
-    <strong>Bo'CitéArt</strong> ne vous demande pas de renoncer au numérique.
+    <strong><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> ne vous demande pas de renoncer au numérique.
 
     <br><br>
 
@@ -471,7 +471,7 @@ function getDevelopmentHtml(){
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -504,7 +504,7 @@ function getDevelopmentHtml(){
 
     <br><br>
 
-    Mais permettez-moi de partager une conviction qui guide la création de <strong>Bo'CitéArt</strong> :
+    Mais permettez-moi de partager une conviction qui guide la création de <strong>  <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c62828;">Art</span></strong> :
 
     <br><br>
 
@@ -512,7 +512,7 @@ function getDevelopmentHtml(){
 
     <br><br>
 
-    <strong>Lorsque l'on décide de le faire, on trouve des solutions.</strong>
+    <strong>Lorsque l'on décide de le faire, on trouve toujours la solution.</strong>
 
     <br><br>
 
@@ -526,7 +526,7 @@ function getDevelopmentHtml(){
 
     <br><br>
 
-    <strong>Il existe toujours une solution.</strong>
+    <strong>Il existe toujours la solution! </strong>
 
   </p>
 
@@ -548,7 +548,7 @@ function getDevelopmentHtml(){
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -611,7 +611,7 @@ function getDevelopmentHtml(){
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -697,7 +697,7 @@ function getDevelopmentHtml(){
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -774,7 +774,7 @@ function getDevelopmentHtml(){
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -851,7 +851,7 @@ function getDevelopmentHtml(){
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
