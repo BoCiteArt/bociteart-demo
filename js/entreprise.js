@@ -294,7 +294,7 @@ function buildBackButton(options){
     `;
   }
 
-function bindBackButton(){
+ function bindBackButton(){
 
   document
     .querySelectorAll(
@@ -307,11 +307,89 @@ function bindBackButton(){
         event.preventDefault();
         event.stopPropagation();
 
+        /*
+          Si nous sommes sur l'accueil Entreprise
+          avec les bandes défilantes,
+          il n'y a plus de rubrique Entreprise précédente.
+
+          Le bouton Retour doit donc fermer
+          l'espace Entreprise pour revenir
+          à la page qui l'avait ouvert.
+        */
+
+        if(
+          state.currentScreen === "home"
+        ){
+
+          const modal =
+            button.closest(
+              ".modal-content, .modalContent, #modalContent"
+            );
+
+          if(modal){
+
+            const closeButton =
+              modal.querySelector(
+                ".modal-close," +
+                ".modalClose," +
+                ".close-modal," +
+                "[data-close-modal]," +
+                "button[aria-label='Fermer']," +
+                "button[aria-label='Close']"
+              );
+
+            if(closeButton){
+
+              closeButton.click();
+              return;
+            }
+          }
+
+          /*
+            Sécurité si le bouton X
+            n'est pas trouvé dans la fenêtre.
+          */
+
+          const globalCloseButton =
+            document.querySelector(
+              ".modal-close," +
+              ".modalClose," +
+              ".close-modal," +
+              "[data-close-modal]," +
+              "button[aria-label='Fermer']," +
+              "button[aria-label='Close']"
+            );
+
+          if(globalCloseButton){
+
+            globalCloseButton.click();
+            return;
+          }
+
+          if(
+            typeof window.closeModal ===
+            "function"
+          ){
+
+            window.closeModal();
+            return;
+          }
+
+        }
+
+        /*
+          Dans toutes les sous-rubriques,
+          comportement normal :
+          retour à l'écran précédent.
+        */
+
         goBack();
+
       };
+
     });
+
 }
-   
   function bindPresentationFooter(){
 
     document
