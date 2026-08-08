@@ -7203,126 +7203,304 @@ window.openEmploymentCompaniesDirectory =
 
 /* =========================================================
    BO'CITÉART — MODULE ENTREPRISE
-   PARTIE 4B — MUTUALISATION
+   PARTIE 4B — MOTEUR BESOINS / CONSULTATIONS / RÉPONSES
+   L'écran public est géré par entreprise-mutualisation.js
    ========================================================= */
 
-(function initBociteEntrepriseMutualisation(){
+(function initBociteEntrepriseMutualisationEngine(){
 
   "use strict";
 
-  const module = window.BociteEntreprise;
+  const module =
+    window.BociteEntreprise;
 
   if(!module){
+
     console.error(
       "Bo'CitéArt Entreprise : les parties précédentes doivent être chargées."
     );
+
     return;
   }
 
   const MUTUALISATION_STORE_KEY =
-    "bociteart_entreprise_mutualisation_v2";
-
-  function getElement(id){
-    return document.getElementById(id);
-  }
+    "bociteart_entreprise_mutualisation_v3";
 
   function escapeValue(value){
-    return module.safeEscape(value);
+
+    if(
+      typeof module.safeEscape ===
+      "function"
+    ){
+      return module.safeEscape(value);
+    }
+
+    return String(
+      value == null ? "" : value
+    );
+  }
+
+  function createId(prefix){
+
+    return (
+      prefix +
+      "-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2,8)
+    );
   }
 
   function getDefaultData(){
+
     return {
-      electricite:{
-        label:"Électricité",
-        count:17,
-        target:30,
-        interested:false
+
+      categories:{
+
+        electricite:{
+          id:"electricite",
+          label:"Électricité",
+          count:17,
+          target:30,
+          interested:false,
+          status:"ouverte"
+        },
+
+        gaz:{
+          id:"gaz",
+          label:"Gaz",
+          count:9,
+          target:30,
+          interested:false,
+          status:"ouverte"
+        },
+
+        telephonie:{
+          id:"telephonie",
+          label:"Téléphonie et Internet",
+          count:24,
+          target:30,
+          interested:false,
+          status:"ouverte"
+        },
+
+        assurances:{
+          id:"assurances",
+          label:"Assurances professionnelles",
+          count:12,
+          target:30,
+          interested:false,
+          status:"ouverte"
+        },
+
+        mutuelle:{
+          id:"mutuelle",
+          label:"Mutuelle",
+          count:8,
+          target:30,
+          interested:false,
+          status:"ouverte"
+        },
+
+        fournitures:{
+          id:"fournitures",
+          label:"Fournitures professionnelles",
+          count:6,
+          target:30,
+          interested:false,
+          status:"ouverte"
+        },
+
+        carburant:{
+          id:"carburant",
+          label:"Carburant",
+          count:11,
+          target:30,
+          interested:false,
+          status:"ouverte"
+        },
+
+        formation:{
+          id:"formation",
+          label:"Formation",
+          count:5,
+          target:20,
+          interested:false,
+          status:"ouverte"
+        }
+
       },
-      gaz:{
-        label:"Gaz",
-        count:9,
-        target:30,
-        interested:false
-      },
-      telephonie:{
-        label:"Téléphonie et Internet",
-        count:24,
-        target:30,
-        interested:false
-      },
-      assurances:{
-        label:"Assurances professionnelles",
-        count:12,
-        target:30,
-        interested:false
-      },
-      mutuelle:{
-        label:"Mutuelle",
-        count:8,
-        target:30,
-        interested:false
-      },
-      fournitures:{
-        label:"Fournitures professionnelles",
-        count:6,
-        target:30,
-        interested:false
-      },
-      carburant:{
-        label:"Carburant",
-        count:11,
-        target:30,
-        interested:false
-      },
-      formation:{
-        label:"Formation",
-        count:5,
-        target:20,
-        interested:false
-      },
-      autres:[]
+
+      customNeeds:[],
+
+      consultations:[],
+
+      supplierRequests:[],
+
+      supplierResponses:[],
+
+      partnerInbox:[],
+
+      commitments:[],
+
+      billingQueue:[],
+
+      auditLog:[]
+    };
+  }
+
+  function normalizeData(data){
+
+    const defaults =
+      getDefaultData();
+
+    const source =
+      data &&
+      typeof data === "object"
+        ? data
+        : {};
+
+    return {
+
+      categories:
+        Object.assign(
+          {},
+          defaults.categories,
+          source.categories || {}
+        ),
+
+      customNeeds:
+        Array.isArray(source.customNeeds)
+          ? source.customNeeds
+          : [],
+
+      consultations:
+        Array.isArray(source.consultations)
+          ? source.consultations
+          : [],
+
+      supplierRequests:
+        Array.isArray(source.supplierRequests)
+          ? source.supplierRequests
+          : [],
+
+      supplierResponses:
+        Array.isArray(source.supplierResponses)
+          ? source.supplierResponses
+          : [],
+
+      partnerInbox:
+        Array.isArray(source.partnerInbox)
+          ? source.partnerInbox
+          : [],
+
+      commitments:
+        Array.isArray(source.commitments)
+          ? source.commitments
+          : [],
+
+      billingQueue:
+        Array.isArray(source.billingQueue)
+          ? source.billingQueue
+          : [],
+
+      auditLog:
+        Array.isArray(source.auditLog)
+          ? source.auditLog
+          : []
     };
   }
 
   function loadMutualisationData(){
+
     try{
+
       const raw =
-        localStorage.getItem(MUTUALISATION_STORE_KEY);
-
-      const parsed =
-        raw ? JSON.parse(raw) : null;
-
-      if(parsed && typeof parsed === "object"){
-        return Object.assign(
-          getDefaultData(),
-          parsed
+        localStorage.getItem(
+          MUTUALISATION_STORE_KEY
         );
+
+      if(!raw){
+        return getDefaultData();
       }
+
+      return normalizeData(
+        JSON.parse(raw)
+      );
+
     }catch(error){
+
       console.warn(
-        "Lecture des mutualisations impossible :",
+        "Lecture des besoins professionnels impossible :",
         error
       );
-    }
 
-    return getDefaultData();
+      return getDefaultData();
+    }
   }
 
   function saveMutualisationData(data){
+
+    const normalized =
+      normalizeData(data);
+
     try{
+
       localStorage.setItem(
         MUTUALISATION_STORE_KEY,
-        JSON.stringify(data)
+        JSON.stringify(normalized)
       );
+
+      return true;
+
     }catch(error){
+
       console.warn(
-        "Enregistrement des mutualisations impossible :",
+        "Enregistrement des besoins professionnels impossible :",
         error
       );
+
+      return false;
     }
   }
 
-  function getProgressPercent(count, target){
+  function addAuditEvent(
+    type,
+    details
+  ){
+
+    const data =
+      loadMutualisationData();
+
+    data.auditLog.push({
+
+      id:
+        createId("LOG"),
+
+      type:
+        String(type || ""),
+
+      details:
+        details || {},
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date()
+          .toLocaleString("fr-FR")
+    });
+
+    saveMutualisationData(data);
+  }
+
+  function getProgressPercent(
+    count,
+    target
+  ){
+
     if(!target){
       return 0;
     }
@@ -7337,214 +7515,543 @@ window.openEmploymentCompaniesDirectory =
     );
   }
 
-function getMutualisationHtml(){
+  function addCustomNeed(options){
 
-return `
+    const input =
+      options || {};
 
- <div class="box entrepriseInfoBox">
-  style="border-left:6px solid #2f5d46;">
+    const title =
+      String(
+        input.title || ""
+      ).trim();
 
-  <div class="sectionTitle">
-    Connaissez-vous le nom de cinq entreprises
-    présentes dans votre ville ?
-  </div>
+    const description =
+      String(
+        input.description || ""
+      ).trim();
 
-  <br>
+    const category =
+      String(
+        input.category ||
+        "autre"
+      ).trim();
 
-  Comme une très grande majorité des habitants,
+    if(!title){
 
-  <strong>probablement NON&nbsp;!</strong>
+      return {
+        ok:false,
+        error:"Titre du besoin obligatoire."
+      };
+    }
 
-  <br><br>
+    const data =
+      loadMutualisationData();
 
-  Pourtant, votre commune possède des entreprises,
-  des artisans,
-  des commerces,
-  des prestataires de services
-  et de nombreux savoir-faire
-  souvent méconnus.
+    const need = {
 
-  <br><br>
+      id:
+        createId("BESOIN"),
 
-  Avant de rechercher une solution ailleurs,
-  prenez le temps de découvrir
-  les compétences déjà présentes
-  sur votre territoire.
+      title:
+        title,
 
-  <br><br>
+      description:
+        description,
 
-  <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-a pour vocation de rendre ces acteurs plus visibles
-afin de renforcer et de favoriser avant tout
-les échanges,
-les partenariats,
-l'emploi
-et le développement économique local,
-en permettant à chaque entreprise,
-artisan,
-commerce
-et professionnel
-d'être vu,
-connu
-et reconnu
-d'abord dans sa ville,
-puis sur son territoire.
-</div>
+      category:
+        category,
 
- <div class="box entrepriseInfoBox">
-<strong>
+      count:
+        1,
 
-Comparez • Choisissez • Validez
+      target:
+        Number(
+          input.target || 20
+        ),
 
-</strong>
+      status:
+        "ouverte",
 
-<br><br>
+      createdAt:
+        Date.now(),
 
-Bo'CitéArt permettra progressivement
-de comparer les propositions reçues
-pour différents postes de dépenses.
+      createdAtFr:
+        new Date()
+          .toLocaleString("fr-FR")
+    };
 
-</div>
-
- <div class="box entrepriseInfoBox">
-
-Les principales mutualisations
-pourront concerner :
-
-<br><br>
-
-• Électricité
-
-<br>
-
-• Gaz
-
-<br>
-
-• Téléphonie
-
-<br>
-
-• Internet
-
-<br>
-
-• Assurances
-
-<br>
-
-• Véhicules
-
-<br>
-
-• Entretien
-
-<br>
-
-• Formation
-
-<br>
-
-• Fournitures
-
-<br>
-
-• Achats groupés
-
-</div>
-
- <div class="box entrepriseInfoBox">
-
-<strong>
-
-Comment cela fonctionne ?
-
-</strong>
-
-<br><br>
-
-Lorsqu'un nombre suffisant
-d'entreprises
-exprime le même besoin,
-Bo'CitéArt peut lancer
-une recherche commune.
-
-<br><br>
-
-Les propositions reçues
-seront regroupées
-dans votre Tableau de Direction.
-
-</div>
-
- <div class="box entrepriseInfoBox">
-
-Vous resterez toujours libre :
-
-<br><br>
-
-• d'accepter
-
-<br>
-
-• de refuser
-
-<br>
-
-• de comparer
-
-<br>
-
-• de demander un autre devis
-
-</div>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;">
-
-<button
-id="mutualisationRequestBtn"
-class="choiceBtn">
-
-Déclarer un besoin
-
-</button>
-
-<button
-id="mutualisationAnswersBtn"
-class="choiceBtn">
-
-Voir les réponses reçues
-
-</button>
-
-<button
-id="mutualisationDirectionBtn"
-class="choiceBtn">
-
-Ouvrir le Tableau de Direction
-
-</button>
-
-</div>
-
-`;
-}
-
-  function openMutualisation(){
-    module.renderModal(
-      "Réduisez vos charges",
-      getMutualisationHtml()
+    data.customNeeds.push(
+      need
     );
 
-    window.setTimeout(function(){
-      bindMutualisation();
-    },0);
+    saveMutualisationData(data);
+
+    addAuditEvent(
+      "besoin_cree",
+      {
+        needId:need.id,
+        title:need.title
+      }
+    );
+
+    return {
+      ok:true,
+      need:need
+    };
   }
 
-  module.registerScreen(
-    "mutualisation",
-    openMutualisation
-  );
+  function joinNeed(needId){
+
+    const data =
+      loadMutualisationData();
+
+    let need =
+      data.customNeeds.find(
+        function(item){
+
+          return (
+            item.id === needId
+          );
+        }
+      );
+
+    if(!need){
+
+      const categoryKeys =
+        Object.keys(
+          data.categories
+        );
+
+      for(
+        let i = 0;
+        i < categoryKeys.length;
+        i += 1
+      ){
+
+        const key =
+          categoryKeys[i];
+
+        if(
+          key === needId ||
+          data.categories[key].id === needId
+        ){
+
+          need =
+            data.categories[key];
+
+          break;
+        }
+      }
+    }
+
+    if(!need){
+
+      return {
+        ok:false,
+        error:"Besoin introuvable."
+      };
+    }
+
+    need.count =
+      Number(
+        need.count || 0
+      ) + 1;
+
+    saveMutualisationData(data);
+
+    addAuditEvent(
+      "besoin_rejoint",
+      {
+        needId:
+          need.id || needId,
+
+        count:
+          need.count
+      }
+    );
+
+    if(
+      Number(need.count) >=
+      Number(need.target || 0)
+    ){
+
+      prepareConsultation(
+        need.id || needId
+      );
+    }
+
+    return {
+      ok:true,
+      need:need
+    };
+  }
+
+  function prepareConsultation(needId){
+
+    const data =
+      loadMutualisationData();
+
+    const existing =
+      data.consultations.find(
+        function(item){
+
+          return (
+            item.needId === needId &&
+            item.status !== "terminee"
+          );
+        }
+      );
+
+    if(existing){
+
+      return {
+        ok:true,
+        consultation:existing
+      };
+    }
+
+    const consultation = {
+
+      id:
+        createId("CONSULT"),
+
+      needId:
+        needId,
+
+      status:
+        "a_preparer",
+
+      supplierSearchStatus:
+        "en_attente",
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date()
+          .toLocaleString("fr-FR"),
+
+      launchedAt:
+        null,
+
+      launchedAtFr:
+        ""
+    };
+
+    data.consultations.push(
+      consultation
+    );
+
+    saveMutualisationData(data);
+
+    addAuditEvent(
+      "consultation_preparee",
+      {
+        consultationId:
+          consultation.id,
+
+        needId:
+          needId
+      }
+    );
+
+    return {
+      ok:true,
+      consultation:
+        consultation
+    };
+  }
+
+  function queueSupplierRequest(
+    consultationId,
+    supplier
+  ){
+
+    const data =
+      loadMutualisationData();
+
+    const request = {
+
+      id:
+        createId("FOURNISSEUR"),
+
+      consultationId:
+        consultationId,
+
+      supplier:
+        supplier || {},
+
+      status:
+        "a_envoyer",
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date()
+          .toLocaleString("fr-FR")
+    };
+
+    data.supplierRequests.push(
+      request
+    );
+
+    saveMutualisationData(data);
+
+    return request;
+  }
+
+  function recordSupplierResponse(
+    consultationId,
+    response
+  ){
+
+    const data =
+      loadMutualisationData();
+
+    const supplierResponse = {
+
+      id:
+        createId("REPONSE"),
+
+      consultationId:
+        consultationId,
+
+      supplierId:
+        String(
+          response &&
+          response.supplierId || ""
+        ),
+
+      supplierName:
+        String(
+          response &&
+          response.supplierName || ""
+        ),
+
+      title:
+        String(
+          response &&
+          response.title || ""
+        ),
+
+      price:
+        Number(
+          response &&
+          response.price || 0
+        ),
+
+      details:
+        String(
+          response &&
+          response.details || ""
+        ),
+
+      status:
+        "recue",
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date()
+          .toLocaleString("fr-FR")
+    };
+
+    data.supplierResponses.push(
+      supplierResponse
+    );
+
+    data.partnerInbox.push({
+
+      id:
+        createId("INBOX"),
+
+      consultationId:
+        consultationId,
+
+      responseId:
+        supplierResponse.id,
+
+      title:
+        supplierResponse.title ||
+        "Nouvelle proposition reçue",
+
+      status:
+        "non_lue",
+
+      createdAt:
+        supplierResponse.createdAt,
+
+      createdAtFr:
+        supplierResponse.createdAtFr
+    });
+
+    saveMutualisationData(data);
+
+    addAuditEvent(
+      "reponse_fournisseur_recue",
+      {
+        consultationId:
+          consultationId,
+
+        responseId:
+          supplierResponse.id
+      }
+    );
+
+    return supplierResponse;
+  }
+
+  function getPartnerInbox(){
+
+    return loadMutualisationData()
+      .partnerInbox
+      .slice()
+      .sort(
+        function(a,b){
+
+          return (
+            Number(
+              b.createdAt || 0
+            ) -
+            Number(
+              a.createdAt || 0
+            )
+          );
+        }
+      );
+  }
+
+  function recordCommitment(
+    responseId,
+    decision
+  ){
+
+    const data =
+      loadMutualisationData();
+
+    const commitment = {
+
+      id:
+        createId("DECISION"),
+
+      responseId:
+        responseId,
+
+      decision:
+        decision === "accepte"
+          ? "accepte"
+          : "refuse",
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date()
+          .toLocaleString("fr-FR")
+    };
+
+    data.commitments.push(
+      commitment
+    );
+
+    saveMutualisationData(data);
+
+    addAuditEvent(
+      "decision_partenaire",
+      {
+        responseId:
+          responseId,
+
+        decision:
+          commitment.decision
+      }
+    );
+
+    return commitment;
+  }
+
+  function queueBillingRecord(options){
+
+    const input =
+      options || {};
+
+    const data =
+      loadMutualisationData();
+
+    const record = {
+
+      id:
+        createId("FACT"),
+
+      supplierId:
+        String(
+          input.supplierId || ""
+        ),
+
+      consultationId:
+        String(
+          input.consultationId || ""
+        ),
+
+      contractId:
+        String(
+          input.contractId || ""
+        ),
+
+      amount:
+        Number(
+          input.amount || 0
+        ),
+
+      status:
+        "a_facturer",
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date()
+          .toLocaleString("fr-FR")
+    };
+
+    data.billingQueue.push(
+      record
+    );
+
+    saveMutualisationData(data);
+
+    addAuditEvent(
+      "facturation_preparee",
+      {
+        billingId:
+          record.id,
+
+        consultationId:
+          record.consultationId
+      }
+    );
+
+    return record;
+  }
+
+  /*
+    IMPORTANT :
+    Ces deux fonctions sont les points d'entrée
+    du futur moteur IA / serveur.
+
+    L'IA ou le backend pourra :
+    - rechercher les fournisseurs ;
+    - préparer les consultations ;
+    - transmettre les demandes ;
+    - récupérer les réponses ;
+    - alimenter la boîte partenaire ;
+    - déclencher la facturation.
+
+    Aucun envoi externe réel n'est encore effectué
+    directement depuis ce fichier JavaScript.
+  */
 
   module.loadMutualisationData =
     loadMutualisationData;
@@ -7552,767 +8059,643 @@ Ouvrir le Tableau de Direction
   module.saveMutualisationData =
     saveMutualisationData;
 
-  module.openMutualisation =
-    openMutualisation;
+  module.getMutualisationProgress =
+    getProgressPercent;
+
+  module.addMutualisationNeed =
+    addCustomNeed;
+
+  module.joinMutualisationNeed =
+    joinNeed;
+
+  module.prepareMutualisationConsultation =
+    prepareConsultation;
+
+  module.queueMutualisationSupplierRequest =
+    queueSupplierRequest;
+
+  module.recordMutualisationSupplierResponse =
+    recordSupplierResponse;
+
+  module.getMutualisationPartnerInbox =
+    getPartnerInbox;
+
+  module.recordMutualisationCommitment =
+    recordCommitment;
+
+  module.queueMutualisationBilling =
+    queueBillingRecord;
 
   console.log(
-    "✅ Module Entreprise — partie 4B chargée"
+    "✅ Moteur besoins, consultations, réponses et facturation préparé"
   );
 
 })();
 
 /* =========================================================
    BO'CITÉART — MODULE ENTREPRISE
-   PARTIE 4C — PROPOSITIONS, VOTES ET ENGAGEMENTS
+   PARTIE 4C — RÉPONSES FOURNISSEURS ET DÉCISIONS
    ========================================================= */
 
-(function initBociteEntrepriseMutualisationVotes(){
+(function initBociteEntrepriseMutualisationResponses(){
 
   "use strict";
 
-  const module = window.BociteEntreprise;
+  const module =
+    window.BociteEntreprise;
 
   if(!module){
+
     console.error(
       "Bo'CitéArt Entreprise : les parties précédentes doivent être chargées."
     );
+
     return;
   }
 
-  const PROPOSALS_STORE_KEY =
-    "bociteart_entreprise_mutualisation_proposals_v1";
-
   function getElement(id){
+
     return document.getElementById(id);
   }
 
   function escapeValue(value){
-    return module.safeEscape(value);
-  }
 
-  function loadProposals(){
-    try{
-      const raw =
-        localStorage.getItem(PROPOSALS_STORE_KEY);
-
-      const parsed =
-        raw ? JSON.parse(raw) : null;
-
-      if(parsed && typeof parsed === "object"){
-        return parsed;
-      }
-    }catch(error){
-      console.warn(
-        "Lecture des propositions impossible :",
-        error
-      );
+    if(
+      typeof module.safeEscape ===
+      "function"
+    ){
+      return module.safeEscape(value);
     }
 
-    return {};
+    return String(
+      value == null ? "" : value
+    );
   }
 
-  function saveProposals(data){
-    try{
-      localStorage.setItem(
-        PROPOSALS_STORE_KEY,
-        JSON.stringify(data || {})
-      );
-    }catch(error){
-      console.warn(
-        "Enregistrement des propositions impossible :",
-        error
-      );
+  function loadData(){
+
+    if(
+      typeof module.loadMutualisationData ===
+      "function"
+    ){
+
+      return module.loadMutualisationData();
     }
+
+    return {
+      supplierResponses:[],
+      partnerInbox:[],
+      commitments:[]
+    };
   }
 
-  function getMutualisationLabel(key){
+  function getResponseById(responseId){
+
     const data =
-      typeof module.loadMutualisationData === "function"
-        ? module.loadMutualisationData()
-        : {};
+      loadData();
 
     return (
-      data[key] &&
-      data[key].label
-    )
-      ? data[key].label
-      : key;
+      Array.isArray(
+        data.supplierResponses
+      )
+        ? data.supplierResponses.find(
+            function(item){
+
+              return (
+                item.id === responseId
+              );
+            }
+          )
+        : null
+    );
   }
 
-  function ensureProposalGroup(key){
+  function getPartnerResponses(){
+
     const data =
-      loadProposals();
+      loadData();
 
-    if(!data[key]){
-      data[key] = {
-        key:key,
-        label:getMutualisationLabel(key),
-        status:"consultation_a_preparer",
-        selectedProposalId:"",
-        finalCommitment:false,
-        unableToParticipate:false,
-        unableDate:null,
-        unableDateFr:"",
-        updatedAt:Date.now(),
-        updatedAtFr:
-          new Date().toLocaleString("fr-FR"),
-        proposals:[
-          {
-            id:key + "-P1",
-            title:"Proposition 1",
-            provider:"Prestataire A",
-            description:
-              "Première proposition de démonstration.",
-            estimatedSaving:"À préciser",
-            deadline:"À préciser",
-            votes:0
-          },
-          {
-            id:key + "-P2",
-            title:"Proposition 2",
-            provider:"Prestataire B",
-            description:
-              "Deuxième proposition de démonstration.",
-            estimatedSaving:"À préciser",
-            deadline:"À préciser",
-            votes:0
-          },
-          {
-            id:key + "-P3",
-            title:"Proposition 3",
-            provider:"Prestataire C",
-            description:
-              "Troisième proposition de démonstration.",
-            estimatedSaving:"À préciser",
-            deadline:"À préciser",
-            votes:0
-          }
-        ]
-      };
+    const responses =
+      Array.isArray(
+        data.supplierResponses
+      )
+        ? data.supplierResponses.slice()
+        : [];
 
-      saveProposals(data);
-    }
+    return responses.sort(
+      function(a,b){
 
-    return data[key];
+        return (
+          Number(
+            b.createdAt || 0
+          ) -
+          Number(
+            a.createdAt || 0
+          )
+        );
+      }
+    );
   }
 
-  function getVotesHtml(key){
-    const group =
-      ensureProposalGroup(key);
+  function getDecisionForResponse(
+    responseId
+  ){
+
+    const data =
+      loadData();
+
+    const commitments =
+      Array.isArray(
+        data.commitments
+      )
+        ? data.commitments
+        : [];
+
+    return commitments
+      .slice()
+      .reverse()
+      .find(
+        function(item){
+
+          return (
+            item.responseId ===
+            responseId
+          );
+        }
+      ) || null;
+  }
+
+  function getResponseCardHtml(
+    response
+  ){
+
+    const decision =
+      getDecisionForResponse(
+        response.id
+      );
 
     return `
-       <div class="box entrepriseInfoBox">
-        style="border-left:6px solid #2f5d46;">
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          border-left:6px solid #2f5d46;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
 
-        <strong style="font-size:18px;">
-          ${escapeValue(group.label)}
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:10px;
+          ">
+          ${escapeValue(
+            response.title ||
+            "Proposition reçue"
+          )}
         </strong>
 
+        <strong>Prestataire :</strong>
+
+        ${escapeValue(
+          response.supplierName ||
+          "Non précisé"
+        )}
+
         <br><br>
 
-        Bo'CitéArt présente ici les propositions reçues.
+        <strong>Proposition :</strong>
 
-        <br><br>
+        <br>
 
-        Chaque entreprise peut comparer,
-        choisir puis confirmer son engagement.
-      </div>
-
-       <div class="box entrepriseInfoBox">
-        <strong>État d’avancement</strong><br><br>
+        ${escapeValue(
+          response.details ||
+          "Aucun détail complémentaire."
+        )}
 
         ${
-          group.status === "consultation_a_preparer"
-            ? "La consultation doit encore être préparée."
-            : escapeValue(group.status)
+          Number(
+            response.price || 0
+          ) > 0
+            ? `
+              <br><br>
+
+              <strong>Prix proposé :</strong>
+
+              ${escapeValue(
+                response.price
+              )} €
+            `
+            : ""
         }
 
         <br><br>
 
-        Dernière mise à jour :
-        ${escapeValue(group.updatedAtFr || "")}
-      </div>
+        <strong>Reçue le :</strong>
 
-      <div
-        id="mutualisationProposalList">
-      </div>
+        ${escapeValue(
+          response.createdAtFr ||
+          ""
+        )}
 
-       <div class="box entrepriseInfoBox">
-        style="margin-top:14px;">
+        ${
+          decision
+            ? `
+              <div
+                style="
+                  margin-top:14px;
+                  padding-top:12px;
+                  border-top:1px solid #d8d8d8;
+                ">
 
-        <strong>Votre décision</strong><br><br>
+                <strong
+                  style="
+                    color:#2f5d46;
+                    font-size:16px;
+                    font-weight:700;
+                  ">
+                  Votre décision
+                </strong>
 
-        Après avoir choisi une proposition,
-        vous pourrez confirmer définitivement
-        votre participation.
+                <br><br>
 
-        <br><br>
+                ${
+                  decision.decision ===
+                  "accepte"
+                    ? "Proposition acceptée."
+                    : "Proposition refusée."
+                }
 
-        Cette confirmation engage l’entreprise
-        à participer à la prestation retenue.
-      </div>
+                <br>
 
-      <button
-        id="mutualisationConfirmCommitmentBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;margin-top:10px;">
-        Confirmer définitivement ma participation
-      </button>
+                ${escapeValue(
+                  decision.createdAtFr ||
+                  ""
+                )}
 
-      <button
-        id="mutualisationUnableBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:8px;
-          background:#fff;
-        ">
-        Je ne peux pas participer à cet événement
-      </button>
+              </div>
+            `
+            : `
+              <div
+                style="
+                  display:flex;
+                  gap:8px;
+                  flex-wrap:wrap;
+                  margin-top:14px;
+                ">
 
-      <div
-        id="mutualisationDecisionStatus"
-        class="muted"
-        style="margin-top:10px;">
+                <button
+                  class="choiceBtn mutualisationAcceptResponseBtn"
+                  type="button"
+                  data-response-id="${escapeValue(
+                    response.id
+                  )}"
+                  style="
+                    flex:1 1 140px;
+                  ">
+                  Accepter
+                </button>
+
+                <button
+                  class="choiceBtn mutualisationRejectResponseBtn"
+                  type="button"
+                  data-response-id="${escapeValue(
+                    response.id
+                  )}"
+                  style="
+                    flex:1 1 140px;
+                    background:#fff;
+                  ">
+                  Refuser
+                </button>
+
+              </div>
+            `
+        }
+
       </div>
     `;
   }
 
-  function renderProposalList(key){
+  function renderPartnerResponses(){
+
     const host =
-      getElement("mutualisationProposalList");
+      getElement(
+        "mutualisationPartnerResponsesList"
+      );
 
     if(!host){
       return;
     }
 
-    const all =
-      loadProposals();
+    const responses =
+      getPartnerResponses();
 
-    const group =
-      all[key] ||
-      ensureProposalGroup(key);
+    if(!responses.length){
+
+      host.innerHTML = `
+        <div
+          class="box entrepriseInfoBox"
+          style="
+            color:#111;
+            font-size:14px;
+            font-weight:400;
+          ">
+
+          Aucune proposition reçue
+          pour le moment.
+
+        </div>
+      `;
+
+      return;
+    }
 
     host.innerHTML =
-      group.proposals.map(function(proposal){
-
-        const selected =
-          group.selectedProposalId ===
-          proposal.id;
-
-        return `
-           <div class="box entrepriseInfoBox">
-            <strong style="font-size:16px;">
-              ${escapeValue(proposal.title)}
-            </strong>
-
-            <br><br>
-
-            Prestataire :
-            <strong>
-              ${escapeValue(proposal.provider)}
-            </strong>
-
-            <br><br>
-
-            ${escapeValue(proposal.description)}
-
-            <br><br>
-
-            Économie estimée :
-            <strong>
-              ${escapeValue(proposal.estimatedSaving)}
-            </strong>
-
-            <br>
-
-            Délai :
-            <strong>
-              ${escapeValue(proposal.deadline)}
-            </strong>
-
-            <br><br>
-
-            Votes enregistrés :
-            <strong>
-              ${Number(proposal.votes || 0)}
-            </strong>
-
-            <button
-              class="choiceBtn mutualisationVoteBtn"
-              type="button"
-              data-proposal-id="${escapeValue(proposal.id)}"
-              style="
-                width:100%;
-                margin-top:10px;
-                ${selected ? "opacity:.65;" : ""}
-              ">
-              ${
-                selected
-                  ? "Proposition choisie"
-                  : "Choisir cette proposition"
-              }
-            </button>
-          </div>
-        `;
-      }).join("");
+      responses
+        .map(
+          getResponseCardHtml
+        )
+        .join("");
 
     host
-      .querySelectorAll(".mutualisationVoteBtn")
-      .forEach(function(button){
+      .querySelectorAll(
+        ".mutualisationAcceptResponseBtn"
+      )
+      .forEach(
+        function(button){
 
-        button.onclick = function(){
-          chooseProposal(
-            key,
-            button.getAttribute(
-              "data-proposal-id"
-            )
-          );
-        };
-      });
+          button.onclick =
+            function(){
+
+              decideResponse(
+                button.getAttribute(
+                  "data-response-id"
+                ),
+                "accepte"
+              );
+            };
+        }
+      );
+
+    host
+      .querySelectorAll(
+        ".mutualisationRejectResponseBtn"
+      )
+      .forEach(
+        function(button){
+
+          button.onclick =
+            function(){
+
+              decideResponse(
+                button.getAttribute(
+                  "data-response-id"
+                ),
+                "refuse"
+              );
+            };
+        }
+      );
   }
 
-  function chooseProposal(key, proposalId){
-    const data =
-      loadProposals();
+  function decideResponse(
+    responseId,
+    decision
+  ){
 
-    const group =
-      data[key] ||
-      ensureProposalGroup(key);
-
-    if(
-      group.finalCommitment
-    ){
-      alert(
-        "Votre participation est déjà confirmée définitivement."
+    const response =
+      getResponseById(
+        responseId
       );
-      return;
-    }
 
-    if(
-      group.selectedProposalId ===
-      proposalId
-    ){
-      alert(
-        "Cette proposition est déjà sélectionnée."
-      );
-      return;
-    }
+    if(!response){
 
-    group.proposals.forEach(function(proposal){
-      if(
-        proposal.id ===
-        group.selectedProposalId &&
-        Number(proposal.votes || 0) > 0
-      ){
-        proposal.votes =
-          Number(proposal.votes || 0) - 1;
-      }
-    });
-
-    const selected =
-      group.proposals.find(function(proposal){
-        return proposal.id === proposalId;
-      });
-
-    if(!selected){
       alert(
         "Cette proposition est introuvable."
       );
+
       return;
     }
 
-    selected.votes =
-      Number(selected.votes || 0) + 1;
+    const existingDecision =
+      getDecisionForResponse(
+        responseId
+      );
 
-    group.selectedProposalId =
-      proposalId;
+    if(existingDecision){
 
-    group.status =
-      "choix_en_cours";
+      alert(
+        "Votre décision est déjà enregistrée."
+      );
 
-    group.updatedAt =
-      Date.now();
+      return;
+    }
 
-    group.updatedAtFr =
-      new Date().toLocaleString("fr-FR");
+    const label =
+      decision === "accepte"
+        ? "accepter"
+        : "refuser";
 
-    data[key] = group;
+    const confirmation =
+      confirm(
+        "Confirmer votre décision : " +
+        label +
+        " cette proposition ?"
+      );
 
-    saveProposals(data);
-    renderProposalList(key);
-    refreshDecisionStatus(key);
+    if(!confirmation){
+      return;
+    }
 
-    alert(
-      "Votre choix est enregistré.\n\n" +
-      "Vous pouvez encore le modifier tant que " +
-      "vous n’avez pas confirmé définitivement votre participation."
+    if(
+      typeof module.recordMutualisationCommitment !==
+      "function"
+    ){
+
+      alert(
+        "Le moteur de décision est indisponible."
+      );
+
+      return;
+    }
+
+    module.recordMutualisationCommitment(
+      responseId,
+      decision
     );
-  }
 
-  function confirmCommitment(key){
-    const data =
-      loadProposals();
+    /*
+      Si la proposition est acceptée,
+      on prépare la suite administrative.
 
-    const group =
-      data[key] ||
-      ensureProposalGroup(key);
+      La facturation réelle restera gérée
+      par le backend / service fournisseur.
+    */
 
-    if(!group.selectedProposalId){
-      alert(
-        "Choisissez d’abord une proposition."
-      );
-      return;
-    }
+    if(
+      decision === "accepte" &&
+      typeof module.queueMutualisationBilling ===
+      "function"
+    ){
 
-    if(group.finalCommitment){
-      alert(
-        "Votre participation est déjà confirmée."
-      );
-      return;
-    }
+      module.queueMutualisationBilling({
 
-    const selected =
-      group.proposals.find(function(proposal){
-        return (
-          proposal.id ===
-          group.selectedProposalId
-        );
+        supplierId:
+          response.supplierId || "",
+
+        consultationId:
+          response.consultationId || "",
+
+        contractId:
+          response.id || "",
+
+        amount:
+          0
       });
-
-    const confirmation =
-      confirm(
-        "Confirmer définitivement votre participation ?\n\n" +
-        "Proposition retenue : " +
-        (
-          selected
-            ? selected.title + " — " + selected.provider
-            : ""
-        ) +
-        "\n\nCette décision engage l’entreprise."
-      );
-
-    if(!confirmation){
-      return;
     }
 
-    group.finalCommitment = true;
-    group.unableToParticipate = false;
-    group.status = "engagement_confirme";
-    group.commitmentDate = Date.now();
-    group.commitmentDateFr =
-      new Date().toLocaleString("fr-FR");
-
-    group.updatedAt =
-      Date.now();
-
-    group.updatedAtFr =
-      new Date().toLocaleString("fr-FR");
-
-    data[key] = group;
-
-    saveProposals(data);
-    refreshDecisionStatus(key);
+    renderPartnerResponses();
 
     alert(
-      "Votre participation est maintenant confirmée définitivement."
+      decision === "accepte"
+        ? "Votre acceptation est enregistrée."
+        : "Votre refus est enregistré."
     );
   }
 
-  function declareUnable(key){
-    const data =
-      loadProposals();
+  function getPartnerResponsesHtml(){
 
-    const group =
-      data[key] ||
-      ensureProposalGroup(key);
+    return `
 
-    if(group.finalCommitment){
-      alert(
-        "Votre participation a déjà été confirmée définitivement.\n\n" +
-        "Cette option n’est plus disponible."
-      );
-      return;
-    }
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          border-left:6px solid #2f5d46;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
 
-    const confirmation =
-      confirm(
-        "Confirmer que vous ne pouvez pas participer à cet événement ?\n\n" +
-        "Votre place pourra alors être proposée à une autre entreprise."
-      );
+        <strong
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:10px;
+          ">
+          Mes réponses reçues
+        </strong>
 
-    if(!confirmation){
-      return;
-    }
+        Les propositions correspondant
+        à vos demandes sont regroupées ici.
 
-    group.unableToParticipate = true;
-    group.status = "participation_impossible";
-    group.unableDate = Date.now();
-    group.unableDateFr =
-      new Date().toLocaleString("fr-FR");
+        <br><br>
 
-    if(group.selectedProposalId){
-      const selected =
-        group.proposals.find(function(proposal){
-          return (
-            proposal.id ===
-            group.selectedProposalId
-          );
-        });
+        Vous les consultez.
 
-      if(
-        selected &&
-        Number(selected.votes || 0) > 0
-      ){
-        selected.votes =
-          Number(selected.votes || 0) - 1;
-      }
-    }
+        <br>Vous les comparez.
 
-    group.selectedProposalId = "";
+        <br>Vous décidez.
 
-    group.updatedAt =
-      Date.now();
+        <br><br>
 
-    group.updatedAtFr =
-      new Date().toLocaleString("fr-FR");
+        <strong>
+          Votre décision reste toujours la vôtre.
+        </strong>
 
-    data[key] = group;
+      </div>
 
-    saveProposals(data);
-    renderProposalList(key);
-    refreshDecisionStatus(key);
-
-    alert(
-      "Votre impossibilité de participer est enregistrée.\n\n" +
-      "Aucune identité ne sera affichée aux autres participants."
-    );
+      <div
+        id="mutualisationPartnerResponsesList">
+      </div>
+    `;
   }
 
-  function refreshDecisionStatus(key){
-    const host =
-      getElement("mutualisationDecisionStatus");
-
-    if(!host){
-      return;
-    }
-
-    const data =
-      loadProposals();
-
-    const group =
-      data[key] ||
-      ensureProposalGroup(key);
-
-    if(group.finalCommitment){
-      host.innerHTML = `
-         <div class="box entrepriseInfoBox">
-          <strong>
-            Participation confirmée
-          </strong>
-
-          <br><br>
-
-          Date :
-          ${escapeValue(
-            group.commitmentDateFr || ""
-          )}
-        </div>
-      `;
-      return;
-    }
-
-    if(group.unableToParticipate){
-      host.innerHTML = `
-         <div class="box entrepriseInfoBox">
-          <strong>
-            Participation impossible
-          </strong>
-
-          <br><br>
-
-          Votre place peut être proposée
-          à une autre entreprise.
-
-          <br><br>
-
-          Date :
-          ${escapeValue(
-            group.unableDateFr || ""
-          )}
-        </div>
-      `;
-      return;
-    }
-
-    if(group.selectedProposalId){
-      const selected =
-        group.proposals.find(function(proposal){
-          return (
-            proposal.id ===
-            group.selectedProposalId
-          );
-        });
-
-      host.innerHTML = `
-         <div class="box entrepriseInfoBox">
-          Proposition sélectionnée :
-
-          <br><br>
-
-          <strong>
-            ${
-              selected
-                ? escapeValue(
-                    selected.title +
-                    " — " +
-                    selected.provider
-                  )
-                : ""
-            }
-          </strong>
-
-          <br><br>
-
-          Vous devez encore confirmer
-          définitivement votre participation.
-        </div>
-      `;
-      return;
-    }
-
-    host.textContent =
-      "Aucune proposition sélectionnée.";
-  }
-
-  function bindVotes(key){
-    const confirmButton =
-      getElement(
-        "mutualisationConfirmCommitmentBtn"
-      );
-
-    const unableButton =
-      getElement(
-        "mutualisationUnableBtn"
-      );
-
-    if(confirmButton){
-      confirmButton.onclick = function(){
-        confirmCommitment(key);
-      };
-    }
-
-    if(unableButton){
-      unableButton.onclick = function(){
-        declareUnable(key);
-      };
-    }
-
-    renderProposalList(key);
-    refreshDecisionStatus(key);
-  }
-
-  function openMutualisationVotes(key){
-    if(!key){
-      alert(
-        "Mutualisation introuvable."
-      );
-      return;
-    }
-
-    const group =
-      ensureProposalGroup(key);
+  function openPartnerResponses(){
 
     module.renderModal(
-      "Propositions — " + group.label,
-      getVotesHtml(key)
+      "Mes réponses reçues",
+      getPartnerResponsesHtml()
     );
 
-    window.setTimeout(function(){
-      bindVotes(key);
-    },0);
+    window.setTimeout(
+      function(){
+
+        renderPartnerResponses();
+
+      },
+      0
+    );
   }
 
   function getDirectionSummaryHtml(){
-    const proposals =
-      loadProposals();
 
-    const keys =
-      Object.keys(proposals);
+    const responses =
+      getPartnerResponses();
 
-    if(!keys.length){
+    if(!responses.length){
+
       return `
         <div class="box entrepriseInfoBox">
-          Aucune consultation n’est encore ouverte.
+
+          Aucune proposition
+          n'est encore enregistrée.
+
         </div>
       `;
     }
 
-    return keys.map(function(key){
-      const group =
-        proposals[key];
+    return `
+      <div
+        class="box entrepriseInfoBox">
 
-      let status =
-        "En attente de choix";
+        <strong>
+          Propositions reçues :
+        </strong>
 
-      if(group.finalCommitment){
-        status =
-          "Participation confirmée";
-      }else if(group.unableToParticipate){
-        status =
-          "Participation impossible";
-      }else if(group.selectedProposalId){
-        status =
-          "Proposition sélectionnée";
-      }
+        ${responses.length}
 
-      return `
-         <div class="box entrepriseInfoBox">
-          <strong>
-            ${escapeValue(group.label)}
-          </strong>
+        <br><br>
 
-          <br><br>
+        <button
+          id="directionOpenMutualisationResponsesBtn"
+          class="choiceBtn"
+          type="button">
 
-          Statut :
-          <strong>
-            ${escapeValue(status)}
-          </strong>
+          Consulter les propositions
 
-          <br><br>
+        </button>
 
-          <button
-            class="choiceBtn directionOpenProposalBtn"
-            type="button"
-            data-mutualisation-key="${escapeValue(key)}">
-            Consulter les propositions
-          </button>
-        </div>
-      `;
-    }).join("");
+      </div>
+    `;
   }
 
   function bindDirectionProposalButtons(){
-    document
-      .querySelectorAll(
-        ".directionOpenProposalBtn"
-      )
-      .forEach(function(button){
 
-        button.onclick = function(){
-          openMutualisationVotes(
-            button.getAttribute(
-              "data-mutualisation-key"
-            )
-          );
-        };
-      });
+    const button =
+      getElement(
+        "directionOpenMutualisationResponsesBtn"
+      );
+
+    if(button){
+
+      button.onclick =
+        openPartnerResponses;
+    }
   }
 
   module.openMutualisationVotes =
-    openMutualisationVotes;
+    openPartnerResponses;
+
+  module.openMutualisationResponses =
+    openPartnerResponses;
 
   module.getDirectionSummaryHtml =
     getDirectionSummaryHtml;
@@ -8321,11 +8704,10 @@ Ouvrir le Tableau de Direction
     bindDirectionProposalButtons;
 
   console.log(
-    "✅ Module Entreprise — partie 4C chargée"
+    "✅ Réponses fournisseurs et décisions partenaires chargées"
   );
 
 })();
-
 /* =========================================================
    BO'CITÉART — MODULE ENTREPRISE
    PARTIE 5 — VISIBILITÉ ET ÉCONOMIES
