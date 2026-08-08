@@ -2,7 +2,7 @@
 /* =========================================================
    BO'CITÉART — ENTREPRISE
    MODULE MUTUALISATION
-   RÉDUIRE SES CHARGES AUTREMENT
+   POURQUOI PAYER PLUS CHER ?
    ========================================================= */
 
 (function initEntrepriseMutualisation(){
@@ -29,421 +29,658 @@
   function getMutualisationHtml(){
 
     return `
+  <div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Pourquoi payer plus cher ?
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    <strong>J'en ai assez de payer toujours plus !</strong>
+    <br><br>
+
+    Cette phrase...
+    <br>combien de fois l'avez-vous prononcée ?
+    <br><br>
+
+    Ou simplement pensée ?
+    <br><br>
+
+    Électricité.
+    <br>Gaz.
+    <br>Téléphonie.
+    <br>Internet.
+    <br>Assurances.
+    <br>Mutuelles.
+    <br>Papeterie.
+    <br>Fournitures.
+    <br><br>
+
+    Chaque année...
+    <br>les tarifs augmentent.
+    <br><br>
+
+    Et l'on finit toujours par se dire :
+    <br><br>
+
+    <strong>« Je n'ai pas le choix... il faut bien payer. »</strong>
+    <br><br>
+
+    Pourtant...
+    <br><br>
+
+    <strong>Ici, désormais, on n'avance plus seul.</strong>
+    <br><br>
+
+    <strong>On avance ensemble.</strong>
+    <br><br>
+
+    Non pas pour perdre son indépendance.
+    <br><br>
+
+    Bien au contraire.
+    <br><br>
+
+    <strong>Pour la renforcer.</strong>
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Pourquoi chacun continuerait-il à négocier de son côté...
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    ...lorsque plusieurs entreprises rencontrent exactement les mêmes besoins ?
+    <br><br>
+
+    Électricité.
+    <br>Gaz.
+    <br>Téléphonie.
+    <br>Internet.
+    <br>Assurances.
+    <br>Papeterie.
+    <br>Fournitures.
+    <br>Matériel.
+    <br>Prestations.
+    <br><br>
+
+    Et bien d'autres encore.
+    <br><br>
+
+    <strong>
+      En restant totalement indépendantes,
+      plusieurs entreprises obtiennent davantage
+      simplement parce qu'elles ne sont plus seules.
+    </strong>
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span> a préparé cette organisation pour vous.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+    Vous indiquez simplement le besoin qui vous intéresse.
+    <br><br>
+
+    Vous ne vous engagez à rien.
+    <br><br>
+
+    Votre demande rejoint les autres besoins similaires.
+    <br><br>
+
+    Un compteur permet à chacun de suivre l'évolution de la consultation.
+    <br><br>
+
+    Vous savez ainsi, en permanence, où en est votre demande.
+    <br><br>
+
+    Simplement.
+    <br>Clairement.
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Lorsque les conditions sont réunies...
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      line-height:1.6;
+    ">
+
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+    organise automatiquement la suite du processus.
+
+    <br><br>
+
+    Les professionnels susceptibles de répondre
+    sont consultés.
+
+    <br><br>
+
+    Ils transmettent leurs meilleures propositions.
+
+    <br><br>
+
+    Vous recevez ensuite
+    les réponses directement
+    dans votre espace partenaire
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>.
+
+    <br><br>
+
+    Vous comparez.
+
+    <br>Vous analysez.
+
+    <br>Vous choisissez.
+
+    <br>Ou vous refusez.
+
+    <br><br>
+
+    <strong>La décision reste toujours la vôtre.</strong>
+
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-      <div
-        class="box entrepriseModuleIntro">
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Votre espace partenaire évolue en permanence.
+  </h2>
 
-        <strong
-          class="entrepriseModuleTitle">
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      line-height:1.6;
+    ">
 
-          Et si certaines de vos charges
-          pouvaient diminuer
-          sans changer votre façon
-          de travailler ?
+    Vous retrouvez notamment :
 
-        </strong>
+    <br><br>
 
-        <br>
+    • Déposer un nouveau besoin.
 
-        Chaque entreprise
-        négocie souvent seule.
+    <br>• Consultations en cours.
 
-        <br><br>
+    <br>• Rejoindre une consultation existante.
 
-        Pourtant,
-        plusieurs entreprises
-        ayant les mêmes besoins
-        disposent généralement
-        d'un pouvoir de négociation
-        bien supérieur.
+    <br>• Mes réponses reçues.
+
+    <br>• Mon historique.
+
+    <br><br>
+
+    Tout est regroupé
+    dans un seul espace.
+
+    <br><br>
+
+    Simple.
+
+    <br>Clair.
+
+    <br>Accessible à tout moment.
+
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-        <br><br>
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Et si votre besoin n'existait pas encore ?
+  </h2>
 
-        Bo'CitéArt vous propose
-        d'observer cette possibilité.
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      line-height:1.6;
+    ">
 
-      </div>
+    Proposez-le.
 
-      <div class="box">
+    <br><br>
 
-        <strong
-          class="entrepriseModuleSubtitle">
+    Un achat.
 
-          Mutualiser
-          ne signifie pas
-          perdre son indépendance.
+    <br>Une location.
 
-        </strong>
+    <br>Une prestation.
 
-        <br><br>
+    <br>Un matériel.
 
-        Chaque entreprise reste :
+    <br>Un service.
 
-        <br><br>
+    <br><br>
 
-        • totalement libre ;<br>
-        • indépendante ;<br>
-        • propriétaire de ses décisions ;<br>
-        • libre d'accepter
-          ou de refuser
-          toute proposition.
+    Ou toute autre idée.
 
-        <br><br>
+    <br><br>
 
-        Mutualiser consiste seulement
-        à rechercher ensemble
-        de meilleures opportunités.
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+    permettra de faire émerger
+    les besoins communs
+    les plus utiles.
 
-      </div>
+    <br><br>
 
-      <div class="box">
+    <strong>Les meilleures idées naissent toujours du terrain.</strong>
 
-        <strong
-          class="entrepriseModuleSubtitle">
+  </p>
 
-          Pourquoi rester seul ?
+</div>
 
-        </strong>
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-        <br><br>
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Tout le monde en parle...
+  </h2>
 
-        Une entreprise isolée
-        dispose souvent
-        d'un pouvoir limité.
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      line-height:1.6;
+    ">
 
-        <br><br>
+    Réduire ses charges.
 
-        En regroupant plusieurs entreprises
-        autour d'un même besoin,
+    <br>Acheter mieux.
 
-        il devient possible
-        d'obtenir davantage
-        de propositions
-        et de meilleures conditions.
+    <br>Obtenir de meilleures conditions.
 
-      </div>
+    <br><br>
 
-      <div class="box">
+    Tout le monde le souhaite.
 
-        <strong
-          class="entrepriseModuleSubtitle">
+    <br><br>
 
-          Quelques exemples
+    Pourtant...
 
-        </strong>
+    <br><br>
 
-        <br><br>
+    Combien disposent réellement
+    d'une organisation pensée
+    pour y parvenir ?
 
-        Une mutualisation pourra concerner :
+    <br><br>
 
-        <br><br>
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+    a préparé cette possibilité.
 
-        • l'électricité ;<br>
-        • le gaz ;<br>
-        • les assurances ;<br>
-        • Internet ;<br>
-        • la téléphonie ;<br>
-        • certains achats professionnels ;<br>
-        • d'autres besoins communs.
+    <br><br>
 
-      </div>
+    À vous d'en profiter.
 
-            <div class="box">
+  </p>
 
-        <strong
-          class="entrepriseModuleSubtitle">
+</div>
 
-          Pourquoi attendre plusieurs entreprises ?
 
-        </strong>
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-        <br><br>
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Encore un des très nombreux services inclus dans votre adhésion.
+  </h2>
 
-        Bo'CitéArt ne lancera pas
-        une consultation
-        pour une seule entreprise.
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      line-height:1.6;
+    ">
 
-        <br><br>
+    Cet espace est exclusivement réservé
+    aux partenaires
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>.
 
-        Un objectif sera fixé
-        selon le type de besoin.
+    <br><br>
 
-        <br><br>
+    Vous continuez simplement
+    à gérer votre entreprise.
 
-        Par exemple :
+    <br><br>
 
-        <br><br>
+    Vous recevez les propositions.
 
-        • 20 entreprises ;<br>
-        • 30 entreprises ;<br>
-        • ou davantage.
+    <br>Vous les comparez.
 
-        <br><br>
+    <br>Vous décidez.
 
-        Lorsque ce seuil sera atteint,
-        Bo'CitéArt pourra consulter
-        plusieurs prestataires
-        afin d'obtenir
-        les propositions
-        les plus intéressantes.
+    <br><br>
 
-      </div>
+    En toute liberté.
 
-      <div class="box">
+  </p>
 
-        <strong
-          class="entrepriseModuleSubtitle">
+</div>
 
-          Chacun reste libre
 
-        </strong>
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-        <br><br>
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Votre abonnement se finance largement tout seul.
+  </h2>
 
-        Votre participation
-        n'est jamais
-        un engagement d'achat.
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      line-height:1.6;
+    ">
 
-        <br><br>
+    Quelques dizaines d'euros
+    économisés chaque mois
+    représentent plusieurs centaines d'euros
+    à la fin de l'année.
 
-        Vous pourrez :
+    <br><br>
 
-        <br><br>
+    <strong>
 
-        • comparer ;<br>
-        • analyser ;<br>
-        • accepter ;<br>
-        • ou refuser.
+      Votre abonnement
+      <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+      est financé par les économies réalisées...
 
-        <br><br>
+      <br><br>
 
-        Vous restez seul décisionnaire.
+      alors tout le monde est déjà gagnant.
 
-      </div>
+    </strong>
 
-      <div class="box">
+    <br><br>
 
-        <strong
-          class="entrepriseModuleSubtitle">
+    <strong>
 
-          Quelques économies
-          deviennent vite importantes
+      <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+      ne devient plus une dépense.
 
-        </strong>
+    </strong>
 
-        <br><br>
+    <br><br>
 
-        Prenons un exemple prudent :
+    <strong style="font-size:18px;">
 
-        <br><br>
+      Il devient un investissement
+      qui continue de produire de la valeur,
+      pour votre entreprise
+      comme pour votre territoire.
 
-        • 15 € / mois sur l'électricité ;<br>
-        • 10 € / mois sur Internet ;<br>
-        • 8 € / mois sur une assurance.
+    </strong>
 
-        <br><br>
+  </p>
 
-        Cela représente déjà :
+</div>
 
-        <br><br>
 
-        <strong
-          style="
-            font-size:22px;
-            color:#2f5d46;
-          ">
+<div
+  style="
+    display:flex;
+    margin-top:18px;
+  ">
 
-          396 € d'économies par an
+  <button
+    id="mutualisationMecenatBtn"
+    class="choiceBtn"
+    type="button"
+    style="width:100%;">
 
-        </strong>
+    Savez-vous vraiment ce qu'est le mécénat ?
 
-        <br><br>
+  </button>
 
-        Sans compter
-        les autres gains possibles.
+</div>
 
-      </div>
+`;
+}
 
-      <div class="box">
+function bindMutualisation(){
 
-        <strong
-          class="entrepriseModuleSubtitle">
-
-          Et ce n'est souvent
-          que le début…
-
-        </strong>
-
-        <br><br>
-
-        Ces économies
-        peuvent ensuite être complétées par :
-
-        <br><br>
-
-        • un nouveau client ;<br>
-        • un nouveau partenaire ;<br>
-        • un nouveau fournisseur ;<br>
-        • un recrutement facilité ;<br>
-        • une meilleure visibilité.
-
-        <br><br>
-
-        L'abonnement Bo'CitéArt
-        peut ainsi contribuer
-        à financer lui-même
-        une partie de son coût.
-
-      </div>
-
-            <div
-        class="entrepriseModuleActions">
-
-        <button
-          id="mutualisationFormBtn"
-          class="choiceBtn"
-          type="button">
-
-          Déclarer un besoin de mutualisation
-
-        </button>
-
-        <button
-          id="mutualisationSubscriptionBtn"
-          class="choiceBtn"
-          type="button">
-
-          Découvrir l'abonnement professionnel
-
-        </button>
-
-        <button
-          id="mutualisationDirectoryBtn"
-          class="choiceBtn"
-          type="button">
-
-          Rechercher des entreprises partenaires
-
-        </button>
-
-      </div>
-
-      <div
-        class="box entrepriseModuleConclusion">
-
-        <strong style="font-size:20px;">
-
-          Se regrouper ne retire
-          aucune liberté.
-
-          <br><br>
-
-          Cela permet simplement
-          de négocier autrement.
-
-        </strong>
-
-      </div>
-
-    `;
-  }
-
-  function bindMutualisation(){
-
-    const formButton =
-      getElement(
-        "mutualisationFormBtn"
-      );
-
-    const subscriptionButton =
-      getElement(
-        "mutualisationSubscriptionBtn"
-      );
-
-    const directoryButton =
-      getElement(
-        "mutualisationDirectoryBtn"
-      );
-
-    if(formButton){
-
-      formButton.onclick = function(){
-
-        if(
-          typeof module.openMutualisation ===
-          "function"
-        ){
-          module.openMutualisation();
-          return;
-        }
-
-        alert(
-          "Le formulaire de mutualisation sera disponible après chargement du module correspondant."
-        );
-      };
-    }
-
-    if(subscriptionButton){
-
-      subscriptionButton.onclick = function(){
-
-        if(
-          typeof module.openEntrepriseSubscription ===
-          "function"
-        ){
-          module.openEntrepriseSubscription();
-          return;
-        }
-
-        module.openScreen(
-          "abonnement"
-        );
-      };
-    }
-
-    if(directoryButton){
-
-      directoryButton.onclick = function(){
-
-        module.openScreen(
-          "annuaire"
-        );
-      };
-    }
-
-  }
-
-  function openMutualisationModule(){
-
-    module.renderModulePage(
-
-      "Réduire ses charges autrement",
-
-      getMutualisationHtml(),
-
-      {
-        afterRender:
-          bindMutualisation
-      }
-
+  const mecenatButton =
+    getElement(
+      "mutualisationMecenatBtn"
     );
+
+  if(mecenatButton){
+
+    mecenatButton.onclick = function(){
+
+      module.openScreen(
+        "mecenat"
+      );
+
+    };
+
   }
 
-  module.registerScreen(
-    "mutualisation",
-    openMutualisationModule
+}
+
+function openMutualisationModule(){
+
+  module.renderModulePage(
+
+    "Pourquoi payer plus cher ?",
+
+    getMutualisationHtml(),
+
+    {
+      showBack:false,
+      showFooter:false,
+      afterRender:
+        bindMutualisation
+    }
+
   );
 
-  module.registerScreen(
-    "economies",
-    openMutualisationModule
-  );
+}
 
-  module.openMutualisationModule =
-    openMutualisationModule;
+module.registerScreen(
+  "mutualisation",
+  openMutualisationModule
+);
 
-  console.log(
-    "✅ Nouveau module Mutualisation chargé"
-  );
+module.registerScreen(
+  "economies",
+  openMutualisationModule
+);
+
+module.openMutualisationModule =
+  openMutualisationModule;
+
+console.log(
+  "✅ Nouveau module Mutualisation chargé"
+);
 
 })();
