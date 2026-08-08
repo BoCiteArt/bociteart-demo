@@ -174,7 +174,7 @@
     );
   }
 
- function getDevelopmentHtml(){
+function getDevelopmentHtml(){
 
   return `
 
@@ -211,14 +211,13 @@
     Pensez-vous que votre entreprise soit connue dans votre commune ?
     <br><br>
 
-    Comme beaucoup de dirigeants,
-    votre première réponse sera probablement :
+    Votre première réponse sera probablement :
     <br><br>
 
-    « Bien sûr ! »
+    <strong>« Bien sûr ! »</strong>
     <br><br>
 
-    Alors, permettez-moi de vous poser une autre question.
+    Permettez-moi de vous poser une autre question.
   </p>
 
 </div>
@@ -258,23 +257,23 @@
     <br>de votre boulanger...
     <br>de votre pharmacie...
     <br>de votre garagiste...
-    <br>des commerces que tout le monde fréquente...
+    <br>de tous les commerces que vous fréquentez habituellement...
     <br><br>
 
-    Pouvez-vous citer cinq entreprises ?
+    Pouvez-vous citer :
     <br><br>
 
-    Leur nom.
-    <br>Leurs métiers.
-    <br>Ce qu'elles fabriquent.
-    <br>Ce qu'elles proposent.
+    • leur nom ;
+    <br>• leurs métiers ;
+    <br>• ce qu'elles fabriquent ;
+    <br>• ce qu'elles proposent.
     <br><br>
 
     Bien souvent...
     <br>nous restons sans réponse.
     <br><br>
 
-    Pourquoi ?
+    <strong>Pourquoi ?</strong>
     <br><br>
 
     Parce que nous passons devant elles...
@@ -314,11 +313,16 @@
       font-weight:400;
       line-height:1.6;
     ">
-    Combien de fois vous êtes-vous arrêté devant une nouvelle vitrine
-    en vous demandant :
+    Combien de fois vous êtes-vous arrêté devant une nouvelle vitrine en vous demandant :
     <br><br>
 
-    « Qu'y avait-il ici avant ? »
+    <strong>« Qu'y avait-il ici avant ? »</strong>
+    <br><br>
+
+    ou simplement :
+    <br><br>
+
+    <strong>« C'était qui, ici, avant ? »</strong>
     <br><br>
 
     Très souvent...
@@ -326,17 +330,17 @@
     <br><br>
 
     Pourtant...
-    <br>nous sommes parfois passés devant des centaines de fois.
+    <br>nous sommes passés devant des centaines de fois.
     <br><br>
 
-    Pourquoi ?
+    <strong>Pourquoi ?</strong>
     <br><br>
 
     Parce que voir...
     <br>n'est pas découvrir.
     <br><br>
 
-    Et notre cerveau retient rarement ce qu'il ne vit pas.
+    Notre cerveau retient rarement ce qu'il ne vit pas.
   </p>
 
 </div>
@@ -418,29 +422,35 @@
       margin:0;
       color:#000;
       font-size:14px;
-      font-weight:400;
       line-height:1.6;
     ">
+
     Internet est devenu indispensable.
+
     <br><br>
 
-    Les grandes plateformes disposent aujourd'hui
-    de moyens considérables pour attirer l'attention.
+    Les grandes plateformes disposent aujourd'hui de moyens considérables pour attirer l'attention.
+
     <br><br>
 
-    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
-    ne vous demande pas de renoncer au numérique.
+    <strong>Bo'CitéArt</strong> ne vous demande pas de renoncer au numérique.
+
     <br><br>
 
-    Il vous aide à renforcer ce que les grandes plateformes
-    ne pourront jamais remplacer :
+    Il vous aide à renforcer ce que les grandes plateformes ne pourront jamais remplacer :
+
     <br><br>
 
     • votre proximité ;
+
     <br>• votre savoir-faire ;
+
     <br>• votre histoire ;
+
     <br>• la confiance ;
-    <br>• votre ancrage dans votre territoire.
+
+    <br>• votre ancrage profond dans votre territoire.
+
   </p>
 
 </div>
@@ -465,7 +475,7 @@
       font-weight:700;
       line-height:1.4;
     ">
-    Pourquoi ouvrir ponctuellement les portes de votre entreprise ?
+    Pourquoi ne pas ouvrir ponctuellement les portes de votre entreprise ?
   </h2>
 
   <p
@@ -473,51 +483,51 @@
       margin:0;
       color:#000;
       font-size:14px;
-      font-weight:400;
       line-height:1.6;
     ">
+
     Beaucoup de dirigeants pensent immédiatement :
+
     <br><br>
 
     « Je n'ai pas le temps. »
-    <br><br>
 
-    « Cela coûte trop cher. »
-    <br><br>
+    <br>« Cela coûte trop cher. »
 
-    « Nous avons des contraintes de sécurité. »
-    <br><br>
+    <br>« Nous avons des contraintes de sécurité. »
 
-    « Nous devons protéger notre savoir-faire. »
+    <br>« Nous devons protéger notre savoir-faire. »
+
     <br><br>
 
     Toutes ces raisons existent.
+
     <br><br>
 
-    Mais permettez-moi de partager une conviction
-    qui guide la création de
-    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span> :
+    Mais permettez-moi de partager une conviction qui guide la création de <strong>Bo'CitéArt</strong> :
+
     <br><br>
 
-    <strong>
-      Lorsque l'on ne souhaite pas faire quelque chose,
-      on trouve des excuses.
-    </strong>
+    <strong>Lorsque l'on ne souhaite pas faire quelque chose, on trouve des excuses.</strong>
+
     <br><br>
 
-    <strong>
-      Lorsque l'on décide de le faire,
-      on trouve des solutions.
-    </strong>
+    <strong>Lorsque l'on décide de le faire, on trouve des solutions.</strong>
+
     <br><br>
 
     Une visite peut être organisée.
+
     <br>Des parcours adaptés peuvent être créés.
+
     <br>Des zones peuvent être protégées.
+
     <br>Des groupes peuvent être encadrés.
+
     <br><br>
 
-    Il existe presque toujours une solution.
+    <strong>Il existe toujours une solution.</strong>
+
   </p>
 
 </div>
@@ -542,7 +552,7 @@
       font-weight:700;
       line-height:1.4;
     ">
-    Il ne s'agit pas d'un stage.
+    Il ne s'agit pas d'un stage, de recruter ou d'embaucher.
   </h2>
 
   <p
@@ -550,27 +560,37 @@
       margin:0;
       color:#000;
       font-size:14px;
-      font-weight:400;
       line-height:1.6;
     ">
-    Il ne s'agit pas de recruter immédiatement.
+
+    Il s'agit de permettre aux élèves, préparés et encadrés par leur établissement scolaire, de découvrir les entreprises de leur commune.
+
     <br><br>
 
-    Il ne s'agit pas d'embaucher.
+    <strong>Ne leur fermez plus vos portes.</strong>
+
     <br><br>
 
-    Il s'agit simplement de permettre aux élèves
-    de découvrir les entreprises de leur propre commune.
+    <strong>Il en va de votre capital, de l'avenir et de la vie de votre entreprise.</strong>
+
     <br><br>
 
     Ils voient.
+
     <br>Ils comprennent.
+
     <br>Ils mémorisent.
+
     <br>Ils imaginent.
+
     <br><br>
 
-    Ils découvrent enfin des métiers qui existent parfois...
-    <br>à seulement quelques minutes de chez eux.
+    Ils découvrent enfin des métiers qui existent...
+
+    <br><br>
+
+    à seulement quelques minutes de chez eux.
+
   </p>
 
 </div>
@@ -603,51 +623,61 @@
       margin:0;
       color:#000;
       font-size:14px;
-      font-weight:400;
       line-height:1.6;
     ">
+
     Un jour, on demandera à ces jeunes :
+
     <br><br>
 
-    « Que souhaites-tu faire plus tard ? »
+    <strong>« Que souhaites-tu faire plus tard ? »</strong>
+
     <br><br>
 
     Au lieu de répondre :
+
     <br><br>
 
-    « Je ne sais pas... »
+    <strong>« Je ne sais pas... »</strong>
+
     <br><br>
 
     certains répondront peut-être :
+
     <br><br>
 
-    « J'ai visité cette entreprise...
-    j'aimerais faire ce métier. »
+    <strong>« J'ai visité cette entreprise... j'aimerais faire ce métier. »</strong>
+
     <br><br>
 
-    Une seule visite peut parfois ouvrir un avenir.
+    Une seule visite peut ouvrir un avenir.
+
     <br><br>
 
-    Et quelques années plus tard...
+    Quelques années plus tard...
+
     <br><br>
 
-    ce même jeune vous adressera peut-être
-    une candidature spontanée.
+    ce même jeune vous adressera peut-être une candidature spontanée.
+
     <br><br>
 
     Non pas par hasard.
+
     <br><br>
 
     Mais parce qu'il sait qui vous êtes.
+
     <br>Il comprend votre activité.
+
     <br>Il connaît vos métiers.
+
     <br>Il sait pourquoi il souhaite rejoindre votre entreprise.
+
     <br><br>
 
-    <strong>
-      La découverte d'aujourd'hui construit
-      le recrutement plus solide de demain.
-    </strong>
+    <strong>La découverte d'aujourd'hui construit les recrutements plus solides de demain.</strong>
+
   </p>
 
 </div>
@@ -671,7 +701,7 @@
       font-weight:700;
       line-height:1.4;
     ">
-    Vous venez aussi de créer vos premiers ambassadeurs.
+    Vous venez aussi de créer vos premiers ambassadeurs naturels.
   </h2>
 
   <p
@@ -679,31 +709,51 @@
       margin:0;
       color:#000;
       font-size:14px;
-      font-weight:400;
       line-height:1.6;
     ">
+
     Le soir même...
+
     <br><br>
 
     ces jeunes racontent leur visite.
+
     <br><br>
 
     À leurs parents.
+
     <br>À leurs proches.
+
     <br>À leurs amis.
+
     <br><br>
 
     Votre entreprise cesse d'être un simple bâtiment.
+
     <br><br>
 
-    Elle devient une entreprise que l'on connaît.
-    <br>Que l'on comprend.
-    <br>Et dont on parle.
+    <strong>Elle devient une entreprise que l'on connaît bien mieux.</strong>
+
+    <br><br>
+
+    Une entreprise dont on parle.
+
+    <br>Dont on connaît enfin les métiers.
+
+    <br>Dont on comprend ce qu'elle produit.
+
     <br><br>
 
     Sans publicité.
+
+    <br>Sans flyers.
+
     <br>Sans démarchage.
-    <br>Naturellement.
+
+    <br><br>
+
+    <strong>Simplement... naturellement.</strong>
+
   </p>
 
 </div>
@@ -728,7 +778,7 @@
       font-weight:700;
       line-height:1.4;
     ">
-    Votre développement commence ici.
+    Votre véritable développement commence ici.
   </h2>
 
   <p
@@ -736,29 +786,51 @@
       margin:0;
       color:#000;
       font-size:14px;
-      font-weight:400;
       line-height:1.6;
     ">
+
     Avant de chercher davantage de clients...
-    <br>commencez par être connu.
+
+    <br><br>
+
+    <strong>commencez par être véritablement connu et reconnu.</strong>
+
     <br><br>
 
     Avant de vouloir recruter...
-    <br>commencez par être compris.
+
     <br><br>
 
-    Avant d'espérer être choisi...
-    <br>commencez par être mémorisé.
+    <strong>commencez par être attirant.</strong>
+
+    <br><br>
+
+    Soyez identifié.
+
+    <br>Soyez compris.
+
+    <br>Soyez repéré.
+
+    <br><br>
+
+    <strong>Soyez enfin mémorisé.</strong>
+
     <br><br>
 
     Une entreprise connue attire plus facilement :
+
     <br><br>
 
     • des clients ;
+
     <br>• des candidats ;
+
     <br>• des partenaires ;
+
     <br>• des fournisseurs ;
+
     <br>• des recommandations.
+
   </p>
 
 </div>
@@ -783,7 +855,7 @@
       font-weight:700;
       line-height:1.4;
     ">
-    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span> renforce vos fondations.
+    Renforcez d'abord vos fondations.
   </h2>
 
   <p
@@ -791,76 +863,45 @@
       margin:0;
       color:#000;
       font-size:14px;
-      font-weight:400;
       line-height:1.6;
     ">
-    Il rapproche les habitants de leurs entreprises.
+
+    Une entreprise solide ne se construit jamais uniquement avec de la publicité.
+
     <br><br>
 
-    Il développe naturellement le bouche-à-oreille.
+    <strong>Elle se construit d'abord par la connaissance de ce qu'elle est, de ce qu'elle fait et de ce qu'elle produit.</strong>
+
     <br><br>
 
-    Il favorise les rencontres.
+    En permettant aux habitants de mieux connaître votre entreprise...
+
     <br><br>
 
-    Il crée davantage d'opportunités.
+    vous développez naturellement la publicité la plus ancienne...
+
     <br><br>
 
-    Il transforme progressivement une entreprise que l'on ignore...
+    <strong>la plus belle...</strong>
+
     <br><br>
 
-    en une entreprise que l'on connaît...
-    <br>que l'on comprend...
-    <br>que l'on recommande...
+    <strong>et probablement la plus efficace :</strong>
+
     <br><br>
 
-    et à laquelle on pense naturellement lorsqu'un besoin apparaît.
-  </p>
-
-</div>
-
-
-<div
-  style="
-    background:#ffffff;
-    border:1px solid #e6e6e6;
-    border-left:6px solid #2f5d46;
-    border-radius:16px;
-    padding:18px;
-    margin:0 0 16px 0;
-    box-shadow:0 1px 3px rgba(0,0,0,.06);
-  ">
-
-  <h2
-    style="
-      margin:0 0 14px 0;
-      color:#2f5d46;
-      font-size:16px;
-      font-weight:700;
-      line-height:1.4;
-    ">
-    Une entreprise peut grandir seule...
-  </h2>
-
-  <p
-    style="
-      margin:0;
-      color:#000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
-    Mais lorsqu'un territoire apprend à mieux se connaître...
-    <br><br>
-
-    chaque entreprise devient aussi une opportunité pour les autres.
-    <br><br>
-
-    <strong>
-      Découvrons maintenant comment la mutualisation
-      transforme cette force collective
-      en nouvelles opportunités.
+    <strong style="font-size:18px;">
+      Le bouche-à-oreille.
     </strong>
+
+    <br><br>
+
+    Celui que tout le monde recherche.
+
+    <br><br>
+
+    <strong>Celui qu'aucune campagne publicitaire ne peut réellement remplacer... ni acheter.</strong>
+
   </p>
 
 </div>
@@ -868,23 +909,25 @@
 
 <div
   style="
-    display:flex;
-    margin-top:16px;
+    margin-top:18px;
   ">
 
- <button
-  id="developmentNextBtn"
-  class="choiceBtn"
-  type="button"
-  style="
-    width:100%;
-  ">
-  Pourquoi payer plus cher ?
-</button>
+  <button
+    id="developmentNextBtn"
+    class="choiceBtn"
+    type="button"
+    style="width:100%;">
+
+    Cliquez pour découvrir :
+    <br>
+    <strong>Pourquoi payer plus cher ?</strong>
+
+  </button>
 
 </div>
 
 `;
+
 }
   
 function bindDevelopment(){
