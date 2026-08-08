@@ -937,7 +937,6 @@ function getSustainabilityHtml(){
 
 }
 
-
 function bindSustainability(){
 
   const nextButton =
@@ -950,8 +949,16 @@ function bindSustainability(){
     nextButton.onclick =
       function(){
 
+        if(
+          typeof module.openHome ===
+          "function"
+        ){
+          module.openHome();
+          return;
+        }
+
         module.openScreen(
-          "entreprise"
+          "home"
         );
 
       };
