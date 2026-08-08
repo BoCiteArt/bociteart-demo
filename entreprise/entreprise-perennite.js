@@ -1,3 +1,30 @@
+/* =========================================================
+   BO'CITÉART — ENTREPRISE
+   MODULE PÉRENNITÉ
+   PRÉPARER L'AVENIR DE SON ENTREPRISE
+   ========================================================= */
+
+(function initEntreprisePerennite(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+
+    console.error(
+      "Bo'CitéArt : entreprise.js doit être chargé avant entreprise-perennite.js."
+    );
+
+    return;
+  }
+
+  function getElement(id){
+
+    return document.getElementById(id);
+  }
+
 function getSustainabilityHtml(){
 
   return `
