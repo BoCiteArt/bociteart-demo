@@ -610,6 +610,25 @@ if(backButton){
       event.preventDefault();
       event.stopPropagation();
 
+      /*
+        Retour vers la page précédente
+        Commerce / Entreprise.
+      */
+
+      if(
+        typeof app.goBack ===
+        "function"
+      ){
+
+        app.goBack();
+        return;
+      }
+
+      /*
+        Secours seulement :
+        fermeture de la fenêtre.
+      */
+
       if(
         typeof window.closeModal ===
         "function"
@@ -655,17 +674,10 @@ if(backButton){
       if(modalCloseButton){
 
         modalCloseButton.click();
-        return;
       }
 
-      if(
-        typeof app.goBack ===
-        "function"
-      ){
-
-        app.goBack();
-      }
     };
+
 }
 
       const button =
