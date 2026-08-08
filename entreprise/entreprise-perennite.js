@@ -25,355 +25,1037 @@
     return document.getElementById(id);
   }
 
-  function getSustainabilityHtml(){
+ function getSustainabilityHtml(){
 
-    return `
+return `
 
-      <div
-        class="box entrepriseModuleIntro">
+<div
+class="box entrepriseModuleIntro">
 
-        <strong
-          class="entrepriseModuleTitle">
+<h2
+style="
+color:#2f5d46;
+font-size:17px;
+font-weight:700;
+line-height:1.4;
+">
 
-          Une entreprise
-          se construit chaque jour.
+Combien d'entreprises disparaissent...
+faute d'avoir préparé leur transmission ?
 
-          Sa pérennité aussi.
+</h2>
 
-        </strong>
+<p
+style="
+color:#000;
+font-size:14px;
+line-height:1.6;
+font-weight:400;
+">
 
-        <br>
+Chaque année...
 
-        Beaucoup de dirigeants
-        consacrent toute leur énergie
-        à leur activité quotidienne.
+<br><br>
 
-        <br><br>
+des milliers d'entreprises ferment leurs portes.
 
-        Pourtant,
-        préparer l'avenir
-        est tout aussi essentiel.
+<br><br>
 
-      </div>
+Non parce qu'elles ne sont plus compétentes.
 
-      <div class="box">
+<br><br>
 
-        <strong
-          class="entrepriseModuleSubtitle">
+Non parce qu'elles manquent de clients.
 
-          Préparer aujourd'hui
-          facilite demain.
+<br><br>
 
-        </strong>
+Mais simplement parce qu'aucune transmission n'a été préparée.
 
-        <br><br>
+</p>
 
-        Développer son entreprise,
-        c'est également penser :
+</div>
 
-        <br><br>
+<div class="box">
 
-        • à sa transmission ;<br>
-        • à son évolution ;<br>
-        • à ses futurs collaborateurs ;<br>
-        • à son savoir-faire ;<br>
-        • à son image ;<br>
-        • à son organisation.
+<h2
+style="
+color:#2f5d46;
+font-size:17px;
+font-weight:700;
+">
 
-      </div>
+Pourquoi ?
 
-      <div class="box">
+</h2>
 
-        <strong
-          class="entrepriseModuleSubtitle">
+<p
+style="
+color:#000;
+font-size:14px;
+line-height:1.6;
+">
 
-          Votre savoir-faire
-          est une richesse.
+Parce que le chef d'entreprise est absorbé par son quotidien.
 
-        </strong>
+<br><br>
 
-        <br><br>
+La tête dans le guidon.
 
-        Il mérite d'être :
+<br>
 
-        <br><br>
+Les clients.
 
-        • reconnu ;<br>
-        • valorisé ;<br>
-        • transmis ;<br>
-        • partagé lorsque vous le souhaitez.
+<br>
 
-        <br><br>
+Les salariés.
 
-        Une entreprise connue
-        transmet plus facilement
-        son histoire,
-        ses valeurs
-        et ses compétences.
+<br>
 
-      </div>
+Les commandes.
 
-      <div class="box">
+<br>
 
-        <strong
-          class="entrepriseModuleSubtitle">
+Les urgences.
 
-          Anticiper
-          permet de choisir.
+<br>
 
-        </strong>
+L'administratif.
 
-        <br><br>
+<br><br>
 
-        Plus une entreprise
-        prépare son avenir,
+<strong>
 
-        plus elle conserve
-        sa liberté
-        de décision.
+La transmission...
+ce sera pour plus tard.
 
-      </div>
+</strong>
 
-            <div class="box">
+<br><br>
 
-        <strong
-          class="entrepriseModuleSubtitle">
+Et les années passent.
 
-          Faire connaître aujourd'hui
-          pour transmettre demain
+</p>
 
-        </strong>
+</div>
 
-        <br><br>
+<div class="box">
 
-        Une entreprise connue,
-        reconnue
-        et appréciée
-        constitue souvent
-        un patrimoine
-        plus solide.
+<h2
+style="
+color:#2f5d46;
+font-size:17px;
+font-weight:700;
+">
 
-        <br><br>
+Une perte sèche...
+parfaitement évitable.
 
-        Les habitants,
-        les futurs salariés,
-        les partenaires
-        et les repreneurs potentiels
-        identifient plus facilement
-        une entreprise
-        qui a su développer
-        sa visibilité.
+</h2>
 
-      </div>
+<p
+style="
+color:#000;
+font-size:14px;
+line-height:1.6;
+">
 
-      <div class="box">
+Une entreprise ne représente pas seulement un chiffre d'affaires.
 
-        <strong
-          class="entrepriseModuleSubtitle">
+<br><br>
 
-          Préparer la relève
+Elle représente un savoir-faire.
 
-        </strong>
+<br>
 
-        <br><br>
+Des emplois.
 
-        Chaque entreprise
-        possède une histoire.
+<br>
 
-        <br><br>
+Une clientèle.
 
-        Préparer son avenir,
-        c'est aussi transmettre :
+<br>
 
-        <br><br>
+Une réputation.
 
-        • une expérience ;<br>
-        • des valeurs ;<br>
-        • une méthode ;<br>
-        • un savoir-faire ;<br>
-        • une réputation.
+<br>
 
-        <br><br>
+Des partenaires.
 
-        Cette préparation
-        ne concerne pas uniquement
-        le départ du dirigeant.
+<br>
 
-        <br><br>
+Parfois toute une vie de travail.
 
-        Elle participe également
-        au développement
-        quotidien
-        de l'entreprise.
+<br><br>
 
-      </div>
+<strong>
 
-      <div class="box">
+Tout cela ne devrait jamais disparaître faute d'anticipation.
 
-        <strong
-          class="entrepriseModuleSubtitle">
+</strong>
 
-          Une entreprise durable
-          regarde toujours plus loin
+</p>
 
-        </strong>
+</div>
 
-        <br><br>
+<div class="box">
 
-        Chaque décision prise aujourd'hui
-        peut produire des effets
-        pendant plusieurs années.
+<h2
+style="
+color:#2f5d46;
+font-size:17px;
+font-weight:700;
+">
 
-        <br><br>
+Construire des fondations solides...
 
-        Bo'CitéArt vous accompagne
-        pour renforcer progressivement :
+</h2>
 
-        <br><br>
+<p
+style="
+color:#000;
+font-size:14px;
+line-height:1.6;
+">
 
-        • votre visibilité ;<br>
-        • votre attractivité ;<br>
-        • votre développement ;<br>
-        • votre ancrage local ;<br>
-        • la valeur de votre entreprise.
+...sans préparer leur continuité...
 
-      </div>
+<br><br>
 
-            <div
-        class="entrepriseModuleActions">
+revient à bâtir une maison
+sans jamais prévoir
+qui en recevra les clés.
 
-        <button
-          id="perenniteDevelopmentBtn"
-          class="choiceBtn"
-          type="button">
+<br><br>
 
-          Développer mon entreprise
+<strong>
 
-        </button>
+Une entreprise qui a construit des fondations solides
+ne devrait jamais disparaître.
 
-        <button
-          id="perenniteVisibilityBtn"
-          class="choiceBtn"
-          type="button">
+<br><br>
 
-          Renforcer ma visibilité
+Elle doit continuer à vivre.
 
-        </button>
+</strong>
 
-        <button
-          id="perenniteDirectionBtn"
-          class="choiceBtn"
-          type="button">
+</p>
 
-          Ouvrir mon tableau de direction
+</div> 
 
-        </button>
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-      </div>
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
 
-      <div
-        class="box entrepriseModuleConclusion">
+    Chaque transmission est différente.
 
-        <strong
-          style="font-size:20px;">
+  </h2>
 
-          La meilleure façon
-          de préparer l'avenir
-          est de commencer aujourd'hui.
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
 
-        </strong>
+    Aucune entreprise
+    ne ressemble à une autre.
 
-      </div>
+    <br><br>
 
-    `;
-  }
+    Chaque dirigeant.
 
-  function bindSustainability(){
+    <br>Chaque famille.
 
-    const developmentButton =
-      getElement(
-        "perenniteDevelopmentBtn"
-      );
+    <br>Chaque salarié.
 
-    const visibilityButton =
-      getElement(
-        "perenniteVisibilityBtn"
-      );
+    <br>Chaque repreneur.
 
-    const directionButton =
-      getElement(
-        "perenniteDirectionBtn"
-      );
+    <br>Chaque situation
+    est particulière.
 
-    if(developmentButton){
+    <br><br>
 
-      developmentButton.onclick =
-        function(){
+    Il n'existe donc
+    pas une solution unique.
 
-          module.openScreen(
-            "developpement"
-          );
-        };
-    }
+    <br><br>
 
-    if(visibilityButton){
+    Mais plusieurs possibilités
+    qu'il convient d'étudier
+    au bon moment.
 
-      visibilityButton.onclick =
-        function(){
+  </p>
 
-          module.openScreen(
-            "visibilite"
-          );
-        };
-    }
+</div>
 
-    if(directionButton){
 
-      directionButton.onclick =
-        function(){
 
-          if(
-            typeof module.openDevelopmentPlan ===
-            "function"
-          ){
-            module.openDevelopmentPlan();
-            return;
-          }
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
 
-          alert(
-            "Le tableau de direction sera disponible après chargement du module correspondant."
-          );
-        };
-    }
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
 
-  }
+    Bo'CitéArt vous indique
+    les premières portes à ouvrir.
 
-  function openSustainabilityModule(){
+  </h2>
 
-    module.renderModulePage(
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
 
-      "Préparer l'avenir de son entreprise",
+    Selon votre situation,
 
-      getSustainabilityHtml(),
+    <br><br>
 
-      {
-        afterRender:
-          bindSustainability
-      }
+    <strong>
 
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+
+    vous oriente
+    vers les organismes
+    et les professionnels
+    les plus adaptés
+    afin de vous permettre
+    d'obtenir rapidement
+    les premiers renseignements
+    utiles à votre projet.
+
+    </strong>
+
+    <br><br>
+
+    Selon les cas,
+    vous pourrez notamment
+    être orienté vers :
+
+    <br><br>
+
+    • la Chambre de Commerce
+    et d'Industrie (CCI) ;
+
+    <br>
+
+    • la Chambre de Métiers
+    et de l'Artisanat (CMA) ;
+
+    <br>
+
+    • votre expert-comptable ;
+
+    <br>
+
+    • votre notaire ;
+
+    <br>
+
+    • votre avocat ;
+
+    <br>
+
+    • des cabinets spécialisés
+    dans la transmission
+    d'entreprise ;
+
+    <br>
+
+    • les réseaux
+    d'accompagnement
+    des cédants
+    et des repreneurs ;
+
+    <br>
+
+    • ou tout autre organisme
+    compétent selon
+    votre situation.
+
+    <br><br>
+
+  <strong>
+
+L'objectif n'est pas
+de remplacer leur expertise.
+
+<br><br>
+
+Mais de vous aider
+à trouver rapidement
+les bons interlocuteurs.
+
+</strong>
+
+</p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+
+    Certains d'entre vous pensent déjà au pacte Dutreil.
+
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    Vous avez raison d'y penser.
+
+    <br><br>
+
+    Dans certaines transmissions d'entreprise,
+    ce dispositif constitue
+    un élément important à étudier.
+
+    <br><br>
+
+    Mais chaque situation est différente.
+
+    <br><br>
+
+    <strong>
+
+      Votre notaire,
+      votre expert-comptable,
+      votre avocat
+      ou votre conseil spécialisé
+      pourront déterminer
+      si ce dispositif correspond
+      à votre situation.
+
+    </strong>
+
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+
+    Préparer la transmission...
+
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    ...ce n'est pas préparer la fin.
+
+    <br><br>
+
+    C'est préparer la continuité.
+
+    <br><br>
+
+    Parce qu'une entreprise
+    qui continue à vivre...
+
+    <br><br>
+
+    continue de créer
+    des emplois,
+
+    <br><br>
+
+    de transmettre
+    son savoir-faire,
+
+    <br><br>
+
+    de faire vivre
+    son territoire,
+
+    <br><br>
+
+    et de prolonger
+    l'œuvre de celles
+    et ceux
+    qui l'ont construite.
+
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+
+    Et si votre futur repreneur
+    avait déjà franchi
+    les portes de votre entreprise ?
+
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    Qui peut affirmer...
+
+    <br><br>
+
+    que parmi ces élèves
+    venus découvrir
+    votre entreprise aujourd'hui...
+
+    <br><br>
+
+    ne se trouve pas
+    celui ou celle qui,
+    dans vingt ou trente ans...
+
+    <br><br>
+
+    souhaitera la reprendre ?
+
+    <br><br>
+
+    Cette visite scolaire...
+
+    <br>
+
+    ce premier contact...
+
+    <br>
+
+    ce souvenir resté
+    dans sa mémoire...
+
+    <br><br>
+
+    pourront un jour
+    prendre une tout autre dimension.
+
+    <br><br>
+
+    Parce qu'il ne reviendra plus
+    dans une entreprise inconnue.
+
+    <br><br>
+
+    <strong>
+
+    Il reviendra
+    dans une entreprise
+    qu'il connaît déjà.
+
+    </strong>
+
+  </p>
+
+</div>
+
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+
+      Une histoire
+      qui ne s'est jamais arrêtée.
+
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+      Une entreprise
+      qui lui a plu.
+
+      <br><br>
+
+      Une entreprise
+      qu'il n'a jamais
+      vraiment oubliée.
+
+      <br><br>
+
+      Peut-être n'y est-il
+      jamais venu travailler.
+
+      <br><br>
+
+      Par choix.
+
+      <br>
+
+      Par opportunité.
+
+      <br>
+
+      Ou simplement
+      parce que la vie
+      en a décidé autrement.
+
+      <br><br>
+
+      <strong>
+
+      Mais il ne l'a jamais
+      perdue de vue.
+
+      </strong>
+
+      <br><br>
+
+      Il l'a vue évoluer.
+
+      <br>
+
+      Grandir.
+
+      <br>
+
+      Traverser les années.
+
+      <br>
+
+      Toujours discrètement.
+
+    </p>
+
+</div>
+
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+
+      Puis un jour...
+
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+      Les circonstances.
+
+      <br>
+
+      L'expérience.
+
+      <br>
+
+      La maturité.
+
+      <br>
+
+      Et parfois
+      le hasard...
+
+      <br><br>
+
+      réunissent enfin
+      tous les ingrédients.
+
+      <br><br>
+
+      Cette fois...
+
+      <br><br>
+
+      <strong>
+
+      il pousse la porte.
+
+      </strong>
+
+      <br><br>
+
+      Non plus
+      pour découvrir
+      cette entreprise...
+
+      <br><br>
+
+      <strong>
+
+      Mais pour la plus belle
+      des raisons.
+
+      <br><br>
+
+      Lui offrir
+      une nouvelle vie.
+
+      </strong>
+
+    </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+
+      Transmettre...
+
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      line-height:1.6;
+      font-weight:400;
+    ">
+
+      ce n'est pas tourner une page.
+
+      <br><br>
+
+      <strong>
+
+      C'est permettre
+      à cette histoire
+      de continuer
+      à s'écrire.
+
+      </strong>
+
+      <br><br>
+
+      De génération en génération.
+
+      <br>
+
+      D'employés en employés.
+
+      <br>
+
+      De dirigeants en dirigeants.
+
+      <br>
+
+      De repreneurs en repreneurs.
+
+      <br>
+
+      De famille en famille.
+
+      <br><br>
+
+      <strong>
+
+      Une transmission réussie
+      permet à une entreprise
+      de continuer
+      à créer de la valeur,
+
+      des emplois,
+
+      des vocations
+
+      et des souvenirs.
+
+      </strong>
+
+  </p>
+
+</div>
+
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+
+      Parce qu'au fond...
+
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      line-height:1.6;
+      font-weight:400;
+    ">
+
+      la plus belle réussite
+      d'un dirigeant...
+
+      <br><br>
+
+      n'est pas seulement
+      d'avoir créé
+      une entreprise.
+
+      <br><br>
+
+      <strong>
+
+      C'est d'avoir permis
+      qu'elle continue
+      à vivre après lui.
+
+      </strong>
+
+  </p>
+
+</div>
+
+
+
+<div
+  style="
+    display:flex;
+    margin-top:18px;
+  ">
+
+  <button
+    id="perenniteNextBtn"
+    class="choiceBtn"
+    type="button"
+    style="width:100%;">
+
+      Retour à l'espace Entreprise
+
+  </button>
+
+</div>
+
+`;
+
+}
+
+function bindSustainability(){
+
+  const nextButton =
+    getElement(
+      "perenniteNextBtn"
     );
+
+  if(nextButton){
+
+    nextButton.onclick =
+      function(){
+
+        module.openScreen(
+          "entreprise"
+        );
+
+      };
+
   }
 
-  module.registerScreen(
-    "perennite",
-    openSustainabilityModule
+}
+
+function openSustainabilityModule(){
+
+  module.renderModulePage(
+
+    "Préparer l'avenir de son entreprise",
+
+    getSustainabilityHtml(),
+
+    {
+      showBack:false,
+      showFooter:false,
+      afterRender:
+        bindSustainability
+    }
+
   );
 
-  module.openSustainabilityModule =
-    openSustainabilityModule;
+}
 
-  console.log(
-    "✅ Nouveau module Pérennité chargé"
-  );
+module.registerScreen(
+  "perennite",
+  openSustainabilityModule
+);
+
+module.openSustainabilityModule =
+  openSustainabilityModule;
+
+console.log(
+  "✅ Nouveau module Pérennité chargé"
+);
 
 })();
