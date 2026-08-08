@@ -25,386 +25,835 @@
     return document.getElementById(id);
   }
 
-  function getPatronageHtml(){
-
-    return `
-
-      <div
-        class="box entrepriseModuleIntro">
-
-        <strong
-          class="entrepriseModuleTitle">
-
-          Le mécénat est encore
-          largement méconnu.
-
-        </strong>
-
-        <br>
-
-        Beaucoup d'entreprises
-        pensent encore
-        que le mécénat
-        est réservé
-        aux grandes sociétés.
-
-        <br><br>
-
-        C'est faux.
-
-        <br><br>
-
-        Une PME,
-        un artisan
-        ou un commerce
-        peuvent eux aussi
-        participer
-        au développement
-        de leur territoire.
-
-      </div>
-
-      <div class="box">
-
-        <strong
-          class="entrepriseModuleSubtitle">
-
-          Et si votre entreprise
-          devenait un acteur reconnu
-          de votre commune ?
-
-        </strong>
-
-        <br><br>
-
-        Le mécénat
-        ne consiste pas seulement
-        à financer un projet.
-
-        <br><br>
-
-        Il permet aussi
-        de renforcer :
-
-        <br><br>
-
-        • votre image ;<br>
-        • votre notoriété ;<br>
-        • votre ancrage local ;<br>
-        • votre crédibilité ;<br>
-        • votre engagement.
-
-      </div>
-
-      <div class="box">
-
-        <strong
-          class="entrepriseModuleSubtitle">
-
-          Bo'CitéArt rapproche
-
-          entreprises,
-          habitants
-          et collectivités.
-
-        </strong>
-
-        <br><br>
-
-        Les actions soutenues
-        peuvent concerner :
-
-        <br><br>
-
-        • les écoles ;<br>
-        • les associations ;<br>
-        • le patrimoine ;<br>
-        • la culture ;<br>
-        • le sport ;<br>
-        • des projets utiles
-          au territoire.
-
-      </div>
-
-      <div class="box">
-
-        <strong
-          class="entrepriseModuleSubtitle">
-
-          Un investissement
-          qui dépasse
-          la simple communication.
-
-        </strong>
-
-        <br><br>
-
-        Les habitants
-        découvrent
-        une entreprise
-        qui agit concrètement
-        pour sa commune.
-
-        <br><br>
-
-        Cette reconnaissance
-        s'installe souvent
-        durablement.
-
-      </div>
-
-            <div class="box">
-
-        <strong
-          class="entrepriseModuleSubtitle">
-
-          Un levier souvent sous-estimé
-
-        </strong>
-
-        <br><br>
-
-        Beaucoup d'entreprises
-        investissent chaque année
-        dans leur communication.
-
-        <br><br>
-
-        Le mécénat local
-        permet de faire connaître
-        votre entreprise
-        autrement.
-
-        <br><br>
-
-        Il associe votre nom
-        à des actions positives
-        visibles par les habitants.
-
-        <br><br>
-
-        Cette visibilité
-        est souvent plus durable
-        qu'une publicité classique.
-
-      </div>
-
-      <div class="box">
-
-        <strong
-          class="entrepriseModuleSubtitle">
-
-          Une démarche gagnante
-          pour tous
-
-        </strong>
-
-        <br><br>
-
-        Les habitants
-        bénéficient
-        de nouvelles initiatives.
-
-        <br><br>
-
-        Les associations,
-        les écoles
-        et les collectivités
-        trouvent de nouveaux partenaires.
-
-        <br><br>
-
-        L'entreprise,
-        quant à elle,
-        développe durablement
-        sa notoriété
-        et renforce
-        son image locale.
-
-      </div>
-
-      <div class="box">
-
-        <strong
-          class="entrepriseModuleSubtitle">
-
-          Le mécénat
-          peut aussi
-          créer des opportunités
-
-        </strong>
-
-        <br><br>
-
-        Une entreprise engagée
-        inspire davantage confiance.
-
-        <br><br>
-
-        Cette confiance
-        peut favoriser :
-
-        <br><br>
-
-        • de nouveaux contacts ;<br>
-        • des recommandations ;<br>
-        • des partenariats ;<br>
-        • de nouveaux clients ;<br>
-        • une meilleure attractivité
-          pour les futurs salariés.
-
-      </div>
-
-            <div
-        class="entrepriseModuleActions">
-
-        <button
-          id="patronageProjectBtn"
-          class="choiceBtn"
-          type="button">
-
-          Proposer un projet de mécénat
-
-        </button>
-
-        <button
-          id="patronageSubscriptionBtn"
-          class="choiceBtn"
-          type="button">
-
-          Découvrir l'abonnement professionnel
-
-        </button>
-
-        <button
-          id="patronageVisibilityBtn"
-          class="choiceBtn"
-          type="button">
-
-          Développer ma visibilité
-
-        </button>
-
-      </div>
-
-      <div
-        class="box entrepriseModuleConclusion">
-
-        <strong
-          style="font-size:20px;">
-
-          Le mécénat
-          n'est pas seulement
-          un soutien financier.
-
-          <br><br>
-
-          C'est aussi
-          une façon durable
-          de faire connaître
-          votre entreprise
-          tout en contribuant
-          au développement
-          de votre territoire.
-
-        </strong>
-
-      </div>
-
-    `;
-  }
-
-  function bindPatronage(){
-
-    const projectButton =
-      getElement(
-        "patronageProjectBtn"
-      );
-
-    const subscriptionButton =
-      getElement(
-        "patronageSubscriptionBtn"
-      );
-
-    const visibilityButton =
-      getElement(
-        "patronageVisibilityBtn"
-      );
-
-    if(projectButton){
-
-      projectButton.onclick = function(){
-
-        if(
-          typeof module.openPatronageForm ===
-          "function"
-        ){
-          module.openPatronageForm();
-          return;
-        }
-
-        alert(
-          "Le formulaire de mécénat sera disponible après chargement du module correspondant."
-        );
-      };
-    }
-
-    if(subscriptionButton){
-
-      subscriptionButton.onclick = function(){
-
-        if(
-          typeof module.openEntrepriseSubscription ===
-          "function"
-        ){
-          module.openEntrepriseSubscription();
-          return;
-        }
-
-        module.openScreen(
-          "abonnement"
-        );
-      };
-    }
-
-    if(visibilityButton){
-
-      visibilityButton.onclick = function(){
-
-        module.openScreen(
-          "visibilite"
-        );
-      };
-    }
-
-  }
-
-  function openPatronageModule(){
-
-    module.renderModulePage(
-
-      "Le mécénat d'entreprise",
-
-      getPatronageHtml(),
-
-      {
-        afterRender:
-          bindPatronage
-      }
-
+function getPatronageHtml(){
+
+  return `
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Savez-vous vraiment ce qu'est le mécénat ?
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    Selon vous...
+    <br><br>
+
+    <strong>qu'est-ce que le mécénat ?</strong>
+    <br><br>
+
+    À quoi sert-il réellement ?
+    <br><br>
+
+    <strong>
+      J'ai posé cette question à de nombreux dirigeants d'entreprises.
+    </strong>
+    <br><br>
+
+    Voici, en général, les réponses que j'entends :
+    <br><br>
+
+    <strong>« C'est donner de l'argent. »</strong>
+    <br><br>
+
+    <strong>« C'est encore une dépense. »</strong>
+    <br><br>
+
+    <strong>« C'est surtout une histoire de réduction d'impôts. »</strong>
+    <br><br>
+
+    <strong>« C'est réservé aux grandes entreprises. »</strong>
+    <br><br>
+
+    <strong>« Nous n'avons déjà plus de marge. »</strong>
+    <br><br>
+
+    <strong>« Ce n'est pas le moment. »</strong>
+    <br><br>
+
+    <strong>« Nous avons déjà suffisamment de charges. »</strong>
+    <br><br>
+
+    <strong>« C'est un autre monde... ce n'est pas pour nous. »</strong>
+    <br><br>
+
+    Toutes ces réponses sont sincères.
+    <br><br>
+
+    Elles traduisent simplement l'image
+    que beaucoup se font encore du mécénat.
+    <br><br>
+
+    <strong>
+      Et pourtant... elles ne représentent
+      qu'une toute petite partie
+      de ce qu'il est réellement.
+    </strong>
+
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Comment permettre à votre entreprise
+    de s'enraciner durablement
+    au cœur de sa commune et de son territoire ?
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    <strong>
+      Comment continuer à vivre
+      dans la mémoire des habitants...
+    </strong>
+
+    <br><br>
+
+    Sans bruit.
+    <br><br>
+
+    Sans démarchage.
+    <br><br>
+
+    Sans flyers.
+    <br><br>
+
+    Sans publicité.
+
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Chaque soir...
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    vous fermez votre entreprise.
+    <br><br>
+
+    Vous rentrez chez vous.
+    <br><br>
+
+    <strong>
+      Pourtant... votre entreprise continue de s'exprimer.
+    </strong>
+    <br><br>
+
+    Toujours sans un bruit.
+    <br><br>
+
+    Grâce à une œuvre.
+    <br><br>
+
+    Visible.
+    <br>Vivante.
+    <br>Présente dans votre commune.
+
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Une œuvre qui continue de parler pour vous.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    Elle raconte une histoire.
+    <br><br>
+
+    Elle témoigne d'une époque.
+    <br><br>
+
+    Elle révèle des talents.
+    <br><br>
+
+    Des savoir-faire.
+    <br>Des entreprises.
+    <br>Des commerces.
+    <br>Des salariés.
+    <br><br>
+
+    Elle rassemble habitants, artistes,
+    entreprises et tous ceux
+    qui ont participé à sa création.
+    <br><br>
+
+    Elle accompagne également la mairie
+    dans la valorisation de son territoire.
+    <br><br>
+
+    <strong>
+      Elle devient le témoin vivant
+      de celles et ceux qui ont choisi
+      d'écrire ensemble une nouvelle page
+      de l'histoire de leur commune.
+    </strong>
+
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    C'est ici que votre entreprise laisse son empreinte.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    Non par une publicité.
+    <br><br>
+
+    Non par un slogan.
+    <br><br>
+
+    Mais par une réalisation visible de tous.
+    <br><br>
+
+    <strong>
+      Dans chaque quartier,
+      une œuvre porte silencieusement
+      une partie de votre histoire.
+    </strong>
+
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Une œuvre vivante dans votre commune.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    Les citoyens la découvrent.
+    <br><br>
+
+    Les salariés s'y reconnaissent.
+    <br><br>
+
+    Les écoles découvrent autrement
+    les métiers de leur territoire.
+    <br><br>
+
+    Les générations se rencontrent.
+    <br><br>
+
+    Les talents se réveillent.
+    <br>Les talents se révèlent.
+    <br><br>
+
+    Et parce que le projet revient
+    tous les deux ans...
+    <br><br>
+
+    <strong>
+      chacun sait qu'un jour viendra
+      peut-être son tour d'y participer.
+    </strong>
+
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Voilà ce qu'est réellement le mécénat.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    Bien plus qu'un simple soutien.
+    <br><br>
+
+    <strong>
+      Une œuvre qui continue de parler de vous...
+      bien après sa création.
+    </strong>
+    <br><br>
+
+    Une publicité attire un regard...
+    <br><br>
+
+    <strong>
+      Une œuvre inscrit durablement
+      votre entreprise
+      dans la mémoire de votre commune.
+    </strong>
+
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Le mécénat génère également de nombreuses retombées positives.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    Selon les projets soutenus,
+    il peut donner lieu à :
+
+    <br><br>
+
+    • une inauguration ;
+    <br>• un article de presse ;
+    <br>• un reportage ;
+    <br>• une distinction ;
+    <br>• un label ;
+    <br>• une récompense ;
+    <br>• la mise en valeur d'une innovation ;
+    <br>• des remerciements publics.
+
+    <br><br>
+
+    Autant d'éléments qui renforcent progressivement
+    votre notoriété,
+    votre crédibilité
+    et votre ancrage dans votre commune.
+
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Le sentiment d'appartenance se construit.
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    En associant habitants,
+    écoles,
+    artistes,
+    salariés
+    et entreprises...
+
+    <br><br>
+
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+    développe naturellement
+    le sentiment d'appartenance.
+
+    <br><br>
+
+    <strong>
+      Et ce que l'on contribue à construire...
+    </strong>
+
+    <br><br>
+
+    <strong>on le mémorise davantage...</strong>
+    <br><br>
+
+    <strong>on le respecte...</strong>
+    <br><br>
+
+    <strong>on le préserve...</strong>
+    <br><br>
+
+    <strong>et l'on en est fier.</strong>
+
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+    Au fil des années...
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.6;
+    ">
+
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>,
+
+    <br>la mairie,
+
+    <br>votre entreprise,
+
+    <br>vos salariés,
+
+    <br>les citoyens...
+
+    <br><br>
+
+    conserveront la mémoire
+    de vos engagements,
+
+    <br>de vos réalisations,
+
+    <br>des reconnaissances obtenues,
+
+    <br>et de votre contribution
+    à l'histoire de votre commune.
+
+    <br><br>
+
+    <strong>
+      Votre fiche
+      <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+      deviendra progressivement
+      la mémoire vivante de cet engagement.
+    </strong>
+
+  </p>
+
+</div>
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+
+    Le mécénat est également un investissement reconnu.
+
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      line-height:1.6;
+    ">
+
+    Souvent méconnu.
+
+    <br><br>
+
+    Souvent mal compris.
+
+    <br><br>
+
+    Selon la situation de votre entreprise
+    et sous réserve des dispositions prévues
+    par la législation en vigueur,
+    les actions de mécénat
+    peuvent ouvrir droit
+    aux avantages fiscaux
+    prévus par la loi.
+
+    <br><br>
+
+    <strong>
+
+      <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+
+      vous aide à mieux comprendre
+      ce dispositif
+      et facilite la mise en relation
+      avec les organismes
+      et les professionnels compétents.
+
+    </strong>
+
+  </p>
+
+</div>
+
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #e6e6e6;
+    border-left:6px solid #2f5d46;
+    border-radius:16px;
+    padding:18px;
+    margin:0 0 16px 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+  ">
+
+  <h2
+    style="
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.4;
+    ">
+
+      Les plus solides fondations...
+
+  </h2>
+
+  <p
+    style="
+      margin:0;
+      color:#000;
+      font-size:14px;
+      line-height:1.6;
+    ">
+
+      ne sont pas uniquement
+      celles qui portent
+      un bâtiment.
+
+      <br><br>
+
+      <strong>
+
+      Ce sont celles qui permettent
+      à votre entreprise
+      de continuer à vivre
+      dans la mémoire
+      des générations
+      qui suivront...
+
+      <br><br>
+
+      bien après
+      que nous aurons tous
+      quitté la scène.
+
+      </strong>
+
+  </p>
+
+</div>
+
+
+<div
+  style="
+    display:flex;
+    margin-top:18px;
+  ">
+
+  <button
+    id="patronageNextBtn"
+    class="choiceBtn"
+    type="button"
+    style="
+      width:100%;
+    ">
+
+    Préparer l'avenir de votre entreprise
+
+  </button>
+
+</div>
+
+`;
+}
+
+ function bindPatronage(){
+
+  const nextButton =
+    getElement(
+      "patronageNextBtn"
     );
+
+  if(nextButton){
+
+    nextButton.onclick = function(){
+
+      module.openScreen(
+        "perennite"
+      );
+
+    };
+
   }
 
-  module.registerScreen(
-    "mecenat",
-    openPatronageModule
+}
+
+function openPatronageModule(){
+
+  module.renderModulePage(
+
+    "Le mécénat d'entreprise",
+
+    getPatronageHtml(),
+
+    {
+      showBack:false,
+      showFooter:false,
+      afterRender:
+        bindPatronage
+    }
+
   );
 
-  module.openPatronageModule =
-    openPatronageModule;
+}
 
-  console.log(
-    "✅ Nouveau module Mécénat chargé"
-  );
+module.registerScreen(
+  "mecenat",
+  openPatronageModule
+);
+
+module.openPatronageModule =
+  openPatronageModule;
+
+console.log(
+  "✅ Nouveau module Mécénat chargé"
+);
 
 })();
