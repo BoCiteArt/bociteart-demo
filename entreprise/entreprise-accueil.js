@@ -51,51 +51,42 @@ function getLogoHtml(){
   `;
 }
 
-function renderPage(html){
+  function renderPage(html){
 
-  if(
-    typeof app.renderModal !==
-    "function"
-  ){
+    if(
+      typeof app.renderModal !==
+      "function"
+    ){
 
-    console.error(
-      "Bo'CitéArt : fonction renderModal introuvable."
-    );
+      console.error(
+        "Bo'CitéArt : fonction renderModal introuvable."
+      );
 
-    return;
-  }
-
-  app.renderModal(
-    "Commerces & Entreprises",
-    html,
-    {
-      hideBack:true
+      return;
     }
-  );
-}
+
+    app.renderModal(
+      "Commerces & Entreprises",
+      html
+    );
+  }
 
   /* =======================================================
      PAGE 1 — INTRODUCTION
      ======================================================= */
 
-/* =======================================================
-   PAGE 1 — INTRODUCTION
-   ======================================================= */
-
 function getIntroductionHtml(){
 
   return `
-
     <button
       id="entrepriseIntroductionBackBtn"
       class="choiceBtn"
       type="button"
       style="
-        width:auto;
-        min-width:130px;
-        margin:0 0 16px 0;
+        width:100%;
+        margin-bottom:14px;
       ">
-      ← Retour
+      ← Retour à Commerces & Entreprises
     </button>
 
     <div
@@ -599,90 +590,104 @@ function getIntroductionHtml(){
      OUVERTURE DE L’INTRODUCTION
      ======================================================= */
 
- function openIntroduction(){
+  function openIntroduction(){
 
-  renderPage(
-    getIntroductionHtml()
+    renderPage(
+      getIntroductionHtml()
+    );
+
+    window.setTimeout(function(){
+       const backButton =
+  getElement(
+    "entrepriseIntroductionBackBtn"
   );
 
-  window.setTimeout(function(){
+if(backButton){
 
-    const backButton =
-      getElement(
-        "entrepriseIntroductionBackBtn"
-      );
+  backButton.onclick =
+    function(event){
 
-    if(backButton){
+      event.preventDefault();
+      event.stopPropagation();
 
-      backButton.onclick =
-        function(event){
+      if(
+        typeof window.closeModal ===
+        "function"
+      ){
 
-          event.preventDefault();
-          event.stopPropagation();
+        window.closeModal();
+        return;
+      }
 
-          if(
-            typeof event.stopImmediatePropagation ===
-            "function"
-          ){
-            event.stopImmediatePropagation();
-          }
+      const closeButtons =
+        Array.from(
+          document.querySelectorAll(
+            "button"
+          )
+        );
 
-          /*
-            Retour vers la vraie page précédente :
-            Commerces & Entreprises.
-          */
+      const modalCloseButton =
+        closeButtons.find(
+          function(item){
 
-          if(
-            typeof window.__bociteartOpenByKey ===
-            "function"
-          ){
+            const text =
+              String(
+                item.textContent || ""
+              ).trim();
 
-            window.__bociteartOpenByKey(
-              "commerces"
+            const label =
+              String(
+                item.getAttribute(
+                  "aria-label"
+                ) || ""
+              ).toLowerCase();
+
+            return (
+              text === "×" ||
+              text === "✕" ||
+              text === "X" ||
+              label.includes("fermer") ||
+              label.includes("close")
             );
-
-            return;
           }
+        );
 
-          /*
-            Secours uniquement si la fonction
-            principale n'est pas disponible.
-          */
+      if(modalCloseButton){
 
-          if(
-            typeof window.closeModal ===
-            "function"
-          ){
+        modalCloseButton.click();
+        return;
+      }
 
-            window.closeModal();
-          }
+      if(
+        typeof app.goBack ===
+        "function"
+      ){
 
-        };
-
-    }
-
-    const button =
-      getElement(
-        "entrepriseEnterSpaceBtn"
-      );
-
-    if(button){
-
-      button.onclick =
-        function(event){
-
-          event.preventDefault();
-          event.stopPropagation();
-
-          openRealEntrepriseHome();
-
-        };
-
-    }
-
-  },0);
-
+        app.goBack();
+      }
+    };
 }
+
+      const button =
+        getElement(
+          "entrepriseEnterSpaceBtn"
+        );
+
+      if(button){
+
+        button.onclick =
+          function(event){
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            openRealEntrepriseHome();
+          };
+      }
+
+    },0);
+  }
+
   /* =======================================================
      OUVERTURE DE L’ESPACE ENTREPRISE EXISTANT
      ======================================================= */
@@ -694,43 +699,6 @@ function openRealEntrepriseHome(){
   ){
 
     originalEntrepriseHome.call(app);
-
-    window.setTimeout(function(){
-
-      /*
-        Sur la page des bandes défilantes,
-        le bouton Retour doit revenir
-        à l'introduction Entreprise.
-      */
-
-      const backButton =
-        document.querySelector(
-          ".bociteEntrepriseProtectedBackBtn"
-        );
-
-      if(backButton){
-
-        backButton.onclick =
-          function(event){
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            if(
-              typeof event.stopImmediatePropagation ===
-              "function"
-            ){
-              event.stopImmediatePropagation();
-            }
-
-            openIntroduction();
-
-          };
-
-      }
-
-    },100);
-
     return;
   }
 
