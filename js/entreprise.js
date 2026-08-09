@@ -294,59 +294,75 @@ function buildBackButton(options){
     `;
   }
 
-/*
-  INTRODUCTION ENTREPRISE :
-  retour vers la page Commerces & Entreprises
-  qui précède l'entrée dans l'univers Entreprise.
-*/
+function bindBackButton(){
 
-if(
-  state.currentScreen === "introductionEntreprise"
-){
+  document
+    .querySelectorAll(
+      ".bociteEntrepriseProtectedBackBtn"
+    )
+    .forEach(function(button){
 
-  if(
-    typeof window.__bociteartOpenByKey ===
-    "function"
-  ){
+      button.onclick = function(event){
 
-    window.__bociteartOpenByKey(
-      "commerces"
-    );
+        event.preventDefault();
+        event.stopPropagation();
 
-    return;
-  }
+        /*
+          PAGE D'INTRODUCTION ENTREPRISE :
+          le bouton Retour doit revenir
+          à Commerces & Entreprises.
+        */
 
-}
+        if(
+          state.currentScreen ===
+          "introductionEntreprise"
+        ){
 
+          if(
+            typeof window.__bociteartOpenByKey ===
+            "function"
+          ){
 
-/*
-  BANDES DÉFILANTES :
-  retour vers l'introduction Entreprise.
-*/
+            window.__bociteartOpenByKey(
+              "commerces"
+            );
 
-if(
-  state.currentScreen === "home"
-){
+            return;
+          }
 
-  if(
-    window.BociteEntreprise &&
-    typeof window.BociteEntreprise.openEntrepriseIntroduction ===
-    "function"
-  ){
+        }
 
-    window.BociteEntreprise.openEntrepriseIntroduction();
-    return;
-  }
+        /*
+          PAGE DES BANDES :
+          retour à l'introduction Entreprise.
+        */
 
-}
+        if(
+          state.currentScreen ===
+          "home"
+        ){
 
+          if(
+            window.BociteEntreprise &&
+            typeof window.BociteEntreprise
+              .openEntrepriseIntroduction ===
+              "function"
+          ){
 
-/*
-  Toutes les autres pages :
-  retour normal dans l'historique Entreprise.
-*/
+            window.BociteEntreprise
+              .openEntrepriseIntroduction();
 
-goBack();
+            return;
+          }
+
+        }
+
+        /*
+          Toutes les autres pages :
+          retour normal.
+        */
+
+        goBack();
 
       };
 
