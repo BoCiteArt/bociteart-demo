@@ -11935,39 +11935,40 @@ Voir les entreprises de ma ville
       }
     }
 
-    /*
-      Premier choix :
-      écran officiel d’introduction Entreprise.
-    */
+   /*
+  Premier choix :
+  introduction officielle fournie
+  par entreprise-accueil.js.
+*/
 
-    if(
-      app.screens &&
-      typeof app.screens.introductionEntreprise ===
-      "function"
-    ){
+if(
+  typeof app.openEntrepriseIntroduction ===
+  "function"
+){
 
-      app.openScreen(
-        "introductionEntreprise"
-      );
+  app.openEntrepriseIntroduction();
 
-      return;
-    }
+  return;
+}
 
-    /*
-      Deuxième choix :
-      fonction officielle fournie
-      par entreprise-accueil.js.
-    */
+/*
+  Deuxième choix :
+  ancien écran enregistré,
+  uniquement en secours.
+*/
 
-    if(
-      typeof app.openEntrepriseIntroduction ===
-      "function"
-    ){
+if(
+  app.screens &&
+  typeof app.screens.introductionEntreprise ===
+  "function"
+){
 
-      app.openEntrepriseIntroduction();
+  app.openScreen(
+    "introductionEntreprise"
+  );
 
-      return;
-    }
+  return;
+}
 
     /*
       Compatibilité avec l’ancienne version
