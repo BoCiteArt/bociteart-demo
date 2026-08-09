@@ -590,116 +590,90 @@ function getIntroductionHtml(){
      OUVERTURE DE L’INTRODUCTION
      ======================================================= */
 
-  function openIntroduction(){
+ function openIntroduction(){
 
-    renderPage(
-      getIntroductionHtml()
-    );
-
-    window.setTimeout(function(){
-       const backButton =
-  getElement(
-    "entrepriseIntroductionBackBtn"
+  renderPage(
+    getIntroductionHtml()
   );
 
-if(backButton){
+  window.setTimeout(function(){
 
-  backButton.onclick =
-    function(event){
+    const backButton =
+      getElement(
+        "entrepriseIntroductionBackBtn"
+      );
 
-      event.preventDefault();
-      event.stopPropagation();
+    if(backButton){
 
-      /*
-        Retour vers la page précédente
-        Commerce / Entreprise.
-      */
+      backButton.onclick =
+        function(event){
 
-      if(
-        typeof app.goBack ===
-        "function"
-      ){
+          event.preventDefault();
+          event.stopPropagation();
 
-        app.goBack();
-        return;
-      }
-
-      /*
-        Secours seulement :
-        fermeture de la fenêtre.
-      */
-
-      if(
-        typeof window.closeModal ===
-        "function"
-      ){
-
-        window.closeModal();
-        return;
-      }
-
-      const closeButtons =
-        Array.from(
-          document.querySelectorAll(
-            "button"
-          )
-        );
-
-      const modalCloseButton =
-        closeButtons.find(
-          function(item){
-
-            const text =
-              String(
-                item.textContent || ""
-              ).trim();
-
-            const label =
-              String(
-                item.getAttribute(
-                  "aria-label"
-                ) || ""
-              ).toLowerCase();
-
-            return (
-              text === "×" ||
-              text === "✕" ||
-              text === "X" ||
-              label.includes("fermer") ||
-              label.includes("close")
-            );
+          if(
+            typeof event.stopImmediatePropagation ===
+            "function"
+          ){
+            event.stopImmediatePropagation();
           }
-        );
 
-      if(modalCloseButton){
+          /*
+            Retour vers la vraie page précédente :
+            Commerces & Entreprises.
+          */
 
-        modalCloseButton.click();
-      }
+          if(
+            typeof window.__bociteartOpenByKey ===
+            "function"
+          ){
 
-    };
+            window.__bociteartOpenByKey(
+              "commerces"
+            );
+
+            return;
+          }
+
+          /*
+            Secours uniquement si la fonction
+            principale n'est pas disponible.
+          */
+
+          if(
+            typeof window.closeModal ===
+            "function"
+          ){
+
+            window.closeModal();
+          }
+
+        };
+
+    }
+
+    const button =
+      getElement(
+        "entrepriseEnterSpaceBtn"
+      );
+
+    if(button){
+
+      button.onclick =
+        function(event){
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          openRealEntrepriseHome();
+
+        };
+
+    }
+
+  },0);
 
 }
-
-      const button =
-        getElement(
-          "entrepriseEnterSpaceBtn"
-        );
-
-      if(button){
-
-        button.onclick =
-          function(event){
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            openRealEntrepriseHome();
-          };
-      }
-
-    },0);
-  }
-
   /* =======================================================
      OUVERTURE DE L’ESPACE ENTREPRISE EXISTANT
      ======================================================= */
