@@ -11901,14 +11901,26 @@ Voir les entreprises de ma ville
 
   "use strict";
 
-  if(
-    window.BOCITEART_ENTREPRISE_CONNECTED
-  ){
-    return;
-  }
+  /*
+    IMPORTANT :
+    on ne bloque plus l'installation avec
+    BOCITEART_ENTREPRISE_CONNECTED.
 
-  window.BOCITEART_ENTREPRISE_CONNECTED =
-    true;
+    Si un ancien raccordement existe,
+    on le retire avant d'installer le nouveau.
+  */
+
+  if(
+    typeof window.__BOCITE_ENTREPRISE_ENTRY_HANDLER__ ===
+    "function"
+  ){
+
+    document.removeEventListener(
+      "click",
+      window.__BOCITE_ENTREPRISE_ENTRY_HANDLER__,
+      true
+    );
+  }
 
   function openEntrepriseModule(event){
 
@@ -11925,128 +11937,104 @@ Voir les entreprises de ma ville
       }
     }
 
-    /*
-      On attend la fin du clic afin qu'aucun
-      ancien gestionnaire ne puisse laisser
-      la page des bandes affichée par-dessus
-      l'introduction.
-    */
+    const currentApp =
+      window.BociteEntreprise;
 
-    window.setTimeout(function(){
-
-      const currentApp =
-        window.BociteEntreprise;
-
-      if(!currentApp){
-
-        console.error(
-          "Bo'CitéArt Entreprise : module principal introuvable."
-        );
-
-        return;
-      }
-
-      /*
-        PRIORITÉ ABSOLUE :
-        passer par le moteur de navigation
-        de js/entreprise.js.
-
-        Cela enregistre réellement
-        introductionEntreprise comme écran courant.
-      */
-
-      if(
-        currentApp.screens &&
-        typeof currentApp.screens
-          .introductionEntreprise ===
-          "function" &&
-        typeof currentApp.openScreen ===
-          "function"
-      ){
-
-        currentApp.openScreen(
-          "introductionEntreprise"
-        );
-
-        return;
-      }
-
-      /*
-        Secours :
-        fonction fournie par
-        entreprise-accueil.js.
-      */
-
-      if(
-        typeof currentApp
-          .openEntrepriseIntroduction ===
-          "function"
-      ){
-
-        currentApp
-          .openEntrepriseIntroduction();
-
-        return;
-      }
-
-      /*
-        Ancienne compatibilité seulement.
-      */
-
-      if(
-        currentApp.screens &&
-        typeof currentApp.screens.accueil ===
-          "function" &&
-        typeof currentApp.openScreen ===
-          "function"
-      ){
-
-        currentApp.openScreen(
-          "accueil"
-        );
-
-        return;
-      }
+    if(!currentApp){
 
       console.error(
-        "Bo'CitéArt : introduction Entreprise introuvable."
+        "Bo'CitéArt Entreprise : module principal introuvable."
       );
 
-    },50);
+      return;
+    }
+
+    /*
+      ENTRÉE OBLIGATOIRE :
+      l'introduction Entreprise doit toujours
+      précéder les bandes défilantes.
+    */
+
+    if(
+      typeof currentApp.openEntrepriseIntroduction ===
+      "function"
+    ){
+
+      currentApp.openEntrepriseIntroduction();
+
+      return;
+    }
+
+    /*
+      Secours uniquement :
+      écran d'introduction enregistré.
+    */
+
+    if(
+      currentApp.screens &&
+      typeof currentApp.screens.introductionEntreprise ===
+        "function" &&
+      typeof currentApp.openScreen ===
+        "function"
+    ){
+
+      currentApp.openScreen(
+        "introductionEntreprise"
+      );
+
+      return;
+    }
+
+    console.error(
+      "Bo'CitéArt : l'introduction Entreprise n'est pas disponible."
+    );
   }
+
+  function entrepriseEntryHandler(event){
+
+    const target =
+      event.target &&
+      typeof event.target.closest ===
+      "function"
+        ? event.target.closest(
+            '[data-commerce-space="entreprise"],' +
+            '#openEntrepriseSpace,' +
+            '[data-open-entreprise]'
+          )
+        : null;
+
+    if(!target){
+      return;
+    }
+
+    openEntrepriseModule(
+      event
+    );
+  }
+
+  /*
+    On garde une référence globale
+    afin de pouvoir retirer proprement
+    cet écouteur lors d'une prochaine correction.
+  */
+
+  window.__BOCITE_ENTREPRISE_ENTRY_HANDLER__ =
+    entrepriseEntryHandler;
 
   document.addEventListener(
     "click",
-    function(event){
-
-      const target =
-        event.target &&
-        typeof event.target.closest ===
-        "function"
-          ? event.target.closest(
-              '[data-commerce-space="entreprise"],' +
-              '#openEntrepriseSpace,' +
-              '[data-open-entreprise]'
-            )
-          : null;
-
-      if(!target){
-        return;
-      }
-
-      openEntrepriseModule(
-        event
-      );
-
-    },
+    entrepriseEntryHandler,
     true
   );
 
   window.openEntrepriseSpace =
     openEntrepriseModule;
 
+  window.BOCITEART_ENTREPRISE_CONNECTED =
+    true;
+
   console.log(
-    "✅ Module Entreprise raccordé à son introduction"
+    "✅ Entrée Entreprise → introduction raccordée"
   );
 
 })();
