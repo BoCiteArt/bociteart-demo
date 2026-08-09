@@ -389,15 +389,13 @@ function bindBackButton(){
       )
       .forEach(function(button){
 
-      if(
-  button.classList.contains(
-    "bociteEntrepriseProtectedBackBtn"
-  ) ||
-  button.id ===
-    "entrepriseIntroductionBackBtn"
-){
-  return;
-}
+        if(
+          button.classList.contains(
+            "bociteEntrepriseProtectedBackBtn"
+          )
+        ){
+          return;
+        }
 
         const text =
           String(
@@ -11894,84 +11892,85 @@ Voir les entreprises de ma ville
   window.BOCITEART_ENTREPRISE_CONNECTED =
     true;
 
-function openEntrepriseModule(event){
+  function openEntrepriseModule(event){
 
-  if(event){
+    if(event){
 
-    event.preventDefault();
-    event.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+        "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+    }
+
+    /*
+      Premier choix :
+      écran officiel d’introduction Entreprise.
+    */
 
     if(
-      typeof event.stopImmediatePropagation ===
+      app.screens &&
+      typeof app.screens.introductionEntreprise ===
       "function"
     ){
-      event.stopImmediatePropagation();
+
+      app.openScreen(
+        "introductionEntreprise"
+      );
+
+      return;
+    }
+
+    /*
+      Deuxième choix :
+      fonction officielle fournie
+      par entreprise-accueil.js.
+    */
+
+    if(
+      typeof app.openEntrepriseIntroduction ===
+      "function"
+    ){
+
+      app.openEntrepriseIntroduction();
+
+      return;
+    }
+
+    /*
+      Compatibilité avec l’ancienne version
+      de entreprise-accueil.js.
+    */
+
+    if(
+      app.screens &&
+      typeof app.screens.accueil ===
+      "function"
+    ){
+
+      app.openScreen(
+        "accueil"
+      );
+
+      return;
+    }
+
+    /*
+      Dernier recours seulement.
+    */
+
+    if(
+      typeof app.openHome ===
+      "function"
+    ){
+
+      app.openHome();
     }
   }
-
-  /*
-    PRIORITÉ ABSOLUE :
-    nouvelle introduction officielle
-    de entreprise-accueil.js.
-  */
-
-  if(
-    typeof app.openEntrepriseIntroduction ===
-    "function"
-  ){
-
-    app.openEntrepriseIntroduction();
-
-    return;
-  }
-
-  /*
-    Secours :
-    ancien écran d'introduction.
-  */
-
-  if(
-    app.screens &&
-    typeof app.screens.introductionEntreprise ===
-    "function"
-  ){
-
-    app.openScreen(
-      "introductionEntreprise"
-    );
-
-    return;
-  }
-
-  /*
-    Compatibilité ancienne version.
-  */
-
-  if(
-    app.screens &&
-    typeof app.screens.accueil ===
-    "function"
-  ){
-
-    app.openScreen(
-      "accueil"
-    );
-
-    return;
-  }
-
-  /*
-    Dernier recours seulement.
-  */
-
-  if(
-    typeof app.openHome ===
-    "function"
-  ){
-
-    app.openHome();
-  }
-}
 
   document.addEventListener(
     "click",
@@ -16789,9 +16788,9 @@ function openMutualisation(){
       "afterend",
       button
     );
-  const originalOpenProfessionalDirectory =
   }
 
+  const originalOpenProfessionalDirectory =
     module.openProfessionalDirectory;
 
   if(
@@ -28998,6 +28997,70 @@ border-radius:10px;
 `;
 
 document.head.appendChild(style);
+
+/* ===========================
+Bouton retour automatique
+=========================== */
+
+const observer =
+new MutationObserver(function(){
+
+const modal =
+document.querySelector(
+".modal-content,.modalContent,#modalContent"
+);
+
+if(!modal){
+return;
+}
+
+if(
+modal.querySelector(
+"#globalEntrepriseBackButton"
+)
+){
+return;
+}
+
+const button =
+document.createElement("button");
+
+button.id =
+"globalEntrepriseBackButton";
+
+button.className =
+"choiceBtn";
+
+button.style.width =
+"100%";
+
+button.style.marginBottom =
+"10px";
+
+button.textContent =
+"← Retour à l'espace Entreprise";
+
+button.onclick=function(){
+
+if(
+window.BociteEntreprise &&
+typeof window.BociteEntreprise.openHome==="function"
+){
+window.BociteEntreprise.openHome();
+}
+
+};
+
+modal.prepend(button);
+
+});
+
+observer.observe(
+document.body,
+{
+childList:true,
+subtree:true
+});
 
 console.log(
 "✅ Harmonisation Entreprise chargée"
@@ -45324,6 +45387,5 @@ document.addEventListener(
   },
   true
 );
-
 
 
