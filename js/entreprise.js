@@ -294,47 +294,59 @@ function buildBackButton(options){
     `;
   }
 
-function bindBackButton(){
+/*
+  INTRODUCTION ENTREPRISE :
+  retour vers la page Commerces & Entreprises
+  qui précède l'entrée dans l'univers Entreprise.
+*/
 
-  document
-    .querySelectorAll(
-      ".bociteEntrepriseProtectedBackBtn"
-    )
-    .forEach(function(button){
+if(
+  state.currentScreen === "introductionEntreprise"
+){
 
-      button.onclick = function(event){
+  if(
+    typeof window.__bociteartOpenByKey ===
+    "function"
+  ){
 
-        event.preventDefault();
-        event.stopPropagation();
+    window.__bociteartOpenByKey(
+      "commerces"
+    );
 
-        /*
-          SUR LA PAGE DES BANDES ENTREPRISE :
-          retour à l'introduction Entreprise,
-          sans fermer la fenêtre.
-        */
+    return;
+  }
 
-        if(
-          state.currentScreen === "home"
-        ){
+}
 
-          if(
-            window.BociteEntreprise &&
-            typeof window.BociteEntreprise.openEntrepriseIntroduction ===
-            "function"
-          ){
 
-            window.BociteEntreprise.openEntrepriseIntroduction();
-            return;
-          }
+/*
+  BANDES DÉFILANTES :
+  retour vers l'introduction Entreprise.
+*/
 
-        }
+if(
+  state.currentScreen === "home"
+){
 
-        /*
-          DANS LES SOUS-PAGES :
-          retour normal à la page précédente.
-        */
+  if(
+    window.BociteEntreprise &&
+    typeof window.BociteEntreprise.openEntrepriseIntroduction ===
+    "function"
+  ){
 
-        goBack();
+    window.BociteEntreprise.openEntrepriseIntroduction();
+    return;
+  }
+
+}
+
+
+/*
+  Toutes les autres pages :
+  retour normal dans l'historique Entreprise.
+*/
+
+goBack();
 
       };
 
