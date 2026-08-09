@@ -11920,118 +11920,136 @@ Voir les entreprises de ma ville
   window.BOCITEART_ENTREPRISE_CONNECTED =
     true;
 
-  function openEntrepriseModule(event){
+function openEntrepriseModule(event){
 
-    if(event){
+  if(event){
 
-      event.preventDefault();
-      event.stopPropagation();
-
-      if(
-        typeof event.stopImmediatePropagation ===
-        "function"
-      ){
-        event.stopImmediatePropagation();
-      }
-    }
-
-   /*
-  Premier choix :
-  introduction officielle fournie
-  par entreprise-accueil.js.
-*/
-
-if(
-  typeof app.openEntrepriseIntroduction ===
-  "function"
-){
-
-  app.openEntrepriseIntroduction();
-
-  return;
-}
-
-/*
-  Deuxième choix :
-  ancien écran enregistré,
-  uniquement en secours.
-*/
-
-if(
-  app.screens &&
-  typeof app.screens.introductionEntreprise ===
-  "function"
-){
-
-  app.openScreen(
-    "introductionEntreprise"
-  );
-
-  return;
-}
-
-    /*
-      Compatibilité avec l’ancienne version
-      de entreprise-accueil.js.
-    */
+    event.preventDefault();
+    event.stopPropagation();
 
     if(
-      app.screens &&
-      typeof app.screens.accueil ===
+      typeof event.stopImmediatePropagation ===
       "function"
     ){
-
-      app.openScreen(
-        "accueil"
-      );
-
-      return;
-    }
-
-    /*
-      Dernier recours seulement.
-    */
-
-    if(
-      typeof app.openHome ===
-      "function"
-    ){
-
-      app.openHome();
+      event.stopImmediatePropagation();
     }
   }
 
-  document.addEventListener(
-    "click",
-    function(event){
+  /*
+    IMPORTANT :
+    on relit l'objet Entreprise réellement chargé
+    au moment du clic.
+  */
 
-      const target =
-        event.target &&
-        typeof event.target.closest ===
-        "function"
-          ? event.target.closest(
-              '[data-commerce-space="entreprise"],' +
-              '#openEntrepriseSpace,' +
-              '[data-open-entreprise]'
-            )
-          : null;
+  const currentApp =
+    window.BociteEntreprise;
 
-      if(!target){
-        return;
-      }
+  if(!currentApp){
 
-      openEntrepriseModule(event);
+    console.error(
+      "Bo'CitéArt Entreprise : module actuel introuvable."
+    );
 
-    },
-    true
-  );
+    return;
+  }
 
-  window.openEntrepriseSpace =
-    openEntrepriseModule;
+  /*
+    Premier choix :
+    introduction officielle fournie
+    par entreprise-accueil.js.
+  */
 
-  console.log(
-    "✅ Module Entreprise raccordé à son introduction"
-  );
+  if(
+    typeof currentApp.openEntrepriseIntroduction ===
+    "function"
+  ){
+
+    currentApp.openEntrepriseIntroduction();
+
+    return;
+  }
+
+  /*
+    Deuxième choix :
+    écran d'introduction enregistré,
+    uniquement en secours.
+  */
+
+  if(
+    currentApp.screens &&
+    typeof currentApp.screens.introductionEntreprise ===
+    "function"
+  ){
+
+    currentApp.openScreen(
+      "introductionEntreprise"
+    );
+
+    return;
+  }
+
+  /*
+    Compatibilité avec l'ancienne version
+    de entreprise-accueil.js.
+  */
+
+  if(
+    currentApp.screens &&
+    typeof currentApp.screens.accueil ===
+    "function"
+  ){
+
+    currentApp.openScreen(
+      "accueil"
+    );
+
+    return;
+  }
+
+  /*
+    Dernier recours seulement.
+  */
+
+  if(
+    typeof currentApp.openHome ===
+    "function"
+  ){
+
+    currentApp.openHome();
+  }
+}
+
+document.addEventListener(
+  "click",
+  function(event){
+
+    const target =
+      event.target &&
+      typeof event.target.closest ===
+      "function"
+        ? event.target.closest(
+            '[data-commerce-space="entreprise"],' +
+            '#openEntrepriseSpace,' +
+            '[data-open-entreprise]'
+          )
+        : null;
+
+    if(!target){
+      return;
+    }
+
+    openEntrepriseModule(event);
+
+  },
+  true
+);
+
+window.openEntrepriseSpace =
+  openEntrepriseModule;
+
+console.log(
+  "✅ Module Entreprise raccordé à son introduction"
+);
 
 })();
 /* =========================================================
