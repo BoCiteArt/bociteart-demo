@@ -389,13 +389,15 @@ function bindBackButton(){
       )
       .forEach(function(button){
 
-        if(
-          button.classList.contains(
-            "bociteEntrepriseProtectedBackBtn"
-          )
-        ){
-          return;
-        }
+      if(
+  button.classList.contains(
+    "bociteEntrepriseProtectedBackBtn"
+  ) ||
+  button.id ===
+    "entrepriseIntroductionBackBtn"
+){
+  return;
+}
 
         const text =
           String(
