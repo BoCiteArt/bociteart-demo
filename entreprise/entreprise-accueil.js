@@ -711,6 +711,43 @@ function openRealEntrepriseHome(){
   ){
 
     originalEntrepriseHome.call(app);
+
+    window.setTimeout(function(){
+
+      /*
+        Sur la page des bandes défilantes,
+        le bouton Retour doit revenir
+        à l'introduction Entreprise.
+      */
+
+      const backButton =
+        document.querySelector(
+          ".bociteEntrepriseProtectedBackBtn"
+        );
+
+      if(backButton){
+
+        backButton.onclick =
+          function(event){
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            if(
+              typeof event.stopImmediatePropagation ===
+              "function"
+            ){
+              event.stopImmediatePropagation();
+            }
+
+            openIntroduction();
+
+          };
+
+      }
+
+    },100);
+
     return;
   }
 
