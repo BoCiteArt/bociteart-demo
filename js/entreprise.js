@@ -11901,155 +11901,153 @@ Voir les entreprises de ma ville
 
   "use strict";
 
-  const app =
-    window.BociteEntreprise;
-
-  if(!app){
-
-    console.error(
-      "Bo'CitéArt Entreprise : module principal introuvable."
-    );
-
-    return;
-  }
-
-  if(window.BOCITEART_ENTREPRISE_CONNECTED){
+  if(
+    window.BOCITEART_ENTREPRISE_CONNECTED
+  ){
     return;
   }
 
   window.BOCITEART_ENTREPRISE_CONNECTED =
     true;
 
-function openEntrepriseModule(event){
+  function openEntrepriseModule(event){
 
-  if(event){
+    if(event){
 
-    event.preventDefault();
-    event.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
 
-    if(
-      typeof event.stopImmediatePropagation ===
-      "function"
-    ){
-      event.stopImmediatePropagation();
-    }
-  }
-
-  /*
-    IMPORTANT :
-    on relit l'objet Entreprise réellement chargé
-    au moment du clic.
-  */
-
-  const currentApp =
-    window.BociteEntreprise;
-
-  if(!currentApp){
-
-    console.error(
-      "Bo'CitéArt Entreprise : module actuel introuvable."
-    );
-
-    return;
-  }
-
-  /*
-    Premier choix :
-    introduction officielle fournie
-    par entreprise-accueil.js.
-  */
-
-  if(
-    typeof currentApp.openEntrepriseIntroduction ===
-    "function"
-  ){
-
-    currentApp.openEntrepriseIntroduction();
-
-    return;
-  }
-
-  /*
-    Deuxième choix :
-    écran d'introduction enregistré,
-    uniquement en secours.
-  */
-
-  if(
-    currentApp.screens &&
-    typeof currentApp.screens.introductionEntreprise ===
-    "function"
-  ){
-
-    currentApp.openScreen(
-      "introductionEntreprise"
-    );
-
-    return;
-  }
-
-  /*
-    Compatibilité avec l'ancienne version
-    de entreprise-accueil.js.
-  */
-
-  if(
-    currentApp.screens &&
-    typeof currentApp.screens.accueil ===
-    "function"
-  ){
-
-    currentApp.openScreen(
-      "accueil"
-    );
-
-    return;
-  }
-
-  /*
-    Dernier recours seulement.
-  */
-
-  if(
-    typeof currentApp.openHome ===
-    "function"
-  ){
-
-    currentApp.openHome();
-  }
-}
-
-document.addEventListener(
-  "click",
-  function(event){
-
-    const target =
-      event.target &&
-      typeof event.target.closest ===
-      "function"
-        ? event.target.closest(
-            '[data-commerce-space="entreprise"],' +
-            '#openEntrepriseSpace,' +
-            '[data-open-entreprise]'
-          )
-        : null;
-
-    if(!target){
-      return;
+      if(
+        typeof event.stopImmediatePropagation ===
+        "function"
+      ){
+        event.stopImmediatePropagation();
+      }
     }
 
-    openEntrepriseModule(event);
+    /*
+      On attend la fin du clic afin qu'aucun
+      ancien gestionnaire ne puisse laisser
+      la page des bandes affichée par-dessus
+      l'introduction.
+    */
 
-  },
-  true
-);
+    window.setTimeout(function(){
 
-window.openEntrepriseSpace =
-  openEntrepriseModule;
+      const currentApp =
+        window.BociteEntreprise;
 
-console.log(
-  "✅ Module Entreprise raccordé à son introduction"
-);
+      if(!currentApp){
+
+        console.error(
+          "Bo'CitéArt Entreprise : module principal introuvable."
+        );
+
+        return;
+      }
+
+      /*
+        PRIORITÉ ABSOLUE :
+        passer par le moteur de navigation
+        de js/entreprise.js.
+
+        Cela enregistre réellement
+        introductionEntreprise comme écran courant.
+      */
+
+      if(
+        currentApp.screens &&
+        typeof currentApp.screens
+          .introductionEntreprise ===
+          "function" &&
+        typeof currentApp.openScreen ===
+          "function"
+      ){
+
+        currentApp.openScreen(
+          "introductionEntreprise"
+        );
+
+        return;
+      }
+
+      /*
+        Secours :
+        fonction fournie par
+        entreprise-accueil.js.
+      */
+
+      if(
+        typeof currentApp
+          .openEntrepriseIntroduction ===
+          "function"
+      ){
+
+        currentApp
+          .openEntrepriseIntroduction();
+
+        return;
+      }
+
+      /*
+        Ancienne compatibilité seulement.
+      */
+
+      if(
+        currentApp.screens &&
+        typeof currentApp.screens.accueil ===
+          "function" &&
+        typeof currentApp.openScreen ===
+          "function"
+      ){
+
+        currentApp.openScreen(
+          "accueil"
+        );
+
+        return;
+      }
+
+      console.error(
+        "Bo'CitéArt : introduction Entreprise introuvable."
+      );
+
+    },50);
+  }
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const target =
+        event.target &&
+        typeof event.target.closest ===
+        "function"
+          ? event.target.closest(
+              '[data-commerce-space="entreprise"],' +
+              '#openEntrepriseSpace,' +
+              '[data-open-entreprise]'
+            )
+          : null;
+
+      if(!target){
+        return;
+      }
+
+      openEntrepriseModule(
+        event
+      );
+
+    },
+    true
+  );
+
+  window.openEntrepriseSpace =
+    openEntrepriseModule;
+
+  console.log(
+    "✅ Module Entreprise raccordé à son introduction"
+  );
 
 })();
 /* =========================================================
