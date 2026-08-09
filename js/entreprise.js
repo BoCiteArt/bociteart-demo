@@ -11894,85 +11894,84 @@ Voir les entreprises de ma ville
   window.BOCITEART_ENTREPRISE_CONNECTED =
     true;
 
-  function openEntrepriseModule(event){
+function openEntrepriseModule(event){
 
-    if(event){
+  if(event){
 
-      event.preventDefault();
-      event.stopPropagation();
-
-      if(
-        typeof event.stopImmediatePropagation ===
-        "function"
-      ){
-        event.stopImmediatePropagation();
-      }
-    }
-
-    /*
-      Premier choix :
-      écran officiel d’introduction Entreprise.
-    */
+    event.preventDefault();
+    event.stopPropagation();
 
     if(
-      app.screens &&
-      typeof app.screens.introductionEntreprise ===
+      typeof event.stopImmediatePropagation ===
       "function"
     ){
-
-      app.openScreen(
-        "introductionEntreprise"
-      );
-
-      return;
-    }
-
-    /*
-      Deuxième choix :
-      fonction officielle fournie
-      par entreprise-accueil.js.
-    */
-
-    if(
-      typeof app.openEntrepriseIntroduction ===
-      "function"
-    ){
-
-      app.openEntrepriseIntroduction();
-
-      return;
-    }
-
-    /*
-      Compatibilité avec l’ancienne version
-      de entreprise-accueil.js.
-    */
-
-    if(
-      app.screens &&
-      typeof app.screens.accueil ===
-      "function"
-    ){
-
-      app.openScreen(
-        "accueil"
-      );
-
-      return;
-    }
-
-    /*
-      Dernier recours seulement.
-    */
-
-    if(
-      typeof app.openHome ===
-      "function"
-    ){
-
-      app.openHome();
+      event.stopImmediatePropagation();
     }
   }
+
+  /*
+    PRIORITÉ ABSOLUE :
+    nouvelle introduction officielle
+    de entreprise-accueil.js.
+  */
+
+  if(
+    typeof app.openEntrepriseIntroduction ===
+    "function"
+  ){
+
+    app.openEntrepriseIntroduction();
+
+    return;
+  }
+
+  /*
+    Secours :
+    ancien écran d'introduction.
+  */
+
+  if(
+    app.screens &&
+    typeof app.screens.introductionEntreprise ===
+    "function"
+  ){
+
+    app.openScreen(
+      "introductionEntreprise"
+    );
+
+    return;
+  }
+
+  /*
+    Compatibilité ancienne version.
+  */
+
+  if(
+    app.screens &&
+    typeof app.screens.accueil ===
+    "function"
+  ){
+
+    app.openScreen(
+      "accueil"
+    );
+
+    return;
+  }
+
+  /*
+    Dernier recours seulement.
+  */
+
+  if(
+    typeof app.openHome ===
+    "function"
+  ){
+
+    app.openHome();
+  }
+}
 
   document.addEventListener(
     "click",
