@@ -51,42 +51,51 @@ function getLogoHtml(){
   `;
 }
 
-  function renderPage(html){
+function renderPage(html){
 
-    if(
-      typeof app.renderModal !==
-      "function"
-    ){
+  if(
+    typeof app.renderModal !==
+    "function"
+  ){
 
-      console.error(
-        "Bo'CitéArt : fonction renderModal introuvable."
-      );
-
-      return;
-    }
-
-    app.renderModal(
-      "Commerces & Entreprises",
-      html
+    console.error(
+      "Bo'CitéArt : fonction renderModal introuvable."
     );
+
+    return;
   }
+
+  app.renderModal(
+    "Commerces & Entreprises",
+    html,
+    {
+      hideBack:true
+    }
+  );
+}
 
   /* =======================================================
      PAGE 1 — INTRODUCTION
      ======================================================= */
 
+/* =======================================================
+   PAGE 1 — INTRODUCTION
+   ======================================================= */
+
 function getIntroductionHtml(){
 
   return `
+
     <button
       id="entrepriseIntroductionBackBtn"
       class="choiceBtn"
       type="button"
       style="
-        width:100%;
-        margin-bottom:14px;
+        width:auto;
+        min-width:130px;
+        margin:0 0 16px 0;
       ">
-      ← Retour à Commerces & Entreprises
+      ← Retour
     </button>
 
     <div
