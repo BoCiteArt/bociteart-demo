@@ -308,6 +308,30 @@ function bindBackButton(){
         event.stopPropagation();
 
         /*
+  PAGE INTRODUCTION ENTREPRISE :
+  retour à Commerces & Entreprises.
+*/
+
+if(
+  state.currentScreen ===
+  "introductionEntreprise"
+){
+
+  if(
+    typeof window.__bociteartOpenByKey ===
+    "function"
+  ){
+
+    window.__bociteartOpenByKey(
+      "commerces"
+    );
+
+    return;
+  }
+
+} 
+
+        /*
           SUR LA PAGE DES BANDES ENTREPRISE :
           retour à l'introduction Entreprise,
           sans fermer la fenêtre.
