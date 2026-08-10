@@ -341,22 +341,27 @@ if(
           sans fermer la fenêtre.
         */
 
-        if(
-          state.currentScreen === "home"
-        ){
+    if(
+  state.currentScreen === "home"
+){
 
-          if(
-            window.BociteEntreprise &&
-            typeof window.BociteEntreprise.openEntrepriseIntroduction ===
-            "function"
-          ){
+  if(
+    screens.introductionEntreprise &&
+    typeof screens.introductionEntreprise ===
+    "function"
+  ){
 
-            window.BociteEntreprise.openEntrepriseIntroduction();
-            return;
-          }
+    openScreen(
+      "introductionEntreprise",
+      {
+        fromBack:true
+      }
+    );
 
-        }
+    return;
+  }
 
+}
         /*
           DANS LES SOUS-PAGES :
           retour normal à la page précédente.
