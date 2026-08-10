@@ -611,21 +611,28 @@ if(backButton){
       event.stopPropagation();
 
       if(
-        typeof window.__bociteartOpenByKey ===
+        typeof window.closeModal ===
         "function"
       ){
-
-        window.__bociteartOpenByKey(
-          "commerces"
-        );
-
-        return;
+        window.closeModal();
       }
+
+      window.setTimeout(function(){
+
+        if(
+          typeof window.__bociteartOpenByKey ===
+          "function"
+        ){
+          window.__bociteartOpenByKey(
+            "commerces"
+          );
+        }
+
+      },0);
 
     };
 
 }
-
       const button =
         getElement(
           "entrepriseEnterSpaceBtn"
