@@ -4,7 +4,7 @@
 ========================================================= */
  
 (function initBociteEntrepriseModule(){      
-    
+   
   "use strict";
 
   const MODULE_NAME = "entreprise";
@@ -308,58 +308,30 @@ function bindBackButton(){
         event.stopPropagation();
 
         /*
-          PAGE D'INTRODUCTION ENTREPRISE :
-          le bouton Retour doit revenir
-          à Commerces & Entreprises.
+          SUR LA PAGE DES BANDES ENTREPRISE :
+          retour à l'introduction Entreprise,
+          sans fermer la fenêtre.
         */
 
         if(
-          state.currentScreen ===
-          "introductionEntreprise"
-        ){
-
-          if(
-            typeof window.__bociteartOpenByKey ===
-            "function"
-          ){
-
-            window.__bociteartOpenByKey(
-              "commerces"
-            );
-
-            return;
-          }
-
-        }
-
-        /*
-          PAGE DES BANDES :
-          retour à l'introduction Entreprise.
-        */
-
-        if(
-          state.currentScreen ===
-          "home"
+          state.currentScreen === "home"
         ){
 
           if(
             window.BociteEntreprise &&
-            typeof window.BociteEntreprise
-              .openEntrepriseIntroduction ===
-              "function"
+            typeof window.BociteEntreprise.openEntrepriseIntroduction ===
+            "function"
           ){
 
-            window.BociteEntreprise
-              .openEntrepriseIntroduction();
-
+            window.BociteEntreprise.openEntrepriseIntroduction();
             return;
           }
 
         }
 
         /*
-          Toutes les autres pages :
-          retour normal.
+          DANS LES SOUS-PAGES :
+          retour normal à la page précédente.
         */
 
         goBack();
@@ -11901,26 +11873,24 @@ Voir les entreprises de ma ville
 
   "use strict";
 
-  /*
-    IMPORTANT :
-    on ne bloque plus l'installation avec
-    BOCITEART_ENTREPRISE_CONNECTED.
+  const app =
+    window.BociteEntreprise;
 
-    Si un ancien raccordement existe,
-    on le retire avant d'installer le nouveau.
-  */
+  if(!app){
 
-  if(
-    typeof window.__BOCITE_ENTREPRISE_ENTRY_HANDLER__ ===
-    "function"
-  ){
-
-    document.removeEventListener(
-      "click",
-      window.__BOCITE_ENTREPRISE_ENTRY_HANDLER__,
-      true
+    console.error(
+      "Bo'CitéArt Entreprise : module principal introuvable."
     );
+
+    return;
   }
+
+  if(window.BOCITEART_ENTREPRISE_CONNECTED){
+    return;
+  }
+
+  window.BOCITEART_ENTREPRISE_CONNECTED =
+    true;
 
   function openEntrepriseModule(event){
 
@@ -11937,104 +11907,101 @@ Voir les entreprises de ma ville
       }
     }
 
-    const currentApp =
-      window.BociteEntreprise;
-
-    if(!currentApp){
-
-      console.error(
-        "Bo'CitéArt Entreprise : module principal introuvable."
-      );
-
-      return;
-    }
-
     /*
-      ENTRÉE OBLIGATOIRE :
-      l'introduction Entreprise doit toujours
-      précéder les bandes défilantes.
+      Premier choix :
+      écran officiel d’introduction Entreprise.
     */
 
     if(
-      typeof currentApp.openEntrepriseIntroduction ===
+      app.screens &&
+      typeof app.screens.introductionEntreprise ===
       "function"
     ){
 
-      currentApp.openEntrepriseIntroduction();
-
-      return;
-    }
-
-    /*
-      Secours uniquement :
-      écran d'introduction enregistré.
-    */
-
-    if(
-      currentApp.screens &&
-      typeof currentApp.screens.introductionEntreprise ===
-        "function" &&
-      typeof currentApp.openScreen ===
-        "function"
-    ){
-
-      currentApp.openScreen(
+      app.openScreen(
         "introductionEntreprise"
       );
 
       return;
     }
 
-    console.error(
-      "Bo'CitéArt : l'introduction Entreprise n'est pas disponible."
-    );
-  }
+    /*
+      Deuxième choix :
+      fonction officielle fournie
+      par entreprise-accueil.js.
+    */
 
-  function entrepriseEntryHandler(event){
-
-    const target =
-      event.target &&
-      typeof event.target.closest ===
+    if(
+      typeof app.openEntrepriseIntroduction ===
       "function"
-        ? event.target.closest(
-            '[data-commerce-space="entreprise"],' +
-            '#openEntrepriseSpace,' +
-            '[data-open-entreprise]'
-          )
-        : null;
+    ){
 
-    if(!target){
+      app.openEntrepriseIntroduction();
+
       return;
     }
 
-    openEntrepriseModule(
-      event
-    );
+    /*
+      Compatibilité avec l’ancienne version
+      de entreprise-accueil.js.
+    */
+
+    if(
+      app.screens &&
+      typeof app.screens.accueil ===
+      "function"
+    ){
+
+      app.openScreen(
+        "accueil"
+      );
+
+      return;
+    }
+
+    /*
+      Dernier recours seulement.
+    */
+
+    if(
+      typeof app.openHome ===
+      "function"
+    ){
+
+      app.openHome();
+    }
   }
-
-  /*
-    On garde une référence globale
-    afin de pouvoir retirer proprement
-    cet écouteur lors d'une prochaine correction.
-  */
-
-  window.__BOCITE_ENTREPRISE_ENTRY_HANDLER__ =
-    entrepriseEntryHandler;
 
   document.addEventListener(
     "click",
-    entrepriseEntryHandler,
+    function(event){
+
+      const target =
+        event.target &&
+        typeof event.target.closest ===
+        "function"
+          ? event.target.closest(
+              '[data-commerce-space="entreprise"],' +
+              '#openEntrepriseSpace,' +
+              '[data-open-entreprise]'
+            )
+          : null;
+
+      if(!target){
+        return;
+      }
+
+      openEntrepriseModule(event);
+
+    },
     true
   );
 
   window.openEntrepriseSpace =
     openEntrepriseModule;
 
-  window.BOCITEART_ENTREPRISE_CONNECTED =
-    true;
-
   console.log(
-    "✅ Entrée Entreprise → introduction raccordée"
+    "✅ Module Entreprise raccordé à son introduction"
   );
 
 })();
@@ -29031,6 +28998,76 @@ border-radius:10px;
 
 document.head.appendChild(style);
 
+/* ===========================
+Bouton retour automatique
+=========================== */
+
+const observer =
+new MutationObserver(function(){
+
+const modal =
+document.querySelector(
+".modal-content,.modalContent,#modalContent"
+);
+
+if(!modal){
+return;
+}
+
+if(
+modal.querySelector(
+"#globalEntrepriseBackButton"
+)
+){
+return;
+}
+
+const button =
+document.createElement("button");
+
+button.id =
+"globalEntrepriseBackButton";
+
+button.className =
+"choiceBtn";
+
+button.style.width =
+"100%";
+
+button.style.marginBottom =
+"10px";
+
+button.textContent =
+"← Retour à l'espace Entreprise";
+
+button.onclick=function(){
+
+if(
+window.BociteEntreprise &&
+typeof window.BociteEntreprise.openHome==="function"
+){
+window.BociteEntreprise.openHome();
+}
+
+};
+
+modal.prepend(button);
+
+});
+
+observer.observe(
+document.body,
+{
+childList:true,
+subtree:true
+});
+
+console.log(
+"✅ Harmonisation Entreprise chargée"
+);
+
+})();
+
 /* =========================================================
    BO'CITÉART — MUTUALISATION
    EXPLICATION DU SEUIL DE PARTICIPANTS
@@ -45350,5 +45387,4 @@ document.addEventListener(
   },
   true
 );
-
 
