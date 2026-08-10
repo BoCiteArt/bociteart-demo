@@ -6,7 +6,7 @@
    2. ESPACE ENTREPRISE AVEC BANDES DÉFILANTES
    ========================================================= */
 
-(function initEntrepriseAccueil(){     
+(function initEntrepriseAccueil(){    
  
   "use strict";
 
@@ -611,61 +611,19 @@ if(backButton){
       event.stopPropagation();
 
       if(
-        typeof window.closeModal ===
+        typeof window.__bociteartOpenByKey ===
         "function"
       ){
 
-        window.closeModal();
+        window.__bociteartOpenByKey(
+          "commerces"
+        );
+
         return;
       }
 
-      const closeButtons =
-        Array.from(
-          document.querySelectorAll(
-            "button"
-          )
-        );
-
-      const modalCloseButton =
-        closeButtons.find(
-          function(item){
-
-            const text =
-              String(
-                item.textContent || ""
-              ).trim();
-
-            const label =
-              String(
-                item.getAttribute(
-                  "aria-label"
-                ) || ""
-              ).toLowerCase();
-
-            return (
-              text === "×" ||
-              text === "✕" ||
-              text === "X" ||
-              label.includes("fermer") ||
-              label.includes("close")
-            );
-          }
-        );
-
-      if(modalCloseButton){
-
-        modalCloseButton.click();
-        return;
-      }
-
-      if(
-        typeof app.goBack ===
-        "function"
-      ){
-
-        app.goBack();
-      }
     };
+
 }
 
       const button =
