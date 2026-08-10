@@ -37606,14 +37606,6 @@ function addUniversalBackButton(
     app.renderModal(
       "Faites connaître vos métiers et votre savoir-faire",
       `
-        <button
-          id="correctedVisibilityBackBtn"
-          class="choiceBtn"
-          type="button"
-          style="margin-bottom:14px;">
-          Retour
-        </button>
-
         <div
           class="box"
           style="border-left:6px solid #2f5d46;">
@@ -37999,11 +37991,6 @@ function addUniversalBackButton(
 
     window.setTimeout(function(){
 
-      const backButton =
-        getElement(
-          "correctedVisibilityBackBtn"
-        );
-
       const directoryButton =
         getElement(
           "correctedVisibilityDirectoryBtn"
@@ -38028,12 +38015,6 @@ function addUniversalBackButton(
         getElement(
           "correctedVisibilityPreviewBtn"
         );
-
-      if(backButton){
-        backButton.onclick = function(){
-          app.openHome();
-        };
-      }
 
       if(directoryButton){
         directoryButton.onclick = function(){
@@ -38278,14 +38259,6 @@ function addUniversalBackButton(
     app.renderModal(
       data.companyName,
       `
-        <button
-          id="correctedVisibilityPreviewBackBtn"
-          class="choiceBtn"
-          type="button"
-          style="margin-bottom:14px;">
-          Retour
-        </button>
-
         <div
           class="box"
           style="border-left:6px solid #2f5d46;">
@@ -38451,11 +38424,6 @@ function addUniversalBackButton(
 
     window.setTimeout(function(){
 
-      const backButton =
-        getElement(
-          "correctedVisibilityPreviewBackBtn"
-        );
-
       const employmentButton =
         getElement(
           "correctedPreviewEmploymentBtn"
@@ -38465,11 +38433,6 @@ function addUniversalBackButton(
         getElement(
           "correctedPreviewMecenatBtn"
         );
-
-      if(backButton){
-        backButton.onclick =
-          openCorrectedVisibilityPage;
-      }
 
       if(employmentButton){
         employmentButton.onclick = function(){
