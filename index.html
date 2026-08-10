@@ -7449,40 +7449,10 @@ Afficher mon QR Code commerçant
       openCommerceSpace.onclick = ()=>showProfessionalSpace("commerce");
     }
 
- if(openEntrepriseSpace){
+   if(openEntrepriseSpace){
+      openEntrepriseSpace.onclick = ()=>showProfessionalSpace("entreprise");
+    }
 
-  openEntrepriseSpace.onclick =
-    function(event){
-
-      if(event){
-        event.preventDefault();
-        event.stopPropagation();
-      }
-
-      if(
-        window.BociteEntreprise &&
-        typeof window.BociteEntreprise
-          .openEntrepriseIntroduction ===
-          "function"
-      ){
-
-        window.BociteEntreprise
-          .openEntrepriseIntroduction();
-
-        return;
-      }
-
-      if(
-        typeof window.openEntrepriseSpace ===
-        "function"
-      ){
-
-        window.openEntrepriseSpace(
-          event
-        );
-      }
-    };
-}
   const ENTREPRISE_MUTUALISATION_KEY =
   "bociteart_entreprise_mutualisation_v1";
 
