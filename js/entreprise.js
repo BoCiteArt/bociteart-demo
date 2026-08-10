@@ -316,6 +316,10 @@ if(
   state.currentScreen ===
   "introductionEntreprise"
 ){
+    
+  state.currentScreen = null;
+  state.previousScreen = null;
+  state.nestedParentScreen = null;
 
   if(
     typeof window.__bociteartOpenByKey ===
