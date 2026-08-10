@@ -585,6 +585,31 @@ function getIntroductionHtml(){
 
  function openIntroduction(){
 
+    document
+  .querySelectorAll(
+    "button"
+  )
+  .forEach(function(button){
+
+    const text =
+      String(
+        button.textContent || ""
+      )
+      .replace(/\s+/g," ")
+      .trim()
+      .toLowerCase();
+
+    if(
+      text === "retour" &&
+      !button.classList.contains(
+        "bociteEntrepriseProtectedBackBtn"
+      )
+    ){
+      button.remove();
+    }
+
+  });
+
   renderPage(
     getIntroductionHtml()
   );
