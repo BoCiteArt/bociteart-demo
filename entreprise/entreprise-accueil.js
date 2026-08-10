@@ -610,26 +610,12 @@ if(backButton){
       event.preventDefault();
       event.stopPropagation();
 
-      const commerceButton =
-        document.querySelector(
-          '[data-open="commerces"]'
-        );
-
-      if(commerceButton){
-
-        commerceButton.click();
-        return;
-      }
-
       if(
-        typeof window.__bociteartOpenByKey ===
+        typeof window.backModal ===
         "function"
       ){
 
-        window.__bociteartOpenByKey(
-          "commerces"
-        );
-
+        window.backModal();
         return;
       }
 
