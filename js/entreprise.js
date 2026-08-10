@@ -12043,9 +12043,12 @@ if(
 
 }
 
-console.log(
-"✅ Module Entreprise raccordé à son introduction"
-);
+      console.log(
+      "✅ Module Entreprise raccordé à son introduction"
+    );
+   
+})();
+
 /* =========================================================
    BO'CITÉART — RECHERCHE PROFESSIONNELLE PRIVÉE
    COMMUNE INDÉPENDANTE • FRANCE • EUROPE
