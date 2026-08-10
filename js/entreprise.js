@@ -316,10 +316,26 @@ if(
   state.currentScreen ===
   "introductionEntreprise"
 ){
-    
+
   state.currentScreen = null;
   state.previousScreen = null;
   state.nestedParentScreen = null;
+  state.history = ["home"];
+
+  /*
+    On quitte complètement le parcours Entreprise.
+    L'ancien historique général des modales
+    ne doit pas recréer son bouton "Retour"
+    lors de la prochaine ouverture.
+  */
+
+  if(
+    Array.isArray(
+      window.modalHistory
+    )
+  ){
+    window.modalHistory.length = 0;
+  }
 
   if(
     typeof window.__bociteartOpenByKey ===
@@ -333,8 +349,7 @@ if(
     return;
   }
 
-} 
-
+}
         /*
           SUR LA PAGE DES BANDES ENTREPRISE :
           retour à l'introduction Entreprise,
