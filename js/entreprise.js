@@ -42199,85 +42199,58 @@ function openDirectly(screenName){
     }
   }
 
-  function correctBackButtons(){
+function correctBackButtons(){
 
-    const modal =
-      getModalContent();
+  const modal =
+    getModalContent();
 
-    if(!modal){
-      return;
-    }
+  if(!modal){
+    return;
+  }
 
-    const buttons =
-      Array.from(
-        modal.querySelectorAll("button")
-      );
+  modal
+    .querySelectorAll(
+      "button, [role='button']"
+    )
+    .forEach(function(button){
 
-    /*
-      Suppression du grand bouton :
-      « Retour à la page précédente ».
-    */
+      /*
+        Le nouveau bouton officiel
+        ← Retour
+        doit absolument être conservé.
+      */
 
-    buttons.forEach(function(button){
+      if(
+        button.classList &&
+        button.classList.contains(
+          "bociteEntrepriseProtectedBackBtn"
+        )
+      ){
+        return;
+      }
 
       const text =
         normalizeText(
           button.textContent
         );
 
+      /*
+        Suppression uniquement
+        des anciens boutons Retour.
+      */
+
       if(
-        text.includes(
-          "retour a la page precedente"
-        )
+        text === "retour" ||
+        text === "retour a l espace entreprise" ||
+        text === "retour a la page precedente" ||
+        text === "retour a commerces & entreprises"
       ){
         button.remove();
       }
+
     });
 
-    /*
-      Recherche des petits boutons Retour.
-    */
-
-    const returnButtons =
-      Array.from(
-        modal.querySelectorAll("button")
-      )
-      .filter(function(button){
-
-        const text =
-          normalizeText(
-            button.textContent
-          );
-
-        return (
-          text === "retour" ||
-          text === "retour a l espace entreprise"
-        );
-      });
-
-    /*
-      On ne conserve qu’un seul bouton Retour.
-    */
-
-    returnButtons.forEach(function(button, index){
-
-      if(index > 0){
-        button.remove();
-        return;
-      }
-
-      button.textContent =
-        "Retour";
-
-      button.onclick = function(event){
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        openPreviousPage();
-      };
-    });
-  }
+}
 
   function openRealLocalDirectory(){
 
