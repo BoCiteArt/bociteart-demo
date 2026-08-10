@@ -611,18 +611,19 @@ if(backButton){
       event.stopPropagation();
 
       if(
-        typeof window.backModal ===
+        typeof app.goBack ===
         "function"
       ){
 
-        window.backModal();
+        app.goBack();
         return;
+
       }
 
     };
 
 }
-      const button =
+       const button =
         getElement(
           "entrepriseEnterSpaceBtn"
         );
