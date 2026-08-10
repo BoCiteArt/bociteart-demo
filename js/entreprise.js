@@ -34762,100 +34762,11 @@ console.log(
     `;
   }
 
-  function addUniversalBackButton(
-    modal,
-    title
-  ){
-
-    if(!modal){
-      return;
-    }
-
-if(
-  state.currentScreen ===
-    "introductionEntreprise" ||
-  title.includes(
-    "commerces & entreprises"
-  ) ||
-  title.includes(
-    "commerces et entreprises"
-  )
+function addUniversalBackButton(
+  modal,
+  title
 ){
   return;
-}
-
-    const oldButtons =
-      modal.querySelectorAll(
-        "#entrepriseBackBtn," +
-        "#entrepriseCorrectedBackBtn," +
-        "#globalEntrepriseBackButton," +
-        "[data-entreprise-back]"
-      );
-
-    oldButtons.forEach(
-      function(button){
-
-        if(
-          button.id !==
-          "entrepriseUniversalBackButton"
-        ){
-          button.remove();
-        }
-      }
-    );
-
-    let button =
-      modal.querySelector(
-        "#entrepriseUniversalBackButton"
-      );
-
-    if(!button){
-
-      button =
-        document.createElement(
-          "button"
-        );
-
-      button.id =
-        "entrepriseUniversalBackButton";
-
-      button.className =
-        "choiceBtn";
-
-      button.type =
-        "button";
-
-      button.textContent =
-        "Retour";
-
-      modal.prepend(
-        button
-      );
-    }
-
-button.onclick =
-  function(event){
-
-    if(event){
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    if(
-      typeof app.goBack ===
-      "function"
-    ){
-      app.goBack();
-      return;
-    }
-
-    if(
-      typeof app.openHome ===
-      "function"
-    ){
-      app.openHome();
-    }
-  };
 }
   function isSmallUnwantedBox(
     element,
