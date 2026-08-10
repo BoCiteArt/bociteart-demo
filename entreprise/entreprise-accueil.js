@@ -51,25 +51,28 @@ function getLogoHtml(){
   `;
 }
 
-  function renderPage(html){
+ function renderPage(html){
 
-    if(
-      typeof app.renderModal !==
-      "function"
-    ){
+  if(
+    typeof app.renderModal !==
+    "function"
+  ){
 
-      console.error(
-        "Bo'CitéArt : fonction renderModal introuvable."
-      );
-
-      return;
-    }
-
-    app.renderModal(
-      "Commerces & Entreprises",
-      html
+    console.error(
+      "Bo'CitéArt : fonction renderModal introuvable."
     );
+
+    return;
   }
+
+  app.renderModal(
+    "Commerces & Entreprises",
+    html,
+    {
+      hideBack:true
+    }
+  );
+}
 
   /* =======================================================
      PAGE 1 — INTRODUCTION
@@ -80,7 +83,7 @@ function getIntroductionHtml(){
   return `
     <button
       id="entrepriseIntroductionBackBtn"
-      class="choiceBtn"
+    class="choiceBtn bociteEntrepriseProtectedBackBtn"
       type="button"
       style="
         width:100%;
