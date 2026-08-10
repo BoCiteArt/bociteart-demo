@@ -35086,11 +35086,6 @@ function addUniversalBackButton(
     const title =
       getModalTitle();
 
-    addUniversalBackButton(
-      modal,
-      title
-    );
-
     removeUnwantedBoxes(
       modal,
       title
