@@ -12006,9 +12006,6 @@ Voir les entreprises de ma ville
     true
   );
 
-  window.openEntrepriseSpace =
-    openEntrepriseModule;
-
  window.openEntrepriseSpace =
 openEntrepriseModule;
 
