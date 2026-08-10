@@ -81,17 +81,7 @@ function getLogoHtml(){
 function getIntroductionHtml(){
 
   return `
-    <button
-      id="entrepriseIntroductionBackBtn"
-    class="choiceBtn bociteEntrepriseProtectedBackBtn"
-      type="button"
-      style="
-        width:100%;
-        margin-bottom:14px;
-      ">
-      ← Retour à Commerces & Entreprises
-    </button>
-
+   
     <div
       class="box"
       style="
@@ -593,67 +583,33 @@ function getIntroductionHtml(){
      OUVERTURE DE L’INTRODUCTION
      ======================================================= */
 
-  function openIntroduction(){
-     
-     document
-  .querySelectorAll(
-    "#entrepriseIntroductionBackBtn," +
-    ".bociteEntrepriseProtectedBackBtn"
-  )
-  .forEach(function(button){
-    button.remove();
-  });
+ function openIntroduction(){
 
-    renderPage(
-      getIntroductionHtml()
-    );
-
-    window.setTimeout(function(){
-       const backButton =
-  getElement(
-    "entrepriseIntroductionBackBtn"
+  renderPage(
+    getIntroductionHtml()
   );
 
-if(backButton){
+  window.setTimeout(function(){
 
-  backButton.onclick =
-    function(event){
+    const button =
+      getElement(
+        "entrepriseEnterSpaceBtn"
+      );
 
-      event.preventDefault();
-      event.stopPropagation();
+    if(button){
 
-      if(
-        typeof app.goBack ===
-        "function"
-      ){
+      button.onclick =
+        function(event){
 
-        app.goBack();
-        return;
+          event.preventDefault();
+          event.stopPropagation();
 
-      }
+          openRealEntrepriseHome();
+        };
+    }
 
-    };
-
+  },0);
 }
-       const button =
-        getElement(
-          "entrepriseEnterSpaceBtn"
-        );
-
-      if(button){
-
-        button.onclick =
-          function(event){
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            openRealEntrepriseHome();
-          };
-      }
-
-    },0);
-  }
 
   /* =======================================================
      OUVERTURE DE L’ESPACE ENTREPRISE EXISTANT
