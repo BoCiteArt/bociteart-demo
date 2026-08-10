@@ -34771,16 +34771,18 @@ console.log(
       return;
     }
 
-    if(
-      title.includes(
-        "commerces & entreprises"
-      ) ||
-      title.includes(
-        "commerces et entreprises"
-      )
-    ){
-      return;
-    }
+if(
+  state.currentScreen ===
+    "introductionEntreprise" ||
+  title.includes(
+    "commerces & entreprises"
+  ) ||
+  title.includes(
+    "commerces et entreprises"
+  )
+){
+  return;
+}
 
     const oldButtons =
       modal.querySelectorAll(
