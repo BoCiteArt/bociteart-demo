@@ -610,25 +610,28 @@ if(backButton){
       event.preventDefault();
       event.stopPropagation();
 
-      if(
-        typeof window.closeModal ===
-        "function"
-      ){
-        window.closeModal();
+      const commerceButton =
+        document.querySelector(
+          '[data-open="commerces"]'
+        );
+
+      if(commerceButton){
+
+        commerceButton.click();
+        return;
       }
 
-      window.setTimeout(function(){
+      if(
+        typeof window.__bociteartOpenByKey ===
+        "function"
+      ){
 
-        if(
-          typeof window.__bociteartOpenByKey ===
-          "function"
-        ){
-          window.__bociteartOpenByKey(
-            "commerces"
-          );
-        }
+        window.__bociteartOpenByKey(
+          "commerces"
+        );
 
-      },0);
+        return;
+      }
 
     };
 
