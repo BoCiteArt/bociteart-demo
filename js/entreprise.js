@@ -11911,8 +11911,17 @@ Voir les entreprises de ma ville
       Premier choix :
       écran officiel d’introduction Entreprise.
     */
+     if(
+  app.state
+){
 
-    if(
+  app.state.currentScreen =
+    "commerces";
+
+  app.state.history = [];
+}
+     
+     if(
       app.screens &&
       typeof app.screens.introductionEntreprise ===
       "function"
@@ -12000,11 +12009,46 @@ Voir les entreprises de ma ville
   window.openEntrepriseSpace =
     openEntrepriseModule;
 
-  console.log(
-    "✅ Module Entreprise raccordé à son introduction"
+ window.openEntrepriseSpace =
+openEntrepriseModule;
+
+/*
+  Écran extérieur au module Entreprise :
+  page générale Commerces & Entreprises.
+
+  Il permet au moteur de navigation Entreprise
+  de retrouver correctement cette page
+  lorsque l'on revient depuis l'introduction.
+*/
+
+if(
+  typeof app.registerScreen ===
+  "function"
+){
+
+  app.registerScreen(
+    "commerces",
+    function(){
+
+      if(
+        typeof window.__bociteartOpenByKey ===
+        "function"
+      ){
+
+        window.__bociteartOpenByKey(
+          "commerces"
+        );
+
+      }
+
+    }
   );
 
-})();
+}
+
+console.log(
+"✅ Module Entreprise raccordé à son introduction"
+);
 /* =========================================================
    BO'CITÉART — RECHERCHE PROFESSIONNELLE PRIVÉE
    COMMUNE INDÉPENDANTE • FRANCE • EUROPE
