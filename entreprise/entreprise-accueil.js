@@ -594,6 +594,15 @@ function getIntroductionHtml(){
      ======================================================= */
 
   function openIntroduction(){
+     
+     document
+  .querySelectorAll(
+    "#entrepriseIntroductionBackBtn," +
+    ".bociteEntrepriseProtectedBackBtn"
+  )
+  .forEach(function(button){
+    button.remove();
+  });
 
     renderPage(
       getIntroductionHtml()
