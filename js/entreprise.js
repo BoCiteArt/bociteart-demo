@@ -3425,36 +3425,7 @@ if(directoryButton){
     openEmploymentCompaniesDirectory();
   };
 }
-
-    /*
-      Retour direct aux bandes défilantes
-      en un seul clic depuis cette page.
-    */
-
- const backButton =
-  document.querySelector(
-    ".bociteEntrepriseProtectedBackBtn"
-  );
-
-if(backButton){
-
-  const directBackButton =
-    backButton.cloneNode(true);
-
-  backButton.replaceWith(
-    directBackButton
-  );
-
-  directBackButton.onclick =
-    function(event){
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      module.returnToEntrepriseHome();
-    };
-}
-
+     
   },0);
 }
    
