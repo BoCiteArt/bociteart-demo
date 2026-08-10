@@ -2471,7 +2471,12 @@ if(
         Retour
      </button>`;
 }
-else if(window.modalHistory.length){
+else if(
+  window.modalHistory.length &&
+  !String(html || "").includes(
+    "bociteEntrepriseProtectedBackBtn"
+  )
+){
   backBtn =
     `<button
         class="choiceBtn"
