@@ -512,7 +512,7 @@
 
 function getLogoHtml(){
 
-  return `<strong style="white-space:nowrap;font-weight:900;color:#2f5d46;">Bo'Cité<span style="color:#b00020;">Art</span></strong>`;
+  return `<strong style="white-space:nowrap;font-weight:900;letter-spacing:-0.7px;color:#2f5d46;">Bo'Cité<span style="color:#b00020;">Art</span></strong>`;
 
 }
    
