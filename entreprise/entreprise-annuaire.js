@@ -2531,257 +2531,718 @@ function clearSearchHistory(){
      CATÉGORIES
      ======================================================= */
 
-  function openCategory(
-    categoryId
-  ){
+  /* =======================================================
+   CATÉGORIES → MÉTIERS → ÉTABLISSEMENTS
+   ======================================================= */
 
-    if(
-      categoryId ===
-      "metiers"
-    ){
-      openAllTrades();
-      return;
-    }
+/*
+  Un nom compréhensible par l'utilisateur
+  peut correspondre à plusieurs formulations
+  dans les données officielles.
+*/
 
-    if(
-      categoryId ===
-      "sante"
-    ){
-      openTradeFamily(
-        "Santé",
-        METIERS.sante
-      );
-      return;
-    }
+const TRADE_SEARCH_TERMS = {
 
-    if(
-      categoryId ===
-      "hebergements"
-    ){
-      openTradeFamily(
-        "Hôtels & séjours",
-        METIERS.hebergements
-      );
-      return;
-    }
+  /* SANTÉ */
 
-    const results =
-      searchEntities(
-        "",
-        {
-          category:
-            categoryId
-        }
-      );
+  "Médecins généralistes":[
+    "médecin généraliste",
+    "médecin",
+    "médecine générale"
+  ],
 
-    openGenericEntityList(
-      CATEGORIES
-        .find(function(item){
+  "Infirmiers":[
+    "infirmier",
+    "infirmière",
+    "soins infirmiers"
+  ],
+
+  "Kinésithérapeutes":[
+    "kinésithérapeute",
+    "kinesitherapeute",
+    "masseur kinésithérapeute",
+    "masseur-kinesitherapeute"
+  ],
+
+  "Dentistes":[
+    "dentiste",
+    "chirurgien dentiste",
+    "chirurgien-dentiste",
+    "dentaire",
+    "pratique dentaire"
+  ],
+
+  "Pharmacies":[
+    "pharmacie",
+    "pharmacien",
+    "pharmaceutique",
+    "produits pharmaceutiques"
+  ],
+
+  "Pédicures-podologues":[
+    "podologue",
+    "pédicure podologue",
+    "pedicure podologue",
+    "pédicure-podologue"
+  ],
+
+  "Orthophonistes":[
+    "orthophoniste",
+    "orthophonie"
+  ],
+
+  "Sages-femmes":[
+    "sage-femme",
+    "sage femme"
+  ],
+
+  "Psychologues":[
+    "psychologue",
+    "psychologie"
+  ],
+
+  "Autres professionnels de santé":[
+    "santé",
+    "soins",
+    "professionnel de santé"
+  ],
+
+  /* MAISON / ARTISANS */
+
+  "Couvreurs":[
+    "couvreur",
+    "couverture",
+    "toiture",
+    "zinguerie"
+  ],
+
+  "Plombiers":[
+    "plombier",
+    "plomberie"
+  ],
+
+  "Électriciens":[
+    "électricien",
+    "electricien",
+    "électricité",
+    "electricite"
+  ],
+
+  "Chauffagistes":[
+    "chauffagiste",
+    "chauffage"
+  ],
+
+  "Menuisiers":[
+    "menuisier",
+    "menuiserie"
+  ],
+
+  "Maçons":[
+    "maçon",
+    "macon",
+    "maçonnerie",
+    "maconnerie"
+  ],
+
+  "Peintres":[
+    "peintre",
+    "peinture"
+  ],
+
+  "Carreleurs":[
+    "carreleur",
+    "carrelage"
+  ],
+
+  "Paysagistes":[
+    "paysagiste",
+    "paysage",
+    "espaces verts"
+  ],
+
+  "Serruriers":[
+    "serrurier",
+    "serrurerie"
+  ],
+
+  "Entreprises de rénovation":[
+    "rénovation",
+    "renovation",
+    "travaux"
+  ],
+
+  /* AUTOMOBILE */
+
+  "Garages automobiles":[
+    "garage",
+    "automobile",
+    "réparation automobile",
+    "reparation automobile"
+  ],
+
+  "Carrossiers":[
+    "carrossier",
+    "carrosserie"
+  ],
+
+  "Pneumatiques":[
+    "pneumatique",
+    "pneu"
+  ],
+
+  "Contrôle technique":[
+    "contrôle technique",
+    "controle technique"
+  ],
+
+  "Motos":[
+    "moto",
+    "motocycle"
+  ],
+
+  "Cycles":[
+    "vélo",
+    "velo",
+    "cycle",
+    "bicyclette"
+  ],
+
+  "Véhicules utilitaires":[
+    "véhicule utilitaire",
+    "vehicule utilitaire",
+    "utilitaire"
+  ],
+
+  "Poids lourds":[
+    "poids lourd",
+    "camion"
+  ],
+
+  /* ALIMENTATION */
+
+  "Restaurants":[
+    "restaurant",
+    "restauration"
+  ],
+
+  "Boulangeries":[
+    "boulanger",
+    "boulangerie",
+    "boulangerie-pâtisserie",
+    "boulangerie patisserie",
+    "pain"
+  ],
+
+  "Boucheries":[
+    "boucher",
+    "boucherie",
+    "charcuterie"
+  ],
+
+  "Traiteurs":[
+    "traiteur"
+  ],
+
+  "Cafés":[
+    "café",
+    "cafe",
+    "débit de boissons",
+    "debit de boissons"
+  ],
+
+  "Épiceries":[
+    "épicerie",
+    "epicerie",
+    "alimentation générale",
+    "alimentation generale"
+  ],
+
+  "Commerces alimentaires":[
+    "commerce alimentaire",
+    "alimentation"
+  ],
+
+  /* SERVICES PROFESSIONNELS */
+
+  "Experts-comptables":[
+    "expert comptable",
+    "expert-comptable",
+    "comptabilité",
+    "comptabilite"
+  ],
+
+  "Avocats":[
+    "avocat",
+    "activité juridique",
+    "activite juridique"
+  ],
+
+  "Assurances":[
+    "assurance",
+    "assureur"
+  ],
+
+  "Informatique":[
+    "informatique",
+    "ordinateur",
+    "logiciel"
+  ],
+
+  "Communication":[
+    "communication",
+    "publicité",
+    "publicite"
+  ],
+
+  "Transport":[
+    "transport"
+  ],
+
+  "Nettoyage professionnel":[
+    "nettoyage",
+    "propreté",
+    "proprete"
+  ],
+
+  "Sécurité":[
+    "sécurité",
+    "securite",
+    "surveillance"
+  ],
+
+  "Bureaux d'études":[
+    "bureau d'études",
+    "bureau d'etudes",
+    "ingénierie",
+    "ingenierie"
+  ],
+
+  "Conseil":[
+    "conseil",
+    "consultant"
+  ],
+
+  /* HÉBERGEMENT */
+
+  "Hôtels":[
+    "hôtel",
+    "hotel",
+    "hôtellerie",
+    "hotellerie"
+  ],
+
+  "Chambres d'hôtes":[
+    "chambre d'hôtes",
+    "chambre d'hotes"
+  ],
+
+  "Gîtes":[
+    "gîte",
+    "gite"
+  ],
+
+  "Locations de courte durée":[
+    "location courte durée",
+    "location courte duree",
+    "hébergement touristique",
+    "hebergement touristique"
+  ],
+
+  "Autres hébergements":[
+    "hébergement",
+    "hebergement"
+  ]
+
+};
+
+
+/* =======================================================
+   RECHERCHE D'UN MÉTIER
+   ======================================================= */
+
+function searchEntitiesByTrade(
+  trade
+){
+
+  const commune =
+    normalizeText(
+      getCurrentCommune()
+    );
+
+  const searchTerms =
+    safeArray(
+      TRADE_SEARCH_TERMS[trade]
+    );
+
+  const terms =
+    (
+      searchTerms.length
+        ? searchTerms
+        : [trade]
+    )
+    .map(normalizeText);
+
+  return loadEntities()
+    .filter(function(entity){
+
+      if(
+        normalizeText(
+          entity.commune
+        ) !== commune
+      ){
+        return false;
+      }
+
+      const haystack =
+        entitySearchText(
+          entity
+        );
+
+      return terms.some(
+        function(term){
 
           return (
-            item.id ===
-            categoryId
+            term &&
+            haystack.includes(
+              term
+            )
           );
-        })?.title ||
-        "Annuaire",
-      results
-    );
-  }
-
-  function openTradeFamily(
-    title,
-    trades
-  ){
-
-    const buttons =
-      safeArray(trades)
-        .map(function(trade){
-
-          return `
-
-            <button
-              type="button"
-              class="choiceBtn annuaireTradeBtn"
-              data-trade="${escapeHtml(trade)}"
-              style="
-                width:100%;
-                margin-top:7px;
-                text-align:left;
-              ">
-              ${escapeHtml(trade)}
-            </button>
-
-          `;
-        })
-        .join("");
-
-    render(
-      title,
-      `
-
-        <div class="box">
-
-          <div class="bociteAnnuaireTitle">
-            ${escapeHtml(title)}
-          </div>
-
-          <div
-            class="bociteAnnuaireText"
-            style="margin-top:6px;">
-            Choisissez un métier.
-          </div>
-
-        </div>
-
-        ${buttons}
-
-        <button
-          id="annuaireTradeBackBtn"
-          class="choiceBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:10px;
-          ">
-          Retour à l'annuaire
-        </button>
-
-      `,
-      function(){
-
-        document
-          .querySelectorAll(
-            ".annuaireTradeBtn"
-          )
-          .forEach(function(button){
-
-            button.onclick =
-              function(){
-
-                launchSearch(
-                  button.getAttribute(
-                    "data-trade"
-                  ) || ""
-                );
-              };
-          });
-
-        const back =
-          getElement(
-            "annuaireTradeBackBtn"
-          );
-
-        if(back){
-          back.onclick =
-            openHome;
         }
+      );
+    })
+    .sort(function(a,b){
 
-      }
+      return String(
+        a.name || ""
+      ).localeCompare(
+        String(
+          b.name || ""
+        ),
+        "fr",
+        {
+          sensitivity:"base"
+        }
+      );
+    });
+}
+
+
+/* =======================================================
+   OUVRIR LES PROFESSIONNELS D'UN MÉTIER
+   ======================================================= */
+
+function openTradeResults(
+  trade
+){
+
+  const results =
+    searchEntitiesByTrade(
+      trade
     );
-  }
 
-  function openAllTrades(){
+  let html = `
 
-    const sections = [
+    <div
+      class="box"
+      style="
+        border-left:6px solid #2f5d46;
+      ">
 
-      {
-        title:"Santé",
-        values:METIERS.sante
-      },
+      <div class="bociteAnnuaireTitle">
+        ${escapeHtml(trade)}
+      </div>
 
-      {
-        title:"Maison & travaux",
-        values:METIERS.maison
-      },
+      <div
+        class="bociteAnnuaireText"
+        style="margin-top:6px;">
+        ${escapeHtml(getCurrentCommune())}
+      </div>
 
-      {
-        title:"Automobile & mobilité",
-        values:METIERS.automobile
-      },
+    </div>
 
-      {
-        title:"Restaurants & alimentation",
-        values:METIERS.alimentation
-      },
+  `;
 
-      {
-        title:"Services aux entreprises",
-        values:METIERS.professionnels
-      },
+  if(!results.length){
 
-      {
-        title:"Hôtels & séjours",
-        values:METIERS.hebergements
-      }
+    html += `
 
-    ];
-
-    let html = `
-
-      <div class="box">
+      <div
+        class="box"
+        style="margin-top:9px;">
 
         <div class="bociteAnnuaireTitle">
-          Tous les métiers de votre ville
+          Aucun résultat disponible
         </div>
 
         <div
           class="bociteAnnuaireText"
           style="margin-top:6px;">
-          Les professionnels sont regroupés
-          par métier puis classés
-          alphabétiquement.
+          Aucune fiche correspondant à ce métier
+          n'est encore disponible
+          dans les données actuellement chargées.
         </div>
 
       </div>
 
     `;
 
-    sections.forEach(
-      function(section){
+  }else{
 
-        html += `
+    results.forEach(
+      function(entity){
 
-          <div
-            class="box"
-            style="margin-top:9px;">
-
-            <div class="bociteAnnuaireTitle">
-              ${escapeHtml(section.title)}
-            </div>
-
-            ${
-              section.values
-                .map(function(trade){
-
-                  return `
-
-                    <button
-                      type="button"
-                      class="choiceBtn annuaireTradeBtn"
-                      data-trade="${escapeHtml(trade)}"
-                      style="
-                        width:100%;
-                        margin-top:6px;
-                        text-align:left;
-                      ">
-                      ${escapeHtml(trade)}
-                    </button>
-
-                  `;
-                })
-                .join("")
-            }
-
-          </div>
-
-        `;
+        html +=
+          getResultCard(
+            entity
+          );
       }
     );
+  }
 
-    html += `
+  html += `
+
+    <button
+      id="annuaireTradeResultsBackBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:10px;
+      ">
+      Retour aux métiers
+    </button>
+
+  `;
+
+  render(
+    trade,
+    html,
+    function(){
+
+      bindResultActions();
+
+      const back =
+        getElement(
+          "annuaireTradeResultsBackBtn"
+        );
+
+      if(back){
+
+        back.onclick =
+          function(){
+
+            openAllTrades();
+          };
+      }
+
+    }
+  );
+}
+
+
+/* =======================================================
+   OUVERTURE D'UNE GRANDE CATÉGORIE
+   ======================================================= */
+
+function openCategory(
+  categoryId
+){
+
+  if(
+    categoryId ===
+    "metiers"
+  ){
+    openAllTrades();
+    return;
+  }
+
+  if(
+    categoryId ===
+    "sante"
+  ){
+    openTradeFamily(
+      "Santé",
+      METIERS.sante
+    );
+    return;
+  }
+
+  if(
+    categoryId ===
+    "artisans"
+  ){
+    openTradeFamily(
+      "Artisans • Maison & travaux",
+      METIERS.maison
+    );
+    return;
+  }
+
+  if(
+    categoryId ===
+    "restaurants"
+  ){
+    openTradeFamily(
+      "Restaurants & alimentation",
+      METIERS.alimentation
+    );
+    return;
+  }
+
+  if(
+    categoryId ===
+    "commerces"
+  ){
+    openTradeFamily(
+      "Commerces & alimentation",
+      METIERS.alimentation
+    );
+    return;
+  }
+
+  if(
+    categoryId ===
+    "services"
+  ){
+    openTradeFamily(
+      "Services",
+      METIERS.professionnels
+    );
+    return;
+  }
+
+  if(
+    categoryId ===
+    "hebergements"
+  ){
+    openTradeFamily(
+      "Hôtels & séjours",
+      METIERS.hebergements
+    );
+    return;
+  }
+
+  /*
+    Entreprises :
+    pour le moment on conserve
+    la liste générale des entreprises.
+  */
+
+  if(
+    categoryId ===
+    "entreprises"
+  ){
+
+    const results =
+      searchEntities(
+        "",
+        {
+          category:
+            "entreprises"
+        }
+      );
+
+    openGenericEntityList(
+      "Entreprises",
+      results
+    );
+
+    return;
+  }
+
+  openHome();
+}
+
+
+/* =======================================================
+   PAGE INTERMÉDIAIRE : LISTE DES MÉTIERS
+   ======================================================= */
+
+function openTradeFamily(
+  title,
+  trades
+){
+
+  const buttons =
+    safeArray(trades)
+      .map(function(trade){
+
+        const count =
+          searchEntitiesByTrade(
+            trade
+          ).length;
+
+        return `
+
+          <button
+            type="button"
+            class="choiceBtn annuaireTradeBtn"
+            data-trade="${escapeHtml(trade)}"
+            style="
+              width:100%;
+              margin-top:7px;
+              text-align:left;
+            ">
+
+            <strong
+              style="
+                display:block;
+                color:#2f5d46;
+                font-size:16px;
+              ">
+              ${escapeHtml(trade)}
+            </strong>
+
+            <span
+              style="
+                display:block;
+                font-size:12px;
+                font-weight:400;
+                margin-top:3px;
+              ">
+              ${
+                count
+                  ? (
+                      count +
+                      (
+                        count > 1
+                          ? " professionnels"
+                          : " professionnel"
+                      )
+                    )
+                  : "Données à compléter"
+              }
+            </span>
+
+          </button>
+
+        `;
+      })
+      .join("");
+
+  render(
+    title,
+    `
+
+      <div class="box">
+
+        <div class="bociteAnnuaireTitle">
+          ${escapeHtml(title)}
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+          Choisissez un métier.
+        </div>
+
+      </div>
+
+      ${buttons}
 
       <button
-        id="annuaireAllTradesBackBtn"
+        id="annuaireTradeBackBtn"
         class="choiceBtn"
         type="button"
         style="
@@ -2791,43 +3252,230 @@ function clearSearchHistory(){
         Retour à l'annuaire
       </button>
 
-    `;
+    `,
+    function(){
 
-    render(
-      "Tous les métiers",
-      html,
-      function(){
+      document
+        .querySelectorAll(
+          ".annuaireTradeBtn"
+        )
+        .forEach(function(button){
 
-        document
-          .querySelectorAll(
-            ".annuaireTradeBtn"
-          )
-          .forEach(function(button){
+          button.onclick =
+            function(){
 
-            button.onclick =
-              function(){
+              openTradeResults(
+                button.getAttribute(
+                  "data-trade"
+                ) || ""
+              );
+            };
+        });
 
-                launchSearch(
-                  button.getAttribute(
-                    "data-trade"
-                  ) || ""
-                );
-              };
-          });
+      const back =
+        getElement(
+          "annuaireTradeBackBtn"
+        );
 
-        const back =
-          getElement(
-            "annuaireAllTradesBackBtn"
-          );
-
-        if(back){
-          back.onclick =
-            openHome;
-        }
-
+      if(back){
+        back.onclick =
+          openHome;
       }
-    );
-  }
+
+    }
+  );
+}
+
+
+/* =======================================================
+   TOUS LES MÉTIERS
+   ======================================================= */
+
+function openAllTrades(){
+
+  const sections = [
+
+    {
+      title:"Santé",
+      values:
+        METIERS.sante
+    },
+
+    {
+      title:"Maison & travaux",
+      values:
+        METIERS.maison
+    },
+
+    {
+      title:"Automobile & mobilité",
+      values:
+        METIERS.automobile
+    },
+
+    {
+      title:"Restaurants & alimentation",
+      values:
+        METIERS.alimentation
+    },
+
+    {
+      title:"Services aux entreprises",
+      values:
+        METIERS.professionnels
+    },
+
+    {
+      title:"Hôtels & séjours",
+      values:
+        METIERS.hebergements
+    }
+
+  ];
+
+  let html = `
+
+    <div class="box">
+
+      <div class="bociteAnnuaireTitle">
+        Tous les métiers de votre ville
+      </div>
+
+      <div
+        class="bociteAnnuaireText"
+        style="margin-top:6px;">
+        Choisissez d'abord un métier.
+        Les établissements correspondants
+        seront ensuite classés
+        par ordre alphabétique.
+      </div>
+
+    </div>
+
+  `;
+
+  sections.forEach(
+    function(section){
+
+      html += `
+
+        <div
+          class="box"
+          style="margin-top:9px;">
+
+          <div class="bociteAnnuaireTitle">
+            ${escapeHtml(section.title)}
+          </div>
+
+          ${
+            section.values
+              .map(function(trade){
+
+                const count =
+                  searchEntitiesByTrade(
+                    trade
+                  ).length;
+
+                return `
+
+                  <button
+                    type="button"
+                    class="choiceBtn annuaireTradeBtn"
+                    data-trade="${escapeHtml(trade)}"
+                    style="
+                      width:100%;
+                      margin-top:6px;
+                      text-align:left;
+                    ">
+
+                    <strong>
+                      ${escapeHtml(trade)}
+                    </strong>
+
+                    <br>
+
+                    <span
+                      style="
+                        font-size:12px;
+                        font-weight:400;
+                      ">
+                      ${
+                        count
+                          ? (
+                              count +
+                              (
+                                count > 1
+                                  ? " professionnels"
+                                  : " professionnel"
+                              )
+                            )
+                          : "Données à compléter"
+                      }
+                    </span>
+
+                  </button>
+
+                `;
+              })
+              .join("")
+          }
+
+        </div>
+
+      `;
+    }
+  );
+
+  html += `
+
+    <button
+      id="annuaireAllTradesBackBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:10px;
+      ">
+      Retour à l'annuaire
+    </button>
+
+  `;
+
+  render(
+    "Tous les métiers",
+    html,
+    function(){
+
+      document
+        .querySelectorAll(
+          ".annuaireTradeBtn"
+        )
+        .forEach(function(button){
+
+          button.onclick =
+            function(){
+
+              openTradeResults(
+                button.getAttribute(
+                  "data-trade"
+                ) || ""
+              );
+            };
+        });
+
+      const back =
+        getElement(
+          "annuaireAllTradesBackBtn"
+        );
+
+      if(back){
+        back.onclick =
+          openHome;
+      }
+
+    }
+  );
+}
 
   /* =======================================================
      PHOTOS
