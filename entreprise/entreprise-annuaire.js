@@ -8554,7 +8554,315 @@
       });
     };
 
+/* =======================================================
+   SÉCURISATION ANNUAIRE
+   BOUTONS DYNAMIQUES + PRÉPARATION AGENT IA
+   ======================================================= */
 
+/*
+  Ce correctif ne recrée aucune page.
+
+  Il sécurise uniquement les boutons
+  qui peuvent être reconstruits par la modale
+  après l'exécution de bindHome().
+*/
+
+if(
+  !window.BOCITE_ANNUAIRE_ACTIONS_SECURISEES
+){
+
+  window.BOCITE_ANNUAIRE_ACTIONS_SECURISEES =
+    true;
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const target =
+        event.target;
+
+      if(
+        !target ||
+        typeof target.closest !==
+        "function"
+      ){
+        return;
+      }
+
+
+      /* -------------------------------
+         CONSULTÉS RÉCEMMENT
+         ------------------------------- */
+
+      const viewedButton =
+        target.closest(
+          "#annuaireViewedBtn"
+        );
+
+      if(viewedButton){
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if(
+          typeof event.stopImmediatePropagation ===
+          "function"
+        ){
+          event.stopImmediatePropagation();
+        }
+
+        openViewedHistory();
+
+        return;
+      }
+
+
+      /* -------------------------------
+         COMPRENDRE LES SYMBOLES
+         ------------------------------- */
+
+      const legendButton =
+        target.closest(
+          "#annuaireLegendBtn"
+        );
+
+      if(legendButton){
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if(
+          typeof event.stopImmediatePropagation ===
+          "function"
+        ){
+          event.stopImmediatePropagation();
+        }
+
+        const legendBox =
+          getElement(
+            "annuaireLegendBox"
+          );
+
+        if(!legendBox){
+          return;
+        }
+
+        legendBox.style.display =
+          legendBox.style.display ===
+          "none"
+            ? "block"
+            : "none";
+
+        return;
+      }
+
+
+      /* -------------------------------
+         ESPACE PROFESSIONNEL
+         ------------------------------- */
+
+      const professionalButton =
+        target.closest(
+          "#annuaireProfessionalBtn"
+        );
+
+      if(professionalButton){
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if(
+          typeof event.stopImmediatePropagation ===
+          "function"
+        ){
+          event.stopImmediatePropagation();
+        }
+
+        openProfessionalDashboard();
+
+        return;
+      }
+
+    },
+    true
+  );
+}
+
+
+/* =======================================================
+   AGENT IA — POINT DE RACCORDEMENT
+   ======================================================= */
+
+/*
+  IMPORTANT :
+
+  Aucune clé IA n'est placée
+  dans le JavaScript public.
+
+  Pour la démonstration :
+  l'annuaire utilise déjà
+  la recherche réseau légère.
+
+  Pour la version officielle :
+  le serveur Bo'CitéArt pourra installer :
+
+  window.BociteAnnuaireAIProvider
+
+  sans modifier les écrans
+  ni les historiques de l'annuaire.
+*/
+
+annuaire.Agent =
+  annuaire.Agent || {};
+
+
+/*
+  Indique si un véritable
+  agent serveur est raccordé.
+*/
+
+annuaire.Agent.isConnected =
+function(){
+
+  return !!(
+    window.BociteAnnuaireAIProvider &&
+    typeof
+      window.BociteAnnuaireAIProvider.enrich ===
+      "function"
+  );
+};
+
+
+/*
+  Préparation d'une fiche.
+
+  Si l'agent serveur existe :
+  il pourra compléter et vérifier
+  les informations.
+
+  Sinon :
+  la fiche actuelle est conservée
+  sans modification.
+*/
+
+annuaire.Agent.enrichEntity =
+function(entity){
+
+  if(!entity){
+
+    return Promise.resolve(
+      null
+    );
+  }
+
+  const provider =
+    window.BociteAnnuaireAIProvider;
+
+  if(
+    !provider ||
+    typeof provider.enrich !==
+    "function"
+  ){
+
+    return Promise.resolve(
+      entity
+    );
+  }
+
+  return Promise
+    .resolve(
+      provider.enrich(
+        entity
+      )
+    )
+    .then(function(result){
+
+      if(
+        !result ||
+        typeof result !==
+        "object"
+      ){
+
+        return entity;
+      }
+
+      /*
+        Les informations déjà validées
+        par Bo'CitéArt restent prioritaires.
+      */
+
+      const enriched =
+        Object.assign(
+          {},
+          result,
+          entity
+        );
+
+      return enriched;
+    })
+    .catch(function(error){
+
+      console.warn(
+        "Bo'CitéArt : agent IA indisponible.",
+        error
+      );
+
+      return entity;
+    });
+};
+
+
+/*
+  Recherche assistée.
+
+  Pour le moment,
+  elle utilise le raccord réseau
+  déjà présent dans ce fichier.
+
+  Plus tard, le serveur IA pourra
+  prendre la main sans changer
+  la fonction appelée par l'interface.
+*/
+
+annuaire.Agent.search =
+function(query){
+
+  const provider =
+    window.BociteAnnuaireAIProvider;
+
+  if(
+    provider &&
+    typeof provider.search ===
+    "function"
+  ){
+
+    return Promise.resolve(
+      provider.search({
+        query:
+          String(query || "").trim(),
+
+        commune:
+          getCurrentCommune(),
+
+        postalCode:
+          getCurrentPostalCode(),
+
+        inseeCode:
+          getCurrentInseeCode()
+      })
+    );
+  }
+
+  return searchNetworkForQuery(
+    query
+  );
+};
+
+
+console.log(
+  "✅ Annuaire — boutons sécurisés et raccord agent IA préparé"
+);
+   
   /* =======================================================
      DÉMARRAGE
      ======================================================= */
