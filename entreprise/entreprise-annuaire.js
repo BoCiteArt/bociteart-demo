@@ -258,56 +258,33 @@
       : [];
   }
 
-  function getCurrentCommune(){
+function getCurrentCommune(){
 
-    const directKeys = [
+  try{
 
-      "bociteart_user_commune_v1",
-      "bociteart_commune_v1",
-      "bociteart_registration_commune_v1"
-
-    ];
-
-    for(
-      let index = 0;
-      index < directKeys.length;
-      index++
-    ){
-
-      const value =
+    const config =
+      JSON.parse(
         localStorage.getItem(
-          directKeys[index]
-        );
+          "bociteart_city_config_v1"
+        ) || "{}"
+      );
 
-      if(
-        value &&
-        String(value).trim()
-      ){
-        return String(value).trim();
-      }
+    if(
+      config &&
+      config.active === true &&
+      config.cityName
+    ){
+      return String(
+        config.cityName
+      ).trim();
     }
 
-    try{
-
-      const account =
-        JSON.parse(
-          localStorage.getItem(
-            "bociteart_account_demo_v1"
-          ) || "{}"
-        );
-
-      if(account.commune){
-        return String(
-          account.commune
-        ).trim();
-      }
-
-    }catch(error){
-      /* aucune action */
-    }
-
-    return "votre ville";
+  }catch(error){
+    /* aucune action */
   }
+
+  return "votre ville";
+}
 
   function getModalContent(){
 
