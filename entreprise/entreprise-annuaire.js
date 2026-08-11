@@ -8192,181 +8192,71 @@ function openProfessionalHistory(){
   module.openProfessionalDirectory =
     openProfessionalDashboard;
 
-  /* =======================================================
-     FOURNISSEUR EXTERNE FUTUR
-     ======================================================= */
-
-  /*
-    Si un agent serveur ou un connecteur
-    officiel est ajouté plus tard :
-
-    window.BociteAnnuaireDataProvider = {
-      refresh:function(){
-        return Promise.resolve({
-          rows:[...],
-          source:"..."
-        });
-      }
-    };
-
-    L'annuaire peut alors recevoir
-    les informations vérifiées sans
-    effectuer directement des extractions
-    depuis le navigateur.
-  */
-
+ /* =======================================================
+   DÉMARRAGE ANNUAIRE
+   ======================================================= */
+   
 annuaire.refreshFromProvider =
 function(){
 
-  let cityConfig = {};
+  /*
+    VERSION SIMPLE ET STABLE
 
-  try{
+    Aucun appel automatique à une API.
+    Aucun chargement de 101 pages.
+    Aucun fichier annuaire-[ville].json
+    imposé au démarrage.
 
-    cityConfig =
-      JSON.parse(
-        localStorage.getItem(
-          "bociteart_city_config_v1"
-        ) || "{}"
-      );
+    L'annuaire conserve simplement
+    les données déjà présentes
+    dans son stockage local.
 
-  }catch(error){
+    Les mises à jour des données
+    seront traitées séparément,
+    sans ralentir l'utilisateur.
+  */
 
-    cityConfig = {};
-  }
+  const rows =
+    loadEntities();
 
-  const cityName =
-    String(
-      cityConfig.cityName ||
-      getCurrentCommune() ||
-      ""
-    ).trim();
+  console.log(
+    "✅ Annuaire Bo'CitéArt prêt :",
+    rows.length,
+    "établissements conservés"
+  );
 
-  const slug =
-    normalizeText(
-      cityConfig.citySlug ||
-      cityName
-    )
-    .replace(
-      /[^a-z0-9]+/g,
-      "-"
-    )
-    .replace(
-      /^-+|-+$/g,
-      ""
-    );
-
-  if(!slug){
-
-    return Promise.resolve({
-      updated:false,
-      reason:"city_not_configured"
-    });
-  }
-
-  const directoryUrl =
-    "entreprise/annuaire-" +
-    slug +
-    ".json";
-
-  return fetch(
-    directoryUrl +
-    "?v=" +
-    Date.now(),
-    {
-      cache:"no-store"
-    }
-  )
-  .then(function(response){
-
-    if(!response.ok){
-
-      throw new Error(
-        "Annuaire local introuvable : " +
-        response.status
-      );
-    }
-
-    return response.json();
-  })
-  .then(function(rows){
-
-    if(!Array.isArray(rows)){
-
-      throw new Error(
-        "Format annuaire local invalide"
-      );
-    }
-
-    const count =
-      applyExternalDirectorySnapshot(
-        rows,
-        "Annuaire local Bo'CitéArt — " +
-        cityName
-      );
-
-    console.log(
-      "✅ Annuaire local chargé :",
-      cityName,
-      count,
-      "établissements"
-    );
-
-    return {
-      updated:true,
-      city:cityName,
-      count:count,
-      source:
-        "Annuaire local Bo'CitéArt"
-    };
-  })
-  .catch(function(error){
-
-    console.error(
-      "Bo'CitéArt Annuaire : chargement local impossible.",
-      error
-    );
-
-    return {
-      updated:false,
-      reason:
-        "local_directory_error",
-      error:
-        String(
-          error &&
-          error.message
-            ? error.message
-            : error
-        )
-    };
+  return Promise.resolve({
+    updated:false,
+    preserved:true,
+    count:
+      rows.length,
+    source:
+      "Stockage local Bo'CitéArt"
   });
 };
 
-   window.setTimeout(
+
+window.setTimeout(
   function(){
 
     annuaire
       .refreshFromProvider()
       .then(function(result){
 
-        if(
-          result &&
-          result.updated
-        ){
-
-          console.log(
-            "✅ Mise à jour Annuaire terminée",
-            result
-          );
-        }
+        console.log(
+          "✅ Annuaire démarré sans chargement externe",
+          result
+        );
 
       });
 
   },
-  800
+  100
 );
 
-  console.log(
-    "✅ Bo'CitéArt — Annuaire complet chargé"
-  );
+
+console.log(
+  "✅ Bo'CitéArt — Annuaire complet chargé"
+);
 
 })();
