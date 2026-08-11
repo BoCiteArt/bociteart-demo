@@ -8967,6 +8967,23 @@ return Promise.all([
       merged,
       "API Recherche d'Entreprises + Annuaire Santé RPPS"
     );
+
+   console.log(
+  "✅ Annuaire officiel chargé :",
+  cityName,
+  count,
+  "établissements"
+);
+
+return {
+  updated:true,
+  city:
+    cityName,
+  count:
+    count,
+  source:
+    "API Recherche d'Entreprises + Annuaire Santé RPPS"
+};
    
     })
     .catch(function(error){
