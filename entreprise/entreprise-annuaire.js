@@ -398,79 +398,86 @@ function getCurrentCommune(){
     style.id =
       "bociteAnnuaireStyles";
 
-    style.textContent = `
+style.textContent = `
 
-    .bociteAnnuaireRoot .choiceBtn{
-  background:#ffffff !important;
-}
+  .bociteAnnuaireRoot button.choiceBtn,
+  .bociteAnnuaireRoot .choiceBtn{
+    background:#ffffff !important;
+    background-color:#ffffff !important;
+    background-image:none !important;
+  }
 
-.bociteAnnuaireRoot .choiceBtn:hover,
-.bociteAnnuaireRoot .choiceBtn:focus,
-.bociteAnnuaireRoot .choiceBtn:active{
-  background:#ffffff !important;
-}
+  .bociteAnnuaireRoot button.choiceBtn:hover,
+  .bociteAnnuaireRoot button.choiceBtn:focus,
+  .bociteAnnuaireRoot button.choiceBtn:active,
+  .bociteAnnuaireRoot .choiceBtn:hover,
+  .bociteAnnuaireRoot .choiceBtn:focus,
+  .bociteAnnuaireRoot .choiceBtn:active{
+    background:#ffffff !important;
+    background-color:#ffffff !important;
+    background-image:none !important;
+  }
 
-      .bociteAnnuaireTitle{
-        color:#2f5d46;
-        font-size:16px;
-        line-height:1.35;
-        font-weight:700;
-      }
+  .bociteAnnuaireTitle{
+    color:#2f5d46;
+    font-size:16px;
+    line-height:1.35;
+    font-weight:700;
+  }
 
-      .bociteAnnuaireText{
-        color:#111;
-        font-size:14px;
-        line-height:1.45;
-        font-weight:400;
-      }
+  .bociteAnnuaireText{
+    color:#111;
+    font-size:14px;
+    line-height:1.45;
+    font-weight:400;
+  }
 
-      .bociteAnnuaireGrid{
-        display:grid;
-        grid-template-columns:
-          repeat(2,minmax(0,1fr));
-        gap:8px;
-      }
+  .bociteAnnuaireGrid{
+    display:grid;
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+    gap:8px;
+  }
 
-      .bociteAnnuaireActions{
-        display:grid;
-        grid-template-columns:
-          repeat(2,minmax(0,1fr));
-        gap:8px;
-      }
+  .bociteAnnuaireActions{
+    display:grid;
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+    gap:8px;
+  }
 
-      .bociteAnnuaireBadgeRow{
-        display:flex;
-        flex-wrap:wrap;
-        gap:6px;
-        align-items:center;
-      }
+  .bociteAnnuaireBadgeRow{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    align-items:center;
+  }
 
-      .bociteAnnuaireResult{
-        margin-bottom:10px;
-      }
+  .bociteAnnuaireResult{
+    margin-bottom:10px;
+  }
 
-      .bociteAnnuaireSmall{
-        color:#666;
-        font-size:12px;
-        line-height:1.4;
-      }
+  .bociteAnnuaireSmall{
+    color:#666;
+    font-size:12px;
+    line-height:1.4;
+  }
 
-      .bociteAnnuaireSignature{
-        margin-top:12px;
-        padding:15px;
-        border-left:4px solid #2f5d46;
-        background:#faf8f1;
-        font-family:
-          "Segoe Print",
-          "Bradley Hand",
-          "Comic Sans MS",
-          cursive;
-        font-style:italic;
-        font-size:15px;
-        line-height:1.55;
-        color:#333;
-      }
-
+  .bociteAnnuaireSignature{
+    margin-top:12px;
+    padding:15px;
+    border-left:4px solid #2f5d46;
+    background:#faf8f1;
+    font-family:
+      "Segoe Print",
+      "Bradley Hand",
+      "Comic Sans MS",
+      cursive;
+    font-style:italic;
+    font-size:15px;
+    line-height:1.55;
+    color:#333;
+  }
       .bociteAnnuairePhotoGrid{
         display:grid;
         grid-template-columns:
