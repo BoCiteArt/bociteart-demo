@@ -7673,82 +7673,85 @@ function(){
     );
   }
 
-  function mapKind(activityCode){
+function mapKind(section){
 
-    const code =
-      String(
-        activityCode ||
-        ""
-      ).trim();
+  section =
+    String(
+      section ||
+      ""
+    ).trim();
 
-    const section =
-      code.charAt(0);
-
-    if(
-      section === "G" ||
-      section === "I"
-    ){
-      return "commerce";
-    }
+  if(
+    section === "G" ||
+    section === "I"
+  ){
+    return "commerce";
+  }
 
     return "entreprise";
   }
 
-  function mapCategory(activityCode){
+function mapCategory(section){
 
-    const code =
-      String(
-        activityCode ||
-        ""
-      ).trim();
+  section =
+    String(
+      section ||
+      ""
+    ).trim();
 
-    const section =
-      code.charAt(0);
-
-    if(section === "I"){
-      return "restaurants";
-    }
-
-    if(section === "Q"){
-      return "sante";
-    }
-
-    if(section === "F"){
-      return "artisans";
-    }
-
-    if(section === "G"){
-      return "commerces";
-    }
-
-    if(section === "H"){
-      return "services";
-    }
-
-    if(section === "M"){
-      return "services";
-    }
-
-    return "entreprises";
+  if(section === "I"){
+    return "restaurants";
   }
 
-  function buildAddress(establishment){
-
-    if(!establishment){
-      return "";
-    }
-
-    return [
-      establishment.numero_voie,
-      establishment.indice_repetition_voie,
-      establishment.type_voie,
-      establishment.libelle_voie
-    ]
-    .filter(Boolean)
-    .join(" ")
-    .trim();
+  if(section === "Q"){
+    return "sante";
   }
 
+  if(section === "F"){
+    return "artisans";
+  }
+
+  if(section === "G"){
+    return "commerces";
+  }
+
+  if(
+    section === "H" ||
+    section === "J" ||
+    section === "K" ||
+    section === "L" ||
+    section === "M" ||
+    section === "N"
+  ){
+    return "services";
+  }
+
+  return "entreprises";
+}
+   
+function buildAddress(establishment){
+
+  if(!establishment){
+    return "";
+  }
+
+  if(establishment.adresse){
+    return String(
+      establishment.adresse
+    ).trim();
+  }
+
+  return [
+    establishment.numero_voie,
+    establishment.indice_repetition,
+    establishment.type_voie,
+    establishment.libelle_voie
+  ]
+  .filter(Boolean)
+  .join(" ")
+  .trim();
+}
+ 
   function mapApiResult(
     company,
     establishment
@@ -7793,15 +7796,17 @@ function(){
         company.nom_commercial ||
         "Établissement",
 
-      kind:
-        mapKind(
-          activityCode
-        ),
+  kind:
+  mapKind(
+    company.section_activite_principale ||
+    ""
+  ),
 
-      category:
-        mapCategory(
-          activityCode
-        ),
+category:
+  mapCategory(
+    company.section_activite_principale ||
+    ""
+  ),
 
       trade:
         activityLabel,
@@ -7951,7 +7956,7 @@ function(){
 
               return (
                 String(
-                  establishment.code_commune ||
+                  establishment.commune ||
                   ""
                 ) ===
                 String(
@@ -8001,7 +8006,7 @@ function(){
         communeCode
           ? (
               String(
-                siege.code_commune ||
+                siege.commune ||
                 ""
               ) ===
               String(
