@@ -2912,17 +2912,90 @@ function searchEntitiesByTrade(
           entity
         );
 
-      return terms.some(
-        function(term){
+      const matches =
+        terms.some(
+          function(term){
 
-          return (
-            term &&
-            haystack.includes(
-              term
-            )
+            return (
+              term &&
+              haystack.includes(
+                term
+              )
+            );
+          }
+        );
+
+      if(!matches){
+        return false;
+      }
+
+      /*
+        DENTISTES
+
+        On évite de classer comme dentiste
+        un laboratoire de prothèse dentaire.
+      */
+
+      if(
+        trade ===
+        "Dentistes"
+      ){
+
+        const dentalLabTerms = [
+
+          "laboratoire dentaire",
+          "laboratoire de prothese dentaire",
+          "laboratoire de protheses dentaires",
+          "prothese dentaire",
+          "prothesiste dentaire"
+
+        ];
+
+        const isDentalLaboratory =
+          dentalLabTerms.some(
+            function(term){
+
+              return haystack.includes(
+                normalizeText(term)
+              );
+            }
           );
+
+        if(isDentalLaboratory){
+          return false;
         }
-      );
+      }
+
+      /*
+        LABORATOIRES D'ANALYSES MÉDICALES
+
+        On évite qu'un laboratoire dentaire
+        soit confondu avec un laboratoire
+        de biologie médicale.
+      */
+
+      if(
+        trade ===
+        "Laboratoires d'analyses médicales"
+      ){
+
+        if(
+          haystack.includes(
+            normalizeText(
+              "laboratoire dentaire"
+            )
+          ) ||
+          haystack.includes(
+            normalizeText(
+              "prothèse dentaire"
+            )
+          )
+        ){
+          return false;
+        }
+      }
+
+      return true;
     })
     .sort(function(a,b){
 
@@ -2939,7 +3012,6 @@ function searchEntitiesByTrade(
       );
     });
 }
-
 
 /* =======================================================
    OUVRIR LES PROFESSIONNELS D'UN MÉTIER
