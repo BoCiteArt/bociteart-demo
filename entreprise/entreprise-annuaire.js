@@ -1,6 +1,6 @@
 /* =========================================================
    BO'CITÉART — ANNUAIRE DE VOTRE VILLE
-   MODULE INDÉPENDANT COMPLET
+   MODULE INDÉPENDANT COMPLET 
 
    PUBLIC 
    • Recherche locale
@@ -2127,33 +2127,392 @@ function clearSearchHistory(){
      LANCEMENT RECHERCHE
      ======================================================= */
 
-  function launchSearch(
-    query,
+function launchSearch(
+  query,
+  options
+){
+
+  const cleanQuery =
+    String(query || "").trim();
+
+  if(!cleanQuery){
+
+    alert(
+      "Indiquez un nom, un métier, un produit ou un service."
+    );
+
+    return;
+  }
+
+  options =
+    options || {};
+
+  addSearchHistory(
+    cleanQuery,
+    getCurrentCommune()
+  );
+
+  /*
+    1. Affichage immédiat
+    avec les données déjà disponibles.
+  */
+
+  openResults(
+    cleanQuery,
     options
-  ){
+  );
 
-    const cleanQuery =
-      String(query || "").trim();
 
-    if(!cleanQuery){
+  /*
+    2. Une seule recherche réseau ciblée.
+    Aucun chargement global de la ville.
+  */
 
-      alert(
-        "Indiquez un nom, un métier, un produit ou un service."
+  let cityConfig = {};
+
+  try{
+
+    cityConfig =
+      JSON.parse(
+        localStorage.getItem(
+          "bociteart_city_config_v1"
+        ) || "{}"
       );
 
-      return;
-    }
+  }catch(error){
 
-    addSearchHistory(
-      cleanQuery,
-      getCurrentCommune()
+    cityConfig = {};
+  }
+
+  const postalCode =
+    String(
+      cityConfig.postalCode ||
+      ""
+    ).trim();
+
+  const inseeCode =
+    String(
+      cityConfig.inseeCode ||
+      ""
+    ).trim();
+
+  if(
+    !postalCode &&
+    !inseeCode
+  ){
+    return;
+  }
+
+  const params =
+    new URLSearchParams();
+
+  params.set(
+    "q",
+    cleanQuery
+  );
+
+  if(inseeCode){
+
+    params.set(
+      "code_commune",
+      inseeCode
     );
 
-    openResults(
-      cleanQuery,
-      options || {}
+  }else{
+
+    params.set(
+      "code_postal",
+      postalCode
     );
   }
+
+  params.set(
+    "etat_administratif",
+    "A"
+  );
+
+  params.set(
+    "page",
+    "1"
+  );
+
+  params.set(
+    "per_page",
+    "25"
+  );
+
+  params.set(
+    "limite_matching_etablissements",
+    "25"
+  );
+
+  const url =
+    "https://recherche-entreprises.api.gouv.fr/search?" +
+    params.toString();
+
+  fetch(
+    url,
+    {
+      method:"GET",
+      headers:{
+        "Accept":
+          "application/json"
+      }
+    }
+  )
+  .then(function(response){
+
+    if(!response.ok){
+
+      throw new Error(
+        "API " +
+        response.status
+      );
+    }
+
+    return response.json();
+  })
+  .then(function(data){
+
+    const networkRows =
+      [];
+
+    safeArray(
+      data.results
+    )
+    .forEach(function(company){
+
+      const establishments =
+        safeArray(
+          company.matching_etablissements
+        );
+
+      const candidates =
+        establishments.length
+          ? establishments
+          : (
+              company.siege
+                ? [company.siege]
+                : []
+            );
+
+      candidates.forEach(
+        function(establishment){
+
+          const commune =
+            String(
+              establishment.libelle_commune ||
+              ""
+            ).trim();
+
+          const codePostal =
+            String(
+              establishment.code_postal ||
+              ""
+            ).trim();
+
+          /*
+            Sécurité :
+            on garde uniquement
+            la ville recherchée.
+          */
+
+          if(
+            postalCode &&
+            codePostal &&
+            codePostal !== postalCode
+          ){
+            return;
+          }
+
+          const siret =
+            String(
+              establishment.siret ||
+              ""
+            );
+
+          const activity =
+            String(
+              establishment.libelle_activite_principale ||
+              company.libelle_activite_principale ||
+              ""
+            );
+
+          const entity = {
+
+            id:
+              siret ||
+              String(
+                company.siren ||
+                uniqueId(
+                  "network"
+                )
+              ),
+
+            siren:
+              company.siren ||
+              "",
+
+            siret:
+              siret,
+
+            name:
+              company.nom_complet ||
+              company.nom_raison_sociale ||
+              company.nom_commercial ||
+              "Établissement",
+
+            kind:
+              "entreprise",
+
+            category:
+              "",
+
+            trade:
+              activity,
+
+            activity:
+              activity,
+
+            description:
+              "",
+
+            services:
+              [],
+
+            keywords:[
+              cleanQuery,
+              activity,
+              company.nom_complet,
+              company.nom_raison_sociale
+            ]
+            .filter(Boolean),
+
+            commune:
+              commune ||
+              getCurrentCommune(),
+
+            postalCode:
+              codePostal ||
+              postalCode,
+
+            address:
+              establishment.adresse ||
+              "",
+
+            phone:
+              "",
+
+            email:
+              "",
+
+            website:
+              "",
+
+            partner:
+              false,
+
+            bocitecoins:
+              false,
+
+            recruiting:
+              false,
+
+            source:
+              "API Recherche d'Entreprises — État",
+
+            verifiedAt:
+              Date.now()
+
+          };
+
+          networkRows.push(
+            entity
+          );
+        }
+      );
+    });
+
+
+    /*
+      3. Fusion légère :
+      on ajoute les résultats trouvés
+      sans effacer l'annuaire existant.
+    */
+
+    const existing =
+      loadEntities();
+
+    const merged =
+      new Map();
+
+    existing.forEach(
+      function(entity){
+
+        merged.set(
+          String(entity.id),
+          entity
+        );
+      }
+    );
+
+    networkRows.forEach(
+      function(entity){
+
+        merged.set(
+          String(entity.id),
+          entity
+        );
+      }
+    );
+
+    saveEntities(
+      Array.from(
+        merged.values()
+      )
+    );
+
+
+    /*
+      4. On réaffiche seulement
+      si le réseau a réellement
+      apporté quelque chose.
+    */
+
+    if(networkRows.length){
+
+      console.log(
+        "✅ Recherche réseau Bo'CitéArt :",
+        networkRows.length,
+        "résultat(s) reçu(s)"
+      );
+
+      openResults(
+        cleanQuery,
+        options
+      );
+
+    }else{
+
+      console.log(
+        "ℹ️ Recherche réseau Bo'CitéArt : aucun résultat complémentaire"
+      );
+    }
+
+  })
+  .catch(function(error){
+
+    /*
+      Le réseau ne doit jamais
+      empêcher l'annuaire de fonctionner.
+    */
+
+    console.warn(
+      "Bo'CitéArt : recherche réseau indisponible.",
+      error
+    );
+  });
+}
 
   /* =======================================================
      RÉSULTATS
