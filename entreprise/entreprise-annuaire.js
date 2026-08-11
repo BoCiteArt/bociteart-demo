@@ -8218,61 +8218,6 @@ function openProfessionalHistory(){
 annuaire.refreshFromProvider =
 function(){
 
-  const provider =
-    window.BociteAnnuaireDataProvider;
-
-  /*
-    1. Un fournisseur externe pourra être
-    branché plus tard.
-  */
-
-  if(
-    provider &&
-    typeof provider.refresh ===
-    "function"
-  ){
-
-    return Promise
-      .resolve(
-        provider.refresh()
-      )
-      .then(function(result){
-
-        if(
-          !result ||
-          !Array.isArray(
-            result.rows
-          )
-        ){
-
-          return {
-            updated:false,
-            reason:
-              "invalid_provider_result"
-          };
-        }
-
-        const count =
-          applyExternalDirectorySnapshot(
-            result.rows,
-            result.source ||
-            "Fournisseur officiel"
-          );
-
-        return {
-          updated:true,
-          count:count,
-          source:
-            result.source ||
-            "Fournisseur officiel"
-        };
-      });
-  }
-
-  /*
-    2. Ville active.
-  */
-
   let cityConfig = {};
 
   try{
@@ -8292,20 +8237,9 @@ function(){
   const cityName =
     String(
       cityConfig.cityName ||
+      getCurrentCommune() ||
       ""
     ).trim();
-
-  const postalCode =
-    String(
-      cityConfig.postalCode ||
-      ""
-    ).trim();
-
-  const knownCityCodes = {
-
-    wattignies:"59648"
-
-  };
 
   const slug =
     normalizeText(
@@ -8321,521 +8255,23 @@ function(){
       ""
     );
 
-  const communeCode =
-    String(
-      cityConfig.inseeCode ||
-      knownCityCodes[slug] ||
-      ""
-    ).trim();
-
-  if(
-    !cityName ||
-    (
-      !communeCode &&
-      !postalCode
-    )
-  ){
+  if(!slug){
 
     return Promise.resolve({
       updated:false,
-      reason:
-        "city_not_configured"
+      reason:"city_not_configured"
     });
   }
 
-  const API_URL =
-    "https://recherche-entreprises.api.gouv.fr/search";
-
-  const PER_PAGE =
-    25;
-
-  /*
-    Sécurité haute.
-    On ne s'arrête plus arbitrairement
-    à 20 pages.
-  */
-
-  const ABSOLUTE_MAX_PAGES =
-    250;
-
-  function buildUrl(page){
-
-    const params =
-      new URLSearchParams();
-
-    if(communeCode){
-
-      params.set(
-        "code_commune",
-        communeCode
-      );
-
-    }else{
-
-      params.set(
-        "code_postal",
-        postalCode
-      );
-    }
-
-    params.set(
-      "etat_administratif",
-      "A"
-    );
-
-    params.set(
-      "page",
-      String(page)
-    );
-
-    params.set(
-      "per_page",
-      String(PER_PAGE)
-    );
-
-    params.set(
-      "limite_matching_etablissements",
-      "100"
-    );
-
-    return (
-      API_URL +
-      "?" +
-      params.toString()
-    );
-  }
-
-  function mapKind(section){
-
-    section =
-      String(
-        section ||
-        ""
-      ).trim();
-
-    if(
-      section === "G" ||
-      section === "I"
-    ){
-      return "commerce";
-    }
-
-    return "entreprise";
-  }
-
-  function mapCategory(section){
-
-    section =
-      String(
-        section ||
-        ""
-      ).trim();
-
-    if(section === "I"){
-      return "restaurants";
-    }
-
-    if(section === "Q"){
-      return "sante";
-    }
-
-    if(section === "F"){
-      return "artisans";
-    }
-
-    if(section === "G"){
-      return "commerces";
-    }
-
-    if(
-      section === "H" ||
-      section === "J" ||
-      section === "K" ||
-      section === "L" ||
-      section === "M" ||
-      section === "N"
-    ){
-      return "services";
-    }
-
-    return "entreprises";
-  }
-
-  function buildAddress(
-    establishment
-  ){
-
-    if(!establishment){
-      return "";
-    }
-
-    if(establishment.adresse){
-
-      return String(
-        establishment.adresse
-      ).trim();
-    }
-
-    return [
-      establishment.numero_voie,
-      establishment.indice_repetition,
-      establishment.type_voie,
-      establishment.libelle_voie
-    ]
-    .filter(Boolean)
-    .join(" ")
-    .trim();
-  }
-
-  function mapApiResult(
-    company,
-    establishment
-  ){
-
-    const selected =
-      establishment ||
-      company.siege ||
-      {};
-
-    const activityCode =
-      selected.activite_principale ||
-      company.activite_principale ||
-      "";
-
-    const activityLabel =
-      selected.libelle_activite_principale ||
-      company.libelle_activite_principale ||
-      "";
-
-    const siret =
-      selected.siret ||
-      "";
-
-    const section =
-      company.section_activite_principale ||
-      "";
-
-    return {
-
-      id:
-        siret ||
-        company.siren ||
-        uniqueId("entity"),
-
-      siren:
-        company.siren ||
-        "",
-
-      siret:
-        siret,
-
-      name:
-        company.nom_complet ||
-        company.nom_raison_sociale ||
-        company.nom_commercial ||
-        "Établissement",
-
-      kind:
-        mapKind(
-          section
-        ),
-
-      category:
-        mapCategory(
-          section
-        ),
-
-      trade:
-        activityLabel,
-
-      activity:
-        activityLabel,
-
-      activityCode:
-        activityCode,
-
-      description:
-        "",
-
-      services:
-        [],
-
-      keywords:
-        [
-          activityLabel,
-          activityCode,
-          company.nom_complet,
-          company.nom_raison_sociale,
-          company.nom_commercial
-        ]
-        .filter(Boolean),
-
-      commune:
-        selected.libelle_commune ||
-        cityName,
-
-      postalCode:
-        selected.code_postal ||
-        postalCode,
-
-      address:
-        buildAddress(
-          selected
-        ),
-
-      phone:
-        "",
-
-      email:
-        "",
-
-      website:
-        "",
-
-      lat:
-        selected.latitude
-          ? Number(
-              selected.latitude
-            )
-          : null,
-
-      lng:
-        selected.longitude
-          ? Number(
-              selected.longitude
-            )
-          : null,
-
-      partner:
-        false,
-
-      bocitecoins:
-        false,
-
-      recruiting:
-        false,
-
-      source:
-        "API Recherche d'Entreprises — État",
-
-      verifiedAt:
-        Date.now(),
-
-      professionalData:{
-
-        siren:
-          company.siren ||
-          "",
-
-        siret:
-          siret,
-
-        legalForm:
-          company.nature_juridique ||
-          "",
-
-        creationDate:
-          company.date_creation ||
-          selected.date_creation ||
-          "",
-
-        activity:
-          activityLabel,
-
-        activityCode:
-          activityCode,
-
-        status:
-          "Actif",
-
-        workforce:
-          company.tranche_effectif_salarie ||
-          "",
-
-        checkedAt:
-          Date.now(),
-
-        events:
-          [],
-
-        sources:[
-          {
-            label:
-              "API Recherche d'Entreprises",
-            url:
-              "https://recherche-entreprises.api.gouv.fr/"
-          }
-        ]
-
-      }
-
-    };
-  }
-
-  function extractEntities(
-    companies
-  ){
-
-    const rows =
-      [];
-
-    safeArray(
-      companies
-    )
-    .forEach(function(company){
-
-      const establishments =
-        safeArray(
-          company.matching_etablissements
-        );
-
-      const matching =
-        establishments.filter(
-          function(establishment){
-
-            if(communeCode){
-
-              return (
-                String(
-                  establishment.commune ||
-                  ""
-                ) ===
-                String(
-                  communeCode
-                )
-              );
-            }
-
-            return (
-              String(
-                establishment.code_postal ||
-                ""
-              ) ===
-              String(
-                postalCode
-              )
-            );
-          }
-        );
-
-      if(matching.length){
-
-        matching.forEach(
-          function(establishment){
-
-            rows.push(
-              mapApiResult(
-                company,
-                establishment
-              )
-            );
-          }
-        );
-
-        return;
-      }
-
-      const siege =
-        company.siege ||
-        null;
-
-      if(!siege){
-        return;
-      }
-
-      const siegeMatches =
-        communeCode
-          ? (
-              String(
-                siege.commune ||
-                ""
-              ) ===
-              String(
-                communeCode
-              )
-            )
-          : (
-              String(
-                siege.code_postal ||
-                ""
-              ) ===
-              String(
-                postalCode
-              )
-            );
-
-      if(siegeMatches){
-
-        rows.push(
-          mapApiResult(
-            company,
-            siege
-          )
-        );
-      }
-    });
-
-    /*
-      Déduplication.
-  */
-
-    const map =
-      new Map();
-
-    rows.forEach(
-      function(row){
-
-        const key =
-          String(
-            row.siret ||
-            row.id ||
-            ""
-          );
-
-        if(!key){
-          return;
-        }
-
-        map.set(
-          key,
-          row
-        );
-      }
-    );
-
-    return Array.from(
-      map.values()
-    );
-  }
-  /* =======================================================
-   ANNUAIRE SANTÉ LOCAL COMPLÉMENTAIRE
-   ======================================================= */
-
-function loadLocalHealthDirectory(){
-
-  const cityName =
-    getCurrentCommune();
-
-  const slug =
-    normalizeText(
-      cityName
-    )
-    .replace(
-      /[^a-z0-9]+/g,
-      "-"
-    )
-    .replace(
-      /^-+|-+$/g,
-      ""
-    );
-
-  const url =
-    "entreprise/annuaire-sante-" +
+  const directoryUrl =
+    "entreprise/annuaire-" +
     slug +
     ".json";
 
   return fetch(
-    url,
+    directoryUrl +
+    "?v=" +
+    Date.now(),
     {
       cache:"no-store"
     }
@@ -8843,354 +8279,66 @@ function loadLocalHealthDirectory(){
   .then(function(response){
 
     if(!response.ok){
-      return [];
+
+      throw new Error(
+        "Annuaire local introuvable : " +
+        response.status
+      );
     }
 
     return response.json();
   })
-  .then(function(data){
+  .then(function(rows){
 
-    return Array.isArray(data)
-      ? data
-      : [];
+    if(!Array.isArray(rows)){
+
+      throw new Error(
+        "Format annuaire local invalide"
+      );
+    }
+
+    const count =
+      applyExternalDirectorySnapshot(
+        rows,
+        "Annuaire local Bo'CitéArt — " +
+        cityName
+      );
+
+    console.log(
+      "✅ Annuaire local chargé :",
+      cityName,
+      count,
+      "établissements"
+    );
+
+    return {
+      updated:true,
+      city:cityName,
+      count:count,
+      source:
+        "Annuaire local Bo'CitéArt"
+    };
   })
   .catch(function(error){
 
-    console.warn(
-      "Bo'CitéArt Annuaire : données Santé locales indisponibles.",
+    console.error(
+      "Bo'CitéArt Annuaire : chargement local impossible.",
       error
     );
 
-    return [];
-  });
-}
-
-function mergeDirectorySources(
-  enterpriseRows,
-  healthRows
-){
-
-  const merged =
-    new Map();
-
-  safeArray(
-    enterpriseRows
-  )
-  .forEach(function(entity){
-
-    const key =
-      String(
-        entity.siret ||
-        entity.id ||
-        ""
-      );
-
-    if(key){
-
-      merged.set(
-        "enterprise_" + key,
-        entity
-      );
-    }
-  });
-
-  safeArray(
-    healthRows
-  )
-  .forEach(function(entity){
-
-    const rpps =
-      String(
-        entity.rpps ||
-        ""
-      ).trim();
-
-    const key =
-      rpps
-        ? "rpps_" + rpps
-        : (
-            "health_" +
-            normalizeText(
-              [
-                entity.name,
-                entity.address,
-                entity.commune
-              ].join("_")
-            )
-          );
-
-    merged.set(
-      key,
-      entity
-    );
-  });
-
-  return Array.from(
-    merged.values()
-  );
-}
-    
-  function fetchPage(
-    page
-  ){
-
-    return fetch(
-      buildUrl(page),
-      {
-        method:"GET",
-        headers:{
-          "Accept":
-            "application/json"
-        }
-      }
-    )
-    .then(function(response){
-
-      if(!response.ok){
-
-        throw new Error(
-          "API HTTP " +
-          response.status
-        );
-      }
-
-      return response.json();
-    });
-  }
-
- function fetchAllPages(){
-
-  let page =
-    1;
-
-  let totalPages =
-    1;
-
-  let allCompanies =
-    [];
-
-  const PAGE_DELAY_MS =
-    350;
-
-  const RETRY_DELAY_MS =
-    2500;
-
-  const MAX_RETRIES_PER_PAGE =
-    3;
-
-  function wait(ms){
-
-    return new Promise(
-      function(resolve){
-
-        window.setTimeout(
-          resolve,
-          ms
-        );
-      }
-    );
-  }
-
-  function fetchPageWithRetry(
-    currentPage,
-    attempt
-  ){
-
-    return fetchPage(
-      currentPage
-    )
-    .catch(function(error){
-
-      const message =
+    return {
+      updated:false,
+      reason:
+        "local_directory_error",
+      error:
         String(
           error &&
           error.message
             ? error.message
             : error
-        );
-
-      const isRateLimit =
-        message.includes(
-          "429"
-        );
-
-      if(
-        isRateLimit &&
-        attempt <
-        MAX_RETRIES_PER_PAGE
-      ){
-
-        console.warn(
-          "Annuaire : API temporairement limitée — nouvelle tentative page",
-          currentPage,
-          "dans",
-          RETRY_DELAY_MS,
-          "ms"
-        );
-
-        return wait(
-          RETRY_DELAY_MS
         )
-        .then(function(){
-
-          return fetchPageWithRetry(
-            currentPage,
-            attempt + 1
-          );
-        });
-      }
-
-      throw error;
-    });
-  }
-
-  function next(){
-
-    return fetchPageWithRetry(
-      page,
-      0
-    )
-    .then(function(data){
-
-      const results =
-        safeArray(
-          data.results
-        );
-
-      allCompanies =
-        allCompanies.concat(
-          results
-        );
-
-      const announcedPages =
-        Number(
-          data.total_pages ||
-          1
-        );
-
-      totalPages =
-        Math.min(
-          announcedPages,
-          ABSOLUTE_MAX_PAGES
-        );
-
-      console.log(
-        "Annuaire Wattignies : page",
-        page,
-        "/",
-        totalPages,
-        "—",
-        allCompanies.length,
-        "entreprises reçues"
-      );
-
-      if(
-        page >= totalPages ||
-        !results.length
-      ){
-        return allCompanies;
-      }
-
-      page += 1;
-
-      return wait(
-        PAGE_DELAY_MS
-      )
-      .then(
-        next
-      );
-    })
-    .catch(function(error){
-
-      console.warn(
-        "Annuaire : arrêt du chargement à la page",
-        page,
-        "— conservation de",
-        allCompanies.length,
-        "entreprises déjà reçues.",
-        error
-      );
-
-      /*
-        Très important :
-        on conserve ce qui a déjà été chargé
-        au lieu de faire échouer tout l'annuaire.
-      */
-
-      return allCompanies;
-    });
-  }
-
-  return next();
-}
-
-return Promise.all([
-  fetchAllPages(),
-  loadLocalHealthDirectory()
-])
-.then(function(results){
-
-  const companies =
-    results[0];
-
-  const healthRows =
-    results[1];
-
-  const enterpriseRows =
-    extractEntities(
-      companies
-    );
-
-  const merged =
-    mergeDirectorySources(
-      enterpriseRows,
-      healthRows
-    );
-
-  const count =
-    applyExternalDirectorySnapshot(
-      merged,
-      "API Recherche d'Entreprises + Annuaire Santé RPPS"
-    );
-
-   console.log(
-  "✅ Annuaire officiel chargé :",
-  cityName,
-  count,
-  "établissements"
-);
-
-return {
-  updated:true,
-  city:
-    cityName,
-  count:
-    count,
-  source:
-    "API Recherche d'Entreprises + Annuaire Santé RPPS"
-};
-   
-    })
-    .catch(function(error){
-
-      console.error(
-        "Bo'CitéArt Annuaire : chargement officiel impossible.",
-        error
-      );
-
-      return {
-        updated:false,
-        reason:
-          "official_api_error",
-        error:
-          String(
-            error &&
-            error.message
-              ? error.message
-              : error
-          )
-      };
-    });
+    };
+  });
 };
 
    window.setTimeout(
