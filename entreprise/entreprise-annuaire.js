@@ -317,10 +317,14 @@ function getCurrentCommune(){
     callback
   ){
 
-    module.renderModal(
-      title,
-      html
-    );
+  module.renderModal(
+  title,
+  `
+    <div class="bociteAnnuaireRoot">
+      ${html}
+    </div>
+  `
+);
 
     window.setTimeout(
       function(){
@@ -395,6 +399,16 @@ function getCurrentCommune(){
       "bociteAnnuaireStyles";
 
     style.textContent = `
+
+    .bociteAnnuaireRoot .choiceBtn{
+  background:#ffffff !important;
+}
+
+.bociteAnnuaireRoot .choiceBtn:hover,
+.bociteAnnuaireRoot .choiceBtn:focus,
+.bociteAnnuaireRoot .choiceBtn:active{
+  background:#ffffff !important;
+}
 
       .bociteAnnuaireTitle{
         color:#2f5d46;
