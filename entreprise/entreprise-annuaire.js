@@ -8137,8 +8137,8 @@ function(){
     window.BociteAnnuaireDataProvider;
 
   /*
-    1. Si un fournisseur externe officiel
-    est branché plus tard, il reste prioritaire.
+    1. Un fournisseur externe pourra être
+    branché plus tard.
   */
 
   if(
@@ -8185,9 +8185,7 @@ function(){
   }
 
   /*
-    2. Sinon :
-    chargement direct depuis
-    l'API officielle Recherche d'Entreprises.
+    2. Ville active.
   */
 
   let cityConfig = {};
@@ -8217,11 +8215,6 @@ function(){
       cityConfig.postalCode ||
       ""
     ).trim();
-
-  /*
-    Pour Wattignies :
-    code INSEE officiel = 59648.
-  */
 
   const knownCityCodes = {
 
@@ -8271,8 +8264,14 @@ function(){
   const PER_PAGE =
     25;
 
-  const MAX_PAGES =
-    20;
+  /*
+    Sécurité haute.
+    On ne s'arrête plus arbitrairement
+    à 20 pages.
+  */
+
+  const ABSOLUTE_MAX_PAGES =
+    250;
 
   function buildUrl(page){
 
@@ -8321,85 +8320,88 @@ function(){
     );
   }
 
-function mapKind(section){
+  function mapKind(section){
 
-  section =
-    String(
-      section ||
-      ""
-    ).trim();
+    section =
+      String(
+        section ||
+        ""
+      ).trim();
 
-  if(
-    section === "G" ||
-    section === "I"
-  ){
-    return "commerce";
-  }
+    if(
+      section === "G" ||
+      section === "I"
+    ){
+      return "commerce";
+    }
 
     return "entreprise";
   }
 
-function mapCategory(section){
+  function mapCategory(section){
 
-  section =
-    String(
-      section ||
-      ""
-    ).trim();
+    section =
+      String(
+        section ||
+        ""
+      ).trim();
 
-  if(section === "I"){
-    return "restaurants";
+    if(section === "I"){
+      return "restaurants";
+    }
+
+    if(section === "Q"){
+      return "sante";
+    }
+
+    if(section === "F"){
+      return "artisans";
+    }
+
+    if(section === "G"){
+      return "commerces";
+    }
+
+    if(
+      section === "H" ||
+      section === "J" ||
+      section === "K" ||
+      section === "L" ||
+      section === "M" ||
+      section === "N"
+    ){
+      return "services";
+    }
+
+    return "entreprises";
   }
 
-  if(section === "Q"){
-    return "sante";
-  }
-
-  if(section === "F"){
-    return "artisans";
-  }
-
-  if(section === "G"){
-    return "commerces";
-  }
-
-  if(
-    section === "H" ||
-    section === "J" ||
-    section === "K" ||
-    section === "L" ||
-    section === "M" ||
-    section === "N"
+  function buildAddress(
+    establishment
   ){
-    return "services";
+
+    if(!establishment){
+      return "";
+    }
+
+    if(establishment.adresse){
+
+      return String(
+        establishment.adresse
+      ).trim();
+    }
+
+    return [
+      establishment.numero_voie,
+      establishment.indice_repetition,
+      establishment.type_voie,
+      establishment.libelle_voie
+    ]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
   }
 
-  return "entreprises";
-}
-   
-function buildAddress(establishment){
-
-  if(!establishment){
-    return "";
-  }
-
-  if(establishment.adresse){
-    return String(
-      establishment.adresse
-    ).trim();
-  }
-
-  return [
-    establishment.numero_voie,
-    establishment.indice_repetition,
-    establishment.type_voie,
-    establishment.libelle_voie
-  ]
-  .filter(Boolean)
-  .join(" ")
-  .trim();
-}
- 
   function mapApiResult(
     company,
     establishment
@@ -8424,6 +8426,10 @@ function buildAddress(establishment){
       selected.siret ||
       "";
 
+    const section =
+      company.section_activite_principale ||
+      "";
+
     return {
 
       id:
@@ -8444,23 +8450,24 @@ function buildAddress(establishment){
         company.nom_commercial ||
         "Établissement",
 
-  kind:
-  mapKind(
-    company.section_activite_principale ||
-    ""
-  ),
+      kind:
+        mapKind(
+          section
+        ),
 
-category:
-  mapCategory(
-    company.section_activite_principale ||
-    ""
-  ),
+      category:
+        mapCategory(
+          section
+        ),
 
       trade:
         activityLabel,
 
       activity:
         activityLabel,
+
+      activityCode:
+        activityCode,
 
       description:
         "",
@@ -8471,8 +8478,10 @@ category:
       keywords:
         [
           activityLabel,
+          activityCode,
           company.nom_complet,
-          company.nom_raison_sociale
+          company.nom_raison_sociale,
+          company.nom_commercial
         ]
         .filter(Boolean),
 
@@ -8548,6 +8557,9 @@ category:
         activity:
           activityLabel,
 
+        activityCode:
+          activityCode,
+
         status:
           "Actif",
 
@@ -8579,7 +8591,8 @@ category:
     companies
   ){
 
-    const rows = [];
+    const rows =
+      [];
 
     safeArray(
       companies
@@ -8590,11 +8603,6 @@ category:
         safeArray(
           company.matching_etablissements
         );
-
-      /*
-        On privilégie les établissements
-        réellement situés dans la commune.
-      */
 
       const matching =
         establishments.filter(
@@ -8683,8 +8691,8 @@ category:
     });
 
     /*
-      Déduplication par SIRET / id.
-    */
+      Déduplication.
+  */
 
     const map =
       new Map();
@@ -8692,8 +8700,19 @@ category:
     rows.forEach(
       function(row){
 
+        const key =
+          String(
+            row.siret ||
+            row.id ||
+            ""
+          );
+
+        if(!key){
+          return;
+        }
+
         map.set(
-          String(row.id),
+          key,
           row
         );
       }
@@ -8704,7 +8723,9 @@ category:
     );
   }
 
-  function fetchPage(page){
+  function fetchPage(
+    page
+  ){
 
     return fetch(
       buildUrl(page),
@@ -8735,6 +8756,9 @@ category:
     let page =
       1;
 
+    let totalPages =
+      1;
+
     let allCompanies =
       [];
 
@@ -8755,27 +8779,36 @@ category:
             results
           );
 
-        /*
-          Si moins de 25 résultats,
-          nous sommes arrivés
-          à la dernière page.
-        */
+        const announcedPages =
+          Number(
+            data.total_pages ||
+            1
+          );
+
+        totalPages =
+          Math.min(
+            announcedPages,
+            ABSOLUTE_MAX_PAGES
+          );
+
+        console.log(
+          "Annuaire Wattignies : page",
+          page,
+          "/",
+          totalPages,
+          "—",
+          allCompanies.length,
+          "entreprises reçues"
+        );
 
         if(
-          results.length <
-          PER_PAGE
+          page >= totalPages ||
+          !results.length
         ){
           return allCompanies;
         }
 
         page += 1;
-
-        if(
-          page >
-          MAX_PAGES
-        ){
-          return allCompanies;
-        }
 
         return next();
       });
@@ -8792,9 +8825,18 @@ category:
           companies
         );
 
+      /*
+        On conserve ici une architecture
+        prête à accueillir ensuite
+        les données RPPS / Santé.
+      */
+
+      const merged =
+        rows;
+
       const count =
         applyExternalDirectorySnapshot(
-          rows,
+          merged,
           "API Recherche d'Entreprises — État"
         );
 
