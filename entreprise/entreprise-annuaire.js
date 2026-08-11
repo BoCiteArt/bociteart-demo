@@ -763,99 +763,99 @@ style.textContent = `
 
   ];
 
-  /* =======================================================
-     MÉTIERS
-     ======================================================= */
+/* =======================================================
+   MÉTIERS
+   ======================================================= */
 
-  const METIERS = {
+const METIERS = {
 
-    sante:[
+  sante:[
 
-      "Médecins généralistes",
-      "Infirmiers",
-      "Kinésithérapeutes",
-      "Dentistes",
-      "Pharmacies",
-      "Pédicures-podologues",
-      "Orthophonistes",
-      "Sages-femmes",
-      "Psychologues",
-      "Autres professionnels de santé"
+    "Médecins généralistes",
+    "Infirmiers",
+    "Kinésithérapeutes",
+    "Dentistes",
+    "Pharmacies",
+    "Pédicures-podologues",
+    "Orthophonistes",
+    "Sages-femmes",
+    "Psychologues",
+    "Laboratoires d'analyses médicales",
+    "Autres professionnels de santé"
 
-    ],
+  ],
 
-    maison:[
+  maison:[
 
-      "Couvreurs",
-      "Plombiers",
-      "Électriciens",
-      "Chauffagistes",
-      "Menuisiers",
-      "Maçons",
-      "Peintres",
-      "Carreleurs",
-      "Paysagistes",
-      "Serruriers",
-      "Entreprises de rénovation"
+    "Couvreurs",
+    "Plombiers",
+    "Électriciens",
+    "Chauffagistes",
+    "Menuisiers",
+    "Maçons",
+    "Peintres",
+    "Carreleurs",
+    "Paysagistes",
+    "Serruriers",
+    "Entreprises de rénovation"
 
-    ],
+  ],
 
-    automobile:[
+  automobile:[
 
-      "Garages automobiles",
-      "Carrossiers",
-      "Pneumatiques",
-      "Contrôle technique",
-      "Motos",
-      "Cycles",
-      "Véhicules utilitaires",
-      "Poids lourds"
+    "Garages automobiles",
+    "Carrossiers",
+    "Pneumatiques",
+    "Contrôle technique",
+    "Motos",
+    "Cycles",
+    "Véhicules utilitaires",
+    "Poids lourds"
 
-    ],
+  ],
 
-    alimentation:[
+  alimentation:[
 
-      "Restaurants",
-      "Boulangeries",
-      "Boucheries",
-      "Traiteurs",
-      "Cafés",
-      "Épiceries",
-      "Commerces alimentaires"
+    "Restaurants",
+    "Boulangeries",
+    "Boucheries",
+    "Traiteurs",
+    "Cafés",
+    "Épiceries",
+    "Commerces alimentaires"
 
-    ],
+  ],
 
-    professionnels:[
+  professionnels:[
 
-      "Experts-comptables",
-      "Avocats",
-      "Assurances",
-      "Informatique",
-      "Communication",
-      "Transport",
-      "Nettoyage professionnel",
-      "Sécurité",
-      "Bureaux d'études",
-      "Conseil"
+    "Experts-comptables",
+    "Avocats",
+    "Assurances",
+    "Informatique",
+    "Communication",
+    "Transport",
+    "Nettoyage professionnel",
+    "Sécurité",
+    "Bureaux d'études",
+    "Conseil"
 
-    ],
+  ],
 
-    hebergements:[
+  hebergements:[
 
-      "Hôtels",
-      "Chambres d'hôtes",
-      "Gîtes",
-      "Locations de courte durée",
-      "Autres hébergements"
+    "Hôtels",
+    "Chambres d'hôtes",
+    "Gîtes",
+    "Locations de courte durée",
+    "Autres hébergements"
 
-    ]
+  ]
 
-  };
+};
 
-  /* =======================================================
-     DONNÉES
-     ======================================================= */
-
+/* =======================================================
+   DONNÉES
+   ======================================================= */
   function loadEntities(){
 
     const data =
@@ -2543,69 +2543,82 @@ function clearSearchHistory(){
 
 const TRADE_SEARCH_TERMS = {
 
-  /* SANTÉ */
+/* SANTÉ */
 
-  "Médecins généralistes":[
-    "médecin généraliste",
-    "médecin",
-    "médecine générale"
-  ],
+"Médecins généralistes":[
+  "médecin généraliste",
+  "médecin",
+  "médecine générale"
+],
 
-  "Infirmiers":[
-    "infirmier",
-    "infirmière",
-    "soins infirmiers"
-  ],
+"Infirmiers":[
+  "infirmier",
+  "infirmière",
+  "soins infirmiers"
+],
 
-  "Kinésithérapeutes":[
-    "kinésithérapeute",
-    "kinesitherapeute",
-    "masseur kinésithérapeute",
-    "masseur-kinesitherapeute"
-  ],
+"Kinésithérapeutes":[
+  "kinésithérapeute",
+  "kinesitherapeute",
+  "masseur kinésithérapeute",
+  "masseur-kinesitherapeute"
+],
 
-  "Dentistes":[
-    "dentiste",
-    "chirurgien dentiste",
-    "chirurgien-dentiste",
-    "dentaire",
-    "pratique dentaire"
-  ],
+"Dentistes":[
+  "dentiste",
+  "chirurgien dentiste",
+  "chirurgien-dentiste",
+  "dentaire",
+  "pratique dentaire"
+],
 
-  "Pharmacies":[
-    "pharmacie",
-    "pharmacien",
-    "pharmaceutique",
-    "produits pharmaceutiques"
-  ],
+"Pharmacies":[
+  "pharmacie",
+  "pharmacien",
+  "pharmaceutique",
+  "produits pharmaceutiques"
+],
 
-  "Pédicures-podologues":[
-    "podologue",
-    "pédicure podologue",
-    "pedicure podologue",
-    "pédicure-podologue"
-  ],
+"Pédicures-podologues":[
+  "podologue",
+  "pédicure podologue",
+  "pedicure podologue",
+  "pédicure-podologue"
+],
 
-  "Orthophonistes":[
-    "orthophoniste",
-    "orthophonie"
-  ],
+"Orthophonistes":[
+  "orthophoniste",
+  "orthophonie"
+],
 
-  "Sages-femmes":[
-    "sage-femme",
-    "sage femme"
-  ],
+"Sages-femmes":[
+  "sage-femme",
+  "sage femme"
+],
 
-  "Psychologues":[
-    "psychologue",
-    "psychologie"
-  ],
+"Psychologues":[
+  "psychologue",
+  "psychologie"
+],
 
-  "Autres professionnels de santé":[
-    "santé",
-    "soins",
-    "professionnel de santé"
-  ],
+"Laboratoires d'analyses médicales":[
+  "laboratoire d'analyses médicales",
+  "laboratoire analyses médicales",
+  "laboratoire médical",
+  "laboratoire de biologie médicale",
+  "biologie médicale"
+],
+
+"Autres professionnels de santé":[
+  "audioprothésiste",
+  "orthoptiste",
+  "diététicien",
+  "ergothérapeute",
+  "psychomotricien",
+  "ostéopathe",
+  "chiropracteur"
+],
+
 
   /* MAISON / ARTISANS */
 
