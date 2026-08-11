@@ -8722,7 +8722,129 @@ function(){
       map.values()
     );
   }
+  /* =======================================================
+   ANNUAIRE SANTÉ LOCAL COMPLÉMENTAIRE
+   ======================================================= */
 
+function loadLocalHealthDirectory(){
+
+  const cityName =
+    getCurrentCommune();
+
+  const slug =
+    normalizeText(
+      cityName
+    )
+    .replace(
+      /[^a-z0-9]+/g,
+      "-"
+    )
+    .replace(
+      /^-+|-+$/g,
+      ""
+    );
+
+  const url =
+    "entreprise/annuaire-sante-" +
+    slug +
+    ".json";
+
+  return fetch(
+    url,
+    {
+      cache:"no-store"
+    }
+  )
+  .then(function(response){
+
+    if(!response.ok){
+      return [];
+    }
+
+    return response.json();
+  })
+  .then(function(data){
+
+    return Array.isArray(data)
+      ? data
+      : [];
+  })
+  .catch(function(error){
+
+    console.warn(
+      "Bo'CitéArt Annuaire : données Santé locales indisponibles.",
+      error
+    );
+
+    return [];
+  });
+}
+
+function mergeDirectorySources(
+  enterpriseRows,
+  healthRows
+){
+
+  const merged =
+    new Map();
+
+  safeArray(
+    enterpriseRows
+  )
+  .forEach(function(entity){
+
+    const key =
+      String(
+        entity.siret ||
+        entity.id ||
+        ""
+      );
+
+    if(key){
+
+      merged.set(
+        "enterprise_" + key,
+        entity
+      );
+    }
+  });
+
+  safeArray(
+    healthRows
+  )
+  .forEach(function(entity){
+
+    const rpps =
+      String(
+        entity.rpps ||
+        ""
+      ).trim();
+
+    const key =
+      rpps
+        ? "rpps_" + rpps
+        : (
+            "health_" +
+            normalizeText(
+              [
+                entity.name,
+                entity.address,
+                entity.commune
+              ].join("_")
+            )
+          );
+
+    merged.set(
+      key,
+      entity
+    );
+  });
+
+  return Array.from(
+    merged.values()
+  );
+}
+    
   function fetchPage(
     page
   ){
@@ -8817,45 +8939,35 @@ function(){
     return next();
   }
 
-  return fetchAllPages()
-    .then(function(companies){
+return Promise.all([
+  fetchAllPages(),
+  loadLocalHealthDirectory()
+])
+.then(function(results){
 
-      const rows =
-        extractEntities(
-          companies
-        );
+  const companies =
+    results[0];
 
-      /*
-        On conserve ici une architecture
-        prête à accueillir ensuite
-        les données RPPS / Santé.
-      */
+  const healthRows =
+    results[1];
 
-      const merged =
-        rows;
+  const enterpriseRows =
+    extractEntities(
+      companies
+    );
 
-      const count =
-        applyExternalDirectorySnapshot(
-          merged,
-          "API Recherche d'Entreprises — État"
-        );
+  const merged =
+    mergeDirectorySources(
+      enterpriseRows,
+      healthRows
+    );
 
-      console.log(
-        "✅ Annuaire officiel chargé :",
-        cityName,
-        count,
-        "établissements"
-      );
-
-      return {
-        updated:true,
-        city:
-          cityName,
-        count:
-          count,
-        source:
-          "API Recherche d'Entreprises — État"
-      };
+  const count =
+    applyExternalDirectorySnapshot(
+      merged,
+      "API Recherche d'Entreprises + Annuaire Santé RPPS"
+    );
+   
     })
     .catch(function(error){
 
