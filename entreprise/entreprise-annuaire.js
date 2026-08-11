@@ -7486,7 +7486,7 @@
     }
 
     if(type === "trade"){
-      renderTrade(data);
+      renderTrade(data); 
       return;
     }
 
