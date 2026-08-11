@@ -506,104 +506,6 @@
 
   injectStyles();
 
-     /* =======================================================
-     CORRECTION VISUELLE — BOUTONS ET CASES EN BLANC
-     RETOUR CONSERVÉ EN BEIGE
-     ======================================================= */
-
-  function injectAnnuaireWhiteButtons(){
-
-    if(
-      document.getElementById(
-        "bociteAnnuaireWhiteButtonsV5"
-      )
-    ){
-      return;
-    }
-
-    const style =
-      document.createElement("style");
-
-    style.id =
-      "bociteAnnuaireWhiteButtonsV5";
-
-    style.textContent = `
-
-      /* Tous les boutons de l'annuaire en blanc */
-
-      .modal-content .choiceBtn,
-      .modalContent .choiceBtn,
-      #modalContent .choiceBtn{
-
-        background:#ffffff !important;
-        color:#111 !important;
-
-      }
-
-      /* Cases catégories */
-
-      .modal-content .annuaireCategoryBtn,
-      .modalContent .annuaireCategoryBtn,
-      #modalContent .annuaireCategoryBtn{
-
-        background:#ffffff !important;
-
-      }
-
-      /* Cases métiers */
-
-      .modal-content .annuaireTradeBtn,
-      .modalContent .annuaireTradeBtn,
-      #modalContent .annuaireTradeBtn,
-
-      .modal-content .annuaireAllTradeBtn,
-      .modalContent .annuaireAllTradeBtn,
-      #modalContent .annuaireAllTradeBtn{
-
-        background:#ffffff !important;
-
-      }
-
-      /* Notes 1 à 5 */
-
-      .modal-content .bociteAnnuaireStarBtn,
-      .modalContent .bociteAnnuaireStarBtn,
-      #modalContent .bociteAnnuaireStarBtn{
-
-        background:#ffffff !important;
-
-      }
-
-      /* Champs de saisie blancs */
-
-      #annuaireSearchInput,
-      #annuaireProQueryInput,
-      #annuaireProDetailsInput,
-      #annuaireProZoneInput{
-
-        background:#ffffff !important;
-        color:#111 !important;
-
-      }
-
-      /* Le bouton Retour reste beige */
-
-      #annuaireInternalBackBtn{
-
-        background:#f3e7d3 !important;
-        color:#111 !important;
-
-      }
-
-    `;
-
-    document.head.appendChild(
-      style
-    );
-  }
-
-  injectAnnuaireWhiteButtons();
-
   /* =======================================================
      LOGO
      ======================================================= */
@@ -7865,6 +7767,109 @@
     }
   );
 
+  /* =======================================================
+     ANNUAIRE — BLANC DÉFINITIF DES BOUTONS
+     RETOUR CONSERVÉ EN BEIGE
+     ======================================================= */
+
+  (function forceAnnuaireWhiteButtons(){
+
+    if(
+      document.getElementById(
+        "bociteAnnuaireWhiteFinal"
+      )
+    ){
+      return;
+    }
+
+    const style =
+      document.createElement("style");
+
+    style.id =
+      "bociteAnnuaireWhiteFinal";
+
+    style.textContent = `
+
+      /* TOUS LES BOUTONS D'ACTION DE L'ANNUAIRE */
+
+      .annuaireCategoryBtn,
+      .annuaireTradeBtn,
+      .annuaireAllTradeBtn,
+      .annuaireReplayHomeBtn,
+      .annuaireOpenEntityBtn,
+      .annuaireRatingBtn,
+      .annuaireHistoryReplayBtn,
+      .annuaireHistoryDeleteBtn,
+      .annuaireFavoriteOpenBtn,
+      .annuaireViewedOpenBtn,
+
+      #annuaireSearchBtn,
+      #annuaireHistoryBtn,
+      #annuaireFavoritesBtn,
+      #annuaireViewedBtn,
+      #annuaireProfessionalBtn,
+      #annuaireTradeSearchBtn,
+      #annuaireRetrySearchBtn,
+      #annuaireExpandSearchBtn,
+      #annuaireFavoriteToggleBtn,
+      #annuaireEntityCallBtn,
+      #annuaireEntityRouteBtn,
+      #annuaireEntityMailBtn,
+      #annuaireEntityWebBtn,
+      #annuaireJobsBtn,
+      #annuaireSpontaneousBtn,
+      #annuaireReportBtn,
+      #annuaireReportSendBtn,
+      #annuaireHistoryClearAllBtn,
+
+      [class*="annuairePro"]:not(#annuaireInternalBackBtn),
+      [class*="annuaireNotebook"]:not(#annuaireInternalBackBtn),
+      [class*="annuaireFollowed"]:not(#annuaireInternalBackBtn){
+
+        background:#ffffff !important;
+        background-color:#ffffff !important;
+        color:#111111 !important;
+
+      }
+
+      /* LES 8 GRANDES CASES DE L'ACCUEIL */
+
+      button.annuaireCategoryBtn{
+
+        background:#ffffff !important;
+        background-color:#ffffff !important;
+
+      }
+
+      /* RETOUR UNIQUEMENT : IL RESTE BEIGE */
+
+      #annuaireInternalBackBtn{
+
+        background:#f3e7d3 !important;
+        background-color:#f3e7d3 !important;
+        color:#111111 !important;
+
+      }
+
+      /* CHAMPS DE SAISIE */
+
+      #annuaireSearchInput,
+      #annuaireProQueryInput,
+      #annuaireProDetailsInput,
+      #annuaireProZoneInput{
+
+        background:#ffffff !important;
+        background-color:#ffffff !important;
+        color:#111111 !important;
+
+      }
+
+    `;
+
+    document.head.appendChild(style);
+
+  })();
+   
   console.log(
     "✅ Bo'CitéArt — Annuaire V5 propre chargé"
   );
