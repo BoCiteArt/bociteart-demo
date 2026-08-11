@@ -1191,8 +1191,33 @@ style.textContent = `
       )
     );
   }
+   
+   function removeSearchHistoryItem(id){
 
-  /* =======================================================
+  const history =
+    loadSearchHistory()
+      .filter(function(item){
+
+        return (
+          String(item.id) !==
+          String(id)
+        );
+      });
+
+  saveJson(
+    STORAGE.searchHistory,
+    history
+  );
+}
+
+function clearSearchHistory(){
+
+  saveJson(
+    STORAGE.searchHistory,
+    []
+  );
+}
+    /* =======================================================
      CONSULTÉS RÉCEMMENT
      ======================================================= */
 
@@ -4155,381 +4180,655 @@ style.textContent = `
   /* =======================================================
      HISTORIQUE PUBLIC
      ======================================================= */
+function openSearchHistory(){
 
-  function openSearchHistory(){
+  const history =
+    loadSearchHistory();
 
-    const history =
-      loadSearchHistory();
+  let html = `
 
-    let html = `
+    <div class="box">
 
-      <div class="box">
+      <div class="bociteAnnuaireTitle">
+        Mes dernières recherches
+      </div>
 
-        <div class="bociteAnnuaireTitle">
-          Mes dernières recherches
-        </div>
+      <div
+        class="bociteAnnuaireText"
+        style="margin-top:6px;">
+        Retrouvez une ancienne recherche
+        sans avoir à la retaper.
+      </div>
 
-        <div
-          class="bociteAnnuaireText"
-          style="margin-top:6px;">
-          Retrouvez une ancienne recherche
-          sans avoir à la retaper.
-        </div>
+    </div>
 
+  `;
+
+  if(!history.length){
+
+    html += `
+
+      <div
+        class="box"
+        style="margin-top:9px;">
+        Aucun historique pour le moment.
       </div>
 
     `;
 
-    if(!history.length){
+  }else{
 
-      html += `
+    history.forEach(
+      function(item){
 
-        <div
-          class="box"
-          style="margin-top:9px;">
-          Aucun historique pour le moment.
-        </div>
+        html += `
 
-      `;
+          <div
+            class="box"
+            style="margin-top:7px;">
 
-    }else{
-
-      history.forEach(
-        function(item){
-
-          html += `
-
-            <button
-              type="button"
-              class="choiceBtn annuaireHistoryQueryBtn"
-              data-query="${escapeHtml(item.query)}"
+            <strong
               style="
-                width:100%;
-                text-align:left;
-                margin-top:7px;
+                color:#2f5d46;
+                font-size:15px;
               ">
+              ${escapeHtml(item.query)}
+            </strong>
 
-              <strong>
-                ${escapeHtml(item.query)}
-              </strong>
+            <div
+              style="
+                font-size:12px;
+                margin-top:4px;
+                color:#666;
+              ">
+              ${escapeHtml(item.commune)}
+              •
+              ${formatDate(item.createdAt)}
+            </div>
 
-              <br>
+            <div
+              class="bociteAnnuaireActions"
+              style="margin-top:8px;">
 
-              <span
-                style="
-                  font-size:12px;
-                  font-weight:400;
-                ">
-                ${escapeHtml(item.commune)}
-                •
-                ${formatDate(item.createdAt)}
-              </span>
+              <button
+                type="button"
+                class="choiceBtn annuaireHistoryQueryBtn"
+                data-query="${escapeHtml(item.query)}">
+                Relancer
+              </button>
 
-            </button>
+              <button
+                type="button"
+                class="choiceBtn annuaireHistoryDeleteBtn"
+                data-id="${escapeHtml(item.id)}">
+                Supprimer
+              </button>
 
-          `;
-        }
-      );
-    }
+            </div>
+
+          </div>
+
+        `;
+      }
+    );
 
     html += `
 
       <button
-        id="annuaireHistoryBackBtn"
+        id="annuaireHistoryClearBtn"
         class="choiceBtn"
         type="button"
         style="
           width:100%;
           margin-top:10px;
         ">
-        Retour à l'annuaire
+        Tout effacer
       </button>
 
     `;
-
-    render(
-      "Mes dernières recherches",
-      html,
-      function(){
-
-        document
-          .querySelectorAll(
-            ".annuaireHistoryQueryBtn"
-          )
-          .forEach(function(button){
-
-            button.onclick =
-              function(){
-
-                launchSearch(
-                  button.getAttribute(
-                    "data-query"
-                  ) || ""
-                );
-              };
-          });
-
-        const back =
-          getElement(
-            "annuaireHistoryBackBtn"
-          );
-
-        if(back){
-          back.onclick =
-            openHome;
-        }
-
-      }
-    );
   }
 
-  function openViewedHistory(){
+  html += `
 
-    const history =
-      loadViewedHistory();
+    <button
+      id="annuaireHistoryBackBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:10px;
+      ">
+      Retour à l'annuaire
+    </button>
 
-    let html = `
+  `;
 
-      <div class="box">
+  render(
+    "Mes dernières recherches",
+    html,
+    function(){
 
-        <div class="bociteAnnuaireTitle">
-          Consultés récemment
-        </div>
+      document
+        .querySelectorAll(
+          ".annuaireHistoryQueryBtn"
+        )
+        .forEach(function(button){
 
+          button.onclick =
+            function(){
+
+              launchSearch(
+                button.getAttribute(
+                  "data-query"
+                ) || ""
+              );
+            };
+        });
+
+      document
+        .querySelectorAll(
+          ".annuaireHistoryDeleteBtn"
+        )
+        .forEach(function(button){
+
+          button.onclick =
+            function(){
+
+              removeSearchHistoryItem(
+                button.getAttribute(
+                  "data-id"
+                )
+              );
+
+              openSearchHistory();
+            };
+        });
+
+      const clearButton =
+        getElement(
+          "annuaireHistoryClearBtn"
+        );
+
+      if(clearButton){
+
+        clearButton.onclick =
+          function(){
+
+            if(
+              !window.confirm(
+                "Effacer toutes vos dernières recherches ?"
+              )
+            ){
+              return;
+            }
+
+            clearSearchHistory();
+
+            openSearchHistory();
+          };
+      }
+
+      const back =
+        getElement(
+          "annuaireHistoryBackBtn"
+        );
+
+      if(back){
+        back.onclick =
+          openHome;
+      }
+
+    }
+  );
+}
+
+
+/* =======================================================
+   CONSULTÉS RÉCEMMENT
+   ======================================================= */
+
+function openViewedHistory(){
+
+  const history =
+    loadViewedHistory();
+
+  let html = `
+
+    <div class="box">
+
+      <div class="bociteAnnuaireTitle">
+        Consultés récemment
+      </div>
+
+      <div
+        class="bociteAnnuaireText"
+        style="margin-top:6px;">
+        Retrouvez les fiches
+        que vous avez déjà consultées.
+      </div>
+
+    </div>
+
+  `;
+
+  if(!history.length){
+
+    html += `
+
+      <div
+        class="box"
+        style="margin-top:9px;">
+        Aucune fiche consultée pour le moment.
       </div>
 
     `;
 
-    if(!history.length){
+  }else{
 
-      html += `
+    history.forEach(
+      function(item){
 
-        <div
-          class="box"
-          style="margin-top:9px;">
-          Aucune fiche consultée pour le moment.
-        </div>
+        html += `
 
-      `;
+          <div
+            class="box"
+            style="margin-top:7px;">
 
-    }else{
-
-      history.forEach(
-        function(item){
-
-          html += `
-
-            <button
-              type="button"
-              class="choiceBtn annuaireViewedEntityBtn"
-              data-id="${escapeHtml(item.entityId)}"
+            <strong
               style="
-                width:100%;
-                text-align:left;
-                margin-top:7px;
+                color:#2f5d46;
+                font-size:15px;
               ">
+              ${escapeHtml(item.name)}
+            </strong>
 
-              <strong>
-                ${escapeHtml(item.name)}
-              </strong>
+            <div
+              style="
+                font-size:12px;
+                color:#666;
+                margin-top:4px;
+              ">
+              ${escapeHtml(item.commune || "")}
+              •
+              ${formatDate(item.viewedAt)}
+            </div>
 
-              <br>
+            <div
+              class="bociteAnnuaireActions"
+              style="margin-top:8px;">
 
-              <span
-                style="
-                  font-size:12px;
-                  font-weight:400;
-                ">
-                ${escapeHtml(item.commune || "")}
-                •
-                ${formatDate(item.viewedAt)}
-              </span>
+              <button
+                type="button"
+                class="choiceBtn annuaireViewedEntityBtn"
+                data-id="${escapeHtml(item.entityId)}">
+                Voir la fiche
+              </button>
 
-            </button>
+              <button
+                type="button"
+                class="choiceBtn annuaireViewedDeleteBtn"
+                data-id="${escapeHtml(item.id)}">
+                Supprimer
+              </button>
 
-          `;
-        }
-      );
-    }
+            </div>
+
+          </div>
+
+        `;
+      }
+    );
 
     html += `
 
       <button
-        id="annuaireViewedBackBtn"
+        id="annuaireViewedClearBtn"
         class="choiceBtn"
         type="button"
         style="
           width:100%;
           margin-top:10px;
         ">
-        Retour à l'annuaire
+        Tout effacer
       </button>
 
     `;
-
-    render(
-      "Consultés récemment",
-      html,
-      function(){
-
-        document
-          .querySelectorAll(
-            ".annuaireViewedEntityBtn"
-          )
-          .forEach(function(button){
-
-            button.onclick =
-              function(){
-
-                openEntity(
-                  button.getAttribute(
-                    "data-id"
-                  )
-                );
-              };
-          });
-
-        const back =
-          getElement(
-            "annuaireViewedBackBtn"
-          );
-
-        if(back){
-          back.onclick =
-            openHome;
-        }
-
-      }
-    );
   }
 
-  function openFavorites(){
+  html += `
 
-    const favorites =
-      loadFavorites();
+    <button
+      id="annuaireViewedBackBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:10px;
+      ">
+      Retour à l'annuaire
+    </button>
 
-    let html = `
+  `;
 
-      <div class="box">
+  render(
+    "Consultés récemment",
+    html,
+    function(){
 
-        <div class="bociteAnnuaireTitle">
-          Mes favoris
-        </div>
+      document
+        .querySelectorAll(
+          ".annuaireViewedEntityBtn"
+        )
+        .forEach(function(button){
 
-        <div
-          class="bociteAnnuaireText"
-          style="margin-top:6px;">
-          Retrouvez les adresses
-          que vous souhaitez conserver.
-        </div>
+          button.onclick =
+            function(){
 
+              openEntity(
+                button.getAttribute(
+                  "data-id"
+                )
+              );
+            };
+        });
+
+      document
+        .querySelectorAll(
+          ".annuaireViewedDeleteBtn"
+        )
+        .forEach(function(button){
+
+          button.onclick =
+            function(){
+
+              const id =
+                button.getAttribute(
+                  "data-id"
+                );
+
+              const updated =
+                loadViewedHistory()
+                  .filter(function(item){
+
+                    return (
+                      String(item.id) !==
+                      String(id)
+                    );
+                  });
+
+              saveJson(
+                STORAGE.viewedHistory,
+                updated
+              );
+
+              openViewedHistory();
+            };
+        });
+
+      const clearButton =
+        getElement(
+          "annuaireViewedClearBtn"
+        );
+
+      if(clearButton){
+
+        clearButton.onclick =
+          function(){
+
+            if(
+              !window.confirm(
+                "Effacer toutes les fiches consultées récemment ?"
+              )
+            ){
+              return;
+            }
+
+            saveJson(
+              STORAGE.viewedHistory,
+              []
+            );
+
+            openViewedHistory();
+          };
+      }
+
+      const back =
+        getElement(
+          "annuaireViewedBackBtn"
+        );
+
+      if(back){
+        back.onclick =
+          openHome;
+      }
+
+    }
+  );
+}
+
+/* =======================================================
+   FAVORIS
+   ======================================================= */
+
+function openFavorites(){
+
+  const favorites =
+    loadFavorites();
+
+  let html = `
+
+    <div class="box">
+
+      <div class="bociteAnnuaireTitle">
+        Mes favoris
+      </div>
+
+      <div
+        class="bociteAnnuaireText"
+        style="margin-top:6px;">
+        Retrouvez les adresses
+        que vous souhaitez conserver.
+      </div>
+
+    </div>
+
+  `;
+
+  if(!favorites.length){
+
+    html += `
+
+      <div
+        class="box"
+        style="margin-top:9px;">
+        Aucun favori enregistré.
       </div>
 
     `;
 
-    if(!favorites.length){
+  }else{
 
-      html += `
+    favorites.forEach(
+      function(item){
 
-        <div
-          class="box"
-          style="margin-top:9px;">
-          Aucun favori enregistré.
-        </div>
+        html += `
 
-      `;
+          <div
+            class="box"
+            style="margin-top:7px;">
 
-    }else{
-
-      favorites.forEach(
-        function(item){
-
-          html += `
-
-            <button
-              type="button"
-              class="choiceBtn annuaireFavoriteEntityBtn"
-              data-id="${escapeHtml(item.entityId)}"
+            <strong
               style="
-                width:100%;
-                text-align:left;
-                margin-top:7px;
+                color:#2f5d46;
+                font-size:15px;
               ">
+              ${escapeHtml(item.name)}
+            </strong>
 
-              <strong>
-                ${escapeHtml(item.name)}
-              </strong>
+            <div
+              style="
+                font-size:12px;
+                color:#666;
+                margin-top:4px;
+              ">
+              ${escapeHtml(item.commune || "")}
+              • enregistré le
+              ${formatDate(item.savedAt)}
+            </div>
 
-              <br>
+            <div
+              class="bociteAnnuaireActions"
+              style="margin-top:8px;">
 
-              <span
-                style="
-                  font-size:12px;
-                  font-weight:400;
-                ">
-                ${escapeHtml(item.commune || "")}
-                • enregistré le
-                ${formatDate(item.savedAt)}
-              </span>
+              <button
+                type="button"
+                class="choiceBtn annuaireFavoriteEntityBtn"
+                data-id="${escapeHtml(item.entityId)}">
+                Voir la fiche
+              </button>
 
-            </button>
+              <button
+                type="button"
+                class="choiceBtn annuaireFavoriteDeleteBtn"
+                data-id="${escapeHtml(item.entityId)}">
+                Retirer
+              </button>
 
-          `;
-        }
-      );
-    }
+            </div>
+
+          </div>
+
+        `;
+      }
+    );
 
     html += `
 
       <button
-        id="annuaireFavoritesBackBtn"
+        id="annuaireFavoritesClearBtn"
         class="choiceBtn"
         type="button"
         style="
           width:100%;
           margin-top:10px;
         ">
-        Retour à l'annuaire
+        Tout retirer
       </button>
 
     `;
-
-    render(
-      "Mes favoris",
-      html,
-      function(){
-
-        document
-          .querySelectorAll(
-            ".annuaireFavoriteEntityBtn"
-          )
-          .forEach(function(button){
-
-            button.onclick =
-              function(){
-
-                openEntity(
-                  button.getAttribute(
-                    "data-id"
-                  )
-                );
-              };
-          });
-
-        const back =
-          getElement(
-            "annuaireFavoritesBackBtn"
-          );
-
-        if(back){
-          back.onclick =
-            openHome;
-        }
-
-      }
-    );
   }
 
+  html += `
+
+    <button
+      id="annuaireFavoritesBackBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:10px;
+      ">
+      Retour à l'annuaire
+    </button>
+
+  `;
+
+  render(
+    "Mes favoris",
+    html,
+    function(){
+
+      document
+        .querySelectorAll(
+          ".annuaireFavoriteEntityBtn"
+        )
+        .forEach(function(button){
+
+          button.onclick =
+            function(){
+
+              openEntity(
+                button.getAttribute(
+                  "data-id"
+                )
+              );
+            };
+        });
+
+      document
+        .querySelectorAll(
+          ".annuaireFavoriteDeleteBtn"
+        )
+        .forEach(function(button){
+
+          button.onclick =
+            function(){
+
+              const entityId =
+                button.getAttribute(
+                  "data-id"
+                );
+
+              const updated =
+                loadFavorites()
+                  .filter(function(item){
+
+                    return (
+                      String(item.entityId) !==
+                      String(entityId)
+                    );
+                  });
+
+              saveJson(
+                STORAGE.favorites,
+                updated
+              );
+
+              openFavorites();
+            };
+        });
+
+      const clearButton =
+        getElement(
+          "annuaireFavoritesClearBtn"
+        );
+
+      if(clearButton){
+
+        clearButton.onclick =
+          function(){
+
+            if(
+              !window.confirm(
+                "Retirer toutes les adresses enregistrées ?"
+              )
+            ){
+              return;
+            }
+
+            saveJson(
+              STORAGE.favorites,
+              []
+            );
+
+            openFavorites();
+          };
+      }
+
+      const back =
+        getElement(
+          "annuaireFavoritesBackBtn"
+        );
+
+      if(back){
+        back.onclick =
+          openHome;
+      }
+
+    }
+  );
+}
+   
   /* =======================================================
      PRÈS DE MOI
      ======================================================= */
@@ -5411,237 +5710,327 @@ style.textContent = `
     );
   }
 
-  /* =======================================================
-     HISTORIQUE PRO
-     ======================================================= */
+function openProfessionalHistory(){
 
-  function openProfessionalHistory(){
+  const history =
+    loadProfessionalHistory();
 
-    const history =
-      loadProfessionalHistory();
+  let html = `
 
-    let html = `
+    <div class="box">
 
-      <div class="box">
+      <div class="bociteAnnuaireTitle">
+        Mes recherches professionnelles
+      </div>
 
-        <div class="bociteAnnuaireTitle">
-          Mes recherches professionnelles
-        </div>
+      <div
+        class="bociteAnnuaireText"
+        style="margin-top:6px;">
+        Retrouvez, reprenez ou classez
+        vos anciennes recherches.
+      </div>
 
-        <div
-          class="bociteAnnuaireText"
-          style="margin-top:6px;">
-          Les recherches terminées
-          restent disponibles dans l'historique.
-        </div>
+    </div>
 
+  `;
+
+  if(!history.length){
+
+    html += `
+
+      <div
+        class="box"
+        style="margin-top:9px;">
+        Aucune recherche professionnelle enregistrée.
       </div>
 
     `;
 
-    if(!history.length){
+  }else{
 
-      html += `
+    history.forEach(
+      function(item){
 
-        <div
-          class="box"
-          style="margin-top:9px;">
-          Aucune recherche professionnelle enregistrée.
-        </div>
+        html += `
 
-      `;
+          <div
+            class="box"
+            style="margin-top:9px;">
 
-    }else{
-
-      history.forEach(
-        function(item){
-
-          html += `
+            <div class="bociteAnnuaireTitle">
+              ${escapeHtml(item.query)}
+            </div>
 
             <div
-              class="box"
-              style="margin-top:9px;">
+              class="bociteAnnuaireText"
+              style="margin-top:5px;">
+              ${escapeHtml(item.details || "")}
+            </div>
 
-              <div class="bociteAnnuaireTitle">
-                ${escapeHtml(item.query)}
-              </div>
+            <div
+              class="bociteAnnuaireSmall"
+              style="margin-top:5px;">
 
-              <div
-                class="bociteAnnuaireText"
-                style="margin-top:5px;">
-                ${escapeHtml(item.details || "")}
-              </div>
+              Zone :
+              ${escapeHtml(item.zone)}
 
-              <div
-                class="bociteAnnuaireSmall"
-                style="margin-top:5px;">
-                Zone :
-                ${escapeHtml(item.zone)}
-                <br>
-                Créée le :
-                ${formatDate(item.createdAt)}
-                <br>
-                Statut :
-                ${
-                  item.status ===
-                  "terminee"
-                    ? "Terminée"
-                    : "En cours"
-                }
-              </div>
+              <br>
 
-              <div
-                class="bociteAnnuaireActions"
-                style="margin-top:8px;">
+              Créée le :
+              ${formatDate(item.createdAt)}
 
-                <button
-                  type="button"
-                  class="choiceBtn annuaireProHistoryResumeBtn"
-                  data-id="${escapeHtml(item.id)}">
-                  Reprendre
-                </button>
+              <br>
 
-                <button
-                  type="button"
-                  class="choiceBtn annuaireProHistoryStatusBtn"
-                  data-id="${escapeHtml(item.id)}">
-                  ${
-                    item.status ===
-                    "terminee"
-                      ? "Remettre en cours"
-                      : "Terminer"
-                  }
-                </button>
-
-              </div>
+              Statut :
+              ${
+                item.status ===
+                "terminee"
+                  ? "Terminée"
+                  : "En cours"
+              }
 
             </div>
 
-          `;
-        }
-      );
-    }
+            <div
+              class="bociteAnnuaireActions"
+              style="margin-top:8px;">
+
+              <button
+                type="button"
+                class="choiceBtn annuaireProHistoryResumeBtn"
+                data-id="${escapeHtml(item.id)}">
+                Reprendre
+              </button>
+
+              <button
+                type="button"
+                class="choiceBtn annuaireProHistoryStatusBtn"
+                data-id="${escapeHtml(item.id)}">
+
+                ${
+                  item.status ===
+                  "terminee"
+                    ? "Remettre en cours"
+                    : "Terminer"
+                }
+
+              </button>
+
+            </div>
+
+            <button
+              type="button"
+              class="choiceBtn annuaireProHistoryDeleteBtn"
+              data-id="${escapeHtml(item.id)}"
+              style="
+                width:100%;
+                margin-top:7px;
+              ">
+              Supprimer
+            </button>
+
+          </div>
+
+        `;
+      }
+    );
 
     html += `
 
       <button
-        id="annuaireProHistoryBackBtn"
+        id="annuaireProHistoryClearBtn"
         class="choiceBtn"
         type="button"
         style="
           width:100%;
-          margin-top:9px;
+          margin-top:10px;
         ">
-        Retour au tableau de bord
+        Tout effacer
       </button>
 
     `;
+  }
 
-    render(
-      "Mes recherches professionnelles",
-      html,
-      function(){
+  html += `
 
-        document
-          .querySelectorAll(
-            ".annuaireProHistoryResumeBtn"
-          )
-          .forEach(function(button){
+    <button
+      id="annuaireProHistoryBackBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:9px;
+      ">
+      Retour au tableau de bord
+    </button>
 
-            button.onclick =
-              function(){
+  `;
 
-                const item =
-                  loadProfessionalHistory()
-                    .find(
-                      function(historyItem){
+  render(
+    "Mes recherches professionnelles",
+    html,
+    function(){
 
-                        return (
-                          historyItem.id ===
-                          button.getAttribute(
-                            "data-id"
-                          )
-                        );
-                      }
-                    );
+      document
+        .querySelectorAll(
+          ".annuaireProHistoryResumeBtn"
+        )
+        .forEach(function(button){
 
-                if(item){
+          button.onclick =
+            function(){
 
-                  openResults(
-                    item.query,
-                    {
-                      localOnly:
-                        item.zone ===
-                        "commune"
-                    }
-                  );
-                }
-              };
-          });
-
-        document
-          .querySelectorAll(
-            ".annuaireProHistoryStatusBtn"
-          )
-          .forEach(function(button){
-
-            button.onclick =
-              function(){
-
-                const id =
-                  button.getAttribute(
-                    "data-id"
-                  );
-
-                const current =
-                  loadProfessionalHistory();
-
-                const item =
-                  current.find(
+              const item =
+                loadProfessionalHistory()
+                  .find(
                     function(historyItem){
 
                       return (
                         historyItem.id ===
-                        id
+                        button.getAttribute(
+                          "data-id"
+                        )
                       );
                     }
                   );
 
-                if(!item){
-                  return;
-                }
+              if(item){
 
-                item.status =
-                  item.status ===
-                  "terminee"
-                    ? "en_cours"
-                    : "terminee";
+                openResults(
+                  item.query,
+                  {
+                    localOnly:
+                      item.zone ===
+                      "commune"
+                  }
+                );
+              }
+            };
+        });
 
-                item.updatedAt =
-                  Date.now();
+      document
+        .querySelectorAll(
+          ".annuaireProHistoryStatusBtn"
+        )
+        .forEach(function(button){
 
-                saveJson(
-                  STORAGE.professionalHistory,
-                  current
+          button.onclick =
+            function(){
+
+              const id =
+                button.getAttribute(
+                  "data-id"
                 );
 
-                openProfessionalHistory();
-              };
-          });
+              const current =
+                loadProfessionalHistory();
 
-        const back =
-          getElement(
-            "annuaireProHistoryBackBtn"
-          );
+              const item =
+                current.find(
+                  function(historyItem){
 
-        if(back){
-          back.onclick =
-            openProfessionalDashboard;
-        }
+                    return (
+                      historyItem.id ===
+                      id
+                    );
+                  }
+                );
 
+              if(!item){
+                return;
+              }
+
+              item.status =
+                item.status ===
+                "terminee"
+                  ? "en_cours"
+                  : "terminee";
+
+              item.updatedAt =
+                Date.now();
+
+              saveJson(
+                STORAGE.professionalHistory,
+                current
+              );
+
+              openProfessionalHistory();
+            };
+        });
+
+      document
+        .querySelectorAll(
+          ".annuaireProHistoryDeleteBtn"
+        )
+        .forEach(function(button){
+
+          button.onclick =
+            function(){
+
+              const id =
+                button.getAttribute(
+                  "data-id"
+                );
+
+              const updated =
+                loadProfessionalHistory()
+                  .filter(function(item){
+
+                    return (
+                      String(item.id) !==
+                      String(id)
+                    );
+                  });
+
+              saveJson(
+                STORAGE.professionalHistory,
+                updated
+              );
+
+              openProfessionalHistory();
+            };
+        });
+
+      const clearButton =
+        getElement(
+          "annuaireProHistoryClearBtn"
+        );
+
+      if(clearButton){
+
+        clearButton.onclick =
+          function(){
+
+            if(
+              !window.confirm(
+                "Effacer toutes vos recherches professionnelles ?"
+              )
+            ){
+              return;
+            }
+
+            saveJson(
+              STORAGE.professionalHistory,
+              []
+            );
+
+            openProfessionalHistory();
+          };
       }
-    );
-  }
+
+      const back =
+        getElement(
+          "annuaireProHistoryBackBtn"
+        );
+
+      if(back){
+        back.onclick =
+          openProfessionalDashboard;
+      }
+
+    }
+  );
+}
 
   /* =======================================================
      CARNET PRO
@@ -7093,59 +7482,731 @@ style.textContent = `
     depuis le navigateur.
   */
 
-  annuaire.refreshFromProvider =
-    function(){
+annuaire.refreshFromProvider =
+function(){
 
-      const provider =
-        window.BociteAnnuaireDataProvider;
+  const provider =
+    window.BociteAnnuaireDataProvider;
 
-      if(
-        !provider ||
-        typeof provider.refresh !==
-        "function"
-      ){
+  /*
+    1. Si un fournisseur externe officiel
+    est branché plus tard, il reste prioritaire.
+  */
 
-        return Promise.resolve(
-          {
+  if(
+    provider &&
+    typeof provider.refresh ===
+    "function"
+  ){
+
+    return Promise
+      .resolve(
+        provider.refresh()
+      )
+      .then(function(result){
+
+        if(
+          !result ||
+          !Array.isArray(
+            result.rows
+          )
+        ){
+
+          return {
             updated:false,
             reason:
-              "provider_missing"
+              "invalid_provider_result"
+          };
+        }
+
+        const count =
+          applyExternalDirectorySnapshot(
+            result.rows,
+            result.source ||
+            "Fournisseur officiel"
+          );
+
+        return {
+          updated:true,
+          count:count,
+          source:
+            result.source ||
+            "Fournisseur officiel"
+        };
+      });
+  }
+
+  /*
+    2. Sinon :
+    chargement direct depuis
+    l'API officielle Recherche d'Entreprises.
+  */
+
+  let cityConfig = {};
+
+  try{
+
+    cityConfig =
+      JSON.parse(
+        localStorage.getItem(
+          "bociteart_city_config_v1"
+        ) || "{}"
+      );
+
+  }catch(error){
+
+    cityConfig = {};
+  }
+
+  const cityName =
+    String(
+      cityConfig.cityName ||
+      ""
+    ).trim();
+
+  const postalCode =
+    String(
+      cityConfig.postalCode ||
+      ""
+    ).trim();
+
+  /*
+    Pour Wattignies :
+    code INSEE officiel = 59648.
+  */
+
+  const knownCityCodes = {
+
+    wattignies:"59648"
+
+  };
+
+  const slug =
+    normalizeText(
+      cityConfig.citySlug ||
+      cityName
+    )
+    .replace(
+      /[^a-z0-9]+/g,
+      "-"
+    )
+    .replace(
+      /^-+|-+$/g,
+      ""
+    );
+
+  const communeCode =
+    String(
+      cityConfig.inseeCode ||
+      knownCityCodes[slug] ||
+      ""
+    ).trim();
+
+  if(
+    !cityName ||
+    (
+      !communeCode &&
+      !postalCode
+    )
+  ){
+
+    return Promise.resolve({
+      updated:false,
+      reason:
+        "city_not_configured"
+    });
+  }
+
+  const API_URL =
+    "https://recherche-entreprises.api.gouv.fr/search";
+
+  const PER_PAGE =
+    25;
+
+  const MAX_PAGES =
+    20;
+
+  function buildUrl(page){
+
+    const params =
+      new URLSearchParams();
+
+    if(communeCode){
+
+      params.set(
+        "code_commune",
+        communeCode
+      );
+
+    }else{
+
+      params.set(
+        "code_postal",
+        postalCode
+      );
+    }
+
+    params.set(
+      "etat_administratif",
+      "A"
+    );
+
+    params.set(
+      "page",
+      String(page)
+    );
+
+    params.set(
+      "per_page",
+      String(PER_PAGE)
+    );
+
+    params.set(
+      "limite_matching_etablissements",
+      "100"
+    );
+
+    return (
+      API_URL +
+      "?" +
+      params.toString()
+    );
+  }
+
+  function mapKind(activityCode){
+
+    const code =
+      String(
+        activityCode ||
+        ""
+      ).trim();
+
+    const section =
+      code.charAt(0);
+
+    if(
+      section === "G" ||
+      section === "I"
+    ){
+      return "commerce";
+    }
+
+    return "entreprise";
+  }
+
+  function mapCategory(activityCode){
+
+    const code =
+      String(
+        activityCode ||
+        ""
+      ).trim();
+
+    const section =
+      code.charAt(0);
+
+    if(section === "I"){
+      return "restaurants";
+    }
+
+    if(section === "Q"){
+      return "sante";
+    }
+
+    if(section === "F"){
+      return "artisans";
+    }
+
+    if(section === "G"){
+      return "commerces";
+    }
+
+    if(section === "H"){
+      return "services";
+    }
+
+    if(section === "M"){
+      return "services";
+    }
+
+    return "entreprises";
+  }
+
+  function buildAddress(establishment){
+
+    if(!establishment){
+      return "";
+    }
+
+    return [
+      establishment.numero_voie,
+      establishment.indice_repetition_voie,
+      establishment.type_voie,
+      establishment.libelle_voie
+    ]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+  }
+
+  function mapApiResult(
+    company,
+    establishment
+  ){
+
+    const selected =
+      establishment ||
+      company.siege ||
+      {};
+
+    const activityCode =
+      selected.activite_principale ||
+      company.activite_principale ||
+      "";
+
+    const activityLabel =
+      selected.libelle_activite_principale ||
+      company.libelle_activite_principale ||
+      "";
+
+    const siret =
+      selected.siret ||
+      "";
+
+    return {
+
+      id:
+        siret ||
+        company.siren ||
+        uniqueId("entity"),
+
+      siren:
+        company.siren ||
+        "",
+
+      siret:
+        siret,
+
+      name:
+        company.nom_complet ||
+        company.nom_raison_sociale ||
+        company.nom_commercial ||
+        "Établissement",
+
+      kind:
+        mapKind(
+          activityCode
+        ),
+
+      category:
+        mapCategory(
+          activityCode
+        ),
+
+      trade:
+        activityLabel,
+
+      activity:
+        activityLabel,
+
+      description:
+        "",
+
+      services:
+        [],
+
+      keywords:
+        [
+          activityLabel,
+          company.nom_complet,
+          company.nom_raison_sociale
+        ]
+        .filter(Boolean),
+
+      commune:
+        selected.libelle_commune ||
+        cityName,
+
+      postalCode:
+        selected.code_postal ||
+        postalCode,
+
+      address:
+        buildAddress(
+          selected
+        ),
+
+      phone:
+        "",
+
+      email:
+        "",
+
+      website:
+        "",
+
+      lat:
+        selected.latitude
+          ? Number(
+              selected.latitude
+            )
+          : null,
+
+      lng:
+        selected.longitude
+          ? Number(
+              selected.longitude
+            )
+          : null,
+
+      partner:
+        false,
+
+      bocitecoins:
+        false,
+
+      recruiting:
+        false,
+
+      source:
+        "API Recherche d'Entreprises — État",
+
+      verifiedAt:
+        Date.now(),
+
+      professionalData:{
+
+        siren:
+          company.siren ||
+          "",
+
+        siret:
+          siret,
+
+        legalForm:
+          company.nature_juridique ||
+          "",
+
+        creationDate:
+          company.date_creation ||
+          selected.date_creation ||
+          "",
+
+        activity:
+          activityLabel,
+
+        status:
+          "Actif",
+
+        workforce:
+          company.tranche_effectif_salarie ||
+          "",
+
+        checkedAt:
+          Date.now(),
+
+        events:
+          [],
+
+        sources:[
+          {
+            label:
+              "API Recherche d'Entreprises",
+            url:
+              "https://recherche-entreprises.api.gouv.fr/"
           }
+        ]
+
+      }
+
+    };
+  }
+
+  function extractEntities(
+    companies
+  ){
+
+    const rows = [];
+
+    safeArray(
+      companies
+    )
+    .forEach(function(company){
+
+      const establishments =
+        safeArray(
+          company.matching_etablissements
+        );
+
+      /*
+        On privilégie les établissements
+        réellement situés dans la commune.
+      */
+
+      const matching =
+        establishments.filter(
+          function(establishment){
+
+            if(communeCode){
+
+              return (
+                String(
+                  establishment.code_commune ||
+                  ""
+                ) ===
+                String(
+                  communeCode
+                )
+              );
+            }
+
+            return (
+              String(
+                establishment.code_postal ||
+                ""
+              ) ===
+              String(
+                postalCode
+              )
+            );
+          }
+        );
+
+      if(matching.length){
+
+        matching.forEach(
+          function(establishment){
+
+            rows.push(
+              mapApiResult(
+                company,
+                establishment
+              )
+            );
+          }
+        );
+
+        return;
+      }
+
+      const siege =
+        company.siege ||
+        null;
+
+      if(!siege){
+        return;
+      }
+
+      const siegeMatches =
+        communeCode
+          ? (
+              String(
+                siege.code_commune ||
+                ""
+              ) ===
+              String(
+                communeCode
+              )
+            )
+          : (
+              String(
+                siege.code_postal ||
+                ""
+              ) ===
+              String(
+                postalCode
+              )
+            );
+
+      if(siegeMatches){
+
+        rows.push(
+          mapApiResult(
+            company,
+            siege
+          )
+        );
+      }
+    });
+
+    /*
+      Déduplication par SIRET / id.
+    */
+
+    const map =
+      new Map();
+
+    rows.forEach(
+      function(row){
+
+        map.set(
+          String(row.id),
+          row
+        );
+      }
+    );
+
+    return Array.from(
+      map.values()
+    );
+  }
+
+  function fetchPage(page){
+
+    return fetch(
+      buildUrl(page),
+      {
+        method:"GET",
+        headers:{
+          "Accept":
+            "application/json"
+        }
+      }
+    )
+    .then(function(response){
+
+      if(!response.ok){
+
+        throw new Error(
+          "API HTTP " +
+          response.status
         );
       }
 
-      return Promise
-        .resolve(
-          provider.refresh()
-        )
-        .then(function(result){
+      return response.json();
+    });
+  }
 
-          if(
-            !result ||
-            !Array.isArray(
-              result.rows
-            )
-          ){
+  function fetchAllPages(){
 
-            return {
-              updated:false,
-              reason:
-                "invalid_result"
-            };
-          }
+    let page =
+      1;
 
-          const count =
-            applyExternalDirectorySnapshot(
-              result.rows,
-              result.source
-            );
+    let allCompanies =
+      [];
 
-          return {
-            updated:true,
-            count:count
-          };
-        });
-    };
+    function next(){
+
+      return fetchPage(
+        page
+      )
+      .then(function(data){
+
+        const results =
+          safeArray(
+            data.results
+          );
+
+        allCompanies =
+          allCompanies.concat(
+            results
+          );
+
+        /*
+          Si moins de 25 résultats,
+          nous sommes arrivés
+          à la dernière page.
+        */
+
+        if(
+          results.length <
+          PER_PAGE
+        ){
+          return allCompanies;
+        }
+
+        page += 1;
+
+        if(
+          page >
+          MAX_PAGES
+        ){
+          return allCompanies;
+        }
+
+        return next();
+      });
+    }
+
+    return next();
+  }
+
+  return fetchAllPages()
+    .then(function(companies){
+
+      const rows =
+        extractEntities(
+          companies
+        );
+
+      const count =
+        applyExternalDirectorySnapshot(
+          rows,
+          "API Recherche d'Entreprises — État"
+        );
+
+      console.log(
+        "✅ Annuaire officiel chargé :",
+        cityName,
+        count,
+        "établissements"
+      );
+
+      return {
+        updated:true,
+        city:
+          cityName,
+        count:
+          count,
+        source:
+          "API Recherche d'Entreprises — État"
+      };
+    })
+    .catch(function(error){
+
+      console.error(
+        "Bo'CitéArt Annuaire : chargement officiel impossible.",
+        error
+      );
+
+      return {
+        updated:false,
+        reason:
+          "official_api_error",
+        error:
+          String(
+            error &&
+            error.message
+              ? error.message
+              : error
+          )
+      };
+    });
+};
+
+   window.setTimeout(
+  function(){
+
+    annuaire
+      .refreshFromProvider()
+      .then(function(result){
+
+        if(
+          result &&
+          result.updated
+        ){
+
+          console.log(
+            "✅ Mise à jour Annuaire terminée",
+            result
+          );
+        }
+
+      });
+
+  },
+  800
+);
 
   console.log(
     "✅ Bo'CitéArt — Annuaire complet chargé"
