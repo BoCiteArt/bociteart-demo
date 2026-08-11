@@ -4660,7 +4660,7 @@
             : ""
         }
 
-        ${
+              ${
           entity.source
             ? `
                 <div
@@ -4673,8 +4673,10 @@
             : ""
         }
 
-      </div>
+        ${getHoursInformationHtml(entity)}
 
+      </div>
+      
       <div
         class="bociteAnnuaireActions"
         style="margin-top:9px;">
@@ -7453,6 +7455,32 @@
     );
   }
 
+    /* =======================================================
+     SIGNALEMENT
+     ======================================================= */
+
+  function renderReport(data){
+    ...
+  }
+
+  /* =======================================================
+     CORRECTIONS VISUELLES + HORAIRES + UPDATE AGENT
+     ======================================================= */
+
+  ... TOUT LE BLOC CORRECTIF ...
+
+  Annuaire.refreshDirectory =
+    function(){
+
+      return UpdateAgent.refresh();
+    };
+
+  /* =======================================================
+     ROUTEUR UNIQUE
+     ======================================================= */
+
+  function renderCurrentView(){
+     
   /* =======================================================
      ROUTEUR UNIQUE
      ======================================================= */
