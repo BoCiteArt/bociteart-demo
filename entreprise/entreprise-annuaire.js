@@ -7,7 +7,7 @@
    • Classement par métiers
    • Fiches établissements
    • Téléphone / e-mail / site / itinéraire
-   • Photos / menus / hébergements
+   • Photos / menus / hébergements 
    • Emploi / candidature spontanée
    • Appréciations locales sans commentaires
    • Historique
