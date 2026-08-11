@@ -510,11 +510,11 @@
      LOGO
      ======================================================= */
 
-  function getLogoHtml(){
+function getLogoHtml(){
 
-    return `<strong style="display:inline-block;white-space:nowrap;font-weight:900;"><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span></strong>`;
-  }
+  return `<strong style="display:inline-flex;align-items:baseline;white-space:nowrap;font-weight:900;gap:0;"><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;margin-left:-2px;">Art</span></strong>`;
 
+}
   /* =======================================================
      UNE SEULE FONCTION DE RENDU
      ======================================================= */
