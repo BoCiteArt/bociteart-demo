@@ -8886,71 +8886,171 @@ function mergeDirectorySources(
     });
   }
 
-  function fetchAllPages(){
+ function fetchAllPages(){
 
-    let page =
-      1;
+  let page =
+    1;
 
-    let totalPages =
-      1;
+  let totalPages =
+    1;
 
-    let allCompanies =
-      [];
+  let allCompanies =
+    [];
 
-    function next(){
+  const PAGE_DELAY_MS =
+    350;
 
-      return fetchPage(
-        page
-      )
-      .then(function(data){
+  const RETRY_DELAY_MS =
+    2500;
 
-        const results =
-          safeArray(
-            data.results
-          );
+  const MAX_RETRIES_PER_PAGE =
+    3;
 
-        allCompanies =
-          allCompanies.concat(
-            results
-          );
+  function wait(ms){
 
-        const announcedPages =
-          Number(
-            data.total_pages ||
-            1
-          );
+    return new Promise(
+      function(resolve){
 
-        totalPages =
-          Math.min(
-            announcedPages,
-            ABSOLUTE_MAX_PAGES
-          );
+        window.setTimeout(
+          resolve,
+          ms
+        );
+      }
+    );
+  }
 
-        console.log(
-          "Annuaire Wattignies : page",
-          page,
-          "/",
-          totalPages,
-          "—",
-          allCompanies.length,
-          "entreprises reçues"
+  function fetchPageWithRetry(
+    currentPage,
+    attempt
+  ){
+
+    return fetchPage(
+      currentPage
+    )
+    .catch(function(error){
+
+      const message =
+        String(
+          error &&
+          error.message
+            ? error.message
+            : error
         );
 
-        if(
-          page >= totalPages ||
-          !results.length
-        ){
-          return allCompanies;
-        }
+      const isRateLimit =
+        message.includes(
+          "429"
+        );
 
-        page += 1;
+      if(
+        isRateLimit &&
+        attempt <
+        MAX_RETRIES_PER_PAGE
+      ){
 
-        return next();
-      });
-    }
+        console.warn(
+          "Annuaire : API temporairement limitée — nouvelle tentative page",
+          currentPage,
+          "dans",
+          RETRY_DELAY_MS,
+          "ms"
+        );
 
-    return next();
+        return wait(
+          RETRY_DELAY_MS
+        )
+        .then(function(){
+
+          return fetchPageWithRetry(
+            currentPage,
+            attempt + 1
+          );
+        });
+      }
+
+      throw error;
+    });
   }
+
+  function next(){
+
+    return fetchPageWithRetry(
+      page,
+      0
+    )
+    .then(function(data){
+
+      const results =
+        safeArray(
+          data.results
+        );
+
+      allCompanies =
+        allCompanies.concat(
+          results
+        );
+
+      const announcedPages =
+        Number(
+          data.total_pages ||
+          1
+        );
+
+      totalPages =
+        Math.min(
+          announcedPages,
+          ABSOLUTE_MAX_PAGES
+        );
+
+      console.log(
+        "Annuaire Wattignies : page",
+        page,
+        "/",
+        totalPages,
+        "—",
+        allCompanies.length,
+        "entreprises reçues"
+      );
+
+      if(
+        page >= totalPages ||
+        !results.length
+      ){
+        return allCompanies;
+      }
+
+      page += 1;
+
+      return wait(
+        PAGE_DELAY_MS
+      )
+      .then(
+        next
+      );
+    })
+    .catch(function(error){
+
+      console.warn(
+        "Annuaire : arrêt du chargement à la page",
+        page,
+        "— conservation de",
+        allCompanies.length,
+        "entreprises déjà reçues.",
+        error
+      );
+
+      /*
+        Très important :
+        on conserve ce qui a déjà été chargé
+        au lieu de faire échouer tout l'annuaire.
+      */
+
+      return allCompanies;
+    });
+  }
+
+  return next();
+}
 
 return Promise.all([
   fetchAllPages(),
