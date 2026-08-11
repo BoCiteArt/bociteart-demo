@@ -1,26 +1,24 @@
 /* =========================================================
    BO'CITÉART — ANNUAIRE
-   VERSION CONSOLIDÉE
+   VERSION CONSOLIDÉE CORRIGÉE
 
-   Annuaire public local
-   Recherche par activité et métier
-   Recherche réseau légère à la demande
-   Fiches établissements
-   Historique
-   Favoris
-   Consultés récemment
-   Appréciations locales
-   Espace professionnel sécurisé
-   Carnet professionnel
-   Entreprises suivies
-   Préparation agent IA / serveur
+   - annuaire public local
+   - recherche réseau légère à la demande
+   - métiers et catégories
+   - fiches établissements
+   - favoris
+   - historique
+   - appréciations
+   - espace professionnel sécurisé
+   - agent IA / serveur préparé
 
-   IMPORTANT :
-   - aucun chargement massif au démarrage
+   CORRECTIONS INTÉGRÉES :
+   - aucun chargement massif
    - aucune récupération de 101 pages
-   - le réseau est interrogé uniquement à la demande
-   - la sécurité générale reste gérée par
-     window.BoCiteArtRegistration
+   - suppression des anciens caches pollués
+   - navigation métier mémorisée
+   - filtrage métier strict
+   - préparation d'un seul retour utile
    ========================================================= */
 
 (function(){
@@ -44,34 +42,34 @@ const annuaire =
 
 
 /* =========================================================
-   STOCKAGE
+   STOCKAGE — VERSION NEUVE
    ========================================================= */
 
 const STORAGE = {
 
   entities:
-    "bociteart_annuaire_entities_v2",
+    "bociteart_annuaire_entities_v4",
 
   searchHistory:
-    "bociteart_annuaire_search_history_v2",
+    "bociteart_annuaire_search_history_v4",
 
   favorites:
-    "bociteart_annuaire_favorites_v2",
+    "bociteart_annuaire_favorites_v4",
 
   viewed:
-    "bociteart_annuaire_viewed_v2",
+    "bociteart_annuaire_viewed_v4",
 
   ratings:
-    "bociteart_annuaire_ratings_v2",
+    "bociteart_annuaire_ratings_v4",
 
   professionalHistory:
-    "bociteart_annuaire_professional_history_v2",
+    "bociteart_annuaire_professional_history_v4",
 
   notebook:
-    "bociteart_annuaire_professional_notebook_v2",
+    "bociteart_annuaire_professional_notebook_v4",
 
   followed:
-    "bociteart_annuaire_followed_v2"
+    "bociteart_annuaire_followed_v4"
 };
 
 
@@ -93,7 +91,21 @@ const MAX_NETWORK_RESULTS =
 
 
 /* =========================================================
-   OUTILS GÉNÉRAUX
+   NAVIGATION INTERNE
+   ========================================================= */
+
+let currentTradeFamilyId =
+  "";
+
+let currentTrade =
+  "";
+
+let currentPublicSearch =
+  "";
+
+
+/* =========================================================
+   OUTILS
    ========================================================= */
 
 function safeArray(
@@ -186,6 +198,7 @@ function uniqueStrings(
   const seen =
     new Set();
 
+
   return safeArray(
     values
   )
@@ -204,17 +217,23 @@ function uniqueStrings(
         return false;
       }
 
+
       const key =
         normalizeText(
           value
         );
 
+
       if(
         !key ||
-        seen.has(key)
+        seen.has(
+          key
+        )
       ){
+
         return false;
       }
+
 
       seen.add(
         key
@@ -246,7 +265,7 @@ function createId(
 
 
 /* =========================================================
-   LOCALSTORAGE
+   STOCKAGE
    ========================================================= */
 
 function readStorage(
@@ -261,6 +280,7 @@ function readStorage(
         key
       );
 
+
     if(
       raw === null ||
       raw === undefined ||
@@ -269,6 +289,7 @@ function readStorage(
 
       return fallback;
     }
+
 
     return JSON.parse(
       raw
@@ -317,19 +338,16 @@ function writeStorage(
 
 
 /* =========================================================
-   COMMUNE COURANTE
+   COMMUNE
    ========================================================= */
 
 function getCurrentCommune(){
-
-  /*
-    1 — Commune déclarée lors de l'inscription.
-  */
 
   try{
 
     const registration =
       window.BoCiteArtRegistration;
+
 
     if(
       registration &&
@@ -343,23 +361,16 @@ function getCurrentCommune(){
           ""
         ).trim();
 
+
       if(declared){
         return declared;
       }
     }
 
   }catch(error){
-
-    console.warn(
-      "Annuaire : commune d'inscription indisponible.",
-      error
-    );
+    /* rien */
   }
 
-
-  /*
-    2 — Ancien stockage de configuration ville.
-  */
 
   try{
 
@@ -370,14 +381,16 @@ function getCurrentCommune(){
         ) || "{}"
       );
 
-    const configured =
+
+    const city =
       String(
         config.cityName ||
         ""
       ).trim();
 
-    if(configured){
-      return configured;
+
+    if(city){
+      return city;
     }
 
   }catch(error){
@@ -385,11 +398,85 @@ function getCurrentCommune(){
   }
 
 
-  /*
-    3 — Commune de démonstration.
-  */
-
   return "Wattignies";
+}
+
+
+function getCurrentPostalCode(){
+
+  try{
+
+    const config =
+      JSON.parse(
+        localStorage.getItem(
+          "bociteart_city_config_v1"
+        ) || "{}"
+      );
+
+
+    return String(
+      config.postalCode ||
+      ""
+    ).trim();
+
+  }catch(error){
+
+    return "";
+  }
+}
+
+
+function getCurrentInseeCode(){
+
+  try{
+
+    const config =
+      JSON.parse(
+        localStorage.getItem(
+          "bociteart_city_config_v1"
+        ) || "{}"
+      );
+
+
+    const direct =
+      String(
+        config.inseeCode ||
+        ""
+      ).trim();
+
+
+    if(direct){
+      return direct;
+    }
+
+  }catch(error){
+    /* rien */
+  }
+
+
+  const known = {
+
+    wattignies:
+      "59648"
+
+  };
+
+
+  const key =
+    normalizeText(
+      getCurrentCommune()
+    )
+    .replace(
+      /[^a-z0-9]+/g,
+      "-"
+    )
+    .replace(
+      /^-+|-+$/g,
+      ""
+    );
+
+
+  return known[key] || "";
 }
 
 
@@ -406,20 +493,18 @@ function sanitizeEntity(
       source
     );
 
-  const keywords =
-    uniqueStrings(
-      source.keywords
-    );
 
   const id =
     String(
       source.id ||
       source.siret ||
       source.siren ||
+      source.rpps ||
       createId(
         "entity"
       )
     );
+
 
   return {
 
@@ -482,7 +567,22 @@ function sanitizeEntity(
       ).trim(),
 
     keywords:
-      keywords,
+      uniqueStrings(
+        source.keywords
+      ),
+
+    /*
+      searchTerms mémorise ce qui a servi
+      à obtenir une fiche sur le réseau.
+
+      Ce champ n'est PAS utilisé seul
+      pour décider du métier réel.
+    */
+
+    searchTerms:
+      uniqueStrings(
+        source.searchTerms
+      ),
 
     address:
       String(
@@ -574,7 +674,71 @@ function sanitizeEntity(
 
 
 /* =========================================================
-   FUSION DE DEUX FICHES
+   IDENTITÉ D'UNE FICHE
+   ========================================================= */
+
+function getEntityIdentity(
+  entity
+){
+
+  entity =
+    safeObject(
+      entity
+    );
+
+
+  if(entity.siret){
+
+    return (
+      "siret:" +
+      String(
+        entity.siret
+      )
+    );
+  }
+
+
+  if(entity.siren){
+
+    return (
+      "siren:" +
+      String(
+        entity.siren
+      )
+    );
+  }
+
+
+  if(entity.rpps){
+
+    return (
+      "rpps:" +
+      String(
+        entity.rpps
+      )
+    );
+  }
+
+
+  return (
+    "name:" +
+    normalizeText(
+      entity.name
+    ) +
+    "|" +
+    normalizeText(
+      entity.commune
+    ) +
+    "|" +
+    normalizeText(
+      entity.address
+    )
+  );
+}
+
+
+/* =========================================================
+   FUSION DE FICHES
    ========================================================= */
 
 function mergeEntity(
@@ -587,16 +751,19 @@ function mergeEntity(
       current
     );
 
+
   incoming =
     sanitizeEntity(
       incoming
     );
+
 
   const merged =
     Object.assign(
       {},
       current
     );
+
 
   [
     "siren",
@@ -632,6 +799,38 @@ function mergeEntity(
   );
 
 
+  merged.keywords =
+    uniqueStrings(
+      []
+      .concat(
+        safeArray(
+          current.keywords
+        )
+      )
+      .concat(
+        safeArray(
+          incoming.keywords
+        )
+      )
+    );
+
+
+  merged.searchTerms =
+    uniqueStrings(
+      []
+      .concat(
+        safeArray(
+          current.searchTerms
+        )
+      )
+      .concat(
+        safeArray(
+          incoming.searchTerms
+        )
+      )
+    );
+
+
   if(
     incoming.latitude !==
     null
@@ -652,31 +851,6 @@ function mergeEntity(
   }
 
 
-  merged.keywords =
-    uniqueStrings(
-      []
-      .concat(
-        safeArray(
-          current.keywords
-        )
-      )
-      .concat(
-        safeArray(
-          incoming.keywords
-        )
-      )
-    );
-
-
-  merged.openingHours =
-    Object.keys(
-      incoming.openingHours ||
-      {}
-    ).length
-      ? incoming.openingHours
-      : current.openingHours;
-
-
   merged.network =
     Boolean(
       current.network ||
@@ -693,67 +867,7 @@ function mergeEntity(
 
 
 /* =========================================================
-   IDENTIFICATION DES DOUBLONS
-   ========================================================= */
-
-function getEntityIdentity(
-  entity
-){
-
-  entity =
-    safeObject(
-      entity
-    );
-
-  if(entity.siret){
-
-    return (
-      "siret:" +
-      String(
-        entity.siret
-      )
-    );
-  }
-
-  if(entity.siren){
-
-    return (
-      "siren:" +
-      String(
-        entity.siren
-      )
-    );
-  }
-
-  if(entity.rpps){
-
-    return (
-      "rpps:" +
-      String(
-        entity.rpps
-      )
-    );
-  }
-
-  return (
-    "name:" +
-    normalizeText(
-      entity.name
-    ) +
-    "|" +
-    normalizeText(
-      entity.commune
-    ) +
-    "|" +
-    normalizeText(
-      entity.address
-    )
-  );
-}
-
-
-/* =========================================================
-   CHARGEMENT DES ÉTABLISSEMENTS
+   CHARGEMENT DES FICHES
    ========================================================= */
 
 function loadEntities(){
@@ -782,17 +896,19 @@ function saveEntities(
       sanitizeEntity
     );
 
+
   writeStorage(
     STORAGE.entities,
     sanitized
   );
+
 
   return sanitized;
 }
 
 
 /* =========================================================
-   FUSION DES DONNÉES RÉSEAU
+   FUSION RÉSEAU
    ========================================================= */
 
 function mergeNetworkEntities(
@@ -801,6 +917,7 @@ function mergeNetworkEntities(
 
   const current =
     loadEntities();
+
 
   const map =
     new Map();
@@ -833,6 +950,7 @@ function mergeNetworkEntities(
           entity
         );
 
+
       if(
         map.has(
           identity
@@ -860,22 +978,16 @@ function mergeNetworkEntities(
   );
 
 
-  const merged =
+  return saveEntities(
     Array.from(
       map.values()
-    );
-
-
-  saveEntities(
-    merged
+    )
   );
-
-  return merged;
 }
 
 
 /* =========================================================
-   RECHERCHE LOCALE
+   TEXTE DE RECHERCHE
    ========================================================= */
 
 function buildEntitySearchText(
@@ -902,6 +1014,10 @@ function buildEntitySearchText(
 }
 
 
+/* =========================================================
+   RECHERCHE GÉNÉRALE
+   ========================================================= */
+
 function searchEntities(
   query,
   options
@@ -912,10 +1028,12 @@ function searchEntities(
       options
     );
 
+
   const cleanQuery =
     normalizeText(
       query
     );
+
 
   if(!cleanQuery){
     return [];
@@ -928,7 +1046,7 @@ function searchEntities(
       .filter(Boolean);
 
 
-  const currentCommune =
+  const commune =
     normalizeText(
       getCurrentCommune()
     );
@@ -948,11 +1066,11 @@ function searchEntities(
         function(entity){
 
           return (
-            !currentCommune ||
+            !commune ||
             normalizeText(
               entity.commune
             ) ===
-            currentCommune
+            commune
           );
         }
       );
@@ -967,6 +1085,7 @@ function searchEntities(
           buildEntitySearchText(
             entity
           );
+
 
         return words.every(
           function(word){
@@ -983,43 +1102,14 @@ function searchEntities(
   rows.sort(
     function(a,b){
 
-      const aName =
-        normalizeText(
-          a.name
-        );
-
-      const bName =
-        normalizeText(
-          b.name
-        );
-
-      const aExact =
-        aName.includes(
-          cleanQuery
-        )
-          ? 1
-          : 0;
-
-      const bExact =
-        bName.includes(
-          cleanQuery
-        )
-          ? 1
-          : 0;
-
-      if(
-        aExact !==
-        bExact
-      ){
-
-        return (
-          bExact -
-          aExact
-        );
-      }
-
-      return aName.localeCompare(
-        bName,
+      return String(
+        a.name ||
+        ""
+      ).localeCompare(
+        String(
+          b.name ||
+          ""
+        ),
         "fr"
       );
     }
@@ -1031,70 +1121,7 @@ function searchEntities(
 
 
 /* =========================================================
-   RECHERCHE PAR MÉTIER
-   ========================================================= */
-
-function searchEntitiesByTrade(
-  trade
-){
-
-  const cleanTrade =
-    normalizeText(
-      trade
-    );
-
-  if(!cleanTrade){
-    return [];
-  }
-
-  const commune =
-    normalizeText(
-      getCurrentCommune()
-    );
-
-  return loadEntities()
-    .filter(
-      function(entity){
-
-        if(
-          commune &&
-          normalizeText(
-            entity.commune
-          ) !==
-          commune
-        ){
-
-          return false;
-        }
-
-        const text =
-          buildEntitySearchText(
-            entity
-          );
-
-        return text.includes(
-          cleanTrade
-        );
-      }
-    )
-    .sort(
-      function(a,b){
-
-        return String(
-          a.name || ""
-        ).localeCompare(
-          String(
-            b.name || ""
-          ),
-          "fr"
-        );
-      }
-    );
-}
-
-
-/* =========================================================
-   HISTORIQUE DES RECHERCHES
+   HISTORIQUE RECHERCHES
    ========================================================= */
 
 function loadSearchHistory(){
@@ -1115,8 +1142,10 @@ function addSearchHistory(
 
   const cleanQuery =
     String(
-      query || ""
+      query ||
+      ""
     ).trim();
+
 
   if(!cleanQuery){
     return;
@@ -1161,11 +1190,13 @@ function addSearchHistory(
 
     commune:
       String(
-        commune || ""
+        commune ||
+        ""
       ),
 
     createdAt:
       new Date().toISOString()
+
   });
 
 
@@ -1205,7 +1236,8 @@ function isFavorite(
   return loadFavorites()
     .includes(
       String(
-        entityId || ""
+        entityId ||
+        ""
       )
     );
 }
@@ -1217,8 +1249,10 @@ function toggleFavorite(
 
   const id =
     String(
-      entityId || ""
+      entityId ||
+      ""
     );
+
 
   if(!id){
     return false;
@@ -1256,6 +1290,7 @@ function toggleFavorite(
     rows
   );
 
+
   return rows.includes(
     id
   );
@@ -1285,6 +1320,7 @@ function addViewedEntity(
     !entity ||
     !entity.id
   ){
+
     return;
   }
 
@@ -1299,7 +1335,8 @@ function addViewedEntity(
 
         return (
           String(
-            item.id || ""
+            item.id ||
+            ""
           ) !==
           String(
             entity.id
@@ -1328,6 +1365,7 @@ function addViewedEntity(
 
     viewedAt:
       new Date().toISOString()
+
   });
 
 
@@ -1346,7 +1384,7 @@ function addViewedEntity(
 
 
 /* =========================================================
-   APPRÉCIATIONS LOCALES
+   APPRÉCIATIONS
    ========================================================= */
 
 function loadRatings(){
@@ -1367,8 +1405,10 @@ function saveRating(
 
   const id =
     String(
-      entityId || ""
+      entityId ||
+      ""
     );
+
 
   const value =
     Number(
@@ -1393,17 +1433,7 @@ function saveRating(
     loadRatings();
 
 
-  /*
-    Pour la démo :
-    une appréciation locale par appareil
-    et par établissement.
-
-    Une future version serveur pourra
-    remplacer ce stockage sans modifier
-    l'interface de la fiche.
-  */
-
-  const existingIndex =
+  const index =
     rows.findIndex(
       function(item){
 
@@ -1428,16 +1458,17 @@ function saveRating(
 
     updatedAt:
       new Date().toISOString()
+
   };
 
 
   if(
-    existingIndex >=
+    index >=
     0
   ){
 
     rows[
-      existingIndex
+      index
     ] = rating;
 
   }else{
@@ -1453,6 +1484,7 @@ function saveRating(
     rows
   );
 
+
   return true;
 }
 
@@ -1461,7 +1493,7 @@ function getRatingSummary(
   entityId
 ){
 
-  const ratings =
+  const rows =
     loadRatings()
       .filter(
         function(item){
@@ -1480,9 +1512,7 @@ function getRatingSummary(
       );
 
 
-  if(
-    !ratings.length
-  ){
+  if(!rows.length){
 
     return {
       visible:false,
@@ -1493,13 +1523,14 @@ function getRatingSummary(
 
 
   const total =
-    ratings.reduce(
+    rows.reduce(
       function(sum,item){
 
         return (
           sum +
           Number(
-            item.score || 0
+            item.score ||
+            0
           )
         );
       },
@@ -1513,10 +1544,11 @@ function getRatingSummary(
 
     global:
       total /
-      ratings.length,
+      rows.length,
 
     count:
-      ratings.length
+      rows.length
+
   };
 }
 
@@ -1542,8 +1574,10 @@ function addProfessionalHistory(
 
   const clean =
     String(
-      query || ""
+      query ||
+      ""
     ).trim();
+
 
   if(!clean){
     return;
@@ -1585,6 +1619,7 @@ function addProfessionalHistory(
 
     createdAt:
       new Date().toISOString()
+
   });
 
 
@@ -1603,7 +1638,7 @@ function addProfessionalHistory(
 
 
 /* =========================================================
-   CARNET PROFESSIONNEL
+   CARNET PRO
    ========================================================= */
 
 function loadNotebook(){
@@ -1640,7 +1675,8 @@ function addNotebookEntity(
 
         return (
           String(
-            item.id || ""
+            item.id ||
+            ""
           ) !==
           String(
             entity.id
@@ -1669,6 +1705,7 @@ function addNotebookEntity(
 
     addedAt:
       new Date().toISOString()
+
   });
 
 
@@ -1676,6 +1713,7 @@ function addNotebookEntity(
     STORAGE.notebook,
     rows
   );
+
 
   return true;
 }
@@ -1706,10 +1744,12 @@ function isFollowed(
 
         return (
           String(
-            item.id || ""
+            item.id ||
+            ""
           ) ===
           String(
-            entityId || ""
+            entityId ||
+            ""
           )
         );
       }
@@ -1734,13 +1774,14 @@ function toggleFollowed(
     loadFollowed();
 
 
-  const already =
+  const exists =
     rows.some(
       function(item){
 
         return (
           String(
-            item.id || ""
+            item.id ||
+            ""
           ) ===
           String(
             entity.id
@@ -1750,7 +1791,7 @@ function toggleFollowed(
     );
 
 
-  if(already){
+  if(exists){
 
     rows =
       rows.filter(
@@ -1758,7 +1799,8 @@ function toggleFollowed(
 
           return (
             String(
-              item.id || ""
+              item.id ||
+              ""
             ) !==
             String(
               entity.id
@@ -1788,6 +1830,7 @@ function toggleFollowed(
 
       followedAt:
         new Date().toISOString()
+
     });
   }
 
@@ -1798,7 +1841,7 @@ function toggleFollowed(
   );
 
 
-  return !already;
+  return !exists;
 }
 
 
@@ -1812,8 +1855,10 @@ function getEntityById(
 
   const id =
     String(
-      entityId || ""
+      entityId ||
+      ""
     );
+
 
   return loadEntities()
     .find(
@@ -1821,7 +1866,8 @@ function getEntityById(
 
         return (
           String(
-            entity.id || ""
+            entity.id ||
+            ""
           ) ===
           id
         );
@@ -1829,224 +1875,1744 @@ function getEntityById(
     ) || null;
 }
 
-
-/* =========================================================
-   STATUT OUVERT / FERMÉ
+ /* =========================================================
+   LOGO BO'CITÉART
    ========================================================= */
 
-function getOpenStatus(
-  entity
-){
+function bociteArtLogoText(){
 
-  /*
-    Les horaires officiels ne sont pas
-    toujours disponibles dans les données
-    publiques utilisées par la démo.
-
-    On n'invente donc jamais un statut.
-  */
-
-  if(
-    !entity ||
-    !entity.openingHours ||
-    !Object.keys(
-      entity.openingHours
-    ).length
-  ){
-
-    return "";
-  }
-
-
-  return "";
+  return `
+    <span style="font-weight:900;">
+      <span style="color:#2f5d46;">
+        Bo'Cité
+      </span><span style="color:#b00020;">
+        Art
+      </span>
+    </span>
+  `;
 }
 
 
 /* =========================================================
-   BADGES
+   MODALE
    ========================================================= */
 
-function getBadgesHtml(
-  entity
+function openModal(
+  title,
+  html
 ){
 
-  const badges =
-    [];
+  if(
+    typeof module.openModal ===
+      "function"
+  ){
+
+    module.openModal(
+      title,
+      html
+    );
+
+    return;
+  }
 
 
   if(
-    normalizeText(
-      entity.commune
-    ) ===
-    normalizeText(
-      getCurrentCommune()
+    typeof window.openModal ===
+      "function"
+  ){
+
+    window.openModal(
+      title,
+      html
+    );
+
+    return;
+  }
+
+
+  alert(
+    String(
+      title || ""
+    ) +
+    "\n\n" +
+    String(
+      html || ""
+    )
+    .replace(
+      /<[^>]+>/g,
+      " "
+    )
+  );
+}
+
+
+/* =========================================================
+   SUPPRESSION DES RETOURS PARASITES DE LA MODALE
+   UNIQUEMENT DANS L'ANNUAIRE
+   ========================================================= */
+
+function hideAnnuaireHostBackButtons(){
+
+  const root =
+    document.querySelector(
+      ".bociteAnnuaireRoot"
+    );
+
+
+  if(!root){
+    return;
+  }
+
+
+  const possibleButtons =
+    document.querySelectorAll(
+      "#entrepriseUniversalBackButton," +
+      ".bociteEntrepriseProtectedBackBtn," +
+      "#entrepriseBackBtn," +
+      "[data-entreprise-back]"
+    );
+
+
+  possibleButtons.forEach(
+    function(button){
+
+      /*
+        On ne supprime rien.
+        On masque uniquement le bouton Retour
+        général pendant l'affichage de l'annuaire.
+      */
+
+      button.style.display =
+        "none";
+    }
+  );
+}
+
+
+/* =========================================================
+   RÉTABLIR LES RETOURS GÉNÉRAUX
+   ========================================================= */
+
+function restoreHostBackButtons(){
+
+  const possibleButtons =
+    document.querySelectorAll(
+      "#entrepriseUniversalBackButton," +
+      ".bociteEntrepriseProtectedBackBtn," +
+      "#entrepriseBackBtn," +
+      "[data-entreprise-back]"
+    );
+
+
+  possibleButtons.forEach(
+    function(button){
+
+      button.style.display =
+        "";
+    }
+  );
+}
+
+
+/* =========================================================
+   RENDU ANNUAIRE
+   ========================================================= */
+
+function render(
+  title,
+  html,
+  afterRender
+){
+
+  openModal(
+    title,
+    `
+      <div class="bociteAnnuaireRoot">
+        ${html}
+      </div>
+    `
+  );
+
+
+  window.setTimeout(
+    function(){
+
+      installAnnuaireStyles();
+
+      hideAnnuaireHostBackButtons();
+
+
+      if(
+        typeof afterRender ===
+          "function"
+      ){
+
+        afterRender();
+      }
+
+    },
+    30
+  );
+}
+
+
+/* =========================================================
+   STYLES
+   ========================================================= */
+
+function installAnnuaireStyles(){
+
+  if(
+    getElement(
+      "bociteAnnuaireStyles"
     )
   ){
 
-    badges.push(
-      "Local"
-    );
+    return;
   }
 
+
+  const style =
+    document.createElement(
+      "style"
+    );
+
+
+  style.id =
+    "bociteAnnuaireStyles";
+
+
+  style.textContent = `
+
+    .bociteAnnuaireRoot{
+      color:#111;
+      font-family:Arial,sans-serif;
+    }
+
+    .bociteAnnuaireTitle{
+      color:#2f5d46;
+      font-size:16px;
+      font-weight:700;
+      line-height:1.35;
+    }
+
+    .bociteAnnuaireText{
+      color:#111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.45;
+    }
+
+    .bociteAnnuaireSmall{
+      color:#666;
+      font-size:12px;
+      font-weight:400;
+      line-height:1.4;
+    }
+
+    .bociteAnnuaireGrid{
+      display:grid;
+      grid-template-columns:
+        repeat(2,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .bociteAnnuaireActions{
+      display:grid;
+      grid-template-columns:
+        repeat(2,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .bociteAnnuaireResult{
+      margin-top:9px;
+      margin-bottom:9px;
+    }
+
+    .bociteAnnuaireRoot .choiceBtn{
+      background:#fff !important;
+      background-image:none !important;
+      pointer-events:auto !important;
+      cursor:pointer !important;
+      touch-action:manipulation;
+    }
+
+    .bociteAnnuaireRoot .choiceBtn:disabled{
+      pointer-events:none !important;
+      cursor:default !important;
+      opacity:.55;
+    }
+
+    .bociteAnnuaireStars{
+      display:grid;
+      grid-template-columns:
+        repeat(5,minmax(0,1fr));
+      gap:6px;
+    }
+
+    .bociteAnnuaireStars .choiceBtn{
+      min-height:45px;
+    }
+
+    @media(max-width:480px){
+
+      .bociteAnnuaireGrid,
+      .bociteAnnuaireActions{
+        grid-template-columns:
+          repeat(2,minmax(0,1fr));
+      }
+
+    }
+
+  `;
+
+
+  document.head.appendChild(
+    style
+  );
+}
+
+
+/* =========================================================
+   MÉTIERS
+   ========================================================= */
+
+const METIERS = {
+
+  sante:[
+
+    "Médecins généralistes",
+    "Infirmiers",
+    "Kinésithérapeutes",
+    "Dentistes",
+    "Pharmacies",
+    "Pédicures-podologues",
+    "Orthophonistes",
+    "Sages-femmes",
+    "Psychologues",
+    "Laboratoires d'analyses médicales",
+    "Autres professionnels de santé"
+
+  ],
+
+
+  maison:[
+
+    "Couvreurs",
+    "Plombiers",
+    "Électriciens",
+    "Chauffagistes",
+    "Menuisiers",
+    "Maçons",
+    "Peintres",
+    "Carreleurs",
+    "Paysagistes",
+    "Serruriers",
+    "Entreprises de rénovation"
+
+  ],
+
+
+  automobile:[
+
+    "Garages automobiles",
+    "Carrossiers",
+    "Pneumatiques",
+    "Contrôle technique",
+    "Motos",
+    "Cycles",
+    "Véhicules utilitaires",
+    "Poids lourds"
+
+  ],
+
+
+  alimentation:[
+
+    "Restaurants",
+    "Boulangeries",
+    "Boucheries",
+    "Traiteurs",
+    "Cafés",
+    "Épiceries",
+    "Commerces alimentaires"
+
+  ],
+
+
+  professionnels:[
+
+    "Experts-comptables",
+    "Avocats",
+    "Assurances",
+    "Informatique",
+    "Communication",
+    "Transport",
+    "Nettoyage professionnel",
+    "Sécurité",
+    "Bureaux d'études",
+    "Conseil"
+
+  ],
+
+
+  hebergements:[
+
+    "Hôtels",
+    "Chambres d'hôtes",
+    "Gîtes",
+    "Locations de courte durée",
+    "Autres hébergements"
+
+  ]
+
+};
+
+
+/* =========================================================
+   TERMES STRICTS PAR MÉTIER
+
+   IMPORTANT :
+   le résultat doit réellement correspondre au métier.
+   Le simple fait d'avoir été récupéré lors d'une ancienne
+   recherche ne suffit plus.
+   ========================================================= */
+
+const TRADE_SEARCH_TERMS = {
+
+  "Médecins généralistes":[
+    "médecin généraliste",
+    "médecine générale"
+  ],
+
+  "Infirmiers":[
+    "infirmier",
+    "infirmière",
+    "soins infirmiers"
+  ],
+
+  "Kinésithérapeutes":[
+    "kinésithérapeute",
+    "masseur kinésithérapeute"
+  ],
+
+  "Dentistes":[
+    "dentiste",
+    "chirurgien dentiste",
+    "chirurgien-dentiste"
+  ],
+
+  "Pharmacies":[
+    "pharmacie",
+    "pharmacien"
+  ],
+
+  "Pédicures-podologues":[
+    "podologue",
+    "pédicure podologue"
+  ],
+
+  "Orthophonistes":[
+    "orthophoniste",
+    "orthophonie"
+  ],
+
+  "Sages-femmes":[
+    "sage-femme",
+    "sage femme"
+  ],
+
+  "Psychologues":[
+    "psychologue",
+    "psychologie"
+  ],
+
+  "Laboratoires d'analyses médicales":[
+    "laboratoire d'analyses médicales",
+    "laboratoire de biologie médicale"
+  ],
+
+  "Autres professionnels de santé":[
+    "audioprothésiste",
+    "orthoptiste",
+    "diététicien",
+    "ergothérapeute",
+    "psychomotricien",
+    "ostéopathe",
+    "chiropracteur"
+  ],
+
+
+  "Couvreurs":[
+    "couvreur",
+    "couverture",
+    "toiture",
+    "zinguerie"
+  ],
+
+  "Plombiers":[
+    "plombier",
+    "plomberie"
+  ],
+
+  "Électriciens":[
+    "électricien",
+    "électricité"
+  ],
+
+  "Chauffagistes":[
+    "chauffagiste",
+    "chauffage"
+  ],
+
+  "Menuisiers":[
+    "menuisier",
+    "menuiserie"
+  ],
+
+  "Maçons":[
+    "maçon",
+    "maçonnerie"
+  ],
+
+  "Peintres":[
+    "peintre",
+    "peinture"
+  ],
+
+  "Carreleurs":[
+    "carreleur",
+    "carrelage"
+  ],
+
+  "Paysagistes":[
+    "paysagiste",
+    "espaces verts"
+  ],
+
+  "Serruriers":[
+    "serrurier",
+    "serrurerie"
+  ],
+
+  "Entreprises de rénovation":[
+    "rénovation",
+    "travaux de rénovation"
+  ],
+
+
+  "Garages automobiles":[
+    "garage automobile",
+    "réparation automobile"
+  ],
+
+  "Carrossiers":[
+    "carrossier",
+    "carrosserie"
+  ],
+
+  "Pneumatiques":[
+    "pneumatique",
+    "pneu"
+  ],
+
+  "Contrôle technique":[
+    "contrôle technique"
+  ],
+
+  "Motos":[
+    "moto",
+    "motocycle"
+  ],
+
+  "Cycles":[
+    "vélo",
+    "cycle",
+    "bicyclette"
+  ],
+
+  "Véhicules utilitaires":[
+    "véhicule utilitaire"
+  ],
+
+  "Poids lourds":[
+    "poids lourd",
+    "camion"
+  ],
+
+
+  "Restaurants":[
+    "restaurant",
+    "restauration"
+  ],
+
+  "Boulangeries":[
+    "boulangerie",
+    "boulanger"
+  ],
+
+  "Boucheries":[
+    "boucherie",
+    "boucher",
+    "charcuterie"
+  ],
+
+  "Traiteurs":[
+    "traiteur"
+  ],
+
+  "Cafés":[
+    "café",
+    "débit de boissons"
+  ],
+
+  "Épiceries":[
+    "épicerie",
+    "alimentation générale"
+  ],
+
+  "Commerces alimentaires":[
+    "commerce alimentaire",
+    "alimentation"
+  ],
+
+
+  "Experts-comptables":[
+    "expert comptable",
+    "expert-comptable",
+    "comptabilité"
+  ],
+
+  "Avocats":[
+    "avocat",
+    "activité juridique"
+  ],
+
+  "Assurances":[
+    "assurance",
+    "assureur"
+  ],
+
+  "Informatique":[
+    "informatique",
+    "logiciel"
+  ],
+
+  "Communication":[
+    "communication",
+    "publicité"
+  ],
+
+  "Transport":[
+    "transport"
+  ],
+
+  "Nettoyage professionnel":[
+    "nettoyage",
+    "propreté"
+  ],
+
+  "Sécurité":[
+    "sécurité",
+    "surveillance"
+  ],
+
+  "Bureaux d'études":[
+    "bureau d'études",
+    "ingénierie"
+  ],
+
+  "Conseil":[
+    "conseil",
+    "consultant"
+  ],
+
+
+  "Hôtels":[
+    "hôtel",
+    "hotel",
+    "hôtellerie",
+    "hotellerie"
+  ],
+
+  "Chambres d'hôtes":[
+    "chambre d'hôtes",
+    "chambres d'hôtes"
+  ],
+
+  "Gîtes":[
+    "gîte",
+    "gites",
+    "gîte touristique"
+  ],
+
+  "Locations de courte durée":[
+    "location courte durée",
+    "location de courte durée",
+    "hébergement touristique"
+  ],
+
+  "Autres hébergements":[
+    "hébergement",
+    "hébergement touristique"
+  ]
+
+};
+
+
+/* =========================================================
+   CORRESPONDANCE STRICTE MÉTIER
+   ========================================================= */
+
+function entityMatchesTrade(
+  entity,
+  trade
+){
+
+  const terms =
+    uniqueStrings(
+      safeArray(
+        TRADE_SEARCH_TERMS[
+          trade
+        ]
+      )
+      .concat(
+        [trade]
+      )
+    )
+    .map(
+      normalizeText
+    );
+
+
+  /*
+    IMPORTANT :
+    searchTerms n'est volontairement PAS intégré ici.
+    Cela empêche une fiche récupérée par erreur lors
+    d'une recherche "Hôtels" de devenir ensuite un hôtel.
+  */
+
+  const text =
+    buildEntitySearchText(
+      entity
+    );
+
+
+  let match =
+    terms.some(
+      function(term){
+
+        return (
+          term &&
+          text.includes(
+            term
+          )
+        );
+      }
+    );
+
+
+  if(!match){
+    return false;
+  }
+
+
+  /* -------------------------------------------------------
+     DENTISTES
+     ------------------------------------------------------- */
 
   if(
-    entity.network
+    trade ===
+    "Dentistes"
   ){
 
-    badges.push(
-      "Réseau"
-    );
+    const excluded = [
+
+      "laboratoire dentaire",
+      "prothese dentaire",
+      "prothesiste dentaire"
+
+    ];
+
+
+    if(
+      excluded.some(
+        function(term){
+
+          return text.includes(
+            normalizeText(
+              term
+            )
+          );
+        }
+      )
+    ){
+
+      return false;
+    }
   }
 
+
+  /* -------------------------------------------------------
+     HÔTELS
+     ------------------------------------------------------- */
 
   if(
-    entity.phone
+    trade ===
+    "Hôtels"
   ){
 
-    badges.push(
-      "Contact"
+    const hotelTerms = [
+
+      "hotel",
+      "hotellerie"
+
+    ];
+
+
+    const realHotel =
+      hotelTerms.some(
+        function(term){
+
+          return text.includes(
+            term
+          );
+        }
+      );
+
+
+    if(!realHotel){
+      return false;
+    }
+
+
+    /*
+      Empêche notamment les associations,
+      comités ou organismes divers de remonter
+      comme hôtels.
+    */
+
+    const excludedHotelTerms = [
+
+      "association",
+      "comite",
+      "jumelage",
+      "don du sang",
+      "club",
+      "syndicat"
+
+    ];
+
+
+    if(
+      excludedHotelTerms.some(
+        function(term){
+
+          return text.includes(
+            normalizeText(
+              term
+            )
+          );
+        }
+      )
+    ){
+
+      return false;
+    }
+  }
+
+
+  return true;
+}
+
+
+/* =========================================================
+   RECHERCHE LOCALE PAR MÉTIER
+   ========================================================= */
+
+function searchLocalTrade(
+  trade
+){
+
+  const commune =
+    normalizeText(
+      getCurrentCommune()
     );
-  }
 
 
-  if(
-    entity.website
-  ){
+  return loadEntities()
+    .filter(
+      function(entity){
 
-    badges.push(
-      "Site"
+        if(
+          commune &&
+          normalizeText(
+            entity.commune
+          ) !==
+          commune
+        ){
+
+          return false;
+        }
+
+
+        return entityMatchesTrade(
+          entity,
+          trade
+        );
+      }
+    )
+    .sort(
+      function(a,b){
+
+        return String(
+          a.name ||
+          ""
+        ).localeCompare(
+          String(
+            b.name ||
+            ""
+          ),
+          "fr"
+        );
+      }
     );
+}
+
+
+/* =========================================================
+   FAMILLES DE MÉTIERS
+   ========================================================= */
+
+const TRADE_FAMILIES = {
+
+  sante:{
+
+    title:
+      "Santé",
+
+    trades:
+      METIERS.sante
+
+  },
+
+
+  artisans:{
+
+    title:
+      "Artisans • Maison & travaux",
+
+    trades:
+      METIERS.maison
+
+  },
+
+
+  alimentation:{
+
+    title:
+      "Restaurants & commerces alimentaires",
+
+    trades:
+      METIERS.alimentation
+
+  },
+
+
+  services:{
+
+    title:
+      "Services",
+
+    trades:
+      METIERS.professionnels
+
+  },
+
+
+  hebergements:{
+
+    title:
+      "Hôtels & séjours",
+
+    trades:
+      METIERS.hebergements
+
+  },
+
+
+  automobile:{
+
+    title:
+      "Automobile & mobilité",
+
+    trades:
+      METIERS.automobile
+
+  }
+
+};
+
+
+/* =========================================================
+   CATÉGORIES DE L'ACCUEIL
+   ========================================================= */
+
+const CATEGORIES = [
+
+  {
+    id:"commerces",
+    title:"Commerces",
+    subtitle:"Boutiques • alimentation • proximité"
+  },
+
+  {
+    id:"restaurants",
+    title:"Restaurants",
+    subtitle:"Restaurants • cafés • traiteurs"
+  },
+
+  {
+    id:"artisans",
+    title:"Artisans",
+    subtitle:"Travaux • réparation • savoir-faire"
+  },
+
+  {
+    id:"sante",
+    title:"Santé",
+    subtitle:"Médecins • soins • professionnels"
+  },
+
+  {
+    id:"entreprises",
+    title:"Entreprises",
+    subtitle:"Industrie • services • compétences"
+  },
+
+  {
+    id:"hebergements",
+    title:"Hôtels & séjours",
+    subtitle:"Hôtels • gîtes • hébergements"
+  },
+
+  {
+    id:"services",
+    title:"Services",
+    subtitle:"Particuliers • professionnels"
+  },
+
+  {
+    id:"metiers",
+    title:"Tout voir par métier",
+    subtitle:"Tous les métiers de votre ville"
+  }
+
+];
+
+
+/* =========================================================
+   OUVERTURE D'UNE FAMILLE
+   ========================================================= */
+
+function openTradeFamily(
+  familyId
+){
+
+  const family =
+    TRADE_FAMILIES[
+      familyId
+    ];
+
+
+  if(!family){
+
+    openAllTrades();
+
+    return;
   }
 
 
-  if(
-    !badges.length
-  ){
-
-    return "";
-  }
+  currentTradeFamilyId =
+    familyId;
 
 
-  return `
+  currentTrade =
+    "";
+
+
+  let html = `
 
     <div
+      class="box"
       style="
-        display:flex;
-        flex-wrap:wrap;
-        gap:5px;
+        border-left:6px solid #2f5d46;
       ">
 
-      ${
-        badges
-          .map(
-            function(label){
+      <div class="bociteAnnuaireTitle">
+        ${escapeHtml(
+          family.title
+        )}
+      </div>
 
-              return `
+      <div
+        class="bociteAnnuaireText"
+        style="margin-top:6px;">
+        Choisissez le métier recherché.
+      </div>
 
-                <span
-                  style="
-                    display:inline-block;
-                    padding:3px 7px;
-                    border:1px solid #2f5d46;
-                    border-radius:999px;
-                    color:#2f5d46;
-                    background:#fff;
-                    font-size:11px;
-                    font-weight:700;
-                  ">
-                  ${escapeHtml(label)}
-                </span>
+    </div>
 
-              `;
+
+    <div
+      class="bociteAnnuaireGrid"
+      style="margin-top:9px;">
+
+  `;
+
+
+  family.trades.forEach(
+    function(trade){
+
+      /*
+        Le compteur est calculé uniquement
+        avec les fiches qui correspondent
+        réellement au métier.
+      */
+
+      const count =
+        searchLocalTrade(
+          trade
+        ).length;
+
+
+      html += `
+
+        <button
+          type="button"
+          class="choiceBtn annuaireTradeBtn"
+          data-trade="${escapeHtml(trade)}">
+
+          <strong>
+            ${escapeHtml(trade)}
+          </strong>
+
+          <br>
+
+          <span
+            style="
+              font-size:12px;
+              font-weight:400;
+            ">
+
+            ${
+              count > 0
+                ? (
+                    count +
+                    " professionnel" +
+                    (count > 1 ? "s" : "") +
+                    " disponible" +
+                    (count > 1 ? "s" : "")
+                  )
+                : "Rechercher"
             }
-          )
-          .join("")
+
+          </span>
+
+        </button>
+
+      `;
+    }
+  );
+
+
+  html += `
+
+    </div>
+
+
+    <button
+      id="annuaireFamilyBackBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:10px;
+      ">
+      Retour à l'annuaire
+    </button>
+
+  `;
+
+
+  render(
+    family.title,
+    html,
+    function(){
+
+      document
+        .querySelectorAll(
+          ".annuaireTradeBtn"
+        )
+        .forEach(
+          function(button){
+
+            button.onclick =
+              function(){
+
+                const trade =
+                  button.getAttribute(
+                    "data-trade"
+                  ) ||
+                  "";
+
+
+                if(!trade){
+                  return;
+                }
+
+
+                currentTrade =
+                  trade;
+
+
+                openTradeResults(
+                  trade,
+                  familyId
+                );
+              };
+          }
+        );
+
+
+      const back =
+        getElement(
+          "annuaireFamilyBackBtn"
+        );
+
+
+      if(back){
+
+        back.onclick =
+          openHome;
       }
+    }
+  );
+}
+
+
+/* =========================================================
+   TOUS LES MÉTIERS
+   ========================================================= */
+
+function openAllTrades(){
+
+  currentTradeFamilyId =
+    "";
+
+
+  currentTrade =
+    "";
+
+
+  let html = `
+
+    <div class="box">
+
+      <div class="bociteAnnuaireTitle">
+        Tous les métiers
+      </div>
+
+      <div
+        class="bociteAnnuaireText"
+        style="margin-top:6px;">
+        Choisissez une famille.
+      </div>
+
+    </div>
+
+
+    <div
+      class="bociteAnnuaireGrid"
+      style="margin-top:9px;">
+
+  `;
+
+
+  Object.keys(
+    TRADE_FAMILIES
+  )
+  .forEach(
+    function(familyId){
+
+      const family =
+        TRADE_FAMILIES[
+          familyId
+        ];
+
+
+      html += `
+
+        <button
+          type="button"
+          class="choiceBtn annuaireFamilyBtn"
+          data-family="${escapeHtml(familyId)}">
+
+          <strong>
+            ${escapeHtml(
+              family.title
+            )}
+          </strong>
+
+        </button>
+
+      `;
+    }
+  );
+
+
+  html += `
+
+    </div>
+
+
+    <button
+      id="annuaireAllTradesBackBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:10px;
+      ">
+      Retour à l'annuaire
+    </button>
+
+  `;
+
+
+  render(
+    "Tous les métiers",
+    html,
+    function(){
+
+      document
+        .querySelectorAll(
+          ".annuaireFamilyBtn"
+        )
+        .forEach(
+          function(button){
+
+            button.onclick =
+              function(){
+
+                openTradeFamily(
+                  button.getAttribute(
+                    "data-family"
+                  )
+                );
+              };
+          }
+        );
+
+
+      const back =
+        getElement(
+          "annuaireAllTradesBackBtn"
+        );
+
+
+      if(back){
+
+        back.onclick =
+          openHome;
+      }
+    }
+  );
+}
+
+
+/* =========================================================
+   CATÉGORIE
+   ========================================================= */
+
+function openCategory(
+  category
+){
+
+  switch(
+    category
+  ){
+
+    case "restaurants":
+
+      currentTradeFamilyId =
+        "alimentation";
+
+      openTradeResults(
+        "Restaurants",
+        "alimentation"
+      );
+
+      return;
+
+
+    case "artisans":
+
+      openTradeFamily(
+        "artisans"
+      );
+
+      return;
+
+
+    case "sante":
+
+      openTradeFamily(
+        "sante"
+      );
+
+      return;
+
+
+    case "hebergements":
+
+      openTradeFamily(
+        "hebergements"
+      );
+
+      return;
+
+
+    case "services":
+
+      openTradeFamily(
+        "services"
+      );
+
+      return;
+
+
+    case "metiers":
+
+      openAllTrades();
+
+      return;
+
+
+    case "commerces":
+
+      launchSearch(
+        "commerce"
+      );
+
+      return;
+
+
+    case "entreprises":
+
+      launchSearch(
+        "entreprise"
+      );
+
+      return;
+
+
+    default:
+
+      launchSearch(
+        category
+      );
+  }
+}
+
+
+/* =========================================================
+   RÉSULTATS D'UN MÉTIER
+   ========================================================= */
+
+function openTradeResults(
+  trade,
+  familyId
+){
+
+  const cleanTrade =
+    String(
+      trade ||
+      ""
+    ).trim();
+
+
+  if(!cleanTrade){
+    return;
+  }
+
+
+  currentTrade =
+    cleanTrade;
+
+
+  if(
+    familyId &&
+    TRADE_FAMILIES[
+      familyId
+    ]
+  ){
+
+    currentTradeFamilyId =
+      familyId;
+  }
+
+
+  const initial =
+    searchLocalTrade(
+      cleanTrade
+    );
+
+
+  renderTradeResults(
+    cleanTrade,
+    initial,
+    true
+  );
+
+
+  annuaire.Agent
+    .search(
+      cleanTrade
+    )
+    .then(
+      function(rows){
+
+        /*
+          On conserve uniquement les fiches réseau
+          correspondant réellement au métier demandé.
+        */
+
+        const validRows =
+          safeArray(
+            rows
+          )
+          .filter(
+            function(entity){
+
+              return entityMatchesTrade(
+                sanitizeEntity(
+                  entity
+                ),
+                cleanTrade
+              );
+            }
+          );
+
+
+        if(
+          validRows.length
+        ){
+
+          mergeNetworkEntities(
+            validRows
+          );
+        }
+
+
+        const refreshed =
+          searchLocalTrade(
+            cleanTrade
+          );
+
+
+        renderTradeResults(
+          cleanTrade,
+          refreshed,
+          false
+        );
+      }
+    )
+    .catch(
+      function(error){
+
+        console.warn(
+          "Bo'CitéArt : recherche métier réseau indisponible.",
+          error
+        );
+
+
+        renderTradeResults(
+          cleanTrade,
+          initial,
+          false
+        );
+      }
+    );
+}
+
+
+/* =========================================================
+   AFFICHAGE RÉSULTATS MÉTIER
+   ========================================================= */
+
+function renderTradeResults(
+  trade,
+  results,
+  searching
+){
+
+  let html = `
+
+    <div
+      class="box"
+      style="
+        border-left:6px solid #2f5d46;
+      ">
+
+      <div class="bociteAnnuaireTitle">
+        ${escapeHtml(trade)}
+      </div>
+
+      <div
+        class="bociteAnnuaireText"
+        style="margin-top:6px;">
+        ${escapeHtml(
+          getCurrentCommune()
+        )}
+      </div>
 
     </div>
 
   `;
+
+
+  if(
+    !results.length
+  ){
+
+    html += `
+
+      <div
+        class="box"
+        style="margin-top:9px;">
+
+        <div class="bociteAnnuaireTitle">
+
+          ${
+            searching
+              ? "Recherche en cours"
+              : "Aucun professionnel trouvé"
+          }
+
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+
+          ${
+            searching
+              ? (
+                  bociteArtLogoText() +
+                  " recherche les professionnels correspondant réellement à ce métier."
+                )
+              : (
+                  "Aucun professionnel correspondant n'est disponible pour le moment."
+                )
+          }
+
+        </div>
+
+      </div>
+
+    `;
+
+  }else{
+
+    results.forEach(
+      function(entity){
+
+        html +=
+          getResultCard(
+            entity
+          );
+      }
+    );
+  }
+
+
+  html += `
+
+    <button
+      id="annuaireTradeResultsBackBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:10px;
+      ">
+
+      ${
+        currentTradeFamilyId &&
+        TRADE_FAMILIES[
+          currentTradeFamilyId
+        ]
+          ? (
+              "Retour à " +
+              escapeHtml(
+                TRADE_FAMILIES[
+                  currentTradeFamilyId
+                ].title
+              )
+            )
+          : "Retour aux métiers"
+      }
+
+    </button>
+
+  `;
+
+
+  render(
+    trade,
+    html,
+    function(){
+
+      bindResultActions();
+
+
+      const back =
+        getElement(
+          "annuaireTradeResultsBackBtn"
+        );
+
+
+      if(back){
+
+        back.onclick =
+          function(){
+
+            if(
+              currentTradeFamilyId &&
+              TRADE_FAMILIES[
+                currentTradeFamilyId
+              ]
+            ){
+
+              openTradeFamily(
+                currentTradeFamilyId
+              );
+
+              return;
+            }
+
+
+            openAllTrades();
+          };
+      }
+    }
+  );
 }
 
 /* =========================================================
-   RÉSEAU LÉGER
-   UNE RECHERCHE = UNE REQUÊTE
+   FIN DU BLOC 2
    ========================================================= */
-
-function getCurrentPostalCode(){
-
-  try{
-
-    const config =
-      JSON.parse(
-        localStorage.getItem(
-          "bociteart_city_config_v1"
-        ) || "{}"
-      );
-
-    return String(
-      config.postalCode ||
-      ""
-    ).trim();
-
-  }catch(error){
-
-    return "";
-  }
-}
-
-
-function getCurrentInseeCode(){
-
-  try{
-
-    const config =
-      JSON.parse(
-        localStorage.getItem(
-          "bociteart_city_config_v1"
-        ) || "{}"
-      );
-
-    const direct =
-      String(
-        config.inseeCode ||
-        ""
-      ).trim();
-
-    if(direct){
-      return direct;
-    }
-
-  }catch(error){
-    /* rien */
-  }
-
-
-  const known = {
-
-    wattignies:
-      "59648"
-
-  };
-
-
-  const key =
-    normalizeText(
-      getCurrentCommune()
-    )
-    .replace(
-      /[^a-z0-9]+/g,
-      "-"
-    )
-    .replace(
-      /^-+|-+$/g,
-      ""
-    );
-
-
-  return known[key] || "";
-}
-
 
 /* =========================================================
    CONFIGURATION RÉSEAU
@@ -2070,7 +3636,7 @@ function getNetworkCityConfig(){
 
 
 /* =========================================================
-   CATÉGORIE D'UNE FICHE RÉSEAU
+   CATÉGORIE RÉSEAU
    ========================================================= */
 
 function getNetworkCategory(
@@ -2084,78 +3650,51 @@ function getNetworkCategory(
 
 
   if(
-    clean.includes(
-      "restaurant"
-    ) ||
-    clean.includes(
-      "restauration"
-    )
+    clean.includes("restaurant") ||
+    clean.includes("restauration")
   ){
-
     return "restaurants";
   }
 
 
   if(
-    clean.includes(
-      "boulanger"
-    ) ||
-    clean.includes(
-      "boucher"
-    ) ||
-    clean.includes(
-      "epicer"
-    ) ||
-    clean.includes(
-      "aliment"
-    )
+    clean.includes("boulanger") ||
+    clean.includes("boucher") ||
+    clean.includes("epicer") ||
+    clean.includes("aliment")
   ){
-
     return "commerces";
   }
 
 
   if(
-    clean.includes(
-      "medecin"
-    ) ||
-    clean.includes(
-      "dentiste"
-    ) ||
-    clean.includes(
-      "infirm"
-    ) ||
-    clean.includes(
-      "pharmac"
-    ) ||
-    clean.includes(
-      "kinesither"
-    )
+    clean.includes("medecin") ||
+    clean.includes("dentiste") ||
+    clean.includes("infirm") ||
+    clean.includes("pharmac") ||
+    clean.includes("kinesither")
   ){
-
     return "sante";
   }
 
 
   if(
-    clean.includes(
-      "plomb"
-    ) ||
-    clean.includes(
-      "electric"
-    ) ||
-    clean.includes(
-      "macon"
-    ) ||
-    clean.includes(
-      "menuiser"
-    ) ||
-    clean.includes(
-      "couverture"
-    )
+    clean.includes("plomb") ||
+    clean.includes("electric") ||
+    clean.includes("macon") ||
+    clean.includes("menuiser") ||
+    clean.includes("couverture")
   ){
-
     return "artisans";
+  }
+
+
+  if(
+    clean.includes("hotel") ||
+    clean.includes("hotellerie") ||
+    clean.includes("hebergement")
+  ){
+    return "hebergements";
   }
 
 
@@ -2164,7 +3703,7 @@ function getNetworkCategory(
 
 
 /* =========================================================
-   CONVERSION D'UN ÉTABLISSEMENT RÉSEAU
+   CONVERSION D'UNE FICHE RÉSEAU
    ========================================================= */
 
 function mapNetworkEntity(
@@ -2248,11 +3787,14 @@ function mapNetworkEntity(
       activity,
 
     keywords:[
-      query,
       activity,
       company.nom_complet,
       company.nom_raison_sociale,
       company.nom_commercial
+    ],
+
+    searchTerms:[
+      query
     ],
 
     address:
@@ -2295,6 +3837,7 @@ function mapNetworkEntity(
 
 /* =========================================================
    RECHERCHE RÉSEAU CIBLÉE
+   UNE RECHERCHE = UNE REQUÊTE
    ========================================================= */
 
 function searchNetworkForQuery(
@@ -2303,7 +3846,8 @@ function searchNetworkForQuery(
 
   const cleanQuery =
     String(
-      query || ""
+      query ||
+      ""
     ).trim();
 
 
@@ -2363,12 +3907,10 @@ function searchNetworkForQuery(
     "A"
   );
 
-
   params.set(
     "page",
     "1"
   );
-
 
   params.set(
     "per_page",
@@ -2376,7 +3918,6 @@ function searchNetworkForQuery(
       MAX_NETWORK_RESULTS
     )
   );
-
 
   params.set(
     "limite_matching_etablissements",
@@ -2413,6 +3954,7 @@ function searchNetworkForQuery(
           response.status
         );
       }
+
 
       return response.json();
     }
@@ -2539,7 +4081,7 @@ function searchNetworkForQuery(
 
 
 /* =========================================================
-   AGENT IA — POINT DE RACCORDEMENT
+   AGENT IA / SERVEUR
    ========================================================= */
 
 annuaire.Agent =
@@ -2582,7 +4124,8 @@ function(
 
           query:
             String(
-              query || ""
+              query ||
+              ""
             ).trim(),
 
           commune:
@@ -2678,6 +4221,7 @@ function(
           error
         );
 
+
         return entity;
       }
     );
@@ -2685,846 +4229,120 @@ function(
 
 
 /* =========================================================
-   MÉTIERS
-   ========================================================= */
-
-const METIERS = {
-
-  sante:[
-
-    "Médecins généralistes",
-    "Infirmiers",
-    "Kinésithérapeutes",
-    "Dentistes",
-    "Pharmacies",
-    "Pédicures-podologues",
-    "Orthophonistes",
-    "Sages-femmes",
-    "Psychologues",
-    "Laboratoires d'analyses médicales",
-    "Autres professionnels de santé"
-
-  ],
-
-  maison:[
-
-    "Couvreurs",
-    "Plombiers",
-    "Électriciens",
-    "Chauffagistes",
-    "Menuisiers",
-    "Maçons",
-    "Peintres",
-    "Carreleurs",
-    "Paysagistes",
-    "Serruriers",
-    "Entreprises de rénovation"
-
-  ],
-
-  automobile:[
-
-    "Garages automobiles",
-    "Carrossiers",
-    "Pneumatiques",
-    "Contrôle technique",
-    "Motos",
-    "Cycles",
-    "Véhicules utilitaires",
-    "Poids lourds"
-
-  ],
-
-  alimentation:[
-
-    "Restaurants",
-    "Boulangeries",
-    "Boucheries",
-    "Traiteurs",
-    "Cafés",
-    "Épiceries",
-    "Commerces alimentaires"
-
-  ],
-
-  professionnels:[
-
-    "Experts-comptables",
-    "Avocats",
-    "Assurances",
-    "Informatique",
-    "Communication",
-    "Transport",
-    "Nettoyage professionnel",
-    "Sécurité",
-    "Bureaux d'études",
-    "Conseil"
-
-  ],
-
-  hebergements:[
-
-    "Hôtels",
-    "Chambres d'hôtes",
-    "Gîtes",
-    "Locations de courte durée",
-    "Autres hébergements"
-
-  ]
-
-};
-
-
-/* =========================================================
-   TERMES DE RECHERCHE MÉTIERS
-   ========================================================= */
-
-const TRADE_SEARCH_TERMS = {
-
-  "Médecins généralistes":[
-    "médecin généraliste",
-    "médecine générale"
-  ],
-
-  "Infirmiers":[
-    "infirmier",
-    "infirmière",
-    "soins infirmiers"
-  ],
-
-  "Kinésithérapeutes":[
-    "kinésithérapeute",
-    "masseur kinésithérapeute"
-  ],
-
-  "Dentistes":[
-    "dentiste",
-    "chirurgien dentiste",
-    "chirurgien-dentiste"
-  ],
-
-  "Pharmacies":[
-    "pharmacie",
-    "pharmacien"
-  ],
-
-  "Pédicures-podologues":[
-    "podologue",
-    "pédicure podologue"
-  ],
-
-  "Orthophonistes":[
-    "orthophoniste",
-    "orthophonie"
-  ],
-
-  "Sages-femmes":[
-    "sage-femme",
-    "sage femme"
-  ],
-
-  "Psychologues":[
-    "psychologue",
-    "psychologie"
-  ],
-
-  "Laboratoires d'analyses médicales":[
-    "laboratoire d'analyses médicales",
-    "laboratoire de biologie médicale"
-  ],
-
-  "Autres professionnels de santé":[
-    "audioprothésiste",
-    "orthoptiste",
-    "diététicien",
-    "ergothérapeute",
-    "psychomotricien",
-    "ostéopathe",
-    "chiropracteur"
-  ],
-
-  "Couvreurs":[
-    "couvreur",
-    "couverture",
-    "toiture",
-    "zinguerie"
-  ],
-
-  "Plombiers":[
-    "plombier",
-    "plomberie"
-  ],
-
-  "Électriciens":[
-    "électricien",
-    "électricité"
-  ],
-
-  "Chauffagistes":[
-    "chauffagiste",
-    "chauffage"
-  ],
-
-  "Menuisiers":[
-    "menuisier",
-    "menuiserie"
-  ],
-
-  "Maçons":[
-    "maçon",
-    "maçonnerie"
-  ],
-
-  "Peintres":[
-    "peintre",
-    "peinture"
-  ],
-
-  "Carreleurs":[
-    "carreleur",
-    "carrelage"
-  ],
-
-  "Paysagistes":[
-    "paysagiste",
-    "espaces verts"
-  ],
-
-  "Serruriers":[
-    "serrurier",
-    "serrurerie"
-  ],
-
-  "Entreprises de rénovation":[
-    "rénovation",
-    "travaux"
-  ],
-
-  "Garages automobiles":[
-    "garage automobile",
-    "réparation automobile"
-  ],
-
-  "Carrossiers":[
-    "carrossier",
-    "carrosserie"
-  ],
-
-  "Pneumatiques":[
-    "pneumatique",
-    "pneu"
-  ],
-
-  "Contrôle technique":[
-    "contrôle technique"
-  ],
-
-  "Motos":[
-    "moto",
-    "motocycle"
-  ],
-
-  "Cycles":[
-    "vélo",
-    "cycle",
-    "bicyclette"
-  ],
-
-  "Véhicules utilitaires":[
-    "véhicule utilitaire"
-  ],
-
-  "Poids lourds":[
-    "poids lourd",
-    "camion"
-  ],
-
-  "Restaurants":[
-    "restaurant",
-    "restauration"
-  ],
-
-  "Boulangeries":[
-    "boulangerie",
-    "boulanger"
-  ],
-
-  "Boucheries":[
-    "boucherie",
-    "boucher",
-    "charcuterie"
-  ],
-
-  "Traiteurs":[
-    "traiteur"
-  ],
-
-  "Cafés":[
-    "café",
-    "débit de boissons"
-  ],
-
-  "Épiceries":[
-    "épicerie",
-    "alimentation générale"
-  ],
-
-  "Commerces alimentaires":[
-    "commerce alimentaire",
-    "alimentation"
-  ],
-
-  "Experts-comptables":[
-    "expert comptable",
-    "expert-comptable",
-    "comptabilité"
-  ],
-
-  "Avocats":[
-    "avocat",
-    "activité juridique"
-  ],
-
-  "Assurances":[
-    "assurance",
-    "assureur"
-  ],
-
-  "Informatique":[
-    "informatique",
-    "logiciel"
-  ],
-
-  "Communication":[
-    "communication",
-    "publicité"
-  ],
-
-  "Transport":[
-    "transport"
-  ],
-
-  "Nettoyage professionnel":[
-    "nettoyage",
-    "propreté"
-  ],
-
-  "Sécurité":[
-    "sécurité",
-    "surveillance"
-  ],
-
-  "Bureaux d'études":[
-    "bureau d'études",
-    "ingénierie"
-  ],
-
-  "Conseil":[
-    "conseil",
-    "consultant"
-  ],
-
-  "Hôtels":[
-    "hôtel",
-    "hôtellerie"
-  ],
-
-  "Chambres d'hôtes":[
-    "chambre d'hôtes"
-  ],
-
-  "Gîtes":[
-    "gîte"
-  ],
-
-  "Locations de courte durée":[
-    "location courte durée",
-    "hébergement touristique"
-  ],
-
-  "Autres hébergements":[
-    "hébergement"
-  ]
-
-};
-
-
-/* =========================================================
-   RECHERCHE LOCALE PAR MÉTIER
-   ========================================================= */
-
-function searchLocalTrade(
-  trade
-){
-
-  const terms =
-    uniqueStrings(
-      safeArray(
-        TRADE_SEARCH_TERMS[
-          trade
-        ]
-      )
-      .concat(
-        [trade]
-      )
-    )
-    .map(
-      normalizeText
-    );
-
-
-  const commune =
-    normalizeText(
-      getCurrentCommune()
-    );
-
-
-  return loadEntities()
-    .filter(
-      function(entity){
-
-        if(
-          commune &&
-          normalizeText(
-            entity.commune
-          ) !==
-          commune
-        ){
-
-          return false;
-        }
-
-
-        const text =
-          buildEntitySearchText(
-            entity
-          );
-
-
-        const match =
-          terms.some(
-            function(term){
-
-              return (
-                term &&
-                text.includes(
-                  term
-                )
-              );
-            }
-          );
-
-
-        if(!match){
-          return false;
-        }
-
-
-        if(
-          trade ===
-          "Dentistes"
-        ){
-
-          const excluded = [
-
-            "laboratoire dentaire",
-            "prothese dentaire",
-            "prothesiste dentaire"
-
-          ];
-
-
-          if(
-            excluded.some(
-              function(term){
-
-                return text.includes(
-                  normalizeText(
-                    term
-                  )
-                );
-              }
-            )
-          ){
-
-            return false;
-          }
-        }
-
-
-        return true;
-      }
-    )
-    .sort(
-      function(a,b){
-
-        return String(
-          a.name || ""
-        ).localeCompare(
-          String(
-            b.name || ""
-          ),
-          "fr"
-        );
-      }
-    );
-}
-
-
-/* =========================================================
-   CATÉGORIES PRINCIPALES
-   ========================================================= */
-
-const CATEGORIES = [
-
-  {
-    id:
-      "commerces",
-
-    title:
-      "Commerces",
-
-    subtitle:
-      "Boutiques • alimentation • proximité"
-  },
-
-  {
-    id:
-      "restaurants",
-
-    title:
-      "Restaurants",
-
-    subtitle:
-      "Restaurants • cafés • traiteurs"
-  },
-
-  {
-    id:
-      "artisans",
-
-    title:
-      "Artisans",
-
-    subtitle:
-      "Travaux • réparation • savoir-faire"
-  },
-
-  {
-    id:
-      "sante",
-
-    title:
-      "Santé",
-
-    subtitle:
-      "Médecins • soins • professionnels"
-  },
-
-  {
-    id:
-      "entreprises",
-
-    title:
-      "Entreprises",
-
-    subtitle:
-      "Industrie • services • compétences"
-  },
-
-  {
-    id:
-      "hebergements",
-
-    title:
-      "Hôtels & séjours",
-
-    subtitle:
-      "Hôtels • gîtes • hébergements"
-  },
-
-  {
-    id:
-      "services",
-
-    title:
-      "Services",
-
-    subtitle:
-      "Particuliers • professionnels"
-  },
-
-  {
-    id:
-      "metiers",
-
-    title:
-      "Tout voir par métier",
-
-    subtitle:
-      "Tous les métiers de votre ville"
-  }
-
-];
-
-
-/* =========================================================
-   MODALE
-   ========================================================= */
-
-function openModal(
-  title,
-  html
-){
-
-  if(
-    typeof module.openModal ===
-      "function"
-  ){
-
-    module.openModal(
-      title,
-      html
-    );
-
-    return;
-  }
-
-
-  if(
-    typeof window.openModal ===
-      "function"
-  ){
-
-    window.openModal(
-      title,
-      html
-    );
-
-    return;
-  }
-
-
-  alert(
-    String(
-      title || ""
-    ) +
-    "\n\n" +
-    String(
-      html || ""
-    )
-    .replace(
-      /<[^>]+>/g,
-      " "
-    )
-  );
-}
-
-
-/* =========================================================
-   RENDU
-   ========================================================= */
-
-function render(
-  title,
-  html,
-  afterRender
-){
-
-  openModal(
-    title,
-    `
-      <div class="bociteAnnuaireRoot">
-        ${html}
-      </div>
-    `
-  );
-
-
-  window.setTimeout(
-    function(){
-
-      installAnnuaireStyles();
-
-      if(
-        typeof afterRender ===
-          "function"
-      ){
-
-        afterRender();
-      }
-
-    },
-    20
-  );
-}
-
-
-/* =========================================================
-   STYLES
-   ========================================================= */
-
-function installAnnuaireStyles(){
-
-  if(
-    getElement(
-      "bociteAnnuaireStyles"
-    )
-  ){
-
-    return;
-  }
-
-
-  const style =
-    document.createElement(
-      "style"
-    );
-
-
-  style.id =
-    "bociteAnnuaireStyles";
-
-
-  style.textContent = `
-
-    .bociteAnnuaireRoot{
-      color:#111;
-      font-family:Arial,sans-serif;
-    }
-
-    .bociteAnnuaireTitle{
-      color:#2f5d46;
-      font-size:16px;
-      font-weight:700;
-      line-height:1.35;
-    }
-
-    .bociteAnnuaireText{
-      color:#111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.45;
-    }
-
-    .bociteAnnuaireSmall{
-      color:#666;
-      font-size:12px;
-      line-height:1.4;
-    }
-
-    .bociteAnnuaireGrid{
-      display:grid;
-      grid-template-columns:
-        repeat(2,minmax(0,1fr));
-      gap:8px;
-    }
-
-    .bociteAnnuaireActions{
-      display:grid;
-      grid-template-columns:
-        repeat(2,minmax(0,1fr));
-      gap:8px;
-    }
-
-    .bociteAnnuaireResult{
-      margin-bottom:9px;
-    }
-
-    .bociteAnnuaireRoot .choiceBtn{
-      background:#fff !important;
-      background-image:none !important;
-    }
-
-    .bociteAnnuaireStars{
-      display:grid;
-      grid-template-columns:
-        repeat(5,minmax(0,1fr));
-      gap:6px;
-    }
-
-    .bociteAnnuaireStars .choiceBtn{
-      min-height:45px;
-    }
-
-    @media(max-width:480px){
-
-      .bociteAnnuaireGrid,
-      .bociteAnnuaireActions{
-        grid-template-columns:
-          repeat(2,minmax(0,1fr));
-      }
-
-    }
-
-  `;
-
-
-  document.head.appendChild(
-    style
-  );
-}
-
-
-/* =========================================================
-   LOGO OFFICIEL
-   ========================================================= */
-
-function bociteArtLogoText(){
-
-  return `
-    <span style="font-weight:900;">
-      <span style="color:#2f5d46;">
-        Bo'Cité
-      </span><span style="color:#b00020;">
-        Art
-      </span>
-    </span>
-  `;
-}
-
-
-/* =========================================================
    CARTE RÉSULTAT
    ========================================================= */
 
+function getBadgesHtml(
+  entity
+){
+
+  const badges =
+    [];
+
+
+  if(
+    normalizeText(
+      entity.commune
+    ) ===
+    normalizeText(
+      getCurrentCommune()
+    )
+  ){
+
+    badges.push(
+      "Local"
+    );
+  }
+
+
+  if(
+    entity.network
+  ){
+
+    badges.push(
+      "Réseau"
+    );
+  }
+
+
+  if(
+    entity.phone
+  ){
+
+    badges.push(
+      "Contact"
+    );
+  }
+
+
+  if(
+    entity.website
+  ){
+
+    badges.push(
+      "Site"
+    );
+  }
+
+
+  if(
+    !badges.length
+  ){
+
+    return "";
+  }
+
+
+  return `
+
+    <div
+      style="
+        display:flex;
+        flex-wrap:wrap;
+        gap:5px;
+      ">
+
+      ${
+        badges
+          .map(
+            function(label){
+
+              return `
+
+                <span
+                  style="
+                    display:inline-block;
+                    padding:3px 7px;
+                    border:1px solid #2f5d46;
+                    border-radius:999px;
+                    color:#2f5d46;
+                    background:#fff;
+                    font-size:11px;
+                    font-weight:700;
+                  ">
+                  ${escapeHtml(label)}
+                </span>
+
+              `;
+            }
+          )
+          .join("")
+      }
+
+    </div>
+
+  `;
+}
+
+
 function getResultCard(
-  entity,
-  distance
+  entity
 ){
 
   const rating =
     getRatingSummary(
       entity.id
     );
-
-
-  const distanceHtml =
-    Number.isFinite(
-      Number(
-        distance
-      )
-    )
-      ? `
-          <div
-            class="bociteAnnuaireSmall"
-            style="margin-top:4px;">
-            À ${Number(distance).toFixed(1)} km
-          </div>
-        `
-      : "";
-
-
-  const ratingHtml =
-    rating.visible
-      ? `
-          <div
-            class="bociteAnnuaireSmall"
-            style="margin-top:5px;">
-            ${rating.global.toFixed(1)} / 5
-          </div>
-        `
-      : "";
 
 
   return `
@@ -3537,7 +4355,9 @@ function getResultCard(
       <div
         class="bociteAnnuaireTitle"
         style="margin-top:6px;">
-        ${escapeHtml(entity.name)}
+        ${escapeHtml(
+          entity.name
+        )}
       </div>
 
       ${
@@ -3559,11 +4379,23 @@ function getResultCard(
       <div
         class="bociteAnnuaireSmall"
         style="margin-top:4px;">
-        ${escapeHtml(entity.commune)}
+        ${escapeHtml(
+          entity.commune
+        )}
       </div>
 
-      ${distanceHtml}
-      ${ratingHtml}
+      ${
+        rating.visible
+          ? `
+              <div
+                class="bociteAnnuaireSmall"
+                style="margin-top:5px;">
+                ${rating.global.toFixed(1)} / 5
+              </div>
+            `
+          : ""
+      }
+
 
       <div
         class="bociteAnnuaireActions"
@@ -3598,6 +4430,7 @@ function getResultCard(
 
       </div>
 
+
       ${
         entity.address
           ? `
@@ -3630,7 +4463,7 @@ function getResultCard(
 
 
 /* =========================================================
-   ACTIONS CARTE
+   ACTIONS CARTES
    ========================================================= */
 
 function callPhone(
@@ -3639,7 +4472,8 @@ function callPhone(
 
   const clean =
     String(
-      phone || ""
+      phone ||
+      ""
     )
     .replace(
       /[^\d+]/g,
@@ -3664,7 +4498,8 @@ function openRoute(
 
   const clean =
     String(
-      address || ""
+      address ||
+      ""
     ).trim();
 
 
@@ -3753,234 +4588,7 @@ function bindResultActions(){
 
 
 /* =========================================================
-   LANCER UNE RECHERCHE PUBLIQUE
-   ========================================================= */
-
-function launchSearch(
-  query,
-  options
-){
-
-  const cleanQuery =
-    String(
-      query || ""
-    ).trim();
-
-
-  if(!cleanQuery){
-
-    alert(
-      "Indiquez un nom, un métier, un produit ou un service."
-    );
-
-    return;
-  }
-
-
-  options =
-    safeObject(
-      options
-    );
-
-
-  addSearchHistory(
-    cleanQuery,
-    getCurrentCommune()
-  );
-
-
-  const existing =
-    searchEntities(
-      cleanQuery,
-      options
-    );
-
-
-  renderSearchResults(
-    cleanQuery,
-    existing,
-    existing.length === 0
-  );
-
-
-  annuaire.Agent
-    .search(
-      cleanQuery
-    )
-    .then(
-      function(rows){
-
-        if(
-          rows.length
-        ){
-
-          mergeNetworkEntities(
-            rows
-          );
-        }
-
-
-        const refreshed =
-          searchEntities(
-            cleanQuery,
-            options
-          );
-
-
-        renderSearchResults(
-          cleanQuery,
-          refreshed,
-          false
-        );
-      }
-    )
-    .catch(
-      function(error){
-
-        console.warn(
-          "Bo'CitéArt : recherche réseau indisponible.",
-          error
-        );
-
-
-        renderSearchResults(
-          cleanQuery,
-          existing,
-          false
-        );
-      }
-    );
-}
-
-
-/* =========================================================
-   AFFICHAGE RÉSULTATS PUBLICS
-   ========================================================= */
-
-function renderSearchResults(
-  query,
-  results,
-  searching
-){
-
-  let html = `
-
-    <div
-      class="box"
-      style="
-        border-left:6px solid #2f5d46;
-      ">
-
-      <div class="bociteAnnuaireTitle">
-        Résultats dans ${escapeHtml(getCurrentCommune())}
-      </div>
-
-      <div
-        class="bociteAnnuaireText"
-        style="margin-top:5px;">
-        Recherche :
-        <strong>
-          ${escapeHtml(query)}
-        </strong>
-      </div>
-
-    </div>
-
-  `;
-
-
-  if(
-    !results.length
-  ){
-
-    html += `
-
-      <div
-        class="box"
-        style="margin-top:9px;">
-
-        <div class="bociteAnnuaireTitle">
-          ${
-            searching
-              ? "Recherche en cours"
-              : "Aucun résultat disponible"
-          }
-        </div>
-
-        <div
-          class="bociteAnnuaireText"
-          style="margin-top:6px;">
-          ${
-            searching
-              ? (
-                  bociteArtLogoText() +
-                  " vérifie également les données disponibles sur le réseau."
-                )
-              : (
-                  "Aucun établissement correspondant n'a été trouvé pour le moment."
-                )
-          }
-        </div>
-
-      </div>
-
-    `;
-
-  }else{
-
-    results.forEach(
-      function(entity){
-
-        html +=
-          getResultCard(
-            entity
-          );
-      }
-    );
-  }
-
-
-  html += `
-
-    <button
-      id="annuaireResultsBackHomeBtn"
-      class="choiceBtn"
-      type="button"
-      style="
-        width:100%;
-        margin-top:10px;
-      ">
-      Retour à l'annuaire
-    </button>
-
-  `;
-
-
-  render(
-    "Résultats",
-    html,
-    function(){
-
-      bindResultActions();
-
-
-      const back =
-        getElement(
-          "annuaireResultsBackHomeBtn"
-        );
-
-
-      if(back){
-
-        back.onclick =
-          openHome;
-      }
-    }
-  );
-}
-
- /* =========================================================
-   ACCUEIL ANNUAIRE
+   ACCUEIL
    ========================================================= */
 
 function getHomeHtml(){
@@ -4062,7 +4670,10 @@ function getHomeHtml(){
                       font-size:12px;
                       font-weight:400;
                     ">
-                    ${escapeHtml(item.commune || commune)}
+                    ${escapeHtml(
+                      item.commune ||
+                      commune
+                    )}
                   </span>
 
                 </button>
@@ -4289,6 +4900,16 @@ function getHomeHtml(){
 
 function openHome(){
 
+  currentTradeFamilyId =
+    "";
+
+  currentTrade =
+    "";
+
+  currentPublicSearch =
+    "";
+
+
   render(
     "Annuaire de votre ville",
     getHomeHtml(),
@@ -4341,6 +4962,7 @@ function bindHome(){
 
           event.preventDefault();
 
+
           launchSearch(
             input.value
           );
@@ -4391,62 +5013,67 @@ function bindHome(){
     );
 
 
-  const nearBtn =
+  const near =
     getElement(
       "annuaireNearBtn"
     );
 
-  if(nearBtn){
 
-    nearBtn.onclick =
+  if(near){
+
+    near.onclick =
       openNearMe;
   }
 
 
-  const historyBtn =
+  const history =
     getElement(
       "annuaireHistoryBtn"
     );
 
-  if(historyBtn){
 
-    historyBtn.onclick =
+  if(history){
+
+    history.onclick =
       openSearchHistory;
   }
 
 
-  const favoritesBtn =
+  const favorites =
     getElement(
       "annuaireFavoritesBtn"
     );
 
-  if(favoritesBtn){
 
-    favoritesBtn.onclick =
+  if(favorites){
+
+    favorites.onclick =
       openFavorites;
   }
 
 
-  const viewedBtn =
+  const viewed =
     getElement(
       "annuaireViewedBtn"
     );
 
-  if(viewedBtn){
 
-    viewedBtn.onclick =
+  if(viewed){
+
+    viewed.onclick =
       openViewedHistory;
   }
 
 
-  const legendBtn =
+  const legend =
     getElement(
       "annuaireLegendBtn"
     );
 
-  if(legendBtn){
 
-    legendBtn.onclick =
+  if(legend){
+
+    legend.onclick =
       function(){
 
         const box =
@@ -4454,9 +5081,11 @@ function bindHome(){
             "annuaireLegendBox"
           );
 
+
         if(!box){
           return;
         }
+
 
         box.style.display =
           box.style.display ===
@@ -4466,305 +5095,94 @@ function bindHome(){
       };
   }
 
+
+  const professional =
+    getElement(
+      "annuaireProfessionalBtn"
+    );
+
+
+  if(professional){
+
+    professional.onclick =
+      openProfessionalDashboard;
+  }
 }
 
 
 /* =========================================================
-   OUVERTURE D'UNE CATÉGORIE
+   FIN DU BLOC 3
    ========================================================= */
 
-function openCategory(
-  categoryId
-){
-
-  if(
-    categoryId ===
-    "metiers"
-  ){
-
-    openAllTrades();
-    return;
-  }
-
-
-  if(
-    categoryId ===
-    "sante"
-  ){
-
-    openTradeFamily(
-      "Santé",
-      METIERS.sante
-    );
-
-    return;
-  }
-
-
-  if(
-    categoryId ===
-    "artisans"
-  ){
-
-    openTradeFamily(
-      "Artisans • Maison & travaux",
-      METIERS.maison
-    );
-
-    return;
-  }
-
-
-  if(
-    categoryId ===
-    "restaurants" ||
-    categoryId ===
-    "commerces"
-  ){
-
-    openTradeFamily(
-      "Restaurants & commerces alimentaires",
-      METIERS.alimentation
-    );
-
-    return;
-  }
-
-
-  if(
-    categoryId ===
-    "services"
-  ){
-
-    openTradeFamily(
-      "Services",
-      METIERS.professionnels
-    );
-
-    return;
-  }
-
-
-  if(
-    categoryId ===
-    "hebergements"
-  ){
-
-    openTradeFamily(
-      "Hôtels & séjours",
-      METIERS.hebergements
-    );
-
-    return;
-  }
-
-
-  if(
-    categoryId ===
-    "entreprises"
-  ){
-
-    launchSearch(
-      "entreprise"
-    );
-
-    return;
-  }
-
-
-  openHome();
-}
-
-
-/* =========================================================
-   LISTE DES MÉTIERS D'UNE FAMILLE
+   /* =========================================================
+   RECHERCHE PUBLIQUE
    ========================================================= */
 
-function openTradeFamily(
-  title,
-  trades
+function launchSearch(
+  query,
+  options
 ){
 
-  let html = `
-
-    <div class="box">
-
-      <div class="bociteAnnuaireTitle">
-        ${escapeHtml(title)}
-      </div>
-
-      <div
-        class="bociteAnnuaireText"
-        style="margin-top:6px;">
-        Choisissez le métier recherché.
-      </div>
-
-    </div>
-
-  `;
+  const cleanQuery =
+    String(
+      query ||
+      ""
+    ).trim();
 
 
-  safeArray(
-    trades
-  )
-  .forEach(
-    function(trade){
+  if(!cleanQuery){
 
-      const count =
-        searchLocalTrade(
-          trade
-        ).length;
+    alert(
+      "Indiquez un nom, un métier, un produit ou un service."
+    );
+
+    return;
+  }
 
 
-      html += `
+  options =
+    safeObject(
+      options
+    );
 
-        <button
-          type="button"
-          class="choiceBtn annuaireTradeBtn"
-          data-trade="${escapeHtml(trade)}"
-          style="
-            width:100%;
-            margin-top:7px;
-            text-align:left;
-          ">
 
-          <strong
-            style="
-              display:block;
-              color:#2f5d46;
-              font-size:16px;
-            ">
-            ${escapeHtml(trade)}
-          </strong>
+  currentPublicSearch =
+    cleanQuery;
 
-          <span
-            style="
-              display:block;
-              margin-top:3px;
-              font-size:12px;
-              font-weight:400;
-            ">
 
-            ${
-              count
-                ? (
-                    count +
-                    (
-                      count > 1
-                        ? " professionnels disponibles"
-                        : " professionnel disponible"
-                    )
-                  )
-                : "Recherche réseau disponible"
-            }
-
-          </span>
-
-        </button>
-
-      `;
-    }
+  addSearchHistory(
+    cleanQuery,
+    getCurrentCommune()
   );
 
-
-  html += `
-
-    <button
-      id="annuaireTradeFamilyBackBtn"
-      class="choiceBtn"
-      type="button"
-      style="
-        width:100%;
-        margin-top:10px;
-      ">
-      Retour à l'annuaire
-    </button>
-
-  `;
-
-
-  render(
-    title,
-    html,
-    function(){
-
-      document
-        .querySelectorAll(
-          ".annuaireTradeBtn"
-        )
-        .forEach(
-          function(button){
-
-            button.onclick =
-              function(){
-
-                openTradeResults(
-                  button.getAttribute(
-                    "data-trade"
-                  ) ||
-                  ""
-                );
-              };
-          }
-        );
-
-
-      const back =
-        getElement(
-          "annuaireTradeFamilyBackBtn"
-        );
-
-
-      if(back){
-
-        back.onclick =
-          openHome;
-      }
-    }
-  );
-}
-
-
-/* =========================================================
-   RÉSULTATS D'UN MÉTIER
-   ========================================================= */
-
-function openTradeResults(
-  trade
-){
 
   const existing =
-    searchLocalTrade(
-      trade
+    searchEntities(
+      cleanQuery,
+      options
     );
 
 
-  renderTradeResults(
-    trade,
+  renderSearchResults(
+    cleanQuery,
     existing,
-    existing.length === 0
+    true
   );
-
-
-  const terms =
-    safeArray(
-      TRADE_SEARCH_TERMS[
-        trade
-      ]
-    );
-
-
-  const networkQuery =
-    terms[0] ||
-    trade;
 
 
   annuaire.Agent
     .search(
-      networkQuery
+      cleanQuery
     )
     .then(
       function(rows){
+
+        /*
+          Recherche générale :
+          les fiches reçues peuvent être conservées,
+          mais le moteur local les re-filtrera ensuite
+          selon la recherche de l'utilisateur.
+        */
 
         if(
           rows.length
@@ -4777,13 +5195,14 @@ function openTradeResults(
 
 
         const refreshed =
-          searchLocalTrade(
-            trade
+          searchEntities(
+            cleanQuery,
+            options
           );
 
 
-        renderTradeResults(
-          trade,
+        renderSearchResults(
+          cleanQuery,
           refreshed,
           false
         );
@@ -4793,13 +5212,13 @@ function openTradeResults(
       function(error){
 
         console.warn(
-          "Bo'CitéArt : recherche métier indisponible.",
+          "Bo'CitéArt : recherche réseau indisponible.",
           error
         );
 
 
-        renderTradeResults(
-          trade,
+        renderSearchResults(
+          cleanQuery,
           existing,
           false
         );
@@ -4809,11 +5228,11 @@ function openTradeResults(
 
 
 /* =========================================================
-   AFFICHAGE RÉSULTATS MÉTIER
+   RÉSULTATS RECHERCHE PUBLIQUE
    ========================================================= */
 
-function renderTradeResults(
-  trade,
+function renderSearchResults(
+  query,
   results,
   searching
 ){
@@ -4827,13 +5246,18 @@ function renderTradeResults(
       ">
 
       <div class="bociteAnnuaireTitle">
-        ${escapeHtml(trade)}
+        Résultats dans ${escapeHtml(
+          getCurrentCommune()
+        )}
       </div>
 
       <div
         class="bociteAnnuaireText"
         style="margin-top:5px;">
-        ${escapeHtml(getCurrentCommune())}
+        Recherche :
+        <strong>
+          ${escapeHtml(query)}
+        </strong>
       </div>
 
     </div>
@@ -4869,7 +5293,7 @@ function renderTradeResults(
             searching
               ? (
                   bociteArtLogoText() +
-                  " vérifie les données disponibles sur le réseau."
+                  " vérifie également les données disponibles sur le réseau."
                 )
               : (
                   "Aucun établissement correspondant n'a été trouvé pour le moment."
@@ -4899,200 +5323,7 @@ function renderTradeResults(
   html += `
 
     <button
-      id="annuaireTradeResultsBackBtn"
-      class="choiceBtn"
-      type="button"
-      style="
-        width:100%;
-        margin-top:10px;
-      ">
-      Retour aux métiers
-    </button>
-
-  `;
-
-
-  render(
-    trade,
-    html,
-    function(){
-
-      bindResultActions();
-
-
-      const back =
-        getElement(
-          "annuaireTradeResultsBackBtn"
-        );
-
-
-      if(back){
-
-        back.onclick =
-          openAllTrades;
-      }
-    }
-  );
-}
-
-
-/* =========================================================
-   TOUS LES MÉTIERS
-   ========================================================= */
-
-function openAllTrades(){
-
-  const sections = [
-
-    {
-      title:
-        "Santé",
-      values:
-        METIERS.sante
-    },
-
-    {
-      title:
-        "Maison & travaux",
-      values:
-        METIERS.maison
-    },
-
-    {
-      title:
-        "Automobile & mobilité",
-      values:
-        METIERS.automobile
-    },
-
-    {
-      title:
-        "Restaurants & alimentation",
-      values:
-        METIERS.alimentation
-    },
-
-    {
-      title:
-        "Services aux entreprises",
-      values:
-        METIERS.professionnels
-    },
-
-    {
-      title:
-        "Hôtels & séjours",
-      values:
-        METIERS.hebergements
-    }
-
-  ];
-
-
-  let html = `
-
-    <div class="box">
-
-      <div class="bociteAnnuaireTitle">
-        Tous les métiers de votre ville
-      </div>
-
-      <div
-        class="bociteAnnuaireText"
-        style="margin-top:6px;">
-        Choisissez le métier recherché.
-      </div>
-
-    </div>
-
-  `;
-
-
-  sections.forEach(
-    function(section){
-
-      html += `
-
-        <div
-          class="box"
-          style="margin-top:9px;">
-
-          <div class="bociteAnnuaireTitle">
-            ${escapeHtml(section.title)}
-          </div>
-
-      `;
-
-
-      safeArray(
-        section.values
-      )
-      .forEach(
-        function(trade){
-
-          const count =
-            searchLocalTrade(
-              trade
-            ).length;
-
-
-          html += `
-
-            <button
-              type="button"
-              class="choiceBtn annuaireTradeBtn"
-              data-trade="${escapeHtml(trade)}"
-              style="
-                width:100%;
-                margin-top:6px;
-                text-align:left;
-              ">
-
-              <strong>
-                ${escapeHtml(trade)}
-              </strong>
-
-              <br>
-
-              <span
-                style="
-                  font-size:12px;
-                  font-weight:400;
-                ">
-
-                ${
-                  count
-                    ? (
-                        count +
-                        (
-                          count > 1
-                            ? " disponibles"
-                            : " disponible"
-                        )
-                      )
-                    : "Recherche réseau"
-                }
-
-              </span>
-
-            </button>
-
-          `;
-        }
-      );
-
-
-      html += `
-        </div>
-      `;
-    }
-  );
-
-
-  html += `
-
-    <button
-      id="annuaireAllTradesBackBtn"
+      id="annuaireResultsBackHomeBtn"
       class="choiceBtn"
       type="button"
       style="
@@ -5106,34 +5337,16 @@ function openAllTrades(){
 
 
   render(
-    "Tous les métiers",
+    "Résultats",
     html,
     function(){
 
-      document
-        .querySelectorAll(
-          ".annuaireTradeBtn"
-        )
-        .forEach(
-          function(button){
-
-            button.onclick =
-              function(){
-
-                openTradeResults(
-                  button.getAttribute(
-                    "data-trade"
-                  ) ||
-                  ""
-                );
-              };
-          }
-        );
+      bindResultActions();
 
 
       const back =
         getElement(
-          "annuaireAllTradesBackBtn"
+          "annuaireResultsBackHomeBtn"
         );
 
 
@@ -5148,7 +5361,7 @@ function openAllTrades(){
 
 
 /* =========================================================
-   HISTORIQUE PUBLIC DES RECHERCHES
+   HISTORIQUE PUBLIC
    ========================================================= */
 
 function openSearchHistory(){
@@ -5222,7 +5435,10 @@ function openSearchHistory(){
                 font-size:12px;
                 font-weight:400;
               ">
-              ${escapeHtml(item.commune || "")}
+              ${escapeHtml(
+                item.commune ||
+                ""
+              )}
             </span>
 
           </button>
@@ -5257,7 +5473,7 @@ function openSearchHistory(){
       type="button"
       style="
         width:100%;
-        margin-top:9px;
+        margin-top:8px;
       ">
       Retour à l'annuaire
     </button>
@@ -5312,6 +5528,7 @@ function openSearchHistory(){
                 STORAGE.searchHistory,
                 []
               );
+
 
               openSearchHistory();
             }
@@ -5382,9 +5599,11 @@ function openFavorites(){
       <div
         class="box"
         style="margin-top:9px;">
+
         <div class="bociteAnnuaireText">
           Aucun favori enregistré.
         </div>
+
       </div>
 
     `;
@@ -5405,16 +5624,22 @@ function openFavorites(){
 
   html += `
 
-    <button
-      id="annuaireFavoritesClearBtn"
-      class="choiceBtn"
-      type="button"
-      style="
-        width:100%;
-        margin-top:9px;
-      ">
-      Tout effacer
-    </button>
+    ${
+      entities.length
+        ? `
+            <button
+              id="annuaireFavoritesClearBtn"
+              class="choiceBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:9px;
+              ">
+              Tout effacer
+            </button>
+          `
+        : ""
+    }
 
     <button
       id="annuaireFavoritesBackBtn"
@@ -5460,6 +5685,7 @@ function openFavorites(){
                 []
               );
 
+
               openFavorites();
             }
           };
@@ -5498,6 +5724,12 @@ function openViewedHistory(){
 
       <div class="bociteAnnuaireTitle">
         Consultés récemment
+      </div>
+
+      <div
+        class="bociteAnnuaireText"
+        style="margin-top:6px;">
+        Retrouvez les dernières fiches ouvertes.
       </div>
 
     </div>
@@ -5559,7 +5791,10 @@ function openViewedHistory(){
             <div
               class="bociteAnnuaireSmall"
               style="margin-top:4px;">
-              ${escapeHtml(item.commune || "")}
+              ${escapeHtml(
+                item.commune ||
+                ""
+              )}
             </div>
 
             ${
@@ -5672,6 +5907,7 @@ function openViewedHistory(){
                 []
               );
 
+
               openViewedHistory();
             }
           };
@@ -5693,8 +5929,9 @@ function openViewedHistory(){
   );
 }
 
+
 /* =========================================================
-   APPRÉCIATION D'UNE FICHE
+   APPRÉCIATION
    ========================================================= */
 
 function openRatingForm(
@@ -5842,6 +6079,74 @@ function openRatingForm(
       }
     }
   );
+}
+
+
+/* =========================================================
+   SÉCURITÉ ESPACE PROFESSIONNEL
+   ========================================================= */
+
+function requireDirectoryAccess(
+  actionLabel
+){
+
+  const registration =
+    window.BoCiteArtRegistration;
+
+
+  if(
+    !registration ||
+    typeof registration.securityReady !==
+      "function"
+  ){
+
+    alert(
+      "La sécurisation du compte n'est pas disponible pour le moment."
+    );
+
+    return false;
+  }
+
+
+  if(
+    !registration.securityReady()
+  ){
+
+    alert(
+      "Votre compte doit être sécurisé avant de pouvoir " +
+      String(
+        actionLabel ||
+        "accéder à cet espace professionnel"
+      ) +
+      "."
+    );
+
+    return false;
+  }
+
+
+  if(
+    typeof registration.canAccess ===
+      "function" &&
+    !registration.canAccess(
+      "directory"
+    )
+  ){
+
+    alert(
+      "Vous ne disposez pas de l'autorisation nécessaire pour " +
+      String(
+        actionLabel ||
+        "accéder à cet espace professionnel"
+      ) +
+      "."
+    );
+
+    return false;
+  }
+
+
+  return true;
 }
 
 
@@ -6053,53 +6358,6 @@ function openEntity(
   `;
 
 
-  const ratingHtml =
-    rating.visible
-      ? `
-
-          <div
-            class="box"
-            style="margin-top:10px;">
-
-            <div class="bociteAnnuaireTitle">
-              Appréciation locale
-            </div>
-
-            <div
-              style="
-                margin-top:7px;
-                color:#2f5d46;
-                font-size:18px;
-                font-weight:700;
-              ">
-              ${rating.global.toFixed(1)} / 5
-            </div>
-
-          </div>
-
-        `
-      : `
-
-          <div
-            class="box"
-            style="margin-top:10px;">
-
-            <div class="bociteAnnuaireTitle">
-              Appréciation locale
-            </div>
-
-            <div
-              class="bociteAnnuaireText"
-              style="margin-top:6px;">
-              Aucune appréciation enregistrée
-              sur cet appareil pour le moment.
-            </div>
-
-          </div>
-
-        `;
-
-
   const html = `
 
     <div
@@ -6162,7 +6420,38 @@ function openEntity(
     }
 
 
-    ${ratingHtml}
+    <div
+      class="box"
+      style="margin-top:10px;">
+
+      <div class="bociteAnnuaireTitle">
+        Appréciation locale
+      </div>
+
+      ${
+        rating.visible
+          ? `
+              <div
+                style="
+                  margin-top:7px;
+                  color:#2f5d46;
+                  font-size:18px;
+                  font-weight:700;
+                ">
+                ${rating.global.toFixed(1)} / 5
+              </div>
+            `
+          : `
+              <div
+                class="bociteAnnuaireText"
+                style="margin-top:6px;">
+                Aucune appréciation enregistrée
+                sur cet appareil pour le moment.
+              </div>
+            `
+      }
+
+    </div>
 
 
     <button
@@ -6185,12 +6474,15 @@ function openEntity(
         id="annuaireFavoriteToggleBtn"
         class="choiceBtn"
         type="button">
+
         ${
           favorite
             ? "Retirer des favoris"
             : "Ajouter aux favoris"
         }
+
       </button>
+
 
       <button
         id="annuaireNotebookAddBtn"
@@ -6210,11 +6502,13 @@ function openEntity(
         width:100%;
         margin-top:8px;
       ">
+
       ${
         followed
           ? "Ne plus suivre cette entreprise"
           : "Suivre cette entreprise"
       }
+
     </button>
 
 
@@ -6372,6 +6666,7 @@ function openEntity(
             toggleFavorite(
               entity.id
             );
+
 
             openEntity(
               entity.id
@@ -6544,10 +6839,6 @@ function distanceKm(
 }
 
 
-/* =========================================================
-   PRÈS DE MOI
-   ========================================================= */
-
 function openNearMe(){
 
   if(
@@ -6604,6 +6895,7 @@ function openNearMe(){
                       entity.latitude,
                       entity.longitude
                     )
+
                 };
               }
             )
@@ -6633,8 +6925,7 @@ function openNearMe(){
             <div
               class="bociteAnnuaireText"
               style="margin-top:6px;">
-              Établissements classés
-              par proximité.
+              Établissements classés par proximité.
             </div>
 
           </div>
@@ -6653,9 +6944,9 @@ function openNearMe(){
               style="margin-top:9px;">
 
               <div class="bociteAnnuaireText">
-                Les fiches actuellement disponibles
-                ne contiennent pas encore suffisamment
-                de coordonnées géographiques.
+                Les fiches disponibles ne contiennent
+                pas encore suffisamment de coordonnées
+                géographiques.
               </div>
 
             </div>
@@ -6667,11 +6958,36 @@ function openNearMe(){
           rows.forEach(
             function(item){
 
-              html +=
-                getResultCard(
-                  item.entity,
-                  item.distance
-                );
+              html += `
+
+                <div
+                  class="box"
+                  style="margin-top:8px;">
+
+                  <div class="bociteAnnuaireTitle">
+                    ${escapeHtml(item.entity.name)}
+                  </div>
+
+                  <div
+                    class="bociteAnnuaireSmall"
+                    style="margin-top:4px;">
+                    À ${item.distance.toFixed(1)} km
+                  </div>
+
+                  <button
+                    type="button"
+                    class="choiceBtn annuaireNearEntityBtn"
+                    data-id="${escapeHtml(item.entity.id)}"
+                    style="
+                      width:100%;
+                      margin-top:7px;
+                    ">
+                    Voir la fiche
+                  </button>
+
+                </div>
+
+              `;
             }
           );
         }
@@ -6698,7 +7014,24 @@ function openNearMe(){
           html,
           function(){
 
-            bindResultActions();
+            document
+              .querySelectorAll(
+                ".annuaireNearEntityBtn"
+              )
+              .forEach(
+                function(button){
+
+                  button.onclick =
+                    function(){
+
+                      openEntity(
+                        button.getAttribute(
+                          "data-id"
+                        )
+                      );
+                    };
+                }
+              );
 
 
             const back =
@@ -6722,88 +7055,19 @@ function openNearMe(){
         );
       },
       {
-        enableHighAccuracy:
-          false,
-
-        timeout:
-          7000,
-
-        maximumAge:
-          300000
+        enableHighAccuracy:false,
+        timeout:7000,
+        maximumAge:300000
       }
     );
 }
 
 
 /* =========================================================
-   SÉCURITÉ ESPACE PROFESSIONNEL
+   FIN DU BLOC 4
    ========================================================= */
 
-function requireDirectoryAccess(
-  actionLabel
-){
-
-  const registration =
-    window.BoCiteArtRegistration;
-
-
-  if(
-    !registration ||
-    typeof registration.securityReady !==
-      "function"
-  ){
-
-    alert(
-      "La sécurisation du compte n'est pas disponible pour le moment."
-    );
-
-    return false;
-  }
-
-
-  if(
-    !registration.securityReady()
-  ){
-
-    alert(
-      "Votre compte doit être sécurisé avant de pouvoir " +
-      String(
-        actionLabel ||
-        "accéder à cet espace professionnel"
-      ) +
-      "."
-    );
-
-    return false;
-  }
-
-
-  if(
-    typeof registration.canAccess ===
-      "function" &&
-    !registration.canAccess(
-      "directory"
-    )
-  ){
-
-    alert(
-      "Vous ne disposez pas de l'autorisation nécessaire pour " +
-      String(
-        actionLabel ||
-        "accéder à cet espace professionnel"
-      ) +
-      "."
-    );
-
-    return false;
-  }
-
-
-  return true;
-}
-
-
-/* =========================================================
+   /* =========================================================
    ESPACE PROFESSIONNEL
    ========================================================= */
 
@@ -7060,58 +7324,6 @@ function openProfessionalDashboard(){
 
 
 /* =========================================================
-   OUVERTURE DU BOUTON PRO DE L'ACCUEIL
-   ========================================================= */
-
-document.addEventListener(
-  "click",
-  function(event){
-
-    const target =
-      event.target;
-
-
-    if(
-      !target ||
-      typeof target.closest !==
-        "function"
-    ){
-
-      return;
-    }
-
-
-    const professionalButton =
-      target.closest(
-        "#annuaireProfessionalBtn"
-      );
-
-
-    if(!professionalButton){
-      return;
-    }
-
-
-    event.preventDefault();
-    event.stopPropagation();
-
-
-    if(
-      typeof event.stopImmediatePropagation ===
-        "function"
-    ){
-
-      event.stopImmediatePropagation();
-    }
-
-
-    openProfessionalDashboard();
-
-  },
-  true
-);
-
- /* =========================================================
    RECHERCHE PROFESSIONNELLE
    ========================================================= */
 
@@ -7288,7 +7500,7 @@ function openProfessionalSearchForm(){
 
 
 /* =========================================================
-   RÉSULTATS DE LA RECHERCHE PROFESSIONNELLE
+   RÉSULTATS PROFESSIONNELS
    ========================================================= */
 
 function openProfessionalSearchResults(
@@ -7307,7 +7519,8 @@ function openProfessionalSearchResults(
 
   const cleanQuery =
     String(
-      query || ""
+      query ||
+      ""
     ).trim();
 
 
@@ -7331,7 +7544,7 @@ function openProfessionalSearchResults(
   renderProfessionalSearchResults(
     cleanQuery,
     existing,
-    existing.length === 0
+    true
   );
 
 
@@ -7372,7 +7585,7 @@ function openProfessionalSearchResults(
       function(error){
 
         console.warn(
-          "Bo'CitéArt : recherche professionnelle réseau indisponible.",
+          "Bo'CitéArt : recherche professionnelle indisponible.",
           error
         );
 
@@ -7386,10 +7599,6 @@ function openProfessionalSearchResults(
     );
 }
 
-
-/* =========================================================
-   AFFICHAGE RÉSULTATS PROFESSIONNELS
-   ========================================================= */
 
 function renderProfessionalSearchResults(
   query,
@@ -7448,10 +7657,10 @@ function renderProfessionalSearchResults(
             searching
               ? (
                   bociteArtLogoText() +
-                  " vérifie également les données disponibles sur le réseau."
+                  " vérifie les données disponibles."
                 )
               : (
-                  "Aucun établissement correspondant n'a été trouvé pour le moment."
+                  "Aucun établissement correspondant n'a été trouvé."
                 )
           }
 
@@ -7478,24 +7687,12 @@ function renderProfessionalSearchResults(
   html += `
 
     <button
-      id="annuaireProResultsHistoryBtn"
-      class="choiceBtn"
-      type="button"
-      style="
-        width:100%;
-        margin-top:10px;
-      ">
-      Mes recherches professionnelles
-    </button>
-
-
-    <button
       id="annuaireProResultsBackBtn"
       class="choiceBtn"
       type="button"
       style="
         width:100%;
-        margin-top:8px;
+        margin-top:10px;
       ">
       Retour au tableau professionnel
     </button>
@@ -7509,19 +7706,6 @@ function renderProfessionalSearchResults(
     function(){
 
       bindResultActions();
-
-
-      const history =
-        getElement(
-          "annuaireProResultsHistoryBtn"
-        );
-
-
-      if(history){
-
-        history.onclick =
-          openProfessionalHistory;
-      }
 
 
       const back =
@@ -7566,12 +7750,6 @@ function openProfessionalHistory(){
 
       <div class="bociteAnnuaireTitle">
         Mes recherches professionnelles
-      </div>
-
-      <div
-        class="bociteAnnuaireText"
-        style="margin-top:6px;">
-        Retrouvez vos recherches sans les retaper.
       </div>
 
     </div>
@@ -7716,6 +7894,7 @@ function openProfessionalHistory(){
                 []
               );
 
+
               openProfessionalHistory();
             }
           };
@@ -7766,13 +7945,6 @@ function openProfessionalNotebook(){
         Mon carnet professionnel
       </div>
 
-      <div
-        class="bociteAnnuaireText"
-        style="margin-top:6px;">
-        Retrouvez les entreprises
-        que vous avez enregistrées.
-      </div>
-
     </div>
 
   `;
@@ -7811,18 +7983,6 @@ function openProfessionalNotebook(){
               ${escapeHtml(item.name)}
             </div>
 
-            ${
-              item.activity
-                ? `
-                    <div
-                      class="bociteAnnuaireText"
-                      style="margin-top:4px;">
-                      ${escapeHtml(item.activity)}
-                    </div>
-                  `
-                : ""
-            }
-
             <div
               class="bociteAnnuaireSmall"
               style="margin-top:4px;">
@@ -7856,22 +8016,6 @@ function openProfessionalNotebook(){
         `;
       }
     );
-
-
-    html += `
-
-      <button
-        id="annuaireNotebookClearBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:9px;
-        ">
-        Tout effacer
-      </button>
-
-    `;
   }
 
 
@@ -7883,7 +8027,7 @@ function openProfessionalNotebook(){
       type="button"
       style="
         width:100%;
-        margin-top:8px;
+        margin-top:9px;
       ">
       Retour au tableau professionnel
     </button>
@@ -7939,10 +8083,12 @@ function openProfessionalNotebook(){
 
                         return (
                           String(
-                            item.id || ""
+                            item.id ||
+                            ""
                           ) !==
                           String(
-                            id || ""
+                            id ||
+                            ""
                           )
                         );
                       }
@@ -7959,34 +8105,6 @@ function openProfessionalNotebook(){
               };
           }
         );
-
-
-      const clear =
-        getElement(
-          "annuaireNotebookClearBtn"
-        );
-
-
-      if(clear){
-
-        clear.onclick =
-          function(){
-
-            if(
-              window.confirm(
-                "Effacer tout le carnet professionnel ?"
-              )
-            ){
-
-              writeStorage(
-                STORAGE.notebook,
-                []
-              );
-
-              openProfessionalNotebook();
-            }
-          };
-      }
 
 
       const back =
@@ -8033,13 +8151,6 @@ function openFollowedCompanies(){
         Entreprises suivies
       </div>
 
-      <div
-        class="bociteAnnuaireText"
-        style="margin-top:6px;">
-        Retrouvez les entreprises
-        que vous souhaitez garder à l'œil.
-      </div>
-
     </div>
 
   `;
@@ -8077,18 +8188,6 @@ function openFollowedCompanies(){
             <div class="bociteAnnuaireTitle">
               ${escapeHtml(item.name)}
             </div>
-
-            ${
-              item.activity
-                ? `
-                    <div
-                      class="bociteAnnuaireText"
-                      style="margin-top:4px;">
-                      ${escapeHtml(item.activity)}
-                    </div>
-                  `
-                : ""
-            }
 
             <div
               class="bociteAnnuaireSmall"
@@ -8276,27 +8375,17 @@ function openBercyInfos(){
 
 
 /* =========================================================
-   FOURNISSEUR FUTUR
+   FOURNISSEUR / DÉMARRAGE LÉGER
    ========================================================= */
 
 annuaire.refreshFromProvider =
 function(){
 
-  /*
-    Aucun balayage global.
-
-    Le chargement réseau est déclenché
-    uniquement lorsqu'un utilisateur
-    effectue une recherche.
-  */
-
   return Promise.resolve({
 
-    updated:
-      false,
+    updated:false,
 
-    preserved:
-      true,
+    preserved:true,
 
     count:
       loadEntities().length,
@@ -8309,7 +8398,7 @@ function(){
 
 
 /* =========================================================
-   API PUBLIQUE DE L'ANNUAIRE
+   API PUBLIQUE
    ========================================================= */
 
 annuaire.openHome =
@@ -8362,7 +8451,7 @@ annuaire.getEntityById =
 
 
 /* =========================================================
-   COMPATIBILITÉ AVEC ENTREPRISE.JS
+   COMPATIBILITÉ ENTREPRISE.JS
    ========================================================= */
 
 if(
@@ -8403,7 +8492,7 @@ module.openProfessionalDirectory =
 
 
 /* =========================================================
-   DÉMARRAGE LÉGER
+   DÉMARRAGE
    ========================================================= */
 
 window.setTimeout(
@@ -8441,8 +8530,8 @@ window.setTimeout(
    ========================================================= */
 
 console.log(
-  "✅ Bo'CitéArt — Annuaire consolidé chargé"
+  "✅ Bo'CitéArt — Annuaire V4 corrigé chargé"
 );
 
 })();
-
+ 
