@@ -34,42 +34,229 @@
      CLÉS DE STOCKAGE
      ===================================================== */
 
-  const STORAGE = {
-    installation:
-      "bociteart_installation_id_v1",
+const STORAGE = {
 
-    activation:
-      "bociteart_activation_v1",
+  installation:
+    "bociteart_installation_id_v1",
 
-    account:
-      "bociteart_account_demo_v1",
+  activation:
+    "bociteart_activation_v1",
 
-    registration:
-      "bociteart_registration_completed_v1",
+  account:
+    "bociteart_account_demo_v1",
 
-    statistics:
-      "bociteart_statistics_queue_v1",
+  registration:
+    "bociteart_registration_completed_v1",
 
-    profile:
-      "bociteart_visit_profile_v1",
+  statistics:
+    "bociteart_statistics_queue_v1",
 
-    commune:
-      "bociteart_declared_commune_v1"
-  };
+  profile:
+    "bociteart_visit_profile_v1",
 
-  const MAX_STATISTICS =
-    250;
+  commune:
+    "bociteart_declared_commune_v1",
 
-  const ALLOWED_CATEGORIES = [
-    "jeune",
-    "citoyen",
-    "commerce",
-    "entreprise",
-    "association",
-    "sport",
-    "ecole",
-    "mairie"
-  ];
+  security:
+    "bociteart_account_security_v1",
+
+  verification:
+    "bociteart_account_verification_v1",
+
+  organization:
+    "bociteart_organization_v1",
+
+  collaborators:
+    "bociteart_collaborators_v1",
+
+  sessions:
+    "bociteart_account_sessions_v1",
+
+  securityLog:
+    "bociteart_security_log_v1"
+
+};
+
+
+const MAX_STATISTICS =
+  250;
+
+
+const MAX_SECURITY_LOG =
+  300;
+
+
+const ALLOWED_CATEGORIES = [
+
+  "jeune",
+  "citoyen",
+  "commerce",
+  "entreprise",
+  "association",
+  "sport",
+  "ecole",
+  "mairie"
+
+];
+
+
+/* =====================================================
+   COMPTES AVEC ORGANISATION
+   ===================================================== */
+
+const ORGANIZATION_CATEGORIES = [
+
+  "commerce",
+  "entreprise",
+  "association",
+  "sport",
+  "ecole",
+  "mairie"
+
+];
+
+
+function isOrganizationCategory(
+  category
+){
+
+  const normalized =
+    normalizeCategory(
+      category
+    );
+
+  return ORGANIZATION_CATEGORIES
+    .includes(
+      normalized
+    );
+}
+
+
+/* =====================================================
+   RÔLES D'ACCÈS
+   ===================================================== */
+
+const ACCESS_ROLES = {
+
+  owner:{
+    label:
+      "Responsable principal",
+
+    permissions:[
+      "all"
+    ]
+  },
+
+  administrator:{
+    label:
+      "Administrateur délégué",
+
+    permissions:[
+      "profile",
+      "messages",
+      "publications",
+      "bocitecoins",
+      "employment",
+      "directory",
+      "sport",
+      "billing",
+      "collaborators"
+    ]
+  },
+
+  communication:{
+    label:
+      "Communication",
+
+    permissions:[
+      "profile",
+      "messages",
+      "publications",
+      "directory"
+    ]
+  },
+
+  employment:{
+    label:
+      "Emploi",
+
+    permissions:[
+      "employment"
+    ]
+  },
+
+  finance:{
+    label:
+      "Gestion / facturation",
+
+    permissions:[
+      "billing",
+      "bocitecoins"
+    ]
+  },
+
+  sport:{
+    label:
+      "Sport / résultats",
+
+    permissions:[
+      "sport",
+      "messages",
+      "publications"
+    ]
+  },
+
+  custom:{
+    label:
+      "Accès personnalisé",
+
+    permissions:[]
+  }
+
+};
+
+
+/* =====================================================
+   PERMISSIONS DISPONIBLES
+   ===================================================== */
+
+const ACCESS_PERMISSIONS = {
+
+  profile:
+    "Modifier la fiche et les informations",
+
+  messages:
+    "Publier le mot du jour et les informations",
+
+  publications:
+    "Créer et gérer les publications / publicités",
+
+  bocitecoins:
+    "Gérer les opérations bocitecoins",
+
+  employment:
+    "Gérer l'emploi et les candidatures",
+
+  directory:
+    "Gérer la fiche annuaire",
+
+  sport:
+    "Publier résultats et résumés sportifs",
+
+  billing:
+    "Consulter et gérer la facturation",
+
+  collaborators:
+    "Gérer les collaborateurs"
+
+};
+
+/* =====================================================
+   VERSION DE SÉCURITÉ
+   ===================================================== */
+
+const ACCOUNT_SECURITY_VERSION =
+  "2";
 
   /* =====================================================
      OUTILS
@@ -236,6 +423,2097 @@
       return false;
     }
   }
+
+/* =====================================================
+   SÉCURITÉ DES COMPTES
+   CITOYENS + ORGANISATIONS + COLLABORATEURS
+   ===================================================== */
+
+function normalizePhone(value){
+
+  return String(value || "")
+    .replace(/[^\d+]/g, "")
+    .trim();
+}
+
+
+/* =====================================================
+   COMPATIBILITÉ
+   ===================================================== */
+
+/*
+  Certains blocs déjà installés utilisent encore
+  isProfessionalCategory().
+
+  On le conserve comme alias pour ne rien casser.
+*/
+
+function isProfessionalCategory(
+  category
+){
+
+  return isOrganizationCategory(
+    category
+  );
+}
+
+
+/* =====================================================
+   SÉCURITÉ PRINCIPALE DU COMPTE
+   ===================================================== */
+
+function getAccountSecurity(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.security
+    );
+
+  const data =
+    saved
+      ? safeParse(
+          saved,
+          {}
+        )
+      : {};
+
+  return (
+    data &&
+    typeof data === "object"
+  )
+    ? data
+    : {};
+}
+
+
+function saveAccountSecurity(
+  data
+){
+
+  const source =
+    data &&
+    typeof data === "object"
+      ? data
+      : {};
+
+  source.version =
+    ACCOUNT_SECURITY_VERSION;
+
+  source.updatedAt =
+    new Date().toISOString();
+
+  setLocalStorageItem(
+    STORAGE.security,
+    JSON.stringify(source)
+  );
+
+  return source;
+}
+
+
+/* =====================================================
+   VÉRIFICATIONS E-MAIL / TÉLÉPHONE
+   ===================================================== */
+
+function getAccountVerification(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.verification
+    );
+
+  const data =
+    saved
+      ? safeParse(
+          saved,
+          {}
+        )
+      : {};
+
+  return (
+    data &&
+    typeof data === "object"
+  )
+    ? data
+    : {};
+}
+
+
+function saveAccountVerification(
+  data
+){
+
+  const source =
+    data &&
+    typeof data === "object"
+      ? data
+      : {};
+
+  source.updatedAt =
+    new Date().toISOString();
+
+  setLocalStorageItem(
+    STORAGE.verification,
+    JSON.stringify(source)
+  );
+
+  return source;
+}
+
+
+/* =====================================================
+   ORGANISATION
+   ===================================================== */
+
+function getOrganization(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.organization
+    );
+
+  const data =
+    saved
+      ? safeParse(
+          saved,
+          {}
+        )
+      : {};
+
+  return (
+    data &&
+    typeof data === "object"
+  )
+    ? data
+    : {};
+}
+
+
+function saveOrganization(
+  data
+){
+
+  const source =
+    data &&
+    typeof data === "object"
+      ? data
+      : {};
+
+  source.updatedAt =
+    new Date().toISOString();
+
+  setLocalStorageItem(
+    STORAGE.organization,
+    JSON.stringify(source)
+  );
+
+  return source;
+}
+
+
+/* =====================================================
+   COLLABORATEURS
+   ===================================================== */
+
+function loadCollaborators(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.collaborators
+    );
+
+  const rows =
+    saved
+      ? safeParse(
+          saved,
+          []
+        )
+      : [];
+
+  return Array.isArray(rows)
+    ? rows
+    : [];
+}
+
+
+function saveCollaborators(
+  rows
+){
+
+  const safeRows =
+    Array.isArray(rows)
+      ? rows
+      : [];
+
+  setLocalStorageItem(
+    STORAGE.collaborators,
+    JSON.stringify(safeRows)
+  );
+
+  return safeRows;
+}
+
+
+function getCollaboratorById(
+  collaboratorId
+){
+
+  return loadCollaborators()
+    .find(function(item){
+
+      return (
+        String(item.id) ===
+        String(collaboratorId)
+      );
+    }) || null;
+}
+
+
+/* =====================================================
+   JOURNAL DE SÉCURITÉ
+   ===================================================== */
+
+function loadSecurityLog(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.securityLog
+    );
+
+  const rows =
+    saved
+      ? safeParse(
+          saved,
+          []
+        )
+      : [];
+
+  return Array.isArray(rows)
+    ? rows
+    : [];
+}
+
+
+function addSecurityLog(
+  type,
+  details
+){
+
+  const rows =
+    loadSecurityLog();
+
+  rows.unshift({
+
+    id:
+      createUniqueId(
+        "bociteart-security"
+      ),
+
+    type:
+      normalizeText(
+        type ||
+        "information"
+      ),
+
+    details:
+      details &&
+      typeof details === "object"
+        ? details
+        : {},
+
+    date:
+      new Date().toISOString()
+
+  });
+
+  setLocalStorageItem(
+    STORAGE.securityLog,
+    JSON.stringify(
+      rows.slice(
+        0,
+        MAX_SECURITY_LOG
+      )
+    )
+  );
+}
+
+
+/* =====================================================
+   SESSIONS
+   ===================================================== */
+
+function loadSessions(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.sessions
+    );
+
+  const rows =
+    saved
+      ? safeParse(
+          saved,
+          []
+        )
+      : [];
+
+  return Array.isArray(rows)
+    ? rows
+    : [];
+}
+
+
+function saveSessions(
+  rows
+){
+
+  const safeRows =
+    Array.isArray(rows)
+      ? rows
+      : [];
+
+  setLocalStorageItem(
+    STORAGE.sessions,
+    JSON.stringify(safeRows)
+  );
+
+  return safeRows;
+}
+
+
+function revokeCollaboratorSessions(
+  collaboratorId
+){
+
+  const rows =
+    loadSessions()
+      .map(function(session){
+
+        if(
+          String(
+            session.collaboratorId ||
+            ""
+          ) ===
+          String(
+            collaboratorId
+          )
+        ){
+
+          return Object.assign(
+            {},
+            session,
+            {
+              active:false,
+              revokedAt:
+                new Date().toISOString()
+            }
+          );
+        }
+
+        return session;
+      });
+
+  saveSessions(
+    rows
+  );
+
+  addSecurityLog(
+    "collaborator_sessions_revoked",
+    {
+      collaboratorId:
+        collaboratorId
+    }
+  );
+
+  return rows;
+}
+
+
+/* =====================================================
+   COUPURE IMMÉDIATE D'UN COLLABORATEUR
+   ===================================================== */
+
+function revokeCollaboratorAccess(
+  collaboratorId
+){
+
+  const rows =
+    loadCollaborators();
+
+  const collaborator =
+    rows.find(function(item){
+
+      return (
+        String(item.id) ===
+        String(collaboratorId)
+      );
+    });
+
+  if(!collaborator){
+    return false;
+  }
+
+  collaborator.enabled =
+    false;
+
+  collaborator.revokedAt =
+    new Date().toISOString();
+
+  collaborator.updatedAt =
+    new Date().toISOString();
+
+  saveCollaborators(
+    rows
+  );
+
+  revokeCollaboratorSessions(
+    collaboratorId
+  );
+
+  addSecurityLog(
+    "collaborator_access_revoked",
+    {
+      collaboratorId:
+        collaboratorId,
+
+      name:
+        collaborator.displayName ||
+        ""
+    }
+  );
+
+  return true;
+}
+
+
+/* =====================================================
+   CODES TEMPORAIRES
+   ===================================================== */
+
+function createNumericCode(
+  length
+){
+
+  const size =
+    Number(length) ||
+    6;
+
+  const digits =
+    [];
+
+  if(
+    window.crypto &&
+    typeof window.crypto.getRandomValues ===
+    "function"
+  ){
+
+    const values =
+      new Uint32Array(
+        size
+      );
+
+    window.crypto
+      .getRandomValues(
+        values
+      );
+
+    for(
+      let index = 0;
+      index < size;
+      index += 1
+    ){
+
+      digits.push(
+        String(
+          values[index] %
+          10
+        )
+      );
+    }
+
+    return digits.join("");
+  }
+
+
+  /*
+    Secours uniquement pour la démo.
+
+    En production :
+    génération exclusivement côté serveur.
+  */
+
+  for(
+    let index = 0;
+    index < size;
+    index += 1
+  ){
+
+    digits.push(
+      String(
+        Math.floor(
+          Math.random() *
+          10
+        )
+      )
+    );
+  }
+
+  return digits.join("");
+}
+
+
+/* =====================================================
+   EMPREINTE LOCALE DES SECRETS
+   ===================================================== */
+
+/*
+  Démonstration uniquement.
+
+  Aucun mot de passe n'est conservé en clair.
+
+  En production :
+  mots de passe, codes temporaires,
+  récupération et authentification
+  seront gérés côté serveur.
+*/
+
+function hashSecret(
+  value
+){
+
+  const clean =
+    String(
+      value ||
+      ""
+    );
+
+  if(!clean){
+
+    return Promise.resolve(
+      ""
+    );
+  }
+
+  if(
+    !window.crypto ||
+    !window.crypto.subtle ||
+    typeof TextEncoder ===
+    "undefined"
+  ){
+
+    return Promise.reject(
+      new Error(
+        "Sécurité cryptographique indisponible."
+      )
+    );
+  }
+
+  const encoded =
+    new TextEncoder()
+      .encode(
+        clean
+      );
+
+  return window.crypto.subtle
+    .digest(
+      "SHA-256",
+      encoded
+    )
+    .then(function(buffer){
+
+      return Array.from(
+        new Uint8Array(
+          buffer
+        )
+      )
+      .map(function(byte){
+
+        return byte
+          .toString(16)
+          .padStart(
+            2,
+            "0"
+          );
+      })
+      .join("");
+    });
+}
+
+
+function verifySecret(
+  value,
+  expectedHash
+){
+
+  if(
+    !value ||
+    !expectedHash
+  ){
+
+    return Promise.resolve(
+      false
+    );
+  }
+
+  return hashSecret(
+    value
+  )
+  .then(function(hash){
+
+    return (
+      hash ===
+      expectedHash
+    );
+  });
+}
+
+
+/* =====================================================
+   ÉTAT DU COMPTE
+   ===================================================== */
+
+function accountSecurityReady(){
+
+  const security =
+    getAccountSecurity();
+
+  return Boolean(
+    security &&
+    security.activated === true &&
+    security.passwordConfigured === true
+  );
+}
+
+
+function accountEmailVerified(){
+
+  const verification =
+    getAccountVerification();
+
+  return (
+    verification.emailVerified ===
+    true
+  );
+}
+
+
+function accountPhoneVerified(){
+
+  const verification =
+    getAccountVerification();
+
+  return (
+    verification.phoneVerified ===
+    true
+  );
+}
+
+
+/* =====================================================
+   COMPATIBILITÉ AVEC LES BLOCS DÉJÀ POSÉS
+   ===================================================== */
+
+function getProfessionalSecurity(){
+
+  return getAccountSecurity();
+}
+
+
+function saveProfessionalSecurity(
+  data
+){
+
+  return saveAccountSecurity(
+    data
+  );
+}
+
+
+function getProfessionalVerification(){
+
+  return getAccountVerification();
+}
+
+
+function saveProfessionalVerification(
+  data
+){
+
+  return saveAccountVerification(
+    data
+  );
+}
+
+
+function professionalSecurityReady(){
+
+  return accountSecurityReady();
+}
+
+
+function professionalEmailVerified(){
+
+  return accountEmailVerified();
+}
+
+
+function professionalPhoneVerified(){
+
+  return accountPhoneVerified();
+}
+
+
+/* =====================================================
+   PASSKEY / BIOMÉTRIE / 2FA
+   ===================================================== */
+
+function passkeyAvailable(){
+
+  return Boolean(
+    window.PublicKeyCredential &&
+    navigator.credentials
+  );
+}
+
+
+function getSecurityCapabilities(){
+
+  return {
+
+    password:
+      true,
+
+    emailCode:
+      true,
+
+    smsCode:
+      true,
+
+    twoFactor:
+      true,
+
+    passkey:
+      passkeyAvailable(),
+
+    biometric:
+      passkeyAvailable(),
+
+    collaboratorManagement:
+      true
+
+  };
+}
+
+function getProfessionalSecurityCapabilities(){
+
+  return getSecurityCapabilities();
+}
+
+   /* =====================================================
+   ORGANISATION ET RESPONSABLE PRINCIPAL
+   ===================================================== */
+
+function getRolePermissions(
+  role,
+  customPermissions
+){
+
+  const cleanRole =
+    String(
+      role ||
+      "custom"
+    ).trim();
+
+  const roleConfig =
+    ACCESS_ROLES[
+      cleanRole
+    ] ||
+    ACCESS_ROLES.custom;
+
+  if(
+    roleConfig.permissions
+      .includes("all")
+  ){
+
+    return [
+      "all"
+    ];
+  }
+
+  if(
+    cleanRole ===
+    "custom"
+  ){
+
+    return Array.from(
+      new Set(
+        Array.isArray(
+          customPermissions
+        )
+          ? customPermissions.filter(
+              function(permission){
+
+                return Object.prototype
+                  .hasOwnProperty
+                  .call(
+                    ACCESS_PERMISSIONS,
+                    permission
+                  );
+              }
+            )
+          : []
+      )
+    );
+  }
+
+  return Array.from(
+    new Set(
+      roleConfig.permissions
+    )
+  );
+}
+
+
+function ensureOrganizationForAccount(
+  account
+){
+
+  if(
+    !account ||
+    !isOrganizationCategory(
+      account.category
+    )
+  ){
+
+    return null;
+  }
+
+const existing =
+  getOrganization();
+
+if(
+  existing &&
+  existing.organizationId
+){
+
+  if(
+    String(
+      existing.ownerAccountId ||
+      ""
+    ) ===
+    String(
+      account.accountId ||
+      ""
+    )
+  ){
+
+    return existing;
+  }
+
+  removeLocalStorageItem(
+    STORAGE.organization
+  );
+
+  removeLocalStorageItem(
+    STORAGE.collaborators
+  );
+
+  removeLocalStorageItem(
+    STORAGE.sessions
+  );
+}
+
+  const organization = {
+
+    organizationId:
+      createUniqueId(
+        "bociteart-organization"
+      ),
+
+    category:
+      account.category,
+
+    name:
+      account.displayName ||
+      "",
+
+    commune:
+      account.commune ||
+      "",
+
+    ownerAccountId:
+      account.accountId,
+
+    ownerDisplayName:
+      account.displayName ||
+      "",
+
+    ownerEmail:
+      account.email ||
+      "",
+
+    ownerPhone:
+      account.phone ||
+      "",
+
+    active:
+      true,
+
+    createdAt:
+      new Date().toISOString(),
+
+    updatedAt:
+      new Date().toISOString(),
+
+    version:
+      "1"
+  };
+
+  saveOrganization(
+    organization
+  );
+
+  addSecurityLog(
+    "organization_created",
+    {
+      organizationId:
+        organization.organizationId,
+
+      ownerAccountId:
+        account.accountId,
+
+      category:
+        account.category
+    }
+  );
+
+  return organization;
+}
+
+
+/* =====================================================
+   RESPONSABLE PRINCIPAL
+   ===================================================== */
+
+function isOrganizationOwner(
+  accountId
+){
+
+  const organization =
+    getOrganization();
+
+  if(
+    !organization ||
+    !organization.ownerAccountId
+  ){
+
+    return false;
+  }
+
+  return (
+    String(
+      organization.ownerAccountId
+    ) ===
+    String(
+      accountId
+    )
+  );
+}
+
+
+/*
+  Le responsable principal possède
+  toujours tous les droits.
+
+  Il ne doit jamais dépendre
+  d'une fiche collaborateur.
+*/
+
+function getOwnerAccess(){
+
+  const organization =
+    getOrganization();
+
+  if(
+    !organization ||
+    !organization.ownerAccountId
+  ){
+
+    return null;
+  }
+
+  return {
+
+    accountId:
+      organization.ownerAccountId,
+
+    role:
+      "owner",
+
+    permissions:[
+      "all"
+    ],
+
+    enabled:
+      true
+  };
+}
+
+
+/* =====================================================
+   PERMISSIONS
+   ===================================================== */
+
+function hasAccessPermission(
+  permissions,
+  permission
+){
+
+  const rows =
+    Array.isArray(
+      permissions
+    )
+      ? permissions
+      : [];
+
+  return (
+    rows.includes(
+      "all"
+    ) ||
+    rows.includes(
+      permission
+    )
+  );
+}
+
+
+function collaboratorHasPermission(
+  collaborator,
+  permission
+){
+
+  if(
+    !collaborator ||
+    collaborator.enabled !== true ||
+    collaborator.invitationAccepted !== true
+  ){
+
+    return false;
+  }
+
+  return hasAccessPermission(
+    collaborator.permissions,
+    permission
+  );
+}
+
+
+/* =====================================================
+   CRÉATION D'UN COLLABORATEUR
+   ===================================================== */
+
+function createCollaboratorAccess(
+  data
+){
+
+  const source =
+    data &&
+    typeof data === "object"
+      ? data
+      : {};
+
+  const organization =
+    getOrganization();
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+
+    return Promise.reject(
+      new Error(
+        "Organisation introuvable."
+      )
+    );
+  }
+
+  const displayName =
+    normalizeText(
+      source.displayName
+    );
+
+  const email =
+    normalizeEmail(
+      source.email
+    );
+
+  const phone =
+    normalizePhone(
+      source.phone
+    );
+
+  const role =
+    ACCESS_ROLES[
+      source.role
+    ]
+      ? source.role
+      : "custom";
+
+  const permissions =
+    getRolePermissions(
+      role,
+      source.permissions
+    );
+
+  if(
+    !displayName ||
+    (
+      !email &&
+      !phone
+    )
+  ){
+
+    return Promise.reject(
+      new Error(
+        "Nom et moyen de contact obligatoires."
+      )
+    );
+  }
+
+
+  /*
+    Code d'invitation de démonstration.
+
+    En production :
+    génération, expiration et validation
+    exclusivement côté serveur.
+  */
+
+  const invitationCode =
+    createNumericCode(6);
+
+
+  return hashSecret(
+    invitationCode
+  )
+  .then(function(
+    invitationCodeHash
+  ){
+
+    const collaborators =
+      loadCollaborators();
+
+    const collaborator = {
+
+      id:
+        createUniqueId(
+          "bociteart-collaborator"
+        ),
+
+      organizationId:
+        organization.organizationId,
+
+      displayName:
+        displayName,
+
+      email:
+        email,
+
+      phone:
+        phone,
+
+      role:
+        role,
+
+      permissions:
+        permissions,
+
+      enabled:
+        true,
+
+      invitationAccepted:
+        false,
+
+      invitationCodeHash:
+        invitationCodeHash,
+
+      invitedAt:
+        new Date().toISOString(),
+
+      acceptedAt:
+        null,
+
+      revokedAt:
+        null,
+
+      updatedAt:
+        new Date().toISOString(),
+
+      version:
+        "1"
+    };
+
+
+    collaborators.push(
+      collaborator
+    );
+
+    saveCollaborators(
+      collaborators
+    );
+
+
+    addSecurityLog(
+      "collaborator_invited",
+      {
+        collaboratorId:
+          collaborator.id,
+
+        organizationId:
+          organization.organizationId,
+
+        displayName:
+          collaborator.displayName,
+
+        role:
+          collaborator.role,
+
+        permissions:
+          collaborator.permissions
+      }
+    );
+
+
+    /*
+      On renvoie le code uniquement
+      pour pouvoir l'afficher dans la démo.
+
+      Il n'est pas enregistré en clair.
+    */
+
+    return {
+
+      collaborator:
+        collaborator,
+
+      invitationCode:
+        invitationCode
+    };
+  });
+}
+
+
+/* =====================================================
+   ACCEPTATION DE L'INVITATION
+   ===================================================== */
+
+function acceptCollaboratorInvitation(
+  collaboratorId,
+  enteredCode
+){
+
+  const collaborators =
+    loadCollaborators();
+
+  const collaborator =
+    collaborators.find(
+      function(item){
+
+        return (
+          String(
+            item.id
+          ) ===
+          String(
+            collaboratorId
+          )
+        );
+      }
+    );
+
+  if(
+    !collaborator ||
+    collaborator.enabled !==
+    true
+  ){
+
+    return Promise.resolve(
+      false
+    );
+  }
+
+
+  return verifySecret(
+    enteredCode,
+    collaborator.invitationCodeHash
+  )
+  .then(function(valid){
+
+    if(!valid){
+      return false;
+    }
+
+    collaborator.invitationAccepted =
+      true;
+
+    collaborator.invitationCodeHash =
+      "";
+
+    collaborator.acceptedAt =
+      new Date().toISOString();
+
+    collaborator.updatedAt =
+      new Date().toISOString();
+
+
+    saveCollaborators(
+      collaborators
+    );
+
+
+    addSecurityLog(
+      "collaborator_invitation_accepted",
+      {
+        collaboratorId:
+          collaborator.id
+      }
+    );
+
+
+    return true;
+  });
+}
+
+
+/* =====================================================
+   MODIFICATION DES DROITS
+   ===================================================== */
+
+function updateCollaboratorAccess(
+  collaboratorId,
+  changes
+){
+
+  const collaborators =
+    loadCollaborators();
+
+  const collaborator =
+    collaborators.find(
+      function(item){
+
+        return (
+          String(
+            item.id
+          ) ===
+          String(
+            collaboratorId
+          )
+        );
+      }
+    );
+
+  if(!collaborator){
+    return null;
+  }
+
+  const source =
+    changes &&
+    typeof changes === "object"
+      ? changes
+      : {};
+
+
+  if(
+    source.displayName !==
+    undefined
+  ){
+
+    collaborator.displayName =
+      normalizeText(
+        source.displayName
+      );
+  }
+
+
+  if(
+    source.email !==
+    undefined
+  ){
+
+    collaborator.email =
+      normalizeEmail(
+        source.email
+      );
+  }
+
+
+  if(
+    source.phone !==
+    undefined
+  ){
+
+    collaborator.phone =
+      normalizePhone(
+        source.phone
+      );
+  }
+
+
+  if(
+    source.role !==
+    undefined
+  ){
+
+    const role =
+      ACCESS_ROLES[
+        source.role
+      ]
+        ? source.role
+        : "custom";
+
+    collaborator.role =
+      role;
+
+    collaborator.permissions =
+      getRolePermissions(
+        role,
+        source.permissions
+      );
+  }
+
+
+  if(
+    source.permissions !==
+    undefined &&
+    collaborator.role ===
+    "custom"
+  ){
+
+    collaborator.permissions =
+      getRolePermissions(
+        "custom",
+        source.permissions
+      );
+  }
+
+
+  collaborator.updatedAt =
+    new Date().toISOString();
+
+
+  saveCollaborators(
+    collaborators
+  );
+
+
+  addSecurityLog(
+    "collaborator_access_updated",
+    {
+      collaboratorId:
+        collaborator.id,
+
+      role:
+        collaborator.role,
+
+      permissions:
+        collaborator.permissions
+    }
+  );
+
+
+  return collaborator;
+}
+
+
+/* =====================================================
+   RÉACTIVER UN COLLABORATEUR
+   ===================================================== */
+
+function restoreCollaboratorAccess(
+  collaboratorId
+){
+
+  const collaborators =
+    loadCollaborators();
+
+  const collaborator =
+    collaborators.find(
+      function(item){
+
+        return (
+          String(
+            item.id
+          ) ===
+          String(
+            collaboratorId
+          )
+        );
+      }
+    );
+
+  if(!collaborator){
+    return false;
+  }
+
+  collaborator.enabled =
+    true;
+
+  collaborator.revokedAt =
+    null;
+
+  collaborator.updatedAt =
+    new Date().toISOString();
+
+
+  saveCollaborators(
+    collaborators
+  );
+
+
+  addSecurityLog(
+    "collaborator_access_restored",
+    {
+      collaboratorId:
+        collaborator.id
+    }
+  );
+
+
+  return true;
+}
+
+
+/* =====================================================
+   SUPPRESSION DÉFINITIVE
+   ===================================================== */
+
+/*
+  La coupure immédiate doit être privilégiée.
+
+  La suppression définitive est distincte
+  afin de conserver la traçabilité
+  tant qu'elle est utile.
+*/
+
+function permanentlyDeleteCollaborator(
+  collaboratorId
+){
+
+  const previous =
+    getCollaboratorById(
+      collaboratorId
+    );
+
+  if(!previous){
+    return false;
+  }
+
+
+  revokeCollaboratorSessions(
+    collaboratorId
+  );
+
+
+  const collaborators =
+    loadCollaborators()
+      .filter(
+        function(item){
+
+          return (
+            String(
+              item.id
+            ) !==
+            String(
+              collaboratorId
+            )
+          );
+        }
+      );
+
+
+  saveCollaborators(
+    collaborators
+  );
+
+
+  addSecurityLog(
+    "collaborator_deleted",
+    {
+      collaboratorId:
+        collaboratorId,
+
+      displayName:
+        previous.displayName ||
+        ""
+    }
+  );
+
+
+  return true;
+}
+
+
+/* =====================================================
+   LISTE DES COLLABORATEURS ACTIFS
+   ===================================================== */
+
+function getActiveCollaborators(){
+
+  return loadCollaborators()
+    .filter(
+      function(item){
+
+        return (
+          item.enabled === true &&
+          item.invitationAccepted === true
+        );
+      }
+    );
+}
+
+   /* =====================================================
+   CONTRÔLE CENTRAL DES ACCÈS PRIVÉS
+   ===================================================== */
+
+function getCurrentAccessContext(){
+
+  const account =
+    getAccount();
+
+  const organization =
+    getOrganization();
+
+  if(!account){
+
+    return {
+      authenticated:false,
+      account:null,
+      organization:null,
+      role:null,
+      permissions:[],
+      collaborator:null
+    };
+  }
+
+
+  /*
+    Cas du responsable principal.
+  */
+
+  if(
+    organization &&
+    organization.organizationId &&
+    String(
+      organization.ownerAccountId ||
+      ""
+    ) ===
+    String(
+      account.accountId ||
+      ""
+    )
+  ){
+
+    return {
+
+      authenticated:
+        accountSecurityReady(),
+
+      account:
+        account,
+
+      organization:
+        organization,
+
+      role:
+        "owner",
+
+      permissions:[
+        "all"
+      ],
+
+      collaborator:
+        null
+    };
+  }
+
+
+  /*
+    Cas d'un compte personnel
+    sans organisation.
+  */
+
+  if(
+    !isOrganizationCategory(
+      account.category
+    )
+  ){
+
+    return {
+
+      authenticated:
+        accountSecurityReady(),
+
+      account:
+        account,
+
+      organization:
+        null,
+
+      role:
+        "personal",
+
+      permissions:[
+        "profile"
+      ],
+
+      collaborator:
+        null
+    };
+  }
+
+
+  /*
+    Si plus tard un collaborateur
+    ouvre une session distincte,
+    son identifiant de collaborateur
+    pourra être placé dans la session active.
+
+    Pour la démo, on prépare déjà
+    le contrôle sans simuler de faux accès.
+  */
+
+  const activeSession =
+    loadSessions()
+      .find(function(session){
+
+        return (
+          session &&
+          session.active === true &&
+          session.accountId ===
+          account.accountId
+        );
+      });
+
+
+  if(
+    activeSession &&
+    activeSession.collaboratorId
+  ){
+
+    const collaborator =
+      getCollaboratorById(
+        activeSession.collaboratorId
+      );
+
+    if(
+      collaborator &&
+      collaborator.enabled === true &&
+      collaborator.invitationAccepted === true
+    ){
+
+      return {
+
+        authenticated:
+          accountSecurityReady(),
+
+        account:
+          account,
+
+        organization:
+          organization,
+
+        role:
+          collaborator.role ||
+          "custom",
+
+        permissions:
+          Array.isArray(
+            collaborator.permissions
+          )
+            ? collaborator.permissions
+            : [],
+
+        collaborator:
+          collaborator
+      };
+    }
+  }
+
+
+  return {
+
+    authenticated:false,
+
+    account:
+      account,
+
+    organization:
+      organization || null,
+
+    role:
+      null,
+
+    permissions:[],
+
+    collaborator:
+      null
+  };
+}
+
+
+/* =====================================================
+   AUTORISATION D'UNE ACTION
+   ===================================================== */
+
+function canAccess(
+  permission
+){
+
+  const context =
+    getCurrentAccessContext();
+
+  if(
+    !context.authenticated
+  ){
+
+    return false;
+  }
+
+  if(
+    context.permissions.includes(
+      "all"
+    )
+  ){
+
+    return true;
+  }
+
+  return context.permissions
+    .includes(
+      permission
+    );
+}
+
+
+/* =====================================================
+   CONTRÔLE D'UNE ACTION PRIVÉE
+   ===================================================== */
+
+function requireAccess(
+  permission
+){
+
+  const allowed =
+    canAccess(
+      permission
+    );
+
+  if(!allowed){
+
+    addSecurityLog(
+      "access_refused",
+      {
+        permission:
+          permission || "",
+
+        accountId:
+          getAccount()
+            ? getAccount().accountId
+            : ""
+      }
+    );
+  }
+
+  return allowed;
+}
+
+
+/* =====================================================
+   CRÉATION D'UNE SESSION LOCALE
+   ===================================================== */
+
+function createSession(
+  data
+){
+
+  const source =
+    data &&
+    typeof data === "object"
+      ? data
+      : {};
+
+  const account =
+    getAccount();
+
+  if(!account){
+    return null;
+  }
+
+  const rows =
+    loadSessions();
+
+  const session = {
+
+    id:
+      createUniqueId(
+        "bociteart-session"
+      ),
+
+    accountId:
+      account.accountId,
+
+    collaboratorId:
+      source.collaboratorId ||
+      null,
+
+    active:
+      true,
+
+    createdAt:
+      new Date().toISOString(),
+
+    lastSeenAt:
+      new Date().toISOString(),
+
+    revokedAt:
+      null,
+
+    version:
+      "1"
+  };
+
+  rows.push(
+    session
+  );
+
+  saveSessions(
+    rows
+  );
+
+  addSecurityLog(
+    "session_created",
+    {
+      sessionId:
+        session.id,
+
+      accountId:
+        session.accountId,
+
+      collaboratorId:
+        session.collaboratorId
+    }
+  );
+
+  return session;
+}
+
+
+/* =====================================================
+   FERMETURE D'UNE SESSION
+   ===================================================== */
+
+function revokeSession(
+  sessionId
+){
+
+  const rows =
+    loadSessions()
+      .map(function(session){
+
+        if(
+          String(
+            session.id ||
+            ""
+          ) ===
+          String(
+            sessionId ||
+            ""
+          )
+        ){
+
+          return Object.assign(
+            {},
+            session,
+            {
+              active:false,
+
+              revokedAt:
+                new Date().toISOString()
+            }
+          );
+        }
+
+        return session;
+      });
+
+  saveSessions(
+    rows
+  );
+
+  addSecurityLog(
+    "session_revoked",
+    {
+      sessionId:
+        sessionId
+    }
+  );
+
+  return true;
+}
+
+
+/* =====================================================
+   COUPURE DE TOUTES LES SESSIONS
+   D'UN COMPTE
+   ===================================================== */
+
+function revokeAllAccountSessions(
+  accountId
+){
+
+  const rows =
+    loadSessions()
+      .map(function(session){
+
+        if(
+          String(
+            session.accountId ||
+            ""
+          ) ===
+          String(
+            accountId ||
+            ""
+          )
+        ){
+
+          return Object.assign(
+            {},
+            session,
+            {
+              active:false,
+
+              revokedAt:
+                new Date().toISOString()
+            }
+          );
+        }
+
+        return session;
+      });
+
+  saveSessions(
+    rows
+  );
+
+  addSecurityLog(
+    "account_sessions_revoked",
+    {
+      accountId:
+        accountId
+    }
+  );
+
+  return rows;
+}
 
  function getLogoHtml(){
 
@@ -844,97 +3122,173 @@
      COMPTE LOCAL
      ===================================================== */
 
-  function sanitizeAccount(data){
+ function sanitizeAccount(data){
 
-    const source =
-      data &&
-      typeof data === "object"
-        ? data
-        : {};
+  const source =
+    data &&
+    typeof data === "object"
+      ? data
+      : {};
 
-    return {
-      accountId:
-        source.accountId ||
-        createUniqueId(
-          "bociteart-account"
-        ),
-
-      displayName:
-        normalizeText(
-          source.displayName
-        ),
-
-      email:
-        normalizeEmail(
-          source.email
-        ),
-
-      category:
-        normalizeCategory(
-          source.category ||
-          source.profile
-        ),
-
-      commune:
-        normalizeText(
-          source.commune
-        ),
-
-      createdAt:
-        source.createdAt ||
-        new Date().toISOString(),
-
-      updatedAt:
-        new Date().toISOString(),
-
-      version:
-        "1"
-    };
-  }
-
-  function createAccount(data){
-
-    const account =
-      sanitizeAccount(data);
-
-    setLocalStorageItem(
-      STORAGE.account,
-      JSON.stringify(account)
+  const category =
+    normalizeCategory(
+      source.category ||
+      source.profile
     );
 
-    setLocalStorageItem(
-      STORAGE.registration,
-      "true"
+  return {
+
+    accountId:
+      source.accountId ||
+      createUniqueId(
+        "bociteart-account"
+      ),
+
+    displayName:
+      normalizeText(
+        source.displayName
+      ),
+
+    email:
+      normalizeEmail(
+        source.email
+      ),
+
+    phone:
+      normalizePhone(
+        source.phone
+      ),
+
+    category:
+      category,
+
+    isProfessional:
+      isProfessionalCategory(
+        category
+      ),
+
+    commune:
+      normalizeText(
+        source.commune
+      ),
+
+  securityConfigured:
+  Boolean(
+    source.securityConfigured
+  ),
+
+professionalSecurityConfigured:
+  Boolean(
+    source.professionalSecurityConfigured
+  ),
+    createdAt:
+      source.createdAt ||
+      new Date().toISOString(),
+
+    updatedAt:
+      new Date().toISOString(),
+
+    version:
+      "2"
+  };
+}
+
+function createAccount(data){
+
+  const account =
+    sanitizeAccount(
+      data
     );
 
-    saveDeclaredProfile(
-      account.category
-    );
 
-    saveDeclaredCommune(
+  /*
+    Enregistrement du compte.
+
+    IMPORTANT :
+    l'inscription n'est pas encore déclarée
+    totalement terminée ici.
+
+    Elle le sera seulement après
+    la sécurisation du compte.
+  */
+
+  setLocalStorageItem(
+    STORAGE.account,
+    JSON.stringify(
+      account
+    )
+  );
+
+
+  saveDeclaredProfile(
+    account.category
+  );
+
+
+  saveDeclaredCommune(
+    account.commune
+  );
+
+
+  activateInstallation({
+    category:
+      account.category,
+
+    commune:
       account.commune
+  });
+
+
+  /*
+    Pour une organisation :
+    la personne qui crée le compte
+    devient automatiquement
+    Responsable principal.
+  */
+
+  if(
+    isOrganizationCategory(
+      account.category
+    )
+  ){
+
+    ensureOrganizationForAccount(
+      account
     );
-
-    activateInstallation({
-      category:
-        account.category,
-
-      commune:
-        account.commune
-    });
-
-    addStatistic({
-      type:"inscription_terminee",
-
-      category:
-        account.category,
-
-      commune:
-        account.commune
-    });
-
-    return account;
   }
+
+
+  addStatistic({
+    type:
+      "inscription_commencee",
+
+    category:
+      account.category,
+
+    commune:
+      account.commune
+  });
+
+
+  addSecurityLog(
+    "account_created",
+    {
+      accountId:
+        account.accountId,
+
+      category:
+        account.category,
+
+      organization:
+        isOrganizationCategory(
+          account.category
+        )
+    }
+  );
+
+
+  return account;
+}
 
   function updateAccount(data){
 
@@ -979,18 +3333,62 @@
     );
   }
 
-  function clearAccount(){
+function clearAccount(){
 
-    removeLocalStorageItem(
-      STORAGE.account
-    );
+  /*
+    Suppression complète des données
+    liées au compte présent sur cet appareil.
 
-    removeLocalStorageItem(
-      STORAGE.registration
-    );
+    On conserve volontairement :
+    - l'identifiant d'installation ;
+    - les statistiques anonymes.
 
-    return true;
-  }
+    Tout ce qui concerne l'identité,
+    la sécurité et les accès est supprimé.
+  */
+
+  removeLocalStorageItem(
+    STORAGE.account
+  );
+
+  removeLocalStorageItem(
+    STORAGE.registration
+  );
+
+  removeLocalStorageItem(
+    STORAGE.profile
+  );
+
+  removeLocalStorageItem(
+    STORAGE.commune
+  );
+
+  removeLocalStorageItem(
+    STORAGE.security
+  );
+
+  removeLocalStorageItem(
+    STORAGE.verification
+  );
+
+  removeLocalStorageItem(
+    STORAGE.organization
+  );
+
+  removeLocalStorageItem(
+    STORAGE.collaborators
+  );
+
+  removeLocalStorageItem(
+    STORAGE.sessions
+  );
+
+  removeLocalStorageItem(
+    STORAGE.securityLog
+  );
+
+  return true;
+}
 
   /* =====================================================
      CONTENU DE LA PAGE
@@ -1073,6 +3471,35 @@
 </div>
 
           </div>
+
+<div
+  id="bociteRegistrationProfessionalPhoneWrap"
+  class="bociteRegistrationField">
+
+  <label for="bociteRegistrationPhone">
+    Numéro de téléphone 
+  </label>
+
+  <input
+    id="bociteRegistrationPhone"
+    type="tel"
+    autocomplete="tel"
+    value="${account.phone || ""}"
+    placeholder="Exemple : 06 12 34 56 78">
+
+ <div class="bociteRegistrationHelp">
+
+  Facultatif pour un citoyen.
+  Il permet de recevoir un code
+  de vérification ou de récupération.
+
+  Pour un compte professionnel
+  ou une organisation, il est demandé
+  comme moyen de sécurité supplémentaire.
+
+</div>
+
+</div>
 
           <div class="bociteRegistrationField">
 
@@ -1215,7 +3642,7 @@
       getElement(
         "bociteRegistrationCategory"
       );
-
+  
     const account =
       getAccount() || {};
 
@@ -1241,6 +3668,875 @@
      VALIDATION DE L'ÉTAPE
      ===================================================== */
 
+/* =====================================================
+   FIN D'INSCRIPTION COMMUNE
+   ===================================================== */
+
+function finishRegistration(
+  account
+){
+
+  if(!account){
+    return;
+  }
+
+  setLocalStorageItem(
+    STORAGE.registration,
+    "true"
+  );
+
+
+  addStatistic({
+    type:
+      "inscription_terminee",
+
+    category:
+      account.category,
+
+    commune:
+      account.commune
+  });
+
+
+  addSecurityLog(
+    "registration_completed",
+    {
+      accountId:
+        account.accountId,
+
+      category:
+        account.category
+    }
+  );
+
+
+  closeRegistration();
+
+
+  document.dispatchEvent(
+    new CustomEvent(
+      "bociteart:registration-completed",
+      {
+        detail:{
+          accountId:
+            account.accountId,
+
+          category:
+            account.category,
+
+          commune:
+            account.commune,
+
+          securityConfigured:
+            true
+        }
+      }
+    )
+  );
+}
+
+
+/* =====================================================
+   ÉCRAN DE SÉCURISATION DU COMPTE
+   ===================================================== */
+
+function openAccountSecuritySetup(
+  account
+){
+
+  if(!account){
+    return;
+  }
+
+
+  const activationCode =
+    createNumericCode(6);
+
+  let emailCode =
+    "";
+
+  let smsCode =
+    "";
+
+
+  hashSecret(
+    activationCode
+  )
+  .then(function(
+    activationCodeHash
+  ){
+
+    saveAccountSecurity({
+
+      accountId:
+        account.accountId,
+
+      activated:
+        false,
+
+      passwordConfigured:
+        false,
+
+      activationCodeHash:
+        activationCodeHash,
+
+      email:
+        account.email || "",
+
+      phone:
+        account.phone || "",
+
+      createdAt:
+        new Date().toISOString()
+
+    });
+
+
+    const overlay =
+      getElement(
+        OVERLAY_ID
+      );
+
+    if(!overlay){
+      return;
+    }
+
+
+    const organizationHtml =
+      isOrganizationCategory(
+        account.category
+      )
+        ? `
+
+            <div class="bociteRegistrationPrivacy">
+
+              <strong>
+                Responsable principal
+              </strong>
+
+              <br><br>
+
+              Vous êtes le responsable principal
+              de cet espace ${getLogoHtml()}.
+
+              <br><br>
+
+              Vous pourrez ensuite donner
+              des accès individuels
+              à vos collaborateurs.
+
+              <br><br>
+
+              Chaque collaborateur aura
+              son propre accès et uniquement
+              les autorisations que vous lui accordez.
+
+              <br><br>
+
+              Vous pourrez couper immédiatement
+              l'accès d'une personne
+              lorsqu'elle quitte votre structure.
+
+            </div>
+
+          `
+        : "";
+
+
+    const smsHtml =
+      account.phone
+        ? `
+
+            <button
+              id="bociteSecuritySmsBtn"
+              type="button"
+              class="choiceBtn"
+              style="
+                width:100%;
+                margin-top:8px;
+              ">
+              Recevoir un code par SMS
+            </button>
+
+
+            <div
+              id="bociteSecuritySmsWrap"
+              class="bociteRegistrationField"
+              style="display:none;">
+
+              <label for="bociteSecuritySmsCode">
+                Code reçu par SMS
+              </label>
+
+              <input
+                id="bociteSecuritySmsCode"
+                type="text"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                maxlength="6"
+                placeholder="6 chiffres">
+
+            </div>
+
+          `
+        : "";
+
+
+    overlay.innerHTML = `
+
+      <div id="bociteRegistrationCard">
+
+        <h2 class="bociteRegistrationTitle">
+
+          Sécurisez votre compte
+
+          <br>
+
+          ${getLogoHtml()}
+
+        </h2>
+
+
+        <div class="bociteRegistrationIntro">
+
+          Votre sécurité protège
+          votre identité et vos accès
+          dans toute l'application.
+
+        </div>
+
+
+        <div class="bociteRegistrationPrivacy">
+
+          <strong>
+            Code d'activation initial
+          </strong>
+
+          <br><br>
+
+          Pour cette démonstration,
+          votre code est :
+
+          <br><br>
+
+          <strong
+            style="
+              display:block;
+              text-align:center;
+              color:#2f5d46;
+              font-size:28px;
+            ">
+            ${activationCode}
+          </strong>
+
+          <br>
+
+          Dans la version officielle,
+          ce code sera transmis
+          de manière sécurisée
+          et utilisable une seule fois.
+
+        </div>
+
+
+        <div class="bociteRegistrationField">
+
+          <label for="bociteSecurityInitialCode">
+            Saisissez votre code initial
+          </label>
+
+          <input
+            id="bociteSecurityInitialCode"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="6"
+            placeholder="6 chiffres">
+
+        </div>
+
+
+        <div class="bociteRegistrationField">
+
+          <label for="bociteSecurityPassword">
+            Créez votre mot de passe
+          </label>
+
+          <input
+            id="bociteSecurityPassword"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Votre mot de passe">
+
+          <div class="bociteRegistrationHelp">
+
+            Utilisez un mot de passe
+            personnel que vous n'utilisez
+            pas ailleurs.
+
+          </div>
+
+        </div>
+
+
+        <div class="bociteRegistrationField">
+
+          <label for="bociteSecurityPasswordConfirm">
+            Confirmez votre mot de passe
+          </label>
+
+          <input
+            id="bociteSecurityPasswordConfirm"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Confirmez votre mot de passe">
+
+        </div>
+
+
+        <div class="bociteRegistrationPrivacy">
+
+          <strong>
+            Préparez plusieurs moyens
+            de récupération
+          </strong>
+
+          <br><br>
+
+          Nous vous recommandons
+          d'enregistrer plusieurs moyens
+          permettant de confirmer votre identité.
+
+          <br><br>
+
+          Votre mot de passe actuel
+          ne peut pas vous être communiqué
+          par ${getLogoHtml()}.
+
+          <br><br>
+
+          En cas d'oubli,
+          une procédure sécurisée
+          de vérification et de réinitialisation
+          sera nécessaire.
+
+        </div>
+
+
+        <button
+          id="bociteSecurityEmailBtn"
+          type="button"
+          class="choiceBtn"
+          style="
+            width:100%;
+            margin-top:10px;
+          ">
+          Recevoir un code par e-mail
+        </button>
+
+
+        <div
+          id="bociteSecurityEmailWrap"
+          class="bociteRegistrationField"
+          style="display:none;">
+
+          <label for="bociteSecurityEmailCode">
+            Code reçu par e-mail
+          </label>
+
+          <input
+            id="bociteSecurityEmailCode"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="6"
+            placeholder="6 chiffres">
+
+        </div>
+
+
+        ${smsHtml}
+
+
+        <div class="bociteRegistrationPrivacy">
+
+          <strong>
+            Sécurité renforcée
+          </strong>
+
+          <br><br>
+
+          Votre compte est également préparé pour :
+
+          <br><br>
+
+          • double authentification
+          <br>
+          • passkey
+          <br>
+          • empreinte
+          <br>
+          • reconnaissance faciale
+          <br>
+          • Windows Hello
+          <br>
+          • clé de sécurité
+
+          <br><br>
+
+          Ces protections seront raccordées
+          au serveur sécurisé
+          dans la version officielle.
+
+        </div>
+
+
+        ${organizationHtml}
+
+
+        <div
+          id="bociteSecurityMessage"
+          role="alert"
+          style="
+            display:none;
+            margin-top:14px;
+            padding:13px;
+            border-left:6px solid #b00020;
+            background:#f7f3ea;
+            color:#111;
+            font-size:14px;
+            line-height:1.45;
+          ">
+        </div>
+
+
+        <button
+          id="bociteSecurityValidateBtn"
+          type="button"
+          style="
+            display:block;
+            width:100%;
+            margin-top:16px;
+            padding:15px 12px;
+            border:2px solid #2f5d46;
+            border-radius:10px;
+            background:#fff;
+            color:#111;
+            font-size:18px;
+            font-weight:900;
+            cursor:pointer;
+          ">
+          Sécuriser et ouvrir mon compte
+        </button>
+
+      </div>
+
+    `;
+
+
+    /* ===================================================
+       CODE E-MAIL
+       =================================================== */
+
+    const emailBtn =
+      getElement(
+        "bociteSecurityEmailBtn"
+      );
+
+    if(emailBtn){
+
+      emailBtn.onclick =
+        function(){
+
+          emailCode =
+            createNumericCode(6);
+
+          const wrap =
+            getElement(
+              "bociteSecurityEmailWrap"
+            );
+
+          if(wrap){
+
+            wrap.style.display =
+              "block";
+          }
+
+
+          /*
+            DÉMONSTRATION UNIQUEMENT.
+
+            En production :
+            envoi réel côté serveur.
+          */
+
+          alert(
+            "Démonstration — code e-mail : " +
+            emailCode
+          );
+        };
+    }
+
+
+    /* ===================================================
+       CODE SMS
+       =================================================== */
+
+    const smsBtn =
+      getElement(
+        "bociteSecuritySmsBtn"
+      );
+
+    if(smsBtn){
+
+      smsBtn.onclick =
+        function(){
+
+          smsCode =
+            createNumericCode(6);
+
+          const wrap =
+            getElement(
+              "bociteSecuritySmsWrap"
+            );
+
+          if(wrap){
+
+            wrap.style.display =
+              "block";
+          }
+
+
+          /*
+            DÉMONSTRATION UNIQUEMENT.
+
+            En production :
+            envoi SMS réel côté serveur.
+          */
+
+          alert(
+            "Démonstration — code SMS : " +
+            smsCode
+          );
+        };
+    }
+
+
+    /* ===================================================
+       VALIDATION
+       =================================================== */
+
+    const validate =
+      getElement(
+        "bociteSecurityValidateBtn"
+      );
+
+    if(validate){
+
+      validate.onclick =
+        function(){
+
+          const initialCode =
+            normalizeText(
+              getElement(
+                "bociteSecurityInitialCode"
+              )?.value
+            );
+
+
+          const password =
+            String(
+              getElement(
+                "bociteSecurityPassword"
+              )?.value ||
+              ""
+            );
+
+
+          const confirmation =
+            String(
+              getElement(
+                "bociteSecurityPasswordConfirm"
+              )?.value ||
+              ""
+            );
+
+
+          const enteredEmailCode =
+            normalizeText(
+              getElement(
+                "bociteSecurityEmailCode"
+              )?.value
+            );
+
+
+          const enteredSmsCode =
+            normalizeText(
+              getElement(
+                "bociteSecuritySmsCode"
+              )?.value
+            );
+
+
+          const message =
+            getElement(
+              "bociteSecurityMessage"
+            );
+
+
+          if(
+            !initialCode ||
+            !password ||
+            !confirmation
+          ){
+
+            if(message){
+
+              message.textContent =
+                "Complétez le code initial et votre mot de passe.";
+
+              message.style.display =
+                "block";
+            }
+
+            return;
+          }
+
+
+          if(
+            password.length <
+            10
+          ){
+
+            if(message){
+
+              message.textContent =
+                "Choisissez un mot de passe d'au moins 10 caractères.";
+
+              message.style.display =
+                "block";
+            }
+
+            return;
+          }
+
+
+          if(
+            password !==
+            confirmation
+          ){
+
+            if(message){
+
+              message.textContent =
+                "Les deux mots de passe ne correspondent pas.";
+
+              message.style.display =
+                "block";
+            }
+
+            return;
+          }
+
+
+          Promise.all([
+
+            verifySecret(
+              initialCode,
+              activationCodeHash
+            ),
+
+            hashSecret(
+              password
+            )
+
+          ])
+          .then(function(results){
+
+            const initialCodeValid =
+              results[0];
+
+            const passwordHash =
+              results[1];
+
+
+            if(!initialCodeValid){
+
+              if(message){
+
+                message.textContent =
+                  "Le code initial est incorrect.";
+
+                message.style.display =
+                  "block";
+              }
+
+              return;
+            }
+
+
+            const emailVerified =
+              Boolean(
+                emailCode &&
+                enteredEmailCode ===
+                emailCode
+              );
+
+
+            const phoneVerified =
+              Boolean(
+                smsCode &&
+                enteredSmsCode ===
+                smsCode
+              );
+
+
+            if(
+              !emailVerified &&
+              !phoneVerified
+            ){
+
+              if(message){
+
+                message.textContent =
+                  "Validez au moins votre e-mail ou votre téléphone avant de continuer.";
+
+                message.style.display =
+                  "block";
+              }
+
+              return;
+            }
+
+
+            saveAccountVerification({
+
+              accountId:
+                account.accountId,
+
+              emailVerified:
+                emailVerified,
+
+              phoneVerified:
+                phoneVerified,
+
+              verifiedAt:
+                new Date().toISOString()
+
+            });
+
+
+            saveAccountSecurity({
+
+              accountId:
+                account.accountId,
+
+              activated:
+                true,
+
+              passwordConfigured:
+                true,
+
+              passwordHash:
+                passwordHash,
+
+              activationCodeHash:
+                "",
+
+              email:
+                account.email || "",
+
+              phone:
+                account.phone || "",
+
+              emailRecovery:
+                emailVerified,
+
+              smsRecovery:
+                phoneVerified,
+
+              twoFactorPrepared:
+                true,
+
+              passkeyAvailable:
+                passkeyAvailable(),
+
+              activatedAt:
+                new Date().toISOString()
+
+            });
+
+
+            const updatedAccount =
+              updateAccount({
+
+                professionalSecurityConfigured:
+                  isOrganizationCategory(
+                    account.category
+                  ),
+
+                securityConfigured:
+                  true
+
+              });
+
+
+            addSecurityLog(
+              "account_security_configured",
+              {
+                accountId:
+                  updatedAccount.accountId,
+
+                emailVerified:
+                  emailVerified,
+
+                phoneVerified:
+                  phoneVerified,
+
+                organization:
+                  isOrganizationCategory(
+                    updatedAccount.category
+                  )
+              }
+            );
+
+
+            finishRegistration(
+              updatedAccount
+            );
+
+          })
+          .catch(function(error){
+
+            console.error(
+              "Bo'CitéArt : sécurisation impossible.",
+              error
+            );
+
+
+            if(message){
+
+              message.textContent =
+                "La sécurisation du compte n'a pas pu être terminée.";
+
+              message.style.display =
+                "block";
+            }
+          });
+
+        };
+    }
+
+  })
+  .catch(function(error){
+
+    console.error(
+      "Bo'CitéArt : préparation de la sécurité impossible.",
+      error
+    );
+  });
+}
+   
   function completeRegistration(){
 
     const nameField =
@@ -1262,6 +4558,11 @@
       getElement(
         "bociteRegistrationCommune"
       );
+
+     const phoneField =
+  getElement(
+    "bociteRegistrationPhone"
+  );
 
     const message =
       getElement(
@@ -1296,24 +4597,35 @@
           : ""
       );
 
-    if(
-      !displayName ||
-      !email ||
-      !category ||
-      !commune
-    ){
+     const phone =
+  normalizePhone(
+    phoneField
+      ? phoneField.value
+      : ""
+  );
 
-      if(message){
+if(
+  !displayName ||
+  !email ||
+  !category ||
+  !commune ||
+  (
+    isProfessionalCategory(category) &&
+    !phone
+  )
+){
 
-        message.textContent =
-          "Complétez tous les champs avant de continuer.";
+  if(message){
 
-        message.style.display =
-          "block";
-      }
+    message.textContent =
+      "Complétez tous les champs avant de continuer.";
 
-      return;
-    }
+    message.style.display =
+      "block";
+  }
+
+  return;
+}
 
     if(
       !email.includes("@") ||
@@ -1332,42 +4644,32 @@
       return;
     }
 
-    const account =
-      createAccount({
-        displayName:
-          displayName,
+const account =
+  createAccount({
 
-        email:
-          email,
+    displayName:
+      displayName,
 
-        category:
-          category,
+    email:
+      email,
 
-        commune:
-          commune
-      });
+    phone:
+      phone,
 
-    closeRegistration();
+    category:
+      category,
 
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:registration-completed",
-        {
-          detail:{
-            accountId:
-              account.accountId,
+    commune:
+      commune
 
-            category:
-              account.category,
+  });
 
-            commune:
-              account.commune
-          }
-        }
-      )
-    );
-  }
 
+openAccountSecuritySetup(
+  account
+);
+}
+     
   /* =====================================================
      ÉVÉNEMENTS
      ===================================================== */
@@ -1457,12 +4759,87 @@
     clearStatistics:
       clearStatistics,
 
-    storageKeys:
-      Object.assign(
-        {},
-        STORAGE
-      )
-  };
+securityReady:
+  accountSecurityReady,
+
+getSecurity:
+  getAccountSecurity,
+
+getVerification:
+  getAccountVerification,
+
+getSecurityCapabilities:
+  getSecurityCapabilities,
+
+getOrganization:
+  getOrganization,
+
+isOrganizationOwner:
+  isOrganizationOwner,
+
+getOwnerAccess:
+  getOwnerAccess,
+
+getCollaborators:
+  loadCollaborators,
+
+getActiveCollaborators:
+  getActiveCollaborators,
+
+getCollaboratorById:
+  getCollaboratorById,
+
+createCollaboratorAccess:
+  createCollaboratorAccess,
+
+acceptCollaboratorInvitation:
+  acceptCollaboratorInvitation,
+
+updateCollaboratorAccess:
+  updateCollaboratorAccess,
+
+revokeCollaboratorAccess:
+  revokeCollaboratorAccess,
+
+restoreCollaboratorAccess:
+  restoreCollaboratorAccess,
+
+deleteCollaborator:
+  permanentlyDeleteCollaborator,
+
+hasAccessPermission:
+  hasAccessPermission,
+
+collaboratorHasPermission:
+  collaboratorHasPermission,
+
+getSecurityLog:
+  loadSecurityLog,
+
+revokeCollaboratorSessions:
+  revokeCollaboratorSessions,
+
+accessRoles:
+  ACCESS_ROLES,
+
+accessPermissions:
+  ACCESS_PERMISSIONS,
+
+     getCurrentAccessContext:
+  getCurrentAccessContext,
+
+canAccess:
+  canAccess,
+
+requireAccess:
+  requireAccess,
+
+storageKeys:
+  Object.assign(
+    {},
+    STORAGE
+  )
+};
 
   getInstallationId();
 
