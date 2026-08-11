@@ -2,7 +2,7 @@
    BO'CITÉART — ANNUAIRE DE VOTRE VILLE
    MODULE INDÉPENDANT COMPLET
 
-   PUBLIC
+   PUBLIC 
    • Recherche locale
    • Classement par métiers
    • Fiches établissements
