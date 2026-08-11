@@ -1,8 +1,538 @@
+/* =========================================================
+   BO'CITÉART — ANNUAIRE DE VOTRE VILLE
+   MODULE INDÉPENDANT COMPLET
+
+   PUBLIC
+   • Recherche locale
+   • Classement par métiers
+   • Fiches établissements
+   • Téléphone / e-mail / site / itinéraire
+   • Photos / menus / hébergements
+   • Emploi / candidature spontanée
+   • Appréciations locales sans commentaires
+   • Historique
+   • Consultés récemment
+   • Favoris
+
+   PROFESSIONNEL
+   • Recherche professionnelle
+   • Historique professionnel
+   • Carnet professionnel
+   • Entreprises suivies
+   • Informations publiques enrichies
+   • Sources et dates
+   • Tableau de bord personnalisable
+   • Bercy Infos Entreprises
+
+   PARTENAIRE
+   • Petit mot du chef / artisan / commerçant / hôte
+   • Modification depuis l'espace privé uniquement
+
+   IMPORTANT
+   L'annuaire affiche les données disponibles.
+   Il ne fabrique aucune entreprise et ne produit
+   aucune notation financière automatique.
+   ========================================================= */
+
+(function initBociteEntrepriseAnnuaire(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+
+    console.error(
+      "Bo'CitéArt Annuaire : module Entreprise introuvable."
+    );
+
+    return;
+  }
+
   /* =======================================================
-     PAGE PRINCIPALE — ANNUAIRE ÉCONOMIQUE VIVANT
+     ESPACE DU MODULE
      ======================================================= */
 
-  function getAnnuaireLogoHtml(){
+  const annuaire =
+    module.Annuaire =
+      module.Annuaire || {};
+
+  /* =======================================================
+     STOCKAGES
+     ======================================================= */
+
+  const STORAGE = {
+
+    entities:
+      "bociteart_annuaire_entities_v2",
+
+    searchHistory:
+      "bociteart_annuaire_search_history_v2",
+
+    viewedHistory:
+      "bociteart_annuaire_viewed_history_v2",
+
+    favorites:
+      "bociteart_annuaire_favorites_v2",
+
+    ratings:
+      "bociteart_annuaire_ratings_v2",
+
+    professionalHistory:
+      "bociteart_annuaire_professional_history_v2",
+
+    notebook:
+      "bociteart_annuaire_professional_notebook_v2",
+
+    followed:
+      "bociteart_annuaire_followed_v2",
+
+    dashboardOrder:
+      "bociteart_annuaire_dashboard_order_v2",
+
+    partnerProfiles:
+      "bociteart_annuaire_partner_profiles_v2",
+
+    updateState:
+      "bociteart_annuaire_update_state_v2"
+
+  };
+
+  annuaire.STORAGE =
+    STORAGE;
+
+  const MINIMUM_RATINGS =
+    10;
+
+  const MAX_SEARCH_HISTORY =
+    150;
+
+  const MAX_VIEW_HISTORY =
+    150;
+
+  /* =======================================================
+     OUTILS
+     ======================================================= */
+
+  function getElement(id){
+
+    return document.getElementById(id);
+  }
+
+  function normalizeText(value){
+
+    return String(value || "")
+      .normalize("NFD")
+      .replace(
+        /[\u0300-\u036f]/g,
+        ""
+      )
+      .toLowerCase()
+      .trim();
+  }
+
+  function escapeHtml(value){
+
+    return String(value || "")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+  }
+
+  function loadJson(key, fallback){
+
+    try{
+
+      const raw =
+        localStorage.getItem(key);
+
+      if(!raw){
+        return fallback;
+      }
+
+      const parsed =
+        JSON.parse(raw);
+
+      return parsed;
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt Annuaire : lecture impossible",
+        key,
+        error
+      );
+
+      return fallback;
+    }
+  }
+
+  function saveJson(key, value){
+
+    try{
+
+      localStorage.setItem(
+        key,
+        JSON.stringify(value)
+      );
+
+      return true;
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt Annuaire : sauvegarde impossible",
+        key,
+        error
+      );
+
+      return false;
+    }
+  }
+
+  function formatDate(timestamp){
+
+    if(!timestamp){
+      return "";
+    }
+
+    try{
+
+      return new Date(
+        timestamp
+      ).toLocaleDateString(
+        "fr-FR",
+        {
+          day:"2-digit",
+          month:"2-digit",
+          year:"numeric"
+        }
+      );
+
+    }catch(error){
+
+      return "";
+    }
+  }
+
+  function formatDateTime(timestamp){
+
+    if(!timestamp){
+      return "";
+    }
+
+    try{
+
+      return new Date(
+        timestamp
+      ).toLocaleString(
+        "fr-FR"
+      );
+
+    }catch(error){
+
+      return "";
+    }
+  }
+
+  function uniqueId(prefix){
+
+    return (
+      prefix +
+      "_" +
+      Date.now() +
+      "_" +
+      Math.random()
+        .toString(36)
+        .slice(2,8)
+    );
+  }
+
+  function safeArray(value){
+
+    return Array.isArray(value)
+      ? value
+      : [];
+  }
+
+  function getCurrentCommune(){
+
+    const directKeys = [
+
+      "bociteart_user_commune_v1",
+      "bociteart_commune_v1",
+      "bociteart_registration_commune_v1"
+
+    ];
+
+    for(
+      let index = 0;
+      index < directKeys.length;
+      index++
+    ){
+
+      const value =
+        localStorage.getItem(
+          directKeys[index]
+        );
+
+      if(
+        value &&
+        String(value).trim()
+      ){
+        return String(value).trim();
+      }
+    }
+
+    try{
+
+      const account =
+        JSON.parse(
+          localStorage.getItem(
+            "bociteart_account_demo_v1"
+          ) || "{}"
+        );
+
+      if(account.commune){
+        return String(
+          account.commune
+        ).trim();
+      }
+
+    }catch(error){
+      /* aucune action */
+    }
+
+    return "votre ville";
+  }
+
+  function getModalContent(){
+
+    return document.querySelector(
+      ".modal-content," +
+      ".modalContent," +
+      "#modalContent"
+    );
+  }
+
+  function scrollModalTop(){
+
+    document
+      .querySelectorAll(
+        ".modal-body," +
+        ".modalBody," +
+        ".modal-content," +
+        ".modalContent," +
+        '[role="dialog"]'
+      )
+      .forEach(function(element){
+
+        element.scrollTop = 0;
+      });
+  }
+
+  function render(
+    title,
+    html,
+    callback
+  ){
+
+    module.renderModal(
+      title,
+      html
+    );
+
+    window.setTimeout(
+      function(){
+
+        scrollModalTop();
+
+        if(
+          typeof callback ===
+          "function"
+        ){
+          callback();
+        }
+
+      },
+      0
+    );
+  }
+
+  function requirePrivateAccess(
+    callback
+  ){
+
+    if(
+      typeof module.requirePrivateAccess ===
+      "function"
+    ){
+
+      module.requirePrivateAccess(
+        callback
+      );
+
+      return;
+    }
+
+    if(
+      typeof module.requirePartnerAccess ===
+      "function"
+    ){
+
+      module.requirePartnerAccess(
+        callback
+      );
+
+      return;
+    }
+
+    alert(
+      "L'accès professionnel privé est momentanément indisponible."
+    );
+  }
+
+  /* =======================================================
+     STYLE DU MODULE
+     ======================================================= */
+
+  function injectStyles(){
+
+    if(
+      document.getElementById(
+        "bociteAnnuaireStyles"
+      )
+    ){
+      return;
+    }
+
+    const style =
+      document.createElement(
+        "style"
+      );
+
+    style.id =
+      "bociteAnnuaireStyles";
+
+    style.textContent = `
+
+      .bociteAnnuaireTitle{
+        color:#2f5d46;
+        font-size:16px;
+        line-height:1.35;
+        font-weight:700;
+      }
+
+      .bociteAnnuaireText{
+        color:#111;
+        font-size:14px;
+        line-height:1.45;
+        font-weight:400;
+      }
+
+      .bociteAnnuaireGrid{
+        display:grid;
+        grid-template-columns:
+          repeat(2,minmax(0,1fr));
+        gap:8px;
+      }
+
+      .bociteAnnuaireActions{
+        display:grid;
+        grid-template-columns:
+          repeat(2,minmax(0,1fr));
+        gap:8px;
+      }
+
+      .bociteAnnuaireBadgeRow{
+        display:flex;
+        flex-wrap:wrap;
+        gap:6px;
+        align-items:center;
+      }
+
+      .bociteAnnuaireResult{
+        margin-bottom:10px;
+      }
+
+      .bociteAnnuaireSmall{
+        color:#666;
+        font-size:12px;
+        line-height:1.4;
+      }
+
+      .bociteAnnuaireSignature{
+        margin-top:12px;
+        padding:15px;
+        border-left:4px solid #2f5d46;
+        background:#faf8f1;
+        font-family:
+          "Segoe Print",
+          "Bradley Hand",
+          "Comic Sans MS",
+          cursive;
+        font-style:italic;
+        font-size:15px;
+        line-height:1.55;
+        color:#333;
+      }
+
+      .bociteAnnuairePhotoGrid{
+        display:grid;
+        grid-template-columns:
+          repeat(2,minmax(0,1fr));
+        gap:7px;
+      }
+
+      .bociteAnnuairePhotoGrid img{
+        width:100%;
+        aspect-ratio:4/3;
+        object-fit:cover;
+        border-radius:8px;
+      }
+
+      .bociteAnnuaireStars{
+        letter-spacing:2px;
+        font-size:20px;
+      }
+
+      .bociteAnnuaireDashboardCard{
+        margin-bottom:10px;
+      }
+
+      .bociteAnnuaireDragHandle{
+        cursor:grab;
+        user-select:none;
+        font-weight:700;
+      }
+
+      @media(max-width:420px){
+
+        .bociteAnnuaireGrid,
+        .bociteAnnuaireActions{
+          grid-template-columns:
+            repeat(2,minmax(0,1fr));
+        }
+
+      }
+
+    `;
+
+    document.head.appendChild(
+      style
+    );
+  }
+
+  injectStyles();
+
+  /* =======================================================
+     LOGO
+     ======================================================= */
+
+  function getLogoHtml(){
 
     return `
       <strong
@@ -11,305 +541,1535 @@
           white-space:nowrap;
           font-weight:900;
         ">
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+        <span style="color:#2f5d46;">
+          Bo'Cité
+        </span><span style="color:#b00020;">
+          Art
+        </span>
       </strong>
     `;
   }
 
-  function getDirectoryHtml(){
+  /* =======================================================
+     REPÈRES VISUELS
+     ======================================================= */
+
+  function partnerBadge(){
+
+    return `
+      <span
+        title="Partenaire Bo'CitéArt"
+        style="
+          display:inline-flex;
+          align-items:center;
+          gap:5px;
+        ">
+        <span
+          style="
+            width:13px;
+            height:13px;
+            border-radius:50%;
+            background:#2f8f4e;
+            display:inline-block;
+          ">
+        </span>
+        <span style="font-size:12px;">
+          Partenaire
+        </span>
+      </span>
+    `;
+  }
+
+  function bocitecoinBadge(){
+
+    return `
+      <span
+        title="Participe au programme bocitecoins"
+        style="
+          display:inline-flex;
+          align-items:center;
+          gap:5px;
+        ">
+        <span
+          style="
+            width:0;
+            height:0;
+            border-left:7px solid transparent;
+            border-right:7px solid transparent;
+            border-bottom:13px solid #e58a1f;
+            display:inline-block;
+          ">
+        </span>
+        <span style="font-size:12px;">
+          bocitecoins
+        </span>
+      </span>
+    `;
+  }
+
+  function commerceBadge(){
+
+    return `
+      <span
+        title="Commerce"
+        style="
+          display:inline-flex;
+          align-items:center;
+          gap:5px;
+        ">
+        <span
+          style="
+            width:13px;
+            height:13px;
+            background:#b00020;
+            display:inline-block;
+          ">
+        </span>
+        <span style="font-size:12px;">
+          Commerce
+        </span>
+      </span>
+    `;
+  }
+
+  function entrepriseBadge(){
+
+    return `
+      <span
+        title="Entreprise ou professionnel"
+        style="
+          display:inline-flex;
+          align-items:center;
+          gap:5px;
+        ">
+        <span
+          style="
+            width:13px;
+            height:13px;
+            background:#2874a6;
+            display:inline-block;
+          ">
+        </span>
+        <span style="font-size:12px;">
+          Entreprise / professionnel
+        </span>
+      </span>
+    `;
+  }
+
+  function getBadgesHtml(entity){
+
+    const badges = [];
+
+    if(entity.partner){
+      badges.push(
+        partnerBadge()
+      );
+    }
+
+    if(entity.bocitecoins){
+      badges.push(
+        bocitecoinBadge()
+      );
+    }
+
+    if(
+      entity.kind ===
+      "commerce"
+    ){
+      badges.push(
+        commerceBadge()
+      );
+    }
+
+    if(
+      entity.kind ===
+      "entreprise" ||
+      entity.kind ===
+      "professionnel"
+    ){
+      badges.push(
+        entrepriseBadge()
+      );
+    }
+
+    return `
+      <div
+        class="bociteAnnuaireBadgeRow">
+        ${badges.join("")}
+      </div>
+    `;
+  }
+
+  /* =======================================================
+     CATÉGORIES
+     ======================================================= */
+
+  const CATEGORIES = [
+
+    {
+      id:"commerces",
+      title:"Commerces",
+      subtitle:
+        "Boutiques • alimentation • proximité"
+    },
+
+    {
+      id:"restaurants",
+      title:"Restaurants",
+      subtitle:
+        "Restaurants • cafés • traiteurs"
+    },
+
+    {
+      id:"artisans",
+      title:"Artisans",
+      subtitle:
+        "Travaux • réparation • savoir-faire"
+    },
+
+    {
+      id:"sante",
+      title:"Santé",
+      subtitle:
+        "Médecins • soins • professionnels"
+    },
+
+    {
+      id:"entreprises",
+      title:"Entreprises",
+      subtitle:
+        "Industrie • services • compétences"
+    },
+
+    {
+      id:"hebergements",
+      title:"Hôtels & séjours",
+      subtitle:
+        "Hôtels • gîtes • hébergements"
+    },
+
+    {
+      id:"services",
+      title:"Services",
+      subtitle:
+        "Particuliers • professionnels"
+    },
+
+    {
+      id:"metiers",
+      title:"Tout voir par métier",
+      subtitle:
+        "Tous les métiers de votre ville"
+    }
+
+  ];
+
+  /* =======================================================
+     MÉTIERS
+     ======================================================= */
+
+  const METIERS = {
+
+    sante:[
+
+      "Médecins généralistes",
+      "Infirmiers",
+      "Kinésithérapeutes",
+      "Dentistes",
+      "Pharmacies",
+      "Pédicures-podologues",
+      "Orthophonistes",
+      "Sages-femmes",
+      "Psychologues",
+      "Autres professionnels de santé"
+
+    ],
+
+    maison:[
+
+      "Couvreurs",
+      "Plombiers",
+      "Électriciens",
+      "Chauffagistes",
+      "Menuisiers",
+      "Maçons",
+      "Peintres",
+      "Carreleurs",
+      "Paysagistes",
+      "Serruriers",
+      "Entreprises de rénovation"
+
+    ],
+
+    automobile:[
+
+      "Garages automobiles",
+      "Carrossiers",
+      "Pneumatiques",
+      "Contrôle technique",
+      "Motos",
+      "Cycles",
+      "Véhicules utilitaires",
+      "Poids lourds"
+
+    ],
+
+    alimentation:[
+
+      "Restaurants",
+      "Boulangeries",
+      "Boucheries",
+      "Traiteurs",
+      "Cafés",
+      "Épiceries",
+      "Commerces alimentaires"
+
+    ],
+
+    professionnels:[
+
+      "Experts-comptables",
+      "Avocats",
+      "Assurances",
+      "Informatique",
+      "Communication",
+      "Transport",
+      "Nettoyage professionnel",
+      "Sécurité",
+      "Bureaux d'études",
+      "Conseil"
+
+    ],
+
+    hebergements:[
+
+      "Hôtels",
+      "Chambres d'hôtes",
+      "Gîtes",
+      "Locations de courte durée",
+      "Autres hébergements"
+
+    ]
+
+  };
+
+  /* =======================================================
+     DONNÉES
+     ======================================================= */
+
+  function loadEntities(){
+
+    const data =
+      loadJson(
+        STORAGE.entities,
+        []
+      );
+
+    return safeArray(data);
+  }
+
+  function saveEntities(data){
+
+    saveJson(
+      STORAGE.entities,
+      safeArray(data)
+    );
+  }
+
+  function getEntityById(id){
+
+    return loadEntities()
+      .find(function(entity){
+
+        return (
+          String(entity.id) ===
+          String(id)
+        );
+      }) || null;
+  }
+
+  /*
+    Cette fonction permettra plus tard
+    au véritable agent / fournisseur de données
+    de transmettre un instantané actualisé
+    de l'annuaire.
+
+    Le navigateur ne visite pas lui-même
+    BODACC, Infogreffe ou d'autres services.
+  */
+
+  function applyExternalDirectorySnapshot(
+    rows,
+    sourceLabel
+  ){
+
+    const entities =
+      safeArray(rows);
+
+    saveEntities(
+      entities
+    );
+
+    saveJson(
+      STORAGE.updateState,
+      {
+        updatedAt:
+          Date.now(),
+
+        source:
+          sourceLabel ||
+          "Source externe autorisée",
+
+        count:
+          entities.length
+      }
+    );
+
+    return entities.length;
+  }
+
+  annuaire.applyExternalDirectorySnapshot =
+    applyExternalDirectorySnapshot;
+
+  /* =======================================================
+     SYNONYMES DE RECHERCHE
+     ======================================================= */
+
+  const SEARCH_SYNONYMS = {
+
+    "fuite":[
+      "plombier",
+      "plomberie"
+    ],
+
+    "toiture":[
+      "couvreur",
+      "couverture",
+      "zinguerie"
+    ],
+
+    "chaudiere":[
+      "chauffagiste",
+      "chauffage"
+    ],
+
+    "mal au pied":[
+      "podologue",
+      "pedicure-podologue"
+    ],
+
+    "kine":[
+      "kinesitherapeute"
+    ],
+
+    "repas":[
+      "restaurant",
+      "traiteur"
+    ],
+
+    "voiture":[
+      "garage",
+      "automobile"
+    ]
+
+  };
+
+  function expandSearchTerms(query){
+
+    const normalized =
+      normalizeText(query);
+
+    let terms = [
+      normalized
+    ];
+
+    Object.keys(
+      SEARCH_SYNONYMS
+    )
+    .forEach(function(key){
+
+      if(
+        normalized.includes(
+          normalizeText(key)
+        )
+      ){
+
+        terms =
+          terms.concat(
+            SEARCH_SYNONYMS[key]
+              .map(normalizeText)
+          );
+      }
+    });
+
+    return Array.from(
+      new Set(terms)
+    );
+  }
+
+  function entitySearchText(entity){
+
+    return normalizeText(
+      [
+        entity.name,
+        entity.trade,
+        entity.category,
+        entity.subcategory,
+        entity.activity,
+        entity.description,
+        safeArray(entity.services)
+          .join(" "),
+        safeArray(entity.keywords)
+          .join(" "),
+        entity.commune
+      ].join(" ")
+    );
+  }
+
+  function searchEntities(
+    query,
+    options
+  ){
+
+    options =
+      options || {};
+
+    const commune =
+      normalizeText(
+        options.commune ||
+        getCurrentCommune()
+      );
+
+    const terms =
+      expandSearchTerms(
+        query
+      );
+
+    return loadEntities()
+      .filter(function(entity){
+
+        if(
+          options.localOnly !==
+          false
+        ){
+
+          if(
+            normalizeText(
+              entity.commune
+            ) !== commune
+          ){
+            return false;
+          }
+        }
+
+        if(options.category){
+
+          const category =
+            normalizeText(
+              options.category
+            );
+
+          const entityCategories =
+            normalizeText(
+              [
+                entity.category,
+                entity.subcategory,
+                entity.trade,
+                entity.kind
+              ].join(" ")
+            );
+
+          if(
+            !entityCategories.includes(
+              category
+            )
+          ){
+            return false;
+          }
+        }
+
+        if(!query){
+          return true;
+        }
+
+        const haystack =
+          entitySearchText(
+            entity
+          );
+
+        return terms.some(
+          function(term){
+
+            return haystack.includes(
+              term
+            );
+          }
+        );
+      })
+      .sort(function(a,b){
+
+        return String(
+          a.name || ""
+        ).localeCompare(
+          String(
+            b.name || ""
+          ),
+          "fr"
+        );
+      });
+  }
+
+  /* =======================================================
+     HISTORIQUE RECHERCHES
+     ======================================================= */
+
+  function loadSearchHistory(){
+
+    return safeArray(
+      loadJson(
+        STORAGE.searchHistory,
+        []
+      )
+    );
+  }
+
+  function addSearchHistory(
+    query,
+    commune
+  ){
+
+    const cleanQuery =
+      String(query || "").trim();
+
+    if(!cleanQuery){
+      return;
+    }
+
+    let history =
+      loadSearchHistory();
+
+    const normalized =
+      normalizeText(cleanQuery);
+
+    history =
+      history.filter(function(item){
+
+        return !(
+          normalizeText(
+            item.query
+          ) === normalized &&
+          normalizeText(
+            item.commune
+          ) ===
+          normalizeText(
+            commune
+          )
+        );
+      });
+
+    history.unshift({
+
+      id:
+        uniqueId("search"),
+
+      query:
+        cleanQuery,
+
+      commune:
+        commune ||
+        getCurrentCommune(),
+
+      createdAt:
+        Date.now()
+
+    });
+
+    saveJson(
+      STORAGE.searchHistory,
+      history.slice(
+        0,
+        MAX_SEARCH_HISTORY
+      )
+    );
+  }
+
+  /* =======================================================
+     CONSULTÉS RÉCEMMENT
+     ======================================================= */
+
+  function loadViewedHistory(){
+
+    return safeArray(
+      loadJson(
+        STORAGE.viewedHistory,
+        []
+      )
+    );
+  }
+
+  function addViewedEntity(
+    entity
+  ){
+
+    if(!entity){
+      return;
+    }
+
+    let history =
+      loadViewedHistory();
+
+    history =
+      history.filter(function(item){
+
+        return (
+          String(item.entityId) !==
+          String(entity.id)
+        );
+      });
+
+    history.unshift({
+
+      id:
+        uniqueId("view"),
+
+      entityId:
+        entity.id,
+
+      name:
+        entity.name,
+
+      commune:
+        entity.commune,
+
+      viewedAt:
+        Date.now()
+
+    });
+
+    saveJson(
+      STORAGE.viewedHistory,
+      history.slice(
+        0,
+        MAX_VIEW_HISTORY
+      )
+    );
+  }
+
+  /* =======================================================
+     FAVORIS
+     ======================================================= */
+
+  function loadFavorites(){
+
+    return safeArray(
+      loadJson(
+        STORAGE.favorites,
+        []
+      )
+    );
+  }
+
+  function isFavorite(entityId){
+
+    return loadFavorites()
+      .some(function(item){
+
+        return (
+          String(item.entityId) ===
+          String(entityId)
+        );
+      });
+  }
+
+  function toggleFavorite(entity){
+
+    let favorites =
+      loadFavorites();
+
+    const exists =
+      favorites.some(
+        function(item){
+
+          return (
+            String(item.entityId) ===
+            String(entity.id)
+          );
+        }
+      );
+
+    if(exists){
+
+      favorites =
+        favorites.filter(
+          function(item){
+
+            return (
+              String(item.entityId) !==
+              String(entity.id)
+            );
+          }
+        );
+
+    }else{
+
+      favorites.unshift({
+
+        entityId:
+          entity.id,
+
+        name:
+          entity.name,
+
+        commune:
+          entity.commune,
+
+        savedAt:
+          Date.now()
+
+      });
+    }
+
+    saveJson(
+      STORAGE.favorites,
+      favorites
+    );
+
+    return !exists;
+  }
+
+  /* =======================================================
+     APPRÉCIATIONS
+     ======================================================= */
+
+  function loadRatings(){
+
+    return safeArray(
+      loadJson(
+        STORAGE.ratings,
+        []
+      )
+    );
+  }
+
+  function getRatingsForEntity(
+    entityId
+  ){
+
+    return loadRatings()
+      .filter(function(rating){
+
+        return (
+          String(
+            rating.entityId
+          ) ===
+          String(entityId) &&
+          rating.verified === true
+        );
+      });
+  }
+
+  function average(values){
+
+    if(!values.length){
+      return 0;
+    }
+
+    const total =
+      values.reduce(
+        function(sum,value){
+
+          return (
+            sum +
+            Number(value || 0)
+          );
+        },
+        0
+      );
+
+    return (
+      total /
+      values.length
+    );
+  }
+
+  function getRatingSummary(
+    entityId
+  ){
+
+    const ratings =
+      getRatingsForEntity(
+        entityId
+      );
+
+    if(
+      ratings.length <
+      MINIMUM_RATINGS
+    ){
+
+      return {
+        visible:false,
+        count:
+          ratings.length
+      };
+    }
+
+    const globalValues =
+      ratings.map(function(rating){
+
+        return average([
+          rating.welcome,
+          rating.quality,
+          rating.value
+        ]);
+      });
+
+    const recommendation =
+      ratings.filter(
+        function(rating){
+
+          return (
+            rating.recommend ===
+            true
+          );
+        }
+      ).length;
+
+    const dates =
+      ratings
+        .map(function(rating){
+
+          return Number(
+            rating.createdAt || 0
+          );
+        })
+        .filter(Boolean)
+        .sort(function(a,b){
+
+          return a-b;
+        });
+
+    return {
+
+      visible:true,
+
+      count:
+        ratings.length,
+
+      global:
+        average(
+          globalValues
+        ),
+
+      welcome:
+        average(
+          ratings.map(
+            function(r){
+              return r.welcome;
+            }
+          )
+        ),
+
+      quality:
+        average(
+          ratings.map(
+            function(r){
+              return r.quality;
+            }
+          )
+        ),
+
+      value:
+        average(
+          ratings.map(
+            function(r){
+              return r.value;
+            }
+          )
+        ),
+
+      recommendPercent:
+        Math.round(
+          (
+            recommendation /
+            ratings.length
+          ) * 100
+        ),
+
+      from:
+        dates[0] || 0,
+
+      to:
+        dates[
+          dates.length - 1
+        ] || 0
+
+    };
+  }
+
+  /*
+    Une appréciation ne peut être enregistrée
+    comme vérifiée que par une interaction
+    reconnue par Bo'CitéArt.
+
+    Cette méthode est volontairement publique
+    pour être appelée plus tard par le système
+    de preuve de fréquentation.
+  */
+
+  function recordVerifiedRating(
+    entityId,
+    values,
+    verificationReference
+  ){
+
+    const ratings =
+      loadRatings();
+
+    ratings.push({
+
+      id:
+        uniqueId("rating"),
+
+      entityId:
+        entityId,
+
+      welcome:
+        Number(
+          values.welcome || 0
+        ),
+
+      quality:
+        Number(
+          values.quality || 0
+        ),
+
+      value:
+        Number(
+          values.value || 0
+        ),
+
+      recommend:
+        values.recommend ===
+        true,
+
+      verified:true,
+
+      verificationReference:
+        verificationReference ||
+        "",
+
+      createdAt:
+        Date.now()
+
+    });
+
+    saveJson(
+      STORAGE.ratings,
+      ratings
+    );
+  }
+
+  annuaire.recordVerifiedRating =
+    recordVerifiedRating;
+
+  /* =======================================================
+     HORAIRES
+     ======================================================= */
+
+  function getOpenStatus(entity){
+
+    if(!entity.hours){
+      return "";
+    }
+
+    /*
+      Format possible :
+      hours:{
+        1:[["09:00","12:00"],["14:00","18:00"]],
+        2:[...]
+      }
+
+      0 = dimanche
+      1 = lundi
+    */
+
+    const now =
+      new Date();
+
+    const day =
+      now.getDay();
+
+    const periods =
+      safeArray(
+        entity.hours[day]
+      );
+
+    if(!periods.length){
+
+      return "Fermé aujourd'hui";
+    }
+
+    const currentMinutes =
+      (
+        now.getHours() *
+        60
+      ) +
+      now.getMinutes();
+
+    const opened =
+      periods.some(
+        function(period){
+
+          if(
+            !Array.isArray(period) ||
+            period.length < 2
+          ){
+            return false;
+          }
+
+          function toMinutes(value){
+
+            const parts =
+              String(value)
+                .split(":");
+
+            return (
+              Number(parts[0] || 0) *
+              60
+            ) +
+            Number(parts[1] || 0);
+          }
+
+          const start =
+            toMinutes(
+              period[0]
+            );
+
+          const end =
+            toMinutes(
+              period[1]
+            );
+
+          return (
+            currentMinutes >= start &&
+            currentMinutes <= end
+          );
+        }
+      );
+
+    return opened
+      ? "Ouvert maintenant"
+      : "Fermé actuellement";
+  }
+
+  /* =======================================================
+     GÉOLOCALISATION
+     ======================================================= */
+
+  function distanceKm(
+    lat1,
+    lon1,
+    lat2,
+    lon2
+  ){
+
+    const R =
+      6371;
+
+    function rad(value){
+
+      return (
+        value *
+        Math.PI /
+        180
+      );
+    }
+
+    const dLat =
+      rad(
+        lat2-lat1
+      );
+
+    const dLon =
+      rad(
+        lon2-lon1
+      );
+
+    const a =
+      Math.sin(
+        dLat/2
+      ) ** 2 +
+      Math.cos(
+        rad(lat1)
+      ) *
+      Math.cos(
+        rad(lat2)
+      ) *
+      Math.sin(
+        dLon/2
+      ) ** 2;
+
+    const c =
+      2 *
+      Math.atan2(
+        Math.sqrt(a),
+        Math.sqrt(1-a)
+      );
+
+    return R*c;
+  }
+
+  /* =======================================================
+     LÉGENDE
+     ======================================================= */
+
+  function getLegendHtml(){
 
     return `
 
-      <!-- =================================================
-           INTRODUCTION
-           ================================================= -->
-
       <div
-        class="box entrepriseModuleIntro"
+        id="annuaireLegendBox"
+        class="box"
         style="
-          font-size:15px;
-          line-height:1.55;
-          font-weight:400;
+          display:none;
+          margin-top:10px;
         ">
 
         <div
-          class="entrepriseModuleTitle"
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            line-height:1.4;
-            font-weight:700;
-          ">
-          L’annuaire économique vivant devient votre outil
-          de développement local
+          class="bociteAnnuaireTitle">
+          Comprendre les repères
         </div>
 
         <div
+          style="margin-top:12px;">
+          ${partnerBadge()}
+        </div>
+
+        <div
+          class="bociteAnnuaireSmall"
+          style="margin:4px 0 12px 22px;">
+          Établissement ayant rejoint
+          officiellement Bo'CitéArt.
+        </div>
+
+        <div>
+          ${bocitecoinBadge()}
+        </div>
+
+        <div
+          class="bociteAnnuaireSmall"
+          style="margin:4px 0 12px 22px;">
+          Participation selon les règles
+          applicables à l'activité.
+        </div>
+
+        <div>
+          ${commerceBadge()}
+        </div>
+
+        <div style="margin-top:10px;">
+          ${entrepriseBadge()}
+        </div>
+
+        <div
+          class="bociteAnnuaireSmall"
           style="
             margin-top:14px;
-            color:#111;
-            font-size:15px;
-            line-height:1.55;
-            font-weight:400;
+            padding-top:10px;
+            border-top:1px solid #ddd;
           ">
-
-          Il ne s’agit plus
-          d’une simple liste de noms.
-
-          <br><br>
-
-          L’annuaire vivant
-          ${getAnnuaireLogoHtml()}
-          révèle les entreprises,
-          les commerces,
-          les artisans,
-          les métiers
-          et les savoir-faire
-          présents dans votre commune
-          et sur votre territoire.
-
-          <br><br>
-
-          Il permet aux habitants,
-          aux professionnels
-          et aux collectivités
-          de découvrir rapidement
-          les richesses économiques
-          qui existent déjà autour d’eux.
-
-          <br><br>
-
-          Il vous aide à trouver,
-          à être trouvé
-          et à créer de nouvelles opportunités.
-
-          <br><br>
-
-          <strong
-            style="
-              color:#111;
-              font-weight:900;
-            ">
-            Et il ne vous coûte rien.
-          </strong>
-
+          L'annuaire est régulièrement
+          actualisé afin d'intégrer
+          les créations,
+          modifications
+          et cessations identifiées
+          à partir de données fiables.
         </div>
 
       </div>
+    `;
+  }
 
-      <!-- =================================================
-           ENTREPRISE ENCORE MÉCONNUE
-           ================================================= -->
+  /* =======================================================
+     PAGE ACCUEIL
+     ======================================================= */
+
+  function getHomeHtml(){
+
+    const commune =
+      getCurrentCommune();
+
+    const categoryButtons =
+      CATEGORIES
+        .map(function(category){
+
+          return `
+
+            <button
+              type="button"
+              class="choiceBtn annuaireCategoryBtn"
+              data-category="${category.id}"
+              style="
+                width:100%;
+                min-height:62px;
+                text-align:left;
+                margin:0;
+              ">
+
+              <strong
+                style="
+                  display:block;
+                  color:#2f5d46;
+                  font-size:16px;
+                ">
+                ${escapeHtml(category.title)}
+              </strong>
+
+              <span
+                style="
+                  display:block;
+                  color:#111;
+                  font-size:13px;
+                  font-weight:400;
+                  margin-top:3px;
+                ">
+                ${escapeHtml(category.subtitle)}
+              </span>
+
+            </button>
+
+          `;
+        })
+        .join("");
+
+    const history =
+      loadSearchHistory()
+        .slice(0,4);
+
+    const historyHtml =
+      history.length
+        ? history
+            .map(function(item){
+
+              return `
+
+                <button
+                  type="button"
+                  class="choiceBtn annuaireRecentQueryBtn"
+                  data-query="${escapeHtml(item.query)}"
+                  style="
+                    width:100%;
+                    text-align:left;
+                    margin-top:7px;
+                  ">
+
+                  <strong>
+                    ${escapeHtml(item.query)}
+                  </strong>
+
+                  <br>
+
+                  <span
+                    style="
+                      font-size:12px;
+                      font-weight:400;
+                    ">
+                    ${escapeHtml(item.commune)}
+                    •
+                    ${formatDate(item.createdAt)}
+                  </span>
+
+                </button>
+
+              `;
+            })
+            .join("")
+        : `
+            <div class="bociteAnnuaireSmall">
+              Vos recherches apparaîtront ici
+              pour être retrouvées sans les retaper.
+            </div>
+          `;
+
+    return `
 
       <div
         class="box"
         style="
-          font-size:15px;
-          line-height:1.55;
-          font-weight:400;
+          border-left:6px solid #2f5d46;
+          margin-bottom:10px;
         ">
 
-        <div
-          class="entrepriseModuleSubtitle"
-          style="
-            color:#2f5d46;
-            font-size:16px;
-            line-height:1.4;
-            font-weight:700;
-          ">
-          Connaît-on vraiment votre entreprise ?
+        <div class="bociteAnnuaireTitle">
+          Annuaire de ${escapeHtml(commune)}
         </div>
 
         <div
-          style="
-            margin-top:14px;
-            color:#111;
-            font-size:15px;
-            line-height:1.55;
-            font-weight:400;
-          ">
-
-          Vous connaissez votre métier,
-          vos produits,
-          vos services,
-          vos équipes
-          et vos clients.
-
-          <br><br>
-
-          Mais les habitants savent-ils
-          ce que vous fabriquez
-          et ce que vous proposez réellement ?
-
-          <br><br>
-
-          Connaissent-ils vos métiers,
-          vos compétences
-          et vos savoir-faire ?
-
-          <br><br>
-
-          Savent-ils que vous recrutez
-          ou que vous recherchez
-          des partenaires,
-          des fournisseurs,
-          des sous-traitants
-          et de nouvelles compétences ?
-
-          <br><br>
-
-          Trop souvent,
-          la réponse est non.
-
-          <br><br>
-
-          L’entreprise est bien là.
-
-          <br><br>
-
-          Elle travaille.
-
-          <br>
-
-          Elle produit.
-
-          <br>
-
-          Elle possède des compétences,
-          des savoir-faire
-          et des richesses
-          que beaucoup ignorent encore.
-
-          <br><br>
-
-          Ce n’est pas toujours visible.
-
-          <br>
-
-          Pourtant,
-          cet écart existe réellement.
-
-          <br><br>
-
-          Il est invisible,
-          mais tellement présent.
-
-          <br><br>
-
-          C’est un véritable ravin
-          entre ce que votre entreprise possède
-          et ce que les autres
-          en connaissent réellement.
-
-          <br><br>
-
-          L’annuaire vivant
-          ${getAnnuaireLogoHtml()}
-          commence à combler
-          ce ravin invisible.
-
-          <br><br>
-
-          Il permet enfin
-          de rendre visibles
-          vos compétences,
-          vos métiers,
-          vos savoir-faire
-          et les richesses
-          que votre entreprise apporte
-          chaque jour
-          à votre commune
-          et à votre territoire.
-
+          class="bociteAnnuaireText"
+          style="margin-top:5px;">
+          Trouvez simplement
+          ce qui existe près de chez vous.
         </div>
 
       </div>
 
-      <!-- =================================================
-           PREMIER RÉFLEXE LOCAL
-           ================================================= -->
+      <div
+        class="box"
+        style="margin-bottom:10px;">
+
+        <label
+          for="annuaireSearchInput"
+          class="bociteAnnuaireTitle"
+          style="
+            display:block;
+            margin-bottom:7px;
+          ">
+          Que recherchez-vous ?
+        </label>
+
+        <input
+          id="annuaireSearchInput"
+          type="search"
+          autocomplete="off"
+          placeholder="Nom, métier, produit ou service"
+          style="
+            width:100%;
+            min-height:46px;
+            box-sizing:border-box;
+            border:1px solid #bbb;
+            border-radius:8px;
+            padding:10px;
+            font-size:14px;
+          "
+        >
+
+        <div
+          class="bociteAnnuaireSmall"
+          style="margin-top:5px;">
+          Restaurant • couvreur • médecin • garage • Dupont…
+        </div>
+
+        <button
+          id="annuaireSearchBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:9px;
+          ">
+          Rechercher dans ma ville
+        </button>
+
+      </div>
+
+      <div class="bociteAnnuaireGrid">
+        ${categoryButtons}
+      </div>
+
+      <div
+        class="bociteAnnuaireActions"
+        style="margin-top:9px;">
+
+        <button
+          id="annuaireNearBtn"
+          class="choiceBtn"
+          type="button">
+          Près de moi
+        </button>
+
+        <button
+          id="annuaireOpenBtn"
+          class="choiceBtn"
+          type="button">
+          Ouvert maintenant
+        </button>
+
+      </div>
+
+      <div
+        class="bociteAnnuaireActions"
+        style="margin-top:9px;">
+
+        <button
+          id="annuaireHistoryBtn"
+          class="choiceBtn"
+          type="button">
+          Dernières recherches
+        </button>
+
+        <button
+          id="annuaireFavoritesBtn"
+          class="choiceBtn"
+          type="button">
+          Mes favoris
+        </button>
+
+      </div>
+
+      <button
+        id="annuaireViewedBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+        ">
+        Consultés récemment
+      </button>
+
+      <button
+        id="annuaireLegendBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+        ">
+        Comprendre les symboles
+      </button>
+
+      ${getLegendHtml()}
 
       <div
         class="box"
-        style="
-          font-size:15px;
-          line-height:1.55;
-          font-weight:400;
-        ">
+        style="margin-top:11px;">
 
-        <div
-          class="entrepriseModuleSubtitle"
-          style="
-            color:#2f5d46;
-            font-size:16px;
-            line-height:1.4;
-            font-weight:700;
-          ">
-          Commencez par regarder autour de vous
+        <div class="bociteAnnuaireTitle">
+          Recherches récentes
+        </div>
+
+        <div style="margin-top:7px;">
+          ${historyHtml}
+        </div>
+
+      </div>
+
+      <div
+        class="box"
+        style="margin-top:11px;">
+
+        <div class="bociteAnnuaireTitle">
+          Un annuaire régulièrement actualisé
         </div>
 
         <div
-          style="
-            margin-top:14px;
-            color:#111;
-            font-size:15px;
-            line-height:1.55;
-            font-weight:400;
-          ">
+          class="bociteAnnuaireText"
+          style="margin-top:7px;">
 
-          Chaque jour,
-          des entreprises recherchent :
-
-          <br><br>
-
-          <span style="color:#2f5d46;">–</span>
-          de nouveaux clients ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          des fournisseurs ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          des partenaires ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          des sous-traitants ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          des compétences particulières ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          de futurs salariés ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          une réponse à un besoin précis.
+          ${getLogoHtml()}
+          rassemble les commerces,
+          entreprises,
+          artisans,
+          professionnels
+          et services identifiables
+          dans votre commune.
 
           <br><br>
 
-          Trop souvent,
-          elles commencent immédiatement
-          par chercher loin.
-
-          <br><br>
-
-          Pourtant,
-          la réponse existe parfois déjà
-          à quelques rues
-          ou à quelques kilomètres.
-
-          <br><br>
-
-          Encore faut-il savoir
-          qu’elle existe.
-
-          <br><br>
-
-          <strong
-            style="
-              color:#111;
-              font-weight:900;
-            ">
-            Pourquoi aller chercher loin
-            ce qui existe déjà
+          <strong>
+            Pourquoi chercher loin
+            ce qui existe peut-être déjà
             près de chez vous ?
           </strong>
 
@@ -317,495 +2077,5080 @@
 
       </div>
 
-      <!-- =================================================
-           CONTENU DE L'ANNUAIRE VIVANT
-           ================================================= -->
+      <button
+        id="annuaireProfessionalBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
+        Espace professionnel enrichi
+      </button>
+
+    `;
+  }
+
+  function openHome(){
+
+    render(
+      "Annuaire de votre ville",
+      getHomeHtml(),
+      bindHome
+    );
+  }
+
+  /* =======================================================
+     LANCEMENT RECHERCHE
+     ======================================================= */
+
+  function launchSearch(
+    query,
+    options
+  ){
+
+    const cleanQuery =
+      String(query || "").trim();
+
+    if(!cleanQuery){
+
+      alert(
+        "Indiquez un nom, un métier, un produit ou un service."
+      );
+
+      return;
+    }
+
+    addSearchHistory(
+      cleanQuery,
+      getCurrentCommune()
+    );
+
+    openResults(
+      cleanQuery,
+      options || {}
+    );
+  }
+
+  /* =======================================================
+     RÉSULTATS
+     ======================================================= */
+
+  function getResultCard(
+    entity,
+    distance
+  ){
+
+    const status =
+      getOpenStatus(entity);
+
+    const rating =
+      getRatingSummary(
+        entity.id
+      );
+
+    const ratingHtml =
+      rating.visible
+        ? `
+            <div
+              style="
+                margin-top:6px;
+                font-size:13px;
+              ">
+              <strong>
+                ${rating.global.toFixed(1)} / 5
+              </strong>
+              •
+              ${rating.count}
+              expériences locales
+            </div>
+          `
+        : "";
+
+    const distanceHtml =
+      typeof distance ===
+      "number"
+        ? `
+            <div
+              class="bociteAnnuaireSmall"
+              style="margin-top:3px;">
+              À ${distance.toFixed(1)} km
+            </div>
+          `
+        : "";
+
+    return `
 
       <div
-        class="box"
-        style="
-          font-size:15px;
-          line-height:1.55;
-          font-weight:400;
-        ">
+        class="box bociteAnnuaireResult">
+
+        ${getBadgesHtml(entity)}
 
         <div
-          class="entrepriseModuleSubtitle"
-          style="
-            color:#2f5d46;
-            font-size:16px;
-            line-height:1.4;
-            font-weight:700;
-          ">
-          Un annuaire vivant
+          class="bociteAnnuaireTitle"
+          style="margin-top:7px;">
+          ${escapeHtml(entity.name || "Établissement")}
         </div>
 
         <div
-          style="
-            margin-top:14px;
-            color:#111;
-            font-size:15px;
-            line-height:1.55;
-            font-weight:400;
-          ">
-
-          Découvrez et recherchez rapidement :
-
-          <br><br>
-
-          <span style="color:#2f5d46;">–</span>
-          les entreprises ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          les commerces ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          les artisans ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          les secteurs d’activité ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          les métiers ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          les savoir-faire ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          les produits et les services ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          les partenaires ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          les fournisseurs ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          les sous-traitants ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          les recherches professionnelles ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          les besoins exprimés par les entreprises.
-
-          <br><br>
-
-          L’annuaire vivant devient
-          un point de rencontre économique
-          entre les besoins
-          et les compétences disponibles.
-
-        </div>
-
-      </div>
-
-      <!-- =================================================
-           RECHERCHE DU DIRIGEANT
-           ================================================= -->
-
-      <div
-        class="box"
-        style="
-          font-size:15px;
-          line-height:1.55;
-          font-weight:400;
-        ">
-
-        <div
-          class="entrepriseModuleSubtitle"
-          style="
-            color:#2f5d46;
-            font-size:16px;
-            line-height:1.4;
-            font-weight:700;
-          ">
-
-          Un dirigeant ne recherche pas seulement un client
-
+          class="bociteAnnuaireText"
+          style="margin-top:4px;">
+          ${escapeHtml(
+            entity.activity ||
+            entity.trade ||
+            ""
+          )}
         </div>
 
         <div
-          style="
-            margin-top:14px;
-            color:#111;
-            font-size:15px;
-            line-height:1.55;
-            font-weight:400;
-          ">
-
-          Il recherche également :
-
-          <br><br>
-
-          <span style="color:#2f5d46;">–</span>
-          une compétence ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          une idée ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          un fabricant ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          un artisan ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          un bureau d’études ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          un transporteur ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          un expert ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          un partenaire ou un futur collaborateur ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          une réponse rapide à un problème concret.
-
-          <br><br>
-
-          L’annuaire vivant
-          ${getAnnuaireLogoHtml()}
-          rassemble toutes ces possibilités
-          dans un même espace.
-
-          <br><br>
-
-          Ne perdez plus votre temps
-          à chercher partout.
-
-          <br><br>
-
-          Toutes ces ressources
-          sont désormais regroupées.
-
-          <br><br>
-
-          Commencez vraiment
-          à découvrir les forces
-          déjà présentes autour de vous.
-
-          <br><br>
-
-          <strong
-            style="
-              color:#111;
-              font-weight:900;
-            ">
-            Ensemble,
-            nous allons plus loin
-            et plus durablement.
-          </strong>
-
+          class="bociteAnnuaireSmall"
+          style="margin-top:4px;">
+          ${escapeHtml(entity.commune || "")}
         </div>
 
-      </div>
-      
-            <!-- =================================================
-           PARTIE 4 — BASE VIVANTE, CONCLUSION ET ACTIONS
-           ================================================= -->
+        ${distanceHtml}
 
-      <div
-        class="box"
-        style="
-          font-size:15px;
-          line-height:1.55;
-          font-weight:400;
-        ">
+        ${
+          status
+            ? `
+                <div
+                  style="
+                    margin-top:5px;
+                    font-size:13px;
+                    font-weight:700;
+                  ">
+                  ${escapeHtml(status)}
+                </div>
+              `
+            : ""
+        }
+
+        ${ratingHtml}
 
         <div
-          class="entrepriseModuleSubtitle"
-          style="
-            color:#2f5d46;
-            font-size:16px;
-            line-height:1.4;
-            font-weight:700;
-          ">
+          class="bociteAnnuaireActions"
+          style="margin-top:9px;">
 
-          Une base économique enrichie quotidiennement
+          <button
+            type="button"
+            class="choiceBtn annuaireOpenEntityBtn"
+            data-id="${escapeHtml(entity.id)}">
+            Voir la fiche
+          </button>
 
-        </div>
-
-        <div
-          style="
-            margin-top:14px;
-            color:#111;
-            font-size:15px;
-            line-height:1.55;
-            font-weight:400;
-          ">
-
-          Les entreprises,
-          les commerces,
-          les artisans
-          et les professionnels
-          disposent d’un espace
-          pour présenter
-          et actualiser leurs informations.
-
-          <br><br>
-
-          L’annuaire vivant
-          ${getAnnuaireLogoHtml()}
-          est enrichi quotidiennement
-          afin de rester
-          le plus clair,
-          le plus utile
-          et le plus fiable possible.
-
-          <br><br>
-
-          Des repères visuels simples
-          permettent notamment de signaler :
-
-          <br><br>
-
-          <span style="color:#2f5d46;">–</span>
-          une nouvelle entreprise ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          des informations vérifiées
-          ou mises à jour ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          un changement d’activité ;<br>
-
-          <span style="color:#2f5d46;">–</span>
-          une reprise d’entreprise ;<br>
-
-          <span style="color:#b00020;">–</span>
-          une liquidation ;<br>
-
-          <span style="color:#b00020;">–</span>
-          une fermeture.
-
-          <br><br>
-
-          L’objectif est de proposer
-          une information claire,
-          utile
-          et toujours la plus récente possible.
+          ${
+            entity.phone
+              ? `
+                  <button
+                    type="button"
+                    class="choiceBtn annuaireCallBtn"
+                    data-phone="${escapeHtml(entity.phone)}">
+                    Appeler
+                  </button>
+                `
+              : `
+                  <button
+                    type="button"
+                    class="choiceBtn"
+                    disabled>
+                    Téléphone indisponible
+                  </button>
+                `
+          }
 
         </div>
-
-      </div>
-
-      <!-- =================================================
-           CONCLUSION
-           ================================================= -->
-
-      <div
-        class="box entrepriseModuleConclusion"
-        style="
-          color:#111;
-          font-size:15px;
-          line-height:1.55;
-          font-weight:400;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:16px;
-            line-height:1.4;
-            font-weight:700;
-          ">
-
-          Ce qui existe autour de nous
-          ne doit plus rester invisible
-
-        </div>
-
-        <div
-          style="
-            margin-top:14px;
-            color:#111;
-            font-size:15px;
-            line-height:1.55;
-            font-weight:400;
-          ">
-
-          Plus les entreprises
-          d’une commune sont connues,
-
-          <br><br>
-
-          plus elles développent
-          leurs contacts,
-          leurs collaborations,
-          leurs recommandations
-          et leurs possibilités d’activité.
-
-          <br><br>
-
-          L’entreprise découvre,
-          gratuitement,
-          de nouvelles ressources.
-
-          <br><br>
-
-          Les professionnels travaillent
-          plus facilement ensemble.
-
-          <br><br>
-
-          Les habitants identifient mieux
-          qui vous êtes
-          et ce que vous faites.
-
-          <br><br>
-
-          Ils en parlent naturellement
-          autour d’eux.
-
-          <br><br>
-
-          Ce bouche-à-oreille devient
-          l’un de vos meilleurs ambassadeurs,
-          sans vous coûter davantage.
-
-          <br><br>
-
-          Il renforce également
-          l’attractivité de votre entreprise
-          et peut favoriser le recrutement.
-
-          <br><br>
-
-          La collectivité connaît réellement
-          davantage les forces
-          et les richesses
-          présentes sur son territoire.
-
-          <br><br>
-
-          L’annuaire vivant
-          ne crée pas les compétences.
-
-          <br><br>
-
-          <strong
-            style="
-              color:#111;
-              font-weight:900;
-            ">
-
-            Il révèle enfin,
-            de manière visible,
-            celles qui existaient déjà.
-
-          </strong>
-
-        </div>
-
-      </div>
-
-      <!-- =================================================
-           ACTIONS — PLACÉES APRÈS LA CONCLUSION
-           ================================================= -->
-
-      <div
-        class="entrepriseModuleActions"
-        style="
-          margin-top:16px;
-        ">
 
         <button
-          id="directorySearchBtn"
-          class="choiceBtn"
-          type="button">
-
-          Rechercher une entreprise
-
-        </button>
-
-        <button
-          id="directoryProfessionalBtn"
-          class="choiceBtn"
-          type="button">
-
-          Recherche professionnelle
-
-        </button>
-
-        <button
-          id="directoryVisibilityBtn"
-          class="choiceBtn"
-          type="button">
-
-          Faire connaître mon entreprise
-
+          type="button"
+          class="choiceBtn annuaireRouteBtn"
+          data-address="${escapeHtml(
+            [
+              entity.address,
+              entity.postalCode,
+              entity.commune
+            ]
+            .filter(Boolean)
+            .join(" ")
+          )}"
+          style="
+            width:100%;
+            margin-top:7px;
+          ">
+          Itinéraire
         </button>
 
       </div>
+    `;
+  }
 
-      <!-- =================================================
-           INFORMATION BERCY INFOS ENTREPRISES
-           ================================================= -->
+  function openResults(
+    query,
+    options
+  ){
+
+    options =
+      options || {};
+
+    const results =
+      searchEntities(
+        query,
+        options
+      );
+
+    const commune =
+      getCurrentCommune();
+
+    let html = `
 
       <div
         class="box"
         style="
-          margin-top:16px;
           border-left:6px solid #2f5d46;
-          font-size:15px;
-          line-height:1.55;
-          font-weight:400;
         ">
 
-        <div
-          style="
-            color:#2f5d46;
-            font-size:16px;
-            line-height:1.4;
-            font-weight:700;
-          ">
-
-          Restez informé des changements
-          utiles à votre entreprise
-
+        <div class="bociteAnnuaireTitle">
+          Résultats dans ${escapeHtml(commune)}
         </div>
 
         <div
-          style="
-            margin-top:12px;
-            color:#111;
-            font-size:15px;
-            line-height:1.55;
-            font-weight:400;
-          ">
+          class="bociteAnnuaireText"
+          style="margin-top:5px;">
+          Recherche :
+          <strong>
+            ${escapeHtml(query)}
+          </strong>
+        </div>
 
-          Aides,
-          obligations légales,
-          fiscalité,
-          comptabilité
-          et gestion d’entreprise :
+      </div>
 
-          <br><br>
+    `;
 
-          découvrez également
-          Bercy Infos Entreprises,
-          un service officiel et gratuit.
+    if(!results.length){
+
+      html += `
+
+        <div
+          class="box"
+          style="margin-top:10px;">
+
+          <div class="bociteAnnuaireTitle">
+            Aucun résultat dans votre ville
+          </div>
+
+          <div
+            class="bociteAnnuaireText"
+            style="margin-top:7px;">
+            Vous pouvez élargir votre recherche
+            autour de votre commune.
+          </div>
+
+          <button
+            id="annuaireExpandSearchBtn"
+            class="choiceBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:9px;
+            ">
+            Élargir ma recherche
+          </button>
 
         </div>
+
+      `;
+
+    }else{
+
+      html += `
+        <div style="margin-top:10px;">
+      `;
+
+      results.forEach(
+        function(entity){
+
+          html +=
+            getResultCard(
+              entity
+            );
+        }
+      );
+
+      html += `
+        </div>
+      `;
+    }
+
+    html += `
+
+      <button
+        id="annuaireResultsBackHomeBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
+        Retour à l'annuaire
+      </button>
+
+    `;
+
+    render(
+      "Résultats",
+      html,
+      function(){
+
+        bindResultActions();
+
+        const back =
+          getElement(
+            "annuaireResultsBackHomeBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openHome;
+        }
+
+        const expand =
+          getElement(
+            "annuaireExpandSearchBtn"
+          );
+
+        if(expand){
+
+          expand.onclick =
+            function(){
+
+              const expanded =
+                searchEntities(
+                  query,
+                  {
+                    localOnly:false
+                  }
+                );
+
+              openGenericEntityList(
+                "Résultats élargis",
+                expanded
+              );
+            };
+        }
+
+      }
+    );
+  }
+
+  function openGenericEntityList(
+    title,
+    entities
+  ){
+
+    let html = "";
+
+    if(!entities.length){
+
+      html = `
+        <div class="box">
+          <div class="bociteAnnuaireText">
+            Aucun établissement disponible.
+          </div>
+        </div>
+      `;
+
+    }else{
+
+      entities.forEach(
+        function(entity){
+
+          html +=
+            getResultCard(
+              entity
+            );
+        }
+      );
+    }
+
+    html += `
+
+      <button
+        id="annuaireGenericBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;">
+        Retour à l'annuaire
+      </button>
+
+    `;
+
+    render(
+      title,
+      html,
+      function(){
+
+        bindResultActions();
+
+        const back =
+          getElement(
+            "annuaireGenericBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openHome;
+        }
+
+      }
+    );
+  }
+
+  /* =======================================================
+     CATÉGORIES
+     ======================================================= */
+
+  function openCategory(
+    categoryId
+  ){
+
+    if(
+      categoryId ===
+      "metiers"
+    ){
+      openAllTrades();
+      return;
+    }
+
+    if(
+      categoryId ===
+      "sante"
+    ){
+      openTradeFamily(
+        "Santé",
+        METIERS.sante
+      );
+      return;
+    }
+
+    if(
+      categoryId ===
+      "hebergements"
+    ){
+      openTradeFamily(
+        "Hôtels & séjours",
+        METIERS.hebergements
+      );
+      return;
+    }
+
+    const results =
+      searchEntities(
+        "",
+        {
+          category:
+            categoryId
+        }
+      );
+
+    openGenericEntityList(
+      CATEGORIES
+        .find(function(item){
+
+          return (
+            item.id ===
+            categoryId
+          );
+        })?.title ||
+        "Annuaire",
+      results
+    );
+  }
+
+  function openTradeFamily(
+    title,
+    trades
+  ){
+
+    const buttons =
+      safeArray(trades)
+        .map(function(trade){
+
+          return `
+
+            <button
+              type="button"
+              class="choiceBtn annuaireTradeBtn"
+              data-trade="${escapeHtml(trade)}"
+              style="
+                width:100%;
+                margin-top:7px;
+                text-align:left;
+              ">
+              ${escapeHtml(trade)}
+            </button>
+
+          `;
+        })
+        .join("");
+
+    render(
+      title,
+      `
+
+        <div class="box">
+
+          <div class="bociteAnnuaireTitle">
+            ${escapeHtml(title)}
+          </div>
+
+          <div
+            class="bociteAnnuaireText"
+            style="margin-top:6px;">
+            Choisissez un métier.
+          </div>
+
+        </div>
+
+        ${buttons}
 
         <button
-          id="directoryBercyInfoBtn"
+          id="annuaireTradeBackBtn"
           class="choiceBtn"
           type="button"
           style="
             width:100%;
-            margin-top:14px;
+            margin-top:10px;
           ">
-
-          Découvrir Bercy Infos Entreprises
-
+          Retour à l'annuaire
         </button>
+
+      `,
+      function(){
+
+        document
+          .querySelectorAll(
+            ".annuaireTradeBtn"
+          )
+          .forEach(function(button){
+
+            button.onclick =
+              function(){
+
+                launchSearch(
+                  button.getAttribute(
+                    "data-trade"
+                  ) || ""
+                );
+              };
+          });
+
+        const back =
+          getElement(
+            "annuaireTradeBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openHome;
+        }
+
+      }
+    );
+  }
+
+  function openAllTrades(){
+
+    const sections = [
+
+      {
+        title:"Santé",
+        values:METIERS.sante
+      },
+
+      {
+        title:"Maison & travaux",
+        values:METIERS.maison
+      },
+
+      {
+        title:"Automobile & mobilité",
+        values:METIERS.automobile
+      },
+
+      {
+        title:"Restaurants & alimentation",
+        values:METIERS.alimentation
+      },
+
+      {
+        title:"Services aux entreprises",
+        values:METIERS.professionnels
+      },
+
+      {
+        title:"Hôtels & séjours",
+        values:METIERS.hebergements
+      }
+
+    ];
+
+    let html = `
+
+      <div class="box">
+
+        <div class="bociteAnnuaireTitle">
+          Tous les métiers de votre ville
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+          Les professionnels sont regroupés
+          par métier puis classés
+          alphabétiquement.
+        </div>
+
+      </div>
+
+    `;
+
+    sections.forEach(
+      function(section){
+
+        html += `
+
+          <div
+            class="box"
+            style="margin-top:9px;">
+
+            <div class="bociteAnnuaireTitle">
+              ${escapeHtml(section.title)}
+            </div>
+
+            ${
+              section.values
+                .map(function(trade){
+
+                  return `
+
+                    <button
+                      type="button"
+                      class="choiceBtn annuaireTradeBtn"
+                      data-trade="${escapeHtml(trade)}"
+                      style="
+                        width:100%;
+                        margin-top:6px;
+                        text-align:left;
+                      ">
+                      ${escapeHtml(trade)}
+                    </button>
+
+                  `;
+                })
+                .join("")
+            }
+
+          </div>
+
+        `;
+      }
+    );
+
+    html += `
+
+      <button
+        id="annuaireAllTradesBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
+        Retour à l'annuaire
+      </button>
+
+    `;
+
+    render(
+      "Tous les métiers",
+      html,
+      function(){
+
+        document
+          .querySelectorAll(
+            ".annuaireTradeBtn"
+          )
+          .forEach(function(button){
+
+            button.onclick =
+              function(){
+
+                launchSearch(
+                  button.getAttribute(
+                    "data-trade"
+                  ) || ""
+                );
+              };
+          });
+
+        const back =
+          getElement(
+            "annuaireAllTradesBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openHome;
+        }
+
+      }
+    );
+  }
+
+  /* =======================================================
+     PHOTOS
+     ======================================================= */
+
+  function getPhotosHtml(entity){
+
+    const photos =
+      safeArray(
+        entity.photos
+      )
+      .slice(0,8);
+
+    if(!photos.length){
+      return "";
+    }
+
+    return `
+
+      <div
+        class="box"
+        style="margin-top:10px;">
+
+        <div class="bociteAnnuaireTitle">
+          Photos
+        </div>
+
+        <div
+          class="bociteAnnuairePhotoGrid"
+          style="margin-top:8px;">
+
+          ${
+            photos.map(
+              function(photo){
+
+                const url =
+                  typeof photo ===
+                  "string"
+                    ? photo
+                    : photo.url;
+
+                const alt =
+                  typeof photo ===
+                  "object"
+                    ? (
+                        photo.alt ||
+                        entity.name ||
+                        ""
+                      )
+                    : (
+                        entity.name ||
+                        ""
+                      );
+
+                return `
+                  <img
+                    src="${escapeHtml(url)}"
+                    alt="${escapeHtml(alt)}"
+                    loading="lazy"
+                  >
+                `;
+              }
+            )
+            .join("")
+          }
+
+        </div>
 
       </div>
 
     `;
   }
+
+  /* =======================================================
+     PETIT MOT
+     ======================================================= */
+
+  function getPartnerSignature(
+    entity
+  ){
+
+    const profiles =
+      loadJson(
+        STORAGE.partnerProfiles,
+        {}
+      );
+
+    const saved =
+      profiles[
+        entity.id
+      ] || {};
+
+    return (
+      saved.signature ||
+      entity.signature ||
+      ""
+    );
+  }
+
+  function signatureTitle(entity){
+
+    if(
+      entity.category ===
+      "restaurants" ||
+      entity.trade ===
+      "Restaurant"
+    ){
+      return "Le petit mot du chef";
+    }
+
+    if(
+      entity.category ===
+      "artisans"
+    ){
+      return "Le mot de l'artisan";
+    }
+
+    if(
+      entity.category ===
+      "hebergements"
+    ){
+      return "Le mot de votre hôte";
+    }
+
+    return "Le mot du commerçant";
+  }
+
+  /* =======================================================
+     APPRÉCIATIONS — AFFICHAGE
+     ======================================================= */
+
+  function getRatingHtml(entity){
+
+    if(
+      entity.ratingEnabled ===
+      false
+    ){
+      return "";
+    }
+
+    const summary =
+      getRatingSummary(
+        entity.id
+      );
+
+    if(!summary.visible){
+
+      return `
+
+        <div
+          class="box"
+          style="margin-top:10px;">
+
+          <div class="bociteAnnuaireTitle">
+            Appréciations locales
+          </div>
+
+          <div
+            class="bociteAnnuaireText"
+            style="margin-top:7px;">
+            Pas encore assez
+            d'expériences locales vérifiées
+            pour afficher une note représentative.
+          </div>
+
+          <div
+            class="bociteAnnuaireSmall"
+            style="margin-top:5px;">
+            ${summary.count}
+            expérience(s) vérifiée(s)
+            sur ${MINIMUM_RATINGS}
+            minimum.
+          </div>
+
+        </div>
+
+      `;
+    }
+
+    return `
+
+      <div
+        class="box"
+        style="margin-top:10px;">
+
+        <div class="bociteAnnuaireTitle">
+          Appréciations locales
+        </div>
+
+        <div
+          class="bociteAnnuaireStars"
+          style="margin-top:7px;">
+          ★★★★★
+        </div>
+
+        <div
+          style="
+            font-size:17px;
+            font-weight:700;
+            margin-top:4px;
+          ">
+          ${summary.global.toFixed(1)} / 5
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:7px;">
+          ${summary.count}
+          expériences locales vérifiées
+        </div>
+
+        <div
+          class="bociteAnnuaireSmall"
+          style="margin-top:5px;">
+          Période :
+          ${formatDate(summary.from)}
+          →
+          ${formatDate(summary.to)}
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:9px;">
+
+          Accueil :
+          <strong>
+            ${summary.welcome.toFixed(1)} / 5
+          </strong>
+
+          <br>
+
+          Qualité / prestation :
+          <strong>
+            ${summary.quality.toFixed(1)} / 5
+          </strong>
+
+          <br>
+
+          Rapport qualité-prix :
+          <strong>
+            ${summary.value.toFixed(1)} / 5
+          </strong>
+
+          <br>
+
+          Recommandent :
+          <strong>
+            ${summary.recommendPercent} %
+          </strong>
+
+        </div>
+
+        <div
+          class="bociteAnnuaireSmall"
+          style="
+            margin-top:9px;
+            padding-top:8px;
+            border-top:1px solid #ddd;
+          ">
+          Aucun commentaire public n'est publié.
+        </div>
+
+      </div>
+
+    `;
+  }
+
+  /* =======================================================
+     FICHE ÉTABLISSEMENT
+     ======================================================= */
+
+  function openEntity(
+    entityId
+  ){
+
+    const entity =
+      getEntityById(
+        entityId
+      );
+
+    if(!entity){
+
+      alert(
+        "Cette fiche n'est plus disponible."
+      );
+
+      return;
+    }
+
+    addViewedEntity(
+      entity
+    );
+
+    const favorite =
+      isFavorite(
+        entity.id
+      );
+
+    const signature =
+      entity.partner
+        ? getPartnerSignature(entity)
+        : "";
+
+    const officialHotelStars =
+      entity.officialHotelStars
+        ? `
+            <div
+              style="
+                margin-top:6px;
+                font-size:14px;
+              ">
+              Classement officiel :
+              <strong>
+                ${"★".repeat(
+                  Math.max(
+                    0,
+                    Math.min(
+                      5,
+                      Number(
+                        entity.officialHotelStars
+                      )
+                    )
+                  )
+                )}
+              </strong>
+            </div>
+          `
+        : "";
+
+    const lastUpdate =
+      entity.verifiedAt
+        ? `
+            <div
+              class="bociteAnnuaireSmall"
+              style="margin-top:6px;">
+              Informations vérifiées le :
+              ${formatDate(entity.verifiedAt)}
+            </div>
+          `
+        : "";
+
+    const source =
+      entity.source
+        ? `
+            <div
+              class="bociteAnnuaireSmall">
+              Source :
+              ${escapeHtml(entity.source)}
+            </div>
+          `
+        : "";
+
+    const services =
+      safeArray(
+        entity.services
+      );
+
+    const servicesHtml =
+      services.length
+        ? `
+            <div
+              class="box"
+              style="margin-top:10px;">
+
+              <div class="bociteAnnuaireTitle">
+                Services et savoir-faire
+              </div>
+
+              <div
+                class="bociteAnnuaireText"
+                style="margin-top:7px;">
+                ${
+                  services
+                    .map(function(service){
+
+                      return (
+                        "• " +
+                        escapeHtml(service)
+                      );
+                    })
+                    .join("<br>")
+                }
+              </div>
+
+            </div>
+          `
+        : "";
+
+    const signatureHtml =
+      signature
+        ? `
+            <div
+              class="box"
+              style="margin-top:10px;">
+
+              <div class="bociteAnnuaireTitle">
+                ${escapeHtml(
+                  signatureTitle(entity)
+                )}
+              </div>
+
+              <div class="bociteAnnuaireSignature">
+                ${escapeHtml(signature)}
+              </div>
+
+            </div>
+          `
+        : "";
+
+    const menuHtml =
+      entity.menuUrl
+        ? `
+            <button
+              id="annuaireMenuBtn"
+              class="choiceBtn"
+              type="button"
+              style="width:100%;">
+              Voir la carte / le menu
+            </button>
+          `
+        : "";
+
+    const employmentHtml = `
+
+      <div
+        class="box"
+        style="margin-top:10px;">
+
+        <div class="bociteAnnuaireTitle">
+          Emploi
+        </div>
+
+        ${
+          entity.recruiting
+            ? `
+                <div
+                  class="bociteAnnuaireText"
+                  style="margin-top:6px;">
+                  Cette entreprise recrute actuellement.
+                </div>
+
+                <button
+                  id="annuaireJobsBtn"
+                  class="choiceBtn"
+                  type="button"
+                  style="
+                    width:100%;
+                    margin-top:8px;
+                  ">
+                  Voir ses offres d'emploi
+                </button>
+              `
+            : ""
+        }
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:8px;">
+          Cette entreprise vous intéresse ?
+        </div>
+
+        <button
+          id="annuaireSpontaneousBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:8px;
+          ">
+          Envoyer une candidature spontanée
+        </button>
+
+      </div>
+
+    `;
+
+    const html = `
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+        ">
+
+        ${getBadgesHtml(entity)}
+
+        <div
+          class="bociteAnnuaireTitle"
+          style="margin-top:8px;">
+          ${escapeHtml(entity.name)}
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:4px;">
+          ${escapeHtml(
+            entity.activity ||
+            entity.trade ||
+            ""
+          )}
+        </div>
+
+        ${officialHotelStars}
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:8px;">
+          ${escapeHtml(entity.address || "")}
+          ${
+            entity.address
+              ? "<br>"
+              : ""
+          }
+          ${escapeHtml(entity.postalCode || "")}
+          ${escapeHtml(entity.commune || "")}
+        </div>
+
+        ${
+          entity.phone
+            ? `
+                <div
+                  class="bociteAnnuaireText"
+                  style="margin-top:6px;">
+                  Téléphone :
+                  ${escapeHtml(entity.phone)}
+                </div>
+              `
+            : ""
+        }
+
+        ${
+          entity.email
+            ? `
+                <div class="bociteAnnuaireText">
+                  E-mail :
+                  ${escapeHtml(entity.email)}
+                </div>
+              `
+            : ""
+        }
+
+        ${
+          getOpenStatus(entity)
+            ? `
+                <div
+                  style="
+                    margin-top:6px;
+                    font-weight:700;
+                    font-size:13px;
+                  ">
+                  ${escapeHtml(
+                    getOpenStatus(entity)
+                  )}
+                </div>
+              `
+            : ""
+        }
+
+        ${lastUpdate}
+        ${source}
+
+      </div>
+
+      <div
+        class="bociteAnnuaireActions"
+        style="margin-top:9px;">
+
+        ${
+          entity.phone
+            ? `
+                <button
+                  id="annuaireEntityCallBtn"
+                  class="choiceBtn"
+                  type="button">
+                  Appeler
+                </button>
+              `
+            : ""
+        }
+
+        <button
+          id="annuaireEntityRouteBtn"
+          class="choiceBtn"
+          type="button">
+          Itinéraire
+        </button>
+
+        ${
+          entity.email
+            ? `
+                <button
+                  id="annuaireEntityMailBtn"
+                  class="choiceBtn"
+                  type="button">
+                  Écrire
+                </button>
+              `
+            : ""
+        }
+
+        ${
+          entity.website
+            ? `
+                <button
+                  id="annuaireEntityWebBtn"
+                  class="choiceBtn"
+                  type="button">
+                  Site internet
+                </button>
+              `
+            : ""
+        }
+
+      </div>
+
+      <button
+        id="annuaireFavoriteToggleBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+        ">
+        ${
+          favorite
+            ? "Retirer de mes favoris"
+            : "Enregistrer cette adresse"
+        }
+      </button>
+
+      ${
+        entity.description
+          ? `
+              <div
+                class="box"
+                style="margin-top:10px;">
+
+                <div class="bociteAnnuaireTitle">
+                  Présentation
+                </div>
+
+                <div
+                  class="bociteAnnuaireText"
+                  style="margin-top:7px;">
+                  ${escapeHtml(entity.description)}
+                </div>
+
+              </div>
+            `
+          : ""
+      }
+
+      ${servicesHtml}
+
+      ${getPhotosHtml(entity)}
+
+      ${menuHtml}
+
+      ${signatureHtml}
+
+      ${employmentHtml}
+
+      ${getRatingHtml(entity)}
+
+      <button
+        id="annuaireReportBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
+        Signaler une information incorrecte
+      </button>
+
+      ${
+        entity.partner
+          ? `
+              <button
+                id="annuairePartnerEditBtn"
+                class="choiceBtn"
+                type="button"
+                style="
+                  width:100%;
+                  margin-top:8px;
+                ">
+                Modifier ma présentation partenaire
+              </button>
+            `
+          : ""
+      }
+
+      <button
+        id="annuaireEntityBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+        ">
+        Retour à l'annuaire
+      </button>
+
+    `;
+
+    render(
+      entity.name,
+      html,
+      function(){
+
+        const call =
+          getElement(
+            "annuaireEntityCallBtn"
+          );
+
+        if(call){
+
+          call.onclick =
+            function(){
+
+              window.location.href =
+                "tel:" +
+                String(
+                  entity.phone
+                ).replace(
+                  /\s+/g,
+                  ""
+                );
+            };
+        }
+
+        const mail =
+          getElement(
+            "annuaireEntityMailBtn"
+          );
+
+        if(mail){
+
+          mail.onclick =
+            function(){
+
+              window.location.href =
+                "mailto:" +
+                entity.email;
+            };
+        }
+
+        const web =
+          getElement(
+            "annuaireEntityWebBtn"
+          );
+
+        if(web){
+
+          web.onclick =
+            function(){
+
+              window.open(
+                entity.website,
+                "_blank",
+                "noopener"
+              );
+            };
+        }
+
+        const route =
+          getElement(
+            "annuaireEntityRouteBtn"
+          );
+
+        if(route){
+
+          route.onclick =
+            function(){
+
+              const address =
+                [
+                  entity.address,
+                  entity.postalCode,
+                  entity.commune
+                ]
+                .filter(Boolean)
+                .join(" ");
+
+              window.open(
+                "https://www.google.com/maps/search/?api=1&query=" +
+                encodeURIComponent(
+                  address
+                ),
+                "_blank",
+                "noopener"
+              );
+            };
+        }
+
+        const favoriteBtn =
+          getElement(
+            "annuaireFavoriteToggleBtn"
+          );
+
+        if(favoriteBtn){
+
+          favoriteBtn.onclick =
+            function(){
+
+              const added =
+                toggleFavorite(
+                  entity
+                );
+
+              favoriteBtn.textContent =
+                added
+                  ? "Retirer de mes favoris"
+                  : "Enregistrer cette adresse";
+            };
+        }
+
+        const menu =
+          getElement(
+            "annuaireMenuBtn"
+          );
+
+        if(menu){
+
+          menu.onclick =
+            function(){
+
+              window.open(
+                entity.menuUrl,
+                "_blank",
+                "noopener"
+              );
+            };
+        }
+
+        const jobs =
+          getElement(
+            "annuaireJobsBtn"
+          );
+
+        if(jobs){
+
+          jobs.onclick =
+            function(){
+
+              if(
+                typeof module.openPublicEmploymentList ===
+                "function"
+              ){
+
+                module.openPublicEmploymentList();
+                return;
+              }
+
+              if(
+                typeof module.openEmploymentPublicHome ===
+                "function"
+              ){
+
+                module.openEmploymentPublicHome();
+                return;
+              }
+
+              module.openScreen(
+                "emploi"
+              );
+            };
+        }
+
+        const spontaneous =
+          getElement(
+            "annuaireSpontaneousBtn"
+          );
+
+        if(spontaneous){
+
+          spontaneous.onclick =
+            function(){
+
+              if(
+                typeof module.openApplicationForm ===
+                "function"
+              ){
+
+                module.openApplicationForm(
+                  {
+                    companyId:
+                      entity.id,
+
+                    companyName:
+                      entity.name
+                  }
+                );
+
+                return;
+              }
+
+              if(
+                typeof module.openEmploymentPublicHome ===
+                "function"
+              ){
+
+                module.openEmploymentPublicHome();
+                return;
+              }
+
+              module.openScreen(
+                "emploi"
+              );
+            };
+        }
+
+        const report =
+          getElement(
+            "annuaireReportBtn"
+          );
+
+        if(report){
+
+          report.onclick =
+            function(){
+
+              openReportForm(
+                entity
+              );
+            };
+        }
+
+        const partnerEdit =
+          getElement(
+            "annuairePartnerEditBtn"
+          );
+
+        if(partnerEdit){
+
+          partnerEdit.onclick =
+            function(){
+
+              openPartnerEditor(
+                entity
+              );
+            };
+        }
+
+        const back =
+          getElement(
+            "annuaireEntityBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openHome;
+        }
+
+      }
+    );
+  }
+
+  /* =======================================================
+     SIGNALEMENT
+     ======================================================= */
+
+  function openReportForm(
+    entity
+  ){
+
+    render(
+      "Signaler une information",
+      `
+
+        <div class="box">
+
+          <div class="bociteAnnuaireTitle">
+            Une information est incorrecte ?
+          </div>
+
+          <div
+            class="bociteAnnuaireText"
+            style="margin-top:6px;">
+            ${escapeHtml(entity.name)}
+          </div>
+
+        </div>
+
+        <div
+          class="box"
+          style="margin-top:10px;">
+
+          <label>
+            <input
+              type="radio"
+              name="annuaireReportType"
+              value="adresse">
+            Adresse incorrecte
+          </label>
+
+          <br><br>
+
+          <label>
+            <input
+              type="radio"
+              name="annuaireReportType"
+              value="telephone">
+            Téléphone incorrect
+          </label>
+
+          <br><br>
+
+          <label>
+            <input
+              type="radio"
+              name="annuaireReportType"
+              value="horaires">
+            Horaires incorrects
+          </label>
+
+          <br><br>
+
+          <label>
+            <input
+              type="radio"
+              name="annuaireReportType"
+              value="ferme">
+            Établissement fermé
+          </label>
+
+          <br><br>
+
+          <label>
+            <input
+              type="radio"
+              name="annuaireReportType"
+              value="deplace">
+            Établissement déplacé
+          </label>
+
+          <br><br>
+
+          <label>
+            <input
+              type="radio"
+              name="annuaireReportType"
+              value="autre">
+            Autre information
+          </label>
+
+        </div>
+
+        <button
+          id="annuaireReportSendBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:9px;
+          ">
+          Signaler
+        </button>
+
+        <button
+          id="annuaireReportBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:7px;
+          ">
+          Retour à la fiche
+        </button>
+
+      `,
+      function(){
+
+        const send =
+          getElement(
+            "annuaireReportSendBtn"
+          );
+
+        if(send){
+
+          send.onclick =
+            function(){
+
+              const selected =
+                document.querySelector(
+                  "input[name='annuaireReportType']:checked"
+                );
+
+              if(!selected){
+
+                alert(
+                  "Choisissez l'information à signaler."
+                );
+
+                return;
+              }
+
+              /*
+                Le signalement ne modifie jamais
+                directement la fiche.
+              */
+
+              const reports =
+                safeArray(
+                  loadJson(
+                    "bociteart_annuaire_reports_v1",
+                    []
+                  )
+                );
+
+              reports.push({
+
+                id:
+                  uniqueId("report"),
+
+                entityId:
+                  entity.id,
+
+                type:
+                  selected.value,
+
+                createdAt:
+                  Date.now(),
+
+                status:
+                  "a_verifier"
+
+              });
+
+              saveJson(
+                "bociteart_annuaire_reports_v1",
+                reports
+              );
+
+              alert(
+                "Merci. L'information sera vérifiée avant toute modification."
+              );
+
+              openEntity(
+                entity.id
+              );
+            };
+        }
+
+        const back =
+          getElement(
+            "annuaireReportBackBtn"
+          );
+
+        if(back){
+
+          back.onclick =
+            function(){
+
+              openEntity(
+                entity.id
+              );
+            };
+        }
+
+      }
+    );
+  }
+
+  /* =======================================================
+     PETIT MOT PARTENAIRE
+     ======================================================= */
+
+  function openPartnerEditor(
+    entity
+  ){
+
+    requirePrivateAccess(
+      function(){
+
+        if(!entity.partner){
+
+          alert(
+            "Cette fonction est réservée aux partenaires Bo'CitéArt."
+          );
+
+          return;
+        }
+
+        const profiles =
+          loadJson(
+            STORAGE.partnerProfiles,
+            {}
+          );
+
+        const saved =
+          profiles[
+            entity.id
+          ] || {};
+
+        const signature =
+          saved.signature ||
+          entity.signature ||
+          "";
+
+        render(
+          "Présentation partenaire",
+          `
+
+            <div class="box">
+
+              <div class="bociteAnnuaireTitle">
+                ${escapeHtml(
+                  signatureTitle(entity)
+                )}
+              </div>
+
+              <div
+                class="bociteAnnuaireText"
+                style="margin-top:6px;">
+                Ajoutez quelques lignes
+                personnelles qui vous ressemblent.
+                Ce texte devient votre signature
+                dans votre fiche publique.
+              </div>
+
+            </div>
+
+            <div
+              class="box"
+              style="margin-top:9px;">
+
+              <textarea
+                id="annuairePartnerSignatureInput"
+                maxlength="400"
+                rows="6"
+                style="
+                  width:100%;
+                  box-sizing:border-box;
+                  resize:vertical;
+                "
+                placeholder="Votre petit mot...">${escapeHtml(signature)}</textarea>
+
+              <div
+                class="bociteAnnuaireSmall"
+                style="margin-top:6px;">
+                400 caractères maximum.
+                Pas de promotion,
+                remise ou offre commerciale.
+                Les campagnes promotionnelles
+                utilisent les espaces publicitaires
+                prévus dans Bo'CitéArt.
+              </div>
+
+            </div>
+
+            <button
+              id="annuairePartnerSignatureSaveBtn"
+              class="choiceBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:8px;
+              ">
+              Enregistrer mon petit mot
+            </button>
+
+            <button
+              id="annuairePartnerSignatureBackBtn"
+              class="choiceBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:7px;
+              ">
+              Retour à ma fiche
+            </button>
+
+          `,
+          function(){
+
+            const save =
+              getElement(
+                "annuairePartnerSignatureSaveBtn"
+              );
+
+            if(save){
+
+              save.onclick =
+                function(){
+
+                  const input =
+                    getElement(
+                      "annuairePartnerSignatureInput"
+                    );
+
+                  const value =
+                    input
+                      ? input.value.trim()
+                      : "";
+
+                  profiles[
+                    entity.id
+                  ] = {
+
+                    ...(profiles[
+                      entity.id
+                    ] || {}),
+
+                    signature:
+                      value,
+
+                    updatedAt:
+                      Date.now()
+
+                  };
+
+                  saveJson(
+                    STORAGE.partnerProfiles,
+                    profiles
+                  );
+
+                  alert(
+                    "Votre petit mot est enregistré."
+                  );
+
+                  openEntity(
+                    entity.id
+                  );
+                };
+            }
+
+            const back =
+              getElement(
+                "annuairePartnerSignatureBackBtn"
+              );
+
+            if(back){
+
+              back.onclick =
+                function(){
+
+                  openEntity(
+                    entity.id
+                  );
+                };
+            }
+
+          }
+        );
+      }
+    );
+  }
+
+  /* =======================================================
+     HISTORIQUE PUBLIC
+     ======================================================= */
+
+  function openSearchHistory(){
+
+    const history =
+      loadSearchHistory();
+
+    let html = `
+
+      <div class="box">
+
+        <div class="bociteAnnuaireTitle">
+          Mes dernières recherches
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+          Retrouvez une ancienne recherche
+          sans avoir à la retaper.
+        </div>
+
+      </div>
+
+    `;
+
+    if(!history.length){
+
+      html += `
+
+        <div
+          class="box"
+          style="margin-top:9px;">
+          Aucun historique pour le moment.
+        </div>
+
+      `;
+
+    }else{
+
+      history.forEach(
+        function(item){
+
+          html += `
+
+            <button
+              type="button"
+              class="choiceBtn annuaireHistoryQueryBtn"
+              data-query="${escapeHtml(item.query)}"
+              style="
+                width:100%;
+                text-align:left;
+                margin-top:7px;
+              ">
+
+              <strong>
+                ${escapeHtml(item.query)}
+              </strong>
+
+              <br>
+
+              <span
+                style="
+                  font-size:12px;
+                  font-weight:400;
+                ">
+                ${escapeHtml(item.commune)}
+                •
+                ${formatDate(item.createdAt)}
+              </span>
+
+            </button>
+
+          `;
+        }
+      );
+    }
+
+    html += `
+
+      <button
+        id="annuaireHistoryBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
+        Retour à l'annuaire
+      </button>
+
+    `;
+
+    render(
+      "Mes dernières recherches",
+      html,
+      function(){
+
+        document
+          .querySelectorAll(
+            ".annuaireHistoryQueryBtn"
+          )
+          .forEach(function(button){
+
+            button.onclick =
+              function(){
+
+                launchSearch(
+                  button.getAttribute(
+                    "data-query"
+                  ) || ""
+                );
+              };
+          });
+
+        const back =
+          getElement(
+            "annuaireHistoryBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openHome;
+        }
+
+      }
+    );
+  }
+
+  function openViewedHistory(){
+
+    const history =
+      loadViewedHistory();
+
+    let html = `
+
+      <div class="box">
+
+        <div class="bociteAnnuaireTitle">
+          Consultés récemment
+        </div>
+
+      </div>
+
+    `;
+
+    if(!history.length){
+
+      html += `
+
+        <div
+          class="box"
+          style="margin-top:9px;">
+          Aucune fiche consultée pour le moment.
+        </div>
+
+      `;
+
+    }else{
+
+      history.forEach(
+        function(item){
+
+          html += `
+
+            <button
+              type="button"
+              class="choiceBtn annuaireViewedEntityBtn"
+              data-id="${escapeHtml(item.entityId)}"
+              style="
+                width:100%;
+                text-align:left;
+                margin-top:7px;
+              ">
+
+              <strong>
+                ${escapeHtml(item.name)}
+              </strong>
+
+              <br>
+
+              <span
+                style="
+                  font-size:12px;
+                  font-weight:400;
+                ">
+                ${escapeHtml(item.commune || "")}
+                •
+                ${formatDate(item.viewedAt)}
+              </span>
+
+            </button>
+
+          `;
+        }
+      );
+    }
+
+    html += `
+
+      <button
+        id="annuaireViewedBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
+        Retour à l'annuaire
+      </button>
+
+    `;
+
+    render(
+      "Consultés récemment",
+      html,
+      function(){
+
+        document
+          .querySelectorAll(
+            ".annuaireViewedEntityBtn"
+          )
+          .forEach(function(button){
+
+            button.onclick =
+              function(){
+
+                openEntity(
+                  button.getAttribute(
+                    "data-id"
+                  )
+                );
+              };
+          });
+
+        const back =
+          getElement(
+            "annuaireViewedBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openHome;
+        }
+
+      }
+    );
+  }
+
+  function openFavorites(){
+
+    const favorites =
+      loadFavorites();
+
+    let html = `
+
+      <div class="box">
+
+        <div class="bociteAnnuaireTitle">
+          Mes favoris
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+          Retrouvez les adresses
+          que vous souhaitez conserver.
+        </div>
+
+      </div>
+
+    `;
+
+    if(!favorites.length){
+
+      html += `
+
+        <div
+          class="box"
+          style="margin-top:9px;">
+          Aucun favori enregistré.
+        </div>
+
+      `;
+
+    }else{
+
+      favorites.forEach(
+        function(item){
+
+          html += `
+
+            <button
+              type="button"
+              class="choiceBtn annuaireFavoriteEntityBtn"
+              data-id="${escapeHtml(item.entityId)}"
+              style="
+                width:100%;
+                text-align:left;
+                margin-top:7px;
+              ">
+
+              <strong>
+                ${escapeHtml(item.name)}
+              </strong>
+
+              <br>
+
+              <span
+                style="
+                  font-size:12px;
+                  font-weight:400;
+                ">
+                ${escapeHtml(item.commune || "")}
+                • enregistré le
+                ${formatDate(item.savedAt)}
+              </span>
+
+            </button>
+
+          `;
+        }
+      );
+    }
+
+    html += `
+
+      <button
+        id="annuaireFavoritesBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
+        Retour à l'annuaire
+      </button>
+
+    `;
+
+    render(
+      "Mes favoris",
+      html,
+      function(){
+
+        document
+          .querySelectorAll(
+            ".annuaireFavoriteEntityBtn"
+          )
+          .forEach(function(button){
+
+            button.onclick =
+              function(){
+
+                openEntity(
+                  button.getAttribute(
+                    "data-id"
+                  )
+                );
+              };
+          });
+
+        const back =
+          getElement(
+            "annuaireFavoritesBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openHome;
+        }
+
+      }
+    );
+  }
+
+  /* =======================================================
+     PRÈS DE MOI
+     ======================================================= */
+
+  function openNearMe(){
+
+    if(
+      !navigator.geolocation
+    ){
+
+      alert(
+        "La géolocalisation n'est pas disponible sur cet appareil."
+      );
+
+      return;
+    }
+
+    navigator.geolocation
+      .getCurrentPosition(
+        function(position){
+
+          const lat =
+            position.coords.latitude;
+
+          const lng =
+            position.coords.longitude;
+
+          const results =
+            loadEntities()
+              .filter(function(entity){
+
+                return (
+                  Number.isFinite(
+                    Number(entity.lat)
+                  ) &&
+                  Number.isFinite(
+                    Number(entity.lng)
+                  )
+                );
+              })
+              .map(function(entity){
+
+                return {
+
+                  entity:entity,
+
+                  distance:
+                    distanceKm(
+                      lat,
+                      lng,
+                      Number(entity.lat),
+                      Number(entity.lng)
+                    )
+
+                };
+              })
+              .sort(function(a,b){
+
+                return (
+                  a.distance -
+                  b.distance
+                );
+              })
+              .slice(0,50);
+
+          let html = "";
+
+          if(!results.length){
+
+            html = `
+              <div class="box">
+                Aucune position géographique
+                n'est encore disponible
+                pour les établissements.
+              </div>
+            `;
+
+          }else{
+
+            results.forEach(
+              function(item){
+
+                html +=
+                  getResultCard(
+                    item.entity,
+                    item.distance
+                  );
+              }
+            );
+          }
+
+          html += `
+
+            <button
+              id="annuaireNearBackBtn"
+              class="choiceBtn"
+              type="button"
+              style="width:100%;">
+              Retour à l'annuaire
+            </button>
+
+          `;
+
+          render(
+            "Près de moi",
+            html,
+            function(){
+
+              bindResultActions();
+
+              const back =
+                getElement(
+                  "annuaireNearBackBtn"
+                );
+
+              if(back){
+                back.onclick =
+                  openHome;
+              }
+
+            }
+          );
+
+        },
+        function(){
+
+          alert(
+            "Votre position n'a pas pu être utilisée."
+          );
+        }
+      );
+  }
+
+  /* =======================================================
+     OUVERT MAINTENANT
+     ======================================================= */
+
+  function openNow(){
+
+    const results =
+      loadEntities()
+        .filter(function(entity){
+
+          return (
+            getOpenStatus(entity) ===
+            "Ouvert maintenant"
+          );
+        });
+
+    openGenericEntityList(
+      "Ouvert maintenant",
+      results
+    );
+  }
+
+  /* =======================================================
+     ACTIONS COMMUNES RÉSULTATS
+     ======================================================= */
+
+  function bindResultActions(){
+
+    document
+      .querySelectorAll(
+        ".annuaireOpenEntityBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick =
+          function(){
+
+            openEntity(
+              button.getAttribute(
+                "data-id"
+              )
+            );
+          };
+      });
+
+    document
+      .querySelectorAll(
+        ".annuaireCallBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick =
+          function(){
+
+            window.location.href =
+              "tel:" +
+              String(
+                button.getAttribute(
+                  "data-phone"
+                ) || ""
+              )
+              .replace(
+                /\s+/g,
+                ""
+              );
+          };
+      });
+
+    document
+      .querySelectorAll(
+        ".annuaireRouteBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick =
+          function(){
+
+            const address =
+              button.getAttribute(
+                "data-address"
+              ) || "";
+
+            window.open(
+              "https://www.google.com/maps/search/?api=1&query=" +
+              encodeURIComponent(
+                address
+              ),
+              "_blank",
+              "noopener"
+            );
+          };
+      });
+  }
+
+  /* =======================================================
+     PROFESSIONNEL — HISTORIQUE
+     ======================================================= */
+
+  function loadProfessionalHistory(){
+
+    return safeArray(
+      loadJson(
+        STORAGE.professionalHistory,
+        []
+      )
+    );
+  }
+
+  function saveProfessionalSearch(
+    query,
+    details,
+    zone
+  ){
+
+    const history =
+      loadProfessionalHistory();
+
+    history.unshift({
+
+      id:
+        uniqueId("prosearch"),
+
+      query:
+        query,
+
+      details:
+        details || "",
+
+      zone:
+        zone ||
+        getCurrentCommune(),
+
+      status:
+        "en_cours",
+
+      createdAt:
+        Date.now(),
+
+      updatedAt:
+        Date.now()
+
+    });
+
+    saveJson(
+      STORAGE.professionalHistory,
+      history
+    );
+  }
+
+  /* =======================================================
+     CARNET PROFESSIONNEL
+     ======================================================= */
+
+  function loadNotebook(){
+
+    return safeArray(
+      loadJson(
+        STORAGE.notebook,
+        []
+      )
+    );
+  }
+
+  function saveNotebookItem(
+    entity,
+    note
+  ){
+
+    let items =
+      loadNotebook();
+
+    const existing =
+      items.find(
+        function(item){
+
+          return (
+            String(item.entityId) ===
+            String(entity.id)
+          );
+        }
+      );
+
+    if(existing){
+
+      existing.note =
+        note;
+
+      existing.updatedAt =
+        Date.now();
+
+    }else{
+
+      items.unshift({
+
+        entityId:
+          entity.id,
+
+        name:
+          entity.name,
+
+        commune:
+          entity.commune,
+
+        note:
+          note,
+
+        createdAt:
+          Date.now(),
+
+        updatedAt:
+          Date.now()
+
+      });
+    }
+
+    saveJson(
+      STORAGE.notebook,
+      items
+    );
+  }
+
+  /* =======================================================
+     ENTREPRISES SUIVIES
+     ======================================================= */
+
+  function loadFollowed(){
+
+    return safeArray(
+      loadJson(
+        STORAGE.followed,
+        []
+      )
+    );
+  }
+
+  function followEntity(
+    entity
+  ){
+
+    let followed =
+      loadFollowed();
+
+    if(
+      followed.some(
+        function(item){
+
+          return (
+            String(item.entityId) ===
+            String(entity.id)
+          );
+        }
+      )
+    ){
+      return;
+    }
+
+    followed.unshift({
+
+      entityId:
+        entity.id,
+
+      name:
+        entity.name,
+
+      createdAt:
+        Date.now(),
+
+      lastCheckedAt:
+        entity.professionalData &&
+        entity.professionalData.checkedAt
+          ? entity.professionalData.checkedAt
+          : 0
+
+    });
+
+    saveJson(
+      STORAGE.followed,
+      followed
+    );
+  }
+
+  /* =======================================================
+     TABLEAU PRO
+     ======================================================= */
+
+  const DEFAULT_DASHBOARD_ORDER = [
+
+    "search",
+    "history",
+    "followed",
+    "notebook",
+    "information",
+    "bercy"
+
+  ];
+
+  function loadDashboardOrder(){
+
+    const order =
+      loadJson(
+        STORAGE.dashboardOrder,
+        DEFAULT_DASHBOARD_ORDER
+      );
+
+    return Array.isArray(order)
+      ? order
+      : DEFAULT_DASHBOARD_ORDER.slice();
+  }
+
+  function saveDashboardOrder(
+    order
+  ){
+
+    saveJson(
+      STORAGE.dashboardOrder,
+      order
+    );
+  }
+
+  function dashboardCard(
+    id,
+    title,
+    subtitle,
+    buttonLabel
+  ){
+
+    return `
+
+      <div
+        class="box bociteAnnuaireDashboardCard"
+        draggable="true"
+        data-dashboard-id="${id}">
+
+        <div
+          style="
+            display:flex;
+            justify-content:space-between;
+            gap:8px;
+            align-items:center;
+          ">
+
+          <div class="bociteAnnuaireTitle">
+            ${escapeHtml(title)}
+          </div>
+
+          <div
+            class="bociteAnnuaireDragHandle"
+            title="Déplacer">
+            ≡
+          </div>
+
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:5px;">
+          ${escapeHtml(subtitle)}
+        </div>
+
+        <button
+          type="button"
+          class="choiceBtn annuaireDashboardOpenBtn"
+          data-dashboard-open="${id}"
+          style="
+            width:100%;
+            margin-top:8px;
+          ">
+          ${escapeHtml(buttonLabel)}
+        </button>
+
+        <div
+          class="bociteAnnuaireActions"
+          style="margin-top:6px;">
+
+          <button
+            type="button"
+            class="choiceBtn annuaireDashboardUpBtn"
+            data-dashboard-id="${id}">
+            Remonter
+          </button>
+
+          <button
+            type="button"
+            class="choiceBtn annuaireDashboardDownBtn"
+            data-dashboard-id="${id}">
+            Descendre
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+  }
+
+  function getProfessionalDashboardHtml(){
+
+    const order =
+      loadDashboardOrder();
+
+    const definitions = {
+
+      search:{
+        title:
+          "Recherche professionnelle",
+
+        subtitle:
+          "Fournisseurs • sous-traitants • partenaires • compétences",
+
+        button:
+          "Rechercher"
+      },
+
+      history:{
+        title:
+          "Mes recherches professionnelles",
+
+        subtitle:
+          "En cours • terminées • anciennes recherches",
+
+        button:
+          "Consulter"
+      },
+
+      followed:{
+        title:
+          "Entreprises suivies",
+
+        subtitle:
+          "Modifications • événements officiels • surveillance",
+
+        button:
+          "Voir mes suivis"
+      },
+
+      notebook:{
+        title:
+          "Mon carnet professionnel",
+
+        subtitle:
+          "Contacts • entreprises conservées • notes privées",
+
+        button:
+          "Ouvrir mon carnet"
+      },
+
+      information:{
+        title:
+          "Informations professionnelles",
+
+        subtitle:
+          "Identité • données publiques • sources • dates",
+
+        button:
+          "Analyser une entreprise"
+      },
+
+      bercy:{
+        title:
+          "Bercy Infos Entreprises",
+
+        subtitle:
+          "Fiscalité • comptabilité • obligations • aides",
+
+        button:
+          "Consulter Bercy Infos"
+      }
+
+    };
+
+    const cards =
+      order
+        .filter(
+          function(id){
+
+            return !!definitions[id];
+          }
+        )
+        .map(function(id){
+
+          const item =
+            definitions[id];
+
+          return dashboardCard(
+            id,
+            item.title,
+            item.subtitle,
+            item.button
+          );
+        })
+        .join("");
+
+    return `
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+        ">
+
+        <div class="bociteAnnuaireTitle">
+          Annuaire professionnel enrichi
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+          Trouvez • conservez • vérifiez • suivez • anticipez
+        </div>
+
+      </div>
+
+      <div
+        class="box"
+        style="margin-top:9px;">
+
+        <div class="bociteAnnuaireText">
+
+          Votre tableau de bord
+          peut être organisé
+          selon vos priorités.
+
+          <br><br>
+
+          Faites glisser les blocs
+          ou utilisez
+          <strong>Remonter</strong>
+          et
+          <strong>Descendre</strong>.
+
+        </div>
+
+      </div>
+
+      <div
+        id="annuaireProfessionalDashboard"
+        style="margin-top:10px;">
+        ${cards}
+      </div>
+
+      <button
+        id="annuaireDashboardResetBtn"
+        class="choiceBtn"
+        type="button"
+        style="width:100%;">
+        Réinitialiser l'ordre Bo'CitéArt
+      </button>
+
+      <button
+        id="annuaireProfessionalBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:7px;
+        ">
+        Retour à l'annuaire
+      </button>
+
+    `;
+  }
+
+  function openProfessionalDashboard(){
+
+    requirePrivateAccess(
+      function(){
+
+        render(
+          "Annuaire professionnel",
+          getProfessionalDashboardHtml(),
+          bindProfessionalDashboard
+        );
+      }
+    );
+  }
+
+  /* =======================================================
+     RECHERCHE PRO
+     ======================================================= */
+
+  function openProfessionalSearch(){
+
+    render(
+      "Recherche professionnelle",
+      `
+
+        <div class="box">
+
+          <div class="bociteAnnuaireTitle">
+            Que recherchez-vous ?
+          </div>
+
+          <div
+            class="bociteAnnuaireText"
+            style="margin-top:6px;">
+            Fournisseur • sous-traitant • partenaire • compétence • produit • service
+          </div>
+
+        </div>
+
+        <div
+          class="box"
+          style="margin-top:9px;">
+
+          <input
+            id="annuaireProQueryInput"
+            type="text"
+            placeholder="Votre recherche"
+            style="
+              width:100%;
+              box-sizing:border-box;
+            "
+          >
+
+          <textarea
+            id="annuaireProDetailsInput"
+            rows="4"
+            placeholder="Précisez votre besoin"
+            style="
+              width:100%;
+              box-sizing:border-box;
+              margin-top:8px;
+            "></textarea>
+
+          <select
+            id="annuaireProZoneInput"
+            style="
+              width:100%;
+              margin-top:8px;
+            ">
+
+            <option value="commune">
+              Ma commune
+            </option>
+
+            <option value="proche">
+              Communes proches
+            </option>
+
+            <option value="departement">
+              Département
+            </option>
+
+            <option value="region">
+              Région
+            </option>
+
+            <option value="france">
+              France
+            </option>
+
+          </select>
+
+        </div>
+
+        <button
+          id="annuaireProSearchBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:8px;
+          ">
+          Rechercher et enregistrer
+        </button>
+
+        <button
+          id="annuaireProSearchBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:7px;
+          ">
+          Retour au tableau de bord
+        </button>
+
+      `,
+      function(){
+
+        const search =
+          getElement(
+            "annuaireProSearchBtn"
+          );
+
+        if(search){
+
+          search.onclick =
+            function(){
+
+              const query =
+                getElement(
+                  "annuaireProQueryInput"
+                )?.value.trim() ||
+                "";
+
+              const details =
+                getElement(
+                  "annuaireProDetailsInput"
+                )?.value.trim() ||
+                "";
+
+              const zone =
+                getElement(
+                  "annuaireProZoneInput"
+                )?.value ||
+                "commune";
+
+              if(!query){
+
+                alert(
+                  "Indiquez votre recherche."
+                );
+
+                return;
+              }
+
+              saveProfessionalSearch(
+                query,
+                details,
+                zone
+              );
+
+              openResults(
+                query,
+                {
+                  localOnly:
+                    zone ===
+                    "commune"
+                }
+              );
+            };
+        }
+
+        const back =
+          getElement(
+            "annuaireProSearchBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openProfessionalDashboard;
+        }
+
+      }
+    );
+  }
+
+  /* =======================================================
+     HISTORIQUE PRO
+     ======================================================= */
+
+  function openProfessionalHistory(){
+
+    const history =
+      loadProfessionalHistory();
+
+    let html = `
+
+      <div class="box">
+
+        <div class="bociteAnnuaireTitle">
+          Mes recherches professionnelles
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+          Les recherches terminées
+          restent disponibles dans l'historique.
+        </div>
+
+      </div>
+
+    `;
+
+    if(!history.length){
+
+      html += `
+
+        <div
+          class="box"
+          style="margin-top:9px;">
+          Aucune recherche professionnelle enregistrée.
+        </div>
+
+      `;
+
+    }else{
+
+      history.forEach(
+        function(item){
+
+          html += `
+
+            <div
+              class="box"
+              style="margin-top:9px;">
+
+              <div class="bociteAnnuaireTitle">
+                ${escapeHtml(item.query)}
+              </div>
+
+              <div
+                class="bociteAnnuaireText"
+                style="margin-top:5px;">
+                ${escapeHtml(item.details || "")}
+              </div>
+
+              <div
+                class="bociteAnnuaireSmall"
+                style="margin-top:5px;">
+                Zone :
+                ${escapeHtml(item.zone)}
+                <br>
+                Créée le :
+                ${formatDate(item.createdAt)}
+                <br>
+                Statut :
+                ${
+                  item.status ===
+                  "terminee"
+                    ? "Terminée"
+                    : "En cours"
+                }
+              </div>
+
+              <div
+                class="bociteAnnuaireActions"
+                style="margin-top:8px;">
+
+                <button
+                  type="button"
+                  class="choiceBtn annuaireProHistoryResumeBtn"
+                  data-id="${escapeHtml(item.id)}">
+                  Reprendre
+                </button>
+
+                <button
+                  type="button"
+                  class="choiceBtn annuaireProHistoryStatusBtn"
+                  data-id="${escapeHtml(item.id)}">
+                  ${
+                    item.status ===
+                    "terminee"
+                      ? "Remettre en cours"
+                      : "Terminer"
+                  }
+                </button>
+
+              </div>
+
+            </div>
+
+          `;
+        }
+      );
+    }
+
+    html += `
+
+      <button
+        id="annuaireProHistoryBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:9px;
+        ">
+        Retour au tableau de bord
+      </button>
+
+    `;
+
+    render(
+      "Mes recherches professionnelles",
+      html,
+      function(){
+
+        document
+          .querySelectorAll(
+            ".annuaireProHistoryResumeBtn"
+          )
+          .forEach(function(button){
+
+            button.onclick =
+              function(){
+
+                const item =
+                  loadProfessionalHistory()
+                    .find(
+                      function(historyItem){
+
+                        return (
+                          historyItem.id ===
+                          button.getAttribute(
+                            "data-id"
+                          )
+                        );
+                      }
+                    );
+
+                if(item){
+
+                  openResults(
+                    item.query,
+                    {
+                      localOnly:
+                        item.zone ===
+                        "commune"
+                    }
+                  );
+                }
+              };
+          });
+
+        document
+          .querySelectorAll(
+            ".annuaireProHistoryStatusBtn"
+          )
+          .forEach(function(button){
+
+            button.onclick =
+              function(){
+
+                const id =
+                  button.getAttribute(
+                    "data-id"
+                  );
+
+                const current =
+                  loadProfessionalHistory();
+
+                const item =
+                  current.find(
+                    function(historyItem){
+
+                      return (
+                        historyItem.id ===
+                        id
+                      );
+                    }
+                  );
+
+                if(!item){
+                  return;
+                }
+
+                item.status =
+                  item.status ===
+                  "terminee"
+                    ? "en_cours"
+                    : "terminee";
+
+                item.updatedAt =
+                  Date.now();
+
+                saveJson(
+                  STORAGE.professionalHistory,
+                  current
+                );
+
+                openProfessionalHistory();
+              };
+          });
+
+        const back =
+          getElement(
+            "annuaireProHistoryBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openProfessionalDashboard;
+        }
+
+      }
+    );
+  }
+
+  /* =======================================================
+     CARNET PRO
+     ======================================================= */
+
+  function openNotebook(){
+
+    const items =
+      loadNotebook();
+
+    let html = `
+
+      <div class="box">
+
+        <div class="bociteAnnuaireTitle">
+          Mon carnet professionnel
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+          Conservez vos contacts
+          et vos notes privées.
+        </div>
+
+      </div>
+
+    `;
+
+    if(!items.length){
+
+      html += `
+
+        <div
+          class="box"
+          style="margin-top:9px;">
+          Aucun professionnel enregistré.
+        </div>
+
+      `;
+
+    }else{
+
+      items.forEach(
+        function(item){
+
+          html += `
+
+            <div
+              class="box"
+              style="margin-top:9px;">
+
+              <div class="bociteAnnuaireTitle">
+                ${escapeHtml(item.name)}
+              </div>
+
+              <div
+                class="bociteAnnuaireSmall"
+                style="margin-top:5px;">
+                ${escapeHtml(item.commune || "")}
+              </div>
+
+              <div
+                class="bociteAnnuaireText"
+                style="margin-top:7px;">
+                <strong>Ma note privée :</strong>
+                <br>
+                ${escapeHtml(item.note || "")}
+              </div>
+
+              <button
+                type="button"
+                class="choiceBtn annuaireNotebookOpenBtn"
+                data-id="${escapeHtml(item.entityId)}"
+                style="
+                  width:100%;
+                  margin-top:8px;
+                ">
+                Voir la fiche
+              </button>
+
+            </div>
+
+          `;
+        }
+      );
+    }
+
+    html += `
+
+      <button
+        id="annuaireNotebookBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:9px;
+        ">
+        Retour au tableau de bord
+      </button>
+
+    `;
+
+    render(
+      "Mon carnet professionnel",
+      html,
+      function(){
+
+        document
+          .querySelectorAll(
+            ".annuaireNotebookOpenBtn"
+          )
+          .forEach(function(button){
+
+            button.onclick =
+              function(){
+
+                openEntity(
+                  button.getAttribute(
+                    "data-id"
+                  )
+                );
+              };
+          });
+
+        const back =
+          getElement(
+            "annuaireNotebookBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openProfessionalDashboard;
+        }
+
+      }
+    );
+  }
+
+  /* =======================================================
+     ENTREPRISES SUIVIES
+     ======================================================= */
+
+  function openFollowedCompanies(){
+
+    const followed =
+      loadFollowed();
+
+    let html = `
+
+      <div class="box">
+
+        <div class="bociteAnnuaireTitle">
+          Entreprises suivies
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+          Retrouvez les informations publiques
+          et les événements officiels disponibles.
+        </div>
+
+      </div>
+
+    `;
+
+    if(!followed.length){
+
+      html += `
+
+        <div
+          class="box"
+          style="margin-top:9px;">
+          Aucune entreprise suivie.
+        </div>
+
+      `;
+
+    }else{
+
+      followed.forEach(
+        function(item){
+
+          const entity =
+            getEntityById(
+              item.entityId
+            );
+
+          html += `
+
+            <div
+              class="box"
+              style="margin-top:9px;">
+
+              <div class="bociteAnnuaireTitle">
+                ${escapeHtml(item.name)}
+              </div>
+
+              <div
+                class="bociteAnnuaireSmall"
+                style="margin-top:5px;">
+                Suivie depuis :
+                ${formatDate(item.createdAt)}
+              </div>
+
+              ${
+                entity &&
+                entity.professionalData &&
+                safeArray(
+                  entity.professionalData.events
+                ).length
+                  ? `
+                      <div
+                        class="bociteAnnuaireText"
+                        style="margin-top:7px;">
+                        ${
+                          entity.professionalData.events
+                            .slice(0,3)
+                            .map(function(event){
+
+                              return (
+                                "• " +
+                                escapeHtml(
+                                  event.label ||
+                                  event.type ||
+                                  "Événement"
+                                ) +
+                                (
+                                  event.date
+                                    ? " — " +
+                                      escapeHtml(event.date)
+                                    : ""
+                                )
+                              );
+                            })
+                            .join("<br>")
+                        }
+                      </div>
+                    `
+                  : `
+                      <div
+                        class="bociteAnnuaireText"
+                        style="margin-top:7px;">
+                        Aucun nouvel événement officiel
+                        disponible dans les données reçues.
+                      </div>
+                    `
+              }
+
+              <button
+                type="button"
+                class="choiceBtn annuaireFollowedOpenBtn"
+                data-id="${escapeHtml(item.entityId)}"
+                style="
+                  width:100%;
+                  margin-top:8px;
+                ">
+                Voir les informations
+              </button>
+
+            </div>
+
+          `;
+        }
+      );
+    }
+
+    html += `
+
+      <button
+        id="annuaireFollowedBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:9px;
+        ">
+        Retour au tableau de bord
+      </button>
+
+    `;
+
+    render(
+      "Entreprises suivies",
+      html,
+      function(){
+
+        document
+          .querySelectorAll(
+            ".annuaireFollowedOpenBtn"
+          )
+          .forEach(function(button){
+
+            button.onclick =
+              function(){
+
+                openProfessionalInformation(
+                  button.getAttribute(
+                    "data-id"
+                  )
+                );
+              };
+          });
+
+        const back =
+          getElement(
+            "annuaireFollowedBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openProfessionalDashboard;
+        }
+
+      }
+    );
+  }
+
+  /* =======================================================
+     INFORMATIONS PRO
+     ======================================================= */
+
+  function openProfessionalInformation(
+    entityId
+  ){
+
+    if(!entityId){
+
+      openProfessionalCompanyPicker();
+      return;
+    }
+
+    const entity =
+      getEntityById(
+        entityId
+      );
+
+    if(!entity){
+
+      alert(
+        "Cette entreprise n'est plus disponible."
+      );
+
+      return;
+    }
+
+    const data =
+      entity.professionalData ||
+      {};
+
+    const fields = [
+
+      [
+        "SIREN",
+        data.siren ||
+        entity.siren
+      ],
+
+      [
+        "SIRET",
+        data.siret ||
+        entity.siret
+      ],
+
+      [
+        "Forme juridique",
+        data.legalForm
+      ],
+
+      [
+        "Date de création",
+        data.creationDate
+      ],
+
+      [
+        "Activité",
+        data.activity ||
+        entity.activity
+      ],
+
+      [
+        "État de l'établissement",
+        data.status
+      ],
+
+      [
+        "Tranche d'effectifs",
+        data.workforce
+      ],
+
+      [
+        "Derniers comptes disponibles",
+        data.latestAccounts
+      ],
+
+      [
+        "Chiffre d'affaires publié",
+        data.revenue
+      ],
+
+      [
+        "Résultat publié",
+        data.result
+      ]
+
+    ];
+
+    const informationHtml =
+      fields
+        .filter(
+          function(field){
+
+            return !!field[1];
+          }
+        )
+        .map(function(field){
+
+          return `
+            <div
+              style="margin-top:7px;">
+              <strong>
+                ${escapeHtml(field[0])} :
+              </strong>
+              ${escapeHtml(field[1])}
+            </div>
+          `;
+        })
+        .join("");
+
+    const events =
+      safeArray(
+        data.events
+      );
+
+    const sources =
+      safeArray(
+        data.sources ||
+        entity.externalSources
+      );
+
+    render(
+      "Informations professionnelles",
+      `
+
+        <div
+          class="box"
+          style="
+            border-left:6px solid #2f5d46;
+          ">
+
+          <div class="bociteAnnuaireTitle">
+            ${escapeHtml(entity.name)}
+          </div>
+
+          <div
+            class="bociteAnnuaireText"
+            style="margin-top:6px;">
+            Informations factuelles disponibles
+          </div>
+
+        </div>
+
+        <div
+          class="box"
+          style="margin-top:9px;">
+
+          ${
+            informationHtml ||
+            `
+              <div class="bociteAnnuaireText">
+                Aucune donnée professionnelle enrichie
+                n'est encore disponible pour cette fiche.
+              </div>
+            `
+          }
+
+          ${
+            data.checkedAt
+              ? `
+                  <div
+                    class="bociteAnnuaireSmall"
+                    style="margin-top:10px;">
+                    Dernière vérification :
+                    ${formatDateTime(data.checkedAt)}
+                  </div>
+                `
+              : ""
+          }
+
+        </div>
+
+        ${
+          events.length
+            ? `
+                <div
+                  class="box"
+                  style="margin-top:9px;">
+
+                  <div class="bociteAnnuaireTitle">
+                    Événements officiels disponibles
+                  </div>
+
+                  <div
+                    class="bociteAnnuaireText"
+                    style="margin-top:7px;">
+                    ${
+                      events
+                        .map(function(event){
+
+                          return (
+                            "• " +
+                            escapeHtml(
+                              event.label ||
+                              event.type ||
+                              "Événement"
+                            ) +
+                            (
+                              event.date
+                                ? " — " +
+                                  escapeHtml(
+                                    event.date
+                                  )
+                                : ""
+                            )
+                          );
+                        })
+                        .join("<br>")
+                    }
+                  </div>
+
+                </div>
+              `
+            : ""
+        }
+
+        ${
+          sources.length
+            ? `
+                <div
+                  class="box"
+                  style="margin-top:9px;">
+
+                  <div class="bociteAnnuaireTitle">
+                    Sources
+                  </div>
+
+                  ${
+                    sources
+                      .map(
+                        function(source,index){
+
+                          return `
+
+                            <button
+                              type="button"
+                              class="choiceBtn annuaireExternalSourceBtn"
+                              data-index="${index}"
+                              style="
+                                width:100%;
+                                margin-top:7px;
+                                text-align:left;
+                              ">
+                              ${escapeHtml(
+                                source.label ||
+                                source.name ||
+                                "Source"
+                              )}
+                            </button>
+
+                          `;
+                        }
+                      )
+                      .join("")
+                  }
+
+                </div>
+              `
+            : ""
+        }
+
+        <div
+          class="box"
+          style="margin-top:9px;">
+
+          <div class="bociteAnnuaireSmall">
+            Bo'CitéArt présente
+            des informations factuelles disponibles.
+            Elles ne constituent ni une notation,
+            ni une garantie de solvabilité
+            ou de bonne santé financière.
+          </div>
+
+        </div>
+
+        <button
+          id="annuaireFollowCompanyBtn"
+          class="choiceBtn"
+          type="button"
+          style="width:100%;">
+          Ajouter à mes entreprises suivies
+        </button>
+
+        <button
+          id="annuaireAddNotebookBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:7px;
+          ">
+          Ajouter à mon carnet professionnel
+        </button>
+
+        <button
+          id="annuaireProfessionalInformationBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:7px;
+          ">
+          Retour au tableau de bord
+        </button>
+
+      `,
+      function(){
+
+        document
+          .querySelectorAll(
+            ".annuaireExternalSourceBtn"
+          )
+          .forEach(function(button){
+
+            button.onclick =
+              function(){
+
+                const index =
+                  Number(
+                    button.getAttribute(
+                      "data-index"
+                    )
+                  );
+
+                const source =
+                  sources[index];
+
+                if(
+                  source &&
+                  source.url
+                ){
+
+                  window.open(
+                    source.url,
+                    "_blank",
+                    "noopener"
+                  );
+                }
+              };
+          });
+
+        const follow =
+          getElement(
+            "annuaireFollowCompanyBtn"
+          );
+
+        if(follow){
+
+          follow.onclick =
+            function(){
+
+              followEntity(
+                entity
+              );
+
+              alert(
+                "Cette entreprise est ajoutée à votre suivi."
+              );
+            };
+        }
+
+        const notebook =
+          getElement(
+            "annuaireAddNotebookBtn"
+          );
+
+        if(notebook){
+
+          notebook.onclick =
+            function(){
+
+              const note =
+                window.prompt(
+                  "Ajoutez une note privée pour cette entreprise :",
+                  ""
+                );
+
+              if(note === null){
+                return;
+              }
+
+              saveNotebookItem(
+                entity,
+                note.trim()
+              );
+
+              alert(
+                "Cette entreprise est enregistrée dans votre carnet."
+              );
+            };
+        }
+
+        const back =
+          getElement(
+            "annuaireProfessionalInformationBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openProfessionalDashboard;
+        }
+
+      }
+    );
+  }
+
+  function openProfessionalCompanyPicker(){
+
+    const entities =
+      loadEntities();
+
+    let html = `
+
+      <div class="box">
+
+        <div class="bociteAnnuaireTitle">
+          Analyser une entreprise
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+          Choisissez une entreprise
+          de l'annuaire.
+        </div>
+
+      </div>
+
+    `;
+
+    entities.forEach(
+      function(entity){
+
+        html += `
+
+          <button
+            type="button"
+            class="choiceBtn annuaireProCompanyPickerBtn"
+            data-id="${escapeHtml(entity.id)}"
+            style="
+              width:100%;
+              text-align:left;
+              margin-top:7px;
+            ">
+            ${escapeHtml(entity.name)}
+          </button>
+
+        `;
+      }
+    );
+
+    html += `
+
+      <button
+        id="annuaireProCompanyPickerBackBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:9px;
+        ">
+        Retour au tableau de bord
+      </button>
+
+    `;
+
+    render(
+      "Analyser une entreprise",
+      html,
+      function(){
+
+        document
+          .querySelectorAll(
+            ".annuaireProCompanyPickerBtn"
+          )
+          .forEach(function(button){
+
+            button.onclick =
+              function(){
+
+                openProfessionalInformation(
+                  button.getAttribute(
+                    "data-id"
+                  )
+                );
+              };
+          });
+
+        const back =
+          getElement(
+            "annuaireProCompanyPickerBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openProfessionalDashboard;
+        }
+
+      }
+    );
+  }
+
+  /* =======================================================
+     BERCY INFO
+     ======================================================= */
+
+  function openBercyInfo(){
+
+    render(
+      "Bercy Infos Entreprises",
+      `
+
+        <div
+          class="box"
+          style="
+            border-left:6px solid #2f5d46;
+          ">
+
+          <div class="bociteAnnuaireTitle">
+            Bercy Infos Entreprises
+          </div>
+
+          <div
+            class="bociteAnnuaireText"
+            style="margin-top:7px;">
+            Fiscalité • comptabilité • obligations • aides • gestion
+          </div>
+
+          <div
+            class="bociteAnnuaireText"
+            style="margin-top:8px;">
+            Retrouvez les informations officielles
+            utiles à la vie de votre entreprise.
+          </div>
+
+        </div>
+
+        <button
+          id="annuaireBercyOpenBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:9px;
+          ">
+          Consulter Bercy Infos Entreprises
+        </button>
+
+        <button
+          id="annuaireBercyBackBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:7px;
+          ">
+          Retour au tableau de bord
+        </button>
+
+      `,
+      function(){
+
+        const open =
+          getElement(
+            "annuaireBercyOpenBtn"
+          );
+
+        if(open){
+
+          open.onclick =
+            function(){
+
+              window.open(
+                "https://www.economie.gouv.fr/entreprises",
+                "_blank",
+                "noopener"
+              );
+            };
+        }
+
+        const back =
+          getElement(
+            "annuaireBercyBackBtn"
+          );
+
+        if(back){
+          back.onclick =
+            openProfessionalDashboard;
+        }
+
+      }
+    );
+  }
+
+  /* =======================================================
+     PERSONNALISATION TABLEAU PRO
+     ======================================================= */
+
+  function moveDashboardItem(
+    id,
+    direction
+  ){
+
+    const order =
+      loadDashboardOrder();
+
+    const index =
+      order.indexOf(id);
+
+    if(index < 0){
+      return;
+    }
+
+    const target =
+      index +
+      direction;
+
+    if(
+      target < 0 ||
+      target >= order.length
+    ){
+      return;
+    }
+
+    const temp =
+      order[index];
+
+    order[index] =
+      order[target];
+
+    order[target] =
+      temp;
+
+    saveDashboardOrder(
+      order
+    );
+
+    openProfessionalDashboard();
+  }
+
+  function bindProfessionalDashboard(){
+
+    document
+      .querySelectorAll(
+        ".annuaireDashboardOpenBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick =
+          function(){
+
+            const target =
+              button.getAttribute(
+                "data-dashboard-open"
+              );
+
+            if(
+              target ===
+              "search"
+            ){
+              openProfessionalSearch();
+            }
+
+            if(
+              target ===
+              "history"
+            ){
+              openProfessionalHistory();
+            }
+
+            if(
+              target ===
+              "followed"
+            ){
+              openFollowedCompanies();
+            }
+
+            if(
+              target ===
+              "notebook"
+            ){
+              openNotebook();
+            }
+
+            if(
+              target ===
+              "information"
+            ){
+              openProfessionalInformation();
+            }
+
+            if(
+              target ===
+              "bercy"
+            ){
+              openBercyInfo();
+            }
+          };
+      });
+
+    document
+      .querySelectorAll(
+        ".annuaireDashboardUpBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick =
+          function(){
+
+            moveDashboardItem(
+              button.getAttribute(
+                "data-dashboard-id"
+              ),
+              -1
+            );
+          };
+      });
+
+    document
+      .querySelectorAll(
+        ".annuaireDashboardDownBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick =
+          function(){
+
+            moveDashboardItem(
+              button.getAttribute(
+                "data-dashboard-id"
+              ),
+              1
+            );
+          };
+      });
+
+    const container =
+      getElement(
+        "annuaireProfessionalDashboard"
+      );
+
+    if(container){
+
+      let draggedId =
+        "";
+
+      container
+        .querySelectorAll(
+          "[data-dashboard-id]"
+        )
+        .forEach(function(card){
+
+          card.addEventListener(
+            "dragstart",
+            function(){
+
+              draggedId =
+                card.getAttribute(
+                  "data-dashboard-id"
+                ) || "";
+            }
+          );
+
+          card.addEventListener(
+            "dragover",
+            function(event){
+
+              event.preventDefault();
+            }
+          );
+
+          card.addEventListener(
+            "drop",
+            function(event){
+
+              event.preventDefault();
+
+              const targetId =
+                card.getAttribute(
+                  "data-dashboard-id"
+                );
+
+              if(
+                !draggedId ||
+                !targetId ||
+                draggedId ===
+                targetId
+              ){
+                return;
+              }
+
+              const order =
+                loadDashboardOrder();
+
+              const from =
+                order.indexOf(
+                  draggedId
+                );
+
+              const to =
+                order.indexOf(
+                  targetId
+                );
+
+              if(
+                from < 0 ||
+                to < 0
+              ){
+                return;
+              }
+
+              order.splice(
+                from,
+                1
+              );
+
+              order.splice(
+                to,
+                0,
+                draggedId
+              );
+
+              saveDashboardOrder(
+                order
+              );
+
+              openProfessionalDashboard();
+            }
+          );
+        });
+    }
+
+    const reset =
+      getElement(
+        "annuaireDashboardResetBtn"
+      );
+
+    if(reset){
+
+      reset.onclick =
+        function(){
+
+          saveDashboardOrder(
+            DEFAULT_DASHBOARD_ORDER.slice()
+          );
+
+          openProfessionalDashboard();
+        };
+    }
+
+    const back =
+      getElement(
+        "annuaireProfessionalBackBtn"
+      );
+
+    if(back){
+      back.onclick =
+        openHome;
+    }
+  }
+
+  /* =======================================================
+     BIND ACCUEIL
+     ======================================================= */
+
+  function bindHome(){
+
+    const input =
+      getElement(
+        "annuaireSearchInput"
+      );
+
+    const search =
+      getElement(
+        "annuaireSearchBtn"
+      );
+
+    if(search){
+
+      search.onclick =
+        function(){
+
+          launchSearch(
+            input
+              ? input.value
+              : ""
+          );
+        };
+    }
+
+    if(input){
+
+      input.onkeydown =
+        function(event){
+
+          if(
+            event.key ===
+            "Enter"
+          ){
+
+            event.preventDefault();
+
+            launchSearch(
+              input.value
+            );
+          }
+        };
+    }
+
+    document
+      .querySelectorAll(
+        ".annuaireCategoryBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick =
+          function(){
+
+            openCategory(
+              button.getAttribute(
+                "data-category"
+              )
+            );
+          };
+      });
+
+    document
+      .querySelectorAll(
+        ".annuaireRecentQueryBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick =
+          function(){
+
+            launchSearch(
+              button.getAttribute(
+                "data-query"
+              ) || ""
+            );
+          };
+      });
+
+    const near =
+      getElement(
+        "annuaireNearBtn"
+      );
+
+    if(near){
+      near.onclick =
+        openNearMe;
+    }
+
+    const open =
+      getElement(
+        "annuaireOpenBtn"
+      );
+
+    if(open){
+      open.onclick =
+        openNow;
+    }
+
+    const history =
+      getElement(
+        "annuaireHistoryBtn"
+      );
+
+    if(history){
+      history.onclick =
+        openSearchHistory;
+    }
+
+    const favorites =
+      getElement(
+        "annuaireFavoritesBtn"
+      );
+
+    if(favorites){
+      favorites.onclick =
+        openFavorites;
+    }
+
+    const viewed =
+      getElement(
+        "annuaireViewedBtn"
+      );
+
+    if(viewed){
+      viewed.onclick =
+        openViewedHistory;
+    }
+
+    const legend =
+      getElement(
+        "annuaireLegendBtn"
+      );
+
+    if(legend){
+
+      legend.onclick =
+        function(){
+
+          const box =
+            getElement(
+              "annuaireLegendBox"
+            );
+
+          if(!box){
+            return;
+          }
+
+          box.style.display =
+            box.style.display ===
+            "none"
+              ? "block"
+              : "none";
+        };
+    }
+
+    const pro =
+      getElement(
+        "annuaireProfessionalBtn"
+      );
+
+    if(pro){
+      pro.onclick =
+        openProfessionalDashboard;
+    }
+  }
+
+  /* =======================================================
+     EXPOSITION DES FONCTIONS
+     ======================================================= */
+
+  annuaire.openHome =
+    openHome;
+
+  annuaire.openSearch =
+    launchSearch;
+
+  annuaire.openCategory =
+    openCategory;
+
+  annuaire.openEntity =
+    openEntity;
+
+  annuaire.openSearchHistory =
+    openSearchHistory;
+
+  annuaire.openRecentlyViewed =
+    openViewedHistory;
+
+  annuaire.openFavorites =
+    openFavorites;
+
+  annuaire.openProfessionalDashboard =
+    openProfessionalDashboard;
+
+  annuaire.openProfessionalInformation =
+    openProfessionalInformation;
+
+  annuaire.loadEntities =
+    loadEntities;
+
+  annuaire.saveEntities =
+    saveEntities;
+
+  annuaire.getEntityById =
+    getEntityById;
+
+  /* =======================================================
+     COMPATIBILITÉ AVEC L'ANCIEN ENTREPRISE.JS
+     ======================================================= */
+
+  if(
+    typeof module.registerScreen ===
+    "function"
+  ){
+
+    module.registerScreen(
+      "annuaire",
+      openHome
+    );
+
+    module.registerScreen(
+      "annuaire_local",
+      openHome
+    );
+
+    module.registerScreen(
+      "recherche_professionnelle",
+      openProfessionalDashboard
+    );
+  }
+
+  module.openAnnuaire =
+    openHome;
+
+  module.openLocalDirectory =
+    openHome;
+
+  module.openCorrectedDirectory =
+    openHome;
+
+  module.openProfessionalDirectory =
+    openProfessionalDashboard;
+
+  /* =======================================================
+     FOURNISSEUR EXTERNE FUTUR
+     ======================================================= */
+
+  /*
+    Si un agent serveur ou un connecteur
+    officiel est ajouté plus tard :
+
+    window.BociteAnnuaireDataProvider = {
+      refresh:function(){
+        return Promise.resolve({
+          rows:[...],
+          source:"..."
+        });
+      }
+    };
+
+    L'annuaire peut alors recevoir
+    les informations vérifiées sans
+    effectuer directement des extractions
+    depuis le navigateur.
+  */
+
+  annuaire.refreshFromProvider =
+    function(){
+
+      const provider =
+        window.BociteAnnuaireDataProvider;
+
+      if(
+        !provider ||
+        typeof provider.refresh !==
+        "function"
+      ){
+
+        return Promise.resolve(
+          {
+            updated:false,
+            reason:
+              "provider_missing"
+          }
+        );
+      }
+
+      return Promise
+        .resolve(
+          provider.refresh()
+        )
+        .then(function(result){
+
+          if(
+            !result ||
+            !Array.isArray(
+              result.rows
+            )
+          ){
+
+            return {
+              updated:false,
+              reason:
+                "invalid_result"
+            };
+          }
+
+          const count =
+            applyExternalDirectorySnapshot(
+              result.rows,
+              result.source
+            );
+
+          return {
+            updated:true,
+            count:count
+          };
+        });
+    };
+
+  console.log(
+    "✅ Bo'CitéArt — Annuaire complet chargé"
+  );
+
+})();
