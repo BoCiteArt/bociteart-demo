@@ -3207,6 +3207,19 @@
      LÉGENDE
      ======================================================= */
 
+   function bociteArtLogoText(){
+
+  return `
+    <span style="font-weight:700;">
+      <span style="color:#2f5d46;">
+        Bo'Cité
+      </span><span style="color:#c62828;">
+        Art
+      </span>
+    </span>
+  `;
+}
+   
   function partnerBadge(){
 
     return `
@@ -3227,7 +3240,7 @@
             border-radius:3px;
           ">
         </span>
-        Partenaire Bo'CitéArt
+     Partenaire ${bociteArtLogoText()}
       </span>
     `;
   }
