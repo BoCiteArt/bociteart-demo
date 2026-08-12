@@ -258,41 +258,10 @@ function buildBackButton(options){
     </div>
   `;
 }
-  function buildPresentationFooter(){
-
-    return `
-      <div
-        class="box entreprisePresentationFooter"
-        style="
-          margin-top:18px;
-          border-left:6px solid #2f5d46;
-          cursor:pointer;
-        "
-        role="button"
-        tabindex="0">
-
-        <strong style="font-size:17px;">
-          Vous pourriez également être intéressé.
-        </strong>
-
-        <br><br>
-
-        Cliquez ici pour revenir
-        aux propositions en bandes défilantes
-        de l’espace Entreprise.
-
-        <button
-          class="choiceBtn entrepriseReturnToBandsBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:12px;
-          ">
-          Revenir aux bandes défilantes
-        </button>
-      </div>
-    `;
-  }
+ 
+   function buildPresentationFooter(){
+  return "";
+}
 
 function bindBackButton(){
 
@@ -10381,51 +10350,19 @@ Voir les entreprises de ma ville
 
   function openAdvertisingCreation(){
 
-    if(
-      typeof module.openAdvertisingCreation ===
-      "function"
-    ){
+  if(
+    typeof window.openTicker ===
+    "function"
+  ){
 
-      module.openAdvertisingCreation();
-
-      return;
-    }
-
-    if(
-      typeof window.openAdvertisingCreation ===
-      "function"
-    ){
-
-      window.openAdvertisingCreation();
-
-      return;
-    }
-
-    /*
-      Point de raccordement unique.
-      Le moteur publicitaire existant pourra écouter
-      cet événement sans modifier ce Tableau de Direction.
-    */
-
-    window.dispatchEvent(
-      new CustomEvent(
-        "bociteart:open-advertising-creation",
-        {
-          detail:{
-            source:
-              "entreprise_direction"
-          }
-        }
-      )
-    );
-
-    alert(
-      "L'accès au formulaire publicitaire est préparé.\n\n" +
-      "Le raccordement final au grand bandeau publicitaire " +
-      "utilisera ce bouton sans refaire le Tableau de Direction."
-    );
+    window.openTicker();
+    return;
   }
 
+  alert(
+    "Le calendrier du grand bandeau publicitaire est momentanément indisponible."
+  );
+}
   /* =======================================================
      COLLABORATEURS
      ======================================================= */
@@ -10706,8 +10643,13 @@ Voir les entreprises de ma ville
 
       </div>
 
-
       <div
+        class="
+          box
+          bociteDirectionBox
+        ">
+
+             <div
         class="
           box
           bociteDirectionBox
@@ -10715,35 +10657,57 @@ Voir les entreprises de ma ville
 
         <div
           class="bociteDirectionTitle">
-          Visibilité et fiche enrichie
+          Faire paraître mon entreprise
         </div>
 
-        Présentez davantage que le simple nom
-        de votre entreprise.
+        Créez la présentation publique
+        de votre entreprise dans
+        <strong
+          style="
+            white-space:nowrap;
+            font-weight:900;
+          ">
+          <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+        </strong>.
 
         <span
           class="bociteDirectionBenefit">
-          • vos métiers ;
+          • présentation de l’entreprise ;
         </span>
 
         <span
           class="bociteDirectionBenefit">
-          • votre savoir-faire ;
+          • métiers et savoir-faire ;
         </span>
 
         <span
           class="bociteDirectionBenefit">
-          • vos services ;
+          • produits et services ;
         </span>
 
         <span
           class="bociteDirectionBenefit">
-          • vos recrutements ;
+          • réalisations ;
         </span>
 
         <span
           class="bociteDirectionBenefit">
-          • vos informations professionnelles.
+          • recrutements ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • actualités ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • coordonnées professionnelles ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • demandes de devis lorsque le service le permet.
         </span>
 
         <br>
@@ -10755,6 +10719,20 @@ Voir les entreprises de ma ville
           )} € HT/an
         </span>
 
+        <br><br>
+
+        <span
+          style="
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Votre fiche de compte professionnelle,
+          vos données privées,
+          vos paiements et vos factures
+          ne sont jamais affichés publiquement.
+        </span>
+
         <button
           id="directionVisibilityBtn"
           class="
@@ -10763,26 +10741,11 @@ Voir les entreprises de ma ville
           "
           type="button"
           style="margin-top:10px;">
-          Gérer ma visibilité
+          Créer ou modifier ma présentation publique
         </button>
 
       </div>
-
-
-      <div
-        class="
-          box
-          bociteDirectionBox
-        "
-        style="
-          border-left:6px solid #b00020;
-        ">
-
-        <div
-          class="bociteDirectionTitle">
-          Publicité
-        </div>
-
+      
         Préparez une publicité
         et accédez directement
         au parcours prévu pour le grand bandeau.
@@ -21458,34 +21421,42 @@ console.log(
       "6px solid #2f5d46";
 
     container.innerHTML = `
-      <strong style="font-size:17px;">
-        Besoins professionnels détectés
-      </strong>
 
-      <br><br>
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:800;
+      line-height:1.35;
+    ">
+    Besoins professionnels détectés
+  </div>
 
-      Consultez les recherches récurrentes,
-      les compteurs d’intérêt
-      et les alertes nécessitant
-      un suivi par Bo'CitéArt.
+  <div
+    style="
+      margin-top:8px;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
+    ">
+    Accès réservé au pilotage privé Bo'CitéArt.
+  </div>
 
-      <br><br>
-
-      Cet accès est réservé
-      au pilotage privé Bo'CitéArt.
-
-      <button
-        id="directionProfessionalDemandDashboardBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:12px;
-        ">
-        Ouvrir le suivi des demandes professionnelles
-      </button>
-    `;
-
+  <button
+    id="directionProfessionalDemandDashboardBtn"
+    class="choiceBtn"
+    type="button"
+    style="
+      width:100%;
+      margin-top:12px;
+      background:#ffffff !important;
+      color:#111111 !important;
+    ">
+    Ouvrir le suivi des demandes professionnelles
+  </button>
+`;
+      
     host.appendChild(container);
 
     const button =
@@ -21660,159 +21631,231 @@ console.log(
     );
   }
 
-  function getNewsManagerHtml(){
-    return `
-      <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
+ function getNewsManagerHtml(){
 
-        <strong style="font-size:18px;">
-          Faites vivre votre fiche entreprise
-        </strong>
+  return `
 
-        <br><br>
-
-        Présentez une nouveauté, un savoir-faire,
-        une porte ouverte, un nouveau service
-        ou une réalisation récente.
-
-        <br><br>
-
-        Les habitants doivent d’abord savoir
-        que votre entreprise existe et comprendre
-        ce qu’elle peut leur apporter.
-      </div>
-
-      <div class="box">
-        <strong>Ajouter une actualité</strong>
-      </div>
-
-      <label
-        style="
-          display:block;
-          font-weight:900;
-        ">
-        Titre
-      </label>
-
-      <input
-        id="visibilityNewsTitle"
-        class="miniField"
-        type="text"
-        placeholder="Exemple : nouveau service proposé">
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Type d’actualité
-      </label>
-
-      <select
-        id="visibilityNewsType"
-        class="miniField">
-
-        <option value="Nouveauté">
-          Nouveauté
-        </option>
-
-        <option value="Savoir-faire">
-          Savoir-faire
-        </option>
-
-        <option value="Réalisation">
-          Réalisation
-        </option>
-
-        <option value="Portes ouvertes">
-          Portes ouvertes
-        </option>
-
-        <option value="Événement">
-          Événement
-        </option>
-
-        <option value="Promotion">
-          Promotion
-        </option>
-
-        <option value="Information">
-          Information
-        </option>
-      </select>
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Présentation
-      </label>
-
-      <textarea
-        id="visibilityNewsDescription"
-        class="miniField"
-        style="min-height:120px;"
-        placeholder="Expliquez clairement ce que les habitants doivent retenir.">
-      </textarea>
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Date de début
-      </label>
-
-      <input
-        id="visibilityNewsStartDate"
-        class="miniField"
-        type="date">
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Date de fin
-      </label>
-
-      <input
-        id="visibilityNewsEndDate"
-        class="miniField"
-        type="date">
-
-      <button
-        id="visibilityNewsSaveBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:14px;
-        ">
-        Enregistrer cette actualité
-      </button>
+    <div
+      class="box"
+      style="
+        border-left:6px solid #2f5d46;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        line-height:1.5;
+        font-weight:400;
+      ">
 
       <div
         style="
-          margin-top:18px;
+          color:#2f5d46;
           font-size:17px;
-          font-weight:900;
+          font-weight:800;
+          line-height:1.35;
         ">
-        Mes actualités
+        Faites vivre votre fiche professionnelle
       </div>
 
       <div
-        id="visibilityNewsList"
-        style="margin-top:10px;">
+        style="
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Ajoutez une information utile :
+        nouveauté, savoir-faire, réalisation,
+        événement, promotion ou nouveau service.
       </div>
-    `;
-  }
+
+    </div>
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:800;
+        ">
+        Ajouter une actualité
+      </div>
+
+    </div>
+
+    <label
+      style="
+        display:block;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Titre
+    </label>
+
+    <input
+      id="visibilityNewsTitle"
+      class="miniField"
+      type="text"
+      placeholder="Exemple : nouveau service proposé"
+      style="
+        background:#ffffff;
+        color:#111111;
+      ">
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Type d’actualité
+    </label>
+
+    <select
+      id="visibilityNewsType"
+      class="miniField"
+      style="
+        background:#ffffff;
+        color:#111111;
+      ">
+
+      <option value="Nouveauté">
+        Nouveauté
+      </option>
+
+      <option value="Savoir-faire">
+        Savoir-faire
+      </option>
+
+      <option value="Réalisation">
+        Réalisation
+      </option>
+
+      <option value="Portes ouvertes">
+        Portes ouvertes
+      </option>
+
+      <option value="Événement">
+        Événement
+      </option>
+
+      <option value="Promotion">
+        Promotion
+      </option>
+
+      <option value="Information">
+        Information
+      </option>
+
+    </select>
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Présentation
+    </label>
+
+    <textarea
+      id="visibilityNewsDescription"
+      class="miniField"
+      style="
+        min-height:120px;
+        background:#ffffff;
+        color:#111111;
+      "
+      placeholder="Présentez simplement votre actualité.">
+    </textarea>
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Date de début
+    </label>
+
+    <input
+      id="visibilityNewsStartDate"
+      class="miniField"
+      type="date"
+      style="
+        background:#ffffff;
+        color:#111111;
+      ">
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Date de fin
+    </label>
+
+    <input
+      id="visibilityNewsEndDate"
+      class="miniField"
+      type="date"
+      style="
+        background:#ffffff;
+        color:#111111;
+      ">
+
+    <button
+      id="visibilityNewsSaveBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:14px;
+        background:#ffffff !important;
+        color:#111111 !important;
+      ">
+      Enregistrer cette actualité
+    </button>
+
+    <div
+      style="
+        margin-top:18px;
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:800;
+      ">
+      Mes actualités
+    </div>
+
+    <div
+      id="visibilityNewsList"
+      style="
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+    </div>
+
+  `;
+}
 
   function renderNewsList(){
     const host =
@@ -30664,12 +30707,50 @@ function addUniversalBackButton(
     );
   }
 
-  function openPrivateLogin(
+   function openPrivateLogin(
     successCallback
   ){
 
     const profile =
       loadProfile();
+
+    /* =====================================================
+       ADMINISTRATEUR BO'CITÉART — CONTRÔLE DE LA DÉMO
+       ===================================================== */
+
+    const isBociteAdmin =
+      (
+        localStorage.getItem(
+          "bociteart_admin_authenticated_v1"
+        ) === "true"
+      ) ||
+      (
+        sessionStorage.getItem(
+          "bociteart_admin_authenticated_v1"
+        ) === "true"
+      ) ||
+      (
+        window.BOCITEART_ADMIN_MODE === true
+      );
+
+    if(isBociteAdmin){
+
+      if(
+        typeof successCallback ===
+        "function"
+      ){
+
+        successCallback();
+        return;
+      }
+
+      openPrivateAccess();
+      return;
+    }
+
+    /* =====================================================
+       FICHE PROFESSIONNELLE NON ENCORE CRÉÉE
+       ===================================================== */
 
     if(
       !profile.companyName ||
@@ -30681,79 +30762,129 @@ function addUniversalBackButton(
         `
           <div
             class="box"
-            style="border-left:6px solid #b00020;">
+            style="
+              border-left:6px solid #b00020;
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              line-height:1.50;
+              font-weight:400;
+            ">
 
-            <strong style="font-size:18px;">
-              La fiche entreprise doit être complétée
-            </strong>
+            <div
+              style="
+                color:#2f5d46;
+                font-size:17px;
+                line-height:1.35;
+                font-weight:800;
+                margin-bottom:10px;
+              ">
+              Fiche professionnelle à compléter
+            </div>
 
-            <br><br>
-
-            Avant d’ouvrir le Tableau de Direction,
-            renseignez l’identité de l’entreprise.
+            La fiche professionnelle
+            permet d’identifier l’entreprise
+            et de sécuriser son espace privé.
 
             <br><br>
 
             Un code d’accès personnel
-            sera créé lors de l’enregistrement.
+            sera créé lors du premier enregistrement.
+
           </div>
 
           <button
             id="privateAccessCreateProfileBtn"
             class="choiceBtn"
             type="button"
-            style="width:100%;">
-            Compléter la fiche entreprise
+            style="
+              width:100%;
+              margin-top:10px;
+              background:#ffffff !important;
+              color:#111111 !important;
+            ">
+            Compléter ma fiche professionnelle
           </button>
         `
       );
 
-      window.setTimeout(function(){
+      window.setTimeout(
+        function(){
 
-        const button =
-          getElement(
-            "privateAccessCreateProfileBtn"
-          );
+          const button =
+            getElement(
+              "privateAccessCreateProfileBtn"
+            );
 
-        if(button){
-          button.onclick =
-            openEntrepriseProfile;
-        }
+          if(button){
 
-      },0);
+            button.onclick =
+              openEntrepriseProfile;
+          }
+
+        },
+        0
+      );
 
       return;
     }
 
+    /* =====================================================
+       ACCÈS PRIVÉ
+       ===================================================== */
+
     app.renderModal(
       "Accès privé de l’entreprise",
       `
+
         <div
           class="box"
-          style="border-left:6px solid #b00020;">
+          style="
+            border-left:6px solid #b00020;
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            line-height:1.50;
+            font-weight:400;
+          ">
 
-          <strong style="font-size:18px;">
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              line-height:1.35;
+              font-weight:800;
+              margin-bottom:10px;
+            ">
             ${escapeValue(
               profile.companyName
             )}
-          </strong>
+          </div>
 
-          <br><br>
-
-          Cet espace contient
-          les informations privées de l’entreprise :
+          Cet espace est réservé
+          aux informations
+          et services privés de l’entreprise.
 
           <br><br>
 
           • candidatures reçues ;<br>
-          • mutualisations suivies ;<br>
+          • actions pour payer moins de charges ;<br>
           • propositions et décisions ;<br>
           • abonnements ;<br>
-          • tarifs ;<br>
+          • paiements ;<br>
           • factures.
+
         </div>
 
-        <label style="font-weight:900;">
+        <label
+          for="entreprisePrivateCodeInput"
+          style="
+            display:block;
+            margin-top:12px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
           Code d’accès de l’entreprise
         </label>
 
@@ -30763,105 +30894,105 @@ function addUniversalBackButton(
           type="password"
           inputmode="numeric"
           maxlength="6"
-          placeholder="Code à six chiffres">
+          placeholder="Code à six chiffres"
+          style="
+            background:#ffffff;
+            color:#111111;
+          ">
 
         <button
           id="entreprisePrivateLoginBtn"
           class="choiceBtn"
           type="button"
-          style="width:100%;margin-top:12px;">
+          style="
+            width:100%;
+            margin-top:12px;
+            background:#ffffff !important;
+            color:#111111 !important;
+          ">
           Ouvrir l’espace privé
         </button>
 
-        <button
-          id="entreprisePrivateProfileBtn"
-          class="choiceBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:8px;
-            background:#fff;
-          ">
-          Consulter la fiche entreprise
-        </button>
       `
     );
 
-    window.setTimeout(function(){
+    window.setTimeout(
+      function(){
 
-      const codeInput =
-        getElement(
-          "entreprisePrivateCodeInput"
-        );
-
-      const loginButton =
-        getElement(
-          "entreprisePrivateLoginBtn"
-        );
-
-      const profileButton =
-        getElement(
-          "entreprisePrivateProfileBtn"
-        );
-
-      function verifyCode(){
-
-        const entered =
-          String(
-            codeInput
-              ? codeInput.value
-              : ""
-          ).trim();
-
-        if(
-          entered !==
-          String(
-            profile.accessCode
-          )
-        ){
-          alert(
-            "Le code d’accès est incorrect."
+        const codeInput =
+          getElement(
+            "entreprisePrivateCodeInput"
           );
-          return;
-        }
 
-        openPrivateAccess();
+        const loginButton =
+          getElement(
+            "entreprisePrivateLoginBtn"
+          );
 
-        if(
-          typeof successCallback ===
-          "function"
-        ){
-          successCallback();
-        }
-      }
+        function verifyCode(){
 
-      if(loginButton){
-        loginButton.onclick =
-          verifyCode;
-      }
+          const entered =
+            String(
+              codeInput
+                ? codeInput.value
+                : ""
+            )
+            .trim();
 
-      if(codeInput){
-        codeInput.addEventListener(
-          "keydown",
-          function(event){
+          if(
+            entered !==
+            String(
+              profile.accessCode
+            )
+          ){
 
-            if(event.key === "Enter"){
+            alert(
+              "Le code d’accès est incorrect."
+            );
 
-              event.preventDefault();
-              verifyCode();
-            }
+            return;
           }
-        );
-      }
 
-      if(profileButton){
-        profileButton.onclick =
-          openEntrepriseProfile;
-      }
+          openPrivateAccess();
 
-    },0);
+          if(
+            typeof successCallback ===
+            "function"
+          ){
+
+            successCallback();
+          }
+        }
+
+        if(loginButton){
+
+          loginButton.onclick =
+            verifyCode;
+        }
+
+        if(codeInput){
+
+          codeInput.addEventListener(
+            "keydown",
+            function(event){
+
+              if(
+                event.key ===
+                "Enter"
+              ){
+
+                event.preventDefault();
+
+                verifyCode();
+              }
+            }
+          );
+        }
+
+      },
+      0
+    );
   }
-
   /*
     Conservation de la dernière version
     du Tableau de Direction déjà enregistrée.
