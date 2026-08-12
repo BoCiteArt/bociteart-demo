@@ -2758,171 +2758,1077 @@ function syncBookingsToTicker(){
 }
 
 function openAdBookingForProfile(profile, y, m, d, containerId){
+
   ensureModalHelpers();
 
-  const key = ymd(y, m, d);
-  const bookings = loadBookings();
-  const list = getDayBookings(bookings, y, m, d);
+  const key =
+    ymd(y, m, d);
 
-  if(list.length >= window.PUB_MAX_PER_DAY){
-    alert("Cette journée est complète. Choisis une autre date.");
+  const bookings =
+    loadBookings();
+
+  const list =
+    getDayBookings(
+      bookings,
+      y,
+      m,
+      d
+    );
+
+  if(
+    list.length >=
+    window.PUB_MAX_PER_DAY
+  ){
+
+    alert(
+      "Cette journée est complète. Choisissez une autre date."
+    );
+
     return;
   }
 
-  if(profile === "mairie" && isMairieBlockedFromBooking()){
+  if(
+    profile === "mairie" &&
+    isMairieBlockedFromBooking()
+  ){
+
     alert(
       "Réservation temporairement bloquée.\n\n" +
-      "Une précédente publicité mairie est arrivée au terme de régularisation prévu.\n" +
-      "Dès que la situation est réglée, les nouvelles réservations pourront reprendre normalement."
+      "Une précédente facture mairie reste à régulariser.\n\n" +
+      "Dès confirmation du règlement, les nouvelles réservations pourront reprendre."
     );
+
     return;
   }
 
+
   const label =
-    profile === "commerce" ? "Commerce" :
-    profile === "entreprise" ? "Entreprise" :
-    profile === "mairie" ? "Mairie" :
-    "Association";
+    profile === "commerce"
+      ? "Commerce"
+      : profile === "entreprise"
+        ? "Entreprise"
+        : profile === "mairie"
+          ? "Mairie"
+          : "Association";
+
 
   const paymentText =
     profile === "mairie"
-      ? "Mode mairie : devis validé / paiement différé à 30 jours. Un rappel apparaît à 8 jours de l’échéance."
-      : "Mode " + label.toLowerCase() + " : paiement immédiat requis pour activer la publicité.";
+      ? (
+          "Mairie : devis validé puis paiement différé à 30 jours. " +
+          "En cas d'impayé, les nouvelles réservations sont bloquées jusqu'à régularisation."
+        )
+      : (
+          label +
+          " : la publicité est réservée après confirmation du paiement."
+        );
 
-  window.openModal("Réservation publicité — " + label, `
-    <div class="box">
-      <div style="font-weight:900;">Date : ${key}</div>
-      <div class="muted" style="margin-top:6px;">
-        Places déjà réservées : <strong>${list.length}/${window.PUB_MAX_PER_DAY}</strong>
+
+  window.openModal(
+    "Publicité dans le grand bandeau — " +
+    label,
+    `
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+          border-left:6px solid #2f5d46;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+          ">
+          Publicité dans le grand bandeau
+        </div>
+
+        <div
+          style="
+            margin-top:8px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+
+          Date :
+          ${escapeHtml(key)}
+
+          <br>
+
+          Places déjà réservées :
+          ${list.length}/${window.PUB_MAX_PER_DAY}
+
+          <br><br>
+
+          ${escapeHtml(paymentText)}
+
+        </div>
+
       </div>
-      <div class="muted" style="margin-top:8px;">
-        ${escapeHtml(paymentText)}
+
+
+      <div
+        class="box"
+        style="
+          margin-top:12px;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+          ">
+          Préparer votre publicité
+        </div>
+
+
+        <label
+          style="
+            display:block;
+            margin-top:12px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Nom de l’entité
+        </label>
+
+        <input
+          class="miniField"
+          id="adEntityName"
+          placeholder="Nom ${label}"
+          style="
+            background:#ffffff;
+            color:#111111;
+          ">
+
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Titre de la publicité
+        </label>
+
+        <input
+          class="miniField"
+          id="adTitle"
+          placeholder="Exemple : offre spéciale"
+          style="
+            background:#ffffff;
+            color:#111111;
+          ">
+
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Texte court
+        </label>
+
+        <textarea
+          class="miniField"
+          id="adText"
+          style="
+            min-height:90px;
+            background:#ffffff;
+            color:#111111;
+          "
+          placeholder="Texte diffusé dans le grand bandeau">
+        </textarea>
+
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Image, logo ou enseigne
+        </label>
+
+        <input
+          class="miniField"
+          id="adImageFile"
+          type="file"
+          accept="image/*"
+          style="
+            background:#ffffff;
+            color:#111111;
+          ">
+
+        <div
+          style="
+            margin-top:6px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Cette image sera utilisée dans le grand rectangle publicitaire.
+        </div>
+
+
+        <label
+          style="
+            display:block;
+            margin-top:10px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Formule
+        </label>
+
+        <select
+          class="miniField"
+          id="adPack"
+          style="
+            background:#ffffff;
+            color:#111111;
+          ">
+
+          <option value="1">
+            1 publicité — 50 € HT
+          </option>
+
+          <option value="5">
+            Pack 5 publicités — 200 € HT
+          </option>
+
+        </select>
+
       </div>
-    </div>
 
-    <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;">Nom de l’entité</div>
-      <input class="miniField" id="adEntityName" placeholder="Nom ${label}">
 
-      <div style="font-weight:900;margin-top:10px;">Titre publicité</div>
-      <input class="miniField" id="adTitle" placeholder="Ex : Offre spéciale / message local">
+      <button
+        class="choiceBtn"
+        id="adValidateBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+          background:#ffffff !important;
+          color:#111111 !important;
+        ">
 
-      <div style="font-weight:900;margin-top:10px;">Texte court</div>
-      <textarea class="miniField" id="adText" style="min-height:90px;" placeholder="Texte diffusé dans le grand bandeau"></textarea>
+        ${
+          profile === "mairie"
+            ? "Valider la demande de réservation"
+            : "Continuer vers le paiement"
+        }
 
-      <div style="font-weight:900;margin-top:10px;">Image / logo / enseigne</div>
-      <input class="miniField" id="adImageFile" type="file" accept="image/*">
-      <div class="muted" style="margin-top:6px;">
-        Cette image sera affichée dans le fond du grand rectangle publicitaire.
-      </div>
+      </button>
 
-      <div style="font-weight:900;margin-top:10px;">Formule</div>
-      <select class="miniField" id="adPack">
-        <option value="1">1 publicité — 50 € HT</option>
-        <option value="5">Pack 5 publicités — 200 € HT</option>
-      </select>
-    </div>
+    `
+  );
 
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
- <button class="choiceBtn" id="adValidateBtn" type="button">
-${profile === "mairie"
-  ? "✅ Valider la réservation"
-  : " Confirmer et payer"}
-</button>
-    </div>
-  `);
 
-  setTimeout(()=>{
-    const btn = $("adValidateBtn");
-    if(!btn) return;
+  setTimeout(
+    function(){
 
-    btn.onclick = async ()=>{
-      const entityName = String($("adEntityName") ? $("adEntityName").value : "").trim();
-      const title = String($("adTitle") ? $("adTitle").value : "").trim();
-      const text = String($("adText") ? $("adText").value : "").trim();
-      const pack = String($("adPack") ? $("adPack").value : "1");
+      const btn =
+        $("adValidateBtn");
 
-      if(!entityName){
-        alert("Renseigne le nom de l’entité.");
+      if(!btn){
         return;
       }
 
-      if(!title || !text){
-        alert("Renseigne le titre et le texte de la publicité.");
-        return;
-      }
 
-      let imageData = "";
+      btn.onclick =
+        async function(){
 
-      const fileInput = $("adImageFile");
-      const file = fileInput && fileInput.files && fileInput.files[0];
+          const entityName =
+            String(
+              $("adEntityName")
+                ? $("adEntityName").value
+                : ""
+            )
+            .trim();
 
-      if(file){
-        imageData = await new Promise((resolve)=>{
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result || "");
-          reader.onerror = () => resolve("");
-          reader.readAsDataURL(file);
-        });
-      }
 
-      const now = new Date();
-      const currentHour = now.getHours();
+          const title =
+            String(
+              $("adTitle")
+                ? $("adTitle").value
+                : ""
+            )
+            .trim();
 
-      const alreadyBookedToday = list.some(item =>
-        String(item.entityType || "").toLowerCase() === label.toLowerCase() &&
-        String(item.entityName || "").toLowerCase() === entityName.toLowerCase()
-      );
 
-      if(currentHour < 16 && alreadyBookedToday){
-        alert("Avant 16h00, une même entité ne peut réserver qu’une seule publicité sur cette date.");
-        return;
-      }
+          const text =
+            String(
+              $("adText")
+                ? $("adText").value
+                : ""
+            )
+            .trim();
 
-      const slots = pack === "5" ? 5 : 1;
 
-      if(list.length + slots > window.PUB_MAX_PER_DAY){
-        alert("Il ne reste pas assez de places sur cette date pour cette formule.");
-        return;
-      }
+          const pack =
+            String(
+              $("adPack")
+                ? $("adPack").value
+                : "1"
+            );
 
-      for(let i = 0; i < slots; i++){
-        list.push({
-          date: key,
-          entityType: label,
-          entityName: entityName,
-          title: title,
-          text: text,
-          img: imageData,
-          pack: pack,
-          slotIndex: i + 1,
-          status: profile === "mairie" ? "quote_validated" : "paid",
-          paymentMode: profile === "mairie" ? "mairie_regularisation_30j" : "immediate",
-          due_ts: profile === "mairie" ? Date.now() + (30 * 24 * 60 * 60 * 1000) : null,
-          reminder_8d: profile === "mairie",
-          ts_iso: now.toISOString(),
-          ts_fr: now.toLocaleString("fr-FR"),
-          note: profile === "mairie"
-            ? "Devis mairie validé — régularisation attendue sous 30 jours"
-            : "Paiement immédiat validé"
-        });
-      }
 
-      setDayBookings(bookings, y, m, d, list);
-      saveBookings(bookings);
+          if(!entityName){
 
-      syncBookingsToTicker();
+            alert(
+              "Renseignez le nom de l’entité."
+            );
 
-      safeCloseModal();
-      renderCalendarInto(containerId);
+            return;
+          }
 
-      alert(
-        profile === "mairie"
-          ? "Devis mairie enregistré.\n\nLa publicité apparaît maintenant dans le grand rectangle. Un rappel apparaîtra 8 jours avant l’échéance."
-          : "Réservation enregistrée. La publicité apparaît maintenant dans le grand rectangle."
-      );
-    };
-  }, 0);
+
+          if(
+            !title ||
+            !text
+          ){
+
+            alert(
+              "Renseignez le titre et le texte de la publicité."
+            );
+
+            return;
+          }
+
+
+          let imageData =
+            "";
+
+
+          const fileInput =
+            $("adImageFile");
+
+
+          const file =
+            fileInput &&
+            fileInput.files &&
+            fileInput.files[0];
+
+
+          if(file){
+
+            imageData =
+              await new Promise(
+                function(resolve){
+
+                  const reader =
+                    new FileReader();
+
+
+                  reader.onload =
+                    function(){
+
+                      resolve(
+                        reader.result || ""
+                      );
+                    };
+
+
+                  reader.onerror =
+                    function(){
+
+                      resolve("");
+                    };
+
+
+                  reader.readAsDataURL(
+                    file
+                  );
+
+                }
+              );
+          }
+
+
+          const now =
+            new Date();
+
+
+          const currentHour =
+            now.getHours();
+
+
+          const alreadyBookedToday =
+            list.some(
+              function(item){
+
+                return (
+                  String(
+                    item.entityType || ""
+                  )
+                  .toLowerCase() ===
+                  label.toLowerCase() &&
+
+                  String(
+                    item.entityName || ""
+                  )
+                  .toLowerCase() ===
+                  entityName.toLowerCase()
+                );
+
+              }
+            );
+
+
+          if(
+            currentHour < 16 &&
+            alreadyBookedToday
+          ){
+
+            alert(
+              "Avant 16h00, une même entité ne peut réserver qu’une seule publicité sur cette date."
+            );
+
+            return;
+          }
+
+
+          const slots =
+            pack === "5"
+              ? 5
+              : 1;
+
+
+          if(
+            list.length +
+            slots >
+            window.PUB_MAX_PER_DAY
+          ){
+
+            alert(
+              "Il ne reste pas assez de places sur cette date pour cette formule."
+            );
+
+            return;
+          }
+
+
+          const priceHT =
+            pack === "5"
+              ? 200
+              : 50;
+
+
+          const vatRate =
+            20;
+
+
+          const vatAmount =
+            Number(
+              (
+                priceHT *
+                vatRate /
+                100
+              )
+              .toFixed(2)
+            );
+
+
+          const amountTTC =
+            Number(
+              (
+                priceHT +
+                vatAmount
+              )
+              .toFixed(2)
+            );
+
+
+          /* =================================================
+             MAIRIE
+             DEVIS / FACTURE À 30 JOURS
+             ================================================= */
+
+          if(
+            profile === "mairie"
+          ){
+
+            const financialModule =
+              window.BociteEntreprise;
+
+
+            let publicInvoice =
+              null;
+
+
+            if(
+              financialModule &&
+              typeof financialModule
+                .createPublicEntityInvoice ===
+              "function"
+            ){
+
+              publicInvoice =
+                financialModule
+                  .createPublicEntityInvoice({
+
+                    customerName:
+                      entityName,
+
+                    customerId:
+                      entityName,
+
+                    serviceLabel:
+                      pack === "5"
+                        ? "Pack 5 publicités grand bandeau Bo'CitéArt"
+                        : "Publicité grand bandeau Bo'CitéArt",
+
+                    amountHT:
+                      priceHT,
+
+                    vatRate:
+                      vatRate,
+
+                    amountTTC:
+                      amountTTC,
+
+                    dueAt:
+                      Date.now() +
+                      (
+                        30 *
+                        24 *
+                        60 *
+                        60 *
+                        1000
+                      )
+
+                  });
+            }
+
+
+            for(
+              let i = 0;
+              i < slots;
+              i++
+            ){
+
+              list.push({
+
+                date:
+                  key,
+
+                entityType:
+                  label,
+
+                entityName:
+                  entityName,
+
+                title:
+                  title,
+
+                text:
+                  text,
+
+                img:
+                  imageData,
+
+                pack:
+                  pack,
+
+                slotIndex:
+                  i + 1,
+
+                status:
+                  "quote_validated",
+
+                paymentStatus:
+                  "waiting_payment",
+
+                paymentMode:
+                  "public_entity_30_days",
+
+                invoiceId:
+                  publicInvoice
+                    ? publicInvoice.id
+                    : "",
+
+                due_ts:
+                  Date.now() +
+                  (
+                    30 *
+                    24 *
+                    60 *
+                    60 *
+                    1000
+                  ),
+
+                reminder_8d:
+                  true,
+
+                ts_iso:
+                  now.toISOString(),
+
+                ts_fr:
+                  now.toLocaleString(
+                    "fr-FR"
+                  ),
+
+                note:
+                  "Réservation mairie — paiement différé à 30 jours"
+
+              });
+            }
+
+
+            setDayBookings(
+              bookings,
+              y,
+              m,
+              d,
+              list
+            );
+
+
+            saveBookings(
+              bookings
+            );
+
+
+            syncBookingsToTicker();
+
+
+            safeCloseModal();
+
+
+            renderCalendarInto(
+              containerId
+            );
+
+
+            alert(
+              "La réservation mairie est enregistrée.\n\n" +
+              "Le règlement reste à effectuer selon le délai prévu."
+            );
+
+
+            return;
+          }
+
+
+          /* =================================================
+             COMMERCE / ENTREPRISE / ASSOCIATION
+             CRÉATION DE LA COMMANDE
+             ================================================= */
+
+          const financialModule =
+            window.BociteEntreprise;
+
+
+          if(
+            !financialModule ||
+            typeof financialModule
+              .createFinancialOrder !==
+            "function"
+          ){
+
+            alert(
+              "Le moteur de paiement Bo'CitéArt est momentanément indisponible."
+            );
+
+            return;
+          }
+
+
+          const order =
+            financialModule
+              .createFinancialOrder({
+
+                productCode:
+                  pack === "5"
+                    ? "ADVERTISING_PACK_5"
+                    : "ADVERTISING_PUBLICATION",
+
+                serviceType:
+                  "advertising",
+
+                serviceLabel:
+                  pack === "5"
+                    ? "Pack 5 publicités dans le grand bandeau Bo'CitéArt"
+                    : "Publicité dans le grand bandeau Bo'CitéArt",
+
+                customerType:
+                  profile,
+
+                customerName:
+                  entityName,
+
+                amountHT:
+                  priceHT,
+
+                vatRate:
+                  vatRate,
+
+                vatAmount:
+                  vatAmount,
+
+                amountTTC:
+                  amountTTC
+
+              });
+
+
+          /*
+            On conserve les données de la publicité
+            en attente du paiement.
+
+            AUCUNE place n'est encore ajoutée
+            au grand bandeau.
+          */
+
+          const pendingAd = {
+
+            orderId:
+              order.id,
+
+            date:
+              key,
+
+            year:
+              y,
+
+            month:
+              m,
+
+            day:
+              d,
+
+            containerId:
+              containerId,
+
+            profile:
+              profile,
+
+            entityType:
+              label,
+
+            entityName:
+              entityName,
+
+            title:
+              title,
+
+            text:
+              text,
+
+            img:
+              imageData,
+
+            pack:
+              pack,
+
+            slots:
+              slots,
+
+            status:
+              "waiting_payment",
+
+            paymentStatus:
+              "waiting_payment",
+
+            createdAt:
+              Date.now()
+
+          };
+
+
+          try{
+
+            const pendingRaw =
+              localStorage.getItem(
+                "bociteart_pending_ads_v1"
+              );
+
+
+            const pendingList =
+              pendingRaw
+                ? JSON.parse(
+                    pendingRaw
+                  )
+                : [];
+
+
+            pendingList.push(
+              pendingAd
+            );
+
+
+            localStorage.setItem(
+              "bociteart_pending_ads_v1",
+              JSON.stringify(
+                pendingList
+              )
+            );
+
+          }catch(error){
+
+            console.warn(
+              "Enregistrement de la publicité en attente impossible.",
+              error
+            );
+          }
+
+
+          /* =================================================
+             CHOIX DU MOYEN DE PAIEMENT
+             ================================================= */
+
+          window.openModal(
+            "Paiement de la publicité",
+            `
+
+              <div
+                class="box"
+                style="
+                  background:#ffffff;
+                  color:#111111;
+                  font-size:14px;
+                  font-weight:400;
+                  line-height:1.5;
+                  border-left:6px solid #2f5d46;
+                ">
+
+                <div
+                  style="
+                    color:#2f5d46;
+                    font-size:17px;
+                    font-weight:800;
+                  ">
+                  Publicité dans le grand bandeau
+                </div>
+
+                <div
+                  style="
+                    margin-top:8px;
+                    color:#111111;
+                    font-size:14px;
+                    font-weight:400;
+                  ">
+
+                  ${escapeHtml(
+                    entityName
+                  )}
+
+                  <br><br>
+
+                  ${priceHT.toFixed(2)} € HT
+
+                  <br>
+
+                  TVA :
+                  ${vatAmount.toFixed(2)} €
+
+                  <br>
+
+                  ${amountTTC.toFixed(2)} € TTC
+
+                </div>
+
+              </div>
+
+
+              <button
+                id="adCardPaymentBtn"
+                class="choiceBtn"
+                type="button"
+                style="
+                  width:100%;
+                  background:#ffffff !important;
+                  color:#111111 !important;
+                ">
+                Payer par carte bancaire
+              </button>
+
+
+              <button
+                id="adBankPaymentBtn"
+                class="choiceBtn"
+                type="button"
+                style="
+                  width:100%;
+                  margin-top:8px;
+                  background:#ffffff !important;
+                  color:#111111 !important;
+                ">
+                Payer par virement / SEPA
+              </button>
+
+            `
+          );
+
+
+          setTimeout(
+            function(){
+
+              const cardButton =
+                $("adCardPaymentBtn");
+
+
+              const bankButton =
+                $("adBankPaymentBtn");
+
+
+              if(cardButton){
+
+                cardButton.onclick =
+                  function(){
+
+                    if(
+                      typeof financialModule
+                        .createCardPayment !==
+                      "function"
+                    ){
+
+                      alert(
+                        "Le paiement par carte est momentanément indisponible."
+                      );
+
+                      return;
+                    }
+
+
+                    const payment =
+                      financialModule
+                        .createCardPayment(
+                          order
+                        );
+
+
+                    alert(
+                      "Paiement par carte préparé.\n\n" +
+                      "Dans la version officielle, le PSP sécurisé s'ouvrira ici.\n\n" +
+                      "La publicité ne sera diffusée qu'après confirmation réelle du paiement."
+                    );
+
+
+                    console.log(
+                      "Publicité en attente du PSP :",
+                      payment
+                    );
+
+                  };
+              }
+
+
+              if(bankButton){
+
+                bankButton.onclick =
+                  function(){
+
+                    if(
+                      typeof financialModule
+                        .createSepaOrBankTransfer !==
+                      "function"
+                    ){
+
+                      alert(
+                        "Le paiement par virement / SEPA est momentanément indisponible."
+                      );
+
+                      return;
+                    }
+
+
+                    const payment =
+                      financialModule
+                        .createSepaOrBankTransfer(
+                          order,
+                          "bank_transfer"
+                        );
+
+
+                    const bank =
+                      typeof financialModule
+                        .getBociteBankInformation ===
+                      "function"
+                        ? financialModule
+                            .getBociteBankInformation()
+                        : {};
+
+
+                    let message =
+                      "Votre paiement par virement est préparé.\n\n" +
+                      "Référence à indiquer :\n" +
+                      (
+                        payment &&
+                        payment.transferReference
+                          ? payment.transferReference
+                          : ""
+                      );
+
+
+                    if(
+                      bank &&
+                      bank.iban
+                    ){
+
+                      message +=
+                        "\n\nIBAN Bo'CitéArt :\n" +
+                        bank.iban;
+
+
+                      if(bank.bic){
+
+                        message +=
+                          "\n\nBIC :\n" +
+                          bank.bic;
+                      }
+
+                    }else{
+
+                      message +=
+                        "\n\nL'IBAN officiel Bo'CitéArt sera affiché ici dès son raccordement.";
+                    }
+
+
+                    message +=
+                      "\n\nLa publicité restera en attente jusqu'à confirmation du règlement.";
+
+
+                    alert(
+                      message
+                    );
+
+                  };
+              }
+
+            },
+            0
+          );
+
+        };
+
+    },
+    0
+  );
+
 }
 
 function renderCalendarInto(containerId){
