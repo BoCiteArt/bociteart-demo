@@ -14152,652 +14152,1604 @@ function openMutualisation(){
 
 })();
 /* =========================================================
-   BO'CITÉART — FACTURES DISPONIBLES 24 MOIS
-   RESPONSABILITÉ D’ARCHIVAGE DE L’ENTREPRISE
+   BO'CITÉART — FACTURATION CENTRALE
+   ABONNEMENTS • EMPLOI • PUBLICITÉ • SERVICES
+   PRÉPARATION FACTURATION ÉLECTRONIQUE
    ========================================================= */
 
 (function patchBociteInvoiceRetention(){
 
   "use strict";
 
-  const module = window.BociteEntreprise;
+  const module =
+    window.BociteEntreprise;
 
   if(!module){
+
     console.error(
       "Bo'CitéArt Entreprise : module principal introuvable."
     );
+
     return;
   }
+
+  /* =======================================================
+     1. STOCKAGE
+     ======================================================= */
 
   const INVOICE_KEY =
     "bociteart_entreprise_search_invoices_v1";
 
-  const PLAN_KEY =
+  const SEARCH_PLAN_KEY =
     "bociteart_entreprise_search_plan_v1";
 
-  const RETENTION_MONTHS = 24;
+  const BILLING_SETTINGS_KEY =
+    "bociteart_billing_settings_v1";
+
+  const INVOICE_SEQUENCE_KEY =
+    "bociteart_invoice_sequence_v1";
+
+  const RETENTION_MS =
+    24 *
+    30.4375 *
+    24 *
+    60 *
+    60 *
+    1000;
 
   function getElement(id){
+
     return document.getElementById(id);
   }
 
   function escapeValue(value){
-    return module.safeEscape(value);
-  }
 
-  function loadPlan(){
-    try{
-      const raw =
-        localStorage.getItem(PLAN_KEY);
+    if(
+      typeof module.safeEscape ===
+      "function"
+    ){
 
-      const parsed =
-        raw ? JSON.parse(raw) : null;
-
-      return parsed &&
-        typeof parsed === "object"
-          ? parsed
-          : {
-              plan:"commune",
-              active:true
-            };
-    }catch(error){
-      return {
-        plan:"commune",
-        active:true
-      };
-    }
-  }
-
-  function savePlan(plan){
-    try{
-      localStorage.setItem(
-        PLAN_KEY,
-        JSON.stringify(plan || {})
-      );
-    }catch(error){
-      console.warn(
-        "Enregistrement de l’abonnement impossible :",
-        error
+      return module.safeEscape(
+        value
       );
     }
-  }
 
-  function loadAllInvoices(){
-    try{
-      const raw =
-        localStorage.getItem(INVOICE_KEY);
-
-      const parsed =
-        raw ? JSON.parse(raw) : [];
-
-      return Array.isArray(parsed)
-        ? parsed
-        : [];
-    }catch(error){
-      return [];
-    }
-  }
-
-  function saveInvoices(list){
-    try{
-      localStorage.setItem(
-        INVOICE_KEY,
-        JSON.stringify(list || [])
-      );
-    }catch(error){
-      console.warn(
-        "Enregistrement des factures impossible :",
-        error
-      );
-    }
-  }
-
-  function getRetentionLimit(){
-    const limit =
-      new Date();
-
-    limit.setMonth(
-      limit.getMonth() -
-      RETENTION_MONTHS
+    return String(
+      value == null
+        ? ""
+        : value
     );
-
-    return limit.getTime();
   }
 
-  function cleanExpiredInvoices(){
-    const invoices =
-      loadAllInvoices();
+  function loadJson(
+    key,
+    fallback
+  ){
 
-    const limit =
-      getRetentionLimit();
+    try{
 
-    const retained =
-      invoices.filter(function(invoice){
+      const raw =
+        localStorage.getItem(
+          key
+        );
 
-        const timestamp =
-          Number(invoice.createdAt || 0);
+      return raw
+        ? JSON.parse(raw)
+        : fallback;
 
-        if(!timestamp){
-          return true;
-        }
+    }catch(error){
 
-        return timestamp >= limit;
-      });
-
-    if(retained.length !== invoices.length){
-      saveInvoices(retained);
+      return fallback;
     }
-
-    return retained;
   }
 
-  function getPlanLabel(planName){
-    if(planName === "europe"){
-      return "Recherche professionnelle Europe";
+  function saveJson(
+    key,
+    value
+  ){
+
+    try{
+
+      localStorage.setItem(
+        key,
+        JSON.stringify(
+          value
+        )
+      );
+
+      return true;
+
+    }catch(error){
+
+      console.warn(
+        "Facturation : enregistrement impossible.",
+        error
+      );
+
+      return false;
     }
-
-    if(planName === "france"){
-      return "Recherche professionnelle France";
-    }
-
-    return "Recherche locale";
-  }
-
-  function formatDate(value){
-    if(!value){
-      return "Non renseignée";
-    }
-
-    const date =
-      new Date(value + "T12:00:00");
-
-    if(Number.isNaN(date.getTime())){
-      return value;
-    }
-
-    return date.toLocaleDateString("fr-FR");
   }
 
   function formatMoney(value){
-    return Number(value || 0)
-      .toFixed(2)
-      .replace(".",",");
-  }
 
-  function getInvoiceExpiryDate(invoice){
-    const created =
-      new Date(
-        Number(invoice.createdAt || Date.now())
-      );
-
-    created.setMonth(
-      created.getMonth() +
-      RETENTION_MONTHS
+    return Number(
+      value || 0
+    )
+    .toLocaleString(
+      "fr-FR",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
     );
-
-    return created.toLocaleDateString("fr-FR");
   }
 
-  function getBillingHtml(){
-    const plan =
-      loadPlan();
-
-    const invoices =
-      cleanExpiredInvoices();
+  function getBrandHtml(){
 
     return `
-      <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
+      <strong
+        style="
+          white-space:nowrap;
+          font-weight:900;
+        ">
+        <span
+          style="color:#2f5d46;">
+          Bo'Cité
+        </span><span
+          style="color:#b00020;">
+          Art
+        </span>
+      </strong>
+    `;
+  }
 
-        <strong style="font-size:18px;">
-          Mon abonnement de recherche
-        </strong>
+  /* =======================================================
+     2. FACTURES
+     ======================================================= */
 
-        <br><br>
+  function loadInvoices(){
 
-        Formule actuelle :
+    const rows =
+      loadJson(
+        INVOICE_KEY,
+        []
+      );
 
-        <br><br>
+    return Array.isArray(rows)
+      ? rows
+      : [];
+  }
 
-        <strong>
-          ${escapeValue(
-            getPlanLabel(plan.plan)
-          )}
-        </strong>
+  function saveInvoices(rows){
 
-        <br><br>
+    return saveJson(
+      INVOICE_KEY,
+      Array.isArray(rows)
+        ? rows
+        : []
+    );
+  }
 
-        Statut :
+  function cleanExpiredInvoices(){
 
-        <strong>
-          ${
-            plan.active
-              ? "Actif"
-              : "Suspendu"
+    const now =
+      Date.now();
+
+    const rows =
+      loadInvoices();
+
+    const kept =
+      rows.filter(
+        function(item){
+
+          const timestamp =
+            Number(
+              item.createdAt ||
+              item.issuedAt ||
+              0
+            );
+
+          if(!timestamp){
+            return true;
           }
-        </strong>
 
-        ${
-          plan.plan !== "commune"
-            ? `
-              <br><br>
-
-              Paiement :
-
-              <strong>
-                ${
-                  plan.billingMode === "annuel"
-                    ? "Annuel"
-                    : "Mensuel"
-                }
-              </strong>
-
-              <br><br>
-
-              Prochaine échéance :
-
-              <strong>
-                ${escapeValue(
-                  formatDate(
-                    plan.nextBillingDate
-                  )
-                )}
-              </strong>
-
-              <br><br>
-
-              Renouvellement automatique :
-
-              <strong>
-                ${
-                  plan.autoRenew
-                    ? "Activé"
-                    : "Désactivé"
-                }
-              </strong>
-            `
-            : ""
+          return (
+            now -
+            timestamp
+          ) <=
+          RETENTION_MS;
         }
-      </div>
+      );
 
-      ${
-        plan.plan !== "commune"
-          ? `
-            <button
-              id="invoiceRetentionRenewBtn"
-              class="choiceBtn"
-              type="button"
-              style="width:100%;">
+    if(
+      kept.length !==
+      rows.length
+    ){
 
-              ${
-                plan.autoRenew
-                  ? "Désactiver le renouvellement automatique"
-                  : "Réactiver le renouvellement automatique"
-              }
-            </button>
-          `
-          : `
-            <div class="box">
-              La recherche dans votre commune
-              est incluse dans votre espace professionnel.
+      saveInvoices(
+        kept
+      );
+    }
 
-              <br><br>
+    return kept;
+  }
 
-              Les recherches France et Europe
-              nécessitent une option payante.
-            </div>
-          `
+  /* =======================================================
+     3. NUMÉROTATION
+     ======================================================= */
+
+  function nextInvoiceNumber(){
+
+    const now =
+      new Date();
+
+    const year =
+      now.getFullYear();
+
+    let state =
+      loadJson(
+        INVOICE_SEQUENCE_KEY,
+        {
+          year:year,
+          value:0
+        }
+      );
+
+    if(
+      !state ||
+      Number(state.year) !==
+      Number(year)
+    ){
+
+      state = {
+        year:year,
+        value:0
+      };
+    }
+
+    state.value =
+      Number(
+        state.value || 0
+      ) + 1;
+
+    saveJson(
+      INVOICE_SEQUENCE_KEY,
+      state
+    );
+
+    return (
+      "BCA-" +
+      year +
+      "-" +
+      String(
+        state.value
+      )
+      .padStart(
+        6,
+        "0"
+      )
+    );
+  }
+
+  /* =======================================================
+     4. IDENTITÉ LÉGALE
+     REMPLIE PLUS TARD LORS DE L'IMMATRICULATION
+     ======================================================= */
+
+  function getBillingSettings(){
+
+    const defaults = {
+
+      issuer:{
+
+        legalName:
+          "Bo'CitéArt",
+
+        address:
+          "À compléter lors de l'immatriculation",
+
+        siret:
+          "À compléter",
+
+        vatNumber:
+          "À compléter",
+
+        email:
+          "À compléter"
+      },
+
+      provider:{
+
+        connected:false,
+
+        name:"",
+
+        mode:
+          "not_connected"
       }
 
-      <div
-        class="box"
-        style="
-          margin-top:14px;
-          border-left:6px solid #b00020;
-        ">
+    };
 
-        <strong>
-          Conservation de vos factures
-        </strong>
+    const saved =
+      loadJson(
+        BILLING_SETTINGS_KEY,
+        {}
+      );
 
-        <br><br>
+    return Object.assign(
+      {},
+      defaults,
+      saved,
+      {
+        issuer:
+          Object.assign(
+            {},
+            defaults.issuer,
+            saved.issuer || {}
+          ),
 
-        Les factures Bo'CitéArt restent disponibles
-        dans votre espace pendant
-        <strong>24 mois à compter de leur émission</strong>.
+        provider:
+          Object.assign(
+            {},
+            defaults.provider,
+            saved.provider || {}
+          )
+      }
+    );
+  }
 
-        <br><br>
+  /* =======================================================
+     5. CONNECTEUR DE FACTURATION FUTUR
+     ======================================================= */
 
-        Téléchargez-les dès leur réception
-        et transmettez-les à votre service comptable.
+  window.BociteBillingProvider =
+    window.BociteBillingProvider ||
+    {
 
-        <br><br>
+      connected:false,
 
-        <strong>
-          La conservation légale des documents comptables
-          reste sous la responsabilité de votre entreprise.
-        </strong>
+      name:
+        "",
 
-        <br><br>
+      createInvoice:
+        async function(invoice){
 
-        Bo'CitéArt n’assure pas un archivage permanent
-        de vos pièces comptables.
+          return {
+            ok:false,
+            status:"not_connected",
+            invoiceId:
+              invoice.id
+          };
+        },
 
-        <br><br>
+      sendInvoice:
+        async function(invoice){
 
-        Après 24 mois, les factures peuvent être
-        automatiquement retirées de votre espace.
-      </div>
+          return {
+            ok:false,
+            status:"not_connected",
+            invoiceId:
+              invoice.id
+          };
+        },
 
-      <div
-        style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
-          color:#2f5d46;
-        ">
-        Mes factures disponibles
-      </div>
+      getInvoiceStatus:
+        async function(){
 
-      <div
-        id="invoiceRetentionList"
-        style="margin-top:10px;">
+          return {
+            ok:false,
+            status:"not_connected"
+          };
+        },
 
-        ${
-          invoices.length
-            ? invoices.map(function(invoice){
+      createCreditNote:
+        async function(){
 
-                return `
-                  <div class="box">
-
-                    <strong>
-                      ${escapeValue(
-                        invoice.number || "Facture"
-                      )}
-                    </strong>
-
-                    <br><br>
-
-                    ${escapeValue(
-                      invoice.planLabel ||
-                      "Service Bo'CitéArt"
-                    )}
-
-                    <br><br>
-
-                    Montant HT :
-
-                    <strong>
-                      ${formatMoney(
-                        invoice.amountHT
-                      )}
-                      €
-                    </strong>
-
-                    <br>
-
-                    TVA :
-
-                    ${formatMoney(
-                      invoice.amountVAT
-                    )}
-                    €
-
-                    <br>
-
-                    Total TTC :
-
-                    <strong>
-                      ${formatMoney(
-                        invoice.amountTTC
-                      )}
-                      €
-                    </strong>
-
-                    <br><br>
-
-                    Émise le :
-
-                    ${escapeValue(
-                      invoice.createdAtFr || ""
-                    )}
-
-                    <br><br>
-
-                    Disponible dans cet espace jusqu’au :
-
-                    <strong>
-                      ${escapeValue(
-                        getInvoiceExpiryDate(invoice)
-                      )}
-                    </strong>
-
-                    <br><br>
-
-                    Statut :
-
-                    <strong>
-                      ${
-                        invoice.status === "paid"
-                          ? "Payée"
-                          : "En attente"
-                      }
-                    </strong>
-
-                    <button
-                      class="choiceBtn invoiceRetentionDownloadBtn"
-                      type="button"
-                      data-invoice-id="${escapeValue(
-                        invoice.id
-                      )}"
-                      style="
-                        width:100%;
-                        margin-top:10px;
-                      ">
-                      Télécharger et archiver la facture
-                    </button>
-                  </div>
-                `;
-              }).join("")
-            : `
-              <div class="box">
-                Aucune facture disponible
-                dans les 24 derniers mois.
-              </div>
-            `
+          return {
+            ok:false,
+            status:"not_connected"
+          };
         }
-      </div>
+
+    };
+
+  /* =======================================================
+     6. NORMALISATION D'UNE FACTURE
+     ======================================================= */
+
+  function normalizeInvoice(input){
+
+    input =
+      input || {};
+
+    const amountHT =
+      Number(
+        input.amountHT || 0
+      );
+
+    const vatRate =
+      Number(
+        input.vatRate == null
+          ? 20
+          : input.vatRate
+      );
+
+    const amountVAT =
+      Number(
+        input.amountVAT != null
+          ? input.amountVAT
+          : (
+              amountHT *
+              vatRate /
+              100
+            )
+            .toFixed(2)
+      );
+
+    const amountTTC =
+      Number(
+        input.amountTTC != null
+          ? input.amountTTC
+          : (
+              amountHT +
+              amountVAT
+            )
+            .toFixed(2)
+      );
+
+    const now =
+      Date.now();
+
+    return {
+
+      id:
+        input.id ||
+        (
+          "INV-" +
+          now +
+          "-" +
+          Math.random()
+            .toString(36)
+            .slice(2,8)
+        ),
+
+      number:
+        input.number ||
+        nextInvoiceNumber(),
+
+      type:
+        input.type ||
+        "invoice",
+
+      status:
+        input.status ||
+        "paid",
+
+      regulatoryStatus:
+        input.regulatoryStatus ||
+        "not_transmitted",
+
+      customerType:
+        input.customerType ||
+        "professional",
+
+      customerName:
+        String(
+          input.customerName || ""
+        ),
+
+      customerEmail:
+        String(
+          input.customerEmail || ""
+        ),
+
+      customerId:
+        String(
+          input.customerId ||
+          input.customerSiret ||
+          input.customerSiren ||
+          ""
+        ),
+
+      customerSiren:
+        String(
+          input.customerSiren || ""
+        ),
+
+      customerSiret:
+        String(
+          input.customerSiret ||
+          input.customerId ||
+          ""
+        ),
+
+      customerVatNumber:
+        String(
+          input.customerVatNumber || ""
+        ),
+
+      serviceType:
+        String(
+          input.serviceType ||
+          input.plan ||
+          "service"
+        ),
+
+      plan:
+        String(
+          input.plan || ""
+        ),
+
+      planLabel:
+        String(
+          input.planLabel ||
+          input.serviceLabel ||
+          "Service Bo'CitéArt"
+        ),
+
+      serviceLabel:
+        String(
+          input.serviceLabel ||
+          input.planLabel ||
+          "Service Bo'CitéArt"
+        ),
+
+      operationCategory:
+        String(
+          input.operationCategory ||
+          "service"
+        ),
+
+      billingMode:
+        String(
+          input.billingMode ||
+          "ponctuel"
+        ),
+
+      amountHT:
+        amountHT,
+
+      vatRate:
+        vatRate,
+
+      amountVAT:
+        amountVAT,
+
+      amountTTC:
+        amountTTC,
+
+      currency:
+        "EUR",
+
+      paymentStatus:
+        input.paymentStatus ||
+        "paid",
+
+      paymentMethod:
+        String(
+          input.paymentMethod || ""
+        ),
+
+      paymentReference:
+        String(
+          input.paymentReference || ""
+        ),
+
+      orderReference:
+        String(
+          input.orderReference ||
+          input.orderId ||
+          ""
+        ),
+
+      paidAt:
+        Number(
+          input.paidAt ||
+          now
+        ),
+
+      issuedAt:
+        Number(
+          input.issuedAt ||
+          now
+        ),
+
+      createdAt:
+        Number(
+          input.createdAt ||
+          now
+        ),
+
+      createdAtFr:
+        new Date(
+          Number(
+            input.createdAt ||
+            now
+          )
+        )
+        .toLocaleString(
+          "fr-FR"
+        ),
+
+      transmissionChannel:
+        input.customerType ===
+        "public"
+          ? "public_sector"
+          : "approved_platform",
+
+      providerName:
+        "",
+
+      providerReference:
+        "",
+
+      transmittedAt:
+        null,
+
+      emailStatus:
+        "not_sent",
+
+      emailSentAt:
+        null,
+
+      archivedByCustomer:
+        false
+    };
+  }
+
+  /* =======================================================
+     7. CRÉATION CENTRALE
+     UTILISÉE PAR EMPLOI / ABONNEMENT / PUB / ETC.
+     ======================================================= */
+
+  function createPaidInvoice(input){
+
+    const invoice =
+      normalizeInvoice(
+        input
+      );
+
+    const rows =
+      loadInvoices();
+
+    rows.unshift(
+      invoice
+    );
+
+    saveInvoices(
+      rows
+    );
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "bociteart:invoice-created",
+        {
+          detail:{
+            invoice:invoice
+          }
+        }
+      )
+    );
+
+    return invoice;
+  }
+
+  /* =======================================================
+     8. TRANSMISSION FUTURE
+     ======================================================= */
+
+  async function transmitInvoice(
+    invoiceId
+  ){
+
+    const rows =
+      loadInvoices();
+
+    const invoice =
+      rows.find(
+        function(item){
+
+          return (
+            item.id ===
+            invoiceId
+          );
+        }
+      );
+
+    if(!invoice){
+
+      return {
+        ok:false,
+        status:"not_found"
+      };
+    }
+
+    const provider =
+      window.BociteBillingProvider;
+
+    if(
+      !provider ||
+      provider.connected !== true ||
+      typeof provider.sendInvoice !==
+      "function"
+    ){
+
+      return {
+        ok:false,
+        status:"not_connected"
+      };
+    }
+
+    const result =
+      await provider
+        .sendInvoice(
+          invoice
+        );
+
+    if(
+      result &&
+      result.ok
+    ){
+
+      invoice.regulatoryStatus =
+        result.status ||
+        "transmitted";
+
+      invoice.providerName =
+        provider.name ||
+        "";
+
+      invoice.providerReference =
+        result.reference ||
+        "";
+
+      invoice.transmittedAt =
+        Date.now();
+
+      saveInvoices(
+        rows
+      );
+    }
+
+    return (
+      result ||
+      {
+        ok:false,
+        status:"unknown"
+      }
+    );
+  }
+
+  /* =======================================================
+     9. COPIE LISIBLE DE FACTURE
+     ======================================================= */
+
+  function buildInvoiceHtml(
+    invoice
+  ){
+
+    const settings =
+      getBillingSettings();
+
+    const issuer =
+      settings.issuer ||
+      {};
+
+    return `
 
       <div
-        class="box"
         style="
-          margin-top:14px;
-          border-left:6px solid #2f5d46;
+          font-family:Arial,sans-serif;
+          color:#111;
+          font-size:14px;
+          line-height:1.45;
         ">
 
-        <strong>
-          Renouvellement et paiement
-        </strong>
+        <div
+          style="
+            font-size:22px;
+            margin-bottom:12px;
+          ">
+          ${getBrandHtml()}
+        </div>
 
-        <br><br>
+        <div
+          style="
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:700;
+          ">
+          Facture
+          ${escapeValue(
+            invoice.number
+          )}
+        </div>
 
-        Un rappel est prévu 7 jours avant l’échéance,
-        puis un second rappel 3 jours avant.
+        <div
+          style="margin-top:6px;">
+          Date :
+          ${escapeValue(
+            new Date(
+              invoice.issuedAt
+            )
+            .toLocaleDateString(
+              "fr-FR"
+            )
+          )}
+        </div>
 
-        <br><br>
+        <hr>
 
-        En cas d’échec du paiement,
-        seule l’option France ou Europe est suspendue.
+        <div>
+          <strong>
+            Émetteur
+          </strong>
 
-        <br><br>
+          <br>
 
-        La recherche dans la commune reste accessible.
+          ${escapeValue(
+            issuer.legalName ||
+            "Bo'CitéArt"
+          )}
+
+          <br>
+
+          ${escapeValue(
+            issuer.address ||
+            ""
+          )}
+
+          <br>
+
+          SIRET :
+          ${escapeValue(
+            issuer.siret ||
+            ""
+          )}
+
+          <br>
+
+          TVA :
+          ${escapeValue(
+            issuer.vatNumber ||
+            ""
+          )}
+        </div>
+
+        <hr>
+
+        <div>
+          <strong>
+            Client
+          </strong>
+
+          <br>
+
+          ${escapeValue(
+            invoice.customerName
+          )}
+
+          <br>
+
+          SIREN / SIRET :
+          ${escapeValue(
+            invoice.customerSiret ||
+            invoice.customerSiren ||
+            invoice.customerId
+          )}
+        </div>
+
+        <hr>
+
+        <div>
+          <strong>
+            Objet
+          </strong>
+
+          <br>
+
+          ${escapeValue(
+            invoice.serviceLabel
+          )}
+        </div>
+
+        <div
+          style="margin-top:10px;">
+
+          HT :
+          ${formatMoney(
+            invoice.amountHT
+          )} €
+
+          <br>
+
+          TVA
+          (${escapeValue(
+            invoice.vatRate
+          )} %) :
+
+          ${formatMoney(
+            invoice.amountVAT
+          )} €
+
+          <br>
+
+          <strong>
+            TTC :
+            ${formatMoney(
+              invoice.amountTTC
+            )} €
+          </strong>
+
+        </div>
+
+        <div
+          style="margin-top:10px;">
+
+          Paiement :
+          ${escapeValue(
+            invoice.paymentMethod ||
+            "Non précisé"
+          )}
+
+          <br>
+
+          Référence :
+          ${escapeValue(
+            invoice.paymentReference ||
+            "Non précisée"
+          )}
+
+        </div>
+
       </div>
     `;
   }
 
-  function downloadInvoice(invoiceId){
+  /* =======================================================
+     10. TÉLÉCHARGEMENT COPIE
+     ======================================================= */
+
+  function downloadInvoice(
+    invoiceId
+  ){
+
     const invoice =
-      cleanExpiredInvoices().find(function(item){
-        return item.id === invoiceId;
-      });
+      loadInvoices()
+        .find(
+          function(item){
+
+            return (
+              item.id ===
+              invoiceId
+            );
+          }
+        );
 
     if(!invoice){
+
       alert(
-        "Cette facture n’est plus disponible dans votre espace."
-      );
-      return;
-    }
-
-    const confirmation =
-      confirm(
-        "Téléchargez et archivez cette facture dès maintenant.\n\n" +
-        "Bo'CitéArt la conserve dans votre espace pendant 24 mois seulement.\n\n" +
-        "La conservation comptable reste sous la responsabilité de votre entreprise.\n\n" +
-        "Continuer le téléchargement ?"
+        "Facture introuvable."
       );
 
-    if(!confirmation){
       return;
     }
-
-    const content =
-      "BO'CITÉART\n" +
-      "FACTURE DE DÉMONSTRATION\n\n" +
-
-      "Facture : " +
-      (invoice.number || "") +
-      "\n" +
-
-      "Date : " +
-      (invoice.createdAtFr || "") +
-      "\n\n" +
-
-      "Service : " +
-      (
-        invoice.planLabel ||
-        "Service Bo'CitéArt"
-      ) +
-      "\n" +
-
-      "Périodicité : " +
-      (
-        invoice.billingMode === "annuel"
-          ? "Annuelle"
-          : "Mensuelle"
-      ) +
-      "\n\n" +
-
-      "Montant HT : " +
-      formatMoney(invoice.amountHT) +
-      " €\n" +
-
-      "TVA : " +
-      formatMoney(invoice.amountVAT) +
-      " €\n" +
-
-      "Total TTC : " +
-      formatMoney(invoice.amountTTC) +
-      " €\n\n" +
-
-      "Statut : " +
-      (
-        invoice.status === "paid"
-          ? "Payée"
-          : "En attente"
-      ) +
-      "\n\n" +
-
-      "IMPORTANT\n" +
-      "Cette facture reste disponible dans l’espace Bo'CitéArt pendant 24 mois.\n" +
-      "La conservation légale du document reste sous la responsabilité de l’entreprise.\n\n" +
-
-      "Document de démonstration — sans valeur comptable.";
 
     const blob =
       new Blob(
-        [content],
+        [
+          buildInvoiceHtml(
+            invoice
+          )
+        ],
         {
-          type:"text/plain;charset=utf-8"
+          type:
+            "text/html;charset=utf-8"
         }
       );
 
     const url =
-      URL.createObjectURL(blob);
+      URL.createObjectURL(
+        blob
+      );
 
     const link =
-      document.createElement("a");
+      document.createElement(
+        "a"
+      );
 
-    link.href = url;
+    link.href =
+      url;
 
     link.download =
       (
         invoice.number ||
-        "facture-bociteart"
+        "facture"
       ) +
-      ".txt";
+      ".html";
 
-    document.body.appendChild(link);
+    document.body
+      .appendChild(
+        link
+      );
+
     link.click();
+
     link.remove();
 
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(
+      url
+    );
+  }
+
+  /* =======================================================
+     11. ÉCRAN ABONNEMENTS ET FACTURES
+     ======================================================= */
+
+  function getBillingHtml(){
+
+    const invoices =
+      cleanExpiredInvoices()
+        .sort(
+          function(a,b){
+
+            return (
+              Number(
+                b.createdAt || 0
+              ) -
+              Number(
+                a.createdAt || 0
+              )
+            );
+          }
+        );
+
+    const plan =
+      loadJson(
+        SEARCH_PLAN_KEY,
+        {
+          plan:"commune",
+          active:true
+        }
+      );
+
+    const provider =
+      window.BociteBillingProvider ||
+      {};
+
+    let html = `
+
+      <style>
+
+        .bociteBillingBox{
+          background:#ffffff !important;
+          color:#111111;
+          font-size:14px;
+          font-weight:400 !important;
+          line-height:1.5;
+        }
+
+        .bociteBillingTitle{
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:700;
+          line-height:1.35;
+        }
+
+        .bociteBillingBtn{
+          width:100%;
+          background:#ffffff !important;
+          background-color:#ffffff !important;
+          color:#111111 !important;
+        }
+
+      </style>
+
+      <div
+        class="
+          box
+          bociteBillingBox
+        "
+        style="
+          border-left:6px solid #2f5d46;
+        ">
+
+        <div
+          class="bociteBillingTitle">
+          Mes abonnements et factures
+        </div>
+
+        <div
+          style="margin-top:8px;">
+          Retrouvez ici vos services souscrits,
+          vos paiements et vos factures.
+        </div>
+
+      </div>
+
+      <div
+        class="
+          box
+          bociteBillingBox
+        ">
+
+        <div
+          class="bociteBillingTitle">
+          Abonnement actuel
+        </div>
+
+        <div
+          style="margin-top:8px;">
+
+          Formule :
+          ${escapeValue(
+            plan.plan ||
+            "commune"
+          )}
+
+          <br>
+
+          État :
+          ${
+            plan.active === false
+              ? "Inactif"
+              : "Actif"
+          }
+
+        </div>
+
+      </div>
+
+      <div
+        class="
+          box
+          bociteBillingBox
+        ">
+
+        <div
+          class="bociteBillingTitle">
+          Facturation électronique
+        </div>
+
+        <div
+          style="margin-top:8px;">
+
+          Connecteur réglementaire :
+
+          <strong>
+            ${
+              provider.connected === true
+                ? "raccordé"
+                : "préparé — non raccordé"
+            }
+          </strong>.
+
+          <br><br>
+
+          Le futur raccordement
+          à la plateforme de facturation
+          se fera sans modifier
+          les écrans Bo'CitéArt.
+
+        </div>
+
+      </div>
+    `;
+
+    if(!invoices.length){
+
+      html += `
+
+        <div
+          class="
+            box
+            bociteBillingBox
+          ">
+
+          Aucune facture disponible.
+
+        </div>
+
+      `;
+
+    }else{
+
+      invoices.forEach(
+        function(invoice){
+
+          html += `
+
+            <div
+              class="
+                box
+                bociteBillingBox
+              "
+              style="margin-top:9px;">
+
+              <div
+                class="bociteBillingTitle">
+
+                ${escapeValue(
+                  invoice.number ||
+                  "Facture"
+                )}
+
+              </div>
+
+              <div
+                style="margin-top:7px;">
+
+                ${escapeValue(
+                  invoice.serviceLabel ||
+                  invoice.planLabel ||
+                  "Service Bo'CitéArt"
+                )}
+
+                <br>
+
+                ${escapeValue(
+                  invoice.createdAtFr ||
+                  ""
+                )}
+
+                <br><br>
+
+                <strong>
+                  ${formatMoney(
+                    invoice.amountTTC
+                  )} € TTC
+                </strong>
+
+                <br>
+
+                Paiement :
+                ${escapeValue(
+                  invoice.paymentMethod ||
+                  "Non précisé"
+                )}
+
+                <br>
+
+                Référence :
+                ${escapeValue(
+                  invoice.paymentReference ||
+                  "Non précisée"
+                )}
+
+                <br>
+
+                Transmission réglementaire :
+                ${escapeValue(
+                  invoice.regulatoryStatus ||
+                  "not_transmitted"
+                )}
+
+              </div>
+
+              <button
+                type="button"
+                class="
+                  choiceBtn
+                  bociteBillingBtn
+                  billingDownloadBtn
+                "
+                data-invoice-id="${escapeValue(
+                  invoice.id
+                )}"
+                style="margin-top:8px;">
+                Télécharger la copie de facture
+              </button>
+
+            </div>
+
+          `;
+        }
+      );
+    }
+
+    html += `
+
+      <div
+        class="
+          box
+          bociteBillingBox
+        "
+        style="margin-top:10px;">
+
+        <div
+          class="bociteBillingTitle">
+          Conservation
+        </div>
+
+        <div
+          style="margin-top:8px;">
+
+          Les copies restent disponibles
+          dans cet espace pendant 24 mois.
+
+          <br><br>
+
+          L’entreprise reste responsable
+          de la conservation de ses pièces
+          dans son propre système comptable.
+
+        </div>
+
+      </div>
+
+    `;
+
+    return html;
   }
 
   function bindBilling(){
-    const plan =
-      loadPlan();
-
-    const renewButton =
-      getElement(
-        "invoiceRetentionRenewBtn"
-      );
-
-    if(renewButton){
-      renewButton.onclick = function(){
-
-        plan.autoRenew =
-          !plan.autoRenew;
-
-        savePlan(plan);
-
-        alert(
-          plan.autoRenew
-            ? "Renouvellement automatique réactivé."
-            : "Renouvellement automatique désactivé. L’accès restera actif jusqu’à l’échéance."
-        );
-
-        openBilling();
-      };
-    }
 
     document
       .querySelectorAll(
-        ".invoiceRetentionDownloadBtn"
+        ".billingDownloadBtn"
       )
-      .forEach(function(button){
+      .forEach(
+        function(button){
 
-        button.onclick = function(){
-          downloadInvoice(
-            button.getAttribute(
-              "data-invoice-id"
-            )
-          );
-        };
-      });
+          button.onclick =
+            function(){
+
+              downloadInvoice(
+                button.getAttribute(
+                  "data-invoice-id"
+                )
+              );
+            };
+        }
+      );
   }
 
   function openBilling(){
+
     module.renderModal(
       "Abonnement et factures",
       getBillingHtml()
     );
 
-    window.setTimeout(function(){
-      bindBilling();
-    },0);
+    window.setTimeout(
+      function(){
+
+        bindBilling();
+
+      },
+      0
+    );
   }
+
+  /* =======================================================
+     12. ACTIVATION ABONNEMENT
+     COMPATIBILITÉ AVEC LE CODE EXISTANT
+     ======================================================= */
+
+  function activateSearchSubscription(
+    zone,
+    mode
+  ){
+
+    const prices = {
+
+      france:{
+        mensuel:26.50,
+        annuel:300
+      },
+
+      europe:{
+        mensuel:44.90,
+        annuel:500
+      }
+
+    };
+
+    const selected =
+      prices[zone] ||
+      prices.france;
+
+    const amountHT =
+      Number(
+        selected[mode] ||
+        selected.annuel
+      );
+
+    const vatRate =
+      20;
+
+    const amountVAT =
+      Number(
+        (
+          amountHT *
+          vatRate /
+          100
+        )
+        .toFixed(2)
+      );
+
+    const amountTTC =
+      Number(
+        (
+          amountHT +
+          amountVAT
+        )
+        .toFixed(2)
+      );
+
+    const plan = {
+
+      plan:
+        zone,
+
+      mode:
+        mode,
+
+      active:
+        true,
+
+      startedAt:
+        Date.now(),
+
+      updatedAt:
+        Date.now()
+    };
+
+    saveJson(
+      SEARCH_PLAN_KEY,
+      plan
+    );
+
+    const invoice =
+      createPaidInvoice({
+
+        customerName:
+          "Entreprise",
+
+        customerId:
+          "",
+
+        plan:
+          "recherche_" +
+          zone,
+
+        planLabel:
+          "Abonnement recherche professionnelle " +
+          zone,
+
+        serviceLabel:
+          "Abonnement recherche professionnelle " +
+          zone,
+
+        operationCategory:
+          "service",
+
+        billingMode:
+          mode,
+
+        amountHT:
+          amountHT,
+
+        vatRate:
+          vatRate,
+
+        amountVAT:
+          amountVAT,
+
+        amountTTC:
+          amountTTC,
+
+        paymentMethod:
+          "Démonstration — à raccorder",
+
+        paymentReference:
+          "DEMO-" +
+          Date.now(),
+
+        paymentStatus:
+          "paid"
+      });
+
+    alert(
+      "Abonnement activé en démonstration.\n\n" +
+      "La facture a été créée dans votre espace Factures."
+    );
+
+    openBilling();
+
+    return invoice;
+  }
+
+  /* =======================================================
+     13. FICHE FACTURE UNIQUE
+     ======================================================= */
+
+  module.openProfessionalInvoice =
+    function(invoiceId){
+
+      const invoice =
+        loadInvoices()
+          .find(
+            function(item){
+
+              return (
+                item.id ===
+                invoiceId
+              );
+            }
+          );
+
+      if(!invoice){
+
+        alert(
+          "Facture introuvable."
+        );
+
+        return;
+      }
+
+      module.renderModal(
+        "Facture " +
+        invoice.number,
+        `
+
+          <div
+            class="
+              box
+              bociteBillingBox
+            ">
+            ${buildInvoiceHtml(
+              invoice
+            )}
+          </div>
+
+          <button
+            id="billingSingleDownloadBtn"
+            class="
+              choiceBtn
+              bociteBillingBtn
+            "
+            type="button"
+            style="margin-top:10px;">
+            Télécharger la copie
+          </button>
+
+        `
+      );
+
+      window.setTimeout(
+        function(){
+
+          const button =
+            getElement(
+              "billingSingleDownloadBtn"
+            );
+
+          if(button){
+
+            button.onclick =
+              function(){
+
+                downloadInvoice(
+                  invoice.id
+                );
+              };
+          }
+
+        },
+        0
+      );
+    };
+
+  /* =======================================================
+     14. EXPOSITION AU RESTE DE L'APPLICATION
+     ======================================================= */
+
+  module.createPaidInvoice =
+    createPaidInvoice;
+
+  module.activateSearchSubscription =
+    activateSearchSubscription;
 
   module.openSearchBilling =
     openBilling;
@@ -14805,10 +15757,33 @@ function openMutualisation(){
   module.cleanExpiredSearchInvoices =
     cleanExpiredInvoices;
 
+  module.transmitInvoice =
+    transmitInvoice;
+
+  module.getBillingInvoices =
+    loadInvoices;
+
+  module.saveBillingSettings =
+    function(settings){
+
+      return saveJson(
+        BILLING_SETTINGS_KEY,
+        settings || {}
+      );
+    };
+
   cleanExpiredInvoices();
 
   console.log(
-    "✅ Factures limitées à 24 mois et archivage responsabilisé"
+    "✅ Facturation centrale Bo'CitéArt préparée"
+  );
+
+  console.log(
+    "✅ Abonnements, emploi et services raccordables au même moteur"
+  );
+
+  console.log(
+    "✅ Connecteur plateforme réglementaire préparé"
   );
 
 })();
