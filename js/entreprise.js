@@ -10101,57 +10101,216 @@ Voir les entreprises de ma ville
 
 /* =========================================================
    BO'CITÉART — MODULE ENTREPRISE
-   PARTIE 7 — TABLEAU DE DIRECTION
+   PARTIE 7 — TABLEAU DE DIRECTION V2
+   SERVICES • ABONNEMENT • FACTURES • COLLABORATEURS
    ========================================================= */
 
 (function initBociteEntrepriseDirection(){
 
   "use strict";
 
-  const module = window.BociteEntreprise;
+  const module =
+    window.BociteEntreprise;
 
   if(!module){
+
     console.error(
-      "Bo'CitéArt Entreprise : les parties précédentes doivent être chargées."
+      "Bo'CitéArt Entreprise : module principal introuvable."
     );
+
     return;
   }
 
   function getElement(id){
+
     return document.getElementById(id);
   }
 
   function escapeValue(value){
-    return module.safeEscape(value);
-  }
 
-  function getEmploymentSummary(){
-    if(typeof module.openEmploymentApplications !== "function"){
-      return {
-        offers:0,
-        applications:0
-      };
+    if(
+      typeof module.safeEscape ===
+      "function"
+    ){
+
+      return module.safeEscape(
+        value
+      );
     }
 
+    return String(
+      value == null
+        ? ""
+        : value
+    );
+  }
+
+  function getBrandHtml(){
+
+    return `
+      <strong
+        style="
+          white-space:nowrap;
+          font-weight:900;
+        ">
+        <span
+          style="color:#2f5d46;">
+          Bo'Cité
+        </span><span
+          style="color:#b00020;">
+          Art
+        </span>
+      </strong>
+    `;
+  }
+
+  /* =======================================================
+     STYLE UNIQUE DU TABLEAU DE DIRECTION
+     ======================================================= */
+
+  function injectDirectionStyles(){
+
+    if(
+      document.getElementById(
+        "bociteDirectionStylesV2"
+      )
+    ){
+      return;
+    }
+
+    const style =
+      document.createElement(
+        "style"
+      );
+
+    style.id =
+      "bociteDirectionStylesV2";
+
+    style.textContent = `
+
+      .bociteDirectionBox{
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px !important;
+        font-weight:400 !important;
+        line-height:1.55 !important;
+      }
+
+      .bociteDirectionBox div,
+      .bociteDirectionBox span,
+      .bociteDirectionBox p{
+        font-size:14px;
+        font-weight:400;
+        color:#111111;
+      }
+
+      .bociteDirectionTitle{
+        display:block;
+        color:#2f5d46 !important;
+        font-size:17px !important;
+        line-height:1.35;
+        font-weight:800 !important;
+        margin-bottom:8px;
+      }
+
+      .bociteDirectionButton{
+        width:100%;
+        background:#ffffff !important;
+        background-color:#ffffff !important;
+        color:#111111 !important;
+      }
+
+      .bociteDirectionGrid{
+        display:grid;
+        grid-template-columns:
+          repeat(2,minmax(0,1fr));
+        gap:8px;
+      }
+
+      .bociteDirectionMetric{
+        background:#ffffff;
+        border:1px solid #d8d8d8;
+        border-radius:10px;
+        padding:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      }
+
+      .bociteDirectionMetric strong{
+        display:block;
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:800;
+        margin-bottom:3px;
+      }
+
+      .bociteDirectionPrice{
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:800;
+      }
+
+      .bociteDirectionBenefit{
+        display:block;
+        margin-top:5px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      }
+
+      @media(max-width:520px){
+
+        .bociteDirectionGrid{
+          grid-template-columns:1fr 1fr;
+        }
+
+      }
+
+    `;
+
+    document.head
+      .appendChild(
+        style
+      );
+  }
+
+  injectDirectionStyles();
+
+  /* =======================================================
+     DONNÉES
+     ======================================================= */
+
+  function getEmploymentSummary(){
+
     try{
+
       const raw =
         localStorage.getItem(
           "bociteart_entreprise_employment_v1"
         );
 
       const data =
-        raw ? JSON.parse(raw) : {};
+        raw
+          ? JSON.parse(raw)
+          : {};
 
       return {
-        offers:Array.isArray(data.offers)
-          ? data.offers.length
-          : 0,
 
-        applications:Array.isArray(data.applications)
-          ? data.applications.length
-          : 0
+        offers:
+          Array.isArray(data.offers)
+            ? data.offers.length
+            : 0,
+
+        applications:
+          Array.isArray(data.applications)
+            ? data.applications.length
+            : 0
+
       };
+
     }catch(error){
+
       return {
         offers:0,
         applications:0
@@ -10159,695 +10318,1078 @@ Voir les entreprises de ma ville
     }
   }
 
-  function getMutualisationSummary(){
+  function getProfessionalValue(){
+
     if(
-      typeof module.loadMutualisationData !== "function"
+      typeof module.loadProfessionalValue ===
+      "function"
     ){
-      return [];
+
+      return (
+        module.loadProfessionalValue() ||
+        {}
+      );
     }
 
-    const data =
-      module.loadMutualisationData();
+    return {};
+  }
 
-    const keys = [
-      "electricite",
-      "gaz",
-      "telephonie",
-      "assurances",
-      "mutuelle",
-      "fournitures",
-      "carburant",
-      "formation"
-    ];
+  function getPrice(
+    key,
+    fallback
+  ){
 
-    return keys
-      .map(function(key){
-        const item = data[key];
+    const catalog =
+      module.PriceCatalog || {};
 
-        if(!item){
-          return null;
+    if(
+      catalog[key] &&
+      catalog[key].amountHT !==
+      undefined
+    ){
+
+      return Number(
+        catalog[key].amountHT
+      );
+    }
+
+    return Number(
+      fallback || 0
+    );
+  }
+
+  function formatMoney(value){
+
+    return Number(
+      value || 0
+    )
+    .toLocaleString(
+      "fr-FR",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+  }
+
+  /* =======================================================
+     OUVERTURE PUBLICITÉ
+
+     Le vrai moteur publicité est ailleurs.
+     On ne recrée pas un second système ici.
+     ======================================================= */
+
+  function openAdvertisingCreation(){
+
+    if(
+      typeof module.openAdvertisingCreation ===
+      "function"
+    ){
+
+      module.openAdvertisingCreation();
+
+      return;
+    }
+
+    if(
+      typeof window.openAdvertisingCreation ===
+      "function"
+    ){
+
+      window.openAdvertisingCreation();
+
+      return;
+    }
+
+    /*
+      Point de raccordement unique.
+      Le moteur publicitaire existant pourra écouter
+      cet événement sans modifier ce Tableau de Direction.
+    */
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "bociteart:open-advertising-creation",
+        {
+          detail:{
+            source:
+              "entreprise_direction"
+          }
         }
+      )
+    );
 
-        return {
-          key:key,
-          label:item.label,
-          count:Number(item.count || 0),
-          target:Number(item.target || 0),
-          interested:!!item.interested
-        };
-      })
-      .filter(Boolean);
+    alert(
+      "L'accès au formulaire publicitaire est préparé.\n\n" +
+      "Le raccordement final au grand bandeau publicitaire " +
+      "utilisera ce bouton sans refaire le Tableau de Direction."
+    );
   }
 
-  function getDevelopmentSummary(){
+  /* =======================================================
+     COLLABORATEURS
+     ======================================================= */
+
+  function openCollaborators(){
+
     if(
-      typeof module.loadDevelopmentData !== "function"
+      window.BoCiteArtRegistration &&
+      typeof window.BoCiteArtRegistration
+        .openCollaborators ===
+      "function"
     ){
-      return null;
+
+      window.BoCiteArtRegistration
+        .openCollaborators();
+
+      return;
     }
 
-    const data =
-      module.loadDevelopmentData();
-
-    if(!data || !data.objective){
-      return null;
-    }
-
-    return data;
-  }
-
-  function getVisibilitySummary(){
     if(
-      typeof module.loadVisibilityData !== "function"
+      typeof module.openCollaborators ===
+      "function"
     ){
-      return null;
+
+      module.openCollaborators();
+
+      return;
     }
 
-    const data =
-      module.loadVisibilityData();
-
-    if(!data || !data.companyName){
-      return null;
-    }
-
-    return data;
+    alert(
+      "La gestion des collaborateurs est préparée dans le compte professionnel central.\n\n" +
+      "Le responsable principal pourra donner ou retirer les autorisations à tout moment."
+    );
   }
 
-  function getSustainabilitySummary(){
-    if(
-      typeof module.loadSustainabilityData !== "function"
-    ){
-      return null;
-    }
-
-    const data =
-      module.loadSustainabilityData();
-
-    if(!data || !data.companyName){
-      return null;
-    }
-
-    return data;
-  }
-
-  function getMecenatSummary(){
-    if(
-      typeof module.loadMecenatData !== "function"
-    ){
-      return null;
-    }
-
-    const data =
-      module.loadMecenatData();
-
-    if(!data || !data.companyName){
-      return null;
-    }
-
-    return data;
-  }
+  /* =======================================================
+     CONTENU
+     ======================================================= */
 
   function getDirectionHtml(){
+
     const employment =
       getEmploymentSummary();
 
-    const mutualisations =
-      getMutualisationSummary();
+    const value =
+      getProfessionalValue();
 
-    const development =
-      getDevelopmentSummary();
+    const membershipPrice =
+      getPrice(
+        "professionalMembership",
+        329
+      );
 
-    const visibility =
-      getVisibilitySummary();
+    const enrichedProfilePrice =
+      getPrice(
+        "enrichedProfile",
+        199
+      );
 
-    const sustainability =
-      getSustainabilitySummary();
+    const employmentPrice =
+      getPrice(
+        "employmentPublication",
+        50
+      );
 
-    const mecenat =
-      getMecenatSummary();
-
-    const proposals =
-      typeof module.getDirectionSummaryHtml === "function"
-        ? module.getDirectionSummaryHtml()
-        : `
-          <div class="box">
-            Aucune proposition disponible.
-          </div>
-        `;
+    const advertisingPrice =
+      getPrice(
+        "advertisingPublication",
+        50
+      );
 
     return `
-      <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
-
-        <strong style="font-size:18px;">
-          Tableau de Direction
-        </strong>
-
-        <br><br>
-
-        Cet espace rassemble les informations,
-        les actions et les décisions de votre entreprise.
-
-        <br><br>
-
-        Il reste réservé au compte professionnel autorisé.
-      </div>
 
       <div
+        class="
+          box
+          bociteDirectionBox
+        "
         style="
-          display:grid;
-          grid-template-columns:repeat(2,minmax(0,1fr));
-          gap:10px;
-          margin-top:12px;
+          border-left:6px solid #2f5d46;
         ">
 
-        <div class="box">
-          <strong style="font-size:20px;">
+        <div
+          class="bociteDirectionTitle">
+          Tableau de Direction
+        </div>
+
+        Cet espace privé rassemble
+        les principaux outils,
+        actions,
+        abonnements
+        et informations de votre entreprise.
+
+        <br><br>
+
+        ${getBrandHtml()}
+        vous permet de retrouver
+        l'essentiel depuis un même endroit.
+
+      </div>
+
+
+      <div
+        class="bociteDirectionGrid">
+
+        <div
+          class="bociteDirectionMetric">
+
+          <strong>
             ${employment.offers}
           </strong>
 
-          <br>
+          offre(s) enregistrée(s)
 
-          Offre(s) enregistrée(s)
         </div>
 
-        <div class="box">
-          <strong style="font-size:20px;">
+        <div
+          class="bociteDirectionMetric">
+
+          <strong>
             ${employment.applications}
           </strong>
 
-          <br>
+          candidature(s) reçue(s)
 
-          Candidature(s) reçue(s)
         </div>
-
-        <div class="box">
-          <strong style="font-size:20px;">
-            ${
-              mutualisations.filter(function(item){
-                return item.interested;
-              }).length
-            }
-          </strong>
-
-          <br>
-
-          Mutualisation(s) suivie(s)
-        </div>
-
-        <div class="box">
-          <strong style="font-size:20px;">
-            ${development ? "1" : "0"}
-          </strong>
-
-          <br>
-
-          Plan de développement
-        </div>
-      </div>
-
-      <div
-        style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
-          color:#2f5d46;
-        ">
-        Emploi
-      </div>
-
-      <div class="box">
-        Offres enregistrées :
-        <strong>${employment.offers}</strong>
-
-        <br><br>
-
-        Candidatures reçues :
-        <strong>${employment.applications}</strong>
 
         <div
-          style="
-            display:flex;
-            gap:8px;
-            flex-wrap:wrap;
-            margin-top:12px;
-          ">
+          class="bociteDirectionMetric">
 
-          <button
-            id="directionEmploymentOffersBtn"
-            class="choiceBtn"
-            type="button">
-            Voir les offres
-          </button>
+          <strong>
+            ${Number(
+              value.contacts || 0
+            )}
+          </strong>
 
-          <button
-            id="directionEmploymentApplicationsBtn"
-            class="choiceBtn"
-            type="button">
-            Voir les candidatures
-          </button>
+          contact(s) reçu(s)
+
         </div>
+
+        <div
+          class="bociteDirectionMetric">
+
+          <strong>
+            ${formatMoney(
+              value.measuredSavings || 0
+            )} €
+          </strong>
+
+          économies mesurées
+
+        </div>
+
       </div>
+
 
       <div
+        class="
+          box
+          bociteDirectionBox
+        "
         style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
-          color:#2f5d46;
+          margin-top:10px;
+          border-left:6px solid #2f5d46;
         ">
-        Mutualisations
+
+        <div
+          class="bociteDirectionTitle">
+          Emploi et recrutement
+        </div>
+
+        Publiez vos offres,
+        consultez les candidatures reçues
+        et retrouvez votre historique.
+
+        <br><br>
+
+        <span
+          class="bociteDirectionPrice">
+          ${formatMoney(
+            employmentPrice
+          )} € HT
+        </span>
+        par publication.
+
+        <button
+          id="directionEmploymentOffersBtn"
+          class="
+            choiceBtn
+            bociteDirectionButton
+          "
+          type="button"
+          style="margin-top:10px;">
+          Voir mes offres
+        </button>
+
+        <button
+          id="directionEmploymentApplicationsBtn"
+          class="
+            choiceBtn
+            bociteDirectionButton
+          "
+          type="button">
+          Voir les candidatures
+        </button>
+
       </div>
 
-      <div id="directionMutualisationList">
-        ${
-          mutualisations.length
-            ? mutualisations.map(function(item){
-
-                return `
-                  <div class="box">
-                    <strong>
-                      ${escapeValue(item.label)}
-                    </strong>
-
-                    <br><br>
-
-                    Participants :
-                    <strong>
-                      ${item.count}
-                      /
-                      ${item.target}
-                    </strong>
-
-                    <br><br>
-
-                    Votre intérêt :
-                    <strong>
-                      ${
-                        item.interested
-                          ? "Enregistré"
-                          : "Non enregistré"
-                      }
-                    </strong>
-
-                    <button
-                      class="choiceBtn directionMutualisationBtn"
-                      type="button"
-                      data-mutualisation-key="${escapeValue(item.key)}"
-                      style="width:100%;margin-top:10px;">
-                      Voir cette mutualisation
-                    </button>
-                  </div>
-                `;
-              }).join("")
-            : `
-              <div class="box">
-                Aucune mutualisation disponible.
-              </div>
-            `
-        }
-      </div>
 
       <div
-        style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
-          color:#2f5d46;
+        class="
+          box
+          bociteDirectionBox
         ">
-        Propositions et décisions
-      </div>
 
-      <div id="directionProposalSummary">
-        ${proposals}
-      </div>
+        <div
+          class="bociteDirectionTitle">
+          Payez moins de charges
+        </div>
 
-      <div
-        style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
-          color:#2f5d46;
-        ">
-        Développement
-      </div>
+        Regroupez certains besoins
+        avec d'autres professionnels
+        afin d'obtenir de meilleures conditions.
 
-      ${
-        development
-          ? `
-            <div class="box">
-              <strong>Plan enregistré</strong>
+        <span
+          class="bociteDirectionBenefit">
+          • électricité et gaz ;
+        </span>
 
-              <br><br>
+        <span
+          class="bociteDirectionBenefit">
+          • assurances ;
+        </span>
 
-              Besoin :
-              ${escapeValue(
-                development.need || "Non renseigné"
-              )}
+        <span
+          class="bociteDirectionBenefit">
+          • téléphonie et Internet ;
+        </span>
 
-              <br><br>
+        <span
+          class="bociteDirectionBenefit">
+          • véhicules ;
+        </span>
 
-              Prochaine action :
-              ${escapeValue(
-                development.action || "Non renseignée"
-              )}
+        <span
+          class="bociteDirectionBenefit">
+          • entretien ;
+        </span>
 
-              <br><br>
+        <span
+          class="bociteDirectionBenefit">
+          • fournitures et formations.
+        </span>
 
-              Mise à jour :
-              ${escapeValue(
-                development.updatedAtFr || ""
-              )}
+        <br>
 
-              <button
-                id="directionDevelopmentBtn"
-                class="choiceBtn"
-                type="button"
-                style="width:100%;margin-top:10px;">
-                Ouvrir le développement
-              </button>
-            </div>
-          `
-          : `
-            <div class="box">
-              Aucun plan de développement enregistré.
-
-              <button
-                id="directionDevelopmentBtn"
-                class="choiceBtn"
-                type="button"
-                style="width:100%;margin-top:10px;">
-                Préparer un plan
-              </button>
-            </div>
-          `
-      }
-
-      <div
-        style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
-          color:#2f5d46;
-        ">
-        Visibilité
-      </div>
-
-      ${
-        visibility
-          ? `
-            <div class="box">
-              <strong>
-                ${escapeValue(visibility.companyName)}
-              </strong>
-
-              <br><br>
-
-              ${escapeValue(
-                visibility.activity || ""
-              )}
-
-              <br><br>
-
-              Dernière mise à jour :
-              ${escapeValue(
-                visibility.updatedAtFr || ""
-              )}
-
-              <button
-                id="directionVisibilityBtn"
-                class="choiceBtn"
-                type="button"
-                style="width:100%;margin-top:10px;">
-                Ouvrir la fiche entreprise
-              </button>
-            </div>
-          `
-          : `
-            <div class="box">
-              Aucune fiche enrichie enregistrée.
-
-              <button
-                id="directionVisibilityBtn"
-                class="choiceBtn"
-                type="button"
-                style="width:100%;margin-top:10px;">
-                Créer ma fiche
-              </button>
-            </div>
-          `
-      }
-
-      <div
-        style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
-          color:#2f5d46;
-        ">
-        Pérennité
-      </div>
-
-      ${
-        sustainability
-          ? `
-            <div class="box">
-              <strong>
-                ${escapeValue(sustainability.companyName)}
-              </strong>
-
-              <br><br>
-
-              Projet enregistré.
-
-              <br><br>
-
-              Prochaine action :
-              ${escapeValue(
-                sustainability.nextAction || "Non renseignée"
-              )}
-
-              <button
-                id="directionSustainabilityBtn"
-                class="choiceBtn"
-                type="button"
-                style="width:100%;margin-top:10px;">
-                Ouvrir le projet
-              </button>
-            </div>
-          `
-          : `
-            <div class="box">
-              Aucun projet de transmission
-              ou de continuité enregistré.
-
-              <button
-                id="directionSustainabilityBtn"
-                class="choiceBtn"
-                type="button"
-                style="width:100%;margin-top:10px;">
-                Préparer l’avenir
-              </button>
-            </div>
-          `
-      }
-
-      <div
-        style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
-          color:#2f5d46;
-        ">
-        Mécénat
-      </div>
-
-      ${
-        mecenat
-          ? `
-            <div class="box">
-              <strong>
-                ${escapeValue(mecenat.companyName)}
-              </strong>
-
-              <br><br>
-
-              Projet :
-              ${escapeValue(
-                mecenat.selectedProject || "Non renseigné"
-              )}
-
-              <br><br>
-
-              Dernière mise à jour :
-              ${escapeValue(
-                mecenat.updatedAtFr || ""
-              )}
-
-              <button
-                id="directionMecenatBtn"
-                class="choiceBtn"
-                type="button"
-                style="width:100%;margin-top:10px;">
-                Ouvrir le mécénat
-              </button>
-            </div>
-          `
-          : `
-            <div class="box">
-              Aucune réflexion mécénat enregistrée.
-
-              <button
-                id="directionMecenatBtn"
-                class="choiceBtn"
-                type="button"
-                style="width:100%;margin-top:10px;">
-                Découvrir le mécénat
-              </button>
-            </div>
-          `
-      }
-
-      <div
-        style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
-          color:#2f5d46;
-        ">
-        Services professionnels
-      </div>
-
-      <div class="box">
-        <strong>
-          Adhésion annuelle professionnelle
+        <strong
+          style="
+            color:#2f5d46;
+            font-size:14px;
+            font-weight:700;
+          ">
+          Les économies obtenues
+          peuvent contribuer à financer
+          tout ou partie de votre abonnement.
         </strong>
 
-        <br><br>
+        <button
+          id="directionLowerChargesBtn"
+          class="
+            choiceBtn
+            bociteDirectionButton
+          "
+          type="button"
+          style="margin-top:10px;">
+          Voir comment payer moins de charges
+        </button>
 
-        329 € HT par an.
-
-        <br><br>
-
-        Paiement prévu à la validation du contrat.
       </div>
 
-      <div class="box">
-        <strong>
-          Fiche enrichie
-        </strong>
+
+      <div
+        class="
+          box
+          bociteDirectionBox
+        ">
+
+        <div
+          class="bociteDirectionTitle">
+          Visibilité et fiche enrichie
+        </div>
+
+        Présentez davantage que le simple nom
+        de votre entreprise.
+
+        <span
+          class="bociteDirectionBenefit">
+          • vos métiers ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • votre savoir-faire ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • vos services ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • vos recrutements ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • vos informations professionnelles.
+        </span>
+
+        <br>
+
+        <span
+          class="bociteDirectionPrice">
+          ${formatMoney(
+            enrichedProfilePrice
+          )} € HT/an
+        </span>
+
+        <button
+          id="directionVisibilityBtn"
+          class="
+            choiceBtn
+            bociteDirectionButton
+          "
+          type="button"
+          style="margin-top:10px;">
+          Gérer ma visibilité
+        </button>
+
+      </div>
+
+
+      <div
+        class="
+          box
+          bociteDirectionBox
+        "
+        style="
+          border-left:6px solid #b00020;
+        ">
+
+        <div
+          class="bociteDirectionTitle">
+          Publicité
+        </div>
+
+        Préparez une publicité
+        et accédez directement
+        au parcours prévu pour le grand bandeau.
 
         <br><br>
 
-        199 € HT par an.
-      </div>
-
-      <div class="box">
-        <strong>
-          Publicité ou offre d’emploi
-        </strong>
+        Vous pourrez y préparer
+        votre contenu,
+        contrôler votre publicité
+        puis la publier
+        après confirmation du paiement.
 
         <br><br>
 
-        50 € HT par publication.
+        <span
+          class="bociteDirectionPrice">
+          ${formatMoney(
+            advertisingPrice
+          )} € HT
+        </span>
+        par publication.
+
+        <button
+          id="directionAdvertisingBtn"
+          class="
+            choiceBtn
+            bociteDirectionButton
+          "
+          type="button"
+          style="margin-top:10px;">
+          Créer ma publicité
+        </button>
+
       </div>
 
-      <div class="muted">
-        Ces informations sont réservées
-        au compte professionnel.
+
+      <div
+        class="
+          box
+          bociteDirectionBox
+        ">
+
+        <div
+          class="bociteDirectionTitle">
+          Abonnement professionnel
+        </div>
+
+        Votre abonnement rassemble
+        progressivement vos principaux outils professionnels.
+
+        <span
+          class="bociteDirectionBenefit">
+          • annuaire vivant et enrichi ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • visibilité de vos métiers ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • recherche professionnelle ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • emploi et candidatures ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • carnet et historique ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • recherche de fournisseurs et partenaires ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • Tableau de Direction ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • délégation à vos collaborateurs.
+        </span>
+
+        <br>
+
+        <span
+          class="bociteDirectionPrice">
+          ${formatMoney(
+            membershipPrice
+          )} € HT/an
+        </span>
+
+        <br><br>
+
+        L'abonnement annuel est prévu
+        avec renouvellement
+        à sa date anniversaire
+        selon les conditions contractuelles applicables.
+
+        <br><br>
+
+        En cas d'impayé,
+        seuls les services premium sont gelés.
+        Le compte et les fonctions de base
+        restent accessibles.
+
+        <button
+          id="directionSubscriptionBtn"
+          class="
+            choiceBtn
+            bociteDirectionButton
+          "
+          type="button"
+          style="margin-top:10px;">
+          Voir mon abonnement
+        </button>
+
       </div>
+
+
+      <div
+        class="
+          box
+          bociteDirectionBox
+        ">
+
+        <div
+          class="bociteDirectionTitle">
+          Mes abonnements et factures
+        </div>
+
+        Retrouvez vos paiements,
+        vos abonnements
+        et les copies de vos factures.
+
+        <br><br>
+
+        Les paiements par carte,
+        SEPA
+        ou virement
+        seront rapprochés
+        avec les factures correspondantes.
+
+        <button
+          id="directionBillingBtn"
+          class="
+            choiceBtn
+            bociteDirectionButton
+          "
+          type="button"
+          style="margin-top:10px;">
+          Ouvrir mes factures
+        </button>
+
+      </div>
+
+
+      <div
+        class="
+          box
+          bociteDirectionBox
+        "
+        style="
+          border-left:6px solid #2f5d46;
+        ">
+
+        <div
+          class="bociteDirectionTitle">
+          Mes collaborateurs
+        </div>
+
+        Le responsable principal
+        peut donner accès
+        à certaines fonctions
+        à un collègue ou salarié.
+
+        <span
+          class="bociteDirectionBenefit">
+          • publicité ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • emploi ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • annuaire professionnel ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • visibilité ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • autres fonctions autorisées.
+        </span>
+
+        <br>
+
+        Le responsable principal
+        conserve toujours la maîtrise
+        et peut suspendre
+        ou retirer un accès
+        à tout moment.
+
+        <button
+          id="directionCollaboratorsBtn"
+          class="
+            choiceBtn
+            bociteDirectionButton
+          "
+          type="button"
+          style="margin-top:10px;">
+          Gérer mes collaborateurs
+        </button>
+
+      </div>
+
+
+      <div
+        class="
+          box
+          bociteDirectionBox
+        ">
+
+        <div
+          class="bociteDirectionTitle">
+          Développement
+        </div>
+
+        Retrouvez vos outils
+        de développement,
+        vos recherches
+        et vos prochaines actions.
+
+        <button
+          id="directionDevelopmentBtn"
+          class="
+            choiceBtn
+            bociteDirectionButton
+          "
+          type="button"
+          style="margin-top:10px;">
+          Ouvrir le développement
+        </button>
+
+      </div>
+
+
+      <div
+        class="
+          box
+          bociteDirectionBox
+        ">
+
+        <div
+          class="bociteDirectionTitle">
+          Pérennité
+        </div>
+
+        Préparez la continuité,
+        la transmission
+        ou la reprise
+        de votre entreprise.
+
+        <button
+          id="directionSustainabilityBtn"
+          class="
+            choiceBtn
+            bociteDirectionButton
+          "
+          type="button"
+          style="margin-top:10px;">
+          Préparer l'avenir
+        </button>
+
+      </div>
+
+
+      <div
+        class="
+          box
+          bociteDirectionBox
+        ">
+
+        <div
+          class="bociteDirectionTitle">
+          Mécénat
+        </div>
+
+        Retrouvez les informations
+        et outils liés
+        aux projets de mécénat.
+
+        <button
+          id="directionMecenatBtn"
+          class="
+            choiceBtn
+            bociteDirectionButton
+          "
+          type="button"
+          style="margin-top:10px;">
+          Ouvrir le mécénat
+        </button>
+
+      </div>
+
+
+      <div
+        class="
+          box
+          bociteDirectionBox
+        "
+        style="
+          border-left:6px solid #2f5d46;
+        ">
+
+        <div
+          class="bociteDirectionTitle">
+          Ce que ${getBrandHtml()} vous apporte
+        </div>
+
+        À mesure de son utilisation,
+        votre Tableau de Direction
+        pourra vous montrer
+        concrètement la valeur obtenue :
+
+        <span
+          class="bociteDirectionBenefit">
+          • visibilité ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • contacts reçus ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • candidatures ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • partenariats ;
+        </span>
+
+        <span
+          class="bociteDirectionBenefit">
+          • économies réellement mesurées.
+        </span>
+
+      </div>
+
     `;
   }
 
+  /* =======================================================
+     BOUTONS
+     ======================================================= */
+
   function bindDirection(){
+
     const offersButton =
-      getElement("directionEmploymentOffersBtn");
+      getElement(
+        "directionEmploymentOffersBtn"
+      );
 
     const applicationsButton =
-      getElement("directionEmploymentApplicationsBtn");
+      getElement(
+        "directionEmploymentApplicationsBtn"
+      );
 
-    const developmentButton =
-      getElement("directionDevelopmentBtn");
+    const lowerChargesButton =
+      getElement(
+        "directionLowerChargesBtn"
+      );
 
     const visibilityButton =
-      getElement("directionVisibilityBtn");
+      getElement(
+        "directionVisibilityBtn"
+      );
+
+    const advertisingButton =
+      getElement(
+        "directionAdvertisingBtn"
+      );
+
+    const subscriptionButton =
+      getElement(
+        "directionSubscriptionBtn"
+      );
+
+    const billingButton =
+      getElement(
+        "directionBillingBtn"
+      );
+
+    const collaboratorsButton =
+      getElement(
+        "directionCollaboratorsBtn"
+      );
+
+    const developmentButton =
+      getElement(
+        "directionDevelopmentBtn"
+      );
 
     const sustainabilityButton =
-      getElement("directionSustainabilityBtn");
+      getElement(
+        "directionSustainabilityBtn"
+      );
 
     const mecenatButton =
-      getElement("directionMecenatBtn");
+      getElement(
+        "directionMecenatBtn"
+      );
+
 
     if(offersButton){
-      offersButton.onclick = function(){
-        if(
-          typeof module.openEmploymentOffers === "function"
-        ){
-          module.openEmploymentOffers();
-        }
-      };
+
+      offersButton.onclick =
+        function(){
+
+          if(
+            typeof module.openEmploymentOffers ===
+            "function"
+          ){
+
+            module.openEmploymentOffers();
+            return;
+          }
+
+          module.openScreen(
+            "emploi"
+          );
+        };
     }
+
 
     if(applicationsButton){
-      applicationsButton.onclick = function(){
-        if(
-          typeof module.openEmploymentApplications === "function"
-        ){
-          module.openEmploymentApplications();
-        }
-      };
+
+      applicationsButton.onclick =
+        function(){
+
+          if(
+            typeof module.openEmploymentApplications ===
+            "function"
+          ){
+
+            module.openEmploymentApplications();
+            return;
+          }
+
+          module.openScreen(
+            "emploi"
+          );
+        };
     }
 
-    if(developmentButton){
-      developmentButton.onclick = function(){
-        module.openScreen("developpement");
-      };
+
+    if(lowerChargesButton){
+
+      lowerChargesButton.onclick =
+        function(){
+
+          module.openScreen(
+            "mutualisation"
+          );
+        };
     }
+
 
     if(visibilityButton){
-      visibilityButton.onclick = function(){
-        module.openScreen("visibilite");
-      };
+
+      visibilityButton.onclick =
+        function(){
+
+          module.openScreen(
+            "visibilite"
+          );
+        };
     }
+
+
+    if(advertisingButton){
+
+      advertisingButton.onclick =
+        openAdvertisingCreation;
+    }
+
+
+    if(subscriptionButton){
+
+      subscriptionButton.onclick =
+        function(){
+
+          if(
+            typeof module.openSubscriptionModule ===
+            "function"
+          ){
+
+            module.openSubscriptionModule();
+            return;
+          }
+
+          module.openScreen(
+            "abonnement"
+          );
+        };
+    }
+
+
+    if(billingButton){
+
+      billingButton.onclick =
+        function(){
+
+          if(
+            typeof module.openSearchBilling ===
+            "function"
+          ){
+
+            module.openSearchBilling();
+            return;
+          }
+
+          alert(
+            "L'espace facturation est momentanément indisponible."
+          );
+        };
+    }
+
+
+    if(collaboratorsButton){
+
+      collaboratorsButton.onclick =
+        openCollaborators;
+    }
+
+
+    if(developmentButton){
+
+      developmentButton.onclick =
+        function(){
+
+          module.openScreen(
+            "developpement"
+          );
+        };
+    }
+
 
     if(sustainabilityButton){
-      sustainabilityButton.onclick = function(){
-        module.openScreen("perennite");
-      };
+
+      sustainabilityButton.onclick =
+        function(){
+
+          module.openScreen(
+            "perennite"
+          );
+        };
     }
+
 
     if(mecenatButton){
-      mecenatButton.onclick = function(){
-        module.openScreen("mecenat");
-      };
-    }
 
-    document
-      .querySelectorAll(".directionMutualisationBtn")
-      .forEach(function(button){
+      mecenatButton.onclick =
+        function(){
 
-        button.onclick = function(){
-          module.openScreen("mutualisation");
+          module.openScreen(
+            "mecenat"
+          );
         };
-      });
-
-    if(
-      typeof module.bindDirectionProposalButtons === "function"
-    ){
-      module.bindDirectionProposalButtons();
     }
   }
 
+  /* =======================================================
+     OUVERTURE
+     ======================================================= */
+
   function openDirection(){
+
     module.renderModal(
       "Tableau de Direction",
       getDirectionHtml()
     );
 
-    window.setTimeout(function(){
-      bindDirection();
-    },0);
+    window.setTimeout(
+      function(){
+
+        bindDirection();
+
+      },
+      0
+    );
   }
 
   module.registerScreen(
@@ -10859,7 +11401,7 @@ Voir les entreprises de ma ville
     openDirection;
 
   console.log(
-    "✅ Module Entreprise — partie 7 chargée"
+    "✅ Tableau de Direction V2 chargé"
   );
 
 })();
@@ -39130,5 +39672,1484 @@ document.addEventListener(
   console.log(
     "✅ Rapprochement comptable et facturation préparés"
   );
+
+   /* =========================================================
+   BO'CITÉART — CIRCUITS DE PAIEMENT V1
+   CB / PSP • SEPA • VIREMENT • MAIRIE
+   COMMISSIONS • RAPPROCHEMENT • IMPAYÉS
+   ========================================================= */
+
+(function initBocitePaymentFlows(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+
+    console.error(
+      "Bo'CitéArt : moteur Entreprise introuvable."
+    );
+
+    return;
+  }
+
+  /* =======================================================
+     1. STOCKAGES
+     ======================================================= */
+
+  const ORDERS_KEY =
+    "bociteart_financial_orders_v1";
+
+  const PAYMENTS_KEY =
+    "bociteart_financial_payments_v1";
+
+  const PAYOUTS_KEY =
+    "bociteart_financial_payouts_v1";
+
+  const PUBLIC_INVOICES_KEY =
+    "bociteart_public_entity_invoices_v1";
+
+
+  function loadList(
+    key
+  ){
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          key
+        );
+
+      if(!raw){
+        return [];
+      }
+
+      const data =
+        JSON.parse(
+          raw
+        );
+
+      return Array.isArray(data)
+        ? data
+        : [];
+
+    }catch(error){
+
+      return [];
+    }
+  }
+
+
+  function saveList(
+    key,
+    data
+  ){
+
+    try{
+
+      localStorage.setItem(
+        key,
+        JSON.stringify(
+          Array.isArray(data)
+            ? data
+            : []
+        )
+      );
+
+      return true;
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : stockage financier impossible.",
+        error
+      );
+
+      return false;
+    }
+  }
+
+
+  function createId(
+    prefix
+  ){
+
+    return (
+      prefix +
+      "-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2,8)
+        .toUpperCase()
+    );
+  }
+
+
+  /* =======================================================
+     2. CRÉATION D'UNE COMMANDE
+     ======================================================= */
+
+  function createFinancialOrder(
+    options
+  ){
+
+    const input =
+      options || {};
+
+    const amountHT =
+      Number(
+        input.amountHT || 0
+      );
+
+    const vatRate =
+      Number(
+        input.vatRate || 0
+      );
+
+    const vatAmount =
+      Number(
+        input.vatAmount != null
+          ? input.vatAmount
+          : (
+              amountHT *
+              vatRate /
+              100
+            ).toFixed(2)
+      );
+
+    const amountTTC =
+      Number(
+        input.amountTTC != null
+          ? input.amountTTC
+          : (
+              amountHT +
+              vatAmount
+            ).toFixed(2)
+      );
+
+    const order = {
+
+      id:
+        createId(
+          "CMD"
+        ),
+
+      productCode:
+        String(
+          input.productCode || ""
+        ),
+
+      serviceType:
+        String(
+          input.serviceType || ""
+        ),
+
+      serviceLabel:
+        String(
+          input.serviceLabel ||
+          "Service Bo'CitéArt"
+        ),
+
+      customerType:
+        String(
+          input.customerType ||
+          "professional"
+        ),
+
+      customerId:
+        String(
+          input.customerId || ""
+        ),
+
+      customerName:
+        String(
+          input.customerName || ""
+        ),
+
+      customerEmail:
+        String(
+          input.customerEmail || ""
+        ),
+
+      customerSiret:
+        String(
+          input.customerSiret || ""
+        ),
+
+      amountHT:
+        amountHT,
+
+      vatRate:
+        vatRate,
+
+      vatAmount:
+        vatAmount,
+
+      amountTTC:
+        amountTTC,
+
+      currency:
+        "EUR",
+
+      paymentMethod:
+        String(
+          input.paymentMethod || ""
+        ),
+
+      status:
+        "waiting_payment",
+
+      invoiceId:
+        "",
+
+      paymentId:
+        "",
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+
+    };
+
+    const orders =
+      loadList(
+        ORDERS_KEY
+      );
+
+    orders.push(
+      order
+    );
+
+    saveList(
+      ORDERS_KEY,
+      orders
+    );
+
+    if(
+      typeof module.addFinancialEvent ===
+      "function"
+    ){
+
+      module.addFinancialEvent(
+        "order_created",
+        order
+      );
+    }
+
+    return order;
+  }
+
+
+  /* =======================================================
+     3. PAIEMENT CB / PSP
+
+     IMPORTANT :
+     cette fonction prépare uniquement
+     la demande.
+
+     En production :
+     le PSP renverra la confirmation serveur.
+     ======================================================= */
+
+  function createCardPayment(
+    order
+  ){
+
+    if(!order){
+      return null;
+    }
+
+    const payment = {
+
+      id:
+        createId(
+          "PAY-CB"
+        ),
+
+      orderId:
+        order.id,
+
+      method:
+        "card",
+
+      status:
+        "pending",
+
+      grossAmount:
+        Number(
+          order.amountTTC || 0
+        ),
+
+      providerFee:
+        0,
+
+      netPayout:
+        0,
+
+      providerTransactionId:
+        "",
+
+      payoutReference:
+        "",
+
+      createdAt:
+        Date.now(),
+
+      confirmedAt:
+        null
+
+    };
+
+    const payments =
+      loadList(
+        PAYMENTS_KEY
+      );
+
+    payments.push(
+      payment
+    );
+
+    saveList(
+      PAYMENTS_KEY,
+      payments
+    );
+
+    return payment;
+  }
+
+
+  /* =======================================================
+     4. CONFIRMATION PSP
+     ======================================================= */
+
+  function confirmCardPayment(
+    paymentId,
+    providerResult
+  ){
+
+    const payments =
+      loadList(
+        PAYMENTS_KEY
+      );
+
+    const payment =
+      payments.find(
+        function(item){
+
+          return (
+            item.id ===
+            paymentId
+          );
+        }
+      );
+
+    if(!payment){
+
+      return {
+        ok:false,
+        error:
+          "Paiement introuvable."
+      };
+    }
+
+    const result =
+      providerResult || {};
+
+    if(
+      result.paid !==
+      true
+    ){
+
+      payment.status =
+        "failed";
+
+      payment.failureReason =
+        String(
+          result.reason || ""
+        );
+
+      saveList(
+        PAYMENTS_KEY,
+        payments
+      );
+
+      if(
+        typeof module.registerPaymentFailure ===
+        "function"
+      ){
+
+        module.registerPaymentFailure(
+          payment
+        );
+      }
+
+      return {
+        ok:false,
+        payment:payment
+      };
+    }
+
+    payment.status =
+      "confirmed";
+
+    payment.providerTransactionId =
+      String(
+        result.transactionId || ""
+      );
+
+    payment.providerFee =
+      Number(
+        result.providerFee || 0
+      );
+
+    payment.netPayout =
+      Number(
+        result.netPayout != null
+          ? result.netPayout
+          : (
+              Number(
+                payment.grossAmount || 0
+              ) -
+              Number(
+                result.providerFee || 0
+              )
+            )
+      );
+
+    payment.confirmedAt =
+      Date.now();
+
+    saveList(
+      PAYMENTS_KEY,
+      payments
+    );
+
+    const orders =
+      loadList(
+        ORDERS_KEY
+      );
+
+    const order =
+      orders.find(
+        function(item){
+
+          return (
+            item.id ===
+            payment.orderId
+          );
+        }
+      );
+
+    if(order){
+
+      order.status =
+        "paid";
+
+      order.paymentId =
+        payment.id;
+
+      saveList(
+        ORDERS_KEY,
+        orders
+      );
+    }
+
+    if(
+      typeof module.confirmFinancialPayment ===
+      "function"
+    ){
+
+      module.confirmFinancialPayment({
+
+        id:
+          payment.id,
+
+        invoiceId:
+          order
+            ? order.invoiceId
+            : "",
+
+        method:
+          "card",
+
+        amountHT:
+          order
+            ? order.amountHT
+            : 0,
+
+        vatAmount:
+          order
+            ? order.vatAmount
+            : 0,
+
+        amountTTC:
+          payment.grossAmount,
+
+        providerFee:
+          payment.providerFee,
+
+        netPayout:
+          payment.netPayout,
+
+        providerTransactionId:
+          payment.providerTransactionId,
+
+        payoutReference:
+          payment.payoutReference
+
+      });
+    }
+
+    return {
+      ok:true,
+      payment:payment,
+      order:order
+    };
+  }
+
+
+  /* =======================================================
+     5. SEPA / VIREMENT
+     ======================================================= */
+
+  function createSepaOrBankTransfer(
+    order,
+    method
+  ){
+
+    if(!order){
+      return null;
+    }
+
+    const paymentMethod =
+      method ===
+      "sepa_direct_debit"
+        ? "sepa_direct_debit"
+        : "bank_transfer";
+
+    const reference =
+      typeof module.createBankTransferReference ===
+      "function"
+        ? module.createBankTransferReference()
+        : createId(
+            "BCA"
+          );
+
+    const payment = {
+
+      id:
+        createId(
+          paymentMethod ===
+          "sepa_direct_debit"
+            ? "PAY-SEPA"
+            : "PAY-VIR"
+        ),
+
+      orderId:
+        order.id,
+
+      method:
+        paymentMethod,
+
+      status:
+        "pending",
+
+      expectedAmount:
+        Number(
+          order.amountTTC || 0
+        ),
+
+      transferReference:
+        reference,
+
+      createdAt:
+        Date.now(),
+
+      confirmedAt:
+        null
+
+    };
+
+    const payments =
+      loadList(
+        PAYMENTS_KEY
+      );
+
+    payments.push(
+      payment
+    );
+
+    saveList(
+      PAYMENTS_KEY,
+      payments
+    );
+
+    return payment;
+  }
+
+
+  /* =======================================================
+     6. CONFIRMATION SEPA / VIREMENT
+     ======================================================= */
+
+  function confirmSepaOrTransfer(
+    paymentId,
+    bankResult
+  ){
+
+    const payments =
+      loadList(
+        PAYMENTS_KEY
+      );
+
+    const payment =
+      payments.find(
+        function(item){
+
+          return (
+            item.id ===
+            paymentId
+          );
+        }
+      );
+
+    if(!payment){
+
+      return {
+        ok:false
+      };
+    }
+
+    const result =
+      bankResult || {};
+
+    if(
+      result.confirmed !==
+      true
+    ){
+
+      return {
+        ok:false,
+        payment:payment
+      };
+    }
+
+    payment.status =
+      "confirmed";
+
+    payment.bankReference =
+      String(
+        result.bankReference || ""
+      );
+
+    payment.confirmedAt =
+      Date.now();
+
+    saveList(
+      PAYMENTS_KEY,
+      payments
+    );
+
+    const orders =
+      loadList(
+        ORDERS_KEY
+      );
+
+    const order =
+      orders.find(
+        function(item){
+
+          return (
+            item.id ===
+            payment.orderId
+          );
+        }
+      );
+
+    if(order){
+
+      order.status =
+        "paid";
+
+      order.paymentId =
+        payment.id;
+
+      saveList(
+        ORDERS_KEY,
+        orders
+      );
+    }
+
+    if(
+      typeof module.confirmFinancialPayment ===
+      "function"
+    ){
+
+      module.confirmFinancialPayment({
+
+        id:
+          payment.id,
+
+        method:
+          payment.method,
+
+        amountHT:
+          order
+            ? order.amountHT
+            : 0,
+
+        vatAmount:
+          order
+            ? order.vatAmount
+            : 0,
+
+        amountTTC:
+          order
+            ? order.amountTTC
+            : payment.expectedAmount,
+
+        providerFee:
+          Number(
+            result.providerFee || 0
+          ),
+
+        netPayout:
+          Number(
+            result.netPayout != null
+              ? result.netPayout
+              : payment.expectedAmount
+          ),
+
+        providerTransactionId:
+          payment.bankReference,
+
+        payoutReference:
+          payment.bankReference
+
+      });
+    }
+
+    return {
+      ok:true,
+      payment:payment,
+      order:order
+    };
+  }
+
+
+  /* =======================================================
+     7. VERSEMENTS PSP ET COMMISSIONS
+     ======================================================= */
+
+  function recordPSPPayout(
+    options
+  ){
+
+    const input =
+      options || {};
+
+    const payout = {
+
+      id:
+        createId(
+          "PAYOUT"
+        ),
+
+      provider:
+        String(
+          input.provider || ""
+        ),
+
+      providerPayoutId:
+        String(
+          input.providerPayoutId || ""
+        ),
+
+      grossAmount:
+        Number(
+          input.grossAmount || 0
+        ),
+
+      providerFees:
+        Number(
+          input.providerFees || 0
+        ),
+
+      netAmount:
+        Number(
+          input.netAmount || 0
+        ),
+
+      bankReference:
+        String(
+          input.bankReference || ""
+        ),
+
+      status:
+        "received",
+
+      receivedAt:
+        Date.now(),
+
+      reconciled:
+        false
+
+    };
+
+    const payouts =
+      loadList(
+        PAYOUTS_KEY
+      );
+
+    payouts.push(
+      payout
+    );
+
+    saveList(
+      PAYOUTS_KEY,
+      payouts
+    );
+
+    if(
+      typeof module.addFinancialEvent ===
+      "function"
+    ){
+
+      module.addFinancialEvent(
+        "psp_payout_received",
+        payout
+      );
+    }
+
+    return payout;
+  }
+
+
+  /* =======================================================
+     8. RAPPROCHEMENT COMPTABLE PSP
+     ======================================================= */
+
+  function reconcilePSPPayout(
+    payoutId
+  ){
+
+    const payouts =
+      loadList(
+        PAYOUTS_KEY
+      );
+
+    const payout =
+      payouts.find(
+        function(item){
+
+          return (
+            item.id ===
+            payoutId
+          );
+        }
+      );
+
+    if(!payout){
+
+      return {
+        ok:false,
+        reason:
+          "payout_not_found"
+      };
+    }
+
+    const payments =
+      loadList(
+        PAYMENTS_KEY
+      )
+      .filter(
+        function(payment){
+
+          return (
+            payment.status ===
+            "confirmed" &&
+            payment.method ===
+            "card"
+          );
+        }
+      );
+
+    const totalGross =
+      payments.reduce(
+        function(total,payment){
+
+          return (
+            total +
+            Number(
+              payment.grossAmount || 0
+            )
+          );
+
+        },
+        0
+      );
+
+    const totalFees =
+      payments.reduce(
+        function(total,payment){
+
+          return (
+            total +
+            Number(
+              payment.providerFee || 0
+            )
+          );
+
+        },
+        0
+      );
+
+    const expectedNet =
+      Number(
+        (
+          totalGross -
+          totalFees
+        )
+        .toFixed(2)
+      );
+
+    const difference =
+      Number(
+        (
+          Number(
+            payout.netAmount || 0
+          ) -
+          expectedNet
+        )
+        .toFixed(2)
+      );
+
+    payout.reconciled =
+      Math.abs(
+        difference
+      ) < 0.01;
+
+    payout.expectedNet =
+      expectedNet;
+
+    payout.difference =
+      difference;
+
+    payout.reconciledAt =
+      Date.now();
+
+    saveList(
+      PAYOUTS_KEY,
+      payouts
+    );
+
+    if(
+      typeof module.addFinancialEvent ===
+      "function"
+    ){
+
+      module.addFinancialEvent(
+        payout.reconciled
+          ? "psp_payout_reconciled"
+          : "psp_payout_difference",
+        {
+          payoutId:
+            payout.id,
+
+          expectedNet:
+            expectedNet,
+
+          receivedNet:
+            payout.netAmount,
+
+          difference:
+            difference
+        }
+      );
+    }
+
+    return {
+      ok:
+        payout.reconciled,
+
+      payout:
+        payout
+    };
+  }
+
+
+  /* =======================================================
+     9. MAIRIES / ORGANISMES PUBLICS
+
+     Devis / commande / facture
+     paiement différé.
+     ======================================================= */
+
+  function createPublicEntityInvoice(
+    options
+  ){
+
+    const input =
+      options || {};
+
+    const invoice = {
+
+      id:
+        createId(
+          "PUB-INV"
+        ),
+
+      customerType:
+        "public",
+
+      customerName:
+        String(
+          input.customerName || ""
+        ),
+
+      customerId:
+        String(
+          input.customerId || ""
+        ),
+
+      serviceLabel:
+        String(
+          input.serviceLabel || ""
+        ),
+
+      quoteReference:
+        String(
+          input.quoteReference || ""
+        ),
+
+      purchaseOrderReference:
+        String(
+          input.purchaseOrderReference || ""
+        ),
+
+      amountHT:
+        Number(
+          input.amountHT || 0
+        ),
+
+      vatRate:
+        Number(
+          input.vatRate || 0
+        ),
+
+      amountTTC:
+        Number(
+          input.amountTTC || 0
+        ),
+
+      status:
+        "issued",
+
+      paymentStatus:
+        "waiting_payment",
+
+      issuedAt:
+        Date.now(),
+
+      dueAt:
+        Number(
+          input.dueAt || 0
+        ),
+
+      reminderSentAt:
+        null,
+
+      paidAt:
+        null
+
+    };
+
+    const rows =
+      loadList(
+        PUBLIC_INVOICES_KEY
+      );
+
+    rows.push(
+      invoice
+    );
+
+    saveList(
+      PUBLIC_INVOICES_KEY,
+      rows
+    );
+
+    return invoice;
+  }
+
+
+  /* =======================================================
+     10. CONTRÔLE IMPAYÉS MAIRIE
+     ======================================================= */
+
+  function publicEntityHasUnpaidInvoice(
+    customerId
+  ){
+
+    return loadList(
+      PUBLIC_INVOICES_KEY
+    )
+    .some(
+      function(invoice){
+
+        return (
+          String(
+            invoice.customerId || ""
+          ) ===
+          String(
+            customerId || ""
+          ) &&
+          invoice.paymentStatus !==
+          "paid"
+        );
+      }
+    );
+  }
+
+
+  /* =======================================================
+     11. BLOCAGE NOUVELLE PRESTATION PUBLIQUE
+     ======================================================= */
+
+  function canPublicEntityOrder(
+    customerId
+  ){
+
+    return !publicEntityHasUnpaidInvoice(
+      customerId
+    );
+  }
+
+
+  /* =======================================================
+     12. PAIEMENT MAIRIE CONFIRMÉ
+     ======================================================= */
+
+  function confirmPublicEntityPayment(
+    invoiceId,
+    paymentReference
+  ){
+
+    const rows =
+      loadList(
+        PUBLIC_INVOICES_KEY
+      );
+
+    const invoice =
+      rows.find(
+        function(item){
+
+          return (
+            item.id ===
+            invoiceId
+          );
+        }
+      );
+
+    if(!invoice){
+
+      return false;
+    }
+
+    invoice.paymentStatus =
+      "paid";
+
+    invoice.paymentReference =
+      String(
+        paymentReference || ""
+      );
+
+    invoice.paidAt =
+      Date.now();
+
+    saveList(
+      PUBLIC_INVOICES_KEY,
+      rows
+    );
+
+    if(
+      typeof module.addFinancialEvent ===
+      "function"
+    ){
+
+      module.addFinancialEvent(
+        "public_invoice_paid",
+        {
+          invoiceId:
+            invoice.id,
+
+          customerId:
+            invoice.customerId
+        }
+      );
+    }
+
+    return true;
+  }
+
+
+  /* =======================================================
+     13. ABONNEMENT — ÉCHEC / J+5 / GEL
+     ======================================================= */
+
+  function processSubscriptionPaymentFailure(
+    options
+  ){
+
+    const input =
+      options || {};
+
+    const failedAt =
+      Number(
+        input.failedAt ||
+        Date.now()
+      );
+
+    const now =
+      Date.now();
+
+    const delayDays =
+      5;
+
+    const delayMs =
+      delayDays *
+      24 *
+      60 *
+      60 *
+      1000;
+
+    const elapsed =
+      now -
+      failedAt;
+
+    if(
+      elapsed <
+      delayMs
+    ){
+
+      return {
+        status:
+          "payment_pending",
+
+        freeze:
+          false,
+
+        remainingMs:
+          delayMs -
+          elapsed
+      };
+    }
+
+    if(
+      typeof module.freezePremiumServices ===
+      "function"
+    ){
+
+      module.freezePremiumServices(
+        "subscription_payment_unpaid"
+      );
+    }
+
+    if(
+      typeof module.addFinancialEvent ===
+      "function"
+    ){
+
+      module.addFinancialEvent(
+        "subscription_final_reminder",
+        {
+          failedAt:
+            failedAt,
+
+          processedAt:
+            now
+        }
+      );
+    }
+
+    return {
+      status:
+        "premium_frozen",
+
+      freeze:
+        true
+    };
+  }
+
+
+  /* =======================================================
+     14. SERVICE GRATUIT / SERVICE PREMIUM
+     ======================================================= */
+
+  function requirePremiumService(
+    callback
+  ){
+
+    if(
+      typeof module.canUsePremiumServices ===
+      "function" &&
+      !module.canUsePremiumServices()
+    ){
+
+      alert(
+        "Votre compte reste accessible, mais ce service professionnel est temporairement gelé.\n\n" +
+        "Régularisez votre abonnement pour le réactiver."
+      );
+
+      if(
+        typeof module.openSearchBilling ===
+        "function"
+      ){
+
+        module.openSearchBilling();
+      }
+
+      return false;
+    }
+
+    if(
+      typeof callback ===
+      "function"
+    ){
+
+      callback();
+    }
+
+    return true;
+  }
+
+
+  /* =======================================================
+     15. EXPORT COMPTABLE PRÉPARÉ
+     ======================================================= */
+
+  function buildAccountingExport(){
+
+    return {
+
+      generatedAt:
+        new Date()
+          .toISOString(),
+
+      orders:
+        loadList(
+          ORDERS_KEY
+        ),
+
+      payments:
+        loadList(
+          PAYMENTS_KEY
+        ),
+
+      pspPayouts:
+        loadList(
+          PAYOUTS_KEY
+        ),
+
+      publicInvoices:
+        loadList(
+          PUBLIC_INVOICES_KEY
+        ),
+
+      financialLog:
+        typeof module.loadFinancialLog ===
+        "function"
+          ? module.loadFinancialLog()
+          : []
+
+    };
+  }
+
+
+  /* =======================================================
+     16. EXPOSITION
+     ======================================================= */
+
+  module.createFinancialOrder =
+    createFinancialOrder;
+
+  module.createCardPayment =
+    createCardPayment;
+
+  module.confirmCardPayment =
+    confirmCardPayment;
+
+  module.createSepaOrBankTransfer =
+    createSepaOrBankTransfer;
+
+  module.confirmSepaOrTransfer =
+    confirmSepaOrTransfer;
+
+  module.recordPSPPayout =
+    recordPSPPayout;
+
+  module.reconcilePSPPayout =
+    reconcilePSPPayout;
+
+  module.createPublicEntityInvoice =
+    createPublicEntityInvoice;
+
+  module.publicEntityHasUnpaidInvoice =
+    publicEntityHasUnpaidInvoice;
+
+  module.canPublicEntityOrder =
+    canPublicEntityOrder;
+
+  module.confirmPublicEntityPayment =
+    confirmPublicEntityPayment;
+
+  module.processSubscriptionPaymentFailure =
+    processSubscriptionPaymentFailure;
+
+  module.requirePremiumService =
+    requirePremiumService;
+
+  module.buildAccountingExport =
+    buildAccountingExport;
+
+
+  console.log(
+    "✅ Bo'CitéArt — circuits de paiement V1 chargés"
+  );
+
+  console.log(
+    "✅ Paiements CB / PSP préparés"
+  );
+
+  console.log(
+    "✅ SEPA et virements préparés"
+  );
+
+  console.log(
+    "✅ Commissions et versements PSP préparés"
+  );
+
+  console.log(
+    "✅ Rapprochement comptable préparé"
+  );
+
+  console.log(
+    "✅ Mairies et paiements différés préparés"
+  );
+
+  console.log(
+    "✅ Impayés et gel des services premium préparés"
+  );
+
+})();
 
 })();
