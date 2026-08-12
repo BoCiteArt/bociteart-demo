@@ -29790,6 +29790,41 @@ function addUniversalBackButton(
     const saved =
       loadProfile();
 
+        /* =====================================================
+       ACCÈS ADMINISTRATEUR BO'CITÉART — DÉMO
+       Permet à l'administrateur de contrôler tous
+       les espaces privés sans créer de fausse entreprise.
+       ===================================================== */
+
+    const isBociteAdmin =
+      (
+        localStorage.getItem(
+          "bociteart_admin_authenticated_v1"
+        ) === "true"
+      ) ||
+      (
+        sessionStorage.getItem(
+          "bociteart_admin_authenticated_v1"
+        ) === "true"
+      ) ||
+      (
+        window.BOCITEART_ADMIN_MODE === true
+      );
+
+    if(isBociteAdmin){
+
+      if(
+        typeof successCallback ===
+        "function"
+      ){
+        successCallback();
+        return;
+      }
+
+      openPrivateAccess();
+      return;
+    } 
+
     const select =
       getElement(
         "entrepriseProfileLegalForm"
