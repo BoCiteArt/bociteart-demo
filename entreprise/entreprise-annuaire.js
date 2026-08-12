@@ -1,43 +1,55 @@
 /* =========================================================
-   BO'CITÉART — ANNUAIRE DE VOTRE VILLE
-   RECONSTRUCTION PROPRE — BASE 2026-08
+   BO'CITÉART — ANNUAIRE
+   VERSION PROPRE ET PRÉPARÉE POUR LE BRANCHEMENT OFFICIEL
 
-   PRINCIPES
-   • Une seule navigation interne
-   • Une seule modale réutilisée
-   • Commune issue du compte Bo'CitéArt
-   • Recherche locale à la demande
-   • Filtrage avant stockage
-   • Aucune fausse coordonnée
-   • Historique conservé sans suppression automatique
-   • Suppression d'une ligne ou de tout l'historique
+   PUBLIC
+   • Annuaire territorial
+   • Commune reprise du compte
+   • Recherche nom / métier / produit / service
+   • Catégories et métiers
+   • Fiches réelles uniquement
+   • Historique longue durée
    • Favoris
    • Consultés récemment
-   • Appréciation citoyenne simple 1 à 5
-   • Espace professionnel séparé
+   • Appréciation 1 à 5
+   • Candidatures spontanées
+
+   PROFESSIONNEL PRIVÉ
    • Sécurité centrale Bo'CitéArt
-   • Préparation serveur / agent futur
+   • Droits responsable / collaborateurs
+   • Contrôle abonnement
+   • Recherche fournisseur / partenaire / sous-traitant
+   • Commune / proximité / département / région
+   • France entière
+   • Europe par pays
+   • Historique professionnel
+   • Carnet professionnel
+   • Entreprises suivies
+   • Informations entreprises / Bercy
 
-   PARCOURS PUBLIC
-   Annuaire
-   → Catégorie
-   → Métier
-   → Résultats
-   → Fiche
-
-   Le Retour suit toujours le chemin inverse.
+   ARCHITECTURE OFFICIELLE
+   • Annuaire.Agent.search()
+   • Annuaire.Agent.enrichEntity()
+   • Annuaire.UpdateAgent
+   • Fournisseur officiel interchangeable
+   • Territoires pilotés côté serveur
+   • Aucun chargement massif
+   • Aucune donnée inventée
    ========================================================= */
 
 (function initBociteEntrepriseAnnuaire(){
 
   "use strict";
 
-  const module = window.BociteEntreprise;
+  const module =
+    window.BociteEntreprise;
 
   if(!module){
+
     console.error(
       "Bo'CitéArt Annuaire : module Entreprise introuvable."
     );
+
     return;
   }
 
@@ -45,116 +57,109 @@
     module.Annuaire =
     module.Annuaire || {};
 
-  /* =======================================================
-     VERSION / STOCKAGES PROPRES
-     ======================================================= */
+  const VERSION =
+    "6.0.0";
 
-  const VERSION = "5.0.0";
+  /* =======================================================
+     1. STOCKAGE
+     ======================================================= */
 
   const STORAGE = {
 
+    schema:
+      "bociteart_annuaire_schema_v6",
+
     entities:
-      "bociteart_annuaire_v5_entities",
+      "bociteart_annuaire_entities_v6",
+
+    communeCache:
+      "bociteart_annuaire_commune_cache_v6",
 
     searchHistory:
-      "bociteart_annuaire_v5_search_history",
+      "bociteart_annuaire_search_history_v6",
 
     viewedHistory:
-      "bociteart_annuaire_v5_viewed_history",
+      "bociteart_annuaire_viewed_history_v6",
 
     favorites:
-      "bociteart_annuaire_v5_favorites",
+      "bociteart_annuaire_favorites_v6",
 
     ratings:
-      "bociteart_annuaire_v5_ratings",
+      "bociteart_annuaire_ratings_v6",
 
-    reports:
-      "bociteart_annuaire_v5_reports",
+    citizenActions:
+      "bociteart_annuaire_citizen_actions_v6",
 
     professionalHistory:
-      "bociteart_annuaire_v5_professional_history",
+      "bociteart_annuaire_professional_history_v6",
 
-    notebook:
-      "bociteart_annuaire_v5_professional_notebook",
+    professionalNotebook:
+      "bociteart_annuaire_professional_notebook_v6",
 
-    followed:
-      "bociteart_annuaire_v5_followed",
+    professionalFollowed:
+      "bociteart_annuaire_professional_followed_v6",
 
-    partnerProfiles:
-      "bociteart_annuaire_v5_partner_profiles",
+    reports:
+      "bociteart_annuaire_reports_v6",
 
-    schema:
-      "bociteart_annuaire_v5_schema"
+    updateState:
+      "bociteart_annuaire_update_state_v6",
+
+    providerCache:
+      "bociteart_annuaire_provider_cache_v6"
 
   };
 
-  Annuaire.VERSION = VERSION;
-  Annuaire.STORAGE = STORAGE;
+  Annuaire.STORAGE =
+    STORAGE;
 
   /* =======================================================
-     ÉTAT UNIQUE DE L'ANNUAIRE
+     2. ÉTAT UNIQUE
      ======================================================= */
 
   const State = {
 
-    stack: [],
+    current:null,
 
-    current: null,
+    stack:[],
 
-    requestCounter: 0,
+    requestId:0,
 
-    activeRequest: 0,
+    abortController:null,
 
-    lastResults: [],
-
-    lastQuery: "",
-
-    lastOptions: null
+    professionalContext:null
 
   };
 
   /* =======================================================
-     OUTILS
+     3. OUTILS
      ======================================================= */
 
-  function safeArray(value){
-    return Array.isArray(value) ? value : [];
-  }
-
   function getElement(id){
+
     return document.getElementById(id);
   }
 
-  function normalizeText(value){
+  function safeArray(value){
 
-    return String(value || "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .trim();
+    return Array.isArray(value)
+      ? value
+      : [];
   }
 
-  function escapeHtml(value){
-
-    return String(value || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-  function loadJson(key, fallback){
+  function loadJson(
+    key,
+    fallback
+  ){
 
     try{
 
-      const raw = localStorage.getItem(key);
+      const raw =
+        localStorage.getItem(key);
 
-      if(!raw){
-        return fallback;
-      }
-
-      return JSON.parse(raw);
+      return raw
+        ? JSON.parse(raw)
+        : fallback;
 
     }catch(error){
 
@@ -168,7 +173,10 @@
     }
   }
 
-  function saveJson(key, value){
+  function saveJson(
+    key,
+    value
+  ){
 
     try{
 
@@ -182,7 +190,7 @@
     }catch(error){
 
       console.warn(
-        "Bo'CitéArt Annuaire : sauvegarde impossible",
+        "Bo'CitéArt Annuaire : enregistrement impossible",
         key,
         error
       );
@@ -193,117 +201,108 @@
 
   function uniqueId(prefix){
 
-    return (
-      prefix +
+    return String(prefix || "item") +
       "_" +
       Date.now() +
       "_" +
       Math.random()
         .toString(36)
-        .slice(2, 9)
-    );
+        .slice(2,10);
   }
 
-  function formatDate(timestamp){
+  function normalizeText(value){
 
-    if(!timestamp){
+    return String(value || "")
+      .normalize("NFD")
+      .replace(
+        /[\u0300-\u036f]/g,
+        ""
+      )
+      .toLowerCase()
+      .replace(
+        /[’']/g,
+        " "
+      )
+      .replace(
+        /[^a-z0-9\s-]/g,
+        " "
+      )
+      .replace(
+        /\s+/g,
+        " "
+      )
+      .trim();
+  }
+
+  function escapeHtml(value){
+
+    return String(value || "")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+  }
+
+  function formatDateTime(value){
+
+    if(!value){
       return "";
     }
 
     try{
 
-      return new Date(timestamp)
-        .toLocaleDateString(
-          "fr-FR",
-          {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
-          }
-        );
-
-    }catch(error){
-      return "";
-    }
-  }
-
-  function formatDateTime(timestamp){
-
-    if(!timestamp){
-      return "";
-    }
-
-    try{
-
-      return new Date(timestamp)
+      return new Date(value)
         .toLocaleString(
           "fr-FR",
           {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric",
+            hour:"2-digit",
+            minute:"2-digit"
           }
         );
 
     }catch(error){
+
       return "";
     }
   }
 
+  function normalizeUrl(value){
+
+    const text =
+      String(value || "")
+        .trim();
+
+    if(!text){
+      return "";
+    }
+
+    if(
+      /^https?:\/\//i.test(text)
+    ){
+      return text;
+    }
+
+    return "https://" + text;
+  }
+
   /* =======================================================
-     COMMUNE DU COMPTE
+     4. COMMUNE DU COMPTE
      ======================================================= */
 
   function getCurrentCommune(){
 
-    try{
-
-      const registration =
-        window.BoCiteArtRegistration;
-
-      if(
-        registration &&
-        typeof registration.getCurrentAccount === "function"
-      ){
-
-        const account =
-          registration.getCurrentAccount();
-
-        if(
-          account &&
-          account.commune
-        ){
-          return String(account.commune).trim();
-        }
-      }
-
-    }catch(error){
-      /* repli ci-dessous */
-    }
-
-    try{
-
-      const account =
-        JSON.parse(
-          localStorage.getItem(
-            "bociteart_account_demo_v1"
-          ) || "{}"
-        );
-
-      if(account.commune){
-        return String(account.commune).trim();
-      }
-
-    }catch(error){
-      /* repli ci-dessous */
-    }
-
     const possibleKeys = [
-      "bociteart_user_commune_v1",
-      "bociteart_commune_v1",
-      "bociteart_registration_commune_v1"
+
+      "bociteart_account_demo_v1",
+
+      "bociteart_activation_v1",
+
+      "bociteart_registration_v1"
+
     ];
 
     for(
@@ -312,109 +311,871 @@
       i++
     ){
 
-      const value =
-        localStorage.getItem(
-          possibleKeys[i]
+      const data =
+        loadJson(
+          possibleKeys[i],
+          null
         );
 
+      if(!data){
+        continue;
+      }
+
+      const commune =
+        data.commune ||
+        data.city ||
+        data.ville ||
+        data.municipality ||
+        "";
+
       if(
-        value &&
-        String(value).trim()
+        String(commune)
+          .trim()
       ){
-        return String(value).trim();
+
+        return String(commune)
+          .trim();
       }
     }
 
-    return "votre ville";
+    try{
+
+      if(
+        window.BoCiteArtRegistration &&
+        typeof window.BoCiteArtRegistration
+          .getCurrentAccount === "function"
+      ){
+
+        const account =
+          window.BoCiteArtRegistration
+            .getCurrentAccount();
+
+        const commune =
+          account &&
+          (
+            account.commune ||
+            account.city ||
+            account.ville
+          );
+
+        if(commune){
+
+          return String(commune)
+            .trim();
+        }
+      }
+
+    }catch(error){
+
+      /* pas de blocage */
+    }
+
+    return "Wattignies";
   }
 
   /* =======================================================
-     SÉCURITÉ CENTRALE
+     5. LOGO
+     UNE SEULE CHAÎNE VISUELLE
      ======================================================= */
 
-  function canAccessDirectory(){
+  function getLogoHtml(){
+
+    return (
+      "<strong " +
+      "class=\"bociteAnnuaireLogo\">" +
+      "Bo'Cité" +
+      "<span>Art</span>" +
+      "</strong>"
+    );
+  }
+
+  /* =======================================================
+     6. PAYS EUROPÉENS
+     RECHERCHE PRO UNIQUEMENT
+     ======================================================= */
+
+  const EUROPE_COUNTRIES = [
+
+    {code:"AT",name:"Autriche"},
+    {code:"BE",name:"Belgique"},
+    {code:"BG",name:"Bulgarie"},
+    {code:"HR",name:"Croatie"},
+    {code:"CY",name:"Chypre"},
+    {code:"CZ",name:"Tchéquie"},
+    {code:"DK",name:"Danemark"},
+    {code:"EE",name:"Estonie"},
+    {code:"FI",name:"Finlande"},
+    {code:"FR",name:"France"},
+    {code:"DE",name:"Allemagne"},
+    {code:"GR",name:"Grèce"},
+    {code:"HU",name:"Hongrie"},
+    {code:"IE",name:"Irlande"},
+    {code:"IT",name:"Italie"},
+    {code:"LV",name:"Lettonie"},
+    {code:"LT",name:"Lituanie"},
+    {code:"LU",name:"Luxembourg"},
+    {code:"MT",name:"Malte"},
+    {code:"NL",name:"Pays-Bas"},
+    {code:"PL",name:"Pologne"},
+    {code:"PT",name:"Portugal"},
+    {code:"RO",name:"Roumanie"},
+    {code:"SK",name:"Slovaquie"},
+    {code:"SI",name:"Slovénie"},
+    {code:"ES",name:"Espagne"},
+    {code:"SE",name:"Suède"},
+
+    {code:"AL",name:"Albanie"},
+    {code:"AD",name:"Andorre"},
+    {code:"BA",name:"Bosnie-Herzégovine"},
+    {code:"IS",name:"Islande"},
+    {code:"LI",name:"Liechtenstein"},
+    {code:"MD",name:"Moldavie"},
+    {code:"MC",name:"Monaco"},
+    {code:"ME",name:"Monténégro"},
+    {code:"MK",name:"Macédoine du Nord"},
+    {code:"NO",name:"Norvège"},
+    {code:"SM",name:"Saint-Marin"},
+    {code:"RS",name:"Serbie"},
+    {code:"CH",name:"Suisse"},
+    {code:"UA",name:"Ukraine"},
+    {code:"GB",name:"Royaume-Uni"},
+    {code:"VA",name:"Vatican"}
+
+  ];
+
+  Annuaire.EUROPE_COUNTRIES =
+    EUROPE_COUNTRIES.slice();
+
+  /* =======================================================
+     7. CATÉGORIES PUBLIQUES
+     ======================================================= */
+
+  const CATEGORIES = [
+
+    {
+      id:"commerces",
+      title:"Commerces",
+      subtitle:
+        "Boutiques • alimentation • proximité"
+    },
+
+    {
+      id:"restaurants",
+      title:"Restaurants",
+      subtitle:
+        "Restaurants • cafés • traiteurs"
+    },
+
+    {
+      id:"artisans",
+      title:"Artisans",
+      subtitle:
+        "Travaux • réparation • savoir-faire"
+    },
+
+    {
+      id:"sante",
+      title:"Santé",
+      subtitle:
+        "Médecins • soins • professionnels"
+    },
+
+    {
+      id:"entreprises",
+      title:"Entreprises",
+      subtitle:
+        "Industrie • services • compétences"
+    },
+
+    {
+      id:"hebergements",
+      title:"Hôtels & séjours",
+      subtitle:
+        "Hôtels • gîtes • hébergements"
+    },
+
+    {
+      id:"services",
+      title:"Services",
+      subtitle:
+        "Particuliers • professionnels"
+    },
+
+    {
+      id:"metiers",
+      title:"Tous les métiers",
+      subtitle:
+        "Rechercher par activité"
+    }
+
+  ];
+
+  /* =======================================================
+     8. FAMILLES DE MÉTIERS
+     ======================================================= */
+
+  const TRADE_FAMILIES = [
+
+    {
+      id:"sante",
+      title:"Santé",
+      trades:[
+        "Médecins généralistes",
+        "Infirmiers",
+        "Kinésithérapeutes",
+        "Dentistes",
+        "Pharmacies",
+        "Pédicures-podologues",
+        "Orthophonistes",
+        "Sages-femmes",
+        "Psychologues"
+      ]
+    },
+
+    {
+      id:"maison",
+      title:"Maison & travaux",
+      trades:[
+        "Couvreurs",
+        "Plombiers",
+        "Électriciens",
+        "Chauffagistes",
+        "Menuisiers",
+        "Maçons",
+        "Peintres",
+        "Carreleurs",
+        "Paysagistes",
+        "Serruriers",
+        "Entreprises de rénovation"
+      ]
+    },
+
+    {
+      id:"automobile",
+      title:"Automobile & mobilité",
+      trades:[
+        "Garages automobiles",
+        "Carrossiers",
+        "Pneumatiques",
+        "Contrôle technique",
+        "Motos",
+        "Cycles"
+      ]
+    },
+
+    {
+      id:"alimentation",
+      title:"Restaurants & alimentation",
+      trades:[
+        "Restaurants",
+        "Boulangeries",
+        "Boucheries",
+        "Traiteurs",
+        "Cafés",
+        "Épiceries",
+        "Commerces alimentaires"
+      ]
+    },
+
+    {
+      id:"professionnels",
+      title:"Services aux entreprises",
+      trades:[
+        "Experts-comptables",
+        "Avocats",
+        "Assurances",
+        "Informatique",
+        "Communication",
+        "Transport",
+        "Nettoyage professionnel",
+        "Sécurité",
+        "Bureaux d'études",
+        "Conseil"
+      ]
+    },
+
+    {
+      id:"hebergements",
+      title:"Hôtels & séjours",
+      trades:[
+        "Hôtels",
+        "Chambres d'hôtes",
+        "Gîtes",
+        "Locations de courte durée",
+        "Autres hébergements"
+      ]
+    }
+
+  ];
+
+  /* =======================================================
+     9. RÈGLES STRICTES DE VALIDATION MÉTIER
+     ======================================================= */
+
+  const TRADE_RULES = {
+
+    "medecins generalistes":[
+      {key:"amenity",values:["doctors"]},
+      {key:"healthcare",values:["doctor"]}
+    ],
+
+    "infirmiers":[
+      {key:"healthcare",values:["nurse"]}
+    ],
+
+    "kinesitherapeutes":[
+      {key:"healthcare",values:["physiotherapist"]}
+    ],
+
+    "dentistes":[
+      {key:"amenity",values:["dentist"]},
+      {key:"healthcare",values:["dentist"]}
+    ],
+
+    "pharmacies":[
+      {key:"amenity",values:["pharmacy"]}
+    ],
+
+    "pedicures-podologues":[
+      {key:"healthcare",values:["podiatrist"]}
+    ],
+
+    "orthophonistes":[
+      {key:"healthcare",values:["speech_therapist"]}
+    ],
+
+    "sages-femmes":[
+      {key:"healthcare",values:["midwife"]}
+    ],
+
+    "psychologues":[
+      {key:"healthcare",values:["psychotherapist","psychologist"]}
+    ],
+
+    "couvreurs":[
+      {key:"craft",values:["roofer"]}
+    ],
+
+    "plombiers":[
+      {key:"craft",values:["plumber"]}
+    ],
+
+    "electriciens":[
+      {key:"craft",values:["electrician"]}
+    ],
+
+    "chauffagistes":[
+      {key:"craft",values:["hvac","heating_engineer"]}
+    ],
+
+    "menuisiers":[
+      {key:"craft",values:["carpenter","joiner"]}
+    ],
+
+    "macons":[
+      {key:"craft",values:["bricklayer","mason"]}
+    ],
+
+    "peintres":[
+      {key:"craft",values:["painter"]}
+    ],
+
+    "carreleurs":[
+      {key:"craft",values:["tiler"]}
+    ],
+
+    "paysagistes":[
+      {key:"craft",values:["landscaper","gardener"]}
+    ],
+
+    "serruriers":[
+      {key:"craft",values:["locksmith"]}
+    ],
+
+    "garages automobiles":[
+      {key:"shop",values:["car_repair"]},
+      {key:"craft",values:["car_repair"]}
+    ],
+
+    "carrossiers":[
+      {key:"craft",values:["car_repair","body_repair"]}
+    ],
+
+    "pneumatiques":[
+      {key:"shop",values:["tyres"]}
+    ],
+
+    "controle technique":[
+      {key:"amenity",values:["vehicle_inspection"]}
+    ],
+
+    "motos":[
+      {key:"shop",values:["motorcycle","motorcycle_repair"]}
+    ],
+
+    "cycles":[
+      {key:"shop",values:["bicycle","bicycle_repair"]}
+    ],
+
+    "restaurants":[
+      {key:"amenity",values:["restaurant"]}
+    ],
+
+    "boulangeries":[
+      {key:"shop",values:["bakery"]}
+    ],
+
+    "boucheries":[
+      {key:"shop",values:["butcher"]}
+    ],
+
+    "traiteurs":[
+      {key:"shop",values:["caterer"]},
+      {key:"craft",values:["caterer"]}
+    ],
+
+    "cafes":[
+      {key:"amenity",values:["cafe"]}
+    ],
+
+    "epiceries":[
+      {key:"shop",values:["convenience","grocery","supermarket"]}
+    ],
+
+    "hotels":[
+      {key:"tourism",values:["hotel"]}
+    ],
+
+    "chambres d hotes":[
+      {key:"tourism",values:["guest_house"]}
+    ],
+
+    "gites":[
+      {key:"tourism",values:["chalet","apartment","guest_house"]}
+    ],
+
+    "locations de courte duree":[
+      {key:"tourism",values:["apartment"]}
+    ]
+
+  };
+
+  /* =======================================================
+     10. CONFIGURATION PROFESSIONNELLE
+     ======================================================= */
+
+  const PROFESSIONAL_ZONES = [
+
+    {
+      id:"commune",
+      label:"Ma commune",
+      subscriptionRequired:false
+    },
+
+    {
+      id:"proche",
+      label:"Communes proches",
+      subscriptionRequired:false
+    },
+
+    {
+      id:"departement",
+      label:"Département",
+      subscriptionRequired:true
+    },
+
+    {
+      id:"region",
+      label:"Région",
+      subscriptionRequired:true
+    },
+
+    {
+      id:"france",
+      label:"France entière",
+      subscriptionRequired:true
+    },
+
+    {
+      id:"europe",
+      label:"Europe — choisir un pays",
+      subscriptionRequired:true
+    }
+
+  ];
+
+  /* =======================================================
+     11. SÉCURITÉ CENTRALE
+     ======================================================= */
+
+  function canAccessProfessionalDirectory(){
 
     try{
 
-      const registration =
-        window.BoCiteArtRegistration;
-
       if(
-        registration &&
-        typeof registration.canAccess === "function"
+        window.BoCiteArtRegistration &&
+        typeof window.BoCiteArtRegistration
+          .canAccess === "function"
       ){
 
-        return (
-          registration.canAccess("directory") === true
-        );
+        return !!window
+          .BoCiteArtRegistration
+          .canAccess("directory");
       }
 
     }catch(error){
 
       console.warn(
-        "Bo'CitéArt Annuaire : contrôle de droit impossible.",
+        "Bo'CitéArt Annuaire : contrôle d'accès impossible.",
         error
       );
     }
 
-    /*
-      Compatibilité temporaire avec l'ancien système.
-      À terme, seule la sécurité centrale devra décider.
-    */
+    return false;
+  }
 
-    return null;
+  /*
+   * Le contrôle d'abonnement reste volontairement abstrait.
+   *
+   * Aujourd'hui :
+   * - utilise le gestionnaire d'abonnement Bo'CitéArt
+   *   s'il expose une méthode compatible.
+   *
+   * Demain :
+   * - le serveur officiel décide.
+   *
+   * Aucun abonnement n'est accordé artificiellement ici.
+   */
+  function hasProfessionalDirectorySubscription(){
+
+    try{
+
+      if(
+        window.BociteEntrepriseSubscription &&
+        typeof window.BociteEntrepriseSubscription
+          .hasFeature === "function"
+      ){
+
+        return !!window
+          .BociteEntrepriseSubscription
+          .hasFeature(
+            "directory_extended_search"
+          );
+      }
+
+      if(
+        window.BoCiteArtSubscription &&
+        typeof window.BoCiteArtSubscription
+          .hasFeature === "function"
+      ){
+
+        return !!window
+          .BoCiteArtSubscription
+          .hasFeature(
+            "directory_extended_search"
+          );
+      }
+
+      if(
+        typeof module.hasSubscriptionFeature ===
+        "function"
+      ){
+
+        return !!module
+          .hasSubscriptionFeature(
+            "directory_extended_search"
+          );
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt Annuaire : contrôle abonnement impossible.",
+        error
+      );
+    }
+
+    return false;
   }
 
   function requireProfessionalAccess(callback){
 
-    const centralAccess =
-      canAccessDirectory();
-
-    if(centralAccess === true){
+    if(
+      canAccessProfessionalDirectory()
+    ){
 
       callback();
       return;
     }
 
-    if(centralAccess === false){
+    if(
+      typeof module.requirePrivateAccess ===
+      "function"
+    ){
 
-      alert(
-        "Votre compte ne possède pas l'autorisation d'accéder à l'annuaire professionnel."
+      module.requirePrivateAccess(
+        function(){
+
+          if(
+            canAccessProfessionalDirectory()
+          ){
+
+            callback();
+
+          }else{
+
+            alert(
+              "Votre compte ne possède pas l'autorisation d'accéder à l'annuaire professionnel."
+            );
+          }
+        }
       );
 
       return;
     }
 
+    alert(
+      "Accès professionnel privé requis."
+    );
+  }
+
+  function requireExtendedSubscription(callback){
+
     if(
-      typeof module.requirePrivateAccess === "function"
+      hasProfessionalDirectorySubscription()
     ){
 
-      module.requirePrivateAccess(callback);
-      return;
-    }
-
-    if(
-      typeof module.requirePartnerAccess === "function"
-    ){
-
-      module.requirePartnerAccess(callback);
+      callback();
       return;
     }
 
     alert(
-      "L'accès professionnel privé est momentanément indisponible."
+      "Cette recherche étendue est réservée aux professionnels disposant de l'abonnement correspondant."
     );
   }
 
   /* =======================================================
-     STYLE
+     12. FOURNISSEUR OFFICIEL / AGENT IA
+     ======================================================= */
+
+  Annuaire.Agent =
+    Annuaire.Agent || {};
+
+  Annuaire.UpdateAgent =
+    Annuaire.UpdateAgent || {};
+
+  /*
+   * CONTRAT DU FUTUR FOURNISSEUR OFFICIEL :
+   *
+   * window.BociteAnnuaireDataProvider = {
+   *
+   *   search(request, options),
+   *
+   *   enrichEntity(entity, options),
+   *
+   *   refreshTerritory(territory, options),
+   *
+   *   getAuthorizedTerritories(options)
+   *
+   * };
+   *
+   * Les écrans de l'annuaire ne devront jamais
+   * être réécrits lorsque le serveur sera branché.
+   */
+
+  function getOfficialProvider(){
+
+    const provider =
+      window.BociteAnnuaireDataProvider;
+
+    if(
+      provider &&
+      typeof provider === "object"
+    ){
+
+      return provider;
+    }
+
+    return null;
+  }
+
+  Annuaire.Agent.isOfficialProviderReady =
+    function(){
+
+      const provider =
+        getOfficialProvider();
+
+      return !!(
+        provider &&
+        typeof provider.search ===
+        "function"
+      );
+    };
+
+  Annuaire.Agent.enrichEntity =
+    async function(entity){
+
+      const provider =
+        getOfficialProvider();
+
+      if(
+        provider &&
+        typeof provider.enrichEntity ===
+        "function"
+      ){
+
+        return await Promise.resolve(
+          provider.enrichEntity(
+            entity,
+            {
+              professional:
+                canAccessProfessionalDirectory()
+            }
+          )
+        );
+      }
+
+      return entity;
+    };
+
+  /*
+   * UpdateAgent ne lance PAS de balayage national
+   * depuis le navigateur.
+   *
+   * En production, le serveur fournira uniquement
+   * les territoires autorisés par les contrats.
+   */
+
+  Annuaire.UpdateAgent.getAuthorizedTerritories =
+    async function(){
+
+      const provider =
+        getOfficialProvider();
+
+      if(
+        provider &&
+        typeof provider
+          .getAuthorizedTerritories ===
+          "function"
+      ){
+
+        const result =
+          await Promise.resolve(
+            provider
+              .getAuthorizedTerritories()
+          );
+
+        return safeArray(result);
+      }
+
+      return [
+        {
+          type:"commune",
+          name:getCurrentCommune(),
+          demo:true
+        }
+      ];
+    };
+
+  Annuaire.UpdateAgent.refreshTerritory =
+    async function(territory){
+
+      const provider =
+        getOfficialProvider();
+
+      if(
+        !provider ||
+        typeof provider.refreshTerritory !==
+        "function"
+      ){
+
+        return {
+          ready:false,
+          reason:"official_provider_not_connected"
+        };
+      }
+
+      return await Promise.resolve(
+        provider.refreshTerritory(
+          territory,
+          {
+            requestedAt:Date.now()
+          }
+        )
+      );
+    };
+
+  Annuaire.UpdateAgent.run =
+    async function(){
+
+      const territories =
+        await Annuaire.UpdateAgent
+          .getAuthorizedTerritories();
+
+      const results = [];
+
+      for(
+        let i = 0;
+        i < territories.length;
+        i++
+      ){
+
+        const territory =
+          territories[i];
+
+        if(territory.demo){
+          continue;
+        }
+
+        try{
+
+          const result =
+            await Annuaire.UpdateAgent
+              .refreshTerritory(
+                territory
+              );
+
+          results.push({
+            territory:territory,
+            success:true,
+            result:result
+          });
+
+        }catch(error){
+
+          results.push({
+            territory:territory,
+            success:false,
+            error:String(
+              error &&
+              error.message ||
+              error
+            )
+          });
+        }
+      }
+
+      saveJson(
+        STORAGE.updateState,
+        {
+          lastRun:Date.now(),
+          results:results
+        }
+      );
+
+      return results;
+    };
+
+  /* =======================================================
+     13. STYLE UNIQUE
+     PAS DE PATCH CSS EN FIN DE FICHIER
      ======================================================= */
 
   function injectStyles(){
 
     if(
       document.getElementById(
-        "bociteAnnuaireV5Styles"
+        "bociteAnnuaireV6Styles"
       )
     ){
       return;
@@ -424,29 +1185,51 @@
       document.createElement("style");
 
     style.id =
-      "bociteAnnuaireV5Styles";
+      "bociteAnnuaireV6Styles";
 
     style.textContent = `
 
       .bociteAnnuaireTitle{
         color:#2f5d46;
         font-size:16px;
-        line-height:1.35;
-        font-weight:700;
+        line-height:1.25;
+        font-weight:800;
       }
 
       .bociteAnnuaireText{
         color:#111;
         font-size:14px;
-        line-height:1.45;
+        line-height:1.35;
         font-weight:400;
       }
 
       .bociteAnnuaireSmall{
-        color:#666;
+        color:#555;
         font-size:12px;
-        line-height:1.4;
+        line-height:1.3;
         font-weight:400;
+      }
+
+      .bociteAnnuaireLogo{
+        display:inline;
+        color:#2f5d46;
+        font-weight:900;
+        font-size:inherit;
+        line-height:inherit;
+        white-space:nowrap;
+        word-spacing:0;
+        letter-spacing:normal;
+      }
+
+      .bociteAnnuaireLogo > span{
+        display:inline;
+        color:#b00020;
+        margin:0;
+        padding:0;
+        position:static;
+        left:auto;
+        word-spacing:0;
+        letter-spacing:normal;
       }
 
       .bociteAnnuaireGrid{
@@ -463,467 +1246,66 @@
         gap:8px;
       }
 
-      .bociteAnnuaireResult{
-        margin-bottom:9px;
+      .bociteAnnuaireWhiteButton,
+      .bociteAnnuaireCategoryButton,
+      .bociteAnnuaireTradeButton,
+      .bociteAnnuaireActionButton{
+
+        background:#ffffff !important;
+        background-color:#ffffff !important;
+        color:#111111 !important;
       }
 
-      .bociteAnnuaireHistoryRow{
-        margin-top:8px;
+      .bociteAnnuaireBackButton{
+
+        background:#f3e7d3 !important;
+        background-color:#f3e7d3 !important;
+        color:#111111 !important;
       }
 
-      .bociteAnnuaireStars{
-        display:flex;
-        gap:5px;
-        flex-wrap:wrap;
-        margin-top:8px;
+      .bociteAnnuaireInput,
+      .bociteAnnuaireSelect,
+      .bociteAnnuaireTextarea{
+
+        width:100%;
+        box-sizing:border-box;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
       }
 
-      .bociteAnnuaireStarBtn{
-        min-width:42px;
-        min-height:42px;
-        font-size:20px;
+      .bociteAnnuaireInput,
+      .bociteAnnuaireSelect{
+
+        min-height:44px;
       }
 
-      .bociteAnnuaireLoading{
-        text-align:center;
-        padding:18px 8px;
+      .bociteAnnuaireTextarea{
+
+        min-height:88px;
+        resize:vertical;
       }
 
       @media(max-width:420px){
 
         .bociteAnnuaireGrid,
         .bociteAnnuaireActions{
+
           grid-template-columns:
             repeat(2,minmax(0,1fr));
         }
-
       }
 
     `;
 
-    document.head.appendChild(style);
+    document.head
+      .appendChild(style);
   }
 
   injectStyles();
 
-  /* =======================================================
-     LOGO
-     ======================================================= */
-
-function getLogoHtml(){
-
-  return `<strong style="white-space:nowrap;font-weight:900;letter-spacing:-0.7px;color:#2f5d46;">Bo'Cité<span style="color:#b00020;">Art</span></strong>`;
-
-}
-   
    /* =======================================================
-     UNE SEULE FONCTION DE RENDU
-     ======================================================= */
-
-  function renderModal(title, html, callback){
-
-    module.renderModal(
-      title,
-      html
-    );
-
-    window.setTimeout(
-      function(){
-
-        document
-          .querySelectorAll(
-            ".modal-body," +
-            ".modalBody," +
-            ".modal-content," +
-            ".modalContent," +
-            '[role="dialog"]'
-          )
-          .forEach(function(element){
-            element.scrollTop = 0;
-          });
-
-        if(
-          typeof callback === "function"
-        ){
-          callback();
-        }
-
-      },
-      0
-    );
-  }
-
-  /* =======================================================
-     NAVIGATION UNIQUE
-     ======================================================= */
-
-  function cloneView(view){
-
-    if(!view){
-      return null;
-    }
-
-    return {
-      type: view.type,
-      data: view.data || {}
-    };
-  }
-
-  function navigate(type, data, options){
-
-    options = options || {};
-
-    if(
-      State.current &&
-      options.replace !== true
-    ){
-      State.stack.push(
-        cloneView(State.current)
-      );
-    }
-
-    State.current = {
-      type: type,
-      data: data || {}
-    };
-
-    renderCurrentView();
-  }
-
-  function replaceView(type, data){
-
-    State.current = {
-      type: type,
-      data: data || {}
-    };
-
-    renderCurrentView();
-  }
-
-  function goBack(){
-
-    /*
-      Toute recherche réseau encore en cours
-      devient obsolète dès que l'utilisateur revient.
-    */
-
-    State.activeRequest =
-      ++State.requestCounter;
-
-    if(State.stack.length){
-
-      State.current =
-        State.stack.pop();
-
-      renderCurrentView();
-
-      return;
-    }
-
-    /*
-      Sortie de l'annuaire :
-      on remet la main au module Entreprise
-      lorsqu'une fonction de retour existe.
-    */
-
-    if(
-      typeof module.returnToEntrepriseHome === "function"
-    ){
-      module.returnToEntrepriseHome();
-      return;
-    }
-
-    if(
-      typeof module.goBack === "function"
-    ){
-      module.goBack();
-      return;
-    }
-
-    if(
-      typeof module.openScreen === "function"
-    ){
-      module.openScreen("accueil");
-    }
-  }
-
-  function resetNavigation(){
-
-    State.stack = [];
-
-    State.current = {
-      type: "home",
-      data: {}
-    };
-
-    renderCurrentView();
-  }
-
-  function getBackButtonHtml(label){
-
-    return `
-      <button
-        id="annuaireInternalBackBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:10px;
-        ">
-        ← ${escapeHtml(label || "Retour")}
-      </button>
-    `;
-  }
-
-  function bindBackButton(){
-
-    const back =
-      getElement(
-        "annuaireInternalBackBtn"
-      );
-
-    if(back){
-      back.onclick = goBack;
-    }
-  }
-
-  /* =======================================================
-     CATÉGORIES
-     ======================================================= */
-
-  const CATEGORIES = [
-
-    {
-      id: "commerces",
-      title: "Commerces",
-      subtitle:
-        "Boutiques • alimentation • proximité"
-    },
-
-    {
-      id: "restaurants",
-      title: "Restaurants",
-      subtitle:
-        "Restaurants • cafés • traiteurs"
-    },
-
-    {
-      id: "artisans",
-      title: "Artisans",
-      subtitle:
-        "Travaux • réparation • savoir-faire"
-    },
-
-    {
-      id: "sante",
-      title: "Santé",
-      subtitle:
-        "Médecins • soins • professionnels"
-    },
-
-    {
-      id: "entreprises",
-      title: "Entreprises",
-      subtitle:
-        "Industrie • services • compétences"
-    },
-
-    {
-      id: "hebergements",
-      title: "Hôtels & séjours",
-      subtitle:
-        "Hôtels • gîtes • hébergements"
-    },
-
-    {
-      id: "services",
-      title: "Services",
-      subtitle:
-        "Particuliers • professionnels"
-    },
-
-    {
-      id: "metiers",
-      title: "Tous les métiers",
-      subtitle:
-        "Rechercher par activité"
-    }
-
-  ];
-
-  const TRADE_FAMILIES = {
-
-    commerces: [
-      "Boulangeries",
-      "Boucheries",
-      "Épiceries",
-      "Fleuristes",
-      "Coiffeurs",
-      "Opticiens",
-      "Vêtements",
-      "Chaussures",
-      "Commerces alimentaires",
-      "Autres commerces"
-    ],
-
-    restaurants: [
-      "Restaurants",
-      "Cafés",
-      "Brasseries",
-      "Traiteurs",
-      "Restauration rapide"
-    ],
-
-    artisans: [
-      "Couvreurs",
-      "Plombiers",
-      "Électriciens",
-      "Chauffagistes",
-      "Menuisiers",
-      "Maçons",
-      "Peintres",
-      "Carreleurs",
-      "Paysagistes",
-      "Serruriers",
-      "Entreprises de rénovation"
-    ],
-
-    sante: [
-      "Médecins généralistes",
-      "Infirmiers",
-      "Kinésithérapeutes",
-      "Dentistes",
-      "Pharmacies",
-      "Pédicures-podologues",
-      "Orthophonistes",
-      "Sages-femmes",
-      "Psychologues",
-      "Autres professionnels de santé"
-    ],
-
-    entreprises: [
-      "Industrie",
-      "Bâtiment",
-      "Transport",
-      "Logistique",
-      "Informatique",
-      "Communication",
-      "Bureaux d'études",
-      "Conseil",
-      "Nettoyage professionnel",
-      "Sécurité"
-    ],
-
-    hebergements: [
-      "Hôtels",
-      "Chambres d'hôtes",
-      "Gîtes",
-      "Locations de courte durée",
-      "Autres hébergements"
-    ],
-
-    services: [
-      "Garages automobiles",
-      "Carrossiers",
-      "Pneumatiques",
-      "Contrôle technique",
-      "Experts-comptables",
-      "Avocats",
-      "Assurances",
-      "Informatique",
-      "Services à la personne",
-      "Autres services"
-    ]
-
-  };
-
-  /* =======================================================
-     SYNONYMES
-     ======================================================= */
-
-  const SEARCH_SYNONYMS = {
-
-    "fuite": [
-      "plombier",
-      "plomberie"
-    ],
-
-    "toiture": [
-      "couvreur",
-      "couverture",
-      "zinguerie"
-    ],
-
-    "chaudiere": [
-      "chauffagiste",
-      "chauffage"
-    ],
-
-    "chauffage": [
-      "chauffagiste"
-    ],
-
-    "mal au pied": [
-      "podologue",
-      "pedicure podologue"
-    ],
-
-    "kine": [
-      "kinesitherapeute"
-    ],
-
-    "repas": [
-      "restaurant",
-      "traiteur"
-    ],
-
-    "voiture": [
-      "garage",
-      "automobile"
-    ],
-
-    "pneu": [
-      "pneumatique",
-      "garage"
-    ]
-
-  };
-
-  function expandSearchTerms(query){
-
-    const normalized =
-      normalizeText(query);
-
-    let terms = [normalized];
-
-    Object.keys(
-      SEARCH_SYNONYMS
-    )
-    .forEach(function(key){
-
-      if(
-        normalized.includes(
-          normalizeText(key)
-        )
-      ){
-
-        terms =
-          terms.concat(
-            SEARCH_SYNONYMS[key]
-              .map(normalizeText)
-          );
-      }
-    });
-
-    return Array.from(
-      new Set(
-        terms.filter(Boolean)
-      )
-    );
-  }
-
-  /* =======================================================
-     ENTITÉS VALIDÉES
+     14. ENTITÉS / FICHES
      ======================================================= */
 
   function loadEntities(){
@@ -938,7 +1320,7 @@ function getLogoHtml(){
 
   function saveEntities(entities){
 
-    return saveJson(
+    saveJson(
       STORAGE.entities,
       safeArray(entities)
     );
@@ -969,10 +1351,13 @@ function getLogoHtml(){
       [
         entity.source || "",
         entity.externalId || "",
+        entity.siret || "",
+        entity.siren || "",
         entity.name || "",
         entity.address || "",
         entity.postalCode || "",
-        entity.commune || ""
+        entity.commune || "",
+        entity.countryCode || ""
       ]
       .map(normalizeText)
       .join("|");
@@ -1018,7 +1403,19 @@ function getLogoHtml(){
         "",
 
       source:
-        raw.source || "",
+        String(
+          raw.source || ""
+        ).trim(),
+
+      sourceType:
+        String(
+          raw.sourceType || ""
+        ).trim(),
+
+      sourceUrl:
+        String(
+          raw.sourceUrl || ""
+        ).trim(),
 
       name:
         String(
@@ -1069,8 +1466,34 @@ function getLogoHtml(){
         String(
           raw.commune ||
           raw.city ||
+          raw.town ||
+          raw.village ||
           ""
         ).trim(),
+
+      department:
+        String(
+          raw.department || ""
+        ).trim(),
+
+      region:
+        String(
+          raw.region || ""
+        ).trim(),
+
+      country:
+        String(
+          raw.country || ""
+        ).trim(),
+
+      countryCode:
+        String(
+          raw.countryCode ||
+          raw.country_code ||
+          ""
+        )
+        .trim()
+        .toUpperCase(),
 
       phone:
         String(
@@ -1111,17 +1534,35 @@ function getLogoHtml(){
             )
           : null,
 
-      hours:
-        raw.hours || null,
+      openingHours:
+        String(
+          raw.openingHours ||
+          raw.opening_hours ||
+          ""
+        ).trim(),
+
+      openNow:
+        typeof raw.openNow ===
+        "boolean"
+          ? raw.openNow
+          : null,
 
       services:
-        safeArray(raw.services),
+        safeArray(
+          raw.services
+        ),
 
       keywords:
-        safeArray(raw.keywords),
+        safeArray(
+          raw.keywords
+        ),
 
-      photos:
-        safeArray(raw.photos),
+      tags:
+        raw.tags &&
+        typeof raw.tags ===
+        "object"
+          ? raw.tags
+          : {},
 
       description:
         String(
@@ -1148,10 +1589,29 @@ function getLogoHtml(){
         ).trim(),
 
       professionalData:
-        raw.professionalData || null,
+        raw.professionalData &&
+        typeof raw.professionalData ===
+        "object"
+          ? raw.professionalData
+          : null,
+
+      verificationStatus:
+        String(
+          raw.verificationStatus ||
+          "confirmed"
+        ).trim(),
 
       verifiedAt:
-        raw.verifiedAt || 0,
+        Number(
+          raw.verifiedAt || 0
+        ),
+
+      lastCheckedAt:
+        Number(
+          raw.lastCheckedAt ||
+          raw.verifiedAt ||
+          0
+        ),
 
       cachedAt:
         Date.now()
@@ -1159,12 +1619,16 @@ function getLogoHtml(){
     };
 
     entity.id =
-      buildStableEntityId(entity);
+      buildStableEntityId(
+        entity
+      );
 
     return entity;
   }
 
-  function mergeValidatedEntities(newEntities){
+  function mergeValidatedEntities(
+    newEntities
+  ){
 
     const existing =
       loadEntities();
@@ -1172,18 +1636,23 @@ function getLogoHtml(){
     const map =
       new Map();
 
-    existing.forEach(function(entity){
+    existing.forEach(
+      function(entity){
 
-      map.set(
-        String(entity.id),
-        entity
-      );
-    });
+        map.set(
+          String(entity.id),
+          entity
+        );
+      }
+    );
 
     safeArray(newEntities)
       .forEach(function(entity){
 
-        if(!entity || !entity.id){
+        if(
+          !entity ||
+          !entity.id
+        ){
           return;
         }
 
@@ -1214,8 +1683,7 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     HISTORIQUE LONGUE DURÉE
-     AUCUNE SUPPRESSION AUTOMATIQUE
+     15. HISTORIQUES / FAVORIS / ACTIONS
      ======================================================= */
 
   function loadSearchHistory(){
@@ -1238,14 +1706,15 @@ function getLogoHtml(){
 
   function addSearchHistory(
     query,
-    commune,
     context
   ){
 
-    const cleanQuery =
-      String(query || "").trim();
+    const clean =
+      String(
+        query || ""
+      ).trim();
 
-    if(!cleanQuery){
+    if(!clean){
       return null;
     }
 
@@ -1255,52 +1724,57 @@ function getLogoHtml(){
     const item = {
 
       id:
-        uniqueId("search"),
+        uniqueId(
+          "search"
+        ),
 
       type:
         "search",
 
       query:
-        cleanQuery,
+        clean,
 
       commune:
-        commune ||
+        context.commune ||
         getCurrentCommune(),
 
       category:
-        context &&
-        context.category
-          ? context.category
-          : "",
+        context.category || "",
 
       trade:
-        context &&
-        context.trade
-          ? context.trade
-          : "",
+        context.trade || "",
+
+      zone:
+        context.zone || "commune",
+
+      countryCode:
+        context.countryCode || "",
+
+      country:
+        context.country || "",
+
+      professional:
+        context.professional === true,
 
       createdAt:
         Date.now()
 
     };
 
-    history.unshift(item);
+    history.unshift(
+      item
+    );
 
-    /*
-      IMPORTANT :
-      aucune limite de 150 lignes,
-      aucune suppression automatique.
-      L'utilisateur décide.
-    */
-
-    saveSearchHistory(history);
+    saveSearchHistory(
+      history
+    );
 
     return item;
   }
 
   function deleteSearchHistoryItem(id){
 
-    const history =
+    saveSearchHistory(
       loadSearchHistory()
         .filter(function(item){
 
@@ -1308,19 +1782,16 @@ function getLogoHtml(){
             String(item.id) !==
             String(id)
           );
-        });
-
-    saveSearchHistory(history);
+        })
+    );
   }
 
   function clearSearchHistory(){
 
-    saveSearchHistory([]);
+    saveSearchHistory(
+      []
+    );
   }
-
-  /* =======================================================
-     CONSULTÉS RÉCEMMENT
-     ======================================================= */
 
   function loadViewedHistory(){
 
@@ -1334,26 +1805,26 @@ function getLogoHtml(){
 
   function addViewedEntity(entity){
 
-    if(!entity){
-      return;
-    }
-
     let history =
       loadViewedHistory();
 
     history =
-      history.filter(function(item){
+      history.filter(
+        function(item){
 
-        return (
-          String(item.entityId) !==
-          String(entity.id)
-        );
-      });
+          return (
+            String(item.entityId) !==
+            String(entity.id)
+          );
+        }
+      );
 
     history.unshift({
 
       id:
-        uniqueId("view"),
+        uniqueId(
+          "view"
+        ),
 
       entityId:
         entity.id,
@@ -1369,6 +1840,9 @@ function getLogoHtml(){
       commune:
         entity.commune,
 
+      country:
+        entity.country,
+
       viewedAt:
         Date.now()
 
@@ -1379,10 +1853,6 @@ function getLogoHtml(){
       history
     );
   }
-
-  /* =======================================================
-     FAVORIS
-     ======================================================= */
 
   function loadFavorites(){
 
@@ -1453,6 +1923,9 @@ function getLogoHtml(){
         commune:
           entity.commune,
 
+        country:
+          entity.country,
+
         savedAt:
           Date.now()
 
@@ -1467,1867 +1940,100 @@ function getLogoHtml(){
     return !exists;
   }
 
-  /* =======================================================
-     FIN DU BLOC 1
-     ======================================================= */
-
-   /* =======================================================
-     MOTEUR DE RECHERCHE / AGENT
-     ======================================================= */
-
-  const Agent =
-    Annuaire.Agent =
-    Annuaire.Agent || {};
-
-  /*
-    L'interface ne connaît pas la provenance
-    des données.
-
-    Aujourd'hui :
-    • fournisseur externe éventuel ;
-    • recherche réseau publique de démonstration.
-
-    Demain :
-    • serveur Bo'CitéArt ;
-    • API officielles ;
-    • agent IA ;
-    • enrichissement centralisé.
-
-    Les écrans continueront à appeler :
-    Annuaire.Agent.search(...)
-  */
-
-  /* =======================================================
-     CORRESPONDANCE MÉTIERS → CRITÈRES RÉSEAU
-     ======================================================= */
-
-  const TRADE_RULES = {
-
-    "boulangeries": {
-      words:[
-        "boulangerie",
-        "baker",
-        "bakery"
-      ],
-      osm:[
-        ["shop","bakery"]
-      ]
-    },
-
-    "boucheries": {
-      words:[
-        "boucherie",
-        "boucher",
-        "butcher"
-      ],
-      osm:[
-        ["shop","butcher"]
-      ]
-    },
-
-    "epiceries": {
-      words:[
-        "epicerie",
-        "superette",
-        "convenience",
-        "grocery"
-      ],
-      osm:[
-        ["shop","convenience"],
-        ["shop","supermarket"]
-      ]
-    },
-
-    "fleuristes": {
-      words:[
-        "fleuriste",
-        "fleurs",
-        "florist"
-      ],
-      osm:[
-        ["shop","florist"]
-      ]
-    },
-
-    "coiffeurs": {
-      words:[
-        "coiffeur",
-        "coiffure",
-        "hairdresser"
-      ],
-      osm:[
-        ["shop","hairdresser"]
-      ]
-    },
-
-    "opticiens": {
-      words:[
-        "opticien",
-        "optique",
-        "optician"
-      ],
-      osm:[
-        ["shop","optician"]
-      ]
-    },
-
-    "restaurants": {
-      words:[
-        "restaurant"
-      ],
-      osm:[
-        ["amenity","restaurant"]
-      ]
-    },
-
-    "cafes": {
-      words:[
-        "cafe",
-        "coffee"
-      ],
-      osm:[
-        ["amenity","cafe"]
-      ]
-    },
-
-    "brasseries": {
-      words:[
-        "brasserie",
-        "restaurant"
-      ],
-      osm:[
-        ["amenity","restaurant"]
-      ]
-    },
-
-    "traiteurs": {
-      words:[
-        "traiteur",
-        "catering"
-      ],
-      osm:[
-        ["shop","deli"],
-        ["craft","caterer"]
-      ]
-    },
-
-    "restauration rapide": {
-      words:[
-        "fast food",
-        "restauration rapide"
-      ],
-      osm:[
-        ["amenity","fast_food"]
-      ]
-    },
-
-    "couvreurs": {
-      words:[
-        "couvreur",
-        "couverture",
-        "toiture",
-        "roof"
-      ],
-      osm:[
-        ["craft","roofer"]
-      ]
-    },
-
-    "plombiers": {
-      words:[
-        "plombier",
-        "plomberie",
-        "plumber"
-      ],
-      osm:[
-        ["craft","plumber"]
-      ]
-    },
-
-    "electriciens": {
-      words:[
-        "electricien",
-        "electricite",
-        "electrician"
-      ],
-      osm:[
-        ["craft","electrician"]
-      ]
-    },
-
-    "chauffagistes": {
-      words:[
-        "chauffagiste",
-        "chauffage",
-        "heating"
-      ],
-      osm:[
-        ["craft","heating_engineer"]
-      ]
-    },
-
-    "menuisiers": {
-      words:[
-        "menuisier",
-        "menuiserie",
-        "carpenter"
-      ],
-      osm:[
-        ["craft","carpenter"]
-      ]
-    },
-
-    "macons": {
-      words:[
-        "macon",
-        "maconnerie",
-        "builder"
-      ],
-      osm:[
-        ["craft","builder"]
-      ]
-    },
-
-    "peintres": {
-      words:[
-        "peintre",
-        "peinture",
-        "painter"
-      ],
-      osm:[
-        ["craft","painter"]
-      ]
-    },
-
-    "carreleurs": {
-      words:[
-        "carreleur",
-        "carrelage",
-        "tiler"
-      ],
-      osm:[
-        ["craft","tiler"]
-      ]
-    },
-
-    "paysagistes": {
-      words:[
-        "paysagiste",
-        "jardin",
-        "landscape"
-      ],
-      osm:[
-        ["craft","gardener"]
-      ]
-    },
-
-    "serruriers": {
-      words:[
-        "serrurier",
-        "serrurerie",
-        "locksmith"
-      ],
-      osm:[
-        ["craft","locksmith"]
-      ]
-    },
-
-    "medecins generalistes": {
-      words:[
-        "medecin",
-        "generaliste",
-        "doctor"
-      ],
-      osm:[
-        ["amenity","doctors"],
-        ["healthcare","doctor"]
-      ]
-    },
-
-    "infirmiers": {
-      words:[
-        "infirmier",
-        "infirmiere",
-        "nurse"
-      ],
-      osm:[
-        ["healthcare","nurse"]
-      ]
-    },
-
-    "kinesitherapeutes": {
-      words:[
-        "kinesitherapeute",
-        "kine",
-        "physiotherapist"
-      ],
-      osm:[
-        ["healthcare","physiotherapist"]
-      ]
-    },
-
-    "dentistes": {
-      words:[
-        "dentiste",
-        "dentaire",
-        "dentist"
-      ],
-      osm:[
-        ["amenity","dentist"],
-        ["healthcare","dentist"]
-      ]
-    },
-
-    "pharmacies": {
-      words:[
-        "pharmacie",
-        "pharmacy"
-      ],
-      osm:[
-        ["amenity","pharmacy"]
-      ]
-    },
-
-    "pedicures-podologues": {
-      words:[
-        "podologue",
-        "pedicure",
-        "podiatrist"
-      ],
-      osm:[
-        ["healthcare","podiatrist"]
-      ]
-    },
-
-    "orthophonistes": {
-      words:[
-        "orthophoniste",
-        "speech therapist"
-      ],
-      osm:[
-        ["healthcare","speech_therapist"]
-      ]
-    },
-
-    "sages-femmes": {
-      words:[
-        "sage femme",
-        "midwife"
-      ],
-      osm:[
-        ["healthcare","midwife"]
-      ]
-    },
-
-    "psychologues": {
-      words:[
-        "psychologue",
-        "psychologist"
-      ],
-      osm:[
-        ["healthcare","psychotherapist"],
-        ["healthcare","psychologist"]
-      ]
-    },
-
-    "hotels": {
-      words:[
-        "hotel"
-      ],
-      osm:[
-        ["tourism","hotel"]
-      ]
-    },
-
-    "chambres d'hotes": {
-      words:[
-        "chambre d'hote",
-        "guest house",
-        "bed and breakfast"
-      ],
-      osm:[
-        ["tourism","guest_house"]
-      ]
-    },
-
-    "gites": {
-      words:[
-        "gite",
-        "holiday cottage"
-      ],
-      osm:[
-        ["tourism","chalet"],
-        ["tourism","apartment"]
-      ]
-    },
-
-    "garages automobiles": {
-      words:[
-        "garage",
-        "automobile",
-        "car repair"
-      ],
-      osm:[
-        ["shop","car_repair"]
-      ]
-    },
-
-    "carrossiers": {
-      words:[
-        "carrosserie",
-        "carrossier"
-      ],
-      osm:[
-        ["craft","body_repair"]
-      ]
-    },
-
-    "pneumatiques": {
-      words:[
-        "pneu",
-        "pneumatique",
-        "tyre"
-      ],
-      osm:[
-        ["shop","tyres"]
-      ]
-    },
-
-    "controle technique": {
-      words:[
-        "controle technique",
-        "vehicle inspection"
-      ],
-      osm:[
-        ["amenity","vehicle_inspection"]
-      ]
-    },
-
-    "avocats": {
-      words:[
-        "avocat",
-        "lawyer"
-      ],
-      osm:[
-        ["office","lawyer"]
-      ]
-    },
-
-    "experts-comptables": {
-      words:[
-        "expert comptable",
-        "comptable",
-        "accountant"
-      ],
-      osm:[
-        ["office","accountant"]
-      ]
-    },
-
-    "assurances": {
-      words:[
-        "assurance",
-        "insurance"
-      ],
-      osm:[
-        ["office","insurance"]
-      ]
-    }
-
-  };
-
-  /* =======================================================
-     RÈGLE D'UNE RECHERCHE
-     ======================================================= */
-
-  function getTradeRule(query){
-
-    const normalized =
-      normalizeText(query);
-
-    if(
-      TRADE_RULES[normalized]
-    ){
-      return TRADE_RULES[normalized];
-    }
-
-    const terms =
-      expandSearchTerms(query);
-
-    let selected = null;
-
-    Object.keys(
-      TRADE_RULES
-    )
-    .some(function(key){
-
-      const rule =
-        TRADE_RULES[key];
-
-      const matches =
-        rule.words.some(
-          function(word){
-
-            const normalizedWord =
-              normalizeText(word);
-
-            return terms.some(
-              function(term){
-
-                return (
-                  term.includes(normalizedWord) ||
-                  normalizedWord.includes(term)
-                );
-              }
-            );
-          }
-        );
-
-      if(matches){
-        selected = rule;
-        return true;
-      }
-
-      return false;
-    });
-
-    return selected;
-  }
-
-  /* =======================================================
-     TEXTE D'UNE ENTITÉ POUR CONTRÔLE
-     ======================================================= */
-
-  function entitySearchText(entity){
-
-    return normalizeText(
-      [
-        entity.name,
-        entity.activity,
-        entity.trade,
-        entity.category,
-        entity.subcategory,
-        entity.kind,
-        safeArray(entity.services).join(" "),
-        safeArray(entity.keywords).join(" ")
-      ].join(" ")
-    );
-  }
-
-  /* =======================================================
-     FILTRAGE STRICT
-     ======================================================= */
-
-  function entityMatchesTrade(
-    entity,
-    query,
-    rule
-  ){
-
-    if(!entity){
-      return false;
-    }
-
-    const haystack =
-      entitySearchText(entity);
-
-    if(!haystack){
-      return false;
-    }
-
-    const terms =
-      expandSearchTerms(query);
-
-    /*
-      Si une règle métier précise existe,
-      au moins un des mots autorisés
-      doit réellement être présent
-      dans les données de l'établissement.
-    */
-
-    if(rule){
-
-      return rule.words.some(
-        function(word){
-
-          const normalizedWord =
-            normalizeText(word);
-
-          return (
-            normalizedWord &&
-            haystack.includes(
-              normalizedWord
-            )
-          );
-        }
-      );
-    }
-
-    /*
-      Recherche libre :
-      nom, produit ou service.
-    */
-
-    return terms.some(
-      function(term){
-
-        return (
-          term &&
-          haystack.includes(term)
-        );
-      }
-    );
-  }
-
-  /* =======================================================
-     VALIDITÉ MINIMALE D'UNE FICHE
-     ======================================================= */
-
-  function isUsableEntity(entity){
-
-    if(!entity){
-      return false;
-    }
-
-    if(
-      !entity.name ||
-      !String(entity.name).trim()
-    ){
-      return false;
-    }
-
-    /*
-      Une fiche doit au minimum permettre
-      d'identifier l'établissement.
-
-      On ne crée jamais de téléphone,
-      d'e-mail ou d'adresse fictive.
-    */
-
-    if(
-      !entity.activity &&
-      !entity.trade &&
-      !entity.category
-    ){
-      return false;
-    }
-
-    return true;
-  }
-
-  /* =======================================================
-     DÉDOUBLONNAGE
-     ======================================================= */
-
-  function deduplicateEntities(entities){
-
-    const map =
-      new Map();
-
-    safeArray(entities)
-      .forEach(function(entity){
-
-        if(!entity){
-          return;
-        }
-
-        const key =
-          entity.id ||
-          normalizeText(
-            [
-              entity.name,
-              entity.address,
-              entity.postalCode,
-              entity.commune
-            ].join("|")
-          );
-
-        if(!key){
-          return;
-        }
-
-        const existing =
-          map.get(key);
-
-        if(!existing){
-
-          map.set(
-            key,
-            entity
-          );
-
-          return;
-        }
-
-        /*
-          Si deux sources donnent la même fiche,
-          on conserve les données non vides.
-        */
-
-        map.set(
-          key,
-          {
-            ...existing,
-            ...Object.fromEntries(
-              Object.entries(entity)
-                .filter(function(entry){
-
-                  const value =
-                    entry[1];
-
-                  if(
-                    value === null ||
-                    value === undefined ||
-                    value === ""
-                  ){
-                    return false;
-                  }
-
-                  if(
-                    Array.isArray(value) &&
-                    !value.length
-                  ){
-                    return false;
-                  }
-
-                  return true;
-                })
-            )
-          }
-        );
-      });
-
-    return Array.from(
-      map.values()
-    );
-  }
-
-  /* =======================================================
-     RECHERCHE DANS LE CACHE VALIDÉ
-     ======================================================= */
-
-  function searchCachedEntities(
-    query,
-    options
-  ){
-
-    options = options || {};
-
-    const commune =
-      normalizeText(
-        options.commune ||
-        getCurrentCommune()
-      );
-
-    const rule =
-      getTradeRule(query);
-
-    return loadEntities()
-      .filter(function(entity){
-
-        if(
-          options.localOnly !== false &&
-          commune &&
-          commune !== "votre ville"
-        ){
-
-          if(
-            normalizeText(
-              entity.commune
-            ) !== commune
-          ){
-            return false;
-          }
-        }
-
-        if(
-          options.category &&
-          normalizeText(
-            entity.category
-          ) !==
-          normalizeText(
-            options.category
-          )
-        ){
-
-          /*
-            Une catégorie peut être absente
-            des données réseau.
-            Dans ce cas le métier reste prioritaire.
-          */
-
-          if(!query){
-            return false;
-          }
-        }
-
-        return entityMatchesTrade(
-          entity,
-          query,
-          rule
-        );
-      })
-      .sort(function(a,b){
-
-        return String(
-          a.name || ""
-        ).localeCompare(
-          String(
-            b.name || ""
-          ),
-          "fr"
-        );
-      });
-  }
-
-  /* =======================================================
-     FOURNISSEUR EXTERNE PRIORITAIRE
-     ======================================================= */
-
-  function searchWithExternalProvider(
-    query,
-    options
-  ){
-
-    const provider =
-      window.BociteAnnuaireDataProvider;
-
-    if(
-      !provider ||
-      typeof provider.search !== "function"
-    ){
-
-      return Promise.resolve(null);
-    }
-
-    return Promise
-      .resolve(
-        provider.search({
-          query: query,
-          commune:
-            options.commune ||
-            getCurrentCommune(),
-          category:
-            options.category || "",
-          trade:
-            options.trade || "",
-          localOnly:
-            options.localOnly !== false
-        })
+  function loadCitizenActions(){
+
+    return safeArray(
+      loadJson(
+        STORAGE.citizenActions,
+        []
       )
-      .then(function(result){
-
-        if(!result){
-          return null;
-        }
-
-        if(Array.isArray(result)){
-          return result;
-        }
-
-        if(
-          Array.isArray(result.rows)
-        ){
-          return result.rows;
-        }
-
-        return null;
-      })
-      .catch(function(error){
-
-        console.warn(
-          "Bo'CitéArt Annuaire : fournisseur externe indisponible.",
-          error
-        );
-
-        return null;
-      });
-  }
-
-  /* =======================================================
-     RECHERCHE OPENSTREETMAP / OVERPASS
-     POUR LA DÉMO
-     ======================================================= */
-
-  const OVERPASS_SERVERS = [
-    "https://overpass-api.de/api/interpreter",
-    "https://overpass.kumi.systems/api/interpreter"
-  ];
-
-  function buildOverpassSelectors(rule){
-
-    if(
-      !rule ||
-      !safeArray(rule.osm).length
-    ){
-      return "";
-    }
-
-    return rule.osm
-      .map(function(pair){
-
-        const key =
-          String(pair[0] || "");
-
-        const value =
-          String(pair[1] || "");
-
-        if(!key || !value){
-          return "";
-        }
-
-        return `
-          nwr["${key}"="${value}"](area.searchArea);
-        `;
-      })
-      .filter(Boolean)
-      .join("\n");
-  }
-
-  function buildOverpassQuery(
-    query,
-    commune
-  ){
-
-    const rule =
-      getTradeRule(query);
-
-    const selectors =
-      buildOverpassSelectors(rule);
-
-    if(!selectors){
-      return "";
-    }
-
-    const safeCommune =
-      String(commune || "")
-        .replace(/"/g, '\\"');
-
-    return `
-      [out:json][timeout:20];
-
-      area
-        ["boundary"="administrative"]
-        ["name"="${safeCommune}"]
-        ->.searchArea;
-
-      (
-        ${selectors}
-      );
-
-      out center tags;
-    `;
-  }
-
-  function getOsmAddress(tags){
-
-    tags = tags || {};
-
-    const street =
-      [
-        tags["addr:housenumber"],
-        tags["addr:street"]
-      ]
-      .filter(Boolean)
-      .join(" ");
-
-    return street.trim();
-  }
-
-  function getOsmPhone(tags){
-
-    tags = tags || {};
-
-    return (
-      tags.phone ||
-      tags["contact:phone"] ||
-      ""
     );
   }
 
-  function getOsmEmail(tags){
+  function saveCitizenActions(actions){
 
-    tags = tags || {};
-
-    return (
-      tags.email ||
-      tags["contact:email"] ||
-      ""
+    saveJson(
+      STORAGE.citizenActions,
+      safeArray(actions)
     );
   }
 
-  function getOsmWebsite(tags){
-
-    tags = tags || {};
-
-    return (
-      tags.website ||
-      tags["contact:website"] ||
-      ""
-    );
-  }
-
-  function deriveOsmActivity(
-    tags,
-    query
+  function addCitizenAction(
+    type,
+    entity,
+    details
   ){
 
-    tags = tags || {};
+    details =
+      details || {};
 
-    if(tags.craft){
-      return tags.craft;
-    }
+    const actions =
+      loadCitizenActions();
 
-    if(tags.shop){
-      return tags.shop;
-    }
+    const item = {
 
-    if(tags.healthcare){
-      return tags.healthcare;
-    }
-
-    if(tags.amenity){
-      return tags.amenity;
-    }
-
-    if(tags.tourism){
-      return tags.tourism;
-    }
-
-    if(tags.office){
-      return tags.office;
-    }
-
-    return query || "";
-  }
-
-  function osmElementToEntity(
-    element,
-    query,
-    commune,
-    options
-  ){
-
-    const tags =
-      element.tags || {};
-
-    const lat =
-      element.lat !== undefined
-        ? Number(element.lat)
-        : (
-            element.center &&
-            element.center.lat !== undefined
-              ? Number(element.center.lat)
-              : null
-          );
-
-    const lng =
-      element.lon !== undefined
-        ? Number(element.lon)
-        : (
-            element.center &&
-            element.center.lon !== undefined
-              ? Number(element.center.lon)
-              : null
-          );
-
-    const raw = {
-
-      externalId:
-        "osm_" +
-        String(element.type || "") +
-        "_" +
-        String(element.id || ""),
-
-      source:
-        "OpenStreetMap",
-
-      name:
-        tags.name ||
-        tags.brand ||
-        tags.operator ||
-        "",
-
-      activity:
-        deriveOsmActivity(
-          tags,
-          query
+      id:
+        uniqueId(
+          "action"
         ),
 
-      trade:
-        query || "",
+      type:
+        type,
 
-      category:
-        options.category || "",
+      entityId:
+        entity &&
+        entity.id
+          ? entity.id
+          : "",
 
-      address:
-        getOsmAddress(tags),
-
-      postalCode:
-        tags["addr:postcode"] || "",
+      companyName:
+        entity &&
+        entity.name
+          ? entity.name
+          : "",
 
       commune:
-        tags["addr:city"] ||
-        commune ||
-        "",
+        entity &&
+        entity.commune
+          ? entity.commune
+          : getCurrentCommune(),
 
-      phone:
-        getOsmPhone(tags),
+      country:
+        entity &&
+        entity.country
+          ? entity.country
+          : "",
 
-      email:
-        getOsmEmail(tags),
+      trade:
+        details.trade || "",
 
-      website:
-        getOsmWebsite(tags),
+      employmentType:
+        details.employmentType || "",
 
-      lat: lat,
-      lng: lng,
+      status:
+        details.status || "created",
 
-      keywords: [
-        tags.craft,
-        tags.shop,
-        tags.healthcare,
-        tags.amenity,
-        tags.tourism,
-        tags.office
-      ].filter(Boolean),
+      createdAt:
+        Date.now(),
 
-      verifiedAt:
+      updatedAt:
         Date.now()
 
     };
 
-    return normalizeEntity(raw);
-  }
-
-  async function fetchOverpass(
-    query,
-    commune,
-    options
-  ){
-
-    const overpassQuery =
-      buildOverpassQuery(
-        query,
-        commune
-      );
-
-    if(!overpassQuery){
-      return [];
-    }
-
-    let lastError = null;
-
-    for(
-      let i = 0;
-      i < OVERPASS_SERVERS.length;
-      i++
-    ){
-
-      try{
-
-        const server =
-          OVERPASS_SERVERS[i];
-
-        const response =
-          await fetch(
-            server,
-            {
-              method: "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/x-www-form-urlencoded;charset=UTF-8"
-              },
-
-              body:
-                "data=" +
-                encodeURIComponent(
-                  overpassQuery
-                )
-            }
-          );
-
-        if(!response.ok){
-
-          throw new Error(
-            "HTTP " +
-            response.status
-          );
-        }
-
-        const data =
-          await response.json();
-
-        return safeArray(
-          data.elements
-        )
-        .map(function(element){
-
-          return osmElementToEntity(
-            element,
-            query,
-            commune,
-            options
-          );
-        });
-
-      }catch(error){
-
-        lastError = error;
-
-        console.warn(
-          "Bo'CitéArt Annuaire : serveur réseau indisponible.",
-          OVERPASS_SERVERS[i],
-          error
-        );
-      }
-    }
-
-    if(lastError){
-      throw lastError;
-    }
-
-    return [];
-  }
-
-  /* =======================================================
-     RECHERCHE NOM LIBRE
-     NOMINATIM EN REPLI
-     ======================================================= */
-
-  async function searchNominatim(
-    query,
-    commune,
-    options
-  ){
-
-    /*
-      Cette recherche sert surtout
-      lorsqu'aucune règle métier structurée
-      n'existe : nom précis,
-      produit ou service libre.
-
-      Les résultats restent filtrés
-      avant d'être acceptés.
-    */
-
-    const searchText =
-      [
-        query,
-        commune
-      ]
-      .filter(Boolean)
-      .join(", ");
-
-    const url =
-      "https://nominatim.openstreetmap.org/search" +
-      "?format=jsonv2" +
-      "&addressdetails=1" +
-      "&limit=30" +
-      "&q=" +
-      encodeURIComponent(searchText);
-
-    const response =
-      await fetch(
-        url,
-        {
-          headers: {
-            "Accept":
-              "application/json"
-          }
-        }
-      );
-
-    if(!response.ok){
-
-      throw new Error(
-        "HTTP " +
-        response.status
-      );
-    }
-
-    const rows =
-      await response.json();
-
-    return safeArray(rows)
-      .map(function(row){
-
-        const address =
-          row.address || {};
-
-        return normalizeEntity({
-
-          externalId:
-            "nominatim_" +
-            String(
-              row.osm_type || ""
-            ) +
-            "_" +
-            String(
-              row.osm_id || ""
-            ),
-
-          source:
-            "OpenStreetMap",
-
-          name:
-            row.name ||
-            (
-              row.display_name
-                ? row.display_name
-                    .split(",")[0]
-                : ""
-            ),
-
-          activity:
-            row.type ||
-            row.category ||
-            query,
-
-          trade:
-            query,
-
-          category:
-            options.category || "",
-
-          address:
-            [
-              address.house_number,
-              address.road
-            ]
-            .filter(Boolean)
-            .join(" "),
-
-          postalCode:
-            address.postcode || "",
-
-          commune:
-            address.city ||
-            address.town ||
-            address.village ||
-            address.municipality ||
-            commune ||
-            "",
-
-          lat:
-            Number(row.lat),
-
-          lng:
-            Number(row.lon),
-
-          keywords: [
-            row.type,
-            row.category
-          ].filter(Boolean),
-
-          verifiedAt:
-            Date.now()
-
-        });
-      });
-  }
-
-  /* =======================================================
-     RECHERCHE RÉSEAU
-     ======================================================= */
-
-  async function searchNetwork(
-    query,
-    options
-  ){
-
-    options = options || {};
-
-    const commune =
-      options.commune ||
-      getCurrentCommune();
-
-    /*
-      1. Fournisseur Bo'CitéArt s'il existe.
-    */
-
-    const external =
-      await searchWithExternalProvider(
-        query,
-        options
-      );
-
-    if(
-      Array.isArray(external)
-    ){
-
-      return external
-        .map(normalizeEntity);
-    }
-
-    /*
-      2. Démo publique.
-    */
-
-    const rule =
-      getTradeRule(query);
-
-    if(rule){
-
-      try{
-
-        return await fetchOverpass(
-          query,
-          commune,
-          options
-        );
-
-      }catch(error){
-
-        console.warn(
-          "Bo'CitéArt Annuaire : recherche Overpass impossible.",
-          error
-        );
-      }
-    }
-
-    /*
-      3. Recherche libre en dernier recours.
-    */
-
-    try{
-
-      return await searchNominatim(
-        query,
-        commune,
-        options
-      );
-
-    }catch(error){
-
-      console.warn(
-        "Bo'CitéArt Annuaire : recherche libre impossible.",
-        error
-      );
-
-      return [];
-    }
-  }
-
-  /* =======================================================
-     VALIDATION DES RÉSULTATS RÉSEAU
-     ======================================================= */
-
-  function validateNetworkResults(
-    rawRows,
-    query,
-    options
-  ){
-
-    options = options || {};
-
-    const commune =
-      normalizeText(
-        options.commune ||
-        getCurrentCommune()
-      );
-
-    const rule =
-      getTradeRule(query);
-
-    const validated =
-      safeArray(rawRows)
-        .map(normalizeEntity)
-        .filter(isUsableEntity)
-        .filter(function(entity){
-
-          /*
-            Si la recherche est locale,
-            une commune explicitement différente
-            est rejetée.
-
-            Une commune absente peut rester admise
-            si la requête réseau était déjà limitée
-            à la zone administrative demandée.
-          */
-
-          if(
-            options.localOnly !== false &&
-            commune &&
-            commune !== "votre ville" &&
-            entity.commune
-          ){
-
-            if(
-              normalizeText(
-                entity.commune
-              ) !== commune
-            ){
-              return false;
-            }
-          }
-
-          return entityMatchesTrade(
-            entity,
-            query,
-            rule
-          );
-        });
-
-    return deduplicateEntities(
-      validated
-    );
-  }
-
-  /* =======================================================
-     AGENT.SEARCH
-     ======================================================= */
-
-  Agent.search =
-    async function(options){
-
-      options = options || {};
-
-      const query =
-        String(
-          options.query || ""
-        ).trim();
-
-      const commune =
-        options.commune ||
-        getCurrentCommune();
-
-      if(!query){
-
-        return {
-          query: "",
-          commune: commune,
-          rows: [],
-          source: "none"
-        };
-      }
-
-      /*
-        On commence par les fiches déjà validées.
-      */
-
-      const cached =
-        searchCachedEntities(
-          query,
-          options
-        );
-
-      let networkRows = [];
-
-      /*
-        La recherche réseau est lancée
-        uniquement lorsque l'utilisateur
-        a réellement demandé une recherche.
-      */
-
-      try{
-
-        networkRows =
-          await searchNetwork(
-            query,
-            {
-              ...options,
-              commune: commune
-            }
-          );
-
-      }catch(error){
-
-        console.warn(
-          "Bo'CitéArt Annuaire : recherche réseau interrompue.",
-          error
-        );
-      }
-
-      const validatedNetwork =
-        validateNetworkResults(
-          networkRows,
-          query,
-          {
-            ...options,
-            commune: commune
-          }
-        );
-
-      /*
-        Seulement APRÈS validation,
-        les données peuvent entrer
-        dans la mémoire locale.
-      */
-
-      if(validatedNetwork.length){
-
-        mergeValidatedEntities(
-          validatedNetwork
-        );
-      }
-
-      const combined =
-        deduplicateEntities(
-          cached.concat(
-            validatedNetwork
-          )
-        )
-        .sort(function(a,b){
-
-          return String(
-            a.name || ""
-          ).localeCompare(
-            String(
-              b.name || ""
-            ),
-            "fr"
-          );
-        });
-
-      return {
-
-        query: query,
-
-        commune: commune,
-
-        rows: combined,
-
-        source:
-          validatedNetwork.length
-            ? "network_and_cache"
-            : (
-                cached.length
-                  ? "cache"
-                  : "none"
-              )
-
-      };
-    };
-
-  /* =======================================================
-     RECHERCHE ASYNCHRONE PROTÉGÉE
-     ======================================================= */
-
-  function startSearch(
-    query,
-    options
-  ){
-
-    options = options || {};
-
-    const cleanQuery =
-      String(query || "").trim();
-
-    if(!cleanQuery){
-
-      alert(
-        "Indiquez un nom, un métier, un produit ou un service."
-      );
-
-      return;
-    }
-
-    const commune =
-      getCurrentCommune();
-
-    addSearchHistory(
-      cleanQuery,
-      commune,
-      options
+    actions.unshift(
+      item
     );
 
-    const requestId =
-      ++State.requestCounter;
-
-    State.activeRequest =
-      requestId;
-
-    State.lastQuery =
-      cleanQuery;
-
-    State.lastOptions =
-      {
-        ...options
-      };
-
-    /*
-      On entre immédiatement
-      dans l'écran Résultats.
-
-      La même modale affiche l'attente,
-      puis les données.
-    */
-
-    navigate(
-      "results",
-      {
-        query: cleanQuery,
-        commune: commune,
-        options: {
-          ...options
-        },
-        loading: true,
-        rows: [],
-        requestId: requestId
-      }
+    saveCitizenActions(
+      actions
     );
 
-    Agent.search({
-      query: cleanQuery,
-      commune: commune,
-      category:
-        options.category || "",
-      trade:
-        options.trade || "",
-      localOnly:
-        options.localOnly !== false
-    })
-    .then(function(result){
-
-      /*
-        Si l'utilisateur a changé d'écran
-        ou lancé une autre recherche,
-        cette réponse ne touche plus l'interface.
-      */
-
-      if(
-        requestId !==
-        State.activeRequest
-      ){
-        return;
-      }
-
-      if(
-        !State.current ||
-        State.current.type !==
-        "results"
-      ){
-        return;
-      }
-
-      if(
-        Number(
-          State.current.data.requestId
-        ) !==
-        Number(requestId)
-      ){
-        return;
-      }
-
-      State.lastResults =
-        safeArray(
-          result.rows
-        );
-
-      replaceView(
-        "results",
-        {
-          query:
-            cleanQuery,
-
-          commune:
-            commune,
-
-          options:
-            {
-              ...options
-            },
-
-          loading:
-            false,
-
-          rows:
-            State.lastResults,
-
-          requestId:
-            requestId,
-
-          source:
-            result.source
-        }
-      );
-
-    })
-    .catch(function(error){
-
-      console.error(
-        "Bo'CitéArt Annuaire : erreur de recherche.",
-        error
-      );
-
-      if(
-        requestId !==
-        State.activeRequest
-      ){
-        return;
-      }
-
-      replaceView(
-        "results",
-        {
-          query:
-            cleanQuery,
-
-          commune:
-            commune,
-
-          options:
-            {
-              ...options
-            },
-
-          loading:
-            false,
-
-          rows: [],
-
-          requestId:
-            requestId,
-
-          error: true
-        }
-      );
-    });
+    return item;
   }
 
   /* =======================================================
-     RELANCER UNE RECHERCHE HISTORIQUE
-     ======================================================= */
-
-  function replaySearchHistoryItem(id){
-
-    const item =
-      loadSearchHistory()
-        .find(function(row){
-
-          return (
-            String(row.id) ===
-            String(id)
-          );
-        });
-
-    if(!item){
-
-      alert(
-        "Cette recherche n'est plus disponible."
-      );
-
-      return;
-    }
-
-    startSearch(
-      item.query,
-      {
-        category:
-          item.category || "",
-
-        trade:
-          item.trade || "",
-
-        localOnly: true
-      }
-    );
-  }
-
-  /* =======================================================
-     APPRÉCIATIONS SIMPLES 1 À 5
+     16. APPRÉCIATIONS 1 À 5
      ======================================================= */
 
   function loadRatings(){
@@ -3340,30 +2046,27 @@ function getLogoHtml(){
     );
   }
 
-  function getEntityRatings(entityId){
-
-    return loadRatings()
-      .filter(function(item){
-
-        return (
-          String(item.entityId) ===
-          String(entityId)
-        );
-      });
-  }
-
-  function getRatingSummary(entityId){
+  function getRatingSummary(
+    entityId
+  ){
 
     const rows =
-      getEntityRatings(
-        entityId
-      );
+      loadRatings()
+        .filter(
+          function(item){
+
+            return (
+              String(item.entityId) ===
+              String(entityId)
+            );
+          }
+        );
 
     if(!rows.length){
 
       return {
-        count: 0,
-        average: 0
+        count:0,
+        average:0
       };
     }
 
@@ -3373,19 +2076,23 @@ function getLogoHtml(){
 
           return (
             sum +
-            Number(item.value || 0)
+            Number(
+              item.value || 0
+            )
           );
         },
         0
       );
 
     return {
+
       count:
         rows.length,
 
       average:
         total /
         rows.length
+
     };
   }
 
@@ -3404,23 +2111,15 @@ function getLogoHtml(){
       return false;
     }
 
-    const ratings =
+    const rows =
       loadRatings();
 
-    /*
-      Pour la démo :
-      une appréciation locale enregistrée.
-
-      En production :
-      le compte / serveur permettra
-      d'empêcher les évaluations multiples
-      abusives.
-    */
-
-    ratings.push({
+    rows.push({
 
       id:
-        uniqueId("rating"),
+        uniqueId(
+          "rating"
+        ),
 
       entityId:
         entityId,
@@ -3435,14 +2134,14 @@ function getLogoHtml(){
 
     saveJson(
       STORAGE.ratings,
-      ratings
+      rows
     );
 
     return true;
   }
 
   /* =======================================================
-     SIGNALEMENTS
+     17. SIGNALEMENTS
      ======================================================= */
 
   function loadReports(){
@@ -3466,7 +2165,9 @@ function getLogoHtml(){
     reports.push({
 
       id:
-        uniqueId("report"),
+        uniqueId(
+          "report"
+        ),
 
       entityId:
         entity.id,
@@ -3481,7 +2182,7 @@ function getLogoHtml(){
         Date.now(),
 
       status:
-        "a_verifier"
+        "to_verify"
 
     });
 
@@ -3492,11 +2193,1951 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     FIN DU BLOC 2
+     18. HORAIRES / OUVERT-FERMÉ
      ======================================================= */
 
+  const DAY_CODES = [
+    "Su",
+    "Mo",
+    "Tu",
+    "We",
+    "Th",
+    "Fr",
+    "Sa"
+  ];
+
+  function timeToMinutes(value){
+
+    const match =
+      String(value || "")
+        .match(
+          /^(\d{1,2}):(\d{2})$/
+        );
+
+    if(!match){
+      return null;
+    }
+
+    const hour =
+      Number(
+        match[1]
+      );
+
+    const minute =
+      Number(
+        match[2]
+      );
+
+    if(
+      hour < 0 ||
+      hour > 23 ||
+      minute < 0 ||
+      minute > 59
+    ){
+      return null;
+    }
+
+    return (
+      hour * 60 +
+      minute
+    );
+  }
+
+  function dayCodeToIndex(code){
+
+    return DAY_CODES.indexOf(
+      String(code || "")
+    );
+  }
+
+  function parseDayExpression(value){
+
+    const result = [];
+
+    String(value || "")
+      .split(",")
+      .map(
+        function(item){
+
+          return item.trim();
+        }
+      )
+      .filter(Boolean)
+      .forEach(
+        function(item){
+
+          if(
+            item.includes("-")
+          ){
+
+            const parts =
+              item.split("-");
+
+            const start =
+              dayCodeToIndex(
+                parts[0]
+              );
+
+            const end =
+              dayCodeToIndex(
+                parts[1]
+              );
+
+            if(
+              start < 0 ||
+              end < 0
+            ){
+              return;
+            }
+
+            if(start <= end){
+
+              for(
+                let i = start;
+                i <= end;
+                i++
+              ){
+                result.push(i);
+              }
+
+            }else{
+
+              for(
+                let i = start;
+                i <= 6;
+                i++
+              ){
+                result.push(i);
+              }
+
+              for(
+                let i = 0;
+                i <= end;
+                i++
+              ){
+                result.push(i);
+              }
+            }
+
+            return;
+          }
+
+          const index =
+            dayCodeToIndex(
+              item
+            );
+
+          if(index >= 0){
+
+            result.push(
+              index
+            );
+          }
+        }
+      );
+
+    return Array.from(
+      new Set(result)
+    );
+  }
+
+  function parseSimpleOpeningHours(
+    openingHours
+  ){
+
+    const value =
+      String(
+        openingHours || ""
+      ).trim();
+
+    if(!value){
+
+      return {
+        known:false,
+        open:null,
+        label:""
+      };
+    }
+
+    if(value === "24/7"){
+
+      return {
+        known:true,
+        open:true,
+        label:"Ouvert actuellement"
+      };
+    }
+
+    const now =
+      new Date();
+
+    const currentDay =
+      now.getDay();
+
+    const currentMinutes =
+      (
+        now.getHours() *
+        60
+      ) +
+      now.getMinutes();
+
+    const segments =
+      value
+        .split(";")
+        .map(
+          function(item){
+
+            return item.trim();
+          }
+        )
+        .filter(Boolean);
+
+    let understoodToday =
+      false;
+
+    let validPeriodToday =
+      false;
+
+    for(
+      let i = 0;
+      i < segments.length;
+      i++
+    ){
+
+      const match =
+        segments[i]
+          .match(
+            /^([A-Za-z,\-]+)\s+(.+)$/
+          );
+
+      if(!match){
+        continue;
+      }
+
+      const days =
+        parseDayExpression(
+          match[1]
+        );
+
+      if(
+        !days.includes(
+          currentDay
+        )
+      ){
+        continue;
+      }
+
+      understoodToday =
+        true;
+
+      const timePart =
+        String(
+          match[2] || ""
+        ).trim();
+
+      if(
+        normalizeText(
+          timePart
+        ) === "off"
+      ){
+
+        return {
+          known:true,
+          open:false,
+          label:"Fermé actuellement"
+        };
+      }
+
+      const periods =
+        timePart
+          .split(",")
+          .map(
+            function(period){
+
+              return period.trim();
+            }
+          );
+
+      for(
+        let p = 0;
+        p < periods.length;
+        p++
+      ){
+
+        const times =
+          periods[p]
+            .split("-");
+
+        if(
+          times.length !== 2
+        ){
+          continue;
+        }
+
+        const start =
+          timeToMinutes(
+            times[0]
+          );
+
+        const end =
+          timeToMinutes(
+            times[1]
+          );
+
+        if(
+          start === null ||
+          end === null
+        ){
+          continue;
+        }
+
+        validPeriodToday =
+          true;
+
+        if(
+          currentMinutes >= start &&
+          currentMinutes <= end
+        ){
+
+          return {
+            known:true,
+            open:true,
+            label:"Ouvert actuellement"
+          };
+        }
+      }
+    }
+
+    if(
+      understoodToday &&
+      validPeriodToday
+    ){
+
+      return {
+        known:true,
+        open:false,
+        label:"Fermé actuellement"
+      };
+    }
+
+    return {
+      known:false,
+      open:null,
+      label:""
+    };
+  }
+
+  function getEntityOpenStatus(
+    entity
+  ){
+
+    if(!entity){
+
+      return {
+        known:false,
+        open:null,
+        label:""
+      };
+    }
+
+    if(
+      entity.openNow === true
+    ){
+
+      return {
+        known:true,
+        open:true,
+        label:"Ouvert actuellement"
+      };
+    }
+
+    if(
+      entity.openNow === false
+    ){
+
+      return {
+        known:true,
+        open:false,
+        label:"Fermé actuellement"
+      };
+    }
+
+    if(entity.openingHours){
+
+      return parseSimpleOpeningHours(
+        entity.openingHours
+      );
+    }
+
+    return {
+      known:false,
+      open:null,
+      label:""
+    };
+  }
+
+  function getHoursInformationHtml(
+    entity
+  ){
+
+    const status =
+      getEntityOpenStatus(
+        entity
+      );
+
+    let html = "";
+
+    if(
+      status.known === true
+    ){
+
+      html += `
+        <div
+          class="bociteAnnuaireText"
+          style="
+            margin-top:7px;
+            font-weight:700;
+            color:${
+              status.open
+                ? "#2f5d46"
+                : "#555"
+            };
+          ">
+          ${escapeHtml(
+            status.label
+          )}
+        </div>
+      `;
+    }
+
+    if(entity.openingHours){
+
+      html += `
+        <div
+          class="bociteAnnuaireSmall"
+          style="margin-top:5px;">
+          Horaires :
+          ${escapeHtml(
+            entity.openingHours
+          )}
+        </div>
+      `;
+    }
+
+    return html;
+  }
+
+  /* =======================================================
+     19. VALIDATION STRICTE DES MÉTIERS
+     ======================================================= */
+
+  function getTradeRules(
+    trade
+  ){
+
+    return safeArray(
+      TRADE_RULES[
+        normalizeText(
+          trade
+        )
+      ]
+    );
+  }
+
+  function tagsMatchTrade(
+    tags,
+    trade
+  ){
+
+    const rules =
+      getTradeRules(
+        trade
+      );
+
+    if(!rules.length){
+
+      return true;
+    }
+
+    return rules.some(
+      function(rule){
+
+        const current =
+          normalizeText(
+            tags[
+              rule.key
+            ]
+          );
+
+        if(!current){
+          return false;
+        }
+
+        return safeArray(
+          rule.values
+        )
+        .some(
+          function(value){
+
+            return (
+              current ===
+              normalizeText(
+                value
+              )
+            );
+          }
+        );
+      }
+    );
+  }
+
+  function entityMatchesText(
+    entity,
+    query
+  ){
+
+    const needle =
+      normalizeText(
+        query
+      );
+
+    if(!needle){
+      return true;
+    }
+
+    const haystack =
+      normalizeText(
+        [
+          entity.name,
+          entity.activity,
+          entity.trade,
+          entity.category,
+          entity.subcategory,
+          entity.description,
+          safeArray(
+            entity.services
+          ).join(" "),
+          safeArray(
+            entity.keywords
+          ).join(" ")
+        ].join(" ")
+      );
+
+    return haystack.includes(
+      needle
+    );
+  }
+
+  function isUsableEntity(entity){
+
+    if(
+      !entity ||
+      !entity.name
+    ){
+      return false;
+    }
+
+    if(
+      !entity.activity &&
+      !entity.trade &&
+      !entity.category
+    ){
+      return false;
+    }
+
+    return true;
+  }
+
+  function deduplicateEntities(
+    entities
+  ){
+
+    const map =
+      new Map();
+
+    safeArray(entities)
+      .forEach(
+        function(entity){
+
+          if(!entity){
+            return;
+          }
+
+          const key =
+            entity.id ||
+            normalizeText(
+              [
+                entity.name,
+                entity.address,
+                entity.postalCode,
+                entity.commune,
+                entity.countryCode
+              ].join("|")
+            );
+
+          if(!key){
+            return;
+          }
+
+          const existing =
+            map.get(key);
+
+          if(!existing){
+
+            map.set(
+              key,
+              entity
+            );
+
+            return;
+          }
+
+          const merged = {
+            ...existing,
+            ...entity
+          };
+
+          map.set(
+            key,
+            merged
+          );
+        }
+      );
+
+    return Array.from(
+      map.values()
+    );
+  }
+
+  function validateResults(
+    rows,
+    request
+  ){
+
+    const commune =
+      normalizeText(
+        request.commune || ""
+      );
+
+    const countryCode =
+      String(
+        request.countryCode || ""
+      )
+      .trim()
+      .toUpperCase();
+
+    return deduplicateEntities(
+
+      safeArray(rows)
+        .map(
+          normalizeEntity
+        )
+        .filter(
+          isUsableEntity
+        )
+        .filter(
+          function(entity){
+
+            if(
+              request.trade &&
+              !tagsMatchTrade(
+                entity.tags,
+                request.trade
+              )
+            ){
+              return false;
+            }
+
+            if(
+              request.query &&
+              !request.trade &&
+              !entityMatchesText(
+                entity,
+                request.query
+              )
+            ){
+              return false;
+            }
+
+            if(
+              request.zone ===
+              "commune" &&
+              commune &&
+              entity.commune
+            ){
+
+              if(
+                normalizeText(
+                  entity.commune
+                ) !== commune
+              ){
+                return false;
+              }
+            }
+
+            if(
+              request.zone ===
+              "europe" &&
+              countryCode &&
+              entity.countryCode
+            ){
+
+              if(
+                entity.countryCode !==
+                countryCode
+              ){
+                return false;
+              }
+            }
+
+            return true;
+          }
+        )
+    );
+  }
+
+  /* =======================================================
+     20. RECHERCHE DANS LE CACHE
+     ======================================================= */
+
+  function searchCachedEntities(
+    request
+  ){
+
+    const commune =
+      normalizeText(
+        request.commune ||
+        ""
+      );
+
+    const countryCode =
+      String(
+        request.countryCode ||
+        ""
+      )
+      .trim()
+      .toUpperCase();
+
+    return loadEntities()
+      .filter(
+        function(entity){
+
+          if(
+            request.zone ===
+            "commune" &&
+            commune
+          ){
+
+            if(
+              normalizeText(
+                entity.commune
+              ) !== commune
+            ){
+              return false;
+            }
+          }
+
+          if(
+            request.zone ===
+            "europe" &&
+            countryCode
+          ){
+
+            if(
+              String(
+                entity.countryCode ||
+                ""
+              ).toUpperCase() !==
+              countryCode
+            ){
+              return false;
+            }
+          }
+
+          if(
+            request.trade &&
+            !tagsMatchTrade(
+              entity.tags,
+              request.trade
+            )
+          ){
+
+            return false;
+          }
+
+          return entityMatchesText(
+            entity,
+            request.query ||
+            request.trade ||
+            ""
+          );
+        }
+      );
+  }
+
+  /* =======================================================
+     21. OPENSTREETMAP / OVERPASS — DÉMO LOCALE
+     ======================================================= */
+
+  const OVERPASS_SERVERS = [
+
+    "https://overpass-api.de/api/interpreter",
+
+    "https://overpass.kumi.systems/api/interpreter"
+
+  ];
+
+  function buildOverpassSelectors(
+    trade
+  ){
+
+    const rules =
+      getTradeRules(
+        trade
+      );
+
+    if(!rules.length){
+      return "";
+    }
+
+    return rules
+      .map(
+        function(rule){
+
+          return safeArray(
+            rule.values
+          )
+          .map(
+            function(value){
+
+              return (
+                'nwr["' +
+                rule.key +
+                '"="' +
+                value +
+                '"](area.searchArea);'
+              );
+            }
+          )
+          .join("\n");
+        }
+      )
+      .join("\n");
+  }
+
+  function buildLocalOverpassQuery(
+    request
+  ){
+
+    const selectors =
+      buildOverpassSelectors(
+        request.trade ||
+        request.query
+      );
+
+    if(!selectors){
+      return "";
+    }
+
+    const commune =
+      String(
+        request.commune ||
+        getCurrentCommune()
+      )
+      .replace(
+        /"/g,
+        '\\"'
+      );
+
+    return `
+      [out:json][timeout:25];
+
+      area
+        ["boundary"="administrative"]
+        ["name"="${commune}"]
+        ->.searchArea;
+
+      (
+        ${selectors}
+      );
+
+      out center tags;
+    `;
+  }
+
+  function getOsmAddress(tags){
+
+    return [
+      tags[
+        "addr:housenumber"
+      ],
+      tags[
+        "addr:street"
+      ]
+    ]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+  }
+
+  function osmElementToEntity(
+    element,
+    request
+  ){
+
+    const tags =
+      element.tags || {};
+
+    const lat =
+      element.lat !== undefined
+        ? Number(
+            element.lat
+          )
+        : (
+            element.center &&
+            element.center.lat !==
+            undefined
+              ? Number(
+                  element.center.lat
+                )
+              : null
+          );
+
+    const lng =
+      element.lon !== undefined
+        ? Number(
+            element.lon
+          )
+        : (
+            element.center &&
+            element.center.lon !==
+            undefined
+              ? Number(
+                  element.center.lon
+                )
+              : null
+          );
+
+    const activity =
+      tags.craft ||
+      tags.shop ||
+      tags.healthcare ||
+      tags.amenity ||
+      tags.tourism ||
+      tags.office ||
+      request.trade ||
+      request.query ||
+      "";
+
+    return normalizeEntity({
+
+      externalId:
+        "osm_" +
+        String(
+          element.type || ""
+        ) +
+        "_" +
+        String(
+          element.id || ""
+        ),
+
+      source:
+        "OpenStreetMap",
+
+      sourceType:
+        "public_network",
+
+      name:
+        tags.name ||
+        tags.brand ||
+        tags.operator ||
+        "",
+
+      activity:
+        activity,
+
+      trade:
+        request.trade || "",
+
+      category:
+        request.category || "",
+
+      address:
+        getOsmAddress(
+          tags
+        ),
+
+      postalCode:
+        tags[
+          "addr:postcode"
+        ] || "",
+
+      commune:
+        tags[
+          "addr:city"
+        ] ||
+        request.commune ||
+        "",
+
+      country:
+        tags[
+          "addr:country"
+        ] || "",
+
+      countryCode:
+        tags[
+          "addr:country"
+        ] || "",
+
+      phone:
+        tags.phone ||
+        tags[
+          "contact:phone"
+        ] ||
+        "",
+
+      email:
+        tags.email ||
+        tags[
+          "contact:email"
+        ] ||
+        "",
+
+      website:
+        tags.website ||
+        tags[
+          "contact:website"
+        ] ||
+        "",
+
+      openingHours:
+        tags.opening_hours ||
+        "",
+
+      lat:
+        lat,
+
+      lng:
+        lng,
+
+      tags:
+        tags,
+
+      keywords:
+        [
+          tags.craft,
+          tags.shop,
+          tags.healthcare,
+          tags.amenity,
+          tags.tourism,
+          tags.office
+        ]
+        .filter(Boolean),
+
+      verificationStatus:
+        "confirmed",
+
+      verifiedAt:
+        Date.now(),
+
+      lastCheckedAt:
+        Date.now()
+
+    });
+  }
+
+  async function searchOverpassLocal(
+    request,
+    signal
+  ){
+
+    const query =
+      buildLocalOverpassQuery(
+        request
+      );
+
+    if(!query){
+      return [];
+    }
+
+    let lastError =
+      null;
+
+    for(
+      let i = 0;
+      i < OVERPASS_SERVERS.length;
+      i++
+    ){
+
+      try{
+
+        const response =
+          await fetch(
+            OVERPASS_SERVERS[i],
+            {
+              method:"POST",
+
+              headers:{
+                "Content-Type":
+                  "application/x-www-form-urlencoded;charset=UTF-8"
+              },
+
+              body:
+                "data=" +
+                encodeURIComponent(
+                  query
+                ),
+
+              signal:
+                signal
+            }
+          );
+
+        if(!response.ok){
+
+          throw new Error(
+            "HTTP " +
+            response.status
+          );
+        }
+
+        const data =
+          await response.json();
+
+        return safeArray(
+          data.elements
+        )
+        .map(
+          function(element){
+
+            return osmElementToEntity(
+              element,
+              request
+            );
+          }
+        );
+
+      }catch(error){
+
+        if(
+          error &&
+          error.name ===
+          "AbortError"
+        ){
+          throw error;
+        }
+
+        lastError =
+          error;
+      }
+    }
+
+    if(lastError){
+      throw lastError;
+    }
+
+    return [];
+  }
+
+  /* =======================================================
+     22. FOURNISSEUR OFFICIEL
+     FRANCE / EUROPE / RECHERCHE PRO
+     ======================================================= */
+
+  async function searchOfficialProvider(
+    request,
+    signal
+  ){
+
+    const provider =
+      getOfficialProvider();
+
+    if(
+      !provider ||
+      typeof provider.search !==
+      "function"
+    ){
+
+      return null;
+    }
+
+    const result =
+      await Promise.resolve(
+        provider.search(
+          request,
+          {
+            signal:
+              signal
+          }
+        )
+      );
+
+    if(
+      Array.isArray(result)
+    ){
+      return result;
+    }
+
+    if(
+      result &&
+      Array.isArray(
+        result.rows
+      )
+    ){
+      return result.rows;
+    }
+
+    return [];
+  }
+
+  /* =======================================================
+     23. AGENT.SEARCH
+     ======================================================= */
+
+  Annuaire.Agent.search =
+    async function(
+      request,
+      options
+    ){
+
+      request =
+        request || {};
+
+      options =
+        options || {};
+
+      const normalizedRequest = {
+
+        query:
+          String(
+            request.query || ""
+          ).trim(),
+
+        trade:
+          String(
+            request.trade || ""
+          ).trim(),
+
+        category:
+          String(
+            request.category || ""
+          ).trim(),
+
+        commune:
+          String(
+            request.commune ||
+            getCurrentCommune()
+          ).trim(),
+
+        zone:
+          String(
+            request.zone ||
+            "commune"
+          ).trim(),
+
+        professional:
+          request.professional ===
+          true,
+
+        countryCode:
+          String(
+            request.countryCode ||
+            ""
+          )
+          .trim()
+          .toUpperCase(),
+
+        country:
+          String(
+            request.country || ""
+          ).trim()
+
+      };
+
+      const cached =
+        searchCachedEntities(
+          normalizedRequest
+        );
+
+      let networkRows = [];
+
+      /*
+       * FOURNISSEUR OFFICIEL PRIORITAIRE :
+       * France, Europe, et demain toutes les recherches.
+       */
+      if(
+        Annuaire.Agent
+          .isOfficialProviderReady()
+      ){
+
+        networkRows =
+          await searchOfficialProvider(
+            normalizedRequest,
+            options.signal
+          );
+
+      }else{
+
+        /*
+         * SANS FOURNISSEUR OFFICIEL :
+         * uniquement la recherche communale de démonstration.
+         *
+         * On ne prétend pas fournir une France/Europe
+         * complète depuis le navigateur.
+         */
+        if(
+          normalizedRequest.zone ===
+          "commune"
+        ){
+
+          networkRows =
+            await searchOverpassLocal(
+              normalizedRequest,
+              options.signal
+            );
+
+        }else{
+
+          networkRows =
+            [];
+        }
+      }
+
+      const validated =
+        validateResults(
+          networkRows,
+          normalizedRequest
+        );
+
+      if(validated.length){
+
+        mergeValidatedEntities(
+          validated
+        );
+      }
+
+      return {
+
+        request:
+          normalizedRequest,
+
+        rows:
+          deduplicateEntities(
+            cached.concat(
+              validated
+            )
+          )
+          .sort(
+            function(a,b){
+
+              return String(
+                a.name || ""
+              ).localeCompare(
+                String(
+                  b.name || ""
+                ),
+                "fr"
+              );
+            }
+          ),
+
+        officialProvider:
+          Annuaire.Agent
+            .isOfficialProviderReady(),
+
+        source:
+          validated.length
+            ? "network_and_cache"
+            : (
+                cached.length
+                  ? "cache"
+                  : "none"
+              )
+
+      };
+    };
+
+  /* =======================================================
+     24. RECHERCHE ASYNCHRONE ANNULABLE
+     ======================================================= */
+
+  function cancelCurrentSearch(){
+
+    if(
+      State.abortController
+    ){
+
+      try{
+
+        State.abortController
+          .abort();
+
+      }catch(error){
+
+        /* aucun blocage */
+      }
+    }
+
+    State.abortController =
+      null;
+  }
+
+  async function runSearch(
+    request
+  ){
+
+    cancelCurrentSearch();
+
+    const controller =
+      new AbortController();
+
+    State.abortController =
+      controller;
+
+    const requestId =
+      ++State.requestId;
+
+    addSearchHistory(
+      request.query ||
+      request.trade,
+      request
+    );
+
+    navigate(
+      "results",
+      {
+        request:
+          request,
+
+        loading:
+          true,
+
+        rows:
+          [],
+
+        requestId:
+          requestId
+      }
+    );
+
+    try{
+
+      const result =
+        await Annuaire.Agent
+          .search(
+            request,
+            {
+              signal:
+                controller.signal
+            }
+          );
+
+      if(
+        requestId !==
+        State.requestId
+      ){
+        return;
+      }
+
+      replaceView(
+        "results",
+        {
+          request:
+            request,
+
+          loading:
+            false,
+
+          rows:
+            safeArray(
+              result.rows
+            ),
+
+          source:
+            result.source,
+
+          officialProvider:
+            result.officialProvider,
+
+          requestId:
+            requestId
+        }
+      );
+
+    }catch(error){
+
+      if(
+        error &&
+        error.name ===
+        "AbortError"
+      ){
+        return;
+      }
+
+      if(
+        requestId !==
+        State.requestId
+      ){
+        return;
+      }
+
+      replaceView(
+        "results",
+        {
+          request:
+            request,
+
+          loading:
+            false,
+
+          rows:
+            [],
+
+          error:
+            true,
+
+          requestId:
+            requestId
+        }
+      );
+    }
+  }
+
+  /* =======================================================
+     25. NAVIGATION UNIQUE
+     ======================================================= */
+
+  function cloneView(view){
+
+    if(!view){
+      return null;
+    }
+
+    return {
+      type:
+        view.type,
+
+      data:
+        view.data || {}
+    };
+  }
+
+  function navigate(
+    type,
+    data,
+    options
+  ){
+
+    options =
+      options || {};
+
+    if(
+      State.current &&
+      options.replace !==
+      true
+    ){
+
+      State.stack.push(
+        cloneView(
+          State.current
+        )
+      );
+    }
+
+    State.current = {
+
+      type:
+        type,
+
+      data:
+        data || {}
+
+    };
+
+    renderCurrentView();
+  }
+
+  function replaceView(
+    type,
+    data
+  ){
+
+    State.current = {
+
+      type:
+        type,
+
+      data:
+        data || {}
+
+    };
+
+    renderCurrentView();
+  }
+
+  function goBack(){
+
+    cancelCurrentSearch();
+
+    if(
+      State.stack.length
+    ){
+
+      State.current =
+        State.stack.pop();
+
+      renderCurrentView();
+
+      return;
+    }
+
+    if(
+      typeof module
+        .returnToEntrepriseHome ===
+      "function"
+    ){
+
+      module
+        .returnToEntrepriseHome();
+
+      return;
+    }
+
+    if(
+      typeof module.goBack ===
+      "function"
+    ){
+
+      module.goBack();
+
+      return;
+    }
+
+    if(
+      typeof module.openScreen ===
+      "function"
+    ){
+
+      module.openScreen(
+        "accueil"
+      );
+    }
+  }
+
+  function resetNavigation(){
+
+    cancelCurrentSearch();
+
+    State.stack =
+      [];
+
+    State.current = {
+
+      type:
+        "home",
+
+      data:
+        {}
+
+    };
+
+    renderCurrentView();
+  }
+
+  function getBackButtonHtml(
+    label
+  ){
+
+    return `
+      <button
+        id="annuaireInternalBackBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireBackButton
+        "
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        ">
+        ← ${escapeHtml(
+          label ||
+          "Retour"
+        )}
+      </button>
+    `;
+  }
+
+  function bindBackButton(){
+
+    const button =
+      getElement(
+        "annuaireInternalBackBtn"
+      );
+
+    if(button){
+
+      button.onclick =
+        goBack;
+    }
+  }
+
+  /* =======================================================
+     26. MODALE UNIQUE
+     ======================================================= */
+
+  function renderModal(
+    title,
+    html,
+    callback
+  ){
+
+    module.renderModal(
+      title,
+      html
+    );
+
+    window.setTimeout(
+      function(){
+
+        document
+          .querySelectorAll(
+            ".modal-body," +
+            ".modalBody," +
+            ".modal-content," +
+            ".modalContent," +
+            '[role="dialog"]'
+          )
+          .forEach(
+            function(element){
+
+              element.scrollTop =
+                0;
+            }
+          );
+
+        if(
+          typeof callback ===
+          "function"
+        ){
+
+          callback();
+        }
+      },
+      0
+    );
+  }
+
    /* =======================================================
-     ÉCRAN ACCUEIL
+     27. OUTILS DES MÉTIERS / CATÉGORIES
+     ======================================================= */
+
+  function getCategoryById(id){
+
+    return CATEGORIES
+      .find(
+        function(category){
+
+          return (
+            category.id === id
+          );
+        }
+      ) || null;
+  }
+
+  function getTradeFamilyById(id){
+
+    return TRADE_FAMILIES
+      .find(
+        function(family){
+
+          return (
+            family.id === id
+          );
+        }
+      ) || null;
+  }
+
+  function getTradesForCategory(
+    categoryId
+  ){
+
+    const result = [];
+
+    function addFamily(
+      familyId,
+      allowedTrades
+    ){
+
+      const family =
+        getTradeFamilyById(
+          familyId
+        );
+
+      if(!family){
+        return;
+      }
+
+      safeArray(
+        family.trades
+      )
+      .forEach(
+        function(trade){
+
+          if(
+            Array.isArray(
+              allowedTrades
+            ) &&
+            allowedTrades.length &&
+            !allowedTrades.includes(
+              trade
+            )
+          ){
+            return;
+          }
+
+          if(
+            !result.includes(
+              trade
+            )
+          ){
+
+            result.push(
+              trade
+            );
+          }
+        }
+      );
+    }
+
+    if(
+      categoryId ===
+      "sante"
+    ){
+
+      addFamily(
+        "sante"
+      );
+    }
+
+    if(
+      categoryId ===
+      "artisans"
+    ){
+
+      addFamily(
+        "maison"
+      );
+    }
+
+    if(
+      categoryId ===
+      "restaurants"
+    ){
+
+      addFamily(
+        "alimentation",
+        [
+          "Restaurants",
+          "Traiteurs",
+          "Cafés"
+        ]
+      );
+    }
+
+    if(
+      categoryId ===
+      "commerces"
+    ){
+
+      addFamily(
+        "alimentation",
+        [
+          "Boulangeries",
+          "Boucheries",
+          "Épiceries",
+          "Commerces alimentaires"
+        ]
+      );
+
+      /*
+       * Les recherches libres permettent ensuite
+       * de trouver fleuristes, vêtements, opticiens,
+       * coiffure, etc. sans fabriquer de faux métiers.
+       */
+    }
+
+    if(
+      categoryId ===
+      "entreprises"
+    ){
+
+      addFamily(
+        "professionnels"
+      );
+    }
+
+    if(
+      categoryId ===
+      "hebergements"
+    ){
+
+      addFamily(
+        "hebergements"
+      );
+    }
+
+    if(
+      categoryId ===
+      "services"
+    ){
+
+      addFamily(
+        "automobile"
+      );
+
+      addFamily(
+        "professionnels"
+      );
+    }
+
+    return result;
+  }
+
+  function getAllTrades(){
+
+    const result = [];
+
+    TRADE_FAMILIES
+      .forEach(
+        function(family){
+
+          safeArray(
+            family.trades
+          )
+          .forEach(
+            function(trade){
+
+              if(
+                !result.includes(
+                  trade
+                )
+              ){
+
+                result.push(
+                  trade
+                );
+              }
+            }
+          );
+        }
+      );
+
+    return result;
+  }
+
+  /* =======================================================
+     28. ACCUEIL PUBLIC
      ======================================================= */
 
   function renderHome(){
@@ -3506,88 +4147,129 @@ function getLogoHtml(){
 
     const categoriesHtml =
       CATEGORIES
-        .map(function(category){
+        .map(
+          function(category){
 
-          return `
-            <button
-              type="button"
-              class="choiceBtn annuaireCategoryBtn"
-              data-category="${escapeHtml(category.id)}"
-              style="
-                width:100%;
-                min-height:62px;
-                text-align:left;
-                margin:0;
-              ">
-
-              <strong
+            return `
+              <button
+                type="button"
+                class="
+                  choiceBtn
+                  bociteAnnuaireCategoryButton
+                  annuaireCategoryBtn
+                "
+                data-category="${escapeHtml(
+                  category.id
+                )}"
                 style="
-                  display:block;
-                  color:#2f5d46;
-                  font-size:16px;
+                  width:100%;
+                  min-height:62px;
+                  margin:0;
+                  text-align:left;
                 ">
-                ${escapeHtml(category.title)}
-              </strong>
 
-              <span
-                style="
-                  display:block;
-                  color:#111;
-                  font-size:13px;
-                  font-weight:400;
-                  margin-top:3px;
-                ">
-                ${escapeHtml(category.subtitle)}
-              </span>
+                <strong
+                  style="
+                    display:block;
+                    color:#2f5d46;
+                    font-size:16px;
+                    font-weight:800;
+                  ">
+                  ${escapeHtml(
+                    category.title
+                  )}
+                </strong>
 
-            </button>
-          `;
-        })
+                <span
+                  style="
+                    display:block;
+                    margin-top:3px;
+                    color:#111;
+                    font-size:13px;
+                    font-weight:400;
+                  ">
+                  ${escapeHtml(
+                    category.subtitle
+                  )}
+                </span>
+
+              </button>
+            `;
+          }
+        )
         .join("");
 
     const recent =
       loadSearchHistory()
-        .slice(0,5);
+        .filter(
+          function(item){
+
+            return (
+              item.professional !==
+              true
+            );
+          }
+        )
+        .slice(
+          0,
+          5
+        );
 
     const recentHtml =
       recent.length
         ? recent
-            .map(function(item){
+            .map(
+              function(item){
 
-              return `
-                <div
-                  class="box"
-                  style="margin-top:7px;">
-
-                  <div class="bociteAnnuaireTitle">
-                    ${escapeHtml(item.query)}
-                  </div>
-
+                return `
                   <div
-                    class="bociteAnnuaireSmall"
-                    style="margin-top:4px;">
-                    ${escapeHtml(item.commune || "")}
-                    •
-                    ${formatDateTime(item.createdAt)}
+                    class="box"
+                    style="margin-top:7px;">
+
+                    <div
+                      class="bociteAnnuaireTitle">
+                      ${escapeHtml(
+                        item.query
+                      )}
+                    </div>
+
+                    <div
+                      class="bociteAnnuaireSmall"
+                      style="margin-top:4px;">
+                      ${escapeHtml(
+                        item.commune || ""
+                      )}
+                      •
+                      ${formatDateTime(
+                        item.createdAt
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      class="
+                        choiceBtn
+                        bociteAnnuaireWhiteButton
+                        annuaireReplayHomeBtn
+                      "
+                      data-id="${escapeHtml(
+                        item.id
+                      )}"
+                      style="
+                        width:100%;
+                        margin-top:7px;
+                      ">
+                      Reprendre cette recherche
+                    </button>
+
                   </div>
-
-                  <button
-                    type="button"
-                    class="choiceBtn annuaireReplayHomeBtn"
-                    data-id="${escapeHtml(item.id)}"
-                    style="
-                      width:100%;
-                      margin-top:7px;
-                    ">
-                    Reprendre cette recherche
-                  </button>
-
-                </div>
-              `;
-            })
+                `;
+              }
+            )
             .join("")
         : `
-            <div class="bociteAnnuaireSmall">
+            <div
+              class="bociteAnnuaireSmall">
               Vos recherches apparaîtront ici.
             </div>
           `;
@@ -3600,15 +4282,21 @@ function getLogoHtml(){
           border-left:6px solid #2f5d46;
         ">
 
-        <div class="bociteAnnuaireTitle">
-          Annuaire de ${escapeHtml(commune)}
+        <div
+          class="bociteAnnuaireTitle">
+          Annuaire de ${escapeHtml(
+            commune
+          )}
         </div>
 
         <div
           class="bociteAnnuaireText"
           style="margin-top:5px;">
-          Trouvez simplement
-          ce qui existe près de chez vous.
+          Trouvez un commerce,
+          une entreprise,
+          un artisan,
+          un professionnel,
+          un produit ou un service.
         </div>
 
       </div>
@@ -3629,29 +4317,29 @@ function getLogoHtml(){
 
         <input
           id="annuaireSearchInput"
+          class="bociteAnnuaireInput"
           type="search"
           autocomplete="off"
           placeholder="Nom, métier, produit ou service"
           style="
-            width:100%;
-            min-height:46px;
-            box-sizing:border-box;
             border:1px solid #bbb;
             border-radius:8px;
             padding:10px;
-            font-size:14px;
           "
         >
 
         <div
           class="bociteAnnuaireSmall"
           style="margin-top:5px;">
-          Restaurant • couvreur • médecin • garage • Dupont…
+          Restaurant • couvreur • dentiste • garage • Dupont…
         </div>
 
         <button
           id="annuaireSearchBtn"
-          class="choiceBtn"
+          class="
+            choiceBtn
+            bociteAnnuaireWhiteButton
+          "
           type="button"
           style="
             width:100%;
@@ -3674,14 +4362,20 @@ function getLogoHtml(){
 
         <button
           id="annuaireHistoryBtn"
-          class="choiceBtn"
+          class="
+            choiceBtn
+            bociteAnnuaireWhiteButton
+          "
           type="button">
           Mon historique
         </button>
 
         <button
           id="annuaireFavoritesBtn"
-          class="choiceBtn"
+          class="
+            choiceBtn
+            bociteAnnuaireWhiteButton
+          "
           type="button">
           Mes favoris
         </button>
@@ -3690,7 +4384,10 @@ function getLogoHtml(){
 
       <button
         id="annuaireViewedBtn"
-        class="choiceBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
@@ -3700,25 +4397,44 @@ function getLogoHtml(){
       </button>
 
       <button
-        id="annuaireProfessionalBtn"
-        class="choiceBtn"
+        id="annuaireCitizenActionsBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
           margin-top:8px;
         ">
-        Espace professionnel
+        Mes démarches
+      </button>
+
+      <button
+        id="annuaireProfessionalBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+        ">
+        Espace professionnel privé
       </button>
 
       <div
         class="box"
         style="margin-top:10px;">
 
-        <div class="bociteAnnuaireTitle">
+        <div
+          class="bociteAnnuaireTitle">
           Recherches récentes
         </div>
 
-        <div style="margin-top:7px;">
+        <div
+          style="margin-top:7px;">
           ${recentHtml}
         </div>
 
@@ -3728,12 +4444,11 @@ function getLogoHtml(){
         class="box"
         style="margin-top:10px;">
 
-        <div class="bociteAnnuaireText">
-          ${getLogoHtml()}
-          vous aide à retrouver
-          les ressources économiques
-          réellement présentes
-          dans votre territoire.
+        <div
+          class="bociteAnnuaireText">
+          ${getLogoHtml()} vous aide à retrouver
+          les ressources réellement présentes
+          sur votre territoire.
         </div>
 
       </div>
@@ -3754,25 +4469,62 @@ function getLogoHtml(){
         "annuaireSearchInput"
       );
 
-    const search =
+    const searchButton =
       getElement(
         "annuaireSearchBtn"
       );
 
-    if(search){
+    function launchPublicSearch(){
 
-      search.onclick =
-        function(){
+      const query =
+        input
+          ? String(
+              input.value || ""
+            ).trim()
+          : "";
 
-          startSearch(
-            input
-              ? input.value
-              : "",
-            {
-              localOnly:true
-            }
-          );
-        };
+      if(!query){
+
+        alert(
+          "Indiquez un nom, un métier, un produit ou un service."
+        );
+
+        return;
+      }
+
+      runSearch({
+
+        query:
+          query,
+
+        trade:
+          "",
+
+        category:
+          "",
+
+        commune:
+          getCurrentCommune(),
+
+        zone:
+          "commune",
+
+        professional:
+          false,
+
+        countryCode:
+          "FR",
+
+        country:
+          "France"
+
+      });
+    }
+
+    if(searchButton){
+
+      searchButton.onclick =
+        launchPublicSearch;
     }
 
     if(input){
@@ -3780,16 +4532,14 @@ function getLogoHtml(){
       input.onkeydown =
         function(event){
 
-          if(event.key === "Enter"){
+          if(
+            event.key ===
+            "Enter"
+          ){
 
             event.preventDefault();
 
-            startSearch(
-              input.value,
-              {
-                localOnly:true
-              }
-            );
+            launchPublicSearch();
           }
         };
     }
@@ -3798,39 +4548,43 @@ function getLogoHtml(){
       .querySelectorAll(
         ".annuaireCategoryBtn"
       )
-      .forEach(function(button){
+      .forEach(
+        function(button){
 
-        button.onclick =
-          function(){
+          button.onclick =
+            function(){
 
-            navigate(
-              "category",
-              {
-                categoryId:
-                  button.getAttribute(
-                    "data-category"
-                  ) || ""
-              }
-            );
-          };
-      });
+              navigate(
+                "category",
+                {
+                  categoryId:
+                    button.getAttribute(
+                      "data-category"
+                    ) || ""
+                }
+              );
+            };
+        }
+      );
 
     document
       .querySelectorAll(
         ".annuaireReplayHomeBtn"
       )
-      .forEach(function(button){
+      .forEach(
+        function(button){
 
-        button.onclick =
-          function(){
+          button.onclick =
+            function(){
 
-            replaySearchHistoryItem(
-              button.getAttribute(
-                "data-id"
-              )
-            );
-          };
-      });
+              replaySearchHistoryItem(
+                button.getAttribute(
+                  "data-id"
+                )
+              );
+            };
+        }
+      );
 
     const history =
       getElement(
@@ -3883,6 +4637,23 @@ function getLogoHtml(){
         };
     }
 
+    const actions =
+      getElement(
+        "annuaireCitizenActionsBtn"
+      );
+
+    if(actions){
+
+      actions.onclick =
+        function(){
+
+          navigate(
+            "citizen_actions",
+            {}
+          );
+        };
+    }
+
     const professional =
       getElement(
         "annuaireProfessionalBtn"
@@ -3907,24 +4678,20 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     ÉCRAN CATÉGORIE
+     29. CATÉGORIE
      ======================================================= */
-
-  function getCategoryById(id){
-
-    return CATEGORIES
-      .find(function(category){
-
-        return category.id === id;
-      }) || null;
-  }
 
   function renderCategory(data){
 
     const categoryId =
-      data.categoryId || "";
+      String(
+        data.categoryId || ""
+      );
 
-    if(categoryId === "metiers"){
+    if(
+      categoryId ===
+      "metiers"
+    ){
 
       renderAllTrades();
       return;
@@ -3946,62 +4713,90 @@ function getLogoHtml(){
     }
 
     const trades =
-      safeArray(
-        TRADE_FAMILIES[
-          categoryId
-        ]
+      getTradesForCategory(
+        categoryId
       );
 
-    const tradesHtml =
-      trades.length
-        ? trades
-            .map(function(trade){
+    let html = `
 
-              return `
-                <button
-                  type="button"
-                  class="choiceBtn annuaireTradeBtn"
-                  data-trade="${escapeHtml(trade)}"
-                  style="
-                    width:100%;
-                    text-align:left;
-                    margin-top:7px;
-                  ">
-                  ${escapeHtml(trade)}
-                </button>
-              `;
-            })
-            .join("")
-        : `
-            <div class="box">
-              <div class="bociteAnnuaireText">
-                Utilisez la recherche par nom,
-                métier, produit ou service.
-              </div>
-            </div>
-          `;
+      <div
+        class="box">
 
-    const html = `
-
-      <div class="box">
-
-        <div class="bociteAnnuaireTitle">
-          ${escapeHtml(category.title)}
+        <div
+          class="bociteAnnuaireTitle">
+          ${escapeHtml(
+            category.title
+          )}
         </div>
 
         <div
           class="bociteAnnuaireText"
           style="margin-top:6px;">
-          ${escapeHtml(category.subtitle)}
+          ${escapeHtml(
+            category.subtitle
+          )}
         </div>
 
       </div>
 
-      ${tradesHtml}
-
-      ${getBackButtonHtml("Retour à l'annuaire")}
-
     `;
+
+    if(
+      trades.length
+    ){
+
+      trades.forEach(
+        function(trade){
+
+          html += `
+
+            <button
+              type="button"
+              class="
+                choiceBtn
+                bociteAnnuaireTradeButton
+                annuaireTradeBtn
+              "
+              data-trade="${escapeHtml(
+                trade
+              )}"
+              style="
+                width:100%;
+                margin-top:7px;
+                text-align:left;
+              ">
+              ${escapeHtml(
+                trade
+              )}
+            </button>
+
+          `;
+        }
+      );
+
+    }else{
+
+      html += `
+
+        <div
+          class="box"
+          style="margin-top:9px;">
+
+          <div
+            class="bociteAnnuaireText">
+            Utilisez la recherche par nom,
+            métier, produit ou service.
+          </div>
+
+        </div>
+
+      `;
+    }
+
+    html +=
+      getBackButtonHtml(
+        "Retour à l'annuaire"
+      );
 
     renderModal(
       category.title,
@@ -4012,25 +4807,27 @@ function getLogoHtml(){
           .querySelectorAll(
             ".annuaireTradeBtn"
           )
-          .forEach(function(button){
+          .forEach(
+            function(button){
 
-            button.onclick =
-              function(){
+              button.onclick =
+                function(){
 
-                navigate(
-                  "trade",
-                  {
-                    categoryId:
-                      categoryId,
+                  navigate(
+                    "trade",
+                    {
+                      categoryId:
+                        categoryId,
 
-                    trade:
-                      button.getAttribute(
-                        "data-trade"
-                      ) || ""
-                  }
-                );
-              };
-          });
+                      trade:
+                        button.getAttribute(
+                          "data-trade"
+                        ) || ""
+                    }
+                  );
+                };
+            }
+          );
 
         bindBackButton();
       }
@@ -4038,16 +4835,18 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     TOUS LES MÉTIERS
+     30. TOUS LES MÉTIERS
      ======================================================= */
 
   function renderAllTrades(){
 
     let html = `
 
-      <div class="box">
+      <div
+        class="box">
 
-        <div class="bociteAnnuaireTitle">
+        <div
+          class="bociteAnnuaireTitle">
           Tous les métiers
         </div>
 
@@ -4061,56 +4860,62 @@ function getLogoHtml(){
 
     `;
 
-    Object.keys(
-      TRADE_FAMILIES
-    )
-    .forEach(function(categoryId){
+    TRADE_FAMILIES
+      .forEach(
+        function(family){
 
-      const category =
-        getCategoryById(
-          categoryId
-        );
+          html += `
 
-      if(!category){
-        return;
-      }
+            <div
+              class="box"
+              style="margin-top:9px;">
 
-      html += `
+              <div
+                class="bociteAnnuaireTitle">
+                ${escapeHtml(
+                  family.title
+                )}
+              </div>
 
-        <div
-          class="box"
-          style="margin-top:9px;">
+          `;
 
-          <div class="bociteAnnuaireTitle">
-            ${escapeHtml(category.title)}
-          </div>
+          safeArray(
+            family.trades
+          )
+          .forEach(
+            function(trade){
 
-          ${
-            TRADE_FAMILIES[categoryId]
-              .map(function(trade){
+              html += `
 
-                return `
-                  <button
-                    type="button"
-                    class="choiceBtn annuaireAllTradeBtn"
-                    data-category="${escapeHtml(categoryId)}"
-                    data-trade="${escapeHtml(trade)}"
-                    style="
-                      width:100%;
-                      text-align:left;
-                      margin-top:6px;
-                    ">
-                    ${escapeHtml(trade)}
-                  </button>
-                `;
-              })
-              .join("")
-          }
+                <button
+                  type="button"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireTradeButton
+                    annuaireAllTradeBtn
+                  "
+                  data-trade="${escapeHtml(
+                    trade
+                  )}"
+                  style="
+                    width:100%;
+                    margin-top:6px;
+                    text-align:left;
+                  ">
+                  ${escapeHtml(
+                    trade
+                  )}
+                </button>
 
-        </div>
+              `;
+            }
+          );
 
-      `;
-    });
+          html += `
+            </div>
+          `;
+        }
+      );
 
     html +=
       getBackButtonHtml(
@@ -4126,27 +4931,24 @@ function getLogoHtml(){
           .querySelectorAll(
             ".annuaireAllTradeBtn"
           )
-          .forEach(function(button){
+          .forEach(
+            function(button){
 
-            button.onclick =
-              function(){
+              button.onclick =
+                function(){
 
-                navigate(
-                  "trade",
-                  {
-                    categoryId:
-                      button.getAttribute(
-                        "data-category"
-                      ) || "",
-
-                    trade:
-                      button.getAttribute(
-                        "data-trade"
-                      ) || ""
-                  }
-                );
-              };
-          });
+                  navigate(
+                    "trade",
+                    {
+                      trade:
+                        button.getAttribute(
+                          "data-trade"
+                        ) || ""
+                    }
+                  );
+                };
+            }
+          );
 
         bindBackButton();
       }
@@ -4154,16 +4956,22 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     ÉCRAN MÉTIER
+     31. ÉCRAN MÉTIER
+     CANDIDATURE SPONTANÉE INTÉGRÉE
      ======================================================= */
 
   function renderTrade(data){
 
     const trade =
-      data.trade || "";
+      String(
+        data.trade || ""
+      ).trim();
 
-    const categoryId =
-      data.categoryId || "";
+    if(!trade){
+
+      goBack();
+      return;
+    }
 
     const html = `
 
@@ -4173,24 +4981,31 @@ function getLogoHtml(){
           border-left:6px solid #2f5d46;
         ">
 
-        <div class="bociteAnnuaireTitle">
-          ${escapeHtml(trade)}
+        <div
+          class="bociteAnnuaireTitle">
+          ${escapeHtml(
+            trade
+          )}
         </div>
 
         <div
           class="bociteAnnuaireText"
           style="margin-top:6px;">
-          Rechercher les professionnels
-          correspondant réellement
-          à cette activité
-          dans ${escapeHtml(getCurrentCommune())}.
+          Retrouvez les professionnels
+          correspondant réellement à ce métier
+          dans ${escapeHtml(
+            getCurrentCommune()
+          )}.
         </div>
 
       </div>
 
       <button
         id="annuaireTradeSearchBtn"
-        class="choiceBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
@@ -4199,7 +5014,37 @@ function getLogoHtml(){
         Voir les professionnels
       </button>
 
-      ${getBackButtonHtml("Retour à la catégorie")}
+      <button
+        id="annuaireTradeApplicationBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
+        type="button"
+        style="
+          width:100%;
+          margin-top:7px;
+        ">
+        Déposer une candidature spontanée
+      </button>
+
+      <div
+        class="box"
+        style="margin-top:9px;">
+
+        <div
+          class="bociteAnnuaireSmall">
+          La candidature sera adressée
+          à l'entreprise que vous choisirez.
+          Aucun envoi n'est réalisé
+          sans destinataire identifié.
+        </div>
+
+      </div>
+
+      ${getBackButtonHtml(
+        "Retour"
+      )}
 
     `;
 
@@ -4218,17 +5063,56 @@ function getLogoHtml(){
           search.onclick =
             function(){
 
-              startSearch(
-                trade,
-                {
-                  category:
-                    categoryId,
+              runSearch({
 
+                query:
+                  trade,
+
+                trade:
+                  trade,
+
+                category:
+                  data.categoryId ||
+                  "",
+
+                commune:
+                  getCurrentCommune(),
+
+                zone:
+                  "commune",
+
+                professional:
+                  false,
+
+                countryCode:
+                  "FR",
+
+                country:
+                  "France"
+
+              });
+            };
+        }
+
+        const application =
+          getElement(
+            "annuaireTradeApplicationBtn"
+          );
+
+        if(application){
+
+          application.onclick =
+            function(){
+
+              navigate(
+                "trade_application",
+                {
                   trade:
                     trade,
 
-                  localOnly:
-                    true
+                  categoryId:
+                    data.categoryId ||
+                    ""
                 }
               );
             };
@@ -4240,7 +5124,398 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     CARTE RÉSULTAT
+     32. CHOIX ENTREPRISE POUR CANDIDATURE MÉTIER
+     ======================================================= */
+
+  async function renderTradeApplication(
+    data
+  ){
+
+    const trade =
+      String(
+        data.trade || ""
+      ).trim();
+
+    if(!trade){
+
+      goBack();
+      return;
+    }
+
+    const viewToken =
+      ++State.requestId;
+
+    renderModal(
+      "Candidature spontanée",
+      `
+
+        <div
+          class="box">
+
+          <div
+            class="bociteAnnuaireTitle">
+            ${escapeHtml(
+              trade
+            )}
+          </div>
+
+          <div
+            class="bociteAnnuaireText"
+            style="margin-top:6px;">
+            Recherche des entreprises
+            correspondant à ce métier…
+          </div>
+
+        </div>
+
+        ${getBackButtonHtml(
+          "Retour au métier"
+        )}
+
+      `,
+      bindBackButton
+    );
+
+    try{
+
+      cancelCurrentSearch();
+
+      const controller =
+        new AbortController();
+
+      State.abortController =
+        controller;
+
+      const result =
+        await Annuaire.Agent
+          .search(
+            {
+              query:
+                trade,
+
+              trade:
+                trade,
+
+              category:
+                data.categoryId ||
+                "",
+
+              commune:
+                getCurrentCommune(),
+
+              zone:
+                "commune",
+
+              professional:
+                false,
+
+              countryCode:
+                "FR",
+
+              country:
+                "France"
+            },
+            {
+              signal:
+                controller.signal
+            }
+          );
+
+      if(
+        !State.current ||
+        State.current.type !==
+        "trade_application"
+      ){
+        return;
+      }
+
+      if(
+        State.requestId !==
+        viewToken
+      ){
+        return;
+      }
+
+      const rows =
+        safeArray(
+          result.rows
+        );
+
+      let html = `
+
+        <div
+          class="box">
+
+          <div
+            class="bociteAnnuaireTitle">
+            Choisissez l'entreprise
+          </div>
+
+          <div
+            class="bociteAnnuaireText"
+            style="margin-top:6px;">
+            Métier :
+            <strong>
+              ${escapeHtml(
+                trade
+              )}
+            </strong>
+          </div>
+
+        </div>
+
+      `;
+
+      if(!rows.length){
+
+        html += `
+
+          <div
+            class="box"
+            style="margin-top:9px;">
+
+            <div
+              class="bociteAnnuaireText">
+              Aucune entreprise correspondant
+              suffisamment à ce métier
+              n'a été trouvée pour le moment.
+            </div>
+
+          </div>
+
+        `;
+
+      }else{
+
+        rows.forEach(
+          function(entity){
+
+            html += `
+
+              <button
+                type="button"
+                class="
+                  choiceBtn
+                  bociteAnnuaireWhiteButton
+                  annuaireApplicationTargetBtn
+                "
+                data-id="${escapeHtml(
+                  entity.id
+                )}"
+                style="
+                  width:100%;
+                  margin-top:7px;
+                  text-align:left;
+                ">
+
+                <strong>
+                  ${escapeHtml(
+                    entity.name
+                  )}
+                </strong>
+
+                ${
+                  entity.commune
+                    ? `
+                        <br>
+                        <span
+                          style="
+                            font-size:12px;
+                            font-weight:400;
+                          ">
+                          ${escapeHtml(
+                            entity.commune
+                          )}
+                        </span>
+                      `
+                    : ""
+                }
+
+              </button>
+
+            `;
+          }
+        );
+      }
+
+      html +=
+        getBackButtonHtml(
+          "Retour au métier"
+        );
+
+      renderModal(
+        "Candidature spontanée",
+        html,
+        function(){
+
+          document
+            .querySelectorAll(
+              ".annuaireApplicationTargetBtn"
+            )
+            .forEach(
+              function(button){
+
+                button.onclick =
+                  function(){
+
+                    const entity =
+                      getEntityById(
+                        button.getAttribute(
+                          "data-id"
+                        )
+                      );
+
+                    if(!entity){
+
+                      alert(
+                        "Cette entreprise n'est plus disponible."
+                      );
+
+                      return;
+                    }
+
+                    openSpontaneousApplication(
+                      entity,
+                      trade
+                    );
+                  };
+              }
+            );
+
+          bindBackButton();
+        }
+      );
+
+    }catch(error){
+
+      if(
+        error &&
+        error.name ===
+        "AbortError"
+      ){
+        return;
+      }
+
+      renderModal(
+        "Candidature spontanée",
+        `
+
+          <div
+            class="box">
+
+            <div
+              class="bociteAnnuaireTitle">
+              Recherche momentanément indisponible
+            </div>
+
+            <div
+              class="bociteAnnuaireText"
+              style="margin-top:6px;">
+              Vous pourrez réessayer
+              depuis ce métier.
+            </div>
+
+          </div>
+
+          ${getBackButtonHtml(
+            "Retour au métier"
+          )}
+
+        `,
+        bindBackButton
+      );
+    }
+  }
+
+  /* =======================================================
+     33. RACCORDEMENT AU MODULE EMPLOI
+     ======================================================= */
+
+  function openSpontaneousApplication(
+    entity,
+    trade
+  ){
+
+    addCitizenAction(
+      "employment_application_opened",
+      entity,
+      {
+        trade:
+          trade ||
+          entity.trade ||
+          entity.activity ||
+          "",
+
+        status:
+          "opened"
+      }
+    );
+
+    /*
+     * Priorité au formulaire Emploi officiel.
+     */
+    if(
+      typeof module
+        .openApplicationForm ===
+      "function"
+    ){
+
+      module.openApplicationForm({
+
+        companyId:
+          entity.id,
+
+        companyName:
+          entity.name,
+
+        companyCommune:
+          entity.commune,
+
+        trade:
+          trade ||
+          entity.trade ||
+          entity.activity ||
+          "",
+
+        source:
+          "annuaire"
+
+      });
+
+      return;
+    }
+
+    if(
+      typeof module
+        .openEmploymentPublicHome ===
+      "function"
+    ){
+
+      module
+        .openEmploymentPublicHome();
+
+      return;
+    }
+
+    if(
+      typeof module.openScreen ===
+      "function"
+    ){
+
+      module.openScreen(
+        "emploi"
+      );
+
+      return;
+    }
+
+    alert(
+      "Le formulaire Emploi n'est pas encore disponible."
+    );
+  }
+
+  /* =======================================================
+     34. CARTE RÉSULTAT
      ======================================================= */
 
   function getResultCard(entity){
@@ -4250,30 +5525,27 @@ function getLogoHtml(){
         entity.id
       );
 
-    const ratingHtml =
-      rating.count
-        ? `
-            <div
-              class="bociteAnnuaireSmall"
-              style="margin-top:5px;">
-              Appréciation :
-              <strong>
-                ${rating.average.toFixed(1)} / 5
-              </strong>
-              •
-              ${rating.count}
-              avis
-            </div>
-          `
-        : "";
+    const openStatus =
+      getEntityOpenStatus(
+        entity
+      );
 
     return `
 
       <div
-        class="box bociteAnnuaireResult">
+        class="
+          box
+          bociteAnnuaireResult
+        "
+        style="
+          margin-bottom:9px;
+        ">
 
-        <div class="bociteAnnuaireTitle">
-          ${escapeHtml(entity.name)}
+        <div
+          class="bociteAnnuaireTitle">
+          ${escapeHtml(
+            entity.name
+          )}
         </div>
 
         ${
@@ -4282,30 +5554,83 @@ function getLogoHtml(){
                 <div
                   class="bociteAnnuaireText"
                   style="margin-top:4px;">
-                  ${escapeHtml(entity.activity)}
+                  ${escapeHtml(
+                    entity.activity
+                  )}
                 </div>
               `
             : ""
         }
 
         ${
-          entity.commune
+          entity.commune ||
+          entity.country
             ? `
                 <div
                   class="bociteAnnuaireSmall"
                   style="margin-top:4px;">
-                  ${escapeHtml(entity.commune)}
+                  ${escapeHtml(
+                    [
+                      entity.commune,
+                      entity.country
+                    ]
+                    .filter(Boolean)
+                    .join(" • ")
+                  )}
                 </div>
               `
             : ""
         }
 
-        ${ratingHtml}
+        ${
+          openStatus.known
+            ? `
+                <div
+                  class="bociteAnnuaireSmall"
+                  style="
+                    margin-top:4px;
+                    font-weight:700;
+                    color:${
+                      openStatus.open
+                        ? "#2f5d46"
+                        : "#555"
+                    };
+                  ">
+                  ${escapeHtml(
+                    openStatus.label
+                  )}
+                </div>
+              `
+            : ""
+        }
+
+        ${
+          rating.count
+            ? `
+                <div
+                  class="bociteAnnuaireSmall"
+                  style="margin-top:4px;">
+                  ${rating.average.toFixed(
+                    1
+                  )} / 5
+                  •
+                  ${rating.count}
+                  appréciation(s)
+                </div>
+              `
+            : ""
+        }
 
         <button
           type="button"
-          class="choiceBtn annuaireOpenEntityBtn"
-          data-id="${escapeHtml(entity.id)}"
+          class="
+            choiceBtn
+            bociteAnnuaireWhiteButton
+            annuaireOpenEntityBtn
+          "
+          data-id="${escapeHtml(
+            entity.id
+          )}"
           style="
             width:100%;
             margin-top:8px;
@@ -4319,25 +5644,47 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     ÉCRAN RÉSULTATS
+     35. RÉSULTATS
      ======================================================= */
 
   function renderResults(data){
 
-    const query =
-      data.query || "";
-
-    const commune =
-      data.commune ||
-      getCurrentCommune();
-
-    const loading =
-      data.loading === true;
+    const request =
+      data.request ||
+      {};
 
     const rows =
       safeArray(
         data.rows
       );
+
+    const searchLabel =
+      request.trade ||
+      request.query ||
+      "";
+
+    let zoneLabel =
+      request.commune ||
+      getCurrentCommune();
+
+    if(
+      request.zone ===
+      "france"
+    ){
+
+      zoneLabel =
+        "France entière";
+    }
+
+    if(
+      request.zone ===
+      "europe"
+    ){
+
+      zoneLabel =
+        request.country ||
+        "Europe";
+    }
 
     let html = `
 
@@ -4347,40 +5694,53 @@ function getLogoHtml(){
           border-left:6px solid #2f5d46;
         ">
 
-        <div class="bociteAnnuaireTitle">
-          Résultats dans ${escapeHtml(commune)}
+        <div
+          class="bociteAnnuaireTitle">
+          Résultats
         </div>
 
         <div
           class="bociteAnnuaireText"
           style="margin-top:5px;">
-          Recherche :
           <strong>
-            ${escapeHtml(query)}
+            ${escapeHtml(
+              searchLabel
+            )}
           </strong>
+          <br>
+          ${escapeHtml(
+            zoneLabel
+          )}
         </div>
 
       </div>
 
     `;
 
-    if(loading){
+    if(
+      data.loading ===
+      true
+    ){
 
       html += `
 
         <div
-          class="box bociteAnnuaireLoading"
-          style="margin-top:9px;">
+          class="box"
+          style="
+            margin-top:9px;
+            text-align:center;
+            padding:18px 8px;
+          ">
 
-          <div class="bociteAnnuaireTitle">
+          <div
+            class="bociteAnnuaireTitle">
             Recherche en cours…
           </div>
 
           <div
             class="bociteAnnuaireText"
             style="margin-top:6px;">
-            ${getLogoHtml()}
-            recherche uniquement
+            ${getLogoHtml()} recherche
             les établissements correspondant
             à votre demande.
           </div>
@@ -4389,7 +5749,10 @@ function getLogoHtml(){
 
       `;
 
-    }else if(data.error){
+    }else if(
+      data.error ===
+      true
+    ){
 
       html += `
 
@@ -4397,20 +5760,23 @@ function getLogoHtml(){
           class="box"
           style="margin-top:9px;">
 
-          <div class="bociteAnnuaireTitle">
+          <div
+            class="bociteAnnuaireTitle">
             Recherche momentanément indisponible
           </div>
 
           <div
             class="bociteAnnuaireText"
             style="margin-top:6px;">
-            Le service réseau n'a pas répondu.
-            Vous pouvez réessayer.
+            Le service n'a pas répondu.
           </div>
 
           <button
             id="annuaireRetrySearchBtn"
-            class="choiceBtn"
+            class="
+              choiceBtn
+              bociteAnnuaireWhiteButton
+            "
             type="button"
             style="
               width:100%;
@@ -4423,7 +5789,25 @@ function getLogoHtml(){
 
       `;
 
-    }else if(!rows.length){
+    }else if(
+      !rows.length
+    ){
+
+      const officialMissing =
+        request.professional ===
+          true &&
+        (
+          request.zone ===
+            "france" ||
+          request.zone ===
+            "europe" ||
+          request.zone ===
+            "region" ||
+          request.zone ===
+            "departement"
+        ) &&
+        data.officialProvider !==
+          true;
 
       html += `
 
@@ -4431,28 +5815,31 @@ function getLogoHtml(){
           class="box"
           style="margin-top:9px;">
 
-          <div class="bociteAnnuaireTitle">
-            Aucun résultat correspondant
+          <div
+            class="bociteAnnuaireTitle">
+            ${
+              officialMissing
+                ? "Branchement officiel requis"
+                : "Aucun résultat correspondant"
+            }
           </div>
 
           <div
             class="bociteAnnuaireText"
             style="margin-top:6px;">
-            Aucun établissement suffisamment fiable
-            n'a été trouvé pour cette recherche
-            dans votre commune.
-          </div>
 
-          <button
-            id="annuaireExpandSearchBtn"
-            class="choiceBtn"
-            type="button"
-            style="
-              width:100%;
-              margin-top:8px;
-            ">
-            Élargir la recherche
-          </button>
+            ${
+              officialMissing
+                ? (
+                    "La recherche étendue est déjà préparée dans l'annuaire. " +
+                    "Elle deviendra active lorsque le fournisseur officiel Bo'CitéArt sera raccordé."
+                  )
+                : (
+                    "Aucun établissement suffisamment fiable n'a été trouvé pour cette recherche."
+                  )
+            }
+
+          </div>
 
         </div>
 
@@ -4471,11 +5858,15 @@ function getLogoHtml(){
 
       `;
 
-      rows.forEach(function(entity){
+      rows.forEach(
+        function(entity){
 
-        html +=
-          getResultCard(entity);
-      });
+          html +=
+            getResultCard(
+              entity
+            );
+        }
+      );
     }
 
     html +=
@@ -4492,28 +5883,28 @@ function getLogoHtml(){
           .querySelectorAll(
             ".annuaireOpenEntityBtn"
           )
-          .forEach(function(button){
+          .forEach(
+            function(button){
 
-            button.onclick =
-              function(){
+              button.onclick =
+                function(){
 
-                navigate(
-                  "entity",
-                  {
-                    entityId:
-                      button.getAttribute(
-                        "data-id"
-                      ),
+                  navigate(
+                    "entity",
+                    {
+                      entityId:
+                        button.getAttribute(
+                          "data-id"
+                        ),
 
-                    fromQuery:
-                      query,
-
-                    resultRows:
-                      rows
-                  }
-                );
-              };
-          });
+                      professional:
+                        request.professional ===
+                        true
+                    }
+                  );
+                };
+            }
+          );
 
         const retry =
           getElement(
@@ -4525,32 +5916,9 @@ function getLogoHtml(){
           retry.onclick =
             function(){
 
-              startSearch(
-                query,
-                {
-                  ...(data.options || {})
-                }
-              );
-            };
-        }
-
-        const expand =
-          getElement(
-            "annuaireExpandSearchBtn"
-          );
-
-        if(expand){
-
-          expand.onclick =
-            function(){
-
-              startSearch(
-                query,
-                {
-                  ...(data.options || {}),
-                  localOnly:false
-                }
-              );
+              runSearch({
+                ...request
+              });
             };
         }
 
@@ -4560,12 +5928,12 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     FICHE ÉTABLISSEMENT
+     36. FICHE ÉTABLISSEMENT
      ======================================================= */
 
-  function renderEntity(data){
+  async function renderEntity(data){
 
-    const entity =
+    let entity =
       getEntityById(
         data.entityId
       );
@@ -4575,18 +5943,62 @@ function getLogoHtml(){
       renderModal(
         "Fiche indisponible",
         `
-          <div class="box">
-            <div class="bociteAnnuaireText">
+
+          <div
+            class="box">
+
+            <div
+              class="bociteAnnuaireText">
               Cette fiche n'est plus disponible.
             </div>
+
           </div>
 
-          ${getBackButtonHtml("Retour")}
+          ${getBackButtonHtml(
+            "Retour"
+          )}
+
         `,
         bindBackButton
       );
 
       return;
+    }
+
+    /*
+     * Enrichissement officiel si disponible.
+     * La fiche de base reste affichable
+     * même si le serveur ne répond pas.
+     */
+    try{
+
+      const enriched =
+        await Annuaire.Agent
+          .enrichEntity(
+            entity
+          );
+
+      if(enriched){
+
+        const normalized =
+          normalizeEntity({
+            ...entity,
+            ...enriched
+          });
+
+        mergeValidatedEntities(
+          [
+            normalized
+          ]
+        );
+
+        entity =
+          normalized;
+      }
+
+    }catch(error){
+
+      /* la fiche reste utilisable */
     }
 
     addViewedEntity(
@@ -4607,12 +6019,23 @@ function getLogoHtml(){
       [
         entity.address,
         entity.postalCode,
-        entity.commune
+        entity.commune,
+        entity.country
       ]
       .filter(Boolean)
       .join(" ");
 
-    const html = `
+    const verificationText =
+      entity.lastCheckedAt
+        ? (
+            "Dernière vérification : " +
+            formatDateTime(
+              entity.lastCheckedAt
+            )
+          )
+        : "";
+
+    let html = `
 
       <div
         class="box"
@@ -4620,8 +6043,11 @@ function getLogoHtml(){
           border-left:6px solid #2f5d46;
         ">
 
-        <div class="bociteAnnuaireTitle">
-          ${escapeHtml(entity.name)}
+        <div
+          class="bociteAnnuaireTitle">
+          ${escapeHtml(
+            entity.name
+          )}
         </div>
 
         ${
@@ -4630,7 +6056,9 @@ function getLogoHtml(){
                 <div
                   class="bociteAnnuaireText"
                   style="margin-top:4px;">
-                  ${escapeHtml(entity.activity)}
+                  ${escapeHtml(
+                    entity.activity
+                  )}
                 </div>
               `
             : ""
@@ -4642,29 +6070,49 @@ function getLogoHtml(){
                 <div
                   class="bociteAnnuaireText"
                   style="margin-top:7px;">
-                  ${escapeHtml(address)}
+                  ${escapeHtml(
+                    address
+                  )}
                 </div>
               `
             : ""
         }
 
-              ${
+        ${getHoursInformationHtml(
+          entity
+        )}
+
+        ${
           entity.source
             ? `
                 <div
                   class="bociteAnnuaireSmall"
                   style="margin-top:7px;">
                   Source :
-                  ${escapeHtml(entity.source)}
+                  ${escapeHtml(
+                    entity.source
+                  )}
                 </div>
               `
             : ""
         }
 
-        ${getHoursInformationHtml(entity)}
+        ${
+          verificationText
+            ? `
+                <div
+                  class="bociteAnnuaireSmall"
+                  style="margin-top:3px;">
+                  ${escapeHtml(
+                    verificationText
+                  )}
+                </div>
+              `
+            : ""
+        }
 
       </div>
-      
+
       <div
         class="bociteAnnuaireActions"
         style="margin-top:9px;">
@@ -4674,7 +6122,10 @@ function getLogoHtml(){
             ? `
                 <button
                   id="annuaireEntityCallBtn"
-                  class="choiceBtn"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireWhiteButton
+                  "
                   type="button">
                   Appeler
                 </button>
@@ -4687,7 +6138,10 @@ function getLogoHtml(){
             ? `
                 <button
                   id="annuaireEntityRouteBtn"
-                  class="choiceBtn"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireWhiteButton
+                  "
                   type="button">
                   Itinéraire
                 </button>
@@ -4700,7 +6154,10 @@ function getLogoHtml(){
             ? `
                 <button
                   id="annuaireEntityMailBtn"
-                  class="choiceBtn"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireWhiteButton
+                  "
                   type="button">
                   Écrire
                 </button>
@@ -4713,7 +6170,10 @@ function getLogoHtml(){
             ? `
                 <button
                   id="annuaireEntityWebBtn"
-                  class="choiceBtn"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireWhiteButton
+                  "
                   type="button">
                   Site internet
                 </button>
@@ -4725,7 +6185,10 @@ function getLogoHtml(){
 
       <button
         id="annuaireFavoriteToggleBtn"
-        class="choiceBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
@@ -4738,64 +6201,12 @@ function getLogoHtml(){
         }
       </button>
 
-      ${
-        entity.description
-          ? `
-              <div
-                class="box"
-                style="margin-top:9px;">
-
-                <div class="bociteAnnuaireTitle">
-                  Présentation
-                </div>
-
-                <div
-                  class="bociteAnnuaireText"
-                  style="margin-top:6px;">
-                  ${escapeHtml(entity.description)}
-                </div>
-
-              </div>
-            `
-          : ""
-      }
-
-      ${
-        safeArray(entity.services).length
-          ? `
-              <div
-                class="box"
-                style="margin-top:9px;">
-
-                <div class="bociteAnnuaireTitle">
-                  Services
-                </div>
-
-                <div
-                  class="bociteAnnuaireText"
-                  style="margin-top:6px;">
-                  ${
-                    entity.services
-                      .map(function(service){
-                        return (
-                          "• " +
-                          escapeHtml(service)
-                        );
-                      })
-                      .join("<br>")
-                  }
-                </div>
-
-              </div>
-            `
-          : ""
-      }
-
       <div
         class="box"
         style="margin-top:9px;">
 
-        <div class="bociteAnnuaireTitle">
+        <div
+          class="bociteAnnuaireTitle">
           Appréciation locale
         </div>
 
@@ -4807,59 +6218,52 @@ function getLogoHtml(){
             rating.count
               ? (
                   "Moyenne : <strong>" +
-                  rating.average.toFixed(1) +
+                  rating.average.toFixed(
+                    1
+                  ) +
                   " / 5</strong> • " +
                   rating.count +
                   " appréciation(s)"
                 )
-              : "Aucune appréciation pour le moment."
+              : (
+                  "Aucune appréciation pour le moment."
+                )
           }
 
         </div>
 
-        <div class="bociteAnnuaireStars">
+        <div
+          class="bociteAnnuaireActions"
+          style="margin-top:8px;">
 
-          <button
-            type="button"
-            class="choiceBtn bociteAnnuaireStarBtn annuaireRatingBtn"
-            data-rating="1">
-            1
-          </button>
+          ${
+            [1,2,3,4,5]
+              .map(
+                function(value){
 
-          <button
-            type="button"
-            class="choiceBtn bociteAnnuaireStarBtn annuaireRatingBtn"
-            data-rating="2">
-            2
-          </button>
-
-          <button
-            type="button"
-            class="choiceBtn bociteAnnuaireStarBtn annuaireRatingBtn"
-            data-rating="3">
-            3
-          </button>
-
-          <button
-            type="button"
-            class="choiceBtn bociteAnnuaireStarBtn annuaireRatingBtn"
-            data-rating="4">
-            4
-          </button>
-
-          <button
-            type="button"
-            class="choiceBtn bociteAnnuaireStarBtn annuaireRatingBtn"
-            data-rating="5">
-            5
-          </button>
+                  return `
+                    <button
+                      type="button"
+                      class="
+                        choiceBtn
+                        bociteAnnuaireWhiteButton
+                        annuaireRatingBtn
+                      "
+                      data-rating="${value}">
+                      ${value}
+                    </button>
+                  `;
+                }
+              )
+              .join("")
+          }
 
         </div>
 
         <div
           class="bociteAnnuaireSmall"
           style="margin-top:6px;">
-          Pas de commentaire public.
+          Sans commentaire public.
         </div>
 
       </div>
@@ -4868,7 +6272,8 @@ function getLogoHtml(){
         class="box"
         style="margin-top:9px;">
 
-        <div class="bociteAnnuaireTitle">
+        <div
+          class="bociteAnnuaireTitle">
           Emploi
         </div>
 
@@ -4877,7 +6282,10 @@ function getLogoHtml(){
             ? `
                 <button
                   id="annuaireJobsBtn"
-                  class="choiceBtn"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireWhiteButton
+                  "
                   type="button"
                   style="
                     width:100%;
@@ -4891,7 +6299,10 @@ function getLogoHtml(){
 
         <button
           id="annuaireSpontaneousBtn"
-          class="choiceBtn"
+          class="
+            choiceBtn
+            bociteAnnuaireWhiteButton
+          "
           type="button"
           style="
             width:100%;
@@ -4902,18 +6313,44 @@ function getLogoHtml(){
 
       </div>
 
+      ${
+        data.professional ===
+        true
+          ? `
+              <button
+                id="annuaireOpenProfessionalInfoBtn"
+                class="
+                  choiceBtn
+                  bociteAnnuaireWhiteButton
+                "
+                type="button"
+                style="
+                  width:100%;
+                  margin-top:8px;
+                ">
+                Informations professionnelles
+              </button>
+            `
+          : ""
+      }
+
       <button
         id="annuaireReportBtn"
-        class="choiceBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
-          margin-top:9px;
+          margin-top:8px;
         ">
         Signaler une information incorrecte
       </button>
 
-      ${getBackButtonHtml("Retour aux résultats")}
+      ${getBackButtonHtml(
+        "Retour aux résultats"
+      )}
 
     `;
 
@@ -4934,8 +6371,13 @@ function getLogoHtml(){
 
               window.location.href =
                 "tel:" +
-                String(entity.phone)
-                  .replace(/\s+/g, "");
+                String(
+                  entity.phone
+                )
+                .replace(
+                  /\s+/g,
+                  ""
+                );
             };
         }
 
@@ -4951,7 +6393,9 @@ function getLogoHtml(){
 
               window.open(
                 "https://www.google.com/maps/search/?api=1&query=" +
-                encodeURIComponent(address),
+                encodeURIComponent(
+                  address
+                ),
                 "_blank",
                 "noopener"
               );
@@ -4974,32 +6418,34 @@ function getLogoHtml(){
             };
         }
 
-        const web =
+        const website =
           getElement(
             "annuaireEntityWebBtn"
           );
 
-        if(web){
+        if(website){
 
-          web.onclick =
+          website.onclick =
             function(){
 
               window.open(
-                entity.website,
+                normalizeUrl(
+                  entity.website
+                ),
                 "_blank",
                 "noopener"
               );
             };
         }
 
-        const favoriteBtn =
+        const favoriteButton =
           getElement(
             "annuaireFavoriteToggleBtn"
           );
 
-        if(favoriteBtn){
+        if(favoriteButton){
 
-          favoriteBtn.onclick =
+          favoriteButton.onclick =
             function(){
 
               const added =
@@ -5007,10 +6453,11 @@ function getLogoHtml(){
                   entity
                 );
 
-              favoriteBtn.textContent =
-                added
-                  ? "Retirer de mes favoris"
-                  : "Ajouter à mes favoris";
+              favoriteButton
+                .textContent =
+                  added
+                    ? "Retirer de mes favoris"
+                    : "Ajouter à mes favoris";
             };
         }
 
@@ -5018,38 +6465,40 @@ function getLogoHtml(){
           .querySelectorAll(
             ".annuaireRatingBtn"
           )
-          .forEach(function(button){
+          .forEach(
+            function(button){
 
-            button.onclick =
-              function(){
+              button.onclick =
+                function(){
 
-                const value =
-                  Number(
-                    button.getAttribute(
-                      "data-rating"
+                  const value =
+                    Number(
+                      button.getAttribute(
+                        "data-rating"
+                      )
+                    );
+
+                  if(
+                    recordRating(
+                      entity.id,
+                      value
                     )
-                  );
+                  ){
 
-                if(
-                  recordRating(
-                    entity.id,
-                    value
-                  )
-                ){
+                    alert(
+                      "Votre appréciation est enregistrée."
+                    );
 
-                  alert(
-                    "Votre appréciation est enregistrée."
-                  );
-
-                  replaceView(
-                    "entity",
-                    {
-                      ...data
-                    }
-                  );
-                }
-              };
-          });
+                    replaceView(
+                      "entity",
+                      {
+                        ...data
+                      }
+                    );
+                  }
+                };
+            }
+          );
 
         const jobs =
           getElement(
@@ -5062,20 +6511,34 @@ function getLogoHtml(){
             function(){
 
               if(
-                typeof module.openPublicEmploymentList ===
+                typeof module
+                  .openPublicEmploymentList ===
                 "function"
               ){
 
-                module.openPublicEmploymentList();
+                module
+                  .openPublicEmploymentList(
+                    {
+                      companyId:
+                        entity.id,
+
+                      companyName:
+                        entity.name
+                    }
+                  );
+
                 return;
               }
 
               if(
-                typeof module.openEmploymentPublicHome ===
+                typeof module
+                  .openEmploymentPublicHome ===
                 "function"
               ){
 
-                module.openEmploymentPublicHome();
+                module
+                  .openEmploymentPublicHome();
+
                 return;
               }
 
@@ -5101,39 +6564,37 @@ function getLogoHtml(){
           spontaneous.onclick =
             function(){
 
-              if(
-                typeof module.openApplicationForm ===
-                "function"
-              ){
+              openSpontaneousApplication(
+                entity,
+                entity.trade ||
+                entity.activity ||
+                ""
+              );
+            };
+        }
 
-                module.openApplicationForm({
-                  companyId:
-                    entity.id,
-                  companyName:
-                    entity.name
-                });
+        const proInformation =
+          getElement(
+            "annuaireOpenProfessionalInfoBtn"
+          );
 
-                return;
-              }
+        if(proInformation){
 
-              if(
-                typeof module.openEmploymentPublicHome ===
-                "function"
-              ){
+          proInformation.onclick =
+            function(){
 
-                module.openEmploymentPublicHome();
-                return;
-              }
+              requireProfessionalAccess(
+                function(){
 
-              if(
-                typeof module.openScreen ===
-                "function"
-              ){
-
-                module.openScreen(
-                  "emploi"
-                );
-              }
+                  navigate(
+                    "professional_information",
+                    {
+                      entityId:
+                        entity.id
+                    }
+                  );
+                }
+              );
             };
         }
 
@@ -5163,19 +6624,129 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     HISTORIQUE
+     37. RELANCER UNE RECHERCHE HISTORIQUE
+     ======================================================= */
+
+  function replaySearchHistoryItem(id){
+
+    const item =
+      loadSearchHistory()
+        .find(
+          function(row){
+
+            return (
+              String(row.id) ===
+              String(id)
+            );
+          }
+        );
+
+    if(!item){
+
+      alert(
+        "Cette recherche n'est plus disponible."
+      );
+
+      return;
+    }
+
+    if(
+      item.professional ===
+      true
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          if(
+            (
+              item.zone ===
+              "departement" ||
+              item.zone ===
+              "region" ||
+              item.zone ===
+              "france" ||
+              item.zone ===
+              "europe"
+            )
+          ){
+
+            requireExtendedSubscription(
+              function(){
+
+                runSearch({
+                  ...item
+                });
+              }
+            );
+
+            return;
+          }
+
+          runSearch({
+            ...item
+          });
+        }
+      );
+
+      return;
+    }
+
+    runSearch({
+
+      query:
+        item.query,
+
+      trade:
+        item.trade || "",
+
+      category:
+        item.category || "",
+
+      commune:
+        item.commune ||
+        getCurrentCommune(),
+
+      zone:
+        "commune",
+
+      professional:
+        false,
+
+      countryCode:
+        "FR",
+
+      country:
+        "France"
+
+    });
+  }
+
+  /* =======================================================
+     38. HISTORIQUE PUBLIC
      ======================================================= */
 
   function renderHistory(){
 
     const history =
-      loadSearchHistory();
+      loadSearchHistory()
+        .filter(
+          function(item){
+
+            return (
+              item.professional !==
+              true
+            );
+          }
+        );
 
     let html = `
 
-      <div class="box">
+      <div
+        class="box">
 
-        <div class="bociteAnnuaireTitle">
+        <div
+          class="bociteAnnuaireTitle">
           Mon historique
         </div>
 
@@ -5199,7 +6770,8 @@ function getLogoHtml(){
           class="box"
           style="margin-top:9px;">
 
-          <div class="bociteAnnuaireText">
+          <div
+            class="bociteAnnuaireText">
             Aucun historique pour le moment.
           </div>
 
@@ -5209,55 +6781,80 @@ function getLogoHtml(){
 
     }else{
 
-      history.forEach(function(item){
+      history.forEach(
+        function(item){
 
-        html += `
-
-          <div
-            class="box bociteAnnuaireHistoryRow">
-
-            <div class="bociteAnnuaireTitle">
-              ${escapeHtml(item.query)}
-            </div>
+          html += `
 
             <div
-              class="bociteAnnuaireSmall"
-              style="margin-top:4px;">
-              ${escapeHtml(item.commune || "")}
-              <br>
-              ${formatDateTime(item.createdAt)}
-            </div>
-
-            <div
-              class="bociteAnnuaireActions"
+              class="box"
               style="margin-top:8px;">
 
-              <button
-                type="button"
-                class="choiceBtn annuaireHistoryReplayBtn"
-                data-id="${escapeHtml(item.id)}">
-                Reprendre
-              </button>
+              <div
+                class="bociteAnnuaireTitle">
+                ${escapeHtml(
+                  item.query
+                )}
+              </div>
 
-              <button
-                type="button"
-                class="choiceBtn annuaireHistoryDeleteBtn"
-                data-id="${escapeHtml(item.id)}">
-                Supprimer
-              </button>
+              <div
+                class="bociteAnnuaireSmall"
+                style="margin-top:4px;">
+                ${escapeHtml(
+                  item.commune || ""
+                )}
+                <br>
+                ${formatDateTime(
+                  item.createdAt
+                )}
+              </div>
+
+              <div
+                class="bociteAnnuaireActions"
+                style="margin-top:8px;">
+
+                <button
+                  type="button"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireWhiteButton
+                    annuaireHistoryReplayBtn
+                  "
+                  data-id="${escapeHtml(
+                    item.id
+                  )}">
+                  Reprendre
+                </button>
+
+                <button
+                  type="button"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireWhiteButton
+                    annuaireHistoryDeleteBtn
+                  "
+                  data-id="${escapeHtml(
+                    item.id
+                  )}">
+                  Supprimer
+                </button>
+
+              </div>
 
             </div>
 
-          </div>
-
-        `;
-      });
+          `;
+        }
+      );
 
       html += `
 
         <button
           id="annuaireHistoryClearAllBtn"
-          class="choiceBtn"
+          class="
+            choiceBtn
+            bociteAnnuaireWhiteButton
+          "
           type="button"
           style="
             width:100%;
@@ -5283,49 +6880,52 @@ function getLogoHtml(){
           .querySelectorAll(
             ".annuaireHistoryReplayBtn"
           )
-          .forEach(function(button){
+          .forEach(
+            function(button){
 
-            button.onclick =
-              function(){
+              button.onclick =
+                function(){
 
-                replaySearchHistoryItem(
-                  button.getAttribute(
-                    "data-id"
-                  )
-                );
-              };
-          });
+                  replaySearchHistoryItem(
+                    button.getAttribute(
+                      "data-id"
+                    )
+                  );
+                };
+            }
+          );
 
         document
           .querySelectorAll(
             ".annuaireHistoryDeleteBtn"
           )
-          .forEach(function(button){
+          .forEach(
+            function(button){
 
-            button.onclick =
-              function(){
+              button.onclick =
+                function(){
 
-                const confirmed =
-                  window.confirm(
-                    "Supprimer uniquement cette ligne de votre historique ?"
+                  if(
+                    !window.confirm(
+                      "Supprimer uniquement cette ligne ?"
+                    )
+                  ){
+                    return;
+                  }
+
+                  deleteSearchHistoryItem(
+                    button.getAttribute(
+                      "data-id"
+                    )
                   );
 
-                if(!confirmed){
-                  return;
-                }
-
-                deleteSearchHistoryItem(
-                  button.getAttribute(
-                    "data-id"
-                  )
-                );
-
-                replaceView(
-                  "history",
-                  {}
-                );
-              };
-          });
+                  replaceView(
+                    "history",
+                    {}
+                  );
+                };
+            }
+          );
 
         const clear =
           getElement(
@@ -5337,16 +6937,29 @@ function getLogoHtml(){
           clear.onclick =
             function(){
 
-              const confirmed =
-                window.confirm(
-                  "Supprimer tout votre historique de recherches ? Cette action supprimera toutes les lignes enregistrées sur cet appareil."
-                );
-
-              if(!confirmed){
+              if(
+                !window.confirm(
+                  "Supprimer tout votre historique de recherches ?"
+                )
+              ){
                 return;
               }
 
-              clearSearchHistory();
+              const professionalRows =
+                loadSearchHistory()
+                  .filter(
+                    function(item){
+
+                      return (
+                        item.professional ===
+                        true
+                      );
+                    }
+                  );
+
+              saveSearchHistory(
+                professionalRows
+              );
 
               replaceView(
                 "history",
@@ -5361,7 +6974,7 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     FAVORIS
+     39. FAVORIS
      ======================================================= */
 
   function renderFavorites(){
@@ -5371,9 +6984,11 @@ function getLogoHtml(){
 
     let html = `
 
-      <div class="box">
+      <div
+        class="box">
 
-        <div class="bociteAnnuaireTitle">
+        <div
+          class="bociteAnnuaireTitle">
           Mes favoris
         </div>
 
@@ -5388,52 +7003,67 @@ function getLogoHtml(){
         <div
           class="box"
           style="margin-top:9px;">
-          <div class="bociteAnnuaireText">
+
+          <div
+            class="bociteAnnuaireText">
             Aucun favori enregistré.
           </div>
+
         </div>
 
       `;
 
     }else{
 
-      favorites.forEach(function(item){
+      favorites.forEach(
+        function(item){
 
-        html += `
+          html += `
 
-          <button
-            type="button"
-            class="choiceBtn annuaireFavoriteOpenBtn"
-            data-id="${escapeHtml(item.entityId)}"
-            style="
-              width:100%;
-              text-align:left;
-              margin-top:7px;
-            ">
+            <button
+              type="button"
+              class="
+                choiceBtn
+                bociteAnnuaireWhiteButton
+                annuaireFavoriteOpenBtn
+              "
+              data-id="${escapeHtml(
+                item.entityId
+              )}"
+              style="
+                width:100%;
+                margin-top:7px;
+                text-align:left;
+              ">
 
-            <strong>
-              ${escapeHtml(item.name)}
-            </strong>
+              <strong>
+                ${escapeHtml(
+                  item.name
+                )}
+              </strong>
 
-            ${
-              item.activity
-                ? `
-                    <br>
-                    <span
-                      style="
-                        font-size:12px;
-                        font-weight:400;
-                      ">
-                      ${escapeHtml(item.activity)}
-                    </span>
-                  `
-                : ""
-            }
+              ${
+                item.commune
+                  ? `
+                      <br>
+                      <span
+                        style="
+                          font-size:12px;
+                          font-weight:400;
+                        ">
+                        ${escapeHtml(
+                          item.commune
+                        )}
+                      </span>
+                    `
+                  : ""
+              }
 
-          </button>
+            </button>
 
-        `;
-      });
+          `;
+        }
+      );
     }
 
     html +=
@@ -5450,22 +7080,24 @@ function getLogoHtml(){
           .querySelectorAll(
             ".annuaireFavoriteOpenBtn"
           )
-          .forEach(function(button){
+          .forEach(
+            function(button){
 
-            button.onclick =
-              function(){
+              button.onclick =
+                function(){
 
-                navigate(
-                  "entity",
-                  {
-                    entityId:
-                      button.getAttribute(
-                        "data-id"
-                      )
-                  }
-                );
-              };
-          });
+                  navigate(
+                    "entity",
+                    {
+                      entityId:
+                        button.getAttribute(
+                          "data-id"
+                        )
+                    }
+                  );
+                };
+            }
+          );
 
         bindBackButton();
       }
@@ -5473,7 +7105,7 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     CONSULTÉS RÉCEMMENT
+     40. CONSULTÉS RÉCEMMENT
      ======================================================= */
 
   function renderViewed(){
@@ -5483,9 +7115,11 @@ function getLogoHtml(){
 
     let html = `
 
-      <div class="box">
+      <div
+        class="box">
 
-        <div class="bociteAnnuaireTitle">
+        <div
+          class="bociteAnnuaireTitle">
           Consultés récemment
         </div>
 
@@ -5500,49 +7134,66 @@ function getLogoHtml(){
         <div
           class="box"
           style="margin-top:9px;">
-          <div class="bociteAnnuaireText">
+
+          <div
+            class="bociteAnnuaireText">
             Aucune fiche consultée.
           </div>
+
         </div>
 
       `;
 
     }else{
 
-      history.forEach(function(item){
+      history.forEach(
+        function(item){
 
-        html += `
+          html += `
 
-          <button
-            type="button"
-            class="choiceBtn annuaireViewedOpenBtn"
-            data-id="${escapeHtml(item.entityId)}"
-            style="
-              width:100%;
-              text-align:left;
-              margin-top:7px;
-            ">
-
-            <strong>
-              ${escapeHtml(item.name)}
-            </strong>
-
-            <br>
-
-            <span
+            <button
+              type="button"
+              class="
+                choiceBtn
+                bociteAnnuaireWhiteButton
+                annuaireViewedOpenBtn
+              "
+              data-id="${escapeHtml(
+                item.entityId
+              )}"
               style="
-                font-size:12px;
-                font-weight:400;
+                width:100%;
+                margin-top:7px;
+                text-align:left;
               ">
-              ${escapeHtml(item.commune || "")}
-              •
-              ${formatDateTime(item.viewedAt)}
-            </span>
 
-          </button>
+              <strong>
+                ${escapeHtml(
+                  item.name
+                )}
+              </strong>
 
-        `;
-      });
+              <br>
+
+              <span
+                style="
+                  font-size:12px;
+                  font-weight:400;
+                ">
+                ${escapeHtml(
+                  item.commune || ""
+                )}
+                •
+                ${formatDateTime(
+                  item.viewedAt
+                )}
+              </span>
+
+            </button>
+
+          `;
+        }
+      );
     }
 
     html +=
@@ -5559,22 +7210,24 @@ function getLogoHtml(){
           .querySelectorAll(
             ".annuaireViewedOpenBtn"
           )
-          .forEach(function(button){
+          .forEach(
+            function(button){
 
-            button.onclick =
-              function(){
+              button.onclick =
+                function(){
 
-                navigate(
-                  "entity",
-                  {
-                    entityId:
-                      button.getAttribute(
-                        "data-id"
-                      )
-                  }
-                );
-              };
-          });
+                  navigate(
+                    "entity",
+                    {
+                      entityId:
+                        button.getAttribute(
+                          "data-id"
+                        )
+                    }
+                  );
+                };
+            }
+          );
 
         bindBackButton();
       }
@@ -5582,7 +7235,178 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     SIGNALEMENT
+     41. MES DÉMARCHES
+     ======================================================= */
+
+  function renderCitizenActions(){
+
+    const actions =
+      loadCitizenActions();
+
+    let html = `
+
+      <div
+        class="box">
+
+        <div
+          class="bociteAnnuaireTitle">
+          Mes démarches
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+          Retrouvez les démarches
+          commencées depuis l'annuaire,
+          avec leur date et leur heure.
+        </div>
+
+      </div>
+
+    `;
+
+    if(!actions.length){
+
+      html += `
+
+        <div
+          class="box"
+          style="margin-top:9px;">
+
+          <div
+            class="bociteAnnuaireText">
+            Aucune démarche enregistrée.
+          </div>
+
+        </div>
+
+      `;
+
+    }else{
+
+      actions.forEach(
+        function(item){
+
+          html += `
+
+            <div
+              class="box"
+              style="margin-top:8px;">
+
+              <div
+                class="bociteAnnuaireTitle">
+                ${escapeHtml(
+                  item.companyName ||
+                  "Entreprise"
+                )}
+              </div>
+
+              <div
+                class="bociteAnnuaireText"
+                style="margin-top:5px;">
+                ${
+                  item.type ===
+                  "employment_application_opened"
+                    ? "Candidature spontanée"
+                    : escapeHtml(
+                        item.type
+                      )
+                }
+              </div>
+
+              ${
+                item.trade
+                  ? `
+                      <div
+                        class="bociteAnnuaireSmall"
+                        style="margin-top:4px;">
+                        Métier :
+                        ${escapeHtml(
+                          item.trade
+                        )}
+                      </div>
+                    `
+                  : ""
+              }
+
+              <div
+                class="bociteAnnuaireSmall"
+                style="margin-top:4px;">
+                ${formatDateTime(
+                  item.createdAt
+                )}
+              </div>
+
+              ${
+                item.entityId
+                  ? `
+                      <button
+                        type="button"
+                        class="
+                          choiceBtn
+                          bociteAnnuaireWhiteButton
+                          annuaireActionEntityBtn
+                        "
+                        data-id="${escapeHtml(
+                          item.entityId
+                        )}"
+                        style="
+                          width:100%;
+                          margin-top:7px;
+                        ">
+                        Retrouver l'entreprise
+                      </button>
+                    `
+                  : ""
+              }
+
+            </div>
+
+          `;
+        }
+      );
+    }
+
+    html +=
+      getBackButtonHtml(
+        "Retour à l'annuaire"
+      );
+
+    renderModal(
+      "Mes démarches",
+      html,
+      function(){
+
+        document
+          .querySelectorAll(
+            ".annuaireActionEntityBtn"
+          )
+          .forEach(
+            function(button){
+
+              button.onclick =
+                function(){
+
+                  navigate(
+                    "entity",
+                    {
+                      entityId:
+                        button.getAttribute(
+                          "data-id"
+                        )
+                    }
+                  );
+                };
+            }
+          );
+
+        bindBackButton();
+      }
+    );
+  }
+
+  /* =======================================================
+     42. SIGNALEMENT
      ======================================================= */
 
   function renderReport(data){
@@ -5600,16 +7424,20 @@ function getLogoHtml(){
 
     const html = `
 
-      <div class="box">
+      <div
+        class="box">
 
-        <div class="bociteAnnuaireTitle">
+        <div
+          class="bociteAnnuaireTitle">
           Signaler une information
         </div>
 
         <div
           class="bociteAnnuaireText"
           style="margin-top:6px;">
-          ${escapeHtml(entity.name)}
+          ${escapeHtml(
+            entity.name
+          )}
         </div>
 
       </div>
@@ -5622,7 +7450,7 @@ function getLogoHtml(){
           <input
             type="radio"
             name="annuaireReportType"
-            value="adresse">
+            value="address">
           Adresse incorrecte
         </label>
 
@@ -5632,7 +7460,7 @@ function getLogoHtml(){
           <input
             type="radio"
             name="annuaireReportType"
-            value="telephone">
+            value="phone">
           Téléphone incorrect
         </label>
 
@@ -5642,7 +7470,7 @@ function getLogoHtml(){
           <input
             type="radio"
             name="annuaireReportType"
-            value="activite">
+            value="activity">
           Activité incorrecte
         </label>
 
@@ -5652,7 +7480,7 @@ function getLogoHtml(){
           <input
             type="radio"
             name="annuaireReportType"
-            value="ferme">
+            value="closed">
           Établissement fermé
         </label>
 
@@ -5662,7 +7490,7 @@ function getLogoHtml(){
           <input
             type="radio"
             name="annuaireReportType"
-            value="deplace">
+            value="moved">
           Établissement déplacé
         </label>
 
@@ -5672,7 +7500,7 @@ function getLogoHtml(){
           <input
             type="radio"
             name="annuaireReportType"
-            value="autre">
+            value="other">
           Autre information
         </label>
 
@@ -5680,7 +7508,10 @@ function getLogoHtml(){
 
       <button
         id="annuaireReportSendBtn"
-        class="choiceBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
@@ -5689,7 +7520,9 @@ function getLogoHtml(){
         Envoyer le signalement
       </button>
 
-      ${getBackButtonHtml("Retour à la fiche")}
+      ${getBackButtonHtml(
+        "Retour à la fiche"
+      )}
 
     `;
 
@@ -5740,259 +7573,558 @@ function getLogoHtml(){
     );
   }
 
-  /* =======================================================
-     FIN DU BLOC 3
-     ======================================================= */
-
    /* =======================================================
-     ESPACE PROFESSIONNEL
+     43. SÉCURITÉ DE L'ESPACE PROFESSIONNEL
      ======================================================= */
 
-  function loadProfessionalHistory(){
+  function canAccessProfessionalDirectory(){
 
-    return safeArray(
-      loadJson(
-        STORAGE.professionalHistory,
-        []
-      )
-    );
-  }
+    try{
 
-  function saveProfessionalHistory(history){
-
-    saveJson(
-      STORAGE.professionalHistory,
-      safeArray(history)
-    );
-  }
-
-  function addProfessionalSearch(
-    query,
-    details,
-    zone
-  ){
-
-    const history =
-      loadProfessionalHistory();
-
-    const item = {
-
-      id:
-        uniqueId("prosearch"),
-
-      query:
-        String(query || "").trim(),
-
-      details:
-        String(details || "").trim(),
-
-      zone:
-        zone || "commune",
-
-      status:
-        "en_cours",
-
-      createdAt:
-        Date.now(),
-
-      updatedAt:
-        Date.now()
-
-    };
-
-    history.unshift(item);
-
-    saveProfessionalHistory(history);
-
-    return item;
-  }
-
-  function toggleProfessionalHistoryStatus(id){
-
-    const history =
-      loadProfessionalHistory();
-
-    const item =
-      history.find(function(row){
+      if(
+        window.BoCiteArtRegistration &&
+        typeof window.BoCiteArtRegistration.canAccess ===
+        "function"
+      ){
 
         return (
-          String(row.id) ===
-          String(id)
+          window.BoCiteArtRegistration
+            .canAccess("directory") ===
+          true
         );
-      });
+      }
 
-    if(!item){
-      return;
+      if(
+        module.registration &&
+        typeof module.registration.canAccess ===
+        "function"
+      ){
+
+        return (
+          module.registration
+            .canAccess("directory") ===
+          true
+        );
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Annuaire : contrôle sécurité indisponible",
+        error
+      );
     }
 
-    item.status =
-      item.status === "terminee"
-        ? "en_cours"
-        : "terminee";
-
-    item.updatedAt =
-      Date.now();
-
-    saveProfessionalHistory(history);
+    return false;
   }
 
-  function deleteProfessionalHistoryItem(id){
+  function requireProfessionalAccess(callback){
 
-    const history =
-      loadProfessionalHistory()
-        .filter(function(item){
+    /*
+     * La sécurité centrale reste l'autorité.
+     * L'annuaire ne crée aucun mot de passe,
+     * aucun code parallèle et aucun compte local.
+     */
 
-          return (
-            String(item.id) !==
-            String(id)
-          );
-        });
+    if(
+      canAccessProfessionalDirectory()
+    ){
 
-    saveProfessionalHistory(history);
-  }
+      if(
+        typeof callback ===
+        "function"
+      ){
+        callback();
+      }
 
-  /* =======================================================
-     CARNET PROFESSIONNEL
-     ======================================================= */
-
-  function loadNotebook(){
-
-    return safeArray(
-      loadJson(
-        STORAGE.notebook,
-        []
-      )
-    );
-  }
-
-  function saveNotebook(items){
-
-    saveJson(
-      STORAGE.notebook,
-      safeArray(items)
-    );
-  }
-
-  function addNotebookItem(
-    entity,
-    note
-  ){
-
-    let items =
-      loadNotebook();
-
-    const existing =
-      items.find(function(item){
-
-        return (
-          String(item.entityId) ===
-          String(entity.id)
-        );
-      });
-
-    if(existing){
-
-      existing.note =
-        String(note || "").trim();
-
-      existing.updatedAt =
-        Date.now();
-
-    }else{
-
-      items.unshift({
-
-        id:
-          uniqueId("notebook"),
-
-        entityId:
-          entity.id,
-
-        name:
-          entity.name,
-
-        commune:
-          entity.commune,
-
-        activity:
-          entity.activity ||
-          entity.trade ||
-          "",
-
-        note:
-          String(note || "").trim(),
-
-        createdAt:
-          Date.now(),
-
-        updatedAt:
-          Date.now()
-
-      });
+      return true;
     }
 
-    saveNotebook(items);
-  }
+    /*
+     * Si le module central possède son propre
+     * écran d'accès, on lui passe la main.
+     */
 
-  function deleteNotebookItem(entityId){
+    if(
+      window.BoCiteArtRegistration &&
+      typeof window.BoCiteArtRegistration
+        .requestAccess ===
+      "function"
+    ){
 
-    const items =
-      loadNotebook()
-        .filter(function(item){
-
-          return (
-            String(item.entityId) !==
-            String(entityId)
-          );
-        });
-
-    saveNotebook(items);
-  }
-
-  /* =======================================================
-     ENTREPRISES SUIVIES
-     ======================================================= */
-
-  function loadFollowed(){
-
-    return safeArray(
-      loadJson(
-        STORAGE.followed,
-        []
-      )
-    );
-  }
-
-  function saveFollowed(items){
-
-    saveJson(
-      STORAGE.followed,
-      safeArray(items)
-    );
-  }
-
-  function followEntity(entity){
-
-    const items =
-      loadFollowed();
-
-    const exists =
-      items.some(function(item){
-
-        return (
-          String(item.entityId) ===
-          String(entity.id)
+      window.BoCiteArtRegistration
+        .requestAccess(
+          "directory",
+          callback
         );
-      });
 
-    if(exists){
       return false;
     }
 
-    items.unshift({
+    if(
+      typeof module
+        .openProfessionalAccess ===
+      "function"
+    ){
+
+      module.openProfessionalAccess(
+        "directory",
+        callback
+      );
+
+      return false;
+    }
+
+    alert(
+      "Accès privé professionnel requis."
+    );
+
+    return false;
+  }
+
+  /* =======================================================
+     44. ABONNEMENT POUR RECHERCHE ÉTENDUE
+     ======================================================= */
+
+  function hasExtendedDirectorySubscription(){
+
+    /*
+     * Aucun faux abonnement n'est créé ici.
+     * On interroge les mécanismes déjà présents
+     * dans l'application.
+     */
+
+    try{
+
+      if(
+        typeof module
+          .hasActiveSubscription ===
+        "function"
+      ){
+
+        return (
+          module.hasActiveSubscription(
+            "directory_extended"
+          ) === true
+        );
+      }
+
+      if(
+        typeof module
+          .hasActiveProfessionalSubscription ===
+        "function"
+      ){
+
+        return (
+          module
+            .hasActiveProfessionalSubscription(
+              "directory"
+            ) === true
+        );
+      }
+
+      if(
+        window.BoCiteArtSubscription &&
+        typeof window.BoCiteArtSubscription
+          .isActive ===
+        "function"
+      ){
+
+        return (
+          window.BoCiteArtSubscription
+            .isActive(
+              "directory_extended"
+            ) === true
+        );
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Annuaire : abonnement non vérifiable",
+        error
+      );
+    }
+
+    return false;
+  }
+
+  function requireExtendedSubscription(
+    callback
+  ){
+
+    if(
+      hasExtendedDirectorySubscription()
+    ){
+
+      if(
+        typeof callback ===
+        "function"
+      ){
+        callback();
+      }
+
+      return true;
+    }
+
+    navigate(
+      "professional_subscription",
+      {
+        returnAction:
+          "professional_search"
+      }
+    );
+
+    return false;
+  }
+
+   /* =======================================================
+     43. SÉCURITÉ DE L'ESPACE PROFESSIONNEL
+     ======================================================= */
+
+  function canAccessProfessionalDirectory(){
+
+    try{
+
+      if(
+        window.BoCiteArtRegistration &&
+        typeof window.BoCiteArtRegistration.canAccess ===
+        "function"
+      ){
+
+        return (
+          window.BoCiteArtRegistration
+            .canAccess("directory") ===
+          true
+        );
+      }
+
+      if(
+        module.registration &&
+        typeof module.registration.canAccess ===
+        "function"
+      ){
+
+        return (
+          module.registration
+            .canAccess("directory") ===
+          true
+        );
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Annuaire : contrôle sécurité indisponible",
+        error
+      );
+    }
+
+    return false;
+  }
+
+  function requireProfessionalAccess(callback){
+
+    /*
+     * La sécurité centrale reste l'autorité.
+     * L'annuaire ne crée aucun mot de passe,
+     * aucun code parallèle et aucun compte local.
+     */
+
+    if(
+      canAccessProfessionalDirectory()
+    ){
+
+      if(
+        typeof callback ===
+        "function"
+      ){
+        callback();
+      }
+
+      return true;
+    }
+
+    /*
+     * Si le module central possède son propre
+     * écran d'accès, on lui passe la main.
+     */
+
+    if(
+      window.BoCiteArtRegistration &&
+      typeof window.BoCiteArtRegistration
+        .requestAccess ===
+      "function"
+    ){
+
+      window.BoCiteArtRegistration
+        .requestAccess(
+          "directory",
+          callback
+        );
+
+      return false;
+    }
+
+    if(
+      typeof module
+        .openProfessionalAccess ===
+      "function"
+    ){
+
+      module.openProfessionalAccess(
+        "directory",
+        callback
+      );
+
+      return false;
+    }
+
+    alert(
+      "Accès privé professionnel requis."
+    );
+
+    return false;
+  }
+
+  /* =======================================================
+     44. ABONNEMENT POUR RECHERCHE ÉTENDUE
+     ======================================================= */
+
+  function hasExtendedDirectorySubscription(){
+
+    /*
+     * Aucun faux abonnement n'est créé ici.
+     * On interroge les mécanismes déjà présents
+     * dans l'application.
+     */
+
+    try{
+
+      if(
+        typeof module
+          .hasActiveSubscription ===
+        "function"
+      ){
+
+        return (
+          module.hasActiveSubscription(
+            "directory_extended"
+          ) === true
+        );
+      }
+
+      if(
+        typeof module
+          .hasActiveProfessionalSubscription ===
+        "function"
+      ){
+
+        return (
+          module
+            .hasActiveProfessionalSubscription(
+              "directory"
+            ) === true
+        );
+      }
+
+      if(
+        window.BoCiteArtSubscription &&
+        typeof window.BoCiteArtSubscription
+          .isActive ===
+        "function"
+      ){
+
+        return (
+          window.BoCiteArtSubscription
+            .isActive(
+              "directory_extended"
+            ) === true
+        );
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Annuaire : abonnement non vérifiable",
+        error
+      );
+    }
+
+    return false;
+  }
+
+  function requireExtendedSubscription(
+    callback
+  ){
+
+    if(
+      hasExtendedDirectorySubscription()
+    ){
+
+      if(
+        typeof callback ===
+        "function"
+      ){
+        callback();
+      }
+
+      return true;
+    }
+
+    navigate(
+      "professional_subscription",
+      {
+        returnAction:
+          "professional_search"
+      }
+    );
+
+    return false;
+  }
+
+  /* =======================================================
+     45. PAYS EUROPÉENS
+     ======================================================= */
+
+  const EUROPE_COUNTRIES = [
+
+    {code:"AT",name:"Autriche"},
+    {code:"BE",name:"Belgique"},
+    {code:"BG",name:"Bulgarie"},
+    {code:"HR",name:"Croatie"},
+    {code:"CY",name:"Chypre"},
+    {code:"CZ",name:"Tchéquie"},
+    {code:"DK",name:"Danemark"},
+    {code:"EE",name:"Estonie"},
+    {code:"FI",name:"Finlande"},
+    {code:"FR",name:"France"},
+    {code:"DE",name:"Allemagne"},
+    {code:"GR",name:"Grèce"},
+    {code:"HU",name:"Hongrie"},
+    {code:"IE",name:"Irlande"},
+    {code:"IT",name:"Italie"},
+    {code:"LV",name:"Lettonie"},
+    {code:"LT",name:"Lituanie"},
+    {code:"LU",name:"Luxembourg"},
+    {code:"MT",name:"Malte"},
+    {code:"NL",name:"Pays-Bas"},
+    {code:"PL",name:"Pologne"},
+    {code:"PT",name:"Portugal"},
+    {code:"RO",name:"Roumanie"},
+    {code:"SK",name:"Slovaquie"},
+    {code:"SI",name:"Slovénie"},
+    {code:"ES",name:"Espagne"},
+    {code:"SE",name:"Suède"},
+
+    /*
+     * Pays européens hors UE également utiles
+     * à une recherche de partenaires.
+     */
+
+    {code:"AL",name:"Albanie"},
+    {code:"AD",name:"Andorre"},
+    {code:"BA",name:"Bosnie-Herzégovine"},
+    {code:"IS",name:"Islande"},
+    {code:"LI",name:"Liechtenstein"},
+    {code:"MC",name:"Monaco"},
+    {code:"ME",name:"Monténégro"},
+    {code:"MK",name:"Macédoine du Nord"},
+    {code:"NO",name:"Norvège"},
+    {code:"SM",name:"Saint-Marin"},
+    {code:"RS",name:"Serbie"},
+    {code:"CH",name:"Suisse"},
+    {code:"GB",name:"Royaume-Uni"}
+
+  ];
+
+  function getEuropeCountry(
+    code
+  ){
+
+    return EUROPE_COUNTRIES
+      .find(
+        function(country){
+
+          return (
+            country.code ===
+            String(
+              code || ""
+            )
+            .toUpperCase()
+          );
+        }
+      ) || null;
+  }
+
+  /* =======================================================
+     46. CARNET PROFESSIONNEL
+     ======================================================= */
+
+  function loadProfessionalNotebook(){
+
+    return safeArray(
+      loadJson(
+        STORAGE.professionalNotebook,
+        []
+      )
+    );
+  }
+
+  function saveProfessionalNotebook(
+    rows
+  ){
+
+    saveJson(
+      STORAGE.professionalNotebook,
+      safeArray(rows)
+    );
+  }
+
+  function isInProfessionalNotebook(
+    entityId
+  ){
+
+    return loadProfessionalNotebook()
+      .some(
+        function(item){
+
+          return (
+            String(item.entityId) ===
+            String(entityId)
+          );
+        }
+      );
+  }
+
+  function addToProfessionalNotebook(
+    entity
+  ){
+
+    let rows =
+      loadProfessionalNotebook();
+
+    if(
+      rows.some(
+        function(item){
+
+          return (
+            String(item.entityId) ===
+            String(entity.id)
+          );
+        }
+      )
+    ){
+
+      return false;
+    }
+
+    rows.unshift({
 
       id:
-        uniqueId("follow"),
+        uniqueId(
+          "pro_contact"
+        ),
 
       entityId:
         entity.id,
@@ -6000,45 +8132,242 @@ function getLogoHtml(){
       name:
         entity.name,
 
+      activity:
+        entity.activity ||
+        entity.trade ||
+        "",
+
       commune:
-        entity.commune,
+        entity.commune || "",
+
+      country:
+        entity.country || "",
+
+      phone:
+        entity.phone || "",
+
+      email:
+        entity.email || "",
+
+      website:
+        entity.website || "",
+
+      note:
+        "",
 
       createdAt:
         Date.now(),
 
-      lastCheckedAt:
-        entity.professionalData &&
-        entity.professionalData.checkedAt
-          ? entity.professionalData.checkedAt
-          : 0
+      updatedAt:
+        Date.now()
 
     });
 
-    saveFollowed(items);
+    saveProfessionalNotebook(
+      rows
+    );
 
     return true;
   }
 
-  function unfollowEntity(entityId){
+  function removeFromProfessionalNotebook(
+    id
+  ){
 
-    const items =
-      loadFollowed()
-        .filter(function(item){
+    saveProfessionalNotebook(
+      loadProfessionalNotebook()
+        .filter(
+          function(item){
+
+            return (
+              String(item.id) !==
+              String(id)
+            );
+          }
+        )
+    );
+  }
+
+  function updateProfessionalNotebookNote(
+    id,
+    note
+  ){
+
+    const rows =
+      loadProfessionalNotebook();
+
+    const item =
+      rows.find(
+        function(row){
 
           return (
-            String(item.entityId) !==
-            String(entityId)
+            String(row.id) ===
+            String(id)
           );
-        });
+        }
+      );
 
-    saveFollowed(items);
+    if(!item){
+      return false;
+    }
+
+    item.note =
+      String(
+        note || ""
+      ).trim();
+
+    item.updatedAt =
+      Date.now();
+
+    saveProfessionalNotebook(
+      rows
+    );
+
+    return true;
   }
 
   /* =======================================================
-     TABLEAU PROFESSIONNEL
+     47. ENTREPRISES SUIVIES
      ======================================================= */
 
-  function renderProfessional(){
+  function loadFollowedCompanies(){
+
+    return safeArray(
+      loadJson(
+        STORAGE.followedCompanies,
+        []
+      )
+    );
+  }
+
+  function saveFollowedCompanies(
+    rows
+  ){
+
+    saveJson(
+      STORAGE.followedCompanies,
+      safeArray(rows)
+    );
+  }
+
+  function isCompanyFollowed(
+    entityId
+  ){
+
+    return loadFollowedCompanies()
+      .some(
+        function(item){
+
+          return (
+            String(item.entityId) ===
+            String(entityId)
+          );
+        }
+      );
+  }
+
+  function toggleFollowCompany(
+    entity
+  ){
+
+    let rows =
+      loadFollowedCompanies();
+
+    const existing =
+      rows.find(
+        function(item){
+
+          return (
+            String(item.entityId) ===
+            String(entity.id)
+          );
+        }
+      );
+
+    if(existing){
+
+      rows =
+        rows.filter(
+          function(item){
+
+            return (
+              String(item.entityId) !==
+              String(entity.id)
+            );
+          }
+        );
+
+      saveFollowedCompanies(
+        rows
+      );
+
+      return false;
+    }
+
+    rows.unshift({
+
+      id:
+        uniqueId(
+          "follow"
+        ),
+
+      entityId:
+        entity.id,
+
+      name:
+        entity.name,
+
+      activity:
+        entity.activity ||
+        entity.trade ||
+        "",
+
+      commune:
+        entity.commune || "",
+
+      country:
+        entity.country || "",
+
+      followedAt:
+        Date.now(),
+
+      lastCheckedAt:
+        entity.lastCheckedAt || 0
+
+    });
+
+    saveFollowedCompanies(
+      rows
+    );
+
+    return true;
+  }
+
+  /* =======================================================
+     48. ACCUEIL PROFESSIONNEL PRIVÉ
+     ======================================================= */
+
+  function renderProfessionalHome(){
+
+    if(
+      !canAccessProfessionalDirectory()
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          replaceView(
+            "professional",
+            {}
+          );
+        }
+      );
+
+      return;
+    }
+
+    const extended =
+      hasExtendedDirectorySubscription();
 
     const html = `
 
@@ -6048,23 +8377,34 @@ function getLogoHtml(){
           border-left:6px solid #2f5d46;
         ">
 
-        <div class="bociteAnnuaireTitle">
-          Espace professionnel
+        <div
+          class="bociteAnnuaireTitle">
+          Espace professionnel privé
         </div>
 
         <div
           class="bociteAnnuaireText"
           style="margin-top:6px;">
-          Recherchez, conservez et suivez
-          les entreprises utiles
-          à votre activité.
+          Recherchez des entreprises,
+          fournisseurs, partenaires,
+          sous-traitants ou compétences.
+        </div>
+
+        <div
+          class="bociteAnnuaireSmall"
+          style="margin-top:6px;">
+          Accès protégé par votre compte
+          professionnel ${getLogoHtml()}.
         </div>
 
       </div>
 
       <button
-        id="annuaireProSearchOpenBtn"
-        class="choiceBtn"
+        id="annuaireProSearchBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
@@ -6074,19 +8414,25 @@ function getLogoHtml(){
       </button>
 
       <button
-        id="annuaireProHistoryOpenBtn"
-        class="choiceBtn"
+        id="annuaireProHistoryBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
           margin-top:7px;
         ">
-        Mes recherches professionnelles
+        Historique de mes recherches
       </button>
 
       <button
-        id="annuaireNotebookOpenBtn"
-        class="choiceBtn"
+        id="annuaireProNotebookBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
@@ -6096,8 +8442,11 @@ function getLogoHtml(){
       </button>
 
       <button
-        id="annuaireFollowedOpenBtn"
-        class="choiceBtn"
+        id="annuaireProFollowedBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
@@ -6107,19 +8456,11 @@ function getLogoHtml(){
       </button>
 
       <button
-        id="annuaireProInformationOpenBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:7px;
-        ">
-        Informations professionnelles
-      </button>
-
-      <button
-        id="annuaireBercyOpenPanelBtn"
-        class="choiceBtn"
+        id="annuaireBercyBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
@@ -6128,7 +8469,58 @@ function getLogoHtml(){
         Bercy Infos Entreprises
       </button>
 
-      ${getBackButtonHtml("Retour à l'annuaire")}
+      <div
+        class="box"
+        style="margin-top:10px;">
+
+        <div
+          class="bociteAnnuaireTitle">
+          Recherche étendue
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+
+          ${
+            extended
+              ? (
+                  "Votre accès étendu est actif : " +
+                  "commune, proximité, département, région, France et Europe."
+                )
+              : (
+                  "La recherche France entière et Europe " +
+                  "est réservée à l'abonnement professionnel."
+                )
+          }
+
+        </div>
+
+        ${
+          !extended
+            ? `
+                <button
+                  id="annuaireProSubscriptionBtn"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireWhiteButton
+                  "
+                  type="button"
+                  style="
+                    width:100%;
+                    margin-top:8px;
+                  ">
+                  Voir l'accès étendu
+                </button>
+              `
+            : ""
+        }
+
+      </div>
+
+      ${getBackButtonHtml(
+        "Retour à l'annuaire"
+      )}
 
     `;
 
@@ -6139,7 +8531,7 @@ function getLogoHtml(){
 
         const search =
           getElement(
-            "annuaireProSearchOpenBtn"
+            "annuaireProSearchBtn"
           );
 
         if(search){
@@ -6156,7 +8548,7 @@ function getLogoHtml(){
 
         const history =
           getElement(
-            "annuaireProHistoryOpenBtn"
+            "annuaireProHistoryBtn"
           );
 
         if(history){
@@ -6173,7 +8565,7 @@ function getLogoHtml(){
 
         const notebook =
           getElement(
-            "annuaireNotebookOpenBtn"
+            "annuaireProNotebookBtn"
           );
 
         if(notebook){
@@ -6182,7 +8574,7 @@ function getLogoHtml(){
             function(){
 
               navigate(
-                "notebook",
+                "professional_notebook",
                 {}
               );
             };
@@ -6190,7 +8582,7 @@ function getLogoHtml(){
 
         const followed =
           getElement(
-            "annuaireFollowedOpenBtn"
+            "annuaireProFollowedBtn"
           );
 
         if(followed){
@@ -6199,24 +8591,7 @@ function getLogoHtml(){
             function(){
 
               navigate(
-                "followed",
-                {}
-              );
-            };
-        }
-
-        const information =
-          getElement(
-            "annuaireProInformationOpenBtn"
-          );
-
-        if(information){
-
-          information.onclick =
-            function(){
-
-              navigate(
-                "professional_company_picker",
+                "professional_followed",
                 {}
               );
             };
@@ -6224,7 +8599,7 @@ function getLogoHtml(){
 
         const bercy =
           getElement(
-            "annuaireBercyOpenPanelBtn"
+            "annuaireBercyBtn"
           );
 
         if(bercy){
@@ -6239,157 +8614,19 @@ function getLogoHtml(){
             };
         }
 
-        bindBackButton();
-      }
-    );
-  }
-
-  /* =======================================================
-     RECHERCHE PROFESSIONNELLE
-     ======================================================= */
-
-  function renderProfessionalSearch(){
-
-    const html = `
-
-      <div class="box">
-
-        <div class="bociteAnnuaireTitle">
-          Recherche professionnelle
-        </div>
-
-        <div
-          class="bociteAnnuaireText"
-          style="margin-top:6px;">
-          Fournisseur • sous-traitant • partenaire • compétence • produit • service
-        </div>
-
-      </div>
-
-      <div
-        class="box"
-        style="margin-top:9px;">
-
-        <input
-          id="annuaireProQueryInput"
-          type="text"
-          placeholder="Votre recherche"
-          style="
-            width:100%;
-            min-height:44px;
-            box-sizing:border-box;
-          "
-        >
-
-        <textarea
-          id="annuaireProDetailsInput"
-          rows="4"
-          placeholder="Précisez votre besoin"
-          style="
-            width:100%;
-            box-sizing:border-box;
-            margin-top:8px;
-          "></textarea>
-
-        <select
-          id="annuaireProZoneInput"
-          style="
-            width:100%;
-            min-height:44px;
-            margin-top:8px;
-          ">
-
-          <option value="commune">
-            Ma commune
-          </option>
-
-          <option value="proche">
-            Communes proches
-          </option>
-
-          <option value="departement">
-            Département
-          </option>
-
-          <option value="region">
-            Région
-          </option>
-
-          <option value="france">
-            France
-          </option>
-
-        </select>
-
-      </div>
-
-      <button
-        id="annuaireProSearchBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:8px;
-        ">
-        Rechercher
-      </button>
-
-      ${getBackButtonHtml("Retour à l'espace professionnel")}
-
-    `;
-
-    renderModal(
-      "Recherche professionnelle",
-      html,
-      function(){
-
-        const search =
+        const subscription =
           getElement(
-            "annuaireProSearchBtn"
+            "annuaireProSubscriptionBtn"
           );
 
-        if(search){
+        if(subscription){
 
-          search.onclick =
+          subscription.onclick =
             function(){
 
-              const query =
-                getElement(
-                  "annuaireProQueryInput"
-                )?.value.trim() || "";
-
-              const details =
-                getElement(
-                  "annuaireProDetailsInput"
-                )?.value.trim() || "";
-
-              const zone =
-                getElement(
-                  "annuaireProZoneInput"
-                )?.value || "commune";
-
-              if(!query){
-
-                alert(
-                  "Indiquez votre recherche."
-                );
-
-                return;
-              }
-
-              addProfessionalSearch(
-                query,
-                details,
-                zone
-              );
-
-              startSearch(
-                query,
-                {
-                  professional:true,
-                  localOnly:
-                    zone === "commune"
-                }
+              navigate(
+                "professional_subscription",
+                {}
               );
             };
         }
@@ -6400,27 +8637,589 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     HISTORIQUE PROFESSIONNEL
+     49. FORMULAIRE RECHERCHE PROFESSIONNELLE
      ======================================================= */
 
-  function renderProfessionalHistory(){
+  function renderProfessionalSearch(){
 
-    const history =
-      loadProfessionalHistory();
+    if(
+      !canAccessProfessionalDirectory()
+    ){
 
-    let html = `
+      requireProfessionalAccess(
+        function(){
 
-      <div class="box">
+          replaceView(
+            "professional_search",
+            {}
+          );
+        }
+      );
 
-        <div class="bociteAnnuaireTitle">
-          Mes recherches professionnelles
+      return;
+    }
+
+    const extended =
+      hasExtendedDirectorySubscription();
+
+    const countries =
+      EUROPE_COUNTRIES
+        .map(
+          function(country){
+
+            return `
+              <option
+                value="${escapeHtml(
+                  country.code
+                )}">
+                ${escapeHtml(
+                  country.name
+                )}
+              </option>
+            `;
+          }
+        )
+        .join("");
+
+    const html = `
+
+      <div
+        class="box">
+
+        <div
+          class="bociteAnnuaireTitle">
+          Recherche professionnelle
         </div>
 
         <div
           class="bociteAnnuaireText"
           style="margin-top:6px;">
-          Les recherches restent disponibles
-          jusqu'à leur suppression.
+          Recherchez par activité,
+          métier, produit, service,
+          compétence ou nom d'entreprise.
+        </div>
+
+      </div>
+
+      <div
+        class="box"
+        style="margin-top:9px;">
+
+        <label
+          for="annuaireProQueryInput"
+          class="bociteAnnuaireTitle">
+          Je recherche
+        </label>
+
+        <input
+          id="annuaireProQueryInput"
+          class="bociteAnnuaireInput"
+          type="search"
+          autocomplete="off"
+          placeholder="Ex. fabricant aluminium, transport, architecte…"
+          style="
+            background:#ffffff !important;
+            color:#111111 !important;
+            border:1px solid #bbb;
+            border-radius:8px;
+            padding:10px;
+            margin-top:6px;
+          "
+        >
+
+        <label
+          for="annuaireProDetailsInput"
+          class="bociteAnnuaireTitle"
+          style="
+            display:block;
+            margin-top:10px;
+          ">
+          Précisez votre besoin
+        </label>
+
+        <textarea
+          id="annuaireProDetailsInput"
+          class="bociteAnnuaireTextarea"
+          rows="3"
+          placeholder="Produit, capacité, spécialité ou besoin recherché…"
+          style="
+            width:100%;
+            box-sizing:border-box;
+            background:#ffffff !important;
+            color:#111111 !important;
+            border:1px solid #bbb;
+            border-radius:8px;
+            padding:10px;
+            margin-top:6px;
+          "
+        ></textarea>
+
+      </div>
+
+      <div
+        class="box"
+        style="margin-top:9px;">
+
+        <div
+          class="bociteAnnuaireTitle">
+          Zone de recherche
+        </div>
+
+        <div
+          style="
+            margin-top:8px;
+            line-height:2;
+          ">
+
+          <label>
+            <input
+              type="radio"
+              name="annuaireProZone"
+              value="commune"
+              checked
+              style="background:#ffffff;">
+            Ma commune
+          </label>
+
+          <br>
+
+          <label>
+            <input
+              type="radio"
+              name="annuaireProZone"
+              value="proximity"
+              style="background:#ffffff;">
+            Autour de ma commune
+          </label>
+
+          <br>
+
+          <label>
+            <input
+              type="radio"
+              name="annuaireProZone"
+              value="departement"
+              ${
+                extended
+                  ? ""
+                  : "disabled"
+              }
+              style="background:#ffffff;">
+            Département
+            ${
+              extended
+                ? ""
+                : " — abonnement"
+            }
+          </label>
+
+          <br>
+
+          <label>
+            <input
+              type="radio"
+              name="annuaireProZone"
+              value="region"
+              ${
+                extended
+                  ? ""
+                  : "disabled"
+              }
+              style="background:#ffffff;">
+            Région
+            ${
+              extended
+                ? ""
+                : " — abonnement"
+            }
+          </label>
+
+          <br>
+
+          <label>
+            <input
+              type="radio"
+              name="annuaireProZone"
+              value="france"
+              ${
+                extended
+                  ? ""
+                  : "disabled"
+              }
+              style="background:#ffffff;">
+            France entière
+            ${
+              extended
+                ? ""
+                : " — abonnement"
+            }
+          </label>
+
+          <br>
+
+          <label>
+            <input
+              type="radio"
+              name="annuaireProZone"
+              value="europe"
+              ${
+                extended
+                  ? ""
+                  : "disabled"
+              }
+              style="background:#ffffff;">
+            Europe par pays
+            ${
+              extended
+                ? ""
+                : " — abonnement"
+            }
+          </label>
+
+        </div>
+
+        <div
+          id="annuaireEuropeCountryBox"
+          style="
+            display:none;
+            margin-top:9px;
+          ">
+
+          <label
+            for="annuaireEuropeCountrySelect"
+            class="bociteAnnuaireTitle">
+            Pays
+          </label>
+
+          <select
+            id="annuaireEuropeCountrySelect"
+            class="bociteAnnuaireSelect"
+            style="
+              width:100%;
+              box-sizing:border-box;
+              background:#ffffff !important;
+              color:#111111 !important;
+              border:1px solid #bbb;
+              border-radius:8px;
+              padding:10px;
+              margin-top:6px;
+            ">
+            ${countries}
+          </select>
+
+        </div>
+
+      </div>
+
+      <button
+        id="annuaireProLaunchSearchBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
+        type="button"
+        style="
+          width:100%;
+          margin-top:9px;
+          background:#ffffff !important;
+          color:#111111 !important;
+        ">
+        Lancer la recherche
+      </button>
+
+      ${
+        !extended
+          ? `
+              <button
+                id="annuaireProSearchSubscriptionBtn"
+                class="
+                  choiceBtn
+                  bociteAnnuaireWhiteButton
+                "
+                type="button"
+                style="
+                  width:100%;
+                  margin-top:7px;
+                  background:#ffffff !important;
+                  color:#111111 !important;
+                ">
+                Accéder aux recherches France et Europe
+              </button>
+            `
+          : ""
+      }
+
+      ${getBackButtonHtml(
+        "Retour à l'espace professionnel"
+      )}
+
+    `;
+
+    renderModal(
+      "Recherche professionnelle",
+      html,
+      function(){
+
+        const countryBox =
+          getElement(
+            "annuaireEuropeCountryBox"
+          );
+
+        function refreshZone(){
+
+          const selected =
+            document.querySelector(
+              "input[name='annuaireProZone']:checked"
+            );
+
+          if(countryBox){
+
+            countryBox.style.display =
+              (
+                selected &&
+                selected.value ===
+                "europe"
+              )
+                ? "block"
+                : "none";
+          }
+        }
+
+        document
+          .querySelectorAll(
+            "input[name='annuaireProZone']"
+          )
+          .forEach(
+            function(radio){
+
+              radio.onchange =
+                refreshZone;
+            }
+          );
+
+        refreshZone();
+
+        const launch =
+          getElement(
+            "annuaireProLaunchSearchBtn"
+          );
+
+        if(launch){
+
+          launch.onclick =
+            function(){
+
+              const queryElement =
+                getElement(
+                  "annuaireProQueryInput"
+                );
+
+              const detailsElement =
+                getElement(
+                  "annuaireProDetailsInput"
+                );
+
+              const selected =
+                document.querySelector(
+                  "input[name='annuaireProZone']:checked"
+                );
+
+              const query =
+                queryElement
+                  ? String(
+                      queryElement.value ||
+                      ""
+                    ).trim()
+                  : "";
+
+              const details =
+                detailsElement
+                  ? String(
+                      detailsElement.value ||
+                      ""
+                    ).trim()
+                  : "";
+
+              const zone =
+                selected
+                  ? selected.value
+                  : "commune";
+
+              if(!query){
+
+                alert(
+                  "Indiquez ce que vous recherchez."
+                );
+
+                return;
+              }
+
+              if(
+                (
+                  zone ===
+                  "departement" ||
+                  zone ===
+                  "region" ||
+                  zone ===
+                  "france" ||
+                  zone ===
+                  "europe"
+                ) &&
+                !hasExtendedDirectorySubscription()
+              ){
+
+                requireExtendedSubscription(
+                  function(){
+
+                    replaceView(
+                      "professional_search",
+                      {}
+                    );
+                  }
+                );
+
+                return;
+              }
+
+              let countryCode =
+                "FR";
+
+              let country =
+                "France";
+
+              if(
+                zone ===
+                "europe"
+              ){
+
+                const select =
+                  getElement(
+                    "annuaireEuropeCountrySelect"
+                  );
+
+                countryCode =
+                  select
+                    ? select.value
+                    : "FR";
+
+                const countryData =
+                  getEuropeCountry(
+                    countryCode
+                  );
+
+                country =
+                  countryData
+                    ? countryData.name
+                    : "";
+              }
+
+              runSearch({
+
+                query:
+                  [
+                    query,
+                    details
+                  ]
+                  .filter(Boolean)
+                  .join(" "),
+
+                trade:
+                  "",
+
+                category:
+                  "",
+
+                commune:
+                  getCurrentCommune(),
+
+                zone:
+                  zone,
+
+                professional:
+                  true,
+
+                countryCode:
+                  countryCode,
+
+                country:
+                  country
+
+              });
+            };
+        }
+
+        const subscription =
+          getElement(
+            "annuaireProSearchSubscriptionBtn"
+          );
+
+        if(subscription){
+
+          subscription.onclick =
+            function(){
+
+              navigate(
+                "professional_subscription",
+                {}
+              );
+            };
+        }
+
+        bindBackButton();
+      }
+    );
+  }
+
+  /* =======================================================
+     50. HISTORIQUE PROFESSIONNEL
+     ======================================================= */
+
+  function renderProfessionalHistory(){
+
+    if(
+      !canAccessProfessionalDirectory()
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          replaceView(
+            "professional_history",
+            {}
+          );
+        }
+      );
+
+      return;
+    }
+
+    const history =
+      loadSearchHistory()
+        .filter(
+          function(item){
+
+            return (
+              item.professional ===
+              true
+            );
+          }
+        );
+
+    let html = `
+
+      <div
+        class="box">
+
+        <div
+          class="bociteAnnuaireTitle">
+          Historique professionnel
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+          Vos recherches restent disponibles
+          jusqu'à leur suppression volontaire.
         </div>
 
       </div>
@@ -6435,8 +9234,9 @@ function getLogoHtml(){
           class="box"
           style="margin-top:9px;">
 
-          <div class="bociteAnnuaireText">
-            Aucune recherche professionnelle.
+          <div
+            class="bociteAnnuaireText">
+            Aucune recherche professionnelle enregistrée.
           </div>
 
         </div>
@@ -6445,92 +9245,112 @@ function getLogoHtml(){
 
     }else{
 
-      history.forEach(function(item){
+      history.forEach(
+        function(item){
 
-        html += `
+          let zone =
+            item.zone || "";
 
-          <div
-            class="box"
-            style="margin-top:8px;">
+          if(
+            item.zone ===
+            "europe"
+          ){
 
-            <div class="bociteAnnuaireTitle">
-              ${escapeHtml(item.query)}
-            </div>
+            zone =
+              item.country ||
+              "Europe";
+          }
 
-            ${
-              item.details
-                ? `
-                    <div
-                      class="bociteAnnuaireText"
-                      style="margin-top:5px;">
-                      ${escapeHtml(item.details)}
-                    </div>
-                  `
-                : ""
-            }
+          if(
+            item.zone ===
+            "france"
+          ){
 
-            <div
-              class="bociteAnnuaireSmall"
-              style="margin-top:5px;">
+            zone =
+              "France entière";
+          }
 
-              Zone :
-              ${escapeHtml(item.zone)}
-
-              <br>
-
-              Créée :
-              ${formatDateTime(item.createdAt)}
-
-              <br>
-
-              Statut :
-              ${
-                item.status === "terminee"
-                  ? "Terminée"
-                  : "En cours"
-              }
-
-            </div>
+          html += `
 
             <div
-              class="bociteAnnuaireActions"
+              class="box"
               style="margin-top:8px;">
 
-              <button
-                type="button"
-                class="choiceBtn annuaireProHistoryReplayBtn"
-                data-id="${escapeHtml(item.id)}">
-                Reprendre
-              </button>
+              <div
+                class="bociteAnnuaireTitle">
+                ${escapeHtml(
+                  item.query
+                )}
+              </div>
 
-              <button
-                type="button"
-                class="choiceBtn annuaireProHistoryStatusBtn"
-                data-id="${escapeHtml(item.id)}">
-                ${
-                  item.status === "terminee"
-                    ? "Remettre en cours"
-                    : "Terminer"
-                }
-              </button>
+              <div
+                class="bociteAnnuaireSmall"
+                style="margin-top:4px;">
+                Zone :
+                ${escapeHtml(
+                  zone
+                )}
+                <br>
+                ${formatDateTime(
+                  item.createdAt
+                )}
+              </div>
+
+              <div
+                class="bociteAnnuaireActions"
+                style="margin-top:8px;">
+
+                <button
+                  type="button"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireWhiteButton
+                    annuaireProHistoryReplayBtn
+                  "
+                  data-id="${escapeHtml(
+                    item.id
+                  )}">
+                  Reprendre
+                </button>
+
+                <button
+                  type="button"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireWhiteButton
+                    annuaireProHistoryDeleteBtn
+                  "
+                  data-id="${escapeHtml(
+                    item.id
+                  )}">
+                  Supprimer
+                </button>
+
+              </div>
 
             </div>
 
-            <button
-              type="button"
-              class="choiceBtn annuaireProHistoryDeleteBtn"
-              data-id="${escapeHtml(item.id)}"
-              style="
-                width:100%;
-                margin-top:7px;
-              ">
-              Supprimer cette recherche
-            </button>
+          `;
+        }
+      );
 
-          </div>
+      html += `
 
-        `;
-      });
+        <button
+          id="annuaireProHistoryClearBtn"
+          class="
+            choiceBtn
+            bociteAnnuaireWhiteButton
+          "
+          type="button"
+          style="
+            width:100%;
+            margin-top:10px;
+          ">
+          Tout supprimer
+        </button>
+
+      `;
     }
 
     html +=
@@ -6539,7 +9359,7 @@ function getLogoHtml(){
       );
 
     renderModal(
-      "Mes recherches professionnelles",
+      "Historique professionnel",
       html,
       function(){
 
@@ -6547,92 +9367,93 @@ function getLogoHtml(){
           .querySelectorAll(
             ".annuaireProHistoryReplayBtn"
           )
-          .forEach(function(button){
+          .forEach(
+            function(button){
 
-            button.onclick =
-              function(){
+              button.onclick =
+                function(){
 
-                const item =
-                  loadProfessionalHistory()
-                    .find(function(row){
-
-                      return (
-                        String(row.id) ===
-                        String(
-                          button.getAttribute(
-                            "data-id"
-                          )
-                        )
-                      );
-                    });
-
-                if(!item){
-                  return;
-                }
-
-                startSearch(
-                  item.query,
-                  {
-                    professional:true,
-                    localOnly:
-                      item.zone === "commune"
-                  }
-                );
-              };
-          });
-
-        document
-          .querySelectorAll(
-            ".annuaireProHistoryStatusBtn"
-          )
-          .forEach(function(button){
-
-            button.onclick =
-              function(){
-
-                toggleProfessionalHistoryStatus(
-                  button.getAttribute(
-                    "data-id"
-                  )
-                );
-
-                replaceView(
-                  "professional_history",
-                  {}
-                );
-              };
-          });
+                  replaySearchHistoryItem(
+                    button.getAttribute(
+                      "data-id"
+                    )
+                  );
+                };
+            }
+          );
 
         document
           .querySelectorAll(
             ".annuaireProHistoryDeleteBtn"
           )
-          .forEach(function(button){
+          .forEach(
+            function(button){
 
-            button.onclick =
-              function(){
+              button.onclick =
+                function(){
 
-                const confirmed =
-                  window.confirm(
-                    "Supprimer cette recherche professionnelle ?"
+                  if(
+                    !window.confirm(
+                      "Supprimer cette recherche ?"
+                    )
+                  ){
+                    return;
+                  }
+
+                  deleteSearchHistoryItem(
+                    button.getAttribute(
+                      "data-id"
+                    )
                   );
 
-                if(!confirmed){
-                  return;
-                }
+                  replaceView(
+                    "professional_history",
+                    {}
+                  );
+                };
+            }
+          );
 
-                deleteProfessionalHistoryItem(
-                  button.getAttribute(
-                    "data-id"
-                  )
-                );
+        const clear =
+          getElement(
+            "annuaireProHistoryClearBtn"
+          );
 
-                replaceView(
-                  "professional_history",
-                  {}
-                );
-              };
-          });
+        if(clear){
+
+          clear.onclick =
+            function(){
+
+              if(
+                !window.confirm(
+                  "Supprimer tout l'historique professionnel ?"
+                )
+              ){
+                return;
+              }
+
+              const publicRows =
+                loadSearchHistory()
+                  .filter(
+                    function(item){
+
+                      return (
+                        item.professional !==
+                        true
+                      );
+                    }
+                  );
+
+              saveSearchHistory(
+                publicRows
+              );
+
+              replaceView(
+                "professional_history",
+                {}
+              );
+            };
+        }
 
         bindBackButton();
       }
@@ -6640,33 +9461,53 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     CARNET PROFESSIONNEL
+     51. CARNET PROFESSIONNEL
      ======================================================= */
 
-  function renderNotebook(){
+  function renderProfessionalNotebook(){
 
-    const items =
-      loadNotebook();
+    if(
+      !canAccessProfessionalDirectory()
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          replaceView(
+            "professional_notebook",
+            {}
+          );
+        }
+      );
+
+      return;
+    }
+
+    const rows =
+      loadProfessionalNotebook();
 
     let html = `
 
-      <div class="box">
+      <div
+        class="box">
 
-        <div class="bociteAnnuaireTitle">
+        <div
+          class="bociteAnnuaireTitle">
           Mon carnet professionnel
         </div>
 
         <div
           class="bociteAnnuaireText"
           style="margin-top:6px;">
-          Contacts et notes privées.
+          Conservez les contacts utiles
+          retrouvés dans l'annuaire.
         </div>
 
       </div>
 
     `;
 
-    if(!items.length){
+    if(!rows.length){
 
       html += `
 
@@ -6674,8 +9515,9 @@ function getLogoHtml(){
           class="box"
           style="margin-top:9px;">
 
-          <div class="bociteAnnuaireText">
-            Aucun professionnel enregistré.
+          <div
+            class="bociteAnnuaireText">
+            Aucun contact enregistré.
           </div>
 
         </div>
@@ -6684,62 +9526,114 @@ function getLogoHtml(){
 
     }else{
 
-      items.forEach(function(item){
+      rows.forEach(
+        function(item){
 
-        html += `
-
-          <div
-            class="box"
-            style="margin-top:8px;">
-
-            <div class="bociteAnnuaireTitle">
-              ${escapeHtml(item.name)}
-            </div>
+          html += `
 
             <div
-              class="bociteAnnuaireSmall"
-              style="margin-top:4px;">
-              ${escapeHtml(item.commune || "")}
-            </div>
-
-            ${
-              item.note
-                ? `
-                    <div
-                      class="bociteAnnuaireText"
-                      style="margin-top:6px;">
-                      <strong>Ma note privée :</strong>
-                      <br>
-                      ${escapeHtml(item.note)}
-                    </div>
-                  `
-                : ""
-            }
-
-            <div
-              class="bociteAnnuaireActions"
+              class="box"
               style="margin-top:8px;">
 
-              <button
-                type="button"
-                class="choiceBtn annuaireNotebookEntityBtn"
-                data-id="${escapeHtml(item.entityId)}">
-                Voir la fiche
-              </button>
+              <div
+                class="bociteAnnuaireTitle">
+                ${escapeHtml(
+                  item.name
+                )}
+              </div>
 
-              <button
-                type="button"
-                class="choiceBtn annuaireNotebookDeleteBtn"
-                data-id="${escapeHtml(item.entityId)}">
-                Supprimer
-              </button>
+              ${
+                item.activity
+                  ? `
+                      <div
+                        class="bociteAnnuaireText"
+                        style="margin-top:4px;">
+                        ${escapeHtml(
+                          item.activity
+                        )}
+                      </div>
+                    `
+                  : ""
+              }
+
+              <div
+                class="bociteAnnuaireSmall"
+                style="margin-top:4px;">
+                ${escapeHtml(
+                  [
+                    item.commune,
+                    item.country
+                  ]
+                  .filter(Boolean)
+                  .join(" • ")
+                )}
+                <br>
+                Ajouté le
+                ${formatDateTime(
+                  item.createdAt
+                )}
+              </div>
+
+              <textarea
+                class="
+                  bociteAnnuaireTextarea
+                  annuaireNotebookNoteInput
+                "
+                data-id="${escapeHtml(
+                  item.id
+                )}"
+                rows="2"
+                placeholder="Note privée"
+                style="
+                  width:100%;
+                  box-sizing:border-box;
+                  background:#ffffff !important;
+                  color:#111111 !important;
+                  border:1px solid #bbb;
+                  border-radius:8px;
+                  padding:9px;
+                  margin-top:7px;
+                ">${escapeHtml(
+                  item.note || ""
+                )}</textarea>
+
+              <div
+                class="bociteAnnuaireActions"
+                style="margin-top:7px;">
+
+                <button
+                  type="button"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireWhiteButton
+                    annuaireNotebookOpenBtn
+                  "
+                  data-entity-id="${escapeHtml(
+                    item.entityId
+                  )}">
+                  Voir la fiche
+                </button>
+
+                <button
+                  type="button"
+                  class="
+                    choiceBtn
+                    bociteAnnuaireWhiteButton
+                    annuaireNotebookDeleteBtn
+                  "
+                  data-id="${escapeHtml(
+                    item.id
+                  )}">
+                  Retirer
+                </button>
+
+              </div>
 
             </div>
 
-          </div>
-
-        `;
-      });
+          `;
+        }
+      );
     }
 
     html +=
@@ -6748,61 +9642,87 @@ function getLogoHtml(){
       );
 
     renderModal(
-      "Mon carnet professionnel",
+      "Carnet professionnel",
       html,
       function(){
 
         document
           .querySelectorAll(
-            ".annuaireNotebookEntityBtn"
+            ".annuaireNotebookNoteInput"
           )
-          .forEach(function(button){
+          .forEach(
+            function(input){
 
-            button.onclick =
-              function(){
+              input.onchange =
+                function(){
 
-                navigate(
-                  "professional_information",
-                  {
-                    entityId:
-                      button.getAttribute(
-                        "data-id"
-                      )
-                  }
-                );
-              };
-          });
+                  updateProfessionalNotebookNote(
+                    input.getAttribute(
+                      "data-id"
+                    ),
+                    input.value
+                  );
+                };
+            }
+          );
+
+        document
+          .querySelectorAll(
+            ".annuaireNotebookOpenBtn"
+          )
+          .forEach(
+            function(button){
+
+              button.onclick =
+                function(){
+
+                  navigate(
+                    "entity",
+                    {
+                      entityId:
+                        button.getAttribute(
+                          "data-entity-id"
+                        ),
+
+                      professional:
+                        true
+                    }
+                  );
+                };
+            }
+          );
 
         document
           .querySelectorAll(
             ".annuaireNotebookDeleteBtn"
           )
-          .forEach(function(button){
+          .forEach(
+            function(button){
 
-            button.onclick =
-              function(){
+              button.onclick =
+                function(){
 
-                const confirmed =
-                  window.confirm(
-                    "Supprimer cette entreprise de votre carnet ?"
+                  if(
+                    !window.confirm(
+                      "Retirer ce contact du carnet ?"
+                    )
+                  ){
+                    return;
+                  }
+
+                  removeFromProfessionalNotebook(
+                    button.getAttribute(
+                      "data-id"
+                    )
                   );
 
-                if(!confirmed){
-                  return;
-                }
-
-                deleteNotebookItem(
-                  button.getAttribute(
-                    "data-id"
-                  )
-                );
-
-                replaceView(
-                  "notebook",
-                  {}
-                );
-              };
-          });
+                  replaceView(
+                    "professional_notebook",
+                    {}
+                  );
+                };
+            }
+          );
 
         bindBackButton();
       }
@@ -6810,35 +9730,53 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     ENTREPRISES SUIVIES
+     52. ENTREPRISES SUIVIES
      ======================================================= */
 
-  function renderFollowed(){
+  function renderProfessionalFollowed(){
 
-    const items =
-      loadFollowed();
+    if(
+      !canAccessProfessionalDirectory()
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          replaceView(
+            "professional_followed",
+            {}
+          );
+        }
+      );
+
+      return;
+    }
+
+    const rows =
+      loadFollowedCompanies();
 
     let html = `
 
-      <div class="box">
+      <div
+        class="box">
 
-        <div class="bociteAnnuaireTitle">
+        <div
+          class="bociteAnnuaireTitle">
           Entreprises suivies
         </div>
 
         <div
           class="bociteAnnuaireText"
           style="margin-top:6px;">
-          Retrouvez les informations publiques
-          disponibles sur les entreprises
-          que vous souhaitez suivre.
+          Retrouvez rapidement
+          les entreprises que vous souhaitez suivre.
         </div>
 
       </div>
 
     `;
 
-    if(!items.length){
+    if(!rows.length){
 
       html += `
 
@@ -6846,7 +9784,8 @@ function getLogoHtml(){
           class="box"
           style="margin-top:9px;">
 
-          <div class="bociteAnnuaireText">
+          <div
+            class="bociteAnnuaireText">
             Aucune entreprise suivie.
           </div>
 
@@ -6856,49 +9795,56 @@ function getLogoHtml(){
 
     }else{
 
-      items.forEach(function(item){
+      rows.forEach(
+        function(item){
 
-        html += `
+          html += `
 
-          <div
-            class="box"
-            style="margin-top:8px;">
+            <button
+              type="button"
+              class="
+                choiceBtn
+                bociteAnnuaireWhiteButton
+                annuaireFollowedOpenBtn
+              "
+              data-id="${escapeHtml(
+                item.entityId
+              )}"
+              style="
+                width:100%;
+                margin-top:7px;
+                text-align:left;
+              ">
 
-            <div class="bociteAnnuaireTitle">
-              ${escapeHtml(item.name)}
-            </div>
+              <strong>
+                ${escapeHtml(
+                  item.name
+                )}
+              </strong>
 
-            <div
-              class="bociteAnnuaireSmall"
-              style="margin-top:4px;">
-              Suivie depuis :
-              ${formatDateTime(item.createdAt)}
-            </div>
+              <br>
 
-            <div
-              class="bociteAnnuaireActions"
-              style="margin-top:8px;">
+              <span
+                style="
+                  font-size:12px;
+                  font-weight:400;
+                ">
+                ${escapeHtml(
+                  [
+                    item.activity,
+                    item.commune,
+                    item.country
+                  ]
+                  .filter(Boolean)
+                  .join(" • ")
+                )}
+              </span>
 
-              <button
-                type="button"
-                class="choiceBtn annuaireFollowedEntityBtn"
-                data-id="${escapeHtml(item.entityId)}">
-                Voir
-              </button>
+            </button>
 
-              <button
-                type="button"
-                class="choiceBtn annuaireFollowedDeleteBtn"
-                data-id="${escapeHtml(item.entityId)}">
-                Ne plus suivre
-              </button>
-
-            </div>
-
-          </div>
-
-        `;
-      });
+          `;
+        }
+      );
     }
 
     html +=
@@ -6913,46 +9859,29 @@ function getLogoHtml(){
 
         document
           .querySelectorAll(
-            ".annuaireFollowedEntityBtn"
+            ".annuaireFollowedOpenBtn"
           )
-          .forEach(function(button){
+          .forEach(
+            function(button){
 
-            button.onclick =
-              function(){
+              button.onclick =
+                function(){
 
-                navigate(
-                  "professional_information",
-                  {
-                    entityId:
-                      button.getAttribute(
-                        "data-id"
-                      )
-                  }
-                );
-              };
-          });
+                  navigate(
+                    "entity",
+                    {
+                      entityId:
+                        button.getAttribute(
+                          "data-id"
+                        ),
 
-        document
-          .querySelectorAll(
-            ".annuaireFollowedDeleteBtn"
-          )
-          .forEach(function(button){
-
-            button.onclick =
-              function(){
-
-                unfollowEntity(
-                  button.getAttribute(
-                    "data-id"
-                  )
-                );
-
-                replaceView(
-                  "followed",
-                  {}
-                );
-              };
-          });
+                      professional:
+                        true
+                    }
+                  );
+                };
+            }
+          );
 
         bindBackButton();
       }
@@ -6960,145 +9889,29 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     CHOISIR UNE ENTREPRISE
+     53. INFORMATIONS PROFESSIONNELLES D'UNE FICHE
      ======================================================= */
 
-  function renderProfessionalCompanyPicker(){
+  function renderProfessionalInformation(
+    data
+  ){
 
-    const entities =
-      loadEntities();
+    if(
+      !canAccessProfessionalDirectory()
+    ){
 
-    let html = `
+      requireProfessionalAccess(
+        function(){
 
-      <div class="box">
-
-        <div class="bociteAnnuaireTitle">
-          Informations professionnelles
-        </div>
-
-        <div
-          class="bociteAnnuaireText"
-          style="margin-top:6px;">
-          Choisissez une entreprise
-          déjà identifiée dans l'annuaire.
-        </div>
-
-      </div>
-
-    `;
-
-    if(!entities.length){
-
-      html += `
-
-        <div
-          class="box"
-          style="margin-top:9px;">
-
-          <div class="bociteAnnuaireText">
-            Aucune entreprise n'est encore disponible.
-            Effectuez d'abord une recherche.
-          </div>
-
-        </div>
-
-      `;
-
-    }else{
-
-      entities
-        .slice()
-        .sort(function(a,b){
-
-          return String(
-            a.name || ""
-          ).localeCompare(
-            String(
-              b.name || ""
-            ),
-            "fr"
+          replaceView(
+            "professional_information",
+            data
           );
-        })
-        .forEach(function(entity){
-
-          html += `
-
-            <button
-              type="button"
-              class="choiceBtn annuaireProCompanyBtn"
-              data-id="${escapeHtml(entity.id)}"
-              style="
-                width:100%;
-                text-align:left;
-                margin-top:7px;
-              ">
-
-              <strong>
-                ${escapeHtml(entity.name)}
-              </strong>
-
-              ${
-                entity.activity
-                  ? `
-                      <br>
-                      <span
-                        style="
-                          font-size:12px;
-                          font-weight:400;
-                        ">
-                        ${escapeHtml(entity.activity)}
-                      </span>
-                    `
-                  : ""
-              }
-
-            </button>
-
-          `;
-        });
-    }
-
-    html +=
-      getBackButtonHtml(
-        "Retour à l'espace professionnel"
+        }
       );
 
-    renderModal(
-      "Informations professionnelles",
-      html,
-      function(){
-
-        document
-          .querySelectorAll(
-            ".annuaireProCompanyBtn"
-          )
-          .forEach(function(button){
-
-            button.onclick =
-              function(){
-
-                navigate(
-                  "professional_information",
-                  {
-                    entityId:
-                      button.getAttribute(
-                        "data-id"
-                      )
-                  }
-                );
-              };
-          });
-
-        bindBackButton();
-      }
-    );
-  }
-
-  /* =======================================================
-     INFORMATIONS PROFESSIONNELLES
-     ======================================================= */
-
-  function renderProfessionalInformation(data){
+      return;
+    }
 
     const entity =
       getEntityById(
@@ -7107,74 +9920,18 @@ function getLogoHtml(){
 
     if(!entity){
 
-      renderModal(
-        "Informations professionnelles",
-        `
-          <div class="box">
-            <div class="bociteAnnuaireText">
-              Cette entreprise n'est plus disponible.
-            </div>
-          </div>
-
-          ${getBackButtonHtml("Retour")}
-        `,
-        bindBackButton
-      );
-
+      goBack();
       return;
     }
 
-    const professional =
-      entity.professionalData || {};
+    const inNotebook =
+      isInProfessionalNotebook(
+        entity.id
+      );
 
-    const fields = [
-
-      ["SIREN", entity.siren || professional.siren],
-
-      ["SIRET", entity.siret || professional.siret],
-
-      ["Forme juridique", professional.legalForm],
-
-      ["Date de création", professional.creationDate],
-
-      ["Activité", professional.activity || entity.activity],
-
-      ["État de l'établissement", professional.status],
-
-      ["Tranche d'effectifs", professional.workforce],
-
-      ["Derniers comptes disponibles", professional.latestAccounts],
-
-      ["Chiffre d'affaires publié", professional.revenue],
-
-      ["Résultat publié", professional.result]
-
-    ];
-
-    const information =
-      fields
-        .filter(function(field){
-
-          return !!field[1];
-        })
-        .map(function(field){
-
-          return `
-            <div
-              class="bociteAnnuaireText"
-              style="margin-top:6px;">
-              <strong>
-                ${escapeHtml(field[0])} :
-              </strong>
-              ${escapeHtml(field[1])}
-            </div>
-          `;
-        })
-        .join("");
-
-    const events =
-      safeArray(
-        professional.events
+    const followed =
+      isCompanyFollowed(
+        entity.id
       );
 
     const html = `
@@ -7185,14 +9942,17 @@ function getLogoHtml(){
           border-left:6px solid #2f5d46;
         ">
 
-        <div class="bociteAnnuaireTitle">
-          ${escapeHtml(entity.name)}
+        <div
+          class="bociteAnnuaireTitle">
+          ${escapeHtml(
+            entity.name
+          )}
         </div>
 
         <div
           class="bociteAnnuaireText"
-          style="margin-top:6px;">
-          Informations publiques disponibles
+          style="margin-top:5px;">
+          Informations professionnelles
         </div>
 
       </div>
@@ -7202,25 +9962,43 @@ function getLogoHtml(){
         style="margin-top:9px;">
 
         ${
-          information ||
-          `
-            <div class="bociteAnnuaireText">
-              Aucune donnée professionnelle enrichie
-              n'est encore disponible pour cette fiche.
-            </div>
-          `
+          entity.siren
+            ? `
+                <div
+                  class="bociteAnnuaireText">
+                  <strong>SIREN :</strong>
+                  ${escapeHtml(
+                    entity.siren
+                  )}
+                </div>
+              `
+            : ""
         }
 
         ${
-          professional.checkedAt
+          entity.siret
             ? `
                 <div
-                  class="bociteAnnuaireSmall"
-                  style="margin-top:9px;">
-                  Dernière vérification :
-                  ${formatDateTime(
-                    professional.checkedAt
+                  class="bociteAnnuaireText"
+                  style="margin-top:5px;">
+                  <strong>SIRET :</strong>
+                  ${escapeHtml(
+                    entity.siret
                   )}
+                </div>
+              `
+            : ""
+        }
+
+        ${
+          !entity.siren &&
+          !entity.siret
+            ? `
+                <div
+                  class="bociteAnnuaireText">
+                  Les données légales complémentaires
+                  apparaîtront lorsqu'elles seront
+                  disponibles auprès du fournisseur officiel.
                 </div>
               `
             : ""
@@ -7228,87 +10006,45 @@ function getLogoHtml(){
 
       </div>
 
-      ${
-        events.length
-          ? `
-              <div
-                class="box"
-                style="margin-top:9px;">
-
-                <div class="bociteAnnuaireTitle">
-                  Événements publics disponibles
-                </div>
-
-                <div
-                  class="bociteAnnuaireText"
-                  style="margin-top:6px;">
-
-                  ${
-                    events
-                      .map(function(event){
-
-                        return (
-                          "• " +
-                          escapeHtml(
-                            event.label ||
-                            event.type ||
-                            "Événement"
-                          ) +
-                          (
-                            event.date
-                              ? " — " +
-                                escapeHtml(event.date)
-                              : ""
-                          )
-                        );
-                      })
-                      .join("<br>")
-                  }
-
-                </div>
-
-              </div>
-            `
-          : ""
-      }
-
-      <div
-        class="box"
-        style="margin-top:9px;">
-
-        <div class="bociteAnnuaireSmall">
-          Bo'CitéArt présente
-          des informations factuelles disponibles.
-          Elles ne constituent ni une notation,
-          ni une garantie de solvabilité
-          ou de santé financière.
-        </div>
-
-      </div>
-
       <button
-        id="annuaireFollowCompanyBtn"
-        class="choiceBtn"
+        id="annuaireAddNotebookBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
           margin-top:8px;
         ">
-        Ajouter aux entreprises suivies
+        ${
+          inNotebook
+            ? "Déjà dans mon carnet"
+            : "Ajouter à mon carnet professionnel"
+        }
       </button>
 
       <button
-        id="annuaireAddNotebookBtn"
-        class="choiceBtn"
+        id="annuaireFollowCompanyBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
           margin-top:7px;
         ">
-        Ajouter à mon carnet professionnel
+        ${
+          followed
+            ? "Ne plus suivre cette entreprise"
+            : "Suivre cette entreprise"
+        }
       </button>
 
-      ${getBackButtonHtml("Retour")}
+      ${getBackButtonHtml(
+        "Retour à la fiche"
+      )}
 
     `;
 
@@ -7316,27 +10052,6 @@ function getLogoHtml(){
       "Informations professionnelles",
       html,
       function(){
-
-        const follow =
-          getElement(
-            "annuaireFollowCompanyBtn"
-          );
-
-        if(follow){
-
-          follow.onclick =
-            function(){
-
-              const added =
-                followEntity(entity);
-
-              alert(
-                added
-                  ? "Cette entreprise est ajoutée à votre suivi."
-                  : "Cette entreprise est déjà suivie."
-              );
-            };
-        }
 
         const notebook =
           getElement(
@@ -7348,23 +10063,196 @@ function getLogoHtml(){
           notebook.onclick =
             function(){
 
-              const note =
-                window.prompt(
-                  "Ajoutez une note privée :",
-                  ""
+              if(
+                isInProfessionalNotebook(
+                  entity.id
+                )
+              ){
+
+                alert(
+                  "Cette entreprise est déjà dans votre carnet."
                 );
 
-              if(note === null){
                 return;
               }
 
-              addNotebookItem(
-                entity,
-                note
+              addToProfessionalNotebook(
+                entity
               );
 
+              notebook.textContent =
+                "Déjà dans mon carnet";
+            };
+        }
+
+        const follow =
+          getElement(
+            "annuaireFollowCompanyBtn"
+          );
+
+        if(follow){
+
+          follow.onclick =
+            function(){
+
+              const active =
+                toggleFollowCompany(
+                  entity
+                );
+
+              follow.textContent =
+                active
+                  ? "Ne plus suivre cette entreprise"
+                  : "Suivre cette entreprise";
+            };
+        }
+
+        bindBackButton();
+      }
+    );
+  }
+
+  /* =======================================================
+     54. ABONNEMENT / RECHERCHE ÉTENDUE
+     ======================================================= */
+
+  function renderProfessionalSubscription(){
+
+    const html = `
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+        ">
+
+        <div
+          class="bociteAnnuaireTitle">
+          Recherche professionnelle étendue
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:6px;">
+          L'abonnement professionnel
+          permet d'étendre la recherche
+          au-delà de la commune.
+        </div>
+
+      </div>
+
+      <div
+        class="box"
+        style="margin-top:9px;">
+
+        <div
+          class="bociteAnnuaireTitle">
+          Recherche disponible
+        </div>
+
+        <div
+          class="bociteAnnuaireText"
+          style="margin-top:7px;">
+          Commune
+          <br>
+          Proximité
+          <br>
+          Département
+          <br>
+          Région
+          <br>
+          France entière
+          <br>
+          Europe par pays
+        </div>
+
+      </div>
+
+      <div
+        class="box"
+        style="margin-top:9px;">
+
+        <div
+          class="bociteAnnuaireText">
+          Le moteur est préparé pour recevoir
+          le fournisseur professionnel officiel
+          sans reconstruire les écrans
+          de l'annuaire.
+        </div>
+
+      </div>
+
+      <button
+        id="annuaireOpenSubscriptionModuleBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
+        type="button"
+        style="
+          width:100%;
+          margin-top:9px;
+          background:#ffffff !important;
+          color:#111111 !important;
+        ">
+        Consulter mon abonnement
+      </button>
+
+      ${getBackButtonHtml(
+        "Retour"
+      )}
+
+    `;
+
+    renderModal(
+      "Recherche étendue",
+      html,
+      function(){
+
+        const button =
+          getElement(
+            "annuaireOpenSubscriptionModuleBtn"
+          );
+
+        if(button){
+
+          button.onclick =
+            function(){
+
+              if(
+                typeof module
+                  .openSubscription ===
+                "function"
+              ){
+
+                module.openSubscription();
+                return;
+              }
+
+              if(
+                typeof module
+                  .openAbonnement ===
+                "function"
+              ){
+
+                module.openAbonnement();
+                return;
+              }
+
+              if(
+                typeof module.openScreen ===
+                "function"
+              ){
+
+                module.openScreen(
+                  "abonnement"
+                );
+
+                return;
+              }
+
               alert(
-                "Cette entreprise est enregistrée dans votre carnet."
+                "Le module Abonnement sera raccordé ici."
               );
             };
         }
@@ -7375,10 +10263,27 @@ function getLogoHtml(){
   }
 
   /* =======================================================
-     BERCY INFOS ENTREPRISES
+     55. BERCY INFOS ENTREPRISES
      ======================================================= */
 
   function renderBercy(){
+
+    if(
+      !canAccessProfessionalDirectory()
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          replaceView(
+            "bercy",
+            {}
+          );
+        }
+      );
+
+      return;
+    }
 
     const html = `
 
@@ -7388,30 +10293,40 @@ function getLogoHtml(){
           border-left:6px solid #2f5d46;
         ">
 
-        <div class="bociteAnnuaireTitle">
+        <div
+          class="bociteAnnuaireTitle">
           Bercy Infos Entreprises
         </div>
 
         <div
           class="bociteAnnuaireText"
           style="margin-top:6px;">
-          Fiscalité • comptabilité • obligations • aides • gestion
+          Retrouvez les informations
+          et ressources officielles
+          destinées aux entreprises.
         </div>
 
       </div>
 
       <button
         id="annuaireBercyExternalBtn"
-        class="choiceBtn"
+        class="
+          choiceBtn
+          bociteAnnuaireWhiteButton
+        "
         type="button"
         style="
           width:100%;
           margin-top:9px;
+          background:#ffffff !important;
+          color:#111111 !important;
         ">
-        Consulter Bercy Infos Entreprises
+        Ouvrir Bercy Infos Entreprises
       </button>
 
-      ${getBackButtonHtml("Retour à l'espace professionnel")}
+      ${getBackButtonHtml(
+        "Retour à l'espace professionnel"
+      )}
 
     `;
 
@@ -7443,8 +10358,99 @@ function getLogoHtml(){
     );
   }
 
+   /* =======================================================
+     54. SURFACE BLANCHE DE L'ANNUAIRE
+     ======================================================= */
+
+  function applyAnnuaireSurface(){
+
+    window.setTimeout(
+      function(){
+
+        document
+          .querySelectorAll(
+            ".modal-body .box," +
+            ".modalBody .box," +
+            ".modal-content .box," +
+            ".modalContent .box"
+          )
+          .forEach(
+            function(box){
+
+              box.style.background =
+                "#ffffff";
+            }
+          );
+
+        document
+          .querySelectorAll(
+            ".bociteAnnuaireWhiteButton," +
+            ".bociteAnnuaireCategoryButton," +
+            ".bociteAnnuaireTradeButton," +
+            ".bociteAnnuaireActionButton"
+          )
+          .forEach(
+            function(button){
+
+              button.style
+                .setProperty(
+                  "background",
+                  "#ffffff",
+                  "important"
+                );
+
+              button.style
+                .setProperty(
+                  "background-color",
+                  "#ffffff",
+                  "important"
+                );
+
+              button.style
+                .setProperty(
+                  "color",
+                  "#111111",
+                  "important"
+                );
+            }
+          );
+
+        const back =
+          getElement(
+            "annuaireInternalBackBtn"
+          );
+
+        if(back){
+
+          back.style
+            .setProperty(
+              "background",
+              "#f3e7d3",
+              "important"
+            );
+
+          back.style
+            .setProperty(
+              "background-color",
+              "#f3e7d3",
+              "important"
+            );
+
+          back.style
+            .setProperty(
+              "color",
+              "#111111",
+              "important"
+            );
+        }
+
+      },
+      0
+    );
+  }
+
   /* =======================================================
-     ROUTEUR UNIQUE
+     55. ROUTEUR UNIQUE
      ======================================================= */
 
   function renderCurrentView(){
@@ -7452,8 +10458,13 @@ function getLogoHtml(){
     if(!State.current){
 
       State.current = {
-        type:"home",
-        data:{}
+
+        type:
+          "home",
+
+        data:
+          {}
+
       };
     }
 
@@ -7461,140 +10472,398 @@ function getLogoHtml(){
       State.current.type;
 
     const data =
-      State.current.data || {};
+      State.current.data ||
+      {};
 
-    if(type === "home"){
+    if(
+      type ===
+      "home"
+    ){
+
       renderHome();
+
+      applyAnnuaireSurface();
+
       return;
     }
 
-    if(type === "category"){
-      renderCategory(data);
+    if(
+      type ===
+      "category"
+    ){
+
+      renderCategory(
+        data
+      );
+
+      applyAnnuaireSurface();
+
       return;
     }
 
-    if(type === "trade"){
-      renderTrade(data); 
+    if(
+      type ===
+      "trade"
+    ){
+
+      renderTrade(
+        data
+      );
+
+      applyAnnuaireSurface();
+
       return;
     }
 
-    if(type === "results"){
-      renderResults(data);
+    if(
+      type ===
+      "trade_application"
+    ){
+
+      renderTradeApplication(
+        data
+      );
+
+      applyAnnuaireSurface();
+
       return;
     }
 
-    if(type === "entity"){
-      renderEntity(data);
+    if(
+      type ===
+      "results"
+    ){
+
+      renderResults(
+        data
+      );
+
+      applyAnnuaireSurface();
+
       return;
     }
 
-    if(type === "history"){
+    if(
+      type ===
+      "entity"
+    ){
+
+      renderEntity(
+        data
+      );
+
+      applyAnnuaireSurface();
+
+      return;
+    }
+
+    if(
+      type ===
+      "history"
+    ){
+
       renderHistory();
+
+      applyAnnuaireSurface();
+
       return;
     }
 
-    if(type === "favorites"){
+    if(
+      type ===
+      "favorites"
+    ){
+
       renderFavorites();
+
+      applyAnnuaireSurface();
+
       return;
     }
 
-    if(type === "viewed"){
+    if(
+      type ===
+      "viewed"
+    ){
+
       renderViewed();
+
+      applyAnnuaireSurface();
+
       return;
     }
 
-    if(type === "report"){
-      renderReport(data);
+    if(
+      type ===
+      "citizen_actions"
+    ){
+
+      renderCitizenActions();
+
+      applyAnnuaireSurface();
+
       return;
     }
 
-    if(type === "professional"){
-      renderProfessional();
+    if(
+      type ===
+      "report"
+    ){
+
+      renderReport(
+        data
+      );
+
+      applyAnnuaireSurface();
+
       return;
     }
 
-    if(type === "professional_search"){
-      renderProfessionalSearch();
+    if(
+      type ===
+      "professional"
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          renderProfessionalHome();
+
+          applyAnnuaireSurface();
+        }
+      );
+
       return;
     }
 
-    if(type === "professional_history"){
-      renderProfessionalHistory();
+    if(
+      type ===
+      "professional_search"
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          renderProfessionalSearch();
+
+          applyAnnuaireSurface();
+        }
+      );
+
       return;
     }
 
-    if(type === "notebook"){
-      renderNotebook();
+    if(
+      type ===
+      "professional_history"
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          renderProfessionalHistory();
+
+          applyAnnuaireSurface();
+        }
+      );
+
       return;
     }
 
-    if(type === "followed"){
-      renderFollowed();
+    if(
+      type ===
+      "professional_notebook"
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          renderProfessionalNotebook();
+
+          applyAnnuaireSurface();
+        }
+      );
+
       return;
     }
 
-    if(type === "professional_company_picker"){
-      renderProfessionalCompanyPicker();
+    if(
+      type ===
+      "professional_followed"
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          renderProfessionalFollowed();
+
+          applyAnnuaireSurface();
+        }
+      );
+
       return;
     }
 
-    if(type === "professional_information"){
-      renderProfessionalInformation(data);
+    if(
+      type ===
+      "professional_information"
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          renderProfessionalInformation(
+            data
+          );
+
+          applyAnnuaireSurface();
+        }
+      );
+
       return;
     }
 
-    if(type === "bercy"){
-      renderBercy();
+    if(
+      type ===
+      "professional_subscription"
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          renderProfessionalSubscription();
+
+          applyAnnuaireSurface();
+        }
+      );
+
+      return;
+    }
+
+    if(
+      type ===
+      "bercy"
+    ){
+
+      requireProfessionalAccess(
+        function(){
+
+          renderBercy();
+
+          applyAnnuaireSurface();
+        }
+      );
+
       return;
     }
 
     /*
-      Sécurité :
-      toute vue inconnue revient à l'accueil.
-    */
+     * Vue inconnue :
+     * retour propre à l'accueil.
+     */
 
-    State.stack = [];
+    State.stack =
+      [];
 
     State.current = {
-      type:"home",
-      data:{}
+
+      type:
+        "home",
+
+      data:
+        {}
+
     };
 
     renderHome();
+
+    applyAnnuaireSurface();
   }
 
   /* =======================================================
-     EXPOSITION PUBLIQUE DU MODULE
+     56. API PUBLIQUE DE L'ANNUAIRE
      ======================================================= */
+
+  Annuaire.VERSION =
+    VERSION;
 
   Annuaire.openHome =
     resetNavigation;
 
+  Annuaire.goBack =
+    goBack;
+
+  Annuaire.getCurrentCommune =
+    getCurrentCommune;
+
+  Annuaire.loadEntities =
+    loadEntities;
+
+  Annuaire.getEntityById =
+    getEntityById;
+
+  Annuaire.getOpenStatus =
+    getEntityOpenStatus;
+
   Annuaire.openSearch =
     function(query){
 
-      if(!State.current){
+      const clean =
+        String(
+          query || ""
+        ).trim();
+
+      if(!clean){
+
         resetNavigation();
+
+        return;
       }
 
-      startSearch(
-        query,
-        {
-          localOnly:true
-        }
-      );
+      runSearch({
+
+        query:
+          clean,
+
+        trade:
+          "",
+
+        category:
+          "",
+
+        commune:
+          getCurrentCommune(),
+
+        zone:
+          "commune",
+
+        professional:
+          false,
+
+        countryCode:
+          "FR",
+
+        country:
+          "France"
+
+      });
     };
 
   Annuaire.openCategory =
     function(categoryId){
 
-      if(!State.current){
+      State.stack =
+        [];
 
-        State.current = {
-          type:"home",
-          data:{}
-        };
-      }
+      State.current = {
+
+        type:
+          "home",
+
+        data:
+          {}
+
+      };
 
       navigate(
         "category",
@@ -7644,38 +10913,223 @@ function getLogoHtml(){
       );
     };
 
+  Annuaire.openCitizenActions =
+    function(){
+
+      navigate(
+        "citizen_actions",
+        {}
+      );
+    };
+
   Annuaire.openProfessionalDashboard =
     function(){
 
       requireProfessionalAccess(
         function(){
 
+          State.stack =
+            [];
+
+          State.current = {
+
+            type:
+              "professional",
+
+            data:
+              {}
+
+          };
+
+          renderCurrentView();
+        }
+      );
+    };
+
+  /* =======================================================
+     57. RECHERCHE PROFESSIONNELLE EXPOSÉE
+     ======================================================= */
+
+  Annuaire.openProfessionalSearch =
+    function(){
+
+      requireProfessionalAccess(
+        function(){
+
           navigate(
-            "professional",
+            "professional_search",
             {}
           );
         }
       );
     };
 
-  Annuaire.loadEntities =
-    loadEntities;
+  Annuaire.searchProfessional =
+    function(options){
 
-  Annuaire.saveEntities =
-    saveEntities;
+      options =
+        options || {};
 
-  Annuaire.getEntityById =
-    getEntityById;
+      requireProfessionalAccess(
+        function(){
 
-  Annuaire.goBack =
-    goBack;
+          const zone =
+            String(
+              options.zone ||
+              "commune"
+            );
+
+          const extended =
+            (
+              zone ===
+              "departement" ||
+
+              zone ===
+              "region" ||
+
+              zone ===
+              "france" ||
+
+              zone ===
+              "europe"
+            );
+
+          const execute =
+            function(){
+
+              runSearch({
+
+                query:
+                  String(
+                    options.query ||
+                    ""
+                  ).trim(),
+
+                trade:
+                  String(
+                    options.trade ||
+                    ""
+                  ).trim(),
+
+                category:
+                  String(
+                    options.category ||
+                    ""
+                  ).trim(),
+
+                commune:
+                  String(
+                    options.commune ||
+                    getCurrentCommune()
+                  ).trim(),
+
+                zone:
+                  zone,
+
+                professional:
+                  true,
+
+                countryCode:
+                  String(
+                    options.countryCode ||
+                    "FR"
+                  )
+                  .toUpperCase(),
+
+                country:
+                  String(
+                    options.country ||
+                    "France"
+                  )
+
+              });
+            };
+
+          if(extended){
+
+            requireExtendedSubscription(
+              execute
+            );
+
+            return;
+          }
+
+          execute();
+        }
+      );
+    };
 
   /* =======================================================
-     COMPATIBILITÉ AVEC ENTREPRISE.JS
+     58. AGENT DE MISE À JOUR OFFICIEL
+     ======================================================= */
+
+  Annuaire.UpdateAgent.getState =
+    function(){
+
+      return loadJson(
+        STORAGE.updateState,
+        {
+          lastRun:0,
+          results:[]
+        }
+      );
+    };
+
+  Annuaire.UpdateAgent.isReady =
+    function(){
+
+      const provider =
+        getOfficialProvider();
+
+      return !!(
+        provider &&
+        typeof provider
+          .refreshTerritory ===
+          "function" &&
+        typeof provider
+          .getAuthorizedTerritories ===
+          "function"
+      );
+    };
+
+  /*
+   * Cette fonction pourra être appelée
+   * par le serveur ou par le futur orchestrateur.
+   *
+   * Le navigateur ne lance jamais
+   * un balayage massif de la France ou de l'Europe.
+   */
+
+  Annuaire.UpdateAgent.refresh =
+    async function(){
+
+      if(
+        !Annuaire.UpdateAgent
+          .isReady()
+      ){
+
+        return {
+
+          ready:
+            false,
+
+          message:
+            "Fournisseur officiel non raccordé"
+
+        };
+      }
+
+      return await Annuaire.UpdateAgent
+        .run();
+    };
+
+  /* =======================================================
+     59. COMPATIBILITÉ AVEC ENTREPRISE.JS
      ======================================================= */
 
   if(
-    typeof module.registerScreen === "function"
+    typeof module.registerScreen ===
+    "function"
   ){
 
     module.registerScreen(
@@ -7695,11 +11149,17 @@ function getLogoHtml(){
         requireProfessionalAccess(
           function(){
 
-            State.stack = [];
+            State.stack =
+              [];
 
             State.current = {
-              type:"professional",
-              data:{}
+
+              type:
+                "professional",
+
+              data:
+                {}
+
             };
 
             renderCurrentView();
@@ -7724,11 +11184,17 @@ function getLogoHtml(){
       requireProfessionalAccess(
         function(){
 
-          State.stack = [];
+          State.stack =
+            [];
 
           State.current = {
-            type:"professional",
-            data:{}
+
+            type:
+              "professional",
+
+            data:
+              {}
+
           };
 
           renderCurrentView();
@@ -7737,130 +11203,132 @@ function getLogoHtml(){
     };
 
   /* =======================================================
-     INITIALISATION DU SCHÉMA
+     60. SCHÉMA / INITIALISATION
      ======================================================= */
+
+  const previousSchema =
+    loadJson(
+      STORAGE.schema,
+      {}
+    );
 
   saveJson(
     STORAGE.schema,
     {
+
       version:
         VERSION,
 
       initializedAt:
-        loadJson(
-          STORAGE.schema,
-          {}
-        ).initializedAt ||
-        Date.now()
+        previousSchema
+          .initializedAt ||
+        Date.now(),
+
+      updatedAt:
+        Date.now(),
+
+      architecture:
+        "provider_ready",
+
+      publicScope:
+        "territorial",
+
+      professionalScopes:[
+        "commune",
+        "proche",
+        "departement",
+        "region",
+        "france",
+        "europe"
+      ],
+
+      officialProviderConnected:
+        Annuaire.Agent
+          .isOfficialProviderReady(),
+
+      updateAgentConnected:
+        Annuaire.UpdateAgent
+          .isReady()
+
     }
   );
 
   /* =======================================================
-     ANNUAIRE — BLANC DÉFINITIF DES BOUTONS
-     RETOUR CONSERVÉ EN BEIGE
+     61. CONTRÔLE DE COHÉRENCE AU CHARGEMENT
      ======================================================= */
 
-  (function forceAnnuaireWhiteButtons(){
+  const requiredFunctions = [
 
-    if(
-      document.getElementById(
-        "bociteAnnuaireWhiteFinal"
-      )
-    ){
-      return;
-    }
+    "renderHome",
+    "renderCategory",
+    "renderTrade",
+    "renderResults",
+    "renderEntity",
+    "renderHistory",
+    "renderFavorites",
+    "renderViewed",
+    "renderCitizenActions",
+    "renderProfessionalHome",
+    "renderProfessionalSearch"
 
-    const style =
-      document.createElement("style");
+  ];
 
-    style.id =
-      "bociteAnnuaireWhiteFinal";
+  const missingFunctions =
+    requiredFunctions
+      .filter(
+        function(name){
 
-    style.textContent = `
+          try{
 
-      /* TOUS LES BOUTONS D'ACTION DE L'ANNUAIRE */
+            return (
+              eval(
+                "typeof " +
+                name
+              ) !==
+              "function"
+            );
 
-      .annuaireCategoryBtn,
-      .annuaireTradeBtn,
-      .annuaireAllTradeBtn,
-      .annuaireReplayHomeBtn,
-      .annuaireOpenEntityBtn,
-      .annuaireRatingBtn,
-      .annuaireHistoryReplayBtn,
-      .annuaireHistoryDeleteBtn,
-      .annuaireFavoriteOpenBtn,
-      .annuaireViewedOpenBtn,
+          }catch(error){
 
-      #annuaireSearchBtn,
-      #annuaireHistoryBtn,
-      #annuaireFavoritesBtn,
-      #annuaireViewedBtn,
-      #annuaireProfessionalBtn,
-      #annuaireTradeSearchBtn,
-      #annuaireRetrySearchBtn,
-      #annuaireExpandSearchBtn,
-      #annuaireFavoriteToggleBtn,
-      #annuaireEntityCallBtn,
-      #annuaireEntityRouteBtn,
-      #annuaireEntityMailBtn,
-      #annuaireEntityWebBtn,
-      #annuaireJobsBtn,
-      #annuaireSpontaneousBtn,
-      #annuaireReportBtn,
-      #annuaireReportSendBtn,
-      #annuaireHistoryClearAllBtn,
+            return true;
+          }
+        }
+      );
 
-      [class*="annuairePro"]:not(#annuaireInternalBackBtn),
-      [class*="annuaireNotebook"]:not(#annuaireInternalBackBtn),
-      [class*="annuaireFollowed"]:not(#annuaireInternalBackBtn){
+  if(
+    missingFunctions.length
+  ){
 
-        background:#ffffff !important;
-        background-color:#ffffff !important;
-        color:#111111 !important;
+    console.error(
+      "Bo'CitéArt Annuaire V6 : fonctions manquantes :",
+      missingFunctions
+    );
 
-      }
+  }else{
 
-      /* LES 8 GRANDES CASES DE L'ACCUEIL */
+    console.log(
+      "✅ Bo'CitéArt — Annuaire V6 prêt"
+    );
+  }
 
-      button.annuaireCategoryBtn{
-
-        background:#ffffff !important;
-        background-color:#ffffff !important;
-
-      }
-
-      /* RETOUR UNIQUEMENT : IL RESTE BEIGE */
-
-      #annuaireInternalBackBtn{
-
-        background:#f3e7d3 !important;
-        background-color:#f3e7d3 !important;
-        color:#111111 !important;
-
-      }
-
-      /* CHAMPS DE SAISIE */
-
-      #annuaireSearchInput,
-      #annuaireProQueryInput,
-      #annuaireProDetailsInput,
-      #annuaireProZoneInput{
-
-        background:#ffffff !important;
-        background-color:#ffffff !important;
-        color:#111111 !important;
-
-      }
-
-    `;
-
-    document.head.appendChild(style);
-
-  })();
-   
   console.log(
-    "✅ Bo'CitéArt — Annuaire V5 propre chargé"
+    "✅ Annuaire public territorial préparé"
+  );
+
+  console.log(
+    "✅ Annuaire professionnel France / Europe préparé"
+  );
+
+  console.log(
+    "✅ Sécurité compte professionnel raccordée"
+  );
+
+  console.log(
+    "✅ Abonnement recherche étendue préparé"
+  );
+
+  console.log(
+    "✅ Agent de mise à jour prêt pour fournisseur officiel"
   );
 
 })();
-
