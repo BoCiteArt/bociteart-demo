@@ -3182,6 +3182,656 @@
 
     return [];
   }
+  /* =======================================================
+     22A. FOURNISSEUR FRANCE — API PUBLIQUE OFFICIELLE
+     ANNUAIRE DES ENTREPRISES / ÉTAT
+     ======================================================= */
+
+  (function installFranceOfficialProvider(){
+
+    /*
+     * Si un véritable fournisseur serveur Bo'CitéArt
+     * est déjà raccordé plus tard, on ne l'écrase jamais.
+     */
+    if(
+      window.BociteAnnuaireDataProvider &&
+      window.BociteAnnuaireDataProvider
+        .isBociteOfficialServer === true
+    ){
+      return;
+    }
+
+    const FRANCE_API_BASE =
+      "https://recherche-entreprises.api.gouv.fr/search";
+
+    function cleanApiText(value){
+
+      return String(
+        value === undefined ||
+        value === null
+          ? ""
+          : value
+      ).trim();
+    }
+
+    function firstValue(){
+
+      for(
+        let i = 0;
+        i < arguments.length;
+        i++
+      ){
+
+        const value =
+          arguments[i];
+
+        if(
+          value !== undefined &&
+          value !== null &&
+          String(value).trim() !== ""
+        ){
+
+          return value;
+        }
+      }
+
+      return "";
+    }
+
+    function buildFranceQuery(request){
+
+      const parts = [];
+
+      if(request.trade){
+        parts.push(
+          request.trade
+        );
+      }
+
+      if(
+        request.query &&
+        normalizeText(
+          request.query
+        ) !==
+        normalizeText(
+          request.trade
+        )
+      ){
+
+        parts.push(
+          request.query
+        );
+      }
+
+      /*
+       * Pour une recherche locale,
+       * la commune aide le moteur officiel
+       * à privilégier le bon territoire.
+       */
+      if(
+        request.zone === "commune" &&
+        request.commune
+      ){
+
+        parts.push(
+          request.commune
+        );
+      }
+
+      return parts
+        .filter(Boolean)
+        .join(" ")
+        .trim();
+    }
+
+    function getApiEstablishment(row){
+
+      if(
+        row &&
+        row.siege &&
+        typeof row.siege ===
+        "object"
+      ){
+
+        return row.siege;
+      }
+
+      if(
+        row &&
+        Array.isArray(
+          row.matching_etablissements
+        ) &&
+        row.matching_etablissements.length
+      ){
+
+        return (
+          row.matching_etablissements[0] ||
+          {}
+        );
+      }
+
+      return {};
+    }
+
+    function buildApiAddress(
+      establishment
+    ){
+
+      const direct =
+        firstValue(
+          establishment.adresse,
+          establishment.adresse_complete,
+          establishment.libelle_adresse
+        );
+
+      if(direct){
+        return cleanApiText(
+          direct
+        );
+      }
+
+      return [
+        firstValue(
+          establishment.numero_voie,
+          establishment.numeroVoieEtablissement
+        ),
+
+        firstValue(
+          establishment.indice_repetition,
+          establishment.indiceRepetitionEtablissement
+        ),
+
+        firstValue(
+          establishment.type_voie,
+          establishment.typeVoieEtablissement
+        ),
+
+        firstValue(
+          establishment.libelle_voie,
+          establishment.libelleVoieEtablissement
+        )
+      ]
+      .filter(Boolean)
+      .join(" ")
+      .replace(
+        /\s+/g,
+        " "
+      )
+      .trim();
+    }
+
+    function franceApiRowToEntity(
+      row,
+      request
+    ){
+
+      row =
+        row || {};
+
+      const establishment =
+        getApiEstablishment(
+          row
+        );
+
+      const siren =
+        cleanApiText(
+          firstValue(
+            row.siren,
+            row.numero_siren
+          )
+        );
+
+      const siret =
+        cleanApiText(
+          firstValue(
+            establishment.siret,
+            row.siret
+          )
+        );
+
+      const name =
+        cleanApiText(
+          firstValue(
+            row.nom_complet,
+            row.nom_raison_sociale,
+            row.nom_commercial,
+            row.denomination,
+            establishment.nom_commercial,
+            establishment.enseigne
+          )
+        );
+
+      const activity =
+        cleanApiText(
+          firstValue(
+            establishment.libelle_activite_principale,
+            row.libelle_activite_principale,
+            establishment.activite_principale,
+            row.activite_principale,
+            request.trade,
+            request.query
+          )
+        );
+
+      const commune =
+        cleanApiText(
+          firstValue(
+            establishment.libelle_commune,
+            establishment.commune,
+            establishment.nom_commune,
+            request.zone === "commune"
+              ? request.commune
+              : ""
+          )
+        );
+
+      const postalCode =
+        cleanApiText(
+          firstValue(
+            establishment.code_postal,
+            establishment.codePostalEtablissement
+          )
+        );
+
+      const address =
+        buildApiAddress(
+          establishment
+        );
+
+      const latitudeRaw =
+        firstValue(
+          establishment.latitude,
+          establishment.lat
+        );
+
+      const longitudeRaw =
+        firstValue(
+          establishment.longitude,
+          establishment.long,
+          establishment.lng,
+          establishment.lon
+        );
+
+      const latitude =
+        latitudeRaw !== ""
+          ? Number(latitudeRaw)
+          : null;
+
+      const longitude =
+        longitudeRaw !== ""
+          ? Number(longitudeRaw)
+          : null;
+
+      const status =
+        cleanApiText(
+          firstValue(
+            establishment.etat_administratif,
+            row.etat_administratif,
+            row.etat_administratif_unite_legale
+          )
+        );
+
+      return normalizeEntity({
+
+        externalId:
+          siret
+            ? "sirene_" + siret
+            : (
+                siren
+                  ? "sirene_" + siren
+                  : ""
+              ),
+
+        source:
+          "Annuaire des Entreprises — données publiques de l'État",
+
+        sourceType:
+          "official_france",
+
+        name:
+          name,
+
+        activity:
+          activity,
+
+        trade:
+          request.trade || "",
+
+        category:
+          request.category || "",
+
+        address:
+          address,
+
+        postalCode:
+          postalCode,
+
+        commune:
+          commune,
+
+        department:
+          cleanApiText(
+            firstValue(
+              establishment.departement,
+              establishment.libelle_departement
+            )
+          ),
+
+        region:
+          cleanApiText(
+            firstValue(
+              establishment.region,
+              establishment.libelle_region
+            )
+          ),
+
+        country:
+          "France",
+
+        countryCode:
+          "FR",
+
+        lat:
+          Number.isFinite(
+            latitude
+          )
+            ? latitude
+            : null,
+
+        lng:
+          Number.isFinite(
+            longitude
+          )
+            ? longitude
+            : null,
+
+        /*
+         * L'API d'entreprises n'est pas utilisée
+         * pour inventer téléphone, e-mail ou horaires.
+         * Ces champs restent vides s'ils ne sont pas
+         * réellement fournis par une autre source.
+         */
+        phone:
+          "",
+
+        email:
+          "",
+
+        website:
+          "",
+
+        openingHours:
+          "",
+
+        siren:
+          siren,
+
+        siret:
+          siret,
+
+        professionalData:{
+
+          siren:
+            siren,
+
+          siret:
+            siret,
+
+          legalForm:
+            cleanApiText(
+              firstValue(
+                row.nature_juridique,
+                row.libelle_nature_juridique,
+                row.categorie_juridique
+              )
+            ),
+
+          activity:
+            activity,
+
+          status:
+            status,
+
+          creationDate:
+            cleanApiText(
+              firstValue(
+                establishment.date_creation,
+                row.date_creation
+              )
+            ),
+
+          workforce:
+            cleanApiText(
+              firstValue(
+                establishment.tranche_effectif_salarie,
+                row.tranche_effectif_salarie,
+                row.tranche_effectif_salarie_unite_legale
+              )
+            )
+
+        },
+
+        tags:{
+          official_france:
+            "yes",
+
+          siren:
+            siren,
+
+          siret:
+            siret,
+
+          administrative_status:
+            status
+        },
+
+        keywords:[
+          activity,
+          row.section_activite_principale,
+          row.nom_raison_sociale,
+          row.nom_complet,
+          commune,
+          postalCode
+        ]
+        .filter(Boolean),
+
+        verificationStatus:
+          "confirmed",
+
+        verifiedAt:
+          Date.now(),
+
+        lastCheckedAt:
+          Date.now()
+
+      });
+    }
+
+    async function searchFranceCompanies(
+      request,
+      options
+    ){
+
+      options =
+        options || {};
+
+      /*
+       * Cette source concerne uniquement la France.
+       * L'Europe restera raccordable séparément.
+       */
+      if(
+        request.zone === "europe" &&
+        request.countryCode &&
+        request.countryCode !== "FR"
+      ){
+
+        return [];
+      }
+
+      const query =
+        buildFranceQuery(
+          request
+        );
+
+      if(!query){
+        return [];
+      }
+
+      const params =
+        new URLSearchParams();
+
+      params.set(
+        "q",
+        query
+      );
+
+      params.set(
+        "page",
+        "1"
+      );
+
+      /*
+       * On reste volontairement raisonnable :
+       * pas de chargement massif.
+       */
+      params.set(
+        "per_page",
+        request.professional === true
+          ? "25"
+          : "15"
+      );
+
+      const response =
+        await fetch(
+          FRANCE_API_BASE +
+          "?" +
+          params.toString(),
+          {
+            method:"GET",
+
+            headers:{
+              "Accept":
+                "application/json"
+            },
+
+            signal:
+              options.signal
+          }
+        );
+
+      if(!response.ok){
+
+        throw new Error(
+          "france_companies_api_" +
+          response.status
+        );
+      }
+
+      const data =
+        await response.json();
+
+      const rows =
+        Array.isArray(
+          data.results
+        )
+          ? data.results
+          : [];
+
+      return rows
+        .map(
+          function(row){
+
+            return franceApiRowToEntity(
+              row,
+              request
+            );
+          }
+        )
+        .filter(
+          function(entity){
+
+            return (
+              entity &&
+              entity.name
+            );
+          }
+        );
+    }
+
+    /*
+     * On raccorde l'API publique française
+     * derrière le contrat déjà prévu par Bo'CitéArt.
+     *
+     * Demain le serveur Bo'CitéArt pourra remplacer
+     * cet objet sans modifier les écrans.
+     */
+    window.BociteAnnuaireDataProvider = {
+
+      providerName:
+        "Bo'CitéArt France — API publique",
+
+      isBociteOfficialServer:
+        false,
+
+      search:
+        async function(
+          request,
+          options
+        ){
+
+          return await searchFranceCompanies(
+            request || {},
+            options || {}
+          );
+        },
+
+      enrichEntity:
+        async function(entity){
+
+          /*
+           * L'enrichissement détaillé sera branché
+           * ensuite par SIREN/SIRET.
+           * Pour l'instant on conserve la fiche
+           * réellement obtenue.
+           */
+          return entity;
+        },
+
+      /*
+       * Ces deux fonctions maintiennent
+       * l'interface attendue par UpdateAgent.
+       * Aucun balayage automatique n'est simulé.
+       */
+      getAuthorizedTerritories:
+        async function(){
+
+          return [
+            {
+              type:"commune",
+              name:getCurrentCommune(),
+              countryCode:"FR",
+              demo:true
+            }
+          ];
+        },
+
+      refreshTerritory:
+        async function(){
+
+          return {
+            ready:false,
+            reason:
+              "server_update_agent_not_connected"
+          };
+        }
+
+    };
+
+    console.log(
+      "✅ Annuaire — vraies entreprises françaises raccordées"
+    );
+
+  })();
 
   /* =======================================================
      23. AGENT.SEARCH
