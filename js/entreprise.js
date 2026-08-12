@@ -10070,8 +10070,8 @@ Voir les entreprises de ma ville
 
 /* =========================================================
    BO'CITÉART — MODULE ENTREPRISE
-   PARTIE 7 — TABLEAU DE DIRECTION V2
-   SERVICES • ABONNEMENT • FACTURES • COLLABORATEURS
+   PARTIE 7 — TABLEAU DE DIRECTION V3
+   MENU PRIVÉ UNIQUE
    ========================================================= */
 
 (function initBociteEntrepriseDirection(){
@@ -10090,153 +10090,86 @@ Voir les entreprises de ma ville
     return;
   }
 
+
   function getElement(id){
 
     return document.getElementById(id);
   }
 
-  function escapeValue(value){
-
-    if(
-      typeof module.safeEscape ===
-      "function"
-    ){
-
-      return module.safeEscape(
-        value
-      );
-    }
-
-    return String(
-      value == null
-        ? ""
-        : value
-    );
-  }
-
-  function getBrandHtml(){
-
-    return `
-      <strong
-        style="
-          white-space:nowrap;
-          font-weight:900;
-        ">
-        <span
-          style="color:#2f5d46;">
-          Bo'Cité
-        </span><span
-          style="color:#b00020;">
-          Art
-        </span>
-      </strong>
-    `;
-  }
 
   /* =======================================================
-     STYLE UNIQUE DU TABLEAU DE DIRECTION
+     STYLE DU MENU
      ======================================================= */
 
   function injectDirectionStyles(){
 
     if(
       document.getElementById(
-        "bociteDirectionStylesV2"
+        "bociteDirectionMenuStylesV3"
       )
     ){
       return;
     }
+
 
     const style =
       document.createElement(
         "style"
       );
 
+
     style.id =
-      "bociteDirectionStylesV2";
+      "bociteDirectionMenuStylesV3";
+
 
     style.textContent = `
 
-      .bociteDirectionBox{
+      .bociteDirectionMenuIntro{
         background:#ffffff !important;
         color:#111111 !important;
         font-size:14px !important;
         font-weight:400 !important;
-        line-height:1.55 !important;
+        line-height:1.5 !important;
+        border-left:6px solid #2f5d46;
       }
 
-      .bociteDirectionBox div,
-      .bociteDirectionBox span,
-      .bociteDirectionBox p{
-        font-size:14px;
-        font-weight:400;
-        color:#111111;
-      }
-
-      .bociteDirectionTitle{
-        display:block;
+      .bociteDirectionMenuTitle{
         color:#2f5d46 !important;
         font-size:17px !important;
-        line-height:1.35;
         font-weight:800 !important;
-        margin-bottom:8px;
+        line-height:1.35 !important;
       }
 
-      .bociteDirectionButton{
+      .bociteDirectionMenuBtn{
         width:100%;
+        margin-top:8px;
+        padding:13px 12px;
         background:#ffffff !important;
         background-color:#ffffff !important;
         color:#111111 !important;
+        font-size:14px !important;
+        font-weight:400 !important;
+        text-align:left;
       }
 
-      .bociteDirectionGrid{
-        display:grid;
-        grid-template-columns:
-          repeat(2,minmax(0,1fr));
-        gap:8px;
-      }
-
-      .bociteDirectionMetric{
-        background:#ffffff;
-        border:1px solid #d8d8d8;
-        border-radius:10px;
-        padding:10px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      }
-
-      .bociteDirectionMetric strong{
+      .bociteDirectionMenuBtn strong{
         display:block;
-        color:#2f5d46;
-        font-size:17px;
-        font-weight:800;
+        color:#2f5d46 !important;
+        font-size:17px !important;
+        font-weight:800 !important;
         margin-bottom:3px;
       }
 
-      .bociteDirectionPrice{
-        color:#2f5d46;
-        font-size:17px;
-        font-weight:800;
-      }
-
-      .bociteDirectionBenefit{
+      .bociteDirectionMenuBtn span{
         display:block;
-        margin-top:5px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      }
-
-      @media(max-width:520px){
-
-        .bociteDirectionGrid{
-          grid-template-columns:1fr 1fr;
-        }
-
+        color:#111111 !important;
+        font-size:14px !important;
+        font-weight:400 !important;
+        line-height:1.4;
       }
 
     `;
+
 
     document.head
       .appendChild(
@@ -10244,125 +10177,32 @@ Voir les entreprises de ma ville
       );
   }
 
+
   injectDirectionStyles();
 
+
   /* =======================================================
-     DONNÉES
+     PUBLICITÉ
      ======================================================= */
 
-  function getEmploymentSummary(){
-
-    try{
-
-      const raw =
-        localStorage.getItem(
-          "bociteart_entreprise_employment_v1"
-        );
-
-      const data =
-        raw
-          ? JSON.parse(raw)
-          : {};
-
-      return {
-
-        offers:
-          Array.isArray(data.offers)
-            ? data.offers.length
-            : 0,
-
-        applications:
-          Array.isArray(data.applications)
-            ? data.applications.length
-            : 0
-
-      };
-
-    }catch(error){
-
-      return {
-        offers:0,
-        applications:0
-      };
-    }
-  }
-
-  function getProfessionalValue(){
+  function openAdvertising(){
 
     if(
-      typeof module.loadProfessionalValue ===
+      typeof window.openTicker ===
       "function"
     ){
 
-      return (
-        module.loadProfessionalValue() ||
-        {}
-      );
+      window.openTicker();
+      return;
     }
 
-    return {};
-  }
 
-  function getPrice(
-    key,
-    fallback
-  ){
-
-    const catalog =
-      module.PriceCatalog || {};
-
-    if(
-      catalog[key] &&
-      catalog[key].amountHT !==
-      undefined
-    ){
-
-      return Number(
-        catalog[key].amountHT
-      );
-    }
-
-    return Number(
-      fallback || 0
+    alert(
+      "Le calendrier publicitaire est momentanément indisponible."
     );
   }
 
-  function formatMoney(value){
 
-    return Number(
-      value || 0
-    )
-    .toLocaleString(
-      "fr-FR",
-      {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }
-    );
-  }
-
-  /* =======================================================
-     OUVERTURE PUBLICITÉ
-
-     Le vrai moteur publicité est ailleurs.
-     On ne recrée pas un second système ici.
-     ======================================================= */
-
-  function openAdvertisingCreation(){
-
-  if(
-    typeof window.openTicker ===
-    "function"
-  ){
-
-    window.openTicker();
-    return;
-  }
-
-  alert(
-    "Le calendrier du grand bandeau publicitaire est momentanément indisponible."
-  );
-}
   /* =======================================================
      COLLABORATEURS
      ======================================================= */
@@ -10370,924 +10210,397 @@ Voir les entreprises de ma ville
   function openCollaborators(){
 
     if(
-      window.BoCiteArtRegistration &&
-      typeof window.BoCiteArtRegistration
-        .openCollaborators ===
+      typeof module.openCollaboratorManagement ===
       "function"
     ){
 
-      window.BoCiteArtRegistration
-        .openCollaborators();
-
+      module.openCollaboratorManagement();
       return;
     }
 
-    if(
-      typeof module.openCollaborators ===
-      "function"
-    ){
-
-      module.openCollaborators();
-
-      return;
-    }
 
     alert(
-      "La gestion des collaborateurs est préparée dans le compte professionnel central.\n\n" +
-      "Le responsable principal pourra donner ou retirer les autorisations à tout moment."
+      "L'espace collaborateurs est momentanément indisponible."
     );
   }
 
+
   /* =======================================================
-     CONTENU
+     ANNUAIRE
+     ======================================================= */
+
+  function openDirectory(){
+
+    if(
+      typeof module.openProfessionalDirectory ===
+      "function"
+    ){
+
+      module.openProfessionalDirectory();
+      return;
+    }
+
+
+    if(
+      typeof module.openScreen ===
+      "function"
+    ){
+
+      module.openScreen(
+        "annuaire"
+      );
+
+      return;
+    }
+
+
+    alert(
+      "L'annuaire professionnel est momentanément indisponible."
+    );
+  }
+
+
+  /* =======================================================
+     PAYER MOINS DE CHARGES
+     ======================================================= */
+
+  function openLowerCharges(){
+
+    if(
+      typeof module.openMutualisationModule ===
+      "function"
+    ){
+
+      module.openMutualisationModule();
+      return;
+    }
+
+
+    if(
+      typeof module.openScreen ===
+      "function"
+    ){
+
+      module.openScreen(
+        "mutualisation"
+      );
+    }
+  }
+
+
+  /* =======================================================
+     EMPLOI
+     ======================================================= */
+
+  function openEmployment(){
+
+    if(
+      typeof module.openEmploymentPrivateHome ===
+      "function"
+    ){
+
+      module.openEmploymentPrivateHome();
+      return;
+    }
+
+
+    if(
+      typeof module.openScreen ===
+      "function"
+    ){
+
+      module.openScreen(
+        "emploi"
+      );
+    }
+  }
+
+
+  /* =======================================================
+     VISIBILITÉ / ACTUALITÉS
+     ======================================================= */
+
+  function openVisibility(){
+
+    if(
+      typeof module.openScreen ===
+      "function"
+    ){
+
+      module.openScreen(
+        "visibilite"
+      );
+
+      return;
+    }
+
+
+    alert(
+      "L'espace visibilité est momentanément indisponible."
+    );
+  }
+
+
+  /* =======================================================
+     ABONNEMENT / FACTURES
+     ======================================================= */
+
+  function openSubscription(){
+
+    if(
+      typeof module.openSubscriptionModule ===
+      "function"
+    ){
+
+      module.openSubscriptionModule();
+      return;
+    }
+
+
+    if(
+      typeof module.openScreen ===
+      "function"
+    ){
+
+      module.openScreen(
+        "abonnement"
+      );
+
+      return;
+    }
+
+
+    if(
+      typeof module.openSearchBilling ===
+      "function"
+    ){
+
+      module.openSearchBilling();
+    }
+  }
+
+
+  /* =======================================================
+     CONTENU DU TABLEAU DE DIRECTION
      ======================================================= */
 
   function getDirectionHtml(){
-
-    const employment =
-      getEmploymentSummary();
-
-    const value =
-      getProfessionalValue();
-
-    const membershipPrice =
-      getPrice(
-        "professionalMembership",
-        329
-      );
-
-    const enrichedProfilePrice =
-      getPrice(
-        "enrichedProfile",
-        199
-      );
-
-    const employmentPrice =
-      getPrice(
-        "employmentPublication",
-        50
-      );
-
-    const advertisingPrice =
-      getPrice(
-        "advertisingPublication",
-        50
-      );
 
     return `
 
       <div
         class="
           box
-          bociteDirectionBox
-        "
-        style="
-          border-left:6px solid #2f5d46;
+          bociteDirectionMenuIntro
         ">
 
         <div
-          class="bociteDirectionTitle">
+          class="bociteDirectionMenuTitle">
           Tableau de Direction
         </div>
 
-        Cet espace privé rassemble
-        les principaux outils,
-        actions,
-        abonnements
-        et informations de votre entreprise.
-
-        <br><br>
-
-        ${getBrandHtml()}
-        vous permet de retrouver
-        l'essentiel depuis un même endroit.
-
-      </div>
-
-
-      <div
-        class="bociteDirectionGrid">
-
         <div
-          class="bociteDirectionMetric">
-
-          <strong>
-            ${employment.offers}
-          </strong>
-
-          offre(s) enregistrée(s)
-
-        </div>
-
-        <div
-          class="bociteDirectionMetric">
-
-          <strong>
-            ${employment.applications}
-          </strong>
-
-          candidature(s) reçue(s)
-
-        </div>
-
-        <div
-          class="bociteDirectionMetric">
-
-          <strong>
-            ${Number(
-              value.contacts || 0
-            )}
-          </strong>
-
-          contact(s) reçu(s)
-
-        </div>
-
-        <div
-          class="bociteDirectionMetric">
-
-          <strong>
-            ${formatMoney(
-              value.measuredSavings || 0
-            )} €
-          </strong>
-
-          économies mesurées
-
-        </div>
-
-      </div>
-
-
-      <div
-        class="
-          box
-          bociteDirectionBox
-        "
-        style="
-          margin-top:10px;
-          border-left:6px solid #2f5d46;
-        ">
-
-        <div
-          class="bociteDirectionTitle">
-          Emploi et recrutement
-        </div>
-
-        Publiez vos offres,
-        consultez les candidatures reçues
-        et retrouvez votre historique.
-
-        <br><br>
-
-        <span
-          class="bociteDirectionPrice">
-          ${formatMoney(
-            employmentPrice
-          )} € HT
-        </span>
-        par publication.
-
-        <button
-          id="directionEmploymentOffersBtn"
-          class="
-            choiceBtn
-            bociteDirectionButton
-          "
-          type="button"
-          style="margin-top:10px;">
-          Voir mes offres
-        </button>
-
-        <button
-          id="directionEmploymentApplicationsBtn"
-          class="
-            choiceBtn
-            bociteDirectionButton
-          "
-          type="button">
-          Voir les candidatures
-        </button>
-
-      </div>
-
-
-      <div
-        class="
-          box
-          bociteDirectionBox
-        ">
-
-        <div
-          class="bociteDirectionTitle">
-          Payez moins de charges
-        </div>
-
-        Regroupez certains besoins
-        avec d'autres professionnels
-        afin d'obtenir de meilleures conditions.
-
-        <span
-          class="bociteDirectionBenefit">
-          • électricité et gaz ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • assurances ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • téléphonie et Internet ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • véhicules ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • entretien ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • fournitures et formations.
-        </span>
-
-        <br>
-
-        <strong
           style="
-            color:#2f5d46;
-            font-size:14px;
-            font-weight:700;
-          ">
-          Les économies obtenues
-          peuvent contribuer à financer
-          tout ou partie de votre abonnement.
-        </strong>
-
-        <button
-          id="directionLowerChargesBtn"
-          class="
-            choiceBtn
-            bociteDirectionButton
-          "
-          type="button"
-          style="margin-top:10px;">
-          Voir comment payer moins de charges
-        </button>
-
-      </div>
-
-      <div
-        class="
-          box
-          bociteDirectionBox
-        ">
-
-             <div
-        class="
-          box
-          bociteDirectionBox
-        ">
-
-        <div
-          class="bociteDirectionTitle">
-          Faire paraître mon entreprise
-        </div>
-
-        Créez la présentation publique
-        de votre entreprise dans
-        <strong
-          style="
-            white-space:nowrap;
-            font-weight:900;
-          ">
-          <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-        </strong>.
-
-        <span
-          class="bociteDirectionBenefit">
-          • présentation de l’entreprise ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • métiers et savoir-faire ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • produits et services ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • réalisations ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • recrutements ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • actualités ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • coordonnées professionnelles ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • demandes de devis lorsque le service le permet.
-        </span>
-
-        <br>
-
-        <span
-          class="bociteDirectionPrice">
-          ${formatMoney(
-            enrichedProfilePrice
-          )} € HT/an
-        </span>
-
-        <br><br>
-
-        <span
-          style="
-            color:#111111;
+            margin-top:7px;
             font-size:14px;
             font-weight:400;
+            color:#111111;
           ">
-          Votre fiche de compte professionnelle,
-          vos données privées,
-          vos paiements et vos factures
-          ne sont jamais affichés publiquement.
-        </span>
-
-        <button
-          id="directionVisibilityBtn"
-          class="
-            choiceBtn
-            bociteDirectionButton
-          "
-          type="button"
-          style="margin-top:10px;">
-          Créer ou modifier ma présentation publique
-        </button>
-
-      </div>
-      
-        Préparez une publicité
-        et accédez directement
-        au parcours prévu pour le grand bandeau.
-
-        <br><br>
-
-        Vous pourrez y préparer
-        votre contenu,
-        contrôler votre publicité
-        puis la publier
-        après confirmation du paiement.
-
-        <br><br>
-
-        <span
-          class="bociteDirectionPrice">
-          ${formatMoney(
-            advertisingPrice
-          )} € HT
-        </span>
-        par publication.
-
-        <button
-          id="directionAdvertisingBtn"
-          class="
-            choiceBtn
-            bociteDirectionButton
-          "
-          type="button"
-          style="margin-top:10px;">
-          Créer ma publicité
-        </button>
-
-      </div>
-
-
-      <div
-        class="
-          box
-          bociteDirectionBox
-        ">
-
-        <div
-          class="bociteDirectionTitle">
-          Abonnement professionnel
+          Choisissez la rubrique
+          que vous souhaitez ouvrir.
         </div>
 
-        Votre abonnement rassemble
-        progressivement vos principaux outils professionnels.
-
-        <span
-          class="bociteDirectionBenefit">
-          • annuaire vivant et enrichi ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • visibilité de vos métiers ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • recherche professionnelle ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • emploi et candidatures ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • carnet et historique ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • recherche de fournisseurs et partenaires ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • Tableau de Direction ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • délégation à vos collaborateurs.
-        </span>
-
-        <br>
-
-        <span
-          class="bociteDirectionPrice">
-          ${formatMoney(
-            membershipPrice
-          )} € HT/an
-        </span>
-
-        <br><br>
-
-        L'abonnement annuel est prévu
-        avec renouvellement
-        à sa date anniversaire
-        selon les conditions contractuelles applicables.
-
-        <br><br>
-
-        En cas d'impayé,
-        seuls les services premium sont gelés.
-        Le compte et les fonctions de base
-        restent accessibles.
-
-        <button
-          id="directionSubscriptionBtn"
-          class="
-            choiceBtn
-            bociteDirectionButton
-          "
-          type="button"
-          style="margin-top:10px;">
-          Voir mon abonnement
-        </button>
-
       </div>
 
 
-      <div
+      <button
+        id="directionDirectoryBtn"
         class="
-          box
-          bociteDirectionBox
-        ">
-
-        <div
-          class="bociteDirectionTitle">
-          Mes abonnements et factures
-        </div>
-
-        Retrouvez vos paiements,
-        vos abonnements
-        et les copies de vos factures.
-
-        <br><br>
-
-        Les paiements par carte,
-        SEPA
-        ou virement
-        seront rapprochés
-        avec les factures correspondantes.
-
-        <button
-          id="directionBillingBtn"
-          class="
-            choiceBtn
-            bociteDirectionButton
-          "
-          type="button"
-          style="margin-top:10px;">
-          Ouvrir mes factures
-        </button>
-
-      </div>
-
-
-      <div
-        class="
-          box
-          bociteDirectionBox
+          choiceBtn
+          bociteDirectionMenuBtn
         "
-        style="
-          border-left:6px solid #2f5d46;
-        ">
+        type="button">
 
-        <div
-          class="bociteDirectionTitle">
-          Mes collaborateurs
-        </div>
+        <strong>
+          1 — Annuaire professionnel
+        </strong>
 
-        Le responsable principal
-        peut donner accès
-        à certaines fonctions
-        à un collègue ou salarié.
-
-        <span
-          class="bociteDirectionBenefit">
-          • publicité ;
+        <span>
+          Recherches • entreprises suivies • informations
         </span>
 
-        <span
-          class="bociteDirectionBenefit">
-          • emploi ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • annuaire professionnel ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • visibilité ;
-        </span>
-
-        <span
-          class="bociteDirectionBenefit">
-          • autres fonctions autorisées.
-        </span>
-
-        <br>
-
-        Le responsable principal
-        conserve toujours la maîtrise
-        et peut suspendre
-        ou retirer un accès
-        à tout moment.
-
-        <button
-          id="directionCollaboratorsBtn"
-          class="
-            choiceBtn
-            bociteDirectionButton
-          "
-          type="button"
-          style="margin-top:10px;">
-          Gérer mes collaborateurs
-        </button>
-
-      </div>
+      </button>
 
 
-      <div
+      <button
+        id="directionCollaboratorsBtn"
         class="
-          box
-          bociteDirectionBox
-        ">
-
-        <div
-          class="bociteDirectionTitle">
-          Développement
-        </div>
-
-        Retrouvez vos outils
-        de développement,
-        vos recherches
-        et vos prochaines actions.
-
-        <button
-          id="directionDevelopmentBtn"
-          class="
-            choiceBtn
-            bociteDirectionButton
-          "
-          type="button"
-          style="margin-top:10px;">
-          Ouvrir le développement
-        </button>
-
-      </div>
-
-
-      <div
-        class="
-          box
-          bociteDirectionBox
-        ">
-
-        <div
-          class="bociteDirectionTitle">
-          Pérennité
-        </div>
-
-        Préparez la continuité,
-        la transmission
-        ou la reprise
-        de votre entreprise.
-
-        <button
-          id="directionSustainabilityBtn"
-          class="
-            choiceBtn
-            bociteDirectionButton
-          "
-          type="button"
-          style="margin-top:10px;">
-          Préparer l'avenir
-        </button>
-
-      </div>
-
-
-      <div
-        class="
-          box
-          bociteDirectionBox
-        ">
-
-        <div
-          class="bociteDirectionTitle">
-          Mécénat
-        </div>
-
-        Retrouvez les informations
-        et outils liés
-        aux projets de mécénat.
-
-        <button
-          id="directionMecenatBtn"
-          class="
-            choiceBtn
-            bociteDirectionButton
-          "
-          type="button"
-          style="margin-top:10px;">
-          Ouvrir le mécénat
-        </button>
-
-      </div>
-
-
-      <div
-        class="
-          box
-          bociteDirectionBox
+          choiceBtn
+          bociteDirectionMenuBtn
         "
-        style="
-          border-left:6px solid #2f5d46;
-        ">
+        type="button">
 
-        <div
-          class="bociteDirectionTitle">
-          Ce que ${getBrandHtml()} vous apporte
-        </div>
+        <strong>
+          2 — Mes collaborateurs
+        </strong>
 
-        À mesure de son utilisation,
-        votre Tableau de Direction
-        pourra vous montrer
-        concrètement la valeur obtenue :
-
-        <span
-          class="bociteDirectionBenefit">
-          • visibilité ;
+        <span>
+          Accès 1 • Accès 2 • autorisations
         </span>
 
-        <span
-          class="bociteDirectionBenefit">
-          • contacts reçus ;
+      </button>
+
+
+      <button
+        id="directionAdvertisingBtn"
+        class="
+          choiceBtn
+          bociteDirectionMenuBtn
+        "
+        type="button">
+
+        <strong>
+          3 — Publicité
+        </strong>
+
+        <span>
+          Créer • modifier • programmer • payer • suivre
         </span>
 
-        <span
-          class="bociteDirectionBenefit">
-          • candidatures ;
+      </button>
+
+
+      <button
+        id="directionLowerChargesBtn"
+        class="
+          choiceBtn
+          bociteDirectionMenuBtn
+        "
+        type="button">
+
+        <strong>
+          4 — Payer moins de charges
+        </strong>
+
+        <span>
+          Propositions • compteurs • entreprises intéressées • suivi
         </span>
 
-        <span
-          class="bociteDirectionBenefit">
-          • partenariats ;
+      </button>
+
+
+      <button
+        id="directionEmploymentBtn"
+        class="
+          choiceBtn
+          bociteDirectionMenuBtn
+        "
+        type="button">
+
+        <strong>
+          5 — Emploi et recrutement
+        </strong>
+
+        <span>
+          Offres • candidatures • historique
         </span>
 
-        <span
-          class="bociteDirectionBenefit">
-          • économies réellement mesurées.
+      </button>
+
+
+      <button
+        id="directionVisibilityBtn"
+        class="
+          choiceBtn
+          bociteDirectionMenuBtn
+        "
+        type="button">
+
+        <strong>
+          6 — Visibilité et actualités
+        </strong>
+
+        <span>
+          Publications • actualités • suivi
         </span>
 
-      </div>
+      </button>
+
+
+      <button
+        id="directionSubscriptionBtn"
+        class="
+          choiceBtn
+          bociteDirectionMenuBtn
+        "
+        type="button">
+
+        <strong>
+          7 — Abonnement et factures
+        </strong>
+
+        <span>
+          Abonnement • paiements • factures
+        </span>
+
+      </button>
 
     `;
   }
 
+
   /* =======================================================
-     BOUTONS
+     RACCORDEMENT DES 7 RUBRIQUES
      ======================================================= */
 
   function bindDirection(){
 
-    const offersButton =
+    const directoryButton =
       getElement(
-        "directionEmploymentOffersBtn"
+        "directionDirectoryBtn"
       );
 
-    const applicationsButton =
-      getElement(
-        "directionEmploymentApplicationsBtn"
-      );
-
-    const lowerChargesButton =
-      getElement(
-        "directionLowerChargesBtn"
-      );
-
-    const visibilityButton =
-      getElement(
-        "directionVisibilityBtn"
-      );
-
-    const advertisingButton =
-      getElement(
-        "directionAdvertisingBtn"
-      );
-
-    const subscriptionButton =
-      getElement(
-        "directionSubscriptionBtn"
-      );
-
-    const billingButton =
-      getElement(
-        "directionBillingBtn"
-      );
 
     const collaboratorsButton =
       getElement(
         "directionCollaboratorsBtn"
       );
 
-    const developmentButton =
-      getElement(
-        "directionDevelopmentBtn"
-      );
 
-    const sustainabilityButton =
+    const advertisingButton =
       getElement(
-        "directionSustainabilityBtn"
-      );
-
-    const mecenatButton =
-      getElement(
-        "directionMecenatBtn"
+        "directionAdvertisingBtn"
       );
 
 
-    if(offersButton){
-
-      offersButton.onclick =
-        function(){
-
-          if(
-            typeof module.openEmploymentOffers ===
-            "function"
-          ){
-
-            module.openEmploymentOffers();
-            return;
-          }
-
-          module.openScreen(
-            "emploi"
-          );
-        };
-    }
+    const lowerChargesButton =
+      getElement(
+        "directionLowerChargesBtn"
+      );
 
 
-    if(applicationsButton){
-
-      applicationsButton.onclick =
-        function(){
-
-          if(
-            typeof module.openEmploymentApplications ===
-            "function"
-          ){
-
-            module.openEmploymentApplications();
-            return;
-          }
-
-          module.openScreen(
-            "emploi"
-          );
-        };
-    }
+    const employmentButton =
+      getElement(
+        "directionEmploymentBtn"
+      );
 
 
-    if(lowerChargesButton){
-
-      lowerChargesButton.onclick =
-        function(){
-
-          module.openScreen(
-            "mutualisation"
-          );
-        };
-    }
+    const visibilityButton =
+      getElement(
+        "directionVisibilityBtn"
+      );
 
 
-    if(visibilityButton){
-
-      visibilityButton.onclick =
-        function(){
-
-          module.openScreen(
-            "visibilite"
-          );
-        };
-    }
+    const subscriptionButton =
+      getElement(
+        "directionSubscriptionBtn"
+      );
 
 
-    if(advertisingButton){
+    if(directoryButton){
 
-      advertisingButton.onclick =
-        openAdvertisingCreation;
-    }
-
-
-    if(subscriptionButton){
-
-      subscriptionButton.onclick =
-        function(){
-
-          if(
-            typeof module.openSubscriptionModule ===
-            "function"
-          ){
-
-            module.openSubscriptionModule();
-            return;
-          }
-
-          module.openScreen(
-            "abonnement"
-          );
-        };
-    }
-
-
-    if(billingButton){
-
-      billingButton.onclick =
-        function(){
-
-          if(
-            typeof module.openSearchBilling ===
-            "function"
-          ){
-
-            module.openSearchBilling();
-            return;
-          }
-
-          alert(
-            "L'espace facturation est momentanément indisponible."
-          );
-        };
+      directoryButton.onclick =
+        openDirectory;
     }
 
 
@@ -11298,44 +10611,44 @@ Voir les entreprises de ma ville
     }
 
 
-    if(developmentButton){
+    if(advertisingButton){
 
-      developmentButton.onclick =
-        function(){
-
-          module.openScreen(
-            "developpement"
-          );
-        };
+      advertisingButton.onclick =
+        openAdvertising;
     }
 
 
-    if(sustainabilityButton){
+    if(lowerChargesButton){
 
-      sustainabilityButton.onclick =
-        function(){
-
-          module.openScreen(
-            "perennite"
-          );
-        };
+      lowerChargesButton.onclick =
+        openLowerCharges;
     }
 
 
-    if(mecenatButton){
+    if(employmentButton){
 
-      mecenatButton.onclick =
-        function(){
+      employmentButton.onclick =
+        openEmployment;
+    }
 
-          module.openScreen(
-            "mecenat"
-          );
-        };
+
+    if(visibilityButton){
+
+      visibilityButton.onclick =
+        openVisibility;
+    }
+
+
+    if(subscriptionButton){
+
+      subscriptionButton.onclick =
+        openSubscription;
     }
   }
 
+
   /* =======================================================
-     OUVERTURE
+     OUVERTURE DU TABLEAU DE DIRECTION
      ======================================================= */
 
   function openDirection(){
@@ -11344,6 +10657,7 @@ Voir les entreprises de ma ville
       "Tableau de Direction",
       getDirectionHtml()
     );
+
 
     window.setTimeout(
       function(){
@@ -11355,20 +10669,22 @@ Voir les entreprises de ma ville
     );
   }
 
+
   module.registerScreen(
     "direction",
     openDirection
   );
 
+
   module.openDirection =
     openDirection;
 
+
   console.log(
-    "✅ Tableau de Direction V2 chargé"
+    "✅ Tableau de Direction V3 — menu 7 rubriques chargé"
   );
 
 })();
-
 /* =========================================================
    BO'CITÉART — MODULE ENTREPRISE
    PARTIE 8 — RACCORDEMENT
