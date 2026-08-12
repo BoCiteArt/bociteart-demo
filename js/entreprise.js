@@ -37997,3 +37997,1138 @@ document.addEventListener(
   true
 );
 
+/* =========================================================
+   BO'CITÉART — MOTEUR FINANCIER CENTRAL V1
+   TARIFS • ABONNEMENTS • PAIEMENTS • FACTURATION
+   DROITS • GEL / RÉACTIVATION • COMPTABILITÉ
+
+   IMPORTANT :
+   - aucune donnée bancaire sensible de carte n'est stockée ici ;
+   - les données PSP seront gérées côté serveur en production ;
+   - l'IBAN Bo'CitéArt sera renseigné à un seul endroit ;
+   - ce bloc prépare les raccordements futurs.
+   ========================================================= */
+
+(function initBociteFinancialEngine(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise =
+    window.BociteEntreprise || {};
+
+  /* =======================================================
+     1 — CONFIGURATION FINANCIÈRE CENTRALE
+     ======================================================= */
+
+  const FinancialConfig = {
+
+    version: "1.0",
+
+    issuer: {
+
+      brand: "Bo'CitéArt",
+
+      legalName: "",
+
+      address: "",
+
+      postalCode: "",
+
+      city: "",
+
+      country: "France",
+
+      siret: "",
+
+      siren: "",
+
+      vatNumber: "",
+
+      email: "",
+
+      phone: ""
+
+    },
+
+    bank: {
+
+      accountHolder: "",
+
+      iban: "",
+
+      bic: ""
+
+    },
+
+    providers: {
+
+      cardPSP: "",
+
+      sepaPSP: "",
+
+      electronicInvoicePlatform: ""
+
+    },
+
+    subscription: {
+
+      renewalMode:
+        "annual",
+
+      automaticRenewal:
+        true,
+
+      failedPaymentReminderDays:
+        5,
+
+      freezePremiumServices:
+        true,
+
+      preserveBasicAccess:
+        true,
+
+      preserveCustomerData:
+        true
+
+    }
+
+  };
+
+  module.FinancialConfig =
+    FinancialConfig;
+
+
+  /* =======================================================
+     2 — CATALOGUE TARIFAIRE CENTRAL
+
+     Les modules devront progressivement venir chercher
+     leurs prix ici au lieu de les écrire en dur.
+     ======================================================= */
+
+  const PriceCatalog = {
+
+    professionalMembership: {
+
+      code:
+        "PRO_MEMBERSHIP_ANNUAL",
+
+      label:
+        "Adhésion annuelle professionnelle",
+
+      amountHT:
+        329,
+
+      vatRate:
+        20,
+
+      frequency:
+        "annual",
+
+      active:
+        true
+
+    },
+
+
+    enrichedProfile: {
+
+      code:
+        "ENRICHED_PROFILE_ANNUAL",
+
+      label:
+        "Fiche enrichie",
+
+      amountHT:
+        199,
+
+      vatRate:
+        20,
+
+      frequency:
+        "annual",
+
+      active:
+        true
+
+    },
+
+
+    employmentPublication: {
+
+      code:
+        "EMPLOYMENT_PUBLICATION",
+
+      label:
+        "Publication d'une offre d'emploi",
+
+      amountHT:
+        50,
+
+      vatRate:
+        20,
+
+      frequency:
+        "one_time",
+
+      active:
+        true
+
+    },
+
+
+    advertisingPublication: {
+
+      code:
+        "ADVERTISING_PUBLICATION",
+
+      label:
+        "Publication publicitaire",
+
+      amountHT:
+        50,
+
+      vatRate:
+        20,
+
+      frequency:
+        "one_time",
+
+      active:
+        true
+
+    },
+
+
+    professionalOpportunity: {
+
+      code:
+        "PROFESSIONAL_OPPORTUNITY",
+
+      label:
+        "Opportunité professionnelle",
+
+      amountHT:
+        50,
+
+      vatRate:
+        20,
+
+      frequency:
+        "one_time",
+
+      active:
+        true
+
+    },
+
+
+    professionalSearchFranceMonthly: {
+
+      code:
+        "PRO_SEARCH_FRANCE_MONTHLY",
+
+      label:
+        "Recherche professionnelle France",
+
+      amountHT:
+        26.50,
+
+      vatRate:
+        20,
+
+      frequency:
+        "monthly",
+
+      active:
+        true
+
+    },
+
+
+    professionalSearchFranceAnnual: {
+
+      code:
+        "PRO_SEARCH_FRANCE_ANNUAL",
+
+      label:
+        "Recherche professionnelle France",
+
+      amountHT:
+        300,
+
+      vatRate:
+        20,
+
+      frequency:
+        "annual",
+
+      active:
+        true
+
+    },
+
+
+    professionalSearchEuropeMonthly: {
+
+      code:
+        "PRO_SEARCH_EUROPE_MONTHLY",
+
+      label:
+        "Recherche professionnelle Europe",
+
+      amountHT:
+        44.90,
+
+      vatRate:
+        20,
+
+      frequency:
+        "monthly",
+
+      active:
+        true
+
+    },
+
+
+    professionalSearchEuropeAnnual: {
+
+      code:
+        "PRO_SEARCH_EUROPE_ANNUAL",
+
+      label:
+        "Recherche professionnelle Europe",
+
+      amountHT:
+        500,
+
+      vatRate:
+        20,
+
+      frequency:
+        "annual",
+
+      active:
+        true
+
+    }
+
+  };
+
+  module.PriceCatalog =
+    PriceCatalog;
+
+
+  /* =======================================================
+     3 — CALCUL DES PRIX
+     ======================================================= */
+
+  function calculatePrice(
+    product
+  ){
+
+    if(!product){
+      return null;
+    }
+
+    const amountHT =
+      Number(
+        product.amountHT || 0
+      );
+
+    const vatRate =
+      Number(
+        product.vatRate || 0
+      );
+
+    const vatAmount =
+      amountHT *
+      vatRate /
+      100;
+
+    const amountTTC =
+      amountHT +
+      vatAmount;
+
+    return {
+
+      amountHT:
+        Number(
+          amountHT.toFixed(2)
+        ),
+
+      vatRate:
+        vatRate,
+
+      vatAmount:
+        Number(
+          vatAmount.toFixed(2)
+        ),
+
+      amountTTC:
+        Number(
+          amountTTC.toFixed(2)
+        )
+
+    };
+
+  }
+
+  module.calculateFinancialPrice =
+    calculatePrice;
+
+
+  /* =======================================================
+     4 — ÉTATS D'ABONNEMENT
+     ======================================================= */
+
+  const SubscriptionStatus = {
+
+    ACTIVE:
+      "active",
+
+    RENEWAL_PENDING:
+      "renewal_pending",
+
+    PAYMENT_PENDING:
+      "payment_pending",
+
+    FINAL_REMINDER:
+      "final_reminder",
+
+    PREMIUM_FROZEN:
+      "premium_frozen",
+
+    CANCELLED:
+      "cancelled",
+
+    EXPIRED:
+      "expired"
+
+  };
+
+  module.SubscriptionStatus =
+    SubscriptionStatus;
+
+
+  /* =======================================================
+     5 — ÉTATS DE PAIEMENT
+     ======================================================= */
+
+  const PaymentStatus = {
+
+    CREATED:
+      "created",
+
+    PENDING:
+      "pending",
+
+    CONFIRMED:
+      "confirmed",
+
+    FAILED:
+      "failed",
+
+    REFUNDED:
+      "refunded",
+
+    PARTIALLY_REFUNDED:
+      "partially_refunded",
+
+    CANCELLED:
+      "cancelled"
+
+  };
+
+  module.PaymentStatus =
+    PaymentStatus;
+
+
+  /* =======================================================
+     6 — MOYENS DE PAIEMENT
+     ======================================================= */
+
+  const PaymentMethods = {
+
+    CARD:
+      "card",
+
+    SEPA_DIRECT_DEBIT:
+      "sepa_direct_debit",
+
+    BANK_TRANSFER:
+      "bank_transfer",
+
+    PUBLIC_ENTITY_TRANSFER:
+      "public_entity_transfer"
+
+  };
+
+  module.PaymentMethods =
+    PaymentMethods;
+
+
+  /* =======================================================
+     7 — DROITS COLLABORATEURS
+     ======================================================= */
+
+  const ProfessionalPermissions = {
+
+    ADVERTISING:
+      "advertising",
+
+    EMPLOYMENT:
+      "employment",
+
+    DIRECTORY:
+      "directory",
+
+    PROFESSIONAL_SEARCH:
+      "professional_search",
+
+    LOWER_CHARGES:
+      "lower_charges",
+
+    VISIBILITY:
+      "visibility",
+
+    BILLING_VIEW:
+      "billing_view",
+
+    BILLING_MANAGE:
+      "billing_manage"
+
+  };
+
+  module.ProfessionalPermissions =
+    ProfessionalPermissions;
+
+
+  /* =======================================================
+     8 — DROITS RÉSERVÉS AU RESPONSABLE PRINCIPAL
+
+     Ces droits ne devront pas être délégués
+     à un simple collaborateur.
+     ======================================================= */
+
+  const OwnerOnlyPermissions = {
+
+    MANAGE_SUBSCRIPTION:
+      "manage_subscription",
+
+    CHANGE_PAYMENT_METHOD:
+      "change_payment_method",
+
+    MANAGE_COLLABORATORS:
+      "manage_collaborators",
+
+    CANCEL_SUBSCRIPTION:
+      "cancel_subscription",
+
+    MANAGE_BANK_DETAILS:
+      "manage_bank_details"
+
+  };
+
+  module.OwnerOnlyPermissions =
+    OwnerOnlyPermissions;
+
+
+  /* =======================================================
+     9 — JOURNAL FINANCIER LOCAL DE DÉMONSTRATION
+
+     En production :
+     stockage serveur + base de données.
+     ======================================================= */
+
+  const FINANCIAL_LOG_KEY =
+    "bociteart_financial_log_v1";
+
+  function loadFinancialLog(){
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          FINANCIAL_LOG_KEY
+        );
+
+      if(!raw){
+        return [];
+      }
+
+      const data =
+        JSON.parse(raw);
+
+      return Array.isArray(data)
+        ? data
+        : [];
+
+    }catch(error){
+
+      console.error(
+        "Bo'CitéArt : lecture du journal financier impossible.",
+        error
+      );
+
+      return [];
+
+    }
+
+  }
+
+
+  function saveFinancialLog(
+    entries
+  ){
+
+    localStorage.setItem(
+      FINANCIAL_LOG_KEY,
+      JSON.stringify(
+        entries
+      )
+    );
+
+  }
+
+
+  function addFinancialEvent(
+    type,
+    data
+  ){
+
+    const entries =
+      loadFinancialLog();
+
+    const event = {
+
+      id:
+        "BCA-EVT-" +
+        Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .slice(2,8)
+          .toUpperCase(),
+
+      type:
+        type,
+
+      date:
+        new Date()
+          .toISOString(),
+
+      data:
+        data || {}
+
+    };
+
+    entries.push(
+      event
+    );
+
+    saveFinancialLog(
+      entries
+    );
+
+    return event;
+
+  }
+
+  module.loadFinancialLog =
+    loadFinancialLog;
+
+  module.addFinancialEvent =
+    addFinancialEvent;
+
+
+  /* =======================================================
+     10 — GEL DES SERVICES PREMIUM
+
+     IMPORTANT :
+     le compte n'est pas supprimé.
+     Les données ne sont pas supprimées.
+     Les fonctions de base restent accessibles.
+     ======================================================= */
+
+  const PREMIUM_STATUS_KEY =
+    "bociteart_professional_premium_status_v1";
+
+
+  function getPremiumStatus(){
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          PREMIUM_STATUS_KEY
+        );
+
+      if(!raw){
+
+        return {
+          frozen:false,
+          reason:"",
+          frozenAt:null
+        };
+
+      }
+
+      return JSON.parse(raw);
+
+    }catch(error){
+
+      return {
+        frozen:false,
+        reason:"",
+        frozenAt:null
+      };
+
+    }
+
+  }
+
+
+  function freezePremiumServices(
+    reason
+  ){
+
+    const status = {
+
+      frozen:
+        true,
+
+      reason:
+        reason ||
+        "payment_pending",
+
+      frozenAt:
+        new Date()
+          .toISOString()
+
+    };
+
+    localStorage.setItem(
+      PREMIUM_STATUS_KEY,
+      JSON.stringify(
+        status
+      )
+    );
+
+    addFinancialEvent(
+      "premium_services_frozen",
+      status
+    );
+
+    return status;
+
+  }
+
+
+  function reactivatePremiumServices(){
+
+    const status = {
+
+      frozen:
+        false,
+
+      reason:
+        "",
+
+      frozenAt:
+        null,
+
+      reactivatedAt:
+        new Date()
+          .toISOString()
+
+    };
+
+    localStorage.setItem(
+      PREMIUM_STATUS_KEY,
+      JSON.stringify(
+        status
+      )
+    );
+
+    addFinancialEvent(
+      "premium_services_reactivated",
+      status
+    );
+
+    return status;
+
+  }
+
+
+  function canUsePremiumServices(){
+
+    return !getPremiumStatus()
+      .frozen;
+
+  }
+
+
+  module.getPremiumStatus =
+    getPremiumStatus;
+
+  module.freezePremiumServices =
+    freezePremiumServices;
+
+  module.reactivatePremiumServices =
+    reactivatePremiumServices;
+
+  module.canUsePremiumServices =
+    canUsePremiumServices;
+
+
+  /* =======================================================
+     11 — PAIEMENT CONFIRMÉ
+
+     Cette fonction sera appelée plus tard par le serveur
+     après confirmation réelle du PSP / SEPA.
+
+     Jamais sur un simple clic du client.
+     ======================================================= */
+
+  function confirmPayment(
+    payment
+  ){
+
+    if(!payment){
+      return false;
+    }
+
+    addFinancialEvent(
+      "payment_confirmed",
+      {
+
+        paymentId:
+          payment.id || "",
+
+        invoiceId:
+          payment.invoiceId || "",
+
+        method:
+          payment.method || "",
+
+        amountHT:
+          payment.amountHT || 0,
+
+        vatAmount:
+          payment.vatAmount || 0,
+
+        amountTTC:
+          payment.amountTTC || 0,
+
+        providerFee:
+          payment.providerFee || 0,
+
+        netPayout:
+          payment.netPayout || 0,
+
+        providerTransactionId:
+          payment.providerTransactionId || "",
+
+        payoutReference:
+          payment.payoutReference || ""
+
+      }
+    );
+
+    reactivatePremiumServices();
+
+    return true;
+
+  }
+
+  module.confirmFinancialPayment =
+    confirmPayment;
+
+
+  /* =======================================================
+     12 — ÉCHEC DE PAIEMENT
+     ======================================================= */
+
+  function registerPaymentFailure(
+    payment
+  ){
+
+    addFinancialEvent(
+      "payment_failed",
+      {
+
+        paymentId:
+          payment &&
+          payment.id
+            ? payment.id
+            : "",
+
+        reason:
+          payment &&
+          payment.reason
+            ? payment.reason
+            : "",
+
+        date:
+          new Date()
+            .toISOString()
+
+      }
+    );
+
+    return true;
+
+  }
+
+  module.registerPaymentFailure =
+    registerPaymentFailure;
+
+
+  /* =======================================================
+     13 — RÉFÉRENCE UNIQUE POUR VIREMENT
+     ======================================================= */
+
+  function createBankTransferReference(){
+
+    const date =
+      new Date();
+
+    return (
+      "BCA-" +
+      date.getFullYear() +
+      "-" +
+      Date.now()
+        .toString()
+        .slice(-8)
+    );
+
+  }
+
+  module.createBankTransferReference =
+    createBankTransferReference;
+
+
+  /* =======================================================
+     14 — MESURE DE LA VALEUR APPORTÉE AU PROFESSIONNEL
+
+     Prépare :
+     "Ce que Bo'CitéArt vous a apporté cette année"
+     ======================================================= */
+
+  const VALUE_KEY =
+    "bociteart_professional_value_v1";
+
+
+  function loadProfessionalValue(){
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          VALUE_KEY
+        );
+
+      if(!raw){
+
+        return {
+
+          profileViews:
+            0,
+
+          contacts:
+            0,
+
+          applications:
+            0,
+
+          professionalRequests:
+            0,
+
+          partnerships:
+            0,
+
+          advertisingActions:
+            0,
+
+          measuredSavings:
+            0
+
+        };
+
+      }
+
+      return JSON.parse(raw);
+
+    }catch(error){
+
+      return {
+
+        profileViews:0,
+        contacts:0,
+        applications:0,
+        professionalRequests:0,
+        partnerships:0,
+        advertisingActions:0,
+        measuredSavings:0
+
+      };
+
+    }
+
+  }
+
+
+  function saveProfessionalValue(
+    data
+  ){
+
+    localStorage.setItem(
+      VALUE_KEY,
+      JSON.stringify(
+        data
+      )
+    );
+
+  }
+
+
+  module.loadProfessionalValue =
+    loadProfessionalValue;
+
+  module.saveProfessionalValue =
+    saveProfessionalValue;
+
+
+  /* =======================================================
+     15 — INFORMATIONS BANCAIRES AFFICHABLES
+
+     L'IBAN sera renseigné plus tard dans FinancialConfig.
+
+     Aucun IBAN n'est écrit dans les autres modules.
+     ======================================================= */
+
+  function getBociteBankInformation(){
+
+    return {
+
+      accountHolder:
+        FinancialConfig.bank
+          .accountHolder,
+
+      iban:
+        FinancialConfig.bank
+          .iban,
+
+      bic:
+        FinancialConfig.bank
+          .bic
+
+    };
+
+  }
+
+  module.getBociteBankInformation =
+    getBociteBankInformation;
+
+
+  /* =======================================================
+     16 — INFORMATIONS ÉMETTEUR POUR LES FACTURES
+     ======================================================= */
+
+  function getInvoiceIssuer(){
+
+    return Object.assign(
+      {},
+      FinancialConfig.issuer
+    );
+
+  }
+
+  module.getInvoiceIssuer =
+    getInvoiceIssuer;
+
+
+  /* =======================================================
+     17 — POINTS DE RACCORDEMENT PRODUCTION
+
+     Ils seront remplacés/raccordés au serveur officiel.
+     ======================================================= */
+
+  module.FinancialConnectors = {
+
+    createCardPayment:
+      null,
+
+    createSepaPayment:
+      null,
+
+    verifyBankTransfer:
+      null,
+
+    createInvoice:
+      null,
+
+    createCreditNote:
+      null,
+
+    sendInvoiceByEmail:
+      null,
+
+    sendPaymentReminder:
+      null,
+
+    exportAccounting:
+      null,
+
+    electronicInvoiceTransmission:
+      null,
+
+    reconcilePSPPayout:
+      null
+
+  };
+
+
+  /* =======================================================
+     18 — SÉCURITÉ
+
+     Les numéros de carte, cryptogrammes et données
+     bancaires sensibles ne doivent jamais être placés
+     dans localStorage.
+     ======================================================= */
+
+  module.isFinancialEngineReady =
+    function(){
+
+      return true;
+
+    };
+
+
+  console.log(
+    "✅ Bo'CitéArt — moteur financier central V1 chargé"
+  );
+
+  console.log(
+    "✅ Catalogue tarifaire central préparé"
+  );
+
+  console.log(
+    "✅ CB / PSP / SEPA / virement préparés"
+  );
+
+  console.log(
+    "✅ Gel et réactivation des services premium préparés"
+  );
+
+  console.log(
+    "✅ Droits collaborateurs et responsable préparés"
+  );
+
+  console.log(
+    "✅ Rapprochement comptable et facturation préparés"
+  );
+
+})();
