@@ -41835,5 +41835,1089 @@ document.addEventListener(
   );
 
 })(); 
+/* =========================================================
+   BO'CITÉART — GESTION DES COLLABORATEURS V1
+   ÉCRAN RÉSERVÉ AU RESPONSABLE
+   ACCÈS 1 + ACCÈS 2
+   ========================================================= */
 
+(function initBociteCollaboratorManagement(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(
+    !module ||
+    !module.collaborators
+  ){
+
+    console.error(
+      "Bo'CitéArt : moteur collaborateurs introuvable."
+    );
+
+    return;
+  }
+
+
+  /* =======================================================
+     OUTILS
+     ======================================================= */
+
+  function escapeValue(value){
+
+    return String(
+      value == null
+        ? ""
+        : value
+    )
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+  }
+
+
+  function getElement(id){
+
+    return document.getElementById(
+      id
+    );
+  }
+
+
+  /*
+    Pour la démo actuelle, on récupère l'identifiant
+    de la structure professionnelle disponible.
+
+    Le raccordement officiel au compte serveur
+    remplacera ensuite cette résolution.
+  */
+
+  function getCurrentStructureId(){
+
+    try{
+
+      if(
+        typeof module.getCurrentProfessionalId ===
+        "function"
+      ){
+
+        const id =
+          module.getCurrentProfessionalId();
+
+        if(id){
+          return String(id);
+        }
+      }
+
+    }catch(error){
+      /* secours ci-dessous */
+    }
+
+
+    try{
+
+      const registration =
+        window.BoCiteArtRegistration;
+
+      if(
+        registration &&
+        typeof registration.getCurrentAccount ===
+        "function"
+      ){
+
+        const account =
+          registration.getCurrentAccount();
+
+        if(account){
+
+          return String(
+            account.structureId ||
+            account.companyId ||
+            account.siret ||
+            account.id ||
+            "bociteart-demo-structure"
+          );
+        }
+      }
+
+    }catch(error){
+      /* secours ci-dessous */
+    }
+
+
+    return "bociteart-demo-structure";
+  }
+
+
+  function emptyCollaborator(slot){
+
+    return {
+
+      slot:
+        slot,
+
+      firstName:
+        "",
+
+      lastName:
+        "",
+
+      email:
+        "",
+
+      phone:
+        "",
+
+      active:
+        false,
+
+      revoked:
+        false,
+
+      activationCode:
+        "",
+
+      permissions:{
+
+        advertising:false,
+        employment:false,
+        news:false,
+        visibility:false,
+        directory:false
+
+      }
+
+    };
+  }
+
+
+  function getCollaboratorBySlot(
+    structureId,
+    slot
+  ){
+
+    const list =
+      module.collaborators
+        .getCollaborators(
+          structureId
+        );
+
+
+    const found =
+      list.find(
+        function(item){
+
+          return (
+            Number(item.slot) ===
+            Number(slot)
+          );
+        }
+      );
+
+
+    return (
+      found ||
+      emptyCollaborator(slot)
+    );
+  }
+
+
+  /* =======================================================
+     CARTE D'UN COLLABORATEUR
+     ======================================================= */
+
+  function collaboratorCardHtml(
+    collaborator,
+    slot
+  ){
+
+    const permissions =
+      collaborator.permissions ||
+      {};
+
+
+    const exists =
+      Boolean(
+        collaborator.id
+      );
+
+
+    const active =
+      exists &&
+      collaborator.active === true &&
+      collaborator.revoked !== true;
+
+
+    const statusText =
+      active
+        ? "Accès actif"
+        : exists
+          ? "Accès coupé"
+          : "Aucun collaborateur";
+
+
+    return `
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+          ">
+          Accès ${slot}
+        </div>
+
+
+        <div
+          style="
+            margin-top:6px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+          ${statusText}
+        </div>
+
+
+        <label
+          style="
+            display:block;
+            margin-top:12px;
+            font-weight:400;
+          ">
+          Prénom
+        </label>
+
+        <input
+          id="collabFirstName${slot}"
+          class="miniField"
+          type="text"
+          value="${escapeValue(
+            collaborator.firstName
+          )}"
+          style="
+            background:#ffffff;
+            color:#111111;
+          "
+        >
+
+
+        <label
+          style="
+            display:block;
+            margin-top:8px;
+            font-weight:400;
+          ">
+          Nom
+        </label>
+
+        <input
+          id="collabLastName${slot}"
+          class="miniField"
+          type="text"
+          value="${escapeValue(
+            collaborator.lastName
+          )}"
+          style="
+            background:#ffffff;
+            color:#111111;
+          "
+        >
+
+
+        <label
+          style="
+            display:block;
+            margin-top:8px;
+            font-weight:400;
+          ">
+          E-mail
+        </label>
+
+        <input
+          id="collabEmail${slot}"
+          class="miniField"
+          type="email"
+          value="${escapeValue(
+            collaborator.email
+          )}"
+          style="
+            background:#ffffff;
+            color:#111111;
+          "
+        >
+
+
+        <label
+          style="
+            display:block;
+            margin-top:8px;
+            font-weight:400;
+          ">
+          Téléphone
+        </label>
+
+        <input
+          id="collabPhone${slot}"
+          class="miniField"
+          type="tel"
+          value="${escapeValue(
+            collaborator.phone
+          )}"
+          style="
+            background:#ffffff;
+            color:#111111;
+          "
+        >
+
+
+        <div
+          style="
+            margin-top:14px;
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+          ">
+          Autorisations
+        </div>
+
+
+        <label
+          style="
+            display:block;
+            margin-top:8px;
+            font-weight:400;
+          ">
+
+          <input
+            id="collabAdvertising${slot}"
+            type="checkbox"
+            ${
+              permissions.advertising
+                ? "checked"
+                : ""
+            }
+          >
+
+          Publicité dans le grand bandeau
+
+        </label>
+
+
+        <label
+          style="
+            display:block;
+            margin-top:6px;
+            font-weight:400;
+          ">
+
+          <input
+            id="collabEmployment${slot}"
+            type="checkbox"
+            ${
+              permissions.employment
+                ? "checked"
+                : ""
+            }
+          >
+
+          Emploi
+
+        </label>
+
+
+        <label
+          style="
+            display:block;
+            margin-top:6px;
+            font-weight:400;
+          ">
+
+          <input
+            id="collabNews${slot}"
+            type="checkbox"
+            ${
+              permissions.news
+                ? "checked"
+                : ""
+            }
+          >
+
+          Actualités
+
+        </label>
+
+
+        <label
+          style="
+            display:block;
+            margin-top:6px;
+            font-weight:400;
+          ">
+
+          <input
+            id="collabVisibility${slot}"
+            type="checkbox"
+            ${
+              permissions.visibility
+                ? "checked"
+                : ""
+            }
+          >
+
+          Visibilité
+
+        </label>
+
+
+        <label
+          style="
+            display:block;
+            margin-top:6px;
+            font-weight:400;
+          ">
+
+          <input
+            id="collabDirectory${slot}"
+            type="checkbox"
+            ${
+              permissions.directory
+                ? "checked"
+                : ""
+            }
+          >
+
+          Annuaire professionnel
+
+        </label>
+
+
+        <button
+          id="collabSave${slot}"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:14px;
+            background:#ffffff !important;
+            color:#111111 !important;
+          ">
+          Enregistrer les autorisations
+        </button>
+
+
+        <button
+          id="collabRenew${slot}"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:8px;
+            background:#ffffff !important;
+            color:#111111 !important;
+          ">
+          ${
+            exists
+              ? "Créer un nouvel accès"
+              : "Créer l'accès"
+          }
+        </button>
+
+
+        ${
+          exists
+            ? `
+
+              <button
+                id="collabCut${slot}"
+                type="button"
+                style="
+                  width:100%;
+                  margin-top:12px;
+                  padding:12px;
+                  border:2px solid #b00020;
+                  border-radius:10px;
+                  background:#ffffff;
+                  color:#b00020;
+                  font-size:14px;
+                  font-weight:800;
+                  cursor:pointer;
+                ">
+                COUPER L'ACCÈS ${slot}
+              </button>
+
+            `
+            : ""
+        }
+
+      </div>
+
+    `;
+  }
+
+
+  /* =======================================================
+     ÉCRAN RESPONSABLE
+     ======================================================= */
+
+  function openCollaboratorManagement(){
+
+    const structureId =
+      getCurrentStructureId();
+
+
+    const collaborator1 =
+      getCollaboratorBySlot(
+        structureId,
+        1
+      );
+
+
+    const collaborator2 =
+      getCollaboratorBySlot(
+        structureId,
+        2
+      );
+
+
+    const html = `
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+          border-left:6px solid #2f5d46;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+          ">
+          Mes collaborateurs
+        </div>
+
+        <div
+          style="
+            margin-top:8px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+
+          Vous pouvez créer jusqu'à
+          deux accès collaborateurs.
+
+          <br><br>
+
+          Choisissez uniquement
+          les fonctions que vous souhaitez
+          leur confier.
+
+          <br><br>
+
+          Chaque collaborateur accède
+          à son propre espace privé.
+          Il n'accède pas à votre
+          Tableau de Direction.
+
+        </div>
+
+      </div>
+
+
+      ${collaboratorCardHtml(
+        collaborator1,
+        1
+      )}
+
+
+      ${collaboratorCardHtml(
+        collaborator2,
+        2
+      )}
+
+    `;
+
+
+    if(
+      typeof module.renderModulePage ===
+      "function"
+    ){
+
+      module.renderModulePage(
+        "Gestion des collaborateurs",
+        html,
+        {
+          afterRender:
+            function(){
+
+              bindCollaboratorManagement(
+                structureId
+              );
+            }
+        }
+      );
+
+      return;
+    }
+
+
+    if(
+      typeof module.renderModal ===
+      "function"
+    ){
+
+      module.renderModal(
+        "Gestion des collaborateurs",
+        html
+      );
+
+
+      setTimeout(
+        function(){
+
+          bindCollaboratorManagement(
+            structureId
+          );
+
+        },
+        0
+      );
+
+      return;
+    }
+
+
+    alert(
+      "L'espace collaborateurs est momentanément indisponible."
+    );
+  }
+
+
+  /* =======================================================
+     LECTURE DU FORMULAIRE
+     ======================================================= */
+
+  function readCollaboratorForm(
+    slot
+  ){
+
+    const firstName =
+      getElement(
+        "collabFirstName" +
+        slot
+      );
+
+
+    const lastName =
+      getElement(
+        "collabLastName" +
+        slot
+      );
+
+
+    const email =
+      getElement(
+        "collabEmail" +
+        slot
+      );
+
+
+    const phone =
+      getElement(
+        "collabPhone" +
+        slot
+      );
+
+
+    return {
+
+      firstName:
+        firstName
+          ? firstName.value
+          : "",
+
+      lastName:
+        lastName
+          ? lastName.value
+          : "",
+
+      email:
+        email
+          ? email.value
+          : "",
+
+      phone:
+        phone
+          ? phone.value
+          : "",
+
+      permissions:{
+
+        advertising:
+          Boolean(
+            getElement(
+              "collabAdvertising" +
+              slot
+            ) &&
+            getElement(
+              "collabAdvertising" +
+              slot
+            ).checked
+          ),
+
+        employment:
+          Boolean(
+            getElement(
+              "collabEmployment" +
+              slot
+            ) &&
+            getElement(
+              "collabEmployment" +
+              slot
+            ).checked
+          ),
+
+        news:
+          Boolean(
+            getElement(
+              "collabNews" +
+              slot
+            ) &&
+            getElement(
+              "collabNews" +
+              slot
+            ).checked
+          ),
+
+        visibility:
+          Boolean(
+            getElement(
+              "collabVisibility" +
+              slot
+            ) &&
+            getElement(
+              "collabVisibility" +
+              slot
+            ).checked
+          ),
+
+        directory:
+          Boolean(
+            getElement(
+              "collabDirectory" +
+              slot
+            ) &&
+            getElement(
+              "collabDirectory" +
+              slot
+            ).checked
+          )
+
+      }
+
+    };
+  }
+
+
+  /* =======================================================
+     ENREGISTREMENT
+     ======================================================= */
+
+  function saveSlot(
+    structureId,
+    slot
+  ){
+
+    const data =
+      readCollaboratorForm(
+        slot
+      );
+
+
+    if(
+      !String(
+        data.firstName || ""
+      ).trim() ||
+      !String(
+        data.lastName || ""
+      ).trim()
+    ){
+
+      alert(
+        "Renseignez le prénom et le nom du collaborateur."
+      );
+
+      return null;
+    }
+
+
+    if(
+      !String(
+        data.email || ""
+      ).trim()
+    ){
+
+      alert(
+        "Renseignez l'adresse e-mail du collaborateur."
+      );
+
+      return null;
+    }
+
+
+    const result =
+      module.collaborators
+        .save(
+          structureId,
+          slot,
+          data
+        );
+
+
+    if(
+      !result ||
+      result.ok !== true
+    ){
+
+      alert(
+        "L'accès collaborateur n'a pas pu être enregistré."
+      );
+
+      return null;
+    }
+
+
+    return result;
+  }
+
+
+  /* =======================================================
+     BOUTONS
+     ======================================================= */
+
+  function bindCollaboratorManagement(
+    structureId
+  ){
+
+    [1,2].forEach(
+      function(slot){
+
+        const saveButton =
+          getElement(
+            "collabSave" +
+            slot
+          );
+
+
+        const renewButton =
+          getElement(
+            "collabRenew" +
+            slot
+          );
+
+
+        const cutButton =
+          getElement(
+            "collabCut" +
+            slot
+          );
+
+
+        if(saveButton){
+
+          saveButton.onclick =
+            function(){
+
+              const result =
+                saveSlot(
+                  structureId,
+                  slot
+                );
+
+
+              if(!result){
+                return;
+              }
+
+
+              alert(
+                "Les informations et autorisations de l'accès " +
+                slot +
+                " sont enregistrées."
+              );
+
+
+              openCollaboratorManagement();
+            };
+        }
+
+
+        if(renewButton){
+
+          renewButton.onclick =
+            function(){
+
+              let collaborator =
+                getCollaboratorBySlot(
+                  structureId,
+                  slot
+                );
+
+
+              /*
+                Si le collaborateur n'existe pas encore,
+                on commence par enregistrer sa fiche.
+              */
+
+              if(!collaborator.id){
+
+                const saved =
+                  saveSlot(
+                    structureId,
+                    slot
+                  );
+
+
+                if(!saved){
+                  return;
+                }
+
+
+                collaborator =
+                  saved.collaborator;
+              }
+
+
+              const result =
+                module.collaborators
+                  .renewAccess(
+                    structureId,
+                    slot
+                  );
+
+
+              if(
+                !result ||
+                result.ok !== true
+              ){
+
+                alert(
+                  "Le nouvel accès n'a pas pu être créé."
+                );
+
+                return;
+              }
+
+
+              alert(
+                "NOUVEL ACCÈS " +
+                slot +
+                "\n\n" +
+                "Code initial à transmettre au collaborateur :\n\n" +
+                result.activationCode +
+                "\n\n" +
+                "L'ancien accès est désormais invalidé."
+              );
+
+
+              openCollaboratorManagement();
+            };
+        }
+
+
+        if(cutButton){
+
+          cutButton.onclick =
+            function(){
+
+              const confirmed =
+                window.confirm(
+                  "Couper immédiatement l'accès " +
+                  slot +
+                  " ?\n\n" +
+                  "Le collaborateur ne pourra plus utiliser son espace ni les fonctions qui lui étaient autorisées."
+                );
+
+
+              if(!confirmed){
+                return;
+              }
+
+
+              const result =
+                module.collaborators
+                  .cutAccess(
+                    structureId,
+                    slot
+                  );
+
+
+              if(
+                !result ||
+                result.ok !== true
+              ){
+
+                alert(
+                  "L'accès n'a pas pu être coupé."
+                );
+
+                return;
+              }
+
+
+              alert(
+                "L'accès " +
+                slot +
+                " est maintenant coupé."
+              );
+
+
+              openCollaboratorManagement();
+            };
+        }
+
+      }
+    );
+  }
+
+
+  /* =======================================================
+     EXPOSITION
+     ======================================================= */
+
+  module.openCollaboratorManagement =
+    openCollaboratorManagement;
+
+
+  console.log(
+    "✅ Gestion des 2 collaborateurs chargée"
+  );
+
+  console.log(
+    "✅ Accès 1 et Accès 2 réservés au responsable"
+  );
+
+})();
+   
 })();
