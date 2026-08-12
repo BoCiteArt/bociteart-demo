@@ -13008,776 +13008,6 @@ if(
   );
 
 })();
-/* =========================================================
-   BO'CITÉART — OPPORTUNITÉS DE MUTUALISATION
-   CHARGES RÉCURRENTES • SERVICES COMMUNS • EXEMPLES
-   ========================================================= */
-
-(function patchBociteEntrepriseMutualisationV2(){
-
-  "use strict";
-
-  const module = window.BociteEntreprise;
-
-  if(!module){
-    console.error(
-      "Bo'CitéArt Entreprise : module principal introuvable."
-    );
-    return;
-  }
-
-  const MUTUALISATION_KEY =
-    "bociteart_entreprise_mutualisation_v4";
-
-  function getElement(id){
-    return document.getElementById(id);
-  }
-
-  function escapeValue(value){
-    return module.safeEscape(value);
-  }
-
-  function getDefaultData(){
-    return {
-      electricite:{
-        label:"Électricité",
-        description:
-          "Contrats d’électricité pour bureaux, ateliers, commerces ou sites professionnels.",
-        count:17,
-        target:30,
-        interested:false
-      },
-
-      gaz:{
-        label:"Gaz",
-        description:
-          "Contrats de gaz destinés aux locaux et installations professionnelles.",
-        count:9,
-        target:30,
-        interested:false
-      },
-
-      telephonie:{
-        label:"Téléphonie et Internet",
-        description:
-          "Téléphonie fixe, mobile, accès Internet, fibre et solutions professionnelles.",
-        count:24,
-        target:30,
-        interested:false
-      },
-
-      assurances:{
-        label:"Assurances professionnelles",
-        description:
-          "Responsabilité civile, multirisque, véhicules, locaux et risques professionnels.",
-        count:12,
-        target:30,
-        interested:false
-      },
-
-      mutuelle:{
-        label:"Mutuelle collective",
-        description:
-          "Recherche de propositions communes pour la complémentaire santé des salariés.",
-        count:8,
-        target:30,
-        interested:false
-      },
-
-      flotte:{
-        label:"Flotte automobile",
-        description:
-          "Location, entretien ou gestion de plusieurs véhicules professionnels.",
-        count:7,
-        target:20,
-        interested:false
-      },
-
-      carburant:{
-        label:"Cartes carburant",
-        description:
-          "Solutions de carburant ou de recharge pour les véhicules professionnels.",
-        count:11,
-        target:25,
-        interested:false
-      },
-
-      nettoyage:{
-        label:"Nettoyage des bureaux et locaux",
-        description:
-          "Entretien régulier des bureaux, ateliers, sanitaires et espaces professionnels.",
-        count:6,
-        target:20,
-        interested:false
-      },
-
-      vitres:{
-        label:"Entretien des vitres",
-        description:
-          "Nettoyage périodique des vitrages, vitrines, baies et façades vitrées.",
-        count:5,
-        target:20,
-        interested:false
-      },
-
-      espacesVerts:{
-        label:"Entretien des espaces verts",
-        description:
-          "Tonte, taille, entretien des abords, parkings et terrains professionnels.",
-        count:4,
-        target:20,
-        interested:false
-      },
-
-      maintenance:{
-        label:"Maintenance des locaux",
-        description:
-          "Petits travaux, chauffage, ventilation, portes, équipements et entretien technique.",
-        count:6,
-        target:20,
-        interested:false
-      },
-
-      dechets:{
-        label:"Collecte et traitement des déchets",
-        description:
-          "Déchets de bureaux, déchets industriels, cartons, bois, métaux ou déchets spécifiques.",
-        count:5,
-        target:20,
-        interested:false
-      },
-
-      alarmes:{
-        label:"Alarmes et télésurveillance",
-        description:
-          "Protection des locaux, détection d’intrusion, vidéosurveillance et télésurveillance.",
-        count:9,
-        target:20,
-        interested:false
-      },
-
-      controles:{
-        label:"Vérifications réglementaires",
-        description:
-          "Exemples : installations électriques, extincteurs, appareils de levage, portes automatiques et contrôles périodiques obligatoires.",
-        count:4,
-        target:20,
-        interested:false
-      },
-
-      formation:{
-        label:"Formations professionnelles communes",
-        description:
-          "Exemples : sauveteur secouriste du travail, habilitation électrique, conduite d’engins, sécurité incendie, anglais professionnel et cybersécurité.",
-        count:5,
-        target:20,
-        interested:false
-      },
-
-      autres:[]
-    };
-  }
-
-  function loadData(){
-    try{
-      const raw =
-        localStorage.getItem(MUTUALISATION_KEY);
-
-      const saved =
-        raw ? JSON.parse(raw) : null;
-
-      if(saved && typeof saved === "object"){
-        return Object.assign(
-          getDefaultData(),
-          saved
-        );
-      }
-    }catch(error){
-      console.warn(
-        "Lecture des mutualisations impossible :",
-        error
-      );
-    }
-
-    return getDefaultData();
-  }
-
-  function saveData(data){
-    try{
-      localStorage.setItem(
-        MUTUALISATION_KEY,
-        JSON.stringify(data)
-      );
-    }catch(error){
-      console.warn(
-        "Enregistrement des mutualisations impossible :",
-        error
-      );
-    }
-  }
-
-  function getItems(){
-    return [
-      "electricite",
-      "gaz",
-      "telephonie",
-      "assurances",
-      "mutuelle",
-      "flotte",
-      "carburant",
-      "nettoyage",
-      "vitres",
-      "espacesVerts",
-      "maintenance",
-      "dechets",
-      "alarmes",
-      "controles",
-      "formation"
-    ];
-  }
-
-  function getHtml(){
-    return `
-      <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
-
-        <strong style="font-size:18px;">
-          Opportunités de mutualisation
-        </strong>
-
-        <br><br>
-
-        Bo'CitéArt permet aux entreprises intéressées
-        de se regrouper afin d’obtenir des propositions
-        communes auprès de prestataires.
-
-        <br><br>
-
-        <strong>
-          Chaque entreprise reste totalement libre
-          d’accepter ou non une proposition.
-        </strong>
-      </div>
-
-      <div class="box">
-        <strong>
-          Bo'CitéArt ne devient pas un groupement d’achat
-        </strong>
-
-        <br><br>
-
-        Bo'CitéArt ne vend aucun contrat,
-        ne choisit aucun prestataire à la place de l’entreprise
-        et ne recommande aucun fournisseur.
-
-        <br><br>
-
-        Son rôle consiste uniquement à :
-
-        <br><br>
-
-        • recueillir les besoins communs ;<br>
-        • comptabiliser les entreprises intéressées ;<br>
-        • organiser une consultation ;<br>
-        • centraliser les propositions reçues ;<br>
-        • présenter les résultats clairement.
-
-        <br><br>
-
-        Le contrat éventuel reste conclu directement
-        entre chaque entreprise et le prestataire retenu.
-      </div>
-
-      <div class="box">
-        <strong>
-          Quelles prestations sont concernées ?
-        </strong>
-
-        <br><br>
-
-        Il s’agit de charges ou de prestations
-        professionnelles récurrentes pouvant concerner
-        plusieurs entreprises.
-
-        <br><br>
-
-        Exemples :
-
-        <br><br>
-
-        • énergie ;<br>
-        • assurances ;<br>
-        • mutuelle collective ;<br>
-        • véhicules ;<br>
-        • nettoyage des bureaux ;<br>
-        • entretien des vitres ;<br>
-        • maintenance des locaux ;<br>
-        • espaces verts ;<br>
-        • contrôles réglementaires ;<br>
-        • formations communes.
-
-        <br><br>
-
-        Bo'CitéArt ne propose pas d’achat groupé
-        de marchandises destinées à la revente.
-      </div>
-
-      <div
-        id="mutualisationCorrectedList"
-        style="margin-top:12px;">
-      </div>
-
-      <div
-        class="box"
-        style="margin-top:14px;">
-
-        <strong>
-          Vous avez identifié une autre charge
-          ou une prestation récurrente ?
-        </strong>
-
-        <br><br>
-
-        Vous pouvez la proposer ci-dessous.
-
-        <br><br>
-
-        Exemple :
-
-        <br><br>
-
-        <strong>
-          Entretien mensuel des vitres de bureaux
-        </strong>
-      </div>
-
-      <label
-        style="
-          display:block;
-          font-weight:900;
-        ">
-        Quelle charge ou prestation proposez-vous ?
-      </label>
-
-      <input
-        id="mutualisationCorrectedTitle"
-        class="miniField"
-        type="text"
-        placeholder="Exemple : entretien des vitres">
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Précisez votre besoin
-      </label>
-
-      <textarea
-        id="mutualisationCorrectedDescription"
-        class="miniField"
-        style="min-height:90px;"
-        placeholder="Exemple : nettoyage mensuel des vitrages de bureaux et des baies vitrées.">
-      </textarea>
-
-      <button
-        id="mutualisationCorrectedSaveBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;margin-top:10px;">
-        Proposer cette mutualisation
-      </button>
-
-      <div
-        id="mutualisationCorrectedOtherList"
-        style="margin-top:12px;">
-      </div>
-
-      <div
-        class="box"
-        style="
-          margin-top:14px;
-          border-left:6px solid #b00020;
-        ">
-
-        <strong>
-          Votre intérêt ne constitue pas un engagement
-        </strong>
-
-        <br><br>
-
-        Le clic indique uniquement que le sujet
-        peut vous intéresser.
-
-        <br><br>
-
-        Vous pourrez ensuite consulter les propositions reçues
-        et rester libre de les accepter ou de les refuser.
-      </div>
-    `;
-  }
-
-  function renderMainList(){
-    const host =
-      getElement("mutualisationCorrectedList");
-
-    if(!host){
-      return;
-    }
-
-    const data =
-      loadData();
-
-    host.innerHTML =
-      getItems().map(function(key){
-
-        const item =
-          data[key];
-
-        const count =
-          Number(item.count || 0);
-
-        const target =
-          Number(item.target || 1);
-
-        const percent =
-          Math.min(
-            100,
-            Math.round(
-              count / target * 100
-            )
-          );
-
-        return `
-          <div class="box">
-
-            <div
-              style="
-                display:flex;
-                justify-content:space-between;
-                gap:10px;
-                align-items:flex-start;
-              ">
-
-              <strong style="font-size:16px;">
-                ${escapeValue(item.label)}
-              </strong>
-
-              <strong
-                style="
-                  color:#2f5d46;
-                  white-space:nowrap;
-                ">
-                ${count} / ${target}
-              </strong>
-            </div>
-
-            <div
-              style="
-                margin-top:8px;
-                line-height:1.45;
-              ">
-              ${escapeValue(item.description || "")}
-            </div>
-
-            <div
-              style="
-                height:12px;
-                margin-top:10px;
-                overflow:hidden;
-                border-radius:999px;
-                background:#e5dfd5;
-              ">
-
-              <div
-                style="
-                  width:${percent}%;
-                  height:100%;
-                  background:#2f5d46;
-                ">
-              </div>
-            </div>
-
-            <div
-              class="muted"
-              style="margin-top:6px;">
-              ${percent} % de l’objectif indicatif
-            </div>
-
-            <button
-              class="choiceBtn mutualisationCorrectedInterestBtn"
-              type="button"
-              data-mutualisation-corrected-key="${escapeValue(key)}"
-              style="
-                width:100%;
-                margin-top:10px;
-                ${item.interested ? "opacity:.65;" : ""}
-              ">
-
-              ${
-                item.interested
-                  ? "Intérêt enregistré"
-                  : "Cette mutualisation m’intéresse"
-              }
-            </button>
-          </div>
-        `;
-      }).join("");
-
-    host
-      .querySelectorAll(
-        ".mutualisationCorrectedInterestBtn"
-      )
-      .forEach(function(button){
-
-        button.onclick = function(){
-          registerInterest(
-            button.getAttribute(
-              "data-mutualisation-corrected-key"
-            )
-          );
-        };
-      });
-  }
-
-  function registerInterest(key){
-    const data =
-      loadData();
-
-    const item =
-      data[key];
-
-    if(!item){
-      alert(
-        "Cette mutualisation est introuvable."
-      );
-      return;
-    }
-
-    if(item.interested){
-      alert(
-        "Votre intérêt est déjà enregistré."
-      );
-      return;
-    }
-
-    item.interested = true;
-
-    item.count =
-      Number(item.count || 0) + 1;
-
-    item.updatedAt =
-      Date.now();
-
-    item.updatedAtFr =
-      new Date().toLocaleString("fr-FR");
-
-    saveData(data);
-
-    renderMainList();
-
-    alert(
-      "Votre intérêt est enregistré.\n\n" +
-      "Vous ne prenez aucun engagement à ce stade.\n\n" +
-      "Vous resterez libre d’accepter ou de refuser " +
-      "les propositions qui seront présentées."
-    );
-  }
-
-  function saveOtherRequest(){
-    const titleInput =
-      getElement(
-        "mutualisationCorrectedTitle"
-      );
-
-    const descriptionInput =
-      getElement(
-        "mutualisationCorrectedDescription"
-      );
-
-    const title =
-      titleInput
-        ? String(titleInput.value || "").trim()
-        : "";
-
-    const description =
-      descriptionInput
-        ? String(descriptionInput.value || "").trim()
-        : "";
-
-    if(!title){
-      alert(
-        "Indiquez clairement la charge ou la prestation proposée.\n\n" +
-        "Exemple : entretien des vitres."
-      );
-      return;
-    }
-
-    if(!description){
-      alert(
-        "Précisez votre besoin.\n\n" +
-        "Exemple : nettoyage mensuel des vitrages de bureaux."
-      );
-      return;
-    }
-
-    const data =
-      loadData();
-
-    if(!Array.isArray(data.autres)){
-      data.autres = [];
-    }
-
-    data.autres.push({
-      id:
-        "MUT-" +
-        Date.now() +
-        "-" +
-        Math.random()
-          .toString(36)
-          .slice(2,7),
-
-      title:title,
-      description:description,
-      count:1,
-      target:10,
-      status:"a_etudier",
-      createdAt:Date.now(),
-      createdAtFr:
-        new Date().toLocaleString("fr-FR")
-    });
-
-    saveData(data);
-
-    if(titleInput){
-      titleInput.value = "";
-    }
-
-    if(descriptionInput){
-      descriptionInput.value = "";
-    }
-
-    renderOtherList();
-
-    alert(
-      "Votre proposition est enregistrée.\n\n" +
-      "Elle pourra être présentée aux autres entreprises " +
-      "si elle correspond à une charge professionnelle récurrente."
-    );
-  }
-
-  function renderOtherList(){
-    const host =
-      getElement(
-        "mutualisationCorrectedOtherList"
-      );
-
-    if(!host){
-      return;
-    }
-
-    const data =
-      loadData();
-
-    const list =
-      Array.isArray(data.autres)
-        ? data.autres
-        : [];
-
-    if(!list.length){
-      host.innerHTML = "";
-      return;
-    }
-
-    host.innerHTML = `
-      <strong style="font-size:17px;">
-        Autres propositions enregistrées
-      </strong>
-
-      ${
-        list.map(function(item){
-          return `
-            <div
-              class="box"
-              style="margin-top:8px;">
-
-              <strong>
-                ${escapeValue(item.title)}
-              </strong>
-
-              <br><br>
-
-              ${escapeValue(item.description)}
-
-              <br><br>
-
-              Statut :
-
-              <strong>
-                À étudier
-              </strong>
-            </div>
-          `;
-        }).join("")
-      }
-    `;
-  }
-
-  function bindMutualisation(){
-    const saveButton =
-      getElement(
-        "mutualisationCorrectedSaveBtn"
-      );
-
-    if(saveButton){
-      saveButton.onclick =
-        saveOtherRequest;
-    }
-
-    renderMainList();
-    renderOtherList();
-  }
-
-function openMutualisation(){
-
-  module.renderModal(
-    "Opportunités de mutualisation",
-    getHtml(),
-    {
-      presentationFooter:true
-    }
-  );
-
-  window.setTimeout(function(){
-
-    bindMutualisation();
-
-  },0);
-}
-   
-  module.registerScreen(
-    "mutualisation",
-    openMutualisation
-  );
-
-  module.registerScreen(
-    "economies",
-    openMutualisation
-  );
-
-  module.loadMutualisationData =
-    loadData;
-
-  module.saveMutualisationData =
-    saveData;
-
-  console.log(
-    "✅ Mutualisations détaillées et exemples ajoutés"
-  );
-
-})();
 
 /* =========================================================
    BO'CITÉART — OPPORTUNITÉS PROFESSIONNELLES
@@ -13845,312 +13075,463 @@ function openMutualisation(){
     }
   }
 
-  function getHtml(){
-    return `
-      <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
+ function getHtml(){
 
-        <strong style="font-size:18px;">
-          Opportunités professionnelles
-        </strong>
+  return `
 
-        <br><br>
-
-        Publiez une information destinée exclusivement
-        aux entreprises, artisans et professionnels.
-
-        <br><br>
-
-        Cette rubrique est différente
-        de la publicité destinée aux habitants.
-      </div>
-
-      <div class="box">
-        <strong>
-          Quelle est la différence avec une publicité ?
-        </strong>
-
-        <br><br>
-
-        <strong>La publicité locale</strong>
-        permet de présenter une offre, un produit,
-        une promotion ou un événement aux habitants.
-
-        <br><br>
-
-        <strong>L’opportunité professionnelle</strong>
-        sert à rechercher ou informer d’autres entreprises.
-
-        <br><br>
-
-        Elle peut concerner :
-
-        <br><br>
-
-        • une recherche de partenaire ;<br>
-        • une recherche de sous-traitant ;<br>
-        • une recherche de fournisseur ;<br>
-        • un appel à compétences ;<br>
-        • une proposition de collaboration ;<br>
-        • une formation professionnelle ;<br>
-        • une conférence ou une rencontre B2B ;<br>
-        • une démonstration de matériel ;<br>
-        • un appel à candidatures ;<br>
-        • un salon ou un événement économique.
-      </div>
-
-      <div
-        class="box"
-        style="border-left:6px solid #b00020;">
-
-        <strong>
-          Tarif de publication
-        </strong>
-
-        <br><br>
-
-        <strong style="font-size:20px;">
-          50 € HT
-        </strong>
-
-        <br><br>
-
-        La publication est destinée
-        à l’espace professionnel Bo'CitéArt.
-
-        <br><br>
-
-        Après validation et mise en ligne,
-        la réservation est ferme et non remboursable.
-      </div>
-
-      <div class="box">
-        <strong>
-          Publier une opportunité
-        </strong>
-
-        <br><br>
-
-        Les informations seront vérifiées
-        avant leur diffusion dans la version définitive.
-      </div>
-
-      <label style="display:block;font-weight:900;">
-        Nom de l’entreprise
-      </label>
-
-      <input
-        id="professionalOpportunityCompany"
-        class="miniField"
-        type="text"
-        placeholder="Nom de l’entreprise">
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Type d’opportunité
-      </label>
-
-      <select
-        id="professionalOpportunityType"
-        class="miniField">
-
-        <option value="">
-          Choisir
-        </option>
-
-        <option value="partenaire">
-          Recherche de partenaire
-        </option>
-
-        <option value="sous_traitant">
-          Recherche de sous-traitant
-        </option>
-
-        <option value="fournisseur">
-          Recherche de fournisseur
-        </option>
-
-        <option value="competence">
-          Recherche de compétence
-        </option>
-
-        <option value="collaboration">
-          Proposition de collaboration
-        </option>
-
-        <option value="formation">
-          Formation professionnelle
-        </option>
-
-        <option value="conference">
-          Conférence ou rencontre B2B
-        </option>
-
-        <option value="demonstration">
-          Démonstration de matériel
-        </option>
-
-        <option value="appel_candidatures">
-          Appel à candidatures
-        </option>
-
-        <option value="evenement">
-          Salon ou événement économique
-        </option>
-
-        <option value="autre">
-          Autre opportunité professionnelle
-        </option>
-      </select>
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Titre de l’annonce
-      </label>
-
-      <input
-        id="professionalOpportunityTitle"
-        class="miniField"
-        type="text"
-        placeholder="Exemple : recherche carreleur pour chantier à Bordeaux">
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Description
-      </label>
-
-      <textarea
-        id="professionalOpportunityDescription"
-        class="miniField"
-        style="min-height:120px;"
-        placeholder="Décrivez clairement votre besoin, les compétences recherchées et les conditions principales.">
-      </textarea>
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Commune ou zone concernée
-      </label>
-
-      <input
-        id="professionalOpportunityLocation"
-        class="miniField"
-        type="text"
-        placeholder="Exemple : Bordeaux, Gironde ou toute la France">
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Date limite de réponse
-      </label>
-
-      <input
-        id="professionalOpportunityDeadline"
-        class="miniField"
-        type="date">
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Adresse e-mail professionnelle
-      </label>
-
-      <input
-        id="professionalOpportunityEmail"
-        class="miniField"
-        type="email"
-        placeholder="contact@entreprise.fr">
-
-      <div
-        class="box"
-        style="margin-top:12px;">
-
-        <label class="miniCheck">
-          <input
-            id="professionalOpportunityLegal"
-            type="checkbox">
-
-          <span>
-            Je confirme que cette annonce est destinée
-            aux professionnels et qu’elle ne constitue pas
-            une publicité grand public.
-          </span>
-        </label>
-
-        <label class="miniCheck">
-          <input
-            id="professionalOpportunityPayment"
-            type="checkbox">
-
-          <span>
-            J’accepte le tarif de 50 € HT
-            et le caractère ferme et non remboursable
-            après validation et mise en ligne.
-          </span>
-        </label>
-      </div>
-
-      <button
-        id="professionalOpportunityPreviewBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;margin-top:12px;">
-        Prévisualiser l’opportunité
-      </button>
-
-      <button
-        id="professionalOpportunityPublishBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;margin-top:8px;">
-        Valider et passer au paiement
-      </button>
-
-      <div
-        id="professionalOpportunityStatus"
-        class="muted"
-        style="margin-top:10px;">
-      </div>
+    <div
+      class="box"
+      style="
+        border-left:6px solid #2f5d46;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      ">
 
       <div
         style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
           color:#2f5d46;
+          font-size:17px;
+          font-weight:800;
+          line-height:1.35;
         ">
-        Opportunités publiées
+        Opportunités professionnelles
       </div>
 
       <div
-        id="professionalOpportunityList"
-        style="margin-top:10px;">
+        style="
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Publiez une information
+        destinée uniquement aux professionnels.
       </div>
-    `;
-  }
 
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:800;
+          margin-bottom:8px;
+        ">
+        Pour quels besoins ?
+      </div>
+
+      • rechercher un partenaire ;<br>
+      • rechercher un sous-traitant ;<br>
+      • rechercher un fournisseur ;<br>
+      • rechercher une compétence ;<br>
+      • proposer une collaboration ;<br>
+      • proposer une formation ;<br>
+      • annoncer une rencontre B2B ;<br>
+      • présenter une démonstration de matériel ;<br>
+      • lancer un appel à candidatures ;<br>
+      • annoncer un salon ou un événement professionnel.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        border-left:6px solid #b00020;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:800;
+          margin-bottom:8px;
+        ">
+        Tarif
+      </div>
+
+      <span
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:800;
+        ">
+        50 € HT
+      </span>
+
+      par publication.
+
+      <br><br>
+
+      Cette publication est réservée
+      à l'espace professionnel
+      <strong
+        style="
+          white-space:nowrap;
+          font-weight:800;
+        ">
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </strong>.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:800;
+        ">
+        Publier une opportunité
+      </div>
+
+    </div>
+
+
+    <label
+      style="
+        display:block;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Nom de l’entreprise
+    </label>
+
+    <input
+      id="professionalOpportunityCompany"
+      class="miniField"
+      type="text"
+      placeholder="Nom de l’entreprise"
+      style="
+        background:#ffffff;
+        color:#111111;
+      ">
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Type d’opportunité
+    </label>
+
+    <select
+      id="professionalOpportunityType"
+      class="miniField"
+      style="
+        background:#ffffff;
+        color:#111111;
+      ">
+
+      <option value="">
+        Choisir
+      </option>
+
+      <option value="partenaire">
+        Recherche de partenaire
+      </option>
+
+      <option value="sous_traitant">
+        Recherche de sous-traitant
+      </option>
+
+      <option value="fournisseur">
+        Recherche de fournisseur
+      </option>
+
+      <option value="competence">
+        Recherche de compétence
+      </option>
+
+      <option value="collaboration">
+        Proposition de collaboration
+      </option>
+
+      <option value="formation">
+        Formation professionnelle
+      </option>
+
+      <option value="conference">
+        Conférence ou rencontre B2B
+      </option>
+
+      <option value="demonstration">
+        Démonstration de matériel
+      </option>
+
+      <option value="appel_candidatures">
+        Appel à candidatures
+      </option>
+
+      <option value="evenement">
+        Salon ou événement économique
+      </option>
+
+      <option value="autre">
+        Autre opportunité professionnelle
+      </option>
+
+    </select>
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Titre
+    </label>
+
+    <input
+      id="professionalOpportunityTitle"
+      class="miniField"
+      type="text"
+      placeholder="Exemple : recherche carreleur pour chantier à Bordeaux"
+      style="
+        background:#ffffff;
+        color:#111111;
+      ">
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Description
+    </label>
+
+    <textarea
+      id="professionalOpportunityDescription"
+      class="miniField"
+      style="
+        min-height:120px;
+        background:#ffffff;
+        color:#111111;
+      "
+      placeholder="Décrivez simplement votre besoin.">
+    </textarea>
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Commune ou zone concernée
+    </label>
+
+    <input
+      id="professionalOpportunityLocation"
+      class="miniField"
+      type="text"
+      placeholder="Exemple : Bordeaux, Gironde ou toute la France"
+      style="
+        background:#ffffff;
+        color:#111111;
+      ">
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Date limite de réponse
+    </label>
+
+    <input
+      id="professionalOpportunityDeadline"
+      class="miniField"
+      type="date"
+      style="
+        background:#ffffff;
+        color:#111111;
+      ">
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Adresse e-mail professionnelle
+    </label>
+
+    <input
+      id="professionalOpportunityEmail"
+      class="miniField"
+      type="email"
+      placeholder="contact@entreprise.fr"
+      style="
+        background:#ffffff;
+        color:#111111;
+      ">
+
+
+    <div
+      class="box"
+      style="
+        margin-top:12px;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+
+      <label
+        class="miniCheck"
+        style="
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <input
+          id="professionalOpportunityLegal"
+          type="checkbox">
+
+        <span>
+          Je confirme que cette publication
+          est destinée aux professionnels.
+        </span>
+
+      </label>
+
+
+      <label
+        class="miniCheck"
+        style="
+          margin-top:8px;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <input
+          id="professionalOpportunityPayment"
+          type="checkbox">
+
+        <span>
+          J’accepte le tarif
+          de 50 € HT par publication.
+        </span>
+
+      </label>
+
+    </div>
+
+
+    <button
+      id="professionalOpportunityPreviewBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:12px;
+        background:#ffffff !important;
+        color:#111111 !important;
+      ">
+      Prévisualiser
+    </button>
+
+
+    <button
+      id="professionalOpportunityPublishBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:8px;
+        background:#ffffff !important;
+        color:#111111 !important;
+      ">
+      Valider et passer au paiement
+    </button>
+
+
+    <div
+      id="professionalOpportunityStatus"
+      class="muted"
+      style="
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+    </div>
+
+
+    <div
+      style="
+        margin-top:18px;
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:800;
+      ">
+      Mes opportunités publiées
+    </div>
+
+    <div
+      id="professionalOpportunityList"
+      style="
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+    </div>
+
+  `;
+}
+   
   function readForm(){
     return {
       company:
@@ -14315,217 +13696,817 @@ function openMutualisation(){
     return labels[value] || value;
   }
 
-  function previewOpportunity(){
-    const data =
-      readForm();
+function previewOpportunity(){
 
-    if(!validateForm(data, false)){
-      return;
-    }
+  const data =
+    readForm();
 
-    module.renderModal(
-      "Prévisualisation de l’opportunité",
-      `
+  if(
+    !validateForm(
+      data,
+      false
+    )
+  ){
+    return;
+  }
+
+  module.renderModal(
+    "Prévisualisation de l’opportunité",
+    `
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
         <div
-          class="box"
-          style="border-left:6px solid #2f5d46;">
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+            line-height:1.35;
+          ">
+          ${escapeValue(
+            data.title
+          )}
+        </div>
 
-          <strong style="font-size:18px;">
-            ${escapeValue(data.title)}
-          </strong>
+        <div
+          style="
+            margin-top:8px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+          ${escapeValue(
+            getTypeLabel(
+              data.type
+            )
+          )}
+        </div>
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+            margin-bottom:8px;
+          ">
+          Entreprise
+        </div>
+
+        ${escapeValue(
+          data.company
+        )}
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+            margin-bottom:8px;
+          ">
+          Description
+        </div>
+
+        ${escapeValue(
+          data.description
+        )}
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+            margin-bottom:8px;
+          ">
+          Zone concernée
+        </div>
+
+        ${escapeValue(
+          data.location
+        )}
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+            margin-bottom:8px;
+          ">
+          Date limite
+        </div>
+
+        ${escapeValue(
+          data.deadline ||
+          "Non précisée"
+        )}
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+            margin-bottom:8px;
+          ">
+          Contact professionnel
+        </div>
+
+        ${escapeValue(
+          data.email
+        )}
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid #b00020;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
+        <span
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+          ">
+          50 € HT
+        </span>
+
+        par publication professionnelle.
+
+      </div>
+
+    `
+  );
+}
+
+ function publishOpportunity(){
+
+  const data =
+    readForm();
+
+  if(
+    !validateForm(
+      data,
+      true
+    )
+  ){
+    return;
+  }
+
+  /* =====================================================
+     1. CRÉATION DE LA COMMANDE CENTRALE
+     ===================================================== */
+
+  if(
+    typeof module.createFinancialOrder !==
+    "function"
+  ){
+
+    alert(
+      "Le moteur financier Bo'CitéArt est momentanément indisponible."
+    );
+
+    return;
+  }
+
+  const priceHT = 50;
+  const vatRate = 20;
+
+  const vatAmount =
+    Number(
+      (
+        priceHT *
+        vatRate /
+        100
+      )
+      .toFixed(2)
+    );
+
+  const amountTTC =
+    Number(
+      (
+        priceHT +
+        vatAmount
+      )
+      .toFixed(2)
+    );
+
+  const order =
+    module.createFinancialOrder({
+
+      productCode:
+        "PROFESSIONAL_OPPORTUNITY",
+
+      serviceType:
+        "professional_opportunity",
+
+      serviceLabel:
+        "Publication d'une opportunité professionnelle",
+
+      customerType:
+        "professional",
+
+      customerName:
+        data.company,
+
+      customerEmail:
+        data.email,
+
+      amountHT:
+        priceHT,
+
+      vatRate:
+        vatRate,
+
+      vatAmount:
+        vatAmount,
+
+      amountTTC:
+        amountTTC
+
+    });
+
+
+  /* =====================================================
+     2. ENREGISTREMENT DE L'OPPORTUNITÉ
+     ELLE N'EST PAS PUBLIÉE AVANT PAIEMENT CONFIRMÉ
+     ===================================================== */
+
+  const list =
+    loadOpportunities();
+
+  const opportunity = {
+
+    id:
+      "OPP-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2,7),
+
+    company:
+      data.company,
+
+    type:
+      data.type,
+
+    title:
+      data.title,
+
+    description:
+      data.description,
+
+    location:
+      data.location,
+
+    deadline:
+      data.deadline,
+
+    email:
+      data.email,
+
+    priceHT:
+      priceHT,
+
+    vatRate:
+      vatRate,
+
+    amountTTC:
+      amountTTC,
+
+    orderId:
+      order.id,
+
+    paymentId:
+      "",
+
+    invoiceId:
+      "",
+
+    paymentStatus:
+      "waiting_payment",
+
+    publicationStatus:
+      "waiting_payment",
+
+    createdAt:
+      Date.now(),
+
+    createdAtFr:
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        )
+
+  };
+
+  list.unshift(
+    opportunity
+  );
+
+  saveOpportunities(
+    list
+  );
+
+
+  /* =====================================================
+     3. CHOIX DU MOYEN DE PAIEMENT
+     ===================================================== */
+
+  module.renderModal(
+    "Paiement de la publication",
+    `
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+          ">
+          Opportunité professionnelle
+        </div>
+
+        <div
+          style="
+            margin-top:8px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+          ${escapeValue(
+            data.title
+          )}
 
           <br><br>
 
-          ${escapeValue(
-            getTypeLabel(data.type)
-          )}
+          50,00 € HT<br>
+          TVA : 10,00 €<br>
+          60,00 € TTC
         </div>
 
-        <div class="box">
-          <strong>Entreprise</strong><br><br>
-          ${escapeValue(data.company)}
-        </div>
+      </div>
 
-        <div class="box">
-          <strong>Description</strong><br><br>
-          ${escapeValue(data.description)}
-        </div>
 
-        <div class="box">
-          <strong>Zone concernée</strong><br><br>
-          ${escapeValue(data.location)}
-        </div>
-
-        <div class="box">
-          <strong>Date limite</strong><br><br>
-          ${escapeValue(
-            data.deadline || "Non précisée"
-          )}
-        </div>
-
-        <div class="box">
-          <strong>Contact professionnel</strong><br><br>
-          ${escapeValue(data.email)}
-        </div>
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
 
         <div
-          class="box"
-          style="border-left:6px solid #b00020;">
-
-          Publication professionnelle :
-          <strong>50 € HT</strong>
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:800;
+            margin-bottom:8px;
+          ">
+          Choisissez votre moyen de paiement
         </div>
-      `
+
+        La publication sera mise en ligne
+        uniquement après confirmation réelle du paiement.
+
+      </div>
+
+
+      <button
+        id="opportunityCardPaymentBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          background:#ffffff !important;
+          color:#111111 !important;
+        ">
+        Payer par carte bancaire
+      </button>
+
+
+      <button
+        id="opportunityTransferPaymentBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:8px;
+          background:#ffffff !important;
+          color:#111111 !important;
+        ">
+        Payer par virement / SEPA
+      </button>
+
+    `
+  );
+
+
+  window.setTimeout(
+    function(){
+
+      const cardButton =
+        getElement(
+          "opportunityCardPaymentBtn"
+        );
+
+      const transferButton =
+        getElement(
+          "opportunityTransferPaymentBtn"
+        );
+
+
+      /* ===================================================
+         CARTE BANCAIRE / PSP
+         =================================================== */
+
+      if(cardButton){
+
+        cardButton.onclick =
+          function(){
+
+            if(
+              typeof module.createCardPayment !==
+              "function"
+            ){
+
+              alert(
+                "Le paiement par carte est momentanément indisponible."
+              );
+
+              return;
+            }
+
+            const payment =
+              module.createCardPayment(
+                order
+              );
+
+            opportunity.paymentId =
+              payment
+                ? payment.id
+                : "";
+
+            opportunity.paymentStatus =
+              "pending_card_confirmation";
+
+            saveOpportunities(
+              list
+            );
+
+            /*
+              En production :
+              ouverture sécurisée du PSP.
+
+              Le PSP confirmera le paiement
+              côté serveur.
+
+              Aucune publication ne doit être
+              déclenchée sur le simple clic.
+            */
+
+            alert(
+              "Le paiement par carte est préparé.\n\n" +
+              "Dans la version officielle, le PSP sécurisé s'ouvrira ici.\n\n" +
+              "Dès confirmation du paiement, la publication sera activée et la facture générée automatiquement."
+            );
+
+          };
+      }
+
+
+      /* ===================================================
+         VIREMENT / SEPA
+         =================================================== */
+
+      if(transferButton){
+
+        transferButton.onclick =
+          function(){
+
+            if(
+              typeof module.createSepaOrBankTransfer !==
+              "function"
+            ){
+
+              alert(
+                "Le paiement par virement ou SEPA est momentanément indisponible."
+              );
+
+              return;
+            }
+
+            const payment =
+              module.createSepaOrBankTransfer(
+                order,
+                "bank_transfer"
+              );
+
+            opportunity.paymentId =
+              payment
+                ? payment.id
+                : "";
+
+            opportunity.paymentStatus =
+              "pending_bank_confirmation";
+
+            saveOpportunities(
+              list
+            );
+
+            const bank =
+              typeof module.getBociteBankInformation ===
+              "function"
+                ? module.getBociteBankInformation()
+                : {};
+
+            const reference =
+              payment &&
+              payment.transferReference
+                ? payment.transferReference
+                : "";
+
+            let message =
+              "Votre demande de paiement par virement est enregistrée.\n\n" +
+              "Référence à indiquer :\n" +
+              reference;
+
+            if(
+              bank &&
+              bank.iban
+            ){
+
+              message +=
+                "\n\nIBAN Bo'CitéArt :\n" +
+                bank.iban;
+
+              if(bank.bic){
+
+                message +=
+                  "\n\nBIC :\n" +
+                  bank.bic;
+              }
+
+            }else{
+
+              message +=
+                "\n\nLes coordonnées bancaires officielles Bo'CitéArt seront affichées ici dès l'ouverture du compte professionnel.";
+            }
+
+            message +=
+              "\n\nLa publication restera en attente jusqu'à confirmation du règlement.";
+
+            alert(
+              message
+            );
+
+          };
+      }
+
+    },
+    0
+  );
+
+}
+   
+function renderOpportunities(){
+
+  const host =
+    getElement(
+      "professionalOpportunityList"
     );
+
+  if(!host){
+    return;
   }
 
-  function publishOpportunity(){
-    const data =
-      readForm();
+  const list =
+    loadOpportunities();
 
-    if(!validateForm(data, true)){
-      return;
-    }
+  if(!list.length){
 
-    const list =
-      loadOpportunities();
+    host.innerHTML = `
 
-    const opportunity = {
-      id:
-        "OPP-" +
-        Date.now() +
-        "-" +
-        Math.random()
-          .toString(36)
-          .slice(2,7),
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Aucune opportunité professionnelle publiée.
+      </div>
 
-      company:data.company,
-      type:data.type,
-      title:data.title,
-      description:data.description,
-      location:data.location,
-      deadline:data.deadline,
-      email:data.email,
+    `;
 
-      priceHT:50,
-      paymentStatus:"demo_paid",
-      publicationStatus:"published",
-
-      invoiceNumber:
-        "DEMO-OPP-" + Date.now(),
-
-      createdAt:Date.now(),
-
-      createdAtFr:
-        new Date().toLocaleString("fr-FR")
-    };
-
-    list.unshift(opportunity);
-
-    saveOpportunities(list);
-
-    const status =
-      getElement("professionalOpportunityStatus");
-
-    if(status){
-      status.textContent =
-        "Opportunité enregistrée le " +
-        opportunity.createdAtFr +
-        ". Facture de démonstration : " +
-        opportunity.invoiceNumber +
-        ".";
-    }
-
-    alert(
-      "Opportunité professionnelle enregistrée.\n\n" +
-      "Dans la version définitive, elle sera publiée " +
-      "après confirmation automatique du paiement de 50 € HT.\n\n" +
-      "La facture sera générée et envoyée automatiquement."
-    );
-
-    openOpportunities();
+    return;
   }
 
-  function renderOpportunities(){
-    const host =
-      getElement("professionalOpportunityList");
+  host.innerHTML =
+    list
+      .map(
+        function(item){
 
-    if(!host){
-      return;
-    }
+          return `
 
-    const list =
-      loadOpportunities();
+            <div
+              class="box"
+              style="
+                background:#ffffff;
+                color:#111111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.5;
+              ">
 
-    if(!list.length){
-      host.innerHTML = `
-        <div class="box">
-          Aucune opportunité professionnelle publiée.
-        </div>
-      `;
+              <div
+                style="
+                  color:#2f5d46;
+                  font-size:17px;
+                  font-weight:800;
+                  line-height:1.35;
+                ">
+                ${escapeValue(
+                  item.title
+                )}
+              </div>
 
-      return;
-    }
+              <div
+                style="
+                  margin-top:8px;
+                  color:#111111;
+                  font-size:14px;
+                  font-weight:400;
+                ">
+                ${escapeValue(
+                  getTypeLabel(
+                    item.type
+                  )
+                )}
+              </div>
 
-    host.innerHTML =
-      list.map(function(item){
+              <div
+                style="
+                  margin-top:10px;
+                  color:#111111;
+                  font-size:14px;
+                  font-weight:400;
+                ">
 
-        return `
-          <div class="box">
+                Entreprise :
+                ${escapeValue(
+                  item.company
+                )}
 
-            <strong style="font-size:17px;">
-              ${escapeValue(item.title)}
-            </strong>
+                <br><br>
 
-            <br><br>
+                ${escapeValue(
+                  item.description
+                )}
 
-            ${escapeValue(
-              getTypeLabel(item.type)
-            )}
+                <br><br>
 
-            <br><br>
+                Zone :
+                ${escapeValue(
+                  item.location
+                )}
 
-            Entreprise :
-            <strong>
-              ${escapeValue(item.company)}
-            </strong>
+                <br><br>
 
-            <br><br>
+                Date limite :
+                ${escapeValue(
+                  item.deadline ||
+                  "Non précisée"
+                )}
 
-            ${escapeValue(item.description)}
+                <br><br>
 
-            <br><br>
+                Contact :
+                ${escapeValue(
+                  item.email
+                )}
 
-            Zone :
-            <strong>
-              ${escapeValue(item.location)}
-            </strong>
+              </div>
 
-            <br><br>
+              <div
+                style="
+                  margin-top:10px;
+                  color:#666666;
+                  font-size:13px;
+                  font-weight:400;
+                ">
+                Publication réservée
+                à l’espace professionnel
+                <strong
+                  style="
+                    white-space:nowrap;
+                    font-weight:800;
+                  ">
+                  <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+                </strong>.
+              </div>
 
-            Date limite :
-            <strong>
-              ${escapeValue(
-                item.deadline || "Non précisée"
-              )}
-            </strong>
+            </div>
 
-            <br><br>
-
-            Contact :
-            ${escapeValue(item.email)}
-
-            <br><br>
-
-            <span class="muted">
-              Publication professionnelle distincte
-              de la publicité grand public.
-            </span>
-          </div>
-        `;
-      }).join("");
-  }
-
+          `;
+        }
+      )
+      .join("");
+}
+   
   function bindOpportunities(){
     const previewButton =
       getElement(
@@ -41282,5 +41263,577 @@ document.addEventListener(
   );
 
 })();
+  /* =========================================================
+   BO'CITÉART — FINALISATION CENTRALE DES PAIEMENTS V1
+   PAIEMENT CONFIRMÉ → FACTURE → ACTIVATION DU SERVICE
+   ========================================================= */
+
+(function initBocitePaymentFinalization(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+
+    console.error(
+      "Bo'CitéArt : moteur Entreprise introuvable."
+    );
+
+    return;
+  }
+
+
+  const ORDERS_KEY =
+    "bociteart_financial_orders_v1";
+
+  const OPPORTUNITY_KEY =
+    "bociteart_professional_opportunities_v1";
+
+
+  function loadList(
+    key
+  ){
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          key
+        );
+
+      const data =
+        raw
+          ? JSON.parse(raw)
+          : [];
+
+      return Array.isArray(data)
+        ? data
+        : [];
+
+    }catch(error){
+
+      return [];
+    }
+  }
+
+
+  function saveList(
+    key,
+    data
+  ){
+
+    try{
+
+      localStorage.setItem(
+        key,
+        JSON.stringify(
+          Array.isArray(data)
+            ? data
+            : []
+        )
+      );
+
+      return true;
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : enregistrement impossible.",
+        error
+      );
+
+      return false;
+    }
+  }
+
+
+  /* =======================================================
+     1. CRÉER LA FACTURE APRÈS PAIEMENT CONFIRMÉ
+     ======================================================= */
+
+  function createInvoiceFromOrder(
+    order,
+    payment
+  ){
+
+    if(
+      !order ||
+      typeof module.createPaidInvoice !==
+      "function"
+    ){
+
+      return null;
+    }
+
+    /*
+      Une commande ne doit produire
+      qu'une seule facture.
+    */
+
+    if(order.invoiceId){
+
+      return null;
+    }
+
+
+    const invoice =
+      module.createPaidInvoice({
+
+        customerType:
+          order.customerType ||
+          "professional",
+
+        customerName:
+          order.customerName ||
+          "",
+
+        customerEmail:
+          order.customerEmail ||
+          "",
+
+        customerSiret:
+          order.customerSiret ||
+          "",
+
+        serviceType:
+          order.serviceType ||
+          "",
+
+        serviceLabel:
+          order.serviceLabel ||
+          "Service Bo'CitéArt",
+
+        operationCategory:
+          "service",
+
+        amountHT:
+          Number(
+            order.amountHT || 0
+          ),
+
+        vatRate:
+          Number(
+            order.vatRate || 0
+          ),
+
+        amountVAT:
+          Number(
+            order.vatAmount || 0
+          ),
+
+        amountTTC:
+          Number(
+            order.amountTTC || 0
+          ),
+
+        orderReference:
+          order.id,
+
+        paymentStatus:
+          "paid",
+
+        paymentMethod:
+          payment
+            ? payment.method || ""
+            : "",
+
+        paymentReference:
+          payment
+            ? (
+                payment.providerTransactionId ||
+                payment.bankReference ||
+                payment.transferReference ||
+                payment.id ||
+                ""
+              )
+            : "",
+
+        paidAt:
+          payment &&
+          payment.confirmedAt
+            ? payment.confirmedAt
+            : Date.now(),
+
+        status:
+          "paid"
+
+      });
+
+
+    if(!invoice){
+      return null;
+    }
+
+
+    const orders =
+      loadList(
+        ORDERS_KEY
+      );
+
+    const storedOrder =
+      orders.find(
+        function(item){
+
+          return (
+            item.id ===
+            order.id
+          );
+        }
+      );
+
+
+    if(storedOrder){
+
+      storedOrder.invoiceId =
+        invoice.id;
+
+      storedOrder.invoiceNumber =
+        invoice.number || "";
+
+      storedOrder.status =
+        "completed";
+
+      storedOrder.completedAt =
+        Date.now();
+
+      saveList(
+        ORDERS_KEY,
+        orders
+      );
+    }
+
+
+    return invoice;
+  }
+
+
+  /* =======================================================
+     2. ACTIVER UNE OPPORTUNITÉ PROFESSIONNELLE
+     ======================================================= */
+
+  function activateProfessionalOpportunity(
+    order,
+    payment,
+    invoice
+  ){
+
+    if(
+      !order ||
+      order.serviceType !==
+      "professional_opportunity"
+    ){
+      return false;
+    }
+
+
+    const opportunities =
+      loadList(
+        OPPORTUNITY_KEY
+      );
+
+
+    const opportunity =
+      opportunities.find(
+        function(item){
+
+          return (
+            item.orderId ===
+            order.id
+          );
+        }
+      );
+
+
+    if(!opportunity){
+
+      return false;
+    }
+
+
+    opportunity.paymentStatus =
+      "paid";
+
+    opportunity.publicationStatus =
+      "published";
+
+    opportunity.paymentId =
+      payment
+        ? payment.id || ""
+        : "";
+
+    opportunity.invoiceId =
+      invoice
+        ? invoice.id || ""
+        : "";
+
+    opportunity.invoiceNumber =
+      invoice
+        ? invoice.number || ""
+        : "";
+
+    opportunity.publishedAt =
+      Date.now();
+
+    opportunity.publishedAtFr =
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        );
+
+
+    saveList(
+      OPPORTUNITY_KEY,
+      opportunities
+    );
+
+
+    if(
+      typeof module.addFinancialEvent ===
+      "function"
+    ){
+
+      module.addFinancialEvent(
+        "professional_opportunity_published",
+        {
+
+          opportunityId:
+            opportunity.id,
+
+          orderId:
+            order.id,
+
+          paymentId:
+            payment
+              ? payment.id || ""
+              : "",
+
+          invoiceId:
+            invoice
+              ? invoice.id || ""
+              : ""
+
+        }
+      );
+    }
+
+
+    return true;
+  }
+
+
+  /* =======================================================
+     3. FINALISATION UNIQUE
+
+     Plus tard :
+     publicité,
+     emploi,
+     abonnement,
+     fiche enrichie,
+     autres services
+     utiliseront cette même entrée.
+     ======================================================= */
+
+  function finalizeFinancialOrder(
+    order,
+    payment
+  ){
+
+    if(!order){
+
+      return {
+        ok:false,
+        reason:
+          "order_missing"
+      };
+    }
+
+
+    const invoice =
+      createInvoiceFromOrder(
+        order,
+        payment
+      );
+
+
+    let serviceActivated =
+      false;
+
+
+    if(
+      order.serviceType ===
+      "professional_opportunity"
+    ){
+
+      serviceActivated =
+        activateProfessionalOpportunity(
+          order,
+          payment,
+          invoice
+        );
+    }
+
+
+    if(
+      typeof module.addFinancialEvent ===
+      "function"
+    ){
+
+      module.addFinancialEvent(
+        "financial_order_finalized",
+        {
+
+          orderId:
+            order.id,
+
+          serviceType:
+            order.serviceType || "",
+
+          paymentId:
+            payment
+              ? payment.id || ""
+              : "",
+
+          invoiceId:
+            invoice
+              ? invoice.id || ""
+              : "",
+
+          serviceActivated:
+            serviceActivated
+
+        }
+      );
+    }
+
+
+    return {
+
+      ok:true,
+
+      order:
+        order,
+
+      payment:
+        payment || null,
+
+      invoice:
+        invoice || null,
+
+      serviceActivated:
+        serviceActivated
+
+    };
+  }
+
+
+  module.finalizeFinancialOrder =
+    finalizeFinancialOrder;
+
+
+  /* =======================================================
+     4. RACCORDEMENT AU PAIEMENT CARTE EXISTANT
+     ======================================================= */
+
+  if(
+    typeof module.confirmCardPayment ===
+    "function" &&
+    !module.__cardFinalizationConnected
+  ){
+
+    module.__cardFinalizationConnected =
+      true;
+
+
+    const originalConfirmCardPayment =
+      module.confirmCardPayment;
+
+
+    module.confirmCardPayment =
+      function(){
+
+        const result =
+          originalConfirmCardPayment
+            .apply(
+              module,
+              arguments
+            );
+
+
+        if(
+          result &&
+          result.ok === true &&
+          result.order
+        ){
+
+          finalizeFinancialOrder(
+            result.order,
+            result.payment || null
+          );
+        }
+
+
+        return result;
+      };
+  }
+
+
+  /* =======================================================
+     5. RACCORDEMENT SEPA / VIREMENT EXISTANT
+     ======================================================= */
+
+  if(
+    typeof module.confirmSepaOrTransfer ===
+    "function" &&
+    !module.__sepaFinalizationConnected
+  ){
+
+    module.__sepaFinalizationConnected =
+      true;
+
+
+    const originalConfirmSepaOrTransfer =
+      module.confirmSepaOrTransfer;
+
+
+    module.confirmSepaOrTransfer =
+      function(){
+
+        const result =
+          originalConfirmSepaOrTransfer
+            .apply(
+              module,
+              arguments
+            );
+
+
+        if(
+          result &&
+          result.ok === true &&
+          result.order
+        ){
+
+          finalizeFinancialOrder(
+            result.order,
+            result.payment || null
+          );
+        }
+
+
+        return result;
+      };
+  }
+
+
+  console.log(
+    "✅ Finalisation centrale des paiements raccordée"
+  );
+
+  console.log(
+    "✅ Paiement confirmé → facture → activation du service"
+  );
+
+})(); 
 
 })();
