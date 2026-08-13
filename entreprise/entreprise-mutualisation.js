@@ -4744,5 +4744,500 @@
     "✅ Payer moins de charges V2 chargé"
   );
 
+})();
+/* =========================================================
+   BO'CITÉART — PAYER MOINS DE CHARGES
+   CORRECTION FINALE DE PRÉSENTATION
+   RETOUR UNIQUE • TEXTES NORMAUX • MARQUE OFFICIELLE
+   ========================================================= */
+
+(function fixMutualisationPresentation(){
+
+  "use strict";
+
+
+  function makeBrand(){
+
+    const strong =
+      document.createElement(
+        "strong"
+      );
+
+    strong.style.whiteSpace =
+      "nowrap";
+
+    strong.style.fontWeight =
+      "700";
+
+
+    const green =
+      document.createElement(
+        "span"
+      );
+
+    green.textContent =
+      "Bo'Cité";
+
+    green.style.color =
+      "#2f5d46";
+
+    green.style.fontWeight =
+      "700";
+
+
+    const red =
+      document.createElement(
+        "span"
+      );
+
+    red.textContent =
+      "Art";
+
+    red.style.color =
+      "#b00020";
+
+    red.style.fontWeight =
+      "700";
+
+
+    strong.appendChild(
+      green
+    );
+
+    strong.appendChild(
+      red
+    );
+
+
+    return strong;
+  }
+
+
+  function replaceBrandIn(root){
+
+    if(!root){
+      return;
+    }
+
+
+    const walker =
+      document.createTreeWalker(
+        root,
+        NodeFilter.SHOW_TEXT
+      );
+
+
+    const nodes = [];
+
+
+    while(
+      walker.nextNode()
+    ){
+
+      nodes.push(
+        walker.currentNode
+      );
+    }
+
+
+    nodes.forEach(
+      function(node){
+
+        const text =
+          String(
+            node.nodeValue || ""
+          );
+
+
+        if(
+          !text.includes(
+            "Bo'CitéArt"
+          )
+        ){
+          return;
+        }
+
+
+        const parent =
+          node.parentElement;
+
+
+        if(
+          !parent ||
+          parent.closest(
+            "script,style,button,input,textarea,select"
+          )
+        ){
+          return;
+        }
+
+
+        /*
+          Ne pas retraiter une marque
+          déjà correctement construite.
+        */
+
+        if(
+          parent.closest(
+            ".bociteMutualisationBrand"
+          )
+        ){
+          return;
+        }
+
+
+        const parts =
+          text.split(
+            "Bo'CitéArt"
+          );
+
+
+        const fragment =
+          document.createDocumentFragment();
+
+
+        parts.forEach(
+          function(part,index){
+
+            if(part){
+
+              fragment.appendChild(
+                document.createTextNode(
+                  part
+                )
+              );
+            }
+
+
+            if(
+              index <
+              parts.length - 1
+            ){
+
+              fragment.appendChild(
+                makeBrand()
+              );
+            }
+
+          }
+        );
+
+
+        if(node.parentNode){
+
+          node.parentNode.replaceChild(
+            fragment,
+            node
+          );
+        }
+
+      }
+    );
+  }
+
+
+  function isRelevantModal(root){
+
+    if(!root){
+      return false;
+    }
+
+
+    const text =
+      String(
+        root.textContent || ""
+      )
+      .toLowerCase();
+
+
+    return (
+      text.includes(
+        "payer moins de charges"
+      ) ||
+      text.includes(
+        "suivi des demandes professionnelles"
+      ) ||
+      text.includes(
+        "mes réponses reçues"
+      ) ||
+      text.includes(
+        "besoins professionnels détectés"
+      )
+    );
+  }
+
+
+  function removeLargeReturn(root){
+
+    root
+      .querySelectorAll(
+        "button,[role='button']"
+      )
+      .forEach(
+        function(button){
+
+          const text =
+            String(
+              button.textContent || ""
+            )
+            .replace(/\s+/g," ")
+            .trim();
+
+
+          /*
+            On conserve uniquement
+            le petit bouton ← Retour.
+          */
+
+          if(
+            text === "Retour"
+          ){
+
+            button.remove();
+          }
+
+        }
+      );
+  }
+
+
+  function normalizeText(root){
+
+    root
+      .querySelectorAll(
+        "p,div,span,label,li"
+      )
+      .forEach(
+        function(element){
+
+          if(
+            element.closest(
+              "button"
+            )
+          ){
+            return;
+          }
+
+
+          /*
+            Titres du nouveau module :
+            on ne les modifie pas.
+          */
+
+          if(
+            element.classList.contains(
+              "bociteMutualisationTitle"
+            )
+          ){
+            return;
+          }
+
+
+          /*
+            Marque officielle :
+            elle reste en gras.
+          */
+
+          if(
+            element.closest(
+              ".bociteMutualisationBrand"
+            )
+          ){
+            return;
+          }
+
+
+          const style =
+            window.getComputedStyle(
+              element
+            );
+
+
+          /*
+            Les anciens textes du suivi
+            étaient presque tous forcés en gras.
+          */
+
+          if(
+            style.fontWeight === "700" ||
+            style.fontWeight === "800" ||
+            style.fontWeight === "900" ||
+            Number(
+              style.fontWeight
+            ) >= 600
+          ){
+
+            /*
+              Si l'élément ressemble à un titre,
+              on le conserve comme titre.
+            */
+
+            const text =
+              String(
+                element.textContent || ""
+              )
+              .trim();
+
+
+            const isShortTitle =
+              text.length > 0 &&
+              text.length <= 60 &&
+              (
+                element.tagName === "H1" ||
+                element.tagName === "H2" ||
+                element.tagName === "H3" ||
+                element.classList.contains(
+                  "sectionTitle"
+                )
+              );
+
+
+            if(isShortTitle){
+
+              element.style.color =
+                "#2f5d46";
+
+              element.style.fontSize =
+                "17px";
+
+              element.style.fontWeight =
+                "700";
+
+              return;
+            }
+
+
+            element.style.fontWeight =
+              "400";
+          }
+
+
+          if(
+            element.tagName !== "STRONG"
+          ){
+
+            element.style.fontSize =
+              "14px";
+          }
+
+        }
+      );
+  }
+
+
+  function fixTitles(root){
+
+    root
+      .querySelectorAll(
+        "h1,h2,h3," +
+        ".bociteMutualisationTitle," +
+        ".sectionTitle"
+      )
+      .forEach(
+        function(title){
+
+          title.style.color =
+            "#2f5d46";
+
+          title.style.fontSize =
+            "17px";
+
+          title.style.fontWeight =
+            "700";
+
+          title.style.lineHeight =
+            "1.3";
+
+        }
+      );
+  }
+
+
+  function clean(){
+
+    const roots =
+      document.querySelectorAll(
+        '[role="dialog"],' +
+        '.modal-content,' +
+        '.modalContent,' +
+        '.modal-body,' +
+        '.modalBody'
+      );
+
+
+    roots.forEach(
+      function(root){
+
+        if(
+          !isRelevantModal(
+            root
+          )
+        ){
+          return;
+        }
+
+
+        removeLargeReturn(
+          root
+        );
+
+        normalizeText(
+          root
+        );
+
+        fixTitles(
+          root
+        );
+
+        replaceBrandIn(
+          root
+        );
+
+      }
+    );
+  }
+
+
+  /*
+    Premier passage.
+  */
+
+  window.setTimeout(
+    clean,
+    0
+  );
+
+
+  /*
+    Les pages sont recréées à chaque clic.
+    On applique donc automatiquement
+    la présentation à chaque nouvelle ouverture.
+  */
+
+  const observer =
+    new MutationObserver(
+      function(){
+
+        window.setTimeout(
+          clean,
+          0
+        );
+      }
+    );
+
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+
+  console.log(
+    "✅ Présentation Payer moins de charges harmonisée"
+  );
 
 })();
+
