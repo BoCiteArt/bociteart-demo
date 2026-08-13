@@ -19,6 +19,29 @@
     return;
   }
 
+function escapeValue(value){
+
+  if(
+    typeof module.safeEscape ===
+    "function"
+  ){
+    return module.safeEscape(
+      value
+    );
+  }
+
+  return String(
+    value == null
+      ? ""
+      : value
+  )
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+}
+
   function getElement(id){
 
     return document.getElementById(id);
