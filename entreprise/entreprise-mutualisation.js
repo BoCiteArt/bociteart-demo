@@ -38,354 +38,556 @@
     `;
   }
 
-  function getMutualisationHtml(){
+ function getMutualisationHtml(){
+
+  const data =
+    typeof module.loadMutualisationData ===
+    "function"
+      ? module.loadMutualisationData()
+      : {
+          categories:{},
+          customNeeds:[]
+        };
+
+
+  const categories =
+    data &&
+    data.categories &&
+    typeof data.categories === "object"
+      ? data.categories
+      : {};
+
+
+  const customNeeds =
+    data &&
+    Array.isArray(
+      data.customNeeds
+    )
+      ? data.customNeeds
+      : [];
+
+
+  function needLine(
+    id,
+    label,
+    count
+  ){
 
     return `
 
       <div
-        class="box"
         style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-          border-left:6px solid #2f5d46;
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          gap:10px;
+          padding:11px 0;
+          border-bottom:1px solid #e3e3e3;
         ">
 
         <div
           style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:800;
-            line-height:1.35;
-            margin-bottom:10px;
+            flex:1;
+            min-width:0;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
           ">
-          Payez moins de charges
+
+          ${escapeValue(label)}
+
+          <div
+            style="
+              margin-top:3px;
+              color:#555555;
+              font-size:14px;
+              font-weight:400;
+            ">
+
+            ${Number(count || 0)}
+            professionnel(s) intéressé(s)
+
+          </div>
+
         </div>
 
-        Regroupez certains besoins
-        avec d'autres professionnels
-        pour rechercher de meilleures conditions,
-        tout en restant totalement indépendant.
 
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-        ">
-
-        <div
+        <button
+          class="choiceBtn mutualisationJoinBtn"
+          type="button"
+          data-need-id="${escapeValue(id)}"
           style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:800;
-            margin-bottom:10px;
+            width:auto;
+            min-width:125px;
+            margin:0;
+            background:#ffffff !important;
+            color:#111111 !important;
           ">
-          Quels besoins ?
-        </div>
-
-        • Électricité et gaz<br>
-        • Téléphonie et Internet<br>
-        • Assurances et mutuelles<br>
-        • Fournitures et papeterie<br>
-        • Matériel professionnel<br>
-        • Véhicules<br>
-        • Entretien<br>
-        • Prestations<br>
-        • Formations<br>
-        • Achats ou locations
+          Je suis intéressé
+        </button>
 
       </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:800;
-            margin-bottom:10px;
-          ">
-          Comment cela fonctionne ?
-        </div>
-
-        1. Vous indiquez votre besoin.
-
-        <br><br>
-
-        2. ${getBrandHtml()}
-        rapproche les demandes similaires.
-
-        <br><br>
-
-        3. Vous suivez le nombre
-        de professionnels intéressés.
-
-        <br><br>
-
-        4. Lorsque les conditions sont réunies,
-        les fournisseurs susceptibles de répondre
-        peuvent être consultés.
-
-        <br><br>
-
-        5. Vous recevez les propositions
-        dans votre espace privé.
-
-        <br><br>
-
-        6. Vous comparez et vous décidez.
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:800;
-            margin-bottom:10px;
-          ">
-          Vous gardez la décision
-        </div>
-
-        Déposer un besoin
-        ne vous oblige pas à accepter
-        une proposition.
-
-        <br><br>
-
-        Vous pouvez comparer,
-        choisir
-        ou refuser.
-
-        <br><br>
-
-        Votre entreprise reste indépendante.
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:800;
-            margin-bottom:10px;
-          ">
-          Dans votre espace privé
-        </div>
-
-        • Déposer un besoin<br>
-        • Voir les demandes en cours<br>
-        • Rejoindre une demande existante<br>
-        • Consulter les propositions reçues<br>
-        • Suivre vos décisions<br>
-        • Retrouver votre historique
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:800;
-            margin-bottom:10px;
-          ">
-          Votre besoin n'est pas encore proposé ?
-        </div>
-
-        Ajoutez-le.
-
-        <br><br>
-
-        ${getBrandHtml()}
-        pourra identifier
-        les autres professionnels
-        ayant le même besoin.
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-          border-left:6px solid #2f5d46;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:800;
-            margin-bottom:10px;
-          ">
-          Un service compris dans votre abonnement
-        </div>
-
-        Les économies obtenues
-        sur vos charges professionnelles
-        peuvent contribuer à couvrir
-        tout ou partie du coût
-        de votre abonnement.
-
-      </div>
-
-
-      <button
-        id="mutualisationPrivateAccessBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:4px;
-          background:#ffffff !important;
-          color:#111111 !important;
-        ">
-        Accéder à mes demandes
-      </button>
-
-
-      <button
-        id="mutualisationMecenatBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:8px;
-          background:#ffffff !important;
-          color:#111111 !important;
-        ">
-        Découvrir le mécénat
-      </button>
 
     `;
   }
 
 
-  function bindMutualisation(){
+  const defaultOrder = [
+    "electricite",
+    "gaz",
+    "telephonie",
+    "assurances",
+    "mutuelle",
+    "fournitures",
+    "carburant",
+    "formation"
+  ];
 
-    const privateButton =
-      getElement(
-        "mutualisationPrivateAccessBtn"
-      );
 
-    const mecenatButton =
-      getElement(
-        "mutualisationMecenatBtn"
-      );
+  const standardHtml =
+    defaultOrder
+      .map(function(key){
+
+        const item =
+          categories[key];
+
+        if(!item){
+          return "";
+        }
+
+        return needLine(
+          item.id || key,
+          item.label || key,
+          item.count || 0
+        );
+
+      })
+      .join("");
 
 
-    if(privateButton){
+  const customHtml =
+    customNeeds.length
+      ? customNeeds
+          .map(function(item){
 
-      privateButton.onclick =
-        function(){
-
-          /*
-            On utilise le système privé central existant.
-            Aucun second compte professionnel n'est créé ici.
-          */
-
-          if(
-            typeof module.openPrivateAccess ===
-            "function"
-          ){
-
-            module.openPrivateAccess();
-            return;
-          }
-
-          if(
-            typeof module.openPrivateLogin ===
-            "function"
-          ){
-
-            module.openPrivateLogin();
-            return;
-          }
-
-          if(
-            typeof module.openScreen ===
-            "function"
-          ){
-
-            module.openScreen(
-              "acces_partenaire"
+            return needLine(
+              item.id || "",
+              item.title || "Nouvelle demande",
+              item.count || 0
             );
-          }
 
-        };
-    }
+          })
+          .join("")
+      : "";
 
 
-    if(mecenatButton){
+  return `
 
-      mecenatButton.onclick =
-        function(){
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+        border-left:6px solid #2f5d46;
+      ">
 
-          module.openScreen(
-            "mecenat"
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Payer moins de charges
+      </div>
+
+      Indiquez simplement
+      les économies qui peuvent
+      vous intéresser.
+
+      <br><br>
+
+      Plus plusieurs professionnels
+      expriment le même besoin,
+      plus une consultation commune
+      peut devenir intéressante.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Économies proposées
+      </div>
+
+      ${standardHtml}
+
+      ${customHtml}
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Vous avez une autre idée ?
+      </div>
+
+      Ajoutez votre besoin.
+      Il apparaîtra ensuite
+      dans la liste afin que
+      d'autres professionnels
+      puissent signaler leur intérêt.
+
+      <input
+        id="mutualisationNewNeedTitle"
+        class="miniField"
+        type="text"
+        placeholder="Exemple : achat groupé de matériel"
+        style="
+          margin-top:10px;
+          background:#ffffff;
+          color:#111111;
+        "
+      >
+
+      <textarea
+        id="mutualisationNewNeedDescription"
+        class="miniField"
+        placeholder="Précisez votre besoin si nécessaire"
+        style="
+          margin-top:8px;
+          min-height:80px;
+          background:#ffffff;
+          color:#111111;
+        ">
+      </textarea>
+
+      <button
+        id="mutualisationAddNeedBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+          background:#ffffff !important;
+          color:#111111 !important;
+        ">
+        Ajouter cette demande
+      </button>
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+        border-left:6px solid #2f5d46;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Suivi
+      </div>
+
+      Les demandes restent visibles
+      avec leur compteur.
+
+      <br><br>
+
+      Lorsque plusieurs professionnels
+      manifestent leur intérêt,
+      la demande pourra être étudiée
+      et suivie par Bo'CitéArt.
+
+      <br><br>
+
+      Les consultations fournisseurs,
+      les réponses reçues
+      et l'état d'avancement
+      seront ensuite regroupés
+      dans votre espace privé.
+
+    </div>
+
+
+    <button
+      id="mutualisationPrivateAccessBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:4px;
+        background:#ffffff !important;
+        color:#111111 !important;
+      ">
+      Suivre mes demandes
+    </button>
+
+  `;
+}
+
+
+function bindMutualisation(){
+
+  const privateButton =
+    getElement(
+      "mutualisationPrivateAccessBtn"
+    );
+
+
+  const addNeedButton =
+    getElement(
+      "mutualisationAddNeedBtn"
+    );
+
+
+  document
+    .querySelectorAll(
+      ".mutualisationJoinBtn"
+    )
+    .forEach(function(button){
+
+      button.onclick = function(){
+
+        const needId =
+          String(
+            button.getAttribute(
+              "data-need-id"
+            ) || ""
           );
 
-        };
-    }
 
+        if(
+          !needId ||
+          typeof module.joinMutualisationNeed !==
+          "function"
+        ){
+
+          alert(
+            "Cette demande est momentanément indisponible."
+          );
+
+          return;
+        }
+
+
+        const result =
+          module.joinMutualisationNeed(
+            needId
+          );
+
+
+        if(
+          !result ||
+          result.ok !== true
+        ){
+
+          alert(
+            result &&
+            result.error
+              ? result.error
+              : "Votre intérêt n'a pas pu être enregistré."
+          );
+
+          return;
+        }
+
+
+        alert(
+          "Votre intérêt est enregistré."
+        );
+
+
+        openMutualisationModule();
+
+      };
+
+    });
+
+
+  if(addNeedButton){
+
+    addNeedButton.onclick =
+      function(){
+
+        const titleInput =
+          getElement(
+            "mutualisationNewNeedTitle"
+          );
+
+
+        const descriptionInput =
+          getElement(
+            "mutualisationNewNeedDescription"
+          );
+
+
+        const title =
+          String(
+            titleInput
+              ? titleInput.value
+              : ""
+          )
+          .trim();
+
+
+        const description =
+          String(
+            descriptionInput
+              ? descriptionInput.value
+              : ""
+          )
+          .trim();
+
+
+        if(!title){
+
+          alert(
+            "Indiquez le besoin que vous souhaitez proposer."
+          );
+
+          return;
+        }
+
+
+        if(
+          typeof module.addMutualisationNeed !==
+          "function"
+        ){
+
+          alert(
+            "Le système de demandes est momentanément indisponible."
+          );
+
+          return;
+        }
+
+
+        const result =
+          module.addMutualisationNeed({
+
+            title:
+              title,
+
+            description:
+              description,
+
+            category:
+              "autre"
+
+          });
+
+
+        if(
+          !result ||
+          result.ok !== true
+        ){
+
+          alert(
+            result &&
+            result.error
+              ? result.error
+              : "La demande n'a pas pu être ajoutée."
+          );
+
+          return;
+        }
+
+
+        alert(
+          "Votre demande est ajoutée.\n\n" +
+          "Les autres professionnels pourront maintenant signaler leur intérêt."
+        );
+
+
+        openMutualisationModule();
+
+      };
   }
 
 
+  if(privateButton){
+
+    privateButton.onclick =
+      function(){
+
+        if(
+          typeof module.openMutualisationResponses ===
+          "function"
+        ){
+
+          module.openMutualisationResponses();
+          return;
+        }
+
+
+        if(
+          typeof module.openPrivateAccess ===
+          "function"
+        ){
+
+          module.openPrivateAccess();
+          return;
+        }
+
+
+        if(
+          typeof module.openScreen ===
+          "function"
+        ){
+
+          module.openScreen(
+            "acces_partenaire"
+          );
+        }
+
+      };
+  }
+
+}
+   
   function openMutualisationModule(){
 
     module.renderModulePage(
