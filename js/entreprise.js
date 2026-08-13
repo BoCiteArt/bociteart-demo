@@ -30390,44 +30390,44 @@ function addUniversalBackButton(
       "Accès privé de l’entreprise",
       `
 
-        <div
-          class="box"
-          style="
-            border-left:6px solid #b00020;
-            background:#ffffff;
-            color:#111111;
-            font-size:14px;
-            line-height:1.50;
-            font-weight:400;
-          ">
+             <div
+        class="box"
+        style="
+          border-left:6px solid #b00020;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          line-height:1.50;
+          font-weight:400;
+        ">
 
-          <div
+        <strong
+          style="
+            white-space:nowrap;
+            font-weight:700;
+          ">
+          <span
             style="
               color:#2f5d46;
-              font-size:17px;
-              line-height:1.35;
-              font-weight:800;
-              margin-bottom:10px;
+              font-weight:700;
             ">
-            ${escapeValue(
-              profile.companyName
-            )}
-          </div>
+            Bo'Cité
+          </span><span
+            style="
+              color:#b00020;
+              font-weight:700;
+            ">
+            Art
+          </span>
+        </strong>
+        vous propose d'accéder à votre espace privé professionnel.
 
-          Cet espace est réservé
-          aux informations
-          et services privés de l’entreprise.
+        <br><br>
 
-          <br><br>
+        Cet espace est réservé au responsable
+        et aux personnes autorisées.
 
-          • candidatures reçues ;<br>
-          • actions pour payer moins de charges ;<br>
-          • propositions et décisions ;<br>
-          • abonnements ;<br>
-          • paiements ;<br>
-          • factures.
-
-        </div>
+      </div>
 
         <label
           for="entreprisePrivateCodeInput"
