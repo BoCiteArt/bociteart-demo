@@ -276,6 +276,56 @@ function bindBackButton(){
         event.preventDefault();
         event.stopPropagation();
 
+         /* =====================================================
+   RETOUR DES 7 PAGES PRIVÉES
+   → TABLEAU DE DIRECTION
+   ===================================================== */
+
+const directionScreens = [
+  "annuaire",
+  "collaborateurs",
+  "publicite",
+  "mutualisation",
+  "emploi",
+  "visibilite",
+  "abonnement"
+];
+
+if(
+  directionScreens.includes(
+    state.currentScreen
+  )
+){
+
+  if(
+    typeof window.BociteEntreprise
+      .openDirection ===
+    "function"
+  ){
+
+    window.BociteEntreprise
+      .openDirection();
+
+    return;
+  }
+
+  if(
+    screens.direction &&
+    typeof screens.direction ===
+    "function"
+  ){
+
+    openScreen(
+      "direction",
+      {
+        fromBack:true
+      }
+    );
+
+    return;
+  }
+}
+
         /*
   PAGE INTRODUCTION ENTREPRISE :
   retour à Commerces & Entreprises.
@@ -10152,13 +10202,14 @@ Voir les entreprises de ma ville
         text-align:left;
       }
 
-      .bociteDirectionMenuBtn strong{
-        display:block;
-        color:#2f5d46 !important;
-        font-size:17px !important;
-        font-weight:800 !important;
-        margin-bottom:3px;
-      }
+    .bociteDirectionMenuBtn strong{
+  display:block;
+  color:#2f5d46 !important;
+  font-size:17px !important;
+  font-weight:700 !important;
+  line-height:1.25 !important;
+  margin-bottom:3px;
+}
 
       .bociteDirectionMenuBtn span{
         display:block;
@@ -10185,200 +10236,163 @@ Voir les entreprises de ma ville
      PUBLICITÉ
      ======================================================= */
 
-  function openAdvertising(){
+function openAdvertising(){
 
-    if(
-      typeof window.openTicker ===
-      "function"
-    ){
+  if(
+    typeof module.openScreen ===
+    "function"
+  ){
 
-      window.openTicker();
-      return;
-    }
-
-
-    alert(
-      "Le calendrier publicitaire est momentanément indisponible."
+    module.openScreen(
+      "publicite"
     );
+
+    return;
   }
+
+  alert(
+    "L'espace publicité est momentanément indisponible."
+  );
+}
 
 
   /* =======================================================
      COLLABORATEURS
      ======================================================= */
 
-  function openCollaborators(){
+ function openCollaborators(){
 
-    if(
-      typeof module.openCollaboratorManagement ===
-      "function"
-    ){
+  if(
+    typeof module.openScreen ===
+    "function"
+  ){
 
-      module.openCollaboratorManagement();
-      return;
-    }
-
-
-    alert(
-      "L'espace collaborateurs est momentanément indisponible."
+    module.openScreen(
+      "collaborateurs"
     );
+
+    return;
   }
 
+  alert(
+    "L'espace collaborateurs est momentanément indisponible."
+  );
+}
 
   /* =======================================================
      ANNUAIRE
      ======================================================= */
 
-  function openDirectory(){
+ function openDirectory(){
 
-    if(
-      typeof module.openProfessionalDirectory ===
-      "function"
-    ){
+  if(
+    typeof module.openScreen ===
+    "function"
+  ){
 
-      module.openProfessionalDirectory();
-      return;
-    }
-
-
-    if(
-      typeof module.openScreen ===
-      "function"
-    ){
-
-      module.openScreen(
-        "annuaire"
-      );
-
-      return;
-    }
-
-
-    alert(
-      "L'annuaire professionnel est momentanément indisponible."
+    module.openScreen(
+      "annuaire"
     );
+
+    return;
   }
 
+  alert(
+    "L'annuaire professionnel est momentanément indisponible."
+  );
+}
 
   /* =======================================================
      PAYER MOINS DE CHARGES
      ======================================================= */
 
-  function openLowerCharges(){
+function openLowerCharges(){
 
-    if(
-      typeof module.openMutualisationModule ===
-      "function"
-    ){
+  if(
+    typeof module.openScreen ===
+    "function"
+  ){
 
-      module.openMutualisationModule();
-      return;
-    }
+    module.openScreen(
+      "mutualisation"
+    );
 
-
-    if(
-      typeof module.openScreen ===
-      "function"
-    ){
-
-      module.openScreen(
-        "mutualisation"
-      );
-    }
+    return;
   }
 
+  alert(
+    "L'espace Payer moins de charges est momentanément indisponible."
+  );
+}
 
   /* =======================================================
      EMPLOI
      ======================================================= */
 
-  function openEmployment(){
+function openEmployment(){
 
-    if(
-      typeof module.openEmploymentPrivateHome ===
-      "function"
-    ){
+  if(
+    typeof module.openScreen ===
+    "function"
+  ){
 
-      module.openEmploymentPrivateHome();
-      return;
-    }
+    module.openScreen(
+      "emploi"
+    );
 
-
-    if(
-      typeof module.openScreen ===
-      "function"
-    ){
-
-      module.openScreen(
-        "emploi"
-      );
-    }
+    return;
   }
 
+  alert(
+    "L'espace Emploi et recrutement est momentanément indisponible."
+  );
+}
 
   /* =======================================================
      VISIBILITÉ / ACTUALITÉS
      ======================================================= */
 
-  function openVisibility(){
+ function openVisibility(){
 
-    if(
-      typeof module.openScreen ===
-      "function"
-    ){
+  if(
+    typeof module.openScreen ===
+    "function"
+  ){
 
-      module.openScreen(
-        "visibilite"
-      );
-
-      return;
-    }
-
-
-    alert(
-      "L'espace visibilité est momentanément indisponible."
+    module.openScreen(
+      "visibilite"
     );
+
+    return;
   }
 
+  alert(
+    "L'espace visibilité est momentanément indisponible."
+  );
+}
 
   /* =======================================================
      ABONNEMENT / FACTURES
      ======================================================= */
 
-  function openSubscription(){
+ function openSubscription(){
 
-    if(
-      typeof module.openSubscriptionModule ===
-      "function"
-    ){
+  if(
+    typeof module.openScreen ===
+    "function"
+  ){
 
-      module.openSubscriptionModule();
-      return;
-    }
+    module.openScreen(
+      "abonnement"
+    );
 
-
-    if(
-      typeof module.openScreen ===
-      "function"
-    ){
-
-      module.openScreen(
-        "abonnement"
-      );
-
-      return;
-    }
-
-
-    if(
-      typeof module.openSearchBilling ===
-      "function"
-    ){
-
-      module.openSearchBilling();
-    }
+    return;
   }
 
+  alert(
+    "L'espace Abonnement et factures est momentanément indisponible."
+  );
+}
 
   /* =======================================================
      CONTENU DU TABLEAU DE DIRECTION
@@ -10719,6 +10733,56 @@ Voir les entreprises de ma ville
 
       event.preventDefault();
       event.stopPropagation();
+
+      /* =====================================================
+   RETOUR DES PAGES PRIVÉES
+   → TABLEAU DE DIRECTION
+   ===================================================== */
+
+const directionScreens = [
+  "annuaire",
+  "collaborateurs",
+  "publicite",
+  "mutualisation",
+  "emploi",
+  "visibilite",
+  "abonnement"
+];
+
+if(
+  directionScreens.includes(
+    state.currentScreen
+  )
+){
+
+  if(
+    typeof window.BociteEntreprise
+      .openDirection ===
+    "function"
+  ){
+
+    window.BociteEntreprise
+      .openDirection();
+
+    return;
+  }
+
+  if(
+    screens.direction &&
+    typeof screens.direction ===
+    "function"
+  ){
+
+    openScreen(
+      "direction",
+      {
+        fromBack:true
+      }
+    );
+
+    return;
+  }
+} 
 
       if(
         typeof event.stopImmediatePropagation ===
@@ -42225,6 +42289,25 @@ document.addEventListener(
   module.openCollaboratorManagement =
     openCollaboratorManagement;
 
+   module.registerScreen(
+  "collaborateurs",
+  function(){
+
+    if(
+      typeof module.openCollaboratorManagement ===
+      "function"
+    ){
+
+      module.openCollaboratorManagement();
+      return;
+    }
+
+    alert(
+      "L'espace collaborateurs est momentanément indisponible."
+    );
+  }
+);
+
 
   console.log(
     "✅ Gestion des 2 collaborateurs chargée"
@@ -42235,5 +42318,45 @@ document.addEventListener(
   );
 
 })();
+
+  /* =========================================================
+   BO'CITÉART — RACCORDEMENT PUBLICITÉ
+   TABLEAU DE DIRECTION → GRAND BANDEAU
+   ========================================================= */
+
+(function connectDirectionAdvertising(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+    return;
+  }
+
+  module.registerScreen(
+    "publicite",
+    function(){
+
+      if(
+        typeof window.openTicker ===
+        "function"
+      ){
+
+        window.openTicker();
+        return;
+      }
+
+      alert(
+        "Le calendrier du grand bandeau publicitaire est momentanément indisponible."
+      );
+    }
+  );
+
+  console.log(
+    "✅ Publicité raccordée au Tableau de Direction"
+  );
+
+})(); 
    
-})();
