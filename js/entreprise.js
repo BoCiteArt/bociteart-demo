@@ -41948,6 +41948,17 @@ document.addEventListener(
 
   function openCollaboratorManagement(){
 
+      if(
+    !module.collaborators
+  ){
+
+    alert(
+      "La gestion des collaborateurs est momentanément indisponible."
+    );
+
+    return;
+  }
+
     const structureId =
       getCurrentStructureId();
 
