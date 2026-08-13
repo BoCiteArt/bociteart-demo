@@ -7563,6 +7563,146 @@ window.openEmploymentCompaniesDirectory =
     saveMutualisationData(data);
   }
 
+   /* =========================================================
+   BO'CITÉART — ALERTES INTERNES
+   DEMANDES / COMPTEURS / CONSULTATIONS
+   ========================================================= */
+
+   
+const MUTUALISATION_ALERTS_KEY =
+  "bociteart_mutualisation_alerts_v1";
+
+
+function loadMutualisationAlerts(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        MUTUALISATION_ALERTS_KEY
+      );
+
+    const parsed =
+      raw
+        ? JSON.parse(raw)
+        : [];
+
+    return Array.isArray(parsed)
+      ? parsed
+      : [];
+
+  }catch(error){
+
+    return [];
+  }
+}
+
+
+function saveMutualisationAlerts(alerts){
+
+  try{
+
+    localStorage.setItem(
+      MUTUALISATION_ALERTS_KEY,
+      JSON.stringify(
+        Array.isArray(alerts)
+          ? alerts
+          : []
+      )
+    );
+
+    return true;
+
+  }catch(error){
+
+    return false;
+  }
+}
+
+
+function createMutualisationAlert(
+  type,
+  details
+){
+
+  const alerts =
+    loadMutualisationAlerts();
+
+
+  const alert = {
+
+    id:
+      createId(
+        "ALERTE"
+      ),
+
+    type:
+      String(
+        type || ""
+      ),
+
+    details:
+      details || {},
+
+    status:
+      "non_lue",
+
+    createdAt:
+      Date.now(),
+
+    createdAtFr:
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        )
+
+  };
+
+
+  alerts.push(
+    alert
+  );
+
+
+  saveMutualisationAlerts(
+    alerts
+  );
+
+
+  window.dispatchEvent(
+    new CustomEvent(
+      "bociteart:mutualisation-alert",
+      {
+        detail:
+          alert
+      }
+    )
+  );
+
+
+  return alert;
+}
+
+
+function getMutualisationAlerts(){
+
+  return loadMutualisationAlerts()
+    .slice()
+    .sort(
+      function(a,b){
+
+        return (
+          Number(
+            b.createdAt || 0
+          ) -
+          Number(
+            a.createdAt || 0
+          )
+        );
+      }
+    );
+}
+
   function getProgressPercent(
     count,
     target
@@ -7652,6 +7792,36 @@ window.openEmploymentCompaniesDirectory =
     );
 
     saveMutualisationData(data);
+
+     createMutualisationAlert(
+  "interet_ajoute",
+  {
+    needId:
+      need.id || needId,
+
+    title:
+      need.title ||
+      need.label ||
+      "",
+
+    count:
+      need.count
+  }
+);
+
+    createMutualisationAlert(
+  "nouvelle_demande",
+  {
+    needId:
+      need.id,
+
+    title:
+      need.title,
+
+    count:
+      need.count
+  }
+); 
 
     addAuditEvent(
       "besoin_cree",
@@ -8129,6 +8299,12 @@ window.openEmploymentCompaniesDirectory =
   module.getMutualisationProgress =
     getProgressPercent;
 
+  module.getMutualisationAlerts =
+  getMutualisationAlerts;
+
+  module.createMutualisationAlert =
+  createMutualisationAlert;
+
   module.addMutualisationNeed =
     addCustomNeed;
 
@@ -8155,6 +8331,241 @@ window.openEmploymentCompaniesDirectory =
 
   console.log(
     "✅ Moteur besoins, consultations, réponses et facturation préparé"
+  );
+
+})();
+
+/* =========================================================
+   BO'CITÉART — ADMIN
+   ALERTES PAYER MOINS DE CHARGES
+   ========================================================= */
+
+(function initMutualisationAdminAlerts(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+    return;
+  }
+
+
+  function escapeValue(value){
+
+    if(
+      typeof module.safeEscape ===
+      "function"
+    ){
+
+      return module.safeEscape(
+        value
+      );
+    }
+
+    return String(
+      value == null
+        ? ""
+        : value
+    );
+  }
+
+
+  function getAdminAlertsHtml(){
+
+    const alerts =
+      typeof module.getMutualisationAlerts ===
+      "function"
+        ? module.getMutualisationAlerts()
+        : [];
+
+
+    if(!alerts.length){
+
+      return `
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+          ">
+
+          Aucune alerte enregistrée
+          pour le moment.
+
+        </div>
+
+      `;
+    }
+
+
+    return alerts
+      .map(function(item){
+
+        const details =
+          item.details || {};
+
+
+        let label =
+          "Nouvelle activité";
+
+
+        if(
+          item.type ===
+          "nouvelle_demande"
+        ){
+
+          label =
+            "Nouvelle demande";
+        }
+
+
+        if(
+          item.type ===
+          "interet_ajoute"
+        ){
+
+          label =
+            "Nouvel intérêt";
+        }
+
+
+        return `
+
+          <div
+            class="box"
+            style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.5;
+              border-left:6px solid #2f5d46;
+            ">
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:17px;
+                font-weight:700;
+                margin-bottom:8px;
+              ">
+              ${escapeValue(label)}
+            </div>
+
+            ${
+              details.title
+                ? `
+                  <div>
+                    ${escapeValue(
+                      details.title
+                    )}
+                  </div>
+                `
+                : ""
+            }
+
+            ${
+              details.count !==
+              undefined
+                ? `
+                  <div
+                    style="
+                      margin-top:6px;
+                    ">
+                    Professionnels intéressés :
+                    ${escapeValue(
+                      details.count
+                    )}
+                  </div>
+                `
+                : ""
+            }
+
+            <div
+              style="
+                margin-top:8px;
+                color:#555555;
+                font-size:14px;
+                font-weight:400;
+              ">
+              ${escapeValue(
+                item.createdAtFr || ""
+              )}
+            </div>
+
+          </div>
+
+        `;
+
+      })
+      .join("");
+  }
+
+
+  function openMutualisationAdminAlerts(){
+
+    if(
+      typeof module.renderModal !==
+      "function"
+    ){
+
+      alert(
+        "L'espace de suivi est momentanément indisponible."
+      );
+
+      return;
+    }
+
+
+    module.renderModal(
+      "Alertes — Payer moins de charges",
+      `
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+            border-left:6px solid #2f5d46;
+          ">
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            ">
+            Suivi Bo'CitéArt
+          </div>
+
+          Retrouvez ici
+          les nouvelles demandes
+          et les intérêts enregistrés
+          par les professionnels.
+
+        </div>
+
+        ${getAdminAlertsHtml()}
+      `
+    );
+  }
+
+
+  module.openMutualisationAdminAlerts =
+    openMutualisationAdminAlerts;
+
+
+  console.log(
+    "✅ Alertes Payer moins de charges — vue admin chargée"
   );
 
 })();
