@@ -394,12 +394,12 @@
 
       getMutualisationHtml(),
 
-      {
-        showBack:false,
-        showFooter:false,
-        afterRender:
-          bindMutualisation
-      }
+        {
+  showBack:true,
+  showFooter:false,
+  afterRender:
+    bindMutualisation
+}
 
     );
 
