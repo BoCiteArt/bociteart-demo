@@ -41412,7 +41412,1198 @@ document.addEventListener(
    ÉCRAN RÉSERVÉ AU RESPONSABLE
    ACCÈS 1 + ACCÈS 2
    ========================================================= */
+/* MOTEUR COLLABORATEURS */
+/* =========================================================
+   BO'CITÉART — MOTEUR COLLABORATEURS
+   2 ACCÈS MAXIMUM PAR STRUCTURE
+   RESPONSABLE PRINCIPAL → ACCÈS 1 / ACCÈS 2
+   ========================================================= */
 
+(function initBociteCollaboratorsEngine(){
+
+  "use strict";
+
+  const module =
+    window.BociteEntreprise;
+
+  if(!module){
+
+    console.error(
+      "Bo'CitéArt : module Entreprise introuvable."
+    );
+
+    return;
+  }
+
+
+  const STORE_KEY =
+    "bociteart_collaborators_v1";
+
+
+  /* =======================================================
+     OUTILS
+     ======================================================= */
+
+  function createId(prefix){
+
+    return (
+      String(prefix || "COLLAB") +
+      "-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2,8)
+    );
+  }
+
+
+  function createActivationCode(){
+
+    return String(
+      Math.floor(
+        100000 +
+        Math.random() * 900000
+      )
+    );
+  }
+
+
+  function normalizeSlot(slot){
+
+    const value =
+      Number(slot);
+
+    if(
+      value !== 1 &&
+      value !== 2
+    ){
+
+      return 0;
+    }
+
+    return value;
+  }
+
+
+  function getDefaultPermissions(){
+
+    return {
+
+      advertising:false,
+
+      employment:false,
+
+      news:false,
+
+      visibility:false,
+
+      directory:false
+
+    };
+  }
+
+
+  function normalizePermissions(
+    permissions
+  ){
+
+    const source =
+      permissions &&
+      typeof permissions === "object"
+        ? permissions
+        : {};
+
+
+    return {
+
+      advertising:
+        Boolean(
+          source.advertising
+        ),
+
+      employment:
+        Boolean(
+          source.employment
+        ),
+
+      news:
+        Boolean(
+          source.news
+        ),
+
+      visibility:
+        Boolean(
+          source.visibility
+        ),
+
+      directory:
+        Boolean(
+          source.directory
+        )
+
+    };
+  }
+
+
+  /* =======================================================
+     STOCKAGE
+     ======================================================= */
+
+  function getDefaultData(){
+
+    return {
+      structures:{}
+    };
+  }
+
+
+  function loadData(){
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          STORE_KEY
+        );
+
+
+      if(!raw){
+
+        return getDefaultData();
+      }
+
+
+      const parsed =
+        JSON.parse(raw);
+
+
+      if(
+        !parsed ||
+        typeof parsed !== "object"
+      ){
+
+        return getDefaultData();
+      }
+
+
+      if(
+        !parsed.structures ||
+        typeof parsed.structures !==
+        "object"
+      ){
+
+        parsed.structures = {};
+      }
+
+
+      return parsed;
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : lecture collaborateurs impossible.",
+        error
+      );
+
+      return getDefaultData();
+    }
+  }
+
+
+  function saveData(data){
+
+    try{
+
+      localStorage.setItem(
+        STORE_KEY,
+        JSON.stringify(
+          data
+        )
+      );
+
+      return true;
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : enregistrement collaborateurs impossible.",
+        error
+      );
+
+      return false;
+    }
+  }
+
+
+  /* =======================================================
+     STRUCTURE
+     ======================================================= */
+
+  function ensureStructure(
+    structureId
+  ){
+
+    const id =
+      String(
+        structureId || ""
+      )
+      .trim();
+
+
+    if(!id){
+
+      return null;
+    }
+
+
+    const data =
+      loadData();
+
+
+    if(
+      !data.structures[id]
+    ){
+
+      data.structures[id] = {
+
+        structureId:
+          id,
+
+        slots:{
+          "1":null,
+          "2":null
+        },
+
+        updatedAt:
+          Date.now(),
+
+        updatedAtFr:
+          new Date()
+            .toLocaleString(
+              "fr-FR"
+            )
+
+      };
+
+
+      saveData(
+        data
+      );
+    }
+
+
+    return data.structures[id];
+  }
+
+
+  function getStructure(
+    structureId
+  ){
+
+    const id =
+      String(
+        structureId || ""
+      )
+      .trim();
+
+
+    if(!id){
+
+      return null;
+    }
+
+
+    const data =
+      loadData();
+
+
+    return (
+      data.structures[id] ||
+      null
+    );
+  }
+
+
+  /* =======================================================
+     LECTURE D'UN COLLABORATEUR
+     ======================================================= */
+
+  function getBySlot(
+    structureId,
+    slot
+  ){
+
+    const normalizedSlot =
+      normalizeSlot(
+        slot
+      );
+
+
+    if(!normalizedSlot){
+
+      return null;
+    }
+
+
+    const structure =
+      getStructure(
+        structureId
+      );
+
+
+    if(
+      !structure ||
+      !structure.slots
+    ){
+
+      return null;
+    }
+
+
+    return (
+      structure.slots[
+        String(
+          normalizedSlot
+        )
+      ] ||
+      null
+    );
+  }
+
+
+  /* =======================================================
+     CRÉATION / MODIFICATION
+     ======================================================= */
+
+  function saveCollaborator(
+    structureId,
+    slot,
+    dataInput
+  ){
+
+    const normalizedSlot =
+      normalizeSlot(
+        slot
+      );
+
+
+    if(!normalizedSlot){
+
+      return {
+        ok:false,
+        error:
+          "Emplacement collaborateur invalide."
+      };
+    }
+
+
+    const id =
+      String(
+        structureId || ""
+      )
+      .trim();
+
+
+    if(!id){
+
+      return {
+        ok:false,
+        error:
+          "Structure professionnelle introuvable."
+      };
+    }
+
+
+    const input =
+      dataInput || {};
+
+
+    const firstName =
+      String(
+        input.firstName || ""
+      )
+      .trim();
+
+
+    const lastName =
+      String(
+        input.lastName || ""
+      )
+      .trim();
+
+
+    const email =
+      String(
+        input.email || ""
+      )
+      .trim();
+
+
+    const phone =
+      String(
+        input.phone || ""
+      )
+      .trim();
+
+
+    if(
+      !firstName ||
+      !lastName
+    ){
+
+      return {
+        ok:false,
+        error:
+          "Nom et prénom obligatoires."
+      };
+    }
+
+
+    if(!email){
+
+      return {
+        ok:false,
+        error:
+          "Adresse e-mail obligatoire."
+      };
+    }
+
+
+    const data =
+      loadData();
+
+
+    if(
+      !data.structures[id]
+    ){
+
+      data.structures[id] = {
+
+        structureId:
+          id,
+
+        slots:{
+          "1":null,
+          "2":null
+        },
+
+        updatedAt:null,
+        updatedAtFr:""
+
+      };
+    }
+
+
+    const key =
+      String(
+        normalizedSlot
+      );
+
+
+    const existing =
+      data.structures[id]
+        .slots[key];
+
+
+    const collaborator = {
+
+      id:
+        existing &&
+        existing.id
+          ? existing.id
+          : createId(
+              "COLLAB"
+            ),
+
+      structureId:
+        id,
+
+      slot:
+        normalizedSlot,
+
+      firstName:
+        firstName,
+
+      lastName:
+        lastName,
+
+      email:
+        email,
+
+      phone:
+        phone,
+
+      permissions:
+        normalizePermissions(
+          input.permissions ||
+          (
+            existing &&
+            existing.permissions
+          ) ||
+          getDefaultPermissions()
+        ),
+
+      accessActive:
+        existing
+          ? Boolean(
+              existing.accessActive
+            )
+          : false,
+
+      activationCode:
+        existing
+          ? String(
+              existing.activationCode ||
+              ""
+            )
+          : "",
+
+      activationCreatedAt:
+        existing
+          ? existing.activationCreatedAt ||
+            null
+          : null,
+
+      activationCreatedAtFr:
+        existing
+          ? existing.activationCreatedAtFr ||
+            ""
+          : "",
+
+      passwordCreated:
+        existing
+          ? Boolean(
+              existing.passwordCreated
+            )
+          : false,
+
+      passwordUpdatedAt:
+        existing
+          ? existing.passwordUpdatedAt ||
+            null
+          : null,
+
+      lastAccessAt:
+        existing
+          ? existing.lastAccessAt ||
+            null
+          : null,
+
+      lastAccessAtFr:
+        existing
+          ? existing.lastAccessAtFr ||
+            ""
+          : "",
+
+      createdAt:
+        existing &&
+        existing.createdAt
+          ? existing.createdAt
+          : Date.now(),
+
+      createdAtFr:
+        existing &&
+        existing.createdAtFr
+          ? existing.createdAtFr
+          : new Date()
+              .toLocaleString(
+                "fr-FR"
+              ),
+
+      updatedAt:
+        Date.now(),
+
+      updatedAtFr:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+
+    };
+
+
+    data.structures[id]
+      .slots[key] =
+      collaborator;
+
+
+    data.structures[id]
+      .updatedAt =
+      Date.now();
+
+
+    data.structures[id]
+      .updatedAtFr =
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        );
+
+
+    if(
+      !saveData(
+        data
+      )
+    ){
+
+      return {
+        ok:false,
+        error:
+          "Enregistrement impossible."
+      };
+    }
+
+
+    return {
+      ok:true,
+      collaborator:
+        collaborator
+    };
+  }
+
+
+  /* =======================================================
+     NOUVEL ACCÈS
+     ======================================================= */
+
+  function renewAccess(
+    structureId,
+    slot
+  ){
+
+    const normalizedSlot =
+      normalizeSlot(
+        slot
+      );
+
+
+    if(!normalizedSlot){
+
+      return {
+        ok:false,
+        error:
+          "Emplacement collaborateur invalide."
+      };
+    }
+
+
+    const data =
+      loadData();
+
+
+    const structure =
+      data.structures[
+        String(
+          structureId || ""
+        )
+      ];
+
+
+    if(
+      !structure ||
+      !structure.slots
+    ){
+
+      return {
+        ok:false,
+        error:
+          "Structure introuvable."
+      };
+    }
+
+
+    const collaborator =
+      structure.slots[
+        String(
+          normalizedSlot
+        )
+      ];
+
+
+    if(!collaborator){
+
+      return {
+        ok:false,
+        error:
+          "Collaborateur introuvable."
+      };
+    }
+
+
+    const code =
+      createActivationCode();
+
+
+    collaborator.activationCode =
+      code;
+
+
+    collaborator.accessActive =
+      true;
+
+
+    collaborator.passwordCreated =
+      false;
+
+
+    collaborator.activationCreatedAt =
+      Date.now();
+
+
+    collaborator.activationCreatedAtFr =
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        );
+
+
+    collaborator.updatedAt =
+      Date.now();
+
+
+    collaborator.updatedAtFr =
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        );
+
+
+    saveData(
+      data
+    );
+
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "bociteart:collaborator-access-renewed",
+        {
+          detail:{
+            structureId:
+              structureId,
+
+            slot:
+              normalizedSlot,
+
+            collaboratorId:
+              collaborator.id
+          }
+        }
+      )
+    );
+
+
+    return {
+      ok:true,
+      collaborator:
+        collaborator,
+
+      activationCode:
+        code
+    };
+  }
+
+
+  /* =======================================================
+     COUPURE DE L'ACCÈS
+     ======================================================= */
+
+  function cutAccess(
+    structureId,
+    slot
+  ){
+
+    const normalizedSlot =
+      normalizeSlot(
+        slot
+      );
+
+
+    if(!normalizedSlot){
+
+      return {
+        ok:false,
+        error:
+          "Emplacement collaborateur invalide."
+      };
+    }
+
+
+    const data =
+      loadData();
+
+
+    const structure =
+      data.structures[
+        String(
+          structureId || ""
+        )
+      ];
+
+
+    if(
+      !structure ||
+      !structure.slots
+    ){
+
+      return {
+        ok:false,
+        error:
+          "Structure introuvable."
+      };
+    }
+
+
+    const collaborator =
+      structure.slots[
+        String(
+          normalizedSlot
+        )
+      ];
+
+
+    if(!collaborator){
+
+      return {
+        ok:false,
+        error:
+          "Collaborateur introuvable."
+      };
+    }
+
+
+    collaborator.accessActive =
+      false;
+
+
+    collaborator.activationCode =
+      "";
+
+
+    collaborator.passwordCreated =
+      false;
+
+
+    collaborator.updatedAt =
+      Date.now();
+
+
+    collaborator.updatedAtFr =
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        );
+
+
+    saveData(
+      data
+    );
+
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "bociteart:collaborator-access-cut",
+        {
+          detail:{
+            structureId:
+              structureId,
+
+            slot:
+              normalizedSlot,
+
+            collaboratorId:
+              collaborator.id
+          }
+        }
+      )
+    );
+
+
+    return {
+      ok:true,
+      collaborator:
+        collaborator
+    };
+  }
+
+
+  /* =======================================================
+     AUTORISATIONS
+     ======================================================= */
+
+  function hasPermission(
+    structureId,
+    slot,
+    permissionName
+  ){
+
+    const collaborator =
+      getBySlot(
+        structureId,
+        slot
+      );
+
+
+    if(
+      !collaborator ||
+      collaborator.accessActive !==
+      true
+    ){
+
+      return false;
+    }
+
+
+    const permissions =
+      normalizePermissions(
+        collaborator.permissions
+      );
+
+
+    return Boolean(
+      permissions[
+        String(
+          permissionName || ""
+        )
+      ]
+    );
+  }
+
+
+  /* =======================================================
+     VALIDATION CODE INITIAL
+     ======================================================= */
+
+  function validateActivationCode(
+    structureId,
+    slot,
+    code
+  ){
+
+    const collaborator =
+      getBySlot(
+        structureId,
+        slot
+      );
+
+
+    if(
+      !collaborator ||
+      collaborator.accessActive !==
+      true
+    ){
+
+      return {
+        ok:false,
+        error:
+          "Accès collaborateur inactif."
+      };
+    }
+
+
+    const entered =
+      String(
+        code || ""
+      )
+      .trim();
+
+
+    if(
+      !entered ||
+      entered !==
+      String(
+        collaborator.activationCode ||
+        ""
+      )
+    ){
+
+      return {
+        ok:false,
+        error:
+          "Code d'activation incorrect."
+      };
+    }
+
+
+    return {
+      ok:true,
+      collaborator:
+        collaborator
+    };
+  }
+
+
+  /* =======================================================
+     MOT DE PASSE
+     DÉMONSTRATION LOCALE UNIQUEMENT
+     ======================================================= */
+
+  function setPasswordCreated(
+    structureId,
+    slot
+  ){
+
+    const normalizedSlot =
+      normalizeSlot(
+        slot
+      );
+
+
+    if(!normalizedSlot){
+
+      return {
+        ok:false
+      };
+    }
+
+
+    const data =
+      loadData();
+
+
+    const structure =
+      data.structures[
+        String(
+          structureId || ""
+        )
+      ];
+
+
+    if(
+      !structure ||
+      !structure.slots
+    ){
+
+      return {
+        ok:false
+      };
+    }
+
+
+    const collaborator =
+      structure.slots[
+        String(
+          normalizedSlot
+        )
+      ];
+
+
+    if(!collaborator){
+
+      return {
+        ok:false
+      };
+    }
+
+
+    collaborator.passwordCreated =
+      true;
+
+
+    collaborator.activationCode =
+      "";
+
+
+    collaborator.passwordUpdatedAt =
+      Date.now();
+
+
+    collaborator.updatedAt =
+      Date.now();
+
+
+    collaborator.updatedAtFr =
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        );
+
+
+    saveData(
+      data
+    );
+
+
+    return {
+      ok:true,
+      collaborator:
+        collaborator
+    };
+  }
+
+
+  /* =======================================================
+     LISTE DES 2 COLLABORATEURS
+     ======================================================= */
+
+  function list(
+    structureId
+  ){
+
+    return [
+      getBySlot(
+        structureId,
+        1
+      ),
+      getBySlot(
+        structureId,
+        2
+      )
+    ];
+  }
+
+
+  /* =======================================================
+     EXPOSITION
+     ======================================================= */
+
+  module.collaborators = {
+
+    load:
+      loadData,
+
+    saveData:
+      saveData,
+
+    ensureStructure:
+      ensureStructure,
+
+    getStructure:
+      getStructure,
+
+    getBySlot:
+      getBySlot,
+
+    list:
+      list,
+
+    save:
+      saveCollaborator,
+
+    renewAccess:
+      renewAccess,
+
+    cutAccess:
+      cutAccess,
+
+    hasPermission:
+      hasPermission,
+
+    validateActivationCode:
+      validateActivationCode,
+
+    setPasswordCreated:
+      setPasswordCreated
+
+  };
+
+
+  console.log(
+    "✅ Moteur collaborateurs Bo'CitéArt chargé"
+  );
+
+})();
+   
 (function initBociteCollaboratorManagement(){
 
   "use strict";
