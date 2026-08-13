@@ -41420,17 +41420,21 @@ document.addEventListener(
   const module =
     window.BociteEntreprise;
 
-  if(
-    !module ||
-    !module.collaborators
-  ){
+if(!module){
 
-    console.error(
-      "Bo'CitéArt : moteur collaborateurs introuvable."
-    );
+  console.error(
+    "Bo'CitéArt : module Entreprise introuvable."
+  );
 
-    return;
-  }
+  return;
+}
+
+if(!module.collaborators){
+
+  console.warn(
+    "Bo'CitéArt : moteur collaborateurs en attente de raccordement."
+  );
+}
 
 
   /* =======================================================
