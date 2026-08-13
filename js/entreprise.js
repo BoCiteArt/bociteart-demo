@@ -10734,56 +10734,6 @@ function openEmployment(){
       event.preventDefault();
       event.stopPropagation();
 
-      /* =====================================================
-   RETOUR DES PAGES PRIVÉES
-   → TABLEAU DE DIRECTION
-   ===================================================== */
-
-const directionScreens = [
-  "annuaire",
-  "collaborateurs",
-  "publicite",
-  "mutualisation",
-  "emploi",
-  "visibilite",
-  "abonnement"
-];
-
-if(
-  directionScreens.includes(
-    state.currentScreen
-  )
-){
-
-  if(
-    typeof window.BociteEntreprise
-      .openDirection ===
-    "function"
-  ){
-
-    window.BociteEntreprise
-      .openDirection();
-
-    return;
-  }
-
-  if(
-    screens.direction &&
-    typeof screens.direction ===
-    "function"
-  ){
-
-    openScreen(
-      "direction",
-      {
-        fromBack:true
-      }
-    );
-
-    return;
-  }
-} 
-
       if(
         typeof event.stopImmediatePropagation ===
         "function"
