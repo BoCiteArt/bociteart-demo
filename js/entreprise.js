@@ -21043,7 +21043,8 @@ console.log(
 
 /* =========================================================
    BO'CITÉART — RECHERCHE ENTREPRISE
-   PARTIE 5D — RACCORDEMENT AU PILOTAGE PRIVÉ
+   PARTIE 5D — PILOTAGE PRIVÉ
+   SANS INJECTION DANS LES PAGES PROFESSIONNELLES
    ========================================================= */
 
 (function connectProfessionalDemandDashboardToDirection(){
@@ -21054,42 +21055,14 @@ console.log(
     window.BociteEntreprise;
 
   if(!module){
+
     console.error(
       "Bo'CitéArt Entreprise : module principal introuvable."
     );
+
     return;
   }
 
-  function getElement(id){
-    return document.getElementById(id);
-  }
-
-  function findDirectionHost(){
-
-    const possibleHosts = [
-      getElement("directionActions"),
-      getElement("directionButtons"),
-      getElement("entrepriseDirectionActions"),
-      getElement("directionProposalSummary"),
-      getElement("directionMutualisationList"),
-      document.querySelector(
-        "#modalContent"
-      ),
-      document.querySelector(
-        ".modalContent"
-      ),
-      document.querySelector(
-        ".modal-content"
-      ),
-      document.querySelector(
-        "[role='dialog']"
-      )
-    ];
-
-    return possibleHosts.find(function(host){
-      return !!host;
-    }) || null;
-  }
 
   function openProfessionalDemandDashboard(){
 
@@ -21097,6 +21070,7 @@ console.log(
       typeof module.openProfessionalDemandDashboard ===
       "function"
     ){
+
       module.openProfessionalDemandDashboard();
       return;
     }
@@ -21107,173 +21081,30 @@ console.log(
     );
   }
 
-  function addProfessionalDemandDashboardButton(){
 
-    if(
-      getElement(
-        "directionProfessionalDemandDashboardBtn"
-      )
-    ){
-      return;
-    }
+  /*
+    IMPORTANT
 
-    const host =
-      findDirectionHost();
+    Le tableau de suivi existe toujours
+    dans le moteur Bo'CitéArt.
 
-    if(!host){
-      console.warn(
-        "Bo'CitéArt : emplacement du bouton de suivi introuvable."
-      );
-      return;
-    }
+    En revanche, aucun bouton,
+    aucun encart
+    et aucun contenu de pilotage
+    ne sont ajoutés automatiquement
+    dans les pages professionnelles.
 
-    const container =
-      document.createElement("div");
+    L'accès sera raccordé séparément
+    à l'espace administrateur Bo'CitéArt.
+  */
 
-    container.id =
-      "directionProfessionalDemandDashboardBox";
 
-    container.className =
-      "box";
+  module.openProfessionalDemandDashboardFromAdmin =
+    openProfessionalDemandDashboard;
 
-    container.style.marginTop =
-      "14px";
-
-    container.style.borderLeft =
-      "6px solid #2f5d46";
-
-    container.innerHTML = `
-
-  <div
-    style="
-      color:#2f5d46;
-      font-size:17px;
-      font-weight:800;
-      line-height:1.35;
-    ">
-    Besoins professionnels détectés
-  </div>
-
-  <div
-    style="
-      margin-top:8px;
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.5;
-    ">
-    Accès réservé au pilotage privé Bo'CitéArt.
-  </div>
-
-  <button
-    id="directionProfessionalDemandDashboardBtn"
-    class="choiceBtn"
-    type="button"
-    style="
-      width:100%;
-      margin-top:12px;
-      background:#ffffff !important;
-      color:#111111 !important;
-    ">
-    Ouvrir le suivi des demandes professionnelles
-  </button>
-`;
-      
-    host.appendChild(container);
-
-    const button =
-      getElement(
-        "directionProfessionalDemandDashboardBtn"
-      );
-
-    if(button){
-      button.onclick =
-        openProfessionalDemandDashboard;
-    }
-  }
-
-  function scheduleButtonInsertion(){
-
-    window.setTimeout(function(){
-      addProfessionalDemandDashboardButton();
-    },50);
-
-    window.setTimeout(function(){
-      addProfessionalDemandDashboardButton();
-    },200);
-  }
-
-  const originalOpenDirection =
-    module.openDirection;
-
-  if(
-    typeof originalOpenDirection === "function" &&
-    !module.__professionalDemandDashboardConnected
-  ){
-    module.__professionalDemandDashboardConnected =
-      true;
-
-    const patchedOpenDirection =
-      function(){
-
-        originalOpenDirection.apply(
-          module,
-          arguments
-        );
-
-        scheduleButtonInsertion();
-      };
-
-    module.openDirection =
-      patchedOpenDirection;
-
-    if(
-      typeof module.registerScreen ===
-      "function"
-    ){
-      module.registerScreen(
-        "direction",
-        patchedOpenDirection
-      );
-    }
-  }
-
-  document.addEventListener(
-    "click",
-    function(event){
-
-      const button =
-        event.target &&
-        typeof event.target.closest === "function"
-          ? event.target.closest(
-              "#directionProfessionalDemandDashboardBtn"
-            )
-          : null;
-
-      if(!button){
-        return;
-      }
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      if(
-        typeof event.stopImmediatePropagation ===
-        "function"
-      ){
-        event.stopImmediatePropagation();
-      }
-
-      openProfessionalDemandDashboard();
-    },
-    true
-  );
-
-  module.addProfessionalDemandDashboardButton =
-    addProfessionalDemandDashboardButton;
 
   console.log(
-    "✅ Suivi des demandes raccordé au pilotage privé"
+    "✅ Suivi des demandes réservé au pilotage admin Bo'CitéArt"
   );
 
 })();
