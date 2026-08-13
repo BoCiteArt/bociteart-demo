@@ -42577,7 +42577,7 @@ document.addEventListener(
     list:
       list,
 
-    getCollaborators:
+    getCollaborators: 
       list,
 
     save:
