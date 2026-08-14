@@ -43250,27 +43250,7 @@ if(!module.collaborators){
 
     if(
       typeof module.renderModulePage ===
-      "function"
-    ){
-
-      module.renderModulePage(
-        "Gestion des collaborateurs",
-        html,
-        {
-          afterRender:
-            function(){
-
-              bindCollaboratorManagement(
-                structureId
-              );
-            }
-        }
-      );
-
-      return;
-    }
-
-
+  
     if(
       typeof module.renderModal ===
       "function"
