@@ -1,10 +1,10 @@
 /* =========================================================
    BO'CITÉART — ENTREPRISE
    VISIBILITÉ & COMMUNICATION
-   PORTE D'ENTRÉE SIMPLE
+   VERSION PROPRE
    ========================================================= */
 
-(function initEntrepriseVisibilite(){ 
+(function initEntrepriseVisibilite(){
 
   "use strict";
 
@@ -34,14 +34,39 @@
   }
 
 
+  function escapeHtml(value){
+
+    return String(
+      value == null
+        ? ""
+        : value
+    )
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+  }
+
+
   function getBrandHtml(){
 
- return `<strong style="white-space:nowrap;font-weight:700;"><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span></strong>`;
+    return `
+      <strong
+        style="
+          white-space:nowrap;
+          font-weight:700;
+        ">
+        <span style="color:#2f5d46;">
+          Bo'Cité
+        </span><span style="color:#b00020;">Art</span>
+      </strong>
+    `;
   }
 
 
   /* =======================================================
-     PAGE PRINCIPALE
+     PAGE PRINCIPALE VISIBILITÉ
      ======================================================= */
 
   function getVisibilityHtml(){
@@ -62,7 +87,7 @@
         <div
           style="
             color:#2f5d46;
-            font-size:17px;
+            font-size:16px;
             font-weight:700;
             line-height:1.3;
           ">
@@ -106,7 +131,7 @@
         <div
           style="
             color:#2f5d46;
-            font-size:17px;
+            font-size:16px;
             font-weight:700;
             margin-bottom:10px;
           ">
@@ -117,12 +142,7 @@
 
         <br><br>
 
-        <strong
-          style="
-            color:#111111;
-            font-size:14px;
-            font-weight:700;
-          ">
+        <strong>
           Quel résultat voulez-vous obtenir ?
         </strong>
 
@@ -154,7 +174,7 @@
         <div
           style="
             color:#2f5d46;
-            font-size:17px;
+            font-size:16px;
             font-weight:700;
             margin-bottom:8px;
           ">
@@ -174,12 +194,7 @@
 
         <br><br>
 
-        <strong
-          style="
-            color:#111111;
-            font-size:14px;
-            font-weight:700;
-          ">
+        <strong>
           Si une seule chose devait être retenue
           de votre publicité,
           laquelle serait-ce ?
@@ -197,6 +212,8 @@
           margin-top:8px;
           background:#ffffff !important;
           color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
         ">
         Préparer une publicité
       </button>
@@ -211,6 +228,8 @@
           margin-top:8px;
           background:#ffffff !important;
           color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
         ">
         Publier une actualité
       </button>
@@ -225,6 +244,8 @@
           margin-top:8px;
           background:#ffffff !important;
           color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
         ">
         Recruter
       </button>
@@ -239,6 +260,8 @@
           margin-top:8px;
           background:#ffffff !important;
           color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
         ">
         Voir ma présence dans l'annuaire
       </button>
@@ -253,6 +276,8 @@
           margin-top:8px;
           background:#ffffff !important;
           color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
         ">
         Voir les résultats de mes communications
       </button>
@@ -272,7 +297,7 @@
         <div
           style="
             color:#2f5d46;
-            font-size:17px;
+            font-size:16px;
             font-weight:700;
             margin-bottom:8px;
           ">
@@ -306,7 +331,7 @@
 
 
   /* =======================================================
-     OUVERTURE PUBLICITÉ
+     PUBLICITÉ
      ======================================================= */
 
   function openAdvertising(){
@@ -317,6 +342,7 @@
     ){
 
       window.openTicker();
+
       return;
     }
 
@@ -328,7 +354,7 @@
 
 
   /* =======================================================
-     OUVERTURE ACTUALITÉS
+     ACTUALITÉS
      ======================================================= */
 
   function openNews(){
@@ -339,6 +365,7 @@
     ){
 
       module.openVisibilityNews();
+
       return;
     }
 
@@ -349,6 +376,7 @@
     ){
 
       module.openEntrepriseNews();
+
       return;
     }
 
@@ -360,7 +388,7 @@
 
 
   /* =======================================================
-     OUVERTURE EMPLOI
+     EMPLOI
      ======================================================= */
 
   function openEmployment(){
@@ -385,7 +413,7 @@
 
 
   /* =======================================================
-     OUVERTURE ANNUAIRE
+     ANNUAIRE
      ======================================================= */
 
   function openDirectory(){
@@ -410,14 +438,14 @@
 
 
   /* =======================================================
-     RÉSULTATS
-     POINT DE RACCORDEMENT
+     RÉSULTATS DES COMMUNICATIONS
      ======================================================= */
 
   function openResults(){
 
     let metrics = {};
     let bookings = {};
+
 
     try{
 
@@ -426,9 +454,12 @@
           "bociteart_pub_v3_metrics"
         );
 
+
       metrics =
         rawMetrics
-          ? JSON.parse(rawMetrics)
+          ? JSON.parse(
+              rawMetrics
+            )
           : {};
 
     }catch(error){
@@ -444,9 +475,12 @@
           "bociteart_pub_v3_bookings"
         );
 
+
       bookings =
         rawBookings
-          ? JSON.parse(rawBookings)
+          ? JSON.parse(
+              rawBookings
+            )
           : {};
 
     }catch(error){
@@ -454,8 +488,173 @@
       bookings = {};
     }
 
+
     /* =====================================================
-       COMPARAISON AVEC LA CAMPAGNE PRÉCÉDENTE
+       CONSTRUCTION DES CAMPAGNES
+       ===================================================== */
+
+    const campaigns = [];
+
+
+    Object.keys(
+      bookings || {}
+    )
+    .forEach(
+      function(monthKey){
+
+        const month =
+          bookings[
+            monthKey
+          ];
+
+
+        if(
+          !month ||
+          typeof month !==
+            "object"
+        ){
+
+          return;
+        }
+
+
+        Object.keys(
+          month
+        )
+        .forEach(
+          function(dayKey){
+
+            const list =
+              Array.isArray(
+                month[
+                  dayKey
+                ]
+              )
+                ? month[
+                    dayKey
+                  ]
+                : [];
+
+
+            list.forEach(
+              function(ad){
+
+                if(!ad){
+
+                  return;
+                }
+
+
+                const campaignId =
+                  String(
+                    ad.campaignId ||
+                    (
+                      String(
+                        ad.date ||
+                        ""
+                      ) +
+                      "_" +
+                      String(
+                        ad.profileType ||
+                        ""
+                      ) +
+                      "_" +
+                      String(
+                        ad.createdTs ||
+                        ""
+                      )
+                    )
+                  );
+
+
+                const result =
+                  metrics[
+                    campaignId
+                  ] &&
+                  typeof metrics[
+                    campaignId
+                  ] ===
+                    "object"
+                    ? metrics[
+                        campaignId
+                      ]
+                    : {};
+
+
+                campaigns.push({
+
+                  id:
+                    campaignId,
+
+                  title:
+                    ad.title ||
+                    ad.entityName ||
+                    "Publicité",
+
+                  date:
+                    ad.date ||
+                    "",
+
+                  status:
+                    ad.status ||
+                    "",
+
+                  openings:
+                    Number(
+                      result.openings ||
+                      0
+                    ),
+
+                  calls:
+                    Number(
+                      result.calls ||
+                      0
+                    ),
+
+                  itineraries:
+                    Number(
+                      result.itineraries ||
+                      0
+                    ),
+
+                  coupons:
+                    Number(
+                      result.coupons ||
+                      0
+                    ),
+
+                  qrActions:
+                    Number(
+                      result.qrActions ||
+                      0
+                    ),
+
+                  quoteRequests:
+                    Number(
+                      result.quoteRequests ||
+                      0
+                    ),
+
+                  bookingRequests:
+                    Number(
+                      result.bookingRequests ||
+                      0
+                    )
+
+                });
+
+              }
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+    /* =====================================================
+       CLASSEMENT CHRONOLOGIQUE
        ===================================================== */
 
     campaigns.sort(
@@ -463,13 +662,17 @@
 
         const dateA =
           String(
-            a.date || ""
+            a.date ||
+            ""
           );
+
 
         const dateB =
           String(
-            b.date || ""
+            b.date ||
+            ""
           );
+
 
         return dateA.localeCompare(
           dateB
@@ -478,22 +681,100 @@
     );
 
 
-    let comparisonHtml = "";
+    /* =====================================================
+       TOTAUX
+       ===================================================== */
+
+    let totalOpenings = 0;
+    let totalCalls = 0;
+    let totalRoutes = 0;
+    let totalCoupons = 0;
+    let totalQr = 0;
+    let totalQuotes = 0;
+    let totalBookings = 0;
+
+
+    campaigns.forEach(
+      function(campaign){
+
+        totalOpenings +=
+          Number(
+            campaign.openings ||
+            0
+          );
+
+        totalCalls +=
+          Number(
+            campaign.calls ||
+            0
+          );
+
+        totalRoutes +=
+          Number(
+            campaign.itineraries ||
+            0
+          );
+
+        totalCoupons +=
+          Number(
+            campaign.coupons ||
+            0
+          );
+
+        totalQr +=
+          Number(
+            campaign.qrActions ||
+            0
+          );
+
+        totalQuotes +=
+          Number(
+            campaign.quoteRequests ||
+            0
+          );
+
+        totalBookings +=
+          Number(
+            campaign.bookingRequests ||
+            0
+          );
+
+      }
+    );
+
+
+    const totalActions =
+      totalCalls +
+      totalRoutes +
+      totalCoupons +
+      totalQr +
+      totalQuotes +
+      totalBookings;
+
+       /* =====================================================
+       COMPARAISON AVEC LA CAMPAGNE PRÉCÉDENTE
+       ===================================================== */
+
+    let comparisonHtml =
+      "";
 
 
     if(
-      campaigns.length >= 2
+      campaigns.length >=
+      2
     ){
 
       const previousCampaign =
         campaigns[
-          campaigns.length - 2
+          campaigns.length -
+          2
         ];
 
 
       const currentCampaign =
         campaigns[
-          campaigns.length - 1
+          campaigns.length -
+          1
         ];
 
 
@@ -503,22 +784,28 @@
 
         return (
           Number(
-            campaign.calls || 0
+            campaign.calls ||
+            0
           ) +
           Number(
-            campaign.itineraries || 0
+            campaign.itineraries ||
+            0
           ) +
           Number(
-            campaign.coupons || 0
+            campaign.coupons ||
+            0
           ) +
           Number(
-            campaign.qrActions || 0
+            campaign.qrActions ||
+            0
           ) +
           Number(
-            campaign.quoteRequests || 0
+            campaign.quoteRequests ||
+            0
           ) +
           Number(
-            campaign.bookingRequests || 0
+            campaign.bookingRequests ||
+            0
           )
         );
       }
@@ -571,7 +858,10 @@
           );
 
 
-        if(differencePercent > 0){
+        if(
+          differencePercent >
+          0
+        ){
 
           differenceText =
             "Cette campagne a généré " +
@@ -579,7 +869,8 @@
             " % d'actions de plus que la précédente.";
 
         }else if(
-          differencePercent < 0
+          differencePercent <
+          0
         ){
 
           differenceText =
@@ -613,7 +904,7 @@
           <div
             style="
               color:#2f5d46;
-              font-size:17px;
+              font-size:16px;
               font-weight:700;
               margin-bottom:8px;
             ">
@@ -622,205 +913,46 @@
 
           Campagne précédente :
 
-          <strong>
-            ${previousCampaign.title}
-          </strong>
+          <br>
+
+          ${escapeHtml(
+            previousCampaign.title
+          )}
 
           <br>
 
           Actions mesurées :
-          <strong>
-            ${previousActions}
-          </strong>
+          ${previousActions}
 
           <br><br>
 
           Dernière campagne :
 
-          <strong>
-            ${currentCampaign.title}
-          </strong>
+          <br>
+
+          ${escapeHtml(
+            currentCampaign.title
+          )}
 
           <br>
 
           Actions mesurées :
-          <strong>
-            ${currentActions}
-          </strong>
+          ${currentActions}
 
           <br><br>
 
-          ${differenceText}
+          ${escapeHtml(
+            differenceText
+          )}
 
         </div>
 
       `;
     }
-     
-    const campaigns = [];
 
-
-    Object.keys(
-      bookings || {}
-    )
-    .forEach(function(monthKey){
-
-      const month =
-        bookings[monthKey];
-
-      if(
-        !month ||
-        typeof month !== "object"
-      ){
-        return;
-      }
-
-
-      Object.keys(month)
-        .forEach(function(dayKey){
-
-          const list =
-            Array.isArray(
-              month[dayKey]
-            )
-              ? month[dayKey]
-              : [];
-
-
-          list.forEach(
-            function(ad){
-
-              if(!ad){
-                return;
-              }
-
-
-              const campaignId =
-                String(
-                  ad.campaignId ||
-                  (
-                    ad.date +
-                    "_" +
-                    ad.profileType +
-                    "_" +
-                    ad.createdTs
-                  )
-                );
-
-
-              const result =
-                metrics[campaignId] ||
-                {};
-
-
-              campaigns.push({
-
-                id:
-                  campaignId,
-
-                title:
-                  ad.title ||
-                  ad.entityName ||
-                  "Publicité",
-
-                date:
-                  ad.date || "",
-
-                status:
-                  ad.status || "",
-
-                openings:
-                  Number(
-                    result.openings || 0
-                  ),
-
-                calls:
-                  Number(
-                    result.calls || 0
-                  ),
-
-                itineraries:
-                  Number(
-                    result.itineraries || 0
-                  ),
-
-                coupons:
-                  Number(
-                    result.coupons || 0
-                  ),
-
-                qrActions:
-                  Number(
-                    result.qrActions || 0
-                  ),
-
-                quoteRequests:
-                  Number(
-                    result.quoteRequests || 0
-                  ),
-
-                bookingRequests:
-                  Number(
-                    result.bookingRequests || 0
-                  )
-
-              });
-
-            }
-          );
-
-        });
-
-    });
-
-
-    let totalOpenings = 0;
-    let totalCalls = 0;
-    let totalRoutes = 0;
-    let totalCoupons = 0;
-    let totalQr = 0;
-    let totalQuotes = 0;
-    let totalBookings = 0;
-
-
-    campaigns.forEach(
-      function(campaign){
-
-        totalOpenings +=
-          campaign.openings;
-
-        totalCalls +=
-          campaign.calls;
-
-        totalRoutes +=
-          campaign.itineraries;
-
-        totalCoupons +=
-          campaign.coupons;
-
-        totalQr +=
-          campaign.qrActions;
-
-        totalQuotes +=
-          campaign.quoteRequests;
-
-        totalBookings +=
-          campaign.bookingRequests;
-
-      }
-    );
-
-
-    const totalActions =
-      totalCalls +
-      totalRoutes +
-      totalCoupons +
-      totalQr +
-      totalQuotes +
-      totalBookings;
 
     /* =====================================================
-       CE QUI A LE MIEUX FONCTIONNÉ
+       MEILLEUR RÉSULTAT
        ===================================================== */
 
     const performanceItems = [
@@ -877,21 +1009,28 @@
           function(a,b){
 
             return (
-              Number(b.value || 0) -
-              Number(a.value || 0)
+              Number(
+                b.value ||
+                0
+              ) -
+              Number(
+                a.value ||
+                0
+              )
             );
-
           }
         )[0];
 
 
-    let bestPerformanceHtml = "";
+    let bestPerformanceHtml =
+      "";
 
 
     if(
       bestPerformance &&
       Number(
-        bestPerformance.value || 0
+        bestPerformance.value ||
+        0
       ) > 0
     ){
 
@@ -911,7 +1050,7 @@
           <div
             style="
               color:#2f5d46;
-              font-size:17px;
+              font-size:16px;
               font-weight:700;
               margin-bottom:8px;
             ">
@@ -924,14 +1063,14 @@
 
           <br><br>
 
-          <strong>
-            ${bestPerformance.label}
-          </strong>
-
+          ${escapeHtml(
+            bestPerformance.label
+          )}
           :
-          <strong>
-            ${bestPerformance.value}
-          </strong>
+          ${Number(
+            bestPerformance.value ||
+            0
+          )}
 
           <br><br>
 
@@ -960,7 +1099,7 @@
           <div
             style="
               color:#2f5d46;
-              font-size:17px;
+              font-size:16px;
               font-weight:700;
               margin-bottom:8px;
             ">
@@ -975,21 +1114,25 @@
       `;
     }
 
-         /* =====================================================
-       CONSEIL POUR LA PROCHAINE CAMPAGNE
+
+    /* =====================================================
+       CONSEIL PROCHAINE CAMPAGNE
        ===================================================== */
 
-    let nextCampaignAdviceHtml = "";
+    let nextCampaignAdviceHtml =
+      "";
 
 
     if(
       bestPerformance &&
       Number(
-        bestPerformance.value || 0
+        bestPerformance.value ||
+        0
       ) > 0
     ){
 
-      let adviceText = "";
+      let adviceText =
+        "";
 
 
       if(
@@ -998,9 +1141,7 @@
       ){
 
         adviceText =
-          "Vos appels fonctionnent bien. " +
-          "Pour votre prochaine campagne, gardez un message court " +
-          "et un bouton Appeler bien visible.";
+          "Vos appels fonctionnent bien. Pour votre prochaine campagne, gardez un message court et un bouton Appeler bien visible.";
 
       }else if(
         bestPerformance.label ===
@@ -1008,9 +1149,7 @@
       ){
 
         adviceText =
-          "Votre publicité donne envie de venir sur place. " +
-          "Mettez davantage en avant votre adresse, votre offre " +
-          "et ce que le client trouvera en venant.";
+          "Votre publicité donne envie de venir sur place. Mettez davantage en avant votre adresse, votre offre et ce que le client trouvera en venant.";
 
       }else if(
         bestPerformance.label ===
@@ -1018,9 +1157,7 @@
       ){
 
         adviceText =
-          "Vos bons attirent l'attention. " +
-          "Une offre simple, claire et limitée dans le temps " +
-          "peut encore améliorer le résultat.";
+          "Vos bons attirent l'attention. Une offre simple, claire et limitée dans le temps peut encore améliorer le résultat.";
 
       }else if(
         bestPerformance.label ===
@@ -1028,9 +1165,7 @@
       ){
 
         adviceText =
-          "Le QR code est bien utilisé. " +
-          "Continuez à proposer une action simple et immédiate " +
-          "derrière le QR.";
+          "Le QR code est bien utilisé. Continuez à proposer une action simple et immédiate derrière le QR.";
 
       }else if(
         bestPerformance.label ===
@@ -1038,9 +1173,7 @@
       ){
 
         adviceText =
-          "Votre publicité génère des demandes de devis. " +
-          "Présentez clairement votre savoir-faire " +
-          "et facilitez encore la prise de contact.";
+          "Votre publicité génère des demandes de devis. Présentez clairement votre savoir-faire et facilitez encore la prise de contact.";
 
       }else if(
         bestPerformance.label ===
@@ -1048,10 +1181,7 @@
       ){
 
         adviceText =
-          "Votre publicité transforme bien l'intérêt en contact. " +
-          "Conservez un appel à l'action direct " +
-          "et une présentation très claire de votre offre.";
-
+          "Votre publicité transforme bien l'intérêt en contact. Conservez un appel à l'action direct et une présentation très claire de votre offre.";
       }
 
 
@@ -1071,14 +1201,16 @@
           <div
             style="
               color:#2f5d46;
-              font-size:17px;
+              font-size:16px;
               font-weight:700;
               margin-bottom:8px;
             ">
             Pour votre prochaine campagne
           </div>
 
-          ${adviceText}
+          ${escapeHtml(
+            adviceText
+          )}
 
         </div>
 
@@ -1101,7 +1233,7 @@
           <div
             style="
               color:#2f5d46;
-              font-size:17px;
+              font-size:16px;
               font-weight:700;
               margin-bottom:8px;
             ">
@@ -1121,7 +1253,12 @@
 
       `;
     }
-     
+
+
+    /* =====================================================
+       DÉTAIL PAR COMMUNICATION
+       ===================================================== */
+
     const campaignHtml =
       campaigns.length
         ? campaigns
@@ -1145,77 +1282,60 @@
                     <div
                       style="
                         color:#2f5d46;
-                        font-size:17px;
+                        font-size:16px;
                         font-weight:700;
                         margin-bottom:8px;
                       ">
-                      ${campaign.title}
+                      ${escapeHtml(
+                        campaign.title
+                      )}
                     </div>
 
                     ${
                       campaign.date
                         ? `
-                          <div>
                             Diffusion :
-                            ${campaign.date}
-                          </div>
-                        `
+                            ${escapeHtml(
+                              campaign.date
+                            )}
+
+                            <br><br>
+                          `
                         : ""
                     }
 
-                    <div
-                      style="
-                        margin-top:10px;
-                      ">
+                    Ouvertures :
+                    ${campaign.openings}
 
-                      Ouvertures :
-                      <strong>
-                        ${campaign.openings}
-                      </strong>
+                    <br>
 
-                      <br>
+                    Appels :
+                    ${campaign.calls}
 
-                      Appels :
-                      <strong>
-                        ${campaign.calls}
-                      </strong>
+                    <br>
 
-                      <br>
+                    Itinéraires :
+                    ${campaign.itineraries}
 
-                      Itinéraires :
-                      <strong>
-                        ${campaign.itineraries}
-                      </strong>
+                    <br>
 
-                      <br>
+                    Bons consultés :
+                    ${campaign.coupons}
 
-                      Bons consultés :
-                      <strong>
-                        ${campaign.coupons}
-                      </strong>
+                    <br>
 
-                      <br>
+                    Actions QR :
+                    ${campaign.qrActions}
 
-                      Actions QR :
-                      <strong>
-                        ${campaign.qrActions}
-                      </strong>
+                    <br>
 
-                      <br>
+                    Demandes de devis :
+                    ${campaign.quoteRequests}
 
-                      Demandes de devis :
-                      <strong>
-                        ${campaign.quoteRequests}
-                      </strong>
+                    <br>
 
-                      <br>
-
-                      Réservations / contacts :
-                      <strong>
-                        ${campaign.bookingRequests}
-                      </strong>
-
-                    </div>
+                    Réservations / contacts :
+                    ${campaign.bookingRequests}
 
                   </div>
 
@@ -1233,14 +1353,22 @@
                 color:#111111;
                 font-size:14px;
                 font-weight:400;
+                line-height:1.5;
               ">
+
               Aucun résultat publicitaire
               n'est encore enregistré.
+
             </div>
 
           `;
 
 
+    /* =====================================================
+       PAGE RÉSULTATS
+       UNE SEULE DÉCLARATION DE html
+       ===================================================== */
+
     const html = `
 
       <div
@@ -1257,7 +1385,7 @@
         <div
           style="
             color:#2f5d46;
-            font-size:17px;
+            font-size:16px;
             font-weight:700;
             margin-bottom:8px;
           ">
@@ -1284,7 +1412,7 @@
         <div
           style="
             color:#2f5d46;
-            font-size:17px;
+            font-size:16px;
             font-weight:700;
             margin-bottom:10px;
           ">
@@ -1292,172 +1420,52 @@
         </div>
 
         Ouvertures de vos publicités :
-        <strong>
-          ${totalOpenings}
-        </strong> 
+        ${totalOpenings}
 
         <br>
 
         Actions réalisées :
-        <strong>
-          ${totalActions}
-        </strong>
+        ${totalActions}
 
         <br><br>
 
         Appels :
-        <strong>
-          ${totalCalls}
-        </strong>
+        ${totalCalls}
 
         <br>
 
         Itinéraires demandés :
-        <strong>
-          ${totalRoutes}
-        </strong>
+        ${totalRoutes}
 
         <br>
 
         Bons consultés :
-        <strong>
-          ${totalCoupons}
-        </strong>
+        ${totalCoupons}
 
         <br>
 
         Actions QR :
-        <strong>
-          ${totalQr}
-        </strong>
+        ${totalQr}
 
         <br>
 
         Demandes de devis :
-        <strong>
-          ${totalQuotes}
-        </strong>
+        ${totalQuotes}
 
         <br>
 
         Réservations / prises de contact :
-        <strong>
-          ${totalBookings}
-        </strong>
-
-      </div>
-
-      `;
-
-    const html = `
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.5;
-          border-left:6px solid #2f5d46;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            margin-bottom:8px;
-          ">
-          Résultats de vos communications
-        </div>
-
-        Suivez simplement
-        ce que vos publicités
-        ont réellement déclenché.
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.6;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            margin-bottom:10px;
-          ">
-          Résultat global
-        </div>
-
-        Ouvertures de vos publicités :
-        <strong>
-          ${totalOpenings}
-        </strong>
-
-        <br>
-
-        Actions réalisées :
-        <strong>
-          ${totalActions}
-        </strong>
-
-        <br><br>
-
-        Appels :
-        <strong>
-          ${totalCalls}
-        </strong>
-
-        <br>
-
-        Itinéraires demandés :
-        <strong>
-          ${totalRoutes}
-        </strong>
-
-        <br>
-
-        Bons consultés :
-        <strong>
-          ${totalCoupons}
-        </strong>
-
-        <br>
-
-        Actions QR :
-        <strong>
-          ${totalQr}
-        </strong>
-
-        <br>
-
-        Demandes de devis :
-        <strong>
-          ${totalQuotes}
-        </strong>
-
-        <br>
-
-        Réservations / prises de contact :
-        <strong>
-          ${totalBookings}
-        </strong>
+        ${totalBookings}
 
       </div>
 
 
       ${comparisonHtml}
 
+      ${bestPerformanceHtml}
+
+      ${nextCampaignAdviceHtml}
+
 
       <div
         class="box"
@@ -1473,7 +1481,7 @@
         <div
           style="
             color:#2f5d46;
-            font-size:17px;
+            font-size:16px;
             font-weight:700;
             margin-bottom:8px;
           ">
@@ -1502,135 +1510,7 @@
         style="
           margin-top:14px;
           color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-        ">
-        Détail par communication
-      </div>
-
-
-     ${campaignHtml}
-
-
-<div
-  class="box"
-  style="
-    margin-top:14px;
-    background:#ffffff;
-    color:#111111;
-    font-size:14px;
-    font-weight:400;
-    line-height:1.5;
-    border-left:6px solid #2f5d46;
-  ">
-
-  <div
-    style="
-      color:#2f5d46;
-      font-size:17px;
-      font-weight:700;
-      margin-bottom:8px;
-    ">
-    Et maintenant ?
-  </div>
-
-  Utilisez ce que vous venez d'apprendre
-  pour préparer votre prochaine communication.
-
-  <button
-    id="visibilityNewCampaignBtn"
-    class="choiceBtn"
-    type="button"
-    style="
-      width:100%;
-      margin-top:12px;
-      background:#ffffff !important;
-      color:#111111 !important;
-      font-size:14px;
-      font-weight:400;
-    ">
-    Préparer une nouvelle publicité
-  </button>
-
-</div>
-
-`;
-
-      module.renderModulePage(
-  "Résultats de mes communications",
-  html,
-  {
-    showBack:false,
-    showFooter:false,
-
-    afterRender:
-      function(){
-
-        const newCampaignButton =
-          getElement(
-            "visibilityNewCampaignBtn"
-          );
-
-        if(newCampaignButton){
-
-          newCampaignButton.onclick =
-            function(){
-
-              openAdvertising();
-
-            };
-        }
-      }
-  }
-);
-      return;
-    }
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.5;
-          border-left:6px solid #2f5d46;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            margin-bottom:8px;
-          ">
-          Comment lire vos résultats ?
-        </div>
-
-        Les ouvertures montrent
-        combien de personnes
-        ont voulu découvrir votre publicité.
-
-        <br><br>
-
-        Les appels,
-        itinéraires,
-        bons,
-        QR codes,
-        devis
-        et réservations
-        montrent les actions
-        réellement déclenchées.
-
-      </div>
-
-
-      <div
-        style="
-          margin-top:14px;
-          color:#2f5d46;
-          font-size:17px;
+          font-size:16px;
           font-weight:700;
         ">
         Détail par communication
@@ -1639,8 +1519,54 @@
 
       ${campaignHtml}
 
+
+      <div
+        class="box"
+        style="
+          margin-top:14px;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+          border-left:6px solid #2f5d46;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:16px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Et maintenant ?
+        </div>
+
+        Utilisez ce que vous venez d'apprendre
+        pour préparer votre prochaine communication.
+
+        <button
+          id="visibilityNewCampaignBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:12px;
+            background:#ffffff !important;
+            color:#111111 !important;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Préparer une nouvelle publicité
+        </button>
+
+      </div>
+
     `;
 
+       /* =====================================================
+       AFFICHAGE DE LA PAGE RÉSULTATS
+       ===================================================== */
 
     if(
       typeof module.renderModulePage ===
@@ -1656,6 +1582,31 @@
         }
       );
 
+
+      window.setTimeout(
+        function(){
+
+          const newCampaignButton =
+            getElement(
+              "visibilityNewCampaignBtn"
+            );
+
+
+          if(newCampaignButton){
+
+            newCampaignButton.onclick =
+              function(){
+
+                openAdvertising();
+
+              };
+          }
+
+        },
+        0
+      );
+
+
       return;
     }
 
@@ -1670,17 +1621,43 @@
         html
       );
 
+
+      window.setTimeout(
+        function(){
+
+          const newCampaignButton =
+            getElement(
+              "visibilityNewCampaignBtn"
+            );
+
+
+          if(newCampaignButton){
+
+            newCampaignButton.onclick =
+              function(){
+
+                openAdvertising();
+
+              };
+          }
+
+        },
+        0
+      );
+
+
       return;
     }
 
 
     alert(
-      "Le suivi des résultats est momentanément indisponible."
+      "Les résultats de vos communications sont momentanément indisponibles."
     );
   }
 
+
   /* =======================================================
-     BIND
+     RACCORDEMENT DES BOUTONS
      ======================================================= */
 
   function bindVisibility(){
@@ -1718,43 +1695,68 @@
     if(advertisingButton){
 
       advertisingButton.onclick =
-        openAdvertising;
+        function(){
+
+          openAdvertising();
+
+        };
     }
 
 
     if(newsButton){
 
       newsButton.onclick =
-        openNews;
+        function(){
+
+          openNews();
+
+        };
     }
 
 
     if(employmentButton){
 
       employmentButton.onclick =
-        openEmployment;
+        function(){
+
+          openEmployment();
+
+        };
     }
 
 
     if(directoryButton){
 
       directoryButton.onclick =
-        openDirectory;
+        function(){
+
+          openDirectory();
+
+        };
     }
 
 
     if(resultsButton){
 
       resultsButton.onclick =
-        openResults;
+        function(){
+
+          openResults();
+
+        };
     }
   }
 
+
   /* =======================================================
-     OUVERTURE DU MODULE
+     OUVERTURE VISIBILITÉ
      ======================================================= */
 
   function openVisibilityModule(){
+
+    const visibilityHtml =
+      getVisibilityHtml();
+
 
     if(
       typeof module.renderModulePage ===
@@ -1762,19 +1764,20 @@
     ){
 
       module.renderModulePage(
-
         "Visibilité & communication",
-
-        getVisibilityHtml(),
-
+        visibilityHtml,
         {
           showBack:false,
-          showFooter:false,
-          afterRender:
-            bindVisibility
+          showFooter:false
         }
-
       );
+
+
+      window.setTimeout(
+        bindVisibility,
+        0
+      );
+
 
       return;
     }
@@ -1787,13 +1790,15 @@
 
       module.renderModal(
         "Visibilité & communication",
-        getVisibilityHtml()
+        visibilityHtml
       );
+
 
       window.setTimeout(
         bindVisibility,
         0
       );
+
 
       return;
     }
@@ -1803,19 +1808,46 @@
       "L'espace Visibilité est momentanément indisponible."
     );
   }
-   
+
+
   /* =======================================================
-     EXPOSITION
+     EXPOSITION DES FONCTIONS
      ======================================================= */
-
-  module.registerScreen(
-    "visibilite",
-    openVisibilityModule
-  );
-
 
   module.openVisibilityModule =
     openVisibilityModule;
+
+
+  module.openVisibility =
+    openVisibilityModule;
+
+
+  module.openVisibilityResults =
+    openResults;
+
+
+  module.getVisibilityHtml =
+    getVisibilityHtml;
+
+
+  window.openEntrepriseVisibility =
+    openVisibilityModule;
+
+
+  /* =======================================================
+     RACCORDEMENT AU ROUTEUR ENTREPRISE
+     ======================================================= */
+
+  if(
+    typeof module.registerScreen ===
+    "function"
+  ){
+
+    module.registerScreen(
+      "visibilite",
+      openVisibilityModule
+    );
+  }
 
 
   console.log(
