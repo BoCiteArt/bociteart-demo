@@ -11793,7 +11793,7 @@ function openEmployment(){
         bookings[monthKey][dayKey][index];
 
 
-      if(action === "approve"){
+         if(action === "approve"){
 
         ad.status =
           "demo_paid";
@@ -11815,36 +11815,66 @@ function openEmployment(){
             ad.version || 1
           );
 
-      }
-
-
-      if(action === "revision"){
-
-        ad.status =
-          "revision_requested";
-
-        ad.ownerValidated =
-          false;
-
-        ad.ownerValidatedAt =
-          null;
+        ad.ownerComment =
+          "";
 
       }
+       
+    if(action === "revision"){
 
+  const comment =
+    window.prompt(
+      "Indiquez au collaborateur ce qu'il doit modifier :"
+    );
 
-      if(action === "reject"){
+  if(comment === null){
+    return;
+  }
 
-        ad.status =
-          "rejected";
+  ad.ownerComment =
+    String(comment || "")
+      .trim();
 
-        ad.ownerValidated =
-          false;
+  ad.status =
+    "revision_requested";
 
-        ad.ownerValidatedAt =
-          null;
+  ad.ownerValidated =
+    false;
 
-      }
+  ad.ownerValidatedAt =
+    null;
 
+  ad.ownerValidatedAtFr =
+    "";
+}
+
+     if(action === "reject"){
+
+  const comment =
+    window.prompt(
+      "Indiquez la raison du refus :"
+    );
+
+  if(comment === null){
+    return;
+  }
+
+  ad.ownerComment =
+    String(comment || "")
+      .trim();
+
+  ad.status =
+    "rejected";
+
+  ad.ownerValidated =
+    false;
+
+  ad.ownerValidatedAt =
+    null;
+
+  ad.ownerValidatedAtFr =
+    "";
+} 
 
       localStorage.setItem(
         "bociteart_pub_v3_bookings",
