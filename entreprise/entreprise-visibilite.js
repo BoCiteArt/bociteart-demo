@@ -1,5 +1,5 @@
 /* =========================================================
-   BO'CITÉART — ENTREPRISE
+   BO'CITÉART — ENTREPRISE 
    VISIBILITÉ & COMMUNICATION
    VERSION PROPRE
    ========================================================= */
