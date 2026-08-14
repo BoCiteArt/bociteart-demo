@@ -520,12 +520,18 @@
     }
   }
 
-
   /* =======================================================
      OUVERTURE DU MODULE
      ======================================================= */
 
   function openVisibilityModule(){
+
+    if(
+      typeof module.renderModulePage ===
+      "function"
+    ){
+
+    function openVisibilityModule(){
 
     if(
       typeof module.renderModulePage ===
@@ -539,7 +545,7 @@
         getVisibilityHtml(),
 
         {
-          showBack:true,
+          showBack:false,
           showFooter:false,
           afterRender:
             bindVisibility
@@ -561,7 +567,6 @@
         getVisibilityHtml()
       );
 
-
       window.setTimeout(
         bindVisibility,
         0
@@ -570,13 +575,11 @@
       return;
     }
 
-
     alert(
       "L'espace Visibilité est momentanément indisponible."
     );
   }
-
-
+   
   /* =======================================================
      EXPOSITION
      ======================================================= */
