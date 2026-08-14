@@ -15425,17 +15425,122 @@ billing:
       ${own.map(x=>{
         const locked = Date.now() - Number(x.ad.createdTs || 0) > ONE_HOUR;
  
-        return `
-          <div class="box">
-            <input class="miniField editTitleV3" data-index="${x.index}" value="${esc(x.ad.title)}" ${locked ? "disabled" : ""}>
-            <textarea class="miniField editTextV3" data-index="${x.index}" style="min-height:70px;margin-top:8px;" ${locked ? "disabled" : ""}>${esc(x.ad.text)}</textarea>
-            <button class="choiceBtn saveEditV3" data-index="${x.index}" type="button" style="margin-top:8px;" ${locked ? "disabled" : ""}>
-              enregistrer
-            </button>
+      return `
+
+  <div
+    class="box"
+    style="
+      background:#ffffff;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
+      border-left:6px solid #2f5d46;
+    ">
+
+    <div
+      style="
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+        margin-bottom:8px;
+      ">
+      État de votre publicité
+    </div>
+
+    <div
+      style="
+        margin-bottom:10px;
+      ">
+
+      ${
+        x.ad.status === "waiting_owner_validation"
+          ? "En attente de validation du responsable."
+          : x.ad.status === "revision_requested"
+            ? "Une modification a été demandée par le responsable."
+            : x.ad.status === "rejected"
+              ? "Cette publicité a été refusée."
+              : x.ad.ownerValidated
+                ? "Publicité validée par le responsable."
+                : "Publicité en préparation."
+      }
+
+    </div>
+
+    ${
+      x.ad.ownerComment
+        ? `
+          <div
+            style="
+              margin-bottom:10px;
+              padding:10px;
+              background:#ffffff;
+              border-left:6px solid #b00020;
+            ">
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:17px;
+                font-weight:700;
+                margin-bottom:6px;
+              ">
+              Message du responsable
+            </div>
+
+            ${esc(
+              x.ad.ownerComment
+            )}
+
           </div>
-        `;
-      }).join("")}
-    `);
+        `
+        : ""
+    }
+
+    <input
+      class="miniField editTitleV3"
+      data-index="${x.index}"
+      value="${esc(x.ad.title)}"
+      ${locked ? "disabled" : ""}
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+
+    <textarea
+      class="miniField editTextV3"
+      data-index="${x.index}"
+      style="
+        min-height:70px;
+        margin-top:8px;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      "
+      ${locked ? "disabled" : ""}>${esc(x.ad.text)}</textarea>
+
+    <button
+      class="choiceBtn saveEditV3"
+      data-index="${x.index}"
+      type="button"
+      style="
+        margin-top:8px;
+        width:100%;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
+      "
+      ${locked ? "disabled" : ""}>
+      Enregistrer mes modifications
+    </button>
+
+  </div>
+
+`; 
  
     setTimeout(()=>{
       document.querySelectorAll(".saveEditV3").forEach(btn=>{
@@ -15453,13 +15558,68 @@ billing:
           const titleInput = document.querySelector('.editTitleV3[data-index="'+index+'"]');
           const textInput = document.querySelector('.editTextV3[data-index="'+index+'"]');
  
-          ad.title = titleInput.value.trim() || ad.title;
-          ad.text = textInput.value.trim() || ad.text;
- 
-          saveBookings(bookings);
+                ad.title =
+            titleInput.value.trim() ||
+            ad.title;
+
+          ad.text =
+            textInput.value.trim() ||
+            ad.text;
+
+
+          /*
+            Toute modification crée
+            une nouvelle version.
+
+            Une validation précédente
+            ne peut jamais rester valable
+            pour un contenu modifié.
+          */
+
+          ad.version =
+            Number(
+              ad.version || 1
+            ) + 1;
+
+
+          ad.ownerValidated =
+            false;
+
+          ad.ownerValidatedAt =
+            null;
+
+          ad.ownerValidatedAtFr =
+            "";
+
+          ad.validatedVersion =
+            null;
+
+          ad.status =
+            "waiting_owner_validation";
+
+          ad.modifiedAt =
+            Date.now();
+
+          ad.modifiedAtFr =
+            new Date()
+              .toLocaleString(
+                "fr-FR"
+              );
+
+
+          saveBookings(
+            bookings
+          );
+
+
           renderTicker();
- 
-          alert("publicité modifiée.");
+
+
+          alert(
+            "La publicité a été modifiée.\n\n" +
+            "La validation précédente est annulée.\n\n" +
+            "Le responsable doit valider cette nouvelle version avant sa diffusion."
+          );
         };
       });
     },100);
