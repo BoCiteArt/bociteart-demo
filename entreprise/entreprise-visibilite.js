@@ -4,7 +4,7 @@
    PORTE D'ENTRÉE SIMPLE
    ========================================================= */
 
-(function initEntrepriseVisibilite(){
+(function initEntrepriseVisibilite(){ 
 
   "use strict";
 
