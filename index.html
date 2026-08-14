@@ -14245,9 +14245,32 @@ function openProfile(type){
       <div id="calendarPubV3"></div>
     </div>
  
-    <div class="box">
+      <div class="box">
       <strong>4. texte par date</strong>
-      <div id="textsPubV3" class="muted" style="margin-top:8px;">sélectionnez une date.</div>
+      <div
+        id="textsPubV3"
+        class="muted"
+        style="margin-top:8px;">
+        sélectionnez une date.
+      </div>
+    </div>
+
+    <div class="box">
+      <strong>5. aperçu avant validation</strong>
+
+      <div
+        class="muted"
+        style="
+          margin-top:6px;
+          margin-bottom:10px;
+        ">
+        Vérifiez ici votre publicité avant de confirmer votre réservation.
+      </div>
+
+      <div
+        id="previewPubV3">
+        Sélectionnez une date puis saisissez votre publicité.
+      </div>
     </div>
  
     <div class="box" style="border-left:6px solid #a51e22;">
@@ -14299,23 +14322,263 @@ function openProfile(type){
     });
   }
  
-  function refreshTexts(){
-    const host = $("textsPubV3");
-    if(!host) return;
- 
-    if(!selectedDates.length){
-      host.innerHTML = "sélectionnez une date.";
-      return;
-    }
- 
-    host.innerHTML = selectedDates.map(date=>`
-      <div class="box" style="background:var(--bg);">
-        <strong>${date}</strong>
-        <input class="miniField titleByDateV3" data-date="${date}" placeholder="titre de la publicité" style="margin-top:8px;">
-        <textarea class="miniField textByDateV3" data-date="${date}" style="min-height:70px;margin-top:8px;" placeholder="texte de la publicité"></textarea>
-      </div>
-    `).join("");
+ function refreshTexts(){
+
+  const host =
+    $("textsPubV3");
+
+  if(!host){
+    return;
   }
+
+
+  if(!selectedDates.length){
+
+    host.innerHTML =
+      "sélectionnez une date.";
+
+    refreshPreview();
+
+    return;
+  }
+
+
+  host.innerHTML =
+    selectedDates
+      .map(function(date){
+
+        return `
+
+          <div
+            class="box"
+            style="
+              background:#ffffff;
+            ">
+
+            <strong>
+              ${date}
+            </strong>
+
+            <input
+              class="miniField titleByDateV3"
+              data-date="${date}"
+              placeholder="titre de la publicité"
+              style="
+                margin-top:8px;
+                background:#ffffff;
+                color:#111111;
+              ">
+
+            <textarea
+              class="miniField textByDateV3"
+              data-date="${date}"
+              style="
+                min-height:70px;
+                margin-top:8px;
+                background:#ffffff;
+                color:#111111;
+              "
+              placeholder="texte de la publicité"></textarea>
+
+          </div>
+
+        `;
+
+      })
+      .join("");
+
+
+  document
+    .querySelectorAll(
+      ".titleByDateV3," +
+      ".textByDateV3"
+    )
+    .forEach(function(field){
+
+      field.addEventListener(
+        "input",
+        refreshPreview
+      );
+
+    });
+
+
+  refreshPreview();
+}
+
+
+async function refreshPreview(){
+
+  const host =
+    $("previewPubV3");
+
+  if(!host){
+    return;
+  }
+
+
+  if(!selectedDates.length){
+
+    host.innerHTML =
+      "Sélectionnez une date puis saisissez votre publicité.";
+
+    return;
+  }
+
+
+  const current =
+    getProfile(type);
+
+
+  let imageData = "";
+
+
+  if(
+    current &&
+    current.imageKey
+  ){
+
+    imageData =
+      await loadImage(
+        current.imageKey
+      );
+  }
+
+
+  const previews = [];
+
+
+  selectedDates.forEach(function(date){
+
+    const titleInput =
+      document.querySelector(
+        '.titleByDateV3[data-date="' +
+        date +
+        '"]'
+      );
+
+
+    const textInput =
+      document.querySelector(
+        '.textByDateV3[data-date="' +
+        date +
+        '"]'
+      );
+
+
+    const title =
+      titleInput &&
+      titleInput.value.trim()
+        ? titleInput.value.trim()
+        : (
+            current.name ||
+            "Votre publicité"
+          );
+
+
+    const text =
+      textInput &&
+      textInput.value.trim()
+        ? textInput.value.trim()
+        : "Votre texte apparaîtra ici.";
+
+
+    previews.push(`
+
+      <div
+        style="
+          margin-bottom:12px;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:14px;
+            font-weight:700;
+            margin-bottom:6px;
+          ">
+          ${esc(date)}
+        </div>
+
+
+        <div
+          style="
+            position:relative;
+            width:100%;
+            min-height:130px;
+            overflow:hidden;
+            border-radius:10px;
+            background-color:#222222;
+            ${imageData
+              ? "background-image:url('" +
+                imageData +
+                "');"
+              : ""
+            }
+            background-size:cover;
+            background-position:center center;
+            background-repeat:no-repeat;
+          ">
+
+          <div
+            style="
+              position:absolute;
+              inset:0;
+              background:
+                linear-gradient(
+                  90deg,
+                  rgba(0,0,0,.72),
+                  rgba(0,0,0,.24)
+                );
+            ">
+          </div>
+
+
+          <div
+            style="
+              position:relative;
+              z-index:2;
+              min-height:130px;
+              display:flex;
+              flex-direction:column;
+              justify-content:center;
+              padding:16px 18px;
+              color:#ffffff;
+            ">
+
+            <div
+              style="
+                font-size:15px;
+                font-weight:900;
+                line-height:1.2;
+              ">
+              ${esc(title)}
+            </div>
+
+            <div
+              style="
+                font-size:12px;
+                font-weight:700;
+                margin-top:6px;
+                line-height:1.3;
+              ">
+              ${esc(text)}
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `);
+
+  });
+
+
+  host.innerHTML =
+    previews.join("");
+}
  
   refreshCalendar();
  
@@ -14517,88 +14780,189 @@ function openProfile(type){
     },100);
   }
  
- window.openTicker = function(){
-  openModal("Publicités & visibilité", `
-    <div class="box">
-      <strong>Calendrier des communications locales</strong><br>
-      Chaque communication peut intégrer un logo, une image et un texte court.
-    </div>
+window.openTicker = function(){
 
-    <div class="box">
-      <strong>Accès sécurisé</strong><br>
-      Codes de présentation :<br>
-      Commerçants : <strong>com1234</strong><br>
-      Entreprises : <strong>ent1234</strong><br>
-      Mairie : <strong>mairie1234</strong><br>
-      Associations : <strong>asso1234</strong>
-    </div>
+  openModal(
+    "Publicités & visibilité",
+    `
+      <div class="box">
+        <strong>
+          Calendrier des communications locales
+        </strong>
 
-    <div class="choiceGrid">
-      <button class="choiceBtn" id="openPubCommerceV3" type="button">
-        Diffuser une offre commerçant
-      </button>
+        <br>
 
-      <button class="choiceBtn" id="openPubEntrepriseV3" type="button">
-        Espace entreprises
-      </button>
+        Chaque communication peut intégrer
+        un logo,
+        une image
+        et un texte court.
+      </div>
 
-      <button class="choiceBtn" id="openPubMairieV3" type="button">
-        Informer les habitants
-      </button>
+      <div class="choiceGrid">
 
-      <button class="choiceBtn" id="openPubAssoV3" type="button">
-        Annoncer un événement associatif
-      </button>
-    </div>
+        <button
+          class="choiceBtn"
+          id="openPubCommerceV3"
+          type="button">
+          Diffuser une offre commerçant
+        </button>
 
-    <div id="pubZoneV3" style="margin-top:12px;"></div>
-  `);
+        <button
+          class="choiceBtn"
+          id="openPubEntrepriseV3"
+          type="button">
+          Espace entreprises
+        </button>
 
-  setTimeout(()=>{
+        <button
+          class="choiceBtn"
+          id="openPubMairieV3"
+          type="button">
+          Informer les habitants
+        </button>
+
+        <button
+          class="choiceBtn"
+          id="openPubAssoV3"
+          type="button">
+          Annoncer un événement associatif
+        </button>
+
+      </div>
+
+      <div
+        id="pubZoneV3"
+        style="
+          margin-top:12px;
+        ">
+      </div>
+    `
+  );
+
+
+  setTimeout(function(){
+
     function ask(type){
+
       const codes = {
-        commerce: "com1234",
-        entreprise: "ent1234",
-        mairie: "mairie1234",
-        asso: "asso1234"
+        commerce:"com1234",
+        entreprise:"ent1234",
+        mairie:"mairie1234",
+        asso:"asso1234"
       };
 
-      const code = prompt(
-        "Veuillez saisir votre code d'accès\n\n" +
-        "Commerçants : com1234\n" +
-        "Entreprises : ent1234\n" +
-        "Mairie : mairie1234\n" +
-        "Associations : asso1234\n\n" +
-        "Votre code :"
+
+      const code =
+        prompt(
+          "Veuillez saisir votre code d'accès."
+        );
+
+
+      if(!code){
+        return;
+      }
+
+
+      const cleanCode =
+        String(
+          code
+        )
+        .trim()
+        .toLowerCase();
+
+
+      if(
+        cleanCode !==
+        codes[type]
+      ){
+
+        alert(
+          "Code incorrect."
+        );
+
+        return;
+      }
+
+
+      if(
+        type ===
+        "entreprise"
+      ){
+
+        openProfile(
+          "commerce"
+        );
+
+        return;
+      }
+
+
+      openProfile(
+        type
       );
-
-      if(!code) return;
-
-      const cleanCode = String(code).trim().toLowerCase();
-
-      if(cleanCode !== codes[type]){
-        alert("Code incorrect.");
-        return;
-      }
-
-      if(type === "entreprise"){
-        alert("Espace entreprises activé.\n\nPour cette version, l'entreprise utilise le même parcours de communication que les commerçants. Le module mécénat et visibilité entreprise sera ajouté ensuite.");
-        openProfile("commerce");
-        return;
-      }
-
-      openProfile(type);
     }
 
-    const c = $("openPubCommerceV3");
-    const e = $("openPubEntrepriseV3");
-    const m = $("openPubMairieV3");
-    const a = $("openPubAssoV3");
 
-    if(c) c.onclick = function(){ ask("commerce"); };
-    if(e) e.onclick = function(){ ask("entreprise"); };
-    if(m) m.onclick = function(){ ask("mairie"); };
-    if(a) a.onclick = function(){ ask("asso"); };
+    const c =
+      $("openPubCommerceV3");
+
+    const e =
+      $("openPubEntrepriseV3");
+
+    const m =
+      $("openPubMairieV3");
+
+    const a =
+      $("openPubAssoV3");
+
+
+    if(c){
+
+      c.onclick =
+        function(){
+
+          ask(
+            "commerce"
+          );
+        };
+    }
+
+
+    if(e){
+
+      e.onclick =
+        function(){
+
+          ask(
+            "entreprise"
+          );
+        };
+    }
+
+
+    if(m){
+
+      m.onclick =
+        function(){
+
+          ask(
+            "mairie"
+          );
+        };
+    }
+
+
+    if(a){
+
+      a.onclick =
+        function(){
+
+          ask(
+            "asso"
+          );
+        };
+    }
+
   },100);
 };
  
