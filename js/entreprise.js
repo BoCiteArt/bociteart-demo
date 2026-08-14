@@ -42765,35 +42765,43 @@ if(!module.collaborators){
   }
 
 
-  function getCollaboratorBySlot(
-    structureId,
-    slot
-  ){
+ function getCollaboratorBySlot(
+  structureId,
+  slot
+){
 
-    const list =
-      module.collaborators
-        .getCollaborators(
-          structureId
-        );
-
-
-    const found =
-      list.find(
-        function(item){
-
-          return (
-            Number(item.slot) ===
-            Number(slot)
-          );
-        }
+  const list =
+    module.collaborators
+      .getCollaborators(
+        structureId
       );
 
 
-    return (
-      found ||
-      emptyCollaborator(slot)
+  const safeList =
+    Array.isArray(list)
+      ? list.filter(function(item){
+          return !!item;
+        })
+      : [];
+
+
+  const found =
+    safeList.find(
+      function(item){
+
+        return (
+          Number(item.slot) ===
+          Number(slot)
+        );
+      }
     );
-  }
+
+
+  return (
+    found ||
+    emptyCollaborator(slot)
+  );
+}
 
 
   /* =======================================================
