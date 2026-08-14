@@ -36,28 +36,7 @@
 
   function getBrandHtml(){
 
-    return `
-      <strong
-        style="
-          display:inline;
-          white-space:nowrap;
-          font-weight:700;
-        ">
-        <span
-          style="
-            color:#2f5d46;
-            font-weight:700;
-          ">
-          Bo'Cité
-        </span><span
-          style="
-            color:#b00020;
-            font-weight:700;
-          ">
-          Art
-        </span>
-      </strong>
-    `;
+ return `<strong style="white-space:nowrap;font-weight:700;"><span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span></strong>`;
   }
 
 
