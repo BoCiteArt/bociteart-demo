@@ -15103,6 +15103,63 @@ async function refreshPreview(){
       return false;
     }
   }
+
+  function getAdvertisingAccessContextV3(){
+
+    try{
+
+      if(
+        window.BoCiteArtRegistration &&
+        typeof window.BoCiteArtRegistration
+          .getCurrentAccessContext ===
+        "function"
+      ){
+
+        return window
+          .BoCiteArtRegistration
+          .getCurrentAccessContext();
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : contexte d'accès Publicité indisponible.",
+        error
+      );
+    }
+
+
+    return {
+      authenticated:false,
+      role:null,
+      permissions:[],
+      collaborator:null
+    };
+  }
+
+
+  function isAdvertisingOwnerV3(){
+
+    const context =
+      getAdvertisingAccessContextV3();
+
+    return (
+      context &&
+      context.role === "owner"
+    );
+  }
+
+
+  function isAdvertisingCollaboratorV3(){
+
+    const context =
+      getAdvertisingAccessContextV3();
+
+    return Boolean(
+      context &&
+      context.collaborator
+    );
+  }
  
   const validateBtn = $("validatePubV3");
   if(validateBtn){
@@ -15204,7 +15261,41 @@ const amount =
           title:(titleInput && titleInput.value.trim()) || current.name,
           text:(textInput && textInput.value.trim()) || "publicité locale bo’citéart",
           imageKey:current.imageKey || "",
-          status:type === "mairie" ? "quote_validated" : "demo_paid",
+         status:
+  isAdvertisingCollaboratorV3()
+    ? "waiting_owner_validation"
+    : (
+        type === "mairie"
+          ? "quote_validated"
+          : "demo_paid"
+      ),
+
+preparedByRole:
+  isAdvertisingCollaboratorV3()
+    ? "collaborator"
+    : "owner",
+
+preparedByCollaboratorId:
+  (
+    getAdvertisingAccessContextV3()
+      .collaborator &&
+    getAdvertisingAccessContextV3()
+      .collaborator.id
+  )
+    ? getAdvertisingAccessContextV3()
+        .collaborator.id
+    : null,
+
+ownerValidated:
+  isAdvertisingOwnerV3(),
+
+ownerValidatedAt:
+  isAdvertisingOwnerV3()
+    ? Date.now()
+    : null,
+
+version:
+  1,
           createdTs:Date.now(),
          amountHT:
   amount,
