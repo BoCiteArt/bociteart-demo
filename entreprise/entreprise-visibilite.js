@@ -531,13 +531,6 @@
       "function"
     ){
 
-    function openVisibilityModule(){
-
-    if(
-      typeof module.renderModulePage ===
-      "function"
-    ){
-
       module.renderModulePage(
 
         "Visibilité & communication",
@@ -574,6 +567,7 @@
 
       return;
     }
+
 
     alert(
       "L'espace Visibilité est momentanément indisponible."
