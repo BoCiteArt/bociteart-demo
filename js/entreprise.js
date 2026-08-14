@@ -3952,6 +3952,25 @@ function openEmployment(){
 
   function openEmploymentForm(){
 
+        let advertisingDraft = null;
+
+    try{
+
+      const rawDraft =
+        localStorage.getItem(
+          "bociteart_employment_ad_draft_v1"
+        );
+
+      advertisingDraft =
+        rawDraft
+          ? JSON.parse(rawDraft)
+          : null;
+
+    }catch(error){
+
+      advertisingDraft = null;
+    } 
+
     module.renderModal(
       "Publier une offre d’emploi",
       `
@@ -4165,6 +4184,154 @@ function openEmployment(){
       `
     );
 
+         window.setTimeout(
+      function(){
+
+        if(!advertisingDraft){
+          return;
+        }
+
+
+        const companyName =
+          document.getElementById(
+            "employmentCompanyName"
+          );
+
+        const companyId =
+          document.getElementById(
+            "employmentCompanyId"
+          );
+
+        const contactEmail =
+          document.getElementById(
+            "employmentContactEmail"
+          );
+
+        const jobTitle =
+          document.getElementById(
+            "employmentJobTitle"
+          );
+
+        const description =
+          document.getElementById(
+            "employmentDescription"
+          );
+
+        const city =
+          document.getElementById(
+            "employmentCity"
+          );
+
+
+        if(companyName){
+          companyName.value =
+            advertisingDraft.companyName || "";
+        }
+
+        if(companyId){
+          companyId.value =
+            advertisingDraft.companyId || "";
+        }
+
+        if(contactEmail){
+          contactEmail.value =
+            advertisingDraft.contactEmail || "";
+        }
+
+        if(jobTitle){
+          jobTitle.value =
+            advertisingDraft.jobTitle || "";
+        }
+
+        if(description){
+          description.value =
+            advertisingDraft.description || "";
+        }
+
+        if(city){
+          city.value =
+            advertisingDraft.city || "";
+        }
+
+
+        if(
+          advertisingDraft.prepaid === true
+        ){
+
+          const info =
+            document.createElement(
+              "div"
+            );
+
+          info.className =
+            "box";
+
+          info.style.background =
+            "#ffffff";
+
+          info.style.color =
+            "#111111";
+
+          info.style.fontSize =
+            "14px";
+
+          info.style.fontWeight =
+            "400";
+
+          info.style.lineHeight =
+            "1.5";
+
+          info.style.borderLeft =
+            "6px solid #2f5d46";
+
+          info.innerHTML = `
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:17px;
+                font-weight:700;
+                margin-bottom:8px;
+              ">
+              Publication Emploi déjà réglée
+            </div>
+
+            Les 50 € HT correspondant
+            à cette publication Emploi
+            sont déjà compris
+            dans votre commande publicitaire.
+
+            <br><br>
+
+            Vous pouvez compléter
+            ou corriger cette offre
+            avant sa publication.
+
+          `;
+
+
+          const firstField =
+            document.getElementById(
+              "employmentCompanyName"
+            );
+
+
+          if(
+            firstField &&
+            firstField.parentNode
+          ){
+
+            firstField.parentNode.insertBefore(
+              info,
+              firstField
+            );
+          }
+        }
+
+      },
+      0
+    );
+
     window.setTimeout(function(){
 
       const saveButton =
@@ -4210,6 +4377,33 @@ function formatEmploymentMoney(value){
 }
 
 function saveEmploymentOffer(){
+
+    let advertisingDraft = null;
+
+  try{
+
+    const rawDraft =
+      localStorage.getItem(
+        "bociteart_employment_ad_draft_v1"
+      );
+
+    advertisingDraft =
+      rawDraft
+        ? JSON.parse(rawDraft)
+        : null;
+
+  }catch(error){
+
+    advertisingDraft = null;
+  }
+
+
+  const employmentAlreadyPaid =
+    Boolean(
+      advertisingDraft &&
+      advertisingDraft.source === "advertising" &&
+      advertisingDraft.prepaid === true
+    ); 
 
   const companyName =
     String(
@@ -4302,8 +4496,10 @@ function saveEmploymentOffer(){
     return;
   }
 
-  const amountHT =
-    EMPLOYMENT_OFFER_PRICE_HT;
+   const amountHT =
+    employmentAlreadyPaid
+      ? 0
+      : EMPLOYMENT_OFFER_PRICE_HT;
 
   const vatRate =
     BOCITEART_VAT_RATE;
@@ -4334,7 +4530,10 @@ function saveEmploymentOffer(){
     description:description,
     contract:contract,
     city:city,
-    status:"en_attente_paiement",
+    status:
+    employmentAlreadyPaid
+    ? "publiee"
+    : "en_attente_paiement",
     amountHT:amountHT,
     vatRate:vatRate,
     amountVAT:amountVAT,
@@ -4345,9 +4544,183 @@ function saveEmploymentOffer(){
         .toLocaleString("fr-FR"),
     updatedAt:null,
     closedAt:null,
-    paidAt:null,
-    invoiceId:null
+   paidAt:
+  employmentAlreadyPaid
+    ? Date.now()
+    : null,
+
+invoiceId:
+  employmentAlreadyPaid
+    ? "PAID_WITH_ADVERTISING"
+    : null,
+
+paymentSource:
+  employmentAlreadyPaid
+    ? "advertising"
+    : "employment",
+
+employmentAlreadyPaid:
+  employmentAlreadyPaid
   };
+
+  /*
+    OFFRE EMPLOI DÉJÀ PAYÉE
+    DANS LA COMMANDE PUBLICITAIRE
+  */
+
+  if(employmentAlreadyPaid){
+
+    const data =
+      loadEmploymentData();
+
+
+    pendingOffer.status =
+      "publiee";
+
+    /*
+      Le service Emploi vaut toujours
+      50 € HT.
+
+      Il n'est simplement pas
+      encaissé une seconde fois ici.
+    */
+
+    pendingOffer.amountHT =
+      EMPLOYMENT_OFFER_PRICE_HT;
+
+    pendingOffer.vatRate =
+      BOCITEART_VAT_RATE;
+
+    pendingOffer.amountVAT =
+      Number(
+        (
+          EMPLOYMENT_OFFER_PRICE_HT *
+          BOCITEART_VAT_RATE /
+          100
+        ).toFixed(2)
+      );
+
+    pendingOffer.amountTTC =
+      Number(
+        (
+          pendingOffer.amountHT +
+          pendingOffer.amountVAT
+        ).toFixed(2)
+      );
+
+
+    pendingOffer.paidAt =
+      Date.now();
+
+    pendingOffer.paidAtFr =
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        );
+
+
+    pendingOffer.paymentMethod =
+      "Commande publicitaire Bo'CitéArt";
+
+    pendingOffer.paymentReference =
+      advertisingDraft &&
+      advertisingDraft.paymentReference
+        ? advertisingDraft.paymentReference
+        : "PUB-EMPLOI-" +
+          Date.now();
+
+
+    pendingOffer.paymentSource =
+      "advertising";
+
+    pendingOffer.employmentAlreadyPaid =
+      true;
+
+    pendingOffer.invoiceId =
+      advertisingDraft &&
+      advertisingDraft.invoiceId
+        ? advertisingDraft.invoiceId
+        : "INVOICE_PUBLICITE";
+
+    pendingOffer.invoiceNumber =
+      advertisingDraft &&
+      advertisingDraft.invoiceNumber
+        ? advertisingDraft.invoiceNumber
+        : "";
+
+
+    data.offers.push(
+      pendingOffer
+    );
+
+
+    saveEmploymentData(
+      data
+    );
+
+
+    /*
+      Le brouillon Publicité → Emploi
+      a maintenant été consommé.
+    */
+
+    try{
+
+      localStorage.removeItem(
+        "bociteart_employment_ad_draft_v1"
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : suppression du brouillon Emploi impossible.",
+        error
+      );
+    }
+
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "bociteart:employment-offer-published",
+        {
+          detail:{
+            offer:
+              pendingOffer,
+
+            source:
+              "advertising"
+          }
+        }
+      )
+    );
+
+
+    alert(
+      "L'offre d'emploi est publiée.\n\n" +
+      "Les 50 € HT du service Emploi étaient déjà compris " +
+      "dans votre commande publicitaire.\n\n" +
+      "Aucun second paiement n'a été demandé."
+    );
+
+
+    window.setTimeout(
+      function(){
+
+        openEmploymentOffers();
+
+      },
+      200
+    );
+
+
+    return;
+  }
+
+
+  /*
+    PARCOURS EMPLOI NORMAL :
+    paiement des 50 € HT.
+  */
 
   openEmploymentPayment(
     pendingOffer
