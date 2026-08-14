@@ -15028,6 +15028,81 @@ async function refreshPreview(){
 
     return total;
   }
+
+   /* =====================================================
+     PONT PUBLICITÉ → EMPLOI
+     ===================================================== */
+
+  function prepareEmploymentDraftV3(
+    current,
+    title,
+    description
+  ){
+
+    const draft = {
+
+      source:
+        "advertising",
+
+      prepaid:
+        true,
+
+      employmentPriceHT:
+        50,
+
+      companyName:
+        current.name || "",
+
+      companyId:
+        current.siret ||
+        current.siren ||
+        "",
+
+      contactEmail:
+        current.billing || "",
+
+      jobTitle:
+        title || "",
+
+      description:
+        description || "",
+
+      city:
+        current.city || "",
+
+      createdAt:
+        Date.now(),
+
+      createdAtFr:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+
+    };
+
+
+    try{
+
+      localStorage.setItem(
+        "bociteart_employment_ad_draft_v1",
+        JSON.stringify(
+          draft
+        )
+      );
+
+      return true;
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : brouillon Emploi non enregistré.",
+        error
+      );
+
+      return false;
+    }
+  }
  
   const validateBtn = $("validatePubV3");
   if(validateBtn){
@@ -15177,6 +15252,51 @@ billing:
       });
  
       saveBookings(bookings);
+
+             if(employmentDetected){
+
+          const firstDate =
+            selectedDates[0] || "";
+
+
+          const employmentTitleInput =
+            firstDate
+              ? document.querySelector(
+                  '.titleByDateV3[data-date="' +
+                  firstDate +
+                  '"]'
+                )
+              : null;
+
+
+          const employmentTextInput =
+            firstDate
+              ? document.querySelector(
+                  '.textByDateV3[data-date="' +
+                  firstDate +
+                  '"]'
+                )
+              : null;
+
+
+          prepareEmploymentDraftV3(
+
+            current,
+
+            employmentTitleInput
+              ? employmentTitleInput.value.trim()
+              : "",
+
+            employmentTextInput
+              ? employmentTextInput.value.trim()
+              : ""
+
+          );
+
+        }
+
+
+     
       renderTicker();
  
       alert("publicité enregistrée. si la date est aujourd’hui, elle apparaît dans le grand bandeau.");
