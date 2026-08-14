@@ -1294,7 +1294,7 @@
         Ouvertures de vos publicités :
         <strong>
           ${totalOpenings}
-        </strong>
+        </strong> 
 
         <br>
 
