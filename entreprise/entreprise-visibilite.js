@@ -1347,6 +1347,8 @@
 
       </div>
 
+      `;
+
     const html = `
 
       <div
