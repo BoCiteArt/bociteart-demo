@@ -11449,24 +11449,564 @@ function openEmployment(){
      OUVERTURE DU TABLEAU DE DIRECTION
      ======================================================= */
 
-  function openDirection(){
+  /* =======================================================
+     PUBLICITÉS À VALIDER
+     RESPONSABLE UNIQUEMENT
+     ======================================================= */
+
+  function loadPendingAdvertisingValidation(){
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          "bociteart_pub_v3_bookings"
+        );
+
+      const bookings =
+        raw
+          ? JSON.parse(raw)
+          : {};
+
+      const pending = [];
+
+      Object.keys(
+        bookings || {}
+      )
+      .forEach(function(monthKey){
+
+        const month =
+          bookings[monthKey];
+
+        if(
+          !month ||
+          typeof month !== "object"
+        ){
+          return;
+        }
+
+        Object.keys(month)
+          .forEach(function(dayKey){
+
+            const list =
+              Array.isArray(
+                month[dayKey]
+              )
+                ? month[dayKey]
+                : [];
+
+            list.forEach(
+              function(ad,index){
+
+                if(
+                  ad &&
+                  ad.status ===
+                    "waiting_owner_validation"
+                ){
+
+                  pending.push({
+
+                    monthKey:
+                      monthKey,
+
+                    dayKey:
+                      dayKey,
+
+                    index:
+                      index,
+
+                    ad:
+                      ad
+
+                  });
+                }
+
+              }
+            );
+
+          });
+
+      });
+
+      return pending;
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : lecture des publicités à valider impossible.",
+        error
+      );
+
+      return [];
+    }
+  }
+
+
+  function getAdvertisingValidationBoxHtml(){
+
+    const pending =
+      loadPendingAdvertisingValidation();
+
+    if(!pending.length){
+      return "";
+    }
+
+    return `
+
+      <div
+        class="box"
+        style="
+          margin-top:12px;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+          border-left:6px solid #b00020;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Publicités à valider
+        </div>
+
+        ${pending.length}
+        publicité(s)
+        préparée(s) par un collaborateur
+        attend(ent) votre validation.
+
+        <button
+          id="directionAdvertisingValidationBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:10px;
+            background:#ffffff !important;
+            color:#111111 !important;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Voir les publicités à valider
+        </button>
+
+      </div>
+
+    `;
+  }
+
+
+  function openAdvertisingValidation(){
+
+    const pending =
+      loadPendingAdvertisingValidation();
+
+
+    if(!pending.length){
+
+      alert(
+        "Aucune publicité n'attend actuellement votre validation."
+      );
+
+      return;
+    }
+
+
+    const html =
+      pending
+        .map(function(item){
+
+          const ad =
+            item.ad || {};
+
+          return `
+
+            <div
+              class="box"
+              style="
+                background:#ffffff;
+                color:#111111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.5;
+                border-left:6px solid #2f5d46;
+              ">
+
+              <div
+                style="
+                  color:#2f5d46;
+                  font-size:17px;
+                  font-weight:700;
+                  margin-bottom:8px;
+                ">
+                ${module.safeEscape(
+                  ad.title ||
+                  ad.entityName ||
+                  "Publicité"
+                )}
+              </div>
+
+              <div>
+                ${module.safeEscape(
+                  ad.text || ""
+                )}
+              </div>
+
+              <div
+                style="
+                  margin-top:8px;
+                ">
+                Date prévue :
+                ${module.safeEscape(
+                  ad.date || ""
+                )}
+              </div>
+
+              <div
+                style="
+                  margin-top:6px;
+                ">
+                Préparée par :
+                collaborateur
+              </div>
+
+              <button
+                class="choiceBtn advertisingApproveBtn"
+                type="button"
+                data-month="${module.safeEscape(
+                  item.monthKey
+                )}"
+                data-day="${module.safeEscape(
+                  item.dayKey
+                )}"
+                data-index="${item.index}"
+                style="
+                  width:100%;
+                  margin-top:10px;
+                  background:#ffffff !important;
+                  color:#111111 !important;
+                ">
+                Valider cette publicité
+              </button>
+
+              <button
+                class="choiceBtn advertisingRevisionBtn"
+                type="button"
+                data-month="${module.safeEscape(
+                  item.monthKey
+                )}"
+                data-day="${module.safeEscape(
+                  item.dayKey
+                )}"
+                data-index="${item.index}"
+                style="
+                  width:100%;
+                  margin-top:8px;
+                  background:#ffffff !important;
+                  color:#111111 !important;
+                ">
+                Demander une modification
+              </button>
+
+              <button
+                class="choiceBtn advertisingRejectBtn"
+                type="button"
+                data-month="${module.safeEscape(
+                  item.monthKey
+                )}"
+                data-day="${module.safeEscape(
+                  item.dayKey
+                )}"
+                data-index="${item.index}"
+                style="
+                  width:100%;
+                  margin-top:8px;
+                  background:#ffffff !important;
+                  color:#111111 !important;
+                ">
+                Refuser
+              </button>
+
+            </div>
+
+          `;
+
+        })
+        .join("");
+
 
     module.renderModal(
-      "Tableau de Direction",
-      getDirectionHtml()
+      "Publicités à valider",
+      html
     );
 
 
     window.setTimeout(
-      function(){
-
-        bindDirection();
-
-      },
+      bindAdvertisingValidationButtons,
       0
     );
   }
 
+
+  function updateAdvertisingValidation(
+    monthKey,
+    dayKey,
+    index,
+    action
+  ){
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          "bociteart_pub_v3_bookings"
+        );
+
+      const bookings =
+        raw
+          ? JSON.parse(raw)
+          : {};
+
+
+      if(
+        !bookings[monthKey] ||
+        !Array.isArray(
+          bookings[monthKey][dayKey]
+        ) ||
+        !bookings[monthKey][dayKey][index]
+      ){
+
+        alert(
+          "Cette publicité est introuvable."
+        );
+
+        return;
+      }
+
+
+      const ad =
+        bookings[monthKey][dayKey][index];
+
+
+      if(action === "approve"){
+
+        ad.status =
+          "demo_paid";
+
+        ad.ownerValidated =
+          true;
+
+        ad.ownerValidatedAt =
+          Date.now();
+
+        ad.ownerValidatedAtFr =
+          new Date()
+            .toLocaleString(
+              "fr-FR"
+            );
+
+        ad.validatedVersion =
+          Number(
+            ad.version || 1
+          );
+
+      }
+
+
+      if(action === "revision"){
+
+        ad.status =
+          "revision_requested";
+
+        ad.ownerValidated =
+          false;
+
+        ad.ownerValidatedAt =
+          null;
+
+      }
+
+
+      if(action === "reject"){
+
+        ad.status =
+          "rejected";
+
+        ad.ownerValidated =
+          false;
+
+        ad.ownerValidatedAt =
+          null;
+
+      }
+
+
+      localStorage.setItem(
+        "bociteart_pub_v3_bookings",
+        JSON.stringify(
+          bookings
+        )
+      );
+
+
+      if(
+        typeof window.refreshPubTickerV3 ===
+        "function"
+      ){
+
+        window.refreshPubTickerV3();
+      }
+
+
+      if(action === "approve"){
+
+        alert(
+          "La publicité est validée."
+        );
+
+      }else if(action === "revision"){
+
+        alert(
+          "La publicité est renvoyée au collaborateur pour modification."
+        );
+
+      }else{
+
+        alert(
+          "La publicité est refusée."
+        );
+      }
+
+
+      openAdvertisingValidation();
+
+    }catch(error){
+
+      console.error(
+        "Bo'CitéArt : validation publicité impossible.",
+        error
+      );
+
+      alert(
+        "La publicité n'a pas pu être mise à jour."
+      );
+    }
+  }
+
+
+  function bindAdvertisingValidationButtons(){
+
+    document
+      .querySelectorAll(
+        ".advertisingApproveBtn," +
+        ".advertisingRevisionBtn," +
+        ".advertisingRejectBtn"
+      )
+      .forEach(function(button){
+
+        button.onclick =
+          function(){
+
+            const monthKey =
+              button.getAttribute(
+                "data-month"
+              );
+
+            const dayKey =
+              button.getAttribute(
+                "data-day"
+              );
+
+            const index =
+              Number(
+                button.getAttribute(
+                  "data-index"
+                )
+              );
+
+
+            if(
+              button.classList.contains(
+                "advertisingApproveBtn"
+              )
+            ){
+
+              updateAdvertisingValidation(
+                monthKey,
+                dayKey,
+                index,
+                "approve"
+              );
+
+              return;
+            }
+
+
+            if(
+              button.classList.contains(
+                "advertisingRevisionBtn"
+              )
+            ){
+
+              updateAdvertisingValidation(
+                monthKey,
+                dayKey,
+                index,
+                "revision"
+              );
+
+              return;
+            }
+
+
+            updateAdvertisingValidation(
+              monthKey,
+              dayKey,
+              index,
+              "reject"
+            );
+
+          };
+
+      });
+  }
+   
+function openDirection(){
+
+  module.renderModal(
+    "Tableau de Direction",
+
+    getDirectionHtml() +
+    getAdvertisingValidationBoxHtml()
+
+  );
+
+
+  window.setTimeout(
+    function(){
+
+      bindDirection();
+
+      const validationButton =
+        getElement(
+          "directionAdvertisingValidationBtn"
+        );
+
+      if(validationButton){
+
+        validationButton.onclick =
+          openAdvertisingValidation;
+      }
+
+    },
+    0
+  );
+}
 
   module.registerScreen(
     "direction",
