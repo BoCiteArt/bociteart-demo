@@ -43152,9 +43152,9 @@ if(!module.collaborators){
      ÉCRAN RESPONSABLE
      ======================================================= */
 
-  function openCollaboratorManagement(){
+function openCollaboratorManagement(){
 
-      if(
+  if(
     !module.collaborators
   ){
 
@@ -43165,118 +43165,119 @@ if(!module.collaborators){
     return;
   }
 
-    const structureId =
-      getCurrentStructureId();
+
+  const structureId =
+    getCurrentStructureId();
 
 
-    const collaborator1 =
-      getCollaboratorBySlot(
-        structureId,
-        1
-      );
+  const collaborator1 =
+    getCollaboratorBySlot(
+      structureId,
+      1
+    );
 
 
-    const collaborator2 =
-      getCollaboratorBySlot(
-        structureId,
-        2
-      );
+  const collaborator2 =
+    getCollaboratorBySlot(
+      structureId,
+      2
+    );
 
 
-    const html = `
+  const html = `
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+        border-left:6px solid #2f5d46;
+      ">
 
       <div
-        class="box"
         style="
-          background:#ffffff;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:800;
+        ">
+        Mes collaborateurs
+      </div>
+
+      <div
+        style="
+          margin-top:8px;
           color:#111111;
           font-size:14px;
           font-weight:400;
-          line-height:1.5;
-          border-left:6px solid #2f5d46;
         ">
 
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:800;
-          ">
-          Mes collaborateurs
-        </div>
+        Vous pouvez créer jusqu'à
+        deux accès collaborateurs.
 
-        <div
-          style="
-            margin-top:8px;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-          ">
+        <br><br>
 
-          Vous pouvez créer jusqu'à
-          deux accès collaborateurs.
+        Choisissez uniquement
+        les fonctions que vous souhaitez
+        leur confier.
 
-          <br><br>
+        <br><br>
 
-          Choisissez uniquement
-          les fonctions que vous souhaitez
-          leur confier.
-
-          <br><br>
-
-          Chaque collaborateur accède
-          à son propre espace privé.
-          Il n'accède pas à votre
-          Tableau de Direction.
-
-        </div>
+        Chaque collaborateur accède
+        à son propre espace privé.
+        Il n'accède pas à votre
+        Tableau de Direction.
 
       </div>
 
-
-      ${collaboratorCardHtml(
-        collaborator1,
-        1
-      )}
+    </div>
 
 
-      ${collaboratorCardHtml(
-        collaborator2,
-        2
-      )}
+    ${collaboratorCardHtml(
+      collaborator1,
+      1
+    )}
 
-    `;
 
-         if(
-      typeof module.renderModal ===
-      "function"
-    ){
+    ${collaboratorCardHtml(
+      collaborator2,
+      2
+    )}
 
-      module.renderModal(
-        "Gestion des collaborateurs",
-        html
-      );
+  `;
 
-      setTimeout(
-        function(){
 
-          bindCollaboratorManagement(
-            structureId
-          );
+  if(
+    typeof module.renderModal ===
+    "function"
+  ){
 
-        },
-        0
-      );
-
-      return;
-    }
-
-    alert(
-      "L'espace collaborateurs est momentanément indisponible."
+    module.renderModal(
+      "Gestion des collaborateurs",
+      html
     );
+
+    window.setTimeout(
+      function(){
+
+        bindCollaboratorManagement(
+          structureId
+        );
+
+      },
+      0
+    );
+
+    return;
   }
 
 
+  alert(
+    "L'espace collaborateurs est momentanément indisponible."
+  );
+}
   /* =======================================================
      LECTURE DU FORMULAIRE
      ======================================================= */
