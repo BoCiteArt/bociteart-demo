@@ -14231,14 +14231,237 @@ function openProfile(type){
 </button>
     </div>
  
-    <div class="box">
-      <strong>2. pack publicitaire</strong>
-      <select class="miniField" id="packPubV3">
-        <option value="1">1 publicité — 50 € ht</option>
-        <option value="5">pack 5 publicités — 200 € ht</option>
-      </select>
-      <div class="muted" id="packHelpV3" style="margin-top:8px;">vous pouvez sélectionner 1 date.</div>
+   <div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+  ">
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:10px;
+    ">
+    2. Quel est votre objectif ?
+  </div>
+
+  <select
+    class="miniField"
+    id="campaignGoalV3"
+    style="
+      background:#ffffff;
+      color:#111111;
+    ">
+
+    <option value="visibility">
+      Faire connaître mon entreprise
+    </option>
+
+    <option value="store">
+      Faire venir des clients
+    </option>
+
+    <option value="offer">
+      Faire connaître une offre
+    </option>
+
+    <option value="product">
+      Présenter un produit ou un service
+    </option>
+
+    <option value="contact">
+      Obtenir des appels ou des contacts
+    </option>
+
+    <option value="quote">
+      Obtenir des demandes de devis
+    </option>
+
+    <option value="booking">
+      Obtenir des réservations
+    </option>
+
+    <option value="employment">
+      Recruter
+    </option>
+
+  </select>
+
+</div>
+
+
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+  ">
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:10px;
+    ">
+    3. Composez votre publicité
+  </div>
+
+  <label
+    style="
+      display:block;
+      margin-bottom:10px;
+    ">
+
+    <input
+      id="interactiveShowcaseV3"
+      type="checkbox">
+
+    Vitrine interactive complète
+    <strong>+15 € HT</strong>
+
+  </label>
+
+
+  <div
+    style="
+      margin-top:12px;
+      margin-bottom:6px;
+    ">
+    Photos de votre vitrine
+  </div>
+
+  <select
+    class="miniField"
+    id="photoPackV3"
+    style="
+      background:#ffffff;
+      color:#111111;
+    ">
+
+    <option value="3">
+      Jusqu'à 3 photos — inclus
+    </option>
+
+    <option value="6">
+      Jusqu'à 6 photos — +6 € HT
+    </option>
+
+    <option value="10">
+      Jusqu'à 10 photos — +12 € HT
+    </option>
+
+  </select>
+
+
+  <div
+    id="employmentPriceInfoV3"
+    style="
+      display:none;
+      margin-top:12px;
+      padding:10px;
+      background:#ffffff;
+      border-left:6px solid #2f5d46;
+    ">
+
+    Cette communication comprend
+    une recherche de candidat.
+
+    <br><br>
+
+    Publication dans l'espace Emploi :
+    <strong>+50 € HT</strong>.
+
+  </div>
+
+</div>
+
+
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+  ">
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:10px;
+    ">
+    4. Votre réservation
+  </div>
+
+  <select
+    class="miniField"
+    id="packPubV3"
+    style="
+      background:#ffffff;
+      color:#111111;
+    ">
+
+    <option value="1">
+      1 publicité — 50 € HT
+    </option>
+
+    <option value="5">
+      Pack 5 publicités — 200 € HT
+    </option>
+
+  </select>
+
+  <div
+    id="packHelpV3"
+    style="
+      margin-top:8px;
+      font-size:14px;
+      font-weight:400;
+    ">
+    Vous pouvez sélectionner 1 date.
+  </div>
+
+
+  <div
+    style="
+      margin-top:14px;
+      padding-top:12px;
+      border-top:1px solid #dddddd;
+    ">
+
+    <div
+      style="
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+      ">
+      Total actuel
     </div>
+
+    <div
+      id="pubTotalV3"
+      style="
+        margin-top:6px;
+        color:#111111;
+        font-size:17px;
+        font-weight:700;
+      ">
+      50 € HT
+    </div>
+
+  </div>
+
+</div>
  
     <div class="box">
       <strong>3. choisir les dates</strong>
@@ -14395,10 +14618,15 @@ function openProfile(type){
     )
     .forEach(function(field){
 
-      field.addEventListener(
-        "input",
-        refreshPreview
-      );
+     field.addEventListener(
+  "input",
+  function(){
+
+    refreshPreview();
+    calculatePubTotalV3();
+
+  }
+);
 
     });
 
@@ -14645,6 +14873,161 @@ async function refreshPreview(){
       alert("fiche enregistrée.");
     };
   }
+
+   function detectEmploymentIntentV3(){
+
+    const goal =
+      $("campaignGoalV3")
+        ? $("campaignGoalV3").value
+        : "";
+
+    const employmentDetected =
+  detectEmploymentIntentV3();
+
+    if(goal === employmentDetected){
+      return true;
+    }
+
+    let content = "";
+
+    document
+      .querySelectorAll(
+        ".titleByDateV3," +
+        ".textByDateV3"
+      )
+      .forEach(function(field){
+
+        content +=
+          " " +
+          String(
+            field.value || ""
+          )
+          .toLowerCase();
+
+      });
+
+    content =
+      content
+        .replace(/[’']/g,"'")
+        .replace(/\s+/g," ")
+        .trim();
+
+    if(!content){
+      return false;
+    }
+
+    const signals = [
+      "nous recrutons",
+      "recrutement",
+      "recrute",
+      "poste à pourvoir",
+      "poste a pourvoir",
+      "offre d'emploi",
+      "offre emploi",
+      "recherche candidat",
+      "recherche candidate",
+      "recherche salarié",
+      "recherche salarie",
+      "recherche collaborateur",
+      "recherche collaboratrice",
+      "rejoignez notre équipe",
+      "rejoignez notre equipe",
+      "envoyez votre cv",
+      "envoyer votre cv",
+      "déposez votre cv",
+      "deposez votre cv",
+      "candidature",
+      "cdi",
+      "cdd",
+      "alternance",
+      "alternant",
+      "alternante",
+      "apprentissage",
+      "apprenti",
+      "apprentie",
+      "stagiaire"
+    ];
+
+    return signals.some(
+      function(signal){
+
+        return content.includes(
+          signal
+        );
+
+      }
+    );
+  }
+
+
+  function calculatePubTotalV3(){
+
+    const pack =
+      Number(
+        $("packPubV3")
+          ? $("packPubV3").value
+          : 1
+      );
+
+    const showcase =
+      Boolean(
+        $("interactiveShowcaseV3") &&
+        $("interactiveShowcaseV3").checked
+      );
+
+    const photoPack =
+      Number(
+        $("photoPackV3")
+          ? $("photoPackV3").value
+          : 3
+      );
+
+    const employmentDetected =
+      detectEmploymentIntentV3();
+
+    let total =
+      pack === 5
+        ? 200
+        : 50;
+
+    if(showcase){
+      total += 15;
+    }
+
+    if(photoPack === 6){
+      total += 6;
+    }
+
+    if(photoPack === 10){
+      total += 12;
+    }
+
+    if(employmentDetected){
+      total += 50;
+    }
+
+    const employmentInfo =
+      $("employmentPriceInfoV3");
+
+    if(employmentInfo){
+
+      employmentInfo.style.display =
+        employmentDetected
+          ? "block"
+          : "none";
+    }
+
+    const totalElement =
+      $("pubTotalV3");
+
+    if(totalElement){
+
+      totalElement.textContent =
+        total + " € HT";
+    }
+
+    return total;
+  }
  
   const validateBtn = $("validatePubV3");
   if(validateBtn){
@@ -14666,15 +15049,70 @@ async function refreshPreview(){
         return;
       }
  
-      const pack = Number($("packPubV3").value || 1);
-      const amount = pack === 5 ? 200 : 50;
+    const pack =
+  Number(
+    $("packPubV3")
+      ? $("packPubV3").value
+      : 1
+  );
+
+
+const goal =
+  $("campaignGoalV3")
+    ? $("campaignGoalV3").value
+    : "visibility";
+
+    const employmentDetected =
+  detectEmploymentIntentV3(); 
+
+
+const showcase =
+  Boolean(
+    $("interactiveShowcaseV3") &&
+    $("interactiveShowcaseV3").checked
+  );
+
+
+const photoPack =
+  Number(
+    $("photoPackV3")
+      ? $("photoPackV3").value
+      : 3
+  );
+
+
+const amount =
+  calculatePubTotalV3();
  
-      const ok = confirm(
-        "simulation paiement\n\n" +
-        "montant : " + amount + " € ht\n\n" +
-        "Confirmer le paiement et la réservation ferme ?\n\n" +
-        "Aucun remboursement ne sera dû, sauf erreur technique imputable à Bo’CitéArt ou impossibilité totale de diffusion."
-      );
+    const ok = confirm(
+  "Récapitulatif de votre réservation\n\n" +
+  "Montant total : " +
+  amount +
+  " € HT\n\n" +
+  (
+    employmentDetected 
+      ? "Publication Emploi incluse : +50 € HT\n\n"
+      : ""
+  ) +
+  (
+    showcase
+      ? "Vitrine interactive : +15 € HT\n\n"
+      : ""
+  ) +
+  (
+    photoPack === 6
+      ? "Jusqu'à 6 photos : +6 € HT\n\n"
+      : ""
+  ) +
+  (
+    photoPack === 10
+      ? "Jusqu'à 10 photos : +12 € HT\n\n"
+      : ""
+  ) +
+  "Confirmer le paiement et la réservation ferme ?\n\n" +
+  "Après validation, la réservation est ferme. " +
+  "La publicité pourra encore être corrigée pendant le délai prévu avant son verrouillage."
+); 
  
       if(!ok) return;
  
@@ -14693,9 +15131,45 @@ async function refreshPreview(){
           imageKey:current.imageKey || "",
           status:type === "mairie" ? "quote_validated" : "demo_paid",
           createdTs:Date.now(),
-          amountHT:amount,
-          pack:pack,
-          billing:current.billing,
+         amountHT:
+  amount,
+
+pack:
+  pack,
+
+campaignGoal:
+  goal,
+
+interactiveShowcase:
+  showcase,
+
+photoPack:
+  photoPack,
+
+employmentIncluded:
+  employmentDetected,
+
+employmentPriceHT:
+  employmentDetected
+    ? 50
+    : 0,
+
+showcasePriceHT:
+  showcase
+    ? 15
+    : 0,
+
+photoPriceHT:
+  photoPack === 6
+    ? 6
+    : (
+        photoPack === 10
+          ? 12
+          : 0
+      ),
+
+billing:
+  current.billing,
           siret:current.siret,
           siren:current.siren,
           tva:current.tva
@@ -14782,62 +15256,133 @@ async function refreshPreview(){
  
 window.openTicker = function(){
 
-  openModal(
-    "Publicités & visibilité",
-    `
-      <div class="box">
-        <strong>
-          Calendrier des communications locales
-        </strong>
+openModal(
+  "Publicités & visibilité",
+  `
 
-        <br>
-
-        Chaque communication peut intégrer
-        un logo,
-        une image
-        et un texte court.
-      </div>
-
-      <div class="choiceGrid">
-
-        <button
-          class="choiceBtn"
-          id="openPubCommerceV3"
-          type="button">
-          Diffuser une offre commerçant
-        </button>
-
-        <button
-          class="choiceBtn"
-          id="openPubEntrepriseV3"
-          type="button">
-          Espace entreprises
-        </button>
-
-        <button
-          class="choiceBtn"
-          id="openPubMairieV3"
-          type="button">
-          Informer les habitants
-        </button>
-
-        <button
-          class="choiceBtn"
-          id="openPubAssoV3"
-          type="button">
-          Annoncer un événement associatif
-        </button>
-
-      </div>
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      ">
 
       <div
-        id="pubZoneV3"
         style="
-          margin-top:12px;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
         ">
+        Calendrier des communications locales
       </div>
-    `
-  );
+
+      Chaque communication peut intégrer
+      un logo,
+      une image
+      et un texte court.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Codes de démonstration
+      </div>
+
+      Commerçant : com1234<br>
+      Entreprise : ent1234<br>
+      Mairie : mairie1234<br>
+      Association : asso1234
+
+    </div>
+
+
+    <div
+      class="choiceGrid">
+
+      <button
+        class="choiceBtn"
+        id="openPubCommerceV3"
+        type="button"
+        style="
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Diffuser une offre commerçant
+      </button>
+
+      <button
+        class="choiceBtn"
+        id="openPubEntrepriseV3"
+        type="button"
+        style="
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Espace entreprises
+      </button>
+
+      <button
+        class="choiceBtn"
+        id="openPubMairieV3"
+        type="button"
+        style="
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Informer les habitants
+      </button>
+
+      <button
+        class="choiceBtn"
+        id="openPubAssoV3"
+        type="button"
+        style="
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Annoncer un événement associatif
+      </button>
+
+    </div>
+
+
+    <div
+      id="pubZoneV3"
+      style="
+        margin-top:12px;
+      ">
+    </div>
+
+  `
+);
 
 
   setTimeout(function(){
@@ -14852,15 +15397,15 @@ window.openTicker = function(){
       };
 
 
-      const code =
-        prompt(
-          "Veuillez saisir votre code d'accès."
-        );
-
-
-      if(!code){
-        return;
-      }
+     const code =
+  prompt(
+    "Veuillez saisir votre code d'accès.\n\n" +
+    "Commerçant : com1234\n" +
+    "Entreprise : ent1234\n" +
+    "Mairie : mairie1234\n" +
+    "Association : asso1234\n\n" +
+    "Votre code :"
+  );
 
 
       const cleanCode =
