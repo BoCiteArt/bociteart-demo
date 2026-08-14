@@ -43247,11 +43247,7 @@ if(!module.collaborators){
 
     `;
 
-
-    if(
-      typeof module.renderModulePage ===
-  
-    if(
+         if(
       typeof module.renderModal ===
       "function"
     ){
@@ -43260,7 +43256,6 @@ if(!module.collaborators){
         "Gestion des collaborateurs",
         html
       );
-
 
       setTimeout(
         function(){
@@ -43275,7 +43270,6 @@ if(!module.collaborators){
 
       return;
     }
-
 
     alert(
       "L'espace collaborateurs est momentanément indisponible."
