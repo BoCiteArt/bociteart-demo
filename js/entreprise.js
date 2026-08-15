@@ -7531,9 +7531,9 @@ function openEmploymentReplyForm(applicationId){
       <label
         style="
           display:block;
-          color:#2f5d46;
-          font-size:17px;
-          font-weight400;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
           margin-top:10px;
         ">
         Document facultatif
@@ -33148,7 +33148,9 @@ function addUniversalBackButton(
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
         ">
         Forme juridique
       </label>
@@ -33198,7 +33200,9 @@ function addUniversalBackButton(
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
         ">
         SIRET ou SIREN
       </label>
@@ -33216,7 +33220,9 @@ function addUniversalBackButton(
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+ color:#111111;
+font-size:14px;
+font-weight:400;
         ">
         Activité principale
       </label>
@@ -33234,7 +33240,9 @@ function addUniversalBackButton(
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
         ">
         Adresse
       </label>
@@ -33279,7 +33287,9 @@ function addUniversalBackButton(
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
         ">
         Nom du responsable
       </label>
@@ -33297,7 +33307,9 @@ function addUniversalBackButton(
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
         ">
         Adresse e-mail professionnelle
       </label>
@@ -33315,7 +33327,9 @@ function addUniversalBackButton(
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
         ">
         Téléphone
       </label>
@@ -33333,7 +33347,9 @@ function addUniversalBackButton(
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
         ">
         Nombre de salariés
       </label>
@@ -33352,7 +33368,9 @@ function addUniversalBackButton(
         style="
           display:block;
           margin-top:10px;
-          font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
         ">
         Site Internet
       </label>
