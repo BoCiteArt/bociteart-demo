@@ -984,9 +984,9 @@
 
       .bociteAnnuaireTitle{
         color:#2f5d46;
-        font-size:16px;
+        font-size:17px;
         line-height:1.25;
-        font-weight:800;
+        font-weight:700;
       }
 
       .bociteAnnuaireText{
@@ -1006,7 +1006,7 @@
       .bociteAnnuaireLogo{
         display:inline;
         color:#2f5d46;
-        font-weight:900;
+        font-weight:700;
         font-size:inherit;
         line-height:inherit;
         white-space:nowrap;
@@ -4091,10 +4091,55 @@
           loading:
             false,
 
-          rows:
-            safeArray(
-              result.rows
-            ),
+         rows:
+  safeArray(
+    result.rows
+  )
+  .filter(
+    function(entity){
+
+      const selectedFilter =
+        String(
+          request.publicFilter ||
+          "all"
+        );
+
+      if(
+        selectedFilter ===
+        "partner"
+      ){
+
+        return (
+          entity &&
+          entity.partner === true
+        );
+      }
+
+      if(
+        selectedFilter ===
+        "official"
+      ){
+
+        return !!(
+          entity &&
+          (
+            String(
+              entity.sourceType || ""
+            ).startsWith(
+              "official"
+            ) ||
+            String(
+              entity.source || ""
+            ).includes(
+              "données publiques"
+            )
+          )
+        );
+      }
+
+      return true;
+    }
+  ),
 
           source:
             result.source,
@@ -4615,8 +4660,8 @@
                   style="
                     display:block;
                     color:#2f5d46;
-                    font-size:16px;
-                    font-weight:800;
+                    font-size:17px;
+                    font-weight:700;
                   ">
                   ${escapeHtml(
                     category.title
@@ -4770,6 +4815,30 @@
             padding:10px;
           "
         >
+        
+<select
+  id="annuairePublicFilter"
+  class="bociteAnnuaireSelect"
+  style="
+    width:100%;
+    margin-top:8px;
+    background:#ffffff !important;
+    color:#111111 !important;
+  ">
+
+  <option value="all">
+    Toutes les entreprises
+  </option>
+
+  <option value="partner">
+    Partenaires Bo'CitéArt
+  </option>
+
+  <option value="official">
+    Référencement officiel
+  </option>
+
+</select>
 
         <div
           class="bociteAnnuaireSmall"
@@ -4917,6 +4986,11 @@
         "annuaireSearchBtn"
       );
 
+     const publicFilter =
+  getElement(
+    "annuairePublicFilter"
+  );
+
     function launchPublicSearch(){
 
       const query =
@@ -4935,6 +5009,13 @@
         return;
       }
 
+const selectedFilter =
+  publicFilter
+    ? String(
+        publicFilter.value || "all"
+      )
+    : "all"; 
+       
       runSearch({
 
         query:
@@ -4960,6 +5041,37 @@
 
         country:
           "France"
+
+         runSearch({
+
+  query:
+    query,
+
+  trade:
+    "",
+
+  category:
+    "",
+
+  commune:
+    getCurrentCommune(),
+
+  zone:
+    "commune",
+
+  professional:
+    false,
+
+  countryCode:
+    "FR",
+
+  country:
+    "France",
+
+  publicFilter:
+    selectedFilter
+
+});
 
       });
     }
@@ -5897,36 +6009,80 @@
     /*
      * Priorité au formulaire Emploi officiel.
      */
-    if(
-      typeof module
-        .openApplicationForm ===
-      "function"
-    ){
+  if(
+  typeof module
+    .openApplicationForm ===
+  "function"
+){
 
-      module.openApplicationForm({
+  /*
+   * Le formulaire Emploi actuel
+   * attend un identifiant d'offre
+   * lorsqu'un argument lui est transmis.
+   *
+   * Pour une candidature spontanée,
+   * on l'ouvre donc sans offre,
+   * puis on préremplit l'entreprise
+   * et le métier sélectionnés
+   * depuis l'annuaire.
+   */
 
-        companyId:
-          entity.id,
+  module.openApplicationForm();
 
-        companyName:
-          entity.name,
+  window.setTimeout(
+    function(){
 
-        companyCommune:
-          entity.commune,
+      const companyInput =
+        document.getElementById(
+          "applicationCompanyName"
+        );
 
-        trade:
-          trade ||
-          entity.trade ||
-          entity.activity ||
-          "",
+      const positionInput =
+        document.getElementById(
+          "applicationPosition"
+        );
 
-        source:
-          "annuaire"
+      const messageInput =
+        document.getElementById(
+          "applicationCandidateMessage"
+        );
 
-      });
+      const selectedTrade =
+        trade ||
+        entity.trade ||
+        entity.activity ||
+        "";
 
-      return;
-    }
+      if(companyInput){
+
+        companyInput.value =
+          entity.name || "";
+      }
+
+      if(positionInput){
+
+        positionInput.value =
+          selectedTrade;
+      }
+
+      if(messageInput){
+
+        messageInput.value =
+          "Votre entreprise a retenu toute mon attention.\n" +
+          "Je souhaite vous proposer ma candidature pour un poste de " +
+          (
+            selectedTrade ||
+            "..."
+          ) +
+          ".";
+      }
+
+    },
+    0
+  );
+
+  return;
+}
 
     if(
       typeof module
@@ -6624,6 +6780,16 @@
             : ""
         }
 
+<button
+  id="annuaireRequestQuoteBtn"
+  class="
+    choiceBtn
+    bociteAnnuaireWhiteButton
+  "
+  type="button">
+  Demander un devis
+</button>
+
       </div>
 
       <button
@@ -7060,6 +7226,22 @@
               );
             };
         }
+
+         const quoteButton =
+  getElement(
+    "annuaireRequestQuoteBtn"
+  );
+
+if(quoteButton){
+
+  quoteButton.onclick =
+    function(){
+
+      alert(
+        "La demande de devis sera transmise depuis le compte sécurisé de l’utilisateur."
+      );
+    };
+}
 
         bindBackButton();
       }
