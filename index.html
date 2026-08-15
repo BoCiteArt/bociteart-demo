@@ -17994,249 +17994,714 @@ const couponData = {
     );
   }
  
-  const validateBtn = $("validatePubV3");
+    const validateBtn =
+    $("validatePubV3");
+
+
   if(validateBtn){
-    validateBtn.onclick = function(){
-      const current = getProfile(type);
- 
-      if(!current.name){
-        alert("enregistrez d’abord votre fiche.");
-        return;
-      }
- 
-      if(!current.billing){
-        alert("renseignez l’email de facturation.");
-        return;
-      }
- 
-      if(!selectedDates.length){
-        alert("sélectionnez une date.");
-        return;
-      }
- 
-    const pack =
-  Number(
-    $("packPubV3")
-      ? $("packPubV3").value
-      : 1
-  );
 
+    validateBtn.onclick =
+      function(){
 
-const goal =
-  $("campaignGoalV3")
-    ? $("campaignGoalV3").value
-    : "visibility";
-
-    const employmentDetected =
-  detectEmploymentIntentV3(); 
-
-
-const showcase =
-  Boolean(
-    $("interactiveShowcaseV3") &&
-    $("interactiveShowcaseV3").checked
-  );
-
-
-const photoPack =
-  Number(
-    $("photoPackV3")
-      ? $("photoPackV3").value
-      : 3
-  );
-
-
-const amount =
-  calculatePubTotalV3();
- 
-    const ok = confirm(
-  "Récapitulatif de votre réservation\n\n" +
-  "Montant total : " +
-  amount +
-  " € HT\n\n" +
-  (
-    employmentDetected 
-      ? "Publication Emploi incluse : +50 € HT\n\n"
-      : ""
-  ) +
-  (
-    showcase
-      ? "Vitrine interactive : +15 € HT\n\n"
-      : ""
-  ) +
-  (
-    photoPack === 6
-      ? "Jusqu'à 6 photos : +6 € HT\n\n"
-      : ""
-  ) +
-  (
-    photoPack === 10
-      ? "Jusqu'à 10 photos : +12 € HT\n\n"
-      : ""
-  ) +
-  "Confirmer le paiement et la réservation ferme ?\n\n" +
-  "Après validation, la réservation est ferme. " +
-  "La publicité pourra encore être corrigée pendant le délai prévu avant son verrouillage."
-); 
- 
-      if(!ok) return;
- 
-      const bookings = getBookings();
- 
-      selectedDates.forEach(date=>{
-        const titleInput = document.querySelector('.titleByDateV3[data-date="'+date+'"]');
-        const textInput = document.querySelector('.textByDateV3[data-date="'+date+'"]');
- 
-        dayList(bookings, date).push({
-          date:date,
-          profileType:type,
-          entityName:current.name,
-          title:(titleInput && titleInput.value.trim()) || current.name,
-          text:(textInput && textInput.value.trim()) || "publicité locale bo’citéart",
-          imageKey:current.imageKey || "",
-         gallery:
-  Array.isArray(
-    current.gallery
-  )
-    ? current.gallery
-    : [],
-         status:
-  isAdvertisingCollaboratorV3()
-    ? "waiting_owner_validation"
-    : (
-        type === "mairie"
-          ? "quote_validated"
-          : "demo_paid"
-      ),
-
-preparedByRole:
-  isAdvertisingCollaboratorV3()
-    ? "collaborator"
-    : "owner",
-
-preparedByCollaboratorId:
-  (
-    getAdvertisingAccessContextV3()
-      .collaborator &&
-    getAdvertisingAccessContextV3()
-      .collaborator.id
-  )
-    ? getAdvertisingAccessContextV3()
-        .collaborator.id
-    : null,
-
-ownerValidated:
-  isAdvertisingOwnerV3(),
-
-ownerValidatedAt:
-  isAdvertisingOwnerV3()
-    ? Date.now()
-    : null,
-
-version:
-  1,
-          createdTs:Date.now(),
-         amountHT:
-  amount,
-
-pack:
-  pack,
-
-campaignGoal:
-  goal,
-
-interactiveShowcase:
-  showcase,
-
-photoPack:
-  photoPack,
-
-      tools:
-  tools,
-
-coupon:
-  couponData,   
-
-employmentIncluded:
-  employmentDetected,
-
-employmentPriceHT:
-  employmentDetected
-    ? 50
-    : 0,
-
-showcasePriceHT:
-  showcase
-    ? 15
-    : 0,
-
-photoPriceHT:
-  photoPack === 6
-    ? 6
-    : (
-        photoPack === 10
-          ? 12
-          : 0
-      ),
-
-billing:
-  current.billing,
-          siret:current.siret,
-          siren:current.siren,
-          tva:current.tva
-        });
-      });
- 
-      saveBookings(bookings);
-
-             if(employmentDetected){
-
-          const firstDate =
-            selectedDates[0] || "";
-
-
-          const employmentTitleInput =
-            firstDate
-              ? document.querySelector(
-                  '.titleByDateV3[data-date="' +
-                  firstDate +
-                  '"]'
-                )
-              : null;
-
-
-          const employmentTextInput =
-            firstDate
-              ? document.querySelector(
-                  '.textByDateV3[data-date="' +
-                  firstDate +
-                  '"]'
-                )
-              : null;
-
-
-          prepareEmploymentDraftV3(
-
-            current,
-
-            employmentTitleInput
-              ? employmentTitleInput.value.trim()
-              : "",
-
-            employmentTextInput
-              ? employmentTextInput.value.trim()
-              : ""
-
+        const current =
+          getProfile(
+            type
           );
 
+
+        if(!current.name){
+
+          alert(
+            "Enregistrez d'abord votre fiche."
+          );
+
+          return;
         }
 
 
-     
-      renderTicker();
- 
-      alert("publicité enregistrée. si la date est aujourd’hui, elle apparaît dans le grand bandeau.");
-    };
+        if(!current.billing){
+
+          alert(
+            "Renseignez l'e-mail de facturation."
+          );
+
+          return;
+        }
+
+
+        if(!selectedDates.length){
+
+          alert(
+            "Sélectionnez au moins une date."
+          );
+
+          return;
+        }
+
+
+        /* ===================================================
+           1. OPTIONS DE LA PUBLICITÉ
+           =================================================== */
+
+        const pack =
+          Number(
+            $("packPubV3")
+              ? $("packPubV3").value
+              : 1
+          );
+
+
+        const goal =
+          $("campaignGoalV3")
+            ? $("campaignGoalV3").value
+            : "visibility";
+
+
+        const showcase =
+          Boolean(
+            $("interactiveShowcaseV3") &&
+            $("interactiveShowcaseV3").checked
+          );
+
+
+        const photoPack =
+          Number(
+            $("photoPackV3")
+              ? $("photoPackV3").value
+              : 3
+          );
+
+
+        const tools = {
+
+          coupon:
+            Boolean(
+              $("pubToolCouponV3") &&
+              $("pubToolCouponV3").checked
+            ),
+
+          qr:
+            Boolean(
+              $("pubToolQrV3") &&
+              $("pubToolQrV3").checked
+            ),
+
+          call:
+            Boolean(
+              $("pubToolCallV3") &&
+              $("pubToolCallV3").checked
+            ),
+
+          route:
+            Boolean(
+              $("pubToolRouteV3") &&
+              $("pubToolRouteV3").checked
+            ),
+
+          quote:
+            Boolean(
+              $("pubToolQuoteV3") &&
+              $("pubToolQuoteV3").checked
+            ),
+
+          booking:
+            Boolean(
+              $("pubToolBookingV3") &&
+              $("pubToolBookingV3").checked
+            )
+
+        };
+
+
+        const couponData = {
+
+          title:
+            $("pubCouponTitleV3")
+              ? $("pubCouponTitleV3").value.trim()
+              : "",
+
+          validity:
+            $("pubCouponValidityV3")
+              ? $("pubCouponValidityV3").value.trim()
+              : ""
+
+        };
+
+
+        /* ===================================================
+           2. CALCUL DU MONTANT HT
+           =================================================== */
+
+        let amountHT =
+          pack === 5
+            ? 200
+            : 50;
+
+
+        if(
+          goal ===
+          "employment"
+        ){
+
+          amountHT +=
+            50;
+        }
+
+
+        if(showcase){
+
+          amountHT +=
+            15;
+        }
+
+
+        if(
+          photoPack ===
+          6
+        ){
+
+          amountHT +=
+            6;
+        }
+
+
+        if(
+          photoPack ===
+          10
+        ){
+
+          amountHT +=
+            12;
+        }
+
+
+        /* ===================================================
+           3. RÉCAPITULATIF AVANT COMMANDE
+           =================================================== */
+
+        const ok =
+          confirm(
+
+            "Récapitulatif de votre réservation\n\n" +
+
+            "Montant : " +
+            amountHT.toFixed(2) +
+            " € HT\n\n" +
+
+            (
+              goal === "employment"
+                ? "Publication Emploi : +50 € HT\n"
+                : ""
+            ) +
+
+            (
+              showcase
+                ? "Vitrine interactive : +15 € HT\n"
+                : ""
+            ) +
+
+            (
+              photoPack === 6
+                ? "Jusqu'à 6 photos : +6 € HT\n"
+                : ""
+            ) +
+
+            (
+              photoPack === 10
+                ? "Jusqu'à 10 photos : +12 € HT\n"
+                : ""
+            ) +
+
+            "\nContinuer vers le paiement ?"
+          );
+
+
+        if(!ok){
+
+          return;
+        }
+
+
+        /* ===================================================
+           4. CAS MAIRIE
+           DEVIS / COMMANDE / PAIEMENT DIFFÉRÉ
+           =================================================== */
+
+        if(
+          type ===
+          "mairie"
+        ){
+
+          const bookings =
+            getBookings();
+
+
+          selectedDates.forEach(
+            function(date){
+
+              const titleInput =
+                document.querySelector(
+                  '.titleByDateV3[data-date="' +
+                  date +
+                  '"]'
+                );
+
+
+              const textInput =
+                document.querySelector(
+                  '.textByDateV3[data-date="' +
+                  date +
+                  '"]'
+                );
+
+
+              dayList(
+                bookings,
+                date
+              )
+              .push({
+
+                date:
+                  date,
+
+                profileType:
+                  type,
+
+                entityName:
+                  current.name,
+
+                title:
+                  (
+                    titleInput &&
+                    titleInput.value.trim()
+                  ) ||
+                  current.name,
+
+                text:
+                  (
+                    textInput &&
+                    textInput.value.trim()
+                  ) ||
+                  "Publicité locale Bo'CitéArt",
+
+                imageKey:
+                  current.imageKey ||
+                  "",
+
+                gallery:
+                  Array.isArray(
+                    current.gallery
+                  )
+                    ? current.gallery
+                    : [],
+
+                status:
+                  "quote_validated",
+
+                paymentStatus:
+                  "waiting_public_payment",
+
+                ownerValidated:
+                  false,
+
+                createdTs:
+                  Date.now(),
+
+                amountHT:
+                  amountHT,
+
+                pack:
+                  pack,
+
+                campaignGoal:
+                  goal,
+
+                interactiveShowcase:
+                  showcase,
+
+                photoPack:
+                  photoPack,
+
+                tools:
+                  tools,
+
+                coupon:
+                  couponData,
+
+                employmentIncluded:
+                  goal ===
+                  "employment",
+
+                billing:
+                  current.billing,
+
+                siret:
+                  current.siret,
+
+                siren:
+                  current.siren,
+
+                tva:
+                  current.tva
+
+              });
+
+            }
+          );
+
+
+          saveBookings(
+            bookings
+          );
+
+
+          renderTicker();
+
+
+          alert(
+            "La demande est enregistrée.\n\n" +
+            "Le circuit mairie reste soumis au devis, à la commande et au paiement différé prévu."
+          );
+
+
+          return;
+        }
+
+
+        /* ===================================================
+           5. MOTEUR FINANCIER CENTRAL
+           =================================================== */
+
+        const financialModule =
+          window.BociteEntreprise;
+
+
+        if(
+          !financialModule ||
+          typeof financialModule
+            .createFinancialOrder !==
+            "function"
+        ){
+
+          alert(
+            "Le moteur de commande est momentanément indisponible."
+          );
+
+          return;
+        }
+
+
+        if(
+          typeof financialModule
+            .openCentralPaymentPage !==
+            "function"
+        ){
+
+          alert(
+            "La page de paiement est momentanément indisponible."
+          );
+
+          return;
+        }
+
+
+        /* ===================================================
+           6. CRÉATION DE LA COMMANDE
+
+           Le montant indiqué dans cette interface est HT.
+           TVA démonstration : 20 %.
+           =================================================== */
+
+        const order =
+          financialModule
+            .createFinancialOrder({
+
+              productCode:
+                goal ===
+                "employment"
+                  ? "PUB_EMPLOI"
+                  : "PUB_VISIBILITE",
+
+              serviceType:
+                "advertising",
+
+              serviceLabel:
+                goal ===
+                "employment"
+                  ? "Publicité Bo'CitéArt avec publication Emploi"
+                  : "Publicité Bo'CitéArt",
+
+              customerType:
+                type ===
+                "commerce"
+                  ? "merchant"
+                  : (
+                      type ===
+                      "asso"
+                        ? "association"
+                        : "professional"
+                    ),
+
+              customerId:
+                String(
+                  current.siret ||
+                  current.siren ||
+                  current.name ||
+                  ""
+                ),
+
+              customerName:
+                current.name ||
+                "",
+
+              customerEmail:
+                current.billing ||
+                "",
+
+              customerSiret:
+                current.siret ||
+                current.siren ||
+                "",
+
+              amountHT:
+                amountHT,
+
+              vatRate:
+                20,
+
+              paymentMethod:
+                ""
+
+            });
+
+
+        if(!order){
+
+          alert(
+            "La commande n'a pas pu être créée."
+          );
+
+          return;
+        }
+
+
+        /* ===================================================
+           7. ENREGISTREMENT DE LA PUBLICITÉ
+           EN ATTENTE DE PAIEMENT
+
+           IMPORTANT :
+           elle n'est PAS considérée comme payée.
+           =================================================== */
+
+        const bookings =
+          getBookings();
+
+
+        selectedDates.forEach(
+          function(date){
+
+            const titleInput =
+              document.querySelector(
+                '.titleByDateV3[data-date="' +
+                date +
+                '"]'
+              );
+
+
+            const textInput =
+              document.querySelector(
+                '.textByDateV3[data-date="' +
+                date +
+                '"]'
+              );
+
+
+            const campaignId =
+              String(
+                order.id
+              ) +
+              "_" +
+              String(
+                date
+              );
+
+
+            dayList(
+              bookings,
+              date
+            )
+            .push({
+
+              campaignId:
+                campaignId,
+
+              orderId:
+                order.id,
+
+              date:
+                date,
+
+              profileType:
+                type,
+
+              entityName:
+                current.name,
+
+              title:
+                (
+                  titleInput &&
+                  titleInput.value.trim()
+                ) ||
+                current.name,
+
+              text:
+                (
+                  textInput &&
+                  textInput.value.trim()
+                ) ||
+                "Publicité locale Bo'CitéArt",
+
+              imageKey:
+                current.imageKey ||
+                "",
+
+              gallery:
+                Array.isArray(
+                  current.gallery
+                )
+                  ? current.gallery
+                  : [],
+
+              createdTs:
+                Date.now(),
+
+              amountHT:
+                amountHT,
+
+              pack:
+                pack,
+
+              campaignGoal:
+                goal,
+
+              interactiveShowcase:
+                showcase,
+
+              photoPack:
+                photoPack,
+
+              tools:
+                tools,
+
+              coupon:
+                couponData,
+
+              employmentIncluded:
+                goal ===
+                "employment",
+
+              employmentPriceHT:
+                goal ===
+                "employment"
+                  ? 50
+                  : 0,
+
+              showcasePriceHT:
+                showcase
+                  ? 15
+                  : 0,
+
+              photoPriceHT:
+                photoPack === 6
+                  ? 6
+                  : (
+                      photoPack === 10
+                        ? 12
+                        : 0
+                    ),
+
+              billing:
+                current.billing,
+
+              siret:
+                current.siret,
+
+              siren:
+                current.siren,
+
+              tva:
+                current.tva,
+
+              paymentStatus:
+                "waiting_payment",
+
+              paymentId:
+                "",
+
+              invoiceId:
+                "",
+
+              invoiceNumber:
+                "",
+
+              ownerValidated:
+                false,
+
+              ownerValidatedAt:
+                null,
+
+              ownerValidatedAtFr:
+                "",
+
+              validatedVersion:
+                null,
+
+              version:
+                1,
+
+              status:
+                "waiting_payment"
+
+            });
+
+          }
+        );
+
+
+        saveBookings(
+          bookings
+        );
+
+
+        renderTicker();
+
+
+        /* ===================================================
+           8. OUVERTURE DU PAIEMENT CENTRAL
+
+           Professionnels / commerçants :
+           carte bancaire OU virement.
+
+           Le virement reste en attente
+           jusqu'à confirmation réelle
+           sur le compte Bo'CitéArt.
+           =================================================== */
+
+        financialModule
+          .openCentralPaymentPage({
+
+            order:
+              order,
+
+            allowCard:
+              true,
+
+            allowBankTransfer:
+              true
+
+          });
+
+      };
   }
  
   const editBtn = $("editPubV3");
