@@ -8936,381 +8936,118 @@ function getMutualisationAlerts(){
   );
 
 })();
+
 /* =========================================================
    BO'CITÉART — MODULE ENTREPRISE
-   PARTIE 5 — VISIBILITÉ ET ÉCONOMIES
+   PARTIE 5 — ÉCONOMIES
+   La Visibilité est désormais gérée
+   par entreprise-visibilite.js
    ========================================================= */
 
-(function initBociteEntrepriseVisibilityAndSavings(){
+(function initBociteEntrepriseSavings(){
 
   "use strict";
 
-  const module = window.BociteEntreprise;
+  const module =
+    window.BociteEntreprise;
 
   if(!module){
+
     console.error(
       "Bo'CitéArt Entreprise : les parties précédentes doivent être chargées."
     );
+
     return;
   }
 
-  const VISIBILITY_STORE_KEY =
-    "bociteart_entreprise_visibility_v1";
 
   function getElement(id){
+
     return document.getElementById(id);
   }
 
-  function escapeValue(value){
-    return module.safeEscape(value);
-  }
 
-  function loadVisibilityData(){
-    try{
-      const raw =
-        localStorage.getItem(VISIBILITY_STORE_KEY);
+  function getSavingsHtml(){
 
-      const parsed =
-        raw ? JSON.parse(raw) : null;
+    const summary =
+      typeof module.getDirectionSummaryHtml ===
+      "function"
+        ? module.getDirectionSummaryHtml()
+        : `
+            <div
+              class="box entrepriseInfoBox"
+              style="
+                background:#ffffff;
+                color:#111111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.6;
+              ">
+              Aucune proposition disponible.
+            </div>
+          `;
 
-      if(parsed && typeof parsed === "object"){
-        return parsed;
-      }
-    }catch(error){
-      console.warn(
-        "Lecture des données de visibilité impossible :",
-        error
-      );
-    }
 
-    return {
-      companyName:"",
-      activity:"",
-      presentation:"",
-      knowHow:"",
-      services:"",
-      website:"",
-      phone:"",
-      email:"",
-      quoteEnabled:false,
-      recruitmentEnabled:false,
-      patronageEnabled:false,
-      newsEnabled:false,
-      updatedAt:null,
-      updatedAtFr:""
-    };
-  }
-
-  function saveVisibilityData(data){
-    try{
-      localStorage.setItem(
-        VISIBILITY_STORE_KEY,
-        JSON.stringify(data)
-      );
-    }catch(error){
-      console.warn(
-        "Enregistrement de la fiche de visibilité impossible :",
-        error
-      );
-    }
-  }
-
-function getVisibilityHtml(){
-
-  return `
-
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        border-left:6px solid #2f5d46;
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
+    return `
 
       <div
+        class="box entrepriseInfoBox"
         style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          line-height:1.35;
-          margin-bottom:8px;
-        ">
-        Connaissez-vous le nom de cinq entreprises présentes dans votre ville ?
-      </div>
-
-      Probablement pas.
-
-      <br><br>
-
-      Nous ne parlons pas uniquement
-      des grandes enseignes,
-      mais également des artisans,
-      des entreprises,
-      des ateliers,
-      des prestataires,
-      des professions libérales,
-      des PME
-      et des nombreux savoir-faire
-      présents dans votre commune.
-
-      <br><br>
-
-      Cette méconnaissance est aujourd'hui
-      l'un des principaux freins
-      au développement économique local.
-
-    </div>
-
-
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
-        style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          line-height:1.35;
-          margin-bottom:8px;
-        ">
-        Faites connaître votre entreprise
-      </div>
-
-      Avant d'acheter ailleurs,
-      encore faut-il savoir
-      que votre entreprise existe.
-
-      <br><br>
-
-      <span
-        style="
-          white-space:nowrap;
-          font-weight:700;
-        ">
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-      </span>
-
-      permet
-      aux habitants,
-      aux entreprises,
-      aux commerces,
-      aux associations
-      et aux écoles
-      de découvrir votre activité.
-
-    </div>
-
-
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
-        style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          line-height:1.35;
-          margin-bottom:8px;
-        ">
-        Présentez votre entreprise
-      </div>
-
-      • votre activité<br>
-      • vos métiers<br>
-      • votre savoir-faire<br>
-      • vos réalisations<br>
-      • vos produits<br>
-      • vos services<br>
-      • votre histoire<br>
-      • vos recrutements<br>
-      • vos apprentissages
-
-    </div>
-
-
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
-        style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          line-height:1.35;
-          margin-bottom:8px;
-        ">
-        Une entreprise mieux connue peut être davantage sollicitée
-      </div>
-
-      • être recommandée ;<br>
-      • recruter plus facilement ;<br>
-      • être contactée ;<br>
-      • recevoir davantage de demandes de devis ;<br>
-      • être sollicitée pour ses compétences et son savoir-faire.
-
-    </div>
-
-
-    <div
-      style="
-        display:flex;
-        gap:8px;
-        flex-wrap:wrap;
-      ">
-
-      <button
-        id="visibilityPresentationBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          background:#ffffff !important;
-          color:#111111 !important;
+          border-left:6px solid #2f5d46;
+          background:#ffffff;
+          color:#111111;
           font-size:14px;
           font-weight:400;
+          line-height:1.6;
         ">
-        Présenter mon entreprise
-      </button>
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            line-height:1.35;
+            margin-bottom:8px;
+          ">
+          Comparez, choisissez, validez
+        </div>
+
+        Recevez des propositions claires
+        avant de prendre votre décision.
+
+      </div>
 
 
-      <button
-        id="visibilityModifyBtn"
-        class="choiceBtn"
-        type="button"
+      <div
+        class="box entrepriseInfoBox"
         style="
-          width:100%;
-          background:#ffffff !important;
-          color:#111111 !important;
+          background:#ffffff;
+          color:#111111;
           font-size:14px;
           font-weight:400;
+          line-height:1.6;
         ">
-        Modifier ma présentation
-      </button>
 
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            line-height:1.35;
+            margin-bottom:8px;
+          ">
 
-      <button
-        id="visibilityDirectoryBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          background:#ffffff !important;
-          color:#111111 !important;
-          font-size:14px;
-          font-weight:400;
-        ">
-        Voir les entreprises de ma ville
-      </button>
-
-    </div>
-
-  `;
-}
-
-  function openVisibility(){
-    module.renderModal(
-      "Faites connaître vos métiers et votre savoir-faire",
-      getVisibilityHtml()
-    );
-
-    window.setTimeout(function(){
-      bindVisibility();
-    },0);
-  }
-
-function getSavingsHtml(){
-
-  const summary =
-    typeof module.getDirectionSummaryHtml ===
-    "function"
-      ? module.getDirectionSummaryHtml()
-      : `
-          <div
-            class="box entrepriseInfoBox"
+          <span
             style="
-              background:#ffffff;
-              color:#111111;
-              font-size:14px;
-              font-weight:400;
-              line-height:1.6;
+              white-space:nowrap;
+              font-weight:700;
             ">
-            Aucune proposition disponible.
-          </div>
-        `;
+            <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+          </span>
 
+          organise
 
-  return `
-
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        border-left:6px solid #2f5d46;
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
-        style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          line-height:1.35;
-          margin-bottom:8px;
-        ">
-        Comparez, choisissez, validez
-      </div>
-
-      Recevez des propositions claires
-      avant de prendre votre décision.
-
-    </div>
-
-
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
-        style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          line-height:1.35;
-          margin-bottom:8px;
-        ">
+        </div>
 
         <span
           style="
@@ -9320,226 +9057,227 @@ function getSavingsHtml(){
           <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
         </span>
 
-        organise
+        prépare la consultation,
+        centralise les réponses
+        et présente les différentes solutions reçues.
+
+        <br><br>
+
+        L’entreprise compare
+        et décide.
 
       </div>
 
-      <span
+
+      <div
+        class="box entrepriseInfoBox"
         style="
-          white-space:nowrap;
-          font-weight:700;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
         ">
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-      </span>
 
-      prépare la consultation,
-      centralise les réponses
-      et présente les différentes solutions reçues.
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            line-height:1.35;
+            margin-bottom:8px;
+          ">
+          Un choix visible et simple
+        </div>
 
-      <br><br>
+        Les participants peuvent consulter :
 
-      L’entreprise compare
-      et décide.
+        <br><br>
 
-    </div>
+        • les prestataires ;<br>
+        • les propositions ;<br>
+        • les délais ;<br>
+        • les économies estimées ;<br>
+        • les votes déjà enregistrés ;<br>
+        • l’état d’avancement.
+
+      </div>
 
 
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            line-height:1.35;
+            margin-bottom:8px;
+          ">
+          Une confirmation finale
+        </div>
+
+        Le choix reste modifiable
+        tant que l’entreprise
+        n’a pas confirmé définitivement
+        sa participation.
+
+        <br><br>
+
+        Une fois confirmée,
+        la décision devient
+        un engagement.
+
+      </div>
+
 
       <div
         style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+        ">
+
+        <button
+          id="savingsMutualisationBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            background:#ffffff !important;
+            color:#111111 !important;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Voir les mutualisations
+        </button>
+
+
+        <button
+          id="savingsDirectionBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            background:#ffffff !important;
+            color:#111111 !important;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Ouvrir le Tableau de Direction
+        </button>
+
+      </div>
+
+
+      <div
+        style="
+          margin-top:16px;
           color:#2f5d46;
           font-size:17px;
           font-weight:700;
           line-height:1.35;
-          margin-bottom:8px;
         ">
-        Un choix visible et simple
+        Propositions suivies
       </div>
 
-      Les participants peuvent consulter :
-
-      <br><br>
-
-      • les prestataires ;<br>
-      • les propositions ;<br>
-      • les délais ;<br>
-      • les économies estimées ;<br>
-      • les votes déjà enregistrés ;<br>
-      • l’état d’avancement.
-
-    </div>
-
-
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
 
       <div
+        id="savingsProposalSummary"
         style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          line-height:1.35;
-          margin-bottom:8px;
+          margin-top:10px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
         ">
-        Une confirmation finale
+        ${summary}
       </div>
 
-      Le choix reste modifiable
-      tant que l’entreprise
-      n’a pas confirmé définitivement
-      sa participation.
+    `;
+  }
 
-      <br><br>
-
-      Une fois confirmée,
-      la décision devient
-      un engagement.
-
-    </div>
-
-
-    <div
-      style="
-        display:flex;
-        gap:8px;
-        flex-wrap:wrap;
-      ">
-
-      <button
-        id="savingsMutualisationBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          background:#ffffff !important;
-          color:#111111 !important;
-          font-size:14px;
-          font-weight:400;
-        ">
-        Voir les mutualisations
-      </button>
-
-
-      <button
-        id="savingsDirectionBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          background:#ffffff !important;
-          color:#111111 !important;
-          font-size:14px;
-          font-weight:400;
-        ">
-        Ouvrir le Tableau de Direction
-      </button>
-
-    </div>
-
-
-    <div
-      style="
-        margin-top:16px;
-        color:#2f5d46;
-        font-size:17px;
-        font-weight:700;
-        line-height:1.35;
-      ">
-      Propositions suivies
-    </div>
-
-
-    <div
-      id="savingsProposalSummary"
-      style="
-        margin-top:10px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      ">
-      ${summary}
-    </div>
-
-  `;
-}
 
   function bindSavings(){
+
     const mutualisationButton =
-      getElement("savingsMutualisationBtn");
+      getElement(
+        "savingsMutualisationBtn"
+      );
 
     const directionButton =
-      getElement("savingsDirectionBtn");
+      getElement(
+        "savingsDirectionBtn"
+      );
+
 
     if(mutualisationButton){
-      mutualisationButton.onclick = function(){
-        module.openScreen("mutualisation");
-      };
+
+      mutualisationButton.onclick =
+        function(){
+
+          module.openScreen(
+            "mutualisation"
+          );
+        };
     }
+
 
     if(directionButton){
-      directionButton.onclick = function(){
-        module.openScreen("direction");
-      };
+
+      directionButton.onclick =
+        function(){
+
+          module.openScreen(
+            "direction"
+          );
+        };
     }
 
+
     if(
-      typeof module.bindDirectionProposalButtons === "function"
+      typeof module.bindDirectionProposalButtons ===
+      "function"
     ){
+
       module.bindDirectionProposalButtons();
     }
   }
 
+
   function openSavings(){
+
     module.renderModal(
       "Comparez, choisissez, validez",
       getSavingsHtml()
     );
 
-    window.setTimeout(function(){
-      bindSavings();
-    },0);
+    window.setTimeout(
+      function(){
+
+        bindSavings();
+
+      },
+      0
+    );
   }
 
-  module.registerScreen(
-    "visibilite",
-    openVisibility
-  );
 
   module.registerScreen(
     "economies",
     openSavings
   );
 
-  module.loadVisibilityData =
-    loadVisibilityData;
-
-  module.saveVisibilityData =
-    saveVisibilityData;
-
-  if(typeof openVisibilityPreview === "function"){
-
-  module.openVisibilityPreview =
-    openVisibilityPreview;
-}
 
   console.log(
-    "✅ Module Entreprise — partie 5 chargée"
+    "✅ Module Entreprise — partie 5 Économies chargée"
   );
 
 })();
