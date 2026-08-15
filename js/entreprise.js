@@ -746,7 +746,9 @@ function getHomeHtml(){
 
   return `
     <style>
+
       @keyframes entrepriseBandScroll {
+
         from {
           transform:translateX(100%);
         }
@@ -756,14 +758,18 @@ function getHomeHtml(){
         }
       }
 
+
       #entrepriseHomeBands {
+
         display:flex;
         flex-direction:column;
         gap:7px;
         margin-top:10px;
       }
 
+
       #entrepriseHomeBands .entrepriseBand {
+
         display:block;
         position:relative;
         width:100%;
@@ -771,66 +777,158 @@ function getHomeHtml(){
         margin:0;
         padding:0;
         overflow:hidden;
+
         border:2px solid #2f5d46;
         border-radius:10px;
-        background:#fffaf1;
-        color:#111;
+
+        background:#ffffff;
+        color:#111111;
+
         text-align:left;
         cursor:pointer;
+
         appearance:none;
         -webkit-appearance:none;
       }
 
+
       #entrepriseHomeBands .entrepriseBand:hover {
-        background:#f8f2e7;
+
+        background:#ffffff;
       }
 
+
       #entrepriseHomeBands .entrepriseBandText {
+
         display:inline-block;
         min-width:100%;
         padding:13px 0;
+
         white-space:nowrap;
-        font-weight:900;
-        color:#111;
+
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+
         animation:
           entrepriseBandScroll
           85s
           linear
           infinite;
+
         animation-delay:0s;
+
         will-change:transform;
       }
 
+
       #entrepriseHomeBands .entrepriseBandAction {
+
         color:#b00020;
-        font-weight:900;
-      }
-
-      #entrepriseHomeBands .entrepriseBandPrivate {
-        border-color:#b00020;
-        background:#fff7f7;
-      }
-
-      .entrepriseInfoBox {
-        font-size:16px;
-        line-height:1.7;
-        color:#222;
-        font-weight:400;
-      }
-
-      .entrepriseInfoBox p,
-      .entrepriseInfoBox li {
-        font-size:16px;
-        line-height:1.7;
-        font-weight:400;
-      }
-
-      .entrepriseInfoBox strong {
+        font-size:14px;
         font-weight:700;
       }
+
+
+      #entrepriseHomeBands .entrepriseBandPrivate {
+
+        border-color:#b00020;
+        background:#ffffff;
+      }
+
+
+      .entrepriseInfoBox {
+
+        background:#ffffff;
+        color:#111111;
+
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      }
+
+
+      .entrepriseInfoBox p,
+      .entrepriseInfoBox li,
+      .entrepriseInfoBox div,
+      .entrepriseInfoBox span {
+
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      }
+
+
+      .entrepriseInfoTitle {
+
+        display:block;
+
+        color:#2f5d46;
+
+        font-size:17px !important;
+        font-weight:700 !important;
+        line-height:1.35;
+
+        margin-bottom:8px;
+      }
+
+
+      .bociteBrand {
+
+        white-space:nowrap;
+
+        font-size:14px !important;
+        font-weight:700 !important;
+      }
+
+
+      .bociteBrandGreen {
+
+        color:#2f5d46;
+        font-weight:700 !important;
+      }
+
+
+      .bociteBrandRed {
+
+        color:#b00020;
+        font-weight:700 !important;
+      }
+
+
+      .entrepriseHomeText {
+
+        color:#111111;
+        font-size:14px !important;
+        font-weight:400 !important;
+        line-height:1.6;
+      }
+
+
+      .entrepriseHomeButtons {
+
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+
+        margin:12px 0;
+      }
+
+
+      .entrepriseHomeButtons .choiceBtn {
+
+        background:#ffffff !important;
+        color:#111111 !important;
+
+        font-size:14px;
+        font-weight:400;
+      }
+
     </style>
 
-  <!-- Bouton Retour géré automatiquement par buildBackButton() -->
+
+    <!-- Bouton Retour géré automatiquement par buildBackButton() -->
+
 
     <div
       class="box entrepriseInfoBox"
@@ -838,68 +936,69 @@ function getHomeHtml(){
         border-left:6px solid #2f5d46;
       ">
 
-      <span
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:18px;
-          font-weight:700;
-        ">
+      <div
+        class="entrepriseInfoTitle">
         Développez votre entreprise grâce
         aux ressources de votre territoire
-      </span>
+      </div>
 
-      <br><br>
 
-      <strong>
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#c00020;">Art</span>
-      </strong>
+      <div
+        class="entrepriseHomeText">
 
-      réunit,
-      dans un même espace,
-      des services utiles pour :
+        <span class="bociteBrand">
+          <span class="bociteBrandGreen">Bo'Cité</span><span class="bociteBrandRed">Art</span>
+        </span>
 
-      <br><br>
+        réunit,
+        dans un même espace,
+        des services utiles pour :
 
-      <span style="font-weight:400;">
+        <br><br>
+
         • recruter plus facilement ;<br>
         • rechercher des entreprises et des compétences ;<br>
         • développer votre activité ;<br>
         • réduire certaines charges ;<br>
         • améliorer votre visibilité ;<br>
         • découvrir des opportunités professionnelles ;<br>
-        • préparer l’avenir de votre entreprise ;<br>
+        • préparer l'avenir de votre entreprise ;<br>
         • comprendre et utiliser le mécénat.
-      </span>
 
-      <br><br>
+        <br><br>
 
-      <span style="color:#2f5d46;font-weight:700;">
         Commencez par votre commune,
         puis élargissez votre recherche
         lorsque votre activité le nécessite.
-      </span>
+
+      </div>
 
     </div>
 
+
     <div id="entrepriseHomeBands">
 
-       <button
+
+      <button
         class="entrepriseBand"
         type="button"
         data-entreprise-screen="emploi">
 
         <span class="entrepriseBandText">
+
           Déposez votre offre
           • Trouvez la personne près de chez vous
           • Consultez les candidatures
           •
+
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
+
         </span>
 
       </button>
+
 
       <button
         class="entrepriseBand"
@@ -907,16 +1006,20 @@ function getHomeHtml(){
         data-entreprise-screen="fidelisation">
 
         <span class="entrepriseBandText">
+
           Attirez vos salariés
           • Fidélisez-les autrement
           • Faites connaître les services proches du travail
           •
+
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
+
         </span>
 
       </button>
+
 
       <button
         class="entrepriseBand"
@@ -924,18 +1027,22 @@ function getHomeHtml(){
         data-entreprise-screen="developpement">
 
         <span class="entrepriseBandText">
+
           Développez votre entreprise
           • Clients
           • Fournisseurs
           • Sous-traitants
           • Partenaires locaux
           •
+
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
+
         </span>
 
       </button>
+
 
       <button
         class="entrepriseBand"
@@ -943,6 +1050,7 @@ function getHomeHtml(){
         data-entreprise-screen="mutualisation">
 
         <span class="entrepriseBandText">
+
           Réduisez vos charges grâce à la mutualisation
           • Électricité
           • Gaz
@@ -955,12 +1063,15 @@ function getHomeHtml(){
           • Choisissez
           • Validez
           •
+
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
+
         </span>
 
       </button>
+
 
       <button
         class="entrepriseBand"
@@ -968,17 +1079,21 @@ function getHomeHtml(){
         data-entreprise-screen="visibilite">
 
         <span class="entrepriseBandText">
+
           Faites connaître votre entreprise
           • Vos métiers
           • Votre savoir-faire
           • Votre présence dans la ville
           •
+
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
+
         </span>
 
       </button>
+
 
       <button
         class="entrepriseBand"
@@ -986,18 +1101,22 @@ function getHomeHtml(){
         data-entreprise-screen="perennite">
 
         <span class="entrepriseBandText">
-          Préparez l’avenir de votre entreprise
+
+          Préparez l'avenir de votre entreprise
           • Transmission
           • Reprise
           • Continuité
           • Valorisation
           •
+
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
+
         </span>
 
       </button>
+
 
       <button
         class="entrepriseBand"
@@ -1005,18 +1124,22 @@ function getHomeHtml(){
         data-entreprise-screen="mecenat">
 
         <span class="entrepriseBandText">
+
           Connaissez-vous réellement le mécénat ?
           • Soutien financier
           • Compétences
           • Matériel
           • Projets locaux
           •
+
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
+
         </span>
 
       </button>
+
 
       <button
         class="entrepriseBand"
@@ -1024,18 +1147,22 @@ function getHomeHtml(){
         data-entreprise-screen="annuaire_local">
 
         <span class="entrepriseBandText">
+
           Découvrez les entreprises, commerces et artisans de votre commune
           • Trouvez un fournisseur
           • Un sous-traitant
           • Un partenaire
           • Des compétences près de chez vous
           •
+
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
+
         </span>
 
       </button>
+
 
       <button
         class="entrepriseBand entrepriseBandPrivate"
@@ -1043,20 +1170,24 @@ function getHomeHtml(){
         data-entreprise-screen="acces_partenaire">
 
         <span class="entrepriseBandText">
+
           Accès partenaire
           • Fiche entreprise
           • Tableau de Direction
           • Services privés
           • Factures
           •
+
           <span class="entrepriseBandAction">
             Cliquez ici…
           </span>
+
         </span>
 
       </button>
 
     </div>
+
 
     <div
       class="box entrepriseInfoBox"
@@ -1065,35 +1196,36 @@ function getHomeHtml(){
         border-left:6px solid #2f5d46;
       ">
 
-      <span
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:18px;
-          line-height:1.4;
-          font-weight:700;
-        ">
+      <div
+        class="entrepriseInfoTitle">
         Choisissez le service correspondant
         à votre besoin dans les bandes défilantes
-      </span>
+      </div>
 
-      <br>
 
-      Chaque proposition ci-dessus vous permet de mieux comprendre son impact pour votre entreprise.
+      <div
+        class="entrepriseHomeText">
 
-      <br><br>
+        Chaque proposition ci-dessus
+        vous permet de mieux comprendre
+        son impact pour votre entreprise.
 
-      Cliquez sur l'une des bandes de votre choix pour découvrir l'idée, la vision et l'impact de ce service, puis agir selon vos objectifs.
+        <br><br>
+
+        Cliquez sur l'une des bandes
+        de votre choix
+        pour découvrir l'idée,
+        la vision
+        et l'impact de ce service,
+        puis agir selon vos objectifs.
+
+      </div>
 
     </div>
 
-        <div
-      style="
-        display:flex;
-        gap:8px;
-        flex-wrap:wrap;
-        margin:12px 0;
-      ">
+
+    <div
+      class="entrepriseHomeButtons">
 
       <button
         class="choiceBtn"
@@ -1101,6 +1233,7 @@ function getHomeHtml(){
         data-entreprise-screen="annuaire_local">
         Entreprises et commerces de ma ville
       </button>
+
 
       <button
         class="choiceBtn"
@@ -1110,10 +1243,10 @@ function getHomeHtml(){
       </button>
 
     </div>
-    
+
   `;
 }
-
+   
 function synchronizeHomeBands(){
 
   const texts = document.querySelectorAll(
@@ -1575,251 +1708,310 @@ console.log(
       });
   }
 
-    function getDirectoryHtml(){
+  function getDirectoryHtml(){
 
-    return `
+  return `
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        border-left:6px solid #2f5d46;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
       <div
-        class="box entrepriseInfoBox"
         style="
-          border-left:6px solid #2f5d46;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        Un annuaire économique vivant
+      </div>
+
+      Connaissez-vous le nom
+      de cinq entreprises
+      présentes dans votre commune ?
+
+      <br><br>
+
+      Probablement pas.
+
+      <br><br>
+
+      Pourtant,
+      des entreprises,
+      des commerces,
+      des artisans,
+      des professions libérales
+      et de nombreux savoir-faire
+      sont déjà présents près de vous.
+
+      <br><br>
+
+      Avant de rechercher ailleurs,
+      commencez par découvrir
+      ce qui existe déjà
+      dans votre commune.
+
+    </div>
+
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        À quoi sert cet annuaire ?
+      </div>
+
+      Il permettra
+      de rechercher rapidement :
+
+      <br><br>
+
+      • une entreprise ;<br>
+      • un commerce ;<br>
+      • un artisan ;<br>
+      • un métier ;<br>
+      • un savoir-faire ;<br>
+      • un produit ;<br>
+      • un service ;<br>
+      • un fournisseur ;<br>
+      • un sous-traitant ;<br>
+      • un partenaire professionnel.
+
+      <br><br>
+
+      Cette visibilité favorisera
+      les recommandations,
+      les demandes de devis,
+      les recrutements,
+      les partenariats
+      et le développement
+      de l’activité locale.
+
+    </div>
+
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        border-left:6px solid #2f5d46;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        Des informations issues de sources officielles
+      </div>
+
+      L’annuaire
+
+      <span
+        style="
+          white-space:nowrap;
+          font-weight:700;
+        ">
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </span>
+
+      sera alimenté
+      lors de son raccordement
+      aux données publiques officielles
+      des entreprises françaises.
+
+      <br><br>
+
+      Chaque entreprise pourra ensuite
+      compléter volontairement sa fiche,
+      présenter son activité,
+      ses services,
+      ses recrutements
+      et ses engagements locaux.
+
+      <br><br>
+
+      Aucune entreprise inventée
+      n’est affichée
+      dans cet annuaire.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        Rechercher une entreprise,
+        un métier ou un savoir-faire
+      </div>
+
+      Saisissez un nom,
+      un métier,
+      une activité,
+      un produit
+      ou un service.
+
+      <br><br>
+
+      <input
+        id="entrepriseDirectorySearch"
+        class="miniField"
+        type="search"
+        placeholder="Nom, métier, activité, produit ou service"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
           font-weight:400;
-          color:#111;
-          line-height:1.55;
         ">
 
-        <strong
-          style="
-            display:block;
-            color:#2f5d46;
-            font-size:18px;
-            font-weight:700;
-            line-height:1.4;
-          ">
-          Un annuaire économique vivant
-        </strong>
 
-        <br>
-
-        Connaissez-vous le nom de cinq entreprises
-        présentes dans votre commune ?
-
-        <br><br>
-
-        <strong>
-          Probablement pas.
-        </strong>
-
-        <br><br>
-
-        Pourtant, des entreprises,
-        des commerces,
-        des artisans,
-        des professions libérales
-        et de nombreux savoir-faire
-        sont déjà présents près de vous.
-
-        <br><br>
-
-        Avant de rechercher ailleurs,
-        commencez par découvrir
-        ce qui existe déjà dans votre commune.
-
-      </div>
-
-      <div
-        class="box entrepriseInfoBox"
+      <select
+        id="entrepriseDirectoryFilter"
+        class="miniField"
         style="
+          width:100%;
+          box-sizing:border-box;
+          margin-top:10px;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
           font-weight:400;
-          color:#111;
-          line-height:1.55;
         ">
 
-        <strong
-          style="
-            display:block;
-            color:#2f5d46;
-            font-size:18px;
-            font-weight:700;
-          ">
-          À quoi sert cet annuaire ?
-        </strong>
+        <option value="all">
+          Toutes les entreprises
+        </option>
 
-        <br>
+        <option value="partner">
+          Partenaires Bo'CitéArt
+        </option>
 
-        Il permettra de rechercher rapidement :
+        <option value="official">
+          Référencement officiel
+        </option>
 
-        <br><br>
+      </select>
 
-        • une entreprise ;<br>
-        • un commerce ;<br>
-        • un artisan ;<br>
-        • un métier ;<br>
-        • un savoir-faire ;<br>
-        • un produit ;<br>
-        • un service ;<br>
-        • un fournisseur ;<br>
-        • un sous-traitant ;<br>
-        • un partenaire professionnel.
+    </div>
 
-        <br><br>
 
-        Cette visibilité favorisera
-        les recommandations,
-        les demandes de devis,
-        les recrutements,
-        les partenariats
-        et le développement de l’activité locale.
+    <div
+      id="entrepriseDirectoryCount"
+      class="muted"
+      style="
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+    </div>
 
-      </div>
 
-      <div
-        class="box entrepriseInfoBox"
-        style="
-          border-left:6px solid #2f5d46;
-          font-weight:400;
-          color:#111;
-          line-height:1.55;
-        ">
+    <div
+      id="entrepriseDirectoryList"
+      style="
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+    </div>
 
-        <strong
-          style="
-            display:block;
-            color:#2f5d46;
-            font-size:18px;
-            font-weight:700;
-          ">
-          Des informations issues de sources officielles
-        </strong>
+  `;
+}
 
-        <br>
+function renderDirectoryList(){
 
-        L’annuaire Bo'CitéArt sera alimenté
-        lors de son raccordement
-        aux données publiques officielles
-        des entreprises françaises.
+  const input =
+    getElement(
+      "entrepriseDirectorySearch"
+    );
 
-        <br><br>
+  const filter =
+    getElement(
+      "entrepriseDirectoryFilter"
+    );
 
-        Chaque entreprise pourra ensuite
-        compléter volontairement sa fiche,
-        présenter son activité,
-        ses services,
-        ses recrutements
-        et ses engagements locaux.
+  const list =
+    getElement(
+      "entrepriseDirectoryList"
+    );
 
-        <br><br>
+  const count =
+    getElement(
+      "entrepriseDirectoryCount"
+    );
 
-        Aucune entreprise inventée
-        n’est affichée dans cet annuaire.
 
-      </div>
-
-      <div
-        class="box"
-        style="
-          font-weight:400;
-          color:#111;
-          line-height:1.55;
-        ">
-
-        <strong
-          style="
-            display:block;
-            color:#2f5d46;
-            font-size:18px;
-            font-weight:700;
-          ">
-          Rechercher une entreprise,
-          un métier ou un savoir-faire
-        </strong>
-
-        <br>
-
-        Saisissez un nom,
-        un métier,
-        une activité,
-        un produit
-        ou un service.
-
-        <br><br>
-
-        <input
-          id="entrepriseDirectorySearch"
-          class="miniField"
-          type="search"
-          placeholder="Nom, métier, activité, produit ou service">
-
-        <select
-          id="entrepriseDirectoryFilter"
-          class="miniField"
-          style="margin-top:10px;">
-
-          <option value="all">
-            Toutes les entreprises
-          </option>
-
-          <option value="partner">
-            Partenaires Bo'CitéArt
-          </option>
-
-          <option value="official">
-            Référencement officiel
-          </option>
-
-        </select>
-
-      </div>
-
-      <div
-        id="entrepriseDirectoryCount"
-        class="muted"
-        style="margin-top:10px;">
-      </div>
-
-      <div
-        id="entrepriseDirectoryList"
-        style="margin-top:10px;">
-      </div>
-    `;
+  if(!list){
+    return;
   }
 
-  function renderDirectoryList(){
 
-    const input =
-      getElement(
-        "entrepriseDirectorySearch"
-      );
+  const query =
+    normalizeText(
+      input
+        ? input.value
+        : ""
+    );
 
-    const filter =
-      getElement(
-        "entrepriseDirectoryFilter"
-      );
 
-    const list =
-      getElement(
-        "entrepriseDirectoryList"
-      );
+  const filterValue =
+    filter
+      ? filter.value
+      : "all";
 
-    const count =
-      getElement(
-        "entrepriseDirectoryCount"
-      );
 
-    if(!list){
-
-      return;
-    }
-
-    const query =
-      normalizeText(
-        input ? input.value : ""
-      );
-
-    const filterValue =
-      filter ? filter.value : "all";
-
-    let companies =
-      loadDirectory().filter(
+  let companies =
+    loadDirectory()
+      .filter(
         function(company){
 
           const searchable =
@@ -1833,177 +2025,272 @@ console.log(
               ].join(" ")
             );
 
+
           if(
             query &&
-            !searchable.includes(query)
+            !searchable.includes(
+              query
+            )
           ){
-
             return false;
           }
+
 
           if(
             filterValue === "partner" &&
             !company.partner
           ){
-
             return false;
           }
+
 
           if(
             filterValue === "official" &&
             company.partner
           ){
-
             return false;
           }
+
 
           return true;
         }
       );
 
-    companies =
-      sortCompanies(companies);
 
-    if(count){
+  companies =
+    sortCompanies(
+      companies
+    );
 
-      count.textContent =
-        companies.length
-          ? companies.length +
-            " entreprise(s) trouvée(s)."
-          : "L’annuaire sera disponible après son raccordement officiel.";
-    }
 
-    if(!companies.length){
+  if(count){
 
-      list.innerHTML = `
+    count.style.color =
+      "#111111";
+
+    count.style.fontSize =
+      "14px";
+
+    count.style.fontWeight =
+      "400";
+
+
+    count.textContent =
+      companies.length
+        ? companies.length +
+          " entreprise(s) trouvée(s)."
+        : "L’annuaire sera disponible après son raccordement officiel.";
+  }
+
+
+  /* =======================================================
+     AUCUNE ENTREPRISE
+     ======================================================= */
+
+  if(!companies.length){
+
+    list.innerHTML = `
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
+
         <div
-          class="box"
           style="
-            border-left:6px solid #2f5d46;
-            font-weight:400;
-            color:#111;
-            line-height:1.55;
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            line-height:1.35;
+            margin-bottom:8px;
           ">
+          Annuaire économique
 
-          L’annuaire économique Bo'CitéArt
-          ne contient actuellement
-          aucune entreprise enregistrée.
-
-          <br><br>
-
-          Les entreprises apparaîtront ici
-          dès le raccordement officiel
-          aux données publiques nationales.
-
-          <br><br>
-
-          Les outils de recherche,
-          de filtrage
-          et de consultation des fiches
-          sont déjà préparés.
-
-        </div>
-      `;
-
-      return;
-    }
-
-    list.innerHTML =
-      companies.map(function(company){
-
-        return `
-          <div
-            class="box"
+          <span
             style="
-              font-weight:400;
-              color:#111;
-              line-height:1.5;
+              white-space:nowrap;
+              font-weight:700;
             ">
+            <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+          </span>
+        </div>
 
-            <strong
-              style="
-                display:block;
-                color:#2f5d46;
-                font-size:18px;
-                font-weight:700;
-                line-height:1.4;
-              ">
-              ${escapeValue(
-                company.name || ""
-              )}
-            </strong>
+
+        Aucune entreprise
+        n’est actuellement enregistrée.
+
+        <br><br>
+
+        Les entreprises apparaîtront ici
+        dès le raccordement officiel
+        aux données publiques nationales.
+
+        <br><br>
+
+        Les outils de recherche,
+        de filtrage
+        et de consultation des fiches
+        sont déjà préparés.
+
+      </div>
+
+    `;
+
+
+    return;
+  }
+
+
+  /* =======================================================
+     LISTE DES ENTREPRISES
+     ======================================================= */
+
+  list.innerHTML =
+    companies
+      .map(
+        function(company){
+
+          return `
 
             <div
+              class="box"
               style="
-                margin-top:9px;
-                color:#2f5d46;
-                font-size:16px;
-                font-weight:600;
+                background:#ffffff;
+                color:#111111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.6;
               ">
-              ${escapeValue(
-                company.activity || ""
-              )}
-            </div>
 
-            <div style="margin-top:9px;">
-              ${escapeValue(
-                company.description || ""
-              )}
-            </div>
+              <div
+                style="
+                  display:block;
+                  color:#2f5d46;
+                  font-size:17px;
+                  font-weight:700;
+                  line-height:1.35;
+                ">
+                ${escapeValue(
+                  company.name || ""
+                )}
+              </div>
 
-            ${
-              company.city
-                ? `
-                  <div style="margin-top:9px;">
 
-                    Commune :
-
-                    <strong
+              ${
+                company.activity
+                  ? `
+                    <div
                       style="
-                        color:#2f5d46;
-                        font-weight:600;
+                        margin-top:8px;
+                        color:#111111;
+                        font-size:14px;
+                        font-weight:400;
+                        line-height:1.5;
                       ">
+                      ${escapeValue(
+                        company.activity
+                      )}
+                    </div>
+                  `
+                  : ""
+              }
+
+
+              ${
+                company.description
+                  ? `
+                    <div
+                      style="
+                        margin-top:9px;
+                        color:#111111;
+                        font-size:14px;
+                        font-weight:400;
+                        line-height:1.6;
+                      ">
+                      ${escapeValue(
+                        company.description
+                      )}
+                    </div>
+                  `
+                  : ""
+              }
+
+
+              ${
+                company.city
+                  ? `
+                    <div
+                      style="
+                        margin-top:9px;
+                        color:#111111;
+                        font-size:14px;
+                        font-weight:400;
+                      ">
+
+                      Commune :
+
                       ${escapeValue(
                         company.city
                       )}
-                    </strong>
 
-                  </div>
-                `
-                : ""
-            }
+                    </div>
+                  `
+                  : ""
+              }
 
-            <button
-              class="choiceBtn entrepriseOpenCompanyBtn"
-              type="button"
-              data-company-id="${escapeValue(
-                company.id || ""
-              )}"
-              style="width:100%;margin-top:12px;">
-              Consulter la fiche
-            </button>
 
-          </div>
-        `;
-      }).join("");
+              <button
+                class="choiceBtn entrepriseOpenCompanyBtn"
+                type="button"
+                data-company-id="${escapeValue(
+                  company.id || ""
+                )}"
+                style="
+                  width:100%;
+                  margin-top:12px;
+                  background:#ffffff !important;
+                  color:#111111 !important;
+                  font-size:14px;
+                  font-weight:400;
+                ">
+                Consulter la fiche
+              </button>
 
-    list
-      .querySelectorAll(
-        ".entrepriseOpenCompanyBtn"
+            </div>
+
+          `;
+
+        }
       )
-      .forEach(function(button){
+      .join("");
 
-        button.onclick = function(){
 
-          openCompanyCard(
-            button.getAttribute(
-              "data-company-id"
-            )
-          );
-        };
-      });
-  }
+  list
+    .querySelectorAll(
+      ".entrepriseOpenCompanyBtn"
+    )
+    .forEach(
+      function(button){
 
+        button.onclick =
+          function(){
+
+            openCompanyCard(
+              button.getAttribute(
+                "data-company-id"
+              )
+            );
+          };
+      }
+    );
+}
+   
   function bindDirectory(){
 
     const input =
@@ -2044,47 +2331,51 @@ console.log(
 
     },0);
   }
-
-  function openCompanyCard(companyId){
-
-    const company =
-      loadDirectory().find(function(item){
-
-        return item.id === companyId;
-      });
-
-    if(!company){
-
-      alert(
-        "Cette entreprise est introuvable."
-      );
-
-      return;
-    }
-
-    const partnerContent =
+      const partnerContent =
       company.partner
         ? `
           <div
             class="box entrepriseInfoBox"
             style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
               font-weight:400;
-              color:#111;
-              line-height:1.55;
+              line-height:1.6;
             ">
 
-            <strong
+            <div
               style="
                 display:block;
                 color:#2f5d46;
-                font-size:18px;
+                font-size:17px;
                 font-weight:700;
-                line-height:1.4;
+                line-height:1.35;
               ">
-              Fiche Bo'CitéArt enrichie
-            </strong>
 
-            <div style="margin-top:14px;">
+              Fiche
+
+              <span
+                style="
+                  white-space:nowrap;
+                  font-weight:700;
+                ">
+                <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+              </span>
+
+              enrichie
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:10px;
+                color:#111111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.6;
+              ">
 
               Cette entreprise peut présenter
               ses services,
@@ -2097,6 +2388,7 @@ console.log(
 
           </div>
 
+
           <div
             style="
               display:flex;
@@ -2107,19 +2399,30 @@ console.log(
             <button
               class="choiceBtn"
               id="companyRequestQuoteBtn"
-              type="button">
-
+              type="button"
+              style="
+                width:100%;
+                background:#ffffff !important;
+                color:#111111 !important;
+                font-size:14px;
+                font-weight:400;
+              ">
               Demander un devis
-
             </button>
+
 
             <button
               class="choiceBtn"
               id="companyRecruitmentBtn"
-              type="button">
-
+              type="button"
+              style="
+                width:100%;
+                background:#ffffff !important;
+                color:#111111 !important;
+                font-size:14px;
+                font-weight:400;
+              ">
               Recrutements
-
             </button>
 
           </div>
@@ -2128,23 +2431,33 @@ console.log(
           <div
             class="box entrepriseInfoBox"
             style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
               font-weight:400;
-              color:#111;
-              line-height:1.55;
+              line-height:1.6;
             ">
 
-            <strong
+            <div
               style="
                 display:block;
                 color:#2f5d46;
-                font-size:18px;
+                font-size:17px;
                 font-weight:700;
-                line-height:1.4;
+                line-height:1.35;
               ">
               Informations publiques
-            </strong>
+            </div>
 
-            <div style="margin-top:14px;">
+
+            <div
+              style="
+                margin-top:10px;
+                color:#111111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.6;
+              ">
 
               Cette fiche reprend
               les informations publiques disponibles.
@@ -2163,29 +2476,41 @@ console.log(
           </div>
         `;
 
+
     module.renderModal(
       company.name || "Fiche entreprise",
       `
+
         <div
           class="box entrepriseInfoBox"
           style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
             font-weight:400;
-            color:#111;
-            line-height:1.55;
+            line-height:1.6;
           ">
 
-          <strong
+          <div
             style="
               display:block;
               color:#2f5d46;
-              font-size:18px;
+              font-size:17px;
               font-weight:700;
-              line-height:1.4;
+              line-height:1.35;
             ">
             Que fait cette entreprise ?
-          </strong>
+          </div>
 
-          <div style="margin-top:14px;">
+
+          <div
+            style="
+              margin-top:10px;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.6;
+            ">
 
             ${escapeValue(
               company.description || ""
@@ -2195,30 +2520,36 @@ console.log(
 
         </div>
 
+
         <div
           class="box entrepriseInfoBox"
           style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
             font-weight:400;
-            color:#111;
-            line-height:1.55;
+            line-height:1.6;
           ">
 
-          <strong
+          <div
             style="
               display:block;
               color:#2f5d46;
-              font-size:18px;
+              font-size:17px;
               font-weight:700;
-              line-height:1.4;
+              line-height:1.35;
             ">
             Activité
-          </strong>
+          </div>
+
 
           <div
             style="
               margin-top:10px;
-              color:#111;
+              color:#111111;
+              font-size:14px;
               font-weight:400;
+              line-height:1.6;
             ">
 
             ${escapeValue(
@@ -2227,23 +2558,27 @@ console.log(
 
           </div>
 
-          <strong
+
+          <div
             style="
               display:block;
               margin-top:18px;
               color:#2f5d46;
-              font-size:18px;
+              font-size:17px;
               font-weight:700;
-              line-height:1.4;
+              line-height:1.35;
             ">
             Commune
-          </strong>
+          </div>
+
 
           <div
             style="
               margin-top:10px;
-              color:#111;
+              color:#111111;
+              font-size:14px;
               font-weight:400;
+              line-height:1.6;
             ">
 
             ${escapeValue(
@@ -2254,45 +2589,56 @@ console.log(
 
         </div>
 
+
         ${partnerContent}
+
       `
     );
 
-    window.setTimeout(function(){
 
-      const quoteButton =
-        getElement(
-          "companyRequestQuoteBtn"
-        );
+    window.setTimeout(
+      function(){
 
-      const recruitmentButton =
-        getElement(
-          "companyRecruitmentBtn"
-        );
-
-      if(quoteButton){
-
-        quoteButton.onclick = function(){
-
-          alert(
-            "La demande de devis sera transmise depuis le compte sécurisé de l’utilisateur."
+        const quoteButton =
+          getElement(
+            "companyRequestQuoteBtn"
           );
-        };
-      }
 
-      if(recruitmentButton){
 
-        recruitmentButton.onclick = function(){
-
-          module.openScreen(
-            "emploi"
+        const recruitmentButton =
+          getElement(
+            "companyRecruitmentBtn"
           );
-        };
-      }
 
-    },0);
+
+        if(quoteButton){
+
+          quoteButton.onclick =
+            function(){
+
+              alert(
+                "La demande de devis sera transmise depuis le compte sécurisé de l’utilisateur."
+              );
+            };
+        }
+
+
+        if(recruitmentButton){
+
+          recruitmentButton.onclick =
+            function(){
+
+              module.openScreen(
+                "emploi"
+              );
+            };
+        }
+
+      },
+      0
+    );
   }
-
+ 
      const originalHome =
     module.screens.home;
 
@@ -2459,7 +2805,7 @@ return `
     background:#ffffff;
     border:1px solid #e6e6e6;
     border-left:6px solid #2f5d46;
-    border-radius:16px;
+    border-radius:17px;
     padding:18px;
     margin:0 0 16px 0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
@@ -2469,7 +2815,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2515,7 +2861,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2558,7 +2904,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2612,7 +2958,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2649,7 +2995,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2687,7 +3033,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2724,7 +3070,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2763,7 +3109,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2796,7 +3142,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2841,7 +3187,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2872,7 +3218,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2916,7 +3262,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2956,7 +3302,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -2990,7 +3336,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -3019,7 +3365,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -3060,7 +3406,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -3096,7 +3442,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -3140,7 +3486,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -3174,7 +3520,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -3210,7 +3556,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -3265,7 +3611,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -3303,7 +3649,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -3339,7 +3685,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -3380,7 +3726,7 @@ return `
     style="
       margin:0 0 14px 0;
       color:#2f5d46;
-      font-size:16px;
+      font-size:17px;
       font-weight:700;
       line-height:1.4;
     ">
@@ -3532,7 +3878,7 @@ function getEmploymentHomeHtml(){
 
 const titleStyle = `
   color:#2f5d46;
-  font-size:16px;
+  font-size:17px;
   font-weight:700;
   line-height:1.45;
 `;
@@ -3688,7 +4034,7 @@ return `
       <span
         style="
           color:#2f5d46;
-          font-size:18px;
+          font-size:17px;
           font-weight:700;
         ">
         ${activeOffers.length}
@@ -4747,71 +5093,105 @@ function openEmploymentPayment(offer){
   module.renderModal(
     "Paiement de l’annonce",
     `
+
       <div
         class="box entrepriseInfoBox"
         style="
           border-left:6px solid #2f5d46;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.55;
         ">
-
-        <strong
-          style="
-            color:#2f5d46;
-            font-size:18px;
-          ">
-          Récapitulatif avant publication
-        </strong>
-
-        <br><br>
-
-        <strong>
-          Entreprise
-        </strong>
-
-        <br>
-
-        ${escapeValue(offer.companyName)}
-
-        <br><br>
-
-        <strong>
-          Offre
-        </strong>
-
-        <br>
-
-        ${escapeValue(offer.title)}
-
-      </div>
-
-      <div
-        class="box entrepriseInfoBox">
 
         <div
           style="
-            display:flex;
-            justify-content:space-between;
-            gap:15px;
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            line-height:1.4;
           ">
-
-          <span>
-            Prix hors taxes
-          </span>
-
-          <strong>
-            ${formatEmploymentMoney(
-              offer.amountHT
-            )} €
-          </strong>
-
+          Récapitulatif avant publication
         </div>
 
         <br>
 
         <div
           style="
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Entreprise
+        </div>
+
+        <br>
+
+        ${escapeValue(
+          offer.companyName
+        )}
+
+        <br><br>
+
+        <div
+          style="
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+          Offre
+        </div>
+
+        <br>
+
+        ${escapeValue(
+          offer.title
+        )}
+
+      </div>
+
+
+      <div
+        class="box entrepriseInfoBox"
+        style="
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.55;
+        ">
+
+        <div
+          style="
             display:flex;
             justify-content:space-between;
             gap:15px;
+            font-size:14px;
+            font-weight:400;
+          ">
+
+          <span>
+            Prix hors taxes
+          </span>
+
+          <span>
+            ${formatEmploymentMoney(
+              offer.amountHT
+            )} €
+          </span>
+
+        </div>
+
+
+        <br>
+
+
+        <div
+          style="
+            display:flex;
+            justify-content:space-between;
+            gap:15px;
+            font-size:14px;
+            font-weight:400;
           ">
 
           <span>
@@ -4820,13 +5200,14 @@ function openEmploymentPayment(offer){
             )} %)
           </span>
 
-          <strong>
+          <span>
             ${formatEmploymentMoney(
               offer.amountVAT
             )} €
-          </strong>
+          </span>
 
         </div>
+
 
         <hr
           style="
@@ -4835,33 +5216,40 @@ function openEmploymentPayment(offer){
             margin:18px 0;
           ">
 
+
         <div
           style="
             display:flex;
             justify-content:space-between;
             gap:15px;
-            font-size:18px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
           ">
 
-          <strong>
+          <span>
             Total à payer
-          </strong>
+          </span>
 
-          <strong
-            style="
-              color:#2f5d46;
-            ">
+          <span>
             ${formatEmploymentMoney(
               offer.amountTTC
             )} € TTC
-          </strong>
+          </span>
 
         </div>
 
       </div>
 
+
       <div
-        class="box entrepriseInfoBox">
+        class="box entrepriseInfoBox"
+        style="
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.55;
+        ">
 
         Le paiement est effectué immédiatement
         par carte bancaire.
@@ -4884,8 +5272,15 @@ function openEmploymentPayment(offer){
 
       </div>
 
+
       <label
-        class="miniCheck">
+        class="miniCheck"
+        style="
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.55;
+        ">
 
         <input
           id="employmentPaymentConfirmation"
@@ -4901,6 +5296,7 @@ function openEmploymentPayment(offer){
 
       </label>
 
+
       <button
         id="employmentPayByCardBtn"
         class="choiceBtn"
@@ -4908,73 +5304,176 @@ function openEmploymentPayment(offer){
         style="
           width:100%;
           margin-top:14px;
-          background:#b00020;
-          color:#fff;
-          border-color:#b00020;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
         ">
 
         Payer par carte bancaire
         et publier l’annonce
 
       </button>
+
     `
   );
 
-  window.setTimeout(function(){
 
-    const paymentButton =
-      getElement(
-        "employmentPayByCardBtn"
-      );
+  window.setTimeout(
+    function(){
 
-    if(!paymentButton){
-      return;
-    }
+      const paymentButton =
+        getElement(
+          "employmentPayByCardBtn"
+        );
 
-    paymentButton.onclick =
-      function(){
 
-        const confirmation =
-          getElement(
-            "employmentPaymentConfirmation"
+      if(!paymentButton){
+
+        return;
+      }
+
+
+      paymentButton.onclick =
+        function(){
+
+          const confirmation =
+            getElement(
+              "employmentPaymentConfirmation"
+            );
+
+
+          if(
+            !confirmation ||
+            !confirmation.checked
+          ){
+
+            alert(
+              "Veuillez confirmer le paiement avant de continuer."
+            );
+
+
+            return;
+          }
+
+
+          /*
+            DÉMONSTRATION
+
+            En production, cette fonction devra être appelée
+            uniquement après le retour sécurisé
+            du prestataire de paiement par carte bancaire.
+          */
+
+
+          const now =
+            Date.now();
+
+
+          offer.paymentStatus =
+            "paid";
+
+
+          offer.paidAt =
+            now;
+
+
+          offer.paidAtFr =
+            new Date(
+              now
+            )
+            .toLocaleString(
+              "fr-FR"
+            );
+
+
+          offer.status =
+            "publiee";
+
+
+          offer.publicationStatus =
+            "published";
+
+
+          offer.publishedAt =
+            now;
+
+
+          offer.publishedAtFr =
+            new Date(
+              now
+            )
+            .toLocaleString(
+              "fr-FR"
+            );
+
+
+          offer.updatedAt =
+            now;
+
+
+          offer.updatedAtFr =
+            new Date(
+              now
+            )
+            .toLocaleString(
+              "fr-FR"
+            );
+
+
+          const data =
+            loadEmploymentData();
+
+
+          const index =
+            data.offers.findIndex(
+              function(item){
+
+                return (
+                  item &&
+                  String(
+                    item.id || ""
+                  ) ===
+                  String(
+                    offer.id || ""
+                  )
+                );
+              }
+            );
+
+
+          if(index >= 0){
+
+            data.offers[index] =
+              offer;
+
+          }else{
+
+            data.offers.push(
+              offer
+            );
+          }
+
+
+          saveEmploymentData(
+            data
           );
 
-        if(
-          !confirmation ||
-          !confirmation.checked
-        ){
 
           alert(
-            "Veuillez confirmer le paiement avant de continuer."
+            "Paiement confirmé. L’annonce est maintenant publiée."
           );
 
-          return;
-        }
 
-        /*
-          DÉMONSTRATION
+          openEmploymentOffers();
 
-          En production, cette fonction devra être appelée
-          uniquement après le retour sécurisé
-          du prestataire de paiement par carte bancaire.
-        */
+        };
 
-        confirmEmploymentCardPayment(
-          offer,
-          {
-            paid:true,
-            paymentMethod:
-              "Carte bancaire",
-            paymentReference:
-              "CB-DEMO-" +
-              Date.now()
-          }
-        );
-      };
-
-  },0);
+    },
+    0
+  );
 }
-
+   
 function confirmEmploymentCardPayment(
   offer,
   paymentResult
@@ -5180,7 +5679,7 @@ function openEmploymentOffers(){
           style="
             display:block;
             color:#2f5d46;
-            font-size:18px;
+            font-size:17px;
             font-weight:700;
             line-height:1.4;
           ">
@@ -5403,21 +5902,21 @@ if(!offers.length){
 
             <strong
               style="
-                font-size:16px;
+                font-size:17px;
               ">
               ${escapeValue(offer.title)}
             </strong>
 
             <br>
 
-            <span
-              style="
-                font-weight:900;
-                color:#2f5d46;
-              ">
-              ${escapeValue(offer.companyName)}
-            </span>
-
+<span
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+  ">
+  ${escapeValue(offer.companyName)}
+</span>
             <div
               style="
                 margin-top:8px;
@@ -5442,7 +5941,9 @@ if(!offers.length){
             <div
               style="
                 margin-top:8px;
-                font-weight:900;
+                font-size:14px;
+                font-weight:400;
+                 color:#111111;
               ">
 
               Statut :
@@ -5545,69 +6046,7 @@ if(!offers.length){
       });
   }
 
-  function closeEmploymentOffer(offerId){
-
-    const data =
-      loadEmploymentData();
-
-    const offer =
-      data.offers.find(function(item){
-
-        return item.id === offerId;
-      });
-
-    if(!offer){
-
-      alert(
-        "Offre introuvable."
-      );
-
-      return;
-    }
-
-    if(
-      offer.status === "pourvue" ||
-      offer.status === "cloturee"
-    ){
-
-      alert(
-        "Cette offre est déjà clôturée."
-      );
-
-      return;
-    }
-
-    const confirmation =
-      confirm(
-        "Confirmer que le poste est pourvu ?\n\n" +
-        "L’offre ne sera plus ouverte aux candidatures."
-      );
-
-    if(!confirmation){
-      return;
-    }
-
-    offer.status =
-      "pourvue";
-
-    offer.closedAt =
-      Date.now();
-
-    offer.updatedAt =
-      Date.now();
-
-    saveEmploymentData(
-      data
-    );
-
-    renderEmploymentOffers();
-
-    alert(
-      "L’offre est maintenant indiquée comme pourvue."
-    );
-  }
-
-function openApplicationForm(offerId){
+ function openApplicationForm(offerId){
 
   const data =
     loadEmploymentData();
@@ -5619,6 +6058,7 @@ function openApplicationForm(offerId){
         })
       : null;
 
+
   if(offerId && !offer){
 
     alert(
@@ -5628,12 +6068,14 @@ function openApplicationForm(offerId){
     return;
   }
 
+
   if(offer){
 
     const active =
       offer.status === "publiee" ||
       offer.status === "modifiee" ||
       offer.status === "published";
+
 
     if(!active){
 
@@ -5647,7 +6089,9 @@ function openApplicationForm(offerId){
     }
   }
 
+
   let savedProfile = {};
+
 
   try{
 
@@ -5663,30 +6107,36 @@ function openApplicationForm(offerId){
     savedProfile = {};
   }
 
+
   const savedName =
     escapeValue(
       savedProfile.name || ""
     );
+
 
   const savedFirstName =
     escapeValue(
       savedProfile.firstName || ""
     );
 
+
   const savedPhone =
     escapeValue(
       savedProfile.phone || ""
     );
+
 
   const savedEmail =
     escapeValue(
       savedProfile.email || ""
     );
 
+
   const savedCity =
     escapeValue(
       savedProfile.city || ""
     );
+
 
   const companyName =
     offer
@@ -5695,6 +6145,7 @@ function openApplicationForm(offerId){
         )
       : "";
 
+
   const position =
     offer
       ? escapeValue(
@@ -5702,35 +6153,66 @@ function openApplicationForm(offerId){
         )
       : "";
 
+
+  const titleStyle = `
+    display:block;
+    color:#2f5d46;
+    font-size:17px;
+    font-weight:700;
+    line-height:1.4;
+    margin-bottom:10px;
+  `;
+
+
+  const textStyle = `
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.55;
+  `;
+
+
+  const labelStyle = `
+    display:block;
+    margin-top:10px;
+    margin-bottom:6px;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+  `;
+
+
+  const fieldStyle = `
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+  `;
+
+
   module.renderModal(
     offer
       ? "Déposer votre candidature"
       : "Candidature spontanée",
     `
+
       ${
         offer
           ? `
+
             <div
               class="box entrepriseInfoBox"
               style="
                 border-left:6px solid #2f5d46;
-                color:#111;
-                font-size:14px;
-                font-weight:400;
+                ${textStyle}
               ">
 
-              <strong
-                style="
-                  display:block;
-                  color:#2f5d46;
-                  font-size:16px;
-                  font-weight:900;
-                  margin-bottom:8px;
-                ">
+              <div style="${titleStyle}">
                 ${escapeValue(
                   offer.title
                 )}
-              </strong>
+              </div>
+
 
               ${escapeValue(
                 offer.companyName
@@ -5747,53 +6229,40 @@ function openApplicationForm(offerId){
               ${escapeValue(
                 offer.contract
               )}
+
             </div>
+
           `
           : `
+
             <div
               class="box entrepriseInfoBox"
               style="
                 border-left:6px solid #2f5d46;
-                color:#111;
-                font-size:14px;
-                font-weight:400;
+                ${textStyle}
               ">
 
-              <strong
-                style="
-                  display:block;
-                  color:#2f5d46;
-                  font-size:16px;
-                  font-weight:900;
-                  margin-bottom:8px;
-                ">
+              <div style="${titleStyle}">
                 Candidature spontanée
-              </strong>
+              </div>
 
               Présentez directement votre candidature
               à l’entreprise de votre choix.
+
             </div>
+
           `
       }
 
+
       <div
         class="box entrepriseInfoBox"
-        style="
-          color:#111;
-          font-size:14px;
-          font-weight:400;
-        ">
+        style="${textStyle}">
 
-        <strong
-          style="
-            display:block;
-            color:#2f5d46;
-            font-size:16px;
-            font-weight:900;
-            margin-bottom:10px;
-          ">
+        <div style="${titleStyle}">
           Vous recherchez ?
-        </strong>
+        </div>
+
 
         <label class="miniCheck">
           <input
@@ -5803,6 +6272,7 @@ function openApplicationForm(offerId){
           <span>Stage</span>
         </label>
 
+
         <label class="miniCheck">
           <input
             class="applicationSearchType"
@@ -5810,6 +6280,7 @@ function openApplicationForm(offerId){
             value="Apprentissage">
           <span>Apprentissage</span>
         </label>
+
 
         <label class="miniCheck">
           <input
@@ -5819,6 +6290,7 @@ function openApplicationForm(offerId){
           <span>Alternance</span>
         </label>
 
+
         <label class="miniCheck">
           <input
             class="applicationSearchType"
@@ -5826,6 +6298,7 @@ function openApplicationForm(offerId){
             value="CDD">
           <span>CDD</span>
         </label>
+
 
         <label class="miniCheck">
           <input
@@ -5835,6 +6308,7 @@ function openApplicationForm(offerId){
           <span>CDI</span>
         </label>
 
+
         <label class="miniCheck">
           <input
             class="applicationSearchType"
@@ -5842,6 +6316,7 @@ function openApplicationForm(offerId){
             value="Intérim">
           <span>Intérim</span>
         </label>
+
 
         <label class="miniCheck">
           <input
@@ -5851,6 +6326,7 @@ function openApplicationForm(offerId){
           <span>Emploi saisonnier</span>
         </label>
 
+
         <label class="miniCheck">
           <input
             class="applicationSearchType"
@@ -5858,25 +6334,23 @@ function openApplicationForm(offerId){
             value="Autre">
           <span>Autre</span>
         </label>
+
       </div>
+
 
       ${
         offer
           ? `
+
             <input
               id="applicationCompanyName"
               type="hidden"
               value="${companyName}">
+
           `
           : `
-            <label
-              style="
-                display:block;
-                color:#2f5d46;
-                font-size:16px;
-                font-weight:900;
-                margin-top:10px;
-              ">
+
+            <label style="${labelStyle}">
               Entreprise destinataire
             </label>
 
@@ -5884,18 +6358,14 @@ function openApplicationForm(offerId){
               id="applicationCompanyName"
               class="miniField"
               type="text"
-              placeholder="Nom de l’entreprise">
+              placeholder="Nom de l’entreprise"
+              style="${fieldStyle}">
+
           `
       }
 
-      <label
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:16px;
-          font-weight:900;
-          margin-top:10px;
-        ">
+
+      <label style="${labelStyle}">
         Poste recherché
       </label>
 
@@ -5904,16 +6374,11 @@ function openApplicationForm(offerId){
         class="miniField"
         type="text"
         value="${position}"
-        placeholder="Poste recherché">
+        placeholder="Poste recherché"
+        style="${fieldStyle}">
 
-      <label
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:16px;
-          font-weight:900;
-          margin-top:10px;
-        ">
+
+      <label style="${labelStyle}">
         Disponibilité
       </label>
 
@@ -5921,16 +6386,11 @@ function openApplicationForm(offerId){
         id="applicationAvailability"
         class="miniField"
         type="text"
-        placeholder="Immédiate, date ou période">
+        placeholder="Immédiate, date ou période"
+        style="${fieldStyle}">
 
-      <label
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:16px;
-          font-weight:900;
-          margin-top:10px;
-        ">
+
+      <label style="${labelStyle}">
         Nom
       </label>
 
@@ -5940,16 +6400,11 @@ function openApplicationForm(offerId){
         type="text"
         autocomplete="family-name"
         value="${savedName}"
-        placeholder="Nom">
+        placeholder="Nom"
+        style="${fieldStyle}">
 
-      <label
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:16px;
-          font-weight:900;
-          margin-top:10px;
-        ">
+
+      <label style="${labelStyle}">
         Prénom
       </label>
 
@@ -5959,16 +6414,11 @@ function openApplicationForm(offerId){
         type="text"
         autocomplete="given-name"
         value="${savedFirstName}"
-        placeholder="Prénom">
+        placeholder="Prénom"
+        style="${fieldStyle}">
 
-      <label
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:16px;
-          font-weight:900;
-          margin-top:10px;
-        ">
+
+      <label style="${labelStyle}">
         Téléphone
       </label>
 
@@ -5978,16 +6428,11 @@ function openApplicationForm(offerId){
         type="tel"
         autocomplete="tel"
         value="${savedPhone}"
-        placeholder="Téléphone">
+        placeholder="Téléphone"
+        style="${fieldStyle}">
 
-      <label
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:16px;
-          font-weight:900;
-          margin-top:10px;
-        ">
+
+      <label style="${labelStyle}">
         Adresse e-mail
       </label>
 
@@ -5997,16 +6442,11 @@ function openApplicationForm(offerId){
         type="email"
         autocomplete="email"
         value="${savedEmail}"
-        placeholder="Adresse e-mail">
+        placeholder="Adresse e-mail"
+        style="${fieldStyle}">
 
-      <label
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:16px;
-          font-weight:900;
-          margin-top:10px;
-        ">
+
+      <label style="${labelStyle}">
         Commune
       </label>
 
@@ -6016,65 +6456,44 @@ function openApplicationForm(offerId){
         type="text"
         autocomplete="address-level2"
         value="${savedCity}"
-        placeholder="Commune">
+        placeholder="Commune"
+        style="${fieldStyle}">
+
 
       <div
         class="box entrepriseInfoBox"
         style="
           margin-top:12px;
-          color:#111;
-          font-size:14px;
-          font-weight:400;
+          ${textStyle}
         ">
 
-        <strong
-          style="
-            display:block;
-            color:#2f5d46;
-            font-size:16px;
-            font-weight:900;
-            margin-bottom:10px;
-          ">
+        <div style="${titleStyle}">
           Votre message
-        </strong>
+        </div>
+
 
         <textarea
           id="applicationCandidateMessage"
           class="miniField"
           style="
             min-height:130px;
-            color:#111;
-            font-size:14px;
-            font-weight:400;
+            ${fieldStyle}
           ">Votre entreprise a retenu toute mon attention.
 Je souhaite vous proposer ma candidature pour un poste de ${position}.</textarea>
+
       </div>
+
 
       <div
         class="box entrepriseInfoBox"
-        style="
-          color:#111;
-          font-size:14px;
-          font-weight:400;
-        ">
+        style="${textStyle}">
 
-        <strong
-          style="
-            display:block;
-            color:#2f5d46;
-            font-size:16px;
-            font-weight:900;
-            margin-bottom:10px;
-          ">
+        <div style="${titleStyle}">
           Documents facultatifs
-        </strong>
+        </div>
 
-        <label
-          style="
-            display:block;
-            margin-bottom:6px;
-            font-weight:900;
-          ">
+
+        <label style="${labelStyle}">
           CV
         </label>
 
@@ -6082,15 +6501,11 @@ Je souhaite vous proposer ma candidature pour un poste de ${position}.</textarea
           id="applicationCandidateCv"
           class="miniField"
           type="file"
-          accept=".pdf,.doc,.docx">
+          accept=".pdf,.doc,.docx"
+          style="${fieldStyle}">
 
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            margin-bottom:6px;
-            font-weight:900;
-          ">
+
+        <label style="${labelStyle}">
           Lettre
         </label>
 
@@ -6098,15 +6513,11 @@ Je souhaite vous proposer ma candidature pour un poste de ${position}.</textarea
           id="applicationCandidateLetter"
           class="miniField"
           type="file"
-          accept=".pdf,.doc,.docx">
+          accept=".pdf,.doc,.docx"
+          style="${fieldStyle}">
 
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            margin-bottom:6px;
-            font-weight:900;
-          ">
+
+        <label style="${labelStyle}">
           Autre document
         </label>
 
@@ -6114,20 +6525,21 @@ Je souhaite vous proposer ma candidature pour un poste de ${position}.</textarea
           id="applicationCandidateOtherDocument"
           class="miniField"
           type="file"
-          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+          style="${fieldStyle}">
+
       </div>
+
 
       <div
         class="box entrepriseInfoBox"
-        style="
-          color:#111;
-          font-size:14px;
-          font-weight:400;
-        ">
+        style="${textStyle}">
 
         Chaque envoi et chaque réponse sont automatiquement
         classés, enregistrés, datés et horodatés.
+
       </div>
+
 
       <button
         id="applicationSendBtn"
@@ -6136,63 +6548,79 @@ Je souhaite vous proposer ma candidature pour un poste de ${position}.</textarea
         style="
           width:100%;
           margin-top:10px;
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
         ">
         Envoyer ma candidature
       </button>
+
     `
   );
 
-  window.setTimeout(function(){
 
-    const positionInput =
-      getElement(
-        "applicationPosition"
-      );
+  window.setTimeout(
+    function(){
 
-    const messageInput =
-      getElement(
-        "applicationCandidateMessage"
-      );
-
-    if(
-      positionInput &&
-      messageInput
-    ){
-
-      positionInput.oninput = function(){
-
-        const selectedPosition =
-          String(
-            positionInput.value || ""
-          ).trim();
-
-        messageInput.value =
-          "Votre entreprise a retenu toute mon attention.\n" +
-          "Je souhaite vous proposer ma candidature pour un poste de " +
-          (
-            selectedPosition ||
-            "..."
-          ) +
-          ".";
-      };
-    }
-
-    const sendButton =
-      getElement(
-        "applicationSendBtn"
-      );
-
-    if(sendButton){
-
-      sendButton.onclick = function(){
-
-        saveApplication(
-          offerId || ""
+      const positionInput =
+        getElement(
+          "applicationPosition"
         );
-      };
-    }
 
-  },0);
+
+      const messageInput =
+        getElement(
+          "applicationCandidateMessage"
+        );
+
+
+      if(
+        positionInput &&
+        messageInput
+      ){
+
+        positionInput.oninput =
+          function(){
+
+            const selectedPosition =
+              String(
+                positionInput.value || ""
+              ).trim();
+
+
+            messageInput.value =
+              "Votre entreprise a retenu toute mon attention.\n" +
+              "Je souhaite vous proposer ma candidature pour un poste de " +
+              (
+                selectedPosition ||
+                "..."
+              ) +
+              ".";
+          };
+      }
+
+
+      const sendButton =
+        getElement(
+          "applicationSendBtn"
+        );
+
+
+      if(sendButton){
+
+        sendButton.onclick =
+          function(){
+
+            saveApplication(
+              offerId || ""
+            );
+          };
+      }
+
+    },
+    0
+  );
 }
    
 function saveApplication(offerId){
@@ -6612,8 +7040,8 @@ function openEmploymentApplications(){
           style="
             display:block;
             color:#2f5d46;
-            font-size:16px;
-            font-weight:900;
+            font-size:17px;
+            font-weight:700;
             margin-bottom:10px;
           ">
           Candidatures reçues
@@ -6739,8 +7167,8 @@ function renderEmploymentApplications(){
             style="
               display:block;
               color:#2f5d46;
-              font-size:16px;
-              font-weight:900;
+              font-size:17px;
+              font-weight:700;
               margin-bottom:10px;
             ">
             ${escapeValue(
@@ -6862,8 +7290,8 @@ function renderEmploymentApplications(){
                     style="
                       display:block;
                       color:#2f5d46;
-                      font-size:16px;
-                      font-weight:900;
+                      font-size:17px;
+                      font-weight:700;
                       margin-bottom:8px;
                     ">
                     Réponse envoyée
@@ -6974,8 +7402,8 @@ function openEmploymentReplyForm(applicationId){
           style="
             display:block;
             color:#2f5d46;
-            font-size:16px;
-            font-weight:900;
+            font-size:17px;
+            font-weight:700;
             margin-bottom:10px;
           ">
           ${escapeValue(
@@ -7004,8 +7432,8 @@ function openEmploymentReplyForm(applicationId){
           style="
             display:block;
             color:#2f5d46;
-            font-size:16px;
-            font-weight:900;
+            font-size:17px;
+            font-weight:700;
             margin-bottom:10px;
           ">
           Votre réponse
@@ -7052,8 +7480,8 @@ function openEmploymentReplyForm(applicationId){
         style="
           display:block;
           color:#2f5d46;
-          font-size:16px;
-          font-weight:900;
+          font-size:17px;
+          font-weight:700;
           margin-top:10px;
         ">
         Précision facultative
@@ -7074,8 +7502,8 @@ function openEmploymentReplyForm(applicationId){
         style="
           display:block;
           color:#2f5d46;
-          font-size:16px;
-          font-weight:900;
+          font-size:17px;
+          font-weight700;
           margin-top:10px;
         ">
         Document facultatif
@@ -7354,8 +7782,8 @@ function saveEmploymentReply(applicationId){
           style="
             display:block;
             color:#2f5d46;
-            font-size:16px;
-            font-weight:900;
+            font-size:17px;
+            font-weight:700;
             margin-bottom:10px;
           ">
           Vos candidatures
@@ -7426,8 +7854,8 @@ function saveEmploymentReply(applicationId){
                     style="
                       display:block;
                       color:#2f5d46;
-                      font-size:16px;
-                      font-weight:900;
+                      font-size:17px;
+                      font-weight:700;
                       margin-bottom:10px;
                     ">
                     ${escapeValue(
@@ -7486,8 +7914,8 @@ function saveEmploymentReply(applicationId){
                             style="
                               display:block;
                               color:#2f5d46;
-                              font-size:16px;
-                              font-weight:900;
+                              font-size:17px;
+                              font-weight:700;
                               margin-bottom:8px;
                             ">
                             Réponse de l’entreprise
@@ -9178,13 +9606,15 @@ function getMutualisationAlerts(){
                   border-top:1px solid #d8d8d8;
                 ">
 
-                <strong
-                  style="
-                    color:#2f5d46;
-                    font-size:16px;
-                    font-weight:700;
-                  ">
-                  Votre décision
+               <strong
+               style="
+                display:block;
+                color:#2f5d46;
+                font-size:17px;
+                font-weight:700;
+                line-height:1.4;
+                ">
+                Votre décision
                 </strong>
 
                 <br><br>
@@ -9657,168 +10087,216 @@ function getVisibilityHtml(){
 
   return `
 
- <div class="box entrepriseInfoBox">
-style="border-left:6px solid #2f5d46;">
-
-<strong style="font-size:19px;">
-
-Connaissez-vous le nom de cinq entreprises présentes dans votre ville ?
-
-</strong>
-
-<br><br>
-
-Probablement pas.
-
-<br><br>
-
-Nous ne parlons pas uniquement
-des grandes enseignes,
-mais également des artisans,
-des entreprises,
-des ateliers,
-des prestataires,
-des professions libérales,
-des PME
-et des nombreux savoir-faire
-présents dans votre commune.
-
-<br><br>
-
-Cette méconnaissance est aujourd'hui
-l'un des principaux freins
-au développement économique local.
-
-</div>
-
- <div class="box entrepriseInfoBox">
-
-<strong style="font-size:18px;">
-
-Faites connaître votre entreprise
-
-</strong>
-
-<br><br>
-
-Avant d'acheter ailleurs,
-encore faut-il savoir
-que votre entreprise existe.
-
-<br><br>
-
-Bo'CitéArt permet
-aux habitants,
-aux entreprises,
-aux commerces,
-aux associations
-et aux écoles
-de découvrir votre activité.
-
-</div>
-
- <div class="box entrepriseInfoBox">
-
-<strong>
-
-Présentez :
-
-</strong>
-
-<br><br>
-
-• votre activité
-
-<br>
-
-• vos métiers
-
-<br>
-
-• votre savoir-faire
-
-<br>
-
-• vos réalisations
-
-<br>
-
-• vos produits
-
-<br>
-
-• vos services
-
-<br>
-
-• votre histoire
-
-<br>
-
-• vos recrutements
-
-<br>
-
-• vos apprentissages
-
-</div>
-
- <div class="box entrepriseInfoBox">
-
-Une entreprise connue
-a beaucoup plus de chances :
-
-<br><br>
-
-• d'être recommandée
-
-<br>
-
-• de recruter
-
-<br>
-
-• d'être contactée
-
-<br>
-
-• d'obtenir des devis
-
-<br>
-
-• d'être sollicitée
-
-</div>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;">
-
-<button
-id="visibilityPresentationBtn"
-class="choiceBtn">
-
-Présenter mon entreprise
-
-</button>
-
-<button
-id="visibilityModifyBtn"
-class="choiceBtn">
-
-Modifier ma présentation
-
-</button>
-
-<button
-id="visibilityDirectoryBtn"
-class="choiceBtn">
-
-Voir les entreprises de ma ville
-
-</button>
-
-</div>
-
-`;
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        border-left:6px solid #2f5d46;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        Connaissez-vous le nom de cinq entreprises présentes dans votre ville ?
+      </div>
+
+      Probablement pas.
+
+      <br><br>
+
+      Nous ne parlons pas uniquement
+      des grandes enseignes,
+      mais également des artisans,
+      des entreprises,
+      des ateliers,
+      des prestataires,
+      des professions libérales,
+      des PME
+      et des nombreux savoir-faire
+      présents dans votre commune.
+
+      <br><br>
+
+      Cette méconnaissance est aujourd'hui
+      l'un des principaux freins
+      au développement économique local.
+
+    </div>
+
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        Faites connaître votre entreprise
+      </div>
+
+      Avant d'acheter ailleurs,
+      encore faut-il savoir
+      que votre entreprise existe.
+
+      <br><br>
+
+      <span
+        style="
+          white-space:nowrap;
+          font-weight:700;
+        ">
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </span>
+
+      permet
+      aux habitants,
+      aux entreprises,
+      aux commerces,
+      aux associations
+      et aux écoles
+      de découvrir votre activité.
+
+    </div>
+
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        Présentez votre entreprise
+      </div>
+
+      • votre activité<br>
+      • vos métiers<br>
+      • votre savoir-faire<br>
+      • vos réalisations<br>
+      • vos produits<br>
+      • vos services<br>
+      • votre histoire<br>
+      • vos recrutements<br>
+      • vos apprentissages
+
+    </div>
+
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        Une entreprise mieux connue peut être davantage sollicitée
+      </div>
+
+      • être recommandée ;<br>
+      • recruter plus facilement ;<br>
+      • être contactée ;<br>
+      • recevoir davantage de demandes de devis ;<br>
+      • être sollicitée pour ses compétences et son savoir-faire.
+
+    </div>
+
+
+    <div
+      style="
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+      ">
+
+      <button
+        id="visibilityPresentationBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Présenter mon entreprise
+      </button>
+
+
+      <button
+        id="visibilityModifyBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Modifier ma présentation
+      </button>
+
+
+      <button
+        id="visibilityDirectoryBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Voir les entreprises de ma ville
+      </button>
+
+    </div>
+
+  `;
 }
 
   function openVisibility(){
@@ -9832,103 +10310,242 @@ Voir les entreprises de ma ville
     },0);
   }
 
-  function getSavingsHtml(){
-    const summary =
-      typeof module.getDirectionSummaryHtml === "function"
-        ? module.getDirectionSummaryHtml()
-        : `
-           <div class="box entrepriseInfoBox">
+function getSavingsHtml(){
+
+  const summary =
+    typeof module.getDirectionSummaryHtml ===
+    "function"
+      ? module.getDirectionSummaryHtml()
+      : `
+          <div
+            class="box entrepriseInfoBox"
+            style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.6;
+            ">
             Aucune proposition disponible.
           </div>
         `;
 
-    return `
-      <div class="box entrepriseInfoBox">
-        style="border-left:6px solid #2f5d46;">
 
-        <strong style="font-size:18px;">
-          Comparez, choisissez, validez
-        </strong>
+  return `
 
-        <br><br>
-
-        Recevez des propositions claires
-        avant de prendre votre décision.
-      </div>
-
-      <div class="box entrepriseInfoBox">
-        <strong>Bo'CitéArt organise</strong><br><br>
-
-        Bo'CitéArt prépare la consultation,
-        centralise les réponses et présente
-        les différentes solutions reçues.
-
-        <br><br>
-
-        L’entreprise compare et décide.
-      </div>
-
-       <div class="box entrepriseInfoBox">
-        <strong>Un choix visible et simple</strong><br><br>
-
-        Les participants peuvent consulter :
-
-        <br><br>
-
-        • les prestataires ;<br>
-        • les propositions ;<br>
-        • les délais ;<br>
-        • les économies estimées ;<br>
-        • les votes déjà enregistrés ;<br>
-        • l’état d’avancement.
-      </div>
-
-       <div class="box entrepriseInfoBox">
-       
-        <strong>Une confirmation finale</strong><br><br>
-
-        Le choix reste modifiable
-        tant que l’entreprise n’a pas confirmé
-        définitivement sa participation.
-
-        <br><br>
-
-        Une fois confirmée,
-        la décision devient un engagement.
-      </div>
-
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button
-          id="savingsMutualisationBtn"
-          class="choiceBtn"
-          type="button">
-          Voir les mutualisations
-        </button>
-
-        <button
-          id="savingsDirectionBtn"
-          class="choiceBtn"
-          type="button">
-          Ouvrir le Tableau de Direction
-        </button>
-      </div>
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        border-left:6px solid #2f5d46;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
 
       <div
         style="
-          margin-top:16px;
-          font-weight:900;
+          color:#2f5d46;
           font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
         ">
-        Propositions suivies
+        Comparez, choisissez, validez
       </div>
 
+      Recevez des propositions claires
+      avant de prendre votre décision.
+
+    </div>
+
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
       <div
-        id="savingsProposalSummary"
-        style="margin-top:10px;">
-        ${summary}
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+
+        <span
+          style="
+            white-space:nowrap;
+            font-weight:700;
+          ">
+          <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+        </span>
+
+        organise
+
       </div>
-    `;
-  }
+
+      <span
+        style="
+          white-space:nowrap;
+          font-weight:700;
+        ">
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </span>
+
+      prépare la consultation,
+      centralise les réponses
+      et présente les différentes solutions reçues.
+
+      <br><br>
+
+      L’entreprise compare
+      et décide.
+
+    </div>
+
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        Un choix visible et simple
+      </div>
+
+      Les participants peuvent consulter :
+
+      <br><br>
+
+      • les prestataires ;<br>
+      • les propositions ;<br>
+      • les délais ;<br>
+      • les économies estimées ;<br>
+      • les votes déjà enregistrés ;<br>
+      • l’état d’avancement.
+
+    </div>
+
+
+    <div
+      class="box entrepriseInfoBox"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        Une confirmation finale
+      </div>
+
+      Le choix reste modifiable
+      tant que l’entreprise
+      n’a pas confirmé définitivement
+      sa participation.
+
+      <br><br>
+
+      Une fois confirmée,
+      la décision devient
+      un engagement.
+
+    </div>
+
+
+    <div
+      style="
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+      ">
+
+      <button
+        id="savingsMutualisationBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Voir les mutualisations
+      </button>
+
+
+      <button
+        id="savingsDirectionBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Ouvrir le Tableau de Direction
+      </button>
+
+    </div>
+
+
+    <div
+      style="
+        margin-top:16px;
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+        line-height:1.35;
+      ">
+      Propositions suivies
+    </div>
+
+
+    <div
+      id="savingsProposalSummary"
+      style="
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      ${summary}
+    </div>
+
+  `;
+}
 
   function bindSavings(){
     const mutualisationButton =
@@ -10083,413 +10700,730 @@ Voir les entreprises de ma ville
     }
   }
 
-  function getSustainabilityHtml(){
-    const saved =
-      loadSustainabilityData();
+function getSustainabilityHtml(){
 
-    return `
-      <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
+  const saved =
+    loadSustainabilityData();
 
-        <strong style="font-size:18px;">
-          Préparez l’avenir de votre entreprise
-        </strong>
 
-        <br><br>
+  return `
 
-        Combien vaut réellement votre entreprise ?
-
-        <br><br>
-
-        À qui souhaitez-vous la transmettre ?
-
-        <br><br>
-
-        À vos enfants, à un salarié
-        ou à un repreneur extérieur ?
-      </div>
-
-      <div class="box">
-        <strong>
-          Commencez par faire évaluer l’entreprise
-        </strong>
-
-        <br><br>
-
-        Cette première approche est souvent réalisée
-        avec votre expert-comptable.
-
-        <br><br>
-
-        Il peut comparer votre entreprise
-        avec d’autres structures de taille
-        et d’activité proches dans le même bassin économique.
-      </div>
-
-      <div class="box">
-        <strong>
-          Le chiffre d’affaires ne suffit pas
-        </strong>
-
-        <br><br>
-
-        La valeur dépend également :
-
-        <br><br>
-
-        • de la rentabilité ;<br>
-        • de la clientèle ;<br>
-        • de l’équipe ;<br>
-        • de la réputation ;<br>
-        • du matériel ;<br>
-        • de l’organisation ;<br>
-        • des contrats ;<br>
-        • du savoir-faire ;<br>
-        • de la dépendance au dirigeant.
-      </div>
-
-      <div class="box">
-        <strong>
-          Petit ou très gros, les critères restent comparables
-        </strong>
-
-        <br><br>
-
-        L’échelle change, mais la logique demeure la même.
-
-        <br><br>
-
-        Une entreprise se valorise par ce qu’elle produit,
-        ce qu’elle gagne, ce qu’elle possède
-        et sa capacité à continuer sans perdre sa valeur.
-      </div>
-
-      <div class="box">
-        <strong>
-          Parlez-en d’abord discrètement
-        </strong>
-
-        <br><br>
-
-        Avec vos proches, puis avec votre expert-comptable
-        afin d’obtenir une première approche chiffrée.
-
-        <br><br>
-
-        La CCI, la CMA et les réseaux professionnels
-        disposent également de services consacrés
-        à la transmission et à la reprise.
-
-        <br><br>
-
-        Les consulter ne vous engage à rien.
-      </div>
-
-      <div class="box">
-        <strong>
-          Plusieurs chemins sont possibles
-        </strong>
-
-        <br><br>
-
-        Vente complète, transmission familiale,
-        reprise par un salarié, cession progressive,
-        maintien d’une partie de la propriété
-        ou organisation de la succession.
-
-        <br><br>
-
-        Selon le projet, un avocat spécialisé
-        ou un notaire pourra vous accompagner.
-      </div>
-
-      <div class="box">
-        <strong>
-          Faire connaître l’entreprise compte aussi
-        </strong>
-
-        <br><br>
-
-        Chaque année, des entreprises disparaissent
-        faute de repreneur.
-
-        <br><br>
-
-        Parfois simplement parce que personne
-        ne connaissait réellement leur activité.
-
-        <br><br>
-
-        Faire connaître votre métier aujourd’hui,
-        c’est aussi préparer demain.
-      </div>
-
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button
-          id="sustainabilityVisibilityBtn"
-          class="choiceBtn"
-          type="button">
-          Faire connaître mon entreprise
-        </button>
-
-        <button
-          id="sustainabilityDirectoryBtn"
-          class="choiceBtn"
-          type="button">
-          Rechercher un expert local
-        </button>
-
-        <button
-          id="sustainabilityDevelopmentBtn"
-          class="choiceBtn"
-          type="button">
-          Préparer un plan d’action
-        </button>
-      </div>
+    <div
+      class="box"
+      style="
+        border-left:6px solid #2f5d46;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
 
       <div
-        class="box"
-        style="margin-top:14px;">
-
-        <strong style="font-size:17px;">
-          Mon projet de transmission ou de continuité
-        </strong>
-
-        <br><br>
-
-        Cet espace reste réservé à l’entreprise.
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        Préparez l’avenir de votre entreprise
       </div>
 
-      <label style="display:block;font-weight:900;">
-        Nom de l’entreprise
-      </label>
+      Combien vaut réellement votre entreprise ?
 
-      <input
-        id="sustainabilityCompanyName"
-        class="miniField"
-        type="text"
-        value="${escapeValue(saved.companyName || "")}"
-        placeholder="Nom de l’entreprise">
+      <br><br>
 
-      <label
+      À qui souhaitez-vous la transmettre ?
+
+      <br><br>
+
+      À vos enfants,
+      à un salarié
+      ou à un repreneur extérieur ?
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
         style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
         ">
-        Quel projet envisagez-vous ?
-      </label>
-
-      <select
-        id="sustainabilityProjectType"
-        class="miniField">
-
-        <option value="">
-          Choisir
-        </option>
-
-        <option value="transmission_familiale">
-          Transmission familiale
-        </option>
-
-        <option value="reprise_salarie">
-          Reprise par un salarié
-        </option>
-
-        <option value="vente_exterieure">
-          Vente à un repreneur extérieur
-        </option>
-
-        <option value="cession_progressive">
-          Cession progressive
-        </option>
-
-        <option value="succession">
-          Préparation de la succession
-        </option>
-
-        <option value="continuité">
-          Assurer la continuité de l’activité
-        </option>
-
-        <option value="indecis">
-          Je ne sais pas encore
-        </option>
-      </select>
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        À qui souhaiteriez-vous transmettre l’entreprise ?
-      </label>
-
-      <select
-        id="sustainabilityPreferredBuyer"
-        class="miniField">
-
-        <option value="">
-          Choisir
-        </option>
-
-        <option value="enfant">
-          À un enfant ou membre de la famille
-        </option>
-
-        <option value="salarie">
-          À un salarié
-        </option>
-
-        <option value="associe">
-          À un associé
-        </option>
-
-        <option value="exterieur">
-          À un repreneur extérieur
-        </option>
-
-        <option value="inconnu">
-          Je ne sais pas encore
-        </option>
-      </select>
-
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
-        ">
-        Échéance envisagée
-      </label>
-
-      <input
-        id="sustainabilityDeadline"
-        class="miniField"
-        type="date"
-        value="${escapeValue(
-          saved.estimatedDeadline || ""
-        )}">
-
-      <div class="box" style="margin-top:12px;">
-        <strong>Démarches déjà engagées</strong>
-
-        <label class="miniCheck">
-          <input
-            id="sustainabilityAccountant"
-            type="checkbox"
-            ${saved.accountantContacted ? "checked" : ""}>
-
-          <span>
-            J’en ai parlé à mon expert-comptable
-          </span>
-        </label>
-
-        <label class="miniCheck">
-          <input
-            id="sustainabilityChamber"
-            type="checkbox"
-            ${saved.chamberContacted ? "checked" : ""}>
-
-          <span>
-            J’ai contacté la CCI, la CMA
-            ou ma chambre professionnelle
-          </span>
-        </label>
-
-        <label class="miniCheck">
-          <input
-            id="sustainabilityLawyer"
-            type="checkbox"
-            ${saved.lawyerContacted ? "checked" : ""}>
-
-          <span>
-            J’ai consulté un avocat spécialisé
-          </span>
-        </label>
-
-        <label class="miniCheck">
-          <input
-            id="sustainabilityNotary"
-            type="checkbox"
-            ${saved.notaryContacted ? "checked" : ""}>
-
-          <span>
-            J’ai consulté un notaire
-          </span>
-        </label>
-
-        <label class="miniCheck">
-          <input
-            id="sustainabilityValuation"
-            type="checkbox"
-            ${saved.valuationStarted ? "checked" : ""}>
-
-          <span>
-            Une première valorisation a été engagée
-          </span>
-        </label>
+        Commencez par faire évaluer l’entreprise
       </div>
 
-      <label
+      Cette première approche
+      est souvent réalisée
+      avec votre expert-comptable.
+
+      <br><br>
+
+      Il peut comparer votre entreprise
+      avec d’autres structures
+      de taille et d’activité proches
+      dans le même bassin économique.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
         style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
         ">
-        Notes confidentielles
-      </label>
+        Le chiffre d’affaires ne suffit pas
+      </div>
 
-      <textarea
-        id="sustainabilityNotes"
-        class="miniField"
-        style="min-height:110px;"
-        placeholder="Indiquez ici les éléments utiles à votre réflexion.">${escapeValue(saved.confidentialNotes || "")}</textarea>
+      La valeur dépend également :
 
-      <label
+      <br><br>
+
+      • de la rentabilité ;<br>
+      • de la clientèle ;<br>
+      • de l’équipe ;<br>
+      • de la réputation ;<br>
+      • du matériel ;<br>
+      • de l’organisation ;<br>
+      • des contrats ;<br>
+      • du savoir-faire ;<br>
+      • de la dépendance au dirigeant.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
         style="
-          display:block;
-          margin-top:10px;
-          font-weight:900;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
         ">
-        Prochaine action à réaliser
-      </label>
+        Petit ou très gros, les critères restent comparables
+      </div>
 
-      <textarea
-        id="sustainabilityNextAction"
-        class="miniField"
-        style="min-height:90px;"
-        placeholder="Exemple : prendre rendez-vous avec l’expert-comptable.">${escapeValue(saved.nextAction || "")}</textarea>
+      L’échelle change,
+      mais la logique demeure la même.
+
+      <br><br>
+
+      Une entreprise se valorise
+      par ce qu’elle produit,
+      ce qu’elle gagne,
+      ce qu’elle possède
+      et sa capacité à continuer
+      sans perdre sa valeur.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Parlez-en d’abord discrètement
+      </div>
+
+      Avec vos proches,
+      puis avec votre expert-comptable
+      afin d’obtenir
+      une première approche chiffrée.
+
+      <br><br>
+
+      La CCI,
+      la CMA
+      et les réseaux professionnels
+      disposent également de services
+      consacrés à la transmission
+      et à la reprise.
+
+      <br><br>
+
+      Les consulter
+      ne vous engage à rien.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Plusieurs chemins sont possibles
+      </div>
+
+      Vente complète,
+      transmission familiale,
+      reprise par un salarié,
+      cession progressive,
+      maintien d’une partie de la propriété
+      ou organisation de la succession.
+
+      <br><br>
+
+      Selon le projet,
+      un avocat spécialisé
+      ou un notaire
+      pourra vous accompagner.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Faire connaître l’entreprise compte aussi
+      </div>
+
+      Chaque année,
+      des entreprises disparaissent
+      faute de repreneur.
+
+      <br><br>
+
+      Parfois simplement parce que personne
+      ne connaissait réellement leur activité.
+
+      <br><br>
+
+      Faire connaître votre métier aujourd’hui,
+      c’est aussi préparer demain.
+
+    </div>
+
+
+    <div
+      style="
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+      ">
 
       <button
-        id="sustainabilitySaveBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;margin-top:12px;">
-        Enregistrer mon projet
-      </button>
-
-      <button
-        id="sustainabilitySummaryBtn"
+        id="sustainabilityVisibilityBtn"
         class="choiceBtn"
         type="button"
         style="
           width:100%;
-          margin-top:8px;
-          background:#fff;
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
         ">
-        Consulter mon récapitulatif
+        Faire connaître mon entreprise
       </button>
 
+
+      <button
+        id="sustainabilityDirectoryBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Rechercher un expert local
+      </button>
+
+
+      <button
+        id="sustainabilityDevelopmentBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Préparer un plan d’action
+      </button>
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        margin-top:14px;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+        border-left:6px solid #2f5d46;
+      ">
+
       <div
-        id="sustainabilityStatus"
-        class="muted"
-        style="margin-top:10px;">
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Mon projet de transmission ou de continuité
       </div>
-    `;
-  }
+
+      Cet espace reste réservé
+      à l’entreprise.
+
+    </div>
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Nom de l’entreprise
+    </label>
+
+    <input
+      id="sustainabilityCompanyName"
+      class="miniField"
+      type="text"
+      value="${escapeValue(
+        saved.companyName || ""
+      )}"
+      placeholder="Nom de l’entreprise"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Quel projet envisagez-vous ?
+    </label>
+
+    <select
+      id="sustainabilityProjectType"
+      class="miniField"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+
+      <option value="">
+        Choisir
+      </option>
+
+      <option value="transmission_familiale">
+        Transmission familiale
+      </option>
+
+      <option value="reprise_salarie">
+        Reprise par un salarié
+      </option>
+
+      <option value="vente_exterieure">
+        Vente à un repreneur extérieur
+      </option>
+
+      <option value="cession_progressive">
+        Cession progressive
+      </option>
+
+      <option value="succession">
+        Préparation de la succession
+      </option>
+
+      <option value="continuité">
+        Assurer la continuité de l’activité
+      </option>
+
+      <option value="indecis">
+        Je ne sais pas encore
+      </option>
+
+    </select>
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      À qui souhaiteriez-vous transmettre l’entreprise ?
+    </label>
+
+    <select
+      id="sustainabilityPreferredBuyer"
+      class="miniField"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+
+      <option value="">
+        Choisir
+      </option>
+
+      <option value="enfant">
+        À un enfant ou membre de la famille
+      </option>
+
+      <option value="salarie">
+        À un salarié
+      </option>
+
+      <option value="associe">
+        À un associé
+      </option>
+
+      <option value="exterieur">
+        À un repreneur extérieur
+      </option>
+
+      <option value="inconnu">
+        Je ne sais pas encore
+      </option>
+
+    </select>
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Échéance envisagée
+    </label>
+
+    <input
+      id="sustainabilityDeadline"
+      class="miniField"
+      type="date"
+      value="${escapeValue(
+        saved.estimatedDeadline || ""
+      )}"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+
+
+    <div
+      class="box"
+      style="
+        margin-top:12px;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Démarches déjà engagées
+      </div>
+
+
+      <label
+        class="miniCheck"
+        style="
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <input
+          id="sustainabilityAccountant"
+          type="checkbox"
+          ${saved.accountantContacted ? "checked" : ""}>
+
+        <span>
+          J’en ai parlé à mon expert-comptable
+        </span>
+
+      </label>
+
+
+      <label
+        class="miniCheck"
+        style="
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <input
+          id="sustainabilityChamber"
+          type="checkbox"
+          ${saved.chamberContacted ? "checked" : ""}>
+
+        <span>
+          J’ai contacté la CCI,
+          la CMA
+          ou ma chambre professionnelle
+        </span>
+
+      </label>
+
+
+      <label
+        class="miniCheck"
+        style="
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <input
+          id="sustainabilityLawyer"
+          type="checkbox"
+          ${saved.lawyerContacted ? "checked" : ""}>
+
+        <span>
+          J’ai consulté un avocat spécialisé
+        </span>
+
+      </label>
+
+
+      <label
+        class="miniCheck"
+        style="
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <input
+          id="sustainabilityNotary"
+          type="checkbox"
+          ${saved.notaryContacted ? "checked" : ""}>
+
+        <span>
+          J’ai consulté un notaire
+        </span>
+
+      </label>
+
+
+      <label
+        class="miniCheck"
+        style="
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <input
+          id="sustainabilityValuation"
+          type="checkbox"
+          ${saved.valuationStarted ? "checked" : ""}>
+
+        <span>
+          Une première valorisation a été engagée
+        </span>
+
+      </label>
+
+    </div>
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Notes confidentielles
+    </label>
+
+    <textarea
+      id="sustainabilityNotes"
+      class="miniField"
+      style="
+        min-height:110px;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      "
+      placeholder="Indiquez ici les éléments utiles à votre réflexion.">${escapeValue(
+        saved.confidentialNotes || ""
+      )}</textarea>
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Prochaine action à réaliser
+    </label>
+
+    <textarea
+      id="sustainabilityNextAction"
+      class="miniField"
+      style="
+        min-height:90px;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      "
+      placeholder="Exemple : prendre rendez-vous avec l’expert-comptable.">${escapeValue(
+        saved.nextAction || ""
+      )}</textarea>
+
+
+    <button
+      id="sustainabilitySaveBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:12px;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Enregistrer mon projet
+    </button>
+
+
+    <button
+      id="sustainabilitySummaryBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:8px;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Consulter mon récapitulatif
+    </button>
+
+
+    <div
+      id="sustainabilityStatus"
+      class="muted"
+      style="
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+    </div>
+
+  `;
+}
 
   function restoreSelectValues(){
     const saved =
@@ -10721,91 +11655,253 @@ Voir les entreprises de ma ville
       : "Aucune démarche renseignée";
   }
 
-  function openSustainabilitySummary(){
-    const data =
-      loadSustainabilityData();
+function openSustainabilitySummary(){
 
-    if(
-      !data.companyName ||
-      !data.projectType
-    ){
-      alert(
-        "Aucun projet n’est encore enregistré."
-      );
-      return;
-    }
+  const data =
+    loadSustainabilityData();
 
-    module.renderModal(
-      "Mon projet de pérennité",
-      `
-        <div
-          class="box"
-          style="border-left:6px solid #2f5d46;">
 
-          <strong style="font-size:18px;">
-            ${escapeValue(data.companyName)}
-          </strong>
-        </div>
+  if(
+    !data.companyName ||
+    !data.projectType
+  ){
 
-        <div class="box">
-          <strong>Projet envisagé</strong><br><br>
-
-          ${escapeValue(
-            getProjectLabel(data.projectType)
-          )}
-        </div>
-
-        <div class="box">
-          <strong>Repreneur envisagé</strong><br><br>
-
-          ${escapeValue(
-            getBuyerLabel(data.preferredBuyer)
-          )}
-        </div>
-
-        <div class="box">
-          <strong>Échéance</strong><br><br>
-
-          ${escapeValue(
-            data.estimatedDeadline ||
-            "Non renseignée"
-          )}
-        </div>
-
-        <div class="box">
-          <strong>Démarches engagées</strong><br><br>
-
-          ${getStepsList(data)}
-        </div>
-
-        <div class="box">
-          <strong>Notes confidentielles</strong><br><br>
-
-          ${escapeValue(
-            data.confidentialNotes ||
-            "Aucune note"
-          )}
-        </div>
-
-        <div class="box">
-          <strong>Prochaine action</strong><br><br>
-
-          ${escapeValue(
-            data.nextAction ||
-            "Non renseignée"
-          )}
-        </div>
-
-        <div class="box">
-          <strong>Dernière mise à jour</strong><br><br>
-
-          ${escapeValue(
-            data.updatedAtFr || ""
-          )}
-        </div>
-      `
+    alert(
+      "Aucun projet n’est encore enregistré."
     );
+
+    return;
   }
+
+
+  module.renderModal(
+    "Mon projet de pérennité",
+    `
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid #2f5d46;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            line-height:1.35;
+          ">
+          ${escapeValue(
+            data.companyName
+          )}
+        </div>
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Projet envisagé
+        </div>
+
+        ${escapeValue(
+          getProjectLabel(
+            data.projectType
+          )
+        )}
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Repreneur envisagé
+        </div>
+
+        ${escapeValue(
+          getBuyerLabel(
+            data.preferredBuyer
+          )
+        )}
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Échéance
+        </div>
+
+        ${escapeValue(
+          data.estimatedDeadline ||
+          "Non renseignée"
+        )}
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Démarches engagées
+        </div>
+
+        ${getStepsList(
+          data
+        )}
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Notes confidentielles
+        </div>
+
+        ${escapeValue(
+          data.confidentialNotes ||
+          "Aucune note"
+        )}
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Prochaine action
+        </div>
+
+        ${escapeValue(
+          data.nextAction ||
+          "Non renseignée"
+        )}
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Dernière mise à jour
+        </div>
+
+        ${escapeValue(
+          data.updatedAtFr || ""
+        )}
+
+      </div>
+
+    `
+  );
+}
 
   function bindSustainability(){
     const visibilityButton =
@@ -10985,7 +12081,7 @@ Voir les entreprises de ma ville
       .bociteDirectionMenuTitle{
         color:#2f5d46 !important;
         font-size:17px !important;
-        font-weight:800 !important;
+        font-weight:700 !important;
         line-height:1.35 !important;
       }
 
@@ -11197,170 +12293,242 @@ function openEmployment(){
      CONTENU DU TABLEAU DE DIRECTION
      ======================================================= */
 
-  function getDirectionHtml(){
+function getDirectionHtml(){
 
-    return `
+  return `
+
+    <style>
+
+      .bociteDirectionMenuIntro{
+
+        background:#ffffff;
+        color:#111111;
+
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+
+        border-left:6px solid #2f5d46;
+      }
+
+
+      .bociteDirectionMenuTitle{
+
+        color:#2f5d46;
+
+        font-size:17px;
+        font-weight:700;
+        line-height:1.35;
+      }
+
+
+      .bociteDirectionMenuBtn{
+
+        display:block;
+
+        width:100%;
+
+        margin-top:8px;
+
+        background:#ffffff !important;
+        color:#111111 !important;
+
+        text-align:left;
+
+        font-size:14px;
+        font-weight:400;
+        line-height:1.4;
+      }
+
+
+      .bociteDirectionMenuBtn strong{
+
+        display:block;
+
+        color:#2f5d46 !important;
+
+        font-size:17px !important;
+        font-weight:700 !important;
+        line-height:1.35;
+
+        margin-bottom:5px;
+      }
+
+
+      .bociteDirectionMenuBtn span{
+
+        display:block;
+
+        color:#111111 !important;
+
+        font-size:14px !important;
+        font-weight:400 !important;
+        line-height:1.4;
+      }
+
+    </style>
+
+
+    <div
+      class="
+        box
+        bociteDirectionMenuIntro
+      ">
 
       <div
-        class="
-          box
-          bociteDirectionMenuIntro
-        ">
-
-        <div
-          class="bociteDirectionMenuTitle">
-          Tableau de Direction
-        </div>
-
-        <div
-          style="
-            margin-top:7px;
-            font-size:14px;
-            font-weight:400;
-            color:#111111;
-          ">
-          Choisissez la rubrique
-          que vous souhaitez ouvrir.
-        </div>
-
+        class="bociteDirectionMenuTitle">
+        Tableau de Direction
       </div>
 
 
-      <button
-        id="directionDirectoryBtn"
-        class="
-          choiceBtn
-          bociteDirectionMenuBtn
-        "
-        type="button">
+      <div
+        style="
+          margin-top:7px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Choisissez la rubrique
+        que vous souhaitez ouvrir.
+      </div>
 
-        <strong>
-          1 — Annuaire professionnel
-        </strong>
-
-        <span>
-          Recherches • entreprises suivies • informations
-        </span>
-
-      </button>
+    </div>
 
 
-      <button
-        id="directionCollaboratorsBtn"
-        class="
-          choiceBtn
-          bociteDirectionMenuBtn
-        "
-        type="button">
+    <button
+      id="directionDirectoryBtn"
+      class="
+        choiceBtn
+        bociteDirectionMenuBtn
+      "
+      type="button">
 
-        <strong>
-          2 — Mes collaborateurs
-        </strong>
+      <strong>
+        1 — Annuaire professionnel
+      </strong>
 
-        <span>
-          Accès 1 • Accès 2 • autorisations
-        </span>
+      <span>
+        Recherches • entreprises suivies • informations
+      </span>
 
-      </button>
-
-
-      <button
-        id="directionAdvertisingBtn"
-        class="
-          choiceBtn
-          bociteDirectionMenuBtn
-        "
-        type="button">
-
-        <strong>
-          3 — Publicité
-        </strong>
-
-        <span>
-          Créer • modifier • programmer • payer • suivre
-        </span>
-
-      </button>
+    </button>
 
 
-      <button
-        id="directionLowerChargesBtn"
-        class="
-          choiceBtn
-          bociteDirectionMenuBtn
-        "
-        type="button">
+    <button
+      id="directionCollaboratorsBtn"
+      class="
+        choiceBtn
+        bociteDirectionMenuBtn
+      "
+      type="button">
 
-        <strong>
-          4 — Payer moins de charges
-        </strong>
+      <strong>
+        2 — Mes collaborateurs
+      </strong>
 
-        <span>
-          Propositions • compteurs • entreprises intéressées • suivi
-        </span>
+      <span>
+        Accès 1 • Accès 2 • autorisations
+      </span>
 
-      </button>
-
-
-      <button
-        id="directionEmploymentBtn"
-        class="
-          choiceBtn
-          bociteDirectionMenuBtn
-        "
-        type="button">
-
-        <strong>
-          5 — Emploi et recrutement
-        </strong>
-
-        <span>
-          Offres • candidatures • historique
-        </span>
-
-      </button>
+    </button>
 
 
-      <button
-        id="directionVisibilityBtn"
-        class="
-          choiceBtn
-          bociteDirectionMenuBtn
-        "
-        type="button">
+    <button
+      id="directionAdvertisingBtn"
+      class="
+        choiceBtn
+        bociteDirectionMenuBtn
+      "
+      type="button">
 
-        <strong>
-          6 — Visibilité et actualités
-        </strong>
+      <strong>
+        3 — Publicité
+      </strong>
 
-        <span>
-          Publications • actualités • suivi
-        </span>
+      <span>
+        Créer • modifier • programmer • payer • suivre
+      </span>
 
-      </button>
+    </button>
 
 
-      <button
-        id="directionSubscriptionBtn"
-        class="
-          choiceBtn
-          bociteDirectionMenuBtn
-        "
-        type="button">
+    <button
+      id="directionLowerChargesBtn"
+      class="
+        choiceBtn
+        bociteDirectionMenuBtn
+      "
+      type="button">
 
-        <strong>
-          7 — Abonnement et factures
-        </strong>
+      <strong>
+        4 — Payer moins de charges
+      </strong>
 
-        <span>
-          Abonnement • paiements • factures
-        </span>
+      <span>
+        Propositions • compteurs • entreprises intéressées • suivi
+      </span>
 
-      </button>
+    </button>
 
-    `;
-  }
 
+    <button
+      id="directionEmploymentBtn"
+      class="
+        choiceBtn
+        bociteDirectionMenuBtn
+      "
+      type="button">
+
+      <strong>
+        5 — Emploi et recrutement
+      </strong>
+
+      <span>
+        Offres • candidatures • historique
+      </span>
+
+    </button>
+
+
+    <button
+      id="directionVisibilityBtn"
+      class="
+        choiceBtn
+        bociteDirectionMenuBtn
+      "
+      type="button">
+
+      <strong>
+        6 — Visibilité et actualités
+      </strong>
+
+      <span>
+        Publications • actualités • suivi
+      </span>
+
+    </button>
+
+
+    <button
+      id="directionSubscriptionBtn"
+      class="
+        choiceBtn
+        bociteDirectionMenuBtn
+      "
+      type="button">
+
+      <strong>
+        7 — Abonnement et factures
+      </strong>
+
+      <span>
+        Abonnement • paiements • factures
+      </span>
+
+    </button>
+
+  `;
+}
 
   /* =======================================================
      RACCORDEMENT DES 7 RUBRIQUES
@@ -12494,312 +13662,556 @@ if(
     );
   }
 
-  function getSearchHtml(){
-    const plan =
-      loadSearchPlan();
+ function getSearchHtml(){
 
-    const savedCity =
-      loadIndependentCity();
+  const plan =
+    loadSearchPlan();
 
-    return `
-      <style>
-        .professionalSearchPlan {
-          display:block;
-          width:100%;
-          margin-top:8px;
-          padding:12px;
-          border:2px solid #2f5d46;
-          border-radius:10px;
-          background:#fffaf1;
-          color:#111;
-          text-align:left;
-          cursor:pointer;
-        }
+  const savedCity =
+    loadIndependentCity();
 
-        .professionalSearchPlan.active {
-          background:#edf6ef;
-          outline:3px solid rgba(47,93,70,.20);
-        }
 
-        .professionalSearchPrice {
-          display:block;
-          margin-top:6px;
-          color:#2f5d46;
-          font-weight:900;
-        }
+  return `
 
-        .professionalSearchLocked {
-          display:inline-block;
-          margin-left:6px;
-          padding:2px 7px;
-          border-radius:999px;
-          background:#b00020;
-          color:#fff;
-          font-size:12px;
-          font-weight:900;
-        }
+    <style>
 
-        .professionalResultCard {
-          margin-top:10px;
-          padding:12px;
-          border:2px solid #2f5d46;
-          border-radius:10px;
-          background:#fff;
-        }
-      </style>
+      .professionalSearchPlan {
+
+        display:block;
+        width:100%;
+
+        margin-top:8px;
+        padding:12px;
+
+        border:2px solid #2f5d46;
+        border-radius:10px;
+
+        background:#ffffff;
+        color:#111111;
+
+        text-align:left;
+        cursor:pointer;
+
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      }
+
+
+      .professionalSearchPlan.active {
+
+        background:#ffffff;
+
+        outline:
+          3px solid
+          rgba(
+            47,
+            93,
+            70,
+            .20
+          );
+      }
+
+
+      .professionalSearchPlan strong {
+
+        color:#2f5d46;
+
+        font-size:17px;
+        font-weight:700;
+        line-height:1.35;
+      }
+
+
+      .professionalSearchPrice {
+
+        display:block;
+
+        margin-top:6px;
+
+        color:#111111;
+
+        font-size:14px;
+        font-weight:400;
+      }
+
+
+      .professionalSearchLocked {
+
+        display:inline-block;
+
+        margin-left:6px;
+        padding:2px 7px;
+
+        border-radius:999px;
+
+        background:#ffffff;
+        color:#b00020;
+
+        border:
+          1px solid
+          #b00020;
+
+        font-size:14px;
+        font-weight:400;
+      }
+
+
+      .professionalResultCard {
+
+        margin-top:10px;
+        padding:12px;
+
+        border:
+          2px solid
+          #2f5d46;
+
+        border-radius:10px;
+
+        background:#ffffff;
+        color:#111111;
+
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      }
+
+
+      .professionalSearchBox {
+
+        background:#ffffff;
+        color:#111111;
+
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      }
+
+
+      .professionalSearchTitle {
+
+        display:block;
+
+        color:#2f5d46;
+
+        font-size:17px;
+        font-weight:700;
+        line-height:1.35;
+
+        margin-bottom:8px;
+      }
+
+
+      .professionalSearchText {
+
+        color:#111111;
+
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      }
+
+
+      .professionalSearchLabel {
+
+        display:block;
+
+        margin-top:12px;
+        margin-bottom:6px;
+
+        color:#111111;
+
+        font-size:14px;
+        font-weight:400;
+      }
+
+
+      .professionalSearchField {
+
+        width:100%;
+        box-sizing:border-box;
+
+        background:#ffffff !important;
+        color:#111111 !important;
+
+        font-size:14px;
+        font-weight:400;
+      }
+
+
+      .professionalSearchButton {
+
+        width:100%;
+
+        margin-top:8px;
+
+        background:#ffffff !important;
+        color:#111111 !important;
+
+        font-size:14px;
+        font-weight:400;
+      }
+
+
+      .professionalSearchBrand {
+
+        white-space:nowrap;
+        font-weight:700;
+      }
+
+
+      .professionalSearchBrandGreen {
+
+        color:#2f5d46;
+        font-weight:700;
+      }
+
+
+      .professionalSearchBrandRed {
+
+        color:#b00020;
+        font-weight:700;
+      }
+
+    </style>
+
+
+    <div
+      class="box professionalSearchBox"
+      style="
+        border-left:6px solid #2f5d46;
+      ">
 
       <div
-        class="box"
-        style="border-left:6px solid #2f5d46;">
+        class="professionalSearchTitle">
+        Recherche professionnelle privée
+      </div>
 
-        <strong style="font-size:18px;">
-          Recherche professionnelle privée
-        </strong>
 
-        <br><br>
+      <div
+        class="professionalSearchText">
 
-        Cette recherche appartient à l’espace sécurisé
+        Cette recherche appartient
+        à l’espace sécurisé
         de votre entreprise.
 
         <br><br>
 
-        Le métier recherché, la commune choisie,
-        l’historique et les résultats ne sont pas visibles
-        par les habitants ni par les autres entreprises.
+        Le métier recherché,
+        la commune choisie,
+        l’historique
+        et les résultats
+        ne sont pas visibles
+        par les habitants
+        ni par les autres entreprises.
 
         <br><br>
 
-        La ville choisie ici est indépendante
-        de la carte, du Sport et de l’onglet
+        La ville choisie ici
+        est indépendante
+        de la carte,
+        du Sport
+        et de l’onglet
         « Explorer les alentours ».
+
       </div>
 
-      <label style="display:block;font-weight:900;">
-        Que recherchez-vous ?
-      </label>
+    </div>
 
-      <input
-        id="professionalSearchKeyword"
-        class="miniField"
-        type="search"
-        placeholder="Exemple : maçon, carreleur, avocat, transporteur">
 
-      <label
-        style="
-          display:block;
-          margin-top:12px;
-          font-weight:900;
-        ">
-        Dans quelle commune souhaitez-vous chercher ?
-      </label>
+    <label
+      class="professionalSearchLabel"
+      for="professionalSearchKeyword">
+      Que recherchez-vous ?
+    </label>
 
-      <input
-        id="professionalSearchCity"
-        class="miniField"
-        type="text"
-        value="${escapeValue(savedCity)}"
-        placeholder="Exemple : Wattignies, Lille, Bordeaux">
 
-      <div class="muted" style="margin-top:6px;">
-        Vous pouvez modifier cette ville à chaque recherche.
-      </div>
+    <input
+      id="professionalSearchKeyword"
+      class="
+        miniField
+        professionalSearchField
+      "
+      type="search"
+      placeholder="Exemple : maçon, carreleur, avocat, transporteur">
 
-      <label
-        style="
-          display:block;
-          margin-top:14px;
-          font-weight:900;
-        ">
-        Étendue de la recherche
-      </label>
 
-      <button
-        class="professionalSearchPlan active"
-        type="button"
-        data-search-zone="commune">
+    <label
+      class="professionalSearchLabel"
+      for="professionalSearchCity">
+      Dans quelle commune souhaitez-vous chercher ?
+    </label>
 
-        <strong>
-          Commune choisie
-        </strong>
 
-        <span class="professionalSearchPrice">
-          Inclus
-        </span>
-      </button>
+    <input
+      id="professionalSearchCity"
+      class="
+        miniField
+        professionalSearchField
+      "
+      type="text"
+      value="${escapeValue(savedCity)}"
+      placeholder="Exemple : Wattignies, Lille, Bordeaux">
 
-      <button
-        class="professionalSearchPlan"
-        type="button"
-        data-search-zone="france">
 
-        <strong>
-          France
-        </strong>
+    <div
+      class="professionalSearchText"
+      style="
+        margin-top:6px;
+      ">
+      Vous pouvez modifier cette ville
+      à chaque recherche.
+    </div>
 
-        ${
-          plan.plan !== "france" &&
-          plan.plan !== "europe"
-            ? `
-              <span class="professionalSearchLocked">
+
+    <div
+      class="professionalSearchTitle"
+      style="
+        margin-top:16px;
+      ">
+      Étendue de la recherche
+    </div>
+
+
+    <button
+      class="
+        professionalSearchPlan
+        active
+      "
+      type="button"
+      data-search-zone="commune">
+
+      <strong>
+        Commune choisie
+      </strong>
+
+      <span
+        class="professionalSearchPrice">
+        Inclus
+      </span>
+
+    </button>
+
+
+    <button
+      class="professionalSearchPlan"
+      type="button"
+      data-search-zone="france">
+
+      <strong>
+        France
+      </strong>
+
+
+      ${
+        plan.plan !== "france" &&
+        plan.plan !== "europe"
+          ? `
+              <span
+                class="professionalSearchLocked">
                 Abonnement
               </span>
             `
-            : ""
-        }
+          : ""
+      }
 
-        <span class="professionalSearchPrice">
-          26,50 € HT par mois
-          ou 300 € HT par an
-        </span>
-      </button>
 
-      <button
-        class="professionalSearchPlan"
-        type="button"
-        data-search-zone="europe">
+      <span
+        class="professionalSearchPrice">
+        26,50 € HT par mois
+        ou 300 € HT par an
+      </span>
 
-        <strong>
-          Europe
-        </strong>
+    </button>
 
-        ${
-          plan.plan !== "europe"
-            ? `
-              <span class="professionalSearchLocked">
+
+    <button
+      class="professionalSearchPlan"
+      type="button"
+      data-search-zone="europe">
+
+      <strong>
+        Europe
+      </strong>
+
+
+      ${
+        plan.plan !== "europe"
+          ? `
+              <span
+                class="professionalSearchLocked">
                 Abonnement
               </span>
             `
-            : ""
-        }
+          : ""
+      }
 
-        <span class="professionalSearchPrice">
-          44,90 € HT par mois
-          ou 500 € HT par an
-        </span>
-      </button>
 
-      <div
-        id="professionalFranceFields"
-        style="display:none;margin-top:12px;">
+      <span
+        class="professionalSearchPrice">
+        44,90 € HT par mois
+        ou 500 € HT par an
+      </span>
 
-        <label style="display:block;font-weight:900;">
-          Périmètre en France
-        </label>
+    </button>
 
-        <select
-          id="professionalFranceScope"
-          class="miniField">
 
-          <option value="commune">
-            Commune indiquée
-          </option>
+    <div
+      id="professionalFranceFields"
+      style="
+        display:none;
+        margin-top:12px;
+      ">
 
-          <option value="20">
-            Rayon de 20 km
-          </option>
+      <label
+        class="professionalSearchLabel"
+        for="professionalFranceScope">
+        Périmètre en France
+      </label>
 
-          <option value="50">
-            Rayon de 50 km
-          </option>
 
-          <option value="departement">
-            Département
-          </option>
-
-          <option value="region">
-            Région
-          </option>
-
-          <option value="france">
-            Toute la France
-          </option>
-        </select>
-      </div>
-
-      <div
-        id="professionalEuropeFields"
-        style="display:none;margin-top:12px;">
-
-        <label style="display:block;font-weight:900;">
-          Pays
-        </label>
-
-        <select
-          id="professionalEuropeCountry"
-          class="miniField">
-
-          <option value="France">France</option>
-          <option value="Belgique">Belgique</option>
-          <option value="Luxembourg">Luxembourg</option>
-          <option value="Pays-Bas">Pays-Bas</option>
-          <option value="Allemagne">Allemagne</option>
-          <option value="Espagne">Espagne</option>
-          <option value="Italie">Italie</option>
-          <option value="Portugal">Portugal</option>
-          <option value="Suisse">Suisse</option>
-          <option value="Autriche">Autriche</option>
-          <option value="Irlande">Irlande</option>
-          <option value="Danemark">Danemark</option>
-          <option value="Suède">Suède</option>
-          <option value="Finlande">Finlande</option>
-          <option value="Pologne">Pologne</option>
-          <option value="Tchéquie">Tchéquie</option>
-        </select>
-      </div>
-
-      <button
-        id="professionalSearchBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:14px;
-          font-size:17px;
+      <select
+        id="professionalFranceScope"
+        class="
+          miniField
+          professionalSearchField
         ">
-        Rechercher
-      </button>
 
-      <button
-        id="professionalClearSearchBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:8px;
-          background:#fff;
+        <option value="commune">
+          Commune indiquée
+        </option>
+
+        <option value="20">
+          Rayon de 20 km
+        </option>
+
+        <option value="50">
+          Rayon de 50 km
+        </option>
+
+        <option value="departement">
+          Département
+        </option>
+
+        <option value="region">
+          Région
+        </option>
+
+        <option value="france">
+          Toute la France
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div
+      id="professionalEuropeFields"
+      style="
+        display:none;
+        margin-top:12px;
+      ">
+
+      <label
+        class="professionalSearchLabel"
+        for="professionalEuropeCountry">
+        Pays
+      </label>
+
+
+      <select
+        id="professionalEuropeCountry"
+        class="
+          miniField
+          professionalSearchField
         ">
-        Effacer la recherche
-      </button>
 
-      <button
-        id="professionalBillingOpenBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:8px;
-          background:#fff;
-        ">
-        Mon abonnement et mes factures
-      </button>
+        <option value="France">France</option>
+        <option value="Belgique">Belgique</option>
+        <option value="Luxembourg">Luxembourg</option>
+        <option value="Pays-Bas">Pays-Bas</option>
+        <option value="Allemagne">Allemagne</option>
+        <option value="Espagne">Espagne</option>
+        <option value="Italie">Italie</option>
+        <option value="Portugal">Portugal</option>
+        <option value="Suisse">Suisse</option>
+        <option value="Autriche">Autriche</option>
+        <option value="Irlande">Irlande</option>
+        <option value="Danemark">Danemark</option>
+        <option value="Suède">Suède</option>
+        <option value="Finlande">Finlande</option>
+        <option value="Pologne">Pologne</option>
+        <option value="Tchéquie">Tchéquie</option>
 
-      <div
-        id="professionalSearchStatus"
-        class="muted"
-        style="margin-top:10px;">
-      </div>
+      </select>
 
-      <div
-        id="professionalSearchResults"
-        style="margin-top:12px;">
-      </div>
+    </div>
 
-      <div
-        id="professionalSubscriptionBox"
-        style="display:none;margin-top:12px;">
-      </div>
-    `;
-  }
+
+    <button
+      id="professionalSearchBtn"
+      class="
+        choiceBtn
+        professionalSearchButton
+      "
+      type="button"
+      style="
+        margin-top:14px;
+      ">
+      Rechercher
+    </button>
+
+
+    <button
+      id="professionalClearSearchBtn"
+      class="
+        choiceBtn
+        professionalSearchButton
+      "
+      type="button">
+      Effacer la recherche
+    </button>
+
+
+    <button
+      id="professionalBillingOpenBtn"
+      class="
+        choiceBtn
+        professionalSearchButton
+      "
+      type="button">
+      Mon abonnement et mes factures
+    </button>
+
+
+    <div
+      id="professionalSearchStatus"
+      class="professionalSearchText"
+      style="
+        margin-top:10px;
+      ">
+    </div>
+
+
+    <div
+      id="professionalSearchResults"
+      style="
+        margin-top:12px;
+      ">
+    </div>
+
+
+    <div
+      id="professionalSubscriptionBox"
+      style="
+        display:none;
+        margin-top:12px;
+      ">
+    </div>
+
+  `;
+}
 
   function getCurrentZone(){
     const selected =
@@ -12879,64 +14291,111 @@ if(
     return false;
   }
 
-  function getSubscriptionHtml(zone){
-    const europe =
-      zone === "europe";
+ function getSubscriptionHtml(zone){
 
-    return `
+  const europe =
+    zone === "europe";
+
+
+  const title =
+    europe
+      ? "Recherche professionnelle Europe"
+      : "Recherche professionnelle France";
+
+
+  const price =
+    europe
+      ? "44,90 € HT par mois ou 500 € HT par an"
+      : "26,50 € HT par mois ou 300 € HT par an";
+
+
+  return `
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+        border-left:6px solid #b00020;
+      ">
+
       <div
-        class="box"
-        style="border-left:6px solid #b00020;">
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        ${title}
+      </div>
 
-        <strong style="font-size:18px;">
-          ${
-            europe
-              ? "Recherche professionnelle Europe"
-              : "Recherche professionnelle France"
-          }
-        </strong>
+
+      <div
+        style="
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
+
+        Cette zone nécessite
+        un abonnement actif.
 
         <br><br>
 
-        Cette zone nécessite un abonnement actif.
+        Tarif :
 
-        <br><br>
+        <br>
 
-        <strong>
-          ${
-            europe
-              ? "44,90 € HT par mois ou 500 € HT par an"
-              : "26,50 € HT par mois ou 300 € HT par an"
-          }
-        </strong>
+        ${price}
 
         <br><br>
 
         La recherche dans la commune choisie
         reste accessible sans cette option.
+
       </div>
 
-      <button
-        class="choiceBtn"
-        id="professionalMonthlySubscribeBtn"
-        type="button"
-        style="width:100%;margin-top:8px;">
-        Choisir l’abonnement mensuel
-      </button>
+    </div>
 
-      <button
-        class="choiceBtn"
-        id="professionalAnnualSubscribeBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:8px;
-          background:#fff;
-        ">
-        Choisir l’abonnement annuel
-      </button>
-    `;
-  }
+
+    <button
+      class="choiceBtn"
+      id="professionalMonthlySubscribeBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:8px;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Choisir l’abonnement mensuel
+    </button>
+
+
+    <button
+      class="choiceBtn"
+      id="professionalAnnualSubscribeBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:8px;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Choisir l’abonnement annuel
+    </button>
+
+  `;
+}
 
   function showSubscription(zone){
     const host =
@@ -13220,50 +14679,92 @@ if(
     );
   }
 
-  function renderSearchResults(
-    elements,
-    keyword,
-    location
-  ){
-    const host =
-      getElement("professionalSearchResults");
+function renderSearchResults(
+  elements,
+  keyword,
+  location
+){
 
-    if(!host){
-      return;
-    }
+  const host =
+    getElement(
+      "professionalSearchResults"
+    );
 
-    const expandedKeywords =
-      expandKeyword(keyword);
 
-    const matches =
-      elements
-        .filter(function(element){
+  if(!host){
+    return;
+  }
+
+
+  const expandedKeywords =
+    expandKeyword(
+      keyword
+    );
+
+
+  const matches =
+    elements
+      .filter(
+        function(element){
+
           return elementMatchesKeyword(
             element,
             expandedKeywords
           );
-        })
-        .slice(0,30);
+        }
+      )
+      .slice(
+        0,
+        30
+      );
 
-    if(!matches.length){
-      host.innerHTML = `
+
+  /* =======================================================
+     AUCUN RÉSULTAT
+     ======================================================= */
+
+  if(!matches.length){
+
+    host.innerHTML = `
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+          border-left:6px solid #b00020;
+        ">
+
         <div
-          class="box"
-          style="border-left:6px solid #b00020;">
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            line-height:1.35;
+            margin-bottom:8px;
+          ">
+          Aucun résultat trouvé
+        </div>
 
-          <strong>
-            Aucun résultat trouvé
-          </strong>
 
-          <br><br>
+        <div
+          style="
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.6;
+          ">
 
           Aucune entreprise correspondant à :
 
           <br><br>
 
-          <strong>
-            ${escapeValue(keyword)}
-          </strong>
+          ${escapeValue(
+            keyword
+          )}
 
           <br><br>
 
@@ -13271,9 +14772,9 @@ if(
 
           <br><br>
 
-          <strong>
-            ${escapeValue(location)}
-          </strong>
+          ${escapeValue(
+            location
+          )}
 
           <br><br>
 
@@ -13282,8 +14783,8 @@ if(
 
           <br><br>
 
-          Certaines entreprises peuvent ne pas encore
-          être correctement renseignées
+          Certaines entreprises peuvent
+          ne pas encore être correctement renseignées
           dans les données publiques utilisées.
 
           <br><br>
@@ -13291,251 +14792,501 @@ if(
           Vous pouvez modifier le métier,
           choisir une autre commune
           ou élargir la zone.
+
         </div>
-      `;
 
-      return;
-    }
+      </div>
 
-    host.innerHTML = `
-      <div class="box">
-        <strong>
-          ${matches.length} résultat(s) trouvé(s)
-        </strong>
+    `;
 
-        <br><br>
+
+    return;
+  }
+
+
+  /* =======================================================
+     RÉSULTATS TROUVÉS
+     ======================================================= */
+
+  host.innerHTML = `
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+        border-left:6px solid #2f5d46;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
+        ">
+        ${matches.length} résultat(s) trouvé(s)
+      </div>
+
+
+      <div
+        style="
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        ">
 
         Métier ou activité :
-        <strong>
-          ${escapeValue(keyword)}
-        </strong>
+
+        <br>
+
+        ${escapeValue(
+          keyword
+        )}
 
         <br><br>
 
         Zone :
-        <strong>
-          ${escapeValue(location)}
-        </strong>
+
+        <br>
+
+        ${escapeValue(
+          location
+        )}
+
       </div>
 
-      ${
-        matches.map(function(element){
+    </div>
 
-          const tags =
-            element.tags || {};
 
-          const name =
-            tags.name ||
-            tags.brand ||
-            tags.operator ||
-            "Entreprise référencée";
+    ${
+      matches
+        .map(
+          function(element){
 
-          const address = [
-            tags["addr:housenumber"],
-            tags["addr:street"],
-            tags["addr:postcode"],
-            tags["addr:city"]
-          ]
-            .filter(Boolean)
-            .join(" ");
+            const tags =
+              element.tags || {};
 
-          const phone =
-            tags["contact:phone"] ||
-            tags.phone ||
-            "";
 
-          const website =
-            tags["contact:website"] ||
-            tags.website ||
-            "";
+            const name =
+              tags.name ||
+              tags.brand ||
+              tags.operator ||
+              "Entreprise référencée";
 
-          return `
-            <div class="professionalResultCard">
 
-              <strong style="font-size:17px;">
-                ${escapeValue(name)}
-              </strong>
+            const address = [
 
-              <br><br>
+              tags[
+                "addr:housenumber"
+              ],
 
-              Activité :
-              <strong>
-                ${escapeValue(
-                  formatActivity(tags)
-                )}
-              </strong>
+              tags[
+                "addr:street"
+              ],
 
-              ${
-                address
-                  ? `
-                    <br><br>
+              tags[
+                "addr:postcode"
+              ],
 
-                    Adresse :
-                    ${escapeValue(address)}
-                  `
-                  : ""
-              }
+              tags[
+                "addr:city"
+              ]
 
-              ${
-                phone
-                  ? `
-                    <br><br>
+            ]
+            .filter(
+              Boolean
+            )
+            .join(
+              " "
+            );
 
-                    Téléphone :
-                    ${escapeValue(phone)}
-                  `
-                  : ""
-              }
 
-              ${
-                website
-                  ? `
-                    <br><br>
+            const phone =
+              tags[
+                "contact:phone"
+              ] ||
+              tags.phone ||
+              "";
 
-                    Site internet :
-                    ${escapeValue(website)}
-                  `
-                  : ""
-              }
-            </div>
-          `;
-        }).join("")
-      }
-    `;
+
+            const website =
+              tags[
+                "contact:website"
+              ] ||
+              tags.website ||
+              "";
+
+
+            return `
+
+              <div
+                class="professionalResultCard"
+                style="
+                  background:#ffffff;
+                  color:#111111;
+                  font-size:14px;
+                  font-weight:400;
+                  line-height:1.6;
+                ">
+
+                <div
+                  style="
+                    color:#2f5d46;
+                    font-size:17px;
+                    font-weight:700;
+                    line-height:1.35;
+                    margin-bottom:8px;
+                  ">
+                  ${escapeValue(
+                    name
+                  )}
+                </div>
+
+
+                <div
+                  style="
+                    color:#111111;
+                    font-size:14px;
+                    font-weight:400;
+                    line-height:1.6;
+                  ">
+
+                  Activité :
+
+                  <br>
+
+                  ${escapeValue(
+                    formatActivity(
+                      tags
+                    )
+                  )}
+
+
+                  ${
+                    address
+                      ? `
+
+                          <br><br>
+
+                          Adresse :
+
+                          <br>
+
+                          ${escapeValue(
+                            address
+                          )}
+
+                        `
+                      : ""
+                  }
+
+
+                  ${
+                    phone
+                      ? `
+
+                          <br><br>
+
+                          Téléphone :
+
+                          <br>
+
+                          ${escapeValue(
+                            phone
+                          )}
+
+                        `
+                      : ""
+                  }
+
+
+                  ${
+                    website
+                      ? `
+
+                          <br><br>
+
+                          Site internet :
+
+                          <br>
+
+                          ${escapeValue(
+                            website
+                          )}
+
+                        `
+                      : ""
+                  }
+
+                </div>
+
+              </div>
+
+            `;
+
+          }
+        )
+        .join("")
+    }
+
+  `;
+}
+   
+ async function runProfessionalSearch(){
+
+  const keywordInput =
+    getElement(
+      "professionalSearchKeyword"
+    );
+
+
+  const cityInput =
+    getElement(
+      "professionalSearchCity"
+    );
+
+
+  const status =
+    getElement(
+      "professionalSearchStatus"
+    );
+
+
+  const results =
+    getElement(
+      "professionalSearchResults"
+    );
+
+
+  const keyword =
+    keywordInput
+      ? String(
+          keywordInput.value || ""
+        ).trim()
+      : "";
+
+
+  const city =
+    cityInput
+      ? String(
+          cityInput.value || ""
+        ).trim()
+      : "";
+
+
+  const zone =
+    getCurrentZone();
+
+
+  if(!keyword){
+
+    alert(
+      "Indiquez le métier, l’activité ou le service recherché."
+    );
+
+    return;
   }
 
-  async function runProfessionalSearch(){
-    const keywordInput =
-      getElement("professionalSearchKeyword");
 
-    const cityInput =
-      getElement("professionalSearchCity");
+  if(!city){
 
-    const status =
-      getElement("professionalSearchStatus");
+    alert(
+      "Indiquez la commune dans laquelle vous souhaitez chercher."
+    );
 
-    const results =
-      getElement("professionalSearchResults");
+    return;
+  }
 
-    const keyword =
-      keywordInput
-        ? String(keywordInput.value || "").trim()
-        : "";
 
-    const city =
-      cityInput
-        ? String(cityInput.value || "").trim()
-        : "";
+  if(
+    !hasAccessToZone(
+      zone
+    )
+  ){
 
-    const zone =
-      getCurrentZone();
+    showSubscription(
+      zone
+    );
 
-    if(!keyword){
-      alert(
-        "Indiquez le métier, l’activité ou le service recherché."
-      );
-      return;
-    }
+    return;
+  }
 
-    if(!city){
-      alert(
-        "Indiquez la commune dans laquelle vous souhaitez chercher."
-      );
-      return;
-    }
 
-    if(!hasAccessToZone(zone)){
-      showSubscription(zone);
-      return;
-    }
+  const location =
+    getSearchLocation(
+      zone
+    );
 
-    const location =
-      getSearchLocation(zone);
 
-    if(status){
-      status.textContent =
-        "Recherche de la commune en cours…";
-    }
+  if(status){
 
-    if(results){
-      results.innerHTML = "";
-    }
+    status.style.color =
+      "#111111";
 
-    try{
-      const geo =
-        await geocodeLocation(location);
+    status.style.fontSize =
+      "14px";
 
-      const lat =
-        Number(geo.lat);
+    status.style.fontWeight =
+      "400";
 
-      const lon =
-        Number(geo.lon);
+    status.textContent =
+      "Recherche de la commune en cours…";
+  }
 
-      if(
-        !Number.isFinite(lat) ||
-        !Number.isFinite(lon)
-      ){
-        throw new Error(
-          "Les coordonnées de cette commune sont indisponibles."
-        );
-      }
 
-      if(status){
-        status.textContent =
-          "Recherche des entreprises en cours…";
-      }
+  if(results){
 
-      const elements =
-        await fetchProfessionalPlaces(
-          lat,
-          lon,
-          getSearchRadius(zone)
-        );
+    results.innerHTML =
+      "";
+  }
 
-      renderSearchResults(
-        elements,
-        keyword,
+
+  try{
+
+    const geo =
+      await geocodeLocation(
         location
       );
 
-      if(status){
-        status.textContent =
-          "Recherche terminée.";
-      }
-    }catch(error){
-      console.warn(
-        "Recherche professionnelle :",
-        error
+
+    const lat =
+      Number(
+        geo.lat
       );
 
-      if(status){
-        status.textContent =
-          error.message ||
-          "La recherche est temporairement indisponible.";
-      }
 
-      if(results){
-        results.innerHTML = `
+    const lon =
+      Number(
+        geo.lon
+      );
+
+
+    if(
+      !Number.isFinite(
+        lat
+      ) ||
+      !Number.isFinite(
+        lon
+      )
+    ){
+
+      throw new Error(
+        "Les coordonnées de cette commune sont indisponibles."
+      );
+    }
+
+
+    if(status){
+
+      status.textContent =
+        "Recherche des entreprises en cours…";
+    }
+
+
+    const elements =
+      await fetchProfessionalPlaces(
+        lat,
+        lon,
+        getSearchRadius(
+          zone
+        )
+      );
+
+
+    renderSearchResults(
+      elements,
+      keyword,
+      location
+    );
+
+
+    if(status){
+
+      status.textContent =
+        "Recherche terminée.";
+    }
+
+
+  }catch(error){
+
+    console.warn(
+      "Recherche professionnelle :",
+      error
+    );
+
+
+    if(status){
+
+      status.style.color =
+        "#111111";
+
+      status.style.fontSize =
+        "14px";
+
+      status.style.fontWeight =
+        "400";
+
+      status.textContent =
+        error.message ||
+        "La recherche est temporairement indisponible.";
+    }
+
+
+    if(results){
+
+      results.innerHTML = `
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.6;
+            border-left:6px solid #b00020;
+          ">
+
           <div
-            class="box"
-            style="border-left:6px solid #b00020;">
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              line-height:1.35;
+              margin-bottom:8px;
+            ">
+            Recherche momentanément indisponible
+          </div>
 
-            <strong>
-              Recherche momentanément indisponible
-            </strong>
 
-            <br><br>
+          <div
+            style="
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.6;
+            ">
 
             ${escapeValue(
               error.message ||
               "Veuillez recommencer dans quelques instants."
             )}
+
           </div>
-        `;
-      }
+
+        </div>
+
+      `;
     }
   }
-
+}
+   
   function clearProfessionalSearch(){
     const keyword =
       getElement("professionalSearchKeyword");
@@ -13774,7 +15525,7 @@ if(
     }
   }
 
- function getHtml(){
+function getHtml(){
 
   return `
 
@@ -13793,7 +15544,7 @@ if(
         style="
           color:#2f5d46;
           font-size:17px;
-          font-weight:800;
+          font-weight:700;
           line-height:1.35;
         ">
         Opportunités professionnelles
@@ -13827,7 +15578,7 @@ if(
         style="
           color:#2f5d46;
           font-size:17px;
-          font-weight:800;
+          font-weight:700;
           margin-bottom:8px;
         ">
         Pour quels besoins ?
@@ -13862,34 +15613,34 @@ if(
         style="
           color:#2f5d46;
           font-size:17px;
-          font-weight:800;
+          font-weight:700;
           margin-bottom:8px;
         ">
         Tarif
       </div>
 
-      <span
+      <div
         style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:800;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
         ">
-        50 € HT
-      </span>
+        50 € HT par publication.
 
-      par publication.
+        <br><br>
 
-      <br><br>
+        Cette publication est réservée
+        à l'espace professionnel
 
-      Cette publication est réservée
-      à l'espace professionnel
-      <strong
-        style="
-          white-space:nowrap;
-          font-weight:800;
-        ">
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-      </strong>.
+        <span
+          style="
+            white-space:nowrap;
+            font-weight:700;
+          ">
+          <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+        </span>.
+      </div>
 
     </div>
 
@@ -13908,7 +15659,7 @@ if(
         style="
           color:#2f5d46;
           font-size:17px;
-          font-weight:800;
+          font-weight:700;
         ">
         Publier une opportunité
       </div>
@@ -13934,6 +15685,8 @@ if(
       style="
         background:#ffffff;
         color:#111111;
+        font-size:14px;
+        font-weight:400;
       ">
 
 
@@ -13954,55 +15707,22 @@ if(
       style="
         background:#ffffff;
         color:#111111;
+        font-size:14px;
+        font-weight:400;
       ">
 
-      <option value="">
-        Choisir
-      </option>
-
-      <option value="partenaire">
-        Recherche de partenaire
-      </option>
-
-      <option value="sous_traitant">
-        Recherche de sous-traitant
-      </option>
-
-      <option value="fournisseur">
-        Recherche de fournisseur
-      </option>
-
-      <option value="competence">
-        Recherche de compétence
-      </option>
-
-      <option value="collaboration">
-        Proposition de collaboration
-      </option>
-
-      <option value="formation">
-        Formation professionnelle
-      </option>
-
-      <option value="conference">
-        Conférence ou rencontre B2B
-      </option>
-
-      <option value="demonstration">
-        Démonstration de matériel
-      </option>
-
-      <option value="appel_candidatures">
-        Appel à candidatures
-      </option>
-
-      <option value="evenement">
-        Salon ou événement économique
-      </option>
-
-      <option value="autre">
-        Autre opportunité professionnelle
-      </option>
+      <option value="">Choisir</option>
+      <option value="partenaire">Recherche de partenaire</option>
+      <option value="sous_traitant">Recherche de sous-traitant</option>
+      <option value="fournisseur">Recherche de fournisseur</option>
+      <option value="competence">Recherche de compétence</option>
+      <option value="collaboration">Proposition de collaboration</option>
+      <option value="formation">Formation professionnelle</option>
+      <option value="conference">Conférence ou rencontre B2B</option>
+      <option value="demonstration">Démonstration de matériel</option>
+      <option value="appel_candidatures">Appel à candidatures</option>
+      <option value="evenement">Salon ou événement économique</option>
+      <option value="autre">Autre opportunité professionnelle</option>
 
     </select>
 
@@ -14026,6 +15746,8 @@ if(
       style="
         background:#ffffff;
         color:#111111;
+        font-size:14px;
+        font-weight:400;
       ">
 
 
@@ -14047,9 +15769,10 @@ if(
         min-height:120px;
         background:#ffffff;
         color:#111111;
+        font-size:14px;
+        font-weight:400;
       "
-      placeholder="Décrivez simplement votre besoin.">
-    </textarea>
+      placeholder="Décrivez simplement votre besoin."></textarea>
 
 
     <label
@@ -14071,6 +15794,8 @@ if(
       style="
         background:#ffffff;
         color:#111111;
+        font-size:14px;
+        font-weight:400;
       ">
 
 
@@ -14092,6 +15817,8 @@ if(
       style="
         background:#ffffff;
         color:#111111;
+        font-size:14px;
+        font-weight:400;
       ">
 
 
@@ -14114,6 +15841,8 @@ if(
       style="
         background:#ffffff;
         color:#111111;
+        font-size:14px;
+        font-weight:400;
       ">
 
 
@@ -14177,6 +15906,8 @@ if(
         margin-top:12px;
         background:#ffffff !important;
         color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
       ">
       Prévisualiser
     </button>
@@ -14191,6 +15922,8 @@ if(
         margin-top:8px;
         background:#ffffff !important;
         color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
       ">
       Valider et passer au paiement
     </button>
@@ -14213,10 +15946,11 @@ if(
         margin-top:18px;
         color:#2f5d46;
         font-size:17px;
-        font-weight:800;
+        font-weight:700;
       ">
       Mes opportunités publiées
     </div>
+
 
     <div
       id="professionalOpportunityList"
@@ -14617,10 +16351,11 @@ function previewOpportunity(){
   );
 }
 
- function publishOpportunity(){
+function publishOpportunity(){
 
   const data =
     readForm();
+
 
   if(
     !validateForm(
@@ -14628,8 +16363,10 @@ function previewOpportunity(){
       true
     )
   ){
+
     return;
   }
+
 
   /* =====================================================
      1. CRÉATION DE LA COMMANDE CENTRALE
@@ -14647,8 +16384,14 @@ function previewOpportunity(){
     return;
   }
 
-  const priceHT = 50;
-  const vatRate = 20;
+
+  const priceHT =
+    50;
+
+
+  const vatRate =
+    20;
+
 
   const vatAmount =
     Number(
@@ -14660,6 +16403,7 @@ function previewOpportunity(){
       .toFixed(2)
     );
 
+
   const amountTTC =
     Number(
       (
@@ -14668,6 +16412,7 @@ function previewOpportunity(){
       )
       .toFixed(2)
     );
+
 
   const order =
     module.createFinancialOrder({
@@ -14712,6 +16457,7 @@ function previewOpportunity(){
 
   const list =
     loadOpportunities();
+
 
   const opportunity = {
 
@@ -14779,9 +16525,11 @@ function previewOpportunity(){
 
   };
 
+
   list.unshift(
     opportunity
   );
+
 
   saveOpportunities(
     list
@@ -14811,10 +16559,11 @@ function previewOpportunity(){
           style="
             color:#2f5d46;
             font-size:17px;
-            font-weight:800;
+            font-weight:700;
           ">
           Opportunité professionnelle
         </div>
+
 
         <div
           style="
@@ -14823,6 +16572,7 @@ function previewOpportunity(){
             font-size:14px;
             font-weight:400;
           ">
+
           ${escapeValue(
             data.title
           )}
@@ -14832,6 +16582,7 @@ function previewOpportunity(){
           50,00 € HT<br>
           TVA : 10,00 €<br>
           60,00 € TTC
+
         </div>
 
       </div>
@@ -14851,14 +16602,34 @@ function previewOpportunity(){
           style="
             color:#2f5d46;
             font-size:17px;
-            font-weight:800;
+            font-weight:700;
             margin-bottom:8px;
           ">
           Choisissez votre moyen de paiement
         </div>
 
-        La publication sera mise en ligne
-        uniquement après confirmation réelle du paiement.
+
+        <div
+          style="
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          ">
+
+          Par carte bancaire,
+          la publication pourra être activée
+          dès confirmation du paiement
+          par le prestataire de paiement.
+
+          <br><br>
+
+          Par virement bancaire,
+          la publication restera en attente
+          jusqu'à réception
+          et confirmation effective du règlement
+          sur le compte Bo'CitéArt.
+
+        </div>
 
       </div>
 
@@ -14871,6 +16642,8 @@ function previewOpportunity(){
           width:100%;
           background:#ffffff !important;
           color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
         ">
         Payer par carte bancaire
       </button>
@@ -14885,8 +16658,10 @@ function previewOpportunity(){
           margin-top:8px;
           background:#ffffff !important;
           color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
         ">
-        Payer par virement / SEPA
+        Payer par virement bancaire
       </button>
 
     `
@@ -14900,6 +16675,7 @@ function previewOpportunity(){
         getElement(
           "opportunityCardPaymentBtn"
         );
+
 
       const transferButton =
         getElement(
@@ -14928,37 +16704,31 @@ function previewOpportunity(){
               return;
             }
 
+
             const payment =
               module.createCardPayment(
                 order
               );
+
 
             opportunity.paymentId =
               payment
                 ? payment.id
                 : "";
 
+
             opportunity.paymentStatus =
               "pending_card_confirmation";
+
 
             saveOpportunities(
               list
             );
 
-            /*
-              En production :
-              ouverture sécurisée du PSP.
-
-              Le PSP confirmera le paiement
-              côté serveur.
-
-              Aucune publication ne doit être
-              déclenchée sur le simple clic.
-            */
 
             alert(
               "Le paiement par carte est préparé.\n\n" +
-              "Dans la version officielle, le PSP sécurisé s'ouvrira ici.\n\n" +
+              "Dans la version officielle, le prestataire de paiement sécurisé s'ouvrira ici.\n\n" +
               "Dès confirmation du paiement, la publication sera activée et la facture générée automatiquement."
             );
 
@@ -14967,7 +16737,7 @@ function previewOpportunity(){
 
 
       /* ===================================================
-         VIREMENT / SEPA
+         VIREMENT BANCAIRE BO'CITÉART
          =================================================== */
 
       if(transferButton){
@@ -14981,11 +16751,12 @@ function previewOpportunity(){
             ){
 
               alert(
-                "Le paiement par virement ou SEPA est momentanément indisponible."
+                "Le paiement par virement bancaire est momentanément indisponible."
               );
 
               return;
             }
+
 
             const payment =
               module.createSepaOrBankTransfer(
@@ -14993,17 +16764,21 @@ function previewOpportunity(){
                 "bank_transfer"
               );
 
+
             opportunity.paymentId =
               payment
                 ? payment.id
                 : "";
 
+
             opportunity.paymentStatus =
               "pending_bank_confirmation";
+
 
             saveOpportunities(
               list
             );
+
 
             const bank =
               typeof module.getBociteBankInformation ===
@@ -15011,16 +16786,19 @@ function previewOpportunity(){
                 ? module.getBociteBankInformation()
                 : {};
 
+
             const reference =
               payment &&
               payment.transferReference
                 ? payment.transferReference
                 : "";
 
+
             let message =
               "Votre demande de paiement par virement est enregistrée.\n\n" +
               "Référence à indiquer :\n" +
               reference;
+
 
             if(
               bank &&
@@ -15030,6 +16808,7 @@ function previewOpportunity(){
               message +=
                 "\n\nIBAN Bo'CitéArt :\n" +
                 bank.iban;
+
 
               if(bank.bic){
 
@@ -15044,8 +16823,10 @@ function previewOpportunity(){
                 "\n\nLes coordonnées bancaires officielles Bo'CitéArt seront affichées ici dès l'ouverture du compte professionnel.";
             }
 
+
             message +=
-              "\n\nLa publication restera en attente jusqu'à confirmation du règlement.";
+              "\n\nLa publication restera en attente jusqu'à confirmation effective du règlement.";
+
 
             alert(
               message
@@ -15067,12 +16848,16 @@ function renderOpportunities(){
       "professionalOpportunityList"
     );
 
+
   if(!host){
+
     return;
   }
 
+
   const list =
     loadOpportunities();
+
 
   if(!list.length){
 
@@ -15085,14 +16870,17 @@ function renderOpportunities(){
           color:#111111;
           font-size:14px;
           font-weight:400;
+          line-height:1.5;
         ">
         Aucune opportunité professionnelle publiée.
       </div>
 
     `;
 
+
     return;
   }
+
 
   host.innerHTML =
     list
@@ -15115,13 +16903,14 @@ function renderOpportunities(){
                 style="
                   color:#2f5d46;
                   font-size:17px;
-                  font-weight:800;
+                  font-weight:700;
                   line-height:1.35;
                 ">
                 ${escapeValue(
                   item.title
                 )}
               </div>
+
 
               <div
                 style="
@@ -15137,15 +16926,20 @@ function renderOpportunities(){
                 )}
               </div>
 
+
               <div
                 style="
                   margin-top:10px;
                   color:#111111;
                   font-size:14px;
                   font-weight:400;
+                  line-height:1.5;
                 ">
 
                 Entreprise :
+
+                <br>
+
                 ${escapeValue(
                   item.company
                 )}
@@ -15159,6 +16953,9 @@ function renderOpportunities(){
                 <br><br>
 
                 Zone :
+
+                <br>
+
                 ${escapeValue(
                   item.location
                 )}
@@ -15166,6 +16963,9 @@ function renderOpportunities(){
                 <br><br>
 
                 Date limite :
+
+                <br>
+
                 ${escapeValue(
                   item.deadline ||
                   "Non précisée"
@@ -15174,33 +16974,42 @@ function renderOpportunities(){
                 <br><br>
 
                 Contact :
+
+                <br>
+
                 ${escapeValue(
                   item.email
                 )}
 
               </div>
 
+
               <div
                 style="
                   margin-top:10px;
-                  color:#666666;
-                  font-size:13px;
+                  color:#111111;
+                  font-size:14px;
                   font-weight:400;
+                  line-height:1.5;
                 ">
+
                 Publication réservée
                 à l’espace professionnel
-                <strong
+
+                <span
                   style="
                     white-space:nowrap;
-                    font-weight:800;
+                    font-weight:700;
                   ">
                   <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-                </strong>.
+                </span>.
+
               </div>
 
             </div>
 
           `;
+
         }
       )
       .join("");
@@ -17614,208 +19423,300 @@ function renderOpportunities(){
     );
   }
 
- function getAccessHtml(){
+function getAccessHtml(){
 
   const account =
     createDemoPartnerAccount();
 
+
   return `
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        border-left:6px solid #2f5d46;
-        line-height:1.55;
+
+    <style>
+
+      .bocitePartnerAccessBox{
+
+        background:#ffffff;
+        color:#111111;
+
+        font-size:14px;
         font-weight:400;
-        color:#111;
-      ">
+        line-height:1.6;
+      }
 
-      <strong
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:16px;
-          font-weight:700;
-          line-height:1.4;
-        ">
-        Espace réservé aux entreprises partenaires
-      </strong>
 
-      <br>
+      .bocitePartnerAccessTitle{
 
-      Les tarifs, abonnements, paiements,
-      factures, contrats, recherches privées
-      et données professionnelles
-      sont accessibles uniquement
-      depuis l’espace sécurisé de l’entreprise.
-
-      <br><br>
-
-      Chaque entreprise partenaire reçoit
-      un code d’accès personnel
-      après la validation de son partenariat
-      avec
-
-      <strong>
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-      </strong>.
-
-    </div>
-
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        border-left:6px solid #2f5d46;
-        line-height:1.55;
-        font-weight:400;
-        color:#111;
-      ">
-
-      <strong
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:16px;
-          font-weight:700;
-          line-height:1.4;
-        ">
-        Activation de votre espace professionnel
-      </strong>
-
-      <br>
-
-      Complétez les renseignements demandés
-      afin de préparer l’ouverture
-      de votre espace professionnel
-
-      <strong>
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-      </strong>.
-
-      <br><br>
-
-      Vous pouvez dès maintenant parcourir
-      et tester l’ensemble du fonctionnement.
-
-      <br><br>
-
-      Lors de l’ouverture officielle,
-      votre accès sera activé
-      après confirmation
-      de votre abonnement.
-
-      <br><br>
-
-      Le paiement pourra être réalisé :
-
-      <br><br>
-
-      • immédiatement par carte bancaire ;<br>
-      • par prélèvement bancaire à partir d’un RIB ou d’un IBAN.
-
-      <br><br>
-
-      En cas de prélèvement bancaire,
-      l’activation pourra être décalée
-      pendant le délai de confirmation
-      imposé par le système bancaire.
-
-      <br><br>
-
-      Vos données professionnelles
-      et vos accès privés
-      seront sécurisés
-      par le serveur
-
-      <strong>
-        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
-      </strong>.
-
-    </div>
-
-    <label
-      style="
         display:block;
-        font-weight:700;
-        margin-top:12px;
-      ">
-      Code d’accès entreprise
-    </label>
 
-    <input
-      id="entreprisePartnerAccessCode"
-      class="miniField"
-      type="password"
-      autocomplete="off"
-      placeholder="Saisissez votre code personnel">
+        color:#2f5d46;
+
+        font-size:17px;
+        font-weight:700;
+        line-height:1.35;
+
+        margin-bottom:8px;
+      }
+
+
+      .bocitePartnerAccessText{
+
+        color:#111111;
+
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      }
+
+
+      .bocitePartnerAccessBrand{
+
+        white-space:nowrap;
+        font-weight:700;
+      }
+
+
+      .bocitePartnerAccessBrandGreen{
+
+        color:#2f5d46;
+        font-weight:700;
+      }
+
+
+      .bocitePartnerAccessBrandRed{
+
+        color:#b00020;
+        font-weight:700;
+      }
+
+
+      .bocitePartnerAccessField{
+
+        width:100%;
+        box-sizing:border-box;
+
+        background:#ffffff;
+        color:#111111;
+
+        font-size:14px;
+        font-weight:400;
+      }
+
+
+      .bocitePartnerAccessBtn{
+
+        width:100%;
+
+        background:#ffffff !important;
+        color:#111111 !important;
+
+        font-size:14px;
+        font-weight:400;
+      }
+
+    </style>
+
+
+    <div
+      class="
+        box
+        bocitePartnerAccessBox
+      "
+      style="
+        border-left:6px solid #2f5d46;
+      ">
+
+      <div
+        class="bocitePartnerAccessTitle">
+        Espace réservé aux entreprises partenaires
+      </div>
+
+
+      <div
+        class="bocitePartnerAccessText">
+
+        Les tarifs,
+        abonnements,
+        paiements,
+        factures,
+        contrats,
+        recherches privées
+        et données professionnelles
+        sont accessibles uniquement
+        depuis l’espace sécurisé
+        de l’entreprise.
+
+        <br><br>
+
+        Chaque entreprise partenaire
+        reçoit un code d’accès personnel
+        après validation de son partenariat
+        avec
+
+        <span
+          class="bocitePartnerAccessBrand">
+          <span class="bocitePartnerAccessBrandGreen">Bo'Cité</span><span class="bocitePartnerAccessBrandRed">Art</span>
+        </span>.
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="
+        box
+        bocitePartnerAccessBox
+      "
+      style="
+        border-left:6px solid #2f5d46;
+      ">
+
+      <div
+        class="bocitePartnerAccessTitle">
+        Activation de votre espace professionnel
+      </div>
+
+
+      <div
+        class="bocitePartnerAccessText">
+
+        Complétez les renseignements demandés
+        afin de préparer l’ouverture
+        de votre espace professionnel
+
+        <span
+          class="bocitePartnerAccessBrand">
+          <span class="bocitePartnerAccessBrandGreen">Bo'Cité</span><span class="bocitePartnerAccessBrandRed">Art</span>
+        </span>.
+
+        <br><br>
+
+        Vous pouvez dès maintenant
+        parcourir et tester
+        le fonctionnement de la démonstration.
+
+        <br><br>
+
+        Lors de l’ouverture officielle,
+        votre accès sera activé
+        après confirmation
+        de votre abonnement.
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="
+        box
+        bocitePartnerAccessBox
+      "
+      style="
+        border-left:6px solid #2f5d46;
+      ">
+
+      <div
+        class="bocitePartnerAccessTitle">
+        Paiement et activation
+      </div>
+
+
+      <div
+        class="bocitePartnerAccessText">
+
+        Par carte bancaire,
+        votre service est activé
+        dès confirmation du paiement
+        par notre prestataire de paiement.
+
+        <br><br>
+
+        Par virement bancaire,
+        votre service est activé
+        après réception
+        et confirmation effective
+        du règlement
+        sur le compte
+
+        <span
+          class="bocitePartnerAccessBrand">
+          <span class="bocitePartnerAccessBrandGreen">Bo'Cité</span><span class="bocitePartnerAccessBrandRed">Art</span>
+        </span>.
+
+        <br><br>
+
+        Le délai dépend
+        de votre établissement bancaire.
+
+        <br><br>
+
+        Pour une activation
+        la plus rapide possible,
+        privilégiez la carte bancaire.
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="
+        box
+        bocitePartnerAccessBox
+      ">
+
+      <div
+        class="bocitePartnerAccessTitle">
+        Code d’accès entreprise
+      </div>
+
+
+      <input
+        id="entreprisePartnerAccessCode"
+        class="
+          miniField
+          bocitePartnerAccessField
+        "
+        type="text"
+        autocomplete="off"
+        placeholder="Votre code d'accès">
+
+
+      <div
+        id="entreprisePartnerAccessStatus"
+        style="
+          margin-top:8px;
+        ">
+      </div>
+
+    </div>
+
 
     <button
       id="entreprisePartnerConnectBtn"
-      class="choiceBtn"
-      type="button"
-      style="
-        width:100%;
-        margin-top:12px;
-      ">
+      class="
+        choiceBtn
+        bocitePartnerAccessBtn
+      "
+      type="button">
       Accéder à mon espace privé
     </button>
 
+
     <button
       id="entreprisePartnerReturnBtn"
-      class="choiceBtn"
+      class="
+        choiceBtn
+        bocitePartnerAccessBtn
+      "
       type="button"
       style="
-        width:100%;
         margin-top:8px;
-        background:#fff;
       ">
       Retour à l’espace Entreprise
     </button>
 
-    <div
-      id="entreprisePartnerAccessStatus"
-      class="muted"
-      style="margin-top:10px;">
-    </div>
-
-    <div
-      class="box entrepriseInfoBox"
-      style="
-        margin-top:14px;
-        border-left:6px solid #2f5d46;
-        line-height:1.55;
-        font-weight:400;
-        color:#111;
-      ">
-
-      <strong
-        style="
-          display:block;
-          color:#2f5d46;
-          font-size:16px;
-          font-weight:700;
-          line-height:1.4;
-        ">
-        Protection de vos données
-      </strong>
-
-      <br>
-
-      Les informations professionnelles
-      et les accès privés
-      de votre entreprise
-      sont destinés à être protégés
-      par un espace sécurisé.
-
-      <br><br>
-
-      Seules les personnes autorisées
-      par l’entreprise
-      pourront accéder
-      aux données confidentielles
-      et aux outils réservés
-      aux partenaires.
-
-    </div>
   `;
 }
   function connectPartnerAccount(
@@ -17929,109 +19830,188 @@ function renderOpportunities(){
     openPrivateHome();
   }
 
-  function getPrivateHomeHtml(){
+   function getPrivateHomeHtml(){
 
     const account =
       loadPartnerAccount();
 
     return `
+
+      <style>
+
+        .bocitePrivateBox{
+
+          background:#ffffff;
+          color:#111111;
+
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        }
+
+
+        .bocitePrivateTitle{
+
+          color:#2f5d46;
+
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+
+          margin-bottom:8px;
+        }
+
+
+        .bocitePrivateText{
+
+          color:#111111;
+
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        }
+
+
+        .bocitePrivateButton{
+
+          width:100%;
+          margin-top:8px;
+
+          background:#ffffff !important;
+          color:#111111 !important;
+
+          font-size:14px;
+          font-weight:400;
+        }
+
+
+        .bocitePrivateBrand{
+
+          white-space:nowrap;
+
+          font-size:14px;
+          font-weight:700;
+        }
+
+
+        .bocitePrivateBrandGreen{
+
+          color:#2f5d46;
+          font-weight:700;
+        }
+
+
+        .bocitePrivateBrandRed{
+
+          color:#b00020;
+          font-weight:700;
+        }
+
+      </style>
+
+
       <div
-        class="box"
+        class="box bocitePrivateBox"
         style="
           border-left:6px solid #2f5d46;
-          line-height:1.5;
         ">
 
-        <strong style="font-size:19px;">
+        <div
+          class="bocitePrivateTitle">
           Espace privé de l’entreprise
-        </strong>
+        </div>
 
-        <br><br>
 
-        Entreprise connectée :
+        <div
+          class="bocitePrivateText">
 
-        <strong>
-          ${escapeValue(
-            account
-              ? account.companyName
-              : "Entreprise"
-          )}
-        </strong>
+          Entreprise connectée :
 
-        <br><br>
+          <br>
 
-        Cet espace regroupera :
+          ${
+            escapeValue(
+              account
+                ? account.companyName
+                : "Entreprise"
+            )
+          }
 
-        <br><br>
+          <br><br>
 
-        • les offres et tarifs Bo'CitéArt ;<br>
-        • les abonnements actifs ;<br>
-        • les recherches professionnelles ;<br>
-        • les opportunités publiées ;<br>
-        • les demandes collectives ;<br>
-        • les factures disponibles ;<br>
-        • les projets de mécénat ;<br>
-        • les conventions et contrats ;<br>
-        • le suivi confidentiel de l’entreprise.
+          Cet espace regroupe :
+
+          <br><br>
+
+          • les offres et tarifs
+          <span class="bocitePrivateBrand">
+            <span class="bocitePrivateBrandGreen">Bo'Cité</span><span class="bocitePrivateBrandRed">Art</span>
+          </span> ;<br>
+
+          • les abonnements actifs ;<br>
+          • les recherches professionnelles ;<br>
+          • les opportunités publiées ;<br>
+          • les demandes collectives ;<br>
+          • les factures disponibles ;<br>
+          • les projets de mécénat ;<br>
+          • les conventions et contrats ;<br>
+          • le suivi confidentiel de l’entreprise.
+
+        </div>
+
       </div>
+
 
       <button
         id="entreprisePrivateOffersBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;">
+        class="choiceBtn bocitePrivateButton"
+        type="button">
         Mes offres et abonnements
       </button>
 
+
       <button
         id="entreprisePrivateSearchBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;margin-top:8px;">
+        class="choiceBtn bocitePrivateButton"
+        type="button">
         Recherche professionnelle
       </button>
 
+
       <button
         id="entreprisePrivateMecenatBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;margin-top:8px;">
+        class="choiceBtn bocitePrivateButton"
+        type="button">
         Mon espace mécénat privé
       </button>
 
+
       <button
         id="entreprisePrivateBillingBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;margin-top:8px;">
+        class="choiceBtn bocitePrivateButton"
+        type="button">
         Abonnements et factures
       </button>
 
+
       <button
         id="entreprisePrivateDisconnectBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:8px;
-          background:#fff;
-        ">
+        class="choiceBtn bocitePrivateButton"
+        type="button">
         Fermer mon espace privé
       </button>
 
+
       <button
         id="entreprisePrivateReturnBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:8px;
-          background:#fff;
-        ">
+        class="choiceBtn bocitePrivateButton"
+        type="button">
         Retour à l’espace Entreprise
       </button>
+
     `;
   }
+
 
   function bindPrivateHome(){
 
@@ -18040,268 +20020,360 @@ function renderOpportunities(){
         "entreprisePrivateOffersBtn"
       );
 
+
     const searchButton =
       getElement(
         "entreprisePrivateSearchBtn"
       );
+
 
     const mecenatButton =
       getElement(
         "entreprisePrivateMecenatBtn"
       );
 
+
     const billingButton =
       getElement(
         "entreprisePrivateBillingBtn"
       );
+
 
     const disconnectButton =
       getElement(
         "entreprisePrivateDisconnectBtn"
       );
 
+
     const returnButton =
       getElement(
         "entreprisePrivateReturnBtn"
       );
 
+
     if(offersButton){
-      offersButton.onclick = function(){
 
-        if(
-          typeof module.openPrivateOffers ===
-          "function"
-        ){
-          module.openPrivateOffers();
-          return;
-        }
+      offersButton.onclick =
+        function(){
 
-        alert(
-          "La page des offres privées sera ajoutée à l’étape suivante."
-        );
-      };
+          if(
+            typeof module.openPrivateOffers ===
+            "function"
+          ){
+
+            module.openPrivateOffers();
+
+            return;
+          }
+
+
+          alert(
+            "La page des offres privées sera ajoutée à l’étape suivante."
+          );
+        };
     }
+
 
     if(searchButton){
-      searchButton.onclick = function(){
 
-        if(
-          typeof module.openProfessionalDirectory ===
-          "function"
-        ){
-          module.openProfessionalDirectory();
-        }
-      };
+      searchButton.onclick =
+        function(){
+
+          if(
+            typeof module.openProfessionalDirectory ===
+            "function"
+          ){
+
+            module.openProfessionalDirectory();
+          }
+        };
     }
+
 
     if(mecenatButton){
-      mecenatButton.onclick = function(){
 
-        if(
-          typeof module.openMecenatPrivateSpace ===
-          "function"
-        ){
-          module.openMecenatPrivateSpace();
-        }
-      };
+      mecenatButton.onclick =
+        function(){
+
+          if(
+            typeof module.openMecenatPrivateSpace ===
+            "function"
+          ){
+
+            module.openMecenatPrivateSpace();
+          }
+        };
     }
+
 
     if(billingButton){
-      billingButton.onclick = function(){
 
-        if(
-          typeof module.openSearchBilling ===
-          "function"
-        ){
-          module.openSearchBilling();
-        }
-      };
+      billingButton.onclick =
+        function(){
+
+          if(
+            typeof module.openSearchBilling ===
+            "function"
+          ){
+
+            module.openSearchBilling();
+          }
+        };
     }
+
 
     if(disconnectButton){
-      disconnectButton.onclick = function(){
 
-        closePartnerSession();
+      disconnectButton.onclick =
+        function(){
 
-        alert(
-          "L’espace privé est fermé."
-        );
+          closePartnerSession();
 
-        if(
-          typeof module.openHome ===
-          "function"
-        ){
-          module.openHome();
-        }
-      };
+
+          alert(
+            "L’espace privé est fermé."
+          );
+
+
+          if(
+            typeof module.openHome ===
+            "function"
+          ){
+
+            module.openHome();
+          }
+        };
     }
 
-    if(returnButton){
-      returnButton.onclick = function(){
 
-        if(
-          typeof module.openHome ===
-          "function"
-        ){
-          module.openHome();
-        }
-      };
+    if(returnButton){
+
+      returnButton.onclick =
+        function(){
+
+          if(
+            typeof module.openHome ===
+            "function"
+          ){
+
+            module.openHome();
+          }
+        };
     }
   }
 
+
   function openPrivateHome(){
 
-    if(!isPartnerAuthenticated()){
+    if(
+      !isPartnerAuthenticated()
+    ){
+
       openPartnerAccess(
         openPrivateHome
       );
 
+
       return;
     }
+
 
     module.renderModal(
       "Espace privé Entreprise",
       getPrivateHomeHtml()
     );
 
-    window.setTimeout(function(){
-      bindPrivateHome();
-    },0);
+
+    window.setTimeout(
+      function(){
+
+        bindPrivateHome();
+
+      },
+      0
+    );
   }
+
 
   function openPartnerAccess(
     successCallback
   ){
 
-    if(isPartnerAuthenticated()){
+    if(
+      isPartnerAuthenticated()
+    ){
 
       if(
         typeof successCallback ===
         "function"
       ){
+
         successCallback();
+
       }else{
+
         openPrivateHome();
       }
 
+
       return;
     }
+
 
     module.renderModal(
       "Accès partenaire Bo'CitéArt",
       getAccessHtml()
     );
 
-    window.setTimeout(function(){
 
-      const connectButton =
-        getElement(
-          "entreprisePartnerConnectBtn"
-        );
+    window.setTimeout(
+      function(){
 
-      const returnButton =
-        getElement(
-          "entreprisePartnerReturnBtn"
-        );
-
-      const codeInput =
-        getElement(
-          "entreprisePartnerAccessCode"
-        );
-
-      if(connectButton){
-        connectButton.onclick = function(){
-          connectPartnerAccount(
-            successCallback
+        const connectButton =
+          getElement(
+            "entreprisePartnerConnectBtn"
           );
-        };
-      }
 
-      if(codeInput){
-        codeInput.addEventListener(
-          "keydown",
-          function(event){
 
-            if(event.key === "Enter"){
-              event.preventDefault();
+        const returnButton =
+          getElement(
+            "entreprisePartnerReturnBtn"
+          );
+
+
+        const codeInput =
+          getElement(
+            "entreprisePartnerAccessCode"
+          );
+
+
+        if(connectButton){
+
+          connectButton.onclick =
+            function(){
 
               connectPartnerAccount(
                 successCallback
               );
+            };
+        }
+
+
+        if(codeInput){
+
+          codeInput.addEventListener(
+            "keydown",
+            function(event){
+
+              if(
+                event.key ===
+                "Enter"
+              ){
+
+                event.preventDefault();
+
+
+                connectPartnerAccount(
+                  successCallback
+                );
+              }
             }
-          }
-        );
-      }
+          );
+        }
 
-      if(returnButton){
-        returnButton.onclick = function(){
 
-          if(
-            typeof module.openHome ===
-            "function"
-          ){
-            module.openHome();
-          }
-        };
-      }
-    },0);
+        if(returnButton){
+
+          returnButton.onclick =
+            function(){
+
+              if(
+                typeof module.openHome ===
+                "function"
+              ){
+
+                module.openHome();
+              }
+            };
+        }
+
+      },
+      0
+    );
   }
+
 
   function requirePartnerAccess(
     callback
   ){
 
-    if(isPartnerAuthenticated()){
+    if(
+      isPartnerAuthenticated()
+    ){
 
       if(
         typeof callback ===
         "function"
       ){
+
         callback();
       }
 
+
       return true;
     }
+
 
     openPartnerAccess(
       callback
     );
 
+
     return false;
   }
+
 
   module.openPartnerAccess =
     openPartnerAccess;
 
+
   module.openPrivateHome =
     openPrivateHome;
+
 
   module.requirePartnerAccess =
     requirePartnerAccess;
 
+
   module.isPartnerAuthenticated =
     isPartnerAuthenticated;
+
 
   module.isPartnerAccountActive =
     isPartnerAccountActive;
 
+
   module.loadPartnerAccount =
     loadPartnerAccount;
+
 
   module.createDemoPartnerAccount =
     createDemoPartnerAccount;
 
+
   module.closePartnerSession =
     closePartnerSession;
 
+
   createDemoPartnerAccount();
+
 
   console.log(
     "✅ Accès partenaire et espace privé Entreprise chargés"
   );
 
-})();
 
+})();
 /* =========================================================
    BO'CITÉART — ARCHITECTURE ENTREPRISE
    PARTIE 2 — OFFRES PRIVÉES ET VERROUILLAGE DES TARIFS
@@ -18328,6 +20400,7 @@ function renderOpportunities(){
     functionName,
     screenName
   ){
+
     const originalFunction =
       module[functionName];
 
@@ -18353,6 +20426,7 @@ function renderOpportunities(){
           typeof module.requirePartnerAccess !==
           "function"
         ){
+
           originalFunction.apply(
             module,
             args
@@ -18383,6 +20457,7 @@ function renderOpportunities(){
       typeof module.registerScreen ===
       "function"
     ){
+
       module.registerScreen(
         screenName,
         protectedFunction
@@ -18390,384 +20465,551 @@ function renderOpportunities(){
     }
   }
 
+
   function getPrivateOffersHtml(){
 
     return `
+
+      <style>
+
+        .bocitePrivateOfferBox{
+
+          background:#ffffff;
+          color:#111111;
+
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        }
+
+
+        .bocitePrivateOfferTitle{
+
+          display:block;
+
+          color:#2f5d46;
+
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+
+          margin-bottom:8px;
+        }
+
+
+        .bocitePrivateOfferText{
+
+          color:#111111;
+
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        }
+
+
+        .bocitePrivateOfferPrice{
+
+          color:#111111;
+
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        }
+
+
+        .bocitePrivateOfferButton{
+
+          width:100%;
+          margin-top:12px;
+
+          background:#ffffff !important;
+          color:#111111 !important;
+
+          font-size:14px;
+          font-weight:400;
+        }
+
+
+        .bocitePrivateOfferBrand{
+
+          white-space:nowrap;
+
+          font-weight:700;
+        }
+
+
+        .bocitePrivateOfferBrandGreen{
+
+          color:#2f5d46;
+          font-weight:700;
+        }
+
+
+        .bocitePrivateOfferBrandRed{
+
+          color:#b00020;
+          font-weight:700;
+        }
+
+      </style>
+
+
       <div
-        class="box"
+        class="box bocitePrivateOfferBox"
         style="
           border-left:6px solid #2f5d46;
-          line-height:1.5;
         ">
 
-        <strong style="font-size:19px;">
-          Offres et services professionnels Bo'CitéArt
-        </strong>
+        <div class="bocitePrivateOfferTitle">
 
-        <br><br>
+          Offres et services professionnels
 
-        Cette page est réservée
-        aux entreprises partenaires connectées.
+          <span class="bocitePrivateOfferBrand">
+            <span class="bocitePrivateOfferBrandGreen">Bo'Cité</span><span class="bocitePrivateOfferBrandRed">Art</span>
+          </span>
 
-        <br><br>
+        </div>
 
-        Elle regroupe les services disponibles,
-        leurs conditions,
-        leurs tarifs
-        et les accès correspondants.
+
+        <div class="bocitePrivateOfferText">
+
+          Cette page est réservée
+          aux entreprises partenaires connectées.
+
+          <br><br>
+
+          Elle regroupe les services disponibles,
+          leurs conditions,
+          leurs tarifs
+          et les accès correspondants.
+
+        </div>
+
       </div>
 
-      <div class="box">
 
-        <strong style="font-size:18px;">
-          Partenariat professionnel Bo'CitéArt
-        </strong>
+      <div class="box bocitePrivateOfferBox">
 
-        <br><br>
+        <div class="bocitePrivateOfferTitle">
 
-        Le partenariat donne accès
-        à l’espace sécurisé de l’entreprise
-        et aux services professionnels disponibles.
+          Partenariat professionnel
 
-        <br><br>
+          <span class="bocitePrivateOfferBrand">
+            <span class="bocitePrivateOfferBrandGreen">Bo'Cité</span><span class="bocitePrivateOfferBrandRed">Art</span>
+          </span>
 
-        Il permet notamment :
+        </div>
 
-        <br><br>
 
-        • de gérer la fiche de l’entreprise ;<br>
-        • d’accéder aux services privés ;<br>
-        • de consulter ses abonnements ;<br>
-        • de retrouver ses factures disponibles ;<br>
-        • de suivre ses demandes ;<br>
-        • d’utiliser les services de recherche ;<br>
-        • d’étudier des projets de mécénat ;<br>
-        • de recevoir les informations professionnelles.
+        <div class="bocitePrivateOfferText">
 
-        <br><br>
+          Le partenariat donne accès
+          à l’espace sécurisé de l’entreprise
+          et aux services professionnels disponibles.
 
-        Les conditions définitives du partenariat
-        seront précisées avant la mise en production.
+          <br><br>
+
+          Il permet notamment :
+
+          <br><br>
+
+          • de gérer la fiche de l’entreprise ;<br>
+          • d’accéder aux services privés ;<br>
+          • de consulter ses abonnements ;<br>
+          • de retrouver ses factures disponibles ;<br>
+          • de suivre ses demandes ;<br>
+          • d’utiliser les services de recherche ;<br>
+          • d’étudier des projets de mécénat ;<br>
+          • de recevoir les informations professionnelles.
+
+          <br><br>
+
+          Les conditions définitives du partenariat
+          seront précisées avant la mise en production.
+
+        </div>
+
       </div>
 
-      <div class="box">
 
-        <strong style="font-size:18px;">
+      <div class="box bocitePrivateOfferBox">
+
+        <div class="bocitePrivateOfferTitle">
           Recherche professionnelle — commune
-        </strong>
+        </div>
 
-        <br><br>
 
-        Recherche d’une entreprise,
-        d’un artisan,
-        d’un fournisseur,
-        d’un sous-traitant
-        ou d’une compétence
-        dans la commune choisie.
+        <div class="bocitePrivateOfferText">
 
-        <br><br>
+          Recherche d’une entreprise,
+          d’un artisan,
+          d’un fournisseur,
+          d’un sous-traitant
+          ou d’une compétence
+          dans la commune choisie.
 
-        <strong>
+          <br><br>
+
           Incluse dans l’espace professionnel.
-        </strong>
+
+        </div>
+
 
         <button
           id="privateOffersLocalSearchBtn"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;margin-top:12px;">
+          class="choiceBtn bocitePrivateOfferButton"
+          type="button">
           Ouvrir la recherche professionnelle
         </button>
+
       </div>
 
-      <div class="box">
 
-        <strong style="font-size:18px;">
+      <div class="box bocitePrivateOfferBox">
+
+        <div class="bocitePrivateOfferTitle">
           Recherche professionnelle — France
-        </strong>
+        </div>
 
-        <br><br>
 
-        Permet d’élargir la recherche :
+        <div class="bocitePrivateOfferText">
 
-        <br><br>
+          Permet d’élargir la recherche :
 
-        • par commune ;<br>
-        • par rayon ;<br>
-        • par département ;<br>
-        • par région ;<br>
-        • dans toute la France.
+          <br><br>
 
-        <br><br>
+          • par commune ;<br>
+          • par rayon ;<br>
+          • par département ;<br>
+          • par région ;<br>
+          • dans toute la France.
 
-        Tarif :
+          <br><br>
 
-        <br><br>
+          Tarif :
 
-        <strong style="font-size:18px;">
-          26,50 € HT par mois
-        </strong>
+          <br><br>
 
-        <br>
+          <span class="bocitePrivateOfferPrice">
+            26,50 € HT par mois
+          </span>
 
-        ou
+          <br>
 
-        <br>
+          ou
 
-        <strong style="font-size:18px;">
-          300 € HT par an
-        </strong>
+          <br>
+
+          <span class="bocitePrivateOfferPrice">
+            300 € HT par an
+          </span>
+
+        </div>
+
 
         <button
-          class="choiceBtn privateOffersSubscribeBtn"
+          class="
+            choiceBtn
+            privateOffersSubscribeBtn
+            bocitePrivateOfferButton
+          "
           type="button"
-          data-private-offer-plan="france"
-          style="width:100%;margin-top:12px;">
+          data-private-offer-plan="france">
           Choisir l’offre France
         </button>
+
       </div>
 
-      <div class="box">
 
-        <strong style="font-size:18px;">
+      <div class="box bocitePrivateOfferBox">
+
+        <div class="bocitePrivateOfferTitle">
           Recherche professionnelle — Europe
-        </strong>
+        </div>
 
-        <br><br>
 
-        Permet de rechercher
-        des entreprises,
-        fournisseurs,
-        partenaires
-        et sous-traitants
-        dans les pays européens disponibles.
+        <div class="bocitePrivateOfferText">
 
-        <br><br>
+          Permet de rechercher
+          des entreprises,
+          fournisseurs,
+          partenaires
+          et sous-traitants
+          dans les pays européens disponibles.
 
-        Tarif :
+          <br><br>
 
-        <br><br>
+          Tarif :
 
-        <strong style="font-size:18px;">
-          44,90 € HT par mois
-        </strong>
+          <br><br>
 
-        <br>
+          <span class="bocitePrivateOfferPrice">
+            44,90 € HT par mois
+          </span>
 
-        ou
+          <br>
 
-        <br>
+          ou
 
-        <strong style="font-size:18px;">
-          500 € HT par an
-        </strong>
+          <br>
+
+          <span class="bocitePrivateOfferPrice">
+            500 € HT par an
+          </span>
+
+        </div>
+
 
         <button
-          class="choiceBtn privateOffersSubscribeBtn"
+          class="
+            choiceBtn
+            privateOffersSubscribeBtn
+            bocitePrivateOfferButton
+          "
           type="button"
-          data-private-offer-plan="europe"
-          style="width:100%;margin-top:12px;">
+          data-private-offer-plan="europe">
           Choisir l’offre Europe
         </button>
+
       </div>
 
-      <div class="box">
 
-        <strong style="font-size:18px;">
+      <div class="box bocitePrivateOfferBox">
+
+        <div class="bocitePrivateOfferTitle">
           Opportunité professionnelle
-        </strong>
+        </div>
 
-        <br><br>
 
-        Cette publication est destinée
-        uniquement aux entreprises.
+        <div class="bocitePrivateOfferText">
 
-        <br><br>
+          Cette publication est destinée
+          uniquement aux entreprises.
 
-        Elle peut concerner :
+          <br><br>
 
-        <br><br>
+          Elle peut concerner :
 
-        • une recherche de partenaire ;<br>
-        • un sous-traitant ;<br>
-        • un fournisseur ;<br>
-        • une compétence ;<br>
-        • une collaboration ;<br>
-        • une formation ;<br>
-        • une rencontre professionnelle ;<br>
-        • un événement économique.
+          <br><br>
 
-        <br><br>
+          • une recherche de partenaire ;<br>
+          • un sous-traitant ;<br>
+          • un fournisseur ;<br>
+          • une compétence ;<br>
+          • une collaboration ;<br>
+          • une formation ;<br>
+          • une rencontre professionnelle ;<br>
+          • un événement économique.
 
-        Tarif :
+          <br><br>
 
-        <br><br>
+          Tarif :
 
-        <strong style="font-size:18px;">
-          50 € HT par publication
-        </strong>
+          <br><br>
+
+          <span class="bocitePrivateOfferPrice">
+            50 € HT par publication
+          </span>
+
+        </div>
+
 
         <button
           id="privateOffersOpportunityBtn"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;margin-top:12px;">
+          class="choiceBtn bocitePrivateOfferButton"
+          type="button">
           Publier une opportunité professionnelle
         </button>
+
       </div>
 
-      <div class="box">
 
-        <strong style="font-size:18px;">
+      <div class="box bocitePrivateOfferBox">
+
+        <div class="bocitePrivateOfferTitle">
           Fiche entreprise enrichie
-        </strong>
+        </div>
 
-        <br><br>
 
-        Elle permet d’ajouter à la fiche officielle :
+        <div class="bocitePrivateOfferText">
 
-        <br><br>
+          Elle permet d’ajouter à la fiche officielle :
 
-        • une présentation ;<br>
-        • les métiers ;<br>
-        • les services ;<br>
-        • les réalisations ;<br>
-        • les recrutements ;<br>
-        • les actualités ;<br>
-        • l’engagement en mécénat ;<br>
-        • les demandes de devis ;<br>
-        • les coordonnées professionnelles.
+          <br><br>
 
-        <br><br>
+          • une présentation ;<br>
+          • les métiers ;<br>
+          • les services ;<br>
+          • les réalisations ;<br>
+          • les recrutements ;<br>
+          • les actualités ;<br>
+          • l’engagement en mécénat ;<br>
+          • les demandes de devis ;<br>
+          • les coordonnées professionnelles.
 
-        Cette fiche constitue
-        une option complémentaire
-        proposée aux entreprises partenaires.
+          <br><br>
 
-        <br><br>
+          Cette fiche constitue
+          une option complémentaire
+          proposée aux entreprises partenaires.
 
-        Tarif actuellement prévu :
+          <br><br>
 
-        <br><br>
+          Tarif actuellement prévu :
 
-        <strong style="font-size:18px;">
-          199 € HT par an
-        </strong>
+          <br><br>
+
+          <span class="bocitePrivateOfferPrice">
+            199 € HT par an
+          </span>
+
+        </div>
+
 
         <button
           id="privateOffersEnrichedProfileBtn"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;margin-top:12px;">
+          class="choiceBtn bocitePrivateOfferButton"
+          type="button">
           Gérer ma fiche entreprise
         </button>
+
       </div>
 
-      <div class="box">
 
-        <strong style="font-size:18px;">
+      <div class="box bocitePrivateOfferBox">
+
+        <div class="bocitePrivateOfferTitle">
           Mécénat
-        </strong>
+        </div>
 
-        <br><br>
 
-        L’entreprise peut :
+        <div class="bocitePrivateOfferText">
 
-        <br><br>
+          L’entreprise peut :
 
-        • découvrir les projets ouverts ;<br>
-        • enregistrer un intérêt privé ;<br>
-        • étudier un projet ;<br>
-        • proposer un espace sur son site ;<br>
-        • suivre les validations ;<br>
-        • préparer une contribution ;<br>
-        • retrouver ses documents privés.
+          <br><br>
 
-        <br><br>
+          • découvrir les projets ouverts ;<br>
+          • enregistrer un intérêt privé ;<br>
+          • étudier un projet ;<br>
+          • proposer un espace sur son site ;<br>
+          • suivre les validations ;<br>
+          • préparer une contribution ;<br>
+          • retrouver ses documents privés.
 
-        Les conventions liées
-        aux projets Bo'CitéArt
-        sont préparées et coordonnées
-        par Bo'CitéArt,
-        en lien avec les partenaires concernés
-        et dans le respect
-        des règles juridiques et fiscales applicables.
+          <br><br>
 
-        <br><br>
+          Les conventions liées
+          aux projets
 
-        La structure associative
-        sans but lucratif prévue par Bo'CitéArt
-        pourra porter les opérations éligibles,
-        lorsque les conditions juridiques
-        et fiscales seront réunies.
+          <span class="bocitePrivateOfferBrand">
+            <span class="bocitePrivateOfferBrandGreen">Bo'Cité</span><span class="bocitePrivateOfferBrandRed">Art</span>
+          </span>
 
-        <br><br>
+          sont préparées et coordonnées
+          par
 
-        L’entreprise devra faire confirmer
-        l’éligibilité de son opération
-        par son expert-comptable.
+          <span class="bocitePrivateOfferBrand">
+            <span class="bocitePrivateOfferBrandGreen">Bo'Cité</span><span class="bocitePrivateOfferBrandRed">Art</span>
+          </span>,
+
+          en lien avec les partenaires concernés
+          et dans le respect
+          des règles juridiques et fiscales applicables.
+
+          <br><br>
+
+          La structure associative
+          sans but lucratif prévue par
+
+          <span class="bocitePrivateOfferBrand">
+            <span class="bocitePrivateOfferBrandGreen">Bo'Cité</span><span class="bocitePrivateOfferBrandRed">Art</span>
+          </span>
+
+          pourra porter les opérations éligibles,
+          lorsque les conditions juridiques
+          et fiscales seront réunies.
+
+          <br><br>
+
+          L’entreprise devra faire confirmer
+          l’éligibilité de son opération
+          par son expert-comptable.
+
+        </div>
+
 
         <button
           id="privateOffersMecenatBtn"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;margin-top:12px;">
+          class="choiceBtn bocitePrivateOfferButton"
+          type="button">
           Ouvrir mon espace mécénat privé
         </button>
+
       </div>
 
-      <div class="box">
 
-        <strong style="font-size:18px;">
+      <div class="box bocitePrivateOfferBox">
+
+        <div class="bocitePrivateOfferTitle">
           Mes abonnements et mes factures
-        </strong>
+        </div>
 
-        <br><br>
 
-        Cet espace permet de consulter :
+        <div class="bocitePrivateOfferText">
 
-        <br><br>
+          Cet espace permet de consulter :
 
-        • les services souscrits ;<br>
-        • le mode de paiement ;<br>
-        • les prochaines échéances ;<br>
-        • le renouvellement automatique ;<br>
-        • les factures encore disponibles.
+          <br><br>
 
-        <br><br>
+          • les services souscrits ;<br>
+          • le mode de paiement ;<br>
+          • les prochaines échéances ;<br>
+          • le renouvellement automatique ;<br>
+          • les factures encore disponibles.
 
-        Bo'CitéArt n’assure pas
-        un archivage permanent
-        des pièces comptables.
+          <br><br>
 
-        <br><br>
+          <span class="bocitePrivateOfferBrand">
+            <span class="bocitePrivateOfferBrandGreen">Bo'Cité</span><span class="bocitePrivateOfferBrandRed">Art</span>
+          </span>
 
-        Chaque entreprise doit télécharger,
-        transmettre et conserver ses factures
-        dans son propre système comptable.
+          n’assure pas
+          un archivage permanent
+          des pièces comptables.
+
+          <br><br>
+
+          Chaque entreprise doit télécharger,
+          transmettre et conserver ses factures
+          dans son propre système comptable.
+
+        </div>
+
 
         <button
           id="privateOffersBillingBtn"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;margin-top:12px;">
+          class="choiceBtn bocitePrivateOfferButton"
+          type="button">
           Consulter mes abonnements et factures
         </button>
+
       </div>
+
 
       <button
         id="privateOffersReturnBtn"
-        class="choiceBtn"
+        class="choiceBtn bocitePrivateOfferButton"
         type="button"
         style="
-          width:100%;
           margin-top:14px;
-          background:#fff;
         ">
         Retour à mon espace privé
       </button>
+
     `;
   }
+
 
   function bindPrivateOffers(){
 
@@ -18801,17 +21043,22 @@ function renderOpportunities(){
         "privateOffersReturnBtn"
       );
 
-    if(localSearchButton){
-      localSearchButton.onclick = function(){
 
-        if(
-          typeof module.openProfessionalDirectory ===
-          "function"
-        ){
-          module.openProfessionalDirectory();
-        }
-      };
+    if(localSearchButton){
+
+      localSearchButton.onclick =
+        function(){
+
+          if(
+            typeof module.openProfessionalDirectory ===
+            "function"
+          ){
+
+            module.openProfessionalDirectory();
+          }
+        };
     }
+
 
     document
       .querySelectorAll(
@@ -18819,107 +21066,131 @@ function renderOpportunities(){
       )
       .forEach(function(button){
 
-        button.onclick = function(){
+        button.onclick =
+          function(){
 
-          const plan =
-            button.getAttribute(
-              "data-private-offer-plan"
-            );
-
-          if(
-            typeof module.activateSearchSubscription ===
-            "function"
-          ){
-            const annual =
-              confirm(
-                "Choisissez le paiement.\n\n" +
-                "OK : abonnement annuel\n" +
-                "Annuler : abonnement mensuel"
+            const plan =
+              button.getAttribute(
+                "data-private-offer-plan"
               );
 
-            module.activateSearchSubscription(
-              plan,
-              annual
-                ? "annuel"
-                : "mensuel"
+            if(
+              typeof module.activateSearchSubscription ===
+              "function"
+            ){
+
+              const annual =
+                confirm(
+                  "Choisissez le paiement.\n\n" +
+                  "OK : abonnement annuel\n" +
+                  "Annuler : abonnement mensuel"
+                );
+
+              module.activateSearchSubscription(
+                plan,
+                annual
+                  ? "annuel"
+                  : "mensuel"
+              );
+
+              return;
+            }
+
+            alert(
+              "La souscription est momentanément indisponible."
             );
+          };
+      });
+
+
+    if(opportunityButton){
+
+      opportunityButton.onclick =
+        function(){
+
+          if(
+            typeof module.openProfessionalOpportunities ===
+            "function"
+          ){
+
+            module.openProfessionalOpportunities();
 
             return;
           }
 
-          alert(
-            "La souscription est momentanément indisponible."
+          module.openScreen(
+            "opportunites"
           );
         };
-      });
-
-    if(opportunityButton){
-      opportunityButton.onclick = function(){
-
-        if(
-          typeof module.openProfessionalOpportunities ===
-          "function"
-        ){
-          module.openProfessionalOpportunities();
-          return;
-        }
-
-        module.openScreen(
-          "opportunites"
-        );
-      };
     }
+
 
     if(profileButton){
-      profileButton.onclick = function(){
 
-        if(
-          typeof module.openScreen ===
-          "function"
-        ){
-          module.openScreen(
-            "visibilite"
-          );
-        }
-      };
+      profileButton.onclick =
+        function(){
+
+          if(
+            typeof module.openScreen ===
+            "function"
+          ){
+
+            module.openScreen(
+              "visibilite"
+            );
+          }
+        };
     }
+
 
     if(mecenatButton){
-      mecenatButton.onclick = function(){
 
-        if(
-          typeof module.openMecenatPrivateSpace ===
-          "function"
-        ){
-          module.openMecenatPrivateSpace();
-        }
-      };
+      mecenatButton.onclick =
+        function(){
+
+          if(
+            typeof module.openMecenatPrivateSpace ===
+            "function"
+          ){
+
+            module.openMecenatPrivateSpace();
+          }
+        };
     }
+
 
     if(billingButton){
-      billingButton.onclick = function(){
 
-        if(
-          typeof module.openSearchBilling ===
-          "function"
-        ){
-          module.openSearchBilling();
-        }
-      };
+      billingButton.onclick =
+        function(){
+
+          if(
+            typeof module.openSearchBilling ===
+            "function"
+          ){
+
+            module.openSearchBilling();
+          }
+        };
     }
+
 
     if(returnButton){
-      returnButton.onclick = function(){
 
-        if(
-          typeof module.openPrivateHome ===
-          "function"
-        ){
-          module.openPrivateHome();
-        }
-      };
+      returnButton.onclick =
+        function(){
+
+          if(
+            typeof module.openPrivateHome ===
+            "function"
+          ){
+
+            module.openPrivateHome();
+          }
+        };
     }
   }
+
 
   function openPrivateOffers(){
 
@@ -18928,6 +21199,7 @@ function renderOpportunities(){
       "function" &&
       !module.isPartnerAuthenticated()
     ){
+
       module.openPartnerAccess(
         openPrivateOffers
       );
@@ -18935,22 +21207,32 @@ function renderOpportunities(){
       return;
     }
 
+
     module.renderModal(
       "Offres professionnelles",
       getPrivateOffersHtml()
     );
 
-    window.setTimeout(function(){
-      bindPrivateOffers();
-    },0);
+
+    window.setTimeout(
+      function(){
+
+        bindPrivateOffers();
+
+      },
+      0
+    );
   }
+
 
   module.openPrivateOffers =
     openPrivateOffers;
 
+
   /*
     Les fonctions suivantes existent déjà.
-    Elles sont maintenant protégées par le code entreprise.
+    Elles sont maintenant protégées
+    par le code entreprise.
   */
 
   protectFunction(
@@ -18975,12 +21257,15 @@ function renderOpportunities(){
     "openMecenatPrivateDashboard"
   );
 
+
   /*
     Protection particulière de la fiche enrichie.
+
     Le contenu d’information peut rester public,
     mais le formulaire privé sera protégé
     à l’étape suivante.
   */
+
 
   console.log(
     "✅ Offres privées et services payants protégés"
@@ -19125,193 +21410,276 @@ console.log(
       privateOpportunityFunction;
   }
 
-  function getPublicOpportunityHtml(){
+ function getPublicOpportunityHtml(){
 
-    return `
-      <div
-        class="box"
-        style="
-          border-left:6px solid #2f5d46;
-          line-height:1.55;
-        ">
+  return `
 
-        <strong style="font-size:19px;">
-          Opportunités professionnelles
-        </strong>
-
-        <br><br>
-
-        Cette rubrique permet aux entreprises,
-        artisans et professionnels
-        de publier une information destinée
-        exclusivement à d’autres professionnels.
-
-        <br><br>
-
-        Elle est distincte de la publicité
-        destinée aux habitants.
-      </div>
-
-      <div class="box" style="line-height:1.55;">
-
-        <strong style="font-size:18px;">
-          À quoi sert une opportunité professionnelle ?
-        </strong>
-
-        <br><br>
-
-        Elle peut permettre de rechercher :
-
-        <br><br>
-
-        • un partenaire ;<br>
-        • un sous-traitant ;<br>
-        • un fournisseur ;<br>
-        • une compétence particulière ;<br>
-        • un intervenant ;<br>
-        • un formateur ;<br>
-        • une entreprise disponible dans une autre région ;<br>
-        • un repreneur ;<br>
-        • une solution technique ;<br>
-        • une collaboration temporaire ou durable.
-
-        <br><br>
-
-        Elle peut également servir à présenter :
-
-        <br><br>
-
-        • une formation professionnelle ;<br>
-        • une conférence ;<br>
-        • une rencontre entre entreprises ;<br>
-        • une démonstration de matériel ;<br>
-        • un salon professionnel ;<br>
-        • un appel à candidatures ;<br>
-        • un événement économique ;<br>
-        • une proposition de coopération.
-
-        <br><br>
-
-        Cette liste est volontairement non exhaustive.
-      </div>
-
-      <div class="box" style="line-height:1.55;">
-
-        <strong style="font-size:18px;">
-          Une publication différente de la publicité locale
-        </strong>
-
-        <br><br>
-
-        <strong>
-          La publicité locale
-        </strong>
-
-        s’adresse principalement aux habitants
-        pour présenter un produit,
-        un service,
-        une promotion
-        ou un événement.
-
-        <br><br>
-
-        <strong>
-          L’opportunité professionnelle
-        </strong>
-
-        s’adresse aux entreprises
-        pour répondre à un besoin professionnel précis.
-
-        <br><br>
-
-        Elle n’est donc pas mélangée
-        avec les publicités grand public.
-      </div>
-
-      <div class="box" style="line-height:1.55;">
-
-        <strong style="font-size:18px;">
-          Une demande peut créer un intérêt collectif
-        </strong>
-
-        <br><br>
-
-        Lorsqu’une même recherche intéresse
-        plusieurs entreprises,
-        Bo'CitéArt peut identifier
-        un besoin commun.
-
-        <br><br>
-
-        Exemples :
-
-        <br><br>
-
-        • plusieurs entreprises recherchent
-          une formation SST ;<br>
-        • plusieurs entreprises recherchent
-          un prestataire pour l’entretien des vitres ;<br>
-        • plusieurs entreprises recherchent
-          un carreleur disponible dans une région ;<br>
-        • plusieurs entreprises recherchent
-          une formation d’anglais professionnel ;<br>
-        • plusieurs entreprises recherchent
-          une solution de recrutement ;<br>
-        • plusieurs entreprises recherchent
-          un fournisseur ou un sous-traitant.
-
-        <br><br>
-
-        Lorsque l’intérêt devient suffisant,
-        Bo'CitéArt peut être alerté
-        afin d’étudier une réponse collective.
-      </div>
+    <div
+      class="box"
+      style="
+        border-left:6px solid #2f5d46;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
 
       <div
-        class="box"
         style="
-          border-left:6px solid #b00020;
-          line-height:1.55;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
         ">
-
-        <strong>
-          Publication réservée aux entreprises partenaires
-        </strong>
-
-        <br><br>
-
-        Le formulaire,
-        les conditions de publication,
-        le tarif,
-        le paiement,
-        les brouillons
-        et le suivi de l’annonce
-        sont accessibles uniquement
-        dans l’espace privé de l’entreprise.
+        Opportunités professionnelles
       </div>
 
-      <button
-        id="publicOpportunityPrivateAccessBtn"
-        class="choiceBtn"
-        type="button"
-        style="width:100%;margin-top:12px;">
-        Publier une opportunité professionnelle
-      </button>
+      Cette rubrique permet aux entreprises,
+      artisans et professionnels
+      de publier une information destinée
+      exclusivement à d’autres professionnels.
 
-      <button
-        id="publicOpportunityReturnBtn"
-        class="choiceBtn"
-        type="button"
+      <br><br>
+
+      Elle est distincte de la publicité
+      destinée aux habitants.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
         style="
-          width:100%;
-          margin-top:8px;
-          background:#fff;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
         ">
-        Retour à l’espace Entreprise
-      </button>
-    `;
-  }
+        À quoi sert une opportunité professionnelle ?
+      </div>
 
+      Elle peut permettre de rechercher :
+
+      <br><br>
+
+      • un partenaire ;<br>
+      • un sous-traitant ;<br>
+      • un fournisseur ;<br>
+      • une compétence particulière ;<br>
+      • un intervenant ;<br>
+      • un formateur ;<br>
+      • une entreprise disponible dans une autre région ;<br>
+      • un repreneur ;<br>
+      • une solution technique ;<br>
+      • une collaboration temporaire ou durable.
+
+      <br><br>
+
+      Elle peut également servir à présenter :
+
+      <br><br>
+
+      • une formation professionnelle ;<br>
+      • une conférence ;<br>
+      • une rencontre entre entreprises ;<br>
+      • une démonstration de matériel ;<br>
+      • un salon professionnel ;<br>
+      • un appel à candidatures ;<br>
+      • un événement économique ;<br>
+      • une proposition de coopération.
+
+      <br><br>
+
+      Cette liste est volontairement non exhaustive.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Une publication différente de la publicité locale
+      </div>
+
+      La publicité locale
+      s’adresse principalement aux habitants
+      pour présenter un produit,
+      un service,
+      une promotion
+      ou un événement.
+
+      <br><br>
+
+      L’opportunité professionnelle
+      s’adresse aux entreprises
+      pour répondre
+      à un besoin professionnel précis.
+
+      <br><br>
+
+      Elle n’est donc pas mélangée
+      avec les publicités grand public.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Une demande peut créer un intérêt collectif
+      </div>
+
+      Lorsqu’une même recherche intéresse
+      plusieurs entreprises,
+
+      <span
+        style="
+          white-space:nowrap;
+          font-weight:700;
+        ">
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </span>
+
+      peut identifier
+      un besoin commun.
+
+      <br><br>
+
+      Exemples :
+
+      <br><br>
+
+      • plusieurs entreprises recherchent une formation SST ;<br>
+      • plusieurs entreprises recherchent un prestataire pour l’entretien des vitres ;<br>
+      • plusieurs entreprises recherchent un carreleur disponible dans une région ;<br>
+      • plusieurs entreprises recherchent une formation d’anglais professionnel ;<br>
+      • plusieurs entreprises recherchent une solution de recrutement ;<br>
+      • plusieurs entreprises recherchent un fournisseur ou un sous-traitant.
+
+      <br><br>
+
+      Lorsque l’intérêt devient suffisant,
+
+      <span
+        style="
+          white-space:nowrap;
+          font-weight:700;
+        ">
+        <span style="color:#2f5d46;">Bo'Cité</span><span style="color:#b00020;">Art</span>
+      </span>
+
+      peut être alerté
+      afin d’étudier une réponse collective.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        border-left:6px solid #b00020;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Publication réservée aux entreprises partenaires
+      </div>
+
+      Le formulaire,
+      les conditions de publication,
+      le tarif,
+      le paiement,
+      les brouillons
+      et le suivi de l’annonce
+      sont accessibles uniquement
+      dans l’espace privé de l’entreprise.
+
+    </div>
+
+
+    <button
+      id="publicOpportunityPrivateAccessBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:12px;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Publier une opportunité professionnelle
+    </button>
+
+
+    <button
+      id="publicOpportunityReturnBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:8px;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Retour à l’espace Entreprise
+    </button>
+
+  `;
+}
+   
   function bindPublicOpportunity(){
 
     const privateButton =
@@ -19587,303 +21955,426 @@ console.log(
     }
   }
 
-  function getSearchHubHtml(){
+function getSearchHubHtml(){
 
-    const saved =
-      loadSettings();
+  const saved =
+    loadSettings();
 
-    return `
+
+  return `
+
+    <div
+      class="box"
+      style="
+        border-left:6px solid #2f5d46;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
       <div
-        class="box"
         style="
-          border-left:6px solid #2f5d46;
-          line-height:1.5;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:8px;
         ">
-
-        <strong style="font-size:19px;">
-          Recherche professionnelle
-        </strong>
-
-        <br><br>
-
-        Recherchez une entreprise,
-        un artisan,
-        un fournisseur,
-        un sous-traitant,
-        un partenaire
-        ou une compétence.
-
-        <br><br>
-
-        La zone indiquée ici
-        est totalement indépendante
-        des villes choisies dans le Sport,
-        la carte
-        ou « Explorer les alentours ».
+        Recherche professionnelle
       </div>
+
+      Recherchez une entreprise,
+      un artisan,
+      un fournisseur,
+      un sous-traitant,
+      un partenaire
+      ou une compétence.
+
+      <br><br>
+
+      La zone indiquée ici
+      est totalement indépendante
+      des villes choisies dans le Sport,
+      la carte
+      ou « Explorer les alentours ».
+
+    </div>
+
+
+    <label
+      style="
+        display:block;
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Que recherchez-vous ?
+    </label>
+
+    <input
+      id="professionalHubKeyword"
+      class="miniField"
+      type="search"
+      value="${escapeValue(saved.keyword || "")}"
+      placeholder="Exemple : maçon, fleuriste, carreleur, repreneur"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+
+
+    <label
+      style="
+        display:block;
+        margin-top:12px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Étendue de la recherche
+    </label>
+
+    <select
+      id="professionalHubScope"
+      class="miniField"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+
+      <option value="commune">
+        Une commune
+      </option>
+
+      <option value="department">
+        Un département
+      </option>
+
+      <option value="region">
+        Une région
+      </option>
+
+      <option value="france">
+        Toute la France
+      </option>
+
+      <option value="europe">
+        Un pays européen
+      </option>
+
+    </select>
+
+
+    <div
+      id="professionalHubCityFields"
+      style="
+        margin-top:12px;
+      ">
 
       <label
         style="
           display:block;
-          font-weight:900;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
         ">
-        Que recherchez-vous ?
+        Commune
       </label>
 
       <input
-        id="professionalHubKeyword"
+        id="professionalHubCity"
         class="miniField"
-        type="search"
-        value="${escapeValue(saved.keyword || "")}"
-        placeholder="Exemple : maçon, fleuriste, carreleur, repreneur">
+        type="text"
+        value="${escapeValue(saved.city || "")}"
+        placeholder="Exemple : Wattignies"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+    </div>
+
+
+    <div
+      id="professionalHubDepartmentFields"
+      style="
+        display:none;
+        margin-top:12px;
+      ">
 
       <label
         style="
           display:block;
-          margin-top:12px;
-          font-weight:900;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
         ">
-        Étendue de la recherche
+        Département
+      </label>
+
+      <input
+        id="professionalHubDepartment"
+        class="miniField"
+        type="text"
+        value="${escapeValue(saved.department || "")}"
+        placeholder="Exemple : Nord ou 59"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+    </div>
+
+
+    <div
+      id="professionalHubRegionFields"
+      style="
+        display:none;
+        margin-top:12px;
+      ">
+
+      <label
+        style="
+          display:block;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Région
+      </label>
+
+      <input
+        id="professionalHubRegion"
+        class="miniField"
+        type="text"
+        value="${escapeValue(saved.region || "")}"
+        placeholder="Exemple : Hauts-de-France"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+    </div>
+
+
+    <div
+      id="professionalHubEuropeFields"
+      style="
+        display:none;
+        margin-top:12px;
+      ">
+
+      <label
+        style="
+          display:block;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Pays
       </label>
 
       <select
-        id="professionalHubScope"
-        class="miniField">
+        id="professionalHubCountry"
+        class="miniField"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
 
-        <option value="commune">
-          Une commune
+        <option value="Belgique">
+          Belgique
         </option>
 
-        <option value="department">
-          Un département
+        <option value="Luxembourg">
+          Luxembourg
         </option>
 
-        <option value="region">
-          Une région
+        <option value="Pays-Bas">
+          Pays-Bas
         </option>
 
-        <option value="france">
-          Toute la France
+        <option value="Allemagne">
+          Allemagne
         </option>
 
-        <option value="europe">
-          Un pays européen
+        <option value="Espagne">
+          Espagne
         </option>
+
+        <option value="Italie">
+          Italie
+        </option>
+
+        <option value="Portugal">
+          Portugal
+        </option>
+
+        <option value="Suisse">
+          Suisse
+        </option>
+
+        <option value="Autriche">
+          Autriche
+        </option>
+
+        <option value="Irlande">
+          Irlande
+        </option>
+
+        <option value="Danemark">
+          Danemark
+        </option>
+
+        <option value="Suède">
+          Suède
+        </option>
+
+        <option value="Finlande">
+          Finlande
+        </option>
+
+        <option value="Pologne">
+          Pologne
+        </option>
+
       </select>
 
-      <div
-        id="professionalHubCityFields"
-        style="margin-top:12px;">
 
-        <label
-          style="
-            display:block;
-            font-weight:900;
-          ">
-          Commune
-        </label>
-
-        <input
-          id="professionalHubCity"
-          class="miniField"
-          type="text"
-          value="${escapeValue(saved.city || "")}"
-          placeholder="Exemple : Wattignies">
-      </div>
-
-      <div
-        id="professionalHubDepartmentFields"
-        style="display:none;margin-top:12px;">
-
-        <label
-          style="
-            display:block;
-            font-weight:900;
-          ">
-          Département
-        </label>
-
-        <input
-          id="professionalHubDepartment"
-          class="miniField"
-          type="text"
-          value="${escapeValue(saved.department || "")}"
-          placeholder="Exemple : Nord ou 59">
-      </div>
-
-      <div
-        id="professionalHubRegionFields"
-        style="display:none;margin-top:12px;">
-
-        <label
-          style="
-            display:block;
-            font-weight:900;
-          ">
-          Région
-        </label>
-
-        <input
-          id="professionalHubRegion"
-          class="miniField"
-          type="text"
-          value="${escapeValue(saved.region || "")}"
-          placeholder="Exemple : Hauts-de-France">
-      </div>
-
-      <div
-        id="professionalHubEuropeFields"
-        style="display:none;margin-top:12px;">
-
-        <label
-          style="
-            display:block;
-            font-weight:900;
-          ">
-          Pays
-        </label>
-
-        <select
-          id="professionalHubCountry"
-          class="miniField">
-
-          <option value="Belgique">
-            Belgique
-          </option>
-
-          <option value="Luxembourg">
-            Luxembourg
-          </option>
-
-          <option value="Pays-Bas">
-            Pays-Bas
-          </option>
-
-          <option value="Allemagne">
-            Allemagne
-          </option>
-
-          <option value="Espagne">
-            Espagne
-          </option>
-
-          <option value="Italie">
-            Italie
-          </option>
-
-          <option value="Portugal">
-            Portugal
-          </option>
-
-          <option value="Suisse">
-            Suisse
-          </option>
-
-          <option value="Autriche">
-            Autriche
-          </option>
-
-          <option value="Irlande">
-            Irlande
-          </option>
-
-          <option value="Danemark">
-            Danemark
-          </option>
-
-          <option value="Suède">
-            Suède
-          </option>
-
-          <option value="Finlande">
-            Finlande
-          </option>
-
-          <option value="Pologne">
-            Pologne
-          </option>
-        </select>
-
-        <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Ville ou région dans ce pays
-        </label>
-
-        <input
-          id="professionalHubEuropeLocation"
-          class="miniField"
-          type="text"
-          placeholder="Exemple : Bruxelles, Milan, Barcelone">
-      </div>
-
-      <button
-        id="professionalHubSearchBtn"
-        class="choiceBtn"
-        type="button"
+      <label
         style="
-          width:100%;
-          margin-top:14px;
+          display:block;
+          margin-top:10px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Ville ou région dans ce pays
+      </label>
+
+      <input
+        id="professionalHubEuropeLocation"
+        class="miniField"
+        type="text"
+        placeholder="Exemple : Bruxelles, Milan, Barcelone"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+    </div>
+
+
+    <button
+      id="professionalHubSearchBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:14px;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Rechercher
+    </button>
+
+
+    <button
+      id="professionalHubClearBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:8px;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Effacer les critères
+    </button>
+
+
+    <button
+      id="professionalHubReturnBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:8px;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Retour à l’espace Entreprise
+    </button>
+
+
+    <div
+      id="professionalHubStatus"
+      class="muted"
+      style="
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        margin-top:14px;
+        border-left:6px solid #b00020;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.6;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
           font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
         ">
-        Rechercher
-      </button>
-
-      <button
-        id="professionalHubClearBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:8px;
-          background:#fff;
-        ">
-        Effacer les critères
-      </button>
-
-      <button
-        id="professionalHubReturnBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:8px;
-          background:#fff;
-        ">
-        Retour à l’espace Entreprise
-      </button>
-
-      <div
-        id="professionalHubStatus"
-        class="muted"
-        style="margin-top:10px;">
+        Recherche privée
       </div>
 
-      <div
-        class="box"
-        style="
-          margin-top:14px;
-          border-left:6px solid #b00020;
-        ">
+      Les métiers recherchés,
+      les zones choisies
+      et les résultats consultés
+      restent dans l’espace privé
+      de l’entreprise.
 
-        <strong>
-          Recherche privée
-        </strong>
+    </div>
 
-        <br><br>
-
-        Les métiers recherchés,
-        les zones choisies
-        et les résultats consultés
-        restent dans l’espace privé
-        de l’entreprise.
-      </div>
-    `;
-  }
-
+  `;
+}
+   
   function updateVisibleFields(){
 
     const scopeInput =
@@ -20150,26 +22641,26 @@ console.log(
       const button =
         document.createElement("button");
 
-      button.id =
-        "professionalSearchReturnToHubBtn";
+    button.style.width =
+  "100%";
 
-      button.type =
-        "button";
+button.style.marginTop =
+  "12px";
 
-      button.className =
-        "choiceBtn";
+button.style.background =
+  "#ffffff";
 
-      button.style.width =
-        "100%";
+button.style.color =
+  "#111111";
 
-      button.style.marginTop =
-        "12px";
+button.style.fontSize =
+  "14px";
 
-      button.style.background =
-        "#fff";
+button.style.fontWeight =
+  "400";
 
-      button.textContent =
-        "Retour aux critères de recherche";
+button.textContent =
+  "Retour aux critères de recherche";
 
       button.onclick = function(){
         openProfessionalSearchHub();
@@ -22186,7 +24677,7 @@ console.log(
         style="
           color:#2f5d46;
           font-size:17px;
-          font-weight:800;
+          font-weight:700;
           line-height:1.35;
         ">
         Faites vivre votre fiche professionnelle
