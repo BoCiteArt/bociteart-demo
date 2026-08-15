@@ -9284,963 +9284,815 @@ function getMutualisationAlerts(){
 
 /* =========================================================
    BO'CITÉART — MODULE ENTREPRISE
-   PARTIE 6A — PÉRENNITÉ ET TRANSMISSION
+   PARTIE 6A — MOTEUR PRIVÉ PÉRENNITÉ
+   La présentation publique est désormais gérée
+   par entreprise-perennite.js
    ========================================================= */
 
-(function initBociteEntrepriseSustainability(){
+(function initBociteEntrepriseSustainabilityPrivate(){
 
   "use strict";
 
-  const module = window.BociteEntreprise;
+  const module =
+    window.BociteEntreprise;
 
   if(!module){
+
     console.error(
       "Bo'CitéArt Entreprise : les parties précédentes doivent être chargées."
     );
+
     return;
   }
+
 
   const SUSTAINABILITY_STORE_KEY =
     "bociteart_entreprise_sustainability_v1";
 
+
   function getElement(id){
+
     return document.getElementById(id);
   }
 
+
   function escapeValue(value){
-    return module.safeEscape(value);
+
+    if(
+      typeof module.safeEscape ===
+      "function"
+    ){
+
+      return module.safeEscape(
+        value
+      );
+    }
+
+    return String(
+      value == null
+        ? ""
+        : value
+    );
   }
 
+
   function getDefaultData(){
+
     return {
+
       companyName:"",
+
       projectType:"",
+
       preferredBuyer:"",
+
       estimatedDeadline:"",
+
       accountantContacted:false,
+
       chamberContacted:false,
+
       lawyerContacted:false,
+
       notaryContacted:false,
+
       valuationStarted:false,
+
       confidentialNotes:"",
+
       nextAction:"",
+
       status:"a_preparer",
+
       updatedAt:null,
+
       updatedAtFr:""
+
     };
   }
 
+
   function loadSustainabilityData(){
+
     try{
+
       const raw =
         localStorage.getItem(
           SUSTAINABILITY_STORE_KEY
         );
 
       const parsed =
-        raw ? JSON.parse(raw) : null;
+        raw
+          ? JSON.parse(raw)
+          : null;
 
-      if(parsed && typeof parsed === "object"){
+
+      if(
+        parsed &&
+        typeof parsed ===
+        "object"
+      ){
+
         return Object.assign(
           getDefaultData(),
           parsed
         );
       }
+
     }catch(error){
+
       console.warn(
         "Lecture des données de pérennité impossible :",
         error
       );
     }
 
+
     return getDefaultData();
   }
 
+
   function saveSustainabilityData(data){
+
     try{
+
       localStorage.setItem(
         SUSTAINABILITY_STORE_KEY,
-        JSON.stringify(data)
+        JSON.stringify(
+          data
+        )
       );
+
+      return true;
+
     }catch(error){
+
       console.warn(
         "Enregistrement des données de pérennité impossible :",
         error
       );
+
+      return false;
     }
   }
 
-function getSustainabilityHtml(){
 
-  const saved =
-    loadSustainabilityData();
+  function getSustainabilityPrivateHtml(){
+
+    const saved =
+      loadSustainabilityData();
 
 
-  return `
-
-    <div
-      class="box"
-      style="
-        border-left:6px solid #2f5d46;
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
+    return `
 
       <div
+        class="box"
         style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          line-height:1.35;
-          margin-bottom:8px;
+          border-left:6px solid #2f5d46;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
         ">
-        Préparez l’avenir de votre entreprise
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            line-height:1.35;
+            margin-bottom:8px;
+          ">
+          Mon projet de transmission ou de continuité
+        </div>
+
+        Cet espace est réservé
+        à l’entreprise.
+
+        <br><br>
+
+        Il vous permet de conserver
+        les premières informations utiles
+        à la préparation de votre projet.
+
       </div>
 
-      Combien vaut réellement votre entreprise ?
 
-      <br><br>
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Nom de l’entreprise
+      </label>
 
-      À qui souhaitez-vous la transmettre ?
+      <input
+        id="sustainabilityCompanyName"
+        class="miniField"
+        type="text"
+        value="${escapeValue(
+          saved.companyName || ""
+        )}"
+        placeholder="Nom de l’entreprise"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
 
-      <br><br>
 
-      À vos enfants,
-      à un salarié
-      ou à un repreneur extérieur ?
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Quel projet envisagez-vous ?
+      </label>
 
-    </div>
+      <select
+        id="sustainabilityProjectType"
+        class="miniField"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <option value="">
+          Choisir
+        </option>
+
+        <option value="transmission_familiale">
+          Transmission familiale
+        </option>
+
+        <option value="reprise_salarie">
+          Reprise par un salarié
+        </option>
+
+        <option value="vente_exterieure">
+          Vente à un repreneur extérieur
+        </option>
+
+        <option value="cession_progressive">
+          Cession progressive
+        </option>
+
+        <option value="succession">
+          Préparation de la succession
+        </option>
+
+        <option value="continuité">
+          Assurer la continuité de l’activité
+        </option>
+
+        <option value="indecis">
+          Je ne sais pas encore
+        </option>
+
+      </select>
 
 
-    <div
-      class="box"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+        À qui souhaiteriez-vous transmettre l’entreprise ?
+      </label>
+
+      <select
+        id="sustainabilityPreferredBuyer"
+        class="miniField"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
+        <option value="">
+          Choisir
+        </option>
+
+        <option value="enfant">
+          À un enfant ou membre de la famille
+        </option>
+
+        <option value="salarie">
+          À un salarié
+        </option>
+
+        <option value="associe">
+          À un associé
+        </option>
+
+        <option value="exterieur">
+          À un repreneur extérieur
+        </option>
+
+        <option value="inconnu">
+          Je ne sais pas encore
+        </option>
+
+      </select>
+
+
+      <label
+        style="
+          display:block;
+          margin-top:10px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Échéance envisagée
+      </label>
+
+      <input
+        id="sustainabilityDeadline"
+        class="miniField"
+        type="date"
+        value="${escapeValue(
+          saved.estimatedDeadline || ""
+        )}"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        ">
+
 
       <div
+        class="box"
         style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          margin-bottom:8px;
+          margin-top:12px;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
         ">
-        Commencez par faire évaluer l’entreprise
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Démarches déjà engagées
+        </div>
+
+
+        <label class="miniCheck">
+
+          <input
+            id="sustainabilityAccountant"
+            type="checkbox"
+            ${saved.accountantContacted ? "checked" : ""}>
+
+          <span>
+            J’en ai parlé à mon expert-comptable
+          </span>
+
+        </label>
+
+
+        <label class="miniCheck">
+
+          <input
+            id="sustainabilityChamber"
+            type="checkbox"
+            ${saved.chamberContacted ? "checked" : ""}>
+
+          <span>
+            J’ai contacté la CCI,
+            la CMA
+            ou ma chambre professionnelle
+          </span>
+
+        </label>
+
+
+        <label class="miniCheck">
+
+          <input
+            id="sustainabilityLawyer"
+            type="checkbox"
+            ${saved.lawyerContacted ? "checked" : ""}>
+
+          <span>
+            J’ai consulté un avocat spécialisé
+          </span>
+
+        </label>
+
+
+        <label class="miniCheck">
+
+          <input
+            id="sustainabilityNotary"
+            type="checkbox"
+            ${saved.notaryContacted ? "checked" : ""}>
+
+          <span>
+            J’ai consulté un notaire
+          </span>
+
+        </label>
+
+
+        <label class="miniCheck">
+
+          <input
+            id="sustainabilityValuation"
+            type="checkbox"
+            ${saved.valuationStarted ? "checked" : ""}>
+
+          <span>
+            Une première valorisation a été engagée
+          </span>
+
+        </label>
+
       </div>
 
-      Cette première approche
-      est souvent réalisée
-      avec votre expert-comptable.
 
-      <br><br>
-
-      Il peut comparer votre entreprise
-      avec d’autres structures
-      de taille et d’activité proches
-      dans le même bassin économique.
-
-    </div>
-
-
-    <div
-      class="box"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
+      <label
         style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          margin-bottom:8px;
+          display:block;
+          margin-top:10px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
         ">
-        Le chiffre d’affaires ne suffit pas
-      </div>
+        Notes confidentielles
+      </label>
 
-      La valeur dépend également :
-
-      <br><br>
-
-      • de la rentabilité ;<br>
-      • de la clientèle ;<br>
-      • de l’équipe ;<br>
-      • de la réputation ;<br>
-      • du matériel ;<br>
-      • de l’organisation ;<br>
-      • des contrats ;<br>
-      • du savoir-faire ;<br>
-      • de la dépendance au dirigeant.
-
-    </div>
-
-
-    <div
-      class="box"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
+      <textarea
+        id="sustainabilityNotes"
+        class="miniField"
         style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          margin-bottom:8px;
-        ">
-        Petit ou très gros, les critères restent comparables
-      </div>
-
-      L’échelle change,
-      mais la logique demeure la même.
-
-      <br><br>
-
-      Une entreprise se valorise
-      par ce qu’elle produit,
-      ce qu’elle gagne,
-      ce qu’elle possède
-      et sa capacité à continuer
-      sans perdre sa valeur.
-
-    </div>
+          min-height:110px;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        "
+        placeholder="Indiquez ici les éléments utiles à votre réflexion.">${escapeValue(
+          saved.confidentialNotes || ""
+        )}</textarea>
 
 
-    <div
-      class="box"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
+      <label
         style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          margin-bottom:8px;
+          display:block;
+          margin-top:10px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
         ">
-        Parlez-en d’abord discrètement
-      </div>
+        Prochaine action à réaliser
+      </label>
 
-      Avec vos proches,
-      puis avec votre expert-comptable
-      afin d’obtenir
-      une première approche chiffrée.
-
-      <br><br>
-
-      La CCI,
-      la CMA
-      et les réseaux professionnels
-      disposent également de services
-      consacrés à la transmission
-      et à la reprise.
-
-      <br><br>
-
-      Les consulter
-      ne vous engage à rien.
-
-    </div>
-
-
-    <div
-      class="box"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
+      <textarea
+        id="sustainabilityNextAction"
+        class="miniField"
         style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          margin-bottom:8px;
-        ">
-        Plusieurs chemins sont possibles
-      </div>
+          min-height:90px;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        "
+        placeholder="Exemple : prendre rendez-vous avec l’expert-comptable.">${escapeValue(
+          saved.nextAction || ""
+        )}</textarea>
 
-      Vente complète,
-      transmission familiale,
-      reprise par un salarié,
-      cession progressive,
-      maintien d’une partie de la propriété
-      ou organisation de la succession.
-
-      <br><br>
-
-      Selon le projet,
-      un avocat spécialisé
-      ou un notaire
-      pourra vous accompagner.
-
-    </div>
-
-
-    <div
-      class="box"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
-        style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          margin-bottom:8px;
-        ">
-        Faire connaître l’entreprise compte aussi
-      </div>
-
-      Chaque année,
-      des entreprises disparaissent
-      faute de repreneur.
-
-      <br><br>
-
-      Parfois simplement parce que personne
-      ne connaissait réellement leur activité.
-
-      <br><br>
-
-      Faire connaître votre métier aujourd’hui,
-      c’est aussi préparer demain.
-
-    </div>
-
-
-    <div
-      style="
-        display:flex;
-        gap:8px;
-        flex-wrap:wrap;
-      ">
 
       <button
-        id="sustainabilityVisibilityBtn"
+        id="sustainabilitySaveBtn"
         class="choiceBtn"
         type="button"
         style="
           width:100%;
+          margin-top:12px;
           background:#ffffff !important;
           color:#111111 !important;
           font-size:14px;
           font-weight:400;
         ">
-        Faire connaître mon entreprise
+        Enregistrer mon projet
       </button>
 
 
       <button
-        id="sustainabilityDirectoryBtn"
+        id="sustainabilitySummaryBtn"
         class="choiceBtn"
         type="button"
         style="
           width:100%;
+          margin-top:8px;
           background:#ffffff !important;
           color:#111111 !important;
           font-size:14px;
           font-weight:400;
         ">
-        Rechercher un expert local
+        Consulter mon récapitulatif
       </button>
 
 
-      <button
-        id="sustainabilityDevelopmentBtn"
-        class="choiceBtn"
-        type="button"
+      <div
+        id="sustainabilityStatus"
+        class="muted"
         style="
-          width:100%;
-          background:#ffffff !important;
-          color:#111111 !important;
+          margin-top:10px;
+          color:#111111;
           font-size:14px;
           font-weight:400;
         ">
-        Préparer un plan d’action
-      </button>
-
-    </div>
-
-
-    <div
-      class="box"
-      style="
-        margin-top:14px;
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-        border-left:6px solid #2f5d46;
-      ">
-
-      <div
-        style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          margin-bottom:8px;
-        ">
-        Mon projet de transmission ou de continuité
       </div>
 
-      Cet espace reste réservé
-      à l’entreprise.
+    `;
+  }
 
-    </div>
-
-
-    <label
-      style="
-        display:block;
-        margin-top:10px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      ">
-      Nom de l’entreprise
-    </label>
-
-    <input
-      id="sustainabilityCompanyName"
-      class="miniField"
-      type="text"
-      value="${escapeValue(
-        saved.companyName || ""
-      )}"
-      placeholder="Nom de l’entreprise"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      ">
-
-
-    <label
-      style="
-        display:block;
-        margin-top:10px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      ">
-      Quel projet envisagez-vous ?
-    </label>
-
-    <select
-      id="sustainabilityProjectType"
-      class="miniField"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      ">
-
-      <option value="">
-        Choisir
-      </option>
-
-      <option value="transmission_familiale">
-        Transmission familiale
-      </option>
-
-      <option value="reprise_salarie">
-        Reprise par un salarié
-      </option>
-
-      <option value="vente_exterieure">
-        Vente à un repreneur extérieur
-      </option>
-
-      <option value="cession_progressive">
-        Cession progressive
-      </option>
-
-      <option value="succession">
-        Préparation de la succession
-      </option>
-
-      <option value="continuité">
-        Assurer la continuité de l’activité
-      </option>
-
-      <option value="indecis">
-        Je ne sais pas encore
-      </option>
-
-    </select>
-
-
-    <label
-      style="
-        display:block;
-        margin-top:10px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      ">
-      À qui souhaiteriez-vous transmettre l’entreprise ?
-    </label>
-
-    <select
-      id="sustainabilityPreferredBuyer"
-      class="miniField"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      ">
-
-      <option value="">
-        Choisir
-      </option>
-
-      <option value="enfant">
-        À un enfant ou membre de la famille
-      </option>
-
-      <option value="salarie">
-        À un salarié
-      </option>
-
-      <option value="associe">
-        À un associé
-      </option>
-
-      <option value="exterieur">
-        À un repreneur extérieur
-      </option>
-
-      <option value="inconnu">
-        Je ne sais pas encore
-      </option>
-
-    </select>
-
-
-    <label
-      style="
-        display:block;
-        margin-top:10px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      ">
-      Échéance envisagée
-    </label>
-
-    <input
-      id="sustainabilityDeadline"
-      class="miniField"
-      type="date"
-      value="${escapeValue(
-        saved.estimatedDeadline || ""
-      )}"
-      style="
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      ">
-
-
-    <div
-      class="box"
-      style="
-        margin-top:12px;
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.6;
-      ">
-
-      <div
-        style="
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          margin-bottom:8px;
-        ">
-        Démarches déjà engagées
-      </div>
-
-
-      <label
-        class="miniCheck"
-        style="
-          font-size:14px;
-          font-weight:400;
-        ">
-
-        <input
-          id="sustainabilityAccountant"
-          type="checkbox"
-          ${saved.accountantContacted ? "checked" : ""}>
-
-        <span>
-          J’en ai parlé à mon expert-comptable
-        </span>
-
-      </label>
-
-
-      <label
-        class="miniCheck"
-        style="
-          font-size:14px;
-          font-weight:400;
-        ">
-
-        <input
-          id="sustainabilityChamber"
-          type="checkbox"
-          ${saved.chamberContacted ? "checked" : ""}>
-
-        <span>
-          J’ai contacté la CCI,
-          la CMA
-          ou ma chambre professionnelle
-        </span>
-
-      </label>
-
-
-      <label
-        class="miniCheck"
-        style="
-          font-size:14px;
-          font-weight:400;
-        ">
-
-        <input
-          id="sustainabilityLawyer"
-          type="checkbox"
-          ${saved.lawyerContacted ? "checked" : ""}>
-
-        <span>
-          J’ai consulté un avocat spécialisé
-        </span>
-
-      </label>
-
-
-      <label
-        class="miniCheck"
-        style="
-          font-size:14px;
-          font-weight:400;
-        ">
-
-        <input
-          id="sustainabilityNotary"
-          type="checkbox"
-          ${saved.notaryContacted ? "checked" : ""}>
-
-        <span>
-          J’ai consulté un notaire
-        </span>
-
-      </label>
-
-
-      <label
-        class="miniCheck"
-        style="
-          font-size:14px;
-          font-weight:400;
-        ">
-
-        <input
-          id="sustainabilityValuation"
-          type="checkbox"
-          ${saved.valuationStarted ? "checked" : ""}>
-
-        <span>
-          Une première valorisation a été engagée
-        </span>
-
-      </label>
-
-    </div>
-
-
-    <label
-      style="
-        display:block;
-        margin-top:10px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      ">
-      Notes confidentielles
-    </label>
-
-    <textarea
-      id="sustainabilityNotes"
-      class="miniField"
-      style="
-        min-height:110px;
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      "
-      placeholder="Indiquez ici les éléments utiles à votre réflexion.">${escapeValue(
-        saved.confidentialNotes || ""
-      )}</textarea>
-
-
-    <label
-      style="
-        display:block;
-        margin-top:10px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      ">
-      Prochaine action à réaliser
-    </label>
-
-    <textarea
-      id="sustainabilityNextAction"
-      class="miniField"
-      style="
-        min-height:90px;
-        background:#ffffff;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      "
-      placeholder="Exemple : prendre rendez-vous avec l’expert-comptable.">${escapeValue(
-        saved.nextAction || ""
-      )}</textarea>
-
-
-    <button
-      id="sustainabilitySaveBtn"
-      class="choiceBtn"
-      type="button"
-      style="
-        width:100%;
-        margin-top:12px;
-        background:#ffffff !important;
-        color:#111111 !important;
-        font-size:14px;
-        font-weight:400;
-      ">
-      Enregistrer mon projet
-    </button>
-
-
-    <button
-      id="sustainabilitySummaryBtn"
-      class="choiceBtn"
-      type="button"
-      style="
-        width:100%;
-        margin-top:8px;
-        background:#ffffff !important;
-        color:#111111 !important;
-        font-size:14px;
-        font-weight:400;
-      ">
-      Consulter mon récapitulatif
-    </button>
-
-
-    <div
-      id="sustainabilityStatus"
-      class="muted"
-      style="
-        margin-top:10px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-      ">
-    </div>
-
-  `;
-}
 
   function restoreSelectValues(){
+
     const saved =
       loadSustainabilityData();
 
     const project =
-      getElement("sustainabilityProjectType");
+      getElement(
+        "sustainabilityProjectType"
+      );
 
     const buyer =
-      getElement("sustainabilityPreferredBuyer");
+      getElement(
+        "sustainabilityPreferredBuyer"
+      );
 
-    if(project && saved.projectType){
-      project.value = saved.projectType;
+
+    if(
+      project &&
+      saved.projectType
+    ){
+
+      project.value =
+        saved.projectType;
     }
 
-    if(buyer && saved.preferredBuyer){
-      buyer.value = saved.preferredBuyer;
+
+    if(
+      buyer &&
+      saved.preferredBuyer
+    ){
+
+      buyer.value =
+        saved.preferredBuyer;
     }
   }
 
+
   function saveSustainabilityForm(){
+
     const companyName =
       String(
-        getElement("sustainabilityCompanyName")
-          ? getElement("sustainabilityCompanyName").value
+        getElement(
+          "sustainabilityCompanyName"
+        )
+          ? getElement(
+              "sustainabilityCompanyName"
+            ).value
           : ""
       ).trim();
+
 
     const projectType =
       String(
-        getElement("sustainabilityProjectType")
-          ? getElement("sustainabilityProjectType").value
+        getElement(
+          "sustainabilityProjectType"
+        )
+          ? getElement(
+              "sustainabilityProjectType"
+            ).value
           : ""
       ).trim();
+
 
     const preferredBuyer =
       String(
-        getElement("sustainabilityPreferredBuyer")
-          ? getElement("sustainabilityPreferredBuyer").value
+        getElement(
+          "sustainabilityPreferredBuyer"
+        )
+          ? getElement(
+              "sustainabilityPreferredBuyer"
+            ).value
           : ""
       ).trim();
+
 
     const estimatedDeadline =
       String(
-        getElement("sustainabilityDeadline")
-          ? getElement("sustainabilityDeadline").value
+        getElement(
+          "sustainabilityDeadline"
+        )
+          ? getElement(
+              "sustainabilityDeadline"
+            ).value
           : ""
       ).trim();
+
 
     const confidentialNotes =
       String(
-        getElement("sustainabilityNotes")
-          ? getElement("sustainabilityNotes").value
+        getElement(
+          "sustainabilityNotes"
+        )
+          ? getElement(
+              "sustainabilityNotes"
+            ).value
           : ""
       ).trim();
+
 
     const nextAction =
       String(
-        getElement("sustainabilityNextAction")
-          ? getElement("sustainabilityNextAction").value
+        getElement(
+          "sustainabilityNextAction"
+        )
+          ? getElement(
+              "sustainabilityNextAction"
+            ).value
           : ""
       ).trim();
 
+
     if(!companyName){
+
       alert(
         "Indiquez le nom de l’entreprise."
       );
+
       return;
     }
 
+
     if(!projectType){
+
       alert(
         "Choisissez le projet que vous envisagez."
       );
+
       return;
     }
 
+
     if(!nextAction){
+
       alert(
         "Indiquez au moins votre prochaine action."
       );
+
       return;
     }
 
+
     const data = {
-      companyName:companyName,
-      projectType:projectType,
-      preferredBuyer:preferredBuyer,
-      estimatedDeadline:estimatedDeadline,
+
+      companyName:
+        companyName,
+
+      projectType:
+        projectType,
+
+      preferredBuyer:
+        preferredBuyer,
+
+      estimatedDeadline:
+        estimatedDeadline,
+
 
       accountantContacted:
         !!(
-          getElement("sustainabilityAccountant") &&
-          getElement("sustainabilityAccountant").checked
+          getElement(
+            "sustainabilityAccountant"
+          ) &&
+          getElement(
+            "sustainabilityAccountant"
+          ).checked
         ),
+
 
       chamberContacted:
         !!(
-          getElement("sustainabilityChamber") &&
-          getElement("sustainabilityChamber").checked
+          getElement(
+            "sustainabilityChamber"
+          ) &&
+          getElement(
+            "sustainabilityChamber"
+          ).checked
         ),
+
 
       lawyerContacted:
         !!(
-          getElement("sustainabilityLawyer") &&
-          getElement("sustainabilityLawyer").checked
+          getElement(
+            "sustainabilityLawyer"
+          ) &&
+          getElement(
+            "sustainabilityLawyer"
+          ).checked
         ),
+
 
       notaryContacted:
         !!(
-          getElement("sustainabilityNotary") &&
-          getElement("sustainabilityNotary").checked
+          getElement(
+            "sustainabilityNotary"
+          ) &&
+          getElement(
+            "sustainabilityNotary"
+          ).checked
         ),
+
 
       valuationStarted:
         !!(
-          getElement("sustainabilityValuation") &&
-          getElement("sustainabilityValuation").checked
+          getElement(
+            "sustainabilityValuation"
+          ) &&
+          getElement(
+            "sustainabilityValuation"
+          ).checked
         ),
 
-      confidentialNotes:confidentialNotes,
-      nextAction:nextAction,
-      status:"en_cours",
-      updatedAt:Date.now(),
+
+      confidentialNotes:
+        confidentialNotes,
+
+      nextAction:
+        nextAction,
+
+      status:
+        "en_cours",
+
+      updatedAt:
+        Date.now(),
+
       updatedAtFr:
-        new Date().toLocaleString("fr-FR")
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+
     };
 
-    saveSustainabilityData(data);
+
+    saveSustainabilityData(
+      data
+    );
+
 
     const status =
-      getElement("sustainabilityStatus");
+      getElement(
+        "sustainabilityStatus"
+      );
+
 
     if(status){
+
       status.textContent =
         "Projet enregistré le " +
         data.updatedAtFr +
         ".";
     }
 
+
     alert(
       "Votre projet a été enregistré dans votre espace professionnel."
     );
   }
 
+
   function getProjectLabel(value){
+
     const labels = {
+
       transmission_familiale:
         "Transmission familiale",
 
@@ -10261,13 +10113,21 @@ function getSustainabilityHtml(){
 
       indecis:
         "Projet encore indécis"
+
     };
 
-    return labels[value] || "Non renseigné";
+
+    return (
+      labels[value] ||
+      "Non renseigné"
+    );
   }
 
+
   function getBuyerLabel(value){
+
     const labels = {
+
       enfant:
         "Enfant ou membre de la famille",
 
@@ -10282,312 +10142,328 @@ function getSustainabilityHtml(){
 
       inconnu:
         "Non déterminé"
+
     };
 
-    return labels[value] || "Non renseigné";
+
+    return (
+      labels[value] ||
+      "Non renseigné"
+    );
   }
 
+
   function getStepsList(data){
+
     const steps = [];
 
-    if(data.accountantContacted){
+
+    if(
+      data.accountantContacted
+    ){
+
       steps.push(
         "Expert-comptable contacté"
       );
     }
 
-    if(data.chamberContacted){
+
+    if(
+      data.chamberContacted
+    ){
+
       steps.push(
         "Chambre professionnelle contactée"
       );
     }
 
-    if(data.lawyerContacted){
+
+    if(
+      data.lawyerContacted
+    ){
+
       steps.push(
         "Avocat spécialisé consulté"
       );
     }
 
-    if(data.notaryContacted){
+
+    if(
+      data.notaryContacted
+    ){
+
       steps.push(
         "Notaire consulté"
       );
     }
 
-    if(data.valuationStarted){
+
+    if(
+      data.valuationStarted
+    ){
+
       steps.push(
         "Valorisation engagée"
       );
     }
+
 
     return steps.length
       ? steps.join("<br>")
       : "Aucune démarche renseignée";
   }
 
-function openSustainabilitySummary(){
 
-  const data =
-    loadSustainabilityData();
+  function openSustainabilitySummary(){
+
+    const data =
+      loadSustainabilityData();
 
 
-  if(
-    !data.companyName ||
-    !data.projectType
-  ){
+    if(
+      !data.companyName ||
+      !data.projectType
+    ){
 
-    alert(
-      "Aucun projet n’est encore enregistré."
+      alert(
+        "Aucun projet n’est encore enregistré."
+      );
+
+      return;
+    }
+
+
+    module.renderModal(
+      "Mon projet de pérennité",
+      `
+
+        <div
+          class="box"
+          style="
+            border-left:6px solid #2f5d46;
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.6;
+          ">
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+            ">
+            ${escapeValue(
+              data.companyName
+            )}
+          </div>
+
+        </div>
+
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.6;
+          ">
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            ">
+            Projet envisagé
+          </div>
+
+          ${escapeValue(
+            getProjectLabel(
+              data.projectType
+            )
+          )}
+
+        </div>
+
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.6;
+          ">
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            ">
+            Repreneur envisagé
+          </div>
+
+          ${escapeValue(
+            getBuyerLabel(
+              data.preferredBuyer
+            )
+          )}
+
+        </div>
+
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.6;
+          ">
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            ">
+            Échéance
+          </div>
+
+          ${escapeValue(
+            data.estimatedDeadline ||
+            "Non renseignée"
+          )}
+
+        </div>
+
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.6;
+          ">
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            ">
+            Démarches engagées
+          </div>
+
+          ${getStepsList(
+            data
+          )}
+
+        </div>
+
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.6;
+          ">
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            ">
+            Notes confidentielles
+          </div>
+
+          ${escapeValue(
+            data.confidentialNotes ||
+            "Aucune note"
+          )}
+
+        </div>
+
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.6;
+          ">
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            ">
+            Prochaine action
+          </div>
+
+          ${escapeValue(
+            data.nextAction ||
+            "Non renseignée"
+          )}
+
+        </div>
+
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.6;
+          ">
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            ">
+            Dernière mise à jour
+          </div>
+
+          ${escapeValue(
+            data.updatedAtFr ||
+            ""
+          )}
+
+        </div>
+
+      `
     );
-
-    return;
   }
 
 
-  module.renderModal(
-    "Mon projet de pérennité",
-    `
-
-      <div
-        class="box"
-        style="
-          border-left:6px solid #2f5d46;
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.6;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            line-height:1.35;
-          ">
-          ${escapeValue(
-            data.companyName
-          )}
-        </div>
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.6;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            margin-bottom:8px;
-          ">
-          Projet envisagé
-        </div>
-
-        ${escapeValue(
-          getProjectLabel(
-            data.projectType
-          )
-        )}
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.6;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            margin-bottom:8px;
-          ">
-          Repreneur envisagé
-        </div>
-
-        ${escapeValue(
-          getBuyerLabel(
-            data.preferredBuyer
-          )
-        )}
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.6;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            margin-bottom:8px;
-          ">
-          Échéance
-        </div>
-
-        ${escapeValue(
-          data.estimatedDeadline ||
-          "Non renseignée"
-        )}
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.6;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            margin-bottom:8px;
-          ">
-          Démarches engagées
-        </div>
-
-        ${getStepsList(
-          data
-        )}
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.6;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            margin-bottom:8px;
-          ">
-          Notes confidentielles
-        </div>
-
-        ${escapeValue(
-          data.confidentialNotes ||
-          "Aucune note"
-        )}
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.6;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            margin-bottom:8px;
-          ">
-          Prochaine action
-        </div>
-
-        ${escapeValue(
-          data.nextAction ||
-          "Non renseignée"
-        )}
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.6;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            margin-bottom:8px;
-          ">
-          Dernière mise à jour
-        </div>
-
-        ${escapeValue(
-          data.updatedAtFr || ""
-        )}
-
-      </div>
-
-    `
-  );
-}
-
-  function bindSustainability(){
-    const visibilityButton =
-      getElement(
-        "sustainabilityVisibilityBtn"
-      );
-
-    const directoryButton =
-      getElement(
-        "sustainabilityDirectoryBtn"
-      );
-
-    const developmentButton =
-      getElement(
-        "sustainabilityDevelopmentBtn"
-      );
+  function bindSustainabilityPrivate(){
 
     const saveButton =
       getElement(
@@ -10599,46 +10475,38 @@ function openSustainabilitySummary(){
         "sustainabilitySummaryBtn"
       );
 
-    if(visibilityButton){
-      visibilityButton.onclick = function(){
-        module.openScreen("visibilite");
-      };
-    }
-
-    if(directoryButton){
-      directoryButton.onclick = function(){
-        module.openScreen("annuaire");
-      };
-    }
-
-    if(developmentButton){
-      developmentButton.onclick = function(){
-        module.openScreen("developpement");
-      };
-    }
 
     if(saveButton){
+
       saveButton.onclick =
         saveSustainabilityForm;
     }
 
+
     if(summaryButton){
+
       summaryButton.onclick =
         openSustainabilitySummary;
     }
 
+
     restoreSelectValues();
+
 
     const saved =
       loadSustainabilityData();
 
     const status =
-      getElement("sustainabilityStatus");
+      getElement(
+        "sustainabilityStatus"
+      );
+
 
     if(
       status &&
       saved.updatedAtFr
     ){
+
       status.textContent =
         "Dernière mise à jour : " +
         saved.updatedAtFr +
@@ -10646,43 +10514,64 @@ function openSustainabilitySummary(){
     }
   }
 
-  function openSustainability(){
+
+  function openSustainabilityPrivate(){
 
     module.renderModal(
-      "Préparez l’avenir de votre entreprise",
-      getSustainabilityHtml(),
-      {
-        presentationFooter:true
-      }
+      "Mon projet de transmission",
+      getSustainabilityPrivateHtml()
     );
 
-    window.setTimeout(function(){
 
-      bindSustainability();
+    window.setTimeout(
+      function(){
 
-    },0);
+        bindSustainabilityPrivate();
+
+      },
+      0
+    );
   }
 
+
+  /*
+    IMPORTANT :
+
+    On ne réenregistre PAS
+    l'écran principal "perennite" ici.
+
+    entreprise-perennite.js
+    possède désormais cet écran.
+  */
+
+
   module.registerScreen(
-    "perennite",
-    openSustainability
+    "perennite_privee",
+    openSustainabilityPrivate
   );
+
 
   module.loadSustainabilityData =
     loadSustainabilityData;
 
+
   module.saveSustainabilityData =
     saveSustainabilityData;
+
+
+  module.openSustainabilityPrivate =
+    openSustainabilityPrivate;
+
 
   module.openSustainabilitySummary =
     openSustainabilitySummary;
 
+
   console.log(
-    "✅ Module Entreprise — partie 6A chargée"
+    "✅ Moteur privé Pérennité chargé"
   );
 
 })();
-
 /* =========================================================
    BO'CITÉART — MODULE ENTREPRISE
    PARTIE 7 — TABLEAU DE DIRECTION V3
