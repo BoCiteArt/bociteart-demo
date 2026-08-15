@@ -5016,32 +5016,6 @@ const selectedFilter =
       )
     : "all"; 
        
-      runSearch({
-
-        query:
-          query,
-
-        trade:
-          "",
-
-        category:
-          "",
-
-        commune:
-          getCurrentCommune(),
-
-        zone:
-          "commune",
-
-        professional:
-          false,
-
-        countryCode:
-          "FR",
-
-        country:
-          "France"
-
          runSearch({
 
   query:
@@ -5070,8 +5044,6 @@ const selectedFilter =
 
   publicFilter:
     selectedFilter
-
-});
 
       });
     }
@@ -5232,9 +5204,9 @@ const selectedFilter =
     }
   }
 
-  /* =======================================================
+ /* =======================================================
      29. CATÉGORIE
-     ======================================================= */
+     ======================================================= */ 
 
   function renderCategory(data){
 
