@@ -2331,6 +2331,24 @@ function renderDirectoryList(){
 
     },0);
   }
+
+function openCompanyCard(companyId){
+
+  const company =
+    loadDirectory().find(function(item){
+
+      return item.id === companyId;
+    });
+
+  if(!company){
+
+    alert(
+      "Cette entreprise est introuvable."
+    );
+
+    return;
+  }
+   
       const partnerContent =
       company.partner
         ? `
@@ -2805,7 +2823,7 @@ return `
     background:#ffffff;
     border:1px solid #e6e6e6;
     border-left:6px solid #2f5d46;
-    border-radius:17px;
+    border-radius:16px;
     padding:18px;
     margin:0 0 16px 0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
@@ -4337,7 +4355,7 @@ function openEmployment(){
 
         <label
           style="
-            font-weight:900;
+            font-weight:700;
           ">
           Nom de l’entreprise
         </label>
@@ -4352,7 +4370,9 @@ function openEmployment(){
           style="
             display:block;
             margin-top:10px;
-            font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
           ">
           SIRET ou SIREN
         </label>
@@ -4367,7 +4387,9 @@ function openEmployment(){
           style="
             display:block;
             margin-top:10px;
-            font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
           ">
           Adresse e-mail de contact
         </label>
@@ -4382,7 +4404,9 @@ function openEmployment(){
           style="
             display:block;
             margin-top:10px;
-            font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
           ">
           Intitulé du poste
         </label>
@@ -4397,7 +4421,9 @@ function openEmployment(){
           style="
             display:block;
             margin-top:10px;
-            font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
           ">
           Description de l’offre
         </label>
@@ -4414,7 +4440,9 @@ function openEmployment(){
           style="
             display:block;
             margin-top:10px;
-            font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
           ">
           Type de contrat
         </label>
@@ -4453,7 +4481,9 @@ function openEmployment(){
   style="
     display:block;
     margin-top:10px;
-    font-weight:900;
+color:#111111;
+font-size:14px;
+font-weight:400;
   ">
   Commune du poste
 </label>
@@ -7503,7 +7533,7 @@ function openEmploymentReplyForm(applicationId){
           display:block;
           color:#2f5d46;
           font-size:17px;
-          font-weight700;
+          font-weight400;
           margin-top:10px;
         ">
         Document facultatif
