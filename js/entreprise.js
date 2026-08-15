@@ -4741,29 +4741,7 @@ function saveEmploymentOffer(){
 
     });
 }
-      function(){ 
-         
-     openEmploymentOffers();
-
-      },
-      200
-    );
-
-
-    return;
-  }
-
-
-  /*
-    PARCOURS EMPLOI NORMAL :
-    paiement des 50 € HT.
-  */
-
-  openEmploymentPayment(
-    pendingOffer
-  );
-}
-
+    
 function openEmploymentPayment(offer){
 
   module.renderModal(
