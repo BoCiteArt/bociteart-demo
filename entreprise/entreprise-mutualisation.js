@@ -4700,17 +4700,10 @@
      RACCORDEMENTS
      ======================================================= */
 
-  module.registerScreen(
-    "mutualisation",
-    openMutualisationModule
-  );
-
-
-  module.registerScreen(
-    "economies",
-    openMutualisationModule
-  );
-
+ module.registerScreen(
+  "mutualisation",
+  openMutualisationModule
+);
 
   module.openMutualisationModule =
     openMutualisationModule;
