@@ -4355,7 +4355,9 @@ function openEmployment(){
 
         <label
           style="
-            font-weight:700;
+color:#111111;
+font-size:14px;
+font-weight:400;
           ">
           Nom de l’entreprise
         </label>
@@ -18255,7 +18257,7 @@ function renderOpportunities(){
 
         .bociteBillingTitle{
           color:#2f5d46;
-          font-size:16px;
+          font-size:17px;
           font-weight:700;
           line-height:1.35;
         }
@@ -23826,9 +23828,14 @@ button.textContent =
           line-height:1.5;
         ">
 
-        <strong style="font-size:19px;">
-          Suivi Bo'CitéArt des besoins professionnels
-        </strong>
+       <strong
+  style="
+    color:#2f5d46;
+    font-size:17px;
+    font-weight:700;
+  ">
+  Suivi Bo'CitéArt des besoins professionnels
+</strong>
 
         <br><br>
 
@@ -23904,14 +23911,14 @@ button.textContent =
       </div>
 
       <div
-        style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
-          color:#2f5d46;
-        ">
-        Alertes Bo'CitéArt
-      </div>
+  style="
+    margin-top:18px;
+    font-size:17px;
+    font-weight:700;
+    color:#2f5d46;
+  ">
+  Alertes Bo'CitéArt
+</div>
 
       <div
         id="bociteProfessionalAlertList"
@@ -23933,9 +23940,14 @@ button.textContent =
                       };
                     ">
 
-                    <strong style="font-size:17px;">
-                      ${escapeValue(alert.title)}
-                    </strong>
+                  <strong
+  style="
+    color:#2f5d46;
+    font-size:17px;
+    font-weight:700;
+  ">
+  ${escapeValue(alert.title)}
+</strong>
 
                     <br><br>
 
@@ -23973,14 +23985,16 @@ button.textContent =
                       alert.createdAtFr || ""
                     )}
 
-                    <label
-                      style="
-                        display:block;
-                        margin-top:12px;
-                        font-weight:900;
-                      ">
-                      Suivi de l’alerte
-                    </label>
+                   <label
+  style="
+    display:block;
+    margin-top:12px;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+  ">
+  Suivi de l’alerte
+</label>
 
                     <select
                       class="miniField bociteProfessionalAlertStatus"
@@ -24037,14 +24051,14 @@ button.textContent =
       </div>
 
       <div
-        style="
-          margin-top:18px;
-          font-size:18px;
-          font-weight:900;
-          color:#2f5d46;
-        ">
-        Demandes professionnelles
-      </div>
+  style="
+    margin-top:18px;
+    font-size:17px;
+    font-weight:700;
+    color:#2f5d46;
+  ">
+  Demandes professionnelles
+</div
 
       <div
         id="bociteProfessionalDemandList"
@@ -24071,9 +24085,14 @@ button.textContent =
                       };
                     ">
 
-                    <strong style="font-size:17px;">
-                      ${escapeValue(demand.keyword)}
-                    </strong>
+                  <strong
+  style="
+    color:#2f5d46;
+    font-size:17px;
+    font-weight:700;
+  ">
+  ${escapeValue(demand.keyword)}
+</strong>
 
                     <br><br>
 
@@ -24142,14 +24161,16 @@ button.textContent =
                         `
                     }
 
-                    <label
-                      style="
-                        display:block;
-                        margin-top:12px;
-                        font-weight:900;
-                      ">
-                      État du suivi
-                    </label>
+                   <label
+  style="
+    display:block;
+    margin-top:12px;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+  ">
+  État du suivi
+</label>
 
                     <select
                       class="miniField bociteProfessionalDemandStatus"
