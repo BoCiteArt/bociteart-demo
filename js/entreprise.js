@@ -4378,39 +4378,13 @@ function formatEmploymentMoney(value){
 
 function saveEmploymentOffer(){
 
-    let advertisingDraft = null;
-
-  try{
-
-    const rawDraft =
-      localStorage.getItem(
-        "bociteart_employment_ad_draft_v1"
-      );
-
-    advertisingDraft =
-      rawDraft
-        ? JSON.parse(rawDraft)
-        : null;
-
-  }catch(error){
-
-    advertisingDraft = null;
-  }
-
-
-  const employmentAlreadyPaid =
-    Boolean(
-      advertisingDraft &&
-      advertisingDraft.source === "advertising" &&
-      advertisingDraft.prepaid === true
-    ); 
-
   const companyName =
     String(
       getElement("employmentCompanyName")
         ? getElement("employmentCompanyName").value
         : ""
     ).trim();
+
 
   const companyId =
     String(
@@ -4419,12 +4393,14 @@ function saveEmploymentOffer(){
         : ""
     ).trim();
 
+
   const email =
     String(
       getElement("employmentContactEmail")
         ? getElement("employmentContactEmail").value
         : ""
     ).trim();
+
 
   const title =
     String(
@@ -4433,12 +4409,14 @@ function saveEmploymentOffer(){
         : ""
     ).trim();
 
+
   const description =
     String(
       getElement("employmentDescription")
         ? getElement("employmentDescription").value
         : ""
     ).trim();
+
 
   const contract =
     String(
@@ -4447,6 +4425,7 @@ function saveEmploymentOffer(){
         : ""
     ).trim();
 
+
   const city =
     String(
       getElement("employmentCity")
@@ -4454,10 +4433,12 @@ function saveEmploymentOffer(){
         : ""
     ).trim();
 
+
   const commitment =
     getElement(
       "employmentCommitmentCheck"
     );
+
 
   if(
     !companyName ||
@@ -4475,7 +4456,10 @@ function saveEmploymentOffer(){
     return;
   }
 
-  if(!email.includes("@")){
+
+  if(
+    !email.includes("@")
+  ){
 
     alert(
       "Veuillez renseigner une adresse e-mail valide."
@@ -4484,25 +4468,37 @@ function saveEmploymentOffer(){
     return;
   }
 
+
   if(
     !commitment ||
     !commitment.checked
   ){
 
     alert(
-      "Vous devez confirmer que l’offre sera clôturée lorsque le poste sera pourvu."
+      "Vous devez confirmer que l'offre sera clôturée lorsque le poste sera pourvu."
     );
 
     return;
   }
 
-   const amountHT =
-    employmentAlreadyPaid
-      ? 0
-      : EMPLOYMENT_OFFER_PRICE_HT;
+
+  /* =======================================================
+     1. TARIF
+     ======================================================= */
+
+  const amountHT =
+    Number(
+      EMPLOYMENT_OFFER_PRICE_HT ||
+      50
+    );
+
 
   const vatRate =
-    BOCITEART_VAT_RATE;
+    Number(
+      BOCITEART_VAT_RATE ||
+      20
+    );
+
 
   const amountVAT =
     Number(
@@ -4510,203 +4506,244 @@ function saveEmploymentOffer(){
         amountHT *
         vatRate /
         100
-      ).toFixed(2)
+      )
+      .toFixed(2)
     );
+
 
   const amountTTC =
     Number(
       (
         amountHT +
         amountVAT
-      ).toFixed(2)
+      )
+      .toFixed(2)
     );
 
+
+  /* =======================================================
+     2. MOTEUR FINANCIER CENTRAL
+     ======================================================= */
+
+  const financialModule =
+    window.BociteEntreprise;
+
+
+  if(
+    !financialModule ||
+    typeof financialModule
+      .createFinancialOrder !==
+      "function"
+  ){
+
+    alert(
+      "Le moteur de commande est momentanément indisponible."
+    );
+
+    return;
+  }
+
+
+  if(
+    typeof financialModule
+      .openCentralPaymentPage !==
+      "function"
+  ){
+
+    alert(
+      "La page de paiement est momentanément indisponible."
+    );
+
+    return;
+  }
+
+
+  /* =======================================================
+     3. CRÉATION DE LA COMMANDE
+     ======================================================= */
+
+  const order =
+    financialModule
+      .createFinancialOrder({
+
+        productCode:
+          "EMPLOYMENT_OFFER",
+
+        serviceType:
+          "employment",
+
+        serviceLabel:
+          "Publication d'une offre d'emploi Bo'CitéArt",
+
+        customerType:
+          "professional",
+
+        customerId:
+          companyId,
+
+        customerName:
+          companyName,
+
+        customerEmail:
+          email,
+
+        customerSiret:
+          companyId,
+
+        amountHT:
+          amountHT,
+
+        vatRate:
+          vatRate,
+
+        vatAmount:
+          amountVAT,
+
+        amountTTC:
+          amountTTC,
+
+        paymentMethod:
+          ""
+
+      });
+
+
+  if(!order){
+
+    alert(
+      "La commande n'a pas pu être créée."
+    );
+
+    return;
+  }
+
+
+  /* =======================================================
+     4. OFFRE EN ATTENTE DE PAIEMENT
+     ======================================================= */
+
+  const data =
+    loadEmploymentData();
+
+
   const pendingOffer = {
-    id:createOfferId(),
-    companyName:companyName,
-    companyId:companyId,
-    email:email,
-    title:title,
-    description:description,
-    contract:contract,
-    city:city,
+
+    id:
+      createOfferId(),
+
+    orderId:
+      order.id,
+
+    companyName:
+      companyName,
+
+    companyId:
+      companyId,
+
+    email:
+      email,
+
+    title:
+      title,
+
+    description:
+      description,
+
+    contract:
+      contract,
+
+    city:
+      city,
+
     status:
-    employmentAlreadyPaid
-    ? "publiee"
-    : "en_attente_paiement",
-    amountHT:amountHT,
-    vatRate:vatRate,
-    amountVAT:amountVAT,
-    amountTTC:amountTTC,
-    createdAt:Date.now(),
+      "en_attente_paiement",
+
+    paymentStatus:
+      "waiting_payment",
+
+    paymentId:
+      "",
+
+    invoiceId:
+      "",
+
+    invoiceNumber:
+      "",
+
+    amountHT:
+      amountHT,
+
+    vatRate:
+      vatRate,
+
+    amountVAT:
+      amountVAT,
+
+    amountTTC:
+      amountTTC,
+
+    createdAt:
+      Date.now(),
+
     createdAtFr:
-      new Date()
-        .toLocaleString("fr-FR"),
-    updatedAt:null,
-    closedAt:null,
-   paidAt:
-  employmentAlreadyPaid
-    ? Date.now()
-    : null,
-
-invoiceId:
-  employmentAlreadyPaid
-    ? "PAID_WITH_ADVERTISING"
-    : null,
-
-paymentSource:
-  employmentAlreadyPaid
-    ? "advertising"
-    : "employment",
-
-employmentAlreadyPaid:
-  employmentAlreadyPaid
-  };
-
-  /*
-    OFFRE EMPLOI DÉJÀ PAYÉE
-    DANS LA COMMANDE PUBLICITAIRE
-  */
-
-  if(employmentAlreadyPaid){
-
-    const data =
-      loadEmploymentData();
-
-
-    pendingOffer.status =
-      "publiee";
-
-    /*
-      Le service Emploi vaut toujours
-      50 € HT.
-
-      Il n'est simplement pas
-      encaissé une seconde fois ici.
-    */
-
-    pendingOffer.amountHT =
-      EMPLOYMENT_OFFER_PRICE_HT;
-
-    pendingOffer.vatRate =
-      BOCITEART_VAT_RATE;
-
-    pendingOffer.amountVAT =
-      Number(
-        (
-          EMPLOYMENT_OFFER_PRICE_HT *
-          BOCITEART_VAT_RATE /
-          100
-        ).toFixed(2)
-      );
-
-    pendingOffer.amountTTC =
-      Number(
-        (
-          pendingOffer.amountHT +
-          pendingOffer.amountVAT
-        ).toFixed(2)
-      );
-
-
-    pendingOffer.paidAt =
-      Date.now();
-
-    pendingOffer.paidAtFr =
       new Date()
         .toLocaleString(
           "fr-FR"
-        );
+        ),
+
+    updatedAt:
+      null,
+
+    closedAt:
+      null,
+
+    paidAt:
+      null,
+
+    publishedAt:
+      null
+
+  };
 
 
-    pendingOffer.paymentMethod =
-      "Commande publicitaire Bo'CitéArt";
-
-    pendingOffer.paymentReference =
-      advertisingDraft &&
-      advertisingDraft.paymentReference
-        ? advertisingDraft.paymentReference
-        : "PUB-EMPLOI-" +
-          Date.now();
+  data.offers.push(
+    pendingOffer
+  );
 
 
-    pendingOffer.paymentSource =
-      "advertising";
-
-    pendingOffer.employmentAlreadyPaid =
-      true;
-
-    pendingOffer.invoiceId =
-      advertisingDraft &&
-      advertisingDraft.invoiceId
-        ? advertisingDraft.invoiceId
-        : "INVOICE_PUBLICITE";
-
-    pendingOffer.invoiceNumber =
-      advertisingDraft &&
-      advertisingDraft.invoiceNumber
-        ? advertisingDraft.invoiceNumber
-        : "";
+  saveEmploymentData(
+    data
+  );
 
 
-    data.offers.push(
-      pendingOffer
-    );
+  /* =======================================================
+     5. PAGE CENTRALE DE PAIEMENT
 
+     Carte bancaire :
+     confirmation PSP → activation rapide.
 
-    saveEmploymentData(
-      data
-    );
+     Virement :
+     attente de réception réelle
+     sur le compte Bo'CitéArt.
+     ======================================================= */
 
+  financialModule
+    .openCentralPaymentPage({
 
-    /*
-      Le brouillon Publicité → Emploi
-      a maintenant été consommé.
-    */
+      order:
+        order,
 
-    try{
+      allowCard:
+        true,
 
-      localStorage.removeItem(
-        "bociteart_employment_ad_draft_v1"
-      );
+      allowBankTransfer:
+        true
 
-    }catch(error){
-
-      console.warn(
-        "Bo'CitéArt : suppression du brouillon Emploi impossible.",
-        error
-      );
-    }
-
-
-    window.dispatchEvent(
-      new CustomEvent(
-        "bociteart:employment-offer-published",
-        {
-          detail:{
-            offer:
-              pendingOffer,
-
-            source:
-              "advertising"
-          }
-        }
-      )
-    );
-
-
-    alert(
-      "L'offre d'emploi est publiée.\n\n" +
-      "Les 50 € HT du service Emploi étaient déjà compris " +
-      "dans votre commande publicitaire.\n\n" +
-      "Aucun second paiement n'a été demandé."
-    );
-
-
-    window.setTimeout(
-      function(){
-
-        openEmploymentOffers();
+    });
+}
+      function(){ 
+         
+     openEmploymentOffers();
 
       },
       200
@@ -43614,7 +43651,412 @@ document.addEventListener(
 
     return true;
   }
-   
+
+     /* =======================================================
+     ACTIVATION ABONNEMENT CITOYEN
+     APRÈS PAIEMENT CONFIRMÉ
+     ======================================================= */
+
+  /* =======================================================
+     ACTIVATION ABONNEMENT CITOYEN
+     APRÈS PAIEMENT CONFIRMÉ
+     ======================================================= */
+
+  function activateCitizenSubscription(
+    order,
+    payment,
+    invoice
+  ){
+
+    if(
+      !order ||
+      order.serviceType !==
+      "citizen_subscription"
+    ){
+
+      return false;
+    }
+
+
+    let pending =
+      null;
+
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          "bociteart_citizen_subscription_pending_v1"
+        );
+
+
+      pending =
+        raw
+          ? JSON.parse(
+              raw
+            )
+          : null;
+
+    }catch(error){
+
+      pending =
+        null;
+    }
+
+
+    if(
+      !pending ||
+      String(
+        pending.orderId || ""
+      ) !==
+      String(
+        order.id || ""
+      )
+    ){
+
+      return false;
+    }
+
+
+    const now =
+      Date.now();
+
+
+    const subscription = {
+
+      orderId:
+        order.id,
+
+      customerId:
+        order.customerId || "",
+
+      contacts:
+        Number(
+          pending.contacts || 2
+        ),
+
+      monthlyPriceHT:
+        Number(
+          pending.monthlyPriceHT ||
+          order.amountHT ||
+          0
+        ),
+
+      paymentMethod:
+        payment
+          ? payment.method || ""
+          : "",
+
+      paymentId:
+        payment
+          ? payment.id || ""
+          : "",
+
+      invoiceId:
+        invoice
+          ? invoice.id || ""
+          : "",
+
+      invoiceNumber:
+        invoice
+          ? invoice.number || ""
+          : "",
+
+      status:
+        "active",
+
+      activatedAt:
+        now,
+
+      activatedAtFr:
+        new Date(
+          now
+        )
+        .toLocaleString(
+          "fr-FR"
+        )
+
+    };
+
+
+    try{
+
+      localStorage.setItem(
+        "bociteart_citizen_subscription_active_v1",
+        JSON.stringify(
+          subscription
+        )
+      );
+
+
+      localStorage.removeItem(
+        "bociteart_citizen_subscription_pending_v1"
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : activation de l'abonnement citoyen impossible.",
+        error
+      );
+
+      return false;
+    }
+
+
+    if(
+      typeof module.addFinancialEvent ===
+      "function"
+    ){
+
+      module.addFinancialEvent(
+        "citizen_subscription_activated",
+        {
+
+          orderId:
+            order.id,
+
+          paymentId:
+            payment
+              ? payment.id || ""
+              : "",
+
+          invoiceId:
+            invoice
+              ? invoice.id || ""
+              : "",
+
+          contacts:
+            subscription.contacts,
+
+          monthlyPriceHT:
+            subscription.monthlyPriceHT
+
+        }
+      );
+    }
+
+
+    return true;
+  }
+
+
+  /* =======================================================
+     ACTIVATION OFFRE EMPLOI
+     APRÈS PAIEMENT CONFIRMÉ
+     ======================================================= */
+
+  function activateEmploymentOrder(
+    order,
+    payment,
+    invoice
+  ){
+
+    if(
+      !order ||
+      order.serviceType !==
+      "employment"
+    ){
+
+      return false;
+    }
+
+
+    if(
+      typeof loadEmploymentData !==
+      "function" ||
+      typeof saveEmploymentData !==
+      "function"
+    ){
+
+      console.warn(
+        "Bo'CitéArt : moteur Emploi indisponible pour l'activation."
+      );
+
+      return false;
+    }
+
+
+    const data =
+      loadEmploymentData();
+
+
+    if(
+      !data ||
+      !Array.isArray(
+        data.offers
+      )
+    ){
+
+      return false;
+    }
+
+
+    const offer =
+      data.offers.find(
+        function(item){
+
+          return (
+            item &&
+            String(
+              item.orderId || ""
+            ) ===
+            String(
+              order.id || ""
+            )
+          );
+
+        }
+      );
+
+
+    if(!offer){
+
+      console.warn(
+        "Bo'CitéArt : offre Emploi liée à la commande introuvable.",
+        order.id
+      );
+
+      return false;
+    }
+
+
+    if(
+      offer.status ===
+      "publiee" &&
+      offer.paymentStatus ===
+      "paid"
+    ){
+
+      return true;
+    }
+
+
+    const now =
+      Date.now();
+
+
+    offer.paymentStatus =
+      "paid";
+
+
+    offer.paymentId =
+      payment
+        ? payment.id || ""
+        : "";
+
+
+    offer.paidAt =
+      payment &&
+      payment.confirmedAt
+        ? payment.confirmedAt
+        : now;
+
+
+    offer.paidAtFr =
+      new Date(
+        offer.paidAt
+      )
+      .toLocaleString(
+        "fr-FR"
+      );
+
+
+    offer.invoiceId =
+      invoice
+        ? invoice.id || ""
+        : "";
+
+
+    offer.invoiceNumber =
+      invoice
+        ? invoice.number || ""
+        : "";
+
+
+    offer.status =
+      "publiee";
+
+
+    offer.publicationStatus =
+      "published";
+
+
+    offer.publishedAt =
+      now;
+
+
+    offer.publishedAtFr =
+      new Date(
+        now
+      )
+      .toLocaleString(
+        "fr-FR"
+      );
+
+
+    offer.updatedAt =
+      now;
+
+
+    offer.updatedAtFr =
+      new Date(
+        now
+      )
+      .toLocaleString(
+        "fr-FR"
+      );
+
+
+    saveEmploymentData(
+      data
+    );
+
+
+    if(
+      typeof module.addFinancialEvent ===
+      "function"
+    ){
+
+      module.addFinancialEvent(
+        "employment_offer_published",
+        {
+
+          offerId:
+            offer.id || "",
+
+          orderId:
+            order.id,
+
+          paymentId:
+            payment
+              ? payment.id || ""
+              : "",
+
+          invoiceId:
+            invoice
+              ? invoice.id || ""
+              : "",
+
+          companyName:
+            offer.companyName || "",
+
+          title:
+            offer.title || ""
+
+        }
+      );
+    }
+
+
+    return true;
+  }
+
+
+  /* =======================================================
+     FINALISATION FINANCIÈRE CENTRALE
+     ======================================================= */
+
   function finalizeFinancialOrder(
     order,
     payment
@@ -43632,9 +44074,6 @@ document.addEventListener(
 
     /* =====================================================
        1. FACTURE CENTRALE BO'CITÉART
-
-       Une seule facture par commande.
-       Si elle existe déjà, on la récupère.
        ===================================================== */
 
     let invoice =
@@ -43676,6 +44115,7 @@ document.addEventListener(
                   order.id || ""
                 )
               );
+
             }
           ) || null;
       }
@@ -43690,14 +44130,9 @@ document.addEventListener(
     }
 
 
-    /*
-      createInvoiceFromOrder()
-      peut avoir mis à jour la commande
-      dans le stockage.
-
-      On récupère donc sa version
-      la plus récente.
-    */
+    /* =====================================================
+       2. RECHARGER LA COMMANDE ACTUELLE
+       ===================================================== */
 
     const storedOrders =
       loadList(
@@ -43717,6 +44152,7 @@ document.addEventListener(
               order.id || ""
             )
           );
+
         }
       );
 
@@ -43729,15 +44165,7 @@ document.addEventListener(
 
 
     /* =====================================================
-       2. CONTRÔLE AGENT 1
-
-       Commande
-       paiement
-       montant
-       frais PSP
-       net Bo'CitéArt
-       facture
-       transmission
+       3. AGENT 1
        ===================================================== */
 
     let agent1Result =
@@ -43829,10 +44257,7 @@ document.addEventListener(
 
 
     /* =====================================================
-       3. CONTRÔLE AGENT 2
-
-       Contrôle indépendant
-       de toute la chaîne.
+       4. AGENT 2
        ===================================================== */
 
     let agent2Result =
@@ -43925,13 +44350,7 @@ document.addEventListener(
 
 
     /* =====================================================
-       4. ACTIVATION DU SERVICE
-
-       Seulement après :
-       paiement confirmé
-       + facture
-       + Agent 1
-       + Agent 2
+       5. ACTIVATION DU SERVICE
        ===================================================== */
 
     let serviceActivated =
@@ -43951,7 +44370,8 @@ document.addEventListener(
         );
     }
 
-           if(
+
+    if(
       currentOrder.serviceType ===
       "advertising"
     ){
@@ -43965,21 +44385,36 @@ document.addEventListener(
     }
 
 
-    /*
-      Les autres services seront raccordés
-      ici progressivement :
+    if(
+      currentOrder.serviceType ===
+      "citizen_subscription"
+    ){
 
-      advertising
-      employment
-      professional_subscription
-      citizen_subscription
-      directory_premium
-      etc.
-    */
+      serviceActivated =
+        activateCitizenSubscription(
+          currentOrder,
+          payment,
+          invoice
+        );
+    }
+
+
+    if(
+      currentOrder.serviceType ===
+      "employment"
+    ){
+
+      serviceActivated =
+        activateEmploymentOrder(
+          currentOrder,
+          payment,
+          invoice
+        );
+    }
 
 
     /* =====================================================
-       5. ÉTAT FINAL DE LA COMMANDE
+       6. ÉTAT FINAL DE LA COMMANDE
        ===================================================== */
 
     const finalOrders =
@@ -44000,6 +44435,7 @@ document.addEventListener(
               currentOrder.id || ""
             )
           );
+
         }
       );
 
@@ -44009,8 +44445,10 @@ document.addEventListener(
       finalOrder.financialControlStatus =
         "validated";
 
+
       finalOrder.financialControlCompletedAt =
         Date.now();
+
 
       finalOrder.serviceActivated =
         Boolean(
@@ -44018,16 +44456,15 @@ document.addEventListener(
         );
 
 
-      /*
-        Pour les services qui seront
-        raccordés ensuite,
-        l'état pourra devenir "active".
+      if(serviceActivated){
 
-        Pour l'instant,
-        on ne force pas artificiellement
-        l'activation d'un service
-        qui n'a pas encore son raccordement.
-      */
+        finalOrder.status =
+          "completed";
+
+        finalOrder.completedAt =
+          Date.now();
+      }
+
 
       saveList(
         ORDERS_KEY,
@@ -44037,7 +44474,7 @@ document.addEventListener(
 
 
     /* =====================================================
-       6. JOURNAL CENTRAL
+       7. JOURNAL CENTRAL
        ===================================================== */
 
     if(
@@ -44116,6 +44553,7 @@ document.addEventListener(
 
     };
   }
+
 
   module.finalizeFinancialOrder =
     finalizeFinancialOrder;
