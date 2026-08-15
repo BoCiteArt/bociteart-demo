@@ -41073,7 +41073,1219 @@ document.addEventListener(
     };
   }
 
+  /* =======================================================
+     6B. CONFIGURATION FACTURATION / COMPTABILITÉ
 
+     À compléter lorsque Bo'CitéArt aura choisi
+     sa plateforme agréée / son logiciel comptable.
+     ======================================================= */
+
+  const BO_CITEART_FINANCIAL_CONFIG = {
+
+    legalName:
+      "Bo'CitéArt",
+
+    siren:
+      "",
+
+    siret:
+      "",
+
+    vatNumber:
+      "",
+
+    legalAddress:
+      "",
+
+    billingEmail:
+      "",
+
+    accountingPlatform:
+      "",
+
+    electronicInvoicePlatform:
+      "",
+
+    pspProvider:
+      "",
+
+    bankAccountLabel:
+      "Compte bancaire Bo'CitéArt",
+
+    bankIban:
+      "",
+
+    bankBic:
+      ""
+
+  };
+
+
+  /* =======================================================
+     6C. INFORMATION COMMUNE AVANT PAIEMENT
+     ======================================================= */
+
+  function getPaymentActivationNotice(){
+
+    return {
+
+      card:
+        "Par carte bancaire, votre service est activé dès confirmation du paiement par notre prestataire de paiement.",
+
+      bankTransfer:
+        "Par virement bancaire, votre service est activé après réception et confirmation effective du règlement sur le compte Bo'CitéArt. Le délai dépend de votre établissement bancaire."
+
+    };
+  }
+
+
+  /* =======================================================
+     6D. AGENT 1 — EXÉCUTION FINANCIÈRE
+
+     Vérifie :
+     commande
+     paiement
+     commission
+     net Bo'CitéArt
+     facture
+     envoi
+     activation
+     ======================================================= */
+
+  function runFinancialAgent1(
+    options
+  ){
+
+    const input =
+      options || {};
+
+
+    const orderId =
+      String(
+        input.orderId || ""
+      );
+
+
+    const orders =
+      loadList(
+        ORDERS_KEY
+      );
+
+
+    const order =
+      orders.find(
+        function(item){
+
+          return (
+            String(
+              item.id || ""
+            ) ===
+            orderId
+          );
+        }
+      );
+
+
+    if(!order){
+
+      return {
+        ok:false,
+        reason:
+          "order_not_found"
+      };
+    }
+
+
+    /* =====================================================
+       1. RETROUVER LE PAIEMENT CONFIRMÉ
+       ===================================================== */
+
+    const payments =
+      loadList(
+        PAYMENTS_KEY
+      );
+
+
+    const payment =
+      payments.find(
+        function(item){
+
+          return (
+            String(
+              item.orderId || ""
+            ) ===
+            orderId &&
+            item.status ===
+            "confirmed"
+          );
+        }
+      );
+
+
+    if(!payment){
+
+      order.agent1Status =
+        "waiting_payment";
+
+      order.agent1CheckedAt =
+        Date.now();
+
+
+      saveList(
+        ORDERS_KEY,
+        orders
+      );
+
+
+      return {
+        ok:false,
+        reason:
+          "payment_not_confirmed",
+        order:order
+      };
+    }
+
+
+    /* =====================================================
+       2. VÉRIFIER LE MONTANT
+       ===================================================== */
+
+    const paidAmount =
+      Number(
+        payment.grossAmount != null
+          ? payment.grossAmount
+          : (
+              payment.expectedAmount != null
+                ? payment.expectedAmount
+                : 0
+            )
+      );
+
+
+    const expectedAmount =
+      Number(
+        order.amountTTC || 0
+      );
+
+
+    if(
+      Math.abs(
+        paidAmount -
+        expectedAmount
+      ) >=
+      0.01
+    ){
+
+      order.agent1Status =
+        "payment_amount_mismatch";
+
+      order.agent1CheckedAt =
+        Date.now();
+
+
+      saveList(
+        ORDERS_KEY,
+        orders
+      );
+
+
+      return {
+        ok:false,
+        reason:
+          "payment_amount_mismatch",
+        order:order,
+        payment:payment
+      };
+    }
+
+
+    /* =====================================================
+       3. FRAIS PSP / NET BO'CITÉART
+       ===================================================== */
+
+    const providerFee =
+      Number(
+        payment.providerFee || 0
+      );
+
+
+    const netPayout =
+      Number(
+        payment.netPayout != null
+          ? payment.netPayout
+          : (
+              paidAmount -
+              providerFee
+            )
+      );
+
+
+    order.providerFee =
+      providerFee;
+
+    order.netPayout =
+      netPayout;
+
+
+    /* =====================================================
+       4. RETROUVER LA FACTURE CENTRALE EXISTANTE
+
+       IMPORTANT :
+       Agent 1 ne recrée PAS une facture.
+       La facture officielle est celle créée
+       par createPaidInvoice().
+       ===================================================== */
+
+    const invoices =
+      (
+        typeof module.getBillingInvoices ===
+        "function"
+      )
+        ? module.getBillingInvoices()
+        : [];
+
+
+    const invoice =
+      Array.isArray(
+        invoices
+      )
+        ? invoices.find(
+            function(item){
+
+              return (
+                String(
+                  item.id || ""
+                ) ===
+                String(
+                  order.invoiceId || ""
+                ) ||
+                String(
+                  item.orderReference || ""
+                ) ===
+                orderId
+              );
+            }
+          )
+        : null;
+
+
+    if(!invoice){
+
+      order.agent1Status =
+        "invoice_missing";
+
+      order.agent1CheckedAt =
+        Date.now();
+
+
+      saveList(
+        ORDERS_KEY,
+        orders
+      );
+
+
+      return {
+        ok:false,
+        reason:
+          "invoice_missing",
+        order:order,
+        payment:payment
+      };
+    }
+
+
+    /* =====================================================
+       5. CONTRÔLER LA FACTURE
+       ===================================================== */
+
+    const invoiceAmount =
+      Number(
+        invoice.amountTTC || 0
+      );
+
+
+    if(
+      Math.abs(
+        invoiceAmount -
+        expectedAmount
+      ) >=
+      0.01
+    ){
+
+      order.agent1Status =
+        "invoice_amount_mismatch";
+
+      order.agent1CheckedAt =
+        Date.now();
+
+
+      saveList(
+        ORDERS_KEY,
+        orders
+      );
+
+
+      return {
+        ok:false,
+        reason:
+          "invoice_amount_mismatch",
+        order:order,
+        payment:payment,
+        invoice:invoice
+      };
+    }
+
+
+    /* =====================================================
+       6. DEMANDER LA TRANSMISSION DE LA FACTURE
+
+       En production :
+       la plateforme de facturation raccordée
+       effectuera réellement la transmission.
+
+       On ne bloque pas le navigateur pendant
+       cette opération.
+       ===================================================== */
+
+    if(
+      typeof module.transmitInvoice ===
+      "function" &&
+      !invoice.transmittedAt
+    ){
+
+      try{
+
+        const transmission =
+          module.transmitInvoice(
+            invoice.id
+          );
+
+
+        if(
+          transmission &&
+          typeof transmission.then ===
+          "function"
+        ){
+
+          transmission
+            .then(
+              function(result){
+
+                if(
+                  typeof module.addFinancialEvent ===
+                  "function"
+                ){
+
+                  module.addFinancialEvent(
+                    result &&
+                    result.ok
+                      ? "invoice_transmitted"
+                      : "invoice_transmission_pending",
+                    {
+                      orderId:
+                        order.id,
+
+                      invoiceId:
+                        invoice.id,
+
+                      status:
+                        result &&
+                        result.status
+                          ? result.status
+                          : ""
+                    }
+                  );
+                }
+
+              }
+            )
+            .catch(
+              function(error){
+
+                console.warn(
+                  "Bo'CitéArt : transmission facture en attente.",
+                  error
+                );
+
+              }
+            );
+        }
+
+      }catch(error){
+
+        console.warn(
+          "Bo'CitéArt : transmission facture non disponible.",
+          error
+        );
+      }
+    }
+
+
+    /* =====================================================
+       7. CONTRÔLE CLIENT / SERVICE
+       ===================================================== */
+
+    const invoiceCustomer =
+      String(
+        invoice.customerName || ""
+      );
+
+
+    const orderCustomer =
+      String(
+        order.customerName || ""
+      );
+
+
+    if(
+      invoiceCustomer &&
+      orderCustomer &&
+      invoiceCustomer !==
+      orderCustomer
+    ){
+
+      order.agent1Status =
+        "customer_mismatch";
+
+      order.agent1CheckedAt =
+        Date.now();
+
+
+      saveList(
+        ORDERS_KEY,
+        orders
+      );
+
+
+      return {
+        ok:false,
+        reason:
+          "customer_mismatch",
+        order:order,
+        payment:payment,
+        invoice:invoice
+      };
+    }
+
+
+    /* =====================================================
+       8. AGENT 1 VALIDÉ
+       ===================================================== */
+
+    order.paymentId =
+      payment.id;
+
+    order.invoiceId =
+      invoice.id;
+
+    order.invoiceNumber =
+      invoice.number || "";
+
+    order.agent1Status =
+      "completed";
+
+    order.agent1CheckedAt =
+      Date.now();
+
+    order.agent1ProviderFee =
+      providerFee;
+
+    order.agent1NetPayout =
+      netPayout;
+
+
+    saveList(
+      ORDERS_KEY,
+      orders
+    );
+
+
+    if(
+      typeof module.addFinancialEvent ===
+      "function"
+    ){
+
+      module.addFinancialEvent(
+        "agent1_financial_check_completed",
+        {
+          orderId:
+            order.id,
+
+          paymentId:
+            payment.id,
+
+          invoiceId:
+            invoice.id,
+
+          grossAmount:
+            paidAmount,
+
+          providerFee:
+            providerFee,
+
+          netPayout:
+            netPayout
+        }
+      );
+    }
+
+
+    return {
+      ok:true,
+      order:order,
+      payment:payment,
+      invoice:invoice
+    };
+  }
+
+
+  /* =======================================================
+     6E. AGENT 2 — CONTRÔLE INDÉPENDANT
+
+     Vérifie le travail de l'Agent 1.
+     ======================================================= */
+
+   function runFinancialAgent2(
+    orderId
+  ){
+
+    const id =
+      String(
+        orderId || ""
+      );
+
+
+    const orders =
+      loadList(
+        ORDERS_KEY
+      );
+
+
+    const order =
+      orders.find(
+        function(item){
+
+          return (
+            String(
+              item.id || ""
+            ) ===
+            id
+          );
+        }
+      );
+
+
+    if(!order){
+
+      return {
+        ok:false,
+        reason:
+          "order_not_found"
+      };
+    }
+
+
+    /* =====================================================
+       1. CONTRÔLER QUE L'AGENT 1 EST PASSÉ
+       ===================================================== */
+
+    if(
+      order.agent1Status !==
+      "completed"
+    ){
+
+      return {
+        ok:false,
+        reason:
+          "agent1_not_completed",
+        order:order
+      };
+    }
+
+
+    /* =====================================================
+       2. RETROUVER LE PAIEMENT
+       ===================================================== */
+
+    const payments =
+      loadList(
+        PAYMENTS_KEY
+      );
+
+
+    const payment =
+      payments.find(
+        function(item){
+
+          return (
+            String(
+              item.id || ""
+            ) ===
+            String(
+              order.paymentId || ""
+            )
+          );
+        }
+      );
+
+
+    /* =====================================================
+       3. RETROUVER LA FACTURE CENTRALE
+       ===================================================== */
+
+    const invoices =
+      (
+        typeof module.getBillingInvoices ===
+        "function"
+      )
+        ? module.getBillingInvoices()
+        : [];
+
+
+    const invoice =
+      Array.isArray(
+        invoices
+      )
+        ? invoices.find(
+            function(item){
+
+              return (
+                String(
+                  item.id || ""
+                ) ===
+                String(
+                  order.invoiceId || ""
+                ) ||
+                String(
+                  item.orderReference || ""
+                ) ===
+                id
+              );
+            }
+          )
+        : null;
+
+
+    const anomalies =
+      [];
+
+
+    /* =====================================================
+       4. CONTRÔLE DU PAIEMENT
+       ===================================================== */
+
+    if(!payment){
+
+      anomalies.push(
+        "payment_missing"
+      );
+
+    }else if(
+      payment.status !==
+      "confirmed"
+    ){
+
+      anomalies.push(
+        "payment_not_confirmed"
+      );
+    }
+
+
+    const paidAmount =
+      payment
+        ? Number(
+            payment.grossAmount != null
+              ? payment.grossAmount
+              : (
+                  payment.expectedAmount != null
+                    ? payment.expectedAmount
+                    : 0
+                )
+          )
+        : 0;
+
+
+    const expectedAmount =
+      Number(
+        order.amountTTC || 0
+      );
+
+
+    if(
+      payment &&
+      Math.abs(
+        paidAmount -
+        expectedAmount
+      ) >=
+      0.01
+    ){
+
+      anomalies.push(
+        "payment_amount_mismatch"
+      );
+    }
+
+
+    /* =====================================================
+       5. CONTRÔLE FRAIS PSP / NET BO'CITÉART
+       ===================================================== */
+
+    if(
+      payment &&
+      payment.method ===
+      "card"
+    ){
+
+      const providerFee =
+        Number(
+          payment.providerFee || 0
+        );
+
+
+      const netPayout =
+        Number(
+          payment.netPayout != null
+            ? payment.netPayout
+            : (
+                paidAmount -
+                providerFee
+              )
+        );
+
+
+      const expectedNet =
+        Number(
+          (
+            paidAmount -
+            providerFee
+          )
+          .toFixed(2)
+        );
+
+
+      if(
+        Math.abs(
+          netPayout -
+          expectedNet
+        ) >=
+        0.01
+      ){
+
+        anomalies.push(
+          "psp_net_payout_mismatch"
+        );
+      }
+
+
+      if(
+        Math.abs(
+          Number(
+            order.agent1ProviderFee || 0
+          ) -
+          providerFee
+        ) >=
+        0.01
+      ){
+
+        anomalies.push(
+          "provider_fee_mismatch"
+        );
+      }
+
+
+      if(
+        Math.abs(
+          Number(
+            order.agent1NetPayout || 0
+          ) -
+          netPayout
+        ) >=
+        0.01
+      ){
+
+        anomalies.push(
+          "net_payout_mismatch"
+        );
+      }
+    }
+
+
+    /* =====================================================
+       6. CONTRÔLE FACTURE
+       ===================================================== */
+
+    if(!invoice){
+
+      anomalies.push(
+        "invoice_missing"
+      );
+
+    }else{
+
+      if(
+        Math.abs(
+          Number(
+            invoice.amountHT || 0
+          ) -
+          Number(
+            order.amountHT || 0
+          )
+        ) >=
+        0.01
+      ){
+
+        anomalies.push(
+          "invoice_ht_mismatch"
+        );
+      }
+
+
+      if(
+        Math.abs(
+          Number(
+            invoice.amountTTC || 0
+          ) -
+          expectedAmount
+        ) >=
+        0.01
+      ){
+
+        anomalies.push(
+          "invoice_ttc_mismatch"
+        );
+      }
+
+
+      const invoiceVat =
+        Number(
+          invoice.amountVAT != null
+            ? invoice.amountVAT
+            : (
+                invoice.vatAmount != null
+                  ? invoice.vatAmount
+                  : 0
+              )
+        );
+
+
+      if(
+        Math.abs(
+          invoiceVat -
+          Number(
+            order.vatAmount || 0
+          )
+        ) >=
+        0.01
+      ){
+
+        anomalies.push(
+          "invoice_vat_mismatch"
+        );
+      }
+
+
+      if(
+        String(
+          invoice.customerName || ""
+        ) !==
+        String(
+          order.customerName || ""
+        )
+      ){
+
+        anomalies.push(
+          "invoice_customer_mismatch"
+        );
+      }
+
+
+      if(
+        String(
+          invoice.customerEmail || ""
+        ) !==
+        String(
+          order.customerEmail || ""
+        )
+      ){
+
+        anomalies.push(
+          "invoice_email_mismatch"
+        );
+      }
+
+
+      if(
+        String(
+          invoice.serviceLabel || ""
+        ) !==
+        String(
+          order.serviceLabel || ""
+        )
+      ){
+
+        anomalies.push(
+          "invoice_service_mismatch"
+        );
+      }
+
+
+      if(
+        String(
+          invoice.orderReference || ""
+        ) &&
+        String(
+          invoice.orderReference || ""
+        ) !==
+        String(
+          order.id || ""
+        )
+      ){
+
+        anomalies.push(
+          "invoice_order_reference_mismatch"
+        );
+      }
+    }
+
+
+    /* =====================================================
+       7. CONTRÔLE ENVOI / TRANSMISSION
+       ===================================================== */
+
+    if(invoice){
+
+      const invoiceWasSent =
+        Boolean(
+          invoice.sentAt ||
+          invoice.sentToCustomerAt ||
+          invoice.transmittedAt
+        );
+
+
+      if(!invoiceWasSent){
+
+        anomalies.push(
+          "invoice_not_sent_or_transmitted"
+        );
+      }
+    }
+
+
+    /* =====================================================
+       8. CONTRÔLE PLATEFORME COMPTABLE FUTURE
+       ===================================================== */
+
+    if(
+      module.financialConfig
+    ){
+
+      /*
+        Les champs peuvent rester vides
+        tant que la solution définitive
+        n'a pas été choisie.
+
+        Dès qu'un nom sera renseigné,
+        Agent 2 vérifiera que le circuit
+        de facturation l'utilise.
+      */
+
+      if(
+        module.financialConfig
+          .accountingPlatform &&
+        invoice &&
+        invoice.accountingPlatform &&
+        String(
+          invoice.accountingPlatform
+        ) !==
+        String(
+          module.financialConfig
+            .accountingPlatform
+        )
+      ){
+
+        anomalies.push(
+          "accounting_platform_mismatch"
+        );
+      }
+
+
+      if(
+        module.financialConfig
+          .electronicInvoicePlatform &&
+        invoice &&
+        invoice.electronicInvoicePlatform &&
+        String(
+          invoice.electronicInvoicePlatform
+        ) !==
+        String(
+          module.financialConfig
+            .electronicInvoicePlatform
+        )
+      ){
+
+        anomalies.push(
+          "electronic_invoice_platform_mismatch"
+        );
+      }
+    }
+
+
+    /* =====================================================
+       9. RÉSULTAT DU CONTRÔLE AGENT 2
+       ===================================================== */
+
+    const auditOk =
+      anomalies.length ===
+      0;
+
+
+    order.agent2Status =
+      auditOk
+        ? "validated"
+        : "anomaly";
+
+
+    order.agent2CheckedAt =
+      Date.now();
+
+
+    order.auditStatus =
+      order.agent2Status;
+
+
+    order.auditAnomalies =
+      anomalies;
+
+
+    saveList(
+      ORDERS_KEY,
+      orders
+    );
+
+
+    if(
+      typeof module.addFinancialEvent ===
+      "function"
+    ){
+
+      module.addFinancialEvent(
+        auditOk
+          ? "agent2_audit_validated"
+          : "agent2_audit_anomaly",
+        {
+          orderId:
+            order.id,
+
+          paymentId:
+            payment
+              ? payment.id || ""
+              : "",
+
+          invoiceId:
+            invoice
+              ? invoice.id || ""
+              : "",
+
+          anomalies:
+            anomalies
+        }
+      );
+    }
+
+
+    return {
+
+      ok:
+        auditOk,
+
+      order:
+        order,
+
+      payment:
+        payment || null,
+
+      invoice:
+        invoice || null,
+
+      anomalies:
+        anomalies
+
+    };
+  }
+  /* =======================================================
+     6F. CONTRÔLE COMPLET
+     ======================================================= */
+
+  function runFullFinancialControl(
+    orderId
+  ){
+
+    const agent1 =
+      runFinancialAgent1({
+        orderId:
+          orderId
+      });
+
+
+    if(
+      !agent1 ||
+      agent1.ok !==
+      true
+    ){
+
+      return {
+        ok:false,
+        stage:
+          "agent1",
+        result:
+          agent1
+      };
+    }
+
+
+    const agent2 =
+      runFinancialAgent2(
+        orderId
+      );
+
+
+    return {
+      ok:
+        Boolean(
+          agent2 &&
+          agent2.ok
+        ),
+
+      stage:
+        "agent2",
+
+      agent1:
+        agent1,
+
+      agent2:
+        agent2
+    };
+  }
+
+  /* =======================================================
+     6G. EXPOSITION AU RESTE DE L'APPLICATION
+     ======================================================= */
+
+  module.getPaymentActivationNotice =
+    getPaymentActivationNotice;
+
+  module.runFinancialAgent1 =
+    runFinancialAgent1;
+
+  module.runFinancialAgent2 =
+    runFinancialAgent2;
+
+  module.runFullFinancialControl =
+    runFullFinancialControl;
+
+  module.financialConfig =
+    BO_CITEART_FINANCIAL_CONFIG;
+   
   /* =======================================================
      7. VERSEMENTS PSP ET COMMISSIONS
      ======================================================= */
@@ -42150,6 +43362,259 @@ document.addEventListener(
      utiliseront cette même entrée.
      ======================================================= */
 
+  /* =======================================================
+     ACTIVATION PUBLICITÉ APRÈS PAIEMENT CONFIRMÉ
+     ======================================================= */
+
+  function activateAdvertisingOrder(
+    order,
+    payment,
+    invoice
+  ){
+
+    if(
+      !order ||
+      order.serviceType !==
+      "advertising"
+    ){
+
+      return false;
+    }
+
+
+    const BOOKINGS_KEY =
+      "bociteart_pub_v3_bookings";
+
+
+    let bookings = {};
+
+
+    try{
+
+      const raw =
+        localStorage.getItem(
+          BOOKINGS_KEY
+        );
+
+
+      bookings =
+        raw
+          ? JSON.parse(
+              raw
+            )
+          : {};
+
+    }catch(error){
+
+      bookings = {};
+    }
+
+
+    let found =
+      false;
+
+
+    Object.keys(
+      bookings || {}
+    )
+    .forEach(
+      function(monthKey){
+
+        const month =
+          bookings[
+            monthKey
+          ];
+
+
+        if(
+          !month ||
+          typeof month !==
+          "object"
+        ){
+
+          return;
+        }
+
+
+        Object.keys(
+          month
+        )
+        .forEach(
+          function(dayKey){
+
+            const list =
+              Array.isArray(
+                month[
+                  dayKey
+                ]
+              )
+                ? month[
+                    dayKey
+                  ]
+                : [];
+
+
+            list.forEach(
+              function(ad){
+
+                if(
+                  !ad ||
+                  String(
+                    ad.orderId || ""
+                  ) !==
+                  String(
+                    order.id || ""
+                  )
+                ){
+
+                  return;
+                }
+
+
+                found =
+                  true;
+
+
+                ad.paymentStatus =
+                  "paid";
+
+
+                ad.paymentId =
+                  payment
+                    ? payment.id || ""
+                    : "";
+
+
+                ad.invoiceId =
+                  invoice
+                    ? invoice.id || ""
+                    : "";
+
+
+                ad.invoiceNumber =
+                  invoice
+                    ? invoice.number || ""
+                    : "";
+
+
+                ad.paidAt =
+                  payment &&
+                  payment.confirmedAt
+                    ? payment.confirmedAt
+                    : Date.now();
+
+
+                ad.paidAtFr =
+                  new Date(
+                    ad.paidAt
+                  )
+                  .toLocaleString(
+                    "fr-FR"
+                  );
+
+
+                /*
+                  Le paiement ne vaut PAS
+                  validation éditoriale.
+
+                  La publicité reste soumise
+                  à la validation du responsable.
+                */
+
+                ad.ownerValidated =
+                  false;
+
+
+                ad.ownerValidatedAt =
+                  null;
+
+
+                ad.ownerValidatedAtFr =
+                  "";
+
+
+                ad.validatedVersion =
+                  null;
+
+
+                ad.status =
+                  "waiting_owner_validation";
+
+              }
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+    if(!found){
+
+      return false;
+    }
+
+
+    try{
+
+      localStorage.setItem(
+        BOOKINGS_KEY,
+        JSON.stringify(
+          bookings
+        )
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : activation de la publicité impossible.",
+        error
+      );
+
+      return false;
+    }
+
+
+    if(
+      typeof window.refreshPubTickerV3 ===
+      "function"
+    ){
+
+      window.refreshPubTickerV3();
+    }
+
+
+    if(
+      typeof module.addFinancialEvent ===
+      "function"
+    ){
+
+      module.addFinancialEvent(
+        "advertising_payment_confirmed",
+        {
+
+          orderId:
+            order.id,
+
+          paymentId:
+            payment
+              ? payment.id || ""
+              : "",
+
+          invoiceId:
+            invoice
+              ? invoice.id || ""
+              : ""
+
+        }
+      );
+    }
+
+
+    return true;
+  }
+   
   function finalizeFinancialOrder(
     order,
     payment
@@ -42165,30 +43630,415 @@ document.addEventListener(
     }
 
 
-    const invoice =
-      createInvoiceFromOrder(
-        order,
-        payment
+    /* =====================================================
+       1. FACTURE CENTRALE BO'CITÉART
+
+       Une seule facture par commande.
+       Si elle existe déjà, on la récupère.
+       ===================================================== */
+
+    let invoice =
+      null;
+
+
+    if(order.invoiceId){
+
+      const existingInvoices =
+        (
+          typeof module.getBillingInvoices ===
+          "function"
+        )
+          ? module.getBillingInvoices()
+          : [];
+
+
+      if(
+        Array.isArray(
+          existingInvoices
+        )
+      ){
+
+        invoice =
+          existingInvoices.find(
+            function(item){
+
+              return (
+                String(
+                  item.id || ""
+                ) ===
+                String(
+                  order.invoiceId || ""
+                ) ||
+                String(
+                  item.orderReference || ""
+                ) ===
+                String(
+                  order.id || ""
+                )
+              );
+            }
+          ) || null;
+      }
+
+    }else{
+
+      invoice =
+        createInvoiceFromOrder(
+          order,
+          payment
+        );
+    }
+
+
+    /*
+      createInvoiceFromOrder()
+      peut avoir mis à jour la commande
+      dans le stockage.
+
+      On récupère donc sa version
+      la plus récente.
+    */
+
+    const storedOrders =
+      loadList(
+        ORDERS_KEY
       );
 
+
+    let currentOrder =
+      storedOrders.find(
+        function(item){
+
+          return (
+            String(
+              item.id || ""
+            ) ===
+            String(
+              order.id || ""
+            )
+          );
+        }
+      );
+
+
+    if(!currentOrder){
+
+      currentOrder =
+        order;
+    }
+
+
+    /* =====================================================
+       2. CONTRÔLE AGENT 1
+
+       Commande
+       paiement
+       montant
+       frais PSP
+       net Bo'CitéArt
+       facture
+       transmission
+       ===================================================== */
+
+    let agent1Result =
+      null;
+
+
+    if(
+      typeof module.runFinancialAgent1 ===
+      "function"
+    ){
+
+      agent1Result =
+        module.runFinancialAgent1({
+          orderId:
+            currentOrder.id
+        });
+
+
+      if(
+        !agent1Result ||
+        agent1Result.ok !==
+        true
+      ){
+
+        if(
+          typeof module.addFinancialEvent ===
+          "function"
+        ){
+
+          module.addFinancialEvent(
+            "financial_finalization_stopped_agent1",
+            {
+
+              orderId:
+                currentOrder.id,
+
+              paymentId:
+                payment
+                  ? payment.id || ""
+                  : "",
+
+              invoiceId:
+                invoice
+                  ? invoice.id || ""
+                  : "",
+
+              reason:
+                agent1Result &&
+                agent1Result.reason
+                  ? agent1Result.reason
+                  : "agent1_failed"
+
+            }
+          );
+        }
+
+
+        return {
+
+          ok:false,
+
+          stage:
+            "agent1",
+
+          reason:
+            agent1Result &&
+            agent1Result.reason
+              ? agent1Result.reason
+              : "agent1_failed",
+
+          order:
+            currentOrder,
+
+          payment:
+            payment || null,
+
+          invoice:
+            invoice || null,
+
+          agent1:
+            agent1Result,
+
+          serviceActivated:
+            false
+
+        };
+      }
+    }
+
+
+    /* =====================================================
+       3. CONTRÔLE AGENT 2
+
+       Contrôle indépendant
+       de toute la chaîne.
+       ===================================================== */
+
+    let agent2Result =
+      null;
+
+
+    if(
+      typeof module.runFinancialAgent2 ===
+      "function"
+    ){
+
+      agent2Result =
+        module.runFinancialAgent2(
+          currentOrder.id
+        );
+
+
+      if(
+        !agent2Result ||
+        agent2Result.ok !==
+        true
+      ){
+
+        if(
+          typeof module.addFinancialEvent ===
+          "function"
+        ){
+
+          module.addFinancialEvent(
+            "financial_finalization_stopped_agent2",
+            {
+
+              orderId:
+                currentOrder.id,
+
+              paymentId:
+                payment
+                  ? payment.id || ""
+                  : "",
+
+              invoiceId:
+                invoice
+                  ? invoice.id || ""
+                  : "",
+
+              anomalies:
+                agent2Result &&
+                Array.isArray(
+                  agent2Result.anomalies
+                )
+                  ? agent2Result.anomalies
+                  : []
+
+            }
+          );
+        }
+
+
+        return {
+
+          ok:false,
+
+          stage:
+            "agent2",
+
+          reason:
+            "financial_audit_failed",
+
+          order:
+            currentOrder,
+
+          payment:
+            payment || null,
+
+          invoice:
+            invoice || null,
+
+          agent1:
+            agent1Result,
+
+          agent2:
+            agent2Result,
+
+          serviceActivated:
+            false
+
+        };
+      }
+    }
+
+
+    /* =====================================================
+       4. ACTIVATION DU SERVICE
+
+       Seulement après :
+       paiement confirmé
+       + facture
+       + Agent 1
+       + Agent 2
+       ===================================================== */
 
     let serviceActivated =
       false;
 
 
     if(
-      order.serviceType ===
+      currentOrder.serviceType ===
       "professional_opportunity"
     ){
 
       serviceActivated =
         activateProfessionalOpportunity(
-          order,
+          currentOrder,
           payment,
           invoice
         );
     }
 
+           if(
+      currentOrder.serviceType ===
+      "advertising"
+    ){
+
+      serviceActivated =
+        activateAdvertisingOrder(
+          currentOrder,
+          payment,
+          invoice
+        );
+    }
+
+
+    /*
+      Les autres services seront raccordés
+      ici progressivement :
+
+      advertising
+      employment
+      professional_subscription
+      citizen_subscription
+      directory_premium
+      etc.
+    */
+
+
+    /* =====================================================
+       5. ÉTAT FINAL DE LA COMMANDE
+       ===================================================== */
+
+    const finalOrders =
+      loadList(
+        ORDERS_KEY
+      );
+
+
+    const finalOrder =
+      finalOrders.find(
+        function(item){
+
+          return (
+            String(
+              item.id || ""
+            ) ===
+            String(
+              currentOrder.id || ""
+            )
+          );
+        }
+      );
+
+
+    if(finalOrder){
+
+      finalOrder.financialControlStatus =
+        "validated";
+
+      finalOrder.financialControlCompletedAt =
+        Date.now();
+
+      finalOrder.serviceActivated =
+        Boolean(
+          serviceActivated
+        );
+
+
+      /*
+        Pour les services qui seront
+        raccordés ensuite,
+        l'état pourra devenir "active".
+
+        Pour l'instant,
+        on ne force pas artificiellement
+        l'activation d'un service
+        qui n'a pas encore son raccordement.
+      */
+
+      saveList(
+        ORDERS_KEY,
+        finalOrders
+      );
+    }
+
+
+    /* =====================================================
+       6. JOURNAL CENTRAL
+       ===================================================== */
 
     if(
       typeof module.addFinancialEvent ===
@@ -42200,10 +44050,10 @@ document.addEventListener(
         {
 
           orderId:
-            order.id,
+            currentOrder.id,
 
           serviceType:
-            order.serviceType || "",
+            currentOrder.serviceType || "",
 
           paymentId:
             payment
@@ -42215,8 +44065,24 @@ document.addEventListener(
               ? invoice.id || ""
               : "",
 
+          agent1Status:
+            agent1Result &&
+            agent1Result.order
+              ? agent1Result.order
+                  .agent1Status || ""
+              : "",
+
+          agent2Status:
+            agent2Result &&
+            agent2Result.order
+              ? agent2Result.order
+                  .agent2Status || ""
+              : "",
+
           serviceActivated:
-            serviceActivated
+            Boolean(
+              serviceActivated
+            )
 
         }
       );
@@ -42228,7 +44094,8 @@ document.addEventListener(
       ok:true,
 
       order:
-        order,
+        finalOrder ||
+        currentOrder,
 
       payment:
         payment || null,
@@ -42236,16 +44103,740 @@ document.addEventListener(
       invoice:
         invoice || null,
 
+      agent1:
+        agent1Result,
+
+      agent2:
+        agent2Result,
+
       serviceActivated:
-        serviceActivated
+        Boolean(
+          serviceActivated
+        )
 
     };
   }
 
-
   module.finalizeFinancialOrder =
     finalizeFinancialOrder;
 
+     /* =======================================================
+     3B. PAGE CENTRALE DE PAIEMENT
+     CARTE BANCAIRE / VIREMENT
+     ======================================================= */
+
+  function openCentralPaymentPage(
+    options
+  ){
+
+    const input =
+      options || {};
+
+
+    const order =
+      input.order || null;
+
+
+    if(!order){
+
+      alert(
+        "La commande est introuvable."
+      );
+
+      return;
+    }
+
+
+    const allowCard =
+      input.allowCard !==
+      false;
+
+
+    const allowBankTransfer =
+      input.allowBankTransfer ===
+      true;
+
+
+    const activationNotice =
+      typeof module.getPaymentActivationNotice ===
+      "function"
+        ? module.getPaymentActivationNotice()
+        : {
+            card:
+              "Par carte bancaire, votre service est activé dès confirmation du paiement.",
+            bankTransfer:
+              "Par virement bancaire, votre service est activé après réception et confirmation du règlement."
+          };
+
+
+    const amountHT =
+      Number(
+        order.amountHT || 0
+      );
+
+
+    const vatAmount =
+      Number(
+        order.vatAmount || 0
+      );
+
+
+    const amountTTC =
+      Number(
+        order.amountTTC || 0
+      );
+
+
+    const html = `
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+          border-left:6px solid #2f5d46;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Paiement de votre commande
+        </div>
+
+        ${
+          order.serviceLabel
+            ? `
+                ${String(
+                  order.serviceLabel
+                )}
+                <br><br>
+              `
+            : ""
+        }
+
+        Montant HT :
+        ${amountHT.toFixed(2)}
+        €
+
+        <br>
+
+        TVA :
+        ${vatAmount.toFixed(2)}
+        €
+
+        <br>
+
+        Total TTC :
+        ${amountTTC.toFixed(2)}
+        €
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Activation de votre service
+        </div>
+
+        ${
+          allowCard
+            ? `
+                ${activationNotice.card}
+                <br><br>
+              `
+            : ""
+        }
+
+        ${
+          allowBankTransfer
+            ? activationNotice.bankTransfer
+            : ""
+        }
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:10px;
+          ">
+          Choisissez votre moyen de paiement
+        </div>
+
+
+        ${
+          allowCard
+            ? `
+                <button
+                  id="centralPaymentCardBtn"
+                  class="choiceBtn"
+                  type="button"
+                  style="
+                    width:100%;
+                    background:#ffffff !important;
+                    color:#111111 !important;
+                    font-size:14px;
+                    font-weight:400;
+                  ">
+                  Payer par carte bancaire
+                </button>
+              `
+            : ""
+        }
+
+
+        ${
+          allowBankTransfer
+            ? `
+                <button
+                  id="centralPaymentTransferBtn"
+                  class="choiceBtn"
+                  type="button"
+                  style="
+                    width:100%;
+                    margin-top:8px;
+                    background:#ffffff !important;
+                    color:#111111 !important;
+                    font-size:14px;
+                    font-weight:400;
+                  ">
+                  Payer par virement bancaire
+                </button>
+              `
+            : ""
+        }
+
+      </div>
+
+    `;
+
+
+    function bindCentralPaymentPage(){
+
+      const cardButton =
+        document.getElementById(
+          "centralPaymentCardBtn"
+        );
+
+
+      const transferButton =
+        document.getElementById(
+          "centralPaymentTransferBtn"
+        );
+
+
+      if(cardButton){
+
+        cardButton.onclick =
+          function(){
+
+            openCardPaymentDemo(
+              order
+            );
+
+          };
+      }
+
+
+      if(transferButton){
+
+        transferButton.onclick =
+          function(){
+
+            openBankTransferPayment(
+              order
+            );
+
+          };
+      }
+    }
+
+
+    if(
+      typeof module.renderModulePage ===
+      "function"
+    ){
+
+      module.renderModulePage(
+        "Paiement",
+        html,
+        {
+          showBack:false,
+          showFooter:false
+        }
+      );
+
+
+      window.setTimeout(
+        bindCentralPaymentPage,
+        0
+      );
+
+
+      return;
+    }
+
+
+    if(
+      typeof module.renderModal ===
+      "function"
+    ){
+
+      module.renderModal(
+        "Paiement",
+        html
+      );
+
+
+      window.setTimeout(
+        bindCentralPaymentPage,
+        0
+      );
+
+
+      return;
+    }
+
+
+    alert(
+      "Le paiement est momentanément indisponible."
+    );
+  }
+
+
+  /* =======================================================
+     3C. CARTE BANCAIRE — DÉMO PSP
+     ======================================================= */
+
+  function openCardPaymentDemo(
+    order
+  ){
+
+    if(
+      typeof module.createCardPayment !==
+      "function"
+    ){
+
+      alert(
+        "Le paiement par carte est momentanément indisponible."
+      );
+
+      return;
+    }
+
+
+    const payment =
+      module.createCardPayment(
+        order
+      );
+
+
+    if(!payment){
+
+      alert(
+        "La demande de paiement n'a pas pu être créée."
+      );
+
+      return;
+    }
+
+
+    const html = `
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+          border-left:6px solid #2f5d46;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Paiement sécurisé par carte bancaire
+        </div>
+
+        Dans la version de production,
+        la saisie de la carte
+        sera effectuée directement
+        sur la page sécurisée
+        du prestataire de paiement.
+
+        <br><br>
+
+        Aucune donnée sensible de carte
+        ne sera enregistrée
+        dans Bo'CitéArt.
+
+        <br><br>
+
+        Total à régler :
+        ${Number(
+          order.amountTTC || 0
+        ).toFixed(2)}
+        €
+
+      </div>
+
+
+      <button
+        id="demoConfirmCardPaymentBtn"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px;
+          font-weight:400;
+        ">
+        Simuler le paiement accepté
+      </button>
+
+    `;
+
+
+    function bindCardDemo(){
+
+      const button =
+        document.getElementById(
+          "demoConfirmCardPaymentBtn"
+        );
+
+
+      if(!button){
+        return;
+      }
+
+
+      button.onclick =
+        function(){
+
+          const providerFee =
+            0;
+
+
+          const result =
+            module.confirmCardPayment(
+              payment.id,
+              {
+                paid:true,
+
+                transactionId:
+                  "DEMO-PSP-" +
+                  Date.now(),
+
+                providerFee:
+                  providerFee,
+
+                netPayout:
+                  Number(
+                    order.amountTTC || 0
+                  ) -
+                  providerFee
+              }
+            );
+
+
+          if(
+            !result ||
+            result.ok !==
+            true
+          ){
+
+            alert(
+              "Le paiement n'a pas pu être confirmé."
+            );
+
+            return;
+          }
+
+
+          alert(
+            "Paiement confirmé.\n\n" +
+            "La facture et les contrôles financiers sont maintenant déclenchés."
+          );
+
+        };
+    }
+
+
+    if(
+      typeof module.renderModulePage ===
+      "function"
+    ){
+
+      module.renderModulePage(
+        "Paiement par carte bancaire",
+        html,
+        {
+          showBack:false,
+          showFooter:false
+        }
+      );
+
+
+      window.setTimeout(
+        bindCardDemo,
+        0
+      );
+
+
+      return;
+    }
+
+
+    if(
+      typeof module.renderModal ===
+      "function"
+    ){
+
+      module.renderModal(
+        "Paiement par carte bancaire",
+        html
+      );
+
+
+      window.setTimeout(
+        bindCardDemo,
+        0
+      );
+    }
+  }
+
+
+  /* =======================================================
+     3D. VIREMENT BANCAIRE BO'CITÉART
+     ======================================================= */
+
+  function openBankTransferPayment(
+    order
+  ){
+
+    if(
+      typeof module.createSepaOrBankTransfer !==
+      "function"
+    ){
+
+      alert(
+        "Le paiement par virement est momentanément indisponible."
+      );
+
+      return;
+    }
+
+
+    const payment =
+      module.createSepaOrBankTransfer(
+        order,
+        "bank_transfer"
+      );
+
+
+    if(!payment){
+
+      alert(
+        "Le virement n'a pas pu être préparé."
+      );
+
+      return;
+    }
+
+
+    const config =
+      module.financialConfig ||
+      {};
+
+
+    const html = `
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+          border-left:6px solid #2f5d46;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:8px;
+          ">
+          Virement bancaire
+        </div>
+
+        Montant à régler :
+        ${Number(
+          order.amountTTC || 0
+        ).toFixed(2)}
+        €
+
+        <br><br>
+
+        Référence obligatoire à indiquer
+        dans votre virement :
+
+        <br>
+
+        <strong>
+          ${String(
+            payment.transferReference || ""
+          )}
+        </strong>
+
+        <br><br>
+
+        Titulaire :
+        ${String(
+          config.bankAccountLabel ||
+          "Compte bancaire Bo'CitéArt"
+        )}
+
+        <br>
+
+        IBAN :
+        ${String(
+          config.bankIban ||
+          "À renseigner"
+        )}
+
+        <br>
+
+        BIC :
+        ${String(
+          config.bankBic ||
+          "À renseigner"
+        )}
+
+        <br><br>
+
+        Votre service sera activé
+        après réception
+        et confirmation effective
+        du règlement sur le compte Bo'CitéArt.
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        ">
+
+        Votre commande reste
+        en attente de paiement.
+
+        <br><br>
+
+        Dès que le règlement
+        sera identifié,
+        les contrôles financiers,
+        la facture
+        et l'activation du service
+        seront déclenchés automatiquement.
+
+      </div>
+
+    `;
+
+
+    if(
+      typeof module.renderModulePage ===
+      "function"
+    ){
+
+      module.renderModulePage(
+        "Paiement par virement",
+        html,
+        {
+          showBack:false,
+          showFooter:false
+        }
+      );
+
+      return;
+    }
+
+
+    if(
+      typeof module.renderModal ===
+      "function"
+    ){
+
+      module.renderModal(
+        "Paiement par virement",
+        html
+      );
+    }
+  }
+
+
+  /* =======================================================
+     3E. EXPOSITION DE LA PAGE DE PAIEMENT
+     ======================================================= */
+
+  module.openCentralPaymentPage =
+    openCentralPaymentPage;
+
+  module.openCardPaymentDemo =
+    openCardPaymentDemo;
+
+  module.openBankTransferPayment =
+    openBankTransferPayment;
 
   /* =======================================================
      4. RACCORDEMENT AU PAIEMENT CARTE EXISTANT
