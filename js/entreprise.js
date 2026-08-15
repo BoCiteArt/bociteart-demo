@@ -440,7 +440,7 @@ if(
       });
   }
 
- function cleanEntrepriseModalPresentation(title){
+function cleanEntrepriseModalPresentation(title){
 
   window.setTimeout(function(){
 
@@ -486,6 +486,7 @@ if(
         }
       });
 
+
     /*
       2. Toujours replacer la nouvelle page
       en haut de la fenêtre.
@@ -529,9 +530,12 @@ if(
         });
     });
 
+
     /*
       3. Présentation particulière
-      de l’Observatoire et de l’Annuaire.
+      de l’Observatoire uniquement.
+      L’Annuaire V6 gère désormais
+      lui-même sa présentation.
     */
 
     const normalizedTitle =
@@ -541,10 +545,8 @@ if(
     const isEconomicPage =
       normalizedTitle.includes(
         "observatoire économique"
-      ) ||
-      normalizedTitle.includes(
-        "annuaire économique"
       );
+
 
     if(isEconomicPage){
 
@@ -561,6 +563,7 @@ if(
           box.style.lineHeight =
             "1.65";
         });
+
 
       document
         .querySelectorAll(
@@ -581,6 +584,7 @@ if(
           }
         });
 
+
       document
         .querySelectorAll(
           ".entrepriseInfoBox h2," +
@@ -596,6 +600,7 @@ if(
           titleElement.style.fontWeight =
             "700";
         });
+
 
       /*
         Remise aux couleurs officielles
@@ -623,6 +628,7 @@ if(
             );
           }
 
+
           nodes.forEach(function(node){
 
             const value =
@@ -646,6 +652,7 @@ if(
               return;
             }
 
+
             const fragment =
               document.createDocumentFragment();
 
@@ -654,15 +661,18 @@ if(
                 "Bo'CitéArt"
               );
 
+
             parts.forEach(function(part,index){
 
               if(part){
+
                 fragment.appendChild(
                   document.createTextNode(
                     part
                   )
                 );
               }
+
 
               if(
                 index <
@@ -687,6 +697,7 @@ if(
                 );
               }
             });
+
 
             node.parentNode.replaceChild(
               fragment,
