@@ -13130,115 +13130,631 @@ if(openLegalBtn) openLegalBtn.onclick = openLegal;
 if(closeLegalBtn) closeLegalBtn.onclick = closeLegal;
 if(closeLegalX) closeLegalX.onclick = closeLegal;
    
-const openSecureBtn = $("openSecure");
+const openSecureBtn =
+  $("openSecure");
+
 if(openSecureBtn){
-  openSecureBtn.onclick = function(){
-    openModal("Compte + aide", `
-      <div class="box">
-        <strong>Compte sécurisé — application Bo’CitéArt</strong><br>
-        Sauvegarde du compte Bo’CitéArt, du solde de BociteCoins, jetons, ou coins, de l’historique utile et des réglages de sécurité.
-        Cela ne sauvegarde pas tout le téléphone.
-      </div>
 
-      <div class="box">
-        <strong>Cercle de confiance inclus</strong><br>
-        2 numéros de téléphone sont inclus dès l’abonnement à 2,99 € / mois.
-        L’abonné choisit les personnes à prévenir et leurs numéros.
-      </div>
+  openSecureBtn.onclick =
+    function(){
 
-      <div class="box">
-        <strong>Exemple simple</strong><br>
-        Jean active l’option pour sa mère.
-        Sur le téléphone de sa mère, il enregistre un contact clair :<br><br>
-        <strong>Bo’CitéArt — appeler Jean</strong><br>
-        avec le numéro de téléphone de Jean.<br><br>
-        Sa mère n’a pas besoin de télécharger l’application. En cas de besoin, elle appelle simplement ce contact.
-      </div>
+      openModal(
+        "Compte + aide",
+        `
 
-      <div class="box">
-        <strong>Si le proche installe aussi l’application</strong><br>
-        Il peut créer son propre cercle de confiance : son fils, une voisine, un proche, etc.
-        Chacun garde le contrôle de ses propres contacts.
-      </div>
+          <div
+            class="box"
+            style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.5;
+            ">
 
-      <div class="box">
-        <strong>Veille volontaire par message</strong><br>
-        Si la personne l’accepte, un message peut être envoyé à l’heure choisie :<br><br>
-        “Tout va bien aujourd’hui ?”<br><br>
-        Réponse simple : 🟢 Tout va bien / 🟡 Rappelez-moi / 🔴 Besoin d’aide.
-      </div>
+            <div
+              style="
+                color:#2f5d46;
+                font-size:16px;
+                font-weight:700;
+                margin-bottom:8px;
+              ">
+              Compte sécurisé — application Bo'CitéArt
+            </div>
 
-     <div class="box">
-  <strong>Je choisis mon offre</strong><br><br>
+            Sauvegarde du compte Bo'CitéArt,
+            du solde de bocitecoins,
+            jetons ou coins,
+            de l'historique utile
+            et des réglages de sécurité.
 
-  <label>
-    <input type="radio" name="securePlan" value="2.99" checked>
-    2 contacts de confiance — 2,99 € / mois 
-  </label><br><br>
+            <br><br>
 
-  <label>
-    <input type="radio" name="securePlan" value="3.99">
-    Jusqu’à 5 contacts — 3,99 € / mois
-  </label><br><br>
+            Cela ne sauvegarde pas
+            tout le téléphone.
 
-  <label>
-    <input type="radio" name="securePlan" value="5">
-    Jusqu’à 10 contacts — 5 € / mois
-  </label>
-</div>
+          </div>
 
-<div class="box">
-  <strong>Validation avant paiement</strong><br>
-  <label>
-    <input type="checkbox" id="secureAccept">
-    Je comprends que cette option est un outil volontaire de notification entre proches,
-    et non un service d’assistance, de surveillance ou d’urgence.
-  </label>
-</div>
 
-<div class="choiceGrid">
-  <button class="choiceBtn" type="button" onclick="
-    const plan = document.querySelector('input[name=securePlan]:checked');
-    const ok = document.getElementById('secureAccept');
-    if(!ok || !ok.checked){ alert('Veuillez accepter le cadre du service avant paiement.'); return; }
-    alert('Démo : paiement CB — formule ' + (plan ? plan.value : '2.99') + ' € / mois');
-  ">
-    Payer par CB
-  </button>
+          <div
+            class="box"
+            style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.5;
+            ">
 
-  <button class="choiceBtn" type="button" onclick="
-    const plan = document.querySelector('input[name=securePlan]:checked');
-    const ok = document.getElementById('secureAccept');
-    if(!ok || !ok.checked){ alert('Veuillez accepter le cadre du service avant paiement.'); return; }
-    alert('Démo : paiement RIB / IBAN — formule ' + (plan ? plan.value : '2.99') + ' € / mois');
-  ">
-    Payer par RIB
-  </button>
-</div>
+            <div
+              style="
+                color:#2f5d46;
+                font-size:16px;
+                font-weight:700;
+                margin-bottom:8px;
+              ">
+              Cercle de confiance inclus
+            </div>
 
-      <div class="box">
-        <strong>Mode de paiement</strong><br>
-        Paiement possible par carte bancaire ou prélèvement RIB/IBAN selon l’option choisie.
-      </div>
+            2 numéros de téléphone
+            sont inclus dès l'abonnement
+            à 2,99 € / mois.
 
-      <div class="box">
-        <strong>Cadre important</strong><br>
-        Bo’CitéArt est un outil volontaire de notification entre proches.
-        Ce n’est pas un service d’assistance, de téléassistance, de surveillance, d’urgence ou d’intervention.
-      </div>
+            <br><br>
 
-      <div class="choiceGrid">
-        <button class="choiceBtn" type="button" onclick="alert('Démo : paiement carte bancaire — 2,99 € / mois')">
-          Activer par CB
-        </button>
-        <button class="choiceBtn" type="button" onclick="alert('Démo : paiement par RIB / IBAN — 2,99 € / mois')">
-          Activer par RIB
-        </button>
-      </div>
-    `);
-  };
+            L'abonné choisit
+            les personnes à prévenir
+            et leurs numéros.
+
+          </div>
+
+
+          <div
+            class="box"
+            style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.5;
+            ">
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:16px;
+                font-weight:700;
+                margin-bottom:8px;
+              ">
+              Exemple simple
+            </div>
+
+            Jean active l'option
+            pour sa mère.
+
+            <br><br>
+
+            Sur le téléphone de sa mère,
+            il enregistre un contact clair :
+
+            <br><br>
+
+            Bo'CitéArt — appeler Jean
+
+            <br><br>
+
+            avec le numéro de téléphone
+            de Jean.
+
+            <br><br>
+
+            Sa mère n'a pas besoin
+            de télécharger l'application.
+
+          </div>
+
+
+          <div
+            class="box"
+            style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.5;
+            ">
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:16px;
+                font-weight:700;
+                margin-bottom:8px;
+              ">
+              Si le proche installe aussi l'application
+            </div>
+
+            Il peut créer
+            son propre cercle de confiance :
+            son fils,
+            une voisine,
+            un proche,
+            etc.
+
+            <br><br>
+
+            Chacun garde le contrôle
+            de ses propres contacts.
+
+          </div>
+
+
+          <div
+            class="box"
+            style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.5;
+            ">
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:16px;
+                font-weight:700;
+                margin-bottom:8px;
+              ">
+              Veille volontaire par message
+            </div>
+
+            Si la personne l'accepte,
+            un message peut être envoyé
+            à l'heure choisie :
+
+            <br><br>
+
+            « Tout va bien aujourd'hui ? »
+
+            <br><br>
+
+            Réponse simple :
+            Tout va bien /
+            Rappelez-moi /
+            Besoin d'aide.
+
+          </div>
+
+
+          <div
+            class="box"
+            style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.5;
+            ">
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:16px;
+                font-weight:700;
+                margin-bottom:10px;
+              ">
+              Je choisis mon offre
+            </div>
+
+            <label
+              style="
+                display:block;
+                margin-bottom:12px;
+              ">
+              <input
+                type="radio"
+                name="securePlan"
+                value="2.99"
+                data-contacts="2"
+                checked>
+
+              2 contacts de confiance —
+              2,99 € / mois
+            </label>
+
+
+            <label
+              style="
+                display:block;
+                margin-bottom:12px;
+              ">
+              <input
+                type="radio"
+                name="securePlan"
+                value="3.99"
+                data-contacts="5">
+
+              Jusqu'à 5 contacts —
+              3,99 € / mois
+            </label>
+
+
+            <label
+              style="
+                display:block;
+              ">
+              <input
+                type="radio"
+                name="securePlan"
+                value="5"
+                data-contacts="10">
+
+              Jusqu'à 10 contacts —
+              5 € / mois
+            </label>
+
+          </div>
+
+
+          <div
+            class="box"
+            style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.5;
+              border-left:6px solid #2f5d46;
+            ">
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:16px;
+                font-weight:700;
+                margin-bottom:8px;
+              ">
+              Activation de votre abonnement
+            </div>
+
+            Par carte bancaire,
+            votre abonnement est activé
+            dès confirmation du paiement
+            par notre prestataire de paiement.
+
+            <br><br>
+
+            Par virement bancaire,
+            votre abonnement est activé
+            après réception
+            et confirmation effective
+            du règlement
+            sur le compte Bo'CitéArt.
+
+            <br><br>
+
+            Le délai d'un virement
+            dépend de votre établissement bancaire.
+
+            <br><br>
+
+            Pour une activation
+            la plus rapide possible,
+            privilégiez la carte bancaire.
+
+          </div>
+
+
+          <div
+            class="box"
+            style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.5;
+            ">
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:16px;
+                font-weight:700;
+                margin-bottom:8px;
+              ">
+              Validation avant paiement
+            </div>
+
+            <label>
+
+              <input
+                type="checkbox"
+                id="secureAccept">
+
+              Je comprends que cette option
+              est un outil volontaire
+              de notification entre proches
+              et non un service d'assistance,
+              de surveillance
+              ou d'urgence.
+
+            </label>
+
+          </div>
+
+
+          <button
+            id="secureContinuePaymentBtn"
+            class="choiceBtn"
+            type="button"
+            style="
+              width:100%;
+              background:#ffffff !important;
+              color:#111111 !important;
+              font-size:14px;
+              font-weight:400;
+            ">
+            Continuer vers le paiement
+          </button>
+
+
+          <div
+            class="box"
+            style="
+              margin-top:12px;
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.5;
+            ">
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:16px;
+                font-weight:700;
+                margin-bottom:8px;
+              ">
+              Cadre important
+            </div>
+
+            Bo'CitéArt est un outil volontaire
+            de notification entre proches.
+
+            <br><br>
+
+            Ce n'est pas un service
+            d'assistance,
+            de téléassistance,
+            de surveillance,
+            d'urgence
+            ou d'intervention.
+
+          </div>
+
+        `
+      );
+
+
+      window.setTimeout(
+        function(){
+
+          const paymentButton =
+            $("secureContinuePaymentBtn");
+
+
+          if(!paymentButton){
+
+            return;
+          }
+
+
+          paymentButton.onclick =
+            function(){
+
+              const plan =
+                document.querySelector(
+                  'input[name="securePlan"]:checked'
+                );
+
+
+              const acceptance =
+                $("secureAccept");
+
+
+              if(
+                !acceptance ||
+                !acceptance.checked
+              ){
+
+                alert(
+                  "Veuillez accepter le cadre du service avant de continuer."
+                );
+
+                return;
+              }
+
+
+              if(!plan){
+
+                alert(
+                  "Choisissez une formule."
+                );
+
+                return;
+              }
+
+
+              const amountHT =
+                Number(
+                  plan.value || 0
+                );
+
+
+              const contacts =
+                Number(
+                  plan.getAttribute(
+                    "data-contacts"
+                  ) || 2
+                );
+
+
+              const financialModule =
+                window.BociteEntreprise;
+
+
+              if(
+                !financialModule ||
+                typeof financialModule
+                  .createFinancialOrder !==
+                  "function"
+              ){
+
+                alert(
+                  "Le moteur de commande est momentanément indisponible."
+                );
+
+                return;
+              }
+
+
+              if(
+                typeof financialModule
+                  .openCentralPaymentPage !==
+                  "function"
+              ){
+
+                alert(
+                  "La page de paiement est momentanément indisponible."
+                );
+
+                return;
+              }
+
+
+              const serviceLabel =
+                contacts === 2
+                  ? "Compte sécurisé Bo'CitéArt — 2 contacts de confiance"
+                  : (
+                      contacts === 5
+                        ? "Compte sécurisé Bo'CitéArt — jusqu'à 5 contacts"
+                        : "Compte sécurisé Bo'CitéArt — jusqu'à 10 contacts"
+                    );
+
+
+              const order =
+                financialModule
+                  .createFinancialOrder({
+
+                    productCode:
+                      "CITIZEN_SECURE_" +
+                      contacts,
+
+                    serviceType:
+                      "citizen_subscription",
+
+                    serviceLabel:
+                      serviceLabel,
+
+                    customerType:
+                      "citizen",
+
+                    customerId:
+                      String(
+                        localStorage.getItem(
+                          "bociteart_installation_id_v1"
+                        ) ||
+                        ""
+                      ),
+
+                    customerName:
+                      "",
+
+                    customerEmail:
+                      "",
+
+                    customerSiret:
+                      "",
+
+                    amountHT:
+                      amountHT,
+
+                    vatRate:
+                      20,
+
+                    paymentMethod:
+                      ""
+
+                  });
+
+
+              if(!order){
+
+                alert(
+                  "La commande n'a pas pu être créée."
+                );
+
+                return;
+              }
+
+
+              try{
+
+                localStorage.setItem(
+                  "bociteart_citizen_subscription_pending_v1",
+                  JSON.stringify({
+
+                    orderId:
+                      order.id,
+
+                    contacts:
+                      contacts,
+
+                    monthlyPriceHT:
+                      amountHT,
+
+                    status:
+                      "waiting_payment",
+
+                    createdAt:
+                      Date.now()
+
+                  })
+                );
+
+              }catch(error){
+
+                console.warn(
+                  "Bo'CitéArt : préparation de l'abonnement impossible.",
+                  error
+                );
+              }
+
+
+              financialModule
+                .openCentralPaymentPage({
+
+                  order:
+                    order,
+
+                  allowCard:
+                    true,
+
+                  allowBankTransfer:
+                    true
+
+                });
+
+            };
+
+        },
+        0
+      );
+
+    };
 }
-
 
 const ACK_PREFIX = "bociteart_ack_v2_";
 const ACK_SALT = "BoCiteArt|ack|v2";
