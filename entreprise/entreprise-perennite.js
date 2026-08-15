@@ -29,7 +29,7 @@ function getSustainabilityHtml(){
   style="
     background:#ffffff;
     border:1px solid #e6e6e6;
-    border-left:6px solid #2f5d46; 
+    border-left:6px solid #2f5d46;
     border-radius:16px;
     padding:18px;
     margin:0 0 16px 0;
@@ -332,8 +332,10 @@ function getSustainabilityHtml(){
       font-weight:700;
       line-height:1.4;
     ">
+
     <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
     vous indique les premières portes à ouvrir.
+
   </h2>
 
   <p
@@ -940,6 +942,7 @@ module.registerScreen(
   "perennite",
   openSustainabilityModule
 );
+
 
 module.openSustainabilityModule =
   openSustainabilityModule;
