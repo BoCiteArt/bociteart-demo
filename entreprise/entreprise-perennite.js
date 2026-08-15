@@ -915,6 +915,27 @@ function getSustainabilityHtml(){
 
 </div>
 
+<div
+  style="
+    margin-top:18px;
+  ">
+
+  <button
+    id="perennitePrivateAccessBtn"
+    class="choiceBtn"
+    type="button"
+    style="
+      width:100%;
+      background:#ffffff !important;
+      color:#111111 !important;
+      font-size:14px;
+      font-weight:400;
+    ">
+    Accéder à mon espace privé Pérennité
+  </button>
+
+</div>
+
 `;
 
 }
@@ -935,8 +956,39 @@ function openSustainabilityModule(){
 
   );
 
-}
 
+  window.setTimeout(function(){
+
+    const privateButton =
+      document.getElementById(
+        "perennitePrivateAccessBtn"
+      );
+
+
+    if(privateButton){
+
+      privateButton.onclick =
+        function(){
+
+          if(
+            typeof module.openSustainabilityPrivate ===
+            "function"
+          ){
+
+            module.openSustainabilityPrivate();
+
+            return;
+          }
+
+
+          alert(
+            "L’espace privé Pérennité est momentanément indisponible."
+          );
+        };
+    }
+
+  },0);
+}
 
 module.registerScreen(
   "perennite",
