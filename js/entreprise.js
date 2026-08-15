@@ -17842,7 +17842,7 @@ function renderOpportunities(){
             .toUpperCase()
         : "";
 
-    if(!enteredCode){
+      if(!enteredCode){
 
       alert(
         "Saisissez votre code d’accès entreprise."
@@ -17851,14 +17851,37 @@ function renderOpportunities(){
       return;
     }
 
+
+    /* =====================================================
+       ACCÈS DÉMO TEMPORAIRE
+       Code de test : ent1234
+       À retirer lors du passage en production
+       ===================================================== */
+
+    const realPartnerCode =
+      account
+        ? String(
+            account.partnerCode || ""
+          )
+          .trim()
+          .toUpperCase()
+        : "";
+
+
+    const demoPartnerCode =
+      "ENT1234";
+
+
     if(
       !account ||
-      enteredCode !==
-        String(account.partnerCode || "")
-          .toUpperCase()
+      (
+        enteredCode !== realPartnerCode &&
+        enteredCode !== demoPartnerCode
+      )
     ){
 
       if(status){
+
         status.innerHTML = `
           <div
             class="box"
@@ -17872,13 +17895,15 @@ function renderOpportunities(){
 
             Vérifiez le code communiqué
             à votre entreprise.
+
           </div>
         `;
       }
 
+
       return;
     }
-
+     
     if(
       account.partnerStatus !== "active" ||
       account.partnershipAccepted !== true
