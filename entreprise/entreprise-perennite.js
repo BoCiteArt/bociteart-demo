@@ -20,10 +20,6 @@
     return;
   }
 
-  function getElement(id){
-
-    return document.getElementById(id);
-  }
 
 function getSustainabilityHtml(){
 
@@ -254,6 +250,7 @@ function getSustainabilityHtml(){
   </p>
 
 </div>
+
 
 <div
   style="
@@ -543,6 +540,7 @@ function getSustainabilityHtml(){
 
 </div>
 
+
 <div
   style="
     background:#ffffff;
@@ -790,6 +788,7 @@ function getSustainabilityHtml(){
 
 </div>
 
+
 <div
   style="
     background:#ffffff;
@@ -871,7 +870,7 @@ function getSustainabilityHtml(){
     border-left:6px solid #2f5d46;
     border-radius:16px;
     padding:18px;
-    margin:0 0 16px 0;
+    margin:0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
   ">
 
@@ -914,56 +913,7 @@ function getSustainabilityHtml(){
 
 </div>
 
-
-<div
-  style="
-    display:flex;
-    margin-top:18px;
-  ">
-
-  <button
-    id="perenniteNextBtn"
-    class="choiceBtn"
-    type="button"
-    style="width:100%;">
-
-    Retour à l'espace Entreprise
-
-  </button>
-
-</div>
-
 `;
-
-}
-
-function bindSustainability(){
-
-  const nextButton =
-    getElement(
-      "perenniteNextBtn"
-    );
-
-  if(nextButton){
-
-    nextButton.onclick =
-      function(){
-
-        if(
-          typeof module.openHome ===
-          "function"
-        ){
-          module.openHome();
-          return;
-        }
-
-        module.openScreen(
-          "home"
-        );
-
-      };
-
-  }
 
 }
 
@@ -977,10 +927,8 @@ function openSustainabilityModule(){
     getSustainabilityHtml(),
 
     {
-      showBack:false,
-      showFooter:false,
-      afterRender:
-        bindSustainability
+      showBack:true,
+      showFooter:false
     }
 
   );
@@ -995,6 +943,7 @@ module.registerScreen(
 
 module.openSustainabilityModule =
   openSustainabilityModule;
+
 
 console.log(
   "✅ Nouveau module Pérennité chargé"
