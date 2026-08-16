@@ -554,7 +554,7 @@ Sous différentes formes — reconnaissance, prix, mise à l’honneur — le ta
 
   <br><br>
 
-  Avec l'accompagnement de la mairie,<span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+  Avec l'accompagnement de la mairie, <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
 
   inscrit encore plus fortement
   votre entreprise
@@ -700,7 +700,7 @@ Sous différentes formes — reconnaissance, prix, mise à l’honneur — le ta
 
   Votre entreprise,
   votre commerce,
-  en sera immanquablement informé.
+  en seront immanquablement informé.
 
   <br><br>
 
