@@ -44,6 +44,10 @@ function getPatronageHtml(){
     padding:18px;
     margin:0 0 16px 0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
   ">
 
   <h2
@@ -54,85 +58,57 @@ function getPatronageHtml(){
       font-weight:700;
       line-height:1.4;
     ">
-    Savez-vous vraiment ce qu'est le mécénat ?
+    Le mécénat, le connaissez-vous vraiment&nbsp;?
   </h2>
 
-  <p
-    style="
-      margin:0;
-      color:#000000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
+  À quoi sert-il réellement ?
 
-    Selon vous...
+  <br><br>
 
-    <br><br>
+  J'ai posé cette question
+  à de nombreux dirigeants d'entreprises.
 
-    <strong>
-      qu'est-ce que le mécénat ?
-    </strong>
+  <br><br>
 
-    <br><br>
+  Les réponses reviennent souvent :
 
-    À quoi sert-il réellement ?
+  <br><br>
 
-    <br><br>
+  « C'est donner de l'argent. »
 
-    J'ai posé cette question
-    à de nombreux dirigeants d'entreprises.
+  <br><br>
 
-    <br><br>
+  « C'est encore une dépense. »
 
-    Les réponses reviennent souvent :
+  <br><br>
 
-    <br><br>
+  « C'est surtout une histoire
+  de réduction d'impôts. »
 
-    <strong>
-      « C'est donner de l'argent. »
-    </strong>
+  <br><br>
 
-    <br><br>
+  « Ce n'est pas pour une entreprise
+  comme la mienne. »
 
-    <strong>
-      « C'est encore une dépense. »
-    </strong>
+  <br><br>
 
-    <br><br>
+  Toutes ces réponses sont sincères.
 
-    <strong>
-      « C'est surtout une histoire
-      de réduction d'impôts. »
-    </strong>
+  <br><br>
 
-    <br><br>
+  Elles traduisent simplement
+  l'image que beaucoup se font encore
+  du mécénat.
 
-    <strong>
-      « Ce n'est pas pour une entreprise
-      comme la mienne. »
-    </strong>
+  <br><br>
 
-    <br><br>
+  Et pourtant...
 
-    Toutes ces réponses sont sincères.
+  <br>
 
-    <br><br>
-
-    Elles traduisent simplement
-    l'image que beaucoup se font encore
-    du mécénat.
-
-    <br><br>
-
-    <strong>
-      Et pourtant...
-      elles ne représentent
-      qu'une toute petite partie
-      de ce qu'il est réellement.
-    </strong>
-
-  </p>
+  elles ne représentent
+  qu'une toute petite partie
+  de ce qu'il est réellement.
 
 </div>
 
@@ -146,6 +122,10 @@ function getPatronageHtml(){
     padding:18px;
     margin:0 0 16px 0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
   ">
 
   <h2
@@ -158,41 +138,27 @@ function getPatronageHtml(){
     ">
     Comment permettre à votre entreprise
     de s'enraciner durablement
-    au cœur de sa commune
-    et de son territoire ?
+    dans sa commune ?
   </h2>
 
-  <p
-    style="
-      margin:0;
-      color:#000000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
+  Comment continuer à vivre
+  dans la mémoire des habitants...
 
-    <strong>
-      Comment continuer à vivre
-      dans la mémoire des habitants...
-    </strong>
+  <br><br>
 
-    <br><br>
+  Sans bruit.
 
-    Sans bruit.
+  <br><br>
 
-    <br><br>
+  Sans démarchage.
 
-    Sans démarchage.
+  <br><br>
 
-    <br><br>
+  Sans flyers.
 
-    Sans flyers.
+  <br><br>
 
-    <br><br>
-
-    Sans publicité.
-
-  </p>
+  Sans publicité.
 
 </div>
 
@@ -206,6 +172,10 @@ function getPatronageHtml(){
     padding:18px;
     margin:0 0 16px 0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
   ">
 
   <h2
@@ -219,54 +189,39 @@ function getPatronageHtml(){
     Chaque soir...
   </h2>
 
-  <p
-    style="
-      margin:0;
-      color:#000000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
+  vous fermez votre entreprise.
 
-    vous fermez votre entreprise.
+  <br><br>
 
-    <br><br>
+  Vous rentrez chez vous.
 
-    Vous rentrez chez vous.
+  <br><br>
 
-    <br><br>
+  Pourtant...
+  votre entreprise continue de s'exprimer.
 
-    <strong>
-      Pourtant...
-      votre entreprise continue de s'exprimer.
-    </strong>
+  <br><br>
 
-    <br><br>
+  Toujours sans un bruit.
 
-    Toujours sans un bruit.
+  <br><br>
 
-    <br><br>
+  Grâce à votre participation,
+  votre signature rejoint celles
+  de toutes celles et ceux
+  qui ont contribué à la faire vivre.
 
-    <strong>
-      Grâce à votre participation,
-      votre signature rejoint celles
-      de toutes celles et ceux
-      qui ont contribué à la faire vivre.
-    </strong>
+  <br><br>
 
-    <br><br>
+  Visible.
 
-    Visible.
+  <br>
 
-    <br>
+  Présente.
 
-    Présente.
+  <br>
 
-    <br>
-
-    Inscrite dans votre commune.
-
-  </p>
+  Inscrite dans votre commune.
 
 </div>
 
@@ -280,6 +235,10 @@ function getPatronageHtml(){
     padding:18px;
     margin:0 0 16px 0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
   ">
 
   <h2
@@ -290,93 +249,87 @@ function getPatronageHtml(){
       font-weight:700;
       line-height:1.4;
     ">
-    L'art raconte bien plus
-    que ce que l'on voit
+
+    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+
+    révèle l'Art d'une autre façon
+
   </h2>
 
-  <p
-    style="
-      margin:0;
-      color:#000000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
+  Le mécénat ne se voit pas.
 
-    Il réveille une histoire.
+  <br><br>
 
-    <br><br>
+  Seul un remerciement sobre
+  témoigne de votre participation.
 
-    Celle d'un quartier.
+  <br><br>
 
-    <br><br>
+  Mais cette participation
+  rend possible
+  ce que chacun découvrira ensuite...
 
-    De celles et ceux
-    qui l'ont fait vivre hier...
+  <br><br>
 
-    <br><br>
+  et laissera votre trace
+  bien plus forte
+  que vous ne l'imaginiez.
 
-    et de celles et ceux
-    qui le font vivre aujourd'hui.
+  <br><br>
 
-    <br><br>
+  L'Art réveille une histoire.
 
-    Un événement.
+  <br><br>
 
-    <br>
-    Un lieu.
+  Celle d'un quartier.
 
-    <br>
-    Un métier.
+  <br><br>
 
-    <br>
-    Une personnalité.
+  De ce qui l'a fait vivre hier...
 
-    <br>
-    Un artiste.
+  <br><br>
 
-    <br>
-    Une association.
+  Un lieu.
 
-    <br>
-    Une entreprise.
+  <br>
 
-    <br>
-    Une génération.
+  Un événement.
 
-    <br><br>
+  <br>
 
-    <strong>
-      L'art révèle bien mieux,
-      bien plus,
-      ce qui se cache derrière chacun...
-      et met aussi en lumière
-      vos propres talents.
-    </strong>
+  Un métier.
 
-    <br><br>
+  <br>
 
-    Il rapproche les générations.
+  Une personnalité.
 
-    <br>
+  <br>
 
-    Il réveille la mémoire.
+  Un artiste.
 
-    <br>
+  <br>
 
-    Il révèle le présent.
+  Une association.
 
-    <br><br>
+  <br>
 
-    <strong>
-      Il devient un trait d'union
-      entre ce qui a construit
-      votre territoire
-      et tout ce qui le fait vivre
-      aujourd'hui.
-    </strong>
+  Une entreprise.
 
-  </p>
+  <br>
+
+  Une génération.
+
+  <br><br>
+
+  L'Art révèle bien mieux,
+  bien plus,
+  ce qui existe autour de nous
+  et permet de mettre en lumière
+  votre propre talent.
+
+  <br><br>
+
+  Il relie la mémoire au présent.
 
 </div>
 
@@ -390,6 +343,10 @@ function getPatronageHtml(){
     padding:18px;
     margin:0 0 16px 0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
   ">
 
   <h2
@@ -400,107 +357,62 @@ function getPatronageHtml(){
       font-weight:700;
       line-height:1.4;
     ">
-    L'art révélé fera vivre
+    L'Art révélé fera vivre
     tous les chemins,
     toutes les rues de la commune
   </h2>
 
-  <p
-    style="
-      margin:0;
-      color:#000000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
+  Les habitants participent.
 
-    Tous les habitants sont invités
-    à participer,
-    selon leur volonté,
-    leurs envies
-    et leurs talents.
+  <br><br>
 
-    <br><br>
+  Puis ils découvrent
+  ou redécouvrent leur quartier,
+  ses entreprises,
+  ses métiers
+  et ses savoir-faire,
+  bien au-delà
+  de ce qu'ils en connaissaient
+  jusqu'ici.
 
-    Puis enfin,
-    ils découvrent ou redécouvrent
-    leur quartier,
-    ses entreprises,
-    ses métiers
-    et ses savoir-faire,
+  <br><br>
 
-    <strong>
-      bien au-delà
-      de ce qu'ils en connaissaient
-      jusqu'ici.
-    </strong>
+  Les salariés s'y reconnaissent.
 
-    <br><br>
+  <br><br>
 
-    Les salariés s'y reconnaissent.
+  Les écoles découvrent autrement
+  leur territoire.
 
-    <br><br>
+  <br><br>
 
-    Les écoles découvrent autrement
-    les métiers
-    et les savoir-faire
-    de leur territoire.
+  Les générations se rencontrent.
 
-    <br><br>
+  <br><br>
 
-    Les générations se rencontrent.
+  Les talents se réveillent.
 
-    <br><br>
+  <br>
 
-    Les talents se réveillent.
+  Les talents se révèlent.
 
-    <br>
+  <br><br>
 
-    Les talents se révèlent.
+  Et pour chaque habitant,
+  parce que le projet revient
+  tous les deux ans,
+  vous aurez toujours
+  la possibilité
+  de faire découvrir
+  ce que vous savez faire.
 
-    <br><br>
+  <br><br>
 
-    Les regards changent.
+  À vos talents donc... !
 
-    <br>
+  <br><br>
 
-    La connaissance grandit.
-
-    <br><br>
-
-    Et parce que le projet revient
-    <strong>tous les deux ans</strong>,
-    vous aurez toujours
-    une nouvelle occasion
-    de faire découvrir
-    ce que vous savez faire.
-
-    <br><br>
-
-    <strong>
-      « Ça aussi, je peux le faire. »
-    </strong>
-
-    <br><br>
-
-    <strong>
-      À vos talents donc... !
-    </strong>
-
-    <br><br>
-
-    Les talents mis à l'honneur
-    seront aussi récompensés.
-
-    <br><br>
-
-    <strong>
-      Et cette reconnaissance
-      fera vivre à son tour
-      le commerce local.
-    </strong>
-
-  </p>
+  Les talents sont récompensés.
 
 </div>
 
@@ -514,6 +426,10 @@ function getPatronageHtml(){
     padding:18px;
     margin:0 0 16px 0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
   ">
 
   <h2
@@ -524,109 +440,90 @@ function getPatronageHtml(){
       font-weight:700;
       line-height:1.4;
     ">
-    C'est aussi là,
-    ici,
-    que votre entreprise entre dans l'histoire
+    C'est aussi ici
+    que votre entreprise
+    entre dans l'histoire
   </h2>
 
-  <p
-    style="
-      margin:0;
-      color:#000000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
+  Non par une publicité.
 
-    Non par une publicité.
+  <br><br>
 
-    <br><br>
+  Non par un slogan.
 
-    Non par un slogan.
+  <br><br>
 
-    <br><br>
+  Mais en contribuant
+  à ce qui appartient réellement
+  à la vie...
 
-    Mais
+  <br>
 
-    <strong>
-      en contribuant à ce qui appartient
-      réellement à la vie...
-      à votre vie dans la commune.
-    </strong>
+  à votre vie dans la commune.
 
-    <br><br>
+  <br><br>
 
-    Hier,
-    comme la plupart d'entre nous,
-    nous passions devant votre entreprise
-    sans réellement savoir
-    qui vous étiez.
+  Hier,
+  comme la plupart d'entre nous,
+  nous passions devant votre entreprise
+  sans réellement savoir
+  qui vous étiez.
 
-    <br><br>
+  <br><br>
 
-    Ce que vous faisiez.
+  Ce que vous faisiez.
 
-    <br>
+  <br>
 
-    Ce que vous produisiez.
+  Ce que vous produisiez.
 
-    <br>
+  <br>
 
-    Pour qui.
+  Pour qui.
 
-    <br><br>
+  <br><br>
 
-    Les métiers
-    et les savoir-faire
-    qui vivent derrière vos murs.
+  Ni les métiers
+  et les savoir-faire
+  qui vivent derrière vos murs.
 
-    <br><br>
+  <br><br>
 
-    Votre entreprise était là.
+  Votre entreprise était là.
 
-    <br><br>
+  <br><br>
 
-    <strong>
-      Mais la connaissions-nous
-      véritablement ?
-    </strong>
+  Mais la connaissions-nous
+  véritablement ?
 
-    <br><br>
+  <br><br>
 
-    Aujourd'hui,
-    les regards changent.
+  Aujourd'hui,
+  les regards changent.
 
-    <br><br>
+  <br><br>
 
-    <strong>
-      Votre entreprise
-      n'est pas simplement
-      présente dans la ville.
-    </strong>
+  Votre entreprise
+  n'est pas simplement
+  présente dans la ville.
 
-    <br><br>
+  <br><br>
 
-    <strong>
-      Elle devient véritablement
-      connue,
-      comprise
-      et reconnue.
-    </strong>
+  Elle devient véritablement
+  connue,
+  comprise
+  et reconnue.
 
-    <br><br>
+  <br><br>
 
-    Une publicité attire un regard.
+  Une publicité attire un regard.
 
-    <br><br>
+  <br><br>
 
-    <strong>
-      Une présence,
-      une signature
-      bien construites dans le temps
-      laissent obligatoirement une trace.
-    </strong>
-
-  </p>
+  Une présence,
+  une signature
+  bien construites dans le temps
+  laissent obligatoirement une trace.
 
 </div>
 
@@ -640,6 +537,10 @@ function getPatronageHtml(){
     padding:18px;
     margin:0 0 16px 0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
   ">
 
   <h2
@@ -656,80 +557,61 @@ function getPatronageHtml(){
     désormais
   </h2>
 
-  <p
-    style="
-      margin:0;
-      color:#000000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
+  Vous n'êtes plus simplement
+  installé à une adresse.
 
-    En associant habitants,
-    écoles,
-    artistes,
-    salariés,
-    entreprises,
-    commerces,
-    associations
-    et acteurs du territoire...
+  <br><br>
 
-    <br><br>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
 
-    <strong>
+  inscrit naturellement
+  votre entreprise
+  dans la vie de la commune.
 
-      <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+  <br><br>
 
-      développe,
-      fonde
-      et inscrit naturellement
-      votre appartenance
-      dans la vie de la commune.
+  Vous faites partie
+  de ce qui vit autour de vous.
 
-    </strong>
+  <br><br>
 
-    <br><br>
+  Et ce que l'on contribue
+  à construire...
 
-    Vous n'êtes plus simplement
-    installé à une adresse.
+  <br><br>
 
-    <br><br>
+  on le mémorise davantage...
 
-    <strong>
-      Vous faites partie
-      de ce qui vit autour de vous.
-    </strong>
+  <br><br>
 
-    <br><br>
+  on le respecte...
 
-    Et ce que l'on contribue
-    à construire...
+  <br><br>
 
-    <br><br>
+  on le préserve...
 
-    <strong>
-      on le mémorise davantage...
-    </strong>
+  <br><br>
 
-    <br><br>
+  et l'on en est fier.
 
-    <strong>
-      on le respecte...
-    </strong>
+  <br><br>
 
-    <br><br>
+  Avec le temps,
+  votre engagement,
+  votre présence
+  et votre contribution
+  restent inscrits
+  dans votre propre historique,
+  mais aussi et surtout
+  dans celui de votre commune.
 
-    <strong>
-      on le préserve...
-    </strong>
+  <br><br>
 
-    <br><br>
+  Votre fiche
 
-    <strong>
-      et l'on en est fier.
-    </strong>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
 
-  </p>
+  en conservera la mémoire.
 
 </div>
 
@@ -743,6 +625,10 @@ function getPatronageHtml(){
     padding:18px;
     margin:0 0 16px 0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
   ">
 
   <h2
@@ -753,270 +639,35 @@ function getPatronageHtml(){
       font-weight:700;
       line-height:1.4;
     ">
-    Le mécénat génère donc
-    bien plus de retombées positives
-    que nous ne l'imaginions
-  </h2>
-
-  <p
-    style="
-      margin:0;
-      color:#000000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
-
-    Ou,
-    plus simplement encore...
-
-    <br><br>
-
-    <strong>
-      bien plus que beaucoup d'entre nous
-      n'en avaient réellement compris le sens.
-    </strong>
-
-    <br><br>
-
-    Une inauguration.
-
-    <br>
-
-    Un article.
-
-    <br>
-
-    Un reportage.
-
-    <br>
-
-    Une reconnaissance.
-
-    <br>
-
-    La mise en valeur d'un talent,
-    d'un savoir-faire,
-    d'une innovation
-    ou d'une réalisation.
-
-    <br><br>
-
-    Votre nom prend désormais un sens.
-
-    <br><br>
-
-    Votre activité devient compréhensible.
-
-    <br><br>
-
-    Votre présence devient identifiable.
-
-    <br><br>
-
-    Vos métiers deviennent visibles.
-
-    <br><br>
-
-    <strong>
-      Notoriété,
-      crédibilité
-      et ancrage
-      se construisent alors
-      dans le temps.
-    </strong>
-
-    <br><br>
-
-    Le mécénat prend ainsi
-    tout son sens :
-
-    <br><br>
-
-    <strong>
-      c'est un véritable investissement
-      dans votre territoire,
-      votre connaissance,
-      votre reconnaissance
-      et votre avenir.
-    </strong>
-
-    <br><br>
-
-    Ce n'est plus une dépense
-    que l'on regarde partir.
-
-    <br><br>
-
-    <strong>
-      C'est une valeur
-      que l'on construit
-      et qui continue de vivre.
-    </strong>
-
-  </p>
-
-</div>
-
-
-<div
-  style="
-    background:#ffffff;
-    border:1px solid #e6e6e6;
-    border-left:6px solid #2f5d46;
-    border-radius:16px;
-    padding:18px;
-    margin:0 0 16px 0;
-    box-shadow:0 1px 3px rgba(0,0,0,.06);
-  ">
-
-  <h2
-    style="
-      margin:0 0 14px 0;
-      color:#2f5d46;
-      font-size:17px;
-      font-weight:700;
-      line-height:1.4;
-    ">
-    Au fil des années...
-  </h2>
-
-  <p
-    style="
-      margin:0;
-      color:#000000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
-
-    Le temps passe.
-
-    <br><br>
-
-    Mais les engagements restent.
-
-    <br>
-
-    Les réalisations restent.
-
-    <br>
-
-    Les rencontres restent.
-
-    <br>
-
-    Les histoires restent.
-
-    <br>
-
-    La mémoire de celles et ceux
-    qui ont participé reste.
-
-    <br><br>
-
-    <strong>
-      Votre fiche avec
-
-      <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
-
-      conservera progressivement
-      la mémoire de votre engagement
-      et de votre contribution à la vie :
-      pour votre propre historique,
-      mais aussi et surtout
-      pour celui de votre commune.
-    </strong>
-
-    <br><br>
-
-    Votre présence s'inscrit
-    dans le temps.
-
-    <br><br>
-
-    Votre notoriété ne se construit
-    alors plus seulement
-    par ce que vous dites
-    de votre entreprise...
-
-    <br><br>
-
-    <strong>
-      mais aussi par tout ce que
-      les autres savent désormais d'elle.
-    </strong>
-
-  </p>
-
-</div>
-
-
-<div
-  style="
-    background:#ffffff;
-    border:1px solid #e6e6e6;
-    border-left:6px solid #2f5d46;
-    border-radius:16px;
-    padding:18px;
-    margin:0 0 16px 0;
-    box-shadow:0 1px 3px rgba(0,0,0,.06);
-  ">
-
-  <h2
-    style="
-      margin:0 0 14px 0;
-      color:#2f5d46;
-      font-size:17px;
-      font-weight:700;
-      line-height:1.4;
-    ">
-    Le mécénat est également
+    Le mécénat est aussi
     un engagement reconnu
   </h2>
 
-  <p
-    style="
-      margin:0;
-      color:#000000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
+  Selon la situation
+  de votre entreprise
+  et sous réserve
+  de la législation en vigueur,
+  certaines actions de mécénat
+  ouvrent droit
+  aux avantages fiscaux
+  prévus par la loi
+  lorsqu'elles remplissent
+  les conditions requises.
 
-    Selon la situation
-    de votre entreprise
-    et sous réserve
-    de la législation en vigueur,
-    certaines actions de mécénat
-    ouvrent droit
-    aux avantages fiscaux
-    prévus par la loi
-    lorsqu'elles remplissent
-    les conditions requises.
+  <br><br>
 
-    <br><br>
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
 
-    <strong>
+  vous aide à mieux comprendre
+  ce dispositif
+  et facilite,
+  lorsque cela devient nécessaire,
+  la mise en relation
+  avec les professionnels compétents.
 
-      <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+  <br><br>
 
-      vous aide à mieux comprendre
-      ce dispositif
-      et facilite,
-      lorsque cela devient nécessaire,
-      la mise en relation
-      avec les professionnels compétents.
-
-    </strong>
-
-    <br><br>
-
-    <strong>
-      Parlons-en... ?
-    </strong>
-
-  </p>
+  Parlons-en.
 
 </div>
 
@@ -1030,6 +681,10 @@ function getPatronageHtml(){
     padding:18px;
     margin:0 0 16px 0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
   ">
 
   <h2
@@ -1040,69 +695,46 @@ function getPatronageHtml(){
       font-weight:700;
       line-height:1.4;
     ">
-    Et demain ?
+    Et demain...
   </h2>
 
-  <p
-    style="
-      margin:0;
-      color:#000000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
+  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
 
-    <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#c62828;font-weight:700;">Art</span>
+  ne dévoile pas à l'avance
+  ce qui prendra vie
+  dans votre commune.
 
-    ne dévoile pas à l'avance
-    ce qui prendra vie
-    dans votre commune.
+  <br><br>
 
-    <br><br>
+  Votre entreprise,
+  votre commerce,
+  en sera immanquablement informé.
 
-    <strong>
-      Votre entreprise
-      ou votre commerce
-      en sera immanquablement informé.
-    </strong>
+  <br><br>
 
-    <br><br>
+  Chacun choisira alors
+  la place qu'il souhaite prendre.
 
-    Chacun choisira alors
-    la place qu'il souhaite prendre.
+  <br><br>
 
-    <br><br>
+  Avancer ou pas.
 
-    <strong>
-      Avancer ou pas.
-    </strong>
+  <br><br>
 
-    <br><br>
+  Prendre sa place ou pas.
 
-    <strong>
-      Prendre sa place ou pas.
-    </strong>
+  <br><br>
 
-    <br><br>
+  Mais vous saurez
+  que l'occasion est là.
 
-    Mais une chose sera certaine :
+  <br><br>
 
-    <br><br>
-
-    <strong>
-      vous saurez
-      que l'occasion est là.
-    </strong>
-
-    <br><br>
-
-    Car regarder ensuite
-    ce qui aura été construit
-    ne remplacera jamais
-    le fait d'avoir participé
-    à son histoire.
-
-  </p>
+  Regarder ensuite
+  ce qui aura été construit
+  ne remplacera jamais
+  le fait d'avoir participé
+  à son histoire.
 
 </div>
 
@@ -1116,6 +748,10 @@ function getPatronageHtml(){
     padding:18px;
     margin:0 0 16px 0;
     box-shadow:0 1px 3px rgba(0,0,0,.06);
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
   ">
 
   <h2
@@ -1129,51 +765,31 @@ function getPatronageHtml(){
     Les plus solides fondations...
   </h2>
 
-  <p
-    style="
-      margin:0;
-      color:#000000;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.6;
-    ">
+  ne sont pas uniquement
+  celles qui portent un bâtiment.
 
-    ne sont pas uniquement
-    celles qui portent un bâtiment.
+  <br><br>
 
-    <br><br>
+  Ce sont aussi celles
+  qui permettent
+  à votre entreprise
+  de prendre racine
+  et de continuer à vivre
+  dans la mémoire
+  des générations qui suivront.
 
-    <strong>
-      Ce sont celles
-      qui permettent
-      à votre entreprise
-      de prendre racine,
-      de grandir
-      et de continuer à vivre
-      dans la mémoire
-      des générations
-      qui suivront...
-    </strong>
+  <br><br>
 
-    <br><br>
+  Ce que vous construisez
+  aujourd'hui
+  dans votre territoire
+  participe directement
+  à ce que votre entreprise
+  sera...
 
-    bien après
-    que nous aurons tous
-    quitté la scène.
+  <br>
 
-    <br><br>
-
-    <strong>
-      Ce que vous construisez
-      aujourd'hui
-      dans votre territoire
-      participe directement
-      à ce que votre entreprise
-      sera...
-      ou laissera demain.
-    </strong>
-
-  </p>
+  ou laissera demain.
 
 </div>
 
