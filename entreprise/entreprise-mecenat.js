@@ -398,21 +398,13 @@ function getPatronageHtml(){
 
   <br><br>
 
-  Et pour chaque habitant,
-  parce que le projet revient
-  tous les deux ans,
-  vous aurez toujours
-  la possibilité
-  de faire découvrir
-  ce que vous savez faire.
+  Et pour chaque habitant, parce que ce type de projet reviendra tous les deux ans, vous aurez toujours la possibilité et l’occasion de faire découvrir l’un de vos talents dans ce cadre-là.
+
+Sous différentes formes — reconnaissance, prix, mise à l’honneur — le talent finit toujours par être récompensé.
 
   <br><br>
 
   À vos talents donc... !
-
-  <br><br>
-
-  Les talents sont récompensés.
 
 </div>
 
@@ -562,9 +554,9 @@ function getPatronageHtml(){
 
   <br><br>
 
-  <span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
+  Avec l'accompagnement de la mairie,<span style="color:#2f5d46;font-weight:700;">Bo'Cité</span><span style="color:#b00020;font-weight:700;">Art</span>
 
-  inscrit naturellement
+  inscrit encore plus fortement
   votre entreprise
   dans la vie de la commune.
 
