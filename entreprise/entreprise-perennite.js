@@ -950,11 +950,13 @@ function openSustainabilityModule(){
     getSustainabilityHtml(),
 
     {
-      showBack:true,
+      showBack:false,
       showFooter:false
     }
 
   );
+
+}
 
 
   window.setTimeout(function(){
