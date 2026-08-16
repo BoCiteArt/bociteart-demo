@@ -9562,16 +9562,16 @@ function getMutualisationAlerts(){
       </select>
 
 
-      <label
-        style="
-          display:block;
-          margin-top:10px;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-        ">
-        À qui souhaiteriez-vous transmettre l’entreprise ?
-      </label>
+    <label
+  style="
+    display:block;
+    margin-top:10px;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+  ">
+  À qui souhaiteriez-vous transmettre l’entreprise ?
+</label>
 
       <select
         id="sustainabilityPreferredBuyer"
@@ -9647,15 +9647,15 @@ function getMutualisationAlerts(){
           line-height:1.6;
         ">
 
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            margin-bottom:8px;
-          ">
-          Démarches déjà engagées
-        </div>
+      <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  Démarches déjà engagées
+</div>
 
 
         <label class="miniCheck">
@@ -24208,9 +24208,17 @@ button.textContent =
           class="box"
           style="border-left:6px solid #2f5d46;">
 
-          <strong style="font-size:19px;">
-            ${escapeValue(data.companyName)}
-          </strong>
+       <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  ${escapeValue(
+    data.companyName
+  )}
+</div>
 
           <br><br>
 
@@ -34890,23 +34898,21 @@ font-weight:400;
 
     app.renderModal(
       "Préparez l’avenir de votre entreprise",
-      `
-        <button
-          id="correctedSustainabilityBackBtn"
-          class="choiceBtn"
-          type="button"
-          style="margin-bottom:14px;">
-          Retour
-        </button>
-
+      ` 
         <div
           class="box"
           style="border-left:6px solid #2f5d46;">
 
-          <strong style="font-size:18px;">
-            Préparez l’avenir
-            de votre entreprise
-          </strong>
+ <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  Préparez l’avenir
+  de votre entreprise
+</div>
 
           <br><br>
 
@@ -34927,11 +34933,16 @@ font-weight:400;
 
         <div class="box">
 
-          <strong>
-            À qui souhaiteriez-vous
-            transmettre votre entreprise ?
-          </strong>
-
+        <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  À qui souhaiteriez-vous
+  transmettre votre entreprise ?
+</div>
           <br><br>
 
           À vos enfants,
@@ -34949,9 +34960,15 @@ font-weight:400;
 
         <div class="box">
 
-          <strong>
-            Combien vaut réellement votre entreprise ?
-          </strong>
+         <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  Combien vaut réellement votre entreprise ?
+</div>
 
           <br><br>
 
@@ -34978,9 +34995,15 @@ font-weight:400;
 
         <div class="box">
 
-          <strong>
-            Faites d’abord connaître votre entreprise
-          </strong>
+        <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  Faites d’abord connaître votre entreprise
+</div>
 
           <br><br>
 
@@ -35005,9 +35028,15 @@ font-weight:400;
 
         <div class="box">
 
-          <strong>
-            Les premiers interlocuteurs possibles
-          </strong>
+         <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  Les premiers interlocuteurs possibles
+</div>
 
           <br><br>
 
@@ -35066,10 +35095,16 @@ font-weight:400;
             border-left:6px solid #2f5d46;
           ">
 
-          <strong style="font-size:17px;">
-            Mon projet de transmission
-            ou de continuité
-          </strong>
+       <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  Mon projet de transmission
+  ou de continuité
+</div>
 
           <br><br>
 
@@ -35077,9 +35112,14 @@ font-weight:400;
           à l’entreprise.
         </div>
 
-        <label style="font-weight:900;">
-          Nom de l’entreprise
-        </label>
+       <label
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+  ">
+  Nom de l’entreprise
+</label>
 
         <input
           id="correctedSustainabilityCompanyName"
@@ -35091,13 +35131,15 @@ font-weight:400;
           placeholder="Nom de l’entreprise">
 
         <label
-          style="
-            display:block;
-            margin-top:10px;
-            font-weight:900;
-          ">
-          Quel projet envisagez-vous ?
-        </label>
+  style="
+    display:block;
+    margin-top:10px;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+  ">
+  Quel projet envisagez-vous ?
+</label>
 
         <select
           id="correctedSustainabilityProjectType"
@@ -35745,9 +35787,15 @@ font-weight:400;
 
         <div class="box">
 
-          <strong>
-            Projet envisagé
-          </strong>
+          <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  Projet envisagé
+</div>
 
           <br><br>
 
@@ -35775,9 +35823,15 @@ font-weight:400;
 
         <div class="box">
 
-          <strong>
-            Échéance envisagée
-          </strong>
+        <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  Échéance envisagée
+</div>
 
           <br><br>
 
@@ -35789,9 +35843,15 @@ font-weight:400;
 
         <div class="box">
 
-          <strong>
-            Démarches engagées
-          </strong>
+         <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  Démarches engagées
+</div>
 
           <br><br>
 
@@ -35810,9 +35870,15 @@ font-weight:400;
 
         <div class="box">
 
-          <strong>
-            Notes confidentielles
-          </strong>
+         <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  Notes confidentielles
+</div>
 
           <br><br>
 
@@ -35824,9 +35890,15 @@ font-weight:400;
 
         <div class="box">
 
-          <strong>
-            Prochaine action
-          </strong>
+         <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  Prochaine action
+</div>
 
           <br><br>
 
@@ -35838,9 +35910,15 @@ font-weight:400;
 
         <div class="box">
 
-          <strong>
-            Dernière mise à jour
-          </strong>
+          <div
+  style="
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.6;
+  ">
+  Dernière mise à jour
+</div>
 
           <br><br>
 
@@ -35852,19 +35930,6 @@ font-weight:400;
       `
     );
 
-    window.setTimeout(function(){
-
-      const backButton =
-        getElement(
-          "correctedSustainabilitySummaryBackBtn"
-        );
-
-      if(backButton){
-        backButton.onclick =
-          openCorrectedSustainabilityPage;
-      }
-
-    },0);
   }
 
   app.registerScreen(
