@@ -400,7 +400,7 @@ function getPatronageHtml(){
 
   Et pour chaque habitant, parce que ce type de projet reviendra tous les deux ans, vous aurez toujours la possibilité et l’occasion de faire découvrir l’un de vos talents dans ce cadre-là.
 
-Sous différentes formes — reconnaissance, prix, mise à l’honneur — le talent finit toujours par être récompensé.
+Sous différentes formes, reconnaissance, prix, mise à l’honneur, le talent finit toujours par être récompensé.
 
   <br><br>
 
