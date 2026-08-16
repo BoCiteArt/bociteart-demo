@@ -35420,12 +35420,6 @@ font-weight:400;
           "correctedSustainabilitySummaryBtn"
         );
 
-      if(backButton){
-        backButton.onclick = function(){
-          app.openHome();
-        };
-      }
-
       if(visibilityButton){
         visibilityButton.onclick = function(){
           app.openScreen(
