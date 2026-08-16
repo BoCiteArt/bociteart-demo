@@ -24898,173 +24898,237 @@ function ensureEntrepriseBackButton(){
 
 /* =========================================================
    BO'CITÉART — ENTREPRISE
-   MUTUALISATION — EXEMPLES CONCRETS ET ABONNEMENT
+   MUTUALISATION — COMPLÉMENT ÉCONOMIES ET ABONNEMENT
+
+   Compatible avec entreprise-mutualisation.js
+   Ne réenregistre PAS l'écran "mutualisation".
    ========================================================= */
 
 (function improveEntrepriseMutualisation(){
 
   "use strict";
 
-  const module = window.BociteEntreprise;
+  const module =
+    window.BociteEntreprise;
 
   if(!module){
+
     console.error(
       "Bo'CitéArt Entreprise : module principal introuvable."
     );
+
     return;
   }
 
+
   function getElement(id){
+
     return document.getElementById(id);
   }
 
+
+  function getMutualisationPage(){
+
+    return document.querySelector(
+      ".bociteMutualisationPage"
+    );
+  }
+
+
   function addConcreteMutualisationExample(){
 
-    const list =
-      getElement("mutualisationList");
-
-    if(!list){
-      return;
-    }
-
     if(
-      getElement("mutualisationConcreteExample")
+      getElement(
+        "mutualisationConcreteExample"
+      )
     ){
       return;
     }
 
+
+    const page =
+      getMutualisationPage();
+
+
+    if(!page){
+      return;
+    }
+
+
     const example =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     example.id =
       "mutualisationConcreteExample";
 
+
     example.className =
-      "box";
+      "bociteMutualisationBox";
+
 
     example.style.marginTop =
       "14px";
 
+
     example.style.borderLeft =
       "6px solid #2f5d46";
 
+
     example.innerHTML = `
-      <strong style="font-size:18px;">
+
+      <div
+        class="bociteMutualisationTitle">
         Concrètement, que pouvez-vous économiser ?
-      </strong>
+      </div>
 
-      <br><br>
 
-      Prenons un exemple volontairement prudent :
+      <div
+        class="bociteMutualisationText">
 
-      <br><br>
+        Prenons un exemple volontairement prudent :
 
-      • 15 € par mois sur l’électricité ;<br>
-      • 10 € par mois sur la téléphonie ou Internet ;<br>
-      • 8 € par mois sur une assurance ou un autre contrat.
+        <br><br>
 
-      <br><br>
+        • 15 € par mois sur l’électricité ;<br>
+        • 10 € par mois sur la téléphonie ou Internet ;<br>
+        • 8 € par mois sur une assurance ou un autre contrat.
 
-      Cela représente déjà :
+        <br><br>
 
-      <br><br>
+        Cela représente déjà :
 
-      <strong style="font-size:21px;color:#2f5d46;">
-        396 € d’économies sur une année
-      </strong>
+        <br><br>
 
-      <br><br>
+        <strong
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+          ">
+          396 € d’économies sur une année
+        </strong>
 
-      Rien que ces trois économies peuvent couvrir
-      une grande partie, voire la totalité,
-      de votre abonnement Bo'CitéArt
-      selon la formule choisie.
+        <br><br>
 
-      <br><br>
+        Rien que ces trois économies peuvent couvrir
+        une grande partie,
+        voire la totalité,
+        de votre abonnement Bo'CitéArt
+        selon la formule choisie.
 
-      Et ce calcul ne tient pas encore compte :
+        <br><br>
 
-      <br><br>
+        Et ce calcul ne tient pas encore compte :
 
-      • d’un nouveau client ;<br>
-      • d’un nouveau fournisseur ;<br>
-      • d’un partenaire rencontré localement ;<br>
-      • d’un recrutement plus proche ;<br>
-      • des possibilités offertes par le mécénat.
+        <br><br>
 
-      <br><br>
+        • d’un nouveau client ;<br>
+        • d’un nouveau fournisseur ;<br>
+        • d’un partenaire rencontré localement ;<br>
+        • d’un recrutement plus proche ;<br>
+        • des possibilités offertes par le mécénat.
 
-      <strong>
-        L’abonnement ne doit donc pas seulement être considéré
-        comme une charge.
-      </strong>
+        <br><br>
 
-      <br><br>
+        L’abonnement ne doit donc pas seulement
+        être considéré comme une charge.
 
-      Il peut devenir un outil qui contribue lui-même
-      à financer son coût et à développer votre entreprise.
+        <br><br>
+
+        Il peut devenir un outil
+        qui contribue lui-même
+        à financer son coût
+        et à développer votre entreprise.
+
+      </div>
+
     `;
 
-    list.insertAdjacentElement(
-      "afterend",
+
+    page.appendChild(
       example
     );
   }
 
+
   function addIsolationMessage(){
 
     if(
-      getElement("mutualisationIsolationMessage")
+      getElement(
+        "mutualisationIsolationMessage"
+      )
     ){
       return;
     }
 
+
     const example =
-      getElement("mutualisationConcreteExample");
+      getElement(
+        "mutualisationConcreteExample"
+      );
+
 
     if(!example){
       return;
     }
 
+
     const message =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     message.id =
       "mutualisationIsolationMessage";
 
-    message.className =
-      "box";
 
-    message.style.marginTop =
-      "12px";
+    message.className =
+      "bociteMutualisationBox";
+
 
     message.innerHTML = `
-      <strong style="font-size:18px;">
+
+      <div
+        class="bociteMutualisationTitle">
         Combien vous coûte le fait de rester seul ?
-      </strong>
+      </div>
 
-      <br><br>
 
-      Une entreprise seule dispose souvent
-      d’un pouvoir de négociation limité.
+      <div
+        class="bociteMutualisationText">
 
-      <br><br>
+        Une entreprise seule dispose souvent
+        d’un pouvoir de négociation limité.
 
-      En se regroupant avec d’autres entreprises,
-      elle peut comparer davantage,
-      recevoir des propositions collectives
-      et décider librement de les accepter ou non.
+        <br><br>
 
-      <br><br>
+        En se regroupant avec d’autres entreprises,
+        elle peut comparer davantage,
+        recevoir des propositions collectives
+        et décider librement
+        de les accepter ou non.
 
-      Refuser de participer reste toujours possible.
+        <br><br>
 
-      <br><br>
+        Refuser de participer
+        reste toujours possible.
 
-      Mais cela signifie aussi continuer à négocier seul,
-      alors que d’autres entreprises du territoire
-      peuvent obtenir ensemble de meilleures conditions.
+        <br><br>
+
+        Mais cela signifie aussi
+        continuer à négocier seul,
+        alors que d’autres entreprises
+        du territoire peuvent obtenir ensemble
+        de meilleures conditions.
+
+      </div>
+
     `;
+
 
     example.insertAdjacentElement(
       "afterend",
@@ -25072,56 +25136,91 @@ function ensureEntrepriseBackButton(){
     );
   }
 
+
   function addSubscriptionMutualisationButton(){
 
     if(
-      getElement("mutualisationSubscriptionBtn")
+      getElement(
+        "mutualisationSubscriptionBtn"
+      )
     ){
       return;
     }
 
+
     const message =
-      getElement("mutualisationIsolationMessage");
+      getElement(
+        "mutualisationIsolationMessage"
+      );
+
 
     if(!message){
       return;
     }
 
+
     const button =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
+
 
     button.id =
       "mutualisationSubscriptionBtn";
 
+
     button.className =
-      "choiceBtn";
+      "choiceBtn bociteMutualisationButton";
+
 
     button.type =
       "button";
 
+
     button.style.width =
       "100%";
+
 
     button.style.marginTop =
       "12px";
 
+
     button.textContent =
       "Voir ce que l’abonnement peut m’apporter";
 
-    button.onclick = function(){
 
-      if(
-        typeof module.openEntrepriseSubscription ===
-        "function"
-      ){
-        module.openEntrepriseSubscription();
-        return;
-      }
+    button.onclick =
+      function(){
 
-      alert(
-        "La présentation de l’abonnement est momentanément indisponible."
-      );
-    };
+        if(
+          typeof module.openEntrepriseSubscription ===
+          "function"
+        ){
+
+          module.openEntrepriseSubscription();
+
+          return;
+        }
+
+
+        if(
+          typeof module.openScreen ===
+          "function"
+        ){
+
+          module.openScreen(
+            "abonnement"
+          );
+
+          return;
+        }
+
+
+        alert(
+          "La présentation de l’abonnement est momentanément indisponible."
+        );
+      };
+
 
     message.insertAdjacentElement(
       "afterend",
@@ -25129,41 +25228,74 @@ function ensureEntrepriseBackButton(){
     );
   }
 
+
   function applyMutualisationImprovements(){
 
-    window.setTimeout(function(){
+    const page =
+      getMutualisationPage();
 
-      addConcreteMutualisationExample();
-      addIsolationMessage();
-      addSubscriptionMutualisationButton();
 
-    },80);
+    if(!page){
+      return;
+    }
+
+
+    addConcreteMutualisationExample();
+
+    addIsolationMessage();
+
+    addSubscriptionMutualisationButton();
   }
 
-  const originalMutualisation =
-    module.screens.mutualisation;
 
-  if(
-    typeof originalMutualisation ===
-    "function"
-  ){
+  /*
+    IMPORTANT :
+
+    On ne fait PLUS :
+
     module.registerScreen(
       "mutualisation",
+      ...
+    );
+
+    L'écran principal est désormais
+    entièrement géré par
+    entreprise-mutualisation.js.
+  */
+
+
+  const observer =
+    new MutationObserver(
       function(){
 
-        originalMutualisation();
-
-        applyMutualisationImprovements();
+        window.setTimeout(
+          applyMutualisationImprovements,
+          0
+        );
       }
     );
-  }
+
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+
+  window.setTimeout(
+    applyMutualisationImprovements,
+    0
+  );
+
 
   console.log(
-    "✅ Mutualisation concrète et abonnement chargés"
+    "✅ Complément Mutualisation compatible chargé"
   );
 
 })();
-
 /* =========================================================
    BO'CITÉART
    ACCÉLÉRATION DES BANDES + HARMONISATION
@@ -25236,157 +25368,6 @@ document.head.appendChild(style);
 console.log(
 "✅ Harmonisation Entreprise chargée"
 );
-
-})();
-
-/* =========================================================
-   BO'CITÉART — MUTUALISATION
-   EXPLICATION DU SEUIL DE PARTICIPANTS
-   ========================================================= */
-
-(function addMutualisationThresholdExplanation(){
-
-  "use strict";
-
-  function addExplanation(){
-
-    const modal =
-      document.querySelector(
-        ".modal-content, .modalContent, #modalContent"
-      );
-
-    if(!modal){
-      return;
-    }
-
-    const title =
-      String(
-        modal.parentElement
-          ? modal.parentElement.textContent
-          : modal.textContent
-      );
-
-    if(
-      !title.includes(
-        "Opportunités de mutualisation"
-      )
-    ){
-      return;
-    }
-
-    if(
-      document.getElementById(
-        "mutualisationThresholdExplanation"
-      )
-    ){
-      return;
-    }
-
-    const warningBoxes =
-      Array.from(
-        modal.querySelectorAll(".box")
-      );
-
-    const freedomBox =
-      warningBoxes.find(function(box){
-
-        return String(
-          box.textContent || ""
-        ).includes(
-          "Votre intérêt ne constitue pas un engagement"
-        );
-      });
-
-    const explanation =
-      document.createElement("div");
-
-    explanation.id =
-      "mutualisationThresholdExplanation";
-
-    explanation.className =
-      "box";
-
-    explanation.style.borderLeft =
-      "6px solid #2f5d46";
-
-    explanation.style.marginTop =
-      "14px";
-
-    explanation.innerHTML = `
-      <strong style="font-size:18px;">
-        Pourquoi faut-il être plusieurs ?
-      </strong>
-
-      <br><br>
-
-      Bo'CitéArt ne lancera pas une recherche
-      ou une consultation pour une seule entreprise.
-
-      <br><br>
-
-      Chaque proposition devra réunir
-      un nombre suffisamment important
-      d’entreprises intéressées.
-
-      <br><br>
-
-      Un objectif sera fixé selon le type de besoin,
-      par exemple 20, 30 entreprises ou davantage.
-
-      <br><br>
-
-      Lorsque ce seuil sera atteint,
-      Bo'CitéArt pourra rechercher pour le groupe :
-
-      <br><br>
-
-      • des prestataires adaptés ;<br>
-      • plusieurs propositions comparables ;<br>
-      • de meilleures conditions ;<br>
-      • une solution commune réellement avantageuse.
-
-      <br><br>
-
-      <strong>
-        Plus les entreprises seront nombreuses,
-        plus leur capacité de négociation pourra être forte.
-      </strong>
-
-      <br><br>
-
-      Chacune restera ensuite entièrement libre
-      d’accepter ou de refuser les propositions reçues.
-    `;
-
-    if(freedomBox){
-      freedomBox.insertAdjacentElement(
-        "beforebegin",
-        explanation
-      );
-    }else{
-      modal.appendChild(explanation);
-    }
-  }
-
-  const observer =
-    new MutationObserver(function(){
-      window.setTimeout(
-        addExplanation,
-        30
-      );
-    });
-
-  observer.observe(
-    document.body,
-    {
-      childList:true,
-      subtree:true
-    }
-  );
-
-  console.log(
-    "✅ Explication du seuil de mutualisation ajoutée"
-  );
 
 })();
 
@@ -33352,450 +33333,6 @@ font-weight:400;
                         ${escapeValue(
                           item.description
                         )}
-                      </div>
-                    `
-                    : ""
-                }
-              </div>
-
-              <strong
-                style="
-                  color:#2f5d46;
-                  white-space:nowrap;
-                ">
-                ${count} / ${target}
-              </strong>
-            </div>
-
-            <div
-              style="
-                height:12px;
-                margin-top:10px;
-                overflow:hidden;
-                border-radius:999px;
-                background:#e5dfd5;
-              ">
-
-              <div
-                style="
-                  width:${percent}%;
-                  height:100%;
-                  background:#2f5d46;
-                ">
-              </div>
-            </div>
-
-            <div
-              class="muted"
-              style="margin-top:6px;">
-              ${percent} % de l’objectif indicatif
-            </div>
-
-            <button
-              class="choiceBtn correctedChargesInterestBtn"
-              type="button"
-              data-charges-key="${escapeValue(
-                key
-              )}"
-              style="
-                width:100%;
-                margin-top:10px;
-                ${
-                  item.interested
-                    ? "opacity:.65;"
-                    : ""
-                }
-              ">
-
-              ${
-                item.interested
-                  ? "Intérêt enregistré"
-                  : "Cette mutualisation m’intéresse"
-              }
-            </button>
-
-            <button
-              class="choiceBtn correctedChargesProposalBtn"
-              type="button"
-              data-charges-key="${escapeValue(
-                key
-              )}"
-              style="
-                width:100%;
-                margin-top:8px;
-                background:#fff;
-              ">
-              Voir les propositions
-            </button>
-          </div>
-        `;
-      })
-      .join("");
-  }
-
-  function openCorrectedChargesPage(){
-
-    app.renderModal(
-      "Réduisez vos charges",
-      `
-        <button
-          id="correctedChargesBackBtn"
-          class="choiceBtn"
-          type="button"
-          style="margin-bottom:14px;">
-          Retour
-        </button>
-
-        <div
-          class="box"
-          style="border-left:6px solid #2f5d46;">
-
-          <strong style="font-size:18px;">
-            Réduisez vos charges
-          </strong>
-
-          <br><br>
-
-          Pourquoi continuer
-          à négocier seul
-          lorsqu’il est possible
-          de regrouper les besoins
-          de plusieurs entreprises ?
-
-          <br><br>
-
-          Bo'CitéArt recueille
-          les entreprises intéressées,
-          organise la consultation
-          et rassemble les propositions reçues.
-        </div>
-
-        <div class="box">
-
-          <strong>
-            Bo'CitéArt ne choisit pas à votre place
-          </strong>
-
-          <br><br>
-
-          Bo'CitéArt ne vend aucun contrat,
-          ne recommande aucun prestataire
-          et ne devient pas un groupement d’achat.
-
-          <br><br>
-
-          Chaque entreprise reste libre :
-
-          <br><br>
-
-          • de consulter les propositions ;<br>
-          • de les comparer ;<br>
-          • d’en choisir une ;<br>
-          • de refuser toutes les propositions ;<br>
-          • ou de confirmer sa participation.
-        </div>
-
-        <div
-          class="box"
-          style="border-left:6px solid #2f5d46;">
-
-          <strong style="font-size:17px;">
-            Comparez, choisissez, validez
-          </strong>
-
-          <br><br>
-
-          Lorsque les propositions sont disponibles,
-          elles sont présentées clairement
-          dans le Tableau de Direction privé
-          de l’entreprise.
-
-          <br><br>
-
-          Vous pourrez y consulter :
-
-          <br><br>
-
-          • le nom du prestataire ;<br>
-          • la proposition reçue ;<br>
-          • les délais ;<br>
-          • les économies estimées ;<br>
-          • les votes enregistrés ;<br>
-          • l’état d’avancement.
-
-          <br><br>
-
-          Votre choix reste modifiable
-          tant que vous n’avez pas confirmé
-          définitivement votre participation.
-        </div>
-
-        <div
-          style="
-            margin-top:16px;
-            margin-bottom:10px;
-            font-size:18px;
-            font-weight:900;
-            color:#2f5d46;
-          ">
-          Mutualisations proposées
-        </div>
-
-        <div id="correctedChargesList">
-          ${getMutualisationCards()}
-        </div>
-
-        <div
-          class="box"
-          style="
-            margin-top:16px;
-            border-left:6px solid #b00020;
-          ">
-
-          <strong>
-            Votre premier clic
-            ne constitue pas un engagement
-          </strong>
-
-          <br><br>
-
-          Il indique uniquement
-          que le sujet peut vous intéresser.
-
-          <br><br>
-
-          L’engagement éventuel
-          intervient uniquement
-          après consultation des propositions
-          et confirmation
-          dans le Tableau de Direction privé.
-        </div>
-
-        <button
-          id="correctedChargesDirectionBtn"
-          class="choiceBtn"
-          type="button"
-          style="width:100%;margin-top:12px;">
-          Ouvrir le Tableau de Direction
-        </button>
-      `
-    );
-
-    window.setTimeout(function(){
-
-      const backButton =
-        getElement(
-          "correctedChargesBackBtn"
-        );
-
-      const directionButton =
-        getElement(
-          "correctedChargesDirectionBtn"
-        );
-
-      if(backButton){
-
-        backButton.onclick = function(){
-          app.openHome();
-        };
-      }
-
-      if(directionButton){
-
-        directionButton.onclick =
-          openProtectedDirection;
-      }
-
-      document
-        .querySelectorAll(
-          ".correctedChargesInterestBtn"
-        )
-        .forEach(function(button){
-
-          button.onclick = function(){
-
-            registerInterest(
-              button.getAttribute(
-                "data-charges-key"
-              )
-            );
-          };
-        });
-
-      document
-        .querySelectorAll(
-          ".correctedChargesProposalBtn"
-        )
-        .forEach(function(button){
-
-          button.onclick = function(){
-
-            openProposals(
-              button.getAttribute(
-                "data-charges-key"
-              )
-            );
-          };
-        });
-
-    },0);
-  }
-
-  function registerInterest(key){
-
-    const data =
-      loadData();
-
-    const item =
-      data[key];
-
-    if(!item){
-
-      alert(
-        "Cette mutualisation est introuvable."
-      );
-
-      return;
-    }
-
-    if(item.interested){
-
-      alert(
-        "Votre intérêt est déjà enregistré."
-      );
-
-      return;
-    }
-
-    item.interested =
-      true;
-
-    item.count =
-      Number(
-        item.count || 0
-      ) + 1;
-
-    item.updatedAt =
-      Date.now();
-
-    item.updatedAtFr =
-      new Date()
-        .toLocaleString(
-          "fr-FR"
-        );
-
-    saveData(
-      data
-    );
-
-    alert(
-      "Votre intérêt est enregistré.\n\n" +
-      "Vous ne prenez aucun engagement à ce stade."
-    );
-
-    openCorrectedChargesPage();
-  }
-
-  function openProtectedDirection(){
-
-    if(
-      typeof app.openPrivateEntrepriseAccess ===
-      "function"
-    ){
-      app.openPrivateEntrepriseAccess();
-      return;
-    }
-
-    app.openScreen(
-      "direction"
-    );
-  }
-
-  function openProposals(key){
-
-    const data =
-      loadData();
-
-    const item =
-      data[key];
-
-    if(!item){
-
-      alert(
-        "Cette mutualisation est introuvable."
-      );
-
-      return;
-    }
-
-    if(!item.interested){
-
-      alert(
-        "Enregistrez d’abord votre intérêt " +
-        "pour cette mutualisation."
-      );
-
-      return;
-    }
-
-    /*
-      Les propositions et les décisions
-      appartiennent à l’espace privé.
-    */
-
-    if(
-      typeof app.openPrivateEntrepriseAccess ===
-      "function"
-    ){
-      app.openPrivateEntrepriseAccess();
-      return;
-    }
-
-    if(
-      typeof app.openMutualisationVotes ===
-      "function"
-    ){
-      app.openMutualisationVotes(
-        key
-      );
-
-      return;
-    }
-
-    alert(
-      "Les propositions ne sont pas encore disponibles."
-    );
-  }
-
-  /*
-    « Économies » ne reste plus
-    comme une page séparée.
-
-    Elle ouvre désormais directement
-    la page Réduisez vos charges,
-    qui contient aussi :
-    Comparez, choisissez, validez.
-  */
-
-  app.registerScreen(
-    "mutualisation",
-    openCorrectedChargesPage
-  );
-
-  app.registerScreen(
-    "economies",
-    openCorrectedChargesPage
-  );
-
-  app.openCorrectedChargesPage =
-    openCorrectedChargesPage;
-
-  console.log(
-    "✅ Page Réduisez vos charges corrigée"
-  );
-
-})();
-
 /* ==========================================================
    BO'CITÉART
    CORRECTIF 12
