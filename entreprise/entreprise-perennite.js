@@ -940,7 +940,6 @@ function getSustainabilityHtml(){
 
 }
 
-
 function openSustainabilityModule(){
 
   module.renderModulePage(
@@ -955,8 +954,6 @@ function openSustainabilityModule(){
     }
 
   );
-
-}
 
 
   window.setTimeout(function(){
@@ -991,6 +988,7 @@ function openSustainabilityModule(){
 
   },0);
 }
+
 
 module.registerScreen(
   "perennite",
