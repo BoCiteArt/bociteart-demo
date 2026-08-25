@@ -300,167 +300,192 @@ function getLogoHtml(){
      CONTENU
      ===================================================== */
 
-  function getIntroductionHtml(){
+/* =========================================================
+   ÇA COMMENCE ICI
+   INTRODUCTION GÉNÉRALE BO'CITÉART
+   VERSION VALIDÉE 25/08/2026
+   ========================================================= */
 
-    return `
-      <div id="bociteIntroductionCard">
+function getIntroductionHtml(){
 
-        <div class="bociteIntroductionLogoBox">
+  return `
+    <div id="bociteIntroductionCard">
 
-          <img
-            class="bociteIntroductionLogoImage"
-            src="./entreprise/bociteart_logo.png?v=20260720-01"
-            alt="Logo officiel Bo'CitéArt">
+      <div class="bociteIntroductionLogoBox">
+        <img
+          class="bociteIntroductionLogoImage"
+          src="./entreprise/bociteart_logo.png?v=20260720-01"
+          alt="Logo officiel Bo'CitéArt">
+      </div>
 
-        </div>
+      <h2 class="bociteIntroductionTitle">
+        Bienvenue dans ${getLogoHtml()}
+      </h2>
 
-              <div class="bociteIntroductionNameMeaning">
+      <div class="bociteIntroductionActors">
 
-          <div class="bociteIntroductionNameMeaningLine">
+        <p>
+          <span>
+            Avant d’entrer, prenez simplement quelques instants pour lire cette introduction.
+          </span>
+        </p>
 
-            Parce que rien n'est plus
+        <p>
+          <span>
+            ${getLogoHtml()} a été construit autour d’une idée simple :
+          </span>
+        </p>
 
-            <span class="bociteIntroductionNameWord bociteIntroductionNameGreen">
-              Bo
-            </span>
+        <p>
+          <span>
+            <strong>
+              ce que nous regardons séparément peut parfois prendre un tout autre sens lorsqu’on commence à le regarder ensemble.
+            </strong>
+          </span>
+        </p>
 
-            <span class="bociteIntroductionMeaning">
-              (Beau)
-            </span>
+        <p>
+          <span>
+            Dans l’application, vous découvrirez plusieurs espaces, chacun accompagné de sa propre introduction.
+          </span>
+        </p>
 
-            qu'une
+        <p>
+          <span>
+            Chacune vous montrera un regard différent.
+          </span>
+        </p>
 
-            <span class="bociteIntroductionNameWord bociteIntroductionNameGreen">
-              Cité
-            </span>
+        <p>
+          <span>
+            Ne vous arrêtez pas seulement à celui qui vous concerne directement.
+          </span>
+        </p>
 
-            <span class="bociteIntroductionMeaning">
-              (ville)
-            </span>
+        <p>
+          <span>
+            En découvrant aussi la réalité des autres, certaines choses prendront progressivement un autre sens.
+          </span>
+        </p>
 
-            révélée par
+        <p>
+          <span>
+            <strong>
+              C’est en reliant ces différents regards que l’ensemble commencera véritablement à se révéler.
+            </strong>
+          </span>
+        </p>
 
-            <span class="bociteIntroductionNameWord bociteIntroductionNameRed">
-              l'Art.
-            </span>
+        <p>
+          <span>
+            Vous n’avez rien à apprendre par cœur et aucun parcours ne vous sera imposé.
+          </span>
+        </p>
 
-          </div>
+        <p>
+          <span>
+            Lors de votre première découverte, ces introductions vous seront présentées naturellement, au bon moment.
+          </span>
+        </p>
 
-        </div>
+        <p>
+          <span>
+            Une fois lues, elles ne reviendront plus automatiquement.
+          </span>
+        </p>
 
-        <div class="bociteIntroductionSeparator"></div>
+        <p>
+          <span>
+            Vous pourrez simplement les relire plus tard, si vous le souhaitez, dans le petit onglet
+            <strong>« Compte + aide »</strong>, situé en bas à droite de l’application, où vous trouverez également
+            d’autres points utiles et importants pour <strong>mieux protéger votre accès, vous accompagner et découvrir
+            progressivement les différents services mis à votre disposition.</strong>
+          </span>
+        </p>
 
-        <h2 class="bociteIntroductionTitle">
+        <p>
+          <span>
+            <strong>
+              Ensemble, toutes ces introductions vous permettront peu à peu de faire la couture complète de ce nouveau monde qui se construit désormais avec vous.
+            </strong>
+          </span>
+        </p>
 
-         ${getLogoHtml()} sert à quoi ?
-
-        </h2>
-
-        <div class="bociteIntroductionActors">
-
-          <p>
-            <span class="introBullet">–</span>
-
-            <span>
-              Les œuvres rapprochent les artistes et les habitants.
-            </span>
-          </p>
-
-          <p>
-            <span class="introBullet">–</span>
-
-            <span>
-              L'école révèle les talents de demain.
-            </span>
-          </p>
-
-          <p>
-            <span class="introBullet">–</span>
-
-            <span>
-              Les associations recréent du lien, l'entraide et les sourires.
-            </span>
-          </p>
-
-          <p>
-            <span class="introBullet">–</span>
-
-            <span>
-              Les clubs sportifs gagnent en visibilité et trouvent de nouveaux partenaires et adhérents.
-            </span>
-          </p>
-
-          <p>
-            <span class="introBullet">–</span>
-
-            <span>
-              Les commerces développent, fidélisent enfin durablement une clientèle perdue dans leur ville.
-            </span>
-          </p>
-
-          <p>
-            <span class="introBullet">–</span>
-
-            <span>
-              Les entreprises trouvent enfin des outils incontournables pour être véritablement visibles, développer leur activité, recruter plus facilement leurs collaborateurs.
-            </span>
-          </p>
-
-          <p>
-            <span class="introBullet">–</span>
-
-            <span>
-              La mairie révèle ses trésors cachés, les talents, sa richesse mieux partagée, qui font la force de son territoire.
-            </span>
-          </p>
-
-        </div>
-
-        <div class="bociteIntroductionSeparator"></div>
-
-               <div class="bociteIntroductionConclusion">
-
-          <div class="bociteIntroductionConclusionTitle">
-            ${getLogoHtml()}, c'est :
-          </div>
-
-          <p>
-            <span class="introBullet">–</span>
-
-            <span>
-              Rallumer la lumière sur ce qui est dans l'ombre.
-            </span>
-          </p>
-
-          <p>
-            <span class="introBullet">–</span>
-
-            <span>
-              Développer les richesses de votre territoire.
-            </span>
-          </p>
-
-          <p>
-            <span class="introBullet">–</span>
-
-            <span>
-              Relier les citoyens et leur faire redécouvrir leur ville.
-            </span>
-          </p>
-
-        </div>
-
-        <button
-          id="bociteIntroductionContinueBtn"
-          type="button">
-
-          Commencer la découverte
-
-        </button>
+        <p>
+          <span>
+            Ensuite, laissez votre curiosité, votre ressenti et votre intuition faire le reste.
+          </span>
+        </p>
 
       </div>
-    `;
-  }
+
+      <div class="bociteIntroductionSeparator"></div>
+
+      <h2 class="bociteIntroductionTitle">
+        Pourquoi certaines choses ne sont-elles pas expliquées ?
+      </h2>
+
+      <div class="bociteIntroductionActors">
+
+        <p>
+          <span>
+            ${getLogoHtml()} souhaite permettre à chacun de comprendre son esprit, ce qu’il peut apporter et la place qu’il peut y trouver.
+          </span>
+        </p>
+
+        <p>
+          <span>
+            Mais son fonctionnement repose aussi sur un savoir-faire qui doit rester protégé.
+          </span>
+        </p>
+
+        <p>
+          <span>
+            Vous découvrirez donc les portes qui s’ouvrent, les possibilités et ce qu’elles peuvent apporter, sans que tous les mécanismes qui permettent d’y parvenir soient dévoilés.
+          </span>
+        </p>
+
+        <p>
+          <span>
+            <strong>
+              On montre les portes, on ne montre pas les engrenages.
+            </strong>
+          </span>
+        </p>
+
+        <p>
+          <span>
+            Il n’est donc pas nécessaire de tout comprendre maintenant.
+          </span>
+        </p>
+
+        <p>
+          <span>
+            Au contraire.
+          </span>
+        </p>
+
+        <p>
+          <span>
+            <strong>
+              Entrez, découvrez, observez… et laissez peu à peu l’ensemble prendre son sens.
+            </strong>
+          </span>
+        </p>
+
+      </div>
+
+      <button
+        id="bociteIntroductionContinueBtn"
+        type="button">
+
+        Entrer dans Bo'CitéArt
+
+      </button>
+
+    </div>
+  `;
+}
 
   /* =====================================================
      OUVERTURE ET FERMETURE
