@@ -2468,5 +2468,682 @@ function resume(){
 })();
 
 /* =========================================================
+   ÇA COMMENCE ICI
+   BO'CITÉART — CORRECTION VISUELLE DES INTRODUCTIONS
+   COMPTE + AIDE
+
+   - chaque courrier sur fond blanc
+   - titres verts 17 px gras
+   - corps noir 14 px
+   - Bo'Cité vert + Art rouge
+   - Bo'CitéArt toujours attaché
+   - aucun texte n'est modifié
+
+   VERSION 25/08/2026
+   ========================================================= */
+
+(function installBociteCompteAidePresentationV2(){
+
+  "use strict";
+
+  if(window.__bociteCompteAidePresentationV2){
+    return;
+  }
+
+  window.__bociteCompteAidePresentationV2 = true;
+
+
+  /* =====================================================
+     1. STYLES
+     ===================================================== */
+
+  function installerStyles(){
+
+    if(
+      document.getElementById(
+        "bociteCompteAidePresentationV2Styles"
+      )
+    ){
+      return;
+    }
+
+
+    const style =
+      document.createElement("style");
+
+
+    style.id =
+      "bociteCompteAidePresentationV2Styles";
+
+
+    style.textContent = `
+
+      #bociteCompteAideCourriersCompletsV1{
+
+        background:transparent !important;
+
+        margin-top:20px !important;
+
+        padding:0 !important;
+
+        color:#111111 !important;
+
+        font-size:14px !important;
+
+        font-weight:400 !important;
+
+        line-height:1.55 !important;
+
+      }
+
+
+      #bociteCompteAideCourriersCompletsV1
+      .bociteDocumentCard{
+
+        background:#ffffff !important;
+
+        border:1px solid #dedede !important;
+
+        border-radius:12px !important;
+
+        padding:16px !important;
+
+        margin:0 0 16px 0 !important;
+
+        box-sizing:border-box !important;
+
+        box-shadow:0 1px 2px rgba(0,0,0,.04) !important;
+
+      }
+
+
+      #bociteCompteAideCourriersCompletsV1 p{
+
+        color:#111111 !important;
+
+        font-size:14px !important;
+
+        font-weight:400 !important;
+
+        line-height:1.55 !important;
+
+        margin:0 0 12px 0 !important;
+
+      }
+
+
+      #bociteCompteAideCourriersCompletsV1
+      .bociteIntroTitle,
+
+      #bociteCompteAideCourriersCompletsV1
+      .bociteCourrierTitle{
+
+        color:#2f5d46 !important;
+
+        font-size:17px !important;
+
+        font-weight:700 !important;
+
+        line-height:1.35 !important;
+
+        margin:0 0 15px 0 !important;
+
+      }
+
+
+      #bociteCompteAideCourriersCompletsV1
+      .bociteSousTitre{
+
+        color:#2f5d46 !important;
+
+        font-size:16px !important;
+
+        font-weight:700 !important;
+
+        line-height:1.35 !important;
+
+        margin:18px 0 12px 0 !important;
+
+      }
+
+
+      #bociteCompteAideCourriersCompletsV1 strong{
+
+        font-weight:700 !important;
+
+      }
+
+
+      /*
+         MARQUE BO'CITÉART
+
+         Le bloc complet reste insécable :
+         impossible de laisser Art partir seul
+         à la ligne suivante.
+      */
+
+      #bociteCompteAideCourriersCompletsV1
+      .bociteBrand{
+
+        display:inline-block !important;
+
+        white-space:nowrap !important;
+
+        font-size:17px !important;
+
+        font-weight:700 !important;
+
+        line-height:1.15 !important;
+
+        vertical-align:baseline !important;
+
+      }
+
+
+      #bociteCompteAideCourriersCompletsV1
+      .bociteBrandGreen{
+
+        color:#2f5d46 !important;
+
+        font-size:17px !important;
+
+        font-weight:700 !important;
+
+      }
+
+
+      #bociteCompteAideCourriersCompletsV1
+      .bociteBrandRed{
+
+        color:#b00020 !important;
+
+        font-size:17px !important;
+
+        font-weight:700 !important;
+
+      }
+
+
+      #bociteCompteAideCourriersCompletsV1
+      .bociteRights{
+
+        color:#111111 !important;
+
+        font-size:14px !important;
+
+        font-weight:400 !important;
+
+      }
+
+
+      #bociteCompteAideCourriersCompletsV1
+      .bociteSeparator{
+
+        display:none !important;
+
+      }
+
+    `;
+
+
+    document.head.appendChild(
+      style
+    );
+
+  }
+
+
+  /* =====================================================
+     2. TRANSFORMER BO'CITÉART
+     EN VERT + ROUGE SANS CHANGER LE TEXTE
+     ===================================================== */
+
+  function creerMarque(texte){
+
+    const span =
+      document.createElement("span");
+
+
+    span.className =
+      "bociteBrand";
+
+
+    /*
+       On garde exactement
+       les majuscules/minuscules
+       présentes dans le texte original.
+    */
+
+    const lower =
+      texte.toLowerCase();
+
+
+    const indexArt =
+      lower.lastIndexOf("art");
+
+
+    const partieVerte =
+      texte.slice(
+        0,
+        indexArt
+      );
+
+
+    const partieRouge =
+      texte.slice(
+        indexArt
+      );
+
+
+    const green =
+      document.createElement("span");
+
+
+    green.className =
+      "bociteBrandGreen";
+
+
+    green.textContent =
+      partieVerte;
+
+
+    const red =
+      document.createElement("span");
+
+
+    red.className =
+      "bociteBrandRed";
+
+
+    red.textContent =
+      partieRouge;
+
+
+    span.appendChild(
+      green
+    );
+
+
+    span.appendChild(
+      red
+    );
+
+
+    return span;
+
+  }
+
+
+  function colorerToutesLesMarques(root){
+
+    if(!root){
+      return;
+    }
+
+
+    const testRegex =
+      /Bo[’']CitéArt/i;
+
+
+    const splitRegex =
+      /(Bo[’']CitéArt)/gi;
+
+
+    const walker =
+      document.createTreeWalker(
+
+        root,
+
+        NodeFilter.SHOW_TEXT,
+
+        {
+
+          acceptNode(node){
+
+            if(
+              !node ||
+              !node.nodeValue
+            ){
+
+              return NodeFilter.FILTER_REJECT;
+
+            }
+
+
+            const parent =
+              node.parentElement;
+
+
+            /*
+               Ne jamais retraiter
+               une marque déjà colorée.
+            */
+
+            if(
+              parent &&
+              parent.closest(
+                ".bociteBrand"
+              )
+            ){
+
+              return NodeFilter.FILTER_REJECT;
+
+            }
+
+
+            if(
+              testRegex.test(
+                node.nodeValue
+              )
+            ){
+
+              return NodeFilter.FILTER_ACCEPT;
+
+            }
+
+
+            return NodeFilter.FILTER_REJECT;
+
+          }
+
+        }
+
+      );
+
+
+    const nodes = [];
+
+
+    let current;
+
+
+    while(
+      current =
+        walker.nextNode()
+    ){
+
+      nodes.push(
+        current
+      );
+
+    }
+
+
+    nodes.forEach(
+      function(textNode){
+
+        const texte =
+          textNode.nodeValue;
+
+
+        const morceaux =
+          texte.split(
+            splitRegex
+          );
+
+
+        const fragment =
+          document.createDocumentFragment();
+
+
+        morceaux.forEach(
+          function(morceau){
+
+            if(!morceau){
+              return;
+            }
+
+
+            if(
+              testRegex.test(
+                morceau
+              )
+            ){
+
+              fragment.appendChild(
+                creerMarque(
+                  morceau
+                )
+              );
+
+            }
+            else{
+
+              fragment.appendChild(
+                document.createTextNode(
+                  morceau
+                )
+              );
+
+            }
+
+          }
+        );
+
+
+        textNode.parentNode.replaceChild(
+          fragment,
+          textNode
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     3. METTRE CHAQUE TEXTE
+     DANS SA PROPRE FICHE BLANCHE
+     ===================================================== */
+
+  function transformerEnFichesBlanches(root){
+
+    if(!root){
+      return;
+    }
+
+
+    if(
+      root.dataset.bociteWhiteCards ===
+      "1"
+    ){
+
+      return;
+
+    }
+
+
+    const elements =
+      Array.from(
+        root.childNodes
+      );
+
+
+    const cards = [];
+
+
+    let card =
+      document.createElement(
+        "section"
+      );
+
+
+    card.className =
+      "bociteDocumentCard";
+
+
+    function terminerCarte(){
+
+      const contientTexte =
+        String(
+          card.textContent || ""
+        ).trim();
+
+
+      if(contientTexte){
+
+        cards.push(
+          card
+        );
+
+      }
+
+
+      card =
+        document.createElement(
+          "section"
+        );
+
+
+      card.className =
+        "bociteDocumentCard";
+
+    }
+
+
+    elements.forEach(
+      function(node){
+
+        /*
+           Chaque ancien trait séparateur
+           marque simplement le début
+           d'une nouvelle fiche blanche.
+        */
+
+        if(
+          node.nodeType === 1 &&
+          node.classList &&
+          node.classList.contains(
+            "bociteSeparator"
+          )
+        ){
+
+          terminerCarte();
+
+          return;
+
+        }
+
+
+        card.appendChild(
+          node
+        );
+
+      }
+    );
+
+
+    terminerCarte();
+
+
+    root.replaceChildren(
+      ...cards
+    );
+
+
+    root.dataset.bociteWhiteCards =
+      "1";
+
+  }
+
+
+  /* =====================================================
+     4. APPLICATION
+     ===================================================== */
+
+  function appliquerPresentation(){
+
+    installerStyles();
+
+
+    const root =
+      document.getElementById(
+        "bociteCompteAideCourriersCompletsV1"
+      );
+
+
+    if(!root){
+      return;
+    }
+
+
+    transformerEnFichesBlanches(
+      root
+    );
+
+
+    colorerToutesLesMarques(
+      root
+    );
+
+  }
+
+
+  /* =====================================================
+     5. DÉTECTION DE L'OUVERTURE
+     DE COMPTE + AIDE
+     ===================================================== */
+
+  document.addEventListener(
+    "click",
+    function(){
+
+      window.setTimeout(
+        appliquerPresentation,
+        20
+      );
+
+    },
+    true
+  );
+
+
+  /*
+     Sécurité :
+     si Compte + aide est déjà ouvert
+     au moment du chargement.
+  */
+
+  window.setTimeout(
+    appliquerPresentation,
+    100
+  );
+
+
+  /*
+     Sécurité supplémentaire :
+     le contenu de la fenêtre modale
+     peut être créé après le clic.
+  */
+
+  const observer =
+    new MutationObserver(
+      function(){
+
+        appliquerPresentation();
+
+      }
+    );
+
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+
+  console.log(
+    "✅ Compte + aide — présentation blanche et logo Bo'CitéArt corrigés"
+  );
+
+})();
+
+/* =========================================================
    ÇA FINIT ICI
    ========================================================= */
+
+
