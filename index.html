@@ -5775,10 +5775,51 @@ Consulter l'historique de l'école
 
       const txt = draftText || officialText || sampleText;
 
-      if(mode === "child"){
-        const played = playRecordedVoiceForClass(cls);
-        if(played) return;
-      }
+     /* =========================================================
+   ÇA COMMENCE ICI
+   VRAIE VOIX SI AUTORISÉE
+   SINON VOIX SYNTHÉTIQUE
+   ========================================================= */
+
+if(
+  mode ===
+    "child"
+){
+
+  let realVoiceAllowed =
+    true;
+
+
+  if(
+    window.BociteSchoolParentalGuard
+  ){
+
+    realVoiceAllowed =
+      window.BociteSchoolParentalGuard
+        .canUseCurrentVoice();
+
+  }
+
+
+  if(realVoiceAllowed){
+
+    const played =
+      playRecordedVoiceForClass(
+        cls
+      );
+
+
+    if(played){
+      return;
+    }
+
+  }
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
       if(!("speechSynthesis" in window)){
         alert("La lecture vocale n’est pas prise en charge sur cet appareil / navigateur.");
@@ -5958,11 +5999,49 @@ Consulter l'historique de l'école
       };
     }
 
-    if(schoolRecordVoiceBtn){
-      schoolRecordVoiceBtn.onclick = function(){
-        startSchoolVoiceRecording();
-      };
-    }
+   /* =========================================================
+   ÇA COMMENCE ICI
+   ENREGISTREMENT VRAIE VOIX → CONTRÔLE PARENTAL
+   ========================================================= */
+
+if(schoolRecordVoiceBtn){
+
+  schoolRecordVoiceBtn.onclick =
+    function(){
+
+      if(
+        window.BociteSchoolParentalGuard &&
+        !window.BociteSchoolParentalGuard
+          .canUseCurrentVoice()
+      ){
+
+        window.BociteSchoolParentalGuard
+          .showMissingPermission();
+
+        return;
+
+      }
+
+
+      if(
+        window.BociteSchoolParentalGuard
+      ){
+
+        window.BociteSchoolParentalGuard
+          .saveVoiceSubject();
+
+      }
+
+
+      startSchoolVoiceRecording();
+
+    };
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
     if(schoolStopRecordVoiceBtn){
       schoolStopRecordVoiceBtn.onclick = function(){
@@ -5970,15 +6049,55 @@ Consulter l'historique de l'école
       };
     }
 
-    if(schoolPlayRecordedVoiceBtn){
-      schoolPlayRecordedVoiceBtn.onclick = function(){
-        const cls = getCurrentSchoolClass();
-        const ok = playRecordedVoiceForClass(cls);
-        if(!ok){
-          alert("Aucun enregistrement disponible pour cette classe.");
-        }
-      };
-    }
+  /* =========================================================
+   ÇA COMMENCE ICI
+   ÉCOUTE VRAIE VOIX → CONTRÔLE PARENTAL
+   ========================================================= */
+
+if(schoolPlayRecordedVoiceBtn){
+
+  schoolPlayRecordedVoiceBtn.onclick =
+    function(){
+
+      if(
+        window.BociteSchoolParentalGuard &&
+        !window.BociteSchoolParentalGuard
+          .canUseCurrentVoice()
+      ){
+
+        window.BociteSchoolParentalGuard
+          .showMissingPermission();
+
+        return;
+
+      }
+
+
+      const cls =
+        getCurrentSchoolClass();
+
+
+      const ok =
+        playRecordedVoiceForClass(
+          cls
+        );
+
+
+      if(!ok){
+
+        alert(
+          "Aucun enregistrement disponible pour cette classe."
+        );
+
+      }
+
+    };
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
     if(schoolDeleteRecordedVoiceBtn){
       schoolDeleteRecordedVoiceBtn.onclick = function(){
