@@ -100,6 +100,236 @@
   let recordingFinished =
     false;
 
+   /* =========================================================
+   ÇA COMMENCE ICI
+   CHOIX DE LA VOIX SYNTHÉTIQUE
+   ========================================================= */
+
+let selectedVoiceMode =
+  "real";
+
+
+function getCurrentWordText(){
+
+  const input =
+    getElement(
+      "schoolWordInput"
+    );
+
+
+  const direct =
+    String(
+      input &&
+      input.value
+        ? input.value
+        : ""
+    ).trim();
+
+
+  if(direct){
+    return direct;
+  }
+
+
+  const display =
+    String(
+      getElement(
+        "schoolWordDisplay"
+      )?.textContent ||
+      ""
+    ).trim();
+
+
+  const match =
+    display.match(
+      /«\s*(.*?)\s*»/
+    );
+
+
+  if(
+    match &&
+    match[1]
+  ){
+
+    return match[1].trim();
+
+  }
+
+
+  return (
+    display ||
+    "Je suis ravi aujourd’hui."
+  );
+
+}
+
+
+function getSyntheticProfile(
+  kind
+){
+
+  const cls =
+    getCurrentClass()
+      .toUpperCase();
+
+
+  let boyPitch =
+    1.25;
+
+
+  if(
+    /CP|CE1/.test(cls)
+  ){
+
+    boyPitch =
+      1.38;
+
+  }
+  else if(
+    /CE2|CM1/.test(cls)
+  ){
+
+    boyPitch =
+      1.32;
+
+  }
+  else if(
+    /CM2|6E/.test(cls)
+  ){
+
+    boyPitch =
+      1.27;
+
+  }
+  else if(
+    /5E|4E/.test(cls)
+  ){
+
+    boyPitch =
+      1.18;
+
+  }
+
+
+  return {
+
+    pitch:
+      kind === "girl"
+        ? Math.min(
+            2,
+            boyPitch + 0.12
+          )
+        : boyPitch,
+
+    rate:
+      0.92
+
+  };
+
+}
+
+
+function speakSyntheticChild(
+  kind
+){
+
+  if(
+    !(
+      "speechSynthesis" in window
+    )
+  ){
+
+    alert(
+      "La voix synthétique n'est pas disponible sur cet appareil."
+    );
+
+    return;
+
+  }
+
+
+  const text =
+    getCurrentWordText();
+
+
+  const profile =
+    getSyntheticProfile(
+      kind
+    );
+
+
+  const utterance =
+    new SpeechSynthesisUtterance(
+      text
+    );
+
+
+  utterance.lang =
+    "fr-FR";
+
+
+  utterance.rate =
+    profile.rate;
+
+
+  utterance.pitch =
+    profile.pitch;
+
+
+  const volume =
+    getElement(
+      "bociteSchoolSimpleVolume"
+    );
+
+
+  utterance.volume =
+    volume
+      ? Number(
+          volume.value
+        )
+      : 1;
+
+
+  const frenchVoices =
+    window.speechSynthesis
+      .getVoices()
+      .filter(
+        function(voice){
+
+          return (
+            voice.lang &&
+            voice.lang
+              .toLowerCase()
+              .startsWith("fr")
+          );
+
+        }
+      );
+
+
+  if(
+    frenchVoices.length
+  ){
+
+    utterance.voice =
+      frenchVoices[0];
+
+  }
+
+
+  window.speechSynthesis.cancel();
+
+
+  window.speechSynthesis.speak(
+    utterance
+  );
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
+
 
   /* =====================================================
      OUTILS
@@ -1610,191 +1840,582 @@
      ÉCOUTE AVANT VALIDATION
      ===================================================== */
 
-  function showRecordingReview(){
+/* =========================================================
+   ÇA COMMENCE ICI
+   ÉCOUTE + CHOIX DE LA VOIX
+   RÉELLE / FILLE / GARÇON
+   ========================================================= */
 
-    const content =
-      getElement(
-        "bociteSchoolSimpleContent"
-      );
+function showRecordingReview(){
 
-
-    if(
-      !content ||
-      !pendingBlob
-    ){
-      return;
-    }
+  const content =
+    getElement(
+      "bociteSchoolSimpleContent"
+    );
 
 
-    revokeObjectUrl();
+  if(
+    !content ||
+    !pendingBlob
+  ){
+    return;
+  }
 
 
-    objectUrl =
-      URL.createObjectURL(
-        pendingBlob
-      );
+  revokeObjectUrl();
 
 
-    content.innerHTML = `
-
-      <div
-        class="bociteSchoolSimpleTitle">
-
-        Écoutez avant de valider
-
-      </div>
+  objectUrl =
+    URL.createObjectURL(
+      pendingBlob
+    );
 
 
-      <p>
-        Vous pouvez écouter,
-        régler le volume
-        et décider de conserver
-        ou de recommencer.
-      </p>
+  /*
+    Par défaut :
+    on conserve la vraie voix enregistrée.
+  */
+
+  selectedVoiceMode =
+    "real";
 
 
-      <audio
-        id="bociteSchoolSimpleAudio"
-        controls
-        preload="metadata"
-        style="
-          display:block;
-          width:100%;
-          margin-top:14px;
-        "
-        src="${objectUrl}">
-      </audio>
+  content.innerHTML = `
+
+    <div
+      class="bociteSchoolSimpleTitle">
+
+      Écoutez avant de valider
+
+    </div>
 
 
-      <label
-        for="bociteSchoolSimpleVolume"
-        style="
-          display:block;
-          margin-top:16px;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-        ">
-
-        Volume d'écoute
-
-      </label>
+    <p>
+      Écoutez la voix enregistrée,
+      puis choisissez celle
+      que vous souhaitez utiliser.
+    </p>
 
 
-      <input
-        id="bociteSchoolSimpleVolume"
-        type="range"
-        min="0"
-        max="1"
-        step="0.05"
-        value="1"
-        style="
-          width:100%;
-          margin-top:8px;
-        "
-      >
+    <audio
+      id="bociteSchoolSimpleAudio"
+      controls
+      preload="metadata"
+      style="
+        display:block;
+        width:100%;
+        margin-top:14px;
+      ">
+    </audio>
 
+
+    <button
+      id="bociteSchoolPlayRealVoice"
+      type="button"
+      class="bociteSchoolSimpleButton">
+
+      ▶ Écouter la voix enregistrée
+
+    </button>
+
+
+    <label
+      for="bociteSchoolSimpleVolume"
+      style="
+        display:block;
+        margin-top:16px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      ">
+
+      Volume d'écoute
+
+    </label>
+
+
+    <input
+      id="bociteSchoolSimpleVolume"
+      type="range"
+      min="0"
+      max="1"
+      step="0.05"
+      value="1"
+      style="
+        width:100%;
+        margin-top:8px;
+      "
+    >
+
+
+    <div
+      class="bociteSchoolSimpleTitle"
+      style="
+        margin-top:22px;
+      ">
+
+      Ou utiliser une voix synthétique
+
+    </div>
+
+
+    <p>
+      Si la vraie voix de l'enfant
+      ne peut pas être utilisée,
+      choisissez une voix fille
+      ou garçon adaptée à sa classe.
+    </p>
+
+
+    <div
+      style="
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+        margin-top:12px;
+      ">
 
       <button
-        id="bociteSchoolSimpleValidateAudio"
+        id="bociteSchoolSyntheticGirl"
         type="button"
-        class="bociteSchoolSimpleButton">
+        class="bociteSchoolSimpleButton"
+        style="
+          margin-top:0;
+        ">
 
-        ✓ Valider cet enregistrement
+        ▶ Fille
 
       </button>
 
 
       <button
-        id="bociteSchoolSimpleRetryAudio"
+        id="bociteSchoolSyntheticBoy"
         type="button"
-        class="
-          bociteSchoolSimpleButton
-          bociteSchoolSimpleSecondary
+        class="bociteSchoolSimpleButton"
+        style="
+          margin-top:0;
         ">
 
-        Recommencer l'enregistrement
+        ▶ Garçon
 
       </button>
 
-    `;
+    </div>
 
 
-    const audio =
-      getElement(
-        "bociteSchoolSimpleAudio"
-      );
+    <div
+      id="bociteSchoolVoiceSelected"
+      style="
+        margin-top:14px;
+        padding:12px;
+        border:1px solid #dedede;
+        border-radius:10px;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      ">
+
+      Voix choisie :
+      voix réelle enregistrée.
+
+    </div>
 
 
-    const volume =
-      getElement(
-        "bociteSchoolSimpleVolume"
-      );
+    <button
+      id="bociteSchoolSimpleValidateAudio"
+      type="button"
+      class="bociteSchoolSimpleButton">
+
+      ✓ Valider la voix choisie
+
+    </button>
 
 
-    const validate =
-      getElement(
-        "bociteSchoolSimpleValidateAudio"
-      );
+    <button
+      id="bociteSchoolSimpleRetryAudio"
+      type="button"
+      class="
+        bociteSchoolSimpleButton
+        bociteSchoolSimpleSecondary
+      ">
+
+      Recommencer l'enregistrement
+
+    </button>
+
+  `;
 
 
-    const retry =
-      getElement(
-        "bociteSchoolSimpleRetryAudio"
-      );
+  const audio =
+    getElement(
+      "bociteSchoolSimpleAudio"
+    );
 
 
-    if(
-      audio &&
-      volume
-    ){
-
-      volume.oninput =
-        function(){
-
-          audio.volume =
-            Number(
-              volume.value
-            );
-
-        };
-
-    }
+  const volume =
+    getElement(
+      "bociteSchoolSimpleVolume"
+    );
 
 
-    if(validate){
-
-      validate.onclick =
-        function(){
-
-          convertPendingAudio();
-
-        };
-
-    }
+  const real =
+    getElement(
+      "bociteSchoolPlayRealVoice"
+    );
 
 
-    if(retry){
+  const girl =
+    getElement(
+      "bociteSchoolSyntheticGirl"
+    );
 
-      retry.onclick =
-        function(){
 
-          revokeObjectUrl();
+  const boy =
+    getElement(
+      "bociteSchoolSyntheticBoy"
+    );
 
-          pendingBlob =
-            null;
 
-          pendingAudioData =
-            "";
+  const selected =
+    getElement(
+      "bociteSchoolVoiceSelected"
+    );
 
-          startRecording();
 
-        };
+  const validate =
+    getElement(
+      "bociteSchoolSimpleValidateAudio"
+    );
+
+
+  const retry =
+    getElement(
+      "bociteSchoolSimpleRetryAudio"
+    );
+
+
+  function showChoice(
+    text
+  ){
+
+    if(selected){
+
+      selected.textContent =
+        "Voix choisie : " +
+        text +
+        ".";
 
     }
 
   }
 
+
+  /*
+    On affecte directement
+    le fichier audio temporaire.
+  */
+
+  if(audio){
+
+    audio.src =
+      objectUrl;
+
+    audio.load();
+
+  }
+
+
+  /*
+    Volume commun :
+    vraie voix + voix synthétique.
+  */
+
+  if(
+    audio &&
+    volume
+  ){
+
+    volume.oninput =
+      function(){
+
+        audio.volume =
+          Number(
+            volume.value
+          );
+
+      };
+
+  }
+
+
+  /*
+    ÉCOUTER LA VRAIE VOIX
+  */
+
+  if(real){
+
+    real.onclick =
+      function(){
+
+        selectedVoiceMode =
+          "real";
+
+
+        showChoice(
+          "voix réelle enregistrée"
+        );
+
+
+        if(!audio){
+          return;
+        }
+
+
+        /*
+          Coupe éventuellement
+          une voix synthétique.
+        */
+
+        if(
+          window.speechSynthesis
+        ){
+
+          window.speechSynthesis
+            .cancel();
+
+        }
+
+
+        audio.volume =
+          volume
+            ? Number(
+                volume.value
+              )
+            : 1;
+
+
+        try{
+
+          audio.currentTime =
+            0;
+
+        }catch(error){
+
+          /* rien */
+
+        }
+
+
+        const playPromise =
+          audio.play();
+
+
+        if(
+          playPromise &&
+          typeof playPromise.catch ===
+            "function"
+        ){
+
+          playPromise.catch(
+            function(error){
+
+              console.error(
+                "Bo'CitéArt — lecture audio :",
+                error
+              );
+
+
+              alert(
+                "La voix enregistrée n'a pas pu être lue. Vous pouvez recommencer l'enregistrement ou choisir une voix synthétique."
+              );
+
+            }
+          );
+
+        }
+
+      };
+
+  }
+
+
+  /*
+    VOIX SYNTHÉTIQUE — FILLE
+  */
+
+  if(girl){
+
+    girl.onclick =
+      function(){
+
+        selectedVoiceMode =
+          "synthetic-girl";
+
+
+        if(audio){
+
+          audio.pause();
+
+        }
+
+
+        showChoice(
+          "voix synthétique enfant — fille"
+        );
+
+
+        speakSyntheticChild(
+          "girl"
+        );
+
+      };
+
+  }
+
+
+  /*
+    VOIX SYNTHÉTIQUE — GARÇON
+  */
+
+  if(boy){
+
+    boy.onclick =
+      function(){
+
+        selectedVoiceMode =
+          "synthetic-boy";
+
+
+        if(audio){
+
+          audio.pause();
+
+        }
+
+
+        showChoice(
+          "voix synthétique enfant — garçon"
+        );
+
+
+        speakSyntheticChild(
+          "boy"
+        );
+
+      };
+
+  }
+
+
+  /*
+    VALIDATION
+  */
+
+  if(validate){
+
+    validate.onclick =
+      function(){
+
+        if(
+          window.speechSynthesis
+        ){
+
+          window.speechSynthesis
+            .cancel();
+
+        }
+
+
+        /*
+          VRAIE VOIX :
+          on convertit le fichier audio
+          avant le calendrier.
+        */
+
+        if(
+          selectedVoiceMode ===
+            "real"
+        ){
+
+          convertPendingAudio();
+
+          return;
+
+        }
+
+
+        /*
+          VOIX SYNTHÉTIQUE :
+          aucun fichier contenant
+          la voix réelle de l'enfant
+          n'est conservé.
+        */
+
+        pendingAudioData =
+          "";
+
+
+        showCalendarStep();
+
+      };
+
+  }
+
+
+  /*
+    RECOMMENCER
+  */
+
+  if(retry){
+
+    retry.onclick =
+      function(){
+
+        if(
+          window.speechSynthesis
+        ){
+
+          window.speechSynthesis
+            .cancel();
+
+        }
+
+
+        if(audio){
+
+          audio.pause();
+
+        }
+
+
+        revokeObjectUrl();
+
+
+        pendingBlob =
+          null;
+
+
+        pendingAudioData =
+          "";
+
+
+        selectedVoiceMode =
+          "real";
+
+
+        startRecording();
+
+      };
+
+  }
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
   /* =====================================================
      CONVERSION APRÈS VALIDATION
