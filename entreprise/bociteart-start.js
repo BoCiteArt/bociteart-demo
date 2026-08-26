@@ -548,6 +548,12 @@
    VALIDATION FICHE → INTRODUCTION DU PROFIL → SYNOPTIQUE
    ========================================================= */
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   FICHE → INTRODUCTION PROFIL → SYNOPTIQUE
+   AUCUN BLOCAGE PARENTAL À L'ENTRÉE
+   ========================================================= */
+
 function handleRegistrationCompleted(event){
 
   if(
@@ -572,16 +578,6 @@ function handleRegistrationCompleted(event){
       : "";
 
 
-  /*
-    La fiche vient d'être remplie.
-
-    On présente d'abord l'introduction
-    correspondant au profil.
-
-    Ensuite seulement :
-    passage au synoptique.
-  */
-
   if(
     window.BociteRoleIntroductions &&
     typeof window.BociteRoleIntroductions
@@ -600,15 +596,9 @@ function handleRegistrationCompleted(event){
       );
 
     return;
+
   }
 
-
-  /*
-    Sécurité :
-    si le module des introductions
-    n'est pas disponible,
-    le parcours continue normalement.
-  */
 
   openSynoptique();
 
@@ -617,6 +607,7 @@ function handleRegistrationCompleted(event){
 /* =========================================================
    ÇA FINIT ICI
    ========================================================= */
+   
   function handleSynoptiqueCompleted(){
 
     if(
@@ -4312,43 +4303,118 @@ const PROFILE_MAP = {
   /* =====================================================
      INTRODUCTION CORRESPONDANT AU PROFIL
      ===================================================== */
+/* =========================================================
+   ÇA COMMENCE ICI
+   INTRODUCTION SELON LE PROFIL
+   JEUNE = PARCOURS COURT
+   ========================================================= */
 
-  function openForCategory(
-    category,
-    onComplete
+function openForCategory(
+  category,
+  onComplete
+){
+
+  const normalized =
+    String(
+      category || ""
+    )
+    .trim()
+    .toLowerCase();
+
+
+  /*
+    MOINS DE 15 ANS
+
+    On ne lui impose plus
+    le grand courrier complet.
+
+    Celui-ci reste disponible
+    dans Compte + aide.
+  */
+
+  if(
+    normalized === "jeune" &&
+    window.BociteYoungIntro &&
+    typeof window.BociteYoungIntro.open ===
+      "function"
   ){
 
-    const normalized =
-      String(
-        category || ""
-      )
-      .trim()
-      .toLowerCase();
+    window.BociteYoungIntro.open(
+      function(){
+
+        /*
+          Le premier parcours jeune
+          a bien été présenté.
+
+          On évite donc de lui imposer
+          ensuite automatiquement
+          le grand courrier n°9.
+        */
+
+        markRead(
+          LETTERS.jeune
+        );
 
 
-    const numbers =
-      PROFILE_MAP[
-        normalized
-      ];
+        if(
+          typeof onComplete ===
+          "function"
+        ){
 
+          onComplete();
 
-    if(
-      !numbers ||
-      !numbers.length
-    ){
-
-      if(
-        typeof onComplete ===
-        "function"
-      ){
-
-        onComplete();
+        }
 
       }
+    );
 
-      return;
+    return;
+
+  }
+
+
+  /*
+    TOUS LES AUTRES PROFILS
+
+    Fonctionnement actuel conservé.
+  */
+
+  const numbers =
+    PROFILE_MAP[
+      normalized
+    ];
+
+
+  if(
+    !numbers ||
+    !numbers.length
+  ){
+
+    if(
+      typeof onComplete ===
+      "function"
+    ){
+
+      onComplete();
 
     }
+
+    return;
+
+  }
+
+
+  openNumbers(
+    numbers,
+    {},
+    onComplete
+  );
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
 
     openNumbers(
