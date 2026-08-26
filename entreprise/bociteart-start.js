@@ -4295,10 +4295,6 @@ function installCommerceOpening(){
               '[data-commerce-space="commerce"],' +
               "[data-open-commerce]," +
 
-              "#openEntrepriseSpace," +
-              '[data-commerce-space="entreprise"],' +
-              "[data-open-entreprise]," +
-
               '[data-open="ecole"],' +
               '[data-open="sport"],' +
               '[data-open="mairie"]'
@@ -4350,24 +4346,6 @@ function installCommerceOpening(){
           LETTERS.commerceProximite,
           LETTERS.grandeEnseigne
 
-        ];
-
-      }
-
-      /* ===================================================
-         ENTREPRISE
-         =================================================== */
-
-      else if(
-        target.matches(
-          "#openEntrepriseSpace," +
-          '[data-commerce-space="entreprise"],' +
-          "[data-open-entreprise]"
-        )
-      ){
-
-        numbers = [
-          LETTERS.commun
         ];
 
       }
@@ -4598,18 +4576,59 @@ function installCommerceOpening(){
             l'application existante s'ouvrir.
           */
 
-          target.__bociteIntroBypass =
-            true;
+/* =========================================================
+   ÇA COMMENCE ICI
+   REPRISE DE L'OUVERTURE APRÈS LES COURRIERS
+   ========================================================= */
+
+window.setTimeout(
+  function(){
+
+    /*
+      Commerce possède déjà
+      son fonctionnement onclick.
+
+      On l'appelle directement
+      pour éviter une nouvelle interception.
+    */
+
+    if(
+      target.matches(
+        "#openCommerceSpace," +
+        '[data-commerce-space="commerce"],' +
+        "[data-open-commerce]"
+      ) &&
+      typeof target.onclick ===
+        "function"
+    ){
+
+      target.onclick.call(
+        target
+      );
+
+      return;
+
+    }
 
 
-          window.setTimeout(
-            function(){
+    /*
+      Pour les autres univers,
+      on conserve le clic normal
+      avec le bypass.
+    */
 
-              target.click();
+    target.__bociteIntroBypass =
+      true;
 
-            },
-            0
-          );
+    target.click();
+
+  },
+  0
+);
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
         }
       );
