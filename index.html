@@ -5709,8 +5709,31 @@ Consulter l'historique de l'école
         schoolMediaRecorder.start();
         refreshRecordedVoiceStatus();
         alert("Enregistrement démarré pour " + cls + ". Appuie ensuite sur “Stop”.");
-      }catch(e){
-        alert("Autorisation micro refusée ou indisponible.");
+           }catch(e){
+
+        console.error(
+          "Bo'CitéArt — erreur microphone :",
+          e
+        );
+
+        const errorName =
+          e && e.name
+            ? e.name
+            : "Erreur inconnue";
+
+        const errorMessage =
+          e && e.message
+            ? e.message
+            : "Aucun détail fourni par le navigateur.";
+
+        alert(
+          "Microphone indisponible.\n\n" +
+          "Erreur : " +
+          errorName +
+          "\n\n" +
+          "Détail : " +
+          errorMessage
+        );
       }
     }
 
