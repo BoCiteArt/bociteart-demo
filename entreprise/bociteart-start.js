@@ -3266,47 +3266,64 @@ function resume(){
 
   };
 
+/* =====================================================
+   ÇA COMMENCE ICI
+   PROFIL → INTRODUCTION PERSONNELLE
+   ===================================================== */
 
-  /* =====================================================
-     PROFIL → INTRODUCTION PERSONNELLE
-     ===================================================== */
+const PROFILE_MAP = {
 
-  const PROFILE_MAP = {
+  citoyen:[
+    LETTERS.citoyen
+  ],
 
-    citoyen:[
-      LETTERS.citoyen
-    ],
+  jeune:[
+    LETTERS.jeune
+  ],
 
-    jeune:[
-      LETTERS.jeune
-    ],
+  mairie:[
+    LETTERS.mairie
+  ],
 
-    mairie:[
-      LETTERS.mairie
-    ],
+  ecole:[
+    LETTERS.ecole
+  ],
 
-    ecole:[
-      LETTERS.ecole
-    ],
+  sport:[
+    LETTERS.sport
+  ],
 
-    sport:[
-      LETTERS.sport
-    ],
+  association:[
+    LETTERS.association
+  ],
 
-    association:[
-      LETTERS.association
-    ],
+  /*
+    Commerce :
+    courrier commun
+    + petite structure
+    + grande enseigne.
 
-    commerce:[
-      LETTERS.commun
-    ],
+    Il n'existe pas ensuite de tuile
+    séparant petit et grand commerce.
+  */
+  commerce:[
 
-    entreprise:[
-      LETTERS.commun
-    ]
+    LETTERS.commun,
+    LETTERS.commerceProximite,
+    LETTERS.grandeEnseigne
 
-  };
+  ],
 
+  /*
+    Entreprise :
+    uniquement le courrier commun
+    Commerces & Entreprises.
+  */
+  entreprise:[
+    LETTERS.commun
+  ]
+
+};
 
   /* =====================================================
      MÉMOIRE DE LECTURE
@@ -4245,49 +4262,89 @@ function resume(){
      proposées dans cette même branche.
      ===================================================== */
 
-  function installCommerceOpening(){
+/* =========================================================
+   ÇA COMMENCE ICI
+   PREMIÈRE OUVERTURE DES UNIVERS
+   ========================================================= */
 
-    document.addEventListener(
-      "click",
-      function(event){
+function installCommerceOpening(){
 
-        const target =
-          event.target &&
-          typeof event.target.closest ===
-            "function"
-            ? event.target.closest(
-                "#openCommerceSpace," +
-                '[data-commerce-space="commerce"],' +
-                "[data-open-commerce]"
-              )
-            : null;
+  /*
+    Le listener est placé sur WINDOW en capture.
+
+    C'est volontaire :
+    Entreprise possède déjà un raccordement
+    en capture sur document.
+
+    WINDOW passe avant DOCUMENT,
+    donc l'introduction peut maintenant
+    apparaître avant l'ouverture de l'application.
+  */
+
+  window.addEventListener(
+    "click",
+    function(event){
+
+      const target =
+        event.target &&
+        typeof event.target.closest ===
+          "function"
+          ? event.target.closest(
+
+              "#openCommerceSpace," +
+              '[data-commerce-space="commerce"],' +
+              "[data-open-commerce]," +
+
+              "#openEntrepriseSpace," +
+              '[data-commerce-space="entreprise"],' +
+              "[data-open-entreprise]," +
+
+              '[data-open="ecole"],' +
+              '[data-open="sport"],' +
+              '[data-open="mairie"]'
+
+            )
+          : null;
 
 
-        if(!target){
-          return;
-        }
+      if(!target){
+        return;
+      }
+
+      /*
+        Après lecture, nous recréons le clic.
+
+        Ce drapeau empêche l'introduction
+        de bloquer ce deuxième clic.
+      */
+
+      if(
+        target.__bociteIntroBypass ===
+          true
+      ){
+
+        target.__bociteIntroBypass =
+          false;
+
+        return;
+      }
 
 
-        /*
-          Deuxième clic programmé :
-          on laisse le fonctionnement
-          Commerce existant continuer.
-        */
+      let numbers = [];
 
-        if(
-          target.__bociteIntroBypass ===
-            true
-        ){
+      /* ===================================================
+         COMMERCE
+         =================================================== */
 
-          target.__bociteIntroBypass =
-            false;
+      if(
+        target.matches(
+          "#openCommerceSpace," +
+          '[data-commerce-space="commerce"],' +
+          "[data-open-commerce]"
+        )
+      ){
 
-          return;
-
-        }
-
-
-        const numbers = [
+        numbers = [
 
           LETTERS.commun,
           LETTERS.commerceProximite,
@@ -4295,66 +4352,273 @@ function resume(){
 
         ];
 
+      }
 
-        if(
-          !hasUnread(
-            numbers
-          )
-        ){
+      /* ===================================================
+         ENTREPRISE
+         =================================================== */
 
-          return;
+      else if(
+        target.matches(
+          "#openEntrepriseSpace," +
+          '[data-commerce-space="entreprise"],' +
+          "[data-open-entreprise]"
+        )
+      ){
 
-        }
+        numbers = [
+          LETTERS.commun
+        ];
 
+      }
 
-        event.preventDefault();
+      /* ===================================================
+         ÉCOLE
+         =================================================== */
 
-        event.stopPropagation();
+      else if(
+        target.matches(
+          '[data-open="ecole"]'
+        )
+      ){
 
+        numbers = [
+          LETTERS.ecole
+        ];
 
-        if(
-          typeof event.stopImmediatePropagation ===
-            "function"
-        ){
+      }
 
-          event.stopImmediatePropagation();
+      /* ===================================================
+         SPORT
+         =================================================== */
 
-        }
+      else if(
+        target.matches(
+          '[data-open="sport"]'
+        )
+      ){
 
+        numbers = [
+          LETTERS.sport
+        ];
 
-        openNumbers(
-          numbers,
-          {},
-          function(){
+      }
 
-            /*
-              Une fois les introductions lues,
-              on relance le bouton Commerce
-              exactement comme avant.
-            */
+      /* ===================================================
+         MAIRIE & ASSOCIATIONS
 
-            target.__bociteIntroBypass =
-              true;
+         Une même tuile accueille les deux.
 
+         Si le compte indique clairement
+         mairie ou association :
+         on privilégie son courrier.
 
-            window.setTimeout(
-              function(){
+         Sinon :
+         les deux introductions sont proposées.
+         =================================================== */
 
-                target.click();
+      else if(
+        target.matches(
+          '[data-open="mairie"]'
+        )
+      ){
 
-              },
-              0
-            );
+        let category = "";
+
+        /*
+          Première source :
+          compte déjà chargé par le module
+          d'inscription.
+        */
+
+        try{
+
+          if(
+            window.BoCiteArtRegistration &&
+            typeof window
+              .BoCiteArtRegistration
+              .getAccount ===
+                "function"
+          ){
+
+            const account =
+              window
+                .BoCiteArtRegistration
+                .getAccount();
+
+            if(
+              account &&
+              account.category
+            ){
+
+              category =
+                String(
+                  account.category
+                )
+                .trim()
+                .toLowerCase();
+
+            }
 
           }
-        );
 
-      },
-      true
-    );
+        }catch(error){
 
-  }
+          category = "";
 
+        }
+
+        /*
+          Deuxième source de secours :
+          compte local de démonstration.
+        */
+
+        if(!category){
+
+          try{
+
+            const raw =
+              localStorage.getItem(
+                "bociteart_account_demo_v1"
+              );
+
+            const account =
+              raw
+                ? JSON.parse(raw)
+                : null;
+
+            if(
+              account &&
+              account.category
+            ){
+
+              category =
+                String(
+                  account.category
+                )
+                .trim()
+                .toLowerCase();
+
+            }
+
+          }catch(error){
+
+            category = "";
+
+          }
+
+        }
+
+        if(
+          category ===
+            "mairie"
+        ){
+
+          numbers = [
+            LETTERS.mairie
+          ];
+
+        }
+        else if(
+          category ===
+            "association"
+        ){
+
+          numbers = [
+            LETTERS.association
+          ];
+
+        }
+        else{
+
+          numbers = [
+
+            LETTERS.mairie,
+            LETTERS.association
+
+          ];
+
+        }
+
+      }
+
+      if(
+        !numbers.length
+      ){
+
+        return;
+      }
+
+      /*
+        Si tout a déjà été lu,
+        on laisse immédiatement
+        le fonctionnement existant continuer.
+      */
+
+      if(
+        !hasUnread(
+          numbers
+        )
+      ){
+
+        return;
+      }
+
+      /*
+        Une introduction doit apparaître :
+        on bloque uniquement ce premier clic.
+      */
+
+      event.preventDefault();
+
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+          "function"
+      ){
+
+        event.stopImmediatePropagation();
+
+      }
+
+      openNumbers(
+        numbers,
+        {},
+        function(){
+
+          /*
+            Les introductions sont terminées.
+
+            On relance exactement
+            le même élément.
+
+            À ce deuxième passage,
+            le drapeau bypass laisse
+            l'application existante s'ouvrir.
+          */
+
+          target.__bociteIntroBypass =
+            true;
+
+
+          window.setTimeout(
+            function(){
+
+              target.click();
+
+            },
+            0
+          );
+
+        }
+      );
+
+    },
+    true
+  );
+
+}
 
   /* =====================================================
      API PUBLIQUE
