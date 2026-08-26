@@ -3737,8 +3737,10 @@ function finishRegistration(
           commune:
             account.commune,
 
-          securityConfigured:
-            true
+         securityConfigured:
+  account.category === "jeune"
+    ? false
+    : true
         }
       }
     )
@@ -3757,7 +3759,6 @@ function openAccountSecuritySetup(
     return;
   }
 
-
   const activationCode =
     createNumericCode(6);
 
@@ -3766,21 +3767,6 @@ function openAccountSecuritySetup(
 
   let smsCode =
     "";
-
-  if(!account){
-    return;
-  }
-
-
-  const activationCode =
-    createNumericCode(6);
-
-  let emailCode =
-    "";
-
-  let smsCode =
-    "";
-
 
   hashSecret(
     activationCode
@@ -3863,7 +3849,6 @@ function openAccountSecuritySetup(
           `
         : "";
 
-
     const smsHtml =
       account.phone
         ? `
@@ -3902,7 +3887,6 @@ function openAccountSecuritySetup(
           `
         : "";
 
-
     overlay.innerHTML = `
 
       <div id="bociteRegistrationCard">
@@ -3925,7 +3909,6 @@ function openAccountSecuritySetup(
           dans toute l'application.
 
         </div>
-
 
         <div class="bociteRegistrationPrivacy">
 
@@ -3959,7 +3942,6 @@ function openAccountSecuritySetup(
 
         </div>
 
-
         <div class="bociteRegistrationField">
 
           <label for="bociteSecurityInitialCode">
@@ -3975,7 +3957,6 @@ function openAccountSecuritySetup(
             placeholder="6 chiffres">
 
         </div>
-
 
         <div class="bociteRegistrationField">
 
@@ -3999,7 +3980,6 @@ function openAccountSecuritySetup(
 
         </div>
 
-
         <div class="bociteRegistrationField">
 
           <label for="bociteSecurityPasswordConfirm">
@@ -4013,7 +3993,6 @@ function openAccountSecuritySetup(
             placeholder="Confirmez votre mot de passe">
 
         </div>
-
 
         <div class="bociteRegistrationPrivacy">
 
@@ -4043,7 +4022,6 @@ function openAccountSecuritySetup(
 
         </div>
 
-
         <button
           id="bociteSecurityEmailBtn"
           type="button"
@@ -4054,7 +4032,6 @@ function openAccountSecuritySetup(
           ">
           Recevoir un code par e-mail
         </button>
-
 
         <div
           id="bociteSecurityEmailWrap"
@@ -4075,9 +4052,7 @@ function openAccountSecuritySetup(
 
         </div>
 
-
         ${smsHtml}
-
 
         <div class="bociteRegistrationPrivacy">
 
@@ -4111,9 +4086,7 @@ function openAccountSecuritySetup(
 
         </div>
 
-
         ${organizationHtml}
-
 
         <div
           id="bociteSecurityMessage"
@@ -4129,7 +4102,6 @@ function openAccountSecuritySetup(
             line-height:1.45;
           ">
         </div>
-
 
         <button
           id="bociteSecurityValidateBtn"
@@ -4153,7 +4125,6 @@ function openAccountSecuritySetup(
       </div>
 
     `;
-
 
     /* ===================================================
        CODE E-MAIL
@@ -4183,7 +4154,6 @@ function openAccountSecuritySetup(
               "block";
           }
 
-
           /*
             DÉMONSTRATION UNIQUEMENT.
 
@@ -4197,7 +4167,6 @@ function openAccountSecuritySetup(
           );
         };
     }
-
 
     /* ===================================================
        CODE SMS
