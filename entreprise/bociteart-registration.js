@@ -1565,41 +1565,32 @@ function createCollaboratorAccess(
       source.permissions
     );
 
- /* =========================================================
+/* =========================================================
    ÇA COMMENCE ICI
-   MOINS DE 15 ANS — E-MAIL NON OBLIGATOIRE
+   VALIDATION COLLABORATEUR — VERSION D'ORIGINE
    ========================================================= */
-
-const isYoung =
-  category === "jeune";
-
 
 if(
   !displayName ||
-  !category ||
-  !commune ||
   (
-    !isYoung &&
-    !email
-  ) ||
-  (
-    isProfessionalCategory(category) &&
+    !email &&
     !phone
   )
 ){
+
+  return Promise.reject(
+    new Error(
+      "Nom et moyen de contact obligatoires."
+    )
+  );
+
+}
 
 /* =========================================================
    ÇA FINIT ICI
    ========================================================= */
 
-    return Promise.reject(
-      new Error(
-        "Nom et moyen de contact obligatoires."
-      )
-    );
-  }
-
-
+  
   /*
     Code d'invitation de démonstration.
 
@@ -3754,49 +3745,27 @@ function finishRegistration(
   );
 }
 
-
 /* =====================================================
    ÉCRAN DE SÉCURISATION DU COMPTE
    ===================================================== */
 
-/* =========================================================
-   ÇA COMMENCE ICI
-   MOINS DE 15 ANS — PAS DE BARRIÈRE DE SÉCURISATION
-   ========================================================= */
-
-if(
-  category === "jeune"
+function openAccountSecuritySetup(
+  account
 ){
 
-  /*
-    Le jeune entre immédiatement.
-
-    Il pourra ensuite préparer
-    la liaison avec un parent,
-    sans que cela bloque son accès.
-  */
-
-  finishRegistration(
-    account
-  );
-
-  return;
-
-}
+  if(!account){
+    return;
+  }
 
 
-/*
-  Tous les autres profils
-  conservent la sécurisation normale.
-*/
+  const activationCode =
+    createNumericCode(6);
 
-openAccountSecuritySetup(
-  account
-);
+  let emailCode =
+    "";
 
-/* =========================================================
-   ÇA FINIT ICI
-   ========================================================= */
+  let smsCode =
+    "";
 
   if(!account){
     return;
@@ -3845,7 +3814,6 @@ openAccountSecuritySetup(
 
     });
 
-
     const overlay =
       getElement(
         OVERLAY_ID
@@ -3854,7 +3822,6 @@ openAccountSecuritySetup(
     if(!overlay){
       return;
     }
-
 
     const organizationHtml =
       isOrganizationCategory(
@@ -4593,141 +4560,216 @@ openAccountSecuritySetup(
   });
 }
    
-  function completeRegistration(){
+ /* =========================================================
+   ÇA COMMENCE ICI
+   INSCRIPTION — JEUNE SANS BARRIÈRE DE SÉCURISATION
+   ========================================================= */
 
-    const nameField =
-      getElement(
-        "bociteRegistrationName"
-      );
+function completeRegistration(){
 
-    const emailField =
-      getElement(
-        "bociteRegistrationEmail"
-      );
+  const nameField =
+    getElement(
+      "bociteRegistrationName"
+    );
 
-    const categoryField =
-      getElement(
-        "bociteRegistrationCategory"
-      );
+  const emailField =
+    getElement(
+      "bociteRegistrationEmail"
+    );
 
-    const communeField =
-      getElement(
-        "bociteRegistrationCommune"
-      );
+  const categoryField =
+    getElement(
+      "bociteRegistrationCategory"
+    );
 
-     const phoneField =
-  getElement(
-    "bociteRegistrationPhone"
-  );
+  const communeField =
+    getElement(
+      "bociteRegistrationCommune"
+    );
 
-    const message =
-      getElement(
-        "bociteRegistrationMessage"
-      );
+  const phoneField =
+    getElement(
+      "bociteRegistrationPhone"
+    );
 
-    const displayName =
-      normalizeText(
-        nameField
-          ? nameField.value
-          : ""
-      );
+  const message =
+    getElement(
+      "bociteRegistrationMessage"
+    );
 
-    const email =
-      normalizeEmail(
-        emailField
-          ? emailField.value
-          : ""
-      );
 
-    const category =
-      normalizeCategory(
-        categoryField
-          ? categoryField.value
-          : ""
-      );
+  const displayName =
+    normalizeText(
+      nameField
+        ? nameField.value
+        : ""
+    );
 
-    const commune =
-      normalizeText(
-        communeField
-          ? communeField.value
-          : ""
-      );
 
-     const phone =
-  normalizePhone(
-    phoneField
-      ? phoneField.value
-      : ""
-  );
+  const email =
+    normalizeEmail(
+      emailField
+        ? emailField.value
+        : ""
+    );
 
-if(
-  !displayName ||
-  !email ||
-  !category ||
-  !commune ||
-  (
-    isProfessionalCategory(category) &&
-    !phone
-  )
-){
 
-  if(message){
+  const category =
+    normalizeCategory(
+      categoryField
+        ? categoryField.value
+        : ""
+    );
 
-    message.textContent =
-      "Complétez tous les champs avant de continuer.";
 
-    message.style.display =
-      "block";
-  }
+  const commune =
+    normalizeText(
+      communeField
+        ? communeField.value
+        : ""
+    );
 
-  return;
-}
 
-   if(
-  email &&
-  (
-    !email.includes("@") ||
-    !email.includes(".")
-  )
-){
+  const phone =
+    normalizePhone(
+      phoneField
+        ? phoneField.value
+        : ""
+    );
 
-      if(message){
 
-        message.textContent =
-          "Indiquez une adresse électronique valide.";
+  const isYoung =
+    category === "jeune";
 
-        message.style.display =
-          "block";
-      }
 
-      return;
+  /*
+    Nom + catégorie + commune :
+    nécessaires pour tous.
+
+    E-mail :
+    non obligatoire pour le jeune.
+
+    Téléphone :
+    obligatoire uniquement
+    pour les profils professionnels concernés.
+  */
+
+  if(
+    !displayName ||
+    !category ||
+    !commune ||
+    (
+      !isYoung &&
+      !email
+    ) ||
+    (
+      isProfessionalCategory(
+        category
+      ) &&
+      !phone
+    )
+  ){
+
+    if(message){
+
+      message.textContent =
+        "Complétez les informations nécessaires avant de continuer.";
+
+      message.style.display =
+        "block";
+
     }
 
-const account =
-  createAccount({
+    return;
 
-    displayName:
-      displayName,
-
-    email:
-      email,
-
-    phone:
-      phone,
-
-    category:
-      category,
-
-    commune:
-      commune
-
-  });
+  }
 
 
-openAccountSecuritySetup(
-  account
-);
+  /*
+    Si une adresse e-mail est fournie,
+    elle doit être valide.
+  */
+
+  if(
+    email &&
+    (
+      !email.includes("@") ||
+      !email.includes(".")
+    )
+  ){
+
+    if(message){
+
+      message.textContent =
+        "Indiquez une adresse électronique valide.";
+
+      message.style.display =
+        "block";
+
+    }
+
+    return;
+
+  }
+
+
+  const account =
+    createAccount({
+
+      displayName:
+        displayName,
+
+      email:
+        email,
+
+      phone:
+        phone,
+
+      category:
+        category,
+
+      commune:
+        commune
+
+    });
+
+
+  /*
+    MOINS DE 15 ANS
+
+    Pas d'écran :
+    mot de passe,
+    code e-mail,
+    code SMS.
+
+    Le parcours continue directement.
+  */
+
+  if(isYoung){
+
+    finishRegistration(
+      account
+    );
+
+    return;
+
+  }
+
+
+  /*
+    Tous les autres profils
+    conservent la sécurisation normale.
+  */
+
+  openAccountSecuritySetup(
+    account
+  );
+
 }
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
      
   /* =====================================================
      ÉVÉNEMENTS
