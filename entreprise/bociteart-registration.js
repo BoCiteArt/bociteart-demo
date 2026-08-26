@@ -1565,13 +1565,32 @@ function createCollaboratorAccess(
       source.permissions
     );
 
-  if(
-    !displayName ||
-    (
-      !email &&
-      !phone
-    )
-  ){
+ /* =========================================================
+   ÇA COMMENCE ICI
+   MOINS DE 15 ANS — E-MAIL NON OBLIGATOIRE
+   ========================================================= */
+
+const isYoung =
+  category === "jeune";
+
+
+if(
+  !displayName ||
+  !category ||
+  !commune ||
+  (
+    !isYoung &&
+    !email
+  ) ||
+  (
+    isProfessionalCategory(category) &&
+    !phone
+  )
+){
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
     return Promise.reject(
       new Error(
