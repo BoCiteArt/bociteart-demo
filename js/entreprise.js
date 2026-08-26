@@ -331,21 +331,42 @@ if(
   retour à Commerces & Entreprises.
 */
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   RETOUR INTRODUCTION ENTREPRISE
+   → COMMERCES & ENTREPRISES
+   ========================================================= */
+
 if(
   state.currentScreen ===
   "introductionEntreprise"
 ){
 
+  /*
+    On quitte réellement
+    le module Entreprise.
+  */
+
   state.currentScreen = null;
   state.previousScreen = null;
   state.nestedParentScreen = null;
-  state.history = ["home"];
+  state.history = [];
 
   /*
-    On quitte complètement le parcours Entreprise.
-    L'ancien historique général des modales
-    ne doit pas recréer son bouton "Retour"
-    lors de la prochaine ouverture.
+    IMPORTANT :
+    remettre également à zéro
+    les anciens repères globaux.
+
+    Sinon le moteur général croit
+    que nous sommes encore dans Entreprise.
+  */
+
+  window.currentModule = null;
+  window.currentEntrepriseScreen = null;
+
+  /*
+    On vide aussi l'ancien historique
+    de fenêtres.
   */
 
   if(
@@ -353,22 +374,68 @@ if(
       window.modalHistory
     )
   ){
+
     window.modalHistory.length = 0;
+
   }
+
+  /*
+    On ferme d'abord complètement
+    l'écran Entreprise.
+  */
+
+  if(
+    typeof window.closeModal ===
+    "function"
+  ){
+
+    window.closeModal();
+
+  }
+
+  /*
+    Puis seulement on revient
+    à la page générale
+    Commerces & Entreprises.
+  */
 
   if(
     typeof window.__bociteartOpenByKey ===
     "function"
   ){
 
-    window.__bociteartOpenByKey(
-      "commerces"
+    window.setTimeout(
+      function(){
+
+        window.__bociteartOpenByKey(
+          "commerces"
+        );
+
+      },
+      0
     );
 
     return;
+
+  }
+
+  /*
+    Sécurité de secours.
+  */
+
+  if(
+    typeof window.backModal ===
+    "function"
+  ){
+
+    window.backModal();
+
+    return;
+
   }
 
 }
+
         /*
           SUR LA PAGE DES BANDES ENTREPRISE :
           retour à l'introduction Entreprise,
