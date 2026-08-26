@@ -1145,6 +1145,19 @@ function resume(){
         À vous maintenant de le découvrir.
       </p>
 
+<!-- =====================================================
+     ÇA COMMENCE ICI
+     RAPPEL COMPTE + AIDE
+     ===================================================== -->
+
+<p>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+</p>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
+
       <p>
         Bienvenue dans Bo’CitéArt.
       </p>
@@ -1305,6 +1318,19 @@ function resume(){
         <strong>Votre ville reste votre ville. Mais désormais, une autre voie existe.</strong>
       </p>
 
+<!-- =====================================================
+     ÇA COMMENCE ICI
+     RAPPEL COMPTE + AIDE
+     ===================================================== -->
+
+<p>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+</p>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
+
       <p>
         Bienvenue dans Bo’CitéArt.
       </p>
@@ -1420,6 +1446,19 @@ function resume(){
       <p>
         Votre espace Commerce vous permettra d’en découvrir beaucoup plus.
       </p>
+
+<!-- =====================================================
+     ÇA COMMENCE ICI
+     RAPPEL COMPTE + AIDE
+     ===================================================== -->
+
+<p>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+</p>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
 
       <p>
         Bienvenue dans Bo’CitéArt.
@@ -1552,6 +1591,19 @@ function resume(){
       <p>
         Votre espace professionnel vous permettra maintenant d’en découvrir davantage.
       </p>
+
+<!-- =====================================================
+     ÇA COMMENCE ICI
+     RAPPEL COMPTE + AIDE
+     ===================================================== -->
+
+<p>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+</p>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
 
       <p>
         Bienvenue dans Bo’CitéArt.
@@ -1709,6 +1761,19 @@ function resume(){
         Dans la partie École & jeunes, vous découvrirez plus précisément l’esprit recherché et les possibilités proposées.
       </p>
 
+      <!-- =====================================================
+     ÇA COMMENCE ICI
+     RAPPEL COMPTE + AIDE
+     ===================================================== -->
+
+<p>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+</p>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
+
       <p>
         Bienvenue dans Bo’CitéArt.
       </p>
@@ -1860,6 +1925,19 @@ function resume(){
       <p>
         <strong>Et ce n’est encore qu’une des facettes prévues pour le sport dans Bo’CitéArt.</strong>
       </p>
+
+      <!-- =====================================================
+     ÇA COMMENCE ICI
+     RAPPEL COMPTE + AIDE
+     ===================================================== -->
+
+<p>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+</p>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
 
       <p>
         Bienvenue dans Bo’CitéArt.
@@ -2033,6 +2111,19 @@ function resume(){
         Il cherche à mieux reconnaître celles et ceux qui les font vivre, à révéler les forces encore cachées parmi les citoyens et à faire en sorte que, lorsque chacun le peut, <strong>participer devienne aussi naturel que recevoir.</strong>
       </p>
 
+      <!-- =====================================================
+     ÇA COMMENCE ICI
+     RAPPEL COMPTE + AIDE
+     ===================================================== -->
+
+<p>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+</p>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
+
       <p>
         Bienvenue dans Bo’CitéArt.
       </p>
@@ -2188,6 +2279,19 @@ function resume(){
       <p>
         <strong>l’exemple.</strong>
       </p>
+
+      <!-- =====================================================
+     ÇA COMMENCE ICI
+     RAPPEL COMPTE + AIDE
+     ===================================================== -->
+
+<p>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+</p>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
 
       <p>
         Bienvenue dans Bo’CitéArt.
@@ -2400,6 +2504,14 @@ function resume(){
       <p>
         <strong>Gardons encore quelques surprises…</strong>
       </p>
+
+      <p>
+  <strong>Tu peux relire cette fiche quand tu le souhaites, mais aussi découvrir les autres. Pour cela, ouvre simplement l’onglet « Compte + aide », situé en bas à droite de l’application, puis descends un peu dans la page : tu y retrouveras toutes les fiches à la suite.</strong>
+</p>
+
+<p>
+  <strong>Les lire petit à petit te permettra de mieux te familiariser avec ce qui t’entoure, de découvrir la réalité des autres et de te faire progressivement ta propre opinion sur le monde d’aujourd’hui… et sur celui de demain.</strong>
+</p>
 
       <p>
         Bienvenue dans Bo’CitéArt.
