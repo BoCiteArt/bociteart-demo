@@ -4676,8 +4676,321 @@ window.setTimeout(
 })();
 
 /* =========================================================
-   ÇA FINIT ICI
+   ÇA COMMENCE ICI
+   BO'CITÉART — INTRODUCTIONS DES AUTRES UNIVERS
+
+   ÉCOLE
+   SPORT
+   MAIRIE & ASSOCIATIONS
    ========================================================= */
+
+(function installBociteOtherUniverseIntroductions(){
+
+  "use strict";
+
+  if(
+    window.__bociteOtherUniverseIntroductionsV1
+  ){
+    return;
+  }
+
+  window.__bociteOtherUniverseIntroductionsV1 =
+    true;
+
+
+  window.addEventListener(
+    "click",
+    function(event){
+
+      const target =
+        event.target &&
+        typeof event.target.closest ===
+          "function"
+          ? event.target.closest(
+              '[data-open="ecole"],' +
+              '[data-open="sport"],' +
+              '[data-open="mairie"]'
+            )
+          : null;
+
+
+      if(!target){
+        return;
+      }
+
+
+      /*
+        Deuxième clic :
+        on laisse l'application
+        fonctionner normalement.
+      */
+
+      if(
+        target.__bociteOtherIntroBypass ===
+          true
+      ){
+
+        target.__bociteOtherIntroBypass =
+          false;
+
+        return;
+      }
+
+
+      if(
+        !window.BociteRoleIntroductions ||
+        typeof window.BociteRoleIntroductions
+          .openNumbers !==
+            "function"
+      ){
+
+        return;
+      }
+
+
+      const letters =
+        window.BociteRoleIntroductions
+          .letters;
+
+
+      if(!letters){
+        return;
+      }
+
+
+      const universe =
+        target.getAttribute(
+          "data-open"
+        );
+
+
+      let numbers = [];
+
+
+      /* ===================================================
+         ÉCOLE
+         =================================================== */
+
+      if(
+        universe ===
+        "ecole"
+      ){
+
+        numbers = [
+          letters.ecole
+        ];
+
+      }
+
+
+      /* ===================================================
+         SPORT
+         =================================================== */
+
+      else if(
+        universe ===
+        "sport"
+      ){
+
+        numbers = [
+          letters.sport
+        ];
+
+      }
+
+
+      /* ===================================================
+         MAIRIE & ASSOCIATIONS
+         =================================================== */
+
+      else if(
+        universe ===
+        "mairie"
+      ){
+
+        let category = "";
+
+
+        /*
+          On regarde la catégorie
+          du compte local existant.
+        */
+
+        try{
+
+          const raw =
+            localStorage.getItem(
+              "bociteart_account_demo_v1"
+            );
+
+
+          const account =
+            raw
+              ? JSON.parse(raw)
+              : null;
+
+
+          if(
+            account &&
+            account.category
+          ){
+
+            category =
+              String(
+                account.category
+              )
+              .trim()
+              .toLowerCase();
+
+          }
+
+        }catch(error){
+
+          category = "";
+
+        }
+
+
+        /*
+          Profil mairie :
+          courrier mairie seulement.
+        */
+
+        if(
+          category ===
+          "mairie"
+        ){
+
+          numbers = [
+            letters.mairie
+          ];
+
+        }
+
+
+        /*
+          Profil association :
+          courrier association seulement.
+        */
+
+        else if(
+          category ===
+          "association"
+        ){
+
+          numbers = [
+            letters.association
+          ];
+
+        }
+
+
+        /*
+          Autre visiteur :
+          la tuile regroupe Mairie & Asso,
+          donc découverte des deux regards.
+        */
+
+        else{
+
+          numbers = [
+            letters.mairie,
+            letters.association
+          ];
+
+        }
+
+      }
+
+
+      if(!numbers.length){
+        return;
+      }
+
+
+      /*
+        Si les courriers concernés
+        sont déjà lus,
+        on laisse le clic normal.
+      */
+
+      if(
+        typeof window.BociteRoleIntroductions
+          .hasUnread ===
+            "function" &&
+        !window.BociteRoleIntroductions
+          .hasUnread(
+            numbers
+          )
+      ){
+
+        return;
+      }
+
+
+      /*
+        Un courrier doit être présenté :
+        on bloque seulement ce premier clic.
+      */
+
+      event.preventDefault();
+
+      event.stopPropagation();
+
+
+      if(
+        typeof event.stopImmediatePropagation ===
+          "function"
+      ){
+
+        event.stopImmediatePropagation();
+
+      }
+
+
+      window.BociteRoleIntroductions
+        .openNumbers(
+          numbers,
+          {},
+          function(){
+
+            /*
+              Après lecture,
+              on relance exactement
+              la même tuile.
+
+              Le drapeau permet
+              au fonctionnement existant
+              de reprendre sans nouvelle interception.
+            */
+
+            target.__bociteOtherIntroBypass =
+              true;
+
+
+            window.setTimeout(
+              function(){
+
+                target.click();
+
+              },
+              0
+            );
+
+          }
+        );
+
+    },
+    true
+  );
+
+
+  console.log(
+    "✅ Introductions École / Sport / Mairie & Asso raccordées"
+  );
+
+})();
+
 /* =========================================================
    ÇA FINIT ICI
    ========================================================= */
