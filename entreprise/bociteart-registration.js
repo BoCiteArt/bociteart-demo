@@ -3759,9 +3759,44 @@ function finishRegistration(
    ÉCRAN DE SÉCURISATION DU COMPTE
    ===================================================== */
 
-function openAccountSecuritySetup(
-  account
+/* =========================================================
+   ÇA COMMENCE ICI
+   MOINS DE 15 ANS — PAS DE BARRIÈRE DE SÉCURISATION
+   ========================================================= */
+
+if(
+  category === "jeune"
 ){
+
+  /*
+    Le jeune entre immédiatement.
+
+    Il pourra ensuite préparer
+    la liaison avec un parent,
+    sans que cela bloque son accès.
+  */
+
+  finishRegistration(
+    account
+  );
+
+  return;
+
+}
+
+
+/*
+  Tous les autres profils
+  conservent la sécurisation normale.
+*/
+
+openAccountSecuritySetup(
+  account
+);
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
   if(!account){
     return;
@@ -4494,8 +4529,10 @@ function openAccountSecuritySetup(
                     account.category
                   ),
 
-                securityConfigured:
-                  true
+               securityConfigured:
+  account.category === "jeune"
+    ? false
+    : true
 
               });
 
@@ -4646,10 +4683,13 @@ if(
   return;
 }
 
-    if(
-      !email.includes("@") ||
-      !email.includes(".")
-    ){
+   if(
+  email &&
+  (
+    !email.includes("@") ||
+    !email.includes(".")
+  )
+){
 
       if(message){
 
