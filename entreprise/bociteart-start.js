@@ -543,18 +543,80 @@
     openRegistration();
   }
 
-  function handleRegistrationCompleted(){
+/* =========================================================
+   ÇA COMMENCE ICI
+   VALIDATION FICHE → INTRODUCTION DU PROFIL → SYNOPTIQUE
+   ========================================================= */
 
-    if(
-      currentStep !==
-      STEPS.registration
-    ){
-      return;
-    }
+function handleRegistrationCompleted(event){
 
-    openSynoptique();
+  if(
+    currentStep !==
+    STEPS.registration
+  ){
+    return;
   }
 
+
+  const detail =
+    event &&
+    event.detail
+      ? event.detail
+      : null;
+
+
+  const category =
+    detail &&
+    detail.category
+      ? detail.category
+      : "";
+
+
+  /*
+    La fiche vient d'être remplie.
+
+    On présente d'abord l'introduction
+    correspondant au profil.
+
+    Ensuite seulement :
+    passage au synoptique.
+  */
+
+  if(
+    window.BociteRoleIntroductions &&
+    typeof window.BociteRoleIntroductions
+      .openForCategory ===
+        "function"
+  ){
+
+    window.BociteRoleIntroductions
+      .openForCategory(
+        category,
+        function(){
+
+          openSynoptique();
+
+        }
+      );
+
+    return;
+  }
+
+
+  /*
+    Sécurité :
+    si le module des introductions
+    n'est pas disponible,
+    le parcours continue normalement.
+  */
+
+  openSynoptique();
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
   function handleSynoptiqueCompleted(){
 
     if(
@@ -2367,6 +2429,8 @@ function resume(){
     </div>
   `;
 
+     window.BOCITEART_COURRIERS_HTML_V1 =
+    COURRIERS_HTML;
 
   /* =====================================================
      AJOUT DANS COMPTE + AIDE
@@ -3142,6 +3206,1195 @@ function resume(){
 
 })();
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   BO'CITÉART — INTRODUCTIONS SELON LE PROFIL
+
+   - une seule source pour les textes
+   - affichage automatique une seule fois
+   - relecture toujours possible dans Compte + aide
+   - Commerce : courrier commun + petite structure
+     + grande enseigne
+   - Jeune : message préalable aux parents
+   ========================================================= */
+
+(function installBociteRoleIntroductions(){
+
+  "use strict";
+
+  if(window.BociteRoleIntroductions){
+    return;
+  }
+
+
+  const STORAGE_PREFIX =
+    "bociteart_role_intro_read_v1_";
+
+
+  /* =====================================================
+     CORRESPONDANCE DES 9 COURRIERS
+     ===================================================== */
+
+  const LETTERS = {
+
+    commun:
+      1,
+
+    mairie:
+      2,
+
+    commerceProximite:
+      3,
+
+    grandeEnseigne:
+      4,
+
+    ecole:
+      5,
+
+    sport:
+      6,
+
+    association:
+      7,
+
+    citoyen:
+      8,
+
+    jeune:
+      9
+
+  };
+
+
+  /* =====================================================
+     PROFIL → INTRODUCTION PERSONNELLE
+     ===================================================== */
+
+  const PROFILE_MAP = {
+
+    citoyen:[
+      LETTERS.citoyen
+    ],
+
+    jeune:[
+      LETTERS.jeune
+    ],
+
+    mairie:[
+      LETTERS.mairie
+    ],
+
+    ecole:[
+      LETTERS.ecole
+    ],
+
+    sport:[
+      LETTERS.sport
+    ],
+
+    association:[
+      LETTERS.association
+    ],
+
+    commerce:[
+      LETTERS.commun
+    ],
+
+    entreprise:[
+      LETTERS.commun
+    ]
+
+  };
+
+
+  /* =====================================================
+     MÉMOIRE DE LECTURE
+     ===================================================== */
+
+  function getStorageKey(
+    number
+  ){
+
+    return (
+      STORAGE_PREFIX +
+      String(number)
+    );
+
+  }
+
+
+  function isRead(
+    number
+  ){
+
+    try{
+
+      return (
+        localStorage.getItem(
+          getStorageKey(number)
+        ) === "true"
+      );
+
+    }catch(error){
+
+      return false;
+
+    }
+
+  }
+
+
+  function markRead(
+    number
+  ){
+
+    try{
+
+      localStorage.setItem(
+        getStorageKey(number),
+        "true"
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Bo'CitéArt : lecture introduction non enregistrée.",
+        error
+      );
+
+    }
+
+  }
+
+
+  function hasUnread(
+    numbers
+  ){
+
+    return numbers.some(
+      function(number){
+
+        return !isRead(number);
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     RÉCUPÉRATION DU TEXTE EXACT
+     DEPUIS COMPTE + AIDE
+
+     Aucune réécriture.
+     ===================================================== */
+
+  function getLetterHtml(
+    number
+  ){
+
+    const source =
+      window.BOCITEART_COURRIERS_HTML_V1;
+
+
+    if(!source){
+
+      console.error(
+        "Bo'CitéArt : source des courriers introuvable."
+      );
+
+      return "";
+
+    }
+
+
+    const host =
+      document.createElement(
+        "div"
+      );
+
+
+    host.innerHTML =
+      source;
+
+
+    const root =
+      host.querySelector(
+        "#bociteCompteAideCourriersCompletsV1"
+      );
+
+
+    if(!root){
+      return "";
+    }
+
+
+    const nodes =
+      Array.from(
+        root.childNodes
+      );
+
+
+    const result =
+      document.createElement(
+        "div"
+      );
+
+
+    let collecting =
+      false;
+
+
+    for(
+      let i = 0;
+      i < nodes.length;
+      i++
+    ){
+
+      const node =
+        nodes[i];
+
+
+      if(
+        node.nodeType === 1 &&
+        node.classList &&
+        node.classList.contains(
+          "bociteCourrierTitle"
+        )
+      ){
+
+        const title =
+          String(
+            node.textContent || ""
+          )
+          .trim();
+
+
+        if(
+          title.indexOf(
+            String(number) + " —"
+          ) === 0
+        ){
+
+          collecting =
+            true;
+
+        }
+        else if(
+          collecting
+        ){
+
+          break;
+
+        }
+
+      }
+
+
+      if(!collecting){
+        continue;
+      }
+
+
+      if(
+        node.nodeType === 1 &&
+        node.classList &&
+        node.classList.contains(
+          "bociteSeparator"
+        )
+      ){
+
+        break;
+
+      }
+
+
+      result.appendChild(
+        node.cloneNode(true)
+      );
+
+    }
+
+
+    return result.innerHTML;
+
+  }
+
+
+  /* =====================================================
+     BO'CITÉART
+     VERT + ART ROUGE
+     TOUJOURS ATTACHÉ
+     ===================================================== */
+
+  function colorBrands(
+    root
+  ){
+
+    if(!root){
+      return;
+    }
+
+
+    const TEST =
+      /Bo[’']CitéArt/i;
+
+
+    const SPLIT =
+      /(Bo[’']CitéArt)/gi;
+
+
+    const walker =
+      document.createTreeWalker(
+
+        root,
+
+        NodeFilter.SHOW_TEXT,
+
+        {
+
+          acceptNode(node){
+
+            if(
+              node &&
+              node.nodeValue &&
+              TEST.test(
+                node.nodeValue
+              )
+            ){
+
+              return NodeFilter
+                .FILTER_ACCEPT;
+
+            }
+
+
+            return NodeFilter
+              .FILTER_REJECT;
+
+          }
+
+        }
+
+      );
+
+
+    const nodes = [];
+
+    let node;
+
+
+    while(
+      node =
+        walker.nextNode()
+    ){
+
+      nodes.push(
+        node
+      );
+
+    }
+
+
+    nodes.forEach(
+      function(textNode){
+
+        const parts =
+          textNode.nodeValue.split(
+            SPLIT
+          );
+
+
+        const fragment =
+          document.createDocumentFragment();
+
+
+        parts.forEach(
+          function(part){
+
+            if(!part){
+              return;
+            }
+
+
+            if(
+              /^Bo[’']CitéArt$/i.test(
+                part
+              )
+            ){
+
+              const brand =
+                document.createElement(
+                  "span"
+                );
+
+
+              brand.style.whiteSpace =
+                "nowrap";
+
+              brand.style.fontSize =
+                "17px";
+
+              brand.style.fontWeight =
+                "700";
+
+
+              const index =
+                part
+                  .toLowerCase()
+                  .lastIndexOf(
+                    "art"
+                  );
+
+
+              const green =
+                document.createElement(
+                  "span"
+                );
+
+
+              green.style.color =
+                "#2f5d46";
+
+
+              green.textContent =
+                part.slice(
+                  0,
+                  index
+                );
+
+
+              const red =
+                document.createElement(
+                  "span"
+                );
+
+
+              red.style.color =
+                "#b00020";
+
+
+              red.textContent =
+                part.slice(
+                  index
+                );
+
+
+              brand.appendChild(
+                green
+              );
+
+
+              brand.appendChild(
+                red
+              );
+
+
+              fragment.appendChild(
+                brand
+              );
+
+            }
+            else{
+
+              fragment.appendChild(
+                document.createTextNode(
+                  part
+                )
+              );
+
+            }
+
+          }
+        );
+
+
+        textNode.parentNode
+          .replaceChild(
+            fragment,
+            textNode
+          );
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     MESSAGE POUR LES PARENTS
+     AVANT LA FICHE MOINS DE 15 ANS
+     ===================================================== */
+
+  function getParentNotice(){
+
+    return `
+
+      <div
+        style="
+          background:#ffffff;
+          border:1px solid #dedede;
+          border-left:6px solid #2f5d46;
+          border-radius:12px;
+          padding:16px;
+          margin-bottom:14px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.55;
+        ">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            margin-bottom:10px;
+          ">
+          Pour les parents ou responsables
+        </div>
+
+        Si vous autorisez votre enfant
+        à utiliser Bo'CitéArt,
+        prenez quelques instants
+        pour lire cette fiche avec lui.
+
+        <br><br>
+
+        Partagez-en le sens avec lui
+        si cela est nécessaire :
+        cette étape est importante.
+
+        <br><br>
+
+        Vous pourrez également lui faire
+        découvrir les autres introductions
+        publiques, à son rythme,
+        afin qu'il puisse progressivement
+        mieux comprendre la place
+        et la réalité des autres.
+
+        <br><br>
+
+        La fiche qui suit
+        s'adresse ensuite directement à lui.
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* =====================================================
+     CRÉATION DE L'ÉCRAN
+     ===================================================== */
+
+  function createOverlay(){
+
+    let overlay =
+      document.getElementById(
+        "bociteRoleIntroductionOverlay"
+      );
+
+
+    if(overlay){
+      return overlay;
+    }
+
+
+    overlay =
+      document.createElement(
+        "div"
+      );
+
+
+    overlay.id =
+      "bociteRoleIntroductionOverlay";
+
+
+    overlay.style.cssText = `
+
+      position:fixed;
+      inset:0;
+      z-index:1000000;
+
+      display:none;
+
+      background:
+        rgba(0,0,0,.58);
+
+      padding:14px;
+
+      box-sizing:border-box;
+
+      overflow:auto;
+
+    `;
+
+
+    overlay.innerHTML = `
+
+      <div
+        style="
+          width:min(760px,100%);
+          margin:20px auto;
+          background:#f3e6d2;
+          border-radius:18px;
+          padding:14px;
+          box-sizing:border-box;
+        ">
+
+        <div
+          id="bociteRoleIntroductionNotice">
+        </div>
+
+        <div
+          id="bociteRoleIntroductionCard"
+          style="
+            background:#ffffff;
+            border:1px solid #dedede;
+            border-radius:12px;
+            padding:16px;
+            box-sizing:border-box;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.55;
+          ">
+        </div>
+
+        <button
+          id="bociteRoleIntroductionContinue"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:14px;
+          ">
+          Continuer
+        </button>
+
+      </div>
+
+    `;
+
+
+    document.body.appendChild(
+      overlay
+    );
+
+
+    return overlay;
+
+  }
+
+
+  /* =====================================================
+     PRÉSENTATION VISUELLE
+     ===================================================== */
+
+  function applyLetterStyle(
+    card
+  ){
+
+    if(!card){
+      return;
+    }
+
+
+    card
+      .querySelectorAll("p")
+      .forEach(
+        function(p){
+
+          p.style.color =
+            "#111111";
+
+          p.style.fontSize =
+            "14px";
+
+          p.style.fontWeight =
+            "400";
+
+          p.style.lineHeight =
+            "1.55";
+
+          p.style.margin =
+            "0 0 12px 0";
+
+        }
+      );
+
+
+    card
+      .querySelectorAll(
+        ".bociteCourrierTitle"
+      )
+      .forEach(
+        function(title){
+
+          title.style.color =
+            "#2f5d46";
+
+          title.style.fontSize =
+            "17px";
+
+          title.style.fontWeight =
+            "700";
+
+          title.style.lineHeight =
+            "1.35";
+
+          title.style.margin =
+            "0 0 15px 0";
+
+        }
+      );
+
+
+    colorBrands(
+      card
+    );
+
+  }
+
+
+  /* =====================================================
+     AFFICHAGE D'UNE SÉQUENCE
+     ===================================================== */
+
+  function openNumbers(
+    numbers,
+    options,
+    onComplete
+  ){
+
+    options =
+      options || {};
+
+
+    const queue =
+      numbers.filter(
+        function(number){
+
+          return (
+            options.force === true ||
+            !isRead(number)
+          );
+
+        }
+      );
+
+
+    if(!queue.length){
+
+      if(
+        typeof onComplete ===
+        "function"
+      ){
+
+        onComplete();
+
+      }
+
+      return;
+
+    }
+
+
+    const overlay =
+      createOverlay();
+
+
+    const notice =
+      document.getElementById(
+        "bociteRoleIntroductionNotice"
+      );
+
+
+    const card =
+      document.getElementById(
+        "bociteRoleIntroductionCard"
+      );
+
+
+    const button =
+      document.getElementById(
+        "bociteRoleIntroductionContinue"
+      );
+
+
+    let position =
+      0;
+
+
+    function showCurrent(){
+
+      const number =
+        queue[position];
+
+
+      const html =
+        getLetterHtml(
+          number
+        );
+
+
+      if(!html){
+
+        position++;
+
+
+        if(
+          position <
+          queue.length
+        ){
+
+          showCurrent();
+
+        }
+        else{
+
+          overlay.style.display =
+            "none";
+
+
+          if(
+            typeof onComplete ===
+            "function"
+          ){
+
+            onComplete();
+
+          }
+
+        }
+
+        return;
+
+      }
+
+
+      /*
+        Le message parental est séparé
+        de la lettre elle-même.
+
+        Le texte validé de la lettre
+        n'est donc jamais modifié.
+      */
+
+      if(
+        number ===
+          LETTERS.jeune &&
+        options.parentNotice ===
+          true
+      ){
+
+        notice.innerHTML =
+          getParentNotice();
+
+        colorBrands(
+          notice
+        );
+
+      }
+      else{
+
+        notice.innerHTML =
+          "";
+
+      }
+
+
+      card.innerHTML =
+        html;
+
+
+      applyLetterStyle(
+        card
+      );
+
+
+      overlay.style.display =
+        "block";
+
+
+      overlay.scrollTop =
+        0;
+
+
+      button.textContent =
+        (
+          position <
+          queue.length - 1
+        )
+          ? "Lire la suite"
+          : "Continuer";
+
+
+      button.onclick =
+        function(){
+
+          markRead(
+            number
+          );
+
+
+          position++;
+
+
+          if(
+            position <
+            queue.length
+          ){
+
+            showCurrent();
+
+            return;
+
+          }
+
+
+          overlay.style.display =
+            "none";
+
+
+          if(
+            typeof onComplete ===
+            "function"
+          ){
+
+            onComplete();
+
+          }
+
+        };
+
+    }
+
+
+    showCurrent();
+
+  }
+
+
+  /* =====================================================
+     INTRODUCTION CORRESPONDANT AU PROFIL
+     ===================================================== */
+
+  function openForCategory(
+    category,
+    onComplete
+  ){
+
+    const normalized =
+      String(
+        category || ""
+      )
+      .trim()
+      .toLowerCase();
+
+
+    const numbers =
+      PROFILE_MAP[
+        normalized
+      ];
+
+
+    if(
+      !numbers ||
+      !numbers.length
+    ){
+
+      if(
+        typeof onComplete ===
+        "function"
+      ){
+
+        onComplete();
+
+      }
+
+      return;
+
+    }
+
+
+    openNumbers(
+      numbers,
+      {
+        parentNotice:
+          normalized ===
+            "jeune"
+      },
+      onComplete
+    );
+
+  }
+
+
+  /* =====================================================
+     PREMIÈRE ENTRÉE DANS COMMERCE
+
+     Pas de sous-tuile séparant
+     petit commerce et grande enseigne.
+
+     Les deux introductions sont donc
+     proposées dans cette même branche.
+     ===================================================== */
+
+  function installCommerceOpening(){
+
+    document.addEventListener(
+      "click",
+      function(event){
+
+        const target =
+          event.target &&
+          typeof event.target.closest ===
+            "function"
+            ? event.target.closest(
+                "#openCommerceSpace," +
+                '[data-commerce-space="commerce"],' +
+                "[data-open-commerce]"
+              )
+            : null;
+
+
+        if(!target){
+          return;
+        }
+
+
+        /*
+          Deuxième clic programmé :
+          on laisse le fonctionnement
+          Commerce existant continuer.
+        */
+
+        if(
+          target.__bociteIntroBypass ===
+            true
+        ){
+
+          target.__bociteIntroBypass =
+            false;
+
+          return;
+
+        }
+
+
+        const numbers = [
+
+          LETTERS.commun,
+          LETTERS.commerceProximite,
+          LETTERS.grandeEnseigne
+
+        ];
+
+
+        if(
+          !hasUnread(
+            numbers
+          )
+        ){
+
+          return;
+
+        }
+
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        if(
+          typeof event.stopImmediatePropagation ===
+            "function"
+        ){
+
+          event.stopImmediatePropagation();
+
+        }
+
+
+        openNumbers(
+          numbers,
+          {},
+          function(){
+
+            /*
+              Une fois les introductions lues,
+              on relance le bouton Commerce
+              exactement comme avant.
+            */
+
+            target.__bociteIntroBypass =
+              true;
+
+
+            window.setTimeout(
+              function(){
+
+                target.click();
+
+              },
+              0
+            );
+
+          }
+        );
+
+      },
+      true
+    );
+
+  }
+
+
+  /* =====================================================
+     API PUBLIQUE
+     ===================================================== */
+
+  window.BociteRoleIntroductions = {
+
+    openForCategory:
+      openForCategory,
+
+    openNumbers:
+      openNumbers,
+
+    isRead:
+      isRead,
+
+    hasUnread:
+      hasUnread,
+
+    markRead:
+      markRead,
+
+    letters:
+      LETTERS
+
+  };
+
+
+  installCommerceOpening();
+
+
+  console.log(
+    "✅ Introductions Bo'CitéArt selon profil chargées"
+  );
+
+})();
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 /* =========================================================
    ÇA FINIT ICI
    ========================================================= */
