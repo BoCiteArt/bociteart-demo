@@ -11823,94 +11823,196 @@ function openDirection(){
   window.BOCITEART_ENTREPRISE_CONNECTED =
     true;
 
-  function openEntrepriseModule(event){
+/* =========================================================
+   ÇA COMMENCE ICI
+   ENTREPRISE — COURRIER COMMUN AVANT OUVERTURE
+   ========================================================= */
 
-    if(event){
+function openEntrepriseModule(event){
 
-      event.preventDefault();
-      event.stopPropagation();
+  if(event){
 
-      if(
-        typeof event.stopImmediatePropagation ===
-        "function"
-      ){
-        event.stopImmediatePropagation();
-      }
+    event.preventDefault();
+    event.stopPropagation();
+
+    if(
+      typeof event.stopImmediatePropagation ===
+      "function"
+    ){
+      event.stopImmediatePropagation();
     }
+  }
+
+
+  /*
+    Fonction qui reprend exactement
+    l'ouverture Entreprise existante.
+  */
+
+  function ouvrirEntreprise(){
+
+    const currentApp =
+      window.BociteEntreprise;
+
+
+    if(!currentApp){
+
+      console.error(
+        "Bo'CitéArt Entreprise : module actuel introuvable."
+      );
+
+      return;
+    }
+
+
+    /*
+      On conserve le fonctionnement existant
+      de la navigation Entreprise.
+    */
+
+    if(
+      currentApp.state
+    ){
+
+      currentApp.state.currentScreen =
+        "commerces";
+
+      currentApp.state.history =
+        [];
+
+    }
+
 
     /*
       Premier choix :
-      écran officiel d’introduction Entreprise.
+      introduction Entreprise existante.
     */
-     if(
-  app.state
-){
 
-  app.state.currentScreen =
-    "commerces";
-
-  app.state.history = [];
-}
-     
-     if(
-      app.screens &&
-      typeof app.screens.introductionEntreprise ===
-      "function"
+    if(
+      currentApp.screens &&
+      typeof currentApp.screens
+        .introductionEntreprise ===
+          "function"
     ){
 
-      app.openScreen(
+      currentApp.openScreen(
         "introductionEntreprise"
       );
 
       return;
     }
 
+
     /*
       Deuxième choix :
-      fonction officielle fournie
-      par entreprise-accueil.js.
+      fonction fournie par
+      entreprise-accueil.js.
     */
 
     if(
-      typeof app.openEntrepriseIntroduction ===
-      "function"
+      typeof currentApp
+        .openEntrepriseIntroduction ===
+          "function"
     ){
 
-      app.openEntrepriseIntroduction();
+      currentApp
+        .openEntrepriseIntroduction();
 
       return;
     }
 
+
     /*
-      Compatibilité avec l’ancienne version
-      de entreprise-accueil.js.
+      Compatibilité ancienne version.
     */
 
     if(
-      app.screens &&
-      typeof app.screens.accueil ===
-      "function"
+      currentApp.screens &&
+      typeof currentApp.screens.accueil ===
+        "function"
     ){
 
-      app.openScreen(
+      currentApp.openScreen(
         "accueil"
       );
 
       return;
     }
 
+
     /*
-      Dernier recours seulement.
+      Dernier recours.
     */
 
     if(
-      typeof app.openHome ===
-      "function"
+      typeof currentApp.openHome ===
+        "function"
     ){
 
-      app.openHome();
+      currentApp.openHome();
+
     }
+
   }
+
+
+  /*
+    AVANT D'ENTRER DANS ENTREPRISE :
+
+    on présente le courrier commun
+    "Commerces & Entreprises".
+
+    openNumbers vérifie lui-même
+    s'il a déjà été lu.
+  */
+
+  if(
+    window.BociteRoleIntroductions &&
+    typeof window.BociteRoleIntroductions
+      .openNumbers ===
+        "function" &&
+    window.BociteRoleIntroductions
+      .letters
+  ){
+
+    const commonLetter =
+      window.BociteRoleIntroductions
+        .letters
+        .commun;
+
+
+    window.BociteRoleIntroductions
+      .openNumbers(
+        [
+          commonLetter
+        ],
+        {},
+        function(){
+
+          ouvrirEntreprise();
+
+        }
+      );
+
+
+    return;
+  }
+
+
+  /*
+    Sécurité :
+    si le nouveau système de courriers
+    n'est pas disponible,
+    Entreprise continue de fonctionner.
+  */
+
+  ouvrirEntreprise();
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
   document.addEventListener(
     "click",
