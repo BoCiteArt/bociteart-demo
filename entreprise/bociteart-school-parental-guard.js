@@ -412,15 +412,41 @@
       getParentRequest();
 
 
-    if(!request){
+  if(!request){
 
-      alert(
-        "Aucune liaison avec un parent ou responsable n'a encore été préparée pour cette démonstration."
-      );
+  if(
+    window.BociteParentalContact &&
+    typeof window.BociteParentalContact.open ===
+      "function"
+  ){
 
-      return;
+    window.BociteParentalContact.open({
 
-    }
+      onContinue:
+        function(){
+
+          /*
+            Une fois la liaison préparée,
+            l'utilisateur revient simplement
+            dans l'application.
+          */
+
+        }
+
+    });
+
+    return;
+
+  }
+
+
+  alert(
+    "Le module de liaison parentale n'est pas disponible."
+  );
+
+  return;
+
+}
 
 
     const input =
