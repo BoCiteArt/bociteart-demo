@@ -4535,6 +4535,133 @@ function speakTextPremium(text){
   }
 }
 
+   /* =========================================================
+   ÇA COMMENCE ICI
+   ŒUVRES — VRAI AUDIO + VOIX DE SECOURS
+   ========================================================= */
+
+let bociteCurrentOeuvreAudio = null;
+
+function stopOeuvreNarration(){
+
+  try{
+    if(bociteCurrentOeuvreAudio){
+      bociteCurrentOeuvreAudio.pause();
+      bociteCurrentOeuvreAudio.currentTime = 0;
+      bociteCurrentOeuvreAudio = null;
+    }
+  }catch(e){}
+
+  try{
+    if("speechSynthesis" in window){
+      window.speechSynthesis.cancel();
+    }
+  }catch(e){}
+}
+
+
+function playOeuvreNarration(id){
+
+  const o =
+    oeuvres.find(
+      x => String(x.id) === String(id)
+    );
+
+  if(!o){
+    return;
+  }
+
+  stopOeuvreNarration();
+
+  let secoursLance = false;
+
+  function lancerSecours(){
+
+    if(secoursLance){
+      return;
+    }
+
+    secoursLance = true;
+
+    try{
+      if(bociteCurrentOeuvreAudio){
+        bociteCurrentOeuvreAudio.pause();
+        bociteCurrentOeuvreAudio = null;
+      }
+    }catch(e){}
+
+    /*
+      Si le véritable fichier audio
+      ne fonctionne pas,
+      la voix féminine française
+      de l'appareil lit automatiquement
+      le même texte.
+    */
+
+    speakTextPremium(
+      o.texte
+    );
+  }
+
+
+  if(o.audio){
+
+    try{
+
+      const audio =
+        new Audio(
+          o.audio
+        );
+
+      bociteCurrentOeuvreAudio =
+        audio;
+
+      audio.preload =
+        "auto";
+
+      audio.onerror =
+        lancerSecours;
+
+      audio.onended =
+        function(){
+          bociteCurrentOeuvreAudio = null;
+        };
+
+      const lecture =
+        audio.play();
+
+      if(
+        lecture &&
+        typeof lecture.catch === "function"
+      ){
+        lecture.catch(
+          lancerSecours
+        );
+      }
+
+      return;
+
+    }catch(e){
+
+      lancerSecours();
+      return;
+
+    }
+  }
+
+  lancerSecours();
+}
+
+window.playOeuvreNarration =
+  playOeuvreNarration;
+
+window.stopOeuvreNarration =
+  stopOeuvreNarration;
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */  
+
 /* =========================================================
    ÇA FINIT ICI
    ========================================================= */
@@ -6930,38 +7057,126 @@ window.BociteOeuvresSupervisor = {
      ===================================================== -->
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-        <button onclick="speakTextPremium(${JSON.stringify(o.texte)})"
+        <button onclick="<button onclick="playOeuvreNarration('${esc(o.id)}')"
           style="background:#1f6f5f;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
-          ▶ Écouter
+          ▶ Écouter l’histoire
         </button>
 
-        <button onclick="stopSpeech()"
+      <button onclick="stopOeuvreNarration()"
           style="background:#666;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
           ■ Arrêter
         </button>
       </div>
 
-      <div id="${audioStatusId}" class="muted" style="margin-top:8px;">
-        ${
-          hasLocalAudio
-            ? "Une voix locale est enregistrée sur cet appareil pour cette œuvre."
-            : "Lecture directe par voix synthétique française de l’appareil. Le texte reste disponible en permanence."
-        }
-      </div>
+    <div
+  id="${audioStatusId}"
+  style="
+    margin-top:8px;
+    color:#111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+  ${
+    hasLocalAudio
+      ? "Une voix enregistrée est disponible sur cet appareil pour cette œuvre."
+      : "L’histoire de cette œuvre est disponible en audio et en texte."
+  }
 
-      <div class="box" style="margin-top:12px;">
-        <strong>Lecture texte :</strong><br>
-        <div style="white-space:pre-line;line-height:1.55;margin-top:8px;">
-          ${esc(o.texte)}
-        </div>
-      </div>
+  <br><br>
 
-      <div class="box" style="margin-top:12px;">
-        <strong>Audio attendu :</strong><br>
-        lecture directe par voix synthétique française de qualité disponible sur l’appareil
-        (type Denise, Mercedes ou équivalent). Le texte reste toujours disponible
-        si le son ne fonctionne pas.
-      </div>
+  Si la piste audio ne peut pas être lue,
+  une voix française de secours de l’appareil
+  peut prendre automatiquement le relais.
+
+  <br><br>
+
+  Le texte reste toujours présent,
+  notamment pour les personnes sourdes
+  ou malentendantes
+  et en cas de problème de son.
+
+  <br><br>
+
+  Pour les personnes aveugles
+  ou malvoyantes,
+  ce même texte reste accessible
+  aux fonctions de lecture d’écran
+  du téléphone,
+  de la tablette
+  ou de l’ordinateur.
+</div>
+
+
+<div
+  class="box"
+  style="margin-top:12px;"
+>
+  <div
+    class="oeuvreSectionTitle"
+    style="margin-top:0;"
+  >
+    Lire l’histoire
+  </div>
+
+  <div
+    style="
+      white-space:pre-line;
+      line-height:1.55;
+      margin-top:8px;
+      color:#111;
+      font-size:14px;
+      font-weight:400;
+    "
+  >
+    ${esc(o.texte)}
+  </div>
+</div>
+
+
+<div
+  class="box"
+  style="margin-top:12px;"
+>
+  <div
+    class="oeuvreSectionTitle"
+    style="margin-top:0;"
+  >
+    Une histoire accessible de plusieurs façons
+  </div>
+
+  <div
+    style="
+      margin-top:8px;
+      color:#111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
+    "
+  >
+    La lecture audio permet
+    d’écouter l’histoire
+    tout en observant l’œuvre.
+
+    <br><br>
+
+    Si cet audio rencontre un problème, 
+    une lecture vocale de secours
+    peut prendre automatiquement le relais.
+
+    <br><br>
+
+    Le texte reste disponible en permanence
+    pour les personnes qui préfèrent lire,
+    pour les personnes sourdes
+    ou malentendantes,
+    et pour permettre l’utilisation
+    des fonctions de lecture d’écran
+    par les personnes aveugles
+    ou malvoyantes.
+  </div>
+</div>
 
       ${renderLinks(o.liens)}
 
@@ -6996,7 +7211,7 @@ window.BociteOeuvresSupervisor = {
     `);
 
     setTimeout(()=>{
-      speakTextPremium(o.texte);
+     playOeuvreNarration(o.id);
     }, 400);
 
     setTimeout(()=>{
@@ -7250,6 +7465,21 @@ QR-BOCITEART-010`
           >
             Me guider vers cette œuvre
           </button>
+          <button
+  type="button"
+  onclick="window.BociteOeuvresSignalement && window.BociteOeuvresSignalement.open('${esc(o.id)}')"
+  style="
+    background:#fff;
+    color:#b42318;
+    padding:8px 10px;
+    border-radius:10px;
+    border:1px solid #b42318;
+    font-weight:700;
+    cursor:pointer;
+  "
+>
+  Signaler un problème
+</button>
 
         </div>
 
