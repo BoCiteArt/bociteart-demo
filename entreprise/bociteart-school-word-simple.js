@@ -1,412 +1,228 @@
 /* =========================================================
    ÇA COMMENCE ICI
    BO'CITÉART — ÉCOLE & JEUNES
-   MOT DU JOUR — PARCOURS PROFESSEUR SIMPLE
+   MOT DU JOUR — PARCOURS PROFESSEUR 3 ÉTAPES
 
-   PROFESSEUR :
    1 — Enregistrer
    2 — Écouter et valider
    3 — Choisir le jour
 
-   La vraie voix est conservée uniquement si elle est autorisée.
-   Sinon la prise temporaire est supprimée après validation et
-   la voix synthétique adaptée prend automatiquement le relais.
-   Aucun choix Fille / Garçon n'est demandé au professeur.
+   Aucun choix Fille / Garçon par le professeur.
+   La vraie voix n'est conservée que si elle est autorisée.
+   Sinon la prise temporaire est supprimée après validation.
    ========================================================= */
 
 (function initBociteSchoolWordSimple(){
-
   "use strict";
 
-
-  if(
-    window.BociteSchoolWordSimple
-  ){
+  if(window.BociteSchoolWordSimple){
     return;
   }
-
 
   const OVERLAY_ID =
     "bociteSchoolSimpleRecorderOverlay";
 
-
   const SCHEDULE_KEY =
     "bociteart_school_voice_schedule_v1";
-
 
   const LEGACY_VOICE_KEY =
     "bociteart_school_voice_v1";
 
-
   const SCHOOL_CONFIG_KEY =
     "bociteart_school_config_v1";
-
 
   const MAX_RECORDING_MS =
     2 * 60 * 1000;
 
-
   const MAX_ADVANCE_DAYS =
     7;
 
-
-  let recorder =
-    null;
-
-  let activeStream =
-    null;
-
-  let audioChunks =
-    [];
-
-  let timerId =
-    null;
-
-  let startedAt =
-    0;
-
-  let objectUrl =
-    "";
-
-  let pendingBlob =
-    null;
-
-  let pendingAudioData =
-    "";
-
-  let pendingClass =
-    "";
-
-  let pendingText =
-    "";
-
+  let recorder = null;
+  let activeStream = null;
+  let audioChunks = [];
+  let timerId = null;
+  let startedAt = 0;
+  let objectUrl = "";
+  let pendingBlob = null;
+  let pendingAudioData = "";
+  let pendingClass = "";
+  let pendingText = "";
+  let pendingChildAccountId = "";
   let selectedVoiceMode =
     "synthetic-pending";
-
-  let selectedVoiceGender =
-    "";
-
-  let pendingChildAccountId =
-    "";
-
-  let typedFallback =
-    false;
-
+  let selectedVoiceGender = "";
+  let typedFallback = false;
 
   /* =====================================================
      OUTILS
      ===================================================== */
 
-  function getElement(
-    id
-  ){
-
-    return document.getElementById(
-      id
-    );
-
+  function el(id){
+    return document.getElementById(id);
   }
 
-
-  function twoDigits(
-    value
-  ){
-
-    return String(
-      value
-    ).padStart(
-      2,
-      "0"
-    );
-
+  function two(n){
+    return String(n).padStart(2,"0");
   }
 
-
-  function localDateToIso(
-    date
-  ){
-
+  function isoDate(d){
     return (
-      date.getFullYear() +
+      d.getFullYear() +
       "-" +
-      twoDigits(
-        date.getMonth() + 1
-      ) +
+      two(d.getMonth()+1) +
       "-" +
-      twoDigits(
-        date.getDate()
-      )
+      two(d.getDate())
     );
-
   }
-
 
   function todayIso(){
-
-    return localDateToIso(
-      new Date()
-    );
-
+    return isoDate(new Date());
   }
 
-
   function maxDateIso(){
+    const d = new Date();
 
-    const date =
-      new Date();
-
-
-    date.setDate(
-      date.getDate() +
+    d.setDate(
+      d.getDate() +
       MAX_ADVANCE_DAYS
     );
 
-
-    return localDateToIso(
-      date
-    );
-
+    return isoDate(d);
   }
 
-
-  function formatDateFr(
-    iso
-  ){
-
-    const parts =
-      String(
-        iso ||
-        ""
-      ).split("-");
-
-
-    if(
-      parts.length !== 3
-    ){
-
-      return iso || "";
-
-    }
-
-
-    const date =
-      new Date(
-
-        Number(
-          parts[0]
-        ),
-
-        Number(
-          parts[1]
-        ) - 1,
-
-        Number(
-          parts[2]
-        )
-
-      );
-
-
-    return date
-      .toLocaleDateString(
-        "fr-FR",
-        {
-          weekday:"long",
-          day:"numeric",
-          month:"long",
-          year:"numeric"
-        }
-      );
-
-  }
-
-
-  function formatTime(
-    milliseconds
-  ){
-
-    const seconds =
+  function formatTime(ms){
+    const s =
       Math.max(
         0,
-        Math.floor(
-          milliseconds /
-          1000
-        )
+        Math.floor(ms/1000)
       );
-
 
     return (
-      twoDigits(
-        Math.floor(
-          seconds /
-          60
-        )
+      two(
+        Math.floor(s/60)
       ) +
       ":" +
-      twoDigits(
-        seconds %
-        60
-      )
+      two(s%60)
     );
-
   }
 
+  function formatDateFr(iso){
+    const p =
+      String(iso || "")
+      .split("-");
+
+    if(p.length !== 3){
+      return iso || "";
+    }
+
+    return new Date(
+      Number(p[0]),
+      Number(p[1])-1,
+      Number(p[2])
+    ).toLocaleDateString(
+      "fr-FR",
+      {
+        weekday:"long",
+        day:"numeric",
+        month:"long",
+        year:"numeric"
+      }
+    );
+  }
 
   function getCurrentClass(){
-
-    const select =
-      getElement(
-        "schoolClassSelect"
-      );
-
+    const s =
+      el("schoolClassSelect");
 
     return String(
-
-      select &&
-      select.value
-
-        ? select.value
-
+      s && s.value
+        ? s.value
         : "Classe"
-
     ).trim();
-
   }
 
-
   function getCurrentWordText(){
-
     const input =
-      getElement(
-        "schoolWordInput"
-      );
-
+      el("schoolWordInput");
 
     const direct =
       String(
-
-        input &&
-        input.value
-
+        input && input.value
           ? input.value
-
           : ""
-
       ).trim();
 
-
     if(direct){
-
       return direct;
-
     }
-
 
     const display =
       String(
-
-        getElement(
-          "schoolWordDisplay"
-        )?.textContent ||
-
+        el("schoolWordDisplay")
+          ?.textContent ||
         ""
-
       ).trim();
 
-
-    const match =
+    const m =
       display.match(
         /«\s*(.*?)\s*»/
       );
 
-
-    if(
-      match &&
-      match[1]
-    ){
-
-      return match[1]
-        .trim();
-
-    }
-
-
     return (
-      display ||
-      "Je suis ravi aujourd’hui."
+      m && m[1]
+        ? m[1].trim()
+        : (
+            display ||
+            "Je suis ravi aujourd’hui."
+          )
     );
-
   }
 
-
   function getSchoolZone(){
-
-    const select =
-      getElement(
-        "schoolConfigZone"
-      );
-
+    const s =
+      el("schoolConfigZone");
 
     if(
-      select &&
-      select.value
+      s &&
+      s.value
     ){
-
       return String(
-        select.value
+        s.value
       )
       .trim()
       .toUpperCase();
-
     }
 
-
     try{
-
       const raw =
         localStorage.getItem(
           SCHOOL_CONFIG_KEY
         );
 
-
-      const config =
+      const cfg =
         raw
-          ? JSON.parse(
-              raw
-            )
+          ? JSON.parse(raw)
           : null;
 
-
       if(
-        config &&
-        config.zone
+        cfg &&
+        cfg.zone
       ){
-
         return String(
-          config.zone
+          cfg.zone
         )
         .trim()
         .toUpperCase();
-
       }
-
     }catch(error){
-
       /* rien */
-
     }
 
-
     return "B";
-
   }
 
-
-  function normalizeGender(
-    value
-  ){
-
-    const gender =
+  function normalizeGender(value){
+    const g =
       String(
         value ||
         ""
@@ -414,21 +230,15 @@
       .trim()
       .toLowerCase();
 
-
     if(
       [
         "girl",
         "fille",
         "female"
-      ].includes(
-        gender
-      )
+      ].includes(g)
     ){
-
       return "girl";
-
     }
-
 
     if(
       [
@@ -436,72 +246,52 @@
         "garcon",
         "garçon",
         "male"
-      ].includes(
-        gender
-      )
+      ].includes(g)
     ){
-
       return "boy";
-
     }
 
-
     return "";
-
   }
 
-
   /* =====================================================
-     PROFIL VOCAL — INVISIBLE POUR LE PROFESSEUR
+     PROFIL VOCAL EN AMONT
      ===================================================== */
 
   function getVoiceProfile(){
-
-    if(
-      window.BociteSchoolParentalGuard &&
-      typeof window
-        .BociteSchoolParentalGuard
-        .getCurrentVoiceProfile ===
-          "function"
-    ){
-
-      try{
-
+    try{
+      if(
+        window.BociteSchoolParentalGuard &&
+        typeof window
+          .BociteSchoolParentalGuard
+          .getCurrentVoiceProfile ===
+            "function"
+      ){
         return (
           window
             .BociteSchoolParentalGuard
             .getCurrentVoiceProfile() ||
           {}
         );
-
-      }catch(error){
-
-        return {};
-
       }
-
+    }catch(error){
+      /* rien */
     }
 
-
     return {};
-
   }
-
 
   function getVoiceProfileFor(
     accountId
   ){
-
-    if(
-      window.BociteSchoolParentalGuard &&
-      typeof window
-        .BociteSchoolParentalGuard
-        .getVoiceProfileFor ===
-          "function"
-    ){
-
-      try{
-
+    try{
+      if(
+        window.BociteSchoolParentalGuard &&
+        typeof window
+          .BociteSchoolParentalGuard
+          .getVoiceProfileFor ===
+            "function"
+      ){
         return (
           window
             .BociteSchoolParentalGuard
@@ -510,101 +300,72 @@
             ) ||
           {}
         );
-
-      }catch(error){
-
-        return {};
-
       }
-
+    }catch(error){
+      /* rien */
     }
-
 
     return getVoiceProfile();
-
   }
-
 
   function voicePermissionAvailable(){
-
-    if(
-      window.BociteSchoolParentalGuard &&
-      typeof window
-        .BociteSchoolParentalGuard
-        .canUseCurrentVoice ===
-          "function"
-    ){
-
-      try{
-
-        return Boolean(
-          window
-            .BociteSchoolParentalGuard
-            .canUseCurrentVoice()
-        );
-
-      }catch(error){
-
-        return false;
-
-      }
-
+    try{
+      return Boolean(
+        window.BociteSchoolParentalGuard &&
+        typeof window
+          .BociteSchoolParentalGuard
+          .canUseCurrentVoice ===
+            "function" &&
+        window
+          .BociteSchoolParentalGuard
+          .canUseCurrentVoice()
+      );
+    }catch(error){
+      return false;
     }
-
-
-    return false;
-
   }
 
-
   function refreshVoiceContext(){
-
-    const profile =
+    const p =
       getVoiceProfile();
-
 
     selectedVoiceGender =
       normalizeGender(
-        profile.syntheticVoice ||
-        profile.voiceGender
+        p.syntheticVoice ||
+        p.voiceGender
       );
-
 
     pendingChildAccountId =
       String(
-        profile.accountId ||
+        p.accountId ||
         ""
       ).trim();
-
 
     if(
       voicePermissionAvailable()
     ){
-
       selectedVoiceMode =
         "real";
-
-      return;
-
     }
-
-
-    selectedVoiceMode =
-      selectedVoiceGender
-
-        ? (
-            selectedVoiceGender ===
-              "girl"
-
-              ? "synthetic-girl"
-
-              : "synthetic-boy"
-          )
-
-        : "synthetic-pending";
-
+    else if(
+      selectedVoiceGender ===
+        "girl"
+    ){
+      selectedVoiceMode =
+        "synthetic-girl";
+    }
+    else if(
+      selectedVoiceGender ===
+        "boy"
+    ){
+      selectedVoiceMode =
+        "synthetic-boy";
+    }
+    else{
+      selectedVoiceMode =
+        "synthetic-pending";
+    }
   }
-
 
   /* =====================================================
      VOIX SYNTHÉTIQUE
@@ -613,220 +374,149 @@
   function getSyntheticProfile(
     kind
   ){
-
     const cls =
       getCurrentClass()
-        .toUpperCase();
-
+      .toUpperCase();
 
     let boyPitch =
       1.10;
 
-
     if(
-      /CP|CE1/.test(
-        cls
-      )
+      /CP|CE1/.test(cls)
     ){
-
       boyPitch =
         1.22;
-
     }
     else if(
-      /CE2|CM1/.test(
-        cls
-      )
+      /CE2|CM1/.test(cls)
     ){
-
       boyPitch =
         1.18;
-
     }
     else if(
-      /CM2|6E/.test(
-        cls
-      )
+      /CM2|6E/.test(cls)
     ){
-
       boyPitch =
         1.14;
-
     }
     else if(
-      /5E|4E/.test(
-        cls
-      )
+      /5E|4E/.test(cls)
     ){
-
       boyPitch =
         1.08;
-
     }
 
-
     return {
-
       pitch:
         kind === "girl"
-
           ? Math.min(
               2,
-              boyPitch +
-              0.18
+              boyPitch + 0.18
             )
-
           : boyPitch,
 
       rate:
         0.92
-
     };
-
   }
-
 
   function getGenderedFrenchVoice(
     kind
   ){
-
     if(
       !window.speechSynthesis
     ){
-
       return null;
-
     }
 
-
-    const frenchVoices =
+    const voices =
       window
         .speechSynthesis
         .getVoices()
         .filter(
-          function(
-            voice
-          ){
-
+          function(voice){
             return (
               voice.lang &&
               voice.lang
                 .toLowerCase()
-                .startsWith(
-                  "fr"
-                )
+                .startsWith("fr")
             );
-
           }
         );
 
-
-    const femaleNames =
+    const female =
       /denise|hortense|julie|sylvie|marie|amelie|amélie|audrey|virginie|eloise|éloise|celine|céline|female|femme|fémin/i;
 
-
-    const maleNames =
+    const male =
       /henri|paul|claude|alain|thomas|hugo|remy|rémy|mathieu|gerard|gérard|loic|loïc|nicolas|male|homme|masculin/i;
 
-
-    const matcher =
+    const re =
       kind === "girl"
-
-        ? femaleNames
-
-        : maleNames;
-
+        ? female
+        : male;
 
     return (
-      frenchVoices.find(
-        function(
-          voice
-        ){
-
-          return matcher.test(
-
+      voices.find(
+        function(v){
+          return re.test(
             String(
-              voice.name ||
+              v.name ||
               ""
             ) +
-
             " " +
-
             String(
-              voice.voiceURI ||
+              v.voiceURI ||
               ""
             )
-
           );
-
         }
       ) ||
       null
     );
-
   }
-
 
   function speakSyntheticChild(
     kind,
     text
   ){
-
     if(
       !window.speechSynthesis ||
       typeof window
         .SpeechSynthesisUtterance !==
           "function"
     ){
-
       alert(
         "La voix synthétique n'est pas disponible sur cet appareil."
       );
 
       return false;
-
     }
 
-
     const gender =
-      normalizeGender(
-        kind
-      );
-
+      normalizeGender(kind);
 
     if(!gender){
-
       alert(
         "La voix synthétique de cet élève n'est pas encore disponible."
       );
 
       return false;
-
     }
 
-
-    const chosenVoice =
+    const voice =
       getGenderedFrenchVoice(
         gender
       );
 
-
-    if(!chosenVoice){
-
+    if(!voice){
       alert(
-
         gender === "girl"
-
           ? "Aucune voix française féminine adaptée n'est disponible sur cet appareil."
-
           : "Aucune voix française masculine adaptée n'est disponible sur cet appareil."
-
       );
 
       return false;
-
     }
-
 
     const phrase =
       String(
@@ -834,87 +524,68 @@
         ""
       ).trim();
 
-
     if(!phrase){
-
       return false;
-
     }
 
-
-    const profile =
+    const p =
       getSyntheticProfile(
         gender
       );
 
-
-    const utterance =
+    const u =
       new SpeechSynthesisUtterance(
         phrase
       );
 
-
-    utterance.lang =
+    u.lang =
       "fr-FR";
 
-    utterance.voice =
-      chosenVoice;
+    u.voice =
+      voice;
 
-    utterance.rate =
-      profile.rate;
+    u.rate =
+      p.rate;
 
-    utterance.pitch =
-      profile.pitch;
+    u.pitch =
+      p.pitch;
 
-    utterance.volume =
+    u.volume =
       1;
-
 
     window
       .speechSynthesis
       .cancel();
 
-
     window
       .speechSynthesis
-      .speak(
-        utterance
-      );
-
+      .speak(u);
 
     return true;
-
   }
 
-
   /* =====================================================
-     STYLE + MASQUAGE DE L'ANCIENNE INTERFACE
+     STYLE + MASQUAGE ANCIEN SYSTÈME
      ===================================================== */
 
   function installStyles(){
-
     if(
-      getElement(
+      el(
         "bociteSchoolSimpleStyles"
       )
     ){
-
       return;
-
     }
 
-
-    const style =
+    const s =
       document.createElement(
         "style"
       );
 
-
-    style.id =
+    s.id =
       "bociteSchoolSimpleStyles";
 
-
-    style.textContent = `
+    s.textContent = `
 
       #schoolVoicePermissionPanel,
       #schoolRecordVoiceBtn,
@@ -924,11 +595,8 @@
       #schoolRecordedVoiceStatus,
       #playChild,
       #playFemale{
-
         display:none !important;
-
       }
-
 
       #modalBody.bociteSchoolClean,
       #modalBody.bociteSchoolClean p,
@@ -936,259 +604,161 @@
       #modalBody.bociteSchoolClean .muted,
       #modalBody.bociteSchoolClean .box,
       #modalBody.bociteSchoolClean .miniField{
-
-        color:#111111 !important;
-
+        color:#111 !important;
         font-size:14px !important;
-
         font-weight:400 !important;
-
         line-height:1.5 !important;
-
       }
-
 
       .bociteSchoolSimpleTitle{
-
         color:#2f5d46 !important;
-
         font-size:17px !important;
-
         font-weight:700 !important;
-
         line-height:1.35 !important;
-
       }
-
 
       .bociteSchoolSimpleText{
-
-        color:#111111 !important;
-
+        color:#111 !important;
         font-size:14px !important;
-
         font-weight:400 !important;
-
         line-height:1.5 !important;
-
       }
-
 
       .bociteSchoolSimpleButton{
-
         display:block;
-
         width:100%;
-
         box-sizing:border-box;
-
         margin-top:12px;
-
         padding:13px 12px;
-
         border:2px solid rgba(0,0,0,.10);
-
         border-radius:12px;
-
         background:#efe4d3;
-
-        color:#111111;
-
+        color:#111;
         font-size:16px;
-
         font-weight:700;
-
         cursor:pointer;
-
       }
-
 
       .bociteSchoolSimpleSecondary{
-
-        background:#ffffff;
-
+        background:#fff;
       }
-
 
       #bociteSchoolSimpleProgress{
-
         width:100%;
-
         height:12px;
-
         overflow:hidden;
-
         border-radius:999px;
-
         background:#e5e5e5;
-
         margin-top:12px;
-
       }
 
-
       #bociteSchoolSimpleProgressBar{
-
         width:0%;
-
         height:100%;
-
         background:#2f5d46;
-
         transition:width .25s linear;
-
       }
 
     `;
 
-
-    document.head
-      .appendChild(
-        style
-      );
-
+    document.head.appendChild(
+      s
+    );
   }
 
-
   function hideLegacyVoiceInterface(){
-
     const body =
-      getElement(
-        "modalBody"
-      );
-
+      el("modalBody");
 
     if(!body){
-
       return;
-
     }
-
 
     body.classList.add(
       "bociteSchoolClean"
     );
 
-
-    const nodes =
-      body.querySelectorAll(
+    body
+      .querySelectorAll(
         "h1,h2,h3,h4,strong,b,div,p,span"
+      )
+      .forEach(
+        function(node){
+
+          if(
+            node.closest(
+              "#bociteSchoolSimpleVoicePanel"
+            )
+          ){
+            return;
+          }
+
+          const t =
+            String(
+              node.textContent ||
+              ""
+            )
+            .replace(
+              /\s+/g,
+              " "
+            )
+            .trim()
+            .toLowerCase();
+
+          if(
+            t ===
+              "voix réelle de l’élève (si accord)" ||
+            t ===
+              "voix réelle de l'élève (si accord)" ||
+            t ===
+              "voix réelle de l’élève" ||
+            t ===
+              "voix réelle de l'élève"
+          ){
+            node.style.display =
+              "none";
+          }
+
+        }
       );
-
-
-    nodes.forEach(
-      function(
-        node
-      ){
-
-        if(
-          node.closest(
-            "#bociteSchoolSimpleVoicePanel"
-          )
-        ){
-
-          return;
-
-        }
-
-
-        const text =
-          String(
-            node.textContent ||
-            ""
-          )
-          .replace(
-            /\s+/g,
-            " "
-          )
-          .trim()
-          .toLowerCase();
-
-
-        if(
-          text ===
-            "voix réelle de l’élève (si accord)" ||
-          text ===
-            "voix réelle de l'élève (si accord)" ||
-          text ===
-            "voix réelle de l’élève" ||
-          text ===
-            "voix réelle de l'élève"
-        ){
-
-          node.style.display =
-            "none";
-
-        }
-
-      }
-    );
-
   }
-
 
   /* =====================================================
      MICRO
      ===================================================== */
 
   function stopTracks(){
-
-    if(
-      activeStream
-    ){
-
+    if(activeStream){
       try{
-
         activeStream
           .getTracks()
           .forEach(
-            function(
-              track
-            ){
-
-              track.stop();
-
+            function(t){
+              t.stop();
             }
           );
-
       }catch(error){
-
         /* rien */
-
       }
-
     }
-
 
     activeStream =
       null;
-
   }
 
-
   function clearTimer(){
-
-    if(
-      timerId
-    ){
-
-      window.clearInterval(
+    if(timerId){
+      clearInterval(
         timerId
       );
-
     }
-
 
     timerId =
       null;
-
   }
 
-
   function resetRecorderState(){
-
     clearTimer();
-
     stopTracks();
 
     recorder =
@@ -1199,113 +769,73 @@
 
     startedAt =
       0;
-
   }
 
-
   function revokeObjectUrl(){
-
-    if(
-      objectUrl
-    ){
-
+    if(objectUrl){
       try{
-
         URL.revokeObjectURL(
           objectUrl
         );
-
       }catch(error){
-
         /* rien */
-
       }
-
     }
-
 
     objectUrl =
       "";
-
   }
 
-
   function closeOverlay(){
-
     if(
       recorder &&
       recorder.state ===
         "recording"
     ){
-
       try{
-
         recorder.onstop =
           null;
 
         recorder.stop();
-
       }catch(error){
-
         /* rien */
-
       }
-
     }
-
 
     resetRecorderState();
 
-
     const overlay =
-      getElement(
-        OVERLAY_ID
-      );
-
+      el(OVERLAY_ID);
 
     if(overlay){
-
       overlay.remove();
-
     }
 
-
     revokeObjectUrl();
-
   }
 
-
   function createOverlay(){
-
     closeOverlay();
 
-
-    const overlay =
+    const o =
       document.createElement(
         "div"
       );
 
-
-    overlay.id =
+    o.id =
       OVERLAY_ID;
 
+    o.style.cssText =
+      "position:fixed;" +
+      "inset:0;" +
+      "z-index:1000010;" +
+      "overflow:auto;" +
+      "box-sizing:border-box;" +
+      "padding:14px 10px 30px;" +
+      "background:rgba(0,0,0,.55);" +
+      "font-family:Arial,sans-serif";
 
-    overlay.style.cssText =
-      [
-
-        "position:fixed",
-        "inset:0",
-        "z-index:1000010",
-        "overflow:auto",
-        "box-sizing:border-box",
-        "padding:14px 10px 30px",
-        "background:rgba(0,0,0,.55)",
-        "font-family:Arial,sans-serif"
-
-      ].join(";");
-
-
-    overlay.innerHTML = `
+    o.innerHTML = `
 
       <div
         style="
@@ -1368,118 +898,79 @@
 
     `;
 
-
     document.body.appendChild(
-      overlay
+      o
     );
 
-
-    const close =
-      getElement(
-        "bociteSchoolSimpleClose"
-      );
-
-
-    if(close){
-
-      close.onclick =
-        closeOverlay;
-
-    }
-
+    el(
+      "bociteSchoolSimpleClose"
+    ).onclick =
+      closeOverlay;
   }
 
-
   function getRecorderOptions(){
-
     if(
       !window.MediaRecorder
     ){
-
       return null;
-
     }
 
-
-    const candidates = [
-
+    const c = [
       "audio/webm;codecs=opus",
       "audio/webm",
       "audio/ogg;codecs=opus"
-
     ];
-
 
     if(
       typeof MediaRecorder
         .isTypeSupported ===
           "function"
     ){
-
       for(
-        const mimeType
-        of candidates
+        const mime
+        of c
       ){
-
         if(
           MediaRecorder
             .isTypeSupported(
-              mimeType
+              mime
             )
         ){
-
           return {
-            mimeType:
-              mimeType
+            mimeType:mime
           };
-
         }
-
       }
-
     }
 
-
     return {};
-
   }
 
-
   function updateRecordingTimer(){
-
     const timer =
-      getElement(
+      el(
         "bociteSchoolSimpleTimer"
       );
 
-
     const bar =
-      getElement(
+      el(
         "bociteSchoolSimpleProgressBar"
       );
-
 
     if(
       !timer ||
       !bar
     ){
-
       return;
-
     }
-
 
     const elapsed =
       Date.now() -
       startedAt;
 
-
     timer.textContent =
-      formatTime(
-        elapsed
-      ) +
+      formatTime(elapsed) +
       " / 02:00";
-
 
     bar.style.width =
       Math.min(
@@ -1492,35 +983,25 @@
       ) +
       "%";
 
-
     if(
       elapsed >=
       MAX_RECORDING_MS
     ){
-
       stopRecording();
-
     }
-
   }
-
 
   function showRecordingError(
     message
   ){
-
     const content =
-      getElement(
+      el(
         "bociteSchoolSimpleContent"
       );
 
-
     if(!content){
-
       return;
-
     }
-
 
     content.innerHTML = `
 
@@ -1544,31 +1025,17 @@
 
     `;
 
-
-    const retry =
-      getElement(
-        "bociteSchoolSimpleRetry"
-      );
-
-
-    if(retry){
-
-      retry.onclick =
-        startRecording;
-
-    }
-
+    el(
+      "bociteSchoolSimpleRetry"
+    ).onclick =
+      startRecording;
   }
 
-
   async function startRecording(){
-
     typedFallback =
       false;
 
-
     refreshVoiceContext();
-
 
     if(
       !navigator.mediaDevices ||
@@ -1578,47 +1045,33 @@
           "function" ||
       !window.MediaRecorder
     ){
-
       alert(
         "L'enregistrement vocal n'est pas disponible sur cet appareil."
       );
 
       return;
-
     }
-
 
     pendingClass =
       getCurrentClass();
 
-
     pendingText =
       getCurrentWordText();
-
 
     pendingBlob =
       null;
 
-
     pendingAudioData =
       "";
 
-
     createOverlay();
 
-
-    const content =
-      getElement(
-        "bociteSchoolSimpleContent"
-      );
-
-
-    content.innerHTML =
+    el(
+      "bociteSchoolSimpleContent"
+    ).innerHTML =
       "<p>Préparation du microphone…</p>";
 
-
     try{
-
       activeStream =
         await navigator
           .mediaDevices
@@ -1626,22 +1079,17 @@
             audio:true
           });
 
-
       const options =
         getRecorderOptions();
-
 
       if(
         options ===
         null
       ){
-
         throw new Error(
           "MediaRecorder indisponible"
         );
-
       }
-
 
       recorder =
         new MediaRecorder(
@@ -1649,109 +1097,87 @@
           options
         );
 
-
       audioChunks =
         [];
 
-
       recorder.ondataavailable =
-        function(
-          event
-        ){
+        function(e){
 
           if(
-            event.data &&
-            event.data.size >
+            e.data &&
+            e.data.size >
               0
           ){
-
             audioChunks.push(
-              event.data
+              e.data
             );
-
           }
 
         };
 
-
       recorder.onerror =
-        function(
-          event
-        ){
+        function(e){
 
           console.error(
             "Bo'CitéArt — erreur enregistrement :",
-            event
+            e
           );
-
 
           resetRecorderState();
 
         };
-
 
       recorder.onstop =
         function(){
 
           clearTimer();
 
-
-          const mimeType =
+          const mime =
             (
               recorder &&
               recorder.mimeType
             ) ||
-
             (
               audioChunks[0] &&
               audioChunks[0].type
             ) ||
-
             "audio/webm";
-
 
           const blob =
             new Blob(
               audioChunks,
               {
-                type:
-                  mimeType
+                type:mime
               }
             );
 
-
           stopTracks();
-
 
           recorder =
             null;
-
 
           if(
             !blob ||
             blob.size ===
               0
           ){
-
             showRecordingError(
               "Aucun son n'a été enregistré. Recommencez simplement."
             );
 
             return;
-
           }
-
 
           pendingBlob =
             blob;
-
 
           showRecordingReview();
 
         };
 
-
-      content.innerHTML = `
+      el(
+        "bociteSchoolSimpleContent"
+      ).innerHTML = `
 
         <div
           class="bociteSchoolSimpleTitle"
@@ -1797,36 +1223,23 @@
 
       `;
 
-
-      const stop =
-        getElement(
-          "bociteSchoolSimpleStop"
-        );
-
-
-      if(stop){
-
-        stop.onclick =
-          stopRecording;
-
-      }
-
+      el(
+        "bociteSchoolSimpleStop"
+      ).onclick =
+        stopRecording;
 
       startedAt =
         Date.now();
-
 
       recorder.start(
         250
       );
 
-
       timerId =
-        window.setInterval(
+        setInterval(
           updateRecordingTimer,
           250
         );
-
 
       updateRecordingTimer();
 
@@ -1837,31 +1250,23 @@
         error
       );
 
-
       resetRecorderState();
-
 
       showRecordingError(
         "Le microphone n'a pas pu être utilisé. Vérifiez son autorisation dans le navigateur puis recommencez."
       );
 
     }
-
   }
 
-
   function stopRecording(){
-
     if(
       recorder &&
       recorder.state ===
         "recording"
     ){
-
       try{
-
         recorder.stop();
-
       }catch(error){
 
         resetRecorderState();
@@ -1871,49 +1276,37 @@
         );
 
       }
-
     }
-
   }
-
 
   /* =====================================================
      ÉCOUTE ET VALIDATION
      ===================================================== */
 
   function showRecordingReview(){
-
     const content =
-      getElement(
+      el(
         "bociteSchoolSimpleContent"
       );
-
 
     if(
       !content ||
       !pendingBlob
     ){
-
       return;
-
     }
-
 
     refreshVoiceContext();
 
-
     revokeObjectUrl();
-
 
     objectUrl =
       URL.createObjectURL(
         pendingBlob
       );
 
-
     const parentOk =
       voicePermissionAvailable();
-
 
     content.innerHTML = `
 
@@ -1987,181 +1380,115 @@
 
     `;
 
-
     const audio =
-      getElement(
+      el(
         "bociteSchoolSimpleAudio"
       );
 
-
     const volume =
-      getElement(
+      el(
         "bociteSchoolSimpleVolume"
       );
 
+    audio.src =
+      objectUrl;
 
-    if(audio){
+    audio.load();
 
-      audio.src =
-        objectUrl;
-
-      audio.load();
-
-    }
-
-
-    if(
-      audio &&
-      volume
-    ){
-
-      volume.oninput =
-        function(){
-
-          audio.volume =
-            Number(
-              volume.value
-            );
-
-        };
-
-    }
-
-
-    const validate =
-      getElement(
-        "bociteSchoolSimpleValidateAudio"
-      );
-
-
-    if(validate){
-
-      validate.onclick =
-        function(){
-
-          if(parentOk){
-
-            selectedVoiceMode =
-              "real";
-
-
-            convertPendingAudio();
-
-            return;
-
-          }
-
-
-          refreshVoiceContext();
-
-
-          if(audio){
-
-            audio.pause();
-
-          }
-
-
-          revokeObjectUrl();
-
-
-          pendingBlob =
-            null;
-
-
-          pendingAudioData =
-            "";
-
-
-          showCalendarStep();
-
-        };
-
-    }
-
-
-    const retry =
-      getElement(
-        "bociteSchoolSimpleRetryAudio"
-      );
-
-
-    if(retry){
-
-      retry.onclick =
-        function(){
-
-          if(audio){
-
-            audio.pause();
-
-          }
-
-
-          revokeObjectUrl();
-
-
-          pendingBlob =
-            null;
-
-
-          pendingAudioData =
-            "";
-
-
-          startRecording();
-
-        };
-
-    }
-
-  }
-
-
-  function convertPendingAudio(){
-
-    if(
-      !pendingBlob
-    ){
-
-      return;
-
-    }
-
-
-    const reader =
-      new FileReader();
-
-
-    reader.onloadend =
+    volume.oninput =
       function(){
 
-        pendingAudioData =
-          String(
-            reader.result ||
-            ""
+        audio.volume =
+          Number(
+            volume.value
           );
 
+      };
 
-        if(
-          !pendingAudioData
-        ){
+    el(
+      "bociteSchoolSimpleValidateAudio"
+    ).onclick =
+      function(){
 
-          showRecordingError(
-            "L'enregistrement n'a pas pu être préparé."
-          );
+        if(parentOk){
+
+          selectedVoiceMode =
+            "real";
+
+          convertPendingAudio();
 
           return;
 
         }
 
+        refreshVoiceContext();
+
+        audio.pause();
+
+        revokeObjectUrl();
+
+        pendingBlob =
+          null;
+
+        pendingAudioData =
+          "";
 
         showCalendarStep();
 
       };
 
+    el(
+      "bociteSchoolSimpleRetryAudio"
+    ).onclick =
+      function(){
 
-    reader.onerror =
+        audio.pause();
+
+        revokeObjectUrl();
+
+        pendingBlob =
+          null;
+
+        pendingAudioData =
+          "";
+
+        startRecording();
+
+      };
+  }
+
+  function convertPendingAudio(){
+    if(!pendingBlob){
+      return;
+    }
+
+    const r =
+      new FileReader();
+
+    r.onloadend =
+      function(){
+
+        pendingAudioData =
+          String(
+            r.result ||
+            ""
+          );
+
+        if(
+          !pendingAudioData
+        ){
+          showRecordingError(
+            "L'enregistrement n'a pas pu être préparé."
+          );
+
+          return;
+        }
+
+        showCalendarStep();
+
+      };
+
+    r.onerror =
       function(){
 
         showRecordingError(
@@ -2170,54 +1497,39 @@
 
       };
 
-
-    reader.readAsDataURL(
+    r.readAsDataURL(
       pendingBlob
     );
-
   }
 
-
   /* =====================================================
-     SECOURS ÉCRIT
+     ÉCRIRE LA PHRASE
      ===================================================== */
 
   function openWrittenWordFallback(){
-
     typedFallback =
       true;
 
-
     refreshVoiceContext();
-
 
     pendingClass =
       getCurrentClass();
-
 
     pendingText =
       pendingText ||
       getCurrentWordText();
 
-
     pendingBlob =
       null;
-
 
     pendingAudioData =
       "";
 
-
     createOverlay();
 
-
-    const content =
-      getElement(
-        "bociteSchoolSimpleContent"
-      );
-
-
-    content.innerHTML = `
+    el(
+      "bociteSchoolSimpleContent"
+    ).innerHTML = `
 
       <div
         class="bociteSchoolSimpleTitle"
@@ -2269,214 +1581,151 @@
 
     `;
 
-
     const field =
-      getElement(
+      el(
         "bociteSchoolWrittenText"
       );
 
+    el(
+      "bociteSchoolWrittenPreview"
+    ).onclick =
+      function(){
 
-    const preview =
-      getElement(
-        "bociteSchoolWrittenPreview"
-      );
+        pendingText =
+          String(
+            field.value ||
+            ""
+          ).trim();
 
+        if(!pendingText){
 
-    const validate =
-      getElement(
-        "bociteSchoolWrittenValidate"
-      );
-
-
-    if(preview){
-
-      preview.onclick =
-        function(){
-
-          pendingText =
-            String(
-              field?.value ||
-              ""
-            ).trim();
-
-
-          if(
-            !pendingText
-          ){
-
-            alert(
-              "Écrivez d'abord la phrase."
-            );
-
-            return;
-
-          }
-
-
-          refreshVoiceContext();
-
-
-          speakSyntheticChild(
-            selectedVoiceGender,
-            pendingText
+          alert(
+            "Écrivez d'abord la phrase."
           );
 
-        };
+          return;
+        }
 
-    }
+        refreshVoiceContext();
 
+        speakSyntheticChild(
+          selectedVoiceGender,
+          pendingText
+        );
 
-    if(validate){
+      };
 
-      validate.onclick =
-        function(){
+    el(
+      "bociteSchoolWrittenValidate"
+    ).onclick =
+      function(){
 
-          pendingText =
-            String(
-              field?.value ||
-              ""
-            ).trim();
+        pendingText =
+          String(
+            field.value ||
+            ""
+          ).trim();
 
+        if(!pendingText){
 
-          if(
-            !pendingText
-          ){
+          alert(
+            "Écrivez d'abord la phrase."
+          );
 
-            alert(
-              "Écrivez d'abord la phrase."
-            );
+          return;
+        }
 
-            return;
+        refreshVoiceContext();
 
-          }
+        if(
+          selectedVoiceMode ===
+            "real"
+        ){
+          selectedVoiceMode =
+            selectedVoiceGender ===
+              "girl"
 
+              ? "synthetic-girl"
 
-          refreshVoiceContext();
+              : selectedVoiceGender ===
+                  "boy"
 
-
-          if(
-            selectedVoiceMode ===
-              "real"
-          ){
-
-            selectedVoiceMode =
-              selectedVoiceGender
-
-                ? (
-                    selectedVoiceGender ===
-                      "girl"
-
-                      ? "synthetic-girl"
-
-                      : "synthetic-boy"
-                  )
+                ? "synthetic-boy"
 
                 : "synthetic-pending";
+        }
 
-          }
+        showCalendarStep();
 
-
-          showCalendarStep();
-
-        };
-
-    }
-
+      };
   }
 
-
   /* =====================================================
-     CALENDRIER SCOLAIRE
+     CALENDRIER
      ===================================================== */
 
-  function easterSunday(
-    year
-  ){
-
+  function easterSunday(year){
     const a =
-      year %
-      19;
+      year % 19;
 
     const b =
       Math.floor(
-        year /
-        100
+        year/100
       );
 
     const c =
-      year %
-      100;
+      year % 100;
 
     const d =
       Math.floor(
-        b /
-        4
+        b/4
       );
 
     const e =
-      b %
-      4;
+      b % 4;
 
     const f =
       Math.floor(
-        (
-          b +
-          8
-        ) /
-        25
+        (b+8)/25
       );
 
     const g =
       Math.floor(
-        (
-          b -
-          f +
-          1
-        ) /
-        3
+        (b-f+1)/3
       );
 
     const h =
       (
-        19 *
-        a +
+        19*a +
         b -
         d -
         g +
         15
-      ) %
-      30;
+      ) % 30;
 
     const i =
       Math.floor(
-        c /
-        4
+        c/4
       );
 
     const k =
-      c %
-      4;
+      c % 4;
 
     const l =
       (
         32 +
-        2 *
-        e +
-        2 *
-        i -
+        2*e +
+        2*i -
         h -
         k
-      ) %
-      7;
+      ) % 7;
 
     const m =
       Math.floor(
         (
           a +
-          11 *
-          h +
-          22 *
-          l
+          11*h +
+          22*l
         ) /
         451
       );
@@ -2486,8 +1735,7 @@
         (
           h +
           l -
-          7 *
-          m +
+          7*m +
           114
         ) /
         31
@@ -2498,178 +1746,126 @@
         (
           h +
           l -
-          7 *
-          m +
+          7*m +
           114
         ) %
         31
       ) +
       1;
 
-
     return new Date(
       year,
-      month - 1,
+      month-1,
       day
     );
-
   }
-
 
   function addDays(
     date,
     days
   ){
-
-    const copy =
+    const d =
       new Date(
         date.getTime()
       );
 
-
-    copy.setDate(
-      copy.getDate() +
+    d.setDate(
+      d.getDate() +
       days
     );
 
-
-    return copy;
-
+    return d;
   }
-
 
   function isFrenchPublicHoliday(
     iso
   ){
-
-    const parts =
+    const p =
       iso.split("-");
 
-
-    const date =
+    const d =
       new Date(
-
-        Number(
-          parts[0]
-        ),
-
-        Number(
-          parts[1]
-        ) -
-        1,
-
-        Number(
-          parts[2]
-        )
-
+        Number(p[0]),
+        Number(p[1])-1,
+        Number(p[2])
       );
 
-
-    const year =
-      date.getFullYear();
-
+    const y =
+      d.getFullYear();
 
     const fixed = [
-
-      year + "-01-01",
-      year + "-05-01",
-      year + "-05-08",
-      year + "-07-14",
-      year + "-08-15",
-      year + "-11-01",
-      year + "-11-11",
-      year + "-12-25"
-
+      y+"-01-01",
+      y+"-05-01",
+      y+"-05-08",
+      y+"-07-14",
+      y+"-08-15",
+      y+"-11-01",
+      y+"-11-11",
+      y+"-12-25"
     ];
 
-
     const easter =
-      easterSunday(
-        year
-      );
-
+      easterSunday(y);
 
     const movable = [
-
-      localDateToIso(
+      isoDate(
         addDays(
           easter,
           1
         )
       ),
-
-      localDateToIso(
+      isoDate(
         addDays(
           easter,
           39
         )
       ),
-
-      localDateToIso(
+      isoDate(
         addDays(
           easter,
           50
         )
       )
-
     ];
 
-
     return (
-      fixed.includes(
-        iso
-      ) ||
-      movable.includes(
-        iso
-      )
+      fixed.includes(iso) ||
+      movable.includes(iso)
     );
-
   }
-
 
   async function isOfficialSchoolHoliday(
     iso
   ){
-
-    const endpoint =
+    const u =
       new URL(
-
-        "https://data.education.gouv.fr/" +
-        "api/explore/v2.1/catalog/datasets/" +
-        "fr-en-calendrier-scolaire/records"
-
+        "https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records"
       );
 
-
-    endpoint.searchParams.set(
+    u.searchParams.set(
       "limit",
       "20"
     );
 
-
-    endpoint.searchParams.set(
+    u.searchParams.set(
       "refine",
       'zones:"Zone ' +
       getSchoolZone() +
       '"'
     );
 
-
-    endpoint.searchParams.set(
+    u.searchParams.set(
       "where",
-
       'start_date <= "' +
       iso +
       '" AND end_date >= "' +
       iso +
       '"'
-
     );
 
-
-    const response =
+    const r =
       await fetch(
-        endpoint.toString(),
+        u.toString(),
         {
           headers:{
             Accept:
@@ -2678,21 +1874,14 @@
         }
       );
 
-
-    if(
-      !response.ok
-    ){
-
+    if(!r.ok){
       throw new Error(
         "Calendrier scolaire indisponible"
       );
-
     }
 
-
     const data =
-      await response.json();
-
+      await r.json();
 
     return Boolean(
       data &&
@@ -2702,47 +1891,34 @@
       data.results.length >
         0
     );
-
   }
 
-
   function showCalendarStep(){
-
     const content =
-      getElement(
+      el(
         "bociteSchoolSimpleContent"
       );
 
-
-    const title =
-      getElement(
-        "bociteSchoolSimpleOverlayTitle"
-      );
-
-
     if(!content){
-
       return;
-
     }
-
 
     pendingClass =
       pendingClass ||
       getCurrentClass();
 
+    const title =
+      el(
+        "bociteSchoolSimpleOverlayTitle"
+      );
 
     if(title){
-
       title.textContent =
         "Programmer le Mot du jour";
-
     }
-
 
     const canGoBack =
       typedFallback ||
-
       (
         selectedVoiceMode ===
           "real" &&
@@ -2750,7 +1926,6 @@
           pendingBlob
         )
       );
-
 
     content.innerHTML = `
 
@@ -2839,7 +2014,6 @@
 
       ${
         canGoBack
-
           ? `
             <button
               id="bociteSchoolSimpleBack"
@@ -2852,233 +2026,144 @@
               ← Revenir à l'étape précédente
             </button>
           `
-
           : ""
       }
 
     `;
 
-
-    const schedule =
-      getElement(
-        "bociteSchoolSimpleSchedule"
-      );
-
+    el(
+      "bociteSchoolSimpleSchedule"
+    ).onclick =
+      validateScheduleDate;
 
     const back =
-      getElement(
+      el(
         "bociteSchoolSimpleBack"
       );
 
-
-    if(schedule){
-
-      schedule.onclick =
-        validateScheduleDate;
-
-    }
-
-
     if(back){
-
       back.onclick =
         function(){
 
-          if(
-            typedFallback
-          ){
-
+          if(typedFallback){
             openWrittenWordFallback();
-
-            return;
-
+          }
+          else{
+            showRecordingReview();
           }
 
-
-          showRecordingReview();
-
         };
-
     }
-
   }
 
-
   async function validateScheduleDate(){
-
     const field =
-      getElement(
+      el(
         "bociteSchoolSimpleDate"
       );
 
-
     const message =
-      getElement(
+      el(
         "bociteSchoolSimpleDateMessage"
       );
 
-
     const button =
-      getElement(
+      el(
         "bociteSchoolSimpleSchedule"
       );
 
-
     const iso =
       String(
-
         field &&
         field.value
-
           ? field.value
-
           : ""
-
       );
 
+    function show(text){
+      if(message){
+        message.style.display =
+          "block";
 
-    function showMessage(
-      text
-    ){
-
-      if(!message){
-
-        return;
-
+        message.textContent =
+          text;
       }
-
-
-      message.style.display =
-        "block";
-
-
-      message.textContent =
-        text;
-
     }
 
-
     if(!iso){
-
-      showMessage(
+      show(
         "Choisissez une date."
       );
 
       return;
-
     }
 
-
-    const parts =
+    const p =
       iso.split("-");
 
-
-    const date =
+    const d =
       new Date(
-
-        Number(
-          parts[0]
-        ),
-
-        Number(
-          parts[1]
-        ) -
-        1,
-
-        Number(
-          parts[2]
-        )
-
+        Number(p[0]),
+        Number(p[1])-1,
+        Number(p[2])
       );
 
-
     if(
-      date.getDay() === 0 ||
-      date.getDay() === 6
+      d.getDay() === 0 ||
+      d.getDay() === 6
     ){
-
-      showMessage(
+      show(
         "Cette date tombe un week-end. Choisissez un jour de classe."
       );
 
       return;
-
     }
-
 
     if(
       isFrenchPublicHoliday(
         iso
       )
     ){
-
-      showMessage(
+      show(
         "Cette date est un jour férié. Choisissez un autre jour."
       );
 
       return;
-
     }
 
+    button.disabled =
+      true;
 
-    if(button){
-
-      button.disabled =
-        true;
-
-
-      button.textContent =
-        "Vérification du calendrier…";
-
-    }
-
+    button.textContent =
+      "Vérification du calendrier…";
 
     try{
-
-      const holiday =
+      if(
         await isOfficialSchoolHoliday(
           iso
-        );
-
-
-      if(holiday){
-
-        showMessage(
+        )
+      ){
+        show(
           "Cette date se situe pendant des vacances scolaires. Choisissez un jour de classe."
         );
 
+        button.disabled =
+          false;
 
-        if(button){
-
-          button.disabled =
-            false;
-
-
-          button.textContent =
-            "✓ Programmer le Mot du jour";
-
-        }
-
+        button.textContent =
+          "✓ Programmer le Mot du jour";
 
         return;
-
       }
 
-
-      const saved =
+      if(
         saveSchedule(
           iso
-        );
-
-
-      if(
-        saved !== false
+        ) !== false
       ){
-
         showScheduleSuccess(
           iso
         );
-
       }
 
     }catch(error){
@@ -3088,114 +2173,80 @@
         error
       );
 
-
-      showMessage(
+      show(
         "Le calendrier scolaire officiel n'a pas pu être vérifié. Réessayez dans quelques instants."
       );
 
+      button.disabled =
+        false;
 
-      if(button){
-
-        button.disabled =
-          false;
-
-
-        button.textContent =
-          "✓ Programmer le Mot du jour";
-
-      }
-
+      button.textContent =
+        "✓ Programmer le Mot du jour";
     }
-
   }
-
 
   /* =====================================================
      PROGRAMMATIONS
      ===================================================== */
 
   function loadSchedule(){
-
     try{
-
       const raw =
         localStorage.getItem(
           SCHEDULE_KEY
         );
 
-
       const data =
         raw
-          ? JSON.parse(
-              raw
-            )
+          ? JSON.parse(raw)
           : [];
-
 
       return Array.isArray(
         data
       )
-
         ? data
-
         : [];
 
     }catch(error){
-
       return [];
-
     }
-
   }
-
 
   function saveScheduleRows(
     rows
   ){
-
     localStorage.setItem(
       SCHEDULE_KEY,
-      JSON.stringify(
-        rows
-      )
+      JSON.stringify(rows)
     );
-
   }
-
 
   function saveSchedule(
     iso
   ){
-
     refreshVoiceContext();
-
 
     const rows =
       loadSchedule();
-
 
     const currentClass =
       pendingClass ||
       getCurrentClass();
 
-
     const filtered =
       rows.filter(
-        function(
-          item
-        ){
+        function(i){
 
           return !(
-            item &&
-            item.class ===
+            i &&
+            i.class ===
               currentClass &&
-            item.date ===
+            i.date ===
               iso
           );
 
         }
       );
-
 
     filtered.push({
 
@@ -3235,26 +2286,19 @@
       audioData:
         selectedVoiceMode ===
           "real"
-
           ? pendingAudioData
-
           : "",
 
       mimeType:
         selectedVoiceMode ===
           "real" &&
         pendingBlob
-
           ? pendingBlob.type
-
           : "",
 
       status:
-        iso ===
-          todayIso()
-
+        iso === todayIso()
           ? "ready-today"
-
           : "scheduled",
 
       createdAt:
@@ -3263,13 +2307,10 @@
 
     });
 
-
     try{
-
       saveScheduleRows(
         filtered
       );
-
     }catch(error){
 
       console.error(
@@ -3277,80 +2318,60 @@
         error
       );
 
-
       alert(
         "La programmation n'a pas pu être enregistrée."
       );
 
-
       return false;
-
     }
-
 
     activateTodaySchedule();
 
-
     return true;
-
   }
-
 
   function resolveGenderForRow(
     row
   ){
-
     const stored =
       normalizeGender(
         row &&
         row.voiceGender
       );
 
-
     if(stored){
-
       return stored;
-
     }
 
-
-    const profile =
+    const p =
       getVoiceProfileFor(
         row &&
         row.childAccountId
       );
 
-
     return normalizeGender(
-      profile.syntheticVoice ||
-      profile.voiceGender
+      p.syntheticVoice ||
+      p.voiceGender
     );
-
   }
 
-
   function getTodaySchedule(){
-
     const cls =
       getCurrentClass();
-
 
     const today =
       todayIso();
 
-
     return (
       loadSchedule()
         .find(
-          function(
-            item
-          ){
+          function(i){
 
             return (
-              item &&
-              item.class ===
+              i &&
+              i.class ===
                 cls &&
-              item.date ===
+              i.date ===
                 today
             );
 
@@ -3358,96 +2379,71 @@
         ) ||
       null
     );
-
   }
 
-
   function activateTodaySchedule(){
-
     const cls =
       getCurrentClass();
-
 
     const today =
       todayIso();
 
-
     const rows =
       loadSchedule();
 
-
     const index =
       rows.findIndex(
-        function(
-          item
-        ){
+        function(i){
 
           return (
-            item &&
-            item.class ===
+            i &&
+            i.class ===
               cls &&
-            item.date ===
+            i.date ===
               today
           );
 
         }
       );
 
-
-    if(
-      index <
-      0
-    ){
-
+    if(index < 0){
       return null;
-
     }
-
 
     let row =
       rows[index];
 
-
-    const currentProfile =
+    const p =
       getVoiceProfileFor(
         row.childAccountId
       );
 
-
     const currentPermission =
       Boolean(
-        currentProfile.realVoiceAuthorized ===
+        p.realVoiceAuthorized ===
           true
       );
-
 
     if(
       row.voiceMode ===
         "real" &&
       !currentPermission
     ){
-
       const gender =
         resolveGenderForRow(
           row
         );
-
 
       row =
         Object.assign(
           {},
           row,
           {
-
             voiceMode:
               gender === "girl"
-
                 ? "synthetic-girl"
-
                 : gender === "boy"
-
                   ? "synthetic-boy"
-
                   : "synthetic-pending",
 
             voiceGender:
@@ -3461,29 +2457,20 @@
 
             mimeType:
               ""
-
           }
         );
-
 
       rows[index] =
         row;
 
-
       try{
-
         saveScheduleRows(
           rows
         );
-
       }catch(error){
-
         /* rien */
-
       }
-
     }
-
 
     const text =
       String(
@@ -3491,63 +2478,51 @@
         ""
       ).trim();
 
-
-    const wordInput =
-      getElement(
+    const input =
+      el(
         "schoolWordInput"
       );
 
-
-    const wordDisplay =
-      getElement(
+    const display =
+      el(
         "schoolWordDisplay"
       );
 
-
     if(
-      wordInput &&
+      input &&
       text &&
       String(
-        wordInput.value ||
+        input.value ||
         ""
       ).trim() !==
         text
     ){
-
-      wordInput.value =
+      input.value =
         text;
-
     }
 
-
     if(
-      wordDisplay &&
+      display &&
       text
     ){
-
       const expected =
         "« " +
         text +
         " »";
 
-
       if(
         String(
-          wordDisplay.textContent ||
+          display.textContent ||
           ""
         ).trim() !==
           expected
       ){
-
-        wordDisplay.textContent =
+        display.textContent =
           expected;
-
       }
-
     }
 
-
-    const realVoiceAllowed =
+    const realAllowed =
       row.voiceMode ===
         "real" &&
       Boolean(
@@ -3557,38 +2532,26 @@
         true &&
       currentPermission;
 
-
     let legacy =
       {};
 
-
     try{
-
       const raw =
         localStorage.getItem(
           LEGACY_VOICE_KEY
         );
 
-
       legacy =
         raw
-          ? JSON.parse(
-              raw
-            )
+          ? JSON.parse(raw)
           : {};
 
     }catch(error){
-
       legacy =
         {};
-
     }
 
-
-    if(
-      realVoiceAllowed
-    ){
-
+    if(realAllowed){
       legacy[cls] = {
 
         class:
@@ -3608,59 +2571,42 @@
           Date.now()
 
       };
-
     }
     else if(
       legacy &&
       legacy[cls]
     ){
-
       delete legacy[cls];
-
     }
 
-
     try{
-
       localStorage.setItem(
         LEGACY_VOICE_KEY,
         JSON.stringify(
           legacy
         )
       );
-
     }catch(error){
-
       /* rien */
-
     }
 
-
     return row;
-
   }
 
-
   function playTodaySchedule(){
-
     const row =
       activateTodaySchedule();
 
-
     if(!row){
-
       return false;
-
     }
 
-
-    const profile =
+    const p =
       getVoiceProfileFor(
         row.childAccountId
       );
 
-
-    const realVoiceAllowed =
+    const realAllowed =
       row.voiceMode ===
         "real" &&
       Boolean(
@@ -3668,47 +2614,34 @@
       ) &&
       row.parentalVoiceAuthorized ===
         true &&
-      profile.realVoiceAuthorized ===
+      p.realVoiceAuthorized ===
         true;
 
-
-    if(
-      realVoiceAllowed
-    ){
-
+    if(realAllowed){
       try{
-
-        const audio =
+        const a =
           new Audio(
             row.audioData
           );
 
-
-        const playPromise =
-          audio.play();
-
+        const promise =
+          a.play();
 
         if(
-          playPromise &&
-          typeof playPromise.catch ===
-            "function"
+          promise &&
+          promise.catch
         ){
-
-          playPromise.catch(
-            function(
-              error
-            ){
+          promise.catch(
+            function(e){
 
               console.error(
                 "Bo'CitéArt — lecture du Mot du jour :",
-                error
+                e
               );
 
             }
           );
-
         }
-
 
         return true;
 
@@ -3720,19 +2653,13 @@
         );
 
       }
-
     }
-
-
-    const gender =
-      resolveGenderForRow(
-        row
-      );
-
 
     return speakSyntheticChild(
 
-      gender,
+      resolveGenderForRow(
+        row
+      ),
 
       String(
         row.text ||
@@ -3740,123 +2667,87 @@
       ).trim()
 
     );
-
   }
 
-
   function validateTodayWord(){
-
     const row =
       activateTodaySchedule();
 
-
     if(!row){
-
       alert(
         "Aucun Mot du jour n'est programmé pour aujourd'hui."
       );
 
       return;
-
     }
 
-
-    const wordInput =
-      getElement(
+    const input =
+      el(
         "schoolWordInput"
       );
 
-
-    const existingButton =
-      getElement(
+    const button =
+      el(
         "schoolSaveBtn"
       );
 
-
     if(
-      wordInput &&
+      input &&
       row.text
     ){
-
-      wordInput.value =
+      input.value =
         String(
           row.text
         ).trim();
-
     }
 
-
-    if(
-      !existingButton
-    ){
-
+    if(!button){
       alert(
         "La validation du Mot du jour n'est pas disponible."
       );
 
       return;
-
     }
 
-
-    if(
-      existingButton.disabled
-    ){
-
+    if(button.disabled){
       alert(
         "Le Mot du jour a déjà été validé aujourd'hui."
       );
 
-
       refreshSimplePanel();
 
-
       return;
-
     }
 
+    button.click();
 
-    existingButton.click();
-
-
-    window.setTimeout(
+    setTimeout(
       refreshSimplePanel,
       100
     );
-
   }
-
 
   function showScheduleSuccess(
     iso
   ){
-
     const content =
-      getElement(
+      el(
         "bociteSchoolSimpleContent"
       );
 
-
     const title =
-      getElement(
+      el(
         "bociteSchoolSimpleOverlayTitle"
       );
 
-
     if(title){
-
       title.textContent =
         "Mot du jour prêt";
-
     }
-
 
     if(!content){
-
       return;
-
     }
-
 
     content.innerHTML = `
 
@@ -3895,112 +2786,78 @@
 
     `;
 
+    el(
+      "bociteSchoolSimpleFinish"
+    ).onclick =
+      function(){
 
-    const finish =
-      getElement(
-        "bociteSchoolSimpleFinish"
-      );
+        closeOverlay();
 
+        refreshSimplePanel();
 
-    if(finish){
-
-      finish.onclick =
-        function(){
-
-          closeOverlay();
-
-          refreshSimplePanel();
-
-        };
-
-    }
-
+      };
   }
 
-
   /* =====================================================
-     PANNEAU PROFESSEUR — 3 ÉTAPES
+     PANNEAU PROFESSEUR
      ===================================================== */
 
   function refreshSimplePanel(){
-
     refreshVoiceContext();
-
 
     hideLegacyVoiceInterface();
 
-
     const icon =
-      getElement(
+      el(
         "bociteSchoolSimpleVoiceIndicator"
       );
 
-
     const status =
-      getElement(
+      el(
         "bociteSchoolSimpleVoiceStatus"
       );
 
-
     if(icon){
-
       icon.style.color =
         voicePermissionAvailable()
-
           ? "#2f5d46"
-
           : "#9a9a9a";
-
     }
-
 
     activateTodaySchedule();
 
-
     if(!status){
-
       return;
-
     }
-
 
     const today =
       getTodaySchedule();
 
-
     if(!today){
-
       status.textContent =
         "Aucun Mot du jour n'est programmé pour aujourd'hui.";
 
-
       return;
-
     }
 
-
-    const existingButton =
-      getElement(
+    const oldButton =
+      el(
         "schoolSaveBtn"
       );
 
-
-    const alreadyValidated =
+    const done =
       Boolean(
-        existingButton &&
-        existingButton.disabled
+        oldButton &&
+        oldButton.disabled
       );
-
 
     status.innerHTML = `
 
       <div>
 
         ${
-          alreadyValidated
-
+          done
             ? "✓ Le Mot du jour a été validé aujourd'hui."
-
             : "Le Mot du jour est prêt pour aujourd'hui."
         }
 
@@ -4015,10 +2872,8 @@
       </button>
 
       ${
-        alreadyValidated
-
+        done
           ? ""
-
           : `
             <button
               id="bociteSchoolValidateToday"
@@ -4032,75 +2887,47 @@
 
     `;
 
-
-    const play =
-      getElement(
-        "bociteSchoolPlayToday"
-      );
-
+    el(
+      "bociteSchoolPlayToday"
+    ).onclick =
+      playTodaySchedule;
 
     const validate =
-      getElement(
+      el(
         "bociteSchoolValidateToday"
       );
 
-
-    if(play){
-
-      play.onclick =
-        playTodaySchedule;
-
-    }
-
-
     if(validate){
-
       validate.onclick =
         validateTodayWord;
-
     }
-
   }
 
-
   function findLegacyHeading(){
-
     const body =
-      getElement(
+      el(
         "modalBody"
       );
 
-
     if(!body){
-
       return null;
-
     }
-
-
-    const nodes =
-      body.querySelectorAll(
-        "h1,h2,h3,h4,strong,b,div,p,span"
-      );
-
 
     for(
       const node
-      of nodes
+      of body.querySelectorAll(
+        "h1,h2,h3,h4,strong,b,div,p,span"
+      )
     ){
-
       if(
         node.closest(
           "#bociteSchoolSimpleVoicePanel"
         )
       ){
-
         continue;
-
       }
 
-
-      const text =
+      const t =
         String(
           node.textContent ||
           ""
@@ -4112,134 +2939,96 @@
         .trim()
         .toLowerCase();
 
-
       if(
-        text ===
+        t ===
           "voix réelle de l’élève (si accord)" ||
-        text ===
+        t ===
           "voix réelle de l'élève (si accord)" ||
-        text ===
+        t ===
           "voix réelle de l’élève" ||
-        text ===
+        t ===
           "voix réelle de l'élève"
       ){
-
         return node;
-
       }
-
     }
 
-
     return null;
-
   }
 
-
   function installSimplePanel(){
-
-    const modalTitle =
-      getElement(
+    const title =
+      el(
         "modalTitle"
       );
 
-
-    const modalBody =
-      getElement(
+    const body =
+      el(
         "modalBody"
       );
 
-
     if(
-      !modalTitle ||
-      !modalBody ||
+      !title ||
+      !body ||
       String(
-        modalTitle.textContent ||
+        title.textContent ||
         ""
       ).trim() !==
         "École"
     ){
-
       return;
-
     }
-
 
     hideLegacyVoiceInterface();
 
-
     if(
-      getElement(
+      el(
         "bociteSchoolSimpleVoicePanel"
       )
     ){
-
       refreshSimplePanel();
 
       return;
-
     }
 
-
-    const oldRecordButton =
-      getElement(
+    const oldRecord =
+      el(
         "schoolRecordVoiceBtn"
       );
-
 
     const heading =
       findLegacyHeading();
 
-
     const anchor =
       heading ||
-      oldRecordButton;
+      oldRecord;
 
-
-    if(!anchor){
-
+    if(
+      !anchor ||
+      !anchor.parentElement
+    ){
       return;
-
     }
-
-
-    const parent =
-      anchor.parentElement;
-
-
-    if(!parent){
-
-      return;
-
-    }
-
 
     const panel =
       document.createElement(
         "div"
       );
 
-
     panel.id =
       "bociteSchoolSimpleVoicePanel";
 
-
     panel.style.cssText =
-      [
-
-        "margin:14px 0",
-        "padding:14px",
-        "border:1px solid #dedede",
-        "border-radius:12px",
-        "background:#ffffff",
-        "box-sizing:border-box",
-        "color:#111111",
-        "font-size:14px",
-        "font-weight:400",
-        "line-height:1.5"
-
-      ].join(";");
-
+      "margin:14px 0;" +
+      "padding:14px;" +
+      "border:1px solid #dedede;" +
+      "border-radius:12px;" +
+      "background:#fff;" +
+      "box-sizing:border-box;" +
+      "color:#111;" +
+      "font-size:14px;" +
+      "font-weight:400;" +
+      "line-height:1.5";
 
     panel.innerHTML = `
 
@@ -4272,7 +3061,6 @@
         </span>
 
       </div>
-
 
       <div
         style="
@@ -4318,7 +3106,6 @@
 
       </div>
 
-
       <button
         id="bociteSchoolSimpleStart"
         type="button"
@@ -4326,7 +3113,6 @@
       >
         🎙 Enregistrer
       </button>
-
 
       <button
         id="bociteSchoolSimpleWrite"
@@ -4339,7 +3125,6 @@
         ✍ Écrire la phrase à la place
       </button>
 
-
       <div
         class="bociteSchoolSimpleText"
         style="
@@ -4350,7 +3135,6 @@
         2 minutes maximum,
         avec arrêt automatique.
       </div>
-
 
       <div
         style="
@@ -4396,7 +3180,6 @@
 
       </div>
 
-
       <div
         style="
           display:grid;
@@ -4441,7 +3224,6 @@
 
       </div>
 
-
       <div
         id="bociteSchoolSimpleVoiceStatus"
         class="bociteSchoolSimpleText"
@@ -4455,48 +3237,26 @@
 
     `;
 
-
-    parent.insertBefore(
-      panel,
-      anchor
-    );
-
-
-    const start =
-      getElement(
-        "bociteSchoolSimpleStart"
+    anchor.parentElement
+      .insertBefore(
+        panel,
+        anchor
       );
 
+    el(
+      "bociteSchoolSimpleStart"
+    ).onclick =
+      startRecording;
 
-    const write =
-      getElement(
-        "bociteSchoolSimpleWrite"
-      );
-
-
-    if(start){
-
-      start.onclick =
-        startRecording;
-
-    }
-
-
-    if(write){
-
-      write.onclick =
-        openWrittenWordFallback;
-
-    }
-
+    el(
+      "bociteSchoolSimpleWrite"
+    ).onclick =
+      openWrittenWordFallback;
 
     hideLegacyVoiceInterface();
 
-
     refreshSimplePanel();
-
   }
-
 
   /* =====================================================
      OBSERVATION
@@ -4507,10 +3267,9 @@
       function(){
 
         const title =
-          getElement(
+          el(
             "modalTitle"
           );
-
 
         if(
           !title ||
@@ -4520,31 +3279,24 @@
           ).trim() !==
             "École"
         ){
-
           return;
-
         }
-
 
         hideLegacyVoiceInterface();
 
-
         if(
-          !getElement(
+          !el(
             "bociteSchoolSimpleVoicePanel"
           )
         ){
-
-          window.setTimeout(
+          setTimeout(
             installSimplePanel,
             0
           );
-
         }
 
       }
     );
-
 
   observer.observe(
     document.body,
@@ -4554,56 +3306,48 @@
     }
   );
 
-
   document.addEventListener(
     "change",
-    function(
-      event
-    ){
+    function(e){
 
       if(
-        event.target &&
-        event.target.id ===
+        e.target &&
+        e.target.id ===
           "schoolClassSelect"
       ){
-
-        window.setTimeout(
+        setTimeout(
           refreshSimplePanel,
           0
         );
-
       }
 
     },
     true
   );
 
-
   document.addEventListener(
     "bociteart:parent-permission-updated",
     function(){
 
-      window.setTimeout(
+      setTimeout(
         refreshSimplePanel,
         50
       );
 
     }
   );
-
 
   document.addEventListener(
     "bociteart:school-child-profile-updated",
     function(){
 
-      window.setTimeout(
+      setTimeout(
         refreshSimplePanel,
         50
       );
 
     }
   );
-
 
   /* =====================================================
      API
@@ -4637,15 +3381,12 @@
 
   };
 
-
   installStyles();
 
-
-  window.setTimeout(
+  setTimeout(
     installSimplePanel,
     100
   );
-
 
   console.log(
     "✅ Mot du jour — parcours professeur 3 étapes chargé"
