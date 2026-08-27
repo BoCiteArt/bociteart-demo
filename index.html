@@ -4384,283 +4384,304 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
    VOIX DOUCE DES ŒUVRES — DÉMO
    ========================================================= */
 
-function speakTextPremium(text){
-
-  try{
-
-    if(!("speechSynthesis" in window)){
-      alert("La lecture vocale n’est pas disponible sur cet appareil.");
-      return;
-    }
-
-    const synth =
-      window.speechSynthesis;
-
-    synth.cancel();
-
-    function lancerLecture(){
-
-      const voices =
-        synth.getVoices() || [];
-
-      const frenchVoices =
-        voices.filter(v =>
-          String(v.lang || "")
-            .toLowerCase()
-            .startsWith("fr")
-        );
-
-      /*
-        Priorité démo :
-        1. Microsoft Denise Online / Natural
-        2. Denise
-        3. Audrey
-        4. Amélie
-        5. Google français
-        6. autre voix française
-      */
-
-      const preferred =
-        frenchVoices.find(v =>
-          /denise/i.test(v.name || "") &&
-          /(natural|online)/i.test(v.name || "")
-        ) ||
-
-        frenchVoices.find(v =>
-          /denise/i.test(v.name || "")
-        ) ||
-
-        frenchVoices.find(v =>
-          /audrey/i.test(v.name || "")
-        ) ||
-
-        frenchVoices.find(v =>
-          /amélie|amelie/i.test(v.name || "")
-        ) ||
-
-        frenchVoices.find(v =>
-          /google.*fran[cç]ais/i.test(v.name || "")
-        ) ||
-
-        frenchVoices.find(v =>
-          String(v.lang || "")
-            .toLowerCase() === "fr-fr"
-        ) ||
-
-        frenchVoices[0] ||
-
-        voices[0];
-
-      const utter =
-        new SpeechSynthesisUtterance(
-          String(text || "")
-        );
-
-      utter.lang =
-        "fr-FR";
-
-      /*
-        Ton recherché :
-        calme, posé, chaleureux,
-        narration culturelle et non GPS.
-      */
-
-      utter.rate =
-        0.88;
-
-      utter.pitch =
-        1.00;
-
-      utter.volume =
-        1;
-
-      if(preferred){
-        utter.voice =
-          preferred;
-      }
-
-      synth.speak(
-        utter
-      );
-    }
-
-    const available =
-      synth.getVoices();
-
-    if(
-      available &&
-      available.length
-    ){
-      lancerLecture();
-    }
-    else{
-
-      let done =
-        false;
-
-      const loadVoices =
-        function(){
-
-          if(done) return;
-
-          done =
-            true;
-
-          synth.removeEventListener(
-            "voiceschanged",
-            loadVoices
-          );
-
-          lancerLecture();
-        };
-
-      synth.addEventListener(
-        "voiceschanged",
-        loadVoices
-      );
-
-      setTimeout(
-        loadVoices,
-        800
-      );
-    }
-
-  }
-  catch(e){
-
-    alert(
-      "La lecture vocale n’a pas pu démarrer."
-    );
-
-  }
-}
-
-   /* =========================================================
+/* =========================================================
    ÇA COMMENCE ICI
-   ŒUVRES — VRAI AUDIO + VOIX DE SECOURS
+   VOIX DES ŒUVRES — LECTURE FIABLE EDGE
    ========================================================= */
 
-let bociteCurrentOeuvreAudio = null;
+let bociteSpeechStopped = false;
+let bociteSpeechQueue = [];
+let bociteSpeechIndex = 0;
 
-function stopOeuvreNarration(){
 
-  try{
-    if(bociteCurrentOeuvreAudio){
-      bociteCurrentOeuvreAudio.pause();
-      bociteCurrentOeuvreAudio.currentTime = 0;
-      bociteCurrentOeuvreAudio = null;
-    }
-  }catch(e){}
+function getBociteFemaleFrenchVoice(){
 
-  try{
-    if("speechSynthesis" in window){
-      window.speechSynthesis.cancel();
-    }
-  }catch(e){}
+  const voices =
+    window.speechSynthesis
+      ? window.speechSynthesis.getVoices() || []
+      : [];
+
+  const french =
+    voices.filter(function(v){
+      return String(v.lang || "")
+        .toLowerCase()
+        .startsWith("fr");
+    });
+
+
+  return (
+
+    french.find(v =>
+      /denise/i.test(v.name || "") &&
+      /(natural|online)/i.test(v.name || "")
+    ) ||
+
+    french.find(v =>
+      /vivienne/i.test(v.name || "")
+    ) ||
+
+    french.find(v =>
+      /denise/i.test(v.name || "")
+    ) ||
+
+    french.find(v =>
+      /audrey/i.test(v.name || "")
+    ) ||
+
+    french.find(v =>
+      /am[eé]lie/i.test(v.name || "")
+    ) ||
+
+    french.find(v =>
+      /hortense/i.test(v.name || "")
+    ) ||
+
+    french.find(v =>
+      /google.*fran[cç]ais/i.test(v.name || "")
+    ) ||
+
+    french.find(v =>
+      String(v.lang || "").toLowerCase() === "fr-fr"
+    ) ||
+
+    french[0] ||
+
+    voices[0] ||
+
+    null
+
+  );
+
 }
 
 
-function playOeuvreNarration(id){
+function splitBociteSpeechText(text){
 
-  const o =
-    oeuvres.find(
-      x => String(x.id) === String(id)
-    );
+  const clean =
+    String(text || "")
+      .replace(/\s+/g, " ")
+      .trim();
 
-  if(!o){
+  if(!clean){
+    return [];
+  }
+
+  const sentences =
+    clean.match(/[^.!?…]+[.!?…]?/g) || [clean];
+
+  const chunks = [];
+  let current = "";
+
+  sentences.forEach(function(sentence){
+
+    const next =
+      (current + " " + sentence).trim();
+
+    if(
+      next.length > 220 &&
+      current
+    ){
+      chunks.push(current);
+      current = sentence.trim();
+    }
+    else{
+      current = next;
+    }
+
+  });
+
+  if(current){
+    chunks.push(current);
+  }
+
+  return chunks;
+}
+
+
+function playNextBociteSpeechChunk(){
+
+  if(
+    bociteSpeechStopped ||
+    bociteSpeechIndex >= bociteSpeechQueue.length
+  ){
     return;
   }
 
-  stopOeuvreNarration();
+  const synth =
+    window.speechSynthesis;
 
-  let secoursLance = false;
-
-  function lancerSecours(){
-
-    if(secoursLance){
-      return;
-    }
-
-    secoursLance = true;
-
-    try{
-      if(bociteCurrentOeuvreAudio){
-        bociteCurrentOeuvreAudio.pause();
-        bociteCurrentOeuvreAudio = null;
-      }
-    }catch(e){}
-
-    /*
-      Si le véritable fichier audio
-      ne fonctionne pas,
-      la voix féminine française
-      de l'appareil lit automatiquement
-      le même texte.
-    */
-
-    speakTextPremium(
-      o.texte
+  const utter =
+    new SpeechSynthesisUtterance(
+      bociteSpeechQueue[bociteSpeechIndex]
     );
+
+  utter.lang = "fr-FR";
+
+  /*
+    Ton voulu :
+    féminin, chaleureux,
+    doux, élégant, calme et posé.
+  */
+
+  utter.rate = 0.86;
+  utter.pitch = 0.98;
+  utter.volume = 1;
+
+
+  const voice =
+    getBociteFemaleFrenchVoice();
+
+  if(voice){
+    utter.voice = voice;
   }
 
 
-  if(o.audio){
+  utter.onend =
+    function(){
 
-    try{
-
-      const audio =
-        new Audio(
-          o.audio
-        );
-
-      bociteCurrentOeuvreAudio =
-        audio;
-
-      audio.preload =
-        "auto";
-
-      audio.onerror =
-        lancerSecours;
-
-      audio.onended =
-        function(){
-          bociteCurrentOeuvreAudio = null;
-        };
-
-      const lecture =
-        audio.play();
-
-      if(
-        lecture &&
-        typeof lecture.catch === "function"
-      ){
-        lecture.catch(
-          lancerSecours
-        );
+      if(bociteSpeechStopped){
+        return;
       }
 
-      return;
+      bociteSpeechIndex++;
 
-    }catch(e){
+      setTimeout(
+        playNextBociteSpeechChunk,
+        120
+      );
 
-      lancerSecours();
-      return;
+    };
 
-    }
-  }
 
-  lancerSecours();
+  utter.onerror =
+    function(){
+
+      if(bociteSpeechStopped){
+        return;
+      }
+
+      bociteSpeechIndex++;
+
+      setTimeout(
+        playNextBociteSpeechChunk,
+        120
+      );
+
+    };
+
+
+  synth.speak(utter);
 }
 
-window.playOeuvreNarration =
-  playOeuvreNarration;
 
-window.stopOeuvreNarration =
-  stopOeuvreNarration;
+function speakTextPremium(text){
 
-/* =========================================================
-   ÇA FINIT ICI
-   ========================================================= */  
+  if(!("speechSynthesis" in window)){
+
+    alert(
+      "La lecture vocale n’est pas disponible sur cet appareil."
+    );
+
+    return;
+  }
+
+
+  const synth =
+    window.speechSynthesis;
+
+  synth.cancel();
+
+  bociteSpeechStopped = false;
+
+  bociteSpeechQueue =
+    splitBociteSpeechText(text);
+
+  bociteSpeechIndex = 0;
+
+
+  if(!bociteSpeechQueue.length){
+    return;
+  }
+
+
+  function start(){
+
+    synth.cancel();
+
+    setTimeout(
+      playNextBociteSpeechChunk,
+      80
+    );
+
+  }
+
+
+  const voices =
+    synth.getVoices() || [];
+
+
+  if(voices.length){
+
+    start();
+
+  }
+  else{
+
+    let started = false;
+
+    const loadVoices =
+      function(){
+
+        if(started){
+          return;
+        }
+
+        started = true;
+
+        synth.removeEventListener(
+          "voiceschanged",
+          loadVoices
+        );
+
+        start();
+
+      };
+
+
+    synth.addEventListener(
+      "voiceschanged",
+      loadVoices
+    );
+
+
+    setTimeout(
+      loadVoices,
+      1000
+    );
+
+  }
+
+}
+
+
+function stopSpeech(){
+
+  bociteSpeechStopped = true;
+  bociteSpeechQueue = [];
+  bociteSpeechIndex = 0;
+
+  try{
+    window.speechSynthesis.cancel();
+  }catch(e){}
+
+}
+
+
+window.speakTextPremium =
+  speakTextPremium;
+
+window.stopSpeech =
+  stopSpeech;
 
 /* =========================================================
    ÇA FINIT ICI
@@ -7057,12 +7078,12 @@ window.BociteOeuvresSupervisor = {
      ===================================================== -->
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-        <button onclick="<button onclick="playOeuvreNarration('${esc(o.id)}')"
+       <button onclick="speakTextPremium(${JSON.stringify(o.texte)})"
           style="background:#1f6f5f;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
           ▶ Écouter l’histoire
         </button>
 
-      <button onclick="stopOeuvreNarration()"
+        <button onclick="stopSpeech()"
           style="background:#666;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
           ■ Arrêter
         </button>
@@ -7108,7 +7129,6 @@ window.BociteOeuvresSupervisor = {
   ou de l’ordinateur.
 </div>
 
-
 <div
   class="box"
   style="margin-top:12px;"
@@ -7117,6 +7137,7 @@ window.BociteOeuvresSupervisor = {
     class="oeuvreSectionTitle"
     style="margin-top:0;"
   >
+
     Lire l’histoire
   </div>
 
@@ -7134,16 +7155,21 @@ window.BociteOeuvresSupervisor = {
   </div>
 </div>
 
+  <!-- =====================================================
+     ÇA COMMENCE ICI
+     ACCESSIBILITÉ DES ŒUVRES
+     ===================================================== -->
 
 <div
   class="box"
   style="margin-top:12px;"
 >
+
   <div
     class="oeuvreSectionTitle"
     style="margin-top:0;"
   >
-    Une histoire accessible de plusieurs façons
+    Une découverte pensée pour être accessible à tous
   </div>
 
   <div
@@ -7152,31 +7178,97 @@ window.BociteOeuvresSupervisor = {
       color:#111;
       font-size:14px;
       font-weight:400;
-      line-height:1.5;
+      line-height:1.55;
     "
   >
-    La lecture audio permet
-    d’écouter l’histoire
-    tout en observant l’œuvre.
+
+    L’histoire de chaque œuvre
+    est proposée de plusieurs façons
+    afin que chacun puisse utiliser
+    celle qui lui convient le mieux.
 
     <br><br>
 
-    Si cet audio rencontre un problème, 
-    une lecture vocale de secours
-    peut prendre automatiquement le relais.
+    <span
+      style="
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+      "
+    >
+      Pour les personnes sourdes ou malentendantes
+    </span>
 
     <br><br>
 
-    Le texte reste disponible en permanence
-    pour les personnes qui préfèrent lire,
-    pour les personnes sourdes
-    ou malentendantes,
-    et pour permettre l’utilisation
-    des fonctions de lecture d’écran
-    par les personnes aveugles
-    ou malvoyantes.
+    L’intégralité de l’histoire
+    reste disponible en texte,
+    même lorsque la lecture audio fonctionne.
+
+    La découverte de l’œuvre
+    ne dépend donc pas du son.
+
+    <br><br>
+
+    <span
+      style="
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+      "
+    >
+      Pour les personnes aveugles ou malvoyantes
+    </span>
+
+    <br><br>
+
+    L’histoire peut être écoutée
+    grâce à la lecture vocale.
+
+    Le texte et les commandes
+    restent également accessibles
+    aux fonctions d’accessibilité
+    et aux lecteurs d’écran
+    du téléphone,
+    de la tablette
+    ou de l’ordinateur.
+
+    <br><br>
+
+    Les personnes utilisant
+    un afficheur braille compatible
+    peuvent également accéder
+    au contenu textuel
+    par l’intermédiaire
+    de leur lecteur d’écran.
+
+    <br><br>
+
+    <span
+      style="
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+      "
+    >
+      Si l’audio rencontre un problème
+    </span>
+
+    <br><br>
+
+    Le texte reste disponible en permanence.
+
+    Une lecture vocale de secours
+    de l’appareil peut également
+    prendre le relais.
+
   </div>
+
 </div>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
 
       ${renderLinks(o.liens)}
 
