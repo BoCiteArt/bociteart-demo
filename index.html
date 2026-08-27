@@ -4591,6 +4591,1170 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
     `;
   }
 
+      /* =========================================================
+     ÇA COMMENCE ICI
+     ŒUVRES — PRÉSENTATION + CARTE + PARCOURS
+     ========================================================= */
+
+  function oeuvrePresentationStyle(){
+    return `
+      <style>
+        #modalTitle{
+          color:#2f5d46 !important;
+          font-size:17px !important;
+          font-weight:700 !important;
+        }
+
+        .bociteOeuvresRoot,
+        .bociteOeuvresRoot .box,
+        .bociteOeuvresRoot .muted,
+        .bociteOeuvresRoot p,
+        .bociteOeuvresRoot li,
+        .bociteOeuvresRoot label{
+          color:#111111 !important;
+          font-size:14px !important;
+          font-weight:400 !important;
+          line-height:1.5 !important;
+        }
+
+        .bociteOeuvresRoot .box{
+          background:#ffffff;
+          border:1px solid #dedede;
+          border-radius:12px;
+          padding:14px;
+        }
+
+        .bociteOeuvresRoot .oeuvreTitle,
+        .bociteOeuvresRoot .oeuvreSectionTitle,
+        .bociteOeuvresRoot .box > strong:first-child,
+        .bociteOeuvresRoot div[style*="font-weight:900"]:not(.walletTitle){
+          color:#2f5d46 !important;
+          font-size:17px !important;
+          font-weight:700 !important;
+          line-height:1.35 !important;
+        }
+
+        .bociteOeuvresRoot .box strong:not(:first-child),
+        .bociteOeuvresRoot li strong{
+          color:#111111 !important;
+          font-size:14px !important;
+          font-weight:400 !important;
+        }
+
+        .bociteOeuvresRoot button,
+        .bociteOeuvresRoot a{
+          font-weight:700 !important;
+        }
+
+        .bociteOeuvresRoot .bociteBrand{
+          display:inline;
+          white-space:nowrap;
+          font-weight:700 !important;
+        }
+
+        .bociteOeuvresRoot .bociteBrandGreen{
+          color:#2f5d46 !important;
+          font-weight:700 !important;
+        }
+
+        .bociteOeuvresRoot .bociteBrandRed{
+          color:#b42318 !important;
+          font-weight:700 !important;
+        }
+
+        .bociteOeuvresRoot .oeuvreMap{
+          height:320px;
+          margin-top:10px;
+          border:1px solid #d8d8d8;
+          border-radius:12px;
+          overflow:hidden;
+          background:#f4f4f4;
+        }
+
+        .bociteOeuvresRoot .oeuvreNote{
+          margin-top:10px;
+          padding:12px;
+          border-radius:10px;
+          background:#f7f2e8;
+          color:#111111 !important;
+          font-size:14px !important;
+          font-weight:400 !important;
+        }
+
+        .bociteOeuvresRoot .oeuvreRouteChoice{
+          display:flex;
+          gap:8px;
+          align-items:flex-start;
+          margin-top:8px;
+          color:#111111 !important;
+          font-size:14px !important;
+          font-weight:400 !important;
+        }
+
+        .bociteOeuvresRoot .oeuvreRouteChoice input{
+          margin-top:4px;
+        }
+      </style>
+    `;
+  }
+
+  function colorBociteBrandTextNodes(root){
+    if(!root || !document.createTreeWalker) return;
+
+    const walker = document.createTreeWalker(
+      root,
+      NodeFilter.SHOW_TEXT
+    );
+
+    const nodes = [];
+    let current = null;
+
+    while((current = walker.nextNode())){
+      if(/Bo[’']CitéArt/.test(current.nodeValue || "")){
+        nodes.push(current);
+      }
+    }
+
+    nodes.forEach(node=>{
+      const text = node.nodeValue || "";
+      const parts = text.split(/(Bo[’']CitéArt)/g);
+      const frag = document.createDocumentFragment();
+
+      parts.forEach(part=>{
+        if(/Bo[’']CitéArt/.test(part)){
+          const brand = document.createElement("span");
+          brand.className = "bociteBrand";
+
+          const green = document.createElement("span");
+          green.className = "bociteBrandGreen";
+          green.textContent = "Bo’Cité";
+
+          const red = document.createElement("span");
+          red.className = "bociteBrandRed";
+          red.textContent = "Art";
+
+          brand.appendChild(green);
+          brand.appendChild(red);
+          frag.appendChild(brand);
+        }else if(part){
+          frag.appendChild(
+            document.createTextNode(part)
+          );
+        }
+      });
+
+      if(node.parentNode){
+        node.parentNode.replaceChild(
+          frag,
+          node
+        );
+      }
+    });
+  }
+
+  function applyOeuvrePresentation(){
+    const body =
+      document.getElementById(
+        "modalBody"
+      );
+
+    if(!body) return;
+
+    if(
+      !body.querySelector(
+        ".bociteOeuvresRoot"
+      )
+    ){
+      const existing =
+        body.innerHTML;
+
+      body.innerHTML =
+        oeuvrePresentationStyle() +
+        '<div class="bociteOeuvresRoot">' +
+        existing +
+        '</div>';
+    }
+
+    colorBociteBrandTextNodes(
+      body.querySelector(
+        ".bociteOeuvresRoot"
+      )
+    );
+  }
+
+  function installOeuvrePresentationWatcher(){
+    const body =
+      document.getElementById(
+        "modalBody"
+      );
+
+    const title =
+      document.getElementById(
+        "modalTitle"
+      );
+
+    if(
+      !body ||
+      !title ||
+      body.__bociteOeuvreWatcher
+    ){
+      return;
+    }
+
+    body.__bociteOeuvreWatcher =
+      true;
+
+    const observer =
+      new MutationObserver(
+        ()=>{
+          const currentTitle =
+            String(
+              title.textContent || ""
+            ).trim();
+
+          const isOeuvreModal =
+            currentTitle === "Œuvres" ||
+            oeuvres.some(
+              o =>
+                o.titre ===
+                currentTitle
+            );
+
+          if(
+            isOeuvreModal &&
+            !body.querySelector(
+              ".bociteOeuvresRoot"
+            )
+          ){
+            applyOeuvrePresentation();
+          }
+        }
+      );
+
+    observer.observe(
+      body,
+      {
+        childList:true,
+        subtree:false
+      }
+    );
+  }
+
+  installOeuvrePresentationWatcher();
+
+  function hasFiniteOeuvreCoordinate(
+    value
+  ){
+    return (
+      value !== null &&
+      value !== undefined &&
+      value !== "" &&
+      Number.isFinite(
+        Number(value)
+      )
+    );
+  }
+
+  function getOeuvreLocationSource(
+    o
+  ){
+    const ext =
+      window.BOCITEART_OEUVRES_LOCATIONS &&
+      window.BOCITEART_OEUVRES_LOCATIONS[
+        o.id
+      ]
+        ? window.BOCITEART_OEUVRES_LOCATIONS[
+            o.id
+          ]
+        : null;
+
+    return {
+      adresse:
+        ext &&
+        ext.adresse != null
+          ? String(
+              ext.adresse || ""
+            ).trim()
+          : String(
+              o.adresse || ""
+            ).trim(),
+
+      lat:
+        ext &&
+        hasFiniteOeuvreCoordinate(
+          ext.lat
+        )
+          ? Number(ext.lat)
+          : hasFiniteOeuvreCoordinate(
+              o.lat
+            )
+            ? Number(o.lat)
+            : null,
+
+      lng:
+        ext &&
+        hasFiniteOeuvreCoordinate(
+          ext.lng
+        )
+          ? Number(ext.lng)
+          : hasFiniteOeuvreCoordinate(
+              o.lng
+            )
+            ? Number(o.lng)
+            : null
+    };
+  }
+
+  async function geocodeOeuvreAddress(
+    address
+  ){
+    const query =
+      String(
+        address || ""
+      ).trim();
+
+    if(!query){
+      return null;
+    }
+
+    try{
+      const response =
+        await fetch(
+          "https://nominatim.openstreetmap.org/search" +
+          "?format=jsonv2" +
+          "&countrycodes=fr" +
+          "&limit=1" +
+          "&q=" +
+          encodeURIComponent(
+            query
+          ),
+          {
+            headers:{
+              "Accept":
+                "application/json"
+            }
+          }
+        );
+
+      if(!response.ok){
+        return null;
+      }
+
+      const rows =
+        await response.json();
+
+      if(
+        !Array.isArray(rows) ||
+        !rows.length
+      ){
+        return null;
+      }
+
+      const lat =
+        Number(
+          rows[0].lat
+        );
+
+      const lng =
+        Number(
+          rows[0].lon
+        );
+
+      if(
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lng)
+      ){
+        return null;
+      }
+
+      return {
+        lat:lat,
+        lng:lng
+      };
+
+    }catch(e){
+      return null;
+    }
+  }
+
+  async function resolveOeuvreLocation(
+    o
+  ){
+    const source =
+      getOeuvreLocationSource(
+        o
+      );
+
+    if(
+      Number.isFinite(
+        source.lat
+      ) &&
+      Number.isFinite(
+        source.lng
+      )
+    ){
+      return {
+        lat:source.lat,
+        lng:source.lng,
+        adresse:
+          source.adresse
+      };
+    }
+
+    if(!source.adresse){
+      return null;
+    }
+
+    const coords =
+      await geocodeOeuvreAddress(
+        source.adresse
+      );
+
+    if(!coords){
+      return null;
+    }
+
+    return {
+      lat:coords.lat,
+      lng:coords.lng,
+      adresse:
+        source.adresse
+    };
+  }
+
+  function initOeuvresMap(){
+    const mapEl =
+      document.getElementById(
+        "oeuvreMap"
+      );
+
+    const statusEl =
+      document.getElementById(
+        "oeuvreMapStatus"
+      );
+
+    const routeStatusEl =
+      document.getElementById(
+        "oeuvreRouteStatus"
+      );
+
+    const locateBtn =
+      document.getElementById(
+        "oeuvreLocateBtn"
+      );
+
+    const routeBtn =
+      document.getElementById(
+        "oeuvreBuildRouteBtn"
+      );
+
+    const walkingBtn =
+      document.getElementById(
+        "oeuvreWalkingBtn"
+      );
+
+    const clearBtn =
+      document.getElementById(
+        "oeuvreClearRouteBtn"
+      );
+
+    if(
+      !mapEl ||
+      typeof L === "undefined"
+    ){
+      if(statusEl){
+        statusEl.textContent =
+          "Carte indisponible dans cette version.";
+      }
+
+      return;
+    }
+
+    const map =
+      L.map(
+        mapEl
+      )
+      .setView(
+        [
+          46.603354,
+          1.888334
+        ],
+        6
+      );
+
+    L.tileLayer(
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {
+        attribution:
+          "© OpenStreetMap",
+        maxZoom:19
+      }
+    ).addTo(map);
+
+    let userPos =
+      null;
+
+    let userMarker =
+      null;
+
+    let routeLine =
+      null;
+
+    const locations =
+      {};
+
+    const markers =
+      {};
+
+    function routeMessage(
+      text
+    ){
+      if(routeStatusEl){
+        routeStatusEl.textContent =
+          text;
+      }
+    }
+
+    function selectedOeuvres(){
+      return Array.from(
+        document.querySelectorAll(
+          ".oeuvreRoutePick:checked"
+        )
+      )
+      .map(
+        input =>
+          oeuvres.find(
+            o =>
+              o.id ===
+              input.dataset.oeuvreId
+          )
+      )
+      .filter(Boolean);
+    }
+
+    function fitKnown(){
+      const pts =
+        Object.values(
+          locations
+        )
+        .filter(Boolean)
+        .map(
+          x => [
+            x.lat,
+            x.lng
+          ]
+        );
+
+      if(userPos){
+        pts.push(
+          [
+            userPos.lat,
+            userPos.lng
+          ]
+        );
+      }
+
+      if(
+        pts.length === 1
+      ){
+        map.setView(
+          pts[0],
+          16
+        );
+      }
+      else if(
+        pts.length > 1
+      ){
+        map.fitBounds(
+          L.latLngBounds(
+            pts
+          ),
+          {
+            padding:[
+              24,
+              24
+            ],
+            maxZoom:16
+          }
+        );
+      }
+    }
+
+    function drawRoute(
+      list
+    ){
+      const pts =
+        [];
+
+      if(userPos){
+        pts.push(
+          [
+            userPos.lat,
+            userPos.lng
+          ]
+        );
+      }
+
+      list.forEach(
+        o=>{
+          const loc =
+            locations[
+              o.id
+            ];
+
+          if(loc){
+            pts.push(
+              [
+                loc.lat,
+                loc.lng
+              ]
+            );
+          }
+        }
+      );
+
+      if(
+        routeLine &&
+        map.hasLayer(
+          routeLine
+        )
+      ){
+        map.removeLayer(
+          routeLine
+        );
+      }
+
+      if(
+        pts.length < 2
+      ){
+        routeLine =
+          null;
+
+        return false;
+      }
+
+      routeLine =
+        L.polyline(
+          pts,
+          {
+            color:"#2f5d46",
+            weight:4,
+            opacity:0.85,
+            dashArray:"8 10"
+          }
+        )
+        .addTo(
+          map
+        );
+
+      map.fitBounds(
+        routeLine.getBounds(),
+        {
+          padding:[
+            30,
+            30
+          ],
+          maxZoom:16
+        }
+      );
+
+      return true;
+    }
+
+    function locateUser(
+      done
+    ){
+      if(
+        !navigator.geolocation
+      ){
+        routeMessage(
+          "La localisation n’est pas disponible sur cet appareil."
+        );
+
+        return;
+      }
+
+      routeMessage(
+        "Localisation en cours…"
+      );
+
+      navigator.geolocation
+        .getCurrentPosition(
+
+          pos=>{
+            userPos = {
+              lat:Number(
+                pos.coords.latitude
+              ),
+              lng:Number(
+                pos.coords.longitude
+              )
+            };
+
+            if(
+              userMarker &&
+              map.hasLayer(
+                userMarker
+              )
+            ){
+              map.removeLayer(
+                userMarker
+              );
+            }
+
+            userMarker =
+              L.marker(
+                [
+                  userPos.lat,
+                  userPos.lng
+                ],
+                {
+                  title:
+                    "Vous êtes ici"
+                }
+              )
+              .addTo(
+                map
+              );
+
+            userMarker
+              .bindPopup(
+                "Vous êtes ici"
+              );
+
+            map.setView(
+              [
+                userPos.lat,
+                userPos.lng
+              ],
+              15
+            );
+
+            routeMessage(
+              "Votre position est prête pour le parcours."
+            );
+
+            if(
+              typeof done ===
+              "function"
+            ){
+              done();
+            }
+          },
+
+          ()=>{
+            routeMessage(
+              "Localisation non autorisée. Vous pouvez tout de même préparer un parcours entre les œuvres."
+            );
+          },
+
+          {
+            enableHighAccuracy:true,
+            timeout:10000,
+            maximumAge:30000
+          }
+        );
+    }
+
+    function buildSelectedRoute(){
+      const selected =
+        selectedOeuvres();
+
+      if(
+        !selected.length
+      ){
+        alert(
+          "Choisissez au moins une œuvre à visiter."
+        );
+
+        return;
+      }
+
+      const available =
+        selected.filter(
+          o =>
+            locations[
+              o.id
+            ]
+        );
+
+      if(
+        !available.length
+      ){
+        routeMessage(
+          "Le guidage sera disponible dès que les adresses exactes des œuvres choisies seront renseignées."
+        );
+
+        return;
+      }
+
+      const finish =
+        ()=>{
+          const ok =
+            drawRoute(
+              available
+            );
+
+          routeMessage(
+            ok
+              ? "Le tracé pointillé montre la direction et l’ordre que vous avez choisis."
+              : "Choisissez au moins une œuvre positionnée sur la carte."
+          );
+        };
+
+      if(!userPos){
+        locateUser(
+          finish
+        );
+      }else{
+        finish();
+      }
+    }
+
+    function openWalkingRoute(
+      listOverride
+    ){
+      const selected =
+        Array.isArray(
+          listOverride
+        )
+          ? listOverride
+          : selectedOeuvres();
+
+      const available =
+        selected.filter(
+          o =>
+            locations[
+              o.id
+            ]
+        );
+
+      if(
+        !available.length
+      ){
+        alert(
+          "Aucune œuvre sélectionnée ne dispose encore d’une localisation exploitable."
+        );
+
+        return;
+      }
+
+      const coords =
+        available.map(
+          o =>
+            locations[
+              o.id
+            ]
+        );
+
+      const destination =
+        coords[
+          coords.length - 1
+        ];
+
+      const waypoints =
+        coords.slice(
+          0,
+          -1
+        );
+
+      let url =
+        "https://www.google.com/maps/dir/?api=1" +
+        "&travelmode=walking" +
+        "&destination=" +
+        encodeURIComponent(
+          destination.lat +
+          "," +
+          destination.lng
+        );
+
+      if(userPos){
+        url +=
+          "&origin=" +
+          encodeURIComponent(
+            userPos.lat +
+            "," +
+            userPos.lng
+          );
+      }
+
+      if(
+        waypoints.length
+      ){
+        url +=
+          "&waypoints=" +
+          encodeURIComponent(
+            waypoints
+              .map(
+                p =>
+                  p.lat +
+                  "," +
+                  p.lng
+              )
+              .join("|")
+          );
+      }
+
+      window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    }
+
+    async function loadMarkers(){
+      let loaded =
+        0;
+
+      for(
+        const o of oeuvres
+      ){
+        const loc =
+          await resolveOeuvreLocation(
+            o
+          );
+
+        if(!loc){
+          continue;
+        }
+
+        locations[
+          o.id
+        ] = loc;
+
+        const marker =
+          L.circleMarker(
+            [
+              loc.lat,
+              loc.lng
+            ],
+            {
+              radius:8,
+              color:"#ffffff",
+              weight:3,
+              fillColor:"#2f5d46",
+              fillOpacity:1
+            }
+          )
+          .addTo(
+            map
+          );
+
+        marker.bindPopup(
+          "<div style='font-size:14px;font-weight:400;line-height:1.45;'>" +
+          "<div style='color:#2f5d46;font-size:17px;font-weight:700;'>" +
+          esc(o.titre) +
+          "</div>" +
+          "<div style='margin-top:5px;'>Quartier : " +
+          esc(o.quartier) +
+          "</div>" +
+          (
+            loc.adresse
+              ? "<div>Adresse : " +
+                esc(
+                  loc.adresse
+                ) +
+                "</div>"
+              : ""
+          ) +
+          "</div>"
+        );
+
+        markers[
+          o.id
+        ] = marker;
+
+        loaded++;
+      }
+
+      if(statusEl){
+        statusEl.textContent =
+          loaded
+            ? loaded +
+              " œuvre(s) positionnée(s). Les autres apparaîtront dès que leur adresse exacte sera renseignée."
+            : "Les points des fresques apparaîtront automatiquement dès que la mairie aura renseigné leurs adresses exactes.";
+      }
+
+      if(loaded){
+        fitKnown();
+      }else{
+        const city =
+          window.BOCITEART_CURRENT_CITY ||
+          localStorage.getItem(
+            "bociteart_current_city"
+          ) ||
+          "Wattignies";
+
+        const center =
+          await geocodeOeuvreAddress(
+            city +
+            ", France"
+          );
+
+        if(center){
+          map.setView(
+            [
+              center.lat,
+              center.lng
+            ],
+            13
+          );
+        }
+      }
+
+      setTimeout(
+        ()=>{
+          map.invalidateSize();
+        },
+        150
+      );
+    }
+
+    document
+      .querySelectorAll(
+        ".oeuvreSingleGuideBtn"
+      )
+      .forEach(
+        btn=>{
+          btn.onclick =
+            ()=>{
+              const id =
+                btn.dataset.oeuvreId;
+
+              const o =
+                oeuvres.find(
+                  x =>
+                    x.id ===
+                    id
+                );
+
+              if(!o){
+                return;
+              }
+
+              document
+                .querySelectorAll(
+                  ".oeuvreRoutePick"
+                )
+                .forEach(
+                  input=>{
+                    input.checked =
+                      input.dataset.oeuvreId ===
+                      id;
+                  }
+                );
+
+              if(
+                !locations[
+                  id
+                ]
+              ){
+                alert(
+                  "Cette œuvre n’a pas encore d’adresse exacte renseignée. Le guidage s’activera automatiquement lorsque sa localisation sera connue."
+                );
+
+                return;
+              }
+
+              if(
+                markers[
+                  id
+                ]
+              ){
+                markers[
+                  id
+                ]
+                .openPopup();
+              }
+
+              const finish =
+                ()=>{
+                  drawRoute(
+                    [o]
+                  );
+
+                  routeMessage(
+                    "Direction préparée vers " +
+                    o.titre +
+                    "."
+                  );
+                };
+
+              if(
+                !userPos
+              ){
+                locateUser(
+                  finish
+                );
+              }else{
+                finish();
+              }
+            };
+        }
+      );
+
+    if(locateBtn){
+      locateBtn.onclick =
+        ()=>{
+          locateUser();
+        };
+    }
+
+    if(routeBtn){
+      routeBtn.onclick =
+        buildSelectedRoute;
+    }
+
+    if(walkingBtn){
+      walkingBtn.onclick =
+        ()=>{
+          openWalkingRoute();
+        };
+    }
+
+    if(clearBtn){
+      clearBtn.onclick =
+        ()=>{
+          document
+            .querySelectorAll(
+              ".oeuvreRoutePick"
+            )
+            .forEach(
+              input=>{
+                input.checked =
+                  false;
+              }
+            );
+
+          if(
+            routeLine &&
+            map.hasLayer(
+              routeLine
+            )
+          ){
+            map.removeLayer(
+              routeLine
+            );
+          }
+
+          routeLine =
+            null;
+
+          routeMessage(
+            "Choisissez une ou plusieurs œuvres pour préparer votre parcours."
+          );
+
+          fitKnown();
+        };
+    }
+
+    loadMarkers();
+  }
+
+  /* =========================================================
+     ÇA FINIT ICI
+     ========================================================= */ 
+
   function openDetailById(id){
     const o = oeuvres.find(x => x.id === id);
     if(!o) return;
@@ -4818,186 +5982,723 @@ QR-BOCITEART-010`
     openOverview();
   }
 
+  /* =========================================================
+     ÇA COMMENCE ICI
+     AFFICHAGE DES ŒUVRES + NOUVEAU PARCOURS
+     ========================================================= */
+
   function renderRow(o, index){
-    const open = isOpen(o);
-    const btnId = "oeuvreRowBtn_" + o.id;
+    const open =
+      isOpen(o);
+
+    const btnId =
+      "oeuvreRowBtn_" +
+      o.id;
+
+    const guideBtnId =
+      "oeuvreGuideBtn_" +
+      o.id;
 
     return `
-      <div class="box" style="margin-top:8px;">
-        <strong>${index + 1}. ${esc(o.titre)}</strong><br>
-        Quartier : ${esc(o.quartier)}<br>
-        Statut : <span style="color:${open ? "#0a7a32" : "#b06b00"};font-weight:900;">
-          ${open ? "accessible" : "à débloquer sur place"}
-        </span><br>
-        ${open
-          ? "Contenu : histoire du quartier, présentation de l’artiste, mécène, remerciements, audio pro et texte, liens complémentaires."
-          : "Aperçu : œuvre visible dans le parcours, fiche complète verrouillée jusqu’au scan."}
+      <div
+        class="box"
+        style="margin-top:8px;"
+      >
 
-        <div style="margin-top:10px;">
+        <div
+          class="oeuvreSectionTitle"
+          style="margin-top:0;"
+        >
+          ${index + 1}.
+          ${esc(o.titre)}
+        </div>
+
+        Quartier :
+        ${esc(o.quartier)}
+        <br>
+
+        Statut :
+
+        <span
+          style="
+            color:${
+              open
+                ? "#0a7a32"
+                : "#b06b00"
+            };
+            font-weight:400;
+          "
+        >
+          ${
+            open
+              ? "accessible"
+              : "à débloquer sur place"
+          }
+        </span>
+
+        <br>
+
+        <div
+          style="margin-top:6px;"
+        >
+          ${
+            open
+              ? "Contenu : histoire du quartier, présentation de l’artiste, mécène, remerciements, audio et texte, liens complémentaires."
+              : "Aperçu : œuvre visible dans le parcours, fiche complète verrouillée jusqu’au scan."
+          }
+        </div>
+
+        <label
+          class="oeuvreRouteChoice"
+        >
+          <input
+            type="checkbox"
+            class="oeuvreRoutePick"
+            data-oeuvre-id="${esc(o.id)}"
+          >
+
+          <span>
+            Ajouter cette œuvre
+            à mon parcours
+          </span>
+        </label>
+
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+            margin-top:10px;
+          "
+        >
+
           <button
             id="${btnId}"
             type="button"
             data-oeuvre-id="${esc(o.id)}"
-            data-open="${open ? "1" : "0"}"
-            style="background:${open ? "#1f6f5f" : "#b06b00"};color:#fff;padding:8px 10px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
-            ${open ? "Ouvrir la fiche" : "Scanner / saisir le QR"}
+            data-open="${
+              open
+                ? "1"
+                : "0"
+            }"
+            style="
+              background:${
+                open
+                  ? "#2f5d46"
+                  : "#b06b00"
+              };
+              color:#fff;
+              padding:8px 10px;
+              border-radius:10px;
+              border:0;
+              font-weight:700;
+              cursor:pointer;
+            "
+          >
+            ${
+              open
+                ? "Ouvrir la fiche"
+                : "Scanner / saisir le QR"
+            }
           </button>
+
+          <button
+            id="${guideBtnId}"
+            type="button"
+            class="oeuvreSingleGuideBtn"
+            data-oeuvre-id="${esc(o.id)}"
+            style="
+              background:#fff;
+              color:#2f5d46;
+              padding:8px 10px;
+              border-radius:10px;
+              border:1px solid #2f5d46;
+              font-weight:700;
+              cursor:pointer;
+            "
+          >
+            Me guider vers cette œuvre
+          </button>
+
         </div>
+
       </div>
     `;
   }
 
+
   function openOverview(){
-    openModal("Œuvres", `
-      <div style="font-weight:900;margin-bottom:8px;">Parcours & Fresques</div>
+
+    openModal(
+      "Œuvres",
+      `
+
+      <div
+        class="oeuvreTitle"
+        style="margin-bottom:8px;"
+      >
+        Parcours & Fresques
+      </div>
+
 
       <div class="box">
-        <strong>Concept :</strong> chaque œuvre visible dans l’application fait partie d’un
-        parcours culturel urbain. Le visiteur découvre les fresques quartier par quartier,
-        scanne un QR code à proximité de l’œuvre, puis débloque automatiquement sa fiche
-        complète avec lecture <strong>audio + texte</strong>.
+
+        Chaque œuvre visible dans l’application
+        fait partie d’un parcours culturel urbain.
+
+        Le visiteur découvre les fresques
+        quartier par quartier,
+        scanne un QR code à proximité de l’œuvre,
+        puis débloque automatiquement
+        sa fiche complète
+        avec lecture audio et texte.
+
       </div>
 
-      <div class="box" style="margin-top:10px;">
-        <strong>Fonctionnement du parcours :</strong><br>
-        1. Le visiteur voit un QR code près de l’œuvre avec un message incitatif.<br>
-        2. Il télécharge ou ouvre l’application Bo’CitéArt.<br>
-        3. Il scanne le QR code depuis l’appli.<br>
-        4. Le QR sert d’<strong>interrupteur de découverte</strong> : la fiche complète de l’œuvre
-        se déverrouille automatiquement.<br>
-        5. L’histoire du quartier se lance en <strong>voix féminine douce</strong> et reste
-        aussi lisible en texte en cas de problème de son ou de connexion.
+
+      <div
+        class="oeuvreSectionTitle"
+        style="margin-top:14px;"
+      >
+        Fonctionnement du parcours
       </div>
 
-      <div class="box" style="margin-top:10px;">
-        <strong>Expérience voulue :</strong> donner envie de visiter les autres quartiers,
-        créer un parcours de plaisir, de culture, d’art et de rencontres, inciter les
-        habitants et visiteurs à découvrir la ville autrement et à échanger avec les gens
-        du quartier autour des œuvres.
+
+      <div
+        class="box"
+        style="margin-top:8px;"
+      >
+
+        1. Le visiteur voit un QR code
+        près de l’œuvre
+        avec un message incitatif.
+        <br>
+
+        2. Il télécharge ou ouvre
+        l’application Bo’CitéArt.
+        <br>
+
+        3. Il scanne le QR code
+        depuis l’application.
+        <br>
+
+        4. La fiche complète de l’œuvre
+        se déverrouille automatiquement.
+        <br>
+
+        5. L’histoire du quartier
+        peut être écoutée
+        et reste aussi disponible en texte.
+
       </div>
 
-      <div class="box" style="margin-top:10px;">
-        <strong>Ce que verront les élus à l’ouverture de cet onglet :</strong><br>
-        un aperçu clair du fonctionnement du parcours, des œuvres déjà ouvertes dans la démo,
-        des œuvres encore verrouillées, du rôle du QR code, de la lecture audio professionnelle
-        prévue, de la lecture texte de secours, et de la valorisation de l’artiste, du mécène
-        et des partenaires.
+
+      <div
+        class="oeuvreSectionTitle"
+        style="margin-top:14px;"
+      >
+        Expérience proposée
       </div>
 
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-        <button id="oeuvreScanBtn"
+
+      <div
+        class="box"
+        style="margin-top:8px;"
+      >
+
+        Donner envie de visiter
+        les autres quartiers,
+        créer un parcours de plaisir,
+        de culture,
+        d’art et de rencontres,
+        inciter habitants et visiteurs
+        à découvrir la ville autrement
+        et à échanger autour des œuvres.
+
+      </div>
+
+
+      <div
+        class="oeuvreSectionTitle"
+        style="margin-top:14px;"
+      >
+        Ce que verront les élus
+        à l’ouverture de cet onglet
+      </div>
+
+
+      <div
+        class="box"
+        style="margin-top:8px;"
+      >
+
+        Un aperçu clair
+        du fonctionnement du parcours,
+        des œuvres déjà ouvertes dans la démo,
+        des œuvres encore verrouillées,
+        du rôle du QR code,
+        de la lecture audio prévue,
+        de la lecture texte de secours
+        et de la valorisation de l’artiste,
+        du mécène et des partenaires.
+
+      </div>
+
+
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+          margin:12px 0;
+        "
+      >
+
+        <button
+          id="oeuvreScanBtn"
           type="button"
-          style="border:0;background:#b06b00;color:#fff;padding:10px 12px;border-radius:10px;font-weight:900;cursor:pointer;">
+          style="
+            border:0;
+            background:#b06b00;
+            color:#fff;
+            padding:10px 12px;
+            border-radius:10px;
+            font-weight:700;
+            cursor:pointer;
+          "
+        >
           Scanner / saisir un QR
         </button>
 
-        <button id="oeuvreReopenBtn"
+        <button
+          id="oeuvreReopenBtn"
           type="button"
-          style="border:0;background:#224e96;color:#fff;padding:10px 12px;border-radius:10px;font-weight:900;cursor:pointer;">
+          style="
+            border:0;
+            background:#224e96;
+            color:#fff;
+            padding:10px 12px;
+            border-radius:10px;
+            font-weight:700;
+            cursor:pointer;
+          "
+        >
           Rouvrir la dernière œuvre
         </button>
 
-        <button id="oeuvreResetBtn"
+        <button
+          id="oeuvreResetBtn"
           type="button"
-          style="border:0;background:#666;color:#fff;padding:10px 12px;border-radius:10px;font-weight:900;cursor:pointer;">
+          style="
+            border:0;
+            background:#666;
+            color:#fff;
+            padding:10px 12px;
+            border-radius:10px;
+            font-weight:700;
+            cursor:pointer;
+          "
+        >
           Réinitialiser la démo
         </button>
+
       </div>
 
-      <div style="font-weight:900;margin:14px 0 8px 0;">Fonctions prévues dans l’onglet</div>
-    <ul style="list-style:none;padding-left:0;margin:10px 0 0 0;font-weight:800;line-height:1.65;">
 
-<li><span style="display:inline-block;width:14px;color:#1fa34a;">●</span> Parc sportif</li>
+      <div
+        class="oeuvreSectionTitle"
+        style="margin-top:14px;"
+      >
+        Carte des œuvres
+      </div>
 
-<li><span style="display:inline-block;width:14px;color:#2a9d8f;">●</span> Bois et parcours</li>
 
-<li><span style="display:inline-block;width:14px;color:#1fa34a;">●</span> Salle de sport</li>
+      <div
+        class="box"
+        style="margin-top:8px;"
+      >
 
-<li><span style="display:inline-block;width:14px;color:#2a9d8f;">●</span> Parc urbain</li>
+        Les fresques sont
+        les seuls points permanents
+        de cette carte.
 
-<li><span style="display:inline-block;width:14px;color:#2a9d8f;">●</span> Espace vert central</li>
+        Dès que la mairie renseigne
+        leurs adresses exactes,
+        elles apparaissent automatiquement.
 
-<li><span style="display:inline-block;width:14px;color:#1fa34a;">●</span> Piste cyclable nord</li>
+        Si une œuvre change d’adresse
+        ou qu’une nouvelle œuvre est ajoutée,
+        le plan peut s’adapter
+        aux nouvelles données.
 
-<li><span style="display:inline-block;width:14px;color:#1fa34a;">●</span> Piste cyclable centre</li>
 
-<li><span style="display:inline-block;width:14px;color:#1f6fd6;">●</span> Arrêt de bus Mairie</li>
+        <div
+          id="oeuvreMap"
+          class="oeuvreMap"
+        >
+        </div>
 
-<li><span style="display:inline-block;width:14px;color:#1f6fd6;">●</span> Arrêt de bus Centre</li>
 
-<li><span style="display:inline-block;width:14px;color:#ff8c00;">●</span> Supérette du centre</li>
+        <div
+          id="oeuvreMapStatus"
+          class="oeuvreNote"
+        >
+          Préparation de la carte…
+        </div>
 
-<li><span style="display:inline-block;width:14px;color:#ff8c00;">●</span> Mini-market quartier nord</li>
 
-<li><span style="display:inline-block;width:14px;color:#ff8c00;">●</span> Restaurant place centrale</li>
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+            margin-top:10px;
+          "
+        >
 
-<li><span style="display:inline-block;width:14px;color:#ff8c00;">●</span> Snack du quartier</li>
+          <button
+            id="oeuvreLocateBtn"
+            type="button"
+            style="
+              background:#fff;
+              color:#2f5d46;
+              padding:8px 10px;
+              border-radius:10px;
+              border:1px solid #2f5d46;
+              font-weight:700;
+              cursor:pointer;
+            "
+          >
+            Me localiser
+          </button>
 
-</ul>
 
-      <div style="font-weight:900;margin:14px 0 8px 0;">Parcours des 10 œuvres</div>
+          <button
+            id="oeuvreBuildRouteBtn"
+            type="button"
+            style="
+              background:#2f5d46;
+              color:#fff;
+              padding:8px 10px;
+              border-radius:10px;
+              border:0;
+              font-weight:700;
+              cursor:pointer;
+            "
+          >
+            Préparer mon parcours
+          </button>
 
-      ${oeuvres.map(function(o, i){ return renderRow(o, i); }).join("")}
 
-      <div class="box" style="margin-top:12px;">
-        <strong>Contenu complet d’une fiche œuvre déverrouillée :</strong><br>
-        • titre de l’œuvre<br>
-        • quartier concerné<br>
-        • histoire du quartier<br>
-        • présentation de l’artiste<br>
-        • présentation du mécène<br>
-        • remerciements<br>
-        • lecture audio par vraie voix premium intégrée en MP3<br>
-        • lecture texte obligatoire en parallèle<br>
-        • liens “aller plus loin” pour visiter le site de l’artiste, du mécène, de la ville
+          <button
+            id="oeuvreWalkingBtn"
+            type="button"
+            style="
+              background:#fff;
+              color:#2f5d46;
+              padding:8px 10px;
+              border-radius:10px;
+              border:1px solid #2f5d46;
+              font-weight:700;
+              cursor:pointer;
+            "
+          >
+            Ouvrir l’itinéraire à pied
+          </button>
+
+
+          <button
+            id="oeuvreClearRouteBtn"
+            type="button"
+            style="
+              background:#fff;
+              color:#555;
+              padding:8px 10px;
+              border-radius:10px;
+              border:1px solid #ccc;
+              font-weight:700;
+              cursor:pointer;
+            "
+          >
+            Effacer mon parcours
+          </button>
+
+        </div>
+
+
+        <div
+          id="oeuvreRouteStatus"
+          class="oeuvreNote"
+        >
+          Choisissez une ou plusieurs œuvres
+          plus bas
+          pour préparer votre parcours.
+        </div>
+
+      </div>
+
+
+      <div
+        class="oeuvreSectionTitle"
+        style="margin-top:14px;"
+      >
+        Découvrez aussi la ville en chemin
+      </div>
+
+
+      <div
+        class="box"
+        style="margin-top:8px;"
+      >
+
+        Lorsque cela est possible,
+        le parcours invite à privilégier
+        la marche et les cheminements agréables
+        plutôt que les axes les plus circulés.
+
+        Aller d’une œuvre à l’autre
+        peut ainsi permettre de découvrir
+        des rues,
+        des quartiers,
+        des perspectives
+        et des endroits
+        que l’on ne traverse pas habituellement.
+
+      </div>
+
+
+      <div
+        class="box"
+        style="margin-top:8px;"
+      >
+
+        Des points de vue,
+        bâtiments remarquables,
+        lieux historiques,
+        jardins
+        ou autres éléments de mémoire locale
+        pourront être signalés
+        lorsqu’ils présentent
+        un véritable intérêt.
+
+        Une courte histoire pourra alors expliquer
+        ce que l’on voit,
+        pourquoi ce lieu compte,
+        ce qu’il était autrefois
+        ou ce qui s’y est passé.
+
+      </div>
+
+
+      <div class="oeuvreNote">
+
+        Dans cette démo,
+        le tracé pointillé montre
+        la direction et l’ordre choisis.
+
+        Le bouton
+        « Ouvrir l’itinéraire à pied »
+        permet ensuite d’utiliser
+        un guidage piéton détaillé.
+
+        La version officielle pourra privilégier
+        les cheminements piétons
+        les plus agréables
+        selon les données disponibles.
+
+      </div>
+
+
+      <div
+        class="oeuvreSectionTitle"
+        style="margin-top:14px;"
+      >
+        Parcours des 10 œuvres
+      </div>
+
+
+      ${
+        oeuvres
+          .map(
+            function(o,i){
+              return renderRow(
+                o,
+                i
+              );
+            }
+          )
+          .join("")
+      }
+
+
+      <div
+        class="oeuvreSectionTitle"
+        style="margin-top:14px;"
+      >
+        Contenu complet
+        d’une fiche œuvre déverrouillée
+      </div>
+
+
+      <div
+        class="box"
+        style="margin-top:8px;"
+      >
+
+        • titre de l’œuvre
+        <br>
+
+        • quartier concerné
+        <br>
+
+        • histoire du quartier
+        <br>
+
+        • présentation de l’artiste
+        <br>
+
+        • présentation du mécène
+        <br>
+
+        • remerciements
+        <br>
+
+        • lecture audio
+        <br>
+
+        • lecture texte en parallèle
+        <br>
+
+        • liens pour aller plus loin
+        et découvrir l’artiste,
+        le mécène,
+        la ville
         ou d’autres partenaires utiles
+
       </div>
 
-      <div class="box" style="margin-top:12px;">
-        <strong>Valeur ajoutée :</strong> l’application ne montre pas seulement une œuvre,
-        elle crée un lien concret entre art, quartier, habitants, mécènes, ville et mémoire locale.
-        Chaque fiche peut aussi orienter l’utilisateur vers des ressources extérieures pour approfondir
-        sa découverte et valoriser fortement les partenaires impliqués.
+
+      <div
+        class="oeuvreSectionTitle"
+        style="margin-top:14px;"
+      >
+        Valeur ajoutée
       </div>
+
+
+      <div
+        class="box"
+        style="margin-top:8px;"
+      >
+
+        L’application ne montre pas seulement
+        une œuvre :
+
+        elle crée un lien concret
+        entre art,
+        quartier,
+        habitants,
+        mécènes,
+        ville
+        et mémoire locale.
+
+        Chaque fiche peut aussi orienter
+        l’utilisateur
+        vers des ressources extérieures
+        pour approfondir sa découverte
+        et valoriser
+        les partenaires impliqués.
+
+      </div>
+
     `);
 
-    setTimeout(()=>{
-      const scanBtn = document.getElementById("oeuvreScanBtn");
-      const reopenBtn = document.getElementById("oeuvreReopenBtn");
-      const resetBtn = document.getElementById("oeuvreResetBtn");
 
-      if(scanBtn){
-        scanBtn.onclick = function(){
-          promptQr();
-        };
-      }
+    setTimeout(
+      ()=>{
 
-      if(reopenBtn){
-        reopenBtn.onclick = function(){
-          reopenLast();
-        };
-      }
+        const scanBtn =
+          document.getElementById(
+            "oeuvreScanBtn"
+          );
 
-      if(resetBtn){
-        resetBtn.onclick = function(){
-          resetDemo();
-        };
-      }
+        const reopenBtn =
+          document.getElementById(
+            "oeuvreReopenBtn"
+          );
 
-      oeuvres.forEach(function(o){
-        const btn = document.getElementById("oeuvreRowBtn_" + o.id);
-        if(!btn) return;
+        const resetBtn =
+          document.getElementById(
+            "oeuvreResetBtn"
+          );
 
-        btn.onclick = function(){
-          if(isOpen(o)){
-            openDetailById(o.id);
-          }else{
-            promptQr();
+
+        if(scanBtn){
+          scanBtn.onclick =
+            function(){
+              promptQr();
+            };
+        }
+
+
+        if(reopenBtn){
+          reopenBtn.onclick =
+            function(){
+              reopenLast();
+            };
+        }
+
+
+        if(resetBtn){
+          resetBtn.onclick =
+            function(){
+              resetDemo();
+            };
+        }
+
+
+        oeuvres.forEach(
+          function(o){
+
+            const btn =
+              document.getElementById(
+                "oeuvreRowBtn_" +
+                o.id
+              );
+
+            if(!btn){
+              return;
+            }
+
+            btn.onclick =
+              function(){
+
+                if(
+                  isOpen(o)
+                ){
+                  openDetailById(
+                    o.id
+                  );
+                }else{
+                  promptQr();
+                }
+
+              };
+
           }
-        };
-      });
-    }, 0);
+        );
+
+
+        initOeuvresMap();
+
+      },
+      0
+    );
   }
+
+  /* =========================================================
+     ÇA FINIT ICI
+     ========================================================= */
 
   openOverview();
   return;
