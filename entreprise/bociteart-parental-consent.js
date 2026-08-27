@@ -1,770 +1,552 @@
 /* =========================================================
    ÇA COMMENCE ICI
-
-   BO'CITÉART — AUTORISATION PARENTALE
-   VERSION DÉMONSTRATION
-
-   Première autorisation :
-   → VOIX DE L'ENFANT / MOT DU JOUR
-
-   IMPORTANT :
-   - aucune autorisation générale ;
-   - chaque usage est autorisé séparément ;
-   - le parent peut refuser ;
-   - le jeune continue à utiliser Bo'CitéArt ;
-   - en production, le lien et la vérification
-     seront gérés côté serveur.
+   BO'CITÉART — AUTORISATIONS PARENTALES
+   VOIX RÉELLE + PROFIL VOCAL SYNTHÉTIQUE
    ========================================================= */
 
 (function initBociteParentalConsent(){
-
   "use strict";
-
 
   if(window.BociteParentalConsent){
     return;
   }
 
+  const STORAGE_KEY =
+    "bociteart_parent_permissions_v1";
 
   const OVERLAY_ID =
     "bociteParentalConsentOverlay";
 
-
-  const STORAGE_KEY =
-    "bociteart_parent_permissions_v1";
-
-
-  /* =====================================================
-     STOCKAGE
-     ===================================================== */
-
-  function readPermissions(){
-
+  function safeParse(value, fallback){
     try{
-
-      const raw =
-        localStorage.getItem(
-          STORAGE_KEY
-        );
-
-
-      return raw
-        ? JSON.parse(raw)
-        : {};
-
+      return JSON.parse(value);
     }catch(error){
-
-      return {};
-
+      return fallback;
     }
-
   }
 
+  function normalizeGender(value){
+    const gender = String(value || "")
+      .trim()
+      .toLowerCase();
 
-  function savePermissions(
-    permissions
+    if(["girl","fille","female"].includes(gender)){
+      return "girl";
+    }
+
+    if(["boy","garcon","garçon","male"].includes(gender)){
+      return "boy";
+    }
+
+    return "";
+  }
+
+  function getAccountId(value){
+    if(value){
+      return String(value).trim();
+    }
+
+    try{
+      const account = safeParse(
+        localStorage.getItem("bociteart_account_demo_v1"),
+        null
+      );
+
+      return account && account.accountId
+        ? String(account.accountId).trim()
+        : "";
+    }catch(error){
+      return "";
+    }
+  }
+
+  function loadAll(){
+    const data = safeParse(
+      localStorage.getItem(STORAGE_KEY),
+      {}
+    );
+
+    return data && typeof data === "object"
+      ? data
+      : {};
+  }
+
+  function saveAll(data){
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(data || {})
+    );
+  }
+
+  function getPermission(accountId){
+    const id = getAccountId(accountId);
+
+    if(!id){
+      return null;
+    }
+
+    const all = loadAll();
+    return all[id] || null;
+  }
+
+  function saveMotDuJourDecision(data){
+    const source = data || {};
+    const accountId = getAccountId(source.accountId);
+
+    if(!accountId){
+      return null;
+    }
+
+    const syntheticVoice = normalizeGender(
+      source.syntheticVoice ||
+      source.voiceGender
+    );
+
+    const authorized =
+      source.realVoiceAuthorized === true ||
+      source.status === "authorized";
+
+    const permission = {
+      accountId:accountId,
+
+      firstName:String(
+        source.firstName ||
+        source.prenom ||
+        ""
+      ).trim(),
+
+      parentEmail:String(
+        source.parentEmail ||
+        ""
+      )
+      .trim()
+      .toLowerCase(),
+
+      status:
+        authorized
+          ? "authorized"
+          : "refused",
+
+      realVoiceAuthorized:
+        authorized,
+
+      syntheticVoice:
+        syntheticVoice,
+
+      voiceGender:
+        syntheticVoice,
+
+      verification:
+        "demo_unverified",
+
+      updatedAt:
+        new Date().toISOString()
+    };
+
+    const all = loadAll();
+
+    all[accountId] =
+      permission;
+
+    saveAll(all);
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:parent-permission-updated",
+        {
+          detail:
+            permission
+        }
+      )
+    );
+
+    return permission;
+  }
+
+  function hasMotDuJourVoicePermission(
+    accountId
   ){
+    const permission =
+      getPermission(accountId);
 
-    try{
-
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(
-          permissions
-        )
-      );
-
-      return true;
-
-    }catch(error){
-
-      console.warn(
-        "Bo'CitéArt : autorisation parentale non enregistrée.",
-        error
-      );
-
-      return false;
-
-    }
-
+    return Boolean(
+      permission &&
+      permission.realVoiceAuthorized === true &&
+      permission.status === "authorized"
+    );
   }
 
+  function getVoiceProfile(accountId){
+    const permission =
+      getPermission(accountId);
 
-  /* =====================================================
-     FERMETURE
-     ===================================================== */
+    if(!permission){
+      return null;
+    }
+
+    return {
+      accountId:
+        permission.accountId,
+
+      firstName:
+        permission.firstName ||
+        "",
+
+      realVoiceAuthorized:
+        permission.realVoiceAuthorized === true,
+
+      syntheticVoice:
+        normalizeGender(
+          permission.syntheticVoice
+        ),
+
+      voiceGender:
+        normalizeGender(
+          permission.voiceGender ||
+          permission.syntheticVoice
+        )
+    };
+  }
+
+  function revokeMotDuJourVoice(
+    accountId
+  ){
+    const id =
+      getAccountId(accountId);
+
+    if(!id){
+      return false;
+    }
+
+    const all =
+      loadAll();
+
+    const previous =
+      all[id] ||
+      {};
+
+    all[id] =
+      Object.assign(
+        {},
+        previous,
+        {
+          accountId:id,
+
+          status:
+            "revoked",
+
+          realVoiceAuthorized:
+            false,
+
+          verification:
+            "demo_unverified",
+
+          updatedAt:
+            new Date()
+              .toISOString()
+        }
+      );
+
+    saveAll(all);
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:parent-permission-updated",
+        {
+          detail:
+            all[id]
+        }
+      )
+    );
+
+    return true;
+  }
 
   function close(){
-
     const overlay =
       document.getElementById(
         OVERLAY_ID
       );
 
-
     if(overlay){
       overlay.remove();
     }
-
   }
 
+  function openMotDuJour(options){
+    const source =
+      options ||
+      {};
 
-  /* =====================================================
-     AUTORISATION MOT DU JOUR
-     ===================================================== */
-
-  function openMotDuJour(
-    options
-  ){
-
-    options =
-      options || {};
-
-
-    close();
-
-
-    const parentEmail =
-      String(
-        options.parentEmail || ""
-      )
-      .trim()
-      .toLowerCase();
-
-
-    const youngAccountId =
-      String(
-        options.accountId || ""
+    const accountId =
+      getAccountId(
+        source.accountId
       );
 
+    if(!accountId){
+      return false;
+    }
+
+    const existing =
+      getPermission(
+        accountId
+      ) ||
+      {};
+
+    const presetGender =
+      normalizeGender(
+        source.syntheticVoice ||
+        source.voiceGender ||
+        existing.syntheticVoice
+      );
+
+    close();
 
     const overlay =
       document.createElement(
         "div"
       );
 
-
     overlay.id =
       OVERLAY_ID;
 
-
-    overlay.style.cssText = `
-
-      position:fixed;
-      inset:0;
-      z-index:1000005;
-
-      overflow:auto;
-
-      box-sizing:border-box;
-
-      padding:16px 10px 34px;
-
-      background:#f3eddf;
-
-      font-family:Arial,sans-serif;
-
-    `;
-
+    overlay.style.cssText = [
+      "position:fixed",
+      "inset:0",
+      "z-index:1000030",
+      "display:flex",
+      "align-items:center",
+      "justify-content:center",
+      "padding:16px",
+      "background:rgba(0,0,0,.55)",
+      "font-family:Arial,sans-serif"
+    ].join(";");
 
     overlay.innerHTML = `
 
       <div
         style="
           width:100%;
-          max-width:680px;
-          margin:0 auto;
-          box-sizing:border-box;
-          padding:20px 16px;
+          max-width:560px;
+          background:#fffdf7;
           border:2px solid #2f5d46;
           border-radius:15px;
-          background:#fffdf7;
-          color:#111111;
-        ">
-
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            line-height:1.35;
-            margin-bottom:15px;
-          ">
-
-          Autorisation parentale —
-          Mot du jour
-
-        </div>
-
+          padding:18px;
+          box-sizing:border-box;
+        "
+      >
 
         <div
           style="
-            font-size:14px;
-            line-height:1.55;
-          ">
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:12px;
+          "
+        >
 
-          Cette autorisation concerne uniquement
-          l'utilisation de la voix de votre enfant
-          dans la rubrique
-          <strong>« Mot du jour »</strong>
-          de Bo'CitéArt.
-
-          <br><br>
-
-          Elle ne donne aucune autorisation générale
-          pour d'autres utilisations de son image,
-          de sa voix ou de ses créations.
-
-        </div>
-
-
-        <div
-          style="
-            margin-top:18px;
-            padding:14px;
-            background:#ffffff;
-            border:1px solid #dedede;
-            border-radius:10px;
-            font-size:14px;
-            line-height:1.55;
-          ">
-
-          <strong
+          <div
             style="
               color:#2f5d46;
-            ">
-            Ce que vous autorisez
-          </strong>
-
-          <br><br>
-
-          Vous autorisez l'enseignant
-          ou l'établissement scolaire
-          à transmettre à Bo'CitéArt
-          l'enregistrement vocal de votre enfant.
-
-          <br><br>
-
-          Vous autorisez également Bo'CitéArt
-          à utiliser et diffuser cet enregistrement
-          dans la rubrique
-          <strong>« Mot du jour »</strong>,
-          dans le cadre pédagogique prévu.
-
-          <br><br>
-
-          Le nom de famille de l'enfant
-          n'a pas vocation à être affiché
-          avec l'enregistrement.
-
-          <br><br>
-
-          Cette autorisation pourra être retirée
-          pour les utilisations futures.
-
-        </div>
-
-
-        <div
-          style="
-            margin-top:18px;
-            padding:14px;
-            background:#ffffff;
-            border:1px solid #dedede;
-            border-radius:10px;
-            font-size:14px;
-            line-height:1.55;
-          ">
-
-          <strong
-            style="
-              color:#2f5d46;
-            ">
-            Pourquoi Bo'CitéArt propose cette participation
-          </strong>
-
-          <br><br>
-
-          Le Mot du jour permet au jeune
-          de participer autrement à la vie collective,
-          de prendre confiance,
-          de transmettre une idée,
-          une valeur ou une attention
-          et de découvrir que sa parole
-          peut aussi avoir une place.
-
-          <br><br>
-
-          Plus largement, Bo'CitéArt souhaite
-          progressivement aider les jeunes
-          à mieux connaître leur territoire,
-          ses métiers, ses commerces,
-          ses artisans, ses producteurs
-          et ses savoir-faire.
-
-          <br><br>
-
-          L'objectif n'est pas de leur dire
-          ce qu'ils doivent acheter
-          ou penser.
-
-          <br><br>
-
-          Il s'agit de leur permettre
-          de mieux comprendre que leurs choix
-          peuvent avoir des conséquences
-          sur l'activité locale,
-          les emplois,
-          les petits commerces,
-          les productions locales,
-          régionales ou françaises
-          et sur une partie du patrimoine
-          économique et humain
-          qu'ils retrouveront demain.
-
-          <br><br>
-
-          <strong>
-            Mieux connaître ce qui nous entoure
-            aide aussi à décider plus tard
-            ce que l'on souhaite préserver,
-            soutenir ou faire évoluer.
-          </strong>
-
-        </div>
-
-
-        <label
-          style="
-            display:block;
-            margin-top:18px;
-            padding:14px;
-            background:#ffffff;
-            border:1px solid #dedede;
-            border-radius:10px;
-            font-size:14px;
-            line-height:1.5;
-          ">
-
-          <input
-            id="bociteParentLegalConfirm"
-            type="checkbox"
-            style="
-              margin-right:8px;
-              transform:scale(1.2);
+              font-size:17px;
+              font-weight:700;
             "
           >
+            Autorisation — Mot du jour
+          </div>
 
-          Je confirme être titulaire
-          de l'autorité parentale
-          ou représentant légal
-          de l'enfant concerné.
+          <button
+            id="bociteParentConsentClose"
+            type="button"
+            style="
+              border:0;
+              background:#fff;
+              font-size:24px;
+              cursor:pointer;
+            "
+          >
+            ×
+          </button>
 
-        </label>
+        </div>
 
+        <p
+          style="
+            font-size:14px;
+            font-weight:400;
+            color:#111;
+            line-height:1.5;
+          "
+        >
+          Cet écran est destiné au parent
+          ou au responsable légal,
+          pas au professeur.
+        </p>
 
         <label
           style="
             display:block;
+            font-size:14px;
+            color:#111;
             margin-top:12px;
-            padding:14px;
-            background:#ffffff;
-            border:1px solid #dedede;
-            border-radius:10px;
-            font-size:14px;
-            line-height:1.5;
-          ">
-
-          <input
-            id="bociteParentVoiceConsent"
-            type="checkbox"
-            style="
-              margin-right:8px;
-              transform:scale(1.2);
-            "
-          >
-
-          J'autorise l'utilisation
-          de la voix de mon enfant
-          dans les conditions décrites ci-dessus.
-
+          "
+        >
+          Profil vocal de remplacement
         </label>
 
-
-        <div
-          id="bociteParentConsentMessage"
-          role="alert"
-          style="
-            display:none;
-            margin-top:14px;
-            padding:12px;
-            border-radius:9px;
-            background:#ffffff;
-            border:1px solid #dedede;
-            color:#111111;
-            font-size:14px;
-            line-height:1.5;
-          ">
-        </div>
-
-
-        <button
-          id="bociteParentConsentAccept"
-          type="button"
-          class="choiceBtn"
+        <select
+          id="bociteParentSyntheticVoice"
           style="
             width:100%;
-            margin-top:16px;
-          ">
+            margin-top:7px;
+            padding:11px;
+            border:1px solid #bbb;
+            border-radius:9px;
+            font-size:14px;
+          "
+        >
 
-          Valider cette autorisation
+          <option
+            value=""
+            ${
+              presetGender
+                ? ""
+                : "selected"
+            }
+          >
+            À confirmer
+          </option>
 
-        </button>
+          <option
+            value="girl"
+            ${
+              presetGender === "girl"
+                ? "selected"
+                : ""
+            }
+          >
+            Fille
+          </option>
 
+          <option
+            value="boy"
+            ${
+              presetGender === "boy"
+                ? "selected"
+                : ""
+            }
+          >
+            Garçon
+          </option>
+
+        </select>
 
         <button
-          id="bociteParentConsentRefuse"
+          id="bociteParentAuthorizeVoice"
           type="button"
-          class="choiceBtn"
+          style="
+            width:100%;
+            margin-top:14px;
+            padding:12px;
+            border:1px solid #d7c9b5;
+            border-radius:10px;
+            background:#efe4d3;
+            font-size:16px;
+            font-weight:700;
+            cursor:pointer;
+          "
+        >
+          Autoriser la vraie voix
+        </button>
+
+        <button
+          id="bociteParentRefuseVoice"
+          type="button"
           style="
             width:100%;
             margin-top:10px;
-          ">
-
-          Je n'autorise pas cette utilisation
-
+            padding:12px;
+            border:1px solid #ddd;
+            border-radius:10px;
+            background:#fff;
+            font-size:16px;
+            font-weight:700;
+            cursor:pointer;
+          "
+        >
+          Ne pas autoriser la vraie voix
         </button>
-
-
-        <div
-          style="
-            margin-top:16px;
-            color:#555555;
-            font-size:13px;
-            line-height:1.45;
-          ">
-
-          Version démonstration :
-          cette page ne constitue pas encore
-          une vérification réelle de l'identité
-          du parent.
-
-          <br><br>
-
-          En production, elle sera ouverte
-          depuis un lien unique envoyé directement
-          au parent ou responsable et validé
-          côté serveur.
-
-        </div>
 
       </div>
 
     `;
 
-
     document.body.appendChild(
       overlay
     );
 
-
-    const legalConfirm =
-      document.getElementById(
-        "bociteParentLegalConfirm"
-      );
-
-
-    const voiceConsent =
-      document.getElementById(
-        "bociteParentVoiceConsent"
-      );
-
-
-    const acceptButton =
-      document.getElementById(
-        "bociteParentConsentAccept"
-      );
-
-
-    const refuseButton =
-      document.getElementById(
-        "bociteParentConsentRefuse"
-      );
-
-
-    const message =
-      document.getElementById(
-        "bociteParentConsentMessage"
-      );
-
-
-    acceptButton.onclick =
-      function(){
-
-        if(
-          !legalConfirm.checked ||
-          !voiceConsent.checked
-        ){
-
-          message.style.display =
-            "block";
-
-
-          message.textContent =
-            "Les deux confirmations doivent être cochées pour autoriser cette utilisation.";
-
-
-          return;
-
-        }
-
-
-        const permissions =
-          readPermissions();
-
-
-        permissions.motDuJourVoice = {
-
-          status:
-            "authorized",
-
-          accountId:
-            youngAccountId,
-
-          parentEmail:
-            parentEmail,
-
-          authorizedAt:
-            new Date().toISOString(),
-
-          permissionVersion:
-            "1",
-
-          /*
-            En démonstration seulement.
-            Ne jamais présenter ceci
-            comme une vérification réelle.
-          */
-
-          verification:
-            "demo_unverified"
-
-        };
-
-
-        savePermissions(
-          permissions
-        );
-
-
-        document.dispatchEvent(
-          new CustomEvent(
-            "bociteart:parent-permission-updated",
-            {
-              detail:{
-
-                permission:
-                  "mot_du_jour_voice",
-
-                status:
-                  "authorized",
-
-                accountId:
-                  youngAccountId
-
-              }
-            }
-          )
-        );
-
-
-        message.style.display =
-          "block";
-
-
-        message.innerHTML = `
-
-          <strong>
-            Autorisation enregistrée
-            pour la démonstration.
-          </strong>
-
-          <br><br>
-
-          Elle concerne uniquement
-          la voix de l'enfant
-          pour le Mot du jour.
-
-        `;
-
-
-        window.setTimeout(
-          close,
-          1400
-        );
-
-      };
-
-
-    refuseButton.onclick =
-      function(){
-
-        const permissions =
-          readPermissions();
-
-
-        permissions.motDuJourVoice = {
-
-          status:
-            "refused",
-
-          accountId:
-            youngAccountId,
-
-          parentEmail:
-            parentEmail,
-
-          decidedAt:
-            new Date().toISOString(),
-
-          permissionVersion:
-            "1",
-
-          verification:
-            "demo_unverified"
-
-        };
-
-
-        savePermissions(
-          permissions
-        );
-
-
-        document.dispatchEvent(
-          new CustomEvent(
-            "bociteart:parent-permission-updated",
-            {
-              detail:{
-
-                permission:
-                  "mot_du_jour_voice",
-
-                status:
-                  "refused",
-
-                accountId:
-                  youngAccountId
-
-              }
-            }
-          )
-        );
-
-
-        close();
-
-      };
-
-
-    overlay.scrollTop =
-      0;
-
-  }
-
-
-  /* =====================================================
-     CONSULTATION D'UNE AUTORISATION
-     ===================================================== */
-
-  function getPermission(
-    name
-  ){
-
-    const permissions =
-      readPermissions();
-
-
-    return (
-      permissions[
-        name
-      ] ||
-      null
-    );
-
-  }
-
-
-  function hasMotDuJourVoicePermission(){
-
-    const permission =
-      getPermission(
-        "motDuJourVoice"
-      );
-
-
-    return Boolean(
-      permission &&
-      permission.status ===
-        "authorized"
-    );
-
-  }
-
-
-  /* =====================================================
-     RETRAIT
-     ===================================================== */
-
-  function revokeMotDuJourVoice(){
-
-    const permissions =
-      readPermissions();
-
-
-    permissions.motDuJourVoice = {
-
-      status:
-        "revoked",
-
-      revokedAt:
-        new Date().toISOString(),
-
-      permissionVersion:
-        "1"
-
-    };
-
-
-    savePermissions(
-      permissions
-    );
-
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:parent-permission-updated",
-        {
-          detail:{
-
-            permission:
-              "mot_du_jour_voice",
-
-            status:
-              "revoked"
-
-          }
-        }
+    document
+      .getElementById(
+        "bociteParentConsentClose"
       )
-    );
+      .onclick =
+        close;
 
+    function saveDecision(
+      authorized
+    ){
+      const gender =
+        normalizeGender(
+          document
+            .getElementById(
+              "bociteParentSyntheticVoice"
+            )
+            .value
+        );
+
+      saveMotDuJourDecision({
+        accountId:
+          accountId,
+
+        firstName:
+          source.firstName ||
+          source.prenom ||
+          existing.firstName,
+
+        parentEmail:
+          source.parentEmail ||
+          existing.parentEmail,
+
+        realVoiceAuthorized:
+          authorized,
+
+        syntheticVoice:
+          gender
+      });
+
+      close();
+    }
+
+    document
+      .getElementById(
+        "bociteParentAuthorizeVoice"
+      )
+      .onclick =
+        function(){
+          saveDecision(true);
+        };
+
+    document
+      .getElementById(
+        "bociteParentRefuseVoice"
+      )
+      .onclick =
+        function(){
+          saveDecision(false);
+        };
+
+    return true;
   }
-
-
-  /* =====================================================
-     API
-     ===================================================== */
 
   window.BociteParentalConsent = {
 
@@ -777,20 +559,22 @@
     getPermission:
       getPermission,
 
+    getVoiceProfile:
+      getVoiceProfile,
+
+    saveMotDuJourDecision:
+      saveMotDuJourDecision,
+
     hasMotDuJourVoicePermission:
       hasMotDuJourVoicePermission,
 
     revokeMotDuJourVoice:
-      revokeMotDuJourVoice,
-
-    storageKey:
-      STORAGE_KEY
+      revokeMotDuJourVoice
 
   };
 
-
   console.log(
-    "✅ Autorisations parentales Bo'CitéArt préparées"
+    "✅ Autorisations parentales Bo'CitéArt simplifiées chargées"
   );
 
 })();
