@@ -4412,24 +4412,6 @@ function openForCategory(
 
 }
 
-/* =========================================================
-   ÇA FINIT ICI
-   ========================================================= */
-
-
-    openNumbers(
-      numbers,
-      {
-        parentNotice:
-          normalized ===
-            "jeune"
-      },
-      onComplete
-    );
-
-  }
-
-
   /* =====================================================
      PREMIÈRE ENTRÉE DANS COMMERCE
 
