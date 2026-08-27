@@ -6938,6 +6938,609 @@ window.BociteOeuvresSupervisor = {
 /* =========================================================
    ÇA FINIT ICI
    ========================================================= */
+
+/* =========================================================
+   ÇA COMMENCE ICI
+   BO'CITÉART — ACCESSIBILITÉ + VOIX DES ŒUVRES
+   MOTEUR DÉFINITIF
+   ========================================================= */
+
+window.BociteOeuvreAccess = (function(){
+
+  "use strict";
+
+  let stopped = true;
+  let queue = [];
+  let index = 0;
+  let currentUtterance = null;
+  let currentStatusId = "";
+
+
+  function setStatus(text){
+
+    if(!currentStatusId){
+      return;
+    }
+
+    const el =
+      document.getElementById(
+        currentStatusId
+      );
+
+    if(el){
+      el.textContent = text;
+    }
+  }
+
+
+  function splitText(text){
+
+    const clean =
+      String(text || "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    if(!clean){
+      return [];
+    }
+
+    const sentences =
+      clean.match(
+        /[^.!?…]+[.!?…]?/g
+      ) || [clean];
+
+    const chunks = [];
+    let current = "";
+
+    sentences.forEach(function(sentence){
+
+      const next =
+        (
+          current +
+          " " +
+          sentence
+        ).trim();
+
+      /*
+        Découpage volontaire :
+        Edge est plus fiable
+        avec des phrases courtes.
+      */
+
+      if(
+        next.length > 200 &&
+        current
+      ){
+        chunks.push(current);
+        current =
+          sentence.trim();
+      }
+      else{
+        current = next;
+      }
+
+    });
+
+    if(current){
+      chunks.push(current);
+    }
+
+    return chunks;
+  }
+
+
+  function pickFrenchVoice(){
+
+    if(!window.speechSynthesis){
+      return null;
+    }
+
+    const voices =
+      window.speechSynthesis
+        .getVoices() || [];
+
+    const french =
+      voices.filter(function(v){
+
+        return String(
+          v.lang || ""
+        )
+        .toLowerCase()
+        .startsWith("fr");
+
+      });
+
+
+    /*
+      Recherche d'une voix française
+      féminine douce lorsqu'elle existe
+      sur l'appareil.
+
+      Denise Natural est privilégiée
+      sur Edge / Windows.
+    */
+
+    return (
+
+      french.find(v =>
+        /denise/i.test(v.name || "") &&
+        /(natural|online)/i.test(v.name || "")
+      ) ||
+
+      french.find(v =>
+        /vivienne/i.test(v.name || "")
+      ) ||
+
+      french.find(v =>
+        /denise/i.test(v.name || "")
+      ) ||
+
+      french.find(v =>
+        /audrey/i.test(v.name || "")
+      ) ||
+
+      french.find(v =>
+        /am[eé]lie/i.test(v.name || "")
+      ) ||
+
+      french.find(v =>
+        /hortense/i.test(v.name || "")
+      ) ||
+
+      french.find(v =>
+        String(v.lang || "")
+          .toLowerCase() ===
+          "fr-fr"
+      ) ||
+
+      french[0] ||
+
+      voices[0] ||
+
+      null
+    );
+  }
+
+
+  function speakChunk(
+    text,
+    usePreferredVoice
+  ){
+
+    if(
+      stopped ||
+      !window.speechSynthesis
+    ){
+      return;
+    }
+
+    const synth =
+      window.speechSynthesis;
+
+    const utterance =
+      new SpeechSynthesisUtterance(
+        text
+      );
+
+    const voice =
+      usePreferredVoice
+        ? pickFrenchVoice()
+        : null;
+
+
+    utterance.lang =
+      "fr-FR";
+
+    /*
+      Ton :
+      doux,
+      calme,
+      posé,
+      chaleureux.
+    */
+
+    utterance.rate =
+      0.88;
+
+    utterance.pitch =
+      0.98;
+
+    utterance.volume =
+      1;
+
+
+    if(voice){
+      utterance.voice =
+        voice;
+    }
+
+
+    currentUtterance =
+      utterance;
+
+
+    utterance.onstart =
+      function(){
+
+        setStatus(
+          voice
+            ? "Lecture en cours — voix : " +
+              voice.name +
+              "."
+            : "Lecture en cours."
+        );
+
+      };
+
+
+    utterance.onend =
+      function(){
+
+        if(stopped){
+          return;
+        }
+
+        index++;
+
+        if(
+          index >=
+          queue.length
+        ){
+
+          currentUtterance =
+            null;
+
+          setStatus(
+            "Lecture terminée. Le texte reste disponible ci-dessous."
+          );
+
+          return;
+        }
+
+        window.setTimeout(
+          function(){
+
+            speakChunk(
+              queue[index],
+              true
+            );
+
+          },
+          90
+        );
+
+      };
+
+
+    utterance.onerror =
+      function(){
+
+        if(stopped){
+          return;
+        }
+
+
+        /*
+          Si la voix choisie pose problème,
+          deuxième tentative avec
+          la voix française par défaut.
+        */
+
+        if(
+          usePreferredVoice &&
+          voice
+        ){
+
+          try{
+            synth.cancel();
+          }catch(e){}
+
+          window.setTimeout(
+            function(){
+
+              speakChunk(
+                text,
+                false
+              );
+
+            },
+            120
+          );
+
+          return;
+        }
+
+
+        stopped = true;
+
+        currentUtterance =
+          null;
+
+        setStatus(
+          "Le navigateur n’a pas pu lancer la lecture. Le texte reste disponible et peut être lu par les fonctions d’accessibilité de l’appareil."
+        );
+
+      };
+
+
+    try{
+
+      synth.resume();
+
+      synth.speak(
+        utterance
+      );
+
+    }catch(error){
+
+      utterance.onerror();
+
+    }
+
+  }
+
+
+  function startQueue(){
+
+    if(
+      stopped ||
+      !queue.length
+    ){
+      return;
+    }
+
+    speakChunk(
+      queue[0],
+      true
+    );
+  }
+
+
+  function speak(
+    text,
+    statusId
+  ){
+
+    currentStatusId =
+      String(
+        statusId || ""
+      );
+
+
+    if(
+      !window.speechSynthesis ||
+      typeof window
+        .SpeechSynthesisUtterance !==
+        "function"
+    ){
+
+      setStatus(
+        "La lecture vocale n’est pas disponible sur cet appareil. Le texte reste accessible au lecteur d’écran et à un afficheur braille compatible."
+      );
+
+      return false;
+    }
+
+
+    const synth =
+      window.speechSynthesis;
+
+
+    try{
+
+      synth.cancel();
+      synth.resume();
+
+    }catch(e){}
+
+
+    queue =
+      splitText(text);
+
+    index = 0;
+    stopped = false;
+
+    currentUtterance =
+      null;
+
+
+    if(!queue.length){
+
+      setStatus(
+        "Aucun texte à lire."
+      );
+
+      return false;
+    }
+
+
+    setStatus(
+      "Préparation de la lecture…"
+    );
+
+
+    const voices =
+      synth.getVoices() || [];
+
+
+    if(voices.length){
+
+      startQueue();
+
+      return true;
+    }
+
+
+    /*
+      Certaines voix Edge arrivent
+      quelques instants après l'ouverture.
+    */
+
+    let started =
+      false;
+
+
+    function launch(){
+
+      if(
+        started ||
+        stopped
+      ){
+        return;
+      }
+
+      started = true;
+
+
+      try{
+
+        synth.removeEventListener(
+          "voiceschanged",
+          launch
+        );
+
+      }catch(e){}
+
+
+      startQueue();
+    }
+
+
+    try{
+
+      synth.addEventListener(
+        "voiceschanged",
+        launch
+      );
+
+    }catch(e){}
+
+
+    window.setTimeout(
+      launch,
+      350
+    );
+
+
+    return true;
+  }
+
+
+  function stop(
+    statusId
+  ){
+
+    if(statusId){
+
+      currentStatusId =
+        String(statusId);
+
+    }
+
+    stopped = true;
+
+    queue = [];
+
+    index = 0;
+
+    currentUtterance =
+      null;
+
+
+    try{
+
+      if(window.speechSynthesis){
+
+        window
+          .speechSynthesis
+          .cancel();
+
+      }
+
+    }catch(e){}
+
+
+    setStatus(
+      "Lecture arrêtée. Le texte reste disponible ci-dessous."
+    );
+  }
+
+
+  function focusText(id){
+
+    const el =
+      document.getElementById(
+        id
+      );
+
+    if(!el){
+      return false;
+    }
+
+
+    try{
+
+      el.focus({
+        preventScroll:true
+      });
+
+    }catch(e){
+
+      try{
+        el.focus();
+      }catch(err){}
+
+    }
+
+
+    try{
+
+      el.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+
+    }catch(e){
+
+      el.scrollIntoView();
+
+    }
+
+
+    return true;
+  }
+
+
+  return {
+
+    speak:
+      speak,
+
+    stop:
+      stop,
+
+    focusText:
+      focusText,
+
+    getVoiceName:
+      function(){
+
+        const voice =
+          pickFrenchVoice();
+
+        return voice
+          ? voice.name
+          : "";
+
+      }
+
+  };
+
+})();
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
      
   function openDetailById(id){
     const o = oeuvres.find(x => x.id === id);
@@ -7076,200 +7679,7 @@ window.BociteOeuvresSupervisor = {
 <!-- =====================================================
      ÇA FINIT ICI
      ===================================================== -->
-
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-       <button onclick="speakTextPremium(${JSON.stringify(o.texte)})"
-          style="background:#1f6f5f;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
-          ▶ Écouter l’histoire
-        </button>
-
-        <button onclick="stopSpeech()"
-          style="background:#666;color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:900;cursor:pointer;">
-          ■ Arrêter
-        </button>
-      </div>
-
-    <div
-  id="${audioStatusId}"
-  style="
-    margin-top:8px;
-    color:#111;
-    font-size:14px;
-    font-weight:400;
-    line-height:1.5;
-  "
->
-  ${
-    hasLocalAudio
-      ? "Une voix enregistrée est disponible sur cet appareil pour cette œuvre."
-      : "L’histoire de cette œuvre est disponible en audio et en texte."
-  }
-
-  <br><br>
-
-  Si la piste audio ne peut pas être lue,
-  une voix française de secours de l’appareil
-  peut prendre automatiquement le relais.
-
-  <br><br>
-
-  Le texte reste toujours présent,
-  notamment pour les personnes sourdes
-  ou malentendantes
-  et en cas de problème de son.
-
-  <br><br>
-
-  Pour les personnes aveugles
-  ou malvoyantes,
-  ce même texte reste accessible
-  aux fonctions de lecture d’écran
-  du téléphone,
-  de la tablette
-  ou de l’ordinateur.
-</div>
-
-<div
-  class="box"
-  style="margin-top:12px;"
->
-  <div
-    class="oeuvreSectionTitle"
-    style="margin-top:0;"
-  >
-
-    Lire l’histoire
-  </div>
-
-  <div
-    style="
-      white-space:pre-line;
-      line-height:1.55;
-      margin-top:8px;
-      color:#111;
-      font-size:14px;
-      font-weight:400;
-    "
-  >
-    ${esc(o.texte)}
-  </div>
-</div>
-
-  <!-- =====================================================
-     ÇA COMMENCE ICI
-     ACCESSIBILITÉ DES ŒUVRES
-     ===================================================== -->
-
-<div
-  class="box"
-  style="margin-top:12px;"
->
-
-  <div
-    class="oeuvreSectionTitle"
-    style="margin-top:0;"
-  >
-    Une découverte pensée pour être accessible à tous
-  </div>
-
-  <div
-    style="
-      margin-top:8px;
-      color:#111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.55;
-    "
-  >
-
-    L’histoire de chaque œuvre
-    est proposée de plusieurs façons
-    afin que chacun puisse utiliser
-    celle qui lui convient le mieux.
-
-    <br><br>
-
-    <span
-      style="
-        color:#2f5d46;
-        font-size:17px;
-        font-weight:700;
-      "
-    >
-      Pour les personnes sourdes ou malentendantes
-    </span>
-
-    <br><br>
-
-    L’intégralité de l’histoire
-    reste disponible en texte,
-    même lorsque la lecture audio fonctionne.
-
-    La découverte de l’œuvre
-    ne dépend donc pas du son.
-
-    <br><br>
-
-    <span
-      style="
-        color:#2f5d46;
-        font-size:17px;
-        font-weight:700;
-      "
-    >
-      Pour les personnes aveugles ou malvoyantes
-    </span>
-
-    <br><br>
-
-    L’histoire peut être écoutée
-    grâce à la lecture vocale.
-
-    Le texte et les commandes
-    restent également accessibles
-    aux fonctions d’accessibilité
-    et aux lecteurs d’écran
-    du téléphone,
-    de la tablette
-    ou de l’ordinateur.
-
-    <br><br>
-
-    Les personnes utilisant
-    un afficheur braille compatible
-    peuvent également accéder
-    au contenu textuel
-    par l’intermédiaire
-    de leur lecteur d’écran.
-
-    <br><br>
-
-    <span
-      style="
-        color:#2f5d46;
-        font-size:17px;
-        font-weight:700;
-      "
-    >
-      Si l’audio rencontre un problème
-    </span>
-
-    <br><br>
-
-    Le texte reste disponible en permanence.
-
-    Une lecture vocale de secours
-    de l’appareil peut également
-    prendre le relais.
-
-  </div>
-
-</div>
-
-<!-- =====================================================
-     ÇA FINIT ICI
-     ===================================================== -->
-
+     
       ${renderLinks(o.liens)}
 
       <div style="margin-top:12px;padding:10px;border-radius:10px;background:#f6f6f6;">
@@ -7307,6 +7717,85 @@ window.BociteOeuvresSupervisor = {
     }, 400);
 
     setTimeout(()=>{
+
+     /* =========================================================
+   ACCÈS AUDIO / TEXTE / BRAILLE
+   ========================================================= */
+
+const oeuvreListenBtn =
+  document.getElementById(
+    "oeuvreAccessListen_" +
+    o.id
+  );
+
+const oeuvreStopBtn =
+  document.getElementById(
+    "oeuvreAccessStop_" +
+    o.id
+  );
+
+const oeuvreTextBtn =
+  document.getElementById(
+    "oeuvreAccessText_" +
+    o.id
+  );
+
+const oeuvreAccessibleText =
+  "oeuvreAccessibleText_" +
+  o.id;
+
+
+if(oeuvreListenBtn){
+
+  oeuvreListenBtn.onclick =
+    function(){
+
+      window
+        .BociteOeuvreAccess
+        .speak(
+          o.texte,
+          audioStatusId
+        );
+
+    };
+
+}
+
+
+if(oeuvreStopBtn){
+
+  oeuvreStopBtn.onclick =
+    function(){
+
+      window
+        .BociteOeuvreAccess
+        .stop(
+          audioStatusId
+        );
+
+    };
+
+}
+
+
+if(oeuvreTextBtn){
+
+  oeuvreTextBtn.onclick =
+    function(){
+
+      window
+        .BociteOeuvreAccess
+        .focusText(
+          oeuvreAccessibleText
+        );
+
+    };
+
+}
+
+/* =========================================================
+   FIN ACCÈS AUDIO / TEXTE / BRAILLE
+   ========================================================= */
       const recBtn = document.getElementById(recBtnId);
       const recStopBtn = document.getElementById(recStopBtnId);
       const localPlayBtn = document.getElementById(localPlayBtnId);
@@ -7420,455 +7909,7 @@ QR-BOCITEART-010`
     openOverview();
   }
 
-  /* =========================================================
-     ÇA COMMENCE ICI
-     AFFICHAGE DES ŒUVRES + NOUVEAU PARCOURS
-     ========================================================= */
 
-  function renderRow(o, index){
-    const open =
-      isOpen(o);
-
-    const btnId =
-      "oeuvreRowBtn_" +
-      o.id;
-
-    const guideBtnId =
-      "oeuvreGuideBtn_" +
-      o.id;
-
-    return `
-      <div
-        class="box"
-        style="margin-top:8px;"
-      >
-
-        <div
-          class="oeuvreSectionTitle"
-          style="margin-top:0;"
-        >
-          ${index + 1}.
-          ${esc(o.titre)}
-        </div>
-
-        Quartier :
-        ${esc(o.quartier)}
-        <br>
-
-        Statut :
-
-        <span
-          style="
-            color:${
-              open
-                ? "#0a7a32"
-                : "#b06b00"
-            };
-            font-weight:400;
-          "
-        >
-          ${
-            open
-              ? "accessible"
-              : "à débloquer sur place"
-          }
-        </span>
-
-        <br>
-
-        <div
-          style="margin-top:6px;"
-        >
-          ${
-            open
-              ? "Contenu : histoire du quartier, présentation de l’artiste, mécène, remerciements, audio et texte, liens complémentaires."
-              : "Aperçu : œuvre visible dans le parcours, fiche complète verrouillée jusqu’au scan."
-          }
-        </div>
-
-        <label
-          class="oeuvreRouteChoice"
-        >
-          <input
-            type="checkbox"
-            class="oeuvreRoutePick"
-            data-oeuvre-id="${esc(o.id)}"
-          >
-
-          <span>
-            Ajouter cette œuvre
-            à mon parcours
-          </span>
-        </label>
-
-        <div
-          style="
-            display:flex;
-            gap:8px;
-            flex-wrap:wrap;
-            margin-top:10px;
-          "
-        >
-
-          <button
-            id="${btnId}"
-            type="button"
-            data-oeuvre-id="${esc(o.id)}"
-            data-open="${
-              open
-                ? "1"
-                : "0"
-            }"
-            style="
-              background:${
-                open
-                  ? "#2f5d46"
-                  : "#b06b00"
-              };
-              color:#fff;
-              padding:8px 10px;
-              border-radius:10px;
-              border:0;
-              font-weight:700;
-              cursor:pointer;
-            "
-          >
-            ${
-              open
-                ? "Ouvrir la fiche"
-                : "Scanner / saisir le QR"
-            }
-          </button>
-
-          <button
-            id="${guideBtnId}"
-            type="button"
-            class="oeuvreSingleGuideBtn"
-            data-oeuvre-id="${esc(o.id)}"
-            style="
-              background:#fff;
-              color:#2f5d46;
-              padding:8px 10px;
-              border-radius:10px;
-              border:1px solid #2f5d46;
-              font-weight:700;
-              cursor:pointer;
-            "
-          >
-            Me guider vers cette œuvre
-          </button>
-          <button
-  type="button"
-  onclick="window.BociteOeuvresSignalement && window.BociteOeuvresSignalement.open('${esc(o.id)}')"
-  style="
-    background:#fff;
-    color:#b42318;
-    padding:8px 10px;
-    border-radius:10px;
-    border:1px solid #b42318;
-    font-weight:700;
-    cursor:pointer;
-  "
->
-  Signaler un problème
-</button>
-
-        </div>
-
-      </div>
-    `;
-  }
-
-
-  function openOverview(){
-
-    openModal(
-      "Œuvres",
-      `
-
-      <div
-        class="oeuvreTitle"
-        style="margin-bottom:8px;"
-      >
-        Parcours & Fresques
-      </div>
-
-
-      <div class="box">
-
-        Chaque œuvre visible dans l’application
-        fait partie d’un parcours culturel urbain.
-
-        Le visiteur découvre les fresques
-        quartier par quartier,
-        scanne un QR code à proximité de l’œuvre,
-        puis débloque automatiquement
-        sa fiche complète
-        avec lecture audio et texte.
-
-      </div>
-
-
-      <div
-        class="oeuvreSectionTitle"
-        style="margin-top:14px;"
-      >
-        Fonctionnement du parcours
-      </div>
-
-
-      <div
-        class="box"
-        style="margin-top:8px;"
-      >
-
-        1. Le visiteur voit un QR code
-        près de l’œuvre
-        avec un message incitatif.
-        <br>
-
-        2. Il télécharge ou ouvre
-        l’application Bo’CitéArt.
-        <br>
-
-        3. Il scanne le QR code
-        depuis l’application.
-        <br>
-
-        4. La fiche complète de l’œuvre
-        se déverrouille automatiquement.
-        <br>
-
-        5. L’histoire du quartier
-        peut être écoutée
-        et reste aussi disponible en texte.
-
-      </div>
-
-
-      <div
-        class="oeuvreSectionTitle"
-        style="margin-top:14px;"
-      >
-        Expérience proposée
-      </div>
-
-
-      <div
-        class="box"
-        style="margin-top:8px;"
-      >
-
-        Donner envie de visiter
-        les autres quartiers,
-        créer un parcours de plaisir,
-        de culture,
-        d’art et de rencontres,
-        inciter habitants et visiteurs
-        à découvrir la ville autrement
-        et à échanger autour des œuvres.
-
-      </div>
-
-<!-- =====================================================
-     ÇA COMMENCE ICI
-     DÉCOUVERTE DE L’ŒUVRE
-     ===================================================== -->
-
-<div
-  class="oeuvreSectionTitle"
-  style="margin-top:14px;"
->
-  Ce que vous découvrirez autour de chaque œuvre
-</div>
-
-<div
-  class="box"
-  style="margin-top:8px;"
->
-  • le titre de l’œuvre
-  <br>
-
-  • le quartier concerné
-  <br>
-
-  • son histoire et sa mémoire
-  <br>
-
-  • la présentation de l’artiste
-  <br>
-
-  • les explications permettant de mieux comprendre l’œuvre
-  <br>
-
-  • une lecture audio et une lecture texte
-  <br>
-
-  • des prolongements permettant d’en apprendre davantage
-  sur le quartier, l’artiste ou certains lieux rencontrés
-  <br>
-
-  • les remerciements aux personnes, entreprises,
-  organismes ou partenaires ayant contribué
-  à rendre cette œuvre possible
-</div>
-
-
-<div
-  class="oeuvreSectionTitle"
-  style="margin-top:14px;"
->
-  Remercier celles et ceux qui ont rendu l’œuvre possible
-</div>
-
-<div
-  class="box"
-  style="margin-top:8px;"
->
-  Lorsqu’une œuvre a bénéficié d’un soutien,
-  la fiche peut mentionner sobrement
-  les mécènes et partenaires qui ont contribué
-  à sa réalisation.
-
-  <br><br>
-
-  Il s’agit d’un remerciement lié à l’œuvre
-  et non d’un espace publicitaire.
-
-  Aucun message commercial,
-  aucune promotion,
-  aucune offre de vente
-  et aucune promesse de visibilité commerciale
-  ne sont associés à ce remerciement.
-
-  <br><br>
-
-  La présentation reste centrée
-  sur l’œuvre,
-  l’artiste,
-  le quartier,
-  son histoire
-  et les personnes qui ont permis
-  au projet d’exister.
-</div>
-
-
-<div
-  class="oeuvreSectionTitle"
-  style="margin-top:14px;"
->
-  Et parfois quelques surprises…
-</div>
-
-<div
-  class="box"
-  style="margin-top:8px;"
->
-  Certaines œuvres pourront aussi réserver
-  quelques détails ou histoires
-  qui ne se dévoilent pas nécessairement
-  au premier regard.
-
-  <br><br>
-
-  Un élément discret,
-  un symbole,
-  une référence au quartier,
-  un personnage,
-  une date,
-  une anecdote
-  ou un détail volontairement glissé dans l’œuvre
-  pourra inviter le visiteur
-  à regarder une seconde fois.
-
-  <br><br>
-
-  Certaines de ces surprises pourront être révélées
-  par la fiche de l’œuvre,
-  par son histoire audio
-  ou simplement laissées à la curiosité
-  de ceux qui prennent le temps d’observer.
-
-  <br><br>
-
-  Toutes les œuvres n’auront pas nécessairement
-  une surprise cachée :
-  c’est justement ce qui permettra
-  de conserver le plaisir de la découverte.
-</div>
-
-
-<div
-  class="oeuvreSectionTitle"
-  style="margin-top:14px;"
->
-  Une autre manière de découvrir la ville
-</div>
-
-<div
-  class="box"
-  style="margin-top:8px;"
->
-  L’application ne montre pas seulement
-  une œuvre.
-
-  Elle invite à découvrir
-  un quartier,
-  son histoire,
-  ses habitants,
-  ses transformations
-  et parfois des lieux
-  que l’on ne remarque plus
-  dans les déplacements du quotidien.
-
-  <br><br>
-
-  D’une œuvre à l’autre,
-  le parcours peut ainsi devenir
-  une autre façon de marcher dans la ville,
-  de l’observer
-  et d’en comprendre progressivement
-  la mémoire.
-</div>
-
-<!-- =====================================================
-     ÇA FINIT ICI
-     ===================================================== -->
-
-      <div
-        style="
-          display:flex;
-          gap:8px;
-          flex-wrap:wrap;
-          margin:12px 0;
-        "
-      >
-
-        <button
-          id="oeuvreScanBtn"
-          type="button"
-          style="
-            border:0;
-            background:#b06b00;
-            color:#fff;
-            padding:10px 12px;
-            border-radius:10px;
-            font-weight:700;
-            cursor:pointer;
-          "
-        >
-          Scanner / saisir un QR
-        </button>
-
-        <button
-          id="oeuvreReopenBtn"
-          type="button"
-          style="
-            border:0;
-            background:#224e96;
-            color:#fff;
-            padding:10px 12px;
-            border-radius:10px;
             font-weight:700;
             cursor:pointer;
           "
@@ -8207,6 +8248,207 @@ QR-BOCITEART-010`
      ÇA FINIT ICI
      ===================================================== -->
 
+   <!-- =====================================================
+     ÇA COMMENCE ICI
+     ACCESSIBILITÉ PUBLIQUE DU PARCOURS
+     ===================================================== -->
+
+<div
+  class="oeuvreSectionTitle"
+  style="margin-top:14px;"
+>
+  Des œuvres accessibles à chacun
+</div>
+
+
+<div
+  class="box"
+  style="margin-top:8px;"
+>
+
+  <div
+    id="oeuvrePublicAccessText"
+    role="region"
+    tabindex="-1"
+    aria-label="Accessibilité du parcours des œuvres"
+    style="
+      color:#111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.55;
+      outline:none;
+    "
+  >
+
+    Bo’CitéArt prévoit plusieurs façons
+    de découvrir les histoires des œuvres
+    afin que leur accès
+    ne dépende pas d’un seul sens.
+
+    <br><br>
+
+    <span
+      style="
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+      "
+    >
+      Sourds et malentendants
+    </span>
+
+    <br>
+
+    L’histoire complète
+    est disponible en texte,
+    indépendamment de l’audio.
+
+    <br><br>
+
+    <span
+      style="
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+      "
+    >
+      Aveugles et malvoyants
+    </span>
+
+    <br>
+
+    Une lecture vocale
+    permet d’écouter les histoires.
+
+    Le contenu est également prévu
+    pour être parcouru
+    avec les lecteurs d’écran
+    et les fonctions d’accessibilité
+    de l’appareil.
+
+    <br><br>
+
+    <span
+      style="
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+      "
+    >
+      Braille
+    </span>
+
+    <br>
+
+    Les personnes équipées
+    d’un afficheur braille compatible
+    peuvent accéder
+    au contenu textuel
+    par l’intermédiaire
+    de leur lecteur d’écran.
+
+    <br><br>
+
+    Ainsi,
+    si le son est indisponible,
+    le texte reste accessible.
+
+    Et lorsqu’une personne
+    ne peut pas lire visuellement l’écran,
+    la lecture vocale,
+    le lecteur d’écran
+    ou l’afficheur braille compatible
+    peuvent prendre le relais.
+
+  </div>
+
+
+  <div
+    style="
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    "
+  >
+
+    <button
+      id="oeuvrePublicAccessSpeak"
+      type="button"
+      style="
+        border:0;
+        border-radius:10px;
+        padding:10px 12px;
+        background:#2f5d46;
+        color:#fff;
+        font-size:14px;
+        font-weight:700;
+        cursor:pointer;
+      "
+    >
+      ▶ Tester la lecture vocale
+    </button>
+
+
+    <button
+      id="oeuvrePublicAccessStop"
+      type="button"
+      style="
+        border:0;
+        border-radius:10px;
+        padding:10px 12px;
+        background:#666;
+        color:#fff;
+        font-size:14px;
+        font-weight:700;
+        cursor:pointer;
+      "
+    >
+      ■ Arrêter
+    </button>
+
+
+    <button
+      id="oeuvrePublicAccessTextBtn"
+      type="button"
+      style="
+        border:1px solid #2f5d46;
+        border-radius:10px;
+        padding:10px 12px;
+        background:#fff;
+        color:#2f5d46;
+        font-size:14px;
+        font-weight:700;
+        cursor:pointer;
+      "
+    >
+      Texte accessible / braille
+    </button>
+
+  </div>
+
+
+  <div
+    id="oeuvrePublicAccessStatus"
+    role="status"
+    aria-live="polite"
+    style="
+      margin-top:10px;
+      color:#111;
+      font-size:14px;
+      font-weight:400;
+    "
+  >
+    Vous pouvez tester ici
+    la lecture vocale du parcours.
+  </div>
+
+</div>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
+
       <div
         class="oeuvreSectionTitle"
         style="margin-top:14px;"
@@ -8389,6 +8631,73 @@ QR-BOCITEART-010`
 
         initOeuvresMap();
        startOeuvresSupervisor();
+
+       const oeuvrePublicAccessSpeak =
+  document.getElementById(
+    "oeuvrePublicAccessSpeak"
+  );
+
+const oeuvrePublicAccessStop =
+  document.getElementById(
+    "oeuvrePublicAccessStop"
+  );
+
+const oeuvrePublicAccessTextBtn =
+  document.getElementById(
+    "oeuvrePublicAccessTextBtn"
+  );
+
+
+if(oeuvrePublicAccessSpeak){
+
+  oeuvrePublicAccessSpeak.onclick =
+    function(){
+
+      window
+        .BociteOeuvreAccess
+        .speak(
+
+          "Bo’CitéArt prévoit plusieurs façons de découvrir les œuvres. Les histoires sont disponibles en audio et en texte. Le contenu peut également être parcouru avec les fonctions d’accessibilité, les lecteurs d’écran et, lorsque la personne en est équipée, un afficheur braille compatible.",
+
+          "oeuvrePublicAccessStatus"
+
+        );
+
+    };
+
+}
+
+
+if(oeuvrePublicAccessStop){
+
+  oeuvrePublicAccessStop.onclick =
+    function(){
+
+      window
+        .BociteOeuvreAccess
+        .stop(
+          "oeuvrePublicAccessStatus"
+        );
+
+    };
+
+}
+
+
+if(oeuvrePublicAccessTextBtn){
+
+  oeuvrePublicAccessTextBtn.onclick =
+    function(){
+
+      window
+        .BociteOeuvreAccess
+        .focusText(
+          "oeuvrePublicAccessText"
+        );
+
+    };
+
+}
 
       },
       0
