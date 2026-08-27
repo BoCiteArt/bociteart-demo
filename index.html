@@ -4129,7 +4129,6 @@ window.tapeAds = [
       audio: AUDIO_BASE + "oeuvre-1.mp3",
       liens: [
         { label: "Découvrir l’artiste", url: "https://site-artiste-julot.com" },
-        { label: "Découvrir le mécène", url: "https://www.citroen.fr" },
         { label: "Ville de Wattignies", url: "https://www.wattignies.fr" }
       ],
       texte: `Bienvenue devant Libre et Fleurie.
@@ -4153,7 +4152,6 @@ Prenez le temps d’observer, d’écouter, et pourquoi pas de poursuivre votre 
       audio: AUDIO_BASE + "oeuvre-2.mp3",
       liens: [
         { label: "Découvrir l’artiste", url: "https://portfolio-amandine.com" },
-        { label: "Découvrir le mécène", url: "https://www.example.com/maison-delcroix" },
         { label: "Ville de Wattignies", url: "https://www.wattignies.fr" }
       ],
       texte: `Bienvenue devant Les Tisserands du Lien.
@@ -4381,215 +4379,165 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
     }catch(e){}
   }
 
-  function speakTextPremium(text){
-    try{
-      if(!("speechSynthesis" in window)){
-        alert("Synthèse vocale non supportée sur cet appareil.");
-        return;
-      }
+/* =========================================================
+   ÇA COMMENCE ICI
+   VOIX DOUCE DES ŒUVRES — DÉMO
+   ========================================================= */
 
-      window.speechSynthesis.cancel();
+function speakTextPremium(text){
 
-      const utter = new SpeechSynthesisUtterance(String(text || ""));
-      utter.rate = 0.95;
-      utter.pitch = 1.05;
-      utter.volume = 1;
-      utter.lang = "fr-FR";
+  try{
 
-      const voices = window.speechSynthesis.getVoices() || [];
+    if(!("speechSynthesis" in window)){
+      alert("La lecture vocale n’est pas disponible sur cet appareil.");
+      return;
+    }
+
+    const synth =
+      window.speechSynthesis;
+
+    synth.cancel();
+
+    function lancerLecture(){
+
+      const voices =
+        synth.getVoices() || [];
+
+      const frenchVoices =
+        voices.filter(v =>
+          String(v.lang || "")
+            .toLowerCase()
+            .startsWith("fr")
+        );
+
+      /*
+        Priorité démo :
+        1. Microsoft Denise Online / Natural
+        2. Denise
+        3. Audrey
+        4. Amélie
+        5. Google français
+        6. autre voix française
+      */
 
       const preferred =
-        voices.find(v => String(v.name || "").toLowerCase().includes("denise")) ||
-        voices.find(v => String(v.name || "").toLowerCase().includes("mercedes")) ||
-        voices.find(v => String(v.name || "").toLowerCase().includes("audrey")) ||
-        voices.find(v => String(v.name || "").toLowerCase().includes("amélie")) ||
-        voices.find(v => String(v.name || "").toLowerCase().includes("amelie")) ||
-        voices.find(v => String(v.name || "").toLowerCase().includes("google français")) ||
-        voices.find(v => String(v.lang || "").toLowerCase() === "fr-fr") ||
-        voices.find(v => String(v.lang || "").toLowerCase().startsWith("fr"));
+        frenchVoices.find(v =>
+          /denise/i.test(v.name || "") &&
+          /(natural|online)/i.test(v.name || "")
+        ) ||
+
+        frenchVoices.find(v =>
+          /denise/i.test(v.name || "")
+        ) ||
+
+        frenchVoices.find(v =>
+          /audrey/i.test(v.name || "")
+        ) ||
+
+        frenchVoices.find(v =>
+          /amélie|amelie/i.test(v.name || "")
+        ) ||
+
+        frenchVoices.find(v =>
+          /google.*fran[cç]ais/i.test(v.name || "")
+        ) ||
+
+        frenchVoices.find(v =>
+          String(v.lang || "")
+            .toLowerCase() === "fr-fr"
+        ) ||
+
+        frenchVoices[0] ||
+
+        voices[0];
+
+      const utter =
+        new SpeechSynthesisUtterance(
+          String(text || "")
+        );
+
+      utter.lang =
+        "fr-FR";
+
+      /*
+        Ton recherché :
+        calme, posé, chaleureux,
+        narration culturelle et non GPS.
+      */
+
+      utter.rate =
+        0.88;
+
+      utter.pitch =
+        1.00;
+
+      utter.volume =
+        1;
 
       if(preferred){
-        utter.voice = preferred;
+        utter.voice =
+          preferred;
       }
 
-      window.speechSynthesis.speak(utter);
-    }catch(e){
-      alert("Erreur de lecture vocale.");
-    }
-  }
-
-  function stopSpeech(){
-    try{
-      if("speechSynthesis" in window){
-        window.speechSynthesis.cancel();
-      }
-    }catch(e){}
-  }
-  window.speakTextPremium = speakTextPremium;
-  window.stopSpeech = stopSpeech;  
-
-  let oeuvreMediaRecorder = null;
-  let oeuvreAudioChunks = [];
-
-  function loadLocalOeuvreAudioDb(){
-    try{
-      return JSON.parse(localStorage.getItem(LOCAL_OEUVRE_AUDIO_KEY) || "{}");
-    }catch(e){
-      return {};
-    }
-  }
-
-  function saveLocalOeuvreAudioDb(db){
-    try{
-      localStorage.setItem(LOCAL_OEUVRE_AUDIO_KEY, JSON.stringify(db));
-    }catch(e){}
-  }
-
-  function getLocalAudioForOeuvre(id){
-    const db = loadLocalOeuvreAudioDb();
-    return db[id] || null;
-  }
-
-  function saveLocalAudioForOeuvre(id, payload){
-    const db = loadLocalOeuvreAudioDb();
-    db[id] = payload;
-    saveLocalOeuvreAudioDb(db);
-  }
-
-  function deleteLocalAudioForOeuvre(id){
-    const db = loadLocalOeuvreAudioDb();
-    if(db[id]) delete db[id];
-    saveLocalOeuvreAudioDb(db);
-  }
-
-  function hasLocalAudioForOeuvre(id){
-    const rec = getLocalAudioForOeuvre(id);
-    return !!(rec && rec.audioData);
-  }
-
-  async function startLocalOeuvreRecording(id){
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      alert("Micro non disponible sur cet appareil.");
-      return;
+      synth.speak(
+        utter
+      );
     }
 
-    if(oeuvreMediaRecorder && oeuvreMediaRecorder.state === "recording"){
-      alert("Un enregistrement est déjà en cours.");
-      return;
+    const available =
+      synth.getVoices();
+
+    if(
+      available &&
+      available.length
+    ){
+      lancerLecture();
+    }
+    else{
+
+      let done =
+        false;
+
+      const loadVoices =
+        function(){
+
+          if(done) return;
+
+          done =
+            true;
+
+          synth.removeEventListener(
+            "voiceschanged",
+            loadVoices
+          );
+
+          lancerLecture();
+        };
+
+      synth.addEventListener(
+        "voiceschanged",
+        loadVoices
+      );
+
+      setTimeout(
+        loadVoices,
+        800
+      );
     }
 
-    try{
-      const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
-      oeuvreAudioChunks = [];
-
-      let options = {};
-      if(window.MediaRecorder){
-        if(MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported("audio/webm")){
-          options.mimeType = "audio/webm";
-        }
-      }
-
-      oeuvreMediaRecorder = new MediaRecorder(stream, options);
-
-      oeuvreMediaRecorder.ondataavailable = function(ev){
-        if(ev.data && ev.data.size > 0){
-          oeuvreAudioChunks.push(ev.data);
-        }
-      };
-
-      oeuvreMediaRecorder.onstop = function(){
-        try{
-          const blob = new Blob(oeuvreAudioChunks, { type: oeuvreMediaRecorder.mimeType || "audio/webm" });
-          const reader = new FileReader();
-
-          reader.onloadend = function(){
-            saveLocalAudioForOeuvre(id, {
-              audioData: reader.result,
-              mimeType: blob.type || "audio/webm",
-              savedAt: Date.now(),
-              savedAtFr: new Date().toLocaleString("fr-FR")
-            });
-            alert("Voix enregistrée localement pour cette œuvre sur cet appareil.");
-          };
-
-          reader.readAsDataURL(blob);
-        }catch(e){
-          alert("Erreur pendant la sauvegarde de l’enregistrement.");
-        }
-
-        try{
-          stream.getTracks().forEach(t => t.stop());
-        }catch(e){}
-      };
-
-      oeuvreMediaRecorder.start();
-      alert("Enregistrement démarré. Appuie ensuite sur Stop.");
-    }catch(e){
-      alert("Autorisation micro refusée ou indisponible.");
-    }
   }
+  catch(e){
 
-  function stopLocalOeuvreRecording(){
-    try{
-      if(oeuvreMediaRecorder && oeuvreMediaRecorder.state === "recording"){
-        oeuvreMediaRecorder.stop();
-      }else{
-        alert("Aucun enregistrement en cours.");
-      }
-    }catch(e){
-      alert("Impossible d’arrêter l’enregistrement.");
-    }
+    alert(
+      "La lecture vocale n’a pas pu démarrer."
+    );
+
   }
+}
 
-  function playLocalRecordedOeuvre(id){
-    const rec = getLocalAudioForOeuvre(id);
-    if(!rec || !rec.audioData){
-      alert("Aucun enregistrement local pour cette œuvre.");
-      return;
-    }
-
-    try{
-      let a = document.getElementById("boc-pro-audio-player");
-      if(!a){
-        a = document.createElement("audio");
-        a.id = "boc-pro-audio-player";
-        a.style.display = "none";
-        document.body.appendChild(a);
-      }
-      a.pause();
-      a.src = rec.audioData;
-      a.currentTime = 0;
-      a.play().catch(function(){
-        alert("Audio local introuvable. Le texte reste disponible.");
-      });
-    }catch(e){
-      alert("Impossible de lancer l’audio local. Le texte reste disponible.");
-    }
-  }
-
-  function deleteLocalRecordedOeuvre(id){
-    deleteLocalAudioForOeuvre(id);
-    alert("Enregistrement local supprimé pour cette œuvre.");
-  }
-
-  function renderLinks(liens){
-    if(!liens || !liens.length) return "";
-    return `
-      <div style="margin-top:12px;">
-        <div style="font-weight:900;margin-bottom:6px;">Aller plus loin</div>
-        ${liens.map(function(l){
-          return `
-            <div style="margin:6px 0;">
-              <a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer"
-                 style="display:inline-block;padding:8px 10px;border-radius:10px;background:#eef6f4;color:#1f6f5f;font-weight:900;text-decoration:none;">
-                ${esc(l.label)}
-              </a>
-            </div>
-          `;
-        }).join("")}
-      </div>
-    `;
-  }
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
       /* =========================================================
      ÇA COMMENCE ICI
@@ -5754,7 +5702,1095 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
   /* =========================================================
      ÇA FINIT ICI
      ========================================================= */ 
+/* =========================================================
+   ÇA COMMENCE ICI
+   ŒUVRES — SIGNALEMENT + SUPERVISION TECHNIQUE
+   ========================================================= */
 
+const OEUVRES_SIGNAL_STORAGE_KEY =
+  "bociteart_oeuvres_signalements_demo_v1";
+
+const OEUVRES_HEALTH_KEY =
+  "bociteart_oeuvres_health_v1";
+
+/*
+  Configuration à renseigner par la mairie en production.
+
+  Exemple futur :
+
+  window.BOCITEART_OEUVRES_SIGNAL_CONFIG = {
+    serviceLabel:"Services techniques de la Ville",
+    serviceEmail:"adresse-officielle@ville.fr",
+    endpoint:"https://serveur-securise.example/signalement",
+
+    byOeuvre:{
+      "4":{
+        serviceLabel:"Service patrimoine",
+        serviceEmail:"adresse-officielle@ville.fr"
+      }
+    }
+  };
+
+  Ne jamais placer ici de mot de passe
+  ou de clé secrète.
+*/
+
+function getOeuvreSignalConfig(o){
+
+  const globalConfig =
+    window.BOCITEART_OEUVRES_SIGNAL_CONFIG || {};
+
+  const byOeuvre =
+    globalConfig.byOeuvre &&
+    globalConfig.byOeuvre[o.id]
+      ? globalConfig.byOeuvre[o.id]
+      : {};
+
+  return {
+    serviceLabel:
+      byOeuvre.serviceLabel ||
+      globalConfig.serviceLabel ||
+      "Service technique compétent",
+
+    serviceEmail:
+      byOeuvre.serviceEmail ||
+      globalConfig.serviceEmail ||
+      "",
+
+    endpoint:
+      byOeuvre.endpoint ||
+      globalConfig.endpoint ||
+      ""
+  };
+}
+
+
+function saveLocalOeuvreSignalement(report){
+
+  try{
+
+    const rows =
+      JSON.parse(
+        localStorage.getItem(
+          OEUVRES_SIGNAL_STORAGE_KEY
+        ) || "[]"
+      );
+
+    rows.push(report);
+
+    localStorage.setItem(
+      OEUVRES_SIGNAL_STORAGE_KEY,
+      JSON.stringify(
+        rows.slice(-100)
+      )
+    );
+
+  }catch(e){}
+
+}
+
+
+function closeOeuvreSignalement(){
+
+  const overlay =
+    document.getElementById(
+      "bociteOeuvreSignalOverlay"
+    );
+
+  if(overlay){
+    overlay.remove();
+  }
+}
+
+
+function openOeuvreSignalement(id){
+
+  const o =
+    oeuvres.find(
+      x => x.id === id
+    );
+
+  if(!o){
+    return;
+  }
+
+  closeOeuvreSignalement();
+
+  const config =
+    getOeuvreSignalConfig(o);
+
+  const overlay =
+    document.createElement("div");
+
+  overlay.id =
+    "bociteOeuvreSignalOverlay";
+
+  overlay.style.cssText = [
+    "position:fixed",
+    "inset:0",
+    "z-index:1000050",
+    "overflow:auto",
+    "padding:16px",
+    "box-sizing:border-box",
+    "background:rgba(0,0,0,.55)",
+    "font-family:Arial,sans-serif"
+  ].join(";");
+
+  const serviceText =
+    config.serviceEmail
+      ? esc(config.serviceLabel) +
+        " — " +
+        esc(config.serviceEmail)
+      : esc(config.serviceLabel) +
+        " — adresse de transmission à renseigner par la mairie";
+
+  overlay.innerHTML = `
+
+    <div
+      style="
+        width:100%;
+        max-width:620px;
+        margin:20px auto;
+        padding:18px;
+        box-sizing:border-box;
+        border-radius:15px;
+        background:#ffffff;
+      "
+    >
+
+      <div
+        style="
+          display:flex;
+          justify-content:space-between;
+          gap:12px;
+          align-items:flex-start;
+        "
+      >
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+          "
+        >
+          Signaler un problème autour de cette œuvre
+        </div>
+
+        <button
+          id="bociteOeuvreSignalClose"
+          type="button"
+          aria-label="Fermer"
+          style="
+            border:0;
+            background:#fff;
+            font-size:26px;
+            cursor:pointer;
+          "
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div
+        style="
+          margin-top:12px;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+
+        <div>
+          Œuvre :
+          ${esc(o.titre)}
+        </div>
+
+        <div>
+          Quartier :
+          ${esc(o.quartier)}
+        </div>
+
+        <div style="margin-top:6px;">
+          Destination du signalement :
+          ${serviceText}
+        </div>
+
+      </div>
+
+
+      <div
+        style="
+          margin-top:16px;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+        "
+      >
+        Que constatez-vous ?
+      </div>
+
+
+      <select
+        id="bociteOeuvreSignalType"
+        style="
+          width:100%;
+          margin-top:8px;
+          padding:11px;
+          box-sizing:border-box;
+          border:1px solid #ccc;
+          border-radius:10px;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+          background:#fff;
+        "
+      >
+        <option value="">
+          Choisir
+        </option>
+
+        <option value="oeuvre_degradee">
+          Œuvre dégradée ou vandalisée
+        </option>
+
+        <option value="dechets">
+          Déchets, canettes ou dépôt aux abords
+        </option>
+
+        <option value="nettoyage">
+          Abords à nettoyer ou remettre en état
+        </option>
+
+        <option value="securite">
+          Élément détérioré pouvant présenter un risque
+        </option>
+
+        <option value="autre">
+          Autre problème
+        </option>
+      </select>
+
+
+      <div
+        style="
+          margin-top:16px;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+        "
+      >
+        Quelques mots si nécessaire
+      </div>
+
+
+      <textarea
+        id="bociteOeuvreSignalText"
+        maxlength="1200"
+        placeholder="Décrivez simplement ce que vous avez constaté."
+        style="
+          width:100%;
+          min-height:100px;
+          margin-top:8px;
+          padding:11px;
+          box-sizing:border-box;
+          resize:vertical;
+          border:1px solid #ccc;
+          border-radius:10px;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+          font-family:Arial,sans-serif;
+        "
+      ></textarea>
+
+
+      <div
+        style="
+          margin-top:16px;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+        "
+      >
+        Ajouter une photo si elle est utile
+      </div>
+
+
+      <div
+        style="
+          margin-top:7px;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        Photographiez uniquement
+        le problème constaté.
+
+        Évitez autant que possible
+        les visages,
+        les plaques d’immatriculation
+        et tout autre élément
+        permettant d’identifier une personne.
+      </div>
+
+
+      <input
+        id="bociteOeuvreSignalPhoto"
+        type="file"
+        accept="image/*"
+        capture="environment"
+        style="
+          width:100%;
+          margin-top:10px;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        "
+      >
+
+
+      <div
+        id="bociteOeuvreSignalPhotoStatus"
+        style="
+          margin-top:7px;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+        "
+      >
+        Aucune photo sélectionnée.
+      </div>
+
+
+      <div
+        style="
+          margin-top:16px;
+          padding:12px;
+          border-radius:10px;
+          background:#f7f2e8;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        Ce service sert à faciliter
+        le traitement d’un problème
+        concernant l’œuvre ou ses abords.
+
+        En cas de danger immédiat
+        ou de situation nécessitant
+        une intervention urgente,
+        utilisez directement
+        les services d’urgence compétents.
+      </div>
+
+
+      <button
+        id="bociteOeuvreSignalSend"
+        type="button"
+        style="
+          width:100%;
+          margin-top:16px;
+          padding:12px;
+          border:0;
+          border-radius:11px;
+          background:#2f5d46;
+          color:#fff;
+          font-size:14px;
+          font-weight:700;
+          cursor:pointer;
+        "
+      >
+        Transmettre le signalement
+      </button>
+
+
+      <div
+        id="bociteOeuvreSignalStatus"
+        style="
+          margin-top:10px;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      ></div>
+
+    </div>
+  `;
+
+  document.body.appendChild(
+    overlay
+  );
+
+
+  const closeBtn =
+    document.getElementById(
+      "bociteOeuvreSignalClose"
+    );
+
+  const sendBtn =
+    document.getElementById(
+      "bociteOeuvreSignalSend"
+    );
+
+  const photoInput =
+    document.getElementById(
+      "bociteOeuvreSignalPhoto"
+    );
+
+  const photoStatus =
+    document.getElementById(
+      "bociteOeuvreSignalPhotoStatus"
+    );
+
+  const status =
+    document.getElementById(
+      "bociteOeuvreSignalStatus"
+    );
+
+
+  if(closeBtn){
+    closeBtn.onclick =
+      closeOeuvreSignalement;
+  }
+
+
+  if(photoInput){
+
+    photoInput.onchange =
+      function(){
+
+        const file =
+          photoInput.files &&
+          photoInput.files[0]
+            ? photoInput.files[0]
+            : null;
+
+        if(!photoStatus){
+          return;
+        }
+
+        photoStatus.textContent =
+          file
+            ? "Photo sélectionnée : " +
+              file.name
+            : "Aucune photo sélectionnée.";
+
+      };
+
+  }
+
+
+  if(sendBtn){
+
+    sendBtn.onclick =
+      async function(){
+
+        const typeEl =
+          document.getElementById(
+            "bociteOeuvreSignalType"
+          );
+
+        const textEl =
+          document.getElementById(
+            "bociteOeuvreSignalText"
+          );
+
+        const type =
+          String(
+            typeEl
+              ? typeEl.value
+              : ""
+          ).trim();
+
+        const message =
+          String(
+            textEl
+              ? textEl.value
+              : ""
+          ).trim();
+
+        const photo =
+          photoInput &&
+          photoInput.files &&
+          photoInput.files[0]
+            ? photoInput.files[0]
+            : null;
+
+
+        if(!type){
+
+          alert(
+            "Choisissez le problème constaté."
+          );
+
+          return;
+        }
+
+
+        const reportId =
+          "oeuvre-signal-" +
+          Date.now();
+
+
+        const report = {
+
+          id:reportId,
+
+          oeuvreId:o.id,
+
+          oeuvreTitre:o.titre,
+
+          quartier:o.quartier,
+
+          type:type,
+
+          message:message,
+
+          photoSelected:
+            Boolean(photo),
+
+          photoName:
+            photo
+              ? photo.name
+              : "",
+
+          createdAt:
+            new Date()
+              .toISOString(),
+
+          status:
+            "prepared"
+        };
+
+
+        sendBtn.disabled =
+          true;
+
+        sendBtn.textContent =
+          "Transmission…";
+
+
+        /*
+          PRODUCTION :
+          si un serveur sécurisé est configuré,
+          la photo et le signalement
+          lui sont transmis.
+        */
+
+        if(config.endpoint){
+
+          try{
+
+            const formData =
+              new FormData();
+
+            formData.append(
+              "report",
+              JSON.stringify(report)
+            );
+
+            if(photo){
+
+              formData.append(
+                "photo",
+                photo
+              );
+
+            }
+
+            const response =
+              await fetch(
+                config.endpoint,
+                {
+                  method:"POST",
+                  body:formData
+                }
+              );
+
+
+            if(!response.ok){
+              throw new Error(
+                "Transmission refusée"
+              );
+            }
+
+
+            report.status =
+              "transmitted";
+
+            saveLocalOeuvreSignalement(
+              report
+            );
+
+
+            if(status){
+
+              status.textContent =
+                "Merci. Votre signalement a été transmis au service compétent.";
+
+            }
+
+
+            sendBtn.textContent =
+              "Signalement transmis";
+
+            return;
+
+          }catch(error){
+
+            console.warn(
+              "Bo’CitéArt — transmission du signalement impossible :",
+              error
+            );
+
+          }
+
+        }
+
+
+        /*
+          DÉMO / SECOURS :
+          aucune photo n'est conservée
+          dans le localStorage.
+
+          Seules les informations textuelles
+          du signalement sont mémorisées.
+        */
+
+        report.status =
+          "demo_local";
+
+        saveLocalOeuvreSignalement(
+          report
+        );
+
+
+        if(config.serviceEmail){
+
+          const subject =
+            "Signalement Bo’CitéArt — " +
+            o.titre;
+
+          const body =
+            "Œuvre : " +
+            o.titre +
+            "\n" +
+
+            "Quartier : " +
+            o.quartier +
+            "\n" +
+
+            "Problème : " +
+            type +
+            "\n\n" +
+
+            "Description :\n" +
+            (
+              message ||
+              "Aucune précision complémentaire."
+            ) +
+            "\n\n" +
+
+            (
+              photo
+                ? "Une photo a été sélectionnée. Merci de l’ajouter à ce message avant l’envoi.\n\n"
+                : ""
+            ) +
+
+            "Référence : " +
+            reportId;
+
+
+          window.location.href =
+            "mailto:" +
+            encodeURIComponent(
+              config.serviceEmail
+            ) +
+            "?subject=" +
+            encodeURIComponent(
+              subject
+            ) +
+            "&body=" +
+            encodeURIComponent(
+              body
+            );
+
+
+          if(status){
+
+            status.textContent =
+              photo
+                ? "Le message est préparé. Ajoutez la photo sélectionnée à l’e-mail avant de l’envoyer."
+                : "Le message est préparé pour le service compétent.";
+
+          }
+
+        }
+        else{
+
+          if(status){
+
+            status.textContent =
+              "Le signalement est préparé dans la démo. L’adresse officielle du service compétent doit encore être renseignée par la mairie pour permettre sa transmission.";
+
+          }
+
+        }
+
+
+        sendBtn.disabled =
+          false;
+
+        sendBtn.textContent =
+          "Transmettre le signalement";
+
+      };
+
+  }
+
+}
+
+
+window.BociteOeuvresSignalement = {
+  open:openOeuvreSignalement,
+  close:closeOeuvreSignalement
+};
+
+
+/* =========================================================
+   SUPERVISION TECHNIQUE INVISIBLE
+   ========================================================= */
+
+async function runOeuvresSupervisor(){
+
+  const problems = [];
+  const warnings = [];
+
+
+  if(
+    typeof unlockByQr !==
+    "function"
+  ){
+
+    problems.push(
+      "Fonction QR indisponible"
+    );
+
+  }
+
+
+  const ids =
+    new Set();
+
+  const qrs =
+    new Set();
+
+
+  oeuvres.forEach(function(o){
+
+    if(
+      !o.id ||
+      ids.has(o.id)
+    ){
+
+      problems.push(
+        "Identifiant d’œuvre absent ou dupliqué : " +
+        String(o.id || "?")
+      );
+
+    }
+
+    ids.add(o.id);
+
+
+    if(
+      !o.qr ||
+      qrs.has(o.qr)
+    ){
+
+      problems.push(
+        "QR absent ou dupliqué pour l’œuvre " +
+        String(o.id || "?")
+      );
+
+    }
+
+    qrs.add(o.qr);
+
+
+    if(
+      !String(
+        o.texte || ""
+      ).trim()
+    ){
+
+      problems.push(
+        "Texte absent pour l’œuvre " +
+        String(o.id || "?")
+      );
+
+    }
+
+
+    if(!o.audio){
+
+      warnings.push(
+        "Aucun fichier audio indiqué pour l’œuvre " +
+        String(o.id || "?")
+      );
+
+    }
+
+  });
+
+
+  if(
+    typeof L ===
+    "undefined"
+  ){
+
+    problems.push(
+      "Cartographie Leaflet indisponible"
+    );
+
+  }
+
+
+  if(
+    !(
+      "speechSynthesis" in window
+    )
+  ){
+
+    warnings.push(
+      "Lecture vocale synthétique indisponible sur cet appareil"
+    );
+
+  }
+
+
+  if(
+    typeof speakTextPremium !==
+    "function"
+  ){
+
+    problems.push(
+      "Fonction de lecture audio indisponible"
+    );
+
+  }
+
+
+  /*
+    Vérification légère des fichiers audio.
+    Aucun fichier n'est téléchargé entièrement :
+    seule son accessibilité est testée.
+  */
+
+  for(
+    const o of oeuvres
+  ){
+
+    if(!o.audio){
+      continue;
+    }
+
+    try{
+
+      const response =
+        await fetch(
+          o.audio,
+          {
+            method:"HEAD",
+            cache:"no-store"
+          }
+        );
+
+      if(!response.ok){
+
+        warnings.push(
+          "Audio introuvable ou inaccessible : œuvre " +
+          o.id
+        );
+
+      }
+
+    }catch(error){
+
+      warnings.push(
+        "Audio non vérifiable : œuvre " +
+        o.id
+      );
+
+    }
+
+  }
+
+
+  const report = {
+
+    module:"oeuvres",
+
+    checkedAt:
+      new Date()
+        .toISOString(),
+
+    ok:
+      problems.length === 0,
+
+    problems:problems,
+
+    warnings:warnings
+
+  };
+
+
+  try{
+
+    localStorage.setItem(
+      OEUVRES_HEALTH_KEY,
+      JSON.stringify(report)
+    );
+
+  }catch(e){}
+
+
+  document.dispatchEvent(
+    new CustomEvent(
+      "bociteart:oeuvres-health",
+      {
+        detail:report
+      }
+    )
+  );
+
+
+  /*
+    PRODUCTION :
+    un serveur sécurisé pourra recevoir
+    les anomalies et déclencher
+    l'alerte e-mail.
+
+    Pas de clé ni mot de passe
+    dans GitHub Pages.
+  */
+
+  const monitorEndpoint =
+    String(
+      window.BOCITEART_OEUVRES_MONITOR_ENDPOINT ||
+      ""
+    ).trim();
+
+
+  if(
+    monitorEndpoint &&
+    problems.length
+  ){
+
+    try{
+
+      await fetch(
+        monitorEndpoint,
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify(
+              report
+            )
+        }
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Bo’CitéArt — supervision distante indisponible :",
+        error
+      );
+
+    }
+
+  }
+
+
+  return report;
+
+}
+
+
+function startOeuvresSupervisor(){
+
+  runOeuvresSupervisor();
+
+
+  if(
+    window.__bociteOeuvresSupervisorTimer
+  ){
+    return;
+  }
+
+
+  /*
+    Toutes les 15 minutes
+    tant que l'application est ouverte.
+  */
+
+  window.__bociteOeuvresSupervisorTimer =
+    setInterval(
+      runOeuvresSupervisor,
+      15 * 60 * 1000
+    );
+
+}
+
+
+window.BociteOeuvresSupervisor = {
+
+  run:
+    runOeuvresSupervisor,
+
+  start:
+    startOeuvresSupervisor,
+
+  getLastReport:
+    function(){
+
+      try{
+
+        return JSON.parse(
+          localStorage.getItem(
+            OEUVRES_HEALTH_KEY
+          ) || "null"
+        );
+
+      }catch(e){
+
+        return null;
+
+      }
+
+    }
+
+};
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
+     
   function openDetailById(id){
     const o = oeuvres.find(x => x.id === id);
     if(!o) return;
@@ -5777,26 +6813,121 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
     const hasLocalAudio = hasLocalAudioForOeuvre(o.id);
 
     openModal(o.titre, `
-      <div class="box">
-        <strong>Explication pour les élus :</strong><br>
-        cette fiche montre ce qui se passe une fois l’œuvre déverrouillée par QR code :
-        le visiteur accède à une expérience complète mêlant audio professionnel,
-        texte lisible, histoire du quartier, mise en valeur de l’artiste, du mécène
-        et des partenaires liés à l’œuvre.
-      </div>
+     <div class="box">
+  <div class="oeuvreSectionTitle" style="margin-top:0;">
+    Découvrez cette œuvre
+  </div>
 
-      <div class="box" style="margin-top:10px;">
-        <strong>Objectif :</strong><br>
-        transformer une fresque en parcours culturel vivant, faire circuler les habitants
-        et visiteurs dans la ville, relier les quartiers, créer du lien humain et donner
-        une profondeur nouvelle à l’œuvre par la voix, le texte et les prolongements externes.
-      </div>
+  <div style="margin-top:8px;">
+    Cette fiche prolonge ce que vous avez devant les yeux :
+    elle permet d’écouter son histoire,
+    de découvrir le quartier,
+    l’artiste,
+    les souvenirs ou événements qui s’y rattachent
+    et de mieux comprendre certains détails de l’œuvre.
+  </div>
+</div>
+
+<div class="box" style="margin-top:10px;">
+  <div class="oeuvreSectionTitle" style="margin-top:0;">
+    Merci à ceux qui l’ont rendue possible
+  </div>
+
+  <div style="margin-top:8px;">
+    Lorsqu’un mécène ou un partenaire a contribué
+    à cette œuvre,
+    son soutien peut être mentionné simplement
+    afin de le remercier.
+
+    Il ne s’agit pas d’une publicité :
+    la présentation reste consacrée
+    à l’œuvre et à son histoire,
+    sans message commercial ni promotion.
+  </div>
+</div>
+
+<div class="box" style="margin-top:10px;">
+  <div class="oeuvreSectionTitle" style="margin-top:0;">
+    Regardez bien…
+  </div>
+
+  <div style="margin-top:8px;">
+    Certaines œuvres pourront cacher
+    un détail,
+    un symbole,
+    une référence,
+    une anecdote
+    ou une petite surprise
+    que l’on ne remarque pas forcément
+    au premier regard.
+
+    Prenez le temps d’observer :
+    toutes les œuvres ne livreront pas
+    nécessairement leurs secrets
+    de la même manière.
+  </div>
+</div>
 
       <div class="box" style="margin-top:10px;">
         Quartier : ${esc(o.quartier)}<br>
         Artiste : ${esc(o.artiste || "à découvrir")}<br>
         Mécène : ${esc(o.mecene || "à découvrir")}
       </div>
+
+      <!-- =====================================================
+     ÇA COMMENCE ICI
+     SIGNALEMENT CITOYEN
+     ===================================================== -->
+
+<div
+  class="box"
+  style="margin-top:12px;"
+>
+
+  <div
+    class="oeuvreSectionTitle"
+    style="margin-top:0;"
+  >
+    Un problème autour de cette œuvre ?
+  </div>
+
+  <div style="margin-top:8px;">
+
+    Une dégradation,
+    des déchets,
+    des canettes,
+    un dépôt,
+    un problème de propreté
+    ou un élément détérioré
+    peuvent être signalés
+    afin d’aider le service compétent
+    à intervenir plus rapidement.
+
+  </div>
+
+  <button
+    type="button"
+    onclick="window.BociteOeuvresSignalement.open('${esc(o.id)}')"
+    style="
+      margin-top:12px;
+      padding:10px 12px;
+      border:0;
+      border-radius:10px;
+      background:#2f5d46;
+      color:#fff;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+    "
+  >
+    Signaler un problème
+  </button>
+
+</div>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
         <button onclick="speakTextPremium(${JSON.stringify(o.texte)})"
@@ -6217,33 +7348,170 @@ QR-BOCITEART-010`
 
       </div>
 
+<!-- =====================================================
+     ÇA COMMENCE ICI
+     DÉCOUVERTE DE L’ŒUVRE
+     ===================================================== -->
 
-      <div
-        class="oeuvreSectionTitle"
-        style="margin-top:14px;"
-      >
-        Ce que verront les élus
-        à l’ouverture de cet onglet
-      </div>
+<div
+  class="oeuvreSectionTitle"
+  style="margin-top:14px;"
+>
+  Ce que vous découvrirez autour de chaque œuvre
+</div>
+
+<div
+  class="box"
+  style="margin-top:8px;"
+>
+  • le titre de l’œuvre
+  <br>
+
+  • le quartier concerné
+  <br>
+
+  • son histoire et sa mémoire
+  <br>
+
+  • la présentation de l’artiste
+  <br>
+
+  • les explications permettant de mieux comprendre l’œuvre
+  <br>
+
+  • une lecture audio et une lecture texte
+  <br>
+
+  • des prolongements permettant d’en apprendre davantage
+  sur le quartier, l’artiste ou certains lieux rencontrés
+  <br>
+
+  • les remerciements aux personnes, entreprises,
+  organismes ou partenaires ayant contribué
+  à rendre cette œuvre possible
+</div>
 
 
-      <div
-        class="box"
-        style="margin-top:8px;"
-      >
+<div
+  class="oeuvreSectionTitle"
+  style="margin-top:14px;"
+>
+  Remercier celles et ceux qui ont rendu l’œuvre possible
+</div>
 
-        Un aperçu clair
-        du fonctionnement du parcours,
-        des œuvres déjà ouvertes dans la démo,
-        des œuvres encore verrouillées,
-        du rôle du QR code,
-        de la lecture audio prévue,
-        de la lecture texte de secours
-        et de la valorisation de l’artiste,
-        du mécène et des partenaires.
+<div
+  class="box"
+  style="margin-top:8px;"
+>
+  Lorsqu’une œuvre a bénéficié d’un soutien,
+  la fiche peut mentionner sobrement
+  les mécènes et partenaires qui ont contribué
+  à sa réalisation.
 
-      </div>
+  <br><br>
 
+  Il s’agit d’un remerciement lié à l’œuvre
+  et non d’un espace publicitaire.
+
+  Aucun message commercial,
+  aucune promotion,
+  aucune offre de vente
+  et aucune promesse de visibilité commerciale
+  ne sont associés à ce remerciement.
+
+  <br><br>
+
+  La présentation reste centrée
+  sur l’œuvre,
+  l’artiste,
+  le quartier,
+  son histoire
+  et les personnes qui ont permis
+  au projet d’exister.
+</div>
+
+
+<div
+  class="oeuvreSectionTitle"
+  style="margin-top:14px;"
+>
+  Et parfois quelques surprises…
+</div>
+
+<div
+  class="box"
+  style="margin-top:8px;"
+>
+  Certaines œuvres pourront aussi réserver
+  quelques détails ou histoires
+  qui ne se dévoilent pas nécessairement
+  au premier regard.
+
+  <br><br>
+
+  Un élément discret,
+  un symbole,
+  une référence au quartier,
+  un personnage,
+  une date,
+  une anecdote
+  ou un détail volontairement glissé dans l’œuvre
+  pourra inviter le visiteur
+  à regarder une seconde fois.
+
+  <br><br>
+
+  Certaines de ces surprises pourront être révélées
+  par la fiche de l’œuvre,
+  par son histoire audio
+  ou simplement laissées à la curiosité
+  de ceux qui prennent le temps d’observer.
+
+  <br><br>
+
+  Toutes les œuvres n’auront pas nécessairement
+  une surprise cachée :
+  c’est justement ce qui permettra
+  de conserver le plaisir de la découverte.
+</div>
+
+
+<div
+  class="oeuvreSectionTitle"
+  style="margin-top:14px;"
+>
+  Une autre manière de découvrir la ville
+</div>
+
+<div
+  class="box"
+  style="margin-top:8px;"
+>
+  L’application ne montre pas seulement
+  une œuvre.
+
+  Elle invite à découvrir
+  un quartier,
+  son histoire,
+  ses habitants,
+  ses transformations
+  et parfois des lieux
+  que l’on ne remarque plus
+  dans les déplacements du quotidien.
+
+  <br><br>
+
+  D’une œuvre à l’autre,
+  le parcours peut ainsi devenir
+  une autre façon de marcher dans la ville,
+  de l’observer
+  et d’en comprendre progressivement
+  la mémoire.
+</div>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
 
       <div
         style="
@@ -6508,6 +7776,114 @@ QR-BOCITEART-010`
 
       </div>
 
+<!-- =====================================================
+     ÇA COMMENCE ICI
+     ENTRETIEN — SIGNALEMENT — RESPONSABILITÉS
+     ===================================================== -->
+
+<div
+  class="oeuvreSectionTitle"
+  style="margin-top:14px;"
+>
+  Préserver les œuvres et leurs abords
+</div>
+
+<div
+  class="box"
+  style="margin-top:8px;"
+>
+
+  Les œuvres vivent dans l’espace public
+  et peuvent parfois subir
+  une dégradation,
+  un dépôt de déchets
+  ou un problème sur leurs abords.
+
+  <br><br>
+
+  Lorsqu’un problème est constaté,
+  l’application permet de le signaler
+  et, si cela est utile,
+  d’y joindre une photo
+  afin d’aider le service compétent
+  à identifier plus rapidement
+  la situation.
+
+  <br><br>
+
+  L’adresse de destination
+  est définie avec chaque mairie
+  ou gestionnaire concerné,
+  afin que le signalement
+  arrive directement
+  auprès du service approprié.
+
+</div>
+
+
+<div
+  class="oeuvreSectionTitle"
+  style="margin-top:14px;"
+>
+  Entretien et responsabilité
+</div>
+
+<div
+  class="box"
+  style="margin-top:8px;"
+>
+
+  Bo’CitéArt met à disposition
+  un dispositif de découverte,
+  d’information
+  et de transmission de signalements
+  autour des œuvres.
+
+  <br><br>
+
+  Sauf engagement contractuel spécifique,
+  Bo’CitéArt n’assure pas
+  la garde,
+  la surveillance quotidienne,
+  l’entretien,
+  le nettoyage
+  ou la réparation
+  des œuvres et de leurs abords.
+
+  Ces interventions relèvent,
+  selon chaque situation,
+  du propriétaire,
+  du gestionnaire
+  ou du service compétent.
+
+  <br><br>
+
+  Les dégradations,
+  actes de vandalisme,
+  dépôts de déchets
+  ou dommages causés par des tiers
+  ne deviennent pas
+  de la responsabilité de Bo’CitéArt
+  du seul fait que l’œuvre
+  figure dans l’application.
+
+  <br><br>
+
+  Le dispositif de signalement
+  facilite la transmission
+  d’une information.
+
+  Il ne se substitue pas
+  aux services d’urgence
+  ni aux responsabilités
+  prévues par la loi
+  et par les conventions applicables.
+
+</div>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ===================================================== -->
 
       <div
         class="oeuvreSectionTitle"
@@ -6690,6 +8066,7 @@ QR-BOCITEART-010`
 
 
         initOeuvresMap();
+       startOeuvresSupervisor();
 
       },
       0
