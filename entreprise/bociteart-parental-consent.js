@@ -1,7 +1,7 @@
 /* =========================================================
    ÇA COMMENCE ICI
    BO'CITÉART — AUTORISATIONS PARENTALES
-   VOIX RÉELLE + PROFIL VOCAL SYNTHÉTIQUE
+   MOT DU JOUR — DÉCISION + PROFIL VOCAL + TRAÇABILITÉ DÉMO
    ========================================================= */
 
 (function initBociteParentalConsent(){
@@ -14,8 +14,14 @@
   const STORAGE_KEY =
     "bociteart_parent_permissions_v1";
 
+  const AUDIT_KEY =
+    "bociteart_parent_permissions_audit_v1";
+
   const OVERLAY_ID =
     "bociteParentalConsentOverlay";
+
+  const POLICY_VERSION =
+    "mot_du_jour_voice_v1_20260827";
 
   function safeParse(value, fallback){
     try{
@@ -30,11 +36,66 @@
       .trim()
       .toLowerCase();
 
-    if(["girl","fille","female"].includes(gender)){
+    if([
+      "girl",
+      "fille",
+      "female"
+    ].includes(gender)){
       return "girl";
     }
 
-    if(["boy","garcon","garçon","male"].includes(gender)){
+    if([
+      "boy",
+      "garcon",
+      "garçon",
+      "male"
+    ].includes(gender)){
+      return "boy";
+    }
+
+    return "";
+  }
+
+  function normalizeFirstName(value){
+    return String(value || "").trim();
+  }
+
+  function normalizeEmail(value){
+    return String(value || "")
+      .trim()
+      .toLowerCase();
+  }
+
+  function inferGenderFromKnownFirstName(value){
+    const name = normalizeFirstName(value)
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+    if(!name){
+      return "";
+    }
+
+    const girls = new Set([
+      "alice","ambre","amelie","anna","celine","charlotte",
+      "chloe","clara","emma","eva","jade","jeanne","julie",
+      "lea","lina","lola","louise","lucie","manon","margaux",
+      "marie","mathilde","nina","oceane","romane","rose","sarah",
+      "sophie","zoe","frederique"
+    ]);
+
+    const boys = new Set([
+      "adam","alexandre","antoine","arthur","baptiste","benjamin",
+      "clement","enzo","frederic","gabriel","hugo","jules","leo",
+      "louis","lucas","mathis","mathieu","maxime","nathan","nicolas",
+      "noah","paul","raphael","remy","thomas","timothee","tom","victor"
+    ]);
+
+    if(girls.has(name) && !boys.has(name)){
+      return "girl";
+    }
+
+    if(boys.has(name) && !girls.has(name)){
       return "boy";
     }
 
@@ -78,6 +139,53 @@
     );
   }
 
+  function loadAudit(){
+    const data = safeParse(
+      localStorage.getItem(AUDIT_KEY),
+      []
+    );
+
+    return Array.isArray(data)
+      ? data
+      : [];
+  }
+
+  function saveAudit(rows){
+    localStorage.setItem(
+      AUDIT_KEY,
+      JSON.stringify(
+        Array.isArray(rows)
+          ? rows
+          : []
+      )
+    );
+  }
+
+  function appendAudit(entry){
+    const rows = loadAudit();
+
+    rows.push(Object.assign({
+      auditId:
+        "parent-audit-" +
+        Date.now() +
+        "-" +
+        Math.random().toString(36).slice(2, 8),
+
+      policyVersion:
+        POLICY_VERSION,
+
+      recordedAt:
+        new Date().toISOString(),
+
+      source:
+        "demo_browser_storage"
+    }, entry || {}));
+
+    saveAudit(rows);
+
+    return rows[rows.length - 1];
+  }
+
   function getPermission(accountId){
     const id = getAccountId(accountId);
 
@@ -86,41 +194,106 @@
     }
 
     const all = loadAll();
+
     return all[id] || null;
+  }
+
+  function getVoiceProfile(accountId){
+    const permission = getPermission(accountId);
+
+    if(!permission){
+      return null;
+    }
+
+    const confirmedGender =
+      permission.voiceProfileConfirmed === true
+        ? normalizeGender(
+            permission.voiceGender ||
+            permission.syntheticVoice
+          )
+        : "";
+
+    return {
+      accountId:
+        permission.accountId,
+
+      firstName:
+        permission.firstName || "",
+
+      realVoiceAuthorized:
+        permission.realVoiceAuthorized === true &&
+        permission.status === "authorized",
+
+      syntheticVoice:
+        confirmedGender,
+
+      voiceGender:
+        confirmedGender,
+
+      voiceProfileConfirmed:
+        Boolean(confirmedGender),
+
+      parentName:
+        permission.parentName || "",
+
+      parentEmail:
+        permission.parentEmail || "",
+
+      policyVersion:
+        permission.policyVersion ||
+        POLICY_VERSION
+    };
   }
 
   function saveMotDuJourDecision(data){
     const source = data || {};
-    const accountId = getAccountId(source.accountId);
+
+    const accountId =
+      getAccountId(source.accountId);
 
     if(!accountId){
       return null;
     }
 
-    const syntheticVoice = normalizeGender(
+    const gender = normalizeGender(
       source.syntheticVoice ||
       source.voiceGender
     );
+
+    if(!gender){
+      return null;
+    }
 
     const authorized =
       source.realVoiceAuthorized === true ||
       source.status === "authorized";
 
+    const all = loadAll();
+    const previous = all[accountId] || null;
+
     const permission = {
       accountId:accountId,
 
-      firstName:String(
-        source.firstName ||
-        source.prenom ||
-        ""
-      ).trim(),
+      firstName:
+        normalizeFirstName(
+          source.firstName ||
+          source.prenom ||
+          (previous && previous.firstName)
+        ),
 
-      parentEmail:String(
-        source.parentEmail ||
-        ""
-      )
-      .trim()
-      .toLowerCase(),
+      parentName:
+        String(
+          source.parentName ||
+          source.legalRepresentativeName ||
+          (previous && previous.parentName) ||
+          ""
+        ).trim(),
+
+      parentEmail:
+        normalizeEmail(
+          source.parentEmail ||
+          (previous && previous.parentEmail)
+        ),
 
       status:
         authorized
@@ -131,24 +304,59 @@
         authorized,
 
       syntheticVoice:
-        syntheticVoice,
+        gender,
 
       voiceGender:
-        syntheticVoice,
+        gender,
+
+      voiceProfileConfirmed:
+        true,
 
       verification:
         "demo_unverified",
+
+      policyVersion:
+        POLICY_VERSION,
 
       updatedAt:
         new Date().toISOString()
     };
 
-    const all = loadAll();
-
-    all[accountId] =
-      permission;
-
+    all[accountId] = permission;
     saveAll(all);
+
+    appendAudit({
+      action:
+        authorized
+          ? "voice_authorized"
+          : "voice_refused",
+
+      accountId:
+        accountId,
+
+      firstName:
+        permission.firstName,
+
+      parentName:
+        permission.parentName,
+
+      parentEmail:
+        permission.parentEmail,
+
+      realVoiceAuthorized:
+        authorized,
+
+      voiceGender:
+        gender,
+
+      voiceProfileConfirmed:
+        true,
+
+      previousStatus:
+        previous
+          ? previous.status || ""
+          : ""
+    });
 
     document.dispatchEvent(
       new CustomEvent(
@@ -163,11 +371,8 @@
     return permission;
   }
 
-  function hasMotDuJourVoicePermission(
-    accountId
-  ){
-    const permission =
-      getPermission(accountId);
+  function hasMotDuJourVoicePermission(accountId){
+    const permission = getPermission(accountId);
 
     return Boolean(
       permission &&
@@ -176,78 +381,43 @@
     );
   }
 
-  function getVoiceProfile(accountId){
-    const permission =
-      getPermission(accountId);
-
-    if(!permission){
-      return null;
-    }
-
-    return {
-      accountId:
-        permission.accountId,
-
-      firstName:
-        permission.firstName ||
-        "",
-
-      realVoiceAuthorized:
-        permission.realVoiceAuthorized === true,
-
-      syntheticVoice:
-        normalizeGender(
-          permission.syntheticVoice
-        ),
-
-      voiceGender:
-        normalizeGender(
-          permission.voiceGender ||
-          permission.syntheticVoice
-        )
-    };
-  }
-
-  function revokeMotDuJourVoice(
-    accountId
-  ){
-    const id =
-      getAccountId(accountId);
+  function revokeMotDuJourVoice(accountId){
+    const id = getAccountId(accountId);
 
     if(!id){
       return false;
     }
 
-    const all =
-      loadAll();
+    const all = loadAll();
+    const previous = all[id] || {};
 
-    const previous =
-      all[id] ||
-      {};
-
-    all[id] =
-      Object.assign(
-        {},
-        previous,
-        {
-          accountId:id,
-
-          status:
-            "revoked",
-
-          realVoiceAuthorized:
-            false,
-
-          verification:
-            "demo_unverified",
-
-          updatedAt:
-            new Date()
-              .toISOString()
-        }
-      );
+    all[id] = Object.assign({}, previous, {
+      accountId:id,
+      status:"revoked",
+      realVoiceAuthorized:false,
+      verification:"demo_unverified",
+      policyVersion:POLICY_VERSION,
+      updatedAt:new Date().toISOString()
+    });
 
     saveAll(all);
+
+    appendAudit({
+      action:"voice_revoked",
+      accountId:id,
+      firstName:all[id].firstName || "",
+      parentName:all[id].parentName || "",
+      parentEmail:all[id].parentEmail || "",
+      realVoiceAuthorized:false,
+      voiceGender:normalizeGender(
+        all[id].voiceGender ||
+        all[id].syntheticVoice
+      ),
+      voiceProfileConfirmed:
+        all[id].voiceProfileConfirmed === true,
+      previousStatus:
+        previous.status || ""
+    });
 
     document.dispatchEvent(
       new CustomEvent(
@@ -262,6 +432,44 @@
     return true;
   }
 
+  function getAuditRecords(filters){
+    const source = filters || {};
+
+    const accountId =
+      String(
+        source.accountId ||
+        ""
+      ).trim();
+
+    const parentEmail =
+      normalizeEmail(
+        source.parentEmail
+      );
+
+    return loadAudit().filter(function(row){
+
+      if(
+        accountId &&
+        String(row.accountId || "") !==
+          accountId
+      ){
+        return false;
+      }
+
+      if(
+        parentEmail &&
+        normalizeEmail(
+          row.parentEmail
+        ) !==
+          parentEmail
+      ){
+        return false;
+      }
+
+      return true;
+    });
+  }
+
   function close(){
     const overlay =
       document.getElementById(
@@ -274,9 +482,7 @@
   }
 
   function openMotDuJour(options){
-    const source =
-      options ||
-      {};
+    const source = options || {};
 
     const accountId =
       getAccountId(
@@ -288,16 +494,31 @@
     }
 
     const existing =
-      getPermission(
-        accountId
-      ) ||
-      {};
+      getPermission(accountId) || {};
 
-    const presetGender =
+    const firstName =
+      normalizeFirstName(
+        source.firstName ||
+        source.prenom ||
+        existing.firstName
+      );
+
+    const existingGender =
+      existing.voiceProfileConfirmed === true
+        ? normalizeGender(
+            existing.voiceGender ||
+            existing.syntheticVoice
+          )
+        : "";
+
+    const suggestion =
+      existingGender ||
       normalizeGender(
-        source.syntheticVoice ||
         source.voiceGender ||
-        existing.syntheticVoice
+        source.syntheticVoice
+      ) ||
+      inferGenderFromKnownFirstName(
+        firstName
       );
 
     close();
@@ -314,10 +535,9 @@
       "position:fixed",
       "inset:0",
       "z-index:1000030",
-      "display:flex",
-      "align-items:center",
-      "justify-content:center",
+      "overflow:auto",
       "padding:16px",
+      "box-sizing:border-box",
       "background:rgba(0,0,0,.55)",
       "font-family:Arial,sans-serif"
     ].join(";");
@@ -327,7 +547,8 @@
       <div
         style="
           width:100%;
-          max-width:560px;
+          max-width:600px;
+          margin:20px auto;
           background:#fffdf7;
           border:2px solid #2f5d46;
           border-radius:15px;
@@ -352,7 +573,7 @@
               font-weight:700;
             "
           >
-            Autorisation — Mot du jour
+            Autorisation parentale — Mot du jour
           </div>
 
           <button
@@ -378,26 +599,60 @@
             line-height:1.5;
           "
         >
-          Cet écran est destiné au parent
-          ou au responsable légal,
-          pas au professeur.
+          Cette fiche est destinée au parent
+          ou au responsable légal.
+          Elle permet de confirmer le profil vocal
+          de l'enfant et d'accepter ou non
+          la conservation et la diffusion
+          de sa vraie voix dans le cadre
+          du Mot du jour.
         </p>
 
-        <label
+        <div
           style="
-            display:block;
-            font-size:14px;
-            color:#111;
-            margin-top:12px;
+            margin-top:14px;
+            padding:12px;
+            border:1px solid #dedede;
+            border-radius:10px;
+            background:#fff;
           "
         >
-          Profil vocal de remplacement
+          <div
+            style="
+              font-size:14px;
+              color:#111;
+            "
+          >
+            Enfant :
+            <strong>
+              ${firstName || "à renseigner"}
+            </strong>
+          </div>
+        </div>
+
+        <label
+          for="bociteParentName"
+          style="
+            display:block;
+            margin-top:14px;
+            font-size:14px;
+            color:#111;
+          "
+        >
+          Nom du parent ou du responsable légal
         </label>
 
-        <select
-          id="bociteParentSyntheticVoice"
+        <input
+          id="bociteParentName"
+          type="text"
+          value="${String(
+            existing.parentName ||
+            source.parentName ||
+            ""
+          ).replace(/"/g, "&quot;")}"
           style="
             width:100%;
+            box-sizing:border-box;
             margin-top:7px;
             padding:11px;
             border:1px solid #bbb;
@@ -406,40 +661,181 @@
           "
         >
 
-          <option
-            value=""
-            ${
-              presetGender
-                ? ""
-                : "selected"
-            }
-          >
-            À confirmer
-          </option>
+        <label
+          for="bociteParentEmail"
+          style="
+            display:block;
+            margin-top:14px;
+            font-size:14px;
+            color:#111;
+          "
+        >
+          Adresse e-mail du parent
+          ou du responsable légal
+        </label>
 
-          <option
+        <input
+          id="bociteParentEmail"
+          type="email"
+          value="${normalizeEmail(
+            existing.parentEmail ||
+            source.parentEmail
+          )}"
+          style="
+            width:100%;
+            box-sizing:border-box;
+            margin-top:7px;
+            padding:11px;
+            border:1px solid #bbb;
+            border-radius:9px;
+            font-size:14px;
+          "
+        >
+
+        <div
+          style="
+            margin-top:16px;
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+          "
+        >
+          Confirmer le profil vocal de l'enfant
+        </div>
+
+        <p
+          style="
+            font-size:14px;
+            font-weight:400;
+            color:#111;
+            line-height:1.5;
+          "
+        >
+          Le prénom peut aider à proposer un choix,
+          mais il ne décide jamais à la place
+          du parent.
+          Cochez obligatoirement Fille ou Garçon
+          afin d'éviter toute erreur
+          de voix synthétique.
+        </p>
+
+        <label
+          style="
+            display:flex;
+            align-items:center;
+            gap:9px;
+            margin-top:10px;
+            padding:10px;
+            border:1px solid #dedede;
+            border-radius:9px;
+            background:#fff;
+            cursor:pointer;
+          "
+        >
+
+          <input
+            id="bociteParentVoiceGirl"
+            type="radio"
+            name="bociteParentVoiceGender"
             value="girl"
             ${
-              presetGender === "girl"
-                ? "selected"
+              suggestion === "girl"
+                ? "checked"
                 : ""
             }
+          >
+
+          <span
+            style="
+              font-size:14px;
+              color:#111;
+            "
           >
             Fille
-          </option>
+          </span>
 
-          <option
+        </label>
+
+        <label
+          style="
+            display:flex;
+            align-items:center;
+            gap:9px;
+            margin-top:8px;
+            padding:10px;
+            border:1px solid #dedede;
+            border-radius:9px;
+            background:#fff;
+            cursor:pointer;
+          "
+        >
+
+          <input
+            id="bociteParentVoiceBoy"
+            type="radio"
+            name="bociteParentVoiceGender"
             value="boy"
             ${
-              presetGender === "boy"
-                ? "selected"
+              suggestion === "boy"
+                ? "checked"
                 : ""
             }
           >
-            Garçon
-          </option>
 
-        </select>
+          <span
+            style="
+              font-size:14px;
+              color:#111;
+            "
+          >
+            Garçon
+          </span>
+
+        </label>
+
+        <div
+          id="bociteParentConsentMessage"
+          style="
+            display:none;
+            margin-top:12px;
+            padding:10px;
+            border-left:5px solid #2f5d46;
+            background:#fff;
+            color:#111;
+            font-size:14px;
+            line-height:1.5;
+          "
+        >
+        </div>
+
+        <div
+          style="
+            margin-top:18px;
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+          "
+        >
+          Décision concernant la vraie voix
+        </div>
+
+        <p
+          style="
+            font-size:14px;
+            font-weight:400;
+            color:#111;
+            line-height:1.5;
+          "
+        >
+          Si la vraie voix est autorisée,
+          elle pourra être conservée et utilisée.
+          Si elle n'est pas autorisée,
+          l'enregistrement réel utilisé pour l'écoute
+          avant validation sera supprimé
+          et remplacé automatiquement
+          par la voix synthétique correspondant
+          au profil confirmé ci-dessus.
+        </p>
 
         <button
           id="bociteParentAuthorizeVoice"
@@ -477,6 +873,23 @@
           Ne pas autoriser la vraie voix
         </button>
 
+        <p
+          style="
+            margin-top:14px;
+            font-size:12px;
+            font-weight:400;
+            color:#666;
+            line-height:1.45;
+          "
+        >
+          Démo : la décision et son historique
+          sont conservés dans le navigateur.
+          En production, ces éléments devront
+          être enregistrés côté serveur
+          dans un espace sécurisé et consultable
+          uniquement par les personnes autorisées.
+        </p>
+
       </div>
 
     `;
@@ -492,37 +905,102 @@
       .onclick =
         close;
 
-    function saveDecision(
-      authorized
-    ){
-      const gender =
-        normalizeGender(
+    function showMessage(text){
+      const box =
+        document.getElementById(
+          "bociteParentConsentMessage"
+        );
+
+      if(!box){
+        return;
+      }
+
+      box.style.display =
+        "block";
+
+      box.textContent =
+        text;
+    }
+
+    function getSelectedGender(){
+      const checked =
+        document.querySelector(
+          'input[name="bociteParentVoiceGender"]:checked'
+        );
+
+      return normalizeGender(
+        checked &&
+        checked.value
+      );
+    }
+
+    function saveDecision(authorized){
+      const parentName =
+        String(
           document
             .getElementById(
-              "bociteParentSyntheticVoice"
+              "bociteParentName"
+            )
+            .value ||
+          ""
+        ).trim();
+
+      const parentEmail =
+        normalizeEmail(
+          document
+            .getElementById(
+              "bociteParentEmail"
             )
             .value
         );
 
-      saveMotDuJourDecision({
-        accountId:
-          accountId,
+      const gender =
+        getSelectedGender();
 
-        firstName:
-          source.firstName ||
-          source.prenom ||
-          existing.firstName,
+      if(!parentName){
+        showMessage(
+          "Renseignez le nom du parent ou du responsable légal."
+        );
 
-        parentEmail:
-          source.parentEmail ||
-          existing.parentEmail,
+        return;
+      }
 
-        realVoiceAuthorized:
-          authorized,
+      if(
+        !parentEmail ||
+        !parentEmail.includes("@")
+      ){
+        showMessage(
+          "Renseignez une adresse e-mail valide pour le parent ou le responsable légal."
+        );
 
-        syntheticVoice:
-          gender
-      });
+        return;
+      }
+
+      if(!gender){
+        showMessage(
+          "Confirmez obligatoirement Fille ou Garçon avant de valider la fiche."
+        );
+
+        return;
+      }
+
+      const saved =
+        saveMotDuJourDecision({
+          accountId:accountId,
+          firstName:firstName,
+          parentName:parentName,
+          parentEmail:parentEmail,
+          realVoiceAuthorized:authorized,
+          syntheticVoice:gender
+        });
+
+      if(!saved){
+        showMessage(
+          "La fiche n'a pas pu être enregistrée."
+        );
+
+        return;
+      }
 
       close();
     }
@@ -569,12 +1047,15 @@
       hasMotDuJourVoicePermission,
 
     revokeMotDuJourVoice:
-      revokeMotDuJourVoice
+      revokeMotDuJourVoice,
+
+    getAuditRecords:
+      getAuditRecords
 
   };
 
   console.log(
-    "✅ Autorisations parentales Bo'CitéArt simplifiées chargées"
+    "✅ Autorisations parentales — profil vocal et traçabilité démo chargés"
   );
 
 })();
