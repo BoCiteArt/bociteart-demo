@@ -1,15 +1,16 @@
 /* =========================================================
    ÇA COMMENCE ICI
    BO'CITÉART — ÉCOLE & JEUNES
-   MOT DU JOUR — PARCOURS PROFESSEUR 3 ÉTAPES
+   MOT DU JOUR — PROFESSEUR + MULTI-CLASSES
 
-   1 — Enregistrer
-   2 — Écouter et valider
-   3 — Choisir le jour
-
-   Aucun choix Fille / Garçon par le professeur.
-   La vraie voix n'est conservée que si elle est autorisée.
-   Sinon la prise temporaire est supprimée après validation.
+   - Nom de classe librement modifiable
+   - Dernière classe utilisée préremplie
+   - Plusieurs classes dans le même espace
+   - Identifiant stable par classe même si son nom change
+   - Programmation séparée pour chaque classe
+   - Jours de classe uniquement
+   - Aucun choix Fille / Garçon par le professeur
+   - Autorisation parentale traitée en amont
    ========================================================= */
 
 (function initBociteSchoolWordSimple(){
@@ -23,6 +24,9 @@
     "bociteSchoolSimpleRecorderOverlay";
 
   const SCHEDULE_KEY =
+    "bociteart_school_voice_schedule_v2";
+
+  const LEGACY_SCHEDULE_KEY =
     "bociteart_school_voice_schedule_v1";
 
   const LEGACY_VOICE_KEY =
@@ -30,6 +34,15 @@
 
   const SCHOOL_CONFIG_KEY =
     "bociteart_school_config_v1";
+
+  const CLASSES_KEY =
+    "bociteart_school_classes_v1";
+
+  const CURRENT_CLASS_ID_KEY =
+    "bociteart_school_current_class_id_v1";
+
+  const LAST_CLASS_NAME_KEY =
+    "bociteart_school_last_class_name_v1";
 
   const MAX_RECORDING_MS =
     2 * 60 * 1000;
@@ -43,199 +56,181 @@
   let timerId = null;
   let startedAt = 0;
   let objectUrl = "";
+
   let pendingBlob = null;
   let pendingAudioData = "";
-  let pendingClass = "";
+
+  let pendingClassId = "";
+  let pendingClassName = "";
   let pendingText = "";
+
   let pendingChildAccountId = "";
+
   let selectedVoiceMode =
     "synthetic-pending";
+
   let selectedVoiceGender = "";
+
   let typedFallback = false;
+
+  let creatingNewClass = false;
+
 
   /* =====================================================
      OUTILS
      ===================================================== */
 
-  function el(id){
+  function getElement(id){
     return document.getElementById(id);
   }
 
-  function two(n){
-    return String(n).padStart(2,"0");
+
+  function safeParse(value, fallback){
+    try{
+      return JSON.parse(value);
+    }catch(error){
+      return fallback;
+    }
   }
 
-  function isoDate(d){
+
+  function escapeHtml(value){
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+
+  function normalizeClassName(value){
+    return String(value || "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+
+  function createId(prefix){
     return (
-      d.getFullYear() +
+      prefix +
       "-" +
-      two(d.getMonth()+1) +
+      Date.now() +
       "-" +
-      two(d.getDate())
+      Math.random()
+        .toString(36)
+        .slice(2, 8)
     );
   }
 
-  function todayIso(){
-    return isoDate(new Date());
+
+  function twoDigits(value){
+    return String(value)
+      .padStart(2, "0");
   }
 
-  function maxDateIso(){
-    const d = new Date();
 
-    d.setDate(
-      d.getDate() +
+  function localDateToIso(date){
+    return (
+      date.getFullYear() +
+      "-" +
+      twoDigits(
+        date.getMonth() + 1
+      ) +
+      "-" +
+      twoDigits(
+        date.getDate()
+      )
+    );
+  }
+
+
+  function todayIso(){
+    return localDateToIso(
+      new Date()
+    );
+  }
+
+
+  function maxDateIso(){
+    const date =
+      new Date();
+
+    date.setDate(
+      date.getDate() +
       MAX_ADVANCE_DAYS
     );
 
-    return isoDate(d);
-  }
-
-  function formatTime(ms){
-    const s =
-      Math.max(
-        0,
-        Math.floor(ms/1000)
-      );
-
-    return (
-      two(
-        Math.floor(s/60)
-      ) +
-      ":" +
-      two(s%60)
+    return localDateToIso(
+      date
     );
   }
 
-  function formatDateFr(iso){
-    const p =
-      String(iso || "")
-      .split("-");
 
-    if(p.length !== 3){
+  function formatDateFr(iso){
+    const parts =
+      String(iso || "")
+        .split("-");
+
+    if(parts.length !== 3){
       return iso || "";
     }
 
-    return new Date(
-      Number(p[0]),
-      Number(p[1])-1,
-      Number(p[2])
-    ).toLocaleDateString(
-      "fr-FR",
-      {
-        weekday:"long",
-        day:"numeric",
-        month:"long",
-        year:"numeric"
-      }
-    );
+    const date =
+      new Date(
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
+      );
+
+    return date
+      .toLocaleDateString(
+        "fr-FR",
+        {
+          weekday:"long",
+          day:"numeric",
+          month:"long",
+          year:"numeric"
+        }
+      );
   }
 
-  function getCurrentClass(){
-    const s =
-      el("schoolClassSelect");
 
-    return String(
-      s && s.value
-        ? s.value
-        : "Classe"
-    ).trim();
-  }
-
-  function getCurrentWordText(){
-    const input =
-      el("schoolWordInput");
-
-    const direct =
-      String(
-        input && input.value
-          ? input.value
-          : ""
-      ).trim();
-
-    if(direct){
-      return direct;
-    }
-
-    const display =
-      String(
-        el("schoolWordDisplay")
-          ?.textContent ||
-        ""
-      ).trim();
-
-    const m =
-      display.match(
-        /«\s*(.*?)\s*»/
+  function formatTime(milliseconds){
+    const seconds =
+      Math.max(
+        0,
+        Math.floor(
+          milliseconds / 1000
+        )
       );
 
     return (
-      m && m[1]
-        ? m[1].trim()
-        : (
-            display ||
-            "Je suis ravi aujourd’hui."
-          )
+      twoDigits(
+        Math.floor(
+          seconds / 60
+        )
+      ) +
+      ":" +
+      twoDigits(
+        seconds % 60
+      )
     );
   }
 
-  function getSchoolZone(){
-    const s =
-      el("schoolConfigZone");
-
-    if(
-      s &&
-      s.value
-    ){
-      return String(
-        s.value
-      )
-      .trim()
-      .toUpperCase();
-    }
-
-    try{
-      const raw =
-        localStorage.getItem(
-          SCHOOL_CONFIG_KEY
-        );
-
-      const cfg =
-        raw
-          ? JSON.parse(raw)
-          : null;
-
-      if(
-        cfg &&
-        cfg.zone
-      ){
-        return String(
-          cfg.zone
-        )
-        .trim()
-        .toUpperCase();
-      }
-    }catch(error){
-      /* rien */
-    }
-
-    return "B";
-  }
 
   function normalizeGender(value){
-    const g =
-      String(
-        value ||
-        ""
-      )
-      .trim()
-      .toLowerCase();
+    const gender =
+      String(value || "")
+        .trim()
+        .toLowerCase();
 
     if(
       [
         "girl",
         "fille",
         "female"
-      ].includes(g)
+      ].includes(gender)
     ){
       return "girl";
     }
@@ -246,7 +241,7 @@
         "garcon",
         "garçon",
         "male"
-      ].includes(g)
+      ].includes(gender)
     ){
       return "boy";
     }
@@ -254,8 +249,710 @@
     return "";
   }
 
+
+  function getCurrentWordText(){
+    const input =
+      getElement(
+        "schoolWordInput"
+      );
+
+    const direct =
+      String(
+        input &&
+        input.value
+          ? input.value
+          : ""
+      ).trim();
+
+    if(direct){
+      return direct;
+    }
+
+    const display =
+      String(
+        getElement(
+          "schoolWordDisplay"
+        )?.textContent ||
+        ""
+      ).trim();
+
+    const match =
+      display.match(
+        /«\s*(.*?)\s*»/
+      );
+
+    if(
+      match &&
+      match[1]
+    ){
+      return match[1]
+        .trim();
+    }
+
+    return (
+      display ||
+      "Je suis ravi aujourd’hui."
+    );
+  }
+
+
+  function getSchoolZone(){
+    const zoneSelect =
+      getElement(
+        "schoolConfigZone"
+      );
+
+    if(
+      zoneSelect &&
+      zoneSelect.value
+    ){
+      return String(
+        zoneSelect.value
+      )
+        .trim()
+        .toUpperCase();
+    }
+
+    try{
+      const raw =
+        localStorage.getItem(
+          SCHOOL_CONFIG_KEY
+        );
+
+      const config =
+        raw
+          ? JSON.parse(raw)
+          : null;
+
+      if(
+        config &&
+        config.zone
+      ){
+        return String(
+          config.zone
+        )
+          .trim()
+          .toUpperCase();
+      }
+
+    }catch(error){
+      /* rien */
+    }
+
+    return "B";
+  }
+
+
   /* =====================================================
-     PROFIL VOCAL EN AMONT
+     GESTION DES CLASSES
+     ===================================================== */
+
+  function loadClasses(){
+    const data =
+      safeParse(
+        localStorage.getItem(
+          CLASSES_KEY
+        ),
+        []
+      );
+
+    return Array.isArray(data)
+      ? data.filter(
+          function(row){
+            return (
+              row &&
+              row.id &&
+              normalizeClassName(
+                row.name
+              )
+            );
+          }
+        )
+      : [];
+  }
+
+
+  function saveClasses(rows){
+    localStorage.setItem(
+      CLASSES_KEY,
+      JSON.stringify(rows)
+    );
+  }
+
+
+  function getCurrentClassId(){
+    return String(
+      localStorage.getItem(
+        CURRENT_CLASS_ID_KEY
+      ) ||
+      ""
+    ).trim();
+  }
+
+
+  function setCurrentClassId(id){
+    const clean =
+      String(id || "")
+        .trim();
+
+    if(clean){
+      localStorage.setItem(
+        CURRENT_CLASS_ID_KEY,
+        clean
+      );
+    }else{
+      localStorage.removeItem(
+        CURRENT_CLASS_ID_KEY
+      );
+    }
+  }
+
+
+  function getClassById(id){
+    const wanted =
+      String(id || "")
+        .trim();
+
+    return (
+      loadClasses()
+        .find(
+          function(row){
+            return (
+              row.id === wanted
+            );
+          }
+        ) ||
+      null
+    );
+  }
+
+
+  function getCurrentClassRecord(){
+    const classes =
+      loadClasses();
+
+    const id =
+      getCurrentClassId();
+
+    if(
+      creatingNewClass &&
+      !id
+    ){
+      return null;
+    }
+
+    let current =
+      classes.find(
+        function(row){
+          return (
+            row.id === id
+          );
+        }
+      ) ||
+      null;
+
+    if(current){
+      return current;
+    }
+
+    if(classes.length){
+      current =
+        classes[0];
+
+      setCurrentClassId(
+        current.id
+      );
+
+      return current;
+    }
+
+    return null;
+  }
+
+
+  function getCurrentClassName(){
+    const current =
+      getCurrentClassRecord();
+
+    if(current){
+      return normalizeClassName(
+        current.name
+      );
+    }
+
+    return normalizeClassName(
+      localStorage.getItem(
+        LAST_CLASS_NAME_KEY
+      ) ||
+      ""
+    );
+  }
+
+
+  function ensureLegacyClassOption(name){
+    const select =
+      getElement(
+        "schoolClassSelect"
+      );
+
+    const clean =
+      normalizeClassName(name);
+
+    if(
+      !select ||
+      !clean
+    ){
+      return;
+    }
+
+    let option =
+      Array
+        .from(
+          select.options ||
+          []
+        )
+        .find(
+          function(row){
+            return (
+              String(
+                row.value ||
+                ""
+              ).trim() ===
+              clean
+            );
+          }
+        );
+
+    if(!option){
+      option =
+        document
+          .createElement(
+            "option"
+          );
+
+      option.value =
+        clean;
+
+      option.textContent =
+        clean;
+
+      option.dataset
+        .bociteCustomClass =
+          "1";
+
+      select.appendChild(
+        option
+      );
+    }
+
+    if(
+      select.value !==
+      clean
+    ){
+      select.value =
+        clean;
+
+      try{
+        select.dispatchEvent(
+          new Event(
+            "change",
+            {
+              bubbles:true
+            }
+          )
+        );
+      }catch(error){
+        /* rien */
+      }
+    }
+  }
+
+
+  function createClass(name){
+    const clean =
+      normalizeClassName(name);
+
+    if(!clean){
+      return null;
+    }
+
+    const classes =
+      loadClasses();
+
+    const existing =
+      classes.find(
+        function(row){
+          return (
+            normalizeClassName(
+              row.name
+            ).toLowerCase() ===
+            clean.toLowerCase()
+          );
+        }
+      );
+
+    if(existing){
+      creatingNewClass =
+        false;
+
+      setCurrentClassId(
+        existing.id
+      );
+
+      localStorage.setItem(
+        LAST_CLASS_NAME_KEY,
+        existing.name
+      );
+
+      ensureLegacyClassOption(
+        existing.name
+      );
+
+      return existing;
+    }
+
+    const row = {
+      id:
+        createId(
+          "school-class"
+        ),
+
+      name:
+        clean,
+
+      createdAt:
+        new Date()
+          .toISOString(),
+
+      updatedAt:
+        new Date()
+          .toISOString()
+    };
+
+    classes.push(row);
+
+    saveClasses(classes);
+
+    creatingNewClass =
+      false;
+
+    setCurrentClassId(
+      row.id
+    );
+
+    localStorage.setItem(
+      LAST_CLASS_NAME_KEY,
+      row.name
+    );
+
+    ensureLegacyClassOption(
+      row.name
+    );
+
+    return row;
+  }
+
+
+  function renameCurrentClass(name){
+    const clean =
+      normalizeClassName(name);
+
+    if(!clean){
+      return null;
+    }
+
+    const classes =
+      loadClasses();
+
+    const id =
+      getCurrentClassId();
+
+    const index =
+      classes.findIndex(
+        function(row){
+          return (
+            row.id === id
+          );
+        }
+      );
+
+    if(index < 0){
+      return createClass(clean);
+    }
+
+    classes[index] =
+      Object.assign(
+        {},
+        classes[index],
+        {
+          name:
+            clean,
+
+          updatedAt:
+            new Date()
+              .toISOString()
+        }
+      );
+
+    saveClasses(classes);
+
+    localStorage.setItem(
+      LAST_CLASS_NAME_KEY,
+      clean
+    );
+
+    ensureLegacyClassOption(
+      clean
+    );
+
+    return classes[index];
+  }
+
+
+  function selectClass(id){
+    const row =
+      getClassById(id);
+
+    if(!row){
+      return null;
+    }
+
+    creatingNewClass =
+      false;
+
+    setCurrentClassId(
+      row.id
+    );
+
+    localStorage.setItem(
+      LAST_CLASS_NAME_KEY,
+      row.name
+    );
+
+    ensureLegacyClassOption(
+      row.name
+    );
+
+    const input =
+      getElement(
+        "bociteSchoolClassNameInput"
+      );
+
+    if(input){
+      input.value =
+        row.name;
+    }
+
+    refreshClassControls();
+    refreshSimplePanel();
+
+    return row;
+  }
+
+
+  function saveClassFromInput(){
+    const input =
+      getElement(
+        "bociteSchoolClassNameInput"
+      );
+
+    if(!input){
+      return null;
+    }
+
+    const clean =
+      normalizeClassName(
+        input.value
+      );
+
+    if(!clean){
+      alert(
+        "Indiquez le nom de la classe."
+      );
+
+      input.focus();
+
+      return null;
+    }
+
+    const current =
+      creatingNewClass
+        ? null
+        : getCurrentClassRecord();
+
+    const saved =
+      current
+        ? renameCurrentClass(clean)
+        : createClass(clean);
+
+    if(saved){
+      input.value =
+        saved.name;
+
+      refreshClassControls();
+      refreshSimplePanel();
+    }
+
+    return saved;
+  }
+
+
+  function beginNewClass(){
+    creatingNewClass =
+      true;
+
+    setCurrentClassId("");
+
+    const input =
+      getElement(
+        "bociteSchoolClassNameInput"
+      );
+
+    if(input){
+      input.value = "";
+      input.focus();
+    }
+
+    refreshClassControls();
+  }
+
+
+  function refreshClassControls(){
+    const select =
+      getElement(
+        "bociteSchoolClassList"
+      );
+
+    const input =
+      getElement(
+        "bociteSchoolClassNameInput"
+      );
+
+    const current =
+      getCurrentClassRecord();
+
+    const classes =
+      loadClasses();
+
+    if(select){
+      select.innerHTML = "";
+
+      const placeholder =
+        document
+          .createElement(
+            "option"
+          );
+
+      placeholder.value = "";
+
+      placeholder.textContent =
+        classes.length
+          ? "Choisir une classe enregistrée"
+          : "Aucune classe enregistrée";
+
+      select.appendChild(
+        placeholder
+      );
+
+      classes.forEach(
+        function(row){
+          const option =
+            document
+              .createElement(
+                "option"
+              );
+
+          option.value =
+            row.id;
+
+          option.textContent =
+            row.name;
+
+          select.appendChild(
+            option
+          );
+        }
+      );
+
+      select.value =
+        current
+          ? current.id
+          : "";
+    }
+
+    if(
+      input &&
+      document.activeElement !==
+        input
+    ){
+      input.value =
+        creatingNewClass
+          ? ""
+          : current
+            ? current.name
+            : normalizeClassName(
+                localStorage.getItem(
+                  LAST_CLASS_NAME_KEY
+                ) ||
+                ""
+              );
+    }
+  }
+
+
+  function ensureInitialClass(){
+    if(creatingNewClass){
+      return null;
+    }
+
+    const current =
+      getCurrentClassRecord();
+
+    if(current){
+      ensureLegacyClassOption(
+        current.name
+      );
+
+      return current;
+    }
+
+    const last =
+      normalizeClassName(
+        localStorage.getItem(
+          LAST_CLASS_NAME_KEY
+        ) ||
+        ""
+      );
+
+    if(last){
+      return createClass(last);
+    }
+
+    const legacySelect =
+      getElement(
+        "schoolClassSelect"
+      );
+
+    const legacyName =
+      normalizeClassName(
+        legacySelect &&
+        legacySelect.value
+          ? legacySelect.value
+          : ""
+      );
+
+    if(legacyName){
+      return createClass(
+        legacyName
+      );
+    }
+
+    return null;
+  }
+
+
+  /* =====================================================
+     PROFIL VOCAL — INVISIBLE POUR LE PROFESSEUR
      ===================================================== */
 
   function getVoiceProfile(){
@@ -274,12 +971,14 @@
           {}
         );
       }
+
     }catch(error){
       /* rien */
     }
 
     return {};
   }
+
 
   function getVoiceProfileFor(
     accountId
@@ -301,12 +1000,14 @@
           {}
         );
       }
+
     }catch(error){
       /* rien */
     }
 
     return getVoiceProfile();
   }
+
 
   function voicePermissionAvailable(){
     try{
@@ -320,24 +1021,26 @@
           .BociteSchoolParentalGuard
           .canUseCurrentVoice()
       );
+
     }catch(error){
       return false;
     }
   }
 
+
   function refreshVoiceContext(){
-    const p =
+    const profile =
       getVoiceProfile();
 
     selectedVoiceGender =
       normalizeGender(
-        p.syntheticVoice ||
-        p.voiceGender
+        profile.syntheticVoice ||
+        profile.voiceGender
       );
 
     pendingChildAccountId =
       String(
-        p.accountId ||
+        profile.accountId ||
         ""
       ).trim();
 
@@ -346,37 +1049,43 @@
     ){
       selectedVoiceMode =
         "real";
+
+      return;
     }
-    else if(
+
+    if(
       selectedVoiceGender ===
         "girl"
     ){
       selectedVoiceMode =
         "synthetic-girl";
+
+      return;
     }
-    else if(
+
+    if(
       selectedVoiceGender ===
         "boy"
     ){
       selectedVoiceMode =
         "synthetic-boy";
+
+      return;
     }
-    else{
-      selectedVoiceMode =
-        "synthetic-pending";
-    }
+
+    selectedVoiceMode =
+      "synthetic-pending";
   }
+
 
   /* =====================================================
      VOIX SYNTHÉTIQUE
      ===================================================== */
 
-  function getSyntheticProfile(
-    kind
-  ){
+  function getSyntheticProfile(kind){
     const cls =
-      getCurrentClass()
-      .toUpperCase();
+      getCurrentClassName()
+        .toUpperCase();
 
     let boyPitch =
       1.10;
@@ -420,16 +1129,15 @@
     };
   }
 
-  function getGenderedFrenchVoice(
-    kind
-  ){
+
+  function getGenderedFrenchVoice(kind){
     if(
       !window.speechSynthesis
     ){
       return null;
     }
 
-    const voices =
+    const frenchVoices =
       window
         .speechSynthesis
         .getVoices()
@@ -444,28 +1152,28 @@
           }
         );
 
-    const female =
+    const femaleNames =
       /denise|hortense|julie|sylvie|marie|amelie|amélie|audrey|virginie|eloise|éloise|celine|céline|female|femme|fémin/i;
 
-    const male =
+    const maleNames =
       /henri|paul|claude|alain|thomas|hugo|remy|rémy|mathieu|gerard|gérard|loic|loïc|nicolas|male|homme|masculin/i;
 
-    const re =
+    const matcher =
       kind === "girl"
-        ? female
-        : male;
+        ? femaleNames
+        : maleNames;
 
     return (
-      voices.find(
-        function(v){
-          return re.test(
+      frenchVoices.find(
+        function(voice){
+          return matcher.test(
             String(
-              v.name ||
+              voice.name ||
               ""
             ) +
             " " +
             String(
-              v.voiceURI ||
+              voice.voiceURI ||
               ""
             )
           );
@@ -474,6 +1182,7 @@
       null
     );
   }
+
 
   function speakSyntheticChild(
     kind,
@@ -497,18 +1206,18 @@
 
     if(!gender){
       alert(
-        "La voix synthétique de cet élève n'est pas encore disponible."
+        "Le profil vocal de cet enfant doit d'abord être confirmé dans la fiche parentale."
       );
 
       return false;
     }
 
-    const voice =
+    const chosenVoice =
       getGenderedFrenchVoice(
         gender
       );
 
-    if(!voice){
+    if(!chosenVoice){
       alert(
         gender === "girl"
           ? "Aucune voix française féminine adaptée n'est disponible sur cet appareil."
@@ -519,38 +1228,36 @@
     }
 
     const phrase =
-      String(
-        text ||
-        ""
-      ).trim();
+      String(text || "")
+        .trim();
 
     if(!phrase){
       return false;
     }
 
-    const p =
+    const profile =
       getSyntheticProfile(
         gender
       );
 
-    const u =
+    const utterance =
       new SpeechSynthesisUtterance(
         phrase
       );
 
-    u.lang =
+    utterance.lang =
       "fr-FR";
 
-    u.voice =
-      voice;
+    utterance.voice =
+      chosenVoice;
 
-    u.rate =
-      p.rate;
+    utterance.rate =
+      profile.rate;
 
-    u.pitch =
-      p.pitch;
+    utterance.pitch =
+      profile.pitch;
 
-    u.volume =
+    utterance.volume =
       1;
 
     window
@@ -559,33 +1266,35 @@
 
     window
       .speechSynthesis
-      .speak(u);
+      .speak(
+        utterance
+      );
 
     return true;
   }
 
-  /* =====================================================
-     STYLE + MASQUAGE ANCIEN SYSTÈME
+   /* =====================================================
+     STYLE + MASQUAGE DE L'ANCIENNE INTERFACE
      ===================================================== */
 
   function installStyles(){
     if(
-      el(
+      getElement(
         "bociteSchoolSimpleStyles"
       )
     ){
       return;
     }
 
-    const s =
+    const style =
       document.createElement(
         "style"
       );
 
-    s.id =
+    style.id =
       "bociteSchoolSimpleStyles";
 
-    s.textContent = `
+    style.textContent = `
 
       #schoolVoicePermissionPanel,
       #schoolRecordVoiceBtn,
@@ -598,13 +1307,10 @@
         display:none !important;
       }
 
-      #modalBody.bociteSchoolClean,
       #modalBody.bociteSchoolClean p,
       #modalBody.bociteSchoolClean li,
-      #modalBody.bociteSchoolClean .muted,
-      #modalBody.bociteSchoolClean .box,
-      #modalBody.bociteSchoolClean .miniField{
-        color:#111 !important;
+      #modalBody.bociteSchoolClean .muted{
+        color:#111111 !important;
         font-size:14px !important;
         font-weight:400 !important;
         line-height:1.5 !important;
@@ -618,7 +1324,7 @@
       }
 
       .bociteSchoolSimpleText{
-        color:#111 !important;
+        color:#111111 !important;
         font-size:14px !important;
         font-weight:400 !important;
         line-height:1.5 !important;
@@ -628,19 +1334,33 @@
         display:block;
         width:100%;
         box-sizing:border-box;
-        margin-top:12px;
-        padding:13px 12px;
+        margin-top:10px;
+        padding:12px;
         border:2px solid rgba(0,0,0,.10);
-        border-radius:12px;
+        border-radius:11px;
         background:#efe4d3;
-        color:#111;
+        color:#111111;
         font-size:16px;
         font-weight:700;
         cursor:pointer;
       }
 
       .bociteSchoolSimpleSecondary{
-        background:#fff;
+        background:#ffffff;
+      }
+
+      .bociteSchoolClassField{
+        display:block;
+        width:100%;
+        box-sizing:border-box;
+        margin-top:7px;
+        padding:11px;
+        border:1px solid #aaa;
+        border-radius:9px;
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
       }
 
       #bociteSchoolSimpleProgress{
@@ -662,13 +1382,16 @@
     `;
 
     document.head.appendChild(
-      s
+      style
     );
   }
 
+
   function hideLegacyVoiceInterface(){
     const body =
-      el("modalBody");
+      getElement(
+        "modalBody"
+      );
 
     if(!body){
       return;
@@ -678,53 +1401,53 @@
       "bociteSchoolClean"
     );
 
-    body
-      .querySelectorAll(
+    const nodes =
+      body.querySelectorAll(
         "h1,h2,h3,h4,strong,b,div,p,span"
-      )
-      .forEach(
-        function(node){
-
-          if(
-            node.closest(
-              "#bociteSchoolSimpleVoicePanel"
-            )
-          ){
-            return;
-          }
-
-          const t =
-            String(
-              node.textContent ||
-              ""
-            )
-            .replace(
-              /\s+/g,
-              " "
-            )
-            .trim()
-            .toLowerCase();
-
-          if(
-            t ===
-              "voix réelle de l’élève (si accord)" ||
-            t ===
-              "voix réelle de l'élève (si accord)" ||
-            t ===
-              "voix réelle de l’élève" ||
-            t ===
-              "voix réelle de l'élève"
-          ){
-            node.style.display =
-              "none";
-          }
-
-        }
       );
+
+    nodes.forEach(
+      function(node){
+        if(
+          node.closest(
+            "#bociteSchoolSimpleVoicePanel"
+          )
+        ){
+          return;
+        }
+
+        const text =
+          String(
+            node.textContent ||
+            ""
+          )
+          .replace(
+            /\s+/g,
+            " "
+          )
+          .trim()
+          .toLowerCase();
+
+        if(
+          text ===
+            "voix réelle de l’élève (si accord)" ||
+          text ===
+            "voix réelle de l'élève (si accord)" ||
+          text ===
+            "voix réelle de l’élève" ||
+          text ===
+            "voix réelle de l'élève"
+        ){
+          node.style.display =
+            "none";
+        }
+      }
+    );
   }
 
+
   /* =====================================================
-     MICRO
+     ENREGISTREMENT
      ===================================================== */
 
   function stopTracks(){
@@ -733,8 +1456,8 @@
         activeStream
           .getTracks()
           .forEach(
-            function(t){
-              t.stop();
+            function(track){
+              track.stop();
             }
           );
       }catch(error){
@@ -746,9 +1469,10 @@
       null;
   }
 
+
   function clearTimer(){
     if(timerId){
-      clearInterval(
+      window.clearInterval(
         timerId
       );
     }
@@ -756,6 +1480,7 @@
     timerId =
       null;
   }
+
 
   function resetRecorderState(){
     clearTimer();
@@ -771,6 +1496,7 @@
       0;
   }
 
+
   function revokeObjectUrl(){
     if(objectUrl){
       try{
@@ -785,6 +1511,7 @@
     objectUrl =
       "";
   }
+
 
   function closeOverlay(){
     if(
@@ -805,7 +1532,9 @@
     resetRecorderState();
 
     const overlay =
-      el(OVERLAY_ID);
+      getElement(
+        OVERLAY_ID
+      );
 
     if(overlay){
       overlay.remove();
@@ -814,28 +1543,30 @@
     revokeObjectUrl();
   }
 
+
   function createOverlay(){
     closeOverlay();
 
-    const o =
+    const overlay =
       document.createElement(
         "div"
       );
 
-    o.id =
+    overlay.id =
       OVERLAY_ID;
 
-    o.style.cssText =
-      "position:fixed;" +
-      "inset:0;" +
-      "z-index:1000010;" +
-      "overflow:auto;" +
-      "box-sizing:border-box;" +
-      "padding:14px 10px 30px;" +
-      "background:rgba(0,0,0,.55);" +
-      "font-family:Arial,sans-serif";
+    overlay.style.cssText = [
+      "position:fixed",
+      "inset:0",
+      "z-index:1000010",
+      "overflow:auto",
+      "box-sizing:border-box",
+      "padding:14px 10px 30px",
+      "background:rgba(0,0,0,.55)",
+      "font-family:Arial,sans-serif"
+    ].join(";");
 
-    o.innerHTML = `
+    overlay.innerHTML = `
 
       <div
         style="
@@ -888,9 +1619,7 @@
         <div
           id="bociteSchoolSimpleContent"
           class="bociteSchoolSimpleText"
-          style="
-            margin-top:16px;
-          "
+          style="margin-top:16px;"
         >
         </div>
 
@@ -899,23 +1628,27 @@
     `;
 
     document.body.appendChild(
-      o
+      overlay
     );
 
-    el(
-      "bociteSchoolSimpleClose"
-    ).onclick =
-      closeOverlay;
+    const close =
+      getElement(
+        "bociteSchoolSimpleClose"
+      );
+
+    if(close){
+      close.onclick =
+        closeOverlay;
+    }
   }
 
+
   function getRecorderOptions(){
-    if(
-      !window.MediaRecorder
-    ){
+    if(!window.MediaRecorder){
       return null;
     }
 
-    const c = [
+    const candidates = [
       "audio/webm;codecs=opus",
       "audio/webm",
       "audio/ogg;codecs=opus"
@@ -927,17 +1660,17 @@
           "function"
     ){
       for(
-        const mime
-        of c
+        const mimeType
+        of candidates
       ){
         if(
           MediaRecorder
             .isTypeSupported(
-              mime
+              mimeType
             )
         ){
           return {
-            mimeType:mime
+            mimeType:mimeType
           };
         }
       }
@@ -946,14 +1679,15 @@
     return {};
   }
 
+
   function updateRecordingTimer(){
     const timer =
-      el(
+      getElement(
         "bociteSchoolSimpleTimer"
       );
 
     const bar =
-      el(
+      getElement(
         "bociteSchoolSimpleProgressBar"
       );
 
@@ -969,7 +1703,9 @@
       startedAt;
 
     timer.textContent =
-      formatTime(elapsed) +
+      formatTime(
+        elapsed
+      ) +
       " / 02:00";
 
     bar.style.width =
@@ -991,11 +1727,10 @@
     }
   }
 
-  function showRecordingError(
-    message
-  ){
+
+  function showRecordingError(message){
     const content =
-      el(
+      getElement(
         "bociteSchoolSimpleContent"
       );
 
@@ -1012,7 +1747,7 @@
       </div>
 
       <p>
-        ${message}
+        ${escapeHtml(message)}
       </p>
 
       <button
@@ -1025,15 +1760,50 @@
 
     `;
 
-    el(
-      "bociteSchoolSimpleRetry"
-    ).onclick =
-      startRecording;
+    const retry =
+      getElement(
+        "bociteSchoolSimpleRetry"
+      );
+
+    if(retry){
+      retry.onclick =
+        startRecording;
+    }
   }
+
+
+  function prepareCurrentClass(){
+    const saved =
+      saveClassFromInput();
+
+    if(!saved){
+      return null;
+    }
+
+    pendingClassId =
+      saved.id;
+
+    pendingClassName =
+      saved.name;
+
+    ensureLegacyClassOption(
+      saved.name
+    );
+
+    return saved;
+  }
+
 
   async function startRecording(){
     typedFallback =
       false;
+
+    const currentClass =
+      prepareCurrentClass();
+
+    if(!currentClass){
+      return;
+    }
 
     refreshVoiceContext();
 
@@ -1052,9 +1822,6 @@
       return;
     }
 
-    pendingClass =
-      getCurrentClass();
-
     pendingText =
       getCurrentWordText();
 
@@ -1066,9 +1833,12 @@
 
     createOverlay();
 
-    el(
-      "bociteSchoolSimpleContent"
-    ).innerHTML =
+    const content =
+      getElement(
+        "bociteSchoolSimpleContent"
+      );
+
+    content.innerHTML =
       "<p>Préparation du microphone…</p>";
 
     try{
@@ -1082,10 +1852,7 @@
       const options =
         getRecorderOptions();
 
-      if(
-        options ===
-        null
-      ){
+      if(options === null){
         throw new Error(
           "MediaRecorder indisponible"
         );
@@ -1101,38 +1868,32 @@
         [];
 
       recorder.ondataavailable =
-        function(e){
-
+        function(event){
           if(
-            e.data &&
-            e.data.size >
-              0
+            event.data &&
+            event.data.size > 0
           ){
             audioChunks.push(
-              e.data
+              event.data
             );
           }
-
         };
 
       recorder.onerror =
-        function(e){
-
+        function(event){
           console.error(
             "Bo'CitéArt — erreur enregistrement :",
-            e
+            event
           );
 
           resetRecorderState();
-
         };
 
       recorder.onstop =
         function(){
-
           clearTimer();
 
-          const mime =
+          const mimeType =
             (
               recorder &&
               recorder.mimeType
@@ -1147,7 +1908,7 @@
             new Blob(
               audioChunks,
               {
-                type:mime
+                type:mimeType
               }
             );
 
@@ -1158,8 +1919,7 @@
 
           if(
             !blob ||
-            blob.size ===
-              0
+            blob.size === 0
           ){
             showRecordingError(
               "Aucun son n'a été enregistré. Recommencez simplement."
@@ -1172,18 +1932,24 @@
             blob;
 
           showRecordingReview();
-
         };
 
-      el(
-        "bociteSchoolSimpleContent"
-      ).innerHTML = `
+      content.innerHTML = `
 
         <div
           class="bociteSchoolSimpleTitle"
         >
           Enregistrement en cours
         </div>
+
+        <p>
+          Classe :
+          <strong>
+            ${escapeHtml(
+              pendingClassName
+            )}
+          </strong>
+        </p>
 
         <p>
           L'enfant parle normalement.
@@ -1223,10 +1989,15 @@
 
       `;
 
-      el(
-        "bociteSchoolSimpleStop"
-      ).onclick =
-        stopRecording;
+      const stop =
+        getElement(
+          "bociteSchoolSimpleStop"
+        );
+
+      if(stop){
+        stop.onclick =
+          stopRecording;
+      }
 
       startedAt =
         Date.now();
@@ -1236,7 +2007,7 @@
       );
 
       timerId =
-        setInterval(
+        window.setInterval(
           updateRecordingTimer,
           250
         );
@@ -1244,7 +2015,6 @@
       updateRecordingTimer();
 
     }catch(error){
-
       console.error(
         "Bo'CitéArt — microphone :",
         error
@@ -1255,9 +2025,9 @@
       showRecordingError(
         "Le microphone n'a pas pu être utilisé. Vérifiez son autorisation dans le navigateur puis recommencez."
       );
-
     }
   }
+
 
   function stopRecording(){
     if(
@@ -1268,24 +2038,23 @@
       try{
         recorder.stop();
       }catch(error){
-
         resetRecorderState();
 
         showRecordingError(
           "L'enregistrement n'a pas pu être arrêté correctement."
         );
-
       }
     }
   }
 
+
   /* =====================================================
-     ÉCOUTE ET VALIDATION
+     ÉCOUTER ET VALIDER
      ===================================================== */
 
   function showRecordingReview(){
     const content =
-      el(
+      getElement(
         "bociteSchoolSimpleContent"
       );
 
@@ -1315,6 +2084,15 @@
       >
         Écouter et valider
       </div>
+
+      <p>
+        Classe :
+        <strong>
+          ${escapeHtml(
+            pendingClassName
+          )}
+        </strong>
+      </p>
 
       <p>
         Écoutez simplement
@@ -1381,102 +2159,119 @@
     `;
 
     const audio =
-      el(
+      getElement(
         "bociteSchoolSimpleAudio"
       );
 
     const volume =
-      el(
+      getElement(
         "bociteSchoolSimpleVolume"
       );
 
-    audio.src =
-      objectUrl;
+    if(audio){
+      audio.src =
+        objectUrl;
 
-    audio.load();
+      audio.load();
+    }
 
-    volume.oninput =
-      function(){
+    if(
+      audio &&
+      volume
+    ){
+      volume.oninput =
+        function(){
+          audio.volume =
+            Number(
+              volume.value
+            );
+        };
+    }
 
-        audio.volume =
-          Number(
-            volume.value
-          );
+    const validate =
+      getElement(
+        "bociteSchoolSimpleValidateAudio"
+      );
 
-      };
+    if(validate){
+      validate.onclick =
+        function(){
+          if(parentOk){
+            selectedVoiceMode =
+              "real";
 
-    el(
-      "bociteSchoolSimpleValidateAudio"
-    ).onclick =
-      function(){
+            convertPendingAudio();
 
-        if(parentOk){
+            return;
+          }
 
-          selectedVoiceMode =
-            "real";
+          /*
+             Pas d'autorisation :
+             l'enfant a pu écouter sa vraie prise,
+             mais celle-ci n'est pas conservée.
+          */
 
-          convertPendingAudio();
+          refreshVoiceContext();
 
-          return;
+          if(audio){
+            audio.pause();
+          }
 
-        }
+          revokeObjectUrl();
 
-        refreshVoiceContext();
+          pendingBlob =
+            null;
 
-        audio.pause();
+          pendingAudioData =
+            "";
 
-        revokeObjectUrl();
+          showCalendarStep();
+        };
+    }
 
-        pendingBlob =
-          null;
+    const retry =
+      getElement(
+        "bociteSchoolSimpleRetryAudio"
+      );
 
-        pendingAudioData =
-          "";
+    if(retry){
+      retry.onclick =
+        function(){
+          if(audio){
+            audio.pause();
+          }
 
-        showCalendarStep();
+          revokeObjectUrl();
 
-      };
+          pendingBlob =
+            null;
 
-    el(
-      "bociteSchoolSimpleRetryAudio"
-    ).onclick =
-      function(){
+          pendingAudioData =
+            "";
 
-        audio.pause();
-
-        revokeObjectUrl();
-
-        pendingBlob =
-          null;
-
-        pendingAudioData =
-          "";
-
-        startRecording();
-
-      };
+          startRecording();
+        };
+    }
   }
+
 
   function convertPendingAudio(){
     if(!pendingBlob){
       return;
     }
 
-    const r =
+    const reader =
       new FileReader();
 
-    r.onloadend =
+    reader.onloadend =
       function(){
-
         pendingAudioData =
           String(
-            r.result ||
+            reader.result ||
             ""
           );
 
-        if(
-          !pendingAudioData
-        ){
+        if(!pendingAudioData){
           showRecordingError(
             "L'enregistrement n'a pas pu être préparé."
           );
@@ -1485,35 +2280,37 @@
         }
 
         showCalendarStep();
-
       };
 
-    r.onerror =
+    reader.onerror =
       function(){
-
         showRecordingError(
           "L'enregistrement n'a pas pu être préparé."
         );
-
       };
 
-    r.readAsDataURL(
+    reader.readAsDataURL(
       pendingBlob
     );
   }
 
+
   /* =====================================================
-     ÉCRIRE LA PHRASE
+     SOLUTION ÉCRITE
      ===================================================== */
 
   function openWrittenWordFallback(){
     typedFallback =
       true;
 
-    refreshVoiceContext();
+    const currentClass =
+      prepareCurrentClass();
 
-    pendingClass =
-      getCurrentClass();
+    if(!currentClass){
+      return;
+    }
+
+    refreshVoiceContext();
 
     pendingText =
       pendingText ||
@@ -1527,15 +2324,27 @@
 
     createOverlay();
 
-    el(
-      "bociteSchoolSimpleContent"
-    ).innerHTML = `
+    const content =
+      getElement(
+        "bociteSchoolSimpleContent"
+      );
+
+    content.innerHTML = `
 
       <div
         class="bociteSchoolSimpleTitle"
       >
         Écrire la phrase
       </div>
+
+      <p>
+        Classe :
+        <strong>
+          ${escapeHtml(
+            pendingClassName
+          )}
+        </strong>
+      </p>
 
       <p>
         Utilisez cette solution
@@ -1561,7 +2370,9 @@
           line-height:1.5;
           resize:vertical;
         "
-      >${pendingText}</textarea>
+      >${escapeHtml(
+        pendingText
+      )}</textarea>
 
       <button
         id="bociteSchoolWrittenPreview"
@@ -1582,86 +2393,101 @@
     `;
 
     const field =
-      el(
+      getElement(
         "bociteSchoolWrittenText"
       );
 
-    el(
-      "bociteSchoolWrittenPreview"
-    ).onclick =
-      function(){
+    const preview =
+      getElement(
+        "bociteSchoolWrittenPreview"
+      );
 
-        pendingText =
-          String(
-            field.value ||
-            ""
-          ).trim();
+    const validate =
+      getElement(
+        "bociteSchoolWrittenValidate"
+      );
 
-        if(!pendingText){
+    if(preview){
+      preview.onclick =
+        function(){
+          pendingText =
+            String(
+              field &&
+              field.value
+                ? field.value
+                : ""
+            ).trim();
 
-          alert(
-            "Écrivez d'abord la phrase."
+          if(!pendingText){
+            alert(
+              "Écrivez d'abord la phrase."
+            );
+
+            return;
+          }
+
+          refreshVoiceContext();
+
+          speakSyntheticChild(
+            selectedVoiceGender,
+            pendingText
           );
+        };
+    }
 
-          return;
-        }
+    if(validate){
+      validate.onclick =
+        function(){
+          pendingText =
+            String(
+              field &&
+              field.value
+                ? field.value
+                : ""
+            ).trim();
 
-        refreshVoiceContext();
+          if(!pendingText){
+            alert(
+              "Écrivez d'abord la phrase."
+            );
 
-        speakSyntheticChild(
-          selectedVoiceGender,
-          pendingText
-        );
+            return;
+          }
 
-      };
+          refreshVoiceContext();
 
-    el(
-      "bociteSchoolWrittenValidate"
-    ).onclick =
-      function(){
+          /*
+             Une phrase écrite utilise
+             forcément la voix synthétique.
+          */
 
-        pendingText =
-          String(
-            field.value ||
-            ""
-          ).trim();
-
-        if(!pendingText){
-
-          alert(
-            "Écrivez d'abord la phrase."
-          );
-
-          return;
-        }
-
-        refreshVoiceContext();
-
-        if(
-          selectedVoiceMode ===
-            "real"
-        ){
-          selectedVoiceMode =
+          if(
             selectedVoiceGender ===
               "girl"
+          ){
+            selectedVoiceMode =
+              "synthetic-girl";
+          }
+          else if(
+            selectedVoiceGender ===
+              "boy"
+          ){
+            selectedVoiceMode =
+              "synthetic-boy";
+          }
+          else{
+            selectedVoiceMode =
+              "synthetic-pending";
+          }
 
-              ? "synthetic-girl"
-
-              : selectedVoiceGender ===
-                  "boy"
-
-                ? "synthetic-boy"
-
-                : "synthetic-pending";
-        }
-
-        showCalendarStep();
-
-      };
+          showCalendarStep();
+        };
+    }
   }
 
+
   /* =====================================================
-     CALENDRIER
+     CALENDRIER SCOLAIRE
      ===================================================== */
 
   function easterSunday(year){
@@ -1670,7 +2496,7 @@
 
     const b =
       Math.floor(
-        year/100
+        year / 100
       );
 
     const c =
@@ -1678,7 +2504,7 @@
 
     const d =
       Math.floor(
-        b/4
+        b / 4
       );
 
     const e =
@@ -1686,17 +2512,17 @@
 
     const f =
       Math.floor(
-        (b+8)/25
+        (b + 8) / 25
       );
 
     const g =
       Math.floor(
-        (b-f+1)/3
+        (b - f + 1) / 3
       );
 
     const h =
       (
-        19*a +
+        19 * a +
         b -
         d -
         g +
@@ -1705,7 +2531,7 @@
 
     const i =
       Math.floor(
-        c/4
+        c / 4
       );
 
     const k =
@@ -1714,8 +2540,8 @@
     const l =
       (
         32 +
-        2*e +
-        2*i -
+        2 * e +
+        2 * i -
         h -
         k
       ) % 7;
@@ -1724,8 +2550,8 @@
       Math.floor(
         (
           a +
-          11*h +
-          22*l
+          11 * h +
+          22 * l
         ) /
         451
       );
@@ -1735,7 +2561,7 @@
         (
           h +
           l -
-          7*m +
+          7 * m +
           114
         ) /
         31
@@ -1746,81 +2572,81 @@
         (
           h +
           l -
-          7*m +
+          7 * m +
           114
         ) %
         31
-      ) +
-      1;
+      ) + 1;
 
     return new Date(
       year,
-      month-1,
+      month - 1,
       day
     );
   }
 
-  function addDays(
-    date,
-    days
-  ){
-    const d =
+
+  function addDays(date, days){
+    const copy =
       new Date(
         date.getTime()
       );
 
-    d.setDate(
-      d.getDate() +
+    copy.setDate(
+      copy.getDate() +
       days
     );
 
-    return d;
+    return copy;
   }
 
-  function isFrenchPublicHoliday(
-    iso
-  ){
-    const p =
+
+  function isFrenchPublicHoliday(iso){
+    const parts =
       iso.split("-");
 
-    const d =
+    const date =
       new Date(
-        Number(p[0]),
-        Number(p[1])-1,
-        Number(p[2])
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
       );
 
-    const y =
-      d.getFullYear();
+    const year =
+      date.getFullYear();
 
     const fixed = [
-      y+"-01-01",
-      y+"-05-01",
-      y+"-05-08",
-      y+"-07-14",
-      y+"-08-15",
-      y+"-11-01",
-      y+"-11-11",
-      y+"-12-25"
+      year + "-01-01",
+      year + "-05-01",
+      year + "-05-08",
+      year + "-07-14",
+      year + "-08-15",
+      year + "-11-01",
+      year + "-11-11",
+      year + "-12-25"
     ];
 
     const easter =
-      easterSunday(y);
+      easterSunday(
+        year
+      );
 
     const movable = [
-      isoDate(
+      localDateToIso(
         addDays(
           easter,
           1
         )
       ),
-      isoDate(
+
+      localDateToIso(
         addDays(
           easter,
           39
         )
       ),
-      isoDate(
+
+      localDateToIso(
         addDays(
           easter,
           50
@@ -1829,32 +2655,37 @@
     ];
 
     return (
-      fixed.includes(iso) ||
-      movable.includes(iso)
+      fixed.includes(
+        iso
+      ) ||
+      movable.includes(
+        iso
+      )
     );
   }
 
-  async function isOfficialSchoolHoliday(
-    iso
-  ){
-    const u =
+
+  async function isOfficialSchoolHoliday(iso){
+    const endpoint =
       new URL(
-        "https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records"
+        "https://data.education.gouv.fr/" +
+        "api/explore/v2.1/catalog/datasets/" +
+        "fr-en-calendrier-scolaire/records"
       );
 
-    u.searchParams.set(
+    endpoint.searchParams.set(
       "limit",
       "20"
     );
 
-    u.searchParams.set(
+    endpoint.searchParams.set(
       "refine",
       'zones:"Zone ' +
       getSchoolZone() +
       '"'
     );
 
-    u.searchParams.set(
+    endpoint.searchParams.set(
       "where",
       'start_date <= "' +
       iso +
@@ -1863,9 +2694,9 @@
       '"'
     );
 
-    const r =
+    const response =
       await fetch(
-        u.toString(),
+        endpoint.toString(),
         {
           headers:{
             Accept:
@@ -1874,43 +2705,39 @@
         }
       );
 
-    if(!r.ok){
+    if(!response.ok){
       throw new Error(
         "Calendrier scolaire indisponible"
       );
     }
 
     const data =
-      await r.json();
+      await response.json();
 
     return Boolean(
       data &&
       Array.isArray(
         data.results
       ) &&
-      data.results.length >
-        0
+      data.results.length > 0
     );
   }
 
+
   function showCalendarStep(){
     const content =
-      el(
+      getElement(
         "bociteSchoolSimpleContent"
+      );
+
+    const title =
+      getElement(
+        "bociteSchoolSimpleOverlayTitle"
       );
 
     if(!content){
       return;
     }
-
-    pendingClass =
-      pendingClass ||
-      getCurrentClass();
-
-    const title =
-      el(
-        "bociteSchoolSimpleOverlayTitle"
-      );
 
     if(title){
       title.textContent =
@@ -1936,22 +2763,30 @@
       </div>
 
       <p>
-        Le Mot du jour est prêt.
-        Choisissez simplement le jour
-        où il doit être présenté.
+        Classe :
+        <strong>
+          ${escapeHtml(
+            pendingClassName
+          )}
+        </strong>
       </p>
 
       <p>
-        Vous pouvez choisir aujourd'hui
-        ou l'un des prochains jours,
-        dans la limite d'une semaine.
+        Choisissez le jour
+        où ce Mot du jour
+        doit être présenté
+        dans cette classe.
       </p>
 
       <p>
-        Les week-ends,
-        jours fériés
-        et vacances scolaires
-        ne sont pas programmables.
+        Les programmations
+        des autres classes
+        restent totalement séparées.
+      </p>
+
+      <p>
+        Seuls les jours de classe
+        sont acceptés.
       </p>
 
       <label
@@ -2009,7 +2844,7 @@
         type="button"
         class="bociteSchoolSimpleButton"
       >
-        ✓ Programmer le Mot du jour
+        ✓ Programmer pour cette classe
       </button>
 
       ${
@@ -2031,44 +2866,49 @@
 
     `;
 
-    el(
-      "bociteSchoolSimpleSchedule"
-    ).onclick =
-      validateScheduleDate;
+    const schedule =
+      getElement(
+        "bociteSchoolSimpleSchedule"
+      );
+
+    if(schedule){
+      schedule.onclick =
+        validateScheduleDate;
+    }
 
     const back =
-      el(
+      getElement(
         "bociteSchoolSimpleBack"
       );
 
     if(back){
       back.onclick =
         function(){
-
           if(typedFallback){
             openWrittenWordFallback();
-          }
-          else{
-            showRecordingReview();
+
+            return;
           }
 
+          showRecordingReview();
         };
     }
   }
 
+
   async function validateScheduleDate(){
     const field =
-      el(
+      getElement(
         "bociteSchoolSimpleDate"
       );
 
     const message =
-      el(
+      getElement(
         "bociteSchoolSimpleDateMessage"
       );
 
     const button =
-      el(
+      getElement(
         "bociteSchoolSimpleSchedule"
       );
 
@@ -2080,39 +2920,41 @@
           : ""
       );
 
-    function show(text){
-      if(message){
-        message.style.display =
-          "block";
-
-        message.textContent =
-          text;
+    function showMessage(text){
+      if(!message){
+        return;
       }
+
+      message.style.display =
+        "block";
+
+      message.textContent =
+        text;
     }
 
     if(!iso){
-      show(
+      showMessage(
         "Choisissez une date."
       );
 
       return;
     }
 
-    const p =
+    const parts =
       iso.split("-");
 
-    const d =
+    const date =
       new Date(
-        Number(p[0]),
-        Number(p[1])-1,
-        Number(p[2])
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
       );
 
     if(
-      d.getDay() === 0 ||
-      d.getDay() === 6
+      date.getDay() === 0 ||
+      date.getDay() === 6
     ){
-      show(
+      showMessage(
         "Cette date tombe un week-end. Choisissez un jour de classe."
       );
 
@@ -2124,138 +2966,293 @@
         iso
       )
     ){
-      show(
+      showMessage(
         "Cette date est un jour férié. Choisissez un autre jour."
       );
 
       return;
     }
 
-    button.disabled =
-      true;
+    if(button){
+      button.disabled =
+        true;
 
-    button.textContent =
-      "Vérification du calendrier…";
+      button.textContent =
+        "Vérification du calendrier…";
+    }
 
     try{
-      if(
+      const holiday =
         await isOfficialSchoolHoliday(
           iso
-        )
-      ){
-        show(
+        );
+
+      if(holiday){
+        showMessage(
           "Cette date se situe pendant des vacances scolaires. Choisissez un jour de classe."
         );
 
-        button.disabled =
-          false;
+        if(button){
+          button.disabled =
+            false;
 
-        button.textContent =
-          "✓ Programmer le Mot du jour";
+          button.textContent =
+            "✓ Programmer pour cette classe";
+        }
 
         return;
       }
 
-      if(
+      const saved =
         saveSchedule(
           iso
-        ) !== false
-      ){
+        );
+
+      if(saved !== false){
         showScheduleSuccess(
           iso
         );
       }
 
     }catch(error){
-
       console.error(
         "Bo'CitéArt — calendrier scolaire :",
         error
       );
 
-      show(
+      showMessage(
         "Le calendrier scolaire officiel n'a pas pu être vérifié. Réessayez dans quelques instants."
       );
 
-      button.disabled =
-        false;
+      if(button){
+        button.disabled =
+          false;
 
-      button.textContent =
-        "✓ Programmer le Mot du jour";
+        button.textContent =
+          "✓ Programmer pour cette classe";
+      }
     }
   }
 
-  /* =====================================================
-     PROGRAMMATIONS
+   /* =====================================================
+     PROGRAMMATIONS MULTI-CLASSES
      ===================================================== */
 
-  function loadSchedule(){
-    try{
-      const raw =
-        localStorage.getItem(
-          SCHEDULE_KEY
+  function migrateLegacySchedules(){
+    const currentRaw =
+      localStorage.getItem(
+        SCHEDULE_KEY
+      );
+
+    if(currentRaw !== null){
+      const current =
+        safeParse(
+          currentRaw,
+          []
         );
 
-      const data =
-        raw
-          ? JSON.parse(raw)
-          : [];
-
-      return Array.isArray(
-        data
-      )
-        ? data
+      return Array.isArray(current)
+        ? current
         : [];
+    }
 
-    }catch(error){
+    const legacy =
+      safeParse(
+        localStorage.getItem(
+          LEGACY_SCHEDULE_KEY
+        ),
+        []
+      );
+
+    if(!Array.isArray(legacy) || !legacy.length){
+      localStorage.setItem(
+        SCHEDULE_KEY,
+        "[]"
+      );
+
       return [];
     }
-  }
 
-  function saveScheduleRows(
-    rows
-  ){
+    const classes =
+      loadClasses();
+
+    function ensureMigrationClass(name){
+      const clean =
+        normalizeClassName(
+          name || "Classe"
+        ) || "Classe";
+
+      let row =
+        classes.find(
+          function(item){
+            return (
+              normalizeClassName(
+                item.name
+              ).toLowerCase() ===
+              clean.toLowerCase()
+            );
+          }
+        );
+
+      if(!row){
+        row = {
+          id:createId(
+            "school-class"
+          ),
+          name:clean,
+          createdAt:
+            new Date()
+              .toISOString(),
+          updatedAt:
+            new Date()
+              .toISOString()
+        };
+
+        classes.push(row);
+      }
+
+      return row;
+    }
+
+    const migrated =
+      legacy
+        .filter(Boolean)
+        .map(
+          function(item){
+            const className =
+              normalizeClassName(
+                item.className ||
+                item.class ||
+                "Classe"
+              ) || "Classe";
+
+            const classRow =
+              ensureMigrationClass(
+                className
+              );
+
+            return Object.assign(
+              {},
+              item,
+              {
+                classId:
+                  classRow.id,
+                className:
+                  classRow.name,
+                class:
+                  classRow.name
+              }
+            );
+          }
+        );
+
+    saveClasses(classes);
+
     localStorage.setItem(
       SCHEDULE_KEY,
-      JSON.stringify(rows)
+      JSON.stringify(
+        migrated
+      )
+    );
+
+    return migrated;
+  }
+
+
+  function loadSchedule(){
+    const data =
+      migrateLegacySchedules();
+
+    return Array.isArray(data)
+      ? data
+      : [];
+  }
+
+
+  function saveScheduleRows(rows){
+    localStorage.setItem(
+      SCHEDULE_KEY,
+      JSON.stringify(
+        Array.isArray(rows)
+          ? rows
+          : []
+      )
     );
   }
 
-  function saveSchedule(
-    iso
-  ){
+
+  function getDisplayClassName(row){
+    if(
+      row &&
+      row.classId
+    ){
+      const current =
+        getClassById(
+          row.classId
+        );
+
+      if(current){
+        return normalizeClassName(
+          current.name
+        );
+      }
+    }
+
+    return normalizeClassName(
+      row &&
+      (
+        row.className ||
+        row.class
+      )
+    ) || "Classe";
+  }
+
+
+  function saveSchedule(iso){
     refreshVoiceContext();
+
+    if(
+      !pendingClassId ||
+      !pendingClassName
+    ){
+      const current =
+        prepareCurrentClass();
+
+      if(!current){
+        return false;
+      }
+    }
 
     const rows =
       loadSchedule();
 
-    const currentClass =
-      pendingClass ||
-      getCurrentClass();
-
     const filtered =
       rows.filter(
-        function(i){
-
+        function(item){
           return !(
-            i &&
-            i.class ===
-              currentClass &&
-            i.date ===
+            item &&
+            item.classId ===
+              pendingClassId &&
+            item.date ===
               iso
           );
-
         }
       );
 
     filtered.push({
-
       id:
-        "school-word-" +
-        Date.now(),
+        createId(
+          "school-word"
+        ),
+
+      classId:
+        pendingClassId,
+
+      className:
+        pendingClassName,
 
       class:
-        currentClass,
+        pendingClassName,
 
       date:
         iso,
@@ -2304,7 +3301,6 @@
       createdAt:
         new Date()
           .toISOString()
-
     });
 
     try{
@@ -2312,7 +3308,6 @@
         filtered
       );
     }catch(error){
-
       console.error(
         "Bo'CitéArt — programmation impossible :",
         error
@@ -2330,9 +3325,8 @@
     return true;
   }
 
-  function resolveGenderForRow(
-    row
-  ){
+
+  function resolveGenderForRow(row){
     const stored =
       normalizeGender(
         row &&
@@ -2343,21 +3337,26 @@
       return stored;
     }
 
-    const p =
+    const profile =
       getVoiceProfileFor(
         row &&
         row.childAccountId
       );
 
     return normalizeGender(
-      p.syntheticVoice ||
-      p.voiceGender
+      profile.syntheticVoice ||
+      profile.voiceGender
     );
   }
 
+
   function getTodaySchedule(){
-    const cls =
-      getCurrentClass();
+    const current =
+      getCurrentClassRecord();
+
+    if(!current){
+      return null;
+    }
 
     const today =
       todayIso();
@@ -2365,25 +3364,32 @@
     return (
       loadSchedule()
         .find(
-          function(i){
-
+          function(item){
             return (
-              i &&
-              i.class ===
-                cls &&
-              i.date ===
+              item &&
+              item.classId ===
+                current.id &&
+              item.date ===
                 today
             );
-
           }
         ) ||
       null
     );
   }
 
+
   function activateTodaySchedule(){
-    const cls =
-      getCurrentClass();
+    const current =
+      getCurrentClassRecord();
+
+    if(!current){
+      return null;
+    }
+
+    ensureLegacyClassOption(
+      current.name
+    );
 
     const today =
       todayIso();
@@ -2393,16 +3399,14 @@
 
     const index =
       rows.findIndex(
-        function(i){
-
+        function(item){
           return (
-            i &&
-            i.class ===
-              cls &&
-            i.date ===
+            item &&
+            item.classId ===
+              current.id &&
+            item.date ===
               today
           );
-
         }
       );
 
@@ -2413,41 +3417,48 @@
     let row =
       rows[index];
 
-    const p =
+    const currentProfile =
       getVoiceProfileFor(
         row.childAccountId
       );
 
     const currentPermission =
       Boolean(
-        p.realVoiceAuthorized ===
+        currentProfile.realVoiceAuthorized ===
           true
       );
+
+    const confirmedGender =
+      normalizeGender(
+        currentProfile.syntheticVoice ||
+        currentProfile.voiceGender ||
+        row.voiceGender
+      );
+
+    let changed =
+      false;
 
     if(
       row.voiceMode ===
         "real" &&
       !currentPermission
     ){
-      const gender =
-        resolveGenderForRow(
-          row
-        );
-
       row =
         Object.assign(
           {},
           row,
           {
             voiceMode:
-              gender === "girl"
+              confirmedGender ===
+                "girl"
                 ? "synthetic-girl"
-                : gender === "boy"
+                : confirmedGender ===
+                    "boy"
                   ? "synthetic-boy"
                   : "synthetic-pending",
 
             voiceGender:
-              gender,
+              confirmedGender,
 
             parentalVoiceAuthorized:
               false,
@@ -2460,6 +3471,63 @@
           }
         );
 
+      changed =
+        true;
+    }
+    else if(
+      row.voiceMode ===
+        "synthetic-pending" &&
+      confirmedGender
+    ){
+      row =
+        Object.assign(
+          {},
+          row,
+          {
+            voiceMode:
+              confirmedGender ===
+                "girl"
+                ? "synthetic-girl"
+                : "synthetic-boy",
+
+            voiceGender:
+              confirmedGender
+          }
+        );
+
+      changed =
+        true;
+    }
+
+    const currentClassName =
+      normalizeClassName(
+        current.name
+      );
+
+    if(
+      row.className !==
+        currentClassName ||
+      row.class !==
+        currentClassName
+    ){
+      row =
+        Object.assign(
+          {},
+          row,
+          {
+            className:
+              currentClassName,
+
+            class:
+              currentClassName
+          }
+        );
+
+      changed =
+        true;
+    }
+
+    if(changed){
       rows[index] =
         row;
 
@@ -2478,31 +3546,31 @@
         ""
       ).trim();
 
-    const input =
-      el(
+    const wordInput =
+      getElement(
         "schoolWordInput"
       );
 
-    const display =
-      el(
+    const wordDisplay =
+      getElement(
         "schoolWordDisplay"
       );
 
     if(
-      input &&
+      wordInput &&
       text &&
       String(
-        input.value ||
+        wordInput.value ||
         ""
       ).trim() !==
         text
     ){
-      input.value =
+      wordInput.value =
         text;
     }
 
     if(
-      display &&
+      wordDisplay &&
       text
     ){
       const expected =
@@ -2512,17 +3580,17 @@
 
       if(
         String(
-          display.textContent ||
+          wordDisplay.textContent ||
           ""
         ).trim() !==
           expected
       ){
-        display.textContent =
+        wordDisplay.textContent =
           expected;
       }
     }
 
-    const realAllowed =
+    const realVoiceAllowed =
       row.voiceMode ===
         "real" &&
       Boolean(
@@ -2545,17 +3613,15 @@
         raw
           ? JSON.parse(raw)
           : {};
-
     }catch(error){
       legacy =
         {};
     }
 
-    if(realAllowed){
-      legacy[cls] = {
-
+    if(realVoiceAllowed){
+      legacy[currentClassName] = {
         class:
-          cls,
+          currentClassName,
 
         audioData:
           row.audioData,
@@ -2569,14 +3635,15 @@
 
         savedAt:
           Date.now()
-
       };
     }
     else if(
       legacy &&
-      legacy[cls]
+      legacy[currentClassName]
     ){
-      delete legacy[cls];
+      delete legacy[
+        currentClassName
+      ];
     }
 
     try{
@@ -2593,6 +3660,7 @@
     return row;
   }
 
+
   function playTodaySchedule(){
     const row =
       activateTodaySchedule();
@@ -2601,12 +3669,12 @@
       return false;
     }
 
-    const p =
+    const profile =
       getVoiceProfileFor(
         row.childAccountId
       );
 
-    const realAllowed =
+    const realVoiceAllowed =
       row.voiceMode ===
         "real" &&
       Boolean(
@@ -2614,31 +3682,30 @@
       ) &&
       row.parentalVoiceAuthorized ===
         true &&
-      p.realVoiceAuthorized ===
+      profile.realVoiceAuthorized ===
         true;
 
-    if(realAllowed){
+    if(realVoiceAllowed){
       try{
-        const a =
+        const audio =
           new Audio(
             row.audioData
           );
 
         const promise =
-          a.play();
+          audio.play();
 
         if(
           promise &&
-          promise.catch
+          typeof promise.catch ===
+            "function"
         ){
           promise.catch(
-            function(e){
-
+            function(error){
               console.error(
                 "Bo'CitéArt — lecture du Mot du jour :",
-                e
+                error
               );
-
             }
           );
         }
@@ -2646,17 +3713,14 @@
         return true;
 
       }catch(error){
-
         console.error(
           "Bo'CitéArt — lecture du Mot du jour :",
           error
         );
-
       }
     }
 
     return speakSyntheticChild(
-
       resolveGenderForRow(
         row
       ),
@@ -2665,43 +3729,58 @@
         row.text ||
         ""
       ).trim()
-
     );
   }
 
-  function validateTodayWord(){
-    const row =
-      activateTodaySchedule();
 
-    if(!row){
+  function validateTodayWord(){
+    const current =
+      getCurrentClassRecord();
+
+    if(!current){
       alert(
-        "Aucun Mot du jour n'est programmé pour aujourd'hui."
+        "Choisissez d'abord la classe."
       );
 
       return;
     }
 
-    const input =
-      el(
+    ensureLegacyClassOption(
+      current.name
+    );
+
+    const row =
+      activateTodaySchedule();
+
+    if(!row){
+      alert(
+        "Aucun Mot du jour n'est programmé pour aujourd'hui dans cette classe."
+      );
+
+      return;
+    }
+
+    const wordInput =
+      getElement(
         "schoolWordInput"
       );
 
-    const button =
-      el(
+    const existingButton =
+      getElement(
         "schoolSaveBtn"
       );
 
     if(
-      input &&
+      wordInput &&
       row.text
     ){
-      input.value =
+      wordInput.value =
         String(
           row.text
         ).trim();
     }
 
-    if(!button){
+    if(!existingButton){
       alert(
         "La validation du Mot du jour n'est pas disponible."
       );
@@ -2709,9 +3788,9 @@
       return;
     }
 
-    if(button.disabled){
+    if(existingButton.disabled){
       alert(
-        "Le Mot du jour a déjà été validé aujourd'hui."
+        "Le Mot du jour a déjà été validé aujourd'hui pour cette classe."
       );
 
       refreshSimplePanel();
@@ -2719,24 +3798,119 @@
       return;
     }
 
-    button.click();
+    existingButton.click();
 
-    setTimeout(
+    window.setTimeout(
       refreshSimplePanel,
       100
     );
   }
 
-  function showScheduleSuccess(
-    iso
-  ){
+
+  function getUpcomingSchedules(){
+    const today =
+      todayIso();
+
+    return loadSchedule()
+      .filter(
+        function(row){
+          return (
+            row &&
+            row.date &&
+            row.date >= today
+          );
+        }
+      )
+      .sort(
+        function(a, b){
+          if(a.date !== b.date){
+            return String(a.date)
+              .localeCompare(
+                String(b.date)
+              );
+          }
+
+          return getDisplayClassName(a)
+            .localeCompare(
+              getDisplayClassName(b),
+              "fr",
+              {
+                sensitivity:"base"
+              }
+            );
+        }
+      );
+  }
+
+
+  function buildScheduleListHtml(){
+    const rows =
+      getUpcomingSchedules();
+
+    if(!rows.length){
+      return `
+        <div
+          class="bociteSchoolSimpleText"
+          style="margin-top:8px;"
+        >
+          Aucune programmation enregistrée pour les prochains jours.
+        </div>
+      `;
+    }
+
+    return rows
+      .map(
+        function(row){
+          return `
+            <div
+              style="
+                margin-top:8px;
+                padding:10px;
+                border:1px solid #dedede;
+                border-radius:9px;
+                background:#fff;
+              "
+            >
+              <div
+                style="
+                  color:#2f5d46;
+                  font-size:14px;
+                  font-weight:700;
+                "
+              >
+                ${escapeHtml(
+                  getDisplayClassName(
+                    row
+                  )
+                )}
+              </div>
+
+              <div
+                class="bociteSchoolSimpleText"
+                style="margin-top:3px;"
+              >
+                ${escapeHtml(
+                  formatDateFr(
+                    row.date
+                  )
+                )}
+              </div>
+            </div>
+          `;
+        }
+      )
+      .join("");
+  }
+
+
+  function showScheduleSuccess(iso){
     const content =
-      el(
+      getElement(
         "bociteSchoolSimpleContent"
       );
 
     const title =
-      el(
+      getElement(
         "bociteSchoolSimpleOverlayTitle"
       );
 
@@ -2768,53 +3942,141 @@
           font-weight:700;
         "
       >
-        ${formatDateFr(iso)}
+        ${escapeHtml(
+          pendingClassName
+        )}
       </p>
 
       <p>
-        Classe :
-        ${pendingClass}
+        ${escapeHtml(
+          formatDateFr(
+            iso
+          )
+        )}
       </p>
+
+      <button
+        id="bociteSchoolPrepareAnotherClass"
+        type="button"
+        class="bociteSchoolSimpleButton"
+      >
+        Préparer une autre classe
+      </button>
 
       <button
         id="bociteSchoolSimpleFinish"
         type="button"
-        class="bociteSchoolSimpleButton"
+        class="
+          bociteSchoolSimpleButton
+          bociteSchoolSimpleSecondary
+        "
       >
         Terminer
       </button>
 
     `;
 
-    el(
-      "bociteSchoolSimpleFinish"
-    ).onclick =
-      function(){
+    const another =
+      getElement(
+        "bociteSchoolPrepareAnotherClass"
+      );
 
-        closeOverlay();
+    if(another){
+      another.onclick =
+        function(){
+          closeOverlay();
 
-        refreshSimplePanel();
+          beginNewClass();
 
-      };
+          refreshSimplePanel();
+
+          const input =
+            getElement(
+              "bociteSchoolClassNameInput"
+            );
+
+          if(input){
+            input.focus();
+          }
+        };
+    }
+
+    const finish =
+      getElement(
+        "bociteSchoolSimpleFinish"
+      );
+
+    if(finish){
+      finish.onclick =
+        function(){
+          closeOverlay();
+
+          refreshSimplePanel();
+        };
+    }
   }
+
 
   /* =====================================================
      PANNEAU PROFESSEUR
      ===================================================== */
 
+  function hideLegacyClassControl(){
+    const select =
+      getElement(
+        "schoolClassSelect"
+      );
+
+    if(select){
+      select.style.display =
+        "none";
+    }
+
+    const body =
+      getElement(
+        "modalBody"
+      );
+
+    if(!body){
+      return;
+    }
+
+    const label =
+      body.querySelector(
+        'label[for="schoolClassSelect"]'
+      );
+
+    if(label){
+      label.style.display =
+        "none";
+    }
+  }
+
+
   function refreshSimplePanel(){
+    ensureInitialClass();
+
+    refreshClassControls();
+
     refreshVoiceContext();
 
     hideLegacyVoiceInterface();
 
+    hideLegacyClassControl();
+
     const icon =
-      el(
+      getElement(
         "bociteSchoolSimpleVoiceIndicator"
       );
 
     const status =
-      el(
+      getElement(
         "bociteSchoolSimpleVoiceStatus"
+      );
+
+    const scheduleList =
+      getElement(
+        "bociteSchoolAllSchedules"
       );
 
     if(icon){
@@ -2823,6 +4085,27 @@
           ? "#2f5d46"
           : "#9a9a9a";
     }
+
+    if(scheduleList){
+      scheduleList.innerHTML =
+        buildScheduleListHtml();
+    }
+
+    const current =
+      getCurrentClassRecord();
+
+    if(!current){
+      if(status){
+        status.textContent =
+          "Enregistrez une classe pour commencer.";
+      }
+
+      return;
+    }
+
+    ensureLegacyClassOption(
+      current.name
+    );
 
     activateTodaySchedule();
 
@@ -2834,33 +4117,48 @@
       getTodaySchedule();
 
     if(!today){
-      status.textContent =
-        "Aucun Mot du jour n'est programmé pour aujourd'hui.";
+      status.innerHTML = `
+        <div>
+          Aucun Mot du jour n'est programmé pour aujourd'hui dans cette classe.
+        </div>
+      `;
 
       return;
     }
 
-    const oldButton =
-      el(
+    const existingButton =
+      getElement(
         "schoolSaveBtn"
       );
 
-    const done =
+    const alreadyValidated =
       Boolean(
-        oldButton &&
-        oldButton.disabled
+        existingButton &&
+        existingButton.disabled
       );
 
     status.innerHTML = `
 
-      <div>
+      <div
+        style="
+          color:#2f5d46;
+          font-size:14px;
+          font-weight:700;
+        "
+      >
+        ${escapeHtml(
+          current.name
+        )}
+      </div>
 
+      <div
+        style="margin-top:5px;"
+      >
         ${
-          done
-            ? "✓ Le Mot du jour a été validé aujourd'hui."
-            : "Le Mot du jour est prêt pour aujourd'hui."
+          alreadyValidated
+            ? "✓ Le Mot du jour a été validé aujourd'hui pour cette classe."
+            : "Le Mot du jour est prêt pour aujourd'hui dans cette classe."
         }
-
       </div>
 
       <button
@@ -2872,7 +4170,7 @@
       </button>
 
       ${
-        done
+        alreadyValidated
           ? ""
           : `
             <button
@@ -2880,22 +4178,27 @@
               type="button"
               class="bociteSchoolSimpleButton"
             >
-              ✓ Valider le Mot du jour
+              ✓ Valider pour cette classe
             </button>
           `
       }
 
     `;
 
-    el(
-      "bociteSchoolPlayToday"
-    ).onclick =
-      playTodaySchedule;
+    const play =
+      getElement(
+        "bociteSchoolPlayToday"
+      );
 
     const validate =
-      el(
+      getElement(
         "bociteSchoolValidateToday"
       );
+
+    if(play){
+      play.onclick =
+        playTodaySchedule;
+    }
 
     if(validate){
       validate.onclick =
@@ -2903,9 +4206,10 @@
     }
   }
 
+
   function findLegacyHeading(){
     const body =
-      el(
+      getElement(
         "modalBody"
       );
 
@@ -2913,12 +4217,12 @@
       return null;
     }
 
-    for(
-      const node
-      of body.querySelectorAll(
+    const nodes =
+      body.querySelectorAll(
         "h1,h2,h3,h4,strong,b,div,p,span"
-      )
-    ){
+      );
+
+    for(const node of nodes){
       if(
         node.closest(
           "#bociteSchoolSimpleVoicePanel"
@@ -2927,7 +4231,7 @@
         continue;
       }
 
-      const t =
+      const text =
         String(
           node.textContent ||
           ""
@@ -2940,13 +4244,13 @@
         .toLowerCase();
 
       if(
-        t ===
+        text ===
           "voix réelle de l’élève (si accord)" ||
-        t ===
+        text ===
           "voix réelle de l'élève (si accord)" ||
-        t ===
+        text ===
           "voix réelle de l’élève" ||
-        t ===
+        text ===
           "voix réelle de l'élève"
       ){
         return node;
@@ -2956,22 +4260,23 @@
     return null;
   }
 
+
   function installSimplePanel(){
-    const title =
-      el(
+    const modalTitle =
+      getElement(
         "modalTitle"
       );
 
-    const body =
-      el(
+    const modalBody =
+      getElement(
         "modalBody"
       );
 
     if(
-      !title ||
-      !body ||
+      !modalTitle ||
+      !modalBody ||
       String(
-        title.textContent ||
+        modalTitle.textContent ||
         ""
       ).trim() !==
         "École"
@@ -2979,10 +4284,14 @@
       return;
     }
 
+    ensureInitialClass();
+
     hideLegacyVoiceInterface();
 
+    hideLegacyClassControl();
+
     if(
-      el(
+      getElement(
         "bociteSchoolSimpleVoicePanel"
       )
     ){
@@ -2991,8 +4300,8 @@
       return;
     }
 
-    const oldRecord =
-      el(
+    const oldRecordButton =
+      getElement(
         "schoolRecordVoiceBtn"
       );
 
@@ -3001,7 +4310,7 @@
 
     const anchor =
       heading ||
-      oldRecord;
+      oldRecordButton;
 
     if(
       !anchor ||
@@ -3018,221 +4327,318 @@
     panel.id =
       "bociteSchoolSimpleVoicePanel";
 
-    panel.style.cssText =
-      "margin:14px 0;" +
-      "padding:14px;" +
-      "border:1px solid #dedede;" +
-      "border-radius:12px;" +
-      "background:#fff;" +
-      "box-sizing:border-box;" +
-      "color:#111;" +
-      "font-size:14px;" +
-      "font-weight:400;" +
-      "line-height:1.5";
+    panel.style.cssText = [
+      "margin:14px 0",
+      "padding:14px",
+      "border:1px solid #dedede",
+      "border-radius:12px",
+      "background:#ffffff",
+      "box-sizing:border-box",
+      "color:#111111",
+      "font-size:14px",
+      "font-weight:400",
+      "line-height:1.5"
+    ].join(";");
 
     panel.innerHTML = `
 
       <div
-        style="
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-          gap:10px;
-        "
+        class="bociteSchoolSimpleTitle"
       >
-
-        <div
-          class="bociteSchoolSimpleTitle"
-        >
-          Préparer le Mot du jour
-        </div>
-
-        <span
-          id="bociteSchoolSimpleVoiceIndicator"
-          aria-label="Statut de la vraie voix"
-          style="
-            color:#9a9a9a;
-            font-size:22px;
-            font-weight:700;
-            line-height:1;
-          "
-        >
-          ✓
-        </span>
-
+        Classe
       </div>
 
-      <div
-        style="
-          display:grid;
-          grid-template-columns:46px 1fr;
-          gap:10px;
-          margin-top:20px;
-          align-items:start;
-        "
+      <p
+        class="bociteSchoolSimpleText"
+        style="margin:6px 0 0 0;"
       >
+        Indiquez librement la classe et l'établissement, par exemple :
+        CM2 A — École Voltaire — Wattignies.
+        Le dernier nom enregistré restera prérempli la prochaine fois.
+      </p>
 
-        <div
-          style="
-            color:#2f5d46;
-            font-size:30px;
-            font-weight:700;
-            line-height:1;
-          "
-        >
-          ①
-        </div>
+      <label
+        for="bociteSchoolClassList"
+        class="bociteSchoolSimpleText"
+        style="display:block;margin-top:12px;"
+      >
+        Classes déjà enregistrées
+      </label>
 
-        <div>
+      <select
+        id="bociteSchoolClassList"
+        class="bociteSchoolClassField"
+      >
+      </select>
 
-          <div
-            class="bociteSchoolSimpleTitle"
-          >
-            Enregistrer la phrase
-          </div>
+      <label
+        for="bociteSchoolClassNameInput"
+        class="bociteSchoolSimpleText"
+        style="display:block;margin-top:12px;"
+      >
+        Nom de la classe
+      </label>
 
-          <p
-            class="bociteSchoolSimpleText"
-            style="
-              margin:6px 0 0 0;
-            "
-          >
-            L'enfant parle normalement.
-            Il pourra écouter exactement
-            ce qu'il vient de dire.
-          </p>
-
-        </div>
-
-      </div>
+      <input
+        id="bociteSchoolClassNameInput"
+        class="bociteSchoolClassField"
+        type="text"
+        maxlength="120"
+        autocomplete="off"
+        placeholder="CM2 A — École Voltaire — Wattignies"
+      >
 
       <button
-        id="bociteSchoolSimpleStart"
+        id="bociteSchoolSaveClassName"
         type="button"
         class="bociteSchoolSimpleButton"
       >
-        🎙 Enregistrer
+        ✓ Enregistrer ce nom de classe
       </button>
 
       <button
-        id="bociteSchoolSimpleWrite"
+        id="bociteSchoolNewClass"
         type="button"
         class="
           bociteSchoolSimpleButton
           bociteSchoolSimpleSecondary
         "
       >
-        ✍ Écrire la phrase à la place
+        + Ajouter une autre classe
       </button>
 
       <div
-        class="bociteSchoolSimpleText"
         style="
-          margin-top:8px;
-        "
-      >
-        Enregistrement :
-        2 minutes maximum,
-        avec arrêt automatique.
-      </div>
-
-      <div
-        style="
-          display:grid;
-          grid-template-columns:46px 1fr;
-          gap:10px;
           margin-top:22px;
-          align-items:start;
-        "
-      >
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:30px;
-            font-weight:700;
-            line-height:1;
-          "
-        >
-          ②
-        </div>
-
-        <div>
-
-          <div
-            class="bociteSchoolSimpleTitle"
-          >
-            Écouter et valider
-          </div>
-
-          <p
-            class="bociteSchoolSimpleText"
-            style="
-              margin:6px 0 0 0;
-            "
-          >
-            Après l'enregistrement,
-            écoutez puis validez
-            ou recommencez simplement.
-          </p>
-
-        </div>
-
-      </div>
-
-      <div
-        style="
-          display:grid;
-          grid-template-columns:46px 1fr;
-          gap:10px;
-          margin-top:22px;
-          align-items:start;
-        "
-      >
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:30px;
-            font-weight:700;
-            line-height:1;
-          "
-        >
-          ③
-        </div>
-
-        <div>
-
-          <div
-            class="bociteSchoolSimpleTitle"
-          >
-            Choisir le jour
-          </div>
-
-          <p
-            class="bociteSchoolSimpleText"
-            style="
-              margin:6px 0 0 0;
-            "
-          >
-            Après validation,
-            le calendrier s'ouvre
-            pour programmer le Mot du jour.
-          </p>
-
-        </div>
-
-      </div>
-
-      <div
-        id="bociteSchoolSimpleVoiceStatus"
-        class="bociteSchoolSimpleText"
-        style="
-          margin-top:18px;
-          padding-top:12px;
+          padding-top:16px;
           border-top:1px solid #dedede;
         "
       >
+
+        <div
+          style="
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+          "
+        >
+
+          <div
+            class="bociteSchoolSimpleTitle"
+          >
+            Préparer le Mot du jour
+          </div>
+
+          <span
+            id="bociteSchoolSimpleVoiceIndicator"
+            aria-label="Statut de la vraie voix"
+            style="
+              color:#9a9a9a;
+              font-size:22px;
+              font-weight:700;
+              line-height:1;
+            "
+          >
+            ✓
+          </span>
+
+        </div>
+
+        <p
+          class="bociteSchoolSimpleText"
+          style="margin:8px 0 0 0;"
+        >
+          Le professeur peut enregistrer la vraie voix de l’élève.
+          L’autorisation des parents ou du responsable légal concernant
+          la diffusion de la voix de l’enfant est traitée en amont.
+          Si la vraie voix est autorisée, elle est conservée.
+          Si elle ne l’est pas, elle est remplacée automatiquement
+          par une voix synthétique correspondant au profil confirmé
+          par le parent ou le responsable légal.
+        </p>
+
+        <div
+          style="
+            display:grid;
+            grid-template-columns:46px 1fr;
+            gap:10px;
+            margin-top:20px;
+            align-items:start;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:30px;
+              font-weight:700;
+              line-height:1;
+            "
+          >
+            ①
+          </div>
+
+          <div>
+
+            <div
+              class="bociteSchoolSimpleTitle"
+            >
+              Enregistrer la phrase
+            </div>
+
+            <p
+              class="bociteSchoolSimpleText"
+              style="margin:6px 0 0 0;"
+            >
+              L'enfant parle normalement puis écoute exactement
+              ce qu'il vient d'enregistrer.
+            </p>
+
+          </div>
+
+        </div>
+
+        <button
+          id="bociteSchoolSimpleStart"
+          type="button"
+          class="bociteSchoolSimpleButton"
+        >
+          🎙 Enregistrer
+        </button>
+
+        <button
+          id="bociteSchoolSimpleWrite"
+          type="button"
+          class="
+            bociteSchoolSimpleButton
+            bociteSchoolSimpleSecondary
+          "
+        >
+          ✍ Écrire la phrase à la place
+        </button>
+
+        <div
+          class="bociteSchoolSimpleText"
+          style="margin-top:8px;"
+        >
+          Enregistrement : 2 minutes maximum, avec arrêt automatique.
+        </div>
+
+        <div
+          style="
+            display:grid;
+            grid-template-columns:46px 1fr;
+            gap:10px;
+            margin-top:22px;
+            align-items:start;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:30px;
+              font-weight:700;
+              line-height:1;
+            "
+          >
+            ②
+          </div>
+
+          <div>
+
+            <div
+              class="bociteSchoolSimpleTitle"
+            >
+              Écouter et valider
+            </div>
+
+            <p
+              class="bociteSchoolSimpleText"
+              style="margin:6px 0 0 0;"
+            >
+              Écoutez puis validez ou recommencez simplement.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div
+          style="
+            display:grid;
+            grid-template-columns:46px 1fr;
+            gap:10px;
+            margin-top:22px;
+            align-items:start;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:30px;
+              font-weight:700;
+              line-height:1;
+            "
+          >
+            ③
+          </div>
+
+          <div>
+
+            <div
+              class="bociteSchoolSimpleTitle"
+            >
+              Choisir le jour
+            </div>
+
+            <p
+              class="bociteSchoolSimpleText"
+              style="margin:6px 0 0 0;"
+            >
+              Chaque classe possède sa propre programmation.
+              Vous pouvez donc préparer plusieurs classes à la suite
+              pour la même matinée ou pour des jours différents.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div
+          id="bociteSchoolSimpleVoiceStatus"
+          class="bociteSchoolSimpleText"
+          style="
+            margin-top:18px;
+            padding-top:12px;
+            border-top:1px solid #dedede;
+          "
+        >
+        </div>
+
+      </div>
+
+      <div
+        style="
+          margin-top:22px;
+          padding-top:16px;
+          border-top:1px solid #dedede;
+        "
+      >
+
+        <div
+          class="bociteSchoolSimpleTitle"
+        >
+          Programmations enregistrées
+        </div>
+
+        <div
+          id="bociteSchoolAllSchedules"
+        >
+        </div>
+
       </div>
 
     `;
@@ -3243,20 +4649,106 @@
         anchor
       );
 
-    el(
-      "bociteSchoolSimpleStart"
-    ).onclick =
-      startRecording;
+    const classList =
+      getElement(
+        "bociteSchoolClassList"
+      );
 
-    el(
-      "bociteSchoolSimpleWrite"
-    ).onclick =
-      openWrittenWordFallback;
+    const classInput =
+      getElement(
+        "bociteSchoolClassNameInput"
+      );
+
+    const saveClassButton =
+      getElement(
+        "bociteSchoolSaveClassName"
+      );
+
+    const newClassButton =
+      getElement(
+        "bociteSchoolNewClass"
+      );
+
+    const start =
+      getElement(
+        "bociteSchoolSimpleStart"
+      );
+
+    const write =
+      getElement(
+        "bociteSchoolSimpleWrite"
+      );
+
+    if(classList){
+      classList.onchange =
+        function(){
+          const id =
+            String(
+              classList.value ||
+              ""
+            ).trim();
+
+          if(id){
+            selectClass(id);
+          }
+        };
+    }
+
+    if(classInput){
+      classInput.addEventListener(
+        "change",
+        function(){
+          if(
+            normalizeClassName(
+              classInput.value
+            )
+          ){
+            saveClassFromInput();
+          }
+        }
+      );
+
+      classInput.addEventListener(
+        "keydown",
+        function(event){
+          if(event.key === "Enter"){
+            event.preventDefault();
+
+            saveClassFromInput();
+          }
+        }
+      );
+    }
+
+    if(saveClassButton){
+      saveClassButton.onclick =
+        saveClassFromInput;
+    }
+
+    if(newClassButton){
+      newClassButton.onclick =
+        beginNewClass;
+    }
+
+    if(start){
+      start.onclick =
+        startRecording;
+    }
+
+    if(write){
+      write.onclick =
+        openWrittenWordFallback;
+    }
+
+    refreshClassControls();
 
     hideLegacyVoiceInterface();
 
+    hideLegacyClassControl();
+
     refreshSimplePanel();
   }
+
 
   /* =====================================================
      OBSERVATION
@@ -3265,9 +4757,8 @@
   const observer =
     new MutationObserver(
       function(){
-
         const title =
-          el(
+          getElement(
             "modalTitle"
           );
 
@@ -3284,19 +4775,21 @@
 
         hideLegacyVoiceInterface();
 
+        hideLegacyClassControl();
+
         if(
-          !el(
+          !getElement(
             "bociteSchoolSimpleVoicePanel"
           )
         ){
-          setTimeout(
+          window.setTimeout(
             installSimplePanel,
             0
           );
         }
-
       }
     );
+
 
   observer.observe(
     document.body,
@@ -3306,55 +4799,34 @@
     }
   );
 
-  document.addEventListener(
-    "change",
-    function(e){
-
-      if(
-        e.target &&
-        e.target.id ===
-          "schoolClassSelect"
-      ){
-        setTimeout(
-          refreshSimplePanel,
-          0
-        );
-      }
-
-    },
-    true
-  );
 
   document.addEventListener(
     "bociteart:parent-permission-updated",
     function(){
-
-      setTimeout(
+      window.setTimeout(
         refreshSimplePanel,
         50
       );
-
     }
   );
+
 
   document.addEventListener(
     "bociteart:school-child-profile-updated",
     function(){
-
-      setTimeout(
+      window.setTimeout(
         refreshSimplePanel,
         50
       );
-
     }
   );
+
 
   /* =====================================================
      API
      ===================================================== */
 
   window.BociteSchoolWordSimple = {
-
     start:
       startRecording,
 
@@ -3367,6 +4839,18 @@
     getSchedule:
       loadSchedule,
 
+    getClasses:
+      loadClasses,
+
+    selectClass:
+      selectClass,
+
+    newClass:
+      beginNewClass,
+
+    saveCurrentClass:
+      saveClassFromInput,
+
     activateToday:
       activateTodaySchedule,
 
@@ -3378,18 +4862,19 @@
 
     close:
       closeOverlay
-
   };
+
 
   installStyles();
 
-  setTimeout(
+  window.setTimeout(
     installSimplePanel,
     100
   );
 
+
   console.log(
-    "✅ Mot du jour — parcours professeur 3 étapes chargé"
+    "✅ Mot du jour — multi-classes + autorisation parentale chargés"
   );
 
 })();
