@@ -4233,7 +4233,9 @@ if(key === "ecole"){
           background:#ffffff;
         }
 
-        .bociteSchoolPublicRoot .bociteSchoolPrivate{
+        .bociteSchoolPublicRoot .bociteSchoolPrivate,
+        .bociteSchoolPublicRoot .bociteSchoolAccessPanel,
+        .bociteSchoolPublicRoot .bociteSchoolDirectionPanel{
           display:none;
           margin-top:14px;
           padding-top:2px;
@@ -4263,11 +4265,69 @@ if(key === "ecole"){
           gap:10px;
           flex:0 0 auto;
         }
-      </style>
 
-      <!-- =====================================================
-           PARTIE PUBLIQUE — MOT DU JOUR ET EFFETS PÉDAGOGIQUES
-           ===================================================== -->
+        .bociteSchoolPublicRoot .bociteSchoolChoice{
+          display:flex;
+          align-items:flex-start;
+          gap:9px;
+          margin-top:10px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.45;
+          cursor:pointer;
+        }
+
+        .bociteSchoolPublicRoot .bociteSchoolChoice input{
+          margin-top:3px;
+          flex:0 0 auto;
+        }
+
+        .bociteSchoolPublicRoot .schoolAssoPercentRow{
+          display:flex;
+          align-items:center;
+          gap:8px;
+          margin:5px 0 0 27px;
+        }
+
+        .bociteSchoolPublicRoot .schoolAssoPercentRow .bociteSchoolField{
+          width:110px;
+          margin-top:0;
+        }
+
+        .bociteSchoolPublicRoot .schoolAccessItem{
+          margin-top:10px;
+          padding:12px;
+          border:1px solid #dedede;
+          border-radius:10px;
+          background:#ffffff;
+        }
+
+        .bociteSchoolPublicRoot .schoolAccessItemTitle{
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:700;
+        }
+
+        .bociteSchoolPublicRoot .schoolMiniButton{
+          display:inline-block;
+          width:auto;
+          margin:8px 6px 0 0;
+          padding:8px 10px;
+          border:1px solid #2f5d46;
+          border-radius:9px;
+          background:#ffffff;
+          color:#2f5d46;
+          font-size:14px;
+          font-weight:700;
+          cursor:pointer;
+        }
+
+        .bociteSchoolPublicRoot .schoolMiniButtonDanger{
+          border-color:#b42318;
+          color:#b42318;
+        }
+      </style>
 
       <div class="bociteSchoolTitle" style="margin-top:0;">
         Le Mot du jour
@@ -4309,7 +4369,8 @@ if(key === "ecole"){
 
         <div class="bociteSchoolList">
           <div>• enrichir le vocabulaire et l’expression ;</div>
-          <div>• apprendre à parler devant les autres et prendre confiance ;</div>
+
+                   <div>• apprendre à parler devant les autres et prendre confiance ;</div>
           <div>• faire silence au bon moment et écouter celui qui parle ;</div>
           <div>• attendre son tour et respecter la parole d’un autre enfant ;</div>
           <div>• mieux maîtriser son comportement pendant un temps donné ;</div>
@@ -4324,14 +4385,7 @@ if(key === "ecole"){
           <div>• comprendre qu’un effort collectif peut aussi servir un projet ou une action utile.</div>
         </div>
 
-        <div
-          style="
-            margin-top:12px;
-            padding:12px;
-            border-radius:10px;
-            background:#f7f2e8;
-          "
-        >
+        <div style="margin-top:12px;padding:12px;border-radius:10px;background:#f7f2e8;">
           Le professeur reste naturellement maître de sa classe.
           <span class="bociteBrand"><span class="bociteBrandGreen">Bo’Cité</span><span class="bociteBrandRed">Art</span></span>
           lui apporte simplement un support complémentaire pour faire vivre ces apprentissages autrement.
@@ -4349,29 +4403,172 @@ if(key === "ecole"){
       </div>
 
       <button
-        id="schoolProfessorAccessBtn"
+        id="schoolAccessOpenBtn"
         class="bociteSchoolAction bociteSchoolActionPrimary"
         type="button"
         style="margin-top:14px;"
       >
-        Accès professeur
+        Accès école
       </button>
 
-      <!-- =====================================================
-           ESPACE PROFESSEUR — COMMANDES UTILES UNIQUEMENT
-           ===================================================== -->
+      <div id="schoolAccessPanel" class="bociteSchoolAccessPanel">
+        <div class="bociteSchoolSectionTitle" style="margin-top:12px;">
+          Accès sécurisé de l’école
+        </div>
 
-      <div
-        id="schoolProfessorPrivatePanel"
-        class="bociteSchoolPrivate"
-      >
+        <div class="bociteSchoolCard">
+          La direction conserve l’accès maître de l’établissement.
+          Chaque professeur ou remplaçant utilise ensuite son propre accès.
 
-        <div
-          class="bociteSchoolSectionTitle"
-          style="margin-top:12px;"
+          <label class="bociteSchoolFieldLabel" for="schoolAccessRole">
+            Je suis
+          </label>
+
+          <select id="schoolAccessRole" class="bociteSchoolField">
+            <option value="teacher">Professeur ou remplaçant</option>
+            <option value="direction">Direction</option>
+          </select>
+
+          <label class="bociteSchoolFieldLabel" for="schoolAccessCodeInput">
+            Code personnel
+          </label>
+
+          <input
+            id="schoolAccessCodeInput"
+            class="bociteSchoolField"
+            type="password"
+            inputmode="numeric"
+            autocomplete="current-password"
+            placeholder="Votre code"
+          >
+
+          <button
+            id="schoolAccessLoginBtn"
+            class="bociteSchoolAction bociteSchoolActionPrimary"
+            type="button"
+          >
+            Ouvrir mon accès
+          </button>
+
+          <button
+            id="schoolDirectionFirstSetupBtn"
+            class="bociteSchoolAction"
+            type="button"
+            style="display:none;"
+          >
+            Première activation de la direction
+          </button>
+
+          <div
+            id="schoolAccessStatus"
+            role="status"
+            aria-live="polite"
+            style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;"
+          ></div>
+        </div>
+      </div>
+
+      <div id="schoolDirectionPanel" class="bociteSchoolDirectionPanel">
+        <div class="bociteSchoolSectionTitle" style="margin-top:12px;">
+          Gestion des accès de l’école
+        </div>
+
+        <div class="bociteSchoolCard">
+          La direction reste maître des accès.
+          Elle peut autoriser un professeur ou un remplaçant,
+          suspendre un accès ou le réinitialiser sans perdre son propre accès.
+
+          <label class="bociteSchoolFieldLabel" for="schoolTeacherNameInput">
+            Professeur ou remplaçant
+          </label>
+
+          <input
+            id="schoolTeacherNameInput"
+            class="bociteSchoolField"
+            type="text"
+            maxlength="120"
+            placeholder="Nom ou repère du professeur"
+          >
+
+          <label class="bociteSchoolFieldLabel" for="schoolTeacherClassInput">
+            Classe
+          </label>
+
+          <input
+            id="schoolTeacherClassInput"
+            class="bociteSchoolField"
+            type="text"
+            maxlength="120"
+            placeholder="Ex. CM2 A"
+            list="schoolClassSuggestions"
+          >
+
+          <datalist id="schoolClassSuggestions"></datalist>
+
+          <label class="bociteSchoolFieldLabel" for="schoolTeacherInitialCodeInput">
+            Code d’activation à remettre au professeur
+          </label>
+
+          <input
+            id="schoolTeacherInitialCodeInput"
+            class="bociteSchoolField"
+            type="password"
+            inputmode="numeric"
+            autocomplete="new-password"
+            placeholder="6 caractères minimum"
+          >
+
+          <label class="bociteSchoolFieldLabel" for="schoolTeacherExpiryInput">
+            Fin d’accès éventuelle
+          </label>
+
+          <input
+            id="schoolTeacherExpiryInput"
+            class="bociteSchoolField"
+            type="date"
+          >
+
+          <button
+            id="schoolTeacherCreateBtn"
+            class="bociteSchoolAction bociteSchoolActionPrimary"
+            type="button"
+          >
+            Créer l’accès professeur
+          </button>
+
+          <div
+            id="schoolDirectionStatus"
+            role="status"
+            aria-live="polite"
+            style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;"
+          ></div>
+        </div>
+
+        <div class="bociteSchoolSectionTitle">
+          Accès autorisés
+        </div>
+
+        <div id="schoolTeacherAccessList"></div>
+
+        <button
+          id="schoolDirectionLogoutBtn"
+          class="bociteSchoolAction"
+          type="button"
         >
+          Fermer l’accès direction
+        </button>
+      </div>
+
+      <div id="schoolProfessorPrivatePanel" class="bociteSchoolPrivate">
+
+        <div class="bociteSchoolSectionTitle" style="margin-top:12px;">
           Espace professeur
         </div>
+
+        <div
+          id="schoolProfessorIdentity"
+          style="margin-top:6px;color:#111111;font-size:14px;font-weight:400;"
+        ></div>
 
         <div class="bociteSchoolCard">
           Préparez simplement le Mot du jour de la classe :
@@ -4395,7 +4592,6 @@ if(key === "ecole"){
           le statut utile à son travail.
         </div>
 
-        <!-- Le module multi-classes utilise ce SELECT comme relais de compatibilité. -->
         <select
           id="schoolClassSelect"
           style="display:none;"
@@ -4405,15 +4601,8 @@ if(key === "ecole"){
           <option value="CM2 A">CM2 A</option>
         </select>
 
-        <div
-          id="schoolProfessorWorkArea"
-          class="bociteSchoolCard"
-        >
-          <label
-            class="bociteSchoolFieldLabel"
-            for="schoolWordInput"
-            style="margin-top:0;"
-          >
+        <div id="schoolProfessorWorkArea" class="bociteSchoolCard">
+          <label class="bociteSchoolFieldLabel" for="schoolWordInput" style="margin-top:0;">
             Mot, expression ou phrase à préparer
           </label>
 
@@ -4425,17 +4614,9 @@ if(key === "ecole"){
             placeholder="Ex. Je suis ravi aujourd’hui."
           >Je suis ravi aujourd’hui.</textarea>
 
-          <div
-            id="schoolWordDisplay"
-            style="display:none;"
-            aria-hidden="true"
-          ></div>
+          <div id="schoolWordDisplay" style="display:none;" aria-hidden="true"></div>
 
-          <!-- Point d’ancrage attendu par bociteart-school-word-simple.js -->
-          <div
-            id="schoolSimpleProfessorMount"
-            style="margin-top:12px;"
-          >
+          <div id="schoolSimpleProfessorMount" style="margin-top:12px;">
             <button
               id="schoolRecordVoiceBtn"
               type="button"
@@ -4449,7 +4630,8 @@ if(key === "ecole"){
 
           <button
             id="schoolManageScheduledWordsBtn"
-            class="bociteSchoolAction"
+
+                        class="bociteSchoolAction"
             type="button"
           >
             Voir ou modifier les Mots programmés
@@ -4459,20 +4641,9 @@ if(key === "ecole"){
             id="schoolProfessorValidationStatus"
             role="status"
             aria-live="polite"
-            style="
-              margin-top:10px;
-              color:#111111;
-              font-size:14px;
-              font-weight:400;
-              line-height:1.5;
-            "
+            style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;line-height:1.5;"
           ></div>
 
-          <!--
-            Relais nécessaire :
-            le module professeur appelle ce bouton
-            lorsqu’il valide le Mot du jour réalisé.
-          -->
           <button
             id="schoolSaveBtn"
             type="button"
@@ -4484,37 +4655,22 @@ if(key === "ecole"){
           </button>
         </div>
 
-        <!-- =====================================================
-             BOCITECOINS — VISUEL JAUNE + TRAITEMENT AUTOMATIQUE
-             AUCUN MONTANT N’EST CHOISI PAR LE PROFESSEUR
-             ===================================================== -->
-
         <div class="bociteSchoolSectionTitle">
           Bocitecoins de la classe
         </div>
 
         <div class="bociteSchoolCard">
-
           <div class="bociteSchoolCoinArea">
 
-            <div
-              class="bociteSchoolCoinVisual"
-              aria-label="Bocitecoins jaunes de la classe"
-            >
-              <div
-                class="coinFace coinYellow"
-                aria-hidden="true"
-              >
+            <div class="bociteSchoolCoinVisual" aria-label="Bocitecoins jaunes de la classe">
+              <div class="coinFace coinYellow" aria-hidden="true">
                 <div class="coinInner coinInnerYellow">
                   <div class="n">B</div>
                   <div class="t">BOCITECOIN</div>
                 </div>
               </div>
 
-              <div
-                class="coinStack"
-                aria-hidden="true"
-              >
+              <div class="coinStack" aria-hidden="true">
                 <div class="stackCoin stackYellow stack1"></div>
                 <div class="stackCoin stackYellow stack2"></div>
                 <div class="stackCoin stackYellow stack3"></div>
@@ -4532,83 +4688,160 @@ if(key === "ecole"){
               Le professeur n’a aucun montant à saisir,
               aucun calcul à effectuer et aucun réglage à choisir.
             </div>
-
           </div>
 
           <div
             id="schoolPrivateCoinStatus"
             role="status"
             aria-live="polite"
-            style="
-              margin-top:12px;
-              color:#111111;
-              font-size:14px;
-              font-weight:400;
-              line-height:1.5;
-            "
+            style="margin-top:12px;color:#111111;font-size:14px;font-weight:400;line-height:1.5;"
           ></div>
         </div>
 
-        <!-- =====================================================
-             ORIENTATION — À VOIR AVEC LA MAIRIE ET L’ÉCOLE
-             ===================================================== -->
-
         <div class="bociteSchoolSectionTitle">
-          Projet de classe ou solidarité
+          Utilisation des bocitecoins de la classe
         </div>
 
         <div class="bociteSchoolCard">
-
           <div>
-            Le professeur peut simplement mémoriser
-            l’orientation souhaitée par la classe.
-
-            <br><br>
-
-            Les modalités d’échange et les possibilités réellement proposées
-            seront précisées avec la mairie, en relation avec l’école,
-            afin de répondre au mieux aux besoins de la classe :
-            aider les enfants, améliorer leur quotidien scolaire,
-            soutenir un projet collectif ou contribuer à une action utile.
+            La classe choisit ce qu’elle souhaite faire
+            des bocitecoins concernés.
           </div>
 
-          <label
-            class="bociteSchoolFieldLabel"
-            for="schoolPrivateUseSelect"
-          >
-            Orientation souhaitée
-          </label>
+          <div style="margin-top:10px;">
+            <label class="bociteSchoolChoice">
+              <input type="radio" name="schoolSolidarityMode" value="none" checked>
+              <span>Garder 100 % des bocitecoins pour la classe</span>
+            </label>
 
-          <select
-            id="schoolPrivateUseSelect"
-            class="bociteSchoolField"
-          >
-            <option value="later">Décider plus tard</option>
-            <option value="class-project">Préparer un projet pour la classe</option>
-            <option value="solidarity">Préparer une action solidaire</option>
-          </select>
+            <label class="bociteSchoolChoice">
+              <input type="radio" name="schoolSolidarityMode" value="partial">
+              <span>Partager une partie avec une ou plusieurs associations</span>
+            </label>
+
+            <label class="bociteSchoolChoice">
+              <input type="radio" name="schoolSolidarityMode" value="full">
+              <span>Donner 100 % des bocitecoins concernés</span>
+            </label>
+          </div>
+
+          <div id="schoolSolidarityAssociations" style="margin-top:14px;display:none;">
+            <div class="bociteSchoolSectionTitle" style="margin-top:0;">
+              Associations proposées
+            </div>
+
+            <div style="margin-top:6px;">
+              La classe peut sélectionner une ou plusieurs associations.
+              En cas de partage, indiquez la répartition souhaitée.
+            </div>
+
+            <label class="bociteSchoolChoice">
+              <input type="checkbox" class="schoolAssoPick" data-asso="Les Clés du Cœur">
+              <span>Les Clés du Cœur — maladies rares pédiatriques</span>
+            </label>
+            <div class="schoolAssoPercentRow">
+              <span>% :</span>
+              <input class="bociteSchoolField schoolAssoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0">
+            </div>
+
+            <label class="bociteSchoolChoice">
+              <input type="checkbox" class="schoolAssoPick" data-asso="Étoile Filante">
+              <span>Étoile Filante — enfants atteints de maladies rares</span>
+            </label>
+            <div class="schoolAssoPercentRow">
+              <span>% :</span>
+              <input class="bociteSchoolField schoolAssoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0">
+            </div>
+
+            <label class="bociteSchoolChoice">
+              <input type="checkbox" class="schoolAssoPick" data-asso="Les Papillons (antenne Nord)">
+              <span>Les Papillons — antenne Nord</span>
+            </label>
+            <div class="schoolAssoPercentRow">
+              <span>% :</span>
+              <input class="bociteSchoolField schoolAssoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0">
+            </div>
+
+            <label class="bociteSchoolChoice">
+              <input type="checkbox" class="schoolAssoPick" data-asso="ATC Nord">
+              <span>ATC Nord — traumatisés crâniens</span>
+            </label>
+            <div class="schoolAssoPercentRow">
+              <span>% :</span>
+              <input class="bociteSchoolField schoolAssoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0">
+            </div>
+          </div>
 
           <button
-            id="schoolPrivateUseSaveBtn"
+            id="schoolSolidaritySaveBtn"
             class="bociteSchoolAction"
             type="button"
           >
-            Enregistrer ce choix
+            Enregistrer le choix de la classe
           </button>
 
           <div
-            id="schoolPrivateUseStatus"
+            id="schoolSolidarityStatus"
             role="status"
             aria-live="polite"
-            style="
-              margin-top:10px;
-              color:#111111;
-              font-size:14px;
-              font-weight:400;
-              line-height:1.5;
-            "
+            style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;"
           ></div>
 
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid #dedede;">
+            Le choix enregistré accompagnera ensuite l’échange prévu
+            avec la mairie et l’école afin que la volonté de la classe soit respectée.
+          </div>
+        </div>
+
+        <div id="schoolTeacherCodeChangeCard" class="bociteSchoolCard" style="display:none;">
+          <div class="bociteSchoolSectionTitle" style="margin-top:0;">
+            Mon accès
+          </div>
+
+          <div>
+            Le professeur peut remplacer le code d’activation reçu
+            par son propre code personnel. La direction conserve toujours son accès maître.
+          </div>
+
+          <label class="bociteSchoolFieldLabel" for="schoolTeacherNewCodeInput">
+            Nouveau code personnel
+          </label>
+
+          <input
+            id="schoolTeacherNewCodeInput"
+            class="bociteSchoolField"
+            type="password"
+            inputmode="numeric"
+            autocomplete="new-password"
+            placeholder="6 caractères minimum"
+          >
+
+          <label class="bociteSchoolFieldLabel" for="schoolTeacherNewCodeConfirmInput">
+            Confirmer le nouveau code
+          </label>
+
+          <input
+            id="schoolTeacherNewCodeConfirmInput"
+            class="bociteSchoolField"
+            type="password"
+            inputmode="numeric"
+            autocomplete="new-password"
+          >
+
+          <button
+            id="schoolTeacherChangeCodeBtn"
+            class="bociteSchoolAction"
+            type="button"
+          >
+            Changer mon code
+          </button>
+
+          <div
+            id="schoolTeacherCodeChangeStatus"
+            role="status"
+            aria-live="polite"
+            style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;"
+          ></div>
         </div>
 
         <button
@@ -4618,261 +4851,187 @@ if(key === "ecole"){
         >
           Fermer l’espace professeur
         </button>
-
       </div>
 
     </div>
 
   `);
 
+  const schoolAccessOpenBtn = document.getElementById("schoolAccessOpenBtn");
+  const schoolAccessPanel = document.getElementById("schoolAccessPanel");
+  const schoolAccessRole = document.getElementById("schoolAccessRole");
+  const schoolAccessCodeInput = document.getElementById("schoolAccessCodeInput");
+  const schoolAccessLoginBtn = document.getElementById("schoolAccessLoginBtn");
+  const schoolDirectionFirstSetupBtn = document.getElementById("schoolDirectionFirstSetupBtn");
+  const schoolAccessStatus = document.getElementById("schoolAccessStatus");
 
-  /* =====================================================
-     RÉFÉRENCES ÉCRAN
-     ===================================================== */
+  const schoolDirectionPanel = document.getElementById("schoolDirectionPanel");
+  const schoolTeacherNameInput = document.getElementById("schoolTeacherNameInput");
+  const schoolTeacherClassInput = document.getElementById("schoolTeacherClassInput");
+  const schoolTeacherInitialCodeInput = document.getElementById("schoolTeacherInitialCodeInput");
+  const schoolTeacherExpiryInput = document.getElementById("schoolTeacherExpiryInput");
+  const schoolTeacherCreateBtn = document.getElementById("schoolTeacherCreateBtn");
+  const schoolDirectionStatus = document.getElementById("schoolDirectionStatus");
+  const schoolTeacherAccessList = document.getElementById("schoolTeacherAccessList");
+  const schoolDirectionLogoutBtn = document.getElementById("schoolDirectionLogoutBtn");
+  const schoolClassSuggestions = document.getElementById("schoolClassSuggestions");
 
-  const schoolProfessorAccessBtn =
-    document.getElementById(
-      "schoolProfessorAccessBtn"
-    );
+  const schoolProfessorCloseBtn = document.getElementById("schoolProfessorCloseBtn");
+  const schoolProfessorPrivatePanel = document.getElementById("schoolProfessorPrivatePanel");
+  const schoolProfessorIdentity = document.getElementById("schoolProfessorIdentity");
+  const schoolClassSelect = document.getElementById("schoolClassSelect");
+  const schoolWordInput = document.getElementById("schoolWordInput");
+  const schoolWordDisplay = document.getElementById("schoolWordDisplay");
+  const schoolSaveBtn = document.getElementById("schoolSaveBtn");
+  const schoolManageScheduledWordsBtn = document.getElementById("schoolManageScheduledWordsBtn");
+  const schoolProfessorValidationStatus = document.getElementById("schoolProfessorValidationStatus");
+  const schoolPrivateCoinStatus = document.getElementById("schoolPrivateCoinStatus");
 
-  const schoolProfessorCloseBtn =
-    document.getElementById(
-      "schoolProfessorCloseBtn"
-    );
+  const schoolSolidarityAssociations = document.getElementById("schoolSolidarityAssociations");
+  const schoolSolidaritySaveBtn = document.getElementById("schoolSolidaritySaveBtn");
+  const schoolSolidarityStatus = document.getElementById("schoolSolidarityStatus");
 
-  const schoolProfessorPrivatePanel =
-    document.getElementById(
-      "schoolProfessorPrivatePanel"
-    );
+   const schoolTeacherCodeChangeCard = document.getElementById("schoolTeacherCodeChangeCard");
+  const schoolTeacherNewCodeInput = document.getElementById("schoolTeacherNewCodeInput");
+  const schoolTeacherNewCodeConfirmInput = document.getElementById("schoolTeacherNewCodeConfirmInput");
+  const schoolTeacherChangeCodeBtn = document.getElementById("schoolTeacherChangeCodeBtn");
+  const schoolTeacherCodeChangeStatus = document.getElementById("schoolTeacherCodeChangeStatus");
 
-  const schoolClassSelect =
-    document.getElementById(
-      "schoolClassSelect"
-    );
+  const SCHOOL_VALIDATION_UI_KEY = "bociteart_school_validation_ui_v3";
+  const SCHOOL_SCHEDULE_UI_KEY = "bociteart_school_voice_schedule_v2";
+  const SCHOOL_CLASSES_KEY = "bociteart_school_classes_v1";
+  const SCHOOL_CURRENT_CLASS_ID_KEY = "bociteart_school_current_class_id_v1";
+  const SCHOOL_SOLIDARITY_KEY = "bociteart_school_solidarity_choice_v4";
+  const SCHOOL_ACCESS_DEMO_KEY = "bociteart_school_access_demo_v1";
 
-  const schoolWordInput =
-    document.getElementById(
-      "schoolWordInput"
-    );
-
-  const schoolWordDisplay =
-    document.getElementById(
-      "schoolWordDisplay"
-    );
-
-  const schoolSaveBtn =
-    document.getElementById(
-      "schoolSaveBtn"
-    );
-
-  const schoolManageScheduledWordsBtn =
-    document.getElementById(
-      "schoolManageScheduledWordsBtn"
-    );
-
-  const schoolProfessorValidationStatus =
-    document.getElementById(
-      "schoolProfessorValidationStatus"
-    );
-
-  const schoolPrivateCoinStatus =
-    document.getElementById(
-      "schoolPrivateCoinStatus"
-    );
-
-  const schoolPrivateUseSelect =
-    document.getElementById(
-      "schoolPrivateUseSelect"
-    );
-
-  const schoolPrivateUseSaveBtn =
-    document.getElementById(
-      "schoolPrivateUseSaveBtn"
-    );
-
-  const schoolPrivateUseStatus =
-    document.getElementById(
-      "schoolPrivateUseStatus"
-    );
-
-
-  /* =====================================================
-     CLÉS LOCALES DE LA DÉMO
-     ===================================================== */
-
-  const SCHOOL_VALIDATION_UI_KEY =
-    "bociteart_school_validation_ui_v3";
-
-  const SCHOOL_SCHEDULE_UI_KEY =
-    "bociteart_school_voice_schedule_v2";
-
-  const SCHOOL_CLASSES_KEY =
-    "bociteart_school_classes_v1";
-
-  const SCHOOL_CURRENT_CLASS_ID_KEY =
-    "bociteart_school_current_class_id_v1";
-
-  const SCHOOL_PRIVATE_USE_KEY =
-    "bociteart_school_private_demo_use_v3";
-
-   /* =====================================================
-     OUTILS
-     ===================================================== */
+  let schoolSession = {
+    role: "",
+    teacherId: "",
+    openedFromDirection: false
+  };
 
   function schoolTodayIso(){
-
-    const now =
-      new Date();
-
-    const year =
-      now.getFullYear();
-
-    const month =
-      String(
-        now.getMonth() + 1
-      ).padStart(
-        2,
-        "0"
-      );
-
-    const day =
-      String(
-        now.getDate()
-      ).padStart(
-        2,
-        "0"
-      );
-
-    return (
-      year +
-      "-" +
-      month +
-      "-" +
-      day
-    );
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return year + "-" + month + "-" + day;
   }
 
-
-  function schoolEscapeHtml(
-    value
-  ){
-
-    return String(
-      value == null
-        ? ""
-        : value
-    )
-      .replace(
-        /&/g,
-        "&amp;"
-      )
-      .replace(
-        /</g,
-        "&lt;"
-      )
-      .replace(
-        />/g,
-        "&gt;"
-      )
-      .replace(
-        /"/g,
-        "&quot;"
-      )
-      .replace(
-        /'/g,
-        "&#039;"
-      );
+  function schoolEscapeHtml(value){
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 
+  function schoolCreateId(prefix){
+    return String(prefix || "school") + "_" + Date.now() + "_" + Math.random().toString(36).slice(2, 9);
+  }
+
+  async function schoolHashCode(value){
+    const text = String(value || "");
+    if(!text){
+      return "";
+    }
+
+    if(window.crypto && window.crypto.subtle && window.TextEncoder){
+      const data = new TextEncoder().encode(text);
+      const digest = await window.crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(digest))
+        .map(function(byte){ return byte.toString(16).padStart(2, "0"); })
+        .join("");
+    }
+
+    let hash = 0;
+    for(let i = 0; i < text.length; i += 1){
+      hash = ((hash << 5) - hash) + text.charCodeAt(i);
+      hash |= 0;
+    }
+    return "fallback_" + Math.abs(hash);
+  }
+
+  function schoolLoadAccessData(){
+    try{
+      const raw = localStorage.getItem(SCHOOL_ACCESS_DEMO_KEY);
+      const data = raw ? JSON.parse(raw) : {};
+      return {
+        direction: data && data.direction && typeof data.direction === "object" ? data.direction : {},
+        teachers: data && Array.isArray(data.teachers) ? data.teachers : []
+      };
+    }catch(error){
+      return { direction: {}, teachers: [] };
+    }
+  }
+
+  function schoolSaveAccessData(data){
+    try{
+      localStorage.setItem(SCHOOL_ACCESS_DEMO_KEY, JSON.stringify(data || { direction:{}, teachers:[] }));
+      return true;
+    }catch(error){
+      return false;
+    }
+  }
 
   function schoolLoadClasses(){
-
     if(
       window.BociteSchoolWordSimple &&
-      typeof window
-        .BociteSchoolWordSimple
-        .getClasses ===
-          "function"
+      typeof window.BociteSchoolWordSimple.getClasses === "function"
     ){
-
       try{
-
-        const rows =
-          window
-            .BociteSchoolWordSimple
-            .getClasses();
-
-        if(
-          Array.isArray(
-            rows
-          )
-        ){
+        const rows = window.BociteSchoolWordSimple.getClasses();
+        if(Array.isArray(rows)){
           return rows;
         }
-
       }catch(error){}
-
     }
 
     try{
-
-      const raw =
-        localStorage.getItem(
-          SCHOOL_CLASSES_KEY
-        );
-
-      const rows =
-        raw
-          ? JSON.parse(
-              raw
-            )
-          : [];
-
-      return Array.isArray(rows)
-        ? rows
-        : [];
-
+      const raw = localStorage.getItem(SCHOOL_CLASSES_KEY);
+      const rows = raw ? JSON.parse(raw) : [];
+      return Array.isArray(rows) ? rows : [];
     }catch(error){
-
       return [];
     }
   }
 
+  function schoolFindClassByName(name){
+    const target = String(name || "").trim().toLowerCase();
+    if(!target){
+      return null;
+    }
+
+    return schoolLoadClasses().find(function(row){
+      return row && String(row.name || "").trim().toLowerCase() === target;
+    }) || null;
+  }
+
+  function schoolFillClassSuggestions(){
+    if(!schoolClassSuggestions){
+      return;
+    }
+
+    const classes = schoolLoadClasses();
+    schoolClassSuggestions.innerHTML = classes
+      .filter(function(row){ return row && row.name; })
+      .map(function(row){
+        return '<option value="' + schoolEscapeHtml(row.name) + '"></option>';
+      })
+      .join("");
+  }
 
   function schoolCurrentClassRecord(){
-
-    let currentId =
-      "";
-
+    let currentId = "";
     try{
-
-      currentId =
-        String(
-          localStorage.getItem(
-            SCHOOL_CURRENT_CLASS_ID_KEY
-          ) ||
-          ""
-        ).trim();
-
+      currentId = String(localStorage.getItem(SCHOOL_CURRENT_CLASS_ID_KEY) || "").trim();
     }catch(error){}
 
-    const classes =
-      schoolLoadClasses();
-
-    const current =
-      classes.find(
-        function(row){
-
-          return (
-            row &&
-            String(
-              row.id ||
-              ""
-            ) ===
-              currentId
-          );
-        }
-      );
+    const classes = schoolLoadClasses();
+    const current = classes.find(function(row){
+      return row && String(row.id || "") === currentId;
+    });
 
     if(current){
       return current;
@@ -4885,514 +5044,264 @@ if(key === "ecole"){
     return null;
   }
 
-
   function schoolCurrentClass(){
-
-    const current =
-      schoolCurrentClassRecord();
-
-    if(
-      current &&
-      current.name
-    ){
-
-      return String(
-        current.name
-      ).trim();
+    const current = schoolCurrentClassRecord();
+    if(current && current.name){
+      return String(current.name).trim();
     }
 
-    const legacy =
-      String(
-        schoolClassSelect &&
-        schoolClassSelect.value
-          ? schoolClassSelect.value
-          : ""
-      ).trim();
+    const legacy = String(
+      schoolClassSelect && schoolClassSelect.value ? schoolClassSelect.value : ""
+    ).trim();
 
-    return (
-      legacy ||
-      "Classe"
-    );
+    return legacy || "Classe";
   }
-
 
   function schoolCurrentClassId(){
-
-    const current =
-      schoolCurrentClassRecord();
-
-    return current
-      ? String(
-          current.id ||
-          ""
-        ).trim()
-      : "";
+    const current = schoolCurrentClassRecord();
+    return current ? String(current.id || "").trim() : "";
   }
 
+  function schoolSelectClassForAccess(account){
+    if(!account){
+      return;
+    }
+
+    let classId = String(account.classId || "").trim();
+    const className = String(account.className || "").trim();
+
+    if(!classId && className){
+      const matched = schoolFindClassByName(className);
+      if(matched){
+        classId = String(matched.id || "").trim();
+        account.classId = classId;
+      }
+    }
+
+    if(classId){
+      try{
+        localStorage.setItem(SCHOOL_CURRENT_CLASS_ID_KEY, classId);
+      }catch(error){}
+
+      if(
+        window.BociteSchoolWordSimple &&
+        typeof window.BociteSchoolWordSimple.selectClass === "function"
+      ){
+        try{
+          window.BociteSchoolWordSimple.selectClass(classId);
+        }catch(error){}
+      }
+    }
+
+    if(className && schoolClassSelect){
+      let option = Array.from(schoolClassSelect.options).find(function(item){
+        return String(item.value || "") === className;
+      });
+
+      if(!option){
+        option = document.createElement("option");
+        option.value = className;
+        option.textContent = className;
+        schoolClassSelect.appendChild(option);
+      }
+
+      schoolClassSelect.value = className;
+    }
+  }
 
   function schoolUpdateWordDisplay(){
-
     if(!schoolWordDisplay){
       return;
     }
 
-    const text =
-      String(
-        schoolWordInput &&
-        schoolWordInput.value
-          ? schoolWordInput.value
-          : ""
-      ).trim();
+    const text = String(
+      schoolWordInput && schoolWordInput.value ? schoolWordInput.value : ""
+    ).trim();
 
-    schoolWordDisplay.textContent =
-      text
-        ? "« " + text + " »"
-        : "";
+    schoolWordDisplay.textContent = text ? "« " + text + " »" : "";
   }
 
-
-  /* =====================================================
-     VALIDATION DU MOT DU JOUR
-     ===================================================== */
-
   function schoolLoadValidationUi(){
-
     try{
-
-      const raw =
-        localStorage.getItem(
-          SCHOOL_VALIDATION_UI_KEY
-        );
-
-      const data =
-        raw
-          ? JSON.parse(
-              raw
-            )
-          : {};
-
-      return (
-        data &&
-        typeof data ===
-          "object"
-      )
-        ? data
-        : {};
-
+      const raw = localStorage.getItem(SCHOOL_VALIDATION_UI_KEY);
+      const data = raw ? JSON.parse(raw) : {};
+      return data && typeof data === "object" ? data : {};
     }catch(error){
-
       return {};
     }
   }
 
-
-  function schoolSaveValidationUi(
-    data
-  ){
-
+  function schoolSaveValidationUi(data){
     try{
-
-      localStorage.setItem(
-        SCHOOL_VALIDATION_UI_KEY,
-        JSON.stringify(
-          data ||
-          {}
-        )
-      );
-
+      localStorage.setItem(SCHOOL_VALIDATION_UI_KEY, JSON.stringify(data || {}));
     }catch(error){}
   }
 
-
   function schoolValidationKey(){
-
-    return (
-      schoolTodayIso() +
-      "||" +
-      (
-        schoolCurrentClassId() ||
-        schoolCurrentClass()
-      )
-    );
+    return schoolTodayIso() + "||" + (schoolCurrentClassId() || schoolCurrentClass());
   }
-
 
   function schoolIsTodayValidated(){
-
-    const validations =
-      schoolLoadValidationUi();
-
-    return Boolean(
-      validations[
-        schoolValidationKey()
-      ]
-    );
+    const validations = schoolLoadValidationUi();
+    return Boolean(validations[schoolValidationKey()]);
   }
 
-
   function schoolRefreshAutomaticCoinUi(){
-
     if(!schoolPrivateCoinStatus){
       return;
     }
 
-    schoolPrivateCoinStatus.textContent =
-      schoolIsTodayValidated()
-        ? "✓ Mot du jour validé. La validation a été transmise au traitement automatique prévu pour la classe."
-        : "Après le Mot du jour, validez simplement l’activité. La suite sera prise en compte automatiquement.";
+       schoolPrivateCoinStatus.textContent = schoolIsTodayValidated()
+      ? "✓ Mot du jour validé. La validation a été transmise au traitement automatique prévu pour la classe."
+      : "Après le Mot du jour, validez simplement l’activité. La suite sera prise en compte automatiquement.";
   }
 
-
   function schoolRefreshValidationUi(){
-
     if(!schoolSaveBtn){
       return;
     }
 
-    const validated =
-      schoolIsTodayValidated();
+    const validated = schoolIsTodayValidated();
+    schoolSaveBtn.disabled = validated;
 
-    schoolSaveBtn.disabled =
-      validated;
-
-    if(
-      schoolProfessorValidationStatus
-    ){
-
-      schoolProfessorValidationStatus
-        .textContent =
-          validated
-            ? "✓ Le Mot du jour a été validé aujourd’hui pour cette classe."
-            : "Le Mot du jour pourra être validé lorsqu’il sera prêt pour aujourd’hui.";
+    if(schoolProfessorValidationStatus){
+      schoolProfessorValidationStatus.textContent = validated
+        ? "✓ Le Mot du jour a été validé aujourd’hui pour cette classe."
+        : "Le Mot du jour pourra être validé lorsqu’il sera prêt pour aujourd’hui.";
     }
 
     schoolRefreshAutomaticCoinUi();
 
     if(
       window.BociteSchoolWordSimple &&
-      typeof window
-        .BociteSchoolWordSimple
-        .refresh ===
-          "function"
+      typeof window.BociteSchoolWordSimple.refresh === "function"
     ){
-
-      window
-        .BociteSchoolWordSimple
-        .refresh();
+      window.BociteSchoolWordSimple.refresh();
     }
   }
 
-
   function schoolMarkTodayValidated(){
+    const validations = schoolLoadValidationUi();
+    const key = schoolValidationKey();
 
-    const validations =
-      schoolLoadValidationUi();
-
-    const key =
-      schoolValidationKey();
-
-    if(
-      validations[
-        key
-      ]
-    ){
-
+    if(validations[key]){
       schoolRefreshValidationUi();
-
       return;
     }
 
     const detail = {
-      date:
-        schoolTodayIso(),
-
-      classId:
-        schoolCurrentClassId(),
-
-      className:
-        schoolCurrentClass(),
-
-      word:
-        String(
-          schoolWordInput &&
-          schoolWordInput.value
-            ? schoolWordInput.value
-            : ""
-        ).trim(),
-
-      validatedAt:
-        new Date()
-          .toISOString()
+      date: schoolTodayIso(),
+      classId: schoolCurrentClassId(),
+      className: schoolCurrentClass(),
+      word: String(schoolWordInput && schoolWordInput.value ? schoolWordInput.value : "").trim(),
+      validatedAt: new Date().toISOString()
     };
 
-    validations[
-      key
-    ] =
-      detail;
-
-    schoolSaveValidationUi(
-      validations
-    );
-
-    /*
-      Relais volontairement sans montant :
-      le professeur valide l’activité,
-      le traitement prévu reste automatique
-      et indépendant de l’interface.
-    */
+    validations[key] = detail;
+    schoolSaveValidationUi(validations);
 
     try{
-
       document.dispatchEvent(
-        new CustomEvent(
-          "bociteart:school-activity-validated",
-          {
-            detail:
-              detail
-          }
-        )
+        new CustomEvent("bociteart:school-activity-validated", { detail: detail })
       );
-
     }catch(error){}
 
     schoolRefreshValidationUi();
   }
 
-   /* =====================================================
-     PROGRAMMATIONS
-     ===================================================== */
-
   function schoolLoadSchedules(){
-
     if(
       window.BociteSchoolWordSimple &&
-      typeof window
-        .BociteSchoolWordSimple
-        .getSchedule ===
-          "function"
+      typeof window.BociteSchoolWordSimple.getSchedule === "function"
     ){
-
       try{
-
-        const rows =
-          window
-            .BociteSchoolWordSimple
-            .getSchedule();
-
-        if(
-          Array.isArray(
-            rows
-          )
-        ){
+        const rows = window.BociteSchoolWordSimple.getSchedule();
+        if(Array.isArray(rows)){
           return rows;
         }
-
       }catch(error){}
-
     }
 
     try{
-
-      const raw =
-        localStorage.getItem(
-          SCHOOL_SCHEDULE_UI_KEY
-        );
-
-      const rows =
-        raw
-          ? JSON.parse(
-              raw
-            )
-          : [];
-
-      return Array.isArray(rows)
-        ? rows
-        : [];
-
+      const raw = localStorage.getItem(SCHOOL_SCHEDULE_UI_KEY);
+      const rows = raw ? JSON.parse(raw) : [];
+      return Array.isArray(rows) ? rows : [];
     }catch(error){
-
       return [];
     }
   }
 
-
-  function schoolSaveSchedules(
-    rows
-  ){
-
+  function schoolSaveSchedules(rows){
     try{
-
       localStorage.setItem(
         SCHOOL_SCHEDULE_UI_KEY,
-        JSON.stringify(
-          Array.isArray(
-            rows
-          )
-            ? rows
-            : []
-        )
+        JSON.stringify(Array.isArray(rows) ? rows : [])
       );
 
       if(
         window.BociteSchoolWordSimple &&
-        typeof window
-          .BociteSchoolWordSimple
-          .refresh ===
-            "function"
+        typeof window.BociteSchoolWordSimple.refresh === "function"
       ){
-
-        window
-          .BociteSchoolWordSimple
-          .refresh();
+        window.BociteSchoolWordSimple.refresh();
       }
 
       return true;
-
     }catch(error){
-
-      alert(
-        "La modification n’a pas pu être enregistrée."
-      );
-
+      alert("La modification n’a pas pu être enregistrée.");
       return false;
     }
   }
 
-
-  function schoolScheduleBelongsToCurrentClass(
-    row
-  ){
-
+  function schoolScheduleBelongsToCurrentClass(row){
     if(!row){
       return false;
     }
 
-    const currentId =
-      schoolCurrentClassId();
-
-    if(
-      currentId &&
-      row.classId
-    ){
-
-      return (
-        String(
-          row.classId
-        ) ===
-        currentId
-      );
+    const currentId = schoolCurrentClassId();
+    if(currentId && row.classId){
+      return String(row.classId) === currentId;
     }
 
-    const rowName =
-      String(
-        row.className ||
-        row.class ||
-        ""
-      ).trim();
-
-    return (
-      rowName ===
-      schoolCurrentClass()
-    );
+    const rowName = String(row.className || row.class || "").trim();
+    return rowName === schoolCurrentClass();
   }
 
-
-  function schoolGetScheduleById(
-    id
-  ){
-
-    return (
-      schoolLoadSchedules()
-        .find(
-          function(row){
-
-            return (
-              row &&
-              String(
-                row.id ||
-                ""
-              ) ===
-                String(
-                  id ||
-                  ""
-                )
-            );
-          }
-        ) ||
-      null
-    );
+  function schoolGetScheduleById(id){
+    return schoolLoadSchedules().find(function(row){
+      return row && String(row.id || "") === String(id || "");
+    }) || null;
   }
-
 
   function schoolCloseScheduleManager(){
-
-    const overlay =
-      document.getElementById(
-        "bociteSchoolScheduleManager"
-      );
-
+    const overlay = document.getElementById("bociteSchoolScheduleManager");
     if(overlay){
       overlay.remove();
     }
   }
 
-
-  function schoolPlayScheduledRow(
-    row
-  ){
-
+  function schoolPlayScheduledRow(row){
     if(!row){
       return;
     }
 
-    const text =
-      String(
-        row.text ||
-        ""
-      ).trim();
+    const text = String(row.text || "").trim();
 
     if(
-      row.voiceMode ===
-        "real" &&
-      row.parentalVoiceAuthorized ===
-        true &&
+      row.voiceMode === "real" &&
+      row.parentalVoiceAuthorized === true &&
       row.audioData
     ){
-
       try{
-
-        const audio =
-          new Audio(
-            row.audioData
-          );
-
-        const promise =
-          audio.play();
-
-        if(
-          promise &&
-          typeof promise.catch ===
-            "function"
-        ){
-
-          promise.catch(
-            function(){
-
-              alert(
-                "La lecture audio n’a pas pu démarrer sur cet appareil."
-              );
-            }
-          );
+        const audio = new Audio(row.audioData);
+        const promise = audio.play();
+        if(promise && typeof promise.catch === "function"){
+          promise.catch(function(){
+            alert("La lecture audio n’a pas pu démarrer sur cet appareil.");
+          });
         }
-
         return;
-
       }catch(error){
-
-        alert(
-          "La lecture audio n’est pas disponible."
-        );
-
+        alert("La lecture audio n’est pas disponible.");
         return;
       }
     }
@@ -5400,133 +5309,46 @@ if(key === "ecole"){
     if(
       !text ||
       !window.speechSynthesis ||
-      typeof window.SpeechSynthesisUtterance !==
-        "function"
+      typeof window.SpeechSynthesisUtterance !== "function"
     ){
-
-      alert(
-        "L’écoute n’est pas disponible pour cette programmation."
-      );
-
+      alert("L’écoute n’est pas disponible pour cette programmation.");
       return;
     }
 
-    const gender =
-      String(
-        row.voiceGender ||
-        ""
-      )
-        .trim()
-        .toLowerCase();
-
-    if(
-      gender !==
-        "girl" &&
-      gender !==
-        "boy"
-    ){
-
-      alert(
-        "La voix de diffusion n’est pas encore disponible pour cette programmation."
-      );
-
+    const gender = String(row.voiceGender || "").trim().toLowerCase();
+    if(gender !== "girl" && gender !== "boy"){
+      alert("La voix de diffusion n’est pas encore disponible pour cette programmation.");
       return;
     }
 
-    const frenchVoices =
-      window.speechSynthesis
-        .getVoices()
-        .filter(
-          function(voice){
+    const frenchVoices = window.speechSynthesis.getVoices().filter(function(voice){
+      return voice.lang && String(voice.lang).toLowerCase().startsWith("fr");
+    });
 
-            return (
-              voice.lang &&
-              String(
-                voice.lang
-              )
-                .toLowerCase()
-                .startsWith(
-                  "fr"
-                )
-            );
-          }
-        );
+    const femaleNames = /denise|hortense|julie|sylvie|marie|amelie|amélie|audrey|virginie|eloise|éloise|celine|céline|female|femme|fémin/i;
+    const maleNames = /henri|paul|claude|alain|thomas|hugo|remy|rémy|mathieu|gerard|gérard|loic|loïc|nicolas|male|homme|masculin/i;
+    const matcher = gender === "girl" ? femaleNames : maleNames;
 
-    const femaleNames =
-      /denise|hortense|julie|sylvie|marie|amelie|amélie|audrey|virginie|eloise|éloise|celine|céline|female|femme|fémin/i;
-
-    const maleNames =
-      /henri|paul|claude|alain|thomas|hugo|remy|rémy|mathieu|gerard|gérard|loic|loïc|nicolas|male|homme|masculin/i;
-
-    const matcher =
-      gender ===
-        "girl"
-        ? femaleNames
-        : maleNames;
-
-    const voice =
-      frenchVoices.find(
-        function(item){
-
-          return matcher.test(
-            String(
-              item.name ||
-              ""
-            ) +
-            " " +
-            String(
-              item.voiceURI ||
-              ""
-            )
-          );
-        }
-      );
+    const voice = frenchVoices.find(function(item){
+      return matcher.test(String(item.name || "") + " " + String(item.voiceURI || ""));
+    });
 
     if(!voice){
-
-      alert(
-        "Aucune voix française adaptée n’est disponible sur cet appareil."
-      );
-
+      alert("Aucune voix française adaptée n’est disponible sur cet appareil.");
       return;
     }
 
-    const utterance =
-      new SpeechSynthesisUtterance(
-        text
-      );
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "fr-FR";
+    utterance.voice = voice;
+    utterance.rate = 0.92;
+    utterance.pitch = gender === "girl" ? 1.28 : 1.10;
 
-    utterance.lang =
-      "fr-FR";
-
-    utterance.voice =
-      voice;
-
-    utterance.rate =
-      0.92;
-
-    utterance.pitch =
-      gender ===
-        "girl"
-        ? 1.28
-        : 1.10;
-
-    window
-      .speechSynthesis
-      .cancel();
-
-    window
-      .speechSynthesis
-      .speak(
-        utterance
-      );
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
   }
 
-
-  function schoolPrepareScheduleAgain(
-    row
-  ){
-
+  function schoolPrepareScheduleAgain(row){
     if(!row){
       return;
     }
@@ -5534,117 +5356,51 @@ if(key === "ecole"){
     if(
       row.classId &&
       window.BociteSchoolWordSimple &&
-      typeof window
-        .BociteSchoolWordSimple
-        .selectClass ===
-          "function"
+      typeof window.BociteSchoolWordSimple.selectClass === "function"
     ){
-
       try{
-
-        window
-          .BociteSchoolWordSimple
-          .selectClass(
-            row.classId
-          );
-
+        window.BociteSchoolWordSimple.selectClass(row.classId);
       }catch(error){}
     }
 
     if(schoolWordInput){
-
-      schoolWordInput.value =
-        String(
-          row.text ||
-          ""
-        );
-
+      schoolWordInput.value = String(row.text || "");
       schoolUpdateWordDisplay();
     }
 
     schoolCloseScheduleManager();
-
-    if(
-      schoolProfessorPrivatePanel
-    ){
-
-      schoolProfessorPrivatePanel
-        .style.display =
-          "block";
-    }
+    schoolProfessorPrivatePanel.style.display = "block";
 
     if(
       window.BociteSchoolWordSimple &&
-      typeof window
-        .BociteSchoolWordSimple
-        .refresh ===
-          "function"
+      typeof window.BociteSchoolWordSimple.refresh === "function"
     ){
-
-      window
-        .BociteSchoolWordSimple
-        .refresh();
+      window.BociteSchoolWordSimple.refresh();
     }
 
-    window.setTimeout(
-      function(){
-
-        const workArea =
-          document.getElementById(
-            "schoolProfessorWorkArea"
-          );
-
-        if(workArea){
-
-          workArea.scrollIntoView({
-            behavior:
-              "smooth",
-            block:
-              "start"
-          });
-        }
-
-      },
-      50
-    );
+    window.setTimeout(function(){
+      const workArea = document.getElementById("schoolProfessorWorkArea");
+      if(workArea){
+        workArea.scrollIntoView({ behavior:"smooth", block:"start" });
+      }
+    }, 50);
 
     alert(
       "La phrase a été replacée dans l’espace de travail.\n\nModifiez-la si nécessaire, refaites l’enregistrement puis choisissez à nouveau le jour."
     );
   }
 
-   function schoolOpenScheduleManager(){
-
+  function schoolOpenScheduleManager(){
     schoolCloseScheduleManager();
 
-    const rows =
-      schoolLoadSchedules()
-        .filter(
-          schoolScheduleBelongsToCurrentClass
-        )
-        .sort(
-          function(a, b){
+    const rows = schoolLoadSchedules()
+      .filter(schoolScheduleBelongsToCurrentClass)
+      .sort(function(a, b){
+        return String(a.date || "").localeCompare(String(b.date || ""));
+      });
 
-            return String(
-              a.date ||
-              ""
-            ).localeCompare(
-              String(
-                b.date ||
-                ""
-              )
-            );
-          }
-        );
-
-    const overlay =
-      document.createElement(
-        "div"
-      );
-
-    overlay.id =
-      "bociteSchoolScheduleManager";
-
+    const overlay = document.createElement("div");
+    overlay.id = "bociteSchoolScheduleManager";
     overlay.style.cssText = [
       "position:fixed",
       "inset:0",
@@ -5654,205 +5410,71 @@ if(key === "ecole"){
       "box-sizing:border-box",
       "background:rgba(0,0,0,.55)",
       "font-family:Arial,sans-serif"
-    ].join(
-      ";"
-    );
+    ].join(";");
 
-    const rowsHtml =
-      rows.length
-        ? rows.map(
-            function(row, index){
+       const rowsHtml = rows.length
+      ? rows.map(function(row, index){
+          const safeId = schoolEscapeHtml(row.id || ("row-" + index));
+          const safeDate = schoolEscapeHtml(row.date || "");
+          const safeText = schoolEscapeHtml(row.text || "");
 
-              const safeId =
-                schoolEscapeHtml(
-                  row.id ||
-                  (
-                    "row-" +
-                    index
-                  )
-                );
-
-              const safeDate =
-                schoolEscapeHtml(
-                  row.date ||
-                  ""
-                );
-
-              const safeText =
-                schoolEscapeHtml(
-                  row.text ||
-                  ""
-                );
-
-              return `
-
-                <div
-                  data-school-schedule-row="${safeId}"
-                  style="
-                    margin-top:10px;
-                    padding:12px;
-                    border:1px solid #dedede;
-                    border-radius:10px;
-                    background:#ffffff;
-                  "
-                >
-
-                  <div
-                    style="
-                      color:#2f5d46;
-                      font-size:17px;
-                      font-weight:700;
-                    "
-                  >
-                    ${safeDate || "Date non renseignée"}
-                  </div>
-
-                  <div
-                    style="
-                      margin-top:7px;
-                      color:#111111;
-                      font-size:14px;
-                      font-weight:400;
-                      line-height:1.5;
-                    "
-                  >
-                    ${safeText || "Phrase non renseignée"}
-                  </div>
-
-                  <label
-                    style="
-                      display:block;
-                      margin-top:10px;
-                      color:#111111;
-                      font-size:14px;
-                      font-weight:400;
-                    "
-                  >
-                    Modifier le jour
-                  </label>
-
-                  <input
-                    data-school-schedule-date="${safeId}"
-                    type="date"
-                    value="${safeDate}"
-                    style="
-                      display:block;
-                      width:100%;
-                      box-sizing:border-box;
-                      margin-top:6px;
-                      padding:10px;
-                      border:1px solid #b9b9b9;
-                      border-radius:9px;
-                      background:#ffffff;
-                      color:#111111;
-                      font-size:14px;
-                      font-weight:400;
-                    "
-                  >
-
-                  <button
-                    data-school-save-date="${safeId}"
-                    type="button"
-                    class="bociteSchoolAction"
-                  >
-                    Enregistrer la nouvelle date
-                  </button>
-
-                  <button
-                    data-school-play-schedule="${safeId}"
-                    type="button"
-                    class="bociteSchoolAction"
-                  >
-                    ▶ Écouter
-                  </button>
-
-                  <button
-                    data-school-redo-schedule="${safeId}"
-                    type="button"
-                    class="bociteSchoolAction"
-                  >
-                    Refaire la phrase / l’enregistrement
-                  </button>
-
-                  <button
-                    data-school-delete-schedule="${safeId}"
-                    type="button"
-                    class="bociteSchoolAction bociteSchoolActionDanger"
-                  >
-                    Supprimer cette programmation
-                  </button>
-
-                </div>
-
-              `;
-            }
-          ).join(
-            ""
-          )
-        : `
-
+          return `
             <div
-              style="
-                margin-top:12px;
-                padding:14px;
-                border:1px solid #dedede;
-                border-radius:10px;
-                background:#ffffff;
-                color:#111111;
-                font-size:14px;
-                font-weight:400;
-              "
+              data-school-schedule-row="${safeId}"
+              style="margin-top:10px;padding:12px;border:1px solid #dedede;border-radius:10px;background:#ffffff;"
             >
-              Aucun Mot du jour programmé pour cette classe.
-            </div>
+              <div style="color:#2f5d46;font-size:17px;font-weight:700;">
+                ${safeDate || "Date non renseignée"}
+              </div>
 
+              <div style="margin-top:7px;color:#111111;font-size:14px;font-weight:400;line-height:1.5;">
+                ${safeText || "Phrase non renseignée"}
+              </div>
+
+              <label style="display:block;margin-top:10px;color:#111111;font-size:14px;font-weight:400;">
+                Modifier le jour
+              </label>
+
+              <input
+                data-school-schedule-date="${safeId}"
+                type="date"
+                value="${safeDate}"
+                style="display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:10px;border:1px solid #b9b9b9;border-radius:9px;background:#ffffff;color:#111111;font-size:14px;font-weight:400;"
+              >
+
+              <button data-school-save-date="${safeId}" type="button" class="bociteSchoolAction">
+                Enregistrer la nouvelle date
+              </button>
+
+              <button data-school-play-schedule="${safeId}" type="button" class="bociteSchoolAction">
+                ▶ Écouter
+              </button>
+
+              <button data-school-redo-schedule="${safeId}" type="button" class="bociteSchoolAction">
+                Refaire la phrase / l’enregistrement
+              </button>
+
+              <button data-school-delete-schedule="${safeId}" type="button" class="bociteSchoolAction bociteSchoolActionDanger">
+                Supprimer cette programmation
+              </button>
+            </div>
           `;
+        }).join("")
+      : `
+          <div style="margin-top:12px;padding:14px;border:1px solid #dedede;border-radius:10px;background:#ffffff;color:#111111;font-size:14px;font-weight:400;">
+            Aucun Mot du jour programmé pour cette classe.
+          </div>
+        `;
 
     overlay.innerHTML = `
-
-      <div
-        style="
-          width:100%;
-          max-width:620px;
-          margin:10px auto;
-          padding:16px;
-          box-sizing:border-box;
-          border-radius:14px;
-          background:#fffdf7;
-        "
-      >
-
-        <div
-          style="
-            display:flex;
-            align-items:flex-start;
-            justify-content:space-between;
-            gap:12px;
-          "
-        >
-
+      <div style="width:100%;max-width:620px;margin:10px auto;padding:16px;box-sizing:border-box;border-radius:14px;background:#fffdf7;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
           <div>
-            <div
-              style="
-                color:#2f5d46;
-                font-size:17px;
-                font-weight:700;
-              "
-            >
+            <div style="color:#2f5d46;font-size:17px;font-weight:700;">
               Mots programmés
             </div>
-
-            <div
-              style="
-                margin-top:5px;
-                color:#111111;
-                font-size:14px;
-                font-weight:400;
-              "
-            >
-              ${schoolEscapeHtml(
-                schoolCurrentClass()
-              )}
+            <div style="margin-top:5px;color:#111111;font-size:14px;font-weight:400;">
+              ${schoolEscapeHtml(schoolCurrentClass())}
             </div>
           </div>
 
@@ -5860,602 +5482,836 @@ if(key === "ecole"){
             id="schoolScheduleManagerCloseBtn"
             type="button"
             aria-label="Fermer"
-            style="
-              width:42px;
-              height:42px;
-              border:1px solid #dedede;
-              border-radius:10px;
-              background:#ffffff;
-              color:#111111;
-              font-size:24px;
-              cursor:pointer;
-            "
-          >
-            ×
-          </button>
-
+            style="width:42px;height:42px;border:1px solid #dedede;border-radius:10px;background:#ffffff;color:#111111;font-size:24px;cursor:pointer;"
+          >×</button>
         </div>
 
         ${rowsHtml}
-
       </div>
-
     `;
 
-    document.body.appendChild(
-      overlay
-    );
+    document.body.appendChild(overlay);
 
-    const closeBtn =
-      document.getElementById(
-        "schoolScheduleManagerCloseBtn"
-      );
-
+    const closeBtn = document.getElementById("schoolScheduleManagerCloseBtn");
     if(closeBtn){
-
-      closeBtn.onclick =
-        schoolCloseScheduleManager;
+      closeBtn.onclick = schoolCloseScheduleManager;
     }
 
-    overlay
-      .querySelectorAll(
-        "[data-school-save-date]"
-      )
-      .forEach(
-        function(button){
+    overlay.querySelectorAll("[data-school-save-date]").forEach(function(button){
+      button.onclick = function(){
+        const id = String(button.dataset.schoolSaveDate || "");
+        const input = overlay.querySelector(
+          '[data-school-schedule-date="' + CSS.escape(id) + '"]'
+        );
+        const newDate = String(input && input.value ? input.value : "").trim();
 
-          button.onclick =
-            function(){
-
-              const id =
-                String(
-                  button.dataset
-                    .schoolSaveDate ||
-                  ""
-                );
-
-              const input =
-                overlay.querySelector(
-                  '[data-school-schedule-date="' +
-                  CSS.escape(
-                    id
-                  ) +
-                  '"]'
-                );
-
-              const newDate =
-                String(
-                  input &&
-                  input.value
-                    ? input.value
-                    : ""
-                ).trim();
-
-              if(!newDate){
-
-                alert(
-                  "Choisissez une date."
-                );
-
-                return;
-              }
-
-              const allRows =
-                schoolLoadSchedules();
-
-              const index =
-                allRows.findIndex(
-                  function(item){
-
-                    return (
-                      item &&
-                      String(
-                        item.id ||
-                        ""
-                      ) ===
-                        id
-                    );
-                  }
-                );
-
-              if(index < 0){
-
-                alert(
-                  "Cette programmation n’est plus disponible."
-                );
-
-                return;
-              }
-
-              const edited =
-                allRows[index];
-
-              const duplicate =
-                allRows.some(
-                  function(item, itemIndex){
-
-                    if(
-                      itemIndex ===
-                        index ||
-                      !item
-                    ){
-                      return false;
-                    }
-
-                    const sameClass =
-                      edited.classId
-                        ? (
-                            String(
-                              item.classId ||
-                              ""
-                            ) ===
-                            String(
-                              edited.classId
-                            )
-                          )
-                        : (
-                            String(
-                              item.className ||
-                              item.class ||
-                              ""
-                            ).trim() ===
-                            String(
-                              edited.className ||
-                              edited.class ||
-                              ""
-                            ).trim()
-                          );
-
-                    return (
-                      sameClass &&
-                      String(
-                        item.date ||
-                        ""
-                      ) ===
-                        newDate
-                    );
-                  }
-                );
-
-              if(duplicate){
-
-                alert(
-                  "Un Mot du jour est déjà programmé pour cette classe à cette date."
-                );
-
-                return;
-              }
-
-              edited.date =
-                newDate;
-
-              edited.status =
-                newDate ===
-                  schoolTodayIso()
-                  ? "ready-today"
-                  : "scheduled";
-
-              edited.updatedAt =
-                new Date()
-                  .toISOString();
-
-              allRows[index] =
-                edited;
-
-              if(
-                schoolSaveSchedules(
-                  allRows
-                )
-              ){
-
-                schoolOpenScheduleManager();
-              }
-            };
+        if(!newDate){
+          alert("Choisissez une date.");
+          return;
         }
-      );
 
-    overlay
-      .querySelectorAll(
-        "[data-school-play-schedule]"
-      )
-      .forEach(
-        function(button){
+        const allRows = schoolLoadSchedules();
+        const index = allRows.findIndex(function(item){
+          return item && String(item.id || "") === id;
+        });
 
-          button.onclick =
-            function(){
-
-              const row =
-                schoolGetScheduleById(
-                  button.dataset
-                    .schoolPlaySchedule
-                );
-
-              schoolPlayScheduledRow(
-                row
-              );
-            };
+        if(index < 0){
+          alert("Cette programmation n’est plus disponible.");
+          return;
         }
-      );
 
-    overlay
-      .querySelectorAll(
-        "[data-school-redo-schedule]"
-      )
-      .forEach(
-        function(button){
+        const edited = allRows[index];
+        const duplicate = allRows.some(function(item, itemIndex){
+          if(itemIndex === index || !item){
+            return false;
+          }
 
-          button.onclick =
-            function(){
+          const sameClass = edited.classId
+            ? String(item.classId || "") === String(edited.classId)
+            : String(item.className || item.class || "").trim() === String(edited.className || edited.class || "").trim();
 
-              const row =
-                schoolGetScheduleById(
-                  button.dataset
-                    .schoolRedoSchedule
-                );
+          return sameClass && String(item.date || "") === newDate;
+        });
 
-              schoolPrepareScheduleAgain(
-                row
-              );
-            };
+        if(duplicate){
+          alert("Un Mot du jour est déjà programmé pour cette classe à cette date.");
+          return;
         }
-      );
 
-    overlay
-      .querySelectorAll(
-        "[data-school-delete-schedule]"
-      )
-      .forEach(
-        function(button){
+        edited.date = newDate;
+        edited.status = newDate === schoolTodayIso() ? "ready-today" : "scheduled";
+        edited.updatedAt = new Date().toISOString();
+        allRows[index] = edited;
 
-          button.onclick =
-            function(){
-
-              const id =
-                String(
-                  button.dataset
-                    .schoolDeleteSchedule ||
-                  ""
-                );
-
-              const row =
-                schoolGetScheduleById(
-                  id
-                );
-
-              if(!row){
-                return;
-              }
-
-              if(
-                !confirm(
-                  "Supprimer cette programmation ?"
-                )
-              ){
-                return;
-              }
-
-              const rowsAfterDelete =
-                schoolLoadSchedules()
-                  .filter(
-                    function(item){
-
-                      return !(
-                        item &&
-                        String(
-                          item.id ||
-                          ""
-                        ) ===
-                          id
-                      );
-                    }
-                  );
-
-              if(
-                schoolSaveSchedules(
-                  rowsAfterDelete
-                )
-              ){
-
-                schoolOpenScheduleManager();
-              }
-            };
+        if(schoolSaveSchedules(allRows)){
+          schoolOpenScheduleManager();
         }
-      );
+      };
+    });
+
+    overlay.querySelectorAll("[data-school-play-schedule]").forEach(function(button){
+      button.onclick = function(){
+        schoolPlayScheduledRow(
+          schoolGetScheduleById(button.dataset.schoolPlaySchedule)
+        );
+      };
+    });
+
+    overlay.querySelectorAll("[data-school-redo-schedule]").forEach(function(button){
+      button.onclick = function(){
+        schoolPrepareScheduleAgain(
+          schoolGetScheduleById(button.dataset.schoolRedoSchedule)
+        );
+      };
+    });
+
+    overlay.querySelectorAll("[data-school-delete-schedule]").forEach(function(button){
+      button.onclick = function(){
+        const id = String(button.dataset.schoolDeleteSchedule || "");
+        const row = schoolGetScheduleById(id);
+        if(!row){
+          return;
+        }
+
+        if(!confirm("Supprimer cette programmation ?")){
+          return;
+        }
+
+        const rowsAfterDelete = schoolLoadSchedules().filter(function(item){
+          return !(item && String(item.id || "") === id);
+        });
+
+        if(schoolSaveSchedules(rowsAfterDelete)){
+          schoolOpenScheduleManager();
+        }
+      };
+    });
   }
 
-   /* =====================================================
-     ORIENTATION DE LA CLASSE
-     ===================================================== */
-
-  function schoolLoadUseMap(){
-
+  function schoolLoadSolidarityMap(){
     try{
-
-      const raw =
-        localStorage.getItem(
-          SCHOOL_PRIVATE_USE_KEY
-        );
-
-      const data =
-        raw
-          ? JSON.parse(
-              raw
-            )
-          : {};
-
-      return (
-        data &&
-        typeof data ===
-          "object" &&
-        !Array.isArray(
-          data
-        )
-      )
-        ? data
-        : {};
-
+      const raw = localStorage.getItem(SCHOOL_SOLIDARITY_KEY);
+      const data = raw ? JSON.parse(raw) : {};
+      return data && typeof data === "object" && !Array.isArray(data) ? data : {};
     }catch(error){
-
       return {};
     }
   }
 
-
-  function schoolUseMapKey(){
-
-    return (
-      schoolCurrentClassId() ||
-      schoolCurrentClass()
-    );
+  function schoolSolidarityMapKey(){
+    return schoolCurrentClassId() || schoolCurrentClass();
   }
 
+  function schoolGetSolidarityMode(){
+    const checked = document.querySelector('input[name="schoolSolidarityMode"]:checked');
+    return checked ? String(checked.value || "none") : "none";
+  }
 
-  function schoolRefreshOrientationUi(){
-
-    if(!schoolPrivateUseSelect){
+  function schoolRefreshSolidarityVisibility(){
+    if(!schoolSolidarityAssociations){
       return;
     }
 
-    const data =
-      schoolLoadUseMap();
+    const mode = schoolGetSolidarityMode();
+    schoolSolidarityAssociations.style.display = mode === "none" ? "none" : "block";
 
-    schoolPrivateUseSelect.value =
-      String(
-        data[
-          schoolUseMapKey()
-        ] ||
-        "later"
-      );
+    document.querySelectorAll(".schoolAssoPct").forEach(function(input){
+      input.disabled = mode === "full";
+    });
+  }
 
-    if(schoolPrivateUseStatus){
-      schoolPrivateUseStatus.textContent = "";
+  function schoolRefreshSolidarityUi(){
+    const map = schoolLoadSolidarityMap();
+    const saved = map[schoolSolidarityMapKey()] || null;
+    const mode = saved && saved.mode ? String(saved.mode) : "none";
+
+    const radio = document.querySelector(
+      'input[name="schoolSolidarityMode"][value="' + CSS.escape(mode) + '"]'
+    );
+    if(radio){
+      radio.checked = true;
+    }
+
+    const savedAssociations = saved && Array.isArray(saved.associations)
+      ? saved.associations
+      : [];
+
+    document.querySelectorAll(".schoolAssoPick").forEach(function(box){
+      const name = String(box.dataset.asso || "");
+      box.checked = savedAssociations.some(function(item){
+        return item && String(item.name || "") === name;
+      });
+    });
+
+    document.querySelectorAll(".schoolAssoPct").forEach(function(input){
+      const name = String(input.dataset.asso || "");
+      const found = savedAssociations.find(function(item){
+        return item && String(item.name || "") === name;
+      });
+      input.value = found && Number.isFinite(Number(found.percent))
+        ? String(Number(found.percent))
+        : "0";
+    });
+
+    if(schoolSolidarityStatus){
+      schoolSolidarityStatus.textContent = saved
+        ? "✓ Choix déjà enregistré pour cette classe."
+        : "";
+    }
+
+    schoolRefreshSolidarityVisibility();
+  }
+
+  function schoolSaveSolidarityChoice(){
+    const mode = schoolGetSolidarityMode();
+    const picks = Array.from(document.querySelectorAll(".schoolAssoPick"));
+    const selected = picks.filter(function(box){ return box.checked; });
+
+    if(mode !== "none" && !selected.length){
+      alert("Choisissez au moins une association.");
+      return;
+    }
+
+       let associations = [];
+
+    if(mode === "partial"){
+      let total = 0;
+      let invalid = false;
+
+      associations = selected.map(function(box){
+        const name = String(box.dataset.asso || "");
+        const input = Array.from(document.querySelectorAll(".schoolAssoPct")).find(function(item){
+          return String(item.dataset.asso || "") === name;
+        });
+        const percent = Number(input && input.value ? input.value : 0);
+
+        if(!Number.isFinite(percent) || percent <= 0 || percent > 100){
+          invalid = true;
+        }
+
+        total += percent;
+        return { name: name, percent: percent };
+      });
+
+      if(invalid){
+        alert("Indiquez un pourcentage supérieur à 0 pour chaque association choisie.");
+        return;
+      }
+
+      if(total <= 0 || total >= 100){
+        alert("Pour un partage, le total destiné aux associations doit être supérieur à 0 % et inférieur à 100 %.");
+        return;
+      }
+    }
+
+    if(mode === "full"){
+      const count = selected.length;
+      const base = Math.floor((10000 / count)) / 100;
+      let remaining = 100;
+
+      associations = selected.map(function(box, index){
+        const name = String(box.dataset.asso || "");
+        const percent = index === count - 1
+          ? Math.round(remaining * 100) / 100
+          : base;
+        remaining = Math.round((remaining - percent) * 100) / 100;
+        return { name: name, percent: percent };
+      });
+    }
+
+    if(mode === "none"){
+      associations = [];
+    }
+
+    const map = schoolLoadSolidarityMap();
+    map[schoolSolidarityMapKey()] = {
+      mode: mode,
+      classId: schoolCurrentClassId(),
+      className: schoolCurrentClass(),
+      associations: associations,
+      savedAt: new Date().toISOString()
+    };
+
+    try{
+      localStorage.setItem(SCHOOL_SOLIDARITY_KEY, JSON.stringify(map));
+    }catch(error){}
+
+    if(schoolSolidarityStatus){
+      schoolSolidarityStatus.textContent =
+        "✓ Choix de la classe enregistré. Il pourra être repris avec la mairie et l’école au moment de l’échange.";
     }
   }
 
-
-  /* =====================================================
-     OUVERTURE / FERMETURE ESPACE PROFESSEUR
-     ===================================================== */
-
-  if(
-    schoolProfessorAccessBtn &&
-    schoolProfessorPrivatePanel
-  ){
-
-    schoolProfessorAccessBtn.onclick =
-      function(){
-
-        schoolProfessorPrivatePanel
-          .style.display =
-            "block";
-
-        schoolProfessorAccessBtn
-          .style.display =
-            "none";
-
-        window.setTimeout(
-          function(){
-
-            if(
-              window.BociteSchoolWordSimple &&
-              typeof window
-                .BociteSchoolWordSimple
-                .refresh ===
-                  "function"
-            ){
-
-              window
-                .BociteSchoolWordSimple
-                .refresh();
-            }
-
-            schoolRefreshValidationUi();
-
-            schoolProfessorPrivatePanel
-              .scrollIntoView({
-                behavior:
-                  "smooth",
-                block:
-                  "start"
-              });
-
-          },
-          50
-        );
-      };
+  function schoolDirectionInitialized(){
+    const data = schoolLoadAccessData();
+    return Boolean(data.direction && data.direction.codeHash);
   }
 
+  function schoolRefreshAccessStartUi(){
+    if(!schoolDirectionFirstSetupBtn){
+      return;
+    }
 
-  if(
-    schoolProfessorCloseBtn &&
-    schoolProfessorPrivatePanel
-  ){
+    schoolDirectionFirstSetupBtn.style.display = schoolDirectionInitialized()
+      ? "none"
+      : "block";
+  }
 
-    schoolProfessorCloseBtn.onclick =
-      function(){
+  async function schoolFirstDirectionSetup(){
+    if(schoolDirectionInitialized()){
+      schoolRefreshAccessStartUi();
+      return;
+    }
 
-        schoolCloseScheduleManager();
+    const first = prompt("Choisissez le code maître de la direction (6 caractères minimum).", "");
+    if(first == null){
+      return;
+    }
 
-        schoolProfessorPrivatePanel
-          .style.display =
-            "none";
+    const code = String(first).trim();
+    if(code.length < 6){
+      alert("Le code doit comporter au moins 6 caractères.");
+      return;
+    }
 
-        if(schoolProfessorAccessBtn){
+    const second = prompt("Confirmez le code maître de la direction.", "");
+    if(second == null){
+      return;
+    }
 
-          schoolProfessorAccessBtn
-            .style.display =
-              "block";
+    if(String(second).trim() !== code){
+      alert("Les deux codes ne correspondent pas.");
+      return;
+    }
 
-          schoolProfessorAccessBtn
-            .scrollIntoView({
-              behavior:
-                "smooth",
-              block:
-                "center"
-            });
+    const data = schoolLoadAccessData();
+    data.direction = {
+      codeHash: await schoolHashCode(code),
+      activatedAt: new Date().toISOString()
+    };
+
+    if(!schoolSaveAccessData(data)){
+      alert("L’activation n’a pas pu être enregistrée sur cet appareil.");
+      return;
+    }
+
+    schoolRefreshAccessStartUi();
+
+    if(schoolAccessStatus){
+      schoolAccessStatus.textContent =
+        "✓ Accès direction activé pour cette démonstration. Dans la version sécurisée, cette activation sera gérée hors du navigateur.";
+    }
+  }
+
+  function schoolTeacherAccessExpired(account){
+    if(!account || !account.expiresAt){
+      return false;
+    }
+    return String(account.expiresAt) < schoolTodayIso();
+  }
+
+  async function schoolLogin(){
+    const role = schoolAccessRole ? String(schoolAccessRole.value || "teacher") : "teacher";
+    const code = String(schoolAccessCodeInput && schoolAccessCodeInput.value ? schoolAccessCodeInput.value : "").trim();
+
+    if(!code){
+      alert("Saisissez votre code personnel.");
+      return;
+    }
+
+    const data = schoolLoadAccessData();
+    const hash = await schoolHashCode(code);
+
+    if(role === "direction"){
+      if(!data.direction || !data.direction.codeHash){
+        alert("L’accès direction n’a pas encore été activé sur cette démonstration.");
+        return;
+      }
+
+      if(hash !== String(data.direction.codeHash)){
+        alert("Code direction incorrect.");
+        return;
+      }
+
+      schoolSession = {
+        role: "direction",
+        teacherId: "",
+        openedFromDirection: false
+      };
+
+      schoolAccessPanel.style.display = "none";
+      schoolDirectionPanel.style.display = "block";
+      schoolAccessOpenBtn.style.display = "none";
+      schoolAccessCodeInput.value = "";
+      schoolRenderTeacherAccessList();
+      schoolFillClassSuggestions();
+      schoolDirectionPanel.scrollIntoView({ behavior:"smooth", block:"start" });
+      return;
+    }
+
+    const account = data.teachers.find(function(item){
+      return item && String(item.codeHash || "") === hash;
+    });
+
+    if(!account){
+      alert("Code professeur incorrect.");
+      return;
+    }
+
+    if(account.active === false){
+      alert("Cet accès professeur est suspendu. Contactez la direction de l’école.");
+      return;
+    }
+
+    if(schoolTeacherAccessExpired(account)){
+      alert("Cet accès temporaire est arrivé à son terme. Contactez la direction de l’école.");
+      return;
+    }
+
+    schoolSession = {
+      role: "teacher",
+      teacherId: String(account.id || ""),
+      openedFromDirection: false
+    };
+
+    schoolAccessCodeInput.value = "";
+    schoolOpenProfessorWorkspace(account, false);
+  }
+
+  function schoolOpenProfessorWorkspace(account, openedFromDirection){
+    if(!account){
+      return;
+    }
+
+    schoolSelectClassForAccess(account);
+
+    schoolSession.openedFromDirection = Boolean(openedFromDirection);
+    if(openedFromDirection){
+      schoolSession.role = "direction";
+      schoolSession.teacherId = String(account.id || "");
+    }
+
+    schoolAccessPanel.style.display = "none";
+    schoolDirectionPanel.style.display = "none";
+    schoolAccessOpenBtn.style.display = "none";
+    schoolProfessorPrivatePanel.style.display = "block";
+
+    if(schoolProfessorIdentity){
+      schoolProfessorIdentity.textContent =
+        "Classe : " + String(account.className || schoolCurrentClass()) +
+        " — Accès : " + String(account.name || "Professeur");
+    }
+
+    if(schoolTeacherCodeChangeCard){
+      schoolTeacherCodeChangeCard.style.display = openedFromDirection ? "none" : "block";
+    }
+
+    schoolUpdateWordDisplay();
+    schoolRefreshValidationUi();
+    schoolRefreshSolidarityUi();
+
+    if(
+      window.BociteSchoolWordSimple &&
+      typeof window.BociteSchoolWordSimple.refresh === "function"
+    ){
+      window.BociteSchoolWordSimple.refresh();
+    }
+
+    window.setTimeout(function(){
+      schoolProfessorPrivatePanel.scrollIntoView({ behavior:"smooth", block:"start" });
+    }, 50);
+  }
+
+  async function schoolCreateTeacherAccess(){
+    const name = String(schoolTeacherNameInput && schoolTeacherNameInput.value ? schoolTeacherNameInput.value : "").trim();
+    const className = String(schoolTeacherClassInput && schoolTeacherClassInput.value ? schoolTeacherClassInput.value : "").trim();
+    const code = String(schoolTeacherInitialCodeInput && schoolTeacherInitialCodeInput.value ? schoolTeacherInitialCodeInput.value : "").trim();
+    const expiresAt = String(schoolTeacherExpiryInput && schoolTeacherExpiryInput.value ? schoolTeacherExpiryInput.value : "").trim();
+
+    if(!name || !className){
+      alert("Renseignez le professeur ou remplaçant et sa classe.");
+      return;
+
+         }
+
+    if(code.length < 6){
+      alert("Le code d’activation doit comporter au moins 6 caractères.");
+      return;
+    }
+
+    if(expiresAt && expiresAt < schoolTodayIso()){
+      alert("La date de fin d’accès ne peut pas être déjà passée.");
+      return;
+    }
+
+    const data = schoolLoadAccessData();
+    const codeHash = await schoolHashCode(code);
+
+    if(data.teachers.some(function(item){
+      return item && String(item.codeHash || "") === codeHash;
+    })){
+      alert("Ce code est déjà utilisé par un autre accès. Choisissez-en un autre.");
+      return;
+    }
+
+    const matchedClass = schoolFindClassByName(className);
+    const nowIso = new Date().toISOString();
+
+    data.teachers.push({
+      id: schoolCreateId("teacher"),
+      name: name,
+      className: className,
+      classId: matchedClass ? String(matchedClass.id || "") : "",
+      codeHash: codeHash,
+      active: true,
+      expiresAt: expiresAt,
+      createdAt: nowIso,
+      updatedAt: nowIso
+    });
+
+    if(!schoolSaveAccessData(data)){
+      alert("L’accès n’a pas pu être enregistré sur cet appareil.");
+      return;
+    }
+
+    schoolTeacherNameInput.value = "";
+    schoolTeacherClassInput.value = "";
+    schoolTeacherInitialCodeInput.value = "";
+    schoolTeacherExpiryInput.value = "";
+
+    if(schoolDirectionStatus){
+      schoolDirectionStatus.textContent =
+        "✓ Accès créé. Remettez le code d’activation au professeur ou au remplaçant concerné.";
+    }
+
+    schoolRenderTeacherAccessList();
+  }
+
+  function schoolRenderTeacherAccessList(){
+    if(!schoolTeacherAccessList){
+      return;
+    }
+
+    const data = schoolLoadAccessData();
+    const rows = data.teachers.slice().sort(function(a, b){
+      return String(a.className || "").localeCompare(String(b.className || ""));
+    });
+
+    if(!rows.length){
+      schoolTeacherAccessList.innerHTML = `
+        <div class="bociteSchoolCard">
+          Aucun accès professeur n’a encore été créé.
+        </div>
+      `;
+      return;
+    }
+
+    schoolTeacherAccessList.innerHTML = rows.map(function(account){
+      const expired = schoolTeacherAccessExpired(account);
+      const active = account.active !== false && !expired;
+      const statusText = expired
+        ? "Accès arrivé à son terme"
+        : (account.active === false ? "Accès suspendu" : "Accès actif");
+
+      return `
+        <div class="schoolAccessItem" data-teacher-access-id="${schoolEscapeHtml(account.id)}">
+          <div class="schoolAccessItemTitle">
+            ${schoolEscapeHtml(account.className || "Classe")}
+          </div>
+
+          <div style="margin-top:5px;">
+            ${schoolEscapeHtml(account.name || "Professeur")}
+          </div>
+
+          <div style="margin-top:5px;">
+            ${schoolEscapeHtml(statusText)}
+            ${account.expiresAt ? " — jusqu’au " + schoolEscapeHtml(account.expiresAt) : ""}
+          </div>
+
+          <button
+            class="schoolMiniButton"
+            type="button"
+            data-school-open-teacher="${schoolEscapeHtml(account.id)}"
+          >
+            Ouvrir cette classe
+          </button>
+
+          <button
+            class="schoolMiniButton ${active ? "schoolMiniButtonDanger" : ""}"
+            type="button"
+            data-school-toggle-teacher="${schoolEscapeHtml(account.id)}"
+          >
+            ${active ? "Suspendre l’accès" : "Réactiver l’accès"}
+          </button>
+
+          <button
+            class="schoolMiniButton"
+            type="button"
+            data-school-reset-teacher-code="${schoolEscapeHtml(account.id)}"
+          >
+            Réinitialiser le code
+          </button>
+        </div>
+      `;
+    }).join("");
+
+    schoolTeacherAccessList.querySelectorAll("[data-school-open-teacher]").forEach(function(button){
+      button.onclick = function(){
+        const id = String(button.dataset.schoolOpenTeacher || "");
+        const currentData = schoolLoadAccessData();
+        const account = currentData.teachers.find(function(item){
+          return item && String(item.id || "") === id;
+        });
+        if(account){
+          schoolOpenProfessorWorkspace(account, true);
         }
       };
+    });
+
+    schoolTeacherAccessList.querySelectorAll("[data-school-toggle-teacher]").forEach(function(button){
+      button.onclick = function(){
+        const id = String(button.dataset.schoolToggleTeacher || "");
+        const currentData = schoolLoadAccessData();
+        const index = currentData.teachers.findIndex(function(item){
+          return item && String(item.id || "") === id;
+        });
+
+        if(index < 0){
+          return;
+        }
+
+        const account = currentData.teachers[index];
+        const currentlyActive = account.active !== false && !schoolTeacherAccessExpired(account);
+        account.active = !currentlyActive;
+
+        if(account.active && account.expiresAt && account.expiresAt < schoolTodayIso()){
+          account.expiresAt = "";
+        }
+
+        account.updatedAt = new Date().toISOString();
+        currentData.teachers[index] = account;
+        schoolSaveAccessData(currentData);
+        schoolRenderTeacherAccessList();
+      };
+    });
+
+    schoolTeacherAccessList.querySelectorAll("[data-school-reset-teacher-code]").forEach(function(button){
+      button.onclick = async function(){
+        const id = String(button.dataset.schoolResetTeacherCode || "");
+        const newCodePrompt = prompt("Nouveau code d’activation pour ce professeur (6 caractères minimum).", "");
+        if(newCodePrompt == null){
+          return;
+        }
+
+        const newCode = String(newCodePrompt).trim();
+        if(newCode.length < 6){
+          alert("Le code doit comporter au moins 6 caractères.");
+          return;
+        }
+
+        const currentData = schoolLoadAccessData();
+        const index = currentData.teachers.findIndex(function(item){
+          return item && String(item.id || "") === id;
+        });
+
+        if(index < 0){
+          return;
+        }
+
+        const newHash = await schoolHashCode(newCode);
+        const duplicate = currentData.teachers.some(function(item, itemIndex){
+          return itemIndex !== index && item && String(item.codeHash || "") === newHash;
+        });
+
+        if(duplicate){
+          alert("Ce code est déjà utilisé par un autre accès.");
+          return;
+        }
+
+        currentData.teachers[index].codeHash = newHash;
+        currentData.teachers[index].active = true;
+        currentData.teachers[index].updatedAt = new Date().toISOString();
+        schoolSaveAccessData(currentData);
+
+        alert("Le code a été réinitialisé. Remettez le nouveau code au professeur concerné.");
+        schoolRenderTeacherAccessList();
+      };
+    });
   }
 
+  async function schoolTeacherChangeOwnCode(){
+    if(schoolSession.role !== "teacher" || !schoolSession.teacherId){
+      return;
+    }
 
-  /* =====================================================
-     RACCORDEMENTS
-     ===================================================== */
+    const newCode = String(schoolTeacherNewCodeInput && schoolTeacherNewCodeInput.value ? schoolTeacherNewCodeInput.value : "").trim();
+    const confirmCode = String(schoolTeacherNewCodeConfirmInput && schoolTeacherNewCodeConfirmInput.value ? schoolTeacherNewCodeConfirmInput.value : "").trim();
+
+    if(newCode.length < 6){
+      alert("Le nouveau code doit comporter au moins 6 caractères.");
+      return;
+    }
+
+    if(newCode !== confirmCode){
+      alert("Les deux codes ne correspondent pas.");
+      return;
+    }
+
+    const data = schoolLoadAccessData();
+    const index = data.teachers.findIndex(function(item){
+      return item && String(item.id || "") === schoolSession.teacherId;
+    });
+
+    if(index < 0){
+      alert("Cet accès n’est plus disponible.");
+      return;
+    }
+
+    const newHash = await schoolHashCode(newCode);
+    const duplicate = data.teachers.some(function(item, itemIndex){
+      return itemIndex !== index && item && String(item.codeHash || "") === newHash;
+    });
+
+    if(duplicate){
+      alert("Ce code est déjà utilisé par un autre accès.");
+      return;
+    }
+
+    data.teachers[index].codeHash = newHash;
+    data.teachers[index].updatedAt = new Date().toISOString();
+    schoolSaveAccessData(data);
+
+    schoolTeacherNewCodeInput.value = "";
+    schoolTeacherNewCodeConfirmInput.value = "";
+
+    if(schoolTeacherCodeChangeStatus){
+      schoolTeacherCodeChangeStatus.textContent =
+        "✓ Votre code personnel a été modifié. L’accès maître de la direction reste inchangé.";
+    }
+  }
+
+  function schoolCloseProfessorWorkspace(){
+    schoolCloseScheduleManager();
+
+       schoolProfessorPrivatePanel.style.display = "none";
+
+    if(schoolSession.openedFromDirection || schoolSession.role === "direction"){
+      schoolSession = { role:"direction", teacherId:"", openedFromDirection:false };
+      schoolDirectionPanel.style.display = "block";
+      schoolRenderTeacherAccessList();
+      schoolDirectionPanel.scrollIntoView({ behavior:"smooth", block:"start" });
+      return;
+    }
+
+    schoolSession = { role:"", teacherId:"", openedFromDirection:false };
+    schoolAccessPanel.style.display = "block";
+    schoolAccessOpenBtn.style.display = "none";
+    schoolAccessPanel.scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
+  function schoolDirectionLogout(){
+    schoolSession = { role:"", teacherId:"", openedFromDirection:false };
+    schoolDirectionPanel.style.display = "none";
+    schoolAccessPanel.style.display = "block";
+    schoolAccessOpenBtn.style.display = "none";
+    if(schoolAccessStatus){
+      schoolAccessStatus.textContent = "";
+    }
+    schoolAccessPanel.scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
+  if(schoolAccessOpenBtn){
+    schoolAccessOpenBtn.onclick = function(){
+      schoolAccessOpenBtn.style.display = "none";
+      schoolAccessPanel.style.display = "block";
+      schoolRefreshAccessStartUi();
+      schoolFillClassSuggestions();
+      schoolAccessPanel.scrollIntoView({ behavior:"smooth", block:"start" });
+    };
+  }
+
+  if(schoolDirectionFirstSetupBtn){
+    schoolDirectionFirstSetupBtn.onclick = schoolFirstDirectionSetup;
+  }
+
+  if(schoolAccessLoginBtn){
+    schoolAccessLoginBtn.onclick = schoolLogin;
+  }
+
+  if(schoolAccessCodeInput){
+    schoolAccessCodeInput.addEventListener("keydown", function(event){
+      if(event.key === "Enter"){
+        event.preventDefault();
+        schoolLogin();
+      }
+    });
+  }
+
+  if(schoolTeacherCreateBtn){
+    schoolTeacherCreateBtn.onclick = schoolCreateTeacherAccess;
+  }
+
+  if(schoolDirectionLogoutBtn){
+    schoolDirectionLogoutBtn.onclick = schoolDirectionLogout;
+  }
+
+  if(schoolProfessorCloseBtn){
+    schoolProfessorCloseBtn.onclick = schoolCloseProfessorWorkspace;
+  }
 
   if(schoolWordInput){
-
-    schoolWordInput.addEventListener(
-      "input",
-      schoolUpdateWordDisplay
-    );
-
+    schoolWordInput.addEventListener("input", schoolUpdateWordDisplay);
     schoolUpdateWordDisplay();
   }
 
-
   if(schoolClassSelect){
-
-    schoolClassSelect.addEventListener(
-      "change",
-      function(){
-
-        schoolRefreshValidationUi();
-        schoolRefreshOrientationUi();
-      }
-    );
+    schoolClassSelect.addEventListener("change", function(){
+      schoolRefreshValidationUi();
+      schoolRefreshSolidarityUi();
+    });
   }
-
 
   if(schoolSaveBtn){
-
-    schoolSaveBtn.onclick =
-      schoolMarkTodayValidated;
+    schoolSaveBtn.onclick = schoolMarkTodayValidated;
   }
 
-
-  if(
-    schoolManageScheduledWordsBtn
-  ){
-
-    schoolManageScheduledWordsBtn.onclick =
-      schoolOpenScheduleManager;
+  if(schoolManageScheduledWordsBtn){
+    schoolManageScheduledWordsBtn.onclick = schoolOpenScheduleManager;
   }
 
+  document.querySelectorAll('input[name="schoolSolidarityMode"]').forEach(function(radio){
+    radio.addEventListener("change", schoolRefreshSolidarityVisibility);
+  });
 
-  schoolRefreshOrientationUi();
-
-
-  if(schoolPrivateUseSaveBtn){
-
-    schoolPrivateUseSaveBtn.onclick =
-      function(){
-
-        const value =
-          schoolPrivateUseSelect
-            ? String(
-                schoolPrivateUseSelect.value ||
-                "later"
-              )
-            : "later";
-
-        const data =
-          schoolLoadUseMap();
-
-        data[
-          schoolUseMapKey()
-        ] =
-          value;
-
-        try{
-
-          localStorage.setItem(
-            SCHOOL_PRIVATE_USE_KEY,
-            JSON.stringify(
-              data
-            )
-          );
-
-        }catch(error){}
-
-        if(
-          schoolPrivateUseStatus
-        ){
-
-          schoolPrivateUseStatus.textContent =
-            "✓ Orientation enregistrée. Les modalités concrètes seront précisées avec la mairie, en relation avec l’école.";
-        }
-      };
+  if(schoolSolidaritySaveBtn){
+    schoolSolidaritySaveBtn.onclick = schoolSaveSolidarityChoice;
   }
 
-
-  window.setTimeout(
-    function(){
-
-      schoolRefreshValidationUi();
-      schoolRefreshAutomaticCoinUi();
-
-      if(
-        window.BociteSchoolWordSimple &&
-        typeof window
-          .BociteSchoolWordSimple
-          .refresh ===
-            "function"
-      ){
-
-        window
-          .BociteSchoolWordSimple
-          .refresh();
-      }
-
-    },
-    120
-  );
-
-
-  const xb =
-    document.getElementById(
-      "xBtn"
-    );
-
-  if(
-    xb &&
-    xb.addEventListener
-  ){
-
-    xb.addEventListener(
-      "click",
-      schoolCloseScheduleManager,
-      {
-        once:true
-      }
-    );
+  if(schoolTeacherChangeCodeBtn){
+    schoolTeacherChangeCodeBtn.onclick = schoolTeacherChangeOwnCode;
   }
 
-  if(
-    xb &&
-    xb.focus
-  ){
+  schoolRefreshAccessStartUi();
+  schoolFillClassSuggestions();
 
+  window.setTimeout(function(){
+    schoolRefreshValidationUi();
+    schoolRefreshAutomaticCoinUi();
+
+    if(
+      window.BociteSchoolWordSimple &&
+      typeof window.BociteSchoolWordSimple.refresh === "function"
+    ){
+      window.BociteSchoolWordSimple.refresh();
+    }
+  }, 120);
+
+  const xb = document.getElementById("xBtn");
+  if(xb && xb.addEventListener){
+    xb.addEventListener("click", schoolCloseScheduleManager, { once:true });
+  }
+
+  if(xb && xb.focus){
     xb.focus();
   }
 
