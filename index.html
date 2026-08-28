@@ -4222,10 +4222,43 @@ if(key === "ecole"){
         }
 
         .bociteSchoolPublicRoot .bociteSchoolActionPrimary{
+          border-color:#2f5d46;
           background:#2f5d46;
           color:#ffffff;
         }
+
+        .bociteSchoolPublicRoot .bociteSchoolActionDanger{
+          border-color:#b42318;
+          color:#b42318;
+          background:#ffffff;
+        }
+
+        .bociteSchoolPublicRoot .bociteSchoolPrivate{
+          display:none;
+          margin-top:14px;
+          padding-top:2px;
+          border-top:2px solid #2f5d46;
+        }
+
+        .bociteSchoolPublicRoot .bociteSchoolBalance{
+          margin-top:8px;
+          padding:12px;
+          border-radius:10px;
+          background:#f7f2e8;
+          text-align:center;
+        }
+
+        .bociteSchoolPublicRoot .bociteSchoolBalanceValue{
+          margin-top:4px;
+          color:#2f5d46;
+          font-size:24px;
+          font-weight:700;
+        }
       </style>
+
+      <!-- =====================================================
+           PARTIE PUBLIQUE — CE QUE LE MOT DU JOUR APPORTE
+           ===================================================== -->
 
       <div class="bociteSchoolTitle" style="margin-top:0;">
         Le Mot du jour
@@ -4250,7 +4283,7 @@ if(key === "ecole"){
       </div>
 
       <div class="bociteSchoolSectionTitle">
-        Ce que ce rendez-vous peut faire grandir
+        Éducation, valeurs et vie collective
       </div>
 
       <div class="bociteSchoolCard">
@@ -4261,125 +4294,32 @@ if(key === "ecole"){
 
         <br><br>
 
-        Ce moment très simple peut aider les enfants,
+        Ce moment très simple peut progressivement aider les enfants,
         selon leur âge et la manière dont le professeur l’utilise,
-        à apprendre autrement.
+        à développer des apprentissages et des attitudes utiles.
 
         <div class="bociteSchoolList">
-          <div>• faire silence au bon moment ;</div>
-          <div>• écouter celui qui parle ;</div>
-          <div>• attendre son tour ;</div>
-          <div>• respecter la parole d’un autre enfant ;</div>
+          <div>• enrichir le vocabulaire et l’expression ;</div>
+          <div>• apprendre à parler devant les autres et prendre confiance ;</div>
+          <div>• faire silence au bon moment et écouter celui qui parle ;</div>
+          <div>• attendre son tour et respecter la parole d’un autre enfant ;</div>
           <div>• mieux maîtriser son comportement pendant un temps donné ;</div>
-          <div>• prendre confiance lorsqu’il faut s’exprimer ;</div>
-          <div>• enrichir son vocabulaire et son expression ;</div>
-          <div>• comprendre que chacun a une place dans le groupe ;</div>
-          <div>• respecter une règle commune ;</div>
-          <div>• développer la patience et la régularité ;</div>
-          <div>• persévérer dans un effort ;</div>
+          <div>• respecter une règle commune et comprendre son utilité ;</div>
+          <div>• développer la patience, la régularité et la persévérance ;</div>
+          <div>• comprendre que tout ne s’obtient pas immédiatement ;</div>
           <div>• encourager un camarade plutôt que le gêner ;</div>
-          <div>• découvrir naturellement des notions de respect, de responsabilité, de solidarité et de civisme.</div>
-        </div>
-      </div>
-
-      <div class="bociteSchoolSectionTitle">
-        Pour le professeur
-      </div>
-
-      <div class="bociteSchoolCard" id="schoolProfessorWorkArea">
-        <div>
-          Le professeur prépare simplement le Mot du jour,
-          l’écoute avant de le retenir,
-          puis choisit le jour où il doit être présenté à la classe.
+          <div>• comprendre que chacun peut contribuer au résultat du groupe ;</div>
+          <div>• apprendre à faire une place à celui qui est plus réservé ;</div>
+          <div>• découvrir concrètement le respect, la responsabilité et le civisme ;</div>
+          <div>• faire vivre l’entraide et la solidarité dans la classe ;</div>
+          <div>• comprendre qu’un effort collectif peut aussi servir un projet ou une action solidaire.</div>
         </div>
 
-        <label class="bociteSchoolFieldLabel" for="schoolClassSelect">
-          Classe
-        </label>
-
-        <input
-          id="schoolClassSelect"
-          class="bociteSchoolField"
-          type="text"
-          maxlength="80"
-          placeholder="Ex. CM2 A"
-          autocomplete="off"
-        >
-
-        <label class="bociteSchoolFieldLabel" for="schoolWordInput">
-          Mot, expression ou phrase du jour
-        </label>
-
-        <textarea
-          id="schoolWordInput"
-          class="bociteSchoolField"
-          rows="3"
-          maxlength="500"
-          placeholder="Ex. Je suis ravi aujourd’hui."
-        >Je suis ravi aujourd’hui.</textarea>
-
-        <div
-          id="schoolWordDisplay"
-          style="display:none;"
-          aria-hidden="true"
-        ></div>
-
-        <div id="schoolSimpleProfessorMount" style="margin-top:12px;">
-          <button
-            id="schoolRecordVoiceBtn"
-            type="button"
-            style="display:none;"
-            aria-hidden="true"
-            tabindex="-1"
-          >
-            Point d’ancrage
-          </button>
+        <div style="margin-top:12px;padding:12px;border-radius:10px;background:#f7f2e8;">
+          Le professeur reste naturellement maître de sa classe.
+          <span class="bociteBrand"><span class="bociteBrandGreen">Bo’Cité</span><span class="bociteBrandRed">Art</span></span>
+          lui apporte simplement un support supplémentaire pour faire vivre ces apprentissages autrement.
         </div>
-
-        <button
-          id="schoolManageScheduledWordsBtn"
-          class="bociteSchoolAction"
-          type="button"
-        >
-          Voir ou modifier les Mots programmés
-        </button>
-
-        <div
-          id="schoolProfessorValidationStatus"
-          role="status"
-          aria-live="polite"
-          style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;line-height:1.5;"
-        ></div>
-
-        <button
-          id="schoolSaveBtn"
-          type="button"
-          style="display:none;"
-          aria-hidden="true"
-          tabindex="-1"
-        >
-          Valider
-        </button>
-      </div>
-
-            <div class="bociteSchoolSectionTitle">
-        Le professeur reste maître de sa classe
-      </div>
-
-      <div class="bociteSchoolCard">
-        <span class="bociteBrand"><span class="bociteBrandGreen">Bo’Cité</span><span class="bociteBrandRed">Art</span></span>
-        apporte un support supplémentaire.
-
-        <br><br>
-
-        Le professeur choisit ce qui est adapté à sa classe,
-        à l’âge des enfants
-        et aux apprentissages qu’il souhaite accompagner.
-
-        <br><br>
-
-        Les bénéfices peuvent être différents d’une classe à l’autre
-        et ne se limitent pas aux exemples présentés ici.
       </div>
 
       <div class="bociteSchoolSectionTitle">
@@ -4392,19 +4332,224 @@ if(key === "ecole"){
         et des autorisations applicables.
       </div>
 
+      <button
+        id="schoolProfessorAccessBtn"
+        class="bociteSchoolAction bociteSchoolActionPrimary"
+        type="button"
+        style="margin-top:14px;"
+      >
+        Accès professeur
+      </button>
+
+      <!-- =====================================================
+           ESPACE PROFESSEUR — COMMANDES UTILES UNIQUEMENT
+           ===================================================== -->
+
+      <div id="schoolProfessorPrivatePanel" class="bociteSchoolPrivate">
+
+        <div class="bociteSchoolSectionTitle" style="margin-top:12px;">
+          Espace professeur
+        </div>
+
+        <div class="bociteSchoolCard" id="schoolProfessorWorkArea">
+          <div>
+            Préparez le Mot du jour, écoutez-le avant de le retenir,
+            puis programmez-le pour la classe.
+          </div>
+
+          <label class="bociteSchoolFieldLabel" for="schoolClassSelect">
+            Classe
+          </label>
+
+          <input
+            id="schoolClassSelect"
+            class="bociteSchoolField"
+            type="text"
+            maxlength="80"
+            placeholder="Ex. CM2 A"
+            autocomplete="off"
+          >
+
+          <label class="bociteSchoolFieldLabel" for="schoolWordInput">
+            Mot, expression ou phrase du jour
+          </label>
+
+          <textarea
+            id="schoolWordInput"
+            class="bociteSchoolField"
+            rows="3"
+            maxlength="500"
+            placeholder="Ex. Je suis ravi aujourd’hui."
+          >Je suis ravi aujourd’hui.</textarea>
+
+          <div id="schoolWordDisplay" style="display:none;" aria-hidden="true"></div>
+
+          <div id="schoolSimpleProfessorMount" style="margin-top:12px;">
+            <button
+              id="schoolRecordVoiceBtn"
+              type="button"
+              style="display:none;"
+              aria-hidden="true"
+              tabindex="-1"
+            >
+              Point d’ancrage
+            </button>
+          </div>
+
+          <button
+            id="schoolManageScheduledWordsBtn"
+            class="bociteSchoolAction"
+            type="button"
+          >
+            Voir ou modifier les Mots programmés
+          </button>
+
+          <div
+            id="schoolProfessorValidationStatus"
+            role="status"
+            aria-live="polite"
+            style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;line-height:1.5;"
+          ></div>
+
+          <button
+            id="schoolSaveBtn"
+            type="button"
+            style="display:none;"
+            aria-hidden="true"
+            tabindex="-1"
+          >
+            Valider
+          </button>
+        </div>
+
+        <div class="bociteSchoolSectionTitle">
+          Bocitecoins de la classe
+        </div>
+
+        <div class="bociteSchoolCard">
+          <div>
+            Après la validation du Mot du jour,
+            le professeur peut enregistrer l’attribution prévue pour la classe.
+            Les règles qui déterminent cette attribution ne sont pas affichées ici.
+          </div>
+
+          <div class="bociteSchoolBalance">
+            <div>Solde actuel de la classe</div>
+            <div id="schoolPrivateCoinBalance" class="bociteSchoolBalanceValue">0</div>
+            <div>bocitecoins</div>
+          </div>
+
+          <label class="bociteSchoolFieldLabel" for="schoolPrivateCoinAmount">
+            Bocitecoins à attribuer pour cette séance
+          </label>
+
+          <input
+            id="schoolPrivateCoinAmount"
+            class="bociteSchoolField"
+            type="number"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            placeholder="Saisir l’attribution prévue"
+          >
+
+          <button
+            id="schoolPrivateAwardBtn"
+            class="bociteSchoolAction bociteSchoolActionPrimary"
+            type="button"
+          >
+            Attribuer les bocitecoins
+          </button>
+
+          <button
+            id="schoolPrivateHistoryBtn"
+            class="bociteSchoolAction"
+            type="button"
+          >
+            Consulter l’historique de la classe
+          </button>
+
+          <div
+            id="schoolPrivateCoinStatus"
+            role="status"
+            aria-live="polite"
+            style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;line-height:1.5;"
+          ></div>
+        </div>
+
+        <div class="bociteSchoolSectionTitle">
+          Projet de classe ou solidarité
+        </div>
+
+        <div class="bociteSchoolCard">
+          <div>
+            Le professeur peut simplement mémoriser l’orientation souhaitée par la classe.
+            Les conditions et possibilités réellement disponibles seront présentées au moment utile.
+          </div>
+
+          <label class="bociteSchoolFieldLabel" for="schoolPrivateUseSelect">
+            Orientation souhaitée
+          </label>
+
+          <select id="schoolPrivateUseSelect" class="bociteSchoolField">
+            <option value="later">Décider plus tard</option>
+            <option value="class-project">Préparer un projet pour la classe</option>
+            <option value="solidarity">Préparer une action solidaire</option>
+          </select>
+
+          <button
+            id="schoolPrivateUseSaveBtn"
+            class="bociteSchoolAction"
+            type="button"
+          >
+            Enregistrer ce choix
+          </button>
+
+          <div
+            id="schoolPrivateUseStatus"
+            role="status"
+            aria-live="polite"
+            style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;line-height:1.5;"
+          ></div>
+        </div>
+
+        <button
+          id="schoolProfessorCloseBtn"
+          class="bociteSchoolAction"
+          type="button"
+        >
+          Fermer l’espace professeur
+        </button>
+
+      </div>
+
     </div>
   `);
 
-  const schoolClassSelect = $("schoolClassSelect");
-  const schoolWordInput = $("schoolWordInput");
-  const schoolWordDisplay = $("schoolWordDisplay");
-  const schoolSaveBtn = $("schoolSaveBtn");
-  const schoolManageScheduledWordsBtn = $("schoolManageScheduledWordsBtn");
-  const schoolProfessorValidationStatus = $("schoolProfessorValidationStatus");
+   const schoolProfessorAccessBtn = document.getElementById("schoolProfessorAccessBtn");
+  const schoolProfessorCloseBtn = document.getElementById("schoolProfessorCloseBtn");
+  const schoolProfessorPrivatePanel = document.getElementById("schoolProfessorPrivatePanel");
+  const schoolClassSelect = document.getElementById("schoolClassSelect");
+  const schoolWordInput = document.getElementById("schoolWordInput");
+  const schoolWordDisplay = document.getElementById("schoolWordDisplay");
+  const schoolSaveBtn = document.getElementById("schoolSaveBtn");
+  const schoolManageScheduledWordsBtn = document.getElementById("schoolManageScheduledWordsBtn");
+  const schoolProfessorValidationStatus = document.getElementById("schoolProfessorValidationStatus");
+  const schoolPrivateCoinBalance = document.getElementById("schoolPrivateCoinBalance");
+  const schoolPrivateCoinAmount = document.getElementById("schoolPrivateCoinAmount");
+  const schoolPrivateAwardBtn = document.getElementById("schoolPrivateAwardBtn");
+  const schoolPrivateHistoryBtn = document.getElementById("schoolPrivateHistoryBtn");
+  const schoolPrivateCoinStatus = document.getElementById("schoolPrivateCoinStatus");
+  const schoolPrivateUseSelect = document.getElementById("schoolPrivateUseSelect");
+  const schoolPrivateUseSaveBtn = document.getElementById("schoolPrivateUseSaveBtn");
+  const schoolPrivateUseStatus = document.getElementById("schoolPrivateUseStatus");
 
-  const SCHOOL_LAST_CLASS_UI_KEY = "bociteart_school_last_class_ui_v1";
-  const SCHOOL_VALIDATION_UI_KEY = "bociteart_school_validation_ui_v1";
+  const SCHOOL_LAST_CLASS_UI_KEY = "bociteart_school_last_class_ui_v2";
+  const SCHOOL_VALIDATION_UI_KEY = "bociteart_school_validation_ui_v2";
   const SCHOOL_SCHEDULE_UI_KEY = "bociteart_school_voice_schedule_v1";
+  const SCHOOL_PRIVATE_WALLET_KEY = "bociteart_school_private_demo_wallet_v1";
+  const SCHOOL_PRIVATE_HISTORY_KEY = "bociteart_school_private_demo_history_v1";
+  const SCHOOL_PRIVATE_USE_KEY = "bociteart_school_private_demo_use_v1";
 
   function schoolTodayIso(){
     const now = new Date();
@@ -4472,26 +4617,26 @@ if(key === "ecole"){
     return schoolTodayIso() + "||" + schoolCurrentClass();
   }
 
+  function schoolIsTodayValidated(){
+    const validations = schoolLoadValidationUi();
+    return Boolean(validations[schoolValidationKey()]);
+  }
+
   function schoolRefreshValidationUi(){
     if(!schoolSaveBtn){
       return;
     }
 
-    const validations = schoolLoadValidationUi();
-    const validated = Boolean(validations[schoolValidationKey()]);
-
+    const validated = schoolIsTodayValidated();
     schoolSaveBtn.disabled = validated;
 
     if(schoolProfessorValidationStatus){
       schoolProfessorValidationStatus.textContent = validated
         ? "✓ Le Mot du jour a été validé aujourd’hui pour cette classe."
-        : "La validation du jour apparaîtra lorsque le Mot du jour programmé sera prêt.";
+        : "Le Mot du jour pourra être validé lorsqu’il sera prêt pour aujourd’hui.";
     }
 
-    if(
-      window.BociteSchoolWordSimple &&
-      typeof window.BociteSchoolWordSimple.refresh === "function"
-    ){
+    if(window.BociteSchoolWordSimple && typeof window.BociteSchoolWordSimple.refresh === "function"){
       window.BociteSchoolWordSimple.refresh();
     }
   }
@@ -4499,9 +4644,15 @@ if(key === "ecole"){
   function schoolMarkTodayValidated(){
     const validations = schoolLoadValidationUi();
 
+    if(validations[schoolValidationKey()]){
+      schoolRefreshValidationUi();
+      return;
+    }
+
     validations[schoolValidationKey()] = {
       date:schoolTodayIso(),
       className:schoolCurrentClass(),
+      word:String(schoolWordInput && schoolWordInput.value ? schoolWordInput.value : "").trim(),
       validatedAt:new Date().toISOString()
     };
 
@@ -4510,10 +4661,7 @@ if(key === "ecole"){
   }
 
   function schoolLoadSchedules(){
-    if(
-      window.BociteSchoolWordSimple &&
-      typeof window.BociteSchoolWordSimple.getSchedule === "function"
-    ){
+    if(window.BociteSchoolWordSimple && typeof window.BociteSchoolWordSimple.getSchedule === "function"){
       try{
         const rows = window.BociteSchoolWordSimple.getSchedule();
 
@@ -4552,6 +4700,186 @@ if(key === "ecole"){
     }
   }
 
+  function schoolLoadPrivateWallet(){
+    if(typeof window.loadSchoolWallet === "function"){
+      try{
+        const wallet = window.loadSchoolWallet();
+
+        return Math.max(
+          0,
+          Number(
+            wallet &&
+            wallet.jaune ||
+            0
+          )
+        );
+      }catch(error){}
+    }
+
+    try{
+      const raw =
+        localStorage.getItem(
+          SCHOOL_PRIVATE_WALLET_KEY
+        );
+
+      return Math.max(
+        0,
+        Number(raw || 0)
+      );
+    }catch(error){
+      return 0;
+    }
+  }
+
+  function schoolSavePrivateWallet(value){
+    const safeValue =
+      Math.max(
+        0,
+        Number(value || 0)
+      );
+
+    if(typeof window.saveSchoolWallet === "function"){
+      try{
+        window.saveSchoolWallet({
+          jaune:safeValue
+        });
+      }catch(error){}
+    }
+
+    try{
+      localStorage.setItem(
+        SCHOOL_PRIVATE_WALLET_KEY,
+        String(safeValue)
+      );
+    }catch(error){}
+  }
+
+  function schoolLoadPrivateHistory(){
+    try{
+      const raw =
+        localStorage.getItem(
+          SCHOOL_PRIVATE_HISTORY_KEY
+        );
+
+      const rows =
+        raw
+          ? JSON.parse(raw)
+          : [];
+
+      return Array.isArray(rows)
+        ? rows
+        : [];
+    }catch(error){
+      return [];
+    }
+  }
+
+  function schoolSavePrivateHistory(rows){
+    try{
+      localStorage.setItem(
+        SCHOOL_PRIVATE_HISTORY_KEY,
+        JSON.stringify(
+          Array.isArray(rows)
+            ? rows.slice(-200)
+            : []
+        )
+      );
+    }catch(error){}
+  }
+
+  function schoolAwardKey(){
+    return (
+      schoolTodayIso() +
+      "||" +
+      schoolCurrentClass()
+    );
+  }
+
+  function schoolRefreshPrivateWallet(){
+    const balance =
+      schoolLoadPrivateWallet();
+
+    if(schoolPrivateCoinBalance){
+      schoolPrivateCoinBalance.textContent =
+        String(balance);
+    }
+
+    const history =
+      schoolLoadPrivateHistory();
+
+    const alreadyAwarded =
+      history.some(function(row){
+        return (
+          row &&
+          row.key === schoolAwardKey()
+        );
+      });
+
+    if(schoolPrivateAwardBtn){
+      schoolPrivateAwardBtn.disabled =
+        alreadyAwarded;
+
+      schoolPrivateAwardBtn.style.opacity =
+        alreadyAwarded
+          ? "0.55"
+          : "1";
+
+      schoolPrivateAwardBtn.style.cursor =
+        alreadyAwarded
+          ? "not-allowed"
+          : "pointer";
+    }
+
+    if(schoolPrivateCoinStatus){
+      schoolPrivateCoinStatus.textContent =
+        alreadyAwarded
+          ? "✓ Une attribution a déjà été enregistrée aujourd’hui pour cette classe."
+          : "Aucune attribution enregistrée aujourd’hui pour cette classe.";
+    }
+  }
+
+  function schoolOpenPrivateHistory(){
+    const currentClass =
+      schoolCurrentClass();
+
+    const rows =
+      schoolLoadPrivateHistory()
+        .filter(function(row){
+          return (
+            row &&
+            String(
+              row.className || ""
+            ) === currentClass
+          );
+        })
+        .slice()
+        .reverse();
+
+    const text =
+      rows.length
+        ? rows.map(function(row){
+            return (
+              String(row.date || "") +
+              " — " +
+              String(row.amount || 0) +
+              " bocitecoins" +
+              (
+                row.word
+                  ? " — " + String(row.word)
+                  : ""
+              )
+            );
+          }).join("\n")
+        : "Aucune attribution enregistrée pour cette classe.";
+
+    alert(
+      "Historique — " +
+      currentClass +
+      "\n\n" +
+      text
+    );
+  }
+
   function schoolCloseScheduleManager(){
     const overlay =
       document.getElementById(
@@ -4572,7 +4900,9 @@ if(key === "ecole"){
       .filter(function(row){
         return (
           row &&
-          String(row.class || "").trim() === currentClass
+          String(
+            row.class || ""
+          ).trim() === currentClass
         );
       })
       .sort(function(a, b){
@@ -4599,234 +4929,229 @@ if(key === "ecole"){
       "font-family:Arial,sans-serif"
     ].join(";");
 
-    const rowsHtml = rows.length
-      ? rows.map(function(row, index){
+    const rowsHtml =
+      rows.length
 
-          const safeId =
-            schoolEscapeHtml(
-              row.id || ("row-" + index)
-            );
+        ? rows.map(function(row, index){
 
-          const safeDate =
-            schoolEscapeHtml(
-              row.date || ""
-            );
+            const safeId =
+              schoolEscapeHtml(
+                row.id ||
+                ("row-" + index)
+              );
 
-          const safeText =
-            schoolEscapeHtml(
-              row.text || ""
-            );
+            const safeDate =
+              schoolEscapeHtml(
+                row.date || ""
+              );
 
-          const realVoice =
-            String(
-              row.voiceMode || ""
-            ) === "real";
+            const safeText =
+              schoolEscapeHtml(
+                row.text || ""
+              );
 
-          return `
+            const realVoice =
+              String(
+                row.voiceMode || ""
+              ) === "real";
+
+            return `
+              <div
+                data-school-schedule-row="${safeId}"
+                style="
+                  margin-top:10px;
+                  padding:12px;
+                  border:1px solid #dedede;
+                  border-radius:10px;
+                  background:#fff;
+                "
+              >
+
+                <div
+                  style="
+                    color:#2f5d46;
+                    font-size:17px;
+                    font-weight:700;
+                  "
+                >
+                  ${safeDate || "Date non renseignée"}
+                </div>
+
+                <div
+                  style="
+                    margin-top:7px;
+                    color:#111;
+                    font-size:14px;
+                    font-weight:400;
+                    line-height:1.5;
+                  "
+                >
+                  ${safeText || "Mot du jour"}
+                </div>
+
+                <label
+                  style="
+                    display:block;
+                    margin-top:10px;
+                    color:#111;
+                    font-size:14px;
+                    font-weight:400;
+                  "
+                >
+                  Jour programmé
+                </label>
+
+                <input
+                  id="schoolScheduleDate_${index}"
+                  type="date"
+                  value="${safeDate}"
+                  style="
+                    display:block;
+                    width:100%;
+                    box-sizing:border-box;
+                    margin-top:6px;
+                    padding:10px;
+                    border:1px solid #bbb;
+                    border-radius:9px;
+                    font-size:14px;
+                  "
+                >
+
+                ${
+                  realVoice
+                    ? `
+                      <div
+                        style="
+                          margin-top:8px;
+                          color:#555;
+                          font-size:13px;
+                          font-weight:400;
+                          line-height:1.45;
+                        "
+                      >
+                        Pour changer la phrase enregistrée,
+                        utilisez « Refaire la phrase »
+                        afin que le son corresponde toujours au texte.
+                      </div>
+                    `
+                    : `
+                      <label
+                        style="
+                          display:block;
+                          margin-top:10px;
+                          color:#111;
+                          font-size:14px;
+                          font-weight:400;
+                        "
+                      >
+                        Phrase
+                      </label>
+
+                      <textarea
+                        id="schoolScheduleText_${index}"
+                        rows="3"
+                        maxlength="500"
+                        style="
+                          display:block;
+                          width:100%;
+                          box-sizing:border-box;
+                          margin-top:6px;
+                          padding:10px;
+                          border:1px solid #bbb;
+                          border-radius:9px;
+                          font-size:14px;
+                          font-family:Arial,sans-serif;
+                        "
+                      >${safeText}</textarea>
+                    `
+                }
+
+                <div
+                  style="
+                    display:flex;
+                    gap:8px;
+                    flex-wrap:wrap;
+                    margin-top:10px;
+                  "
+                >
+
+                  <button
+                    type="button"
+                    data-school-save-schedule="${safeId}"
+                    data-school-index="${index}"
+                    style="
+                      padding:9px 10px;
+                      border:0;
+                      border-radius:9px;
+                      background:#2f5d46;
+                      color:#fff;
+                      font-size:14px;
+                      font-weight:700;
+                      cursor:pointer;
+                    "
+                  >
+                    Enregistrer la modification
+                  </button>
+
+                  <button
+                    type="button"
+                    data-school-redo-schedule="${safeId}"
+                    style="
+                      padding:9px 10px;
+                      border:1px solid #2f5d46;
+                      border-radius:9px;
+                      background:#fff;
+                      color:#2f5d46;
+                      font-size:14px;
+                      font-weight:700;
+                      cursor:pointer;
+                    "
+                  >
+                    Refaire la phrase
+                  </button>
+
+                  <button
+                    type="button"
+                    data-school-delete-schedule="${safeId}"
+                    style="
+                      padding:9px 10px;
+                      border:1px solid #b42318;
+                      border-radius:9px;
+                      background:#fff;
+                      color:#b42318;
+                      font-size:14px;
+                      font-weight:700;
+                      cursor:pointer;
+                    "
+                  >
+                    Supprimer
+                  </button>
+
+                </div>
+
+              </div>
+            `;
+
+          }).join("")
+
+        : `
             <div
-              data-school-schedule-row="${safeId}"
               style="
-                margin-top:10px;
+                margin-top:12px;
                 padding:12px;
-                border:1px solid #dedede;
                 border-radius:10px;
-                background:#fff;
+                background:#f7f2e8;
+                color:#111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.5;
               "
             >
-
-              <div
-                style="
-                  color:#2f5d46;
-                  font-size:17px;
-                  font-weight:700;
-                "
-              >
-                ${safeDate || "Date non renseignée"}
-              </div>
-
-
-              <div
-                style="
-                  margin-top:7px;
-                  color:#111;
-                  font-size:14px;
-                  font-weight:400;
-                  line-height:1.5;
-                "
-              >
-                ${safeText || "Mot du jour"}
-              </div>
-
-
-              <label
-                style="
-                  display:block;
-                  margin-top:10px;
-                  color:#111;
-                  font-size:14px;
-                  font-weight:400;
-                "
-              >
-                Jour programmé
-              </label>
-
-
-              <input
-                id="schoolScheduleDate_${index}"
-                type="date"
-                value="${safeDate}"
-                style="
-                  display:block;
-                  width:100%;
-                  box-sizing:border-box;
-                  margin-top:6px;
-                  padding:10px;
-                  border:1px solid #bbb;
-                  border-radius:9px;
-                  font-size:14px;
-                "
-              >
-
-
-              ${
-                realVoice
-                  ? `
-                    <div
-                      style="
-                        margin-top:8px;
-                        color:#555;
-                        font-size:13px;
-                        font-weight:400;
-                        line-height:1.45;
-                      "
-                    >
-                      Pour changer la phrase enregistrée,
-                      utilisez « Refaire la phrase »
-                      afin que le son corresponde toujours au texte.
-                    </div>
-                  `
-                  : `
-                    <label
-                      style="
-                        display:block;
-                        margin-top:10px;
-                        color:#111;
-                        font-size:14px;
-                        font-weight:400;
-                      "
-                    >
-                      Phrase
-                    </label>
-
-                    <textarea
-                      id="schoolScheduleText_${index}"
-                      rows="3"
-                      maxlength="500"
-                      style="
-                        display:block;
-                        width:100%;
-                        box-sizing:border-box;
-                        margin-top:6px;
-                        padding:10px;
-                        border:1px solid #bbb;
-                        border-radius:9px;
-                        font-size:14px;
-                        font-family:Arial,sans-serif;
-                      "
-                    >${safeText}</textarea>
-                  `
-              }
-
-
-              <div
-                style="
-                  display:flex;
-                  gap:8px;
-                  flex-wrap:wrap;
-                  margin-top:10px;
-                "
-              >
-
-                <button
-                  type="button"
-                  data-school-save-schedule="${safeId}"
-                  data-school-index="${index}"
-                  style="
-                    padding:9px 10px;
-                    border:0;
-                    border-radius:9px;
-                    background:#2f5d46;
-                    color:#fff;
-                    font-size:14px;
-                    font-weight:700;
-                    cursor:pointer;
-                  "
-                >
-                  Enregistrer la modification
-                </button>
-
-
-                <button
-                  type="button"
-                  data-school-redo-schedule="${safeId}"
-                  style="
-                    padding:9px 10px;
-                    border:1px solid #2f5d46;
-                    border-radius:9px;
-                    background:#fff;
-                    color:#2f5d46;
-                    font-size:14px;
-                    font-weight:700;
-                    cursor:pointer;
-                  "
-                >
-                  Refaire la phrase
-                </button>
-
-
-                <button
-                  type="button"
-                  data-school-delete-schedule="${safeId}"
-                  style="
-                    padding:9px 10px;
-                    border:1px solid #b42318;
-                    border-radius:9px;
-                    background:#fff;
-                    color:#b42318;
-                    font-size:14px;
-                    font-weight:700;
-                    cursor:pointer;
-                  "
-                >
-                  Supprimer
-                </button>
-
-              </div>
-
+              Aucun Mot du jour
+              n’est encore programmé
+              pour cette classe.
             </div>
           `;
-
-        }).join("")
-
-      : `
-          <div
-            style="
-              margin-top:12px;
-              padding:12px;
-              border-radius:10px;
-              background:#f7f2e8;
-              color:#111;
-              font-size:14px;
-              font-weight:400;
-              line-height:1.5;
-            "
-          >
-            Aucun Mot du jour
-            n’est encore programmé
-            pour cette classe.
-          </div>
-        `;
-
 
     overlay.innerHTML = `
 
@@ -4877,7 +5202,6 @@ if(key === "ecole"){
 
           </div>
 
-
           <button
             id="schoolScheduleManagerClose"
             type="button"
@@ -4894,9 +5218,7 @@ if(key === "ecole"){
 
         </div>
 
-
         ${rowsHtml}
-
 
         <div
           id="schoolScheduleManagerStatus"
@@ -4914,29 +5236,22 @@ if(key === "ecole"){
       </div>
     `;
 
-
     document.body.appendChild(overlay);
-
 
     const closeButton =
       document.getElementById(
         "schoolScheduleManagerClose"
       );
 
-
     const managerStatus =
       document.getElementById(
         "schoolScheduleManagerStatus"
       );
 
-
     if(closeButton){
-
       closeButton.onclick =
         schoolCloseScheduleManager;
-
     }
-
 
     overlay
       .querySelectorAll(
@@ -4948,74 +5263,67 @@ if(key === "ecole"){
 
           const id =
             String(
-              button.dataset.schoolSaveSchedule || ""
+              button.dataset.schoolSaveSchedule ||
+              ""
             );
-
 
           const index =
             Number(
-              button.dataset.schoolIndex || 0
+              button.dataset.schoolIndex ||
+              0
             );
-
 
           const allRows =
             schoolLoadSchedules();
 
-
           const rowIndex =
             allRows.findIndex(
               function(item){
-
                 return (
                   item &&
-                  String(item.id || "") === id
+                  String(
+                    item.id || ""
+                  ) === id
                 );
-
               }
             );
-
 
           if(rowIndex < 0){
             return;
           }
 
-
           const dateField =
             document.getElementById(
-              "schoolScheduleDate_" + index
+              "schoolScheduleDate_" +
+              index
             );
-
 
           const textField =
             document.getElementById(
-              "schoolScheduleText_" + index
+              "schoolScheduleText_" +
+              index
             );
-
 
           const newDate =
             String(
-              dateField && dateField.value
+              dateField &&
+              dateField.value
                 ? dateField.value
                 : ""
             ).trim();
 
-
           if(!newDate){
 
             if(managerStatus){
-
               managerStatus.textContent =
                 "Choisissez une date.";
-
             }
 
             return;
           }
 
-
           const parts =
             newDate.split("-");
-
 
           const date =
             new Date(
@@ -5024,22 +5332,18 @@ if(key === "ecole"){
               Number(parts[2])
             );
 
-
           if(
             date.getDay() === 0 ||
             date.getDay() === 6
           ){
 
             if(managerStatus){
-
               managerStatus.textContent =
                 "Choisissez un jour de classe, du lundi au vendredi.";
-
             }
 
             return;
           }
-
 
           const updated =
             Object.assign(
@@ -5056,76 +5360,69 @@ if(key === "ecole"){
               }
             );
 
-
           if(textField){
 
             const newText =
               String(
-                textField.value || ""
+                textField.value ||
+                ""
               ).trim();
-
 
             if(!newText){
 
               if(managerStatus){
-
                 managerStatus.textContent =
                   "La phrase ne peut pas être vide.";
-
               }
 
               return;
             }
 
-
             updated.text =
               newText;
-
           }
-
 
           const withoutCollision =
             allRows.filter(
               function(item, currentIndex){
 
                 if(
-                  currentIndex === rowIndex
+                  currentIndex ===
+                  rowIndex
                 ){
                   return true;
                 }
 
                 return !(
                   item &&
-                  String(item.class || "").trim() ===
+                  String(
+                    item.class || ""
+                  ).trim() ===
                     currentClass &&
-                  String(item.date || "") ===
+                  String(
+                    item.date || ""
+                  ) ===
                     newDate
                 );
-
               }
             );
-
 
           const newRowIndex =
             withoutCollision.findIndex(
               function(item){
-
                 return (
                   item &&
-                  String(item.id || "") === id
+                  String(
+                    item.id || ""
+                  ) === id
                 );
-
               }
             );
 
-
           if(newRowIndex >= 0){
-
             withoutCollision[newRowIndex] =
               updated;
-
           }
-
 
           if(
             !schoolSaveSchedules(
@@ -5134,34 +5431,25 @@ if(key === "ecole"){
           ){
 
             if(managerStatus){
-
               managerStatus.textContent =
                 "La modification n’a pas pu être enregistrée.";
-
             }
 
             return;
           }
-
 
           if(
             window.BociteSchoolWordSimple &&
             typeof window.BociteSchoolWordSimple.refresh ===
               "function"
           ){
-
             window.BociteSchoolWordSimple
               .refresh();
-
           }
 
-
           schoolOpenScheduleManager();
-
         };
-
       });
-
 
     overlay
       .querySelectorAll(
@@ -5173,71 +5461,62 @@ if(key === "ecole"){
 
           const id =
             String(
-              button.dataset.schoolRedoSchedule || ""
+              button.dataset.schoolRedoSchedule ||
+              ""
             );
-
 
           const row =
             schoolLoadSchedules()
               .find(function(item){
-
                 return (
                   item &&
-                  String(item.id || "") === id
+                  String(
+                    item.id || ""
+                  ) === id
                 );
-
               });
-
 
           if(
             row &&
             schoolWordInput
           ){
-
             schoolWordInput.value =
               String(
                 row.text || ""
               );
 
             schoolUpdateWordDisplay();
-
           }
-
 
           schoolCloseScheduleManager();
 
+          if(schoolProfessorPrivatePanel){
+            schoolProfessorPrivatePanel.style.display =
+              "block";
+          }
 
           const workArea =
             document.getElementById(
               "schoolProfessorWorkArea"
             );
 
-
           if(workArea){
-
             workArea.scrollIntoView({
               behavior:"smooth",
               block:"start"
             });
-
           }
-
 
           if(
             window.BociteSchoolWordSimple &&
             typeof window.BociteSchoolWordSimple.start ===
               "function"
           ){
-
             window.BociteSchoolWordSimple
               .start();
-
           }
-
         };
-
       });
-
 
     overlay
       .querySelectorAll(
@@ -5249,9 +5528,9 @@ if(key === "ecole"){
 
           const id =
             String(
-              button.dataset.schoolDeleteSchedule || ""
+              button.dataset.schoolDeleteSchedule ||
+              ""
             );
-
 
           if(
             !confirm(
@@ -5261,82 +5540,128 @@ if(key === "ecole"){
             return;
           }
 
-
           const remaining =
             schoolLoadSchedules()
               .filter(function(item){
-
                 return !(
                   item &&
-                  String(item.id || "") === id
+                  String(
+                    item.id || ""
+                  ) === id
                 );
-
               });
-
 
           schoolSaveSchedules(
             remaining
           );
-
 
           if(
             window.BociteSchoolWordSimple &&
             typeof window.BociteSchoolWordSimple.refresh ===
               "function"
           ){
-
             window.BociteSchoolWordSimple
               .refresh();
-
           }
 
-
           schoolOpenScheduleManager();
-
         };
-
       });
-
   }
 
-   if(schoolClassSelect){
+   if(
+    schoolProfessorAccessBtn &&
+    schoolProfessorPrivatePanel
+  ){
+
+    schoolProfessorAccessBtn.onclick =
+      function(){
+
+        schoolProfessorPrivatePanel.style.display =
+          "block";
+
+        schoolProfessorAccessBtn.style.display =
+          "none";
+
+        schoolRefreshValidationUi();
+        schoolRefreshPrivateWallet();
+
+        window.setTimeout(
+          function(){
+
+            if(
+              window.BociteSchoolWordSimple &&
+              typeof window.BociteSchoolWordSimple.refresh ===
+                "function"
+            ){
+              window.BociteSchoolWordSimple
+                .refresh();
+            }
+
+          },
+          50
+        );
+
+        schoolProfessorPrivatePanel.scrollIntoView({
+          behavior:"smooth",
+          block:"start"
+        });
+      };
+  }
+
+  if(
+    schoolProfessorCloseBtn &&
+    schoolProfessorPrivatePanel
+  ){
+
+    schoolProfessorCloseBtn.onclick =
+      function(){
+
+        schoolProfessorPrivatePanel.style.display =
+          "none";
+
+        if(schoolProfessorAccessBtn){
+
+          schoolProfessorAccessBtn.style.display =
+            "block";
+
+          schoolProfessorAccessBtn.scrollIntoView({
+            behavior:"smooth",
+            block:"center"
+          });
+        }
+      };
+  }
+
+  if(schoolClassSelect){
 
     try{
-
       schoolClassSelect.value =
         localStorage.getItem(
           SCHOOL_LAST_CLASS_UI_KEY
-        ) || "CM2 A";
-
+        ) ||
+        "CM2 A";
     }catch(error){
-
       schoolClassSelect.value =
         "CM2 A";
-
     }
-
 
     schoolClassSelect.addEventListener(
       "change",
       function(){
 
         try{
-
           localStorage.setItem(
             SCHOOL_LAST_CLASS_UI_KEY,
             schoolCurrentClass()
           );
-
         }catch(error){}
 
-
         schoolRefreshValidationUi();
-
+        schoolRefreshPrivateWallet();
       }
     );
-
   }
-
 
   if(schoolWordInput){
 
@@ -5346,373 +5671,206 @@ if(key === "ecole"){
     );
 
     schoolUpdateWordDisplay();
-
   }
-
 
   if(schoolSaveBtn){
-
     schoolSaveBtn.onclick =
       schoolMarkTodayValidated;
-
   }
-
 
   if(schoolManageScheduledWordsBtn){
-
     schoolManageScheduledWordsBtn.onclick =
       schoolOpenScheduleManager;
-
   }
 
+  if(schoolPrivateAwardBtn){
+
+    schoolPrivateAwardBtn.onclick =
+      function(){
+
+        if(
+          !schoolIsTodayValidated()
+        ){
+
+          if(schoolPrivateCoinStatus){
+            schoolPrivateCoinStatus.textContent =
+              "Validez d’abord le Mot du jour effectué aujourd’hui pour cette classe.";
+          }
+
+          return;
+        }
+
+        const amount =
+          Math.floor(
+            Number(
+              schoolPrivateCoinAmount &&
+              schoolPrivateCoinAmount.value
+                ? schoolPrivateCoinAmount.value
+                : 0
+            )
+          );
+
+        if(
+          !Number.isFinite(amount) ||
+          amount <= 0
+        ){
+
+          if(schoolPrivateCoinStatus){
+            schoolPrivateCoinStatus.textContent =
+              "Indiquez le nombre de bocitecoins prévu pour cette attribution.";
+          }
+
+          return;
+        }
+
+        const history =
+          schoolLoadPrivateHistory();
+
+        const key =
+          schoolAwardKey();
+
+        if(
+          history.some(
+            function(row){
+              return (
+                row &&
+                row.key === key
+              );
+            }
+          )
+        ){
+          schoolRefreshPrivateWallet();
+          return;
+        }
+
+        const newBalance =
+          schoolLoadPrivateWallet() +
+          amount;
+
+        schoolSavePrivateWallet(
+          newBalance
+        );
+
+        history.push({
+          key:key,
+          date:schoolTodayIso(),
+          className:schoolCurrentClass(),
+          word:String(
+            schoolWordInput &&
+            schoolWordInput.value
+              ? schoolWordInput.value
+              : ""
+          ).trim(),
+          amount:amount,
+          balance:newBalance,
+          createdAt:
+            new Date().toISOString()
+        });
+
+        schoolSavePrivateHistory(
+          history
+        );
+
+        if(schoolPrivateCoinAmount){
+          schoolPrivateCoinAmount.value =
+            "";
+        }
+
+        schoolRefreshPrivateWallet();
+
+        if(schoolPrivateCoinStatus){
+          schoolPrivateCoinStatus.textContent =
+            "✓ Attribution enregistrée. Nouveau solde : " +
+            newBalance +
+            " bocitecoins.";
+        }
+      };
+  }
+
+  if(schoolPrivateHistoryBtn){
+    schoolPrivateHistoryBtn.onclick =
+      schoolOpenPrivateHistory;
+  }
+
+  if(schoolPrivateUseSelect){
+
+    try{
+
+      const savedUse =
+        localStorage.getItem(
+          SCHOOL_PRIVATE_USE_KEY
+        );
+
+      if(savedUse){
+        schoolPrivateUseSelect.value =
+          savedUse;
+      }
+
+    }catch(error){}
+  }
+
+  if(schoolPrivateUseSaveBtn){
+
+    schoolPrivateUseSaveBtn.onclick =
+      function(){
+
+        const value =
+          schoolPrivateUseSelect
+            ? String(
+                schoolPrivateUseSelect.value ||
+                "later"
+              )
+            : "later";
+
+        try{
+          localStorage.setItem(
+            SCHOOL_PRIVATE_USE_KEY,
+            value
+          );
+        }catch(error){}
+
+        if(schoolPrivateUseStatus){
+          schoolPrivateUseStatus.textContent =
+            "✓ Choix enregistré pour la démo.";
+        }
+      };
+  }
 
   window.setTimeout(
     function(){
 
       schoolRefreshValidationUi();
-
+      schoolRefreshPrivateWallet();
 
       if(
         window.BociteSchoolWordSimple &&
         typeof window.BociteSchoolWordSimple.refresh ===
           "function"
       ){
-
         window.BociteSchoolWordSimple
           .refresh();
-
       }
 
     },
     120
   );
 
-
   const xb =
-    $("xBtn");
-
+    document.getElementById(
+      "xBtn"
+    );
 
   if(
     xb &&
     xb.focus
   ){
-
     xb.focus();
-
-  }
-
-
-  return;
-}
-        
-if(key === "ecole"){
-
-  openModal("École", `
-
-    <div class="bociteSchoolPublicRoot">
-
-      <style>
-
-        .bociteSchoolPublicRoot{
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-        }
-
-
-        .bociteSchoolPublicRoot .bociteSchoolTitle,
-        .bociteSchoolPublicRoot .bociteSchoolSectionTitle{
-          color:#2f5d46 !important;
-          font-size:17px !important;
-          font-weight:700 !important;
-          line-height:1.35 !important;
-        }
-
-
-        .bociteSchoolPublicRoot .bociteSchoolSectionTitle{
-          margin-top:14px;
-        }
-
-
-        .bociteSchoolPublicRoot .bociteSchoolCard{
-          margin-top:8px;
-          padding:14px;
-          border:1px solid #dedede;
-          border-radius:12px;
-          background:#ffffff;
-          box-sizing:border-box;
-
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-        }
-
-
-        .bociteSchoolPublicRoot .bociteSchoolCard strong{
-          font-weight:700;
-        }
-
-
-        .bociteSchoolPublicRoot .bociteBrand{
-          display:inline;
-          white-space:nowrap;
-          font-weight:700;
-        }
-
-
-        .bociteSchoolPublicRoot .bociteBrandGreen{
-          color:#2f5d46;
-          font-weight:700;
-        }
-
-
-        .bociteSchoolPublicRoot .bociteBrandRed{
-          color:#b42318;
-          font-weight:700;
-        }
-
-
-        .bociteSchoolPublicRoot .bociteSchoolExample{
-          margin-top:8px;
-          padding:14px;
-          border-radius:12px;
-          background:var(--beige);
-
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-        }
-
-
-        .bociteSchoolPublicRoot .bociteSchoolList{
-          margin-top:8px;
-        }
-
-
-        .bociteSchoolPublicRoot .bociteSchoolList div{
-          margin-top:5px;
-        }
-
-      </style>
-
-
-      <!-- =====================================================
-           ÇA COMMENCE ICI
-           PRÉSENTATION PUBLIQUE
-           ===================================================== -->
-
-
-      <div
-        class="bociteSchoolTitle"
-        style="margin-top:0;"
-      >
-        Le Mot du jour
-      </div>
-
-
-      <div class="bociteSchoolCard">
-
-        Le Mot du jour est un rendez-vous court
-        autour d’un mot,
-        d’une expression
-        ou d’une phrase
-        choisis dans le cadre de la classe.
-
-        <br><br>
-
-        Il permet d’aborder
-        le vocabulaire
-        et l’expression autrement,
-        tout en créant
-        un moment simple
-        d’écoute
-        et de participation.
-
-      </div>
-
-
-      <div class="bociteSchoolSectionTitle">
-        Un exemple
-      </div>
-
-
-      <div class="bociteSchoolExample">
-
-        « Je suis ravi aujourd’hui. »
-
-      </div>
-
-
-      <div class="bociteSchoolSectionTitle">
-        Ce que ce rendez-vous peut faire grandir
-      </div>
-
-
-      <div class="bociteSchoolCard">
-
-        Lorsqu’un enfant prend la parole,
-        les autres doivent lui laisser
-        le silence nécessaire
-        pour qu’il puisse parler,
-        être écouté
-        et aller jusqu’au bout
-        de son intervention.
-
-        <br><br>
-
-        Ce moment très simple
-        peut aider les enfants,
-        selon leur âge
-        et la manière
-        dont le professeur l’utilise,
-        à apprendre autrement.
-
-
-        <div class="bociteSchoolList">
-
-          <div>
-            • faire silence au bon moment ;
-          </div>
-
-          <div>
-            • écouter celui qui parle ;
-          </div>
-
-          <div>
-            • attendre son tour ;
-          </div>
-
-          <div>
-            • respecter la parole
-            d’un autre enfant ;
-          </div>
-
-          <div>
-            • mieux maîtriser
-            son comportement
-            pendant un temps donné ;
-          </div>
-
-          <div>
-            • prendre confiance
-            lorsqu’il faut s’exprimer ;
-          </div>
-
-          <div>
-            • enrichir son vocabulaire
-            et son expression ;
-          </div>
-
-          <div>
-            • comprendre que chacun
-            a une place dans le groupe ;
-          </div>
-
-          <div>
-            • respecter une règle commune ;
-          </div>
-
-          <div>
-            • développer la patience
-            et la régularité ;
-          </div>
-
-          <div>
-            • persévérer dans un effort ;
-          </div>
-
-          <div>
-            • encourager un camarade
-            plutôt que le gêner ;
-          </div>
-
-          <div>
-            • découvrir naturellement
-            des notions de respect,
-            de responsabilité,
-            de solidarité
-            et de civisme.
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div class="bociteSchoolSectionTitle">
-        Le professeur reste maître de sa classe
-      </div>
-
-
-      <div class="bociteSchoolCard">
-
-        <span class="bociteBrand">
-          <span class="bociteBrandGreen">Bo’Cité</span><span class="bociteBrandRed">Art</span>
-        </span>
-
-        apporte un support supplémentaire.
-
-        <br><br>
-
-        Le professeur choisit
-        ce qui est adapté
-        à sa classe,
-        à l’âge des enfants
-        et aux apprentissages
-        qu’il souhaite accompagner.
-
-        <br><br>
-
-        Les bénéfices peuvent être différents
-        d’une classe à l’autre
-        et ne se limitent pas
-        aux exemples présentés ici.
-
-      </div>
-
-
-      <div class="bociteSchoolSectionTitle">
-        Protection des enfants
-      </div>
-
-      <div class="bociteSchoolCard">
-
-        Les contenus impliquant un enfant
-        sont utilisés
-        dans le respect
-        de la protection des mineurs
-        et des autorisations applicables.
-
-      </div>
-
-      <!-- =====================================================
-           ÇA FINIT ICI
-           PRÉSENTATION PUBLIQUE
-           ===================================================== -->
-
-    </div>
-
-  `);
-
-  const xb =
-    $("xBtn");
-
-  if(
-    xb &&
-    xb.focus
-  ){
-
-    xb.focus();
-
   }
 
   return;
 }
+
    
-    
 if(key === "sport"){
   window.openClubReserve = function(){
    const openSport = ()=>{
