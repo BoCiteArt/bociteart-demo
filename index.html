@@ -2436,93 +2436,115 @@ window.PUB_STORE_KEY = window.PUB_STORE_KEY || "bociteart_pub_bookings_v1";
 window.PUB_MAX_PER_DAY = window.PUB_MAX_PER_DAY || 10;
 
 function ensureModalHelpers(){
-window.modalHistory = window.modalHistory || [];
 
-window.openModal = function(title, html, options){
-  if(!modal || !modalTitle || !modalBody){
-    alert("Fenêtre modale introuvable dans le HTML.");
-    return;
-  }
+  window.modalHistory = window.modalHistory || [];
 
-  options = options || {};
+  function cleanAutoBackButton(html){
+    const temp = document.createElement("div");
+    temp.innerHTML = html || "";
 
-  if(!options.noHistory && modal.classList.contains("open")){
-    window.modalHistory.push({
-      title: modalTitle.textContent || "",
-      html: modalBody.innerHTML || ""
+    temp.querySelectorAll('[data-bociteart-auto-back="1"]').forEach(btn=>{
+      btn.remove();
     });
+
+    return temp.innerHTML;
   }
 
-  modalTitle.textContent = title || "";
+  window.openModal = function(title, html, options){
+    if(!modal || !modalTitle || !modalBody){
+      alert("Fenêtre modale introuvable dans le HTML.");
+      return;
+    }
 
-let backBtn = "";
+    options = options || {};
 
-if(
-  window.currentModule === "entreprise" &&
-  window.currentEntrepriseScreen &&
-  window.currentEntrepriseScreen !== "home"
-){
-  backBtn =
-    `<button
-        class="choiceBtn"
-        style="margin-bottom:12px;"
-        onclick="openEntrepriseHome()">
-        Retour
-     </button>`;
-}
-else if(
-  window.modalHistory.length &&
-  !String(html || "").includes(
-    "bociteEntrepriseProtectedBackBtn"
-  )
-){
-  backBtn =
-    `<button
-        class="choiceBtn"
-        style="margin-bottom:12px;"
-        onclick="window.backModal()">
-        Retour
-     </button>`;
-}
+    if(!options.noHistory && modal.classList.contains("open")){
+      window.modalHistory.push({
+        title: modalTitle.textContent || "",
+        html: cleanAutoBackButton(modalBody.innerHTML || "")
+      });
+    }
 
-  modalBody.innerHTML = backBtn + (html || "");
+    modalTitle.textContent = title || "";
 
-  modal.classList.add("open");
-  modal.setAttribute("aria-hidden", "false");
+    let backBtn = "";
 
-  if(typeof lockScroll === "function") lockScroll(true);
-};
+    if(
+      window.currentModule === "entreprise" &&
+      window.currentEntrepriseScreen &&
+      window.currentEntrepriseScreen !== "home"
+    ){
+      backBtn = `
+        <button
+          data-bociteart-auto-back="1"
+          class="choiceBtn"
+          style="margin-bottom:12px;"
+          onclick="openEntrepriseHome()">
+          Retour
+        </button>`;
+    }
+    else if(
+      window.modalHistory.length &&
+      !String(html || "").includes("bociteEntrepriseProtectedBackBtn")
+    ){
+      backBtn = `
+        <button
+          data-bociteart-auto-back="1"
+          class="choiceBtn"
+          style="margin-bottom:12px;"
+          onclick="window.backModal()">
+          Retour
+        </button>`;
+    }
 
-window.backModal = function(){
-  if(!modal || !modalTitle || !modalBody) return;
+    modalBody.innerHTML = backBtn + (html || "");
 
-  const previous = window.modalHistory.pop();
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
 
-  if(!previous){
-    window.closeModal();
-    return;
-  }
+    if(typeof lockScroll === "function") lockScroll(true);
+  };
 
-  modalTitle.textContent = previous.title || "";
+  window.backModal = function(){
+    if(!modal || !modalTitle || !modalBody) return;
 
-  const backBtn = window.modalHistory.length
-    ? `<button class="choiceBtn" style="margin-bottom:12px;" onclick="window.backModal()">Retour</button>`
-    : "";
+    const previous = window.modalHistory.pop();
 
-  modalBody.innerHTML = backBtn + (previous.html || "");
-};
+    if(!previous){
+      window.closeModal();
+      return;
+    }
 
-window.closeModal = function(){
-  if(!modal) return;
+    modalTitle.textContent = previous.title || "";
 
-  window.modalHistory = [];
+    const backBtn = window.modalHistory.length
+      ? `
+        <button
+          data-bociteart-auto-back="1"
+          class="choiceBtn"
+          style="margin-bottom:12px;"
+          onclick="window.backModal()">
+          Retour
+        </button>`
+      : "";
 
-  modal.classList.remove("open");
-  modal.setAttribute("aria-hidden", "true");
+    modalBody.innerHTML =
+      backBtn + cleanAutoBackButton(previous.html || "");
+  };
 
-  if(typeof lockScroll === "function") lockScroll(false);
-};
+  window.closeModal = function(){
+    if(!modal) return;
+
+    window.modalHistory = [];
+
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+
+    if(typeof lockScroll === "function") lockScroll(false);
+  };
+
   const closeBtn = $("xBtn");
+
   if(closeBtn){
     closeBtn.onclick = window.closeModal;
   }
