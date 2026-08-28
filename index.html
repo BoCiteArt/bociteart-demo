@@ -1497,10 +1497,9 @@ Les présentes Conditions Générales de Vente sont régies par le droit frança
       </div>
 
       <div class="choiceGrid">
-        <button class="choiceBtn" data-pick="3919" type="button">
-          3919<br>
-          <small>Écoute et orientation</small>
-        </button>
+
+       <button class="choiceBtn" onclick="openBociteSchoolPrivateDemo()">École — Direction </button>
+        <button class="choiceBtn" data-pick="3919" type="button"> 3919<br> <small>Écoute et orientation</small> </button>
 
         <button class="choiceBtn" data-pick="119" type="button">
           119<br>
@@ -4402,14 +4401,16 @@ if(key === "ecole"){
         et des autorisations applicables.
       </div>
 
-      <button
-        id="schoolAccessOpenBtn"
-        class="bociteSchoolAction bociteSchoolActionPrimary"
-        type="button"
-        style="margin-top:14px;"
-      >
-        Accès école
-      </button>
+     <button
+  id="schoolAccessOpenBtn"
+  class="bociteSchoolAction bociteSchoolActionPrimary"
+  type="button"
+  style="display:none !important;"
+  aria-hidden="true"
+  tabindex="-1"
+>
+  Accès école
+</button>
 
       <div id="schoolAccessPanel" class="bociteSchoolAccessPanel">
         <div class="bociteSchoolSectionTitle" style="margin-top:12px;">
@@ -6220,15 +6221,64 @@ if(key === "ecole"){
     schoolAccessPanel.scrollIntoView({ behavior:"smooth", block:"start" });
   }
 
-  if(schoolAccessOpenBtn){
-    schoolAccessOpenBtn.onclick = function(){
-      schoolAccessOpenBtn.style.display = "none";
-      schoolAccessPanel.style.display = "block";
-      schoolRefreshAccessStartUi();
-      schoolFillClassSuggestions();
-      schoolAccessPanel.scrollIntoView({ behavior:"smooth", block:"start" });
-    };
+if(schoolAccessOpenBtn){
+
+  schoolAccessOpenBtn.style.display = "none";
+  schoolAccessOpenBtn.setAttribute("aria-hidden", "true");
+  schoolAccessOpenBtn.tabIndex = -1;
+
+  schoolAccessOpenBtn.onclick = function(){
+
+    if(
+      !window.bociteartAdminSession ||
+      !window.bociteartSchoolPrivateEntry
+    ){
+      alert("Accès privé requis.");
+      return;
+    }
+
+    schoolAccessPanel.style.display = "block";
+    schoolRefreshAccessStartUi();
+    schoolFillClassSuggestions();
+
+    schoolAccessPanel.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+  };
+}
+
+
+/* =====================================================
+   ENTRÉE ÉCOLE DEPUIS LE PILOTAGE PRIVÉ UNIQUEMENT
+   ===================================================== */
+
+if(
+  window.bociteartAdminSession &&
+  window.bociteartSchoolPrivateEntry &&
+  schoolAccessPanel
+){
+
+  window.bociteartSchoolPrivateEntry = false;
+
+  if(schoolAccessRole){
+    schoolAccessRole.value = "direction";
   }
+
+  schoolAccessPanel.style.display = "block";
+
+  schoolRefreshAccessStartUi();
+  schoolFillClassSuggestions();
+
+  window.setTimeout(function(){
+
+    schoolAccessPanel.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+
+  }, 60);
+}
 
   if(schoolDirectionFirstSetupBtn){
     schoolDirectionFirstSetupBtn.onclick = schoolFirstDirectionSetup;
@@ -10679,6 +10729,19 @@ window.openSauvegardesBociteart = function(){
   `);
 
 };
+
+window.openBociteSchoolPrivateDemo = function(){
+
+  if(!window.bociteartAdminSession){
+    alert("Accès privé requis.");
+    return;
+  }
+
+  window.bociteartSchoolPrivateEntry = true;
+
+  window.__bociteartOpenByKey("ecole");
+};
+   
 window.openPilotagePrive = function(){
 
  if(!window.bociteartAdminSession){
