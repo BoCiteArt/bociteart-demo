@@ -4402,14 +4402,13 @@ if(key === "ecole"){
       </div>
 
      <button
+ <button
   id="schoolAccessOpenBtn"
   class="bociteSchoolAction bociteSchoolActionPrimary"
   type="button"
-  style="display:none !important;"
-  aria-hidden="true"
-  tabindex="-1"
+  style="margin-top:14px;"
 >
-  Accès école
+  Accès privé école
 </button>
 
       <div id="schoolAccessPanel" class="bociteSchoolAccessPanel">
@@ -6223,28 +6222,64 @@ if(key === "ecole"){
 
 if(schoolAccessOpenBtn){
 
-  schoolAccessOpenBtn.style.display = "none";
-  schoolAccessOpenBtn.setAttribute("aria-hidden", "true");
-  schoolAccessOpenBtn.tabIndex = -1;
-
   schoolAccessOpenBtn.onclick = function(){
 
-    if(
-      !window.bociteartAdminSession ||
-      !window.bociteartSchoolPrivateEntry
-    ){
-      alert("Accès privé requis.");
+    /*
+      Déjà reconnu dans le Pilotage privé :
+      ouverture directe de l'accès École.
+    */
+    if(window.bociteartAdminSession){
+
+      window.bociteartSchoolPrivateEntry = true;
+
+      if(schoolAccessRole){
+        schoolAccessRole.value = "direction";
+      }
+
+      if(schoolAccessPanel){
+        schoolAccessPanel.style.display = "block";
+      }
+
+      schoolAccessOpenBtn.style.display = "none";
+
+      schoolRefreshAccessStartUi();
+      schoolFillClassSuggestions();
+
+      window.setTimeout(function(){
+
+        if(schoolAccessPanel){
+          schoolAccessPanel.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+          });
+        }
+
+      }, 50);
+
       return;
     }
 
-    schoolAccessPanel.style.display = "block";
-    schoolRefreshAccessStartUi();
-    schoolFillClassSuggestions();
 
-    schoolAccessPanel.scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
+    /*
+      Pas encore reconnu :
+      on ne montre PAS le formulaire scolaire.
+      Passage obligatoire par la porte privée générale.
+    */
+    if(typeof window.openPilotagePrive === "function"){
+
+      alert(
+        "Cet espace est réservé à la direction et aux personnes autorisées par l’établissement.\n\nVous allez être dirigé vers l’accès privé."
+      );
+
+      window.openPilotagePrive();
+
+      return;
+    }
+
+
+    alert(
+      "Accès privé requis."
+    );
   };
 }
 
