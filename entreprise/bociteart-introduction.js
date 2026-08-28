@@ -59,26 +59,26 @@ function getLogoHtml(){
 
     style.textContent = `
 
-      #${OVERLAY_ID} {
-        position:fixed;
-        inset:0;
-        z-index:999999;
-        overflow-y:auto;
-        box-sizing:border-box;
-        padding:18px 10px 36px;
-        background:#f2ecde;
-        color:#111;
-        font-family:Arial,sans-serif;
-      }
+     #${OVERLAY_ID} {
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  overflow-y:auto;
+  box-sizing:border-box;
+  padding:18px 10px 36px;
+  background:#ffffff;
+  color:#111;
+  font-family:Arial,sans-serif;
+}
 
-      #bociteIntroductionCard {
-        width:100%;
-        max-width:650px;
-        margin:0 auto;
-        box-sizing:border-box;
-        padding:20px 20px 28px;
-        background:#f2ecde;
-      }
+#bociteIntroductionCard {
+  width:100%;
+  max-width:650px;
+  margin:0 auto;
+  box-sizing:border-box;
+  padding:20px 20px 28px;
+  background:#ffffff;
+}
 
       .bociteIntroductionLogoBox {
         margin:0 0 26px;
