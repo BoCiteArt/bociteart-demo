@@ -5782,6 +5782,50 @@ if(key === "ecole"){
   async function schoolFirstDirectionSetup(){
     if(schoolDirectionInitialized()){
       schoolRefreshAccessStartUi();
+     
+     if(
+  window.bociteartAdminSession &&
+  window.bociteartSchoolPrivateEntry
+){
+
+  window.bociteartSchoolPrivateEntry = false;
+
+  schoolSession = {
+    role: "direction",
+    teacherId: "",
+    openedFromDirection: false
+  };
+
+  if(schoolAccessOpenBtn){
+    schoolAccessOpenBtn.style.display = "none";
+  }
+
+  if(schoolAccessPanel){
+    schoolAccessPanel.style.display = "none";
+  }
+
+  if(schoolProfessorPrivatePanel){
+    schoolProfessorPrivatePanel.style.display = "none";
+  }
+
+  if(schoolDirectionPanel){
+    schoolDirectionPanel.style.display = "block";
+  }
+
+  schoolRenderTeacherAccessList();
+  schoolFillClassSuggestions();
+
+  window.setTimeout(function(){
+
+    if(schoolDirectionPanel){
+      schoolDirectionPanel.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+
+  }, 50);
+}
       return;
     }
 
@@ -10859,7 +10903,7 @@ openModal("Pilotage privé Bo'CitéArt",`
     <button class="choiceBtn" onclick="showPilotageAccessLog()">Journal des accès</button>
     <button class="choiceBtn" onclick="fermerPilotagePrive()">Déconnexion pilotage</button>
     <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau commune</button>
-    <button class="choiceBtn" onclick="openBociteSchoolPrivateDemo()">École — Direction</button>
+    <button class="choiceBtn" onclick="window.bociteartSchoolPrivateEntry = true;window.__bociteartOpenByKey('ecole');"> École — Direction</button>
     <button class="choiceBtn" onclick="openPresentationBoCiteArt()">Environnement</button>
     <button class="choiceBtn" onclick="openConformiteBociteart()">Conformité</button>
     <button class="choiceBtn" onclick="openTresorerieIA()">Trésorerie</button>
