@@ -10831,6 +10831,41 @@ window.openSauvegardesBociteart = function(){
 
 };
 
+/* =====================================================
+   OUVERTURE D'UN UNIVERS DEPUIS LE PILOTAGE PRIVÉ
+   ===================================================== */
+
+window.__bociteartOpenByKey = function(key){
+
+  const target =
+    document.querySelector(
+      '[data-open="' + String(key || "") + '"]'
+    );
+
+  if(!target){
+    alert(
+      "L’espace demandé n’a pas été trouvé : " +
+      String(key || "")
+    );
+    return;
+  }
+
+  /*
+    Pour École, mémorise que l'ouverture
+    vient du Pilotage privé.
+  */
+  if(key === "ecole"){
+    window.bociteartSchoolPrivateEntry = true;
+    target.__bociteOtherIntroBypass = true;
+  }
+
+  /*
+    Utilise le mécanisme déjà existant
+    de la vraie tuile de l'application.
+  */
+  target.click();
+};
+   
 window.openBociteSchoolPrivateDemo = function(){
 
   if(!window.bociteartAdminSession){
