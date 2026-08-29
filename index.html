@@ -10872,7 +10872,7 @@ window.__bociteartOpenByKey = function(key){
   target.click();
 };
    
-window.openBociteSchoolPrivateDemo = function(){
+ window.openBociteSchoolPrivateDemo = function(){
 
   if(!window.bociteartAdminSession){
     alert("Accès privé requis.");
@@ -10880,15 +10880,12 @@ window.openBociteSchoolPrivateDemo = function(){
   }
 
   /*
-    Indique à l'espace École que l'ouverture
-    vient bien du Pilotage privé.
+    Mode démonstration Direction :
+    l'administrateur Bo'CitéArt est déjà authentifié.
   */
+  window.bociteartSchoolAdminPreview = true;
   window.bociteartSchoolPrivateEntry = true;
 
-  /*
-    On utilise la vraie porte École déjà existante
-    dans index.html.
-  */
   const schoolTile =
     document.querySelector('[data-open="ecole"]');
 
@@ -10897,16 +10894,7 @@ window.openBociteSchoolPrivateDemo = function(){
     return;
   }
 
-  /*
-    Évite de repasser par l'introduction École
-    puisque la Direction est déjà authentifiée.
-  */
   schoolTile.__bociteOtherIntroBypass = true;
-
-  /*
-    Déclenche exactement le même mécanisme
-    que lorsqu'on clique normalement sur École.
-  */
   schoolTile.click();
 };
    
