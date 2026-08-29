@@ -5883,6 +5883,58 @@ if(key === "ecole"){
   }
 
   async function schoolLogin(){
+     /* =====================================================
+     ACCÈS DIRECT DIRECTION DEPUIS LE PILOTAGE PRIVÉ
+     ===================================================== */
+
+  if(
+    window.bociteartAdminSession &&
+    (
+      window.bociteartSchoolAdminPreview ||
+      window.bociteartSchoolPrivateEntry
+    )
+  ){
+
+    window.bociteartSchoolPrivateEntry = false;
+
+    schoolSession = {
+      role: "direction",
+      teacherId: "",
+      openedFromDirection: false
+    };
+
+    if(schoolAccessOpenBtn){
+      schoolAccessOpenBtn.style.display = "none";
+    }
+
+    if(schoolAccessPanel){
+      schoolAccessPanel.style.display = "none";
+    }
+
+    if(schoolProfessorPrivatePanel){
+      schoolProfessorPrivatePanel.style.display = "none";
+    }
+
+    if(schoolDirectionPanel){
+      schoolDirectionPanel.style.display = "block";
+    }
+
+    schoolRenderTeacherAccessList();
+    schoolFillClassSuggestions();
+
+    window.setTimeout(function(){
+
+      if(schoolDirectionPanel){
+        schoolDirectionPanel.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+
+    }, 50);
+
+    return;
+  }
     const role = schoolAccessRole ? String(schoolAccessRole.value || "teacher") : "teacher";
     const code = String(schoolAccessCodeInput && schoolAccessCodeInput.value ? schoolAccessCodeInput.value : "").trim();
 
