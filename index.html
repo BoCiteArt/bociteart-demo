@@ -1498,7 +1498,7 @@ Les présentes Conditions Générales de Vente sont régies par le droit frança
 
       <div class="choiceGrid">
 
-       <button class="choiceBtn" onclick="openBociteSchoolPrivateDemo()">École — Direction </button>
+        <button class="choiceBtn" onclick="openBociteSchoolPrivateDemo()">École — Direction</button>
         <button class="choiceBtn" data-pick="3919" type="button"> 3919<br> <small>Écoute et orientation</small> </button>
 
         <button class="choiceBtn" data-pick="119" type="button">
@@ -10838,9 +10838,35 @@ window.openBociteSchoolPrivateDemo = function(){
     return;
   }
 
+  /*
+    Indique à l'espace École que l'ouverture
+    vient bien du Pilotage privé.
+  */
   window.bociteartSchoolPrivateEntry = true;
 
-  window.__bociteartOpenByKey("ecole");
+  /*
+    On utilise la vraie porte École déjà existante
+    dans index.html.
+  */
+  const schoolTile =
+    document.querySelector('[data-open="ecole"]');
+
+  if(!schoolTile){
+    alert("La tuile École n’a pas été trouvée.");
+    return;
+  }
+
+  /*
+    Évite de repasser par l'introduction École
+    puisque la Direction est déjà authentifiée.
+  */
+  schoolTile.__bociteOtherIntroBypass = true;
+
+  /*
+    Déclenche exactement le même mécanisme
+    que lorsqu'on clique normalement sur École.
+  */
+  schoolTile.click();
 };
    
 window.openPilotagePrive = function(){
