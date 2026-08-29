@@ -7138,9 +7138,23 @@ if(
   }, 60);
 }
      
-  if(schoolDirectionFirstSetupBtn){
-    schoolDirectionFirstSetupBtn.onclick = schoolFirstDirectionSetup;
+if(schoolDirectionFirstSetupBtn){
+
+  if(typeof schoolFirstDirectionSetup === "function"){
+
+    schoolDirectionFirstSetupBtn.onclick =
+      schoolFirstDirectionSetup;
+
+  }else{
+
+    /*
+      L'accès Direction est déjà géré
+      par le Pilotage privé dans cette démonstration.
+      On masque donc l'ancien bouton d'activation.
+    */
+    schoolDirectionFirstSetupBtn.style.display = "none";
   }
+}
 
   if(schoolAccessLoginBtn){
     schoolAccessLoginBtn.onclick = schoolLogin;
