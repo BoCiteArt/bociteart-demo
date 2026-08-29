@@ -5783,10 +5783,16 @@ if(key === "ecole"){
     if(schoolDirectionInitialized()){
       schoolRefreshAccessStartUi();
      
-     if(
+    if(
   window.bociteartAdminSession &&
   window.bociteartSchoolPrivateEntry
 ){
+
+  /*
+    L'utilisateur est déjà authentifié
+    dans le Pilotage privé Bo'CitéArt.
+    Aucun deuxième code Direction.
+  */
 
   window.bociteartSchoolPrivateEntry = false;
 
@@ -5824,7 +5830,7 @@ if(key === "ecole"){
       });
     }
 
-  }, 50);
+  }, 60);
 }
       return;
     }
