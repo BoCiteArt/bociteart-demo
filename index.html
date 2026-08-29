@@ -4066,12 +4066,28 @@ if(tickerBtn){
 }
 
 window.tapeAds = [
- 
-        { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-        { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
-        { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
-        { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
-      ];
+
+  {
+    txt:"🥐 Commerce partenaire soutient Club + Association solidaire A • www.bociteart.com",
+    bold:true
+  },
+
+  {
+    txt:"💊 Commerce partenaire soutient Club + Association solidaire B • www.bociteart.com",
+    bold:false
+  },
+
+  {
+    txt:"🌸 Commerce partenaire soutient Club + Association solidaire C • www.bociteart.com",
+    bold:true
+  },
+
+  {
+    txt:"🚗 Commerce partenaire soutient Club + Association solidaire D • www.bociteart.com",
+    bold:false
+  }
+
+];
 
       function renderTape(){
         const track = $("sportTapeTrack");
@@ -4403,6 +4419,48 @@ if(key === "ecole"){
           <span class="bociteBrand"><span class="bociteBrandGreen">Bo’Cité</span><span class="bociteBrandRed">Art</span></span>
           lui apporte simplement un support complémentaire pour faire vivre ces apprentissages autrement.
         </div>
+        <div class="bociteSchoolSectionTitle">
+  Comprendre et vivre la solidarité
+</div>
+</div>
+
+<div class="bociteSchoolCard">
+
+  La solidarité peut aussi devenir un véritable sujet
+  d’échange dans la classe.
+
+  <br><br>
+
+  Les élèves peuvent découvrir différentes associations,
+  comprendre les personnes qu’elles accompagnent,
+  pourquoi elles existent et les actions qu’elles mènent.
+
+  <br><br>
+
+  Avec leur professeur, ils peuvent en discuter,
+  poser des questions, exprimer ce qui les touche
+  et apprendre à écouter les choix des autres.
+
+  <br><br>
+
+  Cette découverte permet d’aller plus loin
+  que le simple mot « solidarité ».
+
+  <br><br>
+
+  Les enfants peuvent progressivement comprendre
+  pourquoi on aide, comment chacun peut contribuer,
+  pourquoi plusieurs causes peuvent être importantes
+  et pourquoi un choix collectif mérite d’être
+  discuté, expliqué et respecté.
+
+  <br><br>
+
+  Les associations proposées peuvent être présentées
+  à la classe afin que les élèves comprennent leur mission
+  avant d’échanger ensemble sur les causes
+  qu’ils souhaitent soutenir.
+
       </div>
 
       <div class="bociteSchoolSectionTitle">
@@ -4485,6 +4543,12 @@ if(key === "ecole"){
         <div class="bociteSchoolSectionTitle" style="margin-top:12px;">
           Gestion des accès de l’école
         </div>
+       
+        <div
+  id="schoolSolidarityAgreementDirection"
+  class="bociteSchoolCard"
+  style="border-left:5px solid #b42318;"
+></div>
 
         <div class="bociteSchoolCard">
           La direction reste maître des accès.
@@ -4711,6 +4775,12 @@ if(key === "ecole"){
           ></div>
         </div>
 
+<div
+  id="schoolSolidarityAgreementProfessor"
+  class="bociteSchoolCard"
+  style="border-left:5px solid #b42318;"
+></div>
+
         <div class="bociteSchoolSectionTitle">
           Utilisation des bocitecoins de la classe
         </div>
@@ -4738,53 +4808,403 @@ if(key === "ecole"){
             </label>
           </div>
 
-          <div id="schoolSolidarityAssociations" style="margin-top:14px;display:none;">
-            <div class="bociteSchoolSectionTitle" style="margin-top:0;">
-              Associations proposées
-            </div>
+<div id="schoolSolidarityAssociations" style="margin-top:14px;display:none;">
 
-            <div style="margin-top:6px;">
-              La classe peut sélectionner une ou plusieurs associations.
-              En cas de partage, indiquez la répartition souhaitée.
-            </div>
+  <div class="bociteSchoolSectionTitle" style="margin-top:0;">
+    Associations proposées
+  </div>
 
-            <label class="bociteSchoolChoice">
-              <input type="checkbox" class="schoolAssoPick" data-asso="Les Clés du Cœur">
-              <span>Les Clés du Cœur — maladies rares pédiatriques</span>
-            </label>
-            <div class="schoolAssoPercentRow">
-              <span>% :</span>
-              <input class="bociteSchoolField schoolAssoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0">
-            </div>
+  <div style="margin-top:6px;color:#111111;font-size:14px;font-weight:400;line-height:1.5;">
+    Les associations proposées à la classe sont sélectionnées
+    et vérifiées avant leur mise à disposition.
 
-            <label class="bociteSchoolChoice">
-              <input type="checkbox" class="schoolAssoPick" data-asso="Étoile Filante">
-              <span>Étoile Filante — enfants atteints de maladies rares</span>
-            </label>
-            <div class="schoolAssoPercentRow">
-              <span>% :</span>
-              <input class="bociteSchoolField schoolAssoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0">
-            </div>
+    <br><br>
 
-            <label class="bociteSchoolChoice">
-              <input type="checkbox" class="schoolAssoPick" data-asso="Les Papillons (antenne Nord)">
-              <span>Les Papillons — antenne Nord</span>
-            </label>
-            <div class="schoolAssoPercentRow">
-              <span>% :</span>
-              <input class="bociteSchoolField schoolAssoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0">
-            </div>
+    Leur liste peut évoluer afin de conserver des organismes
+    correspondant aux causes retenues et aux exigences
+    de transparence et d’utilisation effective des soutiens.
 
-            <label class="bociteSchoolChoice">
-              <input type="checkbox" class="schoolAssoPick" data-asso="ATC Nord">
-              <span>ATC Nord — traumatisés crâniens</span>
-            </label>
-            <div class="schoolAssoPercentRow">
-              <span>% :</span>
-              <input class="bociteSchoolField schoolAssoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0">
-            </div>
-          </div>
+    <br><br>
 
+    Les présentations ci-dessous permettent au professeur
+    d’aborder avec les élèves plusieurs grandes formes
+    de solidarité avant qu’un choix soit réalisé.
+  </div>
+
+
+  <!-- ==================================================
+       ASSOCIATION / CAUSE A
+       ================================================== -->
+
+  <label class="bociteSchoolChoice">
+
+    <input
+      type="checkbox"
+      class="schoolAssoPick"
+      data-asso="Association solidaire A"
+    >
+
+    <span>
+      Association solidaire A
+    </span>
+
+  </label>
+
+  <details
+    style="
+      margin:6px 0 8px 27px;
+      padding:10px;
+      border:1px solid #dedede;
+      border-radius:10px;
+      background:#f7f2e8;
+    "
+  >
+
+    <summary
+      style="
+        cursor:pointer;
+        color:#2f5d46;
+        font-size:14px;
+        font-weight:700;
+      "
+    >
+      Comprendre cette cause
+    </summary>
+
+    <div
+      style="
+        margin-top:8px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      "
+    >
+      <strong>Exemple de thème pédagogique :</strong>
+      les maladies rares de l’enfant et la recherche médicale.
+
+      <br><br>
+
+      Le professeur peut expliquer qu’une maladie est dite rare
+      lorsqu’elle concerne peu de personnes,
+      mais que de nombreuses familles sont touchées
+      lorsqu’on rassemble toutes les maladies rares.
+
+      <br><br>
+
+      La discussion peut permettre aux élèves de comprendre
+      pourquoi la recherche est longue,
+      pourquoi certains traitements restent à découvrir
+      et pourquoi même une aide modeste peut contribuer
+      à faire avancer un travail collectif.
+    </div>
+
+  </details>
+
+  <div class="schoolAssoPercentRow">
+
+    <span>% :</span>
+
+    <input
+      class="bociteSchoolField schoolAssoPct"
+      data-asso="Association solidaire A"
+      type="number"
+      min="0"
+      max="100"
+      step="1"
+      value="0"
+    >
+
+  </div>
+
+
+  <!-- ==================================================
+       ASSOCIATION / CAUSE B
+       ================================================== -->
+
+  <label class="bociteSchoolChoice">
+
+    <input
+      type="checkbox"
+      class="schoolAssoPick"
+      data-asso="Association solidaire B"
+    >
+
+    <span>
+      Association solidaire B
+    </span>
+
+  </label>
+
+  <details
+    style="
+      margin:6px 0 8px 27px;
+      padding:10px;
+      border:1px solid #dedede;
+      border-radius:10px;
+      background:#f7f2e8;
+    "
+  >
+
+    <summary
+      style="
+        cursor:pointer;
+        color:#2f5d46;
+        font-size:14px;
+        font-weight:700;
+      "
+    >
+      Comprendre cette cause
+    </summary>
+
+    <div
+      style="
+        margin-top:8px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      "
+    >
+      <strong>Exemple de thème pédagogique :</strong>
+      les enfants malades, les soins et l’accompagnement.
+
+      <br><br>
+
+      Le professeur peut expliquer qu’aider un enfant malade
+      ne consiste pas uniquement à financer des soins.
+
+      <br><br>
+
+      L’accompagnement peut aussi concerner sa vie quotidienne,
+      sa famille, sa scolarité, ses activités
+      et les moments qui lui permettent de rester
+      un enfant malgré la maladie.
+
+      <br><br>
+
+      Les élèves peuvent ainsi réfléchir
+      à ce que signifient l’attention aux autres,
+      l’entraide et le soutien dans une période difficile.
+    </div>
+
+  </details>
+
+  <div class="schoolAssoPercentRow">
+
+    <span>% :</span>
+
+    <input
+      class="bociteSchoolField schoolAssoPct"
+      data-asso="Association solidaire B"
+      type="number"
+      min="0"
+      max="100"
+      step="1"
+      value="0"
+    >
+
+  </div>
+
+
+  <!-- ==================================================
+       ASSOCIATION / CAUSE C
+       ================================================== -->
+
+  <label class="bociteSchoolChoice">
+
+    <input
+      type="checkbox"
+      class="schoolAssoPick"
+      data-asso="Association solidaire C"
+    >
+
+    <span>
+      Association solidaire C
+    </span>
+
+  </label>
+
+  <details
+    style="
+      margin:6px 0 8px 27px;
+      padding:10px;
+      border:1px solid #dedede;
+      border-radius:10px;
+      background:#f7f2e8;
+    "
+  >
+
+    <summary
+      style="
+        cursor:pointer;
+        color:#2f5d46;
+        font-size:14px;
+        font-weight:700;
+      "
+    >
+      Comprendre cette cause
+    </summary>
+
+    <div
+      style="
+        margin-top:8px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      "
+    >
+      <strong>Exemple de thème pédagogique :</strong>
+      le handicap de l’enfant, l’autonomie et l’inclusion.
+
+      <br><br>
+
+      Le professeur peut parler avec les élèves
+      des différences que chacun peut rencontrer
+      et des difficultés qui ne sont pas toujours visibles.
+
+      <br><br>
+
+      Cela permet d’aborder simplement
+      l’accessibilité, l’autonomie,
+      la place de chacun dans le groupe
+      et l’importance de permettre à tous
+      de participer à la vie collective.
+
+      <br><br>
+
+      Les enfants peuvent ainsi comprendre
+      que l’inclusion ne signifie pas traiter tout le monde
+      exactement de la même manière,
+      mais permettre à chacun de trouver sa place.
+    </div>
+
+  </details>
+
+  <div class="schoolAssoPercentRow">
+
+    <span>% :</span>
+
+    <input
+      class="bociteSchoolField schoolAssoPct"
+      data-asso="Association solidaire C"
+      type="number"
+      min="0"
+      max="100"
+      step="1"
+      value="0"
+    >
+
+  </div>
+
+
+  <!-- ==================================================
+       ASSOCIATION / CAUSE D
+       ================================================== -->
+
+  <label class="bociteSchoolChoice">
+
+    <input
+      type="checkbox"
+      class="schoolAssoPick"
+      data-asso="Association solidaire D"
+    >
+
+    <span>
+      Association solidaire D
+    </span>
+
+  </label>
+
+  <details
+    style="
+      margin:6px 0 8px 27px;
+      padding:10px;
+      border:1px solid #dedede;
+      border-radius:10px;
+      background:#f7f2e8;
+    "
+  >
+
+    <summary
+      style="
+        cursor:pointer;
+        color:#2f5d46;
+        font-size:14px;
+        font-weight:700;
+      "
+    >
+      Comprendre cette cause
+    </summary>
+
+    <div
+      style="
+        margin-top:8px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      "
+    >
+      <strong>Exemple de thème pédagogique :</strong>
+      les accidents touchant les enfants,
+      leurs conséquences et la reconstruction.
+
+      <br><br>
+
+      Le professeur peut expliquer qu’un accident
+      peut parfois modifier durablement la vie d’un enfant
+      et celle de sa famille.
+
+      <br><br>
+
+      Après les soins peuvent venir
+      la rééducation, le retour à l’école,
+      l’apprentissage d’une nouvelle autonomie
+      et l’accompagnement de toute la famille.
+
+      <br><br>
+
+      Ce sujet permet aussi de parler
+      de prévention, de courage,
+      de patience et de solidarité
+      envers une personne qui doit reconstruire
+      progressivement une partie de sa vie.
+    </div>
+
+  </details>
+
+  <div class="schoolAssoPercentRow">
+
+    <span>% :</span>
+
+    <input
+      class="bociteSchoolField schoolAssoPct"
+      data-asso="Association solidaire D"
+      type="number"
+      min="0"
+      max="100"
+      step="1"
+      value="0"
+    >
+
+  </div>
+
+</div>
+<input
+  class="bociteSchoolField schoolAssoPct"
+  data-asso="Association solidaire D"
+  type="number"
+  min="0"
+  max="100"
+  step="1"
+  value="0"
+>
+
+</div>
+
+</div>
           <button
             id="schoolSolidaritySaveBtn"
             class="bociteSchoolAction"
@@ -4903,6 +5323,8 @@ if(key === "ecole"){
   const schoolSolidarityAssociations = document.getElementById("schoolSolidarityAssociations");
   const schoolSolidaritySaveBtn = document.getElementById("schoolSolidaritySaveBtn");
   const schoolSolidarityStatus = document.getElementById("schoolSolidarityStatus");
+ const schoolSolidarityAgreementDirection = document.getElementById("schoolSolidarityAgreementDirection");
+ const schoolSolidarityAgreementProfessor = document.getElementById("schoolSolidarityAgreementProfessor");
 
    const schoolTeacherCodeChangeCard = document.getElementById("schoolTeacherCodeChangeCard");
   const schoolTeacherNewCodeInput = document.getElementById("schoolTeacherNewCodeInput");
@@ -4915,6 +5337,7 @@ if(key === "ecole"){
   const SCHOOL_CLASSES_KEY = "bociteart_school_classes_v1";
   const SCHOOL_CURRENT_CLASS_ID_KEY = "bociteart_school_current_class_id_v1";
   const SCHOOL_SOLIDARITY_KEY = "bociteart_school_solidarity_choice_v4";
+ const SCHOOL_SOLIDARITY_AGREEMENT_KEY = "bociteart_school_solidarity_agreement_v1";
   const SCHOOL_ACCESS_DEMO_KEY = "bociteart_school_access_demo_v1";
 
   let schoolSession = {
@@ -4922,6 +5345,376 @@ if(key === "ecole"){
     teacherId: "",
     openedFromDirection: false
   };
+
+ function schoolLoadSolidarityAgreement(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        SCHOOL_SOLIDARITY_AGREEMENT_KEY
+      );
+
+    const saved =
+      raw ? JSON.parse(raw) : {};
+
+    return {
+      status:
+        saved && saved.status === "active"
+          ? "active"
+          : "pending",
+
+      updatedAt:
+        saved && saved.updatedAt
+          ? String(saved.updatedAt)
+          : "",
+
+      source:
+        saved && saved.source
+          ? String(saved.source)
+          : ""
+    };
+
+  }catch(error){
+
+    return {
+      status:"pending",
+      updatedAt:"",
+      source:""
+    };
+  }
+}
+
+
+function schoolSolidarityAgreementActive(){
+
+  return (
+    schoolLoadSolidarityAgreement().status ===
+    "active"
+  );
+}
+
+
+function schoolRenderSolidarityAgreementStatus(){
+
+  const active =
+    schoolSolidarityAgreementActive();
+
+
+  const html =
+    active
+      ? `
+        <div style="display:flex;align-items:flex-start;gap:10px;">
+
+          <div
+            aria-hidden="true"
+            style="
+              color:#1f8f4d;
+              font-size:20px;
+              font-weight:900;
+              line-height:1;
+            ">
+            ✓
+          </div>
+
+          <div>
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:17px;
+                font-weight:700;
+                line-height:1.35;
+              ">
+              Partage solidaire activé
+            </div>
+
+            <div
+              style="
+                margin-top:6px;
+                color:#111111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.5;
+              ">
+              L’accord nécessaire est validé.
+              Le professeur peut présenter les possibilités
+              de solidarité à la classe et enregistrer
+              le choix des élèves.
+            </div>
+
+          </div>
+        </div>
+      `
+      : `
+        <div style="display:flex;align-items:flex-start;gap:10px;">
+
+          <div
+            aria-hidden="true"
+            style="
+              color:#b42318;
+              font-size:20px;
+              font-weight:900;
+              line-height:1;
+            ">
+            ✕
+          </div>
+
+          <div>
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:17px;
+                font-weight:700;
+                line-height:1.35;
+              ">
+              Partage solidaire en attente
+            </div>
+
+            <div
+              style="
+                margin-top:6px;
+                color:#111111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.5;
+              ">
+              L’accord nécessaire n’est pas encore validé.
+              Le Mot du jour reste disponible,
+              mais le partage avec les associations
+              ne doit pas encore être proposé à la classe.
+            </div>
+
+          </div>
+        </div>
+      `;
+
+
+  [
+    schoolSolidarityAgreementDirection,
+    schoolSolidarityAgreementProfessor
+  ].forEach(function(box){
+
+    if(!box){
+      return;
+    }
+
+    box.innerHTML = html;
+
+    box.style.borderLeftColor =
+      active
+        ? "#1f8f4d"
+        : "#b42318";
+  });
+
+
+  document
+    .querySelectorAll(
+      'input[name="schoolSolidarityMode"]'
+    )
+    .forEach(function(radio){
+
+      const mode =
+        String(radio.value || "");
+
+      if(
+        mode === "partial" ||
+        mode === "full"
+      ){
+
+        radio.disabled =
+          !active;
+      }
+    });
+
+
+  /*
+    Accord non encore validé :
+    la classe conserve ses bocitecoins.
+    On ne supprime aucun ancien choix enregistré.
+  */
+  if(!active){
+
+    const keepAll =
+      document.querySelector(
+        'input[name="schoolSolidarityMode"][value="none"]'
+      );
+
+    if(keepAll){
+      keepAll.checked = true;
+    }
+
+
+    if(schoolSolidarityAssociations){
+
+      schoolSolidarityAssociations.style.display =
+        "none";
+    }
+  }
+}
+
+
+function schoolSetSolidarityAgreementStatus(
+  status,
+  meta
+){
+
+  const previous =
+    schoolLoadSolidarityAgreement();
+
+  const nextStatus =
+    status === "active"
+      ? "active"
+      : "pending";
+
+  const info =
+    meta &&
+    typeof meta === "object"
+      ? meta
+      : {};
+
+
+  const next = {
+
+    status:
+      nextStatus,
+
+    updatedAt:
+      new Date().toISOString(),
+
+    source:
+      String(info.source || "")
+  };
+
+
+  try{
+
+    localStorage.setItem(
+      SCHOOL_SOLIDARITY_AGREEMENT_KEY,
+      JSON.stringify(next)
+    );
+
+  }catch(error){}
+
+
+  schoolRenderSolidarityAgreementStatus();
+  schoolRefreshSolidarityUi();
+
+
+  /*
+    Passage EN ATTENTE → ACTIF :
+    prépare automatiquement l'information
+    destinée à la Direction.
+  */
+  if(
+    nextStatus === "active" &&
+    previous.status !== "active"
+  ){
+
+    const notice = {
+
+      type:
+        "school_solidarity_activated",
+
+      title:
+        "Partage solidaire activé",
+
+      message:
+        "L’accord nécessaire est validé. " +
+        "La Direction peut informer les professeurs " +
+        "que le partage solidaire peut désormais " +
+        "être présenté aux classes.",
+
+      createdAt:
+        new Date().toISOString()
+    };
+
+
+    try{
+
+      localStorage.setItem(
+        "bociteart_school_direction_notice_v1",
+        JSON.stringify(notice)
+      );
+
+    }catch(error){}
+
+
+    /*
+      Signal destiné au futur système
+      de notification Bo'CitéArt.
+    */
+    try{
+
+      document.dispatchEvent(
+        new CustomEvent(
+          "bociteart:school-solidarity-activated",
+          {
+            detail:notice
+          }
+        )
+      );
+
+    }catch(error){}
+
+
+    /*
+      Lorsque le module SMS / e-mail sera raccordé,
+      il recevra automatiquement cette demande.
+    */
+    if(
+      window.BociteNotifications &&
+      typeof
+        window.BociteNotifications
+          .notifySchoolDirection ===
+        "function"
+    ){
+
+      try{
+
+        window.BociteNotifications
+          .notifySchoolDirection(
+            notice
+          );
+
+      }catch(error){}
+    }
+  }
+
+
+  return next;
+}
+
+
+/* =====================================================
+   PORTE PRÉPARÉE POUR LE FUTUR CONTRAT MAIRIE
+   ===================================================== */
+
+window.BociteSchoolSolidarityAgreement = {
+
+  getStatus:
+    schoolLoadSolidarityAgreement,
+
+
+  activate:function(meta){
+
+    return schoolSetSolidarityAgreementStatus(
+      "active",
+      meta || {}
+    );
+  },
+
+
+  setPending:function(meta){
+
+    return schoolSetSolidarityAgreementStatus(
+      "pending",
+      meta || {}
+    );
+  }
+
+};
 
   function schoolTodayIso(){
     const now = new Date();
@@ -5673,11 +6466,31 @@ if(key === "ecole"){
     }
 
     schoolRefreshSolidarityVisibility();
+   schoolRenderSolidarityAgreementStatus();
   }
 
   function schoolSaveSolidarityChoice(){
-    const mode = schoolGetSolidarityMode();
-    const picks = Array.from(document.querySelectorAll(".schoolAssoPick"));
+
+  const mode = schoolGetSolidarityMode();
+
+  if(
+    !schoolSolidarityAgreementActive() &&
+    mode !== "none"
+  ){
+    alert(
+      "Le partage solidaire est encore en attente d’accord. " +
+      "La classe peut poursuivre le Mot du jour, " +
+      "mais ce choix n’est pas encore disponible."
+    );
+
+    schoolRenderSolidarityAgreementStatus();
+    return;
+  }
+
+  const picks = Array.from(
+    document.querySelectorAll(".schoolAssoPick")
+  );
+   
     const selected = picks.filter(function(box){ return box.checked; });
 
     if(mode !== "none" && !selected.length){
@@ -5826,6 +6639,8 @@ async function schoolLogin(){
 
     schoolRenderTeacherAccessList();
     schoolFillClassSuggestions();
+   schoolRenderSolidarityAgreementStatus();
+
 
     schoolDirectionPanel.scrollIntoView({
       behavior:"smooth",
@@ -6535,248 +7350,1043 @@ Réinitialiser le résultat
           </div>
         </div>
 
-        <div style="font-weight:900;margin-top:14px;">Partage solidaire club / associations</div>
-        <div class="box">
-          <div style="font-weight:900;">Principe</div>
-          <div class="muted" style="margin-top:6px;">
-            Le club peut garder 100 % de ses bocitecoins, partager une partie avec une ou plusieurs associations,
-            ou donner 100 % des bocitecoins concernés à une ou plusieurs associations.
-          </div>
+<div style="font-weight:900;margin-top:14px;">
+  Partage solidaire club / associations
+</div>
 
-          <div class="muted" style="margin-top:8px;">
-            En cas d’échange via la mairie, le choix enregistré accompagne le scan du club afin que la mairie puisse traiter
-            la répartition choisie par le club sans ressaisie inutile.
-          </div>
+<div class="box">
 
-          <div class="box" style="margin-top:12px;">
-            <div style="font-weight:900;">Choisir le mode de partage</div>
+  <div style="font-weight:900;">
+    Principe
+  </div>
 
-            <label class="miniCheck" style="margin-top:10px;">
-              <input type="radio" name="sportDonMode" value="none" checked>
-              <div>Pas de partage solidaire (100 % pour le club)</div>
-            </label>
+  <div
+    style="
+      margin-top:6px;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
+    "
+  >
+    Le club peut garder 100 % de ses bocitecoins,
+    partager une partie avec une ou plusieurs associations,
+    ou consacrer la totalité des bocitecoins concernés
+    à une ou plusieurs associations.
+  </div>
 
-            <label class="miniCheck">
-              <input type="radio" name="sportDonMode" value="full">
-              <div>Don total (100 % des bocitecoins concernés)</div>
-            </label>
+  <div
+    style="
+      margin-top:8px;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
+    "
+  >
+    Lorsque le choix passe par la mairie,
+    la répartition enregistrée accompagne l’opération
+    afin que la volonté du club puisse être reprise
+    sans nouvelle saisie.
+  </div>
 
-            <label class="miniCheck">
-              <input type="radio" name="sportDonMode" value="partial">
-              <div>Don partiel (répartition en %)</div>
-            </label>
-          </div>
 
-          <div class="box" style="margin-top:12px;">
-            <div style="font-weight:900;">Associations (sélection + répartition)</div>
-            <div class="muted" style="margin-top:6px;">
-              En “don total” : tu coches 1 à 4 associations (partage égal).<br>
-              En “don partiel” : tu coches + tu fixes les pourcentages (total = 100%).
-            </div>
+  <!-- ==================================================
+       MODE DE PARTAGE
+       ================================================== -->
 
-            <div style="margin-top:10px;">
-              <label class="miniCheck">
-                <input type="checkbox" class="sportAssoPick" data-asso="Les Clés du Cœur">
-                <div><strong>Les Clés du Cœur</strong> — maladies rares pédiatriques</div>
-              </label>
-              <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
-                <div class="muted" style="min-width:78px;">% :</div>
-                <input class="miniField sportAssoPct" data-asso="Les Clés du Cœur" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
-              </div>
+  <div class="box" style="margin-top:12px;">
 
-              <label class="miniCheck">
-                <input type="checkbox" class="sportAssoPick" data-asso="Étoile Filante">
-                <div><strong>Étoile Filante</strong> — enfants atteints de maladies rares</div>
-              </label>
-              <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
-                <div class="muted" style="min-width:78px;">% :</div>
-                <input class="miniField sportAssoPct" data-asso="Étoile Filante" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
-              </div>
+    <div style="font-weight:900;">
+      Choisir le mode de partage
+    </div>
 
-              <label class="miniCheck">
-                <input type="checkbox" class="sportAssoPick" data-asso="Les Papillons (antenne Nord)">
-                <div><strong>Les Papillons</strong> — antenne Nord</div>
-              </label>
-              <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
-                <div class="muted" style="min-width:78px;">% :</div>
-                <input class="miniField sportAssoPct" data-asso="Les Papillons (antenne Nord)" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
-              </div>
+    <label class="miniCheck" style="margin-top:10px;">
+      <input
+        type="radio"
+        name="sportDonMode"
+        value="none"
+        checked
+      >
+      <div>
+        Pas de partage solidaire — 100 % pour le club
+      </div>
+    </label>
 
-              <label class="miniCheck">
-                <input type="checkbox" class="sportAssoPick" data-asso="ATC Nord">
-                <div><strong>ATC Nord</strong> — traumatisés crâniens</div>
-              </label>
-              <div style="display:flex;gap:10px;align-items:center;margin:6px 0 10px 36px;">
-                <div class="muted" style="min-width:78px;">% :</div>
-                <input class="miniField sportAssoPct" data-asso="ATC Nord" type="number" min="0" max="100" step="1" value="0" style="max-width:120px;">
-              </div>
-            </div>
+    <label class="miniCheck">
+      <input
+        type="radio"
+        name="sportDonMode"
+        value="partial"
+      >
+      <div>
+        Partager une partie avec une ou plusieurs associations
+      </div>
+    </label>
 
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-             <button class="choiceBtn" id="sportAssoPreview" type="button">
-Consulter le partage
-</button>
+    <label class="miniCheck">
+      <input
+        type="radio"
+        name="sportDonMode"
+        value="full"
+      >
+      <div>
+        Consacrer 100 % des bocitecoins concernés
+        à une ou plusieurs associations
+      </div>
+    </label>
 
-<button class="choiceBtn" id="sportAssoSave" type="button">
-Enregistrer le partage
-</button>
-            </div>
+  </div>
 
-            <div class="muted" style="margin-top:10px;">
-              (Démo) Enregistrement local sur ce téléphone. En LIVE : le choix accompagne le scan du club pour traitement mairie.
-            </div>
-          </div>
+
+  <!-- ==================================================
+       ASSOCIATIONS / CAUSES
+       ================================================== -->
+
+  <div class="box" style="margin-top:12px;">
+
+    <div style="font-weight:900;">
+      Associations proposées
+    </div>
+
+    <div
+      style="
+        margin-top:6px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      "
+    >
+      Les organismes proposés seront vérifiés avant leur mise
+      à disposition et pourront évoluer dans le temps.
+
+      <br><br>
+
+      Les intitulés A, B, C et D ci-dessous sont provisoires.
+      Ils permettent de conserver le fonctionnement de la démonstration
+      sans présenter comme bénéficiaire une association
+      qui n’aurait pas encore été validée.
+
+      <br><br>
+
+      En partage total entre plusieurs associations,
+      la répartition entre celles qui sont sélectionnées est égale.
+
+      <br>
+
+      En partage partiel, la répartition entre les associations
+      sélectionnées est indiquée en pourcentage.
+    </div>
+
+
+    <!-- ASSOCIATION A -->
+
+    <div style="margin-top:14px;">
+
+      <label class="miniCheck">
+
+        <input
+          type="checkbox"
+          class="sportAssoPick"
+          data-asso="Association solidaire A"
+        >
+
+        <div>
+          <strong>Association solidaire A</strong>
+          — maladies rares de l’enfant et recherche médicale
         </div>
 
-        <div style="font-weight:900;margin-top:14px;">PUB défilante Commerçant + Soutien Club + Asso</div>
-        <div class="box">
-          <div class="muted">
-            Le sportif scanne le commerçant. Sa fiche se préremplit automatiquement.
-            Le sportif choisit simplement, d’un clic, l’association que le commerçant souhaite soutenir.
-            Le nom du club est déjà repris automatiquement depuis le téléphone / scan du club.
-          </div>
+      </label>
 
-          <div class="muted" style="margin-top:8px;">
-            Le texte diffusé est standardisé : <strong>nom de l’entreprise + club soutenu + association soutenue</strong>,
-            avec téléphone ou adresse si renseignés.
-          </div>
+      <details
+        style="
+          margin:6px 0 8px 36px;
+          padding:10px;
+          border:1px solid #dedede;
+          border-radius:10px;
+          background:#f7f2e8;
+        "
+      >
 
-          <div class="muted" style="margin-top:8px;">
-            Tarif fixe : <strong>50 € HT / 60 € TTC</strong> — diffusion dans la petite bande défilante pendant <strong>7 jours consécutifs</strong>,
-            uniquement après paiement validé.
-          </div>
+        <summary
+          style="
+            cursor:pointer;
+            color:#2f5d46;
+            font-size:14px;
+            font-weight:700;
+          "
+        >
+          Comprendre cette cause
+        </summary>
 
-          <div style="margin-top:10px;font-weight:900;">Scan commerçant (démo)</div>
-          <textarea id="sportMerchantScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan commerçant (démo)"></textarea>
+        <div
+          style="
+            margin-top:8px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+          "
+        >
+          Cette cause permet notamment de parler
+          des maladies rares touchant les enfants,
+          des difficultés rencontrées par les familles
+          et de l’importance de la recherche médicale.
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="sportMerchantReadBtn" type="button">
-Consulter le scan du commerçant
-</button>
-          </div>
+          <br><br>
 
-          <div class="box" style="margin-top:12px;background:var(--bg);">
-            <div style="font-weight:900;">Fiche commerçant préremplie</div>
-
-            <div style="margin-top:10px;font-weight:900;">Enseigne</div>
-            <input class="miniField" id="sportMerchantName" placeholder="Nom du commerce">
-
-            <div style="margin-top:10px;font-weight:900;">Adresse</div>
-            <input class="miniField" id="sportMerchantAddress" placeholder="Adresse">
-
-            <div style="margin-top:10px;font-weight:900;">Téléphone</div>
-            <input class="miniField" id="sportMerchantPhone" placeholder="Téléphone">
-
-            <div style="margin-top:10px;font-weight:900;">Email</div>
-            <input class="miniField" id="sportMerchantEmail" placeholder="Email">
-          </div>
-
-          <div class="box" style="margin-top:12px;">
-            <div style="font-weight:900;">Association choisie par le commerçant</div>
-            <div class="muted" style="margin-top:6px;">
-              Le sportif clique simplement sur l’association retenue. Le texte défilant est généré automatiquement.
-            </div>
-
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-              <button class="choiceBtn sportPubAssoBtn" data-asso="Les Clés du Cœur" type="button">Les Clés du Cœur</button>
-              <button class="choiceBtn sportPubAssoBtn" data-asso="Étoile Filante" type="button">Étoile Filante</button>
-              <button class="choiceBtn sportPubAssoBtn" data-asso="Les Papillons (antenne Nord)" type="button">Les Papillons</button>
-              <button class="choiceBtn sportPubAssoBtn" data-asso="ATC Nord" type="button">ATC Nord</button>
-            </div>
-
-            <div class="box" style="margin-top:12px;background:var(--bg);">
-              <div style="font-weight:900;">Texte bande défilante généré</div>
-              <div class="muted" id="sportPubPreview" style="margin-top:8px;">Aucune publicité générée pour le moment.</div>
-            </div>
-          </div>
-
-          <div class="box" style="margin-top:12px;">
-            <div style="font-weight:900;">Paiement + diffusion</div>
-            <div class="muted" style="margin-top:6px;">
-              Sans paiement validé, la publicité n’est pas diffusée.
-            </div>
-            <div class="muted" style="margin-top:6px;">
-              Une fois le paiement validé, la publicité est diffusée pendant 7 jours consécutifs puis disparaît automatiquement.
-            </div>
-            <div class="muted" style="margin-top:6px;">
-              Après validation du paiement, une traçabilité complète est prévue pour :
-              le commerçant, le club, l’association et Bo’CitéArt.
-            </div>
-            <div class="muted" style="margin-top:6px;">
-              En version officielle, le commerçant reçoit immédiatement sa facture par email via le PSP.
-              Le club, l’association et Bo’CitéArt reçoivent également leur traçabilité / justificatif correspondant.
-              En cas de besoin, un renvoi de facture doit rester possible.
-            </div>
-
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-             <button class="choiceBtn" id="sportPubPayBtn" type="button">
-Confirmer et payer 60 € TTC
-</button>
-
-<button class="choiceBtn" id="sportPubHistoryBtn" type="button" style="background:#fff;">
-Consulter les publications actives
-</button>
-            </div>
-          </div>
+          Elle peut aussi rappeler que certaines recherches
+          concernent peu de malades et disposent parfois
+          de moyens plus difficiles à réunir.
         </div>
 
-        <div style="font-weight:900;margin-top:14px;">Échange club → mairie / magasin partenaire</div>
-        <div class="box">
-          <div class="muted">
-            Le club présente son code. Ce code peut être lu par la mairie ou par un commerçant partenaire selon le cas.
-            Après validation, les bocitecoins échangés sont déduits et l’opération est enregistrée dans l’historique.
-          </div>
+      </details>
 
-          <div class="muted" style="margin-top:8px;">
-            Échanges autorisés : tranches de <strong>10 bocitecoins</strong> uniquement.
-          </div>
-
-          <div class="muted" style="margin-top:8px;">
-            Chez le commerçant : jusqu’à <strong>30 % maximum</strong> de la valeur totale peut concerner nourriture / boissons.
-            Le reste doit profiter au club selon les règles admises.
-          </div>
-
-          <div class="muted" style="margin-top:8px;">
-            En mairie : le club peut orienter tout ou partie du montant vers du matériel ou vers une / des associations selon le choix enregistré.
-          </div>
-
-          <div style="margin-top:10px;font-weight:900;">Lecture / scan club (démo)</div>
-          <textarea id="sportScanInput" class="miniField" style="min-height:120px;" placeholder="Lecture / scan club (démo)"></textarea>
-
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <button class="choiceBtn" id="sportReadBtn" type="button">
-Consulter le scan
-</button>
-
-<button class="choiceBtn" id="sportValidate10Btn" type="button">
-Confirmer l'échange de 10 Bo'CitéCoins
-</button>
-
-<button class="choiceBtn" id="sportValidate20Btn" type="button">
-Confirmer l'échange de 20 Bo'CitéCoins
-</button>
-
-<button class="choiceBtn" id="sportHistoryBtn" type="button" style="background:#fff;">
-Consulter l'historique
-</button>
-
-<button class="choiceBtn" id="sportExportBtn" type="button" style="background:#fff;">
-Exporter l'historique
-</button>
-          </div>
-
-          <div class="box" style="margin-top:12px;background:var(--bg);">
-            <div style="font-weight:900;">Lecture du code</div>
-            <div class="muted" id="sportReadOut" style="margin-top:8px;">Aucun code lu pour le moment.</div>
-          </div>
+      <div
+        style="
+          display:flex;
+          gap:10px;
+          align-items:center;
+          margin:6px 0 10px 36px;
+        "
+      >
+        <div class="muted" style="min-width:78px;">
+          % :
         </div>
+
+        <input
+          class="miniField sportAssoPct"
+          data-asso="Association solidaire A"
+          type="number"
+          min="0"
+          max="100"
+          step="1"
+          value="0"
+          style="max-width:120px;"
+        >
+      </div>
+
+    </div>
+
+
+    <!-- ASSOCIATION B -->
+
+    <div style="margin-top:14px;">
+
+      <label class="miniCheck">
+
+        <input
+          type="checkbox"
+          class="sportAssoPick"
+          data-asso="Association solidaire B"
+        >
+
+        <div>
+          <strong>Association solidaire B</strong>
+          — enfants malades, soins et accompagnement
+        </div>
+
+      </label>
+
+      <details
+        style="
+          margin:6px 0 8px 36px;
+          padding:10px;
+          border:1px solid #dedede;
+          border-radius:10px;
+          background:#f7f2e8;
+        "
+      >
+
+        <summary
+          style="
+            cursor:pointer;
+            color:#2f5d46;
+            font-size:14px;
+            font-weight:700;
+          "
+        >
+          Comprendre cette cause
+        </summary>
+
+        <div
+          style="
+            margin-top:8px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+          "
+        >
+          Cette cause permet de rappeler qu’un enfant malade
+          peut avoir besoin de soins,
+          mais également d’accompagnement dans sa vie quotidienne.
+
+          <br><br>
+
+          La solidarité peut aussi aider sa famille,
+          faciliter sa scolarité, préserver des activités
+          et permettre à l’enfant de conserver
+          des moments de vie aussi ordinaires que possible.
+        </div>
+
+      </details>
+
+      <div
+        style="
+          display:flex;
+          gap:10px;
+          align-items:center;
+          margin:6px 0 10px 36px;
+        "
+      >
+        <div class="muted" style="min-width:78px;">
+          % :
+        </div>
+
+        <input
+          class="miniField sportAssoPct"
+          data-asso="Association solidaire B"
+          type="number"
+          min="0"
+          max="100"
+          step="1"
+          value="0"
+          style="max-width:120px;"
+        >
+      </div>
+
+    </div>
+
+
+    <!-- ASSOCIATION C -->
+
+    <div style="margin-top:14px;">
+
+      <label class="miniCheck">
+
+        <input
+          type="checkbox"
+          class="sportAssoPick"
+          data-asso="Association solidaire C"
+        >
+
+        <div>
+          <strong>Association solidaire C</strong>
+          — handicap, autonomie et inclusion
+        </div>
+
+      </label>
+
+      <details
+        style="
+          margin:6px 0 8px 36px;
+          padding:10px;
+          border:1px solid #dedede;
+          border-radius:10px;
+          background:#f7f2e8;
+        "
+      >
+
+        <summary
+          style="
+            cursor:pointer;
+            color:#2f5d46;
+            font-size:14px;
+            font-weight:700;
+          "
+        >
+          Comprendre cette cause
+        </summary>
+
+        <div
+          style="
+            margin-top:8px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+          "
+        >
+          Cette cause permet d’aborder le handicap,
+          l’autonomie, l’accessibilité et la place
+          de chacun dans la société.
+
+          <br><br>
+
+          Elle permet aussi de rappeler
+          que certaines difficultés sont visibles
+          et que d’autres ne le sont pas,
+          mais que chacun doit pouvoir participer,
+          apprendre, pratiquer une activité
+          et trouver sa place dans le groupe.
+        </div>
+
+      </details>
+
+      <div
+        style="
+          display:flex;
+          gap:10px;
+          align-items:center;
+          margin:6px 0 10px 36px;
+        "
+      >
+        <div class="muted" style="min-width:78px;">
+          % :
+        </div>
+
+        <input
+          class="miniField sportAssoPct"
+          data-asso="Association solidaire C"
+          type="number"
+          min="0"
+          max="100"
+          step="1"
+          value="0"
+          style="max-width:120px;"
+        >
+      </div>
+
+    </div>
+
+
+    <!-- ASSOCIATION D -->
+
+    <div style="margin-top:14px;">
+
+      <label class="miniCheck">
+
+        <input
+          type="checkbox"
+          class="sportAssoPick"
+          data-asso="Association solidaire D"
+        >
+
+        <div>
+          <strong>Association solidaire D</strong>
+          — accidents, séquelles et reconstruction
+        </div>
+
+      </label>
+
+      <details
+        style="
+          margin:6px 0 8px 36px;
+          padding:10px;
+          border:1px solid #dedede;
+          border-radius:10px;
+          background:#f7f2e8;
+        "
+      >
+
+        <summary
+          style="
+            cursor:pointer;
+            color:#2f5d46;
+            font-size:14px;
+            font-weight:700;
+          "
+        >
+          Comprendre cette cause
+        </summary>
+
+        <div
+          style="
+            margin-top:8px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+          "
+        >
+          Cette cause permet d’évoquer
+          les conséquences qu’un accident peut avoir
+          sur la vie d’un enfant et de sa famille.
+
+          <br><br>
+
+          Après les soins peuvent venir
+          la rééducation, le retour à l’école,
+          la recherche d’une nouvelle autonomie
+          et un accompagnement parfois long.
+
+          <br><br>
+
+          Elle permet également de parler
+          de prévention, de patience,
+          de courage et d’entraide.
+        </div>
+
+      </details>
+
+      <div
+        style="
+          display:flex;
+          gap:10px;
+          align-items:center;
+          margin:6px 0 10px 36px;
+        "
+      >
+        <div class="muted" style="min-width:78px;">
+          % :
+        </div>
+
+        <input
+          class="miniField sportAssoPct"
+          data-asso="Association solidaire D"
+          type="number"
+          min="0"
+          max="100"
+          step="1"
+          value="0"
+          style="max-width:120px;"
+        >
+      </div>
+
+    </div>
+
+
+    <div
+      style="
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-top:12px;
+      "
+    >
+
+      <button
+        class="choiceBtn"
+        id="sportAssoPreview"
+        type="button"
+      >
+        Consulter le partage
+      </button>
+
+      <button
+        class="choiceBtn"
+        id="sportAssoSave"
+        type="button"
+      >
+        Enregistrer le partage
+      </button>
+
+    </div>
+
+    <div
+      style="
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      "
+    >
+      Dans cette démonstration,
+      le choix est enregistré localement.
+      Dans la version officielle,
+      seules les personnes autorisées disposeront
+      des fonctions nécessaires au traitement de l’opération.
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ====================================================
+     PUBLICITÉ DÉFILANTE — CLUB / COMMERÇANT
+     ==================================================== -->
+
+<div style="font-weight:900;margin-top:14px;">
+  PUB défilante Commerçant + Soutien Club + Asso
+</div>
+
+<div class="box">
+
+  <div
+    style="
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
+    "
+  >
+    Le sportif scanne le commerçant.
+    Sa fiche se préremplit automatiquement.
+
+    <br><br>
+
+    Le sportif sélectionne ensuite l’association
+    que le commerçant souhaite soutenir.
+    Le club concerné est repris automatiquement
+    depuis son accès.
+  </div>
+
+  <div
+    style="
+      margin-top:8px;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
+    "
+  >
+    Le texte diffusé reprend simplement
+    le nom de l’entreprise,
+    le club soutenu et l’association soutenue,
+    avec les coordonnées utiles lorsqu’elles sont renseignées.
+  </div>
+
+  <div
+    style="
+      margin-top:8px;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
+    "
+  >
+    Tarif de démonstration :
+    <strong>50 € HT / 60 € TTC</strong>
+    pour une diffusion pendant
+    <strong>7 jours consécutifs</strong>,
+    uniquement après validation du paiement.
+  </div>
+
+
+  <div style="margin-top:12px;font-weight:900;">
+    Scan commerçant — démonstration
+  </div>
+
+  <textarea
+    id="sportMerchantScanInput"
+    class="miniField"
+    style="min-height:120px;"
+    placeholder="Lecture / scan commerçant (démo)"
+  ></textarea>
+
+  <div
+    style="
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    "
+  >
+
+    <button
+      class="choiceBtn"
+      id="sportMerchantReadBtn"
+      type="button"
+    >
+      Consulter le scan du commerçant
+    </button>
+
+  </div>
+
+
+  <div
+    class="box"
+    style="
+      margin-top:12px;
+      background:var(--bg);
+    "
+  >
+
+    <div style="font-weight:900;">
+      Fiche commerçant préremplie
+    </div>
+
+    <div style="margin-top:10px;font-weight:900;">
+      Enseigne
+    </div>
+
+    <input
+      class="miniField"
+      id="sportMerchantName"
+      placeholder="Nom du commerce"
+    >
+
+    <div style="margin-top:10px;font-weight:900;">
+      Adresse
+    </div>
+
+    <input
+      class="miniField"
+      id="sportMerchantAddress"
+      placeholder="Adresse"
+    >
+
+    <div style="margin-top:10px;font-weight:900;">
+      Téléphone
+    </div>
+
+    <input
+      class="miniField"
+      id="sportMerchantPhone"
+      placeholder="Téléphone"
+    >
+
+    <div style="margin-top:10px;font-weight:900;">
+      Email
+    </div>
+
+    <input
+      class="miniField"
+      id="sportMerchantEmail"
+      placeholder="Email"
+    >
+
+  </div>
+
+
+  <div class="box" style="margin-top:12px;">
+
+    <div style="font-weight:900;">
+      Association choisie par le commerçant
+    </div>
+
+    <div
+      style="
+        margin-top:6px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      "
+    >
+      Les noms réels seront affichés
+      lorsque les associations auront été vérifiées et validées.
+      Pour la démonstration,
+      les quatre emplacements restent disponibles.
+    </div>
+
+    <div
+      style="
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-top:10px;
+      "
+    >
+
+      <button
+        class="choiceBtn sportPubAssoBtn"
+        data-asso="Association solidaire A"
+        type="button"
+      >
+        Association solidaire A
+      </button>
+
+      <button
+        class="choiceBtn sportPubAssoBtn"
+        data-asso="Association solidaire B"
+        type="button"
+      >
+        Association solidaire B
+      </button>
+
+      <button
+        class="choiceBtn sportPubAssoBtn"
+        data-asso="Association solidaire C"
+        type="button"
+      >
+        Association solidaire C
+      </button>
+
+      <button
+        class="choiceBtn sportPubAssoBtn"
+        data-asso="Association solidaire D"
+        type="button"
+      >
+        Association solidaire D
+      </button>
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        margin-top:12px;
+        background:var(--bg);
+      "
+    >
+
+      <div style="font-weight:900;">
+        Texte bande défilante généré
+      </div>
+
+      <div
+        id="sportPubPreview"
+        style="
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        Aucune publicité générée pour le moment.
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="box" style="margin-top:12px;">
+
+    <div style="font-weight:900;">
+      Paiement + diffusion
+    </div>
+
+    <div
+      style="
+        margin-top:6px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      "
+    >
+      Sans paiement validé,
+      la publicité n’est pas diffusée.
+
+      <br><br>
+
+      Une fois le paiement validé,
+      la publicité est diffusée pendant
+      7 jours consécutifs
+      puis disparaît automatiquement.
+
+      <br><br>
+
+      Une traçabilité de l’opération est prévue
+      pour les acteurs concernés.
+
+      <br><br>
+
+      Dans la version officielle,
+      le justificatif correspondant
+      sera transmis selon le circuit de paiement retenu.
+    </div>
+
+    <div
+      style="
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-top:10px;
+      "
+    >
+
+      <button
+        class="choiceBtn"
+        id="sportPubPayBtn"
+        type="button"
+      >
+        Confirmer et payer 60 € TTC
+      </button>
+
+      <button
+        class="choiceBtn"
+        id="sportPubHistoryBtn"
+        type="button"
+        style="background:#fff;"
+      >
+        Consulter les publications actives
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ====================================================
+     ÉCHANGE CLUB
+     ==================================================== -->
+
+<div style="font-weight:900;margin-top:14px;">
+  Échange club → mairie / magasin partenaire
+</div>
+
+<div class="box">
+
+  <div
+    style="
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
+    "
+  >
+    Le club présente son code.
+    Celui-ci peut être lu par la mairie
+    ou par un commerçant partenaire selon le cas.
+
+    <br><br>
+
+    Après validation,
+    les bocitecoins concernés sont déduits
+    et l’opération est enregistrée dans l’historique.
+  </div>
+
+  <div
+    style="
+      margin-top:8px;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
+    "
+  >
+    Échanges autorisés :
+    tranches de <strong>10 bocitecoins</strong>.
+  </div>
+
+  <div
+    style="
+      margin-top:8px;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
+    "
+  >
+    Chez le commerçant partenaire,
+    jusqu’à <strong>30 % maximum</strong>
+    de l’avantage peut concerner
+    la nourriture ou les boissons admises.
+
+    <br><br>
+
+    Le reste doit être consacré
+    aux besoins utiles du club.
+  </div>
+
+  <div
+    style="
+      margin-top:8px;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
+    "
+  >
+    Lorsque l’opération passe par la mairie,
+    le choix solidaire préalablement enregistré
+    peut également être pris en compte
+    selon le cadre prévu.
+  </div>
+
+
+  <div style="margin-top:12px;font-weight:900;">
+    Lecture / scan club — démonstration
+  </div>
+
+  <textarea
+    id="sportScanInput"
+    class="miniField"
+    style="min-height:120px;"
+    placeholder="Lecture / scan club (démo)"
+  ></textarea>
+
+
+  <div
+    style="
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    "
+  >
+
+    <button
+      class="choiceBtn"
+      id="sportReadBtn"
+      type="button"
+    >
+      Consulter le scan
+    </button>
+
+    <button
+      class="choiceBtn"
+      id="sportValidate10Btn"
+      type="button"
+    >
+      Confirmer l'échange de 10 Bo'CitéCoins
+    </button>
+
+    <button
+      class="choiceBtn"
+      id="sportValidate20Btn"
+      type="button"
+    >
+      Confirmer l'échange de 20 Bo'CitéCoins
+    </button>
+
+    <button
+      class="choiceBtn"
+      id="sportHistoryBtn"
+      type="button"
+      style="background:#fff;"
+    >
+      Consulter l'historique
+    </button>
+
+    <button
+      class="choiceBtn"
+      id="sportExportBtn"
+      type="button"
+      style="background:#fff;"
+    >
+      Exporter l'historique
+    </button>
+
+  </div>
+
+
+  <div
+    class="box"
+    style="
+      margin-top:12px;
+      background:var(--bg);
+    "
+  >
+
+    <div style="font-weight:900;">
+      Lecture du code
+    </div>
+
+    <div
+      id="sportReadOut"
+      style="
+        margin-top:8px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      "
+    >
+      Aucun code lu pour le moment.
+    </div>
+
+  </div>
+
+</div>
        `);
     
       setTimeout(()=>{
-        const SPORT_HISTORY_KEY = "bociteart_sport_history_v1";
+        const SPORT_HISTORY_KEY = "bociteart_sport_history_v2";
         const SPORT_REPORT_KEY = "bociteart_sport_report_v1";
-        const SPORT_SOLIDARITY_KEY = "bociteart_sport_solidarity_v1";
-        const SPORT_PUBS_KEY = "bociteart_sport_pubs_v1";
+        const SPORT_SOLIDARITY_KEY = "bociteart_sport_solidarity_v2";
+        const SPORT_PUBS_KEY = "bociteart_sport_pubs_v2";
 
         const b = $("openSportFicheBtn");
         const btnMap = $("openMap");
@@ -6856,12 +8466,29 @@ Exporter l'historique
 
         function syncSportPubsToTape(){
           const active = getActiveSportPubs();
-          const staticAds = [
-            { txt:"🥐 Boulangerie Croquet soutient Club + Les Clés du Cœur • www.bociteart.com", bold:true },
-            { txt:"💊 Pharmacie Richardson soutient Club + ATC Nord • www.bociteart.com", bold:false },
-            { txt:"🌸 Anaïs Fleurs soutient Club + Étoile Filante • www.bociteart.com", bold:true },
-            { txt:"🚗 Garage Planque soutient Club + Les Papillons • www.bociteart.com", bold:false }
-          ];
+         const staticAds = [
+
+  {
+    txt:"🥐 Commerce partenaire soutient Club + Association solidaire A • www.bociteart.com",
+    bold:true
+  },
+
+  {
+    txt:"💊 Commerce partenaire soutient Club + Association solidaire B • www.bociteart.com",
+    bold:false
+  },
+
+  {
+    txt:"🌸 Commerce partenaire soutient Club + Association solidaire C • www.bociteart.com",
+    bold:true
+  },
+
+  {
+    txt:"🚗 Commerce partenaire soutient Club + Association solidaire D • www.bociteart.com",
+    bold:false
+  }
+
+];
 
           const dynamicAds = active.map(x => ({
             txt: x.text,
