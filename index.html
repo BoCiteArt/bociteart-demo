@@ -1497,8 +1497,7 @@ Les présentes Conditions Générales de Vente sont régies par le droit frança
       </div>
 
       <div class="choiceGrid">
-
-        <button class="choiceBtn" onclick="openBociteSchoolPrivateDemo()">École — Direction</button>
+       
         <button class="choiceBtn" data-pick="3919" type="button"> 3919<br> <small>Écoute et orientation</small> </button>
 
         <button class="choiceBtn" data-pick="119" type="button">
@@ -4123,13 +4122,6 @@ window.tapeAds = [
   el.addEventListener("click", ()=>{
     const key = el.getAttribute("data-open");
 
-    if(key === "sport" || key === "mairie" || key === "commerces"){
-      if(typeof window.__bociteartOpenByKey === "function"){
-        window.__bociteartOpenByKey(key);
-        return;
-      }
-    }
-
 if(key === "ecole"){
 
   openModal("École", `
@@ -4423,8 +4415,7 @@ if(key === "ecole"){
         et des autorisations applicables.
       </div>
 
-     <button
- <button
+    <button
   id="schoolAccessOpenBtn"
   class="bociteSchoolAction bociteSchoolActionPrimary"
   type="button"
@@ -5779,102 +5770,6 @@ if(key === "ecole"){
       : "block";
   }
 
-  async function schoolFirstDirectionSetup(){
-    if(schoolDirectionInitialized()){
-      schoolRefreshAccessStartUi();
-     
-    if(
-  window.bociteartAdminSession &&
-  window.bociteartSchoolPrivateEntry
-){
-
-  /*
-    L'utilisateur est déjà authentifié
-    dans le Pilotage privé Bo'CitéArt.
-    Aucun deuxième code Direction.
-  */
-
-  window.bociteartSchoolPrivateEntry = false;
-
-  schoolSession = {
-    role: "direction",
-    teacherId: "",
-    openedFromDirection: false
-  };
-
-  if(schoolAccessOpenBtn){
-    schoolAccessOpenBtn.style.display = "none";
-  }
-
-  if(schoolAccessPanel){
-    schoolAccessPanel.style.display = "none";
-  }
-
-  if(schoolProfessorPrivatePanel){
-    schoolProfessorPrivatePanel.style.display = "none";
-  }
-
-  if(schoolDirectionPanel){
-    schoolDirectionPanel.style.display = "block";
-  }
-
-  schoolRenderTeacherAccessList();
-  schoolFillClassSuggestions();
-
-  window.setTimeout(function(){
-
-    if(schoolDirectionPanel){
-      schoolDirectionPanel.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
-
-  }, 60);
-}
-      return;
-    }
-
-    const first = prompt("Choisissez le code maître de la direction (6 caractères minimum).", "");
-    if(first == null){
-      return;
-    }
-
-    const code = String(first).trim();
-    if(code.length < 6){
-      alert("Le code doit comporter au moins 6 caractères.");
-      return;
-    }
-
-    const second = prompt("Confirmez le code maître de la direction.", "");
-    if(second == null){
-      return;
-    }
-
-    if(String(second).trim() !== code){
-      alert("Les deux codes ne correspondent pas.");
-      return;
-    }
-
-    const data = schoolLoadAccessData();
-    data.direction = {
-      codeHash: await schoolHashCode(code),
-      activatedAt: new Date().toISOString()
-    };
-
-    if(!schoolSaveAccessData(data)){
-      alert("L’activation n’a pas pu être enregistrée sur cet appareil.");
-      return;
-    }
-
-    schoolRefreshAccessStartUi();
-
-    if(schoolAccessStatus){
-      schoolAccessStatus.textContent =
-        "✓ Accès direction activé pour cette démonstration. Dans la version sécurisée, cette activation sera gérée hors du navigateur.";
-    }
-  }
-
   function schoolTeacherAccessExpired(account){
     if(!account || !account.expiresAt){
       return false;
@@ -5882,20 +5777,41 @@ if(key === "ecole"){
     return String(account.expiresAt) < schoolTodayIso();
   }
 
-  async function schoolLogin(){
-     /* =====================================================
-     ACCÈS DIRECT DIRECTION DEPUIS LE PILOTAGE PRIVÉ
-     ===================================================== */
+async function schoolLogin(){
 
-  if(
-    window.bociteartAdminSession &&
-    (
-      window.bociteartSchoolAdminPreview ||
-      window.bociteartSchoolPrivateEntry
-    )
-  ){
+  const role =
+    schoolAccessRole
+      ? String(schoolAccessRole.value || "teacher")
+      : "teacher";
 
-    window.bociteartSchoolPrivateEntry = false;
+  const code =
+    String(
+      schoolAccessCodeInput && schoolAccessCodeInput.value
+        ? schoolAccessCodeInput.value
+        : ""
+    ).trim();
+
+  if(!code){
+    alert("Saisissez votre code personnel.");
+    return;
+  }
+
+  const data = schoolLoadAccessData();
+  const hash = await schoolHashCode(code);
+
+  if(role === "direction"){
+
+    if(!data.direction || !data.direction.codeHash){
+      alert(
+        "L’accès direction n’a pas encore été activé sur cette démonstration."
+      );
+      return;
+    }
+
+    if(hash !== String(data.direction.codeHash)){
+      alert("Code direction incorrect.");
+      return;
+    }
 
     schoolSession = {
       role: "direction",
@@ -5903,104 +5819,62 @@ if(key === "ecole"){
       openedFromDirection: false
     };
 
-    if(schoolAccessOpenBtn){
-      schoolAccessOpenBtn.style.display = "none";
-    }
-
-    if(schoolAccessPanel){
-      schoolAccessPanel.style.display = "none";
-    }
-
-    if(schoolProfessorPrivatePanel){
-      schoolProfessorPrivatePanel.style.display = "none";
-    }
-
-    if(schoolDirectionPanel){
-      schoolDirectionPanel.style.display = "block";
-    }
+    schoolAccessPanel.style.display = "none";
+    schoolDirectionPanel.style.display = "block";
+    schoolAccessOpenBtn.style.display = "none";
+    schoolAccessCodeInput.value = "";
 
     schoolRenderTeacherAccessList();
     schoolFillClassSuggestions();
 
-    window.setTimeout(function(){
-
-      if(schoolDirectionPanel){
-        schoolDirectionPanel.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }
-
-    }, 50);
+    schoolDirectionPanel.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
 
     return;
   }
-    const role = schoolAccessRole ? String(schoolAccessRole.value || "teacher") : "teacher";
-    const code = String(schoolAccessCodeInput && schoolAccessCodeInput.value ? schoolAccessCodeInput.value : "").trim();
 
-    if(!code){
-      alert("Saisissez votre code personnel.");
-      return;
-    }
-
-    const data = schoolLoadAccessData();
-    const hash = await schoolHashCode(code);
-
-    if(role === "direction"){
-      if(!data.direction || !data.direction.codeHash){
-        alert("L’accès direction n’a pas encore été activé sur cette démonstration.");
-        return;
-      }
-
-      if(hash !== String(data.direction.codeHash)){
-        alert("Code direction incorrect.");
-        return;
-      }
-
-      schoolSession = {
-        role: "direction",
-        teacherId: "",
-        openedFromDirection: false
-      };
-
-      schoolAccessPanel.style.display = "none";
-      schoolDirectionPanel.style.display = "block";
-      schoolAccessOpenBtn.style.display = "none";
-      schoolAccessCodeInput.value = "";
-      schoolRenderTeacherAccessList();
-      schoolFillClassSuggestions();
-      schoolDirectionPanel.scrollIntoView({ behavior:"smooth", block:"start" });
-      return;
-    }
-
-    const account = data.teachers.find(function(item){
-      return item && String(item.codeHash || "") === hash;
+  const account =
+    data.teachers.find(function(item){
+      return (
+        item &&
+        String(item.codeHash || "") === hash
+      );
     });
 
-    if(!account){
-      alert("Code professeur incorrect.");
-      return;
-    }
-
-    if(account.active === false){
-      alert("Cet accès professeur est suspendu. Contactez la direction de l’école.");
-      return;
-    }
-
-    if(schoolTeacherAccessExpired(account)){
-      alert("Cet accès temporaire est arrivé à son terme. Contactez la direction de l’école.");
-      return;
-    }
-
-    schoolSession = {
-      role: "teacher",
-      teacherId: String(account.id || ""),
-      openedFromDirection: false
-    };
-
-    schoolAccessCodeInput.value = "";
-    schoolOpenProfessorWorkspace(account, false);
+  if(!account){
+    alert("Code professeur incorrect.");
+    return;
   }
+
+  if(account.active === false){
+    alert(
+      "Cet accès professeur est suspendu. Contactez la direction de l’école."
+    );
+    return;
+  }
+
+  if(schoolTeacherAccessExpired(account)){
+    alert(
+      "Cet accès temporaire est arrivé à son terme. Contactez la direction de l’école."
+    );
+    return;
+  }
+
+  schoolSession = {
+    role: "teacher",
+    teacherId: String(account.id || ""),
+    openedFromDirection: false
+  };
+
+  schoolAccessCodeInput.value = "";
+
+  schoolOpenProfessorWorkspace(
+    account,
+    false
+  );
+}
 
   function schoolOpenProfessorWorkspace(account, openedFromDirection){
     if(!account){
@@ -6348,97 +6222,69 @@ if(schoolAccessOpenBtn){
 
   schoolAccessOpenBtn.onclick = function(){
 
-    /*
-      Déjà reconnu dans le Pilotage privé :
-      ouverture directe de l'accès École.
-    */
-    if(window.bociteartAdminSession){
+    schoolAccessOpenBtn.style.display = "none";
+    schoolAccessPanel.style.display = "block";
 
-      window.bociteartSchoolPrivateEntry = true;
-
-      if(schoolAccessRole){
-        schoolAccessRole.value = "direction";
-      }
-
-      if(schoolAccessPanel){
-        schoolAccessPanel.style.display = "block";
-      }
-
-      schoolAccessOpenBtn.style.display = "none";
-
-      schoolRefreshAccessStartUi();
-      schoolFillClassSuggestions();
-
-      window.setTimeout(function(){
-
-        if(schoolAccessPanel){
-          schoolAccessPanel.scrollIntoView({
-            behavior:"smooth",
-            block:"start"
-          });
-        }
-
-      }, 50);
-
-      return;
-    }
-
-
-    /*
-      Pas encore reconnu :
-      on ne montre PAS le formulaire scolaire.
-      Passage obligatoire par la porte privée générale.
-    */
-    if(typeof window.openPilotagePrive === "function"){
-
-      alert(
-        "Cet espace est réservé à la direction et aux personnes autorisées par l’établissement.\n\nVous allez être dirigé vers l’accès privé."
-      );
-
-      window.openPilotagePrive();
-
-      return;
-    }
-
-
-    alert(
-      "Accès privé requis."
-    );
-  };
-}
-
-
-/* =====================================================
-   ENTRÉE ÉCOLE DEPUIS LE PILOTAGE PRIVÉ UNIQUEMENT
-   ===================================================== */
-
-if(
-  window.bociteartAdminSession &&
-  window.bociteartSchoolPrivateEntry &&
-  schoolAccessPanel
-){
-
-  window.bociteartSchoolPrivateEntry = false;
-
-  if(schoolAccessRole){
-    schoolAccessRole.value = "direction";
-  }
-
-  schoolAccessPanel.style.display = "block";
-
-  schoolRefreshAccessStartUi();
-  schoolFillClassSuggestions();
-
-  window.setTimeout(function(){
+    schoolRefreshAccessStartUi();
+    schoolFillClassSuggestions();
 
     schoolAccessPanel.scrollIntoView({
       behavior:"smooth",
       block:"start"
     });
+  };
+}
+
+
+/* =====================================================
+   OUVERTURE DIRECTE DIRECTION DEPUIS LE PILOTAGE PRIVÉ
+   ===================================================== */
+
+if(
+  window.bociteartAdminSession &&
+  window.bociteartSchoolPrivateEntry
+){
+
+  window.bociteartSchoolPrivateEntry = false;
+
+  schoolSession = {
+    role: "direction",
+    teacherId: "",
+    openedFromDirection: false
+  };
+
+  if(schoolAccessOpenBtn){
+    schoolAccessOpenBtn.style.display = "none";
+  }
+
+  if(schoolAccessPanel){
+    schoolAccessPanel.style.display = "none";
+  }
+
+  if(schoolProfessorPrivatePanel){
+    schoolProfessorPrivatePanel.style.display = "none";
+  }
+
+  if(schoolDirectionPanel){
+    schoolDirectionPanel.style.display = "block";
+  }
+
+  schoolRenderTeacherAccessList();
+  schoolFillClassSuggestions();
+
+  window.setTimeout(function(){
+
+    if(schoolDirectionPanel){
+
+      schoolDirectionPanel.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+    }
 
   }, 60);
 }
-
+     
   if(schoolDirectionFirstSetupBtn){
     schoolDirectionFirstSetupBtn.onclick = schoolFirstDirectionSetup;
   }
@@ -10924,18 +10770,13 @@ window.__bociteartOpenByKey = function(key){
   target.click();
 };
    
- window.openBociteSchoolPrivateDemo = function(){
+window.openBociteSchoolPrivateDemo = function(){
 
   if(!window.bociteartAdminSession){
     alert("Accès privé requis.");
     return;
   }
 
-  /*
-    Mode démonstration Direction :
-    l'administrateur Bo'CitéArt est déjà authentifié.
-  */
-  window.bociteartSchoolAdminPreview = true;
   window.bociteartSchoolPrivateEntry = true;
 
   const schoolTile =
@@ -11010,7 +10851,7 @@ openModal("Pilotage privé Bo'CitéArt",`
     <button class="choiceBtn" onclick="showPilotageAccessLog()">Journal des accès</button>
     <button class="choiceBtn" onclick="fermerPilotagePrive()">Déconnexion pilotage</button>
     <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau commune</button>
-    <button class="choiceBtn" onclick="window.bociteartSchoolPrivateEntry = true;window.__bociteartOpenByKey('ecole');"> École — Direction</button>
+    <button class="choiceBtn" onclick="openBociteSchoolPrivateDemo()">École — Direction</button>
     <button class="choiceBtn" onclick="openPresentationBoCiteArt()">Environnement</button>
     <button class="choiceBtn" onclick="openConformiteBociteart()">Conformité</button>
     <button class="choiceBtn" onclick="openTresorerieIA()">Trésorerie</button>
