@@ -4782,510 +4782,548 @@ if(key === "ecole"){
 ></div>
 
         <div class="bociteSchoolSectionTitle">
-          Utilisation des bocitecoins de la classe
-        </div>
+ <div class="bociteSchoolSectionTitle">
+  Utilisation des bocitecoins de la classe
+</div>
 
-        <div class="bociteSchoolCard">
-          <div>
-            La classe choisit ce qu’elle souhaite faire
-            des bocitecoins concernés.
-          </div>
+<div class="bociteSchoolCard">
 
-          <div style="margin-top:10px;">
-            <label class="bociteSchoolChoice">
-              <input type="radio" name="schoolSolidarityMode" value="none" checked>
-              <span>Garder 100 % des bocitecoins pour la classe</span>
-            </label>
-
-            <label class="bociteSchoolChoice">
-              <input type="radio" name="schoolSolidarityMode" value="partial">
-              <span>Partager une partie avec une ou plusieurs associations</span>
-            </label>
-
-            <label class="bociteSchoolChoice">
-              <input type="radio" name="schoolSolidarityMode" value="full">
-              <span>Donner 100 % des bocitecoins concernés</span>
-            </label>
-          </div>
-
-<div id="schoolSolidarityAssociations" style="margin-top:14px;display:none;">
-
-  <div class="bociteSchoolSectionTitle" style="margin-top:0;">
-    Associations proposées
+  <div>
+    La classe choisit ce qu’elle souhaite faire
+    des bocitecoins concernés.
   </div>
 
-  <div style="margin-top:6px;color:#111111;font-size:14px;font-weight:400;line-height:1.5;">
-    Les associations proposées à la classe sont sélectionnées
-    et vérifiées avant leur mise à disposition.
+  <div style="margin-top:10px;">
 
-    <br><br>
+    <label class="bociteSchoolChoice">
+      <input
+        type="radio"
+        name="schoolSolidarityMode"
+        value="none"
+        checked
+      >
+      <span>
+        Garder 100 % des bocitecoins pour la classe
+      </span>
+    </label>
 
-    Leur liste peut évoluer afin de conserver des organismes
-    correspondant aux causes retenues et aux exigences
-    de transparence et d’utilisation effective des soutiens.
+    <label class="bociteSchoolChoice">
+      <input
+        type="radio"
+        name="schoolSolidarityMode"
+        value="partial"
+      >
+      <span>
+        Partager une partie avec une ou plusieurs associations
+      </span>
+    </label>
 
-    <br><br>
+    <label class="bociteSchoolChoice">
+      <input
+        type="radio"
+        name="schoolSolidarityMode"
+        value="full"
+      >
+      <span>
+        Donner 100 % des bocitecoins concernés
+      </span>
+    </label>
 
-    Les présentations ci-dessous permettent au professeur
-    d’aborder avec les élèves plusieurs grandes formes
-    de solidarité avant qu’un choix soit réalisé.
   </div>
 
 
-  <!-- ==================================================
-       ASSOCIATION / CAUSE A
-       ================================================== -->
-
-  <label class="bociteSchoolChoice">
-
-    <input
-      type="checkbox"
-      class="schoolAssoPick"
-      data-asso="Association solidaire A"
-    >
-
-    <span>
-      Association solidaire A
-    </span>
-
-  </label>
-
-  <details
-    style="
-      margin:6px 0 8px 27px;
-      padding:10px;
-      border:1px solid #dedede;
-      border-radius:10px;
-      background:#f7f2e8;
-    "
+  <div
+    id="schoolSolidarityAssociations"
+    style="margin-top:14px;display:none;"
   >
 
-    <summary
-      style="
-        cursor:pointer;
-        color:#2f5d46;
-        font-size:14px;
-        font-weight:700;
-      "
+    <div
+      class="bociteSchoolSectionTitle"
+      style="margin-top:0;"
     >
-      Comprendre cette cause
-    </summary>
+      Associations proposées
+    </div>
 
     <div
       style="
-        margin-top:8px;
+        margin-top:6px;
         color:#111111;
         font-size:14px;
         font-weight:400;
         line-height:1.5;
       "
     >
-      <strong>Exemple de thème pédagogique :</strong>
-      les maladies rares de l’enfant et la recherche médicale.
+      Les associations proposées à la classe
+      sont sélectionnées et vérifiées
+      avant leur mise à disposition.
 
       <br><br>
 
-      Le professeur peut expliquer qu’une maladie est dite rare
-      lorsqu’elle concerne peu de personnes,
-      mais que de nombreuses familles sont touchées
-      lorsqu’on rassemble toutes les maladies rares.
+      Leur liste peut évoluer afin de conserver
+      des organismes correspondant aux causes retenues
+      et aux exigences de transparence
+      et d’utilisation effective des soutiens.
 
       <br><br>
 
-      La discussion peut permettre aux élèves de comprendre
-      pourquoi la recherche est longue,
-      pourquoi certains traitements restent à découvrir
-      et pourquoi même une aide modeste peut contribuer
-      à faire avancer un travail collectif.
+      Les exemples ci-dessous permettent au professeur
+      d’aborder plusieurs grandes formes de solidarité
+      avec les élèves.
     </div>
 
-  </details>
 
-  <div class="schoolAssoPercentRow">
+    <!-- A -->
 
-    <span>% :</span>
+    <label class="bociteSchoolChoice">
 
-    <input
-      class="bociteSchoolField schoolAssoPct"
-      data-asso="Association solidaire A"
-      type="number"
-      min="0"
-      max="100"
-      step="1"
-      value="0"
+      <input
+        type="checkbox"
+        class="schoolAssoPick"
+        data-asso="Association solidaire A"
+      >
+
+      <span>
+        Association solidaire A
+      </span>
+
+    </label>
+
+    <details
+      style="
+        margin:6px 0 8px 27px;
+        padding:10px;
+        border:1px solid #dedede;
+        border-radius:10px;
+        background:#f7f2e8;
+      "
     >
+
+      <summary
+        style="
+          cursor:pointer;
+          color:#2f5d46;
+          font-size:14px;
+          font-weight:700;
+        "
+      >
+        Comprendre cette cause
+      </summary>
+
+      <div
+        style="
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        Exemple de thème pédagogique :
+        les maladies rares de l’enfant
+        et la recherche médicale.
+
+        <br><br>
+
+        Le professeur peut expliquer pourquoi
+        certaines maladies concernent peu de personnes,
+        pourquoi la recherche peut être longue
+        et pourquoi la solidarité peut contribuer
+        à soutenir les travaux nécessaires.
+      </div>
+
+    </details>
+
+    <div class="schoolAssoPercentRow">
+
+      <span>% :</span>
+
+      <input
+        class="bociteSchoolField schoolAssoPct"
+        data-asso="Association solidaire A"
+        type="number"
+        min="0"
+        max="100"
+        step="1"
+        value="0"
+      >
+
+    </div>
+
+
+    <!-- B -->
+
+    <label class="bociteSchoolChoice">
+
+      <input
+        type="checkbox"
+        class="schoolAssoPick"
+        data-asso="Association solidaire B"
+      >
+
+      <span>
+        Association solidaire B
+      </span>
+
+    </label>
+
+    <details
+      style="
+        margin:6px 0 8px 27px;
+        padding:10px;
+        border:1px solid #dedede;
+        border-radius:10px;
+        background:#f7f2e8;
+      "
+    >
+
+      <summary
+        style="
+          cursor:pointer;
+          color:#2f5d46;
+          font-size:14px;
+          font-weight:700;
+        "
+      >
+        Comprendre cette cause
+      </summary>
+
+      <div
+        style="
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        Exemple de thème pédagogique :
+        les enfants malades,
+        les soins et l’accompagnement.
+
+        <br><br>
+
+        Le professeur peut expliquer qu’aider
+        un enfant malade ne concerne pas uniquement
+        les soins, mais aussi sa vie quotidienne,
+        sa famille, sa scolarité
+        et les moments qui lui permettent
+        de rester un enfant malgré la maladie.
+      </div>
+
+    </details>
+
+    <div class="schoolAssoPercentRow">
+
+      <span>% :</span>
+
+      <input
+        class="bociteSchoolField schoolAssoPct"
+        data-asso="Association solidaire B"
+        type="number"
+        min="0"
+        max="100"
+        step="1"
+        value="0"
+      >
+
+    </div>
+
+
+    <!-- C -->
+
+    <label class="bociteSchoolChoice">
+
+      <input
+        type="checkbox"
+        class="schoolAssoPick"
+        data-asso="Association solidaire C"
+      >
+
+      <span>
+        Association solidaire C
+      </span>
+
+    </label>
+
+    <details
+      style="
+        margin:6px 0 8px 27px;
+        padding:10px;
+        border:1px solid #dedede;
+        border-radius:10px;
+        background:#f7f2e8;
+      "
+    >
+
+      <summary
+        style="
+          cursor:pointer;
+          color:#2f5d46;
+          font-size:14px;
+          font-weight:700;
+        "
+      >
+        Comprendre cette cause
+      </summary>
+
+      <div
+        style="
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        Exemple de thème pédagogique :
+        le handicap de l’enfant,
+        l’autonomie et l’inclusion.
+
+        <br><br>
+
+        Le professeur peut aborder
+        la différence, l’accessibilité,
+        l’autonomie et la place de chacun
+        dans la vie collective.
+
+        <br><br>
+
+        Les élèves peuvent ainsi comprendre
+        que chacun doit pouvoir participer
+        et trouver sa place.
+      </div>
+
+    </details>
+
+    <div class="schoolAssoPercentRow">
+
+      <span>% :</span>
+
+      <input
+        class="bociteSchoolField schoolAssoPct"
+        data-asso="Association solidaire C"
+        type="number"
+        min="0"
+        max="100"
+        step="1"
+        value="0"
+      >
+
+    </div>
+
+
+    <!-- D -->
+
+    <label class="bociteSchoolChoice">
+
+      <input
+        type="checkbox"
+        class="schoolAssoPick"
+        data-asso="Association solidaire D"
+      >
+
+      <span>
+        Association solidaire D
+      </span>
+
+    </label>
+
+    <details
+      style="
+        margin:6px 0 8px 27px;
+        padding:10px;
+        border:1px solid #dedede;
+        border-radius:10px;
+        background:#f7f2e8;
+      "
+    >
+
+      <summary
+        style="
+          cursor:pointer;
+          color:#2f5d46;
+          font-size:14px;
+          font-weight:700;
+        "
+      >
+        Comprendre cette cause
+      </summary>
+
+      <div
+        style="
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        Exemple de thème pédagogique :
+        les accidents touchant les enfants,
+        leurs conséquences et la reconstruction.
+
+        <br><br>
+
+        Le professeur peut expliquer
+        qu’après les soins peuvent venir
+        la rééducation, le retour à l’école,
+        la recherche d’une nouvelle autonomie
+        et l’accompagnement de la famille.
+
+        <br><br>
+
+        Cela permet également de parler
+        de prévention, de courage,
+        de patience et d’entraide.
+      </div>
+
+    </details>
+
+    <div class="schoolAssoPercentRow">
+
+      <span>% :</span>
+
+      <input
+        class="bociteSchoolField schoolAssoPct"
+        data-asso="Association solidaire D"
+        type="number"
+        min="0"
+        max="100"
+        step="1"
+        value="0"
+      >
+
+    </div>
 
   </div>
 
 
-  <!-- ==================================================
-       ASSOCIATION / CAUSE B
-       ================================================== -->
+  <button
+    id="schoolSolidaritySaveBtn"
+    class="bociteSchoolAction"
+    type="button"
+  >
+    Enregistrer le choix de la classe
+  </button>
 
-  <label class="bociteSchoolChoice">
-
-    <input
-      type="checkbox"
-      class="schoolAssoPick"
-      data-asso="Association solidaire B"
-    >
-
-    <span>
-      Association solidaire B
-    </span>
-
-  </label>
-
-  <details
+  <div
+    id="schoolSolidarityStatus"
+    role="status"
+    aria-live="polite"
     style="
-      margin:6px 0 8px 27px;
-      padding:10px;
-      border:1px solid #dedede;
-      border-radius:10px;
-      background:#f7f2e8;
+      margin-top:10px;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+    "
+  ></div>
+
+  <div
+    style="
+      margin-top:12px;
+      padding-top:12px;
+      border-top:1px solid #dedede;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.5;
     "
   >
-
-    <summary
-      style="
-        cursor:pointer;
-        color:#2f5d46;
-        font-size:14px;
-        font-weight:700;
-      "
-    >
-      Comprendre cette cause
-    </summary>
-
-    <div
-      style="
-        margin-top:8px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.5;
-      "
-    >
-      <strong>Exemple de thème pédagogique :</strong>
-      les enfants malades, les soins et l’accompagnement.
-
-      <br><br>
-
-      Le professeur peut expliquer qu’aider un enfant malade
-      ne consiste pas uniquement à financer des soins.
-
-      <br><br>
-
-      L’accompagnement peut aussi concerner sa vie quotidienne,
-      sa famille, sa scolarité, ses activités
-      et les moments qui lui permettent de rester
-      un enfant malgré la maladie.
-
-      <br><br>
-
-      Les élèves peuvent ainsi réfléchir
-      à ce que signifient l’attention aux autres,
-      l’entraide et le soutien dans une période difficile.
-    </div>
-
-  </details>
-
-  <div class="schoolAssoPercentRow">
-
-    <span>% :</span>
-
-    <input
-      class="bociteSchoolField schoolAssoPct"
-      data-asso="Association solidaire B"
-      type="number"
-      min="0"
-      max="100"
-      step="1"
-      value="0"
-    >
-
-  </div>
-
-
-  <!-- ==================================================
-       ASSOCIATION / CAUSE C
-       ================================================== -->
-
-  <label class="bociteSchoolChoice">
-
-    <input
-      type="checkbox"
-      class="schoolAssoPick"
-      data-asso="Association solidaire C"
-    >
-
-    <span>
-      Association solidaire C
-    </span>
-
-  </label>
-
-  <details
-    style="
-      margin:6px 0 8px 27px;
-      padding:10px;
-      border:1px solid #dedede;
-      border-radius:10px;
-      background:#f7f2e8;
-    "
-  >
-
-    <summary
-      style="
-        cursor:pointer;
-        color:#2f5d46;
-        font-size:14px;
-        font-weight:700;
-      "
-    >
-      Comprendre cette cause
-    </summary>
-
-    <div
-      style="
-        margin-top:8px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.5;
-      "
-    >
-      <strong>Exemple de thème pédagogique :</strong>
-      le handicap de l’enfant, l’autonomie et l’inclusion.
-
-      <br><br>
-
-      Le professeur peut parler avec les élèves
-      des différences que chacun peut rencontrer
-      et des difficultés qui ne sont pas toujours visibles.
-
-      <br><br>
-
-      Cela permet d’aborder simplement
-      l’accessibilité, l’autonomie,
-      la place de chacun dans le groupe
-      et l’importance de permettre à tous
-      de participer à la vie collective.
-
-      <br><br>
-
-      Les enfants peuvent ainsi comprendre
-      que l’inclusion ne signifie pas traiter tout le monde
-      exactement de la même manière,
-      mais permettre à chacun de trouver sa place.
-    </div>
-
-  </details>
-
-  <div class="schoolAssoPercentRow">
-
-    <span>% :</span>
-
-    <input
-      class="bociteSchoolField schoolAssoPct"
-      data-asso="Association solidaire C"
-      type="number"
-      min="0"
-      max="100"
-      step="1"
-      value="0"
-    >
-
-  </div>
-
-
-  <!-- ==================================================
-       ASSOCIATION / CAUSE D
-       ================================================== -->
-
-  <label class="bociteSchoolChoice">
-
-    <input
-      type="checkbox"
-      class="schoolAssoPick"
-      data-asso="Association solidaire D"
-    >
-
-    <span>
-      Association solidaire D
-    </span>
-
-  </label>
-
-  <details
-    style="
-      margin:6px 0 8px 27px;
-      padding:10px;
-      border:1px solid #dedede;
-      border-radius:10px;
-      background:#f7f2e8;
-    "
-  >
-
-    <summary
-      style="
-        cursor:pointer;
-        color:#2f5d46;
-        font-size:14px;
-        font-weight:700;
-      "
-    >
-      Comprendre cette cause
-    </summary>
-
-    <div
-      style="
-        margin-top:8px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.5;
-      "
-    >
-      <strong>Exemple de thème pédagogique :</strong>
-      les accidents touchant les enfants,
-      leurs conséquences et la reconstruction.
-
-      <br><br>
-
-      Le professeur peut expliquer qu’un accident
-      peut parfois modifier durablement la vie d’un enfant
-      et celle de sa famille.
-
-      <br><br>
-
-      Après les soins peuvent venir
-      la rééducation, le retour à l’école,
-      l’apprentissage d’une nouvelle autonomie
-      et l’accompagnement de toute la famille.
-
-      <br><br>
-
-      Ce sujet permet aussi de parler
-      de prévention, de courage,
-      de patience et de solidarité
-      envers une personne qui doit reconstruire
-      progressivement une partie de sa vie.
-    </div>
-
-  </details>
-
-  <div class="schoolAssoPercentRow">
-
-    <span>% :</span>
-
-    <input
-      class="bociteSchoolField schoolAssoPct"
-      data-asso="Association solidaire D"
-      type="number"
-      min="0"
-      max="100"
-      step="1"
-      value="0"
-    >
-
+    Le choix enregistré accompagnera ensuite
+    l’échange prévu avec la mairie et l’école
+    afin que la volonté de la classe soit respectée.
   </div>
 
 </div>
-<input
-  class="bociteSchoolField schoolAssoPct"
-  data-asso="Association solidaire D"
-  type="number"
-  min="0"
-  max="100"
-  step="1"
-  value="0"
+
+
+<div
+  id="schoolTeacherCodeChangeCard"
+  class="bociteSchoolCard"
+  style="display:none;"
 >
 
-</div>
+  <div
+    class="bociteSchoolSectionTitle"
+    style="margin-top:0;"
+  >
+    Mon accès
+  </div>
+
+  <div>
+    Le professeur peut remplacer
+    le code d’activation reçu
+    par son propre code personnel.
+
+    <br><br>
+
+    La direction conserve toujours
+    son accès maître.
+  </div>
+
+  <label
+    class="bociteSchoolFieldLabel"
+    for="schoolTeacherNewCodeInput"
+  >
+    Nouveau code personnel
+  </label>
+
+  <input
+    id="schoolTeacherNewCodeInput"
+    class="bociteSchoolField"
+    type="password"
+    inputmode="numeric"
+    autocomplete="new-password"
+    placeholder="6 caractères minimum"
+  >
+
+  <label
+    class="bociteSchoolFieldLabel"
+    for="schoolTeacherNewCodeConfirmInput"
+  >
+    Confirmer le nouveau code
+  </label>
+
+  <input
+    id="schoolTeacherNewCodeConfirmInput"
+    class="bociteSchoolField"
+    type="password"
+    inputmode="numeric"
+    autocomplete="new-password"
+  >
+
+  <button
+    id="schoolTeacherChangeCodeBtn"
+    class="bociteSchoolAction"
+    type="button"
+  >
+    Changer mon code
+  </button>
+
+  <div
+    id="schoolTeacherCodeChangeStatus"
+    role="status"
+    aria-live="polite"
+    style="
+      margin-top:10px;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+    "
+  ></div>
 
 </div>
-          <button
-            id="schoolSolidaritySaveBtn"
-            class="bociteSchoolAction"
-            type="button"
-          >
-            Enregistrer le choix de la classe
-          </button>
 
-          <div
-            id="schoolSolidarityStatus"
-            role="status"
-            aria-live="polite"
-            style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;"
-          ></div>
 
-          <div style="margin-top:12px;padding-top:12px;border-top:1px solid #dedede;">
-            Le choix enregistré accompagnera ensuite l’échange prévu
-            avec la mairie et l’école afin que la volonté de la classe soit respectée.
-          </div>
-        </div>
-
-        <div id="schoolTeacherCodeChangeCard" class="bociteSchoolCard" style="display:none;">
-          <div class="bociteSchoolSectionTitle" style="margin-top:0;">
-            Mon accès
-          </div>
-
-          <div>
-            Le professeur peut remplacer le code d’activation reçu
-            par son propre code personnel. La direction conserve toujours son accès maître.
-          </div>
-
-          <label class="bociteSchoolFieldLabel" for="schoolTeacherNewCodeInput">
-            Nouveau code personnel
-          </label>
-
-          <input
-            id="schoolTeacherNewCodeInput"
-            class="bociteSchoolField"
-            type="password"
-            inputmode="numeric"
-            autocomplete="new-password"
-            placeholder="6 caractères minimum"
-          >
-
-          <label class="bociteSchoolFieldLabel" for="schoolTeacherNewCodeConfirmInput">
-            Confirmer le nouveau code
-          </label>
-
-          <input
-            id="schoolTeacherNewCodeConfirmInput"
-            class="bociteSchoolField"
-            type="password"
-            inputmode="numeric"
-            autocomplete="new-password"
-          >
-
-          <button
-            id="schoolTeacherChangeCodeBtn"
-            class="bociteSchoolAction"
-            type="button"
-          >
-            Changer mon code
-          </button>
-
-          <div
-            id="schoolTeacherCodeChangeStatus"
-            role="status"
-            aria-live="polite"
-            style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;"
-          ></div>
-        </div>
-
-       <button
+<button
   id="schoolProfessorCloseBtn"
   class="bociteSchoolAction"
   type="button"
 >
   Fermer l’espace professeur
 </button>
-      </div>
 
+</div>
     </div>
 
   `);
