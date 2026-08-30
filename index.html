@@ -15230,6 +15230,8 @@ function showPilotageAccessLog(){
   openModal("Journal des accès", html);
 }
 
+window.showPilotageAccessLog = showPilotageAccessLog;
+   
 function findPilotageUserByCode(code){
   return Object.values(pilotageUsers).find(u => u.code === code) || null;
 }
