@@ -5276,83 +5276,6 @@ if(key === "ecole"){
 </div>
 
 <!-- ==================================================
-     INVITATION TEMPORAIRE PROFESSEUR / REMPLAÇANT
-     Visible uniquement avec une invitation valide
-     ================================================== -->
-
-<div
-  id="schoolTeacherInvitationCard"
-  class="bociteSchoolCard"
-  style="display:none;"
->
-
-  <div
-    class="bociteSchoolSectionTitle"
-    style="margin-top:0;margin-bottom:12px;"
-  >
-    Invitation professeur / remplaçant
-  </div>
-
-  <div
-    style="
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-    "
-  >
-    Une invitation professionnelle temporaire
-    vous a été transmise par la Direction.
-
-    <br><br>
-
-    Saisissez le code d’activation
-    qui vous a été communiqué séparément.
-
-    <br><br>
-
-    Cette invitation reste valable
-    pendant 5 minutes maximum.
-  </div>
-
-  <label
-    class="bociteSchoolFieldLabel"
-    for="schoolInvitationCodeInput"
-    style="margin-top:14px;"
-  >
-    Code d’activation
-  </label>
-
-  <input
-    id="schoolInvitationCodeInput"
-    class="bociteSchoolField"
-    type="password"
-    autocomplete="one-time-code"
-    placeholder="Votre code d’activation"
-  >
-
-  <button
-    id="schoolInvitationLoginBtn"
-    class="bociteSchoolAction bociteSchoolActionPrimary"
-    type="button"
-  >
-    Ouvrir mon accès
-  </button>
-
-  <div
-    id="schoolInvitationStatus"
-    role="status"
-    aria-live="polite"
-    style="
-      margin-top:10px;
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-    "
-  ></div>
-
-</div>
-
-<!-- ==================================================
      PORTE TECHNIQUE ÉCOLE
      INVISIBLE DANS LA PARTIE PUBLIQUE
      ================================================== -->
@@ -6234,19 +6157,6 @@ if(key === "ecole"){
   const schoolAccessLoginBtn = document.getElementById("schoolAccessLoginBtn");
   const schoolDirectionFirstSetupBtn = document.getElementById("schoolDirectionFirstSetupBtn");
   const schoolAccessStatus = document.getElementById("schoolAccessStatus");
-
- const schoolTeacherInvitationCard =
-  document.getElementById("schoolTeacherInvitationCard");
-
-const schoolInvitationCodeInput =
-  document.getElementById("schoolInvitationCodeInput");
-
-const schoolInvitationLoginBtn =
-  document.getElementById("schoolInvitationLoginBtn");
-
-const schoolInvitationStatus =
-  document.getElementById("schoolInvitationStatus");
- 
   const schoolDirectionPanel = document.getElementById("schoolDirectionPanel");
   const schoolTeacherNameInput = document.getElementById("schoolTeacherNameInput");
   const schoolTeacherClassInput = document.getElementById("schoolTeacherClassInput");
@@ -6635,7 +6545,6 @@ function schoolSetSolidarityAgreementStatus(
   return next;
 }
 
-
 /* =====================================================
    PORTE PRÉPARÉE POUR LE FUTUR CONTRAT MAIRIE
    ===================================================== */
@@ -6653,7 +6562,6 @@ window.BociteSchoolSolidarityAgreement = {
       meta || {}
     );
   },
-
 
   setPending:function(meta){
 
@@ -6729,95 +6637,6 @@ window.BociteSchoolSolidarityAgreement = {
       return false;
     }
   }
-
- let schoolInvitationExpiryTimer = null;
-
-function schoolRefreshTeacherInvitationCard(){
-
-  if(!schoolTeacherInvitationCard){
-    return;
-  }
-
-  schoolTeacherInvitationCard.style.display = "none";
-
-  const invite =
-    window.bociteartSchoolTeacherInvitation;
-
-  if(
-    !invite ||
-    !invite.token ||
-    !invite.teacherId ||
-    !invite.expiresAt
-  ){
-    return;
-  }
-
-  const data =
-    schoolLoadAccessData();
-
-  const account =
-    data.teachers.find(function(item){
-      return (
-        item &&
-        String(item.id || "") ===
-          String(invite.teacherId || "")
-      );
-    });
-
-  const savedInvitation =
-    account &&
-    account.invitation &&
-    typeof account.invitation === "object"
-      ? account.invitation
-      : null;
-
-  const expiresAt =
-    Number(invite.expiresAt || 0);
-
-  if(
-    !account ||
-    account.active === false ||
-    schoolTeacherAccessExpired(account) ||
-    !savedInvitation ||
-    savedInvitation.used === true ||
-    String(savedInvitation.token || "") !==
-      String(invite.token || "") ||
-    Number(savedInvitation.expiresAt || 0) !==
-      expiresAt ||
-    Date.now() >= expiresAt
-  ){
-    window.bociteartSchoolTeacherInvitation = null;
-    return;
-  }
-
-  if(schoolInvitationStatus){
-    schoolInvitationStatus.textContent = "";
-  }
-
-  if(schoolInvitationCodeInput){
-    schoolInvitationCodeInput.value = "";
-  }
-
-  schoolTeacherInvitationCard.style.display = "block";
-
-  if(schoolInvitationExpiryTimer){
-    clearTimeout(schoolInvitationExpiryTimer);
-  }
-
-  schoolInvitationExpiryTimer =
-    window.setTimeout(function(){
-
-      schoolTeacherInvitationCard.style.display = "none";
-
-      if(schoolInvitationCodeInput){
-        schoolInvitationCodeInput.value = "";
-      }
-
-      window.bociteartSchoolTeacherInvitation = null;
-
-    }, Math.max(0, expiresAt - Date.now()));
-
-}
 
   function schoolLoadClasses(){
     if(
@@ -7908,109 +7727,43 @@ async function schoolLogin(){
             Réinitialiser le code
           </button>
          
-          <button
-  class="schoolMiniButton"
-  type="button"
-  data-school-invite-teacher="${schoolEscapeHtml(account.id)}"
->
-  Créer l’invitation — 5 min
-</button>
-
         </div>
       `;
     }).join("");
 
-    schoolTeacherAccessList.querySelectorAll("[data-school-open-teacher]").forEach(function(button){
-      button.onclick = function(){
-        const id = String(button.dataset.schoolOpenTeacher || "");
-        const currentData = schoolLoadAccessData();
-        const account = currentData.teachers.find(function(item){
-          return item && String(item.id || "") === id;
-        });
-        if(account){
-          schoolOpenProfessorWorkspace(account, true);
-        }
-      };
-    });
-
-    schoolTeacherAccessList.querySelectorAll("[data-school-toggle-teacher]").forEach(function(button){
-      button.onclick = function(){
-        const id = String(button.dataset.schoolToggleTeacher || "");
-        const currentData = schoolLoadAccessData();
-        const index = currentData.teachers.findIndex(function(item){
-          return item && String(item.id || "") === id;
-        });
-
-        if(index < 0){
-          return;
-        }
-
-        const account = currentData.teachers[index];
-        const currentlyActive = account.active !== false && !schoolTeacherAccessExpired(account);
-        account.active = !currentlyActive;
-
-        if(account.active && account.expiresAt && account.expiresAt < schoolTodayIso()){
-          account.expiresAt = "";
-        }
-
-        account.updatedAt = new Date().toISOString();
-        currentData.teachers[index] = account;
-        schoolSaveAccessData(currentData);
-        schoolRenderTeacherAccessList();
-      };
-    });
-
-    schoolTeacherAccessList.querySelectorAll("[data-school-reset-teacher-code]").forEach(function(button){
-      button.onclick = async function(){
-        const id = String(button.dataset.schoolResetTeacherCode || "");
-        const newCodePrompt = prompt("Nouveau code d’activation pour ce professeur (6 caractères minimum).", "");
-        if(newCodePrompt == null){
-          return;
-        }
-
-        const newCode = String(newCodePrompt).trim();
-        if(newCode.length < 6){
-          alert("Le code doit comporter au moins 6 caractères.");
-          return;
-        }
-
-        const currentData = schoolLoadAccessData();
-        const index = currentData.teachers.findIndex(function(item){
-          return item && String(item.id || "") === id;
-        });
-
-        if(index < 0){
-          return;
-        }
-
-        const newHash = await schoolHashCode(newCode);
-        const duplicate = currentData.teachers.some(function(item, itemIndex){
-          return itemIndex !== index && item && String(item.codeHash || "") === newHash;
-        });
-
-        if(duplicate){
-          alert("Ce code est déjà utilisé par un autre accès.");
-          return;
-        }
-
-        currentData.teachers[index].codeHash = newHash;
-        currentData.teachers[index].active = true;
-        currentData.teachers[index].updatedAt = new Date().toISOString();
-        schoolSaveAccessData(currentData);
-
-        alert("Le code a été réinitialisé. Remettez le nouveau code au professeur concerné.");
-        schoolRenderTeacherAccessList();
-      };
-    });
-
-    schoolTeacherAccessList
-      .querySelectorAll("[data-school-invite-teacher]")
+       schoolTeacherAccessList
+      .querySelectorAll("[data-school-open-teacher]")
       .forEach(function(button){
 
         button.onclick = function(){
 
           const id =
-            String(button.dataset.schoolInviteTeacher || "");
+            String(button.dataset.schoolOpenTeacher || "");
+
+          const currentData =
+            schoolLoadAccessData();
+
+          const account =
+            currentData.teachers.find(function(item){
+              return item &&
+                String(item.id || "") === id;
+            });
+
+          if(account){
+            schoolOpenProfessorWorkspace(account, true);
+          }
+        };
+      });
+
+
+    schoolTeacherAccessList
+      .querySelectorAll("[data-school-toggle-teacher]")
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          const id =
+            String(button.dataset.schoolToggleTeacher || "");
 
           const currentData =
             schoolLoadAccessData();
@@ -8028,49 +7781,20 @@ async function schoolLogin(){
           const account =
             currentData.teachers[index];
 
-          if(
-            account.active === false ||
-            schoolTeacherAccessExpired(account)
-          ){
-            alert(
-              "Cet accès doit être actif avant de créer une invitation."
-            );
-            return;
-          }
+          const currentlyActive =
+            account.active !== false &&
+            !schoolTeacherAccessExpired(account);
+
+          account.active =
+            !currentlyActive;
 
           if(
-            !window.crypto ||
-            typeof window.crypto.getRandomValues !== "function"
+            account.active &&
+            account.expiresAt &&
+            account.expiresAt < schoolTodayIso()
           ){
-            alert(
-              "Impossible de créer l’invitation sur cet appareil."
-            );
-            return;
+            account.expiresAt = "";
           }
-
-          const bytes =
-            new Uint8Array(16);
-
-          window.crypto.getRandomValues(bytes);
-
-          const token =
-            Array.from(bytes)
-              .map(function(value){
-                return value
-                  .toString(16)
-                  .padStart(2,"0");
-              })
-              .join("");
-
-          const expiresAt =
-            Date.now() + (5 * 60 * 1000);
-
-          account.invitation = {
-            token: token,
-            expiresAt: expiresAt,
-            used: false,
-            createdAt: new Date().toISOString()
-          };
 
           account.updatedAt =
             new Date().toISOString();
@@ -8078,56 +7802,90 @@ async function schoolLogin(){
           currentData.teachers[index] =
             account;
 
-          if(!schoolSaveAccessData(currentData)){
+          schoolSaveAccessData(currentData);
+          schoolRenderTeacherAccessList();
+        };
+      });
+
+
+    schoolTeacherAccessList
+      .querySelectorAll("[data-school-reset-teacher-code]")
+      .forEach(function(button){
+
+        button.onclick = async function(){
+
+          const id =
+            String(button.dataset.schoolResetTeacherCode || "");
+
+          const newCodePrompt =
+            prompt(
+              "Nouveau code d’activation pour ce professeur (6 caractères minimum).",
+              ""
+            );
+
+          if(newCodePrompt == null){
+            return;
+          }
+
+          const newCode =
+            String(newCodePrompt).trim();
+
+          if(newCode.length < 6){
             alert(
-              "L’invitation n’a pas pu être créée."
+              "Le code doit comporter au moins 6 caractères."
             );
             return;
           }
 
-          const invitationUrl =
-            new URL(
-              window.location.origin +
-              window.location.pathname
-            );
+          const currentData =
+            schoolLoadAccessData();
 
-          invitationUrl.searchParams.set(
-            "presentation",
-            "1"
-          );
+          const index =
+            currentData.teachers.findIndex(function(item){
+              return item &&
+                String(item.id || "") === id;
+            });
 
-          invitationUrl.searchParams.set(
-            "schoolinvite",
-            token
-          );
-
-          invitationUrl.searchParams.set(
-            "schoolteacher",
-            id
-          );
-
-          invitationUrl.searchParams.set(
-            "schoolinviteexp",
-            String(expiresAt)
-          );
-
-          invitationUrl.searchParams.set(
-            "nocache",
-            String(Date.now())
-          );
-
-          if(schoolDirectionStatus){
-            schoolDirectionStatus.textContent =
-              "✓ Invitation créée. Elle expire automatiquement dans 5 minutes.";
+          if(index < 0){
+            return;
           }
 
-          window.prompt(
-            "Invitation professeur / remplaçant valable 5 minutes.\n\nCopiez ce lien et envoyez-le immédiatement au professeur :",
-            invitationUrl.toString()
+          const newHash =
+            await schoolHashCode(newCode);
+
+          const duplicate =
+            currentData.teachers.some(function(item, itemIndex){
+              return (
+                itemIndex !== index &&
+                item &&
+                String(item.codeHash || "") === newHash
+              );
+            });
+
+          if(duplicate){
+            alert(
+              "Ce code est déjà utilisé par un autre accès."
+            );
+            return;
+          }
+
+          currentData.teachers[index].codeHash =
+            newHash;
+
+          currentData.teachers[index].active =
+            true;
+
+          currentData.teachers[index].updatedAt =
+            new Date().toISOString();
+
+          schoolSaveAccessData(currentData);
+
+          alert(
+            "Le code a été réinitialisé. Remettez le nouveau code au professeur concerné."
           );
 
+          schoolRenderTeacherAccessList();
         };
-
       });
 
   }
@@ -8231,8 +7989,6 @@ if(schoolAccessOpenBtn){
   };
 }
 
-schoolRefreshTeacherInvitationCard();
- 
 /* =====================================================
    OUVERTURE DIRECTE DIRECTION DEPUIS LE PILOTAGE PRIVÉ
    ===================================================== */
@@ -13669,47 +13425,6 @@ window.openBociteSchoolTeacherAccess = function(){
   schoolTile.__bociteOtherIntroBypass = true;
   schoolTile.click();
 };
-
-/* =====================================================
-   INVITATION ÉCOLE — PROFESSEUR / REMPLAÇANT
-   VALIDITÉ MAXIMUM : 5 MINUTES
-   ===================================================== */
-
-(function(){
-
-  const params =
-    new URLSearchParams(window.location.search);
-
-  const token =
-    String(params.get("schoolinvite") || "").trim();
-
-  const teacherId =
-    String(params.get("schoolteacher") || "").trim();
-
-  const expiresAt =
-    Number(params.get("schoolinviteexp") || 0);
-
-  window.bociteartSchoolTeacherInvitation = null;
-
-  if(
-    !token ||
-    !teacherId ||
-    !Number.isFinite(expiresAt)
-  ){
-    return;
-  }
-
-  if(Date.now() >= expiresAt){
-    return;
-  }
-
-  window.bociteartSchoolTeacherInvitation = {
-    token: token,
-    teacherId: teacherId,
-    expiresAt: expiresAt
-  };
-
-})();
 
 /* =====================================================
    OUVERTURE ÉCOLE — DIRECTION
