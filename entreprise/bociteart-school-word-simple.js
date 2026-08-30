@@ -4079,11 +4079,22 @@
         "bociteSchoolAllSchedules"
       );
 
-    if(icon){
-      icon.style.color =
-        voicePermissionAvailable()
-          ? "#2f5d46"
-          : "#9a9a9a";
+   if(icon){
+
+  const parentalOk =
+    voicePermissionAvailable();
+
+  icon.textContent =
+    parentalOk
+      ? "✓ Accord parental validé"
+      : "✕ Accord parental non validé";
+
+  icon.style.color =
+    parentalOk
+      ? "#2f5d46"
+      : "#b3261e";
+}
+   
     }
 
     if(scheduleList){
@@ -4415,48 +4426,25 @@
         "
       >
 
-        <div
-          style="
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:10px;
-          "
-        >
+       <div
+  class="bociteSchoolSimpleTitle"
+>
+  Préparer le Mot du jour
+</div>
 
-          <div
-            class="bociteSchoolSimpleTitle"
-          >
-            Préparer le Mot du jour
-          </div>
-
-          <span
-            id="bociteSchoolSimpleVoiceIndicator"
-            aria-label="Statut de la vraie voix"
-            style="
-              color:#9a9a9a;
-              font-size:22px;
-              font-weight:700;
-              line-height:1;
-            "
-          >
-            ✓
-          </span>
-
-        </div>
-
-        <p
-          class="bociteSchoolSimpleText"
-          style="margin:8px 0 0 0;"
-        >
-          Le professeur peut enregistrer la vraie voix de l’élève.
-          L’autorisation des parents ou du responsable légal concernant
-          la diffusion de la voix de l’enfant est traitée en amont.
-          Si la vraie voix est autorisée, elle est conservée.
-          Si elle ne l’est pas, elle est remplacée automatiquement
-          par une voix synthétique correspondant au profil confirmé
-          par le parent ou le responsable légal.
-        </p>
+<div
+  id="bociteSchoolSimpleVoiceIndicator"
+  aria-live="polite"
+  style="
+    margin-top:8px;
+    color:#b3261e;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.45;
+  "
+>
+  ✕ Accord parental non validé
+</div>
 
         <div
           style="
