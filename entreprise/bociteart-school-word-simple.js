@@ -4084,10 +4084,74 @@
   const parentalOk =
     voicePermissionAvailable();
 
-  icon.textContent =
-    parentalOk
-      ? "✓ Accord parental validé"
-      : "✕ Accord parental non validé";
+ icon.innerHTML =
+  parentalOk
+    ? `
+      <div
+        style="
+          color:#1f8f4d;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        ✓ Accord parental validé
+      </div>
+
+      <div
+        style="
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        Vous n’avez rien à faire pour l’autorisation parentale :
+        elle est traitée en amont.
+
+        <br><br>
+
+        L’accord étant validé, la vraie voix de l’enfant
+        peut être conservée et utilisée pour la diffusion.
+      </div>
+    `
+    : `
+      <div
+        style="
+          color:#b42318;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        ✕ Accord parental non validé
+      </div>
+
+      <div
+        style="
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        Vous n’avez rien à faire pour l’autorisation parentale :
+        elle est traitée en amont.
+
+        <br><br>
+
+        Dans ce cas, la vraie voix de l’enfant n’est pas conservée
+        pour la diffusion. La diffusion se fera automatiquement
+        avec la voix synthétique prévue, fille ou garçon.
+
+        <br><br>
+
+        L’enfant peut malgré tout enregistrer sa phrase
+        et l’écouter immédiatement.
+      </div>
+    `;
 
   icon.style.color =
     parentalOk
