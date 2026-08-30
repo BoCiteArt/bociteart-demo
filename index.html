@@ -6156,6 +6156,7 @@ if(key === "ecole"){
 
   const schoolAccessOpenBtn = document.getElementById("schoolAccessOpenBtn");
   const schoolAccessPanel = document.getElementById("schoolAccessPanel");
+ const schoolAccessIdentifierInput = document.getElementById("schoolAccessIdentifierInput");
   const schoolAccessRole = document.getElementById("schoolAccessRole");
   const schoolAccessCodeInput = document.getElementById("schoolAccessCodeInput");
   const schoolAccessLoginBtn = document.getElementById("schoolAccessLoginBtn");
@@ -6200,8 +6201,14 @@ if(key === "ecole"){
   const SCHOOL_CLASSES_KEY = "bociteart_school_classes_v1";
   const SCHOOL_CURRENT_CLASS_ID_KEY = "bociteart_school_current_class_id_v1";
   const SCHOOL_SOLIDARITY_KEY = "bociteart_school_solidarity_choice_v5";
- const SCHOOL_SOLIDARITY_AGREEMENT_KEY = "bociteart_school_solidarity_agreement_v1";
+  const SCHOOL_SOLIDARITY_AGREEMENT_KEY = "bociteart_school_solidarity_agreement_v1";
   const SCHOOL_ACCESS_DEMO_KEY = "bociteart_school_access_demo_v1";
+  const SCHOOL_ACCESS_SECURITY_KEY = "bociteart_school_access_security_v1";
+
+const SCHOOL_ACCESS_MAX_FAILURES = 3;
+
+const SCHOOL_ACCESS_LOCK_MS =
+  15 * 60 * 1000;
 
   let schoolSession = {
     role: "",
@@ -6597,6 +6604,91 @@ window.BociteSchoolSolidarityAgreement = {
   function schoolCreateId(prefix){
     return String(prefix || "school") + "_" + Date.now() + "_" + Math.random().toString(36).slice(2, 9);
   }
+
+ function schoolNormalizeTeacherIdentifier(value){
+  return String(value || "")
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, "");
+}
+
+function schoolCreateTeacherIdentifier(data){
+
+  const alphabet =
+    "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+  let identifier = "";
+
+  do{
+
+    let code = "";
+
+    for(let i = 0; i < 8; i++){
+
+      let index = 0;
+
+      if(
+        window.crypto &&
+        typeof window.crypto.getRandomValues === "function"
+      ){
+        const bytes = new Uint32Array(1);
+        window.crypto.getRandomValues(bytes);
+        index = bytes[0] % alphabet.length;
+      }else{
+        index =
+          Math.floor(
+            Math.random() * alphabet.length
+          );
+      }
+
+      code += alphabet[index];
+    }
+
+    identifier =
+      "PROF-" + code;
+
+  }while(
+    data &&
+    Array.isArray(data.teachers) &&
+    data.teachers.some(function(item){
+      return (
+        item &&
+        schoolNormalizeTeacherIdentifier(
+          item.accessIdentifier
+        ) === identifier
+      );
+    })
+  );
+
+  return identifier;
+}
+
+function schoolGetTeacherIdentifier(account){
+
+  if(!account){
+    return "";
+  }
+
+  if(account.accessIdentifier){
+    return schoolNormalizeTeacherIdentifier(
+      account.accessIdentifier
+    );
+  }
+
+  /*
+    Compatibilité avec les accès déjà créés
+    avant l'ajout de l'identifiant.
+  */
+  const legacy =
+    String(account.id || "")
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .slice(-8)
+      .toUpperCase();
+
+  return legacy
+    ? "PROF-" + legacy
+    : "";
+}
 
   async function schoolHashCode(value){
     const text = String(value || "");
@@ -7456,6 +7548,247 @@ window.BociteSchoolSolidarityAgreement = {
     return String(account.expiresAt) < schoolTodayIso();
   }
 
+/* =====================================================
+   SÉCURITÉ ACCÈS PROFESSEUR / REMPLAÇANT
+   ===================================================== */
+
+function schoolLoadAccessSecurity(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        SCHOOL_ACCESS_SECURITY_KEY
+      );
+
+    const data =
+      raw ? JSON.parse(raw) : {};
+
+    return data &&
+      typeof data === "object" &&
+      !Array.isArray(data)
+        ? data
+        : {};
+
+  }catch(error){
+
+    return {};
+  }
+}
+
+
+function schoolSaveAccessSecurity(data){
+
+  try{
+
+    localStorage.setItem(
+      SCHOOL_ACCESS_SECURITY_KEY,
+      JSON.stringify(data || {})
+    );
+
+  }catch(error){}
+}
+
+
+function schoolAccessLocked(identifier){
+
+  const key =
+    schoolNormalizeTeacherIdentifier(
+      identifier
+    );
+
+  if(!key){
+    return false;
+  }
+
+  const data =
+    schoolLoadAccessSecurity();
+
+  const entry =
+    data[key];
+
+  if(!entry){
+    return false;
+  }
+
+  const lockedUntil =
+    Number(entry.lockedUntil || 0);
+
+  if(
+    lockedUntil &&
+    Date.now() < lockedUntil
+  ){
+    return true;
+  }
+
+  if(
+    lockedUntil &&
+    Date.now() >= lockedUntil
+  ){
+    delete data[key];
+    schoolSaveAccessSecurity(data);
+  }
+
+  return false;
+}
+
+
+function schoolRegisterFailedAccess(
+  identifier,
+  account
+){
+
+  const key =
+    schoolNormalizeTeacherIdentifier(
+      identifier
+    );
+
+  if(!key){
+    return false;
+  }
+
+  const data =
+    schoolLoadAccessSecurity();
+
+  let entry =
+    data[key] &&
+    typeof data[key] === "object"
+      ? data[key]
+      : {
+          failures:0,
+          lockedUntil:0
+        };
+
+  if(
+    entry.lockedUntil &&
+    Date.now() >=
+      Number(entry.lockedUntil)
+  ){
+    entry = {
+      failures:0,
+      lockedUntil:0
+    };
+  }
+
+  entry.failures =
+    Number(entry.failures || 0) + 1;
+
+  entry.lastFailureAt =
+    new Date().toISOString();
+
+  let locked = false;
+
+  if(
+    entry.failures >=
+    SCHOOL_ACCESS_MAX_FAILURES
+  ){
+
+    entry.lockedUntil =
+      Date.now() +
+      SCHOOL_ACCESS_LOCK_MS;
+
+    locked = true;
+  }
+
+  data[key] = entry;
+
+  schoolSaveAccessSecurity(data);
+
+
+  /*
+    Journal général Bo'CitéArt.
+    Aucun code saisi n'est enregistré.
+  */
+  if(
+    typeof logPilotageAccess ===
+    "function"
+  ){
+
+    logPilotageAccess(
+      account && account.name
+        ? String(account.name)
+        : "Accès École",
+      locked
+        ? "Accès professeur temporairement verrouillé après tentatives non autorisées — identifiant " + key
+        : "Tentative d’accès professeur non autorisée — identifiant " + key
+    );
+  }
+
+
+  /*
+    Signal destiné à la Direction / supervision.
+  */
+  if(locked){
+
+    try{
+
+      const alertKey =
+        "bociteart_school_security_alerts_v1";
+
+      const raw =
+        localStorage.getItem(alertKey);
+
+      const alerts =
+        raw ? JSON.parse(raw) : [];
+
+      alerts.push({
+
+        type:
+          "school_teacher_access_locked",
+
+        teacherId:
+          account && account.id
+            ? String(account.id)
+            : "",
+
+        identifier:
+          key,
+
+        createdAt:
+          new Date().toISOString(),
+
+        message:
+          "Accès professeur temporairement indisponible après plusieurs tentatives non autorisées."
+
+      });
+
+      localStorage.setItem(
+        alertKey,
+        JSON.stringify(
+          alerts.slice(-100)
+        )
+      );
+
+    }catch(error){}
+
+  }
+
+  return locked;
+}
+
+
+function schoolResetAccessFailures(
+  identifier
+){
+
+  const key =
+    schoolNormalizeTeacherIdentifier(
+      identifier
+    );
+
+  if(!key){
+    return;
+  }
+
+  const data =
+    schoolLoadAccessSecurity();
+
+  if(data[key]){
+    delete data[key];
+    schoolSaveAccessSecurity(data);
+  }
+}
+ 
 async function schoolLogin(){
 
   const role =
@@ -7465,37 +7798,52 @@ async function schoolLogin(){
 
   const code =
     String(
-      schoolAccessCodeInput && schoolAccessCodeInput.value
+      schoolAccessCodeInput &&
+      schoolAccessCodeInput.value
         ? schoolAccessCodeInput.value
         : ""
     ).trim();
 
-  if(!code){
-    alert("Saisissez votre code personnel.");
-    return;
-  }
 
-  const data = schoolLoadAccessData();
-  const hash = await schoolHashCode(code);
-
+  /*
+    La Direction reste gérée séparément.
+    On ne touche pas à son fonctionnement.
+  */
   if(role === "direction"){
 
-    if(!data.direction || !data.direction.codeHash){
+    if(!code){
+      alert("Saisissez votre code personnel.");
+      return;
+    }
+
+    const data =
+      schoolLoadAccessData();
+
+    const hash =
+      await schoolHashCode(code);
+
+    if(
+      !data.direction ||
+      !data.direction.codeHash
+    ){
       alert(
         "L’accès direction n’a pas encore été activé sur cette démonstration."
       );
       return;
     }
 
-    if(hash !== String(data.direction.codeHash)){
+    if(
+      hash !==
+      String(data.direction.codeHash)
+    ){
       alert("Code direction incorrect.");
       return;
     }
 
     schoolSession = {
-      role: "direction",
-      teacherId: "",
-      openedFromDirection: false
+      role:"direction",
+      teacherId:"",
+      openedFromDirection:false
     };
 
     schoolAccessPanel.style.display = "none";
@@ -7505,8 +7853,7 @@ async function schoolLogin(){
 
     schoolRenderTeacherAccessList();
     schoolFillClassSuggestions();
-   schoolRenderSolidarityAgreementStatus();
-
+    schoolRenderSolidarityAgreementStatus();
 
     schoolDirectionPanel.scrollIntoView({
       behavior:"smooth",
@@ -7516,40 +7863,170 @@ async function schoolLogin(){
     return;
   }
 
+
+  /*
+    ACCÈS PROFESSEUR / REMPLAÇANT
+    Identifiant + code obligatoires.
+  */
+
+  const identifier =
+    schoolNormalizeTeacherIdentifier(
+      schoolAccessIdentifierInput &&
+      schoolAccessIdentifierInput.value
+        ? schoolAccessIdentifierInput.value
+        : ""
+    );
+
+  if(!identifier || !code){
+
+    alert(
+      "Renseignez votre identifiant d’accès et votre code personnel."
+    );
+
+    return;
+  }
+
+
+  /*
+    Un accès déjà verrouillé ne permet
+    aucune nouvelle tentative pendant
+    la période de sécurité.
+  */
+  if(
+    schoolAccessLocked(identifier)
+  ){
+
+    alert(
+      "Accès temporairement indisponible. Contactez votre Direction."
+    );
+
+    return;
+  }
+
+
+  const data =
+    schoolLoadAccessData();
+
+
+  /*
+    Recherche d'abord le compte
+    correspondant à l'identifiant.
+  */
   const account =
     data.teachers.find(function(item){
+
       return (
         item &&
-        String(item.codeHash || "") === hash
+        schoolGetTeacherIdentifier(item) ===
+          identifier
       );
-    });
 
-  if(!account){
-    alert("Code professeur incorrect.");
+    }) || null;
+
+
+  /*
+    On calcule le hash du code,
+    sans jamais enregistrer le code saisi.
+  */
+  const hash =
+    await schoolHashCode(code);
+
+
+  /*
+    Identifiant inconnu OU mauvais code :
+    même réponse extérieure.
+    On ne révèle pas quelle information
+    était correcte ou incorrecte.
+  */
+  if(
+    !account ||
+    String(account.codeHash || "") !== hash
+  ){
+
+    const locked =
+      schoolRegisterFailedAccess(
+        identifier,
+        account
+      );
+
+    if(
+      schoolAccessCodeInput
+    ){
+      schoolAccessCodeInput.value = "";
+    }
+
+    if(locked){
+
+      alert(
+        "Accès temporairement indisponible. Contactez votre Direction."
+      );
+
+    }else{
+
+      alert(
+        "Identifiant ou code incorrect."
+      );
+    }
+
     return;
   }
 
+
+  /*
+    Les identifiants sont corrects,
+    mais la Direction peut avoir
+    suspendu cet accès.
+  */
   if(account.active === false){
+
     alert(
-      "Cet accès professeur est suspendu. Contactez la direction de l’école."
+      "Cet accès professeur est actuellement indisponible. Contactez la Direction de l’école."
     );
+
     return;
   }
 
-  if(schoolTeacherAccessExpired(account)){
+
+  if(
+    schoolTeacherAccessExpired(account)
+  ){
+
     alert(
-      "Cet accès temporaire est arrivé à son terme. Contactez la direction de l’école."
+      "Cet accès est arrivé à son terme. Contactez la Direction de l’école."
     );
+
     return;
   }
+
+
+  /*
+    Connexion réussie :
+    remise à zéro des tentatives précédentes.
+  */
+  schoolResetAccessFailures(
+    identifier
+  );
+
 
   schoolSession = {
-    role: "teacher",
-    teacherId: String(account.id || ""),
-    openedFromDirection: false
+    role:"teacher",
+    teacherId:String(account.id || ""),
+    openedFromDirection:false
   };
 
-  schoolAccessCodeInput.value = "";
+
+  if(
+    schoolAccessIdentifierInput
+  ){
+    schoolAccessIdentifierInput.value = "";
+  }
+
+  if(
+    schoolAccessCodeInput
+  ){
+    schoolAccessCodeInput.value = "";
+  }
+
 
   schoolOpenProfessorWorkspace(
     account,
@@ -7637,8 +8114,10 @@ async function schoolLogin(){
     const nowIso = new Date().toISOString();
 
     data.teachers.push({
-      id: schoolCreateId("teacher"),
-      name: name,
+  id: schoolCreateId("teacher"),
+  accessIdentifier:
+    schoolCreateTeacherIdentifier(data),
+  name: name,
       className: className,
       classId: matchedClass ? String(matchedClass.id || "") : "",
       codeHash: codeHash,
@@ -7701,6 +8180,15 @@ async function schoolLogin(){
           <div style="margin-top:5px;">
             ${schoolEscapeHtml(account.name || "Professeur")}
           </div>
+
+          <div style="margin-top:5px;">
+  Identifiant :
+  <strong>
+    ${schoolEscapeHtml(
+      schoolGetTeacherIdentifier(account)
+    )}
+  </strong>
+</div>
 
           <div style="margin-top:5px;">
             ${schoolEscapeHtml(statusText)}
