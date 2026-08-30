@@ -4922,9 +4922,14 @@ document.addEventListener(
 
 if(key === "oeuvres"){
 
-  const STORAGE_KEY = "boc_oeuvres_unlock_v2";
-  const LAST_KEY = "boc_oeuvres_last_v2";
-  const AUDIO_BASE = "audio/oeuvres/";
+  const STORAGE_KEY =
+    "boc_oeuvres_unlock_v2";
+
+  const LAST_KEY =
+    "boc_oeuvres_last_v2";
+
+  const AUDIO_BASE =
+    "audio/oeuvres/";
 
   const OEUVRES_SIGNAL_STORAGE_KEY =
     "bociteart_oeuvres_signalements_demo_v1";
@@ -4932,6 +4937,10 @@ if(key === "oeuvres"){
   const OEUVRES_HEALTH_KEY =
     "bociteart_oeuvres_health_v1";
 
+
+  /* =========================================================
+     1. ŒUVRES
+     ========================================================= */
 
   const oeuvres = [
 
@@ -4943,7 +4952,6 @@ if(key === "oeuvres"){
       artiste:"Julot",
       mecene:"Garage Planque Citroën",
       open:true,
-
       audio:
         AUDIO_BASE +
         "oeuvre-1.mp3",
@@ -4964,13 +4972,19 @@ if(key === "oeuvres"){
       texte:
 `Bienvenue devant Libre et Fleurie.
 
-Cette œuvre rend hommage à l’âme vivante du quartier de L’Arbrisseau. Ici, on ressent à la fois le passage, la rencontre et la simplicité des liens du quotidien. Les habitants y partagent une mémoire discrète mais forte, faite de voisinage, de gestes simples, d’échanges, de fidélité au lieu et de présence humaine.
+Prenez simplement quelques secondes. Regardez le visage devant vous… et laissez le quartier ralentir autour de vous.
 
-Le visage représenté évoque une figure paisible, ouverte, enracinée dans son environnement. Sa chevelure fleurie symbolise la respiration du quartier, sa capacité à garder de la douceur, même au milieu du mouvement de la ville.
+Ici, à L’Arbrisseau, l’histoire ne se raconte pas seulement avec des dates. Elle se glisse dans les habitudes, les rencontres, les voisins que l’on reconnaît et ces petits gestes que l’on finit parfois par ne plus remarquer.
 
-Réalisée par l’artiste Julot, cette fresque a été rendue possible grâce au soutien du Garage Planque Citroën. Merci aux partenaires, à la ville et à toutes les personnes qui participent à faire vivre Wattignies avec culture et humanité.
+Puis il y a ces fleurs. Elles semblent pousser dans le mouvement même du visage, comme si le quartier avait choisi de respirer au milieu de la ville.
 
-Prenez le temps d’observer, d’écouter, et pourquoi pas de poursuivre votre parcours vers une autre œuvre de la ville.`
+L’artiste Julot nous invite ainsi à regarder autrement ce qui nous entoure : un lieu peut être quotidien… et pourtant garder quelque chose à révéler.
+
+Cette œuvre a pu voir le jour avec le soutien du Garage Planque Citroën, aux côtés de la ville et de celles et ceux qui contribuent à faire vivre ce parcours.
+
+Avant de repartir, regardez encore une fois le visage. Peut-être n’y verrez-vous déjà plus exactement la même chose.
+
+Puis, lorsque vous en aurez envie… une autre œuvre vous attend quelque part dans la ville.`
     },
 
 
@@ -4982,7 +4996,6 @@ Prenez le temps d’observer, d’écouter, et pourquoi pas de poursuivre votre 
       artiste:"Amandine Verlaine",
       mecene:"Maison Delcroix",
       open:true,
-
       audio:
         AUDIO_BASE +
         "oeuvre-2.mp3",
@@ -5003,13 +5016,19 @@ Prenez le temps d’observer, d’écouter, et pourquoi pas de poursuivre votre 
       texte:
 `Bienvenue devant Les Tisserands du Lien.
 
-Cette fresque raconte une autre richesse de la ville : celle des liens quotidiens. Dans un centre-ville, beaucoup passent sans toujours se voir. Pourtant, derrière chaque vitrine, chaque façade et chaque trajet répété, il existe une vie locale précieuse faite d’habitudes, de salutations, d’attentions et d’échanges sincères.
+Ici, nous sommes au cœur de la ville. Un endroit où l’on passe souvent… parfois vite… sans forcément regarder tout ce qui se construit autour de nous.
 
-Le visage de cette œuvre ne représente pas une seule personne. Il représente toutes celles et ceux qui tissent la ville au fil des jours : habitants, commerçants, visiteurs, familles et passants.
+Un bonjour derrière une vitrine. Une personne que l’on croise chaque semaine. Une habitude qui devient un repère. Pris séparément, ces petits moments semblent presque insignifiants.
 
-Réalisée par Amandine Verlaine avec le soutien de la Maison Delcroix, cette œuvre rappelle que la ville tient aussi grâce à ce qui ne se voit pas toujours : la confiance, la présence et le respect.
+Et pourtant… ce sont eux qui tissent une ville.
 
-Merci à celles et ceux qui contribuent à faire de Wattignies une ville à taille humaine, où l’art révèle ce qui relie.`
+Le visage imaginé par Amandine Verlaine ne représente donc pas une seule personne. Il ressemble plutôt à une présence collective, faite de toutes celles et ceux qui donnent une âme au centre-ville.
+
+Avec le soutien de la Maison Delcroix, cette œuvre nous rappelle quelque chose de très simple : un territoire ne vit pas uniquement grâce à ses bâtiments.
+
+Il vit parce que des personnes continuent de se reconnaître, de se parler et de prendre soin de ce qui les relie.
+
+Restez encore quelques secondes devant l’œuvre… puis reprenez doucement votre chemin.`
     },
 
 
@@ -5021,23 +5040,27 @@ Merci à celles et ceux qui contribuent à faire de Wattignies une ville à tail
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-
       audio:
         AUDIO_BASE +
         "oeuvre-3.mp3",
-
       liens:[],
 
       texte:
 `Bienvenue devant Souffle des Jardins.
 
-Cette œuvre invite à ressentir le rythme du quartier, sa relation au végétal, aux saisons et aux respirations du quotidien. Ici, la nature n’est pas seulement un décor. Elle devient un langage, une présence, une manière d’habiter le lieu avec douceur et équilibre.
+Ici, le quartier semble vouloir nous rappeler quelque chose que nous oublions facilement : respirer.
 
-Le visage représenté semble émerger d’un mouvement vivant, comme si le quartier lui-même prenait la parole à travers les fleurs, les lignes et la lumière.
+Regardez les formes, les fleurs, les mouvements. Rien ne paraît complètement immobile.
 
-Cette fresque fait partie du parcours Bo'CitéArt, pensé pour révéler autrement les quartiers de la ville. Merci aux futurs partenaires, aux habitants et à toutes les personnes qui contribueront à faire vivre cette étape du parcours.
+Comme les saisons, le quartier change. Des familles arrivent, d’autres grandissent, certaines habitudes disparaissent et de nouvelles histoires commencent.
 
-Poursuivez votre visite pour découvrir d’autres œuvres et d’autres histoires de Wattignies.`
+La nature représentée dans cette œuvre n’est donc pas seulement décorative. Elle symbolise cette capacité à évoluer tout en conservant ses racines.
+
+Bo'CitéArt vous invite simplement à rester quelques instants… sans chercher à aller trop vite.
+
+Regardez autour de l’œuvre. Écoutez le quartier.
+
+Puis poursuivez votre promenade lorsque vous sentirez que le moment est venu.`
     },
 
 
@@ -5049,23 +5072,27 @@ Poursuivez votre visite pour découvrir d’autres œuvres et d’autres histoir
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-
       audio:
         AUDIO_BASE +
         "oeuvre-4.mp3",
-
       liens:[],
 
       texte:
 `Bienvenue devant Mémoire de Briques.
 
-Cette œuvre prolonge l’histoire des lieux, des murs, des générations et des transformations discrètes du quartier. Elle invite à regarder autrement les traces du passé et la manière dont elles continuent à structurer le présent.
+Certains murs paraissent silencieux.
 
-Chaque quartier garde en lui une mémoire silencieuse. Ici, elle se lit dans les matières, dans les lignes, dans l’épaisseur du temps. La fresque donne une voix à ce patrimoine discret et rappelle qu’un territoire se construit aussi à partir de ce qu’il conserve.
+Mais si l’on pouvait entendre tout ce qu’ils ont vu… combien d’histoires raconteraient-ils ?
 
-Merci aux habitants, aux soutiens et aux partenaires qui participent à la valorisation de cette mémoire locale.
+Des générations se sont succédé ici. Des métiers ont changé. Des maisons, des rues et des habitudes ont évolué.
 
-Prenez le temps d’observer les détails et de laisser le quartier vous parler.`
+Pourtant, quelque chose demeure.
+
+Cette œuvre nous invite à regarder les matières anciennes non comme des traces figées du passé, mais comme les premières pages de l’endroit où nous vivons aujourd’hui.
+
+Chaque époque ajoute sa propre couche à cette mémoire.
+
+Et vous aussi, simplement en étant ici maintenant, vous faites déjà partie de la suivante.`
     },
 
 
@@ -5077,23 +5104,29 @@ Prenez le temps d’observer les détails et de laisser le quartier vous parler.
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-
       audio:
         AUDIO_BASE +
         "oeuvre-5.mp3",
-
       liens:[],
 
       texte:
 `Bienvenue devant Le Visage des Saisons.
 
-Cette œuvre parle du temps qui passe, de la jeunesse, de la transmission et de l’évolution. Elle prend tout son sens dans un quartier où l’éducation, la vie quotidienne et l’élan collectif se croisent.
+Regardez ce visage comme on regarderait le temps passer.
 
-Le visage représenté semble traversé par plusieurs saisons à la fois. Il évoque la croissance, le mouvement, l’apprentissage et la capacité à se transformer sans perdre son identité.
+Il y a ce qui commence. Ce qui grandit. Ce qui change. Et parfois ce que l’on transmet sans même s’en apercevoir.
 
-À travers cette fresque, Bo'CitéArt propose une lecture sensible du quartier : un lieu où l’on apprend, où l’on grandit, où l’on construit des repères.
+Dans ce quartier, des enfants découvrent le monde pendant que d’autres deviennent adultes.
 
-Merci à toutes les personnes qui accompagnent la jeunesse et participent à la vitalité de la ville.`
+Des générations différentes se croisent… puis laissent à leur tour quelque chose derrière elles.
+
+Cette fresque parle de cette transformation permanente.
+
+Elle nous rappelle aussi que grandir ne signifie pas forcément oublier.
+
+Certaines choses restent longtemps avec nous : une école, une rencontre, une rue, une voix ou un souvenir.
+
+Prenez quelques secondes pour penser à l’un des vôtres.`
     },
 
 
@@ -5105,23 +5138,29 @@ Merci à toutes les personnes qui accompagnent la jeunesse et participent à la 
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-
       audio:
         AUDIO_BASE +
         "oeuvre-6.mp3",
-
       liens:[],
 
       texte:
 `Bienvenue devant Éclats de Voisins.
 
-Cette œuvre met à l’honneur les liens de proximité, les gestes simples, les attentions discrètes et tout ce qui donne de l’épaisseur à la vie locale. Ici, le quartier existe à travers les regards, les habitudes, les petits échanges et la présence humaine.
+Dans une ville, les grandes histoires attirent facilement notre attention.
 
-La fresque a été pensée comme un portrait collectif du voisinage. Elle rappelle qu’un quartier n’est pas seulement un ensemble de rues ou de bâtiments, mais un tissu vivant fait de présences, de mémoire et de respect mutuel.
+Mais la vie d’un quartier se construit surtout avec des choses beaucoup plus discrètes.
 
-Merci aux habitants, aux soutiens du projet et à toutes celles et ceux qui contribuent chaque jour à faire vivre cet esprit de proximité.
+Une porte tenue quelques secondes. Un voisin que l’on salue. Quelqu’un qui rend service. Une présence familière que l’on remarque surtout lorsqu’elle disparaît.
 
-Continuez votre parcours pour découvrir les autres visages de la ville.`
+Cette œuvre rassemble symboliquement tous ces petits éclats de vie.
+
+Pris séparément, ils paraissent modestes.
+
+Réunis… ils deviennent un quartier.
+
+Regardez la fresque encore un instant.
+
+Et lorsque vous repartirez, peut-être regarderez-vous différemment la prochaine personne que vous croiserez.`
     },
 
 
@@ -5133,23 +5172,31 @@ Continuez votre parcours pour découvrir les autres visages de la ville.`
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-
       audio:
         AUDIO_BASE +
         "oeuvre-7.mp3",
-
       liens:[],
 
       texte:
 `Bienvenue devant La Nuit Respire Ici.
 
-Cette œuvre invite à découvrir un autre visage de la ville : plus apaisé, plus intérieur, plus contemplatif. Elle transforme le passage en expérience sensible et donne au parcours une tonalité presque méditative.
+Imaginez maintenant que le bruit de la journée s’éloigne doucement.
 
-À l’entrée de la ville, la fresque agit comme un seuil. Elle propose de ralentir, d’observer autrement, et de ressentir la présence du lieu au-delà de l’agitation du quotidien.
+Les rues sont toujours là. Les bâtiments également.
 
-Le visage représenté semble écouter le silence, accueillir la lumière et laisser respirer l’espace autour de lui.
+Mais lorsque la lumière change, la ville semble parfois devenir un autre lieu.
 
-Merci aux partenaires, aux habitants et à toutes les personnes qui soutiennent cette manière sensible de révéler la ville par l’art.`
+Cette œuvre a été pensée comme une respiration.
+
+Un moment où l’on ne cherche pas forcément à comprendre immédiatement.
+
+On regarde. On laisse venir une sensation. Puis une autre.
+
+Le visage semble presque écouter le silence qui l’entoure.
+
+Alors profitez simplement de cette pause.
+
+Vous n’avez rien à faire pendant quelques instants… sinon être ici.`
     },
 
 
@@ -5161,23 +5208,29 @@ Merci aux partenaires, aux habitants et à toutes les personnes qui soutiennent 
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-
       audio:
         AUDIO_BASE +
         "oeuvre-8.mp3",
-
       liens:[],
 
       texte:
 `Bienvenue devant Horizons Partagés.
 
-Ici, l’œuvre fait dialoguer le présent et l’avenir. Elle parle de transformation, d’élan commun, de ville en mouvement et de projection collective. Le quartier devient le lieu d’un horizon partagé plutôt qu’un simple espace traversé.
+Certaines œuvres nous parlent du passé.
 
-Le visage représenté semble tourné vers demain, sans oublier ce qui l’a construit. La fresque invite à penser la ville comme une aventure collective, faite de trajectoires différentes mais orientées vers une même ambition : mieux vivre ensemble.
+Celle-ci préfère regarder un peu plus loin.
 
-Merci à tous les partenaires, habitants et soutiens qui participent à cette dynamique de transformation positive.
+Vers ce qui n’existe pas encore.
 
-Poursuivez votre découverte pour explorer les autres étapes du parcours Bo'CitéArt.`
+Une ville se transforme sans cesse. De nouveaux projets apparaissent, des activités évoluent et de nouvelles générations imaginent leurs propres chemins.
+
+Mais avancer ne signifie pas avancer seul.
+
+Le visage tourné vers l’horizon nous rappelle que plusieurs trajectoires peuvent rester différentes tout en partageant une même direction.
+
+C’est peut-être cela, finalement, construire un territoire ensemble.
+
+Conserver ce qui compte… tout en laissant suffisamment d’espace à ce qui peut encore arriver.`
     },
 
 
@@ -5189,23 +5242,31 @@ Poursuivez votre découverte pour explorer les autres étapes du parcours Bo'Cit
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-
       audio:
         AUDIO_BASE +
         "oeuvre-9.mp3",
-
       liens:[],
 
       texte:
 `Bienvenue devant Les Voix Silencieuses.
 
-Cette œuvre rend visibles les présences discrètes, les mémoires tranquilles et les histoires de quartier qui existent sans bruit mais donnent une profondeur réelle à la ville. Elle nous rappelle que tout ce qui compte n’est pas toujours ce qui se voit le plus.
+Toutes les personnes qui font vivre une ville ne cherchent pas à être vues.
 
-À travers ce visage, la fresque donne une place à celles et ceux qui habitent les lieux avec simplicité, fidélité et retenue. Elle valorise une humanité calme, souvent invisible, mais essentielle.
+Certaines avancent discrètement.
 
-Merci aux habitants, aux soutiens du projet et à toutes les personnes qui font vivre le quartier dans la durée, souvent sans chercher à se mettre en avant.
+Elles habitent ici depuis longtemps, entretiennent un jardin, aident un voisin, accompagnent une famille ou transmettent simplement une histoire.
 
-Prenez le temps d’écouter ce que le lieu raconte en silence.`
+Leur présence ne fait pas forcément de bruit.
+
+Et pourtant, lorsqu’elle disparaît, le quartier n’est plus tout à fait le même.
+
+Cette œuvre leur donne symboliquement une place.
+
+Elle nous invite à penser à toutes ces personnes que l’on connaît parfois seulement de visage.
+
+Prenez un instant.
+
+Il y en a probablement déjà une qui vous vient à l’esprit.`
     },
 
 
@@ -5217,31 +5278,39 @@ Prenez le temps d’écouter ce que le lieu raconte en silence.`
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-
       audio:
         AUDIO_BASE +
         "oeuvre-10.mp3",
-
       liens:[],
 
       texte:
 `Bienvenue devant Racines Urbaines.
 
-Cette œuvre interroge l’équilibre entre les matières de la ville, la présence du vivant et l’identité du quartier. Elle relie le minéral, le végétal, l’humain et le temps long dans une même respiration visuelle.
+Une ville peut sembler faite de béton, de routes et de bâtiments.
 
-Le visage représenté semble enraciné dans l’espace urbain tout en restant ouvert à la nature et au mouvement. La fresque rappelle que la ville peut être à la fois construite, habitée, vivante et sensible.
+Mais sous cette apparence se trouvent toujours des racines.
 
-À travers cette œuvre, Bo'CitéArt propose une vision de la ville comme un lieu de liens, d’ancrage et d’évolution.
+Des personnes. Des souvenirs. Des habitudes. Des lieux auxquels quelqu’un reste attaché.
 
-Merci à toutes les personnes, partenaires et habitants qui rendent possible cette alliance entre art, territoire et mémoire locale.`
+Cette œuvre rapproche volontairement le monde construit et le monde vivant.
+
+Comme si le visage représenté appartenait à la fois à la ville et à la nature.
+
+Bo'CitéArt vous propose ici une dernière pause.
+
+Regardez ce qui vous entoure.
+
+Une ville n’est jamais complètement terminée.
+
+Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
     }
 
   ];
 
 
-/* =========================================================
-   OUTILS GÉNÉRAUX
-   ========================================================= */
+  /* =========================================================
+     2. OUTILS VISUELS
+     ========================================================= */
 
   function esc(value){
 
@@ -5278,6 +5347,203 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
       );
   }
 
+
+  function oeuvreTitleCard(
+    title
+  ){
+
+    return `
+
+      <div
+        class="oeuvreTitleCard"
+      >
+
+        <div
+          class="oeuvreTitle"
+        >
+          ${esc(
+            title
+          )}
+        </div>
+
+      </div>
+
+    `;
+  }
+
+
+  function getOeuvreSharedStyles(){
+
+    return `
+
+      <style>
+
+        #modal .head{
+          background:#ffffff !important;
+        }
+
+        #modalTitle{
+          color:#2f5d46 !important;
+          font-size:17px !important;
+          font-weight:700 !important;
+        }
+
+        .bociteOeuvreRoot{
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.55;
+        }
+
+        .bociteOeuvreRoot .box{
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.55;
+          background:#ffffff !important;
+        }
+
+        .bociteOeuvreRoot .oeuvreTitleCard{
+          box-sizing:border-box;
+          width:100%;
+          margin-top:12px;
+          padding:12px 14px;
+          background:#ffffff;
+          border:1px solid rgba(47,93,70,.14);
+          border-radius:13px;
+        }
+
+        .bociteOeuvreRoot .oeuvreTitleCard:first-child{
+          margin-top:0;
+        }
+
+        .bociteOeuvreRoot .oeuvreTitle{
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+        }
+
+        .bociteOeuvreRoot .oeuvreText{
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.55;
+        }
+
+        .bociteOeuvreRoot .oeuvreNote{
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        }
+
+        .bociteOeuvreLogo{
+          display:inline;
+          color:#2f5d46;
+          font-size:inherit;
+          font-weight:700;
+          line-height:inherit;
+          white-space:nowrap;
+          word-spacing:0;
+          letter-spacing:normal;
+        }
+
+        .bociteOeuvreLogo > span{
+          display:inline;
+          color:#b00020;
+          margin:0;
+          padding:0;
+          font-size:inherit;
+          font-weight:700;
+          word-spacing:0;
+          letter-spacing:normal;
+        }
+
+        .oeuvreNarrationWindow{
+          background:#ffffff;
+          border:1px solid rgba(47,93,70,.14);
+          border-radius:13px;
+          padding:14px;
+          margin-top:10px;
+          min-height:92px;
+          box-sizing:border-box;
+        }
+
+        .oeuvreNarrationPassage{
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.65;
+          margin:0 0 12px 0;
+          opacity:0;
+          transform:translateY(5px);
+          animation:
+            bociteOeuvreReveal
+            .65s
+            ease
+            forwards;
+        }
+
+        .oeuvreNarrationPassage:last-child{
+          margin-bottom:0;
+        }
+
+        .oeuvreNarrationCurrent{
+          padding-left:10px;
+          border-left:3px solid #2f5d46;
+        }
+
+        .oeuvreNarrationWaiting{
+          color:#555555;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.55;
+        }
+
+        .oeuvreAccessibleFullText{
+          display:none;
+          white-space:pre-line;
+          margin-top:10px;
+          padding:14px;
+          background:#ffffff;
+          border-radius:13px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
+        }
+
+        @keyframes bociteOeuvreReveal{
+
+          from{
+            opacity:0;
+            transform:translateY(5px);
+          }
+
+          to{
+            opacity:1;
+            transform:translateY(0);
+          }
+        }
+
+        #oeuvresMap{
+          width:100%;
+          height:280px;
+          border-radius:12px;
+          overflow:hidden;
+          margin-top:10px;
+        }
+
+      </style>
+
+    `;
+  }
+
+
+  /* =========================================================
+     3. STOCKAGE QR
+     ========================================================= */
 
   function getUnlocked(){
 
@@ -5386,7 +5652,19 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
   }
 
 
+  /* =========================================================
+     4. NARRATION
+     TEXTE PROGRESSIF + VOIX CALME
+     ========================================================= */
+
+  let oeuvreNarrationToken =
+    0;
+
+
   function stopAudio(){
+
+    oeuvreNarrationToken +=
+      1;
 
     try{
 
@@ -5409,7 +5687,8 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
     try{
 
       if(
-        "speechSynthesis" in window
+        "speechSynthesis"
+        in window
       ){
 
         window
@@ -5421,391 +5700,461 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
   }
 
 
-/* =========================================================
-   ACCESSIBILITÉ + VOIX DES ŒUVRES
-   ========================================================= */
+  function buildNarrationSegments(
+    text
+  ){
 
-  window.BociteOeuvreAccess =
-    (function(){
+    const paragraphs =
+      String(
+        text || ""
+      )
+        .split(
+          /\n\s*\n/
+        )
+        .map(
+          item =>
+            item.trim()
+        )
+        .filter(
+          Boolean
+        );
 
-      "use strict";
+    const result =
+      [];
 
-      let stopped =
-        true;
-
-      let queue =
-        [];
-
-      let index =
-        0;
-
-      let currentStatusId =
-        "";
-
-
-      function setStatus(text){
-
-        if(!currentStatusId){
-
-          return;
-        }
-
-        const el =
-          document.getElementById(
-            currentStatusId
-          );
-
-        if(el){
-
-          el.textContent =
-            text;
-        }
-      }
-
-
-      function splitText(text){
-
-        const clean =
-          String(
-            text || ""
-          )
-            .replace(
-              /\s+/g,
-              " "
-            )
-            .trim();
-
-        if(!clean){
-
-          return [];
-        }
+    paragraphs.forEach(
+      function(paragraph){
 
         const sentences =
-          clean.match(
+          paragraph.match(
             /[^.!?…]+[.!?…]?/g
           ) ||
           [
-            clean
+            paragraph
           ];
-
-        const chunks =
-          [];
-
-        let current =
-          "";
 
         sentences.forEach(
           function(sentence){
 
-            const next =
-              (
-                current +
-                " " +
-                sentence
-              ).trim();
-
-            if(
-              next.length > 180 &&
-              current
-            ){
-
-              chunks.push(
-                current
-              );
-
-              current =
-                sentence.trim();
-
-            }else{
-
-              current =
-                next;
-            }
-          }
-        );
-
-        if(current){
-
-          chunks.push(
-            current
-          );
-        }
-
-        return chunks;
-      }
-
-
-      function chooseVoice(){
-
-        const voices =
-          window
-            .speechSynthesis
-            .getVoices() ||
-          [];
-
-        const french =
-          voices.filter(
-            function(voice){
-
-              return String(
-                voice.lang || ""
+            const clean =
+              String(
+                sentence || ""
               )
-                .toLowerCase()
-                .startsWith(
-                  "fr"
-                );
+                .replace(
+                  /\s+/g,
+                  " "
+                )
+                .trim();
+
+            if(clean){
+
+              result.push(
+                clean
+              );
             }
-          );
-
-        return (
-
-          french.find(
-            v =>
-              /microsoft denise natural/i
-                .test(
-                  v.name || ""
-                )
-          ) ||
-
-          french.find(
-            v =>
-              /denise/i
-                .test(
-                  v.name || ""
-                )
-          ) ||
-
-          french.find(
-            v =>
-              /hortense|audrey|amelie|amélie|marie|claire|celine|céline/i
-                .test(
-                  v.name || ""
-                )
-          ) ||
-
-          french[0] ||
-
-          null
-        );
-      }
-
-
-      function speakNext(){
-
-        if(
-          stopped ||
-          index >= queue.length
-        ){
-
-          if(!stopped){
-
-            setStatus(
-              "Lecture terminée."
-            );
-          }
-
-          return;
-        }
-
-        const utterance =
-          new SpeechSynthesisUtterance(
-            queue[index]
-          );
-
-        utterance.lang =
-          "fr-FR";
-
-        utterance.rate =
-          0.90;
-
-        utterance.pitch =
-          1.02;
-
-        utterance.volume =
-          1;
-
-        const voice =
-          chooseVoice();
-
-        if(voice){
-
-          utterance.voice =
-            voice;
-        }
-
-        utterance.onend =
-          function(){
-
-            index += 1;
-
-            speakNext();
-          };
-
-        utterance.onerror =
-          function(){
-
-            setStatus(
-              "La lecture vocale n’est pas disponible pour le moment."
-            );
-          };
-
-        window
-          .speechSynthesis
-          .speak(
-            utterance
-          );
-      }
-
-
-      function speak(
-        text,
-        statusId
-      ){
-
-        if(
-          !(
-            "speechSynthesis"
-            in window
-          )
-        ){
-
-          const el =
-            statusId
-              ? document.getElementById(
-                  statusId
-                )
-              : null;
-
-          if(el){
-
-            el.textContent =
-              "La lecture vocale n’est pas disponible sur cet appareil.";
-          }
-
-          return;
-        }
-
-        stop();
-
-        currentStatusId =
-          statusId || "";
-
-        queue =
-          splitText(
-            text
-          );
-
-        index =
-          0;
-
-        stopped =
-          false;
-
-        setStatus(
-          "Lecture en cours…"
-        );
-
-        speakNext();
-      }
-
-
-      function stop(statusId){
-
-        stopped =
-          true;
-
-        queue =
-          [];
-
-        index =
-          0;
-
-        try{
-
-          window
-            .speechSynthesis
-            .cancel();
-
-        }catch(error){}
-
-        if(statusId){
-
-          currentStatusId =
-            statusId;
-        }
-
-        setStatus(
-          "Lecture arrêtée."
-        );
-      }
-
-
-      function focusText(id){
-
-        const el =
-          document.getElementById(
-            id
-          );
-
-        if(!el){
-
-          return;
-        }
-
-        el.hidden =
-          false;
-
-        el.setAttribute(
-          "tabindex",
-          "-1"
-        );
-
-        el.focus();
-
-        el.scrollIntoView(
-          {
-            behavior:
-              "smooth",
-
-            block:
-              "start"
           }
         );
       }
+    );
 
-
-      return {
-
-        speak:
-          speak,
-
-        stop:
-          stop,
-
-        focusText:
-          focusText
-      };
-
-    })();
-
-
-  function speakTextPremium(
-    text,
-    statusId
-  ){
-
-    window
-      .BociteOeuvreAccess
-      .speak(
-        text,
-        statusId || ""
-      );
+    return result;
   }
 
 
-/* =========================================================
-   LIENS D'UNE ŒUVRE
-   ========================================================= */
+  function chooseGentleFrenchVoice(){
+
+    if(
+      !(
+        "speechSynthesis"
+        in window
+      )
+    ){
+
+      return null;
+    }
+
+    const voices =
+      window
+        .speechSynthesis
+        .getVoices() ||
+      [];
+
+    const french =
+      voices.filter(
+        function(voice){
+
+          return String(
+            voice.lang || ""
+          )
+            .toLowerCase()
+            .startsWith(
+              "fr"
+            );
+        }
+      );
+
+    return (
+
+      french.find(
+        v =>
+          /denise.*natural/i.test(
+            v.name || ""
+          )
+      ) ||
+
+      french.find(
+        v =>
+          /denise/i.test(
+            v.name || ""
+          )
+      ) ||
+
+      french.find(
+        v =>
+          /audrey|amelie|amélie|hortense|celine|céline|marie|claire/i.test(
+            v.name || ""
+          )
+      ) ||
+
+      french.find(
+        v =>
+          /natural/i.test(
+            v.name || ""
+          )
+      ) ||
+
+      french[0] ||
+
+      null
+    );
+  }
+
+
+  function getNarrationPause(
+    segment
+  ){
+
+    const text =
+      String(
+        segment || ""
+      );
+
+    if(
+      /\.\.\.|…/.test(
+        text
+      )
+    ){
+
+      return 1150;
+    }
+
+    if(
+      /\?$/.test(
+        text
+      )
+    ){
+
+      return 900;
+    }
+
+    if(
+      /!$/.test(
+        text
+      )
+    ){
+
+      return 800;
+    }
+
+    return 650;
+  }
+
+
+  function revealNarrationSegment(
+    container,
+    segment,
+    index
+  ){
+
+    if(!container){
+
+      return;
+    }
+
+    if(index === 0){
+
+      container.innerHTML =
+        "";
+    }
+
+    container
+      .querySelectorAll(
+        ".oeuvreNarrationCurrent"
+      )
+      .forEach(
+        function(element){
+
+          element.classList.remove(
+            "oeuvreNarrationCurrent"
+          );
+        }
+      );
+
+    const passage =
+      document.createElement(
+        "div"
+      );
+
+    passage.className =
+      "oeuvreNarrationPassage oeuvreNarrationCurrent";
+
+    passage.innerHTML =
+      formatOeuvreText(
+        segment
+      );
+
+    container.appendChild(
+      passage
+    );
+
+    passage.scrollIntoView(
+      {
+        behavior:
+          "smooth",
+
+        block:
+          "nearest"
+      }
+    );
+  }
+
+
+  function narrateOeuvre(
+    oeuvre,
+    containerId,
+    statusId
+  ){
+
+    stopAudio();
+
+    const token =
+      ++oeuvreNarrationToken;
+
+    const container =
+      document.getElementById(
+        containerId
+      );
+
+    const status =
+      document.getElementById(
+        statusId
+      );
+
+    if(!container){
+
+      return;
+    }
+
+    const segments =
+      buildNarrationSegments(
+        oeuvre.texte
+      );
+
+    container.innerHTML =
+      "";
+
+    if(
+      !(
+        "speechSynthesis"
+        in window
+      ) ||
+      typeof window
+        .SpeechSynthesisUtterance !==
+      "function"
+    ){
+
+      container.innerHTML =
+        formatOeuvreText(
+          oeuvre.texte
+        );
+
+      if(status){
+
+        status.textContent =
+          "La lecture vocale n’est pas disponible sur cet appareil.";
+      }
+
+      return;
+    }
+
+    if(status){
+
+      status.textContent =
+        "L’histoire commence… laissez-vous guider.";
+    }
+
+    const voice =
+      chooseGentleFrenchVoice();
+
+    let currentIndex =
+      0;
+
+
+    function next(){
+
+      if(
+        token !==
+        oeuvreNarrationToken
+      ){
+
+        return;
+      }
+
+      if(
+        currentIndex >=
+        segments.length
+      ){
+
+        container
+          .querySelectorAll(
+            ".oeuvreNarrationCurrent"
+          )
+          .forEach(
+            function(element){
+
+              element.classList.remove(
+                "oeuvreNarrationCurrent"
+              );
+            }
+          );
+
+        if(status){
+
+          status.textContent =
+            "L’histoire est terminée. Prenez encore quelques secondes pour regarder l’œuvre.";
+        }
+
+        return;
+      }
+
+      const segment =
+        segments[
+          currentIndex
+        ];
+
+      revealNarrationSegment(
+        container,
+        segment,
+        currentIndex
+      );
+
+      const utterance =
+        new SpeechSynthesisUtterance(
+          segment
+        );
+
+      utterance.lang =
+        "fr-FR";
+
+      /*
+       * Débit volontairement calme :
+       * on raconte, on ne récite pas.
+       */
+      utterance.rate =
+        0.82;
+
+      /*
+       * Légèrement plus grave
+       * pour limiter la sensation
+       * de voix synthétique aiguë.
+       */
+      utterance.pitch =
+        0.96;
+
+      utterance.volume =
+        1;
+
+      if(voice){
+
+        utterance.voice =
+          voice;
+      }
+
+      utterance.onend =
+        function(){
+
+          if(
+            token !==
+            oeuvreNarrationToken
+          ){
+
+            return;
+          }
+
+          const pause =
+            getNarrationPause(
+              segment
+            );
+
+          currentIndex +=
+            1;
+
+          window.setTimeout(
+            next,
+            pause
+          );
+        };
+
+      utterance.onerror =
+        function(){
+
+          if(status){
+
+            status.textContent =
+              "La lecture vocale s’est interrompue. Vous pouvez utiliser le texte complet.";
+          }
+        };
+
+      window
+        .speechSynthesis
+        .speak(
+          utterance
+        );
+    }
+
+
+    /*
+     * Petit silence avant les premiers mots.
+     */
+    window.setTimeout(
+      next,
+      500
+    );
+  }
+
+
+  function stopNarration(
+    statusId
+  ){
+
+    stopAudio();
+
+    const status =
+      document.getElementById(
+        statusId
+      );
+
+    if(status){
+
+      status.textContent =
+        "Lecture arrêtée.";
+    }
+  }
+
+
+  /* =========================================================
+     5. LIENS
+     ========================================================= */
 
   function renderLinks(o){
 
@@ -5869,9 +6218,9 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
   }
 
 
-/* =========================================================
-   FICHE DÉTAILLÉE
-   ========================================================= */
+  /* =========================================================
+     6. FICHE D’UNE ŒUVRE
+     ========================================================= */
 
   function openDetailById(id){
 
@@ -5900,6 +6249,8 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
       return;
     }
 
+    stopAudio();
+
     try{
 
       localStorage.setItem(
@@ -5909,12 +6260,16 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
 
     }catch(error){}
 
-    const statusId =
-      "oeuvreAudioStatus_" +
+    const narrationId =
+      "oeuvreNarration_" +
       o.id;
 
-    const textId =
-      "oeuvreAccessibleText_" +
+    const fullTextId =
+      "oeuvreFullText_" +
+      o.id;
+
+    const statusId =
+      "oeuvreAudioStatus_" +
       o.id;
 
     const playId =
@@ -5942,75 +6297,11 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
         class="bociteOeuvreRoot"
       >
 
-        <style>
+        ${getOeuvreSharedStyles()}
 
-          .bociteOeuvreRoot{
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          }
-
-          .bociteOeuvreRoot .box{
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          }
-
-          .bociteOeuvreRoot .oeuvreSectionTitle{
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            line-height:1.35;
-          }
-
-          .bociteOeuvreRoot .oeuvreTitle{
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            line-height:1.35;
-          }
-
-          .bociteOeuvreRoot .oeuvreText{
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          }
-
-          .bociteOeuvreRoot .bociteOeuvreLogo{
-            display:inline-block;
-            color:#2f5d46;
-            font-size:inherit;
-            font-weight:700;
-            line-height:inherit;
-            white-space:nowrap;
-            word-spacing:0;
-            letter-spacing:normal;
-          }
-
-          .bociteOeuvreRoot .bociteOeuvreLogo > span{
-            display:inline;
-            color:#b00020;
-            margin:0;
-            padding:0;
-            font-size:inherit;
-            font-weight:700;
-            word-spacing:0;
-            letter-spacing:normal;
-          }
-
-        </style>
-
-
-        <div
-          class="oeuvreTitle"
-        >
-          ${esc(
-            o.titre
-          )}
-        </div>
+        ${oeuvreTitleCard(
+          o.titre
+        )}
 
 
         <div
@@ -6040,13 +6331,35 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
         </div>
 
 
+        ${oeuvreTitleCard(
+          "Laissez l’histoire venir à vous"
+        )}
+
+
         <div
-          id="${textId}"
-          class="oeuvreText"
-          style="
-            white-space:pre-line;
-            margin-top:12px;
-          "
+          id="${narrationId}"
+          class="oeuvreNarrationWindow"
+          aria-live="polite"
+        >
+
+          <div
+            class="oeuvreNarrationWaiting"
+          >
+            Le récit n’est pas affiché d’avance.
+            <br><br>
+            Appuyez sur
+            « Écouter l’histoire » :
+            les mots apparaîtront doucement
+            au rythme de la narration.
+          </div>
+
+        </div>
+
+
+        <div
+          id="${fullTextId}"
+          class="oeuvreAccessibleFullText"
+          tabindex="-1"
         >${formatOeuvreText(
           o.texte
         )}</div>
@@ -6090,7 +6403,7 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
               background:#ffffff;
             "
           >
-            Texte accessible
+            Texte complet / accessibilité
           </button>
 
         </div>
@@ -6100,13 +6413,13 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
           id="${statusId}"
           role="status"
           aria-live="polite"
-          class="oeuvreText"
+          class="oeuvreNote"
           style="
-            margin-top:8px;
+            margin-top:9px;
           "
         >
-          Lecture disponible sur demande.
           Aucun démarrage automatique.
+          Vous choisissez le moment où l’histoire commence.
         </div>
 
 
@@ -6115,10 +6428,15 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
         )}
 
 
+        ${oeuvreTitleCard(
+          "Remerciements"
+        )}
+
+
         <div
           class="box"
           style="
-            margin-top:14px;
+            margin-top:8px;
           "
         >
           Merci à l’artiste,
@@ -6187,15 +6505,15 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
             reportId
           );
 
+        const fullText =
+          document.getElementById(
+            fullTextId
+          );
+
         const backBtn =
           document.getElementById(
             "oeuvreBackOverview_" +
             o.id
-          );
-
-        const status =
-          document.getElementById(
-            statusId
           );
 
 
@@ -6204,53 +6522,11 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
           playBtn.onclick =
             function(){
 
-              stopAudio();
-
-              const audio =
-                new Audio(
-                  o.audio
-                );
-
-              window
-                .__bociteOeuvreAudio =
-                audio;
-
-              if(status){
-
-                status.textContent =
-                  "Lecture audio en cours…";
-              }
-
-              audio.onended =
-                function(){
-
-                  if(status){
-
-                    status.textContent =
-                      "Lecture terminée.";
-                  }
-                };
-
-              audio.onerror =
-                function(){
-
-                  speakTextPremium(
-                    o.texte,
-                    statusId
-                  );
-                };
-
-              audio
-                .play()
-                .catch(
-                  function(){
-
-                    speakTextPremium(
-                      o.texte,
-                      statusId
-                    );
-                  }
-                );
+              narrateOeuvre(
+                o,
+                narrationId,
+                statusId
+              );
             };
         }
 
@@ -6260,13 +6536,9 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
           stopBtn.onclick =
             function(){
 
-              stopAudio();
-
-              window
-                .BociteOeuvreAccess
-                .stop(
-                  statusId
-                );
+              stopNarration(
+                statusId
+              );
             };
         }
 
@@ -6276,11 +6548,39 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
           textBtn.onclick =
             function(){
 
-              window
-                .BociteOeuvreAccess
-                .focusText(
-                  textId
+              if(!fullText){
+
+                return;
+              }
+
+              const isVisible =
+                fullText.style.display ===
+                "block";
+
+              fullText.style.display =
+                isVisible
+                  ? "none"
+                  : "block";
+
+              textBtn.textContent =
+                isVisible
+                  ? "Texte complet / accessibilité"
+                  : "Masquer le texte complet";
+
+              if(!isVisible){
+
+                fullText.focus();
+
+                fullText.scrollIntoView(
+                  {
+                    behavior:
+                      "smooth",
+
+                    block:
+                      "start"
+                  }
                 );
+              }
             };
         }
 
@@ -6314,9 +6614,9 @@ Merci à toutes les personnes, partenaires et habitants qui rendent possible cet
   }
 
 
-/* =========================================================
-   QR
-   ========================================================= */
+  /* =========================================================
+     7. QR
+     ========================================================= */
 
   function promptQr(){
 
@@ -6412,15 +6712,13 @@ QR-BOCITEART-010`
 
     try{
 
-      localStorage
-        .removeItem(
-          STORAGE_KEY
-        );
+      localStorage.removeItem(
+        STORAGE_KEY
+      );
 
-      localStorage
-        .removeItem(
-          LAST_KEY
-        );
+      localStorage.removeItem(
+        LAST_KEY
+      );
 
     }catch(error){}
 
@@ -6446,10 +6744,6 @@ QR-BOCITEART-010`
         class="box"
         style="
           margin-top:8px;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.5;
         "
       >
 
@@ -6470,7 +6764,7 @@ QR-BOCITEART-010`
 
         <div
           style="
-            margin-top:5px;
+            margin-top:6px;
             color:#111111;
             font-size:14px;
             font-weight:400;
@@ -6506,7 +6800,7 @@ QR-BOCITEART-010`
         >
           ${
             opened
-              ? "Ouvrir la fiche"
+              ? "Ouvrir la découverte"
               : "Scanner / saisir le QR"
           }
         </button>
@@ -6517,9 +6811,9 @@ QR-BOCITEART-010`
   }
 
 
-/* =========================================================
-   CARTE
-   ========================================================= */
+  /* =========================================================
+     8. CARTE
+     ========================================================= */
 
   async function geocodeOeuvreAddress(
     address
@@ -6808,10 +7102,9 @@ QR-BOCITEART-010`
 
       return Array
         .from(
-          document
-            .querySelectorAll(
-              ".oeuvreRoutePick:checked"
-            )
+          document.querySelectorAll(
+            ".oeuvreRoutePick:checked"
+          )
         )
         .map(
           input =>
@@ -7065,9 +7358,7 @@ QR-BOCITEART-010`
                   function(input){
 
                     input.checked =
-                      input
-                        .dataset
-                        .oeuvreId ===
+                      input.dataset.oeuvreId ===
                       id;
                   }
                 );
@@ -7218,9 +7509,9 @@ QR-BOCITEART-010`
   }
 
 
-/* =========================================================
-   SIGNALEMENT
-   ========================================================= */
+  /* =========================================================
+     9. SIGNALEMENT
+     ========================================================= */
 
   function getOeuvreSignalConfig(o){
 
@@ -7245,21 +7536,16 @@ QR-BOCITEART-010`
     return {
 
       serviceLabel:
-
         byOeuvre.serviceLabel ||
         globalConfig.serviceLabel ||
         "Service technique compétent",
 
-
       serviceEmail:
-
         byOeuvre.serviceEmail ||
         globalConfig.serviceEmail ||
         "",
 
-
       endpoint:
-
         byOeuvre.endpoint ||
         globalConfig.endpoint ||
         ""
@@ -7389,19 +7675,22 @@ QR-BOCITEART-010`
           "
         >
 
-          <div>
+          <div
+            style="
+              flex:1;
+              background:#ffffff;
+            "
+          >
 
             <div
               style="
                 color:#2f5d46;
                 font-size:17px;
                 font-weight:700;
-                line-height:1.35;
               "
             >
               Signaler un problème
             </div>
-
 
             <div
               style="
@@ -7409,7 +7698,6 @@ QR-BOCITEART-010`
                 color:#111111;
                 font-size:14px;
                 font-weight:400;
-                line-height:1.5;
               "
             >
               ${esc(
@@ -7561,7 +7849,6 @@ QR-BOCITEART-010`
             color:#111111;
             font-size:14px;
             font-weight:400;
-            line-height:1.5;
           "
         ></div>
 
@@ -7797,14 +8084,6 @@ QR-BOCITEART-010`
 
               "\n\n" +
 
-              (
-                photo
-
-                  ? "Une photo a été sélectionnée. Merci de l’ajouter à ce message avant l’envoi.\n\n"
-
-                  : ""
-              ) +
-
               "Référence : " +
               reportId;
 
@@ -7831,12 +8110,7 @@ QR-BOCITEART-010`
             if(status){
 
               status.textContent =
-
-                photo
-
-                  ? "Le message est préparé. Ajoutez la photo sélectionnée à l’e-mail avant de l’envoyer."
-
-                  : "Le message est préparé pour le service compétent.";
+                "Le message est préparé pour le service compétent.";
             }
 
           }else{
@@ -7844,7 +8118,7 @@ QR-BOCITEART-010`
             if(status){
 
               status.textContent =
-                "Le signalement est préparé dans la démo. L’adresse officielle du service compétent doit encore être renseignée par la mairie pour permettre sa transmission.";
+                "Le signalement est préparé dans la démo. L’adresse officielle du service compétent doit encore être renseignée par la mairie.";
             }
           }
 
@@ -7868,9 +8142,9 @@ QR-BOCITEART-010`
   };
 
 
-/* =========================================================
-   SUPERVISION TECHNIQUE
-   ========================================================= */
+  /* =========================================================
+     10. SUPERVISION
+     ========================================================= */
 
   async function runOeuvresSupervisor(){
 
@@ -7938,17 +8212,6 @@ QR-BOCITEART-010`
         qrs.add(
           o.qr
         );
-
-        if(!o.audio){
-
-          warnings.push(
-            "Aucun fichier audio indiqué pour l’œuvre " +
-            String(
-              o.id ||
-              "?"
-            )
-          );
-        }
       }
     );
 
@@ -7971,21 +8234,6 @@ QR-BOCITEART-010`
 
       warnings.push(
         "Lecture vocale synthétique indisponible sur cet appareil"
-      );
-    }
-
-    if(
-      !window
-        .BociteOeuvreAccess ||
-
-      typeof window
-        .BociteOeuvreAccess
-        .speak !==
-      "function"
-    ){
-
-      problems.push(
-        "Fonction de lecture audio indisponible"
       );
     }
 
@@ -8030,47 +8278,6 @@ QR-BOCITEART-010`
       )
     );
 
-    const monitorEndpoint =
-      String(
-        window
-          .BOCITEART_OEUVRES_MONITOR_ENDPOINT ||
-        ""
-      ).trim();
-
-    if(
-      monitorEndpoint &&
-      problems.length
-    ){
-
-      try{
-
-        await fetch(
-          monitorEndpoint,
-          {
-            method:
-              "POST",
-
-            headers:{
-              "Content-Type":
-                "application/json"
-            },
-
-            body:
-              JSON.stringify(
-                report
-              )
-          }
-        );
-
-      }catch(error){
-
-        console.warn(
-          "Bo'CitéArt — supervision distante indisponible :",
-          error
-        );
-      }
-    }
-
     return report;
   }
 
@@ -8104,34 +8311,17 @@ QR-BOCITEART-010`
       runOeuvresSupervisor,
 
     start:
-      startOeuvresSupervisor,
-
-    getLastReport:
-      function(){
-
-        try{
-
-          return JSON.parse(
-            localStorage
-              .getItem(
-                OEUVRES_HEALTH_KEY
-              ) ||
-            "null"
-          );
-
-        }catch(error){
-
-          return null;
-        }
-      }
+      startOeuvresSupervisor
   };
 
 
-/* =========================================================
-   PAGE GÉNÉRALE ŒUVRES
-   ========================================================= */
+  /* =========================================================
+     11. PAGE GÉNÉRALE
+     ========================================================= */
 
   function openOverview(){
+
+    stopAudio();
 
     openModal(
       "Œuvres",
@@ -8141,75 +8331,12 @@ QR-BOCITEART-010`
         class="bociteOeuvreRoot"
       >
 
-        <style>
-
-          .bociteOeuvreRoot{
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          }
-
-          .bociteOeuvreRoot .box{
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          }
-
-          .bociteOeuvreRoot .oeuvreSectionTitle{
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            line-height:1.35;
-          }
-
-          .bociteOeuvreRoot .oeuvreNote{
-            margin-top:10px;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          }
-
-          .bociteOeuvreRoot .bociteOeuvreLogo{
-            display:inline-block;
-            color:#2f5d46;
-            font-size:inherit;
-            font-weight:700;
-            line-height:inherit;
-            white-space:nowrap;
-            word-spacing:0;
-            letter-spacing:normal;
-          }
-
-          .bociteOeuvreRoot .bociteOeuvreLogo > span{
-            display:inline;
-            color:#b00020;
-            margin:0;
-            padding:0;
-            font-size:inherit;
-            font-weight:700;
-            word-spacing:0;
-            letter-spacing:normal;
-          }
-
-          #oeuvresMap{
-            width:100%;
-            height:280px;
-            border-radius:12px;
-            overflow:hidden;
-            margin-top:10px;
-          }
-
-        </style>
+        ${getOeuvreSharedStyles()}
 
 
-        <div
-          class="oeuvreSectionTitle"
-        >
-          Parcours & Fresques
-        </div>
+        ${oeuvreTitleCard(
+          "Parcours & Fresques"
+        )}
 
 
         <div
@@ -8229,12 +8356,21 @@ QR-BOCITEART-010`
           Le visiteur découvre
           les fresques
           quartier par quartier,
-          scanne un QR code
-          à proximité de l’œuvre,
           puis débloque
-          sa fiche complète
-          avec histoire,
-          audio et texte.
+          progressivement
+          leurs histoires.
+
+          <br><br>
+
+          Ici, l’objectif
+          n’est pas seulement
+          de regarder une œuvre.
+
+          Il s’agit de prendre
+          quelques minutes,
+          de ralentir
+          et de se laisser raconter
+          un morceau de la ville.
 
         </div>
 
@@ -8283,14 +8419,9 @@ QR-BOCITEART-010`
         </div>
 
 
-        <div
-          class="oeuvreSectionTitle"
-          style="
-            margin-top:14px;
-          "
-        >
-          Carte et parcours choisi
-        </div>
+        ${oeuvreTitleCard(
+          "Carte et parcours choisi"
+        )}
 
 
         <div
@@ -8318,6 +8449,9 @@ QR-BOCITEART-010`
           <div
             id="oeuvresMapStatus"
             class="oeuvreNote"
+            style="
+              margin-top:9px;
+            "
           >
             Chargement de la carte…
           </div>
@@ -8354,14 +8488,9 @@ QR-BOCITEART-010`
         </div>
 
 
-        <div
-          class="oeuvreSectionTitle"
-          style="
-            margin-top:14px;
-          "
-        >
-          Choisissez les œuvres de votre parcours
-        </div>
+        ${oeuvreTitleCard(
+          "Choisissez les œuvres de votre parcours"
+        )}
 
 
         <div
@@ -8402,7 +8531,6 @@ QR-BOCITEART-010`
                           color:#111111;
                           font-size:14px;
                           font-weight:400;
-                          line-height:1.5;
                         "
                       >
                         ${esc(
@@ -8444,14 +8572,9 @@ QR-BOCITEART-010`
         </div>
 
 
-        <div
-          class="oeuvreSectionTitle"
-          style="
-            margin-top:14px;
-          "
-        >
-          Découvrez aussi la ville en chemin
-        </div>
+        ${oeuvreTitleCard(
+          "Découvrez aussi la ville en chemin"
+        )}
 
 
         <div
@@ -8464,23 +8587,25 @@ QR-BOCITEART-010`
           Lorsque cela est possible,
           le parcours invite
           à privilégier la marche
-          et les cheminements agréables
-          plutôt que les axes
-          les plus circulés.
+          et les cheminements agréables.
 
           <br><br>
 
           Aller d’une œuvre
           à l’autre
-          peut ainsi permettre
+          devient alors une façon
           de découvrir des rues,
-          des quartiers,
           des perspectives
           et des endroits
-          que l’on ne traverse
-          pas habituellement.
+          que l’on ne regarde
+          pas forcément d’habitude.
 
         </div>
+
+
+        ${oeuvreTitleCard(
+          "Préserver les œuvres et leurs abords"
+        )}
 
 
         <div
@@ -8489,109 +8614,28 @@ QR-BOCITEART-010`
             margin-top:8px;
           "
         >
-
-          Des points de vue,
-          bâtiments remarquables,
-          lieux historiques,
-          jardins
-          ou autres éléments
-          de mémoire locale
-          pourront être signalés
-          lorsqu’ils présentent
-          un véritable intérêt.
-
-          <br><br>
-
-          Une courte histoire
-          pourra alors expliquer
-          ce que l’on voit,
-          pourquoi ce lieu compte,
-          ce qu’il était autrefois
-          ou ce qui s’y est passé.
-
-        </div>
-
-
-        <div
-          class="oeuvreNote"
-        >
-
-          Dans cette démo,
-          le parcours prépare
-          la direction
-          et l’ordre choisis.
-
-          Le bouton
-          « Ouvrir l’itinéraire à pied »
-          permet ensuite
-          d’utiliser
-          un guidage piéton détaillé
-          lorsque les localisations exactes
-          sont disponibles.
-
-        </div>
-
-
-        <div
-          class="oeuvreSectionTitle"
-          style="
-            margin-top:14px;
-          "
-        >
-          Préserver les œuvres et leurs abords
-        </div>
-
-
-        <div
-          class="box"
-          style="
-            margin-top:8px;
-          "
-        >
-
-          Les œuvres vivent
-          dans l’espace public
-          et peuvent parfois subir
-          une dégradation,
-          un dépôt de déchets
-          ou un problème
-          sur leurs abords.
-
-          <br><br>
 
           Lorsqu’un problème
-          est constaté,
+          est constaté
+          autour d’une œuvre,
           l’application permet
           de le signaler
-          et, si cela est utile,
-          d’y joindre une photo
-          afin d’aider
-          le service compétent
-          à identifier
-          plus rapidement
-          la situation.
+          et, si nécessaire,
+          d’y joindre une photo.
 
           <br><br>
 
-          L’adresse de destination
-          est définie
-          avec chaque mairie
-          ou gestionnaire concerné,
-          afin que le signalement
-          arrive directement
-          auprès du service approprié.
+          Le signalement
+          pourra être dirigé
+          vers le service compétent
+          défini avec la commune.
 
         </div>
 
 
-        <div
-          class="oeuvreSectionTitle"
-          style="
-            margin-top:14px;
-          "
-        >
-          Entretien et responsabilité
-        </div>
+        ${oeuvreTitleCard(
+          "Entretien et responsabilité"
+        )}
 
 
         <div
@@ -8603,11 +8647,11 @@ QR-BOCITEART-010`
 
           ${bociteOeuvreLogoHtml()}
           met à disposition
-          un dispositif de découverte,
-          d’information
-          et de transmission
-          de signalements
-          autour des œuvres.
+          le parcours de découverte,
+          les informations
+          et le dispositif
+          de transmission
+          des signalements.
 
           <br><br>
 
@@ -8623,23 +8667,12 @@ QR-BOCITEART-010`
           des œuvres
           et de leurs abords.
 
-          Ces interventions relèvent,
-          selon chaque situation,
-          du propriétaire,
-          du gestionnaire
-          ou du service compétent.
-
         </div>
 
 
-        <div
-          class="oeuvreSectionTitle"
-          style="
-            margin-top:14px;
-          "
-        >
-          Accessibilité
-        </div>
+        ${oeuvreTitleCard(
+          "Accessibilité"
+        )}
 
 
         <div
@@ -8649,111 +8682,27 @@ QR-BOCITEART-010`
           "
         >
 
-          <div
-            id="oeuvrePublicAccessText"
-            tabindex="-1"
-            style="
-              color:#111111;
-              font-size:14px;
-              font-weight:400;
-              line-height:1.5;
-            "
-          >
+          ${bociteOeuvreLogoHtml()}
+          prévoit plusieurs façons
+          de découvrir les œuvres.
 
-            ${bociteOeuvreLogoHtml()}
-            prévoit plusieurs façons
-            de découvrir les œuvres.
+          <br><br>
 
-            Les histoires
-            sont disponibles
-            en audio
-            et en texte.
-
-            Le contenu peut également
-            être parcouru
-            avec les fonctions
-            d’accessibilité
-            et les lecteurs d’écran.
-
-            Lorsqu’une personne
-            est équipée
-            d’un afficheur braille compatible
-            relié à son appareil,
-            celui-ci peut restituer
-            le texte accessible
-            via le lecteur d’écran utilisé.
-
-          </div>
-
-
-          <div
-            style="
-              display:flex;
-              gap:8px;
-              flex-wrap:wrap;
-              margin-top:12px;
-            "
-          >
-
-            <button
-              id="oeuvrePublicAccessSpeak"
-              class="choiceBtn"
-              type="button"
-            >
-              ▶ Tester la lecture vocale
-            </button>
-
-
-            <button
-              id="oeuvrePublicAccessStop"
-              class="choiceBtn"
-              type="button"
-              style="
-                background:#ffffff;
-              "
-            >
-              ■ Arrêter
-            </button>
-
-
-            <button
-              id="oeuvrePublicAccessTextBtn"
-              class="choiceBtn"
-              type="button"
-              style="
-                background:#ffffff;
-              "
-            >
-              Texte accessible / braille
-            </button>
-
-          </div>
-
-
-          <div
-            id="oeuvrePublicAccessStatus"
-            role="status"
-            aria-live="polite"
-            class="oeuvreNote"
-          >
-
-            Vous pouvez tester ici
-            la lecture vocale
-            du parcours.
-
-          </div>
+          Le récit progressif
+          accompagne l’écoute,
+          mais un texte complet
+          reste disponible
+          à la demande
+          pour l’accessibilité,
+          les lecteurs d’écran
+          et les afficheurs braille compatibles.
 
         </div>
 
 
-        <div
-          class="oeuvreSectionTitle"
-          style="
-            margin-top:14px;
-          "
-        >
-          Parcours des 10 œuvres
-        </div>
+        ${oeuvreTitleCard(
+          "Parcours des 10 œuvres"
+        )}
 
 
         ${
@@ -8774,14 +8723,9 @@ QR-BOCITEART-010`
         }
 
 
-        <div
-          class="oeuvreSectionTitle"
-          style="
-            margin-top:14px;
-          "
-        >
-          Contenu complet d’une fiche œuvre déverrouillée
-        </div>
+        ${oeuvreTitleCard(
+          "Une découverte, pas seulement une fiche"
+        )}
 
 
         <div
@@ -8791,48 +8735,34 @@ QR-BOCITEART-010`
           "
         >
 
-          • titre de l’œuvre
-          <br>
+          La fiche d’une œuvre
+          ne dévoile plus immédiatement
+          toute son histoire.
 
-          • quartier concerné
-          <br>
+          <br><br>
 
-          • histoire du quartier
-          <br>
+          Le récit apparaît
+          au fur et à mesure
+          de la voix,
+          afin que l’image,
+          les mots
+          et le lieu
+          soient découverts ensemble.
 
-          • présentation de l’artiste
-          <br>
+          <br><br>
 
-          • présentation du mécène
-          <br>
-
-          • remerciements
-          <br>
-
-          • lecture audio
-          <br>
-
-          • lecture texte en parallèle
-          <br>
-
-          • liens utiles
-          pour approfondir
-          la découverte,
-          sans transformer
-          le mécénat
-          en publicité commerciale
+          C’est un moment
+          pour ralentir,
+          regarder
+          et profiter simplement
+          de ce qui nous entoure.
 
         </div>
 
 
-        <div
-          class="oeuvreSectionTitle"
-          style="
-            margin-top:14px;
-          "
-        >
-          Valeur ajoutée
-        </div>
+        ${oeuvreTitleCard(
+          "Valeur ajoutée"
+        )}
 
 
         <div
@@ -8844,29 +8774,16 @@ QR-BOCITEART-010`
 
           L’application
           ne montre pas seulement
-          une œuvre :
+          une œuvre.
 
-          elle crée
-          un lien concret
-          entre art,
-          quartier,
-          habitants,
-          mécènes,
-          ville
-          et mémoire locale.
-
-          <br><br>
-
-          Chaque fiche
-          peut aussi orienter
-          l’utilisateur
-          vers des ressources utiles
-          pour approfondir
-          sa découverte,
-          tout en conservant
-          le remerciement
-          des partenaires
-          sans publicité commerciale.
+          Elle crée
+          un lien entre l’art,
+          le quartier,
+          les habitants,
+          les artistes,
+          les partenaires,
+          la ville
+          et la mémoire locale.
 
         </div>
 
@@ -8892,21 +8809,6 @@ QR-BOCITEART-010`
         const resetBtn =
           document.getElementById(
             "oeuvreResetBtn"
-          );
-
-        const speakBtn =
-          document.getElementById(
-            "oeuvrePublicAccessSpeak"
-          );
-
-        const stopBtn =
-          document.getElementById(
-            "oeuvrePublicAccessStop"
-          );
-
-        const textBtn =
-          document.getElementById(
-            "oeuvrePublicAccessTextBtn"
           );
 
 
@@ -8965,51 +8867,6 @@ QR-BOCITEART-010`
               };
           }
         );
-
-
-        if(speakBtn){
-
-          speakBtn.onclick =
-            function(){
-
-              window
-                .BociteOeuvreAccess
-                .speak(
-
-                  "Bo'CitéArt prévoit plusieurs façons de découvrir les œuvres. Les histoires sont disponibles en audio et en texte. Le contenu peut également être parcouru avec les fonctions d’accessibilité, les lecteurs d’écran et, lorsque la personne en est équipée, un afficheur braille compatible relié à son appareil peut restituer le texte accessible via le lecteur d’écran utilisé.",
-
-                  "oeuvrePublicAccessStatus"
-                );
-            };
-        }
-
-
-        if(stopBtn){
-
-          stopBtn.onclick =
-            function(){
-
-              window
-                .BociteOeuvreAccess
-                .stop(
-                  "oeuvrePublicAccessStatus"
-                );
-            };
-        }
-
-
-        if(textBtn){
-
-          textBtn.onclick =
-            function(){
-
-              window
-                .BociteOeuvreAccess
-                .focusText(
-                  "oeuvrePublicAccessText"
-                );
-            };
-        }
 
 
         initOeuvresMap();
