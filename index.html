@@ -13354,9 +13354,9 @@ window.openBociteSchoolTeacherAccess = function(){
   schoolTile.click();
 };
 
-   /* =====================================================
-   PORTE PRIVÉE ÉCOLE — PROFESSEUR / REMPLAÇANT
-   LIEN DIRECT DE DÉMONSTRATION
+/* =====================================================
+   INVITATION ÉCOLE — PROFESSEUR / REMPLAÇANT
+   VALIDITÉ MAXIMUM : 5 MINUTES
    ===================================================== */
 
 (function(){
@@ -13364,30 +13364,34 @@ window.openBociteSchoolTeacherAccess = function(){
   const params =
     new URLSearchParams(window.location.search);
 
+  const token =
+    String(params.get("schoolinvite") || "").trim();
+
+  const teacherId =
+    String(params.get("schoolteacher") || "").trim();
+
+  const expiresAt =
+    Number(params.get("schoolinviteexp") || 0);
+
+  window.bociteartSchoolTeacherInvitation = null;
+
   if(
-    params.get("ecole") !== "professeur"
+    !token ||
+    !teacherId ||
+    !Number.isFinite(expiresAt)
   ){
     return;
   }
 
-  const schoolTile =
-    document.querySelector('[data-open="ecole"]');
-
-  if(!schoolTile){
+  if(Date.now() >= expiresAt){
     return;
   }
 
-  schoolTile.addEventListener(
-    "click",
-    function(){
-
-      window.bociteartSchoolTeacherEntry = true;
-
-      schoolTile.__bociteOtherIntroBypass = true;
-
-    },
-    true
-  );
+  window.bociteartSchoolTeacherInvitation = {
+    token: token,
+    teacherId: teacherId,
+    expiresAt: expiresAt
+  };
 
 })();
 
