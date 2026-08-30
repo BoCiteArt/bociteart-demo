@@ -8022,50 +8022,6 @@ if(window.bociteartSchoolTeacherEntry){
  /* =====================================================
    OUVERTURE PROFESSEUR DEPUIS SA PORTE PRIVÉE
    ===================================================== */
-
-if(window.bociteartSchoolTeacherEntry){
-
-  window.bociteartSchoolTeacherEntry = false;
-
-  schoolSession = {
-    role:"teacher",
-    teacherId:"",
-    openedFromDirection:false
-  };
-
-  if(schoolAccessOpenBtn){
-    schoolAccessOpenBtn.style.display = "none";
-  }
-
-  if(schoolDirectionPanel){
-    schoolDirectionPanel.style.display = "none";
-  }
-
-  if(schoolProfessorPrivatePanel){
-    schoolProfessorPrivatePanel.style.display = "none";
-  }
-
-  if(schoolAccessPanel){
-    schoolAccessPanel.style.display = "block";
-  }
-
-  schoolFillClassSuggestions();
-
-  window.setTimeout(function(){
-
-    if(schoolAccessPanel){
-      schoolAccessPanel.scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-      });
-    }
-
-    if(schoolAccessCodeInput){
-      schoolAccessCodeInput.focus();
-    }
-
-  },60);
-}
  
 if(schoolDirectionFirstSetupBtn){
 
@@ -13397,26 +13353,6 @@ window.openBociteSchoolTeacherAccess = function(){
   schoolTile.__bociteOtherIntroBypass = true;
   schoolTile.click();
 };
-
-  /* =====================================================
-   ACCÈS PROFESSEUR / REMPLAÇANT
-   ===================================================== */
-
-window.openBociteSchoolTeacherAccess = function(){
-
-  window.bociteartSchoolTeacherEntry = true;
-
-  const schoolTile =
-    document.querySelector('[data-open="ecole"]');
-
-  if(!schoolTile){
-    alert("La tuile École n’a pas été trouvée.");
-    return;
-  }
-
-  schoolTile.__bociteOtherIntroBypass = true;
-  schoolTile.click();
-}; 
 
 /* =====================================================
    OUVERTURE ÉCOLE — DIRECTION
