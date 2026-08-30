@@ -7729,6 +7729,15 @@ async function schoolLogin(){
           >
             Réinitialiser le code
           </button>
+         
+          <button
+  class="schoolMiniButton"
+  type="button"
+  data-school-invite-teacher="${schoolEscapeHtml(account.id)}"
+>
+  Créer l’invitation — 5 min
+</button>
+
         </div>
       `;
     }).join("");
@@ -7815,6 +7824,134 @@ async function schoolLogin(){
         schoolRenderTeacherAccessList();
       };
     });
+
+    schoolTeacherAccessList
+      .querySelectorAll("[data-school-invite-teacher]")
+      .forEach(function(button){
+
+        button.onclick = function(){
+
+          const id =
+            String(button.dataset.schoolInviteTeacher || "");
+
+          const currentData =
+            schoolLoadAccessData();
+
+          const index =
+            currentData.teachers.findIndex(function(item){
+              return item &&
+                String(item.id || "") === id;
+            });
+
+          if(index < 0){
+            return;
+          }
+
+          const account =
+            currentData.teachers[index];
+
+          if(
+            account.active === false ||
+            schoolTeacherAccessExpired(account)
+          ){
+            alert(
+              "Cet accès doit être actif avant de créer une invitation."
+            );
+            return;
+          }
+
+          if(
+            !window.crypto ||
+            typeof window.crypto.getRandomValues !== "function"
+          ){
+            alert(
+              "Impossible de créer l’invitation sur cet appareil."
+            );
+            return;
+          }
+
+          const bytes =
+            new Uint8Array(16);
+
+          window.crypto.getRandomValues(bytes);
+
+          const token =
+            Array.from(bytes)
+              .map(function(value){
+                return value
+                  .toString(16)
+                  .padStart(2,"0");
+              })
+              .join("");
+
+          const expiresAt =
+            Date.now() + (5 * 60 * 1000);
+
+          account.invitation = {
+            token: token,
+            expiresAt: expiresAt,
+            used: false,
+            createdAt: new Date().toISOString()
+          };
+
+          account.updatedAt =
+            new Date().toISOString();
+
+          currentData.teachers[index] =
+            account;
+
+          if(!schoolSaveAccessData(currentData)){
+            alert(
+              "L’invitation n’a pas pu être créée."
+            );
+            return;
+          }
+
+          const invitationUrl =
+            new URL(
+              window.location.origin +
+              window.location.pathname
+            );
+
+          invitationUrl.searchParams.set(
+            "presentation",
+            "1"
+          );
+
+          invitationUrl.searchParams.set(
+            "schoolinvite",
+            token
+          );
+
+          invitationUrl.searchParams.set(
+            "schoolteacher",
+            id
+          );
+
+          invitationUrl.searchParams.set(
+            "schoolinviteexp",
+            String(expiresAt)
+          );
+
+          invitationUrl.searchParams.set(
+            "nocache",
+            String(Date.now())
+          );
+
+          if(schoolDirectionStatus){
+            schoolDirectionStatus.textContent =
+              "✓ Invitation créée. Elle expire automatiquement dans 5 minutes.";
+          }
+
+          window.prompt(
+            "Invitation professeur / remplaçant valable 5 minutes.\n\nCopiez ce lien et envoyez-le immédiatement au professeur :",
+            invitationUrl.toString()
+          );
+
+        };
+
+      });
+
   }
 
   async function schoolTeacherChangeOwnCode(){
