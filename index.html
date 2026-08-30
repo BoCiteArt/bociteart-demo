@@ -15218,44 +15218,26 @@ function showPilotageAccessLog(){
       ) || "[]"
     );
 
-  if(!logs.length){
-
-    openModal(
-      "Journal des accès",
-      `
-        <div class="box">
-          Aucun accès enregistré.
-        </div>
-      `
-    );
-
-    return;
-  }
-
   const html =
-    logs
-      .slice()
-      .reverse()
-      .map(function(l){
-
-        return `
+    logs.length
+      ? logs
+          .slice()
+          .reverse()
+          .map(function(l){
+            return `
+              <div class="box">
+                <strong>${l.user || "Inconnu"}</strong><br>
+                ${l.action || ""}<br>
+                <small>${l.date || ""}</small>
+              </div>
+            `;
+          })
+          .join("")
+      : `
           <div class="box">
-            <strong>
-              ${l.user || "Inconnu"}
-            </strong>
-            <br>
-
-            ${l.action || ""}
-            <br>
-
-            <small>
-              ${l.date || ""}
-            </small>
+            Aucun accès enregistré.
           </div>
         `;
-
-      })
-      .join("");
 
   openModal(
     "Journal des accès",
@@ -15264,11 +15246,7 @@ function showPilotageAccessLog(){
       <button
         class="choiceBtn"
         type="button"
-        style="
-          width:100%;
-          margin-top:12px;
-          background:#ffffff;
-        "
+        style="width:100%;margin-top:12px;"
         onclick="window.clearPilotageAccessLogDemo()"
       >
         Effacer le journal de test
@@ -15286,12 +15264,11 @@ window.clearPilotageAccessLogDemo = function(){
     return;
   }
 
-  const confirmed =
-    confirm(
+  if(
+    !confirm(
       "Effacer entièrement le journal des accès de cette démonstration ?"
-    );
-
-  if(!confirmed){
+    )
+  ){
     return;
   }
 
