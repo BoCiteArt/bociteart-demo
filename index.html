@@ -15210,25 +15210,97 @@ function logPilotageAccess(user, action){
 }
 
 function showPilotageAccessLog(){
-  const logs = JSON.parse(localStorage.getItem("bociteart_pilotage_access_log") || "[]");
+
+  const logs =
+    JSON.parse(
+      localStorage.getItem(
+        "bociteart_pilotage_access_log"
+      ) || "[]"
+    );
 
   if(!logs.length){
-    openModal("Journal des accès",`
-      <div class="box">Aucun accès enregistré.</div>
-    `);
+
+    openModal(
+      "Journal des accès",
+      `
+        <div class="box">
+          Aucun accès enregistré.
+        </div>
+      `
+    );
+
     return;
   }
 
-  const html = logs.slice().reverse().map(l=>`
-    <div class="box">
-      <strong>${l.user || "Inconnu"}</strong><br>
-      ${l.action || ""}<br>
-      <small>${l.date || ""}</small>
-    </div>
-  `).join("");
+  const html =
+    logs
+      .slice()
+      .reverse()
+      .map(function(l){
 
-  openModal("Journal des accès", html);
+        return `
+          <div class="box">
+            <strong>
+              ${l.user || "Inconnu"}
+            </strong>
+            <br>
+
+            ${l.action || ""}
+            <br>
+
+            <small>
+              ${l.date || ""}
+            </small>
+          </div>
+        `;
+
+      })
+      .join("");
+
+  openModal(
+    "Journal des accès",
+    html + `
+
+      <button
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:12px;
+          background:#ffffff;
+        "
+        onclick="window.clearPilotageAccessLogDemo()"
+      >
+        Effacer le journal de test
+      </button>
+
+    `
+  );
 }
+
+
+window.clearPilotageAccessLogDemo = function(){
+
+  if(!window.bociteartAdminSession){
+    alert("Accès privé requis.");
+    return;
+  }
+
+  const confirmed =
+    confirm(
+      "Effacer entièrement le journal des accès de cette démonstration ?"
+    );
+
+  if(!confirmed){
+    return;
+  }
+
+  localStorage.removeItem(
+    "bociteart_pilotage_access_log"
+  );
+
+  window.showPilotageAccessLog();
+};
 
 window.showPilotageAccessLog = showPilotageAccessLog;
    
