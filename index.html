@@ -4134,9 +4134,783 @@ window.tapeAds = [
       window.mairieLoad = mairieLoad;
       window.mairieSave = mairieSave;
 
-     document.querySelectorAll("[data-open]").forEach((el)=>{
-  el.addEventListener("click", ()=>{
-    const key = el.getAttribute("data-open");
+/* =========================================================
+   BO'CITÉART — MAINTENANCE GÉNÉRALE ET PAR ESPACE
+   DÉMONSTRATION LOCALE
+   ========================================================= */
+
+const BOCITE_MAINTENANCE_KEY =
+  "bociteart_maintenance_demo_v1";
+
+
+function loadBociteMaintenance(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        BOCITE_MAINTENANCE_KEY
+      );
+
+    const saved =
+      raw ? JSON.parse(raw) : {};
+
+    return {
+
+      general:
+        saved &&
+        saved.general === true,
+
+      modules:{
+
+        oeuvres:
+          Boolean(
+            saved &&
+            saved.modules &&
+            saved.modules.oeuvres
+          ),
+
+        ecole:
+          Boolean(
+            saved &&
+            saved.modules &&
+            saved.modules.ecole
+          ),
+
+        sport:
+          Boolean(
+            saved &&
+            saved.modules &&
+            saved.modules.sport
+          ),
+
+        mairie:
+          Boolean(
+            saved &&
+            saved.modules &&
+            saved.modules.mairie
+          ),
+
+        commerces:
+          Boolean(
+            saved &&
+            saved.modules &&
+            saved.modules.commerces
+          )
+      },
+
+      updatedAt:
+        saved && saved.updatedAt
+          ? String(saved.updatedAt)
+          : "",
+
+      updatedBy:
+        saved && saved.updatedBy
+          ? String(saved.updatedBy)
+          : ""
+    };
+
+  }catch(error){
+
+    return {
+      general:false,
+      modules:{
+        oeuvres:false,
+        ecole:false,
+        sport:false,
+        mairie:false,
+        commerces:false
+      },
+      updatedAt:"",
+      updatedBy:""
+    };
+  }
+}
+
+
+function saveBociteMaintenance(state){
+
+  try{
+
+    localStorage.setItem(
+      BOCITE_MAINTENANCE_KEY,
+      JSON.stringify(state)
+    );
+
+    return true;
+
+  }catch(error){
+
+    alert(
+      "L’état de maintenance n’a pas pu être enregistré."
+    );
+
+    return false;
+  }
+}
+
+
+function bociteMaintenanceLabel(key){
+
+  const labels = {
+    oeuvres:"Œuvres d’artistes",
+    ecole:"École",
+    sport:"Sport",
+    mairie:"Mairie & Asso",
+    commerces:"Commerces & entreprises"
+  };
+
+  return labels[key] || "Cet espace";
+}
+
+
+function bociteGeneralMaintenanceActive(){
+
+  return (
+    loadBociteMaintenance().general === true
+  );
+}
+
+
+function bociteModuleMaintenanceActive(key){
+
+  const state =
+    loadBociteMaintenance();
+
+  return Boolean(
+    state.modules &&
+    state.modules[key] === true
+  );
+}
+
+
+/* =========================================================
+   MESSAGE DE MAINTENANCE
+   ========================================================= */
+
+function showBociteMaintenanceMessage(key){
+
+  const general =
+    bociteGeneralMaintenanceActive();
+
+  const title =
+    general
+      ? "Bo’CitéArt — Maintenance"
+      : bociteMaintenanceLabel(key);
+
+
+  const text =
+    general
+      ? `
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.55;
+            border-left:6px solid #b42318;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+            "
+          >
+            Bo’CitéArt est momentanément en maintenance
+          </div>
+
+          <div style="margin-top:10px;">
+            Une intervention est en cours.
+            Merci de revenir un peu plus tard.
+
+            <br><br>
+
+            Seuls les services d’urgence
+            et d’aide restent accessibles :
+
+            <br><br>
+
+            <strong>112 • 3919 • 119</strong>
+          </div>
+
+        </div>
+      `
+      : `
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.55;
+            border-left:6px solid #b42318;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+            "
+          >
+            Cet espace est momentanément en maintenance
+          </div>
+
+          <div style="margin-top:10px;">
+            Une intervention est en cours.
+            Merci de revenir un peu plus tard.
+
+            <br><br>
+
+            Les autres services Bo’CitéArt
+            restent accessibles.
+
+            <br><br>
+
+            Les services d’urgence et d’aide
+            restent également accessibles :
+
+            <br><br>
+
+            <strong>112 • 3919 • 119</strong>
+          </div>
+
+        </div>
+      `;
+
+
+  openModal(
+    title,
+    text + `
+
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+          margin-top:12px;
+        "
+      >
+
+        <button
+          class="choiceBtn"
+          type="button"
+          data-bocite-emergency="1"
+          onclick="callPhone('112')"
+        >
+          112
+        </button>
+
+        <button
+          class="choiceBtn"
+          type="button"
+          data-bocite-emergency="1"
+          onclick="callPhone('3919')"
+        >
+          3919
+        </button>
+
+        <button
+          class="choiceBtn"
+          type="button"
+          data-bocite-emergency="1"
+          onclick="callPhone('119')"
+        >
+          119
+        </button>
+
+      </div>
+    `,
+    {
+      noHistory:true
+    }
+  );
+}
+
+
+/* =========================================================
+   COMMANDES ADMINISTRATEUR
+   ========================================================= */
+
+function setBociteGeneralMaintenance(enabled){
+
+  if(!window.bociteartAdminSession){
+
+    alert("Accès privé requis.");
+    return false;
+  }
+
+  const state =
+    loadBociteMaintenance();
+
+  state.general =
+    Boolean(enabled);
+
+  state.updatedAt =
+    new Date().toISOString();
+
+  state.updatedBy =
+    window.bociteartCurrentPilotageUser &&
+    window.bociteartCurrentPilotageUser.name
+      ? String(
+          window.bociteartCurrentPilotageUser.name
+        )
+      : "Pilotage Bo’CitéArt";
+
+
+  if(!saveBociteMaintenance(state)){
+    return false;
+  }
+
+
+  if(typeof logPilotageAccess === "function"){
+
+    logPilotageAccess(
+      state.updatedBy,
+      state.general
+        ? "Maintenance générale activée"
+        : "Maintenance générale désactivée"
+    );
+  }
+
+  return true;
+}
+
+
+function setBociteModuleMaintenance(
+  key,
+  enabled
+){
+
+  if(!window.bociteartAdminSession){
+
+    alert("Accès privé requis.");
+    return false;
+  }
+
+  const state =
+    loadBociteMaintenance();
+
+  if(
+    !Object.prototype.hasOwnProperty.call(
+      state.modules,
+      key
+    )
+  ){
+
+    alert(
+      "Espace de maintenance inconnu."
+    );
+
+    return false;
+  }
+
+
+  state.modules[key] =
+    Boolean(enabled);
+
+  state.updatedAt =
+    new Date().toISOString();
+
+  state.updatedBy =
+    window.bociteartCurrentPilotageUser &&
+    window.bociteartCurrentPilotageUser.name
+      ? String(
+          window.bociteartCurrentPilotageUser.name
+        )
+      : "Pilotage Bo’CitéArt";
+
+
+  if(!saveBociteMaintenance(state)){
+    return false;
+  }
+
+
+  if(typeof logPilotageAccess === "function"){
+
+    logPilotageAccess(
+      state.updatedBy,
+      (
+        enabled
+          ? "Maintenance activée : "
+          : "Maintenance désactivée : "
+      ) +
+      bociteMaintenanceLabel(key)
+    );
+  }
+
+  return true;
+}
+
+
+window.BociteMaintenance = {
+
+  getState:
+    loadBociteMaintenance,
+
+  isGeneral:
+    bociteGeneralMaintenanceActive,
+
+  isModuleClosed:
+    bociteModuleMaintenanceActive,
+
+  showMessage:
+    showBociteMaintenanceMessage,
+
+  setGeneral:
+    setBociteGeneralMaintenance,
+
+  setModule:
+    setBociteModuleMaintenance
+};
+
+
+/* =========================================================
+   TABLEAU MAINTENANCE DU PILOTAGE PRIVÉ
+   ========================================================= */
+
+window.openMaintenanceBociteart = function(){
+
+  if(!window.bociteartAdminSession){
+
+    alert("Accès privé requis.");
+    return;
+  }
+
+
+  const state =
+    loadBociteMaintenance();
+
+
+  function moduleBox(
+    key,
+    label
+  ){
+
+    const closed =
+      state.modules[key] === true;
+
+    return `
+
+      <div class="box">
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+          "
+        >
+          ${label}
+        </div>
+
+        <div
+          style="
+            margin-top:6px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          "
+        >
+          État :
+          ${
+            closed
+              ? "🔴 Maintenance"
+              : "🟢 Accessible"
+          }
+        </div>
+
+        <button
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:10px;
+          "
+          onclick="
+            window.BociteMaintenance.setModule(
+              '${key}',
+              ${closed ? "false" : "true"}
+            );
+            window.openMaintenanceBociteart();
+          "
+        >
+          ${
+            closed
+              ? "Réactiver cet espace"
+              : "Mettre cet espace en maintenance"
+          }
+        </button>
+
+      </div>
+    `;
+  }
+
+
+  openModal(
+    "Maintenance Bo’CitéArt",
+    `
+
+      <div
+        class="box"
+        style="
+          border-left:6px solid ${
+            state.general
+              ? "#b42318"
+              : "#1f8f4d"
+          };
+        "
+      >
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+          "
+        >
+          Maintenance générale
+        </div>
+
+        <div
+          style="
+            margin-top:6px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          "
+        >
+          État :
+          ${
+            state.general
+              ? "🔴 Maintenance générale active"
+              : "🟢 Application accessible"
+          }
+        </div>
+
+        <button
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:10px;
+          "
+          onclick="
+            window.BociteMaintenance.setGeneral(
+              ${state.general ? "false" : "true"}
+            );
+            window.openMaintenanceBociteart();
+          "
+        >
+          ${
+            state.general
+              ? "Réactiver toute l’application"
+              : "Mettre toute l’application en maintenance"
+          }
+        </button>
+
+      </div>
+
+
+      <div
+        style="
+          margin-top:14px;
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+        "
+      >
+        Maintenance par espace
+      </div>
+
+
+      ${moduleBox(
+        "oeuvres",
+        "Œuvres d’artistes"
+      )}
+
+      ${moduleBox(
+        "ecole",
+        "École"
+      )}
+
+      ${moduleBox(
+        "sport",
+        "Sport"
+      )}
+
+      ${moduleBox(
+        "mairie",
+        "Mairie & Asso"
+      )}
+
+      ${moduleBox(
+        "commerces",
+        "Commerces & entreprises"
+      )}
+
+
+      <div
+        style="
+          margin-top:12px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        Les numéros 112, 3919 et 119
+        restent disponibles même lorsqu’une
+        maintenance générale est activée.
+      </div>
+
+    `,
+    {
+      noHistory:true
+    }
+  );
+};
+
+
+/* =========================================================
+   MAINTENANCE GÉNÉRALE :
+   BLOQUER LES ACCÈS PUBLICS,
+   MAIS JAMAIS 112 / 3919 / 119
+   ========================================================= */
+
+document.addEventListener(
+  "click",
+  function(event){
+
+    if(
+      !window.BociteMaintenance ||
+      !window.BociteMaintenance.isGeneral()
+    ){
+      return;
+    }
+
+
+    /*
+      Le Pilotage Bo’CitéArt conserve la main.
+    */
+    if(window.bociteartAdminSession){
+      return;
+    }
+
+
+    const target =
+      event.target instanceof Element
+        ? event.target
+        : null;
+
+    if(!target){
+      return;
+    }
+
+
+    /*
+      Les services d'urgence et d'aide
+      restent toujours utilisables.
+    */
+    if(
+      target.closest("#btn112") ||
+      target.closest("#btnSos") ||
+      target.closest("#choice") ||
+      target.closest(
+        '[data-bocite-emergency="1"]'
+      )
+    ){
+      return;
+    }
+
+
+    /*
+      La porte du Pilotage reste techniquement
+      joignable afin que Bo’CitéArt puisse
+      rétablir l'application.
+      Son authentification reste obligatoire.
+    */
+    if(
+      target.closest("#pilotageTile")
+    ){
+      return;
+    }
+
+
+    /*
+      Permet uniquement de fermer
+      le message de maintenance.
+    */
+    if(
+      target.closest("#xBtn") ||
+      target.closest("#modalClose")
+    ){
+      return;
+    }
+
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+
+    showBociteMaintenanceMessage(
+      ""
+    );
+
+  },
+  true
+);
+   
+    document.querySelectorAll("[data-open]").forEach((el)=>{
+
+  el.addEventListener("click", (event)=>{
+
+    const key =
+      el.getAttribute("data-open");
+
+
+    /*
+      Maintenance générale
+      pour un utilisateur public.
+    */
+    if(
+      !window.bociteartAdminSession &&
+      window.BociteMaintenance &&
+      window.BociteMaintenance.isGeneral()
+    ){
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      window.BociteMaintenance.showMessage("");
+
+      return;
+    }
+
+
+    /*
+      Maintenance de cette seule tuile.
+    */
+    if(
+      !window.bociteartAdminSession &&
+      window.BociteMaintenance &&
+      window.BociteMaintenance.isModuleClosed(key)
+    ){
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      window.BociteMaintenance.showMessage(key);
+
+      return;
+    }
 
 if(key === "ecole"){
 
@@ -4414,14 +5188,16 @@ if(key === "ecole"){
           <div>• comprendre qu’un effort collectif peut aussi servir un projet ou une action utile.</div>
         </div>
 
-        <div style="margin-top:12px;padding:12px;border-radius:10px;background:#f7f2e8;">
-          Le professeur reste naturellement maître de sa classe.
-          <span class="bociteBrand"><span class="bociteBrandGreen">Bo’Cité</span><span class="bociteBrandRed">Art</span></span>
-          lui apporte simplement un support complémentaire pour faire vivre ces apprentissages autrement.
         </div>
-        <div class="bociteSchoolSectionTitle">
-  Comprendre et vivre la solidarité
+
+<div style="margin-top:12px;padding:12px;border-radius:10px;background:#f7f2e8;">
+  Le professeur reste naturellement maître de sa classe.
+  <span class="bociteBrand"><span class="bociteBrandGreen">Bo’Cité</span><span class="bociteBrandRed">Art</span></span>
+  lui apporte simplement un support complémentaire pour faire vivre ces apprentissages autrement.
 </div>
+
+<div class="bociteSchoolSectionTitle">
+  Comprendre et vivre la solidarité
 </div>
 
 <div class="bociteSchoolCard">
@@ -4473,14 +5249,92 @@ if(key === "ecole"){
         et des autorisations applicables.
       </div>
 
-    <button
+<!-- ==================================================
+     PORTE TECHNIQUE ÉCOLE
+     INVISIBLE DANS LA PARTIE PUBLIQUE
+     ================================================== -->
+
+<button
   id="schoolAccessOpenBtn"
-  class="bociteSchoolAction bociteSchoolActionPrimary"
   type="button"
-  style="margin-top:14px;"
+  style="display:none !important;"
+  aria-hidden="true"
+  tabindex="-1"
 >
   Accès privé école
 </button>
+
+<div
+  id="schoolAccessPanel"
+  class="bociteSchoolAccessPanel"
+>
+
+  <div
+    class="bociteSchoolSectionTitle"
+    style="margin-top:12px;"
+  >
+    Accès professeur / remplaçant
+  </div>
+
+  <div class="bociteSchoolCard">
+
+    Cet accès est personnel et réservé
+    aux professeurs ou remplaçants autorisés
+    par la Direction de l’établissement.
+
+    <br><br>
+
+    Toute tentative d’accès non autorisée
+    peut être journalisée et signalée.
+
+    <label
+      class="bociteSchoolFieldLabel"
+      for="schoolAccessCodeInput"
+    >
+      Code d’activation ou code personnel
+    </label>
+
+    <input
+      id="schoolAccessCodeInput"
+      class="bociteSchoolField"
+      type="password"
+      autocomplete="current-password"
+      placeholder="Votre code"
+    >
+
+    <button
+      id="schoolAccessLoginBtn"
+      class="bociteSchoolAction bociteSchoolActionPrimary"
+      type="button"
+    >
+      Ouvrir mon accès
+    </button>
+
+    <button
+      id="schoolDirectionFirstSetupBtn"
+      type="button"
+      style="display:none !important;"
+      aria-hidden="true"
+      tabindex="-1"
+    >
+      Première activation de la direction
+    </button>
+
+    <div
+      id="schoolAccessStatus"
+      role="status"
+      aria-live="polite"
+      style="
+        margin-top:10px;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+      "
+    ></div>
+
+  </div>
+
+</div>
 
       <div id="schoolAccessPanel" class="bociteSchoolAccessPanel">
         <div class="bociteSchoolSectionTitle" style="margin-top:12px;">
@@ -4781,10 +5635,9 @@ if(key === "ecole"){
   style="border-left:5px solid #b42318;"
 ></div>
 
-        <div class="bociteSchoolSectionTitle">
- <div class="bociteSchoolSectionTitle">
+      <div class="bociteSchoolSectionTitle">
   Utilisation des bocitecoins de la classe
-</div>
+</div> 
 
 <div class="bociteSchoolCard">
 
@@ -5374,7 +6227,7 @@ if(key === "ecole"){
   const SCHOOL_SCHEDULE_UI_KEY = "bociteart_school_voice_schedule_v2";
   const SCHOOL_CLASSES_KEY = "bociteart_school_classes_v1";
   const SCHOOL_CURRENT_CLASS_ID_KEY = "bociteart_school_current_class_id_v1";
-  const SCHOOL_SOLIDARITY_KEY = "bociteart_school_solidarity_choice_v4";
+  const SCHOOL_SOLIDARITY_KEY = "bociteart_school_solidarity_choice_v5";
  const SCHOOL_SOLIDARITY_AGREEMENT_KEY = "bociteart_school_solidarity_agreement_v1";
   const SCHOOL_ACCESS_DEMO_KEY = "bociteart_school_access_demo_v1";
 
@@ -6611,15 +7464,20 @@ window.BociteSchoolSolidarityAgreement = {
     return Boolean(data.direction && data.direction.codeHash);
   }
 
-  function schoolRefreshAccessStartUi(){
-    if(!schoolDirectionFirstSetupBtn){
-      return;
-    }
+ function schoolRefreshAccessStartUi(){
 
-    schoolDirectionFirstSetupBtn.style.display = schoolDirectionInitialized()
-      ? "none"
-      : "block";
+  if(!schoolDirectionFirstSetupBtn){
+    return;
   }
+
+  /*
+    Dans cette démonstration,
+    la Direction entre par le Pilotage privé.
+    L'ancien bouton de première activation
+    ne doit plus être proposé.
+  */
+  schoolDirectionFirstSetupBtn.style.display = "none";
+}
 
   function schoolTeacherAccessExpired(account){
     if(!account || !account.expiresAt){
@@ -7080,6 +7938,7 @@ if(schoolAccessOpenBtn){
 
     schoolRefreshAccessStartUi();
     schoolFillClassSuggestions();
+   schoolRenderSolidarityAgreementStatus();
 
     schoolAccessPanel.scrollIntoView({
       behavior:"smooth",
@@ -7137,7 +7996,108 @@ if(
 
   }, 60);
 }
-     
+
+/* =====================================================
+   OUVERTURE DE L'ACCÈS PROFESSEUR / REMPLAÇANT
+   ===================================================== */
+
+if(window.bociteartSchoolTeacherEntry){
+
+  window.bociteartSchoolTeacherEntry = false;
+
+  schoolSession = {
+    role:"",
+    teacherId:"",
+    openedFromDirection:false
+  };
+
+  if(schoolAccessOpenBtn){
+    schoolAccessOpenBtn.style.display = "none";
+  }
+
+  if(schoolDirectionPanel){
+    schoolDirectionPanel.style.display = "none";
+  }
+
+  if(schoolProfessorPrivatePanel){
+    schoolProfessorPrivatePanel.style.display = "none";
+  }
+
+  if(schoolAccessPanel){
+    schoolAccessPanel.style.display = "block";
+  }
+
+  if(schoolAccessRole){
+    schoolAccessRole.value = "teacher";
+  }
+
+  schoolRefreshAccessStartUi();
+  schoolFillClassSuggestions();
+
+  window.setTimeout(function(){
+
+    if(schoolAccessPanel){
+      schoolAccessPanel.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+    }
+
+    if(schoolAccessCodeInput){
+      schoolAccessCodeInput.focus();
+    }
+
+  },60);
+}
+
+ /* =====================================================
+   OUVERTURE PROFESSEUR DEPUIS SA PORTE PRIVÉE
+   ===================================================== */
+
+if(window.bociteartSchoolTeacherEntry){
+
+  window.bociteartSchoolTeacherEntry = false;
+
+  schoolSession = {
+    role:"teacher",
+    teacherId:"",
+    openedFromDirection:false
+  };
+
+  if(schoolAccessOpenBtn){
+    schoolAccessOpenBtn.style.display = "none";
+  }
+
+  if(schoolDirectionPanel){
+    schoolDirectionPanel.style.display = "none";
+  }
+
+  if(schoolProfessorPrivatePanel){
+    schoolProfessorPrivatePanel.style.display = "none";
+  }
+
+  if(schoolAccessPanel){
+    schoolAccessPanel.style.display = "block";
+  }
+
+  schoolFillClassSuggestions();
+
+  window.setTimeout(function(){
+
+    if(schoolAccessPanel){
+      schoolAccessPanel.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+    }
+
+    if(schoolAccessCodeInput){
+      schoolAccessCodeInput.focus();
+    }
+
+  },60);
+}
+ 
 if(schoolDirectionFirstSetupBtn){
 
   if(typeof schoolFirstDirectionSetup === "function"){
@@ -12449,14 +13409,33 @@ window.__bociteartOpenByKey = function(key){
   target.click();
 };
    
-window.openBociteSchoolPrivateDemo = function(){
+/* =====================================================
+   PORTE PRIVÉE PROFESSEUR / REMPLAÇANT
+   ===================================================== */
 
-  if(!window.bociteartAdminSession){
-    alert("Accès privé requis.");
+window.openBociteSchoolTeacherAccess = function(){
+
+  window.bociteartSchoolTeacherEntry = true;
+
+  const schoolTile =
+    document.querySelector('[data-open="ecole"]');
+
+  if(!schoolTile){
+    alert("L’espace École n’a pas été trouvé.");
     return;
   }
 
-  window.bociteartSchoolPrivateEntry = true;
+  schoolTile.__bociteOtherIntroBypass = true;
+  schoolTile.click();
+};
+
+  /* =====================================================
+   ACCÈS PROFESSEUR / REMPLAÇANT
+   ===================================================== */
+
+window.openBociteSchoolTeacherAccess = function(){
+
+  window.bociteartSchoolTeacherEntry = true;
 
   const schoolTile =
     document.querySelector('[data-open="ecole"]');
@@ -12468,7 +13447,7 @@ window.openBociteSchoolPrivateDemo = function(){
 
   schoolTile.__bociteOtherIntroBypass = true;
   schoolTile.click();
-};
+}; 
    
 window.openPilotagePrive = function(){
 
@@ -12538,6 +13517,7 @@ openModal("Pilotage privé Bo'CitéArt",`
     <button class="choiceBtn" onclick="openCoffreFortDoc()">Coffre-fort</button>
     <button class="choiceBtn" onclick="openContratsBoCiteArt()">Contrats</button>
     <button class="choiceBtn" onclick="openEtatSysteme()">État système</button>
+    <button class="choiceBtn" onclick="openMaintenanceBociteart()">Maintenance</button>
     <button class="choiceBtn" onclick="openParametresBociteart()">Paramètres</button>
 
   </div>
