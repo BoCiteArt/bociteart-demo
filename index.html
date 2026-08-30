@@ -5308,29 +5308,41 @@ if(key === "ecole"){
 
   <div class="bociteSchoolCard">
 
-    Cet accès est personnel et réservé
-    aux professeurs ou remplaçants autorisés
-    par la Direction de l’établissement.
+Cet accès est personnel et réservé
+aux professeurs ou remplaçants autorisés
+par la Direction de l’établissement.
 
-    <br><br>
+<label
+  class="bociteSchoolFieldLabel"
+  for="schoolAccessIdentifierInput"
+>
+  Identifiant d’accès
+</label>
 
-    Toute tentative d’accès non autorisée
-    peut être journalisée et signalée.
+<input
+  id="schoolAccessIdentifierInput"
+  class="bociteSchoolField"
+  type="text"
+  autocomplete="username"
+  autocapitalize="characters"
+  spellcheck="false"
+  placeholder="Votre identifiant"
+>
 
-    <label
-      class="bociteSchoolFieldLabel"
-      for="schoolAccessCodeInput"
-    >
-      Code d’activation ou code personnel
-    </label>
+<label
+  class="bociteSchoolFieldLabel"
+  for="schoolAccessCodeInput"
+>
+  Code d’activation ou code personnel
+</label>
 
-    <input
-      id="schoolAccessCodeInput"
-      class="bociteSchoolField"
-      type="password"
-      autocomplete="current-password"
-      placeholder="Votre code"
-    >
+<input
+  id="schoolAccessCodeInput"
+  class="bociteSchoolField"
+  type="password"
+  autocomplete="current-password"
+  placeholder="Votre code"
+>
 
     <button
       id="schoolAccessLoginBtn"
