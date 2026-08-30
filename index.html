@@ -13370,15 +13370,24 @@ window.openBociteSchoolTeacherAccess = function(){
     return;
   }
 
-  window.setTimeout(function(){
+  const schoolTile =
+    document.querySelector('[data-open="ecole"]');
 
-    if(
-      typeof window.openBociteSchoolTeacherAccess === "function"
-    ){
-      window.openBociteSchoolTeacherAccess();
-    }
+  if(!schoolTile){
+    return;
+  }
 
-  },300);
+  schoolTile.addEventListener(
+    "click",
+    function(){
+
+      window.bociteartSchoolTeacherEntry = true;
+
+      schoolTile.__bociteOtherIntroBypass = true;
+
+    },
+    true
+  );
 
 })();
 
