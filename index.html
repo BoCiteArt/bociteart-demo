@@ -5643,16 +5643,32 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
 
   /* =========================================================
      4. NARRATION
+     VOIX + TEXTE PROGRESSIF
      ========================================================= */
 
   let oeuvreNarrationToken =
     0;
+
+  let oeuvreTextTimer =
+    null;
 
 
   function stopAudio(){
 
     oeuvreNarrationToken +=
       1;
+
+    if(
+      oeuvreTextTimer
+    ){
+
+      clearTimeout(
+        oeuvreTextTimer
+      );
+
+      oeuvreTextTimer =
+        null;
+    }
 
     try{
 
@@ -5892,6 +5908,11 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
   }
 
 
+  /* ---------------------------------------------------------
+     MODE 1
+     VOIX + TEXTE AU FUR ET À MESURE
+     --------------------------------------------------------- */
+
   function narrateOeuvre(
     oeuvre,
     containerId,
@@ -5936,16 +5957,17 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
       "function"
     ){
 
-      container.innerHTML =
-        formatOeuvreText(
-          oeuvre.texte
-        );
-
       if(status){
 
         status.textContent =
-          "La lecture vocale n’est pas disponible. Le texte complet reste accessible.";
+          "La voix n’est pas disponible sur cet appareil. Utilisez « Suivre l’histoire en texte ».";
       }
+
+      startProgressiveText(
+        oeuvre,
+        containerId,
+        statusId
+      );
 
       return;
     }
@@ -5953,17 +5975,14 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
     if(status){
 
       status.textContent =
-        "L’histoire commence… laissez-vous guider doucement.";
+        "L’histoire commence… regardez l’œuvre et laissez les mots venir doucement.";
     }
-
-    const voice =
-      chooseGentleFrenchVoice();
 
     let currentIndex =
       0;
 
 
-    function next(){
+    function speakNext(){
 
       if(
         token !==
@@ -5994,7 +6013,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
         if(status){
 
           status.textContent =
-            "L’histoire est terminée. Prenez encore quelques secondes pour regarder l’œuvre.";
+            "La découverte est terminée. Prenez encore quelques secondes pour regarder l’œuvre.";
         }
 
         return;
@@ -6019,14 +6038,21 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
       utterance.lang =
         "fr-FR";
 
+      /*
+       * Voix volontairement lente,
+       * calme et posée.
+       */
       utterance.rate =
-        0.78;
+        0.76;
 
       utterance.pitch =
-        0.93;
+        0.92;
 
       utterance.volume =
         1;
+
+      const voice =
+        chooseGentleFrenchVoice();
 
       if(voice){
 
@@ -6053,11 +6079,13 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           currentIndex +=
             1;
 
-          window.setTimeout(
-            next,
-            pause
-          );
+          oeuvreTextTimer =
+            window.setTimeout(
+              speakNext,
+              pause
+            );
         };
+
 
       utterance.onerror =
         function(){
@@ -6065,22 +6093,188 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           if(status){
 
             status.textContent =
-              "La lecture vocale s’est interrompue. Le texte complet reste disponible.";
+              "La voix s’est interrompue. Le récit continue en mode texte progressif.";
           }
+
+          currentIndex +=
+            1;
+
+          oeuvreTextTimer =
+            window.setTimeout(
+              speakNext,
+              1000
+            );
         };
 
-      window
-        .speechSynthesis
-        .speak(
-          utterance
+
+      /*
+       * Correction importante pour Edge / Chrome :
+       * petit redémarrage du moteur vocal
+       * avant chaque phrase.
+       */
+      try{
+
+        window
+          .speechSynthesis
+          .resume();
+
+        window
+          .speechSynthesis
+          .speak(
+            utterance
+          );
+
+      }catch(error){
+
+        if(status){
+
+          status.textContent =
+            "La voix n’a pas pu démarrer. Utilisez « Suivre l’histoire en texte ».";
+        }
+      }
+    }
+
+
+    oeuvreTextTimer =
+      window.setTimeout(
+        speakNext,
+        650
+      );
+  }
+
+
+  /* ---------------------------------------------------------
+     MODE 2
+     MALENTENDANTS :
+     MÊME DÉCOUVERTE PROGRESSIVE SANS VOIX
+     --------------------------------------------------------- */
+
+  function startProgressiveText(
+    oeuvre,
+    containerId,
+    statusId
+  ){
+
+    stopAudio();
+
+    const token =
+      ++oeuvreNarrationToken;
+
+    const container =
+      document.getElementById(
+        containerId
+      );
+
+    const status =
+      document.getElementById(
+        statusId
+      );
+
+    if(!container){
+
+      return;
+    }
+
+    const segments =
+      buildNarrationSegments(
+        oeuvre.texte
+      );
+
+    container.innerHTML =
+      "";
+
+    if(status){
+
+      status.textContent =
+        "Mode texte progressif : prenez le temps de découvrir l’histoire phrase après phrase.";
+    }
+
+    let index =
+      0;
+
+
+    function revealNext(){
+
+      if(
+        token !==
+        oeuvreNarrationToken
+      ){
+
+        return;
+      }
+
+      if(
+        index >=
+        segments.length
+      ){
+
+        container
+          .querySelectorAll(
+            ".oeuvreNarrationCurrent"
+          )
+          .forEach(
+            function(element){
+
+              element.classList.remove(
+                "oeuvreNarrationCurrent"
+              );
+            }
+          );
+
+        if(status){
+
+          status.textContent =
+            "La découverte est terminée. Prenez encore quelques secondes devant l’œuvre.";
+        }
+
+        return;
+      }
+
+      const segment =
+        segments[
+          index
+        ];
+
+      revealNarrationSegment(
+        container,
+        segment,
+        index
+      );
+
+      /*
+       * Temps laissé pour lire la phrase.
+       * Plus elle est longue,
+       * plus elle reste seule à l’écran.
+       */
+      const readingTime =
+        Math.max(
+          2600,
+          Math.min(
+            6500,
+            segment.length *
+            55
+          )
+        );
+
+      index +=
+        1;
+
+      oeuvreTextTimer =
+        window.setTimeout(
+          revealNext,
+          readingTime +
+          getNarrationPause(
+            segment
+          )
         );
     }
 
 
-    window.setTimeout(
-      next,
-      700
-    );
+    oeuvreTextTimer =
+      window.setTimeout(
+        revealNext,
+        700
+      );
   }
 
 
@@ -6096,11 +6290,9 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
     if(status){
 
       status.textContent =
-        "Lecture arrêtée.";
+        "Découverte arrêtée.";
     }
   }
-
-
   /* =========================================================
      5. LIENS
      ========================================================= */
@@ -6170,7 +6362,6 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
   /* =========================================================
      6. FICHE ŒUVRE
      ========================================================= */
-
   function openDetailById(id){
 
     const o =
@@ -6213,8 +6404,8 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
       "oeuvreNarration_" +
       o.id;
 
-    const fullTextId =
-      "oeuvreFullText_" +
+    const accessibleTextId =
+      "oeuvreAccessibleTechnology_" +
       o.id;
 
     const statusId =
@@ -6232,9 +6423,11 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
 
         ${getOeuvreSharedStyles()}
 
+
         ${oeuvreTitleCard(
           o.titre
         )}
+
 
         <div
           class="box"
@@ -6277,76 +6470,29 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           <div
             class="oeuvreNarrationWaiting"
           >
-            Le récit n’est pas dévoilé d’avance.
-            <br><br>
-
-            Appuyez sur
-            « Écouter l’histoire ».
+            L’histoire n’est pas dévoilée
+            d’avance.
 
             <br><br>
 
-            Les mots apparaîtront
-            progressivement
-            au rythme de la narration.
+            Choisissez votre manière
+            de la découvrir.
+
+            <br><br>
+
+            Avec la voix,
+            les mots apparaissent
+            au rythme du récit.
+
+            <br><br>
+
+            Sans la voix,
+            ils apparaissent également
+            progressivement,
+            phrase après phrase.
           </div>
 
         </div>
-
-
-        <div
-          class="oeuvreSupportCard"
-        >
-
-          <div
-            class="oeuvreSupportTitle"
-          >
-            Accessibilité de la découverte
-          </div>
-
-          <div
-            class="oeuvreSupportText"
-          >
-            Pour les personnes malentendantes,
-            le récit apparaît progressivement
-            à l’écran pendant la narration.
-
-            <br><br>
-
-            Le texte complet
-            peut également être affiché
-            immédiatement.
-
-            <br><br>
-
-            Les lecteurs d’écran
-            peuvent parcourir ce texte.
-
-            <br><br>
-
-            Lorsqu’une personne utilise
-            un afficheur braille compatible
-            relié à son appareil,
-            le texte accessible
-            peut être restitué
-            par son lecteur d’écran.
-
-            <br><br>
-
-            Chacun peut donc choisir
-            la manière de vivre
-            cette découverte.
-          </div>
-
-        </div>
-
-
-        <div
-          id="${fullTextId}"
-          class="oeuvreAccessibleFullText"
-          tabindex="-1"
-        >${formatOeuvreText(
-          o.texte
-        )}</div>
 
 
         <div
@@ -6364,9 +6510,27 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
             )}"
             class="choiceBtn"
             type="button"
+            style="
+              background:#ffffff;
+            "
           >
             ▶ Écouter l’histoire
           </button>
+
+
+          <button
+            id="oeuvreTextProgress_${esc(
+              o.id
+            )}"
+            class="choiceBtn"
+            type="button"
+            style="
+              background:#ffffff;
+            "
+          >
+            Suivre l’histoire en texte
+          </button>
+
 
           <button
             id="oeuvreStop_${esc(
@@ -6379,19 +6543,6 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
             "
           >
             ■ Arrêter
-          </button>
-
-          <button
-            id="oeuvreText_${esc(
-              o.id
-            )}"
-            class="choiceBtn"
-            type="button"
-            style="
-              background:#ffffff;
-            "
-          >
-            Texte complet / accessibilité
           </button>
 
         </div>
@@ -6407,9 +6558,88 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           "
         >
           Aucun démarrage automatique.
-          Vous choisissez le moment
-          où l’histoire commence.
+          Chacun choisit son rythme.
         </div>
+
+
+        ${oeuvreTitleCard(
+          "Accessibilité"
+        )}
+
+
+        <div
+          class="oeuvreSupportCard"
+        >
+
+          <div
+            class="oeuvreSupportTitle"
+          >
+            Une découverte adaptée à chacun
+          </div>
+
+
+          <div
+            class="oeuvreSupportText"
+          >
+
+            Les personnes malentendantes
+            peuvent choisir
+            « Suivre l’histoire en texte ».
+
+            <br><br>
+
+            Le récit apparaît alors
+            progressivement,
+            exactement dans le même esprit
+            que la narration vocale :
+            l’histoire n’est pas dévoilée
+            en une seule fois.
+
+            <br><br>
+
+            Les personnes aveugles
+            ou malvoyantes
+            peuvent utiliser
+            leur lecteur d’écran.
+
+            <br><br>
+
+            Un afficheur braille compatible
+            relié à l’appareil
+            peut également restituer
+            le récit par l’intermédiaire
+            du lecteur d’écran.
+
+          </div>
+
+        </div>
+
+
+        <!--
+          TEXTE COMPLET CONSERVÉ
+          POUR LES TECHNOLOGIES D’ASSISTANCE,
+          MAIS PAS AFFICHÉ VISUELLEMENT.
+        -->
+        <div
+          id="${accessibleTextId}"
+          tabindex="0"
+          aria-label="Texte complet de l’œuvre ${esc(
+            o.titre
+          )}"
+          style="
+            position:absolute;
+            width:1px;
+            height:1px;
+            padding:0;
+            margin:-1px;
+            overflow:hidden;
+            clip:rect(0,0,0,0);
+            white-space:pre-line;
+            border:0;
+          "
+        >${formatOeuvreText(
+          o.texte
+        )}</div>
 
 
         ${renderLinks(
@@ -6420,6 +6650,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
         ${oeuvreTitleCard(
           "Remerciements"
         )}
+
 
         <div
           class="box"
@@ -6445,6 +6676,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           style="
             width:100%;
             margin-top:12px;
+            background:#ffffff;
           "
         >
           Signaler un problème autour de cette œuvre
@@ -6481,15 +6713,15 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
             o.id
           );
 
-        const stopBtn =
+        const progressiveTextBtn =
           document.getElementById(
-            "oeuvreStop_" +
+            "oeuvreTextProgress_" +
             o.id
           );
 
-        const textBtn =
+        const stopBtn =
           document.getElementById(
-            "oeuvreText_" +
+            "oeuvreStop_" +
             o.id
           );
 
@@ -6503,11 +6735,6 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           document.getElementById(
             "oeuvreBack_" +
             o.id
-          );
-
-        const fullText =
-          document.getElementById(
-            fullTextId
           );
 
 
@@ -6525,6 +6752,20 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
         }
 
 
+        if(progressiveTextBtn){
+
+          progressiveTextBtn.onclick =
+            function(){
+
+              startProgressiveText(
+                o,
+                narrationId,
+                statusId
+              );
+            };
+        }
+
+
         if(stopBtn){
 
           stopBtn.onclick =
@@ -6533,45 +6774,6 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
               stopNarration(
                 statusId
               );
-            };
-        }
-
-
-        if(textBtn){
-
-          textBtn.onclick =
-            function(){
-
-              if(!fullText){
-
-                return;
-              }
-
-              const visible =
-                fullText.style.display ===
-                "block";
-
-              fullText.style.display =
-                visible
-                  ? "none"
-                  : "block";
-
-              textBtn.textContent =
-                visible
-                  ? "Texte complet / accessibilité"
-                  : "Masquer le texte complet";
-
-              if(!visible){
-
-                fullText.focus();
-
-                fullText.scrollIntoView(
-                  {
-                    behavior:"smooth",
-                    block:"start"
-                  }
-                );
-              }
             };
         }
 
@@ -7785,7 +7987,484 @@ QR-BOCITEART-010`
     }
   }
 
+  /* =========================================================
+     SIGNALEMENT D’UN LIEU À LA MAIRIE
+     ========================================================= */
 
+  function openLieuMunicipalSignalement(){
+
+    const old =
+      document.getElementById(
+        "bociteLieuSignalOverlay"
+      );
+
+    if(old){
+
+      old.remove();
+    }
+
+
+    const config =
+      window
+        .BOCITEART_MAIRIE_SIGNALEMENT ||
+      {};
+
+
+    const overlay =
+      document.createElement(
+        "div"
+      );
+
+    overlay.id =
+      "bociteLieuSignalOverlay";
+
+    overlay.style.cssText =
+      "position:fixed;" +
+      "inset:0;" +
+      "z-index:1000060;" +
+      "overflow:auto;" +
+      "padding:16px;" +
+      "box-sizing:border-box;" +
+      "background:rgba(0,0,0,.55);";
+
+
+    overlay.innerHTML = `
+
+      <div
+        style="
+          width:100%;
+          max-width:620px;
+          margin:20px auto;
+          background:#ffffff;
+          border:1px solid rgba(47,93,70,.30);
+          border-radius:16px;
+          padding:16px;
+          box-sizing:border-box;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.55;
+        "
+      >
+
+        <div
+          style="
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:10px;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+            "
+          >
+            Signaler un lieu à remettre au propre
+          </div>
+
+
+          <button
+            id="bociteLieuSignalClose"
+            type="button"
+            style="
+              background:#ffffff;
+              border:1px solid rgba(47,93,70,.30);
+              border-radius:9px;
+              padding:7px 10px;
+              cursor:pointer;
+            "
+          >
+            ✕
+          </button>
+
+        </div>
+
+
+        <div
+          style="
+            margin-top:12px;
+          "
+        >
+          Vous avez constaté
+          des détritus,
+          une salissure,
+          une dégradation
+          ou un lieu nécessitant
+          une intervention ?
+
+          <br><br>
+
+          Envoyez ici
+          une remarque simple
+          et, si utile,
+          une photo.
+
+          <br><br>
+
+          La mairie pourra renseigner
+          l’adresse électronique
+          ou le service dédié
+          chargé de recevoir
+          ces signalements.
+        </div>
+
+
+        <label
+          style="
+            display:block;
+            margin-top:15px;
+          "
+        >
+          Nature du signalement
+        </label>
+
+
+        <select
+          id="bociteLieuSignalType"
+          class="miniField"
+        >
+          <option value="dechets">
+            Détritus / déchets
+          </option>
+
+          <option value="salissure">
+            Salissure / propreté
+          </option>
+
+          <option value="degradation">
+            Dégradation
+          </option>
+
+          <option value="mobilier">
+            Mobilier ou espace détérioré
+          </option>
+
+          <option value="autre">
+            Autre
+          </option>
+        </select>
+
+
+        <label
+          style="
+            display:block;
+            margin-top:12px;
+          "
+        >
+          Lieu concerné
+        </label>
+
+
+        <input
+          id="bociteLieuSignalPlace"
+          class="miniField"
+          type="text"
+          placeholder="Rue, place, parc, repère…"
+        >
+
+
+        <label
+          style="
+            display:block;
+            margin-top:12px;
+          "
+        >
+          Votre remarque
+        </label>
+
+
+        <textarea
+          id="bociteLieuSignalMessage"
+          class="miniField"
+          style="
+            min-height:100px;
+          "
+          placeholder="Décrivez brièvement ce que vous avez constaté."
+        ></textarea>
+
+
+        <label
+          style="
+            display:block;
+            margin-top:12px;
+          "
+        >
+          Photo facultative
+        </label>
+
+
+        <input
+          id="bociteLieuSignalPhoto"
+          class="miniField"
+          type="file"
+          accept="image/*"
+          capture="environment"
+        >
+
+
+        <button
+          id="bociteLieuSignalSend"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:15px;
+            background:#ffffff;
+            border:1px solid rgba(47,93,70,.32);
+          "
+        >
+          Envoyer au service municipal
+        </button>
+
+
+        <div
+          id="bociteLieuSignalStatus"
+          role="status"
+          aria-live="polite"
+          style="
+            margin-top:10px;
+          "
+        ></div>
+
+      </div>
+
+    `;
+
+
+    document
+      .body
+      .appendChild(
+        overlay
+      );
+
+
+    const closeBtn =
+      document.getElementById(
+        "bociteLieuSignalClose"
+      );
+
+    const sendBtn =
+      document.getElementById(
+        "bociteLieuSignalSend"
+      );
+
+    const status =
+      document.getElementById(
+        "bociteLieuSignalStatus"
+      );
+
+
+    if(closeBtn){
+
+      closeBtn.onclick =
+        function(){
+
+          overlay.remove();
+        };
+    }
+
+
+    overlay.addEventListener(
+      "click",
+      function(event){
+
+        if(
+          event.target ===
+          overlay
+        ){
+
+          overlay.remove();
+        }
+      }
+    );
+
+
+    if(sendBtn){
+
+      sendBtn.onclick =
+        function(){
+
+          const type =
+            document.getElementById(
+              "bociteLieuSignalType"
+            );
+
+          const place =
+            document.getElementById(
+              "bociteLieuSignalPlace"
+            );
+
+          const message =
+            document.getElementById(
+              "bociteLieuSignalMessage"
+            );
+
+          const photo =
+            document.getElementById(
+              "bociteLieuSignalPhoto"
+            );
+
+
+          const report = {
+
+            id:
+              "LIEU-" +
+              Date.now(),
+
+            type:
+              type
+                ? type.value
+                : "",
+
+            lieu:
+              place
+                ? String(
+                    place.value ||
+                    ""
+                  ).trim()
+                : "",
+
+            message:
+              message
+                ? String(
+                    message.value ||
+                    ""
+                  ).trim()
+                : "",
+
+            photoSelected:
+              Boolean(
+                photo &&
+                photo.files &&
+                photo.files[0]
+              ),
+
+            createdAt:
+              new Date()
+                .toISOString()
+          };
+
+
+          if(
+            !report.lieu &&
+            !report.message
+          ){
+
+            if(status){
+
+              status.textContent =
+                "Indiquez au moins le lieu ou une courte remarque.";
+            }
+
+            return;
+          }
+
+
+          try{
+
+            const rows =
+              JSON.parse(
+                localStorage.getItem(
+                  "bociteart_signalements_lieux_demo_v1"
+                ) ||
+                "[]"
+              );
+
+            const safeRows =
+              Array.isArray(
+                rows
+              )
+                ? rows
+                : [];
+
+            safeRows.push(
+              report
+            );
+
+            localStorage.setItem(
+              "bociteart_signalements_lieux_demo_v1",
+              JSON.stringify(
+                safeRows.slice(
+                  -100
+                )
+              )
+            );
+
+          }catch(error){}
+
+
+          const mairieEmail =
+            String(
+              config.email ||
+              ""
+            ).trim();
+
+
+          if(mairieEmail){
+
+            const subject =
+              "Signalement propreté / dégradation";
+
+            const body =
+              "Nature : " +
+              report.type +
+              "\n\n" +
+
+              "Lieu : " +
+              (
+                report.lieu ||
+                "Non précisé"
+              ) +
+              "\n\n" +
+
+              "Remarque :\n" +
+              (
+                report.message ||
+                "Aucune précision complémentaire."
+              ) +
+              "\n\n" +
+
+              "Référence : " +
+              report.id;
+
+
+            window.location.href =
+              "mailto:" +
+              encodeURIComponent(
+                mairieEmail
+              ) +
+              "?subject=" +
+              encodeURIComponent(
+                subject
+              ) +
+              "&body=" +
+              encodeURIComponent(
+                body
+              );
+
+
+            if(status){
+
+              status.textContent =
+                "Votre message est préparé pour le service municipal.";
+            }
+
+          }else{
+
+            if(status){
+
+              status.textContent =
+                "Signalement enregistré dans la démo. L’adresse dédiée de la mairie sera renseignée lors du déploiement.";
+            }
+          }
+        };
+    }
+  }
+ 
   /* =========================================================
      10. SUPERVISION
      ========================================================= */
@@ -8271,7 +8950,7 @@ QR-BOCITEART-010`
         </div>
 
 
-        ${oeuvreTitleCard(
+               ${oeuvreTitleCard(
           "Préserver les œuvres et leurs abords"
         )}
 
@@ -8281,21 +8960,48 @@ QR-BOCITEART-010`
             margin-top:8px;
           "
         >
-          Lorsqu’un problème
-          est constaté
-          autour d’une œuvre,
-          l’application permet
-          de le signaler
-          et, si nécessaire,
-          d’y joindre une photo.
+
+          Un lieu dégradé,
+          souillé par des détritus
+          ou nécessitant
+          une intervention rapide
+          peut être signalé
+          directement depuis
+          ${bociteOeuvreLogoHtml()}.
 
           <br><br>
 
-          En production,
-          le signalement
-          sera dirigé
-          vers le service compétent
-          défini avec la commune.
+          Le citoyen peut indiquer
+          le lieu concerné,
+          écrire une courte remarque
+          et joindre une photo
+          si cela aide
+          le service municipal
+          à identifier le problème.
+
+          <br><br>
+
+          La mairie renseignera
+          l’adresse électronique
+          ou le service dédié
+          chargé de recevoir
+          ces signalements.
+
+
+          <button
+            id="oeuvreLieuSignalBtn"
+            class="choiceBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:12px;
+              background:#ffffff;
+              border:1px solid rgba(47,93,70,.32);
+            "
+          >
+            Signaler un lieu à remettre au propre
+          </button>
+
         </div>
 
 
@@ -8439,6 +9145,13 @@ QR-BOCITEART-010`
             "oeuvreResetBtn"
           );
 
+       const lieuSignalBtn =
+  document.getElementById(
+    "oeuvreLieuSignalBtn"
+  );
+
+       
+
         if(scanBtn){
 
           scanBtn.onclick =
@@ -8456,6 +9169,12 @@ QR-BOCITEART-010`
           resetBtn.onclick =
             resetDemo;
         }
+
+       if(lieuSignalBtn){
+
+  lieuSignalBtn.onclick =
+    openLieuMunicipalSignalement;
+}
 
         oeuvres.forEach(
           function(o){
