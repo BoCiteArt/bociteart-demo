@@ -1574,6 +1574,14 @@ Les présentes Conditions Générales de Vente sont régies par le droit frança
   window.makeKeyboardClickable = makeKeyboardClickable;
 
   const APP_MODE = "DEMO";
+  const SECURITY_LOG_RETENTION_DAYS = 365;
+
+const SECURITY_LOG_RETENTION_MS =
+  SECURITY_LOG_RETENTION_DAYS *
+  24 *
+  60 *
+  60 *
+  1000; 
 
   function callPhone(number){
     const n = String(number || "").trim();
@@ -15194,19 +15202,86 @@ const pilotageUsers = {
 };
 
 function logPilotageAccess(user, action){
+
   try{
-    const key = "bociteart_pilotage_access_log";
-    const logs = JSON.parse(localStorage.getItem(key) || "[]");
+
+    const key =
+      "bociteart_pilotage_access_log";
+
+    const now =
+      Date.now();
+
+    const limit =
+      now - SECURITY_LOG_RETENTION_MS;
+
+    const existing =
+      JSON.parse(
+        localStorage.getItem(key) || "[]"
+      );
+
+    const logs =
+      Array.isArray(existing)
+        ? existing.filter(function(item){
+
+            /*
+              Les anciennes traces de la démo
+              qui ne possèdent pas encore ts
+              sont conservées jusqu'au nettoyage manuel.
+            */
+            if(
+              !item ||
+              !Number.isFinite(Number(item.ts))
+            ){
+              return true;
+            }
+
+            return Number(item.ts) >= limit;
+
+          })
+        : [];
 
     logs.push({
-      user: user || "Inconnu",
-      action: action || "Action pilotage",
-      date: new Date().toLocaleString("fr-FR"),
-      device: navigator.userAgent || "appareil inconnu"
+      user:
+        user || "Inconnu",
+
+      action:
+        action || "Action pilotage",
+
+      ts:
+        now,
+
+      date:
+        new Date(now)
+          .toLocaleString("fr-FR"),
+
+      device:
+        navigator.userAgent ||
+        "appareil inconnu"
     });
 
-    localStorage.setItem(key, JSON.stringify(logs.slice(-100)));
-  }catch(e){}
+
+    /*
+      Pendant la démonstration :
+      on évite de remplir inutilement
+      le stockage du navigateur.
+
+      En production :
+      les journaux devront être stockés
+      côté serveur et conservés au maximum
+      pendant 365 jours.
+    */
+    const toSave =
+      APP_MODE === "DEMO"
+        ? logs.slice(-100)
+        : logs;
+
+    localStorage.setItem(
+      key,
+      JSON.stringify(toSave)
+    );
+
+  }catch(error){}
+
 }
 
 function showPilotageAccessLog(){
@@ -15239,10 +15314,12 @@ function showPilotageAccessLog(){
           </div>
         `;
 
-  openModal(
-    "Journal des accès",
-    html + `
-
+ const clearDemoButton =
+  APP_MODE === "DEMO"
+    ? `
+      const clearDemoButton =
+  APP_MODE === "DEMO"
+    ? `
       <button
         class="choiceBtn"
         type="button"
@@ -15251,13 +15328,34 @@ function showPilotageAccessLog(){
       >
         Effacer le journal de test
       </button>
-
     `
-  );
+    : "";
+
+openModal(
+  "Journal des accès",
+  html + clearDemoButton
+);
+    `
+    : "";
+
+openModal(
+  "Journal des accès",
+  html + clearDemoButton
+);
 }
 
 
 window.clearPilotageAccessLogDemo = function(){
+  
+ if(APP_MODE !== "DEMO"){
+    alert("Cette fonction est réservée à la démonstration.");
+    return;
+  }
+
+   if(APP_MODE !== "DEMO"){
+    alert("Cette fonction est réservée à la démonstration.");
+    return;
+  }
 
   if(!window.bociteartAdminSession){
     alert("Accès privé requis.");
