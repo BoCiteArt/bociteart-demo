@@ -5362,63 +5362,6 @@ if(key === "ecole"){
 
 </div>
 
-      <div id="schoolAccessPanel" class="bociteSchoolAccessPanel">
-        <div class="bociteSchoolSectionTitle" style="margin-top:12px;">
-          Accès sécurisé de l’école
-        </div>
-
-        <div class="bociteSchoolCard">
-          La direction conserve l’accès maître de l’établissement.
-          Chaque professeur ou remplaçant utilise ensuite son propre accès.
-
-          <label class="bociteSchoolFieldLabel" for="schoolAccessRole">
-            Je suis
-          </label>
-
-          <select id="schoolAccessRole" class="bociteSchoolField">
-            <option value="teacher">Professeur ou remplaçant</option>
-            <option value="direction">Direction</option>
-          </select>
-
-          <label class="bociteSchoolFieldLabel" for="schoolAccessCodeInput">
-            Code personnel
-          </label>
-
-          <input
-            id="schoolAccessCodeInput"
-            class="bociteSchoolField"
-            type="password"
-            inputmode="numeric"
-            autocomplete="current-password"
-            placeholder="Votre code"
-          >
-
-          <button
-            id="schoolAccessLoginBtn"
-            class="bociteSchoolAction bociteSchoolActionPrimary"
-            type="button"
-          >
-            Ouvrir mon accès
-          </button>
-
-          <button
-            id="schoolDirectionFirstSetupBtn"
-            class="bociteSchoolAction"
-            type="button"
-            style="display:none;"
-          >
-            Première activation de la direction
-          </button>
-
-          <div
-            id="schoolAccessStatus"
-            role="status"
-            aria-live="polite"
-            style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;"
-          ></div>
-        </div>
-      </div>
-
       <div id="schoolDirectionPanel" class="bociteSchoolDirectionPanel">
         <div class="bociteSchoolSectionTitle" style="margin-top:12px;">
           Gestion des accès de l’école
