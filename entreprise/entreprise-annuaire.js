@@ -11649,43 +11649,92 @@ if(quoteButton){
      61. CONTRÔLE DE COHÉRENCE AU CHARGEMENT
      ======================================================= */
 
-  const requiredFunctions = [
+ const requiredFunctions = [
 
-    "renderHome",
-    "renderCategory",
-    "renderTrade",
-    "renderResults",
-    "renderEntity",
-    "renderHistory",
-    "renderFavorites",
-    "renderViewed",
-    "renderCitizenActions",
-    "renderProfessionalHome",
-    "renderProfessionalSearch"
+  {
+    name:"renderHome",
+    available:
+      typeof renderHome === "function"
+  },
 
-  ];
+  {
+    name:"renderCategory",
+    available:
+      typeof renderCategory === "function"
+  },
 
-  const missingFunctions =
-    requiredFunctions
-      .filter(
-        function(name){
+  {
+    name:"renderTrade",
+    available:
+      typeof renderTrade === "function"
+  },
 
-          try{
+  {
+    name:"renderResults",
+    available:
+      typeof renderResults === "function"
+  },
 
-            return (
-              eval(
-                "typeof " +
-                name
-              ) !==
-              "function"
-            );
+  {
+    name:"renderEntity",
+    available:
+      typeof renderEntity === "function"
+  },
 
-          }catch(error){
+  {
+    name:"renderHistory",
+    available:
+      typeof renderHistory === "function"
+  },
 
-            return true;
-          }
-        }
-      );
+  {
+    name:"renderFavorites",
+    available:
+      typeof renderFavorites === "function"
+  },
+
+  {
+    name:"renderViewed",
+    available:
+      typeof renderViewed === "function"
+  },
+
+  {
+    name:"renderCitizenActions",
+    available:
+      typeof renderCitizenActions === "function"
+  },
+
+  {
+    name:"renderProfessionalHome",
+    available:
+      typeof renderProfessionalHome === "function"
+  },
+
+  {
+    name:"renderProfessionalSearch",
+    available:
+      typeof renderProfessionalSearch === "function"
+  }
+
+];
+
+const missingFunctions =
+  requiredFunctions
+    .filter(
+      function(item){
+
+        return (
+          item.available !== true
+        );
+      }
+    )
+    .map(
+      function(item){
+
+        return item.name;
+      }
+    );
 
   if(
     missingFunctions.length
