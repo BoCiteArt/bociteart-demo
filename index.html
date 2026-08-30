@@ -4928,9 +4928,6 @@ if(key === "oeuvres"){
   const LAST_KEY =
     "boc_oeuvres_last_v2";
 
-  const AUDIO_BASE =
-    "audio/oeuvres/";
-
   const OEUVRES_SIGNAL_STORAGE_KEY =
     "bociteart_oeuvres_signalements_demo_v1";
 
@@ -4952,20 +4949,15 @@ if(key === "oeuvres"){
       artiste:"Julot",
       mecene:"Garage Planque Citroën",
       open:true,
-      audio:
-        AUDIO_BASE +
-        "oeuvre-1.mp3",
 
       liens:[
         {
           label:"Découvrir l’artiste",
-          url:
-            "https://site-artiste-julot.com"
+          url:"https://site-artiste-julot.com"
         },
         {
           label:"Ville de Wattignies",
-          url:
-            "https://www.wattignies.fr"
+          url:"https://www.wattignies.fr"
         }
       ],
 
@@ -4996,20 +4988,15 @@ Puis, lorsque vous en aurez envie… une autre œuvre vous attend quelque part d
       artiste:"Amandine Verlaine",
       mecene:"Maison Delcroix",
       open:true,
-      audio:
-        AUDIO_BASE +
-        "oeuvre-2.mp3",
 
       liens:[
         {
           label:"Découvrir l’artiste",
-          url:
-            "https://portfolio-amandine.com"
+          url:"https://portfolio-amandine.com"
         },
         {
           label:"Ville de Wattignies",
-          url:
-            "https://www.wattignies.fr"
+          url:"https://www.wattignies.fr"
         }
       ],
 
@@ -5040,9 +5027,6 @@ Restez encore quelques secondes devant l’œuvre… puis reprenez doucement vot
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-      audio:
-        AUDIO_BASE +
-        "oeuvre-3.mp3",
       liens:[],
 
       texte:
@@ -5072,9 +5056,6 @@ Puis poursuivez votre promenade lorsque vous sentirez que le moment est venu.`
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-      audio:
-        AUDIO_BASE +
-        "oeuvre-4.mp3",
       liens:[],
 
       texte:
@@ -5104,9 +5085,6 @@ Et vous aussi, simplement en étant ici maintenant, vous faites déjà partie de
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-      audio:
-        AUDIO_BASE +
-        "oeuvre-5.mp3",
       liens:[],
 
       texte:
@@ -5138,9 +5116,6 @@ Prenez quelques secondes pour penser à l’un des vôtres.`
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-      audio:
-        AUDIO_BASE +
-        "oeuvre-6.mp3",
       liens:[],
 
       texte:
@@ -5172,9 +5147,6 @@ Et lorsque vous repartirez, peut-être regarderez-vous différemment la prochain
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-      audio:
-        AUDIO_BASE +
-        "oeuvre-7.mp3",
       liens:[],
 
       texte:
@@ -5208,9 +5180,6 @@ Vous n’avez rien à faire pendant quelques instants… sinon être ici.`
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-      audio:
-        AUDIO_BASE +
-        "oeuvre-8.mp3",
       liens:[],
 
       texte:
@@ -5242,9 +5211,6 @@ Conserver ce qui compte… tout en laissant suffisamment d’espace à ce qui pe
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-      audio:
-        AUDIO_BASE +
-        "oeuvre-9.mp3",
       liens:[],
 
       texte:
@@ -5278,9 +5244,6 @@ Il y en a probablement déjà une qui vous vient à l’esprit.`
       artiste:"À découvrir",
       mecene:"À découvrir",
       open:false,
-      audio:
-        AUDIO_BASE +
-        "oeuvre-10.mp3",
       liens:[],
 
       texte:
@@ -5309,7 +5272,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
 
 
   /* =========================================================
-     2. OUTILS VISUELS
+     2. OUTILS
      ========================================================= */
 
   function esc(value){
@@ -5348,16 +5311,13 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
   }
 
 
-  function oeuvreTitleCard(
-    title
-  ){
+  function oeuvreTitleCard(title){
 
     return `
 
       <div
         class="oeuvreTitleCard"
       >
-
         <div
           class="oeuvreTitle"
         >
@@ -5365,7 +5325,6 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
             title
           )}
         </div>
-
       </div>
 
     `;
@@ -5396,11 +5355,15 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
         }
 
         .bociteOeuvreRoot .box{
+          box-sizing:border-box;
+          background:#ffffff !important;
+          border:1px solid rgba(47,93,70,.20);
+          border-radius:14px;
+          padding:14px;
           color:#111111;
           font-size:14px;
           font-weight:400;
           line-height:1.55;
-          background:#ffffff !important;
         }
 
         .bociteOeuvreRoot .oeuvreTitleCard{
@@ -5409,8 +5372,8 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           margin-top:12px;
           padding:12px 14px;
           background:#ffffff;
-          border:1px solid rgba(47,93,70,.14);
-          border-radius:13px;
+          border:1px solid rgba(47,93,70,.30);
+          border-radius:14px;
         }
 
         .bociteOeuvreRoot .oeuvreTitleCard:first-child{
@@ -5424,18 +5387,16 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           line-height:1.35;
         }
 
-        .bociteOeuvreRoot .oeuvreText{
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-        }
-
+        .bociteOeuvreRoot .oeuvreText,
         .bociteOeuvreRoot .oeuvreNote{
           color:#111111;
           font-size:14px;
           font-weight:400;
-          line-height:1.5;
+          line-height:1.6;
+        }
+
+        .bociteOeuvreRoot .choiceBtn{
+          border:1px solid rgba(47,93,70,.32) !important;
         }
 
         .bociteOeuvreLogo{
@@ -5461,20 +5422,27 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
         }
 
         .oeuvreNarrationWindow{
+          box-sizing:border-box;
           background:#ffffff;
-          border:1px solid rgba(47,93,70,.14);
-          border-radius:13px;
+          border:1px solid rgba(47,93,70,.22);
+          border-radius:14px;
           padding:14px;
           margin-top:10px;
-          min-height:92px;
-          box-sizing:border-box;
+          min-height:110px;
+        }
+
+        .oeuvreNarrationWaiting{
+          color:#555555;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
         }
 
         .oeuvreNarrationPassage{
           color:#111111;
           font-size:14px;
           font-weight:400;
-          line-height:1.65;
+          line-height:1.7;
           margin:0 0 12px 0;
           opacity:0;
           transform:translateY(5px);
@@ -5494,24 +5462,51 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           border-left:3px solid #2f5d46;
         }
 
-        .oeuvreNarrationWaiting{
-          color:#555555;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-        }
-
         .oeuvreAccessibleFullText{
           display:none;
+          box-sizing:border-box;
           white-space:pre-line;
           margin-top:10px;
           padding:14px;
           background:#ffffff;
-          border-radius:13px;
+          border:1px solid rgba(47,93,70,.22);
+          border-radius:14px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.65;
+        }
+
+        .oeuvreSupportCard{
+          box-sizing:border-box;
+          margin-top:10px;
+          padding:14px;
+          background:#ffffff;
+          border:1px solid rgba(47,93,70,.30);
+          border-radius:14px;
+        }
+
+        .oeuvreSupportTitle{
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+          margin-bottom:10px;
+        }
+
+        .oeuvreSupportText{
           color:#111111;
           font-size:14px;
           font-weight:400;
           line-height:1.6;
+        }
+
+        #oeuvresMap{
+          width:100%;
+          height:280px;
+          margin-top:10px;
+          border-radius:12px;
+          overflow:hidden;
         }
 
         @keyframes bociteOeuvreReveal{
@@ -5527,14 +5522,6 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           }
         }
 
-        #oeuvresMap{
-          width:100%;
-          height:280px;
-          border-radius:12px;
-          overflow:hidden;
-          margin-top:10px;
-        }
-
       </style>
 
     `;
@@ -5542,7 +5529,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
 
 
   /* =========================================================
-     3. STOCKAGE QR
+     3. DÉVERROUILLAGE
      ========================================================= */
 
   function getUnlocked(){
@@ -5591,10 +5578,9 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
       o &&
       (
         o.open === true ||
-        getUnlocked()
-          .includes(
-            o.id
-          )
+        getUnlocked().includes(
+          o.id
+        )
       )
     );
   }
@@ -5654,7 +5640,6 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
 
   /* =========================================================
      4. NARRATION
-     TEXTE PROGRESSIF + VOIX CALME
      ========================================================= */
 
   let oeuvreNarrationToken =
@@ -5665,24 +5650,6 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
 
     oeuvreNarrationToken +=
       1;
-
-    try{
-
-      if(
-        window.__bociteOeuvreAudio
-      ){
-
-        window
-          .__bociteOeuvreAudio
-          .pause();
-
-        window
-          .__bociteOeuvreAudio
-          .currentTime =
-          0;
-      }
-
-    }catch(error){}
 
     try{
 
@@ -5700,9 +5667,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
   }
 
 
-  function buildNarrationSegments(
-    text
-  ){
+  function buildNarrationSegments(text){
 
     const paragraphs =
       String(
@@ -5830,9 +5795,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
   }
 
 
-  function getNarrationPause(
-    segment
-  ){
+  function getNarrationPause(segment){
 
     const text =
       String(
@@ -5845,7 +5808,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
       )
     ){
 
-      return 1150;
+      return 1500;
     }
 
     if(
@@ -5854,7 +5817,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
       )
     ){
 
-      return 900;
+      return 1200;
     }
 
     if(
@@ -5863,10 +5826,10 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
       )
     ){
 
-      return 800;
+      return 1000;
     }
 
-    return 650;
+    return 900;
   }
 
 
@@ -5919,11 +5882,8 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
 
     passage.scrollIntoView(
       {
-        behavior:
-          "smooth",
-
-        block:
-          "nearest"
+        behavior:"smooth",
+        block:"nearest"
       }
     );
   }
@@ -5981,7 +5941,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
       if(status){
 
         status.textContent =
-          "La lecture vocale n’est pas disponible sur cet appareil.";
+          "La lecture vocale n’est pas disponible. Le texte complet reste accessible.";
       }
 
       return;
@@ -5990,7 +5950,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
     if(status){
 
       status.textContent =
-        "L’histoire commence… laissez-vous guider.";
+        "L’histoire commence… laissez-vous guider doucement.";
     }
 
     const voice =
@@ -6056,20 +6016,11 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
       utterance.lang =
         "fr-FR";
 
-      /*
-       * Débit volontairement calme :
-       * on raconte, on ne récite pas.
-       */
       utterance.rate =
-        0.82;
+        0.78;
 
-      /*
-       * Légèrement plus grave
-       * pour limiter la sensation
-       * de voix synthétique aiguë.
-       */
       utterance.pitch =
-        0.96;
+        0.93;
 
       utterance.volume =
         1;
@@ -6111,7 +6062,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           if(status){
 
             status.textContent =
-              "La lecture vocale s’est interrompue. Vous pouvez utiliser le texte complet.";
+              "La lecture vocale s’est interrompue. Le texte complet reste disponible.";
           }
         };
 
@@ -6123,19 +6074,14 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
     }
 
 
-    /*
-     * Petit silence avant les premiers mots.
-     */
     window.setTimeout(
       next,
-      500
+      700
     );
   }
 
 
-  function stopNarration(
-    statusId
-  ){
+  function stopNarration(statusId){
 
     stopAudio();
 
@@ -6197,8 +6143,8 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
                     class="choiceBtn"
                     style="
                       text-decoration:none;
-                      color:#2f5d46;
                       display:inline-block;
+                      color:#2f5d46;
                     "
                   >
                     ${esc(
@@ -6219,7 +6165,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
 
 
   /* =========================================================
-     6. FICHE D’UNE ŒUVRE
+     6. FICHE ŒUVRE
      ========================================================= */
 
   function openDetailById(id){
@@ -6269,23 +6215,7 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
       o.id;
 
     const statusId =
-      "oeuvreAudioStatus_" +
-      o.id;
-
-    const playId =
-      "oeuvrePlayBtn_" +
-      o.id;
-
-    const stopId =
-      "oeuvreStopBtn_" +
-      o.id;
-
-    const textBtnId =
-      "oeuvreTextBtn_" +
-      o.id;
-
-    const reportId =
-      "oeuvreReportBtn_" +
+      "oeuvreStatus_" +
       o.id;
 
 
@@ -6303,11 +6233,10 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           o.titre
         )}
 
-
         <div
           class="box"
           style="
-            margin-top:10px;
+            margin-top:8px;
           "
         >
 
@@ -6345,12 +6274,64 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
           <div
             class="oeuvreNarrationWaiting"
           >
-            Le récit n’est pas affiché d’avance.
+            Le récit n’est pas dévoilé d’avance.
             <br><br>
+
             Appuyez sur
-            « Écouter l’histoire » :
-            les mots apparaîtront doucement
+            « Écouter l’histoire ».
+
+            <br><br>
+
+            Les mots apparaîtront
+            progressivement
             au rythme de la narration.
+          </div>
+
+        </div>
+
+
+        <div
+          class="oeuvreSupportCard"
+        >
+
+          <div
+            class="oeuvreSupportTitle"
+          >
+            Accessibilité de la découverte
+          </div>
+
+          <div
+            class="oeuvreSupportText"
+          >
+            Pour les personnes malentendantes,
+            le récit apparaît progressivement
+            à l’écran pendant la narration.
+
+            <br><br>
+
+            Le texte complet
+            peut également être affiché
+            immédiatement.
+
+            <br><br>
+
+            Les lecteurs d’écran
+            peuvent parcourir ce texte.
+
+            <br><br>
+
+            Lorsqu’une personne utilise
+            un afficheur braille compatible
+            relié à son appareil,
+            le texte accessible
+            peut être restitué
+            par son lecteur d’écran.
+
+            <br><br>
+
+            Chacun peut donc choisir
+            la manière de vivre
+            cette découverte.
           </div>
 
         </div>
@@ -6375,17 +6356,20 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
         >
 
           <button
+            id="oeuvrePlay_${esc(
+              o.id
+            )}"
             class="choiceBtn"
-            id="${playId}"
             type="button"
           >
             ▶ Écouter l’histoire
           </button>
 
-
           <button
+            id="oeuvreStop_${esc(
+              o.id
+            )}"
             class="choiceBtn"
-            id="${stopId}"
             type="button"
             style="
               background:#ffffff;
@@ -6394,10 +6378,11 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
             ■ Arrêter
           </button>
 
-
           <button
+            id="oeuvreText_${esc(
+              o.id
+            )}"
             class="choiceBtn"
-            id="${textBtnId}"
             type="button"
             style="
               background:#ffffff;
@@ -6411,15 +6396,16 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
 
         <div
           id="${statusId}"
+          class="oeuvreNote"
           role="status"
           aria-live="polite"
-          class="oeuvreNote"
           style="
             margin-top:9px;
           "
         >
           Aucun démarrage automatique.
-          Vous choisissez le moment où l’histoire commence.
+          Vous choisissez le moment
+          où l’histoire commence.
         </div>
 
 
@@ -6431,7 +6417,6 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
         ${oeuvreTitleCard(
           "Remerciements"
         )}
-
 
         <div
           class="box"
@@ -6449,8 +6434,10 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
 
 
         <button
+          id="oeuvreReport_${esc(
+            o.id
+          )}"
           class="choiceBtn"
-          id="${reportId}"
           type="button"
           style="
             width:100%;
@@ -6462,10 +6449,10 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
 
 
         <button
-          class="choiceBtn"
-          id="oeuvreBackOverview_${esc(
+          id="oeuvreBack_${esc(
             o.id
           )}"
+          class="choiceBtn"
           type="button"
           style="
             width:100%;
@@ -6482,38 +6469,42 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
     );
 
 
-    setTimeout(
+    window.setTimeout(
       function(){
 
         const playBtn =
           document.getElementById(
-            playId
+            "oeuvrePlay_" +
+            o.id
           );
 
         const stopBtn =
           document.getElementById(
-            stopId
+            "oeuvreStop_" +
+            o.id
           );
 
         const textBtn =
           document.getElementById(
-            textBtnId
+            "oeuvreText_" +
+            o.id
           );
 
         const reportBtn =
           document.getElementById(
-            reportId
+            "oeuvreReport_" +
+            o.id
+          );
+
+        const backBtn =
+          document.getElementById(
+            "oeuvreBack_" +
+            o.id
           );
 
         const fullText =
           document.getElementById(
             fullTextId
-          );
-
-        const backBtn =
-          document.getElementById(
-            "oeuvreBackOverview_" +
-            o.id
           );
 
 
@@ -6553,31 +6544,28 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
                 return;
               }
 
-              const isVisible =
+              const visible =
                 fullText.style.display ===
                 "block";
 
               fullText.style.display =
-                isVisible
+                visible
                   ? "none"
                   : "block";
 
               textBtn.textContent =
-                isVisible
+                visible
                   ? "Texte complet / accessibilité"
                   : "Masquer le texte complet";
 
-              if(!isVisible){
+              if(!visible){
 
                 fullText.focus();
 
                 fullText.scrollIntoView(
                   {
-                    behavior:
-                      "smooth",
-
-                    block:
-                      "start"
+                    behavior:"smooth",
+                    block:"start"
                   }
                 );
               }
@@ -6671,10 +6659,9 @@ QR-BOCITEART-010`
     try{
 
       const id =
-        localStorage
-          .getItem(
-            LAST_KEY
-          );
+        localStorage.getItem(
+          LAST_KEY
+        );
 
       if(!id){
 
@@ -6748,12 +6735,7 @@ QR-BOCITEART-010`
       >
 
         <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            line-height:1.35;
-          "
+          class="oeuvreTitle"
         >
           ${index + 1}.
           ${esc(
@@ -6761,17 +6743,15 @@ QR-BOCITEART-010`
           )}
         </div>
 
-
         <div
           style="
             margin-top:6px;
             color:#111111;
             font-size:14px;
             font-weight:400;
-            line-height:1.5;
+            line-height:1.55;
           "
         >
-
           Quartier :
           ${esc(
             o.quartier
@@ -6784,9 +6764,7 @@ QR-BOCITEART-010`
               ? "accessible"
               : "à débloquer sur place"
           }
-
         </div>
-
 
         <button
           id="oeuvreRowBtn_${esc(
@@ -6842,8 +6820,7 @@ QR-BOCITEART-010`
           url,
           {
             headers:{
-              "Accept":
-                "application/json"
+              "Accept":"application/json"
             }
           }
         );
@@ -6867,19 +6844,9 @@ QR-BOCITEART-010`
       }
 
       return {
-
-        lat:
-          Number(
-            rows[0].lat
-          ),
-
-        lng:
-          Number(
-            rows[0].lon
-          ),
-
-        adresse:
-          query
+        lat:Number(rows[0].lat),
+        lng:Number(rows[0].lon),
+        adresse:query
       };
 
     }catch(error){
@@ -6897,9 +6864,7 @@ QR-BOCITEART-010`
       {};
 
     const item =
-      config[
-        o.id
-      ] ||
+      config[o.id] ||
       {};
 
     const lat =
@@ -6922,18 +6887,12 @@ QR-BOCITEART-010`
     ){
 
       return {
-
-        lat:
-          lat,
-
-        lng:
-          lng,
-
-        adresse:
-          String(
-            item.adresse ||
-            ""
-          ).trim()
+        lat:lat,
+        lng:lng,
+        adresse:String(
+          item.adresse ||
+          ""
+        ).trim()
       };
     }
 
@@ -7013,31 +6972,27 @@ QR-BOCITEART-010`
       L.map(
         mapEl
       )
-        .setView(
-          [
-            50.58,
-            3.04
-          ],
-          12
-        );
+      .setView(
+        [
+          50.58,
+          3.04
+        ],
+        12
+      );
 
-    window
-      .__bociteOeuvresMap =
+    window.__bociteOeuvresMap =
       map;
 
     L.tileLayer(
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       {
-        maxZoom:
-          19,
-
-        attribution:
-          "&copy; OpenStreetMap"
+        maxZoom:19,
+        attribution:"&copy; OpenStreetMap"
       }
     )
-      .addTo(
-        map
-      );
+    .addTo(
+      map
+    );
 
     const locations =
       {};
@@ -7049,26 +7004,25 @@ QR-BOCITEART-010`
     function fitKnown(){
 
       const points =
-        Object
-          .values(
-            locations
-          )
-          .filter(
-            loc =>
-              loc &&
-              Number.isFinite(
-                loc.lat
-              ) &&
-              Number.isFinite(
-                loc.lng
-              )
-          )
-          .map(
-            loc => [
-              loc.lat,
+        Object.values(
+          locations
+        )
+        .filter(
+          loc =>
+            loc &&
+            Number.isFinite(
+              loc.lat
+            ) &&
+            Number.isFinite(
               loc.lng
-            ]
-          );
+            )
+        )
+        .map(
+          loc => [
+            loc.lat,
+            loc.lng
+          ]
+        );
 
       if(userLocation){
 
@@ -7089,9 +7043,7 @@ QR-BOCITEART-010`
               24,
               24
             ],
-
-            maxZoom:
-              15
+            maxZoom:15
           }
         );
       }
@@ -7100,21 +7052,20 @@ QR-BOCITEART-010`
 
     function selectedLocations(){
 
-      return Array
-        .from(
-          document.querySelectorAll(
-            ".oeuvreRoutePick:checked"
-          )
+      return Array.from(
+        document.querySelectorAll(
+          ".oeuvreRoutePick:checked"
         )
-        .map(
-          input =>
-            locations[
-              input.dataset.oeuvreId
-            ]
-        )
-        .filter(
-          Boolean
-        );
+      )
+      .map(
+        input =>
+          locations[
+            input.dataset.oeuvreId
+          ]
+      )
+      .filter(
+        Boolean
+      );
     }
 
 
@@ -7123,7 +7074,7 @@ QR-BOCITEART-010`
       if(!points.length){
 
         alert(
-          "Sélectionnez au moins une œuvre dont l’adresse exacte est renseignée."
+          "Sélectionnez au moins une œuvre dont la localisation exacte est disponible."
         );
 
         return;
@@ -7141,20 +7092,14 @@ QR-BOCITEART-010`
         );
 
       const params =
-        new URLSearchParams(
-          {
-            api:
-              "1",
-
-            destination:
-              destination.lat +
-              "," +
-              destination.lng,
-
-            travelmode:
-              "walking"
-          }
-        );
+        new URLSearchParams({
+          api:"1",
+          destination:
+            destination.lat +
+            "," +
+            destination.lng,
+          travelmode:"walking"
+        });
 
       if(userLocation){
 
@@ -7210,9 +7155,7 @@ QR-BOCITEART-010`
           continue;
         }
 
-        locations[
-          o.id
-        ] =
+        locations[o.id] =
           loc;
 
         const marker =
@@ -7222,29 +7165,20 @@ QR-BOCITEART-010`
               loc.lng
             ],
             {
-              radius:
-                8,
-
-              color:
-                "#ffffff",
-
-              weight:
-                3,
-
-              fillColor:
-                "#2f5d46",
-
-              fillOpacity:
-                1
+              radius:8,
+              color:"#ffffff",
+              weight:3,
+              fillColor:"#2f5d46",
+              fillOpacity:1
             }
           )
-            .addTo(
-              map
-            );
+          .addTo(
+            map
+          );
 
         marker.bindPopup(
 
-          "<div style='color:#111111;font-size:14px;font-weight:400;line-height:1.5;'>" +
+          "<div style='font-size:14px;font-weight:400;line-height:1.5;'>" +
 
           "<div style='color:#2f5d46;font-size:17px;font-weight:700;'>" +
 
@@ -7275,19 +7209,17 @@ QR-BOCITEART-010`
           "</div>"
         );
 
-        loaded += 1;
+        loaded +=
+          1;
       }
 
       if(statusEl){
 
         statusEl.textContent =
-
           loaded
-
             ? loaded +
-              " œuvre(s) positionnée(s). Les autres apparaîtront dès que leur adresse exacte sera renseignée."
-
-            : "Les points des fresques apparaîtront automatiquement dès que la mairie aura renseigné leurs adresses exactes.";
+              " œuvre(s) positionnée(s)."
+            : "Les œuvres apparaîtront sur la carte dès que leurs localisations exactes seront renseignées.";
       }
 
       if(loaded){
@@ -7296,22 +7228,9 @@ QR-BOCITEART-010`
 
       }else{
 
-        const city =
-
-          window
-            .BOCITEART_CURRENT_CITY ||
-
-          localStorage
-            .getItem(
-              "bociteart_current_city"
-            ) ||
-
-          "Wattignies";
-
         const center =
           await geocodeOeuvreAddress(
-            city +
-            ", France"
+            "Wattignies, France"
           );
 
         if(center){
@@ -7326,7 +7245,7 @@ QR-BOCITEART-010`
         }
       }
 
-      setTimeout(
+      window.setTimeout(
         function(){
 
           map.invalidateSize();
@@ -7364,13 +7283,11 @@ QR-BOCITEART-010`
                 );
 
               if(
-                !locations[
-                  id
-                ]
+                !locations[id]
               ){
 
                 alert(
-                  "Cette œuvre n’a pas encore d’adresse exacte renseignée. Le guidage s’activera automatiquement lorsque sa localisation sera connue."
+                  "Cette œuvre n’a pas encore de localisation exacte renseignée."
                 );
 
                 return;
@@ -7378,9 +7295,7 @@ QR-BOCITEART-010`
 
               openWalkingRoute(
                 [
-                  locations[
-                    id
-                  ]
+                  locations[id]
                 ]
               );
             };
@@ -7406,8 +7321,7 @@ QR-BOCITEART-010`
         function(){
 
           if(
-            !navigator
-              .geolocation
+            !navigator.geolocation
           ){
 
             alert(
@@ -7423,23 +7337,16 @@ QR-BOCITEART-010`
               "Recherche de votre position…";
           }
 
-          navigator
-            .geolocation
+          navigator.geolocation
             .getCurrentPosition(
 
               function(position){
 
                 userLocation = {
-
                   lat:
-                    position
-                      .coords
-                      .latitude,
-
+                    position.coords.latitude,
                   lng:
-                    position
-                      .coords
-                      .longitude
+                    position.coords.longitude
                 };
 
                 L.circleMarker(
@@ -7448,28 +7355,19 @@ QR-BOCITEART-010`
                     userLocation.lng
                   ],
                   {
-                    radius:
-                      7,
-
-                    color:
-                      "#ffffff",
-
-                    weight:
-                      3,
-
-                    fillColor:
-                      "#2563eb",
-
-                    fillOpacity:
-                      1
+                    radius:7,
+                    color:"#ffffff",
+                    weight:3,
+                    fillColor:"#2563eb",
+                    fillOpacity:1
                   }
                 )
-                  .addTo(
-                    map
-                  )
-                  .bindPopup(
-                    "Votre position"
-                  );
+                .addTo(
+                  map
+                )
+                .bindPopup(
+                  "Votre position"
+                );
 
                 if(statusEl){
 
@@ -7492,15 +7390,11 @@ QR-BOCITEART-010`
 
 
               {
-                enableHighAccuracy:
-                  true,
-
-                timeout:
-                  10000,
-
-                maximumAge:
-                  60000
+                enableHighAccuracy:true,
+                timeout:10000,
+                maximumAge:60000
               }
+
             );
         };
     }
@@ -7513,46 +7407,6 @@ QR-BOCITEART-010`
      9. SIGNALEMENT
      ========================================================= */
 
-  function getOeuvreSignalConfig(o){
-
-    const globalConfig =
-      window
-        .BOCITEART_OEUVRES_SIGNAL_CONFIG ||
-      {};
-
-    const byOeuvre =
-
-      globalConfig.byOeuvre &&
-      globalConfig.byOeuvre[
-        o.id
-      ]
-
-        ? globalConfig.byOeuvre[
-            o.id
-          ]
-
-        : {};
-
-    return {
-
-      serviceLabel:
-        byOeuvre.serviceLabel ||
-        globalConfig.serviceLabel ||
-        "Service technique compétent",
-
-      serviceEmail:
-        byOeuvre.serviceEmail ||
-        globalConfig.serviceEmail ||
-        "",
-
-      endpoint:
-        byOeuvre.endpoint ||
-        globalConfig.endpoint ||
-        ""
-    };
-  }
-
-
   function saveLocalOeuvreSignalement(
     report
   ){
@@ -7561,10 +7415,9 @@ QR-BOCITEART-010`
 
       const rows =
         JSON.parse(
-          localStorage
-            .getItem(
-              OEUVRES_SIGNAL_STORAGE_KEY
-            ) ||
+          localStorage.getItem(
+            OEUVRES_SIGNAL_STORAGE_KEY
+          ) ||
           "[]"
         );
 
@@ -7624,11 +7477,6 @@ QR-BOCITEART-010`
 
     closeOeuvreSignalement();
 
-    const config =
-      getOeuvreSignalConfig(
-        o
-      );
-
     const overlay =
       document.createElement(
         "div"
@@ -7638,15 +7486,13 @@ QR-BOCITEART-010`
       "bociteOeuvreSignalOverlay";
 
     overlay.style.cssText =
-
       "position:fixed;" +
       "inset:0;" +
       "z-index:1000050;" +
       "overflow:auto;" +
       "padding:16px;" +
       "box-sizing:border-box;" +
-      "background:rgba(0,0,0,.55);" +
-      "font-family:Arial,sans-serif;";
+      "background:rgba(0,0,0,.55);";
 
     overlay.innerHTML = `
 
@@ -7656,6 +7502,7 @@ QR-BOCITEART-010`
           max-width:620px;
           margin:20px auto;
           background:#ffffff;
+          border:1px solid rgba(47,93,70,.30);
           border-radius:16px;
           padding:16px;
           box-sizing:border-box;
@@ -7678,7 +7525,6 @@ QR-BOCITEART-010`
           <div
             style="
               flex:1;
-              background:#ffffff;
             "
           >
 
@@ -7695,9 +7541,6 @@ QR-BOCITEART-010`
             <div
               style="
                 margin-top:5px;
-                color:#111111;
-                font-size:14px;
-                font-weight:400;
               "
             >
               ${esc(
@@ -7711,18 +7554,10 @@ QR-BOCITEART-010`
 
           </div>
 
-
           <button
             id="oeuvreSignalClose"
             type="button"
             aria-label="Fermer"
-            style="
-              border:0;
-              background:#eeeeee;
-              border-radius:9px;
-              padding:8px 10px;
-              cursor:pointer;
-            "
           >
             ✕
           </button>
@@ -7734,36 +7569,27 @@ QR-BOCITEART-010`
           style="
             display:block;
             margin-top:14px;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
           "
         >
           Type de problème
         </label>
 
-
         <select
           id="oeuvreSignalType"
           class="miniField"
         >
-
           <option value="degradation">
             Dégradation de l’œuvre
           </option>
-
           <option value="dechets">
             Déchets / propreté
           </option>
-
           <option value="securite">
             Problème de sécurité
           </option>
-
           <option value="autre">
             Autre problème
           </option>
-
         </select>
 
 
@@ -7771,14 +7597,10 @@ QR-BOCITEART-010`
           style="
             display:block;
             margin-top:12px;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
           "
         >
           Précisions
         </label>
-
 
         <textarea
           id="oeuvreSignalMessage"
@@ -7794,14 +7616,10 @@ QR-BOCITEART-010`
           style="
             display:block;
             margin-top:12px;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
           "
         >
           Photo facultative
         </label>
-
 
         <input
           id="oeuvreSignalPhoto"
@@ -7814,10 +7632,6 @@ QR-BOCITEART-010`
         <div
           style="
             margin-top:10px;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
           "
         >
           La photo éventuelle
@@ -7834,6 +7648,7 @@ QR-BOCITEART-010`
           style="
             width:100%;
             margin-top:14px;
+            border:1px solid rgba(47,93,70,.30);
           "
         >
           Transmettre le signalement
@@ -7846,9 +7661,6 @@ QR-BOCITEART-010`
           aria-live="polite"
           style="
             margin-top:10px;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
           "
         ></div>
 
@@ -7856,11 +7668,9 @@ QR-BOCITEART-010`
 
     `;
 
-    document
-      .body
-      .appendChild(
-        overlay
-      );
+    document.body.appendChild(
+      overlay
+    );
 
     const closeBtn =
       document.getElementById(
@@ -7900,7 +7710,7 @@ QR-BOCITEART-010`
     if(sendBtn){
 
       sendBtn.onclick =
-        async function(){
+        function(){
 
           const typeEl =
             document.getElementById(
@@ -7917,40 +7727,11 @@ QR-BOCITEART-010`
               "oeuvreSignalPhoto"
             );
 
-          const type =
-            typeEl
-              ? String(
-                  typeEl.value ||
-                  ""
-                ).trim()
-              : "";
-
-          const message =
-            messageEl
-              ? String(
-                  messageEl.value ||
-                  ""
-                ).trim()
-              : "";
-
-          const photo =
-
-            photoEl &&
-            photoEl.files &&
-            photoEl.files[0]
-
-              ? photoEl.files[0]
-
-              : null;
-
-          const reportId =
-            "OEUVRE-" +
-            Date.now();
-
           const report = {
 
             id:
-              reportId,
+              "OEUVRE-" +
+              Date.now(),
 
             oeuvreId:
               o.id,
@@ -7962,184 +7743,44 @@ QR-BOCITEART-010`
               o.quartier,
 
             type:
-              type,
+              typeEl
+                ? typeEl.value
+                : "",
 
             message:
-              message,
+              messageEl
+                ? String(
+                    messageEl.value ||
+                    ""
+                  ).trim()
+                : "",
 
             photoSelected:
               Boolean(
-                photo
+                photoEl &&
+                photoEl.files &&
+                photoEl.files[0]
               ),
 
             createdAt:
-              new Date()
-                .toISOString(),
+              new Date().toISOString(),
 
             status:
-              "prepared"
+              "demo_local"
           };
-
-          sendBtn.disabled =
-            true;
-
-          sendBtn.textContent =
-            "Transmission…";
-
-          if(
-            config.endpoint
-          ){
-
-            try{
-
-              const form =
-                new FormData();
-
-              form.append(
-                "report",
-                JSON.stringify(
-                  report
-                )
-              );
-
-              if(photo){
-
-                form.append(
-                  "photo",
-                  photo,
-                  photo.name
-                );
-              }
-
-              const response =
-                await fetch(
-                  config.endpoint,
-                  {
-                    method:
-                      "POST",
-
-                    body:
-                      form
-                  }
-                );
-
-              if(response.ok){
-
-                if(status){
-
-                  status.textContent =
-                    "Votre signalement a été transmis au service compétent.";
-                }
-
-                sendBtn.textContent =
-                  "Signalement transmis";
-
-                return;
-              }
-
-            }catch(error){
-
-              console.warn(
-                "Bo'CitéArt — transmission du signalement impossible :",
-                error
-              );
-            }
-          }
-
-          report.status =
-            "demo_local";
 
           saveLocalOeuvreSignalement(
             report
           );
 
-          if(
-            config.serviceEmail
-          ){
+          if(status){
 
-            const subject =
-              "Signalement Bo'CitéArt — " +
-              o.titre;
-
-            const body =
-
-              "Œuvre : " +
-              o.titre +
-              "\n" +
-
-              "Quartier : " +
-              o.quartier +
-              "\n" +
-
-              "Problème : " +
-              type +
-              "\n\n" +
-
-              "Description :\n" +
-
-              (
-                message ||
-                "Aucune précision complémentaire."
-              ) +
-
-              "\n\n" +
-
-              "Référence : " +
-              reportId;
-
-            window.location.href =
-
-              "mailto:" +
-
-              encodeURIComponent(
-                config.serviceEmail
-              ) +
-
-              "?subject=" +
-
-              encodeURIComponent(
-                subject
-              ) +
-
-              "&body=" +
-
-              encodeURIComponent(
-                body
-              );
-
-            if(status){
-
-              status.textContent =
-                "Le message est préparé pour le service compétent.";
-            }
-
-          }else{
-
-            if(status){
-
-              status.textContent =
-                "Le signalement est préparé dans la démo. L’adresse officielle du service compétent doit encore être renseignée par la mairie.";
-            }
+            status.textContent =
+              "Signalement enregistré dans la démo. En production, il sera transmis au service compétent défini avec la commune.";
           }
-
-          sendBtn.disabled =
-            false;
-
-          sendBtn.textContent =
-            "Transmettre le signalement";
         };
     }
   }
-
-
-  window.BociteOeuvresSignalement = {
-
-    open:
-      openOeuvreSignalement,
-
-    close:
-      closeOeuvreSignalement
-  };
 
 
   /* =========================================================
@@ -8160,16 +7801,6 @@ QR-BOCITEART-010`
     const qrs =
       new Set();
 
-    if(
-      typeof unlockByQr !==
-      "function"
-    ){
-
-      problems.push(
-        "Fonction QR indisponible"
-      );
-    }
-
     oeuvres.forEach(
       function(o){
 
@@ -8181,11 +7812,7 @@ QR-BOCITEART-010`
         ){
 
           problems.push(
-            "Identifiant d’œuvre absent ou dupliqué : " +
-            String(
-              o.id ||
-              "?"
-            )
+            "Identifiant d’œuvre absent ou dupliqué."
           );
         }
 
@@ -8220,8 +7847,8 @@ QR-BOCITEART-010`
       "undefined"
     ){
 
-      problems.push(
-        "Cartographie Leaflet indisponible"
+      warnings.push(
+        "Cartographie Leaflet indisponible."
       );
     }
 
@@ -8233,18 +7860,16 @@ QR-BOCITEART-010`
     ){
 
       warnings.push(
-        "Lecture vocale synthétique indisponible sur cet appareil"
+        "Lecture vocale indisponible sur cet appareil."
       );
     }
 
     const report = {
 
-      module:
-        "oeuvres",
+      module:"oeuvres",
 
       checkedAt:
-        new Date()
-          .toISOString(),
+        new Date().toISOString(),
 
       ok:
         problems.length ===
@@ -8267,16 +7892,6 @@ QR-BOCITEART-010`
       );
 
     }catch(error){}
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:oeuvres-health",
-        {
-          detail:
-            report
-        }
-      )
-    );
 
     return report;
   }
@@ -8305,18 +7920,8 @@ QR-BOCITEART-010`
   }
 
 
-  window.BociteOeuvresSupervisor = {
-
-    run:
-      runOeuvresSupervisor,
-
-    start:
-      startOeuvresSupervisor
-  };
-
-
   /* =========================================================
-     11. PAGE GÉNÉRALE
+     11. PAGE PRINCIPALE
      ========================================================= */
 
   function openOverview(){
@@ -8338,14 +7943,12 @@ QR-BOCITEART-010`
           "Parcours & Fresques"
         )}
 
-
         <div
           class="box"
           style="
             margin-top:8px;
           "
         >
-
           Chaque œuvre visible
           dans l’application
           fait partie
@@ -8366,12 +7969,13 @@ QR-BOCITEART-010`
           n’est pas seulement
           de regarder une œuvre.
 
-          Il s’agit de prendre
-          quelques minutes,
-          de ralentir
-          et de se laisser raconter
+          Il s’agit aussi
+          de ralentir,
+          écouter,
+          lire
+          et prendre quelques minutes
+          pour découvrir autrement
           un morceau de la ville.
-
         </div>
 
 
@@ -8385,17 +7989,16 @@ QR-BOCITEART-010`
         >
 
           <button
-            class="choiceBtn"
             id="oeuvreScanBtn"
+            class="choiceBtn"
             type="button"
           >
             Scanner / saisir un QR
           </button>
 
-
           <button
-            class="choiceBtn"
             id="oeuvreReopenBtn"
+            class="choiceBtn"
             type="button"
             style="
               background:#ffffff;
@@ -8404,10 +8007,9 @@ QR-BOCITEART-010`
             Rouvrir la dernière œuvre
           </button>
 
-
           <button
-            class="choiceBtn"
             id="oeuvreResetBtn"
+            class="choiceBtn"
             type="button"
             style="
               background:#ffffff;
@@ -8423,14 +8025,12 @@ QR-BOCITEART-010`
           "Carte et parcours choisi"
         )}
 
-
         <div
           class="box"
           style="
             margin-top:8px;
           "
         >
-
           Les adresses exactes
           des fresques
           ne sont jamais inventées.
@@ -8440,11 +8040,9 @@ QR-BOCITEART-010`
           dès qu’elles sont renseignées
           par la mairie.
 
-
           <div
             id="oeuvresMap"
           ></div>
-
 
           <div
             id="oeuvresMapStatus"
@@ -8456,7 +8054,6 @@ QR-BOCITEART-010`
             Chargement de la carte…
           </div>
 
-
           <div
             style="
               display:flex;
@@ -8467,31 +8064,28 @@ QR-BOCITEART-010`
           >
 
             <button
-              class="choiceBtn"
               id="oeuvresPositionBtn"
+              class="choiceBtn"
               type="button"
             >
               Afficher ma position
             </button>
 
-
             <button
-              class="choiceBtn"
               id="oeuvresRouteBtn"
+              class="choiceBtn"
               type="button"
             >
               Ouvrir l’itinéraire à pied
             </button>
 
           </div>
-
         </div>
 
 
         ${oeuvreTitleCard(
           "Choisissez les œuvres de votre parcours"
         )}
-
 
         <div
           class="box"
@@ -8524,7 +8118,6 @@ QR-BOCITEART-010`
                         )}"
                       >
 
-
                       <div
                         style="
                           flex:1;
@@ -8542,7 +8135,6 @@ QR-BOCITEART-010`
                         )}
                       </div>
 
-
                       <button
                         class="oeuvreSingleGuideBtn"
                         data-oeuvre-id="${esc(
@@ -8550,7 +8142,7 @@ QR-BOCITEART-010`
                         )}"
                         type="button"
                         style="
-                          border:1px solid #2f5d46;
+                          border:1px solid rgba(47,93,70,.32);
                           border-radius:8px;
                           background:#ffffff;
                           color:#2f5d46;
@@ -8573,9 +8165,62 @@ QR-BOCITEART-010`
 
 
         ${oeuvreTitleCard(
-          "Découvrez aussi la ville en chemin"
+          "Accessibilité renforcée"
         )}
 
+        <div
+          class="oeuvreSupportCard"
+        >
+
+          <div
+            class="oeuvreSupportTitle"
+          >
+            Une expérience pensée pour tous
+          </div>
+
+          <div
+            class="oeuvreSupportText"
+          >
+            Les personnes malentendantes
+            peuvent suivre le récit
+            grâce au texte
+            qui apparaît progressivement
+            à l’écran.
+
+            <br><br>
+
+            Le texte complet
+            reste également disponible
+            à tout moment.
+
+            <br><br>
+
+            Les lecteurs d’écran
+            peuvent parcourir ce contenu.
+
+            <br><br>
+
+            Les personnes utilisant
+            un afficheur braille compatible
+            relié à leur appareil
+            peuvent également accéder
+            au texte par leur lecteur d’écran.
+
+            <br><br>
+
+            La découverte vocale
+            ne démarre jamais automatiquement :
+            chacun choisit son rythme,
+            son mode d’accès
+            et la manière de vivre l’expérience.
+          </div>
+
+        </div>
+
+
+        ${oeuvreTitleCard(
+          "Découvrez aussi la ville en chemin"
+        )}
 
         <div
           class="box"
@@ -8583,7 +8228,6 @@ QR-BOCITEART-010`
             margin-top:8px;
           "
         >
-
           Lorsque cela est possible,
           le parcours invite
           à privilégier la marche
@@ -8595,11 +8239,11 @@ QR-BOCITEART-010`
           à l’autre
           devient alors une façon
           de découvrir des rues,
-          des perspectives
-          et des endroits
-          que l’on ne regarde
-          pas forcément d’habitude.
-
+          des perspectives,
+          des lieux
+          et parfois des histoires
+          que l’on ne remarque
+          pas forcément au quotidien.
         </div>
 
 
@@ -8607,14 +8251,12 @@ QR-BOCITEART-010`
           "Préserver les œuvres et leurs abords"
         )}
 
-
         <div
           class="box"
           style="
             margin-top:8px;
           "
         >
-
           Lorsqu’un problème
           est constaté
           autour d’une œuvre,
@@ -8625,11 +8267,11 @@ QR-BOCITEART-010`
 
           <br><br>
 
-          Le signalement
-          pourra être dirigé
+          En production,
+          le signalement
+          sera dirigé
           vers le service compétent
           défini avec la commune.
-
         </div>
 
 
@@ -8637,14 +8279,12 @@ QR-BOCITEART-010`
           "Entretien et responsabilité"
         )}
 
-
         <div
           class="box"
           style="
             margin-top:8px;
           "
         >
-
           ${bociteOeuvreLogoHtml()}
           met à disposition
           le parcours de découverte,
@@ -8666,44 +8306,12 @@ QR-BOCITEART-010`
           ou la réparation
           des œuvres
           et de leurs abords.
-
-        </div>
-
-
-        ${oeuvreTitleCard(
-          "Accessibilité"
-        )}
-
-
-        <div
-          class="box"
-          style="
-            margin-top:8px;
-          "
-        >
-
-          ${bociteOeuvreLogoHtml()}
-          prévoit plusieurs façons
-          de découvrir les œuvres.
-
-          <br><br>
-
-          Le récit progressif
-          accompagne l’écoute,
-          mais un texte complet
-          reste disponible
-          à la demande
-          pour l’accessibilité,
-          les lecteurs d’écran
-          et les afficheurs braille compatibles.
-
         </div>
 
 
         ${oeuvreTitleCard(
           "Parcours des 10 œuvres"
         )}
-
 
         ${
           oeuvres
@@ -8727,36 +8335,35 @@ QR-BOCITEART-010`
           "Une découverte, pas seulement une fiche"
         )}
 
-
         <div
           class="box"
           style="
             margin-top:8px;
           "
         >
-
           La fiche d’une œuvre
-          ne dévoile plus immédiatement
+          ne dévoile pas immédiatement
           toute son histoire.
 
           <br><br>
 
           Le récit apparaît
           au fur et à mesure
-          de la voix,
-          afin que l’image,
-          les mots
-          et le lieu
+          de la narration,
+          afin que l’œuvre,
+          les mots,
+          le lieu
+          et l’émotion
           soient découverts ensemble.
 
           <br><br>
 
           C’est un moment
           pour ralentir,
-          regarder
+          regarder,
+          respirer
           et profiter simplement
           de ce qui nous entoure.
-
         </div>
 
 
@@ -8764,14 +8371,12 @@ QR-BOCITEART-010`
           "Valeur ajoutée"
         )}
 
-
         <div
           class="box"
           style="
             margin-top:8px;
           "
         >
-
           L’application
           ne montre pas seulement
           une œuvre.
@@ -8784,7 +8389,6 @@ QR-BOCITEART-010`
           les partenaires,
           la ville
           et la mémoire locale.
-
         </div>
 
       </div>
@@ -8793,7 +8397,7 @@ QR-BOCITEART-010`
     );
 
 
-    setTimeout(
+    window.setTimeout(
       function(){
 
         const scanBtn =
@@ -8811,13 +8415,11 @@ QR-BOCITEART-010`
             "oeuvreResetBtn"
           );
 
-
         if(scanBtn){
 
           scanBtn.onclick =
             promptQr;
         }
-
 
         if(reopenBtn){
 
@@ -8825,13 +8427,11 @@ QR-BOCITEART-010`
             reopenLast;
         }
 
-
         if(resetBtn){
 
           resetBtn.onclick =
             resetDemo;
         }
-
 
         oeuvres.forEach(
           function(o){
@@ -8867,7 +8467,6 @@ QR-BOCITEART-010`
               };
           }
         );
-
 
         initOeuvresMap();
 
