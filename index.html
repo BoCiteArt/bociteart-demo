@@ -5196,11 +5196,16 @@ if(key === "ecole"){
   lui apporte simplement un support complémentaire pour faire vivre ces apprentissages autrement.
 </div>
 
-<div class="bociteSchoolSectionTitle">
-  Comprendre et vivre la solidarité
 </div>
 
 <div class="bociteSchoolCard">
+
+  <div
+    class="bociteSchoolSectionTitle"
+    style="margin-top:0;margin-bottom:12px;"
+  >
+    Comprendre et vivre la solidarité
+  </div>
 
   La solidarité peut aussi devenir un véritable sujet
   d’échange dans la classe.
@@ -13448,6 +13453,39 @@ window.openBociteSchoolTeacherAccess = function(){
   schoolTile.__bociteOtherIntroBypass = true;
   schoolTile.click();
 }; 
+
+/* =====================================================
+   OUVERTURE ÉCOLE — DIRECTION
+   DEPUIS LE PILOTAGE PRIVÉ
+   ===================================================== */
+
+window.openBociteSchoolPrivateDemo = function(){
+
+  if(!window.bociteartAdminSession){
+    alert("Accès privé requis.");
+    return;
+  }
+
+  /*
+    Le Pilotage Bo’CitéArt est déjà authentifié.
+    On demande donc l’ouverture directe
+    de l’espace Direction de l’École.
+  */
+  window.bociteartSchoolAdminPreview = true;
+  window.bociteartSchoolPrivateEntry = true;
+
+  const schoolTile =
+    document.querySelector('[data-open="ecole"]');
+
+  if(!schoolTile){
+    alert("La tuile École n’a pas été trouvée.");
+    return;
+  }
+
+  schoolTile.__bociteOtherIntroBypass = true;
+  schoolTile.click();
+};
+
    
 window.openPilotagePrive = function(){
 
