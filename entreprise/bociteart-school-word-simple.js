@@ -4095,8 +4095,6 @@
       : "#b3261e";
 }
    
-    }
-
     if(scheduleList){
       scheduleList.innerHTML =
         buildScheduleListHtml();
