@@ -5276,6 +5276,83 @@ if(key === "ecole"){
 </div>
 
 <!-- ==================================================
+     INVITATION TEMPORAIRE PROFESSEUR / REMPLAÇANT
+     Visible uniquement avec une invitation valide
+     ================================================== -->
+
+<div
+  id="schoolTeacherInvitationCard"
+  class="bociteSchoolCard"
+  style="display:none;"
+>
+
+  <div
+    class="bociteSchoolSectionTitle"
+    style="margin-top:0;margin-bottom:12px;"
+  >
+    Invitation professeur / remplaçant
+  </div>
+
+  <div
+    style="
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+    "
+  >
+    Une invitation professionnelle temporaire
+    vous a été transmise par la Direction.
+
+    <br><br>
+
+    Saisissez le code d’activation
+    qui vous a été communiqué séparément.
+
+    <br><br>
+
+    Cette invitation reste valable
+    pendant 5 minutes maximum.
+  </div>
+
+  <label
+    class="bociteSchoolFieldLabel"
+    for="schoolInvitationCodeInput"
+    style="margin-top:14px;"
+  >
+    Code d’activation
+  </label>
+
+  <input
+    id="schoolInvitationCodeInput"
+    class="bociteSchoolField"
+    type="password"
+    autocomplete="one-time-code"
+    placeholder="Votre code d’activation"
+  >
+
+  <button
+    id="schoolInvitationLoginBtn"
+    class="bociteSchoolAction bociteSchoolActionPrimary"
+    type="button"
+  >
+    Ouvrir mon accès
+  </button>
+
+  <div
+    id="schoolInvitationStatus"
+    role="status"
+    aria-live="polite"
+    style="
+      margin-top:10px;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+    "
+  ></div>
+
+</div>
+
+<!-- ==================================================
      PORTE TECHNIQUE ÉCOLE
      INVISIBLE DANS LA PARTIE PUBLIQUE
      ================================================== -->
@@ -6158,6 +6235,18 @@ if(key === "ecole"){
   const schoolDirectionFirstSetupBtn = document.getElementById("schoolDirectionFirstSetupBtn");
   const schoolAccessStatus = document.getElementById("schoolAccessStatus");
 
+ const schoolTeacherInvitationCard =
+  document.getElementById("schoolTeacherInvitationCard");
+
+const schoolInvitationCodeInput =
+  document.getElementById("schoolInvitationCodeInput");
+
+const schoolInvitationLoginBtn =
+  document.getElementById("schoolInvitationLoginBtn");
+
+const schoolInvitationStatus =
+  document.getElementById("schoolInvitationStatus");
+ 
   const schoolDirectionPanel = document.getElementById("schoolDirectionPanel");
   const schoolTeacherNameInput = document.getElementById("schoolTeacherNameInput");
   const schoolTeacherClassInput = document.getElementById("schoolTeacherClassInput");
@@ -6640,6 +6729,95 @@ window.BociteSchoolSolidarityAgreement = {
       return false;
     }
   }
+
+ let schoolInvitationExpiryTimer = null;
+
+function schoolRefreshTeacherInvitationCard(){
+
+  if(!schoolTeacherInvitationCard){
+    return;
+  }
+
+  schoolTeacherInvitationCard.style.display = "none";
+
+  const invite =
+    window.bociteartSchoolTeacherInvitation;
+
+  if(
+    !invite ||
+    !invite.token ||
+    !invite.teacherId ||
+    !invite.expiresAt
+  ){
+    return;
+  }
+
+  const data =
+    schoolLoadAccessData();
+
+  const account =
+    data.teachers.find(function(item){
+      return (
+        item &&
+        String(item.id || "") ===
+          String(invite.teacherId || "")
+      );
+    });
+
+  const savedInvitation =
+    account &&
+    account.invitation &&
+    typeof account.invitation === "object"
+      ? account.invitation
+      : null;
+
+  const expiresAt =
+    Number(invite.expiresAt || 0);
+
+  if(
+    !account ||
+    account.active === false ||
+    schoolTeacherAccessExpired(account) ||
+    !savedInvitation ||
+    savedInvitation.used === true ||
+    String(savedInvitation.token || "") !==
+      String(invite.token || "") ||
+    Number(savedInvitation.expiresAt || 0) !==
+      expiresAt ||
+    Date.now() >= expiresAt
+  ){
+    window.bociteartSchoolTeacherInvitation = null;
+    return;
+  }
+
+  if(schoolInvitationStatus){
+    schoolInvitationStatus.textContent = "";
+  }
+
+  if(schoolInvitationCodeInput){
+    schoolInvitationCodeInput.value = "";
+  }
+
+  schoolTeacherInvitationCard.style.display = "block";
+
+  if(schoolInvitationExpiryTimer){
+    clearTimeout(schoolInvitationExpiryTimer);
+  }
+
+  schoolInvitationExpiryTimer =
+    window.setTimeout(function(){
+
+      schoolTeacherInvitationCard.style.display = "none";
+
+      if(schoolInvitationCodeInput){
+        schoolInvitationCodeInput.value = "";
+      }
+
+      window.bociteartSchoolTeacherInvitation = null;
+
+    }, Math.max(0, expiresAt - Date.now()));
+
+}
 
   function schoolLoadClasses(){
     if(
@@ -8053,7 +8231,8 @@ if(schoolAccessOpenBtn){
   };
 }
 
-
+schoolRefreshTeacherInvitationCard();
+ 
 /* =====================================================
    OUVERTURE DIRECTE DIRECTION DEPUIS LE PILOTAGE PRIVÉ
    ===================================================== */
