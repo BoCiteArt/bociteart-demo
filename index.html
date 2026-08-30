@@ -13354,6 +13354,34 @@ window.openBociteSchoolTeacherAccess = function(){
   schoolTile.click();
 };
 
+   /* =====================================================
+   PORTE PRIVÉE ÉCOLE — PROFESSEUR / REMPLAÇANT
+   LIEN DIRECT DE DÉMONSTRATION
+   ===================================================== */
+
+(function(){
+
+  const params =
+    new URLSearchParams(window.location.search);
+
+  if(
+    params.get("ecole") !== "professeur"
+  ){
+    return;
+  }
+
+  window.setTimeout(function(){
+
+    if(
+      typeof window.openBociteSchoolTeacherAccess === "function"
+    ){
+      window.openBociteSchoolTeacherAccess();
+    }
+
+  },300);
+
+})();
+
 /* =====================================================
    OUVERTURE ÉCOLE — DIRECTION
    DEPUIS LE PILOTAGE PRIVÉ
