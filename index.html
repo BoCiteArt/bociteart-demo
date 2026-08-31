@@ -14156,12 +14156,283 @@ if(schoolDirectionFirstSetupBtn){
 }
    
 if(key === "sport"){
+
+  /* =========================================================
+     SPORT — PRÉSENTATION COMMUNE
+     ========================================================= */
+
+  function sportBrandHtml(){
+    return '<span class="bociteSportLogo">' + "Bo'Cité" + '<span>Art</span></span>';
+  }
+
+  function sportSharedStyles(){
+    return `
+      <style>
+        #modal .head{
+          background:#ffffff !important;
+        }
+
+        #modalTitle{
+          color:#2f5d46 !important;
+          font-size:17px !important;
+          font-weight:700 !important;
+        }
+
+        .bociteSportRoot{
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.55;
+        }
+
+        .bociteSportRoot .box,
+        .bociteSportRoot .walletBox{
+          box-sizing:border-box;
+          background:#ffffff !important;
+          color:#111111 !important;
+          font-size:14px !important;
+          font-weight:400 !important;
+          line-height:1.55 !important;
+          border:1px solid rgba(47,93,70,.20) !important;
+          border-radius:14px;
+        }
+
+        .bociteSportRoot .muted,
+        .bociteSportRoot .walletSub{
+          color:#111111 !important;
+          font-size:14px !important;
+          font-weight:400 !important;
+          line-height:1.55 !important;
+        }
+
+        .bociteSportRoot > div[style*="font-weight:900"],
+        .bociteSportRoot > div[style*="font-weight:800"]{
+          box-sizing:border-box;
+          width:100%;
+          margin-top:14px !important;
+          margin-bottom:8px !important;
+          padding:12px 14px !important;
+          background:#ffffff !important;
+          border:1px solid rgba(47,93,70,.30) !important;
+          border-radius:14px !important;
+          color:#2f5d46 !important;
+          font-size:17px !important;
+          font-weight:700 !important;
+          line-height:1.35 !important;
+        }
+
+        .bociteSportRoot > div[style*="font-weight:900"]:first-of-type,
+        .bociteSportRoot > div[style*="font-weight:800"]:first-of-type{
+          margin-top:0 !important;
+        }
+
+        .bociteSportRoot .box > div[style*="font-weight:900"],
+        .bociteSportRoot .box > div[style*="font-weight:800"],
+        .bociteSportRoot .box > strong:first-child,
+        .bociteSportRoot .walletTitle{
+          color:#2f5d46 !important;
+          font-size:17px !important;
+          font-weight:700 !important;
+          line-height:1.35 !important;
+        }
+
+        .bociteSportRoot .box > div[style*="font-weight:900"]{
+          margin-top:10px;
+        }
+
+        .bociteSportRoot ul,
+        .bociteSportRoot li{
+          color:#111111 !important;
+          font-size:14px !important;
+          font-weight:400 !important;
+          line-height:1.6 !important;
+        }
+
+        .bociteSportRoot li strong,
+        .bociteSportRoot .muted strong{
+          font-weight:400 !important;
+        }
+
+        .bociteSportRoot .choiceBtn,
+        .bociteSportRoot .walletMini{
+          background:#ffffff !important;
+          background-color:#ffffff !important;
+          color:#2f5d46 !important;
+          border:1px solid rgba(47,93,70,.38) !important;
+          font-size:14px !important;
+          font-weight:700 !important;
+        }
+
+        .bociteSportRoot .miniField{
+          background:#ffffff !important;
+          color:#111111 !important;
+          border:1px solid rgba(47,93,70,.28) !important;
+          font-size:14px !important;
+          font-weight:400 !important;
+        }
+
+        .bociteSportRoot .miniCheck{
+          color:#111111 !important;
+          font-size:14px !important;
+          font-weight:400 !important;
+          line-height:1.5 !important;
+        }
+
+        .bociteSportRoot details{
+          background:#ffffff !important;
+          border:1px solid rgba(47,93,70,.26) !important;
+        }
+
+        .bociteSportRoot details summary{
+          color:#2f5d46 !important;
+          font-size:14px !important;
+          font-weight:700 !important;
+        }
+
+        .bociteSportLogo{
+          display:inline-block;
+          color:#2f5d46;
+          font-size:inherit;
+          font-weight:700;
+          line-height:inherit;
+          white-space:nowrap;
+          word-spacing:0;
+          letter-spacing:normal;
+        }
+
+        .bociteSportLogo > span{
+          display:inline;
+          color:#b00020;
+          margin:0;
+          padding:0;
+          font-size:inherit;
+          font-weight:700;
+          word-spacing:0;
+          letter-spacing:normal;
+        }
+      </style>
+    `;
+  }
+
+  /* =========================================================
+     FICHE ÉLUS / CCI / COMMERÇANTS
+     ========================================================= */
+
+  window.openSportFiche = function(){
+    openModal(
+      "Fiche élus / CCI / commerçants — soutien Club + Association",
+      `
+        ${sportSharedStyles()}
+        <div class="bociteSportRoot">
+
+          <div style="font-weight:900;margin-bottom:8px;">
+            Soutenir le sport local et créer de nouveaux liens
+          </div>
+
+          <div class="box">
+            Un club sportif n’est pas seulement un lieu où l’on pratique une discipline.
+            Il fait vivre l’effort, le respect, l’engagement, l’esprit d’équipe et la responsabilité.
+
+            <br><br>
+
+            ${sportBrandHtml()} souhaite aussi faciliter de nouvelles rencontres entre clubs,
+            commerces, entreprises, familles et autres acteurs du territoire.
+          </div>
+
+          <div style="font-weight:900;margin-top:14px;">
+            Pour le club
+          </div>
+
+          <div class="box">
+            Cette mise en relation permet au club de présenter plus facilement ses besoins,
+            ses projets et ce qu’il apporte à la ville.
+
+            <br><br>
+
+            Elle peut ouvrir de nouvelles occasions de soutien,
+            de visibilité et de rencontres avec les professionnels locaux.
+          </div>
+
+          <div style="font-weight:900;margin-top:14px;">
+            Pour le commerçant
+          </div>
+
+          <div class="box">
+            Le commerçant peut améliorer sa visibilité locale,
+            montrer concrètement son soutien à un club et à une cause solidaire,
+            participer à la dynamique de la ville
+            et renforcer son image dans le temps.
+          </div>
+
+          <div style="font-weight:900;margin-top:14px;">
+            Club + association + diffusion locale
+          </div>
+
+          <div class="box">
+            Le parcours déjà prévu permet de reprendre la fiche du commerçant,
+            le club concerné et l’association retenue,
+            puis de générer le texte destiné à la bande défilante.
+
+            <br><br>
+
+            Tarif : 50 € HT / 60 € TTC pour une diffusion pendant 7 jours consécutifs,
+            uniquement après validation du paiement.
+          </div>
+
+          <div style="font-weight:900;margin-top:14px;">
+            Associations proposées
+          </div>
+
+          <div class="box">
+            Les associations proposées sont sélectionnées et vérifiées
+            avant leur mise à disposition.
+
+            <br><br>
+
+            Leur liste peut évoluer afin de conserver des organismes correspondant
+            aux causes retenues et aux exigences de transparence
+            et d’utilisation effective des soutiens.
+
+            <br><br>
+
+            Les associations retenues seront définies avec la mairie et ${sportBrandHtml()}
+            selon le cadre prévu.
+
+            <br><br>
+
+            Les emplacements A, B, C et D permettent de conserver les différentes causes
+            sans désigner à l’avance une association qui n’aurait pas encore été retenue.
+          </div>
+
+          <button
+            class="choiceBtn"
+            id="sportFicheBackBtn"
+            type="button"
+            style="width:100%;margin-top:14px;"
+          >
+            Retour à l’espace Club
+          </button>
+
+        </div>
+      `
+    );
+
+    setTimeout(()=>{
+      const backBtn = $("sportFicheBackBtn");
+      if(backBtn){
+        backBtn.onclick = ()=> window.openClubReserve();
+      }
+    },0);
+  };
+
   window.openClubReserve = function(){
    const openSport = ()=>{
      openModal("Espace Club réservé", `
-        <div style="font-weight:900;margin-bottom:8px;">Sport & associations (structure)</div>
+        ${sportSharedStyles()}
+        <div class="bociteSportRoot">
+        <div style="font-weight:900;margin-bottom:8px;">Sport & associations</div>
         <div class="box">
-          <strong>Cadre :</strong> publications par référent habilité. Éléments de validation (si activés) non publics, accès restreint, finalité limitée.
+          Les publications sont réalisées par un référent habilité du club. Les fonctions réservées restent accessibles uniquement aux personnes autorisées.
         </div>
 
         <div class="coinShowcase">
@@ -14206,7 +14477,7 @@ if(key === "sport"){
             <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
             <div class="walletSub">
               Les BoCitecoins VERT sont gagnés par les actions sportives et citoyennes validées.
-              Ils servent uniquement à aider le club bénéficiaire, éventuellement une association de recherche, jamais une personne.
+              Ils servent uniquement à aider le club bénéficiaire ou, selon l’orientation retenue, une ou plusieurs associations proposées, jamais une personne.
             </div>
             <div class="walletActions">
               <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
@@ -14238,8 +14509,8 @@ Consulter la fiche du club
         <div class="box" style="margin-top:12px;">
           <div style="font-weight:900;">Règle Sport – BoCitecoins VERT</div>
           <div class="muted" style="margin-top:8px;">
-            Les BoCitecoins VERT sont gagnés par les clubs ou groupes sportifs pour des actions sportives et citoyennes validées dans le cadre de Bo’CitéArt.
-            Ils servent uniquement à aider le club bénéficiaire, éventuellement une association de recherche, jamais une personne physique.
+            Les BoCitecoins VERT sont gagnés par les clubs ou groupes sportifs pour des actions sportives et citoyennes validées dans le cadre de ${sportBrandHtml()}.
+            Ils servent uniquement à aider le club bénéficiaire ou, selon l’orientation retenue, une ou plusieurs associations proposées, jamais une personne physique.
           </div>
 
           <div class="muted" style="margin-top:8px;">
@@ -14253,7 +14524,7 @@ Consulter la fiche du club
             <li>Les bocitecoins sont déduits au moment de l’échange</li>
             <li>Le commerçant ou la mairie offre au club l’avantage correspondant</li>
             <li>Chez le commerçant : matériel sportif uniquement, ou matériel + <strong>30 % maximum</strong> en nourriture et boissons incluses</li>
-            <li>1 bocitecoin = 1 unité d’avantage interne Bo’CitéArt pour le club</li>
+            <li>1 bocitecoin = 1 unité d’avantage interne ${sportBrandHtml()} pour le club</li>
             <li>Échange autorisé uniquement par tranches de <strong>10</strong> : 10, 20, 30…</li>
             <li>Exemples : 10 = possible • 12 = impossible • 16 = impossible • 20 = possible • 25 = impossible • 30 = possible</li>
             <li>Aucune conversion en euros, aucun versement d’argent, aucun usage personnel</li>
@@ -14285,7 +14556,7 @@ Consulter la fiche du club
           </div>
 
           <div class="muted" style="margin-top:8px;">
-            1 bocitecoin = 1 unité d’avantage interne Bo’CitéArt pour le club. Les échanges standards sont par tranches de <strong>10 bocitecoins</strong> avec un minimum de 10.
+            1 bocitecoin = 1 unité d’avantage interne ${sportBrandHtml()} pour le club. Les échanges standards sont par tranches de <strong>10 bocitecoins</strong> avec un minimum de 10.
           </div>
         </div>
 
@@ -14425,15 +14696,29 @@ Réinitialiser le résultat
         line-height:1.5;
       "
     >
-      Les organismes proposés seront vérifiés avant leur mise
-      à disposition et pourront évoluer dans le temps.
+      Les associations proposées aux clubs
+      sont sélectionnées et vérifiées
+      avant leur mise à disposition.
 
       <br><br>
 
-      Les intitulés A, B, C et D ci-dessous sont provisoires.
-      Ils permettent de conserver le fonctionnement de la démonstration
-      sans présenter comme bénéficiaire une association
-      qui n’aurait pas encore été validée.
+      Leur liste peut évoluer afin de conserver
+      des organismes correspondant aux causes retenues
+      et aux exigences de transparence
+      et d’utilisation effective des soutiens.
+
+      <br><br>
+
+      Les associations retenues seront définies
+      avec la mairie et ${sportBrandHtml()}
+      selon le cadre prévu.
+
+      <br><br>
+
+      Les exemples ci-dessous permettent
+      de présenter plusieurs grandes formes de solidarité
+      sans désigner à l’avance une association
+      qui n’aurait pas encore été retenue.
 
       <br><br>
 
@@ -14769,7 +15054,8 @@ Réinitialiser le résultat
           "
         >
           Cette cause permet d’évoquer
-          les conséquences qu’un accident peut avoir
+
+                    les conséquences qu’un accident peut avoir
           sur la vie d’un enfant et de sa famille.
 
           <br><br>
@@ -14851,10 +15137,8 @@ Réinitialiser le résultat
         line-height:1.5;
       "
     >
-      Dans cette démonstration,
-      le choix est enregistré localement.
-      Dans la version officielle,
-      seules les personnes autorisées disposeront
+      Le choix est enregistré.
+      Seules les personnes autorisées disposent
       des fonctions nécessaires au traitement de l’opération.
     </div>
 
@@ -14916,7 +15200,7 @@ Réinitialiser le résultat
       line-height:1.5;
     "
   >
-    Tarif de démonstration :
+    Tarif :
     <strong>50 € HT / 60 € TTC</strong>
     pour une diffusion pendant
     <strong>7 jours consécutifs</strong>,
@@ -14925,14 +15209,14 @@ Réinitialiser le résultat
 
 
   <div style="margin-top:12px;font-weight:900;">
-    Scan commerçant — démonstration
+    Scan commerçant
   </div>
 
   <textarea
     id="sportMerchantScanInput"
     class="miniField"
     style="min-height:120px;"
-    placeholder="Lecture / scan commerçant (démo)"
+    placeholder="Lecture / scan commerçant"
   ></textarea>
 
   <div
@@ -15027,8 +15311,8 @@ Réinitialiser le résultat
     >
       Les noms réels seront affichés
       lorsque les associations auront été vérifiées et validées.
-      Pour la démonstration,
-      les quatre emplacements restent disponibles.
+      Les quatre emplacements restent disponibles
+      jusqu’à la validation des associations retenues.
     </div>
 
     <div
@@ -15132,14 +15416,13 @@ Réinitialiser le résultat
 
       <br><br>
 
-      Une traçabilité de l’opération est prévue
+      L’opération est enregistrée
       pour les acteurs concernés.
 
       <br><br>
 
-      Dans la version officielle,
-      le justificatif correspondant
-      sera transmis selon le circuit de paiement retenu.
+      Le justificatif correspondant
+      suit le circuit de paiement retenu.
     </div>
 
     <div
@@ -15254,14 +15537,14 @@ Réinitialiser le résultat
 
 
   <div style="margin-top:12px;font-weight:900;">
-    Lecture / scan club — démonstration
+    Lecture / scan club
   </div>
 
   <textarea
     id="sportScanInput"
     class="miniField"
     style="min-height:120px;"
-    placeholder="Lecture / scan club (démo)"
+    placeholder="Lecture / scan club"
   ></textarea>
 
 
@@ -15347,6 +15630,7 @@ Réinitialiser le résultat
   </div>
 
 </div>
+        </div>
        `);
     
       setTimeout(()=>{
@@ -15357,7 +15641,7 @@ Réinitialiser le résultat
 
         const b = $("openSportFicheBtn");
         const btnMap = $("openMap");
-        if(b) b.onclick = openSportFiche;
+        if(b) b.onclick = window.openSportFiche;
         if(btnMap) btnMap.onclick = openWellbeingMap;
 
         const refresh = ()=>{
@@ -15548,7 +15832,7 @@ Réinitialiser le résultat
         let currentSelectedPubAsso = null;
 
         function getClubName(){
-          return "Club partenaire (démo)";
+          return "Club partenaire";
         }
 
         function buildSportSolidarityPayload(){
@@ -15633,7 +15917,7 @@ Réinitialiser le résultat
               return;
             }
             saveSportSolidarity(payload);
-            alert("Choix de partage sport enregistré (démo).");
+            alert("Choix de partage sport enregistré.");
           };
         }
 
@@ -15671,7 +15955,8 @@ Réinitialiser le résultat
 
         if(sportShowQr){
           sportShowQr.onclick = ()=>{
-            const w = loadSportWallet();
+
+                      const w = loadSportWallet();
             const solidarity = loadSportSolidarity();
 
             const payload = {
@@ -15689,7 +15974,7 @@ Réinitialiser le résultat
 
         if(rst){
           rst.onclick = ()=>{
-            if(confirm("Réinitialiser le wallet Sport (démo) sur ce téléphone ?")){
+            if(confirm("Réinitialiser le wallet Sport sur ce téléphone ?")){
               saveSportWallet({ vert:0 });
               refresh();
             }
@@ -16007,7 +16292,7 @@ Réinitialiser le résultat
             }
 
             const paymentValidated = confirm(
-              "Simulation paiement PSP\n\n" +
+              "Confirmation du paiement\n\n" +
               "Montant : 60 € TTC\n" +
               "Répartition prévue :\n" +
               "- 35 € TTC club\n" +
@@ -16048,9 +16333,9 @@ Réinitialiser le résultat
             syncSportPubsToTape();
 
             alert(
-              "Paiement validé (démo).\n\n" +
+              "Paiement confirmé.\n\n" +
               "La publicité est active pendant 7 jours.\n" +
-              "Les justificatifs / factures sont à prévoir pour :\n" +
+              "Circuit justificatif / facturation :\n" +
               "- le commerçant\n" +
               "- le club\n" +
               "- l’association\n" +
@@ -16087,6 +16372,8 @@ Réinitialiser le résultat
 
 window.openSportPanel = function(){
   openModal("Sport", `
+    ${sportSharedStyles()}
+    <div class="bociteSportRoot">
 
     <div style="font-weight:900;margin-bottom:10px;">
       Explorer les alentours
@@ -16143,6 +16430,8 @@ window.openSportPanel = function(){
       </button>
     </div>
 
+    </div>
+
   `);
 
   setTimeout(()=>{
@@ -16166,374 +16455,7 @@ window.openClubAccess = openClubAccess;
 
 window.openSportPanel();
 return;
-}
-
-if(key === "mairie"){
-  const CITY_SERVICES_DATA = [
-    {
-      title: "Accueil mairie",
-      items: [
-        "Téléphone : 03 20 00 00 00",
-        "Horaires : lundi au vendredi de 8h30 à 12h00 et de 13h30 à 17h30",
-        "Samedi : 9h00 à 12h00 selon permanence"
-      ]
-    },
-    {
-      title: "État civil",
-      items: [
-        "Actes de naissance, mariage, décès, livret de famille",
-        "Attestations, copies et démarches d’état civil",
-        "Accueil sur rendez-vous ou aux horaires d’ouverture"
-      ]
-    },
-    {
-      title: "Carte d’identité / passeport",
-      items: [
-        "Dépôt des dossiers sur rendez-vous",
-        "Pré-demande possible en ligne avant passage au guichet",
-        "Retrait des titres sur présentation du justificatif"
-      ]
-    },
-    {
-      title: "CCAS",
-      items: [
-        "Téléphone : 03 20 00 00 01",
-        "Aide sociale, accompagnement des personnes âgées",
-        "Soutien aux familles, orientation administrative"
-      ]
-    },
-    {
-      title: "Urbanisme",
-      items: [
-        "Déclarations préalables, permis, demandes liées aux travaux",
-        "Renseignements sur le règlement local",
-        "Informations sur les dépôts et délais d’instruction"
-      ]
-    }
-  ];
-
-const demoHealthActive = (typeof getDemoCity === "function" && getDemoCity() && getDemoCity().mode === "DEMO");
-
-const HEALTH_DIRECTORY_DATA = demoHealthActive ? {
-  medecins: [
-    { nom:"Dr Martin", adresse:"12 rue du Centre", telephone:"03 20 00 10 01" },
-    { nom:"Dr Lefèvre", adresse:"8 avenue de la Gare", telephone:"03 20 00 10 02" },
-    { nom:"Dr Moreau", adresse:"22 rue Jean Jaurès", telephone:"03 20 00 10 03" }
-  ],
-  specialistes: [
-    { nom:"Cabinet dentaire République", adresse:"4 rue de la République", telephone:"03 20 00 11 01" },
-    { nom:"Ophtalmologie du Parc", adresse:"15 rue du Parc", telephone:"03 20 00 11 02" }
-  ],
-  kines: [
-    { nom:"Cabinet Kiné du Centre", adresse:"18 rue du Centre", telephone:"03 20 00 12 01" },
-    { nom:"Kiné des Écoles", adresse:"7 rue des Écoles", telephone:"03 20 00 12 02" }
-  ],
-  infirmieres: [
-    { nom:"Cabinet infirmier Saint-Martin", adresse:"3 place Saint-Martin", telephone:"03 20 00 13 01" },
-    { nom:"Infirmiers des Acacias", adresse:"10 rue des Acacias", telephone:"03 20 00 13 02" }
-  ],
-  pharmacies: [
-    { nom:"Pharmacie du Centre", adresse:"1 rue du Centre", telephone:"03 20 00 14 01" },
-    { nom:"Pharmacie de la Gare", adresse:"2 avenue de la Gare", telephone:"03 20 00 14 02" }
-  ]
-} : {
-  medecins: [
-    { nom:"Dr à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-  ],
-  specialistes: [
-    { nom:"Spécialiste à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-  ],
-  kines: [
-    { nom:"Kiné à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-  ],
-  infirmieres: [
-    { nom:"Cabinet infirmier à compléter", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-  ],
-  pharmacies: [
-    { nom:"Pharmacie Richardson", adresse:"Adresse à compléter", telephone:"Téléphone à compléter" }
-  ]
-};
-
-  function renderHealthBlock(title, list){
-    return `
-      <div class="box" style="margin-top:12px;">
-        <div style="font-weight:900;">${escapeHtml(title)}</div>
-        <div class="muted" style="margin-top:8px;">
-          ${
-            list.length
-              ? list.map(item => `
-                  • <strong>${escapeHtml(item.nom || "")}</strong><br>
-                  ${escapeHtml(item.adresse || "")}<br>
-                  ${escapeHtml(item.telephone || "")}
-                `).join("<br><br>")
-              : "Aucune entrée pour le moment."
-          }
-        </div>
-      </div>
-    `;
-  }
-
-  function renderHealthDirectoryHtml(){
-    return `
-      <div style="font-weight:900;margin-bottom:8px;">
-        Santé — médecins • spécialistes • kinés • infirmières • pharmacies
-      </div>
-
-      <div class="box">
-        <div class="muted">
-          Cet annuaire santé est séparé du service mairie principal pour être repéré immédiatement.
-        </div>
-      </div>
-
-      ${renderHealthBlock("Médecins généralistes", HEALTH_DIRECTORY_DATA.medecins)}
-      ${renderHealthBlock("Spécialistes", HEALTH_DIRECTORY_DATA.specialistes)}
-      ${renderHealthBlock("Kinésithérapeutes", HEALTH_DIRECTORY_DATA.kines)}
-      ${renderHealthBlock("Infirmières / infirmiers", HEALTH_DIRECTORY_DATA.infirmieres)}
-      ${renderHealthBlock("Pharmacies", HEALTH_DIRECTORY_DATA.pharmacies)}
-    `;
-  }
-
-  openModal("Mairie", `
-    <div style="font-weight:900;margin-bottom:8px;">Mairie</div>
-
-    <div style="font-weight:900;margin-top:10px;">Accès habitants — services utiles</div>
-
-    <div class="box">
-      <div class="muted">
-        Cette partie est destinée aux habitants. Elle permet d’ouvrir directement des espaces utiles,
-        lisibles et pratiques.
-      </div>
-
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-        <button class="choiceBtn" id="openMairieServicesBtn" type="button" style="background:#fff4f4;">
-         Services mairie / ville
-        </button>
-
-        <button class="choiceBtn" id="openHealthServicesBtn" type="button" style="background:#f2fff7;">
-          Médecins • spécialistes • kinés • infirmières • pharmacies
-        </button>
-      </div>
-    </div>
-
-    <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;">Messages gratuits d’intérêt général</div>
-      <ul style="margin:8px 0 0 18px;font-weight:800;">
-        <li>Urgence, tempête, vigilance météo</li>
-        <li>Rue barrée / déviation</li>
-        <li>Risque de gel / température dangereuse</li>
-        <li>Information de sécurité publique</li>
-      </ul>
-
-      <div class="muted" style="margin-top:8px;">
-        Ces messages restent gratuits pour la mairie lorsqu’ils relèvent de l’intérêt général
-        et sont diffusés dans le petit bandeau rouge défilant de la tuile Mairie.
-      </div>
-    </div>
-
-    <div class="box" style="margin-top:12px;border-left:6px solid #2f5d46;font-size:13px;line-height:1.45;">
-      <div style="font-weight:800;margin-bottom:6px;">Publicité mairie & association</div>
-
-      <div>
-        Cliquez directement sur le grand bandeau publicitaire en haut de l’application
-        pour accéder à votre espace : mairie ou association.
-      </div>
-
-      <div style="margin-top:8px;">
-        Lors de la première utilisation, vous remplissez votre fiche.
-        Elle restera ensuite préremplie pour éviter de tout ressaisir.
-      </div>
-
-      <div style="margin-top:8px;">
-        Après validation, l’accès pourra se faire avec un code, un qr code,
-        ou un code de secours envoyé par email ou téléphone.
-      </div>
-
-      <div class="muted" style="margin-top:8px;">
-        Les associations disposent de leur propre accès indépendant
-        et n’entrent pas dans l’espace interne mairie.
-      </div>
-    </div>
-
-    <div class="box" style="margin-top:12px;">
-      <div style="font-weight:900;">Accès interne mairie</div>
-      <div class="muted" style="margin-top:6px;">
-        Cet espace regroupe la gestion interne : message bandeau, lecture des scans école et sport,
-        dispatch des échanges, validations, historiques et suivi des parrainages.
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
- <button class="choiceBtn" id="toggleMairieAdminBtn" type="button">
-Espace de gestion de la mairie
-</button>
-          Ouvrir l’espace interne mairie
-        </button>
-      </div>
-    </div>
-
-    <div id="mairieAdminPanel" style="display:none;">
-
-      <div style="font-weight:900;margin-top:14px;">Message bandeau mairie interne</div>
-      <div class="box">
-        <div class="muted" style="margin-top:6px;">
-          Ce message alimente le petit bandeau rouge défilant sur la tuile Mairie.
-        </div>
-
-        <div style="margin-top:10px;font-weight:900;">Message</div>
-        <input class="miniField" id="mairieMsgInput" placeholder="Ex : Rue du 14 juillet fermée du 4 au 9 août – déviation rue Michelet" />
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <button class="choiceBtn" id="mairieMsgSave" type="button">
-Enregistrer le message
-</button>
-
-<button class="choiceBtn" id="mairieMsgReset" type="button" style="background:#fff;">
-Effacer le message
-</button>
-        </div>
-      </div>
-
-      <div style="font-weight:900;margin-top:16px;color:#8a6d00;">Lecture école → mairie</div>
-      <div class="box" style="border-left:6px solid #d4bb18;">
-        <div class="muted">
-          La mairie lit le code dynamique transmis par l’école, visualise le montant,
-          prépare la destination de l’échange puis valide l’opération.
-        </div>
-
-        <textarea id="mairieScanInput" class="miniField" style="min-height:120px;margin-top:10px;" placeholder="Lecture / scan classe (démo)"></textarea>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-         <button class="choiceBtn" id="mairieReadBtn" type="button" style="background:#f2df58;">
-Consulter le scan
-</button>
-
-<button class="choiceBtn" id="mairieValidateBtn" type="button" style="background:#f2df58;">
-Confirmer l'échange avec l'école
-</button>
-
-<button class="choiceBtn" id="mairieHistoryBtn" type="button" style="background:#f2df58;">
-Consulter l'historique
-</button>
-
-<button class="choiceBtn" id="mairieHistoryResetBtn" type="button" style="background:#f2df58;">
-Réinitialiser l'historique
-</button>
-
-<button class="choiceBtn" id="mairieExportBtn" type="button" style="background:#f2df58;">
-Exporter l'historique
-</button>
-        </div>
-
-        <div class="box" style="margin-top:12px;background:var(--bg);">
-          <div style="font-weight:900;">Lecture du code école</div>
-          <div class="muted" id="mairieReadOut" style="margin-top:8px;">Aucun code lu pour le moment.</div>
-        </div>
-      </div>
-
-      <div style="font-weight:900;margin-top:16px;color:#2f5d46;">Lecture sport → mairie</div>
-      <div class="box" style="border-left:6px solid #2f5d46;">
-        <div class="muted">
-          Espace prévu pour la lecture des codes sport et la validation des échanges clubs.
-        </div>
-      </div>
-
-      <div style="font-weight:900;margin-top:16px;">Parrainages</div>
-      <div class="box">
-        <textarea id="mairieReferralInput" class="miniField" style="min-height:110px;" placeholder="Ex : Nom du parrain, type, date, contrôle 30 jours, commentaire (démo)"></textarea>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-         <button class="choiceBtn" id="mairieReferralSaveBtn" type="button">
-Enregistrer le suivi du parrainage
-</button>
-
-<button class="choiceBtn" id="mairieReferralReadBtn" type="button" style="background:#fff;">
-Consulter le suivi du parrainage
-</button>
-
-<button class="choiceBtn" id="mairieReferralResetBtn" type="button" style="background:#fff;">
-Réinitialiser le suivi du parrainage
-</button>
-        </div>
-      </div>
-    </div>
-  `);
-
-  setTimeout(()=>{
-    const input = $("mairieMsgInput");
-    const saveBtn = $("mairieMsgSave");
-    const resetBtn = $("mairieMsgReset");
-
-    const toggleAdminBtn = $("toggleMairieAdminBtn");
-    const mairieAdminPanel = $("mairieAdminPanel");
-    const openMairieServicesBtn = $("openMairieServicesBtn");
-    const openHealthServicesBtn = $("openHealthServicesBtn");
-
-    if(toggleAdminBtn && mairieAdminPanel){
-      toggleAdminBtn.onclick = ()=>{
-        const isHidden = mairieAdminPanel.style.display === "none" || mairieAdminPanel.style.display === "";
-        mairieAdminPanel.style.display = isHidden ? "block" : "none";
-        toggleAdminBtn.textContent = isHidden
-          ? "Fermer l’espace interne mairie"
-          : "Ouvrir l’espace interne mairie";
-      };
-    }
-
-    if(openMairieServicesBtn){
-      openMairieServicesBtn.onclick = ()=>{
-        window.open("https://www.wattignies.fr", "_blank", "noopener,noreferrer");
-      };
-    }
-
-    if(openHealthServicesBtn){
-      openHealthServicesBtn.onclick = ()=>{
-        openModal("Santé — médecins • spécialistes • kinés • infirmières • pharmacies", renderHealthDirectoryHtml());
-      };
-    }
-
-    if(input){
-      const db = typeof mairieLoad === "function" ? mairieLoad() : {};
-      input.value = db.message || "";
-    }
-
-    if(saveBtn){
-      saveBtn.onclick = ()=>{
-        const msg = input ? String(input.value || "").trim() : "";
-        if(!msg){
-          alert("Renseigne un message.");
-          return;
-        }
-
-        if(typeof mairieSave === "function"){
-          mairieSave({ message:msg, ts:Date.now(), ts_fr:new Date().toLocaleString("fr-FR") });
-        }
-
-        if(typeof renderMairieTicker === "function"){
-          renderMairieTicker();
-        }
-
-        alert("Message mairie enregistré.");
-      };
-    }
-
-    if(resetBtn){
-      resetBtn.onclick = ()=>{
-        if(confirm("Réinitialiser le message mairie ?")){
-          if(typeof mairieSave === "function"){
-            mairieSave({});
-          }
-          if(input) input.value = "";
-          if(typeof renderMairieTicker === "function"){
-            renderMairieTicker();
-          }
-          alert("Message mairie réinitialisé.");
-        }
-      };
-    }
-
-    const xb = $("xBtn");
-    if(xb && xb.focus) xb.focus();
-  },0);
-
-  return;
-}
+} 
 
 if(key === "commerces") {
   openModal("Commerces & Entreprises", `
