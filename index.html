@@ -14169,16 +14169,73 @@ if(schoolDirectionFirstSetupBtn){
 if(key === "sport"){
 
   /* =========================================================
-     SPORT — PRÉSENTATION COMMUNE
+     SPORT — Bo'CitéArt
+     BLOC COMPLET PUBLIC + CLUB + BOCITECOINS + SOLIDARITÉ
      ========================================================= */
 
+  const SPORT_KEYS = {
+    wallet: "bociteart_sport_wallet_v3",
+    ledger: "bociteart_sport_ledger_v3",
+    access: "bociteart_sport_access_v3",
+    club: "bociteart_sport_club_v3",
+    training: "bociteart_sport_training_v3",
+    reports: "bociteart_sport_reports_v3",
+    solidarity: "bociteart_sport_solidarity_v3",
+    exchanges: "bociteart_sport_exchanges_v3",
+    pubs: "bociteart_sport_pubs_v3"
+  };
+
+  const SPORT_CONFIG = Object.assign({
+    mode: "preproduction",
+    resultsEndpoint: "",
+    mairieEndpoint: "",
+    authEndpoint: "",
+    clubId: "sport-club-local"
+  }, window.BOCITEART_SPORT_CONFIG || {});
+
+  let sportSession = window.bociteartSportSession || {
+    role: "",
+    accountId: "",
+    name: "",
+    team: ""
+  };
+
+  function sportEl(id){
+    return document.getElementById(id);
+  }
+
+  function sportEsc(value){
+    return String(value == null ? "" : value)
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+  }
+
   function sportBrandHtml(){
-    return '<span class="bociteSportLogo">' + "Bo'Cité" + '<span>Art</span></span>';
+    return '<span class="bociteSportLogo">' +
+      "Bo'Cité" +
+      '<span>Art</span>' +
+    '</span>';
+  }
+
+  function sportTitle(textBefore, textAfter){
+    return `
+      <div class="sportTitleCard">
+        <div class="sportTitleText">
+          ${sportEsc(textBefore || "")}
+          ${sportBrandHtml()}
+          ${textAfter ? " " + sportEsc(textAfter) : ""}
+        </div>
+      </div>
+    `;
   }
 
   function sportSharedStyles(){
     return `
       <style>
+
         #modal .head{
           background:#ffffff !important;
         }
@@ -14196,9 +14253,34 @@ if(key === "sport"){
           line-height:1.55;
         }
 
-        .bociteSportRoot .box,
-        .bociteSportRoot .walletBox{
+        .bociteSportRoot *{
           box-sizing:border-box;
+        }
+
+        .bociteSportRoot .sportTitleCard{
+          width:100%;
+          margin-top:14px;
+          padding:12px 14px;
+          background:#ffffff;
+          border:1px solid rgba(47,93,70,.30);
+          border-radius:14px;
+        }
+
+        .bociteSportRoot .sportTitleCard:first-child{
+          margin-top:0;
+        }
+
+        .bociteSportRoot .sportTitleText,
+        .bociteSportRoot .sportSubTitle{
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          line-height:1.35;
+        }
+
+        .bociteSportRoot .box,
+        .bociteSportRoot .sportCard,
+        .bociteSportRoot .walletBox{
           background:#ffffff !important;
           color:#111111 !important;
           font-size:14px !important;
@@ -14206,220 +14288,1442 @@ if(key === "sport"){
           line-height:1.55 !important;
           border:1px solid rgba(47,93,70,.20) !important;
           border-radius:14px;
+          padding:14px;
+        }
+
+        .bociteSportRoot .sportCard{
+          margin-top:8px;
         }
 
         .bociteSportRoot .muted,
-        .bociteSportRoot .walletSub{
+        .bociteSportRoot .walletSub,
+        .bociteSportRoot .sportText{
           color:#111111 !important;
           font-size:14px !important;
           font-weight:400 !important;
           line-height:1.55 !important;
         }
 
-        .bociteSportRoot > div[style*="font-weight:900"],
-        .bociteSportRoot > div[style*="font-weight:800"]{
-          box-sizing:border-box;
-          width:100%;
-          margin-top:14px !important;
-          margin-bottom:8px !important;
-          padding:12px 14px !important;
-          background:#ffffff !important;
-          border:1px solid rgba(47,93,70,.30) !important;
-          border-radius:14px !important;
-          color:#2f5d46 !important;
-          font-size:17px !important;
-          font-weight:700 !important;
-          line-height:1.35 !important;
+        .bociteSportRoot ul{
+          margin:10px 0 0 20px;
+          padding:0;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.6;
         }
 
-        .bociteSportRoot > div[style*="font-weight:900"]:first-of-type,
-        .bociteSportRoot > div[style*="font-weight:800"]:first-of-type{
-          margin-top:0 !important;
-        }
-
-        .bociteSportRoot .box > div[style*="font-weight:900"],
-        .bociteSportRoot .box > div[style*="font-weight:800"],
-        .bociteSportRoot .box > strong:first-child,
-        .bociteSportRoot .walletTitle{
-          color:#2f5d46 !important;
-          font-size:17px !important;
-          font-weight:700 !important;
-          line-height:1.35 !important;
-        }
-
-        .bociteSportRoot .box > div[style*="font-weight:900"]{
-          margin-top:10px;
-        }
-
-        .bociteSportRoot ul,
         .bociteSportRoot li{
-          color:#111111 !important;
-          font-size:14px !important;
-          font-weight:400 !important;
-          line-height:1.6 !important;
+          margin:6px 0;
+          font-weight:400;
         }
 
-        .bociteSportRoot li strong,
-        .bociteSportRoot .muted strong{
-          font-weight:400 !important;
+        .bociteSportRoot strong{
+          font-weight:700;
         }
 
         .bociteSportRoot .choiceBtn,
-        .bociteSportRoot .walletMini{
+        .bociteSportRoot .walletMini,
+        .bociteSportRoot .sportBtn{
           background:#ffffff !important;
           background-color:#ffffff !important;
+          background-image:none !important;
           color:#2f5d46 !important;
           border:1px solid rgba(47,93,70,.38) !important;
           font-size:14px !important;
           font-weight:700 !important;
+          min-height:42px;
+          border-radius:10px;
+          padding:9px 12px;
+          cursor:pointer;
         }
 
-        .bociteSportRoot .miniField{
+        .bociteSportRoot .sportBtnDanger{
+          border-color:rgba(176,0,32,.35) !important;
+          color:#8e001a !important;
+        }
+
+        .bociteSportRoot .sportActions{
+          display:flex;
+          gap:10px;
+          flex-wrap:wrap;
+          margin-top:12px;
+        }
+
+        .bociteSportRoot .sportActions > button{
+          flex:1 1 180px;
+        }
+
+        .bociteSportRoot .miniField,
+        .bociteSportRoot .sportField{
+          width:100%;
           background:#ffffff !important;
           color:#111111 !important;
           border:1px solid rgba(47,93,70,.28) !important;
+          border-radius:10px;
+          padding:10px;
           font-size:14px !important;
           font-weight:400 !important;
+          margin-top:6px;
         }
 
-        .bociteSportRoot .miniCheck{
-          color:#111111 !important;
-          font-size:14px !important;
-          font-weight:400 !important;
-          line-height:1.5 !important;
+        .bociteSportRoot textarea.sportField{
+          min-height:100px;
+          resize:vertical;
+        }
+
+        .bociteSportRoot .sportLabel{
+          display:block;
+          margin-top:10px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        }
+
+        .bociteSportRoot .sportCheck{
+          display:flex;
+          gap:9px;
+          align-items:flex-start;
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
         }
 
         .bociteSportRoot details{
+          margin-top:8px;
+          padding:10px;
           background:#ffffff !important;
-          border:1px solid rgba(47,93,70,.26) !important;
+          border:1px solid rgba(47,93,70,.24) !important;
+          border-radius:10px;
         }
 
-        .bociteSportRoot details summary{
-          color:#2f5d46 !important;
-          font-size:14px !important;
-          font-weight:700 !important;
+        .bociteSportRoot summary{
+          cursor:pointer;
+          color:#2f5d46;
+          font-size:14px;
+          font-weight:700;
         }
 
-        .bociteSportLogo{
+        .bociteSportRoot .sportStatus{
+          margin-top:10px;
+          padding:10px;
+          background:#ffffff;
+          border:1px solid rgba(47,93,70,.18);
+          border-radius:10px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+        }
+
+        .bociteSportRoot .sportAccessItem,
+        .bociteSportRoot .sportTrainingItem,
+        .bociteSportRoot .sportResultItem,
+        .bociteSportRoot .sportExchangeItem{
+          margin-top:10px;
+          padding:12px;
+          background:#ffffff;
+          border:1px solid rgba(47,93,70,.20);
+          border-radius:12px;
+        }
+
+        .bociteSportRoot .sportAccessName{
+          color:#2f5d46;
+          font-size:15px;
+          font-weight:700;
+        }
+
+        .bociteSportRoot .sportPill{
+          display:inline-block;
+          margin:4px 6px 0 0;
+          padding:4px 8px;
+          border:1px solid rgba(47,93,70,.25);
+          border-radius:999px;
+          background:#ffffff;
+          color:#111111;
+          font-size:12px;
+          font-weight:400;
+        }
+
+        .bociteSportRoot .bociteSportLogo{
           display:inline-block;
           color:#2f5d46;
-          font-size:inherit;
           font-weight:700;
-          line-height:inherit;
           white-space:nowrap;
           word-spacing:0;
           letter-spacing:normal;
         }
 
-        .bociteSportLogo > span{
+        .bociteSportRoot .bociteSportLogo > span{
           display:inline;
           color:#b00020;
           margin:0;
           padding:0;
-          font-size:inherit;
           font-weight:700;
-          word-spacing:0;
-          letter-spacing:normal;
         }
+
+        .bociteSportRoot .walletTitle{
+          color:#2f5d46 !important;
+          font-size:17px !important;
+          font-weight:700 !important;
+        }
+
+        .bociteSportRoot .walletValue{
+          font-size:34px;
+          font-weight:700;
+          line-height:1.1;
+          margin-top:6px;
+        }
+
+        .bociteSportRoot .sportCauseName{
+          color:#2f5d46;
+          font-size:14px;
+          font-weight:700;
+        }
+
       </style>
     `;
   }
 
-  /* =========================================================
-     FICHE ÉLUS / CCI / COMMERÇANTS
-     ========================================================= */
+  function sportLoad(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
 
-  window.openSportFiche = function(){
+      if(!raw){
+        return fallback;
+      }
+
+      const parsed = JSON.parse(raw);
+
+      return parsed == null
+        ? fallback
+        : parsed;
+
+    }catch(error){
+      return fallback;
+    }
+  }
+
+  function sportSave(key, value){
+    try{
+      localStorage.setItem(
+        key,
+        JSON.stringify(value)
+      );
+
+      return true;
+
+    }catch(error){
+      return false;
+    }
+  }
+
+  function sportCreateId(prefix){
+    return (
+      String(prefix || "sport") +
+      "-" +
+      Date.now() +
+      "-" +
+      Math.random().toString(36).slice(2,8)
+    );
+  }
+
+  function sportToday(){
+    const d = new Date();
+
+    const y = d.getFullYear();
+
+    const m =
+      String(d.getMonth() + 1)
+        .padStart(2,"0");
+
+    const day =
+      String(d.getDate())
+        .padStart(2,"0");
+
+    return `${y}-${m}-${day}`;
+  }
+
+  async function sportHash(text){
+    const value =
+      String(text || "");
+
+    try{
+
+      if(
+        window.crypto &&
+        window.crypto.subtle &&
+        window.TextEncoder
+      ){
+
+        const data =
+          new TextEncoder()
+            .encode(value);
+
+        const hash =
+          await window.crypto.subtle.digest(
+            "SHA-256",
+            data
+          );
+
+        return Array
+          .from(new Uint8Array(hash))
+          .map(
+            x =>
+              x
+                .toString(16)
+                .padStart(2,"0")
+          )
+          .join("");
+      }
+
+    }catch(error){}
+
+    return "local:" + value;
+  }
+
+  function sportLoadWallet(){
+
+    const saved =
+      sportLoad(
+        SPORT_KEYS.wallet,
+        null
+      );
+
+    if(
+      saved &&
+      Number.isFinite(
+        Number(saved.vert)
+      )
+    ){
+      return {
+        vert:
+          Math.max(
+            0,
+            Number(saved.vert || 0)
+          )
+      };
+    }
+
+    if(
+      typeof loadSportWallet ===
+      "function"
+    ){
+
+      try{
+
+        const old =
+          loadSportWallet();
+
+        const vert =
+          Math.max(
+            0,
+            Number(
+              old &&
+              old.vert ||
+              0
+            )
+          );
+
+        sportSave(
+          SPORT_KEYS.wallet,
+          {vert}
+        );
+
+        return {vert};
+
+      }catch(error){}
+    }
+
+    return {
+      vert:0
+    };
+  }
+
+  function sportSaveWallet(wallet){
+
+    const clean = {
+      vert:
+        Math.max(
+          0,
+          Number(
+            wallet &&
+            wallet.vert ||
+            0
+          )
+        )
+    };
+
+    sportSave(
+      SPORT_KEYS.wallet,
+      clean
+    );
+
+    if(
+      typeof saveSportWallet ===
+      "function"
+    ){
+      try{
+        saveSportWallet(clean);
+      }catch(error){}
+    }
+
+    return clean;
+  }
+
+  function sportLoadLedger(){
+    return sportLoad(
+      SPORT_KEYS.ledger,
+      []
+    );
+  }
+
+  function sportAddCoin(
+    reason,
+    reference,
+    team
+  ){
+
+    const ledger =
+      sportLoadLedger();
+
+    const ref =
+      String(
+        reference ||
+        ""
+      ).trim();
+
+    if(
+      ref &&
+      ledger.some(
+        item =>
+          String(
+            item.reference ||
+            ""
+          ) === ref
+      )
+    ){
+      return {
+        ok:false,
+        duplicate:true
+      };
+    }
+
+    const wallet =
+      sportLoadWallet();
+
+    wallet.vert += 1;
+
+    sportSaveWallet(
+      wallet
+    );
+
+    ledger.push({
+      id:
+        sportCreateId("coin"),
+
+      amount:
+        1,
+
+      direction:
+        "credit",
+
+      reason:
+        String(
+          reason ||
+          "Action sportive validée"
+        ),
+
+      reference:
+        ref,
+
+      team:
+        String(
+          team ||
+          ""
+        ),
+
+      ts:
+        Date.now(),
+
+      ts_fr:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+    });
+
+    sportSave(
+      SPORT_KEYS.ledger,
+      ledger.slice(-500)
+    );
+
+    return {
+      ok:true,
+      balance:wallet.vert
+    };
+  }
+
+  function sportDebitCoins(
+    amount,
+    reason,
+    reference
+  ){
+
+    const n =
+      Number(amount || 0);
+
+    const wallet =
+      sportLoadWallet();
+
+    if(
+      n < 30 ||
+      n % 10 !== 0 ||
+      wallet.vert < n
+    ){
+      return {
+        ok:false,
+        balance:wallet.vert
+      };
+    }
+
+    wallet.vert -= n;
+
+    sportSaveWallet(
+      wallet
+    );
+
+    const ledger =
+      sportLoadLedger();
+
+    ledger.push({
+      id:
+        sportCreateId("coin"),
+
+      amount:
+        n,
+
+      direction:
+        "debit",
+
+      reason:
+        String(
+          reason ||
+          "Échange club"
+        ),
+
+      reference:
+        String(
+          reference ||
+          ""
+        ),
+
+      ts:
+        Date.now(),
+
+      ts_fr:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+    });
+
+    sportSave(
+      SPORT_KEYS.ledger,
+      ledger.slice(-500)
+    );
+
+    return {
+      ok:true,
+      balance:wallet.vert
+    };
+  }
+
+  function sportLoadClub(){
+
+    return sportLoad(
+      SPORT_KEYS.club,
+      {
+        id:
+          SPORT_CONFIG.clubId,
+
+        name:
+          "Club partenaire",
+
+        officialResultsUrl:
+          "",
+
+        publicNetworkUrl:
+          "",
+
+        teams:[]
+      }
+    );
+  }
+
+  function sportSaveClub(data){
+    return sportSave(
+      SPORT_KEYS.club,
+      data
+    );
+  }
+
+  function sportLoadAccess(){
+
+    const data =
+      sportLoad(
+        SPORT_KEYS.access,
+        null
+      );
+
+    if(
+      data &&
+      data.president &&
+      Array.isArray(
+        data.coaches
+      )
+    ){
+      return data;
+    }
+
+    return {
+      president:{
+        id:
+          "president",
+
+        identifier:
+          "president",
+
+        name:
+          "Président du club",
+
+        codeHash:
+          "",
+
+        active:
+          true,
+
+        updatedAt:
+          new Date()
+            .toISOString()
+      },
+
+      coaches:[]
+    };
+  }
+
+  function sportSaveAccess(data){
+    return sportSave(
+      SPORT_KEYS.access,
+      data
+    );
+  }
+
+  function sportLoadTrainings(){
+    return sportLoad(
+      SPORT_KEYS.training,
+      []
+    );
+  }
+
+  function sportSaveTrainings(items){
+    return sportSave(
+      SPORT_KEYS.training,
+      items.slice(-300)
+    );
+  }
+
+  function sportLoadReports(){
+
+    const current =
+      sportLoad(
+        SPORT_KEYS.reports,
+        null
+      );
+
+    if(
+      Array.isArray(current)
+    ){
+      return current;
+    }
+
+    const old =
+      sportLoad(
+        "bociteart_sport_report_v1",
+        null
+      );
+
+    if(
+      old &&
+      typeof old ===
+      "object"
+    ){
+
+      return [{
+        id:
+          sportCreateId(
+            "legacy-report"
+          ),
+
+        team:
+          "Club partenaire",
+
+        text:
+          String(
+            old.text ||
+            ""
+          ),
+
+        official:
+          false,
+
+        ts:
+          Number(
+            old.ts ||
+            Date.now()
+          ),
+
+        ts_fr:
+          String(
+            old.ts_fr ||
+            ""
+          )
+      }];
+    }
+
+    return [];
+  }
+
+  function sportSaveReports(items){
+    return sportSave(
+      SPORT_KEYS.reports,
+      items.slice(-300)
+    );
+  }
+
+  function sportLoadSolidarity(){
+
+    const current =
+      sportLoad(
+        SPORT_KEYS.solidarity,
+        null
+      );
+
+    if(
+      current &&
+      typeof current ===
+      "object"
+    ){
+      return current;
+    }
+
+    const old =
+      sportLoad(
+        "bociteart_sport_solidarity_v2",
+        null
+      );
+
+    return (
+      old &&
+      typeof old ===
+      "object"
+    )
+      ? old
+      : {
+          mode:"none",
+          map:{}
+        };
+  }
+
+  function sportSaveSolidarity(data){
+    return sportSave(
+      SPORT_KEYS.solidarity,
+      data
+    );
+  }
+
+  function sportLoadExchanges(){
+
+    const current =
+      sportLoad(
+        SPORT_KEYS.exchanges,
+        null
+      );
+
+    if(
+      Array.isArray(current)
+    ){
+      return current;
+    }
+
+    const old =
+      sportLoad(
+        "bociteart_sport_history_v2",
+        null
+      );
+
+    return Array.isArray(old)
+      ? old
+      : [];
+  }
+
+  function sportSaveExchanges(items){
+    return sportSave(
+      SPORT_KEYS.exchanges,
+      items.slice(-300)
+    );
+  }
+
+  function sportLoadPubs(){
+
+    const current =
+      sportLoad(
+        SPORT_KEYS.pubs,
+        null
+      );
+
+    if(
+      Array.isArray(current)
+    ){
+      return current;
+    }
+
+    const old =
+      sportLoad(
+        "bociteart_sport_pubs_v2",
+        null
+      );
+
+    return Array.isArray(old)
+      ? old
+      : [];
+  }
+
+  function sportSavePubs(items){
+    return sportSave(
+      SPORT_KEYS.pubs,
+      items.slice(-300)
+    );
+  }
+
+  function getActiveSportPubs(){
+
+    const now =
+      Date.now();
+
+    return sportLoadPubs()
+      .filter(
+        x =>
+          x.paid === true &&
+          now >= x.startTs &&
+          now <= x.endTs
+      );
+  }
+
+  function syncSportPubsToTape(){
+
+    const staticAds = [
+
+      {
+        txt:
+          "🥐 Commerce partenaire soutient Club + Association solidaire A • www.bociteart.com",
+        bold:true
+      },
+
+      {
+        txt:
+          "💊 Commerce partenaire soutient Club + Association solidaire B • www.bociteart.com",
+        bold:false
+      },
+
+      {
+        txt:
+          "🌸 Commerce partenaire soutient Club + Association solidaire C • www.bociteart.com",
+        bold:true
+      },
+
+      {
+        txt:
+          "🚗 Commerce partenaire soutient Club + Association solidaire D • www.bociteart.com",
+        bold:false
+      }
+
+    ];
+
+    const dynamicAds =
+      getActiveSportPubs()
+        .map(
+          x => ({
+            txt:x.text,
+            bold:true
+          })
+        );
+
+    window.tapeAds =
+      dynamicAds.length
+        ? dynamicAds.concat(
+            staticAds
+          )
+        : staticAds.slice();
+
+    if(
+      typeof window.renderTape ===
+      "function"
+    ){
+      window.renderTape();
+    }
+  }
+
+  window.loadSportHistory =
+    sportLoadExchanges;
+
+  window.saveSportHistory =
+    sportSaveExchanges;
+
+  window.loadSportReport =
+    function(){
+
+      const list =
+        sportLoadReports();
+
+      return list.length
+        ? list[list.length - 1]
+        : null;
+    };
+
+  window.loadSportSolidarity =
+    sportLoadSolidarity;
+
+  window.saveSportSolidarity =
+    sportSaveSolidarity;
+
+  window.loadSportPubs =
+    sportLoadPubs;
+
+  window.saveSportPubs =
+    sportSavePubs;
+
+  window.getActiveSportPubs =
+    getActiveSportPubs;
+
+  window.syncSportPubsToTape =
+    syncSportPubsToTape;
+
+  syncSportPubsToTape();
+
+   function sportBenefitsHtml(){
+
+    return `
+
+      ${sportTitle(
+        "Ce que le sport fait grandir avec"
+      )}
+
+      <div class="sportCard">
+
+        <div class="sportText">
+          Le sport rassemble,
+          transmet
+          et révèle bien davantage
+          qu’un résultat.
+
+          <br><br>
+
+          Avec ${sportBrandHtml()},
+          l’entraînement,
+          la compétition
+          et la vie du club
+          deviennent des occasions concrètes
+          de faire grandir
+          le respect,
+          l’engagement,
+          l’entraide,
+          la responsabilité
+          et la solidarité.
+        </div>
+
+        <ul>
+          <li>écouter les consignes du coach et aller jusqu’au bout de l’effort demandé ;</li>
+          <li>respecter ses partenaires, ses adversaires, les arbitres, les entraîneurs, les bénévoles et le personnel de service ;</li>
+          <li>savoir attendre, écouter et laisser une place aux autres ;</li>
+          <li>encourager un équipier lorsqu’il rencontre une difficulté ;</li>
+          <li>partager les efforts, le matériel et les responsabilités ;</li>
+          <li>accepter la victoire avec respect et la défaite avec dignité ;</li>
+          <li>être ponctuel et respecter l’engagement pris envers son équipe ;</li>
+          <li>ranger le matériel après l’entraînement ou le match ;</li>
+          <li>laisser les vestiaires, le terrain, la salle et les espaces utilisés propres ;</li>
+          <li>ne jamais laisser aux autres ce que chacun doit faire lui-même ;</li>
+          <li>prendre soin des équipements appartenant au club ou à la collectivité ;</li>
+          <li>comprendre que l’attitude individuelle construit directement l’image de toute l’équipe ;</li>
+          <li>apprendre que les bons comportements produisent toujours quelque chose de rare et de précieux : des valeurs, de la confiance et une utilité réelle pour tout le club ;</li>
+          <li>comprendre progressivement que le sport est un formidable miroir de nos comportements et une force au service de la solidarité.</li>
+        </ul>
+
+      </div>
+
+
+      ${sportTitle(
+        "Ce que",
+        "apporte au sportif"
+      )}
+
+      <div class="sportCard">
+
+        <ul>
+          <li>voir ses efforts et ceux de son équipe reconnus au-delà du seul score ;</li>
+          <li>comprendre que le respect, l’entraide, la discipline et le soin apporté aux lieux produisent quelque chose d’utile pour tout le club ;</li>
+          <li>participer à un objectif collectif plutôt qu’à une récompense individuelle ;</li>
+          <li>retrouver les résultats de son équipe et des autres équipes du club ;</li>
+          <li>mieux connaître tous les commerces, les entreprises, les associations et les autres acteurs de la commune qui soutiennent son club ;</li>
+          <li>découvrir les personnes qui font vivre sa ville autour du sport ;</li>
+          <li>parler naturellement de son club, de ses résultats, de ses actions et de ceux qui le soutiennent ;</li>
+          <li>devenir un ambassadeur de son équipe, de son club et de sa commune ;</li>
+          <li>comprendre que son comportement donne aussi une image du club qu’il représente ;</li>
+          <li>découvrir que le sport relie effort, respect, vie locale et solidarité.</li>
+        </ul>
+
+        <div
+          class="sportText"
+          style="margin-top:10px;"
+        >
+          <strong>
+            Avec ${sportBrandHtml()},
+            le sportif ne représente pas seulement
+            son équipe pendant un match :
+            il porte aussi les valeurs
+            de son club partout où il va.
+          </strong>
+        </div>
+
+      </div>
+
+
+      ${sportTitle(
+        "Ce que",
+        "apporte au club"
+      )}
+
+      <div class="sportCard">
+
+        <ul>
+          <li>faire connaître ses équipes, ses disciplines, ses résultats et ses rendez-vous ;</li>
+          <li>valoriser le travail des présidents, entraîneurs, éducateurs, dirigeants, bénévoles et de tout le personnel de service qui contribue chaque jour à faire vivre le club ;</li>
+          <li>mettre en valeur les comportements responsables des équipes ;</li>
+          <li>responsabiliser les sportifs dans l’utilisation des vestiaires, terrains, salles et équipements ;</li>
+          <li>donner un sens collectif aux bocitecoins gagnés par les équipes ;</li>
+          <li>consacrer les avantages obtenus aux besoins utiles du club ;</li>
+          <li>choisir collectivement de conserver ces avantages pour le club, d’en partager une partie avec une cause solidaire ou de les consacrer entièrement à cette cause ;</li>
+          <li>créer des relations directes avec les commerces et les entreprises de la commune ;</li>
+          <li>faire connaître les besoins du club sans réduire la relation avec les professionnels à une simple demande d’aide ;</li>
+          <li>faire entrer de nouveaux partenaires dans la vie du club ;</li>
+          <li>renforcer les relations avec les adhérents, les familles et les supporters ;</li>
+          <li>rendre les résultats du week-end accessibles dans ${sportBrandHtml()} ;</li>
+          <li>donner davantage de visibilité aux clubs et disciplines encore trop méconnus dans la commune.</li>
+        </ul>
+
+        <div
+          class="sportText"
+          style="margin-top:10px;"
+        >
+          <strong>
+            Avec ${sportBrandHtml()},
+            chaque club gagne une nouvelle porte
+            pour montrer ce qu’il fait,
+            ce qu’il transmet
+            et tout ce qu’il apporte à la commune.
+          </strong>
+        </div>
+
+      </div>
+
+
+      ${sportTitle(
+        "Ce que",
+        "apporte au commerçant"
+      )}
+
+      <div class="sportCard">
+
+        <div class="sportText">
+          Voici une belle occasion
+          de montrer qui vous êtes
+          dans toute la commune,
+          de faire connaître vos services
+          et de montrer concrètement
+          votre attachement à la vie locale.
+        </div>
+
+        <ul>
+          <li>être davantage remarqué par les citoyens, les adhérents, les familles, les supporters et leur entourage ;</li>
+          <li>faire connaître votre activité à de nouveaux habitants ;</li>
+          <li>disposer d’une présence supplémentaire dans ${sportBrandHtml()}, au-delà de vos autres possibilités de communication ;</li>
+          <li>ouvrir une véritable fenêtre sur la ville, dans la poche de tous ;</li>
+          <li>diffuser pendant 7 jours une petite publicité locale mettant en avant votre commerce et le club que vous choisissez de soutenir ;</li>
+          <li>associer clairement votre enseigne à la vie sportive et à l’ensemble des clubs sportifs de votre commune ;</li>
+          <li>montrer qu’un commerce est bien davantage qu’un lieu d’achat : un acteur de la vie locale ;</li>
+          <li>aller encore plus loin en associant votre soutien à une cause de recherche encore trop méconnue et qui a besoin d’un engagement durable pour faire avancer la recherche ;</li>
+          <li>montrer publiquement le club et la cause que vous choisissez de soutenir ;</li>
+          <li>créer une relation durable avec un club qui a lui-même des besoins d’achat, d’équipement et de développement ;</li>
+          <li>accueillir de nouveaux clients issus du club, de ses adhérents, de leurs familles et de leur entourage ;</li>
+          <li>contribuer à faire connaître d’autres clubs sportifs encore trop méconnus dans la commune ;</li>
+          <li>créer de nouvelles habitudes de fréquentation dans votre commerce ;</li>
+          <li>faire circuler davantage la vie locale entre commerces, clubs, habitants et associations.</li>
+        </ul>
+
+        <div
+          class="sportText"
+          style="margin-top:10px;"
+        >
+          <strong>
+            Avec ${sportBrandHtml()},
+            votre soutien ne reste jamais invisible :
+            votre commerce devient un cœur,
+            un poumon de la vie locale.
+            Il crée de nouvelles rencontres,
+            rapproche les habitants
+            et fait vivre toute la commune.
+          </strong>
+        </div>
+
+      </div>
+
+
+      ${sportTitle(
+        "Dans le cadre sportif, ce que",
+        "apporte à la mairie"
+      )}
+
+      <div class="sportCard">
+
+        <ul>
+          <li>valoriser les clubs qui font vivre la commune toute l’année ;</li>
+          <li>encourager le respect des équipements sportifs et des espaces communs ;</li>
+          <li>transformer les gestes simples de rangement, de propreté et de respect en habitudes collectives ;</li>
+          <li>valoriser l’engagement des bénévoles, entraîneurs, dirigeants et personnels de service ;</li>
+          <li>mieux faire connaître la diversité sportive présente dans la commune ;</li>
+          <li>renforcer les liens entre clubs, habitants, commerces, entreprises et associations ;</li>
+          <li>disposer d’un cadre identifiable pour les bocitecoins attribués aux clubs ;</li>
+          <li>assurer la gestion des échanges destinés aux besoins utiles des clubs ;</li>
+          <li>conserver un suivi clair, daté et comptablement traçable des opérations ;</li>
+          <li>faire apparaître concrètement les effets des engagements locaux ;</li>
+          <li>soutenir des causes solidaires retenues avec ${sportBrandHtml()} ;</li>
+          <li>donner davantage de visibilité aux clubs les moins connus ;</li>
+          <li>montrer aux habitants tout ce que le sport produit au-delà des compétitions.</li>
+        </ul>
+
+        <div
+          class="sportText"
+          style="margin-top:10px;"
+        >
+          <strong>
+            Avec ${sportBrandHtml()},
+            la mairie ne voit plus seulement
+            des équipements et des clubs séparés :
+            elle voit tout ce que le sport
+            fait circuler entre les habitants
+            et tout ce qu’il construit
+            dans la commune.
+          </strong>
+        </div>
+
+      </div>
+
+
+      ${sportTitle(
+        "Ce que",
+        "apporte au citoyen"
+      )}
+
+      <div class="sportCard">
+
+        <div class="sportText">
+          <strong>
+            Faire vivre le local commence
+            par un geste simple :
+            acheter ici ce dont vous avez besoin.
+          </strong>
+        </div>
+
+        <ul>
+          <li>acheter dans votre commune, c’est investir dans votre propre avenir et dans celui de votre territoire ;</li>
+          <li>accepter une différence de prix lorsqu’elle existe, c’est comprendre tout ce que cette différence maintient autour de vous ;</li>
+          <li>soutenir un commerce, c’est soutenir aussi des emplois, des salariés, des artisans, des fournisseurs et toute une activité locale ;</li>
+          <li>conserver des commerces ouverts, des services accessibles et des rues vivantes ;</li>
+          <li>préserver aujourd’hui les professionnels dont vous aurez besoin demain ;</li>
+          <li>découvrir les commerces et entreprises présents autour de vous ;</li>
+          <li>connaître les clubs, associations et acteurs qui font vivre la commune ;</li>
+          <li>voir quels professionnels choisissent de soutenir les clubs sportifs ;</li>
+          <li>découvrir les causes solidaires associées aux actions locales ;</li>
+          <li>comprendre où vont les efforts produits autour de soi ;</li>
+          <li>soutenir les professionnels qui participent concrètement à la vie locale ;</li>
+          <li>trouver un club, une activité ou une discipline pour soi-même ou pour ses enfants ;</li>
+          <li>voir que les petits gestes de chacun finissent toujours par produire un résultat visible pour tous.</li>
+        </ul>
+
+        <div
+          class="sportText"
+          style="margin-top:10px;"
+        >
+          <strong>
+            Avec ${sportBrandHtml()},
+            acheter local n’est plus seulement acheter :
+            c’est choisir de faire vivre
+            ce qui vous entoure,
+            soutenir ceux qui travaillent près de chez vous
+            et investir chaque jour
+            dans l’avenir de votre commune
+            et dans le vôtre.
+          </strong>
+        </div>
+
+      </div>
+
+
+      ${sportTitle(
+        "Un vrai phare pour tous, y compris pour les associations solidaires avec"
+      )}
+
+      <div class="sportCard">
+
+        <div class="sportText">
+          Avec ${sportBrandHtml()},
+          les associations solidaires retenues
+          trouvent une place visible
+          au cœur de la commune.
+
+          <br><br>
+
+          Leur cause,
+          leur travail,
+          leurs besoins
+          et les soutiens qu’elles reçoivent
+          cessent de rester dans l’ombre.
+        </div>
+
+        <ul>
+          <li>faire connaître des causes encore trop méconnues ;</li>
+          <li>montrer le travail accompli par les associations et les équipes qui les font vivre ;</li>
+          <li>expliquer clairement ce que les soutiens reçus permettent de réaliser ;</li>
+          <li>recevoir le soutien des clubs qui choisissent de partager tout ou partie de leurs bocitecoins ;</li>
+          <li>recevoir le soutien des commerçants qui choisissent d’associer leur enseigne, un club et une cause solidaire ;</li>
+          <li>remercier les clubs, commerces, entreprises, citoyens et collectivités qui participent ;</li>
+          <li>créer un lien direct entre la vie locale et des causes qui ont besoin de soutien pour continuer d’avancer ;</li>
+          <li>donner envie à d’autres habitants et acteurs de la commune de rejoindre à leur tour cette chaîne de solidarité.</li>
+        </ul>
+
+        <div
+          class="sportText"
+          style="margin-top:10px;"
+        >
+          Les associations réellement proposées
+          sont sélectionnées
+          et vérifiées
+          avec la mairie
+          et ${sportBrandHtml()}
+          avant leur mise à disposition.
+
+          <br><br>
+
+          Les emplacements A, B, C et D
+          restent disponibles
+          jusqu’à la désignation
+          des associations retenues.
+        </div>
+
+        <div
+          class="sportText"
+          style="margin-top:10px;"
+        >
+          <strong>
+            Avec ${sportBrandHtml()},
+            aucune belle action
+            ne reste dans l’ombre :
+            le sport,
+            les clubs,
+            les commerces,
+            la mairie,
+            les citoyens
+            et les associations solidaires
+            deviennent visibles
+            les uns pour les autres.
+
+            ${sportBrandHtml()}
+            devient un véritable phare
+            qui éclaire ce que chacun apporte
+            et donne envie aux autres
+            de rejoindre le mouvement.
+          </strong>
+        </div>
+
+      </div>
+
+    `;
+  }
+
+
+  function sportRenderPublicResultsHtml(){
+
+    const reports =
+      sportLoadReports()
+        .slice()
+        .reverse()
+        .slice(0,12);
+
+    if(!reports.length){
+
+      return `
+        <div class="sportCard">
+          Les résultats publiés
+          par les clubs
+          apparaîtront ici.
+        </div>
+      `;
+    }
+
+    return reports
+      .map(
+        r => `
+          <div class="sportResultItem">
+
+            <div class="sportAccessName">
+              ${sportEsc(
+                r.team ||
+                "Équipe"
+              )}
+            </div>
+
+            <div style="margin-top:5px;">
+              ${sportEsc(
+                r.text ||
+                r.score ||
+                "Résultat enregistré"
+              )}
+            </div>
+
+            <div style="margin-top:5px;">
+              ${sportEsc(
+                r.playedAt ||
+                r.ts_fr ||
+                ""
+              )}
+            </div>
+
+            ${
+              r.official
+                ? '<span class="sportPill">Résultat officiel vérifié</span>'
+                : '<span class="sportPill">Publié par le club</span>'
+            }
+
+          </div>
+        `
+      )
+      .join("");
+  }
+
+
+  function openSportFiche(){
+
     openModal(
-      "Fiche élus / CCI / commerçants — soutien Club + Association",
+      "Soutien sport avec Bo'CitéArt",
       `
         ${sportSharedStyles()}
+
         <div class="bociteSportRoot">
 
-          <div style="font-weight:900;margin-bottom:8px;">
-            Soutenir le sport local et créer de nouveaux liens
-          </div>
+          ${sportTitle(
+            "Soutenir le sport local avec"
+          )}
 
-          <div class="box">
-            Un club sportif n’est pas seulement un lieu où l’on pratique une discipline.
-            Il fait vivre l’effort, le respect, l’engagement, l’esprit d’équipe et la responsabilité.
+          <div class="sportCard">
 
-            <br><br>
-
-            ${sportBrandHtml()} souhaite aussi faciliter de nouvelles rencontres entre clubs,
-            commerces, entreprises, familles et autres acteurs du territoire.
-          </div>
-
-          <div style="font-weight:900;margin-top:14px;">
-            Pour le club
-          </div>
-
-          <div class="box">
-            Cette mise en relation permet au club de présenter plus facilement ses besoins,
-            ses projets et ce qu’il apporte à la ville.
+            Un club sportif
+            fait vivre l’effort,
+            le respect,
+            l’engagement,
+            l’esprit d’équipe
+            et la responsabilité.
 
             <br><br>
 
-            Elle peut ouvrir de nouvelles occasions de soutien,
-            de visibilité et de rencontres avec les professionnels locaux.
+            ${sportBrandHtml()}
+            crée une relation directe
+            entre clubs,
+            commerces,
+            entreprises,
+            habitants,
+            mairie
+            et associations solidaires.
+
           </div>
 
-          <div style="font-weight:900;margin-top:14px;">
-            Pour le commerçant
+
+          ${sportTitle(
+            "Ce que",
+            "apporte au commerçant"
+          )}
+
+          <div class="sportCard">
+
+            <ul>
+              <li>une visibilité locale supplémentaire pendant 7 jours ;</li>
+              <li>une enseigne directement associée à la vie sportive de la commune ;</li>
+              <li>un lien visible avec le club soutenu ;</li>
+              <li>une ouverture vers les adhérents, les familles, les supporters et leur entourage ;</li>
+              <li>une occasion de soutenir également une association solidaire retenue ;</li>
+              <li>une nouvelle relation avec un club qui a lui-même des besoins d’achat et d’équipement.</li>
+            </ul>
+
+            <div
+              class="sportText"
+              style="margin-top:10px;"
+            >
+              <strong>
+                Avec ${sportBrandHtml()},
+                votre soutien ne reste jamais invisible :
+                votre commerce devient
+                un cœur,
+                un poumon de la vie locale.
+              </strong>
+            </div>
+
           </div>
 
-          <div class="box">
-            Le commerçant peut améliorer sa visibilité locale,
-            montrer concrètement son soutien à un club et à une cause solidaire,
-            participer à la dynamique de la ville
-            et renforcer son image dans le temps.
-          </div>
 
-          <div style="font-weight:900;margin-top:14px;">
-            Club + association + diffusion locale
-          </div>
+          ${sportTitle(
+            "Publicité locale avec"
+          )}
 
-          <div class="box">
-            Le parcours déjà prévu permet de reprendre la fiche du commerçant,
-            le club concerné et l’association retenue,
-            puis de générer le texte destiné à la bande défilante.
+          <div class="sportCard">
+
+            Tarif :
+            <strong>50 € HT / 60 € TTC</strong>
+            pour une diffusion
+            pendant
+            <strong>7 jours consécutifs</strong>,
+            uniquement après validation
+            du paiement.
 
             <br><br>
 
-            Tarif : 50 € HT / 60 € TTC pour une diffusion pendant 7 jours consécutifs,
-            uniquement après validation du paiement.
+            Le message reprend
+            le commerce,
+            le club soutenu
+            et,
+            lorsque le commerçant le choisit,
+            l’association solidaire retenue.
+
           </div>
 
-          <div style="font-weight:900;margin-top:14px;">
-            Associations proposées
-          </div>
-
-          <div class="box">
-            Les associations proposées sont sélectionnées et vérifiées
-            avant leur mise à disposition.
-
-            <br><br>
-
-            Leur liste peut évoluer afin de conserver des organismes correspondant
-            aux causes retenues et aux exigences de transparence
-            et d’utilisation effective des soutiens.
-
-            <br><br>
-
-            Les associations retenues seront définies avec la mairie et ${sportBrandHtml()}
-            selon le cadre prévu.
-
-            <br><br>
-
-            Les emplacements A, B, C et D permettent de conserver les différentes causes
-            sans désigner à l’avance une association qui n’aurait pas encore été retenue.
-          </div>
 
           <button
             class="choiceBtn"
             id="sportFicheBackBtn"
             type="button"
-            style="width:100%;margin-top:14px;"
+            style="
+              width:100%;
+              margin-top:14px;
+            "
           >
             Retour à l’espace Club
           </button>
@@ -14428,2045 +15732,4468 @@ if(key === "sport"){
       `
     );
 
-    setTimeout(()=>{
-      const backBtn = $("sportFicheBackBtn");
-      if(backBtn){
-        backBtn.onclick = ()=> window.openClubReserve();
-      }
-    },0);
-  };
-
-  window.openClubReserve = function(){
-   const openSport = ()=>{
-     openModal("Espace Club réservé", `
-        ${sportSharedStyles()}
-        <div class="bociteSportRoot">
-        <div style="font-weight:900;margin-bottom:8px;">Sport & associations</div>
-        <div class="box">
-          Les publications sont réalisées par un référent habilité du club. Les fonctions réservées restent accessibles uniquement aux personnes autorisées.
-        </div>
-
-        <div class="coinShowcase">
-          <div class="coinFace coinGreen" aria-hidden="true">
-            <div class="coinStarsRing coinStarsGreen" aria-hidden="true">
-              <svg viewBox="0 0 100 100" focusable="false" aria-hidden="true">
-                <circle cx="50" cy="50" r="30.5" stroke-width="4.8" stroke-dasharray="0.01 5.33" class="starRingStroke"></circle>
-              </svg>
-            </div>
-            <div class="coinInner coinInnerGreen">
-              <div class="n">1</div>
-              <div class="t">BoCitecoin</div>
-            </div>
-          </div>
-
-          <div class="coinStack" aria-hidden="true">
-            <div class="stackCoin stackGreen stack1">
-              <div class="stackCoinStars" aria-hidden="true">
-                <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                  <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                </svg>
-              </div>
-            </div>
-            <div class="stackCoin stackGreen stack2">
-              <div class="stackCoinStars" aria-hidden="true">
-                <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                  <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                </svg>
-              </div>
-            </div>
-            <div class="stackCoin stackGreen stack3">
-              <div class="stackCoinStars" aria-hidden="true">
-                <svg viewBox="0 0 44 44" focusable="false" aria-hidden="true">
-                  <circle cx="22" cy="22" r="11.4" stroke-width="2.2" stroke-dasharray="0.01 2.05" class="stackStarRingStroke"></circle>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div class="walletBox">
-            <div class="walletTitle">Wallet Sport — BoCitecoins VERT</div>
-            <div class="walletValue walletGreen" id="sportCoinBalance">0</div>
-            <div class="walletSub">
-              Les BoCitecoins VERT sont gagnés par les actions sportives et citoyennes validées.
-              Ils servent uniquement à aider le club bénéficiaire ou, selon l’orientation retenue, une ou plusieurs associations proposées, jamais une personne.
-            </div>
-            <div class="walletActions">
-              <button class="walletMini" id="walletSportPlus10" type="button">+10</button>
-              <button class="walletMini" id="walletSportPlus20" type="button">+20</button>
-              <button class="walletMini" id="walletSportInfo" type="button">Règle d’échange</button>
-              <button class="walletMini" id="sportShowQr" type="button">Code club</button>
-              <button class="walletMini" id="walletSportReset" type="button">Réinitialiser</button>
-            </div>
-          </div>
-        </div>
-
-        <div style="font-weight:900;margin-top:10px;">Fiche élus / CCI / commerçants</div>
-        <div class="box">
-          <div style="font-weight:900;">Fiche élus / CCI / commerçants — soutien Club + Asso + pub défilante 7 jours</div>
-          <div class="muted" style="margin-top:6px;">
-            Cette fiche explique la logique et l’intérêt du soutien pour le club + asso + publicité défilante pendant 7 jours.
-          </div>
-          <div class="muted" style="margin-top:8px;">
-            Le commerçant améliore sa visibilité locale, montre concrètement son soutien à un club et à une association,
-            participe à la dynamique de la ville et peut renforcer son image dans le temps.
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <button class="choiceBtn" id="openSportFicheBtn" type="button">
-Consulter la fiche du club
-</button>
-          </div>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <div style="font-weight:900;">Règle Sport – BoCitecoins VERT</div>
-          <div class="muted" style="margin-top:8px;">
-            Les BoCitecoins VERT sont gagnés par les clubs ou groupes sportifs pour des actions sportives et citoyennes validées dans le cadre de ${sportBrandHtml()}.
-            Ils servent uniquement à aider le club bénéficiaire ou, selon l’orientation retenue, une ou plusieurs associations proposées, jamais une personne physique.
-          </div>
-
-          <div class="muted" style="margin-top:8px;">
-            Après le choix retenu et discuté avec l’équipe sportive, le référent se présente soit chez le commerçant, soit à la mairie pour échanger selon ce que le club souhaite :
-            garder pour le club, partager partiellement avec une ou plusieurs associations, ou donner totalement à une ou plusieurs associations.
-          </div>
-
-          <ul style="margin:10px 0 0 18px;font-weight:800;">
-            <li>L’avantage bénéficie au <strong>club</strong>, jamais au référent, éducateur ou particulier</li>
-            <li>Le référent présente le code club à la mairie ou au commerçant partenaire</li>
-            <li>Les bocitecoins sont déduits au moment de l’échange</li>
-            <li>Le commerçant ou la mairie offre au club l’avantage correspondant</li>
-            <li>Chez le commerçant : matériel sportif uniquement, ou matériel + <strong>30 % maximum</strong> en nourriture et boissons incluses</li>
-            <li>1 bocitecoin = 1 unité d’avantage interne ${sportBrandHtml()} pour le club</li>
-            <li>Échange autorisé uniquement par tranches de <strong>10</strong> : 10, 20, 30…</li>
-            <li>Exemples : 10 = possible • 12 = impossible • 16 = impossible • 20 = possible • 25 = impossible • 30 = possible</li>
-            <li>Aucune conversion en euros, aucun versement d’argent, aucun usage personnel</li>
-          </ul>
-        </div>
-
-        <div style="font-weight:900;margin-top:14px;">Validation d’échange club</div>
-        <div class="box">
-          <div class="muted">
-            Cet échange est réalisé au nom du club.<br>
-            Il est enregistré, daté et consultable par la mairie.<br>
-            Il doit être utilisé uniquement dans l’intérêt du club.
-          </div>
-
-          <div class="muted" style="margin-top:8px;">
-            Les bocitecoins appartiennent au club. Ils ne peuvent en aucun cas être utilisés à titre personnel.
-          </div>
-
-          <div class="muted" style="margin-top:8px;">
-            Utilisation : au besoin du club, échangés en mairie ou auprès d’un magasin partenaire.
-          </div>
-
-          <div class="muted" style="margin-top:8px;">
-            Une part peut être utilisée pour nourriture ou boissons <strong>(maximum 30%)</strong>. Le reste doit être consacré au matériel ou aux besoins du club.
-          </div>
-
-          <div class="muted" style="margin-top:8px;">
-            Chaque échange est tracé. La mairie peut consulter l’historique.
-          </div>
-
-          <div class="muted" style="margin-top:8px;">
-            1 bocitecoin = 1 unité d’avantage interne ${sportBrandHtml()} pour le club. Les échanges standards sont par tranches de <strong>10 bocitecoins</strong> avec un minimum de 10.
-          </div>
-        </div>
-
-        <div style="font-weight:900;margin-top:14px;">Résultat / compte-rendu du week-end</div>
-        <div class="box">
-          <div class="muted">
-            Le président ou le référent peut enregistrer un résultat, un résumé ou une information utile au club.
-          </div>
-
-          <div style="margin-top:10px;font-weight:900;">Texte</div>
-          <textarea id="sportWeekendReport" class="miniField" style="min-height:120px;" placeholder="Ex : Victoire 3-1 à domicile, bon état d’esprit, fair-play exemplaire"></textarea>
-
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-         <button class="choiceBtn" id="sportWeekendSave" type="button">
-Enregistrer le résultat
-</button>
-
-<button class="choiceBtn" id="sportWeekendRead" type="button" style="background:#fff;">
-Consulter le résultat
-</button>
-
-<button class="choiceBtn" id="sportWeekendReset" type="button" style="background:#fff;">
-Réinitialiser le résultat
-</button> 
-          </div>
-
-          <div class="muted" style="margin-top:10px;">
-            Les injures, propos agressifs, diffamatoires, humiliants ou non sportifs sont interdits.
-          </div>
-        </div>
-
-<div style="font-weight:900;margin-top:14px;">
-  Partage solidaire club / associations
-</div>
-
-<div class="box">
-
-  <div style="font-weight:900;">
-    Principe
-  </div>
-
-  <div
-    style="
-      margin-top:6px;
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.5;
-    "
-  >
-    Le club peut garder 100 % de ses bocitecoins,
-    partager une partie avec une ou plusieurs associations,
-    ou consacrer la totalité des bocitecoins concernés
-    à une ou plusieurs associations.
-  </div>
-
-  <div
-    style="
-      margin-top:8px;
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.5;
-    "
-  >
-    Lorsque le choix passe par la mairie,
-    la répartition enregistrée accompagne l’opération
-    afin que la volonté du club puisse être reprise
-    sans nouvelle saisie.
-  </div>
-
-
-  <!-- ==================================================
-       MODE DE PARTAGE
-       ================================================== -->
-
-  <div class="box" style="margin-top:12px;">
-
-    <div style="font-weight:900;">
-      Choisir le mode de partage
-    </div>
-
-    <label class="miniCheck" style="margin-top:10px;">
-      <input
-        type="radio"
-        name="sportDonMode"
-        value="none"
-        checked
-      >
-      <div>
-        Pas de partage solidaire — 100 % pour le club
-      </div>
-    </label>
-
-    <label class="miniCheck">
-      <input
-        type="radio"
-        name="sportDonMode"
-        value="partial"
-      >
-      <div>
-        Partager une partie avec une ou plusieurs associations
-      </div>
-    </label>
-
-    <label class="miniCheck">
-      <input
-        type="radio"
-        name="sportDonMode"
-        value="full"
-      >
-      <div>
-        Consacrer 100 % des bocitecoins concernés
-        à une ou plusieurs associations
-      </div>
-    </label>
-
-  </div>
-
-
-  <!-- ==================================================
-       ASSOCIATIONS / CAUSES
-       ================================================== -->
-
-  <div class="box" style="margin-top:12px;">
-
-    <div style="font-weight:900;">
-      Associations proposées
-    </div>
-
-    <div
-      style="
-        margin-top:6px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.5;
-      "
-    >
-      Les associations proposées aux clubs
-      sont sélectionnées et vérifiées
-      avant leur mise à disposition.
-
-      <br><br>
-
-      Leur liste peut évoluer afin de conserver
-      des organismes correspondant aux causes retenues
-      et aux exigences de transparence
-      et d’utilisation effective des soutiens.
-
-      <br><br>
-
-      Les associations retenues seront définies
-      avec la mairie et ${sportBrandHtml()}
-      selon le cadre prévu.
-
-      <br><br>
-
-      Les exemples ci-dessous permettent
-      de présenter plusieurs grandes formes de solidarité
-      sans désigner à l’avance une association
-      qui n’aurait pas encore été retenue.
-
-      <br><br>
-
-      En partage total entre plusieurs associations,
-      la répartition entre celles qui sont sélectionnées est égale.
-
-      <br>
-
-      En partage partiel, la répartition entre les associations
-      sélectionnées est indiquée en pourcentage.
-    </div>
-
-
-    <!-- ASSOCIATION A -->
-
-    <div style="margin-top:14px;">
-
-      <label class="miniCheck">
-
-        <input
-          type="checkbox"
-          class="sportAssoPick"
-          data-asso="Association solidaire A"
-        >
-
-        <div>
-          <strong>Association solidaire A</strong>
-          — maladies rares de l’enfant et recherche médicale
-        </div>
-
-      </label>
-
-      <details
-        style="
-          margin:6px 0 8px 36px;
-          padding:10px;
-          border:1px solid #dedede;
-          border-radius:10px;
-          background:#f7f2e8;
-        "
-      >
-
-        <summary
-          style="
-            cursor:pointer;
-            color:#2f5d46;
-            font-size:14px;
-            font-weight:700;
-          "
-        >
-          Comprendre cette cause
-        </summary>
-
-        <div
-          style="
-            margin-top:8px;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          "
-        >
-          Cette cause permet notamment de parler
-          des maladies rares touchant les enfants,
-          des difficultés rencontrées par les familles
-          et de l’importance de la recherche médicale.
-
-          <br><br>
-
-          Elle peut aussi rappeler que certaines recherches
-          concernent peu de malades et disposent parfois
-          de moyens plus difficiles à réunir.
-        </div>
-
-      </details>
-
-      <div
-        style="
-          display:flex;
-          gap:10px;
-          align-items:center;
-          margin:6px 0 10px 36px;
-        "
-      >
-        <div class="muted" style="min-width:78px;">
-          % :
-        </div>
-
-        <input
-          class="miniField sportAssoPct"
-          data-asso="Association solidaire A"
-          type="number"
-          min="0"
-          max="100"
-          step="1"
-          value="0"
-          style="max-width:120px;"
-        >
-      </div>
-
-    </div>
-
-
-    <!-- ASSOCIATION B -->
-
-    <div style="margin-top:14px;">
-
-      <label class="miniCheck">
-
-        <input
-          type="checkbox"
-          class="sportAssoPick"
-          data-asso="Association solidaire B"
-        >
-
-        <div>
-          <strong>Association solidaire B</strong>
-          — enfants malades, soins et accompagnement
-        </div>
-
-      </label>
-
-      <details
-        style="
-          margin:6px 0 8px 36px;
-          padding:10px;
-          border:1px solid #dedede;
-          border-radius:10px;
-          background:#f7f2e8;
-        "
-      >
-
-        <summary
-          style="
-            cursor:pointer;
-            color:#2f5d46;
-            font-size:14px;
-            font-weight:700;
-          "
-        >
-          Comprendre cette cause
-        </summary>
-
-        <div
-          style="
-            margin-top:8px;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          "
-        >
-          Cette cause permet de rappeler qu’un enfant malade
-          peut avoir besoin de soins,
-          mais également d’accompagnement dans sa vie quotidienne.
-
-          <br><br>
-
-          La solidarité peut aussi aider sa famille,
-          faciliter sa scolarité, préserver des activités
-          et permettre à l’enfant de conserver
-          des moments de vie aussi ordinaires que possible.
-        </div>
-
-      </details>
-
-      <div
-        style="
-          display:flex;
-          gap:10px;
-          align-items:center;
-          margin:6px 0 10px 36px;
-        "
-      >
-        <div class="muted" style="min-width:78px;">
-          % :
-        </div>
-
-        <input
-          class="miniField sportAssoPct"
-          data-asso="Association solidaire B"
-          type="number"
-          min="0"
-          max="100"
-          step="1"
-          value="0"
-          style="max-width:120px;"
-        >
-      </div>
-
-    </div>
-
-
-    <!-- ASSOCIATION C -->
-
-    <div style="margin-top:14px;">
-
-      <label class="miniCheck">
-
-        <input
-          type="checkbox"
-          class="sportAssoPick"
-          data-asso="Association solidaire C"
-        >
-
-        <div>
-          <strong>Association solidaire C</strong>
-          — handicap, autonomie et inclusion
-        </div>
-
-      </label>
-
-      <details
-        style="
-          margin:6px 0 8px 36px;
-          padding:10px;
-          border:1px solid #dedede;
-          border-radius:10px;
-          background:#f7f2e8;
-        "
-      >
-
-        <summary
-          style="
-            cursor:pointer;
-            color:#2f5d46;
-            font-size:14px;
-            font-weight:700;
-          "
-        >
-          Comprendre cette cause
-        </summary>
-
-        <div
-          style="
-            margin-top:8px;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          "
-        >
-          Cette cause permet d’aborder le handicap,
-          l’autonomie, l’accessibilité et la place
-          de chacun dans la société.
-
-          <br><br>
-
-          Elle permet aussi de rappeler
-          que certaines difficultés sont visibles
-          et que d’autres ne le sont pas,
-          mais que chacun doit pouvoir participer,
-          apprendre, pratiquer une activité
-          et trouver sa place dans le groupe.
-        </div>
-
-      </details>
-
-      <div
-        style="
-          display:flex;
-          gap:10px;
-          align-items:center;
-          margin:6px 0 10px 36px;
-        "
-      >
-        <div class="muted" style="min-width:78px;">
-          % :
-        </div>
-
-        <input
-          class="miniField sportAssoPct"
-          data-asso="Association solidaire C"
-          type="number"
-          min="0"
-          max="100"
-          step="1"
-          value="0"
-          style="max-width:120px;"
-        >
-      </div>
-
-    </div>
-
-
-    <!-- ASSOCIATION D -->
-
-    <div style="margin-top:14px;">
-
-      <label class="miniCheck">
-
-        <input
-          type="checkbox"
-          class="sportAssoPick"
-          data-asso="Association solidaire D"
-        >
-
-        <div>
-          <strong>Association solidaire D</strong>
-          — accidents, séquelles et reconstruction
-        </div>
-
-      </label>
-
-      <details
-        style="
-          margin:6px 0 8px 36px;
-          padding:10px;
-          border:1px solid #dedede;
-          border-radius:10px;
-          background:#f7f2e8;
-        "
-      >
-
-        <summary
-          style="
-            cursor:pointer;
-            color:#2f5d46;
-            font-size:14px;
-            font-weight:700;
-          "
-        >
-          Comprendre cette cause
-        </summary>
-
-        <div
-          style="
-            margin-top:8px;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          "
-        >
-          Cette cause permet d’évoquer
-
-                    les conséquences qu’un accident peut avoir
-          sur la vie d’un enfant et de sa famille.
-
-          <br><br>
-
-          Après les soins peuvent venir
-          la rééducation, le retour à l’école,
-          la recherche d’une nouvelle autonomie
-          et un accompagnement parfois long.
-
-          <br><br>
-
-          Elle permet également de parler
-          de prévention, de patience,
-          de courage et d’entraide.
-        </div>
-
-      </details>
-
-      <div
-        style="
-          display:flex;
-          gap:10px;
-          align-items:center;
-          margin:6px 0 10px 36px;
-        "
-      >
-        <div class="muted" style="min-width:78px;">
-          % :
-        </div>
-
-        <input
-          class="miniField sportAssoPct"
-          data-asso="Association solidaire D"
-          type="number"
-          min="0"
-          max="100"
-          step="1"
-          value="0"
-          style="max-width:120px;"
-        >
-      </div>
-
-    </div>
-
-
-    <div
-      style="
-        display:flex;
-        gap:10px;
-        flex-wrap:wrap;
-        margin-top:12px;
-      "
-    >
-
-      <button
-        class="choiceBtn"
-        id="sportAssoPreview"
-        type="button"
-      >
-        Consulter le partage
-      </button>
-
-      <button
-        class="choiceBtn"
-        id="sportAssoSave"
-        type="button"
-      >
-        Enregistrer le partage
-      </button>
-
-    </div>
-
-    <div
-      style="
-        margin-top:10px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.5;
-      "
-    >
-      Le choix est enregistré.
-      Seules les personnes autorisées disposent
-      des fonctions nécessaires au traitement de l’opération.
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- ====================================================
-     PUBLICITÉ DÉFILANTE — CLUB / COMMERÇANT
-     ==================================================== -->
-
-<div style="font-weight:900;margin-top:14px;">
-  PUB défilante Commerçant + Soutien Club + Asso
-</div>
-
-<div class="box">
-
-  <div
-    style="
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.5;
-    "
-  >
-    Le sportif scanne le commerçant.
-    Sa fiche se préremplit automatiquement.
-
-    <br><br>
-
-    Le sportif sélectionne ensuite l’association
-    que le commerçant souhaite soutenir.
-    Le club concerné est repris automatiquement
-    depuis son accès.
-  </div>
-
-  <div
-    style="
-      margin-top:8px;
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.5;
-    "
-  >
-    Le texte diffusé reprend simplement
-    le nom de l’entreprise,
-    le club soutenu et l’association soutenue,
-    avec les coordonnées utiles lorsqu’elles sont renseignées.
-  </div>
-
-  <div
-    style="
-      margin-top:8px;
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.5;
-    "
-  >
-    Tarif :
-    <strong>50 € HT / 60 € TTC</strong>
-    pour une diffusion pendant
-    <strong>7 jours consécutifs</strong>,
-    uniquement après validation du paiement.
-  </div>
-
-
-  <div style="margin-top:12px;font-weight:900;">
-    Scan commerçant
-  </div>
-
-  <textarea
-    id="sportMerchantScanInput"
-    class="miniField"
-    style="min-height:120px;"
-    placeholder="Lecture / scan commerçant"
-  ></textarea>
-
-  <div
-    style="
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    "
-  >
-
-    <button
-      class="choiceBtn"
-      id="sportMerchantReadBtn"
-      type="button"
-    >
-      Consulter le scan du commerçant
-    </button>
-
-  </div>
-
-
-  <div
-    class="box"
-    style="
-      margin-top:12px;
-      background:var(--bg);
-    "
-  >
-
-    <div style="font-weight:900;">
-      Fiche commerçant préremplie
-    </div>
-
-    <div style="margin-top:10px;font-weight:900;">
-      Enseigne
-    </div>
-
-    <input
-      class="miniField"
-      id="sportMerchantName"
-      placeholder="Nom du commerce"
-    >
-
-    <div style="margin-top:10px;font-weight:900;">
-      Adresse
-    </div>
-
-    <input
-      class="miniField"
-      id="sportMerchantAddress"
-      placeholder="Adresse"
-    >
-
-    <div style="margin-top:10px;font-weight:900;">
-      Téléphone
-    </div>
-
-    <input
-      class="miniField"
-      id="sportMerchantPhone"
-      placeholder="Téléphone"
-    >
-
-    <div style="margin-top:10px;font-weight:900;">
-      Email
-    </div>
-
-    <input
-      class="miniField"
-      id="sportMerchantEmail"
-      placeholder="Email"
-    >
-
-  </div>
-
-
-  <div class="box" style="margin-top:12px;">
-
-    <div style="font-weight:900;">
-      Association choisie par le commerçant
-    </div>
-
-    <div
-      style="
-        margin-top:6px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.5;
-      "
-    >
-      Les noms réels seront affichés
-      lorsque les associations auront été vérifiées et validées.
-      Les quatre emplacements restent disponibles
-      jusqu’à la validation des associations retenues.
-    </div>
-
-    <div
-      style="
-        display:flex;
-        gap:10px;
-        flex-wrap:wrap;
-        margin-top:10px;
-      "
-    >
-
-      <button
-        class="choiceBtn sportPubAssoBtn"
-        data-asso="Association solidaire A"
-        type="button"
-      >
-        Association solidaire A
-      </button>
-
-      <button
-        class="choiceBtn sportPubAssoBtn"
-        data-asso="Association solidaire B"
-        type="button"
-      >
-        Association solidaire B
-      </button>
-
-      <button
-        class="choiceBtn sportPubAssoBtn"
-        data-asso="Association solidaire C"
-        type="button"
-      >
-        Association solidaire C
-      </button>
-
-      <button
-        class="choiceBtn sportPubAssoBtn"
-        data-asso="Association solidaire D"
-        type="button"
-      >
-        Association solidaire D
-      </button>
-
-    </div>
-
-
-    <div
-      class="box"
-      style="
-        margin-top:12px;
-        background:var(--bg);
-      "
-    >
-
-      <div style="font-weight:900;">
-        Texte bande défilante généré
-      </div>
-
-      <div
-        id="sportPubPreview"
-        style="
-          margin-top:8px;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.5;
-        "
-      >
-        Aucune publicité générée pour le moment.
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="box" style="margin-top:12px;">
-
-    <div style="font-weight:900;">
-      Paiement + diffusion
-    </div>
-
-    <div
-      style="
-        margin-top:6px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.5;
-      "
-    >
-      Sans paiement validé,
-      la publicité n’est pas diffusée.
-
-      <br><br>
-
-      Une fois le paiement validé,
-      la publicité est diffusée pendant
-      7 jours consécutifs
-      puis disparaît automatiquement.
-
-      <br><br>
-
-      L’opération est enregistrée
-      pour les acteurs concernés.
-
-      <br><br>
-
-      Le justificatif correspondant
-      suit le circuit de paiement retenu.
-    </div>
-
-    <div
-      style="
-        display:flex;
-        gap:10px;
-        flex-wrap:wrap;
-        margin-top:10px;
-      "
-    >
-
-      <button
-        class="choiceBtn"
-        id="sportPubPayBtn"
-        type="button"
-      >
-        Confirmer et payer 60 € TTC
-      </button>
-
-      <button
-        class="choiceBtn"
-        id="sportPubHistoryBtn"
-        type="button"
-        style="background:#fff;"
-      >
-        Consulter les publications actives
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- ====================================================
-     ÉCHANGE CLUB
-     ==================================================== -->
-
-<div style="font-weight:900;margin-top:14px;">
-  Échange club → mairie / magasin partenaire
-</div>
-
-<div class="box">
-
-  <div
-    style="
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.5;
-    "
-  >
-    Le club présente son code.
-    Celui-ci peut être lu par la mairie
-    ou par un commerçant partenaire selon le cas.
-
-    <br><br>
-
-    Après validation,
-    les bocitecoins concernés sont déduits
-    et l’opération est enregistrée dans l’historique.
-  </div>
-
-  <div
-    style="
-      margin-top:8px;
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.5;
-    "
-  >
-    Échanges autorisés :
-    tranches de <strong>10 bocitecoins</strong>.
-  </div>
-
-  <div
-    style="
-      margin-top:8px;
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.5;
-    "
-  >
-    Chez le commerçant partenaire,
-    jusqu’à <strong>30 % maximum</strong>
-    de l’avantage peut concerner
-    la nourriture ou les boissons admises.
-
-    <br><br>
-
-    Le reste doit être consacré
-    aux besoins utiles du club.
-  </div>
-
-  <div
-    style="
-      margin-top:8px;
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.5;
-    "
-  >
-    Lorsque l’opération passe par la mairie,
-    le choix solidaire préalablement enregistré
-    peut également être pris en compte
-    selon le cadre prévu.
-  </div>
-
-
-  <div style="margin-top:12px;font-weight:900;">
-    Lecture / scan club
-  </div>
-
-  <textarea
-    id="sportScanInput"
-    class="miniField"
-    style="min-height:120px;"
-    placeholder="Lecture / scan club"
-  ></textarea>
-
-
-  <div
-    style="
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    "
-  >
-
-    <button
-      class="choiceBtn"
-      id="sportReadBtn"
-      type="button"
-    >
-      Consulter le scan
-    </button>
-
-    <button
-      class="choiceBtn"
-      id="sportValidate10Btn"
-      type="button"
-    >
-      Confirmer l'échange de 10 Bo'CitéCoins
-    </button>
-
-    <button
-      class="choiceBtn"
-      id="sportValidate20Btn"
-      type="button"
-    >
-      Confirmer l'échange de 20 Bo'CitéCoins
-    </button>
-
-    <button
-      class="choiceBtn"
-      id="sportHistoryBtn"
-      type="button"
-      style="background:#fff;"
-    >
-      Consulter l'historique
-    </button>
-
-    <button
-      class="choiceBtn"
-      id="sportExportBtn"
-      type="button"
-      style="background:#fff;"
-    >
-      Exporter l'historique
-    </button>
-
-  </div>
-
-
-  <div
-    class="box"
-    style="
-      margin-top:12px;
-      background:var(--bg);
-    "
-  >
-
-    <div style="font-weight:900;">
-      Lecture du code
-    </div>
-
-    <div
-      id="sportReadOut"
-      style="
-        margin-top:8px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.5;
-      "
-    >
-      Aucun code lu pour le moment.
-    </div>
-
-  </div>
-
-</div>
-        </div>
-       `);
-    
-      setTimeout(()=>{
-        const SPORT_HISTORY_KEY = "bociteart_sport_history_v2";
-        const SPORT_REPORT_KEY = "bociteart_sport_report_v1";
-        const SPORT_SOLIDARITY_KEY = "bociteart_sport_solidarity_v2";
-        const SPORT_PUBS_KEY = "bociteart_sport_pubs_v2";
-
-        const b = $("openSportFicheBtn");
-        const btnMap = $("openMap");
-        if(b) b.onclick = window.openSportFiche;
-        if(btnMap) btnMap.onclick = openWellbeingMap;
-
-        const refresh = ()=>{
-          const out = $("sportCoinBalance");
-          if(out) out.textContent = Number(loadSportWallet().vert || 0);
-        };
-        refresh();
-
-        function loadSportHistory(){
-          try{
-            const raw = localStorage.getItem(SPORT_HISTORY_KEY);
-            return raw ? JSON.parse(raw) : [];
-          }catch(e){
-            return [];
-          }
+    setTimeout(
+      ()=>{
+
+        const b =
+          sportEl(
+            "sportFicheBackBtn"
+          );
+
+        if(b){
+          b.onclick =
+            ()=> openClubReserve();
         }
 
-        function saveSportHistory(arr){
-          try{
-            localStorage.setItem(SPORT_HISTORY_KEY, JSON.stringify(arr));
-          }catch(e){}
-        }
-
-        function loadSportReport(){
-          try{
-            const raw = localStorage.getItem(SPORT_REPORT_KEY);
-            return raw ? JSON.parse(raw) : null;
-          }catch(e){
-            return null;
-          }
-        }
-
-        function saveSportReport(obj){
-          try{
-            localStorage.setItem(SPORT_REPORT_KEY, JSON.stringify(obj));
-          }catch(e){}
-        }
-
-        function loadSportSolidarity(){
-          try{
-            const raw = localStorage.getItem(SPORT_SOLIDARITY_KEY);
-            return raw ? JSON.parse(raw) : { mode:"none", map:{} };
-          }catch(e){
-            return { mode:"none", map:{} };
-          }
-        }
-
-        function saveSportSolidarity(obj){
-          try{
-            localStorage.setItem(SPORT_SOLIDARITY_KEY, JSON.stringify(obj));
-          }catch(e){}
-        }
-
-        function loadSportPubs(){
-          try{
-            const raw = localStorage.getItem(SPORT_PUBS_KEY);
-            return raw ? JSON.parse(raw) : [];
-          }catch(e){
-            return [];
-          }
-        }
-
-        function saveSportPubs(arr){
-          try{
-            localStorage.setItem(SPORT_PUBS_KEY, JSON.stringify(arr));
-          }catch(e){}
-        }
-
-        function getActiveSportPubs(){
-          const now = Date.now();
-          return loadSportPubs().filter(x => x.paid === true && now >= x.startTs && now <= x.endTs);
-        }
-
-        function syncSportPubsToTape(){
-          const active = getActiveSportPubs();
-         const staticAds = [
-
-  {
-    txt:"🥐 Commerce partenaire soutient Club + Association solidaire A • www.bociteart.com",
-    bold:true
-  },
-
-  {
-    txt:"💊 Commerce partenaire soutient Club + Association solidaire B • www.bociteart.com",
-    bold:false
-  },
-
-  {
-    txt:"🌸 Commerce partenaire soutient Club + Association solidaire C • www.bociteart.com",
-    bold:true
-  },
-
-  {
-    txt:"🚗 Commerce partenaire soutient Club + Association solidaire D • www.bociteart.com",
-    bold:false
+      },
+      0
+    );
   }
 
-];
+  window.openSportFiche =
+    openSportFiche;
 
-          const dynamicAds = active.map(x => ({
-            txt: x.text,
-            bold: true
-          }));
+   function sportRenderAccessList(){
 
-          window.tapeAds = dynamicAds.length ? dynamicAds.concat(staticAds) : staticAds.slice();
+    const list =
+      sportEl(
+        "sportAccessList"
+      );
 
-          if(typeof window.renderTape === "function"){
-            window.renderTape();
-          }
-        }
+    if(!list){
+      return;
+    }
 
-        window.loadSportHistory = loadSportHistory;
-        window.saveSportHistory = saveSportHistory;
-        window.loadSportReport = loadSportReport;
-        window.saveSportReport = saveSportReport;
-        window.loadSportSolidarity = loadSportSolidarity;
-        window.saveSportSolidarity = saveSportSolidarity;
-        window.loadSportPubs = loadSportPubs;
-        window.saveSportPubs = saveSportPubs;
-        window.getActiveSportPubs = getActiveSportPubs;
-        window.syncSportPubsToTape = syncSportPubsToTape;
+    const data =
+      sportLoadAccess();
 
-        syncSportPubsToTape();
+    if(
+      !data.coaches.length
+    ){
 
-        function containsForbiddenWords(text){
-          const banned = [
-            "con","connard","connasse","salope","pute","merde","encule","enculé",
-            "fdp","fils de pute","batard","bâtard","abruti","idiot","cretin","crétin",
-            "ta gueule","ferme ta gueule","nique","niquer","va te faire","ordure",
-            "pourri","pourriture","demeure","débile","debile","sale type","sale mec"
-          ];
+      list.innerHTML = `
+        <div class="sportStatus">
+          Aucun accès entraîneur
+          ou responsable
+          n’a encore été créé.
+        </div>
+      `;
 
-          const normalized = String(text || "")
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/\s+/g, " ")
-            .trim();
+      return;
+    }
 
-          return banned.some(word =>
-            normalized.includes(
-              word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-            )
-          );
-        }
+    list.innerHTML =
+      data.coaches
+        .map(
+          acc => `
+            <div
+              class="sportAccessItem"
+              data-sport-account="${sportEsc(acc.id)}"
+            >
 
-        function containsSuspiciousPattern(text){
-          const t = String(text || "");
-          if(/[<>]/.test(t)) return true;
-          if(/https?:\/\//i.test(t)) return true;
-          return false;
-        }
+              <div class="sportAccessName">
+                ${sportEsc(
+                  acc.name ||
+                  "Responsable"
+                )}
+              </div>
 
-        const p10 = $("walletSportPlus10");
-        const p20 = $("walletSportPlus20");
-        const infoBtn = $("walletSportInfo");
-        const sportShowQr = $("sportShowQr");
-        const rst = $("walletSportReset");
+              <div style="margin-top:5px;">
+                Équipe :
+                ${sportEsc(
+                  acc.team ||
+                  "Toutes les équipes"
+                )}
+              </div>
 
-        const sportWeekendReport = $("sportWeekendReport");
-        const sportWeekendSave = $("sportWeekendSave");
-        const sportWeekendRead = $("sportWeekendRead");
-        const sportWeekendReset = $("sportWeekendReset");
+              <div style="margin-top:5px;">
+                Identifiant :
+                <strong>
+                  ${sportEsc(
+                    acc.identifier ||
+                    ""
+                  )}
+                </strong>
+              </div>
 
-        const sportScanInput = $("sportScanInput");
-        const sportReadBtn = $("sportReadBtn");
-        const sportValidate10Btn = $("sportValidate10Btn");
-        const sportValidate20Btn = $("sportValidate20Btn");
-        const sportHistoryBtn = $("sportHistoryBtn");
-        const sportExportBtn = $("sportExportBtn");
-        const sportReadOut = $("sportReadOut");
+              <div style="margin-top:5px;">
+                ${
+                  acc.active === false
+                    ? "Accès suspendu"
+                    : "Accès actif"
+                }
+              </div>
 
-        const sportAssoPreview = $("sportAssoPreview");
-        const sportAssoSave = $("sportAssoSave");
+              <div class="sportActions">
 
-        const sportMerchantScanInput = $("sportMerchantScanInput");
-        const sportMerchantReadBtn = $("sportMerchantReadBtn");
-        const sportMerchantName = $("sportMerchantName");
-        const sportMerchantAddress = $("sportMerchantAddress");
-        const sportMerchantPhone = $("sportMerchantPhone");
-        const sportMerchantEmail = $("sportMerchantEmail");
-        const sportPubPreview = $("sportPubPreview");
-        const sportPubPayBtn = $("sportPubPayBtn");
-        const sportPubHistoryBtn = $("sportPubHistoryBtn");
+                <button
+                  class="sportBtn"
+                  type="button"
+                  data-sport-open-account="${sportEsc(acc.id)}"
+                >
+                  Ouvrir cet accès
+                </button>
 
-        let currentPayload = null;
-        let currentMerchantPayload = null;
-        let currentSelectedPubAsso = null;
+                <button
+                  class="sportBtn ${
+                    acc.active === false
+                      ? ""
+                      : "sportBtnDanger"
+                  }"
+                  type="button"
+                  data-sport-toggle-account="${sportEsc(acc.id)}"
+                >
+                  ${
+                    acc.active === false
+                      ? "Réactiver l’accès"
+                      : "Suspendre l’accès"
+                  }
+                </button>
 
-        function getClubName(){
-          return "Club partenaire";
-        }
+                <button
+                  class="sportBtn"
+                  type="button"
+                  data-sport-reset-account="${sportEsc(acc.id)}"
+                >
+                  Réinitialiser le code
+                </button>
 
-        function buildSportSolidarityPayload(){
-          const modeEl = document.querySelector('input[name="sportDonMode"]:checked');
-          const mode = modeEl ? modeEl.value : "none";
-          const picks = Array.from(document.querySelectorAll(".sportAssoPick"));
-          const pcts = Array.from(document.querySelectorAll(".sportAssoPct"));
+              </div>
 
-          const selected = picks
-            .filter(x => x.checked)
-            .map(x => x.getAttribute("data-asso"));
+            </div>
+          `
+        )
+        .join("");
 
-          const map = {};
 
-          if(mode === "none"){
-            return { mode:"none", map:{} };
-          }
+    list
+      .querySelectorAll(
+        "[data-sport-open-account]"
+      )
+      .forEach(
+        btn =>{
 
-          if(mode === "full"){
-            if(!selected.length){
-              return { error:"Sélectionne au moins une association." };
-            }
+          btn.onclick =
+            ()=>{
 
-            const share = Math.floor(100 / selected.length);
-            let remaining = 100;
+              const id =
+                String(
+                  btn.dataset
+                    .sportOpenAccount ||
+                  ""
+                );
 
-            selected.forEach((name, idx)=>{
-              if(idx === selected.length - 1){
-                map[name] = remaining;
-              }else{
-                map[name] = share;
-                remaining -= share;
+              const current =
+                sportLoadAccess()
+                  .coaches
+                  .find(
+                    x =>
+                      String(x.id) ===
+                      id
+                  );
+
+              if(
+                !current ||
+                current.active === false
+              ){
+                return;
               }
-            });
 
-            return { mode:"full", map };
-          }
+              sportSession = {
+                role:
+                  "coach",
 
-          if(mode === "partial"){
-            if(!selected.length){
-              return { error:"Sélectionne au moins une association." };
-            }
+                accountId:
+                  current.id,
 
-            let total = 0;
+                name:
+                  current.name,
 
-            pcts.forEach((input)=>{
-              const name = input.getAttribute("data-asso");
-              const linked = picks.find(x => x.getAttribute("data-asso") === name);
-              if(linked && linked.checked){
-                const v = Number(input.value || 0);
-                map[name] = v;
-                total += v;
-              }
-            });
+                team:
+                  current.team ||
+                  "",
 
-            if(total !== 100){
-              return { error:"En mode partiel, le total doit être égal à 100 %." };
-            }
+                openedFromPresident:
+                  true
+              };
 
-            return { mode:"partial", map };
-          }
+              window.bociteartSportSession =
+                sportSession;
 
-          return { mode:"none", map:{} };
-        }
-
-        if(sportAssoPreview){
-          sportAssoPreview.onclick = ()=>{
-            const payload = buildSportSolidarityPayload();
-            if(payload.error){
-              alert(payload.error);
-              return;
-            }
-            alert("Aperçu partage sport :\n\n" + JSON.stringify(payload, null, 2));
-          };
-        }
-
-        if(sportAssoSave){
-          sportAssoSave.onclick = ()=>{
-            const payload = buildSportSolidarityPayload();
-            if(payload.error){
-              alert(payload.error);
-              return;
-            }
-            saveSportSolidarity(payload);
-            alert("Choix de partage sport enregistré.");
-          };
-        }
-
-        if(p10){
-          p10.onclick = ()=>{
-            const w = loadSportWallet();
-            w.vert = Number(w.vert || 0) + 10;
-            saveSportWallet(w);
-            refresh();
-          };
-        }
-
-        if(p20){
-          p20.onclick = ()=>{
-            const w = loadSportWallet();
-            w.vert = Number(w.vert || 0) + 20;
-            saveSportWallet(w);
-            refresh();
-          };
-        }
-
-        if(infoBtn){
-          infoBtn.onclick = ()=>{
-            alert(
-              "BoCitecoins VERT — règle d’échange\n\n" +
-              "- 1 bocitecoin = 1 unité d’avantage interne Bo’CitéArt pour le club\n" +
-              "- Échanges autorisés : par tranches de 10 (10, 20, 30...)\n" +
-              "- Réservés au club, jamais à une personne\n" +
-              "- Maximum 30 % en nourriture / boissons chez commerçant\n" +
-              "- Le reste doit servir utilement au club\n" +
-              "- Le club peut garder, partager partiellement ou donner à une association via la mairie"
-            );
-          };
-        }
-
-        if(sportShowQr){
-          sportShowQr.onclick = ()=>{
-
-                      const w = loadSportWallet();
-            const solidarity = loadSportSolidarity();
-
-            const payload = {
-              type: "sport_wallet",
-              club: getClubName(),
-              wallet: Number(w.vert || 0),
-              beneficiary: "club_only",
-              solidarity: solidarity,
-              ts: Date.now()
+              openClubReserve();
             };
-
-            alert("Code club à scanner :\n\n" + JSON.stringify(payload, null, 2));
-          };
         }
+      );
 
-        if(rst){
-          rst.onclick = ()=>{
-            if(confirm("Réinitialiser le wallet Sport sur ce téléphone ?")){
-              saveSportWallet({ vert:0 });
-              refresh();
-            }
-          };
-        }
 
-        if(sportWeekendSave){
-          sportWeekendSave.onclick = ()=>{
-            const txt = sportWeekendReport ? String(sportWeekendReport.value || "").trim() : "";
+    list
+      .querySelectorAll(
+        "[data-sport-toggle-account]"
+      )
+      .forEach(
+        btn =>{
 
-            if(!txt){
-              alert("Saisis un résultat ou un compte-rendu.");
-              return;
-            }
+          btn.onclick =
+            ()=>{
 
-            if(txt.length < 5){
-              alert("Texte trop court.");
-              return;
-            }
+              const id =
+                String(
+                  btn.dataset
+                    .sportToggleAccount ||
+                  ""
+                );
 
-            if(txt.length > 500){
-              alert("Texte trop long (maximum 500 caractères).");
-              return;
-            }
+              const current =
+                sportLoadAccess();
 
-            if(containsForbiddenWords(txt)){
-              alert("Le texte contient des mots interdits. Les injures, propos agressifs, diffamatoires, humiliants ou non sportifs sont interdits.");
-              return;
-            }
+              const index =
+                current.coaches
+                  .findIndex(
+                    x =>
+                      String(x.id) ===
+                      id
+                  );
 
-            if(containsSuspiciousPattern(txt)){
-              alert("Le texte contient des éléments non autorisés.");
-              return;
-            }
-
-            saveSportReport({
-              text: txt,
-              ts: Date.now(),
-              ts_fr: new Date().toLocaleString("fr-FR")
-            });
-
-            alert("Résultat / compte-rendu enregistré.");
-          };
-        }
-
-        if(sportWeekendRead){
-          sportWeekendRead.onclick = ()=>{
-            const data = loadSportReport();
-            if(!data){
-              alert("Aucun résultat enregistré.");
-              return;
-            }
-
-            alert("Dernier résultat enregistré :\n\n" + data.text + "\n\nLe " + data.ts_fr);
-          };
-        }
-
-        if(sportWeekendReset){
-          sportWeekendReset.onclick = ()=>{
-            if(confirm("Réinitialiser le dernier résultat du week-end ?")){
-              localStorage.removeItem(SPORT_REPORT_KEY);
-              if(sportWeekendReport) sportWeekendReport.value = "";
-              alert("Résultat réinitialisé.");
-            }
-          };
-        }
-
-        function renderSportPayload(payload){
-          if(!sportReadOut) return;
-
-          const solidarity = payload.solidarity ? JSON.stringify(payload.solidarity) : "aucun";
-
-          sportReadOut.innerHTML =
-            "<strong>Club :</strong> " + escapeHtml(payload.club || "Non renseigné") + "<br>" +
-            "<strong>Montant :</strong> " + Number(payload.wallet || 0) + " bocitecoins VERT<br>" +
-            "<strong>Date :</strong> " + new Date(payload.ts || Date.now()).toLocaleString("fr-FR") + "<br>" +
-            "<strong>Partage :</strong> " + escapeHtml(solidarity);
-        }
-
-        if(sportReadBtn){
-          sportReadBtn.onclick = ()=>{
-            const raw = sportScanInput ? String(sportScanInput.value || "").trim() : "";
-
-            if(!raw){
-              alert("Aucune lecture disponible.");
-              return;
-            }
-
-            try{
-              const parsed = JSON.parse(raw);
-
-              if(parsed.type !== "sport_wallet"){
-                alert("Code non reconnu pour l’échange sport.");
+              if(index < 0){
                 return;
               }
 
-              currentPayload = parsed;
-              renderSportPayload(parsed);
-            }catch(e){
-              alert("Lecture invalide.");
-            }
-          };
-        }
+              current
+                .coaches[index]
+                .active =
+                  current
+                    .coaches[index]
+                    .active === false
+                      ? true
+                      : false;
 
-        function validateSportExchange(amountToBurn){
-          if(!currentPayload){
-            alert("Lis d’abord un code club.");
-            return;
-          }
+              current
+                .coaches[index]
+                .updatedAt =
+                  new Date()
+                    .toISOString();
 
-          const walletAmount = Number(currentPayload.wallet || 0);
-
-          if(walletAmount < amountToBurn){
-            alert("Montant insuffisant dans le wallet du club.");
-            return;
-          }
-
-          const history = loadSportHistory();
-          history.push({
-            club: currentPayload.club || getClubName(),
-            amount: amountToBurn,
-            beneficiary: "club_only",
-            solidarity: currentPayload.solidarity || { mode:"none", map:{} },
-            ts: Date.now(),
-            ts_fr: new Date().toLocaleString("fr-FR"),
-            note: "échange validé via interface sport"
-          });
-          saveSportHistory(history);
-
-          const remaining = Math.max(0, walletAmount - amountToBurn);
-          saveSportWallet({ vert:remaining });
-          refresh();
-
-          alert(
-            "Échange validé pour le club.\n\n" +
-            "Montant déduit : " + amountToBurn + " bocitecoins VERT.\n" +
-            "Reste wallet : " + remaining + " bocitecoins VERT."
-          );
-
-          currentPayload = null;
-          if(sportScanInput) sportScanInput.value = "";
-          if(sportReadOut) sportReadOut.textContent = "Aucun code lu pour le moment.";
-        }
-
-        if(sportValidate10Btn){
-          sportValidate10Btn.onclick = ()=> validateSportExchange(10);
-        }
-
-        if(sportValidate20Btn){
-          sportValidate20Btn.onclick = ()=> validateSportExchange(20);
-        }
-
-        if(sportHistoryBtn){
-          sportHistoryBtn.onclick = ()=>{
-            const history = loadSportHistory();
-
-            if(!history.length){
-              alert("Aucun historique sport pour le moment.");
-              return;
-            }
-
-            const grouped = {};
-            history.forEach((x)=>{
-              if(!grouped[x.club]){
-                grouped[x.club] = {
-                  total:0,
-                  count:0,
-                  last:x.ts_fr
-                };
-              }
-              grouped[x.club].total += Number(x.amount || 0);
-              grouped[x.club].count += 1;
-              grouped[x.club].last = x.ts_fr;
-            });
-
-            const lines = Object.keys(grouped).sort().map((club)=>{
-              const g = grouped[club];
-              return (
-                club +
-                "\n- échanges : " + g.count +
-                "\n- total vidé : " + g.total + " bocitecoins VERT" +
-                "\n- dernier échange : " + g.last
+              sportSaveAccess(
+                current
               );
-            }).join("\n\n");
 
-            alert("Historique sport :\n\n" + lines);
-          };
+              sportRenderAccessList();
+            };
         }
+      );
 
-        if(sportExportBtn){
-          sportExportBtn.onclick = ()=>{
-            const history = loadSportHistory();
 
-            if(!history.length){
-              alert("Aucun historique à exporter.");
-              return;
-            }
+    list
+      .querySelectorAll(
+        "[data-sport-reset-account]"
+      )
+      .forEach(
+        btn =>{
 
-            const grouped = {};
-            history.forEach((x)=>{
-              if(!grouped[x.club]){
-                grouped[x.club] = {
-                  total:0,
-                  count:0,
-                  last:x.ts_fr
-                };
-              }
-              grouped[x.club].total += Number(x.amount || 0);
-              grouped[x.club].count += 1;
-              grouped[x.club].last = x.ts_fr;
-            });
+          btn.onclick =
+            async ()=>{
 
-            const lines = Object.keys(grouped).sort().map((club)=>{
-              const g = grouped[club];
-              return (
-                "Club : " + club + "\n" +
-                "Nombre d’échanges : " + g.count + "\n" +
-                "Total vidé : " + g.total + " bocitecoins VERT\n" +
-                "Dernier échange : " + g.last
-              );
-            }).join("\n\n--------------------\n\n");
+              const id =
+                String(
+                  btn.dataset
+                    .sportResetAccount ||
+                  ""
+                );
 
-            const exportText =
-              "HISTORIQUE SPORT — CLUBS\n" +
-              "Export du " + new Date().toLocaleString("fr-FR") + "\n\n" +
-              lines;
+              const code =
+                prompt(
+                  "Nouveau code pour cet accès (6 caractères minimum).",
+                  ""
+                );
 
-            if(navigator.clipboard && navigator.clipboard.writeText){
-              navigator.clipboard.writeText(exportText)
-                .then(()=> alert("Historique exporté et copié dans le presse-papiers."))
-                .catch(()=> alert(exportText));
-            }else{
-              alert(exportText);
-            }
-          };
-        }
-
-        function renderMerchantPayload(payload){
-          if(sportMerchantName) sportMerchantName.value = payload.shopName || "";
-          if(sportMerchantAddress) sportMerchantAddress.value = payload.address || "";
-          if(sportMerchantPhone) sportMerchantPhone.value = payload.phone || "";
-          if(sportMerchantEmail) sportMerchantEmail.value = payload.email || "";
-        }
-
-        if(sportMerchantReadBtn){
-          sportMerchantReadBtn.onclick = ()=>{
-            const raw = sportMerchantScanInput ? String(sportMerchantScanInput.value || "").trim() : "";
-
-            if(!raw){
-              alert("Aucune lecture commerçant disponible.");
-              return;
-            }
-
-            try{
-              const parsed = JSON.parse(raw);
-
-              if(parsed.type !== "merchant_profile"){
-                alert("Code commerçant non reconnu.");
+              if(code == null){
                 return;
               }
 
-              currentMerchantPayload = parsed;
-              renderMerchantPayload(parsed);
-              alert("Fiche commerçant préremplie.");
-            }catch(e){
-              alert("Lecture commerçant invalide.");
-            }
-          };
-        }
+              const clean =
+                String(code)
+                  .trim();
 
-        function buildSportPubText(assoName){
-          const company = sportMerchantName ? String(sportMerchantName.value || "").trim() : "";
-          const address = sportMerchantAddress ? String(sportMerchantAddress.value || "").trim() : "";
-          const phone = sportMerchantPhone ? String(sportMerchantPhone.value || "").trim() : "";
+              if(
+                clean.length < 6
+              ){
+                alert(
+                  "Le code doit comporter au moins 6 caractères."
+                );
 
-          if(!company) return "";
+                return;
+              }
 
-          let txt = `${company} soutient ${getClubName()} + ${assoName}`;
-          if(phone) txt += ` • ${phone}`;
-          if(address) txt += ` • ${address}`;
-          return txt;
-        }
+              const current =
+                sportLoadAccess();
 
-        document.querySelectorAll(".sportPubAssoBtn").forEach((btn)=>{
-          btn.addEventListener("click", ()=>{
-            currentSelectedPubAsso = btn.getAttribute("data-asso");
-            const txt = buildSportPubText(currentSelectedPubAsso);
-            if(sportPubPreview){
-              sportPubPreview.textContent = txt || "Aucune publicité générée pour le moment.";
-            }
-          });
-        });
+              const index =
+                current.coaches
+                  .findIndex(
+                    x =>
+                      String(x.id) ===
+                      id
+                  );
 
-        if(sportPubPayBtn){
-          sportPubPayBtn.onclick = ()=>{
-            const company = sportMerchantName ? String(sportMerchantName.value || "").trim() : "";
-            const email = sportMerchantEmail ? String(sportMerchantEmail.value || "").trim() : "";
-            const phone = sportMerchantPhone ? String(sportMerchantPhone.value || "").trim() : "";
-            const address = sportMerchantAddress ? String(sportMerchantAddress.value || "").trim() : "";
+              if(index < 0){
+                return;
+              }
 
-            if(!company){
-              alert("Scanne d’abord le commerçant pour Revendiquer ma fiche.");
-              return;
-            }
+              current
+                .coaches[index]
+                .codeHash =
+                  await sportHash(
+                    clean
+                  );
 
-            if(!currentSelectedPubAsso){
-              alert("Choisis l’association soutenue.");
-              return;
-            }
+              current
+                .coaches[index]
+                .active =
+                  true;
 
-            const pubText = buildSportPubText(currentSelectedPubAsso);
-            if(!pubText){
-              alert("Impossible de générer la publicité.");
-              return;
-            }
+              current
+                .coaches[index]
+                .updatedAt =
+                  new Date()
+                    .toISOString();
 
-            const paymentValidated = confirm(
-              "Confirmation du paiement\n\n" +
-              "Montant : 60 € TTC\n" +
-              "Répartition prévue :\n" +
-              "- 35 € TTC club\n" +
-              "- 22 € TTC association\n" +
-              "- 3 € TTC Bo'CitéArt\n\n" +
-              "Confirmer le paiement ?"
-            );
-
-            if(!paymentValidated){
-              alert("Paiement requis pour activer la publicité.");
-              return;
-            }
-
-            const now = Date.now();
-            const endTs = now + (7 * 24 * 60 * 60 * 1000);
-
-            const pubs = loadSportPubs();
-            pubs.push({
-              type:"sport_support",
-              company,
-              club:getClubName(),
-              asso:currentSelectedPubAsso,
-              email,
-              phone,
-              address,
-              text:pubText,
-              paid:true,
-              startTs:now,
-              endTs:endTs,
-              amountTTC:60,
-              clubPartTTC:35,
-              assoPartTTC:22,
-              bociteartPartTTC:3,
-              ts_fr:new Date().toLocaleString("fr-FR")
-            });
-            saveSportPubs(pubs);
-
-            syncSportPubsToTape();
-
-            alert(
-              "Paiement confirmé.\n\n" +
-              "La publicité est active pendant 7 jours.\n" +
-              "Circuit justificatif / facturation :\n" +
-              "- le commerçant\n" +
-              "- le club\n" +
-              "- l’association\n" +
-              "- Bo'CitéArt"
-            );
-          };
-        }
-
-        if(sportPubHistoryBtn){
-          sportPubHistoryBtn.onclick = ()=>{
-            const active = getActiveSportPubs();
-
-            if(!active.length){
-              alert("Aucune publicité sport active pour le moment.");
-              return;
-            }
-
-            const lines = active.map((x)=>{
-              return (
-                x.text +
-                "\n- début : " + new Date(x.startTs).toLocaleString("fr-FR") +
-                "\n- fin : " + new Date(x.endTs).toLocaleString("fr-FR")
+              sportSaveAccess(
+                current
               );
-            }).join("\n\n--------------------\n\n");
 
-            alert("Publicités sport actives :\n\n" + lines);
-          };
+              alert(
+                "Le code a été réinitialisé."
+              );
+
+              sportRenderAccessList();
+            };
         }
-      },0);
+      );
+  }
+
+
+  async function sportCreateCoachAccess(){
+
+    if(
+      sportSession.role !==
+      "president"
+    ){
+      return;
+    }
+
+    const name =
+      String(
+        sportEl("sportCoachName") &&
+        sportEl("sportCoachName").value ||
+        ""
+      ).trim();
+
+    const team =
+      String(
+        sportEl("sportCoachTeam") &&
+        sportEl("sportCoachTeam").value ||
+        ""
+      ).trim();
+
+    const code =
+      String(
+        sportEl("sportCoachCode") &&
+        sportEl("sportCoachCode").value ||
+        ""
+      ).trim();
+
+    if(!name){
+
+      alert(
+        "Renseignez le nom du responsable ou de l’entraîneur."
+      );
+
+      return;
+    }
+
+    if(
+      code.length < 6
+    ){
+
+      alert(
+        "Le code doit comporter au moins 6 caractères."
+      );
+
+      return;
+    }
+
+    const data =
+      sportLoadAccess();
+
+    if(
+      data.coaches.length >= 2
+    ){
+
+      alert(
+        "Deux accès responsables sont déjà créés. Suspendez ou réattribuez un accès existant."
+      );
+
+      return;
+    }
+
+    const identifier =
+      "sport-" +
+      String(
+        data.coaches.length + 1
+      ) +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2,6);
+
+    data.coaches.push({
+
+      id:
+        sportCreateId(
+          "coach"
+        ),
+
+      identifier:
+        identifier,
+
+      name:
+        name,
+
+      team:
+        team,
+
+      codeHash:
+        await sportHash(
+          code
+        ),
+
+      active:
+        true,
+
+      createdAt:
+        new Date()
+          .toISOString(),
+
+      updatedAt:
+        new Date()
+          .toISOString()
+    });
+
+    sportSaveAccess(
+      data
+    );
+
+    if(
+      sportEl(
+        "sportCoachName"
+      )
+    ){
+      sportEl(
+        "sportCoachName"
+      ).value = "";
+    }
+
+    if(
+      sportEl(
+        "sportCoachTeam"
+      )
+    ){
+      sportEl(
+        "sportCoachTeam"
+      ).value = "";
+    }
+
+    if(
+      sportEl(
+        "sportCoachCode"
+      )
+    ){
+      sportEl(
+        "sportCoachCode"
+      ).value = "";
+    }
+
+    const status =
+      sportEl(
+        "sportPresidentStatus"
+      );
+
+    if(status){
+
+      status.textContent =
+        "Accès créé. Identifiant : " +
+        identifier;
+    }
+
+    sportRenderAccessList();
+  }
+
+
+  function sportRenderTrainingList(){
+
+    const target =
+      sportEl(
+        "sportTrainingList"
+      );
+
+    if(!target){
+      return;
+    }
+
+    const items =
+      sportLoadTrainings()
+        .slice()
+        .reverse()
+        .slice(0,30);
+
+    if(!items.length){
+
+      target.innerHTML = `
+        <div class="sportStatus">
+          Aucune séance
+          n’a encore été enregistrée.
+        </div>
+      `;
+
+      return;
+    }
+
+    target.innerHTML =
+      items
+        .map(
+          item =>{
+
+            const confirmations =
+              Array.isArray(
+                item.confirmations
+              )
+                ? item.confirmations
+                : [];
+
+            const already =
+              confirmations
+                .some(
+                  c =>
+                    String(
+                      c.accountId
+                    ) ===
+                    String(
+                      sportSession.accountId ||
+                      sportSession.role
+                    )
+                );
+
+            const awarded =
+              item.coinAwarded ===
+              true;
+
+            return `
+
+              <div class="sportTrainingItem">
+
+                <div class="sportAccessName">
+                  ${sportEsc(
+                    item.team ||
+                    "Équipe"
+                  )}
+                </div>
+
+                <div style="margin-top:5px;">
+                  ${sportEsc(
+                    item.date ||
+                    ""
+                  )}
+                  —
+                  ${sportEsc(
+                    item.label ||
+                    "Entraînement"
+                  )}
+                </div>
+
+                <div style="margin-top:7px;">
+                  Critères :
+                  consignes respectées •
+                  matériel rangé •
+                  vestiaires et espaces laissés propres •
+                  terrain ou salle remis en ordre.
+                </div>
+
+                <div style="margin-top:7px;">
+                  Validations indépendantes :
+                  ${confirmations.length}/2
+                </div>
+
+                <div style="margin-top:5px;">
+                  ${
+                    awarded
+                      ? "✓ 1 bocitecoin crédité à l’équipe."
+                      : "Le crédit est déclenché après deux validations indépendantes."
+                  }
+                </div>
+
+                ${
+                  !awarded &&
+                  !already
+                    ? `
+                      <button
+                        class="sportBtn"
+                        type="button"
+                        data-sport-confirm-training="${sportEsc(item.id)}"
+                        style="margin-top:10px;"
+                      >
+                        Confirmer la séance correctement terminée
+                      </button>
+                    `
+                    : ""
+                }
+
+              </div>
+            `;
+          }
+        )
+        .join("");
+
+
+    target
+      .querySelectorAll(
+        "[data-sport-confirm-training]"
+      )
+      .forEach(
+        btn =>{
+
+          btn.onclick =
+            ()=>{
+
+              const id =
+                String(
+                  btn.dataset
+                    .sportConfirmTraining ||
+                  ""
+                );
+
+              const itemsNow =
+                sportLoadTrainings();
+
+              const index =
+                itemsNow.findIndex(
+                  x =>
+                    String(x.id) ===
+                    id
+                );
+
+              if(index < 0){
+                return;
+              }
+
+              const item =
+                itemsNow[index];
+
+              item.confirmations =
+                Array.isArray(
+                  item.confirmations
+                )
+                  ? item.confirmations
+                  : [];
+
+              const confirmerId =
+                String(
+                  sportSession.accountId ||
+                  sportSession.role ||
+                  ""
+                );
+
+              if(!confirmerId){
+
+                alert(
+                  "Accès responsable requis."
+                );
+
+                return;
+              }
+
+              if(
+                item.confirmations
+                  .some(
+                    c =>
+                      String(
+                        c.accountId
+                      ) ===
+                      confirmerId
+                  )
+              ){
+                return;
+              }
+
+              item.confirmations.push({
+                accountId:
+                  confirmerId,
+
+                name:
+                  sportSession.name ||
+                  "Responsable",
+
+                ts:
+                  Date.now()
+              });
+
+              if(
+                item.confirmations.length >= 2 &&
+                item.coinAwarded !== true
+              ){
+
+                const added =
+                  sportAddCoin(
+                    "Séance sportive correctement terminée",
+                    "training:" + item.id,
+                    item.team
+                  );
+
+                if(added.ok){
+
+                  item.coinAwarded =
+                    true;
+
+                  item.coinAwardedAt =
+                    Date.now();
+                }
+              }
+
+              itemsNow[index] =
+                item;
+
+              sportSaveTrainings(
+                itemsNow
+              );
+
+              sportRenderTrainingList();
+              sportRefreshWalletUi();
+            };
+        }
+      );
+  }
+
+
+  function sportCreateTraining(){
+
+    const date =
+      String(
+        sportEl("sportTrainingDate") &&
+        sportEl("sportTrainingDate").value ||
+        sportToday()
+      ).trim();
+
+    const team =
+      String(
+        sportEl("sportTrainingTeam") &&
+        sportEl("sportTrainingTeam").value ||
+        sportSession.team ||
+        ""
+      ).trim();
+
+    const label =
+      String(
+        sportEl("sportTrainingLabel") &&
+        sportEl("sportTrainingLabel").value ||
+        "Entraînement"
+      ).trim();
+
+    if(!team){
+
+      alert(
+        "Renseignez l’équipe concernée."
+      );
+
+      return;
+    }
+
+    const items =
+      sportLoadTrainings();
+
+    items.push({
+
+      id:
+        sportCreateId(
+          "training"
+        ),
+
+      date:
+        date,
+
+      team:
+        team,
+
+      label:
+        label,
+
+      confirmations:
+        [],
+
+      coinAwarded:
+        false,
+
+      createdBy:
+        sportSession.accountId ||
+        sportSession.role,
+
+      createdAt:
+        Date.now()
+    });
+
+    sportSaveTrainings(
+      items
+    );
+
+    sportRenderTrainingList();
+  }
+
+
+  function sportRenderReportsList(){
+
+    const target =
+      sportEl(
+        "sportPrivateReportsList"
+      );
+
+    if(!target){
+      return;
+    }
+
+    const reports =
+      sportLoadReports()
+        .slice()
+        .reverse()
+        .slice(0,30);
+
+    if(!reports.length){
+
+      target.innerHTML = `
+        <div class="sportStatus">
+          Aucun résultat
+          n’a encore été enregistré.
+        </div>
+      `;
+
+      return;
+    }
+
+    target.innerHTML =
+      reports
+        .map(
+          r => `
+            <div class="sportResultItem">
+
+              <div class="sportAccessName">
+                ${sportEsc(
+                  r.team ||
+                  "Équipe"
+                )}
+              </div>
+
+              <div style="margin-top:5px;">
+                ${sportEsc(
+                  r.text ||
+                  r.score ||
+                  "Résultat"
+                )}
+              </div>
+
+              <div style="margin-top:5px;">
+                ${sportEsc(
+                  r.playedAt ||
+                  r.ts_fr ||
+                  ""
+                )}
+              </div>
+
+              ${
+                r.official
+                  ? '<span class="sportPill">Officiel vérifié</span>'
+                  : '<span class="sportPill">Publié par le club</span>'
+              }
+
+            </div>
+          `
+        )
+        .join("");
+  }
+
+
+  function sportSaveManualReport(){
+
+    const team =
+      String(
+        sportEl("sportWeekendTeam") &&
+        sportEl("sportWeekendTeam").value ||
+        sportSession.team ||
+        ""
+      ).trim();
+
+    const text =
+      String(
+        sportEl("sportWeekendReport") &&
+        sportEl("sportWeekendReport").value ||
+        ""
+      ).trim();
+
+    if(!team){
+
+      alert(
+        "Renseignez l’équipe."
+      );
+
+      return;
+    }
+
+    if(
+      text.length < 5
+    ){
+
+      alert(
+        "Renseignez un résultat ou un compte-rendu."
+      );
+
+      return;
+    }
+
+    if(
+      text.length > 500
+    ){
+
+      alert(
+        "Le texte est limité à 500 caractères."
+      );
+
+      return;
+    }
+
+    if(
+      /[<>]/.test(text) ||
+      /https?:\/\//i.test(text)
+    ){
+
+      alert(
+        "Le texte contient des éléments non autorisés."
+      );
+
+      return;
+    }
+
+    const reports =
+      sportLoadReports();
+
+    reports.push({
+
+      id:
+        sportCreateId(
+          "report"
+        ),
+
+      team:
+        team,
+
+      text:
+        text,
+
+      official:
+        false,
+
+      createdBy:
+        sportSession.name ||
+        "Club",
+
+      ts:
+        Date.now(),
+
+      ts_fr:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+    });
+
+    sportSaveReports(
+      reports
+    );
+
+    if(
+      sportEl(
+        "sportWeekendReport"
+      )
+    ){
+      sportEl(
+        "sportWeekendReport"
+      ).value = "";
+    }
+
+    sportRenderReportsList();
+
+    const status =
+      sportEl(
+        "sportResultStatus"
+      );
+
+    if(status){
+
+      status.textContent =
+        "Résultat publié. Une victoire crédite 1 bocitecoin uniquement après vérification sur la source officielle.";
+    }
+  }
+
+
+  async function sportSyncOfficialResults(){
+
+    const club =
+      sportLoadClub();
+
+    if(
+      !club.officialResultsUrl
+    ){
+
+      alert(
+        "Le président doit d’abord renseigner la source officielle des résultats."
+      );
+
+      return;
+    }
+
+    if(
+      !SPORT_CONFIG.resultsEndpoint
+    ){
+
+      const status =
+        sportEl(
+          "sportOfficialStatus"
+        );
+
+      if(status){
+
+        status.textContent =
+          "La source officielle est enregistrée. La vérification automatique sera active dès le raccordement du service de résultats.";
+      }
+
+      return;
+    }
+
+    const status =
+      sportEl(
+        "sportOfficialStatus"
+      );
+
+    if(status){
+
+      status.textContent =
+        "Vérification des résultats officiels…";
+    }
+
+    try{
+
+      const response =
+        await fetch(
+          SPORT_CONFIG.resultsEndpoint,
+          {
+            method:
+              "POST",
+
+            credentials:
+              "include",
+
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+                clubId:
+                  club.id,
+
+                clubName:
+                  club.name,
+
+                officialResultsUrl:
+                  club.officialResultsUrl
+              })
+          }
+        );
+
+      if(!response.ok){
+        throw new Error(
+          "server"
+        );
+      }
+
+      const data =
+        await response.json();
+
+      const rows =
+        Array.isArray(
+          data &&
+          data.results
+        )
+          ? data.results
+          : [];
+
+      const reports =
+        sportLoadReports();
+
+      let credited =
+        0;
+
+      rows.forEach(
+        row =>{
+
+          if(
+            !row ||
+            row.official !== true ||
+            !row.id
+          ){
+            return;
+          }
+
+          const matchRef =
+            "match:" +
+            String(row.id);
+
+          if(
+            !reports.some(
+              r =>
+                String(
+                  r.matchRef ||
+                  ""
+                ) ===
+                matchRef
+            )
+          ){
+
+            reports.push({
+
+              id:
+                sportCreateId(
+                  "official"
+                ),
+
+              matchRef:
+                matchRef,
+
+              team:
+                String(
+                  row.team ||
+                  "Équipe"
+                ),
+
+              opponent:
+                String(
+                  row.opponent ||
+                  ""
+                ),
+
+              score:
+                String(
+                  row.score ||
+                  ""
+                ),
+
+              text:
+                String(
+                  row.text ||
+                  row.score ||
+                  "Résultat officiel"
+                ),
+
+              playedAt:
+                String(
+                  row.playedAt ||
+                  ""
+                ),
+
+              official:
+                true,
+
+              won:
+                row.won === true,
+
+              ts:
+                Date.now(),
+
+              ts_fr:
+                new Date()
+                  .toLocaleString(
+                    "fr-FR"
+                  )
+            });
+
+            if(
+              row.won === true
+            ){
+
+              const added =
+                sportAddCoin(
+                  "Match officiellement gagné",
+                  matchRef,
+                  String(
+                    row.team ||
+                    ""
+                  )
+                );
+
+              if(added.ok){
+                credited += 1;
+              }
+            }
+          }
+        }
+      );
+
+      sportSaveReports(
+        reports
+      );
+
+      sportRenderReportsList();
+      sportRefreshWalletUi();
+
+      if(status){
+
+        status.textContent =
+          "Résultats synchronisés. Bocitecoins crédités pour les nouvelles victoires officielles : " +
+          credited +
+          ".";
+      }
+
+    }catch(error){
+
+      if(status){
+
+        status.textContent =
+          "La vérification des résultats est momentanément indisponible.";
+      }
+    }
+  }
+
+
+  function sportSaveClubSettings(){
+
+    if(
+      sportSession.role !==
+      "president"
+    ){
+      return;
+    }
+
+    const club =
+      sportLoadClub();
+
+    club.name =
+      String(
+        sportEl("sportClubName") &&
+        sportEl("sportClubName").value ||
+        "Club partenaire"
+      ).trim() ||
+      "Club partenaire";
+
+    club.officialResultsUrl =
+      String(
+        sportEl("sportOfficialResultsUrl") &&
+        sportEl("sportOfficialResultsUrl").value ||
+        ""
+      ).trim();
+
+    club.publicNetworkUrl =
+      String(
+        sportEl("sportPublicNetworkUrl") &&
+        sportEl("sportPublicNetworkUrl").value ||
+        ""
+      ).trim();
+
+    club.teams =
+      String(
+        sportEl("sportTeamsInput") &&
+        sportEl("sportTeamsInput").value ||
+        ""
+      )
+        .split(
+          /\n|,/
+        )
+        .map(
+          x =>
+            x.trim()
+        )
+        .filter(Boolean)
+        .slice(0,50);
+
+    sportSaveClub(
+      club
+    );
+
+    const status =
+      sportEl(
+        "sportOfficialStatus"
+      );
+
+    if(status){
+
+      status.textContent =
+        "Fiche du club enregistrée.";
+    }
+  }
+
+   function sportBuildSolidarityPayload(){
+
+    const modeEl =
+      document.querySelector(
+        'input[name="sportDonMode"]:checked'
+      );
+
+    const mode =
+      modeEl
+        ? modeEl.value
+        : "none";
+
+    const picks =
+      Array.from(
+        document.querySelectorAll(
+          ".sportAssoPick"
+        )
+      );
+
+    const pcts =
+      Array.from(
+        document.querySelectorAll(
+          ".sportAssoPct"
+        )
+      );
+
+    const selected =
+      picks
+        .filter(
+          x => x.checked
+        )
+        .map(
+          x =>
+            x.getAttribute(
+              "data-asso"
+            )
+        );
+
+    const map = {};
+
+    if(
+      mode ===
+      "none"
+    ){
+      return {
+        mode:"none",
+        map:{}
+      };
+    }
+
+    if(
+      !selected.length
+    ){
+
+      return {
+        error:
+          "Sélectionnez au moins une association."
+      };
+    }
+
+    if(
+      mode ===
+      "full"
+    ){
+
+      const base =
+        Math.floor(
+          100 /
+          selected.length
+        );
+
+      let remaining =
+        100;
+
+      selected.forEach(
+        (name,index)=>{
+
+          if(
+            index ===
+            selected.length - 1
+          ){
+
+            map[name] =
+              remaining;
+
+          }else{
+
+            map[name] =
+              base;
+
+            remaining -=
+              base;
+          }
+        }
+      );
+
+      return {
+        mode:"full",
+        map
+      };
+    }
+
+    if(
+      mode ===
+      "partial"
+    ){
+
+      let total =
+        0;
+
+      pcts.forEach(
+        input =>{
+
+          const name =
+            input.getAttribute(
+              "data-asso"
+            );
+
+          const linked =
+            picks.find(
+              x =>
+                x.getAttribute(
+                  "data-asso"
+                ) ===
+                name
+            );
+
+          if(
+            linked &&
+            linked.checked
+          ){
+
+            const value =
+              Math.max(
+                0,
+                Math.min(
+                  100,
+                  Number(
+                    input.value ||
+                    0
+                  )
+                )
+              );
+
+            map[name] =
+              value;
+
+            total +=
+              value;
+          }
+        }
+      );
+
+      if(
+        total !== 100
+      ){
+
+        return {
+          error:
+            "En partage partiel, le total doit être égal à 100 %."
+        };
+      }
+
+      return {
+        mode:"partial",
+        map
+      };
+    }
+
+    return {
+      mode:"none",
+      map:{}
+    };
+  }
+
+
+  function sportSaveSolidarityFromUi(){
+
+    const payload =
+      sportBuildSolidarityPayload();
+
+    if(
+      payload.error
+    ){
+
+      alert(
+        payload.error
+      );
+
+      return;
+    }
+
+    sportSaveSolidarity(
+      payload
+    );
+
+    const status =
+      sportEl(
+        "sportSolidarityStatus"
+      );
+
+    if(status){
+
+      status.textContent =
+        "Orientation du club enregistrée. Modalités d’échange à voir avec la mairie.";
+    }
+  }
+
+
+  function sportApplySolidarityUi(){
+
+    const saved =
+      sportLoadSolidarity();
+
+    const mode =
+      String(
+        saved.mode ||
+        "none"
+      );
+
+    const radio =
+      document.querySelector(
+        'input[name="sportDonMode"][value="' +
+        mode +
+        '"]'
+      );
+
+    if(radio){
+      radio.checked = true;
+    }
+
+    document
+      .querySelectorAll(
+        ".sportAssoPick"
+      )
+      .forEach(
+        input =>{
+
+          const name =
+            input.getAttribute(
+              "data-asso"
+            );
+
+          input.checked =
+            Object
+              .prototype
+              .hasOwnProperty
+              .call(
+                saved.map ||
+                {},
+                name
+              );
+        }
+      );
+
+    document
+      .querySelectorAll(
+        ".sportAssoPct"
+      )
+      .forEach(
+        input =>{
+
+          const name =
+            input.getAttribute(
+              "data-asso"
+            );
+
+          input.value =
+            Number(
+              saved.map &&
+              saved.map[name] ||
+              0
+            );
+        }
+      );
+  }
+
+
+  function sportRefreshWalletUi(){
+
+    const wallet =
+      sportLoadWallet();
+
+    const out =
+      sportEl(
+        "sportCoinBalance"
+      );
+
+    if(out){
+      out.textContent =
+        wallet.vert;
+    }
+
+    [
+      sportEl(
+        "sportWalletExchangeAvailability"
+      ),
+
+      sportEl(
+        "sportExchangeAvailability"
+      )
+    ]
+      .forEach(
+        state =>{
+
+          if(state){
+
+            state.textContent =
+              wallet.vert >= 30
+
+                ? "Échange disponible : minimum 30 bocitecoins, puis par lots de 10."
+
+                : "Encore " +
+                  (30 - wallet.vert) +
+                  " bocitecoins avant le premier échange.";
+          }
+        }
+      );
+
+    const amount =
+      sportEl(
+        "sportExchangeAmount"
+      );
+
+    if(amount){
+
+      const previous =
+        Number(
+          amount.value ||
+          0
+        );
+
+      const options = [];
+
+      for(
+        let n = 30;
+        n <= wallet.vert;
+        n += 10
+      ){
+        options.push(n);
+      }
+
+      amount.innerHTML =
+        options.length
+
+          ? options
+              .map(
+                n =>
+                  `<option value="${n}">${n} bocitecoins</option>`
+              )
+              .join("")
+
+          : `
+              <option value="">
+                30 bocitecoins minimum
+              </option>
+            `;
+
+      if(
+        options.includes(
+          previous
+        )
+      ){
+        amount.value =
+          String(previous);
+      }
+    }
+  }
+
+
+  async function sportRequestExchange(){
+
+    const wallet =
+      sportLoadWallet();
+
+    const amount =
+      Number(
+        sportEl("sportExchangeAmount") &&
+        sportEl("sportExchangeAmount").value ||
+        0
+      );
+
+    if(
+      wallet.vert < 30
+    ){
+
+      alert(
+        "Le club doit disposer d’au moins 30 bocitecoins."
+      );
+
+      return;
+    }
+
+    if(
+      amount < 30 ||
+      amount % 10 !== 0 ||
+      amount > wallet.vert
+    ){
+
+      alert(
+        "Choisissez un montant disponible à partir de 30, par lots de 10."
+      );
+
+      return;
+    }
+
+    const club =
+      sportLoadClub();
+
+    const solidarity =
+      sportLoadSolidarity();
+
+    const request = {
+
+      id:
+        sportCreateId(
+          "exchange"
+        ),
+
+      clubId:
+        club.id,
+
+      clubName:
+        club.name,
+
+      amount:
+        amount,
+
+      solidarity:
+        solidarity,
+
+      status:
+        "pending_mairie",
+
+      createdAt:
+        Date.now(),
+
+      createdAt_fr:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
     };
 
-     openSport();
-  };
+    if(
+      SPORT_CONFIG.mairieEndpoint
+    ){
 
-window.openSportPanel = function(){
-  openModal("Sport", `
-    ${sportSharedStyles()}
-    <div class="bociteSportRoot">
+      try{
 
-    <div style="font-weight:900;margin-bottom:10px;">
-      Explorer les alentours
-    </div>
+        const response =
+          await fetch(
+            SPORT_CONFIG.mairieEndpoint,
+            {
+              method:
+                "POST",
 
-    <div class="box">
-      <strong>Parcours, plans et repères utiles</strong><br><br>
-      Retrouvez les parcs, parcours, pistes cyclables, équipements sportifs,
-      espaces verts, arrêts de bus, commerces utiles et points de repère de la ville.
-    </div>
+              credentials:
+                "include",
 
-    <div class="box">
-      <strong>Repères utiles</strong>
+              headers:{
+                "Content-Type":
+                  "application/json"
+              },
 
-      <ul style="list-style:none;padding-left:0;margin:10px 0 0 0;font-weight:800;line-height:1.7;">
-        <li onclick="window.BOCITEART_MAP_TARGET='Parc sportif'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#1fa34a;">●</span> Parc sportif</li>
-        <li onclick="window.BOCITEART_MAP_TARGET='Bois et parcours'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#2a9d8f;">●</span> Bois et parcours</li>
-        <li onclick="window.BOCITEART_MAP_TARGET='Salle de sport'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#1fa34a;">●</span> Salle de sport</li>
-        <li onclick="window.BOCITEART_MAP_TARGET='Parc urbain'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#2a9d8f;">●</span> Parc urbain</li>
-        <li onclick="window.BOCITEART_MAP_TARGET='Espace vert central'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#2a9d8f;">●</span> Espace vert central</li>
-        <li onclick="window.BOCITEART_MAP_TARGET='Piste cyclable nord'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#1fa34a;">●</span> Piste cyclable nord</li>
-        <li onclick="window.BOCITEART_MAP_TARGET='Piste cyclable centre'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#1fa34a;">●</span> Piste cyclable centre</li>
-        <li onclick="window.BOCITEART_MAP_TARGET='Arrêt de bus Mairie'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#1f6fd6;">●</span> Arrêt de bus Mairie</li>
-        <li onclick="window.BOCITEART_MAP_TARGET='Arrêt de bus Centre'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#1f6fd6;">●</span> Arrêt de bus Centre</li>
-        <li onclick="window.BOCITEART_MAP_TARGET='Supérette du centre'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#ff8c00;">●</span> Supérette du centre</li>
-        <li onclick="window.BOCITEART_MAP_TARGET='Mini-market quartier nord'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#ff8c00;">●</span> Mini-market quartier nord</li>
-        <li onclick="window.BOCITEART_MAP_TARGET='Restaurant place centrale'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#ff8c00;">●</span> Restaurant place centrale</li>
-        <li onclick="window.BOCITEART_MAP_TARGET='Snack du quartier'; window.openWellbeingMap();" style="cursor:pointer;"><span style="display:inline-block;width:18px;color:#ff8c00;">●</span> Snack du quartier</li>
-      </ul>
-    </div>
+              body:
+                JSON.stringify(
+                  request
+                )
+            }
+          );
 
-    <div class="box">
-      <strong>Explorer les alentours</strong><br><br>
-      Parcs, écoles, commerces, services, équipements sportifs et points utiles autour de vous.
+        if(!response.ok){
 
-      <br><br>
+          throw new Error(
+            "server"
+          );
+        }
 
-      <button class="choiceBtn" id="openMap" type="button">
-        Consulter la carte
-      </button>
-    </div>
+        const answer =
+          await response.json();
 
-    <div style="font-weight:900;margin-top:16px;">
-      Espace Clubs partenaires
-    </div>
+        request.serverReference =
+          String(
+            answer &&
+            answer.reference ||
+            ""
+          );
 
-    <div class="box">
-      Les fonctionnalités réservées aux clubs sont accessibles uniquement aux clubs partenaires autorisés.
+      }catch(error){
 
-      <br><br>
+        alert(
+          "La transmission à la mairie est momentanément indisponible."
+        );
 
-      <button class="choiceBtn" onclick="openClubAccess()">
-        Accéder à l'espace Club
-      </button>
-    </div>
+        return;
+      }
+    }
 
-    </div>
+    const exchanges =
+      sportLoadExchanges();
 
-  `);
+    exchanges.push(
+      request
+    );
 
-  setTimeout(()=>{
-    const btnMap = $("openMap");
-    if(btnMap) btnMap.onclick = openWellbeingMap;
-  },0);
-};
+    sportSaveExchanges(
+      exchanges
+    );
 
-function openClubAccess(){
-  const code = prompt("Code club partenaire :");
+    const status =
+      sportEl(
+        "sportExchangeStatus"
+      );
 
-  if(code !== "club-demo"){
-    alert("Accès réservé aux clubs partenaires autorisés.");
-    return;
+    if(status){
+
+      status.textContent =
+        "Demande d’échange enregistrée pour traitement par la mairie. Les bocitecoins ne sont déduits qu’après validation de l’opération.";
+    }
+
+    sportRenderExchangeHistory();
   }
 
-  openClubReserve();
+
+  function sportRenderExchangeHistory(){
+
+    const target =
+      sportEl(
+        "sportExchangeHistory"
+      );
+
+    if(!target){
+      return;
+    }
+
+    const list =
+      sportLoadExchanges()
+        .slice()
+        .reverse()
+        .slice(0,20);
+
+    if(!list.length){
+
+      target.innerHTML = `
+        <div class="sportStatus">
+          Aucune demande d’échange enregistrée.
+        </div>
+      `;
+
+      return;
+    }
+
+    target.innerHTML =
+      list
+        .map(
+          x => `
+            <div class="sportExchangeItem">
+
+              <div class="sportAccessName">
+                ${sportEsc(
+                  x.amount
+                )}
+                bocitecoins
+              </div>
+
+              <div style="margin-top:5px;">
+                ${sportEsc(
+                  x.createdAt_fr ||
+                  ""
+                )}
+              </div>
+
+              <div style="margin-top:5px;">
+                ${
+                  x.status ===
+                  "validated"
+
+                    ? "Échange validé"
+
+                    : "En attente de traitement mairie"
+                }
+              </div>
+
+            </div>
+          `
+        )
+        .join("");
+  }
+
+
+  window.BociteSportMairie = {
+
+    getPending:
+      function(){
+
+        return sportLoadExchanges()
+          .filter(
+            x =>
+              x.status ===
+              "pending_mairie"
+          );
+      },
+
+
+    validate:
+      function(id){
+
+        const list =
+          sportLoadExchanges();
+
+        const index =
+          list.findIndex(
+            x =>
+              String(x.id) ===
+              String(id)
+          );
+
+        if(
+          index < 0 ||
+          list[index].status ===
+          "validated"
+        ){
+
+          return {
+            ok:false
+          };
+        }
+
+        const debited =
+          sportDebitCoins(
+            list[index].amount,
+            "Échange Sport validé par la mairie",
+            "mairie:" +
+            list[index].id
+          );
+
+        if(!debited.ok){
+
+          return {
+            ok:false,
+            balance:
+              debited.balance
+          };
+        }
+
+        list[index].status =
+          "validated";
+
+        list[index].validatedAt =
+          Date.now();
+
+        list[index].validatedAt_fr =
+          new Date()
+            .toLocaleString(
+              "fr-FR"
+            );
+
+        sportSaveExchanges(
+          list
+        );
+
+        return {
+          ok:true,
+          balance:
+            debited.balance,
+          exchange:
+            list[index]
+        };
+      }
+  };
+
+
+  function sportClubCodePayload(){
+
+    const club =
+      sportLoadClub();
+
+    const wallet =
+      sportLoadWallet();
+
+    const solidarity =
+      sportLoadSolidarity();
+
+    return {
+
+      type:
+        "sport_wallet",
+
+      clubId:
+        club.id,
+
+      club:
+        club.name,
+
+      wallet:
+        wallet.vert,
+
+      solidarity:
+        solidarity,
+
+      ts:
+        Date.now()
+    };
+  }
+
+
+  function sportShowClubCode(){
+
+    alert(
+      "Code club à scanner :\n\n" +
+      JSON.stringify(
+        sportClubCodePayload(),
+        null,
+        2
+      )
+    );
+  }
+
+
+  function sportPublicityHtml(){
+
+    return `
+
+      ${sportTitle(
+        "Publicité locale et soutien avec"
+      )}
+
+      <div class="sportCard">
+
+        <div class="sportText">
+
+          Le représentant du club
+          scanne ou renseigne
+          la fiche du commerçant.
+
+          <br><br>
+
+          Le club est repris
+          depuis son accès.
+
+          <br><br>
+
+          Le commerçant choisit
+          le soutien au club
+          et ajoute,
+          s’il le souhaite,
+          l’une des associations
+          solidaires proposées.
+
+          <br><br>
+
+          Tarif :
+          <strong>50 € HT / 60 € TTC</strong>
+          pour une diffusion
+          pendant
+          <strong>7 jours consécutifs</strong>,
+          uniquement après validation
+          du paiement.
+
+        </div>
+
+
+        <label class="sportLabel">
+          Lecture / scan commerçant
+        </label>
+
+        <textarea
+          id="sportMerchantScanInput"
+          class="sportField"
+          placeholder="Lecture / scan commerçant"
+        ></textarea>
+
+
+        <div class="sportActions">
+
+          <button
+            class="sportBtn"
+            id="sportMerchantReadBtn"
+            type="button"
+          >
+            Consulter le scan du commerçant
+          </button>
+
+        </div>
+
+
+        <div class="sportCard">
+
+          <div class="sportSubTitle">
+            Fiche commerçant avec
+            ${sportBrandHtml()}
+          </div>
+
+          <label class="sportLabel">
+            Enseigne
+          </label>
+
+          <input
+            class="sportField"
+            id="sportMerchantName"
+            placeholder="Nom du commerce"
+          >
+
+
+          <label class="sportLabel">
+            Adresse
+          </label>
+
+          <input
+            class="sportField"
+            id="sportMerchantAddress"
+            placeholder="Adresse"
+          >
+
+
+          <label class="sportLabel">
+            Téléphone
+          </label>
+
+          <input
+            class="sportField"
+            id="sportMerchantPhone"
+            placeholder="Téléphone"
+          >
+
+
+          <label class="sportLabel">
+            Email
+          </label>
+
+          <input
+            class="sportField"
+            id="sportMerchantEmail"
+            placeholder="Email"
+          >
+
+        </div>
+
+
+        <div class="sportCard">
+
+          <div class="sportSubTitle">
+            Association solidaire avec
+            ${sportBrandHtml()}
+          </div>
+
+          <div
+            class="sportText"
+            style="margin-top:8px;"
+          >
+            Les associations réelles
+            seront affichées
+            après sélection
+            et vérification
+            avec la mairie
+            et ${sportBrandHtml()}.
+          </div>
+
+
+          <div class="sportActions">
+
+            <button
+              class="sportBtn sportPubAssoBtn"
+              data-asso="Association solidaire A"
+              type="button"
+            >
+              Association solidaire A
+            </button>
+
+            <button
+              class="sportBtn sportPubAssoBtn"
+              data-asso="Association solidaire B"
+              type="button"
+            >
+              Association solidaire B
+            </button>
+
+            <button
+              class="sportBtn sportPubAssoBtn"
+              data-asso="Association solidaire C"
+              type="button"
+            >
+              Association solidaire C
+            </button>
+
+            <button
+              class="sportBtn sportPubAssoBtn"
+              data-asso="Association solidaire D"
+              type="button"
+            >
+              Association solidaire D
+            </button>
+
+          </div>
+
+
+          <div
+            id="sportPubPreview"
+            class="sportStatus"
+          >
+            Aucune publicité générée
+            pour le moment.
+          </div>
+
+        </div>
+
+
+        <div class="sportActions">
+
+          <button
+            class="sportBtn"
+            id="openSportFicheBtn"
+            type="button"
+          >
+            Consulter la fiche commerçant / club
+          </button>
+
+          <button
+            class="sportBtn"
+            id="sportPubPayBtn"
+            type="button"
+          >
+            Confirmer et payer 60 € TTC
+          </button>
+
+          <button
+            class="sportBtn"
+            id="sportPubHistoryBtn"
+            type="button"
+          >
+            Consulter les publications actives
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+  }
+
+
+  function sportSolidarityHtml(){
+
+    const causes = [
+
+      [
+        "Association solidaire A",
+        "maladies rares de l’enfant et recherche médicale",
+        "Cette cause met en lumière les maladies rares touchant les enfants, les difficultés rencontrées par les familles et l’importance d’une recherche médicale durable."
+      ],
+
+      [
+        "Association solidaire B",
+        "enfants malades, soins et accompagnement",
+        "Cette cause rappelle que les soins, l’accompagnement quotidien, la scolarité et le soutien aux familles avancent ensemble."
+      ],
+
+      [
+        "Association solidaire C",
+        "handicap, autonomie et inclusion",
+        "Cette cause met en avant l’autonomie, l’accessibilité, l’inclusion et la place de chacun dans la société et dans la pratique sportive."
+      ],
+
+      [
+        "Association solidaire D",
+        "accidents, séquelles et reconstruction",
+        "Cette cause met en lumière la rééducation, le retour à l’école ou au sport, la reconstruction, la prévention, le courage et l’entraide."
+      ]
+
+    ];
+
+    return `
+
+      ${sportTitle(
+        "Orientation solidaire du club avec"
+      )}
+
+      <div class="sportCard">
+
+        <div class="sportText">
+          Le club choisit
+          l’orientation souhaitée
+          pour les bocitecoins concernés.
+        </div>
+
+
+        <label class="sportCheck">
+
+          <input
+            type="radio"
+            name="sportDonMode"
+            value="none"
+            checked
+          >
+
+          <span>
+            Garder 100 % pour le club
+          </span>
+
+        </label>
+
+
+        <label class="sportCheck">
+
+          <input
+            type="radio"
+            name="sportDonMode"
+            value="partial"
+          >
+
+          <span>
+            Partager une partie
+            avec une ou plusieurs associations
+          </span>
+
+        </label>
+
+
+        <label class="sportCheck">
+
+          <input
+            type="radio"
+            name="sportDonMode"
+            value="full"
+          >
+
+          <span>
+            Donner 100 %
+            des bocitecoins concernés
+            à une ou plusieurs associations
+          </span>
+
+        </label>
+
+
+        <div class="sportCard">
+
+          <div class="sportSubTitle">
+            Associations proposées avec
+            ${sportBrandHtml()}
+          </div>
+
+          <div
+            class="sportText"
+            style="margin-top:8px;"
+          >
+            Les associations réellement proposées
+            sont sélectionnées
+            et vérifiées
+            avec la mairie
+            et ${sportBrandHtml()}
+            avant leur mise à disposition.
+
+            <br><br>
+
+            Les emplacements A, B, C et D
+            restent disponibles
+            jusqu’à leur désignation.
+          </div>
+
+
+          ${
+            causes
+              .map(
+                c => `
+
+                  <div style="margin-top:14px;">
+
+                    <label class="sportCheck">
+
+                      <input
+                        type="checkbox"
+                        class="sportAssoPick"
+                        data-asso="${sportEsc(c[0])}"
+                      >
+
+                      <span>
+
+                        <span class="sportCauseName">
+                          ${sportEsc(c[0])}
+                        </span>
+
+                        —
+                        ${sportEsc(c[1])}
+
+                      </span>
+
+                    </label>
+
+
+                    <details>
+
+                      <summary>
+                        Comprendre cette cause
+                      </summary>
+
+                      <div
+                        class="sportText"
+                        style="margin-top:8px;"
+                      >
+                        ${sportEsc(c[2])}
+                      </div>
+
+                    </details>
+
+
+                    <label
+                      class="sportLabel"
+                      style="
+                        margin-left:30px;
+                        max-width:180px;
+                      "
+                    >
+                      Part en %
+
+                      <input
+                        class="sportField sportAssoPct"
+                        data-asso="${sportEsc(c[0])}"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value="0"
+                      >
+
+                    </label>
+
+                  </div>
+
+                `
+              )
+              .join("")
+          }
+
+        </div>
+
+
+        <button
+          class="sportBtn"
+          id="sportAssoSave"
+          type="button"
+          style="
+            width:100%;
+            margin-top:12px;
+          "
+        >
+          Enregistrer l’orientation du club
+        </button>
+
+
+        <div
+          id="sportSolidarityStatus"
+          class="sportStatus"
+        >
+          Modalités d’échange
+          à voir avec la mairie.
+        </div>
+
+      </div>
+
+    `;
+  }
+
+   function sportPresidentHtml(){
+
+    if(
+      sportSession.role !==
+      "president"
+    ){
+      return "";
+    }
+
+    const club =
+      sportLoadClub();
+
+    return `
+
+      ${sportTitle(
+        "Présidence du club avec"
+      )}
+
+      <div class="sportCard">
+
+        <div class="sportText">
+          Le président conserve
+          l’accès maître du club.
+
+          <br><br>
+
+          Il crée,
+          suspend,
+          réactive
+          et réattribue
+          jusqu’à deux accès
+          entraîneur ou responsable.
+        </div>
+
+
+        <div class="sportCard">
+
+          <div class="sportSubTitle">
+            Fiche du club avec
+            ${sportBrandHtml()}
+          </div>
+
+          <label class="sportLabel">
+            Nom du club
+          </label>
+
+          <input
+            id="sportClubName"
+            class="sportField"
+            value="${sportEsc(
+              club.name ||
+              ""
+            )}"
+          >
+
+
+          <label class="sportLabel">
+            Équipes —
+            une par ligne
+            ou séparées par une virgule
+          </label>
+
+          <textarea
+            id="sportTeamsInput"
+            class="sportField"
+          >${sportEsc(
+            (club.teams || [])
+              .join("\n")
+          )}</textarea>
+
+
+          <label class="sportLabel">
+            Source officielle des résultats
+          </label>
+
+          <input
+            id="sportOfficialResultsUrl"
+            class="sportField"
+            value="${sportEsc(
+              club.officialResultsUrl ||
+              ""
+            )}"
+            placeholder="Adresse officielle ligue, fédération ou compétition"
+          >
+
+
+          <label class="sportLabel">
+            Réseau ou page publique du club
+          </label>
+
+          <input
+            id="sportPublicNetworkUrl"
+            class="sportField"
+            value="${sportEsc(
+              club.publicNetworkUrl ||
+              ""
+            )}"
+            placeholder="Page publique du club"
+          >
+
+
+          <div class="sportActions">
+
+            <button
+              class="sportBtn"
+              id="sportClubSettingsSave"
+              type="button"
+            >
+              Enregistrer la fiche du club
+            </button>
+
+            <button
+              class="sportBtn"
+              id="sportSyncOfficialResults"
+              type="button"
+            >
+              Vérifier les résultats officiels
+            </button>
+
+          </div>
+
+
+          <div
+            id="sportOfficialStatus"
+            class="sportStatus"
+          ></div>
+
+        </div>
+
+
+        <div class="sportCard">
+
+          <div class="sportSubTitle">
+            Accès entraîneurs / responsables avec
+            ${sportBrandHtml()}
+          </div>
+
+
+          <label class="sportLabel">
+            Nom
+          </label>
+
+          <input
+            id="sportCoachName"
+            class="sportField"
+            placeholder="Nom du responsable ou entraîneur"
+          >
+
+
+          <label class="sportLabel">
+            Équipe
+          </label>
+
+          <input
+            id="sportCoachTeam"
+            class="sportField"
+            placeholder="Équipe concernée"
+          >
+
+
+          <label class="sportLabel">
+            Code initial
+          </label>
+
+          <input
+            id="sportCoachCode"
+            class="sportField"
+            type="password"
+            placeholder="6 caractères minimum"
+          >
+
+
+          <button
+            class="sportBtn"
+            id="sportCoachCreateBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:12px;
+            "
+          >
+            Créer l’accès
+          </button>
+
+
+          <div
+            id="sportPresidentStatus"
+            class="sportStatus"
+          ></div>
+
+
+          <div
+            id="sportAccessList"
+          ></div>
+
+        </div>
+
+      </div>
+
+    `;
+  }
+
+
+  function sportTrainingHtml(){
+
+    return `
+
+      ${sportTitle(
+        "Entraînements responsables avec"
+      )}
+
+      <div class="sportCard">
+
+        <div class="sportText">
+
+          Une séance correctement terminée
+          fait gagner
+          <strong>
+            1 bocitecoin à l’équipe
+          </strong>
+          après deux validations indépendantes.
+
+          <br><br>
+
+          Le coach ne donne pas directement
+          le bocitecoin :
+          il confirme le constat.
+
+          <br><br>
+
+          Le second responsable
+          confirme à son tour,
+          puis ${sportBrandHtml()}
+          crédite automatiquement l’équipe.
+
+        </div>
+
+
+        <div
+          class="sportText"
+          style="margin-top:10px;"
+        >
+          Critères :
+          consignes respectées •
+          matériel rangé •
+          vestiaires propres •
+          terrain ou salle remis en ordre •
+          aucun détritus laissé aux autres.
+        </div>
+
+
+        <label class="sportLabel">
+          Date
+        </label>
+
+        <input
+          id="sportTrainingDate"
+          class="sportField"
+          type="date"
+          value="${sportToday()}"
+        >
+
+
+        <label class="sportLabel">
+          Équipe
+        </label>
+
+        <input
+          id="sportTrainingTeam"
+          class="sportField"
+          value="${sportEsc(
+            sportSession.team ||
+            ""
+          )}"
+          placeholder="Équipe"
+        >
+
+
+        <label class="sportLabel">
+          Séance
+        </label>
+
+        <input
+          id="sportTrainingLabel"
+          class="sportField"
+          value="Entraînement"
+          placeholder="Entraînement, séance, exercice…"
+        >
+
+
+        <button
+          class="sportBtn"
+          id="sportTrainingCreateBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:12px;
+          "
+        >
+          Enregistrer la séance
+        </button>
+
+
+        <div
+          id="sportTrainingList"
+        ></div>
+
+      </div>
+
+    `;
+  }
+
+
+  function sportResultsHtml(){
+
+    return `
+
+      ${sportTitle(
+        "Résultats du week-end avec"
+      )}
+
+      <div class="sportCard">
+
+        <div class="sportText">
+          Les responsables publient
+          le compte-rendu visible
+          par les adhérents.
+
+          <br><br>
+
+          Une victoire fait gagner
+          <strong>1 bocitecoin</strong>
+          uniquement après vérification
+          sur la source officielle
+          enregistrée par le président.
+        </div>
+
+
+        <label class="sportLabel">
+          Équipe
+        </label>
+
+        <input
+          id="sportWeekendTeam"
+          class="sportField"
+          value="${sportEsc(
+            sportSession.team ||
+            ""
+          )}"
+          placeholder="Équipe"
+        >
+
+
+        <label class="sportLabel">
+          Résultat / compte-rendu
+        </label>
+
+        <textarea
+          id="sportWeekendReport"
+          class="sportField"
+          maxlength="500"
+          placeholder="Ex : Victoire 3-1 à domicile, bon état d’esprit, fair-play exemplaire"
+        ></textarea>
+
+
+        <button
+          class="sportBtn"
+          id="sportWeekendSave"
+          type="button"
+          style="
+            width:100%;
+            margin-top:12px;
+          "
+        >
+          Publier le résultat
+        </button>
+
+
+        <div
+          id="sportResultStatus"
+          class="sportStatus"
+        ></div>
+
+
+        <div
+          id="sportPrivateReportsList"
+        ></div>
+
+      </div>
+
+    `;
+  }
+
+
+  function sportExchangeHtml(){
+
+    return `
+
+      ${sportTitle(
+        "Échanges du club avec"
+      )}
+
+      <div class="sportCard">
+
+        <div class="sportText">
+
+          Le premier échange
+          est accessible
+          à partir de
+          <strong>30 bocitecoins</strong>.
+
+          <br><br>
+
+          Ensuite,
+          les demandes
+          se font par lots de 10 :
+          30,
+          40,
+          50,
+          60…
+
+          <br><br>
+
+          L’échange concerne exclusivement
+          les besoins du club.
+
+          <br><br>
+
+          Les factures
+          et tickets
+          sont au nom du club,
+          jamais au nom personnel
+          d’un président,
+          d’un entraîneur
+          ou d’un adhérent.
+
+          <br><br>
+
+          Lorsque de la nourriture
+          ou des boissons
+          sont admises
+          dans l’opération,
+          elles représentent
+          au maximum
+          <strong>30 %</strong>.
+
+          <br><br>
+
+          Le reste est consacré
+          au matériel
+          et aux besoins utiles du club.
+
+          <br><br>
+
+          La mairie traite
+          et valide l’opération
+          dans son système interne
+          et comptable.
+
+          <br><br>
+
+          Les bocitecoins
+          ne sont déduits
+          qu’après validation.
+
+        </div>
+
+
+        <div
+          id="sportExchangeAvailability"
+          class="sportStatus"
+        ></div>
+
+
+        <label class="sportLabel">
+          Montant demandé
+        </label>
+
+        <select
+          id="sportExchangeAmount"
+          class="sportField"
+        ></select>
+
+
+        <button
+          class="sportBtn"
+          id="sportExchangeRequestBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:12px;
+          "
+        >
+          Transmettre la demande d’échange à la mairie
+        </button>
+
+
+        <div
+          id="sportExchangeStatus"
+          class="sportStatus"
+        ></div>
+
+
+        <div
+          id="sportExchangeHistory"
+        ></div>
+
+      </div>
+
+    `;
+  }
+
+
+  function openClubReserve(){
+
+    const club =
+      sportLoadClub();
+
+    const roleLabel =
+      sportSession.role ===
+      "president"
+
+        ? "Président"
+
+        : "Entraîneur / responsable";
+
+
+    openModal(
+      "Club avec Bo'CitéArt",
+      `
+
+        ${sportSharedStyles()}
+
+        <div class="bociteSportRoot">
+
+
+          ${sportTitle(
+            "Espace Club avec"
+          )}
+
+          <div class="sportCard">
+
+            <div class="sportAccessName">
+              ${sportEsc(
+                club.name ||
+                "Club partenaire"
+              )}
+            </div>
+
+            <div style="margin-top:5px;">
+              Accès :
+              ${sportEsc(roleLabel)}
+              —
+              ${sportEsc(
+                sportSession.name ||
+                ""
+              )}
+            </div>
+
+          </div>
+
+
+          ${sportTitle(
+            "Bocitecoins Sport avec"
+          )}
+
+
+          <div class="coinShowcase">
+
+            <div
+              class="coinFace coinGreen"
+              aria-hidden="true"
+            >
+
+              <div
+                class="coinStarsRing coinStarsGreen"
+                aria-hidden="true"
+              >
+                <svg
+                  viewBox="0 0 100 100"
+                  focusable="false"
+                  aria-hidden="true"
+                >
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="30.5"
+                    stroke-width="4.8"
+                    stroke-dasharray="0.01 5.33"
+                    class="starRingStroke"
+                  ></circle>
+                </svg>
+              </div>
+
+              <div class="coinInner coinInnerGreen">
+                <div class="n">
+                  1
+                </div>
+
+                <div class="t">
+                  BoCitecoin
+                </div>
+              </div>
+
+            </div>
+
+
+            <div class="walletBox">
+
+              <div class="walletTitle">
+                Wallet Sport — BoCitecoins VERT
+              </div>
+
+              <div
+                class="walletValue walletGreen"
+                id="sportCoinBalance"
+              >
+                0
+              </div>
+
+              <div class="walletSub">
+
+                Les bocitecoins
+                sont gagnés par les équipes
+                grâce aux séances responsables validées
+                et aux victoires officiellement vérifiées.
+
+                <br><br>
+
+                Ils appartiennent au club,
+                jamais à une personne.
+
+              </div>
+
+
+              <div
+                id="sportWalletExchangeAvailability"
+                class="sportStatus"
+              ></div>
+
+
+              <div class="sportActions">
+
+                <button
+                  class="walletMini"
+                  id="walletSportInfo"
+                  type="button"
+                >
+                  Règle d’échange
+                </button>
+
+                <button
+                  class="walletMini"
+                  id="sportShowQr"
+                  type="button"
+                >
+                  Code club
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          ${sportPresidentHtml()}
+
+          ${sportTrainingHtml()}
+
+          ${sportResultsHtml()}
+
+          ${sportSolidarityHtml()}
+
+          ${sportExchangeHtml()}
+
+          ${sportPublicityHtml()}
+
+
+          <div class="sportActions">
+
+            ${
+              sportSession.openedFromPresident
+
+                ? `
+                  <button
+                    class="sportBtn"
+                    id="sportBackPresidentBtn"
+                    type="button"
+                  >
+                    Retour à la présidence
+                  </button>
+                `
+
+                : ""
+            }
+
+            <button
+              class="sportBtn"
+              id="sportClubLogoutBtn"
+              type="button"
+            >
+              Fermer l’espace Club
+            </button>
+
+          </div>
+
+        </div>
+
+      `
+    );
+
+
+    setTimeout(
+      ()=>{
+
+        sportRefreshWalletUi();
+
+        sportRenderTrainingList();
+
+        sportRenderReportsList();
+
+        sportApplySolidarityUi();
+
+        sportRenderExchangeHistory();
+
+        sportRenderAccessList();
+
+
+        const info =
+          sportEl(
+            "walletSportInfo"
+          );
+
+        if(info){
+
+          info.onclick =
+            ()=>{
+
+              alert(
+                "Bocitecoins Sport — règle d’échange\n\n" +
+                "- 1 séance correctement terminée après deux validations indépendantes = 1 bocitecoin pour l’équipe\n" +
+                "- 1 match officiellement gagné = 1 bocitecoin\n" +
+                "- premier échange à partir de 30 bocitecoins\n" +
+                "- ensuite par lots de 10 : 30, 40, 50, 60…\n" +
+                "- utilisation au nom du club uniquement\n" +
+                "- nourriture / boissons admises : 30 % maximum\n" +
+                "- orientation : garder, partager ou donner\n" +
+                "- traitement et validation de l’échange par la mairie"
+              );
+            };
+        }
+
+
+        const qr =
+          sportEl(
+            "sportShowQr"
+          );
+
+        if(qr){
+          qr.onclick =
+            sportShowClubCode;
+        }
+
+
+        const coachCreate =
+          sportEl(
+            "sportCoachCreateBtn"
+          );
+
+        if(coachCreate){
+          coachCreate.onclick =
+            sportCreateCoachAccess;
+        }
+
+
+        const clubSave =
+          sportEl(
+            "sportClubSettingsSave"
+          );
+
+        if(clubSave){
+          clubSave.onclick =
+            sportSaveClubSettings;
+        }
+
+
+        const sync =
+          sportEl(
+            "sportSyncOfficialResults"
+          );
+
+        if(sync){
+          sync.onclick =
+            sportSyncOfficialResults;
+        }
+
+
+        const trainingCreate =
+          sportEl(
+            "sportTrainingCreateBtn"
+          );
+
+        if(trainingCreate){
+          trainingCreate.onclick =
+            sportCreateTraining;
+        }
+
+
+        const reportSave =
+          sportEl(
+            "sportWeekendSave"
+          );
+
+        if(reportSave){
+          reportSave.onclick =
+            sportSaveManualReport;
+        }
+
+
+        const solidaritySave =
+          sportEl(
+            "sportAssoSave"
+          );
+
+        if(solidaritySave){
+          solidaritySave.onclick =
+            sportSaveSolidarityFromUi;
+        }
+
+
+        const exchangeRequest =
+          sportEl(
+            "sportExchangeRequestBtn"
+          );
+
+        if(exchangeRequest){
+          exchangeRequest.onclick =
+            sportRequestExchange;
+        }
+
+
+        const fiche =
+          sportEl(
+            "openSportFicheBtn"
+          );
+
+        if(fiche){
+          fiche.onclick =
+            openSportFiche;
+        }
+
+
+        let currentSelectedPubAsso =
+          null;
+
+
+        const merchantScan =
+          sportEl(
+            "sportMerchantScanInput"
+          );
+
+        const merchantName =
+          sportEl(
+            "sportMerchantName"
+          );
+
+        const merchantAddress =
+          sportEl(
+            "sportMerchantAddress"
+          );
+
+        const merchantPhone =
+          sportEl(
+            "sportMerchantPhone"
+          );
+
+        const merchantEmail =
+          sportEl(
+            "sportMerchantEmail"
+          );
+
+        const pubPreview =
+          sportEl(
+            "sportPubPreview"
+          );
+
+
+        const merchantRead =
+          sportEl(
+            "sportMerchantReadBtn"
+          );
+
+        if(merchantRead){
+
+          merchantRead.onclick =
+            ()=>{
+
+              const raw =
+                String(
+                  merchantScan &&
+                  merchantScan.value ||
+                  ""
+                ).trim();
+
+              if(!raw){
+
+                alert(
+                  "Aucune lecture commerçant disponible."
+                );
+
+                return;
+              }
+
+              try{
+
+                const parsed =
+                  JSON.parse(
+                    raw
+                  );
+
+                if(
+                  parsed.type !==
+                  "merchant_profile"
+                ){
+
+                  alert(
+                    "Code commerçant non reconnu."
+                  );
+
+                  return;
+                }
+
+                if(merchantName){
+                  merchantName.value =
+                    parsed.shopName ||
+                    "";
+                }
+
+                if(merchantAddress){
+                  merchantAddress.value =
+                    parsed.address ||
+                    "";
+                }
+
+                if(merchantPhone){
+                  merchantPhone.value =
+                    parsed.phone ||
+                    "";
+                }
+
+                if(merchantEmail){
+                  merchantEmail.value =
+                    parsed.email ||
+                    "";
+                }
+
+              }catch(error){
+
+                alert(
+                  "Lecture commerçant invalide."
+                );
+              }
+            };
+        }
+
+
+        function buildSportPubText(asso){
+
+          const company =
+            String(
+              merchantName &&
+              merchantName.value ||
+              ""
+            ).trim();
+
+          if(!company){
+            return "";
+          }
+
+          let text =
+            company +
+            " soutient " +
+            (
+              sportLoadClub().name ||
+              "le club"
+            );
+
+          if(asso){
+
+            text +=
+              " + " +
+              asso;
+          }
+
+          return text;
+        }
+
+
+        document
+          .querySelectorAll(
+            ".sportPubAssoBtn"
+          )
+          .forEach(
+            btn =>{
+
+              btn.onclick =
+                ()=>{
+
+                  currentSelectedPubAsso =
+                    btn.getAttribute(
+                      "data-asso"
+                    ) ||
+                    "";
+
+                  const text =
+                    buildSportPubText(
+                      currentSelectedPubAsso
+                    );
+
+                  if(pubPreview){
+
+                    pubPreview.textContent =
+                      text ||
+                      "Renseignez d’abord le commerce.";
+                  }
+                };
+            }
+          );
+
+
+        const pay =
+          sportEl(
+            "sportPubPayBtn"
+          );
+
+        if(pay){
+
+          pay.onclick =
+            ()=>{
+
+              const company =
+                String(
+                  merchantName &&
+                  merchantName.value ||
+                  ""
+                ).trim();
+
+              if(!company){
+
+                alert(
+                  "Renseignez d’abord la fiche du commerçant."
+                );
+
+                return;
+              }
+
+              const text =
+                buildSportPubText(
+                  currentSelectedPubAsso
+                );
+
+              const ok =
+                confirm(
+                  "Montant : 60 € TTC\n" +
+                  "Diffusion : 7 jours consécutifs\n\n" +
+                  "Confirmer le paiement ?"
+                );
+
+              if(!ok){
+                return;
+              }
+
+              const now =
+                Date.now();
+
+              const pubs =
+                sportLoadPubs();
+
+              pubs.push({
+
+                id:
+                  sportCreateId(
+                    "pub"
+                  ),
+
+                type:
+                  "sport_support",
+
+                company:
+                  company,
+
+                club:
+                  sportLoadClub().name ||
+                  "Club partenaire",
+
+                asso:
+                  currentSelectedPubAsso ||
+                  "",
+
+                email:
+                  String(
+                    merchantEmail &&
+                    merchantEmail.value ||
+                    ""
+                  ).trim(),
+
+                phone:
+                  String(
+                    merchantPhone &&
+                    merchantPhone.value ||
+                    ""
+                  ).trim(),
+
+                address:
+                  String(
+                    merchantAddress &&
+                    merchantAddress.value ||
+                    ""
+                  ).trim(),
+
+                text:
+                  text,
+
+                paid:
+                  true,
+
+                startTs:
+                  now,
+
+                endTs:
+                  now +
+                  (
+                    7 *
+                    24 *
+                    60 *
+                    60 *
+                    1000
+                  ),
+
+                amountTTC:
+                  60,
+
+                amountHT:
+                  50,
+
+                ts_fr:
+                  new Date()
+                    .toLocaleString(
+                      "fr-FR"
+                    )
+              });
+
+              sportSavePubs(
+                pubs
+              );
+
+              syncSportPubsToTape();
+
+              alert(
+                "Paiement confirmé. La publicité est active pendant 7 jours."
+              );
+            };
+        }
+
+
+        const pubHistory =
+          sportEl(
+            "sportPubHistoryBtn"
+          );
+
+        if(pubHistory){
+
+          pubHistory.onclick =
+            ()=>{
+
+              const active =
+                getActiveSportPubs();
+
+              if(
+                !active.length
+              ){
+
+                alert(
+                  "Aucune publicité sport active pour le moment."
+                );
+
+                return;
+              }
+
+              alert(
+                "Publicités sport actives :\n\n" +
+                active
+                  .map(
+                    x =>
+                      x.text +
+                      "\nJusqu’au " +
+                      new Date(
+                        x.endTs
+                      )
+                        .toLocaleString(
+                          "fr-FR"
+                        )
+                  )
+                  .join(
+                    "\n\n--------------------\n\n"
+                  )
+              );
+            };
+        }
+
+
+        const backPresident =
+          sportEl(
+            "sportBackPresidentBtn"
+          );
+
+        if(backPresident){
+
+          backPresident.onclick =
+            ()=>{
+
+              sportSession = {
+                role:
+                  "president",
+
+                accountId:
+                  "president",
+
+                name:
+                  sportLoadAccess()
+                    .president
+                    .name ||
+                  "Président du club",
+
+                team:
+                  "",
+
+                openedFromPresident:
+                  false
+              };
+
+              window.bociteartSportSession =
+                sportSession;
+
+              openClubReserve();
+            };
+        }
+
+
+        const logout =
+          sportEl(
+            "sportClubLogoutBtn"
+          );
+
+        if(logout){
+
+          logout.onclick =
+            ()=>{
+
+              sportSession = {
+                role:"",
+                accountId:"",
+                name:"",
+                team:""
+              };
+
+              window.bociteartSportSession =
+                sportSession;
+
+              openSportPanel();
+            };
+        }
+
+      },
+      0
+    );
+  }
+
+
+  window.openClubReserve =
+    openClubReserve;
+
+   function openClubAccess(){
+
+    openModal(
+      "Accès Club avec Bo'CitéArt",
+      `
+
+        ${sportSharedStyles()}
+
+        <div class="bociteSportRoot">
+
+          ${sportTitle(
+            "Accès Club avec"
+          )}
+
+          <div class="sportCard">
+
+            Le président conserve
+            l’accès maître.
+
+            <br><br>
+
+            Il crée jusqu’à deux accès
+            entraîneur ou responsable
+            et garde la main
+            pour les suspendre,
+            les réactiver
+            ou les réattribuer.
+
+
+            <label class="sportLabel">
+              Identifiant
+            </label>
+
+            <input
+              id="sportLoginIdentifier"
+              class="sportField"
+              autocomplete="username"
+              placeholder="Identifiant président ou responsable"
+            >
+
+
+            <label class="sportLabel">
+              Code personnel
+            </label>
+
+            <input
+              id="sportLoginCode"
+              class="sportField"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Code d’accès"
+            >
+
+
+            <button
+              id="sportLoginBtn"
+              class="sportBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:12px;
+              "
+            >
+              Ouvrir l’espace Club
+            </button>
+
+
+            <div
+              id="sportLoginStatus"
+              class="sportStatus"
+            ></div>
+
+          </div>
+
+        </div>
+
+      `
+    );
+
+
+    setTimeout(
+      ()=>{
+
+        const button =
+          sportEl(
+            "sportLoginBtn"
+          );
+
+        if(!button){
+          return;
+        }
+
+
+        button.onclick =
+          async ()=>{
+
+            const identifier =
+              String(
+                sportEl("sportLoginIdentifier") &&
+                sportEl("sportLoginIdentifier").value ||
+                ""
+              ).trim();
+
+
+            const code =
+              String(
+                sportEl("sportLoginCode") &&
+                sportEl("sportLoginCode").value ||
+                ""
+              ).trim();
+
+
+            const status =
+              sportEl(
+                "sportLoginStatus"
+              );
+
+
+            if(
+              !identifier ||
+              !code
+            ){
+
+              if(status){
+
+                status.textContent =
+                  "Renseignez l’identifiant et le code.";
+              }
+
+              return;
+            }
+
+
+            if(
+              SPORT_CONFIG.mode ===
+              "production" &&
+              SPORT_CONFIG.authEndpoint
+            ){
+
+              try{
+
+                const response =
+                  await fetch(
+                    SPORT_CONFIG.authEndpoint,
+                    {
+                      method:
+                        "POST",
+
+                      credentials:
+                        "include",
+
+                      headers:{
+                        "Content-Type":
+                          "application/json"
+                      },
+
+                      body:
+                        JSON.stringify({
+                          identifier:
+                            identifier,
+
+                          code:
+                            code,
+
+                          scope:
+                            "sport_club"
+                        })
+                    }
+                  );
+
+
+                if(!response.ok){
+
+                  throw new Error(
+                    "denied"
+                  );
+                }
+
+
+                const data =
+                  await response.json();
+
+
+                if(
+                  !data ||
+                  data.ok !== true
+                ){
+
+                  throw new Error(
+                    "denied"
+                  );
+                }
+
+
+                sportSession = {
+
+                  role:
+                    data.role ===
+                    "president"
+                      ? "president"
+                      : "coach",
+
+                  accountId:
+                    String(
+                      data.accountId ||
+                      identifier
+                    ),
+
+                  name:
+                    String(
+                      data.name ||
+                      identifier
+                    ),
+
+                  team:
+                    String(
+                      data.team ||
+                      ""
+                    )
+                };
+
+
+                window.bociteartSportSession =
+                  sportSession;
+
+
+                openClubReserve();
+
+                return;
+
+
+              }catch(error){
+
+                if(status){
+
+                  status.textContent =
+                    "Accès temporairement indisponible. Contactez le président du club.";
+                }
+
+                return;
+              }
+            }
+
+
+            const access =
+              sportLoadAccess();
+
+
+            if(
+              identifier ===
+              access.president.identifier
+            ){
+
+              let accepted =
+                false;
+
+
+              const hashed =
+                await sportHash(
+                  code
+                );
+
+
+              if(
+                access.president.codeHash
+              ){
+
+                accepted =
+                  hashed ===
+                  access.president.codeHash;
+
+
+              }else if(
+                code ===
+                "club-demo"
+              ){
+
+                accepted =
+                  true;
+
+
+                access.president.codeHash =
+                  hashed;
+
+
+                access.president.updatedAt =
+                  new Date()
+                    .toISOString();
+
+
+                sportSaveAccess(
+                  access
+                );
+              }
+
+
+              if(
+                accepted &&
+                access.president.active !==
+                false
+              ){
+
+                sportSession = {
+
+                  role:
+                    "president",
+
+                  accountId:
+                    "president",
+
+                  name:
+                    access.president.name ||
+                    "Président du club",
+
+                  team:
+                    ""
+                };
+
+
+                window.bociteartSportSession =
+                  sportSession;
+
+
+                openClubReserve();
+
+                return;
+              }
+            }
+
+
+            const coach =
+              access.coaches.find(
+                x =>
+                  String(
+                    x.identifier ||
+                    ""
+                  ) ===
+                  identifier &&
+                  x.active !== false
+              );
+
+
+            if(
+              coach &&
+              coach.codeHash ===
+              await sportHash(
+                code
+              )
+            ){
+
+              sportSession = {
+
+                role:
+                  "coach",
+
+                accountId:
+                  coach.id,
+
+                name:
+                  coach.name ||
+                  "Responsable",
+
+                team:
+                  coach.team ||
+                  ""
+              };
+
+
+              window.bociteartSportSession =
+                sportSession;
+
+
+              openClubReserve();
+
+              return;
+            }
+
+
+            if(status){
+
+              status.textContent =
+                "Accès réservé aux clubs partenaires autorisés.";
+            }
+          };
+
+      },
+      0
+    );
+  }
+
+
+  window.openClubAccess =
+    openClubAccess;
+
+
+  function openSportPanel(){
+
+    openModal(
+      "Sport avec Bo'CitéArt",
+      `
+
+        ${sportSharedStyles()}
+
+        <div class="bociteSportRoot">
+
+
+          ${sportTitle(
+            "Sport avec"
+          )}
+
+          <div class="sportCard">
+
+            Le sport relie
+            l’effort,
+            le respect,
+            l’engagement,
+            la vie locale
+            et la solidarité.
+
+            <br><br>
+
+            ${sportBrandHtml()}
+            rend visibles
+            les clubs,
+            leurs résultats,
+            les comportements
+            qui font grandir une équipe
+            et les acteurs de la commune
+            qui choisissent
+            de les soutenir.
+
+          </div>
+
+
+          ${sportBenefitsHtml()}
+
+
+          ${sportTitle(
+            "Résultats du week-end avec"
+          )}
+
+          <div class="sportCard">
+
+            Les résultats publiés
+            par les clubs
+            permettent aux adhérents,
+            aux familles,
+            aux supporters
+            et aux habitants
+            de suivre la vie sportive
+            de la commune.
+
+            <div
+              id="sportPublicResultsList"
+              style="margin-top:10px;"
+            >
+              ${sportRenderPublicResultsHtml()}
+            </div>
+
+          </div>
+
+
+          ${sportTitle(
+            "Explorer les alentours avec"
+          )}
+
+          <div class="sportCard">
+
+            Retrouvez les parcs,
+            parcours,
+            pistes cyclables,
+            équipements sportifs,
+            espaces verts,
+            arrêts de bus,
+            commerces utiles
+            et points de repère
+            de la ville.
+
+
+            <div class="sportActions">
+
+              <button
+                class="sportBtn"
+                id="openMap"
+                type="button"
+              >
+                Consulter la carte
+              </button>
+
+            </div>
+
+          </div>
+
+
+          ${sportTitle(
+            "Repères utiles avec"
+          )}
+
+          <div class="sportCard">
+
+            <ul
+              style="
+                list-style:none;
+                margin-left:0;
+              "
+            >
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Parc sportif';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Parc sportif
+              </li>
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Bois et parcours';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Bois et parcours
+              </li>
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Salle de sport';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Salle de sport
+              </li>
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Parc urbain';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Parc urbain
+              </li>
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Espace vert central';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Espace vert central
+              </li>
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Piste cyclable nord';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Piste cyclable nord
+              </li>
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Piste cyclable centre';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Piste cyclable centre
+              </li>
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Arrêt de bus Mairie';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Arrêt de bus Mairie
+              </li>
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Arrêt de bus Centre';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Arrêt de bus Centre
+              </li>
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Supérette du centre';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Supérette du centre
+              </li>
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Mini-market quartier nord';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Mini-market quartier nord
+              </li>
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Restaurant place centrale';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Restaurant place centrale
+              </li>
+
+              <li
+                onclick="
+                  window.BOCITEART_MAP_TARGET='Snack du quartier';
+                  window.openWellbeingMap();
+                "
+                style="cursor:pointer;"
+              >
+                ● Snack du quartier
+              </li>
+
+            </ul>
+
+          </div>
+
+
+          ${sportTitle(
+            "Espace Clubs partenaires avec"
+          )}
+
+          <div class="sportCard">
+
+            Les fonctions réservées
+            sont accessibles uniquement
+            aux clubs partenaires autorisés.
+
+
+            <div class="sportActions">
+
+              <button
+                class="sportBtn"
+                id="sportOpenClubAccessBtn"
+                type="button"
+              >
+                Accéder à l’espace Club
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `
+    );
+
+
+    setTimeout(
+      ()=>{
+
+        const map =
+          sportEl(
+            "openMap"
+          );
+
+        if(map){
+          map.onclick =
+            openWellbeingMap;
+        }
+
+
+        const access =
+          sportEl(
+            "sportOpenClubAccessBtn"
+          );
+
+        if(access){
+          access.onclick =
+            openClubAccess;
+        }
+
+      },
+      0
+    );
+  }
+
+
+  window.openSportPanel =
+    openSportPanel;
+
+
+  openSportPanel();
+
+  return;
 }
-
-window.openClubAccess = openClubAccess;
-
-window.openSportPanel();
-return;
-} 
 
 if(key === "commerces") {
   openModal("Commerces & Entreprises", `
