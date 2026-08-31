@@ -14220,6 +14220,23 @@ if(key === "sport"){
     '</span>';
   }
 
+ const SPORT_LOCAL_CLUB_IDENTIFIER = "club-partenaire-001";
+const SPORT_LOCAL_INITIAL_CODE = "BCA-SPORT-001";
+
+function sportSetModalHeader(textBefore){
+  const title = document.getElementById("modalTitle");
+
+  if(!title){
+    return;
+  }
+
+  title.innerHTML =
+    sportEsc(textBefore || "") +
+    ' <span class="bociteSportLogo">' +
+    "Bo'Cité" +
+    '<span>Art</span></span>';
+}
+
   function sportTitle(textBefore, textAfter){
     return `
       <div class="sportTitleCard">
@@ -14245,6 +14262,21 @@ if(key === "sport"){
           font-size:17px !important;
           font-weight:700 !important;
         }
+
+        #modalTitle .bociteSportLogo{
+  display:inline-block;
+  color:#2f5d46 !important;
+  font-size:inherit;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+#modalTitle .bociteSportLogo > span{
+  display:inline;
+  color:#b00020 !important;
+  font-size:inherit;
+  font-weight:700;
+}
 
         .bociteSportRoot{
           color:#111111;
@@ -14869,50 +14901,97 @@ if(key === "sport"){
     );
   }
 
-  function sportLoadAccess(){
+function sportLoadAccess(){
 
-    const data =
-      sportLoad(
-        SPORT_KEYS.access,
-        null
-      );
+  const data =
+    sportLoad(
+      SPORT_KEYS.access,
+      null
+    );
 
-    if(
-      data &&
-      data.president &&
-      Array.isArray(
-        data.coaches
-      )
-    ){
-      return data;
+  if(
+    data &&
+    data.president &&
+    Array.isArray(data.coaches)
+  ){
+
+    let changed = false;
+
+    if(!data.clubId){
+      data.clubId =
+        SPORT_CONFIG.clubId;
+
+      changed = true;
     }
 
-    return {
-      president:{
-        id:
-          "president",
+    if(!data.clubIdentifier){
+      data.clubIdentifier =
+        SPORT_LOCAL_CLUB_IDENTIFIER;
 
-        identifier:
-          "president",
+      changed = true;
+    }
 
-        name:
-          "Président du club",
+    /* ancien accès générique converti en accès propre au club */
+    if(
+      !data.president.identifier ||
+      data.president.identifier === "president"
+    ){
 
-        codeHash:
-          "",
+      data.president.identifier =
+        data.clubIdentifier;
 
-        active:
-          true,
+      data.president.codeHash =
+        "";
 
-        updatedAt:
-          new Date()
-            .toISOString()
-      },
+      data.president.updatedAt =
+        new Date().toISOString();
 
-      coaches:[]
-    };
+      changed = true;
+    }
+
+    if(changed){
+      sportSave(
+        SPORT_KEYS.access,
+        data
+      );
+    }
+
+    return data;
   }
 
+  return {
+
+    clubId:
+      SPORT_CONFIG.clubId,
+
+    clubIdentifier:
+      SPORT_LOCAL_CLUB_IDENTIFIER,
+
+    president:{
+
+      id:
+        "president",
+
+      identifier:
+        SPORT_LOCAL_CLUB_IDENTIFIER,
+
+      name:
+        "Président du club",
+
+      codeHash:
+        "",
+
+      active:
+        true,
+
+      updatedAt:
+        new Date().toISOString()
+    },
+
+    coaches:[]
+  };
+}
+ 
   function sportSaveAccess(data){
     return sportSave(
       SPORT_KEYS.access,
@@ -19471,6 +19550,7 @@ if(key === "sport"){
                 sportSession;
 
               openSportPanel();
+             sportSetModalHeader("Sport avec");
             };
         }
 
@@ -19478,7 +19558,6 @@ if(key === "sport"){
       0
     );
   }
-
 
   window.openClubReserve =
     openClubReserve;
@@ -19504,25 +19583,26 @@ if(key === "sport"){
 
             <br><br>
 
-            Il crée jusqu’à deux accès
-            entraîneur ou responsable
-            et garde la main
-            pour les suspendre,
-            les réactiver
-            ou les réattribuer.
+    Chaque club partenaire dispose de son propre identifiant
+et de son propre code d’accès.
 
+<br><br>
 
-            <label class="sportLabel">
-              Identifiant
-            </label>
+Le président conserve l’accès maître.
+Il crée jusqu’à deux accès entraîneur ou responsable
+et garde la main pour les suspendre,
+les réactiver ou les réattribuer.
 
-            <input
-              id="sportLoginIdentifier"
-              class="sportField"
-              autocomplete="username"
-              placeholder="Identifiant président ou responsable"
-            >
+<label class="sportLabel">
+  Identifiant du club ou du responsable
+</label>
 
+<input
+  id="sportLoginIdentifier"
+  class="sportField"
+  autocomplete="username"
+  placeholder="Identifiant du club ou du responsable"
+>
 
             <label class="sportLabel">
               Code personnel
@@ -19983,147 +20063,75 @@ if(key === "sport"){
 
           <div class="sportCard">
 
-            <ul
-              style="
-                list-style:none;
-                margin-left:0;
-              "
-            >
+             <ul style="list-style:none;margin-left:0;">
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Parc sportif';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Parc sportif
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Parc sportif'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#1fa34a;">●</span>
+    Parc sportif
+  </li>
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Bois et parcours';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Bois et parcours
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Bois et parcours'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#2a9d8f;">●</span>
+    Bois et parcours
+  </li>
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Salle de sport';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Salle de sport
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Salle de sport'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#1fa34a;">●</span>
+    Salle de sport
+  </li>
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Parc urbain';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Parc urbain
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Parc urbain'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#2a9d8f;">●</span>
+    Parc urbain
+  </li>
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Espace vert central';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Espace vert central
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Espace vert central'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#2a9d8f;">●</span>
+    Espace vert central
+  </li>
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Piste cyclable nord';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Piste cyclable nord
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Piste cyclable nord'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#1fa34a;">●</span>
+    Piste cyclable nord
+  </li>
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Piste cyclable centre';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Piste cyclable centre
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Piste cyclable centre'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#1fa34a;">●</span>
+    Piste cyclable centre
+  </li>
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Arrêt de bus Mairie';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Arrêt de bus Mairie
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Arrêt de bus Mairie'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#1f6fd6;">●</span>
+    Arrêt de bus Mairie
+  </li>
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Arrêt de bus Centre';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Arrêt de bus Centre
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Arrêt de bus Centre'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#1f6fd6;">●</span>
+    Arrêt de bus Centre
+  </li>
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Supérette du centre';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Supérette du centre
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Supérette du centre'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#ff8c00;">●</span>
+    Supérette du centre
+  </li>
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Mini-market quartier nord';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Mini-market quartier nord
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Mini-market quartier nord'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#ff8c00;">●</span>
+    Mini-market quartier nord
+  </li>
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Restaurant place centrale';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Restaurant place centrale
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Restaurant place centrale'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#ff8c00;">●</span>
+    Restaurant place centrale
+  </li>
 
-              <li
-                onclick="
-                  window.BOCITEART_MAP_TARGET='Snack du quartier';
-                  window.openWellbeingMap();
-                "
-                style="cursor:pointer;"
-              >
-                ● Snack du quartier
-              </li>
+  <li onclick="window.BOCITEART_MAP_TARGET='Snack du quartier'; window.openWellbeingMap();" style="cursor:pointer;">
+    <span style="display:inline-block;width:18px;color:#ff8c00;">●</span>
+    Snack du quartier
+  </li>
 
-            </ul>
-
+</ul> 
           </div>
-
 
           ${sportTitle(
             "Espace Clubs partenaires avec"
