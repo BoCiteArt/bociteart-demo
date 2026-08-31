@@ -6808,17 +6808,747 @@ Elle continue simplement de pousser… avec celles et ceux qui la font vivre.`
 
 
   /* =========================================================
-     7. QR
+     7. QR — ŒUVRES
+     PRÉPARATION IMMÉDIATE AU PASSAGE EN PRODUCTION
      ========================================================= */
 
-  function promptQr(){
+  const OEUVRES_QR_CONFIG =
+    Object.assign(
+      {
 
-    const code =
-      prompt(
-`Entrer le QR code de démo.
+        /*
+         * État actuel interne.
+         *
+         * Lors du branchement réel :
+         * passer simplement à "production"
+         * et renseigner les services serveur.
+         */
+        mode:
+          "preproduction",
 
-Exemples :
+        /*
+         * Code court de la commune.
+         */
+        cityCode:
+          "WAT",
 
+        /*
+         * Adresse publique officielle
+         * qui sera encodée dans les QR.
+         */
+        publicBaseUrl:
+          "",
+
+        /*
+         * Vérification d'un QR scanné.
+         */
+        verifyEndpoint:
+          "",
+
+        /*
+         * Création d'un QR officiel.
+         */
+        generateEndpoint:
+          "",
+
+        /*
+         * Révocation et remplacement.
+         */
+        replaceEndpoint:
+          "",
+
+        /*
+         * Signalement d'une anomalie
+         * de plaque ou de QR.
+         */
+        reportEndpoint:
+          "",
+
+        /*
+         * En production,
+         * une vérification ponctuelle
+         * de proximité pourra être demandée.
+         */
+        requireProximity:
+          true,
+
+        /*
+         * Valeur de préparation de l'interface.
+         * La validation réelle sera faite
+         * côté serveur.
+         */
+        proximityRadiusMeters:
+          100
+
+      },
+
+      window
+        .BOCITEART_OEUVRES_QR_CONFIG ||
+      {}
+    );
+
+
+  /* =========================================================
+     RÉFÉRENCE VISIBLE DE LA PLAQUE
+     ========================================================= */
+
+  function getOeuvrePlaqueRef(o){
+
+    if(!o){
+
+      return "";
+    }
+
+    if(
+      o.plaqueRef
+    ){
+
+      return String(
+        o.plaqueRef
+      );
+    }
+
+    return (
+      "BCA-" +
+      String(
+        OEUVRES_QR_CONFIG.cityCode ||
+        "VILLE"
+      )
+        .toUpperCase() +
+      "-" +
+      String(
+        o.id
+      )
+        .padStart(
+          3,
+          "0"
+        )
+    );
+  }
+
+
+  function getOeuvrePlaqueLabel(o){
+
+    return (
+      "Réf. œuvre : " +
+      getOeuvrePlaqueRef(
+        o
+      )
+    );
+  }
+
+
+  /* =========================================================
+     IDENTIFICATION DU QR OU DE LA RÉFÉRENCE
+     ========================================================= */
+
+  function getOeuvreByQrValue(value){
+
+    const raw =
+      String(
+        value || ""
+      ).trim();
+
+    if(!raw){
+
+      return null;
+    }
+
+
+    /*
+     * QR actuellement attribué à l'œuvre.
+     */
+    const direct =
+      oeuvres.find(
+        function(o){
+
+          return (
+            String(
+              o.qr ||
+              ""
+            ) ===
+            raw
+          );
+        }
+      );
+
+    if(direct){
+
+      return direct;
+    }
+
+
+    /*
+     * Référence visible inscrite
+     * directement sur la plaque.
+     */
+    const byPlaque =
+      oeuvres.find(
+        function(o){
+
+          return (
+            getOeuvrePlaqueRef(
+              o
+            )
+              .toUpperCase() ===
+            raw.toUpperCase()
+          );
+        }
+      );
+
+    if(byPlaque){
+
+      return byPlaque;
+    }
+
+
+    /*
+     * Futur QR contenant
+     * une adresse officielle Bo'CitéArt.
+     */
+    try{
+
+      const url =
+        new URL(
+          raw
+        );
+
+      const lastPart =
+        String(
+          url.pathname
+            .split("/")
+            .filter(
+              Boolean
+            )
+            .pop() ||
+          ""
+        );
+
+      if(lastPart){
+
+        return (
+          oeuvres.find(
+            function(o){
+
+              return (
+                String(
+                  o.qrPublicId ||
+                  ""
+                ) ===
+                lastPart
+              );
+            }
+          ) ||
+          null
+        );
+      }
+
+    }catch(error){}
+
+    return null;
+  }
+
+
+  /* =========================================================
+     MÉMORISATION DE L'ŒUVRE OUVERTE
+     ========================================================= */
+
+  function saveUnlockedOeuvre(o){
+
+    if(!o){
+
+      return;
+    }
+
+    if(!o.open){
+
+      const unlocked =
+        getUnlocked();
+
+      if(
+        !unlocked.includes(
+          o.id
+        )
+      ){
+
+        unlocked.push(
+          o.id
+        );
+
+        setUnlocked(
+          unlocked
+        );
+      }
+    }
+
+    try{
+
+      localStorage.setItem(
+        LAST_KEY,
+        o.id
+      );
+
+    }catch(error){}
+  }
+
+
+  /* =========================================================
+     LOCALISATION TEMPORAIRE
+     ========================================================= */
+
+  function getTemporaryQrPosition(){
+
+    return new Promise(
+      function(resolve){
+
+        if(
+          !OEUVRES_QR_CONFIG
+            .requireProximity
+        ){
+
+          resolve(
+            null
+          );
+
+          return;
+        }
+
+
+        if(
+          !navigator
+            .geolocation
+        ){
+
+          resolve(
+            {
+              unavailable:true
+            }
+          );
+
+          return;
+        }
+
+
+        navigator
+          .geolocation
+          .getCurrentPosition(
+
+            function(position){
+
+              resolve(
+                {
+
+                  lat:
+                    position
+                      .coords
+                      .latitude,
+
+                  lng:
+                    position
+                      .coords
+                      .longitude,
+
+                  accuracy:
+                    position
+                      .coords
+                      .accuracy
+                }
+              );
+            },
+
+
+            function(error){
+
+              resolve(
+                {
+
+                  denied:
+                    true,
+
+                  code:
+                    error
+                      ? error.code
+                      : null
+                }
+              );
+            },
+
+
+            {
+              enableHighAccuracy:
+                true,
+
+              timeout:
+                10000,
+
+              maximumAge:
+                30000
+            }
+
+          );
+      }
+    );
+  }
+
+
+  /* =========================================================
+     VÉRIFICATION RÉELLE CÔTÉ SERVEUR
+     ========================================================= */
+
+  async function verifyProductionQr(
+    rawCode
+  ){
+
+    if(
+      !OEUVRES_QR_CONFIG
+        .verifyEndpoint
+    ){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "production_not_configured"
+      };
+    }
+
+
+    const position =
+      await getTemporaryQrPosition();
+
+
+    if(
+      OEUVRES_QR_CONFIG
+        .requireProximity &&
+      position &&
+      (
+        position.denied ||
+        position.unavailable
+      )
+    ){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "position_required"
+      };
+    }
+
+
+    try{
+
+      const response =
+        await fetch(
+          OEUVRES_QR_CONFIG
+            .verifyEndpoint,
+          {
+
+            method:
+              "POST",
+
+            credentials:
+              "include",
+
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(
+                {
+
+                  qr:
+                    String(
+                      rawCode ||
+                      ""
+                    ),
+
+                  latitude:
+                    position &&
+                    Number.isFinite(
+                      position.lat
+                    )
+                      ? position.lat
+                      : null,
+
+                  longitude:
+                    position &&
+                    Number.isFinite(
+                      position.lng
+                    )
+                      ? position.lng
+                      : null,
+
+                  accuracy:
+                    position &&
+                    Number.isFinite(
+                      position.accuracy
+                    )
+                      ? position.accuracy
+                      : null
+                }
+              )
+          }
+        );
+
+
+      if(!response.ok){
+
+        return {
+
+          ok:false,
+
+          reason:
+            "server_rejected"
+        };
+      }
+
+
+      const result =
+        await response.json();
+
+
+      if(
+        !result ||
+        result.ok !==
+        true
+      ){
+
+        return {
+
+          ok:false,
+
+          reason:
+            result &&
+            result.reason
+              ? result.reason
+              : "not_valid"
+        };
+      }
+
+
+      return result;
+
+    }catch(error){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "network_error"
+      };
+    }
+  }
+
+
+  /* =========================================================
+     RÉSOLUTION DU QR
+     ========================================================= */
+
+  async function resolveOeuvreQr(
+    rawCode
+  ){
+
+    const value =
+      String(
+        rawCode || ""
+      ).trim();
+
+    if(!value){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "empty"
+      };
+    }
+
+
+    /* ---------------------------------------------------------
+       ÉTAT PRÉPRODUCTION
+       --------------------------------------------------------- */
+
+    if(
+      OEUVRES_QR_CONFIG
+        .mode !==
+      "production"
+    ){
+
+      const oeuvre =
+        getOeuvreByQrValue(
+          value
+        );
+
+      if(!oeuvre){
+
+        return {
+
+          ok:false,
+
+          reason:
+            "unknown"
+        };
+      }
+
+
+      saveUnlockedOeuvre(
+        oeuvre
+      );
+
+
+      return {
+
+        ok:true,
+
+        oeuvre:
+          oeuvre,
+
+        plaqueRef:
+          getOeuvrePlaqueRef(
+            oeuvre
+          ),
+
+        mode:
+          "preproduction"
+      };
+    }
+
+
+    /* ---------------------------------------------------------
+       PRODUCTION
+       --------------------------------------------------------- */
+
+    const verified =
+      await verifyProductionQr(
+        value
+      );
+
+
+    if(
+      !verified ||
+      verified.ok !==
+      true
+    ){
+
+      return verified;
+    }
+
+
+    const artworkId =
+      String(
+        verified.artworkId ||
+        verified.oeuvreId ||
+        ""
+      );
+
+
+    const oeuvre =
+      oeuvres.find(
+        function(o){
+
+          return (
+            String(
+              o.id
+            ) ===
+            artworkId
+          );
+        }
+      );
+
+
+    if(!oeuvre){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "artwork_not_found"
+      };
+    }
+
+
+    saveUnlockedOeuvre(
+      oeuvre
+    );
+
+
+    return {
+
+      ok:true,
+
+      oeuvre:
+        oeuvre,
+
+      plaqueRef:
+        verified.plaqueRef ||
+        getOeuvrePlaqueRef(
+          oeuvre
+        ),
+
+      mode:
+        "production"
+    };
+  }
+
+
+  /* =========================================================
+     SCANNER OU SAISIR LE QR
+     ========================================================= */
+
+  async function requestQrCode(){
+
+    /*
+     * Dès que le scanner caméra réel
+     * est branché, il sera utilisé ici
+     * automatiquement.
+     */
+    if(
+      window
+        .BociteQrScanner &&
+      typeof window
+        .BociteQrScanner
+        .scan ===
+      "function"
+    ){
+
+      try{
+
+        const scanned =
+          await window
+            .BociteQrScanner
+            .scan();
+
+        if(scanned){
+
+          return scanned;
+        }
+
+      }catch(error){}
+    }
+
+
+    /*
+     * Saisie de secours.
+     * Elle reste utile si la caméra
+     * n'est pas disponible
+     * ou si le QR est détérioré
+     * mais que sa référence reste lisible.
+     */
+    return prompt(
+`Scanner ou saisir le QR de l'œuvre.
+
+Codes actuellement disponibles :
+
+QR-BOCITEART-001
+QR-BOCITEART-002
 QR-BOCITEART-003
 QR-BOCITEART-004
 QR-BOCITEART-005
@@ -6826,38 +7556,396 @@ QR-BOCITEART-006
 QR-BOCITEART-007
 QR-BOCITEART-008
 QR-BOCITEART-009
-QR-BOCITEART-010`
-      );
+QR-BOCITEART-010
+
+La référence visible de l'œuvre,
+par exemple BCA-WAT-003,
+peut également être saisie.`
+    );
+  }
+
+
+  async function promptQr(){
+
+    const code =
+      await requestQrCode();
 
     if(!code){
 
       return;
     }
 
-    const o =
-      unlockByQr(
+
+    const result =
+      await resolveOeuvreQr(
         code
       );
 
-    if(!o){
 
-      alert(
-        "QR code non reconnu."
+    if(
+      result &&
+      result.ok ===
+      true &&
+      result.oeuvre
+    ){
+
+      /*
+       * En préproduction,
+       * confirmation visible.
+       *
+       * En production,
+       * l'ouverture peut être immédiate
+       * après validation serveur.
+       */
+      if(
+        OEUVRES_QR_CONFIG
+          .mode !==
+        "production"
+      ){
+
+        alert(
+          "Œuvre accessible : " +
+          result.oeuvre.titre +
+          "\n\n" +
+          getOeuvrePlaqueLabel(
+            result.oeuvre
+          )
+        );
+      }
+
+
+      openDetailById(
+        result.oeuvre.id
       );
 
       return;
     }
 
-    alert(
-      "Œuvre débloquée : " +
-      o.titre
-    );
 
-    openDetailById(
-      o.id
+    const reason =
+      result &&
+      result.reason
+        ? result.reason
+        : "not_valid";
+
+
+    if(
+      reason ===
+      "position_required"
+    ){
+
+      alert(
+        "Pour ouvrir cette découverte sur place, autorisez temporairement la localisation de votre appareil."
+      );
+
+      return;
+    }
+
+
+    if(
+      reason ===
+      "production_not_configured"
+    ){
+
+      alert(
+        "Le service de validation est momentanément indisponible."
+      );
+
+      return;
+    }
+
+
+    if(
+      reason ===
+      "network_error"
+    ){
+
+      alert(
+        "La vérification du QR est momentanément indisponible."
+      );
+
+      return;
+    }
+
+
+    /*
+     * Message volontairement générique :
+     * aucun mécanisme de protection
+     * n'est révélé.
+     */
+    alert(
+      "Ce QR ne peut pas être validé. Vérifiez la pancarte ou signalez une anomalie."
     );
   }
 
+
+  /* =========================================================
+     CRÉATION D'UN QR OFFICIEL
+     ESPACE PRIVÉ UNIQUEMENT
+     ========================================================= */
+
+  async function requestProductionQrCreation(
+    oeuvreId
+  ){
+
+    if(
+      OEUVRES_QR_CONFIG
+        .mode !==
+      "production"
+    ){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "preproduction_mode"
+      };
+    }
+
+
+    if(
+      !OEUVRES_QR_CONFIG
+        .generateEndpoint
+    ){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "endpoint_missing"
+      };
+    }
+
+
+    const oeuvre =
+      oeuvres.find(
+        function(o){
+
+          return (
+            String(
+              o.id
+            ) ===
+            String(
+              oeuvreId
+            )
+          );
+        }
+      );
+
+
+    if(!oeuvre){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "artwork_not_found"
+      };
+    }
+
+
+    try{
+
+      const response =
+        await fetch(
+          OEUVRES_QR_CONFIG
+            .generateEndpoint,
+          {
+
+            method:
+              "POST",
+
+            credentials:
+              "include",
+
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(
+                {
+
+                  artworkId:
+                    oeuvre.id,
+
+                  plaqueRef:
+                    getOeuvrePlaqueRef(
+                      oeuvre
+                    )
+                }
+              )
+          }
+        );
+
+
+      if(!response.ok){
+
+        return {
+
+          ok:false,
+
+          reason:
+            "server_rejected"
+        };
+      }
+
+
+      return await response.json();
+
+    }catch(error){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "network_error"
+      };
+    }
+  }
+
+
+  /* =========================================================
+     REMPLACEMENT / RÉVOCATION
+     ESPACE PRIVÉ UNIQUEMENT
+     ========================================================= */
+
+  async function requestProductionQrReplacement(
+    oeuvreId,
+    reason
+  ){
+
+    if(
+      OEUVRES_QR_CONFIG
+        .mode !==
+      "production"
+    ){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "preproduction_mode"
+      };
+    }
+
+
+    if(
+      !OEUVRES_QR_CONFIG
+        .replaceEndpoint
+    ){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "endpoint_missing"
+      };
+    }
+
+
+    try{
+
+      const response =
+        await fetch(
+          OEUVRES_QR_CONFIG
+            .replaceEndpoint,
+          {
+
+            method:
+              "POST",
+
+            credentials:
+              "include",
+
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(
+                {
+
+                  artworkId:
+                    String(
+                      oeuvreId
+                    ),
+
+                  reason:
+                    String(
+                      reason ||
+                      "replacement"
+                    )
+                }
+              )
+          }
+        );
+
+
+      if(!response.ok){
+
+        return {
+
+          ok:false,
+
+          reason:
+            "server_rejected"
+        };
+      }
+
+
+      return await response.json();
+
+    }catch(error){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "network_error"
+      };
+    }
+  }
+
+
+  /* =========================================================
+     INTERFACE DE BRANCHEMENT
+     ========================================================= */
+
+  window.BociteOeuvresQR = {
+
+    config:
+      OEUVRES_QR_CONFIG,
+
+    scan:
+      promptQr,
+
+    resolve:
+      resolveOeuvreQr,
+
+    getPlaqueRef:
+      getOeuvrePlaqueRef,
+
+    generate:
+      requestProductionQrCreation,
+
+    replace:
+      requestProductionQrReplacement
+  };
+
+
+  /* =========================================================
+     ROUVRIR LA DERNIÈRE ŒUVRE
+     ========================================================= */
 
   function reopenLast(){
 
@@ -6890,6 +7978,10 @@ QR-BOCITEART-010`
   }
 
 
+  /* =========================================================
+     RÉINITIALISER LE PARCOURS
+     ========================================================= */
+
   function resetDemo(){
 
     const ok =
@@ -6920,6 +8012,10 @@ QR-BOCITEART-010`
   }
 
 
+  /* =========================================================
+     AFFICHAGE D'UNE ŒUVRE DANS LE PARCOURS
+     ========================================================= */
+
   function renderRow(
     o,
     index
@@ -6948,6 +8044,7 @@ QR-BOCITEART-010`
           )}
         </div>
 
+
         <div
           style="
             margin-top:6px;
@@ -6957,10 +8054,21 @@ QR-BOCITEART-010`
             line-height:1.55;
           "
         >
+
           Quartier :
           ${esc(
             o.quartier
           )}
+
+          <br>
+
+          Référence :
+          ${esc(
+            getOeuvrePlaqueRef(
+              o
+            )
+          )}
+
           <br>
 
           Statut :
@@ -6969,7 +8077,9 @@ QR-BOCITEART-010`
               ? "accessible"
               : "à débloquer sur place"
           }
+
         </div>
+
 
         <button
           id="oeuvreRowBtn_${esc(
@@ -6979,6 +8089,8 @@ QR-BOCITEART-010`
           class="choiceBtn"
           style="
             margin-top:10px;
+            background:#ffffff;
+            border:1px solid rgba(47,93,70,.32);
           "
         >
           ${
@@ -6992,8 +8104,6 @@ QR-BOCITEART-010`
 
     `;
   }
-
-
   /* =========================================================
      8. CARTE
      ========================================================= */
