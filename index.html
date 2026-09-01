@@ -14187,8 +14187,31 @@ const SPORT_KEYS = {
   dossiers:"bociteart_sport_support_dossiers_v2",
   receipts:"bociteart_sport_receipts_v2",
   mairieTransfers:"bociteart_sport_mairie_transfers_v2",
-  payments:"bociteart_sport_payments_v2",
-  pubs:"bociteart_sport_pubs_v3"
+   payments:"bociteart_sport_payments_v2",
+  pubs:"bociteart_sport_pubs_v3",
+
+  /*
+    Gouvernance du club.
+    Ces données appartiennent au CLUB,
+    jamais au président personnellement.
+  */
+  governance:"bociteart_sport_governance_v1",
+
+  /*
+    Signalements confidentiels :
+    changement de président,
+    départ d'un dirigeant,
+    impossibilité d'accès,
+    contestation de mandat...
+  */
+  governanceReports:"bociteart_sport_governance_reports_v1",
+
+  /*
+    Historique permanent des mandats.
+    Un changement de président
+    ne supprime jamais l'historique du club.
+  */
+  mandateHistory:"bociteart_sport_mandate_history_v1"
 };
 
 const SPORT_CONFIG = Object.assign({
@@ -14200,6 +14223,8 @@ const SPORT_CONFIG = Object.assign({
   authEndpoint:"",
   scanEndpoint:"",
   notificationEndpoint:"",
+   governanceEndpoint:"",
+  governanceReportEndpoint:"",
 
   supportEndpoint:"",
   merchantLookupEndpoint:"",
