@@ -14171,24 +14171,51 @@ if(key === "sport"){
      SPORT — Bo'CitéArt — BLOC COMPLET
      ========================================================= */
 
-  const SPORT_KEYS = {
-    wallet:"bociteart_sport_wallet_v3",
-    ledger:"bociteart_sport_ledger_v3",
-    access:"bociteart_sport_access_v3",
-    accessSecurity:"bociteart_sport_access_security_v1",
-    club:"bociteart_sport_club_v4",
-    training:"bociteart_sport_training_v3",
-    reports:"bociteart_sport_reports_v4",
-    solidarity:"bociteart_sport_solidarity_v4",
-    exchanges:"bociteart_sport_exchanges_v4",
-    season:"bociteart_sport_season_v2",
-    contacts:"bociteart_sport_support_contacts_v2",
-    associations:"bociteart_sport_associations_v2",
-    dossiers:"bociteart_sport_support_dossiers_v2",
-    receipts:"bociteart_sport_receipts_v2",
-    mairieTransfers:"bociteart_sport_mairie_transfers_v2",
-    pubs:"bociteart_sport_pubs_v3"
-  };
+const SPORT_KEYS = {
+  wallet:"bociteart_sport_wallet_v3",
+  ledger:"bociteart_sport_ledger_v3",
+  access:"bociteart_sport_access_v3",
+  accessSecurity:"bociteart_sport_access_security_v1",
+  club:"bociteart_sport_club_v4",
+  training:"bociteart_sport_training_v3",
+  reports:"bociteart_sport_reports_v4",
+  solidarity:"bociteart_sport_solidarity_v4",
+  exchanges:"bociteart_sport_exchanges_v4",
+  season:"bociteart_sport_season_v2",
+  contacts:"bociteart_sport_support_contacts_v2",
+  associations:"bociteart_sport_associations_v2",
+  dossiers:"bociteart_sport_support_dossiers_v2",
+  receipts:"bociteart_sport_receipts_v2",
+  mairieTransfers:"bociteart_sport_mairie_transfers_v2",
+  payments:"bociteart_sport_payments_v2",
+  pubs:"bociteart_sport_pubs_v3"
+};
+
+const SPORT_CONFIG = Object.assign({
+  mode:"preproduction",
+  clubId:"sport-club-local",
+
+  resultsEndpoint:"",
+  identityEndpoint:"",
+  authEndpoint:"",
+  scanEndpoint:"",
+  notificationEndpoint:"",
+
+  supportEndpoint:"",
+  merchantLookupEndpoint:"",
+  checkoutEndpoint:"",
+  paymentStatusEndpoint:"",
+
+  billingProductCode:"SPORT_TAPE_7D",
+
+  supportMinimumHT:50,
+
+  schoolYearEndMonthDay:"07-07",
+
+  mairieSportAccountCode:
+    "MAIRIE-SPORT-SOLIDARITE"
+
+},window.BOCITEART_SPORT_CONFIG || {});
 
   const SPORT_CONFIG = Object.assign({
     mode:"preproduction",
@@ -15424,59 +15451,118 @@ if(key === "sport"){
           : []
       );
 
-  function sportAllocation(mode){
+function sportAllocation(
+  mode,
+  amountHT
+){
 
-    if(mode === "all_club"){
+  const amount=
+    Math.round(
+      Number(amountHT || 0) *
+      100
+    ) / 100;
 
-      return {
-        mode,
-        baseHT:50,
-        clubHT:50,
-        associationHT:0
-      };
-    }
 
-    if(
-      mode ===
-      "all_association"
-    ){
-
-      return {
-        mode,
-        baseHT:50,
-        clubHT:0,
-        associationHT:50
-      };
-    }
-
-    if(
-      mode ===
-      "half_half"
-    ){
-
-      return {
-        mode,
-        baseHT:50,
-        clubHT:25,
-        associationHT:25
-      };
-    }
-
-    if(
-      mode ===
-      "partial_35_15"
-    ){
-
-      return {
-        mode,
-        baseHT:50,
-        clubHT:35,
-        associationHT:15
-      };
-    }
-
+  if(
+    !Number.isFinite(amount) ||
+    amount <
+      Number(
+        SPORT_CONFIG.supportMinimumHT ||
+        50
+      )
+  ){
     return null;
   }
+
+
+  const code=
+    String(
+      mode ||
+      ""
+    ).toUpperCase();
+
+
+  /*
+     100 % POUR LE CLUB
+  */
+  if(
+    code === "ALL_CLUB" ||
+    code === "ALL-CLUB" ||
+    code === "100_CLUB" ||
+    String(mode) === "all_club"
+  ){
+
+    return {
+
+      mode:
+        "all_club",
+
+      allocationCode:
+        "ALL_CLUB",
+
+      amountHT:
+        amount,
+
+      clubHT:
+        amount,
+
+      associationHT:
+        0
+    };
+  }
+
+
+  /*
+     50 % CLUB / 50 % ASSOCIATION
+  */
+  if(
+    code === "HALF_HALF" ||
+    code === "50_50" ||
+    String(mode) === "half_half"
+  ){
+
+    const clubHT=
+      Math.round(
+        (
+          amount /
+          2
+        ) *
+        100
+      ) / 100;
+
+
+    const associationHT=
+      Math.round(
+        (
+          amount -
+          clubHT
+        ) *
+        100
+      ) / 100;
+
+
+    return {
+
+      mode:
+        "half_half",
+
+      allocationCode:
+        "HALF_HALF",
+
+      amountHT:
+        amount,
+
+      clubHT:
+        clubHT,
+
+      associationHT:
+        associationHT
+    };
+  }
+
+
+  return null;
+}
 
   function sportReceiptDraft(
     d,
@@ -15621,12 +15707,13 @@ if(key === "sport"){
     };
   }
 
-  async function sportCreateSupportDossier(
-    scan,
-    merchant,
-    mode,
-    associationId
-  ){
+async function sportCreateSupportDossier(
+  scan,
+  merchant,
+  mode,
+  associationId,
+  amountHT
+){
 
     const club=
       sportClub();
@@ -16241,66 +16328,71 @@ if(key === "sport"){
     };
   }
 
-  window.BociteSportMerchant={
+window.BociteSportMerchant={
 
-    validateClubScan:
-      (scan,merchant)=>
-        sportValidateBag(
-          scan,
-          {
-            type:
-              "merchant",
+  validateClubScan:
+    (scan,merchant)=>
+      sportValidateBag(
+        scan,
+        {
+          type:
+            "merchant",
 
-            label:
-              String(
-                merchant &&
-                merchant.name ||
-                merchant &&
-                merchant.shopName ||
-                merchant ||
-                "Commerce partenaire"
-              ),
+          label:
+            String(
+              merchant &&
+              merchant.name ||
 
-            merchantId:
-              String(
-                merchant &&
-                merchant.id ||
-                ""
-              )
-          }
-        ),
+              merchant &&
+              merchant.shopName ||
 
-    createSupportFromClubScan:
-      (
+              merchant ||
+
+              "Commerce partenaire"
+            ),
+
+          merchantId:
+            String(
+              merchant &&
+              merchant.id ||
+              ""
+            )
+        }
+      ),
+
+
+  createSupportFromClubScan:
+    (
+      scan,
+      merchant,
+      mode,
+      associationId,
+      amountHT
+    ) =>
+      sportCreateSupportDossier(
         scan,
         merchant,
         mode,
-        associationId
-      ) =>
-        sportCreateSupportDossier(
-          scan,
-          merchant,
-          mode,
-          associationId
-        ),
+        associationId,
+        amountHT
+      ),
 
-    allocationOptions:
-      () => [
-        sportAllocation(
-          "all_club"
-        ),
-        sportAllocation(
-          "all_association"
-        ),
-        sportAllocation(
-          "half_half"
-        ),
-        sportAllocation(
-          "partial_35_15"
-        )
-      ]
-  };
 
+  allocationOptions:
+    amountHT => [
+
+      sportAllocation(
+        "ALL_CLUB",
+        amountHT
+      ),
+
+      sportAllocation(
+        "HALF_HALF",
+        amountHT
+      )
+
+    ].filter(Boolean)
+};
   window.BociteSportMairie={
 
     readClub(scan){
@@ -16610,16 +16702,43 @@ if(key === "sport"){
           .slice()
   };
 
-  window.BociteSportSupportRules={
+ window.BociteSportSupportRules={
 
-    baseHT:50,
+  minimumHT:
+    50,
 
-    allocations:{
+  amountRule:
+    "free_amount_from_minimum",
 
-      all_club:{
-        clubHT:50,
-        associationHT:0
-      },
+  choices:[
+
+    {
+      code:
+        "ALL_CLUB",
+
+      label:
+        "100 % au club"
+    },
+
+    {
+      code:
+        "HALF_HALF",
+
+      label:
+        "50 % au club / 50 % à l’association"
+    }
+
+  ],
+
+  paymentProcessing:
+    "server_side",
+
+  beneficiarySettlement:
+    "server_side",
+
+  taxTreatment:
+    "validated_case_by_case"
+};
 
       all_association:{
         clubHT:0,
@@ -19094,237 +19213,1484 @@ if(key === "sport"){
     `;
   }
 
-  function sportSupportHtml(){
+function sportPaymentRecords(){
 
-    const c=
-      sportContacts()
-        .filter(
-          x => !x.archived
+  const x=
+    sportLoad(
+      SPORT_KEYS.payments,
+      []
+    );
+
+  return Array.isArray(x)
+    ? x
+    : [];
+}
+
+
+function sportSavePaymentRecords(x){
+
+  return sportSave(
+    SPORT_KEYS.payments,
+    Array.isArray(x)
+      ? x.slice(-500)
+      : []
+  );
+}
+
+
+function sportSupportReadMerchant(){
+
+  return {
+
+    name:
+      String(
+        sportEl(
+          "sportSupportMerchantName"
+        )?.value ||
+        ""
+      ).trim(),
+
+    sirenSiret:
+      String(
+        sportEl(
+          "sportSupportMerchantSiret"
+        )?.value ||
+        ""
+      ).trim(),
+
+    address:
+      String(
+        sportEl(
+          "sportSupportMerchantAddress"
+        )?.value ||
+        ""
+      ).trim(),
+
+    phone:
+      String(
+        sportEl(
+          "sportSupportMerchantPhone"
+        )?.value ||
+        ""
+      ).trim(),
+
+    email:
+      String(
+        sportEl(
+          "sportSupportMerchantEmail"
+        )?.value ||
+        ""
+      ).trim(),
+
+    accountingEmail:
+      String(
+        sportEl(
+          "sportSupportMerchantAccountingEmail"
+        )?.value ||
+        ""
+      ).trim()
+  };
+}
+
+
+function sportSupportFillMerchant(profile){
+
+  if(
+    !profile ||
+    typeof profile !== "object"
+  ){
+    return;
+  }
+
+  const data={
+
+    sportSupportMerchantName:
+      profile.name ||
+      profile.shopName ||
+      profile.companyName ||
+      "",
+
+    sportSupportMerchantSiret:
+      profile.sirenSiret ||
+      profile.siret ||
+      "",
+
+    sportSupportMerchantAddress:
+      profile.address ||
+      "",
+
+    sportSupportMerchantPhone:
+      profile.phone ||
+      "",
+
+    sportSupportMerchantEmail:
+      profile.email ||
+      "",
+
+    sportSupportMerchantAccountingEmail:
+      profile.accountingEmail ||
+      profile.email ||
+      ""
+  };
+
+
+  Object
+    .keys(data)
+    .forEach(
+      id=>{
+
+        const e=
+          sportEl(id);
+
+        if(e){
+
+          e.value=
+            String(
+              data[id] ||
+              ""
+            );
+        }
+      }
+    );
+
+
+  window
+    .BOCITEART_LAST_SPORT_MERCHANT_PROFILE=
+      profile;
+}
+
+
+function sportSupportSaveMerchant(){
+
+  const profile=
+    sportSupportReadMerchant();
+
+  if(!profile.name){
+    return;
+  }
+
+  const all=
+    sportContacts();
+
+  let index=-1;
+
+
+  if(profile.sirenSiret){
+
+    index=
+      all.findIndex(
+        x =>
+          String(
+            x.sirenSiret ||
+            ""
+          ) ===
+          String(
+            profile.sirenSiret
+          )
+      );
+  }
+
+
+  if(index < 0){
+
+    index=
+      all.findIndex(
+        x =>
+          String(
+            x.name ||
+            ""
+          )
+            .trim()
+            .toLowerCase() ===
+          profile.name
+            .trim()
+            .toLowerCase()
+      );
+  }
+
+
+  const item={
+
+    id:
+      index >= 0
+        ? all[index].id
+        : sportId(
+            "merchant"
+          ),
+
+    name:
+      profile.name,
+
+    sirenSiret:
+      profile.sirenSiret,
+
+    address:
+      profile.address,
+
+    phone:
+      profile.phone,
+
+    email:
+      profile.email,
+
+    accountingEmail:
+      profile.accountingEmail,
+
+    archived:
+      false,
+
+    updatedAt:
+      Date.now()
+  };
+
+
+  if(index >= 0){
+
+    all[index]=
+      Object.assign(
+        {},
+        all[index],
+        item
+      );
+
+  }else{
+
+    all.push(item);
+  }
+
+
+  sportSaveContacts(all);
+}
+
+
+async function sportSupportFindMerchant(){
+
+  const status=
+    sportEl(
+      "sportSupportStatus"
+    );
+
+  const club=
+    sportClub();
+
+
+  if(!club.clubRef){
+
+    if(status){
+
+      status.textContent=
+        "La fiche d’identité du club doit d’abord être validée.";
+    }
+
+    return;
+  }
+
+
+  if(
+    SPORT_CONFIG
+      .merchantLookupEndpoint
+  ){
+
+    if(status){
+
+      status.textContent=
+        "Recherche du commerce…";
+    }
+
+
+    try{
+
+      const response=
+        await fetch(
+          SPORT_CONFIG
+            .merchantLookupEndpoint,
+          {
+
+            method:
+              "POST",
+
+            credentials:
+              "include",
+
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+
+                clubRef:
+                  club.clubRef
+
+              })
+          }
         );
 
-    return `
 
-      ${sportTitle(
-        "Soutien des commerces et associations avec"
-      )}
+      if(!response.ok){
+        throw new Error();
+      }
+
+
+      const data=
+        await response.json();
+
+
+      if(
+        !data ||
+        !data.merchant
+      ){
+        throw new Error();
+      }
+
+
+      sportSupportFillMerchant(
+        data.merchant
+      );
+
+      sportSupportSaveMerchant();
+
+
+      if(status){
+
+        status.textContent=
+          "Commerce reconnu. Sa fiche est préremplie.";
+      }
+
+
+      return;
+
+    }catch(error){
+
+      if(status){
+
+        status.textContent=
+          "Le commerce n’a pas été retrouvé automatiquement. La saisie manuelle reste disponible.";
+      }
+
+      return;
+    }
+  }
+
+
+  if(
+    window
+      .BOCITEART_LAST_SPORT_MERCHANT_PROFILE
+  ){
+
+    sportSupportFillMerchant(
+      window
+        .BOCITEART_LAST_SPORT_MERCHANT_PROFILE
+    );
+
+    if(status){
+
+      status.textContent=
+        "Fiche commerce retrouvée.";
+    }
+
+    return;
+  }
+
+
+  if(status){
+
+    status.textContent=
+      "Aucun commerce scanné n’a été retrouvé. Utilisez la saisie manuelle.";
+  }
+}
+
+
+function sportSupportAmount(){
+
+  const value=
+    Number(
+      sportEl(
+        "sportSupportAmountHT"
+      )?.value ||
+      0
+    );
+
+  return Math.round(
+    value *
+    100
+  ) / 100;
+}
+
+
+function sportSupportChoice(){
+
+  return String(
+    document.querySelector(
+      'input[name="sportSupportAllocation"]:checked'
+    )?.value ||
+    "ALL_CLUB"
+  );
+}
+
+
+function sportSupportUpdatePreview(){
+
+  const amount=
+    sportSupportAmount();
+
+  const choice=
+    sportSupportChoice();
+
+  const preview=
+    sportEl(
+      "sportSupportPreview"
+    );
+
+  const associationBox=
+    sportEl(
+      "sportSupportAssociationBox"
+    );
+
+
+  if(associationBox){
+
+    associationBox.style.display=
+      choice ===
+      "HALF_HALF"
+        ? "block"
+        : "none";
+  }
+
+
+  if(!preview){
+    return;
+  }
+
+
+  if(
+    !Number.isFinite(amount) ||
+    amount <
+      Number(
+        SPORT_CONFIG.supportMinimumHT ||
+        50
+      )
+  ){
+
+    preview.textContent=
+      "Montant minimum : 50 € HT.";
+
+    return;
+  }
+
+
+  const allocation=
+    sportAllocation(
+      choice,
+      amount
+    );
+
+
+  if(!allocation){
+
+    preview.textContent=
+      "Choix de répartition invalide.";
+
+    return;
+  }
+
+
+  if(
+    choice ===
+    "ALL_CLUB"
+  ){
+
+    preview.innerHTML=
+
+      "<strong>" +
+      sportEsc(
+        amount.toFixed(2)
+      ) +
+      " € HT</strong>" +
+
+      " — 100 % destinés au club avant traitement du paiement.";
+
+    return;
+  }
+
+
+  preview.innerHTML=
+
+    "<strong>" +
+    sportEsc(
+      amount.toFixed(2)
+    ) +
+    " € HT</strong>" +
+
+    " — " +
+
+    sportEsc(
+      allocation.clubHT
+        .toFixed(2)
+    ) +
+
+    " € HT pour le club et " +
+
+    sportEsc(
+      allocation.associationHT
+        .toFixed(2)
+    ) +
+
+    " € HT pour l’association avant traitement du paiement.";
+}
+
+
+async function sportSupportStartPayment(){
+
+  const status=
+    sportEl(
+      "sportSupportStatus"
+    );
+
+  const club=
+    sportClub();
+
+  const amountHT=
+    sportSupportAmount();
+
+  const choice=
+    sportSupportChoice();
+
+  const merchant=
+    sportSupportReadMerchant();
+
+
+  if(!club.clubRef){
+
+    if(status){
+
+      status.textContent=
+        "La fiche d’identité du club doit être validée avant le paiement.";
+    }
+
+    return;
+  }
+
+
+  if(
+    !Number.isFinite(amountHT) ||
+    amountHT <
+      Number(
+        SPORT_CONFIG.supportMinimumHT ||
+        50
+      )
+  ){
+
+    if(status){
+
+      status.textContent=
+        "Le montant minimum est de 50 € HT.";
+    }
+
+    return;
+  }
+
+
+  if(
+    choice !== "ALL_CLUB" &&
+    choice !== "HALF_HALF"
+  ){
+
+    if(status){
+
+      status.textContent=
+        "Choisissez 100 % au club ou 50 / 50.";
+    }
+
+    return;
+  }
+
+
+  if(
+    !merchant.name ||
+    !merchant.sirenSiret ||
+    !merchant.address ||
+    !merchant.accountingEmail
+  ){
+
+    if(status){
+
+      status.textContent=
+        "Complétez le nom, le SIRET, l’adresse et l’email comptable du commerce.";
+    }
+
+    return;
+  }
+
+
+  let associationId="";
+
+
+  if(
+    choice ===
+    "HALF_HALF"
+  ){
+
+    associationId=
+      String(
+        sportEl(
+          "sportSupportAssociation"
+        )?.value ||
+        ""
+      );
+
+
+    const association=
+      sportAssociations()
+        .find(
+          x =>
+            String(x.id) ===
+            String(
+              associationId
+            )
+        );
+
+
+    if(
+      !association ||
+      !sportAssociationOK(
+        association
+      )
+    ){
+
+      if(status){
+
+        status.textContent=
+          "Choisissez une association partenaire validée.";
+      }
+
+      return;
+    }
+  }
+
+
+  sportSupportSaveMerchant();
+
+
+  /*
+     AUCUN CALCUL DES FRAIS ICI.
+
+     Le navigateur transmet uniquement :
+
+     - le montant HT choisi ;
+     - le club ;
+     - le choix 100 % club ou 50 / 50 ;
+     - l'association si nécessaire ;
+     - l'identité du commerce.
+
+     Les frais PSP,
+     les règlements bénéficiaires,
+     la contribution Bo'CitéArt
+     et les justificatifs comptables
+     sont traités côté serveur.
+  */
+
+  const payload={
+
+    productCode:
+      SPORT_CONFIG
+        .billingProductCode,
+
+    amountHT:
+      amountHT,
+
+    clubRef:
+      club.clubRef,
+
+    allocationCode:
+      choice,
+
+    associationId:
+      associationId,
+
+    merchant:{
+
+      name:
+        merchant.name,
+
+      sirenSiret:
+        merchant.sirenSiret,
+
+      address:
+        merchant.address,
+
+      phone:
+        merchant.phone,
+
+      email:
+        merchant.email,
+
+      accountingEmail:
+        merchant.accountingEmail
+    },
+
+    returnUrl:
+      window.location.href,
+
+    cancelUrl:
+      window.location.href
+  };
+
+
+  if(
+    !SPORT_CONFIG
+      .checkoutEndpoint
+  ){
+
+    if(status){
+
+      status.textContent=
+        "Le paiement sécurisé n’est pas encore raccordé au service de paiement.";
+    }
+
+    return;
+  }
+
+
+  if(status){
+
+    status.textContent=
+      "Préparation du paiement sécurisé…";
+  }
+
+
+  try{
+
+    const response=
+      await fetch(
+        SPORT_CONFIG
+          .checkoutEndpoint,
+        {
+
+          method:
+            "POST",
+
+          credentials:
+            "include",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            )
+        }
+      );
+
+
+    if(!response.ok){
+      throw new Error();
+    }
+
+
+    const data=
+      await response.json();
+
+
+    if(
+      !data ||
+      data.ok !== true ||
+      !data.paymentReference ||
+      !data.checkoutUrl
+    ){
+      throw new Error();
+    }
+
+
+    const payments=
+      sportPaymentRecords();
+
+
+    payments.push({
+
+      paymentReference:
+        String(
+          data.paymentReference
+        ),
+
+      clubRef:
+        club.clubRef,
+
+      merchantName:
+        merchant.name,
+
+      merchantSiret:
+        merchant.sirenSiret,
+
+      amountHT:
+        amountHT,
+
+      allocationCode:
+        choice,
+
+      associationId:
+        associationId,
+
+      status:
+        "checkout_created",
+
+      createdAt:
+        Date.now()
+    });
+
+
+    sportSavePaymentRecords(
+      payments
+    );
+
+
+    if(status){
+
+      status.textContent=
+        "Paiement sécurisé préparé.";
+    }
+
+
+    window.location.assign(
+      data.checkoutUrl
+    );
+
+
+  }catch(error){
+
+    if(status){
+
+      status.textContent=
+        "Le paiement sécurisé est momentanément indisponible.";
+    }
+  }
+}
+
+
+async function sportSupportCheckPayment(){
+
+  const status=
+    sportEl(
+      "sportSupportStatus"
+    );
+
+  const records=
+    sportPaymentRecords()
+      .slice()
+      .reverse();
+
+  const payment=
+    records.find(
+      x =>
+        x &&
+        x.paymentReference
+    );
+
+
+  if(!payment){
+
+    if(status){
+
+      status.textContent=
+        "Aucun paiement à vérifier.";
+    }
+
+    return;
+  }
+
+
+  if(
+    !SPORT_CONFIG
+      .paymentStatusEndpoint
+  ){
+
+    if(status){
+
+      status.textContent=
+        "La vérification automatique du paiement n’est pas encore raccordée.";
+    }
+
+    return;
+  }
+
+
+  if(status){
+
+    status.textContent=
+      "Vérification du paiement…";
+  }
+
+
+  try{
+
+    const response=
+      await fetch(
+        SPORT_CONFIG
+          .paymentStatusEndpoint,
+        {
+
+          method:
+            "POST",
+
+          credentials:
+            "include",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+
+              paymentReference:
+                payment.paymentReference
+
+            })
+        }
+      );
+
+
+    if(!response.ok){
+      throw new Error();
+    }
+
+
+    const data=
+      await response.json();
+
+
+    if(
+      data &&
+      data.status ===
+      "paid"
+    ){
+
+      const all=
+        sportPaymentRecords();
+
+
+      const index=
+        all.findIndex(
+          x =>
+            String(
+              x.paymentReference
+            ) ===
+            String(
+              payment.paymentReference
+            )
+        );
+
+
+      if(index >= 0){
+
+        all[index].status=
+          "paid";
+
+        all[index].paidAt=
+          Date.now();
+
+        all[index].invoiceStatus=
+          data.invoiceSent === true
+            ? "sent"
+            : "processing";
+
+        sportSavePaymentRecords(
+          all
+        );
+      }
+
+
+      if(status){
+
+        status.textContent=
+          data.invoiceSent === true
+
+            ? "Paiement confirmé. La facture a été envoyée au commerce."
+
+            : "Paiement confirmé. La facture est en cours d’envoi au commerce.";
+      }
+
+
+      return;
+    }
+
+
+    if(status){
+
+      status.textContent=
+        "Le paiement n’est pas encore confirmé.";
+    }
+
+
+  }catch(error){
+
+    if(status){
+
+      status.textContent=
+        "La vérification du paiement est momentanément indisponible.";
+    }
+  }
+}
+
+
+function sportInitSupportPaymentUi(){
+
+  const amount=
+    sportEl(
+      "sportSupportAmountHT"
+    );
+
+  if(amount){
+
+    amount.oninput=
+      sportSupportUpdatePreview;
+
+    amount.onchange=
+      sportSupportUpdatePreview;
+  }
+
+
+  document
+    .querySelectorAll(
+      'input[name="sportSupportAllocation"]'
+    )
+    .forEach(
+      input=>{
+
+        input.onchange=
+          sportSupportUpdatePreview;
+      }
+    );
+
+
+  const findMerchant=
+    sportEl(
+      "sportSupportFindMerchant"
+    );
+
+  if(findMerchant){
+
+    findMerchant.onclick=
+      sportSupportFindMerchant;
+  }
+
+
+  const pay=
+    sportEl(
+      "sportSupportPayBtn"
+    );
+
+  if(pay){
+
+    pay.onclick=
+      sportSupportStartPayment;
+  }
+
+
+  const check=
+    sportEl(
+      "sportSupportCheckPayment"
+    );
+
+  if(check){
+
+    check.onclick=
+      sportSupportCheckPayment;
+  }
+
+
+  sportSupportUpdatePreview();
+}
+ 
+function sportSupportHtml(){
+
+  const associations=
+    sportAssociations()
+      .filter(
+        sportAssociationOK
+      );
+
+
+  return `
+
+    ${sportTitle(
+      "Publicité locale et soutien avec"
+    )}
+
+    <div class="sportCard">
+
+
+      <div class="sportText">
+
+        Le commerçant choisit librement
+        le montant de son soutien
+        à partir de
+        <strong>
+          50 € HT
+        </strong>.
+
+        <br><br>
+
+        Il dispose de deux choix :
+
+        <br>
+
+        <strong>
+          100 % pour le club
+        </strong>
+
+        ou
+
+        <strong>
+          50 % pour le club
+          et 50 % pour une association
+          de recherche partenaire.
+        </strong>
+
+        <br><br>
+
+        La petite publicité locale
+        est diffusée pendant
+        <strong>
+          7 jours consécutifs
+        </strong>
+        après confirmation du paiement.
+
+      </div>
+
 
       <div class="sportCard">
 
+        <div class="sportSubTitle">
+          Commerce avec
+          ${sportBrandHtml()}
+        </div>
+
+
         <div class="sportText">
 
-          Pour un Cabas,
+          Si le commerçant
+          vient de scanner
+          l’identité du club,
+          sa fiche est retrouvée
+          et préremplie.
+
+          <br><br>
+
+          La saisie manuelle reste disponible
+          en cas d’impossibilité de lecture.
+
+        </div>
+
+
+        <button
+          id="sportSupportFindMerchant"
+          class="sportBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:12px;
+          "
+        >
+          Retrouver le commerce
+          qui vient de me scanner
+        </button>
+
+
+        <label class="sportLabel">
+          Nom du commerce / entreprise
+        </label>
+
+        <input
+          id="sportSupportMerchantName"
+          class="sportField"
+        >
+
+
+        <label class="sportLabel">
+          SIREN / SIRET
+        </label>
+
+        <input
+          id="sportSupportMerchantSiret"
+          class="sportField"
+        >
+
+
+        <label class="sportLabel">
+          Adresse
+        </label>
+
+        <input
+          id="sportSupportMerchantAddress"
+          class="sportField"
+        >
+
+
+        <label class="sportLabel">
+          Téléphone
+        </label>
+
+        <input
+          id="sportSupportMerchantPhone"
+          class="sportField"
+        >
+
+
+        <label class="sportLabel">
+          Email
+        </label>
+
+        <input
+          id="sportSupportMerchantEmail"
+          class="sportField"
+        >
+
+
+        <label class="sportLabel">
+          Email comptable
+        </label>
+
+        <input
+          id="sportSupportMerchantAccountingEmail"
+          class="sportField"
+        >
+
+      </div>
+
+
+      <div class="sportCard">
+
+        <div class="sportSubTitle">
+          Montant choisi avec
+          ${sportBrandHtml()}
+        </div>
+
+
+        <label class="sportLabel">
+          Montant du soutien en € HT
+        </label>
+
+        <input
+          id="sportSupportAmountHT"
+          class="sportField"
+          type="number"
+          min="50"
+          step="1"
+          value="50"
+        >
+
+
+        <div
+          class="sportText"
+          style="margin-top:8px;"
+        >
+          Montant minimum :
           <strong>
-            le commerçant
-            ou la mairie
-            scanne le club
+            50 € HT
           </strong>.
 
-          Pour le soutien d’un commerce,
-          les données déjà connues du commerce
-          et celles de la fiche du club
-          préremplissent le dossier automatiquement.
-
-        </div>
-
-
-        <ul>
-
-          <li>
-            <strong>
-              100 % club :
-            </strong>
-            50 € HT au club ;
-          </li>
-
-          <li>
-            <strong>
-              100 % association :
-            </strong>
-            50 € HT à l’association ;
-          </li>
-
-          <li>
-            <strong>
-              50 / 50 :
-            </strong>
-            25 € HT au club
-            et 25 € HT à l’association ;
-          </li>
-
-          <li>
-            <strong>
-              répartition ${sportBrandHtml()} :
-            </strong>
-            35 € HT au club
-            et 15 € HT à l’association.
-          </li>
-
-        </ul>
-
-
-        <div class="sportStatus">
-
-          Dès qu’une association
-          reçoit une part,
-          elle doit être vérifiée
-          et capable d’émettre
-          le justificatif comptable adapté.
-
-          Le dossier est prérempli,
-          mais l’association valide
-          et émet elle-même le document.
-
-          Un justificatif obligatoire
-          non retourné
-          est inscrit dans son dossier
-          et bloque son renouvellement
-          tant que la situation
-          n’est pas régularisée.
-
-        </div>
-
-
-        <div class="sportStatus">
-
-          La qualification fiscale
-          n’est jamais inventée :
-
-          mécénat,
-          parrainage,
-          facture,
-          TVA
-          ou reçu fiscal
-          dépendent de la nature réelle
-          de l’opération
-          et du statut validé
-          des structures.
-
-        </div>
-
-
-        <div class="sportCard">
-
-          <div class="sportSubTitle">
-            Fiche commerce de secours
-            avec ${sportBrandHtml()}
-          </div>
-
-          <div class="sportText">
-
-            Elle n’est utilisée
-            que si le commerce
-            n’est pas reconnu automatiquement.
-
-            Elle est remplie une fois,
-            puis préremplie
-            aux passages suivants.
-
-          </div>
-
-
-          <label class="sportLabel">
-            Nom du commerce
-          </label>
-
-          <input
-            id="sportContactName"
-            class="sportField"
-            list="sportContactNames"
-          >
-
-
-          <datalist
-            id="sportContactNames"
-          >
-
-            ${
-              c.map(
-                x =>
-                  `<option value="${sportEsc(x.name)}"></option>`
-              ).join("")
-            }
-
-          </datalist>
-
-
-          <label class="sportLabel">
-            SIREN / SIRET
-          </label>
-
-          <input
-            id="sportContactSiret"
-            class="sportField"
-          >
-
-
-          <label class="sportLabel">
-            Adresse
-          </label>
-
-          <input
-            id="sportContactAddress"
-            class="sportField"
-          >
-
-
-          <label class="sportLabel">
-            Téléphone
-          </label>
-
-          <input
-            id="sportContactPhone"
-            class="sportField"
-          >
-
-
-          <label class="sportLabel">
-            Email
-          </label>
-
-          <input
-            id="sportContactEmail"
-            class="sportField"
-          >
-
-
-          <label class="sportLabel">
-            Email comptable
-          </label>
-
-          <input
-            id="sportContactAccountingEmail"
-            class="sportField"
-          >
-
-
-          <button
-            id="sportContactSave"
-            class="sportBtn"
-            type="button"
-            style="
-              width:100%;
-              margin-top:12px;
-            "
-          >
-            Enregistrer ou mettre à jour
-          </button>
-
-
-          <div
-            id="sportContactStatus"
-            class="sportStatus"
-          ></div>
-
-
-          <div
-            id="sportContactList"
-          ></div>
-
+          Le commerçant peut choisir
+          librement un montant supérieur.
         </div>
 
       </div>
-    `;
-  }
+
+
+      <div class="sportCard">
+
+        <div class="sportSubTitle">
+          Choix du commerçant avec
+          ${sportBrandHtml()}
+        </div>
+
+
+        <label class="sportCheck">
+
+          <input
+            type="radio"
+            name="sportSupportAllocation"
+            value="ALL_CLUB"
+            checked
+          >
+
+          <span>
+
+            <strong>
+              100 % pour le club
+            </strong>
+
+          </span>
+
+        </label>
+
+
+        <label class="sportCheck">
+
+          <input
+            type="radio"
+            name="sportSupportAllocation"
+            value="HALF_HALF"
+          >
+
+          <span>
+
+            <strong>
+              50 % pour le club
+              / 50 % pour l’association
+            </strong>
+
+          </span>
+
+        </label>
+
+
+        <div
+          id="sportSupportAssociationBox"
+          style="
+            display:none;
+            margin-top:12px;
+          "
+        >
+
+          <label class="sportLabel">
+            Association de recherche partenaire
+          </label>
+
+
+          <select
+            id="sportSupportAssociation"
+            class="sportField"
+          >
+
+            <option value="">
+              Choisir l’association
+            </option>
+
+
+            ${
+              associations.length
+
+                ? associations
+                    .map(
+                      x => `
+
+                        <option
+                          value="${sportEsc(x.id)}"
+                        >
+                          ${sportEsc(
+                            x.legalName ||
+                            x.label
+                          )}
+                        </option>
+
+                      `
+                    )
+                    .join("")
+
+                : `
+
+                    <option
+                      value=""
+                      disabled
+                    >
+                      Aucune association
+                      partenaire validée
+                    </option>
+
+                  `
+            }
+
+          </select>
+
+        </div>
+
+
+        <div
+          id="sportSupportPreview"
+          class="sportStatus"
+        ></div>
+
+      </div>
+
+
+      <div class="sportCard">
+
+        <div class="sportSubTitle">
+          Paiement sécurisé avec
+          ${sportBrandHtml()}
+        </div>
+
+
+        <div class="sportText">
+
+          Le commerçant règle
+          sur la page de paiement sécurisée.
+
+          <br><br>
+
+          Aucune donnée bancaire
+          n’est saisie
+          ni conservée
+          dans ${sportBrandHtml()}.
+
+          <br><br>
+
+          Après confirmation du paiement,
+          la facture correspondant
+          au montant réellement payé
+          est envoyée
+          à l’adresse comptable du commerce.
+
+          <br><br>
+
+          La publicité locale
+          n’est activée
+          qu’après confirmation effective
+          du paiement.
+
+        </div>
+
+
+        <div class="sportActions">
+
+          <button
+            id="sportSupportPayBtn"
+            class="sportBtn"
+            type="button"
+          >
+            Ouvrir le paiement sécurisé
+          </button>
+
+
+          <button
+            id="sportSupportCheckPayment"
+            class="sportBtn"
+            type="button"
+          >
+            Vérifier le paiement
+          </button>
+
+        </div>
+
+
+        <div
+          id="sportSupportStatus"
+          class="sportStatus"
+        >
+          Aucun paiement en cours.
+        </div>
+
+      </div>
+
+    </div>
+  `;
+}
 
    function sportRenderAccessList(){
 
@@ -20563,6 +21929,7 @@ if(key === "sport"){
     }
 
     sportRenderContacts();
+  
   }
 
   function sportRenderContacts(){
@@ -20968,6 +22335,7 @@ if(key === "sport"){
 
         sportRenderContacts();
 
+       sportInitSupportPaymentUi();
 
         const td=
           sportEl(
