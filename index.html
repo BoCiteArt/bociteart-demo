@@ -25997,7 +25997,12 @@ window.openBociteSchoolTeacherAccess = function(){
    DEPUIS LE PILOTAGE PRIVÉ
    ===================================================== */
 
-window.openBociteSchoolPrivateDemo = function(){
+/* =====================================================
+   OUVERTURE SPORT — PRÉSIDENCE
+   DEPUIS LE PILOTAGE PRIVÉ
+   ===================================================== */
+
+window.openBociteSportPrivate = function(){
 
   if(!window.bociteartAdminSession){
     alert("Accès privé requis.");
@@ -26005,23 +26010,22 @@ window.openBociteSchoolPrivateDemo = function(){
   }
 
   /*
-    Le Pilotage Bo’CitéArt est déjà authentifié.
-    On demande donc l’ouverture directe
-    de l’espace Direction de l’École.
+    Le Pilotage Bo'CitéArt est déjà authentifié.
+    On demande l'ouverture directe
+    de l'espace Présidence Sport.
   */
-  window.bociteartSchoolAdminPreview = true;
-  window.bociteartSchoolPrivateEntry = true;
+  window.bociteartSportPrivateEntry = true;
 
-  const schoolTile =
-    document.querySelector('[data-open="ecole"]');
+  const sportTile =
+    document.querySelector('[data-open="sport"]');
 
-  if(!schoolTile){
-    alert("La tuile École n’a pas été trouvée.");
+  if(!sportTile){
+    alert("La tuile Sport n’a pas été trouvée.");
     return;
   }
 
-  schoolTile.__bociteOtherIntroBypass = true;
-  schoolTile.click();
+  sportTile.__bociteOtherIntroBypass = true;
+  sportTile.click();
 };
 
    
@@ -26086,6 +26090,7 @@ openModal("Pilotage privé Bo'CitéArt",`
     <button class="choiceBtn" onclick="fermerPilotagePrive()">Déconnexion pilotage</button>
     <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau commune</button>
     <button class="choiceBtn" onclick="openBociteSchoolPrivateDemo()">École — Direction</button>
+    <button class="choiceBtn" onclick="openBociteSportPrivate()">Sport — Présidence</button>
     <button class="choiceBtn" onclick="openPresentationBoCiteArt()">Environnement</button>
     <button class="choiceBtn" onclick="openConformiteBociteart()">Conformité</button>
     <button class="choiceBtn" onclick="openTresorerieIA()">Trésorerie</button>
