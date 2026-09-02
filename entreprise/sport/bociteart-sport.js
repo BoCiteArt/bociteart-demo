@@ -350,63 +350,27 @@
       "</span>" +
       "</span>";
 
+function sportSetModalHeader(
+  before
+){
 
-  function sportSetModalHeader(
-    before
-  ){
-
-    const apply=
-      ()=>{
-
-        const title=
-          sportEl(
-            "modalTitle"
-          );
-
-        if(!title){
-          return;
-        }
-
-        title.innerHTML=
-          sportEsc(
-            before ||
-            ""
-          ) +
-          " " +
-          sportBrandHtml();
-      };
-
-
-    apply();
-
-
-    if(
-      window.requestAnimationFrame
-    ){
-
-      window.requestAnimationFrame(
-        apply
-      );
-    }
-
-
-    setTimeout(
-      apply,
-      0
+  const title=
+    sportEl(
+      "modalTitle"
     );
 
-    setTimeout(
-      apply,
-      80
-    );
-
-    setTimeout(
-      apply,
-      220
-    );
+  if(!title){
+    return;
   }
 
-
+  title.innerHTML=
+    sportEsc(
+      before ||
+      ""
+    ) +
+    " " +
+    sportBrandHtml();
+}
   function sportTitle(
     before,
     after=""
