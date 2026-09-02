@@ -14165,6 +14165,39 @@ if(schoolDirectionFirstSetupBtn){
 
   return;
 }
+
+/* =====================================================
+   SPORT — MODULE EXTERNE
+   ===================================================== */
+
+if(key === "sport"){
+
+  if(
+    window.BociteSportModule &&
+    window.BociteSportModule.ready === true &&
+    typeof window.BociteSportModule.open === "function"
+  ){
+
+    window.BociteSportModule.open();
+
+    return;
+  }
+
+  if(
+    typeof window.openSportPanel === "function"
+  ){
+
+    window.openSportPanel();
+
+    return;
+  }
+
+  alert(
+    "L’espace Sport est momentanément indisponible."
+  );
+
+  return;
+}
    
 if(key === "commerces") {
   openModal("Commerces & Entreprises", `
