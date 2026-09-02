@@ -14684,6 +14684,624 @@ const SPORT_CONFIG = Object.assign({
       x
     );
 
+ /* =========================================================
+   SPORT — GOUVERNANCE DU CLUB
+   PRÉSIDENT + CONTINUITÉ + VALIDATION
+   ========================================================= */
+
+function sportDefaultGovernance(){
+
+  return {
+
+    clubId:
+      SPORT_CONFIG.clubId,
+
+    /*
+      draft
+      pending_review
+      verified
+      suspended
+      disputed
+    */
+    status:"draft",
+
+    /*
+      blocked
+      active
+    */
+    activationStatus:"blocked",
+
+    president:{
+      fullName:"",
+      role:"Président / responsable légal",
+      email:"",
+      phone:"",
+      officialReference:"",
+      verificationStatus:"pending"
+    },
+
+    continuity:[
+      {
+        id:"continuity-1",
+        fullName:"",
+        role:"",
+        email:"",
+        phone:"",
+        officialReference:"",
+        verificationStatus:"pending"
+      },
+      {
+        id:"continuity-2",
+        fullName:"",
+        role:"",
+        email:"",
+        phone:"",
+        officialReference:"",
+        verificationStatus:"pending"
+      }
+    ],
+
+    submittedAt:null,
+    verifiedAt:null,
+    verifiedBy:"",
+    updatedAt:Date.now()
+  };
+}
+
+
+function sportLoadGovernance(){
+
+  const saved=
+    sportLoad(
+      SPORT_KEYS.governance,
+      null
+    );
+
+  const base=
+    sportDefaultGovernance();
+
+  if(
+    !saved ||
+    typeof saved !== "object"
+  ){
+    return base;
+  }
+
+  const president=
+    Object.assign(
+      {},
+      base.president,
+      saved.president || {}
+    );
+
+  const savedContinuity=
+    Array.isArray(saved.continuity)
+      ? saved.continuity
+      : [];
+
+  const continuity=[
+    Object.assign(
+      {},
+      base.continuity[0],
+      savedContinuity[0] || {}
+    ),
+    Object.assign(
+      {},
+      base.continuity[1],
+      savedContinuity[1] || {}
+    )
+  ];
+
+  return Object.assign(
+    {},
+    base,
+    saved,
+    {
+      president,
+      continuity
+    }
+  );
+}
+
+
+function sportSaveGovernance(data){
+
+  if(
+    !data ||
+    typeof data !== "object"
+  ){
+    return false;
+  }
+
+  data.clubId=
+    SPORT_CONFIG.clubId;
+
+  data.updatedAt=
+    Date.now();
+
+  return sportSave(
+    SPORT_KEYS.governance,
+    data
+  );
+}
+
+
+/*
+  Vérifie uniquement que la fiche est complète.
+
+  ATTENTION :
+  cela NE valide PAS l'identité
+  ni le mandat des personnes.
+*/
+function sportGovernanceCompleteness(){
+
+  const governance=
+    sportLoadGovernance();
+
+  const missing=[];
+
+  const president=
+    governance.president || {};
+
+  if(
+    !String(
+      president.fullName || ""
+    ).trim()
+  ){
+    missing.push(
+      "Président / responsable légal"
+    );
+  }
+
+  if(
+    !String(
+      president.role || ""
+    ).trim()
+  ){
+    missing.push(
+      "Fonction du président"
+    );
+  }
+
+  const continuity=
+    Array.isArray(
+      governance.continuity
+    )
+      ? governance.continuity
+      : [];
+
+  for(
+    let i=0;
+    i<2;
+    i++
+  ){
+
+    const person=
+      continuity[i] || {};
+
+    if(
+      !String(
+        person.fullName || ""
+      ).trim()
+    ){
+      missing.push(
+        "Personne de continuité " +
+        (i + 1)
+      );
+    }
+
+    if(
+      !String(
+        person.role || ""
+      ).trim()
+    ){
+      missing.push(
+        "Fonction de la personne de continuité " +
+        (i + 1)
+      );
+    }
+  }
+
+  return {
+    complete:
+      missing.length === 0,
+    missing
+  };
+}
+
+
+/*
+  LA VALIDATION RÉELLE NE PEUT PAS ÊTRE
+  PRODUITE PAR UNE SIMPLE SAISIE UTILISATEUR.
+
+  Elle devra venir du serveur Bo'CitéArt
+  après contrôle de la structure,
+  des personnes et de leur mandat.
+*/
+function sportGovernanceIsVerified(){
+
+  const governance=
+    sportLoadGovernance();
+
+  const completeness=
+    sportGovernanceCompleteness();
+
+  if(
+    completeness.complete !== true
+  ){
+    return false;
+  }
+
+  if(
+    governance.status !==
+      "verified"
+  ){
+    return false;
+  }
+
+  if(
+    governance.activationStatus !==
+      "active"
+  ){
+    return false;
+  }
+
+  const president=
+    governance.president || {};
+
+  if(
+    president.verificationStatus !==
+      "verified"
+  ){
+    return false;
+  }
+
+  const continuity=
+    Array.isArray(
+      governance.continuity
+    )
+      ? governance.continuity
+      : [];
+
+  if(
+    continuity.length < 2
+  ){
+    return false;
+  }
+
+  return continuity
+    .slice(0,2)
+    .every(
+      person =>
+        person &&
+        person.verificationStatus ===
+          "verified"
+    );
+}
+
+
+/*
+  Enregistrement d'une fiche déclarative.
+
+  Toute modification d'identité ou
+  de gouvernance remet automatiquement
+  la fiche en attente de vérification.
+*/
+function sportSaveGovernanceDraft(
+  president,
+  continuity
+){
+
+  const current=
+    sportLoadGovernance();
+
+  const people=
+    Array.isArray(continuity)
+      ? continuity
+      : [];
+
+  const next=
+    sportDefaultGovernance();
+
+  next.president={
+    fullName:
+      String(
+        president &&
+        president.fullName ||
+        ""
+      ).trim(),
+
+    role:
+      String(
+        president &&
+        president.role ||
+        "Président / responsable légal"
+      ).trim(),
+
+    email:
+      String(
+        president &&
+        president.email ||
+        ""
+      ).trim(),
+
+    phone:
+      String(
+        president &&
+        president.phone ||
+        ""
+      ).trim(),
+
+    officialReference:
+      String(
+        president &&
+        president.officialReference ||
+        ""
+      ).trim(),
+
+    verificationStatus:"pending"
+  };
+
+  next.continuity=
+    [0,1].map(
+      function(index){
+
+        const person=
+          people[index] || {};
+
+        return {
+          id:
+            "continuity-" +
+            (index + 1),
+
+          fullName:
+            String(
+              person.fullName ||
+              ""
+            ).trim(),
+
+          role:
+            String(
+              person.role ||
+              ""
+            ).trim(),
+
+          email:
+            String(
+              person.email ||
+              ""
+            ).trim(),
+
+          phone:
+            String(
+              person.phone ||
+              ""
+            ).trim(),
+
+          officialReference:
+            String(
+              person.officialReference ||
+              ""
+            ).trim(),
+
+          verificationStatus:
+            "pending"
+        };
+      }
+    );
+
+  next.status=
+    "pending_review";
+
+  next.activationStatus=
+    "blocked";
+
+  next.submittedAt=
+    Date.now();
+
+  next.verifiedAt=
+    null;
+
+  next.verifiedBy=
+    "";
+
+  /*
+    On conserve seulement
+    les informations techniques
+    qui ne constituent pas une validation.
+  */
+  next.clubId=
+    current.clubId ||
+    SPORT_CONFIG.clubId;
+
+  sportSaveGovernance(
+    next
+  );
+
+  return next;
+}
+
+
+/*
+  Cette fonction recevra ensuite
+  la réponse du serveur sécurisé.
+
+  Elle n'est jamais appelée
+  directement depuis un bouton public.
+*/
+function sportApplyGovernanceVerification(
+  serverResult
+){
+
+  if(
+    !serverResult ||
+    serverResult.verified !== true
+  ){
+    return false;
+  }
+
+  const governance=
+    sportLoadGovernance();
+
+  governance.status=
+    "verified";
+
+  governance.activationStatus=
+    "active";
+
+  governance.verifiedAt=
+    Date.now();
+
+  governance.verifiedBy=
+    String(
+      serverResult.verifiedBy ||
+      "Bo'CitéArt"
+    );
+
+  governance.president
+    .verificationStatus=
+      "verified";
+
+  governance.continuity=
+    governance.continuity.map(
+      person =>
+        Object.assign(
+          {},
+          person,
+          {
+            verificationStatus:
+              "verified"
+          }
+        )
+    );
+
+  sportSaveGovernance(
+    governance
+  );
+
+  return true;
+}
+
+
+/*
+  Vérification demandée au serveur.
+
+  Sans serveur raccordé :
+  la fiche reste volontairement bloquée.
+*/
+async function sportSubmitGovernanceVerification(){
+
+  const governance=
+    sportLoadGovernance();
+
+  const completeness=
+    sportGovernanceCompleteness();
+
+  if(
+    !completeness.complete
+  ){
+
+    alert(
+      "La fiche de gouvernance doit être complète avant vérification."
+    );
+
+    return {
+      ok:false,
+      reason:"incomplete"
+    };
+  }
+
+  if(
+    !SPORT_CONFIG.governanceEndpoint
+  ){
+
+    return {
+      ok:false,
+      pending:true
+    };
+  }
+
+  try{
+
+    const response=
+      await fetch(
+        SPORT_CONFIG.governanceEndpoint,
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+          body:
+            JSON.stringify({
+              clubId:
+                SPORT_CONFIG.clubId,
+              governance
+            })
+        }
+      );
+
+    if(
+      !response.ok
+    ){
+      throw new Error(
+        "verification_failed"
+      );
+    }
+
+    const result=
+      await response.json();
+
+    if(
+      result &&
+      result.verified === true
+    ){
+
+      sportApplyGovernanceVerification(
+        result
+      );
+
+      return {
+        ok:true,
+        verified:true
+      };
+    }
+
+    return {
+      ok:true,
+      verified:false,
+      pending:true
+    };
+
+  }catch(error){
+
+    return {
+      ok:false,
+      pending:true
+    };
+  }
+}
+
+
+/*
+  Toute fonction sensible peut appeler
+  ce verrou avant de continuer.
+*/
+function sportRequireVerifiedGovernance(){
+
+  if(
+    sportGovernanceIsVerified()
+  ){
+    return true;
+  }
+
+  alert(
+    "La gouvernance du club doit être vérifiée avant l’ouverture des fonctions réservées."
+  );
+
+  return false;
+}
+
   function sportWallet(){
 
     const x=
@@ -14808,7 +15426,10 @@ const SPORT_CONFIG = Object.assign({
     };
   }
 
-   function sportDebitBag(actor){
+  function sportDebitBag(
+  actor,
+  representative
+){
 
     const w=
       sportWallet();
@@ -14844,6 +15465,9 @@ const SPORT_CONFIG = Object.assign({
 
       actor:
         actor,
+
+     representative:
+  representative || {},
 
       ts:
         Date.now(),
@@ -16199,6 +16823,341 @@ async function sportCreateSupportDossier(
     };
   }
 
+function sportClubCode(){
+
+  const c=
+    sportClub();
+
+  const representative={
+
+    ref:
+      String(
+        sportSession.accountId ||
+        sportSession.role ||
+        ""
+      ),
+
+    name:
+      String(
+        sportSession.name ||
+        "Responsable du club"
+      ),
+
+    role:
+      String(
+        sportSession.role ||
+        ""
+      ),
+
+    team:
+      String(
+        sportSession.team ||
+        ""
+      )
+  };
+
+  return {
+
+    type:
+      "sport_club_ref",
+
+    clubId:
+      c.id,
+
+    clubRef:
+      String(
+        c.clubRef ||
+        ""
+      ),
+
+    clubName:
+      String(
+        c.name ||
+        ""
+      ),
+
+    commune:
+      String(
+        c.commune ||
+        ""
+      ),
+
+    organizationType:
+      String(
+        c.organizationType ||
+        ""
+      ),
+
+    /*
+      En production, le serveur
+      associera ces informations
+      au jeton sécurisé du scan.
+    */
+    presentedBy:
+      representative,
+
+    scanToken:
+      "",
+
+    ts:
+      Date.now()
+  };
+}
+
+ /* =========================================================
+   SPORT — NOTIFICATION D'UN ÉCHANGE CABAS
+
+   En production :
+   le serveur retrouve lui-même
+   les coordonnées du Président.
+   Aucun email ou téléphone sensible
+   n'est exposé dans le JavaScript public.
+   ========================================================= */
+
+/* =========================================================
+   SPORT — JUSTIFICATIF AUTOMATIQUE D'ÉCHANGE CABAS
+   ========================================================= */
+
+function sportCreateBagExchangeReceipt(
+  exchange,
+  balance
+){
+
+  if(!exchange){
+    return null;
+  }
+
+  const receipt={
+
+    id:
+      sportId(
+        "bag-receipt"
+      ),
+
+    documentType:
+      "sport_bag_exchange_receipt",
+
+    operationRef:
+      String(
+        exchange.operationRef ||
+        exchange.id ||
+        ""
+      ),
+
+    clubRef:
+      String(
+        exchange.clubRef ||
+        ""
+      ),
+
+    clubName:
+      String(
+        exchange.clubName ||
+        ""
+      ),
+
+    amount:
+      Number(
+        exchange.amount ||
+        30
+      ),
+
+    balanceAfter:
+      Number(
+        balance || 0
+      ),
+
+    actor:
+      exchange.actor || {},
+
+    representative:
+      exchange.representative || {},
+
+   purchase:
+  exchange.purchase
+    ? {
+        amountTTC:
+          Number(
+            exchange.purchase.amountTTC ||
+            0
+          ),
+
+        reference:
+          String(
+            exchange.purchase.reference ||
+            ""
+          )
+      }
+    : null,
+
+    validatedAt:
+      exchange.validatedAt ||
+      Date.now(),
+
+    status:
+      "recorded",
+
+    createdAt:
+      Date.now()
+  };
+
+
+  const receipts=
+    sportReceipts();
+
+
+  receipts.push(
+    receipt
+  );
+
+
+  sportSaveReceipts(
+    receipts
+  );
+
+
+  return receipt;
+}
+ 
+ async function sportNotifyBagExchange(
+  exchange,
+  balance,
+  receipt
+){
+
+  if(!exchange){
+    return {
+      ok:false
+    };
+  }
+
+  const payload={
+
+    event:
+      "sport_bag_redeemed",
+
+    operationRef:
+      String(
+        exchange.operationRef ||
+        exchange.id ||
+        ""
+      ),
+
+   receiptId:
+  String(
+    receipt &&
+    receipt.id ||
+    ""
+  ),
+
+documentType:
+  "sport_bag_exchange_receipt",
+
+    clubRef:
+      String(
+        exchange.clubRef ||
+        ""
+      ),
+
+    clubName:
+      String(
+        exchange.clubName ||
+        ""
+      ),
+
+    amount:
+      Number(
+        exchange.amount ||
+        30
+      ),
+
+    balance:
+      Number(
+        balance || 0
+      ),
+
+    actor:
+      exchange.actor || {},
+
+    representative:
+      exchange.representative || {},
+
+    validatedAt:
+      exchange.validatedAt ||
+      Date.now(),
+
+    /*
+      Le serveur détermine les destinataires
+      réellement habilités du club.
+    */
+    requestedChannels:[
+      "in_app",
+      "email",
+      "sms"
+    ]
+  };
+
+
+  if(
+    !SPORT_CONFIG.notificationEndpoint
+  ){
+
+    return {
+  ok:true,
+  balance:d.balance,
+  operationRef:operationRef,
+  receiptId:
+    receipt
+      ? receipt.id
+      : ""
+};
+
+  try{
+
+    const response=
+      await fetch(
+        SPORT_CONFIG.notificationEndpoint,
+        {
+          method:"POST",
+
+          credentials:"include",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            )
+        }
+      );
+
+
+    if(!response.ok){
+
+      return {
+        ok:false,
+        pending:true
+      };
+    }
+
+
+    return {
+      ok:true,
+      sent:true
+    };
+
+  }catch(error){
+
+    return {
+      ok:false,
+      pending:true
+    };
+  }
+}
+       
   async function sportValidateBag(
     scan,
     actor
@@ -16237,6 +17196,78 @@ async function sportCreateSupportDossier(
       };
     }
 
+   const representative={
+
+  ref:
+    String(
+      scan.presentedBy &&
+      scan.presentedBy.ref ||
+      ""
+    ),
+
+  name:
+    String(
+      scan.presentedBy &&
+      scan.presentedBy.name ||
+      "Responsable du club"
+    ),
+
+  role:
+    String(
+      scan.presentedBy &&
+      scan.presentedBy.role ||
+      ""
+    ),
+
+  team:
+    String(
+      scan.presentedBy &&
+      scan.presentedBy.team ||
+      ""
+    )
+};
+
+/* =========================================================
+   CABAS SPORT — ACHAT RÉEL CHEZ LE COMMERÇANT
+
+   L'échange chez un commerçant n'est possible
+   qu'après un achat réel d'au moins 10 €.
+
+   Cette règle ne concerne pas la mairie.
+   ========================================================= */
+
+if(
+  actor &&
+  actor.type === "merchant"
+){
+
+  const purchaseAmount=
+    Number(
+      actor.purchaseAmountTTC ||
+      0
+    );
+
+  const purchaseReference=
+    String(
+      actor.purchaseReference ||
+      ""
+    ).trim();
+
+  if(
+    purchaseAmount < 10 ||
+    !purchaseReference
+  ){
+
+    return {
+      ok:false,
+      reason:
+        "purchase_required",
+      minimumPurchaseTTC:
+        10
+    };
+  }
+}
+   
     if(
       SPORT_CONFIG.scanEndpoint
     ){
@@ -16270,8 +17301,32 @@ async function sportCreateSupportDossier(
                   amount:
                     30,
 
-                  actor:
-                    actor
+                 actor:
+                 actor,
+
+                 representative:
+                 representative,
+
+                 purchase:
+  actor &&
+  actor.type === "merchant"
+    ? {
+        amountTTC:
+          Number(
+            actor.purchaseAmountTTC ||
+            0
+          ),
+
+        reference:
+          String(
+            actor.purchaseReference ||
+            ""
+          )
+           }
+    : null,
+
+validatedAt:
+  Date.now(),
                 })
             }
           );
@@ -16295,22 +17350,34 @@ async function sportCreateSupportDossier(
     }
 
     const d=
-      sportDebitBag(actor);
+  sportDebitBag(
+    actor,
+    representative
+  );
 
     if(!d.ok){
       return d;
     }
 
-    const h=
-      sportExchanges();
+const operationRef=
+  "BCA-SPORT-" +
+  Date.now() +
+  "-" +
+  Math.random()
+    .toString(36)
+    .slice(2,7)
+    .toUpperCase();
+   
+   const exchange={
 
-    h.push({
+  id:
+    sportId("bag"),
 
-      id:
-        sportId("bag"),
+  operationRef:
+    operationRef,
 
-      clubRef:
-        c.clubRef,
+  clubRef:
+    c.clubRef,
 
       clubName:
         c.name,
@@ -16329,14 +17396,31 @@ async function sportCreateSupportDossier(
           .toLocaleString(
             "fr-FR"
           )
-    });
+    };
+
+   h.push(
+  exchange
+);
 
     sportSaveExchanges(h);
 
-    return {
-      ok:true,
-      balance:d.balance
-    };
+const receipt=
+  sportCreateBagExchangeReceipt(
+    exchange,
+    d.balance
+  );
+
+await sportNotifyBagExchange(
+  exchange,
+  d.balance,
+  receipt
+);
+
+  return {
+  ok:true,
+  balance:d.balance,
+  operationRef:operationRef
+};
   }
 
 window.BociteSportMerchant={
@@ -16485,7 +17569,56 @@ window.BociteSportMerchant={
     },
 
     validateClubScan:
-      scan =>
+  (
+    scan,
+    merchant,
+    purchase
+  ) =>
+    sportValidateBag(
+      scan,
+      {
+        type:
+          "merchant",
+
+        label:
+          String(
+            merchant &&
+            merchant.name ||
+
+            merchant &&
+            merchant.shopName ||
+
+            merchant ||
+
+            "Commerce partenaire"
+          ),
+
+        merchantId:
+          String(
+            merchant &&
+            merchant.id ||
+            ""
+          ),
+
+        purchaseAmountTTC:
+          Number(
+            purchase &&
+            purchase.amountTTC ||
+            0
+          ),
+
+        purchaseReference:
+          String(
+            purchase &&
+            (
+              purchase.reference ||
+              purchase.ticketReference ||
+              purchase.transactionReference
+            ) ||
+            ""
+          )
+      }
+    ),
         sportValidateBag(
           scan,
           {
@@ -18301,6 +19434,1837 @@ window.BociteSportMerchant={
     `;
   }
 
+/* =========================================================
+   SPORT — FICHE DE GOUVERNANCE
+   PRÉSIDENT + 2 PERSONNES DE CONTINUITÉ
+   ========================================================= */
+
+function sportGovernanceHtml(){
+
+  const g=
+    sportLoadGovernance();
+
+  const p=
+    g.president || {};
+
+  const people=
+    Array.isArray(g.continuity)
+      ? g.continuity
+      : [];
+
+  const c1=
+    people[0] || {};
+
+  const c2=
+    people[1] || {};
+
+  const verified=
+    sportGovernanceIsVerified();
+
+  return `
+
+    <div class="sportCard">
+
+      <div class="sportSubTitle">
+        Gouvernance et continuité
+        avec ${sportBrandHtml()}
+      </div>
+
+      <div class="sportText" style="margin-top:8px;">
+
+        Les personnes déclarées doivent
+        correspondre à la gouvernance réelle
+        de la structure.
+
+        <br><br>
+
+        Une simple saisie ne valide jamais
+        un Président ou un responsable.
+
+        Les fonctions réservées restent bloquées
+        tant que les informations nécessaires
+        n’ont pas été vérifiées.
+
+      </div>
+
+      <div
+        class="sportStatus"
+        style="margin-top:10px;"
+      >
+        État :
+        <strong>
+          ${
+            verified
+              ? "✓ Gouvernance validée"
+              : "Vérification nécessaire"
+          }
+        </strong>
+      </div>
+
+
+      <div class="sportSubTitle" style="margin-top:16px;">
+        Président / responsable légal
+      </div>
+
+      <label class="sportLabel">
+        Nom et prénom
+      </label>
+
+      <input
+        id="sportGovPresidentName"
+        class="sportField"
+        value="${sportEsc(p.fullName || "")}"
+      >
+
+      <label class="sportLabel">
+        Fonction officielle
+      </label>
+
+      <input
+        id="sportGovPresidentRole"
+        class="sportField"
+        value="${sportEsc(
+          p.role ||
+          "Président / responsable légal"
+        )}"
+      >
+
+      <label class="sportLabel">
+        Email
+      </label>
+
+      <input
+        id="sportGovPresidentEmail"
+        class="sportField"
+        type="email"
+        value="${sportEsc(p.email || "")}"
+      >
+
+      <label class="sportLabel">
+        Téléphone
+      </label>
+
+      <input
+        id="sportGovPresidentPhone"
+        class="sportField"
+        value="${sportEsc(p.phone || "")}"
+      >
+
+      <label class="sportLabel">
+        Référence permettant de justifier la fonction
+      </label>
+
+      <input
+        id="sportGovPresidentRef"
+        class="sportField"
+        value="${sportEsc(
+          p.officialReference || ""
+        )}"
+        placeholder="Référence du document ou mandat"
+      >
+
+
+      <div class="sportSubTitle" style="margin-top:18px;">
+        Personne de continuité 1
+      </div>
+
+      <label class="sportLabel">
+        Nom et prénom
+      </label>
+
+      <input
+        id="sportGovC1Name"
+        class="sportField"
+        value="${sportEsc(c1.fullName || "")}"
+      >
+
+      <label class="sportLabel">
+        Fonction officielle
+      </label>
+
+      <input
+        id="sportGovC1Role"
+        class="sportField"
+        value="${sportEsc(c1.role || "")}"
+        placeholder="Secrétaire, trésorier..."
+      >
+
+      <label class="sportLabel">
+        Email
+      </label>
+
+      <input
+        id="sportGovC1Email"
+        class="sportField"
+        type="email"
+        value="${sportEsc(c1.email || "")}"
+      >
+
+      <label class="sportLabel">
+        Téléphone
+      </label>
+
+      <input
+        id="sportGovC1Phone"
+        class="sportField"
+        value="${sportEsc(c1.phone || "")}"
+      >
+
+      <label class="sportLabel">
+        Référence permettant de justifier la fonction
+      </label>
+
+      <input
+        id="sportGovC1Ref"
+        class="sportField"
+        value="${sportEsc(
+          c1.officialReference || ""
+        )}"
+        placeholder="Référence du document ou mandat"
+      >
+
+
+      <div class="sportSubTitle" style="margin-top:18px;">
+        Personne de continuité 2
+      </div>
+
+      <label class="sportLabel">
+        Nom et prénom
+      </label>
+
+      <input
+        id="sportGovC2Name"
+        class="sportField"
+        value="${sportEsc(c2.fullName || "")}"
+      >
+
+      <label class="sportLabel">
+        Fonction officielle
+      </label>
+
+      <input
+        id="sportGovC2Role"
+        class="sportField"
+        value="${sportEsc(c2.role || "")}"
+        placeholder="Secrétaire, trésorier..."
+      >
+
+      <label class="sportLabel">
+        Email
+      </label>
+
+      <input
+        id="sportGovC2Email"
+        class="sportField"
+        type="email"
+        value="${sportEsc(c2.email || "")}"
+      >
+
+      <label class="sportLabel">
+        Téléphone
+      </label>
+
+      <input
+        id="sportGovC2Phone"
+        class="sportField"
+        value="${sportEsc(c2.phone || "")}"
+      >
+
+      <label class="sportLabel">
+        Référence permettant de justifier la fonction
+      </label>
+
+      <input
+        id="sportGovC2Ref"
+        class="sportField"
+        value="${sportEsc(
+          c2.officialReference || ""
+        )}"
+        placeholder="Référence du document ou mandat"
+      >
+
+
+      <button
+        id="sportGovernanceSave"
+        class="sportBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:16px;
+        "
+      >
+        Enregistrer et demander la vérification
+      </button>
+
+      <div
+        id="sportGovernanceStatus"
+        class="sportStatus"
+      ></div>
+
+    </div>
+
+  `;
+}
+
+
+async function sportSaveGovernanceFromUi(){
+
+  const value=
+    id =>
+      String(
+        sportEl(id)?.value ||
+        ""
+      ).trim();
+
+  const president={
+
+    fullName:
+      value(
+        "sportGovPresidentName"
+      ),
+
+    role:
+      value(
+        "sportGovPresidentRole"
+      ),
+
+    email:
+      value(
+        "sportGovPresidentEmail"
+      ),
+
+    phone:
+      value(
+        "sportGovPresidentPhone"
+      ),
+
+    officialReference:
+      value(
+        "sportGovPresidentRef"
+      )
+  };
+
+
+  const continuity=[
+
+    {
+      fullName:
+        value("sportGovC1Name"),
+
+      role:
+        value("sportGovC1Role"),
+
+      email:
+        value("sportGovC1Email"),
+
+      phone:
+        value("sportGovC1Phone"),
+
+      officialReference:
+        value("sportGovC1Ref")
+    },
+
+    {
+      fullName:
+        value("sportGovC2Name"),
+
+      role:
+        value("sportGovC2Role"),
+
+      email:
+        value("sportGovC2Email"),
+
+      phone:
+        value("sportGovC2Phone"),
+
+      officialReference:
+        value("sportGovC2Ref")
+    }
+  ];
+
+
+  sportSaveGovernanceDraft(
+    president,
+    continuity
+  );
+
+
+  const status=
+    sportEl(
+      "sportGovernanceStatus"
+    );
+
+
+  const check=
+    sportGovernanceCompleteness();
+
+
+  if(!check.complete){
+
+    if(status){
+
+      status.textContent=
+        "La fiche est enregistrée mais reste incomplète. " +
+        check.missing.join(", ") +
+        ".";
+    }
+
+    return;
+  }
+
+
+  if(status){
+
+    status.textContent=
+      "Fiche complète. Vérification en attente.";
+  }
+
+
+  const result=
+    await sportSubmitGovernanceVerification();
+
+
+  if(
+    result &&
+    result.verified === true
+  ){
+
+    if(status){
+
+      status.textContent=
+        "✓ Gouvernance vérifiée.";
+    }
+
+    return;
+  }
+
+
+  if(status){
+
+    status.textContent=
+      "Fiche enregistrée. Les fonctions réservées seront ouvertes après validation.";
+  }
+}
+
+   /* =========================================================
+   SPORT — SIGNALEMENT CONFIDENTIEL
+   CHANGEMENT DE GOUVERNANCE
+   ========================================================= */
+
+function sportGovernanceReports(){
+
+  const rows=
+    sportLoad(
+      SPORT_KEYS.governanceReports,
+      []
+    );
+
+  return Array.isArray(rows)
+    ? rows
+    : [];
+}
+
+
+function sportSaveGovernanceReports(rows){
+
+  return sportSave(
+    SPORT_KEYS.governanceReports,
+    Array.isArray(rows)
+      ? rows
+      : []
+  );
+}
+
+
+function sportGovernanceReportHtml(){
+
+  if(
+    sportSession.role !==
+    "president"
+  ){
+    return "";
+  }
+
+  return `
+
+    <div class="sportCard">
+
+      <div class="sportSubTitle">
+        Signaler un changement de gouvernance
+      </div>
+
+      <div class="sportText" style="margin-top:8px;">
+
+        Un départ, un remplacement,
+        une indisponibilité ou une contestation
+        peut être signalé sans attendre
+        la transmission des anciens accès.
+
+        <br><br>
+
+        Le signalement est traité
+        confidentiellement.
+
+        Il ne modifie pas automatiquement
+        les droits d’une personne
+        tant que la situation
+        n’a pas été contrôlée.
+
+      </div>
+
+
+      <label class="sportLabel">
+        Situation
+      </label>
+
+      <select
+        id="sportGovReportType"
+        class="sportField"
+      >
+
+        <option value="">
+          Choisir
+        </option>
+
+        <option value="president_change">
+          Changement de Président / responsable légal
+        </option>
+
+        <option value="person_departure">
+          Départ d’une personne déclarée
+        </option>
+
+        <option value="person_removed">
+          Personne retirée de ses fonctions
+        </option>
+
+        <option value="unavailable">
+          Responsable indisponible
+        </option>
+
+        <option value="access_problem">
+          Problème d’accès ou de continuité
+        </option>
+
+        <option value="mandate_dispute">
+          Contestation concernant une fonction
+        </option>
+
+        <option value="other">
+          Autre changement
+        </option>
+
+      </select>
+
+
+      <label class="sportLabel">
+        Personne concernée
+      </label>
+
+      <input
+        id="sportGovReportPerson"
+        class="sportField"
+        placeholder="Nom et prénom"
+      >
+
+
+      <label class="sportLabel">
+        Précisions
+      </label>
+
+      <textarea
+        id="sportGovReportMessage"
+        class="sportField"
+        style="min-height:90px;"
+        placeholder="Indiquez simplement ce qui a changé."
+      ></textarea>
+
+
+      <button
+        id="sportGovReportSend"
+        class="sportBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:14px;
+        "
+      >
+        Transmettre le changement
+      </button>
+
+
+      <div
+        id="sportGovReportStatus"
+        class="sportStatus"
+      ></div>
+
+    </div>
+
+  `;
+}
+
+
+async function sportSendGovernanceReport(){
+
+  const type=
+    String(
+      sportEl(
+        "sportGovReportType"
+      )?.value ||
+      ""
+    ).trim();
+
+
+  const person=
+    String(
+      sportEl(
+        "sportGovReportPerson"
+      )?.value ||
+      ""
+    ).trim();
+
+
+  const message=
+    String(
+      sportEl(
+        "sportGovReportMessage"
+      )?.value ||
+      ""
+    ).trim();
+
+
+  const status=
+    sportEl(
+      "sportGovReportStatus"
+    );
+
+
+  if(!type){
+
+    if(status){
+
+      status.textContent=
+        "Choisissez la situation à signaler.";
+    }
+
+    return;
+  }
+
+
+  if(
+    !person &&
+    !message
+  ){
+
+    if(status){
+
+      status.textContent=
+        "Indiquez la personne concernée ou une courte précision.";
+    }
+
+    return;
+  }
+
+
+  const report={
+
+    id:
+      "SPORT-GOV-" +
+      Date.now(),
+
+    clubId:
+      SPORT_CONFIG.clubId,
+
+    clubRef:
+      sportClub().clubRef ||
+      "",
+
+    type:
+      type,
+
+    person:
+      person,
+
+    message:
+      message,
+
+    reporterRole:
+      String(
+        sportSession.role ||
+        ""
+      ),
+
+    reporterAccountId:
+      String(
+        sportSession.accountId ||
+        ""
+      ),
+
+    reporterName:
+      String(
+        sportSession.name ||
+        ""
+      ),
+
+    confidential:
+      true,
+
+    status:
+      "pending_review",
+
+    createdAt:
+      new Date()
+        .toISOString()
+  };
+
+
+  /*
+    En production :
+    le signalement est transmis
+    au serveur sécurisé Bo'CitéArt.
+  */
+  if(
+    SPORT_CONFIG
+      .governanceReportEndpoint
+  ){
+
+    try{
+
+      const response=
+        await fetch(
+          SPORT_CONFIG
+            .governanceReportEndpoint,
+          {
+            method:"POST",
+
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(
+                report
+              )
+          }
+        );
+
+
+      if(!response.ok){
+
+        throw new Error(
+          "report_failed"
+        );
+      }
+
+
+      const result=
+        await response.json();
+
+
+      if(
+        result &&
+        result.reference
+      ){
+
+        report.serverReference=
+          String(
+            result.reference
+          );
+      }
+
+
+      report.status=
+        "transmitted";
+
+    }catch(error){
+
+      /*
+        Le dossier reste enregistré
+        pour ne pas perdre le signalement.
+      */
+      report.status=
+        "pending_transmission";
+    }
+  }
+
+
+  const rows=
+    sportGovernanceReports();
+
+
+  rows.push(
+    report
+  );
+
+
+  sportSaveGovernanceReports(
+    rows.slice(-100)
+  );
+
+
+  if(
+    sportEl(
+      "sportGovReportType"
+    )
+  ){
+
+    sportEl(
+      "sportGovReportType"
+    ).value="";
+  }
+
+
+  if(
+    sportEl(
+      "sportGovReportPerson"
+    )
+  ){
+
+    sportEl(
+      "sportGovReportPerson"
+    ).value="";
+  }
+
+
+  if(
+    sportEl(
+      "sportGovReportMessage"
+    )
+  ){
+
+    sportEl(
+      "sportGovReportMessage"
+    ).value="";
+  }
+
+
+  if(status){
+
+    status.textContent=
+      "Signalement enregistré. La situation sera vérifiée avant toute modification des droits.";
+  }
+}  
+
+/* =========================================================
+   SPORT — MÉMOIRE PERMANENTE DU CLUB
+   TABLEAU RÉSERVÉ À LA PRÉSIDENCE
+
+   L'historique appartient au club.
+   Il ne disparaît jamais avec un changement de Président.
+   ========================================================= */
+
+function sportHistoryTimestamp(item){
+
+  if(!item){
+    return 0;
+  }
+
+  const direct=[
+    item.ts,
+    item.createdAt,
+    item.validatedAt,
+    item.paidAt,
+    item.coinAwardedAt,
+    item.receiptReceivedAt
+  ];
+
+  for(const value of direct){
+
+    const n=Number(value);
+
+    if(
+      Number.isFinite(n) &&
+      n > 0
+    ){
+      return n;
+    }
+  }
+
+  const text=
+    item.playedAt ||
+    item.date ||
+    item.ts_fr ||
+    "";
+
+  const parsed=
+    Date.parse(text);
+
+  return Number.isFinite(parsed)
+    ? parsed
+    : 0;
+}
+
+
+function sportHistoryPeriodStart(period){
+
+  const now=
+    new Date();
+
+  if(period === "month"){
+
+    return new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1,
+      0,0,0,0
+    ).getTime();
+  }
+
+
+  if(period === "quarter"){
+
+    const quarterMonth=
+      Math.floor(
+        now.getMonth() / 3
+      ) * 3;
+
+    return new Date(
+      now.getFullYear(),
+      quarterMonth,
+      1,
+      0,0,0,0
+    ).getTime();
+  }
+
+
+  if(period === "semester"){
+
+    const semesterMonth=
+      now.getMonth() < 6
+        ? 0
+        : 6;
+
+    return new Date(
+      now.getFullYear(),
+      semesterMonth,
+      1,
+      0,0,0,0
+    ).getTime();
+  }
+
+
+  if(period === "season"){
+
+    const club=
+      sportClub();
+
+    const end=
+      new Date(
+        String(
+          club.seasonEndDate ||
+          ""
+        ) +
+        "T23:59:59"
+      );
+
+    if(
+      !Number.isNaN(
+        end.getTime()
+      )
+    ){
+
+      const start=
+        new Date(end);
+
+      start.setFullYear(
+        start.getFullYear() - 1
+      );
+
+      start.setDate(
+        start.getDate() + 1
+      );
+
+      return start.getTime();
+    }
+  }
+
+
+  return 0;
+}
+
+
+function sportHistoryFilter(
+  rows,
+  period
+){
+
+  const start=
+    sportHistoryPeriodStart(
+      period
+    );
+
+  if(!start){
+
+    return Array.isArray(rows)
+      ? rows.slice()
+      : [];
+  }
+
+  return (
+    Array.isArray(rows)
+      ? rows
+      : []
+  ).filter(
+    item =>
+      sportHistoryTimestamp(item) >=
+      start
+  );
+}
+
+
+function sportPresidentHistoryHtml(){
+
+  if(
+    sportSession.role !==
+    "president"
+  ){
+    return "";
+  }
+
+  return `
+
+    <div class="sportCard">
+
+      <div class="sportSubTitle">
+        Suivi et mémoire du club avec
+        ${sportBrandHtml()}
+      </div>
+
+      <div
+        class="sportText"
+        style="margin-top:8px;"
+      >
+
+        Cet historique appartient
+        à la structure sportive.
+
+        <br><br>
+
+        Un changement de Président
+        ou de responsable
+        ne supprime jamais
+        les opérations déjà enregistrées.
+
+      </div>
+
+
+      <label class="sportLabel">
+        Période à consulter
+      </label>
+
+      <select
+        id="sportPresidentHistoryPeriod"
+        class="sportField"
+      >
+
+        <option value="month">
+          Ce mois
+        </option>
+
+        <option value="quarter">
+          Ce trimestre
+        </option>
+
+        <option value="semester">
+          Ce semestre
+        </option>
+
+        <option value="season" selected>
+          Cette saison
+        </option>
+
+        <option value="all">
+          Tout l’historique
+        </option>
+
+      </select>
+
+
+      <button
+        id="sportPresidentHistoryRefresh"
+        class="sportBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        "
+      >
+        Actualiser le relevé
+      </button>
+
+
+      <div
+        id="sportPresidentHistorySummary"
+        style="margin-top:12px;"
+      ></div>
+
+
+      <div
+        id="sportPresidentHistoryDetails"
+        style="margin-top:12px;"
+      ></div>
+
+    </div>
+
+  `;
+}
+
+
+function sportRenderPresidentHistory(){
+
+  if(
+    sportSession.role !==
+    "president"
+  ){
+    return;
+  }
+
+
+  const summary=
+    sportEl(
+      "sportPresidentHistorySummary"
+    );
+
+  const details=
+    sportEl(
+      "sportPresidentHistoryDetails"
+    );
+
+  if(
+    !summary ||
+    !details
+  ){
+    return;
+  }
+
+
+  const periodEl=
+    sportEl(
+      "sportPresidentHistoryPeriod"
+    );
+
+  const period=
+    periodEl
+      ? periodEl.value
+      : "season";
+
+
+  const ledger=
+    sportHistoryFilter(
+      sportLedger(),
+      period
+    );
+
+
+  const exchanges=
+    sportHistoryFilter(
+      sportExchanges(),
+      period
+    );
+
+
+  const trainings=
+    sportHistoryFilter(
+      sportTrainings(),
+      period
+    );
+
+
+  const reports=
+    sportHistoryFilter(
+      sportReports(),
+      period
+    );
+
+
+  const dossiers=
+    sportHistoryFilter(
+      sportDossiers(),
+      period
+    );
+
+
+  const payments=
+    sportHistoryFilter(
+      sportPaymentRecords(),
+      period
+    );
+
+
+  const credits=
+    ledger.filter(
+      x =>
+        x.direction ===
+        "credit"
+    );
+
+
+  const debits=
+    ledger.filter(
+      x =>
+        x.direction ===
+        "debit"
+    );
+
+
+  const solidarity=
+    ledger.filter(
+      x =>
+        x.direction ===
+        "solidarity_transfer"
+    );
+
+
+  const expired=
+    ledger.filter(
+      x =>
+        x.direction ===
+        "expire"
+    );
+
+
+  const coinsWon=
+    credits.reduce(
+      (sum,x) =>
+        sum +
+        Number(
+          x.amount || 0
+        ),
+      0
+    );
+
+
+  const coinsUsed=
+    debits.reduce(
+      (sum,x) =>
+        sum +
+        Number(
+          x.amount || 0
+        ),
+      0
+    );
+
+
+  const solidarityCoins=
+    solidarity.reduce(
+      (sum,x) =>
+        sum +
+        Number(
+          x.amount || 0
+        ),
+      0
+    );
+
+
+  const expiredCoins=
+    expired.reduce(
+      (sum,x) =>
+        sum +
+        Number(
+          x.amount || 0
+        ),
+      0
+    );
+
+
+  const validatedTrainings=
+    trainings.filter(
+      x =>
+        x.coinAwarded === true
+    ).length;
+
+
+  const officialResults=
+    reports.filter(
+      x =>
+        x.official === true
+    ).length;
+
+
+  const paidSupport=
+    payments.filter(
+      x =>
+        x.status ===
+        "paid"
+    );
+
+
+  const paidAmountHT=
+    paidSupport.reduce(
+      (sum,x) =>
+        sum +
+        Number(
+          x.amountHT || 0
+        ),
+      0
+    );
+
+ const exchangesByRepresentative={};
+
+exchanges.forEach(
+  item=>{
+
+    const representative=
+      item.representative || {};
+
+    const ref=
+      String(
+        representative.ref ||
+        representative.name ||
+        "non-identifie"
+      );
+
+    const name=
+      String(
+        representative.name ||
+        "Représentant non identifié"
+      );
+
+    const team=
+      String(
+        representative.team ||
+        ""
+      );
+
+    if(
+      !exchangesByRepresentative[ref]
+    ){
+
+      exchangesByRepresentative[ref]={
+        name:name,
+        team:team,
+        exchanges:0,
+        coins:0
+      };
+    }
+
+    exchangesByRepresentative[ref]
+      .exchanges += 1;
+
+    exchangesByRepresentative[ref]
+      .coins +=
+        Number(
+          item.amount || 30
+        );
+  }
+);
+
+
+const representativeRows=
+  Object.values(
+    exchangesByRepresentative
+  );
+
+ const supportsByRepresentative={};
+
+paidSupport.forEach(
+  item=>{
+
+    const representative=
+      item.representative || {};
+
+    const ref=
+      String(
+        representative.ref ||
+        representative.name ||
+        "non-identifie"
+      );
+
+    const name=
+      String(
+        representative.name ||
+        "Représentant non identifié"
+      );
+
+    const team=
+      String(
+        representative.team ||
+        ""
+      );
+
+    if(
+      !supportsByRepresentative[ref]
+    ){
+
+      supportsByRepresentative[ref]={
+        name:name,
+        team:team,
+        supports:0,
+        amountHT:0
+      };
+    }
+
+    supportsByRepresentative[ref]
+      .supports += 1;
+
+    supportsByRepresentative[ref]
+      .amountHT +=
+        Number(
+          item.amountHT || 0
+        );
+  }
+);
+
+
+const supportRepresentativeRows=
+  Object.values(
+    supportsByRepresentative
+  );
+
+  summary.innerHTML=`
+
+    <div class="sportItem">
+
+      <div class="sportName">
+        Situation de la période
+      </div>
+
+      <div style="margin-top:8px;">
+        Solde actuel :
+        <strong>
+          ${sportWallet().vert}
+          bocitecoins
+        </strong>
+      </div>
+
+      <div style="margin-top:6px;">
+        Bocitecoins gagnés :
+        <strong>${coinsWon}</strong>
+      </div>
+
+      <div style="margin-top:6px;">
+        Bocitecoins utilisés en Cabas :
+        <strong>${coinsUsed}</strong>
+      </div>
+
+      <div style="margin-top:6px;">
+        Orientés vers la solidarité :
+        <strong>${solidarityCoins}</strong>
+      </div>
+
+      <div style="margin-top:6px;">
+        Expirés en clôture :
+        <strong>${expiredCoins}</strong>
+      </div>
+
+      <div style="margin-top:6px;">
+        Cabas validés :
+        <strong>${exchanges.length}</strong>
+      </div>
+
+      <div style="margin-top:6px;">
+        Entraînements ayant produit
+        un bocitecoin :
+        <strong>${validatedTrainings}</strong>
+      </div>
+
+      <div style="margin-top:6px;">
+        Résultats officiels enregistrés :
+        <strong>${officialResults}</strong>
+      </div>
+
+      <div style="margin-top:6px;">
+        Parrainages / soutiens enregistrés :
+        <strong>${dossiers.length}</strong>
+      </div>
+
+      <div style="margin-top:6px;">
+        Paiements de soutien confirmés :
+        <strong>${paidSupport.length}</strong>
+      </div>
+
+      <div style="margin-top:6px;">
+        Montant HT des paiements confirmés :
+        <strong>
+          ${paidAmountHT.toFixed(2)} €
+        </strong>
+      </div>
+
+      ${
+  representativeRows.length
+    ? `
+
+      <div
+        class="sportSubTitle"
+        style="margin-top:16px;"
+      >
+        Échanges Cabas par représentant
+      </div>
+
+      ${
+        representativeRows
+          .map(
+            row=>`
+
+              <div
+                style="
+                  margin-top:8px;
+                  padding-top:8px;
+                  border-top:1px solid rgba(47,93,70,.18);
+                "
+              >
+
+                <strong>
+                  ${sportEsc(
+                    row.name
+                  )}
+                </strong>
+
+                ${
+                  row.team
+                    ? " — " +
+                      sportEsc(
+                        row.team
+                      )
+                    : ""
+                }
+
+                <br>
+
+                ${row.exchanges}
+                échange(s) Cabas
+
+                —
+                ${row.coins}
+                bocitecoins utilisés
+
+              </div>
+
+            `
+          )
+          .join("")
+      }
+
+    `
+    : ""
+}
+
+${
+  supportRepresentativeRows.length
+    ? `
+
+      <div
+        class="sportSubTitle"
+        style="margin-top:18px;"
+      >
+        Parrainages par représentant
+      </div>
+
+      ${
+        supportRepresentativeRows
+          .map(
+            row=>`
+
+              <div
+                style="
+                  margin-top:8px;
+                  padding-top:8px;
+                  border-top:1px solid rgba(47,93,70,.18);
+                "
+              >
+
+                <strong>
+                  ${sportEsc(
+                    row.name
+                  )}
+                </strong>
+
+                ${
+                  row.team
+                    ? " — " +
+                      sportEsc(
+                        row.team
+                      )
+                    : ""
+                }
+
+                <br>
+
+                ${row.supports}
+                parrainage(s) confirmé(s)
+
+                <br>
+
+                Montant HT :
+                <strong>
+                  ${row.amountHT.toFixed(2)} €
+                </strong>
+
+              </div>
+
+            `
+          )
+          .join("")
+      }
+
+    `
+    : ""
+}
+
+    </div>
+  `;
+
+
+  const operations=[];
+
+
+  ledger.forEach(
+    item=>{
+
+      let label=
+        item.reason ||
+        "Mouvement bocitecoins";
+
+      if(
+        item.direction ===
+        "solidarity_transfer"
+      ){
+
+        label=
+          "Orientation vers une association solidaire";
+      }
+
+      if(
+        item.direction ===
+        "expire"
+      ){
+
+        label=
+          "Clôture de saison";
+      }
+
+      operations.push({
+
+        ts:
+          sportHistoryTimestamp(
+            item
+          ),
+
+        title:
+          label,
+
+        detail:
+          (
+            item.direction ===
+            "credit"
+              ? "+"
+              : "-"
+          ) +
+          String(
+            item.amount || 0
+          ) +
+          " bocitecoins" +
+          (
+            item.team
+              ? " — " +
+                item.team
+              : ""
+          )
+      });
+    }
+  );
+
+  exchanges.forEach(
+    item=>{
+
+      const actor=
+        item.actor &&
+        item.actor.label
+          ? item.actor.label
+          : "Partenaire";
+
+      operations.push({
+
+        ts:
+          sportHistoryTimestamp(
+            item
+          ),
+
+        title:
+          "Cabas Sport validé",
+
+      detail:
+  String(
+    item.amount || 30
+  ) +
+  " bocitecoins — " +
+  actor +
+  (
+    item.representative &&
+    item.representative.name
+      ? " — présenté par " +
+        String(
+          item.representative.name
+        )
+      : ""
+  ) +
+  (
+    item.representative &&
+    item.representative.team
+      ? " — " +
+        String(
+          item.representative.team
+        )
+      : ""
+  ) +
+  (
+    item.operationRef
+      ? " — Réf. " +
+        String(
+          item.operationRef
+        )
+      : ""
+  )
+      : ""
+  ) +
+  (
+    item.representative &&
+    item.representative.team
+      ? " — " +
+        String(
+          item.representative.team
+        )
+      : ""
+  )
+      });
+    }
+  );
+
+
+  payments.forEach(
+    item=>{
+
+      operations.push({
+
+        ts:
+          sportHistoryTimestamp(
+            item
+          ),
+
+        title:
+          item.status === "paid"
+            ? "Parrainage payé"
+            : "Parrainage en cours",
+
+     detail:
+  String(
+    item.merchantName ||
+    "Commerce partenaire"
+  ) +
+  " — " +
+  Number(
+    item.amountHT || 0
+  ).toFixed(2) +
+  " € HT" +
+  (
+    item.representative &&
+    item.representative.name
+      ? " — obtenu par " +
+        String(
+          item.representative.name
+        )
+      : ""
+  ) +
+  (
+    item.representative &&
+    item.representative.team
+      ? " — " +
+        String(
+          item.representative.team
+        )
+      : ""
+  ) +
+  (
+    item.paymentReference
+      ? " — Réf. " +
+        String(
+          item.paymentReference
+        )
+      : ""
+  )
+      });
+    }
+  );
+
+
+  operations.sort(
+    (a,b) =>
+      b.ts - a.ts
+  );
+
+
+  const latest=
+    operations.slice(
+      0,
+      30
+    );
+
+
+  details.innerHTML=
+
+    latest.length
+
+      ? `
+
+        <div class="sportSubTitle">
+          Dernières opérations de la période
+        </div>
+
+        ${
+          latest
+            .map(
+              item=>`
+
+                <div class="sportItem">
+
+                  <div class="sportName">
+                    ${sportEsc(
+                      item.title
+                    )}
+                  </div>
+
+                  <div style="margin-top:5px;">
+                    ${sportEsc(
+                      item.detail
+                    )}
+                  </div>
+
+                  <div
+                    class="sportStatus"
+                    style="margin-top:5px;"
+                  >
+                    ${
+                      item.ts
+                        ? new Date(
+                            item.ts
+                          )
+                          .toLocaleString(
+                            "fr-FR"
+                          )
+                        : ""
+                    }
+                  </div>
+
+                </div>
+
+              `
+            )
+            .join("")
+        }
+
+      `
+
+      : `
+
+        <div class="sportStatus">
+          Aucune opération enregistrée
+          pour cette période.
+        </div>
+
+      `;
+}
+ 
   function sportPresidentHtml(){
 
     if(
@@ -19170,13 +22134,23 @@ window.BociteSportMerchant={
           40
           ou 50.
 
-          Le commerçant partenaire
-          ou la mairie
-          scanne le code du club
-          et valide l’échange.
+        Chez un commerçant partenaire,
+le représentant du club
+effectue d’abord
+un achat réel
+d’au moins <strong>10 €</strong>.
 
-          Le club ne déclenche jamais
-          lui-même l’opération.
+Le commerçant
+scanne ensuite
+le code du club
+et valide l’échange.
+
+Lorsque l’opération
+est réalisée par la mairie,
+aucun achat n’est demandé.
+
+Le club ne déclenche jamais
+lui-même l’opération.
 
           <br><br>
 
@@ -19375,6 +22349,34 @@ function sportSupportSaveMerchant(){
 
   const profile=
     sportSupportReadMerchant();
+
+ const representative={
+
+  ref:
+    String(
+      sportSession.accountId ||
+      sportSession.role ||
+      ""
+    ),
+
+  name:
+    String(
+      sportSession.name ||
+      "Responsable du club"
+    ),
+
+  role:
+    String(
+      sportSession.role ||
+      ""
+    ),
+
+  team:
+    String(
+      sportSession.team ||
+      ""
+    )
+};
 
   if(!profile.name){
     return;
@@ -19913,7 +22915,10 @@ async function sportSupportStartPayment(){
 
     clubRef:
       club.clubRef,
-
+   
+representative:
+  representative,
+   
     allocationCode:
       choice,
 
@@ -20030,6 +23035,9 @@ async function sportSupportStartPayment(){
 
       clubRef:
         club.clubRef,
+
+      representative:
+    representative,
 
       merchantName:
         merchant.name,
@@ -20996,6 +24004,12 @@ function sportSupportHtml(){
     ){
       return;
     }
+
+     if(
+    !sportRequireVerifiedGovernance()
+  ){
+    return;
+  }
 
     const a=
       sportAccess();
@@ -22381,7 +25395,9 @@ function sportSupportHtml(){
 
               "- aucun Cabas de 10, 20, 40 ou 50\n" +
 
-              "- le commerçant partenaire ou la mairie scanne le club\n" +
+              "- chez un commerçant partenaire : achat réel minimum de 10 € avant l’échange\n" +
+
+              "- le commerçant partenaire ou la mairie scanne ensuite le club\n" +
 
               "- le club ne valide jamais lui-même l’échange\n" +
 
