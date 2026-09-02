@@ -14177,18 +14177,7 @@ if(key === "sport"){
     window.BociteSportModule.ready === true &&
     typeof window.BociteSportModule.open === "function"
   ){
-
     window.BociteSportModule.open();
-
-    return;
-  }
-
-  if(
-    typeof window.openSportPanel === "function"
-  ){
-
-    window.openSportPanel();
-
     return;
   }
 
@@ -14198,7 +14187,17 @@ if(key === "sport"){
 
   return;
 }
-   
+
+
+/* ICI LE BLOC MAIRIE COMPLET CONSERVÉ */
+
+if(key === "mairie"){
+    ...
+    return;
+}
+
+/* COMMERCE RESTE INTACT */
+
 if(key === "commerces") {
   openModal("Commerces & Entreprises", `
     <div style="font-weight:900;margin-bottom:8px;">Commerces & Entreprises</div>
@@ -26434,7 +26433,7 @@ openModal(
 <script src="./entreprise/bociteart-school-parental-guard.js?v=20260827-02"></script>
 <script src="./entreprise/bociteart-school-word-simple.js?v=20260830-01"></script>
 <script src="./entreprise/bociteart-young-intro.js?v=20260826-01"></script>
-<script src="./sport/bociteart-sport.js?v=20260902-01"></script> 
+<script src="./sport/bociteart-sport.js?v=20260902-02"></script> 
 <script src="./entreprise/bociteart-start.js?v=20260827-01"></script>
      
 </body>
