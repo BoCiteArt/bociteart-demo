@@ -2669,28 +2669,28 @@ function sportAssociations(){
       id:"A",
       label:"Association solidaire A",
       cause:
-        "maladies rares de l’enfant et recherche médicale"
+        "En attente du choix défini par la mairie et Bo'CitéArt"
     },
 
     {
       id:"B",
       label:"Association solidaire B",
       cause:
-        "enfants malades, soins et accompagnement"
+         "En attente du choix défini par la mairie et Bo'CitéArt"
     },
 
     {
       id:"C",
       label:"Association solidaire C",
       cause:
-        "handicap, autonomie et inclusion"
+         "En attente du choix défini par la mairie et Bo'CitéArt"
     },
 
     {
       id:"D",
       label:"Association solidaire D",
       cause:
-        "accidents, séquelles et reconstruction"
+         "En attente du choix défini par la mairie et Bo'CitéArt"
     }
 
   ].map(
@@ -8637,7 +8637,7 @@ function sportSolidarityHtml(){
                     ${
                       sportAssociationOK(x)
                         ? "association validée"
-                        : "orientation provisoire en attente de validation"
+                       : " — En attente du choix défini par la mairie et Bo'CitéArt"
                     }
 
                   </span>
@@ -12268,6 +12268,77 @@ function openClubAccess(){
             return;
           }
 
+/* =====================================================
+   ÇA COMMENCE ICI — ACCÈS SPÉCIAL DE TEST
+   ===================================================== */
+
+          if(
+            SPORT_CONFIG.mode !==
+              "production" &&
+
+            sportNorm(id) ===
+              "SPORT-TEST" &&
+
+            code ===
+              "BCA-SPORT-2026"
+          ){
+
+            window
+              .bociteartSportTestFullAccess =
+              true;
+
+
+            sportResetFail(
+              id
+            );
+
+
+            sportSession={
+
+              role:
+                "president",
+
+              accountId:
+                "sport-test-full",
+
+              name:
+                "Accès spécial de test",
+
+              team:
+                "",
+
+              testFullAccess:
+                true
+            };
+
+
+            window.bociteartSportSession=
+              sportSession;
+
+
+            openClubReserve();
+
+            return;
+          }
+
+/* =====================================================
+   ÇA FINIT ICI — ACCÈS SPÉCIAL DE TEST
+   ===================================================== */
+
+
+          if(
+            sportLocked(id)
+          ){
+
+            if(o){
+
+              o.textContent=
+                "Accès temporairement indisponible. Contactez le président de la structure.";
+            }
+
+            return;
+          }
+           
           if(
             sportLocked(id)
           ){
