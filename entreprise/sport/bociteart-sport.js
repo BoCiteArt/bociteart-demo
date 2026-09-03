@@ -400,6 +400,42 @@ function sportSetModalHeader(
    ÇA FINIT ICI — PROTECTION DU TITRE SPORT
    ========================================================= */
 
+  function sportTitle(
+    before,
+    after=""
+  ){
+
+    return `
+
+      <div
+        class="sportTitleCard"
+      >
+
+        <div
+          class="sportTitleText"
+        >
+
+          ${sportEsc(
+            before
+          )}
+
+          ${sportBrandHtml()}
+
+          ${
+            after
+              ? " " +
+                sportEsc(
+                  after
+                )
+              : ""
+          }
+
+        </div>
+
+      </div>
+
+    `;
+  }
 
   /* =========================================================
      STYLES DU MODULE SPORT
