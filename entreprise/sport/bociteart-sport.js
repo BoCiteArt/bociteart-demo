@@ -7965,12 +7965,12 @@ function sportPresidentHtml(){
         n’est affiché
         dans la partie publique.
 
-        Il crée,
-        suspend,
-        réactive
-        et réattribue
-        jusqu’à deux accès
-        entraîneur ou responsable.
+       Il crée autant d’accès individuels
+que nécessaire pour ses collaborateurs,
+puis suspend,
+réactive
+ou réattribue
+chaque accès depuis la liste.
 
       </div>
 
@@ -10519,16 +10519,9 @@ async function sportCreateCoach(){
   const a=
     sportAccess();
 
-  if(
-    a.coaches.length >= 2
-  ){
-
-    alert(
-      "Deux accès responsables sont déjà créés. Suspendez ou réattribuez un accès existant."
-    );
-
-    return;
-  }
+if(
+  a.coaches.length >= 2
+){
 
   const name=
     String(
