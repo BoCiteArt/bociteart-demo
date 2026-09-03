@@ -10519,10 +10519,6 @@ async function sportCreateCoach(){
   const a=
     sportAccess();
 
-if(
-  a.coaches.length >= 2
-){
-
   const name=
     String(
       sportEl(
