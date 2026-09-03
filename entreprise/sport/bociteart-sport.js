@@ -350,20 +350,44 @@
       "</span>" +
       "</span>";
 
+/* =========================================================
+   ÇA COMMENCE ICI — PROTECTION DU TITRE SPORT
+   ========================================================= */
+
 function sportSetModalHeader(
   before
 ){
 
-  const title=
+  const title =
     sportEl(
       "modalTitle"
     );
 
-  if(!title){
+  const body =
+    sportEl(
+      "modalBody"
+    );
+
+  if(
+    !title ||
+    !body
+  ){
     return;
   }
 
-  title.innerHTML=
+  /*
+   * Sport ne peut modifier le titre que si la fenêtre
+   * actuellement affichée contient réellement Sport.
+   */
+  if(
+    !body.querySelector(
+      ".bociteSportRoot"
+    )
+  ){
+    return;
+  }
+
+  title.innerHTML =
     sportEsc(
       before ||
       ""
@@ -371,42 +395,10 @@ function sportSetModalHeader(
     " " +
     sportBrandHtml();
 }
-  function sportTitle(
-    before,
-    after=""
-  ){
 
-    return `
-
-      <div
-        class="sportTitleCard"
-      >
-
-        <div
-          class="sportTitleText"
-        >
-
-          ${sportEsc(
-            before
-          )}
-
-          ${sportBrandHtml()}
-
-          ${
-            after
-              ? " " +
-                sportEsc(
-                  after
-                )
-              : ""
-          }
-
-        </div>
-
-      </div>
-
-    `;
-  }
+/* =========================================================
+   ÇA FINIT ICI — PROTECTION DU TITRE SPORT
+   ========================================================= */
 
 
   /* =========================================================
