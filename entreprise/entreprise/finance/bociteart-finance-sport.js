@@ -151,7 +151,7 @@
     }) || null;
   }
 
-    function sportFinancePreview(profile, club, choice, association){
+  function sportFinancePreview(profile, club, choice, association){
     const contact = profile.website || profile.phone || profile.email;
     const lines = [
       profile.name,
@@ -168,7 +168,8 @@
     );
 
     if(choice === "HALF_HALF" && association){
-      lines.push(
+
+          lines.push(
         "Merci également pour son soutien à " +
         sportFinanceText(association.name) + "."
       );
@@ -236,7 +237,7 @@
     return errors;
   }
 
-    function sportFinanceOpenReview(){
+  function sportFinanceOpenReview(){
     const core = sportFinanceCore();
     const ui = sportFinanceUI();
 
@@ -339,7 +340,7 @@
       returnButton.style.display = "none";
     }
 
-    if(correctionNotice){
+       if(correctionNotice){
       correctionNotice.style.display = "none";
     }
 
@@ -352,7 +353,7 @@
     });
   }
 
-    async function sportFinanceStartCheckout(request){
+  async function sportFinanceStartCheckout(request){
     const config = sportFinanceCore().getConfig();
 
     if(sportFinanceText(config.mode).toLowerCase() === "production"){
@@ -408,7 +409,7 @@
     `;
   }
 
-    function sportFinanceRender(){
+  function sportFinanceRender(){
     const mount = sportFinanceField(MOUNT_ID);
 
     if(!mount || mount.dataset.financeReady === "1"){
@@ -508,7 +509,8 @@
 
           <div id="bcfSportStatus" class="sportStatus">
             Choisissez d’abord la destination du soutien.
-          </div>
+
+                      </div>
         </div>
       </div>
     `;
@@ -529,7 +531,7 @@
       sportFinanceReturnToReview;
   }
 
-    function sportFinanceInstall(){
+  function sportFinanceInstall(){
     const core = sportFinanceCore();
 
     if(
