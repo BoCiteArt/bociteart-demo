@@ -18,7 +18,7 @@
     return;
   }
 
-  const VERSION = "2026-09-03-01";
+  const VERSION = "2026-09-04-02";
   const CONNECTOR_NAME = "sport-parrainage";
   const MOUNT_ID = "bociteSportFinanceMount";
   const PROFILE_KEY = "bociteart_finance_sport_merchant_v1";
@@ -61,6 +61,51 @@
     }
 
     return {};
+  }
+
+     function sportFinanceSession(){
+
+    let source={};
+
+    if(
+      window.BociteSportModule &&
+      typeof window.BociteSportModule.getSession ===
+      "function"
+    ){
+
+      source=
+        window.BociteSportModule.getSession() ||
+        {};
+    }else{
+
+      source=
+        window.bociteartSportSession ||
+        {};
+    }
+
+    return {
+
+      accountId:
+        sportFinanceText(
+          source.accountId ||
+          source.id
+        ),
+
+      name:
+        sportFinanceText(
+          source.name
+        ),
+
+      role:
+        sportFinanceText(
+          source.role
+        ),
+
+      team:
+        sportFinanceText(
+          source.team
+        )
+    };
   }
 
   function sportFinanceAssociations(){
@@ -254,6 +299,18 @@
     const amountHT = sportFinanceAmount();
     const choice = sportFinanceChoice();
     const association = sportFinanceSelectedAssociation();
+    const representative = sportFinanceSession();
+
+    if(!representative.accountId){
+
+      sportFinanceSetStatus(
+        "L’utilisateur Sport doit être identifié avant de présenter ce parrainage.",
+        "error"
+      );
+
+      return;
+    }
+
     const errors = sportFinanceValidate(
       profile,
       club,
@@ -278,7 +335,17 @@
       connectorName: CONNECTOR_NAME,
       flowType: "sport_local_sponsorship",
       reviewTitle: "Dernière vérification avant paiement",
-      payerRef: profile.sirenSiret,
+           payerRef: profile.sirenSiret,
+
+      representativeRef:
+        representative.accountId,
+
+      representative:
+        representative,
+
+      presentedAt:
+        sportFinanceNow(),
+
       identityVersion: profile.updatedAt,
       beneficiaryRefs: [
         sportFinanceText(club.clubRef),
@@ -389,8 +456,9 @@
     return window.BociteFinanceTest.startCheckout(request);
   }
 
-  function sportFinanceAssociationOptions(){
+     const profile = sportFinanceInitialProfile();
     const associations = sportFinanceAssociations();
+    const representative = sportFinanceSession();
 
     if(!associations.length){
       return `
@@ -433,6 +501,25 @@
           Le commerçant choisit un montant à partir de <strong>50 € HT</strong>.
           Après confirmation du paiement, la publicité est automatiquement transmise
           pour <strong>5 jours de diffusion réelle</strong>.
+        </div>
+
+                <div class="sportStatus">
+          Parrainage présenté par
+          <strong>
+            ${sportFinanceEscape(
+              representative.name ||
+              "Utilisateur Sport autorisé"
+            )}
+          </strong>
+
+          ${
+            representative.team
+              ? " — Équipe : " +
+                sportFinanceEscape(
+                  representative.team
+                )
+              : ""
+          }
         </div>
 
         <div class="sportCard">
