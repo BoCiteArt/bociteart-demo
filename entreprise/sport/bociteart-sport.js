@@ -11493,17 +11493,46 @@ function openClubReserve(){
             0
           </div>
 
-          <div class="walletSub">
+                   <div class="walletSub">
 
             Les bocitecoins appartiennent
             au club
             ou à l’association sportive,
             jamais à une personne.
 
-            Ils sont crédités
-            par les actions sportives validées
-            et les victoires
-            officiellement vérifiées.
+            <br><br>
+
+            Le club gagne
+            <strong>1 bocitecoin</strong>
+            pour chaque entraînement
+            correctement terminé et validé,
+            notamment lorsque le matériel est rangé
+            et que les vestiaires,
+            le terrain ou la salle
+            sont laissés propres.
+
+            <br><br>
+
+            Il gagne également
+            <strong>1 bocitecoin</strong>
+            pour chaque victoire
+            officiellement confirmée.
+
+            <br><br>
+
+            Dès que le solde atteint
+            <strong>30 bocitecoins</strong>,
+            ils peuvent être échangés
+            uniquement par blocs complets
+            de 30 bocitecoins.
+
+            <br><br>
+
+            Chez un commerçant partenaire,
+            l’échange est possible
+            après un achat réel
+            d’au moins <strong>10 €</strong>,
+            puis validation par le commerçant.
 
           </div>
 
