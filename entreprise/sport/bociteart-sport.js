@@ -7672,24 +7672,26 @@ function sportPresidentHtml(){
 
       <div class="sportText">
 
-        Le président
-        ou responsable légal
-        dispose de l’accès maître
-        depuis la porte privée
-        ${sportBrandHtml()},
-        sur le même principe
-        que la Direction de l’École.
+      Pour ouvrir ce chapitre,
+référez-vous aux indications disponibles
+après votre identification.
 
-        Aucun identifiant Président
-        n’est affiché
-        dans la partie publique.
+<br><br>
 
-       Il crée autant d’accès individuels
-que nécessaire pour ses collaborateurs,
-puis suspend,
-réactive
-ou réattribue
-chaque accès depuis la liste.
+Le président
+ou responsable légal
+peut alors compléter
+la fiche de sa structure
+et gérer les accès
+de ses collaborateurs.
+
+Il peut créer autant d’accès individuels
+que nécessaire,
+puis les activer,
+les suspendre,
+les réactiver
+ou les réattribuer
+depuis la liste.
 
       </div>
 
@@ -7996,66 +7998,138 @@ chaque accès depuis la liste.
 
       </div>
 
+<div class="sportCard">
 
-      <div class="sportCard">
+  <div class="sportSubTitle">
+    Gestion des collaborateurs avec
+    ${sportBrandHtml()}
+  </div>
 
-        <div class="sportSubTitle">
-          Accès entraîneurs / responsables
-          avec ${sportBrandHtml()}
-        </div>
+  <div class="sportText" style="margin-top:8px;">
 
-        <label class="sportLabel">
-          Nom
-        </label>
+    Enregistrez une seule fiche à la fois.
+    Après validation, la fiche est conservée
+    dans l’historique et le formulaire se vide.
 
-        <input
-          id="sportCoachName"
-          class="sportField"
-        >
+    Le nombre de collaborateurs n’est pas limité.
 
-        <label class="sportLabel">
-          Équipe
-        </label>
+  </div>
 
-        <input
-          id="sportCoachTeam"
-          class="sportField"
-        >
+  <input
+    id="sportCoachEditId"
+    type="hidden"
+  >
 
-        <label class="sportLabel">
-          Code initial
-        </label>
+  <label class="sportLabel">
+    Nom et prénom
+  </label>
 
-        <input
-          id="sportCoachCode"
-          class="sportField"
-          type="password"
-          placeholder="6 caractères minimum"
-        >
+  <input
+    id="sportCoachName"
+    class="sportField"
+  >
 
-        <button
-          id="sportCoachCreate"
-          class="sportBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:12px;
-          "
-        >
-          Créer l’accès
-        </button>
+  <label class="sportLabel">
+    Fonction
+  </label>
 
-        <div
-          id="sportAccessStatus"
-          class="sportStatus"
-        ></div>
+  <input
+    id="sportCoachFunction"
+    class="sportField"
+    placeholder="Entraîneur, responsable, bénévole..."
+  >
 
-        <div
-          id="sportAccessList"
-        ></div>
+  <label class="sportLabel">
+    Équipe
+  </label>
 
-      </div>
+  <input
+    id="sportCoachTeam"
+    class="sportField"
+  >
 
+  <label class="sportLabel">
+    Adresse
+  </label>
+
+  <input
+    id="sportCoachAddress"
+    class="sportField"
+  >
+
+  <label class="sportLabel">
+    Téléphone
+  </label>
+
+  <input
+    id="sportCoachPhone"
+    class="sportField"
+    type="tel"
+  >
+
+  <label class="sportLabel">
+    Email
+  </label>
+
+  <input
+    id="sportCoachEmail"
+    class="sportField"
+    type="email"
+  >
+
+  <label class="sportLabel">
+    Code initial
+  </label>
+
+  <input
+    id="sportCoachCode"
+    class="sportField"
+    type="password"
+    placeholder="6 caractères minimum"
+  >
+
+  <div class="sportActions">
+
+    <button
+      id="sportCoachCreate"
+      class="sportBtn"
+      type="button"
+    >
+      Enregistrer le collaborateur
+    </button>
+
+    <button
+      id="sportCoachCancel"
+      class="sportBtn"
+      type="button"
+      style="display:none;"
+    >
+      Annuler la modification
+    </button>
+
+  </div>
+
+  <div
+    id="sportAccessStatus"
+    class="sportStatus"
+  ></div>
+
+  <button
+    id="sportAccessHistoryToggle"
+    class="sportBtn"
+    type="button"
+    data-opened="0"
+    style="width:100%;margin-top:14px;"
+  >
+    Historique des collaborateurs
+  </button>
+
+  <div
+    id="sportAccessList"
+    style="display:none;"
+  ></div>
+
+</div>
 
       <div class="sportCard">
 
@@ -8442,85 +8516,25 @@ function sportSolidarityHtml(){
 }
 
 
+/* ===== ÇA COMMENCE ICI ===== */
+
 function sportBagHtml(){
 
   return `
 
     ${sportTitle(
-      "Cabas Sport avec"
+      "Historique des échanges de Cabas avec"
     )}
 
     <div class="sportCard">
 
       <div class="sportText">
 
-        <strong>
-          Un Cabas Sport =
-          exactement 30 bocitecoins.
-        </strong>
-
-        <br><br>
-
-        Il n’existe pas
-        de Cabas de 10,
-        20,
-        40
-        ou 50.
-
-        <br><br>
-
-        Chez un commerçant partenaire,
-        le représentant du club
-        effectue d’abord
-        un achat réel
-        d’au moins <strong>10 €</strong>.
-
-        Le commerçant
-        scanne ensuite
-        le code du club
-        et valide l’échange.
-
-        Lorsque l’opération
-        est réalisée par la mairie,
-        aucun achat n’est demandé.
-
-        Le club ne déclenche jamais
-        lui-même l’opération.
-
-        <br><br>
-
-        La nourriture
-        et les boissons admises
-        représentent au maximum
-        <strong>30 %</strong>.
-
-        Les bocitecoins
-        ne sont jamais transférables
-        entre clubs.
-
-        <br><br>
-
-        En fin de saison,
-        un solde inférieur à 30
-        peut être remis à la mairie
-        pour une association solidaire validée.
-
-        L’opération est ventilée
-        sur le compte municipal dédié
-        au service Sport / solidarité.
+        Retrouvez ici les échanges de Cabas
+        déjà validés par un commerçant partenaire
+        ou par la mairie.
 
       </div>
-
-      <div
-        id="sportWalletStatus"
-        class="sportStatus"
-      ></div>
-
-      <div
-        id="sportSeasonNotice"
-        class="sportStatus"
-        style="display:none"
-      ></div>
 
       <div
         id="sportExchangeHistory"
@@ -8529,6 +8543,8 @@ function sportBagHtml(){
     </div>
   `;
 }
+
+/* ===== ÇA FINIT ICI ===== */
 
 
 /* =========================================================
@@ -9934,6 +9950,177 @@ function sportSupportHtml(){
    ACCÈS ENTRAÎNEURS — SÉANCES — CONTACTS
    ========================================================= */
 
+/* ===== ÇA COMMENCE ICI — MOTEUR DES COLLABORATEURS ===== */
+
+function sportResetCoachForm(){
+
+  [
+    "sportCoachName",
+    "sportCoachFunction",
+    "sportCoachTeam",
+    "sportCoachAddress",
+    "sportCoachPhone",
+    "sportCoachEmail",
+    "sportCoachCode"
+  ].forEach(
+    id =>{
+
+      const field=
+        sportEl(id);
+
+      if(field){
+        field.value="";
+      }
+    }
+  );
+
+  const editId=
+    sportEl(
+      "sportCoachEditId"
+    );
+
+  if(editId){
+    editId.value="";
+  }
+
+  const save=
+    sportEl(
+      "sportCoachCreate"
+    );
+
+  if(save){
+    save.textContent=
+      "Enregistrer le collaborateur";
+  }
+
+  const cancel=
+    sportEl(
+      "sportCoachCancel"
+    );
+
+  if(cancel){
+    cancel.style.display="none";
+  }
+
+  const code=
+    sportEl(
+      "sportCoachCode"
+    );
+
+  if(code){
+    code.placeholder=
+      "6 caractères minimum";
+  }
+}
+
+
+function sportEditCoach(id){
+
+  const coach=
+    sportAccess()
+      .coaches
+      .find(
+        item =>
+          String(item.id) ===
+          String(id)
+      );
+
+  if(!coach){
+    return;
+  }
+
+  const values={
+
+    sportCoachEditId:
+      coach.id,
+
+    sportCoachName:
+      coach.name,
+
+    sportCoachFunction:
+      coach.functionName,
+
+    sportCoachTeam:
+      coach.team,
+
+    sportCoachAddress:
+      coach.address,
+
+    sportCoachPhone:
+      coach.phone,
+
+    sportCoachEmail:
+      coach.email,
+
+    sportCoachCode:
+      ""
+  };
+
+  Object
+    .keys(values)
+    .forEach(
+      fieldId =>{
+
+        const field=
+          sportEl(fieldId);
+
+        if(field){
+
+          field.value=
+            String(
+              values[fieldId] ||
+              ""
+            );
+        }
+      }
+    );
+
+  const save=
+    sportEl(
+      "sportCoachCreate"
+    );
+
+  if(save){
+
+    save.textContent=
+      "Enregistrer les modifications";
+  }
+
+  const cancel=
+    sportEl(
+      "sportCoachCancel"
+    );
+
+  if(cancel){
+    cancel.style.display="block";
+  }
+
+  const code=
+    sportEl(
+      "sportCoachCode"
+    );
+
+  if(code){
+
+    code.placeholder=
+      "Laisser vide pour conserver le code actuel";
+  }
+
+  const firstField=
+    sportEl(
+      "sportCoachName"
+    );
+
+  if(firstField){
+
+    firstField.scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
+  }
+}
+
+
 function sportRenderAccessList(){
 
   const out=
@@ -9941,60 +10128,138 @@ function sportRenderAccessList(){
       "sportAccessList"
     );
 
+  const historyButton=
+    sportEl(
+      "sportAccessHistoryToggle"
+    );
+
+  const cancelButton=
+    sportEl(
+      "sportCoachCancel"
+    );
+
   if(!out){
     return;
   }
 
-  const a=
-    sportAccess();
+  if(historyButton){
 
-  if(
-    !a.coaches.length
-  ){
+    const opened=
+      historyButton.dataset.opened ===
+      "1";
+
+    out.style.display=
+      opened
+        ? "block"
+        : "none";
+
+    historyButton.textContent=
+      opened
+        ? "Fermer l’historique"
+        : "Historique des collaborateurs";
+
+    historyButton.onclick=
+      ()=>{
+
+        historyButton.dataset.opened=
+          historyButton.dataset.opened ===
+          "1"
+            ? "0"
+            : "1";
+
+        sportRenderAccessList();
+      };
+  }
+
+  if(cancelButton){
+
+    cancelButton.onclick=
+      sportResetCoachForm;
+  }
+
+  const coaches=
+    sportAccess()
+      .coaches
+      .slice()
+      .sort(
+        (a,b) =>
+          String(
+            a.name ||
+            ""
+          )
+          .localeCompare(
+            String(
+              b.name ||
+              ""
+            ),
+            "fr"
+          )
+      );
+
+  if(!coaches.length){
 
     out.innerHTML=
-      '<div class="sportStatus">Aucun accès entraîneur ou responsable n’a encore été créé.</div>';
+      '<div class="sportStatus">Aucun collaborateur enregistré.</div>';
 
     return;
   }
 
   out.innerHTML=
-    a.coaches
+    coaches
       .map(
         x => `
 
           <div class="sportItem">
 
-            <div class="sportName">
+            <button
+              class="sportBtn"
+              data-sport-edit="${sportEsc(x.id)}"
+              type="button"
+              style="
+                width:100%;
+                text-align:left;
+              "
+            >
               ${sportEsc(
                 x.name ||
-                "Responsable"
+                "Collaborateur"
               )}
+            </button>
+
+            <div style="margin-top:8px;">
+
+              ${
+                x.functionName
+                  ? sportEsc(
+                      x.functionName
+                    )
+                  : "Fonction non renseignée"
+              }
+
+              ${
+                x.team
+                  ? " — " +
+                    sportEsc(x.team)
+                  : ""
+              }
+
             </div>
 
-            <div>
-              Équipe :
-              ${sportEsc(
-                x.team ||
-                "Toutes les équipes"
-              )}
-            </div>
-
-            <div>
-              Identifiant :
-              <strong>
-                ${sportEsc(
-                  x.identifier ||
-                  ""
-                )}
-              </strong>
-            </div>
-
-            <div>
+            <div
+              style="
+                margin-top:6px;
+                color:${
+                  x.active === false
+                    ? "#b00020"
+                    : "#2f5d46"
+                };
+                font-weight:700;
+              "
+            >
               ${
                 x.active === false
-                  ? "Accès suspendu"
-                  : "Accès actif"
+                  ? "● Désactivé"
+                  : "● Activé"
               }
             </div>
 
@@ -10005,7 +10270,7 @@ function sportRenderAccessList(){
                 data-sport-open="${sportEsc(x.id)}"
                 type="button"
               >
-                Ouvrir cet accès
+                Ouvrir son espace
               </button>
 
               <button
@@ -10019,8 +10284,8 @@ function sportRenderAccessList(){
               >
                 ${
                   x.active === false
-                    ? "Réactiver"
-                    : "Suspendre"
+                    ? "Activer"
+                    : "Désactiver"
                 }
               </button>
 
@@ -10029,7 +10294,7 @@ function sportRenderAccessList(){
                 data-sport-reset="${sportEsc(x.id)}"
                 type="button"
               >
-                Réinitialiser le code
+                Nouveau code
               </button>
 
             </div>
@@ -10042,57 +10307,76 @@ function sportRenderAccessList(){
 
   out
     .querySelectorAll(
+      "[data-sport-edit]"
+    )
+    .forEach(
+      button =>{
+
+        button.onclick=
+          ()=> sportEditCoach(
+            button.dataset.sportEdit
+          );
+      }
+    );
+
+  out
+    .querySelectorAll(
       "[data-sport-open]"
     )
     .forEach(
-      b =>{
+      button =>{
 
-        b.onclick=()=>{
+        button.onclick=
+          ()=>{
 
-          const x=
-            sportAccess()
-              .coaches
-              .find(
-                y =>
-                  String(y.id) ===
-                  String(
-                    b.dataset
-                      .sportOpen
-                  )
+            const coach=
+              sportAccess()
+                .coaches
+                .find(
+                  item =>
+                    String(item.id) ===
+                    String(
+                      button.dataset.sportOpen
+                    )
+                );
+
+            if(
+              !coach ||
+              coach.active === false
+            ){
+
+              alert(
+                "Cet accès est désactivé."
               );
 
-          if(
-            !x ||
-            x.active === false
-          ){
-            return;
-          }
+              return;
+            }
 
-          sportSession={
+            sportSession={
 
-            role:
-              "coach",
+              role:
+                "coach",
 
-            accountId:
-              x.id,
+              accountId:
+                coach.id,
 
-            name:
-              x.name ||
-              "Responsable",
+              name:
+                coach.name ||
+                "Collaborateur",
 
-            team:
-              x.team ||
-              "",
+              team:
+                coach.team ||
+                "",
 
-            openedFromPresident:
-              true
+              openedFromPresident:
+                true
+            };
+
+            window.bociteartSportSession=
+              sportSession;
+
+            openClubReserve();
           };
-
-          window.bociteartSportSession=
-            sportSession;
-
-          openClubReserve();
-        };
       }
     );
 
@@ -10101,41 +10385,47 @@ function sportRenderAccessList(){
       "[data-sport-toggle]"
     )
     .forEach(
-      b =>{
+      button =>{
 
-        b.onclick=()=>{
+        button.onclick=
+          ()=>{
 
-          const a=
-            sportAccess();
+            if(
+              !sportRequireVerifiedGovernance()
+            ){
+              return;
+            }
 
-          const i=
-            a.coaches
-              .findIndex(
-                y =>
-                  String(y.id) ===
-                  String(
-                    b.dataset
-                      .sportToggle
-                  )
-              );
+            const access=
+              sportAccess();
 
-          if(i < 0){
-            return;
-          }
+            const index=
+              access.coaches
+                .findIndex(
+                  item =>
+                    String(item.id) ===
+                    String(
+                      button.dataset.sportToggle
+                    )
+                );
 
-          a.coaches[i].active=
-            a.coaches[i]
-              .active === false
-                ? true
-                : false;
+            if(index < 0){
+              return;
+            }
 
-          a.coaches[i].updatedAt=
-            Date.now();
+            access.coaches[index].active=
+              access.coaches[index]
+                .active === false;
 
-          sportSaveAccess(a);
+            access.coaches[index].updatedAt=
+              Date.now();
 
-          sportRenderAccessList();
-        };
+            sportSaveAccess(
+              access
+            );
+
+            sportRenderAccessList();
+          };
       }
     );
 
@@ -10144,10 +10434,16 @@ function sportRenderAccessList(){
       "[data-sport-reset]"
     )
     .forEach(
-      b =>{
+      button =>{
 
-        b.onclick=
+        button.onclick=
           async ()=>{
+
+            if(
+              !sportRequireVerifiedGovernance()
+            ){
+              return;
+            }
 
             const code=
               String(
@@ -10162,9 +10458,7 @@ function sportRenderAccessList(){
               return;
             }
 
-            if(
-              code.length < 6
-            ){
+            if(code.length < 6){
 
               alert(
                 "Le code doit comporter au moins 6 caractères."
@@ -10173,44 +10467,43 @@ function sportRenderAccessList(){
               return;
             }
 
-            const a=
+            const access=
               sportAccess();
 
-            const i=
-              a.coaches
+            const index=
+              access.coaches
                 .findIndex(
-                  y =>
-                    String(y.id) ===
+                  item =>
+                    String(item.id) ===
                     String(
-                      b.dataset
-                        .sportReset
+                      button.dataset.sportReset
                     )
                 );
 
-            if(i < 0){
+            if(index < 0){
               return;
             }
 
-            a.coaches[i].codeHash=
-              await sportHash(
-                code
-              );
+            access.coaches[index].codeHash=
+              await sportHash(code);
 
-            a.coaches[i].active=
+            access.coaches[index].active=
               true;
 
-            a.coaches[i].updatedAt=
+            access.coaches[index].updatedAt=
               Date.now();
 
-            sportSaveAccess(a);
+            sportSaveAccess(
+              access
+            );
 
             sportResetFail(
-              a.coaches[i]
+              access.coaches[index]
                 .identifier
             );
 
             alert(
-              "Le code a été réinitialisé."
+              "Le nouveau code est enregistré."
             );
 
             sportRenderAccessList();
@@ -10235,8 +10528,16 @@ async function sportCreateCoach(){
     return;
   }
 
-  const a=
+  const access=
     sportAccess();
+
+  const editId=
+    String(
+      sportEl(
+        "sportCoachEditId"
+      )?.value ||
+      ""
+    ).trim();
 
   const name=
     String(
@@ -10246,10 +10547,42 @@ async function sportCreateCoach(){
       ""
     ).trim();
 
+  const functionName=
+    String(
+      sportEl(
+        "sportCoachFunction"
+      )?.value ||
+      ""
+    ).trim();
+
   const team=
     String(
       sportEl(
         "sportCoachTeam"
+      )?.value ||
+      ""
+    ).trim();
+
+  const address=
+    String(
+      sportEl(
+        "sportCoachAddress"
+      )?.value ||
+      ""
+    ).trim();
+
+  const phone=
+    String(
+      sportEl(
+        "sportCoachPhone"
+      )?.value ||
+      ""
+    ).trim();
+
+  const email=
+    String(
+      sportEl(
+        "sportCoachEmail"
       )?.value ||
       ""
     ).trim();
@@ -10265,97 +10598,179 @@ async function sportCreateCoach(){
   if(!name){
 
     alert(
-      "Renseignez le nom du responsable."
+      "Renseignez le nom du collaborateur."
     );
 
     return;
   }
 
-  if(
-    code.length < 6
-  ){
+  let message="";
 
-    alert(
-      "Le code doit comporter au moins 6 caractères."
-    );
+  if(editId){
 
-    return;
+    const index=
+      access.coaches
+        .findIndex(
+          item =>
+            String(item.id) ===
+            editId
+        );
+
+    if(index < 0){
+      return;
+    }
+
+    if(
+      code &&
+      code.length < 6
+    ){
+
+      alert(
+        "Le nouveau code doit comporter au moins 6 caractères."
+      );
+
+      return;
+    }
+
+    access.coaches[index]=
+      Object.assign(
+        {},
+        access.coaches[index],
+        {
+          name:
+            name,
+
+          functionName:
+            functionName,
+
+          team:
+            team,
+
+          address:
+            address,
+
+          phone:
+            phone,
+
+          email:
+            email,
+
+          updatedAt:
+            Date.now()
+        }
+      );
+
+    if(code){
+
+      access.coaches[index].codeHash=
+        await sportHash(code);
+
+      sportResetFail(
+        access.coaches[index]
+          .identifier
+      );
+    }
+
+    message=
+      "La fiche du collaborateur a été modifiée.";
+
+  }else{
+
+    if(code.length < 6){
+
+      alert(
+        "Le code doit comporter au moins 6 caractères."
+      );
+
+      return;
+    }
+
+    const identifier=
+      "SPORT-" +
+      String(
+        access.coaches.length +
+        1
+      ) +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2,6)
+        .toUpperCase();
+
+    access.coaches.push({
+
+      id:
+        sportId(
+          "coach"
+        ),
+
+      identifier:
+        identifier,
+
+      name:
+        name,
+
+      functionName:
+        functionName,
+
+      team:
+        team,
+
+      address:
+        address,
+
+      phone:
+        phone,
+
+      email:
+        email,
+
+      codeHash:
+        await sportHash(code),
+
+      active:
+        true,
+
+      createdAt:
+        Date.now(),
+
+      updatedAt:
+        Date.now()
+    });
+
+    message=
+      "Collaborateur enregistré. Identifiant : " +
+      identifier;
   }
 
-  const identifier=
-    "SPORT-" +
-    String(
-      a.coaches.length +
-      1
-    ) +
-    "-" +
-    Math.random()
-      .toString(36)
-      .slice(2,6)
-      .toUpperCase();
+  sportSaveAccess(
+    access
+  );
 
-  a.coaches.push({
+  sportResetCoachForm();
 
-    id:
-      sportId("coach"),
-
-    identifier:
-      identifier,
-
-    name:
-      name,
-
-    team:
-      team,
-
-    codeHash:
-      await sportHash(
-        code
-      ),
-
-    active:
-      true,
-
-    createdAt:
-      Date.now(),
-
-    updatedAt:
-      Date.now()
-  });
-
-  sportSaveAccess(a);
-
-  const s=
+  const status=
     sportEl(
       "sportAccessStatus"
     );
 
-  if(s){
-
-    s.textContent=
-      "Accès créé. Identifiant : " +
-      identifier;
+  if(status){
+    status.textContent=message;
   }
 
-  [
-    "sportCoachName",
-    "sportCoachTeam",
-    "sportCoachCode"
-  ].forEach(
-    id =>{
+  const history=
+    sportEl(
+      "sportAccessHistoryToggle"
+    );
 
-      const e=
-        sportEl(id);
-
-      if(e){
-        e.value="";
-      }
-    }
-  );
+  if(history){
+    history.dataset.opened="0";
+  }
 
   sportRenderAccessList();
 }
 
+/* ===== ÇA FINIT ICI — MOTEUR DES COLLABORATEURS ===== */
 
 function sportRenderTrainings(){
 
