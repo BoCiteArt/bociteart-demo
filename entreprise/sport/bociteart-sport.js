@@ -12809,8 +12809,14 @@ window.BociteSportModule={
   openPresident:
     ()=>window.openSportPresidentPrivate(),
 
-  getClub:
+   getClub:
     ()=>sportClub(),
+
+  getSession:
+    ()=>Object.assign(
+      {},
+      sportSession || {}
+    ),
 
   getWallet:
     ()=>sportWallet(),
