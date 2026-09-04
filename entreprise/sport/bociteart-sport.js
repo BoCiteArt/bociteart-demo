@@ -1236,14 +1236,11 @@ function sportGovernanceCompleteness(){
   const governance=
     sportLoadGovernance();
 
-
   const missing=[];
-
 
   const president=
     governance.president ||
     {};
-
 
   if(
     !String(
@@ -1257,7 +1254,6 @@ function sportGovernanceCompleteness(){
     );
   }
 
-
   if(
     !String(
       president.role ||
@@ -1269,7 +1265,6 @@ function sportGovernanceCompleteness(){
       "Fonction du Président"
     );
   }
-
 
   if(
     !String(
@@ -1287,82 +1282,6 @@ function sportGovernanceCompleteness(){
     );
   }
 
-
-  const continuity=
-    Array.isArray(
-      governance.continuity
-    )
-      ? governance.continuity
-      : [];
-
-
-  for(
-    let index=0;
-    index<2;
-    index++
-  ){
-
-    const person=
-      continuity[index] ||
-      {};
-
-
-    if(
-      !String(
-        person.fullName ||
-        ""
-      ).trim()
-    ){
-
-      missing.push(
-        "Personne de continuité " +
-        (
-          index +
-          1
-        )
-      );
-    }
-
-
-    if(
-      !String(
-        person.role ||
-        ""
-      ).trim()
-    ){
-
-      missing.push(
-        "Fonction de la personne de continuité " +
-        (
-          index +
-          1
-        )
-      );
-    }
-
-
-    if(
-      !String(
-        person.email ||
-        ""
-      ).trim() &&
-      !String(
-        person.phone ||
-        ""
-      ).trim()
-    ){
-
-      missing.push(
-        "Coordonnée de la personne de continuité " +
-        (
-          index +
-          1
-        )
-      );
-    }
-  }
-
-
   return {
 
     complete:
@@ -1374,7 +1293,6 @@ function sportGovernanceCompleteness(){
   };
 }
 
-
 /* =========================================================
    GOUVERNANCE RÉELLEMENT VALIDÉE
    ========================================================= */
@@ -1384,10 +1302,8 @@ function sportGovernanceIsVerified(){
   const governance=
     sportLoadGovernance();
 
-
   const completeness=
     sportGovernanceCompleteness();
-
 
   if(
     completeness.complete !==
@@ -1397,7 +1313,6 @@ function sportGovernanceIsVerified(){
     return false;
   }
 
-
   if(
     governance.status !==
     "verified"
@@ -1405,7 +1320,6 @@ function sportGovernanceIsVerified(){
 
     return false;
   }
-
 
   if(
     governance.activationStatus !==
@@ -1415,11 +1329,9 @@ function sportGovernanceIsVerified(){
     return false;
   }
 
-
   const president=
     governance.president ||
     {};
-
 
   if(
     president.verificationStatus !==
@@ -1429,37 +1341,8 @@ function sportGovernanceIsVerified(){
     return false;
   }
 
-
-  const continuity=
-    Array.isArray(
-      governance.continuity
-    )
-      ? governance.continuity
-      : [];
-
-
-  if(
-    continuity.length <
-    2
-  ){
-
-    return false;
-  }
-
-
-  return continuity
-    .slice(
-      0,
-      2
-    )
-    .every(
-      person =>
-        person &&
-        person.verificationStatus ===
-        "verified"
-    );
+  return true;
 }
-
 
 /* =========================================================
    ENREGISTRER UNE NOUVELLE DÉCLARATION
@@ -6172,17 +6055,6 @@ function sportGovernanceHtml(){
   const p=
     g.president || {};
 
-  const people=
-    Array.isArray(g.continuity)
-      ? g.continuity
-      : [];
-
-  const c1=
-    people[0] || {};
-
-  const c2=
-    people[1] || {};
-
   const verified=
     sportGovernanceIsVerified();
 
@@ -6191,24 +6063,27 @@ function sportGovernanceHtml(){
     <div class="sportCard">
 
       <div class="sportSubTitle">
-        Gouvernance et continuité
+        Gouvernance du club
         avec ${sportBrandHtml()}
       </div>
 
       <div class="sportText" style="margin-top:8px;">
 
-        Les personnes déclarées doivent
-        correspondre à la gouvernance réelle
+        Les informations déclarées doivent
+        correspondre au président
+        ou responsable légal réel
         de la structure.
 
         <br><br>
 
         Une simple saisie ne valide jamais
-        un Président ou un responsable.
+        un président ou responsable légal.
 
         Les fonctions réservées restent bloquées
         tant que les informations nécessaires
-        n’ont pas été vérifiées.
+        n’ont pas été vérifiées,
+        sauf dans le mode de présentation prévu
+        pour tester le fonctionnement.
 
       </div>
 
@@ -6225,7 +6100,6 @@ function sportGovernanceHtml(){
           }
         </strong>
       </div>
-
 
       <div class="sportSubTitle" style="margin-top:16px;">
         Président / responsable légal
@@ -6288,127 +6162,6 @@ function sportGovernanceHtml(){
         placeholder="Référence du document ou mandat"
       >
 
-
-      <div class="sportSubTitle" style="margin-top:18px;">
-        Personne de continuité 1
-      </div>
-
-      <label class="sportLabel">
-        Nom et prénom
-      </label>
-
-      <input
-        id="sportGovC1Name"
-        class="sportField"
-        value="${sportEsc(c1.fullName || "")}"
-      >
-
-      <label class="sportLabel">
-        Fonction officielle
-      </label>
-
-      <input
-        id="sportGovC1Role"
-        class="sportField"
-        value="${sportEsc(c1.role || "")}"
-        placeholder="Secrétaire, trésorier..."
-      >
-
-      <label class="sportLabel">
-        Email
-      </label>
-
-      <input
-        id="sportGovC1Email"
-        class="sportField"
-        type="email"
-        value="${sportEsc(c1.email || "")}"
-      >
-
-      <label class="sportLabel">
-        Téléphone
-      </label>
-
-      <input
-        id="sportGovC1Phone"
-        class="sportField"
-        value="${sportEsc(c1.phone || "")}"
-      >
-
-      <label class="sportLabel">
-        Référence permettant de justifier la fonction
-      </label>
-
-      <input
-        id="sportGovC1Ref"
-        class="sportField"
-        value="${sportEsc(
-          c1.officialReference || ""
-        )}"
-        placeholder="Référence du document ou mandat"
-      >
-
-
-      <div class="sportSubTitle" style="margin-top:18px;">
-        Personne de continuité 2
-      </div>
-
-      <label class="sportLabel">
-        Nom et prénom
-      </label>
-
-      <input
-        id="sportGovC2Name"
-        class="sportField"
-        value="${sportEsc(c2.fullName || "")}"
-      >
-
-      <label class="sportLabel">
-        Fonction officielle
-      </label>
-
-      <input
-        id="sportGovC2Role"
-        class="sportField"
-        value="${sportEsc(c2.role || "")}"
-        placeholder="Secrétaire, trésorier..."
-      >
-
-      <label class="sportLabel">
-        Email
-      </label>
-
-      <input
-        id="sportGovC2Email"
-        class="sportField"
-        type="email"
-        value="${sportEsc(c2.email || "")}"
-      >
-
-      <label class="sportLabel">
-        Téléphone
-      </label>
-
-      <input
-        id="sportGovC2Phone"
-        class="sportField"
-        value="${sportEsc(c2.phone || "")}"
-      >
-
-      <label class="sportLabel">
-        Référence permettant de justifier la fonction
-      </label>
-
-      <input
-        id="sportGovC2Ref"
-        class="sportField"
-        value="${sportEsc(
-          c2.officialReference || ""
-        )}"
-        placeholder="Référence du document ou mandat"
-      >
-
-
       <button
         id="sportGovernanceSave"
         class="sportBtn"
@@ -6430,7 +6183,6 @@ function sportGovernanceHtml(){
 
   `;
 }
-
 
 async function sportSaveGovernanceFromUi(){
 
@@ -6469,47 +6221,9 @@ async function sportSaveGovernanceFromUi(){
       )
   };
 
-
-  const continuity=[
-
-    {
-      fullName:
-        value("sportGovC1Name"),
-
-      role:
-        value("sportGovC1Role"),
-
-      email:
-        value("sportGovC1Email"),
-
-      phone:
-        value("sportGovC1Phone"),
-
-      officialReference:
-        value("sportGovC1Ref")
-    },
-
-    {
-      fullName:
-        value("sportGovC2Name"),
-
-      role:
-        value("sportGovC2Role"),
-
-      email:
-        value("sportGovC2Email"),
-
-      phone:
-        value("sportGovC2Phone"),
-
-      officialReference:
-        value("sportGovC2Ref")
-    }
-  ];
-
   sportSaveGovernanceDraft(
     president,
-    continuity
+    []
   );
 
   const status=
@@ -6562,7 +6276,6 @@ async function sportSaveGovernanceFromUi(){
       "Fiche enregistrée. Les fonctions réservées seront ouvertes après validation.";
   }
 }
-
 
 function sportGovernanceReports(){
 
