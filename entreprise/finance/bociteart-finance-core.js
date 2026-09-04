@@ -310,9 +310,30 @@
     const request = {
       draftId: frozen.draftId,
       idempotencyKey: frozen.idempotencyKey || financeId("payment"),
-      flowType: frozen.flowType,
+            flowType: frozen.flowType,
       payerRef: frozen.payerRef,
-      beneficiaryRefs: financeClone(frozen.beneficiaryRefs || []),
+
+      representativeRef:
+        financeText(
+          frozen.representativeRef
+        ),
+
+      representative:
+        financeClone(
+          frozen.representative ||
+          {}
+        ),
+
+      presentedAt:
+        financeText(
+          frozen.presentedAt
+        ),
+
+      beneficiaryRefs:
+        financeClone(
+          frozen.beneficiaryRefs ||
+          []
+        ),
       identityVersion: frozen.identityVersion,
       amountHT: Number(frozen.amountHT),
       allocationCode: financeText(frozen.allocationCode),
