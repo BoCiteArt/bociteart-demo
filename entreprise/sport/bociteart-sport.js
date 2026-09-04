@@ -1884,16 +1884,10 @@ async function sportSubmitGovernanceVerification(){
 function sportRequireVerifiedGovernance(){
 
   const presentationMode=
-    (
-      window.location.hostname ===
-      "bociteart.github.io"
-    ) &&
-    (
-      new URLSearchParams(
-        window.location.search
-      ).get("presentation") ===
-      "1"
-    );
+    new URLSearchParams(
+      window.location.search
+    ).get("presentation") ===
+    "1";
 
   if(presentationMode){
     return true;
@@ -1911,7 +1905,6 @@ function sportRequireVerifiedGovernance(){
 
   return false;
 }
-
 
 /* =========================================================
    PORTEFEUILLE SPORT
