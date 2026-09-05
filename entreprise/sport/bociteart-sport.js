@@ -12094,8 +12094,8 @@ function openClubReserve(){
 
   <div>
     ${sportEsc(role)} — ${sportEsc(sportSession.name || "")}
-  </ uncertain>
 
+   </div> 
 </div>
 
         ${sportResultsPrivateHtml()}
