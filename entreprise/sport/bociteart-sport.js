@@ -16,7 +16,7 @@
      ========================================================= */
 
   if(
-    window.__bociteSportModuleLoaded
+    window.__bociteSportModuleLoadedf
   ){
     return;
   }
@@ -11961,24 +11961,71 @@ function sportWalletHtml(){
         0
       </div>
 
-      <div class="walletSub">
+           <div class="walletSub">
 
-        Ce solde collectif appartient
-        au club ou à l’association sportive,
-        jamais à une personne.
+        Tous les bocitecoins gagnés
+        par les équipes sont réunis
+        dans un portefeuille commun
+        appartenant au club.
+
+        Ils ne sont jamais attribués
+        personnellement au Président,
+        à un collaborateur ou à un joueur.
 
         <br><br>
 
-        Les victoires officiellement confirmées
-        sont créditées automatiquement.
+        Tous les collaborateurs
+        dont l’accès est actif
+        peuvent consulter le même solde
+        et présenter le code dynamique du club
+        chez un commerçant partenaire
+        ${sportBrandHtml()}.
 
-        Les entraînements responsables
-        sont crédités après validation
-        par un collaborateur autorisé
-        présent sur le terrain.
+        Cela permet à celui qui passe
+        à proximité du commerce retenu par le club
+        d’effectuer l’échange,
+        sans imposer un déplacement particulier
+        au Président ou à un seul responsable.
+
+        <br><br>
+
+        À partir de 30 bocitecoins,
+        le club peut les utiliser
+        par blocs de 30.
+
+        Chez un commerçant partenaire
+        ${sportBrandHtml()},
+        chaque Cabas accompagne
+        un achat réel d’au moins
+        <strong>10 €</strong>.
+
+        <br><br>
+
+        Un seul Cabas peut être échangé
+        chez un même commerçant
+        avant de poursuivre
+        chez un autre partenaire.
+
+        Deux Cabas ne peuvent donc jamais
+        être échangés consécutivement
+        chez le même commerce.
+
+        Cette rotation permet de répartir
+        les échanges entre plusieurs
+        commerces partenaires locaux.
+
+        <br><br>
+
+        Le commerçant scanne le code du club
+        et valide lui-même l’opération.
+
+        Les 30 bocitecoins sont alors retirés
+        du portefeuille commun
+        et le nouveau solde devient immédiatement
+        visible par tous les collaborateurs.
 
       </div>
-
+      
       <div
         id="sportWalletStatus"
         class="sportStatus"
