@@ -7976,23 +7976,10 @@ depuis la liste.
             Enregistrer la fiche
           </button>
 
-          <button
-            id="sportSyncResults"
-            class="sportBtn"
-            type="button"
-          >
-            Vérifier les résultats officiels
-          </button>
-
         </div>
 
         <div
           id="sportIdentityStatus"
-          class="sportStatus"
-        ></div>
-
-        <div
-          id="sportResultSyncStatus"
           class="sportStatus"
         ></div>
 
@@ -8161,36 +8148,83 @@ depuis la liste.
 }
 
 
+/* ===== ÇA COMMENCE ICI — ENTRAÎNEMENTS RESPONSABLES ===== */
+
 function sportTrainingHtml(){
 
   return `
 
     ${sportTitle(
-      "Entraînements responsables avec"
+      "Entraînements et valeurs collectives avec"
     )}
 
     <div class="sportCard">
 
       <div class="sportText">
 
-        Une séance correctement terminée
-        fait gagner
-        <strong>
-          1 bocitecoin à l’équipe
-        </strong>
-        après deux validations indépendantes.
+        Le bocitecoin n’est pas seulement lié
+        au résultat sportif.
 
-        Critères :
-        consignes respectées,
-        comportement respectueux,
-        matériel rangé,
-        vestiaires
-        et espaces laissés propres.
+        Il permet d’installer progressivement
+        une éducation douce autour du partage,
+        de la solidarité, du respect d’autrui,
+        du civisme et de la responsabilité collective.
+
+        <br><br>
+
+        En reliant des gestes simples
+        à un petit avantage destiné au club,
+        les jeunes comprennent concrètement
+        que ranger le matériel,
+        respecter les lieux,
+        prendre soin des autres
+        et agir ensemble produit un résultat utile
+        pour toute l’équipe.
+
+        <br><br>
+
+        Après l’entraînement,
+        le collaborateur autorisé présent sur le terrain
+        vérifie que le matériel est rangé
+        et que les vestiaires, le terrain
+        et les espaces utilisés sont laissés propres.
+
+        Lorsque ces conditions sont respectées,
+        il valide la séance et
+        <strong>1 bocitecoin est attribué au club</strong>.
+
+        <br><br>
+
+        Ce petit encouragement collectif
+        aide les valeurs sportives et citoyennes
+        à devenir des habitudes naturelles,
+        sans leçon imposée
+        et sans récompense individuelle.
+
+      </div>
+
+      <div
+        class="sportStatus"
+        style="margin-top:12px;"
+      >
+
+        Chaque validation engage
+        le collaborateur qui l’effectue.
+
+        Toute attribution signalée comme irrégulière
+        est contrôlée.
+
+        Si l’anomalie est confirmée,
+        le bocitecoin concerné est retiré.
+
+        En cas de répétition,
+        l’accès du collaborateur est suspendu
+        et ses dernières validations sont réexaminées.
 
       </div>
 
       <label class="sportLabel">
-        Date
+        Date de l’entraînement
       </label>
 
       <input
@@ -8231,8 +8265,13 @@ function sportTrainingHtml(){
           margin-top:12px;
         "
       >
-        Enregistrer la séance
+        Valider la séance et attribuer 1 bocitecoin
       </button>
+
+      <div
+        id="sportTrainingStatus"
+        class="sportStatus"
+      ></div>
 
       <div
         id="sportTrainingList"
@@ -8242,6 +8281,7 @@ function sportTrainingHtml(){
   `;
 }
 
+/* ===== ÇA COMMENCE ICI — RÉSULTATS DU WEEK-END ===== */
 
 function sportResultsPrivateHtml(){
 
@@ -8255,19 +8295,29 @@ function sportResultsPrivateHtml(){
 
       <div class="sportText">
 
-        Les résultats sont recherchés
-        à partir de la commune partenaire,
-        de la fiche d’identité,
-        de la référence du club
-        et de la source officielle.
+        Les résultats officiels du club
+        sont vérifiés à partir
+        de la source sportive enregistrée.
 
-        Une victoire définitivement confirmée
-        fait gagner
-        <strong>
-          1 bocitecoin
-        </strong>
-        une seule fois.
+        <br><br>
 
+        Chaque victoire officiellement confirmée
+        crédite automatiquement
+        <strong>1 bocitecoin au club</strong>.
+
+        Le Président et les collaborateurs
+        n’ont aucune attribution manuelle
+        à effectuer pour les victoires.
+
+      </div>
+
+      <div
+        id="sportResultSyncStatus"
+        class="sportStatus"
+        style="margin-top:12px;"
+      >
+        Les résultats sont actualisés automatiquement
+        lorsque la source officielle est raccordée.
       </div>
 
       ${
@@ -8275,22 +8325,33 @@ function sportResultsPrivateHtml(){
         "president"
           ? `
 
+            <button
+              id="sportSyncResults"
+              class="sportBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:12px;
+              "
+            >
+              Actualiser les résultats maintenant
+            </button>
+
             <div class="sportCard">
 
               <div class="sportSubTitle">
-                Saisie de secours
-                par la présidence
+                Saisie de secours par la présidence
               </div>
 
               <div class="sportText">
 
-                À utiliser uniquement
-                si la récupération automatique
-                est indisponible.
+                Cette saisie est utilisée uniquement
+                lorsque la récupération automatique
+                est momentanément indisponible.
 
-                Aucun bocitecoin
-                n’est crédité
-                avant la vérification officielle.
+                Aucun bocitecoin n’est crédité
+                avant la confirmation officielle
+                du résultat.
 
               </div>
 
@@ -8304,7 +8365,7 @@ function sportResultsPrivateHtml(){
               >
 
               <label class="sportLabel">
-                Résultat / compte-rendu
+                Résultat ou compte-rendu
               </label>
 
               <textarea
@@ -8338,6 +8399,7 @@ function sportResultsPrivateHtml(){
   `;
 }
 
+/* ===== ÇA FINIT ICI — RÉSULTATS DU WEEK-END ===== */
 
 function sportSolidarityHtml(){
 
@@ -11847,6 +11909,84 @@ window.openSportPublicResults=
    OUVERTURE DU MODULE — ACCÈS — EXPORT
    ========================================================= */
 
+/* ===== ÇA COMMENCE ICI — PORTEFEUILLE SPORT ===== */
+
+function sportWalletHtml(){
+
+  return `
+
+    ${sportTitle(
+      "Bocitecoins du club avec"
+    )}
+
+    <div class="walletBox">
+
+      <div class="walletTitle">
+        Portefeuille Sport
+      </div>
+
+      <div
+        id="sportCoinBalance"
+        class="walletValue"
+      >
+        0
+      </div>
+
+      <div class="walletSub">
+
+        Ce solde collectif appartient
+        au club ou à l’association sportive,
+        jamais à une personne.
+
+        <br><br>
+
+        Les victoires officiellement confirmées
+        sont créditées automatiquement.
+
+        Les entraînements responsables
+        sont crédités après validation
+        par un collaborateur autorisé
+        présent sur le terrain.
+
+      </div>
+
+      <div
+        id="sportWalletStatus"
+        class="sportStatus"
+      ></div>
+
+      <div
+        id="sportSeasonNotice"
+        class="sportStatus"
+        style="display:none;"
+      ></div>
+
+      <div class="sportActions">
+
+        <button
+          id="walletSportInfo"
+          class="walletMini"
+          type="button"
+        >
+          Règle du Cabas
+        </button>
+
+        <button
+          id="sportShowQr"
+          class="walletMini"
+          type="button"
+        >
+          Code du club
+        </button>
+
+      </div>
+
+    </div>
+  `;
+}
+
+/* ===== ÇA FINIT ICI — PORTEFEUILLE SPORT ===== */
+   
 function openClubReserve(){
 
   const c=
@@ -11865,10 +12005,6 @@ function openClubReserve(){
       ${sportStyles()}
 
       <div class="bociteSportRoot">
-
-        ${sportTitle(
-          "Espace de la structure sportive avec"
-        )}
 
         <div class="sportCard">
 
@@ -11891,105 +12027,15 @@ function openClubReserve(){
         </div>
 
 
-        ${sportTitle(
-          "Bocitecoins Sport avec"
-        )}
+       /* ===== ÇA COMMENCE ICI — NOUVEL ORDRE SPORT ===== */
 
-        <div class="walletBox">
-
-          <div class="walletTitle">
-            Portefeuille Sport
-          </div>
-
-          <div
-            id="sportCoinBalance"
-            class="walletValue"
-          >
-            0
-          </div>
-
-                   <div class="walletSub">
-
-            Les bocitecoins appartiennent
-            au club
-            ou à l’association sportive,
-            jamais à une personne.
-
-            <br><br>
-
-            Le club gagne
-            <strong>1 bocitecoin</strong>
-            pour chaque entraînement
-            correctement terminé et validé,
-            notamment lorsque le matériel est rangé
-            et que les vestiaires,
-            le terrain ou la salle
-            sont laissés propres.
-
-            <br><br>
-
-            Il gagne également
-            <strong>1 bocitecoin</strong>
-            pour chaque victoire
-            officiellement confirmée.
-
-            <br><br>
-
-            Dès que le solde atteint
-            <strong>30 bocitecoins</strong>,
-            ils peuvent être échangés
-            uniquement par blocs complets
-            de 30 bocitecoins.
-
-            <br><br>
-
-            Chez un commerçant partenaire,
-            l’échange est possible
-            après un achat réel
-            d’au moins <strong>10 €</strong>,
-            puis validation par le commerçant.
-
-          </div>
-
-          <div
-            id="sportWalletStatus"
-            class="sportStatus"
-          ></div>
-
-          <div
-            id="sportSeasonNotice"
-            class="sportStatus"
-            style="display:none"
-          ></div>
-
-          <div class="sportActions">
-
-            <button
-              id="walletSportInfo"
-              class="walletMini"
-              type="button"
-            >
-              Règle du Cabas
-            </button>
-
-            <button
-              id="sportShowQr"
-              class="walletMini"
-              type="button"
-            >
-              Code du club
-            </button>
-
-          </div>
-
-        </div>
-
+        ${sportResultsPrivateHtml()}
 
         ${sportPresidentHtml()}
 
         ${sportTrainingHtml()}
 
-        ${sportResultsPrivateHtml()}
+        ${sportWalletHtml()}
 
         ${sportSolidarityHtml()}
 
@@ -11997,6 +12043,7 @@ function openClubReserve(){
 
         <div id="bociteSportFinanceMount"></div>
 
+/* ===== ÇA FINIT ICI — NOUVEL ORDRE SPORT ===== */
 
         <div class="sportActions">
 
