@@ -12082,25 +12082,21 @@ function openClubReserve(){
 
       <div class="bociteSportRoot">
 
-        <div class="sportCard">
+     <div class="sportCard">
 
-          <div class="sportName">
-            ${sportEsc(
-              c.name ||
-              "Club partenaire"
-            )}
-          </div>
+  <div class="sportName">
+    ${sportEsc(
+      c.name ||
+      "Club partenaire"
+    )}
+    avec ${sportBrandHtml()}
+  </div>
 
-          <div>
-            ${sportEsc(role)}
-            —
-            ${sportEsc(
-              sportSession.name ||
-              ""
-            )}
-          </div>
+  <div>
+    ${sportEsc(role)} — ${sportEsc(sportSession.name || "")}
+  </ uncertain>
 
-        </div>
+</div>
 
         ${sportResultsPrivateHtml()}
 
