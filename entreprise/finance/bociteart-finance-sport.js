@@ -9,7 +9,7 @@
    ========================================================= */
 
 (function(){
-  "use strict";
+  "use strict"; 
 
   if(
     window.BociteFinanceSport &&
@@ -456,11 +456,15 @@
     return window.BociteFinanceTest.startCheckout(request);
   }
 
-     const profile = sportFinanceInitialProfile();
-    const associations = sportFinanceAssociations();
-    const representative = sportFinanceSession();
+   /* ===== ÇA COMMENCE ICI — LISTE DES ASSOCIATIONS ===== */
+
+  function sportFinanceAssociationOptions(){
+
+    const associations =
+      sportFinanceAssociations();
 
     if(!associations.length){
+
       return `
         <option value="">
           En attente du choix défini par la mairie et Bo'CitéArt
@@ -469,14 +473,31 @@
     }
 
     return `
-      <option value="">Choisir l’association</option>
-      ${associations.map(function(item){
-        return '<option value="' + sportFinanceEscape(item.id) + '">' +
-          sportFinanceEscape(item.name) + '</option>';
-      }).join("")}
+      <option value="">
+        Choisir l’association
+      </option>
+
+      ${
+        associations
+          .map(
+            function(item){
+
+              return (
+                '<option value="' +
+                sportFinanceEscape(item.id) +
+                '">' +
+                sportFinanceEscape(item.name) +
+                '</option>'
+              );
+            }
+          )
+          .join("")
+      }
     `;
   }
 
+/* ===== ÇA FINIT ICI — LISTE DES ASSOCIATIONS ===== */
+   
   function sportFinanceRender(){
     const mount = sportFinanceField(MOUNT_ID);
 
