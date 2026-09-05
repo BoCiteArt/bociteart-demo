@@ -12026,9 +12026,6 @@ function openClubReserve(){
 
         </div>
 
-
-       /* ===== ÇA COMMENCE ICI — NOUVEL ORDRE SPORT ===== */
-
         ${sportResultsPrivateHtml()}
 
         ${sportPresidentHtml()}
@@ -12042,8 +12039,6 @@ function openClubReserve(){
         ${sportBagHtml()}
 
         <div id="bociteSportFinanceMount"></div>
-
-/* ===== ÇA FINIT ICI — NOUVEL ORDRE SPORT ===== */
 
         <div class="sportActions">
 
