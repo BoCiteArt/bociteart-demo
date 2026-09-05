@@ -486,17 +486,28 @@ function sportSetModalHeader(
         }
 
 
-        .sportTitleCard{
+             .sportTitleCard{
           margin-top:14px;
-          padding:12px 14px;
+          margin-bottom:0;
+          padding:14px 14px 6px;
           background:#ffffff;
-          border:1px solid rgba(47,93,70,.30);
-          border-radius:14px;
+          border:1px solid rgba(47,93,70,.20);
+          border-bottom:0;
+          border-radius:14px 14px 0 0;
         }
 
 
         .sportTitleCard:first-child{
           margin-top:0;
+        }
+
+
+        .sportTitleCard + .sportCard,
+        .sportTitleCard + .walletBox{
+          margin-top:0 !important;
+          padding-top:8px;
+          border-top:0 !important;
+          border-radius:0 0 14px 14px !important;
         }
 
 
@@ -8172,7 +8183,7 @@ function sportTrainingHtml(){
 
         <br><br>
 
-        En reliant des gestes simples
+               En reliant des gestes simples
         à un petit avantage destiné au club,
         les jeunes comprennent concrètement
         que ranger le matériel,
@@ -8181,6 +8192,12 @@ function sportTrainingHtml(){
         et agir ensemble produit un résultat utile
         pour toute l’équipe.
 
+        <br><br>
+
+        Ces habitudes acquises dans le cadre sportif
+        les accompagnent également plus tard
+        dans leur vie personnelle,
+        citoyenne et professionnelle.
         <br><br>
 
         Après l’entraînement,
@@ -8485,8 +8502,8 @@ function sportSolidarityHtml(){
         </div>
 
         ${
-          a.map(
-            x => `
+                   a.map(
+            (x,index) => `
 
               <div class="sportItem">
 
@@ -8504,26 +8521,34 @@ function sportSolidarityHtml(){
                     }
                   >
 
-                  <span>
+                                  <span>
 
                     <strong>
-                      ${sportEsc(
-                        x.legalName ||
-                        x.label
-                      )}
+
+                      ${
+                        sportAssociationOK(x)
+                          ? sportEsc(
+                              x.legalName ||
+                              x.label
+                            )
+                          : "Choix solidaire " +
+                            String(index + 1)
+                      }
+
                     </strong>
 
-                    —
-                    ${sportEsc(x.cause)}
                     —
 
                     ${
                       sportAssociationOK(x)
-                        ? "association validée"
-                       : " — En attente du choix défini par la mairie et Bo'CitéArt"
+                        ? (
+                            sportEsc(x.cause) +
+                            " — association validée"
+                          )
+                        : "En attente du choix défini par la mairie et Bo'CitéArt"
                     }
 
-                  </span>
+                  </span> 
 
                 </label>
 
@@ -10890,12 +10915,16 @@ function sportRenderTrainings(){
 
           <div class="sportItem">
 
-            <div class="sportName">
-              ${sportEsc(
-                x.team ||
-                "Équipe"
-              )}
-            </div>
+                    <div class="sportName">
+
+            ${sportEsc(
+              c.name ||
+              "Club partenaire"
+            )}
+
+            avec ${sportBrandHtml()}
+
+          </div>
 
             <div>
               ${sportEsc(
