@@ -13051,16 +13051,72 @@ function openSportPanel(){
           openWellbeingMap;
       }
 
-      const a=
-        sportEl(
-          "sportOpenClubAccess"
-        );
+     /* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — PASSAGE PAR LE CONTRÔLEUR CENTRAL D'ACCÈS
+   ========================================================= */
 
-      if(a){
+const a=
+  sportEl(
+    "sportOpenClubAccess"
+  );
 
-        a.onclick=
-          openClubAccess;
+if(a){
+
+  a.onclick=
+    function(){
+
+      /*
+        Si aucun profil général Bo'CitéArt
+        n'existe encore, le contrôleur
+        demande d'abord l'identification.
+
+        Après identification réussie,
+        l'utilisateur revient automatiquement
+        à cette porte Sport.
+
+        Si le profil existe déjà,
+        la porte Sport s'ouvre immédiatement.
+      */
+
+      if(
+        window.BociteAccess &&
+        typeof window.BociteAccess.request ===
+          "function"
+      ){
+
+        window.BociteAccess.request({
+
+          service:
+            "sport",
+
+          action:
+            "club-responsible-access",
+
+          open:
+            openClubAccess
+
+        });
+
+        return;
       }
+
+
+      /*
+        Sécurité de compatibilité :
+        si le contrôleur central n'est pas chargé,
+        on conserve l'ancienne porte Sport.
+      */
+
+      openClubAccess();
+
+    };
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
     },
     0
