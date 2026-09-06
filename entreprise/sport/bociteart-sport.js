@@ -10864,6 +10864,11 @@ function sportRenderAccessList(){
       }
     );
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — RENOUVELLEMENT DU CODE COLLABORATEUR
+   ========================================================= */
+
   out
     .querySelectorAll(
       "[data-sport-reset]"
@@ -10873,27 +10878,6 @@ function sportRenderAccessList(){
 
         button.onclick=
           async ()=>{
-
-            /* =========================================================
-   ÇA COMMENCE ICI
-   SPORT — OUVERTURE CONTINUITÉ INDÉPENDANTE
-   ========================================================= */
-
-const continuity=
-  sportEl(
-    "sportContinuityOpen"
-  );
-
-if(continuity){
-
-  continuity.onclick=
-    openSportContinuity;
-}
-
-/* =========================================================
-   ÇA FINIT ICI
-   SPORT — OUVERTURE CONTINUITÉ INDÉPENDANTE
-   ========================================================= */ 
 
             if(
               !sportRequireVerifiedGovernance()
@@ -10930,7 +10914,9 @@ if(continuity){
               access.coaches
                 .findIndex(
                   item =>
-                    String(item.id) ===
+                    String(
+                      item.id
+                    ) ===
                     String(
                       button.dataset.sportReset
                     )
@@ -10941,7 +10927,9 @@ if(continuity){
             }
 
             access.coaches[index].codeHash=
-              await sportHash(code);
+              await sportHash(
+                code
+              );
 
             access.coaches[index].active=
               true;
@@ -10961,8 +10949,10 @@ if(continuity){
             sportNotifyEvent(
               "sport_collaborator_code_renewed",
               {
+
                 collaboratorId:
                   access.coaches[index].id,
+
                 collaboratorName:
                   access.coaches[index].name ||
                   ""
@@ -10978,6 +10968,11 @@ if(continuity){
       }
     );
 }
+
+/* =========================================================
+   ÇA FINIT ICI
+   SPORT — RENOUVELLEMENT DU CODE COLLABORATEUR
+   ========================================================= */
 
 
 async function sportCreateCoach(){
@@ -16118,6 +16113,11 @@ window.BociteSportContinuity={
    ========================================================= */
 
    
+/* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — ACCÈS RESPONSABLES + CONTINUITÉ INDÉPENDANTE
+   ========================================================= */
+
 function openClubAccess(){
 
   openModal(
@@ -16132,13 +16132,17 @@ function openClubAccess(){
           "Accès responsables avec"
         )}
 
+
         <div class="sportCard">
 
           <div class="sportSubTitle">
             Président / responsable légal
           </div>
 
-          <div class="sportText" style="margin-top:8px;">
+          <div
+            class="sportText"
+            style="margin-top:8px;"
+          >
 
             Vous représentez officiellement
             le club ou l’association sportive.
@@ -16176,7 +16180,10 @@ function openClubAccess(){
             Collaborateur déjà autorisé
           </div>
 
-          <div class="sportText" style="margin-top:8px;">
+          <div
+            class="sportText"
+            style="margin-top:8px;"
+          >
 
             Utilisez l’identifiant personnel
             et le code qui vous ont été remis
@@ -16184,6 +16191,7 @@ function openClubAccess(){
             ou le responsable habilité du club.
 
           </div>
+
 
           <label class="sportLabel">
             Identifiant personnel
@@ -16195,6 +16203,7 @@ function openClubAccess(){
             autocomplete="username"
             placeholder="Identifiant collaborateur"
           >
+
 
           <label class="sportLabel">
             Code personnel
@@ -16208,6 +16217,7 @@ function openClubAccess(){
             placeholder="Code d’accès"
           >
 
+
           <button
             id="sportLoginBtn"
             class="sportBtn"
@@ -16220,145 +16230,102 @@ function openClubAccess(){
             Ouvrir mon espace
           </button>
 
+
           <div
-<div
-  id="sportLoginStatus"
-  class="sportStatus"
-></div>
+            id="sportLoginStatus"
+            class="sportStatus"
+          ></div>
 
 
-<!-- ======================================================
-     ÇA COMMENCE ICI
-     SPORT — ALERTE / CONTINUITÉ INDÉPENDANTE
-     ====================================================== -->
+          <!-- ======================================================
+               ÇA COMMENCE ICI
+               SPORT — PORTE DE SECOURS INDÉPENDANTE
+               ====================================================== -->
 
-<div
-  style="
-    margin-top:20px;
-    padding-top:18px;
-    border-top:1px solid #d9dfda;
-  "
->
+          <div
+            style="
+              margin-top:20px;
+              padding-top:18px;
+              border-top:1px solid #d9dfda;
+            "
+          >
 
-  <div class="sportSubTitle">
+            <div class="sportSubTitle">
 
-    Difficulté d’accès
-    ou changement de responsable
+              Difficulté d’accès
+              ou changement de responsable
 
-  </div>
+            </div>
 
-  <div
-    class="sportText"
-    style="margin-top:8px;"
-  >
+            <div
+              class="sportText"
+              style="margin-top:8px;"
+            >
 
-    Vous faisiez partie du club,
-    vous êtes un collaborateur,
-    un nouveau responsable
-    ou une personne mandatée,
-    mais une difficulté empêche
-    l’accès normal à la structure ?
+              Vous faisiez partie du club,
+              vous êtes un collaborateur,
+              un nouveau responsable
+              ou une personne mandatée,
+              mais une difficulté empêche
+              l’accès normal à la structure ?
 
-    <br><br>
+              <br><br>
 
-    Vous pouvez signaler ici
-    la situation directement à
-    ${sportBrandHtml()}.
+              Vous pouvez signaler ici
+              la situation directement à
+              ${sportBrandHtml()}.
 
-    <br><br>
+              <br><br>
 
-    Cet accès reste disponible
-    indépendamment des droits
-    attribués ou retirés
-    par le responsable principal.
+              Cet accès reste disponible
+              indépendamment des droits
+              attribués ou retirés
+              par le responsable principal.
 
-    Aucun droit de direction
-    n’est accordé automatiquement.
+              Aucun droit de direction
+              n’est accordé automatiquement.
 
-  </div>
+            </div>
 
-  <button
-    id="sportContinuityOpen"
-    class="sportBtn"
-    type="button"
-    style="
-      width:100%;
-      margin-top:14px;
-    "
-  >
-    Signaler une difficulté à Bo'CitéArt
-  </button>
+            <button
+              id="sportContinuityOpen"
+              class="sportBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:14px;
+              "
+            >
+              Signaler une difficulté à Bo'CitéArt
+            </button>
 
-</div>
+          </div>
 
-<!-- ======================================================
-     ÇA FINIT ICI
-     SPORT — ALERTE / CONTINUITÉ INDÉPENDANTE
-     ====================================================== -->
+          <!-- ======================================================
+               ÇA FINIT ICI
+               SPORT — PORTE DE SECOURS INDÉPENDANTE
+               ====================================================== -->
 
-
-</div>
-
-<div class="sportCard">
-
-  <div class="sportSubTitle">
-
-    Difficulté d’accès
-    ou changement de responsable
-
-  </div>
-
-  <div
-    class="sportText"
-    style="margin-top:8px;"
-  >
-
-    Un changement de responsable,
-    une indisponibilité
-    ou une difficulté d’accès
-    ne doit jamais bloquer durablement
-    votre club.
-
-    <br><br>
-
-    Si l’accès normal
-    à la structure n’est plus possible,
-    vous pouvez transmettre
-    la situation à ${sportBrandHtml()}.
-
-    Aucun droit
-    n’est transféré automatiquement.
-
-  </div>
-
-  <button
-    id="sportContinuityOpen"
-    class="sportBtn"
-    type="button"
-    style="
-      width:100%;
-      margin-top:12px;
-    "
-  >
-    Continuité de mon club
-  </button>
-
-</div>
-
-
-</div>
+        </div>
 
       </div>
 
     `
   );
 
+
   sportSetModalHeader(
     "Accès responsables avec"
   );
 
+
   setTimeout(
     ()=>{
+
+
+      /* =====================================================
+         PRÉSIDENT / RESPONSABLE LÉGAL
+         ===================================================== */
 
       const presidentCheck=
         sportEl(
@@ -16371,218 +16338,115 @@ function openClubAccess(){
           openSportPresidentPrecheck;
       }
 
-       /* =========================================================
-   ÇA COMMENCE ICI
-   SPORT — PORTE DE CONTINUITÉ
-   ========================================================= */
 
-const continuity=
-  sportEl(
-    "sportContinuityOpen"
-  );
+      /* =====================================================
+         CONTINUITÉ INDÉPENDANTE
+         CETTE PORTE NE DÉPEND PAS DU PRÉSIDENT
+         ===================================================== */
+
+      const continuity=
+        sportEl(
+          "sportContinuityOpen"
+        );
+
+      if(continuity){
+
+        continuity.onclick=
+          openSportContinuity;
+      }
 
 
-if(continuity){
-
-  continuity.onclick=
-    openSportContinuity;
-}
-
-/* =========================================================
-   ÇA FINIT ICI
-   ========================================================= */
+      /* =====================================================
+         CONNEXION COLLABORATEUR
+         ===================================================== */
 
       const b=
         sportEl(
           "sportLoginBtn"
         );
 
-      if(!b){
-     
-      b.onclick=
-        async ()=>{
+      if(b){
 
-          const id=
-            String(
+        b.onclick=
+          async ()=>{
+
+            const id=
+              String(
+                sportEl(
+                  "sportLoginIdentifier"
+                )?.value ||
+                ""
+              ).trim();
+
+            const code=
+              String(
+                sportEl(
+                  "sportLoginCode"
+                )?.value ||
+                ""
+              ).trim();
+
+            const o=
               sportEl(
-                "sportLoginIdentifier"
-              )?.value ||
-              ""
-            ).trim();
-
-          const code=
-            String(
-              sportEl(
-                "sportLoginCode"
-              )?.value ||
-              ""
-            ).trim();
-
-          const o=
-            sportEl(
-              "sportLoginStatus"
-            );
-
-      if(
-  !id ||
-  !code
-){
-
-  if(o){
-
-    o.textContent=
-      "Renseignez l’identifiant et le code.";
-  }
-
-  return;
-
-   };       
-}
+                "sportLoginStatus"
+              );
 
 
-/* =========================================================
-   ÇA COMMENCE ICI
-   SPORT — ACCÈS DIRECT COMPLET POUR LA DÉMO
-   ========================================================= */
+            if(
+              !id ||
+              !code
+            ){
 
-if(
-  SPORT_CONFIG.mode !==
-    "production" &&
+              if(o){
 
-  id ===
-    "141010" &&
+                o.textContent=
+                  "Renseignez l’identifiant et le code.";
+              }
 
-  code ===
-    "141010"
-){
-
-  sportResetFail(
-    id
-  );
-
-
-  window
-    .bociteartSportPresidentPrechecked =
-      true;
-
-
-  sportSession={
-
-    role:
-      "president",
-
-    accountId:
-      "sport-demo-president",
-
-    name:
-      "Président — accès de présentation",
-
-    team:
-      "",
-
-    testFullAccess:
-      true
-  };
-
-
-  window.bociteartSportSession=
-    sportSession;
-
-
-  openClubReserve();
-
-  return;
-}
-
-/* =========================================================
-   ÇA FINIT ICI
-   SPORT — ACCÈS DIRECT COMPLET POUR LA DÉMO
-   ========================================================= */
-
-
-if(
-  sportLocked(id)
-){
-
-            if(o){
-
-              o.textContent=
-                "Accès temporairement indisponible. Contactez le président de la structure.";
+              return;
             }
 
-            return;
-          }
 
-          if(
-            SPORT_CONFIG.mode ===
-              "production" &&
-            SPORT_CONFIG.authEndpoint
-          ){
+            /* =================================================
+               ACCÈS PRÉSIDENT POUR NOTRE PRÉSENTATION
+               HORS PRODUCTION UNIQUEMENT
+               ================================================= */
 
-            try{
+            if(
+              SPORT_CONFIG.mode !==
+                "production" &&
 
-              const r=
-                await fetch(
-                  SPORT_CONFIG.authEndpoint,
-                  {
-                    method:"POST",
-                    credentials:"include",
-                    headers:{
-                      "Content-Type":
-                        "application/json"
-                    },
-                    body:
-                      JSON.stringify({
-                        scope:
-                          "sport_responsible",
-                        identifier:
-                          id,
-                        code:
-                          code
-                      })
-                  }
-                );
+              id ===
+                "141010" &&
 
-              if(!r.ok){
-                throw 0;
-              }
+              code ===
+                "141010"
+            ){
 
-              const j=
-                await r.json();
+              sportResetFail(
+                id
+              );
 
-              if(
-                !j ||
-                j.ok !== true ||
-                j.role ===
-                  "president"
-              ){
-                throw 0;
-              }
-
-              sportResetFail(id);
+              window
+                .bociteartSportPresidentPrechecked=
+                  true;
 
               sportSession={
 
                 role:
-                  "coach",
+                  "president",
 
                 accountId:
-                  String(
-                    j.accountId ||
-                    id
-                  ),
+                  "sport-demo-president",
 
                 name:
-                  String(
-                    j.name ||
-                    "Responsable"
-                  ),
+                  "Président — accès de présentation",
 
                 team:
-                  String(
-                    j.team ||
-                    ""
-                  )
+                  "",
+
+                testFullAccess:
+                  true
               };
 
               window.bociteartSportSession=
@@ -16591,87 +16455,257 @@ if(
               openClubReserve();
 
               return;
+            }
 
-            }catch(_){
 
-              const locked=
-                sportFail(id);
+            /* =================================================
+               VERROU TEMPORAIRE
+               ================================================= */
+
+            if(
+              sportLocked(
+                id
+              )
+            ){
 
               if(o){
 
                 o.textContent=
-                  locked
-                    ? "Accès temporairement indisponible. Contactez le président de la structure."
-                    : "Accès réservé aux collaborateurs autorisés.";
+                  "Accès temporairement indisponible. Utilisez le signalement à Bo'CitéArt si la situation nécessite une continuité du club.";
               }
 
               return;
             }
-          }
 
-          const a=
-            sportAccess();
 
-          const x=
-            a.coaches
-              .find(
-                y =>
-                  sportNorm(
-                    y.identifier
-                  ) ===
-                  sportNorm(id) &&
-                  y.active !== false
+            /* =================================================
+               PRODUCTION — CONTRÔLE SERVEUR
+               ================================================= */
+
+            if(
+              SPORT_CONFIG.mode ===
+                "production" &&
+              SPORT_CONFIG.authEndpoint
+            ){
+
+              try{
+
+                const r=
+                  await fetch(
+                    SPORT_CONFIG.authEndpoint,
+                    {
+
+                      method:
+                        "POST",
+
+                      credentials:
+                        "include",
+
+                      headers:{
+                        "Content-Type":
+                          "application/json"
+                      },
+
+                      body:
+                        JSON.stringify({
+
+                          scope:
+                            "sport_responsible",
+
+                          identifier:
+                            id,
+
+                          code:
+                            code
+                        })
+                    }
+                  );
+
+
+                if(!r.ok){
+                  throw 0;
+                }
+
+
+                const j=
+                  await r.json();
+
+
+                /*
+                  Le Président ne passe pas
+                  par la connexion collaborateur.
+                */
+
+                if(
+                  !j ||
+                  j.ok !== true ||
+                  j.role ===
+                    "president"
+                ){
+
+                  throw 0;
+                }
+
+
+                sportResetFail(
+                  id
+                );
+
+
+                sportSession={
+
+                  role:
+                    "coach",
+
+                  accountId:
+                    String(
+                      j.accountId ||
+                      id
+                    ),
+
+                  name:
+                    String(
+                      j.name ||
+                      "Collaborateur"
+                    ),
+
+                  team:
+                    String(
+                      j.team ||
+                      ""
+                    )
+                };
+
+
+                window.bociteartSportSession=
+                  sportSession;
+
+
+                openClubReserve();
+
+                return;
+
+
+              }catch(_){
+
+                const locked=
+                  sportFail(
+                    id
+                  );
+
+                if(o){
+
+                  o.textContent=
+                    locked
+
+                      ? "Accès temporairement indisponible. Utilisez le signalement à Bo'CitéArt si nécessaire."
+
+                      : "Accès réservé aux collaborateurs autorisés.";
+                }
+
+                return;
+              }
+            }
+
+
+            /* =================================================
+               PRÉPRODUCTION — CONTRÔLE LOCAL COLLABORATEUR
+               ================================================= */
+
+            const access=
+              sportAccess();
+
+
+            const collaborator=
+              access.coaches
+                .find(
+                  item =>
+
+                    sportNorm(
+                      item.identifier
+                    ) ===
+                    sportNorm(
+                      id
+                    ) &&
+
+                    item.active !==
+                      false
+                );
+
+
+            if(
+              collaborator &&
+              collaborator.codeHash ===
+                await sportHash(
+                  code
+                )
+            ){
+
+              sportResetFail(
+                id
               );
 
-          if(
-            x &&
-            x.codeHash ===
-              await sportHash(code)
-          ){
 
-            sportResetFail(id);
+              sportSession={
 
-            sportSession={
+                role:
+                  "coach",
 
-              role:
-                "coach",
+                accountId:
+                  collaborator.id,
 
-              accountId:
-                x.id,
+                name:
+                  collaborator.name ||
+                  "Collaborateur",
 
-              name:
-                x.name ||
-                "Collaborateur",
+                team:
+                  collaborator.team ||
+                  ""
+              };
 
-              team:
-                x.team ||
-                ""
-            };
 
-            window.bociteartSportSession=
-              sportSession;
+              window.bociteartSportSession=
+                sportSession;
 
-            openClubReserve();
 
-            return;
-          }
+              openClubReserve();
 
-          const locked=
-            sportFail(id);
+              return;
+            }
 
-          if(o){
 
-            o.textContent=
-              locked
-                ? "Accès temporairement indisponible. Contactez le président de la structure."
-                : "Accès réservé aux collaborateurs autorisés.";
-          }
-        };
+            /* =================================================
+               ÉCHEC DE CONNEXION
+               ================================================= */
+
+            const locked=
+              sportFail(
+                id
+              );
+
+
+            if(o){
+
+              o.textContent=
+                locked
+
+                  ? "Accès temporairement indisponible. Utilisez le signalement à Bo'CitéArt si nécessaire."
+
+                  : "Accès réservé aux collaborateurs autorisés.";
+            }
+
+          };
+      }
 
     },
     0
   );
 }
+
+/* =========================================================
+   ÇA FINIT ICI
+   SPORT — ACCÈS RESPONSABLES + CONTINUITÉ INDÉPENDANTE
+   ========================================================= */
 
 
 window.openClubAccess=
