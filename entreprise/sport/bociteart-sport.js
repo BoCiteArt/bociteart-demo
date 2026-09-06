@@ -16259,9 +16259,9 @@ function openClubAccess(){
     style="margin-top:8px;"
   >
 
-    En cas de difficulté de connexion
-    ou pour toute autre question concernant
-    l’accès à votre espace Sport,
+    En cas de modification ou importante
+    concernant votre accès
+    ou votre club,
     vous pouvez contacter
     ${sportBrandHtml()}
     directement ici.
