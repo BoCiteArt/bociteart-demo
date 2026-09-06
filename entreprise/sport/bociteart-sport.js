@@ -16,7 +16,7 @@
      ========================================================= */
 
   if(
-    window.__bociteSportModuleLoadedf
+    window.__bociteSportModuleLoaded
   ){
     return;
   }
@@ -202,7 +202,7 @@
           "",
 
         billingProductCode:
-          "SPORT_TAPE_7D",
+          "SPORT_TAPE_5D",
 
         supportMinimumHT:
           50,
@@ -335,6 +335,115 @@
           /'/g,
           "&#039;"
         );
+
+
+  function sportNotifyEvent(
+    eventName,
+    payload
+  ){
+
+    const data=
+      Object.assign(
+        {
+          event:
+            String(
+              eventName ||
+              "sport_event"
+            ),
+
+          clubId:
+            SPORT_CONFIG.clubId,
+
+          clubRef:
+            sportClub &&
+            typeof sportClub ===
+              "function"
+              ? (
+                  sportClub()
+                    .clubRef ||
+                  ""
+                )
+              : "",
+
+          actor:{
+
+            accountId:
+              String(
+                sportSession &&
+                sportSession.accountId ||
+                ""
+              ),
+
+            name:
+              String(
+                sportSession &&
+                sportSession.name ||
+                ""
+              ),
+
+            role:
+              String(
+                sportSession &&
+                sportSession.role ||
+                ""
+              )
+          },
+
+          createdAt:
+            new Date()
+              .toISOString()
+        },
+
+        payload &&
+        typeof payload ===
+          "object"
+          ? payload
+          : {}
+      );
+
+    if(
+      !SPORT_CONFIG
+        .notificationEndpoint
+    ){
+
+      return Promise.resolve({
+        ok:true,
+        pending:true,
+        payload:data
+      });
+    }
+
+    return fetch(
+      SPORT_CONFIG
+        .notificationEndpoint,
+      {
+        method:"POST",
+        credentials:"include",
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+        body:
+          JSON.stringify(
+            data
+          )
+      }
+    )
+      .then(
+        response => ({
+          ok:
+            response.ok,
+          sent:
+            response.ok
+        })
+      )
+      .catch(
+        () => ({
+          ok:false,
+          pending:true
+        })
+      );
+  }
 
 
   /* =========================================================
@@ -486,7 +595,7 @@ function sportSetModalHeader(
         }
 
 
-             .sportTitleCard{
+        .sportTitleCard{
           margin-top:14px;
           margin-bottom:0;
           padding:14px 14px 6px;
@@ -1048,57 +1157,6 @@ function sportDefaultGovernance(){
         "pending"
     },
 
-    continuity:[
-
-      {
-
-        id:
-          "continuity-1",
-
-        fullName:
-          "",
-
-        role:
-          "",
-
-        email:
-          "",
-
-        phone:
-          "",
-
-        officialReference:
-          "",
-
-        verificationStatus:
-          "pending"
-      },
-
-      {
-
-        id:
-          "continuity-2",
-
-        fullName:
-          "",
-
-        role:
-          "",
-
-        email:
-          "",
-
-        phone:
-          "",
-
-        officialReference:
-          "",
-
-        verificationStatus:
-          "pending"
-      }
-    ],
-
     submittedAt:
       null,
 
@@ -1113,7 +1171,6 @@ function sportDefaultGovernance(){
   };
 }
 
-
 /* =========================================================
    CHARGEMENT DE LA GOUVERNANCE
    ========================================================= */
@@ -1126,10 +1183,8 @@ function sportLoadGovernance(){
       null
     );
 
-
   const base=
     sportDefaultGovernance();
-
 
   if(
     !saved ||
@@ -1140,7 +1195,6 @@ function sportLoadGovernance(){
     return base;
   }
 
-
   const president=
     Object.assign(
       {},
@@ -1149,47 +1203,40 @@ function sportLoadGovernance(){
       {}
     );
 
+  /*
+    Nettoyage automatique des anciennes données
+    continuity-1 / continuity-2.
 
-  const savedContinuity=
-    Array.isArray(
-      saved.continuity
-    )
-      ? saved.continuity
-      : [];
-
-
-  const continuity=[
-
+    La continuité est désormais assurée
+    par les collaborateurs autorisés.
+  */
+  const clean=
     Object.assign(
       {},
-      base.continuity[0],
-      savedContinuity[0] ||
-      {}
-    ),
+      base,
+      saved,
+      {
+        president:
+          president
+      }
+    );
 
-    Object.assign(
-      {},
-      base.continuity[1],
-      savedContinuity[1] ||
-      {}
+  if(
+    Object.prototype.hasOwnProperty.call(
+      clean,
+      "continuity"
     )
-  ];
+  ){
+    delete clean.continuity;
 
+    sportSave(
+      SPORT_KEYS.governance,
+      clean
+    );
+  }
 
-  return Object.assign(
-    {},
-    base,
-    saved,
-    {
-      president:
-        president,
-
-      continuity:
-        continuity
-    }
-  );
+  return clean;
 }
-
 
 /* =========================================================
    ENREGISTREMENT DE LA GOUVERNANCE
@@ -1233,13 +1280,6 @@ function sportSaveGovernance(
 
 /* =========================================================
    CONTRÔLE DE COMPLÉTUDE
-
-   Ceci contrôle uniquement
-   que les informations nécessaires
-   ont été fournies.
-
-   Cela ne valide jamais
-   l'identité ou le mandat.
    ========================================================= */
 
 function sportGovernanceCompleteness(){
@@ -1304,6 +1344,7 @@ function sportGovernanceCompleteness(){
   };
 }
 
+
 /* =========================================================
    GOUVERNANCE RÉELLEMENT VALIDÉE
    ========================================================= */
@@ -1355,152 +1396,96 @@ function sportGovernanceIsVerified(){
   return true;
 }
 
+
 /* =========================================================
    ENREGISTRER UNE NOUVELLE DÉCLARATION
    ========================================================= */
 
 function sportSaveGovernanceDraft(
-  president,
-  continuity
+  president
 ){
 
-  const people=
-    Array.isArray(
-      continuity
-    )
-      ? continuity
-      : [];
-
+  const current=
+    sportLoadGovernance();
 
   const next=
-    sportDefaultGovernance();
+    Object.assign(
+      {},
+      current,
+      {
+        clubId:
+          SPORT_CONFIG.clubId,
 
+        status:
+          "pending_review",
 
-  next.president={
+        activationStatus:
+          "blocked",
 
-    fullName:
-      String(
-        president &&
-        president.fullName ||
-        ""
-      ).trim(),
+        president:{
 
-    role:
-      String(
-        president &&
-        president.role ||
-        "Président / responsable légal"
-      ).trim(),
+          fullName:
+            String(
+              president &&
+              president.fullName ||
+              ""
+            ).trim(),
 
-    email:
-      String(
-        president &&
-        president.email ||
-        ""
-      ).trim(),
+          role:
+            String(
+              president &&
+              president.role ||
+              "Président / responsable légal"
+            ).trim(),
 
-    phone:
-      String(
-        president &&
-        president.phone ||
-        ""
-      ).trim(),
+          email:
+            String(
+              president &&
+              president.email ||
+              ""
+            ).trim(),
 
-    officialReference:
-      String(
-        president &&
-        president.officialReference ||
-        ""
-      ).trim(),
+          phone:
+            String(
+              president &&
+              president.phone ||
+              ""
+            ).trim(),
 
-    verificationStatus:
-      "pending"
-  };
+          officialReference:
+            String(
+              president &&
+              president.officialReference ||
+              ""
+            ).trim(),
 
+          verificationStatus:
+            "pending"
+        },
 
-  next.continuity=
-    [
-      0,
-      1
-    ]
-      .map(
-        index =>{
+        submittedAt:
+          Date.now(),
 
-          const person=
-            people[index] ||
-            {};
+        verifiedAt:
+          null,
 
+        verifiedBy:
+          ""
+      }
+    );
 
-          return {
-
-            id:
-              "continuity-" +
-              (
-                index +
-                1
-              ),
-
-            fullName:
-              String(
-                person.fullName ||
-                ""
-              ).trim(),
-
-            role:
-              String(
-                person.role ||
-                ""
-              ).trim(),
-
-            email:
-              String(
-                person.email ||
-                ""
-              ).trim(),
-
-            phone:
-              String(
-                person.phone ||
-                ""
-              ).trim(),
-
-            officialReference:
-              String(
-                person.officialReference ||
-                ""
-              ).trim(),
-
-            verificationStatus:
-              "pending"
-          };
-        }
-      );
-
-
-  next.status=
-    "pending_review";
-
-
-  next.activationStatus=
-    "blocked";
-
-
-  next.submittedAt=
-    Date.now();
-
-
-  next.verifiedAt=
-    null;
-
-
-  next.verifiedBy=
-    "";
-
+  if(
+    Object.prototype.hasOwnProperty.call(
+      next,
+      "continuity"
+    )
+  ){
+    delete next.continuity;
+  }
 
   sportSaveGovernance(
     next
   );
-
 
   sportRecordMandateEvent(
     "governance_submitted",
@@ -1508,16 +1493,12 @@ function sportSaveGovernanceDraft(
     "sport_module"
   );
 
-
   return next;
 }
 
 
 /* =========================================================
    APPLIQUER UNE VALIDATION SERVEUR
-
-   Cette fonction reste privée
-   à l'intérieur du module Sport.
    ========================================================= */
 
 function sportApplyGovernanceVerification(
@@ -1533,29 +1514,23 @@ function sportApplyGovernanceVerification(
     return false;
   }
 
-
   const governance=
     sportLoadGovernance();
-
 
   governance.status=
     "verified";
 
-
   governance.activationStatus=
     "active";
 
-
   governance.verifiedAt=
     Date.now();
-
 
   governance.verifiedBy=
     String(
       serverResult.verifiedBy ||
       "Bo'CitéArt"
     );
-
 
   governance.president=
     Object.assign(
@@ -1567,36 +1542,18 @@ function sportApplyGovernanceVerification(
       }
     );
 
-
-  governance.continuity=
-    (
-      Array.isArray(
-        governance.continuity
-      )
-        ? governance.continuity
-        : []
+  if(
+    Object.prototype.hasOwnProperty.call(
+      governance,
+      "continuity"
     )
-      .slice(
-        0,
-        2
-      )
-      .map(
-        person =>
-          Object.assign(
-            {},
-            person,
-            {
-              verificationStatus:
-                "verified"
-            }
-          )
-      );
-
+  ){
+    delete governance.continuity;
+  }
 
   sportSaveGovernance(
     governance
   );
-
 
   sportRecordMandateEvent(
     "governance_verified",
@@ -1606,7 +1563,6 @@ function sportApplyGovernanceVerification(
       "server"
     )
   );
-
 
   return true;
 }
@@ -1643,11 +1599,6 @@ async function sportSubmitGovernanceVerification(){
   }
 
 
-  /*
-    Sans serveur sécurisé raccordé,
-    aucune validation artificielle
-    n'est créée dans le navigateur.
-  */
   if(
     !SPORT_CONFIG
       .governanceEndpoint
@@ -1788,6 +1739,16 @@ function sportRequireVerifiedGovernance(){
   }
 
   if(
+    SPORT_CONFIG.mode !==
+      "production" &&
+    window
+      .bociteartSportPresidentPrechecked ===
+      true
+  ){
+    return true;
+  }
+
+  if(
     sportGovernanceIsVerified()
   ){
     return true;
@@ -1799,6 +1760,7 @@ function sportRequireVerifiedGovernance(){
 
   return false;
 }
+
 
 /* =========================================================
    PORTEFEUILLE SPORT
@@ -1898,11 +1860,6 @@ function sportAddCoin(
     sportLedger();
 
 
-  /*
-    Une référence unique empêche
-    de créditer deux fois
-    la même action validée.
-  */
   if(
     reference &&
     ledger.some(
@@ -1987,6 +1944,30 @@ function sportAddCoin(
 
   sportSaveLedger(
     ledger
+  );
+
+  sportNotifyEvent(
+    "sport_coin_credit",
+    {
+      amount:1,
+      reason:
+        String(
+          reason ||
+          ""
+        ),
+      reference:
+        String(
+          reference ||
+          ""
+        ),
+      team:
+        String(
+          team ||
+          ""
+        ),
+      balance:
+        wallet.vert
+    }
   );
 
 
@@ -2090,6 +2071,21 @@ function sportDebitBag(
     ledger
   );
 
+  sportNotifyEvent(
+    "sport_bag_debit",
+    {
+      amount:30,
+      balance:
+        wallet.vert,
+      representative:
+        representative &&
+        typeof representative ===
+          "object"
+          ? representative
+          : {}
+    }
+  );
+
   return {
 
     ok:true,
@@ -2099,9 +2095,9 @@ function sportDebitBag(
   };
 }
 
+
 /* =========================================================
    RELIQUAT DE FIN DE SAISON
-   INFÉRIEUR À 30 BOCITECOINS
    ========================================================= */
 
 function sportDebitRemainder(
@@ -2218,14 +2214,8 @@ function sportDebitRemainder(
   };
 }
 
+
 /* =========================================================
-   FIN DU BLOC SPORT 2
-
-   LE BLOC SPORT 3
-   SE COLLE IMMÉDIATEMENT DESSOUS.
-   ========================================================= */
-
- /* =========================================================
    BLOC SPORT 3
    ACCÈS — DONNÉES — SOUTIENS — CABAS
    ========================================================= */
@@ -2271,6 +2261,42 @@ async function sportHash(v){
 
 function sportAccess(){
 
+  const normalizeCoach=
+    coach =>{
+
+      coach=
+        coach &&
+        typeof coach ===
+        "object"
+          ? coach
+          : {};
+
+      return Object.assign(
+        {},
+        coach,
+        {
+          permissions:
+            Array.isArray(
+              coach.permissions
+            )
+              ? Array.from(
+                  new Set(
+                    coach.permissions
+                      .map(
+                        x =>
+                          String(
+                            x ||
+                            ""
+                          ).trim()
+                      )
+                      .filter(Boolean)
+                  )
+                )
+              : []
+        }
+      );
+    };
+
   const x=
     sportLoad(
       SPORT_KEYS.access,
@@ -2312,7 +2338,9 @@ function sportAccess(){
       },
 
       coaches:
-        x.coaches
+        x.coaches.map(
+          normalizeCoach
+        )
     };
   }
 
@@ -2335,6 +2363,62 @@ function sportAccess(){
 
     coaches:[]
   };
+}
+
+
+function sportCurrentCoach(){
+
+  if(
+    sportSession.role !==
+      "coach"
+  ){
+    return null;
+  }
+
+  return sportAccess()
+    .coaches
+    .find(
+      coach =>
+        String(
+          coach.id ||
+          ""
+        ) ===
+        String(
+          sportSession.accountId ||
+          ""
+        )
+    ) ||
+    null;
+}
+
+
+function sportHasPermission(
+  permission
+){
+
+  if(
+    sportSession.role ===
+      "president"
+  ){
+    return true;
+  }
+
+  const coach=
+    sportCurrentCoach();
+
+  return !!(
+    coach &&
+    coach.active !== false &&
+    Array.isArray(
+      coach.permissions
+    ) &&
+    coach.permissions.includes(
+      String(
+        permission ||
+        ""
+      )
+    )
+  );
 }
 
 
@@ -2604,21 +2688,21 @@ function sportAssociations(){
       id:"B",
       label:"Association solidaire B",
       cause:
-         "En attente du choix défini par la mairie et Bo'CitéArt"
+        "En attente du choix défini par la mairie et Bo'CitéArt"
     },
 
     {
       id:"C",
       label:"Association solidaire C",
       cause:
-         "En attente du choix défini par la mairie et Bo'CitéArt"
+        "En attente du choix défini par la mairie et Bo'CitéArt"
     },
 
     {
       id:"D",
       label:"Association solidaire D",
       cause:
-         "En attente du choix défini par la mairie et Bo'CitéArt"
+        "En attente du choix défini par la mairie et Bo'CitéArt"
     }
 
   ].map(
@@ -3043,7 +3127,7 @@ async function sportCreateSupportDossier(
     !club.clubRef ||
     !scan ||
     scan.type !==
-    "sport_club_ref" ||
+      "sport_club_ref" ||
     String(
       scan.clubRef ||
       ""
@@ -3224,7 +3308,7 @@ async function sportCreateSupportDossier(
         : null,
 
     visibility:{
-      durationDays:7,
+      durationDays:5,
       status:
         "pending_payment_and_validation"
     },
@@ -3491,6 +3575,33 @@ function sportClubCode(){
       )
   };
 
+  const now=
+    Date.now();
+
+  const expiresAt=
+    now +
+    (
+      2 *
+      60 *
+      1000
+    );
+
+  const scanToken=
+    SPORT_CONFIG.mode ===
+      "production"
+      ? ""
+      : (
+          "SPORT-" +
+          Math.random()
+            .toString(36)
+            .slice(2,8)
+            .toUpperCase() +
+          "-" +
+          String(
+            now
+          ).slice(-6)
+        );
+
   return {
 
     type:
@@ -3527,10 +3638,16 @@ function sportClubCode(){
       representative,
 
     scanToken:
-      "",
+      scanToken,
+
+    issuedAt:
+      now,
+
+    expiresAt:
+      expiresAt,
 
     ts:
-      Date.now()
+      now
   };
 }
 
@@ -3791,7 +3908,7 @@ async function sportValidateBag(
     !c.clubRef ||
     !scan ||
     scan.type !==
-    "sport_club_ref"
+      "sport_club_ref"
   ){
 
     return {
@@ -3815,6 +3932,40 @@ async function sportValidateBag(
       ok:false,
       reason:
         "wrong_club"
+    };
+  }
+
+  if(
+    Number(
+      scan.expiresAt ||
+      0
+    ) > 0 &&
+    Number(
+      scan.expiresAt
+    ) <
+    Date.now()
+  ){
+
+    return {
+      ok:false,
+      reason:
+        "scan_expired"
+    };
+  }
+
+  if(
+    SPORT_CONFIG.mode ===
+      "production" &&
+    !String(
+      scan.scanToken ||
+      ""
+    ).trim()
+  ){
+
+    return {
+      ok:false,
+      reason:
+        "scan_token_required"
     };
   }
 
@@ -3855,8 +4006,90 @@ async function sportValidateBag(
   if(
     actor &&
     actor.type ===
-    "merchant"
+      "merchant"
   ){
+
+    if(
+      actor.partnerActive ===
+        false
+    ){
+
+      return {
+        ok:false,
+        reason:
+          "merchant_not_active_partner"
+      };
+    }
+
+    if(
+      SPORT_CONFIG.mode ===
+        "production" &&
+      actor.partnerActive !==
+        true
+    ){
+
+      return {
+        ok:false,
+        reason:
+          "merchant_partner_verification_required"
+      };
+    }
+
+    const merchantId=
+      String(
+        actor.merchantId ||
+        ""
+      ).trim();
+
+    if(
+      SPORT_CONFIG.mode ===
+        "production" &&
+      !merchantId
+    ){
+
+      return {
+        ok:false,
+        reason:
+          "merchant_identity_required"
+      };
+    }
+
+    if(merchantId){
+
+      const lastMerchantExchange=
+        sportExchanges()
+          .slice()
+          .reverse()
+          .find(
+            item =>
+              item &&
+              item.actor &&
+              item.actor.type ===
+                "merchant" &&
+              String(
+                item.actor.merchantId ||
+                ""
+              ).trim()
+          );
+
+      if(
+        lastMerchantExchange &&
+        String(
+          lastMerchantExchange
+            .actor
+            .merchantId ||
+          ""
+        ).trim() ===
+        merchantId
+      ){
+
+        return {
+          ok:false,
+          reason:
+            "merchant_rotation_required"
+        };
+      }
+    }
 
     const purchaseAmount=
       Number(
@@ -4085,8 +4318,26 @@ window.BociteSportMerchant={
           merchantId:
             String(
               merchant &&
-              merchant.id ||
+              (
+                merchant.id ||
+                merchant.merchantId ||
+                merchant.siret ||
+                merchant.sirenSiret
+              ) ||
               ""
+            ),
+
+          partnerActive:
+            !!(
+              merchant &&
+              (
+                merchant.partnerActive ===
+                  true ||
+                merchant.bociteartPartner ===
+                  true ||
+                merchant.partnerStatus ===
+                  "active"
+              )
             ),
 
           purchaseAmountTTC:
@@ -4155,7 +4406,7 @@ window.BociteSportMairie={
     if(
       !scan ||
       scan.type !==
-      "sport_club_ref" ||
+        "sport_club_ref" ||
       String(
         scan.clubRef ||
         ""
@@ -4251,7 +4502,7 @@ window.BociteSportMairie={
     if(
       !scan ||
       scan.type !==
-      "sport_club_ref" ||
+        "sport_club_ref" ||
       String(
         scan.clubRef ||
         ""
@@ -4467,6 +4718,9 @@ window.BociteSportSupportRules={
   minimumHT:
     50,
 
+  publicationDays:
+    5,
+
   amountRule:
     "free_amount_from_minimum",
 
@@ -4499,10 +4753,6 @@ window.BociteSportSupportRules={
 
 
 /* =========================================================
-   FIN BLOC SPORT 3
-   ========================================================= */
-
-  /* =========================================================
    BLOC SPORT 4
    IDENTITÉ — RÉSULTATS — SAISON — PRÉSENTATION PUBLIQUE
    ========================================================= */
@@ -5478,8 +5728,8 @@ function sportPublicResultsHtml(){
   ).join("");
 }
 
+
 /* =========================================================
-   ÇA COMMENCE ICI
    SPORT — PRÉSENTATION PUBLIQUE COMPLÈTE
    ========================================================= */
 
@@ -5965,15 +6215,10 @@ function sportBenefitsHtml(){
     </div>
 
   `;
-
 }
 
-/* =========================================================
-   ÇA FINIT ICI FIN BLOC SPORT 4
-   SPORT — PRÉSENTATION PUBLIQUE COMPLÈTE
-   ========================================================= */
 
-  /* =========================================================
+/* =========================================================
    BLOC SPORT 5
    GOUVERNANCE — SIGNALEMENT — MÉMOIRE DU CLUB
    ========================================================= */
@@ -6115,6 +6360,7 @@ function sportGovernanceHtml(){
   `;
 }
 
+
 async function sportSaveGovernanceFromUi(){
 
   const value=
@@ -6153,8 +6399,7 @@ async function sportSaveGovernanceFromUi(){
   };
 
   sportSaveGovernanceDraft(
-    president,
-    []
+    president
   );
 
   const status=
@@ -6208,6 +6453,7 @@ async function sportSaveGovernanceFromUi(){
   }
 }
 
+
 function sportGovernanceReports(){
 
   const rows=
@@ -6236,8 +6482,9 @@ function sportSaveGovernanceReports(rows){
 function sportGovernanceReportHtml(){
 
   if(
-    sportSession.role !==
-    "president"
+    !sportHasPermission(
+      "governance_report"
+    )
   ){
     return "";
   }
@@ -6247,7 +6494,8 @@ function sportGovernanceReportHtml(){
     <div class="sportCard">
 
       <div class="sportSubTitle">
-        Signaler un changement de gouvernance
+        Continuité de la structure sportive
+        avec ${sportBrandHtml()}
       </div>
 
       <div class="sportText" style="margin-top:8px;">
@@ -6357,6 +6605,14 @@ function sportGovernanceReportHtml(){
 
 
 async function sportSendGovernanceReport(){
+
+  if(
+    !sportHasPermission(
+      "governance_report"
+    )
+  ){
+    return;
+  }
 
   const type=
     String(
@@ -6530,6 +6786,18 @@ async function sportSendGovernanceReport(){
     rows.slice(-100)
   );
 
+  sportNotifyEvent(
+    "sport_governance_report",
+    {
+      reportId:
+        report.id,
+      reportType:
+        report.type,
+      confidential:
+        true
+    }
+  );
+
   const typeEl=
     sportEl(
       "sportGovReportType"
@@ -6618,7 +6886,7 @@ function sportHistoryPeriodStart(period){
 
   if(
     period ===
-    "month"
+      "month"
   ){
 
     return new Date(
@@ -6631,7 +6899,7 @@ function sportHistoryPeriodStart(period){
 
   if(
     period ===
-    "quarter"
+      "quarter"
   ){
 
     const quarterMonth=
@@ -6650,7 +6918,7 @@ function sportHistoryPeriodStart(period){
 
   if(
     period ===
-    "semester"
+      "semester"
   ){
 
     const semesterMonth=
@@ -6668,7 +6936,7 @@ function sportHistoryPeriodStart(period){
 
   if(
     period ===
-    "season"
+      "season"
   ){
 
     const club=
@@ -6745,7 +7013,7 @@ function sportPresidentHistoryHtml(){
 
   if(
     sportSession.role !==
-    "president"
+      "president"
   ){
     return "";
   }
@@ -6839,7 +7107,7 @@ function sportRenderPresidentHistory(){
 
   if(
     sportSession.role !==
-    "president"
+      "president"
   ){
     return;
   }
@@ -6911,28 +7179,28 @@ function sportRenderPresidentHistory(){
     ledger.filter(
       x =>
         x.direction ===
-        "credit"
+          "credit"
     );
 
   const debits=
     ledger.filter(
       x =>
         x.direction ===
-        "debit"
+          "debit"
     );
 
   const solidarity=
     ledger.filter(
       x =>
         x.direction ===
-        "solidarity_transfer"
+          "solidarity_transfer"
     );
 
   const expired=
     ledger.filter(
       x =>
         x.direction ===
-        "expire"
+          "expire"
     );
 
   const coinsWon=
@@ -6979,21 +7247,21 @@ function sportRenderPresidentHistory(){
     trainings.filter(
       x =>
         x.coinAwarded ===
-        true
+          true
     ).length;
 
   const officialResults=
     reports.filter(
       x =>
         x.official ===
-        true
+          true
     ).length;
 
   const paidSupport=
     payments.filter(
       x =>
         x.status ===
-        "paid"
+          "paid"
     );
 
   const paidAmountHT=
@@ -7328,7 +7596,7 @@ function sportRenderPresidentHistory(){
 
       if(
         item.direction ===
-        "solidarity_transfer"
+          "solidarity_transfer"
       ){
 
         label=
@@ -7337,7 +7605,7 @@ function sportRenderPresidentHistory(){
 
       if(
         item.direction ===
-        "expire"
+          "expire"
       ){
 
         label=
@@ -7357,7 +7625,7 @@ function sportRenderPresidentHistory(){
         detail:
           (
             item.direction ===
-            "credit"
+              "credit"
               ? "+"
               : "-"
           ) +
@@ -7559,10 +7827,6 @@ function sportRenderPresidentHistory(){
 
 
 /* =========================================================
-   FIN BLOC SPORT 5
-   ========================================================= */
-
-  /* =========================================================
    BLOC SPORT 6
    ÉCRANS PRIVÉS
    ========================================================= */
@@ -7571,7 +7835,7 @@ function sportPresidentHtml(){
 
   if(
     sportSession.role !==
-    "president"
+      "president"
   ){
     return "";
   }
@@ -7584,502 +7848,502 @@ function sportPresidentHtml(){
       .filter(
         x =>
           x.status !==
-          "received"
+            "received"
       ).length;
 
   return `
 
     ${sportTitle(
-      "Présidence de la structure sportive avec"
+      "Identité et gouvernance du club avec"
     )}
 
     ${sportGovernanceHtml()}
 
-    ${sportGovernanceReportHtml()}
-
-    ${sportPresidentHistoryHtml()}
 
     <div class="sportCard">
 
-      <div class="sportText">
+      <div class="sportSubTitle">
+        Fiche d’identité de la structure sportive
+        avec ${sportBrandHtml()}
+      </div>
 
-      Pour ouvrir ce chapitre,
-référez-vous aux indications disponibles
-après votre identification.
+      <div class="sportText" style="margin-top:8px;">
 
-<br><br>
-
-Le président
-ou responsable légal
-peut alors compléter
-la fiche de sa structure
-et gérer les accès
-de ses collaborateurs.
-
-Il peut créer autant d’accès individuels
-que nécessaire,
-puis les activer,
-les suspendre,
-les réactiver
-ou les réattribuer
-depuis la liste.
+        Cette fiche appartient au club.
+        Elle reste attachée à la structure
+        même lorsqu’un président
+        ou un responsable légal change.
 
       </div>
 
-      <div class="sportCard">
+      <label class="sportLabel">
+        Nom usuel
+      </label>
 
-        <div class="sportSubTitle">
-          Fiche d’identité
-          de la structure sportive
-          avec ${sportBrandHtml()}
-        </div>
+      <input
+        id="sportClubName"
+        class="sportField"
+        value="${sportEsc(c.name)}"
+      >
 
-        <label class="sportLabel">
-          Nom usuel
-        </label>
+      <label class="sportLabel">
+        Nom officiel
+      </label>
 
-        <input
-          id="sportClubName"
-          class="sportField"
-          value="${sportEsc(c.name)}"
+      <input
+        id="sportOfficialName"
+        class="sportField"
+        value="${sportEsc(c.officialName)}"
+      >
+
+      <label class="sportLabel">
+        Type de structure
+      </label>
+
+      <select
+        id="sportOrganizationType"
+        class="sportField"
+      >
+
+        <option
+          value="association_sportive"
+          ${c.organizationType==="association_sportive" ? "selected" : ""}
         >
+          Association sportive
+        </option>
 
-        <label class="sportLabel">
-          Nom officiel
-        </label>
-
-        <input
-          id="sportOfficialName"
-          class="sportField"
-          value="${sportEsc(c.officialName)}"
+        <option
+          value="club_sportif"
+          ${c.organizationType==="club_sportif" ? "selected" : ""}
         >
+          Club sportif
+        </option>
 
-        <label class="sportLabel">
-          Type de structure
-        </label>
-
-        <select
-          id="sportOrganizationType"
-          class="sportField"
+        <option
+          value="section_sportive"
+          ${c.organizationType==="section_sportive" ? "selected" : ""}
         >
+          Section sportive
+        </option>
 
-          <option
-            value="association_sportive"
-            ${c.organizationType==="association_sportive" ? "selected" : ""}
-          >
-            Association sportive
-          </option>
-
-          <option
-            value="club_sportif"
-            ${c.organizationType==="club_sportif" ? "selected" : ""}
-          >
-            Club sportif
-          </option>
-
-          <option
-            value="section_sportive"
-            ${c.organizationType==="section_sportive" ? "selected" : ""}
-          >
-            Section sportive
-          </option>
-
-          <option
-            value="autre"
-            ${c.organizationType==="autre" ? "selected" : ""}
-          >
-            Autre structure sportive
-          </option>
-
-        </select>
-
-        <label class="sportLabel">
-          Forme juridique
-        </label>
-
-        <input
-          id="sportLegalForm"
-          class="sportField"
-          value="${sportEsc(c.legalForm)}"
-          placeholder="Ex : association loi 1901"
+        <option
+          value="autre"
+          ${c.organizationType==="autre" ? "selected" : ""}
         >
+          Autre structure sportive
+        </option>
 
-        <label class="sportLabel">
-          SIREN / SIRET
-        </label>
+      </select>
 
-        <input
-          id="sportSiret"
-          class="sportField"
-          value="${sportEsc(c.sirenSiret)}"
+      <label class="sportLabel">
+        Forme juridique
+      </label>
+
+      <input
+        id="sportLegalForm"
+        class="sportField"
+        value="${sportEsc(c.legalForm)}"
+        placeholder="Ex : association loi 1901"
+      >
+
+      <label class="sportLabel">
+        SIREN / SIRET
+      </label>
+
+      <input
+        id="sportSiret"
+        class="sportField"
+        value="${sportEsc(c.sirenSiret)}"
+      >
+
+      <label class="sportLabel">
+        Numéro RNA
+      </label>
+
+      <input
+        id="sportRna"
+        class="sportField"
+        value="${sportEsc(c.rnaNumber)}"
+      >
+
+      <label class="sportLabel">
+        Situation TVA
+      </label>
+
+      <select
+        id="sportVatStatus"
+        class="sportField"
+      >
+
+        <option
+          value="to_verify"
+          ${c.vatStatus==="to_verify" ? "selected" : ""}
         >
+          À vérifier
+        </option>
 
-        <label class="sportLabel">
-          Numéro RNA
-        </label>
-
-        <input
-          id="sportRna"
-          class="sportField"
-          value="${sportEsc(c.rnaNumber)}"
+        <option
+          value="subject"
+          ${c.vatStatus==="subject" ? "selected" : ""}
         >
+          Assujetti à la TVA
+        </option>
 
-        <label class="sportLabel">
-          Situation TVA
-        </label>
-
-        <select
-          id="sportVatStatus"
-          class="sportField"
+        <option
+          value="not_subject"
+          ${c.vatStatus==="not_subject" ? "selected" : ""}
         >
+          Non assujetti / exonéré selon situation validée
+        </option>
 
-          <option
-            value="to_verify"
-            ${c.vatStatus==="to_verify" ? "selected" : ""}
-          >
-            À vérifier
-          </option>
+      </select>
 
-          <option
-            value="subject"
-            ${c.vatStatus==="subject" ? "selected" : ""}
-          >
-            Assujetti à la TVA
-          </option>
+      <label class="sportLabel">
+        N° TVA intracommunautaire
+      </label>
 
-          <option
-            value="not_subject"
-            ${c.vatStatus==="not_subject" ? "selected" : ""}
-          >
-            Non assujetti / exonéré selon situation validée
-          </option>
+      <input
+        id="sportVatNumber"
+        class="sportField"
+        value="${sportEsc(c.vatNumber)}"
+      >
 
-        </select>
+      <label class="sportLabel">
+        Email comptable
+      </label>
 
-        <label class="sportLabel">
-          N° TVA intracommunautaire
-        </label>
+      <input
+        id="sportAccountingEmail"
+        class="sportField"
+        type="email"
+        value="${sportEsc(c.accountingEmail)}"
+      >
 
-        <input
-          id="sportVatNumber"
-          class="sportField"
-          value="${sportEsc(c.vatNumber)}"
-        >
+      <label class="sportLabel">
+        Commune partenaire
+      </label>
 
-        <label class="sportLabel">
-          Email comptable
-        </label>
+      <input
+        id="sportCommune"
+        class="sportField"
+        value="${sportEsc(c.commune)}"
+      >
 
-        <input
-          id="sportAccountingEmail"
-          class="sportField"
-          value="${sportEsc(c.accountingEmail)}"
-        >
+      <label class="sportLabel">
+        Discipline sportive
+      </label>
 
-        <div class="sportStatus">
+      <input
+        id="sportName"
+        class="sportField"
+        value="${sportEsc(c.sportName)}"
+      >
 
-          La TVA
-          et le type de justificatif
-          ne sont jamais déduits
-          du seul mot
-          « association »
-          ou « club ».
+      <label class="sportLabel">
+        Fédération
+      </label>
 
-          Le statut fiscal validé
-          de la structure
-          est enregistré
-          dans cette fiche.
+      <input
+        id="sportFederation"
+        class="sportField"
+        value="${sportEsc(c.federation)}"
+      >
 
-        </div>
+      <label class="sportLabel">
+        Ligue / district / comité
+      </label>
 
-        <label class="sportLabel">
-          Commune partenaire
-        </label>
+      <input
+        id="sportLeague"
+        class="sportField"
+        value="${sportEsc(c.league)}"
+      >
 
-        <input
-          id="sportCommune"
-          class="sportField"
-          value="${sportEsc(c.commune)}"
-        >
+      <label class="sportLabel">
+        Identifiant officiel
+      </label>
 
-        <label class="sportLabel">
-          Discipline sportive
-        </label>
+      <input
+        id="sportOfficialId"
+        class="sportField"
+        value="${sportEsc(c.officialClubId)}"
+      >
 
-        <input
-          id="sportName"
-          class="sportField"
-          value="${sportEsc(c.sportName)}"
-        >
+      <label class="sportLabel">
+        Équipes — une par ligne
+        ou séparées par une virgule
+      </label>
 
-        <label class="sportLabel">
-          Fédération
-        </label>
+      <textarea
+        id="sportTeams"
+        class="sportField"
+      >${sportEsc(c.teams.join("\n"))}</textarea>
 
-        <input
-          id="sportFederation"
-          class="sportField"
-          value="${sportEsc(c.federation)}"
-        >
+      <label class="sportLabel">
+        Source officielle des résultats
+      </label>
 
-        <label class="sportLabel">
-          Ligue / district / comité
-        </label>
+      <input
+        id="sportOfficialUrl"
+        class="sportField"
+        value="${sportEsc(c.officialResultsUrl)}"
+        placeholder="Fédération, ligue, district, comité ou compétition officielle"
+      >
 
-        <input
-          id="sportLeague"
-          class="sportField"
-          value="${sportEsc(c.league)}"
-        >
+      <label class="sportLabel">
+        Page publique du club
+      </label>
 
-        <label class="sportLabel">
-          Identifiant officiel
-        </label>
+      <input
+        id="sportPublicUrl"
+        class="sportField"
+        value="${sportEsc(c.publicNetworkUrl)}"
+      >
 
-        <input
-          id="sportOfficialId"
-          class="sportField"
-          value="${sportEsc(c.officialClubId)}"
-        >
+      <label class="sportLabel">
+        Fin de saison
+      </label>
 
-        <label class="sportLabel">
-          Équipes —
-          une par ligne
-          ou séparées par une virgule
-        </label>
+      <input
+        id="sportSeasonEnd"
+        class="sportField"
+        type="date"
+        value="${sportEsc(c.seasonEndDate)}"
+      >
 
-        <textarea
-          id="sportTeams"
-          class="sportField"
-        >${sportEsc(c.teams.join("\n"))}</textarea>
+      <div class="sportStatus">
 
-        <label class="sportLabel">
-          Source officielle des résultats
-        </label>
-
-        <input
-          id="sportOfficialUrl"
-          class="sportField"
-          value="${sportEsc(c.officialResultsUrl)}"
-          placeholder="Fédération, ligue, district, comité ou compétition officielle"
-        >
-
-        <label class="sportLabel">
-          Page publique du club
-        </label>
-
-        <input
-          id="sportPublicUrl"
-          class="sportField"
-          value="${sportEsc(c.publicNetworkUrl)}"
-        >
-
-        <label class="sportLabel">
-          Fin de saison
-        </label>
-
-        <input
-          id="sportSeasonEnd"
-          class="sportField"
-          type="date"
-          value="${sportEsc(c.seasonEndDate)}"
-        >
-
-        <div class="sportStatus">
-
-          Référence club :
-          <strong>
-            ${sportEsc(
-              c.clubRef ||
-              "attribuée après validation"
-            )}
-          </strong>
-
-        </div>
-
-        <div class="sportActions">
-
-          <button
-            id="sportIdentitySave"
-            class="sportBtn"
-            type="button"
-          >
-            Enregistrer la fiche
-          </button>
-
-        </div>
-
-        <div
-          id="sportIdentityStatus"
-          class="sportStatus"
-        ></div>
+        Référence club :
+        <strong>
+          ${sportEsc(
+            c.clubRef ||
+            "attribuée après validation"
+          )}
+        </strong>
 
       </div>
 
-<div class="sportCard">
+      <button
+        id="sportIdentitySave"
+        class="sportBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:14px;
+        "
+      >
+        Enregistrer la fiche
+      </button>
 
-  <div class="sportSubTitle">
-    Gestion des collaborateurs avec
-    ${sportBrandHtml()}
-  </div>
+      <div
+        id="sportIdentityStatus"
+        class="sportStatus"
+      ></div>
 
-  <div class="sportText" style="margin-top:8px;">
+    </div>
 
-    Enregistrez une seule fiche à la fois.
-    Après validation, la fiche est conservée
-    dans l’historique et le formulaire se vide.
 
-    Le nombre de collaborateurs n’est pas limité.
+    <div class="sportCard">
 
-  </div>
+      <div class="sportSubTitle">
+        Gestion des collaborateurs avec
+        ${sportBrandHtml()}
+      </div>
 
-  <input
-    id="sportCoachEditId"
-    type="hidden"
-  >
+      <div class="sportText" style="margin-top:8px;">
 
-  <label class="sportLabel">
-    Nom et prénom
-  </label>
+        Le président peut créer
+        autant d’accès individuels que nécessaire.
 
-  <input
-    id="sportCoachName"
-    class="sportField"
-  >
+        Chaque collaborateur possède
+        son propre identifiant,
+        son propre code
+        et uniquement les habilitations
+        nécessaires à sa fonction.
 
-  <label class="sportLabel">
-    Fonction
-  </label>
+      </div>
 
-  <input
-    id="sportCoachFunction"
-    class="sportField"
-    placeholder="Entraîneur, responsable, bénévole..."
-  >
+      <input
+        id="sportCoachEditId"
+        type="hidden"
+      >
 
-  <label class="sportLabel">
-    Équipe
-  </label>
+      <label class="sportLabel">
+        Nom et prénom
+      </label>
 
-  <input
-    id="sportCoachTeam"
-    class="sportField"
-  >
+      <input
+        id="sportCoachName"
+        class="sportField"
+      >
 
-  <label class="sportLabel">
-    Adresse
-  </label>
+      <label class="sportLabel">
+        Fonction
+      </label>
 
-  <input
-    id="sportCoachAddress"
-    class="sportField"
-  >
+      <input
+        id="sportCoachFunction"
+        class="sportField"
+        placeholder="Entraîneur, responsable, bénévole..."
+      >
 
-  <label class="sportLabel">
-    Téléphone
-  </label>
+      <label class="sportLabel">
+        Équipe
+      </label>
 
-  <input
-    id="sportCoachPhone"
-    class="sportField"
-    type="tel"
-  >
+      <input
+        id="sportCoachTeam"
+        class="sportField"
+      >
 
-  <label class="sportLabel">
-    Email
-  </label>
+      <label class="sportLabel">
+        Adresse
+      </label>
 
-  <input
-    id="sportCoachEmail"
-    class="sportField"
-    type="email"
-  >
+      <input
+        id="sportCoachAddress"
+        class="sportField"
+      >
 
-  <label class="sportLabel">
-    Code initial
-  </label>
+      <label class="sportLabel">
+        Téléphone
+      </label>
 
-  <input
-    id="sportCoachCode"
-    class="sportField"
-    type="password"
-    placeholder="6 caractères minimum"
-  >
+      <input
+        id="sportCoachPhone"
+        class="sportField"
+        type="tel"
+      >
 
-  <div class="sportActions">
+      <label class="sportLabel">
+        Email
+      </label>
 
-    <button
-      id="sportCoachCreate"
-      class="sportBtn"
-      type="button"
-    >
-      Enregistrer le collaborateur
-    </button>
+      <input
+        id="sportCoachEmail"
+        class="sportField"
+        type="email"
+      >
 
-    <button
-      id="sportCoachCancel"
-      class="sportBtn"
-      type="button"
-      style="display:none;"
-    >
-      Annuler la modification
-    </button>
+      <div class="sportSubTitle" style="margin-top:16px;">
+        Habilitations particulières
+      </div>
 
-  </div>
+      <label class="sportCheck">
 
-  <div
-    id="sportAccessStatus"
-    class="sportStatus"
-  ></div>
+        <input
+          id="sportCoachGovernanceReport"
+          type="checkbox"
+        >
 
-  <button
-    id="sportAccessHistoryToggle"
-    class="sportBtn"
-    type="button"
-    data-opened="0"
-    style="width:100%;margin-top:14px;"
-  >
-    Historique des collaborateurs
-  </button>
+        <span>
+          Autoriser le signalement confidentiel
+          d’un changement de gouvernance
+        </span>
 
-  <div
-    id="sportAccessList"
-    style="display:none;"
-  ></div>
+      </label>
 
-</div>
+      <label class="sportCheck">
 
-      <div class="sportCard">
+        <input
+          id="sportCoachSolidarityManage"
+          type="checkbox"
+        >
 
-        <div class="sportSubTitle">
-          Suivi soutien / justificatifs
-          avec ${sportBrandHtml()}
-        </div>
+        <span>
+          Autoriser la modification
+          de l’orientation solidaire du club
+        </span>
 
-        <div class="sportStatus">
+      </label>
 
-          Dossiers de soutien :
-          <strong>
-            ${sportDossiers().length}
-          </strong>
+      <label class="sportLabel">
+        Code initial
+      </label>
 
-          <br>
+      <input
+        id="sportCoachCode"
+        class="sportField"
+        type="password"
+        placeholder="6 caractères minimum"
+      >
 
-          Justificatifs en attente :
-          <strong>
-            ${waiting}
-          </strong>
+      <div class="sportActions">
 
-        </div>
+        <button
+          id="sportCoachCreate"
+          class="sportBtn"
+          type="button"
+        >
+          Enregistrer le collaborateur
+        </button>
+
+        <button
+          id="sportCoachCancel"
+          class="sportBtn"
+          type="button"
+          style="display:none;"
+        >
+          Annuler la modification
+        </button>
+
+      </div>
+
+      <div
+        id="sportAccessStatus"
+        class="sportStatus"
+      ></div>
+
+      <button
+        id="sportAccessHistoryToggle"
+        class="sportBtn"
+        type="button"
+        data-opened="0"
+        style="width:100%;margin-top:14px;"
+      >
+        Historique des collaborateurs
+      </button>
+
+      <div
+        id="sportAccessList"
+        style="display:none;"
+      ></div>
+
+    </div>
+
+
+    <div class="sportCard">
+
+      <div class="sportSubTitle">
+        Suivi soutien / justificatifs
+        avec ${sportBrandHtml()}
+      </div>
+
+      <div class="sportStatus">
+
+        Dossiers de soutien :
+        <strong>
+          ${sportDossiers().length}
+        </strong>
+
+        <br>
+
+        Justificatifs en attente :
+        <strong>
+          ${waiting}
+        </strong>
 
       </div>
 
     </div>
+
   `;
 }
 
 
-/* ===== ÇA COMMENCE ICI — ENTRAÎNEMENTS RESPONSABLES ===== */
+/* =========================================================
+   ENTRAÎNEMENTS RESPONSABLES
+   ========================================================= */
 
 function sportTrainingHtml(){
 
@@ -8103,7 +8367,7 @@ function sportTrainingHtml(){
 
         <br><br>
 
-               En reliant des gestes simples
+        En reliant des gestes simples
         à un petit avantage destiné au club,
         les jeunes comprennent concrètement
         que ranger le matériel,
@@ -8118,6 +8382,7 @@ function sportTrainingHtml(){
         les accompagnent également plus tard
         dans leur vie personnelle,
         citoyenne et professionnelle.
+
         <br><br>
 
         Après l’entraînement,
@@ -8218,7 +8483,10 @@ function sportTrainingHtml(){
   `;
 }
 
-/* ===== ÇA COMMENCE ICI — RÉSULTATS DU WEEK-END ===== */
+
+/* =========================================================
+   RÉSULTATS DU WEEK-END
+   ========================================================= */
 
 function sportResultsPrivateHtml(){
 
@@ -8336,7 +8604,6 @@ function sportResultsPrivateHtml(){
   `;
 }
 
-/* ===== ÇA FINIT ICI — RÉSULTATS DU WEEK-END ===== */
 
 function sportSolidarityHtml(){
 
@@ -8351,6 +8618,58 @@ function sportSolidarityHtml(){
 
   const a=
     sportAssociations();
+
+  const canManage=
+    sportHasPermission(
+      "solidarity_manage"
+    );
+
+  const modeLabel=
+    saved.mode === "full"
+      ? "Donner 100 %"
+      : saved.mode === "partial"
+        ? "Partager une partie"
+        : "Garder 100 % pour le club";
+
+  if(
+    !canManage
+  ){
+
+    return `
+
+      ${sportTitle(
+        "Orientation solidaire du club avec"
+      )}
+
+      <div class="sportCard">
+
+        <div class="sportText">
+
+          Orientation actuelle :
+          <strong>
+            ${sportEsc(modeLabel)}
+          </strong>.
+
+          <br><br>
+
+          Cette orientation est décidée
+          par la présidence
+          ou par une personne disposant
+          d’une habilitation spécifique.
+
+          <br><br>
+
+          En fin de saison,
+          un reliquat inférieur à 30
+          peut être remis à la mairie
+          pour une association validée.
+
+        </div>
+
+      </div>
+
+    `;
+  }
 
   return `
 
@@ -8367,6 +8686,8 @@ function sportSolidarityHtml(){
         d’en partager une partie
         ou de les orienter entièrement
         vers une association.
+
+        <br><br>
 
         En fin de saison,
         un reliquat inférieur à 30
@@ -8422,7 +8743,7 @@ function sportSolidarityHtml(){
         </div>
 
         ${
-                   a.map(
+          a.map(
             (x,index) => `
 
               <div class="sportItem">
@@ -8441,7 +8762,7 @@ function sportSolidarityHtml(){
                     }
                   >
 
-                                  <span>
+                  <span>
 
                     <strong>
 
@@ -8468,7 +8789,7 @@ function sportSolidarityHtml(){
                         : "En attente du choix défini par la mairie et Bo'CitéArt"
                     }
 
-                  </span> 
+                  </span>
 
                 </label>
 
@@ -8523,8 +8844,6 @@ function sportSolidarityHtml(){
 }
 
 
-/* ===== ÇA COMMENCE ICI ===== */
-
 function sportBagHtml(){
 
   return `
@@ -8551,14 +8870,8 @@ function sportBagHtml(){
   `;
 }
 
-/* ===== ÇA FINIT ICI ===== */
-
 
 /* =========================================================
-   FIN BLOC SPORT 6
-   ========================================================= */
-
-  /* =========================================================
    BLOC SPORT 7
    PARRAINAGE — COMMERCE — PAIEMENT
    ========================================================= */
@@ -8976,7 +9289,7 @@ function sportSupportUpdatePreview(){
 
     associationBox.style.display=
       choice ===
-      "HALF_HALF"
+        "HALF_HALF"
         ? "block"
         : "none";
   }
@@ -9016,7 +9329,7 @@ function sportSupportUpdatePreview(){
 
   if(
     choice ===
-    "ALL_CLUB"
+      "ALL_CLUB"
   ){
 
     preview.innerHTML=
@@ -9168,7 +9481,7 @@ async function sportSupportStartPayment(){
 
   if(
     choice ===
-    "HALF_HALF"
+      "HALF_HALF"
   ){
 
     associationId=
@@ -9461,7 +9774,7 @@ async function sportSupportCheckPayment(){
     if(
       data &&
       data.status ===
-      "paid"
+        "paid"
     ){
 
       const all=
@@ -9639,7 +9952,7 @@ function sportSupportHtml(){
         La petite publicité locale
         est diffusée pendant
         <strong>
-          7 jours consécutifs
+          5 jours consécutifs
         </strong>
         après confirmation du paiement.
 
@@ -9948,16 +10261,11 @@ function sportSupportHtml(){
   `;
 }
 
-/* =========================================================
-   FIN BLOC SPORT 7
-   ========================================================= */
 
-  /* =========================================================
+/* =========================================================
    BLOC SPORT 8
    ACCÈS ENTRAÎNEURS — SÉANCES — CONTACTS
    ========================================================= */
-
-/* ===== ÇA COMMENCE ICI — MOTEUR DES COLLABORATEURS ===== */
 
 function sportResetCoachForm(){
 
@@ -9977,6 +10285,21 @@ function sportResetCoachForm(){
 
       if(field){
         field.value="";
+      }
+    }
+  );
+
+  [
+    "sportCoachGovernanceReport",
+    "sportCoachSolidarityManage"
+  ].forEach(
+    id =>{
+
+      const field=
+        sportEl(id);
+
+      if(field){
+        field.checked=false;
       }
     }
   );
@@ -10081,6 +10404,38 @@ function sportEditCoach(id){
         }
       }
     );
+
+  const governanceReport=
+    sportEl(
+      "sportCoachGovernanceReport"
+    );
+
+  if(governanceReport){
+
+    governanceReport.checked=
+      Array.isArray(
+        coach.permissions
+      ) &&
+      coach.permissions.includes(
+        "governance_report"
+      );
+  }
+
+  const solidarityManage=
+    sportEl(
+      "sportCoachSolidarityManage"
+    );
+
+  if(solidarityManage){
+
+    solidarityManage.checked=
+      Array.isArray(
+        coach.permissions
+      ) &&
+      coach.permissions.includes(
+        "solidarity_manage"
+      );
+  }
 
   const save=
     sportEl(
@@ -10270,6 +10625,40 @@ function sportRenderAccessList(){
               }
             </div>
 
+            ${
+              Array.isArray(
+                x.permissions
+              ) &&
+              x.permissions.length
+                ? `
+
+                  <div
+                    class="sportStatus"
+                    style="margin-top:8px;"
+                  >
+                    Habilitations :
+                    ${
+                      x.permissions
+                        .map(
+                          permission =>
+                            permission ===
+                              "governance_report"
+                              ? "signalement gouvernance"
+                              : permission ===
+                                  "solidarity_manage"
+                                  ? "orientation solidaire"
+                                  : sportEsc(
+                                      permission
+                                    )
+                        )
+                        .join(", ")
+                    }
+                  </div>
+
+                `
+                : ""
+            }
+
             <div class="sportActions">
 
               <button
@@ -10431,6 +10820,20 @@ function sportRenderAccessList(){
               access
             );
 
+            sportNotifyEvent(
+              access.coaches[index].active ===
+                false
+                ? "sport_collaborator_suspended"
+                : "sport_collaborator_reactivated",
+              {
+                collaboratorId:
+                  access.coaches[index].id,
+                collaboratorName:
+                  access.coaches[index].name ||
+                  ""
+              }
+            );
+
             sportRenderAccessList();
           };
       }
@@ -10509,6 +10912,17 @@ function sportRenderAccessList(){
                 .identifier
             );
 
+            sportNotifyEvent(
+              "sport_collaborator_code_renewed",
+              {
+                collaboratorId:
+                  access.coaches[index].id,
+                collaboratorName:
+                  access.coaches[index].name ||
+                  ""
+              }
+            );
+
             alert(
               "Le nouveau code est enregistré."
             );
@@ -10524,7 +10938,7 @@ async function sportCreateCoach(){
 
   if(
     sportSession.role !==
-    "president"
+      "president"
   ){
     return;
   }
@@ -10602,6 +11016,28 @@ async function sportCreateCoach(){
       ""
     ).trim();
 
+  const permissions=[];
+
+  if(
+    sportEl(
+      "sportCoachGovernanceReport"
+    )?.checked
+  ){
+    permissions.push(
+      "governance_report"
+    );
+  }
+
+  if(
+    sportEl(
+      "sportCoachSolidarityManage"
+    )?.checked
+  ){
+    permissions.push(
+      "solidarity_manage"
+    );
+  }
+
   if(!name){
 
     alert(
@@ -10661,6 +11097,9 @@ async function sportCreateCoach(){
 
           email:
             email,
+
+          permissions:
+            permissions,
 
           updatedAt:
             Date.now()
@@ -10732,6 +11171,9 @@ async function sportCreateCoach(){
       email:
         email,
 
+      permissions:
+        permissions,
+
       codeHash:
         await sportHash(code),
 
@@ -10752,6 +11194,18 @@ async function sportCreateCoach(){
 
   sportSaveAccess(
     access
+  );
+
+  sportNotifyEvent(
+    editId
+      ? "sport_collaborator_updated"
+      : "sport_collaborator_created",
+    {
+      collaboratorName:
+        name,
+      permissions:
+        permissions.slice()
+    }
   );
 
   sportResetCoachForm();
@@ -10777,7 +11231,6 @@ async function sportCreateCoach(){
   sportRenderAccessList();
 }
 
-/* ===== ÇA FINIT ICI — MOTEUR DES COLLABORATEURS ===== */
 
 function sportRenderTrainings(){
 
@@ -10789,6 +11242,9 @@ function sportRenderTrainings(){
   if(!out){
     return;
   }
+
+  const club=
+    sportClub();
 
   const a=
     sportTrainings()
@@ -10808,7 +11264,7 @@ function sportRenderTrainings(){
     a.map(
       x =>{
 
-        const c=
+        const confirmations=
           Array.isArray(
             x.confirmations
           )
@@ -10823,7 +11279,7 @@ function sportRenderTrainings(){
           );
 
         const already=
-          c.some(
+          confirmations.some(
             y =>
               String(
                 y.accountId
@@ -10831,22 +11287,27 @@ function sportRenderTrainings(){
               me
           );
 
+        const validator=
+          confirmations.length
+            ? confirmations[0]
+            : null;
+
         return `
 
           <div class="sportItem">
 
-                    <div class="sportName">
+            <div class="sportName">
 
-            ${sportEsc(
-              c.name ||
-              "Club partenaire"
-            )}
+              ${sportEsc(
+                club.name ||
+                "Club partenaire"
+              )}
 
-            avec ${sportBrandHtml()}
+              avec ${sportBrandHtml()}
 
-          </div>
+            </div>
 
-            <div>
+            <div style="margin-top:6px;">
               ${sportEsc(
                 x.date ||
                 ""
@@ -10858,17 +11319,32 @@ function sportRenderTrainings(){
               )}
             </div>
 
-            <div>
-              Validations indépendantes :
-              ${c.length}/2
+            <div style="margin-top:6px;">
+              Équipe :
+              ${sportEsc(
+                x.team ||
+                "Non renseignée"
+              )}
             </div>
 
-            <div>
+            <div style="margin-top:6px;">
 
               ${
                 x.coinAwarded
-                  ? "✓ 1 bocitecoin crédité à l’équipe."
-                  : "Consignes, respect, matériel, vestiaires et espaces doivent être validés."
+                  ? (
+                      "✓ Séance validée — 1 bocitecoin crédité au club." +
+                      (
+                        validator &&
+                        validator.name
+                          ? " Validation par " +
+                            sportEsc(
+                              validator.name
+                            ) +
+                            "."
+                          : ""
+                      )
+                    )
+                  : "Consignes, respect, matériel, vestiaires et espaces doivent être vérifiés avant validation."
               }
 
             </div>
@@ -10941,6 +11417,8 @@ function sportRenderTrainings(){
 
           if(
             !me ||
+            x.coinAwarded ===
+              true ||
             x.confirmations.some(
               y =>
                 String(
@@ -10961,31 +11439,29 @@ function sportRenderTrainings(){
               sportSession.name ||
               "Responsable",
 
+            role:
+              sportSession.role ||
+              "",
+
             ts:
               Date.now()
           });
 
-          if(
-            x.confirmations.length >= 2 &&
-            !x.coinAwarded
-          ){
+          const r=
+            sportAddCoin(
+              "Séance sportive correctement terminée",
+              "training:" +
+              x.id,
+              x.team
+            );
 
-            const r=
-              sportAddCoin(
-                "Séance sportive correctement terminée",
-                "training:" +
-                x.id,
-                x.team
-              );
+          if(r.ok){
 
-            if(r.ok){
+            x.coinAwarded=
+              true;
 
-              x.coinAwarded=
-                true;
-
-              x.coinAwardedAt=
-                Date.now();
-            }
+            x.coinAwardedAt=
+              Date.now();
           }
 
           all[i]=x;
@@ -11141,6 +11617,17 @@ function sportRenderPrivateResults(){
 
 function sportSaveSolidarityFromUi(){
 
+  if(
+    !sportHasPermission(
+      "solidarity_manage"
+    )
+  ){
+    alert(
+      "Cette orientation est réservée à la présidence ou à une personne officiellement habilitée."
+    );
+    return;
+  }
+
   const mode=
     String(
       document.querySelector(
@@ -11160,7 +11647,7 @@ function sportSaveSolidarityFromUi(){
 
   if(
     mode ===
-    "none"
+      "none"
   ){
 
     sportSave(
@@ -11203,7 +11690,7 @@ function sportSaveSolidarityFromUi(){
 
   if(
     mode ===
-    "full"
+      "full"
   ){
 
     const base=
@@ -11222,7 +11709,7 @@ function sportSaveSolidarityFromUi(){
 
         map[id]=
           i ===
-          selected.length-1
+            selected.length-1
             ? rest
             : base;
 
@@ -11234,7 +11721,7 @@ function sportSaveSolidarityFromUi(){
 
   if(
     mode ===
-    "partial"
+      "partial"
   ){
 
     let total=0;
@@ -11360,11 +11847,40 @@ function sportRenderExchangeHistory(){
     return;
   }
 
-  const a=
+  let a=
     sportExchanges()
       .slice()
-      .reverse()
-      .slice(0,20);
+      .reverse();
+
+  if(
+    sportSession.role ===
+      "coach"
+  ){
+
+    const me=
+      String(
+        sportSession.accountId ||
+        ""
+      );
+
+    a=
+      a.filter(
+        item =>
+          String(
+            item &&
+            item.representative &&
+            item.representative.ref ||
+            ""
+          ) ===
+          me
+      );
+  }
+
+  a=
+    a.slice(
+      0,
+      20
+    );
 
   out.innerHTML=
     a.length
@@ -11742,7 +12258,7 @@ function sportRenderContacts(){
 }
 
 
-function sportShowCode(){
+async function sportShowCode(){
 
   const c=
     sportClub();
@@ -11756,13 +12272,234 @@ function sportShowCode(){
     return;
   }
 
-  alert(
-    "Code club à présenter au commerçant ou à la mairie :\n\n" +
-    JSON.stringify(
-      sportClubCode(),
-      null,
-      2
-    )
+  let code=
+    sportClubCode();
+
+  if(
+    SPORT_CONFIG.mode ===
+      "production"
+  ){
+
+    if(
+      !SPORT_CONFIG.scanEndpoint
+    ){
+
+      alert(
+        "Le service sécurisé du code dynamique n’est pas encore raccordé."
+      );
+
+      return;
+    }
+
+    try{
+
+      const response=
+        await fetch(
+          SPORT_CONFIG.scanEndpoint,
+          {
+            method:"POST",
+            credentials:"include",
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+            body:
+              JSON.stringify({
+                action:
+                  "issue_sport_club_token",
+                clubRef:
+                  c.clubRef,
+                representative:
+                  code.presentedBy
+              })
+          }
+        );
+
+      if(!response.ok){
+        throw 0;
+      }
+
+      const result=
+        await response.json();
+
+      if(
+        !result ||
+        result.ok !== true ||
+        !result.scanToken
+      ){
+        throw 0;
+      }
+
+      code=
+        Object.assign(
+          {},
+          code,
+          {
+            scanToken:
+              String(
+                result.scanToken
+              ),
+            issuedAt:
+              Number(
+                result.issuedAt ||
+                Date.now()
+              ),
+            expiresAt:
+              Number(
+                result.expiresAt ||
+                (
+                  Date.now() +
+                  2 * 60 * 1000
+                )
+              )
+          }
+        );
+
+    }catch(_){
+
+      alert(
+        "Le code dynamique est momentanément indisponible."
+      );
+
+      return;
+    }
+  }
+
+  openModal(
+    "Code du club avec Bo'CitéArt",
+    `
+
+      ${sportStyles()}
+
+      <div class="bociteSportRoot">
+
+        ${sportTitle(
+          "Code dynamique du club avec"
+        )}
+
+        <div class="sportCard">
+
+          <div class="sportText">
+
+            Présentez ce code
+            au commerçant partenaire
+            lors de l’opération.
+
+            <br><br>
+
+            Il identifie temporairement
+            le club,
+            la session active
+            et le collaborateur
+            qui le présente.
+
+            <br><br>
+
+            Il ne révèle
+            ni le solde du portefeuille,
+            ni les données de gouvernance,
+            ni les codes personnels d’accès.
+
+          </div>
+
+          <div
+            class="sportStatus"
+            style="
+              margin-top:14px;
+              text-align:center;
+            "
+          >
+
+            Code temporaire :
+
+            <br>
+
+            <strong
+              style="
+                display:block;
+                margin-top:8px;
+                font-size:20px;
+                letter-spacing:1px;
+              "
+            >
+              ${sportEsc(
+                code.scanToken ||
+                "En attente du service sécurisé"
+              )}
+            </strong>
+
+          </div>
+
+          <div class="sportStatus">
+
+            Présenté par :
+            <strong>
+              ${sportEsc(
+                code.presentedBy.name ||
+                "Responsable du club"
+              )}
+            </strong>
+
+            <br>
+
+            Valable jusqu’à :
+            <strong>
+              ${
+                code.expiresAt
+                  ? new Date(
+                      code.expiresAt
+                    ).toLocaleTimeString(
+                      "fr-FR",
+                      {
+                        hour:"2-digit",
+                        minute:"2-digit"
+                      }
+                    )
+                  : "validation serveur"
+              }
+            </strong>
+
+          </div>
+
+          <button
+            id="sportDynamicCodeClose"
+            class="sportBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:12px;
+            "
+          >
+            Fermer
+          </button>
+
+        </div>
+
+      </div>
+
+    `
+  );
+
+  sportSetModalHeader(
+    "Code du club avec"
+  );
+
+  setTimeout(
+    ()=>{
+
+      const close=
+        sportEl(
+          "sportDynamicCodeClose"
+        );
+
+      if(close){
+
+        close.onclick=
+          openClubReserve;
+      }
+
+    },
+    0
   );
 }
 
@@ -11850,15 +12587,11 @@ function openSportPublicResults(){
 window.openSportPublicResults=
   openSportPublicResults;
 
+
 /* =========================================================
-   FIN BLOC SPORT 8
-   ========================================================= */
-   /* =========================================================
    BLOC SPORT 9
    OUVERTURE DU MODULE — ACCÈS — EXPORT
    ========================================================= */
-
-/* ===== ÇA COMMENCE ICI — PORTEFEUILLE SPORT ===== */
 
 function sportWalletHtml(){
 
@@ -11881,7 +12614,7 @@ function sportWalletHtml(){
         0
       </div>
 
-           <div class="walletSub">
+      <div class="walletSub">
 
         Tous les bocitecoins gagnés
         par les équipes sont réunis
@@ -11944,6 +12677,15 @@ function sportWalletHtml(){
         et le nouveau solde devient immédiatement
         visible par tous les collaborateurs.
 
+        <br><br>
+
+        L’échange de bocitecoins reste indépendant
+        de la carte de fidélité du commerce.
+        Chaque commerçant conserve,
+        adapte ou propose librement
+        son propre dispositif de fidélité
+        selon ce qu’il juge utile à sa clientèle.
+
       </div>
       
       <div
@@ -11981,8 +12723,7 @@ function sportWalletHtml(){
   `;
 }
 
-/* ===== ÇA FINIT ICI — PORTEFEUILLE SPORT ===== */
-   
+
 function openClubReserve(){
 
   const c=
@@ -11990,7 +12731,7 @@ function openClubReserve(){
 
   const role=
     sportSession.role ===
-    "president"
+      "president"
       ? "Présidence / responsable légal"
       : "Entraîneur / responsable";
 
@@ -12002,25 +12743,27 @@ function openClubReserve(){
 
       <div class="bociteSportRoot">
 
-     <div class="sportCard">
+        <div class="sportCard">
 
-  <div class="sportName">
-    ${sportEsc(
-      c.name ||
-      "Club partenaire"
-    )}
-    avec ${sportBrandHtml()}
-  </div>
+          <div class="sportName">
+            ${sportEsc(
+              c.name ||
+              "Club partenaire"
+            )}
+            avec ${sportBrandHtml()}
+          </div>
 
-  <div>
-    ${sportEsc(role)} — ${sportEsc(sportSession.name || "")}
+          <div>
+            ${sportEsc(role)} — ${sportEsc(sportSession.name || "")}
+          </div>
 
-   </div> 
-</div>
+        </div>
 
         ${sportResultsPrivateHtml()}
 
         ${sportPresidentHtml()}
+
+        ${sportGovernanceReportHtml()}
 
         ${sportTrainingHtml()}
 
@@ -12029,6 +12772,8 @@ function openClubReserve(){
         ${sportSolidarityHtml()}
 
         ${sportBagHtml()}
+
+        ${sportPresidentHistoryHtml()}
 
         <div id="bociteSportFinanceMount"></div>
 
@@ -12079,6 +12824,11 @@ function openClubReserve(){
       sportRenderTrainings();
 
       sportRenderPrivateResults();
+
+      window.setTimeout(
+        sportSyncResults,
+        150
+      );
 
       sportRenderContacts();
 
@@ -12359,8 +13109,8 @@ function openClubReserve(){
 window.openClubReserve=
   openClubReserve;
 
+
 /* =========================================================
-   ÇA COMMENCE ICI
    SPORT — PREMIER CONTRÔLE PRÉSIDENT / RESPONSABLE LÉGAL
    ========================================================= */
 
@@ -12469,6 +13219,29 @@ function openSportPresidentPrecheck(){
             autocomplete="off"
             placeholder="Identifiant fédéral du club"
           >
+
+
+          <label class="sportLabel">
+            Référence du récépissé de déclaration des dirigeants
+          </label>
+
+          <input
+            id="sportPresidentCheckOfficialReference"
+            class="sportField"
+            autocomplete="off"
+            placeholder="Référence du récépissé ou du document officiel"
+          >
+
+          <div
+            class="sportText"
+            style="margin-top:8px;"
+          >
+
+            Cette référence permet
+            de rapprocher votre demande
+            du mandat déclaré pour la structure.
+
+          </div>
 
 
           <label class="sportLabel">
@@ -12650,6 +13423,13 @@ function openSportPresidentPrecheck(){
                 )?.value || ""
               ).trim(),
 
+            officialReference:
+              String(
+                sportEl(
+                  "sportPresidentCheckOfficialReference"
+                )?.value || ""
+              ).trim(),
+
             firstName:
               String(
                 sportEl(
@@ -12680,6 +13460,7 @@ function openSportPresidentPrecheck(){
             !data.rna ||
             !data.federation ||
             !data.affiliation ||
+            !data.officialReference ||
             !data.firstName ||
             !data.lastName
           ){
@@ -12711,17 +13492,6 @@ function openSportPresidentPrecheck(){
             return;
           }
 
-
-          /*
-            PRODUCTION :
-            la vérification réelle reste côté serveur.
-
-            Le serveur doit :
-            - retrouver la structure ;
-            - contrôler la fonction ;
-            - retrouver une coordonnée déjà vérifiée ;
-            - envoyer le code temporaire.
-          */
 
           if(
             SPORT_CONFIG.mode ===
@@ -12823,26 +13593,8 @@ function openSportPresidentPrecheck(){
           }
 
 
-          /*
-            FONCTIONNEMENT ACTUEL SUR GITHUB PAGES :
-            simulation locale uniquement pour tester
-            le parcours écran par écran.
-
-            Cette partie disparaîtra lorsque
-            l'envoi réel SMS / e-mail sera raccordé.
-          */
-
-         /* =========================================================
-   ÇA COMMENCE ICI
-   CODE FIXE POUR LA DÉMO UNIQUEMENT
-   ========================================================= */
-
-const localCode =
-  "141010";
-
-/* =========================================================
-   ÇA FINIT ICI
-   ========================================================= */
+          const localCode =
+            "141010";
 
 
           sportPresidentAccessChallenge = {
@@ -13214,11 +13966,85 @@ function openSportPresidentCode(){
               affiliation:
                 challenge.data.affiliation,
 
+              officialReference:
+                challenge.data.officialReference,
+
               verifiedAt:
                 new Date()
                   .toISOString()
 
             };
+
+
+          const precheckedClub=
+            sportClub();
+
+          precheckedClub.name=
+            challenge.data.clubName ||
+            precheckedClub.name;
+
+          if(
+            !precheckedClub.officialName
+          ){
+            precheckedClub.officialName=
+              challenge.data.clubName;
+          }
+
+          precheckedClub.commune=
+            challenge.data.commune ||
+            precheckedClub.commune;
+
+          precheckedClub.rnaNumber=
+            challenge.data.rna ||
+            precheckedClub.rnaNumber;
+
+          precheckedClub.federation=
+            challenge.data.federation ||
+            precheckedClub.federation;
+
+          precheckedClub.officialClubId=
+            challenge.data.affiliation ||
+            precheckedClub.officialClubId;
+
+          precheckedClub.identityStatus=
+            "prechecked";
+
+          sportSaveClub(
+            precheckedClub
+          );
+
+
+          const precheckedGovernance=
+            sportLoadGovernance();
+
+          precheckedGovernance.president=
+            Object.assign(
+              {},
+              precheckedGovernance.president,
+              {
+                fullName:
+                  verifiedName,
+
+                role:
+                  "Président / responsable légal",
+
+                officialReference:
+                  challenge.data.officialReference,
+
+                verificationStatus:
+                  "prechecked"
+              }
+            );
+
+          precheckedGovernance.status=
+            "pending_review";
+
+          precheckedGovernance.activationStatus=
+            "blocked";
+
+          sportSaveGovernance(
+            precheckedGovernance
+          );
 
 
           sportSession = {
@@ -13246,13 +14072,6 @@ function openSportPresidentCode(){
             null;
 
 
-          /*
-            Le premier palier est validé.
-
-            On ouvre maintenant
-            la fiche complète déjà existante.
-          */
-
           openClubReserve();
 
         };
@@ -13263,11 +14082,7 @@ function openSportPresidentCode(){
 
 }
 
-/* =========================================================
-   ÇA FINIT ICI
-   SPORT — PREMIER CONTRÔLE PRÉSIDENT / RESPONSABLE LÉGAL
-   ========================================================= */
-   
+
 function openClubAccess(){
 
   openModal(
@@ -13284,10 +14099,56 @@ function openClubAccess(){
 
         <div class="sportCard">
 
-          Cet accès est réservé
-          aux entraîneurs
-          et responsables autorisés
-          de la structure sportive.
+          <div class="sportSubTitle">
+            Président / responsable légal
+          </div>
+
+          <div class="sportText" style="margin-top:8px;">
+
+            Vous représentez officiellement
+            le club ou l’association sportive.
+
+            <br><br>
+
+            Avant l’ouverture de la fiche complète,
+            un premier contrôle permet
+            de vérifier la demande
+            et de transmettre
+            un code temporaire
+            vers une coordonnée officielle
+            déjà vérifiée.
+
+          </div>
+
+          <button
+            id="sportPresidentPrecheckOpen"
+            class="sportBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:12px;
+            "
+          >
+            Vérifier ma fonction et demander mon code
+          </button>
+
+        </div>
+
+
+        <div class="sportCard">
+
+          <div class="sportSubTitle">
+            Collaborateur déjà autorisé
+          </div>
+
+          <div class="sportText" style="margin-top:8px;">
+
+            Utilisez l’identifiant personnel
+            et le code qui vous ont été remis
+            par le président
+            ou le responsable habilité du club.
+
+          </div>
 
           <label class="sportLabel">
             Identifiant personnel
@@ -13297,7 +14158,7 @@ function openClubAccess(){
             id="sportLoginIdentifier"
             class="sportField"
             autocomplete="username"
-            placeholder="Identifiant responsable"
+            placeholder="Identifiant collaborateur"
           >
 
           <label class="sportLabel">
@@ -13321,7 +14182,7 @@ function openClubAccess(){
               margin-top:12px;
             "
           >
-            Ouvrir l’espace
+            Ouvrir mon espace
           </button>
 
           <div
@@ -13343,27 +14204,17 @@ function openClubAccess(){
   setTimeout(
     ()=>{
 
-/* =========================================================
-   ÇA COMMENCE ICI
-   OUVERTURE DU PREMIER CONTRÔLE PRÉSIDENT
-   ========================================================= */
+      const presidentCheck=
+        sportEl(
+          "sportPresidentPrecheckOpen"
+        );
 
-const presidentCheck=
-  sportEl(
-    "sportPresidentPrecheckOpen"
-  );
+      if(presidentCheck){
 
-if(presidentCheck){
+        presidentCheck.onclick=
+          openSportPresidentPrecheck;
+      }
 
-  presidentCheck.onclick=
-    openSportPresidentPrecheck;
-
-}
-
-/* =========================================================
-   ÇA FINIT ICI
-   ========================================================= */
-       
       const b=
         sportEl(
           "sportLoginBtn"
@@ -13411,77 +14262,6 @@ if(presidentCheck){
             return;
           }
 
-/* =====================================================
-   ÇA COMMENCE ICI — ACCÈS SPÉCIAL DE TEST
-   ===================================================== */
-
-          if(
-            SPORT_CONFIG.mode !==
-              "production" &&
-
-            sportNorm(id) ===
-              "SPORT-TEST" &&
-
-            code ===
-              "BCA-SPORT-2026"
-          ){
-
-            window
-              .bociteartSportTestFullAccess =
-              true;
-
-
-            sportResetFail(
-              id
-            );
-
-
-            sportSession={
-
-              role:
-                "president",
-
-              accountId:
-                "sport-test-full",
-
-              name:
-                "Accès spécial de test",
-
-              team:
-                "",
-
-              testFullAccess:
-                true
-            };
-
-
-            window.bociteartSportSession=
-              sportSession;
-
-
-            openClubReserve();
-
-            return;
-          }
-
-/* =====================================================
-   ÇA FINIT ICI — ACCÈS SPÉCIAL DE TEST
-   ===================================================== */
-
-
-          if(
-            sportLocked(id)
-          ){
-
-            if(o){
-
-              o.textContent=
-                "Accès temporairement indisponible. Contactez le président de la structure.";
-            }
-
-            return;
-          }
-           
           if(
             sportLocked(id)
           ){
@@ -13497,7 +14277,7 @@ if(presidentCheck){
 
           if(
             SPORT_CONFIG.mode ===
-            "production" &&
+              "production" &&
             SPORT_CONFIG.authEndpoint
           ){
 
@@ -13536,7 +14316,7 @@ if(presidentCheck){
                 !j ||
                 j.ok !== true ||
                 j.role ===
-                "president"
+                  "president"
               ){
                 throw 0;
               }
@@ -13584,7 +14364,7 @@ if(presidentCheck){
                 o.textContent=
                   locked
                     ? "Accès temporairement indisponible. Contactez le président de la structure."
-                    : "Accès réservé aux responsables autorisés.";
+                    : "Accès réservé aux collaborateurs autorisés.";
               }
 
               return;
@@ -13608,7 +14388,7 @@ if(presidentCheck){
           if(
             x &&
             x.codeHash ===
-            await sportHash(code)
+              await sportHash(code)
           ){
 
             sportResetFail(id);
@@ -13623,7 +14403,7 @@ if(presidentCheck){
 
               name:
                 x.name ||
-                "Responsable",
+                "Collaborateur",
 
               team:
                 x.team ||
@@ -13646,7 +14426,7 @@ if(presidentCheck){
             o.textContent=
               locked
                 ? "Accès temporairement indisponible. Contactez le président de la structure."
-                : "Accès réservé aux responsables autorisés.";
+                : "Accès réservé aux collaborateurs autorisés.";
           }
         };
 
@@ -13683,7 +14463,7 @@ window.openSportPresidentPrivate=
 
     if(
       a.president.active ===
-      false
+        false
     ){
 
       alert(
@@ -13744,38 +14524,6 @@ function openSportPanel(){
       ${sportStyles()}
 
       <div class="bociteSportRoot">
-
-        ${sportTitle(
-          "Sport avec"
-        )}
-
-        <div class="sportCard">
-
-          <div class="sportText">
-
-            Le sport relie
-            l’effort,
-            le respect,
-            l’engagement,
-            la vie locale
-            et la solidarité.
-
-            <br><br>
-
-            ${sportBrandHtml()}
-            rend visibles
-            les clubs
-            et associations sportives,
-            leurs résultats,
-            les comportements
-            qui font grandir une équipe
-            et les acteurs de la commune
-            qui les soutiennent.
-
-          </div>
-
-        </div>
-
 
         ${sportTitle(
           "Résultats du week-end avec"
@@ -13847,10 +14595,16 @@ function openSportPanel(){
 
         <div class="sportCard">
 
-          Les fonctions réservées
-          sont accessibles uniquement
-          aux entraîneurs
-          et responsables autorisés.
+          <div class="sportText">
+
+            Les fonctions réservées
+            sont accessibles uniquement
+            au président,
+            au responsable légal
+            et aux collaborateurs
+            autorisés de la structure.
+
+          </div>
 
           <button
             id="sportOpenClubAccess"
@@ -13897,75 +14651,44 @@ function openSportPanel(){
       if(m){
 
         m.onclick=
-          openWellbeingMap; 
+          openWellbeingMap;
       }
 
-     /* =========================================================
-   ÇA COMMENCE ICI
-   SPORT — PASSAGE PAR LE CONTRÔLEUR CENTRAL D'ACCÈS
-   ========================================================= */
+      const a=
+        sportEl(
+          "sportOpenClubAccess"
+        );
 
-const a=
-  sportEl(
-    "sportOpenClubAccess"
-  );
+      if(a){
 
-if(a){
+        a.onclick=
+          function(){
 
-  a.onclick=
-    function(){
+            if(
+              window.BociteAccess &&
+              typeof window.BociteAccess.request ===
+                "function"
+            ){
 
-      /*
-        Si aucun profil général Bo'CitéArt
-        n'existe encore, le contrôleur
-        demande d'abord l'identification.
+              window.BociteAccess.request({
 
-        Après identification réussie,
-        l'utilisateur revient automatiquement
-        à cette porte Sport.
+                service:
+                  "sport",
 
-        Si le profil existe déjà,
-        la porte Sport s'ouvre immédiatement.
-      */
+                action:
+                  "club-responsible-access",
 
-      if(
-        window.BociteAccess &&
-        typeof window.BociteAccess.request ===
-          "function"
-      ){
+                open:
+                  openClubAccess
 
-        window.BociteAccess.request({
+              });
 
-          service:
-            "sport",
+              return;
+            }
 
-          action:
-            "club-responsible-access",
-
-          open:
-            openClubAccess
-
-        });
-
-        return;
+            openClubAccess();
+          };
       }
-
-
-      /*
-        Sécurité de compatibilité :
-        si le contrôleur central n'est pas chargé,
-        on conserve l'ancienne porte Sport.
-      */
-
-      openClubAccess();
-
-    };
-
-}
-
-/* =========================================================
-   ÇA FINIT ICI
-   ========================================================= */
 
     },
     0
@@ -13980,7 +14703,7 @@ if(a){
 window.BociteSportModule={
 
   version:
-    "2026-09-02-01",
+    "2026-09-06-83",
 
   ready:
     true,
@@ -13991,7 +14714,7 @@ window.BociteSportModule={
   openPresident:
     ()=>window.openSportPresidentPrivate(),
 
-   getClub:
+  getClub:
     ()=>sportClub(),
 
   getSession:
@@ -14020,4 +14743,3 @@ window.openSportPanel=
    ========================================================= */
 
 })();
-  
